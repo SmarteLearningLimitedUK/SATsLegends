@@ -527,7 +527,7 @@ const App: React.FC = () => {
   const showCompactShell = !isWideScreenScene;
 
   return (
-    <div className={`relative h-screen w-full flex flex-col items-center overflow-hidden ${isWideScreenScene ? 'licensed-playfield-bg bg-slate-950' : 'licensed-shell-bg p-3 md:p-8'}`}>
+    <div className={`relative h-[100dvh] w-full flex flex-col items-center overflow-hidden ${isWideScreenScene ? 'licensed-playfield-bg bg-slate-950' : 'licensed-shell-bg p-3 md:p-8 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]'}`}>
       <div className="soft-vignette" />
       {showCompactShell && (
         <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-40 bg-gradient-to-b from-white/18 to-transparent" />
@@ -586,7 +586,7 @@ const App: React.FC = () => {
       )}
 
       {showBottomNav && (
-        <nav className="fixed bottom-4 left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 items-center justify-between rounded-[2rem] border border-white/20 bg-slate-950/55 px-4 py-3 shadow-[0_20px_45px_rgba(0,0,0,0.3)] backdrop-blur-2xl md:bottom-6 md:w-auto md:gap-8 md:px-5 md:py-4">
+        <nav className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 items-center justify-between rounded-[2rem] border border-white/20 bg-slate-950/55 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px)*0.5)] shadow-[0_20px_45px_rgba(0,0,0,0.3)] backdrop-blur-2xl md:bottom-6 md:w-auto md:gap-8 md:px-5 md:py-4 md:pb-4">
           <button
             onClick={goToHome}
             className={`flex flex-col items-center gap-1 rounded-2xl px-3 py-2 transition-all ${screen === 'world_map' ? 'bg-white text-sky-600 scale-105 shadow-lg' : 'text-white/85 hover:bg-white/10'}`}
