@@ -28,85 +28,85 @@ export const INITIAL_DAILY_QUESTS: DailyQuest[] = [
 ];
 
 export const AVATARS: AvatarData[] = [
-  { 
-    id: 'green_slime', 
-    name: 'Green Slime', 
-    image: '🟢', 
+  {
+    id: 'green_slime',
+    name: 'Green Slime',
+    image: '🟢',
     color: 'bg-green-100',
-    rarity: 'Common', 
-    level: 1, 
+    rarity: 'Common',
+    level: 1,
     imagePrompt: "A high-quality, chaos kawaii style monster, simple green slime with big expressive eyes, small mouth, vibrant green color, glossy texture, detailed digital art, game asset style, white background.",
-    sprite: { row: 0, colStart: 0, frames: 4 } 
+    sprite: { row: 0, colStart: 0, frames: 4 }
   },
-  { 
-    id: 'horned_slime', 
-    name: 'Horned Slime', 
-    image: '😈', 
+  {
+    id: 'horned_slime',
+    name: 'Horned Slime',
+    image: '😈',
     color: 'bg-green-200',
-    rarity: 'Common', 
-    level: 1, 
+    rarity: 'Common',
+    level: 1,
     imagePrompt: "A high-quality, chaos kawaii style monster, happy green slime with small orange horns, tongue sticking out, big eyes, vibrant green color, glossy texture, detailed digital art, game asset style, white background.",
-    sprite: { row: 1, colStart: 0, frames: 4 } 
+    sprite: { row: 1, colStart: 0, frames: 4 }
   },
-  { 
-    id: 'teal_wing', 
-    name: 'Teal Wing', 
-    image: '🧚', 
+  {
+    id: 'teal_wing',
+    name: 'Teal Wing',
+    image: '🧚',
     color: 'bg-teal-100',
-    rarity: 'Rare', 
-    level: 5, 
+    rarity: 'Rare',
+    level: 5,
     imagePrompt: "A high-quality, chaos kawaii style monster, teal slime with orange horns and small wings, happy expression, vibrant teal color, glossy texture, detailed digital art, game asset style, white background.",
-    sprite: { row: 2, colStart: 0, frames: 5 } 
+    sprite: { row: 2, colStart: 0, frames: 5 }
   },
-  { 
-    id: 'blue_dragon', 
-    name: 'Blue Dragon', 
-    image: '🐉', 
+  {
+    id: 'blue_dragon',
+    name: 'Blue Dragon',
+    image: '🐉',
     color: 'bg-blue-100',
-    rarity: 'Rare', 
-    level: 8, 
+    rarity: 'Rare',
+    level: 8,
     imagePrompt: "A high-quality, chaos kawaii style monster, blue slime with orange horns and a small tail, big expressive eyes, vibrant blue color, glossy texture, detailed digital art, game asset style, white background.",
-    sprite: { row: 3, colStart: 0, frames: 5 } 
+    sprite: { row: 3, colStart: 0, frames: 5 }
   },
-  { 
-    id: 'fire_slime', 
-    name: 'Fire Slime', 
-    image: '🔥', 
+  {
+    id: 'fire_slime',
+    name: 'Fire Slime',
+    image: '🔥',
     color: 'bg-red-100',
-    rarity: 'Rare', 
-    level: 10, 
+    rarity: 'Rare',
+    level: 10,
     imagePrompt: "A high-quality, chaos kawaii style monster, orange and red fire slime with flame-like features on its head, small wings, big eyes, vibrant colors, glossy texture, detailed digital art, game asset style, white background.",
-    sprite: { row: 4, colStart: 0, frames: 5 } 
+    sprite: { row: 4, colStart: 0, frames: 5 }
   },
-  { 
-    id: 'cyclops_slime', 
-    name: 'Cyclops Slime', 
-    image: '👁️', 
+  {
+    id: 'cyclops_slime',
+    name: 'Cyclops Slime',
+    image: '👁️',
     color: 'bg-orange-100',
-    rarity: 'Epic', 
-    level: 15, 
+    rarity: 'Epic',
+    level: 15,
     imagePrompt: "A high-quality, chaos kawaii style monster, orange slime with one large central eye, happy expression with tongue out, vibrant orange color, glossy texture, detailed digital art, game asset style, white background.",
-    sprite: { row: 5, colStart: 0, frames: 4 } 
+    sprite: { row: 5, colStart: 0, frames: 4 }
   },
-  { 
-    id: 'void_behemoth', 
-    name: 'Void Behemoth', 
-    image: '👾', 
+  {
+    id: 'void_behemoth',
+    name: 'Void Behemoth',
+    image: '👾',
     color: 'bg-purple-100',
-    rarity: 'Epic', 
-    level: 18, 
+    rarity: 'Epic',
+    level: 18,
     imagePrompt: "A high-quality, chaos kawaii style monster, large purple slime with multiple eyes and horns, big mouth with teeth, vibrant purple color, glossy texture, detailed digital art, game asset style, white background.",
-    sprite: { row: 6, colStart: 0, frames: 5 } 
+    sprite: { row: 6, colStart: 0, frames: 5 }
   },
-  { 
-    id: 'royal_slime', 
-    name: 'Royal Slime', 
-    image: '👑', 
+  {
+    id: 'royal_slime',
+    name: 'Royal Slime',
+    image: '👑',
     color: 'bg-indigo-100',
-    rarity: 'Legendary', 
-    level: 20, 
+    rarity: 'Legendary',
+    level: 20,
     imagePrompt: "A high-quality, chaos kawaii style monster, purple slime wearing a small golden crown, orange horns, big expressive eyes, vibrant purple color, glossy texture, detailed digital art, game asset style, white background.",
-    sprite: { row: 7, colStart: 0, frames: 6 } 
+    sprite: { row: 7, colStart: 0, frames: 6 }
   },
 ];
 
@@ -120,7 +120,8 @@ export const ISLANDS: IslandData[] = [
     themeName: 'Green Hill Zone',
     bgGradient: 'from-sky-300 to-sky-100',
     groundColor: 'bg-green-500',
-    decorations: ['🌴', '🌻', '🍄', '🦋'],
+    mapImage: '/src/assets/licensed/maps/map_1.png',
+    decorations: [],
     levels: [
       { id: 1, stars: 3, isLocked: false, gameType: 'monster_market' },
       { id: 2, stars: 2, isLocked: false, gameType: 'prime_pop' },
@@ -138,7 +139,8 @@ export const ISLANDS: IslandData[] = [
     themeName: 'Crystal Cave',
     bgGradient: 'from-indigo-900 to-purple-800',
     groundColor: 'bg-fuchsia-900',
-    decorations: ['💎', '✨', '🔮', '🦇'],
+    mapImage: '/src/assets/licensed/maps/map_2.png',
+    decorations: [],
     levels: [
       { id: 1, stars: 0, isLocked: false, gameType: 'burger_builder' },
       { id: 2, stars: 0, isLocked: false, gameType: 'fraction_match' },
@@ -156,7 +158,8 @@ export const ISLANDS: IslandData[] = [
     themeName: 'Marble Ruins',
     bgGradient: 'from-orange-200 to-rose-200',
     groundColor: 'bg-stone-400',
-    decorations: ['🏛️', '🏺', '🗿', '🌿'],
+    mapImage: '/src/assets/licensed/maps/map_3.png',
+    decorations: [],
     levels: [
       { id: 1, stars: 0, isLocked: false, gameType: 'angle_arena' },
       { id: 2, stars: 0, isLocked: false, gameType: 'polygon_palace' },
@@ -174,7 +177,8 @@ export const ISLANDS: IslandData[] = [
     themeName: 'Desert Oasis',
     bgGradient: 'from-yellow-200 to-orange-300',
     groundColor: 'bg-yellow-600',
-    decorations: ['🌵', '🐪', '☀️', '🦂'],
+    mapImage: '/src/assets/licensed/maps/map_4.png',
+    decorations: [],
     levels: [
       { id: 1, stars: 0, isLocked: false, gameType: 'ratio_rapids' },
       { id: 2, stars: 0, isLocked: false, gameType: 'potion_pour' },
@@ -192,7 +196,8 @@ export const ISLANDS: IslandData[] = [
     themeName: 'Starlight City',
     bgGradient: 'from-slate-900 to-blue-900',
     groundColor: 'bg-slate-800',
-    decorations: ['🌃', '⭐', '🚀', '🛸'],
+    mapImage: '/src/assets/licensed/maps/map_5.png',
+    decorations: [],
     levels: [
       { id: 1, stars: 0, isLocked: false, gameType: 'data_dungeon' },
       { id: 2, stars: 0, isLocked: false, gameType: 'timekeeper_temple' },
@@ -210,7 +215,8 @@ export const ISLANDS: IslandData[] = [
     themeName: 'Magic Forest',
     bgGradient: 'from-emerald-800 to-teal-900',
     groundColor: 'bg-emerald-950',
-    decorations: ['🌲', '🦉', '🍄', '✨'],
+    mapImage: '/src/assets/licensed/maps/map_1.png', // Fallback to map 1
+    decorations: [],
     levels: [
       { id: 1, stars: 0, isLocked: false, gameType: 'sequence_sprint' },
       { id: 2, stars: 0, isLocked: false, gameType: 'logic_sort' },
