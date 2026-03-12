@@ -1,172 +1,118 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import confetti from 'canvas-confetti';
-import { AvatarData } from '../types';
-import { AVATARS } from '../constants';
+import { Store, Coins, Star } from 'lucide-react';
 import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
-import { Home, HelpCircle, Star, Timer, Coins, Store } from './GameIcons';
-
-interface MonsterMarketGameProps {
-  levelId: number;
-  avatarId: string;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
-  onBack: () => void;
-}
+import { AVATARS } from '../constants';
+import confetti from 'canvas-confetti';
 
 interface Currency {
   id: string;
-  value: number; // in pence to avoid floating point issues
   label: string;
-  type: 'note' | 'coin';
+  value: number;
   color: string;
+  type: 'coin' | 'note';
 }
 
 const CURRENCIES: Currency[] = [
-  { id: '1000', value: 1000, label: '£10', type: 'note', color: 'bg-orange-200 border-orange-400 text-orange-800' },
-  { id: '500', value: 500, label: '£5', type: 'note', color: 'bg-teal-200 border-teal-400 text-teal-800' },
-  { id: '200', value: 200, label: '£2', type: 'coin', color: 'bg-yellow-300 border-yellow-500 text-yellow-900' },
-  { id: '100', value: 100, label: '£1', type: 'coin', color: 'bg-yellow-300 border-yellow-500 text-yellow-900' },
-  { id: '50', value: 50, label: '50p', type: 'coin', color: 'bg-slate-300 border-slate-400 text-slate-700' },
-  { id: '20', value: 20, label: '20p', type: 'coin', color: 'bg-slate-300 border-slate-400 text-slate-700' },
-  { id: '10', value: 10, label: '10p', type: 'coin', color: 'bg-slate-300 border-slate-400 text-slate-700' },
-  { id: '5', value: 5, label: '5p', type: 'coin', color: 'bg-slate-300 border-slate-400 text-slate-700' },
-  { id: '2', value: 2, label: '2p', type: 'coin', color: 'bg-amber-600 border-amber-800 text-amber-100' },
-  { id: '1', value: 1, label: '1p', type: 'coin', color: 'bg-amber-600 border-amber-800 text-amber-100' },
+  { id: '10p', label: '10p', value: 0.1, color: 'bg-slate-300 border-slate-400 text-slate-700', type: 'coin' },
+  { id: '20p', label: '20p', value: 0.2, color: 'bg-slate-300 border-slate-400 text-slate-700', type: 'coin' },
+  { id: '50p', label: '50p', value: 0.5, color: 'bg-slate-300 border-slate-400 text-slate-700', type: 'coin' },
+  { id: '1pound', label: '£1', value: 1, color: 'bg-yellow-400 border-yellow-600 text-yellow-900', type: 'coin' },
+  { id: '2pound', label: '£2', value: 2, color: 'bg-yellow-400 border-yellow-600 text-yellow-900', type: 'coin' },
+  { id: '5pound', label: '£5', value: 5, color: 'bg-cyan-200 border-cyan-400 text-cyan-800', type: 'note' },
+  { id: '10pound', label: '£10', value: 10, color: 'bg-orange-200 border-orange-400 text-orange-800', type: 'note' },
+  { id: '1p', label: '1p', value: 0.01, color: 'bg-orange-600 border-orange-800 text-orange-200', type: 'coin' },
+  { id: '2p', label: '2p', value: 0.02, color: 'bg-orange-600 border-orange-800 text-orange-200', type: 'coin' },
+  { id: '5p', label: '5p', value: 0.05, color: 'bg-slate-300 border-slate-400 text-slate-700', type: 'coin' },
 ];
 
-const MONSTERS = ['👾', '👽', '👻', '🤖', '🎃', '👹', '👺', '🤡'];
+const MONSTERS = ['🟢', '😈', '🧚', '🐉', '🔥', '👁️', '👾', '👑'];
 
-const formatMoney = (pence: number) => {
-  return `£${(pence / 100).toFixed(2)}`;
-};
+interface MonsterMarketGameProps {
+  avatarId: string;
+  onBack: () => void;
+}
 
-const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
-  levelId,
-  avatarId,
-  onVictory,
-  onGameOver,
-  onBack
-}) => {
+const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({ avatarId, onBack }) => {
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(90);
-  const [isGameOver, setIsGameOver] = useState(false);
-  const [isVictory, setIsVictory] = useState(false);
-
-  const [targetCost, setTargetCost] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(120);
+  const [monster, setMonster] = useState('');
+  const [scenario, setScenario] = useState('');
   const [amountPaid, setAmountPaid] = useState(0);
   const [changeNeeded, setChangeNeeded] = useState(0);
-  const [scenario, setScenario] = useState('');
   const [tray, setTray] = useState<Currency[]>([]);
-  const [monster, setMonster] = useState(MONSTERS[0]);
-  const [streak, setStreak] = useState(0);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [isVictory, setIsVictory] = useState(false);
+  const [streak, setStreak] = useState(0);
 
+  const targetScore = 1000;
   const avatar = AVATARS.find(a => a.id === avatarId) || AVATARS[0];
-  const targetScore = 800 + (levelId * 200);
-
-  const generateCustomer = useCallback(() => {
-    // Higher levels = more complex amounts
-    const maxPence = levelId > 2 ? 2000 : 1000; // £20 or £10 max
-
-    let cost = 0;
-    let scenarioText = '';
-
-    // SATs style word problems
-    if (Math.random() > 0.5 && levelId > 1) {
-      const quantity = Math.floor(Math.random() * 4) + 2; // 2 to 5 items
-      const itemCost = Math.floor(Math.random() * 300) + 50; // 50p to £3.50
-      cost = quantity * itemCost;
-      scenarioText = `Bought ${quantity} items for ${formatMoney(itemCost)} each.`;
-    } else {
-      cost = Math.floor(Math.random() * (maxPence - 50)) + 50;
-      if (levelId <= 2) {
-        cost = Math.round(cost / 5) * 5;
-      }
-      scenarioText = `Total cost: ${formatMoney(cost)}`;
-    }
-
-    // Determine paid amount (always higher than cost, usually a round note)
-    let paid = 0;
-    if (cost < 500) paid = 500; // £5
-    else if (cost < 1000) paid = 1000; // £10
-    else paid = 2000; // £20
-
-    setTargetCost(cost);
-    setAmountPaid(paid);
-    setChangeNeeded(paid - cost);
-    setScenario(scenarioText);
-    setTray([]);
-    setMonster(MONSTERS[Math.floor(Math.random() * MONSTERS.length)]);
-    setFeedback(null);
-  }, [levelId]);
 
   useEffect(() => {
-    setTimeLeft(90 + levelId * 10);
-    setScore(0);
-    setIsGameOver(false);
-    setIsVictory(false);
-    setStreak(0);
     generateCustomer();
-  }, [levelId, generateCustomer]);
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (timeLeft > 0 && !isGameOver && !isVictory && !feedback) {
-      timer = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            handleTimeUp();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setIsGameOver(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
     return () => clearInterval(timer);
-  }, [timeLeft, isGameOver, isVictory, feedback]);
+  }, []);
 
-  const handleTimeUp = () => {
-    if (score >= targetScore) {
-      handleWin();
-    } else {
-      setIsGameOver(true);
-      onGameOver(score);
-    }
+  const generateCustomer = () => {
+    const randomMonster = MONSTERS[Math.floor(Math.random() * MONSTERS.length)];
+    const items = [
+      { name: 'Magic Potion', price: 4.50 },
+      { name: 'Dragon Egg', price: 12.75 },
+      { name: 'Spell Book', price: 8.20 },
+      { name: 'Hero Shield', price: 15.40 },
+      { name: 'Crystal Ball', price: 6.65 },
+      { name: 'Golden Apple', price: 2.35 },
+      { name: 'Phoenix Feather', price: 1.90 },
+      { name: 'Titan Boots', price: 24.50 },
+      { name: 'Invisibility Cloak', price: 35.80 },
+      { name: 'Sword of Light', price: 19.99 },
+    ];
+
+    const randomItem = items[Math.floor(Math.random() * items.length)];
+    const paymentOptions = [5, 10, 20, 50];
+    const paid = paymentOptions.find(p => p > randomItem.price) || 50;
+
+    setMonster(randomMonster);
+    setScenario(`Shopping for ${randomItem.name}`);
+    setAmountPaid(paid);
+    setChangeNeeded(Number((paid - randomItem.price).toFixed(2)));
+    setTray([]);
+    setFeedback(null);
   };
 
-  const handleWin = () => {
-    const stars = score >= targetScore * 2 ? 3 : score >= targetScore * 1.5 ? 2 : 1;
-    setIsVictory(true);
-    confetti({
-      particleCount: 150,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#FFD700', '#FFFFFF', '#87CEEB']
-    });
-    onVictory(stars, score);
-  };
+  const formatMoney = (val: number) => `£${val.toFixed(2)}`;
+
+  const currentTrayTotal = Number(tray.reduce((sum, item) => sum + item.value, 0).toFixed(2));
 
   const addToTray = (currency: Currency) => {
-    if (feedback || isGameOver || isVictory) return;
-    setTray(prev => [...prev, { ...currency, id: Math.random().toString(36).substr(2, 9) }]);
+    if (feedback) return;
+    setTray(prev => [...prev, { ...currency, id: `${currency.id}-${Date.now()}` }]);
   };
 
   const removeFromTray = (id: string) => {
-    if (feedback || isGameOver || isVictory) return;
+    if (feedback) return;
     setTray(prev => prev.filter(item => item.id !== id));
   };
 
-  const currentTrayTotal = tray.reduce((sum, item) => sum + item.value, 0);
-
   const handleSubmit = () => {
-    if (feedback || isGameOver || isVictory) return;
+    if (feedback || tray.length === 0) return;
 
     if (currentTrayTotal === changeNeeded) {
       setFeedback('correct');
-      const points = 100 + (streak * 20);
-      setScore(prev => prev + points);
+      const timeBonus = Math.floor(timeLeft / 10);
+      setScore(prev => prev + 100 + timeBonus);
       setStreak(prev => prev + 1);
 
       confetti({
@@ -176,7 +122,11 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
         colors: ['#10b981', '#34d399']
       });
 
-      setTimeout(generateCustomer, 1500);
+      if (score + 100 + timeBonus >= targetScore) {
+        setIsVictory(true);
+      } else {
+        setTimeout(generateCustomer, 1500);
+      }
     } else {
       setFeedback('incorrect');
       setStreak(0);
@@ -192,14 +142,14 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
   const progress = Math.min((score / targetScore) * 100, 100);
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-2 sm:p-4 bg-emerald-900 border-[8px] border-emerald-950 font-sans shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden">
+    <div className="h-full w-full flex flex-col items-center p-2 sm:p-4 pt-[env(safe-area-inset-top)] bg-emerald-900 border-[8px] border-emerald-950 font-sans shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden">
       {/* Market Background */}
       <div className="absolute inset-0 opacity-20 pointer-events-none" style={{
         backgroundImage: 'radial-gradient(#10b981 2px, transparent 2px)',
         backgroundSize: '40px 40px'
       }} />
 
-      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-2 md:gap-4 h-full flex-1 min-h-0">
+      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-1.5 md:gap-4 h-full flex-1 min-h-0">
         <GameplayHUD
           title="Monster Market"
           avatar={avatar}

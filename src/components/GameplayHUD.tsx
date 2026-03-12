@@ -6,7 +6,7 @@ import progressBarAsset from '../assets/licensed/slices/progress_bar.png';
 
 interface GameplayHUDProps {
   title: string;
-  avatar: AvatarData;
+  avatar: AvatarData | undefined;
   score: number;
   targetScore: number;
   timeLeft: number;
@@ -34,16 +34,16 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
 }) => {
   return (
     <div className="w-full flex flex-col gap-3 md:gap-4">
-      <div className={`w-full rounded-[2rem] border-4 ${accentBorder} bg-white/70 backdrop-blur-2xl shadow-[0_18px_50px_rgba(15,23,42,0.16)] overflow-hidden`}>
+      <div className={`w-full rounded-[2rem] border-4 ${accentBorder} bg-white/70 backdrop-blur-2xl shadow-[0_18px_50px_rgba(15,23,42,0.16)] overflow-hidden relative`}>
         <div className="absolute inset-x-0 top-0 h-14 bg-gradient-to-r from-white/40 via-white/10 to-transparent pointer-events-none" />
         <div className="relative p-4 md:p-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center gap-3 md:gap-4 min-w-0">
             <motion.div
               whileHover={{ scale: 1.06, rotate: -4 }}
-              className={`${avatar.color} w-16 h-16 md:w-20 md:h-20 rounded-[1.6rem] md:rounded-[2rem] flex items-center justify-center text-3xl md:text-4xl shadow-[inset_0_2px_10px_rgba(255,255,255,0.35),0_12px_24px_rgba(15,23,42,0.18)] border-4 border-white/80 relative overflow-hidden shrink-0`}
+              className={`${avatar?.color || 'bg-slate-200'} w-16 h-16 md:w-20 md:h-20 rounded-[1.6rem] md:rounded-[2rem] flex items-center justify-center text-3xl md:text-4xl shadow-[inset_0_2px_10px_rgba(255,255,255,0.35),0_12px_24px_rgba(15,23,42,0.18)] border-4 border-white/80 relative overflow-hidden shrink-0`}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-white/35 to-transparent" />
-              <span className="relative">{avatar.image}</span>
+              <span className="relative">{avatar?.image || '❓'}</span>
             </motion.div>
             <div className="min-w-0">
               <div className="text-[11px] md:text-xs font-black uppercase tracking-[0.28em] text-slate-500">Gameplay</div>

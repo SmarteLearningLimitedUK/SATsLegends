@@ -97,19 +97,19 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
         ))}
       </div>
 
-      <header className="absolute top-0 left-0 right-0 z-50 px-4 pt-4 md:px-8 md:pt-6 pointer-events-none">
+      <header className="absolute top-0 left-0 right-0 z-50 px-4 pt-[calc(1rem+env(safe-area-inset-top))] md:px-8 md:pt-6 pointer-events-none">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div className="pointer-events-auto flex w-full md:w-auto items-center gap-3 md:gap-4 rounded-[1.5rem] md:rounded-[2rem] border border-white/15 bg-white/10 px-3 py-3 md:px-4 md:py-4 backdrop-blur-2xl shadow-2xl">
-              <div className="relative flex h-14 w-14 md:h-20 md:w-20 items-center justify-center rounded-xl md:rounded-[1.5rem] border border-white/20 bg-gradient-to-b from-white/25 to-white/5 text-3xl md:text-4xl shadow-[0_15px_40px_rgba(0,0,0,0.35)] shrink-0">
+              <div className="relative flex h-14 w-14 md:h-20 md:w-20 items-center justify-center rounded-xl md:rounded-[1.5rem] border border-white/20 bg-gradient-to-b from-white/25 to-white/5 text-3xl md:text-5xl shadow-[0_15px_40px_rgba(0,0,0,0.35)] shrink-0">
                 {avatar?.image || '🌟'}
-                <div className="absolute -bottom-2 -right-2 flex h-6 w-6 md:h-8 md:w-8 items-center justify-center rounded-lg md:rounded-xl border-2 border-white bg-yellow-400 text-[10px] md:text-xs font-black text-yellow-950 shadow-lg">
+                <div className="absolute -bottom-1 -right-1 flex h-6 w-6 md:h-8 md:w-8 items-center justify-center rounded-lg md:rounded-xl border-2 border-white bg-yellow-400 text-[10px] md:text-sm font-black text-yellow-950 shadow-lg">
                   {player.level}
                 </div>
               </div>
-              <div className="min-w-0 flex-1">
-                <div className="text-[9px] md:text-xs font-black uppercase tracking-[0.35em] text-white/60 truncate">Adventure profile</div>
-                <h1 className="text-xl md:text-3xl font-black tracking-tight text-white truncate">{player.playerName || 'Explorer'}</h1>
+              <div className="min-w-0 flex-1 pl-1">
+                <div className="text-[8px] md:text-xs font-black uppercase tracking-[0.25em] text-white/50 truncate mb-0.5">Adventure profile</div>
+                <h1 className="text-lg md:text-3xl font-black tracking-tight text-white truncate leading-tight">{player.playerName || 'Explorer'}</h1>
                 <div className="mt-1 md:mt-2 h-2.5 md:h-3 w-full md:w-60 overflow-hidden rounded-full border border-white/10 bg-black/40">
                   <motion.div
                     initial={{ width: 0 }}

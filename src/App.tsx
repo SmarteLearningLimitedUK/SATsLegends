@@ -527,7 +527,7 @@ const App: React.FC = () => {
   const showCompactShell = !isWideScreenScene;
 
   return (
-    <div className={`relative h-[100dvh] w-full flex flex-col items-center overflow-hidden ${isWideScreenScene ? 'licensed-playfield-bg bg-slate-950' : 'licensed-shell-bg p-3 md:p-8 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]'}`}>
+    <div className={`relative h-[100dvh] w-full flex flex-col items-center overflow-hidden ${isWideScreenScene ? 'licensed-playfield-bg bg-slate-950 pb-[env(safe-area-inset-bottom)]' : 'licensed-shell-bg p-3 md:p-8 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]'}`}>
       <div className="soft-vignette" />
       {showCompactShell && (
         <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-40 bg-gradient-to-b from-white/18 to-transparent" />
@@ -577,64 +577,68 @@ const App: React.FC = () => {
         } : null}
       />
 
-      {!isWideScreenScene && (
-        <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-          <div className="cloud w-64 h-24 top-20" style={{ animationDuration: '25s' }} />
-          <div className="cloud w-48 h-16 top-40" style={{ animationDuration: '40s', animationDelay: '-10s' }} />
-          <div className="cloud w-80 h-32 bottom-20" style={{ animationDuration: '30s', animationDelay: '-5s' }} />
-        </div>
-      )}
-
-      {showBottomNav && (
-        <nav className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 items-center justify-between rounded-[2rem] border border-white/20 bg-slate-950/55 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px)*0.5)] shadow-[0_20px_45px_rgba(0,0,0,0.3)] backdrop-blur-2xl md:bottom-6 md:w-auto md:gap-8 md:px-5 md:py-4 md:pb-4">
-          <button
-            onClick={goToHome}
-            className={`flex flex-col items-center gap-1 rounded-2xl px-3 py-2 transition-all ${screen === 'world_map' ? 'bg-white text-sky-600 scale-105 shadow-lg' : 'text-white/85 hover:bg-white/10'}`}
-          >
-            <AssetIcon name="home" className="h-6 w-6" />
-            <span className="text-[10px] font-black uppercase tracking-[0.22em]">Map</span>
-          </button>
-          <button
-            onClick={() => setScreen('avatar_selection')}
-            className={`flex flex-col items-center gap-1 rounded-2xl px-3 py-2 transition-all ${screen === 'avatar_selection' ? 'bg-white text-sky-600 scale-105 shadow-lg' : 'text-white/85 hover:bg-white/10'}`}
-          >
-            <AssetIcon name="user" className="h-6 w-6" />
-            <span className="text-[10px] font-black uppercase tracking-[0.22em]">Hero</span>
-          </button>
-          <button
-            onClick={() => setShowQuests(true)}
-            className="relative flex flex-col items-center gap-1 rounded-2xl px-3 py-2 text-white/85 transition-all hover:bg-white/10"
-          >
-            <AssetIcon name="doc" className="h-6 w-6" />
-            <span className="text-[10px] font-black uppercase tracking-[0.22em]">Quests</span>
-            {(player.dailyQuests || []).some(q => q.current >= q.target && !q.isClaimed) && (
-              <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white animate-pulse" />
-            )}
-          </button>
-          <button
-            onClick={() => setShowAchievements(true)}
-            className="relative flex flex-col items-center gap-1 rounded-2xl px-3 py-2 text-white/85 transition-all hover:bg-white/10"
-          >
-            <AssetIcon name="medal" className="h-6 w-6" />
-            <span className="text-[10px] font-black uppercase tracking-[0.22em]">Wins</span>
-            {(player.achievements?.length || 0) > 0 && (
-              <span className="absolute top-0 right-0 w-3 h-3 bg-yellow-400 rounded-full border-2 border-white" />
-            )}
-          </button>
-          <button
-            onClick={() => setScreen('parent_dashboard')}
-            className={`flex flex-col items-center gap-1 rounded-2xl px-3 py-2 transition-all ${screen === 'parent_dashboard' ? 'bg-white text-sky-600 scale-105 shadow-lg' : 'text-white/85 hover:bg-white/10'}`}
-          >
-            <AssetIcon name="gear" className="h-6 w-6" />
-            <span className="text-[10px] font-black uppercase tracking-[0.22em]">Stats</span>
-          </button>
-          <div className="hidden items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-2 text-cyan-100 md:flex">
-            <AssetIcon name="star" className="h-4 w-4" />
-            <span className="text-[10px] font-black uppercase tracking-[0.24em]">Adventure mode</span>
+      {
+        !isWideScreenScene && (
+          <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+            <div className="cloud w-64 h-24 top-20" style={{ animationDuration: '25s' }} />
+            <div className="cloud w-48 h-16 top-40" style={{ animationDuration: '40s', animationDelay: '-10s' }} />
+            <div className="cloud w-80 h-32 bottom-20" style={{ animationDuration: '30s', animationDelay: '-5s' }} />
           </div>
-        </nav>
-      )}
-    </div>
+        )
+      }
+
+      {
+        showBottomNav && (
+          <nav className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 items-center justify-between rounded-[2rem] border border-white/20 bg-slate-950/55 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px)*0.5)] shadow-[0_20px_45px_rgba(0,0,0,0.3)] backdrop-blur-2xl md:bottom-6 md:w-auto md:gap-8 md:px-5 md:py-4 md:pb-4">
+            <button
+              onClick={goToHome}
+              className={`flex flex-col items-center gap-1 rounded-2xl px-3 py-2 transition-all ${screen === 'world_map' ? 'bg-white text-sky-600 scale-105 shadow-lg' : 'text-white/85 hover:bg-white/10'}`}
+            >
+              <AssetIcon name="home" className="h-6 w-6" />
+              <span className="text-[10px] font-black uppercase tracking-[0.22em]">Map</span>
+            </button>
+            <button
+              onClick={() => setScreen('avatar_selection')}
+              className={`flex flex-col items-center gap-1 rounded-2xl px-3 py-2 transition-all ${screen === 'avatar_selection' ? 'bg-white text-sky-600 scale-105 shadow-lg' : 'text-white/85 hover:bg-white/10'}`}
+            >
+              <AssetIcon name="user" className="h-6 w-6" />
+              <span className="text-[10px] font-black uppercase tracking-[0.22em]">Hero</span>
+            </button>
+            <button
+              onClick={() => setShowQuests(true)}
+              className="relative flex flex-col items-center gap-1 rounded-2xl px-3 py-2 text-white/85 transition-all hover:bg-white/10"
+            >
+              <AssetIcon name="doc" className="h-6 w-6" />
+              <span className="text-[10px] font-black uppercase tracking-[0.22em]">Quests</span>
+              {(player.dailyQuests || []).some(q => q.current >= q.target && !q.isClaimed) && (
+                <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white animate-pulse" />
+              )}
+            </button>
+            <button
+              onClick={() => setShowAchievements(true)}
+              className="relative flex flex-col items-center gap-1 rounded-2xl px-3 py-2 text-white/85 transition-all hover:bg-white/10"
+            >
+              <AssetIcon name="medal" className="h-6 w-6" />
+              <span className="text-[10px] font-black uppercase tracking-[0.22em]">Wins</span>
+              {(player.achievements?.length || 0) > 0 && (
+                <span className="absolute top-0 right-0 w-3 h-3 bg-yellow-400 rounded-full border-2 border-white" />
+              )}
+            </button>
+            <button
+              onClick={() => setScreen('parent_dashboard')}
+              className={`flex flex-col items-center gap-1 rounded-2xl px-3 py-2 transition-all ${screen === 'parent_dashboard' ? 'bg-white text-sky-600 scale-105 shadow-lg' : 'text-white/85 hover:bg-white/10'}`}
+            >
+              <AssetIcon name="gear" className="h-6 w-6" />
+              <span className="text-[10px] font-black uppercase tracking-[0.22em]">Stats</span>
+            </button>
+            <div className="hidden items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-2 text-cyan-100 md:flex">
+              <AssetIcon name="star" className="h-4 w-4" />
+              <span className="text-[10px] font-black uppercase tracking-[0.24em]">Adventure mode</span>
+            </div>
+          </nav>
+        )
+      }
+    </div >
   );
 };
 
