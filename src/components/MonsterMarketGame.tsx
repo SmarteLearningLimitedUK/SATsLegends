@@ -42,18 +42,18 @@ const formatMoney = (pence: number) => {
   return `£${(pence / 100).toFixed(2)}`;
 };
 
-const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({ 
-  levelId, 
-  avatarId, 
-  onVictory, 
-  onGameOver, 
-  onBack 
+const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
+  levelId,
+  avatarId,
+  onVictory,
+  onGameOver,
+  onBack
 }) => {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(90);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isVictory, setIsVictory] = useState(false);
-  
+
   const [targetCost, setTargetCost] = useState(0);
   const [amountPaid, setAmountPaid] = useState(0);
   const [changeNeeded, setChangeNeeded] = useState(0);
@@ -69,7 +69,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
   const generateCustomer = useCallback(() => {
     // Higher levels = more complex amounts
     const maxPence = levelId > 2 ? 2000 : 1000; // £20 or £10 max
-    
+
     let cost = 0;
     let scenarioText = '';
 
@@ -168,7 +168,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
       const points = 100 + (streak * 20);
       setScore(prev => prev + points);
       setStreak(prev => prev + 1);
-      
+
       confetti({
         particleCount: 50,
         spread: 60,
@@ -181,7 +181,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
       setFeedback('incorrect');
       setStreak(0);
       setScore(prev => Math.max(0, prev - 30));
-      
+
       setTimeout(() => {
         setFeedback(null);
         setTray([]);
@@ -192,14 +192,14 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
   const progress = Math.min((score / targetScore) * 100, 100);
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-4 relative overflow-y-auto overflow-x-hidden bg-emerald-900 font-sans">
+    <div className="h-full w-full flex flex-col items-center p-2 sm:p-4 bg-emerald-900 border-[8px] border-emerald-950 font-sans shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden">
       {/* Market Background */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ 
-        backgroundImage: 'radial-gradient(#10b981 2px, transparent 2px)', 
-        backgroundSize: '40px 40px' 
+      <div className="absolute inset-0 opacity-20 pointer-events-none" style={{
+        backgroundImage: 'radial-gradient(#10b981 2px, transparent 2px)',
+        backgroundSize: '40px 40px'
       }} />
 
-      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-6 h-full flex-1">
+      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-2 md:gap-4 h-full flex-1 min-h-0">
         <GameplayHUD
           title="Monster Market"
           avatar={avatar}
@@ -216,56 +216,56 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
         />
 
         {/* Game Area */}
-        <div className="w-full flex-1 relative flex flex-col items-center gap-6">
-          
+        <div className="w-full flex-1 min-h-0 min-w-0 relative flex flex-col lg:flex-row items-stretch justify-center gap-2 md:gap-4 licensed-board-frame p-2 md:p-4 overflow-hidden">
+
           {/* Customer Area */}
-          <div className="w-full max-w-3xl bg-emerald-800/50 backdrop-blur-sm rounded-[3rem] border-4 border-emerald-700 shadow-inner p-8 flex flex-col md:flex-row items-center justify-between gap-8">
-            
+          <div className="w-full lg:w-2/5 flex flex-row lg:flex-col items-center justify-between lg:justify-center gap-2 md:gap-4 bg-emerald-800/50 backdrop-blur-sm rounded-2xl md:rounded-[2rem] border-2 md:border-4 border-emerald-700 shadow-inner p-3 md:p-6 min-h-0 flex-shrink-0">
+
             {/* Monster */}
-            <motion.div 
+            <motion.div
               key={monster}
               initial={{ x: -100, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              className="text-9xl drop-shadow-2xl"
+              className="text-5xl sm:text-6xl md:text-8xl drop-shadow-2xl flex-shrink-0"
             >
               {monster}
             </motion.div>
 
             {/* Order Details */}
-            <div className="flex-1 bg-emerald-900/80 p-6 rounded-3xl border-2 border-emerald-600 shadow-lg flex flex-col gap-4 w-full">
-              <div className="flex flex-col gap-1 border-b border-emerald-700 pb-3">
-                <span className="text-emerald-400 font-bold text-sm uppercase tracking-wider">Customer Order</span>
-                <span className="text-2xl font-black text-white">{scenario}</span>
+            <div className="flex-1 lg:w-full bg-emerald-900/80 p-2 md:p-4 rounded-xl md:rounded-2xl border-2 border-emerald-600 shadow-lg flex flex-col justify-center gap-1 md:gap-2 min-w-0 min-h-0">
+              <div className="flex flex-col border-b border-emerald-700 pb-1">
+                <span className="text-emerald-400 font-bold text-[10px] sm:text-xs uppercase tracking-wider">Order</span>
+                <span className="text-sm sm:text-base md:text-xl font-black text-white truncate">{scenario}</span>
               </div>
-              <div className="flex justify-between items-center text-xl font-bold text-emerald-200 border-b border-emerald-700 pb-2">
-                <span>Amount Paid:</span>
-                <span className="text-3xl text-green-400">{formatMoney(amountPaid)}</span>
+              <div className="flex justify-between items-center text-xs sm:text-sm md:text-lg font-bold text-emerald-200 border-b border-emerald-700 pb-1">
+                <span>Paid:</span>
+                <span className="text-base sm:text-lg md:text-2xl text-green-400">{formatMoney(amountPaid)}</span>
               </div>
-              <div className="flex justify-between items-center text-2xl font-black text-emerald-400 pt-2">
-                <span>Change Needed:</span>
-                <span className="text-4xl text-yellow-400">{formatMoney(changeNeeded)}</span>
+              <div className="flex justify-between items-center text-sm md:text-xl font-black text-emerald-400 pt-1">
+                <span>Change:</span>
+                <span className="text-lg sm:text-xl md:text-3xl text-yellow-400">{formatMoney(changeNeeded)}</span>
               </div>
             </div>
 
           </div>
 
           {/* Till / Tray Area */}
-          <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
+          <div className="w-full lg:w-3/5 flex-1 flex flex-col md:flex-row gap-2 md:gap-4 min-h-0">
+
             {/* Available Currency */}
-            <div className="lg:col-span-2 bg-emerald-800/80 p-6 rounded-[2rem] border-4 border-emerald-600 shadow-xl">
-              <h3 className="text-emerald-300 font-bold mb-4 flex items-center gap-2">
-                <Store className="w-5 h-5" /> Till
+            <div className="flex-[3] bg-emerald-800/80 p-3 md:p-5 rounded-2xl md:rounded-[2rem] border-2 md:border-4 border-emerald-600 shadow-xl overflow-hidden flex flex-col">
+              <h3 className="text-emerald-300 font-bold mb-2 flex items-center gap-1 md:gap-2 text-[10px] md:text-base leading-none">
+                <Store className="w-4 h-4" /> Till
               </h3>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-1 sm:gap-2 flex-1 content-start overflow-y-auto hide-scrollbar pt-1">
                 {CURRENCIES.map(currency => (
                   <button
                     key={currency.id}
                     onClick={() => addToTray(currency)}
                     disabled={!!feedback}
                     className={`
-                      ${currency.type === 'note' ? 'w-24 h-12 rounded-md' : 'w-14 h-14 rounded-full'}
-                      ${currency.color} border-2 shadow-md flex items-center justify-center font-black text-lg
+                      ${currency.type === 'note' ? 'w-12 h-6 md:w-20 md:h-10 rounded text-[10px] md:text-sm' : 'w-8 h-8 md:w-14 md:h-14 rounded-full text-[10px] md:text-sm'}
+                      ${currency.color} border-2 shadow-md flex items-center justify-center font-black drop-shadow-sm
                       hover:scale-105 active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed
                     `}
                   >
@@ -276,13 +276,13 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
             </div>
 
             {/* Change Tray */}
-            <div className="bg-emerald-900 p-6 rounded-[2rem] border-4 border-emerald-700 shadow-inner flex flex-col">
-              <h3 className="text-emerald-400 font-bold mb-4 flex items-center justify-between">
-                <span className="flex items-center gap-2"><Coins className="w-5 h-5" /> Change Tray</span>
-                <span className="text-2xl text-white">{formatMoney(currentTrayTotal)}</span>
+            <div className="flex-[2] bg-emerald-900 p-3 md:p-5 rounded-2xl md:rounded-[2rem] border-2 md:border-4 border-emerald-700 shadow-inner flex flex-col min-h-0 relative">
+              <h3 className="text-emerald-400 font-bold mb-2 flex items-center justify-between text-[10px] md:text-sm leading-none">
+                <span className="flex items-center gap-1"><Coins className="w-4 h-4" /> Tray</span>
+                <span className="text-sm md:text-xl text-white drop-shadow-md">{formatMoney(currentTrayTotal)}</span>
               </h3>
-              
-              <div className="flex-1 rounded-xl p-4 min-h-[150px] flex flex-wrap content-start gap-2 overflow-y-auto licensed-game-card-dark">
+
+              <div className="flex-1 rounded-xl p-2 min-h-0 flex flex-wrap content-start gap-1 overflow-y-auto hide-scrollbar licensed-game-card-dark bg-black/40 border border-white/10">
                 <AnimatePresence>
                   {tray.map(item => (
                     <motion.button
@@ -293,9 +293,9 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
                       onClick={() => removeFromTray(item.id)}
                       disabled={!!feedback}
                       className={`
-                        ${item.type === 'note' ? 'w-16 h-8 rounded-sm text-xs' : 'w-10 h-10 rounded-full text-xs'}
-                        ${item.color} border-2 shadow-sm flex items-center justify-center font-bold
-                        hover:opacity-80 transition-opacity
+                        ${item.type === 'note' ? 'w-10 h-5 md:w-14 md:h-7 rounded-sm text-[8px] md:text-xs' : 'w-6 h-6 md:w-10 md:h-10 rounded-full text-[8px] md:text-xs'}
+                        ${item.color} border shadow-sm flex items-center justify-center font-bold drop-shadow-sm
+                        hover:opacity-80 transition-opacity flex-shrink-0
                       `}
                     >
                       {item.label}
@@ -303,8 +303,8 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
                   ))}
                 </AnimatePresence>
                 {tray.length === 0 && (
-                  <div className="w-full h-full flex items-center justify-center text-emerald-800 font-bold">
-                    Add coins/notes here
+                  <div className="w-full h-full flex items-center justify-center text-emerald-800/80 font-bold text-[10px] md:text-sm text-center">
+                    Tap till to give change
                   </div>
                 )}
               </div>
@@ -312,7 +312,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
               <button
                 onClick={handleSubmit}
                 disabled={tray.length === 0 || !!feedback}
-                className="mt-4 w-full py-4 text-white text-xl font-black rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed licensed-submit-button"
+                className="mt-2 w-full py-2 text-white text-xs md:text-lg font-black rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed licensed-submit-button"
               >
                 GIVE CHANGE
               </button>
@@ -320,13 +320,13 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
               {/* Feedback Overlay */}
               <AnimatePresence>
                 {feedback && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
-                    className={`absolute inset-0 flex items-center justify-center rounded-[2rem] backdrop-blur-sm z-20 ${feedback === 'correct' ? 'bg-green-500/20' : 'bg-red-500/20'}`}
+                    className={`absolute inset-0 flex items-center justify-center rounded-[1rem] backdrop-blur-md z-20 ${feedback === 'correct' ? 'bg-green-500/30' : 'bg-red-500/30'}`}
                   >
-                    <span className={`text-5xl font-black drop-shadow-lg ${feedback === 'correct' ? 'text-green-400' : 'text-red-500'}`}>
+                    <span className={`text-2xl md:text-4xl font-black drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] ${feedback === 'correct' ? 'text-green-300' : 'text-red-400'}`}>
                       {feedback === 'correct' ? 'CORRECT!' : 'WRONG!'}
                     </span>
                   </motion.div>
@@ -345,46 +345,46 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
 
         {/* Game Over / Victory Modals */}
         <AnimatePresence>
-        {(isGameOver || isVictory) && (
-          <motion.div 
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
-          >
-            <div className="bg-emerald-900 p-12 rounded-[3rem] border-8 border-emerald-600 shadow-2xl flex flex-col items-center gap-8 max-w-md w-full">
-              <div className={`text-5xl font-black ${isVictory ? 'text-emerald-400' : 'text-red-500'} drop-shadow-md text-center`}>
-                {isVictory ? 'TOP CASHIER!' : 'SHIFT OVER!'}
-              </div>
-
-              {isVictory && (
-                <div className="flex gap-2">
-                  {[1, 2, 3].map(s => (
-                    <motion.div
-                      key={s}
-                      initial={{ scale: 0, rotate: -20 }}
-                      animate={{ scale: 1, rotate: 0 }}
-                      transition={{ delay: s * 0.2, type: 'spring' }}
-                    >
-                      <Star className={`w-16 h-16 ${s <= (score >= targetScore * 2 ? 3 : score >= targetScore * 1.5 ? 2 : 1) ? 'fill-yellow-400 text-yellow-400' : 'text-emerald-700'}`} />
-                    </motion.div>
-                  ))}
+          {(isGameOver || isVictory) && (
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md cursor-default pointer-events-auto"
+            >
+              <div className="licensed-overlay-card p-8 md:p-12 flex flex-col items-center gap-6 max-w-md w-full">
+                <div className={`text-3xl md:text-5xl font-black ${isVictory ? 'text-emerald-400' : 'text-red-500'} drop-shadow-md text-center`}>
+                  {isVictory ? 'TOP CASHIER!' : 'SHIFT OVER!'}
                 </div>
-              )}
 
-              <div className="text-center">
-                <div className="text-emerald-500 font-black uppercase tracking-widest text-sm">Final Score</div>
-                <div className="text-6xl font-black text-white drop-shadow-sm">{score}</div>
+                {isVictory && (
+                  <div className="flex gap-2">
+                    {[1, 2, 3].map(s => (
+                      <motion.div
+                        key={s}
+                        initial={{ scale: 0, rotate: -20 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ delay: s * 0.2, type: 'spring' }}
+                      >
+                        <Star className={`w-12 h-12 md:w-16 md:h-16 ${s <= (score >= targetScore * 2 ? 3 : score >= targetScore * 1.5 ? 2 : 1) ? 'fill-yellow-400 text-yellow-400' : 'text-emerald-900/50'}`} />
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="text-center">
+                  <div className="text-emerald-700 font-black uppercase tracking-widest text-[10px] md:text-sm">Final Score</div>
+                  <div className="text-5xl md:text-6xl font-black text-white drop-shadow-sm">{score}</div>
+                </div>
+
+                <button
+                  onClick={onBack}
+                  className="w-full py-4 md:py-5 text-white text-xl font-black rounded-2xl transition-all licensed-submit-button"
+                >
+                  CONTINUE
+                </button>
               </div>
-
-              <button 
-                onClick={onBack}
-                className="w-full py-5 text-white text-2xl font-black rounded-2xl transition-all licensed-submit-button"
-              >
-                CONTINUE
-              </button>
-            </div>
-          </motion.div>
-        )}
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
     </div>
