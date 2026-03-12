@@ -24,10 +24,10 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
             <span key={label} className="game-chip">{label}</span>
           ))}
         </div>
-        <h1 className="text-2xl font-black tracking-tight text-white drop-shadow-[0_4px_0_rgba(0,0,0,0.18)] sm:text-4xl md:text-6xl">
+        <h1 className="text-xl font-black tracking-tight text-white drop-shadow-[0_4px_0_rgba(0,0,0,0.18)] sm:text-4xl md:text-6xl">
           Choose Your Hero
         </h1>
-        <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.2em] text-white/65 md:text-sm">
+        <p className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.2em] text-white/65 md:text-sm">
           Select your companion
         </p>
       </div>
@@ -39,8 +39,8 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
         </div>
         <div className="min-w-0 flex-1 text-left text-white">
           <div className="flex items-center gap-2">
-            <h2 className="truncate text-lg font-black tracking-tight md:text-3xl">{selectedAvatar.name}</h2>
-            <span className="rounded-full border border-yellow-300/40 bg-yellow-300/15 px-2 py-0.5 text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] text-yellow-100">
+            <h2 className="truncate text-base font-black tracking-tight md:text-3xl">{selectedAvatar.name}</h2>
+            <span className="rounded-full border border-yellow-300/40 bg-yellow-300/15 px-1.5 py-0.5 text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] text-yellow-100">
               {selectedAvatar.rarity}
             </span>
           </div>
@@ -55,8 +55,8 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
       </div>
 
       <div className="relative z-10 w-full min-h-0 flex-1 overflow-hidden p-1">
-        <div className="h-full w-full overflow-y-auto rounded-[1.5rem] md:rounded-[1.75rem] border border-white/10 bg-black/10 p-2 backdrop-blur-xl md:p-4 hide-scrollbar">
-          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 md:gap-4">
+        <div className="h-full w-full overflow-y-auto rounded-[1.25rem] md:rounded-[1.75rem] border border-white/10 bg-black/10 p-1.5 backdrop-blur-xl md:p-4 hide-scrollbar">
+          <div className="grid grid-cols-4 gap-1.5 sm:grid-cols-5 md:gap-4">
             {AVATARS.map((avatar) => {
               const isSelected = selectedId === avatar.id;
               return (
@@ -65,17 +65,17 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   whileHover={{ scale: 1.04, y: -4 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => onSelect(avatar.id)}
-                  className={`relative overflow-hidden rounded-[1.5rem] border p-3 text-center transition-all md:rounded-[2rem] md:p-5 ${isSelected
+                  className={`relative overflow-hidden rounded-[1.25rem] border p-2 text-center transition-all md:rounded-[2rem] md:p-5 ${isSelected
                     ? 'border-yellow-300 bg-white/22 shadow-[0_10px_20px_rgba(0,0,0,0.22)] md:shadow-[0_20px_40px_rgba(0,0,0,0.22)]'
                     : 'border-white/10 bg-white/8 hover:bg-white/14'
                     }`}
                 >
                   <div className="shine" />
-                  <div className={`mx-auto flex h-14 w-14 items-center justify-center rounded-xl border border-white/15 ${avatar.color} text-3xl shadow-lg md:h-24 md:w-24 md:rounded-[1.4rem] md:text-5xl`}>
+                  <div className={`mx-auto flex h-10 w-10 items-center justify-center rounded-lg border border-white/15 ${avatar.color} text-2xl shadow-lg md:h-24 md:w-24 md:rounded-[1.4rem] md:text-5xl`}>
                     {avatar.image}
                   </div>
-                  <div className="mt-2 md:mt-4 text-xs font-black tracking-tight text-white md:text-base">{avatar.name}</div>
-                  <div className="mt-1 text-[8px] font-black uppercase tracking-[0.24em] text-white/50 md:text-[10px]">
+                  <div className="mt-1 md:mt-4 text-[10px] font-black tracking-tight text-white md:text-base leading-tight">{avatar.name}</div>
+                  <div className="hidden md:block mt-1 text-[8px] font-black uppercase tracking-[0.24em] text-white/50 md:text-[10px]">
                     {avatar.rarity}
                   </div>
 
@@ -83,9 +83,9 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      className="absolute right-2 top-2 rounded-lg border border-white bg-gradient-to-b from-yellow-300 to-yellow-500 p-1 text-white shadow-xl md:right-3 md:top-3 md:rounded-xl md:border-2 md:p-1.5"
+                      className="absolute right-1 top-1 rounded-md border border-white bg-gradient-to-b from-yellow-300 to-yellow-500 p-0.5 text-white shadow-xl md:right-3 md:top-3 md:rounded-xl md:border-2 md:p-1.5"
                     >
-                      <Check className="h-3 w-3 md:h-4 md:w-4 stroke-[4px]" />
+                      <Check className="h-2 w-2 md:h-4 md:w-4 stroke-[4px]" />
                     </motion.div>
                   )}
                 </motion.button>
