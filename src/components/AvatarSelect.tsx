@@ -13,7 +13,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
   const selectedAvatar = AVATARS.find(avatar => avatar.id === selectedId) || AVATARS[0];
 
   return (
-    <div className="relative my-auto flex h-full max-h-[850px] w-full max-w-6xl flex-col items-center gap-3 px-3 py-6 md:gap-8 md:px-8 md:py-8 min-h-0">
+    <div className="relative my-auto flex h-full max-h-[850px] w-full max-w-6xl flex-col items-center gap-3 px-3 pt-6 pb-24 md:gap-8 md:px-8 md:pb-8 min-h-0">
       <div className="glass-panel absolute inset-x-4 top-1/2 -z-10 h-full max-h-[96%] -translate-y-1/2 rounded-[2.5rem] md:inset-x-8" />
       <div className="absolute left-10 top-10 h-32 w-32 rounded-full bg-cyan-300/10 blur-3xl" />
       <div className="absolute bottom-10 right-10 h-40 w-40 rounded-full bg-fuchsia-400/10 blur-3xl" />
