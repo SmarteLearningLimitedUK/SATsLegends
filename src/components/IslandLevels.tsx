@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component, ReactNode, ErrorInfo } from 'react';
 import { motion } from 'motion/react';
 import { IslandData, PlayerData, LevelData } from '../types';
 import AssetIcon from './AssetIcon';
@@ -10,9 +10,37 @@ interface IslandLevelsProps {
   onSelectLevel: (level: LevelData) => void;
 }
 
-const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onSelectLevel }) => {
-  // Pre-calculated node positions along a generic winding path for up to 5 levels
-  // (In a real game these might be tailored per map, but these percentages work for the provided 3:4 aspect ratio paths)
+class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean, error: Error | null }> {
+  public state: { hasError: boolean, error: Error | null } = { hasError: false, error: null };
+  public props: { children: ReactNode };
+
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.props = props;
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error("IslandLevels Crash:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="w-full h-full bg-slate-900 flex flex-col items-center justify-center p-8 text-white z-[9999] absolute inset-0">
+          <h1 className="text-4xl text-red-500 font-bold mb-4">Map Crash</h1>
+          <p className="text-xl font-mono bg-black p-4 rounded-xl">{this.state.error?.message}</p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBack, onSelectLevel }) => {
   const NODE_POSITIONS = [
     { top: '80%', left: '25%' },
     { top: '65%', left: '70%' },
@@ -21,14 +49,16 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
     { top: '8%', left: '50%' },
   ];
 
+  const completedLevels = player.completedLevels[island.id] || [];
+  const earnedStars = island.levels.reduce((sum, level) => {
+    const key = `${island.id}-${level.id}`;
+    return sum + (player.levelStars?.[key] || 0);
+  }, 0);
+
   return (
     <div className="relative w-full h-full bg-slate-900 overflow-hidden font-sans">
-
-      {/* Scrollable Map Container */}
       <div className="absolute inset-0 overflow-y-auto overflow-x-hidden md:overflow-hidden touch-pan-y">
         <div className="relative w-full h-[150vh] md:h-full md:w-auto md:aspect-[3/4] md:mx-auto">
-
-          {/* Map Background */}
           {island.mapImage ? (
             <img
               src={island.mapImage}
@@ -40,14 +70,12 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
             <div className={`absolute w-full h-full bg-gradient-to-b ${island.bgGradient || 'from-sky-400 to-sky-200'} `} />
           )}
 
-          {/* Level Nodes */}
           {island.levels.map((level, index) => {
             const previousLevel = island.levels[index - 1];
             const isUnlocked = index === 0 || completedLevels.includes(previousLevel?.id);
             const stars = player.levelStars?.[`${island.id}-${level.id}`] || 0;
             const isCompleted = completedLevels.includes(level.id);
 
-            // Hardcode coordinates to match the winding path
             const pos = NODE_POSITIONS[index] || { top: '50%', left: '50%' };
 
             return (
@@ -62,19 +90,15 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
                 <button
                   onClick={() => isUnlocked && onSelectLevel(level)}
                   disabled={!isUnlocked}
-                  className={`group relative flex flex-col items-center justify-center transition-all ${isUnlocked ? 'cursor-pointer hover:scale-110' : 'cursor-not-allowed opacity-80'
-                    }`}
+                  className={`group relative flex flex-col items-center justify-center transition-all ${isUnlocked ? 'cursor-pointer hover:scale-110' : 'cursor-not-allowed opacity-80'}`}
                 >
-                  {/* Pin Base (Wooden Plaque) */}
                   <div className={`relative flex items-center justify-center w-14 h-14 md:w-20 md:h-20 rounded-full border-[3px] shadow-2xl ${level.isBoss
                     ? 'border-yellow-400 bg-red-600 shadow-[0_4px_15px_rgba(220,38,38,0.5)]'
                     : isCompleted ? 'border-amber-700 bg-amber-500' : isUnlocked ? 'border-amber-800 bg-amber-400' : 'border-slate-800 bg-slate-600'
                     }`}>
 
-                    {/* Inner texture/highlight */}
                     <div className="absolute inset-1 rounded-full border border-white/20 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
 
-                    {/* Icon */}
                     {level.isBoss ? (
                       <AssetIcon name="trophy" className="w-8 h-8 md:w-10 md:h-10 drop-shadow-md text-yellow-100" />
                     ) : !isUnlocked ? (
@@ -83,7 +107,6 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
                       <span className="text-2xl md:text-4xl font-black text-amber-950 drop-shadow-sm">{level.id}</span>
                     )}
 
-                    {/* Completion Checkmark overlay */}
                     {isCompleted && !level.isBoss && (
                       <div className="absolute -bottom-2 -right-2 bg-emerald-500 rounded-full p-1 border-2 border-amber-700 shadow-md">
                         <AssetIcon name="check" className="w-4 h-4 text-white" />
@@ -91,12 +114,11 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
                     )}
                   </div>
 
-                  {/* Stars Display below node */}
                   {isUnlocked && !level.isBoss && (
                     <div className="absolute top-full mt-1 flex gap-0.5 bg-black/40 rounded-full px-2 py-0.5 backdrop-blur-sm border border-white/10">
                       {[1, 2, 3].map(value => (
                         <AssetIcon
-                          key={value}
+                          key={value as any}
                           name={value <= stars ? 'star' : 'starOutline'}
                           className={`w-3 h-3 md:w-4 md:h-4 drop-shadow-md ${value <= stars ? 'text-yellow-400' : 'text-white/40'}`}
                         />
@@ -104,7 +126,6 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
                     </div>
                   )}
 
-                  {/* Boss Label */}
                   {level.isBoss && isUnlocked && (
                     <motion.div animate={{ y: [0, -4, 0] }} transition={{ duration: 2, repeat: Infinity }} className="absolute -top-8 bg-black/60 backdrop-blur-md rounded-lg px-2 py-1 border border-yellow-500/50">
                       <span className="text-[10px] md:text-xs font-black text-yellow-400 tracking-wider">BOSS</span>
@@ -117,10 +138,8 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
         </div>
       </div>
 
-      {/* Floating Header UI */}
       <header className="absolute top-0 left-0 right-0 z-50 p-4 md:p-6 pointer-events-none">
         <div className="flex justify-between items-start w-full max-w-6xl mx-auto">
-          {/* Back Button */}
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -130,7 +149,6 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
             <AssetIcon name="back" className="h-6 w-6 md:h-8 md:w-8" />
           </motion.button>
 
-          {/* Stats Bar */}
           <div className="pointer-events-auto flex items-center gap-2 bg-black/40 p-2 md:p-3 rounded-full backdrop-blur-xl border border-white/15 shadow-xl">
             <div className="flex items-center gap-1.5 px-3 py-1 bg-white/10 rounded-full border border-white/10">
               <AssetIcon name="star" className="w-4 h-4 md:w-5 md:h-5 text-yellow-400" />
@@ -144,7 +162,6 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
         </div>
       </header>
 
-      {/* Island Title Card (Bottom) */}
       <div className="absolute bottom-6 left-6 right-6 z-50 pointer-events-none hidden md:flex justify-center">
         <div className="bg-black/60 backdrop-blur-xl border border-white/20 p-4 rounded-3xl shadow-2xl flex items-center gap-6">
           <div>
@@ -156,5 +173,11 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
     </div>
   );
 };
+
+const IslandLevels: React.FC<IslandLevelsProps> = (props) => (
+  <ErrorBoundary>
+    <IslandLevelsContent {...props} />
+  </ErrorBoundary>
+);
 
 export default IslandLevels;

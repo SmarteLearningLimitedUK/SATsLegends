@@ -17,6 +17,7 @@ export interface IslandData {
   themeName?: string;
   bgGradient?: string;
   groundColor?: string;
+  mapImage?: string;
   decorations?: string[];
 }
 
@@ -85,14 +86,14 @@ export interface PlayerData {
   };
 }
 
-export type AnimationState = 
-  | 'idle' 
-  | 'walk' 
-  | 'jump' 
-  | 'attack' 
-  | 'hit' 
-  | 'victory' 
-  | 'sad' 
+export type AnimationState =
+  | 'idle'
+  | 'walk'
+  | 'jump'
+  | 'attack'
+  | 'hit'
+  | 'victory'
+  | 'sad'
   | 'special'
   | 'sitting'
   | 'waving'
@@ -100,16 +101,16 @@ export type AnimationState =
   | 'sleeping'
   | 'thinking';
 
-export type GameScreen = 
-  | 'splash' 
-  | 'profile_setup' 
-  | 'avatar_selection' 
-  | 'world_map' 
-  | 'island_levels' 
+export type GameScreen =
+  | 'splash'
+  | 'profile_setup'
+  | 'avatar_selection'
+  | 'world_map'
+  | 'island_levels'
   | 'gameplay'
   | 'level_result'
-  | 'shop' 
-  | 'profile' 
+  | 'shop'
+  | 'profile'
   | 'settings'
   | 'parent_dashboard';
 
