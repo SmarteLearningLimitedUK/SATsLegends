@@ -141,19 +141,18 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
               ))}
             </div>
           </div>
-
-          <div className="pointer-events-auto grid grid-cols-3 gap-3 md:max-w-3xl">
+          <div className="pointer-events-auto grid grid-cols-3 gap-2 md:gap-3 md:max-w-3xl">
             {[
               { label: 'Stars won', value: totalStars, icon: 'star' },
               { label: 'Levels cleared', value: totalCompletedLevels, icon: 'play' },
               { label: 'Islands open', value: `${unlockedCount}/${ISLANDS.length}`, icon: 'trophy' },
             ].map(item => (
-              <div key={item.label} className="rounded-[1.5rem] border border-white/10 bg-black/20 px-4 py-3 backdrop-blur-xl shadow-lg">
-                <div className="flex items-center gap-2 text-white">
+              <div key={item.label} className="rounded-xl border border-white/10 bg-black/20 px-2.5 py-2 md:rounded-[1.5rem] md:px-4 md:py-3 backdrop-blur-xl shadow-lg flex flex-col items-center sm:items-start text-center sm:text-left">
+                <div className="flex items-center gap-1.5 md:gap-2 text-white">
                   <AssetIcon name={item.icon as any} className="h-4 w-4 md:h-5 md:w-5" />
-                  <span className="text-lg font-black md:text-2xl">{item.value}</span>
+                  <span className="text-sm font-black md:text-2xl">{item.value}</span>
                 </div>
-                <div className="text-[10px] font-black uppercase tracking-[0.25em] text-white/55">{item.label}</div>
+                <div className="mt-0.5 text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.25em] text-white/55 leading-tight">{item.label}</div>
               </div>
             ))}
           </div>
@@ -201,22 +200,22 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
           return (
             <section
               key={island.id}
-              className="relative flex min-w-[100vw] snap-center items-center justify-center overflow-hidden px-5 pb-16 pt-32 md:pb-24 md:pt-48 lg:px-12"
+              className="relative flex h-full min-w-[100vw] snap-center items-center justify-center overflow-hidden px-4 pb-20 pt-24 min-h-0 md:pb-24 md:pt-48 lg:px-12"
             >
               <div className={`absolute inset-0 bg-gradient-to-b ${island.bgGradient || 'from-sky-600 to-slate-900'} opacity-70`} />
-              <div className="absolute inset-x-0 bottom-0 h-40 md:h-56 bg-gradient-to-t from-black/40 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 h-40 md:h-56 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
 
               <motion.div
-                animate={isActive ? { y: [0, -14, 0] } : { y: 0 }}
+                animate={isActive ? { y: [0, -10, 0] } : { y: 0 }}
                 transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
-                className="relative mx-auto flex w-full max-w-6xl flex-col items-center gap-8 lg:flex-row lg:items-center lg:justify-between"
+                className="relative mx-auto flex w-full max-w-6xl flex-col items-center gap-4 lg:flex-row lg:items-center lg:justify-between shrink-0"
               >
                 <div className="relative w-full max-w-[540px]">
-                  <div className="absolute inset-x-10 -bottom-8 h-10 rounded-full bg-black/40 blur-2xl" />
+                  <div className="absolute inset-x-10 -bottom-8 h-10 rounded-full bg-black/40 blur-2xl md:h-14 md:-bottom-12" />
 
-                  <div className="relative mx-auto h-[180px] w-[260px] sm:h-[240px] sm:w-[320px] md:h-[300px] md:w-[460px]">
-                    <div className={`absolute inset-x-0 top-10 h-[48%] rounded-[100%] ${island.groundColor || 'bg-green-500'} border-b-[10px] border-black/20 shadow-[inset_0_18px_30px_rgba(255,255,255,0.16),0_18px_40px_rgba(0,0,0,0.32)] md:border-b-[14px]`} />
-                    <div className="absolute left-1/2 top-[42%] h-[48%] w-[86%] -translate-x-1/2 rounded-b-[100%] bg-stone-800 shadow-[inset_0_-24px_40px_rgba(0,0,0,0.45)]" />
+                  <div className="relative mx-auto h-[120px] w-[180px] sm:h-[200px] sm:w-[280px] md:h-[300px] md:w-[460px]">
+                    <div className={`absolute inset-x-0 top-10 h-[48%] rounded-[100%] ${island.groundColor || 'bg-green-500'} border-b-4 border-black/20 shadow-[inset_0_18px_30px_rgba(255,255,255,0.16),0_18px_40px_rgba(0,0,0,0.32)] md:border-b-[14px]`} />
+                    <div className="absolute left-1/2 top-[42%] h-[48%] w-[86%] -translate-x-1/2 rounded-b-[100%] bg-stone-800 shadow-[inset_0_-16px_40px_rgba(0,0,0,0.45)] md:shadow-[inset_0_-24px_40px_rgba(0,0,0,0.45)]" />
 
                     {Array.from({ length: 5 }).map((_, particleIndex) => (
                       <motion.div
@@ -233,13 +232,13 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                       />
                     ))}
 
-                    <div className="absolute inset-0">
+                    <div className="absolute inset-0 z-10">
                       {island.decorations?.map((decoration, decorationIndex) => (
                         <motion.div
                           key={decorationIndex}
-                          animate={isActive ? { y: [0, -10, 0], rotate: [0, 4, -4, 0] } : { y: 0 }}
+                          animate={isActive ? { y: [0, -6, 0], rotate: [0, 4, -4, 0] } : { y: 0 }}
                           transition={{ duration: 4 + decorationIndex, repeat: Infinity, delay: decorationIndex * 0.2 }}
-                          className="absolute text-4xl drop-shadow-xl md:text-6xl"
+                          className="absolute text-3xl drop-shadow-xl md:text-6xl"
                           style={{
                             left: `${12 + decorationIndex * 18}%`,
                             top: `${18 + (decorationIndex % 2) * 10}%`,
@@ -250,48 +249,48 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                       ))}
                     </div>
 
-                    <div className="absolute left-1/2 top-[15%] flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/25 bg-black/30 px-4 py-2 backdrop-blur-xl">
-                      <span className="text-xs font-black uppercase tracking-[0.3em] text-white/70">Island {island.id}</span>
+                    <div className="absolute left-1/2 top-[10%] flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/25 bg-black/30 px-3 py-1.5 backdrop-blur-xl md:py-2 md:px-4 hidden md:flex">
+                      <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/70 md:text-xs">Island {island.id}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="relative w-full max-w-2xl rounded-[2.5rem] border border-white/15 bg-black/25 p-6 text-white shadow-[0_25px_80px_rgba(0,0,0,0.35)] backdrop-blur-2xl md:p-8 lg:p-10">
-                  <div className="mb-4 flex flex-wrap items-center gap-3">
-                    <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em] text-white/70">
+                <div className="relative w-full max-w-2xl rounded-[2rem] border border-white/15 bg-black/25 p-4 text-white shadow-[0_15px_40px_rgba(0,0,0,0.35)] backdrop-blur-2xl md:p-8 md:rounded-[2.5rem] shrink-0">
+                  <div className="mb-2 flex flex-wrap items-center gap-2 md:mb-4 md:gap-3">
+                    <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.3em] text-white/70 md:px-4 md:py-2 md:text-[10px]">
                       {island.category}
                     </span>
-                    <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em] text-cyan-100">
-                      {isUnlocked ? nextLevelLabel : 'Complete the previous island boss'}
+                    <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.3em] text-cyan-100 md:px-4 md:py-2 md:text-[10px]">
+                      {isUnlocked ? nextLevelLabel : 'Complete previous boss'}
                     </span>
                   </div>
 
-                  <h2 className="text-3xl font-black tracking-tight sm:text-4xl md:text-6xl">{island.themeName || island.name}</h2>
-                  <p className="mt-2 text-sm text-white/70 md:mt-3 md:text-lg">
+                  <h2 className="text-2xl font-black tracking-tight sm:text-3xl md:text-6xl">{island.themeName || island.name}</h2>
+                  <p className="mt-1 text-[11px] leading-snug text-white/70 md:mt-3 md:text-lg hidden sm:block">
                     {island.name} training zone with {island.levels.length} playable stages, animated progression, and a boss gate at the end.
                   </p>
 
-                  <div className="mt-4 grid gap-3 grid-cols-3 md:mt-6 md:gap-4">
-                    <div className="rounded-xl md:rounded-[1.75rem] border border-white/10 bg-white/8 p-3 md:p-4">
-                      <div className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.25em] text-white/55">Progress</div>
-                      <div className="mt-1 text-lg md:text-2xl font-black">{completedCount} / {island.levels.length}</div>
+                  <div className="mt-3 grid gap-2 grid-cols-3 md:mt-6 md:gap-4">
+                    <div className="rounded-[1rem] md:rounded-[1.75rem] border border-white/10 bg-white/8 p-2.5 md:p-4">
+                      <div className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-white/55">Progress</div>
+                      <div className="mt-0.5 text-sm md:text-2xl font-black">{completedCount} / {island.levels.length}</div>
                     </div>
-                    <div className="rounded-xl md:rounded-[1.75rem] border border-white/10 bg-white/8 p-3 md:p-4">
-                      <div className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.25em] text-white/55">Stars</div>
-                      <div className="mt-1 text-lg md:text-2xl font-black">{earnedStars} / {maxStars}</div>
+                    <div className="rounded-[1rem] md:rounded-[1.75rem] border border-white/10 bg-white/8 p-2.5 md:p-4">
+                      <div className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-white/55">Stars</div>
+                      <div className="mt-0.5 text-sm md:text-2xl font-black">{earnedStars} / {maxStars}</div>
                     </div>
-                    <div className="rounded-xl md:rounded-[1.75rem] border border-white/10 bg-white/8 p-3 md:p-4">
-                      <div className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.25em] text-white/55">Status</div>
-                      <div className="mt-1 text-lg md:text-2xl font-black">{isUnlocked ? `${completion}%` : 'Locked'}</div>
+                    <div className="rounded-[1rem] md:rounded-[1.75rem] border border-white/10 bg-white/8 p-2.5 md:p-4">
+                      <div className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-white/55">Status</div>
+                      <div className="mt-0.5 text-sm md:text-2xl font-black">{isUnlocked ? `${completion}%` : 'Locked'}</div>
                     </div>
                   </div>
 
-                  <div className="mt-6">
-                    <div className="mb-2 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.25em] text-white/55">
+                  <div className="mt-3 md:mt-6 hidden sm:block">
+                    <div className="mb-1.5 flex items-center justify-between text-[9px] md:text-[10px] font-black uppercase tracking-[0.25em] text-white/55">
                       <span>Island completion</span>
                       <span>{completion}%</span>
                     </div>
-                    <div className="h-4 overflow-hidden rounded-full border border-white/10 bg-black/35">
+                    <div className="h-2 md:h-4 overflow-hidden rounded-full border border-white/10 bg-black/35">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${completion}%` }}
@@ -300,22 +299,21 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                     </div>
                   </div>
 
-                  <div className="mt-5 flex flex-wrap items-center gap-3 md:mt-7 md:gap-4">
+                  <div className="mt-4 flex flex-wrap items-center gap-2 md:mt-7 md:gap-4">
                     <button
                       onClick={() => isUnlocked && onSelectIsland(island)}
                       disabled={!isUnlocked}
-                      className={`group inline-flex w-full sm:w-auto items-center justify-center gap-3 rounded-[1.25rem] md:rounded-[1.75rem] px-5 py-4 md:px-7 md:py-5 text-base md:text-xl font-black shadow-xl transition-all ${isUnlocked
-                        ? 'bg-gradient-to-b from-emerald-400 to-emerald-600 text-white shadow-[0_10px_0_#047857] hover:translate-y-1 hover:shadow-[0_5px_0_#047857]'
-                        : 'cursor-not-allowed bg-white/10 text-white/50'
+                      className={`group inline-flex w-full sm:w-auto items-center justify-center gap-2 md:gap-3 rounded-[1.25rem] md:rounded-[1.75rem] px-5 py-3.5 md:px-7 md:py-5 text-sm md:text-xl font-black shadow-xl transition-all ${isUnlocked
+                        ? 'bg-gradient-to-b from-emerald-400 to-emerald-600 text-white shadow-[0_6px_0_#047857] md:shadow-[0_10px_0_#047857] hover:translate-y-1 hover:shadow-none md:hover:shadow-[0_5px_0_#047857]'
+                        : 'cursor-not-allowed bg-white/10 text-white/50 shadow-none'
                         }`}
                     >
-                      {isUnlocked ? <AssetIcon name="play" className="h-5 w-5 md:h-6 md:w-6" /> : <AssetIcon name="plusSquare" className="h-5 w-5 md:h-6 md:w-6" />}
+                      {isUnlocked ? <AssetIcon name="play" className="h-4 w-4 md:h-6 md:w-6" /> : <AssetIcon name="plusSquare" className="h-4 w-4 md:h-6 md:w-6" />}
                       {isUnlocked ? 'Open island path' : 'Island locked'}
                     </button>
-
-                    <div className="hidden sm:flex items-center gap-2 rounded-full border border-white/10 bg-black/20 px-4 py-3 text-sm font-black text-white/75">
-                      <AssetIcon name="star" className="h-4 w-4" />
-                      Best route rewards persist between sessions
+                    <div className="hidden sm:flex items-center gap-2 rounded-full border border-white/10 bg-black/20 px-3 py-2 text-[10px] md:px-4 md:py-3 md:text-sm font-black text-white/75">
+                      <AssetIcon name="star" className="h-3 w-3 md:h-4 md:w-4" />
+                      Best rewards persist
                     </div>
                   </div>
                 </div>
@@ -324,7 +322,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
           );
         })}
       </div>
-    </div>
+    </div >
   );
 };
 
