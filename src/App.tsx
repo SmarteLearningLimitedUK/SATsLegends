@@ -386,10 +386,10 @@ const App: React.FC = () => {
     switch (screen) {
       case 'splash':
         return (
-          <div className="relative my-auto flex w-full max-w-6xl flex-col items-center gap-10 px-6 text-center md:gap-14">
-            <div className="absolute inset-0 -z-20 rounded-[3rem] bg-cover bg-center opacity-50 pointer-events-none" style={{ backgroundImage: `url(${forestBg})` }} />
-            <div className="absolute inset-0 -z-10 rounded-[3rem] bg-[linear-gradient(180deg,rgba(15,23,42,0.35),rgba(15,23,42,0.72))] pointer-events-none" />
-            <div className="absolute inset-x-0 top-1/2 -z-10 h-[520px] -translate-y-1/2 rounded-[3rem] border border-white/20 bg-white/10 blur-0 backdrop-blur-2xl pointer-events-none" />
+          <div className="relative my-auto flex w-full max-w-6xl flex-col items-center gap-6 px-4 text-center sm:px-6 md:gap-14">
+            <div className="absolute inset-0 -z-20 rounded-[2.5rem] bg-cover bg-center opacity-50 pointer-events-none md:rounded-[3rem]" style={{ backgroundImage: `url(${forestBg})` }} />
+            <div className="absolute inset-0 -z-10 rounded-[2.5rem] bg-[linear-gradient(180deg,rgba(15,23,42,0.35),rgba(15,23,42,0.72))] pointer-events-none md:rounded-[3rem]" />
+            <div className="absolute inset-x-0 top-1/2 -z-10 h-[420px] -translate-y-1/2 rounded-[2.5rem] border border-white/20 bg-white/10 blur-0 backdrop-blur-2xl pointer-events-none md:h-[520px] md:rounded-[3rem]" />
             <div className="absolute -z-10 w-[150%] h-[150%] flex items-center justify-center opacity-20 pointer-events-none">
               <motion.div
                 animate={{ rotate: 360 }}
@@ -408,27 +408,27 @@ const App: React.FC = () => {
               animate={{ y: 0, opacity: 1 }}
               transition={{ type: 'spring', stiffness: 100, damping: 15 }}
             >
-              <div className="absolute -top-16 left-1/2 -translate-x-1/2 flex gap-4">
+              <div className="absolute -top-12 left-1/2 -translate-x-1/2 flex gap-3 md:-top-16 md:gap-4">
                 {['➕', '➖', '✖️', '➗'].map((emoji, i) => (
                   <motion.span
                     key={i}
                     animate={{ y: [0, -16, 0] }}
                     transition={{ duration: 2, repeat: Infinity, delay: i * 0.4 }}
-                    className="text-4xl"
+                    className="text-3xl md:text-4xl"
                   >
                     {emoji}
                   </motion.span>
                 ))}
               </div>
-              <div className="mb-5 flex justify-center gap-2">
+              <div className="mb-4 flex justify-center gap-2 md:mb-5">
                 {['Mobile-first', 'Quest map', 'Mini-games'].map(label => (
-                  <span key={label} className="game-chip">{label}</span>
+                  <span key={label} className="game-chip px-2 py-0.5 text-[9px] md:px-3 md:py-1 md:text-[10px]">{label}</span>
                 ))}
               </div>
-              <h1 className="text-[3.5rem] sm:text-6xl md:text-8xl lg:text-[9rem] leading-[0.85] font-black text-white tracking-tighter drop-shadow-[0_8px_0_rgba(0,0,0,0.24)]">
+              <h1 className="text-[3rem] sm:text-[4rem] md:text-8xl lg:text-[9rem] leading-[0.85] font-black text-white tracking-tighter drop-shadow-[0_8px_0_rgba(0,0,0,0.24)]">
                 SATS
                 <br />
-                <span className="text-yellow-400 drop-shadow-[0_8px_0_#ca8a04] text-[3rem] sm:text-[4.5rem] md:text-7xl lg:text-[8rem]">MASTERY</span>
+                <span className="text-yellow-400 drop-shadow-[0_8px_0_#ca8a04] text-[2.5rem] sm:text-[3.5rem] md:text-7xl lg:text-[8rem]">MASTERY</span>
               </h1>
               <p className="mt-4 md:mt-5 inline-block rounded-full bg-black/15 backdrop-blur-sm px-4 py-1.5 md:px-6 md:py-2 text-xs md:text-xl font-bold tracking-[0.25em] uppercase text-white/95">
                 World map adventure build
@@ -440,7 +440,7 @@ const App: React.FC = () => {
                 whileHover={{ scale: 1.04, y: -3 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={handleStartAdventure}
-                className="game-button-primary licensed-wood-button group relative px-8 py-4 text-xl sm:px-12 sm:py-5 sm:text-2xl md:px-20 md:py-8 md:text-5xl rounded-[2rem] md:rounded-[2.3rem]"
+                className="game-button-primary licensed-wood-button group relative px-8 py-4 text-xl sm:px-12 sm:py-5 sm:text-2xl md:px-20 md:py-8 md:text-5xl rounded-[1.75rem] md:rounded-[2.3rem]"
               >
                 {hasCompletedProfile ? 'CONTINUE' : 'START ADVENTURE'}
               </motion.button>
@@ -453,15 +453,15 @@ const App: React.FC = () => {
 
       case 'profile_setup':
         return (
-          <div className="glass-panel relative z-10 w-full max-w-sm sm:max-w-md md:max-w-3xl my-auto overflow-hidden rounded-[3rem] p-6 text-center md:p-12">
-            <div className="relative z-10 mb-8">
-              <h2 className="text-4xl md:text-6xl font-black text-white tracking-tight">Name your hero</h2>
-              <p className="mt-3 text-white/75 font-bold uppercase tracking-[0.2em] text-xs md:text-sm">
+          <div className="glass-panel relative z-10 w-full max-w-sm sm:max-w-md md:max-w-3xl my-auto overflow-hidden rounded-[2.5rem] p-5 text-center md:rounded-[3rem] md:p-12">
+            <div className="relative z-10 mb-6 md:mb-8">
+              <h2 className="text-3xl md:text-6xl font-black text-white tracking-tight">Name your hero</h2>
+              <p className="mt-2 text-white/75 font-bold uppercase tracking-[0.2em] text-[10px] md:text-sm">
                 Step 1 of 2 · profile setup
               </p>
             </div>
 
-            <div className="relative z-10 flex flex-col gap-5 items-center">
+            <div className="relative z-10 flex flex-col gap-4 md:gap-5 items-center">
               <input
                 value={draftName}
                 onChange={event => setDraftName(event.target.value.slice(0, 18))}
@@ -469,18 +469,18 @@ const App: React.FC = () => {
                   if (event.key === 'Enter') handleSaveProfileName();
                 }}
                 placeholder="Explorer"
-                className="w-full max-w-xl rounded-[1.75rem] border-2 border-white/20 bg-black/20 px-6 py-5 text-center text-2xl md:text-3xl font-black text-white placeholder:text-white/35 outline-none focus:border-yellow-300"
+                className="w-full max-w-xl rounded-[1.5rem] md:rounded-[1.75rem] border-2 border-white/20 bg-black/20 px-5 py-4 text-center text-xl md:text-3xl font-black text-white placeholder:text-white/35 outline-none focus:border-yellow-300 md:px-6 md:py-5"
               />
-              <div className="flex gap-4 flex-wrap justify-center">
+              <div className="flex gap-3 flex-wrap justify-center md:gap-4">
                 <button
                   onClick={() => setScreen('splash')}
-                  className="game-button-secondary licensed-wood-button-secondary px-8 py-4 rounded-2xl"
+                  className="game-button-secondary licensed-wood-button-secondary px-6 py-3 rounded-[1.25rem] text-sm md:px-8 md:py-4 md:rounded-2xl md:text-base"
                 >
                   Back
                 </button>
                 <button
                   onClick={handleSaveProfileName}
-                  className="licensed-wood-button px-10 py-4 rounded-2xl text-white font-black transition-all"
+                  className="licensed-wood-button px-8 py-3 rounded-[1.25rem] text-white text-base md:text-lg font-black transition-all md:px-10 md:py-4 md:rounded-2xl"
                 >
                   Choose avatar
                 </button>

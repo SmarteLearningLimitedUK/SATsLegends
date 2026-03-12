@@ -201,10 +201,10 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
           return (
             <section
               key={island.id}
-              className="relative flex min-w-[100vw] snap-center items-center justify-center overflow-hidden px-5 pb-24 pt-44 md:px-12 md:pt-52"
+              className="relative flex min-w-[100vw] snap-center items-center justify-center overflow-hidden px-5 pb-16 pt-32 md:pb-24 md:pt-48 lg:px-12"
             >
               <div className={`absolute inset-0 bg-gradient-to-b ${island.bgGradient || 'from-sky-600 to-slate-900'} opacity-70`} />
-              <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-black/40 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 h-40 md:h-56 bg-gradient-to-t from-black/40 to-transparent" />
 
               <motion.div
                 animate={isActive ? { y: [0, -14, 0] } : { y: 0 }}
@@ -214,7 +214,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                 <div className="relative w-full max-w-[540px]">
                   <div className="absolute inset-x-10 -bottom-8 h-10 rounded-full bg-black/40 blur-2xl" />
 
-                  <div className="relative mx-auto h-[240px] w-[320px] md:h-[300px] md:w-[460px]">
+                  <div className="relative mx-auto h-[180px] w-[260px] sm:h-[240px] sm:w-[320px] md:h-[300px] md:w-[460px]">
                     <div className={`absolute inset-x-0 top-10 h-[48%] rounded-[100%] ${island.groundColor || 'bg-green-500'} border-b-[10px] border-black/20 shadow-[inset_0_18px_30px_rgba(255,255,255,0.16),0_18px_40px_rgba(0,0,0,0.32)] md:border-b-[14px]`} />
                     <div className="absolute left-1/2 top-[42%] h-[48%] w-[86%] -translate-x-1/2 rounded-b-[100%] bg-stone-800 shadow-[inset_0_-24px_40px_rgba(0,0,0,0.45)]" />
 
@@ -266,23 +266,23 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                     </span>
                   </div>
 
-                  <h2 className="text-4xl font-black tracking-tight md:text-6xl">{island.themeName || island.name}</h2>
-                  <p className="mt-3 max-w-xl text-base text-white/70 md:text-lg">
+                  <h2 className="text-3xl font-black tracking-tight sm:text-4xl md:text-6xl">{island.themeName || island.name}</h2>
+                  <p className="mt-2 text-sm text-white/70 md:mt-3 md:text-lg">
                     {island.name} training zone with {island.levels.length} playable stages, animated progression, and a boss gate at the end.
                   </p>
 
-                  <div className="mt-6 grid gap-4 md:grid-cols-3">
-                    <div className="rounded-[1.75rem] border border-white/10 bg-white/8 p-4">
-                      <div className="text-[10px] font-black uppercase tracking-[0.25em] text-white/55">Progress</div>
-                      <div className="mt-1 text-2xl font-black">{completedCount} / {island.levels.length}</div>
+                  <div className="mt-4 grid gap-3 grid-cols-3 md:mt-6 md:gap-4">
+                    <div className="rounded-xl md:rounded-[1.75rem] border border-white/10 bg-white/8 p-3 md:p-4">
+                      <div className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.25em] text-white/55">Progress</div>
+                      <div className="mt-1 text-lg md:text-2xl font-black">{completedCount} / {island.levels.length}</div>
                     </div>
-                    <div className="rounded-[1.75rem] border border-white/10 bg-white/8 p-4">
-                      <div className="text-[10px] font-black uppercase tracking-[0.25em] text-white/55">Stars</div>
-                      <div className="mt-1 text-2xl font-black">{earnedStars} / {maxStars}</div>
+                    <div className="rounded-xl md:rounded-[1.75rem] border border-white/10 bg-white/8 p-3 md:p-4">
+                      <div className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.25em] text-white/55">Stars</div>
+                      <div className="mt-1 text-lg md:text-2xl font-black">{earnedStars} / {maxStars}</div>
                     </div>
-                    <div className="rounded-[1.75rem] border border-white/10 bg-white/8 p-4">
-                      <div className="text-[10px] font-black uppercase tracking-[0.25em] text-white/55">Status</div>
-                      <div className="mt-1 text-2xl font-black">{isUnlocked ? `${completion}%` : 'Locked'}</div>
+                    <div className="rounded-xl md:rounded-[1.75rem] border border-white/10 bg-white/8 p-3 md:p-4">
+                      <div className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.25em] text-white/55">Status</div>
+                      <div className="mt-1 text-lg md:text-2xl font-black">{isUnlocked ? `${completion}%` : 'Locked'}</div>
                     </div>
                   </div>
 
@@ -300,20 +300,20 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                     </div>
                   </div>
 
-                  <div className="mt-7 flex flex-wrap items-center gap-4">
+                  <div className="mt-5 flex flex-wrap items-center gap-3 md:mt-7 md:gap-4">
                     <button
                       onClick={() => isUnlocked && onSelectIsland(island)}
                       disabled={!isUnlocked}
-                      className={`group inline-flex items-center gap-3 rounded-[1.75rem] px-7 py-5 text-lg font-black shadow-xl transition-all md:text-xl ${isUnlocked
+                      className={`group inline-flex w-full sm:w-auto items-center justify-center gap-3 rounded-[1.25rem] md:rounded-[1.75rem] px-5 py-4 md:px-7 md:py-5 text-base md:text-xl font-black shadow-xl transition-all ${isUnlocked
                         ? 'bg-gradient-to-b from-emerald-400 to-emerald-600 text-white shadow-[0_10px_0_#047857] hover:translate-y-1 hover:shadow-[0_5px_0_#047857]'
                         : 'cursor-not-allowed bg-white/10 text-white/50'
                         }`}
                     >
-                      {isUnlocked ? <AssetIcon name="play" className="h-6 w-6" /> : <AssetIcon name="plusSquare" className="h-6 w-6" />}
+                      {isUnlocked ? <AssetIcon name="play" className="h-5 w-5 md:h-6 md:w-6" /> : <AssetIcon name="plusSquare" className="h-5 w-5 md:h-6 md:w-6" />}
                       {isUnlocked ? 'Open island path' : 'Island locked'}
                     </button>
 
-                    <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/20 px-4 py-3 text-sm font-black text-white/75">
+                    <div className="hidden sm:flex items-center gap-2 rounded-full border border-white/10 bg-black/20 px-4 py-3 text-sm font-black text-white/75">
                       <AssetIcon name="star" className="h-4 w-4" />
                       Best route rewards persist between sessions
                     </div>
