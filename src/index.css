@@ -1,0 +1,355 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap');
+
+@theme {
+  --font-fredoka: "Fredoka", sans-serif;
+}
+
+@layer utilities {
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .glass-panel {
+    @apply border border-white/15 bg-white/10 backdrop-blur-2xl shadow-[0_18px_50px_rgba(0,0,0,0.22)];
+  }
+
+  .game-chip {
+    @apply rounded-full border border-white/15 bg-black/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-white/75 backdrop-blur-xl;
+  }
+
+  .game-button-primary {
+    @apply rounded-[1.75rem] bg-gradient-to-b from-yellow-300 to-yellow-500 text-white font-black shadow-[0_8px_0_#ca8a04] transition-all active:shadow-none;
+  }
+
+  .game-button-secondary {
+    @apply rounded-[1.4rem] border border-white/15 bg-white/10 text-white font-black shadow-[0_8px_24px_rgba(0,0,0,0.12)] backdrop-blur-xl transition-all;
+  }
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-fredoka);
+  overflow: hidden;
+  user-select: none;
+  background:
+    radial-gradient(circle at top, rgba(59, 130, 246, 0.24), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(168, 85, 247, 0.18), transparent 28%),
+    linear-gradient(180deg, #0f172a 0%, #111827 48%, #020617 100%);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.cloud-bg {
+  background:
+    radial-gradient(circle at top, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 38%),
+    linear-gradient(180deg, #9ddcff 0%, #5bb4f1 43%, #1b4f9f 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.cloud-bg::before,
+.cloud-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.cloud-bg::before {
+  background:
+    radial-gradient(circle at 22% 22%, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 16%),
+    radial-gradient(circle at 78% 16%, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0) 18%),
+    radial-gradient(circle at 50% 82%, rgba(255,240,196,0.18) 0%, rgba(255,240,196,0) 18%);
+  animation: pulse-bg 12s ease-in-out infinite alternate;
+}
+
+.cloud-bg::after {
+  background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 20%, rgba(2,6,23,0.22) 100%);
+}
+
+@keyframes pulse-bg {
+  from {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  to {
+    transform: scale(1.18);
+    opacity: 0.7;
+  }
+}
+
+.cloud {
+  position: absolute;
+  background: rgba(255,255,255,0.8);
+  border-radius: 999px;
+  opacity: 0.58;
+  filter: blur(10px);
+  animation: float linear infinite;
+  box-shadow:
+    inset -12px -12px 24px rgba(15, 23, 42, 0.08),
+    inset 10px 10px 24px rgba(255,255,255,0.72),
+    0 16px 40px rgba(148, 163, 184, 0.2);
+}
+
+@keyframes float {
+  from {
+    transform: translateX(-120%);
+  }
+  to {
+    transform: translateX(120vw);
+  }
+}
+
+.jelly-squish {
+  animation: jelly 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes jelly {
+  0% { transform: scale(1, 1); }
+  30% { transform: scale(1.25, 0.75); }
+  40% { transform: scale(0.75, 1.25); }
+  50% { transform: scale(1.15, 0.85); }
+  65% { transform: scale(0.95, 1.05); }
+  75% { transform: scale(1.05, 0.95); }
+  100% { transform: scale(1, 1); }
+}
+
+.tile-pop {
+  animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes pop {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.shine {
+  position: absolute;
+  top: 0;
+  left: -30%;
+  width: 65%;
+  height: 100%;
+  background: linear-gradient(110deg, rgba(255,255,255,0.34), rgba(255,255,255,0));
+  pointer-events: none;
+  transform: skewX(-20deg);
+}
+
+.gloss {
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  width: 80%;
+  height: 40%;
+  background: rgba(255,255,255,0.22);
+  border-radius: 50% 50% 40% 40%;
+  pointer-events: none;
+}
+
+.progress-bar-fill {
+  transition: width 0.35s ease-out;
+}
+
+.soft-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255,255,255,0) 52%, rgba(2,6,23,0.22) 100%);
+}
+
+@keyframes hud-shine {
+  0% { background-position: 200% 0; }
+  100% { background-position: -20% 0; }
+}
+
+.game-dock-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 999px;
+  border: 2px solid rgba(92,58,30,0.55);
+  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02)), url('./assets/licensed/slices/button_green_pill.png') center/100% 100% no-repeat;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.16), 0 4px 0 rgba(74,44,23,0.58);
+  backdrop-filter: blur(12px);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.game-dock-button:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.2), inset 0 2px 8px rgba(255,255,255,0.72);
+}
+
+.game-dock-button:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+
+.licensed-shell-bg {
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(12, 18, 28, 0.12), rgba(12, 18, 28, 0.58)),
+    url('./assets/licensed/background.jpeg') center/cover no-repeat,
+    linear-gradient(180deg, #22312a 0%, #0f172a 100%);
+}
+
+.licensed-playfield-bg {
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(4, 8, 16, 0.44), rgba(4, 8, 16, 0.8)),
+    url('./assets/licensed/background.jpeg') center/cover no-repeat,
+    linear-gradient(180deg, #0f172a 0%, #020617 100%);
+}
+
+.licensed-wood-button {
+  border: 2px solid rgba(255,255,255,0.2);
+  color: #fff8ec;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.12), rgba(0,0,0,0.06)),
+    url('./assets/licensed/slices/wood_plank_long_4.png') center/100% 100% no-repeat;
+  box-shadow:
+    0 8px 0 rgba(74, 44, 23, 0.95),
+    0 16px 30px rgba(0,0,0,0.22);
+  text-shadow: 0 2px 0 rgba(0,0,0,0.35);
+}
+
+.licensed-wood-button:hover {
+  filter: brightness(1.04);
+}
+
+.licensed-wood-button-secondary {
+  border: 2px solid rgba(92, 58, 30, 0.8);
+  color: #fff7ea;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.08), rgba(0,0,0,0.04)),
+    url('./assets/licensed/slices/wood_plank_long_2.png') center/100% 100% no-repeat;
+  box-shadow:
+    0 8px 0 rgba(74, 44, 23, 0.95),
+    0 12px 24px rgba(0,0,0,0.18);
+  text-shadow: 0 2px 0 rgba(0,0,0,0.35);
+}
+
+.licensed-game-card {
+  border: 2px solid rgba(92, 58, 30, 0.72);
+  border-radius: 1.6rem;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.04)),
+    rgba(247, 239, 223, 0.92);
+  box-shadow:
+    0 12px 0 rgba(74, 44, 23, 0.92),
+    0 22px 40px rgba(0,0,0,0.18);
+}
+
+.licensed-game-card-dark {
+  border: 2px solid rgba(92, 58, 30, 0.6);
+  border-radius: 1.6rem;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.08), rgba(0,0,0,0.08)),
+    rgba(53, 33, 19, 0.84);
+  box-shadow: 0 10px 0 rgba(39, 23, 10, 0.95), 0 20px 32px rgba(0,0,0,0.2);
+}
+
+.licensed-panel-plank {
+  border: 2px solid rgba(74, 44, 23, 0.82);
+  background: url('./assets/licensed/slices/wood_plank_long_1.png') center/100% 100% no-repeat;
+  color: #fff7ea;
+  text-shadow: 0 2px 0 rgba(0,0,0,0.28);
+}
+
+.licensed-submit-button {
+  border: 2px solid rgba(92,58,30,0.72);
+  color: #fff8ec;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.02)),
+    url('./assets/licensed/slices/button_yellow_plank.png') center/100% 100% no-repeat;
+  box-shadow: 0 8px 0 rgba(146, 64, 14, 0.94), 0 18px 30px rgba(0,0,0,0.18);
+  text-shadow: 0 2px 0 rgba(0,0,0,0.28);
+}
+.licensed-submit-button:hover { filter: brightness(1.03); }
+.licensed-submit-button:active { transform: translateY(2px); box-shadow: 0 4px 0 rgba(146,64,14,0.94); }
+
+.licensed-answer-button {
+  border: 2px solid rgba(92,58,30,0.62);
+  color: #fff8ec;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.11), rgba(255,255,255,0.02)),
+    url('./assets/licensed/slices/wood_plank_long_3.png') center/100% 100% no-repeat;
+  box-shadow: 0 7px 0 rgba(74,44,23,0.94), 0 14px 24px rgba(0,0,0,0.16);
+  text-shadow: 0 2px 0 rgba(0,0,0,0.28);
+}
+.licensed-answer-button:hover { filter: brightness(1.04); }
+.licensed-answer-button:active { transform: translateY(2px); box-shadow: 0 3px 0 rgba(74,44,23,0.94); }
+
+.licensed-answer-chip {
+  border: 2px solid rgba(92,58,30,0.55);
+  border-radius: 1rem;
+  background: rgba(255,248,235,0.88);
+  box-shadow: 0 6px 0 rgba(92,58,30,0.18);
+}
+
+.licensed-board-frame {
+  border: 4px solid rgba(92,58,30,0.75);
+  border-radius: 2rem;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02)),
+    rgba(248, 240, 223, 0.88);
+  box-shadow: inset 0 0 0 3px rgba(255,255,255,0.12), 0 14px 0 rgba(74,44,23,0.85), 0 28px 44px rgba(0,0,0,0.18);
+}
+
+.licensed-overlay-card {
+  border: 3px solid rgba(92,58,30,0.75);
+  border-radius: 2rem;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
+    rgba(58, 35, 20, 0.90);
+  box-shadow: 0 12px 0 rgba(39,23,10,0.92), 0 20px 36px rgba(0,0,0,0.22);
+  color: #fff7ea;
+}
+
+.licensed-input-panel {
+  border: 2px solid rgba(92,58,30,0.48);
+  border-radius: 1.25rem;
+  background: rgba(255, 248, 235, 0.9);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.65), 0 6px 0 rgba(92,58,30,0.14);
+}
+
+.licensed-grid-backdrop {
+  background-image:
+    linear-gradient(rgba(92,58,30,0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(92,58,30,0.10) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.licensed-slider {
+  accent-color: #3cc7c4;
+}
+
+.licensed-stat-badge {
+  border: 2px solid rgba(92,58,30,0.6);
+  border-radius: 1rem;
+  background: rgba(255,248,235,0.92);
+  box-shadow: 0 6px 0 rgba(92,58,30,0.14);
+}
