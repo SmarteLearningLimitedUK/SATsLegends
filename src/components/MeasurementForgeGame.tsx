@@ -240,7 +240,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
   const progress = Math.min((score / targetScore) * 100, 100);
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-4 relative overflow-hidden bg-stone-950 font-sans">
+    <div className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden bg-stone-950 font-sans">
       {/* Forge Background */}
       <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ 
         backgroundImage: 'radial-gradient(circle at 50% 100%, #ea580c 0%, transparent 60%)', 
@@ -251,7 +251,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
         backgroundPosition: '0 0, 20px 20px'
       }} />
 
-      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-3 md:gap-6 h-full flex-1 min-h-0">
+      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-2 md:gap-6 h-full flex-1 min-h-0">
         <GameplayHUD
           title="Measurement Forge"
           avatar={avatar}
@@ -268,16 +268,16 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
         />
 
         {/* Game Area */}
-        <div className="w-full flex-1 relative flex flex-col items-center justify-center gap-8">
+        <div className="w-full flex-1 relative flex flex-col items-center justify-center gap-4 md:gap-8">
           
           {problem && (
             <>
               {/* Anvil & Item Area */}
-              <div className="relative w-full max-w-md aspect-video flex items-end justify-center mb-12">
+              <div className="relative w-full max-w-sm md:max-w-md aspect-[4/3] md:aspect-video flex items-end justify-center mb-4 md:mb-12">
                 {/* Anvil */}
-                <div className="absolute bottom-0 w-64 h-32 bg-stone-700 rounded-t-xl border-t-8 border-stone-500 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col items-center justify-end pb-4">
-                  <div className="w-48 h-16 bg-stone-800 rounded-lg border-2 border-stone-600 flex items-center justify-center">
-                    <Flame className="w-8 h-8 text-orange-500 animate-pulse" />
+                <div className="absolute bottom-0 w-44 h-24 md:w-64 md:h-32 bg-stone-700 rounded-t-xl border-t-8 border-stone-500 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col items-center justify-end pb-3 md:pb-4">
+                  <div className="w-32 h-12 md:w-48 md:h-16 bg-stone-800 rounded-lg border-2 border-stone-600 flex items-center justify-center">
+                    <Flame className="h-6 w-6 md:h-8 md:w-8 text-orange-500 animate-pulse" />
                   </div>
                 </div>
 
@@ -289,7 +289,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                       animate={{ y: -100, opacity: 1, scale: 1.5 }}
                       exit={{ opacity: 0, scale: 2, y: -150 }}
                       transition={{ duration: 1 }}
-                      className="absolute bottom-16 text-6xl drop-shadow-[0_0_15px_rgba(251,146,60,0.8)]"
+                      className="absolute bottom-12 md:bottom-16 text-4xl md:text-6xl drop-shadow-[0_0_15px_rgba(251,146,60,0.8)]"
                     >
                       {ITEMS[problem.itemType].icon}
                     </motion.div>
@@ -304,33 +304,33 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                       animate={{ rotate: -45, x: 0, y: -50 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.2, yoyo: 3 }}
-                      className="absolute bottom-16 right-1/4"
+                      className="absolute bottom-12 md:bottom-16 right-1/4"
                     >
-                      <Hammer className="w-24 h-24 text-stone-400 drop-shadow-xl" />
+                      <Hammer className="h-14 w-14 md:h-24 md:w-24 text-stone-400 drop-shadow-xl" />
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
 
               {/* Order Scroll */}
-              <div className="p-6 text-center max-w-2xl w-full relative transform -rotate-1 licensed-game-card">
-                <div className="absolute -top-4 -left-4 w-8 h-8 bg-red-700 rounded-full border-2 border-red-900 shadow-sm" />
-                <div className="absolute -top-4 -right-4 w-8 h-8 bg-red-700 rounded-full border-2 border-red-900 shadow-sm" />
-                <h3 className="text-2xl text-amber-900 font-bold font-serif">
+              <div className="p-4 md:p-6 text-center max-w-2xl w-full relative transform -rotate-1 licensed-game-card">
+                <div className="absolute -top-3 -left-3 md:-top-4 md:-left-4 w-6 h-6 md:w-8 md:h-8 bg-red-700 rounded-full border-2 border-red-900 shadow-sm" />
+                <div className="absolute -top-3 -right-3 md:-top-4 md:-right-4 w-6 h-6 md:w-8 md:h-8 bg-red-700 rounded-full border-2 border-red-900 shadow-sm" />
+                <h3 className="text-base md:text-2xl text-amber-900 font-bold font-serif leading-tight">
                   {problem.question}
                 </h3>
               </div>
 
               {/* Options Grid */}
-              <div className="grid grid-cols-2 gap-6 w-full max-w-3xl">
+              <div className="grid grid-cols-2 gap-3 md:gap-6 w-full max-w-3xl">
                 {problem.options.map((opt, i) => (
                   <button
                     key={i}
                     onClick={() => handleAnswer(opt)}
                     disabled={!!feedback || isForging}
-                    className="relative group p-6 rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center licensed-answer-button"
+                    className="relative group min-h-[4.5rem] md:min-h-[5.5rem] px-3 py-4 md:p-6 rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center licensed-answer-button"
                   >
-                    <span className="text-3xl font-black text-orange-400 drop-shadow-md group-hover:text-orange-300">
+                    <span className="text-xl md:text-3xl font-black text-orange-400 drop-shadow-md group-hover:text-orange-300">
                       {opt}
                     </span>
                   </button>
@@ -349,7 +349,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                 className={`absolute inset-0 flex items-center justify-center z-20 pointer-events-none`}
               >
                 <div className={`px-12 py-6 rounded-full backdrop-blur-md border-4 ${feedback === 'correct' ? 'bg-green-500/20 border-green-400' : 'bg-red-500/20 border-red-400'}`}>
-                  <span className={`text-6xl font-black drop-shadow-lg ${feedback === 'correct' ? 'text-green-400' : 'text-red-500'}`}>
+                  <span className={`text-3xl md:text-6xl font-black drop-shadow-lg ${feedback === 'correct' ? 'text-green-400' : 'text-red-500'}`}>
                     {feedback === 'correct' ? 'MASTERPIECE!' : 'RUINED!'}
                   </span>
                 </div>

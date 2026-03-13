@@ -605,7 +605,7 @@ const renderCoordinates = (visual: Extract<VisualData, { type: 'coordinates' }>)
   }));
 
   return (
-    <div className="relative aspect-square w-full max-w-[22rem] rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.42),rgba(15,23,42,0.16))] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+    <div className="relative aspect-square w-full max-w-[16rem] md:max-w-[22rem] rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.42),rgba(15,23,42,0.16))] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
       <div
         className="absolute inset-4 grid"
         style={{
@@ -640,7 +640,7 @@ const renderVisual = (visual: VisualData) => {
       return (
         <div className="grid w-full max-w-[24rem] grid-cols-2 gap-3">
           {visual.items.map((item) => (
-            <div key={item} className="rounded-[1.2rem] border border-white/12 bg-white/8 px-3 py-3 text-center text-sm font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:text-lg">
+          <div key={item} className="rounded-[1.2rem] border border-white/12 bg-white/8 px-3 py-2.5 text-center text-xs font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:py-3 md:text-lg">
               {item}
             </div>
           ))}
@@ -648,7 +648,7 @@ const renderVisual = (visual: VisualData) => {
       );
     case 'equation':
       return (
-        <div className="w-full max-w-[24rem] rounded-[1.5rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-5 text-center shadow-[0_18px_44px_rgba(0,0,0,0.22)]">
+        <div className="w-full max-w-[24rem] rounded-[1.5rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-4 md:p-5 text-center shadow-[0_18px_44px_rgba(0,0,0,0.22)]">
           {visual.badge && (
             <div className="mb-3 inline-flex rounded-full border border-white/12 bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-white/70">
               {visual.badge}
@@ -656,7 +656,7 @@ const renderVisual = (visual: VisualData) => {
           )}
           <div className="space-y-2">
             {visual.lines.map((line) => (
-              <div key={line} className="text-lg font-black text-white md:text-3xl">
+              <div key={line} className="text-base font-black text-white md:text-3xl">
                 {line}
               </div>
             ))}
@@ -665,11 +665,11 @@ const renderVisual = (visual: VisualData) => {
       );
     case 'bars':
       return (
-        <div className="flex w-full max-w-[24rem] items-end justify-between gap-3 rounded-[1.5rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] px-4 pb-4 pt-8 shadow-[0_18px_44px_rgba(0,0,0,0.22)]">
+        <div className="flex w-full max-w-[24rem] items-end justify-between gap-2 md:gap-3 rounded-[1.5rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] px-3 md:px-4 pb-3 md:pb-4 pt-6 md:pt-8 shadow-[0_18px_44px_rgba(0,0,0,0.22)]">
           {visual.bars.map((bar) => (
             <div key={bar.label} className="flex flex-1 flex-col items-center gap-2">
               <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/55">{bar.value}</div>
-              <div className="flex h-40 w-full items-end rounded-t-[1rem] border border-white/10 bg-white/6 p-1">
+              <div className="flex h-28 md:h-40 w-full items-end rounded-t-[1rem] border border-white/10 bg-white/6 p-1">
                 <div className={`w-full rounded-[0.8rem] bg-gradient-to-t ${bar.color}`} style={{ height: `${Math.max(18, bar.value * 10)}%` }} />
               </div>
               <div className="text-[11px] font-black uppercase tracking-[0.16em] text-white/80">{bar.label}</div>
@@ -681,10 +681,10 @@ const renderVisual = (visual: VisualData) => {
       return renderCoordinates(visual);
     case 'sequence':
       return (
-        <div className="flex w-full max-w-[26rem] flex-wrap items-center justify-center gap-2 rounded-[1.6rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] px-4 py-5 shadow-[0_18px_44px_rgba(0,0,0,0.22)]">
+        <div className="flex w-full max-w-[26rem] flex-wrap items-center justify-center gap-2 rounded-[1.6rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] px-3 md:px-4 py-4 md:py-5 shadow-[0_18px_44px_rgba(0,0,0,0.22)]">
           {visual.values.map((value, index) => (
             <React.Fragment key={`${value}-${index}`}>
-              <div className="flex h-14 min-w-[3.6rem] items-center justify-center rounded-[1rem] border border-white/12 bg-white/10 px-3 text-lg font-black text-white md:h-16 md:min-w-[4.5rem] md:text-2xl">
+                <div className="flex h-12 min-w-[3rem] items-center justify-center rounded-[1rem] border border-white/12 bg-white/10 px-2.5 text-base font-black text-white md:h-16 md:min-w-[4.5rem] md:px-3 md:text-2xl">
                 {value}
               </div>
               {index < visual.values.length - 1 && <div className="text-white/55">→</div>}
@@ -695,13 +695,13 @@ const renderVisual = (visual: VisualData) => {
     case 'ratio':
       return (
         <div className="grid w-full max-w-[24rem] grid-cols-2 gap-3">
-          <div className="rounded-[1.3rem] border border-white/12 bg-white/10 p-4 text-center shadow-[0_16px_34px_rgba(0,0,0,0.2)]">
+            <div className="rounded-[1.3rem] border border-white/12 bg-white/10 p-3 md:p-4 text-center shadow-[0_16px_34px_rgba(0,0,0,0.2)]">
             <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/55">{visual.leftLabel}</div>
-            <div className="mt-2 text-2xl font-black text-white md:text-3xl">{visual.leftValue}</div>
+              <div className="mt-1.5 md:mt-2 text-xl font-black text-white md:text-3xl">{visual.leftValue}</div>
           </div>
-          <div className="rounded-[1.3rem] border border-white/12 bg-white/10 p-4 text-center shadow-[0_16px_34px_rgba(0,0,0,0.2)]">
+            <div className="rounded-[1.3rem] border border-white/12 bg-white/10 p-3 md:p-4 text-center shadow-[0_16px_34px_rgba(0,0,0,0.2)]">
             <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/55">{visual.rightLabel}</div>
-            <div className="mt-2 text-2xl font-black text-white md:text-3xl">{visual.rightValue}</div>
+              <div className="mt-1.5 md:mt-2 text-xl font-black text-white md:text-3xl">{visual.rightValue}</div>
           </div>
         </div>
       );
@@ -850,11 +850,11 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
   ), [score, targetScore]);
 
   return (
-    <div className={`relative flex h-full w-full flex-col overflow-hidden ${theme.ambient} px-2 pb-2 pt-1 md:px-4 md:pb-4`}>
+    <div className={`relative flex h-full w-full flex-col overflow-hidden ${theme.ambient} px-1.5 pb-1.5 pt-1 md:px-4 md:pb-4`}>
       <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${theme.scene}`} />
       <div className="pointer-events-none absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.22) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
 
-      <div className="relative z-10 flex h-full min-h-0 flex-col gap-2 md:gap-4">
+      <div className="relative z-10 flex h-full min-h-0 flex-col gap-1.5 md:gap-4">
         <GameplayHUD
           title={theme.title}
           avatar={avatar}
@@ -870,50 +870,50 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
           statValue={streak}
         />
 
-        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] shadow-[0_24px_64px_rgba(0,0,0,0.28)] md:rounded-[2.6rem]">
-          <div className="absolute left-3 top-3 z-20 md:left-4 md:top-4">
+        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.8rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] shadow-[0_24px_64px_rgba(0,0,0,0.28)] md:rounded-[2.6rem]">
+          <div className="absolute left-2.5 top-2.5 z-20 md:left-4 md:top-4">
             <button
               onClick={onBack}
-              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/14 bg-black/26 text-white shadow-[0_12px_24px_rgba(0,0,0,0.32)] backdrop-blur-md transition hover:bg-white/12"
+              className="flex h-10 w-10 md:h-11 md:w-11 items-center justify-center rounded-2xl border border-white/14 bg-black/26 text-white shadow-[0_12px_24px_rgba(0,0,0,0.32)] backdrop-blur-md transition hover:bg-white/12"
               aria-label="Back to island"
             >
               <AssetIcon name="back" className="h-5 w-5" />
             </button>
           </div>
 
-          <div className="absolute inset-x-4 top-3 z-20 flex justify-center md:top-4">
-            <div className={`rounded-full border border-white/12 bg-black/28 px-4 py-2 text-center text-[10px] font-black uppercase tracking-[0.22em] shadow-[0_12px_24px_rgba(0,0,0,0.3)] backdrop-blur-md md:text-xs ${theme.badge}`}>
+          <div className="absolute inset-x-4 top-2.5 z-20 flex justify-center md:top-4">
+            <div className={`rounded-full border border-white/12 bg-black/28 px-3 py-1.5 text-center text-[9px] font-black uppercase tracking-[0.18em] shadow-[0_12px_24px_rgba(0,0,0,0.3)] backdrop-blur-md md:px-4 md:py-2 md:text-xs ${theme.badge}`}>
               {meta.focus}
             </div>
           </div>
 
-          <div className="grid min-h-0 flex-1 grid-rows-[1.05fr_0.95fr] gap-2 p-3 pt-16 md:gap-3 md:p-4 md:pt-18 lg:grid-cols-[1.04fr_0.96fr] lg:grid-rows-1 lg:pt-16">
-            <div className={`relative min-h-0 overflow-hidden rounded-[1.6rem] border border-white/12 bg-gradient-to-br ${theme.surface} p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:rounded-[2rem] md:p-5`}>
+          <div className="grid min-h-0 flex-1 grid-rows-[0.98fr_1.02fr] gap-1.5 p-2.5 pt-14 md:gap-3 md:p-4 md:pt-18 lg:grid-cols-[1.04fr_0.96fr] lg:grid-rows-1 lg:pt-16">
+            <div className={`relative min-h-0 overflow-hidden rounded-[1.4rem] border border-white/12 bg-gradient-to-br ${theme.surface} p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:rounded-[2rem] md:p-5`}>
               <div className={`absolute inset-x-5 top-0 h-28 rounded-full bg-gradient-to-br ${theme.prompt} blur-3xl`} />
               <div className="relative flex h-full min-h-0 flex-col">
                 <div className="shrink-0">
-                  <div className="text-[10px] font-black uppercase tracking-[0.24em] text-white/55 md:text-[11px]">Challenge Prompt</div>
-                  <div className="mt-2 text-xl font-black leading-tight text-white md:text-3xl">{question.prompt}</div>
-                  <div className="mt-2 max-w-xl text-xs font-semibold text-white/72 md:text-sm">{question.sublabel}</div>
+                  <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/55 md:text-[11px]">Challenge Prompt</div>
+                  <div className="mt-1.5 text-lg font-black leading-tight text-white md:mt-2 md:text-3xl">{question.prompt}</div>
+                  <div className="mt-1.5 max-w-xl text-[11px] font-semibold text-white/72 md:mt-2 md:text-sm">{question.sublabel}</div>
                 </div>
 
                 <motion.div
                   key={`${question.prompt}-${question.sublabel}`}
                   initial={{ opacity: 0, y: 8, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  className="flex min-h-0 flex-1 items-center justify-center py-4"
+                  className="flex min-h-0 flex-1 items-center justify-center py-2 md:py-4"
                 >
                   {renderVisual(question.visual)}
                 </motion.div>
 
-                <div className="shrink-0 rounded-[1.2rem] border border-white/10 bg-black/22 px-4 py-3 text-center text-[11px] font-bold text-white/84 shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:text-sm">
+                <div className="shrink-0 rounded-[1.1rem] border border-white/10 bg-black/22 px-3 py-2.5 text-center text-[10px] font-bold text-white/84 shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:rounded-[1.2rem] md:px-4 md:py-3 md:text-sm">
                   {visualCaption || statusMessage}
                 </div>
               </div>
             </div>
 
-            <div className="flex min-h-0 flex-col gap-2 md:gap-3">
-              <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3 lg:grid-cols-1 xl:grid-cols-2">
+            <div className="flex min-h-0 flex-col gap-1.5 md:gap-3">
+              <div className="grid grid-cols-1 gap-1.5 md:grid-cols-2 md:gap-3 lg:grid-cols-1 xl:grid-cols-2">
                 {question.options.map((option, index) => {
                   const isSelected = index === selectedIndex;
                   const isCorrect = feedback === 'correct' && index === question.answerIndex;
@@ -925,7 +925,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleAnswer(index)}
                       disabled={Boolean(feedback) || isVictory || isGameOver}
-                      className={`min-h-[4.75rem] rounded-[1.4rem] border px-4 py-4 text-left shadow-[0_14px_30px_rgba(0,0,0,0.16)] transition-all md:min-h-[5.25rem] ${isCorrect
+                      className={`min-h-[4rem] rounded-[1.2rem] border px-3 py-3 text-left shadow-[0_14px_30px_rgba(0,0,0,0.16)] transition-all md:min-h-[5.25rem] md:rounded-[1.4rem] md:px-4 md:py-4 ${isCorrect
                         ? 'border-emerald-200/80 bg-gradient-to-br from-emerald-300/55 to-lime-300/45 text-emerald-950'
                         : isWrongSelected
                           ? 'border-rose-200/80 bg-gradient-to-br from-rose-300/55 to-orange-300/45 text-rose-950'
@@ -934,25 +934,25 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                             : `border-white/12 bg-gradient-to-br ${theme.answer} text-white hover:bg-white/14`}`}
                     >
                       <div className="flex items-start gap-3">
-                        <div className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-[11px] font-black uppercase ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/35' : 'border-white/12 bg-white/8'}`}>
+                        <div className={`mt-0.5 flex h-7 w-7 md:h-8 md:w-8 shrink-0 items-center justify-center rounded-full border text-[10px] md:text-[11px] font-black uppercase ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/35' : 'border-white/12 bg-white/8'}`}>
                           {String.fromCharCode(65 + index)}
                         </div>
-                        <div className="text-sm font-black leading-tight md:text-lg">{option}</div>
+                        <div className="text-[13px] font-black leading-tight md:text-lg">{option}</div>
                       </div>
                     </motion.button>
                   );
                 })}
               </div>
 
-              <div className="grid flex-1 min-h-0 grid-cols-2 gap-2 md:gap-3">
-                <div className="rounded-[1.3rem] border border-white/10 bg-black/20 p-3 shadow-[0_16px_32px_rgba(0,0,0,0.16)] md:rounded-[1.6rem] md:p-4">
-                  <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/50">Status</div>
-                  <div className="mt-2 text-sm font-black leading-tight text-white md:text-lg">{statusMessage}</div>
+              <div className="grid flex-1 min-h-0 grid-cols-2 gap-1.5 md:gap-3">
+                <div className="rounded-[1.1rem] border border-white/10 bg-black/20 p-2.5 shadow-[0_16px_32px_rgba(0,0,0,0.16)] md:rounded-[1.6rem] md:p-4">
+                  <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/50 md:text-[10px] md:tracking-[0.22em]">Status</div>
+                  <div className="mt-1.5 text-[11px] font-black leading-tight text-white md:mt-2 md:text-lg">{statusMessage}</div>
                 </div>
-                <div className="rounded-[1.3rem] border border-white/10 bg-black/20 p-3 shadow-[0_16px_32px_rgba(0,0,0,0.16)] md:rounded-[1.6rem] md:p-4">
-                  <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/50">Target</div>
-                  <div className="mt-2 text-2xl font-black text-white md:text-4xl">{targetScore}</div>
-                  <div className="mt-1 text-[11px] font-semibold text-white/60">Hit the target before the timer ends.</div>
+                <div className="rounded-[1.1rem] border border-white/10 bg-black/20 p-2.5 shadow-[0_16px_32px_rgba(0,0,0,0.16)] md:rounded-[1.6rem] md:p-4">
+                  <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/50 md:text-[10px] md:tracking-[0.22em]">Target</div>
+                  <div className="mt-1.5 text-xl font-black text-white md:mt-2 md:text-4xl">{targetScore}</div>
+                  <div className="mt-1 text-[10px] font-semibold text-white/60 md:text-[11px]">Hit the target before time ends.</div>
                 </div>
               </div>
             </div>

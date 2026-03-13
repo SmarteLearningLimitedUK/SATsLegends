@@ -175,11 +175,11 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
   const progress = Math.min((score / targetScore) * 100, 100);
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-4 relative overflow-hidden bg-fuchsia-50">
+    <div className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden bg-fuchsia-50">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#d946ef 2px, transparent 2px)', backgroundSize: '30px 30px' }} />
 
-      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-3 md:gap-6 h-full flex-1 min-h-0">
+      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-2 md:gap-6 h-full flex-1 min-h-0">
         <GameplayHUD
           title="Polygon Palace"
           avatar={avatar}
@@ -196,15 +196,15 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
         />
 
         {/* Game Area */}
-        <div className="w-full flex-1 relative bg-white/50 backdrop-blur-sm rounded-[3rem] border-4 border-fuchsia-200 shadow-inner overflow-hidden flex flex-col items-center p-8">
+        <div className="w-full flex-1 relative bg-white/50 backdrop-blur-sm rounded-[2rem] md:rounded-[3rem] border-2 md:border-4 border-fuchsia-200 shadow-inner overflow-hidden flex flex-col items-center p-3 md:p-8">
           
-          <div className="bg-white px-8 py-6 rounded-3xl shadow-lg border-2 border-fuchsia-100 mb-12 max-w-2xl w-full text-center">
-            <h3 className="text-3xl font-black text-slate-800">
+          <div className="bg-white px-4 md:px-8 py-4 md:py-6 rounded-[1.6rem] md:rounded-3xl shadow-lg border-2 border-fuchsia-100 mb-4 md:mb-12 max-w-2xl w-full text-center">
+            <h3 className="text-lg md:text-3xl font-black text-slate-800 leading-tight">
               {currentQuestion?.text}
             </h3>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-4xl">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 w-full max-w-4xl flex-1 min-h-0 auto-rows-fr">
             <AnimatePresence mode="popLayout">
               {options.map((shape) => {
                 const isSelected = selectedShapeId === shape.id;
@@ -236,9 +236,9 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
                     whileTap={!feedback ? { scale: 0.95 } : {}}
                     onClick={() => handleSelect(shape)}
                     disabled={!!feedback}
-                    className={`relative aspect-square rounded-3xl border-4 shadow-xl flex flex-col items-center justify-center p-6 transition-colors duration-300 ${buttonStyle}`}
+                    className={`relative min-h-[8.5rem] md:aspect-square rounded-[1.5rem] md:rounded-3xl border-4 shadow-xl flex flex-col items-center justify-center p-3 md:p-6 transition-colors duration-300 ${buttonStyle}`}
                   >
-                    <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-md">
+                    <svg viewBox="0 0 100 100" className="w-full h-full max-h-[7rem] md:max-h-none drop-shadow-md">
                       {shape.svg}
                     </svg>
                     
@@ -247,9 +247,9 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
                       <motion.div 
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
-                        className={`absolute -top-4 -right-4 w-12 h-12 rounded-full flex items-center justify-center border-4 border-white shadow-lg ${isCorrect ? 'bg-green-500' : 'bg-red-500'}`}
+                        className={`absolute -top-3 -right-3 md:-top-4 md:-right-4 w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center border-4 border-white shadow-lg ${isCorrect ? 'bg-green-500' : 'bg-red-500'}`}
                       >
-                        {isCorrect ? <Check className="w-6 h-6 text-white" /> : <X className="w-6 h-6 text-white" />}
+                        {isCorrect ? <Check className="w-5 h-5 md:w-6 md:h-6 text-white" /> : <X className="w-5 h-5 md:w-6 md:h-6 text-white" />}
                       </motion.div>
                     )}
                   </motion.button>

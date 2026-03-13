@@ -171,7 +171,7 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
   const progress = Math.min((score / targetScore) * 100, 100);
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-4 relative overflow-hidden bg-cyan-900 font-sans">
+    <div className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden bg-cyan-900 font-sans">
       {/* River Background */}
       <div className="absolute inset-0 opacity-30 pointer-events-none" style={{ 
         backgroundImage: 'radial-gradient(circle at 50% 50%, #0891b2 2px, transparent 2px)', 
@@ -190,7 +190,7 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
         transition={{ repeat: Infinity, duration: 3, ease: "easeInOut", delay: 0.5 }}
       />
 
-      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-3 md:gap-6 h-full flex-1 min-h-0">
+      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-2 md:gap-6 h-full flex-1 min-h-0">
         <GameplayHUD
           title="Ratio Rapids"
           avatar={avatar}
@@ -207,16 +207,16 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
         />
 
         {/* Game Area */}
-        <div className="w-full flex-1 relative flex flex-col items-center justify-center gap-8">
+        <div className="w-full flex-1 relative flex flex-col items-center justify-center gap-4 md:gap-8">
           
           {problem && (
             <>
               {/* Instruction Panel */}
-              <div className="bg-cyan-950/80 backdrop-blur-md p-8 rounded-[3rem] border-4 border-cyan-700 shadow-2xl text-center max-w-2xl w-full">
-                <h3 className="text-2xl text-cyan-100 font-bold mb-4">
+              <div className="bg-cyan-950/80 backdrop-blur-md p-4 md:p-8 rounded-[2rem] md:rounded-[3rem] border-2 md:border-4 border-cyan-700 shadow-2xl text-center max-w-2xl w-full">
+                <h3 className="text-base md:text-2xl text-cyan-100 font-bold mb-2 md:mb-4">
                   The river demands a ratio of:
                 </h3>
-                <div className="text-4xl font-black text-white flex items-center justify-center gap-4">
+                <div className="text-xl md:text-4xl font-black text-white flex flex-wrap items-center justify-center gap-2 md:gap-4">
                   <span className={problem.colorA.replace('bg-', 'text-')}>{problem.ratioA} {problem.itemA}</span>
                   <span className="text-cyan-500">:</span>
                   <span className={problem.colorB.replace('bg-', 'text-')}>{problem.ratioB} {problem.itemB}</span>
@@ -224,46 +224,46 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
               </div>
 
               {/* Interactive Area */}
-              <div className="flex flex-col md:flex-row gap-8 items-center justify-center w-full max-w-4xl">
+              <div className="flex flex-col md:flex-row gap-3 md:gap-8 items-center justify-center w-full max-w-4xl">
                 
                 {/* Item A */}
-                <div className="bg-cyan-900/60 p-6 rounded-3xl border-2 border-cyan-700 flex flex-col items-center gap-4 flex-1 w-full">
-                  <div className="text-xl font-bold text-cyan-200">{problem.itemA}</div>
-                  <div className="flex items-center gap-4">
+                <div className="bg-cyan-900/60 p-4 md:p-6 rounded-[1.6rem] md:rounded-3xl border-2 border-cyan-700 flex flex-col items-center gap-3 md:gap-4 flex-1 w-full">
+                  <div className="text-base md:text-xl font-bold text-cyan-200 text-center">{problem.itemA}</div>
+                  <div className="flex items-center gap-3 md:gap-4">
                     <button 
                       onClick={() => setPlayerA(Math.max(0, playerA - 1))}
                       disabled={problem.givenA !== null || !!feedback}
-                      className="w-12 h-12 rounded-full bg-cyan-800 text-white font-black text-2xl hover:bg-cyan-700 disabled:opacity-50"
+                      className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-cyan-800 text-white font-black text-xl md:text-2xl hover:bg-cyan-700 disabled:opacity-50"
                     >-</button>
-                    <div className={`text-6xl font-black w-24 text-center ${problem.givenA !== null ? 'text-cyan-400' : 'text-white'}`}>
+                    <div className={`text-4xl md:text-6xl font-black w-16 md:w-24 text-center ${problem.givenA !== null ? 'text-cyan-400' : 'text-white'}`}>
                       {playerA}
                     </div>
                     <button 
                       onClick={() => setPlayerA(playerA + 1)}
                       disabled={problem.givenA !== null || !!feedback}
-                      className="w-12 h-12 rounded-full bg-cyan-800 text-white font-black text-2xl hover:bg-cyan-700 disabled:opacity-50"
+                      className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-cyan-800 text-white font-black text-xl md:text-2xl hover:bg-cyan-700 disabled:opacity-50"
                     >+</button>
                   </div>
                 </div>
 
-                <div className="text-6xl font-black text-cyan-600">:</div>
+                <div className="text-4xl md:text-6xl font-black text-cyan-600">:</div>
 
                 {/* Item B */}
-                <div className="bg-cyan-900/60 p-6 rounded-3xl border-2 border-cyan-700 flex flex-col items-center gap-4 flex-1 w-full">
-                  <div className="text-xl font-bold text-cyan-200">{problem.itemB}</div>
-                  <div className="flex items-center gap-4">
+                <div className="bg-cyan-900/60 p-4 md:p-6 rounded-[1.6rem] md:rounded-3xl border-2 border-cyan-700 flex flex-col items-center gap-3 md:gap-4 flex-1 w-full">
+                  <div className="text-base md:text-xl font-bold text-cyan-200 text-center">{problem.itemB}</div>
+                  <div className="flex items-center gap-3 md:gap-4">
                     <button 
                       onClick={() => setPlayerB(Math.max(0, playerB - 1))}
                       disabled={problem.givenB !== null || !!feedback}
-                      className="w-12 h-12 rounded-full bg-cyan-800 text-white font-black text-2xl hover:bg-cyan-700 disabled:opacity-50"
+                      className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-cyan-800 text-white font-black text-xl md:text-2xl hover:bg-cyan-700 disabled:opacity-50"
                     >-</button>
-                    <div className={`text-6xl font-black w-24 text-center ${problem.givenB !== null ? 'text-cyan-400' : 'text-white'}`}>
+                    <div className={`text-4xl md:text-6xl font-black w-16 md:w-24 text-center ${problem.givenB !== null ? 'text-cyan-400' : 'text-white'}`}>
                       {playerB}
                     </div>
                     <button 
                       onClick={() => setPlayerB(playerB + 1)}
                       disabled={problem.givenB !== null || !!feedback}
-                      className="w-12 h-12 rounded-full bg-cyan-800 text-white font-black text-2xl hover:bg-cyan-700 disabled:opacity-50"
+                      className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-cyan-800 text-white font-black text-xl md:text-2xl hover:bg-cyan-700 disabled:opacity-50"
                     >+</button>
                   </div>
                 </div>
@@ -273,9 +273,9 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
               <button
                 onClick={handleSubmit}
                 disabled={!!feedback || (playerA === 0 && playerB === 0)}
-                className="px-12 py-6 bg-blue-500 text-white text-3xl font-black rounded-3xl shadow-[0_8px_0_#2563eb] hover:translate-y-1 hover:shadow-[0_4px_0_#2563eb] active:translate-y-2 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-4"
+                className="px-6 py-3 md:px-12 md:py-6 bg-blue-500 text-white text-xl md:text-3xl font-black rounded-[1.4rem] md:rounded-3xl shadow-[0_8px_0_#2563eb] hover:translate-y-1 hover:shadow-[0_4px_0_#2563eb] active:translate-y-2 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3 md:gap-4"
               >
-                <Anchor className="w-8 h-8" /> ROW!
+                <Anchor className="w-6 h-6 md:w-8 md:h-8" /> ROW!
               </button>
             </>
           )}
@@ -290,7 +290,7 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
                 className={`absolute inset-0 flex items-center justify-center z-20 pointer-events-none`}
               >
                 <div className={`px-12 py-6 rounded-full backdrop-blur-md border-4 ${feedback === 'correct' ? 'bg-green-500/20 border-green-400' : 'bg-red-500/20 border-red-400'}`}>
-                  <span className={`text-6xl font-black drop-shadow-lg ${feedback === 'correct' ? 'text-green-400' : 'text-red-500'}`}>
+                  <span className={`text-3xl md:text-6xl font-black drop-shadow-lg ${feedback === 'correct' ? 'text-green-400' : 'text-red-500'}`}>
                     {feedback === 'correct' ? 'SAFE PASSAGE!' : 'CRASH!'}
                   </span>
                 </div>

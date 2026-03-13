@@ -156,11 +156,11 @@ const AngleArenaGame: React.FC<AngleArenaGameProps> = ({
   const targetPos = getCoordinates(targetAngle, 40); // 40% radius
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-4 relative overflow-hidden licensed-playfield-bg">
+    <div className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden licensed-playfield-bg">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#94a3b8 2px, transparent 2px)', backgroundSize: '40px 40px' }} />
 
-      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-3 md:gap-6 h-full flex-1 min-h-0">
+      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-2 md:gap-6 h-full flex-1 min-h-0">
         <GameplayHUD
           title="Angle Arena"
           avatar={avatar}
@@ -177,12 +177,12 @@ const AngleArenaGame: React.FC<AngleArenaGameProps> = ({
         />
 
         {/* Game Area */}
-        <div className="w-full flex-1 relative licensed-board-frame overflow-hidden flex flex-col items-center justify-end pb-8">
+        <div className="w-full flex-1 relative licensed-board-frame overflow-hidden flex flex-col items-center justify-end pb-4 md:pb-8">
           
           {/* Protractor / Arena Background */}
-          <div className="absolute bottom-0 w-[80%] aspect-[2/1] border-t-4 border-l-4 border-r-4 border-slate-600 rounded-t-full opacity-30" />
-          <div className="absolute bottom-0 w-[60%] aspect-[2/1] border-t-2 border-l-2 border-r-2 border-slate-500 border-dashed rounded-t-full opacity-20" />
-          <div className="absolute bottom-0 w-[40%] aspect-[2/1] border-t-2 border-l-2 border-r-2 border-slate-500 border-dashed rounded-t-full opacity-20" />
+          <div className="absolute bottom-0 w-[88%] md:w-[80%] aspect-[2/1] border-t-4 border-l-4 border-r-4 border-slate-600 rounded-t-full opacity-30" />
+          <div className="absolute bottom-0 w-[68%] md:w-[60%] aspect-[2/1] border-t-2 border-l-2 border-r-2 border-slate-500 border-dashed rounded-t-full opacity-20" />
+          <div className="absolute bottom-0 w-[48%] md:w-[40%] aspect-[2/1] border-t-2 border-l-2 border-r-2 border-slate-500 border-dashed rounded-t-full opacity-20" />
           
           {/* Angle Markers */}
           {[0, 30, 60, 90, 120, 150, 180].map(angle => {
@@ -190,7 +190,7 @@ const AngleArenaGame: React.FC<AngleArenaGameProps> = ({
             return (
               <div 
                 key={angle} 
-                className="absolute text-slate-500 font-bold text-sm -translate-x-1/2 -translate-y-1/2"
+                className="absolute -translate-x-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-500 md:text-sm"
                 style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
               >
                 {angle}°
@@ -200,16 +200,16 @@ const AngleArenaGame: React.FC<AngleArenaGameProps> = ({
 
           {/* Target */}
           <motion.div 
-            className="absolute w-16 h-16 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center"
+            className="absolute h-12 w-12 md:h-16 md:w-16 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center"
             style={{ left: `${targetPos.x}%`, top: `${targetPos.y}%` }}
             animate={{ scale: [1, 1.1, 1] }}
             transition={{ repeat: Infinity, duration: 2 }}
           >
             <div className="absolute inset-0 bg-red-500 rounded-full opacity-20 animate-ping" />
-            <Target className="w-12 h-12 text-red-500" />
+            <Target className="h-9 w-9 md:h-12 md:w-12 text-red-500" />
             {/* Show target angle only on lower levels */}
             {levelId <= 2 && (
-              <div className="absolute -top-8 bg-slate-800 text-white px-2 py-1 rounded text-xs font-bold border border-slate-600">
+              <div className="absolute -top-7 md:-top-8 bg-slate-800 text-white px-2 py-1 rounded text-[10px] md:text-xs font-bold border border-slate-600">
                 {targetAngle}°
               </div>
             )}
@@ -239,7 +239,7 @@ const AngleArenaGame: React.FC<AngleArenaGameProps> = ({
                 initial={{ opacity: 0, y: -20, scale: 0.5 }}
                 animate={{ opacity: 1, y: -50, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.5 }}
-                className={`absolute top-1/3 text-4xl font-black drop-shadow-lg z-30 ${feedback === 'hit' ? 'text-green-400' : 'text-red-500'}`}
+                className={`absolute top-1/3 text-2xl md:text-4xl font-black drop-shadow-lg z-30 ${feedback === 'hit' ? 'text-green-400' : 'text-red-500'}`}
               >
                 {feedback === 'hit' ? 'BULLSEYE!' : 'MISS!'}
               </motion.div>
@@ -250,7 +250,7 @@ const AngleArenaGame: React.FC<AngleArenaGameProps> = ({
           <div className="relative z-10 flex flex-col items-center">
             {/* Cannon Barrel */}
             <motion.div 
-              className="w-8 h-24 bg-slate-400 rounded-t-lg origin-bottom border-4 border-slate-500 shadow-lg absolute bottom-8"
+              className="absolute bottom-7 md:bottom-8 h-20 w-7 md:h-24 md:w-8 bg-slate-400 rounded-t-lg origin-bottom border-[3px] md:border-4 border-slate-500 shadow-lg"
               animate={{ rotate: playerAngle - 90 }} // 90 is straight up, so subtract 90
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
             >
@@ -258,15 +258,15 @@ const AngleArenaGame: React.FC<AngleArenaGameProps> = ({
             </motion.div>
             
             {/* Cannon Base */}
-            <div className="w-24 h-16 bg-slate-600 rounded-t-full border-4 border-slate-700 shadow-2xl flex items-center justify-center relative z-10 mt-16">
-              <div className="w-8 h-8 bg-slate-800 rounded-full border-2 border-slate-500" />
+            <div className="w-20 h-14 md:w-24 md:h-16 bg-slate-600 rounded-t-full border-4 border-slate-700 shadow-2xl flex items-center justify-center relative z-10 mt-12 md:mt-16">
+              <div className="w-7 h-7 md:w-8 md:h-8 bg-slate-800 rounded-full border-2 border-slate-500" />
             </div>
           </div>
 
           {/* Controls */}
-          <div className="absolute bottom-8 left-8 right-8 flex items-center justify-between gap-8 licensed-overlay-card p-6 z-30">
-            <div className="flex-1 flex flex-col gap-2">
-              <div className="flex justify-between text-slate-300 font-bold">
+          <div className="absolute bottom-3 left-3 right-3 md:bottom-8 md:left-8 md:right-8 flex items-center justify-between gap-3 md:gap-8 licensed-overlay-card p-3 md:p-6 z-30">
+            <div className="flex-1 min-w-0 flex flex-col gap-1.5 md:gap-2">
+              <div className="flex justify-between text-[11px] md:text-base text-slate-300 font-bold">
                 <span>0°</span>
                 <span className="text-cyan-400 text-xl">{playerAngle}°</span>
                 <span>180°</span>
@@ -278,14 +278,14 @@ const AngleArenaGame: React.FC<AngleArenaGameProps> = ({
                 value={playerAngle}
                 onChange={(e) => setPlayerAngle(parseInt(e.target.value))}
                 disabled={isFiring}
-                className="w-full h-4 bg-amber-100/70 rounded-lg appearance-none cursor-pointer licensed-slider"
+                className="w-full h-3 md:h-4 bg-amber-100/70 rounded-lg appearance-none cursor-pointer licensed-slider"
               />
             </div>
             
             <button
               onClick={handleFire}
               disabled={isFiring}
-              className={`px-10 py-4 rounded-2xl font-black text-2xl transition-all licensed-answer-button ${
+              className={`px-5 py-3 md:px-10 md:py-4 rounded-2xl font-black text-lg md:text-2xl transition-all licensed-answer-button ${
                 isFiring 
                   ? 'bg-slate-600 text-slate-400 cursor-not-allowed' 
                   : 'bg-red-500 text-white shadow-[0_6px_0_#991b1b] hover:translate-y-1 hover:shadow-[0_2px_0_#991b1b] active:translate-y-2 active:shadow-none'

@@ -241,7 +241,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
   const progress = Math.min((score / targetScore) * 100, 100);
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-4 relative overflow-hidden bg-amber-950 font-sans">
+    <div className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden bg-amber-950 font-sans">
       {/* Temple Background */}
       <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ 
         backgroundImage: 'radial-gradient(circle at 50% 50%, #d97706 2px, transparent 2px)', 
@@ -249,7 +249,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
       }} />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(217,119,6,0.3)_0%,transparent_70%)] pointer-events-none" />
 
-      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-3 md:gap-6 h-full flex-1 min-h-0">
+      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-2 md:gap-6 h-full flex-1 min-h-0">
         <GameplayHUD
           title="Timekeeper Temple"
           avatar={avatar}
@@ -266,31 +266,31 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
         />
 
         {/* Game Area */}
-        <div className="w-full flex-1 relative flex flex-col items-center justify-center gap-8">
+        <div className="w-full flex-1 relative flex flex-col items-center justify-center gap-4 md:gap-8">
           
           {problem && (
             <>
               {/* Question Tablet */}
-              <div className="bg-amber-100 p-8 rounded-[3rem] border-8 border-amber-600 shadow-2xl text-center max-w-2xl w-full relative">
-                <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-amber-800 p-4 rounded-full border-4 border-amber-600 shadow-lg">
-                  <Hourglass className="w-10 h-10 text-amber-400 animate-pulse" />
+              <div className="bg-amber-100 p-4 md:p-8 rounded-[2rem] md:rounded-[3rem] border-4 md:border-8 border-amber-600 shadow-2xl text-center max-w-2xl w-full relative">
+                <div className="absolute -top-7 md:-top-10 left-1/2 -translate-x-1/2 bg-amber-800 p-3 md:p-4 rounded-full border-4 border-amber-600 shadow-lg">
+                  <Hourglass className="h-7 w-7 md:h-10 md:w-10 text-amber-400 animate-pulse" />
                 </div>
-                <h3 className="text-3xl text-amber-900 font-black mt-4">
+                <h3 className="mt-3 md:mt-4 text-lg md:text-3xl text-amber-900 font-black leading-tight">
                   {problem.question}
                 </h3>
               </div>
 
               {/* Options Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 w-full max-w-3xl">
                 {problem.options.map((opt, i) => (
                   <button
                     key={i}
                     onClick={() => handleAnswer(opt)}
                     disabled={!!feedback}
-                    className="relative group bg-amber-800 border-4 border-amber-600 p-6 rounded-3xl shadow-[0_8px_0_#92400e] hover:translate-y-1 hover:shadow-[0_4px_0_#92400e] active:translate-y-2 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-4"
+                    className="relative group min-h-[4.5rem] md:min-h-[5.5rem] bg-amber-800 border-4 border-amber-600 px-4 py-3 md:p-6 rounded-[1.5rem] md:rounded-3xl shadow-[0_8px_0_#92400e] hover:translate-y-1 hover:shadow-[0_4px_0_#92400e] active:translate-y-2 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 md:gap-4"
                   >
-                    <Clock className="w-8 h-8 text-amber-400 group-hover:rotate-12 transition-transform" />
-                    <span className="text-4xl font-black text-amber-100 drop-shadow-md">
+                    <Clock className="h-6 w-6 md:h-8 md:w-8 text-amber-400 group-hover:rotate-12 transition-transform" />
+                    <span className="text-2xl md:text-4xl font-black text-amber-100 drop-shadow-md">
                       {opt}
                     </span>
                   </button>
@@ -309,7 +309,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
                 className={`absolute inset-0 flex items-center justify-center z-20 pointer-events-none`}
               >
                 <div className={`px-12 py-6 rounded-full backdrop-blur-md border-4 ${feedback === 'correct' ? 'bg-green-500/20 border-green-400' : 'bg-red-500/20 border-red-400'}`}>
-                  <span className={`text-6xl font-black drop-shadow-lg ${feedback === 'correct' ? 'text-green-400' : 'text-red-500'}`}>
+                  <span className={`text-3xl md:text-6xl font-black drop-shadow-lg ${feedback === 'correct' ? 'text-green-400' : 'text-red-500'}`}>
                     {feedback === 'correct' ? 'TIMELESS!' : 'OUT OF SYNC!'}
                   </span>
                 </div>
