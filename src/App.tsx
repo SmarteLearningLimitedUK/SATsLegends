@@ -21,6 +21,7 @@ import MeasurementForgeGame from './components/MeasurementForgeGame';
 import TowerOfFactorsGame from './components/TowerOfFactorsGame';
 import ReasoningGame from './components/reasoning/ReasoningGame';
 import CurriculumChallengeGame from './components/CurriculumChallengeGame';
+import BossEncounterGame, { isBossEncounterGameType } from './components/BossEncounterGame';
 import AvatarSelect from './components/AvatarSelect';
 import DailyRewardsModal from './components/modals/DailyRewardsModal';
 import DailyQuestsModal from './components/modals/DailyQuestsModal';
@@ -28,7 +29,7 @@ import AchievementsModal from './components/modals/AchievementsModal';
 import ParentDashboard from './components/ParentDashboard';
 import LevelResultModal from './components/LevelResultModal';
 import GameRulesModal from './components/GameRulesModal';
-import { GAME_META } from './gameMeta';
+import { BOSS_BATTLE_RULES, GAME_META } from './gameMeta';
 import {
   GAME_AUDIO_STORAGE_KEY,
   GAME_HUD_HELP_EVENT,
@@ -62,9 +63,10 @@ const createDefaultPlayer = (parsed?: Partial<PlayerData> | null): PlayerData =>
   dailyQuests: parsed?.dailyQuests || INITIAL_DAILY_QUESTS,
   achievements: parsed?.achievements || [],
   customSpriteUrl: parsed?.customSpriteUrl,
-  stats: parsed?.stats || {
-    totalStars: 0,
-    totalGamesPlayed: 0,
+  stats: {
+    totalStars: parsed?.stats?.totalStars || 0,
+    totalGamesPlayed: parsed?.stats?.totalGamesPlayed || 0,
+    totalCoinsEarned: parsed?.stats?.totalCoinsEarned || 0,
   },
 });
 
@@ -241,6 +243,7 @@ const App: React.FC = () => {
       const stats = {
         totalStars: totalTrackedStars,
         totalGamesPlayed: (prev.stats?.totalGamesPlayed || 0) + 1,
+        totalCoinsEarned: (prev.stats?.totalCoinsEarned || 0) + earnedCoins,
       };
 
       const achievements = [...(prev.achievements || [])];
@@ -328,9 +331,23 @@ const App: React.FC = () => {
     }
 
     const nextLevel = selectedIsland.levels.find(level => level.id === selectedLevel.id + 1);
+    const completedInIsland = player.completedLevels[selectedIsland.id] || [];
     setLevelResult(null);
 
     if (nextLevel && !nextLevel.isLocked) {
+      const canEnterNextLevel = nextLevel.isBoss
+        ? selectedIsland.levels
+            .filter(level => level.id < nextLevel.id)
+            .every(level => completedInIsland.includes(level.id))
+          && (player.stats?.totalCoinsEarned || 0) >= (nextLevel.bossUnlockCoins || 0)
+        : true;
+
+      if (!canEnterNextLevel) {
+        setSelectedLevel(null);
+        setScreen('island_levels');
+        return;
+      }
+
       setSelectedLevel(nextLevel);
       setScreen('gameplay');
       return;
@@ -346,6 +363,10 @@ const App: React.FC = () => {
       ...prev,
       coins: reward.type === 'coins' ? prev.coins + reward.amount : prev.coins,
       gems: reward.type === 'gems' ? prev.gems + reward.amount : prev.gems,
+      stats: {
+        ...prev.stats,
+        totalCoinsEarned: (prev.stats?.totalCoinsEarned || 0) + (reward.type === 'coins' ? reward.amount : 0),
+      },
       claimedDailyRewardToday: true,
     }));
     setShowDailyRewards(false);
@@ -362,6 +383,10 @@ const App: React.FC = () => {
         coins: quest.reward.type === 'coins' ? prev.coins + quest.reward.amount : prev.coins,
         gems: quest.reward.type === 'gems' ? prev.gems + quest.reward.amount : prev.gems,
         xp: quest.reward.type === 'xp' ? prev.xp + quest.reward.amount : prev.xp,
+        stats: {
+          ...prev.stats,
+          totalCoinsEarned: (prev.stats?.totalCoinsEarned || 0) + (quest.reward.type === 'coins' ? quest.reward.amount : 0),
+        },
         dailyQuests: prev.dailyQuests.map(q =>
           q.id === questId ? { ...q, isClaimed: true } : q,
         ),
@@ -371,6 +396,19 @@ const App: React.FC = () => {
 
   const renderGameplay = () => {
     if (!selectedLevel) return null;
+
+    if (selectedLevel.isBoss && isBossEncounterGameType(selectedLevel.gameType)) {
+      return (
+        <BossEncounterGame
+          gameType={selectedLevel.gameType}
+          levelId={selectedLevel.id}
+          avatarId={player.avatarId}
+          onVictory={handleGameVictory}
+          onGameOver={handleGameOver}
+          onBack={() => setScreen('island_levels')}
+        />
+      );
+    }
 
     const sharedProps = {
       levelId: selectedLevel.id,
@@ -689,7 +727,13 @@ const App: React.FC = () => {
       <GameRulesModal
         isOpen={showGameRules}
         onClose={() => setShowGameRules(false)}
-        rules={selectedLevel?.gameType ? GAME_META[selectedLevel.gameType]?.rules || null : null}
+        rules={
+          selectedLevel?.isBoss
+            ? BOSS_BATTLE_RULES
+            : selectedLevel?.gameType
+              ? GAME_META[selectedLevel.gameType]?.rules || null
+              : null
+        }
       />
 
       {

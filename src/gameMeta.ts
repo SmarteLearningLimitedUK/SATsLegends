@@ -12,6 +12,16 @@ export interface GameMeta {
   rules: GameRuleSet;
 }
 
+export const BOSS_BATTLE_RULES: GameRuleSet = {
+  title: 'Boss Battle',
+  summary: 'Face the island boss in a 10-question SATs duel built from that island topic.',
+  bullets: [
+    'Each correct answer damages the boss health bar.',
+    'You need at least 8 correct answers out of 10 to win.',
+    'Wrong answers boost the boss, so accuracy matters more than rushing.',
+  ],
+};
+
 export const GAME_META: Record<MiniGameType, GameMeta> = {
   quiz: {
     label: 'Quiz',

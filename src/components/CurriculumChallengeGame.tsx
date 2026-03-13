@@ -7,6 +7,7 @@ import { GAME_META } from '../gameMeta';
 import { triggerHaptic } from '../haptics';
 import BossPortrait from './BossPortrait';
 import GameActionDock from './GameActionDock';
+import GameplaySceneBackdrop from './GameplaySceneBackdrop';
 import GameplayHUD from './GameplayHUD';
 import { Star } from './GameIcons';
 
@@ -872,6 +873,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
 
   return (
     <div className={`relative flex h-full w-full flex-col overflow-hidden ${theme.ambient} px-1.5 pb-1.5 pt-1 md:px-4 md:pb-4`}>
+      <GameplaySceneBackdrop gameType={gameType} />
       <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${theme.scene}`} />
       <div className="pointer-events-none absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.22) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
 
@@ -899,8 +901,9 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
           </div>
 
           <div className="grid min-h-0 flex-1 grid-rows-[0.98fr_1.02fr] gap-1.5 p-2.5 pt-14 md:gap-3 md:p-4 md:pt-18 lg:grid-cols-[1.04fr_0.96fr] lg:grid-rows-1 lg:pt-16">
-            <div className={`relative min-h-0 overflow-hidden rounded-[1.4rem] border border-white/12 bg-gradient-to-br ${theme.surface} p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:rounded-[2rem] md:p-5`}>
+            <div className={`relative min-h-0 overflow-hidden rounded-[1.4rem] border border-white/12 bg-gradient-to-br ${theme.surface} p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_44px_rgba(0,0,0,0.18)] md:rounded-[2rem] md:p-5`}>
               <div className={`absolute inset-x-5 top-0 h-28 rounded-full bg-gradient-to-br ${theme.prompt} blur-3xl`} />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(12,18,28,0)_24%,rgba(12,18,28,0.16)_100%)]" />
               <div className="relative flex h-full min-h-0 flex-col">
                 <div className="shrink-0">
                   <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/55 md:text-[11px]">Challenge Prompt</div>

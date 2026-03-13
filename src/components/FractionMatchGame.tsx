@@ -6,6 +6,7 @@ import { getBossEncounter } from '../bossMeta';
 import BossPortrait from './BossPortrait';
 import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
+import GameplaySceneBackdrop from './GameplaySceneBackdrop';
 import { Star } from './GameIcons';
 import { triggerHaptic } from '../haptics';
 import { FRACTION_MATCH_ASSETS } from '../assets/fraction_match';
@@ -408,6 +409,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden bg-[radial-gradient(circle_at_top,#5b3b1a_0%,#23130b_28%,#120d0d_58%,#050608_100%)] px-2 pb-2 pt-1 md:px-4 md:pb-4">
+      <GameplaySceneBackdrop gameType="fraction_match" className="opacity-90" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(250,204,21,0.16),transparent_26%),radial-gradient(circle_at_top_left,rgba(132,204,22,0.14),transparent_24%),radial-gradient(circle_at_bottom_right,rgba(245,158,11,0.14),transparent_28%)]" />
       <div className="pointer-events-none absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(rgba(255,244,214,0.2) 1px, transparent 1px)', backgroundSize: '26px 26px' }} />
 

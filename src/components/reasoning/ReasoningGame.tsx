@@ -4,6 +4,7 @@ import LogicSort from './LogicSort';
 import ShapeShift from './ShapeShift';
 import MatrixMatch from './MatrixMatch';
 import GameActionDock from '../GameActionDock';
+import GameplaySceneBackdrop from '../GameplaySceneBackdrop';
 
 interface ReasoningGameProps {
   gameType: string;
@@ -35,6 +36,7 @@ const ReasoningGame: React.FC<ReasoningGameProps> = ({ gameType, isBoss = false,
 
   return (
     <div className="relative flex h-full w-full min-h-0 flex-col overflow-hidden">
+      <GameplaySceneBackdrop gameType={gameType as any} />
       <div className="flex min-h-0 flex-1 items-stretch justify-center overflow-hidden pt-0">
         {renderGame()}
       </div>

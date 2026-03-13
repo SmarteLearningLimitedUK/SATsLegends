@@ -35,6 +35,7 @@ export interface LevelData {
   stars: number;
   isLocked: boolean;
   isBoss?: boolean;
+  bossUnlockCoins?: number;
   gameType?: MiniGameType;
 }
 
@@ -116,6 +117,7 @@ export interface PlayerData {
   stats: {
     totalStars: number;
     totalGamesPlayed: number;
+    totalCoinsEarned: number;
   };
 }
 

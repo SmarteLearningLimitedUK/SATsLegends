@@ -52,7 +52,7 @@ export const ISLANDS: IslandData[] = [
       { id: 2, stars: 2, isLocked: false, gameType: 'calculation_clash' },
       { id: 3, stars: 0, isLocked: false, gameType: 'monster_market' },
       { id: 4, stars: 0, isLocked: false, gameType: 'prime_pop' },
-      { id: 5, stars: 0, isLocked: false, isBoss: true, gameType: 'tower_of_factors' },
+      { id: 5, stars: 0, isLocked: false, isBoss: true, bossUnlockCoins: 350, gameType: 'tower_of_factors' },
     ]
   },
   {
@@ -71,7 +71,7 @@ export const ISLANDS: IslandData[] = [
       { id: 2, stars: 0, isLocked: false, gameType: 'percent_pulse' },
       { id: 3, stars: 0, isLocked: false, gameType: 'fraction_match' },
       { id: 4, stars: 0, isLocked: false, gameType: 'cloud_collapse' },
-      { id: 5, stars: 0, isLocked: false, isBoss: true, gameType: 'fraction_match' },
+      { id: 5, stars: 0, isLocked: false, isBoss: true, bossUnlockCoins: 700, gameType: 'fraction_match' },
     ]
   },
   {
@@ -90,7 +90,7 @@ export const ISLANDS: IslandData[] = [
       { id: 2, stars: 0, isLocked: false, gameType: 'polygon_palace' },
       { id: 3, stars: 0, isLocked: false, gameType: 'coordinate_quest' },
       { id: 4, stars: 0, isLocked: false, gameType: 'transform_temple' },
-      { id: 5, stars: 0, isLocked: false, isBoss: true, gameType: 'transform_temple' },
+      { id: 5, stars: 0, isLocked: false, isBoss: true, bossUnlockCoins: 1050, gameType: 'transform_temple' },
     ]
   },
   {
@@ -109,7 +109,7 @@ export const ISLANDS: IslandData[] = [
       { id: 2, stars: 0, isLocked: false, gameType: 'potion_pour' },
       { id: 3, stars: 0, isLocked: false, gameType: 'ratio_rapids' },
       { id: 4, stars: 0, isLocked: false, gameType: 'scale_safari' },
-      { id: 5, stars: 0, isLocked: false, isBoss: true, gameType: 'scale_safari' },
+      { id: 5, stars: 0, isLocked: false, isBoss: true, bossUnlockCoins: 1450, gameType: 'scale_safari' },
     ]
   },
   {
@@ -128,7 +128,7 @@ export const ISLANDS: IslandData[] = [
       { id: 2, stars: 0, isLocked: false, gameType: 'timekeeper_temple' },
       { id: 3, stars: 0, isLocked: false, gameType: 'chart_chase' },
       { id: 4, stars: 0, isLocked: false, gameType: 'mean_machine' },
-      { id: 5, stars: 0, isLocked: false, isBoss: true, gameType: 'chart_chase' },
+      { id: 5, stars: 0, isLocked: false, isBoss: true, bossUnlockCoins: 1850, gameType: 'chart_chase' },
     ]
   },
   {
@@ -147,7 +147,7 @@ export const ISLANDS: IslandData[] = [
       { id: 2, stars: 0, isLocked: false, gameType: 'rule_runner' },
       { id: 3, stars: 0, isLocked: false, gameType: 'sequence_sprint' },
       { id: 4, stars: 0, isLocked: false, gameType: 'logic_sort' },
-      { id: 5, stars: 0, isLocked: false, isBoss: true, gameType: 'matrix_match' },
+      { id: 5, stars: 0, isLocked: false, isBoss: true, bossUnlockCoins: 2300, gameType: 'matrix_match' },
     ]
   },
 ];
