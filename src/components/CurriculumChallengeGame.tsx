@@ -643,9 +643,9 @@ const renderVisual = (visual: VisualData) => {
   switch (visual.type) {
     case 'tokens':
       return (
-        <div className="grid w-full max-w-[24rem] grid-cols-2 gap-3">
+        <div className="grid w-full max-w-[22rem] grid-cols-2 gap-2 md:max-w-[24rem] md:gap-3">
           {visual.items.map((item) => (
-          <div key={item} className="rounded-[1.2rem] border border-white/12 bg-white/8 px-3 py-2.5 text-center text-xs font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:py-3 md:text-lg">
+          <div key={item} className="rounded-[1rem] border border-white/12 bg-white/8 px-2.5 py-2 text-center text-[11px] font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:rounded-[1.2rem] md:px-3 md:py-3 md:text-lg">
               {item}
             </div>
           ))}
@@ -653,15 +653,15 @@ const renderVisual = (visual: VisualData) => {
       );
     case 'equation':
       return (
-        <div className="w-full max-w-[24rem] rounded-[1.5rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-4 md:p-5 text-center shadow-[0_18px_44px_rgba(0,0,0,0.22)]">
+        <div className="w-full max-w-[22rem] rounded-[1.2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-3 text-center shadow-[0_18px_44px_rgba(0,0,0,0.22)] md:max-w-[24rem] md:rounded-[1.5rem] md:p-5">
           {visual.badge && (
-            <div className="mb-3 inline-flex rounded-full border border-white/12 bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-white/70">
+            <div className="mb-2 inline-flex rounded-full border border-white/12 bg-white/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.18em] text-white/70 md:mb-3 md:px-3 md:text-[10px] md:tracking-[0.22em]">
               {visual.badge}
             </div>
           )}
-          <div className="space-y-2">
+          <div className="space-y-1.5 md:space-y-2">
             {visual.lines.map((line) => (
-              <div key={line} className="text-base font-black text-white md:text-3xl">
+              <div key={line} className="text-[1.1rem] font-black text-white md:text-3xl">
                 {line}
               </div>
             ))}
@@ -670,14 +670,14 @@ const renderVisual = (visual: VisualData) => {
       );
     case 'bars':
       return (
-        <div className="flex w-full max-w-[24rem] items-end justify-between gap-2 md:gap-3 rounded-[1.5rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] px-3 md:px-4 pb-3 md:pb-4 pt-6 md:pt-8 shadow-[0_18px_44px_rgba(0,0,0,0.22)]">
+        <div className="flex w-full max-w-[22rem] items-end justify-between gap-1.5 rounded-[1.2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] px-2.5 pb-2.5 pt-4 shadow-[0_18px_44px_rgba(0,0,0,0.22)] md:max-w-[24rem] md:gap-3 md:rounded-[1.5rem] md:px-4 md:pb-4 md:pt-8">
           {visual.bars.map((bar) => (
-            <div key={bar.label} className="flex flex-1 flex-col items-center gap-2">
-              <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/55">{bar.value}</div>
-              <div className="flex h-28 md:h-40 w-full items-end rounded-t-[1rem] border border-white/10 bg-white/6 p-1">
+            <div key={bar.label} className="flex flex-1 flex-col items-center gap-1.5 md:gap-2">
+              <div className="text-[9px] font-black uppercase tracking-[0.12em] text-white/55 md:text-[10px] md:tracking-[0.18em]">{bar.value}</div>
+              <div className="flex h-20 md:h-40 w-full items-end rounded-t-[0.8rem] border border-white/10 bg-white/6 p-1 md:rounded-t-[1rem]">
                 <div className={`w-full rounded-[0.8rem] bg-gradient-to-t ${bar.color}`} style={{ height: `${Math.max(18, bar.value * 10)}%` }} />
               </div>
-              <div className="text-[11px] font-black uppercase tracking-[0.16em] text-white/80">{bar.label}</div>
+              <div className="text-[9px] font-black uppercase tracking-[0.12em] text-white/80 md:text-[11px] md:tracking-[0.16em]">{bar.label}</div>
             </div>
           ))}
         </div>

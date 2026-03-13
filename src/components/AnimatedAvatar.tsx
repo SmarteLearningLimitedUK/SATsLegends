@@ -71,8 +71,16 @@ const AnimatedAvatar: React.FC<AnimatedAvatarProps> = ({
   return (
     <motion.div
       className={`relative overflow-visible ${className}`.trim()}
-      animate={floating ? { y: [0, -4, 0], rotate: [0, 1.25, 0], scale: [1, 1.018, 1] } : { scale: [1, 1.01, 1] }}
-      transition={floating ? { duration: 4.8, repeat: Infinity, ease: 'easeInOut' } : { duration: 5.2, repeat: Infinity, ease: 'easeInOut' }}
+      animate={
+        floating
+          ? { y: [0, -5, -2, 0], x: [0, 1, 0, -1, 0], scale: [1, 1.018, 1.012, 1] }
+          : { y: [0, -1.5, 0], scale: [1, 1.01, 1] }
+      }
+      transition={
+        floating
+          ? { duration: 4.8, repeat: Infinity, ease: 'easeInOut' }
+          : { duration: 4.4, repeat: Infinity, ease: 'easeInOut' }
+      }
     >
       <motion.div
         className="pointer-events-none absolute inset-[14%] rounded-full bg-white/20 blur-xl"
