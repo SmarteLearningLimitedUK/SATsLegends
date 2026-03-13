@@ -263,7 +263,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
         {islandProgress.map(({ island, isUnlocked, completedCount, earnedStars, maxStars, completion }, index) => {
           const isActive = index === activeIndex;
           const palette = ISLAND_PALETTES[island.id] || ISLAND_PALETTES[1];
-          const nextLevelLabel = completedCount >= island.levels.length ? 'Boss cleared' : `Next stage ${Math.min(completedCount + 1, island.levels.length)}`;
 
           return (
             <section
@@ -333,45 +332,25 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                 <div className="casual-panel-strong relative overflow-hidden rounded-[2rem] border border-white/16 p-4 text-white shadow-[0_28px_80px_rgba(2,6,23,0.4)] md:rounded-[2.6rem] md:p-7">
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.12),transparent_22%),radial-gradient(circle_at_bottom_left,rgba(34,211,238,0.12),transparent_24%)] opacity-90" />
                   <div className="relative">
-                    <div className="mb-2 flex flex-wrap items-center gap-2 md:mb-4 md:gap-3">
+                    <div className="mb-3 flex items-center justify-between gap-3 md:mb-5">
                       <span className="casual-ribbon-chip rounded-full px-2.5 py-1 text-[8px] font-black uppercase tracking-[0.26em] text-white/85 md:px-4 md:py-2 md:text-[10px]">
                         {island.name}
                       </span>
-                      <span className="casual-ribbon-chip hidden rounded-full px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.3em] text-cyan-100 md:inline-flex md:px-4 md:py-2 md:text-[10px]">
-                        {isUnlocked ? nextLevelLabel : 'Complete previous boss'}
+                      <span className="text-lg font-black text-white md:text-3xl">
+                        {completion}%
                       </span>
                     </div>
 
-                    <h3 className="text-[1.15rem] font-black tracking-tight text-white drop-shadow-[0_6px_18px_rgba(2,6,23,0.35)] md:text-[3.2rem]">
-                      {isUnlocked ? 'Choose your next route' : 'Progress gate ahead'}
-                    </h3>
-                    <p className="mt-1.5 text-[11px] leading-relaxed text-slate-200/82 md:mt-2 md:text-base">
-                      {isUnlocked
-                        ? `Your current island completion is ${completion}%. Push deeper, improve your stars, and unlock the next world by clearing the boss path.`
-                        : 'This island is still locked. Clear the previous island boss and the route will open automatically.'}
-                    </p>
-
-                    <div className="mt-3 hidden grid-cols-3 gap-2 md:mt-6 md:grid md:gap-3">
-                      <div className="casual-stat-shell rounded-[1.2rem] border border-white/12 p-3 md:rounded-[1.6rem] md:p-4">
-                        <div className="text-[8px] font-black uppercase tracking-[0.22em] text-slate-100/56 md:text-[10px]">Progress</div>
-                        <div className="mt-1 text-sm font-black md:text-2xl">{completedCount} / {island.levels.length}</div>
-                      </div>
-                      <div className="casual-stat-shell rounded-[1.2rem] border border-white/12 p-3 md:rounded-[1.6rem] md:p-4">
-                        <div className="text-[8px] font-black uppercase tracking-[0.22em] text-slate-100/56 md:text-[10px]">Stars</div>
-                        <div className="mt-1 text-sm font-black md:text-2xl">{earnedStars} / {maxStars}</div>
-                      </div>
-                      <div className="casual-stat-shell rounded-[1.2rem] border border-white/12 p-3 md:rounded-[1.6rem] md:p-4">
-                        <div className="text-[8px] font-black uppercase tracking-[0.22em] text-slate-100/56 md:text-[10px]">Status</div>
-                        <div className="mt-1 text-sm font-black md:text-2xl">{isUnlocked ? `${completion}%` : 'Locked'}</div>
-                      </div>
+                    <div className="mb-3 text-[11px] font-bold uppercase tracking-[0.24em] text-slate-100/58 md:mb-4 md:text-[10px]">
+                      {completedCount} of {island.levels.length} mini-games complete
                     </div>
 
-                    <div className="mt-3 md:mt-6">
-                      <div className="mb-1 flex items-center justify-between text-[8px] font-black uppercase tracking-[0.24em] text-slate-100/58 md:mb-1.5 md:text-[10px]">
-                        <span>Island completion</span>
+                    <div className="mt-2 md:mt-4">
+                      <div className="mb-1.5 flex items-center justify-between text-[8px] font-black uppercase tracking-[0.24em] text-slate-100/58 md:text-[10px]">
+                        <span>Completion</span>
                         <span>{completion}%</span>
                       </div>
-                      <div className="h-2.5 overflow-hidden rounded-full border border-white/10 bg-black/35 md:h-4">
+                      <div className="h-3 overflow-hidden rounded-full border border-white/10 bg-black/35 md:h-4">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${completion}%` }}
@@ -380,7 +359,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                       </div>
                     </div>
 
-                    <div className="mt-4 flex flex-col gap-2 md:mt-6 md:flex-row md:items-center md:justify-between md:gap-3">
+                    <div className="mt-4 flex flex-col gap-2 md:mt-6">
                       <button
                         onClick={() => isUnlocked && onSelectIsland(island)}
                         disabled={!isUnlocked}
@@ -391,12 +370,12 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                         }`}
                       >
                         {isUnlocked ? <AssetIcon name="play" className="h-4 w-4 md:h-5 md:w-5" /> : <AssetIcon name="plusSquare" className="h-4 w-4 md:h-5 md:w-5" />}
-                        {isUnlocked ? 'Open island path' : 'Island locked'}
+                        {isUnlocked ? "Let's go" : 'Island locked'}
                       </button>
 
-                      <div className="casual-ribbon-chip hidden items-center justify-center gap-2 rounded-full px-3 py-2 text-[10px] font-black text-white/85 md:inline-flex md:justify-start md:px-4 md:py-2.5 md:text-sm">
+                      <div className="casual-ribbon-chip inline-flex items-center justify-center gap-2 rounded-full px-3 py-2 text-[10px] font-black text-white/85 md:w-fit md:justify-start md:px-4 md:py-2.5 md:text-sm">
                         <AssetIcon name="star" className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                        Best rewards persist between runs
+                        {earnedStars} / {maxStars} stars earned
                       </div>
                     </div>
                   </div>
