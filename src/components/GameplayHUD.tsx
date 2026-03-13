@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { AvatarData } from '../types';
 import AssetIcon from './AssetIcon';
+import AnimatedAvatar from './AnimatedAvatar';
 import progressBarAsset from '../assets/casual_ui/hud/progress_bar_1__fg.png';
 import progressBarBgAsset from '../assets/casual_ui/hud/progress_bar_1__bg.png';
 import profileContainerAsset from '../assets/casual_ui/hud/hud__profile_container.png';
@@ -43,10 +44,14 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
           <div className="flex items-center gap-3 md:gap-4 min-w-0">
             <motion.div
               whileHover={{ scale: 1.06, rotate: -4 }}
-              className={`${avatar?.color || 'bg-slate-200'} h-12 w-12 md:h-20 md:w-20 rounded-[1.4rem] md:rounded-[2rem] flex items-center justify-center text-2xl md:text-4xl border-2 border-white/70 relative overflow-hidden shrink-0 bg-center bg-cover`}
+              className={`${avatar?.color || 'bg-slate-200'} h-12 w-12 md:h-20 md:w-20 rounded-[1.4rem] md:rounded-[2rem] flex items-center justify-center border-2 border-white/70 relative overflow-hidden shrink-0 bg-center bg-cover`}
             >
               <div className="absolute inset-0 opacity-95" style={{ backgroundImage: `url(${profileContainerAsset})`, backgroundSize: '100% 100%' }} />
-              <span className="relative">{avatar?.image || '❓'}</span>
+              <AnimatedAvatar
+                avatar={avatar}
+                className="relative z-10 h-full w-full"
+                imageClassName="object-bottom scale-[1.18] translate-y-[6%]"
+              />
             </motion.div>
             <div className="min-w-0">
               <div className="text-[11px] md:text-xs font-black uppercase tracking-[0.28em] text-slate-500">Gameplay</div>

@@ -2,6 +2,7 @@
 
 @theme {
   --font-fredoka: "Fredoka", sans-serif;
+  --font-display: "Baloo 2", "Fredoka", sans-serif;
 }
 
 @layer utilities {
@@ -105,6 +106,26 @@ button {
   to {
     transform: scale(1.18);
     opacity: 0.7;
+  }
+}
+
+@keyframes splash-glow {
+  from {
+    transform: scale(0.96);
+    opacity: 0.5;
+  }
+  to {
+    transform: scale(1.04);
+    opacity: 0.9;
+  }
+}
+
+@keyframes splash-shimmer {
+  0% {
+    transform: translateX(-140%) skewX(-18deg);
+  }
+  100% {
+    transform: translateX(180%) skewX(-18deg);
   }
 }
 
@@ -405,49 +426,74 @@ button {
 }
 
 .casual-ribbon-chip {
-  border: 1px solid rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.16);
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02)),
-    url('./assets/casual_ui/dialogs_panels/dialog__tag.png') center/100% 100% no-repeat;
+    radial-gradient(circle at top, rgba(255,255,255,0.24), transparent 58%),
+    linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.05)),
+    linear-gradient(135deg, rgba(56,189,248,0.24), rgba(129,140,248,0.14));
   color: #f8fafc;
   text-shadow: 0 1px 0 rgba(0,0,0,0.25);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.2),
+    0 10px 20px rgba(2,6,23,0.16);
+  backdrop-filter: blur(16px);
 }
 
 .casual-tab-shell {
   border: 1px solid rgba(255,255,255,0.16);
   background:
-    linear-gradient(180deg, rgba(12,18,30,0.16), rgba(12,18,30,0.04)),
-    url('./assets/casual_ui/dialogs_panels/tab_bar.png') center/100% 100% no-repeat;
+    radial-gradient(circle at top, rgba(255,255,255,0.18), transparent 52%),
+    linear-gradient(180deg, rgba(15,23,42,0.48), rgba(15,23,42,0.22));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.14),
+    0 18px 36px rgba(2,6,23,0.2);
+  backdrop-filter: blur(18px);
 }
 
 .casual-stat-shell {
   border: 1px solid rgba(255,255,255,0.16);
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02)),
-    url('./assets/casual_ui/dialogs_panels/currency_display_bar.png') center/100% 100% no-repeat;
+    radial-gradient(circle at top, rgba(255,255,255,0.2), transparent 54%),
+    linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05)),
+    linear-gradient(135deg, rgba(15,23,42,0.34), rgba(30,41,59,0.12));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.16),
+    0 14px 32px rgba(2,6,23,0.18);
+  backdrop-filter: blur(18px);
 }
 
 .casual-nav-shell {
-  border: 1px solid rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.16);
   background:
-    linear-gradient(180deg, rgba(12,18,30,0.24), rgba(12,18,30,0.14)),
-    url('./assets/casual_ui/dialogs_panels/tab_bar.png') center/100% 100% no-repeat;
-  box-shadow: 0 20px 45px rgba(0,0,0,0.3);
+    radial-gradient(circle at top, rgba(255,255,255,0.16), transparent 52%),
+    linear-gradient(180deg, rgba(15,23,42,0.54), rgba(15,23,42,0.24));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.16),
+    0 22px 44px rgba(2,6,23,0.28);
+  backdrop-filter: blur(20px);
 }
 
 .casual-nav-button-active {
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.08)),
-    url('./assets/casual_ui/inputs/btn_6a.png') center/100% 100% no-repeat;
+    radial-gradient(circle at top, rgba(255,255,255,0.22), transparent 56%),
+    linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08)),
+    linear-gradient(135deg, rgba(125,211,252,0.58), rgba(96,165,250,0.4));
   color: #082f49;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.28),
+    0 12px 22px rgba(14,116,144,0.22);
 }
 
 .casual-action-button {
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.18), rgba(0,0,0,0.04)),
-    url('./assets/casual_ui/inputs/btn_3.png') center/100% 100% no-repeat;
+    radial-gradient(circle at top, rgba(255,255,255,0.28), transparent 58%),
+    linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08)),
+    linear-gradient(135deg, rgba(103,232,249,0.84), rgba(129,140,248,0.62));
   border: 2px solid rgba(255,255,255,0.16);
   color: white;
   text-shadow: 0 2px 0 rgba(0,0,0,0.25);
-  box-shadow: 0 8px 0 rgba(83, 46, 15, 0.75), 0 14px 28px rgba(0,0,0,0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.24),
+    0 10px 24px rgba(14,116,144,0.22);
+  backdrop-filter: blur(16px);
 }

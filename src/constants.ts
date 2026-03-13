@@ -1,4 +1,5 @@
 import { AvatarData, IslandData, ShopItem, DailyQuest, MathFamily, CloudCollapseLevelConfig, PotionPourLevelConfig, Achievement } from "./types";
+import { CHARACTER_AVATARS } from './assets/characters';
 
 export const ACHIEVEMENTS: Achievement[] = [
   { id: 'first_win', title: 'First Victory', description: 'Complete your first level', icon: '🏆', type: 'levels', target: 1 },
@@ -26,89 +27,7 @@ export const INITIAL_DAILY_QUESTS: DailyQuest[] = [
   { id: 'q2', description: 'Earn 3 stars in a level', target: 1, current: 0, reward: { type: 'xp', amount: 50 }, isClaimed: false },
   { id: 'q3', description: 'Visit the shop', target: 1, current: 0, reward: { type: 'gems', amount: 2 }, isClaimed: false },
 ];
-
-export const AVATARS: AvatarData[] = [
-  {
-    id: 'green_slime',
-    name: 'Green Slime',
-    image: '🟢',
-    color: 'bg-green-100',
-    rarity: 'Common',
-    level: 1,
-    imagePrompt: "A high-quality, chaos kawaii style monster, simple green slime with big expressive eyes, small mouth, vibrant green color, glossy texture, detailed digital art, game asset style, white background.",
-    sprite: { row: 0, colStart: 0, frames: 4 }
-  },
-  {
-    id: 'horned_slime',
-    name: 'Horned Slime',
-    image: '😈',
-    color: 'bg-green-200',
-    rarity: 'Common',
-    level: 1,
-    imagePrompt: "A high-quality, chaos kawaii style monster, happy green slime with small orange horns, tongue sticking out, big eyes, vibrant green color, glossy texture, detailed digital art, game asset style, white background.",
-    sprite: { row: 1, colStart: 0, frames: 4 }
-  },
-  {
-    id: 'teal_wing',
-    name: 'Teal Wing',
-    image: '🧚',
-    color: 'bg-teal-100',
-    rarity: 'Rare',
-    level: 5,
-    imagePrompt: "A high-quality, chaos kawaii style monster, teal slime with orange horns and small wings, happy expression, vibrant teal color, glossy texture, detailed digital art, game asset style, white background.",
-    sprite: { row: 2, colStart: 0, frames: 5 }
-  },
-  {
-    id: 'blue_dragon',
-    name: 'Blue Dragon',
-    image: '🐉',
-    color: 'bg-blue-100',
-    rarity: 'Rare',
-    level: 8,
-    imagePrompt: "A high-quality, chaos kawaii style monster, blue slime with orange horns and a small tail, big expressive eyes, vibrant blue color, glossy texture, detailed digital art, game asset style, white background.",
-    sprite: { row: 3, colStart: 0, frames: 5 }
-  },
-  {
-    id: 'fire_slime',
-    name: 'Fire Slime',
-    image: '🔥',
-    color: 'bg-red-100',
-    rarity: 'Rare',
-    level: 10,
-    imagePrompt: "A high-quality, chaos kawaii style monster, orange and red fire slime with flame-like features on its head, small wings, big eyes, vibrant colors, glossy texture, detailed digital art, game asset style, white background.",
-    sprite: { row: 4, colStart: 0, frames: 5 }
-  },
-  {
-    id: 'cyclops_slime',
-    name: 'Cyclops Slime',
-    image: '👁️',
-    color: 'bg-orange-100',
-    rarity: 'Epic',
-    level: 15,
-    imagePrompt: "A high-quality, chaos kawaii style monster, orange slime with one large central eye, happy expression with tongue out, vibrant orange color, glossy texture, detailed digital art, game asset style, white background.",
-    sprite: { row: 5, colStart: 0, frames: 4 }
-  },
-  {
-    id: 'void_behemoth',
-    name: 'Void Behemoth',
-    image: '👾',
-    color: 'bg-purple-100',
-    rarity: 'Epic',
-    level: 18,
-    imagePrompt: "A high-quality, chaos kawaii style monster, large purple slime with multiple eyes and horns, big mouth with teeth, vibrant purple color, glossy texture, detailed digital art, game asset style, white background.",
-    sprite: { row: 6, colStart: 0, frames: 5 }
-  },
-  {
-    id: 'royal_slime',
-    name: 'Royal Slime',
-    image: '👑',
-    color: 'bg-indigo-100',
-    rarity: 'Legendary',
-    level: 20,
-    imagePrompt: "A high-quality, chaos kawaii style monster, purple slime wearing a small golden crown, orange horns, big expressive eyes, vibrant purple color, glossy texture, detailed digital art, game asset style, white background.",
-    sprite: { row: 7, colStart: 0, frames: 6 }
-  },
-];
+export const AVATARS: AvatarData[] = CHARACTER_AVATARS;
 
 export const ISLANDS: IslandData[] = [
   {

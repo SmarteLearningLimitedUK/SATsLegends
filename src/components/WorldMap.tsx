@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS, AVATARS } from '../constants';
 import AssetIcon from './AssetIcon';
+import AnimatedAvatar from './AnimatedAvatar';
 import forestBg from '../assets/licensed/background.jpeg';
 
 interface WorldMapProps {
@@ -65,7 +66,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const avatar = AVATARS.find(item => item.id === player.avatarId);
+  const avatar = AVATARS.find(item => item.id === player.avatarId) || AVATARS[0];
 
   const islandProgress = useMemo(() => {
     return ISLANDS.map(island => {
@@ -152,8 +153,13 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
       <header className="pointer-events-none absolute left-0 right-0 top-0 z-50 px-3 pt-[calc(0.45rem+env(safe-area-inset-top))] md:px-6 md:pt-6">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 md:gap-3">
           <div className="pointer-events-auto casual-panel-surface relative flex items-center gap-2 overflow-hidden rounded-full border border-white/15 px-3 py-2 text-white shadow-[0_16px_34px_rgba(2,6,23,0.26)] md:hidden">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/10 text-lg">
-              {avatar?.image || '?'}
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white/10">
+              <AnimatedAvatar
+                avatar={avatar}
+                className="h-full w-full"
+                imageClassName="object-bottom scale-[1.35] translate-y-[10%]"
+                floating={false}
+              />
             </div>
             <div className="min-w-0 flex-1">
               <div className="truncate text-sm font-black tracking-tight text-white">{player.playerName || 'Explorer'}</div>
@@ -172,8 +178,12 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.14),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(56,189,248,0.16),transparent_24%)] opacity-80" />
             <div className="relative flex flex-col gap-2 md:flex-row md:items-center md:justify-between md:gap-3">
               <div className="flex min-w-0 items-center gap-2.5 md:gap-4">
-                <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.95rem] border border-white/20 bg-gradient-to-b from-white/28 to-white/8 text-xl shadow-[0_12px_30px_rgba(0,0,0,0.28)] md:h-20 md:w-20 md:rounded-[1.7rem] md:text-5xl">
-                  {avatar?.image || '?'}
+                <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-[0.95rem] border border-white/20 bg-gradient-to-b from-white/28 to-white/8 shadow-[0_12px_30px_rgba(0,0,0,0.28)] md:h-20 md:w-20 md:rounded-[1.7rem]">
+                  <AnimatedAvatar
+                    avatar={avatar}
+                    className="h-full w-full"
+                    imageClassName="object-bottom scale-[1.22] translate-y-[8%]"
+                  />
                   <div className="absolute -bottom-1 -right-1 flex h-4.5 w-4.5 items-center justify-center rounded-md border-2 border-white bg-gradient-to-br from-yellow-300 to-orange-400 text-[8px] font-black text-yellow-950 shadow-lg md:h-8 md:w-8 md:rounded-xl md:text-xs">
                     {player.level}
                   </div>

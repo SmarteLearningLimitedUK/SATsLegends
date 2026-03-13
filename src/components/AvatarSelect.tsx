@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Check, Sparkles } from './GameIcons';
 import { AVATARS } from '../constants';
+import AnimatedAvatar from './AnimatedAvatar';
 
 interface AvatarSelectProps {
   selectedId: string;
@@ -25,17 +26,22 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
           ))}
         </div>
         <h1 className="text-xl font-black tracking-tight text-white drop-shadow-[0_4px_0_rgba(0,0,0,0.18)] sm:text-3xl md:text-6xl">
-          Choose Your Hero
+          Choose Your Character
         </h1>
         <p className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.2em] text-white/65 md:text-sm">
-          Select your companion
+          Select your avatar
         </p>
       </div>
 
       <div className="glass-panel relative z-10 flex w-full shrink-0 items-center gap-2 overflow-hidden rounded-[1.1rem] px-3 py-2 md:max-w-2xl md:self-center md:rounded-[1.5rem] md:gap-3 md:px-6 md:py-4">
-        <div className={`relative flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-white/20 ${selectedAvatar.color} text-2xl shadow-xl md:h-20 md:w-20 md:text-5xl md:rounded-2xl`}>
+        <div className={`relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/20 ${selectedAvatar.color} shadow-xl md:h-24 md:w-24 md:rounded-2xl`}>
           <div className="shine" />
-          {selectedAvatar.image}
+          <AnimatedAvatar
+            avatar={selectedAvatar}
+            pose="victory"
+            className="relative z-10 h-full w-full"
+            imageClassName="object-bottom scale-[1.14] translate-y-[6%]"
+          />
         </div>
         <div className="min-w-0 flex-1 text-left text-white">
           <div className="flex flex-wrap items-center gap-1.5 md:gap-2">
@@ -54,7 +60,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
         </div>
       </div>
 
-      <div className="relative z-10 grid flex-1 min-h-0 grid-cols-4 gap-2 content-start md:gap-4">
+      <div className="relative z-10 grid flex-1 min-h-0 grid-cols-2 gap-2 content-start md:grid-cols-4 md:gap-4">
         {AVATARS.map((avatar) => {
           const isSelected = selectedId === avatar.id;
           return (
@@ -63,17 +69,21 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               whileHover={{ scale: 1.03, y: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => onSelect(avatar.id)}
-              className={`relative flex min-h-[8.2rem] flex-col justify-center overflow-hidden rounded-[1rem] border p-2 text-center transition-all md:min-h-[11.5rem] md:rounded-[2rem] md:p-5 ${isSelected
+              className={`relative flex min-h-[10.75rem] flex-col justify-center overflow-hidden rounded-[1rem] border p-2 text-center transition-all md:min-h-[11.5rem] md:rounded-[2rem] md:p-5 ${isSelected
                 ? 'border-yellow-300 bg-white/22 shadow-[0_10px_20px_rgba(0,0,0,0.22)] md:shadow-[0_20px_40px_rgba(0,0,0,0.22)]'
                 : 'border-white/10 bg-white/8 hover:bg-white/14'
                 }`}
             >
               <div className="shine" />
-              <div className={`mx-auto flex h-10 w-10 items-center justify-center rounded-lg border border-white/15 ${avatar.color} text-xl shadow-lg md:h-18 md:w-18 md:rounded-[1.4rem] md:text-4xl`}>
-                {avatar.image}
+              <div className={`mx-auto flex h-24 w-full max-w-[7rem] items-center justify-center overflow-hidden rounded-[1.2rem] border border-white/15 ${avatar.color} shadow-lg md:h-28 md:max-w-[8rem] md:rounded-[1.4rem]`}>
+                <AnimatedAvatar
+                  avatar={avatar}
+                  className="h-full w-full"
+                  imageClassName="object-bottom scale-[1.08] translate-y-[4%]"
+                />
               </div>
               <div className="mt-1 text-[9px] font-black leading-tight tracking-tight text-white md:mt-3 md:text-sm">{avatar.name}</div>
-              <div className="hidden md:block mt-1 text-[8px] font-black uppercase tracking-[0.24em] text-white/50 md:text-[10px]">
+              <div className="mt-1 text-[8px] font-black uppercase tracking-[0.24em] text-white/50 md:text-[10px]">
                 {avatar.rarity}
               </div>
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { AvatarData, CloudCollapseLevelConfig } from '../types';
 import AssetIcon from './AssetIcon';
+import AnimatedAvatar from './AnimatedAvatar';
 import progressBarAsset from '../assets/licensed/slices/progress_bar.png';
 
 interface HUDProps {
@@ -21,10 +22,14 @@ const HUD: React.FC<HUDProps> = ({ score, targetScore, timeLeft, level, avatar }
         <div className="flex items-center gap-2 md:gap-4 shrink-0">
           <motion.div
             whileHover={{ scale: 1.1, rotate: 5 }}
-            className={`${avatar.color} w-9 h-9 md:w-16 md:h-16 shrink-0 rounded-xl md:rounded-3xl flex items-center justify-center text-xl md:text-3xl shadow-lg border-2 md:border-4 border-white relative overflow-hidden`}
+            className={`${avatar.color} w-9 h-9 md:w-16 md:h-16 shrink-0 rounded-xl md:rounded-3xl flex items-center justify-center shadow-lg border-2 md:border-4 border-white relative overflow-hidden`}
           >
             <div className="shine" />
-            {avatar.image}
+            <AnimatedAvatar
+              avatar={avatar}
+              className="relative z-10 h-full w-full"
+              imageClassName="object-bottom scale-[1.18] translate-y-[6%]"
+            />
           </motion.div>
           <div className="min-w-0">
             <h2 className="text-xs md:text-xl font-black text-white drop-shadow-md tracking-tight truncate">Level {level.id}</h2>

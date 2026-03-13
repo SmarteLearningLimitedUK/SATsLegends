@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import AssetIcon from './components/AssetIcon';
-import { ACHIEVEMENTS, INITIAL_DAILY_QUESTS, ISLANDS } from './constants';
+import { ACHIEVEMENTS, AVATARS, INITIAL_DAILY_QUESTS, ISLANDS } from './constants';
+import { DEFAULT_AVATAR_ID } from './assets/characters';
 import { GameScreen, IslandData, LevelData, PlayerData } from './types';
 import WorldMap from './components/WorldMap';
 import IslandLevels from './components/IslandLevels';
@@ -30,9 +31,13 @@ import paperPanel from './assets/licensed/Atlas_07_Paper.png';
 
 const PLAYER_STORAGE_KEY = 'maths_quest_player';
 
+const resolveAvatarId = (avatarId?: string) => (
+  AVATARS.some(avatar => avatar.id === avatarId) ? avatarId! : DEFAULT_AVATAR_ID
+);
+
 const createDefaultPlayer = (parsed?: Partial<PlayerData> | null): PlayerData => ({
   playerName: parsed?.playerName || '',
-  avatarId: parsed?.avatarId || 'green_slime',
+  avatarId: resolveAvatarId(parsed?.avatarId),
   level: parsed?.level || 1,
   xp: parsed?.xp || 0,
   coins: parsed?.coins || 100,
@@ -386,71 +391,109 @@ const App: React.FC = () => {
     switch (screen) {
       case 'splash':
         return (
-          <div className="relative my-auto flex h-full max-h-full w-full max-w-5xl flex-col items-center justify-center gap-4 overflow-hidden px-4 py-5 text-center sm:px-6 md:gap-10 md:py-8">
-            <div className="absolute inset-0 -z-20 rounded-[2.5rem] bg-cover bg-center opacity-50 pointer-events-none md:rounded-[3rem]" style={{ backgroundImage: `url(${forestBg})` }} />
-            <div className="absolute inset-0 -z-10 rounded-[2.5rem] bg-[linear-gradient(180deg,rgba(15,23,42,0.35),rgba(15,23,42,0.72))] pointer-events-none md:rounded-[3rem]" />
-            <div className="absolute inset-x-0 top-1/2 -z-10 h-[420px] -translate-y-1/2 rounded-[2.5rem] border border-white/20 bg-white/10 blur-0 backdrop-blur-2xl pointer-events-none md:h-[520px] md:rounded-[3rem]" />
-            <div className="absolute inset-0 -z-10 flex items-center justify-center overflow-hidden opacity-20 pointer-events-none">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-                className="h-[520px] w-[520px] rounded-full border-[24px] border-dashed border-white pointer-events-none md:h-[800px] md:w-[800px] md:border-[40px]"
-              />
-              <motion.div
-                animate={{ rotate: -360 }}
-                transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-                className="absolute h-[380px] w-[380px] rounded-full border-[14px] border-dotted border-white pointer-events-none md:h-[600px] md:w-[600px] md:border-[20px]"
-              />
-            </div>
+          <div className="relative my-auto flex h-full max-h-full w-full max-w-6xl items-center justify-center overflow-hidden px-4 py-5 text-center sm:px-6 md:py-8">
+            <div className="absolute inset-0 -z-30 rounded-[2.7rem] bg-cover bg-center opacity-25 pointer-events-none md:rounded-[3.4rem]" style={{ backgroundImage: `url(${forestBg})` }} />
+            <div className="absolute inset-0 -z-20 rounded-[2.7rem] bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.28)_0%,rgba(15,23,42,0.12)_32%,rgba(2,6,23,0.9)_100%)] pointer-events-none md:rounded-[3.4rem]" />
+            <div className="absolute inset-0 -z-20 rounded-[2.7rem] bg-[linear-gradient(145deg,rgba(14,165,233,0.16),rgba(129,140,248,0.08)_32%,rgba(2,6,23,0)_60%)] pointer-events-none md:rounded-[3.4rem]" />
 
             <motion.div
-              initial={{ y: -30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ type: 'spring', stiffness: 100, damping: 15 }}
-            >
-              <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex gap-2 md:-top-16 md:gap-4">
-                {['➕', '➖', '✖️', '➗'].map((emoji, i) => (
-                  <motion.span
-                    key={i}
-                    animate={{ y: [0, -16, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: i * 0.4 }}
-                    className="text-2xl md:text-4xl"
-                  >
-                    {emoji}
-                  </motion.span>
-                ))}
-              </div>
-              <div className="mb-4 flex justify-center gap-2 md:mb-5">
-                {['Mobile-first', 'Quest map', 'Mini-games'].map(label => (
-                  <span key={label} className="casual-ribbon-chip px-2 py-0.5 text-[9px] md:px-3 md:py-1 md:text-[10px]">{label}</span>
-                ))}
-              </div>
-              <h1 className="text-[2.5rem] leading-[0.88] font-black tracking-tighter text-white drop-shadow-[0_8px_0_rgba(0,0,0,0.24)] sm:text-[3.4rem] md:text-8xl lg:text-[9rem]">
-                SATS
-                <br />
-                <span className="text-[2rem] text-yellow-400 drop-shadow-[0_8px_0_#ca8a04] sm:text-[3rem] md:text-7xl lg:text-[8rem]">MASTERY</span>
-              </h1>
-              <p className="casual-ribbon-chip mt-3 inline-block rounded-full px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.22em] text-white/95 md:mt-5 md:px-6 md:py-2 md:text-xl">
-                World map adventure build
-              </p>
-            </motion.div>
+              animate={{ scale: [0.98, 1.05, 0.98], opacity: [0.45, 0.78, 0.45] }}
+              transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+              className="absolute left-1/2 top-1/2 -z-10 h-[22rem] w-[22rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(96,165,250,0.35)_0%,rgba(125,211,252,0.16)_38%,rgba(2,6,23,0)_72%)] blur-2xl pointer-events-none md:h-[34rem] md:w-[34rem]"
+            />
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 28, repeat: Infinity, ease: 'linear' }}
+              className="absolute left-1/2 top-1/2 -z-10 h-[18rem] w-[18rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/12 pointer-events-none md:h-[28rem] md:w-[28rem]"
+            />
+            <motion.div
+              animate={{ rotate: -360 }}
+              transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
+              className="absolute left-1/2 top-1/2 -z-10 h-[14rem] w-[14rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-200/12 pointer-events-none md:h-[22rem] md:w-[22rem]"
+            />
 
-            <div className="flex flex-col items-center gap-3 md:gap-4">
+            <motion.div
+              animate={{ y: [0, -12, 0] }}
+              transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+              className="relative flex w-full max-w-4xl flex-col items-center justify-center gap-8 rounded-[2.2rem] border border-white/14 bg-[linear-gradient(180deg,rgba(15,23,42,0.36),rgba(15,23,42,0.16))] px-6 py-12 shadow-[0_35px_100px_rgba(2,6,23,0.46)] backdrop-blur-[28px] md:rounded-[3rem] md:px-10 md:py-16"
+            >
+              <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2.2rem] md:rounded-[3rem]">
+                <motion.div
+                  animate={{ opacity: [0.45, 0.9, 0.45], x: ['-15%', '15%', '-15%'] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                  className="absolute left-1/2 top-0 h-full w-28 -translate-x-1/2 bg-[linear-gradient(180deg,rgba(255,255,255,0.22),rgba(255,255,255,0)_72%)] blur-xl md:w-40"
+                />
+                <motion.div
+                  animate={{ x: ['-140%', '180%'] }}
+                  transition={{ duration: 3.8, repeat: Infinity, ease: 'linear' }}
+                  className="absolute inset-y-0 left-0 w-24 bg-[linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,0.22),rgba(255,255,255,0))] opacity-60 blur-md"
+                />
+                {Array.from({ length: 7 }).map((_, index) => (
+                  <motion.div
+                    key={index}
+                    animate={{
+                      y: [0, -24 - index * 2, 0],
+                      opacity: [0.15, 0.85, 0.15],
+                      scale: [1, 1.25, 1],
+                    }}
+                    transition={{ duration: 3.2 + index * 0.35, repeat: Infinity, delay: index * 0.22 }}
+                    className="absolute rounded-full bg-white/80 blur-[2px]"
+                    style={{
+                      width: `${6 + (index % 3) * 4}px`,
+                      height: `${6 + (index % 3) * 4}px`,
+                      left: `${12 + index * 12}%`,
+                      bottom: `${20 + (index % 2) * 18}%`,
+                    }}
+                  />
+                ))}
+              </div>
+
+              <div className="pointer-events-none absolute inset-x-10 top-4 flex items-center justify-between md:top-8">
+                {[0, 1].map(side => (
+                  <motion.div
+                    key={side}
+                    animate={{ y: [0, side === 0 ? -10 : 10, 0], rotate: [0, side === 0 ? 8 : -8, 0] }}
+                    transition={{ duration: 5.2 + side, repeat: Infinity, ease: 'easeInOut' }}
+                    className="h-10 w-10 rounded-[1rem] border border-white/16 bg-[linear-gradient(145deg,rgba(255,255,255,0.18),rgba(255,255,255,0.02))] shadow-[0_16px_36px_rgba(2,6,23,0.3)] backdrop-blur-xl md:h-14 md:w-14 md:rounded-[1.2rem]"
+                  />
+                ))}
+              </div>
+
+              <div className="relative">
+                <motion.div
+                  initial={{ y: 18, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.8, ease: 'easeOut' }}
+                  className="relative"
+                >
+                  <div className="absolute inset-x-[8%] top-[18%] h-[56%] rounded-full bg-cyan-300/18 blur-3xl" />
+                  <h1
+                    className="relative text-[3.3rem] leading-[0.84] tracking-[-0.06em] text-white drop-shadow-[0_14px_34px_rgba(2,6,23,0.55)] sm:text-[4.5rem] md:text-[7.4rem] lg:text-[8.6rem]"
+                    style={{ fontFamily: 'var(--font-display)' }}
+                  >
+                    <span className="block bg-[linear-gradient(180deg,#ffffff_0%,#dbeafe_46%,#93c5fd_100%)] bg-clip-text text-transparent">
+                      Sats
+                    </span>
+                    <span className="block bg-[linear-gradient(180deg,#fef3c7_0%,#facc15_46%,#f97316_100%)] bg-clip-text text-transparent">
+                      Mastery
+                    </span>
+                  </h1>
+                </motion.div>
+              </div>
+
               <motion.button
-                whileHover={{ scale: 1.04, y: -3 }}
-                whileTap={{ scale: 0.97 }}
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={handleStartAdventure}
-                className="game-button-primary licensed-wood-button group relative rounded-[1.4rem] px-7 py-3.5 text-lg sm:px-12 sm:py-5 sm:text-2xl md:rounded-[2.3rem] md:px-20 md:py-8 md:text-5xl"
+                className="group relative inline-flex min-w-[15rem] items-center justify-center overflow-hidden rounded-full border border-white/18 bg-[linear-gradient(135deg,rgba(129,140,248,0.78),rgba(34,211,238,0.76))] px-8 py-3.5 text-base font-black uppercase tracking-[0.18em] text-white shadow-[0_22px_50px_rgba(14,116,144,0.32)] md:min-w-[20rem] md:px-12 md:py-5 md:text-lg"
               >
-                {hasCompletedProfile ? 'CONTINUE' : 'START ADVENTURE'}
+                <span className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.28),rgba(255,255,255,0.02))]" />
+                <span className="absolute inset-y-0 left-[-20%] w-16 rotate-[18deg] bg-white/35 blur-md transition-transform duration-700 group-hover:translate-x-[420%]" />
+                <span className="relative">{hasCompletedProfile ? 'Welcome' : 'Select Character'}</span>
               </motion.button>
-              <p className="max-w-xl px-4 text-xs font-bold text-white/80 md:text-base">
-                {hasCompletedProfile ? `Welcome back, ${player.playerName}.` : 'Create your hero and jump into the islands.'}
-              </p>
-            </div>
+            </motion.div>
           </div>
         );
-
       case 'profile_setup':
         return (
           <div className="casual-panel-strong relative z-10 my-auto w-full max-w-sm max-h-full overflow-hidden rounded-[2rem] p-4 text-center sm:max-w-md md:max-w-3xl md:rounded-[3rem] md:p-12">
@@ -650,3 +693,6 @@ const App: React.FC = () => {
 };
 
 export default App;
+
+
+

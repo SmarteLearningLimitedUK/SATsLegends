@@ -24,7 +24,8 @@ export interface IslandData {
 export interface AvatarData {
   id: string;
   name: string;
-  image: string; // Used as emoji
+  image: string;
+  portrait?: string;
   color: string;
   rarity: 'Common' | 'Rare' | 'Epic' | 'Legendary';
   level: number;
@@ -34,6 +35,7 @@ export interface AvatarData {
     colStart: number;
     frames: number;
   };
+  poses?: Partial<Record<AnimationState, string[]>>;
 }
 
 export interface ShopItem {
