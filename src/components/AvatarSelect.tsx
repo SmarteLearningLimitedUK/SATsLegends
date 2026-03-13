@@ -1,8 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Check, Sparkles } from './GameIcons';
+import { Check } from './GameIcons';
 import { AVATARS } from '../constants';
-import AnimatedAvatar from './AnimatedAvatar';
 
 interface AvatarSelectProps {
   selectedId: string;
@@ -10,88 +9,109 @@ interface AvatarSelectProps {
   onConfirm: () => void;
 }
 
+const HERO_STYLES: Record<string, { glow: string; tint: string; ring: string; name: string }> = {
+  barratt: {
+    glow: 'from-emerald-300/40 via-cyan-300/14 to-transparent',
+    tint: 'from-emerald-300/20 via-sky-400/12 to-slate-950/72',
+    ring: 'shadow-[0_0_36px_rgba(74,222,128,0.32)]',
+    name: 'from-emerald-200 via-cyan-100 to-white',
+  },
+  bran: {
+    glow: 'from-sky-300/42 via-blue-300/16 to-transparent',
+    tint: 'from-sky-300/22 via-indigo-300/14 to-slate-950/72',
+    ring: 'shadow-[0_0_36px_rgba(96,165,250,0.34)]',
+    name: 'from-sky-200 via-blue-100 to-white',
+  },
+  mochi: {
+    glow: 'from-rose-300/42 via-fuchsia-300/16 to-transparent',
+    tint: 'from-rose-300/20 via-pink-300/14 to-slate-950/72',
+    ring: 'shadow-[0_0_38px_rgba(244,114,182,0.32)]',
+    name: 'from-rose-100 via-pink-100 to-white',
+  },
+  vex: {
+    glow: 'from-violet-300/42 via-indigo-300/16 to-transparent',
+    tint: 'from-violet-300/20 via-indigo-300/14 to-slate-950/72',
+    ring: 'shadow-[0_0_38px_rgba(167,139,250,0.34)]',
+    name: 'from-violet-100 via-indigo-100 to-white',
+  },
+};
+
 const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onConfirm }) => {
   const selectedAvatar = AVATARS.find(avatar => avatar.id === selectedId) || AVATARS[0];
+  const selectedStyle = HERO_STYLES[selectedAvatar.id] || HERO_STYLES.barratt;
 
   return (
-    <div className="relative my-auto flex h-full max-h-full w-full max-w-5xl flex-col gap-2 overflow-hidden px-3 py-3 md:gap-4 md:px-8 md:py-6">
-      <div className="glass-panel absolute inset-x-3 top-0 bottom-0 -z-10 rounded-[2rem] md:inset-x-8 md:rounded-[2.5rem]" />
-      <div className="absolute left-6 top-6 h-24 w-24 rounded-full bg-cyan-300/10 blur-3xl md:h-32 md:w-32" />
-      <div className="absolute bottom-6 right-6 h-28 w-28 rounded-full bg-fuchsia-400/10 blur-3xl md:h-40 md:w-40" />
+    <div className="relative my-auto flex h-full max-h-full w-full max-w-6xl flex-col gap-3 overflow-hidden px-3 py-3 md:px-8 md:py-6">
+      <div className="absolute inset-0 -z-30 rounded-[2rem] bg-[radial-gradient(circle_at_top,rgba(255,248,220,0.28),transparent_24%),linear-gradient(180deg,#20120b_0%,#120d15_36%,#070b16_100%)] md:rounded-[2.8rem]" />
+      <div className={`absolute inset-0 -z-20 rounded-[2rem] bg-[radial-gradient(circle_at_top,rgba(255,214,102,0.12),transparent_24%),linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01)),linear-gradient(135deg,rgba(62,32,18,0.92),rgba(17,22,36,0.96))] md:rounded-[2.8rem]`} />
+      <div className={`absolute left-1/2 top-[12%] -z-10 h-48 w-48 -translate-x-1/2 rounded-full bg-gradient-to-br ${selectedStyle.glow} blur-3xl md:h-72 md:w-72`} />
+      <motion.div
+        animate={{ scale: [0.98, 1.04, 0.98], opacity: [0.45, 0.82, 0.45] }}
+        transition={{ duration: 6.4, repeat: Infinity, ease: 'easeInOut' }}
+        className={`absolute left-1/2 top-[34%] -z-10 h-64 w-64 -translate-x-1/2 rounded-full ${selectedStyle.ring} md:h-96 md:w-96`}
+      />
+      <div className="absolute inset-x-3 top-0 bottom-0 -z-10 rounded-[2rem] border border-[#f3cf78]/35 bg-[linear-gradient(180deg,rgba(255,244,213,0.06),rgba(255,255,255,0.015))] shadow-[inset_0_1px_0_rgba(255,237,186,0.15),0_28px_90px_rgba(2,6,23,0.42)] backdrop-blur-[22px] md:inset-x-8 md:rounded-[2.8rem]" />
+      <div className="pointer-events-none absolute inset-x-6 top-3 z-0 h-px bg-[linear-gradient(90deg,transparent,rgba(255,225,145,0.65),transparent)] md:inset-x-16" />
 
-      <div className="relative z-10 flex shrink-0 flex-col items-center text-center">
-        <div className="mb-1 hidden md:flex justify-center gap-2">
-          {['Pick a companion', 'Animated map', 'Portrait UI'].map(label => (
-            <span key={label} className="game-chip">{label}</span>
-          ))}
-        </div>
-        <h1 className="text-xl font-black tracking-tight text-white drop-shadow-[0_4px_0_rgba(0,0,0,0.18)] sm:text-3xl md:text-6xl">
-          Choose Your Character
-        </h1>
-        <p className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.2em] text-white/65 md:text-sm">
-          Select your avatar
-        </p>
-      </div>
-
-      <div className="glass-panel relative z-10 flex w-full shrink-0 items-center gap-2 overflow-hidden rounded-[1.1rem] px-3 py-2 md:max-w-2xl md:self-center md:rounded-[1.5rem] md:gap-3 md:px-6 md:py-4">
-        <div className={`relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/20 ${selectedAvatar.color} shadow-xl md:h-24 md:w-24 md:rounded-2xl`}>
-          <div className="shine" />
-          <AnimatedAvatar
-            avatar={selectedAvatar}
-            pose="victory"
-            className="relative z-10 h-full w-full"
-            imageClassName="object-bottom scale-[1.14] translate-y-[6%]"
-          />
-        </div>
-        <div className="min-w-0 flex-1 text-left text-white">
-          <div className="flex flex-wrap items-center gap-1.5 md:gap-2">
-            <h2 className="truncate text-sm font-black tracking-tight md:text-2xl">{selectedAvatar.name}</h2>
-            <span className="rounded-full border border-yellow-300/40 bg-yellow-300/15 px-1.5 py-0.5 text-[7px] font-black uppercase tracking-[0.2em] text-yellow-100 md:text-[9px]">
-              {selectedAvatar.rarity}
-            </span>
+      <div className="relative z-10 flex shrink-0 flex-col items-center text-center pt-1">
+        <div className="fantasy-title-plaque max-w-[20rem] px-6 py-3 md:max-w-[30rem] md:px-10 md:py-4">
+          <div className="mb-2 flex items-center justify-center gap-2">
+            {['emerald', 'ruby', 'sapphire'].map(gem => (
+              <span key={gem} className={`fantasy-gem fantasy-gem-${gem}`} />
+            ))}
           </div>
-          <p className="mt-0.5 text-[10px] font-bold leading-tight text-white/70 md:text-sm">
-            Ready to carry your progress across every island.
-          </p>
-          <div className="mt-1 hidden items-center gap-1.5 text-cyan-100 sm:flex">
-            <Sparkles className="h-3 w-3" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Selected hero ready</span>
-          </div>
+          <h1
+            className="text-[2rem] font-black leading-none tracking-[-0.04em] text-[#fff7dc] drop-shadow-[0_10px_32px_rgba(2,6,23,0.58)] sm:text-[2.6rem] md:text-[5.2rem]"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            Choose Your Character
+          </h1>
         </div>
       </div>
 
-      <div className="relative z-10 grid flex-1 min-h-0 grid-cols-2 gap-2 content-start md:grid-cols-4 md:gap-4">
+      <div className="relative z-10 grid min-h-0 flex-1 grid-cols-2 grid-rows-2 gap-3 md:gap-5">
         {AVATARS.map((avatar) => {
           const isSelected = selectedId === avatar.id;
+          const style = HERO_STYLES[avatar.id] || HERO_STYLES.barratt;
+
           return (
             <motion.button
               key={avatar.id}
-              whileHover={{ scale: 1.03, y: -2 }}
+              whileHover={{ scale: 1.025, y: -3 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => onSelect(avatar.id)}
-              className={`relative flex min-h-[10.75rem] flex-col justify-center overflow-hidden rounded-[1rem] border p-2 text-center transition-all md:min-h-[11.5rem] md:rounded-[2rem] md:p-5 ${isSelected
-                ? 'border-yellow-300 bg-white/22 shadow-[0_10px_20px_rgba(0,0,0,0.22)] md:shadow-[0_20px_40px_rgba(0,0,0,0.22)]'
-                : 'border-white/10 bg-white/8 hover:bg-white/14'
+              className={`group fantasy-hero-card relative flex h-full min-h-0 flex-col overflow-hidden rounded-[1.45rem] text-center transition-all md:rounded-[2.25rem] ${isSelected
+                ? 'fantasy-hero-card-selected shadow-[0_20px_34px_rgba(2,6,23,0.34)] md:shadow-[0_28px_54px_rgba(2,6,23,0.38)]'
+                : 'hover:bg-white/[0.04]'
                 }`}
             >
-              <div className="shine" />
-              <div className={`mx-auto flex h-24 w-full max-w-[7rem] items-center justify-center overflow-hidden rounded-[1.2rem] border border-white/15 ${avatar.color} shadow-lg md:h-28 md:max-w-[8rem] md:rounded-[1.4rem]`}>
-                <AnimatedAvatar
-                  avatar={avatar}
-                  className="h-full w-full"
-                  imageClassName="object-bottom scale-[1.08] translate-y-[4%]"
+              <div className={`absolute inset-0 bg-gradient-to-br ${style.tint} opacity-80`} />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,244,214,0.14),rgba(255,255,255,0.02)_26%,rgba(2,6,23,0.42)_100%)]" />
+              <div className={`absolute left-1/2 top-[18%] h-24 w-24 -translate-x-1/2 rounded-full bg-gradient-to-br ${style.glow} blur-2xl md:h-36 md:w-36`} />
+              <div className="absolute inset-x-3 top-3 h-[34%] rounded-[1.25rem] bg-[linear-gradient(180deg,rgba(255,246,219,0.16),rgba(255,255,255,0))] opacity-70 blur-lg md:inset-x-4 md:rounded-[1.8rem]" />
+              <div className="pointer-events-none absolute inset-x-2 top-2 bottom-2 rounded-[1.2rem] border border-[#f2d182]/18 md:inset-x-3 md:top-3 md:bottom-3 md:rounded-[2rem]" />
+
+              <div className={`relative mx-2.5 mt-2.5 flex min-h-0 flex-1 items-end justify-center overflow-hidden rounded-[1.1rem] border border-white/14 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(2,6,23,0.16))] shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] md:mx-4 md:mt-4 md:rounded-[1.8rem] ${isSelected ? style.ring : ''}`}>
+                <img
+                  src={avatar.portrait || avatar.image}
+                  alt={avatar.name}
+                  className={`h-full w-full object-contain object-bottom transition-transform duration-500 ${isSelected ? 'scale-[1.3] translate-y-[4%] md:scale-[1.36]' : 'scale-[1.24] translate-y-[5%] md:scale-[1.28]'}`}
+                  draggable={false}
                 />
               </div>
-              <div className="mt-1 text-[9px] font-black leading-tight tracking-tight text-white md:mt-3 md:text-sm">{avatar.name}</div>
-              <div className="mt-1 text-[8px] font-black uppercase tracking-[0.24em] text-white/50 md:text-[10px]">
-                {avatar.rarity}
+              <div className="relative px-2 pb-3 pt-2 md:px-4 md:pb-4 md:pt-3">
+                <div className="fantasy-nameplate mx-auto max-w-[10rem] px-3 py-2 md:max-w-[12rem]">
+                  <div className={`bg-gradient-to-r ${style.name} bg-clip-text text-sm font-black leading-tight tracking-[-0.02em] text-transparent md:text-[1.35rem]`}>
+                    {avatar.name}
+                  </div>
+                </div>
               </div>
 
               {isSelected && (
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="absolute right-1 top-1 rounded-md border border-white bg-gradient-to-b from-yellow-300 to-yellow-500 p-0.5 text-white shadow-xl md:right-3 md:top-3 md:rounded-xl md:border-2 md:p-1.5"
+                  className="absolute right-2 top-2 rounded-full border border-white/70 bg-[linear-gradient(180deg,#fde68a,#f59e0b)] p-1 text-white shadow-[0_12px_24px_rgba(245,158,11,0.3)] md:right-3 md:top-3 md:border-2 md:p-1.5"
                 >
                   <Check className="h-2 w-2 md:h-4 md:w-4 stroke-[4px]" />
                 </motion.div>
@@ -106,7 +126,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
           whileHover={{ scale: 1.02, y: -2 }}
           whileTap={{ scale: 0.98 }}
           onClick={onConfirm}
-          className="game-button-primary relative z-10 w-full rounded-[1.1rem] px-8 py-3 text-base md:rounded-[1.5rem] md:px-20 md:py-5 md:text-3xl"
+          className="fantasy-cta-button relative z-10 w-full px-8 py-3.5 text-base md:px-20 md:py-5 md:text-3xl"
         >
           Let&apos;s Go
         </motion.button>
