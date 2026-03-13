@@ -1,43 +1,83 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Store, Coins, Star } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
+import { Coins, Store, Star } from 'lucide-react';
+import confetti from 'canvas-confetti';
 import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
 import { AVATARS } from '../constants';
-import confetti from 'canvas-confetti';
 
 interface Currency {
   id: string;
   label: string;
   value: number;
-  color: string;
+  tone: 'silver' | 'gold' | 'copper' | 'aqua' | 'amber';
   type: 'coin' | 'note';
 }
 
+interface ShopperProfile {
+  name: string;
+  title: string;
+  crest: string;
+  aura: string;
+  badge: string;
+}
+
 const CURRENCIES: Currency[] = [
-  { id: '10p', label: '10p', value: 0.1, color: 'bg-slate-300 border-slate-400 text-slate-700', type: 'coin' },
-  { id: '20p', label: '20p', value: 0.2, color: 'bg-slate-300 border-slate-400 text-slate-700', type: 'coin' },
-  { id: '50p', label: '50p', value: 0.5, color: 'bg-slate-300 border-slate-400 text-slate-700', type: 'coin' },
-  { id: '1pound', label: '£1', value: 1, color: 'bg-yellow-400 border-yellow-600 text-yellow-900', type: 'coin' },
-  { id: '2pound', label: '£2', value: 2, color: 'bg-yellow-400 border-yellow-600 text-yellow-900', type: 'coin' },
-  { id: '5pound', label: '£5', value: 5, color: 'bg-cyan-200 border-cyan-400 text-cyan-800', type: 'note' },
-  { id: '10pound', label: '£10', value: 10, color: 'bg-orange-200 border-orange-400 text-orange-800', type: 'note' },
-  { id: '1p', label: '1p', value: 0.01, color: 'bg-orange-600 border-orange-800 text-orange-200', type: 'coin' },
-  { id: '2p', label: '2p', value: 0.02, color: 'bg-orange-600 border-orange-800 text-orange-200', type: 'coin' },
-  { id: '5p', label: '5p', value: 0.05, color: 'bg-slate-300 border-slate-400 text-slate-700', type: 'coin' },
+  { id: '10p', label: '10p', value: 0.1, tone: 'silver', type: 'coin' },
+  { id: '20p', label: '20p', value: 0.2, tone: 'silver', type: 'coin' },
+  { id: '50p', label: '50p', value: 0.5, tone: 'silver', type: 'coin' },
+  { id: '1pound', label: '£1', value: 1, tone: 'gold', type: 'coin' },
+  { id: '2pound', label: '£2', value: 2, tone: 'gold', type: 'coin' },
+  { id: '5pound', label: '£5', value: 5, tone: 'aqua', type: 'note' },
+  { id: '10pound', label: '£10', value: 10, tone: 'amber', type: 'note' },
+  { id: '1p', label: '1p', value: 0.01, tone: 'copper', type: 'coin' },
+  { id: '2p', label: '2p', value: 0.02, tone: 'copper', type: 'coin' },
+  { id: '5p', label: '5p', value: 0.05, tone: 'silver', type: 'coin' },
 ];
 
-const MONSTERS = ['🟢', '😈', '🧚', '🐉', '🔥', '👁️', '👾', '👑'];
+const SHOPPERS: ShopperProfile[] = [
+  { name: 'Nyx', title: 'Night Bazaar Scout', crest: 'N', aura: 'from-cyan-300/55 via-sky-500/30 to-transparent', badge: 'text-cyan-100' },
+  { name: 'Brugo', title: 'Cavern Coin Keeper', crest: 'B', aura: 'from-amber-300/55 via-orange-500/30 to-transparent', badge: 'text-amber-100' },
+  { name: 'Vela', title: 'Potion Quartermaster', crest: 'V', aura: 'from-fuchsia-300/55 via-violet-500/30 to-transparent', badge: 'text-fuchsia-100' },
+  { name: 'Drak', title: 'Dragon Lane Broker', crest: 'D', aura: 'from-rose-300/55 via-red-500/30 to-transparent', badge: 'text-rose-100' },
+  { name: 'Moro', title: 'Forest Relic Trader', crest: 'M', aura: 'from-emerald-300/55 via-lime-500/30 to-transparent', badge: 'text-lime-100' },
+  { name: 'Zuri', title: 'Crystal Vault Collector', crest: 'Z', aura: 'from-indigo-300/55 via-blue-500/30 to-transparent', badge: 'text-blue-100' },
+];
+
+const ITEMS = [
+  { name: 'Magic Potion', price: 4.5 },
+  { name: 'Dragon Egg', price: 12.75 },
+  { name: 'Spell Book', price: 8.2 },
+  { name: 'Hero Shield', price: 15.4 },
+  { name: 'Crystal Ball', price: 6.65 },
+  { name: 'Golden Apple', price: 2.35 },
+  { name: 'Phoenix Feather', price: 1.9 },
+  { name: 'Titan Boots', price: 24.5 },
+  { name: 'Invisibility Cloak', price: 35.8 },
+  { name: 'Sword of Light', price: 19.99 },
+];
+
+const PAYMENT_OPTIONS = [5, 10, 20, 50];
+
+const TONE_CLASSES: Record<Currency['tone'], string> = {
+  silver: 'border-slate-200/70 bg-[radial-gradient(circle_at_30%_28%,rgba(255,255,255,0.92),rgba(226,232,240,0.92)_24%,rgba(148,163,184,0.92)_72%,rgba(71,85,105,0.96)_100%)] text-slate-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.46),0_12px_22px_rgba(15,23,42,0.18)]',
+  gold: 'border-amber-200/80 bg-[radial-gradient(circle_at_30%_28%,rgba(255,248,196,0.98),rgba(253,224,71,0.96)_22%,rgba(251,191,36,0.96)_68%,rgba(146,64,14,0.98)_100%)] text-amber-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.46),0_12px_24px_rgba(146,64,14,0.18)]',
+  copper: 'border-orange-200/70 bg-[radial-gradient(circle_at_30%_28%,rgba(255,237,213,0.98),rgba(251,146,60,0.96)_26%,rgba(194,65,12,0.96)_72%,rgba(124,45,18,0.98)_100%)] text-orange-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.28),0_12px_22px_rgba(124,45,18,0.22)]',
+  aqua: 'border-cyan-200/80 bg-[linear-gradient(180deg,rgba(207,250,254,0.96),rgba(103,232,249,0.92)_48%,rgba(14,116,144,0.96)_100%)] text-cyan-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.42),0_12px_22px_rgba(8,47,73,0.18)]',
+  amber: 'border-orange-200/80 bg-[linear-gradient(180deg,rgba(255,237,213,0.96),rgba(253,186,116,0.92)_48%,rgba(194,65,12,0.96)_100%)] text-orange-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.42),0_12px_22px_rgba(124,45,18,0.18)]',
+};
 
 interface MonsterMarketGameProps {
   avatarId: string;
   onBack: () => void;
 }
 
+const formatMoney = (value: number) => `£${value.toFixed(2)}`;
+
 const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({ avatarId, onBack }) => {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(120);
-  const [monster, setMonster] = useState('');
+  const [shopper, setShopper] = useState<ShopperProfile>(SHOPPERS[0]);
   const [scenario, setScenario] = useState('');
   const [amountPaid, setAmountPaid] = useState(0);
   const [changeNeeded, setChangeNeeded] = useState(0);
@@ -48,7 +88,9 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({ avatarId, onBack 
   const [streak, setStreak] = useState(0);
 
   const targetScore = 1000;
-  const avatar = AVATARS.find(a => a.id === avatarId) || AVATARS[0];
+  const avatar = AVATARS.find(item => item.id === avatarId) || AVATARS[0];
+  const currentTrayTotal = Number(tray.reduce((sum, item) => sum + item.value, 0).toFixed(2));
+  const progress = Math.min((score / targetScore) * 100, 100);
 
   useEffect(() => {
     generateCustomer();
@@ -66,44 +108,31 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({ avatarId, onBack 
   }, []);
 
   const generateCustomer = () => {
-    const randomMonster = MONSTERS[Math.floor(Math.random() * MONSTERS.length)];
-    const items = [
-      { name: 'Magic Potion', price: 4.50 },
-      { name: 'Dragon Egg', price: 12.75 },
-      { name: 'Spell Book', price: 8.20 },
-      { name: 'Hero Shield', price: 15.40 },
-      { name: 'Crystal Ball', price: 6.65 },
-      { name: 'Golden Apple', price: 2.35 },
-      { name: 'Phoenix Feather', price: 1.90 },
-      { name: 'Titan Boots', price: 24.50 },
-      { name: 'Invisibility Cloak', price: 35.80 },
-      { name: 'Sword of Light', price: 19.99 },
-    ];
+    const nextShopper = SHOPPERS[Math.floor(Math.random() * SHOPPERS.length)];
+    const item = ITEMS[Math.floor(Math.random() * ITEMS.length)];
+    const paid = PAYMENT_OPTIONS.find(option => option > item.price) || 50;
 
-    const randomItem = items[Math.floor(Math.random() * items.length)];
-    const paymentOptions = [5, 10, 20, 50];
-    const paid = paymentOptions.find(p => p > randomItem.price) || 50;
-
-    setMonster(randomMonster);
-    setScenario(`Shopping for ${randomItem.name}`);
+    setShopper(nextShopper);
+    setScenario(`Shopping for ${item.name}`);
     setAmountPaid(paid);
-    setChangeNeeded(Number((paid - randomItem.price).toFixed(2)));
+    setChangeNeeded(Number((paid - item.price).toFixed(2)));
     setTray([]);
     setFeedback(null);
   };
 
-  const formatMoney = (val: number) => `£${val.toFixed(2)}`;
-
-  const currentTrayTotal = Number(tray.reduce((sum, item) => sum + item.value, 0).toFixed(2));
-
   const addToTray = (currency: Currency) => {
     if (feedback) return;
-    setTray(prev => [...prev, { ...currency, id: `${currency.id}-${Date.now()}` }]);
+    setTray(prev => [...prev, { ...currency, id: `${currency.id}-${Date.now()}-${Math.random()}` }]);
   };
 
   const removeFromTray = (id: string) => {
     if (feedback) return;
     setTray(prev => prev.filter(item => item.id !== id));
+  };
+
+  const clearTray = () => {
+    if (feedback) return;
+    setTray([]);
   };
 
   const handleSubmit = () => {
@@ -112,20 +141,21 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({ avatarId, onBack 
     if (currentTrayTotal === changeNeeded) {
       setFeedback('correct');
       const timeBonus = Math.floor(timeLeft / 10);
-      setScore(prev => prev + 100 + timeBonus);
+      const updatedScore = score + 100 + timeBonus;
+      setScore(updatedScore);
       setStreak(prev => prev + 1);
 
       confetti({
         particleCount: 50,
         spread: 60,
         origin: { y: 0.5 },
-        colors: ['#10b981', '#34d399']
+        colors: ['#10b981', '#34d399', '#fde047'],
       });
 
-      if (score + 100 + timeBonus >= targetScore) {
+      if (updatedScore >= targetScore) {
         setIsVictory(true);
       } else {
-        setTimeout(generateCustomer, 1500);
+        setTimeout(generateCustomer, 1400);
       }
     } else {
       setFeedback('incorrect');
@@ -135,21 +165,20 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({ avatarId, onBack 
       setTimeout(() => {
         setFeedback(null);
         setTray([]);
-      }, 1500);
+      }, 1400);
     }
   };
 
-  const progress = Math.min((score / targetScore) * 100, 100);
-
   return (
-    <div className="h-full w-full flex flex-col items-center p-2 sm:p-4 pt-[env(safe-area-inset-top)] bg-emerald-900 border-[8px] border-emerald-950 font-sans shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden">
-      {/* Market Background */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none" style={{
-        backgroundImage: 'radial-gradient(#10b981 2px, transparent 2px)',
-        backgroundSize: '40px 40px'
-      }} />
+    <div className="relative flex h-full w-full flex-col items-center overflow-hidden border-[8px] border-emerald-950 bg-[linear-gradient(180deg,#0b3133_0%,#0d213f_42%,#041421_100%)] p-2 pt-[env(safe-area-inset-top)] font-sans shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] sm:p-4">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute left-[-8%] top-[8%] h-[28%] w-[42%] rounded-full bg-emerald-400/14 blur-3xl" />
+        <div className="absolute right-[-12%] top-[18%] h-[36%] w-[44%] rounded-full bg-cyan-400/16 blur-3xl" />
+        <div className="absolute bottom-[-10%] left-[18%] h-[34%] w-[46%] rounded-full bg-amber-300/10 blur-3xl" />
+        <div className="absolute inset-0 opacity-15" style={{ backgroundImage: 'radial-gradient(#99f6e4 1.8px, transparent 1.8px)', backgroundSize: '36px 36px' }} />
+      </div>
 
-      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-1.5 md:gap-3 md:gap-4 h-full flex-1 min-h-0 min-h-0">
+      <div className="z-10 flex h-full min-h-0 w-full max-w-5xl flex-1 flex-col items-center gap-2">
         <GameplayHUD
           title="Monster Market"
           avatar={avatar}
@@ -157,82 +186,89 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({ avatarId, onBack 
           targetScore={targetScore}
           timeLeft={timeLeft}
           progress={progress}
+          compact
           accentText="text-emerald-900"
           accentSoftBg="bg-emerald-100/80"
           accentBorder="border-emerald-200/80"
           progressBar="bg-gradient-to-r from-emerald-400 via-green-400 to-lime-400"
-          statLabel="Coins"
+          statLabel="Streak"
           statValue={streak}
         />
 
-        {/* Game Area */}
-        <div className="w-full flex-1 min-h-0 min-w-0 relative flex flex-col lg:flex-row items-stretch justify-center gap-2 md:gap-4 licensed-board-frame p-2 md:p-4 overflow-hidden">
+        <div className="licensed-board-frame relative flex w-full min-h-0 flex-1 flex-col gap-2 overflow-hidden p-2 md:p-4 lg:flex-row lg:gap-4">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_22%,rgba(16,185,129,0.22),transparent_24%),radial-gradient(circle_at_78%_18%,rgba(34,211,238,0.18),transparent_24%),linear-gradient(180deg,rgba(4,120,87,0.12),rgba(2,6,23,0.48))]" />
 
-          {/* Customer Area */}
-          <div className="w-full lg:w-2/5 flex flex-row lg:flex-col items-center justify-between lg:justify-center gap-2 md:gap-4 bg-emerald-800/50 backdrop-blur-sm rounded-2xl md:rounded-[2rem] border-2 md:border-4 border-emerald-700 shadow-inner p-3 md:p-6 min-h-0 flex-shrink-0">
-
-            {/* Monster */}
+          <div className="relative flex w-full flex-shrink-0 flex-row items-center gap-3 rounded-2xl border-2 border-emerald-200/22 bg-[linear-gradient(180deg,rgba(13,148,136,0.84),rgba(4,120,87,0.92))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_18px_36px_rgba(2,6,23,0.24)] backdrop-blur-sm lg:w-[37%] lg:flex-col lg:justify-center lg:p-4">
+            <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${shopper.aura} opacity-85`} />
             <motion.div
-              key={monster}
-              initial={{ x: -100, opacity: 0 }}
+              key={shopper.name}
+              initial={{ x: -60, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              className="text-5xl sm:text-6xl md:text-8xl drop-shadow-2xl flex-shrink-0"
+              className="relative flex h-24 w-24 shrink-0 items-center justify-center rounded-[1.8rem] border border-white/20 bg-[radial-gradient(circle_at_30%_28%,rgba(255,255,255,0.42),rgba(255,255,255,0.08)_38%,rgba(15,23,42,0.42)_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.24),0_16px_28px_rgba(2,6,23,0.35)] sm:h-28 sm:w-28 lg:h-36 lg:w-36"
             >
-              {monster}
+              <div className={`absolute inset-[12%] rounded-[1.4rem] bg-gradient-to-br ${shopper.aura} blur-md`} />
+              <div className="relative flex h-[72%] w-[72%] items-center justify-center rounded-[1.2rem] border border-white/16 bg-slate-950/28 text-4xl font-black text-white lg:text-6xl">
+                {shopper.crest}
+              </div>
             </motion.div>
 
-            {/* Order Details */}
-            <div className="flex-1 lg:w-full bg-emerald-900/80 p-2 md:p-4 rounded-xl md:rounded-2xl border-2 border-emerald-600 shadow-lg flex flex-col justify-center gap-1 md:gap-2 min-w-0 min-h-0">
-              <div className="flex flex-col border-b border-emerald-700 pb-1">
-                <span className="text-emerald-400 font-bold text-[10px] sm:text-xs uppercase tracking-wider">Order</span>
-                <span className="text-sm sm:text-base md:text-xl font-black text-white truncate">{scenario}</span>
+            <div className="relative flex min-w-0 flex-1 flex-col gap-2 rounded-2xl border border-white/12 bg-slate-950/32 p-3 backdrop-blur-md">
+              <div className="border-b border-white/10 pb-2">
+                <div className={`text-[10px] font-black uppercase tracking-[0.22em] ${shopper.badge}`}>{shopper.title}</div>
+                <div className="truncate text-lg font-black text-white sm:text-xl lg:text-2xl">{shopper.name}</div>
               </div>
-              <div className="flex justify-between items-center text-xs sm:text-sm md:text-lg font-bold text-emerald-200 border-b border-emerald-700 pb-1">
-                <span>Paid:</span>
-                <span className="text-base sm:text-lg md:text-2xl text-green-400">{formatMoney(amountPaid)}</span>
+              <div className="rounded-2xl border border-white/10 bg-white/6 px-3 py-2">
+                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-100/72">Order</div>
+                <div className="text-sm font-black leading-tight text-white sm:text-base lg:text-xl">{scenario}</div>
               </div>
-              <div className="flex justify-between items-center text-sm md:text-xl font-black text-emerald-400 pt-1">
-                <span>Change:</span>
-                <span className="text-lg sm:text-xl md:text-3xl text-yellow-400">{formatMoney(changeNeeded)}</span>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="rounded-2xl border border-white/10 bg-emerald-950/26 px-3 py-2">
+                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-100/68">Paid</div>
+                  <div className="text-lg font-black text-emerald-300 sm:text-xl lg:text-2xl">{formatMoney(amountPaid)}</div>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-amber-950/24 px-3 py-2">
+                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/68">Change</div>
+                  <div className="text-lg font-black text-amber-300 sm:text-xl lg:text-2xl">{formatMoney(changeNeeded)}</div>
+                </div>
               </div>
             </div>
-
           </div>
 
-          {/* Till / Tray Area */}
-          <div className="w-full lg:w-3/5 flex-1 flex flex-col md:flex-row gap-2 md:gap-4 min-h-0">
+          <div className="relative z-10 flex min-h-0 w-full flex-1 flex-col gap-2 md:flex-row md:gap-3">
+            <div className="flex min-h-0 flex-[3.15] flex-col rounded-2xl border-2 border-cyan-200/18 bg-[linear-gradient(180deg,rgba(11,84,83,0.92),rgba(5,65,72,0.96))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_18px_36px_rgba(2,6,23,0.28)] md:rounded-[2rem]">
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <h3 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-cyan-100 md:text-sm">
+                  <Store className="h-4 w-4" /> Till
+                </h3>
+                <span className="rounded-full border border-white/12 bg-white/8 px-2 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/76">
+                  Tap To Add
+                </span>
+              </div>
 
-            {/* Available Currency */}
-            <div className="flex-[3] bg-emerald-800/80 p-3 md:p-5 rounded-2xl md:rounded-[2rem] border-2 md:border-4 border-emerald-600 shadow-xl overflow-hidden flex flex-col">
-              <h3 className="text-emerald-300 font-bold mb-2 flex items-center gap-1 md:gap-2 text-[10px] md:text-base leading-none">
-                <Store className="w-4 h-4" /> Till
-              </h3>
-              <div className="flex flex-wrap gap-1 sm:gap-2 flex-1 content-start pt-1">
+              <div className="grid flex-1 auto-rows-[minmax(3.75rem,1fr)] grid-cols-4 gap-2 md:auto-rows-[minmax(4.5rem,1fr)] md:gap-3">
                 {CURRENCIES.map(currency => (
                   <button
                     key={currency.id}
                     onClick={() => addToTray(currency)}
                     disabled={!!feedback}
-                    className={`
-                      ${currency.type === 'note' ? 'w-12 h-6 md:w-20 md:h-10 rounded text-[10px] md:text-sm' : 'w-8 h-8 md:w-14 md:h-14 rounded-full text-[10px] md:text-sm'}
-                      ${currency.color} border-2 shadow-md flex items-center justify-center font-black drop-shadow-sm
-                      hover:scale-105 active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed
-                    `}
+                    className={`relative flex min-h-[3.75rem] items-center justify-center overflow-hidden border-2 font-black transition-transform hover:scale-[1.04] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 md:min-h-[4.5rem] ${currency.type === 'note' ? 'col-span-2 rounded-[1.1rem] text-sm md:text-base' : 'rounded-full text-sm md:text-base'} ${TONE_CLASSES[currency.tone]}`}
                   >
+                    <span className="pointer-events-none absolute inset-x-[15%] top-[10%] h-[20%] rounded-full bg-white/28 blur-[1px]" />
                     {currency.label}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Change Tray */}
-            <div className="flex-[2] bg-emerald-900 p-3 md:p-5 rounded-2xl md:rounded-[2rem] border-2 md:border-4 border-emerald-700 shadow-inner flex flex-col min-h-0 relative">
-              <h3 className="text-emerald-400 font-bold mb-2 flex items-center justify-between text-[10px] md:text-sm leading-none">
-                <span className="flex items-center gap-1"><Coins className="w-4 h-4" /> Tray</span>
-                <span className="text-sm md:text-xl text-white drop-shadow-md">{formatMoney(currentTrayTotal)}</span>
-              </h3>
+            <div className="relative flex min-h-0 flex-[2.05] flex-col rounded-2xl border-2 border-cyan-200/16 bg-[linear-gradient(180deg,rgba(9,32,49,0.96),rgba(7,18,32,0.96))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_36px_rgba(2,6,23,0.3)] md:rounded-[2rem]">
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <h3 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-cyan-100 md:text-sm">
+                  <Coins className="h-4 w-4" /> Tray
+                </h3>
+                <span className="text-base font-black text-white md:text-2xl">{formatMoney(currentTrayTotal)}</span>
+              </div>
 
-              <div className="flex-1 rounded-xl p-2 min-h-0 flex flex-wrap content-start gap-1 licensed-game-card-dark bg-black/40 border border-white/10">
+              <div className="licensed-game-card-dark grid min-h-0 flex-1 auto-rows-[minmax(2.85rem,auto)] grid-cols-3 content-start gap-2 rounded-[1.35rem] border border-white/10 bg-black/32 p-2.5 md:auto-rows-[minmax(3.5rem,auto)]">
                 <AnimatePresence>
                   {tray.map(item => (
                     <motion.button
@@ -242,50 +278,52 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({ avatarId, onBack 
                       exit={{ scale: 0 }}
                       onClick={() => removeFromTray(item.id)}
                       disabled={!!feedback}
-                      className={`
-                        ${item.type === 'note' ? 'w-10 h-5 md:w-14 md:h-7 rounded-sm text-[8px] md:text-xs' : 'w-6 h-6 md:w-10 md:h-10 rounded-full text-[8px] md:text-xs'}
-                        ${item.color} border shadow-sm flex items-center justify-center font-bold drop-shadow-sm
-                        hover:opacity-80 transition-opacity flex-shrink-0
-                      `}
+                      className={`flex min-h-[2.85rem] items-center justify-center border font-black transition-opacity hover:opacity-80 md:min-h-[3.5rem] ${item.type === 'note' ? 'col-span-2 rounded-xl text-[11px] md:text-sm' : 'rounded-full text-[11px] md:text-sm'} ${TONE_CLASSES[item.tone]}`}
                     >
                       {item.label}
                     </motion.button>
                   ))}
                 </AnimatePresence>
                 {tray.length === 0 && (
-                  <div className="w-full h-full flex items-center justify-center text-emerald-800/80 font-bold text-[10px] md:text-sm text-center">
-                    Tap till to give change
+                  <div className="col-span-3 flex h-full w-full items-center justify-center text-center text-[11px] font-bold text-cyan-100/38 md:text-sm">
+                    Tap money from the till to build the exact change.
                   </div>
                 )}
               </div>
 
-              <button
-                onClick={handleSubmit}
-                disabled={tray.length === 0 || !!feedback}
-                className="mt-2 w-full py-2 text-white text-xs md:text-lg font-black rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed licensed-submit-button"
-              >
-                GIVE CHANGE
-              </button>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <button
+                  onClick={clearTray}
+                  disabled={tray.length === 0 || !!feedback}
+                  className="rounded-2xl border border-white/12 bg-white/8 py-2.5 text-xs font-black text-white transition-all hover:bg-white/12 disabled:cursor-not-allowed disabled:opacity-40 md:text-sm"
+                >
+                  CLEAR
+                </button>
+                <button
+                  onClick={handleSubmit}
+                  disabled={tray.length === 0 || !!feedback}
+                  className="licensed-submit-button rounded-2xl py-2.5 text-xs font-black text-white transition-all disabled:cursor-not-allowed disabled:opacity-50 md:text-base"
+                >
+                  GIVE CHANGE
+                </button>
+              </div>
 
-              {/* Feedback Overlay */}
               <AnimatePresence>
                 {feedback && (
                   <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 18 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
-                    className={`absolute inset-0 flex items-center justify-center rounded-[1rem] backdrop-blur-md z-20 ${feedback === 'correct' ? 'bg-green-500/30' : 'bg-red-500/30'}`}
+                    className={`absolute inset-0 z-20 flex items-center justify-center rounded-[1.3rem] backdrop-blur-md ${feedback === 'correct' ? 'bg-green-500/24' : 'bg-red-500/24'}`}
                   >
-                    <span className={`text-2xl md:text-4xl font-black drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] ${feedback === 'correct' ? 'text-green-300' : 'text-red-400'}`}>
+                    <span className={`text-2xl font-black drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] md:text-4xl ${feedback === 'correct' ? 'text-green-300' : 'text-red-400'}`}>
                       {feedback === 'correct' ? 'CORRECT!' : 'WRONG!'}
                     </span>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
-
           </div>
-
         </div>
 
         <GameActionDock
@@ -293,42 +331,41 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({ avatarId, onBack 
           accentClass="text-emerald-700"
         />
 
-        {/* Game Over / Victory Modals */}
         <AnimatePresence>
           {(isGameOver || isVictory) && (
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md cursor-default pointer-events-auto"
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md"
             >
-              <div className="licensed-overlay-card p-8 md:p-12 flex flex-col items-center gap-6 max-w-md w-full">
-                <div className={`text-3xl md:text-5xl font-black ${isVictory ? 'text-emerald-400' : 'text-red-500'} drop-shadow-md text-center`}>
+              <div className="licensed-overlay-card flex w-full max-w-md flex-col items-center gap-6 p-8 md:p-12">
+                <div className={`text-center text-3xl font-black drop-shadow-md md:text-5xl ${isVictory ? 'text-emerald-400' : 'text-red-500'}`}>
                   {isVictory ? 'TOP CASHIER!' : 'SHIFT OVER!'}
                 </div>
 
                 {isVictory && (
                   <div className="flex gap-2">
-                    {[1, 2, 3].map(s => (
+                    {[1, 2, 3].map(value => (
                       <motion.div
-                        key={s}
+                        key={value}
                         initial={{ scale: 0, rotate: -20 }}
                         animate={{ scale: 1, rotate: 0 }}
-                        transition={{ delay: s * 0.2, type: 'spring' }}
+                        transition={{ delay: value * 0.2, type: 'spring' }}
                       >
-                        <Star className={`w-12 h-12 md:w-16 md:h-16 ${s <= (score >= targetScore * 2 ? 3 : score >= targetScore * 1.5 ? 2 : 1) ? 'fill-yellow-400 text-yellow-400' : 'text-emerald-900/50'}`} />
+                        <Star className={`h-12 w-12 md:h-16 md:w-16 ${value <= (score >= targetScore * 2 ? 3 : score >= targetScore * 1.5 ? 2 : 1) ? 'fill-yellow-400 text-yellow-400' : 'text-emerald-900/50'}`} />
                       </motion.div>
                     ))}
                   </div>
                 )}
 
                 <div className="text-center">
-                  <div className="text-emerald-700 font-black uppercase tracking-widest text-[10px] md:text-sm">Final Score</div>
-                  <div className="text-5xl md:text-6xl font-black text-white drop-shadow-sm">{score}</div>
+                  <div className="text-[10px] font-black uppercase tracking-widest text-emerald-700 md:text-sm">Final Score</div>
+                  <div className="text-5xl font-black text-white md:text-6xl">{score}</div>
                 </div>
 
                 <button
                   onClick={onBack}
-                  className="w-full py-4 md:py-5 text-white text-xl font-black rounded-2xl transition-all licensed-submit-button"
+                  className="licensed-submit-button w-full rounded-2xl py-4 text-xl font-black text-white transition-all md:py-5"
                 >
                   CONTINUE
                 </button>
