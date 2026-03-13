@@ -277,16 +277,16 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
               <motion.div
                 animate={isActive ? { y: [0, -8, 0] } : { y: 0 }}
                 transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
-                className="relative mx-auto flex w-full max-w-6xl flex-col gap-3 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(25rem,0.95fr)] lg:items-center lg:gap-6"
+                className="relative mx-auto grid h-full w-full max-w-6xl min-h-0 grid-rows-[minmax(0,2fr)_minmax(0,1fr)] gap-3 lg:h-auto lg:grid-cols-[minmax(0,1fr)_minmax(25rem,0.95fr)] lg:grid-rows-none lg:items-center lg:gap-6"
               >
-                <div className="relative">
+                <div className="relative min-h-0">
                   <div className={`absolute inset-x-12 bottom-3 h-10 rounded-full bg-black/40 blur-2xl md:bottom-0 md:h-14 ${palette.halo}`} />
 
-                  <div className="relative overflow-hidden rounded-[2rem] border border-white/15 bg-slate-950/70 shadow-[0_32px_90px_rgba(2,6,23,0.42)] md:rounded-[2.8rem]">
+                  <div className="relative flex h-full min-h-0 flex-col overflow-hidden rounded-[2rem] border border-white/15 bg-slate-950/70 shadow-[0_32px_90px_rgba(2,6,23,0.42)] md:rounded-[2.8rem]">
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.16),transparent_26%),linear-gradient(180deg,rgba(2,6,23,0.08),rgba(2,6,23,0.72))]" />
                     <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-white/12 to-transparent md:h-28" />
 
-                    <div className="relative p-3 md:p-5">
+                    <div className="relative flex h-full min-h-0 flex-col p-3 md:p-5">
                       <div className="flex items-center justify-between gap-2">
                         <div className="casual-ribbon-chip inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-white">
                           <span className="text-[9px] font-black uppercase tracking-[0.3em] md:text-[10px]">Island {island.id}</span>
@@ -300,17 +300,17 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                       <motion.div
                         animate={isActive ? { scale: [1, 1.02, 1] } : { scale: 1 }}
                         transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-                        className="relative mt-3 overflow-hidden rounded-[1.7rem] border border-white/10 bg-slate-950/70 md:mt-4 md:rounded-[2.2rem]"
+                        className="relative mt-3 flex-1 min-h-[13.5rem] overflow-hidden rounded-[1.7rem] border border-white/10 bg-slate-950/70 md:mt-4 md:min-h-[22rem] md:rounded-[2.2rem]"
                       >
                         {island.mapImage ? (
                           <img
                             src={island.mapImage}
                             alt={island.themeName || island.name}
-                            className="h-[9.5rem] w-full object-cover object-center opacity-90 md:h-[22rem]"
+                            className="h-full w-full object-cover object-center opacity-90"
                             draggable={false}
                           />
                         ) : (
-                          <div className={`h-[9.5rem] w-full bg-gradient-to-br ${island.bgGradient || 'from-sky-600 to-slate-900'} md:h-[22rem]`} />
+                          <div className={`h-full w-full bg-gradient-to-br ${island.bgGradient || 'from-sky-600 to-slate-900'}`} />
                         )}
                         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(2,6,23,0)_28%,rgba(2,6,23,0.56)_100%)]" />
                         <div className="absolute inset-x-0 bottom-0 p-3 md:p-5">
@@ -329,7 +329,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                   </div>
                 </div>
 
-                <div className="casual-panel-strong relative overflow-hidden rounded-[2rem] border border-white/16 p-4 text-white shadow-[0_28px_80px_rgba(2,6,23,0.4)] md:rounded-[2.6rem] md:p-7">
+                <div className="casual-panel-strong relative flex h-full min-h-0 flex-col justify-center overflow-hidden rounded-[2rem] border border-white/16 p-4 text-white shadow-[0_28px_80px_rgba(2,6,23,0.4)] md:rounded-[2.6rem] md:p-7">
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.12),transparent_22%),radial-gradient(circle_at_bottom_left,rgba(34,211,238,0.12),transparent_24%)] opacity-90" />
                   <div className="relative">
                     <div className="mb-3 flex items-center justify-between gap-3 md:mb-5">
