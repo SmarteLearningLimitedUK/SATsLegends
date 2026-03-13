@@ -10,6 +10,33 @@ interface IslandLevelsProps {
   onSelectLevel: (level: LevelData) => void;
 }
 
+const GAME_TYPE_LABELS: Record<NonNullable<LevelData['gameType']>, string> = {
+  quiz: 'Quiz',
+  potion_pour: 'Potion Pour',
+  burger_bar: 'Burger Bar',
+  cloud_collapse: 'Cloud Collapse',
+  sequence_sprint: 'Sequence Sprint',
+  logic_sort: 'Logic Sort',
+  shape_shift: 'Shape Shift',
+  matrix_match: 'Matrix Match',
+  burger_builder: 'Burger Bar',
+  fraction_match: 'Crystal Match',
+  prime_pop: 'Prime Pop',
+  angle_arena: 'Angle Arena',
+  polygon_palace: 'Polygon Palace',
+  data_dungeon: 'Data Dungeon',
+  monster_market: 'Monster Market',
+  tower_of_factors: 'Tower Of Factors',
+  measurement_forge: 'Measurement Forge',
+  timekeeper_temple: 'Timekeeper Temple',
+  ratio_rapids: 'Ratio Rapids',
+};
+
+const getGameLabel = (level: LevelData) => {
+  if (!level.gameType) return `Level ${level.id}`;
+  return GAME_TYPE_LABELS[level.gameType] || level.gameType.replace(/_/g, ' ');
+};
+
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean, error: Error | null }> {
   public state: { hasError: boolean, error: Error | null } = { hasError: false, error: null };
   public props: { children: ReactNode };
@@ -74,6 +101,7 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
             const isUnlocked = true;
             const stars = player.levelStars?.[`${island.id}-${level.id}`] || 0;
             const isCompleted = completedLevels.includes(level.id);
+            const gameLabel = getGameLabel(level);
 
             const pos = NODE_POSITIONS[index] || { top: '50%', left: '50%' };
 
@@ -130,6 +158,14 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
                       <span className="text-[10px] md:text-xs font-black text-yellow-400 tracking-wider">BOSS</span>
                     </motion.div>
                   )}
+
+                  <div className="absolute top-full mt-6 flex w-24 justify-center md:w-32">
+                    <div className="rounded-[0.95rem] border border-white/15 bg-slate-950/70 px-2 py-1 text-center shadow-[0_10px_24px_rgba(2,6,23,0.28)] backdrop-blur-md">
+                      <span className="block text-[9px] font-black uppercase leading-[1.15] tracking-[0.08em] text-white/95 md:text-[10px]">
+                        {gameLabel}
+                      </span>
+                    </div>
+                  </div>
                 </button>
               </motion.div>
             );

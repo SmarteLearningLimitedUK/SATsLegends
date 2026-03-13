@@ -1,5 +1,11 @@
 import { AvatarData, IslandData, ShopItem, DailyQuest, MathFamily, CloudCollapseLevelConfig, PotionPourLevelConfig, Achievement } from "./types";
 import { CHARACTER_AVATARS } from './assets/characters';
+import world01Map from './assets/maps/world_01.png';
+import world02Map from './assets/maps/world_02.png';
+import world03Map from './assets/maps/world_03.png';
+import world04Map from './assets/maps/world_04.png';
+import world05Map from './assets/maps/world_05.png';
+import world06Map from './assets/maps/world_06.png';
 
 export const ACHIEVEMENTS: Achievement[] = [
   { id: 'first_win', title: 'First Victory', description: 'Complete your first level', icon: '🏆', type: 'levels', target: 1 },
@@ -39,7 +45,7 @@ export const ISLANDS: IslandData[] = [
     themeName: 'Lush Grove',
     bgGradient: 'from-sky-300 to-sky-100',
     groundColor: 'bg-green-500',
-    mapImage: '/src/assets/licensed/maps/map_1.png',
+    mapImage: world01Map,
     decorations: [],
     levels: [
       { id: 1, stars: 3, isLocked: false, gameType: 'monster_market' },
@@ -58,7 +64,7 @@ export const ISLANDS: IslandData[] = [
     themeName: 'Crystal Cave',
     bgGradient: 'from-indigo-900 to-purple-800',
     groundColor: 'bg-fuchsia-900',
-    mapImage: '/src/assets/licensed/maps/map_2.png',
+    mapImage: world02Map,
     decorations: [],
     levels: [
       { id: 1, stars: 0, isLocked: false, gameType: 'burger_builder' },
@@ -77,7 +83,7 @@ export const ISLANDS: IslandData[] = [
     themeName: 'Marble Ruins',
     bgGradient: 'from-orange-200 to-rose-200',
     groundColor: 'bg-stone-400',
-    mapImage: '/src/assets/licensed/maps/map_3.png',
+    mapImage: world03Map,
     decorations: [],
     levels: [
       { id: 1, stars: 0, isLocked: false, gameType: 'angle_arena' },
@@ -96,7 +102,7 @@ export const ISLANDS: IslandData[] = [
     themeName: 'Desert Oasis',
     bgGradient: 'from-yellow-200 to-orange-300',
     groundColor: 'bg-yellow-600',
-    mapImage: '/src/assets/licensed/maps/map_4.png',
+    mapImage: world04Map,
     decorations: [],
     levels: [
       { id: 1, stars: 0, isLocked: false, gameType: 'ratio_rapids' },
@@ -115,7 +121,7 @@ export const ISLANDS: IslandData[] = [
     themeName: 'Starlight City',
     bgGradient: 'from-slate-900 to-blue-900',
     groundColor: 'bg-slate-800',
-    mapImage: '/src/assets/licensed/maps/map_5.png',
+    mapImage: world05Map,
     decorations: [],
     levels: [
       { id: 1, stars: 0, isLocked: false, gameType: 'data_dungeon' },
@@ -134,7 +140,7 @@ export const ISLANDS: IslandData[] = [
     themeName: 'Magic Forest',
     bgGradient: 'from-emerald-800 to-teal-900',
     groundColor: 'bg-emerald-950',
-    mapImage: '/src/assets/licensed/maps/map_1.png', // Fallback to map 1
+    mapImage: world06Map,
     decorations: [],
     levels: [
       { id: 1, stars: 0, isLocked: false, gameType: 'sequence_sprint' },

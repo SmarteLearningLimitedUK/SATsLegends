@@ -348,6 +348,11 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
     return `${burgerStack.map(item => item.shortLabel).join(' + ')} = ${formatFractionUnits(totalUnits)}`;
   }, [burgerStack, totalUnits]);
 
+  const orderSummary = useMemo(() => {
+    if (!currentOrder) return '';
+    return `${formatFractionUnits(currentOrder.targetUnits)} burger • ${currentOrder.requiredIngredients.join(' + ')}`;
+  }, [currentOrder]);
+
   const handleIngredientAdd = (ingredient: IngredientType) => {
     if (isGameOver || isVictory || isTransitioning) return;
     if (burgerStack.length >= 14) {
@@ -434,51 +439,87 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
           statValue={ordersServed}
         />
 
-        <div className="grid min-h-0 flex-1 gap-2 md:gap-4 lg:grid-cols-[1.15fr_0.85fr]">
-          <section className="order-2 flex min-h-0 flex-col overflow-hidden rounded-[2rem] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.78),rgba(255,247,237,0.98))] p-3 shadow-[0_22px_52px_rgba(120,53,15,0.16)] md:rounded-[2.5rem] md:p-4 lg:order-1">
-            <div className="mb-2 flex items-center justify-between gap-3">
-              <div>
-                <div className="text-[10px] font-black uppercase tracking-[0.28em] text-amber-700/70 md:text-xs">Build Zone</div>
-                <div className="text-base font-black text-amber-950 md:text-xl">Stack To The Exact Fraction</div>
+        <div className="flex min-h-0 flex-1 flex-col gap-2 md:gap-3 lg:grid lg:grid-cols-[1.15fr_0.85fr] lg:gap-4">
+          <section className="relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-[linear-gradient(180deg,rgba(120,53,15,0.98),rgba(146,64,14,0.92))] p-3 text-white shadow-[0_18px_42px_rgba(120,53,15,0.22)] lg:hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.2),transparent_46%)]" />
+            <div className="relative flex items-start gap-3">
+              <CustomerFace mood={customerMood} />
+              <div className="min-w-0 flex-1">
+                <div className="text-[10px] font-black uppercase tracking-[0.24em] text-amber-200/80">Burger Order</div>
+                <div className="mt-1 text-base font-black text-white">{orderSummary}</div>
+                <div className="mt-1 text-xs font-semibold text-amber-100/80">{feedback}</div>
               </div>
               <button
                 onClick={onBack}
-                className="flex h-11 w-11 items-center justify-center rounded-2xl border border-amber-200 bg-white/90 shadow-[0_10px_24px_rgba(15,23,42,0.1)]"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-white/20 bg-white/12 text-white shadow-lg"
+                aria-label="Back to island"
+              >
+                <AssetIcon name="back" className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="relative mt-3 flex items-center justify-between gap-2 rounded-[1.1rem] bg-white/12 px-3 py-2 backdrop-blur-sm">
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-100/80">Needs</div>
+                <div className="mt-1 text-xs font-black text-white">{currentOrder ? currentOrder.requiredIngredients.join(' + ') : ''}</div>
+              </div>
+              <div className="rounded-[0.9rem] bg-white/12 px-3 py-1.5 text-center">
+                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-100/80">Patience</div>
+                <div className={`mt-0.5 text-xl font-black ${orderTimeLeft <= 10 ? 'text-red-300' : 'text-white'}`}>{orderTimeLeft}s</div>
+              </div>
+              <div className="flex items-center gap-1.5">
+                {Array.from({ length: MAX_MISSES }).map((_, index) => (
+                  <div key={index} className={`flex h-7 w-7 items-center justify-center rounded-full ${index < MAX_MISSES - missedCustomers ? 'bg-white/16' : 'bg-red-500/30'} shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]`}>
+                    <AssetIcon name="heart" className={`h-3.5 w-3.5 ${index < MAX_MISSES - missedCustomers ? '' : 'opacity-35 grayscale'}`} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="order-1 flex min-h-0 flex-[1.08] flex-col overflow-hidden rounded-[1.8rem] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.78),rgba(255,247,237,0.98))] p-2.5 shadow-[0_22px_52px_rgba(120,53,15,0.16)] md:rounded-[2.5rem] md:p-4 lg:order-1">
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-[0.28em] text-amber-700/70 md:text-xs">Build Zone</div>
+                <div className="text-sm font-black text-amber-950 md:text-xl">Stack To The Exact Fraction</div>
+              </div>
+              <button
+                onClick={onBack}
+                className="hidden h-11 w-11 items-center justify-center rounded-2xl border border-amber-200 bg-white/90 shadow-[0_10px_24px_rgba(15,23,42,0.1)] lg:flex"
                 aria-label="Back to island"
               >
                 <AssetIcon name="back" className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 rounded-[1.4rem] border border-amber-100 bg-white/80 p-2 md:rounded-[1.8rem] md:p-3">
+            <div className="grid grid-cols-3 gap-1.5 rounded-[1.2rem] border border-amber-100 bg-white/80 p-2 md:gap-2 md:rounded-[1.8rem] md:p-3">
               <div className="rounded-[1.1rem] bg-amber-50 px-3 py-2 text-center">
                 <div className="text-[10px] font-black uppercase tracking-[0.24em] text-amber-700/70">Target</div>
-                <div className="mt-1 text-lg font-black text-amber-950 md:text-2xl">{currentOrder ? formatFractionUnits(currentOrder.targetUnits) : '0'}</div>
+                <div className="mt-1 text-base font-black text-amber-950 md:text-2xl">{currentOrder ? formatFractionUnits(currentOrder.targetUnits) : '0'}</div>
               </div>
               <div className="rounded-[1.1rem] bg-orange-50 px-3 py-2 text-center">
                 <div className="text-[10px] font-black uppercase tracking-[0.24em] text-amber-700/70">Built</div>
-                <div className={`mt-1 text-lg font-black md:text-2xl ${currentOrder && totalUnits > currentOrder.targetUnits ? 'text-red-500' : 'text-amber-950'}`}>{formatFractionUnits(totalUnits)}</div>
+                <div className={`mt-1 text-base font-black md:text-2xl ${currentOrder && totalUnits > currentOrder.targetUnits ? 'text-red-500' : 'text-amber-950'}`}>{formatFractionUnits(totalUnits)}</div>
               </div>
               <div className="rounded-[1.1rem] bg-yellow-50 px-3 py-2 text-center">
                 <div className="text-[10px] font-black uppercase tracking-[0.24em] text-amber-700/70">Layers</div>
-                <div className="mt-1 text-lg font-black text-amber-950 md:text-2xl">{burgerStack.length}</div>
+                <div className="mt-1 text-base font-black text-amber-950 md:text-2xl">{burgerStack.length}</div>
               </div>
             </div>
 
-            <div className="relative mt-2 flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.8rem] bg-[linear-gradient(180deg,rgba(255,251,235,0.96),rgba(255,237,213,0.92))] px-3 pb-3 pt-4 shadow-[inset_0_2px_18px_rgba(255,255,255,0.9),inset_0_-10px_20px_rgba(251,146,60,0.12)] md:rounded-[2.4rem] md:px-4 md:pb-4 lg:px-5">
+            <div className="relative mt-2 flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.6rem] bg-[linear-gradient(180deg,rgba(255,251,235,0.96),rgba(255,237,213,0.92))] px-2.5 pb-2.5 pt-3 shadow-[inset_0_2px_18px_rgba(255,255,255,0.9),inset_0_-10px_20px_rgba(251,146,60,0.12)] md:rounded-[2.4rem] md:px-4 md:pb-4 lg:px-5">
               <div className="absolute inset-x-6 top-4 h-16 rounded-full bg-white/55 blur-2xl" />
               <div className="absolute inset-x-4 bottom-4 h-20 rounded-full bg-amber-900/8 blur-2xl" />
 
-              <div className="rounded-[1.2rem] border border-white/70 bg-white/70 px-3 py-2 shadow-[0_10px_24px_rgba(15,23,42,0.06)]">
+              <div className="rounded-[1.1rem] border border-white/70 bg-white/70 px-3 py-2 shadow-[0_10px_24px_rgba(15,23,42,0.06)]">
                 <div className="text-[10px] font-black uppercase tracking-[0.24em] text-amber-700/70 md:text-xs">Fraction Equation</div>
-                <div className="mt-1 text-sm font-bold text-amber-950 md:text-base">{buildEquation}</div>
+                <div className="mt-1 text-xs font-bold text-amber-950 md:text-base">{buildEquation}</div>
               </div>
 
-              <div className="relative flex min-h-0 flex-1 items-end justify-center overflow-hidden pt-4">
+              <div className="relative flex min-h-0 flex-1 items-end justify-center overflow-hidden pt-2 md:pt-4">
                 <div className="absolute bottom-0 h-10 w-[72%] rounded-full bg-amber-900/15 blur-xl" />
-                <div className="relative flex h-full w-full max-w-[420px] flex-col items-center justify-end">
-                  <img src={BURGER_ASSETS.topBun} alt="Top bun" className="z-20 w-40 object-contain drop-shadow-[0_12px_18px_rgba(120,53,15,0.24)] md:w-52" draggable={false} />
-                  <div className="relative -mt-3 flex w-full flex-1 flex-col-reverse items-center justify-start overflow-visible px-2 pb-1 pt-2 md:-mt-5">
+                <div className="relative flex h-full w-full max-w-[310px] md:max-w-[420px] flex-col items-center justify-end">
+                  <img src={BURGER_ASSETS.topBun} alt="Top bun" className="z-20 w-28 object-contain drop-shadow-[0_12px_18px_rgba(120,53,15,0.24)] md:w-52" draggable={false} />
+                  <div className="relative -mt-2 flex w-full flex-1 flex-col-reverse items-center justify-start overflow-visible px-1 pb-1 pt-1 md:-mt-5">
                     <AnimatePresence initial={false}>
                       {burgerStack.map((ingredient, index) => (
                         <motion.div
@@ -487,7 +528,7 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
                           animate={{ y: 0, opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, y: 18 }}
                           transition={{ type: 'spring', stiffness: 220, damping: 18 }}
-                          className={`${index === 0 ? '' : '-mt-3 md:-mt-5'} relative flex items-center justify-center`}
+                          className={`${index === 0 ? '' : '-mt-2 md:-mt-5'} relative flex items-center justify-center`}
                           style={{ zIndex: index + 1 }}
                         >
                           <img
@@ -503,14 +544,14 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
                       ))}
                     </AnimatePresence>
                   </div>
-                  <img src={BURGER_ASSETS.bottomBun} alt="Bottom bun" className="relative z-30 -mt-2 w-40 object-contain drop-shadow-[0_14px_20px_rgba(120,53,15,0.24)] md:w-52" draggable={false} />
+                  <img src={BURGER_ASSETS.bottomBun} alt="Bottom bun" className="relative z-30 -mt-1 w-28 object-contain drop-shadow-[0_14px_20px_rgba(120,53,15,0.24)] md:-mt-2 md:w-52" draggable={false} />
                 </div>
               </div>
 
               <div className="mt-2 grid grid-cols-2 gap-2 md:gap-3">
                 <button
                   onClick={clearBurger}
-                  className="flex items-center justify-center gap-2 rounded-[1.2rem] border border-amber-200 bg-white/90 px-4 py-3 text-sm font-black text-amber-950 shadow-[0_10px_18px_rgba(15,23,42,0.08)] transition-transform hover:-translate-y-0.5 disabled:opacity-60 md:text-base"
+                  className="flex items-center justify-center gap-2 rounded-[1rem] border border-amber-200 bg-white/90 px-3 py-2.5 text-xs font-black text-amber-950 shadow-[0_10px_18px_rgba(15,23,42,0.08)] transition-transform hover:-translate-y-0.5 disabled:opacity-60 md:text-base"
                   disabled={!burgerStack.length || isTransitioning}
                 >
                   <AssetIcon name="refresh" className="h-4 w-4 md:h-5 md:w-5" />
@@ -518,7 +559,7 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
                 </button>
                 <button
                   onClick={handleServe}
-                  className="rounded-[1.2rem] bg-[linear-gradient(180deg,#22c55e_0%,#16a34a_100%)] px-4 py-3 text-sm font-black text-white shadow-[0_10px_0_#166534,0_14px_26px_rgba(21,128,61,0.28)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-[0_8px_0_#166534] md:text-base"
+                  className="rounded-[1rem] bg-[linear-gradient(180deg,#22c55e_0%,#16a34a_100%)] px-3 py-2.5 text-xs font-black text-white shadow-[0_10px_0_#166534,0_14px_26px_rgba(21,128,61,0.28)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-[0_8px_0_#166534] md:text-base"
                   disabled={!burgerStack.length || isTransitioning}
                 >
                   Let&apos;s Serve
@@ -527,8 +568,8 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
             </div>
           </section>
 
-          <aside className="order-1 flex min-h-0 flex-col gap-2 lg:order-2">
-            <section className="relative overflow-hidden rounded-[2rem] border border-white/70 bg-[linear-gradient(180deg,rgba(120,53,15,0.98),rgba(146,64,14,0.92))] p-3 text-white shadow-[0_22px_52px_rgba(120,53,15,0.22)] md:rounded-[2.4rem] md:p-4">
+          <aside className="order-2 flex min-h-0 flex-[0.92] flex-col gap-2 lg:order-2">
+            <section className="relative hidden overflow-hidden rounded-[2rem] border border-white/70 bg-[linear-gradient(180deg,rgba(120,53,15,0.98),rgba(146,64,14,0.92))] p-3 text-white shadow-[0_22px_52px_rgba(120,53,15,0.22)] md:rounded-[2.4rem] md:p-4 lg:block">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.2),transparent_46%)]" />
               <div className="relative flex items-start gap-3">
                 <CustomerFace mood={customerMood} />
@@ -587,13 +628,13 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
               </AnimatePresence>
             </section>
 
-            <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] border border-white/70 bg-white/80 p-3 shadow-[0_22px_52px_rgba(15,23,42,0.12)] backdrop-blur-md md:rounded-[2.4rem] md:p-4">
+            <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/80 p-2.5 shadow-[0_22px_52px_rgba(15,23,42,0.12)] backdrop-blur-md md:rounded-[2.4rem] md:p-4">
               <div className="mb-3 flex items-center justify-between gap-3">
                 <div>
                   <div className="text-[10px] font-black uppercase tracking-[0.28em] text-amber-700/70 md:text-xs">Ingredients</div>
-                  <div className="text-base font-black text-amber-950 md:text-xl">Tap To Build</div>
+                  <div className="text-sm font-black text-amber-950 md:text-xl">Tap To Build</div>
                 </div>
-                <div className="rounded-full bg-amber-100 px-3 py-1 text-xs font-black text-amber-900">
+                <div className="hidden rounded-full bg-amber-100 px-3 py-1 text-xs font-black text-amber-900 md:block">
                   Higher layers = higher score
                 </div>
               </div>
@@ -605,12 +646,12 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                     onClick={() => handleIngredientAdd(ingredient)}
-                    className={`flex min-h-[92px] flex-col items-center justify-center rounded-[1.35rem] border border-white/70 bg-gradient-to-br ${ingredient.accent} px-2 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_12px_18px_rgba(15,23,42,0.08)] md:min-h-[110px] md:rounded-[1.6rem]`}
+                    className={`flex min-h-[74px] flex-col items-center justify-center rounded-[1.15rem] border border-white/70 bg-gradient-to-br ${ingredient.accent} px-1.5 py-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_12px_18px_rgba(15,23,42,0.08)] md:min-h-[110px] md:rounded-[1.6rem] md:px-2 md:py-2`}
                   >
                     <img src={ingredient.asset} alt={ingredient.name} className={`${ingredient.buttonImageClass} object-contain drop-shadow-[0_8px_10px_rgba(15,23,42,0.16)]`} draggable={false} />
                     <div className="mt-1 text-center">
-                      <div className="text-[11px] font-black leading-none text-amber-950 md:text-sm">{ingredient.name}</div>
-                      <div className="mt-1 rounded-full bg-white/88 px-2 py-0.5 text-[10px] font-black text-amber-900 shadow-sm md:text-xs">
+                      <div className="text-[10px] font-black leading-none text-amber-950 md:text-sm">{ingredient.name}</div>
+                      <div className="mt-1 rounded-full bg-white/88 px-2 py-0.5 text-[9px] font-black text-amber-900 shadow-sm md:text-xs">
                         {ingredient.shortLabel}
                       </div>
                     </div>
