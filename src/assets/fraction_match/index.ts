@@ -1,4 +1,4 @@
-import board from './board.png';
+import board from './board_premium.png';
 import ember from './tiles/ember.png';
 import sapphire from './tiles/sapphire.png';
 import emerald from './tiles/emerald.png';

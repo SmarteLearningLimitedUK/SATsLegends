@@ -1,10 +1,41 @@
 
+export type MiniGameType =
+  | 'quiz'
+  | 'potion_pour'
+  | 'burger_bar'
+  | 'cloud_collapse'
+  | 'sequence_sprint'
+  | 'logic_sort'
+  | 'shape_shift'
+  | 'matrix_match'
+  | 'burger_builder'
+  | 'fraction_match'
+  | 'prime_pop'
+  | 'angle_arena'
+  | 'polygon_palace'
+  | 'data_dungeon'
+  | 'monster_market'
+  | 'tower_of_factors'
+  | 'measurement_forge'
+  | 'timekeeper_temple'
+  | 'ratio_rapids'
+  | 'place_value_peaks'
+  | 'calculation_clash'
+  | 'percent_pulse'
+  | 'coordinate_quest'
+  | 'transform_temple'
+  | 'scale_safari'
+  | 'chart_chase'
+  | 'mean_machine'
+  | 'equation_grove'
+  | 'rule_runner';
+
 export interface LevelData {
   id: number;
   stars: number;
   isLocked: boolean;
   isBoss?: boolean;
-  gameType?: 'quiz' | 'potion_pour' | 'burger_bar' | 'cloud_collapse' | 'sequence_sprint' | 'logic_sort' | 'shape_shift' | 'matrix_match' | 'burger_builder' | 'fraction_match' | 'prime_pop' | 'angle_arena' | 'polygon_palace' | 'data_dungeon' | 'monster_market' | 'tower_of_factors' | 'measurement_forge' | 'timekeeper_temple' | 'ratio_rapids';
+  gameType?: MiniGameType;
 }
 
 export interface IslandData {

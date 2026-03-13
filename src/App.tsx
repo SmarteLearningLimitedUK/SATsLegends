@@ -497,15 +497,15 @@ const App: React.FC = () => {
         );
       case 'profile_setup':
         return (
-          <div className="casual-panel-strong relative z-10 my-auto w-full max-w-sm max-h-full overflow-hidden rounded-[2rem] p-4 text-center sm:max-w-md md:max-w-3xl md:rounded-[3rem] md:p-12">
-            <div className="relative z-10 mb-6 md:mb-8">
-              <h2 className="text-2xl font-black tracking-tight text-white md:text-6xl">Name your hero</h2>
+          <div className="casual-panel-strong relative z-10 my-auto flex w-full max-w-sm max-h-full flex-col justify-center overflow-hidden rounded-[2rem] p-4 text-center sm:max-w-md md:max-w-3xl md:rounded-[3rem] md:p-12">
+            <div className="relative z-10 mb-5 md:mb-8">
+              <h2 className="text-[1.7rem] font-black tracking-tight text-white md:text-6xl">Name your hero</h2>
               <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/75 md:text-sm">
                 Step 1 of 2 · profile setup
               </p>
             </div>
 
-            <div className="relative z-10 flex flex-col gap-4 md:gap-5 items-center">
+            <div className="relative z-10 flex flex-col items-center gap-3.5 md:gap-5">
               <input
                 value={draftName}
                 onChange={event => setDraftName(event.target.value.slice(0, 18))}
@@ -513,7 +513,7 @@ const App: React.FC = () => {
                   if (event.key === 'Enter') handleSaveProfileName();
                 }}
                 placeholder="Explorer"
-                className="w-full max-w-xl rounded-[1.25rem] border-2 border-white/20 bg-black/20 px-5 py-3 text-center text-lg font-black text-white outline-none placeholder:text-white/35 focus:border-yellow-300 md:rounded-[1.75rem] md:px-6 md:py-5 md:text-3xl"
+                className="w-full max-w-xl rounded-[1.25rem] border-2 border-white/20 bg-black/20 px-5 py-3 text-center text-base font-black text-white outline-none placeholder:text-white/35 focus:border-yellow-300 md:rounded-[1.75rem] md:px-6 md:py-5 md:text-3xl"
               />
               <div className="flex gap-3 flex-wrap justify-center md:gap-4">
                 <button

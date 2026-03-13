@@ -41,7 +41,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
   const selectedStyle = HERO_STYLES[selectedAvatar.id] || HERO_STYLES.barratt;
 
   return (
-    <div className="relative my-auto flex h-full max-h-full w-full max-w-6xl flex-col gap-3 overflow-hidden px-3 py-3 md:px-8 md:py-6">
+    <div className="relative my-auto flex h-full max-h-full w-full max-w-6xl flex-col gap-2 overflow-hidden px-3 py-2 md:gap-3 md:px-8 md:py-6">
       <div className="absolute inset-0 -z-30 rounded-[2rem] bg-[radial-gradient(circle_at_top,rgba(255,248,220,0.28),transparent_24%),linear-gradient(180deg,#20120b_0%,#120d15_36%,#070b16_100%)] md:rounded-[2.8rem]" />
       <div className={`absolute inset-0 -z-20 rounded-[2rem] bg-[radial-gradient(circle_at_top,rgba(255,214,102,0.12),transparent_24%),linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01)),linear-gradient(135deg,rgba(62,32,18,0.92),rgba(17,22,36,0.96))] md:rounded-[2.8rem]`} />
       <div className={`absolute left-1/2 top-[12%] -z-10 h-48 w-48 -translate-x-1/2 rounded-full bg-gradient-to-br ${selectedStyle.glow} blur-3xl md:h-72 md:w-72`} />
@@ -53,15 +53,15 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
       <div className="absolute inset-x-3 top-0 bottom-0 -z-10 rounded-[2rem] border border-[#f3cf78]/35 bg-[linear-gradient(180deg,rgba(255,244,213,0.06),rgba(255,255,255,0.015))] shadow-[inset_0_1px_0_rgba(255,237,186,0.15),0_28px_90px_rgba(2,6,23,0.42)] backdrop-blur-[22px] md:inset-x-8 md:rounded-[2.8rem]" />
       <div className="pointer-events-none absolute inset-x-6 top-3 z-0 h-px bg-[linear-gradient(90deg,transparent,rgba(255,225,145,0.65),transparent)] md:inset-x-16" />
 
-      <div className="relative z-10 flex shrink-0 flex-col items-center text-center pt-1">
-        <div className="fantasy-title-plaque max-w-[20rem] px-6 py-3 md:max-w-[30rem] md:px-10 md:py-4">
-          <div className="mb-2 flex items-center justify-center gap-2">
+      <div className="relative z-10 flex shrink-0 flex-col items-center text-center pt-0.5">
+        <div className="fantasy-title-plaque max-w-[18rem] px-5 py-2.5 md:max-w-[30rem] md:px-10 md:py-4">
+          <div className="mb-1.5 flex items-center justify-center gap-2 md:mb-2">
             {['emerald', 'ruby', 'sapphire'].map(gem => (
               <span key={gem} className={`fantasy-gem fantasy-gem-${gem}`} />
             ))}
           </div>
           <h1
-            className="text-[2rem] font-black leading-none tracking-[-0.04em] text-[#fff7dc] drop-shadow-[0_10px_32px_rgba(2,6,23,0.58)] sm:text-[2.6rem] md:text-[5.2rem]"
+            className="text-[1.65rem] font-black leading-none tracking-[-0.04em] text-[#fff7dc] drop-shadow-[0_10px_32px_rgba(2,6,23,0.58)] sm:text-[2.2rem] md:text-[5.2rem]"
             style={{ fontFamily: 'var(--font-display)' }}
           >
             Choose Your Character
@@ -69,7 +69,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
         </div>
       </div>
 
-      <div className="relative z-10 grid min-h-0 flex-1 grid-cols-2 grid-rows-2 gap-3 md:gap-5">
+      <div className="relative z-10 grid min-h-0 flex-1 grid-cols-2 grid-rows-2 gap-2.5 md:gap-5">
         {AVATARS.map((avatar) => {
           const isSelected = selectedId === avatar.id;
           const style = HERO_STYLES[avatar.id] || HERO_STYLES.barratt;
@@ -101,7 +101,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               </div>
               <div className="relative px-2 pb-3 pt-2 md:px-4 md:pb-4 md:pt-3">
                 <div className="fantasy-nameplate mx-auto max-w-[10rem] px-3 py-2 md:max-w-[12rem]">
-                  <div className={`bg-gradient-to-r ${style.name} bg-clip-text text-sm font-black leading-tight tracking-[-0.02em] text-transparent md:text-[1.35rem]`}>
+                  <div className={`bg-gradient-to-r ${style.name} bg-clip-text text-[0.9rem] font-black leading-tight tracking-[-0.02em] text-transparent md:text-[1.35rem]`}>
                     {avatar.name}
                   </div>
                 </div>
@@ -121,12 +121,12 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
         })}
       </div>
 
-      <div className="relative z-10 w-full shrink-0 pt-1 md:max-w-sm md:self-center">
+      <div className="relative z-10 w-full shrink-0 pt-0.5 md:max-w-sm md:self-center">
         <motion.button
           whileHover={{ scale: 1.02, y: -2 }}
           whileTap={{ scale: 0.98 }}
           onClick={onConfirm}
-          className="fantasy-cta-button relative z-10 w-full px-8 py-3.5 text-base md:px-20 md:py-5 md:text-3xl"
+          className="fantasy-cta-button relative z-10 w-full px-8 py-3 text-sm md:px-20 md:py-5 md:text-3xl"
         >
           Let&apos;s Go
         </motion.button>

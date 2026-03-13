@@ -53,40 +53,40 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
         </div>
       </header>
 
-      <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-3 px-4 pb-24 md:gap-5 md:px-8 md:pb-8">
+      <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-2.5 px-4 pb-24 md:gap-5 md:px-8 md:pb-8">
         <div className="grid grid-cols-4 gap-2 md:gap-4">
           {stats.map(item => (
-            <div key={item.label} className="rounded-[1.2rem] border border-white/12 bg-black/25 p-3 text-center text-white shadow-xl backdrop-blur-xl md:rounded-[1.75rem] md:p-5">
-              <AssetIcon name={item.icon} className="mx-auto h-4 w-4 md:h-6 md:w-6" />
-              <div className="mt-1 text-lg font-black md:mt-2 md:text-3xl">{item.value}</div>
+            <div key={item.label} className="rounded-[1rem] border border-white/12 bg-black/25 p-2.5 text-center text-white shadow-xl backdrop-blur-xl md:rounded-[1.75rem] md:p-5">
+              <AssetIcon name={item.icon} className="mx-auto h-3.5 w-3.5 md:h-6 md:w-6" />
+              <div className="mt-1 text-base font-black md:mt-2 md:text-3xl">{item.value}</div>
               <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/55 md:text-[10px]">{item.label}</div>
             </div>
           ))}
         </div>
 
-        <div className="grid min-h-0 flex-1 gap-3 md:grid-cols-[1.25fr_0.95fr] md:gap-5">
-          <div className="rounded-[1.6rem] border border-white/12 bg-black/25 p-4 text-white shadow-xl backdrop-blur-xl md:rounded-[2rem] md:p-6">
+        <div className="grid min-h-0 flex-1 gap-2.5 md:grid-cols-[1.25fr_0.95fr] md:gap-5">
+          <div className="rounded-[1.4rem] border border-white/12 bg-black/25 p-3 text-white shadow-xl backdrop-blur-xl md:rounded-[2rem] md:p-6">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/60">Curriculum</div>
-                <h2 className="text-lg font-black md:text-2xl">Island Progress</h2>
+                <h2 className="text-base font-black md:text-2xl">Island Progress</h2>
               </div>
-              <div className="rounded-full border border-cyan-300/25 bg-cyan-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100">
+              <div className="rounded-full border border-cyan-300/25 bg-cyan-300/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.18em] text-cyan-100 md:px-3 md:text-[10px] md:tracking-[0.22em]">
                 {totalLevelsCompleted}/{totalLevelsAvailable} cleared
               </div>
             </div>
 
-            <div className="mt-4 grid grid-cols-2 gap-2 md:mt-5 md:gap-3">
-              {progressCards.map(card => (
-                <div key={card.name} className="rounded-[1.2rem] border border-white/10 bg-white/8 p-3 md:rounded-[1.5rem] md:p-4">
+            <div className="mt-3 grid grid-cols-2 gap-2 md:mt-5 md:gap-3">
+              {progressCards.map((card, index) => (
+                <div key={card.name} className={`rounded-[1rem] border border-white/10 bg-white/8 p-2.5 md:rounded-[1.5rem] md:p-4 ${index > 1 ? 'hidden md:block' : ''}`}>
                   <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/45 md:text-[10px]">{card.short}</div>
-                  <div className="mt-1 text-sm font-black leading-tight text-white md:text-lg">{card.name}</div>
-                  <div className="mt-2 text-lg font-black text-yellow-300 md:text-2xl">{card.value}</div>
+                  <div className="mt-1 text-xs font-black leading-tight text-white md:text-lg">{card.name}</div>
+                  <div className="mt-1.5 text-base font-black text-yellow-300 md:mt-2 md:text-2xl">{card.value}</div>
                 </div>
               ))}
             </div>
 
-            <div className="mt-4 rounded-[1.2rem] border border-white/10 bg-white/8 p-3 md:mt-5 md:rounded-[1.5rem] md:p-4">
+            <div className="mt-3 rounded-[1rem] border border-white/10 bg-white/8 p-2.5 md:mt-5 md:rounded-[1.5rem] md:p-4">
               <div className="flex items-center justify-between text-[9px] font-black uppercase tracking-[0.2em] text-white/50 md:text-[10px]">
                 <span>Overall completion</span>
                 <span>{completionPercentage}%</span>
@@ -101,32 +101,32 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
             </div>
           </div>
 
-          <div className="grid gap-3 md:grid-rows-[auto_1fr] md:gap-5">
-            <div className="rounded-[1.6rem] border border-white/12 bg-black/25 p-4 text-white shadow-xl backdrop-blur-xl md:rounded-[2rem] md:p-6">
+          <div className="grid gap-2.5 md:grid-rows-[auto_1fr] md:gap-5">
+            <div className="rounded-[1.4rem] border border-white/12 bg-black/25 p-3 text-white shadow-xl backdrop-blur-xl md:rounded-[2rem] md:p-6">
               <div className="text-[10px] font-black uppercase tracking-[0.24em] text-yellow-100/60">Badges</div>
-              <div className="mt-1 text-3xl font-black md:text-5xl">{unlockedAchievements}</div>
-              <div className="text-sm font-bold text-white/70">of {ACHIEVEMENTS.length} unlocked</div>
+              <div className="mt-1 text-2xl font-black md:text-5xl">{unlockedAchievements}</div>
+              <div className="text-xs font-bold text-white/70 md:text-sm">of {ACHIEVEMENTS.length} unlocked</div>
             </div>
 
-            <div className="rounded-[1.6rem] border border-white/12 bg-black/25 p-4 text-white shadow-xl backdrop-blur-xl md:rounded-[2rem] md:p-6">
+            <div className="rounded-[1.4rem] border border-white/12 bg-black/25 p-3 text-white shadow-xl backdrop-blur-xl md:rounded-[2rem] md:p-6">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <div className="text-[10px] font-black uppercase tracking-[0.24em] text-yellow-100/60">Recent wins</div>
-                  <h2 className="text-lg font-black md:text-2xl">Achievement Board</h2>
+                  <h2 className="text-base font-black md:text-2xl">Achievement Board</h2>
                 </div>
                 <AssetIcon name="trophy" className="h-5 w-5 md:h-6 md:w-6" />
               </div>
 
-              <div className="mt-4 grid grid-cols-2 gap-2 md:gap-3">
-                {ACHIEVEMENTS.slice(0, 4).map(achievement => {
+              <div className="mt-3 grid grid-cols-2 gap-2 md:mt-4 md:gap-3">
+                {ACHIEVEMENTS.slice(0, 4).map((achievement, index) => {
                   const isUnlocked = (player.achievements || []).includes(achievement.id);
                   return (
                     <div
                       key={achievement.id}
-                      className={`rounded-[1.2rem] border p-3 text-center md:rounded-[1.5rem] ${isUnlocked ? 'border-yellow-300/35 bg-yellow-300/12' : 'border-white/10 bg-white/8 opacity-70'}`}
+                      className={`rounded-[1rem] border p-2.5 text-center md:rounded-[1.5rem] md:p-3 ${index > 1 ? 'hidden md:block' : ''} ${isUnlocked ? 'border-yellow-300/35 bg-yellow-300/12' : 'border-white/10 bg-white/8 opacity-70'}`}
                     >
-                      <div className="text-2xl md:text-3xl">{achievement.icon}</div>
-                      <div className="mt-1 text-[10px] font-black leading-tight text-white md:text-xs">{achievement.title}</div>
+                      <div className="text-xl md:text-3xl">{achievement.icon}</div>
+                      <div className="mt-1 text-[9px] font-black leading-tight text-white md:text-xs">{achievement.title}</div>
                     </div>
                   );
                 })}

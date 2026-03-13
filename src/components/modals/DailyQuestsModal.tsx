@@ -14,12 +14,12 @@ const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({ isOpen, onClose, qu
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-md">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-3 backdrop-blur-md md:p-4">
           <motion.div
             initial={{ scale: 0.8, opacity: 0, y: 50 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.8, opacity: 0, y: 50 }}
-            className="app-modal-panel casual-modal-panel relative flex w-full max-w-2xl flex-col overflow-hidden rounded-[2rem] border border-white/20 bg-slate-900/90 p-4 shadow-[0_0_100px_rgba(0,0,0,0.35)] backdrop-blur-xl md:rounded-[3rem] md:p-8"
+            className="app-modal-panel casual-modal-panel relative flex w-full max-w-xl flex-col overflow-hidden rounded-[1.75rem] border border-white/20 bg-slate-900/90 p-3.5 shadow-[0_0_100px_rgba(0,0,0,0.35)] backdrop-blur-xl md:max-w-2xl md:rounded-[3rem] md:p-8"
           >
             <div className="absolute inset-0 pointer-events-none opacity-10">
               <div className="absolute -left-10 -top-10 h-40 w-40 rounded-full bg-emerald-500 blur-[100px] md:h-64 md:w-64" />
@@ -34,18 +34,18 @@ const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({ isOpen, onClose, qu
             </button>
 
             <div className="relative z-10 flex flex-col items-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-[1.1rem] bg-emerald-500 shadow-2xl md:mb-6 md:h-20 md:w-20 md:rounded-2xl">
+              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-[1rem] bg-emerald-500 shadow-2xl md:mb-6 md:h-20 md:w-20 md:rounded-2xl">
                 <AssetIcon name="trophy" className="h-8 w-8 md:h-10 md:w-10" />
               </div>
 
-              <h2 className="text-center text-2xl font-black tracking-tight text-white md:text-5xl">
+              <h2 className="text-center text-[1.65rem] font-black tracking-tight text-white md:text-5xl">
                 DAILY QUESTS
               </h2>
-              <p className="mb-5 text-center text-[10px] font-bold uppercase tracking-[0.22em] text-slate-400 md:mb-8 md:text-xs md:tracking-widest">
+              <p className="mb-4 text-center text-[9px] font-bold uppercase tracking-[0.18em] text-slate-400 md:mb-8 md:text-xs md:tracking-widest">
                 Complete tasks to earn extra rewards
               </p>
 
-              <div className="flex w-full flex-col gap-3">
+              <div className="flex w-full flex-col gap-2.5">
                 {quests.slice(0, 3).map((quest) => {
                   const isCompleted = quest.current >= quest.target;
                   const progress = Math.min((quest.current / quest.target) * 100, 100);
@@ -53,15 +53,15 @@ const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({ isOpen, onClose, qu
                   return (
                     <div
                       key={quest.id}
-                      className={`flex flex-col gap-3 rounded-[1.25rem] border p-4 transition-all md:rounded-3xl md:p-5 ${isCompleted && !quest.isClaimed ? 'border-emerald-500/50 bg-emerald-500/20' : 'border-white/10 bg-white/5'} ${quest.isClaimed ? 'grayscale opacity-50' : ''}`}
+                      className={`flex flex-col gap-2.5 rounded-[1.05rem] border p-3 transition-all md:rounded-3xl md:p-5 ${isCompleted && !quest.isClaimed ? 'border-emerald-500/50 bg-emerald-500/20' : 'border-white/10 bg-white/5'} ${quest.isClaimed ? 'grayscale opacity-50' : ''}`}
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex min-w-0 items-start gap-3">
-                          <div className={`rounded-[1rem] p-2.5 ${isCompleted ? 'bg-emerald-500 text-white' : 'bg-white/10 text-white/40'}`}>
+                          <div className={`rounded-[0.9rem] p-2 ${isCompleted ? 'bg-emerald-500 text-white' : 'bg-white/10 text-white/40'}`}>
                             {isCompleted ? <AssetIcon name="check" className="h-5 w-5" /> : <AssetIcon name="play" className="h-5 w-5" />}
                           </div>
                           <div className="min-w-0">
-                            <h3 className="text-sm font-black leading-tight text-white md:text-lg">{quest.description}</h3>
+                            <h3 className="text-[13px] font-black leading-tight text-white md:text-lg">{quest.description}</h3>
                             <div className="mt-1 flex items-center gap-2">
                               <span className="text-[9px] font-black uppercase tracking-[0.18em] text-white/40">Reward</span>
                               <div className="flex items-center gap-1 rounded-lg bg-black/30 px-2 py-0.5">
@@ -79,7 +79,7 @@ const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({ isOpen, onClose, qu
                             whileHover={{ scale: 1.03 }}
                             whileTap={{ scale: 0.97 }}
                             onClick={() => onClaimQuest(quest.id)}
-                            className="rounded-xl border-b-4 border-emerald-700 bg-emerald-500 px-4 py-2 text-[10px] font-black text-white shadow-lg transition-all hover:bg-emerald-400 md:px-6 md:text-sm"
+                            className="rounded-xl border-b-4 border-emerald-700 bg-emerald-500 px-3 py-2 text-[9px] font-black text-white shadow-lg transition-all hover:bg-emerald-400 md:px-6 md:text-sm"
                           >
                             CLAIM
                           </motion.button>
@@ -102,10 +102,10 @@ const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({ isOpen, onClose, qu
                 })}
               </div>
 
-              <div className="mt-5 w-full md:mt-8">
+              <div className="mt-4 w-full md:mt-8">
                 <button
                   onClick={onClose}
-                  className="w-full rounded-[1.1rem] border-b-4 border-white/20 bg-white/10 py-3 text-sm font-black text-white transition-all hover:bg-white/20 md:rounded-2xl md:py-4"
+                  className="w-full rounded-[1.1rem] border-b-4 border-white/20 bg-white/10 py-3 text-[13px] font-black text-white transition-all hover:bg-white/20 md:rounded-2xl md:py-4 md:text-sm"
                 >
                   CONTINUE ADVENTURE
                 </button>
