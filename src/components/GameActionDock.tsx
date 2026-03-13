@@ -9,7 +9,7 @@ interface GameActionDockProps {
 
 const GameActionDock: React.FC<GameActionDockProps> = ({ onBack, onHelp, accentClass = 'text-slate-700' }) => {
   return (
-    <div className="mt-1 flex shrink-0 items-center gap-2 md:mt-4 md:gap-4">
+    <div className="mt-1 flex shrink-0 items-center gap-2 md:mt-2 md:gap-3">
       <button
         onClick={onBack}
         className={`game-dock-button ${accentClass}`}

@@ -129,9 +129,9 @@ const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack
   };
 
   return (
-    <div className="relative w-full max-w-2xl bg-white rounded-[3rem] p-8 md:p-12 shadow-[0_40px_100px_rgba(0,0,0,0.1)] border-8 border-gray-100 overflow-hidden">
+    <div className="relative h-full w-full bg-white rounded-[2rem] md:rounded-[3rem] p-4 md:p-8 shadow-[0_40px_100px_rgba(0,0,0,0.1)] border-8 border-gray-100 overflow-hidden">
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-4 md:mb-6">
         <div className="flex items-center gap-3 px-6 py-3 rounded-2xl licensed-answer-chip">
           <Trophy className="text-yellow-500 w-6 h-6" />
           <span className="text-2xl font-black text-gray-800">{score}</span>
@@ -147,7 +147,7 @@ const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack
       </div>
 
       {/* Visual Timer Bar */}
-      <div className="w-full h-3 bg-gray-100 rounded-full mb-12 overflow-hidden">
+      <div className="w-full h-3 bg-gray-100 rounded-full mb-5 md:mb-8 overflow-hidden">
         <motion.div 
           initial={{ width: '100%' }}
           animate={{ width: `${(timeLeft / 60) * 100}%` }}
@@ -158,7 +158,7 @@ const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack
       {/* Matrix Grid */}
       <motion.div 
         animate={shake ? { x: [-10, 10, -10, 10, 0] } : {}}
-        className="grid grid-cols-3 gap-4 md:gap-6 mb-12 aspect-square max-w-md mx-auto"
+        className="grid grid-cols-3 gap-3 md:gap-5 mb-6 md:mb-8 aspect-square max-w-[min(100%,24rem)] mx-auto"
       >
         {grid.map((item, i) => (
           <motion.div
@@ -180,7 +180,7 @@ const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack
       </motion.div>
 
       {/* Options */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-5 md:mb-6">
         {options.map((option, i) => {
           const isCorrect = correctItem && option.shape === correctItem.shape && option.color === correctItem.color;
           return (
@@ -216,7 +216,7 @@ const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack
           onClick={useHint}
           disabled={showHint || score < 100}
           className={`
-            flex items-center gap-3 px-8 py-4 rounded-2xl font-black transition-all border-b-4
+            flex items-center gap-3 px-6 py-3 rounded-2xl font-black transition-all border-b-4
             ${showHint || score < 100 
               ? 'bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed' 
               : 'bg-yellow-400 text-white border-yellow-600 hover:bg-yellow-500 hover:-translate-y-1 active:border-b-0 active:translate-y-0'

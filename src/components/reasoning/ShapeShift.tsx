@@ -66,7 +66,7 @@ const ShapeShift: React.FC<ShapeShiftProps> = ({ onVictory, onGameOver, onBack }
   };
 
   return (
-    <div className="relative w-full max-w-2xl h-[600px] bg-[#fdfcf0] rounded-[3rem] p-12 flex flex-col items-center gap-12 shadow-2xl border-8 border-[#e6e2cf] overflow-hidden">
+    <div className="relative h-full w-full bg-[#fdfcf0] rounded-[2rem] md:rounded-[3rem] p-4 md:p-8 flex flex-col items-center gap-5 md:gap-8 shadow-2xl border-8 border-[#e6e2cf] overflow-hidden">
       {/* Header */}
       <div className="w-full flex justify-between items-center">
         <div className="flex items-center gap-2 bg-black/5 px-4 py-2 rounded-full">
@@ -79,7 +79,7 @@ const ShapeShift: React.FC<ShapeShiftProps> = ({ onVictory, onGameOver, onBack }
         </div>
       </div>
 
-      <div className="flex gap-16 items-center">
+      <div className="flex flex-1 min-h-0 w-full items-center justify-center gap-6 md:gap-12">
         {/* Target (Ghost) */}
         <div className="flex flex-col items-center gap-4">
           <span className="text-gray-400 text-xs font-bold uppercase tracking-widest">Target</span>
@@ -89,7 +89,7 @@ const ShapeShift: React.FC<ShapeShiftProps> = ({ onVictory, onGameOver, onBack }
                 {row.map((cell, c) => (
                   <div 
                     key={c} 
-                    className={`w-8 h-8 rounded-md ${cell ? 'bg-gray-800' : 'bg-transparent'}`} 
+                    className={`w-5 h-5 md:w-8 md:h-8 rounded-md ${cell ? 'bg-gray-800' : 'bg-transparent'}`} 
                   />
                 ))}
               </div>
@@ -106,14 +106,14 @@ const ShapeShift: React.FC<ShapeShiftProps> = ({ onVictory, onGameOver, onBack }
               scaleX: isFlipped ? -1 : 1
             }}
             transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-            className="grid gap-2 p-4 bg-white rounded-3xl shadow-xl border-2 border-gray-100"
+            className="grid gap-1.5 md:gap-2 p-3 md:p-4 bg-white rounded-3xl shadow-xl border-2 border-gray-100"
           >
             {playerGrid.map((row, r) => (
-              <div key={r} className="flex gap-2">
+              <div key={r} className="flex gap-1.5 md:gap-2">
                 {row.map((cell, c) => (
                   <div 
                     key={c} 
-                    className={`w-12 h-12 rounded-xl transition-colors duration-500 ${cell ? 'bg-indigo-500 shadow-lg shadow-indigo-200' : 'bg-gray-50'}`} 
+                    className={`w-8 h-8 md:w-12 md:h-12 rounded-xl transition-colors duration-500 ${cell ? 'bg-indigo-500 shadow-lg shadow-indigo-200' : 'bg-gray-50'}`} 
                   />
                 ))}
               </div>
@@ -123,26 +123,26 @@ const ShapeShift: React.FC<ShapeShiftProps> = ({ onVictory, onGameOver, onBack }
       </div>
 
       {/* Controls */}
-      <div className="flex gap-6 mt-4">
+      <div className="flex gap-3 md:gap-6 mt-1 md:mt-2">
         <button 
           onClick={rotate}
-          className="flex flex-col items-center gap-2 p-6 bg-white rounded-3xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all border-b-4 border-gray-200 active:border-b-0 active:translate-y-0"
+          className="flex flex-col items-center gap-2 p-4 md:p-6 bg-white rounded-3xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all border-b-4 border-gray-200 active:border-b-0 active:translate-y-0"
         >
-          <RotateCw size={32} className="text-indigo-500" />
+          <RotateCw size={28} className="text-indigo-500" />
           <span className="text-[10px] font-black text-gray-400 uppercase">Rotate</span>
         </button>
         <button 
           onClick={flip}
-          className="flex flex-col items-center gap-2 p-6 bg-white rounded-3xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all border-b-4 border-gray-200 active:border-b-0 active:translate-y-0"
+          className="flex flex-col items-center gap-2 p-4 md:p-6 bg-white rounded-3xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all border-b-4 border-gray-200 active:border-b-0 active:translate-y-0"
         >
-          <FlipHorizontal size={32} className="text-indigo-500" />
+          <FlipHorizontal size={28} className="text-indigo-500" />
           <span className="text-[10px] font-black text-gray-400 uppercase">Flip</span>
         </button>
         <button 
           onClick={checkVictory}
-          className="flex flex-col items-center gap-2 p-6 bg-emerald-500 rounded-3xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all border-b-4 border-emerald-700 active:border-b-0 active:translate-y-0"
+          className="flex flex-col items-center gap-2 p-4 md:p-6 bg-emerald-500 rounded-3xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all border-b-4 border-emerald-700 active:border-b-0 active:translate-y-0"
         >
-          <CheckCircle2 size={32} className="text-white" />
+          <CheckCircle2 size={28} className="text-white" />
           <span className="text-[10px] font-black text-emerald-100 uppercase">Submit</span>
         </button>
       </div>
