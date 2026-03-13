@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import { AvatarData } from '../types';
 import { AVATARS } from '../constants';
+import { BURGER_ASSETS } from '../assets/burger';
 import GameplayHUD from './GameplayHUD';
-import GameActionDock from './GameActionDock';
-import { Home, HelpCircle, Star, Timer } from './GameIcons';
+import AssetIcon from './AssetIcon';
+import { Star } from './GameIcons';
 
 interface BurgerBuilderGameProps {
   levelId: number;
@@ -15,371 +15,669 @@ interface BurgerBuilderGameProps {
   onBack: () => void;
 }
 
-interface Ingredient {
-  id: string;
+type CustomerMood = 'waiting' | 'happy' | 'sad';
+
+interface IngredientType {
   name: string;
-  fraction: number; // e.g., 0.5 for 1/2
-  display: string;
-  color: string;
-  emoji: string;
+  units: number;
+  asset: string;
+  accent: string;
+  buttonImageClass: string;
+  stackImageClass: string;
+  shortLabel: string;
 }
 
-interface OrderItem {
+interface OrderRequest {
   id: string;
-  name: string;
-  targetFraction: number;
-  display: string;
-  currentFraction: number;
-  emoji: string;
+  targetUnits: number;
+  requiredIngredients: string[];
+  text: string;
 }
 
-const INGREDIENT_TYPES = [
-  { name: 'Lettuce', emoji: '🥬', color: 'bg-green-400' },
-  { name: 'Tomato', emoji: '🍅', color: 'bg-red-500' },
-  { name: 'Cheese', emoji: '🧀', color: 'bg-yellow-400' },
-  { name: 'Patty', emoji: '🥩', color: 'bg-amber-800' },
-  { name: 'Pickles', emoji: '🥒', color: 'bg-green-600' },
-  { name: 'Onion', emoji: '🧅', color: 'bg-purple-300' },
+interface CustomerReaction {
+  mood: CustomerMood;
+  text: string;
+}
+
+const ORDER_DURATION = 45;
+const MAX_MISSES = 3;
+const SCORE_TARGET_BASE = 900;
+const SCORE_TARGET_PER_LEVEL = 250;
+
+const INGREDIENT_TYPES: IngredientType[] = [
+  {
+    name: 'Patty',
+    units: 4,
+    asset: BURGER_ASSETS.patty,
+    accent: 'from-amber-100 via-orange-50 to-white',
+    buttonImageClass: 'w-16 md:w-20',
+    stackImageClass: 'w-36 md:w-44',
+    shortLabel: '1/2',
+  },
+  {
+    name: 'Cheese',
+    units: 2,
+    asset: BURGER_ASSETS.cheese,
+    accent: 'from-yellow-100 via-amber-50 to-white',
+    buttonImageClass: 'w-14 md:w-16',
+    stackImageClass: 'w-32 md:w-40',
+    shortLabel: '1/4',
+  },
+  {
+    name: 'Bacon',
+    units: 1,
+    asset: BURGER_ASSETS.bacon,
+    accent: 'from-rose-100 via-orange-50 to-white',
+    buttonImageClass: 'w-14 md:w-16',
+    stackImageClass: 'w-34 md:w-42',
+    shortLabel: '1/8',
+  },
+  {
+    name: 'Lettuce',
+    units: 1,
+    asset: BURGER_ASSETS.lettuce,
+    accent: 'from-lime-100 via-emerald-50 to-white',
+    buttonImageClass: 'w-16 md:w-20',
+    stackImageClass: 'w-36 md:w-46',
+    shortLabel: '1/8',
+  },
+  {
+    name: 'Tomato',
+    units: 1,
+    asset: BURGER_ASSETS.tomato,
+    accent: 'from-red-100 via-rose-50 to-white',
+    buttonImageClass: 'w-16 md:w-20',
+    stackImageClass: 'w-34 md:w-42',
+    shortLabel: '1/8',
+  },
+  {
+    name: 'Onion',
+    units: 1,
+    asset: BURGER_ASSETS.onion,
+    accent: 'from-fuchsia-100 via-violet-50 to-white',
+    buttonImageClass: 'w-14 md:w-18',
+    stackImageClass: 'w-32 md:w-38',
+    shortLabel: '1/8',
+  },
+  {
+    name: 'Pickles',
+    units: 1,
+    asset: BURGER_ASSETS.pickles,
+    accent: 'from-emerald-100 via-lime-50 to-white',
+    buttonImageClass: 'w-14 md:w-18',
+    stackImageClass: 'w-30 md:w-38',
+    shortLabel: '1/8',
+  },
+  {
+    name: 'Ketchup',
+    units: 1,
+    asset: BURGER_ASSETS.ketchup,
+    accent: 'from-red-100 via-orange-50 to-white',
+    buttonImageClass: 'w-14 md:w-16',
+    stackImageClass: 'w-30 md:w-36',
+    shortLabel: '1/8',
+  },
+  {
+    name: 'BBQ',
+    units: 1,
+    asset: BURGER_ASSETS.bbq,
+    accent: 'from-amber-100 via-orange-50 to-white',
+    buttonImageClass: 'w-14 md:w-16',
+    stackImageClass: 'w-30 md:w-36',
+    shortLabel: '1/8',
+  },
 ];
 
-const FRACTIONS = [
-  { value: 1, display: '1' },
-  { value: 0.5, display: '1/2' },
-  { value: 0.25, display: '1/4' },
-  { value: 0.75, display: '3/4' },
-  { value: 0.2, display: '1/5' },
-  { value: 0.1, display: '1/10' },
-];
+const TARGET_UNIT_OPTIONS = [7, 8, 9, 10, 11, 12, 13, 14];
 
-const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({ 
-  levelId, 
-  avatarId, 
-  onVictory, 
-  onGameOver, 
-  onBack 
-}) => {
-  const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(60);
-  const [isGameOver, setIsGameOver] = useState(false);
-  const [isVictory, setIsVictory] = useState(false);
-  
-  const [currentOrder, setCurrentOrder] = useState<OrderItem[]>([]);
-  const [burgerStack, setBurgerStack] = useState<Ingredient[]>([]);
-  const [availableIngredients, setAvailableIngredients] = useState<Ingredient[]>([]);
-  const [combo, setCombo] = useState(0);
+const createId = () => Math.random().toString(36).slice(2, 11);
 
-  const avatar = AVATARS.find(a => a.id === avatarId) || AVATARS[0];
-  const targetScore = 1000 + (levelId * 500);
+const gcd = (a: number, b: number): number => {
+  let x = Math.abs(a);
+  let y = Math.abs(b);
+  while (y) {
+    const temp = y;
+    y = x % y;
+    x = temp;
+  }
+  return x || 1;
+};
 
-  const generateOrder = useCallback(() => {
-    const numItems = Math.min(3 + Math.floor(levelId / 2), 5);
-    const order: OrderItem[] = [];
-    const available = [...INGREDIENT_TYPES].sort(() => Math.random() - 0.5);
-    
-    for (let i = 0; i < numItems; i++) {
-      const type = available[i];
-      // Pick a random fraction that makes sense for the level
-      const fractionObj = FRACTIONS[Math.floor(Math.random() * Math.min(levelId + 2, FRACTIONS.length))];
-      
-      order.push({
-        id: Math.random().toString(36).substr(2, 9),
-        name: type.name,
-        targetFraction: fractionObj.value,
-        display: `${fractionObj.display} ${type.name}`,
-        currentFraction: 0,
-        emoji: type.emoji
-      });
-    }
-    setCurrentOrder(order);
-    setBurgerStack([]);
-    
-    // Generate draggable ingredients
-    const draggables: Ingredient[] = [];
-    // Ensure we have the right ingredients
-    order.forEach(item => {
-      const type = INGREDIENT_TYPES.find(t => t.name === item.name)!;
-      // Add pieces that sum up to the target or just exact pieces
-      // For simplicity, let's just add exact pieces and some random ones
-      draggables.push({
-        id: Math.random().toString(36).substr(2, 9),
-        name: type.name,
-        fraction: item.targetFraction,
-        display: FRACTIONS.find(f => f.value === item.targetFraction)?.display || String(item.targetFraction),
-        color: type.color,
-        emoji: type.emoji
-      });
-    });
-    
-    // Add some random distractors
-    for (let i = 0; i < 4; i++) {
-      const type = INGREDIENT_TYPES[Math.floor(Math.random() * INGREDIENT_TYPES.length)];
-      const fractionObj = FRACTIONS[Math.floor(Math.random() * FRACTIONS.length)];
-      draggables.push({
-        id: Math.random().toString(36).substr(2, 9),
-        name: type.name,
-        fraction: fractionObj.value,
-        display: fractionObj.display,
-        color: type.color,
-        emoji: type.emoji
-      });
-    }
-    
-    setAvailableIngredients(draggables.sort(() => Math.random() - 0.5));
-  }, [levelId]);
+const formatFractionUnits = (units: number) => {
+  if (units === 0) return '0';
 
-  useEffect(() => {
-    setTimeLeft(60 + levelId * 10);
-    setScore(0);
-    setIsGameOver(false);
-    setIsVictory(false);
-    generateOrder();
-  }, [levelId, generateOrder]);
+  const whole = Math.floor(units / 8);
+  const remainder = units % 8;
 
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (timeLeft > 0 && !isGameOver && !isVictory) {
-      timer = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            handleTimeUp();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-    return () => clearInterval(timer);
-  }, [timeLeft, isGameOver, isVictory]);
+  if (!remainder) return `${whole}`;
 
-  const handleTimeUp = () => {
-    if (score >= targetScore) {
-      handleWin();
-    } else {
-      setIsGameOver(true);
-      onGameOver(score);
-    }
-  };
+  const divisor = gcd(remainder, 8);
+  const numerator = remainder / divisor;
+  const denominator = 8 / divisor;
 
-  const handleWin = () => {
-    const stars = score >= targetScore * 2 ? 3 : score >= targetScore * 1.5 ? 2 : 1;
-    setIsVictory(true);
-    confetti({
-      particleCount: 150,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#FFD700', '#FFFFFF', '#87CEEB']
-    });
-    onVictory(stars, score);
-  };
+  if (!whole) return `${numerator}/${denominator}`;
+  return `${whole} ${numerator}/${denominator}`;
+};
 
-  const addIngredientToBurger = (ingredient: Ingredient) => {
-    if (isGameOver || isVictory) return;
+const formatFractionSentence = (units: number) => {
+  const whole = Math.floor(units / 8);
+  const remainder = units % 8;
 
-    setBurgerStack(prev => [...prev, ingredient]);
-    
-    // Check if it matches any order item
-    setCurrentOrder(prevOrder => {
-      const newOrder = [...prevOrder];
-      const orderItem = newOrder.find(item => item.name === ingredient.name);
-      
-      if (orderItem) {
-        orderItem.currentFraction += ingredient.fraction;
-        // Float point math fix
-        orderItem.currentFraction = Math.round(orderItem.currentFraction * 100) / 100;
-      }
-      return newOrder;
-    });
-  };
+  if (!remainder) return `${whole}`;
+  if (!whole) return formatFractionUnits(units);
 
-  const submitBurger = () => {
-    let isPerfect = true;
-    let isAcceptable = true;
-    let pointsEarned = 0;
+  const divisor = gcd(remainder, 8);
+  const numerator = remainder / divisor;
+  const denominator = 8 / divisor;
+  return `${whole} and ${numerator}/${denominator}`;
+};
 
-    currentOrder.forEach(item => {
-      if (item.currentFraction === item.targetFraction) {
-        pointsEarned += 100;
-      } else {
-        isPerfect = false;
-        if (item.currentFraction > item.targetFraction) {
-          isAcceptable = false;
-        }
-      }
-    });
+const joinWithAnd = (items: string[]) => {
+  if (items.length <= 1) return items[0] || '';
+  if (items.length === 2) return `${items[0]} and ${items[1]}`;
+  return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
+};
 
-    if (isPerfect) {
-      const comboMultiplier = 1 + (combo * 0.1);
-      const finalPoints = Math.round(pointsEarned * comboMultiplier);
-      setScore(prev => prev + finalPoints);
-      setCombo(prev => prev + 1);
-      confetti({
-        particleCount: 50,
-        spread: 60,
-        origin: { y: 0.7 }
-      });
-      generateOrder();
-    } else if (!isAcceptable) {
-      // Penalty for over-adding
-      setScore(prev => Math.max(0, prev - 50));
-      setCombo(0);
-      // Reset burger stack but keep order
-      setBurgerStack([]);
-      setCurrentOrder(prev => prev.map(item => ({ ...item, currentFraction: 0 })));
-    } else {
-      // Incomplete, do nothing or show message
-    }
-  };
-
-  const progress = Math.min((score / targetScore) * 100, 100);
+const CustomerFace: React.FC<{ mood: CustomerMood }> = ({ mood }) => {
+  const faceTone = mood === 'happy' ? 'from-emerald-300 to-lime-200' : mood === 'sad' ? 'from-rose-300 to-orange-200' : 'from-sky-200 to-cyan-100';
+  const mouthClasses = mood === 'sad'
+    ? 'h-5 w-12 rounded-t-full border-x-4 border-t-4 border-x-slate-800 border-t-slate-800'
+    : mood === 'happy'
+      ? 'h-5 w-12 rounded-b-full border-b-4 border-x-4 border-b-slate-800 border-x-slate-800'
+      : 'h-1.5 w-10 rounded-full bg-slate-800';
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden bg-amber-50">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#d97706 2px, transparent 2px)', backgroundSize: '30px 30px' }} />
+    <div className={`relative flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br ${faceTone} shadow-[inset_0_2px_10px_rgba(255,255,255,0.6),0_12px_24px_rgba(15,23,42,0.18)] md:h-20 md:w-20`}>
+      <div className="absolute left-[22px] top-[24px] h-2.5 w-2.5 rounded-full bg-slate-800 md:left-[28px] md:top-[29px]" />
+      <div className="absolute right-[22px] top-[24px] h-2.5 w-2.5 rounded-full bg-slate-800 md:right-[28px] md:top-[29px]" />
+      <div className={`absolute bottom-[18px] md:bottom-[22px] ${mouthClasses}`} />
+    </div>
+  );
+};
 
-      <div className="z-10 w-full max-w-5xl flex h-full min-h-0 flex-1 flex-col items-center gap-3 md:gap-6">
+const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
+  levelId,
+  avatarId,
+  onVictory,
+  onGameOver,
+  onBack,
+}) => {
+  const [score, setScore] = useState(0);
+  const [orderTimeLeft, setOrderTimeLeft] = useState(ORDER_DURATION);
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [isVictory, setIsVictory] = useState(false);
+  const [currentOrder, setCurrentOrder] = useState<OrderRequest | null>(null);
+  const [burgerStack, setBurgerStack] = useState<IngredientType[]>([]);
+  const [ordersServed, setOrdersServed] = useState(0);
+  const [missedCustomers, setMissedCustomers] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [customerMood, setCustomerMood] = useState<CustomerMood>('waiting');
+  const [reaction, setReaction] = useState<CustomerReaction | null>(null);
+  const [feedback, setFeedback] = useState('Build the burger to match the order exactly.');
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const reactionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const avatar = AVATARS.find(item => item.id === avatarId) || AVATARS[0];
+  const targetScore = SCORE_TARGET_BASE + (levelId * SCORE_TARGET_PER_LEVEL);
+  const progress = Math.min((score / targetScore) * 100, 100);
+
+  const createOrder = useCallback((): OrderRequest => {
+    const targetUnits = TARGET_UNIT_OPTIONS[Math.floor(Math.random() * TARGET_UNIT_OPTIONS.length)];
+    const requiredCount = levelId >= 5 ? 2 : 1;
+    const requiredIngredients = [...INGREDIENT_TYPES]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, requiredCount)
+      .map(item => item.name);
+
+    const ingredientText = joinWithAnd(requiredIngredients.map(item => item.toLowerCase()));
+
+    return {
+      id: createId(),
+      targetUnits,
+      requiredIngredients,
+      text: `I want a ${formatFractionSentence(targetUnits)} burger with ${ingredientText}.`,
+    };
+  }, [levelId]);
+
+  const clearTransitionTimers = () => {
+    if (transitionTimeoutRef.current) {
+      clearTimeout(transitionTimeoutRef.current);
+      transitionTimeoutRef.current = null;
+    }
+    if (reactionTimeoutRef.current) {
+      clearTimeout(reactionTimeoutRef.current);
+      reactionTimeoutRef.current = null;
+    }
+  };
+
+  useEffect(() => clearTransitionTimers, []);
+
+  const beginNextOrder = useCallback((nextMood: CustomerMood, nextReaction: string) => {
+    setIsTransitioning(true);
+    setCustomerMood(nextMood);
+    setReaction({ mood: nextMood, text: nextReaction });
+
+    if (reactionTimeoutRef.current) clearTimeout(reactionTimeoutRef.current);
+    reactionTimeoutRef.current = setTimeout(() => setReaction(null), 1100);
+
+    if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current);
+    transitionTimeoutRef.current = setTimeout(() => {
+      setCurrentOrder(createOrder());
+      setBurgerStack([]);
+      setOrderTimeLeft(ORDER_DURATION);
+      setCustomerMood('waiting');
+      setFeedback('Build the burger to match the order exactly.');
+      setIsTransitioning(false);
+    }, 1100);
+  }, [createOrder]);
+
+  const finishLevel = useCallback((finalScore: number) => {
+    const stars = finalScore >= targetScore * 1.9 ? 3 : finalScore >= targetScore * 1.35 ? 2 : 1;
+    setIsVictory(true);
+    confetti({
+      particleCount: 180,
+      spread: 72,
+      origin: { y: 0.62 },
+      colors: ['#ffd166', '#f97316', '#ffffff'],
+    });
+    onVictory(stars, finalScore);
+  }, [onVictory, targetScore]);
+
+  useEffect(() => {
+    setScore(0);
+    setOrderTimeLeft(ORDER_DURATION);
+    setIsGameOver(false);
+    setIsVictory(false);
+    setOrdersServed(0);
+    setMissedCustomers(0);
+    setStreak(0);
+    setCustomerMood('waiting');
+    setReaction(null);
+    setFeedback('Build the burger to match the order exactly.');
+    setIsTransitioning(false);
+    setBurgerStack([]);
+    setCurrentOrder(createOrder());
+  }, [createOrder, levelId]);
+
+  useEffect(() => {
+    if (isGameOver || isVictory || isTransitioning || !currentOrder) return undefined;
+    if (orderTimeLeft <= 0) {
+      const nextMisses = missedCustomers + 1;
+      setMissedCustomers(nextMisses);
+      setStreak(0);
+      if (nextMisses >= MAX_MISSES) {
+        setCustomerMood('sad');
+        setReaction({ mood: 'sad', text: 'The last customer walked away.' });
+        setIsGameOver(true);
+        onGameOver(score);
+      } else {
+        beginNextOrder('sad', 'Customer left unhappy.');
+      }
+      return undefined;
+    }
+
+    const timer = setTimeout(() => {
+      setOrderTimeLeft(prev => prev - 1);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [beginNextOrder, currentOrder, isGameOver, isTransitioning, isVictory, missedCustomers, onGameOver, orderTimeLeft, score]);
+
+  const totalUnits = useMemo(
+    () => burgerStack.reduce((sum, ingredient) => sum + ingredient.units, 0),
+    [burgerStack],
+  );
+
+  const usedIngredientCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    burgerStack.forEach(ingredient => {
+      counts.set(ingredient.name, (counts.get(ingredient.name) || 0) + 1);
+    });
+    return counts;
+  }, [burgerStack]);
+
+  const requiredMissing = useMemo(() => {
+    if (!currentOrder) return [];
+    return currentOrder.requiredIngredients.filter(name => !usedIngredientCounts.has(name));
+  }, [currentOrder, usedIngredientCounts]);
+
+  const buildEquation = useMemo(() => {
+    if (!burgerStack.length) return 'Tap ingredients to start your fraction stack.';
+    return `${burgerStack.map(item => item.shortLabel).join(' + ')} = ${formatFractionUnits(totalUnits)}`;
+  }, [burgerStack, totalUnits]);
+
+  const handleIngredientAdd = (ingredient: IngredientType) => {
+    if (isGameOver || isVictory || isTransitioning) return;
+    if (burgerStack.length >= 14) {
+      setFeedback('That burger is towering already. Serve it or clear and rebuild.');
+      return;
+    }
+
+    setBurgerStack(prev => [...prev, ingredient]);
+    setFeedback(`Added ${ingredient.name.toLowerCase()} for ${ingredient.shortLabel}.`);
+  };
+
+  const clearBurger = () => {
+    if (isGameOver || isVictory || isTransitioning) return;
+    setBurgerStack([]);
+    setFeedback('Burger cleared. Start the order again.');
+  };
+
+  const handleServe = () => {
+    if (!currentOrder || isGameOver || isVictory || isTransitioning) return;
+
+    if (requiredMissing.length) {
+      setFeedback(`Still needs ${joinWithAnd(requiredMissing.map(item => item.toLowerCase()))}.`);
+      return;
+    }
+
+    if (totalUnits < currentOrder.targetUnits) {
+      const shortBy = currentOrder.targetUnits - totalUnits;
+      setFeedback(`You are short by ${formatFractionUnits(shortBy)}.`);
+      return;
+    }
+
+    if (totalUnits > currentOrder.targetUnits) {
+      setFeedback('That burger is too large. Clear it and rebuild this order.');
+      return;
+    }
+
+    const uniqueIngredients = usedIngredientCounts.size;
+    const layerBonus = burgerStack.length * 18;
+    const varietyBonus = uniqueIngredients * 14;
+    const speedBonus = orderTimeLeft * 3;
+    const streakBonus = streak * 25;
+    const earnedScore = 140 + layerBonus + varietyBonus + speedBonus + streakBonus;
+    const newScore = score + earnedScore;
+
+    setScore(newScore);
+    setOrdersServed(prev => prev + 1);
+    setStreak(prev => prev + 1);
+    setCustomerMood('happy');
+    setFeedback(`Perfect order. +${earnedScore} points.`);
+    confetti({
+      particleCount: 60,
+      spread: 54,
+      origin: { y: 0.74 },
+      colors: ['#facc15', '#fb923c', '#ffffff'],
+    });
+
+    if (newScore >= targetScore) {
+      finishLevel(newScore);
+      return;
+    }
+
+    beginNextOrder('happy', `Order served. +${earnedScore}`);
+  };
+
+  return (
+    <div className="relative flex h-full w-full flex-col overflow-hidden bg-[radial-gradient(circle_at_top,#fff7ed_0%,#ffedd5_42%,#fed7aa_100%)] px-2 pb-2 pt-1 md:px-4 md:pb-4">
+      <div className="pointer-events-none absolute inset-0 opacity-15" style={{ backgroundImage: 'radial-gradient(rgba(251,146,60,0.55) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+      <img src={BURGER_ASSETS.ketchup} alt="" className="pointer-events-none absolute left-[-2%] top-[18%] w-28 opacity-20 blur-[1px] md:w-40" />
+      <img src={BURGER_ASSETS.bbq} alt="" className="pointer-events-none absolute right-[-1%] bottom-[18%] w-28 opacity-18 blur-[1px] md:w-40" />
+
+      <div className="relative z-10 flex h-full min-h-0 flex-col gap-2 md:gap-4">
         <GameplayHUD
-          title="Burger Builder"
+          title="Burger Bar"
           avatar={avatar}
           score={score}
           targetScore={targetScore}
-          timeLeft={timeLeft}
+          timeLeft={orderTimeLeft}
           progress={progress}
-          accentText="text-amber-900"
-          accentSoftBg="bg-amber-100/80"
-          accentBorder="border-amber-200/80"
-          progressBar="bg-gradient-to-r from-yellow-400 via-orange-400 to-amber-500"
-          statLabel="Combo"
-          statValue={`x${(1 + combo * 0.1).toFixed(1)}`}
+          accentText="text-amber-950"
+          accentSoftBg="bg-orange-100/80"
+          accentBorder="border-amber-200/90"
+          progressBar="bg-gradient-to-r from-orange-400 via-amber-400 to-yellow-300"
+          statLabel="Served"
+          statValue={ordersServed}
         />
 
-        {/* Game Area */}
-        <div className="w-full flex-1 min-h-0 grid grid-cols-1 gap-3 md:gap-4 lg:grid-cols-3 lg:gap-6">
-          {/* Left: Order Ticket */}
-          <div className="bg-white p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] shadow-xl border-t-4 md:border-t-8 border-amber-400 relative min-h-0 overflow-hidden">
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-16 h-8 bg-gray-300 rounded-full shadow-inner" />
-            <h3 className="text-lg md:text-2xl font-black text-gray-800 mb-3 md:mb-6 text-center border-b-2 border-dashed border-gray-300 pb-3 md:pb-4">
-              Order Ticket
-            </h3>
-            <div className="space-y-2 md:space-y-4">
-              {currentOrder.map(item => (
-                <div key={item.id} className="flex items-center justify-between gap-2 p-2 md:p-3 licensed-answer-chip">
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl md:text-3xl">{item.emoji}</span>
-                    <span className="font-bold text-gray-700 text-sm md:text-lg">{item.display}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`font-black ${item.currentFraction === item.targetFraction ? 'text-green-500' : item.currentFraction > item.targetFraction ? 'text-red-500' : 'text-amber-500'}`}>
-                      {item.currentFraction} / {item.targetFraction}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Center: Burger Stack */}
-          <div className="relative flex min-h-[260px] flex-col items-center justify-end rounded-[2rem] border-2 md:border-4 border-amber-200 bg-white/50 p-4 shadow-inner backdrop-blur-sm md:min-h-[420px] md:rounded-[3rem] md:p-8">
-            <div className="w-32 h-10 md:w-48 md:h-16 bg-amber-200 rounded-t-full border-4 border-amber-300 shadow-md mb-2 flex items-center justify-center">
-              <span className="text-amber-600 font-bold opacity-50">Top Bun</span>
-            </div>
-            
-            <div className="flex w-full flex-1 flex-col-reverse items-center justify-start gap-1 overflow-visible py-2 md:py-4">
-              <AnimatePresence>
-                {burgerStack.map((ing, idx) => (
-                  <motion.div
-                    key={`${ing.id}-${idx}`}
-                    initial={{ y: -50, opacity: 0, scale: 1.2 }}
-                    animate={{ y: 0, opacity: 1, scale: 1 }}
-                    className={`${ing.color} w-32 h-6 md:w-48 md:h-8 rounded-full border-2 border-black/20 shadow-md flex items-center justify-center relative z-${idx}`}
-                  >
-                    <span className="text-[10px] md:text-sm font-black text-white drop-shadow-md">{ing.display}</span>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
-
-            <div className="w-32 h-9 md:w-48 md:h-12 bg-amber-200 rounded-b-full border-4 border-amber-300 shadow-md mt-2 flex items-center justify-center">
-              <span className="text-amber-600 font-bold opacity-50">Bottom Bun</span>
-            </div>
-
-            <button
-              onClick={submitBurger}
-              className="absolute -bottom-4 md:-bottom-6 bg-green-500 text-white px-5 py-2.5 md:px-8 md:py-4 rounded-full font-black text-sm md:text-xl shadow-[0_8px_0_#16a34a] hover:translate-y-1 hover:shadow-[0_4px_0_#16a34a] active:translate-y-2 active:shadow-none transition-all"
-            >
-              SERVE BURGER
-            </button>
-          </div>
-
-          {/* Right: Ingredients */}
-          <div className="bg-white/80 backdrop-blur-md p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] shadow-xl border-2 md:border-4 border-amber-200 min-h-0 overflow-hidden">
-            <h3 className="text-lg md:text-xl font-black text-amber-900 mb-3 md:mb-4 text-center">Ingredients</h3>
-            <div className="grid grid-cols-2 gap-2 md:gap-4">
-              {availableIngredients.map(ing => (
-                <motion.button
-                  key={ing.id}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => addIngredientToBurger(ing)}
-                  className={`${ing.color} p-3 md:p-4 rounded-[1.25rem] md:rounded-2xl border-b-4 border-black/20 flex flex-col items-center gap-2 licensed-answer-button`}
-                >
-                  <span className="text-2xl md:text-4xl filter drop-shadow-md">{ing.emoji}</span>
-                  <span className="bg-white/90 px-2 py-1 rounded-full text-[10px] md:text-sm font-black text-gray-800 shadow-sm">
-                    {ing.display}
-                  </span>
-                </motion.button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <GameActionDock
-          onBack={onBack}
-          accentClass="text-amber-700"
-        />
-
-        {/* Game Over / Victory Modals */}
-        <AnimatePresence>
-        {(isGameOver || isVictory) && (
-          <motion.div 
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md"
-          >
-            <div className="app-modal-panel w-full max-w-md rounded-[2rem] border-4 border-amber-400 bg-white p-6 shadow-2xl flex flex-col items-center gap-5 md:rounded-[3rem] md:border-8 md:gap-8 md:p-12">
-              <div className={`text-5xl font-black ${isVictory ? 'text-green-500' : 'text-red-500'} drop-shadow-md text-center`}>
-                {isVictory ? 'ORDER UP!' : 'SHIFT OVER!'}
+        <div className="grid min-h-0 flex-1 gap-2 md:gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+          <section className="order-2 flex min-h-0 flex-col overflow-hidden rounded-[2rem] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.78),rgba(255,247,237,0.98))] p-3 shadow-[0_22px_52px_rgba(120,53,15,0.16)] md:rounded-[2.5rem] md:p-4 lg:order-1">
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-[0.28em] text-amber-700/70 md:text-xs">Build Zone</div>
+                <div className="text-base font-black text-amber-950 md:text-xl">Stack To The Exact Fraction</div>
               </div>
-
-              {isVictory && (
-                <div className="flex gap-2">
-                  {[1, 2, 3].map(s => (
-                    <motion.div
-                      key={s}
-                      initial={{ scale: 0, rotate: -20 }}
-                      animate={{ scale: 1, rotate: 0 }}
-                      transition={{ delay: s * 0.2, type: 'spring' }}
-                    >
-                      <Star className={`w-16 h-16 ${s <= (score >= targetScore * 2 ? 3 : score >= targetScore * 1.5 ? 2 : 1) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} />
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-
-              <div className="text-center">
-                <div className="text-gray-500 font-black uppercase tracking-widest text-sm">Final Score</div>
-                <div className="text-6xl font-black text-amber-500 drop-shadow-sm">{score}</div>
-              </div>
-
-              <button 
+              <button
                 onClick={onBack}
-                className="w-full py-5 text-white text-2xl font-black rounded-2xl transition-all licensed-submit-button"
+                className="flex h-11 w-11 items-center justify-center rounded-2xl border border-amber-200 bg-white/90 shadow-[0_10px_24px_rgba(15,23,42,0.1)]"
+                aria-label="Back to island"
               >
-                CONTINUE
+                <AssetIcon name="back" className="h-5 w-5" />
               </button>
             </div>
-          </motion.div>
-        )}
+
+            <div className="grid grid-cols-3 gap-2 rounded-[1.4rem] border border-amber-100 bg-white/80 p-2 md:rounded-[1.8rem] md:p-3">
+              <div className="rounded-[1.1rem] bg-amber-50 px-3 py-2 text-center">
+                <div className="text-[10px] font-black uppercase tracking-[0.24em] text-amber-700/70">Target</div>
+                <div className="mt-1 text-lg font-black text-amber-950 md:text-2xl">{currentOrder ? formatFractionUnits(currentOrder.targetUnits) : '0'}</div>
+              </div>
+              <div className="rounded-[1.1rem] bg-orange-50 px-3 py-2 text-center">
+                <div className="text-[10px] font-black uppercase tracking-[0.24em] text-amber-700/70">Built</div>
+                <div className={`mt-1 text-lg font-black md:text-2xl ${currentOrder && totalUnits > currentOrder.targetUnits ? 'text-red-500' : 'text-amber-950'}`}>{formatFractionUnits(totalUnits)}</div>
+              </div>
+              <div className="rounded-[1.1rem] bg-yellow-50 px-3 py-2 text-center">
+                <div className="text-[10px] font-black uppercase tracking-[0.24em] text-amber-700/70">Layers</div>
+                <div className="mt-1 text-lg font-black text-amber-950 md:text-2xl">{burgerStack.length}</div>
+              </div>
+            </div>
+
+            <div className="relative mt-2 flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.8rem] bg-[linear-gradient(180deg,rgba(255,251,235,0.96),rgba(255,237,213,0.92))] px-3 pb-3 pt-4 shadow-[inset_0_2px_18px_rgba(255,255,255,0.9),inset_0_-10px_20px_rgba(251,146,60,0.12)] md:rounded-[2.4rem] md:px-4 md:pb-4 lg:px-5">
+              <div className="absolute inset-x-6 top-4 h-16 rounded-full bg-white/55 blur-2xl" />
+              <div className="absolute inset-x-4 bottom-4 h-20 rounded-full bg-amber-900/8 blur-2xl" />
+
+              <div className="rounded-[1.2rem] border border-white/70 bg-white/70 px-3 py-2 shadow-[0_10px_24px_rgba(15,23,42,0.06)]">
+                <div className="text-[10px] font-black uppercase tracking-[0.24em] text-amber-700/70 md:text-xs">Fraction Equation</div>
+                <div className="mt-1 text-sm font-bold text-amber-950 md:text-base">{buildEquation}</div>
+              </div>
+
+              <div className="relative flex min-h-0 flex-1 items-end justify-center overflow-hidden pt-4">
+                <div className="absolute bottom-0 h-10 w-[72%] rounded-full bg-amber-900/15 blur-xl" />
+                <div className="relative flex h-full w-full max-w-[420px] flex-col items-center justify-end">
+                  <img src={BURGER_ASSETS.topBun} alt="Top bun" className="z-20 w-40 object-contain drop-shadow-[0_12px_18px_rgba(120,53,15,0.24)] md:w-52" draggable={false} />
+                  <div className="relative -mt-3 flex w-full flex-1 flex-col-reverse items-center justify-start overflow-visible px-2 pb-1 pt-2 md:-mt-5">
+                    <AnimatePresence initial={false}>
+                      {burgerStack.map((ingredient, index) => (
+                        <motion.div
+                          key={`${ingredient.name}-${index}-${burgerStack.length}`}
+                          initial={{ y: -18, opacity: 0, scale: 1.06 }}
+                          animate={{ y: 0, opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, y: 18 }}
+                          transition={{ type: 'spring', stiffness: 220, damping: 18 }}
+                          className={`${index === 0 ? '' : '-mt-3 md:-mt-5'} relative flex items-center justify-center`}
+                          style={{ zIndex: index + 1 }}
+                        >
+                          <img
+                            src={ingredient.asset}
+                            alt={ingredient.name}
+                            className={`${ingredient.stackImageClass} object-contain drop-shadow-[0_8px_14px_rgba(15,23,42,0.18)]`}
+                            draggable={false}
+                          />
+                          <span className="absolute -right-2 top-1 rounded-full bg-slate-950/78 px-2 py-0.5 text-[10px] font-black text-white shadow-lg md:text-xs">
+                            {ingredient.shortLabel}
+                          </span>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                  <img src={BURGER_ASSETS.bottomBun} alt="Bottom bun" className="relative z-30 -mt-2 w-40 object-contain drop-shadow-[0_14px_20px_rgba(120,53,15,0.24)] md:w-52" draggable={false} />
+                </div>
+              </div>
+
+              <div className="mt-2 grid grid-cols-2 gap-2 md:gap-3">
+                <button
+                  onClick={clearBurger}
+                  className="flex items-center justify-center gap-2 rounded-[1.2rem] border border-amber-200 bg-white/90 px-4 py-3 text-sm font-black text-amber-950 shadow-[0_10px_18px_rgba(15,23,42,0.08)] transition-transform hover:-translate-y-0.5 disabled:opacity-60 md:text-base"
+                  disabled={!burgerStack.length || isTransitioning}
+                >
+                  <AssetIcon name="refresh" className="h-4 w-4 md:h-5 md:w-5" />
+                  Clear Burger
+                </button>
+                <button
+                  onClick={handleServe}
+                  className="rounded-[1.2rem] bg-[linear-gradient(180deg,#22c55e_0%,#16a34a_100%)] px-4 py-3 text-sm font-black text-white shadow-[0_10px_0_#166534,0_14px_26px_rgba(21,128,61,0.28)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-[0_8px_0_#166534] md:text-base"
+                  disabled={!burgerStack.length || isTransitioning}
+                >
+                  Let&apos;s Serve
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <aside className="order-1 flex min-h-0 flex-col gap-2 lg:order-2">
+            <section className="relative overflow-hidden rounded-[2rem] border border-white/70 bg-[linear-gradient(180deg,rgba(120,53,15,0.98),rgba(146,64,14,0.92))] p-3 text-white shadow-[0_22px_52px_rgba(120,53,15,0.22)] md:rounded-[2.4rem] md:p-4">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.2),transparent_46%)]" />
+              <div className="relative flex items-start gap-3">
+                <CustomerFace mood={customerMood} />
+                <div className="min-w-0 flex-1">
+                  <div className="text-[10px] font-black uppercase tracking-[0.28em] text-amber-200/80 md:text-xs">Customer Order</div>
+                  <div className="mt-1 text-lg font-black tracking-tight text-white md:text-2xl">Build This Burger</div>
+                  <p className="mt-2 text-sm leading-5 text-amber-50/92 md:text-base">
+                    {currentOrder?.text}
+                  </p>
+                </div>
+              </div>
+
+              <div className="relative mt-3 grid grid-cols-[1fr_auto] gap-2 rounded-[1.3rem] bg-white/12 p-3 backdrop-blur-sm">
+                <div className="min-w-0">
+                  <div className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-100/80">Required Ingredients</div>
+                  <div className="mt-1 text-sm font-black text-white md:text-base">
+                    {currentOrder ? currentOrder.requiredIngredients.join(' + ') : ''}
+                  </div>
+                  <div className="mt-2 text-xs font-semibold text-amber-100/80 md:text-sm">
+                    {feedback}
+                  </div>
+                </div>
+                <div className="rounded-[1rem] bg-white/12 px-3 py-2 text-center">
+                  <div className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-100/80">Patience</div>
+                  <div className={`mt-1 text-2xl font-black ${orderTimeLeft <= 10 ? 'text-red-300' : 'text-white'}`}>{orderTimeLeft}s</div>
+                </div>
+              </div>
+
+              <div className="mt-3 flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1.5">
+                  {Array.from({ length: MAX_MISSES }).map((_, index) => (
+                    <div key={index} className={`flex h-8 w-8 items-center justify-center rounded-full ${index < MAX_MISSES - missedCustomers ? 'bg-white/16' : 'bg-red-500/30'} shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]`}>
+                      <AssetIcon name="heart" className={`h-4 w-4 ${index < MAX_MISSES - missedCustomers ? '' : 'opacity-35 grayscale'}`} />
+                    </div>
+                  ))}
+                </div>
+                <div className="rounded-full bg-white/12 px-3 py-1.5 text-xs font-black uppercase tracking-[0.22em] text-amber-100 md:text-sm">
+                  Streak {streak}
+                </div>
+              </div>
+
+              <AnimatePresence>
+                {reaction && (
+                  <motion.div
+                    key={`${reaction.mood}-${reaction.text}`}
+                    initial={{ opacity: 0, y: -12, scale: 0.92 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.96 }}
+                    className={`absolute right-3 top-3 rounded-full px-3 py-1.5 text-xs font-black uppercase tracking-[0.22em] shadow-lg ${
+                      reaction.mood === 'happy' ? 'bg-lime-300 text-emerald-950' : 'bg-rose-300 text-rose-950'
+                    }`}
+                  >
+                    {reaction.text}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </section>
+
+            <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] border border-white/70 bg-white/80 p-3 shadow-[0_22px_52px_rgba(15,23,42,0.12)] backdrop-blur-md md:rounded-[2.4rem] md:p-4">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.28em] text-amber-700/70 md:text-xs">Ingredients</div>
+                  <div className="text-base font-black text-amber-950 md:text-xl">Tap To Build</div>
+                </div>
+                <div className="rounded-full bg-amber-100 px-3 py-1 text-xs font-black text-amber-900">
+                  Higher layers = higher score
+                </div>
+              </div>
+
+              <div className="grid min-h-0 flex-1 grid-cols-3 gap-2 md:grid-cols-3 md:gap-3 xl:grid-cols-3">
+                {INGREDIENT_TYPES.map(ingredient => (
+                  <motion.button
+                    key={ingredient.name}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => handleIngredientAdd(ingredient)}
+                    className={`flex min-h-[92px] flex-col items-center justify-center rounded-[1.35rem] border border-white/70 bg-gradient-to-br ${ingredient.accent} px-2 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_12px_18px_rgba(15,23,42,0.08)] md:min-h-[110px] md:rounded-[1.6rem]`}
+                  >
+                    <img src={ingredient.asset} alt={ingredient.name} className={`${ingredient.buttonImageClass} object-contain drop-shadow-[0_8px_10px_rgba(15,23,42,0.16)]`} draggable={false} />
+                    <div className="mt-1 text-center">
+                      <div className="text-[11px] font-black leading-none text-amber-950 md:text-sm">{ingredient.name}</div>
+                      <div className="mt-1 rounded-full bg-white/88 px-2 py-0.5 text-[10px] font-black text-amber-900 shadow-sm md:text-xs">
+                        {ingredient.shortLabel}
+                      </div>
+                    </div>
+                  </motion.button>
+                ))}
+              </div>
+            </section>
+          </aside>
+        </div>
+
+        <AnimatePresence>
+          {(isGameOver || isVictory) && (
+            <motion.div
+              initial={{ scale: 0.82, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-md"
+            >
+              <div className="app-modal-panel flex w-full max-w-md flex-col items-center gap-5 rounded-[2rem] border-4 border-amber-300 bg-white p-6 shadow-2xl md:gap-7 md:p-10">
+                <CustomerFace mood={isVictory ? 'happy' : 'sad'} />
+                <div className="text-center">
+                  <div className={`text-4xl font-black md:text-5xl ${isVictory ? 'text-emerald-500' : 'text-rose-500'}`}>
+                    {isVictory ? 'Service Mastered' : 'Shift Over'}
+                  </div>
+                  <div className="mt-2 text-sm font-semibold text-slate-500 md:text-base">
+                    {isVictory ? 'You hit the score target and kept the orders moving.' : 'Too many customers left before their burger was ready.'}
+                  </div>
+                </div>
+
+                {isVictory && (
+                  <div className="flex gap-2">
+                    {[1, 2, 3].map(index => {
+                      const earnedStars = score >= targetScore * 1.9 ? 3 : score >= targetScore * 1.35 ? 2 : 1;
+                      return (
+                        <motion.div
+                          key={index}
+                          initial={{ scale: 0, rotate: -12 }}
+                          animate={{ scale: 1, rotate: 0 }}
+                          transition={{ delay: index * 0.16, type: 'spring' }}
+                        >
+                          <Star className={`h-14 w-14 ${index <= earnedStars ? 'fill-yellow-400 text-yellow-400' : 'text-slate-200'}`} />
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                <div className="grid w-full grid-cols-3 gap-3">
+                  <div className="rounded-[1.2rem] bg-amber-50 p-3 text-center">
+                    <div className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-700/70">Score</div>
+                    <div className="mt-1 text-2xl font-black text-amber-950">{score}</div>
+                  </div>
+                  <div className="rounded-[1.2rem] bg-orange-50 p-3 text-center">
+                    <div className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-700/70">Served</div>
+                    <div className="mt-1 text-2xl font-black text-amber-950">{ordersServed}</div>
+                  </div>
+                  <div className="rounded-[1.2rem] bg-rose-50 p-3 text-center">
+                    <div className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-700/70">Missed</div>
+                    <div className="mt-1 text-2xl font-black text-amber-950">{missedCustomers}</div>
+                  </div>
+                </div>
+
+                <button onClick={onBack} className="licensed-submit-button w-full rounded-2xl py-4 text-xl font-black text-white transition-all">
+                  Continue
+                </button>
+              </div>
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
     </div>
