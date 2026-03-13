@@ -277,7 +277,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
               <motion.div
                 animate={isActive ? { y: [0, -8, 0] } : { y: 0 }}
                 transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
-                className="relative mx-auto grid h-full w-full max-w-6xl min-h-0 grid-rows-[minmax(0,2fr)_minmax(0,1fr)] gap-3 lg:h-auto lg:grid-cols-[minmax(0,1fr)_minmax(25rem,0.95fr)] lg:grid-rows-none lg:items-center lg:gap-6"
+                className="relative mx-auto grid h-full w-full max-w-6xl min-h-0 grid-rows-[minmax(0,3fr)_minmax(0,1fr)] gap-2.5 lg:h-auto lg:grid-cols-[minmax(0,1fr)_minmax(25rem,0.95fr)] lg:grid-rows-none lg:items-center lg:gap-6"
               >
                 <div className="relative min-h-0">
                   <div className={`absolute inset-x-12 bottom-3 h-10 rounded-full bg-black/40 blur-2xl md:bottom-0 md:h-14 ${palette.halo}`} />
@@ -300,7 +300,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                       <motion.div
                         animate={isActive ? { scale: [1, 1.02, 1] } : { scale: 1 }}
                         transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-                        className="relative mt-3 flex-1 min-h-[13.5rem] overflow-hidden rounded-[1.7rem] border border-white/10 bg-slate-950/70 md:mt-4 md:min-h-[22rem] md:rounded-[2.2rem]"
+                        className="relative mt-3 flex-1 min-h-[16rem] overflow-hidden rounded-[1.7rem] border border-white/10 bg-slate-950/70 md:mt-4 md:min-h-[22rem] md:rounded-[2.2rem]"
                       >
                         {island.mapImage ? (
                           <img
@@ -329,10 +329,10 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                   </div>
                 </div>
 
-                <div className="casual-panel-strong relative flex h-full min-h-0 flex-col justify-center overflow-hidden rounded-[2rem] border border-white/16 p-4 text-white shadow-[0_28px_80px_rgba(2,6,23,0.4)] md:rounded-[2.6rem] md:p-7">
+                <div className="casual-panel-strong relative flex h-full min-h-0 flex-col justify-center overflow-hidden rounded-[2rem] border border-white/16 p-3.5 text-white shadow-[0_28px_80px_rgba(2,6,23,0.4)] md:rounded-[2.6rem] md:p-7">
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.12),transparent_22%),radial-gradient(circle_at_bottom_left,rgba(34,211,238,0.12),transparent_24%)] opacity-90" />
                   <div className="relative">
-                    <div className="mb-3 flex items-center justify-between gap-3 md:mb-5">
+                    <div className="mb-2.5 flex items-center justify-between gap-3 md:mb-5">
                       <span className="casual-ribbon-chip rounded-full px-2.5 py-1 text-[8px] font-black uppercase tracking-[0.26em] text-white/85 md:px-4 md:py-2 md:text-[10px]">
                         {island.name}
                       </span>
@@ -341,11 +341,11 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                       </span>
                     </div>
 
-                    <div className="mb-3 text-[11px] font-bold uppercase tracking-[0.24em] text-slate-100/58 md:mb-4 md:text-[10px]">
+                    <div className="mb-2.5 text-[10px] font-bold uppercase tracking-[0.22em] text-slate-100/58 md:mb-4 md:text-[10px]">
                       {completedCount} of {island.levels.length} mini-games complete
                     </div>
 
-                    <div className="mt-2 md:mt-4">
+                    <div className="mt-1.5 md:mt-4">
                       <div className="mb-1.5 flex items-center justify-between text-[8px] font-black uppercase tracking-[0.24em] text-slate-100/58 md:text-[10px]">
                         <span>Completion</span>
                         <span>{completion}%</span>
@@ -359,11 +359,11 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                       </div>
                     </div>
 
-                    <div className="mt-4 flex flex-col gap-2 md:mt-6">
+                    <div className="mt-3 flex flex-col gap-2 md:mt-6">
                       <button
                         onClick={() => isUnlocked && onSelectIsland(island)}
                         disabled={!isUnlocked}
-                        className={`group inline-flex w-full items-center justify-center gap-2 rounded-[1.2rem] px-5 py-3 text-sm font-black text-slate-950 transition-all md:w-auto md:min-w-[14rem] md:gap-3 md:rounded-[1.8rem] md:px-7 md:py-4 md:text-lg ${
+                        className={`group inline-flex w-full items-center justify-center gap-2 rounded-[1.2rem] px-5 py-2.5 text-sm font-black text-slate-950 transition-all md:w-auto md:min-w-[14rem] md:gap-3 md:rounded-[1.8rem] md:px-7 md:py-4 md:text-lg ${
                           isUnlocked
                             ? `bg-gradient-to-r ${palette.button} shadow-[0_14px_30px_rgba(2,6,23,0.24)] hover:-translate-y-0.5`
                             : 'cursor-not-allowed border border-white/10 bg-white/10 text-white/50 shadow-none'
@@ -373,7 +373,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                         {isUnlocked ? "Let's go" : 'Island locked'}
                       </button>
 
-                      <div className="casual-ribbon-chip inline-flex items-center justify-center gap-2 rounded-full px-3 py-2 text-[10px] font-black text-white/85 md:w-fit md:justify-start md:px-4 md:py-2.5 md:text-sm">
+                      <div className="casual-ribbon-chip inline-flex items-center justify-center gap-2 rounded-full px-3 py-1.5 text-[10px] font-black text-white/85 md:w-fit md:justify-start md:px-4 md:py-2.5 md:text-sm">
                         <AssetIcon name="star" className="h-3.5 w-3.5 md:h-4 md:w-4" />
                         {earnedStars} / {maxStars} stars earned
                       </div>
