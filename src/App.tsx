@@ -493,89 +493,64 @@ const App: React.FC = () => {
       case 'splash':
         return (
           <div className="relative my-auto flex h-full max-h-full w-full max-w-6xl items-center justify-center overflow-hidden px-4 py-5 text-center sm:px-6 md:py-8">
-            <div className="absolute inset-0 -z-30 rounded-[2.7rem] bg-cover bg-center opacity-25 pointer-events-none md:rounded-[3.4rem]" style={{ backgroundImage: `url(${forestBg})` }} />
-            <div className="absolute inset-0 -z-20 rounded-[2.7rem] bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.28)_0%,rgba(15,23,42,0.12)_32%,rgba(2,6,23,0.9)_100%)] pointer-events-none md:rounded-[3.4rem]" />
-            <div className="absolute inset-0 -z-20 rounded-[2.7rem] bg-[linear-gradient(145deg,rgba(14,165,233,0.16),rgba(129,140,248,0.08)_32%,rgba(2,6,23,0)_60%)] pointer-events-none md:rounded-[3.4rem]" />
+            <div className="absolute inset-0 -z-40 rounded-[2.7rem] bg-cover bg-center opacity-55 pointer-events-none md:rounded-[3.4rem]" style={{ backgroundImage: `url(${forestBg})` }} />
+            <div className="absolute inset-0 -z-30 rounded-[2.7rem] bg-[linear-gradient(180deg,rgba(3,9,19,0.18),rgba(3,9,19,0.54)_34%,rgba(2,6,23,0.92)_100%)] pointer-events-none md:rounded-[3.4rem]" />
+            <div className="absolute inset-0 -z-20 rounded-[2.7rem] bg-[radial-gradient(circle_at_top,rgba(160,220,255,0.22)_0%,rgba(34,211,238,0.08)_24%,rgba(2,6,23,0)_48%),radial-gradient(circle_at_bottom,rgba(250,204,21,0.18)_0%,rgba(249,115,22,0.06)_22%,rgba(2,6,23,0)_48%)] pointer-events-none md:rounded-[3.4rem]" />
+            <div className="absolute inset-x-[8%] top-0 -z-10 h-[38%] bg-[linear-gradient(180deg,rgba(255,252,230,0.28),rgba(255,252,230,0))] blur-3xl pointer-events-none" />
+            <div className="absolute inset-x-0 bottom-0 -z-10 h-[28%] bg-[linear-gradient(180deg,rgba(7,12,24,0),rgba(7,12,24,0.9))] pointer-events-none" />
 
             <motion.div
-              animate={{ scale: [0.98, 1.05, 0.98], opacity: [0.45, 0.78, 0.45] }}
-              transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute left-1/2 top-1/2 -z-10 h-[22rem] w-[22rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(96,165,250,0.35)_0%,rgba(125,211,252,0.16)_38%,rgba(2,6,23,0)_72%)] blur-2xl pointer-events-none md:h-[34rem] md:w-[34rem]"
-            />
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 28, repeat: Infinity, ease: 'linear' }}
-              className="absolute left-1/2 top-1/2 -z-10 h-[18rem] w-[18rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/12 pointer-events-none md:h-[28rem] md:w-[28rem]"
-            />
-            <motion.div
-              animate={{ rotate: -360 }}
-              transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
-              className="absolute left-1/2 top-1/2 -z-10 h-[14rem] w-[14rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-200/12 pointer-events-none md:h-[22rem] md:w-[22rem]"
+              animate={{ scale: [0.98, 1.04, 0.98], opacity: [0.35, 0.72, 0.35] }}
+              transition={{ duration: 7.5, repeat: Infinity, ease: 'easeInOut' }}
+              className="absolute left-1/2 top-[34%] -z-10 h-[18rem] w-[18rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(251,191,36,0.32)_0%,rgba(56,189,248,0.18)_34%,rgba(2,6,23,0)_72%)] blur-2xl pointer-events-none md:h-[30rem] md:w-[30rem]"
             />
 
-            <motion.div
-              animate={{ y: [0, -12, 0] }}
-              transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-              className="relative flex w-full max-w-4xl flex-col items-center justify-center gap-8 rounded-[2.2rem] border border-white/14 bg-[linear-gradient(180deg,rgba(15,23,42,0.36),rgba(15,23,42,0.16))] px-6 py-12 shadow-[0_35px_100px_rgba(2,6,23,0.46)] backdrop-blur-[28px] md:rounded-[3rem] md:px-10 md:py-16"
-            >
-              <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2.2rem] md:rounded-[3rem]">
-                <motion.div
-                  animate={{ opacity: [0.45, 0.9, 0.45], x: ['-15%', '15%', '-15%'] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-                  className="absolute left-1/2 top-0 h-full w-28 -translate-x-1/2 bg-[linear-gradient(180deg,rgba(255,255,255,0.22),rgba(255,255,255,0)_72%)] blur-xl md:w-40"
-                />
-                <motion.div
-                  animate={{ x: ['-140%', '180%'] }}
-                  transition={{ duration: 3.8, repeat: Infinity, ease: 'linear' }}
-                  className="absolute inset-y-0 left-0 w-24 bg-[linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,0.22),rgba(255,255,255,0))] opacity-60 blur-md"
-                />
-                {Array.from({ length: 7 }).map((_, index) => (
-                  <motion.div
-                    key={index}
-                    animate={{
-                      y: [0, -24 - index * 2, 0],
-                      opacity: [0.15, 0.85, 0.15],
-                      scale: [1, 1.25, 1],
-                    }}
-                    transition={{ duration: 3.2 + index * 0.35, repeat: Infinity, delay: index * 0.22 }}
-                    className="absolute rounded-full bg-white/80 blur-[2px]"
-                    style={{
-                      width: `${6 + (index % 3) * 4}px`,
-                      height: `${6 + (index % 3) * 4}px`,
-                      left: `${12 + index * 12}%`,
-                      bottom: `${20 + (index % 2) * 18}%`,
-                    }}
-                  />
-                ))}
+            {Array.from({ length: 10 }).map((_, index) => (
+              <motion.div
+                key={index}
+                animate={{
+                  y: [0, -28 - index * 2, 0],
+                  opacity: [0.14, 0.78, 0.14],
+                  scale: [1, 1.35, 1],
+                }}
+                transition={{ duration: 3.4 + index * 0.25, repeat: Infinity, delay: index * 0.18 }}
+                className="pointer-events-none absolute rounded-full bg-white/80 blur-[2px]"
+                style={{
+                  width: `${5 + (index % 3) * 4}px`,
+                  height: `${5 + (index % 3) * 4}px`,
+                  left: `${8 + index * 8}%`,
+                  top: `${18 + (index % 4) * 10}%`,
+                }}
+              />
+            ))}
+
+            <div className="relative flex h-full w-full flex-col items-center justify-between px-2 py-8 md:px-6 md:py-12">
+              <div className="pointer-events-none flex w-full justify-center">
+                <div className="fantasy-title-plaque px-5 py-2 md:px-8 md:py-3">
+                  <div className="flex items-center justify-center gap-2 md:gap-3">
+                    {['emerald', 'ruby', 'sapphire'].map(gem => (
+                      <span key={gem} className={`fantasy-gem fantasy-gem-${gem}`} />
+                    ))}
+                  </div>
+                </div>
               </div>
 
-              <div className="pointer-events-none absolute inset-x-10 top-4 flex items-center justify-between md:top-8">
-                {[0, 1].map(side => (
-                  <motion.div
-                    key={side}
-                    animate={{ y: [0, side === 0 ? -10 : 10, 0], rotate: [0, side === 0 ? 8 : -8, 0] }}
-                    transition={{ duration: 5.2 + side, repeat: Infinity, ease: 'easeInOut' }}
-                    className="h-10 w-10 rounded-[1rem] border border-white/16 bg-[linear-gradient(145deg,rgba(255,255,255,0.18),rgba(255,255,255,0.02))] shadow-[0_16px_36px_rgba(2,6,23,0.3)] backdrop-blur-xl md:h-14 md:w-14 md:rounded-[1.2rem]"
-                  />
-                ))}
-              </div>
-
-              <div className="relative">
+              <div className="relative flex flex-1 w-full items-center justify-center">
                 <motion.div
                   initial={{ y: 18, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.8, ease: 'easeOut' }}
-                  className="relative"
+                  className="relative flex flex-col items-center"
                 >
-                  <div className="absolute inset-x-[8%] top-[18%] h-[56%] rounded-full bg-cyan-300/18 blur-3xl" />
+                  <div className="absolute inset-x-[4%] top-[10%] h-[68%] rounded-full bg-[radial-gradient(circle,rgba(255,241,201,0.2),rgba(96,165,250,0.14),rgba(2,6,23,0))] blur-3xl" />
                   <h1
-                    className="relative text-[3.3rem] leading-[0.84] tracking-[-0.06em] text-white drop-shadow-[0_14px_34px_rgba(2,6,23,0.55)] sm:text-[4.5rem] md:text-[7.4rem] lg:text-[8.6rem]"
+                    className="relative text-[3.2rem] leading-[0.82] tracking-[-0.065em] text-white drop-shadow-[0_16px_40px_rgba(2,6,23,0.65)] sm:text-[4.6rem] md:text-[7.3rem] lg:text-[8.4rem]"
                     style={{ fontFamily: 'var(--font-display)' }}
                   >
-                    <span className="block bg-[linear-gradient(180deg,#ffffff_0%,#dbeafe_46%,#93c5fd_100%)] bg-clip-text text-transparent">
+                    <span className="block bg-[linear-gradient(180deg,#fffef8_0%,#e0ecff_42%,#8fc3ff_100%)] bg-clip-text text-transparent">
                       Sats
                     </span>
-                    <span className="block bg-[linear-gradient(180deg,#fef3c7_0%,#facc15_46%,#f97316_100%)] bg-clip-text text-transparent">
+                    <span className="block bg-[linear-gradient(180deg,#fff6c9_0%,#ffd95e_38%,#ff922b_100%)] bg-clip-text text-transparent">
                       Mastery
                     </span>
                   </h1>
@@ -586,13 +561,12 @@ const App: React.FC = () => {
                 whileHover={{ scale: 1.03, y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleStartAdventure}
-                className="group relative inline-flex min-w-[15rem] items-center justify-center overflow-hidden rounded-full border border-white/18 bg-[linear-gradient(135deg,rgba(129,140,248,0.78),rgba(34,211,238,0.76))] px-8 py-3.5 text-base font-black uppercase tracking-[0.18em] text-white shadow-[0_22px_50px_rgba(14,116,144,0.32)] md:min-w-[20rem] md:px-12 md:py-5 md:text-lg"
+                className="fantasy-cta-button group relative inline-flex min-w-[15rem] items-center justify-center overflow-hidden px-8 py-3 text-base uppercase tracking-[0.18em] md:min-w-[18rem] md:px-12 md:py-4 md:text-lg"
               >
-                <span className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.28),rgba(255,255,255,0.02))]" />
                 <span className="absolute inset-y-0 left-[-20%] w-16 rotate-[18deg] bg-white/35 blur-md transition-transform duration-700 group-hover:translate-x-[420%]" />
                 <span className="relative">{hasCompletedProfile ? 'Welcome' : 'Select Character'}</span>
               </motion.button>
-            </motion.div>
+            </div>
           </div>
         );
       case 'profile_setup':

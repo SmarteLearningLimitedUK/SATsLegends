@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { AVATARS } from '../constants';
 import { BURGER_ASSETS } from '../assets/burger';
+import burgerLevelBg from '../assets/level_backgrounds/burger.png';
 import { triggerHaptic } from '../haptics';
 import GameActionDock from './GameActionDock';
 import GameplaySceneBackdrop from './GameplaySceneBackdrop';
@@ -429,8 +430,14 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden bg-[radial-gradient(circle_at_top,#fff7ed_0%,#ffedd5_42%,#fed7aa_100%)] px-2 pb-2 pt-1 md:px-4 md:pb-4">
-      <GameplaySceneBackdrop gameType="burger_builder" className="opacity-95" />
-      <div className="pointer-events-none absolute inset-0 opacity-15" style={{ backgroundImage: 'radial-gradient(rgba(251,146,60,0.55) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+      <div
+        className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-[0.72]"
+        style={{ backgroundImage: `url(${burgerLevelBg})` }}
+      />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(20,10,3,0.1),rgba(120,53,15,0.16)_26%,rgba(20,10,3,0.52)_100%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,243,199,0.44),rgba(255,243,199,0)_34%),radial-gradient(circle_at_bottom,rgba(120,53,15,0.28),rgba(120,53,15,0)_34%)]" />
+      <GameplaySceneBackdrop gameType="burger_builder" className="opacity-20 mix-blend-soft-light" />
+      <div className="pointer-events-none absolute inset-0 opacity-12" style={{ backgroundImage: 'radial-gradient(rgba(251,146,60,0.55) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
       <img src={BURGER_ASSETS.ketchup} alt="" className="pointer-events-none absolute left-[-2%] top-[18%] w-28 opacity-20 blur-[1px] md:w-40" />
       <img src={BURGER_ASSETS.bbq} alt="" className="pointer-events-none absolute right-[-1%] bottom-[18%] w-28 opacity-18 blur-[1px] md:w-40" />
 

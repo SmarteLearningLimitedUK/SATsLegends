@@ -7,6 +7,7 @@ import {
   MathType
 } from '../types';
 import { POTION_POUR_LEVELS, AVATARS, MATH_FAMILIES } from '../constants';
+import potionLevelBg from '../assets/level_backgrounds/potion-panic.png';
 import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
 import { Home, HelpCircle, Star, RotateCcw, CheckCircle2, FlaskConical, Beaker, Droplets } from './GameIcons';
@@ -166,6 +167,12 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
 
   return (
     <div className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden licensed-playfield-bg">
+      <div
+        className="absolute inset-0 pointer-events-none bg-cover bg-center opacity-[0.74]"
+        style={{ backgroundImage: `url(${potionLevelBg})` }}
+      />
+      <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(180deg,rgba(10,18,32,0.12),rgba(31,41,55,0.2)_28%,rgba(9,12,26,0.58)_100%)]" />
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(167,243,208,0.34),rgba(167,243,208,0)_30%),radial-gradient(circle_at_bottom,rgba(147,51,234,0.24),rgba(147,51,234,0)_34%)]" />
       {/* Magical Background Particles */}
       <div className="absolute inset-0 pointer-events-none">
         {Array.from({ length: 20 }).map((_, i) => (

@@ -541,11 +541,11 @@ button {
   border-radius: 999px;
   background:
     radial-gradient(circle at top, rgba(255,245,214,0.22), transparent 58%),
-    linear-gradient(180deg, rgba(83,56,29,0.88), rgba(26,37,62,0.94) 52%, rgba(12,18,30,0.98));
+    linear-gradient(180deg, rgba(38,54,86,0.96), rgba(22,32,56,0.96) 52%, rgba(10,16,28,0.98));
   box-shadow:
     inset 0 1px 0 rgba(255,245,214,0.24),
-    inset 0 -1px 0 rgba(92,53,19,0.46),
-    0 18px 40px rgba(0,0,0,0.32);
+    inset 0 -1px 0 rgba(92,53,19,0.36),
+    0 18px 40px rgba(2,6,23,0.42);
 }
 
 .fantasy-title-plaque::before,
@@ -633,13 +633,13 @@ button {
   text-shadow: 0 2px 0 rgba(0,0,0,0.34);
   background:
     radial-gradient(circle at top, rgba(255,245,214,0.34), transparent 58%),
-    linear-gradient(180deg, rgba(255,210,74,0.2), rgba(255,255,255,0.02)),
-    linear-gradient(135deg, #a51717 0%, #d9481f 42%, #5c1d12 100%);
+    linear-gradient(180deg, rgba(255,214,102,0.24), rgba(255,255,255,0.03)),
+    linear-gradient(135deg, #5ad0ff 0%, #4f8dff 44%, #1d3f9c 100%);
   box-shadow:
     inset 0 1px 0 rgba(255,245,214,0.28),
-    inset 0 -1px 0 rgba(92,29,18,0.58),
-    0 10px 0 rgba(92,29,18,0.86),
-    0 24px 38px rgba(92,29,18,0.28);
+    inset 0 -1px 0 rgba(18,40,92,0.7),
+    0 10px 0 rgba(17,39,94,0.92),
+    0 24px 38px rgba(17,39,94,0.32);
 }
 
 .fantasy-cta-button:hover {
@@ -650,7 +650,7 @@ button {
   transform: translateY(2px);
   box-shadow:
     inset 0 1px 0 rgba(255,245,214,0.28),
-    inset 0 -1px 0 rgba(92,29,18,0.58),
-    0 6px 0 rgba(92,29,18,0.86),
-    0 16px 28px rgba(92,29,18,0.24);
+    inset 0 -1px 0 rgba(18,40,92,0.7),
+    0 6px 0 rgba(17,39,94,0.92),
+    0 16px 28px rgba(17,39,94,0.26);
 }

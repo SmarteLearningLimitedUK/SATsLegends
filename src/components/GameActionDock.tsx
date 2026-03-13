@@ -95,7 +95,7 @@ const GameActionDock: React.FC<GameActionDockProps> = ({
 
   return (
     <div className="mt-0.5 flex shrink-0 items-center justify-center md:mt-2">
-      <div className="flex items-center gap-2 rounded-full border border-white/14 bg-black/24 px-2 py-1.5 shadow-[0_12px_24px_rgba(0,0,0,0.18)] backdrop-blur-xl md:gap-3 md:px-3 md:py-2">
+      <div className="flex items-center gap-1.5 rounded-full border border-white/14 bg-black/24 px-1.5 py-1 shadow-[0_12px_24px_rgba(0,0,0,0.18)] backdrop-blur-xl md:gap-3 md:px-3 md:py-2">
         <button
           onClick={() => {
             triggerHaptic('tap');

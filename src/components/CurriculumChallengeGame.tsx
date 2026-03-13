@@ -48,9 +48,9 @@ interface BarDatum {
 
 type VisualData =
   | { type: 'tokens'; items: string[]; accent?: string }
-  | { type: 'equation'; lines: string[]; badge?: string }
+  | { type: 'equation'; lines: string[]; badge?: string; variant?: 'standard' | 'clash' }
   | { type: 'bars'; bars: BarDatum[]; caption?: string }
-  | { type: 'coordinates'; points: CoordinatePoint[]; min: number; max: number; caption?: string }
+  | { type: 'coordinates'; points: CoordinatePoint[]; min: number; max: number; caption?: string; targetLabel: string }
   | { type: 'sequence'; values: string[]; caption?: string }
   | { type: 'ratio'; leftLabel: string; leftValue: string; rightLabel: string; rightValue: string; caption?: string };
 
@@ -385,7 +385,7 @@ const generatePercentQuestion = (): ChallengeQuestion => {
 };
 
 const generateCoordinateQuestion = (): ChallengeQuestion => {
-  const points = shuffle(['A', 'B', 'C', 'D']).slice(0, 3).map((label) => ({
+  const points = shuffle(['A', 'B', 'C', 'D']).slice(0, 4).map((label) => ({
     label,
     x: randomInt(-4, 4),
     y: randomInt(-4, 4),
@@ -399,11 +399,11 @@ const generateCoordinateQuestion = (): ChallengeQuestion => {
   }
   const { options, answerIndex } = makeOptions(correct, wrong);
   return {
-    prompt: `What are the coordinates of point ${target.label}?`,
-    sublabel: 'Remember: x-coordinate first, then y-coordinate.',
+    prompt: `Guide the scout to beacon ${target.label}. Which coordinates lock in the route?`,
+    sublabel: 'Start from the centre, move along x first, then y.',
     options,
     answerIndex,
-    visual: { type: 'coordinates', points, min: -4, max: 4, caption: 'Read the grid precisely.' },
+    visual: { type: 'coordinates', points, min: -4, max: 4, caption: 'Plot the beacon and claim the route.', targetLabel: target.label },
   };
 };
 
@@ -424,7 +424,7 @@ const generateTransformQuestion = (): ChallengeQuestion => {
     sublabel: 'Track horizontal movement first, then vertical.',
     options,
     answerIndex,
-    visual: { type: 'coordinates', points: [start, image], min: -4, max: 4, caption: 'Original point and translated image' },
+    visual: { type: 'coordinates', points: [start, image], min: -4, max: 4, caption: 'Original point and translated image', targetLabel: image.label },
   };
 };
 
@@ -603,14 +603,27 @@ const generateRuleRunnerQuestion = (): ChallengeQuestion => {
 
 const renderCoordinates = (visual: Extract<VisualData, { type: 'coordinates' }>) => {
   const span = visual.max - visual.min + 1;
+  const originLeft = 4 + (((0 - visual.min) / (span - 1)) * 92);
+  const originTop = 4 + (100 - (((0 - visual.min) / (span - 1)) * 100)) * 0.92;
   const points = visual.points.map((point) => ({
     ...point,
     left: 4 + (((point.x - visual.min) / (span - 1)) * 92),
     top: 4 + (100 - (((point.y - visual.min) / (span - 1)) * 100)) * 0.92,
+    isTarget: point.label === visual.targetLabel,
   }));
+  const targetPoint = points.find((point) => point.isTarget);
+  const dx = targetPoint ? targetPoint.left - originLeft : 0;
+  const dy = targetPoint ? targetPoint.top - originTop : 0;
+  const routeLength = Math.sqrt((dx ** 2) + (dy ** 2));
+  const routeAngle = Math.atan2(dy, dx) * (180 / Math.PI);
 
   return (
-    <div className="relative aspect-square w-full max-w-[16rem] md:max-w-[22rem] rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.42),rgba(15,23,42,0.16))] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+    <div className="relative aspect-square w-full max-w-[17rem] overflow-hidden rounded-[1.5rem] border border-[#f2d182]/35 bg-[linear-gradient(180deg,rgba(14,34,48,0.88),rgba(8,18,30,0.96))] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_20px_50px_rgba(2,6,23,0.28)] md:max-w-[22rem] md:rounded-[1.8rem]">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(186,230,253,0.18),rgba(186,230,253,0)_30%),radial-gradient(circle_at_bottom,rgba(34,197,94,0.16),rgba(34,197,94,0)_26%)]" />
+      <div className="absolute inset-[0.85rem] rounded-[1.15rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.01))] md:inset-4 md:rounded-[1.4rem]" />
+      <div className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full border border-[#f2d182]/35 bg-black/24 px-3 py-1 text-[9px] font-black uppercase tracking-[0.24em] text-[#fff1c2] shadow-[0_12px_24px_rgba(0,0,0,0.22)] md:top-4 md:text-[10px]">
+        Quest Grid
+      </div>
       <div
         className="absolute inset-4 grid"
         style={{
@@ -619,22 +632,66 @@ const renderCoordinates = (visual: Extract<VisualData, { type: 'coordinates' }>)
         }}
       >
         {Array.from({ length: span * span }).map((_, index) => (
-          <div key={index} className="border border-white/8" />
+          <div key={index} className="border border-white/6" />
         ))}
       </div>
       <div className="absolute inset-y-4 left-1/2 w-px bg-white/18" />
       <div className="absolute inset-x-4 top-1/2 h-px bg-white/18" />
+      <div className="absolute left-5 top-1/2 -translate-y-1/2 text-[9px] font-black uppercase tracking-[0.2em] text-white/45 md:text-[10px]">W</div>
+      <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[9px] font-black uppercase tracking-[0.2em] text-white/45 md:text-[10px]">E</div>
+      <div className="absolute left-1/2 top-5 -translate-x-1/2 text-[9px] font-black uppercase tracking-[0.2em] text-white/45 md:text-[10px]">N</div>
+      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 text-[9px] font-black uppercase tracking-[0.2em] text-white/45 md:text-[10px]">S</div>
+      {targetPoint && (
+        <div
+          className="absolute left-0 top-0 h-[2px] origin-left rounded-full bg-[linear-gradient(90deg,rgba(125,211,252,0.16),rgba(255,226,128,0.95))] shadow-[0_0_14px_rgba(125,211,252,0.32)]"
+          style={{
+            left: `${originLeft}%`,
+            top: `${originTop}%`,
+            width: `${routeLength}%`,
+            transform: `rotate(${routeAngle}deg)`,
+          }}
+        />
+      )}
+      <div
+        className="absolute -translate-x-1/2 -translate-y-1/2"
+        style={{ left: `${originLeft}%`, top: `${originTop}%` }}
+      >
+        <div className="relative flex h-7 w-7 items-center justify-center rounded-full border-2 border-white/50 bg-[linear-gradient(180deg,#f8fafc,#bfdbfe)] text-[9px] font-black uppercase text-slate-950 shadow-[0_10px_20px_rgba(0,0,0,0.28)] md:h-8 md:w-8">
+          S
+          <div className="absolute inset-[-5px] rounded-full border border-cyan-200/28" />
+        </div>
+      </div>
       {points.map((point) => (
         <div
           key={point.label}
           className="absolute -translate-x-1/2 -translate-y-1/2"
           style={{ left: `${point.left}%`, top: `${point.top}%` }}
         >
-          <div className={`flex h-8 w-8 items-center justify-center rounded-full border-2 border-white/40 ${point.tone || 'bg-cyan-300'} text-[11px] font-black text-slate-950 shadow-[0_8px_18px_rgba(0,0,0,0.3)]`}>
-            {point.label}
+          <div className="relative">
+            {point.isTarget && (
+              <>
+                <motion.div
+                  animate={{ scale: [0.94, 1.18, 0.94], opacity: [0.24, 0.62, 0.24] }}
+                  transition={{ duration: 2.1, repeat: Infinity, ease: 'easeInOut' }}
+                  className="absolute inset-[-8px] rounded-full border border-yellow-300/55"
+                />
+                <motion.div
+                  animate={{ scale: [1, 1.32, 1], opacity: [0.16, 0.38, 0.16] }}
+                  transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
+                  className="absolute inset-[-16px] rounded-full border border-cyan-200/28"
+                />
+              </>
+            )}
+            <div className={`relative flex h-8 w-8 items-center justify-center rounded-full border-2 ${point.isTarget ? 'border-yellow-100/90 ring-2 ring-yellow-300/40' : 'border-white/40'} ${point.tone || 'bg-cyan-300'} text-[11px] font-black text-slate-950 shadow-[0_8px_18px_rgba(0,0,0,0.3)] md:h-9 md:w-9`}>
+              {point.label}
+            </div>
           </div>
         </div>
       ))}
+      <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-black/26 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.18em] text-white/78 shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:bottom-4 md:text-[10px]">
+        <span className="inline-flex h-2 w-2 rounded-full bg-yellow-300 shadow-[0_0_10px_rgba(253,224,71,0.55)]" />
+        Beacon {visual.targetLabel}
+      </div>
     </div>
   );
 };
@@ -652,6 +709,40 @@ const renderVisual = (visual: VisualData) => {
         </div>
       );
     case 'equation':
+      if (visual.badge === 'BODMAS' || visual.badge === 'Clash') {
+        return (
+          <div className="relative w-full max-w-[22rem] overflow-hidden rounded-[1.3rem] border border-amber-200/22 bg-[linear-gradient(180deg,rgba(44,18,8,0.92),rgba(17,24,39,0.96))] p-3 text-center shadow-[0_24px_48px_rgba(0,0,0,0.28)] md:max-w-[24rem] md:rounded-[1.6rem] md:p-5">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.2),rgba(251,191,36,0)_34%),radial-gradient(circle_at_bottom,rgba(249,115,22,0.16),rgba(249,115,22,0)_30%)]" />
+            <div className="absolute left-3 top-3 h-14 w-14 rounded-full bg-orange-300/14 blur-2xl md:h-20 md:w-20" />
+            <div className="absolute bottom-3 right-3 h-14 w-14 rounded-full bg-yellow-300/14 blur-2xl md:h-20 md:w-20" />
+            <div className="relative">
+              {visual.badge && (
+                <div className="mb-2 inline-flex items-center gap-1 rounded-full border border-amber-200/28 bg-white/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.18em] text-amber-100 md:mb-3 md:px-3 md:text-[10px] md:tracking-[0.22em]">
+                  <span className="inline-flex h-2 w-2 rounded-full bg-yellow-300 shadow-[0_0_10px_rgba(253,224,71,0.55)]" />
+                  {visual.badge}
+                </div>
+              )}
+              <div className="mb-2 flex items-center justify-center gap-2 text-[0.7rem] font-black uppercase tracking-[0.2em] text-amber-100/72 md:mb-3 md:text-[0.78rem]">
+                <span className="rounded-full border border-white/10 bg-white/8 px-2 py-1">Strike</span>
+                <span className="rounded-full border border-white/10 bg-white/8 px-2 py-1">Solve</span>
+                <span className="rounded-full border border-white/10 bg-white/8 px-2 py-1">Score</span>
+              </div>
+              <div className="space-y-2">
+                {visual.lines.map((line, index) => (
+                  <motion.div
+                    key={line}
+                    animate={index === 0 ? { y: [0, -2, 0], scale: [1, 1.02, 1] } : undefined}
+                    transition={index === 0 ? { duration: 2.2, repeat: Infinity, ease: 'easeInOut' } : undefined}
+                    className={`${index === 0 ? 'rounded-[1.1rem] border border-amber-200/24 bg-[linear-gradient(180deg,rgba(255,255,255,0.14),rgba(255,255,255,0.04))] px-3 py-3 text-[1.3rem] md:text-[2.15rem]' : 'text-[0.95rem] md:text-[1.2rem]'} font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]`}
+                  >
+                    {line}
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      }
       return (
         <div className="w-full max-w-[22rem] rounded-[1.2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-3 text-center shadow-[0_18px_44px_rgba(0,0,0,0.22)] md:max-w-[24rem] md:rounded-[1.5rem] md:p-5">
           {visual.badge && (
@@ -686,27 +777,27 @@ const renderVisual = (visual: VisualData) => {
       return renderCoordinates(visual);
     case 'sequence':
       return (
-        <div className="flex w-full max-w-[26rem] flex-wrap items-center justify-center gap-2 rounded-[1.6rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] px-3 md:px-4 py-4 md:py-5 shadow-[0_18px_44px_rgba(0,0,0,0.22)]">
+        <div className="flex w-full max-w-[22rem] flex-wrap items-center justify-center gap-1.5 rounded-[1.3rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] px-2.5 py-3 shadow-[0_18px_44px_rgba(0,0,0,0.22)] md:max-w-[26rem] md:gap-2 md:rounded-[1.6rem] md:px-4 md:py-5">
           {visual.values.map((value, index) => (
             <React.Fragment key={`${value}-${index}`}>
-                <div className="flex h-12 min-w-[3rem] items-center justify-center rounded-[1rem] border border-white/12 bg-white/10 px-2.5 text-base font-black text-white md:h-16 md:min-w-[4.5rem] md:px-3 md:text-2xl">
+              <div className="flex h-10 min-w-[2.7rem] items-center justify-center rounded-[0.9rem] border border-white/12 bg-white/10 px-2 text-sm font-black text-white md:h-16 md:min-w-[4.5rem] md:rounded-[1rem] md:px-3 md:text-2xl">
                 {value}
               </div>
-              {index < visual.values.length - 1 && <div className="text-white/55">→</div>}
+              {index < visual.values.length - 1 && <div className="text-sm font-black text-white/55 md:text-base">-&gt;</div>}
             </React.Fragment>
           ))}
         </div>
       );
     case 'ratio':
       return (
-        <div className="grid w-full max-w-[24rem] grid-cols-2 gap-3">
-            <div className="rounded-[1.3rem] border border-white/12 bg-white/10 p-3 md:p-4 text-center shadow-[0_16px_34px_rgba(0,0,0,0.2)]">
+        <div className="grid w-full max-w-[22rem] grid-cols-2 gap-2 md:max-w-[24rem] md:gap-3">
+          <div className="rounded-[1.1rem] border border-white/12 bg-white/10 p-2.5 text-center shadow-[0_16px_34px_rgba(0,0,0,0.2)] md:rounded-[1.3rem] md:p-4">
             <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/55">{visual.leftLabel}</div>
-              <div className="mt-1.5 md:mt-2 text-xl font-black text-white md:text-3xl">{visual.leftValue}</div>
+            <div className="mt-1 text-lg font-black text-white md:mt-2 md:text-3xl">{visual.leftValue}</div>
           </div>
-            <div className="rounded-[1.3rem] border border-white/12 bg-white/10 p-3 md:p-4 text-center shadow-[0_16px_34px_rgba(0,0,0,0.2)]">
+          <div className="rounded-[1.1rem] border border-white/12 bg-white/10 p-2.5 text-center shadow-[0_16px_34px_rgba(0,0,0,0.2)] md:rounded-[1.3rem] md:p-4">
             <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/55">{visual.rightLabel}</div>
-              <div className="mt-1.5 md:mt-2 text-xl font-black text-white md:text-3xl">{visual.rightValue}</div>
+            <div className="mt-1 text-lg font-black text-white md:mt-2 md:text-3xl">{visual.rightValue}</div>
           </div>
         </div>
       );
@@ -762,6 +853,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
   const scoreRef = useRef(0);
 
   const theme = CHALLENGE_THEMES[gameType];
+  const isCalculationClash = gameType === 'calculation_clash';
   const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
   const targetScore = 780 + (levelId * 180);
   const progress = Math.min((score / targetScore) * 100, 100);
@@ -877,7 +969,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
       <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${theme.scene}`} />
       <div className="pointer-events-none absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.22) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
 
-      <div className="relative z-10 flex h-full min-h-0 flex-col gap-1.5 md:gap-4">
+      <div className="relative z-10 flex h-full min-h-0 flex-col gap-1 md:gap-4">
         <GameplayHUD
           title={theme.title}
           avatar={avatar}
@@ -891,46 +983,52 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
           progressBar={theme.progress}
           statLabel="Streak"
           statValue={streak}
+          compact
         />
 
-        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.8rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] shadow-[0_24px_64px_rgba(0,0,0,0.28)] md:rounded-[2.6rem]">
-          <div className="absolute inset-x-4 top-2.5 z-20 flex justify-center md:top-4">
+        <div className={`relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.8rem] border border-white/10 ${isCalculationClash ? 'bg-[linear-gradient(180deg,rgba(36,15,8,0.74),rgba(9,16,28,0.38))]' : 'bg-[linear-gradient(180deg,rgba(9,16,28,0.68),rgba(9,16,28,0.34))]'} shadow-[0_24px_64px_rgba(0,0,0,0.28)] md:rounded-[2.6rem]`}>
+          <div className="absolute inset-x-4 top-2.5 z-20 hidden justify-center md:flex md:top-4">
             <div className={`rounded-full border border-white/12 bg-black/28 px-3 py-1.5 text-center text-[9px] font-black uppercase tracking-[0.18em] shadow-[0_12px_24px_rgba(0,0,0,0.3)] backdrop-blur-md md:px-4 md:py-2 md:text-xs ${theme.badge}`}>
               {meta.focus}
             </div>
           </div>
 
-          <div className="grid min-h-0 flex-1 grid-rows-[0.98fr_1.02fr] gap-1.5 p-2.5 pt-14 md:gap-3 md:p-4 md:pt-18 lg:grid-cols-[1.04fr_0.96fr] lg:grid-rows-1 lg:pt-16">
-            <div className={`relative min-h-0 overflow-hidden rounded-[1.4rem] border border-white/12 bg-gradient-to-br ${theme.surface} p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_44px_rgba(0,0,0,0.18)] md:rounded-[2rem] md:p-5`}>
+          <div className={`grid min-h-0 flex-1 ${isCalculationClash ? 'grid-rows-[minmax(0,0.62fr)_minmax(0,1.18fr)]' : 'grid-rows-[minmax(0,0.8fr)_minmax(0,1fr)]'} gap-1 p-1.5 pt-1.5 md:gap-3 md:p-4 md:pt-[4.5rem] lg:grid-cols-[1.04fr_0.96fr] lg:grid-rows-1 lg:pt-16`}>
+            <div className={`relative min-h-0 overflow-hidden rounded-[1.25rem] border border-white/12 bg-gradient-to-br ${theme.surface} p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_44px_rgba(0,0,0,0.18)] md:rounded-[2rem] md:p-5`}>
               <div className={`absolute inset-x-5 top-0 h-28 rounded-full bg-gradient-to-br ${theme.prompt} blur-3xl`} />
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(12,18,28,0)_24%,rgba(12,18,28,0.16)_100%)]" />
               <div className="relative flex h-full min-h-0 flex-col">
                 <div className="shrink-0">
-                  <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/55 md:text-[11px]">Challenge Prompt</div>
-                  <div className="mt-1.5 text-lg font-black leading-tight text-white md:mt-2 md:text-3xl">{question.prompt}</div>
-                  <div className="mt-1.5 max-w-xl text-[11px] font-semibold text-white/72 md:mt-2 md:text-sm">{question.sublabel}</div>
+                  <div className={`inline-flex rounded-full border border-white/12 bg-black/22 px-2 py-1 text-[8px] font-black uppercase tracking-[0.18em] text-white/72 md:hidden ${theme.badge}`}>
+                    {meta.focus}
+                  </div>
+                  <div className={`mt-1 ${isCalculationClash ? 'text-[1.08rem]' : 'text-[1.18rem]'} font-black leading-[1.05] text-white md:mt-2 md:text-3xl`}>{question.prompt}</div>
+                  <div className="mt-0.5 max-w-xl text-[9px] font-semibold leading-snug text-white/68 md:mt-2 md:text-sm">{question.sublabel}</div>
                 </div>
 
                 <motion.div
                   key={`${question.prompt}-${question.sublabel}`}
                   initial={{ opacity: 0, y: 8, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  className="flex min-h-0 flex-1 items-center justify-center py-2 md:py-4"
+                  className="flex min-h-0 flex-1 items-center justify-center py-1 md:py-4"
                 >
                   {renderVisual(question.visual)}
                 </motion.div>
 
-                <div className="shrink-0 rounded-[1.1rem] border border-white/10 bg-black/22 px-3 py-2.5 text-center text-[10px] font-bold text-white/84 shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:rounded-[1.2rem] md:px-4 md:py-3 md:text-sm">
+                <div className="hidden shrink-0 rounded-[1.1rem] border border-white/10 bg-black/22 px-3 py-2.5 text-center text-[10px] font-bold text-white/84 shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:block md:rounded-[1.2rem] md:px-4 md:py-3 md:text-sm">
                   {visualCaption || statusMessage}
                 </div>
               </div>
             </div>
 
-            <div className="flex min-h-0 flex-col gap-1.5 md:gap-3">
+            <div className="flex min-h-0 flex-col gap-1 md:gap-3">
               {bossEncounter && (
                 <BossPortrait encounter={bossEncounter} pose={bossPose} compact className="shrink-0" />
               )}
-              <div className="grid grid-cols-1 gap-1.5 md:grid-cols-2 md:gap-3 lg:grid-cols-1 xl:grid-cols-2">
+              <div className="shrink-0 rounded-[0.95rem] border border-white/10 bg-black/24 px-2.5 py-1.5 text-center text-[9px] font-bold text-white/84 shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:hidden">
+                {visualCaption || statusMessage}
+              </div>
+              <div className="grid min-h-0 grid-cols-2 gap-1 md:grid-cols-2 md:gap-3 lg:grid-cols-1 xl:grid-cols-2">
                 {question.options.map((option, index) => {
                   const isSelected = index === selectedIndex;
                   const isCorrect = feedback === 'correct' && index === question.answerIndex;
@@ -942,26 +1040,26 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleAnswer(index)}
                       disabled={Boolean(feedback) || isVictory || isGameOver}
-                      className={`min-h-[4rem] rounded-[1.2rem] border px-3 py-3 text-left shadow-[0_14px_30px_rgba(0,0,0,0.16)] transition-all md:min-h-[5.25rem] md:rounded-[1.4rem] md:px-4 md:py-4 ${isCorrect
+                      className={`min-h-[3.4rem] rounded-[1rem] border px-2 py-2 ${isCalculationClash ? 'text-center' : 'text-left'} shadow-[0_14px_30px_rgba(0,0,0,0.16)] transition-all md:min-h-[5.25rem] md:rounded-[1.4rem] md:px-4 md:py-4 ${isCorrect
                         ? 'border-emerald-200/80 bg-gradient-to-br from-emerald-300/55 to-lime-300/45 text-emerald-950'
                         : isWrongSelected
                           ? 'border-rose-200/80 bg-gradient-to-br from-rose-300/55 to-orange-300/45 text-rose-950'
                           : isSelected
                             ? `border-white/20 bg-gradient-to-br ${theme.answerActive} text-slate-950`
-                            : `border-white/12 bg-gradient-to-br ${theme.answer} text-white hover:bg-white/14`}`}
+                            : `${isCalculationClash ? 'border-amber-200/18 bg-[linear-gradient(180deg,rgba(255,255,255,0.16),rgba(255,255,255,0.05)),linear-gradient(135deg,rgba(120,53,15,0.44),rgba(15,23,42,0.24))] text-white hover:-translate-y-0.5 hover:border-amber-100/28' : `border-white/12 bg-gradient-to-br ${theme.answer} text-white hover:bg-white/14`}`}`}
                     >
-                      <div className="flex items-start gap-3">
-                        <div className={`mt-0.5 flex h-7 w-7 md:h-8 md:w-8 shrink-0 items-center justify-center rounded-full border text-[10px] md:text-[11px] font-black uppercase ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/35' : 'border-white/12 bg-white/8'}`}>
+                      <div className={`flex ${isCalculationClash ? 'items-center justify-center gap-1.5' : 'items-start gap-2'}`}>
+                        <div className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[9px] font-black uppercase md:h-8 md:w-8 md:text-[11px] ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/35' : 'border-white/12 bg-white/8'}`}>
                           {String.fromCharCode(65 + index)}
                         </div>
-                        <div className="text-[13px] font-black leading-tight md:text-lg">{option}</div>
+                        <div className={`${isCalculationClash ? 'text-[1rem] md:text-[1.45rem]' : 'text-[11px] md:text-lg'} font-black leading-tight`}>{option}</div>
                       </div>
                     </motion.button>
                   );
                 })}
               </div>
 
-              <div className="grid flex-1 min-h-0 grid-cols-2 gap-1.5 md:gap-3">
+              <div className="hidden min-h-0 grid-cols-2 gap-1.5 md:grid md:gap-3">
                 <div className="rounded-[1.1rem] border border-white/10 bg-black/20 p-2.5 shadow-[0_16px_32px_rgba(0,0,0,0.16)] md:rounded-[1.6rem] md:p-4">
                   <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/50 md:text-[10px] md:tracking-[0.22em]">Status</div>
                   <div className="mt-1.5 text-[11px] font-black leading-tight text-white md:mt-2 md:text-lg">{statusMessage}</div>

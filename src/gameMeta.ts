@@ -314,10 +314,10 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     focus: 'Coordinates and plotting',
     rules: {
       title: 'Coordinate Quest',
-      summary: 'Read the grid and choose the correct coordinate or missing point.',
+      summary: 'Guide the scout across the quest grid and lock in the right coordinates.',
       bullets: [
-        'Use x first, then y.',
-        'Watch for all four quadrants on tougher rounds.',
+        'Start from the centre and read x first, then y.',
+        'Use the beacon marker and route line to track the target point.',
         'Plot carefully because near-misses still count as wrong.',
       ],
     },

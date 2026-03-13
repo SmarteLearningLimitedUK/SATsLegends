@@ -20,9 +20,18 @@ interface Bubble {
   number: number;
   isPrime: boolean;
   x: number; // percentage 0-100
+  lane: number;
+  createdAt: number;
   speed: number;
   isPopped: boolean;
   size: number;
+  palette: {
+    background: string;
+    ring: string;
+    glow: string;
+    sparkle: string;
+    text: string;
+  };
 }
 
 const isPrime = (num: number) => {
@@ -36,6 +45,49 @@ const isPrime = (num: number) => {
   }
   return true;
 };
+
+const BUBBLE_LANES = [12, 24, 36, 48, 60, 72, 84];
+
+const PRIME_PALETTES = [
+  {
+    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.96), rgba(125,211,252,0.92) 18%, rgba(56,189,248,0.78) 45%, rgba(14,165,233,0.7) 68%, rgba(8,47,73,0.74) 100%)',
+    ring: 'rgba(186,230,253,0.75)',
+    glow: '0 0 26px rgba(56,189,248,0.35)',
+    sparkle: 'rgba(255,255,255,0.7)',
+    text: '#effbff',
+  },
+  {
+    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.96), rgba(134,239,172,0.92) 18%, rgba(52,211,153,0.8) 45%, rgba(16,185,129,0.72) 68%, rgba(6,78,59,0.8) 100%)',
+    ring: 'rgba(209,250,229,0.74)',
+    glow: '0 0 26px rgba(52,211,153,0.35)',
+    sparkle: 'rgba(255,255,255,0.72)',
+    text: '#f3fff9',
+  },
+  {
+    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.97), rgba(196,181,253,0.92) 18%, rgba(167,139,250,0.8) 45%, rgba(139,92,246,0.72) 68%, rgba(76,29,149,0.82) 100%)',
+    ring: 'rgba(233,213,255,0.74)',
+    glow: '0 0 26px rgba(167,139,250,0.34)',
+    sparkle: 'rgba(255,255,255,0.76)',
+    text: '#fbf7ff',
+  },
+];
+
+const COMPOSITE_PALETTES = [
+  {
+    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.95), rgba(253,224,71,0.9) 18%, rgba(251,191,36,0.76) 45%, rgba(249,115,22,0.7) 68%, rgba(120,53,15,0.82) 100%)',
+    ring: 'rgba(254,240,138,0.72)',
+    glow: '0 0 24px rgba(251,191,36,0.34)',
+    sparkle: 'rgba(255,247,200,0.72)',
+    text: '#fffdf3',
+  },
+  {
+    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.95), rgba(253,186,116,0.9) 18%, rgba(251,146,60,0.78) 45%, rgba(239,68,68,0.68) 68%, rgba(127,29,29,0.82) 100%)',
+    ring: 'rgba(254,215,170,0.72)',
+    glow: '0 0 24px rgba(249,115,22,0.32)',
+    sparkle: 'rgba(255,242,214,0.72)',
+    text: '#fffaf5',
+  },
+];
 
 const PrimePopGame: React.FC<PrimePopGameProps> = ({ 
   levelId, 
@@ -78,17 +130,38 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
       finalNum = trickyComposites[Math.floor(Math.random() * trickyComposites.length)];
     }
 
-    const newBubble: Bubble = {
-      id: Math.random().toString(36).substr(2, 9),
-      number: finalNum,
-      isPrime: isPrime(finalNum),
-      x: 10 + Math.random() * 80, // 10% to 90% width
-      speed: 4 + Math.random() * 4 + (levelId * 0.5), // seconds to reach top
-      isPopped: false,
-      size: 60 + Math.random() * 24,
-    };
+    const bubbleIsPrime = isPrime(finalNum);
+    const palettePool = bubbleIsPrime ? PRIME_PALETTES : COMPOSITE_PALETTES;
+    const now = Date.now();
+    const laneCooldown = Math.max(1050, 1500 - (levelId * 110));
 
-    setBubbles(prev => [...prev, newBubble]);
+    setBubbles(prev => {
+      const occupiedLanes = new Set(
+        prev
+          .filter(bubble => !bubble.isPopped && now - bubble.createdAt < laneCooldown)
+          .map(bubble => bubble.lane)
+      );
+      const availableLanes = BUBBLE_LANES.filter(lane => !occupiedLanes.has(lane));
+      const lanePool = availableLanes.length > 0 ? availableLanes : BUBBLE_LANES;
+      const selectedLane = lanePool[Math.floor(Math.random() * lanePool.length)];
+      const laneJitter = (Math.random() * 3.2) - 1.6;
+      const palette = palettePool[Math.floor(Math.random() * palettePool.length)];
+
+      const newBubble: Bubble = {
+        id: Math.random().toString(36).substr(2, 9),
+        number: finalNum,
+        isPrime: bubbleIsPrime,
+        x: selectedLane + laneJitter,
+        lane: selectedLane,
+        createdAt: now,
+        speed: 4.6 + Math.random() * 2.8 + (levelId * 0.36),
+        isPopped: false,
+        size: 58 + Math.random() * 18,
+        palette,
+      };
+
+      return [...prev, newBubble];
+    });
   }, [levelId, isGameOver, isVictory]);
 
   useEffect(() => {
@@ -201,6 +274,13 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
   return (
     <div className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden licensed-playfield-bg md:cursor-none">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute left-[-8%] top-[10%] h-[32%] w-[42%] rounded-full bg-cyan-400/18 blur-3xl" />
+        <div className="absolute right-[-10%] top-[20%] h-[40%] w-[44%] rounded-full bg-fuchsia-500/14 blur-3xl" />
+        <div className="absolute left-[18%] bottom-[-8%] h-[34%] w-[48%] rounded-full bg-emerald-400/16 blur-3xl" />
+        <div className="absolute right-[12%] bottom-[8%] h-[24%] w-[28%] rounded-full bg-amber-300/12 blur-3xl" />
+      </div>
+
       {/* Background Grid */}
       <div className="absolute inset-0 opacity-20 pointer-events-none licensed-grid-backdrop" />
 
@@ -212,6 +292,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
           targetScore={targetScore}
           timeLeft={timeLeft}
           progress={progress}
+          compact
           accentText="text-emerald-900"
           accentSoftBg="bg-emerald-100/80"
           accentBorder="border-emerald-200/80"
@@ -226,6 +307,10 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
           onPointerMove={handlePointerMove}
           className="w-full flex-1 min-h-0 relative licensed-board-frame overflow-hidden touch-none"
         >
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.25),transparent_28%),radial-gradient(circle_at_78%_18%,rgba(192,132,252,0.22),transparent_26%),radial-gradient(circle_at_50%_88%,rgba(74,222,128,0.2),transparent_30%),linear-gradient(180deg,rgba(7,20,45,0.2),rgba(2,6,23,0.55))]" />
+          <div className="absolute inset-x-[6%] top-[7%] h-[14%] rounded-full bg-white/8 blur-3xl opacity-70" />
+          <div className="absolute inset-x-0 bottom-0 h-[28%] bg-gradient-to-t from-slate-950/30 via-transparent to-transparent" />
+
           {/* Custom Crosshair */}
           <div 
             className="absolute hidden md:block w-12 h-12 pointer-events-none z-50 -translate-x-1/2 -translate-y-1/2 text-cyan-400 opacity-80"
@@ -253,20 +338,49 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
                   e.stopPropagation();
                   popBubble(bubble.id, bubble.isPrime, e.clientX, e.clientY);
                 }}
-                className="absolute -translate-x-1/2 flex items-center justify-center rounded-full border border-white/30 backdrop-blur-md md:cursor-none shadow-[inset_0_-10px_20px_rgba(0,0,0,0.2),_0_0_15px_rgba(255,255,255,0.2)]"
+                className="absolute -translate-x-1/2 flex items-center justify-center rounded-full backdrop-blur-md md:cursor-none"
                 style={{
-                  background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(255,255,255,0.2) 20%, rgba(255,255,255,0.1) 60%, rgba(255,255,255,0.4))',
+                  background: bubble.palette.background,
+                  border: `2px solid ${bubble.palette.ring}`,
+                  boxShadow: `${bubble.palette.glow}, inset 0 -14px 26px rgba(15,23,42,0.28), inset 0 10px 18px rgba(255,255,255,0.18)`,
                   left: `${bubble.x}%`,
                   width: `${bubble.size}px`,
                   height: `${bubble.size}px`,
                 }}
               >
-                <span className="pointer-events-none text-2xl md:text-3xl font-black text-white drop-shadow-md">
+                <div
+                  className="absolute inset-[6%] rounded-full opacity-70"
+                  style={{
+                    border: `1px solid ${bubble.palette.sparkle}`,
+                    boxShadow: bubble.isPrime ? `0 0 20px ${bubble.palette.sparkle}` : 'none',
+                  }}
+                />
+                <div
+                  className="absolute inset-[16%] rounded-full opacity-55"
+                  style={{
+                    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.42), transparent 62%)',
+                  }}
+                />
+                <span
+                  className="pointer-events-none text-2xl md:text-3xl font-black drop-shadow-[0_5px_14px_rgba(15,23,42,0.46)]"
+                  style={{ color: bubble.palette.text }}
+                >
                   {bubble.number}
                 </span>
                 
                 {/* Bubble reflection */}
-                <div className="absolute top-[15%] left-[20%] w-[30%] h-[20%] bg-white/60 rounded-full rotate-[-45deg] blur-[1px] pointer-events-none" />
+                <div
+                  className="absolute top-[15%] left-[18%] w-[30%] h-[20%] rounded-full rotate-[-45deg] blur-[1px] pointer-events-none"
+                  style={{ background: bubble.palette.sparkle }}
+                />
+                {bubble.isPrime && (
+                  <motion.div
+                    className="absolute inset-[-10%] rounded-full pointer-events-none"
+                    animate={{ scale: [0.96, 1.08, 0.96], opacity: [0.22, 0.42, 0.22] }}
+                    transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+                    style={{ border: `2px solid ${bubble.palette.ring}` }}
+                  />
+                )}
               </motion.div>
             ))}
           </AnimatePresence>

@@ -43,7 +43,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
   const selectedStyle = HERO_STYLES[selectedAvatar.id] || HERO_STYLES.barratt;
 
   return (
-    <div className="relative my-auto flex h-full max-h-full w-full max-w-6xl flex-col gap-2 overflow-hidden px-3 py-2 md:gap-3 md:px-8 md:py-6">
+    <div className="relative my-auto flex h-full max-h-full w-full max-w-6xl flex-col gap-1.5 overflow-hidden px-3 py-2 md:gap-3 md:px-8 md:py-6">
       <div className="absolute inset-0 -z-30 rounded-[2rem] bg-[radial-gradient(circle_at_top,rgba(255,244,214,0.16),transparent_18%),linear-gradient(180deg,#1a2238_0%,#10192d_42%,#070b16_100%)] md:rounded-[2.8rem]" />
       <div className="absolute inset-0 -z-20 rounded-[2rem] bg-[linear-gradient(140deg,rgba(255,214,102,0.1),rgba(125,211,252,0.08)_34%,rgba(2,6,23,0)_66%),radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_26%)] md:rounded-[2.8rem]" />
       <div className={`absolute left-1/2 top-[12%] -z-10 h-48 w-48 -translate-x-1/2 rounded-full bg-gradient-to-br ${selectedStyle.glow} blur-3xl md:h-72 md:w-72`} />
@@ -56,14 +56,14 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
       <div className="pointer-events-none absolute inset-x-6 top-3 z-0 h-px bg-[linear-gradient(90deg,transparent,rgba(255,225,145,0.65),transparent)] md:inset-x-16" />
 
       <div className="relative z-10 flex shrink-0 flex-col items-center text-center pt-0.5">
-        <div className="fantasy-title-plaque max-w-[18rem] px-5 py-2 md:max-w-[30rem] md:px-10 md:py-4">
+        <div className="fantasy-title-plaque max-w-[16.5rem] px-4 py-1.5 md:max-w-[30rem] md:px-10 md:py-4">
           <div className="mb-1.5 flex items-center justify-center gap-2 md:mb-2">
             {['emerald', 'ruby', 'sapphire'].map(gem => (
               <span key={gem} className={`fantasy-gem fantasy-gem-${gem}`} />
             ))}
           </div>
           <h1
-            className="text-[1.55rem] font-black leading-none tracking-[-0.04em] text-[#fff7dc] drop-shadow-[0_10px_32px_rgba(2,6,23,0.58)] sm:text-[2.2rem] md:text-[5.2rem]"
+            className="text-[1.35rem] font-black leading-none tracking-[-0.04em] text-[#fff7dc] drop-shadow-[0_10px_32px_rgba(2,6,23,0.58)] sm:text-[2.2rem] md:text-[5.2rem]"
             style={{ fontFamily: 'var(--font-display)' }}
           >
             Choose Your Character
@@ -71,7 +71,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
         </div>
       </div>
 
-      <div className="relative z-10 grid min-h-0 flex-1 grid-cols-2 grid-rows-2 gap-2.5 md:gap-5">
+      <div className="relative z-10 grid min-h-0 flex-1 grid-cols-2 grid-rows-2 gap-2 md:gap-5">
         {AVATARS.map((avatar) => {
           const isSelected = selectedId === avatar.id;
           const style = HERO_STYLES[avatar.id] || HERO_STYLES.barratt;
@@ -79,7 +79,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
           return (
             <motion.button
               key={avatar.id}
-              animate={isSelected ? { y: [0, -3, 0], boxShadow: ['0 16px 34px rgba(2,6,23,0.3)', '0 22px 46px rgba(2,6,23,0.4)', '0 16px 34px rgba(2,6,23,0.3)'] } : { y: 0 }}
+              animate={isSelected ? { y: [0, -2, 0], boxShadow: ['0 16px 34px rgba(2,6,23,0.3)', '0 22px 46px rgba(2,6,23,0.4)', '0 16px 34px rgba(2,6,23,0.3)'] } : { y: 0 }}
               transition={isSelected ? { duration: 3.6, repeat: Infinity, ease: 'easeInOut' } : { duration: 0.2 }}
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
@@ -92,7 +92,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                 : 'hover:bg-white/[0.04]'
                 }`}
             >
-              <div className={`absolute inset-0 bg-gradient-to-br ${style.tint} opacity-88`} />
+              <div className={`absolute inset-0 bg-gradient-to-br ${style.tint} opacity-[0.88]`} />
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,244,214,0.14),rgba(255,255,255,0.02)_22%,rgba(2,6,23,0.42)_100%)]" />
               <div className={`absolute left-1/2 top-[18%] h-24 w-24 -translate-x-1/2 rounded-full bg-gradient-to-br ${style.glow} blur-2xl md:h-36 md:w-36`} />
               <div className="absolute inset-x-3 top-3 h-[34%] rounded-[1.25rem] bg-[linear-gradient(180deg,rgba(255,246,219,0.12),rgba(255,255,255,0))] opacity-70 blur-lg md:inset-x-4 md:rounded-[1.8rem]" />
@@ -101,9 +101,10 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               <div className={`relative mx-2.5 mt-2.5 flex min-h-0 flex-1 items-end justify-center overflow-hidden rounded-[1.1rem] border border-white/14 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(2,6,23,0.16))] shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] md:mx-4 md:mt-4 md:rounded-[1.8rem] ${isSelected ? style.ring : ''}`}>
                 <AnimatedAvatar
                   avatar={avatar}
-                  pose={isSelected ? 'victory' : 'idle'}
-                  frameDurationMs={isSelected ? 980 : 1320}
+                  pose="idle"
+                  frameDurationMs={1400}
                   floating={false}
+                  cycleFrames={false}
                   alt={avatar.name}
                   className="h-full w-full"
                   imageClassName={`object-bottom transition-transform duration-500 ${isSelected ? 'scale-[1.28] translate-y-[3%] md:scale-[1.34]' : 'scale-[1.22] translate-y-[4%] md:scale-[1.26]'}`}
@@ -139,7 +140,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
             triggerHaptic('success');
             onConfirm();
           }}
-          className="fantasy-cta-button relative z-10 w-full px-8 py-2.5 text-sm md:px-20 md:py-5 md:text-3xl"
+          className="fantasy-cta-button relative z-10 w-full px-8 py-2 text-sm md:px-20 md:py-5 md:text-3xl"
         >
           Let&apos;s Go
         </motion.button>

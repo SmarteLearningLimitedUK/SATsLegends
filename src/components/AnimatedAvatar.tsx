@@ -10,6 +10,7 @@ interface AnimatedAvatarProps {
   alt?: string;
   frameDurationMs?: number;
   floating?: boolean;
+  cycleFrames?: boolean;
 }
 
 const POSE_FALLBACKS: Partial<Record<AnimationState, AnimationState[]>> = {
@@ -44,6 +45,7 @@ const AnimatedAvatar: React.FC<AnimatedAvatarProps> = ({
   alt,
   frameDurationMs = 1400,
   floating = true,
+  cycleFrames = true,
 }) => {
   const frames = useMemo(() => resolveFrames(avatar, pose as AnimationState), [avatar, pose]);
   const [frameIndex, setFrameIndex] = useState(0);
@@ -53,7 +55,7 @@ const AnimatedAvatar: React.FC<AnimatedAvatarProps> = ({
   }, [avatar?.id, pose, frames.length]);
 
   useEffect(() => {
-    if (frames.length <= 1) return undefined;
+    if (!cycleFrames || frames.length <= 1) return undefined;
 
     const intervalId = window.setInterval(() => {
       setFrameIndex(current => (current + 1) % frames.length);
@@ -62,7 +64,7 @@ const AnimatedAvatar: React.FC<AnimatedAvatarProps> = ({
     return () => window.clearInterval(intervalId);
   }, [frameDurationMs, frames]);
 
-  const activeFrame = frames[frameIndex];
+  const activeFrame = frames[cycleFrames ? frameIndex : 0];
 
   if (!avatar || !activeFrame) {
     return <div className={className} />;
