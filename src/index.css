@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap');
 
 @theme {
   --font-fredoka: "Fredoka", sans-serif;
@@ -16,7 +15,8 @@
   }
 
   .glass-panel {
-    @apply border border-white/15 bg-white/10 backdrop-blur-2xl shadow-[0_18px_50px_rgba(0,0,0,0.22)];
+    @apply border border-white/15 shadow-[0_18px_50px_rgba(0,0,0,0.22)];
+    background: linear-gradient(180deg, rgba(12,18,30,0.14), rgba(12,18,30,0.06)), url('./assets/casual_ui/dialogs_panels/panel_2.png') center/100% 100% no-repeat;
   }
 
   .game-chip {
@@ -24,11 +24,15 @@
   }
 
   .game-button-primary {
-    @apply rounded-[1.75rem] bg-gradient-to-b from-yellow-300 to-yellow-500 text-white font-black shadow-[0_8px_0_#ca8a04] transition-all active:shadow-none;
+    @apply rounded-[1.75rem] text-white font-black shadow-[0_8px_0_rgba(123,63,19,0.95)] transition-all active:shadow-none;
+    background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(0,0,0,0.04)), url('./assets/casual_ui/inputs/btn_2.png') center/100% 100% no-repeat;
+    text-shadow: 0 2px 0 rgba(0,0,0,0.3);
   }
 
   .game-button-secondary {
-    @apply rounded-[1.4rem] border border-white/15 bg-white/10 text-white font-black shadow-[0_8px_24px_rgba(0,0,0,0.12)] backdrop-blur-xl transition-all;
+    @apply rounded-[1.4rem] border border-white/15 text-white font-black shadow-[0_8px_24px_rgba(0,0,0,0.12)] transition-all;
+    background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(0,0,0,0.05)), url('./assets/casual_ui/inputs/btn_7.png') center/100% 100% no-repeat;
+    text-shadow: 0 2px 0 rgba(0,0,0,0.3);
   }
 }
 
@@ -40,6 +44,8 @@ html,
 body,
 #root {
   height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 
 body {
@@ -51,6 +57,7 @@ body {
     radial-gradient(circle at top, rgba(59, 130, 246, 0.24), transparent 32%),
     radial-gradient(circle at bottom right, rgba(168, 85, 247, 0.18), transparent 28%),
     linear-gradient(180deg, #0f172a 0%, #111827 48%, #020617 100%);
+  overscroll-behavior: none;
 }
 
 button,
@@ -192,7 +199,7 @@ button {
   height: 3.4rem;
   border-radius: 999px;
   border: 2px solid rgba(92,58,30,0.55);
-  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02)), url('./assets/licensed/slices/button_green_pill.png') center/100% 100% no-repeat;
+  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02)), url('./assets/casual_ui/hud/hud__action_btn.png') center/100% 100% no-repeat;
   box-shadow: 0 10px 26px rgba(15, 23, 42, 0.16), 0 4px 0 rgba(74,44,23,0.58);
   backdrop-filter: blur(12px);
   transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
@@ -211,27 +218,31 @@ button {
 .licensed-shell-bg {
   position: relative;
   background:
-    linear-gradient(180deg, rgba(12, 18, 28, 0.12), rgba(12, 18, 28, 0.58)),
-    url('./assets/licensed/background.jpeg') center/cover no-repeat,
-    linear-gradient(180deg, #22312a 0%, #0f172a 100%);
+    radial-gradient(circle at top, rgba(255,255,255,0.16), transparent 32%),
+    radial-gradient(circle at 18% 14%, rgba(56,189,248,0.2), transparent 18%),
+    radial-gradient(circle at 82% 10%, rgba(251,191,36,0.14), transparent 16%),
+    linear-gradient(180deg, rgba(7,17,31,0.24), rgba(7,17,31,0.72)),
+    linear-gradient(180deg, #0e7490 0%, #155e75 28%, #1d4ed8 58%, #0f172a 100%);
 }
 
 .licensed-playfield-bg {
   position: relative;
   background:
-    linear-gradient(180deg, rgba(4, 8, 16, 0.44), rgba(4, 8, 16, 0.8)),
-    url('./assets/licensed/background.jpeg') center/cover no-repeat,
-    linear-gradient(180deg, #0f172a 0%, #020617 100%);
+    radial-gradient(circle at top, rgba(255,255,255,0.12), transparent 26%),
+    radial-gradient(circle at 16% 18%, rgba(34,211,238,0.15), transparent 18%),
+    radial-gradient(circle at 84% 12%, rgba(167,139,250,0.14), transparent 18%),
+    linear-gradient(180deg, rgba(7,17,31,0.34), rgba(7,17,31,0.84)),
+    linear-gradient(180deg, #38bdf8 0%, #2563eb 30%, #1e3a8a 62%, #020617 100%);
 }
 
 .licensed-wood-button {
-  border: 2px solid rgba(255,255,255,0.2);
+  border: 2px solid rgba(255,255,255,0.18);
   color: #fff8ec;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.12), rgba(0,0,0,0.06)),
-    url('./assets/licensed/slices/wood_plank_long_4.png') center/100% 100% no-repeat;
+    linear-gradient(180deg, rgba(255,255,255,0.16), rgba(0,0,0,0.04)),
+    url('./assets/casual_ui/inputs/btn_3.png') center/100% 100% no-repeat;
   box-shadow:
-    0 8px 0 rgba(74, 44, 23, 0.95),
+    0 8px 0 rgba(96, 53, 18, 0.88),
     0 16px 30px rgba(0,0,0,0.22);
   text-shadow: 0 2px 0 rgba(0,0,0,0.35);
 }
@@ -241,91 +252,91 @@ button {
 }
 
 .licensed-wood-button-secondary {
-  border: 2px solid rgba(92, 58, 30, 0.8);
+  border: 2px solid rgba(255,255,255,0.16);
   color: #fff7ea;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.08), rgba(0,0,0,0.04)),
-    url('./assets/licensed/slices/wood_plank_long_2.png') center/100% 100% no-repeat;
+    linear-gradient(180deg, rgba(255,255,255,0.14), rgba(0,0,0,0.04)),
+    url('./assets/casual_ui/inputs/btn_8.png') center/100% 100% no-repeat;
   box-shadow:
-    0 8px 0 rgba(74, 44, 23, 0.95),
+    0 8px 0 rgba(73, 44, 97, 0.7),
     0 12px 24px rgba(0,0,0,0.18);
   text-shadow: 0 2px 0 rgba(0,0,0,0.35);
 }
 
 .licensed-game-card {
-  border: 2px solid rgba(92, 58, 30, 0.72);
+  border: 2px solid rgba(255,255,255,0.16);
   border-radius: 1.6rem;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.04)),
-    rgba(247, 239, 223, 0.92);
+    linear-gradient(180deg, rgba(15,23,42,0.14), rgba(15,23,42,0.04)),
+    url('./assets/casual_ui/dialogs_panels/card_1.png') center/100% 100% no-repeat;
   box-shadow:
-    0 12px 0 rgba(74, 44, 23, 0.92),
+    0 12px 0 rgba(53, 67, 97, 0.6),
     0 22px 40px rgba(0,0,0,0.18);
 }
 
 .licensed-game-card-dark {
-  border: 2px solid rgba(92, 58, 30, 0.6);
+  border: 2px solid rgba(255,255,255,0.12);
   border-radius: 1.6rem;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.08), rgba(0,0,0,0.08)),
-    rgba(53, 33, 19, 0.84);
-  box-shadow: 0 10px 0 rgba(39, 23, 10, 0.95), 0 20px 32px rgba(0,0,0,0.2);
+    linear-gradient(180deg, rgba(15,23,42,0.2), rgba(15,23,42,0.1)),
+    url('./assets/casual_ui/dialogs_panels/panel.png') center/100% 100% no-repeat;
+  box-shadow: 0 10px 0 rgba(24, 32, 48, 0.8), 0 20px 32px rgba(0,0,0,0.2);
 }
 
 .licensed-panel-plank {
-  border: 2px solid rgba(74, 44, 23, 0.82);
-  background: url('./assets/licensed/slices/wood_plank_long_1.png') center/100% 100% no-repeat;
+  border: 2px solid rgba(255,255,255,0.18);
+  background: url('./assets/casual_ui/dialogs_panels/ribbon_1.png') center/100% 100% no-repeat;
   color: #fff7ea;
   text-shadow: 0 2px 0 rgba(0,0,0,0.28);
 }
 
 .licensed-submit-button {
-  border: 2px solid rgba(92,58,30,0.72);
+  border: 2px solid rgba(255,255,255,0.16);
   color: #fff8ec;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.02)),
-    url('./assets/licensed/slices/button_yellow_plank.png') center/100% 100% no-repeat;
-  box-shadow: 0 8px 0 rgba(146, 64, 14, 0.94), 0 18px 30px rgba(0,0,0,0.18);
+    linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.02)),
+    url('./assets/casual_ui/inputs/btn_6a.png') center/100% 100% no-repeat;
+  box-shadow: 0 8px 0 rgba(14, 116, 144, 0.82), 0 18px 30px rgba(0,0,0,0.18);
   text-shadow: 0 2px 0 rgba(0,0,0,0.28);
 }
 .licensed-submit-button:hover { filter: brightness(1.03); }
-.licensed-submit-button:active { transform: translateY(2px); box-shadow: 0 4px 0 rgba(146,64,14,0.94); }
+.licensed-submit-button:active { transform: translateY(2px); box-shadow: 0 4px 0 rgba(14,116,144,0.82); }
 
 .licensed-answer-button {
-  border: 2px solid rgba(92,58,30,0.62);
+  border: 2px solid rgba(255,255,255,0.14);
   color: #fff8ec;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.11), rgba(255,255,255,0.02)),
-    url('./assets/licensed/slices/wood_plank_long_3.png') center/100% 100% no-repeat;
-  box-shadow: 0 7px 0 rgba(74,44,23,0.94), 0 14px 24px rgba(0,0,0,0.16);
+    linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.02)),
+    url('./assets/casual_ui/inputs/btn_10.png') center/100% 100% no-repeat;
+  box-shadow: 0 7px 0 rgba(67, 56, 202, 0.62), 0 14px 24px rgba(0,0,0,0.16);
   text-shadow: 0 2px 0 rgba(0,0,0,0.28);
 }
 .licensed-answer-button:hover { filter: brightness(1.04); }
-.licensed-answer-button:active { transform: translateY(2px); box-shadow: 0 3px 0 rgba(74,44,23,0.94); }
+.licensed-answer-button:active { transform: translateY(2px); box-shadow: 0 3px 0 rgba(67,56,202,0.62); }
 
 .licensed-answer-chip {
-  border: 2px solid rgba(92,58,30,0.55);
+  border: 2px solid rgba(59,130,246,0.32);
   border-radius: 1rem;
-  background: rgba(255,248,235,0.88);
-  box-shadow: 0 6px 0 rgba(92,58,30,0.18);
+  background: rgba(255,255,255,0.92);
+  box-shadow: 0 6px 0 rgba(37,99,235,0.14);
 }
 
 .licensed-board-frame {
-  border: 4px solid rgba(92,58,30,0.75);
+  border: 4px solid rgba(255,255,255,0.14);
   border-radius: 2rem;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02)),
-    rgba(248, 240, 223, 0.88);
-  box-shadow: inset 0 0 0 3px rgba(255,255,255,0.12), 0 14px 0 rgba(74,44,23,0.85), 0 28px 44px rgba(0,0,0,0.18);
+    linear-gradient(180deg, rgba(15,23,42,0.08), rgba(15,23,42,0.02)),
+    url('./assets/casual_ui/dialogs_panels/panel.png') center/100% 100% no-repeat;
+  box-shadow: inset 0 0 0 3px rgba(255,255,255,0.1), 0 14px 0 rgba(37, 52, 82, 0.6), 0 28px 44px rgba(0,0,0,0.18);
 }
 
 .licensed-overlay-card {
-  border: 3px solid rgba(92,58,30,0.75);
+  border: 3px solid rgba(255,255,255,0.18);
   border-radius: 2rem;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
-    rgba(58, 35, 20, 0.90);
-  box-shadow: 0 12px 0 rgba(39,23,10,0.92), 0 20px 36px rgba(0,0,0,0.22);
+    linear-gradient(180deg, rgba(12,18,34,0.82), rgba(15,23,42,0.92)),
+    url('./assets/casual_ui/dialogs_panels/dialog__popup_1.png') center/100% 100% no-repeat;
+  box-shadow: 0 12px 0 rgba(24,32,48,0.76), 0 20px 36px rgba(0,0,0,0.22);
   color: #fff7ea;
 }
 
@@ -338,8 +349,8 @@ button {
 
 .licensed-grid-backdrop {
   background-image:
-    linear-gradient(rgba(92,58,30,0.10) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(92,58,30,0.10) 1px, transparent 1px);
+    linear-gradient(rgba(148,163,184,0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148,163,184,0.16) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
@@ -352,4 +363,91 @@ button {
   border-radius: 1rem;
   background: rgba(255,248,235,0.92);
   box-shadow: 0 6px 0 rgba(92,58,30,0.14);
+}
+
+
+.app-viewport {
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100svh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
+.app-modal-panel {
+  max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 2rem);
+}
+
+.casual-modal-panel {
+  border: 3px solid rgba(255,255,255,0.18);
+  background: linear-gradient(180deg, rgba(13,18,34,0.78), rgba(15,23,42,0.9)), url('./assets/casual_ui/dialogs_panels/panel_3.png') center/100% 100% no-repeat;
+  box-shadow: 0 22px 60px rgba(0,0,0,0.32);
+}
+
+
+.casual-panel-surface {
+  border: 2px solid rgba(255,255,255,0.18);
+  background:
+    linear-gradient(180deg, rgba(12,18,30,0.18), rgba(12,18,30,0.08)),
+    url('./assets/casual_ui/dialogs_panels/panel_2.png') center/100% 100% no-repeat;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.22);
+}
+
+.casual-panel-strong {
+  border: 2px solid rgba(255,255,255,0.2);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
+    url('./assets/casual_ui/dialogs_panels/panel_3.png') center/100% 100% no-repeat;
+  box-shadow: 0 18px 42px rgba(0,0,0,0.24);
+}
+
+.casual-ribbon-chip {
+  border: 1px solid rgba(255,255,255,0.18);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02)),
+    url('./assets/casual_ui/dialogs_panels/dialog__tag.png') center/100% 100% no-repeat;
+  color: #f8fafc;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.25);
+}
+
+.casual-tab-shell {
+  border: 1px solid rgba(255,255,255,0.16);
+  background:
+    linear-gradient(180deg, rgba(12,18,30,0.16), rgba(12,18,30,0.04)),
+    url('./assets/casual_ui/dialogs_panels/tab_bar.png') center/100% 100% no-repeat;
+}
+
+.casual-stat-shell {
+  border: 1px solid rgba(255,255,255,0.16);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02)),
+    url('./assets/casual_ui/dialogs_panels/currency_display_bar.png') center/100% 100% no-repeat;
+}
+
+.casual-nav-shell {
+  border: 1px solid rgba(255,255,255,0.18);
+  background:
+    linear-gradient(180deg, rgba(12,18,30,0.24), rgba(12,18,30,0.14)),
+    url('./assets/casual_ui/dialogs_panels/tab_bar.png') center/100% 100% no-repeat;
+  box-shadow: 0 20px 45px rgba(0,0,0,0.3);
+}
+
+.casual-nav-button-active {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.08)),
+    url('./assets/casual_ui/inputs/btn_6a.png') center/100% 100% no-repeat;
+  color: #082f49;
+}
+
+.casual-action-button {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.18), rgba(0,0,0,0.04)),
+    url('./assets/casual_ui/inputs/btn_3.png') center/100% 100% no-repeat;
+  border: 2px solid rgba(255,255,255,0.16);
+  color: white;
+  text-shadow: 0 2px 0 rgba(0,0,0,0.25);
+  box-shadow: 0 8px 0 rgba(83, 46, 15, 0.75), 0 14px 28px rgba(0,0,0,0.18);
 }

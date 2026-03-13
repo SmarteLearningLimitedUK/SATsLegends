@@ -156,11 +156,11 @@ const AngleArenaGame: React.FC<AngleArenaGameProps> = ({
   const targetPos = getCoordinates(targetAngle, 40); // 40% radius
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-4 relative overflow-y-auto overflow-x-hidden licensed-playfield-bg">
+    <div className="h-full w-full flex flex-col items-center p-4 relative overflow-hidden licensed-playfield-bg">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#94a3b8 2px, transparent 2px)', backgroundSize: '40px 40px' }} />
 
-      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-6 h-full flex-1">
+      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-3 md:gap-6 h-full flex-1 min-h-0">
         <GameplayHUD
           title="Angle Arena"
           avatar={avatar}
@@ -309,7 +309,7 @@ const AngleArenaGame: React.FC<AngleArenaGameProps> = ({
             animate={{ scale: 1, opacity: 1 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
           >
-            <div className="licensed-overlay-card p-12 flex flex-col items-center gap-8 max-w-md w-full">
+            <div className="app-modal-panel licensed-overlay-card w-full max-w-md flex flex-col items-center gap-5 p-6 md:gap-8 md:p-12">
               <div className={`text-5xl font-black ${isVictory ? 'text-green-400' : 'text-red-500'} drop-shadow-md text-center`}>
                 {isVictory ? 'SHARPSHOOTER!' : 'OUT OF TIME!'}
               </div>

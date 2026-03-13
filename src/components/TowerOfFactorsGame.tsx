@@ -182,7 +182,7 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
   const progress = Math.min((score / targetScore) * 100, 100);
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-4 relative overflow-y-auto overflow-x-hidden licensed-playfield-bg font-sans">
+    <div className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden licensed-playfield-bg font-sans">
       {/* Night Sky Background */}
       <div className="absolute inset-0 opacity-30 pointer-events-none" style={{ 
         backgroundImage: 'radial-gradient(circle at 50% 0%, #1e293b 0%, transparent 70%)', 
@@ -198,7 +198,7 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
         }} />
       ))}
 
-      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-6 h-full flex-1">
+      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-3 md:gap-6 h-full flex-1 min-h-0">
         <GameplayHUD
           title="Tower of Factors"
           avatar={avatar}
@@ -215,27 +215,27 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
         />
 
         {/* Game Area */}
-        <div className="w-full flex-1 relative flex flex-col md:flex-row items-center justify-center gap-12">
+        <div className="relative flex w-full flex-1 min-h-0 flex-col items-center justify-center gap-3 md:flex-row md:gap-8">
           
           {problem && (
             <>
               {/* Tower Building Area */}
-              <div className="flex-1 flex flex-col items-center justify-end h-full min-h-[400px] relative">
+              <div className="relative flex min-h-[220px] w-full flex-1 flex-col items-center justify-end md:min-h-[400px]">
                 
                 {/* Target Number Cloud */}
-                <div className="absolute top-0 licensed-overlay-card p-6 text-center z-20">
-                  <h3 className="text-xl text-slate-300 font-bold mb-2">Build a tower for</h3>
-                  <div className="text-6xl font-black text-lime-400 drop-shadow-lg">{problem.target}</div>
+                <div className="absolute top-0 z-20 licensed-overlay-card p-3 md:p-6 text-center">
+                  <h3 className="mb-1 text-sm md:text-xl text-slate-300 font-bold">Build a tower for</h3>
+                  <div className="text-3xl md:text-6xl font-black text-lime-400 drop-shadow-lg">{problem.target}</div>
                 </div>
 
                 {/* The Tower */}
                 <motion.div 
-                  className="flex flex-col-reverse items-center gap-1 z-10 w-48"
+                  className="z-10 flex w-28 md:w-48 flex-col-reverse items-center gap-1"
                   animate={shake ? { x: [-10, 10, -10, 10, 0], rotate: [-5, 5, -5, 5, 0] } : {}}
                   transition={{ duration: 0.5 }}
                 >
                   {/* Base */}
-                  <div className="w-64 h-8 licensed-panel-plank rounded-t-xl flex items-center justify-center">
+                  <div className="w-40 h-6 md:w-64 md:h-8 licensed-panel-plank rounded-t-xl flex items-center justify-center">
                     <Castle className="w-6 h-6 text-slate-400" />
                   </div>
                   
@@ -248,9 +248,9 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
                         animate={{ y: 0, opacity: 1, scale: 1 }}
                         exit={{ y: 200, opacity: 0, rotate: Math.random() * 90 - 45 }}
                         transition={{ type: 'spring', bounce: 0.5 }}
-                        className="w-full h-16 rounded-lg flex items-center justify-center licensed-answer-button"
+                        className="w-full h-10 md:h-16 rounded-lg flex items-center justify-center licensed-answer-button"
                       >
-                        <span className="text-3xl font-black text-lime-950">{num}</span>
+                        <span className="text-xl md:text-3xl font-black text-lime-950">{num}</span>
                       </motion.div>
                     ))}
                   </AnimatePresence>
@@ -258,9 +258,9 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
               </div>
 
               {/* Block Selection Grid */}
-              <div className="flex-1 licensed-board-frame p-8 w-full max-w-md">
-                <h3 className="text-2xl text-slate-300 font-bold mb-6 text-center">Select the factors!</h3>
-                <div className="grid grid-cols-3 gap-4">
+              <div className="flex w-full max-w-md flex-1 min-h-0 flex-col licensed-board-frame p-4 md:p-8">
+                <h3 className="mb-3 md:mb-6 text-center text-lg md:text-2xl text-slate-300 font-bold">Select the factors!</h3>
+                <div className="grid grid-cols-3 gap-2 md:gap-4">
                   {problem.options.map((opt, i) => {
                     const isSelected = tower.includes(opt);
                     return (
@@ -269,13 +269,13 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
                         onClick={() => handleSelect(opt)}
                         disabled={isSelected || !!feedback}
                         className={`
-                          relative aspect-square rounded-2xl border-4 shadow-lg flex items-center justify-center transition-all
+                          relative aspect-square rounded-[1rem] md:rounded-2xl border-2 md:border-4 shadow-lg flex items-center justify-center transition-all
                           ${isSelected 
                             ? 'bg-slate-700 border-slate-600 opacity-50 scale-95' 
                             : 'bg-slate-600 border-slate-500 hover:bg-slate-500 hover:-translate-y-1 hover:shadow-xl active:translate-y-1 active:shadow-sm'}
                         `}
                       >
-                        <span className={`text-3xl font-black ${isSelected ? 'text-slate-500' : 'text-white'}`}>
+                        <span className={`text-xl md:text-3xl font-black ${isSelected ? 'text-slate-500' : 'text-white'}`}>
                           {opt}
                         </span>
                       </button>
@@ -295,8 +295,8 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
                 exit={{ opacity: 0, scale: 1.5 }}
                 className={`absolute inset-0 flex items-center justify-center z-30 pointer-events-none`}
               >
-                <div className="px-12 py-6 rounded-full backdrop-blur-md border-4 bg-red-500/20 border-red-400">
-                  <span className="text-6xl font-black drop-shadow-lg text-red-500">
+                <div className="px-6 py-3 md:px-12 md:py-6 rounded-full backdrop-blur-md border-4 bg-red-500/20 border-red-400">
+                  <span className="text-3xl md:text-6xl font-black drop-shadow-lg text-red-500">
                     TIMBER!
                   </span>
                 </div>
@@ -319,7 +319,7 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
             animate={{ scale: 1, opacity: 1 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
           >
-            <div className="licensed-overlay-card p-12 flex flex-col items-center gap-8 max-w-md w-full">
+            <div className="app-modal-panel licensed-overlay-card w-full max-w-md flex flex-col items-center gap-5 p-6 md:gap-8 md:p-12">
               <div className={`text-5xl font-black ${isVictory ? 'text-lime-400' : 'text-red-500'} drop-shadow-md text-center`}>
                 {isVictory ? 'MASTER BUILDER!' : 'RUINS!'}
               </div>

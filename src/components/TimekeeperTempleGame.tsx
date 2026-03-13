@@ -241,7 +241,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
   const progress = Math.min((score / targetScore) * 100, 100);
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-4 relative overflow-y-auto overflow-x-hidden bg-amber-950 font-sans">
+    <div className="h-full w-full flex flex-col items-center p-4 relative overflow-hidden bg-amber-950 font-sans">
       {/* Temple Background */}
       <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ 
         backgroundImage: 'radial-gradient(circle at 50% 50%, #d97706 2px, transparent 2px)', 
@@ -249,7 +249,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
       }} />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(217,119,6,0.3)_0%,transparent_70%)] pointer-events-none" />
 
-      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-6 h-full flex-1">
+      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-3 md:gap-6 h-full flex-1 min-h-0">
         <GameplayHUD
           title="Timekeeper Temple"
           avatar={avatar}
@@ -332,7 +332,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
             animate={{ scale: 1, opacity: 1 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
           >
-            <div className="bg-amber-900 p-12 rounded-[3rem] border-8 border-amber-600 shadow-2xl flex flex-col items-center gap-8 max-w-md w-full">
+            <div className="app-modal-panel w-full max-w-md rounded-[2rem] border-4 border-amber-600 bg-amber-900 p-6 shadow-2xl flex flex-col items-center gap-5 md:rounded-[3rem] md:border-8 md:gap-8 md:p-12">
               <div className={`text-5xl font-black ${isVictory ? 'text-amber-400' : 'text-red-500'} drop-shadow-md text-center`}>
                 {isVictory ? 'TIME MASTER!' : 'TIME UP!'}
               </div>

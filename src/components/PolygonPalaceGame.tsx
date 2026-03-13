@@ -175,11 +175,11 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
   const progress = Math.min((score / targetScore) * 100, 100);
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-4 relative overflow-y-auto overflow-x-hidden bg-fuchsia-50">
+    <div className="h-full w-full flex flex-col items-center p-4 relative overflow-hidden bg-fuchsia-50">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#d946ef 2px, transparent 2px)', backgroundSize: '30px 30px' }} />
 
-      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-6 h-full flex-1">
+      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-3 md:gap-6 h-full flex-1 min-h-0">
         <GameplayHUD
           title="Polygon Palace"
           avatar={avatar}
@@ -272,7 +272,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
             animate={{ scale: 1, opacity: 1 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md"
           >
-            <div className="bg-white p-12 rounded-[3rem] border-8 border-fuchsia-400 shadow-2xl flex flex-col items-center gap-8 max-w-md w-full">
+            <div className="app-modal-panel w-full max-w-md rounded-[2rem] border-4 border-fuchsia-400 bg-white p-6 shadow-2xl flex flex-col items-center gap-5 md:rounded-[3rem] md:border-8 md:gap-8 md:p-12">
               <div className={`text-5xl font-black ${isVictory ? 'text-green-500' : 'text-red-500'} drop-shadow-md text-center`}>
                 {isVictory ? 'ROYAL ARCHITECT!' : 'TIME UP!'}
               </div>

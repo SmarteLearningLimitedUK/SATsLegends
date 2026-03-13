@@ -165,7 +165,7 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
   const cauldronFill = Math.min((currentValue / targetValue) * 100, 110);
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-4 relative overflow-y-auto overflow-x-hidden licensed-playfield-bg">
+    <div className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden licensed-playfield-bg">
       {/* Magical Background Particles */}
       <div className="absolute inset-0 pointer-events-none">
         {Array.from({ length: 20 }).map((_, i) => (
@@ -187,7 +187,7 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
         ))}
       </div>
 
-      <div className="z-10 w-full max-w-4xl flex flex-col items-center gap-8">
+      <div className="z-10 w-full max-w-4xl flex h-full min-h-0 flex-1 flex-col items-center gap-3 md:gap-6">
         <GameplayHUD
           title="Potion Pour"
           avatar={avatar}
@@ -204,24 +204,24 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
         />
 
         {/* Main Game Area */}
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div className="grid w-full flex-1 min-h-0 grid-cols-1 items-center gap-3 md:grid-cols-2 md:gap-8">
           {/* Left: Target & Cauldron */}
-          <div className="flex flex-col items-center gap-8">
+          <div className="flex min-h-0 flex-col items-center gap-3 md:gap-6">
             <div className="relative">
               <motion.div
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="licensed-game-card p-8 text-center relative"
+                className="licensed-game-card relative p-4 md:p-8 text-center"
               >
-                <div className="text-white/60 font-black uppercase tracking-widest text-xs mb-2">Order Request</div>
-                <div className="text-6xl font-black text-white drop-shadow-lg">{targetDisplay}</div>
-                <div className="absolute -top-4 -right-4 bg-yellow-400 text-white p-3 rounded-2xl shadow-lg rotate-12">
+                <div className="mb-1 text-[10px] md:text-xs font-black uppercase tracking-widest text-white/60">Order Request</div>
+                <div className="text-3xl md:text-6xl font-black text-white drop-shadow-lg">{targetDisplay}</div>
+                <div className="absolute -right-2 -top-2 md:-top-4 md:-right-4 rounded-xl md:rounded-2xl bg-yellow-400 p-2 md:p-3 text-white shadow-lg rotate-12">
                   <FlaskConical className="w-6 h-6" />
                 </div>
               </motion.div>
             </div>
 
-            <div className="relative w-64 h-64">
+            <div className="relative h-40 w-40 md:h-64 md:w-64">
               {/* Cauldron Body */}
               <div className="absolute inset-0 bg-gray-800 rounded-full border-8 border-gray-700 shadow-2xl overflow-hidden">
                 {/* Liquid Fill */}
@@ -261,12 +261,12 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
               </div>
 
               {/* Cauldron Rim */}
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-[110%] h-8 bg-gray-700 rounded-full border-4 border-gray-600 z-10" />
+              <div className="absolute -top-2 md:-top-4 left-1/2 -translate-x-1/2 h-5 md:h-8 w-[110%] bg-gray-700 rounded-full border-4 border-gray-600 z-10" />
 
               {/* Reset Button */}
               <button
                 onClick={resetCauldron}
-                className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-red-500 text-white p-3 rounded-full shadow-lg hover:bg-red-600 transition-all z-20"
+                className="absolute -bottom-2 md:-bottom-4 left-1/2 -translate-x-1/2 bg-red-500 text-white p-2 md:p-3 rounded-full shadow-lg hover:bg-red-600 transition-all z-20"
               >
                 <RotateCcw className="w-6 h-6" />
               </button>
@@ -274,18 +274,18 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
           </div>
 
           {/* Right: Ingredients */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-2 md:gap-4">
             {ingredients.map((ing, idx) => (
               <motion.button
                 key={ing.id}
                 whileHover={{ scale: 1.05, y: -5 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => addIngredient(ing)}
-                className={`${ing.color} p-6 rounded-[2rem] border-b-8 border-black/20 shadow-xl flex flex-col items-center gap-4 relative overflow-hidden group`}
+                className={`${ing.color} p-3 md:p-6 rounded-[1.25rem] md:rounded-[2rem] border-b-4 md:border-b-8 border-black/20 shadow-xl flex flex-col items-center gap-4 relative overflow-hidden group`}
               >
                 <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <Beaker className="w-10 h-10 text-white drop-shadow-md" />
-                <span className="text-2xl font-black text-white drop-shadow-md">{ing.display}</span>
+                <Beaker className="h-7 w-7 md:h-10 md:w-10 text-white drop-shadow-md" />
+                <span className="text-base md:text-2xl font-black text-white drop-shadow-md">{ing.display}</span>
               </motion.button>
             ))}
           </div>
@@ -305,7 +305,7 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
             animate={{ scale: 1, opacity: 1 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md"
           >
-            <div className="licensed-overlay-card p-12 flex flex-col items-center gap-8 max-w-md w-full">
+            <div className="app-modal-panel licensed-overlay-card w-full max-w-md flex flex-col items-center gap-5 p-6 md:gap-8 md:p-12">
               <div className={`text-6xl font-black ${isVictory ? 'text-yellow-400' : 'text-red-500'} drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]`}>
                 {isVictory ? 'MASTER!' : 'PANIC!'}
               </div>
@@ -332,7 +332,7 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
 
               <button
                 onClick={onBack}
-                className="w-full py-6 text-white text-3xl font-black rounded-3xl transition-all licensed-submit-button"
+                className="w-full rounded-2xl md:rounded-3xl py-4 md:py-6 text-white text-xl md:text-3xl font-black transition-all licensed-submit-button"
               >
                 CONTINUE
               </button>

@@ -18,94 +18,77 @@ const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, onClose, 
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-md">
           <motion.div
             initial={{ scale: 0.8, opacity: 0, y: 50 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.8, opacity: 0, y: 50 }}
-            className="bg-gradient-to-b from-yellow-500 to-orange-600 w-full max-w-3xl rounded-[3rem] border-8 border-white/20 shadow-[0_0_100px_rgba(234,179,8,0.4)] relative overflow-hidden p-6 md:p-12"
+            className="app-modal-panel casual-modal-panel relative flex w-full max-w-3xl flex-col overflow-hidden rounded-[2rem] border-4 border-white/20 bg-gradient-to-b from-yellow-500 to-orange-600 p-4 shadow-[0_0_100px_rgba(234,179,8,0.4)] md:rounded-[3rem] md:p-8"
           >
-            {/* Decorative Background */}
-            <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
-              <div className="absolute -top-20 -left-20 w-64 h-64 bg-white rounded-full blur-[100px]" />
-              <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-yellow-300 rounded-full blur-[100px]" />
+            <div className="absolute inset-0 pointer-events-none opacity-20">
+              <div className="absolute -left-10 -top-10 h-40 w-40 rounded-full bg-white blur-[100px] md:h-64 md:w-64" />
+              <div className="absolute -bottom-10 -right-10 h-40 w-40 rounded-full bg-yellow-300 blur-[100px] md:h-64 md:w-64" />
             </div>
 
-            <button 
+            <button
               onClick={onClose}
-              className="absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors z-20"
+              className="absolute right-4 top-4 z-20 rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20 md:right-6 md:top-6"
             >
-              <AssetIcon name="x" className="w-6 h-6" />
+              <AssetIcon name="x" className="h-5 w-5 md:h-6 md:w-6" />
             </button>
 
             <div className="relative z-10 flex flex-col items-center">
-              <div className="w-24 h-24 bg-white/20 backdrop-blur-md rounded-3xl flex items-center justify-center shadow-2xl mb-6 border-4 border-white/40 rotate-6">
-                <AssetIcon name="trophy" className="w-12 h-12" />
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-[1.2rem] border-2 border-white/40 bg-white/20 shadow-2xl md:mb-6 md:h-24 md:w-24 md:rounded-3xl md:border-4">
+                <AssetIcon name="trophy" className="h-8 w-8 md:h-12 md:w-12" />
               </div>
-              
-              <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter mb-2 text-center drop-shadow-lg">
+
+              <h2 className="text-center text-2xl font-black tracking-tight text-white drop-shadow-lg md:text-6xl">
                 YOUR BADGES
               </h2>
-              <p className="text-orange-100 font-bold uppercase tracking-widest text-sm mb-8 text-center">
-                Collect them all to become a Math Master!
+              <p className="mb-5 text-center text-[10px] font-bold uppercase tracking-[0.22em] text-orange-100 md:mb-8 md:text-sm md:tracking-widest">
+                Collect them all to become a Math Master
               </p>
 
-              {/* Progress Bar */}
-              <div className="w-full max-w-md bg-black/20 p-4 rounded-3xl backdrop-blur-md border border-white/10 mb-8">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs font-black text-white/70 uppercase tracking-widest">Collection Progress</span>
-                  <span className="text-sm font-black text-white">{unlockedCount} / {totalCount}</span>
+              <div className="mb-5 w-full max-w-md rounded-[1.3rem] border border-white/10 bg-black/20 p-4 backdrop-blur-md md:mb-8 md:rounded-3xl">
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70 md:text-xs md:tracking-widest">Collection Progress</span>
+                  <span className="text-xs font-black text-white md:text-sm">{unlockedCount} / {totalCount}</span>
                 </div>
-                <div className="w-full h-4 bg-black/40 rounded-full overflow-hidden border border-white/5">
-                  <motion.div 
+                <div className="h-3 w-full overflow-hidden rounded-full border border-white/5 bg-black/40 md:h-4">
+                  <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
-                    className="h-full bg-gradient-to-r from-yellow-300 to-yellow-500 relative"
+                    className="relative h-full bg-gradient-to-r from-yellow-300 to-yellow-500"
                   >
-                    <div className="absolute inset-0 bg-white/20 w-full h-1/2" />
+                    <div className="absolute inset-0 h-1/2 w-full bg-white/20" />
                   </motion.div>
                 </div>
               </div>
 
-              {/* Badges Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 w-full max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
-                {ACHIEVEMENTS.map((ach, idx) => {
-                  const isUnlocked = (player.achievements || []).includes(ach.id);
-                  
+              <div className="grid w-full grid-cols-4 gap-2 md:gap-4">
+                {ACHIEVEMENTS.map((achievement, idx) => {
+                  const isUnlocked = (player.achievements || []).includes(achievement.id);
+
                   return (
-                    <motion.div 
-                      key={ach.id}
+                    <motion.div
+                      key={achievement.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.05 }}
-                      className={`
-                        relative p-4 rounded-3xl flex flex-col items-center text-center border-4 transition-all
-                        ${isUnlocked 
-                          ? 'bg-white/20 border-white/40 shadow-[0_10px_20px_rgba(0,0,0,0.2)] hover:scale-105 hover:bg-white/30' 
-                          : 'bg-black/20 border-black/20 grayscale opacity-60'}
-                      `}
+                      className={`relative flex flex-col items-center rounded-[1rem] border-2 p-2 text-center transition-all md:rounded-3xl md:p-4 ${isUnlocked ? 'border-white/40 bg-white/20 shadow-[0_10px_20px_rgba(0,0,0,0.2)]' : 'border-black/20 bg-black/20 opacity-60 grayscale'}`}
                     >
-                      {/* Glow effect for unlocked */}
-                      {isUnlocked && (
-                        <div className="absolute inset-0 bg-white/10 rounded-3xl blur-md pointer-events-none" />
-                      )}
-                      
-                      <div className="text-5xl mb-3 filter drop-shadow-xl relative z-10">
-                        {ach.icon}
+                      {isUnlocked && <div className="pointer-events-none absolute inset-0 rounded-[1rem] bg-white/10 blur-md md:rounded-3xl" />}
+                      <div className="relative z-10 text-2xl md:text-5xl">{achievement.icon}</div>
+                      <div className={`relative z-10 mt-1 text-[9px] font-black leading-tight md:mt-2 md:text-sm ${isUnlocked ? 'text-white drop-shadow-md' : 'text-white/50'}`}>
+                        {achievement.title}
                       </div>
-                      
-                      <div className={`text-sm font-black ${isUnlocked ? 'text-white drop-shadow-md' : 'text-white/50'} leading-tight mb-1 relative z-10`}>
-                        {ach.title}
-                      </div>
-                      
-                      <div className="text-[10px] font-bold text-white/70 leading-tight relative z-10">
-                        {ach.description}
+                      <div className="relative z-10 mt-1 hidden text-[10px] font-bold leading-tight text-white/70 md:block">
+                        {achievement.description}
                       </div>
 
-                      {/* Lock Icon Overlay */}
                       {!isUnlocked && (
-                        <div className="absolute top-2 right-2 bg-black/40 p-1.5 rounded-full backdrop-blur-sm">
-                          <AssetIcon name="x" className="w-3 h-3" />
+                        <div className="absolute right-1 top-1 rounded-full bg-black/40 p-1 backdrop-blur-sm md:right-2 md:top-2 md:p-1.5">
+                          <AssetIcon name="x" className="h-3 w-3" />
                         </div>
                       )}
                     </motion.div>

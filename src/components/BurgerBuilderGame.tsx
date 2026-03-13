@@ -233,11 +233,11 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
   const progress = Math.min((score / targetScore) * 100, 100);
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-4 relative overflow-y-auto overflow-x-hidden bg-amber-50">
+    <div className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden bg-amber-50">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#d97706 2px, transparent 2px)', backgroundSize: '30px 30px' }} />
 
-      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-6">
+      <div className="z-10 w-full max-w-5xl flex h-full min-h-0 flex-1 flex-col items-center gap-3 md:gap-6">
         <GameplayHUD
           title="Burger Builder"
           avatar={avatar}
@@ -254,19 +254,19 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
         />
 
         {/* Game Area */}
-        <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="w-full flex-1 min-h-0 grid grid-cols-1 gap-3 md:gap-4 lg:grid-cols-3 lg:gap-6">
           {/* Left: Order Ticket */}
-          <div className="bg-white p-6 rounded-[2rem] shadow-xl border-t-8 border-amber-400 relative">
+          <div className="bg-white p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] shadow-xl border-t-4 md:border-t-8 border-amber-400 relative min-h-0 overflow-hidden">
             <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-16 h-8 bg-gray-300 rounded-full shadow-inner" />
-            <h3 className="text-2xl font-black text-gray-800 mb-6 text-center border-b-2 border-dashed border-gray-300 pb-4">
+            <h3 className="text-lg md:text-2xl font-black text-gray-800 mb-3 md:mb-6 text-center border-b-2 border-dashed border-gray-300 pb-3 md:pb-4">
               Order Ticket
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-2 md:space-y-4">
               {currentOrder.map(item => (
-                <div key={item.id} className="flex items-center justify-between p-3 licensed-answer-chip">
+                <div key={item.id} className="flex items-center justify-between gap-2 p-2 md:p-3 licensed-answer-chip">
                   <div className="flex items-center gap-3">
-                    <span className="text-3xl">{item.emoji}</span>
-                    <span className="font-bold text-gray-700 text-lg">{item.display}</span>
+                    <span className="text-2xl md:text-3xl">{item.emoji}</span>
+                    <span className="font-bold text-gray-700 text-sm md:text-lg">{item.display}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={`font-black ${item.currentFraction === item.targetFraction ? 'text-green-500' : item.currentFraction > item.targetFraction ? 'text-red-500' : 'text-amber-500'}`}>
@@ -279,52 +279,52 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
           </div>
 
           {/* Center: Burger Stack */}
-          <div className="flex flex-col items-center justify-end h-[500px] bg-white/50 backdrop-blur-sm rounded-[3rem] border-4 border-amber-200 shadow-inner p-8 relative">
-            <div className="w-48 h-16 bg-amber-200 rounded-t-full border-4 border-amber-300 shadow-md mb-2 flex items-center justify-center">
+          <div className="relative flex min-h-[260px] flex-col items-center justify-end rounded-[2rem] border-2 md:border-4 border-amber-200 bg-white/50 p-4 shadow-inner backdrop-blur-sm md:min-h-[420px] md:rounded-[3rem] md:p-8">
+            <div className="w-32 h-10 md:w-48 md:h-16 bg-amber-200 rounded-t-full border-4 border-amber-300 shadow-md mb-2 flex items-center justify-center">
               <span className="text-amber-600 font-bold opacity-50">Top Bun</span>
             </div>
             
-            <div className="flex flex-col-reverse items-center justify-start w-full flex-1 overflow-visible py-4 gap-1">
+            <div className="flex w-full flex-1 flex-col-reverse items-center justify-start gap-1 overflow-visible py-2 md:py-4">
               <AnimatePresence>
                 {burgerStack.map((ing, idx) => (
                   <motion.div
                     key={`${ing.id}-${idx}`}
                     initial={{ y: -50, opacity: 0, scale: 1.2 }}
                     animate={{ y: 0, opacity: 1, scale: 1 }}
-                    className={`${ing.color} w-48 h-8 rounded-full border-2 border-black/20 shadow-md flex items-center justify-center relative z-${idx}`}
+                    className={`${ing.color} w-32 h-6 md:w-48 md:h-8 rounded-full border-2 border-black/20 shadow-md flex items-center justify-center relative z-${idx}`}
                   >
-                    <span className="text-white font-black text-sm drop-shadow-md">{ing.display}</span>
+                    <span className="text-[10px] md:text-sm font-black text-white drop-shadow-md">{ing.display}</span>
                   </motion.div>
                 ))}
               </AnimatePresence>
             </div>
 
-            <div className="w-48 h-12 bg-amber-200 rounded-b-full border-4 border-amber-300 shadow-md mt-2 flex items-center justify-center">
+            <div className="w-32 h-9 md:w-48 md:h-12 bg-amber-200 rounded-b-full border-4 border-amber-300 shadow-md mt-2 flex items-center justify-center">
               <span className="text-amber-600 font-bold opacity-50">Bottom Bun</span>
             </div>
 
             <button
               onClick={submitBurger}
-              className="absolute -bottom-6 bg-green-500 text-white px-8 py-4 rounded-full font-black text-xl shadow-[0_8px_0_#16a34a] hover:translate-y-1 hover:shadow-[0_4px_0_#16a34a] active:translate-y-2 active:shadow-none transition-all"
+              className="absolute -bottom-4 md:-bottom-6 bg-green-500 text-white px-5 py-2.5 md:px-8 md:py-4 rounded-full font-black text-sm md:text-xl shadow-[0_8px_0_#16a34a] hover:translate-y-1 hover:shadow-[0_4px_0_#16a34a] active:translate-y-2 active:shadow-none transition-all"
             >
               SERVE BURGER
             </button>
           </div>
 
           {/* Right: Ingredients */}
-          <div className="bg-white/80 backdrop-blur-md p-6 rounded-[2rem] shadow-xl border-4 border-amber-200">
-            <h3 className="text-xl font-black text-amber-900 mb-4 text-center">Ingredients</h3>
-            <div className="grid grid-cols-2 gap-4">
+          <div className="bg-white/80 backdrop-blur-md p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] shadow-xl border-2 md:border-4 border-amber-200 min-h-0 overflow-hidden">
+            <h3 className="text-lg md:text-xl font-black text-amber-900 mb-3 md:mb-4 text-center">Ingredients</h3>
+            <div className="grid grid-cols-2 gap-2 md:gap-4">
               {availableIngredients.map(ing => (
                 <motion.button
                   key={ing.id}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => addIngredientToBurger(ing)}
-                  className={`${ing.color} p-4 rounded-2xl border-b-4 border-black/20 flex flex-col items-center gap-2 licensed-answer-button`}
+                  className={`${ing.color} p-3 md:p-4 rounded-[1.25rem] md:rounded-2xl border-b-4 border-black/20 flex flex-col items-center gap-2 licensed-answer-button`}
                 >
-                  <span className="text-4xl filter drop-shadow-md">{ing.emoji}</span>
-                  <span className="bg-white/90 px-3 py-1 rounded-full text-sm font-black text-gray-800 shadow-sm">
+                  <span className="text-2xl md:text-4xl filter drop-shadow-md">{ing.emoji}</span>
+                  <span className="bg-white/90 px-2 py-1 rounded-full text-[10px] md:text-sm font-black text-gray-800 shadow-sm">
                     {ing.display}
                   </span>
                 </motion.button>
@@ -346,7 +346,7 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
             animate={{ scale: 1, opacity: 1 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md"
           >
-            <div className="bg-white p-12 rounded-[3rem] border-8 border-amber-400 shadow-2xl flex flex-col items-center gap-8 max-w-md w-full">
+            <div className="app-modal-panel w-full max-w-md rounded-[2rem] border-4 border-amber-400 bg-white p-6 shadow-2xl flex flex-col items-center gap-5 md:rounded-[3rem] md:border-8 md:gap-8 md:p-12">
               <div className={`text-5xl font-black ${isVictory ? 'text-green-500' : 'text-red-500'} drop-shadow-md text-center`}>
                 {isVictory ? 'ORDER UP!' : 'SHIFT OVER!'}
               </div>

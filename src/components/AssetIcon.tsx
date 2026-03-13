@@ -1,28 +1,29 @@
 import React from 'react';
-import iconHome from '../assets/licensed/slices/icon_home.png';
+import iconHome from '../assets/casual_ui/icons/icon__map.png';
 import iconUser from '../assets/licensed/slices/icon_user.png';
-import iconPlay from '../assets/licensed/slices/icon_play.png';
+import iconPlay from '../assets/casual_ui/icons/icon__play.png';
 import iconBack from '../assets/licensed/slices/icon_back.png';
-import iconStar from '../assets/licensed/slices/icon_star.png';
-import iconStarOutline from '../assets/licensed/slices/icon_star_outline.png';
+import iconNext from '../assets/casual_ui/icons/icon__next.png';
+import iconStar from '../assets/casual_ui/icons/icon__star.png';
+import iconStarOutline from '../assets/casual_ui/icons/icon__star_empty.png';
 import iconQuestion from '../assets/licensed/slices/icon_question.png';
-import iconCheck from '../assets/licensed/slices/icon_check.png';
-import iconTrophy from '../assets/licensed/slices/icon_trophy.png';
+import iconCheck from '../assets/casual_ui/icons/icon__check.png';
+import iconTrophy from '../assets/casual_ui/icons/icon__trophy.png';
 import iconTimer from '../assets/licensed/slices/icon_timer.png';
-import iconHeart from '../assets/licensed/slices/icon_heart.png';
+import iconHeart from '../assets/casual_ui/icons/icon__heart.png';
 import iconHeartOutline from '../assets/licensed/slices/icon_heart_outline.png';
 import iconDoc from '../assets/licensed/slices/icon_doc.png';
-import iconGear from '../assets/licensed/slices/icon_gear.png';
+import iconGear from '../assets/casual_ui/icons/icon__gear.png';
 import iconPeople from '../assets/licensed/slices/icon_people.png';
-import iconChat from '../assets/licensed/slices/icon_chat.png';
+import iconChat from '../assets/casual_ui/icons/icon__chat.png';
 import iconInfo from '../assets/licensed/slices/icon_info.png';
-import iconRefresh from '../assets/licensed/slices/icon_refresh.png';
-import iconX from '../assets/licensed/slices/icon_x.png';
+import iconRefresh from '../assets/casual_ui/icons/icon__restart.png';
+import iconX from '../assets/casual_ui/icons/icon__close.png';
 import iconMinus from '../assets/licensed/slices/icon_minus.png';
 import iconPlus from '../assets/licensed/slices/icon_plus.png';
 import iconMedal from '../assets/licensed/slices/icon_medal.png';
-import iconGem from '../assets/licensed/slices/icon_gem.png';
-import iconCoin from '../assets/licensed/slices/icon_coin.png';
+import iconGem from '../assets/casual_ui/icons/icon__gem.png';
+import iconCoin from '../assets/casual_ui/icons/icon__coin.png';
 import iconBigHeart from '../assets/licensed/slices/icon_big_heart.png';
 import iconGamepad from '../assets/licensed/slices/icon_gamepad.png';
 import iconStopwatch from '../assets/licensed/slices/icon_stopwatch.png';
@@ -33,7 +34,7 @@ const ICONS = {
   user: iconUser,
   play: iconPlay,
   back: iconBack,
-  next: iconPlay,
+  next: iconNext,
   star: iconStar,
   starOutline: iconStarOutline,
   question: iconQuestion,

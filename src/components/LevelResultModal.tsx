@@ -42,20 +42,20 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
             animate={{ y: 0, scale: 1, opacity: 1 }}
             exit={{ y: 18, scale: 0.97, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 220, damping: 22 }}
-            className={`relative w-full max-w-lg overflow-hidden rounded-[2rem] border shadow-[0_30px_90px_rgba(0,0,0,0.45)] ${isVictory ? 'border-yellow-300/60 bg-[radial-gradient(circle_at_top,_rgba(250,204,21,0.18),_rgba(15,23,42,0.92)_64%)]' : 'border-rose-300/30 bg-[radial-gradient(circle_at_top,_rgba(251,113,133,0.16),_rgba(15,23,42,0.92)_64%)]'}`}
+            className={`app-modal-panel relative flex w-full max-w-lg flex-col overflow-hidden rounded-[1.75rem] border shadow-[0_30px_90px_rgba(0,0,0,0.45)] ${isVictory ? 'border-yellow-300/60 bg-[radial-gradient(circle_at_top,_rgba(250,204,21,0.18),_rgba(15,23,42,0.94)_64%)]' : 'border-rose-300/30 bg-[radial-gradient(circle_at_top,_rgba(251,113,133,0.16),_rgba(15,23,42,0.94)_64%)]'} md:rounded-[2rem]`}
           >
-            <div className="relative z-10 p-6 md:p-8">
-              <div className="mx-auto mb-4 flex h-28 w-28 items-center justify-center rounded-[1.75rem] border border-white/20 bg-white/10 p-2 shadow-inner">
+            <div className="relative z-10 flex flex-col gap-4 p-4 md:gap-6 md:p-8">
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-[1.25rem] border border-white/20 bg-white/10 p-2 shadow-inner md:h-28 md:w-28 md:rounded-[1.75rem]">
                 <img src={isVictory ? rewardChest : coinBag} alt="Reward" className="h-full w-full object-contain drop-shadow-xl" />
               </div>
 
               <div className="text-center">
-                <div className="text-[11px] font-black uppercase tracking-[0.35em] text-white/60">Level complete</div>
-                <h2 className="mt-2 text-3xl font-black text-white md:text-4xl">{result.title}</h2>
-                <p className="mx-auto mt-2 max-w-md text-sm text-white/70 md:text-base">{result.subtitle}</p>
+                <div className="text-[10px] font-black uppercase tracking-[0.3em] text-white/60">Level complete</div>
+                <h2 className="mt-2 text-2xl font-black text-white md:text-4xl">{result.title}</h2>
+                <p className="mx-auto mt-2 max-w-md text-xs text-white/70 md:text-base">{result.subtitle}</p>
               </div>
 
-              <div className="mt-6 flex items-center justify-center gap-2">
+              <div className="flex items-center justify-center gap-2">
                 {[1, 2, 3].map((star, index) => (
                   <motion.div
                     key={star}
@@ -64,43 +64,43 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
                     transition={{ delay: 0.1 + index * 0.12, type: 'spring', stiffness: 250, damping: 16 }}
                     className={`rounded-full p-2 ${star <= result.stars ? 'bg-yellow-300/18' : 'bg-white/5'}`}
                   >
-                    <AssetIcon name={star <= result.stars ? "star" : "starOutline"} className="h-10 w-10" />
+                    <AssetIcon name={star <= result.stars ? 'star' : 'starOutline'} className="h-8 w-8 md:h-10 md:w-10" />
                   </motion.div>
                 ))}
               </div>
 
-              <div className="mt-6 grid grid-cols-3 gap-3">
-                <div className="rounded-[1.35rem] border border-white/10 bg-white/8 p-4 text-center backdrop-blur-sm">
-                  <div className="text-[10px] font-black uppercase tracking-[0.25em] text-white/45">Score</div>
-                  <div className="mt-2 text-2xl font-black text-white">{result.score}</div>
+              <div className="grid grid-cols-3 gap-2 md:gap-3">
+                <div className="rounded-[1.15rem] border border-white/10 bg-white/8 p-3 text-center backdrop-blur-sm md:rounded-[1.35rem] md:p-4">
+                  <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/45">Score</div>
+                  <div className="mt-1 text-lg font-black text-white md:mt-2 md:text-2xl">{result.score}</div>
                 </div>
-                <div className="rounded-[1.35rem] border border-amber-300/20 bg-amber-300/10 p-4 text-center backdrop-blur-sm">
-                  <div className="flex items-center justify-center gap-1 text-[10px] font-black uppercase tracking-[0.25em] text-amber-100/70"><AssetIcon name="coin" className="h-3.5 w-3.5" /> Coins</div>
-                  <div className="mt-2 text-2xl font-black text-amber-200">+{result.coinsEarned}</div>
+                <div className="rounded-[1.15rem] border border-amber-300/20 bg-amber-300/10 p-3 text-center backdrop-blur-sm md:rounded-[1.35rem] md:p-4">
+                  <div className="flex items-center justify-center gap-1 text-[9px] font-black uppercase tracking-[0.2em] text-amber-100/70"><AssetIcon name="coin" className="h-3 w-3" /> Coins</div>
+                  <div className="mt-1 text-lg font-black text-amber-200 md:mt-2 md:text-2xl">+{result.coinsEarned}</div>
                 </div>
-                <div className="rounded-[1.35rem] border border-cyan-300/20 bg-cyan-300/10 p-4 text-center backdrop-blur-sm">
-                  <div className="flex items-center justify-center gap-1 text-[10px] font-black uppercase tracking-[0.25em] text-cyan-100/75"><AssetIcon name="star" className="h-3.5 w-3.5" /> XP</div>
-                  <div className="mt-2 text-2xl font-black text-cyan-200">+{result.xpEarned}</div>
+                <div className="rounded-[1.15rem] border border-cyan-300/20 bg-cyan-300/10 p-3 text-center backdrop-blur-sm md:rounded-[1.35rem] md:p-4">
+                  <div className="flex items-center justify-center gap-1 text-[9px] font-black uppercase tracking-[0.2em] text-cyan-100/75"><AssetIcon name="star" className="h-3 w-3" /> XP</div>
+                  <div className="mt-1 text-lg font-black text-cyan-200 md:mt-2 md:text-2xl">+{result.xpEarned}</div>
                 </div>
               </div>
 
               {(result.islandUnlockedName || (result.achievementsUnlocked?.length || 0) > 0) && (
-                <div className="mt-5 space-y-3">
+                <div className="space-y-2 md:space-y-3">
                   {result.islandUnlockedName && (
-                    <div className="rounded-[1.5rem] border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-100">
-                      <div className="flex items-center gap-2 font-black uppercase tracking-[0.24em] text-[10px] text-emerald-100/70">
+                    <div className="rounded-[1.2rem] border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-100 md:rounded-[1.5rem]">
+                      <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] text-emerald-100/70 md:text-[10px]">
                         <AssetIcon name="trophy" className="h-3.5 w-3.5" /> New island unlocked
                       </div>
-                      <div className="mt-1 text-base font-bold text-white">{result.islandUnlockedName}</div>
+                      <div className="mt-1 text-sm font-bold text-white md:text-base">{result.islandUnlockedName}</div>
                     </div>
                   )}
 
                   {(result.achievementsUnlocked?.length || 0) > 0 && (
-                    <div className="rounded-[1.5rem] border border-fuchsia-300/20 bg-fuchsia-300/10 px-4 py-3 text-sm text-fuchsia-100">
-                      <div className="font-black uppercase tracking-[0.24em] text-[10px] text-fuchsia-100/70">Achievements unlocked</div>
+                    <div className="rounded-[1.2rem] border border-fuchsia-300/20 bg-fuchsia-300/10 px-4 py-3 text-sm text-fuchsia-100 md:rounded-[1.5rem]">
+                      <div className="text-[9px] font-black uppercase tracking-[0.2em] text-fuchsia-100/70 md:text-[10px]">Achievements unlocked</div>
                       <div className="mt-1 flex flex-wrap gap-2">
-                        {result.achievementsUnlocked?.map((achievement) => (
-                          <span key={achievement} className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-bold text-white">
+                        {result.achievementsUnlocked?.slice(0, 3).map((achievement) => (
+                          <span key={achievement} className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-[10px] font-bold text-white md:text-xs">
                             {achievement}
                           </span>
                         ))}
@@ -110,11 +110,11 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
                 </div>
               )}
 
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-1 flex flex-col gap-2 sm:flex-row">
                 {result.onSecondary && result.secondaryLabel && (
                   <button
                     onClick={result.onSecondary}
-                    className="flex flex-1 items-center justify-center gap-2 rounded-[1.2rem] border border-white/12 bg-white/8 px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-white transition hover:bg-white/14"
+                    className="flex flex-1 items-center justify-center gap-2 rounded-[1rem] border border-white/12 bg-white/8 px-4 py-3 text-xs font-black uppercase tracking-[0.16em] text-white transition hover:bg-white/14 md:rounded-[1.2rem] md:px-5 md:py-4 md:text-sm"
                   >
                     <AssetIcon name="refresh" className="h-4 w-4" />
                     {result.secondaryLabel}
@@ -122,7 +122,7 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
                 )}
                 <button
                   onClick={result.onPrimary}
-                  className={`flex flex-1 items-center justify-center gap-2 rounded-[1.2rem] px-5 py-4 text-sm font-black uppercase tracking-[0.18em] transition ${isVictory ? 'bg-yellow-300 text-slate-950 hover:bg-yellow-200' : 'bg-rose-300 text-slate-950 hover:bg-rose-200'}`}
+                  className={`flex flex-1 items-center justify-center gap-2 rounded-[1rem] px-4 py-3 text-xs font-black uppercase tracking-[0.16em] transition md:rounded-[1.2rem] md:px-5 md:py-4 md:text-sm ${isVictory ? 'bg-yellow-300 text-slate-950 hover:bg-yellow-200' : 'bg-rose-300 text-slate-950 hover:bg-rose-200'}`}
                 >
                   {isVictory ? <AssetIcon name="trophy" className="h-4 w-4" /> : <AssetIcon name="refresh" className="h-4 w-4" />}
                   {result.primaryLabel}

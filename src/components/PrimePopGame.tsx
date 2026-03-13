@@ -199,11 +199,11 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
   const progress = Math.min((score / targetScore) * 100, 100);
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-4 relative overflow-y-auto overflow-x-hidden licensed-playfield-bg cursor-none">
+    <div className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden licensed-playfield-bg cursor-none">
       {/* Background Grid */}
       <div className="absolute inset-0 opacity-20 pointer-events-none licensed-grid-backdrop" />
 
-      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-6 h-full flex-1">
+      <div className="z-10 w-full max-w-5xl flex h-full min-h-0 flex-1 flex-col items-center gap-3 md:gap-6">
         <GameplayHUD
           title="Prime Pop"
           avatar={avatar}
@@ -223,7 +223,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
         <div 
           ref={gameAreaRef}
           onMouseMove={handleMouseMove}
-          className="w-full flex-1 relative licensed-board-frame overflow-hidden"
+          className="w-full flex-1 min-h-0 relative licensed-board-frame overflow-hidden"
         >
           {/* Custom Crosshair */}
           <div 
@@ -246,7 +246,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
                   scale: { duration: 0.2 }
                 }}
                 onMouseDown={(e) => popBubble(bubble.id, bubble.isPrime, e)}
-                className="absolute w-20 h-20 rounded-full flex items-center justify-center cursor-none shadow-[inset_0_-10px_20px_rgba(0,0,0,0.2),_0_0_15px_rgba(255,255,255,0.2)] border border-white/30 backdrop-blur-md"
+                className="absolute flex h-16 w-16 items-center justify-center rounded-full border border-white/30 backdrop-blur-md cursor-none shadow-[inset_0_-10px_20px_rgba(0,0,0,0.2),_0_0_15px_rgba(255,255,255,0.2)] md:h-20 md:w-20"
                 style={{
                   background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(255,255,255,0.2) 20%, rgba(255,255,255,0.1) 60%, rgba(255,255,255,0.4))',
                   left: `${bubble.x}%`,
@@ -277,7 +277,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
             animate={{ scale: 1, opacity: 1 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md cursor-default"
           >
-            <div className="licensed-overlay-card p-12 flex flex-col items-center gap-8 max-w-md w-full">
+            <div className="app-modal-panel licensed-overlay-card w-full max-w-md flex flex-col items-center gap-5 p-6 md:gap-8 md:p-12">
               <div className={`text-5xl font-black ${isVictory ? 'text-emerald-400' : 'text-red-500'} drop-shadow-md text-center`}>
                 {isVictory ? 'PRIME MASTER!' : 'OUT OF TIME!'}
               </div>

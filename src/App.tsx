@@ -386,20 +386,20 @@ const App: React.FC = () => {
     switch (screen) {
       case 'splash':
         return (
-          <div className="relative my-auto flex w-full max-w-6xl flex-col items-center gap-6 px-4 text-center sm:px-6 md:gap-14">
+          <div className="relative my-auto flex h-full max-h-full w-full max-w-5xl flex-col items-center justify-center gap-4 overflow-hidden px-4 py-5 text-center sm:px-6 md:gap-10 md:py-8">
             <div className="absolute inset-0 -z-20 rounded-[2.5rem] bg-cover bg-center opacity-50 pointer-events-none md:rounded-[3rem]" style={{ backgroundImage: `url(${forestBg})` }} />
             <div className="absolute inset-0 -z-10 rounded-[2.5rem] bg-[linear-gradient(180deg,rgba(15,23,42,0.35),rgba(15,23,42,0.72))] pointer-events-none md:rounded-[3rem]" />
             <div className="absolute inset-x-0 top-1/2 -z-10 h-[420px] -translate-y-1/2 rounded-[2.5rem] border border-white/20 bg-white/10 blur-0 backdrop-blur-2xl pointer-events-none md:h-[520px] md:rounded-[3rem]" />
-            <div className="absolute -z-10 w-[150%] h-[150%] flex items-center justify-center opacity-20 pointer-events-none">
+            <div className="absolute inset-0 -z-10 flex items-center justify-center overflow-hidden opacity-20 pointer-events-none">
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-                className="w-[800px] h-[800px] border-[40px] border-dashed border-white rounded-full pointer-events-none"
+                className="h-[520px] w-[520px] rounded-full border-[24px] border-dashed border-white pointer-events-none md:h-[800px] md:w-[800px] md:border-[40px]"
               />
               <motion.div
                 animate={{ rotate: -360 }}
                 transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-                className="absolute w-[600px] h-[600px] border-[20px] border-dotted border-white rounded-full pointer-events-none"
+                className="absolute h-[380px] w-[380px] rounded-full border-[14px] border-dotted border-white pointer-events-none md:h-[600px] md:w-[600px] md:border-[20px]"
               />
             </div>
 
@@ -408,13 +408,13 @@ const App: React.FC = () => {
               animate={{ y: 0, opacity: 1 }}
               transition={{ type: 'spring', stiffness: 100, damping: 15 }}
             >
-              <div className="absolute -top-12 left-1/2 -translate-x-1/2 flex gap-3 md:-top-16 md:gap-4">
+              <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex gap-2 md:-top-16 md:gap-4">
                 {['➕', '➖', '✖️', '➗'].map((emoji, i) => (
                   <motion.span
                     key={i}
                     animate={{ y: [0, -16, 0] }}
                     transition={{ duration: 2, repeat: Infinity, delay: i * 0.4 }}
-                    className="text-3xl md:text-4xl"
+                    className="text-2xl md:text-4xl"
                   >
                     {emoji}
                   </motion.span>
@@ -422,29 +422,29 @@ const App: React.FC = () => {
               </div>
               <div className="mb-4 flex justify-center gap-2 md:mb-5">
                 {['Mobile-first', 'Quest map', 'Mini-games'].map(label => (
-                  <span key={label} className="game-chip px-2 py-0.5 text-[9px] md:px-3 md:py-1 md:text-[10px]">{label}</span>
+                  <span key={label} className="casual-ribbon-chip px-2 py-0.5 text-[9px] md:px-3 md:py-1 md:text-[10px]">{label}</span>
                 ))}
               </div>
-              <h1 className="text-[3rem] sm:text-[4rem] md:text-8xl lg:text-[9rem] leading-[0.85] font-black text-white tracking-tighter drop-shadow-[0_8px_0_rgba(0,0,0,0.24)]">
+              <h1 className="text-[2.5rem] leading-[0.88] font-black tracking-tighter text-white drop-shadow-[0_8px_0_rgba(0,0,0,0.24)] sm:text-[3.4rem] md:text-8xl lg:text-[9rem]">
                 SATS
                 <br />
-                <span className="text-yellow-400 drop-shadow-[0_8px_0_#ca8a04] text-[2.5rem] sm:text-[3.5rem] md:text-7xl lg:text-[8rem]">MASTERY</span>
+                <span className="text-[2rem] text-yellow-400 drop-shadow-[0_8px_0_#ca8a04] sm:text-[3rem] md:text-7xl lg:text-[8rem]">MASTERY</span>
               </h1>
-              <p className="mt-4 md:mt-5 inline-block rounded-full bg-black/15 backdrop-blur-sm px-4 py-1.5 md:px-6 md:py-2 text-xs md:text-xl font-bold tracking-[0.25em] uppercase text-white/95">
+              <p className="casual-ribbon-chip mt-3 inline-block rounded-full px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.22em] text-white/95 md:mt-5 md:px-6 md:py-2 md:text-xl">
                 World map adventure build
               </p>
             </motion.div>
 
-            <div className="flex flex-col items-center gap-4">
+            <div className="flex flex-col items-center gap-3 md:gap-4">
               <motion.button
                 whileHover={{ scale: 1.04, y: -3 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={handleStartAdventure}
-                className="game-button-primary licensed-wood-button group relative px-8 py-4 text-xl sm:px-12 sm:py-5 sm:text-2xl md:px-20 md:py-8 md:text-5xl rounded-[1.75rem] md:rounded-[2.3rem]"
+                className="game-button-primary licensed-wood-button group relative rounded-[1.4rem] px-7 py-3.5 text-lg sm:px-12 sm:py-5 sm:text-2xl md:rounded-[2.3rem] md:px-20 md:py-8 md:text-5xl"
               >
                 {hasCompletedProfile ? 'CONTINUE' : 'START ADVENTURE'}
               </motion.button>
-              <p className="max-w-xl text-white/80 font-bold text-sm md:text-base px-4">
+              <p className="max-w-xl px-4 text-xs font-bold text-white/80 md:text-base">
                 {hasCompletedProfile ? `Welcome back, ${player.playerName}.` : 'Create your hero and jump into the islands.'}
               </p>
             </div>
@@ -453,10 +453,10 @@ const App: React.FC = () => {
 
       case 'profile_setup':
         return (
-          <div className="glass-panel relative z-10 w-full max-w-sm sm:max-w-md md:max-w-3xl my-auto overflow-hidden rounded-[2.5rem] p-5 text-center md:rounded-[3rem] md:p-12">
+          <div className="casual-panel-strong relative z-10 my-auto w-full max-w-sm max-h-full overflow-hidden rounded-[2rem] p-4 text-center sm:max-w-md md:max-w-3xl md:rounded-[3rem] md:p-12">
             <div className="relative z-10 mb-6 md:mb-8">
-              <h2 className="text-3xl md:text-6xl font-black text-white tracking-tight">Name your hero</h2>
-              <p className="mt-2 text-white/75 font-bold uppercase tracking-[0.2em] text-[10px] md:text-sm">
+              <h2 className="text-2xl font-black tracking-tight text-white md:text-6xl">Name your hero</h2>
+              <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/75 md:text-sm">
                 Step 1 of 2 · profile setup
               </p>
             </div>
@@ -469,7 +469,7 @@ const App: React.FC = () => {
                   if (event.key === 'Enter') handleSaveProfileName();
                 }}
                 placeholder="Explorer"
-                className="w-full max-w-xl rounded-[1.5rem] md:rounded-[1.75rem] border-2 border-white/20 bg-black/20 px-5 py-4 text-center text-xl md:text-3xl font-black text-white placeholder:text-white/35 outline-none focus:border-yellow-300 md:px-6 md:py-5"
+                className="w-full max-w-xl rounded-[1.25rem] border-2 border-white/20 bg-black/20 px-5 py-3 text-center text-lg font-black text-white outline-none placeholder:text-white/35 focus:border-yellow-300 md:rounded-[1.75rem] md:px-6 md:py-5 md:text-3xl"
               />
               <div className="flex gap-3 flex-wrap justify-center md:gap-4">
                 <button
@@ -525,9 +525,12 @@ const App: React.FC = () => {
   const showBottomNav = ['world_map', 'avatar_selection', 'parent_dashboard'].includes(screen);
   const isWideScreenScene = ['world_map', 'island_levels', 'gameplay', 'parent_dashboard'].includes(screen);
   const showCompactShell = !isWideScreenScene;
+  const bottomNavOffsetClass = showBottomNav
+    ? 'pb-[calc(6.75rem+env(safe-area-inset-bottom))] md:pb-[calc(7.25rem+env(safe-area-inset-bottom))]'
+    : '';
 
   return (
-    <div className={`relative h-[100dvh] w-full flex flex-col items-center overflow-hidden ${isWideScreenScene ? 'licensed-playfield-bg bg-slate-950 pb-[env(safe-area-inset-bottom)]' : 'licensed-shell-bg p-3 md:p-8 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]'}`}>
+    <div className={`app-viewport relative w-full flex flex-col items-center overflow-hidden ${isWideScreenScene ? 'licensed-playfield-bg bg-slate-950 pb-[env(safe-area-inset-bottom)]' : 'licensed-shell-bg p-3 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] md:p-8'}`}>
       <div className="soft-vignette" />
       {showCompactShell && (
         <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-40 bg-gradient-to-b from-white/18 to-transparent" />
@@ -539,7 +542,7 @@ const App: React.FC = () => {
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 1.02 }}
-          className={`w-full flex-1 flex justify-center relative z-10 overflow-hidden pointer-events-auto ${isWideScreenScene ? '' : 'mx-auto max-w-7xl'}`}
+          className={`relative z-10 flex min-h-0 w-full flex-1 justify-center overflow-hidden pointer-events-auto ${isWideScreenScene ? '' : 'mx-auto max-w-7xl items-stretch'} ${bottomNavOffsetClass}`}
         >
           {renderScreen()}
         </motion.div>
@@ -589,53 +592,57 @@ const App: React.FC = () => {
 
       {
         showBottomNav && (
-          <nav className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 items-center justify-between rounded-[2rem] border border-white/20 bg-slate-950/55 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px)*0.5)] shadow-[0_20px_45px_rgba(0,0,0,0.3)] backdrop-blur-2xl md:bottom-6 md:w-auto md:gap-8 md:px-5 md:py-4 md:pb-4">
-            <button
-              onClick={goToHome}
-              className={`flex flex-col items-center gap-1 rounded-2xl px-3 py-2 transition-all ${screen === 'world_map' ? 'bg-white text-sky-600 scale-105 shadow-lg' : 'text-white/85 hover:bg-white/10'}`}
-            >
-              <AssetIcon name="home" className="h-6 w-6" />
-              <span className="text-[10px] font-black uppercase tracking-[0.22em]">Map</span>
-            </button>
-            <button
-              onClick={() => setScreen('avatar_selection')}
-              className={`flex flex-col items-center gap-1 rounded-2xl px-3 py-2 transition-all ${screen === 'avatar_selection' ? 'bg-white text-sky-600 scale-105 shadow-lg' : 'text-white/85 hover:bg-white/10'}`}
-            >
-              <AssetIcon name="user" className="h-6 w-6" />
-              <span className="text-[10px] font-black uppercase tracking-[0.22em]">Hero</span>
-            </button>
-            <button
-              onClick={() => setShowQuests(true)}
-              className="relative flex flex-col items-center gap-1 rounded-2xl px-3 py-2 text-white/85 transition-all hover:bg-white/10"
-            >
-              <AssetIcon name="doc" className="h-6 w-6" />
-              <span className="text-[10px] font-black uppercase tracking-[0.22em]">Quests</span>
-              {(player.dailyQuests || []).some(q => q.current >= q.target && !q.isClaimed) && (
-                <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white animate-pulse" />
-              )}
-            </button>
-            <button
-              onClick={() => setShowAchievements(true)}
-              className="relative flex flex-col items-center gap-1 rounded-2xl px-3 py-2 text-white/85 transition-all hover:bg-white/10"
-            >
-              <AssetIcon name="medal" className="h-6 w-6" />
-              <span className="text-[10px] font-black uppercase tracking-[0.22em]">Wins</span>
-              {(player.achievements?.length || 0) > 0 && (
-                <span className="absolute top-0 right-0 w-3 h-3 bg-yellow-400 rounded-full border-2 border-white" />
-              )}
-            </button>
-            <button
-              onClick={() => setScreen('parent_dashboard')}
-              className={`flex flex-col items-center gap-1 rounded-2xl px-3 py-2 transition-all ${screen === 'parent_dashboard' ? 'bg-white text-sky-600 scale-105 shadow-lg' : 'text-white/85 hover:bg-white/10'}`}
-            >
-              <AssetIcon name="gear" className="h-6 w-6" />
-              <span className="text-[10px] font-black uppercase tracking-[0.22em]">Stats</span>
-            </button>
-            <div className="hidden items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-2 text-cyan-100 md:flex">
-              <AssetIcon name="star" className="h-4 w-4" />
-              <span className="text-[10px] font-black uppercase tracking-[0.24em]">Adventure mode</span>
+          <div className="pointer-events-none fixed inset-x-0 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-50 flex justify-center px-3 md:bottom-6">
+            <div className="pointer-events-auto flex w-full max-w-3xl flex-col items-center gap-2 md:gap-3">
+              <div className="casual-ribbon-chip inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-cyan-100 shadow-[0_12px_30px_rgba(0,0,0,0.22)] md:px-4 md:py-2">
+                <AssetIcon name="star" className="h-4 w-4" />
+                <span className="text-[9px] font-black uppercase tracking-[0.24em] md:text-[10px]">Adventure mode</span>
+              </div>
+              <nav className="casual-nav-shell flex w-full max-w-[28rem] items-center justify-between rounded-[2rem] px-2 py-2 md:max-w-3xl md:px-4 md:py-3">
+                <button
+                  onClick={goToHome}
+                  className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'world_map' ? 'casual-nav-button-active scale-[1.02] shadow-lg' : 'text-white/85 hover:bg-white/10'}`}
+                >
+                  <AssetIcon name="home" className="h-5 w-5 md:h-6 md:w-6" />
+                  <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Map</span>
+                </button>
+                <button
+                  onClick={() => setScreen('avatar_selection')}
+                  className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'avatar_selection' ? 'casual-nav-button-active scale-[1.02] shadow-lg' : 'text-white/85 hover:bg-white/10'}`}
+                >
+                  <AssetIcon name="user" className="h-5 w-5 md:h-6 md:w-6" />
+                  <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Hero</span>
+                </button>
+                <button
+                  onClick={() => setShowQuests(true)}
+                  className="relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 text-white/85 transition-all hover:bg-white/10 md:flex-none md:px-3"
+                >
+                  <AssetIcon name="doc" className="h-5 w-5 md:h-6 md:w-6" />
+                  <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Quests</span>
+                  {(player.dailyQuests || []).some(q => q.current >= q.target && !q.isClaimed) && (
+                    <span className="absolute right-2 top-1 h-3 w-3 rounded-full border-2 border-white bg-red-500 animate-pulse" />
+                  )}
+                </button>
+                <button
+                  onClick={() => setShowAchievements(true)}
+                  className="relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 text-white/85 transition-all hover:bg-white/10 md:flex-none md:px-3"
+                >
+                  <AssetIcon name="medal" className="h-5 w-5 md:h-6 md:w-6" />
+                  <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Wins</span>
+                  {(player.achievements?.length || 0) > 0 && (
+                    <span className="absolute right-2 top-1 h-3 w-3 rounded-full border-2 border-white bg-yellow-400" />
+                  )}
+                </button>
+                <button
+                  onClick={() => setScreen('parent_dashboard')}
+                  className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'parent_dashboard' ? 'casual-nav-button-active scale-[1.02] shadow-lg' : 'text-white/85 hover:bg-white/10'}`}
+                >
+                  <AssetIcon name="gear" className="h-5 w-5 md:h-6 md:w-6" />
+                  <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Stats</span>
+                </button>
+              </nav>
             </div>
-          </nav>
+          </div>
         )
       }
     </div >

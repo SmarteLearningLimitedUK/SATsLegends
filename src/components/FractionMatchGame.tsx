@@ -200,7 +200,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   const progress = Math.min((score / targetScore) * 100, 100);
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-4 relative overflow-y-auto overflow-x-hidden bg-indigo-50">
+    <div className="h-full w-full flex flex-col items-center p-4 relative overflow-hidden bg-indigo-50">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#4f46e5 2px, transparent 2px)', backgroundSize: '30px 30px' }} />
 
@@ -269,7 +269,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
             animate={{ scale: 1, opacity: 1 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md"
           >
-            <div className="bg-white p-12 rounded-[3rem] border-8 border-indigo-400 shadow-2xl flex flex-col items-center gap-8 max-w-md w-full">
+            <div className="app-modal-panel w-full max-w-md rounded-[2rem] border-4 border-indigo-400 bg-white p-6 shadow-2xl flex flex-col items-center gap-5 md:rounded-[3rem] md:border-8 md:gap-8 md:p-12">
               <div className={`text-5xl font-black ${isVictory ? 'text-green-500' : 'text-red-500'} drop-shadow-md text-center`}>
                 {isVictory ? 'PERFECT MATCH!' : 'TIME UP!'}
               </div>

@@ -9,20 +9,20 @@ interface GameActionDockProps {
 
 const GameActionDock: React.FC<GameActionDockProps> = ({ onBack, onHelp, accentClass = 'text-slate-700' }) => {
   return (
-    <div className="flex items-center gap-3 md:gap-4 mt-2 md:mt-4">
+    <div className="mt-1 flex shrink-0 items-center gap-2 md:mt-4 md:gap-4">
       <button
         onClick={onBack}
         className={`game-dock-button ${accentClass}`}
         aria-label="Back to island"
       >
-        <AssetIcon name="home" className="w-6 h-6 md:w-7 md:h-7" />
+        <AssetIcon name="home" className="h-5 w-5 md:h-7 md:w-7" />
       </button>
       <button
         onClick={onHelp}
         className={`game-dock-button ${accentClass}`}
         aria-label="Open help"
       >
-        <AssetIcon name="question" className="w-6 h-6 md:w-7 md:h-7" />
+        <AssetIcon name="question" className="h-5 w-5 md:h-7 md:w-7" />
       </button>
     </div>
   );

@@ -149,7 +149,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({ avatarId, onBack 
         backgroundSize: '40px 40px'
       }} />
 
-      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-1.5 md:gap-4 h-full flex-1 min-h-0">
+      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-1.5 md:gap-3 md:gap-4 h-full flex-1 min-h-0 min-h-0">
         <GameplayHUD
           title="Monster Market"
           avatar={avatar}
@@ -207,7 +207,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({ avatarId, onBack 
               <h3 className="text-emerald-300 font-bold mb-2 flex items-center gap-1 md:gap-2 text-[10px] md:text-base leading-none">
                 <Store className="w-4 h-4" /> Till
               </h3>
-              <div className="flex flex-wrap gap-1 sm:gap-2 flex-1 content-start overflow-y-auto hide-scrollbar pt-1">
+              <div className="flex flex-wrap gap-1 sm:gap-2 flex-1 content-start pt-1">
                 {CURRENCIES.map(currency => (
                   <button
                     key={currency.id}
@@ -232,7 +232,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({ avatarId, onBack 
                 <span className="text-sm md:text-xl text-white drop-shadow-md">{formatMoney(currentTrayTotal)}</span>
               </h3>
 
-              <div className="flex-1 rounded-xl p-2 min-h-0 flex flex-wrap content-start gap-1 overflow-y-auto hide-scrollbar licensed-game-card-dark bg-black/40 border border-white/10">
+              <div className="flex-1 rounded-xl p-2 min-h-0 flex flex-wrap content-start gap-1 licensed-game-card-dark bg-black/40 border border-white/10">
                 <AnimatePresence>
                   {tray.map(item => (
                     <motion.button

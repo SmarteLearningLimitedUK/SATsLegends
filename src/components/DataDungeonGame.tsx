@@ -240,7 +240,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
   const progress = Math.min((score / targetScore) * 100, 100);
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-4 relative overflow-y-auto overflow-x-hidden bg-stone-900 font-sans">
+    <div className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden bg-stone-900 font-sans">
       {/* Dungeon Background */}
       <div className="absolute inset-0 opacity-40 pointer-events-none" style={{ 
         backgroundImage: `
@@ -251,7 +251,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
       }} />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_20%,#0c0a09_100%)] pointer-events-none" />
 
-      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-6 h-full flex-1">
+      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-3 md:gap-6 h-full flex-1 min-h-0">
         <GameplayHUD
           title="Data Dungeon"
           avatar={avatar}
@@ -268,12 +268,12 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
         />
 
         {/* Game Area */}
-        <div className="w-full flex-1 relative flex flex-col items-center justify-center perspective-1000">
+        <div className="relative flex w-full flex-1 min-h-0 flex-col items-center justify-center perspective-1000">
           
           {/* The Door */}
-          <div className="relative w-full max-w-2xl aspect-[4/3] flex items-end justify-center">
+          <div className="relative flex w-full max-w-2xl flex-1 min-h-[260px] items-end justify-center md:min-h-[420px]">
             {/* Door Frame */}
-            <div className="absolute inset-0 border-[16px] border-b-0 border-stone-800 rounded-t-[4rem] shadow-[inset_0_0_50px_rgba(0,0,0,0.8)] bg-black overflow-hidden flex justify-center">
+            <div className="absolute inset-0 border-[8px] md:border-[16px] border-b-0 border-stone-800 rounded-t-[2.5rem] md:rounded-t-[4rem] shadow-[inset_0_0_50px_rgba(0,0,0,0.8)] bg-black overflow-hidden flex justify-center">
               
               {/* Left Door Panel */}
               <motion.div 
@@ -302,16 +302,16 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.8 }}
-                    className="absolute top-8 w-[80%] p-6 flex flex-col items-center gap-4 z-20 licensed-game-card"
+                    className="absolute top-3 md:top-8 z-20 flex w-[86%] flex-col items-center gap-3 p-3 md:w-[80%] md:gap-4 md:p-6 licensed-game-card"
                   >
-                    <h3 className="text-xl font-black text-stone-800 text-center">
+                    <h3 className="text-sm md:text-xl font-black text-stone-800 text-center">
                       {puzzle.question}
                     </h3>
 
                     {/* Data Visualization */}
-                    <div className="w-full bg-stone-100 rounded-lg p-4 border-2 border-stone-300 min-h-[120px] flex items-center justify-center">
+                    <div className="flex min-h-[84px] w-full items-center justify-center rounded-lg border-2 border-stone-300 bg-stone-100 p-2 md:min-h-[120px] md:p-4">
                       {puzzle.type === 'barchart' && puzzle.chartData ? (
-                        <div className="w-full h-32 flex items-end justify-around gap-2 px-4">
+                        <div className="flex h-24 w-full items-end justify-around gap-1 px-2 md:h-32 md:gap-2 md:px-4">
                           {puzzle.chartData.map((bar, i) => (
                             <div key={i} className="flex flex-col items-center gap-2 flex-1">
                               <div className="w-full relative flex items-end justify-center h-24 bg-stone-200 rounded-t-md overflow-hidden">
@@ -329,7 +329,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
                       ) : (
                         <div className="flex flex-wrap justify-center gap-3">
                           {puzzle.data.map((num, i) => (
-                            <div key={i} className="w-12 h-12 bg-stone-800 text-amber-400 rounded-lg flex items-center justify-center text-xl font-black border-2 border-stone-600 shadow-inner">
+                            <div key={i} className="flex h-9 w-9 md:h-12 md:w-12 items-center justify-center rounded-lg border-2 border-stone-600 bg-stone-800 text-sm md:text-xl font-black text-amber-400 shadow-inner">
                               {num}
                             </div>
                           ))}
@@ -340,7 +340,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
                     {/* Feedback Overlay */}
                     {feedback && (
                       <div className={`absolute inset-0 flex items-center justify-center rounded-xl backdrop-blur-sm ${feedback === 'correct' ? 'bg-green-500/20' : 'bg-red-500/20'}`}>
-                        <span className={`text-4xl font-black drop-shadow-lg ${feedback === 'correct' ? 'text-green-500' : 'text-red-500'}`}>
+                        <span className={`text-2xl md:text-4xl font-black drop-shadow-lg ${feedback === 'correct' ? 'text-green-500' : 'text-red-500'}`}>
                           {feedback === 'correct' ? 'CORRECT!' : 'INCORRECT!'}
                         </span>
                       </div>
@@ -353,16 +353,16 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
           </div>
 
           {/* Answer Runes */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 w-full max-w-2xl z-20">
+          <div className="z-20 mt-3 md:mt-8 grid w-full max-w-2xl grid-cols-2 gap-2 md:grid-cols-4 md:gap-4">
             {puzzle?.options.map((opt, i) => (
               <button
                 key={i}
                 onClick={() => handleAnswer(opt)}
                 disabled={doorState !== 'locked'}
-                className="relative group p-4 rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed licensed-answer-button"
+                className="relative group p-3 md:p-4 rounded-[1rem] md:rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed licensed-answer-button"
               >
                 <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent rounded-xl pointer-events-none" />
-                <span className="text-3xl font-black text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)] group-hover:text-amber-400">
+                <span className="text-xl md:text-3xl font-black text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)] group-hover:text-amber-400">
                   {opt}
                 </span>
               </button>
@@ -384,7 +384,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
             animate={{ scale: 1, opacity: 1 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
           >
-            <div className="bg-stone-800 p-12 rounded-[3rem] border-8 border-stone-600 shadow-2xl flex flex-col items-center gap-8 max-w-md w-full">
+            <div className="app-modal-panel w-full max-w-md rounded-[2rem] border-4 border-stone-600 bg-stone-800 p-6 shadow-2xl flex flex-col items-center gap-5 md:rounded-[3rem] md:border-8 md:gap-8 md:p-12">
               <div className={`text-5xl font-black ${isVictory ? 'text-amber-400' : 'text-red-500'} drop-shadow-md text-center`}>
                 {isVictory ? 'DUNGEON CLEARED!' : 'TRAPPED!'}
               </div>

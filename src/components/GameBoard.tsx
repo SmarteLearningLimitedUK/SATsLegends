@@ -143,8 +143,8 @@ const GameBoard: React.FC<GameBoardProps> = ({ level, onScoreUpdate, onMatch }) 
     <div 
       className="relative bg-white/30 backdrop-blur-xl rounded-[2rem] md:rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.2)] border-4 md:border-8 border-white/40 overflow-hidden"
       style={{
-        width: 'min(90vw, 480px)',
-        height: 'min(90vw, 480px)',
+        width: 'min(82vw, 52dvh, 480px)',
+        height: 'min(82vw, 52dvh, 480px)',
       }}
     >
       {/* Subtle Grid Pattern Background */}

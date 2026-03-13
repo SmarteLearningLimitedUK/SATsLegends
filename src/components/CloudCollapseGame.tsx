@@ -90,7 +90,7 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
   };
 
   return (
-    <div className="cloud-bg h-full w-full flex flex-col items-center p-4 relative overflow-y-auto overflow-x-hidden">
+    <div className="cloud-bg h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden">
       {/* Animated Clouds */}
       <div className="cloud w-64 h-24 top-20" style={{ animationDuration: '25s' }} />
       <div className="cloud w-48 h-16 top-40" style={{ animationDuration: '40s', animationDelay: '-10s' }} />
@@ -100,7 +100,7 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
       {/* Background Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-400/20 blur-[120px] rounded-full pointer-events-none" />
       
-      <div className="z-10 w-full flex flex-col items-center gap-4">
+      <div className="z-10 w-full min-h-0 flex flex-col items-center gap-3 md:gap-4">
         <HUD 
           score={score} 
           targetScore={level.targetScore} 
@@ -115,7 +115,7 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
           onMatch={() => {}} 
         />
 
-        <div className="flex gap-4 mt-4">
+        <div className="mt-2 flex shrink-0 gap-3 md:mt-4 md:gap-4">
           <button 
             onClick={onBack}
             className="p-3 bg-white/30 rounded-full text-white hover:bg-white/50 transition-colors"
@@ -138,7 +138,7 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
             animate={{ scale: 1, opacity: 1 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
           >
-            <div className="bg-white/30 backdrop-blur-xl p-12 rounded-[3rem] border-8 border-white/50 shadow-2xl flex flex-col items-center gap-6 max-w-md w-full">
+            <div className="app-modal-panel w-full max-w-md rounded-[2rem] border-4 border-white/50 bg-white/30 p-6 shadow-2xl backdrop-blur-xl flex flex-col items-center gap-5 md:rounded-[3rem] md:border-8 md:p-12">
               <div className={`text-6xl font-black ${isVictory ? 'text-yellow-400' : 'text-red-500'} drop-shadow-md`}>
                 {isVictory ? 'VICTORY!' : 'TIME UP!'}
               </div>

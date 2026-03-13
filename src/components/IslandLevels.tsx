@@ -92,7 +92,7 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
                   disabled={!isUnlocked}
                   className={`group relative flex flex-col items-center justify-center transition-all ${isUnlocked ? 'cursor-pointer hover:scale-110' : 'cursor-not-allowed opacity-80'}`}
                 >
-                  <div className={`relative flex items-center justify-center w-14 h-14 md:w-20 md:h-20 rounded-full border-[3px] shadow-2xl ${level.isBoss
+                  <div className={`relative flex items-center justify-center w-14 h-14 md:w-20 md:h-20 rounded-full border-[3px] shadow-2xl bg-center bg-cover ${level.isBoss
                     ? 'border-yellow-400 bg-red-600 shadow-[0_4px_15px_rgba(220,38,38,0.5)]'
                     : isCompleted ? 'border-amber-700 bg-amber-500' : isUnlocked ? 'border-amber-800 bg-amber-400' : 'border-slate-800 bg-slate-600'
                     }`}>
@@ -115,7 +115,7 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
                   </div>
 
                   {isUnlocked && !level.isBoss && (
-                    <div className="absolute top-full mt-1 flex gap-0.5 bg-black/40 rounded-full px-2 py-0.5 backdrop-blur-sm border border-white/10">
+                    <div className="casual-ribbon-chip absolute top-full mt-1 flex gap-0.5 rounded-full px-2 py-0.5">
                       {[1, 2, 3].map(value => (
                         <AssetIcon
                           key={value as any}
@@ -127,7 +127,7 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
                   )}
 
                   {level.isBoss && isUnlocked && (
-                    <motion.div animate={{ y: [0, -4, 0] }} transition={{ duration: 2, repeat: Infinity }} className="absolute -top-8 bg-black/60 backdrop-blur-md rounded-lg px-2 py-1 border border-yellow-500/50">
+                    <motion.div animate={{ y: [0, -4, 0] }} transition={{ duration: 2, repeat: Infinity }} className="casual-ribbon-chip absolute -top-8 rounded-lg px-2 py-1">
                       <span className="text-[10px] md:text-xs font-black text-yellow-400 tracking-wider">BOSS</span>
                     </motion.div>
                   )}
@@ -144,17 +144,17 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={onBack}
-            className="pointer-events-auto rounded-full border-2 border-white/20 bg-black/40 p-3 md:p-4 text-white shadow-xl backdrop-blur-xl hover:bg-black/60"
+            className="pointer-events-auto casual-panel-surface rounded-full p-3 text-white shadow-xl md:p-4"
           >
             <AssetIcon name="back" className="h-6 w-6 md:h-8 md:w-8" />
           </motion.button>
 
-          <div className="pointer-events-auto flex items-center gap-2 bg-black/40 p-2 md:p-3 rounded-full backdrop-blur-xl border border-white/15 shadow-xl">
-            <div className="flex items-center gap-1.5 px-3 py-1 bg-white/10 rounded-full border border-white/10">
+          <div className="pointer-events-auto casual-tab-shell flex items-center gap-2 rounded-full p-2 shadow-xl md:p-3">
+            <div className="casual-ribbon-chip flex items-center gap-1.5 rounded-full px-3 py-1">
               <AssetIcon name="star" className="w-4 h-4 md:w-5 md:h-5 text-yellow-400" />
               <span className="text-sm md:text-base font-black text-white">{earnedStars}</span>
             </div>
-            <div className="hidden md:flex items-center gap-1.5 px-3 py-1 bg-white/10 rounded-full border border-white/10">
+            <div className="casual-ribbon-chip hidden items-center gap-1.5 rounded-full px-3 py-1 md:flex">
               <span className="text-[10px] uppercase font-black tracking-widest text-white/70">Progress</span>
               <span className="text-sm font-black text-white ml-1">{completedLevels.length}/{island.levels.length}</span>
             </div>
@@ -163,7 +163,7 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
       </header>
 
       <div className="absolute bottom-6 left-6 right-6 z-50 pointer-events-none hidden md:flex justify-center">
-        <div className="bg-black/60 backdrop-blur-xl border border-white/20 p-4 rounded-3xl shadow-2xl flex items-center gap-6">
+        <div className="casual-panel-strong flex items-center gap-6 rounded-3xl p-4 shadow-2xl">
           <div>
             <div className="text-[10px] font-black uppercase text-amber-400 tracking-widest">{island.category} Island</div>
             <h1 className="text-2xl font-black text-white drop-shadow-md">{island.themeName || island.name}</h1>

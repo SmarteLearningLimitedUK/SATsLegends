@@ -2,7 +2,10 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { AvatarData } from '../types';
 import AssetIcon from './AssetIcon';
-import progressBarAsset from '../assets/licensed/slices/progress_bar.png';
+import progressBarAsset from '../assets/casual_ui/hud/progress_bar_1__fg.png';
+import progressBarBgAsset from '../assets/casual_ui/hud/progress_bar_1__bg.png';
+import profileContainerAsset from '../assets/casual_ui/hud/hud__profile_container.png';
+import scoreTimerBoardAsset from '../assets/casual_ui/hud/hud__score_timer_board.png';
 
 interface GameplayHUDProps {
   title: string;
@@ -33,42 +36,42 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
   statValue,
 }) => {
   return (
-    <div className="w-full flex flex-col gap-3 md:gap-4">
-      <div className={`w-full rounded-[2rem] border-4 ${accentBorder} bg-white/70 backdrop-blur-2xl shadow-[0_18px_50px_rgba(15,23,42,0.16)] overflow-hidden relative`}>
-        <div className="absolute inset-x-0 top-0 h-14 bg-gradient-to-r from-white/40 via-white/10 to-transparent pointer-events-none" />
-        <div className="relative p-4 md:p-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <div className="w-full flex shrink-0 flex-col gap-2 md:gap-3">
+      <div className={`w-full rounded-[1.4rem] border-2 md:rounded-[2rem] md:border-4 ${accentBorder} bg-white/70 shadow-[0_18px_50px_rgba(15,23,42,0.16)] overflow-hidden relative`}>
+        <div className="absolute inset-0 opacity-90 pointer-events-none bg-center bg-cover" style={{ backgroundImage: `url(${scoreTimerBoardAsset})` }} />
+        <div className="relative flex flex-col gap-3 p-3 md:p-5 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center gap-3 md:gap-4 min-w-0">
             <motion.div
               whileHover={{ scale: 1.06, rotate: -4 }}
-              className={`${avatar?.color || 'bg-slate-200'} w-16 h-16 md:w-20 md:h-20 rounded-[1.6rem] md:rounded-[2rem] flex items-center justify-center text-3xl md:text-4xl shadow-[inset_0_2px_10px_rgba(255,255,255,0.35),0_12px_24px_rgba(15,23,42,0.18)] border-4 border-white/80 relative overflow-hidden shrink-0`}
+              className={`${avatar?.color || 'bg-slate-200'} h-12 w-12 md:h-20 md:w-20 rounded-[1.4rem] md:rounded-[2rem] flex items-center justify-center text-2xl md:text-4xl border-2 border-white/70 relative overflow-hidden shrink-0 bg-center bg-cover`}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-white/35 to-transparent" />
+              <div className="absolute inset-0 opacity-95" style={{ backgroundImage: `url(${profileContainerAsset})`, backgroundSize: '100% 100%' }} />
               <span className="relative">{avatar?.image || '❓'}</span>
             </motion.div>
             <div className="min-w-0">
               <div className="text-[11px] md:text-xs font-black uppercase tracking-[0.28em] text-slate-500">Gameplay</div>
-              <h2 className={`text-2xl md:text-3xl font-black tracking-tight ${accentText} truncate`}>{title}</h2>
-              <div className={`mt-1 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-bold ${accentBorder} ${accentSoftBg} ${accentText}`}>
+              <h2 className={`text-xl md:text-3xl font-black tracking-tight ${accentText} truncate`}>{title}</h2>
+              <div className={`mt-1 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] md:gap-2 md:px-3 md:text-sm font-bold ${accentBorder} ${accentSoftBg} ${accentText}`}>
                 <AssetIcon name="star" className="w-4 h-4" />
                 <span>Target {targetScore}</span>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 md:gap-3 w-full lg:min-w-[420px]">
+          <div className="grid w-full grid-cols-3 gap-2 md:gap-3 lg:min-w-[360px]">
             {statLabel && (
               <div className={`rounded-xl md:rounded-[1.5rem] border-2 ${accentBorder} ${accentSoftBg} px-2 py-2 md:px-3 md:py-3 text-center`}>
                 <div className="text-[9px] md:text-xs font-black uppercase tracking-[0.24em] text-slate-500">{statLabel}</div>
-                <div className={`mt-0.5 md:mt-1 text-lg md:text-2xl font-black ${accentText}`}>{statValue}</div>
+                <div className={`mt-0.5 md:mt-1 text-base md:text-2xl font-black ${accentText}`}>{statValue}</div>
               </div>
             )}
-            <div className={`rounded-xl md:rounded-[1.5rem] border-2 ${accentBorder} bg-white/65 px-2 py-2 md:px-3 md:py-3 text-center`}>
+            <div className={`rounded-xl md:rounded-[1.5rem] border-2 ${accentBorder} bg-white/78 px-2 py-2 md:px-3 md:py-3 text-center`}>
               <div className="text-[9px] md:text-xs font-black uppercase tracking-[0.24em] text-slate-500">Score</div>
               <motion.div
                 key={score}
                 initial={{ scale: 1.16 }}
                 animate={{ scale: 1 }}
-                className={`mt-1 text-2xl md:text-3xl font-black ${accentText}`}
+                className={`mt-1 text-xl md:text-3xl font-black ${accentText}`}
               >
                 {score}
               </motion.div>
@@ -78,15 +81,15 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
                 <AssetIcon name="timer" className={`w-3 h-3 md:w-5 md:h-5 ${timeLeft < 10 ? 'animate-pulse' : ''}`} />
                 <div className="text-[9px] md:text-xs font-black uppercase tracking-[0.24em] text-slate-500">Time</div>
               </div>
-              <div className={`mt-0.5 md:mt-1 text-lg md:text-3xl font-black ${timeLeft < 10 ? 'text-red-500' : accentText}`}>{timeLeft}s</div>
+              <div className={`mt-0.5 md:mt-1 text-base md:text-3xl font-black ${timeLeft < 10 ? 'text-red-500' : accentText}`}>{timeLeft}s</div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className={`w-full rounded-full border-2 ${accentBorder} bg-white/60 p-1.5 shadow-[inset_0_2px_8px_rgba(15,23,42,0.08)]`}>
-        <div className="relative h-5 md:h-6 overflow-hidden rounded-full bg-slate-200/60">
-          <img src={progressBarAsset} alt="progress bar" className="absolute inset-0 h-full w-full object-fill opacity-35" />
+      <div className={`w-full rounded-full border-2 ${accentBorder} bg-white/78 p-1 shadow-[inset_0_2px_8px_rgba(15,23,42,0.08)]`}>
+        <div className="relative h-4 md:h-6 overflow-hidden rounded-full bg-slate-200/60">
+          <img src={progressBarBgAsset} alt="progress bar background" className="absolute inset-0 h-full w-full object-fill opacity-95" />
           <motion.div
             className="absolute inset-y-0 left-0 rounded-full overflow-hidden"
             initial={{ width: 0 }}

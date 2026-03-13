@@ -13,129 +13,120 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
   const totalLevelsAvailable = ISLANDS.reduce((acc, island) => acc + island.levels.length, 0);
   const totalLevelsCompleted = Object.values(player.completedLevels).flat().length;
   const completionPercentage = Math.round((totalLevelsCompleted / totalLevelsAvailable) * 100) || 0;
+  const unlockedAchievements = (player.achievements || []).length;
+
+  const stats = [
+    { label: 'Stars', value: player.stats?.totalStars || 0, icon: 'star' as const },
+    { label: 'Games', value: player.stats?.totalGamesPlayed || 0, icon: 'gamepad' as const },
+    { label: 'Complete', value: `${completionPercentage}%`, icon: 'check' as const },
+    { label: 'Streak', value: player.dailyStreak, icon: 'heart' as const },
+  ];
+
+  const progressCards = ISLANDS.slice(0, 4).map(island => {
+    const completedInIsland = player.completedLevels[island.id]?.length || 0;
+    return {
+      name: island.themeName || island.name,
+      short: island.category,
+      value: `${completedInIsland}/${island.levels.length}`,
+    };
+  });
 
   return (
-    <div className="relative w-full h-full flex flex-col licensed-shell-bg overflow-y-auto font-sans">
-      {/* Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-50 px-4 md:px-8 py-4 flex items-center justify-between shadow-sm">
-        <div className="flex items-center gap-4">
-          <button 
+    <div className="relative flex h-full w-full flex-col overflow-hidden licensed-shell-bg">
+      <div className="absolute inset-0 bg-slate-950/45" />
+
+      <header className="relative z-10 flex shrink-0 items-center justify-between px-4 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))] md:px-8 md:pt-6">
+        <div className="flex min-w-0 items-center gap-3">
+          <button
             onClick={onBack}
-            className="p-2 rounded-full transition-colors text-amber-50/95 bg-black/20 border border-amber-100/15"
+            className="rounded-full border border-white/15 bg-black/25 p-2.5 text-white backdrop-blur-xl"
           >
-            <AssetIcon name="back" className="w-6 h-6" />
+            <AssetIcon name="back" className="h-5 w-5 md:h-6 md:w-6" />
           </button>
-          <h1 className="text-2xl font-black text-slate-800 tracking-tight">Parent Dashboard</h1>
+          <div className="min-w-0">
+            <div className="text-[10px] font-black uppercase tracking-[0.24em] text-white/55">Family view</div>
+            <h1 className="truncate text-lg font-black tracking-tight text-white md:text-3xl">Progress Snapshot</h1>
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-xl">
-            👨‍👩‍👧
-          </div>
-          <div className="hidden md:block">
-            <div className="text-sm font-bold text-slate-800">Viewing Progress For</div>
-            <div className="text-xs font-medium text-slate-500">{player.playerName}</div>
-          </div>
+        <div className="hidden rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-black text-white/85 backdrop-blur-xl md:block">
+          {player.playerName || 'Explorer'}
         </div>
       </header>
 
-      <div className="p-4 md:p-8 max-w-6xl mx-auto w-full flex flex-col gap-8 pb-32">
-        {/* Top Stats Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col items-center text-center">
-            <div className="w-12 h-12 bg-yellow-100 rounded-2xl flex items-center justify-center mb-3">
-              <AssetIcon name="star" className="w-6 h-6" />
+      <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-3 px-4 pb-24 md:gap-5 md:px-8 md:pb-8">
+        <div className="grid grid-cols-4 gap-2 md:gap-4">
+          {stats.map(item => (
+            <div key={item.label} className="rounded-[1.2rem] border border-white/12 bg-black/25 p-3 text-center text-white shadow-xl backdrop-blur-xl md:rounded-[1.75rem] md:p-5">
+              <AssetIcon name={item.icon} className="mx-auto h-4 w-4 md:h-6 md:w-6" />
+              <div className="mt-1 text-lg font-black md:mt-2 md:text-3xl">{item.value}</div>
+              <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/55 md:text-[10px]">{item.label}</div>
             </div>
-            <div className="text-3xl font-black text-slate-800">{player.stats?.totalStars || 0}</div>
-            <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Total Stars</div>
-          </div>
-          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col items-center text-center">
-            <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mb-3">
-              <AssetIcon name="gamepad" className="w-6 h-6" />
-            </div>
-            <div className="text-3xl font-black text-slate-800">{player.stats?.totalGamesPlayed || 0}</div>
-            <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Games Played</div>
-          </div>
-          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col items-center text-center">
-            <div className="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center mb-3">
-              <AssetIcon name="check" className="w-6 h-6" />
-            </div>
-            <div className="text-3xl font-black text-slate-800">{completionPercentage}%</div>
-            <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Completion</div>
-          </div>
-          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col items-center text-center">
-            <div className="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center mb-3">
-              <AssetIcon name="heart" className="w-6 h-6" />
-            </div>
-            <div className="text-3xl font-black text-slate-800">{player.dailyStreak}</div>
-            <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Day Streak</div>
-          </div>
+          ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column: Curriculum Progress */}
-          <div className="lg:col-span-2 flex flex-col gap-6">
-            <div className="bg-white p-6 md:p-8 rounded-[2rem] border border-slate-200 shadow-sm">
-              <h2 className="text-xl font-black text-slate-800 mb-6 flex items-center gap-2">
-                <AssetIcon name="medal" className="w-6 h-6" />
-                Curriculum Progress
-              </h2>
-              
-              <div className="flex flex-col gap-6">
-                {ISLANDS.map(island => {
-                  const completedInIsland = player.completedLevels[island.id]?.length || 0;
-                  const totalInIsland = island.levels.length;
-                  const progress = (completedInIsland / totalInIsland) * 100;
-                  
-                  return (
-                    <div key={island.id} className="flex flex-col gap-2">
-                      <div className="flex justify-between items-end">
-                        <div>
-                          <div className="text-sm font-bold text-slate-800">{island.name}</div>
-                          <div className="text-xs font-medium text-slate-500">{island.category}</div>
-                        </div>
-                        <div className="text-sm font-black text-indigo-600">{completedInIsland} / {totalInIsland}</div>
-                      </div>
-                      <div className="w-full h-3 bg-amber-100/60 rounded-full overflow-hidden">
-                        <motion.div 
-                          initial={{ width: 0 }}
-                          animate={{ width: `${progress}%` }}
-                          className={`h-full ${island.color.replace('bg-[', '').replace(']', '')}`}
-                          style={{ backgroundColor: island.color.includes('#') ? island.color.match(/#([0-9a-fA-F]{6})/)?.[0] : undefined }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
+        <div className="grid min-h-0 flex-1 gap-3 md:grid-cols-[1.25fr_0.95fr] md:gap-5">
+          <div className="rounded-[1.6rem] border border-white/12 bg-black/25 p-4 text-white shadow-xl backdrop-blur-xl md:rounded-[2rem] md:p-6">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/60">Curriculum</div>
+                <h2 className="text-lg font-black md:text-2xl">Island Progress</h2>
+              </div>
+              <div className="rounded-full border border-cyan-300/25 bg-cyan-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100">
+                {totalLevelsCompleted}/{totalLevelsAvailable} cleared
+              </div>
+            </div>
+
+            <div className="mt-4 grid grid-cols-2 gap-2 md:mt-5 md:gap-3">
+              {progressCards.map(card => (
+                <div key={card.name} className="rounded-[1.2rem] border border-white/10 bg-white/8 p-3 md:rounded-[1.5rem] md:p-4">
+                  <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/45 md:text-[10px]">{card.short}</div>
+                  <div className="mt-1 text-sm font-black leading-tight text-white md:text-lg">{card.name}</div>
+                  <div className="mt-2 text-lg font-black text-yellow-300 md:text-2xl">{card.value}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4 rounded-[1.2rem] border border-white/10 bg-white/8 p-3 md:mt-5 md:rounded-[1.5rem] md:p-4">
+              <div className="flex items-center justify-between text-[9px] font-black uppercase tracking-[0.2em] text-white/50 md:text-[10px]">
+                <span>Overall completion</span>
+                <span>{completionPercentage}%</span>
+              </div>
+              <div className="mt-2 h-3 overflow-hidden rounded-full border border-white/10 bg-black/35 md:h-4">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${completionPercentage}%` }}
+                  className="h-full rounded-full bg-gradient-to-r from-cyan-400 via-sky-400 to-emerald-400"
+                />
               </div>
             </div>
           </div>
 
-          {/* Right Column: Badges & Achievements */}
-          <div className="flex flex-col gap-6">
-            <div className="bg-white p-6 md:p-8 rounded-[2rem] border border-slate-200 shadow-sm h-full">
-              <h2 className="text-xl font-black text-slate-800 mb-6 flex items-center gap-2">
-                <AssetIcon name="trophy" className="w-6 h-6" />
-                Earned Badges
-              </h2>
-              
-              <div className="grid grid-cols-2 gap-4">
-                {ACHIEVEMENTS.map(ach => {
-                  const isUnlocked = (player.achievements || []).includes(ach.id);
+          <div className="grid gap-3 md:grid-rows-[auto_1fr] md:gap-5">
+            <div className="rounded-[1.6rem] border border-white/12 bg-black/25 p-4 text-white shadow-xl backdrop-blur-xl md:rounded-[2rem] md:p-6">
+              <div className="text-[10px] font-black uppercase tracking-[0.24em] text-yellow-100/60">Badges</div>
+              <div className="mt-1 text-3xl font-black md:text-5xl">{unlockedAchievements}</div>
+              <div className="text-sm font-bold text-white/70">of {ACHIEVEMENTS.length} unlocked</div>
+            </div>
+
+            <div className="rounded-[1.6rem] border border-white/12 bg-black/25 p-4 text-white shadow-xl backdrop-blur-xl md:rounded-[2rem] md:p-6">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.24em] text-yellow-100/60">Recent wins</div>
+                  <h2 className="text-lg font-black md:text-2xl">Achievement Board</h2>
+                </div>
+                <AssetIcon name="trophy" className="h-5 w-5 md:h-6 md:w-6" />
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-2 md:gap-3">
+                {ACHIEVEMENTS.slice(0, 4).map(achievement => {
+                  const isUnlocked = (player.achievements || []).includes(achievement.id);
                   return (
-                    <div 
-                      key={ach.id} 
-                      className={`
-                        p-4 rounded-2xl flex flex-col items-center text-center border-2 transition-all
-                        ${isUnlocked ? 'bg-yellow-50 border-yellow-200' : 'bg-slate-50 border-slate-100 grayscale opacity-50'}
-                      `}
+                    <div
+                      key={achievement.id}
+                      className={`rounded-[1.2rem] border p-3 text-center md:rounded-[1.5rem] ${isUnlocked ? 'border-yellow-300/35 bg-yellow-300/12' : 'border-white/10 bg-white/8 opacity-70'}`}
                     >
-                      <div className="text-4xl mb-2 filter drop-shadow-sm">{ach.icon}</div>
-                      <div className={`text-xs font-black ${isUnlocked ? 'text-yellow-900' : 'text-slate-500'} leading-tight mb-1`}>
-                        {ach.title}
-                      </div>
-                      <div className="text-[9px] font-medium text-slate-500 leading-tight">
-                        {ach.description}
-                      </div>
+                      <div className="text-2xl md:text-3xl">{achievement.icon}</div>
+                      <div className="mt-1 text-[10px] font-black leading-tight text-white md:text-xs">{achievement.title}</div>
                     </div>
                   );
                 })}

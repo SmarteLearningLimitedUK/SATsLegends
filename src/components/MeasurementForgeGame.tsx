@@ -240,7 +240,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
   const progress = Math.min((score / targetScore) * 100, 100);
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-4 relative overflow-y-auto overflow-x-hidden bg-stone-950 font-sans">
+    <div className="h-full w-full flex flex-col items-center p-4 relative overflow-hidden bg-stone-950 font-sans">
       {/* Forge Background */}
       <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ 
         backgroundImage: 'radial-gradient(circle at 50% 100%, #ea580c 0%, transparent 60%)', 
@@ -251,7 +251,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
         backgroundPosition: '0 0, 20px 20px'
       }} />
 
-      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-6 h-full flex-1">
+      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-3 md:gap-6 h-full flex-1 min-h-0">
         <GameplayHUD
           title="Measurement Forge"
           avatar={avatar}
@@ -372,7 +372,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
             animate={{ scale: 1, opacity: 1 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
           >
-            <div className="bg-stone-900 p-12 rounded-[3rem] border-8 border-stone-700 shadow-2xl flex flex-col items-center gap-8 max-w-md w-full">
+            <div className="app-modal-panel w-full max-w-md rounded-[2rem] border-4 border-stone-700 bg-stone-900 p-6 shadow-2xl flex flex-col items-center gap-5 md:rounded-[3rem] md:border-8 md:gap-8 md:p-12">
               <div className={`text-5xl font-black ${isVictory ? 'text-orange-500' : 'text-red-500'} drop-shadow-md text-center`}>
                 {isVictory ? 'MASTER SMITH!' : 'FORGE COLD!'}
               </div>
