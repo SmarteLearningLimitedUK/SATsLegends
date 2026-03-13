@@ -100,22 +100,42 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
       {/* Background Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-400/20 blur-[120px] rounded-full pointer-events-none" />
       
-      <div className="z-10 w-full min-h-0 flex flex-col items-center gap-3 md:gap-4">
+      <div className="z-10 flex h-full w-full min-h-0 flex-1 flex-col items-center gap-2 md:gap-3">
         <HUD 
+          title="Cloud Collapse"
           score={score} 
           targetScore={level.targetScore} 
           timeLeft={timeLeft} 
           level={level} 
           avatar={avatar}
         />
-        
-        <GameBoard 
-          level={level} 
-          onScoreUpdate={handleScoreUpdate}
-          onMatch={() => {}} 
-        />
 
-        <div className="mt-2 flex shrink-0 gap-3 md:mt-4 md:gap-4">
+        <div className="relative flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden rounded-[2rem] border border-white/15 bg-white/8 p-2 shadow-[0_20px_60px_rgba(15,23,42,0.18)] md:rounded-[2.6rem] md:p-4">
+          <div className="absolute right-3 top-3 z-20 flex gap-2 md:right-4 md:top-4">
+            <button
+              onClick={onBack}
+              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/20 bg-white/20 text-white shadow-lg transition-colors hover:bg-white/30"
+              aria-label="Back to island"
+            >
+              <Home />
+            </button>
+            <button
+              onClick={() => setShowTutorial(true)}
+              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/20 bg-white/20 text-white shadow-lg transition-colors hover:bg-white/30"
+              aria-label="Open help"
+            >
+              <HelpCircle />
+            </button>
+          </div>
+
+          <GameBoard
+            level={level}
+            onScoreUpdate={handleScoreUpdate}
+            onMatch={() => {}}
+          />
+        </div>
+
+        <div className="hidden mt-1 shrink-0 gap-3 md:gap-4">
           <button 
             onClick={onBack}
             className="p-3 bg-white/30 rounded-full text-white hover:bg-white/50 transition-colors"

@@ -121,12 +121,12 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
 
   return (
     <div 
-      className="relative w-full max-w-2xl h-[min(80vh,750px)] rounded-[3rem] md:rounded-[4rem] overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.3)] border-[8px] md:border-[12px] border-white/50 outline-none licensed-playfield-bg"
+      className="relative h-full w-full rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.3)] border-[6px] md:border-[10px] border-white/50 outline-none licensed-playfield-bg"
       onKeyDown={handleKeyDown}
       tabIndex={0}
     >
       {/* Header */}
-      <div className="absolute top-0 left-0 right-0 p-4 md:p-8 flex justify-between items-center z-20 bg-black/20 backdrop-blur-xl border-b border-white/10">
+      <div className="absolute top-0 left-0 right-0 p-3 md:p-6 flex justify-between items-center z-20 bg-black/20 backdrop-blur-xl border-b border-white/10">
         <div className="flex items-center gap-2 md:gap-3 bg-white/20 px-4 md:px-6 py-2 md:py-3 rounded-xl md:rounded-2xl border border-white/20">
           <Trophy className="text-yellow-400 w-4 h-4 md:w-6 md:h-6 filter drop-shadow-md" />
           <span className="text-white text-lg md:text-2xl font-black">{score}</span>
@@ -151,8 +151,8 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
       </div>
 
       {/* Sequence Display */}
-      <div className="absolute top-24 md:top-32 left-1/2 -translate-x-1/2 z-20 w-full px-6 md:px-12">
-        <div className="bg-white/95 backdrop-blur-xl p-4 md:p-6 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl flex justify-center gap-3 md:gap-6 items-center border-b-[4px] md:border-b-[8px] border-gray-200">
+      <div className="absolute top-20 md:top-28 left-1/2 -translate-x-1/2 z-20 w-full px-4 md:px-10">
+        <div className="bg-white/95 backdrop-blur-xl p-3 md:p-5 rounded-[1.6rem] md:rounded-[2.2rem] shadow-2xl flex justify-center gap-2 md:gap-5 items-center border-b-[4px] md:border-b-[8px] border-gray-200">
           {sequence.map((num, i) => (
             <motion.div 
               key={i}
@@ -196,9 +196,9 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
 
       {/* Player */}
       <motion.div
-        animate={{ x: (lane - 1) * 180 }}
+        animate={{ x: (lane - 1) * 26 }}
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-        className="absolute bottom-16 left-1/2 -translate-x-1/2 w-28 h-28 bg-white rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex items-center justify-center text-6xl border-4 border-blue-100 z-10"
+        className="absolute bottom-20 md:bottom-24 left-1/2 -translate-x-1/2 w-20 h-20 md:w-24 md:h-24 bg-white rounded-[1.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex items-center justify-center text-4xl md:text-5xl border-4 border-blue-100 z-10"
       >
         🏃‍♂️
       </motion.div>
@@ -217,7 +217,7 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
               animate={{ y: 0, opacity: 1 }}
               className="bg-white p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] shadow-2xl border-b-[8px] md:border-b-[12px] border-gray-200 w-full max-w-lg"
             >
-              <h2 className="text-3xl md:text-5xl font-black text-blue-600 mb-4 md:mb-6 tracking-tight">REASONING DASH</h2>
+        <h2 className="text-3xl md:text-5xl font-black text-blue-600 mb-4 md:mb-6 tracking-tight">SEQUENCE SPRINT</h2>
               <div className="space-y-3 md:space-y-6 text-gray-600 font-bold text-base md:text-xl mb-6 md:mb-10">
                 <p className="flex items-center gap-3 md:gap-4 justify-center">
                   <span className="text-2xl md:text-3xl">🔢</span> Complete the sequence
@@ -243,18 +243,18 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
       </AnimatePresence>
 
       {/* Controls Overlay (Mobile) */}
-      <div className="absolute bottom-0 left-0 right-0 p-10 flex justify-between z-30 pointer-events-none">
+      <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8 flex justify-between z-30 pointer-events-none">
         <button 
           onClick={() => setLane(l => Math.max(0, l - 1))}
-          className="w-20 h-20 bg-white/20 backdrop-blur-xl rounded-3xl flex items-center justify-center text-white pointer-events-auto active:scale-90 transition-transform border border-white/30 shadow-2xl"
+          className="w-14 h-14 md:w-18 md:h-18 bg-white/20 backdrop-blur-xl rounded-3xl flex items-center justify-center text-white pointer-events-auto active:scale-90 transition-transform border border-white/30 shadow-2xl"
         >
-          <ArrowLeft size={40} />
+          <ArrowLeft size={28} />
         </button>
         <button 
           onClick={() => setLane(l => Math.min(2, l + 1))}
-          className="w-20 h-20 bg-white/20 backdrop-blur-xl rounded-3xl flex items-center justify-center text-white pointer-events-auto active:scale-90 transition-transform border border-white/30 shadow-2xl"
+          className="w-14 h-14 md:w-18 md:h-18 bg-white/20 backdrop-blur-xl rounded-3xl flex items-center justify-center text-white pointer-events-auto active:scale-90 transition-transform border border-white/30 shadow-2xl"
         >
-          <ArrowRight size={40} />
+          <ArrowRight size={28} />
         </button>
       </div>
 

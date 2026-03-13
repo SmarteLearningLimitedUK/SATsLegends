@@ -3,7 +3,7 @@ import SequenceSprint from './SequenceSprint';
 import LogicSort from './LogicSort';
 import ShapeShift from './ShapeShift';
 import MatrixMatch from './MatrixMatch';
-import { ArrowLeft } from '../GameIcons';
+import AssetIcon from '../AssetIcon';
 
 interface ReasoningGameProps {
   gameType: string;
@@ -33,16 +33,18 @@ const ReasoningGame: React.FC<ReasoningGameProps> = ({ gameType, onVictory, onGa
   };
 
   return (
-    <div className="h-full w-full flex flex-col items-center gap-6 overflow-y-auto overflow-x-hidden">
-      <button 
+    <div className="relative flex h-full w-full min-h-0 flex-col overflow-hidden">
+      <button
         onClick={onBack}
-        className="self-start flex items-center gap-2 px-6 py-3 text-white font-black rounded-2xl transition-all mb-4 licensed-answer-button"
+        className="absolute left-3 top-3 z-30 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/15 bg-slate-950/45 text-white shadow-[0_12px_24px_rgba(2,6,23,0.32)] backdrop-blur-md md:left-4 md:top-4"
+        aria-label="Back to island"
       >
-        <ArrowLeft size={20} />
-        BACK TO LEVELS
+        <AssetIcon name="back" className="h-5 w-5" />
       </button>
-      
-      {renderGame()}
+
+      <div className="flex min-h-0 flex-1 items-stretch justify-center overflow-hidden pt-0">
+        {renderGame()}
+      </div>
     </div>
   );
 };

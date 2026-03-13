@@ -6,6 +6,7 @@ import AnimatedAvatar from './AnimatedAvatar';
 import progressBarAsset from '../assets/licensed/slices/progress_bar.png';
 
 interface HUDProps {
+  title?: string;
   score: number;
   targetScore: number;
   timeLeft: number;
@@ -13,11 +14,11 @@ interface HUDProps {
   avatar: AvatarData;
 }
 
-const HUD: React.FC<HUDProps> = ({ score, targetScore, timeLeft, level, avatar }) => {
+const HUD: React.FC<HUDProps> = ({ title, score, targetScore, timeLeft, level, avatar }) => {
   const progress = Math.min((score / targetScore) * 100, 100);
 
   return (
-    <div className="w-full max-w-2xl shrink-0 px-1 py-1 md:px-4 flex flex-col gap-2 md:gap-4">
+    <div className="w-full shrink-0 px-1 py-1 md:px-2 flex flex-col gap-2 md:gap-3">
       <div className="flex items-center justify-between bg-white/40 backdrop-blur-xl p-2 md:p-4 rounded-[1.1rem] md:rounded-[2rem] border-2 md:border-4 border-white/60 shadow-[0_10px_30px_rgba(0,0,0,0.1)] gap-2">
         <div className="flex items-center gap-2 md:gap-4 shrink-0">
           <motion.div
@@ -32,10 +33,10 @@ const HUD: React.FC<HUDProps> = ({ score, targetScore, timeLeft, level, avatar }
             />
           </motion.div>
           <div className="min-w-0">
-            <h2 className="text-xs md:text-xl font-black text-white drop-shadow-md tracking-tight truncate">Level {level.id}</h2>
+            <h2 className="text-xs md:text-xl font-black text-white drop-shadow-md tracking-tight truncate">{title || `Level ${level.id}`}</h2>
             <div className="flex items-center gap-1 text-white/90 font-bold text-[10px] md:text-sm">
               <AssetIcon name="trophy" className="w-3 h-3 md:w-4 md:h-4" />
-              <span>Target: {targetScore}</span>
+              <span>{title ? `Level ${level.id} • Target ${targetScore}` : `Target: ${targetScore}`}</span>
             </div>
           </div>
         </div>

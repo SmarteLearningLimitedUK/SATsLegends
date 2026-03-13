@@ -129,7 +129,7 @@ const LogicSort: React.FC<LogicSortProps> = ({ onVictory, onGameOver, onBack }) 
   };
 
   return (
-    <div className="relative w-full max-w-2xl h-[600px] licensed-playfield-bg rounded-[3rem] p-8 flex flex-col items-center gap-8 shadow-2xl border-8 border-white/10 overflow-hidden">
+    <div className="relative h-full w-full licensed-playfield-bg rounded-[2rem] md:rounded-[3rem] p-4 md:p-6 flex flex-col items-center gap-4 md:gap-6 shadow-2xl border-8 border-white/10 overflow-hidden">
       {/* Header */}
       <div className="w-full flex justify-between items-center">
         <div className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full border border-white/20">
@@ -148,7 +148,7 @@ const LogicSort: React.FC<LogicSortProps> = ({ onVictory, onGameOver, onBack }) 
         <span className="text-white/50 text-xs font-bold uppercase tracking-tighter">Source</span>
         <div 
           onClick={() => handleTubeClick(0)}
-          className={`w-64 h-24 bg-white/5 rounded-3xl border-2 flex items-center justify-center gap-2 p-4 transition-all cursor-pointer ${selectedTube === 0 ? 'border-yellow-400 shadow-[0_0_20px_rgba(250,204,21,0.3)]' : 'border-white/10'}`}
+          className={`w-full max-w-md h-20 md:h-24 bg-white/5 rounded-3xl border-2 flex items-center justify-center gap-1 md:gap-2 p-3 md:p-4 transition-all cursor-pointer ${selectedTube === 0 ? 'border-yellow-400 shadow-[0_0_20px_rgba(250,204,21,0.3)]' : 'border-white/10'}`}
         >
           <AnimatePresence>
             {tubes[0]?.items.map((item, i) => (
@@ -168,12 +168,12 @@ const LogicSort: React.FC<LogicSortProps> = ({ onVictory, onGameOver, onBack }) 
       </div>
 
       {/* Target Tubes */}
-      <div className="flex gap-6 mt-8">
+      <div className="flex flex-1 min-h-0 items-end justify-center gap-3 md:gap-6 mt-2 md:mt-4">
         {tubes.slice(1).map((tube) => (
-          <div key={tube.id} className="flex flex-col items-center gap-4">
+          <div key={tube.id} className="flex flex-col items-center gap-2 md:gap-4">
             <div 
               onClick={() => handleTubeClick(tube.id)}
-              className={`w-24 h-64 bg-white/5 rounded-t-none rounded-b-[2rem] border-2 border-t-0 flex flex-col-reverse items-center gap-2 p-4 transition-all cursor-pointer ${selectedTube === tube.id ? 'border-yellow-400 shadow-[0_0_20px_rgba(250,204,21,0.3)]' : 'border-white/10'}`}
+              className={`w-20 h-44 md:w-24 md:h-56 bg-white/5 rounded-t-none rounded-b-[2rem] border-2 border-t-0 flex flex-col-reverse items-center gap-1 md:gap-2 p-2 md:p-4 transition-all cursor-pointer ${selectedTube === tube.id ? 'border-yellow-400 shadow-[0_0_20px_rgba(250,204,21,0.3)]' : 'border-white/10'}`}
             >
               <AnimatePresence>
                 {tube.items.map((item, i) => (
@@ -182,7 +182,7 @@ const LogicSort: React.FC<LogicSortProps> = ({ onVictory, onGameOver, onBack }) 
                     layout
                     initial={{ y: -100, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    className="w-16 h-12 rounded-xl flex items-center justify-center text-white font-black text-lg licensed-answer-button"
+                    className="w-12 h-9 md:w-16 md:h-12 rounded-xl flex items-center justify-center text-white font-black text-sm md:text-lg licensed-answer-button"
                   >
                     {item}
                   </motion.div>
@@ -201,7 +201,7 @@ const LogicSort: React.FC<LogicSortProps> = ({ onVictory, onGameOver, onBack }) 
       {/* Reset Button */}
       <button 
         onClick={() => generateLevel(level)}
-        className="absolute bottom-8 right-8 p-4 bg-white/10 rounded-full text-white hover:bg-white/20 transition-all"
+        className="absolute bottom-4 right-4 md:bottom-6 md:right-6 p-3 md:p-4 bg-white/10 rounded-full text-white hover:bg-white/20 transition-all"
       >
         <RefreshCw size={24} />
       </button>
