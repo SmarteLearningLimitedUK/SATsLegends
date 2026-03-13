@@ -117,7 +117,7 @@ export const ISLANDS: IslandData[] = [
     category: 'Maths',
     isLocked: false,
     color: 'bg-[#7ED321]',
-    themeName: 'Green Hill Zone',
+    themeName: 'Lush Grove',
     bgGradient: 'from-sky-300 to-sky-100',
     groundColor: 'bg-green-500',
     mapImage: '/src/assets/licensed/maps/map_1.png',
