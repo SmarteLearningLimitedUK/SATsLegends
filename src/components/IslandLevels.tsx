@@ -71,8 +71,7 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
           )}
 
           {island.levels.map((level, index) => {
-            const previousLevel = island.levels[index - 1];
-            const isUnlocked = index === 0 || completedLevels.includes(previousLevel?.id);
+            const isUnlocked = true;
             const stars = player.levelStars?.[`${island.id}-${level.id}`] || 0;
             const isCompleted = completedLevels.includes(level.id);
 

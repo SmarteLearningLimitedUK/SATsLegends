@@ -30,6 +30,7 @@ import forestBg from './assets/licensed/background.jpeg';
 import paperPanel from './assets/licensed/Atlas_07_Paper.png';
 
 const PLAYER_STORAGE_KEY = 'maths_quest_player';
+const ALL_ISLAND_IDS = ISLANDS.map(island => island.id);
 
 const resolveAvatarId = (avatarId?: string) => (
   AVATARS.some(avatar => avatar.id === avatarId) ? avatarId! : DEFAULT_AVATAR_ID
@@ -42,7 +43,7 @@ const createDefaultPlayer = (parsed?: Partial<PlayerData> | null): PlayerData =>
   xp: parsed?.xp || 0,
   coins: parsed?.coins || 100,
   gems: parsed?.gems || 10,
-  unlockedIslands: parsed?.unlockedIslands || [1],
+  unlockedIslands: ALL_ISLAND_IDS,
   completedLevels: parsed?.completedLevels || {},
   levelStars: parsed?.levelStars || {},
   lastLoginDate: parsed?.lastLoginDate,
