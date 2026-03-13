@@ -20,12 +20,15 @@ import TimekeeperTempleGame from './components/TimekeeperTempleGame';
 import MeasurementForgeGame from './components/MeasurementForgeGame';
 import TowerOfFactorsGame from './components/TowerOfFactorsGame';
 import ReasoningGame from './components/reasoning/ReasoningGame';
+import CurriculumChallengeGame from './components/CurriculumChallengeGame';
 import AvatarSelect from './components/AvatarSelect';
 import DailyRewardsModal from './components/modals/DailyRewardsModal';
 import DailyQuestsModal from './components/modals/DailyQuestsModal';
 import AchievementsModal from './components/modals/AchievementsModal';
 import ParentDashboard from './components/ParentDashboard';
 import LevelResultModal from './components/LevelResultModal';
+import GameRulesModal from './components/GameRulesModal';
+import { GAME_META } from './gameMeta';
 import forestBg from './assets/licensed/background.jpeg';
 import paperPanel from './assets/licensed/Atlas_07_Paper.png';
 
@@ -71,6 +74,7 @@ const App: React.FC = () => {
   const [showDailyRewards, setShowDailyRewards] = useState(false);
   const [showQuests, setShowQuests] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
+  const [showGameRules, setShowGameRules] = useState(false);
   const [levelResult, setLevelResult] = useState<null | {
     type: 'victory' | 'gameover';
     title: string;
@@ -358,6 +362,17 @@ const App: React.FC = () => {
         return <MeasurementForgeGame {...sharedProps} />;
       case 'tower_of_factors':
         return <TowerOfFactorsGame {...sharedProps} />;
+      case 'place_value_peaks':
+      case 'calculation_clash':
+      case 'percent_pulse':
+      case 'coordinate_quest':
+      case 'transform_temple':
+      case 'scale_safari':
+      case 'chart_chase':
+      case 'mean_machine':
+      case 'equation_grove':
+      case 'rule_runner':
+        return <CurriculumChallengeGame gameType={selectedLevel.gameType} {...sharedProps} />;
       case 'sequence_sprint':
       case 'logic_sort':
       case 'shape_shift':
@@ -592,6 +607,16 @@ const App: React.FC = () => {
         </motion.div>
       </AnimatePresence>
 
+      {screen === 'gameplay' && selectedLevel?.gameType && GAME_META[selectedLevel.gameType] && (
+        <button
+          onClick={() => setShowGameRules(true)}
+          className="fixed right-3 top-[calc(0.8rem+env(safe-area-inset-top))] z-[115] flex h-11 w-11 items-center justify-center rounded-full border border-white/16 bg-black/30 text-white shadow-[0_14px_26px_rgba(0,0,0,0.28)] backdrop-blur-xl transition hover:bg-white/12 md:right-5 md:top-5"
+          aria-label="Open game rules"
+        >
+          <AssetIcon name="question" className="h-5 w-5" />
+        </button>
+      )}
+
       <DailyRewardsModal
         isOpen={showDailyRewards}
         onClose={() => setShowDailyRewards(false)}
@@ -622,6 +647,12 @@ const App: React.FC = () => {
           secondaryLabel: levelResult.type === 'victory' ? 'Map' : 'Try again',
           onSecondary: levelResult.type === 'victory' ? goToHome : handleRetryLevel,
         } : null}
+      />
+
+      <GameRulesModal
+        isOpen={showGameRules}
+        onClose={() => setShowGameRules(false)}
+        rules={selectedLevel?.gameType ? GAME_META[selectedLevel.gameType]?.rules || null : null}
       />
 
       {

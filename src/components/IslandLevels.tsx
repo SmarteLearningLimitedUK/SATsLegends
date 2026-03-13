@@ -30,6 +30,16 @@ const GAME_TYPE_LABELS: Record<NonNullable<LevelData['gameType']>, string> = {
   measurement_forge: 'Measurement Forge',
   timekeeper_temple: 'Timekeeper Temple',
   ratio_rapids: 'Ratio Rapids',
+  place_value_peaks: 'Place Value Peaks',
+  calculation_clash: 'Calculation Clash',
+  percent_pulse: 'Percent Pulse',
+  coordinate_quest: 'Coordinate Quest',
+  transform_temple: 'Transform Temple',
+  scale_safari: 'Scale Safari',
+  chart_chase: 'Chart Chase',
+  mean_machine: 'Mean Machine',
+  equation_grove: 'Equation Grove',
+  rule_runner: 'Rule Runner',
 };
 
 const getGameLabel = (level: LevelData) => {
