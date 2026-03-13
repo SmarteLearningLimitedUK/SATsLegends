@@ -594,7 +594,7 @@ const App: React.FC = () => {
         showBottomNav && (
           <div className="pointer-events-none fixed inset-x-0 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-50 flex justify-center px-3 md:bottom-6">
             <div className="pointer-events-auto flex w-full max-w-3xl flex-col items-center gap-2 md:gap-3">
-              <div className="casual-ribbon-chip inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-cyan-100 shadow-[0_12px_30px_rgba(0,0,0,0.22)] md:px-4 md:py-2">
+              <div className="casual-ribbon-chip hidden items-center gap-2 rounded-full px-3 py-1.5 text-cyan-100 shadow-[0_12px_30px_rgba(0,0,0,0.22)] md:inline-flex md:px-4 md:py-2">
                 <AssetIcon name="star" className="h-4 w-4" />
                 <span className="text-[9px] font-black uppercase tracking-[0.24em] md:text-[10px]">Adventure mode</span>
               </div>
