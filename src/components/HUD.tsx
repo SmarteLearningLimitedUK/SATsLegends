@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { AvatarData, CloudCollapseLevelConfig } from '../types';
+import { AnimationState, AvatarData, CloudCollapseLevelConfig } from '../types';
 import AssetIcon from './AssetIcon';
 import AnimatedAvatar from './AnimatedAvatar';
 import progressBarAsset from '../assets/licensed/slices/progress_bar.png';
@@ -16,6 +16,13 @@ interface HUDProps {
 
 const HUD: React.FC<HUDProps> = ({ title, score, targetScore, timeLeft, level, avatar }) => {
   const progress = Math.min((score / targetScore) * 100, 100);
+  const avatarPose: AnimationState = progress >= 100
+    ? 'victory'
+    : timeLeft <= 12
+      ? 'thinking'
+      : score >= targetScore * 0.7
+        ? 'victory'
+        : 'idle';
 
   return (
     <div className="w-full shrink-0 px-1 py-0.5 md:px-2 flex flex-col gap-1.5 md:gap-3">
@@ -28,6 +35,8 @@ const HUD: React.FC<HUDProps> = ({ title, score, targetScore, timeLeft, level, a
             <div className="shine" />
             <AnimatedAvatar
               avatar={avatar}
+              pose={avatarPose}
+              frameDurationMs={1040}
               className="relative z-10 h-full w-full"
               imageClassName="object-bottom scale-[1.18] translate-y-[6%]"
             />

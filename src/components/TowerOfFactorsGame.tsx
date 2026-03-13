@@ -1,15 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
-import { AvatarData } from '../types';
 import { AVATARS } from '../constants';
+import BossPortrait from './BossPortrait';
 import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
-import { Home, HelpCircle, Star, Timer, Castle } from './GameIcons';
+import { getBossEncounter } from '../bossMeta';
+import { triggerHaptic } from '../haptics';
+import { Star, Castle } from './GameIcons';
 
 interface TowerOfFactorsGameProps {
   levelId: number;
   avatarId: string;
+  isBoss?: boolean;
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
   onBack: () => void;
@@ -66,6 +69,7 @@ const generateFactorProblem = (levelId: number): FactorProblem => {
 const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({ 
   levelId, 
   avatarId, 
+  isBoss = false,
   onVictory, 
   onGameOver, 
   onBack 
@@ -83,6 +87,20 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
 
   const avatar = AVATARS.find(a => a.id === avatarId) || AVATARS[0];
   const targetScore = 800 + (levelId * 200);
+  const bossEncounter = isBoss ? getBossEncounter('tower_of_factors') : undefined;
+  const bossPose = !bossEncounter
+    ? 'neutral'
+    : isVictory
+      ? 'defeat'
+      : isGameOver
+        ? 'victory'
+        : feedback === 'correct'
+          ? 'dazed'
+          : feedback === 'incorrect'
+            ? 'attack'
+            : streak >= 3
+              ? 'happy'
+              : 'neutral';
 
   useEffect(() => {
     setTimeLeft(60 + levelId * 10);
@@ -138,6 +156,7 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
     if (tower.includes(num)) return;
 
     if (problem.factors.includes(num)) {
+      triggerHaptic('selection');
       setFeedback('correct');
       setTower(prev => [...prev, num]);
       
@@ -165,6 +184,7 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
       }
 
     } else {
+      triggerHaptic('error');
       setFeedback('incorrect');
       setShake(true);
       setStreak(0);
@@ -216,6 +236,11 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
 
         {/* Game Area */}
         <div className="relative flex w-full flex-1 min-h-0 flex-col items-center justify-center gap-3 md:flex-row md:gap-8">
+          {bossEncounter && (
+            <div className="absolute right-2 top-2 z-20 w-40 md:right-4 md:top-4 md:w-56">
+              <BossPortrait encounter={bossEncounter} pose={bossPose} compact />
+            </div>
+          )}
           
           {problem && (
             <>

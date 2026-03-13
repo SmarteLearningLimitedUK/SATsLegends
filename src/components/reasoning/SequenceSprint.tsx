@@ -8,11 +8,17 @@ interface SequenceSprintProps {
   onBack: () => void;
 }
 
+interface SequenceRound {
+  sequence: number[];
+  correct: number;
+  options: number[];
+}
+
 const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, onBack }) => {
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [timeLeft, setTimeLeft] = useState(60);
-  const [sequence, setSequence] = useState<number[]>([]);
+  const [round, setRound] = useState<SequenceRound | null>(null);
   const [lane, setLane] = useState(1); // 0, 1, 2
   const [items, setItems] = useState<{ id: number; value: number; lane: number; y: number }[]>([]);
   const [gameActive, setGameActive] = useState(false);
@@ -24,24 +30,21 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
   const itemIdRef = useRef(0);
 
   // Generate a new sequence
-  const generateSequence = () => {
+  const generateRound = (): SequenceRound => {
     const start = Math.floor(Math.random() * 10);
     const step = Math.floor(Math.random() * 5) + 1;
     const newSeq = Array.from({ length: 4 }, (_, i) => start + (i * step));
-    setSequence(newSeq);
     
     const correct = start + (4 * step);
     const wrong1 = correct + step + (Math.random() > 0.5 ? 1 : -1);
     const wrong2 = correct - step + (Math.random() > 0.5 ? 1 : -1);
     
     const newOptions = [correct, wrong1, wrong2].sort(() => Math.random() - 0.5);
-    return { correct, options: newOptions };
+    return { sequence: newSeq, correct, options: newOptions };
   };
 
   useEffect(() => {
-    if (showInstructions) return;
-    
-    const { options: initialOptions } = generateSequence();
+    if (showInstructions || !round) return;
     
     const gameLoop = (time: number) => {
       if (!gameActive) return;
@@ -54,11 +57,10 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
         // Check collisions
         const collision = updated.find(item => item.y > 550 && item.y < 650 && item.lane === lane);
         if (collision) {
-          const correctValue = sequence[3] + (sequence[1] - sequence[0]);
-          if (collision.value === correctValue) {
+          if (collision.value === round.correct) {
             setScore(s => s + 100);
             setSpeed(prev => Math.min(prev + 0.1, 8)); // Gradual speed up
-            generateSequence();
+            setRound(generateRound());
             return []; // Clear items on correct hit
           } else {
             setLives(l => l - 1);
@@ -72,8 +74,7 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
       // Spawn items
       const spawnRate = Math.max(1500, 3000 - (score / 10));
       if (time - lastSpawnRef.current > spawnRate) {
-        const { options: currentOptions } = generateSequence();
-        const newItems = currentOptions.map((val, idx) => ({
+        const newItems = round.options.map((val, idx) => ({
           id: itemIdRef.current++,
           value: val,
           lane: idx,
@@ -90,7 +91,7 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
     return () => {
       if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current);
     };
-  }, [lane, sequence, gameActive, showInstructions, speed, score]);
+  }, [gameActive, lane, round, score, showInstructions, speed]);
 
   useEffect(() => {
     if (timeLeft > 0 && gameActive && !showInstructions) {
@@ -115,6 +116,14 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
   };
 
   const startGame = () => {
+    setRound(generateRound());
+    setItems([]);
+    setLane(1);
+    setLives(3);
+    setTimeLeft(60);
+    setScore(0);
+    setSpeed(3);
+    lastSpawnRef.current = 0;
     setShowInstructions(false);
     setGameActive(true);
   };
@@ -153,7 +162,7 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
       {/* Sequence Display */}
       <div className="absolute top-20 md:top-28 left-1/2 -translate-x-1/2 z-20 w-full px-4 md:px-10">
         <div className="bg-white/95 backdrop-blur-xl p-3 md:p-5 rounded-[1.6rem] md:rounded-[2.2rem] shadow-2xl flex justify-center gap-2 md:gap-5 items-center border-b-[4px] md:border-b-[8px] border-gray-200">
-          {sequence.map((num, i) => (
+          {(round?.sequence || []).map((num, i) => (
             <motion.div 
               key={i}
               initial={{ scale: 0 }}

@@ -2,9 +2,12 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { AVATARS } from '../constants';
+import { getBossEncounter } from '../bossMeta';
 import { GAME_META } from '../gameMeta';
+import { triggerHaptic } from '../haptics';
+import BossPortrait from './BossPortrait';
+import GameActionDock from './GameActionDock';
 import GameplayHUD from './GameplayHUD';
-import AssetIcon from './AssetIcon';
 import { Star } from './GameIcons';
 
 type SupportedChallengeGameType =
@@ -23,6 +26,7 @@ interface CurriculumChallengeGameProps {
   gameType: SupportedChallengeGameType;
   levelId: number;
   avatarId: string;
+  isBoss?: boolean;
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
   onBack: () => void;
@@ -740,6 +744,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
   gameType,
   levelId,
   avatarId,
+  isBoss = false,
   onVictory,
   onGameOver,
   onBack,
@@ -761,6 +766,20 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
   const progress = Math.min((score / targetScore) * 100, 100);
   const meta = GAME_META[gameType];
   const visualCaption = 'caption' in question.visual ? question.visual.caption : undefined;
+  const bossEncounter = isBoss ? getBossEncounter(gameType) : undefined;
+  const bossPose = !bossEncounter
+    ? 'neutral'
+    : isVictory
+      ? 'defeat'
+      : isGameOver
+        ? 'victory'
+        : feedback === 'correct'
+          ? 'dazed'
+          : feedback === 'incorrect'
+            ? 'attack'
+            : streak >= 2
+              ? 'happy'
+              : 'neutral';
 
   const resetRound = useCallback(() => {
     scoreRef.current = 0;
@@ -813,6 +832,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
     if (isCorrect) {
       const points = 110 + (streak * 20);
       const newScore = scoreRef.current + points;
+      triggerHaptic('success');
       scoreRef.current = newScore;
       setScore(newScore);
       setStreak((prev) => prev + 1);
@@ -833,6 +853,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
         return;
       }
     } else {
+      triggerHaptic('warning');
       setStreak(0);
       setTimeLeft((prev) => Math.max(0, prev - 3));
       setStatusMessage('Not this time. Reset and read the clue again.');
@@ -871,16 +892,6 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
         />
 
         <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.8rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] shadow-[0_24px_64px_rgba(0,0,0,0.28)] md:rounded-[2.6rem]">
-          <div className="absolute left-2.5 top-2.5 z-20 md:left-4 md:top-4">
-            <button
-              onClick={onBack}
-              className="flex h-10 w-10 md:h-11 md:w-11 items-center justify-center rounded-2xl border border-white/14 bg-black/26 text-white shadow-[0_12px_24px_rgba(0,0,0,0.32)] backdrop-blur-md transition hover:bg-white/12"
-              aria-label="Back to island"
-            >
-              <AssetIcon name="back" className="h-5 w-5" />
-            </button>
-          </div>
-
           <div className="absolute inset-x-4 top-2.5 z-20 flex justify-center md:top-4">
             <div className={`rounded-full border border-white/12 bg-black/28 px-3 py-1.5 text-center text-[9px] font-black uppercase tracking-[0.18em] shadow-[0_12px_24px_rgba(0,0,0,0.3)] backdrop-blur-md md:px-4 md:py-2 md:text-xs ${theme.badge}`}>
               {meta.focus}
@@ -913,6 +924,9 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
             </div>
 
             <div className="flex min-h-0 flex-col gap-1.5 md:gap-3">
+              {bossEncounter && (
+                <BossPortrait encounter={bossEncounter} pose={bossPose} compact className="shrink-0" />
+              )}
               <div className="grid grid-cols-1 gap-1.5 md:grid-cols-2 md:gap-3 lg:grid-cols-1 xl:grid-cols-2">
                 {question.options.map((option, index) => {
                   const isSelected = index === selectedIndex;
@@ -958,6 +972,8 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
             </div>
           </div>
         </div>
+
+        <GameActionDock onBack={onBack} accentClass="text-white" />
 
         <AnimatePresence>
           {(isVictory || isGameOver) && (

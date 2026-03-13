@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Trophy, Timer, HelpCircle, CheckCircle2, XCircle, Lightbulb } from '../GameIcons';
+import BossPortrait from '../BossPortrait';
+import { getBossEncounter } from '../../bossMeta';
 
 interface MatrixMatchProps {
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
   onBack: () => void;
+  isBoss?: boolean;
 }
 
 interface MatrixItem {
@@ -24,7 +27,7 @@ const COLORS = [
   'bg-pink-400'
 ];
 
-const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack }) => {
+const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack, isBoss = false }) => {
   const [grid, setGrid] = useState<(MatrixItem | null)[]>([]);
   const [options, setOptions] = useState<MatrixItem[]>([]);
   const [score, setScore] = useState(0);
@@ -35,6 +38,16 @@ const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack
   const [correctItem, setCorrectItem] = useState<MatrixItem | null>(null);
   const [showHint, setShowHint] = useState(false);
   const [shake, setShake] = useState(false);
+  const bossEncounter = isBoss ? getBossEncounter('matrix_match') : undefined;
+  const bossPose = !bossEncounter
+    ? 'neutral'
+    : feedback === 'correct'
+      ? 'dazed'
+      : feedback === 'wrong'
+        ? 'attack'
+        : timeLeft <= 20 || showHint
+          ? 'happy'
+          : 'neutral';
 
   const generateLevel = () => {
     const ruleType = Math.floor(Math.random() * 3);
@@ -145,6 +158,12 @@ const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack
           <span className="text-2xl font-black text-gray-800">{timeLeft}s</span>
         </div>
       </div>
+
+      {bossEncounter && (
+        <div className="mb-4 md:mb-5">
+          <BossPortrait encounter={bossEncounter} pose={bossPose} compact className="mx-auto max-w-sm" />
+        </div>
+      )}
 
       {/* Visual Timer Bar */}
       <div className="w-full h-3 bg-gray-100 rounded-full mb-5 md:mb-8 overflow-hidden">

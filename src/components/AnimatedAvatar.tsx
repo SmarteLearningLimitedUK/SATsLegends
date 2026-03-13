@@ -70,20 +70,25 @@ const AnimatedAvatar: React.FC<AnimatedAvatarProps> = ({
 
   return (
     <motion.div
-      className={className}
-      animate={floating ? { y: [0, -4, 0], rotate: [0, 1.5, 0] } : undefined}
-      transition={floating ? { duration: 4.8, repeat: Infinity, ease: 'easeInOut' } : undefined}
+      className={`relative overflow-visible ${className}`.trim()}
+      animate={floating ? { y: [0, -4, 0], rotate: [0, 1.25, 0], scale: [1, 1.018, 1] } : { scale: [1, 1.01, 1] }}
+      transition={floating ? { duration: 4.8, repeat: Infinity, ease: 'easeInOut' } : { duration: 5.2, repeat: Infinity, ease: 'easeInOut' }}
     >
+      <motion.div
+        className="pointer-events-none absolute inset-[14%] rounded-full bg-white/20 blur-xl"
+        animate={{ opacity: [0.12, 0.28, 0.12], scale: [0.94, 1.08, 0.94] }}
+        transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut' }}
+      />
       <AnimatePresence initial={false} mode="wait">
         <motion.img
           key={`${avatar.id}-${pose}-${frameIndex}`}
           src={activeFrame}
           alt={alt || avatar.name}
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 1.03 }}
-          transition={{ duration: 0.24, ease: 'easeOut' }}
-          className={`h-full w-full object-contain ${imageClassName}`.trim()}
+          initial={{ opacity: 0, scale: 0.94, y: 4 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 1.03, y: -4 }}
+          transition={{ duration: 0.28, ease: 'easeOut' }}
+          className={`relative z-10 h-full w-full object-contain drop-shadow-[0_10px_18px_rgba(0,0,0,0.24)] ${imageClassName}`.trim()}
           draggable={false}
         />
       </AnimatePresence>

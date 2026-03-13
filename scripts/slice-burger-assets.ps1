@@ -2,7 +2,7 @@ $ErrorActionPreference = 'Stop'
 
 Add-Type -AssemblyName System.Drawing
 
-$sourcePath = 'D:\codexsatsgame\external-assets\game assets\burger\burger bar.png'
+$sourcePath = 'D:\codexsatsgame\external-assets\game assets\burger\burgerassets.png'
 $targetRoot = 'D:\gamedevsam\SATSLegends\src\assets\burger\slices'
 
 if (Test-Path $targetRoot) {

@@ -29,6 +29,13 @@ import ParentDashboard from './components/ParentDashboard';
 import LevelResultModal from './components/LevelResultModal';
 import GameRulesModal from './components/GameRulesModal';
 import { GAME_META } from './gameMeta';
+import {
+  GAME_AUDIO_STORAGE_KEY,
+  GAME_HUD_HELP_EVENT,
+  GAME_HUD_MUTE_EVENT,
+  GAME_HUD_MUTE_SYNC_EVENT,
+} from './gameHudEvents';
+import { triggerHaptic } from './haptics';
 import forestBg from './assets/licensed/background.jpeg';
 import paperPanel from './assets/licensed/Atlas_07_Paper.png';
 
@@ -75,6 +82,7 @@ const App: React.FC = () => {
   const [showQuests, setShowQuests] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
   const [showGameRules, setShowGameRules] = useState(false);
+  const [isMuted, setIsMuted] = useState(() => localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true');
   const [levelResult, setLevelResult] = useState<null | {
     type: 'victory' | 'gameover';
     title: string;
@@ -121,12 +129,42 @@ const App: React.FC = () => {
     localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(player));
   }, [player]);
 
+  useEffect(() => {
+    localStorage.setItem(GAME_AUDIO_STORAGE_KEY, String(isMuted));
+    window.dispatchEvent(new CustomEvent(GAME_HUD_MUTE_SYNC_EVENT, { detail: { muted: isMuted } }));
+    document.querySelectorAll<HTMLMediaElement>('audio, video').forEach((media) => {
+      media.muted = isMuted;
+    });
+  }, [isMuted, screen]);
+
+  useEffect(() => {
+    const handleOpenHelp = () => {
+      if (screen === 'gameplay' && selectedLevel?.gameType && GAME_META[selectedLevel.gameType]) {
+        setShowGameRules(true);
+      }
+    };
+
+    const handleMuteChange = (event: Event) => {
+      const detail = (event as CustomEvent<{ muted?: boolean }>).detail;
+      setIsMuted((prev) => (typeof detail?.muted === 'boolean' ? detail.muted : !prev));
+    };
+
+    window.addEventListener(GAME_HUD_HELP_EVENT, handleOpenHelp as EventListener);
+    window.addEventListener(GAME_HUD_MUTE_EVENT, handleMuteChange as EventListener);
+
+    return () => {
+      window.removeEventListener(GAME_HUD_HELP_EVENT, handleOpenHelp as EventListener);
+      window.removeEventListener(GAME_HUD_MUTE_EVENT, handleMuteChange as EventListener);
+    };
+  }, [screen, selectedLevel?.gameType]);
+
   const goToHome = () => {
     setSelectedLevel(null);
     setScreen('world_map');
   };
 
   const handleStartAdventure = () => {
+    triggerHaptic('tap');
     if (!player.playerName.trim()) {
       setDraftName('Explorer');
       setScreen('profile_setup');
@@ -137,28 +175,33 @@ const App: React.FC = () => {
   };
 
   const handleSaveProfileName = () => {
+    triggerHaptic('selection');
     const sanitizedName = draftName.trim() || 'Explorer';
     setPlayer(prev => ({ ...prev, playerName: sanitizedName }));
     setScreen('avatar_selection');
   };
 
   const handleAvatarConfirm = () => {
+    triggerHaptic('success');
     setScreen('world_map');
   };
 
   const handleIslandSelect = (island: IslandData) => {
+    triggerHaptic('selection');
     setSelectedIsland(island);
     setSelectedLevel(null);
     setScreen('island_levels');
   };
 
   const handleLevelSelect = (level: LevelData) => {
+    triggerHaptic('selection');
     setSelectedLevel(level);
     setScreen('gameplay');
   };
 
   const handleGameVictory = (stars: number, score: number) => {
     if (!selectedIsland || !selectedLevel) return;
+    triggerHaptic('success');
 
     const earnedCoins = stars * 50;
     const earnedXp = stars * 100;
@@ -253,6 +296,7 @@ const App: React.FC = () => {
   };
 
   const handleGameOver = (score: number) => {
+    triggerHaptic('error');
     setLevelResult({
       type: 'gameover',
       title: 'Round over',
@@ -297,6 +341,7 @@ const App: React.FC = () => {
   };
 
   const handleClaimDailyReward = (reward: { type: string; amount: number }) => {
+    triggerHaptic('success');
     setPlayer(prev => ({
       ...prev,
       coins: reward.type === 'coins' ? prev.coins + reward.amount : prev.coins,
@@ -310,6 +355,7 @@ const App: React.FC = () => {
     setPlayer(prev => {
       const quest = prev.dailyQuests.find(q => q.id === questId);
       if (!quest || quest.isClaimed || quest.current < quest.target) return prev;
+      triggerHaptic('success');
 
       return {
         ...prev,
@@ -343,7 +389,7 @@ const App: React.FC = () => {
       case 'burger_bar':
         return <BurgerBuilderGame {...sharedProps} />;
       case 'fraction_match':
-        return <FractionMatchGame {...sharedProps} />;
+        return <FractionMatchGame {...sharedProps} isBoss={Boolean(selectedLevel.isBoss)} />;
       case 'prime_pop':
         return <PrimePopGame {...sharedProps} />;
       case 'angle_arena':
@@ -361,7 +407,7 @@ const App: React.FC = () => {
       case 'measurement_forge':
         return <MeasurementForgeGame {...sharedProps} />;
       case 'tower_of_factors':
-        return <TowerOfFactorsGame {...sharedProps} />;
+        return <TowerOfFactorsGame {...sharedProps} isBoss={Boolean(selectedLevel.isBoss)} />;
       case 'place_value_peaks':
       case 'calculation_clash':
       case 'percent_pulse':
@@ -372,7 +418,7 @@ const App: React.FC = () => {
       case 'mean_machine':
       case 'equation_grove':
       case 'rule_runner':
-        return <CurriculumChallengeGame gameType={selectedLevel.gameType} {...sharedProps} />;
+        return <CurriculumChallengeGame gameType={selectedLevel.gameType} isBoss={Boolean(selectedLevel.isBoss)} {...sharedProps} />;
       case 'sequence_sprint':
       case 'logic_sort':
       case 'shape_shift':
@@ -380,6 +426,7 @@ const App: React.FC = () => {
         return (
           <ReasoningGame
             gameType={selectedLevel.gameType}
+            isBoss={Boolean(selectedLevel.isBoss)}
             onVictory={handleGameVictory}
             onGameOver={handleGameOver}
             onBack={() => setScreen('island_levels')}
@@ -606,16 +653,6 @@ const App: React.FC = () => {
           {renderScreen()}
         </motion.div>
       </AnimatePresence>
-
-      {screen === 'gameplay' && selectedLevel?.gameType && GAME_META[selectedLevel.gameType] && (
-        <button
-          onClick={() => setShowGameRules(true)}
-          className="fixed right-3 top-[calc(0.8rem+env(safe-area-inset-top))] z-[115] flex h-11 w-11 items-center justify-center rounded-full border border-white/16 bg-black/30 text-white shadow-[0_14px_26px_rgba(0,0,0,0.28)] backdrop-blur-xl transition hover:bg-white/12 md:right-5 md:top-5"
-          aria-label="Open game rules"
-        >
-          <AssetIcon name="question" className="h-5 w-5" />
-        </button>
-      )}
 
       <DailyRewardsModal
         isOpen={showDailyRewards}

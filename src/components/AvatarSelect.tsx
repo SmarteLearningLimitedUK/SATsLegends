@@ -1,7 +1,9 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Check } from './GameIcons';
+import AnimatedAvatar from './AnimatedAvatar';
 import { AVATARS } from '../constants';
+import { triggerHaptic } from '../haptics';
 
 interface AvatarSelectProps {
   selectedId: string;
@@ -79,7 +81,10 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               key={avatar.id}
               whileHover={{ scale: 1.025, y: -3 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => onSelect(avatar.id)}
+              onClick={() => {
+                triggerHaptic(selectedId === avatar.id ? 'light' : 'selection');
+                onSelect(avatar.id);
+              }}
               className={`group fantasy-hero-card relative flex h-full min-h-0 flex-col overflow-hidden rounded-[1.45rem] text-center transition-all md:rounded-[2.25rem] ${isSelected
                 ? 'fantasy-hero-card-selected shadow-[0_20px_34px_rgba(2,6,23,0.34)] md:shadow-[0_28px_54px_rgba(2,6,23,0.38)]'
                 : 'hover:bg-white/[0.04]'
@@ -92,11 +97,14 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               <div className="pointer-events-none absolute inset-x-2 top-2 bottom-2 rounded-[1.2rem] border border-[#f2d182]/18 md:inset-x-3 md:top-3 md:bottom-3 md:rounded-[2rem]" />
 
               <div className={`relative mx-2.5 mt-2.5 flex min-h-0 flex-1 items-end justify-center overflow-hidden rounded-[1.1rem] border border-white/14 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(2,6,23,0.16))] shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] md:mx-4 md:mt-4 md:rounded-[1.8rem] ${isSelected ? style.ring : ''}`}>
-                <img
-                  src={avatar.portrait || avatar.image}
+                <AnimatedAvatar
+                  avatar={avatar}
+                  pose={isSelected ? 'victory' : 'idle'}
+                  frameDurationMs={isSelected ? 980 : 1320}
+                  floating={isSelected}
                   alt={avatar.name}
-                  className={`h-full w-full object-contain object-bottom transition-transform duration-500 ${isSelected ? 'scale-[1.3] translate-y-[4%] md:scale-[1.36]' : 'scale-[1.24] translate-y-[5%] md:scale-[1.28]'}`}
-                  draggable={false}
+                  className="h-full w-full"
+                  imageClassName={`object-bottom transition-transform duration-500 ${isSelected ? 'scale-[1.3] translate-y-[4%] md:scale-[1.36]' : 'scale-[1.24] translate-y-[5%] md:scale-[1.28]'}`}
                 />
               </div>
               <div className="relative px-2 pb-3 pt-2 md:px-4 md:pb-4 md:pt-3">
@@ -125,7 +133,10 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
         <motion.button
           whileHover={{ scale: 1.02, y: -2 }}
           whileTap={{ scale: 0.98 }}
-          onClick={onConfirm}
+          onClick={() => {
+            triggerHaptic('success');
+            onConfirm();
+          }}
           className="fantasy-cta-button relative z-10 w-full px-8 py-3 text-sm md:px-20 md:py-5 md:text-3xl"
         >
           Let&apos;s Go

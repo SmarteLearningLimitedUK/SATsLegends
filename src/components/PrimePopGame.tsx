@@ -22,6 +22,7 @@ interface Bubble {
   x: number; // percentage 0-100
   speed: number;
   isPopped: boolean;
+  size: number;
 }
 
 const isPrime = (num: number) => {
@@ -83,7 +84,8 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
       isPrime: isPrime(finalNum),
       x: 10 + Math.random() * 80, // 10% to 90% width
       speed: 4 + Math.random() * 4 + (levelId * 0.5), // seconds to reach top
-      isPopped: false
+      isPopped: false,
+      size: 60 + Math.random() * 24,
     };
 
     setBubbles(prev => [...prev, newBubble]);
@@ -151,7 +153,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     onVictory(stars, score);
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handlePointerMove = (e: React.PointerEvent) => {
     if (!gameAreaRef.current) return;
     const rect = gameAreaRef.current.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 100;
@@ -159,8 +161,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     setCrosshairPos({ x, y });
   };
 
-  const popBubble = (id: string, isPrimeBubble: boolean, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const popBubble = (id: string, isPrimeBubble: boolean, clientX: number, clientY: number) => {
     if (isGameOver || isVictory) return;
 
     setBubbles(prev => prev.map(b => b.id === id ? { ...b, isPopped: true } : b));
@@ -175,8 +176,8 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
         particleCount: 30,
         spread: 50,
         origin: { 
-          x: e.clientX / window.innerWidth, 
-          y: e.clientY / window.innerHeight 
+          x: clientX / window.innerWidth, 
+          y: clientY / window.innerHeight 
         },
         colors: ['#34d399', '#10b981', '#059669']
       });
@@ -188,8 +189,8 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
         particleCount: 20,
         spread: 40,
         origin: { 
-          x: e.clientX / window.innerWidth, 
-          y: e.clientY / window.innerHeight 
+          x: clientX / window.innerWidth, 
+          y: clientY / window.innerHeight 
         },
         colors: ['#ef4444', '#b91c1c']
       });
@@ -199,11 +200,11 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
   const progress = Math.min((score / targetScore) * 100, 100);
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden licensed-playfield-bg cursor-none">
+    <div className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden licensed-playfield-bg md:cursor-none">
       {/* Background Grid */}
       <div className="absolute inset-0 opacity-20 pointer-events-none licensed-grid-backdrop" />
 
-      <div className="z-10 w-full max-w-5xl flex h-full min-h-0 flex-1 flex-col items-center gap-3 md:gap-6">
+      <div className="z-10 w-full max-w-5xl flex h-full min-h-0 flex-1 flex-col items-center gap-2 md:gap-6">
         <GameplayHUD
           title="Prime Pop"
           avatar={avatar}
@@ -222,12 +223,12 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
         {/* Game Area */}
         <div 
           ref={gameAreaRef}
-          onMouseMove={handleMouseMove}
-          className="w-full flex-1 min-h-0 relative licensed-board-frame overflow-hidden"
+          onPointerMove={handlePointerMove}
+          className="w-full flex-1 min-h-0 relative licensed-board-frame overflow-hidden touch-none"
         >
           {/* Custom Crosshair */}
           <div 
-            className="absolute w-12 h-12 pointer-events-none z-50 -translate-x-1/2 -translate-y-1/2 text-cyan-400 opacity-80"
+            className="absolute hidden md:block w-12 h-12 pointer-events-none z-50 -translate-x-1/2 -translate-y-1/2 text-cyan-400 opacity-80"
             style={{ left: `${crosshairPos.x}%`, top: `${crosshairPos.y}%` }}
           >
             <Crosshair className="w-full h-full" />
@@ -237,23 +238,30 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
             {bubbles.map(bubble => !bubble.isPopped && (
               <motion.div
                 key={bubble.id}
-                initial={{ y: '100%', x: `${bubble.x}%`, opacity: 0, scale: 0.5 }}
-                animate={{ y: '-100%', opacity: 1, scale: 1 }}
+                initial={{ bottom: '-22%', opacity: 0, scale: 0.72 }}
+                animate={{ bottom: '108%', opacity: [0, 1, 1], scale: [0.72, 1, 1] }}
                 exit={{ scale: 1.5, opacity: 0 }}
                 transition={{ 
-                  y: { duration: bubble.speed, ease: 'linear' },
-                  opacity: { duration: 0.2 },
-                  scale: { duration: 0.2 }
+                  bottom: { duration: bubble.speed, ease: 'linear' },
+                  opacity: { duration: 0.45, times: [0, 0.1, 1] },
+                  scale: { duration: 0.35 }
                 }}
-                onMouseDown={(e) => popBubble(bubble.id, bubble.isPrime, e)}
-                className="absolute flex h-16 w-16 items-center justify-center rounded-full border border-white/30 backdrop-blur-md cursor-none shadow-[inset_0_-10px_20px_rgba(0,0,0,0.2),_0_0_15px_rgba(255,255,255,0.2)] md:h-20 md:w-20"
+                onAnimationComplete={() => {
+                  setBubbles(prev => prev.filter(item => item.id !== bubble.id || item.isPopped));
+                }}
+                onPointerDown={(e) => {
+                  e.stopPropagation();
+                  popBubble(bubble.id, bubble.isPrime, e.clientX, e.clientY);
+                }}
+                className="absolute -translate-x-1/2 flex items-center justify-center rounded-full border border-white/30 backdrop-blur-md md:cursor-none shadow-[inset_0_-10px_20px_rgba(0,0,0,0.2),_0_0_15px_rgba(255,255,255,0.2)]"
                 style={{
                   background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(255,255,255,0.2) 20%, rgba(255,255,255,0.1) 60%, rgba(255,255,255,0.4))',
                   left: `${bubble.x}%`,
-                  bottom: '-10%'
+                  width: `${bubble.size}px`,
+                  height: `${bubble.size}px`,
                 }}
               >
-                <span className="text-3xl font-black text-white drop-shadow-md pointer-events-none">
+                <span className="pointer-events-none text-2xl md:text-3xl font-black text-white drop-shadow-md">
                   {bubble.number}
                 </span>
                 

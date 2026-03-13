@@ -1,6 +1,7 @@
 import React from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import AssetIcon from './AssetIcon';
+import { triggerHaptic } from '../haptics';
 import rewardChest from '../assets/licensed/reward_chest_gold.png';
 import coinBag from '../assets/licensed/reward_bag_coins.png';
 
@@ -113,7 +114,10 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
               <div className="mt-0.5 flex flex-col gap-2 sm:flex-row">
                 {result.onSecondary && result.secondaryLabel && (
                   <button
-                    onClick={result.onSecondary}
+                    onClick={() => {
+                      triggerHaptic('selection');
+                      result.onSecondary?.();
+                    }}
                     className="flex flex-1 items-center justify-center gap-2 rounded-[1rem] border border-white/12 bg-white/8 px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.14em] text-white transition hover:bg-white/14 md:rounded-[1.2rem] md:px-5 md:py-4 md:text-sm"
                   >
                     <AssetIcon name="refresh" className="h-4 w-4" />
@@ -121,7 +125,10 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
                   </button>
                 )}
                 <button
-                  onClick={result.onPrimary}
+                  onClick={() => {
+                    triggerHaptic(isVictory ? 'success' : 'selection');
+                    result.onPrimary();
+                  }}
                   className={`flex flex-1 items-center justify-center gap-2 rounded-[1rem] px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.14em] transition md:rounded-[1.2rem] md:px-5 md:py-4 md:text-sm ${isVictory ? 'bg-yellow-300 text-slate-950 hover:bg-yellow-200' : 'bg-rose-300 text-slate-950 hover:bg-rose-200'}`}
                 >
                   {isVictory ? <AssetIcon name="trophy" className="h-4 w-4" /> : <AssetIcon name="refresh" className="h-4 w-4" />}

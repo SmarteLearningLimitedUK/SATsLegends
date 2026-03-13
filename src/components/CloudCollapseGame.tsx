@@ -9,7 +9,8 @@ import { CLOUD_COLLAPSE_LEVELS, AVATARS } from '../constants';
 import HUD from './HUD';
 import GameBoard from './GameBoard';
 import Tutorial from './Tutorial';
-import { Home, HelpCircle, Star } from './GameIcons';
+import GameActionDock from './GameActionDock';
+import { Star } from './GameIcons';
 
 interface CloudCollapseGameProps {
   levelId: number;
@@ -111,23 +112,6 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
         />
 
         <div className="relative flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden rounded-[2rem] border border-white/15 bg-white/8 p-2 shadow-[0_20px_60px_rgba(15,23,42,0.18)] md:rounded-[2.6rem] md:p-4">
-          <div className="absolute right-3 top-3 z-20 flex gap-2 md:right-4 md:top-4">
-            <button
-              onClick={onBack}
-              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/20 bg-white/20 text-white shadow-lg transition-colors hover:bg-white/30"
-              aria-label="Back to island"
-            >
-              <Home />
-            </button>
-            <button
-              onClick={() => setShowTutorial(true)}
-              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/20 bg-white/20 text-white shadow-lg transition-colors hover:bg-white/30"
-              aria-label="Open help"
-            >
-              <HelpCircle />
-            </button>
-          </div>
-
           <GameBoard
             level={level}
             onScoreUpdate={handleScoreUpdate}
@@ -135,20 +119,11 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
           />
         </div>
 
-        <div className="hidden mt-1 shrink-0 gap-3 md:gap-4">
-          <button 
-            onClick={onBack}
-            className="p-3 bg-white/30 rounded-full text-white hover:bg-white/50 transition-colors"
-          >
-            <Home />
-          </button>
-          <button 
-            onClick={() => setShowTutorial(true)}
-            className="p-3 bg-white/30 rounded-full text-white hover:bg-white/50 transition-colors"
-          >
-            <HelpCircle />
-          </button>
-        </div>
+        <GameActionDock
+          onBack={onBack}
+          onHelp={() => setShowTutorial(true)}
+          accentClass="text-white"
+        />
       </div>
 
       <AnimatePresence>

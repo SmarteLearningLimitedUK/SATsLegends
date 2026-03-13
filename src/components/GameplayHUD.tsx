@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { AvatarData } from '../types';
+import { AnimationState, AvatarData } from '../types';
 import AssetIcon from './AssetIcon';
 import AnimatedAvatar from './AnimatedAvatar';
 import progressBarAsset from '../assets/casual_ui/hud/progress_bar_1__fg.png';
@@ -36,6 +36,14 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
   statLabel,
   statValue,
 }) => {
+  const avatarPose: AnimationState = progress >= 100
+    ? 'victory'
+    : timeLeft <= 12
+      ? 'thinking'
+      : score >= targetScore * 0.75
+        ? 'victory'
+        : 'idle';
+
   return (
     <div className="w-full flex shrink-0 flex-col gap-1.5 md:gap-3">
       <div className={`w-full rounded-[1.4rem] border-2 md:rounded-[2rem] md:border-4 ${accentBorder} bg-white/70 shadow-[0_18px_50px_rgba(15,23,42,0.16)] overflow-hidden relative`}>
@@ -49,6 +57,8 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
               <div className="absolute inset-0 opacity-95" style={{ backgroundImage: `url(${profileContainerAsset})`, backgroundSize: '100% 100%' }} />
               <AnimatedAvatar
                 avatar={avatar}
+                pose={avatarPose}
+                frameDurationMs={1020}
                 className="relative z-10 h-full w-full"
                 imageClassName="object-bottom scale-[1.18] translate-y-[6%]"
               />
