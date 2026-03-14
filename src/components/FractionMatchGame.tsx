@@ -387,7 +387,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
         ? 'Tap the fraction cards in ascending order to stabilise the Crystal Core.'
         : 'Swap adjacent tiles to line up three equivalent values and trigger crystal powers.',
     );
-  }, [levelId, setBoardState]);
+  }, [isBoss, levelId, setBoardState]);
 
   useEffect(() => {
     resetGame();
@@ -520,6 +520,69 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
     void attemptSwap(selectedTile, position);
   };
 
+  const prepareNextBossChallenge = useCallback(() => {
+    setBossCards(createBossSortChallenge(levelId >= 5 ? 4 : 3));
+    setBossSelection([]);
+    setBossFeedback(null);
+  }, [levelId]);
+
+  const handleBossCardTap = useCallback((card: FractionOrderCard) => {
+    if (!isBoss || isResolving || isGameOver || isVictory || bossFeedback) return;
+    if (bossSelection.includes(card.id)) return;
+
+    triggerHaptic('selection');
+    const nextSelection = [...bossSelection, card.id];
+    setBossSelection(nextSelection);
+
+    if (nextSelection.length < bossCards.length) {
+      setStatusMessage(`Order locked: ${nextSelection.length}/${bossCards.length}. Keep going from smallest to largest.`);
+      return;
+    }
+
+    const orderedCards = nextSelection
+      .map((id) => bossCards.find((bossCard) => bossCard.id === id))
+      .filter((bossCard): bossCard is FractionOrderCard => Boolean(bossCard));
+    const expectedOrder = [...bossCards].sort((a, b) => a.value - b.value).map((bossCard) => bossCard.id);
+    const isCorrect = expectedOrder.every((id, index) => id === nextSelection[index]);
+
+    if (isCorrect) {
+      const points = 180 + (combo * 28);
+      const total = awardPoints(points);
+      setCombo((prev) => prev + 1);
+      setBossFeedback('correct');
+      setStatusMessage(`Core stabilised. +${points}`);
+      triggerHaptic('success');
+      confetti({
+        particleCount: 40,
+        spread: 46,
+        origin: { y: 0.72 },
+        colors: ['#a78bfa', '#67e8f9', '#fde68a'],
+      });
+
+      if (total >= targetScore) {
+        setTimeout(() => finishLevel(total), 520);
+        return;
+      }
+
+      window.setTimeout(() => {
+        prepareNextBossChallenge();
+        setStatusMessage('Tap the fraction cards in ascending order to stabilise the Crystal Core.');
+      }, 650);
+      return;
+    }
+
+    setBossFeedback('incorrect');
+    setCombo(0);
+    setTimeLeft((prev) => Math.max(0, prev - 4));
+    setStatusMessage(`Not quite. ${orderedCards.map((bossCard) => bossCard.label).join(' -> ')} is out of order.`);
+    triggerHaptic('warning');
+    window.setTimeout(() => {
+      setBossSelection([]);
+      setBossFeedback(null);
+      setStatusMessage('Try again. Start with the smallest fraction.');
+    }, 850);
+  }, [awardPoints, bossCards, bossFeedback, bossSelection, combo, finishLevel, isBoss, isGameOver, isResolving, isVictory, prepareNextBossChallenge, targetScore]);
+
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden bg-[radial-gradient(circle_at_top,#5b3b1a_0%,#23130b_28%,#120d0d_58%,#050608_100%)] px-2 pb-2 pt-1 md:px-4 md:pb-4">
       <img
@@ -533,7 +596,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
 
       <div className="relative z-10 flex h-full min-h-0 flex-col gap-2 md:gap-4">
         <GameplayHUD
-          title="Crystal Match"
+          title={isBoss ? 'Crystal Core' : 'Crystal Match'}
           avatar={avatar}
           score={score}
           targetScore={targetScore}
@@ -544,8 +607,8 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
           accentSoftBg="bg-amber-100/85"
           accentBorder="border-amber-200/90"
           progressBar="bg-gradient-to-r from-lime-300 via-amber-300 to-orange-400"
-          statLabel="Combo"
-          statValue={combo}
+          statLabel={isBoss ? 'Solved' : 'Combo'}
+          statValue={isBoss ? combo : combo}
         />
 
         <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] border border-[#f7d98c]/16 bg-[linear-gradient(180deg,rgba(255,248,220,0.08),rgba(255,255,255,0.01))] p-2 shadow-[0_28px_60px_rgba(0,0,0,0.42)] md:rounded-[2.6rem] md:p-4">
