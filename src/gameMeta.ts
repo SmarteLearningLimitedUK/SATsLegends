@@ -164,15 +164,15 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   angle_arena: {
-    label: 'Angle Arena',
-    focus: 'Angles',
+    label: 'Angle Siege',
+    focus: 'Angles, missing angles and angle reasoning',
     rules: {
-      title: 'Angle Arena',
-      summary: 'Aim for the target angle as accurately as possible.',
+      title: 'Angle Siege',
+      summary: 'Pull back the protractor sling and launch at the correct angle to shatter the target.',
       bullets: [
-        'Compare the target with the live angle indicator.',
-        'Closer answers score more points.',
-        'Tight streaks unlock the best star ratings.',
+        'Some rounds ask for a direct angle, while others hide the answer inside a geometry clue.',
+        'Release the sling as close as you can to the correct target angle.',
+        'Final rounds can turn missing-angle maths into the boss shot itself.',
       ],
     },
   },
