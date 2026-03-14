@@ -38,6 +38,8 @@ import {
 } from './gameHudEvents';
 import { triggerHaptic } from './haptics';
 import splashPoster from './assets/splash.png';
+import splashButtonBase from './assets/fantasy_hero/buttons/primary_yellow.png';
+import splashButtonDeco from './assets/fantasy_hero/buttons/primary_deco.png';
 
 const PLAYER_STORAGE_KEY = 'maths_quest_player';
 const ALL_ISLAND_IDS = ISLANDS.map(island => island.id);
@@ -491,23 +493,36 @@ const App: React.FC = () => {
     switch (screen) {
       case 'splash':
         return (
-          <div className="relative my-auto flex h-full max-h-full w-full max-w-[34rem] items-center justify-center overflow-hidden px-3 py-3 sm:px-4 md:max-w-[38rem] md:py-6">
-            <motion.button
+          <div className="relative h-full w-full overflow-hidden">
+            <motion.img
               initial={{ opacity: 0, scale: 0.985 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.45, ease: 'easeOut' }}
-              whileTap={{ scale: 0.992 }}
-              onClick={handleStartAdventure}
-              aria-label={hasCompletedProfile ? 'Continue adventure' : 'Start adventure'}
-              className="relative h-full w-full overflow-hidden rounded-[2.4rem] bg-slate-950 shadow-[0_26px_80px_rgba(2,6,23,0.52)] md:rounded-[3.2rem]"
-            >
-              <img
-                src={splashPoster}
-                alt="Sats Hero splash screen"
-                className="h-full w-full object-contain"
-                draggable={false}
-              />
-            </motion.button>
+              src={splashPoster}
+              alt="Sats Hero splash screen"
+              className="absolute inset-0 h-full w-full object-cover"
+              draggable={false}
+            />
+
+            <div className="absolute inset-0 flex items-end justify-center pb-[max(7.5rem,12vh)] md:pb-[max(8.5rem,13vh)]">
+              <motion.button
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleStartAdventure}
+                aria-label={hasCompletedProfile ? 'Continue adventure' : 'Start adventure'}
+                className="relative inline-flex h-[4.5rem] w-[15rem] items-center justify-center text-lg font-black uppercase tracking-[0.16em] text-white drop-shadow-[0_2px_0_rgba(0,0,0,0.34)] md:h-[5.2rem] md:w-[18rem] md:text-xl"
+                style={{
+                  backgroundImage: `url(${splashButtonDeco}), url(${splashButtonBase})`,
+                  backgroundPosition: 'center, center',
+                  backgroundRepeat: 'no-repeat, no-repeat',
+                  backgroundSize: '100% 100%, 100% 100%',
+                  textShadow: '0 2px 0 rgba(0,0,0,0.34)',
+                  filter: 'drop-shadow(0 12px 24px rgba(120,53,15,0.32))',
+                }}
+              >
+                <span className="relative">{hasCompletedProfile ? 'Continue' : "Let's Go"}</span>
+              </motion.button>
+            </div>
           </div>
         );
       case 'profile_setup':
@@ -582,15 +597,16 @@ const App: React.FC = () => {
   };
 
   const showBottomNav = ['world_map', 'avatar_selection', 'parent_dashboard'].includes(screen);
+  const isSplashScreen = screen === 'splash';
   const isWideScreenScene = ['world_map', 'island_levels', 'gameplay', 'parent_dashboard'].includes(screen);
-  const showCompactShell = !isWideScreenScene;
+  const showCompactShell = !isWideScreenScene && !isSplashScreen;
   const bottomNavOffsetClass = showBottomNav
     ? 'pb-[calc(6.75rem+env(safe-area-inset-bottom))] md:pb-[calc(7.25rem+env(safe-area-inset-bottom))]'
     : '';
 
   return (
-    <div className={`app-viewport relative w-full flex flex-col items-center overflow-hidden ${isWideScreenScene ? 'licensed-playfield-bg bg-slate-950 pb-[env(safe-area-inset-bottom)]' : 'licensed-shell-bg p-3 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] md:p-8'}`}>
-      <div className="soft-vignette" />
+    <div className={`app-viewport relative w-full flex flex-col items-center overflow-hidden ${isSplashScreen ? '' : isWideScreenScene ? 'licensed-playfield-bg bg-slate-950 pb-[env(safe-area-inset-bottom)]' : 'licensed-shell-bg p-3 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] md:p-8'}`}>
+      {!isSplashScreen && <div className="soft-vignette" />}
       {showCompactShell && (
         <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-40 bg-gradient-to-b from-cyan-300/8 via-sky-300/4 to-transparent" />
       )}
@@ -601,7 +617,7 @@ const App: React.FC = () => {
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 1.02 }}
-          className={`relative z-10 flex min-h-0 w-full flex-1 justify-center overflow-hidden pointer-events-auto ${isWideScreenScene ? '' : 'mx-auto max-w-7xl items-stretch'} ${bottomNavOffsetClass}`}
+          className={`relative z-10 flex min-h-0 w-full flex-1 justify-center overflow-hidden pointer-events-auto ${isSplashScreen ? '' : isWideScreenScene ? '' : 'mx-auto max-w-7xl items-stretch'} ${bottomNavOffsetClass}`}
         >
           {renderScreen()}
         </motion.div>
@@ -652,7 +668,7 @@ const App: React.FC = () => {
       />
 
       {
-        !isWideScreenScene && (
+        !isWideScreenScene && !isSplashScreen && (
           <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
             <div className="cloud w-64 h-24 top-20" style={{ animationDuration: '25s' }} />
             <div className="cloud w-48 h-16 top-40" style={{ animationDuration: '40s', animationDelay: '-10s' }} />
