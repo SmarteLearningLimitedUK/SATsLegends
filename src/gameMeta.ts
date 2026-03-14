@@ -216,13 +216,13 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   tower_of_factors: {
-    label: 'Tower Of Factors',
-    focus: 'Factors and multiples',
+    label: 'Factor Forge',
+    focus: 'Factors, multiples and factor fluency',
     mode: 'boss',
     rules: makeBossRules(
-      'Tower Of Factors',
-      'Climb the summit of Lush Grove by beating the island boss with sharp factors and multiples knowledge.',
-      'Wrong choices strengthen the brute, so clean number fluency matters.'
+      'Factor Forge',
+      'Smash the correct factor enemies in the forge before they overrun your line.',
+      'Wrong hits cost hearts, so speed matters only when your factor fluency is solid.'
     ),
   },
   measurement_forge: {

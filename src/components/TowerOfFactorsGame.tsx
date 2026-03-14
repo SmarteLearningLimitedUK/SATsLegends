@@ -24,6 +24,23 @@ interface FactorProblem {
   options: number[];
 }
 
+const MAX_HEARTS = 4;
+
+const FORGE_POSITIONS = [
+  { top: '18%', left: '17%' },
+  { top: '21%', left: '61%' },
+  { top: '43%', left: '10%' },
+  { top: '40%', left: '39%' },
+  { top: '52%', left: '70%' },
+  { top: '60%', left: '28%' },
+  { top: '68%', left: '52%' },
+  { top: '30%', left: '79%' },
+  { top: '63%', left: '80%' },
+  { top: '33%', left: '25%' },
+  { top: '48%', left: '55%' },
+  { top: '74%', left: '12%' },
+] as const;
+
 const generateFactorProblem = (levelId: number): FactorProblem => {
   const maxTarget = levelId === 1 ? 24 : levelId === 2 ? 48 : levelId === 3 ? 72 : 100;
   const minTarget = levelId === 1 ? 12 : 24;
@@ -97,6 +114,8 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
   const [streak, setStreak] = useState(0);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
   const [shake, setShake] = useState(false);
+  const [hearts, setHearts] = useState(MAX_HEARTS);
+  const [statusMessage, setStatusMessage] = useState('Tap every true factor before the forge line breaks.');
 
   const avatar = AVATARS.find(item => item.id === avatarId) || AVATARS[0];
   const targetScore = 800 + (levelId * 200);
@@ -121,7 +140,9 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
     setIsGameOver(false);
     setIsVictory(false);
     setStreak(0);
+    setHearts(MAX_HEARTS);
     setTower([]);
+    setStatusMessage('Tap every true factor before the forge line breaks.');
     setProblem(generateFactorProblem(levelId));
   }, [levelId]);
 
@@ -170,6 +191,7 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
       triggerHaptic('selection');
       setFeedback('correct');
       setTower(prev => [...prev, num]);
+      setStatusMessage(`${num} is a factor of ${problem.target}. Smash the next one.`);
 
       const points = 50 + (streak * 10);
       setScore(prev => prev + points);
@@ -188,6 +210,7 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
           setProblem(generateFactorProblem(levelId));
           setTower([]);
           setFeedback(null);
+          setStatusMessage('New target forged. Tap every true factor before the timer runs out.');
         }, 1500);
       } else {
         setTimeout(() => setFeedback(null), 450);
@@ -198,12 +221,22 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
       setShake(true);
       setStreak(0);
       setScore(prev => Math.max(0, prev - 20));
+      const nextHearts = hearts - 1;
+      setHearts(nextHearts);
+      setStatusMessage(`${num} is not a factor. The forge takes damage.`);
 
       setTimeout(() => {
         setTower([]);
         setShake(false);
         setFeedback(null);
       }, 1000);
+
+      if (nextHearts <= 0) {
+        setTimeout(() => {
+          setIsGameOver(true);
+          onGameOver(score);
+        }, 250);
+      }
     }
   };
 
@@ -238,123 +271,133 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
 
       <div className="z-10 flex h-full min-h-0 w-full max-w-5xl flex-1 flex-col items-center gap-2 md:gap-4">
         <GameplayHUD
-          title="Tower of Factors"
+          title="Factor Forge"
           avatar={avatar}
           score={score}
           targetScore={targetScore}
           timeLeft={timeLeft}
           progress={progress}
           compact
-          accentText="text-slate-900"
-          accentSoftBg="bg-slate-100/80"
-          accentBorder="border-slate-200/80"
-          progressBar="bg-gradient-to-r from-slate-400 via-blue-400 to-indigo-500"
-          statLabel="Streak"
+          accentText="text-amber-950"
+          accentSoftBg="bg-amber-100/80"
+          accentBorder="border-amber-200/80"
+          progressBar="bg-gradient-to-r from-yellow-300 via-orange-400 to-red-500"
+          statLabel="Combo"
           statValue={streak}
         />
 
-        <div className="relative grid w-full flex-1 min-h-0 grid-rows-[minmax(0,0.95fr)_minmax(0,1.05fr)] gap-2 md:grid-cols-[minmax(0,1.04fr)_minmax(0,0.96fr)] md:grid-rows-1 md:gap-4">
+        <div className="relative w-full flex-1 min-h-0">
           {problem && (
-            <>
-              <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] border-2 border-sky-200/12 bg-[linear-gradient(180deg,rgba(14,24,46,0.86),rgba(8,18,34,0.94))] shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_22px_40px_rgba(2,6,23,0.26)]">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_22%_18%,rgba(56,189,248,0.16),transparent_24%),radial-gradient(circle_at_80%_14%,rgba(167,139,250,0.14),transparent_22%),linear-gradient(180deg,rgba(255,255,255,0.04),transparent_30%,rgba(15,23,42,0.18)_100%)]" />
-                <div className="absolute inset-x-[12%] top-[14%] h-[18%] rounded-full bg-white/6 blur-3xl" />
-                <div className="absolute bottom-[10%] left-1/2 h-[62%] w-[8rem] -translate-x-1/2 rounded-[2rem] border border-cyan-100/8 bg-white/[0.03] md:w-[10.5rem]" />
-                <div className="relative z-10 flex h-full flex-col p-3 md:p-5">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="rounded-[1.3rem] border border-white/12 bg-slate-950/34 px-3 py-2.5 backdrop-blur-md shadow-[0_10px_24px_rgba(2,6,23,0.2)]">
-                      <div className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-300/72 md:text-xs">Build The Tower</div>
-                      <div className="mt-1 flex items-end gap-2">
-                        <span className="text-4xl font-black leading-none text-lime-300 drop-shadow-[0_8px_20px_rgba(163,230,53,0.22)] md:text-6xl">{problem.target}</span>
-                        <span className="pb-1 text-[10px] font-bold uppercase tracking-[0.16em] text-cyan-100/60 md:text-xs">Target</span>
-                      </div>
-                      <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-100/60 md:text-xs">
-                        {tower.length}/{towerGoal} factors found
+            <div className="relative h-full overflow-hidden rounded-[2rem] border border-orange-200/14 bg-[linear-gradient(180deg,rgba(54,19,10,0.88),rgba(17,10,10,0.96))] shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_28px_60px_rgba(0,0,0,0.4)] md:rounded-[2.6rem]">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(251,146,60,0.26),transparent_24%),linear-gradient(180deg,rgba(255,255,255,0.04),transparent_30%,rgba(0,0,0,0.24)_100%)]" />
+              <div className="absolute inset-x-[26%] top-[14%] h-[26%] rounded-full bg-orange-300/16 blur-3xl" />
+              <div className="absolute inset-x-0 bottom-0 h-[42%] bg-[linear-gradient(180deg,rgba(0,0,0,0),rgba(15,23,42,0.3)_12%,rgba(28,12,6,0.86)_100%)]" />
+
+              <div className="relative z-10 flex h-full flex-col p-3 md:p-5">
+                <div className="grid grid-cols-[1fr_auto] items-start gap-3">
+                  <div className="rounded-[1.25rem] border border-white/10 bg-black/20 px-3 py-2.5 shadow-[0_12px_24px_rgba(0,0,0,0.22)]">
+                    <div className="flex items-center gap-1.5">
+                      {Array.from({ length: MAX_HEARTS }).map((_, index) => (
+                        <div key={index} className={`h-6 w-6 rounded-full ${index < hearts ? 'bg-[radial-gradient(circle_at_30%_25%,#fca5a5,#ef4444_58%,#991b1b)] shadow-[0_6px_12px_rgba(239,68,68,0.35)]' : 'bg-white/10'} md:h-7 md:w-7`} />
+                      ))}
+                    </div>
+                    <div className="mt-2 rounded-[1rem] border border-amber-200/20 bg-[linear-gradient(180deg,rgba(251,146,60,0.92),rgba(194,65,12,0.98))] px-3 py-2 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_12px_20px_rgba(120,53,15,0.28)]">
+                      <div className="flex items-center justify-between gap-2 text-amber-50">
+                        <span className="text-[0.68rem] font-black uppercase tracking-[0.16em] md:text-[0.82rem]">Combo x{Math.max(streak, 1)}</span>
+                        <span className="text-[1.15rem] font-black md:text-[2rem]">Target: {problem.target}</span>
                       </div>
                     </div>
+                  </div>
 
+                  <div className="flex flex-col items-end gap-2">
+                    <div className="rounded-[1.1rem] border border-white/10 bg-slate-950/46 px-4 py-2 text-center shadow-[0_12px_22px_rgba(0,0,0,0.24)]">
+                      <div className="text-2xl font-black text-white md:text-4xl">{timeLeft}s</div>
+                    </div>
                     {bossEncounter && (
-                      <div className="w-24 shrink-0 md:w-36">
+                      <div className="w-20 md:w-28">
                         <BossPortrait encounter={bossEncounter} pose={bossPose} compact />
                       </div>
                     )}
                   </div>
+                </div>
 
-                  <div className="mt-3 flex flex-1 items-end justify-center">
-                    <motion.div
-                      className="relative z-10 flex w-28 flex-col-reverse items-center gap-1.5 sm:w-32 md:w-44 md:gap-2"
-                      animate={shake ? { x: [-10, 10, -10, 10, 0], rotate: [-5, 5, -5, 5, 0] } : {}}
-                      transition={{ duration: 0.5 }}
-                    >
-                      <div className="absolute bottom-[2.35rem] left-1/2 h-[55%] w-[86%] -translate-x-1/2 rounded-[1.6rem] border border-cyan-100/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))]" />
-                      <div className="absolute bottom-[2.35rem] left-1/2 h-[55%] w-[2px] -translate-x-1/2 bg-cyan-100/10" />
+                <div className="mt-2 text-center text-[0.72rem] font-black uppercase tracking-[0.16em] text-amber-100/82 md:text-sm">
+                  {statusMessage}
+                </div>
 
-                      <div className="relative flex h-8 w-40 items-center justify-center overflow-hidden rounded-[1rem] border border-amber-100/26 bg-[linear-gradient(180deg,rgba(120,53,15,0.98),rgba(68,32,12,0.98))] shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_10px_24px_rgba(68,32,12,0.34)] md:h-10 md:w-60">
-                        <div className="absolute inset-x-[10%] top-[18%] h-[24%] rounded-full bg-white/16 blur-[1px]" />
-                        <Castle className="h-5 w-5 text-amber-100/86 md:h-6 md:w-6" />
-                      </div>
+                <div className="relative mt-3 flex-1">
+                  {problem.options.map((option, index) => {
+                    const isSelected = tower.includes(option);
+                    const isCorrect = problem.factors.includes(option);
+                    const position = FORGE_POSITIONS[index % FORGE_POSITIONS.length];
+                    const variant = index % 4;
+                    const baseClass = variant === 0
+                      ? 'rounded-[1.1rem] border-lime-200/28 bg-[radial-gradient(circle_at_30%_22%,rgba(255,255,255,0.34),rgba(132,204,22,0.86)_40%,rgba(77,124,15,0.96)_100%)]'
+                      : variant === 1
+                        ? 'rounded-[1.4rem] border-orange-200/22 bg-[radial-gradient(circle_at_30%_22%,rgba(255,255,255,0.24),rgba(251,146,60,0.82)_40%,rgba(120,53,15,0.98)_100%)]'
+                        : variant === 2
+                          ? 'rounded-full border-sky-200/24 bg-[radial-gradient(circle_at_30%_22%,rgba(255,255,255,0.34),rgba(59,130,246,0.82)_40%,rgba(30,64,175,0.96)_100%)]'
+                          : 'rounded-[1.3rem] border-stone-300/18 bg-[linear-gradient(180deg,rgba(120,113,108,0.98),rgba(68,64,60,0.98))]';
 
-                      <AnimatePresence>
-                        {tower.map((num, index) => (
-                          <motion.div
-                            key={`${num}-${index}`}
-                            initial={{ y: -200, opacity: 0, scale: 0.5 }}
-                            animate={{ y: 0, opacity: 1, scale: 1 }}
-                            exit={{ y: 200, opacity: 0, rotate: Math.random() * 90 - 45 }}
-                            transition={{ type: 'spring', bounce: 0.42 }}
-                            className="relative flex h-10 w-full items-center justify-center overflow-hidden rounded-[0.95rem] border border-cyan-100/14 bg-[linear-gradient(180deg,rgba(192,132,252,0.94),rgba(96,165,250,0.92)_42%,rgba(30,64,175,0.94)_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.24),0_12px_24px_rgba(30,41,59,0.3)] md:h-14 md:rounded-[1.15rem]"
-                          >
-                            <div className="absolute inset-x-[14%] top-[14%] h-[24%] rounded-full bg-white/24 blur-[1px]" />
-                            <span className="text-xl font-black text-white drop-shadow-[0_6px_14px_rgba(15,23,42,0.42)] md:text-3xl">{num}</span>
-                          </motion.div>
-                        ))}
-                      </AnimatePresence>
-                    </motion.div>
+                    return (
+                      <motion.button
+                        key={index}
+                        onClick={() => handleSelect(option)}
+                        disabled={isSelected || !!feedback || isGameOver || isVictory}
+                        whileTap={{ scale: 0.96 }}
+                        animate={feedback === 'incorrect' && !isCorrect ? { x: [0, 2, -2, 0] } : { y: [0, -4, 0] }}
+                        transition={{ duration: feedback === 'incorrect' && !isCorrect ? 0.3 : 2.8 + (index * 0.08), repeat: feedback === 'incorrect' && !isCorrect ? 0 : Infinity, ease: 'easeInOut' }}
+                        className={`absolute flex h-16 w-16 items-center justify-center border-2 text-center shadow-[0_18px_26px_rgba(0,0,0,0.24)] transition-all md:h-24 md:w-24 ${baseClass} ${
+                          isSelected ? 'scale-[0.92] opacity-25 grayscale' : 'hover:scale-[1.03]'
+                        }`}
+                        style={{ top: position.top, left: position.left }}
+                      >
+                        <span className="text-3xl font-black text-amber-50 drop-shadow-[0_4px_0_rgba(41,24,14,0.8)] md:text-5xl">{option}</span>
+                        {feedback === 'incorrect' && !isCorrect && (
+                          <span className="absolute -right-2 -bottom-2 text-2xl font-black text-red-500 md:text-4xl">x</span>
+                        )}
+                      </motion.button>
+                    );
+                  })}
+
+                  <AnimatePresence>
+                    {tower.slice(-2).map((num, index) => (
+                      <motion.div
+                        key={`${num}-${index}-forge-hit`}
+                        initial={{ scale: 0.5, opacity: 0, y: 40 }}
+                        animate={{ scale: 1, opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute left-1/2 z-20 flex h-16 w-16 -translate-x-1/2 items-center justify-center rounded-[1rem] border border-amber-200/22 bg-[radial-gradient(circle_at_30%_22%,rgba(255,255,255,0.3),rgba(251,191,36,0.9)_40%,rgba(194,65,12,0.98)_100%)] shadow-[0_0_24px_rgba(251,191,36,0.4)] md:h-24 md:w-24"
+                        style={{ bottom: `${18 + index * 14}%` }}
+                      >
+                        <span className="text-3xl font-black text-amber-50 drop-shadow-[0_4px_0_rgba(120,53,15,0.9)] md:text-5xl">{num}</span>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+
+                <div className="relative mt-2 flex items-end justify-between">
+                  <div className="hidden rounded-[1rem] border border-white/10 bg-black/16 px-3 py-2 text-left md:block">
+                    <div className="text-[0.62rem] font-black uppercase tracking-[0.16em] text-orange-100/70">Forged Factors</div>
+                    <div className="mt-1 text-lg font-black text-amber-50">{tower.length}/{towerGoal}</div>
+                  </div>
+
+                  <div className="relative mx-auto flex h-24 w-24 items-end justify-center md:h-32 md:w-32">
+                    <div className="absolute bottom-2 h-7 w-24 rounded-full bg-orange-500/30 blur-xl md:h-10 md:w-32" />
+                    <div className="absolute bottom-0 h-14 w-24 rounded-[1rem] border border-stone-400/26 bg-[linear-gradient(180deg,rgba(71,85,105,0.96),rgba(51,65,85,0.98))] shadow-[0_16px_26px_rgba(0,0,0,0.28)] md:h-20 md:w-32 md:rounded-[1.3rem]" />
+                    <div className="absolute bottom-8 z-10 flex h-16 w-16 items-center justify-center rounded-[1rem] border border-amber-200/18 bg-[radial-gradient(circle_at_30%_22%,rgba(255,255,255,0.22),rgba(251,191,36,0.9)_40%,rgba(194,65,12,0.98)_100%)] shadow-[0_0_28px_rgba(251,191,36,0.4)] md:bottom-12 md:h-20 md:w-20">
+                      <span className="text-3xl font-black text-amber-50 drop-shadow-[0_4px_0_rgba(120,53,15,0.9)] md:text-5xl">{problem.target}</span>
+                    </div>
+                    <Castle className="absolute bottom-2 h-6 w-6 text-amber-100/70 md:h-8 md:w-8" />
+                  </div>
+
+                  <div className="rounded-[1rem] border border-white/10 bg-black/18 px-3 py-2 text-right shadow-[0_12px_22px_rgba(0,0,0,0.2)]">
+                    <div className="text-[0.62rem] font-black uppercase tracking-[0.16em] text-cyan-100/72">Remaining</div>
+                    <div className="mt-1 text-xl font-black text-cyan-100 md:text-3xl">{remainingFactors}</div>
                   </div>
                 </div>
               </div>
-
-              <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] border-2 border-indigo-200/12 bg-[linear-gradient(180deg,rgba(17,27,49,0.9),rgba(10,17,32,0.96))] shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_22px_40px_rgba(2,6,23,0.28)]">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_14%,rgba(125,211,252,0.1),transparent_20%),radial-gradient(circle_at_82%_10%,rgba(253,224,71,0.08),transparent_18%),linear-gradient(180deg,rgba(255,255,255,0.04),transparent_34%,rgba(15,23,42,0.18)_100%)]" />
-                <div className="relative z-10 flex h-full flex-col p-3 md:p-5">
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <div className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-300/72 md:text-xs">Choose The Stones</div>
-                      <h3 className="text-lg font-black text-white md:text-2xl">Tap only true factors</h3>
-                    </div>
-                    <div className="rounded-full border border-cyan-100/16 bg-cyan-400/10 px-3 py-2 text-center shadow-[0_8px_18px_rgba(14,165,233,0.12)]">
-                      <div className="text-[9px] font-black uppercase tracking-[0.18em] text-cyan-100/70 md:text-[10px]">Remaining</div>
-                      <div className="text-lg font-black text-cyan-100 md:text-2xl">{remainingFactors}</div>
-                    </div>
-                  </div>
-
-                  <div className="mt-3 grid min-h-0 flex-1 grid-cols-3 auto-rows-fr gap-2 md:gap-3">
-                    {problem.options.map((option, index) => {
-                      const isSelected = tower.includes(option);
-
-                      return (
-                        <button
-                          key={index}
-                          onClick={() => handleSelect(option)}
-                          disabled={isSelected || !!feedback}
-                          className={`
-                            relative flex h-full min-h-0 items-center justify-center overflow-hidden rounded-[1rem] border-2 transition-all md:rounded-[1.25rem]
-                            ${isSelected
-                              ? 'scale-[0.98] border-slate-300/18 bg-[linear-gradient(180deg,rgba(71,85,105,0.72),rgba(30,41,59,0.82))] opacity-55'
-                              : 'border-cyan-100/14 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(96,165,250,0.2)_42%,rgba(30,41,59,0.92)_100%)] hover:-translate-y-0.5 hover:border-cyan-100/30 hover:shadow-[0_16px_28px_rgba(59,130,246,0.18)] active:translate-y-0 active:shadow-[0_6px_14px_rgba(15,23,42,0.26)]'}
-                          `}
-                        >
-                          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_24%,rgba(255,255,255,0.22),transparent_34%)]" />
-                          <span className={`relative text-xl font-black drop-shadow-[0_6px_12px_rgba(15,23,42,0.4)] md:text-3xl ${isSelected ? 'text-slate-400' : 'text-white'}`}>
-                            {option}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </>
+            </div>
           )}
 
           <AnimatePresence>
