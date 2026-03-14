@@ -39,6 +39,9 @@ import {
 import { triggerHaptic } from './haptics';
 import splashBackground from './assets/fantasy_hero/demo_bg/background_01.png';
 import splashGlow from './assets/fantasy_hero/demo_fx/effect_light_01.png';
+import splashGlowSecondary from './assets/fantasy_hero/demo_fx/effect_light_02.png';
+import splashOrb from './assets/fantasy_hero/demo_fx/glow_circle_02.png';
+import splashLine from './assets/fantasy_hero/title/line.png';
 
 const PLAYER_STORAGE_KEY = 'maths_quest_player';
 const ALL_ISLAND_IDS = ISLANDS.map(island => island.id);
@@ -497,6 +500,12 @@ const App: React.FC = () => {
             <div className="absolute inset-0 -z-30 rounded-[2.7rem] bg-[linear-gradient(180deg,rgba(3,9,19,0.06),rgba(3,9,19,0.48)_34%,rgba(2,6,23,0.92)_100%)] pointer-events-none md:rounded-[3.4rem]" />
             <div className="absolute inset-0 -z-20 rounded-[2.7rem] bg-[radial-gradient(circle_at_top,rgba(255,241,196,0.22)_0%,rgba(34,211,238,0.08)_24%,rgba(2,6,23,0)_48%),radial-gradient(circle_at_bottom,rgba(96,165,250,0.18)_0%,rgba(249,115,22,0.05)_22%,rgba(2,6,23,0)_48%)] pointer-events-none md:rounded-[3.4rem]" />
             <div className="absolute inset-x-[8%] top-0 -z-10 h-[44%] bg-center bg-no-repeat opacity-80 blur-sm pointer-events-none" style={{ backgroundImage: `url(${splashGlow})`, backgroundSize: 'min(44rem, 88vw)' }} />
+            <motion.div
+              animate={{ opacity: [0.28, 0.68, 0.28], scale: [0.96, 1.08, 0.96] }}
+              transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+              className="absolute inset-x-[2%] top-[10%] -z-10 h-[54%] bg-center bg-no-repeat pointer-events-none"
+              style={{ backgroundImage: `url(${splashGlowSecondary})`, backgroundSize: 'min(48rem, 96vw)' }}
+            />
             <div className="absolute inset-x-0 bottom-0 -z-10 h-[28%] bg-[linear-gradient(180deg,rgba(7,12,24,0),rgba(7,12,24,0.9))] pointer-events-none" />
 
             <motion.div
@@ -504,6 +513,56 @@ const App: React.FC = () => {
               transition={{ duration: 7.5, repeat: Infinity, ease: 'easeInOut' }}
               className="absolute left-1/2 top-[34%] -z-10 h-[18rem] w-[18rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(251,191,36,0.32)_0%,rgba(56,189,248,0.18)_34%,rgba(2,6,23,0)_72%)] blur-2xl pointer-events-none md:h-[30rem] md:w-[30rem]"
             />
+
+            {[18, 34, 50, 66, 82].map((left, index) => (
+              <motion.div
+                key={`beam-${left}`}
+                animate={{ opacity: [0.08, 0.24, 0.08], y: [0, -10, 0] }}
+                transition={{ duration: 4.2 + index * 0.45, repeat: Infinity, delay: index * 0.3 }}
+                className="pointer-events-none absolute top-[2%] -z-10 h-[62%] w-[2px] origin-top rounded-full bg-[linear-gradient(180deg,rgba(125,211,252,0),rgba(125,211,252,0.9),rgba(125,211,252,0))] blur-[1px]"
+                style={{ left: `${left}%`, transform: `rotate(${index % 2 === 0 ? -10 : 10}deg)` }}
+              />
+            ))}
+
+            {[0, 1, 2].map(index => (
+              <motion.img
+                key={`orb-${index}`}
+                src={splashOrb}
+                alt=""
+                animate={{
+                  y: [0, -20 - index * 4, 0],
+                  x: [0, index % 2 === 0 ? 8 : -8, 0],
+                  opacity: [0.24, 0.55, 0.24],
+                  scale: [0.8, 1.05, 0.8],
+                }}
+                transition={{ duration: 5.6 + index, repeat: Infinity, delay: index * 0.7 }}
+                className="pointer-events-none absolute -z-10 w-20 blur-[1px] md:w-28"
+                style={{
+                  left: `${16 + index * 28}%`,
+                  top: `${58 - index * 7}%`,
+                }}
+              />
+            ))}
+
+            {[
+              { icon: 'doc', left: '12%', top: '59%', rotate: -18, duration: 7.2 },
+              { icon: 'star', left: '70%', top: '50%', rotate: 12, duration: 5.9 },
+              { icon: 'gem', left: '82%', top: '63%', rotate: 16, duration: 6.6 },
+            ].map(item => (
+              <motion.div
+                key={item.icon}
+                animate={{
+                  y: [0, -14, 0],
+                  rotate: [item.rotate, item.rotate + 6, item.rotate],
+                  opacity: [0.38, 0.76, 0.38],
+                }}
+                transition={{ duration: item.duration, repeat: Infinity, ease: 'easeInOut' }}
+                className="pointer-events-none absolute -z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white/6 backdrop-blur-sm md:h-14 md:w-14"
+                style={{ left: item.left, top: item.top }}
+              >
+                <AssetIcon name={item.icon as 'doc' | 'star' | 'gem'} className="h-7 w-7 text-white/90 md:h-8 md:w-8" />
+              </motion.div>
+            ))}
 
             {Array.from({ length: 10 }).map((_, index) => (
               <motion.div
@@ -526,6 +585,13 @@ const App: React.FC = () => {
 
             <div className="relative flex h-full w-full items-center justify-center px-2 py-8 md:px-6 md:py-12">
               <div className="casual-panel-strong relative flex w-full max-w-[22rem] flex-col items-center gap-8 rounded-[2.2rem] px-5 py-7 md:max-w-[32rem] md:rounded-[3rem] md:px-10 md:py-12">
+                <motion.img
+                  src={splashLine}
+                  alt=""
+                  animate={{ opacity: [0.45, 0.95, 0.45], scaleX: [0.96, 1.02, 0.96] }}
+                  transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }}
+                  className="pointer-events-none absolute left-1/2 top-5 w-[76%] -translate-x-1/2 opacity-80 md:top-7"
+                />
                 <div className="pointer-events-none flex w-full justify-center">
                   <div className="fantasy-title-plaque px-5 py-2 md:px-8 md:py-3">
                     <div className="flex items-center justify-center gap-2 md:gap-3">
@@ -562,6 +628,11 @@ const App: React.FC = () => {
                   onClick={handleStartAdventure}
                   className="fantasy-cta-button group relative inline-flex min-w-[15rem] items-center justify-center overflow-hidden px-8 py-3 text-base uppercase tracking-[0.18em] md:min-w-[18rem] md:px-12 md:py-4 md:text-lg"
                 >
+                  <motion.span
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
+                    className="pointer-events-none absolute left-4 top-1/2 h-7 w-7 -translate-y-1/2 rounded-full border border-white/25"
+                  />
                   <span className="absolute inset-y-0 left-[-20%] w-16 rotate-[18deg] bg-white/35 blur-md transition-transform duration-700 group-hover:translate-x-[420%]" />
                   <span className="relative">{hasCompletedProfile ? 'Welcome' : 'Select Character'}</span>
                 </motion.button>
