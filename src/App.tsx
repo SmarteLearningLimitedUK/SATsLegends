@@ -506,13 +506,13 @@ const App: React.FC = () => {
                 whileHover={{ scale: 1.025, y: -3 }}
                 whileTap={{ scale: 0.985, y: 1 }}
                 onClick={handleStartAdventure}
-                aria-label={hasCompletedProfile ? 'Continue adventure' : 'Start adventure'}
+                aria-label="Let's Go!"
                 className="splash-continue-button"
               >
                 <span className="splash-continue-button-face">
                   <span className="splash-continue-button-flare" />
                   <span className="splash-continue-button-label">
-                    {hasCompletedProfile ? 'Continue' : "Let's Go"}
+                    Let's Go!
                   </span>
                 </span>
               </motion.button>
