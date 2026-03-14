@@ -629,8 +629,11 @@ const App: React.FC = () => {
   const isSplashScreen = screen === 'splash';
   const isWideScreenScene = ['world_map', 'island_levels', 'gameplay', 'parent_dashboard'].includes(screen);
   const showCompactShell = !isWideScreenScene && !isSplashScreen;
+  const isWorldMapScreen = screen === 'world_map';
   const bottomNavOffsetClass = showBottomNav
-    ? 'pb-[calc(6.75rem+env(safe-area-inset-bottom))] md:pb-[calc(7.25rem+env(safe-area-inset-bottom))]'
+    ? isWorldMapScreen
+      ? 'pb-[calc(6.75rem+env(safe-area-inset-bottom))] md:pb-[calc(2.4rem+env(safe-area-inset-bottom))]'
+      : 'pb-[calc(6.75rem+env(safe-area-inset-bottom))] md:pb-[calc(7.25rem+env(safe-area-inset-bottom))]'
     : '';
 
   return (
@@ -706,13 +709,25 @@ const App: React.FC = () => {
 
       {
         showBottomNav && (
-          <div className="pointer-events-none fixed inset-x-0 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-50 flex justify-center px-3 md:bottom-6">
-            <div className="pointer-events-auto flex w-full max-w-3xl flex-col items-center gap-2 md:gap-3">
-              <div className="casual-ribbon-chip hidden items-center gap-2 rounded-full px-3 py-1.5 shadow-[0_12px_30px_rgba(0,0,0,0.22)] md:inline-flex md:px-4 md:py-2">
+          <div className={`pointer-events-none fixed inset-x-0 z-50 flex justify-center px-3 ${
+            isWorldMapScreen
+              ? 'bottom-[calc(0.75rem+env(safe-area-inset-bottom))] md:bottom-[calc(1rem+env(safe-area-inset-bottom))]'
+              : 'bottom-[calc(0.75rem+env(safe-area-inset-bottom))] md:bottom-6'
+          }`}>
+            <div className={`pointer-events-auto flex w-full max-w-3xl flex-col items-center ${
+              isWorldMapScreen ? 'gap-2 md:gap-1' : 'gap-2 md:gap-3'
+            }`}>
+              <div className={`casual-ribbon-chip hidden items-center gap-2 rounded-full px-3 py-1.5 shadow-[0_12px_30px_rgba(0,0,0,0.22)] md:px-4 md:py-2 ${
+                isWorldMapScreen ? 'lg:inline-flex' : 'md:inline-flex'
+              }`}>
                 <AssetIcon name="star" className="h-4 w-4" />
                 <span className="text-[9px] font-black uppercase tracking-[0.24em] md:text-[10px]">Adventure mode</span>
               </div>
-              <nav className="casual-nav-shell flex w-full max-w-[28rem] items-center justify-between rounded-[2rem] px-2 py-2 md:max-w-3xl md:px-4 md:py-3">
+              <nav className={`casual-nav-shell flex w-full items-center justify-between rounded-[2rem] px-2 py-2 ${
+                isWorldMapScreen
+                  ? 'max-w-[28rem] md:max-w-[32rem] md:px-3 md:py-2.5'
+                  : 'max-w-[28rem] md:max-w-3xl md:px-4 md:py-3'
+              }`}>
                 <motion.button
                   whileTap={{ scale: 0.96, y: 1 }}
                   onClick={goToHome}

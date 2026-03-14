@@ -18,6 +18,24 @@ type IslandHotspot = {
   labelY: number;
 };
 
+type AmbientRegion = {
+  id: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  effect:
+    | 'butterflies'
+    | 'sparkles'
+    | 'birds'
+    | 'light-beams'
+    | 'stars'
+    | 'dust-devils'
+    | 'blizzard'
+    | 'wind-wisps'
+    | 'lava-spurts';
+};
+
 const ISLAND_HOTSPOTS: Record<number, IslandHotspot> = {
   1: { x: 69, y: 82, width: 24, height: 15, labelX: 69, labelY: 91 },
   2: { x: 27, y: 37, width: 27, height: 17, labelX: 27, labelY: 46 },
@@ -25,6 +43,201 @@ const ISLAND_HOTSPOTS: Record<number, IslandHotspot> = {
   4: { x: 69, y: 59, width: 23, height: 15, labelX: 69, labelY: 68 },
   5: { x: 73, y: 36, width: 25, height: 16, labelX: 73, labelY: 45 },
   6: { x: 28, y: 59, width: 27, height: 16, labelX: 28, labelY: 68 },
+};
+
+const MAP_AMBIENTS: AmbientRegion[] = [
+  { id: 'lava-island', x: 26, y: 16, width: 20, height: 16, effect: 'lava-spurts' },
+  { id: 'wind-island', x: 72, y: 16, width: 20, height: 16, effect: 'wind-wisps' },
+  { id: 'ice-island', x: 28, y: 37, width: 22, height: 17, effect: 'blizzard' },
+  { id: 'crystal-refract', x: 28, y: 34, width: 20, height: 14, effect: 'light-beams' },
+  { id: 'ruins-island', x: 73, y: 36, width: 22, height: 17, effect: 'dust-devils' },
+  { id: 'lush-grove', x: 29, y: 59, width: 22, height: 16, effect: 'butterflies' },
+  { id: 'desert-oasis', x: 69, y: 59, width: 22, height: 16, effect: 'birds' },
+  { id: 'magic-forest', x: 28, y: 82, width: 20, height: 18, effect: 'sparkles' },
+  { id: 'starlight-city', x: 69, y: 82, width: 22, height: 17, effect: 'stars' },
+];
+
+const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
+  switch (effect) {
+    case 'butterflies':
+      return (
+        <>
+          {[
+            { left: '18%', top: '28%', delay: '0s', duration: '5.4s' },
+            { left: '44%', top: '16%', delay: '1.1s', duration: '6.1s' },
+            { left: '68%', top: '24%', delay: '2s', duration: '5.8s' },
+          ].map((item, index) => (
+            <span
+              key={`butterfly-${index}`}
+              className="world-map-butterfly"
+              style={{ left: item.left, top: item.top, animationDelay: item.delay, animationDuration: item.duration }}
+            />
+          ))}
+        </>
+      );
+
+    case 'sparkles':
+      return (
+        <>
+          {[
+            { left: '28%', bottom: '10%', delay: '0s', duration: '4.8s' },
+            { left: '50%', bottom: '8%', delay: '1s', duration: '5.6s' },
+            { left: '68%', bottom: '14%', delay: '1.8s', duration: '5.2s' },
+          ].map((item, index) => (
+            <span
+              key={`bubble-${index}`}
+              className="world-map-bubble"
+              style={{ left: item.left, bottom: item.bottom, animationDelay: item.delay, animationDuration: item.duration }}
+            />
+          ))}
+          {[
+            { left: '34%', bottom: '36%', delay: '0.8s', duration: '3.6s' },
+            { left: '58%', bottom: '52%', delay: '1.6s', duration: '3.1s' },
+            { left: '46%', bottom: '70%', delay: '2.2s', duration: '3.8s' },
+          ].map((item, index) => (
+            <span
+              key={`sparkle-${index}`}
+              className="world-map-sparkle"
+              style={{ left: item.left, bottom: item.bottom, animationDelay: item.delay, animationDuration: item.duration }}
+            />
+          ))}
+        </>
+      );
+
+    case 'birds':
+      return (
+        <>
+          {[0, 1, 2].map(index => (
+            <span
+              key={`bird-${index}`}
+              className="world-map-orbit world-map-orbit-birds"
+              style={{ animationDelay: `${index * 1.2}s`, animationDuration: `${7.2 + index * 0.6}s` }}
+            >
+              <span className="world-map-bird" />
+            </span>
+          ))}
+        </>
+      );
+
+    case 'light-beams':
+      return (
+        <>
+          {[
+            { left: '26%', top: '8%', delay: '0s', duration: '4.2s', rotate: '-14deg' },
+            { left: '48%', top: '4%', delay: '1.3s', duration: '4.8s', rotate: '0deg' },
+            { left: '64%', top: '10%', delay: '2.1s', duration: '4.5s', rotate: '16deg' },
+          ].map((item, index) => (
+            <span
+              key={`beam-${index}`}
+              className="world-map-light-beam"
+              style={{
+                left: item.left,
+                top: item.top,
+                transform: `rotate(${item.rotate})`,
+                animationDelay: item.delay,
+                animationDuration: item.duration,
+              }}
+            />
+          ))}
+        </>
+      );
+
+    case 'stars':
+      return (
+        <>
+          {[0, 1, 2, 3].map(index => (
+            <span
+              key={`star-orbit-${index}`}
+              className="world-map-orbit world-map-orbit-stars"
+              style={{ animationDelay: `${index * 0.7}s`, animationDuration: `${6.4 + index * 0.5}s` }}
+            >
+              <span className="world-map-star" />
+            </span>
+          ))}
+        </>
+      );
+
+    case 'dust-devils':
+      return (
+        <>
+          {[
+            { left: '26%', bottom: '12%', delay: '0s', duration: '4.6s' },
+            { left: '52%', bottom: '16%', delay: '1.4s', duration: '5.1s' },
+            { left: '68%', bottom: '20%', delay: '2.2s', duration: '4.8s' },
+          ].map((item, index) => (
+            <span
+              key={`dust-${index}`}
+              className="world-map-dust-devil"
+              style={{ left: item.left, bottom: item.bottom, animationDelay: item.delay, animationDuration: item.duration }}
+            />
+          ))}
+        </>
+      );
+
+    case 'blizzard':
+      return (
+        <>
+          {[0, 1, 2, 3, 4, 5].map(index => (
+            <span
+              key={`snow-${index}`}
+              className="world-map-snowflake"
+              style={{
+                left: `${14 + index * 12}%`,
+                top: `${10 + (index % 3) * 18}%`,
+                animationDelay: `${index * 0.55}s`,
+                animationDuration: `${3.8 + (index % 3) * 0.5}s`,
+              }}
+            />
+          ))}
+          {[0, 1, 2].map(index => (
+            <span
+              key={`gust-${index}`}
+              className="world-map-snow-gust"
+              style={{
+                left: `${18 + index * 18}%`,
+                top: `${22 + index * 12}%`,
+                animationDelay: `${index * 0.9}s`,
+                animationDuration: `${3.4 + index * 0.4}s`,
+              }}
+            />
+          ))}
+        </>
+      );
+
+    case 'wind-wisps':
+      return (
+        <>
+          {[
+            { left: '22%', top: '24%', delay: '0s', duration: '4.6s' },
+            { left: '48%', top: '16%', delay: '1.3s', duration: '5.1s' },
+            { left: '58%', top: '38%', delay: '2.1s', duration: '4.4s' },
+          ].map((item, index) => (
+            <span
+              key={`wisp-${index}`}
+              className="world-map-wind-wisp"
+              style={{ left: item.left, top: item.top, animationDelay: item.delay, animationDuration: item.duration }}
+            />
+          ))}
+        </>
+      );
+
+    case 'lava-spurts':
+      return (
+        <>
+          {[
+            { left: '28%', bottom: '22%', delay: '0s', duration: '3.6s' },
+            { left: '48%', bottom: '28%', delay: '1.1s', duration: '4.1s' },
+            { left: '66%', bottom: '20%', delay: '2s', duration: '3.8s' },
+          ].map((item, index) => (
+            <span
+              key={`lava-${index}`}
+              className="world-map-lava-spurt"
+              style={{ left: item.left, bottom: item.bottom, animationDelay: item.delay, animationDuration: item.duration }}
+            />
+          ))}
+        </>
+      );
+  }
 };
 
 const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
@@ -46,15 +259,32 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
       className="relative h-full w-full overflow-hidden md:overflow-y-auto md:overflow-x-hidden"
       style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}
     >
-      <div className="relative h-full w-full md:mx-auto md:h-auto md:min-h-full md:max-w-[52rem] md:aspect-[1024/1792]">
+      <div className="relative h-full w-full md:h-auto md:min-h-full md:aspect-[1024/1792] lg:mx-auto lg:max-w-[56rem]">
         <img
           src={islandSelectPoster}
           alt="Island select map"
-          className="absolute inset-0 h-full w-full object-cover md:object-contain md:object-top"
+          className="absolute inset-0 h-full w-full object-cover md:object-cover md:object-top lg:object-contain"
           draggable={false}
         />
 
-        <div className="absolute inset-0">
+        <div className="pointer-events-none absolute inset-0 z-10">
+          {MAP_AMBIENTS.map(region => (
+            <div
+              key={region.id}
+              className={`world-map-ambient world-map-ambient-${region.effect}`}
+              style={{
+                left: `${region.x}%`,
+                top: `${region.y}%`,
+                width: `${region.width}%`,
+                height: `${region.height}%`,
+              }}
+            >
+              {renderAmbientEffect(region.effect)}
+            </div>
+          ))}
+        </div>
+
+        <div className="absolute inset-0 z-20">
           {islandProgress.map(({ island, isUnlocked, completion }) => {
             const hotspot = ISLAND_HOTSPOTS[island.id];
             if (!hotspot) return null;
@@ -89,9 +319,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                   />
                 </motion.button>
 
-                <motion.button
-                  whileHover={isUnlocked ? { scale: 1.03, y: -2 } : {}}
-                  whileTap={isUnlocked ? { scale: 0.98 } : {}}
+                <button
                   onClick={() => {
                     if (isUnlocked) onSelectIsland(island);
                   }}
@@ -107,14 +335,14 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                   }}
                 >
                   <span className="world-map-island-label-face">
-                    <span className="block text-[10px] font-black uppercase tracking-[0.08em] md:text-[11px]">
+                    <span className="block text-[9px] font-black uppercase leading-none tracking-[0.06em] md:text-[10px]">
                       {island.themeName || island.name}
                     </span>
-                    <span className="block text-[10px] font-black text-white/85 md:text-[11px]">
+                    <span className="mt-0.5 block text-[9px] font-black leading-none text-white/85 md:text-[10px]">
                       {completion}%
                     </span>
                   </span>
-                </motion.button>
+                </button>
               </React.Fragment>
             );
           })}
