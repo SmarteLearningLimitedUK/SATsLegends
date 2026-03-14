@@ -321,7 +321,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
 
         <GameActionDock
           onBack={onBack}
-          accentClass="text-violet-700"
+          accentClass="text-white"
         />
 
         {/* Game Over / Victory Modals */}

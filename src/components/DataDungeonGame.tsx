@@ -373,7 +373,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
 
         <GameActionDock
           onBack={onBack}
-          accentClass="text-amber-500"
+          accentClass="text-white"
         />
 
         {/* Game Over / Victory Modals */}

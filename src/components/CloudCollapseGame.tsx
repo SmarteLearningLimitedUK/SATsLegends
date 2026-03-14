@@ -162,7 +162,7 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
         <GameActionDock
           onBack={onBack}
           onHelp={() => setShowTutorial(true)}
-          accentClass="text-slate-700"
+          accentClass="text-white"
         />
       </div>
 

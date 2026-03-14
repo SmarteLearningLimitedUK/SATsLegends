@@ -361,7 +361,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({ avatarId, onBack 
 
         <GameActionDock
           onBack={onBack}
-          accentClass="text-emerald-700"
+          accentClass="text-white"
         />
 
         <AnimatePresence>

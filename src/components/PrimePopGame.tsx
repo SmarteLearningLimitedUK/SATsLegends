@@ -388,7 +388,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
         <GameActionDock
           onBack={onBack}
-          accentClass="text-emerald-700"
+          accentClass="text-white"
         />
 
         {/* Game Over / Victory Modals */}

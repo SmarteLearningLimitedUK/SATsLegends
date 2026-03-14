@@ -382,7 +382,7 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
           </AnimatePresence>
         </div>
 
-        <GameActionDock onBack={onBack} accentClass="text-purple-800" />
+      <GameActionDock onBack={onBack} accentClass="text-white" />
       </div>
 
       <AnimatePresence>

@@ -377,7 +377,7 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
 
         <GameActionDock
           onBack={onBack}
-          accentClass="text-slate-700"
+          accentClass="text-white"
         />
 
         <AnimatePresence>

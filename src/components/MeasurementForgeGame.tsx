@@ -361,7 +361,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
 
         <GameActionDock
           onBack={onBack}
-          accentClass="text-orange-700"
+          accentClass="text-white"
         />
 
         {/* Game Over / Victory Modals */}
