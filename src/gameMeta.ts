@@ -252,15 +252,15 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   ratio_rapids: {
-    label: 'Ratio Rapids',
-    focus: 'Ratio and proportion',
+    label: 'Ratio Raiders',
+    focus: 'Ratios, proportional reasoning and simplification',
     rules: {
-      title: 'Ratio Rapids',
-      summary: 'Use the given ratio to complete each river challenge.',
+      title: 'Ratio Raiders',
+      summary: 'Split the treasure into the correct ratio, then simplify the pirate captain challenge.',
       bullets: [
-        'Match parts to wholes or scale quantities up and down.',
-        'Simplify where needed before choosing.',
-        'Accurate scaling keeps your raft moving.',
+        'Drag coins into each barrel until the whole treasure is shared correctly.',
+        'Use every coin before you check the split.',
+        'The final round asks you to simplify a ratio under pressure.',
       ],
     },
   },
