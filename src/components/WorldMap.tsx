@@ -46,15 +46,15 @@ const ISLAND_HOTSPOTS: Record<number, IslandHotspot> = {
 };
 
 const MAP_AMBIENTS: AmbientRegion[] = [
-  { id: 'lava-island', x: 26, y: 16, width: 20, height: 16, effect: 'lava-spurts' },
-  { id: 'wind-island', x: 72, y: 16, width: 20, height: 16, effect: 'wind-wisps' },
-  { id: 'ice-island', x: 28, y: 37, width: 22, height: 17, effect: 'blizzard' },
-  { id: 'crystal-refract', x: 28, y: 34, width: 20, height: 14, effect: 'light-beams' },
-  { id: 'ruins-island', x: 73, y: 36, width: 22, height: 17, effect: 'dust-devils' },
-  { id: 'lush-grove', x: 29, y: 59, width: 22, height: 16, effect: 'butterflies' },
-  { id: 'desert-oasis', x: 69, y: 59, width: 22, height: 16, effect: 'birds' },
-  { id: 'magic-forest', x: 28, y: 82, width: 20, height: 18, effect: 'sparkles' },
-  { id: 'starlight-city', x: 69, y: 82, width: 22, height: 17, effect: 'stars' },
+  { id: 'lava-island', x: 26, y: 11.5, width: 20, height: 18, effect: 'lava-spurts' },
+  { id: 'wind-island', x: 72, y: 12.5, width: 20, height: 18, effect: 'wind-wisps' },
+  { id: 'ice-island', x: 28, y: 30.5, width: 24, height: 20, effect: 'blizzard' },
+  { id: 'crystal-refract', x: 28, y: 28.5, width: 20, height: 16, effect: 'light-beams' },
+  { id: 'ruins-island', x: 73, y: 29.5, width: 23, height: 19, effect: 'dust-devils' },
+  { id: 'lush-grove', x: 29, y: 51.5, width: 22, height: 16, effect: 'butterflies' },
+  { id: 'desert-oasis', x: 69, y: 52, width: 22, height: 16, effect: 'birds' },
+  { id: 'magic-forest', x: 28, y: 74.5, width: 20, height: 22, effect: 'sparkles' },
+  { id: 'starlight-city', x: 69, y: 74.5, width: 22, height: 18, effect: 'stars' },
 ];
 
 const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
@@ -243,8 +243,11 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
 const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
   const islandProgress = useMemo(() => {
     return ISLANDS.map(island => {
-      const completed = player.completedLevels[island.id] || [];
-      const completion = Math.round((completed.length / island.levels.length) * 100);
+      const starredLevels = island.levels.filter(level => {
+        const starKey = `${island.id}-${level.id}`;
+        return (player.levelStars[starKey] || 0) >= 1;
+      });
+      const completion = Math.round((starredLevels.length / island.levels.length) * 100);
 
       return {
         island,
@@ -334,12 +337,24 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                     textShadow: '0 1px 0 rgba(0,0,0,0.24)',
                   }}
                 >
-                  <span className="world-map-island-label-face">
-                    <span className="block text-[9px] font-black uppercase leading-none tracking-[0.06em] md:text-[10px]">
+                  <span className={`world-map-island-label-face ${
+                    !isUnlocked
+                      ? 'world-map-island-label-face-locked'
+                      : completion === 0
+                        ? 'world-map-island-label-face-idle'
+                        : 'world-map-island-label-face-progress'
+                  }`}>
+                    {isUnlocked && completion > 0 && (
+                      <span
+                        className="world-map-island-progress-fill"
+                        style={{ width: `${completion}%` }}
+                        aria-hidden="true"
+                      >
+                        <span className="world-map-island-progress-shimmer" />
+                      </span>
+                    )}
+                    <span className="world-map-island-label-text block text-[9px] font-black uppercase leading-none tracking-[0.06em] md:text-[10px]">
                       {island.themeName || island.name}
-                    </span>
-                    <span className="mt-0.5 block text-[9px] font-black leading-none text-white/85 md:text-[10px]">
-                      {completion}%
                     </span>
                   </span>
                 </button>
