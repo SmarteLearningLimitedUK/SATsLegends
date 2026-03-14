@@ -4,8 +4,6 @@ import { IslandData, PlayerData } from '../types';
 import { ISLANDS, AVATARS } from '../constants';
 import AssetIcon from './AssetIcon';
 import splashBackground from '../assets/fantasy_hero/demo_bg/background_02.png';
-import splashGlow from '../assets/fantasy_hero/demo_fx/effect_light_01.png';
-import splashGlowSecondary from '../assets/fantasy_hero/demo_fx/effect_light_02.png';
 
 interface WorldMapProps {
   player: PlayerData;
@@ -128,12 +126,11 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
       <div className="absolute inset-0 bg-cover bg-center opacity-95" style={{ backgroundImage: `url(${splashBackground})` }} />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,17,43,0.15),rgba(4,17,43,0.46)_34%,rgba(4,12,27,0.88)_100%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.2),rgba(7,17,31,0)_28%),radial-gradient(circle_at_bottom,rgba(59,130,246,0.22),rgba(7,17,31,0)_30%)]" />
-      <div className="pointer-events-none absolute inset-x-[6%] top-0 h-[42%] bg-center bg-no-repeat opacity-80 blur-[1px]" style={{ backgroundImage: `url(${splashGlow})`, backgroundSize: 'min(46rem, 96vw)' }} />
+      <div className="pointer-events-none absolute inset-x-[6%] top-[1%] h-[36%] rounded-[50%] bg-[radial-gradient(circle,rgba(96,165,250,0.2),rgba(96,165,250,0)_64%)] blur-3xl" />
       <motion.div
-        animate={{ opacity: [0.22, 0.54, 0.22], scale: [0.96, 1.04, 0.96] }}
+        animate={{ opacity: [0.18, 0.42, 0.18], scale: [0.96, 1.04, 0.96] }}
         transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        className="pointer-events-none absolute inset-x-[10%] top-[8%] h-[46%] bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${splashGlowSecondary})`, backgroundSize: 'min(48rem, 98vw)' }}
+        className="pointer-events-none absolute inset-x-[10%] top-[12%] h-[34%] rounded-[50%] bg-[radial-gradient(circle,rgba(250,204,21,0.12),rgba(250,204,21,0)_62%)] blur-3xl"
       />
 
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -168,7 +165,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
       </div>
 
       <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-3 pt-[calc(0.35rem+env(safe-area-inset-top))] md:px-6 md:pb-6 md:pt-6">
-        <div className="mb-2 flex shrink-0 items-center gap-2 rounded-[1.4rem] border border-white/14 bg-slate-950/34 px-3 py-2.5 text-white shadow-[0_18px_34px_rgba(2,6,23,0.26)] backdrop-blur-xl md:mb-4 md:rounded-[2rem] md:px-5 md:py-4">
+        <div className="mb-2 flex shrink-0 items-center gap-2 rounded-[1.4rem] border border-white/14 bg-[linear-gradient(180deg,rgba(21,33,63,0.98),rgba(8,14,27,0.99))] px-3 py-2.5 text-white shadow-[0_18px_34px_rgba(2,6,23,0.34)] md:mb-4 md:rounded-[2rem] md:px-5 md:py-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-[1rem] border border-white/20 bg-white/10 md:h-16 md:w-16 md:rounded-[1.4rem]">
             <img
               src={avatarImage}
@@ -194,10 +191,10 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
         </div>
 
         <div className="relative min-h-0 flex-1">
-          <div className="absolute inset-0 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(7,17,31,0.08),rgba(7,17,31,0.28))] shadow-[0_28px_90px_rgba(2,6,23,0.38)] backdrop-blur-[8px] md:rounded-[2.8rem]" />
+          <div className="absolute inset-0 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(8,16,32,0.72),rgba(4,10,22,0.88))] shadow-[0_28px_90px_rgba(2,6,23,0.42)] md:rounded-[2.8rem]" />
 
           <div className="relative h-full min-h-0">
-            <div className="absolute inset-[0.7rem] rounded-[1.8rem] border border-white/8 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.06),rgba(255,255,255,0)_22%),linear-gradient(180deg,rgba(11,25,55,0.18),rgba(4,13,31,0.28))] md:inset-4 md:rounded-[2.4rem]" />
+            <div className="absolute inset-[0.7rem] rounded-[1.8rem] border border-white/8 bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.08),rgba(255,255,255,0)_20%),linear-gradient(180deg,rgba(11,25,55,0.34),rgba(4,13,31,0.48))] md:inset-4 md:rounded-[2.4rem]" />
 
             <div className="relative mx-auto h-full max-w-[30rem] px-1.5 pb-[7.25rem] pt-1.5 md:max-w-[34rem] md:px-2 md:pb-[8.5rem] md:pt-2">
               <div className="relative h-full w-full overflow-hidden rounded-[1.8rem] md:rounded-[2.4rem]">
@@ -337,7 +334,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
             </div>
 
             <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex justify-center px-3 pb-1.5 md:px-6 md:pb-3">
-              <div className="pointer-events-auto w-full max-w-[28rem] rounded-[1.6rem] border border-white/16 bg-slate-950/58 p-3 text-white shadow-[0_22px_44px_rgba(2,6,23,0.4)] backdrop-blur-xl md:max-w-[32rem] md:rounded-[2rem] md:p-4">
+              <div className="pointer-events-auto w-full max-w-[28rem] rounded-[1.6rem] border border-white/16 bg-[linear-gradient(180deg,rgba(17,27,52,0.98),rgba(7,13,24,0.99))] p-3 text-white shadow-[0_22px_44px_rgba(2,6,23,0.44)] md:max-w-[32rem] md:rounded-[2rem] md:p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="text-[8px] font-black uppercase tracking-[0.22em] text-cyan-100/62 md:text-[10px]">
@@ -350,13 +347,13 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                       {selectedIslandData.completedCount} of {selectedIslandData.island.levels.length} mini-games complete
                     </div>
                   </div>
-                  <div className="rounded-[1rem] bg-white/8 px-3 py-2 text-right shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]">
+                  <div className="rounded-[1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(40,59,104,0.98),rgba(17,27,52,0.98))] px-3 py-2 text-right shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]">
                     <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/56 md:text-[10px]">Progress</div>
                     <div className="mt-0.5 text-lg font-black text-white md:text-2xl">{selectedIslandData.completion}%</div>
                   </div>
                 </div>
 
-                <div className="mt-3 h-3 overflow-hidden rounded-full border border-white/10 bg-black/35 md:h-4">
+                <div className="mt-3 h-3 overflow-hidden rounded-full border border-white/10 bg-slate-950/70 md:h-4">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${selectedIslandData.completion}%` }}
@@ -382,7 +379,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                     }`}
                   >
                     <AssetIcon name={selectedIslandData.isUnlocked ? 'play' : 'plusSquare'} className="h-4 w-4 md:h-5 md:w-5" />
-                    {selectedIslandData.isUnlocked ? 'Enter Island' : 'Island Locked'}
+                    {selectedIslandData.isUnlocked ? 'Let\'s go' : 'Island Locked'}
                   </button>
                 </div>
               </div>

@@ -9,8 +9,6 @@ import Tutorial from './Tutorial';
 import GameActionDock from './GameActionDock';
 import AssetIcon from './AssetIcon';
 import cloudBackdrop from '../assets/fantasy_hero/demo_bg/background_01.png';
-import topGlow from '../assets/fantasy_hero/demo_fx/effect_light_02.png';
-import jewelGlow from '../assets/fantasy_hero/cloud_collapse/glow_circle.png';
 import sparkle from '../assets/fantasy_hero/cloud_collapse/sparkle.png';
 
 interface CloudCollapseGameProps {
@@ -101,15 +99,12 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
   return (
     <div className="relative flex h-full w-full flex-col items-center overflow-hidden p-2 md:p-4">
       <div className="absolute inset-0 bg-cover bg-center opacity-95" style={{ backgroundImage: `url(${cloudBackdrop})` }} />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,39,73,0.14),rgba(8,15,31,0.34)_40%,rgba(7,12,23,0.78)_100%)]" />
-      <div className="absolute inset-x-0 top-0 h-[40%] bg-center bg-no-repeat opacity-85" style={{ backgroundImage: `url(${topGlow})`, backgroundSize: 'min(52rem, 120vw)' }} />
-      <motion.img
-        src={jewelGlow}
-        alt=""
-        animate={{ scale: [0.96, 1.06, 0.96], opacity: [0.18, 0.42, 0.18] }}
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,22,44,0.62),rgba(8,15,31,0.74)_40%,rgba(7,12,23,0.94)_100%)]" />
+      <div className="absolute inset-x-[8%] top-[2%] h-[28%] rounded-[50%] bg-[radial-gradient(circle,rgba(96,165,250,0.22),rgba(96,165,250,0)_62%)] blur-3xl" />
+      <motion.div
+        animate={{ scale: [0.96, 1.06, 0.96], opacity: [0.14, 0.3, 0.14] }}
         transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-        className="pointer-events-none absolute left-1/2 top-[44%] h-[48rem] w-[48rem] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain opacity-35"
-        draggable={false}
+        className="pointer-events-none absolute left-1/2 top-[44%] h-[34rem] w-[34rem] max-w-none -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(125,211,252,0.16),rgba(125,211,252,0)_62%)] blur-3xl"
       />
       <motion.img
         src={sparkle}
@@ -138,7 +133,7 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
           avatar={avatar}
         />
 
-        <div className="casual-panel-strong relative flex min-h-0 w-full flex-1 flex-col items-center overflow-hidden rounded-[1.8rem] px-2 py-2 md:rounded-[2.4rem] md:px-4 md:py-4">
+        <div className="casual-panel-strong relative flex min-h-0 w-full flex-1 flex-col items-center overflow-hidden rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(18,28,55,0.985),rgba(8,14,27,0.995))] px-2 py-2 md:rounded-[2.4rem] md:px-4 md:py-4">
           <div className="relative z-10 mb-2 flex w-full shrink-0 items-center justify-between gap-2 px-1 md:mb-3">
             <div className="casual-ribbon-chip inline-flex items-center gap-2 rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em] md:px-4 md:py-1.5 md:text-[10px]">
               <AssetIcon name="star" className="h-4 w-4" />
@@ -150,7 +145,7 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
           </div>
 
           <div className="relative z-10 mb-2 w-full shrink-0 px-2 text-center md:mb-3">
-            <div className="mx-auto max-w-3xl rounded-[1.1rem] bg-[linear-gradient(180deg,rgba(6,12,26,0.42),rgba(6,12,26,0.18))] px-3 py-2 text-[10px] font-bold text-white/88 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:rounded-[1.4rem] md:px-4 md:py-2.5 md:text-sm">
+            <div className="mx-auto max-w-3xl rounded-[1.1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(10,18,34,0.92),rgba(7,12,23,0.96))] px-3 py-2 text-[10px] font-bold text-white/92 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] md:rounded-[1.4rem] md:px-4 md:py-2.5 md:text-sm">
               {helperText}
             </div>
           </div>

@@ -7,7 +7,6 @@ import boardBg from '../assets/fantasy_hero/cloud_collapse/board_bg.png';
 import boardBorder from '../assets/fantasy_hero/cloud_collapse/board_border.png';
 import boardGradient from '../assets/fantasy_hero/cloud_collapse/board_gradient.png';
 import boardInnerBorder from '../assets/fantasy_hero/cloud_collapse/board_inner_border.png';
-import glowCircle from '../assets/fantasy_hero/cloud_collapse/glow_circle.png';
 import sparkle from '../assets/fantasy_hero/cloud_collapse/sparkle.png';
 
 interface GameBoardProps {
@@ -154,7 +153,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ level, onScoreUpdate, onMatch }) 
       <img src={boardInnerBorder} alt="" className="absolute inset-0 h-full w-full object-fill opacity-95" draggable={false} />
       <img src={boardBorder} alt="" className="absolute inset-0 h-full w-full object-fill opacity-100" draggable={false} />
 
-      <img src={glowCircle} alt="" className="absolute left-1/2 top-1/2 h-[74%] w-[74%] -translate-x-1/2 -translate-y-1/2 object-contain opacity-45" draggable={false} />
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[74%] w-[74%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(125,211,252,0.12),rgba(96,165,250,0.06)_34%,rgba(2,6,23,0)_72%)] blur-xl" />
       <motion.img
         src={sparkle}
         alt=""

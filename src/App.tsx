@@ -38,10 +38,6 @@ import {
 } from './gameHudEvents';
 import { triggerHaptic } from './haptics';
 import splashBackground from './assets/fantasy_hero/demo_bg/background_01.png';
-import splashGlow from './assets/fantasy_hero/demo_fx/effect_light_01.png';
-import splashGlowSecondary from './assets/fantasy_hero/demo_fx/effect_light_02.png';
-import splashOrb from './assets/fantasy_hero/demo_fx/glow_circle_02.png';
-import splashLine from './assets/fantasy_hero/title/line.png';
 
 const PLAYER_STORAGE_KEY = 'maths_quest_player';
 const ALL_ISLAND_IDS = ISLANDS.map(island => island.id);
@@ -497,15 +493,10 @@ const App: React.FC = () => {
         return (
           <div className="relative my-auto flex h-full max-h-full w-full max-w-6xl items-center justify-center overflow-hidden px-4 py-5 text-center sm:px-6 md:py-8">
             <div className="absolute inset-0 -z-40 rounded-[2.7rem] bg-cover bg-center opacity-90 pointer-events-none md:rounded-[3.4rem]" style={{ backgroundImage: `url(${splashBackground})` }} />
-            <div className="absolute inset-0 -z-30 rounded-[2.7rem] bg-[linear-gradient(180deg,rgba(3,9,19,0.06),rgba(3,9,19,0.48)_34%,rgba(2,6,23,0.92)_100%)] pointer-events-none md:rounded-[3.4rem]" />
-            <div className="absolute inset-0 -z-20 rounded-[2.7rem] bg-[radial-gradient(circle_at_top,rgba(255,241,196,0.22)_0%,rgba(34,211,238,0.08)_24%,rgba(2,6,23,0)_48%),radial-gradient(circle_at_bottom,rgba(96,165,250,0.18)_0%,rgba(249,115,22,0.05)_22%,rgba(2,6,23,0)_48%)] pointer-events-none md:rounded-[3.4rem]" />
-            <div className="absolute inset-x-[8%] top-0 -z-10 h-[44%] bg-center bg-no-repeat opacity-80 blur-sm pointer-events-none" style={{ backgroundImage: `url(${splashGlow})`, backgroundSize: 'min(44rem, 88vw)' }} />
-            <motion.div
-              animate={{ opacity: [0.28, 0.68, 0.28], scale: [0.96, 1.08, 0.96] }}
-              transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute inset-x-[2%] top-[10%] -z-10 h-[54%] bg-center bg-no-repeat pointer-events-none"
-              style={{ backgroundImage: `url(${splashGlowSecondary})`, backgroundSize: 'min(48rem, 96vw)' }}
-            />
+            <div className="absolute inset-0 -z-30 rounded-[2.7rem] bg-[linear-gradient(180deg,rgba(3,9,19,0.08),rgba(3,9,19,0.54)_34%,rgba(2,6,23,0.94)_100%)] pointer-events-none md:rounded-[3.4rem]" />
+            <div className="absolute inset-0 -z-20 rounded-[2.7rem] bg-[radial-gradient(circle_at_top,rgba(255,241,196,0.16)_0%,rgba(34,211,238,0.06)_24%,rgba(2,6,23,0)_48%),radial-gradient(circle_at_bottom,rgba(96,165,250,0.16)_0%,rgba(249,115,22,0.07)_22%,rgba(2,6,23,0)_48%)] pointer-events-none md:rounded-[3.4rem]" />
+            <div className="absolute inset-x-[4%] top-[2%] -z-10 h-[42%] rounded-[50%] bg-[radial-gradient(circle,rgba(125,211,252,0.22),rgba(125,211,252,0)_62%)] blur-3xl pointer-events-none" />
+            <div className="absolute inset-x-[8%] top-[16%] -z-10 h-[28%] rounded-[50%] bg-[radial-gradient(circle,rgba(255,231,153,0.18),rgba(255,231,153,0)_62%)] blur-3xl pointer-events-none" />
             <div className="absolute inset-x-0 bottom-0 -z-10 h-[28%] bg-[linear-gradient(180deg,rgba(7,12,24,0),rgba(7,12,24,0.9))] pointer-events-none" />
 
             <motion.div
@@ -525,21 +516,20 @@ const App: React.FC = () => {
             ))}
 
             {[0, 1, 2].map(index => (
-              <motion.img
+              <motion.div
                 key={`orb-${index}`}
-                src={splashOrb}
-                alt=""
                 animate={{
                   y: [0, -20 - index * 4, 0],
                   x: [0, index % 2 === 0 ? 8 : -8, 0],
-                  opacity: [0.24, 0.55, 0.24],
-                  scale: [0.8, 1.05, 0.8],
+                  opacity: [0.18, 0.42, 0.18],
+                  scale: [0.8, 1.04, 0.8],
                 }}
                 transition={{ duration: 5.6 + index, repeat: Infinity, delay: index * 0.7 }}
-                className="pointer-events-none absolute -z-10 w-20 blur-[1px] md:w-28"
+                className="pointer-events-none absolute -z-10 w-20 rounded-full bg-[radial-gradient(circle,rgba(96,165,250,0.34),rgba(56,189,248,0.16)_42%,rgba(2,6,23,0)_72%)] blur-xl md:w-28"
                 style={{
                   left: `${16 + index * 28}%`,
                   top: `${58 - index * 7}%`,
+                  height: `${index === 1 ? 76 : 68}px`,
                 }}
               />
             ))}
@@ -585,12 +575,10 @@ const App: React.FC = () => {
 
             <div className="relative flex h-full w-full items-center justify-center px-2 py-8 md:px-6 md:py-12">
               <div className="casual-panel-strong relative flex w-full max-w-[22rem] flex-col items-center gap-8 rounded-[2.2rem] px-5 py-7 md:max-w-[32rem] md:rounded-[3rem] md:px-10 md:py-12">
-                <motion.img
-                  src={splashLine}
-                  alt=""
-                  animate={{ opacity: [0.45, 0.95, 0.45], scaleX: [0.96, 1.02, 0.96] }}
+                <motion.div
+                  animate={{ opacity: [0.3, 0.72, 0.3], scaleX: [0.96, 1.02, 0.96] }}
                   transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }}
-                  className="pointer-events-none absolute left-1/2 top-5 w-[76%] -translate-x-1/2 opacity-80 md:top-7"
+                  className="pointer-events-none absolute left-1/2 top-5 h-[3px] w-[76%] -translate-x-1/2 rounded-full bg-[linear-gradient(90deg,rgba(34,211,238,0),rgba(34,211,238,0.82),rgba(250,204,21,0.92),rgba(34,211,238,0.82),rgba(34,211,238,0))] blur-[1px] md:top-7"
                 />
                 <div className="pointer-events-none flex w-full justify-center">
                   <div className="fantasy-title-plaque px-5 py-2 md:px-8 md:py-3">
@@ -722,7 +710,7 @@ const App: React.FC = () => {
     <div className={`app-viewport relative w-full flex flex-col items-center overflow-hidden ${isWideScreenScene ? 'licensed-playfield-bg bg-slate-950 pb-[env(safe-area-inset-bottom)]' : 'licensed-shell-bg p-3 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] md:p-8'}`}>
       <div className="soft-vignette" />
       {showCompactShell && (
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-40 bg-gradient-to-b from-white/18 to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-40 bg-gradient-to-b from-cyan-300/8 via-sky-300/4 to-transparent" />
       )}
 
       <AnimatePresence mode="wait">
