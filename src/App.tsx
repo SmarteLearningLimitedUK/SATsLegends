@@ -37,8 +37,7 @@ import {
   GAME_HUD_MUTE_SYNC_EVENT,
 } from './gameHudEvents';
 import { triggerHaptic } from './haptics';
-import splashBackground from './assets/fantasy_hero/demo_bg/background_01.png';
-import splashMascot from './assets/characters/mobile/Bran/bran_happy.png';
+import splashPoster from './assets/splash.png';
 
 const PLAYER_STORAGE_KEY = 'maths_quest_player';
 const ALL_ISLAND_IDS = ISLANDS.map(island => island.id);
@@ -492,122 +491,23 @@ const App: React.FC = () => {
     switch (screen) {
       case 'splash':
         return (
-          <div className="relative my-auto flex h-full max-h-full w-full max-w-[34rem] items-center justify-center overflow-hidden px-3 py-3 text-center sm:px-4 md:max-w-[38rem] md:py-6">
-            <div className="absolute inset-0 -z-40 rounded-[2.6rem] bg-cover bg-center opacity-95 pointer-events-none md:rounded-[3.4rem]" style={{ backgroundImage: `url(${splashBackground})` }} />
-            <div className="absolute inset-0 -z-30 rounded-[2.6rem] bg-[linear-gradient(180deg,rgba(4,10,23,0.14),rgba(15,23,42,0.12)_24%,rgba(8,12,27,0.54)_64%,rgba(4,7,18,0.94)_100%)] pointer-events-none md:rounded-[3.4rem]" />
-            <div className="absolute inset-0 -z-20 rounded-[2.6rem] bg-[radial-gradient(circle_at_50%_17%,rgba(34,211,238,0.34),rgba(34,211,238,0)_24%),radial-gradient(circle_at_50%_62%,rgba(74,222,128,0.18),rgba(74,222,128,0)_24%),radial-gradient(circle_at_50%_84%,rgba(251,191,36,0.18),rgba(251,191,36,0)_24%)] pointer-events-none md:rounded-[3.4rem]" />
-            <div className="absolute inset-x-0 bottom-0 -z-10 h-[30%] bg-[linear-gradient(180deg,rgba(7,12,24,0),rgba(7,12,24,0.92))] pointer-events-none" />
-
-            <motion.div
-              animate={{ scale: [0.95, 1.05, 0.95], opacity: [0.52, 0.9, 0.52] }}
-              transition={{ duration: 5.8, repeat: Infinity, ease: 'easeInOut' }}
-              className="pointer-events-none absolute left-1/2 top-[57%] -z-10 h-[15rem] w-[15rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.68)_0%,rgba(74,222,128,0.36)_34%,rgba(251,191,36,0.18)_56%,rgba(2,6,23,0)_76%)] blur-2xl md:h-[18rem] md:w-[18rem]"
-            />
-
-            {[14, 26, 38, 50, 62, 74, 86].map((left, index) => (
-              <motion.div
-                key={`beam-${left}`}
-                animate={{ opacity: [0.12, 0.34, 0.12], y: [0, -12, 0] }}
-                transition={{ duration: 3.8 + index * 0.3, repeat: Infinity, delay: index * 0.22 }}
-                className="pointer-events-none absolute top-[8%] -z-10 h-[42%] w-[3px] origin-bottom rounded-full bg-[linear-gradient(180deg,rgba(34,211,238,0),rgba(125,211,252,0.94),rgba(34,211,238,0))] blur-[1.5px]"
-                style={{ left: `${left}%`, transform: `rotate(${index % 2 === 0 ? -12 : 12}deg)` }}
+          <div className="relative my-auto flex h-full max-h-full w-full max-w-[34rem] items-center justify-center overflow-hidden px-3 py-3 sm:px-4 md:max-w-[38rem] md:py-6">
+            <motion.button
+              initial={{ opacity: 0, scale: 0.985 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.45, ease: 'easeOut' }}
+              whileTap={{ scale: 0.992 }}
+              onClick={handleStartAdventure}
+              aria-label={hasCompletedProfile ? 'Continue adventure' : 'Start adventure'}
+              className="relative h-full w-full overflow-hidden rounded-[2.4rem] bg-slate-950 shadow-[0_26px_80px_rgba(2,6,23,0.52)] md:rounded-[3.2rem]"
+            >
+              <img
+                src={splashPoster}
+                alt="Sats Hero splash screen"
+                className="h-full w-full object-contain"
+                draggable={false}
               />
-            ))}
-
-            {[
-              { icon: 'doc', left: '10%', top: '61%', rotate: -18, duration: 6.2, bg: 'from-amber-200/92 to-orange-300/92' },
-              { icon: 'coin', left: '82%', top: '64%', rotate: 18, duration: 5.8, bg: 'from-yellow-200/92 to-amber-300/92' },
-              { icon: 'gem', left: '78%', top: '84%', rotate: 14, duration: 6.8, bg: 'from-sky-200/92 to-cyan-300/92' },
-              { icon: 'star', left: '18%', top: '28%', rotate: -10, duration: 5.2, bg: 'from-white/80 to-cyan-200/80' },
-            ].map(item => (
-              <motion.div
-                key={`${item.icon}-${item.left}`}
-                animate={{
-                  y: [0, -14, 0],
-                  rotate: [item.rotate, item.rotate + 8, item.rotate],
-                  opacity: [0.4, 0.9, 0.4],
-                }}
-                transition={{ duration: item.duration, repeat: Infinity, ease: 'easeInOut' }}
-                className={`pointer-events-none absolute -z-10 flex h-12 w-12 items-center justify-center rounded-[1rem] border border-white/18 bg-gradient-to-b ${item.bg} shadow-[0_14px_26px_rgba(3,7,18,0.28)] backdrop-blur-sm md:h-14 md:w-14`}
-                style={{ left: item.left, top: item.top }}
-              >
-                <AssetIcon name={item.icon as 'doc' | 'star' | 'gem' | 'coin'} className="h-7 w-7 md:h-8 md:w-8" />
-              </motion.div>
-            ))}
-
-            {Array.from({ length: 12 }).map((_, index) => (
-              <motion.div
-                key={`spark-${index}`}
-                animate={{
-                  y: [0, -26 - index * 2, 0],
-                  opacity: [0.12, 0.72, 0.12],
-                  scale: [0.9, 1.25, 0.9],
-                }}
-                transition={{ duration: 3.1 + index * 0.18, repeat: Infinity, delay: index * 0.14 }}
-                className="pointer-events-none absolute rounded-full bg-white/85 blur-[1.4px]"
-                style={{
-                  width: `${4 + (index % 3) * 4}px`,
-                  height: `${4 + (index % 3) * 4}px`,
-                  left: `${10 + index * 7}%`,
-                  top: `${14 + (index % 5) * 11}%`,
-                }}
-              />
-            ))}
-
-            <div className="relative flex h-full w-full flex-col items-center justify-between px-3 pb-6 pt-8 md:px-6 md:pb-8 md:pt-10">
-              <div className="relative z-10 flex w-full flex-col items-center">
-                <motion.div
-                  initial={{ opacity: 0, y: -14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.7, ease: 'easeOut' }}
-                  className="relative w-full max-w-[25rem]"
-                >
-                  <div className="absolute left-1/2 top-1 -z-10 h-14 w-14 -translate-x-1/2 rotate-45 rounded-[0.9rem] border-2 border-amber-200/80 bg-[linear-gradient(180deg,#fff4a8_0%,#ffbf34_46%,#ff7c14_100%)] shadow-[0_0_24px_rgba(250,204,21,0.6),0_14px_26px_rgba(88,28,135,0.42)] md:h-16 md:w-16" />
-                  <div className="absolute inset-x-[4%] top-[7%] -z-20 h-[66%] rounded-[2rem] bg-[linear-gradient(180deg,rgba(88,28,135,0.94),rgba(67,31,148,0.88)_34%,rgba(31,41,55,0.88)_100%)] shadow-[0_18px_0_rgba(15,23,42,0.8),0_34px_70px_rgba(15,23,42,0.42)]" />
-                  <div className="absolute left-[-2%] right-[-2%] top-[49%] -z-30 h-[26%] rounded-[2.2rem] bg-[linear-gradient(180deg,rgba(124,58,237,0.96),rgba(109,40,217,0.92)_42%,rgba(76,29,149,0.92)_100%)] shadow-[0_14px_34px_rgba(76,29,149,0.38)]" />
-                  <div className="absolute left-[1%] top-[51%] -z-40 h-[20%] w-[24%] rounded-[1.7rem] bg-[linear-gradient(180deg,rgba(124,58,237,0.98),rgba(91,33,182,0.92))] rotate-[-9deg]" />
-                  <div className="absolute right-[1%] top-[51%] -z-40 h-[20%] w-[24%] rounded-[1.7rem] bg-[linear-gradient(180deg,rgba(124,58,237,0.98),rgba(91,33,182,0.92))] rotate-[9deg]" />
-
-                  <div className="relative px-3 pb-8 pt-5 md:px-6 md:pb-11 md:pt-6">
-                    <div className="relative">
-                      <div className="splash-logo-top">SATS</div>
-                      <div className="splash-logo-bottom -mt-2 md:-mt-3">HERO</div>
-                    </div>
-                  </div>
-                </motion.div>
-              </div>
-
-              <div className="relative flex w-full flex-1 items-end justify-center">
-                <motion.div
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 4.6, repeat: Infinity, ease: 'easeInOut' }}
-                  className="relative z-10 flex w-full max-w-[20rem] flex-col items-center md:max-w-[22rem]"
-                >
-                  <div className="pointer-events-none absolute inset-x-[20%] bottom-[10%] z-0 h-16 rounded-full bg-[radial-gradient(circle,rgba(250,204,21,0.5),rgba(34,211,238,0.3)_48%,rgba(2,6,23,0)_74%)] blur-xl md:h-20" />
-                  <div className="pointer-events-none absolute inset-x-[12%] bottom-[3%] z-0 h-8 rounded-full border border-emerald-200/60 bg-[radial-gradient(circle,rgba(74,222,128,0.68),rgba(16,185,129,0.42)_58%,rgba(2,6,23,0)_82%)] blur-[2px] md:h-10" />
-                  <img
-                    src={splashMascot}
-                    alt="Bran the dragon"
-                    className="relative z-10 w-full max-w-[14rem] object-contain drop-shadow-[0_22px_36px_rgba(15,23,42,0.54)] md:max-w-[16rem]"
-                    draggable={false}
-                  />
-                  <div className="mt-4 flex w-full max-w-[18rem] flex-col items-center gap-3 md:max-w-[20rem]">
-                    <div className="casual-ribbon-chip inline-flex items-center gap-2 rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-[0.22em] md:px-5 md:text-xs">
-                      {hasCompletedProfile ? `Welcome back, ${player.playerName}` : 'Maths adventure portal'}
-                    </div>
-                    <motion.button
-                      whileHover={{ scale: 1.03, y: -2 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={handleStartAdventure}
-                      className="fantasy-cta-button group relative inline-flex min-w-[16rem] items-center justify-center overflow-hidden px-8 py-3.5 text-sm uppercase tracking-[0.18em] md:min-w-[18rem] md:px-12 md:py-4 md:text-base"
-                    >
-                      <span className="absolute inset-y-0 left-[-18%] w-16 rotate-[18deg] bg-white/35 blur-md transition-transform duration-700 group-hover:translate-x-[440%]" />
-                      <span className="relative">{hasCompletedProfile ? 'Continue Adventure' : 'Start Adventure'}</span>
-                    </motion.button>
-                  </div>
-                </motion.div>
-              </div>
-            </div>
+            </motion.button>
           </div>
         );
       case 'profile_setup':
