@@ -1,8 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Grid, TileData, CloudCollapseLevelConfig } from '../types';
 import { GameService } from '../services/gameService';
 import Tile from './Tile';
+import boardBg from '../assets/fantasy_hero/cloud_collapse/board_bg.png';
+import boardBorder from '../assets/fantasy_hero/cloud_collapse/board_border.png';
+import boardGradient from '../assets/fantasy_hero/cloud_collapse/board_gradient.png';
+import boardInnerBorder from '../assets/fantasy_hero/cloud_collapse/board_inner_border.png';
+import glowCircle from '../assets/fantasy_hero/cloud_collapse/glow_circle.png';
+import sparkle from '../assets/fantasy_hero/cloud_collapse/sparkle.png';
 
 interface GameBoardProps {
   level: CloudCollapseLevelConfig;
@@ -19,7 +25,7 @@ interface GameEffect {
 
 const GameBoard: React.FC<GameBoardProps> = ({ level, onScoreUpdate, onMatch }) => {
   const [grid, setGrid] = useState<Grid>([]);
-  const [selectedTile, setSelectedTile] = useState<{ x: number, y: number } | null>(null);
+  const [selectedTile, setSelectedTile] = useState<{ x: number; y: number } | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [effects, setEffects] = useState<GameEffect[]>([]);
 
@@ -29,11 +35,11 @@ const GameBoard: React.FC<GameBoardProps> = ({ level, onScoreUpdate, onMatch }) 
   }, [level]);
 
   const addEffect = (type: 'bomb' | 'row' | 'column', x: number, y: number) => {
-    const id = Math.random().toString(36).substr(2, 9);
-    setEffects(prev => [...prev, { id, type, x, y }]);
+    const id = Math.random().toString(36).slice(2, 11);
+    setEffects((prev) => [...prev, { id, type, x, y }]);
     setTimeout(() => {
-      setEffects(prev => prev.filter(e => e.id !== id));
-    }, 600);
+      setEffects((prev) => prev.filter((effect) => effect.id !== id));
+    }, 520);
   };
 
   const handleTileClick = async (x: number, y: number) => {
@@ -56,36 +62,33 @@ const GameBoard: React.FC<GameBoardProps> = ({ level, onScoreUpdate, onMatch }) 
     }
   };
 
-  const swapAndProcess = async (p1: { x: number, y: number }, p2: { x: number, y: number }) => {
+  const swapAndProcess = async (p1: { x: number; y: number }, p2: { x: number; y: number }) => {
     setIsProcessing(true);
     setSelectedTile(null);
 
-    // 1. Visual Swap
-    let newGrid = grid.map(row => [...row]);
+    let newGrid = grid.map((row) => [...row]);
     const t1 = newGrid[p1.y][p1.x];
     const t2 = newGrid[p2.y][p2.x];
-    
+
     if (t1 && t2) {
       newGrid[p1.y][p1.x] = { ...t2, x: p1.x, y: p1.y };
       newGrid[p2.y][p2.x] = { ...t1, x: p2.x, y: p2.y };
       setGrid(newGrid);
 
-      // Wait for swap animation
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise((resolve) => setTimeout(resolve, 220));
 
-      // 2. Check for matches
       const matches = GameService.findMatches(newGrid);
       if (matches.length > 0) {
         onMatch();
         await processMatches(newGrid);
       } else {
-        // Swap back if no match
         newGrid[p1.y][p1.x] = { ...t1, x: p1.x, y: p1.y };
         newGrid[p2.y][p2.x] = { ...t2, x: p2.x, y: p2.y };
         setGrid(newGrid);
-        await new Promise(resolve => setTimeout(resolve, 300));
+        await new Promise((resolve) => setTimeout(resolve, 220));
       }
     }
+
     setIsProcessing(false);
   };
 
@@ -94,14 +97,12 @@ const GameBoard: React.FC<GameBoardProps> = ({ level, onScoreUpdate, onMatch }) 
     let hasMoreMatches = true;
 
     while (hasMoreMatches) {
-      // Phase 1: Find and Remove Matches
       const matches = GameService.findMatches(workingGrid);
       if (matches.length === 0) {
         hasMoreMatches = false;
         break;
       }
 
-      // Check for power-ups being triggered
       matches.forEach(({ x, y }) => {
         const tile = workingGrid[y][x];
         if (tile?.powerUp === 'BOMB') addEffect('bomb', x, y);
@@ -110,108 +111,159 @@ const GameBoard: React.FC<GameBoardProps> = ({ level, onScoreUpdate, onMatch }) 
       });
 
       const affected = GameService.applyPowerUps(workingGrid, matches);
-      const score = affected.length * 10;
-      onScoreUpdate(score);
+      onScoreUpdate(affected.length * 10);
 
-      // Mark for removal
-      let removedGrid = workingGrid.map(row => row.map(tile => {
-        if (tile && affected.some(a => a.x === tile.x && a.y === tile.y)) {
-          return null;
-        }
-        return tile;
-      }));
-      
+      const removedGrid = workingGrid.map((row) =>
+        row.map((tile) => {
+          if (tile && affected.some((coord) => coord.x === tile.x && coord.y === tile.y)) {
+            return null;
+          }
+          return tile;
+        }),
+      );
+
       setGrid(removedGrid);
-      await new Promise(resolve => setTimeout(resolve, 400));
+      await new Promise((resolve) => setTimeout(resolve, 260));
 
-      // Phase 2: Drop existing tiles
       const { newGrid: droppedGrid } = GameService.dropTiles(removedGrid);
       setGrid(droppedGrid);
-      await new Promise(resolve => setTimeout(resolve, 450));
+      await new Promise((resolve) => setTimeout(resolve, 280));
 
-      // Phase 3: Refill from top
       const { newGrid: refilledGrid } = GameService.fillTop(droppedGrid, level.mathTypes);
       workingGrid = refilledGrid;
       setGrid(workingGrid);
-      await new Promise(resolve => setTimeout(resolve, 450));
+      await new Promise((resolve) => setTimeout(resolve, 300));
     }
   };
 
-  const tileSize = 100 / level.gridSize;
+  const boardPadding = level.gridSize >= 8 ? 4.2 : 4.8;
+  const gap = level.gridSize >= 8 ? 0.8 : level.gridSize >= 7 ? 0.95 : 1.15;
+  const tileSize = (100 - boardPadding * 2 - gap * (level.gridSize - 1)) / level.gridSize;
+  const innerSize = 100 - boardPadding * 2;
 
   return (
-    <div 
-      className="relative bg-white/30 backdrop-blur-xl rounded-[2rem] md:rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.2)] border-4 md:border-8 border-white/40 overflow-hidden"
+    <div
+      className="relative aspect-square max-h-full max-w-full overflow-hidden rounded-[1.8rem] md:rounded-[2.4rem]"
       style={{
-        width: 'min(96vw, 72dvh, 760px)',
-        height: 'min(96vw, 72dvh, 760px)',
+        width: 'min(96vw, calc(100dvh - 13.5rem), 680px)',
+        height: 'min(96vw, calc(100dvh - 13.5rem), 680px)',
       }}
     >
-      {/* Subtle Grid Pattern Background */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none" 
-        style={{ 
-          backgroundImage: 'radial-gradient(circle, #000 1px, transparent 1px)', 
-          backgroundSize: `${tileSize}% ${tileSize}%` 
-        }} 
+      <img src={boardBg} alt="" className="absolute inset-0 h-full w-full object-fill" draggable={false} />
+      <img src={boardGradient} alt="" className="absolute inset-0 h-full w-full object-fill opacity-90" draggable={false} />
+      <img src={boardInnerBorder} alt="" className="absolute inset-0 h-full w-full object-fill opacity-95" draggable={false} />
+      <img src={boardBorder} alt="" className="absolute inset-0 h-full w-full object-fill opacity-100" draggable={false} />
+
+      <img src={glowCircle} alt="" className="absolute left-1/2 top-1/2 h-[74%] w-[74%] -translate-x-1/2 -translate-y-1/2 object-contain opacity-45" draggable={false} />
+      <motion.img
+        src={sparkle}
+        alt=""
+        draggable={false}
+        animate={{ opacity: [0.18, 0.48, 0.18], rotate: [0, 18, 0] }}
+        transition={{ duration: 5.6, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute left-[6%] top-[5%] h-[18%] w-[18%] object-contain opacity-30"
+      />
+      <motion.img
+        src={sparkle}
+        alt=""
+        draggable={false}
+        animate={{ opacity: [0.14, 0.34, 0.14], rotate: [0, -16, 0] }}
+        transition={{ duration: 6.2, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute bottom-[4%] right-[6%] h-[16%] w-[16%] object-contain opacity-24"
       />
 
-      <div className="relative w-full h-full">
+      <div
+        className="absolute overflow-hidden rounded-[1.25rem] md:rounded-[1.7rem]"
+        style={{
+          left: `${boardPadding}%`,
+          top: `${boardPadding}%`,
+          width: `${innerSize}%`,
+          height: `${innerSize}%`,
+          background:
+            'linear-gradient(180deg, rgba(53,182,108,0.92), rgba(94,198,110,0.94) 30%, rgba(138,209,88,0.94) 72%, rgba(82,160,68,0.94))',
+          boxShadow: 'inset 0 0 0 2px rgba(255,255,255,0.18), inset 0 0 24px rgba(255,255,255,0.12)',
+        }}
+      >
+        {Array.from({ length: level.gridSize + 1 }).map((_, index) => (
+          <div
+            key={`v-${index}`}
+            className="absolute top-0 h-full w-[2px] bg-white/18"
+            style={{ left: `${(index * 100) / level.gridSize}%`, transform: 'translateX(-50%)' }}
+          />
+        ))}
+        {Array.from({ length: level.gridSize + 1 }).map((_, index) => (
+          <div
+            key={`h-${index}`}
+            className="absolute left-0 h-[2px] w-full bg-white/18"
+            style={{ top: `${(index * 100) / level.gridSize}%`, transform: 'translateY(-50%)' }}
+          />
+        ))}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),rgba(255,255,255,0)_32%),linear-gradient(180deg,rgba(255,255,255,0.06),rgba(2,6,23,0.08))]" />
+      </div>
+
+      <div className="relative h-full w-full">
         <AnimatePresence mode="popLayout">
-          {grid.map((row) => 
-            row.map((tile) => (
-              tile && (
+          {grid.map((row) =>
+            row.map((tile) =>
+              tile ? (
                 <Tile
                   key={tile.id}
                   tile={tile}
                   gridSize={level.gridSize}
                   tileSize={tileSize}
+                  boardPadding={boardPadding}
+                  gap={gap}
                   isSelected={selectedTile?.x === tile.x && selectedTile?.y === tile.y}
                   onClick={() => handleTileClick(tile.x, tile.y)}
                 />
-              )
-            ))
+              ) : null,
+            ),
           )}
         </AnimatePresence>
 
-        {/* Power-up Effects Overlay */}
         <AnimatePresence>
-          {effects.map(effect => (
-            <motion.div
-              key={effect.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute pointer-events-none z-30"
-              style={{
-                left: effect.type === 'row' ? 0 : `${effect.x * tileSize}%`,
-                top: effect.type === 'column' ? 0 : `${effect.y * tileSize}%`,
-                width: effect.type === 'row' ? '100%' : `${tileSize}%`,
-                height: effect.type === 'column' ? '100%' : `${tileSize}%`,
-              }}
-            >
-              {effect.type === 'bomb' && (
-                <motion.div 
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 3, opacity: [0, 1, 0] }}
-                  className="w-full h-full bg-orange-500/40 rounded-full blur-xl"
-                />
-              )}
-              {effect.type === 'row' && (
-                <motion.div 
-                  initial={{ scaleY: 0 }}
-                  animate={{ scaleY: 1, opacity: [0, 1, 0] }}
-                  className="w-full h-full bg-blue-400/40 blur-md"
-                />
-              )}
-              {effect.type === 'column' && (
-                <motion.div 
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1, opacity: [0, 1, 0] }}
-                  className="w-full h-full bg-purple-400/40 blur-md"
-                />
-              )}
-            </motion.div>
-          ))}
+          {effects.map((effect) => {
+            const left = boardPadding + effect.x * (tileSize + gap);
+            const top = boardPadding + effect.y * (tileSize + gap);
+
+            return (
+              <motion.div
+                key={effect.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute pointer-events-none z-40"
+                style={{
+                  left: effect.type === 'row' ? `${boardPadding}%` : `${left}%`,
+                  top: effect.type === 'column' ? `${boardPadding}%` : `${top}%`,
+                  width: effect.type === 'row' ? `${innerSize}%` : `${tileSize}%`,
+                  height: effect.type === 'column' ? `${innerSize}%` : `${tileSize}%`,
+                }}
+              >
+                {effect.type === 'bomb' && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 2.4, opacity: [0, 1, 0] }}
+                    className="h-full w-full rounded-full bg-orange-300/60 blur-xl"
+                  />
+                )}
+                {effect.type === 'row' && (
+                  <motion.div
+                    initial={{ scaleY: 0 }}
+                    animate={{ scaleY: 1, opacity: [0, 1, 0] }}
+                    className="h-full w-full bg-cyan-200/40 blur-md"
+                  />
+                )}
+                {effect.type === 'column' && (
+                  <motion.div
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1, opacity: [0, 1, 0] }}
+                    className="h-full w-full bg-fuchsia-300/35 blur-md"
+                  />
+                )}
+              </motion.div>
+            );
+          })}
         </AnimatePresence>
       </div>
     </div>

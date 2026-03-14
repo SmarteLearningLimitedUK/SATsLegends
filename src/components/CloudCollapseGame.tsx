@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
-import { 
-  CloudCollapseLevelConfig,
-  AvatarData
-} from '../types';
+import { CloudCollapseLevelConfig } from '../types';
 import { CLOUD_COLLAPSE_LEVELS, AVATARS } from '../constants';
 import HUD from './HUD';
 import GameBoard from './GameBoard';
 import Tutorial from './Tutorial';
 import GameActionDock from './GameActionDock';
-import { Star } from './GameIcons';
+import AssetIcon from './AssetIcon';
+import cloudBackdrop from '../assets/fantasy_hero/demo_bg/background_01.png';
+import topGlow from '../assets/fantasy_hero/demo_fx/effect_light_02.png';
+import jewelGlow from '../assets/fantasy_hero/cloud_collapse/glow_circle.png';
+import sparkle from '../assets/fantasy_hero/cloud_collapse/sparkle.png';
 
 interface CloudCollapseGameProps {
   levelId: number;
@@ -20,12 +21,12 @@ interface CloudCollapseGameProps {
   onBack: () => void;
 }
 
-const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({ 
-  levelId, 
-  avatarId, 
-  onVictory, 
-  onGameOver, 
-  onBack 
+const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
+  levelId,
+  avatarId,
+  onVictory,
+  onGameOver,
+  onBack,
 }) => {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(0);
@@ -33,8 +34,8 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
   const [isGameOver, setIsGameOver] = useState(false);
   const [isVictory, setIsVictory] = useState(false);
 
-  const level = CLOUD_COLLAPSE_LEVELS.find(l => l.id === levelId) || CLOUD_COLLAPSE_LEVELS[0];
-  const avatar = AVATARS.find(a => a.id === avatarId) || AVATARS[0];
+  const level = CLOUD_COLLAPSE_LEVELS.find((entry) => entry.id === levelId) || CLOUD_COLLAPSE_LEVELS[0];
+  const avatar = AVATARS.find((entry) => entry.id === avatarId) || AVATARS[0];
 
   useEffect(() => {
     setTimeLeft(level.duration);
@@ -47,7 +48,7 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
     let timer: NodeJS.Timeout;
     if (timeLeft > 0 && !isGameOver && !isVictory) {
       timer = setInterval(() => {
-        setTimeLeft(prev => {
+        setTimeLeft((prev) => {
           if (prev <= 1) {
             handleTimeUp();
             return 0;
@@ -57,116 +58,179 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
       }, 1000);
     }
     return () => clearInterval(timer);
-  }, [timeLeft, isGameOver, isVictory]);
+  }, [timeLeft, isGameOver, isVictory, score]);
 
-  const handleTimeUp = () => {
-    if (score >= level.targetScore) {
-      handleWin();
-    } else {
-      setIsGameOver(true);
-      onGameOver(score);
-    }
+  const calculateStars = (currentScore: number, target: number) => {
+    if (currentScore >= target * 2) return 3;
+    if (currentScore >= target * 1.5) return 2;
+    return 1;
   };
 
   const handleWin = () => {
     const stars = calculateStars(score, level.targetScore);
     setIsVictory(true);
     confetti({
-      particleCount: 150,
-      spread: 70,
+      particleCount: 140,
+      spread: 72,
       origin: { y: 0.6 },
-      colors: ['#FFD700', '#FFFFFF', '#87CEEB']
+      colors: ['#fde047', '#7dd3fc', '#86efac', '#f9a8d4'],
     });
     onVictory(stars, score);
   };
 
-  const calculateStars = (score: number, target: number) => {
-    if (score >= target * 2) return 3;
-    if (score >= target * 1.5) return 2;
-    return 1;
+  const handleTimeUp = () => {
+    if (score >= level.targetScore) {
+      handleWin();
+      return;
+    }
+
+    setIsGameOver(true);
+    onGameOver(score);
   };
 
   const handleScoreUpdate = (points: number) => {
-    setScore(prev => prev + points);
+    setScore((prev) => prev + points);
   };
 
+  const helperText = level.mathTypes.includes('FRACTIONS') && level.mathTypes.includes('DECIMALS')
+    ? 'Swap to match 3 equal values across fractions and decimals.'
+    : level.mathTypes.includes('FRACTIONS')
+      ? 'Swap adjacent gems to match 3 equal fraction values.'
+      : 'Swap adjacent gems to match 3 equal decimal values.';
+
   return (
-    <div className="cloud-bg h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden">
-      {/* Animated Clouds */}
-      <div className="cloud w-64 h-24 top-20" style={{ animationDuration: '25s' }} />
-      <div className="cloud w-48 h-16 top-40" style={{ animationDuration: '40s', animationDelay: '-10s' }} />
-      <div className="cloud w-80 h-32 bottom-20" style={{ animationDuration: '30s', animationDelay: '-5s' }} />
-      <div className="cloud w-40 h-20 top-1/2 -left-20" style={{ animationDuration: '35s', animationDelay: '-15s' }} />
-      
-      {/* Background Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-400/20 blur-[120px] rounded-full pointer-events-none" />
-      
-      <div className="z-10 flex h-full w-full min-h-0 flex-1 flex-col items-center gap-2 md:gap-3">
-        <HUD 
+    <div className="relative flex h-full w-full flex-col items-center overflow-hidden p-2 md:p-4">
+      <div className="absolute inset-0 bg-cover bg-center opacity-95" style={{ backgroundImage: `url(${cloudBackdrop})` }} />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,39,73,0.14),rgba(8,15,31,0.34)_40%,rgba(7,12,23,0.78)_100%)]" />
+      <div className="absolute inset-x-0 top-0 h-[40%] bg-center bg-no-repeat opacity-85" style={{ backgroundImage: `url(${topGlow})`, backgroundSize: 'min(52rem, 120vw)' }} />
+      <motion.img
+        src={jewelGlow}
+        alt=""
+        animate={{ scale: [0.96, 1.06, 0.96], opacity: [0.18, 0.42, 0.18] }}
+        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+        className="pointer-events-none absolute left-1/2 top-[44%] h-[48rem] w-[48rem] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain opacity-35"
+        draggable={false}
+      />
+      <motion.img
+        src={sparkle}
+        alt=""
+        animate={{ y: [0, -10, 0], opacity: [0.12, 0.36, 0.12] }}
+        transition={{ duration: 5.4, repeat: Infinity, ease: 'easeInOut' }}
+        className="pointer-events-none absolute left-[5%] top-[18%] h-24 w-24 object-contain opacity-30 md:h-32 md:w-32"
+        draggable={false}
+      />
+      <motion.img
+        src={sparkle}
+        alt=""
+        animate={{ y: [0, 10, 0], opacity: [0.1, 0.28, 0.1] }}
+        transition={{ duration: 6.1, repeat: Infinity, ease: 'easeInOut' }}
+        className="pointer-events-none absolute right-[6%] top-[22%] h-20 w-20 object-contain opacity-24 md:h-28 md:w-28"
+        draggable={false}
+      />
+
+      <div className="relative z-10 flex h-full min-h-0 w-full max-w-5xl flex-1 flex-col items-center gap-2 md:gap-3">
+        <HUD
           title="Cloud Collapse"
-          score={score} 
-          targetScore={level.targetScore} 
-          timeLeft={timeLeft} 
-          level={level} 
+          score={score}
+          targetScore={level.targetScore}
+          timeLeft={timeLeft}
+          level={level as CloudCollapseLevelConfig}
           avatar={avatar}
         />
 
-        <div className="relative flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden rounded-[2rem] border border-white/15 bg-white/8 p-2 shadow-[0_20px_60px_rgba(15,23,42,0.18)] md:rounded-[2.6rem] md:p-4">
-          <GameBoard
-            level={level}
-            onScoreUpdate={handleScoreUpdate}
-            onMatch={() => {}}
-          />
+        <div className="casual-panel-strong relative flex min-h-0 w-full flex-1 flex-col items-center overflow-hidden rounded-[1.8rem] px-2 py-2 md:rounded-[2.4rem] md:px-4 md:py-4">
+          <div className="relative z-10 mb-2 flex w-full shrink-0 items-center justify-between gap-2 px-1 md:mb-3">
+            <div className="casual-ribbon-chip inline-flex items-center gap-2 rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em] md:px-4 md:py-1.5 md:text-[10px]">
+              <AssetIcon name="star" className="h-4 w-4" />
+              Crystal Grid
+            </div>
+            <div className="rounded-full bg-slate-950/30 px-3 py-1 text-[9px] font-black uppercase tracking-[0.18em] text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:text-[10px]">
+              {level.gridSize} x {level.gridSize}
+            </div>
+          </div>
+
+          <div className="relative z-10 mb-2 w-full shrink-0 px-2 text-center md:mb-3">
+            <div className="mx-auto max-w-3xl rounded-[1.1rem] bg-[linear-gradient(180deg,rgba(6,12,26,0.42),rgba(6,12,26,0.18))] px-3 py-2 text-[10px] font-bold text-white/88 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:rounded-[1.4rem] md:px-4 md:py-2.5 md:text-sm">
+              {helperText}
+            </div>
+          </div>
+
+          <div className="relative z-10 flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden">
+            <GameBoard
+              level={level}
+              onScoreUpdate={handleScoreUpdate}
+              onMatch={() => undefined}
+            />
+          </div>
         </div>
 
         <GameActionDock
           onBack={onBack}
           onHelp={() => setShowTutorial(true)}
-          accentClass="text-white"
+          accentClass="text-slate-700"
         />
       </div>
 
       <AnimatePresence>
         {(isGameOver || isVictory) && (
-          <motion.div 
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/76 p-4 backdrop-blur-md"
           >
-            <div className="app-modal-panel w-full max-w-md rounded-[2rem] border-4 border-white/50 bg-white/30 p-6 shadow-2xl backdrop-blur-xl flex flex-col items-center gap-5 md:rounded-[3rem] md:border-8 md:p-12">
-              <div className={`text-6xl font-black ${isVictory ? 'text-yellow-400' : 'text-red-500'} drop-shadow-md`}>
-                {isVictory ? 'VICTORY!' : 'TIME UP!'}
+            <motion.div
+              initial={{ scale: 0.88, y: 18 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.92, y: 12 }}
+              className="app-modal-panel casual-modal-panel relative flex w-full max-w-md flex-col items-center gap-4 overflow-hidden rounded-[2rem] p-5 text-center md:max-w-lg md:rounded-[2.6rem] md:p-8"
+            >
+              <div className="casual-ribbon-chip inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] md:text-xs">
+                <AssetIcon name={isVictory ? 'trophy' : 'timer'} className="h-4 w-4" />
+                {isVictory ? 'Crystal Cleared' : 'Out of Time'}
               </div>
 
+              <h2 className="text-3xl font-black tracking-tight text-white md:text-5xl">
+                {isVictory ? 'Victory' : 'Try Again'}
+              </h2>
+
               {isVictory && (
-                <div className="flex gap-2">
-                  {[1, 2, 3].map(s => (
+                <div className="flex items-center gap-2">
+                  {[1, 2, 3].map((starIndex) => (
                     <motion.div
-                      key={s}
+                      key={starIndex}
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      transition={{ delay: s * 0.2 }}
+                      transition={{ delay: starIndex * 0.12, type: 'spring', stiffness: 220 }}
+                      className="rounded-full bg-white/8 p-2"
                     >
-                      <Star className={`w-16 h-16 ${s <= calculateStars(score, level.targetScore) ? 'fill-yellow-400 text-yellow-400' : 'text-white/30'}`} />
+                      <AssetIcon
+                        name="star"
+                        className={`h-8 w-8 md:h-10 md:w-10 ${starIndex <= calculateStars(score, level.targetScore) ? '' : 'opacity-25 grayscale'}`}
+                      />
                     </motion.div>
                   ))}
                 </div>
               )}
 
-              <div className="text-center">
-                <div className="text-white/80 font-bold uppercase tracking-widest">Final Score</div>
-                <div className="text-5xl font-black text-white drop-shadow-md">{score}</div>
+              <div className="grid w-full grid-cols-2 gap-3">
+                <div className="casual-panel-surface rounded-[1.2rem] p-3 md:rounded-[1.5rem] md:p-4">
+                  <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/60 md:text-[10px]">Score</div>
+                  <div className="mt-1 text-2xl font-black text-white md:text-4xl">{score}</div>
+                </div>
+                <div className="casual-panel-surface rounded-[1.2rem] p-3 md:rounded-[1.5rem] md:p-4">
+                  <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/60 md:text-[10px]">Target</div>
+                  <div className="mt-1 text-2xl font-black text-white md:text-4xl">{level.targetScore}</div>
+                </div>
               </div>
 
-              <div className="flex flex-col gap-4 w-full mt-4">
-                <button 
-                  onClick={onBack}
-                  className="w-full py-4 text-white text-2xl font-black rounded-2xl transition-all licensed-submit-button"
-                >
-                  CONTINUE
-                </button>
-              </div>
-            </div>
+              <button
+                onClick={onBack}
+                className="fantasy-cta-button w-full px-6 py-3 text-sm uppercase tracking-[0.18em] md:px-8 md:py-4 md:text-base"
+              >
+                Continue
+              </button>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

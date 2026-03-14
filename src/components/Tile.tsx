@@ -3,6 +3,17 @@ import { motion } from 'motion/react';
 import { Bomb, ArrowRightLeft, ArrowUpDown } from './GameIcons';
 import { TileData } from '../types';
 import { clsx } from 'clsx';
+import tileBlue from '../assets/fantasy_hero/cloud_collapse/tile_blue.png';
+import tileGreen from '../assets/fantasy_hero/cloud_collapse/tile_green.png';
+import tilePurple from '../assets/fantasy_hero/cloud_collapse/tile_purple.png';
+import tileRed from '../assets/fantasy_hero/cloud_collapse/tile_red.png';
+import tileYellow from '../assets/fantasy_hero/cloud_collapse/tile_yellow.png';
+import tileNavy from '../assets/fantasy_hero/cloud_collapse/tile_navy.png';
+import tileGlow from '../assets/fantasy_hero/cloud_collapse/tile_glow.png';
+import tileGradient from '../assets/fantasy_hero/cloud_collapse/tile_gradient.png';
+import tileInnerDeco from '../assets/fantasy_hero/cloud_collapse/tile_inner_deco.png';
+import tileFocusBorder from '../assets/fantasy_hero/cloud_collapse/tile_focus_border.png';
+import tileFocusGlow from '../assets/fantasy_hero/cloud_collapse/tile_focus_glow.png';
 
 interface TileProps {
   tile: TileData;
@@ -10,110 +21,149 @@ interface TileProps {
   onClick: () => void;
   gridSize: number;
   tileSize: number;
+  boardPadding: number;
+  gap: number;
 }
 
-const Tile: React.FC<TileProps> = ({ tile, isSelected, onClick, gridSize, tileSize }) => {
+const TILE_ART: Record<string, string> = {
+  half: tileBlue,
+  quarter: tileRed,
+  'three-quarters': tileGreen,
+  'one-fifth': tileYellow,
+  ten: tilePurple,
+  twelve: tileNavy,
+  twenty: tileBlue,
+  one: tileGreen,
+};
+
+const TILE_TEXT: Record<string, string> = {
+  half: 'text-cyan-50',
+  quarter: 'text-amber-50',
+  'three-quarters': 'text-emerald-50',
+  'one-fifth': 'text-yellow-50',
+  ten: 'text-violet-50',
+  twelve: 'text-slate-50',
+  twenty: 'text-cyan-50',
+  one: 'text-emerald-50',
+};
+
+const Tile: React.FC<TileProps> = ({ tile, isSelected, onClick, gridSize, tileSize, boardPadding, gap }) => {
   const getPowerUpIcon = () => {
     switch (tile.powerUp) {
-      case 'BOMB': return <Bomb className="w-4 h-4 text-white" />;
-      case 'ROW_CLEAR': return <ArrowRightLeft className="w-4 h-4 text-white" />;
-      case 'COLUMN_CLEAR': return <ArrowUpDown className="w-4 h-4 text-white" />;
-      default: return null;
+      case 'BOMB':
+        return <Bomb className="h-3 w-3 text-white md:h-4 md:w-4" />;
+      case 'ROW_CLEAR':
+        return <ArrowRightLeft className="h-3 w-3 text-white md:h-4 md:w-4" />;
+      case 'COLUMN_CLEAR':
+        return <ArrowUpDown className="h-3 w-3 text-white md:h-4 md:w-4" />;
+      default:
+        return null;
     }
-  };
-
-  const getTileColor = () => {
-    const colors: Record<string, string> = {
-      'half': 'from-blue-400 to-blue-600 border-blue-700 shadow-blue-900/40',
-      'quarter': 'from-purple-400 to-purple-600 border-purple-700 shadow-purple-900/40',
-      'three-quarters': 'from-pink-400 to-pink-600 border-pink-700 shadow-pink-900/40',
-      'one-fifth': 'from-emerald-400 to-emerald-600 border-emerald-700 shadow-emerald-900/40',
-      'ten': 'from-orange-400 to-orange-600 border-orange-700 shadow-orange-900/40',
-      'twelve': 'from-yellow-400 to-yellow-600 border-yellow-700 shadow-yellow-900/40',
-      'twenty': 'from-indigo-400 to-indigo-600 border-indigo-700 shadow-indigo-900/40',
-      'one': 'from-teal-400 to-teal-600 border-teal-700 shadow-teal-900/40',
-    };
-    return colors[tile.familyId] || 'from-gray-400 to-gray-600 border-gray-700 shadow-gray-900/40';
   };
 
   const getExitAnimation = () => {
     switch (tile.powerUp) {
       case 'BOMB':
-        return { 
-          scale: [1, 1.5, 0], 
+        return {
+          scale: [1, 1.45, 0],
           opacity: [1, 1, 0],
           rotate: [0, 45, 90],
-          transition: { duration: 0.4 } 
+          transition: { duration: 0.35 },
         };
       case 'ROW_CLEAR':
-        return { 
+        return {
           x: tile.x < gridSize / 2 ? -500 : 500,
           opacity: 0,
-          transition: { duration: 0.4, ease: "easeIn" }
+          transition: { duration: 0.34, ease: 'easeIn' },
         };
       case 'COLUMN_CLEAR':
-        return { 
+        return {
           y: tile.y < gridSize / 2 ? -500 : 500,
           opacity: 0,
-          transition: { duration: 0.4, ease: "easeIn" }
+          transition: { duration: 0.34, ease: 'easeIn' },
         };
       default:
-        return { 
-          scale: 0, 
-          opacity: 0, 
-          transition: { duration: 0.2 } 
+        return {
+          scale: 0.2,
+          opacity: 0,
+          transition: { duration: 0.18 },
         };
     }
   };
 
+  const tileArt = TILE_ART[tile.familyId] || tileBlue;
+  const textColor = TILE_TEXT[tile.familyId] || 'text-white';
+  const left = boardPadding + tile.x * (tileSize + gap);
+  const top = boardPadding + tile.y * (tileSize + gap);
+  const labelSize =
+    gridSize >= 8
+      ? 'text-[9px] md:text-xs'
+      : gridSize >= 7
+        ? 'text-[10px] md:text-sm'
+        : 'text-[11px] md:text-base';
+
   return (
-    <motion.div
+    <motion.button
       layout
-      initial={{ scale: 0, opacity: 0, y: -100 }}
-      animate={{ 
-        scale: isSelected ? 1.1 : 1, 
+      type="button"
+      initial={{ scale: 0.4, opacity: 0, y: -36 }}
+      animate={{
+        scale: isSelected ? 1.06 : 1,
         opacity: 1,
         y: 0,
-        left: `${tile.x * tileSize}%`,
-        top: `${tile.y * tileSize}%`,
-        rotate: isSelected ? [0, -2, 2, 0] : 0,
+        left: `${left}%`,
+        top: `${top}%`,
       }}
-      whileTap={{ scale: 0.9 }}
+      whileTap={{ scale: 0.94 }}
       exit={getExitAnimation()}
-      transition={{ 
-        type: 'spring', 
-        stiffness: 400, 
-        damping: 25,
-        mass: 0.8,
-        rotate: { repeat: Infinity, duration: 0.5 },
-        layout: { duration: 0.3 }
+      transition={{
+        type: 'spring',
+        stiffness: 420,
+        damping: 28,
+        mass: 0.72,
+        layout: { duration: 0.28 },
       }}
       onClick={onClick}
       className={clsx(
-        "absolute flex items-center justify-center rounded-2xl border-b-6 cursor-pointer select-none transition-all duration-200 bg-gradient-to-b shadow-lg",
-        getTileColor(),
-        isSelected && "ring-4 ring-white shadow-2xl z-10 -translate-y-2",
-        gridSize > 7 ? "p-1 text-xs" : "p-2 text-sm md:text-base"
+        'absolute z-10 flex items-center justify-center overflow-hidden rounded-[18%] border-0 bg-transparent p-0 transition-transform duration-200',
+        isSelected && 'z-20',
       )}
       style={{
         width: `${tileSize}%`,
         height: `${tileSize}%`,
-        padding: '4px',
       }}
     >
-      <div className="shine rounded-2xl" />
-      <div className="gloss" />
-      
-      <span className="font-black text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)] text-center break-words z-10">
+      <img src={tileArt} alt="" className="absolute inset-0 h-full w-full object-fill" draggable={false} />
+      <img src={tileGradient} alt="" className="absolute inset-0 h-full w-full object-fill opacity-90" draggable={false} />
+      <img src={tileInnerDeco} alt="" className="absolute inset-0 h-full w-full object-fill opacity-90" draggable={false} />
+      <img src={tileGlow} alt="" className="absolute inset-0 h-full w-full object-fill opacity-80" draggable={false} />
+
+      {isSelected && (
+        <>
+          <img src={tileFocusGlow} alt="" className="absolute inset-[-4%] h-[108%] w-[108%] object-fill opacity-90" draggable={false} />
+          <img src={tileFocusBorder} alt="" className="absolute inset-0 h-full w-full object-fill opacity-100" draggable={false} />
+        </>
+      )}
+
+      <div className="absolute inset-[9%] rounded-[20%] bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.34),rgba(255,255,255,0.08)_36%,rgba(255,255,255,0)_60%)]" />
+      <div className="absolute left-[16%] top-[10%] h-[18%] w-[44%] rounded-full bg-white/28 blur-[3px]" />
+
+      <span
+        className={clsx(
+          'relative z-20 max-w-[78%] text-center font-black leading-[0.88] tracking-[-0.03em] drop-shadow-[0_2px_2px_rgba(0,0,0,0.6)]',
+          labelSize,
+          textColor,
+        )}
+      >
         {tile.display}
       </span>
-      
+
       {tile.powerUp && (
-        <div className="absolute top-1 right-1 bg-white/40 backdrop-blur-sm rounded-full p-1 shadow-sm border border-white/50 z-20">
+        <div className="absolute right-[6%] top-[6%] z-30 flex h-[24%] w-[24%] items-center justify-center rounded-full bg-[radial-gradient(circle_at_top,#f8fafc,#93c5fd)] shadow-[0_4px_10px_rgba(15,23,42,0.35)]">
           {getPowerUpIcon()}
         </div>
       )}
-    </motion.div>
+    </motion.button>
   );
 };
 

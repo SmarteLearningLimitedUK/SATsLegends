@@ -10,6 +10,10 @@ import GameActionDock from './GameActionDock';
 import GameplaySceneBackdrop from './GameplaySceneBackdrop';
 import GameplayHUD from './GameplayHUD';
 import { Star } from './GameIcons';
+import answerPurpleBg from '../assets/fantasy_hero/buttons/small_purple.png';
+import answerPurpleDeco from '../assets/fantasy_hero/buttons/small_deco.png';
+import answerOrangeBg from '../assets/fantasy_hero/buttons/small_orange.png';
+import answerGreenBg from '../assets/fantasy_hero/buttons/primary_green.png';
 
 type SupportedChallengeGameType =
   | 'place_value_peaks'
@@ -1165,89 +1169,85 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
         />
 
         <div className={`relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.8rem] border border-white/10 ${isCalculationClash ? 'bg-[linear-gradient(180deg,rgba(36,15,8,0.74),rgba(9,16,28,0.38))]' : isPercentPulse ? 'bg-[linear-gradient(180deg,rgba(30,12,58,0.82),rgba(7,18,32,0.42))]' : 'bg-[linear-gradient(180deg,rgba(9,16,28,0.68),rgba(9,16,28,0.34))]'} shadow-[0_24px_64px_rgba(0,0,0,0.28)] md:rounded-[2.6rem]`}>
-          <div className="absolute inset-x-4 top-2.5 z-20 hidden justify-center md:flex md:top-4">
-            <div className={`rounded-full border border-white/12 bg-black/28 px-3 py-1.5 text-center text-[9px] font-black uppercase tracking-[0.18em] shadow-[0_12px_24px_rgba(0,0,0,0.3)] backdrop-blur-md md:px-4 md:py-2 md:text-xs ${theme.badge}`}>
-              {meta.focus}
-            </div>
-          </div>
+          <div className="flex min-h-0 flex-1 flex-col gap-1.5 p-1.5 md:gap-3 md:p-4">
+            {bossEncounter && (
+              <BossPortrait encounter={bossEncounter} pose={bossPose} compact className="shrink-0" />
+            )}
 
-          <div className={`grid min-h-0 flex-1 ${isCalculationClash ? 'grid-rows-[minmax(0,0.62fr)_minmax(0,1.18fr)]' : isPercentPulse ? 'grid-rows-[minmax(0,0.72fr)_minmax(0,1.08fr)]' : 'grid-rows-[minmax(0,0.8fr)_minmax(0,1fr)]'} gap-1 p-1.5 pt-1.5 md:gap-3 md:p-4 md:pt-[4.5rem] lg:grid-cols-[1.04fr_0.96fr] lg:grid-rows-1 lg:pt-16`}>
-            <div className={`relative min-h-0 overflow-hidden rounded-[1.25rem] border border-white/12 bg-gradient-to-br ${theme.surface} p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_44px_rgba(0,0,0,0.18)] md:rounded-[2rem] md:p-5`}>
-              <div className={`absolute inset-x-5 top-0 h-28 rounded-full bg-gradient-to-br ${theme.prompt} blur-3xl`} />
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(12,18,28,0)_24%,rgba(12,18,28,0.16)_100%)]" />
-              <div className="relative flex h-full min-h-0 flex-col">
-                <div className="shrink-0">
-                  <div className={`inline-flex rounded-full border border-white/12 bg-black/22 px-2 py-1 text-[8px] font-black uppercase tracking-[0.18em] text-white/72 md:hidden ${theme.badge}`}>
-                    {meta.focus}
-                  </div>
-                  <div className={`mt-1 ${isCalculationClash ? 'text-[1.08rem]' : 'text-[1.18rem]'} font-black leading-[1.05] text-white md:mt-2 md:text-3xl`}>{question.prompt}</div>
-                  <div className="mt-0.5 max-w-xl text-[9px] font-semibold leading-snug text-white/68 md:mt-2 md:text-sm">{question.sublabel}</div>
+            <div className={`casual-panel-strong relative shrink-0 overflow-hidden rounded-[1.35rem] px-3 py-3 text-center md:rounded-[2rem] md:px-5 md:py-5`}>
+              <div className={`absolute inset-x-5 top-0 h-20 rounded-full bg-gradient-to-br ${theme.prompt} blur-3xl`} />
+              <div className="relative z-10 flex flex-col items-center">
+                <div className={`casual-ribbon-chip mb-2 inline-flex items-center justify-center rounded-full px-3 py-1 text-[8px] font-black uppercase tracking-[0.18em] md:mb-3 md:px-4 md:py-1.5 md:text-[10px] ${theme.badge}`}>
+                  {meta.focus}
                 </div>
+                <div className={`${isCalculationClash ? 'text-[1.15rem]' : 'text-[1.28rem]'} max-w-[18rem] font-black leading-[0.95] text-white md:max-w-[30rem] md:text-[2.25rem]`}>
+                  {question.prompt}
+                </div>
+                <div className="mt-1 max-w-[18rem] text-[9px] font-semibold leading-snug text-white/70 md:mt-2 md:max-w-[30rem] md:text-sm">
+                  {question.sublabel}
+                </div>
+              </div>
+            </div>
 
+            <div className="casual-panel-surface relative flex min-h-0 shrink overflow-hidden rounded-[1.25rem] px-2 py-2 md:rounded-[1.8rem] md:px-4 md:py-4">
+              <div className="relative z-10 flex min-h-0 w-full flex-col items-center justify-center gap-2">
                 <motion.div
                   key={`${question.prompt}-${question.sublabel}`}
                   initial={{ opacity: 0, y: 8, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  className="flex min-h-0 flex-1 items-center justify-center py-1 md:py-4"
+                  className="flex min-h-0 w-full items-center justify-center overflow-hidden"
                 >
-                  {renderVisual(question.visual)}
+                  <div className="max-h-[10.5rem] w-full overflow-hidden md:max-h-[15rem]">
+                    <div className="flex h-full w-full items-center justify-center">
+                      {renderVisual(question.visual)}
+                    </div>
+                  </div>
                 </motion.div>
-
-                <div className="hidden shrink-0 rounded-[1.1rem] border border-white/10 bg-black/22 px-3 py-2.5 text-center text-[10px] font-bold text-white/84 shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:block md:rounded-[1.2rem] md:px-4 md:py-3 md:text-sm">
+                <div className="w-full rounded-[1rem] bg-black/22 px-3 py-2 text-center text-[9px] font-bold text-white/84 shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:rounded-[1.15rem] md:px-4 md:py-2.5 md:text-sm">
                   {visualCaption || statusMessage}
                 </div>
               </div>
             </div>
 
-            <div className="flex min-h-0 flex-col gap-1 md:gap-3">
-              {bossEncounter && (
-                <BossPortrait encounter={bossEncounter} pose={bossPose} compact className="shrink-0" />
-              )}
-              <div className="shrink-0 rounded-[0.95rem] border border-white/10 bg-black/24 px-2.5 py-1.5 text-center text-[9px] font-bold text-white/84 shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:hidden">
-                {visualCaption || statusMessage}
-              </div>
-              <div className="grid min-h-0 grid-cols-2 gap-1 md:grid-cols-2 md:gap-3 lg:grid-cols-1 xl:grid-cols-2">
-                {question.options.map((option, index) => {
-                  const isSelected = index === selectedIndex;
-                  const isCorrect = feedback === 'correct' && index === question.answerIndex;
-                  const isWrongSelected = feedback === 'incorrect' && isSelected;
+            <div className="flex min-h-0 flex-1 flex-col gap-1.5 md:gap-2.5">
+              {question.options.map((option, index) => {
+                const isSelected = index === selectedIndex;
+                const isCorrect = feedback === 'correct' && index === question.answerIndex;
+                const isWrongSelected = feedback === 'incorrect' && isSelected;
 
-                  return (
-                    <motion.button
-                      key={`${question.prompt}-${option}`}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => handleAnswer(index)}
-                      disabled={Boolean(feedback) || isVictory || isGameOver}
-                      className={`min-h-[3.4rem] rounded-[1rem] border px-2 py-2 ${isCalculationClash || isPercentPulse ? 'text-center' : 'text-left'} shadow-[0_14px_30px_rgba(0,0,0,0.16)] transition-all md:min-h-[5.25rem] md:rounded-[1.4rem] md:px-4 md:py-4 ${isCorrect
-                        ? 'border-emerald-200/80 bg-gradient-to-br from-emerald-300/55 to-lime-300/45 text-emerald-950'
-                        : isWrongSelected
-                          ? 'border-rose-200/80 bg-gradient-to-br from-rose-300/55 to-orange-300/45 text-rose-950'
-                          : isSelected
-                            ? `border-white/20 bg-gradient-to-br ${theme.answerActive} text-slate-950`
-                            : `${isCalculationClash ? 'border-amber-200/18 bg-[linear-gradient(180deg,rgba(255,255,255,0.16),rgba(255,255,255,0.05)),linear-gradient(135deg,rgba(120,53,15,0.44),rgba(15,23,42,0.24))] text-white hover:-translate-y-0.5 hover:border-amber-100/28' : isPercentPulse ? 'border-fuchsia-200/18 bg-[linear-gradient(180deg,rgba(255,255,255,0.14),rgba(255,255,255,0.03)),linear-gradient(135deg,rgba(232,121,249,0.32),rgba(34,211,238,0.2))] text-white hover:-translate-y-0.5 hover:border-cyan-100/26 hover:shadow-[0_18px_30px_rgba(34,211,238,0.14)]' : `border-white/12 bg-gradient-to-br ${theme.answer} text-white hover:bg-white/14`}`}`}
-                    >
-                      <div className={`flex ${isCalculationClash || isPercentPulse ? 'items-center justify-center gap-1.5' : 'items-start gap-2'}`}>
-                        <div className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[9px] font-black uppercase md:h-8 md:w-8 md:text-[11px] ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/35' : 'border-white/12 bg-white/8'}`}>
-                          {String.fromCharCode(65 + index)}
-                        </div>
-                        <div className={`${isCalculationClash ? 'text-[1rem] md:text-[1.45rem]' : isPercentPulse ? 'text-[0.95rem] md:text-[1.35rem]' : 'text-[11px] md:text-lg'} font-black leading-tight`}>{option}</div>
+                const answerBackground = isCorrect
+                  ? answerGreenBg
+                  : isWrongSelected
+                    ? answerOrangeBg
+                    : answerPurpleBg;
+
+                return (
+                  <motion.button
+                    key={`${question.prompt}-${option}`}
+                    whileTap={{ scale: 0.985 }}
+                    onClick={() => handleAnswer(index)}
+                    disabled={Boolean(feedback) || isVictory || isGameOver}
+                    className="relative flex min-h-[3.55rem] w-full shrink-0 items-center justify-center overflow-hidden rounded-[999px] px-3 py-2 text-center shadow-[0_16px_26px_rgba(0,0,0,0.24)] transition-transform md:min-h-[4.7rem] md:px-5 md:py-3"
+                  >
+                    <img src={answerBackground} alt="" className="absolute inset-0 h-full w-full object-fill" draggable={false} />
+                    {!isCorrect && !isWrongSelected && (
+                      <img src={answerPurpleDeco} alt="" className="absolute inset-0 h-full w-full object-fill opacity-95" draggable={false} />
+                    )}
+                    {isSelected && !isCorrect && !isWrongSelected && (
+                      <div className={`absolute inset-0 bg-gradient-to-br ${theme.answerActive} opacity-40`} />
+                    )}
+                    <div className="absolute inset-x-[8%] top-[10%] h-[34%] rounded-full bg-white/18 blur-md" />
+                    <div className="relative z-10 flex w-full items-center gap-2.5 md:gap-3">
+                      <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-[9px] font-black uppercase md:h-8 md:w-8 md:text-[11px] ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/35 text-slate-900' : 'border-white/14 bg-white/10 text-white'}`}>
+                        {String.fromCharCode(65 + index)}
                       </div>
-                    </motion.button>
-                  );
-                })}
-              </div>
-
-              <div className="hidden min-h-0 grid-cols-2 gap-1.5 md:grid md:gap-3">
-                <div className="rounded-[1.1rem] border border-white/10 bg-black/20 p-2.5 shadow-[0_16px_32px_rgba(0,0,0,0.16)] md:rounded-[1.6rem] md:p-4">
-                  <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/50 md:text-[10px] md:tracking-[0.22em]">Status</div>
-                  <div className="mt-1.5 text-[11px] font-black leading-tight text-white md:mt-2 md:text-lg">{statusMessage}</div>
-                </div>
-                <div className="rounded-[1.1rem] border border-white/10 bg-black/20 p-2.5 shadow-[0_16px_32px_rgba(0,0,0,0.16)] md:rounded-[1.6rem] md:p-4">
-                  <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/50 md:text-[10px] md:tracking-[0.22em]">Target</div>
-                  <div className="mt-1.5 text-xl font-black text-white md:mt-2 md:text-4xl">{targetScore}</div>
-                  <div className="mt-1 text-[10px] font-semibold text-white/60 md:text-[11px]">Hit the target before time ends.</div>
-                </div>
-              </div>
+                      <div className="flex-1 text-center text-[1.02rem] font-black leading-none tracking-[-0.02em] text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.42)] md:text-[1.45rem]">
+                        {option}
+                      </div>
+                    </div>
+                  </motion.button>
+                );
+              })}
             </div>
           </div>
         </div>
