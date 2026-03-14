@@ -265,15 +265,15 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   place_value_peaks: {
-    label: 'Place Value Peaks',
-    focus: 'Place value and rounding',
+    label: 'Decimal Sniper',
+    focus: 'Decimals, place value and rounding',
     rules: {
-      title: 'Place Value Peaks',
-      summary: 'Choose the number, order or rounding answer that best fits the climb.',
+      title: 'Decimal Sniper',
+      summary: 'Track the moving decimal targets and fire at the one that matches the rule.',
       bullets: [
-        'Compare numbers up to millions and beyond.',
-        'Look carefully at digit value, ordering and rounding clues.',
-        'Keep your climb clean to build streak bonuses.',
+        'Prompts can ask for the largest, smallest, closest or correctly rounded decimal.',
+        'Read each decimal place carefully before you fire, especially in the later rounds.',
+        'Final rounds may require you to hit decimals in order from smallest to largest.',
       ],
     },
   },
