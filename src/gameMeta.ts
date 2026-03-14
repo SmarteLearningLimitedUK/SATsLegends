@@ -9,30 +9,32 @@ export interface GameRuleSet {
 export interface GameMeta {
   label: string;
   focus: string;
+  mode?: 'standard' | 'boss' | 'special';
   rules: GameRuleSet;
 }
 
-export const BOSS_BATTLE_RULES: GameRuleSet = {
-  title: 'Boss Battle',
-  summary: 'Face the island boss in a 10-question SATs duel built from that island topic.',
+const makeBossRules = (title: string, summary: string, closingLine: string): GameRuleSet => ({
+  title,
+  summary,
   bullets: [
     'Each correct answer damages the boss health bar.',
     'You need at least 8 correct answers out of 10 to win.',
-    'Wrong answers boost the boss, so accuracy matters more than rushing.',
+    closingLine,
   ],
-};
+});
 
 export const GAME_META: Record<MiniGameType, GameMeta> = {
   quiz: {
     label: 'Quiz',
-    focus: 'Mixed maths fluency',
+    focus: 'Mixed SATs fluency',
+    mode: 'special',
     rules: {
       title: 'Quiz',
-      summary: 'Read the question carefully and choose the best answer.',
+      summary: 'A flexible revision mode for mixed SATs questions and practice runs.',
       bullets: [
-        'Solve each prompt before time runs out.',
-        'Correct answers build score and stars.',
-        'Wrong answers slow your progress, so accuracy matters.',
+        'Use it for daily review, warm-ups, or catch-up revision.',
+        'Questions can mix domains instead of staying on one island topic.',
+        'It is best suited to side modes rather than the core campaign route.',
       ],
     },
   },
@@ -49,41 +51,28 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       ],
     },
   },
-  burger_bar: {
-    label: 'Burger Bar',
-    focus: 'Fractions and mixed numbers',
-    rules: {
-      title: 'Burger Bar',
-      summary: 'Build the burger so the total equals the customer order.',
-      bullets: [
-        'Each ingredient has a fraction value.',
-        'Match the exact total and include required ingredients.',
-        'You have 45 seconds before the customer leaves.',
-      ],
-    },
-  },
   cloud_collapse: {
     label: 'Cloud Collapse',
-    focus: 'Fraction and decimal matching',
+    focus: 'Rapid equivalence cluster clearing',
     rules: {
       title: 'Cloud Collapse',
-      summary: 'Clear matching maths clouds to build score quickly.',
+      summary: 'Clear connected clouds of matching equivalent values before the board fills your path.',
       bullets: [
         'Tap connected matching answers to clear bigger groups.',
-        'Large clears give better score bonuses.',
+        'Large clears trigger better score bonuses than small taps.',
         'Reach the target before the timer expires.',
       ],
     },
   },
   sequence_sprint: {
     label: 'Sequence Sprint',
-    focus: 'Sequences and reasoning',
+    focus: 'Next-term sequence spotting',
     rules: {
       title: 'Sequence Sprint',
-      summary: 'Spot the pattern fast and choose the missing value.',
+      summary: 'Read the pattern quickly and choose the next value before the route closes.',
       bullets: [
-        'Look for the rule linking each term.',
-        'Use both increase and decrease patterns.',
+        'Look for the rule linking each term to the next.',
+        'This game is about continuing number patterns at speed.',
         'Keep streaks alive to score faster.',
       ],
     },
@@ -104,28 +93,26 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
   shape_shift: {
     label: 'Shape Shift',
     focus: 'Spatial reasoning',
+    mode: 'special',
     rules: {
       title: 'Shape Shift',
       summary: 'Transform the shape until it matches the target pattern.',
       bullets: [
         'Rotate, reflect or flip the shape as needed.',
         'Compare your build to the target before locking it in.',
-        'Efficient solutions score more highly.',
+        'This reads more like a side challenge than a core island lane right now.',
       ],
     },
   },
   matrix_match: {
     label: 'Matrix Match',
     focus: 'Reasoning matrices',
-    rules: {
-      title: 'Matrix Match',
-      summary: 'Find the missing piece that completes the logic grid.',
-      bullets: [
-        'Check rows and columns for matching rules.',
-        'Look at colour, number, size and rotation changes.',
-        'Choose carefully to avoid losing momentum.',
-      ],
-    },
+    mode: 'boss',
+    rules: makeBossRules(
+      'Matrix Match',
+      'Enter the final logic matrix and complete each pattern before the Oracle Slime overwhelms the forest.',
+      'Look for colour, size, number and rotation rules before you commit.'
+    ),
   },
   burger_builder: {
     label: 'Burger Bar',
@@ -142,16 +129,26 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
   },
   fraction_match: {
     label: 'Crystal Match',
-    focus: 'Equivalent fractions and decimals',
+    focus: 'Equivalent values match-3 play',
     rules: {
       title: 'Crystal Match',
-      summary: 'Swap tiles to make matches of equivalent values.',
+      summary: 'Swap tiles to line up equivalent fractions and decimals in clean match-3 chains.',
       bullets: [
         'Only adjacent tiles can be swapped.',
         'A valid match needs 3 or more equivalent values in a line.',
         'The board reshuffles when no moves remain.',
       ],
     },
+  },
+  crystal_core: {
+    label: 'Crystal Core',
+    focus: 'Fractions, decimals and percentages boss duel',
+    mode: 'boss',
+    rules: makeBossRules(
+      'Crystal Core',
+      'Stabilise the heart of Crystal Cave by proving equivalence across fractions, decimals and percentages.',
+      'Wrong answers feed the unstable core, so accuracy matters more than rushing.'
+    ),
   },
   prime_pop: {
     label: 'Prime Pop',
@@ -194,12 +191,12 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
   },
   data_dungeon: {
     label: 'Data Dungeon',
-    focus: 'Data handling',
+    focus: 'Tables, sets and summary statistics',
     rules: {
       title: 'Data Dungeon',
-      summary: 'Read charts and number sets to unlock each door.',
+      summary: 'Read number sets, tables and summary clues to unlock each chamber.',
       bullets: [
-        'Use the graph or data table shown on screen.',
+        'Use the data table or values shown on screen.',
         'Questions may ask for mean, median, mode or range.',
         'Clear rooms quickly to hit the target score.',
       ],
@@ -221,15 +218,12 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
   tower_of_factors: {
     label: 'Tower Of Factors',
     focus: 'Factors and multiples',
-    rules: {
-      title: 'Tower Of Factors',
-      summary: 'Choose numbers that are true factors of the target.',
-      bullets: [
-        'Every correct factor builds the tower.',
-        'Wrong choices knock your tower back down.',
-        'Complete factor sets to move to the next round.',
-      ],
-    },
+    mode: 'boss',
+    rules: makeBossRules(
+      'Tower Of Factors',
+      'Climb the summit of Lush Grove by beating the island boss with sharp factors and multiples knowledge.',
+      'Wrong choices strengthen the brute, so clean number fluency matters.'
+    ),
   },
   measurement_forge: {
     label: 'Measurement Forge',
@@ -252,7 +246,7 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       summary: 'Solve time and timetable problems before the clock runs down.',
       bullets: [
         'Read times carefully in 12-hour and 24-hour form.',
-        'Work out durations, intervals or start/end times.',
+        'Work out durations, intervals or start and end times.',
         'Temple rounds get harder as the clock speeds up.',
       ],
     },
@@ -301,7 +295,7 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     focus: 'Fractions, decimals and percentages',
     rules: {
       title: 'Percent Pulse',
-      summary: 'Match percentages to equivalent fractions, decimals or values of amounts.',
+      summary: 'Convert between percentages, fractions and decimals in a rhythm-like equivalence run.',
       bullets: [
         'Switch between % symbols, decimals and fractions confidently.',
         'Some rounds ask for a percentage of a quantity.',
@@ -324,16 +318,26 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
   },
   transform_temple: {
     label: 'Transform Temple',
-    focus: 'Translation and reflection',
+    focus: 'Transformations and movement rules',
     rules: {
       title: 'Transform Temple',
-      summary: 'Work out how the shape moves across the temple grid.',
+      summary: 'Track how a shape moves across the temple grid using translation and reflection clues.',
       bullets: [
         'Follow translation and reflection clues closely.',
         'Track how each vertex changes position.',
         'Correct movement rules unlock the next gate.',
       ],
     },
+  },
+  mirror_gate: {
+    label: 'Mirror Gate',
+    focus: 'Geometry boss duel',
+    mode: 'boss',
+    rules: makeBossRules(
+      'Mirror Gate',
+      'Survive the ruins guardian by mastering transformations, shape properties and coordinate thinking.',
+      'Mirror errors give the warden control of the gate, so read each move carefully.'
+    ),
   },
   scale_safari: {
     label: 'Scale Safari',
@@ -348,18 +352,38 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       ],
     },
   },
+  scales_of_the_sun: {
+    label: 'Scales Of The Sun',
+    focus: 'Measure and proportion boss duel',
+    mode: 'boss',
+    rules: makeBossRules(
+      'Scales Of The Sun',
+      'Balance the desert trial by scaling recipes, converting measures and holding every ratio steady.',
+      'The sun scales punish rushed estimates, so measure with precision.'
+    ),
+  },
   chart_chase: {
     label: 'Chart Chase',
     focus: 'Graphs and chart interpretation',
     rules: {
       title: 'Chart Chase',
-      summary: 'Read the chart quickly and answer the question before the trail goes cold.',
+      summary: 'Read the graph fast and answer before the trail goes cold.',
       bullets: [
         'Use the bars, lines or pie sections shown on screen.',
         'Compare values, totals and differences accurately.',
         'Fast reads keep the chase multiplier high.',
       ],
     },
+  },
+  observatory_overload: {
+    label: 'Observatory Overload',
+    focus: 'Statistics and data boss duel',
+    mode: 'boss',
+    rules: makeBossRules(
+      'Observatory Overload',
+      'Calm the Starlight City observatory by mastering graphs, averages and high-pressure data reads.',
+      'Bad reads scramble the signals, so slow down and interpret the evidence carefully.'
+    ),
   },
   mean_machine: {
     label: 'Mean Machine',
@@ -389,15 +413,19 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
   },
   rule_runner: {
     label: 'Rule Runner',
-    focus: 'Sequences and function rules',
+    focus: 'Input-output rules and function patterns',
     rules: {
       title: 'Rule Runner',
-      summary: 'Spot the sequence rule and pick the next correct gate.',
+      summary: 'Decode the rule machine or sequence gate and choose the correct result.',
       bullets: [
-        'Find the increase, decrease or step pattern first.',
-        'Some rounds use input-output rules instead of raw sequences.',
-        'Keep moving by choosing the next correct value quickly.',
+        'Some rounds use input-output rules instead of raw next-term sequences.',
+        'Work out the rule before you race for the answer.',
+        'Fast accurate rule reading keeps the run alive.',
       ],
     },
   },
 };
+
+export const getGameLabel = (gameType?: MiniGameType | null) => (
+  gameType ? GAME_META[gameType]?.label || gameType.replace(/_/g, ' ') : ''
+);

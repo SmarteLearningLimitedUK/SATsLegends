@@ -15,7 +15,7 @@ const ISLAND_REPORT_META: Record<number, { domain: string; revise: string }> = {
     revise: 'Revisit place value, calculation methods, and number fluency.',
   },
   2: {
-    domain: 'Fractions, Decimals & %',
+    domain: 'Fractions, Decimals & Percentages',
     revise: 'Strengthen equivalence, mixed numbers, and percentages of amounts.',
   },
   3: {
@@ -23,15 +23,15 @@ const ISLAND_REPORT_META: Record<number, { domain: string; revise: string }> = {
     revise: 'Practise angles, shape properties, coordinates, and transformations.',
   },
   4: {
-    domain: 'Measure, Ratio & Scale',
+    domain: 'Measure, Ratio & Proportion',
     revise: 'Focus on conversion, ratio reasoning, and scaling problems.',
   },
   5: {
-    domain: 'Statistics & Time',
-    revise: 'Work on chart reading, averages, timetables, and data interpretation.',
+    domain: 'Statistics & Data',
+    revise: 'Work on chart reading, averages, tables, and timetable interpretation.',
   },
   6: {
-    domain: 'Algebra & Reasoning',
+    domain: 'Sequences, Reasoning & Algebra',
     revise: 'Build confidence with patterns, rules, equations, and SATs reasoning.',
   },
 };

@@ -2,6 +2,7 @@ import React, { Component, ReactNode, ErrorInfo, useEffect, useMemo, useRef } fr
 import { motion } from 'motion/react';
 import { IslandData, PlayerData, LevelData } from '../types';
 import AssetIcon from './AssetIcon';
+import { getGameLabel as getGameTypeLabel } from '../gameMeta';
 
 interface IslandLevelsProps {
   island: IslandData;
@@ -10,41 +11,9 @@ interface IslandLevelsProps {
   onSelectLevel: (level: LevelData) => void;
 }
 
-const GAME_TYPE_LABELS: Record<NonNullable<LevelData['gameType']>, string> = {
-  quiz: 'Quiz',
-  potion_pour: 'Potion Pour',
-  burger_bar: 'Burger Bar',
-  cloud_collapse: 'Cloud Collapse',
-  sequence_sprint: 'Sequence Sprint',
-  logic_sort: 'Logic Sort',
-  shape_shift: 'Shape Shift',
-  matrix_match: 'Matrix Match',
-  burger_builder: 'Burger Bar',
-  fraction_match: 'Crystal Match',
-  prime_pop: 'Prime Pop',
-  angle_arena: 'Angle Arena',
-  polygon_palace: 'Polygon Palace',
-  data_dungeon: 'Data Dungeon',
-  monster_market: 'Monster Market',
-  tower_of_factors: 'Tower Of Factors',
-  measurement_forge: 'Measurement Forge',
-  timekeeper_temple: 'Timekeeper Temple',
-  ratio_rapids: 'Ratio Rapids',
-  place_value_peaks: 'Place Value Peaks',
-  calculation_clash: 'Calculation Clash',
-  percent_pulse: 'Percent Pulse',
-  coordinate_quest: 'Coordinate Quest',
-  transform_temple: 'Transform Temple',
-  scale_safari: 'Scale Safari',
-  chart_chase: 'Chart Chase',
-  mean_machine: 'Mean Machine',
-  equation_grove: 'Equation Grove',
-  rule_runner: 'Rule Runner',
-};
-
-const getGameLabel = (level: LevelData) => {
+const getLevelLabel = (level: LevelData) => {
   if (!level.gameType) return `Level ${level.id}`;
-  return GAME_TYPE_LABELS[level.gameType] || level.gameType.replace(/_/g, ' ');
+  return getGameTypeLabel(level.gameType);
 };
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean, error: Error | null }> {
@@ -179,7 +148,7 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
             const isCompleted = completedLevels.includes(level.id);
             const isNextPlayable = level.id === nextPlayableLevelId && isUnlocked;
             const isPerfectClear = isCompleted && stars === 3;
-            const gameLabel = getGameLabel(level);
+            const gameLabel = getLevelLabel(level);
 
             const pos = NODE_POSITIONS[index] || { top: 50, left: 50 };
 

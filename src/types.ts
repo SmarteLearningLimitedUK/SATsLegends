@@ -2,7 +2,6 @@
 export type MiniGameType =
   | 'quiz'
   | 'potion_pour'
-  | 'burger_bar'
   | 'cloud_collapse'
   | 'sequence_sprint'
   | 'logic_sort'
@@ -10,6 +9,7 @@ export type MiniGameType =
   | 'matrix_match'
   | 'burger_builder'
   | 'fraction_match'
+  | 'crystal_core'
   | 'prime_pop'
   | 'angle_arena'
   | 'polygon_palace'
@@ -24,8 +24,11 @@ export type MiniGameType =
   | 'percent_pulse'
   | 'coordinate_quest'
   | 'transform_temple'
+  | 'mirror_gate'
   | 'scale_safari'
+  | 'scales_of_the_sun'
   | 'chart_chase'
+  | 'observatory_overload'
   | 'mean_machine'
   | 'equation_grove'
   | 'rule_runner';

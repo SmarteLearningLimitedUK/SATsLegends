@@ -14,10 +14,10 @@ import AssetIcon from './AssetIcon';
 
 export type SupportedBossGameType =
   | 'tower_of_factors'
-  | 'fraction_match'
-  | 'transform_temple'
-  | 'scale_safari'
-  | 'chart_chase'
+  | 'crystal_core'
+  | 'mirror_gate'
+  | 'scales_of_the_sun'
+  | 'observatory_overload'
   | 'matrix_match';
 
 interface BossEncounterGameProps {
@@ -41,7 +41,7 @@ const TOTAL_QUESTIONS = 10;
 const PASS_MARK = 8;
 
 export const isBossEncounterGameType = (gameType?: MiniGameType | null): gameType is SupportedBossGameType => (
-  ['tower_of_factors', 'fraction_match', 'transform_temple', 'scale_safari', 'chart_chase', 'matrix_match'].includes(gameType || '')
+  ['tower_of_factors', 'crystal_core', 'mirror_gate', 'scales_of_the_sun', 'observatory_overload', 'matrix_match'].includes(gameType || '')
 );
 
 const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
@@ -433,10 +433,10 @@ const generateReasoningBossQuestion = (): BossQuestion => {
 
 const QUESTION_GENERATORS: Record<SupportedBossGameType, () => BossQuestion> = {
   tower_of_factors: generateFactorsQuestion,
-  fraction_match: generateFractionBossQuestion,
-  transform_temple: generateGeometryBossQuestion,
-  scale_safari: generateMeasureBossQuestion,
-  chart_chase: generateStatisticsBossQuestion,
+  crystal_core: generateFractionBossQuestion,
+  mirror_gate: generateGeometryBossQuestion,
+  scales_of_the_sun: generateMeasureBossQuestion,
+  observatory_overload: generateStatisticsBossQuestion,
   matrix_match: generateReasoningBossQuestion,
 };
 

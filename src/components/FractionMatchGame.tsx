@@ -298,7 +298,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   const avatar = AVATARS.find(item => item.id === avatarId) || AVATARS[0];
   const targetScore = LEVEL_TARGET_BASE + (levelId * LEVEL_TARGET_STEP);
   const progress = Math.min((score / targetScore) * 100, 100);
-  const bossEncounter = isBoss ? getBossEncounter('fraction_match') : undefined;
+  const bossEncounter = isBoss ? getBossEncounter('crystal_core') : undefined;
   const bossPose = !bossEncounter
     ? 'neutral'
     : isVictory

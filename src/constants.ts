@@ -57,7 +57,7 @@ export const ISLANDS: IslandData[] = [
   },
   {
     id: 2,
-    name: 'Fractions, Decimals & %',
+    name: 'Fractions, Decimals & Percentages',
     category: 'Maths',
     isLocked: false,
     color: 'bg-[#4B9EFF]',
@@ -71,12 +71,12 @@ export const ISLANDS: IslandData[] = [
       { id: 2, stars: 0, isLocked: false, gameType: 'percent_pulse' },
       { id: 3, stars: 0, isLocked: false, gameType: 'fraction_match' },
       { id: 4, stars: 0, isLocked: false, gameType: 'cloud_collapse' },
-      { id: 5, stars: 0, isLocked: false, isBoss: true, bossUnlockCoins: 700, gameType: 'fraction_match' },
+      { id: 5, stars: 0, isLocked: false, isBoss: true, bossUnlockCoins: 700, gameType: 'crystal_core' },
     ]
   },
   {
     id: 3,
-    name: 'Geometry & Measure',
+    name: 'Geometry',
     category: 'Maths',
     isLocked: false,
     color: 'bg-[#B04BFF]',
@@ -90,12 +90,12 @@ export const ISLANDS: IslandData[] = [
       { id: 2, stars: 0, isLocked: false, gameType: 'polygon_palace' },
       { id: 3, stars: 0, isLocked: false, gameType: 'coordinate_quest' },
       { id: 4, stars: 0, isLocked: false, gameType: 'transform_temple' },
-      { id: 5, stars: 0, isLocked: false, isBoss: true, bossUnlockCoins: 1050, gameType: 'transform_temple' },
+      { id: 5, stars: 0, isLocked: false, isBoss: true, bossUnlockCoins: 1050, gameType: 'mirror_gate' },
     ]
   },
   {
     id: 4,
-    name: 'Ratio & Proportion',
+    name: 'Measure, Ratio & Proportion',
     category: 'Maths',
     isLocked: false,
     color: 'bg-[#FFD700]',
@@ -109,12 +109,12 @@ export const ISLANDS: IslandData[] = [
       { id: 2, stars: 0, isLocked: false, gameType: 'potion_pour' },
       { id: 3, stars: 0, isLocked: false, gameType: 'ratio_rapids' },
       { id: 4, stars: 0, isLocked: false, gameType: 'scale_safari' },
-      { id: 5, stars: 0, isLocked: false, isBoss: true, bossUnlockCoins: 1450, gameType: 'scale_safari' },
+      { id: 5, stars: 0, isLocked: false, isBoss: true, bossUnlockCoins: 1450, gameType: 'scales_of_the_sun' },
     ]
   },
   {
     id: 5,
-    name: 'Statistics & Time',
+    name: 'Statistics & Data',
     category: 'Maths',
     isLocked: false,
     color: 'bg-[#FF4B4B]',
@@ -128,12 +128,12 @@ export const ISLANDS: IslandData[] = [
       { id: 2, stars: 0, isLocked: false, gameType: 'timekeeper_temple' },
       { id: 3, stars: 0, isLocked: false, gameType: 'chart_chase' },
       { id: 4, stars: 0, isLocked: false, gameType: 'mean_machine' },
-      { id: 5, stars: 0, isLocked: false, isBoss: true, bossUnlockCoins: 1850, gameType: 'chart_chase' },
+      { id: 5, stars: 0, isLocked: false, isBoss: true, bossUnlockCoins: 1850, gameType: 'observatory_overload' },
     ]
   },
   {
     id: 6,
-    name: 'Reasoning & Algebra',
+    name: 'Sequences, Reasoning & Algebra',
     category: 'Logic',
     isLocked: false,
     color: 'bg-[#FF8C00]',

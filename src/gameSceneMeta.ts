@@ -58,7 +58,6 @@ const REASONING_SCENE: GameSceneMeta = {
 export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   quiz: NUMBER_SCENE,
   potion_pour: RATIO_SCENE,
-  burger_bar: FRACTION_SCENE,
   cloud_collapse: FRACTION_SCENE,
   sequence_sprint: REASONING_SCENE,
   logic_sort: REASONING_SCENE,
@@ -66,6 +65,7 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   matrix_match: REASONING_SCENE,
   burger_builder: FRACTION_SCENE,
   fraction_match: FRACTION_SCENE,
+  crystal_core: FRACTION_SCENE,
   prime_pop: NUMBER_SCENE,
   angle_arena: GEOMETRY_SCENE,
   polygon_palace: GEOMETRY_SCENE,
@@ -80,10 +80,12 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   percent_pulse: FRACTION_SCENE,
   coordinate_quest: GEOMETRY_SCENE,
   transform_temple: GEOMETRY_SCENE,
+  mirror_gate: GEOMETRY_SCENE,
   scale_safari: RATIO_SCENE,
+  scales_of_the_sun: RATIO_SCENE,
   chart_chase: DATA_SCENE,
+  observatory_overload: DATA_SCENE,
   mean_machine: DATA_SCENE,
   equation_grove: REASONING_SCENE,
   rule_runner: REASONING_SCENE,
 };
-
