@@ -716,7 +716,7 @@ const App: React.FC = () => {
                 <motion.button
                   whileTap={{ scale: 0.96, y: 1 }}
                   onClick={goToHome}
-                  className={`hero-nav-button hero-nav-button-home flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'world_map' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'text-white/85 hover:bg-white/10'}`}
+                  className={`hero-nav-button hero-nav-button-home flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'world_map' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
                 >
                   <AssetIcon name="home" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
                   <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Map</span>
@@ -724,7 +724,7 @@ const App: React.FC = () => {
                 <motion.button
                   whileTap={{ scale: 0.96, y: 1 }}
                   onClick={() => setScreen('avatar_selection')}
-                  className={`hero-nav-button hero-nav-button-hero flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'avatar_selection' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'text-white/85 hover:bg-white/10'}`}
+                  className={`hero-nav-button hero-nav-button-hero flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'avatar_selection' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
                 >
                   <AssetIcon name="user" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
                   <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Hero</span>
@@ -732,7 +732,7 @@ const App: React.FC = () => {
                 <motion.button
                   whileTap={{ scale: 0.96, y: 1 }}
                   onClick={() => setShowQuests(true)}
-                  className="hero-nav-button hero-nav-button-quests relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 text-white/85 transition-all hover:bg-white/10 md:flex-none md:px-3"
+                  className="hero-nav-button hero-nav-button-idle hero-nav-button-quests relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3"
                 >
                   <AssetIcon name="doc" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
                   <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Quests</span>
@@ -743,7 +743,7 @@ const App: React.FC = () => {
                 <motion.button
                   whileTap={{ scale: 0.96, y: 1 }}
                   onClick={() => setShowAchievements(true)}
-                  className="hero-nav-button hero-nav-button-wins relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 text-white/85 transition-all hover:bg-white/10 md:flex-none md:px-3"
+                  className="hero-nav-button hero-nav-button-idle hero-nav-button-wins relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3"
                 >
                   <AssetIcon name="medal" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
                   <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Wins</span>
@@ -754,7 +754,7 @@ const App: React.FC = () => {
                 <motion.button
                   whileTap={{ scale: 0.96, y: 1 }}
                   onClick={() => setScreen('parent_dashboard')}
-                  className={`hero-nav-button hero-nav-button-stats flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'parent_dashboard' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'text-white/85 hover:bg-white/10'}`}
+                  className={`hero-nav-button hero-nav-button-stats flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'parent_dashboard' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
                 >
                   <AssetIcon name="gear" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
                   <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Stats</span>

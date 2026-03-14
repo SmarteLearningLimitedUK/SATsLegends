@@ -583,14 +583,41 @@ button:disabled {
 }
 
 .casual-nav-shell {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   border: 1px solid rgba(255,255,255,0.12);
   background:
-    radial-gradient(circle at top, rgba(96,165,250,0.24), transparent 30%),
-    linear-gradient(180deg, rgba(36,50,102,0.98), rgba(13,21,43,0.99));
+    radial-gradient(circle at 50% -20%, rgba(255,215,107,0.18), rgba(255,215,107,0) 38%),
+    radial-gradient(circle at top, rgba(96,165,250,0.2), transparent 32%),
+    linear-gradient(180deg, rgba(42,58,116,0.99), rgba(20,30,62,0.99) 46%, rgba(9,15,29,0.995));
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.14),
-    inset 0 -1px 0 rgba(255,213,107,0.08),
-    0 24px 44px rgba(2,6,23,0.38);
+    inset 0 1px 0 rgba(255,255,255,0.16),
+    inset 0 -1px 0 rgba(255,213,107,0.12),
+    0 16px 0 rgba(16,22,49,0.92),
+    0 28px 44px rgba(2,6,23,0.42);
+}
+
+.casual-nav-shell::before,
+.casual-nav-shell::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+
+.casual-nav-shell::before {
+  inset: 0.28rem;
+  border-radius: 1.6rem;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0) 26%);
+}
+
+.casual-nav-shell::after {
+  inset: auto 12% 0.24rem;
+  height: 0.8rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255,210,120,0.14), rgba(255,210,120,0) 72%);
+  filter: blur(6px);
 }
 
 .casual-nav-button-active {
@@ -606,8 +633,14 @@ button:disabled {
 .hero-nav-button {
   position: relative;
   overflow: hidden;
-  border: 1px solid transparent;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.78);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01) 22%, rgba(7,13,27,0.14));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    inset 0 -1px 0 rgba(255,255,255,0.02);
+  transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
 
 .hero-nav-button::before {
@@ -621,25 +654,54 @@ button:disabled {
   transition: opacity 0.18s ease;
 }
 
+.hero-nav-button::after {
+  content: '';
+  position: absolute;
+  inset: 0.18rem 0.3rem auto;
+  height: 42%;
+  border-radius: 1rem;
+  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0));
+  opacity: 0.36;
+  pointer-events: none;
+}
+
 .hero-nav-button:hover::before,
 .hero-nav-button-active::before {
   opacity: 1;
 }
 
+.hero-nav-button:hover {
+  border-color: rgba(255,255,255,0.08);
+  filter: brightness(1.04);
+}
+
+.hero-nav-button-idle {
+  color: rgba(255,255,255,0.76);
+}
+
+.hero-nav-button-idle:hover {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02) 22%, rgba(7,13,27,0.12));
+}
+
 .hero-nav-button-active {
-  border-color: rgba(255,241,193,0.18);
+  border-color: rgba(255,241,193,0.22);
+  color: #fffdf4;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.18),
+    0 10px 22px rgba(20,24,60,0.22);
 }
 
 .hero-nav-button-home.hero-nav-button-active {
   background:
-    radial-gradient(circle at top, rgba(110,231,255,0.28), rgba(110,231,255,0) 38%),
-    linear-gradient(180deg, rgba(64,180,255,0.98), rgba(58,104,236,0.98) 46%, rgba(65,62,214,0.99));
+    radial-gradient(circle at 50% 8%, rgba(110,231,255,0.3), rgba(110,231,255,0) 38%),
+    linear-gradient(180deg, rgba(82,204,255,0.98), rgba(61,122,241,0.98) 46%, rgba(65,62,214,0.99));
 }
 
 .hero-nav-button-hero.hero-nav-button-active {
   background:
-    radial-gradient(circle at top, rgba(253,224,71,0.24), rgba(253,224,71,0) 38%),
-    linear-gradient(180deg, rgba(255,190,70,0.98), rgba(255,140,39,0.98) 46%, rgba(215,88,22,0.99));
+    radial-gradient(circle at 50% 8%, rgba(253,224,71,0.28), rgba(253,224,71,0) 38%),
+    linear-gradient(180deg, rgba(255,203,89,0.98), rgba(255,148,48,0.98) 46%, rgba(215,88,22,0.99));
 }
 
 .hero-nav-button-quests.hero-nav-button-active {
@@ -661,7 +723,12 @@ button:disabled {
 }
 
 .hero-nav-button-active .hero-nav-icon {
+  transform: scale(1.08);
   filter: drop-shadow(0 0 10px rgba(255,255,255,0.24));
+}
+
+.hero-nav-icon {
+  transition: transform 0.18s ease, filter 0.18s ease;
 }
 
 .casual-action-button {
@@ -823,22 +890,74 @@ button:disabled {
 }
 
 .hero-screen-shell {
+  position: relative;
   border: 1px solid rgba(255,255,255,0.08);
   background:
-    linear-gradient(180deg, rgba(15,23,42,0.16), rgba(2,6,23,0.3)),
-    linear-gradient(180deg, rgba(8,13,28,0.16), rgba(8,13,28,0.46));
+    linear-gradient(180deg, rgba(15,23,42,0.08), rgba(2,6,23,0.22)),
+    linear-gradient(180deg, rgba(8,13,28,0.1), rgba(8,13,28,0.34));
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.08),
-    0 30px 70px rgba(2,6,23,0.32);
+    0 34px 80px rgba(2,6,23,0.4);
+}
+
+.hero-screen-shell::before,
+.hero-screen-shell::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.hero-screen-shell::before {
+  inset: 0.36rem;
+  border: 1px solid rgba(255,255,255,0.08);
+  opacity: 0.8;
+}
+
+.hero-screen-shell::after {
+  inset: auto 10% 0.45rem;
+  height: 1rem;
+  background: radial-gradient(circle, rgba(255,212,120,0.12), rgba(255,212,120,0) 72%);
+  filter: blur(8px);
+}
+
+.hero-header-banner {
+  position: relative;
+  border: 1px solid rgba(255,239,196,0.2);
+  border-radius: 1.8rem;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255,220,120,0.14), rgba(255,220,120,0) 32%),
+    url('./assets/fantasy_hero/title/ribbon_purple.png') center/100% 100% no-repeat,
+    linear-gradient(180deg, rgba(57,72,122,0.98), rgba(22,31,64,0.99) 54%, rgba(10,15,31,0.995));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.18),
+    inset 0 -1px 0 rgba(255,212,120,0.1),
+    0 18px 36px rgba(2,6,23,0.36);
+}
+
+.hero-header-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0.3rem;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0));
+  pointer-events: none;
+}
+
+.hero-stage-pedestal {
+  animation: splash-glow 3.6s ease-in-out infinite alternate;
 }
 
 .hero-card-shell {
+  position: relative;
   background:
-    radial-gradient(circle at 50% 6%, rgba(255,255,255,0.16), rgba(255,255,255,0) 28%),
-    linear-gradient(180deg, rgba(28,44,88,0.92), rgba(8,16,31,0.98));
+    radial-gradient(circle at 50% 8%, rgba(255,255,255,0.12), rgba(255,255,255,0) 30%),
+    linear-gradient(180deg, rgba(32,49,96,0.94), rgba(10,18,37,0.985));
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.08),
-    0 18px 34px rgba(2,6,23,0.3);
+    inset 0 -10px 22px rgba(2,6,23,0.34),
+    0 18px 34px rgba(2,6,23,0.34);
 }
 
 .hero-card-shell::before,
@@ -851,59 +970,114 @@ button:disabled {
 
 .hero-card-shell::before {
   inset: 0.3rem;
-  border: 1px solid rgba(255,255,255,0.08);
-  opacity: 0.8;
+  border: 1px solid rgba(255,255,255,0.1);
+  opacity: 0.88;
 }
 
 .hero-card-shell::after {
-  inset: auto 14% 1.15rem;
-  height: 1.25rem;
-  background: radial-gradient(circle, rgba(255,241,150,0.12), rgba(255,241,150,0) 72%);
-  filter: blur(7px);
+  inset: auto 12% 1.15rem;
+  height: 1.5rem;
+  background: radial-gradient(circle, rgba(255,241,150,0.14), rgba(255,241,150,0) 72%);
+  filter: blur(9px);
 }
 
 .hero-card-shell-selected {
   background:
-    radial-gradient(circle at 50% 8%, rgba(255,244,196,0.18), rgba(255,244,196,0) 28%),
-    linear-gradient(180deg, rgba(44,70,130,0.94), rgba(12,21,46,0.98));
+    radial-gradient(circle at 50% 8%, rgba(255,244,196,0.2), rgba(255,244,196,0) 30%),
+    linear-gradient(180deg, rgba(50,78,146,0.96), rgba(13,23,49,0.985));
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.14),
     inset 0 -1px 0 rgba(255,196,82,0.18),
-    0 24px 48px rgba(2,6,23,0.34),
-    0 0 0 1px rgba(255,213,107,0.14);
+    0 20px 0 rgba(15,30,83,0.9),
+    0 30px 56px rgba(2,6,23,0.4),
+    0 0 0 1px rgba(255,213,107,0.18);
 }
 
 .hero-card-shell-side {
-  filter: saturate(0.8);
+  filter: saturate(0.7) brightness(0.86) blur(0.45px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    0 12px 24px rgba(2,6,23,0.24);
 }
 
 .hero-arrow-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 3rem;
-  height: 3rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  padding: 0.22rem;
   border: 0;
-  border-radius: 999px;
-  color: #fff9e9;
+  border-radius: 1.3rem;
   background:
-    radial-gradient(circle at top, rgba(255,255,255,0.2), rgba(255,255,255,0) 48%),
-    linear-gradient(180deg, rgba(81,108,213,0.96), rgba(42,61,140,0.98));
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,0.22), rgba(255,255,255,0) 34%),
+    linear-gradient(180deg, #8c63ff 0%, #5932c8 46%, #31146f 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.24),
-    0 8px 0 rgba(21,35,91,0.9),
-    0 18px 24px rgba(2,6,23,0.22);
+    inset 0 1px 0 rgba(255,255,255,0.2),
+    inset 0 -4px 0 rgba(42,19,102,0.9),
+    0 10px 0 rgba(41,18,103,0.96),
+    0 18px 26px rgba(2,6,23,0.24);
 }
 
 .hero-arrow-button:hover {
-  filter: brightness(1.04);
+  filter: brightness(1.04) saturate(1.04);
 }
 
 .hero-arrow-button:active {
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.16),
-    0 4px 0 rgba(21,35,91,0.9),
+    inset 0 -3px 0 rgba(42,19,102,0.9),
+    0 5px 0 rgba(41,18,103,0.96),
     0 12px 18px rgba(2,6,23,0.18);
+}
+
+.hero-arrow-button-face {
+  position: relative;
+  display: inline-flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 1.05rem;
+  border: 2px solid rgba(255,241,193,0.48);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.24), rgba(255,255,255,0) 22%),
+    radial-gradient(circle at 50% 0%, rgba(255,247,207,0.84), rgba(255,247,207,0) 34%),
+    linear-gradient(180deg, #fff2a4 0%, #ffd64a 26%, #ffb512 56%, #f68d10 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.56),
+    inset 0 -4px 0 rgba(169, 73, 0, 0.46),
+    inset 0 0 16px rgba(255, 246, 207, 0.24);
+}
+
+.hero-arrow-button-face::before {
+  content: '';
+  position: absolute;
+  inset: 0.18rem 0.45rem auto;
+  height: 42%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.42), rgba(255,255,255,0));
+}
+
+.hero-arrow-button-gem {
+  position: absolute;
+  top: 0.26rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 0.16rem;
+  background: linear-gradient(180deg, #fff0a6 0%, #ffd14a 54%, #d17f0d 100%);
+  transform: rotate(45deg);
+  box-shadow: 0 0 12px rgba(255,205,90,0.42);
+}
+
+.hero-arrow-icon {
+  position: relative;
+  z-index: 2;
+  color: #4a206c;
+  filter:
+    drop-shadow(0 1px 0 rgba(255,247,215,0.9))
+    drop-shadow(0 3px 5px rgba(128,52,0,0.18));
 }
 
 .hero-carousel-dot {
@@ -927,30 +1101,33 @@ button:disabled {
 .hero-cta-button {
   position: relative;
   display: inline-flex;
-  width: min(23rem, calc(100vw - 3.5rem));
+  width: min(24rem, calc(100vw - 3.5rem));
   max-width: 100%;
   align-items: center;
   justify-content: center;
-  padding: 0.32rem;
+  padding: 0.38rem;
   border: 0;
   border-radius: 999px;
-  background: linear-gradient(180deg, #8d5cff 0%, #5a35cf 46%, #32167a 100%);
+  background:
+    radial-gradient(circle at 50% -5%, rgba(255,255,255,0.24), rgba(255,255,255,0) 36%),
+    linear-gradient(180deg, #9462ff 0%, #6037d5 46%, #35157f 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.18),
-    inset 0 -4px 0 rgba(106, 42, 0, 0.84),
-    0 10px 0 rgba(88, 34, 104, 0.94),
+    inset 0 1px 0 rgba(255,255,255,0.2),
+    inset 0 -4px 0 rgba(42,19,102,0.88),
+    0 11px 0 rgba(88, 34, 104, 0.94),
     0 24px 36px rgba(24, 10, 68, 0.34),
-    0 0 18px rgba(255, 190, 34, 0.18);
+    0 0 24px rgba(255, 190, 34, 0.18);
   animation: hero-cta-pulse 2.8s ease-in-out infinite;
+  isolation: isolate;
 }
 
 .hero-cta-button::before {
   content: '';
   position: absolute;
-  inset: -0.15rem;
+  inset: -0.24rem;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(255,196,71,0.28), rgba(255,196,71,0) 70%);
-  filter: blur(10px);
+  background: radial-gradient(circle, rgba(255,196,71,0.3), rgba(255,196,71,0) 70%);
+  filter: blur(12px);
   z-index: -1;
 }
 
@@ -962,15 +1139,16 @@ button:disabled {
   justify-content: center;
   overflow: hidden;
   border-radius: 999px;
-  border: 2px solid rgba(255,241,193,0.48);
+  border: 2px solid rgba(255,241,193,0.56);
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.24), rgba(255,255,255,0) 22%),
-    radial-gradient(circle at 50% 0%, rgba(255,247,207,0.84), rgba(255,247,207,0) 34%),
-    linear-gradient(180deg, #fff2a4 0%, #ffd64a 20%, #ffb512 52%, #ff8f0d 100%);
+    linear-gradient(180deg, rgba(255,255,255,0.26), rgba(255,255,255,0) 20%),
+    radial-gradient(circle at 50% 0%, rgba(255,247,207,0.86), rgba(255,247,207,0) 34%),
+    radial-gradient(circle at 50% 120%, rgba(176, 70, 0, 0.28), rgba(176, 70, 0, 0) 34%),
+    linear-gradient(180deg, #fff4ab 0%, #ffde56 18%, #ffba18 54%, #ff8f10 100%);
   box-shadow:
-    inset 0 3px 0 rgba(255,255,255,0.58),
-    inset 0 -4px 0 rgba(169, 73, 0, 0.44),
-    inset 0 0 24px rgba(255, 246, 207, 0.28);
+    inset 0 3px 0 rgba(255,255,255,0.62),
+    inset 0 -5px 0 rgba(169, 73, 0, 0.46),
+    inset 0 0 28px rgba(255, 246, 207, 0.28);
 }
 
 .hero-cta-button-face::before {
@@ -994,15 +1172,35 @@ button:disabled {
   animation: splash-shimmer 3.5s ease-in-out infinite;
 }
 
+.hero-cta-button-orb {
+  position: absolute;
+  top: 50%;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 0.2rem;
+  background: linear-gradient(180deg, #fff0a6 0%, #ffd14a 54%, #d17f0d 100%);
+  transform: translateY(-50%) rotate(45deg);
+  box-shadow: 0 0 12px rgba(255,205,90,0.38);
+  z-index: 2;
+}
+
+.hero-cta-button-orb-left {
+  left: 1rem;
+}
+
+.hero-cta-button-orb-right {
+  right: 1rem;
+}
+
 .hero-cta-button-label {
   position: relative;
   z-index: 2;
-  padding: 0.95rem 2.4rem 1.05rem;
+  padding: 1.02rem 3rem 1.12rem;
   font-family: var(--font-display);
-  font-size: clamp(1.15rem, 4.2vw, 1.7rem);
+  font-size: clamp(1.16rem, 4.2vw, 1.78rem);
   font-weight: 900;
   line-height: 1;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: #48206f;
   text-shadow:
@@ -1018,7 +1216,7 @@ button:disabled {
   transform: translateY(2px) scale(0.985);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.16),
-    inset 0 -3px 0 rgba(106, 42, 0, 0.84),
+    inset 0 -3px 0 rgba(42,19,102,0.88),
     0 5px 0 rgba(88, 34, 104, 0.94),
     0 14px 24px rgba(24, 10, 68, 0.26),
     0 0 14px rgba(255, 190, 34, 0.14);
