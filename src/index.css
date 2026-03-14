@@ -62,9 +62,11 @@ body {
   overflow: hidden;
   user-select: none;
   background:
-    radial-gradient(circle at top, rgba(103,232,249,0.22), transparent 28%),
-    radial-gradient(circle at 50% 30%, rgba(167,139,250,0.16), transparent 22%),
-    linear-gradient(180deg, #1f3b70 0%, #16294a 34%, #101826 68%, #070b13 100%);
+    radial-gradient(circle at top, rgba(255,241,196,0.18), transparent 24%),
+    radial-gradient(circle at 50% 28%, rgba(96,165,250,0.14), transparent 22%),
+    url('./assets/fantasy_hero/demo_fx/effect_light_02.png') top center/42rem auto no-repeat,
+    url('./assets/fantasy_hero/demo_bg/background_02.png') center/cover no-repeat,
+    linear-gradient(180deg, #3a5b93 0%, #22365f 42%, #101827 76%, #070b13 100%);
   overscroll-behavior: none;
 }
 
@@ -79,8 +81,8 @@ button {
 
 .cloud-bg {
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
-    radial-gradient(circle at top, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 38%),
+    linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03)),
+    url('./assets/fantasy_hero/demo_bg/background_01.png') center/cover no-repeat,
     linear-gradient(180deg, #9ddcff 0%, #5bb4f1 43%, #1b4f9f 100%);
   position: relative;
   overflow: hidden;
@@ -250,7 +252,9 @@ button {
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,0.14);
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.14), rgba(11,18,34,0.1)),
+    url('./assets/fantasy_hero/frames/list_border.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/frames/list_glow.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/frames/list_inner.png') center/100% 100% no-repeat,
     url('./assets/fantasy_hero/frames/list_bg.png') center/100% 100% no-repeat;
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.16),
@@ -262,18 +266,18 @@ button {
 .licensed-shell-bg {
   position: relative;
   background:
-    radial-gradient(circle at top, rgba(103,232,249,0.2), transparent 24%),
-    radial-gradient(circle at 50% 18%, rgba(190,242,100,0.12), transparent 18%),
-    linear-gradient(180deg, rgba(7,17,31,0.24), rgba(7,17,31,0.72)),
-    linear-gradient(180deg, #4d7bd4 0%, #3358a2 24%, #22365f 56%, #0f172a 100%);
+    linear-gradient(180deg, rgba(7,17,31,0.26), rgba(7,17,31,0.76)),
+    url('./assets/fantasy_hero/demo_bg/pattern_512.png') center/520px repeat,
+    url('./assets/fantasy_hero/demo_bg/background_02.png') center/cover no-repeat,
+    linear-gradient(180deg, #5f87c8 0%, #3358a2 28%, #22365f 58%, #0f172a 100%);
 }
 
 .licensed-playfield-bg {
   position: relative;
   background:
-    radial-gradient(circle at top, rgba(255,255,255,0.12), transparent 24%),
-    radial-gradient(circle at 84% 12%, rgba(167,139,250,0.14), transparent 18%),
     linear-gradient(180deg, rgba(7,17,31,0.34), rgba(7,17,31,0.84)),
+    url('./assets/fantasy_hero/demo_bg/pattern_512.png') center/420px repeat,
+    url('./assets/fantasy_hero/demo_bg/background_03.png') center/cover no-repeat,
     linear-gradient(180deg, #81c6ff 0%, #4973d4 24%, #223f7e 58%, #0b1221 100%);
 }
 
@@ -290,9 +294,10 @@ button {
 .licensed-shell-bg::before,
 .licensed-playfield-bg::before {
   background:
+    url('./assets/fantasy_hero/demo_fx/effect_light_01.png') top center/50rem auto no-repeat,
+    url('./assets/fantasy_hero/demo_fx/glow_circle_02.png') 84% 14%/18rem auto no-repeat,
     radial-gradient(circle at 18% 22%, rgba(255,255,255,0.14), transparent 14%),
-    radial-gradient(circle at 82% 14%, rgba(255,255,255,0.12), transparent 15%),
-    radial-gradient(circle at 52% 78%, rgba(255,240,196,0.1), transparent 18%);
+    radial-gradient(circle at 82% 14%, rgba(255,255,255,0.12), transparent 15%);
   mix-blend-mode: screen;
   animation: pulse-bg 12s ease-in-out infinite alternate;
 }
@@ -453,113 +458,115 @@ button {
 }
 
 .casual-modal-panel {
-  border: 3px solid rgba(255,255,255,0.18);
-  background: linear-gradient(180deg, rgba(13,18,34,0.78), rgba(15,23,42,0.9)), url('./assets/casual_ui/dialogs_panels/panel_3.png') center/100% 100% no-repeat;
-  box-shadow: 0 22px 60px rgba(0,0,0,0.32);
+  border: 0;
+  background:
+    url('./assets/fantasy_hero/popup/box_line1.png') top center/100% auto no-repeat,
+    url('./assets/fantasy_hero/popup/box_line2.png') bottom center/100% auto no-repeat,
+    url('./assets/fantasy_hero/popup/box_deco1.png') left 5% top 9%/3.2rem auto no-repeat,
+    url('./assets/fantasy_hero/popup/box_deco2.png') right 5% bottom 10%/3.2rem auto no-repeat,
+    url('./assets/fantasy_hero/popup/box_border.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/popup/box_inner1.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/popup/box_inner2.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/popup/box_gradient_top.png') top/100% 64% no-repeat,
+    url('./assets/fantasy_hero/popup/box_bg.png') center/100% 100% no-repeat,
+    linear-gradient(180deg, rgba(20,29,54,0.95), rgba(9,14,26,0.98));
+  box-shadow: 0 24px 70px rgba(0,0,0,0.42);
 }
 
 
 .casual-panel-surface {
-  border: 2px solid rgba(255,255,255,0.18);
+  border: 0;
   background:
-    radial-gradient(circle at top, rgba(255,255,255,0.16), transparent 56%),
-    linear-gradient(180deg, rgba(12,18,30,0.18), rgba(12,18,30,0.08)),
-    url('./assets/casual_ui/dialogs_panels/panel_2.png') center/100% 100% no-repeat;
+    url('./assets/fantasy_hero/frames/list_border.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/frames/list_glow.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/frames/list_inner.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/frames/list_bg.png') center/100% 100% no-repeat,
+    linear-gradient(180deg, rgba(12,18,30,0.24), rgba(12,18,30,0.08));
   box-shadow: 0 16px 40px rgba(0,0,0,0.22);
 }
 
 .casual-panel-strong {
-  border: 2px solid rgba(255,255,255,0.2);
+  border: 0;
   background:
-    radial-gradient(circle at top, rgba(255,255,255,0.14), transparent 58%),
-    linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
-    url('./assets/casual_ui/dialogs_panels/panel_3.png') center/100% 100% no-repeat;
-  box-shadow: 0 18px 42px rgba(0,0,0,0.24);
+    url('./assets/fantasy_hero/frames/stage_deco_border.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/frames/stage_border.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/frames/stage_deco_bg.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/frames/stage_inner.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/frames/stage_bg.png') center/100% 100% no-repeat,
+    linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+  box-shadow: 0 22px 48px rgba(0,0,0,0.28);
 }
 
 .casual-ribbon-chip {
-  border: 1px solid rgba(255,255,255,0.16);
+  border: 0;
   background:
-    radial-gradient(circle at top, rgba(255,255,255,0.24), transparent 58%),
-    linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.05)),
-    linear-gradient(135deg, rgba(56,189,248,0.24), rgba(129,140,248,0.14));
-  color: #f8fafc;
+    url('./assets/fantasy_hero/title/ribbon_yellow.png') center/100% 100% no-repeat;
+  color: #fff7dc;
   text-shadow: 0 1px 0 rgba(0,0,0,0.25);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.2),
-    0 10px 20px rgba(2,6,23,0.16);
-  backdrop-filter: blur(16px);
+    0 10px 20px rgba(2,6,23,0.24);
 }
 
 .casual-tab-shell {
-  border: 1px solid rgba(255,255,255,0.16);
+  border: 0;
   background:
-    radial-gradient(circle at top, rgba(255,255,255,0.18), transparent 52%),
-    linear-gradient(180deg, rgba(15,23,42,0.48), rgba(15,23,42,0.22));
+    url('./assets/fantasy_hero/buttons/tab_mid_border.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/buttons/tab_mid_glow.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/buttons/tab_mid_bg.png') center/100% 100% no-repeat;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.14),
     0 18px 36px rgba(2,6,23,0.2);
-  backdrop-filter: blur(18px);
 }
 
 .casual-stat-shell {
-  border: 1px solid rgba(255,255,255,0.16);
+  border: 0;
   background:
-    radial-gradient(circle at top, rgba(255,255,255,0.2), transparent 54%),
-    linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05)),
-    linear-gradient(135deg, rgba(15,23,42,0.34), rgba(30,41,59,0.12));
+    url('./assets/fantasy_hero/frames/card_border.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/frames/card_inner.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/frames/card_gradient.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/frames/card_bg.png') center/100% 100% no-repeat;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.16),
     0 14px 32px rgba(2,6,23,0.18);
-  backdrop-filter: blur(18px);
 }
 
 .casual-nav-shell {
-  border: 1px solid rgba(255,255,255,0.16);
+  border: 0;
   background:
-    radial-gradient(circle at top, rgba(255,255,255,0.16), transparent 52%),
+    url('./assets/fantasy_hero/buttons/tab_mid_border.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/buttons/tab_mid_glow.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/buttons/tab_mid_bg.png') center/100% 100% no-repeat,
     linear-gradient(180deg, rgba(15,23,42,0.54), rgba(15,23,42,0.24));
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.16),
     0 22px 44px rgba(2,6,23,0.28);
-  backdrop-filter: blur(20px);
 }
 
 .casual-nav-button-active {
   background:
-    radial-gradient(circle at top, rgba(255,255,255,0.22), transparent 56%),
-    linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08)),
-    linear-gradient(135deg, rgba(125,211,252,0.58), rgba(96,165,250,0.4));
-  color: #082f49;
+    url('./assets/fantasy_hero/buttons/tab_bottom_select.png') center/100% 100% no-repeat;
+  color: #173c69;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.28),
     0 12px 22px rgba(14,116,144,0.22);
 }
 
 .casual-action-button {
   background:
-    radial-gradient(circle at top, rgba(255,255,255,0.28), transparent 58%),
-    linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08)),
-    linear-gradient(135deg, rgba(103,232,249,0.84), rgba(129,140,248,0.62));
-  border: 2px solid rgba(255,255,255,0.16);
-  color: white;
+    url('./assets/fantasy_hero/buttons/primary_deco.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/buttons/primary_blue.png') center/100% 100% no-repeat;
+  border: 0;
+  color: #fff9e9;
   text-shadow: 0 2px 0 rgba(0,0,0,0.25);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.24),
-    0 10px 24px rgba(14,116,144,0.22);
-  backdrop-filter: blur(16px);
+    0 8px 0 rgba(26,65,142,0.82),
+    0 18px 30px rgba(14,116,144,0.22);
 }
 
 .fantasy-title-plaque {
   position: relative;
-  border: 1px solid rgba(243, 209, 130, 0.42);
+  border: 0;
   border-radius: 999px;
   background:
-    radial-gradient(circle at top, rgba(255,245,214,0.22), transparent 58%),
+    url('./assets/fantasy_hero/title/ribbon_purple.png') center/100% 100% no-repeat,
     linear-gradient(180deg, rgba(38,54,86,0.96), rgba(22,32,56,0.96) 52%, rgba(10,16,28,0.98));
   box-shadow:
-    inset 0 1px 0 rgba(255,245,214,0.24),
-    inset 0 -1px 0 rgba(92,53,19,0.36),
     0 18px 40px rgba(2,6,23,0.42);
 }
 
@@ -588,41 +595,36 @@ button {
   display: inline-block;
   width: 0.9rem;
   height: 0.9rem;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.35);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.4),
-    0 0 12px rgba(255,255,255,0.18);
+  background: url('./assets/fantasy_hero/ui/gem.png') center/contain no-repeat;
+  filter: drop-shadow(0 0 10px rgba(255,255,255,0.18));
 }
 
 .fantasy-gem-emerald {
-  background: radial-gradient(circle at 35% 35%, #d9ffcf 0%, #61d169 42%, #14532d 100%);
+  filter: hue-rotate(72deg) saturate(1.05) drop-shadow(0 0 10px rgba(74,222,128,0.26));
 }
 
 .fantasy-gem-ruby {
-  background: radial-gradient(circle at 35% 35%, #ffe0e0 0%, #ef4444 42%, #7f1d1d 100%);
+  filter: hue-rotate(-24deg) saturate(1.08) drop-shadow(0 0 10px rgba(248,113,113,0.26));
 }
 
 .fantasy-gem-sapphire {
-  background: radial-gradient(circle at 35% 35%, #dff4ff 0%, #38bdf8 42%, #1d4ed8 100%);
+  filter: hue-rotate(12deg) saturate(1.02) drop-shadow(0 0 10px rgba(96,165,250,0.26));
 }
 
 .fantasy-hero-card {
-  border: 1px solid rgba(243, 209, 130, 0.24);
+  border: 0;
   background:
-    radial-gradient(circle at top, rgba(255,244,213,0.08), transparent 58%),
+    url('./assets/fantasy_hero/frames/item_border.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/frames/item_deco.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/frames/item_gradient.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/frames/item_bg.png') center/100% 100% no-repeat,
     linear-gradient(180deg, rgba(27,40,66,0.96), rgba(11,18,34,0.98));
   box-shadow:
-    inset 0 1px 0 rgba(255,245,214,0.12),
-    inset 0 -1px 0 rgba(80,48,24,0.28),
     0 16px 34px rgba(2,6,23,0.34);
 }
 
 .fantasy-hero-card-selected {
-  border-color: rgba(255,229,153,0.68);
   box-shadow:
-    inset 0 1px 0 rgba(255,250,232,0.24),
-    inset 0 -1px 0 rgba(92,53,19,0.48),
     0 0 0 1px rgba(255,221,128,0.24),
     0 0 36px rgba(255,196,64,0.18),
     0 24px 44px rgba(2,6,23,0.36);
@@ -630,29 +632,26 @@ button {
 
 .fantasy-nameplate {
   position: relative;
-  border: 1px solid rgba(243, 209, 130, 0.34);
+  border: 0;
   border-radius: 999px;
   background:
-    radial-gradient(circle at top, rgba(255,248,225,0.18), transparent 60%),
-    linear-gradient(180deg, rgba(124,93,51,0.88), rgba(71,47,30,0.92));
+    url('./assets/fantasy_hero/labels/tapered_border.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/labels/tapered_inner.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/labels/tapered_bg.png') center/100% 100% no-repeat;
   box-shadow:
-    inset 0 1px 0 rgba(255,245,214,0.2),
     0 10px 18px rgba(0,0,0,0.18);
 }
 
 .fantasy-cta-button {
-  border: 1px solid rgba(255,230,153,0.62);
+  border: 0;
   border-radius: 999px;
   color: #fff7dc;
   font-weight: 900;
   text-shadow: 0 2px 0 rgba(0,0,0,0.34);
   background:
-    radial-gradient(circle at top, rgba(255,245,214,0.34), transparent 58%),
-    linear-gradient(180deg, rgba(255,214,102,0.24), rgba(255,255,255,0.03)),
-    linear-gradient(135deg, #5ad0ff 0%, #4f8dff 44%, #1d3f9c 100%);
+    url('./assets/fantasy_hero/buttons/primary_deco.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/buttons/primary_blue.png') center/100% 100% no-repeat;
   box-shadow:
-    inset 0 1px 0 rgba(255,245,214,0.28),
-    inset 0 -1px 0 rgba(18,40,92,0.7),
     0 10px 0 rgba(17,39,94,0.92),
     0 24px 38px rgba(17,39,94,0.32);
 }

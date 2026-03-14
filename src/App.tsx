@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+﻿import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import AssetIcon from './components/AssetIcon';
 import { ACHIEVEMENTS, AVATARS, INITIAL_DAILY_QUESTS, ISLANDS } from './constants';
@@ -37,8 +37,8 @@ import {
   GAME_HUD_MUTE_SYNC_EVENT,
 } from './gameHudEvents';
 import { triggerHaptic } from './haptics';
-import forestBg from './assets/licensed/background.jpeg';
-import paperPanel from './assets/licensed/Atlas_07_Paper.png';
+import splashBackground from './assets/fantasy_hero/demo_bg/background_01.png';
+import splashGlow from './assets/fantasy_hero/demo_fx/effect_light_01.png';
 
 const PLAYER_STORAGE_KEY = 'maths_quest_player';
 const ALL_ISLAND_IDS = ISLANDS.map(island => island.id);
@@ -493,10 +493,10 @@ const App: React.FC = () => {
       case 'splash':
         return (
           <div className="relative my-auto flex h-full max-h-full w-full max-w-6xl items-center justify-center overflow-hidden px-4 py-5 text-center sm:px-6 md:py-8">
-            <div className="absolute inset-0 -z-40 rounded-[2.7rem] bg-cover bg-center opacity-55 pointer-events-none md:rounded-[3.4rem]" style={{ backgroundImage: `url(${forestBg})` }} />
-            <div className="absolute inset-0 -z-30 rounded-[2.7rem] bg-[linear-gradient(180deg,rgba(3,9,19,0.18),rgba(3,9,19,0.54)_34%,rgba(2,6,23,0.92)_100%)] pointer-events-none md:rounded-[3.4rem]" />
-            <div className="absolute inset-0 -z-20 rounded-[2.7rem] bg-[radial-gradient(circle_at_top,rgba(160,220,255,0.22)_0%,rgba(34,211,238,0.08)_24%,rgba(2,6,23,0)_48%),radial-gradient(circle_at_bottom,rgba(250,204,21,0.18)_0%,rgba(249,115,22,0.06)_22%,rgba(2,6,23,0)_48%)] pointer-events-none md:rounded-[3.4rem]" />
-            <div className="absolute inset-x-[8%] top-0 -z-10 h-[38%] bg-[linear-gradient(180deg,rgba(255,252,230,0.28),rgba(255,252,230,0))] blur-3xl pointer-events-none" />
+            <div className="absolute inset-0 -z-40 rounded-[2.7rem] bg-cover bg-center opacity-90 pointer-events-none md:rounded-[3.4rem]" style={{ backgroundImage: `url(${splashBackground})` }} />
+            <div className="absolute inset-0 -z-30 rounded-[2.7rem] bg-[linear-gradient(180deg,rgba(3,9,19,0.06),rgba(3,9,19,0.48)_34%,rgba(2,6,23,0.92)_100%)] pointer-events-none md:rounded-[3.4rem]" />
+            <div className="absolute inset-0 -z-20 rounded-[2.7rem] bg-[radial-gradient(circle_at_top,rgba(255,241,196,0.22)_0%,rgba(34,211,238,0.08)_24%,rgba(2,6,23,0)_48%),radial-gradient(circle_at_bottom,rgba(96,165,250,0.18)_0%,rgba(249,115,22,0.05)_22%,rgba(2,6,23,0)_48%)] pointer-events-none md:rounded-[3.4rem]" />
+            <div className="absolute inset-x-[8%] top-0 -z-10 h-[44%] bg-center bg-no-repeat opacity-80 blur-sm pointer-events-none" style={{ backgroundImage: `url(${splashGlow})`, backgroundSize: 'min(44rem, 88vw)' }} />
             <div className="absolute inset-x-0 bottom-0 -z-10 h-[28%] bg-[linear-gradient(180deg,rgba(7,12,24,0),rgba(7,12,24,0.9))] pointer-events-none" />
 
             <motion.div
@@ -524,27 +524,27 @@ const App: React.FC = () => {
               />
             ))}
 
-            <div className="relative flex h-full w-full flex-col items-center justify-between px-2 py-8 md:px-6 md:py-12">
-              <div className="pointer-events-none flex w-full justify-center">
-                <div className="fantasy-title-plaque px-5 py-2 md:px-8 md:py-3">
-                  <div className="flex items-center justify-center gap-2 md:gap-3">
-                    {['emerald', 'ruby', 'sapphire'].map(gem => (
-                      <span key={gem} className={`fantasy-gem fantasy-gem-${gem}`} />
-                    ))}
+            <div className="relative flex h-full w-full items-center justify-center px-2 py-8 md:px-6 md:py-12">
+              <div className="casual-panel-strong relative flex w-full max-w-[22rem] flex-col items-center gap-8 rounded-[2.2rem] px-5 py-7 md:max-w-[32rem] md:rounded-[3rem] md:px-10 md:py-12">
+                <div className="pointer-events-none flex w-full justify-center">
+                  <div className="fantasy-title-plaque px-5 py-2 md:px-8 md:py-3">
+                    <div className="flex items-center justify-center gap-2 md:gap-3">
+                      {['emerald', 'ruby', 'sapphire'].map(gem => (
+                        <span key={gem} className={`fantasy-gem fantasy-gem-${gem}`} />
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="relative flex flex-1 w-full items-center justify-center">
                 <motion.div
                   initial={{ y: 18, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.8, ease: 'easeOut' }}
-                  className="relative flex flex-col items-center"
+                  className="relative flex w-full flex-col items-center"
                 >
                   <div className="absolute inset-x-[4%] top-[10%] h-[68%] rounded-full bg-[radial-gradient(circle,rgba(255,241,201,0.2),rgba(96,165,250,0.14),rgba(2,6,23,0))] blur-3xl" />
                   <h1
-                    className="relative text-[3.2rem] leading-[0.82] tracking-[-0.065em] text-white drop-shadow-[0_16px_40px_rgba(2,6,23,0.65)] sm:text-[4.6rem] md:text-[7.3rem] lg:text-[8.4rem]"
+                    className="relative text-[3rem] leading-[0.82] tracking-[-0.065em] text-white drop-shadow-[0_16px_40px_rgba(2,6,23,0.65)] sm:text-[4.3rem] md:text-[6.6rem]"
                     style={{ fontFamily: 'var(--font-display)' }}
                   >
                     <span className="block bg-[linear-gradient(180deg,#fffef8_0%,#e0ecff_42%,#8fc3ff_100%)] bg-clip-text text-transparent">
@@ -555,17 +555,17 @@ const App: React.FC = () => {
                     </span>
                   </h1>
                 </motion.div>
-              </div>
 
-              <motion.button
-                whileHover={{ scale: 1.03, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleStartAdventure}
-                className="fantasy-cta-button group relative inline-flex min-w-[15rem] items-center justify-center overflow-hidden px-8 py-3 text-base uppercase tracking-[0.18em] md:min-w-[18rem] md:px-12 md:py-4 md:text-lg"
-              >
-                <span className="absolute inset-y-0 left-[-20%] w-16 rotate-[18deg] bg-white/35 blur-md transition-transform duration-700 group-hover:translate-x-[420%]" />
-                <span className="relative">{hasCompletedProfile ? 'Welcome' : 'Select Character'}</span>
-              </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.03, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleStartAdventure}
+                  className="fantasy-cta-button group relative inline-flex min-w-[15rem] items-center justify-center overflow-hidden px-8 py-3 text-base uppercase tracking-[0.18em] md:min-w-[18rem] md:px-12 md:py-4 md:text-lg"
+                >
+                  <span className="absolute inset-y-0 left-[-20%] w-16 rotate-[18deg] bg-white/35 blur-md transition-transform duration-700 group-hover:translate-x-[420%]" />
+                  <span className="relative">{hasCompletedProfile ? 'Welcome' : 'Select Character'}</span>
+                </motion.button>
+              </div>
             </div>
           </div>
         );
@@ -575,7 +575,7 @@ const App: React.FC = () => {
             <div className="relative z-10 mb-5 md:mb-8">
               <h2 className="text-[1.7rem] font-black tracking-tight text-white md:text-6xl">Name your hero</h2>
               <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/75 md:text-sm">
-                Step 1 of 2 · profile setup
+                Step 1 of 2 - profile setup
               </p>
             </div>
 
@@ -587,7 +587,7 @@ const App: React.FC = () => {
                   if (event.key === 'Enter') handleSaveProfileName();
                 }}
                 placeholder="Explorer"
-                className="w-full max-w-xl rounded-[1.25rem] border-2 border-white/20 bg-black/20 px-5 py-3 text-center text-base font-black text-white outline-none placeholder:text-white/35 focus:border-yellow-300 md:rounded-[1.75rem] md:px-6 md:py-5 md:text-3xl"
+                className="w-full max-w-xl rounded-[1.25rem] border border-white/10 bg-slate-950/36 px-5 py-3 text-center text-base font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] outline-none placeholder:text-white/35 focus:border-yellow-300 md:rounded-[1.75rem] md:px-6 md:py-5 md:text-3xl"
               />
               <div className="flex gap-3 flex-wrap justify-center md:gap-4">
                 <button
@@ -724,7 +724,7 @@ const App: React.FC = () => {
         showBottomNav && (
           <div className="pointer-events-none fixed inset-x-0 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-50 flex justify-center px-3 md:bottom-6">
             <div className="pointer-events-auto flex w-full max-w-3xl flex-col items-center gap-2 md:gap-3">
-              <div className="casual-ribbon-chip hidden items-center gap-2 rounded-full px-3 py-1.5 text-cyan-100 shadow-[0_12px_30px_rgba(0,0,0,0.22)] md:inline-flex md:px-4 md:py-2">
+              <div className="casual-ribbon-chip hidden items-center gap-2 rounded-full px-3 py-1.5 shadow-[0_12px_30px_rgba(0,0,0,0.22)] md:inline-flex md:px-4 md:py-2">
                 <AssetIcon name="star" className="h-4 w-4" />
                 <span className="text-[9px] font-black uppercase tracking-[0.24em] md:text-[10px]">Adventure mode</span>
               </div>
@@ -780,6 +780,7 @@ const App: React.FC = () => {
 };
 
 export default App;
+
 
 
 

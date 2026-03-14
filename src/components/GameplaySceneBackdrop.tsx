@@ -2,11 +2,12 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { GAME_SCENE_META } from '../gameSceneMeta';
 import { MiniGameType } from '../types';
-import backgroundTexture from '../assets/casual_ui/dialogs_panels/background.png';
-import cardAsset from '../assets/casual_ui/dialogs_panels/card_1.png';
-import panelAsset from '../assets/casual_ui/dialogs_panels/panel.png';
-import ribbonAsset from '../assets/casual_ui/dialogs_panels/ribbon_1.png';
-import stepIndicator from '../assets/casual_ui/hud/reward_step_indicator_highlighted.png';
+import backgroundTexture from '../assets/fantasy_hero/demo_bg/pattern_512.png';
+import cardAsset from '../assets/fantasy_hero/frames/item_deco.png';
+import panelAsset from '../assets/fantasy_hero/frames/stage_deco_border.png';
+import ribbonAsset from '../assets/fantasy_hero/title/ribbon_blue.png';
+import stepIndicator from '../assets/fantasy_hero/demo_fx/glow_circle_02.png';
+import panelGlow from '../assets/fantasy_hero/demo_bg/panel_inner_glow.png';
 
 interface GameplaySceneBackdropProps {
   gameType: MiniGameType;
@@ -27,7 +28,13 @@ const GameplaySceneBackdrop: React.FC<GameplaySceneBackdropProps> = ({ gameType,
       <img
         src={backgroundTexture}
         alt=""
-        className="absolute inset-0 h-full w-full object-cover opacity-[0.12] mix-blend-screen"
+        className="absolute inset-0 h-full w-full object-cover opacity-[0.14] mix-blend-screen"
+        draggable={false}
+      />
+      <img
+        src={panelGlow}
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover opacity-[0.2] mix-blend-screen"
         draggable={false}
       />
       <div className={`absolute inset-0 bg-gradient-to-b ${scene.tint}`} />
@@ -42,7 +49,7 @@ const GameplaySceneBackdrop: React.FC<GameplaySceneBackdropProps> = ({ gameType,
         draggable={false}
         animate={{ y: [0, -12, 0], rotate: [0, 3, 0] }}
         transition={{ duration: 8.5, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute -left-12 top-[16%] w-44 opacity-[0.12] blur-[0.2px] md:w-64"
+        className="absolute -left-12 top-[16%] w-44 opacity-[0.14] blur-[0.2px] md:w-64"
       />
       <motion.img
         src={cardAsset}
@@ -50,7 +57,7 @@ const GameplaySceneBackdrop: React.FC<GameplaySceneBackdropProps> = ({ gameType,
         draggable={false}
         animate={{ y: [0, 14, 0], rotate: [0, -4, 0] }}
         transition={{ duration: 9.2, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute -right-14 bottom-[18%] w-40 opacity-[0.13] blur-[0.2px] md:w-60"
+        className="absolute -right-14 bottom-[18%] w-40 opacity-[0.14] blur-[0.2px] md:w-60"
       />
       <motion.img
         src={ribbonAsset}
@@ -66,7 +73,7 @@ const GameplaySceneBackdrop: React.FC<GameplaySceneBackdropProps> = ({ gameType,
         draggable={false}
         animate={{ x: [0, -18, 0], opacity: [0.08, 0.22, 0.08] }}
         transition={{ duration: 5.8, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute right-[12%] top-[14%] w-24 rotate-[16deg] opacity-[0.18] md:w-32"
+        className="absolute right-[12%] top-[14%] w-28 rotate-[16deg] opacity-[0.24] md:w-36"
       />
       {Array.from({ length: 16 }).map((_, index) => (
         <motion.div

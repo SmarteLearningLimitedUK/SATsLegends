@@ -3,7 +3,18 @@ import { motion } from 'motion/react';
 import { AnimationState, AvatarData, CloudCollapseLevelConfig } from '../types';
 import AssetIcon from './AssetIcon';
 import AnimatedAvatar from './AnimatedAvatar';
-import progressBarAsset from '../assets/licensed/slices/progress_bar.png';
+import profileBgAsset from '../assets/fantasy_hero/frames/profile_bg.png';
+import profileBorderAsset from '../assets/fantasy_hero/frames/profile_border.png';
+import profileInnerAsset from '../assets/fantasy_hero/frames/profile_inner.png';
+import profileDecoAsset from '../assets/fantasy_hero/frames/profile_deco.png';
+import stageBgAsset from '../assets/fantasy_hero/frames/stage_bg.png';
+import stageBorderAsset from '../assets/fantasy_hero/frames/stage_border.png';
+import stageInnerAsset from '../assets/fantasy_hero/frames/stage_inner.png';
+import resourceBgAsset from '../assets/fantasy_hero/ui/resource_bg.png';
+import sliderBgAsset from '../assets/fantasy_hero/slider/play_bg.png';
+import sliderBorderAsset from '../assets/fantasy_hero/slider/play_border.png';
+import sliderFillAsset from '../assets/fantasy_hero/slider/play_fill_blue.png';
+import titleFlagAsset from '../assets/fantasy_hero/title/flag_purple.png';
 
 interface HUDProps {
   title?: string;
@@ -25,14 +36,22 @@ const HUD: React.FC<HUDProps> = ({ title, score, targetScore, timeLeft, level, a
         : 'idle';
 
   return (
-    <div className="w-full shrink-0 px-1 py-0.5 md:px-2 flex flex-col gap-1.5 md:gap-3">
-      <div className="flex items-center justify-between bg-white/40 backdrop-blur-xl p-2 md:p-4 rounded-[1.1rem] md:rounded-[2rem] border-2 md:border-4 border-white/60 shadow-[0_10px_30px_rgba(0,0,0,0.1)] gap-1.5 md:gap-2">
-        <div className="flex items-center gap-2 md:gap-4 shrink-0">
+    <div className="flex w-full shrink-0 flex-col gap-1.5 px-1 py-0.5 md:gap-3 md:px-2">
+      <div className="relative flex items-center justify-between overflow-hidden rounded-[1.1rem] p-2 shadow-[0_10px_30px_rgba(0,0,0,0.18)] md:rounded-[2rem] md:p-4">
+        <div className="absolute inset-0 bg-center bg-cover opacity-95" style={{ backgroundImage: `url(${stageBgAsset})` }} />
+        <div className="absolute inset-0 bg-center bg-cover opacity-95" style={{ backgroundImage: `url(${stageBorderAsset})` }} />
+        <div className="absolute inset-[2px] bg-center bg-cover opacity-90 md:inset-[4px]" style={{ backgroundImage: `url(${stageInnerAsset})` }} />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(2,6,23,0.08))]" />
+
+        <div className="relative z-10 flex shrink-0 items-center gap-2 md:gap-4">
           <motion.div
-            whileHover={{ scale: 1.1, rotate: 5 }}
-            className={`${avatar.color} w-8 h-8 md:w-16 md:h-16 shrink-0 rounded-xl md:rounded-3xl flex items-center justify-center shadow-lg border-2 md:border-4 border-white relative overflow-hidden`}
+            whileHover={{ scale: 1.08, rotate: 4 }}
+            className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-xl shadow-lg md:h-16 md:w-16 md:rounded-3xl"
           >
-            <div className="shine" />
+            <div className="absolute inset-0 opacity-95" style={{ backgroundImage: `url(${profileBgAsset})`, backgroundSize: '100% 100%' }} />
+            <div className="absolute inset-0 opacity-95" style={{ backgroundImage: `url(${profileBorderAsset})`, backgroundSize: '100% 100%' }} />
+            <div className="absolute inset-[4%] opacity-90" style={{ backgroundImage: `url(${profileInnerAsset})`, backgroundSize: '100% 100%' }} />
+            <div className="absolute inset-0 opacity-75" style={{ backgroundImage: `url(${profileDecoAsset})`, backgroundSize: '100% 100%' }} />
             <AnimatedAvatar
               avatar={avatar}
               pose={avatarPose}
@@ -41,19 +60,26 @@ const HUD: React.FC<HUDProps> = ({ title, score, targetScore, timeLeft, level, a
               imageClassName="object-bottom scale-[1.18] translate-y-[6%]"
             />
           </motion.div>
+
           <div className="min-w-0">
-            <h2 className="text-[11px] md:text-xl font-black text-white drop-shadow-md tracking-tight truncate">{title || `Level ${level.id}`}</h2>
-            <div className="flex items-center gap-1 text-white/90 font-bold text-[9px] md:text-sm">
-              <AssetIcon name="trophy" className="w-3 h-3 md:w-4 md:h-4" />
-              <span>{title ? `Level ${level.id} • Target ${targetScore}` : `Target: ${targetScore}`}</span>
+            <h2 className="truncate text-[11px] font-black tracking-tight text-white drop-shadow-md md:text-xl">
+              {title || `Level ${level.id}`}
+            </h2>
+            <div
+              className="mt-0.5 inline-flex items-center gap-1 bg-center bg-no-repeat px-2 py-0.5 text-[8px] font-bold text-white/95 md:px-3 md:py-1 md:text-sm"
+              style={{ backgroundImage: `url(${titleFlagAsset})`, backgroundSize: '100% 100%' }}
+            >
+              <AssetIcon name="trophy" className="h-3 w-3 md:h-4 md:w-4" />
+              <span>{title ? `Level ${level.id} - Target ${targetScore}` : `Target ${targetScore}`}</span>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col items-end gap-0.5 md:gap-1">
-          <div className="flex items-center gap-1 md:gap-2 bg-black/10 px-1.5 md:px-4 py-1 rounded-xl md:rounded-2xl border border-white/20">
-            <AssetIcon name="timer" className={`w-3 h-3 md:w-5 md:h-5 ${timeLeft < 10 ? 'animate-pulse' : ''}`} />
-            <span className={`text-[11px] md:text-xl font-black ${timeLeft < 10 ? "text-red-400" : "text-white"}`}>
+        <div className="relative z-10 flex flex-col items-end gap-0.5 md:gap-1">
+          <div className="relative flex items-center gap-1 overflow-hidden rounded-xl px-1.5 py-1 md:gap-2 md:rounded-2xl md:px-4">
+            <div className="absolute inset-0 opacity-95" style={{ backgroundImage: `url(${resourceBgAsset})`, backgroundSize: '100% 100%' }} />
+            <AssetIcon name="timer" className={`relative h-3 w-3 md:h-5 md:w-5 ${timeLeft < 10 ? 'animate-pulse' : ''}`} />
+            <span className={`relative text-[11px] font-black md:text-xl ${timeLeft < 10 ? 'text-red-400' : 'text-slate-900'}`}>
               {timeLeft}s
             </span>
           </div>
@@ -61,25 +87,26 @@ const HUD: React.FC<HUDProps> = ({ title, score, targetScore, timeLeft, level, a
             key={score}
             initial={{ scale: 1.5, color: '#fbbf24' }}
             animate={{ scale: 1, color: '#ffffff' }}
-            className="text-base md:text-4xl font-black text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.3)]"
+            className="text-base font-black text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.3)] md:text-4xl"
           >
             {score}
           </motion.div>
         </div>
       </div>
 
-      <div className="relative w-full h-3.5 md:h-10 bg-black/10 rounded-2xl md:rounded-3xl p-1 md:p-1.5 border-2 md:border-4 border-white/40 shadow-inner overflow-hidden">
-        <img src={progressBarAsset} alt="bar" className="absolute inset-0 h-full w-full object-fill opacity-40" />
+      <div className="relative h-3.5 w-full overflow-hidden rounded-2xl p-1 shadow-inner md:h-10 md:rounded-3xl md:p-1.5">
+        <img src={sliderBgAsset} alt="bar" className="absolute inset-0 h-full w-full object-fill opacity-95" />
+        <img src={sliderBorderAsset} alt="bar border" className="absolute inset-0 h-full w-full object-fill opacity-95" />
         <motion.div
-          className="h-full rounded-xl md:rounded-2xl relative overflow-hidden"
+          className="relative h-full overflow-hidden rounded-xl md:rounded-2xl"
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
           transition={{ type: 'spring', stiffness: 60, damping: 12 }}
         >
-          <img src={progressBarAsset} alt="progress" className="absolute inset-0 h-full w-full object-fill" />
+          <img src={sliderFillAsset} alt="progress" className="absolute inset-0 h-full w-full object-fill" />
           <div className="shine rounded-xl md:rounded-2xl" />
         </motion.div>
-        <div className="absolute inset-0 flex items-center justify-center text-[10px] md:text-sm font-black text-white drop-shadow-md uppercase tracking-widest">
+        <div className="absolute inset-0 flex items-center justify-center text-[10px] font-black uppercase tracking-widest text-white drop-shadow-md md:text-sm">
           {Math.round(progress)}%
         </div>
       </div>

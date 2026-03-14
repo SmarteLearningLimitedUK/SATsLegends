@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import AssetIcon from '../AssetIcon';
-import rewardChest from '../../assets/licensed/slices/chest_gold.png';
+import rewardChest from '../../assets/fantasy_hero/demo_rewards/chest_02.png';
 import { DAILY_REWARDS } from '../../constants';
 
 interface DailyRewardsModalProps {

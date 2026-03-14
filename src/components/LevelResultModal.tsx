@@ -2,8 +2,8 @@ import React from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import AssetIcon from './AssetIcon';
 import { triggerHaptic } from '../haptics';
-import rewardChest from '../assets/licensed/reward_chest_gold.png';
-import coinBag from '../assets/licensed/reward_bag_coins.png';
+import rewardChest from '../assets/fantasy_hero/demo_rewards/chest_02.png';
+import rewardStash from '../assets/fantasy_hero/demo_rewards/chest_01.png';
 
 interface LevelResultModalProps {
   isOpen: boolean;
@@ -43,11 +43,11 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
             animate={{ y: 0, scale: 1, opacity: 1 }}
             exit={{ y: 18, scale: 0.97, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 220, damping: 22 }}
-            className={`app-modal-panel relative flex w-full max-w-md flex-col overflow-hidden rounded-[1.5rem] border shadow-[0_30px_90px_rgba(0,0,0,0.45)] ${isVictory ? 'border-yellow-300/60 bg-[radial-gradient(circle_at_top,_rgba(250,204,21,0.18),_rgba(15,23,42,0.94)_64%)]' : 'border-rose-300/30 bg-[radial-gradient(circle_at_top,_rgba(251,113,133,0.16),_rgba(15,23,42,0.94)_64%)]'} md:max-w-lg md:rounded-[2rem]`}
+            className="app-modal-panel casual-modal-panel relative flex w-full max-w-md flex-col overflow-hidden rounded-[1.5rem] shadow-[0_30px_90px_rgba(0,0,0,0.45)] md:max-w-lg md:rounded-[2rem]"
           >
             <div className="relative z-10 flex flex-col gap-3 p-3.5 md:gap-6 md:p-8">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.1rem] border border-white/20 bg-white/10 p-2 shadow-inner md:h-28 md:w-28 md:rounded-[1.75rem]">
-                <img src={isVictory ? rewardChest : coinBag} alt="Reward" className="h-full w-full object-contain drop-shadow-xl" />
+              <div className="casual-panel-surface mx-auto flex h-16 w-16 items-center justify-center rounded-[1.1rem] p-2 shadow-inner md:h-28 md:w-28 md:rounded-[1.75rem]">
+                <img src={isVictory ? rewardChest : rewardStash} alt="Reward" className="h-full w-full object-contain drop-shadow-xl" />
               </div>
 
               <div className="text-center">
@@ -118,8 +118,8 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
                       triggerHaptic('selection');
                       result.onSecondary?.();
                     }}
-                    className="flex flex-1 items-center justify-center gap-2 rounded-[1rem] border border-white/12 bg-white/8 px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.14em] text-white transition hover:bg-white/14 md:rounded-[1.2rem] md:px-5 md:py-4 md:text-sm"
-                  >
+                  className="licensed-wood-button-secondary flex flex-1 items-center justify-center gap-2 rounded-[1rem] px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.14em] text-white transition md:rounded-[1.2rem] md:px-5 md:py-4 md:text-sm"
+                >
                     <AssetIcon name="refresh" className="h-4 w-4" />
                     {result.secondaryLabel}
                   </button>
@@ -129,7 +129,7 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
                     triggerHaptic(isVictory ? 'success' : 'selection');
                     result.onPrimary();
                   }}
-                  className={`flex flex-1 items-center justify-center gap-2 rounded-[1rem] px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.14em] transition md:rounded-[1.2rem] md:px-5 md:py-4 md:text-sm ${isVictory ? 'bg-yellow-300 text-slate-950 hover:bg-yellow-200' : 'bg-rose-300 text-slate-950 hover:bg-rose-200'}`}
+                  className={`flex flex-1 items-center justify-center gap-2 rounded-[1rem] px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.14em] transition md:rounded-[1.2rem] md:px-5 md:py-4 md:text-sm ${isVictory ? 'fantasy-cta-button' : 'licensed-wood-button'}`}
                 >
                   {isVictory ? <AssetIcon name="trophy" className="h-4 w-4" /> : <AssetIcon name="refresh" className="h-4 w-4" />}
                   {result.primaryLabel}
