@@ -616,11 +616,11 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
 
           <div className="relative z-10 mb-2 flex items-center justify-between gap-2 md:mb-3">
             <div className="min-w-0 flex-1 rounded-[1.25rem] border border-[#f6dfae]/24 bg-[linear-gradient(180deg,rgba(70,42,20,0.92),rgba(26,16,10,0.88))] px-3 py-2 shadow-[0_12px_24px_rgba(0,0,0,0.3)]">
-              <div className="text-[9px] font-black uppercase tracking-[0.22em] text-amber-50/82 md:text-[10px]">Match 3+ Equivalent Values</div>
+              <div className="text-[9px] font-black uppercase tracking-[0.22em] text-amber-50/82 md:text-[10px]">{isBoss ? 'Sort The Fractions' : 'Match 3+ Equivalent Values'}</div>
               <div className="mt-1 truncate text-[11px] font-bold text-amber-50 md:text-sm">{statusMessage}</div>
             </div>
 
-            {bossEncounter && (
+            {bossEncounter && !isBoss && (
               <div className="w-24 shrink-0 md:w-32">
                 <BossPortrait encounter={bossEncounter} pose={bossPose} compact />
               </div>
@@ -628,7 +628,77 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
           </div>
 
           <div className="relative z-10 flex min-h-0 flex-1 items-center justify-center">
-            <div className="relative aspect-square w-full max-w-[24rem] sm:max-w-[28rem] md:max-w-[34rem]">
+            {isBoss ? (
+              <div className="relative flex h-full w-full flex-col overflow-hidden rounded-[1.6rem] border border-violet-200/14 bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.14),transparent_24%),linear-gradient(180deg,rgba(34,18,55,0.82),rgba(12,10,20,0.88))] p-3 md:rounded-[2rem] md:p-5">
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_35%_62%,rgba(34,211,238,0.12),transparent_16%),radial-gradient(circle_at_70%_68%,rgba(251,146,60,0.12),transparent_18%)]" />
+                <div className="relative z-10 mx-auto rounded-[1.1rem] border border-orange-200/20 bg-[linear-gradient(180deg,rgba(236,125,34,0.98),rgba(176,74,18,0.98))] px-4 py-2 text-center shadow-[0_14px_28px_rgba(0,0,0,0.24)] md:rounded-[1.45rem] md:px-6 md:py-3">
+                  <div className="text-[1rem] font-black leading-tight text-amber-50 drop-shadow-[0_2px_0_rgba(120,53,15,0.64)] md:text-[1.85rem]">
+                    Sort the fractions from smallest to largest!
+                  </div>
+                </div>
+
+                <div className="relative z-10 mt-3 flex flex-1 flex-col justify-between">
+                  <div className="flex items-start justify-center gap-3 md:gap-6">
+                    {bossCards.map((card) => {
+                      const isPicked = bossSelection.includes(card.id);
+                      return (
+                        <motion.button
+                          key={card.id}
+                          onClick={() => handleBossCardTap(card)}
+                          disabled={isPicked || Boolean(bossFeedback) || isGameOver || isVictory}
+                          whileTap={{ scale: 0.96 }}
+                          animate={isPicked ? { y: -40, opacity: 0.15, scale: 0.9 } : { y: [0, -4, 0] }}
+                          transition={isPicked ? { duration: 0.22 } : { duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
+                          className="relative flex h-[7.3rem] w-[4.7rem] items-center justify-center overflow-hidden rounded-[1rem] border border-sky-200/26 bg-[linear-gradient(180deg,rgba(59,130,246,0.92),rgba(6,78,163,0.98))] shadow-[0_20px_28px_rgba(8,47,73,0.34)] md:h-[10rem] md:w-[6.5rem] md:rounded-[1.3rem]"
+                        >
+                          <img src={card.asset} alt="" className="absolute inset-0 h-full w-full object-cover opacity-22" draggable={false} />
+                          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.35),transparent_30%)]" />
+                          <div className="absolute inset-[4%] rounded-[0.9rem] border border-white/16 md:rounded-[1.15rem]" />
+                          <div className="relative z-10 text-center text-[2rem] font-black leading-[0.78] text-amber-50 drop-shadow-[0_3px_0_rgba(30,41,59,0.9)] md:text-[3rem]">
+                            {card.label.includes('/') ? card.label.split('/').map((part, index) => (
+                              <React.Fragment key={`${card.id}-${part}-${index}`}>
+                                <div>{part}</div>
+                                {index === 0 && <div className="mx-auto my-1 h-[3px] w-8 rounded-full bg-amber-50/90 md:w-11" />}
+                              </React.Fragment>
+                            )) : card.label}
+                          </div>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+
+                  <div className="mt-4 flex flex-1 items-end justify-between gap-3">
+                    <div className="hidden md:block w-24" />
+                    <div className="flex flex-1 items-end justify-center gap-2 md:gap-4">
+                      {bossCards.map((card, index) => {
+                        const selectedCard = bossSelectedCards[index];
+                        return (
+                          <div key={`slot-${card.id}`} className="flex flex-col items-center gap-1.5">
+                            <div className="relative flex h-14 w-20 items-center justify-center rounded-[1rem] border border-stone-400/24 bg-[linear-gradient(180deg,rgba(120,83,58,0.92),rgba(76,53,39,0.98))] shadow-[inset_0_2px_0_rgba(255,255,255,0.1),0_10px_0_rgba(39,24,17,0.72),0_16px_24px_rgba(0,0,0,0.24)] md:h-20 md:w-28 md:rounded-[1.25rem]">
+                              {selectedCard && (
+                                <div className="text-center text-[1.05rem] font-black leading-[0.78] text-amber-50 drop-shadow-[0_2px_0_rgba(30,41,59,0.9)] md:text-[1.55rem]">
+                                  {selectedCard.label.includes('/') ? selectedCard.label.split('/').map((part, partIndex) => (
+                                    <React.Fragment key={`${selectedCard.id}-${part}-${partIndex}`}>
+                                      <div>{part}</div>
+                                      {partIndex === 0 && <div className="mx-auto my-0.5 h-[2px] w-5 rounded-full bg-amber-50/90 md:w-7" />}
+                                    </React.Fragment>
+                                  )) : selectedCard.label}
+                                </div>
+                              )}
+                            </div>
+                            {index < bossCards.length - 1 && <div className="text-cyan-300 text-lg font-black md:text-2xl">-&gt;</div>}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <div className="flex w-20 justify-end md:w-28">
+                      {bossEncounter && <BossPortrait encounter={bossEncounter} pose={bossPose} compact className="w-20 md:w-28" />}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="relative aspect-square w-full max-w-[24rem] sm:max-w-[28rem] md:max-w-[34rem]">
               <div className="absolute inset-[-3.5%] overflow-hidden rounded-[2.35rem] border border-[#f7d98c]/20 shadow-[0_20px_38px_rgba(0,0,0,0.34)]">
                 <img
                   src={FRACTION_MATCH_ASSETS.board}
@@ -687,7 +757,8 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
                   })}
                 </div>
               </div>
-            </div>
+              </div>
+            )}
           </div>
         </div>
 
