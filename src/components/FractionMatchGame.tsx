@@ -24,6 +24,7 @@ interface TileFamily {
   labels: string[];
   asset: string;
   glow: string;
+  value: number;
 }
 
 interface TileData {
@@ -51,17 +52,18 @@ const MATCH_DELAY_MS = 180;
 const SPECIAL_CHANCE = 0.07;
 
 const TILE_FAMILIES: TileFamily[] = [
-  { id: 'half', labels: ['1/2', '0.5', '2/4', '0.50'], asset: FRACTION_MATCH_ASSETS.tiles.ember, glow: 'shadow-[0_0_24px_rgba(249,115,22,0.38)]' },
-  { id: 'quarter', labels: ['1/4', '0.25', '2/8'], asset: FRACTION_MATCH_ASSETS.tiles.sapphire, glow: 'shadow-[0_0_24px_rgba(59,130,246,0.38)]' },
-  { id: 'three-quarters', labels: ['3/4', '0.75', '6/8'], asset: FRACTION_MATCH_ASSETS.tiles.emerald, glow: 'shadow-[0_0_24px_rgba(34,197,94,0.36)]' },
-  { id: 'fifth', labels: ['1/5', '0.2', '2/10'], asset: FRACTION_MATCH_ASSETS.tiles.violet, glow: 'shadow-[0_0_24px_rgba(192,132,252,0.36)]' },
-  { id: 'two-fifths', labels: ['2/5', '0.4', '4/10'], asset: FRACTION_MATCH_ASSETS.tiles.gold, glow: 'shadow-[0_0_24px_rgba(250,204,21,0.38)]' },
-  { id: 'tenth', labels: ['1/10', '0.1', '10/100'], asset: FRACTION_MATCH_ASSETS.tiles.storm, glow: 'shadow-[0_0_24px_rgba(167,139,250,0.36)]' },
-  { id: 'three-tenths', labels: ['3/10', '0.3', '30/100'], asset: FRACTION_MATCH_ASSETS.tiles.plasma, glow: 'shadow-[0_0_24px_rgba(236,72,153,0.34)]' },
-  { id: 'eighth', labels: ['1/8', '0.125', '2/16'], asset: FRACTION_MATCH_ASSETS.tiles.azure, glow: 'shadow-[0_0_24px_rgba(56,189,248,0.34)]' },
+  { id: 'half', labels: ['1/2', '0.5', '2/4', '0.50'], asset: FRACTION_MATCH_ASSETS.tiles.ember, glow: 'shadow-[0_0_24px_rgba(249,115,22,0.38)]', value: 0.5 },
+  { id: 'quarter', labels: ['1/4', '0.25', '2/8'], asset: FRACTION_MATCH_ASSETS.tiles.sapphire, glow: 'shadow-[0_0_24px_rgba(59,130,246,0.38)]', value: 0.25 },
+  { id: 'three-quarters', labels: ['3/4', '0.75', '6/8'], asset: FRACTION_MATCH_ASSETS.tiles.emerald, glow: 'shadow-[0_0_24px_rgba(34,197,94,0.36)]', value: 0.75 },
+  { id: 'fifth', labels: ['1/5', '0.2', '2/10'], asset: FRACTION_MATCH_ASSETS.tiles.violet, glow: 'shadow-[0_0_24px_rgba(192,132,252,0.36)]', value: 0.2 },
+  { id: 'two-fifths', labels: ['2/5', '0.4', '4/10'], asset: FRACTION_MATCH_ASSETS.tiles.gold, glow: 'shadow-[0_0_24px_rgba(250,204,21,0.38)]', value: 0.4 },
+  { id: 'tenth', labels: ['1/10', '0.1', '10/100'], asset: FRACTION_MATCH_ASSETS.tiles.storm, glow: 'shadow-[0_0_24px_rgba(167,139,250,0.36)]', value: 0.1 },
+  { id: 'three-tenths', labels: ['3/10', '0.3', '30/100'], asset: FRACTION_MATCH_ASSETS.tiles.plasma, glow: 'shadow-[0_0_24px_rgba(236,72,153,0.34)]', value: 0.3 },
+  { id: 'eighth', labels: ['1/8', '0.125', '2/16'], asset: FRACTION_MATCH_ASSETS.tiles.azure, glow: 'shadow-[0_0_24px_rgba(56,189,248,0.34)]', value: 0.125 },
 ];
 
 const createId = () => Math.random().toString(36).slice(2, 11);
+const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -274,6 +276,26 @@ const renderSpecialBadge = (special: TileData['special']) => {
   return <ArrowUpDown className="h-3 w-3 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.4)] md:h-4 md:w-4" />;
 };
 
+interface FractionOrderCard {
+  id: string;
+  familyId: string;
+  label: string;
+  value: number;
+  asset: string;
+}
+
+const createBossSortChallenge = (size: number): FractionOrderCard[] => (
+  shuffle(TILE_FAMILIES)
+    .slice(0, size)
+    .map((family) => ({
+      id: createId(),
+      familyId: family.id,
+      label: family.labels[Math.floor(Math.random() * family.labels.length)],
+      value: family.value,
+      asset: family.asset,
+    }))
+);
+
 const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   levelId,
   avatarId,
@@ -292,6 +314,9 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   const [isGameOver, setIsGameOver] = useState(false);
   const [isVictory, setIsVictory] = useState(false);
   const [statusMessage, setStatusMessage] = useState('Swap adjacent tiles to line up three equivalent values and trigger crystal powers.');
+  const [bossCards, setBossCards] = useState<FractionOrderCard[]>([]);
+  const [bossSelection, setBossSelection] = useState<string[]>([]);
+  const [bossFeedback, setBossFeedback] = useState<'correct' | 'incorrect' | null>(null);
 
   const scoreRef = useRef(0);
 
@@ -312,6 +337,10 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
             : isResolving
               ? 'attack'
               : 'neutral';
+  const bossSelectedCards = useMemo(
+    () => bossSelection.map((id) => bossCards.find((card) => card.id === id)).filter((card): card is FractionOrderCard => Boolean(card)),
+    [bossCards, bossSelection],
+  );
 
   const boardTiles = useMemo(() => board.flat(), [board]);
 
@@ -339,6 +368,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
 
   const resetGame = useCallback(() => {
     const nextBoard = buildBoard();
+    const nextBossCards = createBossSortChallenge(levelId >= 5 ? 4 : 3);
     scoreRef.current = 0;
     setScore(0);
     setTimeLeft(LEVEL_TIME_BASE + (levelId * LEVEL_TIME_STEP));
@@ -349,7 +379,14 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
     setCombo(0);
     setIsGameOver(false);
     setIsVictory(false);
-    setStatusMessage('Swap adjacent tiles to line up three equivalent values and trigger crystal powers.');
+    setBossCards(nextBossCards);
+    setBossSelection([]);
+    setBossFeedback(null);
+    setStatusMessage(
+      isBoss
+        ? 'Tap the fraction cards in ascending order to stabilise the Crystal Core.'
+        : 'Swap adjacent tiles to line up three equivalent values and trigger crystal powers.',
+    );
   }, [levelId, setBoardState]);
 
   useEffect(() => {
