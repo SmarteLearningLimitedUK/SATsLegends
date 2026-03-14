@@ -52,7 +52,8 @@ type VisualData =
   | { type: 'bars'; bars: BarDatum[]; caption?: string }
   | { type: 'coordinates'; points: CoordinatePoint[]; min: number; max: number; caption?: string; targetLabel: string }
   | { type: 'sequence'; values: string[]; caption?: string }
-  | { type: 'ratio'; leftLabel: string; leftValue: string; rightLabel: string; rightValue: string; caption?: string };
+  | { type: 'ratio'; leftLabel: string; leftValue: string; rightLabel: string; rightValue: string; caption?: string }
+  | { type: 'pulse'; centerLabel: string; orbitLabels: string[]; meterValue: number; meterLabel: string; caption?: string };
 
 interface ChallengeQuestion {
   prompt: string;
@@ -110,17 +111,17 @@ const CHALLENGE_THEMES: Record<SupportedChallengeGameType, ChallengeTheme> = {
   },
   percent_pulse: {
     title: 'Percent Pulse',
-    surface: 'from-fuchsia-300/18 via-violet-200/12 to-slate-950/86',
-    scene: 'from-fuchsia-300/16 via-pink-300/12 to-transparent',
-    ambient: 'bg-[radial-gradient(circle_at_top,rgba(232,121,249,0.2),transparent_28%),linear-gradient(180deg,#28113a_0%,#091018_100%)]',
-    prompt: 'from-fuchsia-200/20 to-violet-100/8',
-    answer: 'from-white/10 to-white/4',
-    answerActive: 'from-fuchsia-300/55 to-violet-400/48',
-    statText: 'text-violet-950',
-    statSoftBg: 'bg-violet-100/85',
-    statBorder: 'border-violet-200/90',
-    progress: 'bg-gradient-to-r from-pink-300 via-fuchsia-300 to-violet-400',
-    badge: 'text-fuchsia-100',
+    surface: 'from-fuchsia-300/28 via-sky-300/16 to-slate-950/88',
+    scene: 'from-fuchsia-300/22 via-cyan-300/18 to-transparent',
+    ambient: 'bg-[radial-gradient(circle_at_top,rgba(232,121,249,0.26),transparent_26%),radial-gradient(circle_at_bottom_right,rgba(34,211,238,0.2),transparent_24%),linear-gradient(180deg,#1f1241_0%,#07111b_100%)]',
+    prompt: 'from-fuchsia-200/28 to-cyan-100/12',
+    answer: 'from-fuchsia-200/10 via-sky-200/8 to-white/4',
+    answerActive: 'from-fuchsia-300/62 via-cyan-300/58 to-blue-400/48',
+    statText: 'text-fuchsia-950',
+    statSoftBg: 'bg-fuchsia-100/85',
+    statBorder: 'border-fuchsia-200/90',
+    progress: 'bg-gradient-to-r from-cyan-300 via-fuchsia-300 to-violet-400',
+    badge: 'text-cyan-100',
   },
   coordinate_quest: {
     title: 'Coordinate Quest',
@@ -227,6 +228,7 @@ const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 const formatCoordinate = (point: { x: number; y: number }) => `(${point.x}, ${point.y})`;
+const formatChallengeNumber = (value: number) => value.toLocaleString('en-GB', { maximumFractionDigits: 2 });
 
 const makeOptions = (correct: string, wrongOptions: string[]) => {
   const options = shuffle([correct, ...wrongOptions.slice(0, 3)]);
@@ -367,7 +369,14 @@ const generatePercentQuestion = (): ChallengeQuestion => {
       sublabel: 'Link fractions, decimals and percentages confidently.',
       options,
       answerIndex,
-      visual: { type: 'tokens', items: [sample.fraction, sample.decimal, sample.percent], accent: 'violet' },
+      visual: {
+        type: 'pulse',
+        centerLabel: promptForm,
+        orbitLabels: [...forms.filter((item) => item !== promptForm), 'Same pulse'],
+        meterValue: Number.parseFloat(sample.percent),
+        meterLabel: sample.percent,
+        caption: 'Read the glow and find the equivalent form.',
+      },
     };
   }
 
@@ -380,7 +389,14 @@ const generatePercentQuestion = (): ChallengeQuestion => {
     sublabel: 'Use a known fraction or decimal equivalent.',
     options,
     answerIndex,
-    visual: { type: 'equation', lines: [`${percent}% of ${amount}`, `${correct}`], badge: 'FDP' },
+    visual: {
+      type: 'pulse',
+      centerLabel: `${percent}%`,
+      orbitLabels: [`Whole ${amount}`, `1% = ${formatChallengeNumber(amount / 100)}`, 'Find the share'],
+      meterValue: percent,
+      meterLabel: `${percent}% target`,
+      caption: 'Charge the pulse by spotting the correct portion.',
+    },
   };
 };
 
@@ -696,6 +712,80 @@ const renderCoordinates = (visual: Extract<VisualData, { type: 'coordinates' }>)
   );
 };
 
+const renderPercentPulse = (visual: Extract<VisualData, { type: 'pulse' }>) => {
+  const orbitPositions = [
+    'left-3 top-3 md:left-5 md:top-5',
+    'right-3 top-6 md:right-6 md:top-8',
+    'left-1/2 bottom-12 -translate-x-1/2 md:bottom-14',
+  ];
+
+  return (
+    <div className="relative w-full max-w-[22rem] overflow-hidden rounded-[1.5rem] border border-fuchsia-200/18 bg-[linear-gradient(180deg,rgba(32,14,66,0.96),rgba(7,18,32,0.98))] p-3 shadow-[0_24px_50px_rgba(0,0,0,0.3)] md:max-w-[24rem] md:rounded-[1.8rem] md:p-5">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(232,121,249,0.22),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(34,211,238,0.18),transparent_26%),linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0))]" />
+      <div className="absolute left-4 top-4 h-16 w-16 rounded-full bg-fuchsia-300/18 blur-2xl md:h-24 md:w-24" />
+      <div className="absolute bottom-3 right-4 h-16 w-16 rounded-full bg-cyan-300/16 blur-2xl md:h-24 md:w-24" />
+
+      <div className="relative flex flex-col items-center">
+        <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-fuchsia-200/18 bg-white/8 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.22em] text-cyan-100 md:mb-3 md:px-3 md:text-[10px]">
+          <span className="inline-flex h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.7)]" />
+          Pulse Lane
+        </div>
+
+        <div className="relative flex h-44 w-full items-center justify-center md:h-56">
+          <motion.div
+            animate={{ scale: [0.94, 1.06, 0.94], opacity: [0.2, 0.42, 0.2] }}
+            transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute h-28 w-28 rounded-full border border-fuchsia-200/28 md:h-36 md:w-36"
+          />
+          <motion.div
+            animate={{ scale: [1, 1.22, 1], opacity: [0.16, 0.34, 0.16] }}
+            transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute h-36 w-36 rounded-full border border-cyan-200/18 md:h-48 md:w-48"
+          />
+          <motion.div
+            animate={{ y: [0, -4, 0], boxShadow: ['0 18px 36px rgba(34,211,238,0.16)', '0 26px 48px rgba(232,121,249,0.24)', '0 18px 36px rgba(34,211,238,0.16)'] }}
+            transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
+            className="relative flex h-24 w-24 items-center justify-center rounded-full border border-white/18 bg-[radial-gradient(circle_at_30%_22%,rgba(255,255,255,0.34),rgba(34,211,238,0.26)_34%,rgba(232,121,249,0.42)_70%,rgba(30,41,59,0.92)_100%)] text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.24)] md:h-32 md:w-32"
+          >
+            <div className="absolute inset-[10%] rounded-full border border-white/12 bg-slate-950/28" />
+            <span className="relative px-2 text-[1.05rem] font-black leading-none text-white drop-shadow-[0_6px_14px_rgba(15,23,42,0.48)] md:text-[1.55rem]">
+              {visual.centerLabel}
+            </span>
+          </motion.div>
+
+          {visual.orbitLabels.slice(0, 3).map((label, index) => (
+            <motion.div
+              key={`${label}-${index}`}
+              animate={{ y: [0, index === 1 ? -5 : -3, 0], x: [0, index === 2 ? 2 : -1, 0] }}
+              transition={{ duration: 2.2 + (index * 0.35), repeat: Infinity, ease: 'easeInOut' }}
+              className={`absolute ${orbitPositions[index]} rounded-full border border-white/14 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(255,255,255,0.04))] px-2.5 py-1.5 text-[10px] font-black text-white shadow-[0_12px_22px_rgba(0,0,0,0.22)] md:px-3 md:py-2 md:text-xs`}
+            >
+              {label}
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="mt-1 w-full rounded-[1rem] border border-white/10 bg-slate-950/30 p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] md:mt-2 md:rounded-[1.2rem] md:p-3">
+          <div className="mb-1 flex items-center justify-between text-[9px] font-black uppercase tracking-[0.18em] text-white/60 md:text-[10px]">
+            <span>Pulse Meter</span>
+            <span>{visual.meterLabel}</span>
+          </div>
+          <div className="relative h-4 overflow-hidden rounded-full border border-white/10 bg-white/6 md:h-5">
+            <motion.div
+              initial={false}
+              animate={{ width: `${clamp(visual.meterValue, 8, 100)}%` }}
+              transition={{ type: 'spring', stiffness: 120, damping: 18 }}
+              className="relative h-full rounded-full bg-[linear-gradient(90deg,#22d3ee_0%,#c084fc_50%,#f472b6_100%)] shadow-[0_0_18px_rgba(232,121,249,0.4)]"
+            >
+              <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.16),rgba(255,255,255,0.52),rgba(255,255,255,0.16))] bg-[length:180%_100%] animate-[hud-shine_2.2s_linear_infinite]" />
+            </motion.div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const renderVisual = (visual: VisualData) => {
   switch (visual.type) {
     case 'tokens':
@@ -801,6 +891,8 @@ const renderVisual = (visual: VisualData) => {
           </div>
         </div>
       );
+    case 'pulse':
+      return renderPercentPulse(visual);
     default:
       return null;
   }
@@ -854,6 +946,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
 
   const theme = CHALLENGE_THEMES[gameType];
   const isCalculationClash = gameType === 'calculation_clash';
+  const isPercentPulse = gameType === 'percent_pulse';
   const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
   const targetScore = 780 + (levelId * 180);
   const progress = Math.min((score / targetScore) * 100, 100);
@@ -986,14 +1079,14 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
           compact
         />
 
-        <div className={`relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.8rem] border border-white/10 ${isCalculationClash ? 'bg-[linear-gradient(180deg,rgba(36,15,8,0.74),rgba(9,16,28,0.38))]' : 'bg-[linear-gradient(180deg,rgba(9,16,28,0.68),rgba(9,16,28,0.34))]'} shadow-[0_24px_64px_rgba(0,0,0,0.28)] md:rounded-[2.6rem]`}>
+        <div className={`relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.8rem] border border-white/10 ${isCalculationClash ? 'bg-[linear-gradient(180deg,rgba(36,15,8,0.74),rgba(9,16,28,0.38))]' : isPercentPulse ? 'bg-[linear-gradient(180deg,rgba(30,12,58,0.82),rgba(7,18,32,0.42))]' : 'bg-[linear-gradient(180deg,rgba(9,16,28,0.68),rgba(9,16,28,0.34))]'} shadow-[0_24px_64px_rgba(0,0,0,0.28)] md:rounded-[2.6rem]`}>
           <div className="absolute inset-x-4 top-2.5 z-20 hidden justify-center md:flex md:top-4">
             <div className={`rounded-full border border-white/12 bg-black/28 px-3 py-1.5 text-center text-[9px] font-black uppercase tracking-[0.18em] shadow-[0_12px_24px_rgba(0,0,0,0.3)] backdrop-blur-md md:px-4 md:py-2 md:text-xs ${theme.badge}`}>
               {meta.focus}
             </div>
           </div>
 
-          <div className={`grid min-h-0 flex-1 ${isCalculationClash ? 'grid-rows-[minmax(0,0.62fr)_minmax(0,1.18fr)]' : 'grid-rows-[minmax(0,0.8fr)_minmax(0,1fr)]'} gap-1 p-1.5 pt-1.5 md:gap-3 md:p-4 md:pt-[4.5rem] lg:grid-cols-[1.04fr_0.96fr] lg:grid-rows-1 lg:pt-16`}>
+          <div className={`grid min-h-0 flex-1 ${isCalculationClash ? 'grid-rows-[minmax(0,0.62fr)_minmax(0,1.18fr)]' : isPercentPulse ? 'grid-rows-[minmax(0,0.72fr)_minmax(0,1.08fr)]' : 'grid-rows-[minmax(0,0.8fr)_minmax(0,1fr)]'} gap-1 p-1.5 pt-1.5 md:gap-3 md:p-4 md:pt-[4.5rem] lg:grid-cols-[1.04fr_0.96fr] lg:grid-rows-1 lg:pt-16`}>
             <div className={`relative min-h-0 overflow-hidden rounded-[1.25rem] border border-white/12 bg-gradient-to-br ${theme.surface} p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_44px_rgba(0,0,0,0.18)] md:rounded-[2rem] md:p-5`}>
               <div className={`absolute inset-x-5 top-0 h-28 rounded-full bg-gradient-to-br ${theme.prompt} blur-3xl`} />
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(12,18,28,0)_24%,rgba(12,18,28,0.16)_100%)]" />
@@ -1040,19 +1133,19 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleAnswer(index)}
                       disabled={Boolean(feedback) || isVictory || isGameOver}
-                      className={`min-h-[3.4rem] rounded-[1rem] border px-2 py-2 ${isCalculationClash ? 'text-center' : 'text-left'} shadow-[0_14px_30px_rgba(0,0,0,0.16)] transition-all md:min-h-[5.25rem] md:rounded-[1.4rem] md:px-4 md:py-4 ${isCorrect
+                      className={`min-h-[3.4rem] rounded-[1rem] border px-2 py-2 ${isCalculationClash || isPercentPulse ? 'text-center' : 'text-left'} shadow-[0_14px_30px_rgba(0,0,0,0.16)] transition-all md:min-h-[5.25rem] md:rounded-[1.4rem] md:px-4 md:py-4 ${isCorrect
                         ? 'border-emerald-200/80 bg-gradient-to-br from-emerald-300/55 to-lime-300/45 text-emerald-950'
                         : isWrongSelected
                           ? 'border-rose-200/80 bg-gradient-to-br from-rose-300/55 to-orange-300/45 text-rose-950'
                           : isSelected
                             ? `border-white/20 bg-gradient-to-br ${theme.answerActive} text-slate-950`
-                            : `${isCalculationClash ? 'border-amber-200/18 bg-[linear-gradient(180deg,rgba(255,255,255,0.16),rgba(255,255,255,0.05)),linear-gradient(135deg,rgba(120,53,15,0.44),rgba(15,23,42,0.24))] text-white hover:-translate-y-0.5 hover:border-amber-100/28' : `border-white/12 bg-gradient-to-br ${theme.answer} text-white hover:bg-white/14`}`}`}
+                            : `${isCalculationClash ? 'border-amber-200/18 bg-[linear-gradient(180deg,rgba(255,255,255,0.16),rgba(255,255,255,0.05)),linear-gradient(135deg,rgba(120,53,15,0.44),rgba(15,23,42,0.24))] text-white hover:-translate-y-0.5 hover:border-amber-100/28' : isPercentPulse ? 'border-fuchsia-200/18 bg-[linear-gradient(180deg,rgba(255,255,255,0.14),rgba(255,255,255,0.03)),linear-gradient(135deg,rgba(232,121,249,0.32),rgba(34,211,238,0.2))] text-white hover:-translate-y-0.5 hover:border-cyan-100/26 hover:shadow-[0_18px_30px_rgba(34,211,238,0.14)]' : `border-white/12 bg-gradient-to-br ${theme.answer} text-white hover:bg-white/14`}`}`}
                     >
-                      <div className={`flex ${isCalculationClash ? 'items-center justify-center gap-1.5' : 'items-start gap-2'}`}>
+                      <div className={`flex ${isCalculationClash || isPercentPulse ? 'items-center justify-center gap-1.5' : 'items-start gap-2'}`}>
                         <div className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[9px] font-black uppercase md:h-8 md:w-8 md:text-[11px] ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/35' : 'border-white/12 bg-white/8'}`}>
                           {String.fromCharCode(65 + index)}
                         </div>
-                        <div className={`${isCalculationClash ? 'text-[1rem] md:text-[1.45rem]' : 'text-[11px] md:text-lg'} font-black leading-tight`}>{option}</div>
+                        <div className={`${isCalculationClash ? 'text-[1rem] md:text-[1.45rem]' : isPercentPulse ? 'text-[0.95rem] md:text-[1.35rem]' : 'text-[11px] md:text-lg'} font-black leading-tight`}>{option}</div>
                       </div>
                     </motion.button>
                   );

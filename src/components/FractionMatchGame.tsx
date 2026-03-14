@@ -6,7 +6,6 @@ import { getBossEncounter } from '../bossMeta';
 import BossPortrait from './BossPortrait';
 import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
-import GameplaySceneBackdrop from './GameplaySceneBackdrop';
 import { Star } from './GameIcons';
 import { triggerHaptic } from '../haptics';
 import { FRACTION_MATCH_ASSETS } from '../assets/fraction_match';
@@ -409,9 +408,14 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden bg-[radial-gradient(circle_at_top,#5b3b1a_0%,#23130b_28%,#120d0d_58%,#050608_100%)] px-2 pb-2 pt-1 md:px-4 md:pb-4">
-      <GameplaySceneBackdrop gameType="fraction_match" className="opacity-90" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(250,204,21,0.16),transparent_26%),radial-gradient(circle_at_top_left,rgba(132,204,22,0.14),transparent_24%),radial-gradient(circle_at_bottom_right,rgba(245,158,11,0.14),transparent_28%)]" />
-      <div className="pointer-events-none absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(rgba(255,244,214,0.2) 1px, transparent 1px)', backgroundSize: '26px 26px' }} />
+      <img
+        src={FRACTION_MATCH_ASSETS.board}
+        alt="Crystal Cave board background"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-28"
+        draggable={false}
+      />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(250,204,21,0.18),transparent_24%),radial-gradient(circle_at_top_left,rgba(132,204,22,0.16),transparent_24%),radial-gradient(circle_at_bottom_right,rgba(34,211,238,0.16),transparent_28%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(9,6,3,0.28),rgba(6,8,16,0.62))]" />
 
       <div className="relative z-10 flex h-full min-h-0 flex-col gap-2 md:gap-4">
         <GameplayHUD
@@ -421,6 +425,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
           targetScore={targetScore}
           timeLeft={timeLeft}
           progress={progress}
+          compact
           accentText="text-amber-950"
           accentSoftBg="bg-amber-100/85"
           accentBorder="border-amber-200/90"
@@ -429,76 +434,77 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
           statValue={combo}
         />
 
-        <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-[2rem] border border-[#f7d98c]/15 bg-[linear-gradient(180deg,rgba(255,248,220,0.08),rgba(255,255,255,0.01))] shadow-[0_28px_60px_rgba(0,0,0,0.42)] md:rounded-[2.6rem]">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,251,235,0.1),transparent_35%),linear-gradient(180deg,rgba(255,255,255,0.05),rgba(0,0,0,0.08))]" />
+        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] border border-[#f7d98c]/16 bg-[linear-gradient(180deg,rgba(255,248,220,0.08),rgba(255,255,255,0.01))] p-2 shadow-[0_28px_60px_rgba(0,0,0,0.42)] md:rounded-[2.6rem] md:p-4">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,251,235,0.12),transparent_34%),linear-gradient(180deg,rgba(255,255,255,0.05),rgba(0,0,0,0.1))]" />
 
-          {bossEncounter && (
-            <div className="absolute right-3 top-3 z-20 w-36 md:right-4 md:top-4 md:w-48">
-              <BossPortrait encounter={bossEncounter} pose={bossPose} compact />
-            </div>
-          )}
-
-          <div className="relative h-[108%] md:h-full aspect-[736/1308] w-auto max-w-none">
-            <img
-              src={FRACTION_MATCH_ASSETS.board}
-              alt="Crystal Cave board"
-              className="pointer-events-none absolute inset-0 h-full w-full object-contain"
-              draggable={false}
-            />
-
-            <div className="absolute left-[17%] right-[17%] top-[5.2%] z-20 rounded-[1.4rem] border border-[#f6dfae]/28 bg-[linear-gradient(180deg,rgba(70,42,20,0.9),rgba(26,16,10,0.86))] px-3 py-2 text-center shadow-[0_12px_24px_rgba(0,0,0,0.3)]">
+          <div className="relative z-10 mb-2 flex items-center justify-between gap-2 md:mb-3">
+            <div className="min-w-0 flex-1 rounded-[1.25rem] border border-[#f6dfae]/24 bg-[linear-gradient(180deg,rgba(70,42,20,0.92),rgba(26,16,10,0.88))] px-3 py-2 shadow-[0_12px_24px_rgba(0,0,0,0.3)]">
               <div className="text-[9px] font-black uppercase tracking-[0.22em] text-amber-50/82 md:text-[10px]">Match 3+ Equivalent Values</div>
-              <div className="mt-1 text-[10px] font-bold text-amber-50 md:text-sm">{statusMessage}</div>
+              <div className="mt-1 truncate text-[11px] font-bold text-amber-50 md:text-sm">{statusMessage}</div>
             </div>
 
-            <div
-              className="absolute"
-              style={{
-                left: '8.4%',
-                right: '8.4%',
-                top: '16.9%',
-                bottom: '20.2%',
-                display: 'grid',
-                gridTemplateColumns: 'repeat(8, minmax(0, 1fr))',
-                gridTemplateRows: 'repeat(8, minmax(0, 1fr))',
-                gap: '1%',
-              }}
-            >
-              {boardTiles.map(tile => {
-                const isSelected = selectedTile?.row === tile.row && selectedTile?.col === tile.col;
-                const isMatched = matchedTileIds.includes(tile.id);
-                const family = getFamily(tile.familyId);
+            {bossEncounter && (
+              <div className="w-24 shrink-0 md:w-32">
+                <BossPortrait encounter={bossEncounter} pose={bossPose} compact />
+              </div>
+            )}
+          </div>
 
-                return (
-                  <motion.button
-                    key={tile.id}
-                    layout
-                    transition={{ type: 'spring', stiffness: 280, damping: 26 }}
-                    onClick={() => handleTileTap(tile)}
-                    disabled={isResolving || isGameOver || isVictory}
-                    className={`group relative aspect-square overflow-hidden rounded-[20%] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(31,20,13,0.92))] shadow-[0_10px_22px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.08)] ${family.glow} ${isSelected ? 'ring-4 ring-[#fff1b6] ring-offset-2 ring-offset-[#3b2417]' : ''}`}
-                    style={{
-                      gridRow: tile.row + 1,
-                      gridColumn: tile.col + 1,
-                    }}
-                    whileTap={{ scale: 0.95 }}
-                    animate={isMatched ? { scale: [1, 1.14, 0.86], opacity: [1, 1, 0.5] } : { scale: 1, opacity: 1 }}
-                  >
-                    <div className="absolute inset-x-[10%] top-[8%] bottom-[24%] rounded-[24%] bg-[radial-gradient(circle_at_30%_18%,rgba(255,255,255,0.18),transparent_44%)]" />
-                    <img
-                      src={tile.asset}
-                      alt={tile.label}
-                      className="absolute inset-x-[6%] top-[4%] h-[68%] w-[88%] object-contain drop-shadow-[0_12px_16px_rgba(0,0,0,0.26)]"
-                      draggable={false}
-                    />
-                    <div className="absolute inset-x-[8%] bottom-[6%] rounded-full border border-[#f7d98c]/18 bg-[linear-gradient(180deg,rgba(26,18,13,0.94),rgba(59,40,23,0.9))] px-[4%] py-[6%] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-                      <span className={`block text-center font-black leading-none text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] ${tile.label.length >= 5 ? 'text-[clamp(0.38rem,1.14vw,0.78rem)]' : 'text-[clamp(0.46rem,1.3vw,0.92rem)]'}`}>
-                        {tile.label}
-                      </span>
-                    </div>
-                  </motion.button>
-                );
-              })}
+          <div className="relative z-10 flex min-h-0 flex-1 items-center justify-center">
+            <div className="relative aspect-square w-full max-w-[24rem] sm:max-w-[28rem] md:max-w-[34rem]">
+              <div className="absolute inset-[-3.5%] overflow-hidden rounded-[2.35rem] border border-[#f7d98c]/20 shadow-[0_20px_38px_rgba(0,0,0,0.34)]">
+                <img
+                  src={FRACTION_MATCH_ASSETS.board}
+                  alt="Crystal board stage"
+                  className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-34 scale-[1.08]"
+                  draggable={false}
+                />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(250,204,21,0.16),transparent_24%),linear-gradient(180deg,rgba(5,8,15,0.04),rgba(5,8,15,0.24))]" />
+              </div>
+
+              <div className="absolute inset-0 rounded-[2rem] border border-[#f7d98c]/26 bg-[linear-gradient(180deg,rgba(72,44,19,0.94),rgba(39,24,14,0.94))] shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_20px_38px_rgba(0,0,0,0.32)]" />
+              <div className="absolute inset-[2.6%] rounded-[1.7rem] border border-[#f7d98c]/14 bg-[linear-gradient(180deg,rgba(30,20,12,0.94),rgba(18,12,8,0.96))]" />
+              <div className="absolute inset-[6%] rounded-[1.35rem] bg-[linear-gradient(180deg,rgba(26,20,18,0.94),rgba(14,10,9,0.98))] p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] md:p-2">
+                <div className="grid h-full w-full grid-cols-8 grid-rows-8 gap-1 md:gap-1.5">
+                  {boardTiles.map(tile => {
+                    const isSelected = selectedTile?.row === tile.row && selectedTile?.col === tile.col;
+                    const isMatched = matchedTileIds.includes(tile.id);
+                    const family = getFamily(tile.familyId);
+
+                    return (
+                      <motion.button
+                        key={tile.id}
+                        layout
+                        transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+                        onClick={() => handleTileTap(tile)}
+                        disabled={isResolving || isGameOver || isVictory}
+                        className={`group relative aspect-square overflow-hidden rounded-[26%] ${family.glow} ${isSelected ? 'z-20' : ''}`}
+                        style={{
+                          gridRow: tile.row + 1,
+                          gridColumn: tile.col + 1,
+                        }}
+                        whileTap={{ scale: 0.95 }}
+                        animate={isMatched ? { scale: [1, 1.16, 0.86], rotate: [0, 2, -2, 0], opacity: [1, 1, 0.4] } : { scale: isSelected ? 1.05 : 1, opacity: 1, y: isSelected ? -1 : 0 }}
+                      >
+                        <img
+                          src={tile.asset}
+                          alt={tile.label}
+                          className="absolute inset-0 h-full w-full object-cover drop-shadow-[0_12px_18px_rgba(0,0,0,0.32)]"
+                          draggable={false}
+                        />
+                        <div className="absolute inset-0 rounded-[26%] bg-[radial-gradient(circle_at_30%_18%,rgba(255,255,255,0.42),transparent_34%),linear-gradient(180deg,rgba(255,255,255,0.12),transparent_42%,rgba(15,23,42,0.18))]" />
+                        <div className="absolute inset-x-[16%] top-[10%] h-[16%] rounded-full bg-white/30 blur-[1px]" />
+                        <div className={`absolute inset-[3%] rounded-[24%] border ${isSelected ? 'border-[#fff6bf]' : 'border-white/12'} shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]`} />
+                        <div className="absolute inset-[14%] flex items-center justify-center">
+                          <span className={`rounded-full border border-white/10 bg-slate-950/40 px-1.5 py-1 text-center font-black leading-none text-white backdrop-blur-[2px] drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)] ${tile.label.length >= 5 ? 'text-[clamp(0.34rem,1.55vw,0.82rem)]' : 'text-[clamp(0.46rem,1.95vw,1rem)]'}`}>
+                            {tile.label}
+                          </span>
+                        </div>
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
         </div>

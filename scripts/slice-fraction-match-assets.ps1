@@ -2,7 +2,7 @@ $ErrorActionPreference = 'Stop'
 
 Add-Type -AssemblyName System.Drawing
 
-$sourceBoard = 'D:\codexsatsgame\external-assets\game assets\match\matchboard.png'
+$sourceBoard = 'D:\codexsatsgame\external-assets\game assets\match\matchboard 2.png'
 $sourceTiles = 'D:\codexsatsgame\external-assets\game assets\match\matchsquares.png'
 $targetRoot = 'D:\gamedevsam\SATSLegends\src\assets\fraction_match'
 $tileRoot = Join-Path $targetRoot 'tiles'
