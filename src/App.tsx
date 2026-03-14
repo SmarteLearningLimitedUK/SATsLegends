@@ -678,47 +678,52 @@ const App: React.FC = () => {
                 <span className="text-[9px] font-black uppercase tracking-[0.24em] md:text-[10px]">Adventure mode</span>
               </div>
               <nav className="casual-nav-shell flex w-full max-w-[28rem] items-center justify-between rounded-[2rem] px-2 py-2 md:max-w-3xl md:px-4 md:py-3">
-                <button
+                <motion.button
+                  whileTap={{ scale: 0.96, y: 1 }}
                   onClick={goToHome}
-                  className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'world_map' ? 'casual-nav-button-active scale-[1.02] shadow-lg' : 'text-white/85 hover:bg-white/10'}`}
+                  className={`hero-nav-button hero-nav-button-home flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'world_map' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'text-white/85 hover:bg-white/10'}`}
                 >
-                  <AssetIcon name="home" className="h-5 w-5 md:h-6 md:w-6" />
+                  <AssetIcon name="home" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
                   <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Map</span>
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.96, y: 1 }}
                   onClick={() => setScreen('avatar_selection')}
-                  className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'avatar_selection' ? 'casual-nav-button-active scale-[1.02] shadow-lg' : 'text-white/85 hover:bg-white/10'}`}
+                  className={`hero-nav-button hero-nav-button-hero flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'avatar_selection' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'text-white/85 hover:bg-white/10'}`}
                 >
-                  <AssetIcon name="user" className="h-5 w-5 md:h-6 md:w-6" />
+                  <AssetIcon name="user" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
                   <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Hero</span>
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.96, y: 1 }}
                   onClick={() => setShowQuests(true)}
-                  className="relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 text-white/85 transition-all hover:bg-white/10 md:flex-none md:px-3"
+                  className="hero-nav-button hero-nav-button-quests relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 text-white/85 transition-all hover:bg-white/10 md:flex-none md:px-3"
                 >
-                  <AssetIcon name="doc" className="h-5 w-5 md:h-6 md:w-6" />
+                  <AssetIcon name="doc" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
                   <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Quests</span>
                   {(player.dailyQuests || []).some(q => q.current >= q.target && !q.isClaimed) && (
                     <span className="absolute right-2 top-1 h-3 w-3 rounded-full border-2 border-white bg-red-500 animate-pulse" />
                   )}
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.96, y: 1 }}
                   onClick={() => setShowAchievements(true)}
-                  className="relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 text-white/85 transition-all hover:bg-white/10 md:flex-none md:px-3"
+                  className="hero-nav-button hero-nav-button-wins relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 text-white/85 transition-all hover:bg-white/10 md:flex-none md:px-3"
                 >
-                  <AssetIcon name="medal" className="h-5 w-5 md:h-6 md:w-6" />
+                  <AssetIcon name="medal" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
                   <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Wins</span>
                   {(player.achievements?.length || 0) > 0 && (
                     <span className="absolute right-2 top-1 h-3 w-3 rounded-full border-2 border-white bg-yellow-400" />
                   )}
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.96, y: 1 }}
                   onClick={() => setScreen('parent_dashboard')}
-                  className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'parent_dashboard' ? 'casual-nav-button-active scale-[1.02] shadow-lg' : 'text-white/85 hover:bg-white/10'}`}
+                  className={`hero-nav-button hero-nav-button-stats flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'parent_dashboard' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'text-white/85 hover:bg-white/10'}`}
                 >
-                  <AssetIcon name="gear" className="h-5 w-5 md:h-6 md:w-6" />
+                  <AssetIcon name="gear" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
                   <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Stats</span>
-                </button>
+                </motion.button>
               </nav>
             </div>
           </div>
