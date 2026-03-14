@@ -501,7 +501,7 @@ const App: React.FC = () => {
               draggable={false}
             />
 
-            <div className="absolute inset-0 flex items-end justify-center pb-[max(4.5rem,7vh)] md:pb-[max(5.5rem,8vh)]">
+            <div className="absolute inset-0 flex items-end justify-center pb-[calc(max(4.5rem,7vh)-15px)] md:pb-[calc(max(5.5rem,8vh)-15px)]">
               <motion.button
                 whileHover={{ scale: 1.025, y: -3 }}
                 whileTap={{ scale: 0.985, y: 1 }}

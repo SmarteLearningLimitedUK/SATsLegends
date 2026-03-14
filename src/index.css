@@ -1038,7 +1038,7 @@ button:disabled {
   align-items: center;
   justify-content: center;
   width: min(16.6rem, calc(100vw - 3.5rem));
-  height: clamp(4.55rem, 11.5vw, 5.45rem);
+  height: clamp(4.1rem, 10.4vw, 4.95rem);
   padding: 0.34rem;
   border: 0;
   border-radius: 999px;
