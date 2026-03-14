@@ -39,7 +39,6 @@ import {
 import { triggerHaptic } from './haptics';
 import splashPoster from './assets/splash.png';
 import splashButtonBase from './assets/fantasy_hero/buttons/primary_yellow.png';
-import splashButtonDeco from './assets/fantasy_hero/buttons/primary_deco.png';
 
 const PLAYER_STORAGE_KEY = 'maths_quest_player';
 const ALL_ISLAND_IDS = ISLANDS.map(island => island.id);
@@ -504,20 +503,20 @@ const App: React.FC = () => {
               draggable={false}
             />
 
-            <div className="absolute inset-0 flex items-end justify-center pb-[max(7.5rem,12vh)] md:pb-[max(8.5rem,13vh)]">
+            <div className="absolute inset-0 flex items-end justify-center pb-[max(4.5rem,7vh)] md:pb-[max(5.5rem,8vh)]">
               <motion.button
                 whileHover={{ scale: 1.03, y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleStartAdventure}
                 aria-label={hasCompletedProfile ? 'Continue adventure' : 'Start adventure'}
-                className="relative inline-flex h-[4.5rem] w-[15rem] items-center justify-center text-lg font-black uppercase tracking-[0.16em] text-white drop-shadow-[0_2px_0_rgba(0,0,0,0.34)] md:h-[5.2rem] md:w-[18rem] md:text-xl"
+                className="relative inline-flex h-[4.5rem] w-[15rem] items-center justify-center text-lg font-black uppercase tracking-[0.16em] text-amber-950 md:h-[5.2rem] md:w-[18rem] md:text-xl"
                 style={{
-                  backgroundImage: `url(${splashButtonDeco}), url(${splashButtonBase})`,
-                  backgroundPosition: 'center, center',
-                  backgroundRepeat: 'no-repeat, no-repeat',
-                  backgroundSize: '100% 100%, 100% 100%',
-                  textShadow: '0 2px 0 rgba(0,0,0,0.34)',
-                  filter: 'drop-shadow(0 12px 24px rgba(120,53,15,0.32))',
+                  backgroundImage: `url(${splashButtonBase})`,
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundSize: '100% 100%',
+                  textShadow: '0 1px 0 rgba(255,248,220,0.35)',
+                  filter: 'drop-shadow(0 12px 20px rgba(120,53,15,0.26))',
                 }}
               >
                 <span className="relative">{hasCompletedProfile ? 'Continue' : "Let's Go"}</span>
