@@ -4,10 +4,15 @@ import confetti from 'canvas-confetti';
 import { AVATARS } from '../constants';
 import { BURGER_ASSETS } from '../assets/burger';
 import burgerLevelBg from '../assets/level_backgrounds/burger.png';
+import playBgAsset from '../assets/fantasy_hero/slider/play_bg.png';
+import playBorderAsset from '../assets/fantasy_hero/slider/play_border.png';
+import playFillBlueAsset from '../assets/fantasy_hero/slider/play_fill_blue.png';
+import ribbonPurpleAsset from '../assets/fantasy_hero/title/ribbon_purple.png';
+import lineBgAsset from '../assets/fantasy_hero/title/line_bg.png';
+import coinAsset from '../assets/fantasy_hero/ui/coin.png';
 import { triggerHaptic } from '../haptics';
 import GameActionDock from './GameActionDock';
 import GameplaySceneBackdrop from './GameplaySceneBackdrop';
-import GameplayHUD from './GameplayHUD';
 import AssetIcon from './AssetIcon';
 import { Star } from './GameIcons';
 
@@ -26,6 +31,7 @@ interface IngredientType {
   units: number;
   asset: string;
   accent: string;
+  trayTone: string;
   buttonImageClass: string;
   stackImageClass: string;
   shortLabel: string;
@@ -54,6 +60,7 @@ const INGREDIENT_TYPES: IngredientType[] = [
     units: 4,
     asset: BURGER_ASSETS.patty,
     accent: 'from-amber-100 via-orange-50 to-white',
+    trayTone: 'from-violet-500 via-fuchsia-500 to-purple-600',
     buttonImageClass: 'w-16 md:w-20',
     stackImageClass: 'w-36 md:w-44',
     shortLabel: '1/2',
@@ -63,6 +70,7 @@ const INGREDIENT_TYPES: IngredientType[] = [
     units: 2,
     asset: BURGER_ASSETS.cheese,
     accent: 'from-yellow-100 via-amber-50 to-white',
+    trayTone: 'from-orange-400 via-amber-400 to-yellow-500',
     buttonImageClass: 'w-14 md:w-16',
     stackImageClass: 'w-32 md:w-40',
     shortLabel: '1/4',
@@ -72,6 +80,7 @@ const INGREDIENT_TYPES: IngredientType[] = [
     units: 1,
     asset: BURGER_ASSETS.bacon,
     accent: 'from-rose-100 via-orange-50 to-white',
+    trayTone: 'from-rose-500 via-red-500 to-orange-500',
     buttonImageClass: 'w-14 md:w-16',
     stackImageClass: 'w-34 md:w-42',
     shortLabel: '1/8',
@@ -81,6 +90,7 @@ const INGREDIENT_TYPES: IngredientType[] = [
     units: 1,
     asset: BURGER_ASSETS.lettuce,
     accent: 'from-lime-100 via-emerald-50 to-white',
+    trayTone: 'from-lime-400 via-emerald-400 to-green-500',
     buttonImageClass: 'w-16 md:w-20',
     stackImageClass: 'w-36 md:w-46',
     shortLabel: '1/8',
@@ -90,6 +100,7 @@ const INGREDIENT_TYPES: IngredientType[] = [
     units: 1,
     asset: BURGER_ASSETS.tomato,
     accent: 'from-red-100 via-rose-50 to-white',
+    trayTone: 'from-cyan-500 via-sky-500 to-teal-500',
     buttonImageClass: 'w-16 md:w-20',
     stackImageClass: 'w-34 md:w-42',
     shortLabel: '1/8',
@@ -99,6 +110,7 @@ const INGREDIENT_TYPES: IngredientType[] = [
     units: 1,
     asset: BURGER_ASSETS.onion,
     accent: 'from-fuchsia-100 via-violet-50 to-white',
+    trayTone: 'from-fuchsia-500 via-purple-500 to-violet-600',
     buttonImageClass: 'w-14 md:w-18',
     stackImageClass: 'w-32 md:w-38',
     shortLabel: '1/8',
@@ -108,6 +120,7 @@ const INGREDIENT_TYPES: IngredientType[] = [
     units: 1,
     asset: BURGER_ASSETS.pickles,
     accent: 'from-emerald-100 via-lime-50 to-white',
+    trayTone: 'from-emerald-500 via-lime-500 to-green-500',
     buttonImageClass: 'w-14 md:w-18',
     stackImageClass: 'w-30 md:w-38',
     shortLabel: '1/8',
@@ -117,6 +130,7 @@ const INGREDIENT_TYPES: IngredientType[] = [
     units: 1,
     asset: BURGER_ASSETS.ketchup,
     accent: 'from-red-100 via-orange-50 to-white',
+    trayTone: 'from-red-500 via-rose-500 to-pink-500',
     buttonImageClass: 'w-14 md:w-16',
     stackImageClass: 'w-30 md:w-36',
     shortLabel: '1/8',
@@ -126,6 +140,7 @@ const INGREDIENT_TYPES: IngredientType[] = [
     units: 1,
     asset: BURGER_ASSETS.bbq,
     accent: 'from-amber-100 via-orange-50 to-white',
+    trayTone: 'from-amber-500 via-orange-500 to-red-500',
     buttonImageClass: 'w-14 md:w-16',
     stackImageClass: 'w-30 md:w-36',
     shortLabel: '1/8',
@@ -364,6 +379,39 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
       .filter((item): item is IngredientType => Boolean(item));
   }, [currentOrder]);
 
+  const orderChecklist = useMemo(() => {
+    if (!currentOrder) return [];
+
+    const rows = requiredIngredientVisuals.map((ingredient) => ({
+      id: ingredient.name,
+      label: ingredient.name,
+      asset: ingredient.asset,
+      current: usedIngredientCounts.get(ingredient.name) || 0,
+      target: 1,
+      tone: ingredient.trayTone,
+    }));
+
+    rows.unshift({
+      id: 'size',
+      label: 'Burger Size',
+      asset: BURGER_ASSETS.topBun,
+      current: totalUnits,
+      target: currentOrder.targetUnits,
+      tone: 'from-sky-500 via-blue-500 to-indigo-600',
+    });
+
+    return rows;
+  }, [currentOrder, requiredIngredientVisuals, totalUnits, usedIngredientCounts]);
+
+  const orderProgress = useMemo(() => {
+    if (!currentOrder) return 0;
+    const sizeProgress = Math.min(totalUnits / currentOrder.targetUnits, 1) * 0.6;
+    const ingredientProgress = currentOrder.requiredIngredients.length
+      ? ((currentOrder.requiredIngredients.length - requiredMissing.length) / currentOrder.requiredIngredients.length) * 0.4
+      : 0.4;
+    return Math.round((sizeProgress + ingredientProgress) * 100);
+  }, [currentOrder, requiredMissing.length, totalUnits]);
+
   const handleIngredientAdd = (ingredient: IngredientType) => {
     if (isGameOver || isVictory || isTransitioning) return;
     if (burgerStack.length >= 14) {
@@ -436,71 +484,117 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
   };
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden bg-[radial-gradient(circle_at_top,#fff7ed_0%,#ffedd5_42%,#fed7aa_100%)] px-2 pb-2 pt-1 md:px-4 md:pb-4">
+    <div className="relative flex h-full w-full flex-col overflow-hidden bg-[radial-gradient(circle_at_top,#78350f_0%,#431407_42%,#0f172a_100%)] px-2 pb-2 pt-1 md:px-4 md:pb-4">
       <div
-        className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-[0.72]"
+        className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-[0.92]"
         style={{ backgroundImage: `url(${burgerLevelBg})` }}
       />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(20,10,3,0.1),rgba(120,53,15,0.16)_24%,rgba(20,10,3,0.5)_100%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,243,199,0.42),rgba(255,243,199,0)_34%),radial-gradient(circle_at_bottom,rgba(120,53,15,0.26),rgba(120,53,15,0)_34%)]" />
-      <GameplaySceneBackdrop gameType="burger_builder" className="opacity-20 mix-blend-soft-light" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(34,12,56,0.42),rgba(91,33,182,0.16)_24%,rgba(20,10,3,0.54)_100%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.34),rgba(255,243,199,0)_28%),radial-gradient(circle_at_bottom,rgba(249,115,22,0.3),rgba(120,53,15,0)_36%)]" />
+      <GameplaySceneBackdrop gameType="burger_builder" className="opacity-12" />
 
       <div className="relative z-10 flex h-full min-h-0 flex-col gap-2 md:gap-4">
-        <GameplayHUD
-          title="Burger Bar"
-          avatar={avatar}
-          score={score}
-          targetScore={targetScore}
-          timeLeft={orderTimeLeft}
-          progress={progress}
-          accentText="text-amber-950"
-          accentSoftBg="bg-orange-100/80"
-          accentBorder="border-amber-200/90"
-          progressBar="bg-gradient-to-r from-orange-400 via-amber-400 to-yellow-300"
-          statLabel="Served"
-          statValue={ordersServed}
-          compact
-        />
-
-        <div className="grid min-h-0 flex-1 grid-cols-[4.75rem_minmax(0,1fr)] grid-rows-[auto_minmax(0,1fr)_auto] gap-2 md:grid-cols-[7rem_minmax(0,1fr)] md:gap-3">
-          <section className="row-span-3 flex min-h-0 flex-col overflow-hidden rounded-[1.8rem] border border-white/75 bg-[linear-gradient(180deg,rgba(255,251,235,0.96),rgba(254,243,199,0.9))] p-1.5 shadow-[0_20px_40px_rgba(120,53,15,0.18)] md:rounded-[2.4rem] md:p-2.5">
-            <div className="rounded-[1.1rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.78),rgba(255,251,235,0.92))] px-1 py-1.5 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] md:rounded-[1.6rem]">
-              <div className="text-[8px] font-black uppercase tracking-[0.2em] text-amber-700/70 md:text-[10px]">Build</div>
+        <div className="grid shrink-0 grid-cols-[auto_1fr] items-center gap-2 md:gap-3">
+          <div className="relative h-16 w-16 shrink-0 md:h-20 md:w-20">
+            <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,rgba(251,191,36,0.34),rgba(251,191,36,0)_68%)] blur-xl" />
+            <div className="relative flex h-full w-full items-center justify-center rounded-full border-2 border-amber-200/70 bg-[linear-gradient(180deg,rgba(20,20,40,0.96),rgba(41,20,68,0.98))] shadow-[0_14px_32px_rgba(0,0,0,0.32)]">
+              <div className="text-center leading-none">
+                <div className="text-[8px] font-black uppercase tracking-[0.14em] text-amber-200/78 md:text-[9px]">Time</div>
+                <div className={`mt-1 text-xl font-black md:text-[1.75rem] ${orderTimeLeft <= 10 ? 'text-red-300' : 'text-yellow-200'}`}>{orderTimeLeft}s</div>
+              </div>
             </div>
-            <div className="mt-1.5 grid min-h-0 flex-1 grid-rows-9 gap-1 md:mt-2 md:gap-1.5">
-              {INGREDIENT_TYPES.map(ingredient => (
-                <motion.button
-                  key={ingredient.name}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handleIngredientAdd(ingredient)}
-                  className={`relative flex min-h-0 flex-col items-center justify-center overflow-hidden rounded-[1rem] border border-white/75 bg-gradient-to-br ${ingredient.accent} px-1 py-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.72),0_8px_16px_rgba(15,23,42,0.08)] md:rounded-[1.4rem]`}
+          </div>
+
+          <div className="relative overflow-hidden rounded-[1.3rem] border border-white/16 bg-[linear-gradient(180deg,rgba(53,24,89,0.96),rgba(29,20,57,0.98))] px-3 py-2 text-white shadow-[0_16px_36px_rgba(0,0,0,0.3)] md:rounded-[1.8rem] md:px-4 md:py-3">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.18),rgba(251,191,36,0)_28%)]" />
+            <div className="relative flex items-center justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <div
+                  className="inline-flex items-center gap-2 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-white md:text-xs"
+                  style={{ backgroundImage: `url(${ribbonPurpleAsset})`, backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat' }}
                 >
-                  <img
-                    src={ingredient.asset}
-                    alt={ingredient.name}
-                    className={`${ingredient.buttonImageClass} max-h-[1.75rem] max-w-[2.2rem] md:max-h-[2.8rem] md:max-w-[3.4rem] object-contain drop-shadow-[0_6px_8px_rgba(15,23,42,0.18)]`}
-                    draggable={false}
-                  />
-                  <div className="mt-0.5 text-center leading-none">
-                    <div className="text-[7px] font-black text-amber-950 md:text-[10px]">{ingredient.name}</div>
-                    <div className="mt-0.5 text-[7px] font-black text-amber-900/80 md:text-[10px]">{ingredient.shortLabel}</div>
+                  <img src={coinAsset} alt="" className="h-4 w-4 object-contain" draggable={false} />
+                  {ordersServed}/{Math.max(4, Math.ceil(targetScore / 420))} Progress
+                </div>
+                <div className="mt-2 flex items-center gap-2">
+                  <div className="relative h-4 flex-1 overflow-hidden rounded-full md:h-5">
+                    <img src={playBgAsset} alt="" className="absolute inset-0 h-full w-full object-fill opacity-95" draggable={false} />
+                    <img src={playBorderAsset} alt="" className="absolute inset-0 h-full w-full object-fill opacity-95" draggable={false} />
+                    <div className="absolute inset-[10%] overflow-hidden rounded-full">
+                      <motion.div
+                        className="absolute inset-y-0 left-0 overflow-hidden rounded-full"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${progress}%` }}
+                        transition={{ type: 'spring', stiffness: 90, damping: 18 }}
+                      >
+                        <img src={playFillBlueAsset} alt="" className="h-full w-full object-fill saturate-[1.4]" draggable={false} />
+                        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(56,189,248,0.4),rgba(250,204,21,0.4),rgba(74,222,128,0.4))]" />
+                      </motion.div>
+                    </div>
                   </div>
-                </motion.button>
-              ))}
+                  <div className="text-lg font-black text-yellow-200 md:text-2xl">{score}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid min-h-0 flex-1 grid-cols-[minmax(7.8rem,9.2rem)_minmax(0,1fr)] grid-rows-[auto_minmax(0,1fr)_auto] gap-2 md:grid-cols-[minmax(10.5rem,12rem)_minmax(0,1fr)] md:gap-3">
+          <section className="row-span-2 relative overflow-hidden rounded-[1.6rem] border border-white/18 bg-[linear-gradient(180deg,rgba(116,44,94,0.96),rgba(56,25,80,0.98))] p-2 shadow-[0_20px_42px_rgba(0,0,0,0.34)] md:rounded-[2rem] md:p-3">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,241,201,0.28),rgba(255,241,201,0)_24%)]" />
+            <div className="relative flex h-full min-h-0 flex-col rounded-[1.2rem] border border-amber-200/55 bg-[linear-gradient(180deg,rgba(255,248,231,0.98),rgba(253,230,138,0.88))] p-2 shadow-[inset_0_2px_0_rgba(255,255,255,0.6)] md:rounded-[1.6rem] md:p-3">
+              <div className="pointer-events-none absolute inset-x-3 top-1 h-6 bg-contain bg-center bg-no-repeat opacity-75 md:top-2 md:h-8" style={{ backgroundImage: `url(${lineBgAsset})` }} />
+              <div className="relative mb-1.5 flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="text-[8px] font-black uppercase tracking-[0.18em] text-amber-800/70 md:text-[9px]">Order Ticket</div>
+                  <div className="truncate text-[10px] font-black text-amber-950 md:text-sm">{currentOrder?.text}</div>
+                </div>
+                <div className="flex shrink-0 items-center gap-1">
+                  {[0, 1, 2].map(pin => (
+                    <div key={pin} className="h-3 w-3 rounded-full bg-[linear-gradient(180deg,#ef4444,#991b1b)] shadow-[0_2px_0_rgba(69,10,10,0.6)] md:h-4 md:w-4" />
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid min-h-0 flex-1 auto-rows-fr gap-1.5 md:gap-2">
+                {orderChecklist.map((row, index) => (
+                  <div key={row.id} className="grid grid-cols-[2rem_minmax(0,1fr)] items-center gap-1.5 md:grid-cols-[2.6rem_minmax(0,1fr)] md:gap-2">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-[0.75rem] bg-white/75 shadow-[inset_0_1px_0_rgba(255,255,255,0.72)] md:h-10 md:w-10 md:rounded-[0.95rem]">
+                      <img
+                        src={row.asset}
+                        alt={row.label}
+                        className={`${index === 0 ? 'h-5 w-7 md:h-7 md:w-10' : 'h-4 w-6 md:h-6 md:w-9'} object-contain`}
+                        draggable={false}
+                      />
+                    </div>
+                    <div className={`rounded-[0.85rem] bg-gradient-to-r ${row.tone} px-2 py-1.5 text-white shadow-[0_8px_18px_rgba(15,23,42,0.16)] md:rounded-[1rem] md:px-3 md:py-2`}>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="truncate text-[8px] font-black uppercase tracking-[0.12em] md:text-[10px]">{row.label}</span>
+                        <span className="shrink-0 text-sm font-black md:text-xl">
+                          {index === 0 ? `${formatFractionUnits(row.current)} / ${formatFractionUnits(row.target)}` : `${row.current}/${row.target}`}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-1.5 rounded-[0.95rem] border border-amber-300/45 bg-white/58 px-2 py-1.5 text-[9px] font-black text-amber-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] md:rounded-[1.15rem] md:px-3 md:py-2 md:text-[10px]">
+                {feedback}
+              </div>
             </div>
           </section>
 
-          <section className="relative overflow-hidden rounded-[1.5rem] border border-white/70 bg-[linear-gradient(180deg,rgba(120,53,15,0.98),rgba(146,64,14,0.92))] p-2 text-white shadow-[0_18px_42px_rgba(120,53,15,0.22)] md:rounded-[2.1rem] md:p-3">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.22),transparent_46%)]" />
+          <section className="relative overflow-hidden rounded-[1.5rem] border border-white/16 bg-[linear-gradient(180deg,rgba(55,22,82,0.96),rgba(31,16,48,0.98))] p-2 text-white shadow-[0_18px_42px_rgba(0,0,0,0.32)] md:rounded-[2.1rem] md:p-3">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,191,36,0.18),transparent_36%)]" />
             <div className="relative grid grid-cols-[auto_1fr_auto] items-center gap-2 md:gap-3">
               <CustomerFace mood={customerMood} />
               <div className="min-w-0">
-                <div className="text-[8px] font-black uppercase tracking-[0.24em] text-amber-200/80 md:text-[10px]">Order Board</div>
-                <div className="mt-0.5 text-sm font-black text-white md:text-lg">{orderSummary}</div>
-                <div className="mt-1 line-clamp-1 text-[10px] font-semibold text-amber-100/80 md:text-xs">{feedback}</div>
+                <div className="text-[8px] font-black uppercase tracking-[0.24em] text-amber-200/80 md:text-[10px]">Kitchen Rush</div>
+                <div className="mt-0.5 truncate text-sm font-black text-white md:text-lg">{orderSummary}</div>
                 <div className="mt-1 flex items-center gap-1.5 md:gap-2">
                   {requiredIngredientVisuals.map(ingredient => (
-                    <div key={ingredient.name} className="rounded-full bg-white/14 px-2 py-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.34)]">
+                    <div key={ingredient.name} className={`rounded-full bg-gradient-to-r ${ingredient.trayTone} px-2 py-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.24)]`}>
                       <img src={ingredient.asset} alt={ingredient.name} className="h-4 w-7 object-contain md:h-5 md:w-9" draggable={false} />
                     </div>
                   ))}
@@ -508,8 +602,8 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
               </div>
               <div className="flex flex-col items-end gap-1">
                 <div className="rounded-[0.95rem] bg-white/12 px-2 py-1.5 text-center md:px-3">
-                  <div className="text-[8px] font-black uppercase tracking-[0.18em] text-amber-100/80 md:text-[10px]">Patience</div>
-                  <div className={`mt-0.5 text-lg font-black md:text-2xl ${orderTimeLeft <= 10 ? 'text-red-300' : 'text-white'}`}>{orderTimeLeft}s</div>
+                  <div className="text-[8px] font-black uppercase tracking-[0.18em] text-amber-100/80 md:text-[10px]">Served</div>
+                  <div className="mt-0.5 text-lg font-black text-yellow-200 md:text-2xl">{ordersServed}</div>
                 </div>
                 <div className="flex items-center gap-1">
                   {Array.from({ length: MAX_MISSES }).map((_, index) => (
@@ -538,27 +632,27 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
             </AnimatePresence>
           </section>
 
-          <section className="relative flex min-h-0 flex-col overflow-hidden rounded-[1.9rem] border border-white/75 bg-[linear-gradient(180deg,rgba(255,255,255,0.82),rgba(255,247,237,0.98))] p-2 shadow-[0_22px_52px_rgba(120,53,15,0.18)] md:rounded-[2.6rem] md:p-3">
-            <div className="absolute inset-0 opacity-35" style={{ backgroundImage: 'linear-gradient(rgba(96,165,250,0.14) 1px, transparent 1px), linear-gradient(90deg, rgba(96,165,250,0.14) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-            <div className="absolute bottom-0 left-0 right-0 h-[22%] bg-[linear-gradient(180deg,rgba(255,224,178,0),rgba(254,215,170,0.96))]" />
-            <div className="absolute inset-x-[8%] top-[6%] h-10 rounded-full bg-white/65 blur-3xl md:h-16" />
+          <section className="relative flex min-h-0 flex-col overflow-hidden rounded-[1.9rem] border border-white/16 bg-[linear-gradient(180deg,rgba(27,14,47,0.56),rgba(24,14,38,0.76))] p-2 shadow-[0_22px_52px_rgba(0,0,0,0.28)] md:rounded-[2.6rem] md:p-3">
+            <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'linear-gradient(rgba(125,211,252,0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(125,211,252,0.18) 1px, transparent 1px)', backgroundSize: '42px 42px' }} />
+            <div className="absolute bottom-0 left-0 right-0 h-[28%] bg-[linear-gradient(180deg,rgba(255,224,178,0),rgba(251,146,60,0.28))]" />
+            <div className="absolute inset-x-[8%] top-[6%] h-10 rounded-full bg-amber-100/20 blur-3xl md:h-16" />
 
-            <div className="relative z-10 grid grid-cols-3 gap-1.5 rounded-[1.2rem] border border-amber-100 bg-white/82 p-1.5 shadow-[0_10px_24px_rgba(15,23,42,0.06)] md:gap-2 md:rounded-[1.6rem] md:p-2.5">
-              <div className="rounded-[1rem] bg-amber-50 px-2 py-1.5 text-center">
-                <div className="text-[8px] font-black uppercase tracking-[0.18em] text-amber-700/70 md:text-[10px]">Target</div>
-                <div className="mt-0.5 text-sm font-black text-amber-950 md:text-xl">{currentOrder ? formatFractionUnits(currentOrder.targetUnits) : '0'}</div>
+            <div className="relative z-10 grid grid-cols-3 gap-1.5 rounded-[1.2rem] border border-white/12 bg-slate-950/34 p-1.5 shadow-[0_10px_24px_rgba(15,23,42,0.12)] md:gap-2 md:rounded-[1.6rem] md:p-2.5">
+              <div className="rounded-[1rem] bg-white/10 px-2 py-1.5 text-center">
+                <div className="text-[8px] font-black uppercase tracking-[0.18em] text-white/56 md:text-[10px]">Target</div>
+                <div className="mt-0.5 text-sm font-black text-white md:text-xl">{currentOrder ? formatFractionUnits(currentOrder.targetUnits) : '0'}</div>
               </div>
-              <div className="rounded-[1rem] bg-orange-50 px-2 py-1.5 text-center">
-                <div className="text-[8px] font-black uppercase tracking-[0.18em] text-amber-700/70 md:text-[10px]">Built</div>
-                <div className={`mt-0.5 text-sm font-black md:text-xl ${currentOrder && totalUnits > currentOrder.targetUnits ? 'text-red-500' : 'text-amber-950'}`}>{formatFractionUnits(totalUnits)}</div>
+              <div className="rounded-[1rem] bg-white/10 px-2 py-1.5 text-center">
+                <div className="text-[8px] font-black uppercase tracking-[0.18em] text-white/56 md:text-[10px]">Built</div>
+                <div className={`mt-0.5 text-sm font-black md:text-xl ${currentOrder && totalUnits > currentOrder.targetUnits ? 'text-red-300' : 'text-yellow-200'}`}>{formatFractionUnits(totalUnits)}</div>
               </div>
-              <div className="rounded-[1rem] bg-yellow-50 px-2 py-1.5 text-center">
-                <div className="text-[8px] font-black uppercase tracking-[0.18em] text-amber-700/70 md:text-[10px]">Layers</div>
-                <div className="mt-0.5 text-sm font-black text-amber-950 md:text-xl">{burgerStack.length}</div>
+              <div className="rounded-[1rem] bg-white/10 px-2 py-1.5 text-center">
+                <div className="text-[8px] font-black uppercase tracking-[0.18em] text-white/56 md:text-[10px]">Layers</div>
+                <div className="mt-0.5 text-sm font-black text-lime-200 md:text-xl">{burgerStack.length}</div>
               </div>
             </div>
 
-            <div className="relative z-10 mt-2 flex min-h-0 flex-1 items-end justify-center overflow-hidden rounded-[1.6rem] bg-[linear-gradient(180deg,rgba(147,197,253,0.22),rgba(96,165,250,0.08)_38%,rgba(255,255,255,0)_38%)] px-1 pt-4 md:mt-3 md:rounded-[2rem] md:px-3 md:pt-6">
+            <div className="relative z-10 mt-2 flex min-h-0 flex-1 items-end justify-center overflow-hidden rounded-[1.6rem] bg-[linear-gradient(180deg,rgba(251,191,36,0.12),rgba(251,191,36,0.02)_28%,rgba(255,255,255,0)_28%)] px-1 pt-4 md:mt-3 md:rounded-[2rem] md:px-3 md:pt-6">
               {burgerStack.length > 0 && (
                 <motion.div
                   key={`${burgerStack[burgerStack.length - 1]?.name}-${burgerStack.length}`}
@@ -574,10 +668,25 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
                   />
                 </motion.div>
               )}
-              <div className="absolute bottom-3 h-12 w-[76%] rounded-full bg-amber-900/20 blur-xl md:bottom-5 md:h-16" />
+              {reaction?.mood === 'happy' && (
+                <motion.div
+                  initial={{ scale: 0.82, opacity: 0, y: 10 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute left-1/2 top-[14%] z-40 -translate-x-1/2 text-center"
+                >
+                  <div className="text-[1.85rem] font-black uppercase tracking-[-0.04em] text-yellow-200 drop-shadow-[0_5px_0_rgba(88,28,135,0.72)] md:text-[3rem]">
+                    Perfect!
+                  </div>
+                </motion.div>
+              )}
+              <div className="absolute bottom-3 h-12 w-[76%] rounded-full bg-amber-900/30 blur-xl md:bottom-5 md:h-16" />
+              <div className="absolute bottom-[1%] left-1/2 z-10 h-[5.2rem] w-[78%] -translate-x-1/2 rounded-[1.5rem] border border-amber-100/18 bg-[linear-gradient(180deg,rgba(180,83,9,0.96),rgba(120,53,15,0.98))] shadow-[0_18px_30px_rgba(0,0,0,0.28)] md:h-[7.4rem] md:rounded-[2rem]">
+                <div className="absolute inset-[8%] rounded-[1.2rem] border border-amber-100/20 bg-[linear-gradient(180deg,rgba(255,224,178,0.26),rgba(255,224,178,0.08))] md:rounded-[1.6rem]" />
+              </div>
               <div className="relative flex h-full w-full max-w-[290px] flex-col items-center justify-end md:max-w-[440px]">
                 <img src={BURGER_ASSETS.topBun} alt="Top bun" className="z-20 w-28 object-contain drop-shadow-[0_12px_18px_rgba(120,53,15,0.24)] md:w-56" draggable={false} />
-                <div className="relative -mt-2 flex w-full flex-1 flex-col-reverse items-center justify-start overflow-visible px-1 pb-1 pt-2 md:-mt-5 md:px-2">
+                <div className="relative -mt-2 flex w-full flex-1 flex-col-reverse items-center justify-start overflow-visible px-1 pb-4 pt-2 md:-mt-5 md:px-2 md:pb-7">
                   <AnimatePresence initial={false}>
                     {burgerStack.map((ingredient, index) => (
                       <motion.div
@@ -604,30 +713,79 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
             </div>
           </section>
 
-          <section className="flex items-center gap-2 rounded-[1.4rem] border border-white/75 bg-white/88 p-2 shadow-[0_16px_30px_rgba(15,23,42,0.12)] md:rounded-[1.8rem] md:p-3">
-            <div className="min-w-0 flex-1 rounded-[1rem] bg-amber-50/80 px-2.5 py-2 text-[10px] font-bold text-amber-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] md:text-xs">
-              <div className="text-[8px] font-black uppercase tracking-[0.2em] text-amber-700/70 md:text-[10px]">Equation</div>
-              <div className="mt-0.5 truncate">{buildEquation}</div>
+          <section className="col-span-2 rounded-[1.4rem] border border-white/16 bg-[linear-gradient(180deg,rgba(20,15,40,0.96),rgba(36,18,52,0.98))] p-2 shadow-[0_16px_30px_rgba(15,23,42,0.22)] md:rounded-[1.8rem] md:p-3">
+            <div className="grid grid-cols-6 gap-1.5 md:grid-cols-9 md:gap-2">
+              {INGREDIENT_TYPES.map(ingredient => {
+                const currentCount = usedIngredientCounts.get(ingredient.name) || 0;
+                return (
+                  <motion.button
+                    key={ingredient.name}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleIngredientAdd(ingredient)}
+                    className="group relative flex min-h-[4.4rem] flex-col items-center justify-end overflow-hidden rounded-[1.15rem] border border-white/12 p-1.5 shadow-[0_12px_22px_rgba(0,0,0,0.24)] md:min-h-[5.6rem] md:rounded-[1.4rem] md:p-2"
+                  >
+                    <div className={`absolute inset-0 bg-gradient-to-b ${ingredient.trayTone}`} />
+                    <div className="absolute inset-x-[12%] top-[8%] h-[30%] rounded-full bg-white/28 blur-lg" />
+                    <div className="relative z-10 flex h-full w-full flex-col items-center justify-between">
+                      <div className="rounded-full bg-black/18 px-2 py-0.5 text-[9px] font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] md:text-[11px]">
+                        {currentCount}/{Math.max(1, currentOrder?.requiredIngredients.includes(ingredient.name) ? 1 : Math.ceil((currentOrder?.targetUnits || 8) / ingredient.units))}
+                      </div>
+                      <img
+                        src={ingredient.asset}
+                        alt={ingredient.name}
+                        className={`${ingredient.buttonImageClass} max-h-[2rem] max-w-[2.4rem] md:max-h-[2.75rem] md:max-w-[3.2rem] object-contain drop-shadow-[0_8px_10px_rgba(15,23,42,0.22)]`}
+                        draggable={false}
+                      />
+                      <div className="text-center leading-none text-white">
+                        <div className="text-[8px] font-black md:text-[10px]">{ingredient.shortLabel}</div>
+                      </div>
+                    </div>
+                  </motion.button>
+                );
+              })}
             </div>
-            <button
-              onClick={clearBurger}
-              className="flex shrink-0 items-center justify-center gap-1 rounded-[1rem] border border-amber-200 bg-white/92 px-3 py-2 text-[10px] font-black text-amber-950 shadow-[0_10px_18px_rgba(15,23,42,0.08)] transition-transform hover:-translate-y-0.5 disabled:opacity-60 md:px-4 md:text-sm"
-              disabled={!burgerStack.length || isTransitioning}
-            >
-              <AssetIcon name="refresh" className="h-4 w-4" />
-              Clear
-            </button>
-            <button
-              onClick={handleServe}
-              className="shrink-0 rounded-[1rem] bg-[linear-gradient(180deg,#22c55e_0%,#16a34a_100%)] px-3 py-2 text-[10px] font-black text-white shadow-[0_10px_0_#166534,0_14px_26px_rgba(21,128,61,0.28)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-[0_8px_0_#166534] md:px-5 md:text-sm"
-              disabled={!burgerStack.length || isTransitioning}
-            >
-              Complete Order
-            </button>
+
+            <div className="mt-2 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 md:mt-3">
+              <div className="min-w-0">
+                <div className="relative h-4 overflow-hidden rounded-full md:h-5">
+                  <img src={playBgAsset} alt="" className="absolute inset-0 h-full w-full object-fill opacity-95" draggable={false} />
+                  <img src={playBorderAsset} alt="" className="absolute inset-0 h-full w-full object-fill opacity-95" draggable={false} />
+                  <div className="absolute inset-[10%] overflow-hidden rounded-full">
+                    <motion.div
+                      className="absolute inset-y-0 left-0 overflow-hidden rounded-full"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${orderProgress}%` }}
+                      transition={{ type: 'spring', stiffness: 90, damping: 18 }}
+                    >
+                      <img src={playFillBlueAsset} alt="" className="h-full w-full object-fill saturate-[1.35]" draggable={false} />
+                      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(168,85,247,0.45),rgba(251,191,36,0.45),rgba(74,222,128,0.45))]" />
+                    </motion.div>
+                  </div>
+                </div>
+                <div className="mt-1 truncate text-[10px] font-black text-white/88 md:text-xs">{buildEquation}</div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={clearBurger}
+                  className="rounded-[1rem] border border-white/14 bg-white/10 px-3 py-2 text-[10px] font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.16)] transition-transform hover:-translate-y-0.5 disabled:opacity-60 md:px-4 md:text-sm"
+                  disabled={!burgerStack.length || isTransitioning}
+                >
+                  Clear
+                </button>
+                <button
+                  onClick={handleServe}
+                  className="relative overflow-hidden rounded-[1rem] border border-lime-200/30 bg-[linear-gradient(180deg,#84cc16_0%,#22c55e_46%,#16a34a_100%)] px-3 py-2 text-[10px] font-black text-white shadow-[0_10px_0_#166534,0_14px_26px_rgba(21,128,61,0.28)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-[0_8px_0_#166534] md:px-5 md:text-sm"
+                  disabled={!burgerStack.length || isTransitioning}
+                >
+                  <span className="absolute inset-x-0 top-0 h-1/2 bg-white/12" />
+                  <span className="relative">Complete Order</span>
+                </button>
+              </div>
+            </div>
           </section>
         </div>
 
-        <GameActionDock onBack={onBack} accentClass="text-amber-950" />
+        <GameActionDock onBack={onBack} accentClass="text-white" />
 
         <AnimatePresence>
           {(isGameOver || isVictory) && (

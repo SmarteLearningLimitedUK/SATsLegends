@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'motion/react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS, AVATARS } from '../constants';
@@ -18,12 +18,12 @@ type IslandPosition = {
 };
 
 const MAP_POSITIONS: Record<number, IslandPosition> = {
-  1: { x: 75, y: 84, size: 24, rotation: -6 },
-  2: { x: 25, y: 74, size: 22, rotation: 4 },
-  3: { x: 34, y: 54, size: 24, rotation: -5 },
-  4: { x: 74, y: 49, size: 22, rotation: 5 },
-  5: { x: 27, y: 28, size: 23, rotation: -4 },
-  6: { x: 73, y: 21, size: 23, rotation: 4 },
+  1: { x: 74, y: 91, size: 29, rotation: -6 },
+  2: { x: 26, y: 77, size: 27, rotation: 4 },
+  3: { x: 36, y: 59, size: 29, rotation: -5 },
+  4: { x: 74, y: 45, size: 27, rotation: 5 },
+  5: { x: 28, y: 25, size: 28, rotation: -4 },
+  6: { x: 73, y: 11, size: 28, rotation: 4 },
 };
 
 const PATH_ORDER = [1, 2, 3, 4, 5, 6];
@@ -112,10 +112,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
   const firstPlayableIslandId = islandProgress.find(item => item.isUnlocked && item.completion < 100)?.island.id
     || islandProgress.find(item => item.isUnlocked)?.island.id
     || ISLANDS[0].id;
-
-  const [selectedIslandId, setSelectedIslandId] = useState(firstPlayableIslandId);
-
-  const selectedIslandData = islandProgress.find(item => item.island.id === selectedIslandId) || islandProgress[0];
   const totalStars = islandProgress.reduce((sum, item) => sum + item.earnedStars, 0);
 
   const pathPositions = PATH_ORDER.map(id => MAP_POSITIONS[id]);
@@ -165,7 +161,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
       </div>
 
       <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-3 pt-[calc(0.35rem+env(safe-area-inset-top))] md:px-6 md:pb-6 md:pt-6">
-        <div className="mb-2 flex shrink-0 items-center gap-2 rounded-[1.4rem] border border-white/14 bg-[linear-gradient(180deg,rgba(21,33,63,0.98),rgba(8,14,27,0.99))] px-3 py-2.5 text-white shadow-[0_18px_34px_rgba(2,6,23,0.34)] md:mb-4 md:rounded-[2rem] md:px-5 md:py-4">
+        <div className="mb-2 flex shrink-0 items-center gap-2 rounded-[1.4rem] border border-white/14 bg-[linear-gradient(180deg,rgba(34,47,98,0.98),rgba(11,18,34,0.99))] px-3 py-2.5 text-white shadow-[0_18px_34px_rgba(2,6,23,0.34)] md:mb-4 md:rounded-[2rem] md:px-5 md:py-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-[1rem] border border-white/20 bg-white/10 md:h-16 md:w-16 md:rounded-[1.4rem]">
             <img
               src={avatarImage}
@@ -178,14 +174,20 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
             <div className="text-[9px] font-black uppercase tracking-[0.22em] text-cyan-100/66 md:text-[10px]">World Map</div>
             <div className="truncate text-base font-black text-white md:text-2xl">{player.playerName || 'Explorer'}</div>
           </div>
-          <div className="flex items-center gap-1.5 md:gap-2">
-            <div className="casual-ribbon-chip inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-white/90">
-              <AssetIcon name="coin" className="h-4 w-4" />
-              <span className="text-[10px] font-black md:text-xs">{player.coins}</span>
+          <div className="grid shrink-0 grid-cols-2 gap-1.5 md:gap-2">
+            <div className="min-w-[4.8rem] rounded-[1rem] border border-amber-100/20 bg-[linear-gradient(180deg,rgba(251,191,36,0.98),rgba(245,158,11,0.98)_52%,rgba(217,119,6,0.99))] px-2 py-1.5 text-amber-950 shadow-[0_10px_18px_rgba(120,53,15,0.22)] md:min-w-[6rem] md:rounded-[1.2rem] md:px-3 md:py-2">
+              <div className="flex items-center justify-center gap-1">
+                <AssetIcon name="coin" className="h-4 w-4 md:h-5 md:w-5" />
+                <span className="text-[8px] font-black uppercase tracking-[0.14em] text-amber-950/75 md:text-[9px]">Gold</span>
+              </div>
+              <div className="mt-0.5 text-center text-sm font-black leading-none md:text-xl">{player.coins}</div>
             </div>
-            <div className="casual-ribbon-chip inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-white/90">
-              <AssetIcon name="star" className="h-4 w-4" />
-              <span className="text-[10px] font-black md:text-xs">{totalStars}</span>
+            <div className="min-w-[4.8rem] rounded-[1rem] border border-cyan-100/20 bg-[linear-gradient(180deg,rgba(56,189,248,0.98),rgba(99,102,241,0.98)_52%,rgba(79,70,229,0.99))] px-2 py-1.5 text-white shadow-[0_10px_18px_rgba(30,41,88,0.26)] md:min-w-[6rem] md:rounded-[1.2rem] md:px-3 md:py-2">
+              <div className="flex items-center justify-center gap-1">
+                <AssetIcon name="star" className="h-4 w-4 md:h-5 md:w-5" />
+                <span className="text-[8px] font-black uppercase tracking-[0.14em] text-white/82 md:text-[9px]">Stars</span>
+              </div>
+              <div className="mt-0.5 text-center text-sm font-black leading-none md:text-xl">{totalStars}</div>
             </div>
           </div>
         </div>
@@ -193,11 +195,11 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
         <div className="relative min-h-0 flex-1">
           <div className="absolute inset-0 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(8,16,32,0.72),rgba(4,10,22,0.88))] shadow-[0_28px_90px_rgba(2,6,23,0.42)] md:rounded-[2.8rem]" />
 
-          <div className="relative h-full min-h-0">
+          <div className="relative h-full min-h-0 overflow-hidden">
             <div className="absolute inset-[0.7rem] rounded-[1.8rem] border border-white/8 bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.08),rgba(255,255,255,0)_20%),linear-gradient(180deg,rgba(11,25,55,0.34),rgba(4,13,31,0.48))] md:inset-4 md:rounded-[2.4rem]" />
 
-            <div className="relative mx-auto h-full max-w-[30rem] px-1.5 pb-[7.25rem] pt-1.5 md:max-w-[34rem] md:px-2 md:pb-[8.5rem] md:pt-2">
-              <div className="relative h-full w-full overflow-hidden rounded-[1.8rem] md:rounded-[2.4rem]">
+            <div className="relative mx-auto h-full max-w-[34rem] overflow-y-auto px-1.5 pb-[7.25rem] pt-1.5 hide-scrollbar md:max-w-[40rem] md:px-2 md:pb-[8.5rem] md:pt-2">
+              <div className="relative min-h-[980px] w-full rounded-[1.8rem] md:min-h-[1180px] md:rounded-[2.4rem]">
                 <svg viewBox="0 0 100 100" className="pointer-events-none absolute inset-0 h-full w-full overflow-visible">
                   <path
                     d={mapPath}
@@ -245,10 +247,9 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                   });
                 })}
 
-                {islandProgress.map(({ island, isUnlocked, completion, earnedStars, maxStars }, index) => {
+                {islandProgress.map(({ island, isUnlocked, completion, completedCount, earnedStars, maxStars }) => {
                   const position = MAP_POSITIONS[island.id];
                   const palette = ISLAND_PALETTES[island.id] || ISLAND_PALETTES[1];
-                  const isSelected = island.id === selectedIslandId;
                   const isNext = island.id === firstPlayableIslandId;
                   const isThreeStar = earnedStars === maxStars && maxStars > 0;
 
@@ -257,7 +258,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                       key={island.id}
                       whileTap={{ scale: 0.96 }}
                       onClick={() => {
-                        setSelectedIslandId(island.id);
                         if (isUnlocked) {
                           onSelectIsland(island);
                         }
@@ -276,9 +276,9 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                         className="relative"
                       >
                         <div className={`pointer-events-none absolute left-1/2 top-[44%] h-[64%] w-[64%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br ${palette.glow} blur-2xl`} />
-                        <div className={`pointer-events-none absolute inset-[-4%] rounded-[1.9rem] ${isSelected ? palette.ring : ''}`} />
+                        <div className={`pointer-events-none absolute inset-[-4%] rounded-[1.9rem] ${isNext || isThreeStar ? palette.ring : ''}`} />
 
-                        <div className={`relative overflow-hidden rounded-[1.65rem] border ${isSelected ? 'border-[#ffe49a]' : 'border-white/18'} bg-slate-950/42 shadow-[0_18px_32px_rgba(2,6,23,0.36)]`}>
+                        <div className={`relative overflow-hidden rounded-[1.85rem] border ${isNext ? 'border-[#ffe49a]' : 'border-white/18'} bg-slate-950/42 shadow-[0_18px_32px_rgba(2,6,23,0.36)]`}>
                           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.14),rgba(255,255,255,0)_24%,rgba(2,6,23,0.36)_100%)]" />
                           {island.mapImage && (
                             <img
@@ -288,12 +288,15 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                               draggable={false}
                             />
                           )}
-                          <div className="absolute inset-x-2 bottom-2 rounded-[1rem] border border-white/12 bg-slate-950/68 px-2 py-1.5 text-center backdrop-blur-xl">
-                            <div className="text-[8px] font-black uppercase tracking-[0.16em] text-white/92 md:text-[9px]">
+                          <div className="absolute inset-x-2 bottom-2 rounded-[1.05rem] border border-white/12 bg-slate-950/72 px-2.5 py-2 text-center backdrop-blur-xl">
+                            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/96 md:text-[10px]">
                               {island.themeName || island.name}
                             </div>
-                            <div className="mt-0.5 text-[7px] font-black uppercase tracking-[0.16em] text-white/62 md:text-[8px]">
-                              {completion}% complete
+                            <div className="mt-1 flex items-center justify-center gap-1.5 text-[8px] font-black uppercase tracking-[0.14em] text-white/76 md:text-[9px]">
+                              <AssetIcon name="play" className="h-3 w-3" />
+                              {completedCount}/{island.levels.length}
+                              <span className="text-white/44">|</span>
+                              {completion}%
                             </div>
                           </div>
                         </div>
@@ -320,7 +323,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                         )}
 
                         {!isUnlocked && (
-                          <div className="absolute inset-0 flex items-center justify-center rounded-[1.65rem] bg-slate-950/52 backdrop-blur-[2px]">
+                          <div className="absolute inset-0 flex items-center justify-center rounded-[1.85rem] bg-slate-950/52 backdrop-blur-[2px]">
                             <div className="rounded-full border border-white/20 bg-slate-950/55 px-2.5 py-1 text-[8px] font-black uppercase tracking-[0.16em] text-white/80">
                               Locked
                             </div>
@@ -333,57 +336,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
               </div>
             </div>
 
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex justify-center px-3 pb-1.5 md:px-6 md:pb-3">
-              <div className="pointer-events-auto w-full max-w-[28rem] rounded-[1.6rem] border border-white/16 bg-[linear-gradient(180deg,rgba(17,27,52,0.98),rgba(7,13,24,0.99))] p-3 text-white shadow-[0_22px_44px_rgba(2,6,23,0.44)] md:max-w-[32rem] md:rounded-[2rem] md:p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="text-[8px] font-black uppercase tracking-[0.22em] text-cyan-100/62 md:text-[10px]">
-                      Island {selectedIslandData.island.id}
-                    </div>
-                    <div className="truncate text-lg font-black text-white md:text-2xl">
-                      {selectedIslandData.island.themeName || selectedIslandData.island.name}
-                    </div>
-                    <div className="mt-0.5 text-[10px] font-semibold text-white/72 md:text-xs">
-                      {selectedIslandData.completedCount} of {selectedIslandData.island.levels.length} mini-games complete
-                    </div>
-                  </div>
-                  <div className="rounded-[1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(40,59,104,0.98),rgba(17,27,52,0.98))] px-3 py-2 text-right shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]">
-                    <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/56 md:text-[10px]">Progress</div>
-                    <div className="mt-0.5 text-lg font-black text-white md:text-2xl">{selectedIslandData.completion}%</div>
-                  </div>
-                </div>
-
-                <div className="mt-3 h-3 overflow-hidden rounded-full border border-white/10 bg-slate-950/70 md:h-4">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${selectedIslandData.completion}%` }}
-                    className={`h-full rounded-full bg-gradient-to-r ${(ISLAND_PALETTES[selectedIslandData.island.id] || ISLAND_PALETTES[1]).chip}`}
-                  />
-                </div>
-
-                <div className="mt-3 flex items-center justify-between gap-3">
-                  <div className="casual-ribbon-chip inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-white/92">
-                    <AssetIcon name="star" className="h-4 w-4" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.16em] md:text-xs">
-                      {selectedIslandData.earnedStars} / {selectedIslandData.maxStars}
-                    </span>
-                  </div>
-
-                  <button
-                    onClick={() => selectedIslandData.isUnlocked && onSelectIsland(selectedIslandData.island)}
-                    disabled={!selectedIslandData.isUnlocked}
-                    className={`inline-flex min-h-[2.9rem] items-center justify-center gap-2 rounded-[1rem] px-4 py-2 text-sm font-black text-slate-950 transition-all md:min-h-[3.4rem] md:rounded-[1.3rem] md:px-5 md:text-base ${
-                      selectedIslandData.isUnlocked
-                        ? `bg-gradient-to-r ${(ISLAND_PALETTES[selectedIslandData.island.id] || ISLAND_PALETTES[1]).button} shadow-[0_14px_30px_rgba(2,6,23,0.24)] hover:-translate-y-0.5`
-                        : 'cursor-not-allowed border border-white/10 bg-white/10 text-white/48 shadow-none'
-                    }`}
-                  >
-                    <AssetIcon name={selectedIslandData.isUnlocked ? 'play' : 'plusSquare'} className="h-4 w-4 md:h-5 md:w-5" />
-                    {selectedIslandData.isUnlocked ? 'Let\'s go' : 'Island Locked'}
-                  </button>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
