@@ -20,6 +20,7 @@ import TimekeeperTempleGame from './components/TimekeeperTempleGame';
 import MeasurementForgeGame from './components/MeasurementForgeGame';
 import TowerOfFactorsGame from './components/TowerOfFactorsGame';
 import DecimalSniperGame from './components/DecimalSniperGame';
+import TreasureChartCoveGame from './components/TreasureChartCoveGame';
 import ReasoningGame from './components/reasoning/ReasoningGame';
 import CurriculumChallengeGame from './components/CurriculumChallengeGame';
 import BossEncounterGame, { isBossEncounterGameType } from './components/BossEncounterGame';
@@ -447,12 +448,13 @@ const App: React.FC = () => {
         return <TowerOfFactorsGame {...sharedProps} isBoss={Boolean(selectedLevel.isBoss)} />;
       case 'place_value_peaks':
         return <DecimalSniperGame {...sharedProps} isBoss={Boolean(selectedLevel.isBoss)} />;
+      case 'chart_chase':
+        return <TreasureChartCoveGame {...sharedProps} />;
       case 'calculation_clash':
       case 'percent_pulse':
       case 'coordinate_quest':
       case 'transform_temple':
       case 'scale_safari':
-      case 'chart_chase':
       case 'mean_machine':
       case 'equation_grove':
       case 'rule_runner':
