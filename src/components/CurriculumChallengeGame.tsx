@@ -841,6 +841,28 @@ const renderTransformTemple = (visual: Extract<VisualData, { type: 'transform' }
 const renderVisual = (visual: VisualData) => {
   switch (visual.type) {
     case 'tokens':
+      if (visual.accent === 'amber' || visual.accent === 'emerald') {
+        return (
+          <div className="w-full max-w-[24rem] rounded-[1.4rem] border border-amber-200/12 bg-[linear-gradient(180deg,rgba(48,22,12,0.72),rgba(24,18,14,0.92))] p-3 shadow-[0_20px_44px_rgba(0,0,0,0.28)] md:max-w-[30rem] md:rounded-[1.8rem] md:p-5">
+            <div className="mb-3 flex items-center justify-between gap-3 rounded-[1rem] border border-orange-200/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] px-3 py-2 md:mb-4 md:rounded-[1.2rem] md:px-4">
+              <div className="text-[0.62rem] font-black uppercase tracking-[0.18em] text-orange-100/72 md:text-[0.72rem]">Number Dash</div>
+              <div className="text-[0.62rem] font-black uppercase tracking-[0.18em] text-amber-100/72 md:text-[0.72rem]">Pick Fast</div>
+            </div>
+            <div className="grid grid-cols-2 gap-2.5 md:gap-3">
+              {visual.items.map((item, index) => (
+                <motion.div
+                  key={item}
+                  animate={{ y: [0, index % 2 === 0 ? -2 : 2, 0] }}
+                  transition={{ duration: 2.4 + index * 0.2, repeat: Infinity, ease: 'easeInOut' }}
+                  className="rounded-[1rem] border border-stone-400/30 bg-[linear-gradient(180deg,rgba(132,94,64,0.88),rgba(84,58,40,0.96))] px-2 py-3 text-center text-[1.1rem] font-black text-amber-50 shadow-[inset_0_2px_0_rgba(255,255,255,0.12),0_10px_0_rgba(41,24,14,0.72),0_18px_26px_rgba(0,0,0,0.24)] md:rounded-[1.25rem] md:px-3 md:py-4 md:text-[1.8rem]"
+                >
+                  {item}
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        );
+      }
       return (
         <div className="grid w-full max-w-[22rem] grid-cols-2 gap-2 md:max-w-[24rem] md:gap-3">
           {visual.items.map((item) => (
@@ -1009,6 +1031,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
   const theme = CHALLENGE_THEMES[gameType];
   const isCalculationClash = gameType === 'calculation_clash';
   const isPercentPulse = gameType === 'percent_pulse';
+  const isPlaceValuePeaks = gameType === 'place_value_peaks';
   const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
   const targetScore = 780 + (levelId * 180);
   const progress = Math.min((score / targetScore) * 100, 100);
@@ -1141,19 +1164,19 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
           compact
         />
 
-        <div className={`relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.8rem] border border-white/10 ${isCalculationClash ? 'bg-[linear-gradient(180deg,rgba(36,15,8,0.74),rgba(9,16,28,0.38))]' : isPercentPulse ? 'bg-[linear-gradient(180deg,rgba(30,12,58,0.82),rgba(7,18,32,0.42))]' : 'bg-[linear-gradient(180deg,rgba(9,16,28,0.68),rgba(9,16,28,0.34))]'} shadow-[0_24px_64px_rgba(0,0,0,0.28)] md:rounded-[2.6rem]`}>
+        <div className={`relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.8rem] border border-white/10 ${isCalculationClash ? 'bg-[linear-gradient(180deg,rgba(36,15,8,0.74),rgba(9,16,28,0.38))]' : isPercentPulse ? 'bg-[linear-gradient(180deg,rgba(30,12,58,0.82),rgba(7,18,32,0.42))]' : isPlaceValuePeaks ? 'bg-[linear-gradient(180deg,rgba(52,28,10,0.76),rgba(16,16,22,0.54))]' : 'bg-[linear-gradient(180deg,rgba(9,16,28,0.68),rgba(9,16,28,0.34))]'} shadow-[0_24px_64px_rgba(0,0,0,0.28)] md:rounded-[2.6rem]`}>
           <div className="flex min-h-0 flex-1 flex-col gap-1.5 p-1.5 md:gap-3 md:p-4">
             {bossEncounter && (
               <BossPortrait encounter={bossEncounter} pose={bossPose} compact className="shrink-0" />
             )}
 
-            <div className={`casual-panel-strong relative shrink-0 overflow-hidden rounded-[1.35rem] px-3 py-3 text-center md:rounded-[2rem] md:px-5 md:py-5`}>
-              <div className={`absolute inset-x-5 top-0 h-20 rounded-full bg-gradient-to-br ${theme.prompt} blur-3xl`} />
+            <div className={`casual-panel-strong relative shrink-0 overflow-hidden ${isPlaceValuePeaks ? 'rounded-[1.25rem] border border-amber-200/18 bg-[linear-gradient(180deg,rgba(124,45,18,0.88),rgba(83,33,13,0.92))]' : 'rounded-[1.35rem]'} px-3 py-3 text-center md:rounded-[2rem] md:px-5 md:py-5`}>
+              <div className={`absolute inset-x-5 top-0 h-20 rounded-full bg-gradient-to-br ${isPlaceValuePeaks ? 'from-yellow-200/18 via-orange-300/12 to-transparent' : theme.prompt} blur-3xl`} />
               <div className="relative z-10 flex flex-col items-center">
-                <div className={`casual-ribbon-chip mb-2 inline-flex items-center justify-center rounded-full px-3 py-1 text-[8px] font-black uppercase tracking-[0.18em] md:mb-3 md:px-4 md:py-1.5 md:text-[10px] ${theme.badge}`}>
-                  {meta.focus}
+                <div className={`${isPlaceValuePeaks ? 'mb-2 rounded-[0.9rem] border border-amber-200/24 bg-[linear-gradient(180deg,rgba(251,146,60,0.3),rgba(194,65,12,0.18))] px-3 py-1.5 text-amber-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]' : `casual-ribbon-chip mb-2 inline-flex items-center justify-center rounded-full px-3 py-1 text-[8px] font-black uppercase tracking-[0.18em] md:mb-3 md:px-4 md:py-1.5 md:text-[10px] ${theme.badge}`}`}>
+                  {isPlaceValuePeaks ? 'Highest Number Dash' : meta.focus}
                 </div>
-                <div className={`${isCalculationClash ? 'text-[1.15rem]' : 'text-[1.28rem]'} max-w-[18rem] font-black leading-[0.95] text-white md:max-w-[30rem] md:text-[2.25rem]`}>
+                <div className={`${isCalculationClash ? 'text-[1.15rem]' : isPlaceValuePeaks ? 'text-[1.18rem]' : 'text-[1.28rem]'} max-w-[18rem] font-black leading-[0.95] text-white md:max-w-[30rem] md:text-[2.25rem]`}>
                   {question.prompt}
                 </div>
                 <div className="mt-1 max-w-[18rem] text-[9px] font-semibold leading-snug text-white/70 md:mt-2 md:max-w-[30rem] md:text-sm">
@@ -1162,7 +1185,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
               </div>
             </div>
 
-            <div className="casual-panel-surface relative flex min-h-0 shrink overflow-hidden rounded-[1.25rem] px-2 py-2 md:rounded-[1.8rem] md:px-4 md:py-4">
+            <div className={`casual-panel-surface relative flex min-h-0 shrink overflow-hidden ${isPlaceValuePeaks ? 'rounded-[1.35rem] border border-amber-200/12 bg-[linear-gradient(180deg,rgba(32,18,11,0.72),rgba(12,12,16,0.82))]' : 'rounded-[1.25rem]'} px-2 py-2 md:rounded-[1.8rem] md:px-4 md:py-4`}>
               <div className="relative z-10 flex min-h-0 w-full flex-col items-center justify-center gap-2">
                 <motion.div
                   key={`${question.prompt}-${question.sublabel}`}
@@ -1182,7 +1205,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
               </div>
             </div>
 
-            <div className="flex min-h-0 flex-1 flex-col gap-1.5 md:gap-2.5">
+            <div className={`flex min-h-0 flex-1 flex-col ${isPlaceValuePeaks ? 'gap-2 md:gap-3' : 'gap-1.5 md:gap-2.5'}`}>
               {question.options.map((option, index) => {
                 const isSelected = index === selectedIndex;
                 const isCorrect = feedback === 'correct' && index === question.answerIndex;
@@ -1200,21 +1223,32 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                     whileTap={{ scale: 0.985 }}
                     onClick={() => handleAnswer(index)}
                     disabled={Boolean(feedback) || isVictory || isGameOver}
-                    className="relative flex min-h-[3.55rem] w-full shrink-0 items-center justify-center overflow-hidden rounded-[999px] px-3 py-2 text-center shadow-[0_16px_26px_rgba(0,0,0,0.24)] transition-transform md:min-h-[4.7rem] md:px-5 md:py-3"
+                    className={`relative flex min-h-[3.55rem] w-full shrink-0 items-center justify-center overflow-hidden px-3 py-2 text-center shadow-[0_16px_26px_rgba(0,0,0,0.24)] transition-transform md:min-h-[4.7rem] md:px-5 md:py-3 ${
+                      isPlaceValuePeaks ? 'rounded-[1.1rem] border border-stone-400/24 bg-[linear-gradient(180deg,rgba(132,94,64,0.92),rgba(84,58,40,0.98))] shadow-[inset_0_2px_0_rgba(255,255,255,0.12),0_10px_0_rgba(41,24,14,0.72),0_18px_26px_rgba(0,0,0,0.24)] md:rounded-[1.35rem]' : 'rounded-[999px]'
+                    }`}
                   >
-                    <img src={answerBackground} alt="" className="absolute inset-0 h-full w-full object-fill" draggable={false} />
-                    {!isCorrect && !isWrongSelected && (
+                    {!isPlaceValuePeaks && <img src={answerBackground} alt="" className="absolute inset-0 h-full w-full object-fill" draggable={false} />}
+                    {!isPlaceValuePeaks && !isCorrect && !isWrongSelected && (
                       <img src={answerPurpleDeco} alt="" className="absolute inset-0 h-full w-full object-fill opacity-95" draggable={false} />
+                    )}
+                    {isPlaceValuePeaks && (
+                      <div className={`absolute inset-0 ${
+                        isCorrect
+                          ? 'bg-[linear-gradient(180deg,rgba(34,197,94,0.52),rgba(22,163,74,0.28))]'
+                          : isWrongSelected
+                            ? 'bg-[linear-gradient(180deg,rgba(251,146,60,0.48),rgba(220,38,38,0.24))]'
+                            : 'bg-transparent'
+                      }`} />
                     )}
                     {isSelected && !isCorrect && !isWrongSelected && (
                       <div className={`absolute inset-0 bg-gradient-to-br ${theme.answerActive} opacity-40`} />
                     )}
-                    <div className="absolute inset-x-[8%] top-[10%] h-[34%] rounded-full bg-white/18 blur-md" />
+                    <div className={`absolute inset-x-[8%] top-[10%] h-[34%] ${isPlaceValuePeaks ? 'rounded-[0.9rem]' : 'rounded-full'} bg-white/18 blur-md`} />
                     <div className="relative z-10 flex w-full items-center gap-2.5 md:gap-3">
-                      <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-[9px] font-black uppercase md:h-8 md:w-8 md:text-[11px] ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/35 text-slate-900' : 'border-white/14 bg-white/10 text-white'}`}>
+                      <div className={`flex h-7 w-7 shrink-0 items-center justify-center border text-[9px] font-black uppercase md:h-8 md:w-8 md:text-[11px] ${isPlaceValuePeaks ? 'rounded-[0.7rem] border-amber-100/14 bg-black/14 text-amber-50' : `rounded-full ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/35 text-slate-900' : 'border-white/14 bg-white/10 text-white'}`}`}>
                         {String.fromCharCode(65 + index)}
                       </div>
-                      <div className="flex-1 text-center text-[1.02rem] font-black leading-none tracking-[-0.02em] text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.42)] md:text-[1.45rem]">
+                      <div className={`flex-1 text-center ${isPlaceValuePeaks ? 'text-[1.1rem] md:text-[1.7rem] text-amber-50' : 'text-[1.02rem] md:text-[1.45rem] text-white'} font-black leading-none tracking-[-0.02em] drop-shadow-[0_2px_2px_rgba(0,0,0,0.42)]`}>
                         {option}
                       </div>
                     </div>
