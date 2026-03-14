@@ -1,70 +1,92 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS, AVATARS } from '../constants';
 import AssetIcon from './AssetIcon';
-import forestBg from '../assets/licensed/background.jpeg';
+import splashBackground from '../assets/fantasy_hero/demo_bg/background_02.png';
+import splashGlow from '../assets/fantasy_hero/demo_fx/effect_light_01.png';
+import splashGlowSecondary from '../assets/fantasy_hero/demo_fx/effect_light_02.png';
 
 interface WorldMapProps {
   player: PlayerData;
   onSelectIsland: (island: IslandData) => void;
 }
 
-const ISLAND_PALETTES: Record<number, {
-  atmosphere: string;
-  sceneGlow: string;
-  halo: string;
-  button: string;
-  progress: string;
-}> = {
+type IslandPosition = {
+  x: number;
+  y: number;
+  size: number;
+  rotation: number;
+};
+
+const MAP_POSITIONS: Record<number, IslandPosition> = {
+  1: { x: 75, y: 84, size: 24, rotation: -6 },
+  2: { x: 25, y: 74, size: 22, rotation: 4 },
+  3: { x: 34, y: 54, size: 24, rotation: -5 },
+  4: { x: 74, y: 49, size: 22, rotation: 5 },
+  5: { x: 27, y: 28, size: 23, rotation: -4 },
+  6: { x: 73, y: 21, size: 23, rotation: 4 },
+};
+
+const PATH_ORDER = [1, 2, 3, 4, 5, 6];
+
+const ISLAND_PALETTES: Record<number, { glow: string; ring: string; chip: string; button: string }> = {
   1: {
-    atmosphere: 'from-cyan-300/28 via-sky-700/20 to-slate-950/88',
-    sceneGlow: 'from-lime-300/35 via-cyan-300/15 to-transparent',
-    halo: 'shadow-[0_0_80px_rgba(56,189,248,0.28)]',
-    button: 'from-lime-300 to-cyan-400',
-    progress: 'from-lime-300 via-cyan-300 to-sky-500',
+    glow: 'from-emerald-300/46 via-lime-300/14 to-transparent',
+    ring: 'shadow-[0_0_42px_rgba(74,222,128,0.35)]',
+    chip: 'from-lime-300 to-emerald-400',
+    button: 'from-lime-300 to-emerald-400',
   },
   2: {
-    atmosphere: 'from-violet-300/26 via-indigo-700/20 to-slate-950/88',
-    sceneGlow: 'from-fuchsia-300/35 via-violet-300/18 to-transparent',
-    halo: 'shadow-[0_0_80px_rgba(192,132,252,0.28)]',
-    button: 'from-fuchsia-300 to-violet-400',
-    progress: 'from-fuchsia-300 via-violet-300 to-indigo-500',
+    glow: 'from-cyan-300/44 via-sky-300/14 to-transparent',
+    ring: 'shadow-[0_0_42px_rgba(103,232,249,0.35)]',
+    chip: 'from-cyan-300 to-sky-400',
+    button: 'from-cyan-300 to-sky-400',
   },
   3: {
-    atmosphere: 'from-amber-200/28 via-rose-500/20 to-slate-950/88',
-    sceneGlow: 'from-orange-200/32 via-amber-200/18 to-transparent',
-    halo: 'shadow-[0_0_80px_rgba(251,191,36,0.24)]',
-    button: 'from-amber-200 to-orange-300',
-    progress: 'from-amber-200 via-orange-300 to-rose-400',
+    glow: 'from-amber-300/44 via-yellow-300/14 to-transparent',
+    ring: 'shadow-[0_0_42px_rgba(253,224,71,0.35)]',
+    chip: 'from-amber-300 to-orange-400',
+    button: 'from-amber-300 to-orange-400',
   },
   4: {
-    atmosphere: 'from-yellow-200/28 via-orange-500/20 to-slate-950/88',
-    sceneGlow: 'from-yellow-200/35 via-orange-200/18 to-transparent',
-    halo: 'shadow-[0_0_80px_rgba(253,224,71,0.26)]',
-    button: 'from-yellow-200 to-orange-300',
-    progress: 'from-yellow-200 via-amber-300 to-orange-400',
+    glow: 'from-orange-300/44 via-amber-300/14 to-transparent',
+    ring: 'shadow-[0_0_42px_rgba(251,146,60,0.35)]',
+    chip: 'from-orange-300 to-amber-400',
+    button: 'from-orange-300 to-amber-400',
   },
   5: {
-    atmosphere: 'from-cyan-200/24 via-blue-700/20 to-slate-950/88',
-    sceneGlow: 'from-cyan-200/30 via-sky-300/18 to-transparent',
-    halo: 'shadow-[0_0_80px_rgba(103,232,249,0.26)]',
-    button: 'from-cyan-200 to-sky-300',
-    progress: 'from-cyan-200 via-sky-300 to-blue-500',
+    glow: 'from-fuchsia-300/44 via-violet-300/14 to-transparent',
+    ring: 'shadow-[0_0_42px_rgba(216,180,254,0.35)]',
+    chip: 'from-fuchsia-300 to-violet-400',
+    button: 'from-fuchsia-300 to-violet-400',
   },
   6: {
-    atmosphere: 'from-emerald-200/24 via-teal-700/22 to-slate-950/88',
-    sceneGlow: 'from-emerald-200/32 via-teal-300/18 to-transparent',
-    halo: 'shadow-[0_0_80px_rgba(110,231,183,0.26)]',
-    button: 'from-emerald-200 to-teal-300',
-    progress: 'from-emerald-200 via-teal-300 to-cyan-500',
+    glow: 'from-violet-300/44 via-indigo-300/14 to-transparent',
+    ring: 'shadow-[0_0_42px_rgba(167,139,250,0.35)]',
+    chip: 'from-violet-300 to-indigo-400',
+    button: 'from-violet-300 to-indigo-400',
   },
 };
 
-const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
+const buildPath = (positions: IslandPosition[]) => {
+  if (!positions.length) return '';
 
+  return positions
+    .map((point, index) => {
+      if (index === 0) {
+        return `M ${point.x} ${point.y}`;
+      }
+
+      const previous = positions[index - 1];
+      const controlX = (previous.x + point.x) / 2 + (index % 2 === 0 ? -5 : 5);
+      const controlY = (previous.y + point.y) / 2;
+      return `Q ${controlX} ${controlY} ${point.x} ${point.y}`;
+    })
+    .join(' ');
+};
+
+const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
   const avatar = AVATARS.find(item => item.id === player.avatarId) || AVATARS[0];
   const avatarImage = avatar.portrait || avatar.image;
 
@@ -89,346 +111,284 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
     });
   }, [player]);
 
+  const firstPlayableIslandId = islandProgress.find(item => item.isUnlocked && item.completion < 100)?.island.id
+    || islandProgress.find(item => item.isUnlocked)?.island.id
+    || ISLANDS[0].id;
+
+  const [selectedIslandId, setSelectedIslandId] = useState(firstPlayableIslandId);
+
+  const selectedIslandData = islandProgress.find(item => item.island.id === selectedIslandId) || islandProgress[0];
   const totalStars = islandProgress.reduce((sum, item) => sum + item.earnedStars, 0);
-  const unlockedCount = islandProgress.filter(item => item.isUnlocked).length;
-  const totalCompletedLevels = islandProgress.reduce((sum, item) => sum + item.completedCount, 0);
 
-  const handleScroll = () => {
-    if (!scrollRef.current) return;
-    const scrollLeft = scrollRef.current.scrollLeft;
-    const width = scrollRef.current.clientWidth;
-    const index = Math.round(scrollLeft / width);
-    if (index !== activeIndex) {
-      setActiveIndex(index);
-    }
-  };
-
-  const scrollTo = (index: number) => {
-    if (!scrollRef.current) return;
-    scrollRef.current.scrollTo({
-      left: index * scrollRef.current.clientWidth,
-      behavior: 'smooth',
-    });
-  };
+  const pathPositions = PATH_ORDER.map(id => MAP_POSITIONS[id]);
+  const mapPath = buildPath(pathPositions);
 
   return (
-    <div className="relative h-full w-full overflow-hidden bg-[#07111f] font-sans">
-      <div className="absolute inset-0 bg-center bg-cover opacity-20" style={{ backgroundImage: `url(${forestBg})` }} />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.2)_0%,rgba(7,17,31,0.72)_38%,rgba(2,6,23,0.98)_100%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0)_20%,rgba(2,6,23,0.46)_100%)]" />
+    <div className="relative h-full w-full overflow-hidden bg-[#07111f]">
+      <div className="absolute inset-0 bg-cover bg-center opacity-95" style={{ backgroundImage: `url(${splashBackground})` }} />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,17,43,0.15),rgba(4,17,43,0.46)_34%,rgba(4,12,27,0.88)_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.2),rgba(7,17,31,0)_28%),radial-gradient(circle_at_bottom,rgba(59,130,246,0.22),rgba(7,17,31,0)_30%)]" />
+      <div className="pointer-events-none absolute inset-x-[6%] top-0 h-[42%] bg-center bg-no-repeat opacity-80 blur-[1px]" style={{ backgroundImage: `url(${splashGlow})`, backgroundSize: 'min(46rem, 96vw)' }} />
+      <motion.div
+        animate={{ opacity: [0.22, 0.54, 0.22], scale: [0.96, 1.04, 0.96] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        className="pointer-events-none absolute inset-x-[10%] top-[8%] h-[46%] bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${splashGlowSecondary})`, backgroundSize: 'min(48rem, 98vw)' }}
+      />
 
-      <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-90">
-        {Array.from({ length: 28 }).map((_, i) => (
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        {Array.from({ length: 32 }).map((_, index) => (
           <motion.div
-            key={i}
+            key={index}
             className="absolute rounded-full bg-white"
             style={{
-              width: `${(i % 4) + 2}px`,
-              height: `${(i % 4) + 2}px`,
-              top: `${(i * 13) % 100}%`,
-              left: `${(i * 17) % 100}%`,
+              width: `${(index % 3) + 2}px`,
+              height: `${(index % 3) + 2}px`,
+              top: `${(index * 11) % 100}%`,
+              left: `${(index * 19) % 100}%`,
             }}
-            animate={{ opacity: [0.18, 0.95, 0.18], scale: [1, 1.55, 1] }}
-            transition={{ duration: 2.8 + i * 0.18, repeat: Infinity, delay: i * 0.14 }}
+            animate={{ opacity: [0.18, 0.95, 0.18], scale: [1, 1.4, 1] }}
+            transition={{ duration: 2.4 + index * 0.14, repeat: Infinity, delay: index * 0.09 }}
           />
         ))}
-
-        {Array.from({ length: 6 }).map((_, i) => (
+        {Array.from({ length: 7 }).map((_, index) => (
           <motion.div
-            key={`nebula-${i}`}
-            animate={{ x: [0, i % 2 === 0 ? 30 : -30, 0], y: [0, -18, 0] }}
-            transition={{ duration: 10 + i * 1.8, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute rounded-full blur-3xl"
+            key={`cloud-${index}`}
+            animate={{ x: [0, index % 2 === 0 ? 18 : -18, 0] }}
+            transition={{ duration: 12 + index * 1.5, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute rounded-full bg-white/18 blur-2xl"
             style={{
-              width: `${180 + i * 56}px`,
-              height: `${180 + i * 56}px`,
-              top: `${6 + i * 14}%`,
-              left: `${i * 15}%`,
-              background: i % 2 === 0 ? 'rgba(56,189,248,0.15)' : 'rgba(250,204,21,0.1)',
+              width: `${100 + index * 16}px`,
+              height: `${36 + index * 8}px`,
+              top: `${6 + index * 13}%`,
+              left: `${(index * 15) % 88}%`,
             }}
           />
         ))}
       </div>
 
-      <header className="pointer-events-none absolute left-0 right-0 top-0 z-50 px-3 pt-[calc(0.45rem+env(safe-area-inset-top))] md:px-6 md:pt-6">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 md:gap-3">
-          <div className="pointer-events-auto casual-panel-surface relative flex items-center gap-3 overflow-hidden rounded-[1.4rem] border border-white/15 px-4 py-3.5 text-white shadow-[0_16px_34px_rgba(2,6,23,0.26)] md:hidden">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-[1.1rem] border border-white/20 bg-white/10 shadow-[0_10px_22px_rgba(2,6,23,0.2)]">
-              <img
-                src={avatarImage}
-                alt={avatar.name}
-                className="h-full w-full object-contain object-bottom scale-[1.14]"
-                draggable={false}
-              />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/68">Adventure profile</div>
-              <div className="truncate text-lg font-black tracking-tight text-white">{player.playerName || 'Explorer'}</div>
-            </div>
-            <div className="casual-ribbon-chip inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-white/90">
+      <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-3 pt-[calc(0.35rem+env(safe-area-inset-top))] md:px-6 md:pb-6 md:pt-6">
+        <div className="mb-2 flex shrink-0 items-center gap-2 rounded-[1.4rem] border border-white/14 bg-slate-950/34 px-3 py-2.5 text-white shadow-[0_18px_34px_rgba(2,6,23,0.26)] backdrop-blur-xl md:mb-4 md:rounded-[2rem] md:px-5 md:py-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-[1rem] border border-white/20 bg-white/10 md:h-16 md:w-16 md:rounded-[1.4rem]">
+            <img
+              src={avatarImage}
+              alt={avatar.name}
+              className="h-full w-full object-contain object-bottom scale-[1.14]"
+              draggable={false}
+            />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-[9px] font-black uppercase tracking-[0.22em] text-cyan-100/66 md:text-[10px]">World Map</div>
+            <div className="truncate text-base font-black text-white md:text-2xl">{player.playerName || 'Explorer'}</div>
+          </div>
+          <div className="flex items-center gap-1.5 md:gap-2">
+            <div className="casual-ribbon-chip inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-white/90">
               <AssetIcon name="coin" className="h-4 w-4" />
-              <span className="text-[11px] font-black">{player.coins}</span>
+              <span className="text-[10px] font-black md:text-xs">{player.coins}</span>
             </div>
-            <div className="casual-ribbon-chip inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-white/90">
-              <AssetIcon name="gem" className="h-4 w-4" />
-              <span className="text-[11px] font-black">{player.gems}</span>
-            </div>
-          </div>
-
-          <div className="pointer-events-auto casual-panel-strong relative hidden overflow-hidden rounded-[2.4rem] border border-white/15 px-6 py-6 shadow-[0_22px_48px_rgba(2,6,23,0.3)] md:block">
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.14),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(56,189,248,0.16),transparent_24%)] opacity-80" />
-            <div className="relative flex flex-col gap-2 md:flex-row md:items-center md:justify-between md:gap-3">
-              <div className="flex min-w-0 items-center gap-2.5 md:gap-4">
-                <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-[0.95rem] border border-white/20 bg-gradient-to-b from-white/28 to-white/8 shadow-[0_12px_30px_rgba(0,0,0,0.28)] md:h-20 md:w-20 md:rounded-[1.7rem]">
-                  <img
-                    src={avatarImage}
-                    alt={avatar.name}
-                    className="h-full w-full object-contain object-bottom scale-[1.12]"
-                    draggable={false}
-                  />
-                  <div className="absolute -bottom-1 -right-1 flex h-4.5 w-4.5 items-center justify-center rounded-md border-2 border-white bg-gradient-to-br from-yellow-300 to-orange-400 text-[8px] font-black text-yellow-950 shadow-lg md:h-8 md:w-8 md:rounded-xl md:text-xs">
-                    {player.level}
-                  </div>
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="text-[8px] font-black uppercase tracking-[0.24em] text-cyan-100/70 md:text-[10px]">Adventure profile</div>
-                  <h1 className="truncate text-[1.1rem] font-black tracking-tight text-white drop-shadow-[0_4px_14px_rgba(2,6,23,0.45)] md:text-[2.4rem]">
-                    {player.playerName || 'Explorer'}
-                  </h1>
-                  <p className="mt-0.5 hidden max-w-2xl text-[11px] leading-snug text-slate-200/84 md:block md:text-sm">
-                    Choose an island, keep your streak alive, and push your best stars higher across the campaign map.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 md:grid md:min-w-[19rem] md:grid-cols-2 md:gap-3">
-                {[
-                  { icon: 'coin', value: player.coins, label: 'Coins' },
-                  { icon: 'gem', value: player.gems, label: 'Gems' },
-                ].map(item => (
-                  <div
-                    key={item.label}
-                    className="casual-stat-shell rounded-full border border-white/12 px-2.5 py-1.5 text-white shadow-[0_12px_24px_rgba(2,6,23,0.2)] md:rounded-[1.5rem] md:px-4 md:py-3"
-                  >
-                    <div className="flex items-center gap-1.5 text-sm font-black md:text-xl">
-                      <AssetIcon name={item.icon as any} className="h-4 w-4 shrink-0 md:h-5 md:w-5" />
-                      <span>{item.value}</span>
-                    </div>
-                    <div className="mt-0.5 hidden text-[9px] font-black uppercase tracking-[0.22em] text-slate-100/62 md:block md:text-[10px]">{item.label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="relative mt-2 hidden md:block">
-              <div className="mb-1 flex items-center justify-between text-[8px] font-black uppercase tracking-[0.25em] text-slate-100/62 md:mb-1.5 md:text-[10px]">
-                <span>Account XP</span>
-                <span>{player.xp % 1000} / 1000</span>
-              </div>
-              <div className="h-2.5 overflow-hidden rounded-full border border-white/10 bg-black/35 md:h-4">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(player.xp % 1000) / 10}%` }}
-                  className="h-full rounded-full bg-[linear-gradient(90deg,#67e8f9_0%,#38bdf8_36%,#818cf8_72%,#c084fc_100%)] shadow-[0_0_18px_rgba(103,232,249,0.45)]"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="pointer-events-auto hidden grid-cols-3 gap-2 md:grid md:max-w-3xl md:gap-3">
-            {[
-              { label: 'Stars won', value: totalStars, icon: 'star' },
-              { label: 'Levels cleared', value: totalCompletedLevels, icon: 'play' },
-              { label: 'Islands open', value: `${unlockedCount}/${ISLANDS.length}`, icon: 'trophy' },
-            ].map(item => (
-              <div
-                key={item.label}
-                className="casual-stat-shell rounded-[1.1rem] border border-white/12 px-3 py-2.5 text-center text-white shadow-[0_14px_34px_rgba(2,6,23,0.24)] md:rounded-[1.4rem] md:px-4 md:py-3"
-              >
-                <div className="flex items-center justify-center gap-1.5 md:gap-2">
-                  <AssetIcon name={item.icon as any} className="h-4 w-4 md:h-5 md:w-5" />
-                  <span className="text-sm font-black md:text-2xl">{item.value}</span>
-                </div>
-                <div className="mt-0.5 text-[8px] font-black uppercase tracking-[0.22em] text-slate-100/58 md:text-[10px]">{item.label}</div>
-              </div>
-            ))}
-          </div>
-
-          <div className="pointer-events-auto hidden items-center gap-2 md:flex">
-            <div className="casual-ribbon-chip inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-white/90">
-              <AssetIcon name="star" className="h-3.5 w-3.5" />
-              <span className="text-[9px] font-black uppercase tracking-[0.22em]">{totalStars}</span>
-            </div>
-            <div className="casual-ribbon-chip inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-white/90">
-              <AssetIcon name="trophy" className="h-3.5 w-3.5" />
-              <span className="text-[9px] font-black uppercase tracking-[0.22em]">{unlockedCount}/{ISLANDS.length}</span>
+            <div className="casual-ribbon-chip inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-white/90">
+              <AssetIcon name="star" className="h-4 w-4" />
+              <span className="text-[10px] font-black md:text-xs">{totalStars}</span>
             </div>
           </div>
         </div>
-      </header>
 
-      <div
-        ref={scrollRef}
-        onScroll={handleScroll}
-        className="relative z-10 flex h-full w-full snap-x snap-mandatory overflow-x-auto hide-scrollbar"
-      >
-        {islandProgress.map(({ island, isUnlocked, completedCount, earnedStars, maxStars, completion }, index) => {
-          const isActive = index === activeIndex;
-          const palette = ISLAND_PALETTES[island.id] || ISLAND_PALETTES[1];
+        <div className="relative min-h-0 flex-1">
+          <div className="absolute inset-0 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(7,17,31,0.08),rgba(7,17,31,0.28))] shadow-[0_28px_90px_rgba(2,6,23,0.38)] backdrop-blur-[8px] md:rounded-[2.8rem]" />
 
-          return (
-            <section
-              key={island.id}
-              className="relative flex h-full min-w-[100vw] snap-center items-center justify-center overflow-hidden px-4 pb-[8rem] pt-[7rem] md:px-10 md:pb-32 md:pt-56 lg:px-12"
-            >
-              <div className={`absolute inset-0 bg-gradient-to-b ${island.bgGradient || 'from-sky-600 to-slate-900'} opacity-72`} />
-              <div className={`absolute inset-0 bg-gradient-to-b ${palette.atmosphere}`} />
-              <div className={`absolute left-1/2 top-[18%] h-[22rem] w-[22rem] -translate-x-1/2 rounded-full blur-3xl ${palette.sceneGlow} opacity-80 md:h-[34rem] md:w-[34rem]`} />
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-black/60 to-transparent md:h-72" />
+          <div className="relative h-full min-h-0">
+            <div className="absolute inset-[0.7rem] rounded-[1.8rem] border border-white/8 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.06),rgba(255,255,255,0)_22%),linear-gradient(180deg,rgba(11,25,55,0.18),rgba(4,13,31,0.28))] md:inset-4 md:rounded-[2.4rem]" />
 
-              <motion.div
-                animate={isActive ? { y: [0, -8, 0] } : { y: 0 }}
-                transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
-              className="relative mx-auto grid h-full w-full max-w-6xl min-h-0 grid-rows-[minmax(0,3fr)_minmax(0,1.28fr)] gap-2.5 lg:h-auto lg:grid-cols-[minmax(0,1fr)_minmax(26rem,1fr)] lg:grid-rows-none lg:items-center lg:gap-6"
-              >
-                <div className="relative min-h-0">
-                  <div className={`absolute inset-x-12 bottom-3 h-10 rounded-full bg-black/40 blur-2xl md:bottom-0 md:h-14 ${palette.halo}`} />
+            <div className="relative mx-auto h-full max-w-[30rem] px-1.5 pb-[7.25rem] pt-1.5 md:max-w-[34rem] md:px-2 md:pb-[8.5rem] md:pt-2">
+              <div className="relative h-full w-full overflow-hidden rounded-[1.8rem] md:rounded-[2.4rem]">
+                <svg viewBox="0 0 100 100" className="pointer-events-none absolute inset-0 h-full w-full overflow-visible">
+                  <path
+                    d={mapPath}
+                    fill="none"
+                    stroke="rgba(255,242,178,0.3)"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d={mapPath}
+                    fill="none"
+                    stroke="url(#mapPathGradient)"
+                    strokeWidth="1.05"
+                    strokeLinecap="round"
+                    strokeDasharray="1.2 2.1"
+                  />
+                  <defs>
+                    <linearGradient id="mapPathGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#fde68a" />
+                      <stop offset="50%" stopColor="#fbbf24" />
+                      <stop offset="100%" stopColor="#f59e0b" />
+                    </linearGradient>
+                  </defs>
+                </svg>
 
-                  <div className="relative flex h-full min-h-0 flex-col overflow-hidden rounded-[2rem] border border-white/15 bg-slate-950/70 shadow-[0_32px_90px_rgba(2,6,23,0.42)] md:rounded-[2.8rem]">
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.16),transparent_26%),linear-gradient(180deg,rgba(2,6,23,0.08),rgba(2,6,23,0.72))]" />
-                    <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-white/12 to-transparent md:h-28" />
+                {PATH_ORDER.slice(0, -1).map((islandId, index) => {
+                  const from = MAP_POSITIONS[islandId];
+                  const to = MAP_POSITIONS[PATH_ORDER[index + 1]];
+                  const dots = Array.from({ length: 6 });
 
-                    <div className="relative flex h-full min-h-0 flex-col p-3 md:p-5">
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="casual-ribbon-chip inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-white">
-                          <span className="text-[9px] font-black uppercase tracking-[0.3em] md:text-[10px]">Island {island.id}</span>
-                        </div>
-                        <div className="casual-ribbon-chip hidden items-center gap-2 rounded-full px-3 py-1.5 text-white/90 md:inline-flex">
-                          <AssetIcon name="star" className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                          <span className="text-[9px] font-black uppercase tracking-[0.24em] md:text-[10px]">{earnedStars} / {maxStars}</span>
-                        </div>
-                      </div>
+                  return dots.map((_, dotIndex) => {
+                    const t = (dotIndex + 1) / (dots.length + 1);
+                    const x = from.x + (to.x - from.x) * t;
+                    const y = from.y + (to.y - from.y) * t;
 
+                    return (
                       <motion.div
-                        animate={isActive ? { scale: [1, 1.02, 1] } : { scale: 1 }}
-                        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-                        className="relative mt-3 flex-1 min-h-[18.5rem] overflow-hidden rounded-[1.7rem] border border-white/10 bg-slate-950/70 md:mt-4 md:min-h-[22rem] md:rounded-[2.2rem]"
+                        key={`${islandId}-${dotIndex}`}
+                        className="absolute h-2.5 w-2.5 rounded-full border border-yellow-100/70 bg-[linear-gradient(180deg,#ffe79a_0%,#ffb938_100%)] shadow-[0_0_12px_rgba(251,191,36,0.55)] md:h-3 md:w-3"
+                        style={{ left: `${x}%`, top: `${y}%`, transform: 'translate(-50%, -50%)' }}
+                        animate={{ scale: [1, 1.2, 1], opacity: [0.72, 1, 0.72] }}
+                        transition={{ duration: 2 + dotIndex * 0.18, repeat: Infinity, delay: dotIndex * 0.12 }}
+                      />
+                    );
+                  });
+                })}
+
+                {islandProgress.map(({ island, isUnlocked, completion, earnedStars, maxStars }, index) => {
+                  const position = MAP_POSITIONS[island.id];
+                  const palette = ISLAND_PALETTES[island.id] || ISLAND_PALETTES[1];
+                  const isSelected = island.id === selectedIslandId;
+                  const isNext = island.id === firstPlayableIslandId;
+                  const isThreeStar = earnedStars === maxStars && maxStars > 0;
+
+                  return (
+                    <motion.button
+                      key={island.id}
+                      whileTap={{ scale: 0.96 }}
+                      onClick={() => {
+                        setSelectedIslandId(island.id);
+                        if (isUnlocked) {
+                          onSelectIsland(island);
+                        }
+                      }}
+                      className="absolute z-20"
+                      style={{
+                        left: `${position.x}%`,
+                        top: `${position.y}%`,
+                        width: `${position.size}%`,
+                        transform: `translate(-50%, -50%) rotate(${position.rotation}deg)`,
+                      }}
+                    >
+                      <motion.div
+                        animate={isNext ? { y: [0, -8, 0] } : isThreeStar ? { rotate: [position.rotation, position.rotation + 3, position.rotation] } : { y: [0, -4, 0] }}
+                        transition={{ duration: isNext ? 2.2 : 5.8, repeat: Infinity, ease: 'easeInOut' }}
+                        className="relative"
                       >
-                        {island.mapImage ? (
-                          <img
-                            src={island.mapImage}
-                            alt={island.themeName || island.name}
-                            className="h-full w-full object-cover object-center opacity-90"
-                            draggable={false}
-                          />
-                        ) : (
-                          <div className={`h-full w-full bg-gradient-to-br ${island.bgGradient || 'from-sky-600 to-slate-900'}`} />
-                        )}
-                        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(2,6,23,0)_28%,rgba(2,6,23,0.56)_100%)]" />
-                        <div className="absolute inset-x-0 bottom-0 p-3 md:p-5">
-                          <div className="rounded-[1.3rem] border border-white/10 bg-slate-950/72 px-3 py-3 backdrop-blur-xl md:rounded-[1.8rem] md:px-4 md:py-4">
-                            <div className="text-[8px] font-black uppercase tracking-[0.26em] text-cyan-100/72 md:text-[10px]">{island.category}</div>
-                            <h2 className="mt-1 text-lg font-black tracking-tight text-white drop-shadow-[0_6px_18px_rgba(2,6,23,0.35)] md:text-4xl">
+                        <div className={`pointer-events-none absolute left-1/2 top-[44%] h-[64%] w-[64%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br ${palette.glow} blur-2xl`} />
+                        <div className={`pointer-events-none absolute inset-[-4%] rounded-[1.9rem] ${isSelected ? palette.ring : ''}`} />
+
+                        <div className={`relative overflow-hidden rounded-[1.65rem] border ${isSelected ? 'border-[#ffe49a]' : 'border-white/18'} bg-slate-950/42 shadow-[0_18px_32px_rgba(2,6,23,0.36)]`}>
+                          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.14),rgba(255,255,255,0)_24%,rgba(2,6,23,0.36)_100%)]" />
+                          {island.mapImage && (
+                            <img
+                              src={island.mapImage}
+                              alt={island.themeName || island.name}
+                              className="h-full w-full object-cover object-center"
+                              draggable={false}
+                            />
+                          )}
+                          <div className="absolute inset-x-2 bottom-2 rounded-[1rem] border border-white/12 bg-slate-950/68 px-2 py-1.5 text-center backdrop-blur-xl">
+                            <div className="text-[8px] font-black uppercase tracking-[0.16em] text-white/92 md:text-[9px]">
                               {island.themeName || island.name}
-                            </h2>
-                            <p className="mt-1 hidden text-[11px] leading-snug text-slate-200/82 md:block md:text-sm">
-                              Premium campaign zone with {island.levels.length} stages, a final boss gate, and persistent reward progress.
-                            </p>
+                            </div>
+                            <div className="mt-0.5 text-[7px] font-black uppercase tracking-[0.16em] text-white/62 md:text-[8px]">
+                              {completion}% complete
+                            </div>
                           </div>
                         </div>
+
+                        {isNext && (
+                          <motion.div
+                            animate={{ y: [0, -5, 0], opacity: [0.85, 1, 0.85] }}
+                            transition={{ duration: 1.7, repeat: Infinity }}
+                            className="absolute left-1/2 top-[-0.7rem] flex -translate-x-1/2 items-center gap-1 rounded-full bg-[linear-gradient(180deg,#6ee7b7_0%,#22c55e_100%)] px-2 py-1 text-[7px] font-black uppercase tracking-[0.16em] text-emerald-950 shadow-[0_8px_18px_rgba(34,197,94,0.35)] md:text-[8px]"
+                          >
+                            <AssetIcon name="play" className="h-2.5 w-2.5" />
+                            Next
+                          </motion.div>
+                        )}
+
+                        {isThreeStar && (
+                          <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+                            className="absolute right-[-0.35rem] top-[-0.35rem] flex h-7 w-7 items-center justify-center rounded-full border border-yellow-100/65 bg-[linear-gradient(180deg,#fde68a_0%,#f59e0b_100%)] shadow-[0_10px_18px_rgba(245,158,11,0.35)]"
+                          >
+                            <AssetIcon name="star" className="h-3.5 w-3.5" />
+                          </motion.div>
+                        )}
+
+                        {!isUnlocked && (
+                          <div className="absolute inset-0 flex items-center justify-center rounded-[1.65rem] bg-slate-950/52 backdrop-blur-[2px]">
+                            <div className="rounded-full border border-white/20 bg-slate-950/55 px-2.5 py-1 text-[8px] font-black uppercase tracking-[0.16em] text-white/80">
+                              Locked
+                            </div>
+                          </div>
+                        )}
                       </motion.div>
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex justify-center px-3 pb-1.5 md:px-6 md:pb-3">
+              <div className="pointer-events-auto w-full max-w-[28rem] rounded-[1.6rem] border border-white/16 bg-slate-950/58 p-3 text-white shadow-[0_22px_44px_rgba(2,6,23,0.4)] backdrop-blur-xl md:max-w-[32rem] md:rounded-[2rem] md:p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="text-[8px] font-black uppercase tracking-[0.22em] text-cyan-100/62 md:text-[10px]">
+                      Island {selectedIslandData.island.id}
                     </div>
+                    <div className="truncate text-lg font-black text-white md:text-2xl">
+                      {selectedIslandData.island.themeName || selectedIslandData.island.name}
+                    </div>
+                    <div className="mt-0.5 text-[10px] font-semibold text-white/72 md:text-xs">
+                      {selectedIslandData.completedCount} of {selectedIslandData.island.levels.length} mini-games complete
+                    </div>
+                  </div>
+                  <div className="rounded-[1rem] bg-white/8 px-3 py-2 text-right shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]">
+                    <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/56 md:text-[10px]">Progress</div>
+                    <div className="mt-0.5 text-lg font-black text-white md:text-2xl">{selectedIslandData.completion}%</div>
                   </div>
                 </div>
 
-                <div className="casual-panel-strong relative flex h-full min-h-0 flex-col justify-center overflow-hidden rounded-[2rem] border border-white/16 p-4 text-white shadow-[0_28px_80px_rgba(2,6,23,0.4)] md:rounded-[2.6rem] md:p-7">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.12),transparent_22%),radial-gradient(circle_at_bottom_left,rgba(34,211,238,0.12),transparent_24%)] opacity-90" />
-                  <div className="relative">
-                    <div className="mb-3 flex items-center justify-between gap-3 md:mb-5">
-                      <span className="casual-ribbon-chip rounded-full px-2.5 py-1 text-[8px] font-black uppercase tracking-[0.26em] text-white/85 md:px-4 md:py-2 md:text-[10px]">
-                        {island.name}
-                      </span>
-                      <span className="text-lg font-black text-white md:text-3xl">
-                        {completion}%
-                      </span>
-                    </div>
-
-                    <div className="mb-3 text-[10px] font-bold uppercase tracking-[0.22em] text-slate-100/58 md:mb-4 md:text-[10px]">
-                      {completedCount} of {island.levels.length} mini-games complete
-                    </div>
-
-                    <div className="mt-1.5 md:mt-4">
-                      <div className="mb-1.5 flex items-center justify-between text-[8px] font-black uppercase tracking-[0.24em] text-slate-100/58 md:text-[10px]">
-                        <span>Completion</span>
-                        <span>{completion}%</span>
-                      </div>
-                      <div className="h-3 overflow-hidden rounded-full border border-white/10 bg-black/35 md:h-4">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${completion}%` }}
-                          className={`h-full rounded-full bg-gradient-to-r ${palette.progress} shadow-[0_0_18px_rgba(255,255,255,0.2)]`}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="mt-4 flex flex-col gap-2.5 md:mt-6">
-                      <button
-                        onClick={() => isUnlocked && onSelectIsland(island)}
-                        disabled={!isUnlocked}
-                        className={`group inline-flex w-full min-h-[3.75rem] items-center justify-center gap-2 rounded-[1.35rem] px-5 py-3 text-base font-black leading-none text-slate-950 transition-all md:w-auto md:min-w-[14rem] md:gap-3 md:min-h-[4.5rem] md:rounded-[1.8rem] md:px-7 md:py-4 md:text-lg ${
-                          isUnlocked
-                            ? `bg-gradient-to-r ${palette.button} shadow-[0_14px_30px_rgba(2,6,23,0.24)] hover:-translate-y-0.5`
-                            : 'cursor-not-allowed border border-white/10 bg-white/10 text-white/50 shadow-none'
-                        }`}
-                      >
-                        {isUnlocked ? <AssetIcon name="play" className="h-4 w-4 md:h-5 md:w-5" /> : <AssetIcon name="plusSquare" className="h-4 w-4 md:h-5 md:w-5" />}
-                        {isUnlocked ? "Let's go" : 'Island locked'}
-                      </button>
-
-                      <div className="casual-ribbon-chip inline-flex items-center justify-center gap-2 rounded-full px-3 py-1.5 text-[10px] font-black text-white/85 md:w-fit md:justify-start md:px-4 md:py-2.5 md:text-sm">
-                        <AssetIcon name="star" className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                        {earnedStars} / {maxStars} stars earned
-                      </div>
-                    </div>
-                  </div>
+                <div className="mt-3 h-3 overflow-hidden rounded-full border border-white/10 bg-black/35 md:h-4">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${selectedIslandData.completion}%` }}
+                    className={`h-full rounded-full bg-gradient-to-r ${(ISLAND_PALETTES[selectedIslandData.island.id] || ISLAND_PALETTES[1]).chip}`}
+                  />
                 </div>
-              </motion.div>
-            </section>
-          );
-        })}
-      </div>
 
-      <div className="pointer-events-none absolute bottom-8 left-1/2 z-40 hidden -translate-x-1/2 items-center gap-2.5 md:flex md:bottom-8 md:gap-3">
-        <button
-          onClick={() => scrollTo(Math.max(0, activeIndex - 1))}
-          disabled={activeIndex === 0}
-          className={`pointer-events-auto casual-panel-surface rounded-full p-3 text-white shadow-[0_18px_40px_rgba(2,6,23,0.3)] transition-all md:p-4 ${activeIndex === 0 ? 'opacity-35' : 'hover:-translate-y-0.5'}`}
-          aria-label="Previous island"
-        >
-          <AssetIcon name="back" className="h-6 w-6 md:h-7 md:w-7" />
-        </button>
+                <div className="mt-3 flex items-center justify-between gap-3">
+                  <div className="casual-ribbon-chip inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-white/92">
+                    <AssetIcon name="star" className="h-4 w-4" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.16em] md:text-xs">
+                      {selectedIslandData.earnedStars} / {selectedIslandData.maxStars}
+                    </span>
+                  </div>
 
-        <div className="pointer-events-auto casual-tab-shell rounded-full border border-white/12 px-3 py-2 shadow-[0_18px_40px_rgba(2,6,23,0.26)] md:px-4">
-          <div className="flex items-center gap-2">
-            {islandProgress.map((item, index) => (
-              <button
-                key={item.island.id}
-                onClick={() => scrollTo(index)}
-                className={`h-3 rounded-full transition-all ${index === activeIndex ? 'w-10 bg-white shadow-[0_0_18px_rgba(255,255,255,0.42)]' : 'w-3 bg-white/38 hover:bg-white/60'}`}
-                aria-label={`Go to island ${index + 1}`}
-              />
-            ))}
+                  <button
+                    onClick={() => selectedIslandData.isUnlocked && onSelectIsland(selectedIslandData.island)}
+                    disabled={!selectedIslandData.isUnlocked}
+                    className={`inline-flex min-h-[2.9rem] items-center justify-center gap-2 rounded-[1rem] px-4 py-2 text-sm font-black text-slate-950 transition-all md:min-h-[3.4rem] md:rounded-[1.3rem] md:px-5 md:text-base ${
+                      selectedIslandData.isUnlocked
+                        ? `bg-gradient-to-r ${(ISLAND_PALETTES[selectedIslandData.island.id] || ISLAND_PALETTES[1]).button} shadow-[0_14px_30px_rgba(2,6,23,0.24)] hover:-translate-y-0.5`
+                        : 'cursor-not-allowed border border-white/10 bg-white/10 text-white/48 shadow-none'
+                    }`}
+                  >
+                    <AssetIcon name={selectedIslandData.isUnlocked ? 'play' : 'plusSquare'} className="h-4 w-4 md:h-5 md:w-5" />
+                    {selectedIslandData.isUnlocked ? 'Enter Island' : 'Island Locked'}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-
-        <button
-          onClick={() => scrollTo(Math.min(ISLANDS.length - 1, activeIndex + 1))}
-          disabled={activeIndex === ISLANDS.length - 1}
-          className={`pointer-events-auto casual-panel-surface rounded-full p-3 text-white shadow-[0_18px_40px_rgba(2,6,23,0.3)] transition-all md:p-4 ${activeIndex === ISLANDS.length - 1 ? 'opacity-35' : 'hover:-translate-y-0.5'}`}
-          aria-label="Next island"
-        >
-          <AssetIcon name="next" className="h-6 w-6 md:h-7 md:w-7" />
-        </button>
       </div>
     </div>
   );

@@ -3,14 +3,6 @@ import { motion } from 'motion/react';
 import { AnimationState, AvatarData, CloudCollapseLevelConfig } from '../types';
 import AssetIcon from './AssetIcon';
 import AnimatedAvatar from './AnimatedAvatar';
-import profileBgAsset from '../assets/fantasy_hero/frames/profile_bg.png';
-import profileBorderAsset from '../assets/fantasy_hero/frames/profile_border.png';
-import profileInnerAsset from '../assets/fantasy_hero/frames/profile_inner.png';
-import profileDecoAsset from '../assets/fantasy_hero/frames/profile_deco.png';
-import stageBgAsset from '../assets/fantasy_hero/frames/stage_bg.png';
-import stageBorderAsset from '../assets/fantasy_hero/frames/stage_border.png';
-import stageInnerAsset from '../assets/fantasy_hero/frames/stage_inner.png';
-import resourceBgAsset from '../assets/fantasy_hero/ui/resource_bg.png';
 import sliderBgAsset from '../assets/fantasy_hero/slider/play_bg.png';
 import sliderBorderAsset from '../assets/fantasy_hero/slider/play_border.png';
 import sliderFillAsset from '../assets/fantasy_hero/slider/play_fill_blue.png';
@@ -38,20 +30,15 @@ const HUD: React.FC<HUDProps> = ({ title, score, targetScore, timeLeft, level, a
   return (
     <div className="flex w-full shrink-0 flex-col gap-1.5 px-1 py-0.5 md:gap-3 md:px-2">
       <div className="relative flex items-center justify-between overflow-hidden rounded-[1.1rem] p-2 shadow-[0_10px_30px_rgba(0,0,0,0.18)] md:rounded-[2rem] md:p-4">
-        <div className="absolute inset-0 bg-center bg-cover opacity-95" style={{ backgroundImage: `url(${stageBgAsset})` }} />
-        <div className="absolute inset-0 bg-center bg-cover opacity-95" style={{ backgroundImage: `url(${stageBorderAsset})` }} />
-        <div className="absolute inset-[2px] bg-center bg-cover opacity-90 md:inset-[4px]" style={{ backgroundImage: `url(${stageInnerAsset})` }} />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(2,6,23,0.08))]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(168,85,247,0.18),transparent_24%),linear-gradient(180deg,rgba(42,54,98,0.96),rgba(12,18,32,0.98))]" />
+        <div className="absolute inset-0 border border-white/12" />
 
         <div className="relative z-10 flex shrink-0 items-center gap-2 md:gap-4">
           <motion.div
             whileHover={{ scale: 1.08, rotate: 4 }}
             className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-xl shadow-lg md:h-16 md:w-16 md:rounded-3xl"
           >
-            <div className="absolute inset-0 opacity-95" style={{ backgroundImage: `url(${profileBgAsset})`, backgroundSize: '100% 100%' }} />
-            <div className="absolute inset-0 opacity-95" style={{ backgroundImage: `url(${profileBorderAsset})`, backgroundSize: '100% 100%' }} />
-            <div className="absolute inset-[4%] opacity-90" style={{ backgroundImage: `url(${profileInnerAsset})`, backgroundSize: '100% 100%' }} />
-            <div className="absolute inset-0 opacity-75" style={{ backgroundImage: `url(${profileDecoAsset})`, backgroundSize: '100% 100%' }} />
+            <div className="absolute inset-0 rounded-[inherit] border border-white/18 bg-[linear-gradient(180deg,rgba(255,255,255,0.14),rgba(17,24,39,0.18))]" />
             <AnimatedAvatar
               avatar={avatar}
               pose={avatarPose}
@@ -77,7 +64,7 @@ const HUD: React.FC<HUDProps> = ({ title, score, targetScore, timeLeft, level, a
 
         <div className="relative z-10 flex flex-col items-end gap-0.5 md:gap-1">
           <div className="relative flex items-center gap-1 overflow-hidden rounded-xl px-1.5 py-1 md:gap-2 md:rounded-2xl md:px-4">
-            <div className="absolute inset-0 opacity-95" style={{ backgroundImage: `url(${resourceBgAsset})`, backgroundSize: '100% 100%' }} />
+            <div className="absolute inset-0 rounded-[inherit] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(226,232,240,0.92))]" />
             <AssetIcon name="timer" className={`relative h-3 w-3 md:h-5 md:w-5 ${timeLeft < 10 ? 'animate-pulse' : ''}`} />
             <span className={`relative text-[11px] font-black md:text-xl ${timeLeft < 10 ? 'text-red-400' : 'text-slate-900'}`}>
               {timeLeft}s
