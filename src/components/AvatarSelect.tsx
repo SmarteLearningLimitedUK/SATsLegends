@@ -96,7 +96,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
   };
 
   return (
-    <div className="relative flex h-full w-full items-stretch justify-center overflow-hidden px-3 pt-[calc(env(safe-area-inset-top)+0.45rem)] pb-[calc(env(safe-area-inset-bottom)+0.6rem)] md:px-6 md:pt-5 md:pb-6">
+    <div className="relative flex h-full w-full items-stretch justify-center overflow-hidden px-3 pt-[calc(env(safe-area-inset-top)+0.25rem)] pb-[calc(env(safe-area-inset-bottom)+0.45rem)] md:px-6 md:pt-5 md:pb-6">
       <div className="hero-screen-shell relative flex h-full w-full max-w-6xl flex-col overflow-hidden rounded-[2.35rem] md:rounded-[3rem]">
         <div
           className="absolute inset-0 -z-40 bg-cover bg-center opacity-95"
@@ -110,11 +110,11 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
           className="pointer-events-none absolute inset-x-[18%] top-[5%] -z-10 h-[39%] bg-center bg-no-repeat opacity-72"
           style={{ backgroundImage: `url(${splashGlow})`, backgroundSize: 'min(36rem, 86vw)' }}
         />
-        <div className={`pointer-events-none absolute left-1/2 top-[16%] -z-10 h-[33rem] w-[18rem] -translate-x-1/2 rounded-[50%] bg-gradient-to-b ${selectedStyle.beam} opacity-78 blur-2xl`} />
+        <div className={`pointer-events-none absolute left-1/2 top-[14%] -z-10 h-[28rem] w-[16rem] -translate-x-1/2 rounded-[50%] bg-gradient-to-b ${selectedStyle.beam} opacity-74 blur-2xl md:top-[16%] md:h-[33rem] md:w-[18rem] md:opacity-78`} />
 
-        <div className="pointer-events-none absolute bottom-[18%] left-1/2 z-0 h-32 w-[18rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,243,166,0.28),rgba(255,243,166,0.08)_34%,rgba(2,6,23,0)_72%)] blur-2xl md:h-36 md:w-[22rem]" />
-        <div className={`hero-stage-pedestal pointer-events-none absolute bottom-[17.25%] left-1/2 z-0 h-24 w-[16rem] -translate-x-1/2 rounded-full bg-gradient-to-b ${selectedStyle.pedestal} blur-xl md:w-[19rem]`} />
-        <div className="pointer-events-none absolute bottom-[13.4%] left-1/2 z-0 h-16 w-[13.5rem] -translate-x-1/2 rounded-[100%] border border-yellow-100/32 bg-[linear-gradient(180deg,rgba(255,235,153,0.38),rgba(89,255,150,0.12))] shadow-[0_0_34px_rgba(252,211,77,0.28)] md:w-[15rem]" />
+        <div className="pointer-events-none absolute bottom-[18.5%] left-1/2 z-0 h-24 w-[14rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,243,166,0.28),rgba(255,243,166,0.08)_34%,rgba(2,6,23,0)_72%)] blur-2xl md:bottom-[18%] md:h-36 md:w-[22rem]" />
+        <div className={`hero-stage-pedestal pointer-events-none absolute bottom-[17.8%] left-1/2 z-0 h-20 w-[12.8rem] -translate-x-1/2 rounded-full bg-gradient-to-b ${selectedStyle.pedestal} blur-xl md:bottom-[17.25%] md:h-24 md:w-[19rem]`} />
+        <div className="pointer-events-none absolute bottom-[14.1%] left-1/2 z-0 h-12 w-[10.8rem] -translate-x-1/2 rounded-[100%] border border-yellow-100/32 bg-[linear-gradient(180deg,rgba(255,235,153,0.38),rgba(89,255,150,0.12))] shadow-[0_0_34px_rgba(252,211,77,0.28)] md:bottom-[13.4%] md:h-16 md:w-[15rem]" />
 
         {PARTICLE_POSITIONS.map((particle, index) => (
           <motion.span
@@ -143,38 +143,38 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
           />
         ))}
 
-        <div className="relative z-10 flex shrink-0 flex-col items-center gap-2 px-4 pt-[calc(env(safe-area-inset-top)+0.55rem)] text-center md:px-8 md:pt-6">
+        <div className="relative z-10 flex shrink-0 flex-col items-center gap-1.5 px-4 pt-[calc(env(safe-area-inset-top)+0.35rem)] text-center md:gap-2 md:px-8 md:pt-6">
           <motion.img
             src={titleLine}
             alt=""
             animate={{ opacity: [0.4, 0.86, 0.4], scaleX: [0.98, 1.02, 0.98] }}
             transition={{ duration: 4.2, repeat: Infinity, ease: 'easeInOut' }}
-            className="pointer-events-none w-[78%] max-w-[18rem] opacity-85 md:max-w-[27rem]"
+            className="pointer-events-none w-[72%] max-w-[15rem] opacity-82 md:w-[78%] md:max-w-[27rem] md:opacity-85"
           />
-          <div className="hero-header-banner px-5 py-3 md:px-8 md:py-4">
-            <div className="mb-1.5 flex items-center justify-center gap-2 md:mb-2 md:gap-3">
+          <div className="hero-header-banner px-4 py-2.5 md:px-8 md:py-4">
+            <div className="mb-1 flex items-center justify-center gap-1.5 md:mb-2 md:gap-3">
               {['emerald', 'ruby', 'sapphire'].map(gem => (
                 <span key={gem} className={`fantasy-gem fantasy-gem-${gem}`} />
               ))}
             </div>
             <h1
-              className="text-[2rem] font-black leading-none tracking-[-0.05em] text-[#fff7dc] drop-shadow-[0_10px_32px_rgba(2,6,23,0.58)] sm:text-[2.95rem] md:text-[4.9rem]"
+              className="text-[1.72rem] font-black leading-none tracking-[-0.05em] text-[#fff7dc] drop-shadow-[0_10px_32px_rgba(2,6,23,0.58)] sm:text-[2.95rem] md:text-[4.9rem]"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Choose Your Hero
             </h1>
-            <p className="mt-1.5 text-[10px] font-black uppercase tracking-[0.24em] text-white/84 md:mt-2 md:text-[11px]">
+            <p className="mt-1 text-[9px] font-black uppercase tracking-[0.2em] text-white/84 md:mt-2 md:text-[11px] md:tracking-[0.24em]">
               Select the champion who enters the portal
             </p>
           </div>
         </div>
 
-        <div className="relative z-10 flex min-h-0 flex-1 items-center justify-center px-2 pt-1 pb-2 md:px-8 md:pt-3 md:pb-4">
+        <div className="relative z-10 flex min-h-0 flex-1 items-center justify-center px-1.5 pt-0.5 pb-1.5 md:px-8 md:pt-3 md:pb-4">
           <motion.button
             whileHover={{ scale: 1.04, x: -1 }}
             whileTap={{ scale: 0.95, y: 1 }}
             onClick={() => selectIndex(selectedIndex - 1)}
-            className="hero-arrow-button absolute left-2 top-1/2 z-20 -translate-y-1/2 md:left-5"
+            className="hero-arrow-button absolute left-1 top-1/2 z-20 -translate-y-1/2 md:left-5"
             aria-label="Previous hero"
           >
             <span className="hero-arrow-button-face">
@@ -183,13 +183,13 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
             </span>
           </motion.button>
 
-          <div className="grid h-full w-full max-w-5xl grid-cols-[0.5fr_1.48fr_0.5fr] items-center gap-1 md:gap-5">
+          <div className="grid h-full w-full max-w-5xl grid-cols-[0.42fr_1.16fr_0.42fr] items-center gap-0.5 md:grid-cols-[0.5fr_1.48fr_0.5fr] md:gap-5">
             {carouselItems.map(({ avatar, position }) => {
               const isCenter = position === 'center';
               const style = HERO_STYLES[avatar.id] || HERO_STYLES.barratt;
               const sidePositionClass = position === 'side-left'
-                ? '-translate-x-[10%] md:-translate-x-[9%]'
-                : 'translate-x-[10%] md:translate-x-[9%]';
+                ? '-translate-x-[5%] md:-translate-x-[9%]'
+                : 'translate-x-[5%] md:translate-x-[9%]';
 
               return (
                 <motion.button
@@ -203,7 +203,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   <motion.div
                     animate={isCenter ? { scale: [1, 1.025, 1], y: [0, -7, 0] } : { scale: 1, y: 0 }}
                     transition={isCenter ? { duration: 4.8, repeat: Infinity, ease: 'easeInOut' } : { duration: 0.3 }}
-                    className={`hero-card-shell relative flex h-[67svh] max-h-[35rem] min-h-[19rem] w-full flex-col items-center justify-end overflow-hidden rounded-[1.9rem] border md:max-h-[40rem] md:min-h-[24rem] md:rounded-[2.7rem] ${
+                    className={`hero-card-shell relative flex h-[54svh] max-h-[28rem] min-h-[15.5rem] w-full flex-col items-center justify-end overflow-hidden rounded-[1.6rem] border md:h-[67svh] md:max-h-[40rem] md:min-h-[24rem] md:rounded-[2.7rem] ${
                       isCenter
                         ? `hero-card-shell-selected border-[#ffd56b]/90 ${style.frameGlow}`
                         : 'hero-card-shell-side border-white/8 opacity-62'
@@ -211,18 +211,18 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   >
                     <div className={`absolute inset-0 bg-gradient-to-br ${isCenter ? `${style.glow} opacity-95` : 'from-slate-400/6 via-slate-300/2 to-transparent opacity-55'}`} />
                     <div className={`absolute inset-0 ${isCenter ? 'bg-[linear-gradient(180deg,rgba(255,246,208,0.14),rgba(255,255,255,0.01)_20%,rgba(2,6,23,0.44)_100%)]' : 'bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01)_16%,rgba(2,6,23,0.74)_100%)]'}`} />
-                    <div className={`pointer-events-none absolute inset-[4px] rounded-[1.6rem] border md:rounded-[2.35rem] ${isCenter ? 'border-[#fff4c8]/34' : 'border-white/6'}`} />
-                    <div className={`pointer-events-none absolute inset-[0.65rem] rounded-[1.45rem] md:rounded-[2rem] ${isCenter ? 'bg-[linear-gradient(180deg,rgba(11,28,60,0.08),rgba(8,14,31,0.44)_32%,rgba(4,10,22,0.78)_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.12),inset_0_-8px_18px_rgba(2,6,23,0.38)]' : 'bg-[linear-gradient(180deg,rgba(8,18,36,0.12),rgba(4,10,22,0.6)_100%)]'} `} />
+                    <div className={`pointer-events-none absolute inset-[4px] rounded-[1.3rem] border md:rounded-[2.35rem] ${isCenter ? 'border-[#fff4c8]/34' : 'border-white/6'}`} />
+                    <div className={`pointer-events-none absolute inset-[0.5rem] rounded-[1.15rem] md:inset-[0.65rem] md:rounded-[2rem] ${isCenter ? 'bg-[linear-gradient(180deg,rgba(11,28,60,0.08),rgba(8,14,31,0.44)_32%,rgba(4,10,22,0.78)_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.12),inset_0_-8px_18px_rgba(2,6,23,0.38)]' : 'bg-[linear-gradient(180deg,rgba(8,18,36,0.12),rgba(4,10,22,0.6)_100%)]'} `} />
 
                     {isCenter && (
                       <>
-                        <div className={`pointer-events-none absolute left-1/2 top-[14%] h-44 w-44 -translate-x-1/2 rounded-full bg-gradient-to-br ${style.glow} blur-3xl md:h-64 md:w-64`} />
-                        <div className={`pointer-events-none absolute bottom-[15.5%] left-1/2 h-28 w-[78%] -translate-x-1/2 rounded-full bg-gradient-to-b ${style.pedestal} blur-xl`} />
-                        <div className="pointer-events-none absolute bottom-[12%] left-1/2 h-16 w-[68%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,244,164,0.34),rgba(255,244,164,0.06)_36%,rgba(255,244,164,0)_72%)] blur-lg" />
+                        <div className={`pointer-events-none absolute left-1/2 top-[12%] h-32 w-32 -translate-x-1/2 rounded-full bg-gradient-to-br ${style.glow} blur-3xl md:top-[14%] md:h-64 md:w-64`} />
+                        <div className={`pointer-events-none absolute bottom-[14.5%] left-1/2 h-20 w-[74%] -translate-x-1/2 rounded-full bg-gradient-to-b ${style.pedestal} blur-xl md:bottom-[15.5%] md:h-28 md:w-[78%]`} />
+                        <div className="pointer-events-none absolute bottom-[11%] left-1/2 h-12 w-[62%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,244,164,0.34),rgba(255,244,164,0.06)_36%,rgba(255,244,164,0)_72%)] blur-lg md:bottom-[12%] md:h-16 md:w-[68%]" />
                       </>
                     )}
 
-                    <div className={`relative mt-1 flex w-full flex-1 items-end justify-center overflow-visible ${isCenter ? 'px-1 pb-0 md:px-2' : 'px-0 pb-1 md:px-1'}`}>
+                    <div className={`relative mt-0 flex w-full flex-1 items-end justify-center overflow-visible ${isCenter ? 'px-0 pb-0 md:px-2' : 'px-0 pb-1 md:px-1'}`}>
                       <AnimatedAvatar
                         avatar={avatar}
                         pose={isCenter ? 'idle' : 'thinking'}
@@ -233,22 +233,22 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                         className="h-full w-full"
                         imageClassName={`object-bottom transition-transform duration-500 ${
                           isCenter
-                            ? 'scale-[1.72] -translate-y-[6%] md:scale-[1.84]'
-                            : 'scale-[0.98] translate-y-[12%] opacity-70 saturate-[0.62] brightness-[0.72] blur-[1px] md:scale-[1.02]'
+                            ? 'scale-[1.34] -translate-y-[1%] md:scale-[1.84] md:-translate-y-[6%]'
+                            : 'scale-[0.82] translate-y-[14%] opacity-66 saturate-[0.6] brightness-[0.72] blur-[1px] md:scale-[1.02] md:translate-y-[12%]'
                         }`}
                       />
                     </div>
 
-                    <div className={`relative w-full ${isCenter ? 'px-3 pb-3 pt-0 md:px-4 md:pb-4' : 'px-2 pb-2 pt-0 md:px-3 md:pb-3'}`}>
+                    <div className={`relative w-full ${isCenter ? 'px-2.5 pb-2.5 pt-0 md:px-4 md:pb-4' : 'px-1.5 pb-1.5 pt-0 md:px-3 md:pb-3'}`}>
                       <div className={`mx-auto rounded-[1.15rem] border text-center ${
                         isCenter
-                          ? 'border-[#ffe49a]/60 bg-[linear-gradient(180deg,rgba(64,106,229,0.98),rgba(36,61,168,0.99))] px-3 py-2.5 shadow-[0_10px_0_rgba(19,38,110,0.92),0_22px_36px_rgba(15,23,42,0.3)] md:rounded-[1.6rem] md:px-4 md:py-3.5'
-                          : 'border-white/8 bg-[linear-gradient(180deg,rgba(14,24,48,0.84),rgba(8,14,30,0.96))] px-2 py-1.5 shadow-[0_8px_18px_rgba(2,6,23,0.16)] md:rounded-[1.35rem] md:px-3 md:py-2'
+                          ? 'border-[#ffe49a]/60 bg-[linear-gradient(180deg,rgba(64,106,229,0.98),rgba(36,61,168,0.99))] px-2.5 py-2 shadow-[0_8px_0_rgba(19,38,110,0.92),0_18px_28px_rgba(15,23,42,0.28)] md:rounded-[1.6rem] md:px-4 md:py-3.5 md:shadow-[0_10px_0_rgba(19,38,110,0.92),0_22px_36px_rgba(15,23,42,0.3)]'
+                          : 'border-white/8 bg-[linear-gradient(180deg,rgba(14,24,48,0.84),rgba(8,14,30,0.96))] px-1.5 py-1 shadow-[0_6px_14px_rgba(2,6,23,0.16)] md:rounded-[1.35rem] md:px-3 md:py-2'
                       }`}>
-                        <div className={`bg-gradient-to-r ${style.text} bg-clip-text text-transparent ${isCenter ? 'text-[1.42rem] md:text-[1.9rem]' : 'text-[0.95rem] md:text-[1.08rem]'} font-black tracking-[-0.03em]`}>
+                        <div className={`bg-gradient-to-r ${style.text} bg-clip-text text-transparent ${isCenter ? 'text-[1.12rem] md:text-[1.9rem]' : 'text-[0.8rem] md:text-[1.08rem]'} font-black tracking-[-0.03em]`}>
                           {avatar.name}
                         </div>
-                        <div className={`mt-1 font-black uppercase tracking-[0.22em] ${isCenter ? 'text-[9px] text-white/82 md:text-[10px]' : 'text-[8px] text-white/42 md:text-[9px]'}`}>
+                        <div className={`mt-0.5 font-black uppercase tracking-[0.18em] ${isCenter ? 'text-[8px] text-white/82 md:text-[10px] md:tracking-[0.22em]' : 'text-[7px] text-white/42 md:text-[9px] md:tracking-[0.22em]'}`}>
                           {isCenter ? `${avatar.rarity} Hero` : 'Tap'}
                         </div>
                       </div>
@@ -263,7 +263,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
             whileHover={{ scale: 1.04, x: 1 }}
             whileTap={{ scale: 0.95, y: 1 }}
             onClick={() => selectIndex(selectedIndex + 1)}
-            className="hero-arrow-button absolute right-2 top-1/2 z-20 -translate-y-1/2 md:right-5"
+            className="hero-arrow-button absolute right-1 top-1/2 z-20 -translate-y-1/2 md:right-5"
             aria-label="Next hero"
           >
             <span className="hero-arrow-button-face">
@@ -273,8 +273,8 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
           </motion.button>
         </div>
 
-        <div className="relative z-10 flex shrink-0 flex-col items-center gap-3 px-4 pb-[calc(env(safe-area-inset-bottom)+0.85rem)] md:px-8 md:pb-6">
-          <div className="flex items-center gap-2.5">
+        <div className="relative z-10 flex shrink-0 flex-col items-center gap-2 px-4 pb-[calc(env(safe-area-inset-bottom)+0.65rem)] md:gap-3 md:px-8 md:pb-6">
+          <div className="flex items-center gap-2">
             {AVATARS.map((avatar, index) => (
               <button
                 key={avatar.id}
