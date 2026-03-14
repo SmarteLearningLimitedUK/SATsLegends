@@ -18,52 +18,46 @@ type IslandPosition = {
 };
 
 const MAP_POSITIONS: Record<number, IslandPosition> = {
-  1: { x: 74, y: 91, size: 29, rotation: -6 },
-  2: { x: 26, y: 77, size: 27, rotation: 4 },
-  3: { x: 36, y: 59, size: 29, rotation: -5 },
-  4: { x: 74, y: 45, size: 27, rotation: 5 },
-  5: { x: 28, y: 25, size: 28, rotation: -4 },
-  6: { x: 73, y: 11, size: 28, rotation: 4 },
+  5: { x: 24, y: 16, size: 28, rotation: -7 },
+  6: { x: 72, y: 16, size: 28, rotation: 6 },
+  2: { x: 72, y: 37, size: 29, rotation: 5 },
+  3: { x: 27, y: 43, size: 29, rotation: -4 },
+  4: { x: 70, y: 65, size: 28, rotation: 5 },
+  1: { x: 28, y: 74, size: 30, rotation: -5 },
 };
 
-const PATH_ORDER = [1, 2, 3, 4, 5, 6];
+const PATH_ORDER = [5, 6, 3, 2, 1, 4];
 
-const ISLAND_PALETTES: Record<number, { glow: string; ring: string; chip: string; button: string }> = {
+const ISLAND_PALETTES: Record<number, { glow: string; ring: string; label: string }> = {
   1: {
     glow: 'from-emerald-300/46 via-lime-300/14 to-transparent',
     ring: 'shadow-[0_0_42px_rgba(74,222,128,0.35)]',
-    chip: 'from-lime-300 to-emerald-400',
-    button: 'from-lime-300 to-emerald-400',
+    label: 'from-emerald-500/92 to-lime-500/92',
   },
   2: {
     glow: 'from-cyan-300/44 via-sky-300/14 to-transparent',
     ring: 'shadow-[0_0_42px_rgba(103,232,249,0.35)]',
-    chip: 'from-cyan-300 to-sky-400',
-    button: 'from-cyan-300 to-sky-400',
+    label: 'from-cyan-500/92 to-sky-500/92',
   },
   3: {
     glow: 'from-amber-300/44 via-yellow-300/14 to-transparent',
     ring: 'shadow-[0_0_42px_rgba(253,224,71,0.35)]',
-    chip: 'from-amber-300 to-orange-400',
-    button: 'from-amber-300 to-orange-400',
+    label: 'from-amber-500/92 to-orange-500/92',
   },
   4: {
     glow: 'from-orange-300/44 via-amber-300/14 to-transparent',
     ring: 'shadow-[0_0_42px_rgba(251,146,60,0.35)]',
-    chip: 'from-orange-300 to-amber-400',
-    button: 'from-orange-300 to-amber-400',
+    label: 'from-orange-500/92 to-amber-500/92',
   },
   5: {
     glow: 'from-fuchsia-300/44 via-violet-300/14 to-transparent',
     ring: 'shadow-[0_0_42px_rgba(216,180,254,0.35)]',
-    chip: 'from-fuchsia-300 to-violet-400',
-    button: 'from-fuchsia-300 to-violet-400',
+    label: 'from-fuchsia-500/92 to-violet-500/92',
   },
   6: {
     glow: 'from-violet-300/44 via-indigo-300/14 to-transparent',
     ring: 'shadow-[0_0_42px_rgba(167,139,250,0.35)]',
-    chip: 'from-violet-300 to-indigo-400',
-    button: 'from-violet-300 to-indigo-400',
+    label: 'from-violet-500/92 to-indigo-500/92',
   },
 };
 
@@ -198,23 +192,23 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
           <div className="relative h-full min-h-0 overflow-hidden">
             <div className="absolute inset-[0.7rem] rounded-[1.8rem] border border-white/8 bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.08),rgba(255,255,255,0)_20%),linear-gradient(180deg,rgba(11,25,55,0.34),rgba(4,13,31,0.48))] md:inset-4 md:rounded-[2.4rem]" />
 
-            <div className="relative mx-auto h-full max-w-[34rem] overflow-y-auto px-1.5 pb-[7.25rem] pt-1.5 hide-scrollbar md:max-w-[40rem] md:px-2 md:pb-[8.5rem] md:pt-2">
-              <div className="relative min-h-[980px] w-full rounded-[1.8rem] md:min-h-[1180px] md:rounded-[2.4rem]">
+            <div className="relative mx-auto h-full max-w-[34rem] overflow-y-auto px-1.5 pb-[6rem] pt-1.5 hide-scrollbar md:max-w-[40rem] md:px-2 md:pb-[7rem] md:pt-2">
+              <div className="relative min-h-[1180px] w-full rounded-[1.8rem] md:min-h-[1380px] md:rounded-[2.4rem]">
                 <svg viewBox="0 0 100 100" className="pointer-events-none absolute inset-0 h-full w-full overflow-visible">
                   <path
                     d={mapPath}
                     fill="none"
-                    stroke="rgba(255,242,178,0.3)"
-                    strokeWidth="1.6"
+                    stroke="rgba(255,242,178,0.32)"
+                    strokeWidth="1.7"
                     strokeLinecap="round"
                   />
                   <path
                     d={mapPath}
                     fill="none"
                     stroke="url(#mapPathGradient)"
-                    strokeWidth="1.05"
+                    strokeWidth="1.18"
                     strokeLinecap="round"
-                    strokeDasharray="1.2 2.1"
+                    strokeDasharray="1.2 1.85"
                   />
                   <defs>
                     <linearGradient id="mapPathGradient" x1="0%" y1="100%" x2="100%" y2="0%">
@@ -247,7 +241,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                   });
                 })}
 
-                {islandProgress.map(({ island, isUnlocked, completion, completedCount, earnedStars, maxStars }) => {
+                {islandProgress.map(({ island, isUnlocked, completion, earnedStars, maxStars }) => {
                   const position = MAP_POSITIONS[island.id];
                   const palette = ISLAND_PALETTES[island.id] || ISLAND_PALETTES[1];
                   const isNext = island.id === firstPlayableIslandId;
@@ -256,13 +250,13 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                   return (
                     <motion.button
                       key={island.id}
-                      whileTap={{ scale: 0.96 }}
+                      whileTap={{ scale: 0.97 }}
                       onClick={() => {
                         if (isUnlocked) {
                           onSelectIsland(island);
                         }
                       }}
-                      className="absolute z-20"
+                      className={`group absolute z-20 ${isUnlocked ? 'cursor-pointer' : 'cursor-not-allowed'}`}
                       style={{
                         left: `${position.x}%`,
                         top: `${position.y}%`,
@@ -275,28 +269,26 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                         transition={{ duration: isNext ? 2.2 : 5.8, repeat: Infinity, ease: 'easeInOut' }}
                         className="relative"
                       >
-                        <div className={`pointer-events-none absolute left-1/2 top-[44%] h-[64%] w-[64%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br ${palette.glow} blur-2xl`} />
-                        <div className={`pointer-events-none absolute inset-[-4%] rounded-[1.9rem] ${isNext || isThreeStar ? palette.ring : ''}`} />
+                        <div className={`pointer-events-none absolute left-1/2 top-[46%] h-[70%] w-[70%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br ${palette.glow} blur-2xl`} />
+                        <div className={`pointer-events-none absolute inset-[-3%] rounded-[2rem] ${isNext || isThreeStar ? palette.ring : ''}`} />
 
-                        <div className={`relative overflow-hidden rounded-[1.85rem] border ${isNext ? 'border-[#ffe49a]' : 'border-white/18'} bg-slate-950/42 shadow-[0_18px_32px_rgba(2,6,23,0.36)]`}>
-                          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.14),rgba(255,255,255,0)_24%,rgba(2,6,23,0.36)_100%)]" />
+                        <div className="relative">
                           {island.mapImage && (
                             <img
                               src={island.mapImage}
                               alt={island.themeName || island.name}
-                              className="h-full w-full object-cover object-center"
+                              className={`h-full w-full object-contain drop-shadow-[0_24px_38px_rgba(2,6,23,0.42)] transition-transform duration-300 ${isUnlocked ? 'group-hover:scale-[1.03]' : 'opacity-72 grayscale-[0.1]'}`}
                               draggable={false}
                             />
                           )}
-                          <div className="absolute inset-x-2 bottom-2 rounded-[1.05rem] border border-white/12 bg-slate-950/72 px-2.5 py-2 text-center backdrop-blur-xl">
-                            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/96 md:text-[10px]">
-                              {island.themeName || island.name}
-                            </div>
-                            <div className="mt-1 flex items-center justify-center gap-1.5 text-[8px] font-black uppercase tracking-[0.14em] text-white/76 md:text-[9px]">
-                              <AssetIcon name="play" className="h-3 w-3" />
-                              {completedCount}/{island.levels.length}
-                              <span className="text-white/44">|</span>
-                              {completion}%
+                          <div className="absolute left-1/2 top-full mt-1.5 flex w-[118%] -translate-x-1/2 justify-center md:mt-2">
+                            <div className={`rounded-[1rem] border border-white/16 bg-gradient-to-b ${palette.label} px-3 py-2 text-center text-white shadow-[0_14px_26px_rgba(2,6,23,0.34)]`}>
+                              <div className="text-[9px] font-black uppercase tracking-[0.14em] text-white/96 md:text-[10px]">
+                                {island.themeName || island.name}
+                              </div>
+                              <div className="mt-0.5 text-[9px] font-black text-white/85 md:text-[10px]">
+                                {completion}% complete
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -305,7 +297,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                           <motion.div
                             animate={{ y: [0, -5, 0], opacity: [0.85, 1, 0.85] }}
                             transition={{ duration: 1.7, repeat: Infinity }}
-                            className="absolute left-1/2 top-[-0.7rem] flex -translate-x-1/2 items-center gap-1 rounded-full bg-[linear-gradient(180deg,#6ee7b7_0%,#22c55e_100%)] px-2 py-1 text-[7px] font-black uppercase tracking-[0.16em] text-emerald-950 shadow-[0_8px_18px_rgba(34,197,94,0.35)] md:text-[8px]"
+                            className="absolute left-1/2 top-[-0.55rem] flex -translate-x-1/2 items-center gap-1 rounded-full bg-[linear-gradient(180deg,#6ee7b7_0%,#22c55e_100%)] px-2 py-1 text-[7px] font-black uppercase tracking-[0.16em] text-emerald-950 shadow-[0_8px_18px_rgba(34,197,94,0.35)] md:text-[8px]"
                           >
                             <AssetIcon name="play" className="h-2.5 w-2.5" />
                             Next
@@ -316,14 +308,14 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                           <motion.div
                             animate={{ rotate: 360 }}
                             transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-                            className="absolute right-[-0.35rem] top-[-0.35rem] flex h-7 w-7 items-center justify-center rounded-full border border-yellow-100/65 bg-[linear-gradient(180deg,#fde68a_0%,#f59e0b_100%)] shadow-[0_10px_18px_rgba(245,158,11,0.35)]"
+                            className="absolute right-[2%] top-[4%] flex h-7 w-7 items-center justify-center rounded-full border border-yellow-100/65 bg-[linear-gradient(180deg,#fde68a_0%,#f59e0b_100%)] shadow-[0_10px_18px_rgba(245,158,11,0.35)]"
                           >
                             <AssetIcon name="star" className="h-3.5 w-3.5" />
                           </motion.div>
                         )}
 
                         {!isUnlocked && (
-                          <div className="absolute inset-0 flex items-center justify-center rounded-[1.85rem] bg-slate-950/52 backdrop-blur-[2px]">
+                          <div className="absolute inset-[8%] flex items-center justify-center rounded-[2rem] bg-slate-950/40 backdrop-blur-[2px]">
                             <div className="rounded-full border border-white/20 bg-slate-950/55 px-2.5 py-1 text-[8px] font-black uppercase tracking-[0.16em] text-white/80">
                               Locked
                             </div>

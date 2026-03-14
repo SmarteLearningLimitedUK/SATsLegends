@@ -6,3 +6,6 @@ coverage/
 *.log
 .env*
 !.env.example
+external-assets/
+GUI Pro-FantasyHero/
+characters/
