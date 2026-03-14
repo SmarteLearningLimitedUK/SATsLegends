@@ -4,7 +4,6 @@ import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
 import islandSelectPoster from '../assets/islandselect.png';
 import smallButtonBase from '../assets/fantasy_hero/buttons/small_purple.png';
-import smallButtonDeco from '../assets/fantasy_hero/buttons/small_deco.png';
 
 interface WorldMapProps {
   player: PlayerData;
@@ -102,12 +101,12 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                   left: `${hotspot.labelX}%`,
                   top: `${hotspot.labelY}%`,
                   minWidth: '9.5rem',
-                  backgroundImage: `url(${smallButtonDeco}), url(${smallButtonBase})`,
-                  backgroundPosition: 'center, center',
-                  backgroundRepeat: 'no-repeat, no-repeat',
-                  backgroundSize: '100% 100%, 100% 100%',
-                  filter: 'drop-shadow(0 10px 18px rgba(15,23,42,0.26))',
-                  textShadow: '0 2px 0 rgba(0,0,0,0.28)',
+                  backgroundImage: `url(${smallButtonBase})`,
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundSize: '100% 100%',
+                  filter: 'drop-shadow(0 10px 18px rgba(15,23,42,0.22))',
+                  textShadow: '0 1px 0 rgba(0,0,0,0.24)',
                 }}
               >
                 <span className="block text-[10px] font-black uppercase tracking-[0.08em] md:text-[11px]">
