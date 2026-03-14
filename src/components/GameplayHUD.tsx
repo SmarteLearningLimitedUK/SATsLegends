@@ -3,10 +3,19 @@ import { motion } from 'motion/react';
 import { AnimationState, AvatarData } from '../types';
 import AssetIcon from './AssetIcon';
 import AnimatedAvatar from './AnimatedAvatar';
-import progressBarAsset from '../assets/casual_ui/hud/progress_bar_1__fg.png';
-import progressBarBgAsset from '../assets/casual_ui/hud/progress_bar_1__bg.png';
-import profileContainerAsset from '../assets/casual_ui/hud/hud__profile_container.png';
-import scoreTimerBoardAsset from '../assets/casual_ui/hud/hud__score_timer_board.png';
+import profileBgAsset from '../assets/fantasy_hero/frames/profile_bg.png';
+import profileBorderAsset from '../assets/fantasy_hero/frames/profile_border.png';
+import profileInnerAsset from '../assets/fantasy_hero/frames/profile_inner.png';
+import profileDecoAsset from '../assets/fantasy_hero/frames/profile_deco.png';
+import stageBgAsset from '../assets/fantasy_hero/frames/stage_bg.png';
+import stageBorderAsset from '../assets/fantasy_hero/frames/stage_border.png';
+import stageInnerAsset from '../assets/fantasy_hero/frames/stage_inner.png';
+import resourceBgAsset from '../assets/fantasy_hero/ui/resource_bg.png';
+import statusRectAsset from '../assets/fantasy_hero/ui/status_rect.png';
+import sliderBgAsset from '../assets/fantasy_hero/slider/taper_bg.png';
+import sliderBorderAsset from '../assets/fantasy_hero/slider/taper_border.png';
+import sliderFillAsset from '../assets/fantasy_hero/slider/taper_fill_yellow.png';
+import titleFlagAsset from '../assets/fantasy_hero/title/flag_sky.png';
 
 interface GameplayHUDProps {
   title: string;
@@ -48,15 +57,21 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
 
   return (
     <div className="w-full flex shrink-0 flex-col gap-1 md:gap-2">
-      <div className={`w-full ${compact ? 'rounded-[0.95rem]' : 'rounded-[1.15rem]'} border-2 md:rounded-[2rem] md:border-4 ${accentBorder} bg-white/70 shadow-[0_18px_50px_rgba(15,23,42,0.16)] overflow-hidden relative`}>
-        <div className="absolute inset-0 opacity-90 pointer-events-none bg-center bg-cover" style={{ backgroundImage: `url(${scoreTimerBoardAsset})` }} />
+      <div className={`fantasy-hud-shell relative w-full overflow-hidden ${compact ? 'rounded-[1rem]' : 'rounded-[1.25rem]'} shadow-[0_18px_50px_rgba(15,23,42,0.24)] md:rounded-[2rem]`}>
+        <div className="absolute inset-0 opacity-95 pointer-events-none bg-center bg-cover" style={{ backgroundImage: `url(${stageBgAsset})` }} />
+        <div className="absolute inset-0 opacity-95 pointer-events-none bg-center bg-cover" style={{ backgroundImage: `url(${stageBorderAsset})` }} />
+        <div className="absolute inset-[2px] opacity-90 pointer-events-none bg-center bg-cover md:inset-[4px]" style={{ backgroundImage: `url(${stageInnerAsset})` }} />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),transparent_28%),linear-gradient(180deg,rgba(7,17,31,0.22),rgba(7,17,31,0.1))]" />
         <div className={`relative flex flex-col ${compact ? 'gap-0.5 p-1' : 'gap-1 p-1.5'} md:p-5 lg:flex-row lg:items-center lg:justify-between`}>
           <div className={`flex min-w-0 items-center ${compact ? 'gap-1' : 'gap-1.5'} md:gap-4`}>
             <motion.div
               whileHover={{ scale: 1.06, rotate: -4 }}
-              className={`${avatar?.color || 'bg-slate-200'} ${compact ? 'h-8 w-8 rounded-[0.8rem]' : 'h-9 w-9 rounded-[0.9rem]'} md:h-20 md:w-20 md:rounded-[2rem] flex items-center justify-center border-2 border-white/70 relative overflow-hidden shrink-0 bg-center bg-cover`}
+              className={`${compact ? 'h-8 w-8 rounded-[0.8rem]' : 'h-9 w-9 rounded-[0.9rem]'} md:h-20 md:w-20 md:rounded-[2rem] flex items-center justify-center relative overflow-hidden shrink-0 bg-center bg-cover`}
             >
-              <div className="absolute inset-0 opacity-95" style={{ backgroundImage: `url(${profileContainerAsset})`, backgroundSize: '100% 100%' }} />
+              <div className="absolute inset-0 opacity-95" style={{ backgroundImage: `url(${profileBgAsset})`, backgroundSize: '100% 100%' }} />
+              <div className="absolute inset-0 opacity-95" style={{ backgroundImage: `url(${profileBorderAsset})`, backgroundSize: '100% 100%' }} />
+              <div className="absolute inset-[3%] opacity-90" style={{ backgroundImage: `url(${profileInnerAsset})`, backgroundSize: '100% 100%' }} />
+              <div className="absolute inset-0 opacity-80" style={{ backgroundImage: `url(${profileDecoAsset})`, backgroundSize: '100% 100%' }} />
               <AnimatedAvatar
                 avatar={avatar}
                 pose={avatarPose}
@@ -66,10 +81,10 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
               />
             </motion.div>
             <div className="min-w-0">
-              {!compact && <div className="text-[8px] md:text-xs font-black uppercase tracking-[0.22em] text-slate-300/82">Gameplay</div>}
+              {!compact && <div className="text-[8px] md:text-xs font-black uppercase tracking-[0.22em] text-slate-100/82">Gameplay</div>}
               <h2 className={`${compact ? 'text-[0.95rem] leading-none' : 'text-[1.15rem]'} md:text-3xl font-black tracking-tight text-white truncate drop-shadow-[0_6px_16px_rgba(2,6,23,0.42)]`}>{title}</h2>
-              <div className={`mt-0.5 inline-flex items-center gap-1 rounded-full border ${compact ? 'px-1 py-[2px] text-[6px]' : 'px-1.5 py-0.5 text-[7px]'} md:mt-1 md:gap-2 md:px-3 md:py-1 md:text-sm font-bold ${accentBorder} ${accentSoftBg} ${accentText}`}>
-                <AssetIcon name="star" className="w-4 h-4" />
+              <div className={`mt-0.5 inline-flex items-center gap-1 ${compact ? 'px-2 py-[2px] text-[6px]' : 'px-3 py-0.5 text-[7px]'} md:mt-1 md:gap-2 md:px-4 md:py-1.5 md:text-sm font-bold text-white drop-shadow-[0_2px_8px_rgba(2,6,23,0.4)]`} style={{ backgroundImage: `url(${titleFlagAsset})`, backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat' }}>
+                <AssetIcon name="star" className="w-3 h-3 md:w-4 md:h-4" />
                 <span>Target {targetScore}</span>
               </div>
             </div>
@@ -77,48 +92,56 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
 
           <div className={`grid w-full grid-cols-3 ${compact ? 'gap-0.5' : 'gap-1'} md:gap-3 lg:min-w-[360px]`}>
             {statLabel && (
-              <div className={`rounded-[0.75rem] md:rounded-[1.5rem] border-2 ${accentBorder} ${accentSoftBg} ${compact ? 'px-0.5 py-0.5' : 'px-1 py-0.75'} md:px-3 md:py-3 text-center`}>
-                <div className={`${compact ? 'text-[6px]' : 'text-[7px]'} md:text-xs font-black uppercase tracking-[0.16em] text-slate-500`}>{statLabel}</div>
+              <div className={`relative rounded-[0.75rem] md:rounded-[1.5rem] ${compact ? 'px-0.5 py-0.5' : 'px-1 py-0.75'} md:px-3 md:py-3 text-center overflow-hidden`}>
+                <div className="absolute inset-0 opacity-95" style={{ backgroundImage: `url(${statusRectAsset})`, backgroundSize: '100% 100%' }} />
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.14),rgba(255,255,255,0.04))]" />
+                <div className={`${compact ? 'text-[6px]' : 'text-[7px]'} relative md:text-xs font-black uppercase tracking-[0.16em] text-slate-600`}>{statLabel}</div>
                 <div className={`mt-0.5 md:mt-1 ${compact ? 'text-[0.82rem]' : 'text-[0.95rem]'} md:text-2xl font-black ${accentText}`}>{statValue}</div>
               </div>
             )}
-            <div className={`rounded-[0.75rem] md:rounded-[1.5rem] border-2 ${accentBorder} bg-white/78 ${compact ? 'px-0.5 py-0.5' : 'px-1 py-0.75'} md:px-3 md:py-3 text-center`}>
-              <div className={`${compact ? 'text-[6px]' : 'text-[7px]'} md:text-xs font-black uppercase tracking-[0.16em] text-slate-500`}>Score</div>
+            <div className={`relative rounded-[0.75rem] md:rounded-[1.5rem] ${compact ? 'px-0.5 py-0.5' : 'px-1 py-0.75'} md:px-3 md:py-3 text-center overflow-hidden`}>
+              <div className="absolute inset-0 opacity-95" style={{ backgroundImage: `url(${resourceBgAsset})`, backgroundSize: '100% 100%' }} />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(255,255,255,0.04))]" />
+              <div className={`${compact ? 'text-[6px]' : 'text-[7px]'} relative md:text-xs font-black uppercase tracking-[0.16em] text-slate-600`}>Score</div>
               <motion.div
                 key={score}
                 initial={{ scale: 1.16 }}
                 animate={{ scale: 1 }}
-                className={`mt-0.5 md:mt-1 ${compact ? 'text-[0.82rem]' : 'text-[1rem]'} md:text-3xl font-black ${accentText}`}
+                className={`mt-0.5 relative md:mt-1 ${compact ? 'text-[0.82rem]' : 'text-[1rem]'} md:text-3xl font-black ${accentText}`}
               >
                 {score}
               </motion.div>
             </div>
-            <div className={`rounded-[0.75rem] md:rounded-[1.5rem] border-2 ${accentBorder} ${accentSoftBg} ${compact ? 'px-0.5 py-0.5' : 'px-1 py-0.75'} md:px-3 md:py-3 text-center`}>
-              <div className={`flex items-center justify-center ${compact ? 'gap-0.5' : 'gap-1'} md:gap-2`}>
+            <div className={`relative rounded-[0.75rem] md:rounded-[1.5rem] ${compact ? 'px-0.5 py-0.5' : 'px-1 py-0.75'} md:px-3 md:py-3 text-center overflow-hidden`}>
+              <div className="absolute inset-0 opacity-95" style={{ backgroundImage: `url(${resourceBgAsset})`, backgroundSize: '100% 100%' }} />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(255,255,255,0.04))]" />
+              <div className={`relative flex items-center justify-center ${compact ? 'gap-0.5' : 'gap-1'} md:gap-2`}>
                 <AssetIcon name="timer" className={`${compact ? 'w-2.5 h-2.5' : 'w-3 h-3'} md:w-5 md:h-5 ${timeLeft < 10 ? 'animate-pulse' : ''}`} />
-                <div className={`${compact ? 'text-[6px]' : 'text-[7px]'} md:text-xs font-black uppercase tracking-[0.16em] text-slate-500`}>Time</div>
+                <div className={`${compact ? 'text-[6px]' : 'text-[7px]'} md:text-xs font-black uppercase tracking-[0.16em] text-slate-600`}>Time</div>
               </div>
-              <div className={`mt-0.5 md:mt-1 ${compact ? 'text-[0.82rem]' : 'text-[0.95rem]'} md:text-3xl font-black ${timeLeft < 10 ? 'text-red-500' : accentText}`}>{timeLeft}s</div>
+              <div className={`mt-0.5 relative md:mt-1 ${compact ? 'text-[0.82rem]' : 'text-[0.95rem]'} md:text-3xl font-black ${timeLeft < 10 ? 'text-red-500' : accentText}`}>{timeLeft}s</div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className={`w-full rounded-full border-2 ${accentBorder} bg-white/78 ${compact ? 'p-[2px]' : 'p-0.5'} md:p-1 shadow-[inset_0_2px_8px_rgba(15,23,42,0.08)]`}>
-        <div className={`relative ${compact ? 'h-2' : 'h-2.5'} md:h-6 overflow-hidden rounded-full bg-slate-200/60`}>
-          <img src={progressBarBgAsset} alt="progress bar background" className="absolute inset-0 h-full w-full object-fill opacity-95" />
+      <div className={`relative w-full ${compact ? 'h-3' : 'h-4'} md:h-6 overflow-hidden rounded-full`}>
+        <img src={sliderBgAsset} alt="progress bar background" className="absolute inset-0 h-full w-full object-fill opacity-95" />
+        <img src={sliderBorderAsset} alt="progress bar border" className="absolute inset-0 h-full w-full object-fill opacity-95" />
+        <div className="absolute inset-[6%] overflow-hidden rounded-full">
           <motion.div
             className="absolute inset-y-0 left-0 rounded-full overflow-hidden"
             initial={{ width: 0 }}
             animate={{ width: `${Math.max(0, Math.min(progress, 100))}%` }}
             transition={{ type: 'spring', stiffness: 90, damping: 18 }}
           >
-            <img src={progressBarAsset} alt="progress" className="h-full w-full object-fill" />
+            <img src={sliderFillAsset} alt="progress" className="h-full w-full object-fill" />
+            <div className={`absolute inset-0 ${progressBar}`} />
             <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.15)_20%,rgba(255,255,255,0.5)_35%,rgba(255,255,255,0.15)_50%)] bg-[length:200%_100%] animate-[hud-shine_2.4s_linear_infinite]" />
           </motion.div>
-          <div className={`absolute inset-0 flex items-center justify-center ${compact ? 'text-[7px]' : 'text-[8px]'} md:text-xs font-black uppercase tracking-[0.14em] text-slate-700`}>
-            {Math.round(progress)}% complete
-          </div>
+        </div>
+        <div className={`absolute inset-0 flex items-center justify-center ${compact ? 'text-[7px]' : 'text-[8px]'} md:text-xs font-black uppercase tracking-[0.14em] text-slate-50 drop-shadow-[0_2px_8px_rgba(2,6,23,0.4)]`}>
+          {Math.round(progress)}% complete
         </div>
       </div>
     </div>

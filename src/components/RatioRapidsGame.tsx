@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import { AvatarData } from '../types';
 import { AVATARS } from '../constants';
-import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
-import { Home, HelpCircle, Star, Timer, Droplets, Anchor } from './GameIcons';
+import GameplayHUD from './GameplayHUD';
+import { Anchor, Droplets, Star } from './GameIcons';
 
 interface RatioRapidsGameProps {
   levelId: number;
@@ -15,6 +14,13 @@ interface RatioRapidsGameProps {
   onBack: () => void;
 }
 
+interface CargoItem {
+  name: string;
+  short: string;
+  color: string;
+  glow: string;
+}
+
 interface RatioProblem {
   ratioA: number;
   ratioB: number;
@@ -22,175 +28,160 @@ interface RatioProblem {
   givenB: number | null;
   targetA: number;
   targetB: number;
-  itemA: string;
-  itemB: string;
-  colorA: string;
-  colorB: string;
+  cargoA: CargoItem;
+  cargoB: CargoItem;
 }
 
-const ITEMS = [
-  { name: 'Red Gems', color: 'bg-red-500' },
-  { name: 'Blue Gems', color: 'bg-blue-500' },
-  { name: 'Gold Coins', color: 'bg-yellow-400' },
-  { name: 'Silver Coins', color: 'bg-slate-300' },
-  { name: 'Green Potions', color: 'bg-green-500' },
-  { name: 'Purple Potions', color: 'bg-purple-500' },
+const CARGO_ITEMS: CargoItem[] = [
+  { name: 'Sun Gems', short: 'SG', color: 'from-amber-300 via-yellow-300 to-orange-400', glow: 'shadow-[0_0_24px_rgba(251,191,36,0.3)]' },
+  { name: 'Mist Crystals', short: 'MC', color: 'from-cyan-300 via-sky-300 to-blue-400', glow: 'shadow-[0_0_24px_rgba(56,189,248,0.3)]' },
+  { name: 'Forest Herbs', short: 'FH', color: 'from-lime-300 via-emerald-300 to-green-400', glow: 'shadow-[0_0_24px_rgba(74,222,128,0.3)]' },
+  { name: 'Royal Ink', short: 'RI', color: 'from-violet-300 via-fuchsia-300 to-pink-400', glow: 'shadow-[0_0_24px_rgba(232,121,249,0.3)]' },
+  { name: 'Forge Ore', short: 'FO', color: 'from-slate-300 via-stone-300 to-orange-400', glow: 'shadow-[0_0_24px_rgba(251,146,60,0.24)]' },
+  { name: 'Moon Pearls', short: 'MP', color: 'from-indigo-300 via-blue-300 to-cyan-300', glow: 'shadow-[0_0_24px_rgba(96,165,250,0.28)]' },
 ];
 
-const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({ 
-  levelId, 
-  avatarId, 
-  onVictory, 
-  onGameOver, 
-  onBack 
+const formatRatio = (first: number, second: number) => `${first}:${second}`;
+
+const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
+  levelId,
+  avatarId,
+  onVictory,
+  onGameOver,
+  onBack,
 }) => {
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(60);
-  const [isGameOver, setIsGameOver] = useState(false);
-  const [isVictory, setIsVictory] = useState(false);
-  
+  const [timeLeft, setTimeLeft] = useState(68 + (levelId * 15));
+  const [streak, setStreak] = useState(0);
+  const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
   const [problem, setProblem] = useState<RatioProblem | null>(null);
   const [playerA, setPlayerA] = useState(0);
   const [playerB, setPlayerB] = useState(0);
-  const [streak, setStreak] = useState(0);
-  const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [isVictory, setIsVictory] = useState(false);
 
-  const avatar = AVATARS.find(a => a.id === avatarId) || AVATARS[0];
-  const targetScore = 800 + (levelId * 200);
+  const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
+  const targetScore = 820 + (levelId * 220);
+  const progress = Math.min((score / targetScore) * 100, 100);
 
   const generateProblem = useCallback(() => {
-    const maxMultiplier = 2 + levelId * 2;
     const ratioA = Math.floor(Math.random() * 5) + 1;
     let ratioB = Math.floor(Math.random() * 5) + 1;
-    while (ratioA === ratioB) {
+    while (ratioB === ratioA) {
       ratioB = Math.floor(Math.random() * 5) + 1;
     }
 
-    const multiplier = Math.floor(Math.random() * maxMultiplier) + 2;
+    const multiplier = Math.floor(Math.random() * (2 + levelId * 2)) + 2;
     const targetA = ratioA * multiplier;
     const targetB = ratioB * multiplier;
+    const cargoA = CARGO_ITEMS[Math.floor(Math.random() * CARGO_ITEMS.length)];
+    let cargoB = CARGO_ITEMS[Math.floor(Math.random() * CARGO_ITEMS.length)];
+    while (cargoB.name === cargoA.name) {
+      cargoB = CARGO_ITEMS[Math.floor(Math.random() * CARGO_ITEMS.length)];
+    }
 
-    const itemIdx1 = Math.floor(Math.random() * ITEMS.length);
-    let itemIdx2 = Math.floor(Math.random() * ITEMS.length);
-    while (itemIdx1 === itemIdx2) itemIdx2 = Math.floor(Math.random() * ITEMS.length);
-
-    const isMissingA = Math.random() > 0.5;
-
+    const missingA = Math.random() > 0.5;
     setProblem({
       ratioA,
       ratioB,
-      givenA: isMissingA ? null : targetA,
-      givenB: isMissingA ? targetB : null,
+      givenA: missingA ? null : targetA,
+      givenB: missingA ? targetB : null,
       targetA,
       targetB,
-      itemA: ITEMS[itemIdx1].name,
-      itemB: ITEMS[itemIdx2].name,
-      colorA: ITEMS[itemIdx1].color,
-      colorB: ITEMS[itemIdx2].color,
+      cargoA,
+      cargoB,
     });
-
-    setPlayerA(isMissingA ? 0 : targetA);
-    setPlayerB(isMissingA ? targetB : 0);
+    setPlayerA(missingA ? 0 : targetA);
+    setPlayerB(missingA ? targetB : 0);
     setFeedback(null);
   }, [levelId]);
 
   useEffect(() => {
-    setTimeLeft(60 + levelId * 15);
     setScore(0);
+    setTimeLeft(68 + (levelId * 15));
+    setStreak(0);
+    setFeedback(null);
     setIsGameOver(false);
     setIsVictory(false);
-    setStreak(0);
     generateProblem();
-  }, [levelId, generateProblem]);
+  }, [generateProblem, levelId]);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (timeLeft > 0 && !isGameOver && !isVictory && !feedback) {
-      timer = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            handleTimeUp();
-            return 0;
-          }
-          return prev - 1;
+    if (isGameOver || isVictory || feedback) return undefined;
+    if (timeLeft <= 0) {
+      if (score >= targetScore) {
+        const stars = score >= targetScore * 1.85 ? 3 : score >= targetScore * 1.3 ? 2 : 1;
+        setIsVictory(true);
+        confetti({
+          particleCount: 150,
+          spread: 68,
+          origin: { y: 0.62 },
+          colors: ['#38bdf8', '#fde68a', '#ffffff'],
         });
-      }, 1000);
+        onVictory(stars, score);
+      } else {
+        setIsGameOver(true);
+        onGameOver(score);
+      }
+      return undefined;
     }
-    return () => clearInterval(timer);
-  }, [timeLeft, isGameOver, isVictory, feedback]);
 
-  const handleTimeUp = () => {
-    if (score >= targetScore) {
-      handleWin();
-    } else {
-      setIsGameOver(true);
-      onGameOver(score);
-    }
-  };
-
-  const handleWin = () => {
-    const stars = score >= targetScore * 2 ? 3 : score >= targetScore * 1.5 ? 2 : 1;
-    setIsVictory(true);
-    confetti({
-      particleCount: 150,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#FFD700', '#FFFFFF', '#87CEEB']
-    });
-    onVictory(stars, score);
-  };
+    const timer = setTimeout(() => setTimeLeft((prev) => prev - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [feedback, isGameOver, isVictory, onGameOver, onVictory, score, targetScore, timeLeft]);
 
   const handleSubmit = () => {
-    if (feedback || isGameOver || isVictory || !problem) return;
+    if (!problem || feedback) return;
 
-    if (playerA === problem.targetA && playerB === problem.targetB) {
-      setFeedback('correct');
-      const points = 100 + (streak * 20);
-      setScore(prev => prev + points);
-      setStreak(prev => prev + 1);
-      
+    const isCorrect = playerA === problem.targetA && playerB === problem.targetB;
+    setFeedback(isCorrect ? 'correct' : 'incorrect');
+
+    if (isCorrect) {
+      const points = 120 + (streak * 20);
+      const newScore = score + points;
+      setScore(newScore);
+      setStreak((prev) => prev + 1);
+
       confetti({
-        particleCount: 50,
-        spread: 60,
-        origin: { y: 0.5 },
-        colors: ['#3b82f6', '#60a5fa']
+        particleCount: 44,
+        spread: 46,
+        origin: { y: 0.7 },
+        colors: ['#22d3ee', '#60a5fa', '#ffffff'],
       });
 
-      setTimeout(generateProblem, 1500);
-    } else {
-      setFeedback('incorrect');
-      setStreak(0);
-      setScore(prev => Math.max(0, prev - 30));
-      
       setTimeout(() => {
-        setFeedback(null);
-      }, 1500);
+        if (newScore >= targetScore) {
+          const stars = newScore >= targetScore * 1.85 ? 3 : newScore >= targetScore * 1.3 ? 2 : 1;
+          setIsVictory(true);
+          onVictory(stars, newScore);
+        } else {
+          generateProblem();
+        }
+      }, 760);
+    } else {
+      setStreak(0);
+      setScore((prev) => Math.max(0, prev - 35));
+      setTimeout(() => setFeedback(null), 760);
     }
   };
 
-  const progress = Math.min((score / targetScore) * 100, 100);
+  const adjustCargo = (side: 'A' | 'B', delta: number) => {
+    if (!problem || feedback) return;
+    if (side === 'A' && problem.givenA === null) setPlayerA((prev) => Math.max(0, prev + delta));
+    if (side === 'B' && problem.givenB === null) setPlayerB((prev) => Math.max(0, prev + delta));
+  };
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden bg-cyan-900 font-sans">
-      {/* River Background */}
-      <div className="absolute inset-0 opacity-30 pointer-events-none" style={{ 
-        backgroundImage: 'radial-gradient(circle at 50% 50%, #0891b2 2px, transparent 2px)', 
-        backgroundSize: '40px 40px' 
-      }} />
-      
-      {/* Animated waves */}
-      <motion.div 
-        className="absolute bottom-0 left-0 right-0 h-32 bg-cyan-500/20 rounded-t-[100%]"
-        animate={{ y: [0, -20, 0], scaleX: [1, 1.05, 1] }}
-        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-      />
-      <motion.div 
-        className="absolute bottom-0 left-0 right-0 h-24 bg-cyan-400/30 rounded-t-[100%]"
-        animate={{ y: [0, -15, 0], scaleX: [1.05, 1, 1.05] }}
-        transition={{ repeat: Infinity, duration: 3, ease: "easeInOut", delay: 0.5 }}
-      />
+    <div className="relative flex h-full w-full flex-col overflow-hidden bg-[linear-gradient(180deg,#0f766e_0%,#0f172a_42%,#020617_100%)] px-2 pb-2 pt-1 md:px-4 md:pb-4">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute inset-x-0 top-0 h-[32%] bg-[radial-gradient(circle_at_top,rgba(103,232,249,0.16),transparent_42%)]" />
+        <motion.div className="absolute inset-x-[-10%] bottom-[24%] h-[28%] rounded-[45%] bg-cyan-400/18 blur-2xl" animate={{ x: ['0%', '4%', '0%'] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }} />
+        <motion.div className="absolute inset-x-[-12%] bottom-[16%] h-[24%] rounded-[45%] bg-sky-500/22 blur-2xl" animate={{ x: ['0%', '-4%', '0%'] }} transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }} />
+        <div className="absolute inset-x-0 bottom-0 h-[52%] bg-[linear-gradient(180deg,rgba(14,165,233,0.04),rgba(8,47,73,0.3)_18%,rgba(8,47,73,0.78)_56%,rgba(2,6,23,0.98)_100%)]" />
+        <div className="absolute inset-0 opacity-15" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.3) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+      </div>
 
-      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-2 md:gap-6 h-full flex-1 min-h-0">
+      <div className="relative z-10 flex h-full min-h-0 flex-col gap-2 md:gap-4">
         <GameplayHUD
           title="Ratio Rapids"
           avatar={avatar}
@@ -198,155 +189,168 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
           targetScore={targetScore}
           timeLeft={timeLeft}
           progress={progress}
-          accentText="text-cyan-900"
-          accentSoftBg="bg-cyan-100/80"
-          accentBorder="border-cyan-200/80"
-          progressBar="bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500"
+          compact
+          accentText="text-cyan-950"
+          accentSoftBg="bg-cyan-100/86"
+          accentBorder="border-cyan-200/88"
+          progressBar="bg-gradient-to-r from-cyan-300 via-sky-300 to-emerald-300"
           statLabel="Streak"
           statValue={streak}
         />
 
-        {/* Game Area */}
-        <div className="w-full flex-1 relative flex flex-col items-center justify-center gap-4 md:gap-8">
-          
+        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-2 shadow-[0_28px_64px_rgba(0,0,0,0.34)] md:rounded-[2.6rem] md:p-4">
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(15,23,42,0.14))]" />
+
           {problem && (
             <>
-              {/* Instruction Panel */}
-              <div className="bg-cyan-950/80 backdrop-blur-md p-4 md:p-8 rounded-[2rem] md:rounded-[3rem] border-2 md:border-4 border-cyan-700 shadow-2xl text-center max-w-2xl w-full">
-                <h3 className="text-base md:text-2xl text-cyan-100 font-bold mb-2 md:mb-4">
-                  The river demands a ratio of:
-                </h3>
-                <div className="text-xl md:text-4xl font-black text-white flex flex-wrap items-center justify-center gap-2 md:gap-4">
-                  <span className={problem.colorA.replace('bg-', 'text-')}>{problem.ratioA} {problem.itemA}</span>
-                  <span className="text-cyan-500">:</span>
-                  <span className={problem.colorB.replace('bg-', 'text-')}>{problem.ratioB} {problem.itemB}</span>
+              <div className="relative z-10 mb-2 rounded-[1.3rem] border border-cyan-100/12 bg-[linear-gradient(180deg,rgba(8,47,73,0.88),rgba(8,47,73,0.96))] px-4 py-3 shadow-[0_18px_36px_rgba(0,0,0,0.24)] md:mb-4 md:rounded-[1.8rem]">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/74 md:text-xs">River Contract</div>
+                    <div className="mt-1 text-base font-black text-white md:text-3xl">{formatRatio(problem.ratioA, problem.ratioB)}</div>
+                  </div>
+                  <div className="rounded-full border border-white/12 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-50 md:text-xs">
+                    Keep the cargo in exact proportion
+                  </div>
                 </div>
               </div>
 
-              {/* Interactive Area */}
-              <div className="flex flex-col md:flex-row gap-3 md:gap-8 items-center justify-center w-full max-w-4xl">
-                
-                {/* Item A */}
-                <div className="bg-cyan-900/60 p-4 md:p-6 rounded-[1.6rem] md:rounded-3xl border-2 border-cyan-700 flex flex-col items-center gap-3 md:gap-4 flex-1 w-full">
-                  <div className="text-base md:text-xl font-bold text-cyan-200 text-center">{problem.itemA}</div>
-                  <div className="flex items-center gap-3 md:gap-4">
-                    <button 
-                      onClick={() => setPlayerA(Math.max(0, playerA - 1))}
-                      disabled={problem.givenA !== null || !!feedback}
-                      className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-cyan-800 text-white font-black text-xl md:text-2xl hover:bg-cyan-700 disabled:opacity-50"
-                    >-</button>
-                    <div className={`text-4xl md:text-6xl font-black w-16 md:w-24 text-center ${problem.givenA !== null ? 'text-cyan-400' : 'text-white'}`}>
-                      {playerA}
+              <div className="relative z-10 grid min-h-0 flex-1 grid-cols-1 gap-2 md:gap-3 lg:grid-cols-[1.05fr_0.95fr]">
+                <div className="relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-[linear-gradient(180deg,rgba(7,89,133,0.44),rgba(8,47,73,0.86))] p-3 shadow-[0_24px_38px_rgba(0,0,0,0.26)] md:rounded-[2rem]">
+                  <div className="absolute inset-x-0 bottom-0 h-[34%] bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(14,116,144,0.32),rgba(8,47,73,0.92))]" />
+                  <div className="absolute left-[10%] top-[16%] h-12 w-12 rounded-full bg-white/14 blur-2xl" />
+                  <div className="absolute right-[10%] top-[22%] h-12 w-12 rounded-full bg-white/12 blur-2xl" />
+
+                  <div className="relative flex h-full flex-col justify-between gap-3">
+                    <div className="rounded-[1.1rem] border border-white/10 bg-slate-950/26 px-3 py-2 text-center">
+                      <div className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/72">Cargo Order</div>
+                      <div className="mt-1 text-sm font-bold text-white md:text-lg">
+                        Load the rafts so the cargo stays in the ratio {problem.ratioA}:{problem.ratioB}.
+                      </div>
                     </div>
-                    <button 
-                      onClick={() => setPlayerA(playerA + 1)}
-                      disabled={problem.givenA !== null || !!feedback}
-                      className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-cyan-800 text-white font-black text-xl md:text-2xl hover:bg-cyan-700 disabled:opacity-50"
-                    >+</button>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      {[{ key: 'A', cargo: problem.cargoA, value: playerA, given: problem.givenA !== null }, { key: 'B', cargo: problem.cargoB, value: playerB, given: problem.givenB !== null }].map((raft) => (
+                        <div key={raft.key} className="relative rounded-[1.2rem] border border-white/12 bg-slate-950/24 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+                          <div className={`absolute inset-x-[22%] top-[16%] h-14 rounded-full bg-gradient-to-br ${raft.cargo.color} opacity-35 blur-2xl`} />
+                          <div className="relative flex flex-col items-center gap-2">
+                            <div className={`flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br ${raft.cargo.color} text-sm font-black text-slate-950 shadow-[0_14px_20px_rgba(0,0,0,0.24)] ${raft.cargo.glow}`}>
+                              {raft.cargo.short}
+                            </div>
+                            <div className="text-center">
+                              <div className="text-[11px] font-black text-white md:text-base">{raft.cargo.name}</div>
+                              <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/54 md:text-[10px]">Raft {raft.key}</div>
+                            </div>
+                            <motion.div
+                              animate={{ y: [0, -2, 0] }}
+                              transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+                              className="relative flex h-16 w-full items-center justify-center rounded-[1.1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(41,37,36,0.82),rgba(28,25,23,0.92))] shadow-[0_14px_24px_rgba(0,0,0,0.24)]"
+                            >
+                              <div className="absolute inset-x-[10%] bottom-[-10px] h-5 rounded-full bg-cyan-950/50 blur-md" />
+                              <div className="absolute inset-x-[12%] bottom-0 h-5 rounded-[0.9rem] bg-[linear-gradient(180deg,#7c4a22,#4a2b14)]" />
+                              <div className="absolute inset-x-[8%] bottom-[10px] h-7 rounded-[0.8rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.18),rgba(255,255,255,0.02))] backdrop-blur-[2px]" />
+                              <div className="relative text-2xl font-black text-white md:text-3xl">{raft.value}</div>
+                            </motion.div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
-                <div className="text-4xl md:text-6xl font-black text-cyan-600">:</div>
+                <div className="grid min-h-0 grid-rows-[1fr_auto] gap-2 md:gap-3">
+                  <div className="grid grid-cols-2 gap-2 md:gap-3">
+                    {[{ side: 'A' as const, cargo: problem.cargoA, value: playerA, locked: problem.givenA !== null }, { side: 'B' as const, cargo: problem.cargoB, value: playerB, locked: problem.givenB !== null }].map((panel) => (
+                      <div key={panel.side} className="rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.74),rgba(8,47,73,0.9))] p-3 shadow-[0_20px_30px_rgba(0,0,0,0.24)] md:rounded-[1.8rem]">
+                        <div className="mb-2 text-center">
+                          <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/66 md:text-[11px]">Adjust {panel.side}</div>
+                          <div className="mt-1 text-sm font-black text-white md:text-lg">{panel.cargo.name}</div>
+                        </div>
 
-                {/* Item B */}
-                <div className="bg-cyan-900/60 p-4 md:p-6 rounded-[1.6rem] md:rounded-3xl border-2 border-cyan-700 flex flex-col items-center gap-3 md:gap-4 flex-1 w-full">
-                  <div className="text-base md:text-xl font-bold text-cyan-200 text-center">{problem.itemB}</div>
-                  <div className="flex items-center gap-3 md:gap-4">
-                    <button 
-                      onClick={() => setPlayerB(Math.max(0, playerB - 1))}
-                      disabled={problem.givenB !== null || !!feedback}
-                      className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-cyan-800 text-white font-black text-xl md:text-2xl hover:bg-cyan-700 disabled:opacity-50"
-                    >-</button>
-                    <div className={`text-4xl md:text-6xl font-black w-16 md:w-24 text-center ${problem.givenB !== null ? 'text-cyan-400' : 'text-white'}`}>
-                      {playerB}
-                    </div>
-                    <button 
-                      onClick={() => setPlayerB(playerB + 1)}
-                      disabled={problem.givenB !== null || !!feedback}
-                      className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-cyan-800 text-white font-black text-xl md:text-2xl hover:bg-cyan-700 disabled:opacity-50"
-                    >+</button>
+                        <div className="flex items-center justify-between gap-2">
+                          <button
+                            onClick={() => adjustCargo(panel.side, -1)}
+                            disabled={panel.locked || !!feedback}
+                            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/12 bg-white/10 text-xl font-black text-white disabled:opacity-35"
+                          >
+                            -
+                          </button>
+                          <div className="rounded-[1rem] border border-white/12 bg-white/10 px-3 py-2 text-center">
+                            <div className="text-2xl font-black text-white md:text-3xl">{panel.value}</div>
+                          </div>
+                          <button
+                            onClick={() => adjustCargo(panel.side, 1)}
+                            disabled={panel.locked || !!feedback}
+                            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/12 bg-white/10 text-xl font-black text-white disabled:opacity-35"
+                          >
+                            +
+                          </button>
+                        </div>
+
+                        {panel.locked && (
+                          <div className="mt-2 rounded-full border border-emerald-200/18 bg-emerald-400/12 px-2.5 py-1 text-center text-[10px] font-black uppercase tracking-[0.18em] text-emerald-100/82">
+                            Locked Cargo
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
+
+                  <button
+                    onClick={handleSubmit}
+                    disabled={!!feedback}
+                    className="licensed-submit-button flex items-center justify-center gap-3 rounded-[1.4rem] py-3 text-lg font-black text-white disabled:cursor-not-allowed disabled:opacity-45 md:rounded-[1.8rem] md:text-2xl"
+                  >
+                    <Anchor className="h-5 w-5 md:h-6 md:w-6" />
+                    Set Sail
+                  </button>
                 </div>
 
+                <AnimatePresence>
+                  {feedback && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.7 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 1.1 }}
+                      className={`absolute inset-0 z-20 flex items-center justify-center rounded-[1.6rem] backdrop-blur-md ${
+                        feedback === 'correct' ? 'bg-emerald-500/18' : 'bg-rose-500/18'
+                      }`}
+                    >
+                      <div className="rounded-full border border-white/14 bg-slate-950/46 px-5 py-3 shadow-[0_18px_28px_rgba(0,0,0,0.24)]">
+                        <div className={`flex items-center gap-3 text-lg font-black uppercase tracking-[0.2em] md:text-2xl ${
+                          feedback === 'correct' ? 'text-emerald-100' : 'text-rose-100'
+                        }`}>
+                          <Droplets className="h-5 w-5 md:h-6 md:w-6" />
+                          {feedback === 'correct' ? 'Safe Crossing' : 'Rapids Crash'}
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-
-              <button
-                onClick={handleSubmit}
-                disabled={!!feedback || (playerA === 0 && playerB === 0)}
-                className="px-6 py-3 md:px-12 md:py-6 bg-blue-500 text-white text-xl md:text-3xl font-black rounded-[1.4rem] md:rounded-3xl shadow-[0_8px_0_#2563eb] hover:translate-y-1 hover:shadow-[0_4px_0_#2563eb] active:translate-y-2 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3 md:gap-4"
-              >
-                <Anchor className="w-6 h-6 md:w-8 md:h-8" /> ROW!
-              </button>
             </>
           )}
-
-          {/* Feedback Overlay */}
-          <AnimatePresence>
-            {feedback && (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.5 }}
-                className={`absolute inset-0 flex items-center justify-center z-20 pointer-events-none`}
-              >
-                <div className={`px-12 py-6 rounded-full backdrop-blur-md border-4 ${feedback === 'correct' ? 'bg-green-500/20 border-green-400' : 'bg-red-500/20 border-red-400'}`}>
-                  <span className={`text-3xl md:text-6xl font-black drop-shadow-lg ${feedback === 'correct' ? 'text-green-400' : 'text-red-500'}`}>
-                    {feedback === 'correct' ? 'SAFE PASSAGE!' : 'CRASH!'}
-                  </span>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
         </div>
 
-        <GameActionDock
-          onBack={onBack}
-          accentClass="text-cyan-700"
-        />
+        <GameActionDock onBack={onBack} accentClass="text-cyan-100" />
 
-        {/* Game Over / Victory Modals */}
         <AnimatePresence>
-        {(isGameOver || isVictory) && (
-          <motion.div 
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
-          >
-            <div className="app-modal-panel w-full max-w-md rounded-[2rem] border-4 border-cyan-700 bg-cyan-950 p-6 shadow-2xl flex flex-col items-center gap-5 md:rounded-[3rem] md:border-8 md:gap-8 md:p-12">
-              <div className={`text-5xl font-black ${isVictory ? 'text-cyan-400' : 'text-red-500'} drop-shadow-md text-center`}>
-                {isVictory ? 'RIVER MASTER!' : 'SUNK!'}
-              </div>
-
-              {isVictory && (
-                <div className="flex gap-2">
-                  {[1, 2, 3].map(s => (
-                    <motion.div
-                      key={s}
-                      initial={{ scale: 0, rotate: -20 }}
-                      animate={{ scale: 1, rotate: 0 }}
-                      transition={{ delay: s * 0.2, type: 'spring' }}
-                    >
-                      <Star className={`w-16 h-16 ${s <= (score >= targetScore * 2 ? 3 : score >= targetScore * 1.5 ? 2 : 1) ? 'fill-yellow-400 text-yellow-400' : 'text-cyan-800'}`} />
-                    </motion.div>
-                  ))}
+          {(isGameOver || isVictory) && (
+            <motion.div
+              initial={{ scale: 0.84, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/66 p-4 backdrop-blur-md"
+            >
+              <div className="app-modal-panel flex w-full max-w-md flex-col items-center gap-5 rounded-[2rem] border-4 border-cyan-200/32 bg-[linear-gradient(180deg,#f0f9ff,#bae6fd)] p-6 shadow-2xl md:gap-7 md:p-10">
+                <div className={`text-center text-4xl font-black md:text-5xl ${isVictory ? 'text-emerald-600' : 'text-rose-600'}`}>
+                  {isVictory ? 'Rapid Master' : 'River Closed'}
                 </div>
-              )}
-
-              <div className="text-center">
-                <div className="text-cyan-600 font-black uppercase tracking-widest text-sm">Final Score</div>
-                <div className="text-6xl font-black text-white drop-shadow-sm">{score}</div>
+                <button onClick={onBack} className="licensed-submit-button w-full rounded-2xl py-4 text-xl font-black text-white transition-all">
+                  Continue
+                </button>
               </div>
-
-              <button 
-                onClick={onBack}
-                className="w-full py-5 text-white text-2xl font-black rounded-2xl transition-all licensed-submit-button"
-              >
-                CONTINUE
-              </button>
-            </div>
-          </motion.div>
-        )}
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
     </div>

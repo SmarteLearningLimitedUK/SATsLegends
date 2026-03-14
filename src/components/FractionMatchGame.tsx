@@ -6,7 +6,7 @@ import { getBossEncounter } from '../bossMeta';
 import BossPortrait from './BossPortrait';
 import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
-import { Star } from './GameIcons';
+import { ArrowRightLeft, ArrowUpDown, Bomb, Star } from './GameIcons';
 import { triggerHaptic } from '../haptics';
 import { FRACTION_MATCH_ASSETS } from '../assets/fraction_match';
 
@@ -31,6 +31,7 @@ interface TileData {
   familyId: string;
   label: string;
   asset: string;
+  special?: 'BOMB' | 'ROW_CLEAR' | 'COLUMN_CLEAR';
   row: number;
   col: number;
 }
@@ -47,6 +48,7 @@ const LEVEL_TARGET_STEP = 180;
 const LEVEL_TIME_BASE = 90;
 const LEVEL_TIME_STEP = 8;
 const MATCH_DELAY_MS = 180;
+const SPECIAL_CHANCE = 0.07;
 
 const TILE_FAMILIES: TileFamily[] = [
   { id: 'half', labels: ['1/2', '0.5', '2/4', '0.50'], asset: FRACTION_MATCH_ASSETS.tiles.ember, glow: 'shadow-[0_0_24px_rgba(249,115,22,0.38)]' },
@@ -71,6 +73,12 @@ const tileKey = (row: number, col: number) => `${row}-${col}`;
 
 const getFamily = (familyId: string) => TILE_FAMILIES.find(family => family.id === familyId) || TILE_FAMILIES[0];
 
+const maybeCreateSpecial = (): TileData['special'] => {
+  if (Math.random() > SPECIAL_CHANCE) return undefined;
+  const specials: Array<NonNullable<TileData['special']>> = ['BOMB', 'ROW_CLEAR', 'COLUMN_CLEAR'];
+  return specials[Math.floor(Math.random() * specials.length)];
+};
+
 const createTile = (familyId: string, row: number, col: number): TileData => {
   const family = getFamily(familyId);
   const label = family.labels[Math.floor(Math.random() * family.labels.length)];
@@ -80,6 +88,7 @@ const createTile = (familyId: string, row: number, col: number): TileData => {
     familyId,
     label,
     asset: family.asset,
+    special: maybeCreateSpecial(),
     row,
     col,
   };
@@ -206,6 +215,65 @@ const collapseBoard = (board: TileData[][], matchedKeys: Set<string>) => {
   return nextBoard;
 };
 
+const expandMatchesWithSpecials = (board: TileData[][], initialMatches: Set<string>) => {
+  const expanded = new Set(initialMatches);
+  const queue = [...initialMatches];
+
+  while (queue.length > 0) {
+    const key = queue.shift();
+    if (!key) continue;
+
+    const [row, col] = key.split('-').map(Number);
+    const tile = board[row]?.[col];
+    if (!tile?.special) continue;
+
+    const affected: string[] = [];
+
+    if (tile.special === 'ROW_CLEAR') {
+      for (let targetCol = 0; targetCol < COLS; targetCol += 1) {
+        affected.push(tileKey(row, targetCol));
+      }
+    }
+
+    if (tile.special === 'COLUMN_CLEAR') {
+      for (let targetRow = 0; targetRow < ROWS; targetRow += 1) {
+        affected.push(tileKey(targetRow, col));
+      }
+    }
+
+    if (tile.special === 'BOMB') {
+      for (let targetRow = Math.max(0, row - 1); targetRow <= Math.min(ROWS - 1, row + 1); targetRow += 1) {
+        for (let targetCol = Math.max(0, col - 1); targetCol <= Math.min(COLS - 1, col + 1); targetCol += 1) {
+          affected.push(tileKey(targetRow, targetCol));
+        }
+      }
+    }
+
+    affected.forEach((affectedKey) => {
+      if (!expanded.has(affectedKey)) {
+        expanded.add(affectedKey);
+        queue.push(affectedKey);
+      }
+    });
+  }
+
+  return expanded;
+};
+
+const renderSpecialBadge = (special: TileData['special']) => {
+  if (!special) return null;
+
+  if (special === 'BOMB') {
+    return <Bomb className="h-3 w-3 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.4)] md:h-4 md:w-4" />;
+  }
+
+  if (special === 'ROW_CLEAR') {
+    return <ArrowRightLeft className="h-3 w-3 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.4)] md:h-4 md:w-4" />;
+  }
+
+  return <ArrowUpDown className="h-3 w-3 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.4)] md:h-4 md:w-4" />;
+};
+
 const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   levelId,
   avatarId,
@@ -223,7 +291,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   const [combo, setCombo] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isVictory, setIsVictory] = useState(false);
-  const [statusMessage, setStatusMessage] = useState('Swap adjacent tiles to line up three equivalent values.');
+  const [statusMessage, setStatusMessage] = useState('Swap adjacent tiles to line up three equivalent values and trigger crystal powers.');
 
   const scoreRef = useRef(0);
 
@@ -281,7 +349,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
     setCombo(0);
     setIsGameOver(false);
     setIsVictory(false);
-    setStatusMessage('Swap adjacent tiles to line up three equivalent values.');
+    setStatusMessage('Swap adjacent tiles to line up three equivalent values and trigger crystal powers.');
   }, [levelId, setBoardState]);
 
   useEffect(() => {
@@ -322,21 +390,30 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
         break;
       }
 
+      const affectedMatches = expandMatchesWithSpecials(workingBoard, matches);
+
       chain += 1;
-      const matchedIds = Array.from(matches).map(key => {
+      const matchedIds = Array.from(affectedMatches).map(key => {
         const [row, col] = key.split('-').map(Number);
         return workingBoard[row][col].id;
       });
       setMatchedTileIds(matchedIds);
 
-      const points = (matches.size * 55) + (chain * 35);
+      const specialBonus = Math.max(0, affectedMatches.size - matches.size) * 18;
+      const points = (affectedMatches.size * 55) + (chain * 35) + specialBonus;
       const total = awardPoints(points);
       triggerHaptic(chain > 1 ? 'success' : 'selection');
       setCombo(chain);
-      setStatusMessage(chain > 1 ? `Cascade x${chain}. +${points}` : `Match scored. +${points}`);
+      setStatusMessage(
+        affectedMatches.size > matches.size
+          ? `Power clear triggered. +${points}`
+          : chain > 1
+            ? `Cascade x${chain}. +${points}`
+            : `Match scored. +${points}`,
+      );
 
       await delay(MATCH_DELAY_MS);
-      workingBoard = collapseBoard(workingBoard, matches);
+      workingBoard = collapseBoard(workingBoard, affectedMatches);
       setMatchedTileIds([]);
       setBoardState(workingBoard);
 
@@ -393,7 +470,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
 
     if (selectedTile.row === position.row && selectedTile.col === position.col) {
       setSelectedTile(null);
-      setStatusMessage('Swap adjacent tiles to line up three equivalent values.');
+      setStatusMessage('Swap adjacent tiles to line up three equivalent values and trigger crystal powers.');
       return;
     }
 
@@ -500,6 +577,11 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
                             {tile.label}
                           </span>
                         </div>
+                        {tile.special && (
+                          <div className="absolute right-[6%] top-[6%] flex h-5 w-5 items-center justify-center rounded-full border border-white/18 bg-slate-950/58 shadow-[0_10px_16px_rgba(0,0,0,0.34)] md:h-6 md:w-6">
+                            {renderSpecialBadge(tile.special)}
+                          </div>
+                        )}
                       </motion.button>
                     );
                   })}

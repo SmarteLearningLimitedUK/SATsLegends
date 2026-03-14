@@ -51,6 +51,7 @@ type VisualData =
   | { type: 'equation'; lines: string[]; badge?: string; variant?: 'standard' | 'clash' }
   | { type: 'bars'; bars: BarDatum[]; caption?: string }
   | { type: 'coordinates'; points: CoordinatePoint[]; min: number; max: number; caption?: string; targetLabel: string }
+  | { type: 'transform'; start: CoordinatePoint; image: CoordinatePoint; min: number; max: number; caption?: string }
   | { type: 'sequence'; values: string[]; caption?: string }
   | { type: 'ratio'; leftLabel: string; leftValue: string; rightLabel: string; rightValue: string; caption?: string }
   | { type: 'pulse'; centerLabel: string; orbitLabels: string[]; meterValue: number; meterLabel: string; caption?: string };
@@ -440,7 +441,7 @@ const generateTransformQuestion = (): ChallengeQuestion => {
     sublabel: 'Track horizontal movement first, then vertical.',
     options,
     answerIndex,
-    visual: { type: 'coordinates', points: [start, image], min: -4, max: 4, caption: 'Original point and translated image', targetLabel: image.label },
+    visual: { type: 'transform', start, image, min: -4, max: 4, caption: 'Trace the glowing rune route from the original point to its image.' },
   };
 };
 
@@ -786,6 +787,88 @@ const renderPercentPulse = (visual: Extract<VisualData, { type: 'pulse' }>) => {
   );
 };
 
+const renderTransformTemple = (visual: Extract<VisualData, { type: 'transform' }>) => {
+  const size = visual.max - visual.min + 1;
+  const toPercent = (value: number) => ((value - visual.min) / (size - 1)) * 100;
+  const startLeft = toPercent(visual.start.x);
+  const startTop = 100 - toPercent(visual.start.y);
+  const endLeft = toPercent(visual.image.x);
+  const endTop = 100 - toPercent(visual.image.y);
+  const midLeft = endLeft;
+  const midTop = startTop;
+  const dx = visual.image.x - visual.start.x;
+  const dy = visual.image.y - visual.start.y;
+
+  return (
+    <div className="relative w-full max-w-[22rem] overflow-hidden rounded-[1.5rem] border border-amber-200/20 bg-[linear-gradient(180deg,rgba(57,39,17,0.96),rgba(15,15,18,0.98))] p-3 shadow-[0_24px_50px_rgba(0,0,0,0.32)] md:max-w-[24rem] md:rounded-[1.8rem] md:p-5">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(250,204,21,0.18),transparent_26%),radial-gradient(circle_at_bottom_right,rgba(56,189,248,0.12),transparent_24%)]" />
+      <div className="absolute inset-x-0 top-0 h-14 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0))]" />
+
+      <div className="relative flex flex-col items-center">
+        <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-amber-200/18 bg-white/8 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.22em] text-amber-100 md:mb-3 md:px-3 md:text-[10px]">
+          <span className="inline-flex h-2 w-2 rounded-full bg-amber-300 shadow-[0_0_10px_rgba(252,211,77,0.65)]" />
+          Temple Route
+        </div>
+
+        <div className="relative aspect-square w-full max-w-[18rem] overflow-hidden rounded-[1.3rem] border border-white/10 bg-[linear-gradient(180deg,rgba(17,24,39,0.88),rgba(15,23,42,0.98))] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:max-w-[19rem]">
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(180deg,rgba(255,255,255,0.05)_1px,transparent_1px)]" style={{ backgroundSize: `${100 / size}% ${100 / size}%` }} />
+          <div className="absolute inset-x-[8%] top-[8%] bottom-[8%] rounded-[1.1rem] border border-amber-200/12" />
+
+          <motion.div
+            animate={{ opacity: [0.45, 0.95, 0.45] }}
+            transition={{ duration: 2.1, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute h-[2px] origin-left bg-[linear-gradient(90deg,rgba(251,191,36,0.16),rgba(251,191,36,0.88),rgba(56,189,248,0.6))] shadow-[0_0_14px_rgba(251,191,36,0.4)]"
+            style={{
+              left: `${Math.min(startLeft, midLeft)}%`,
+              top: `${startTop}%`,
+              width: `${Math.abs(midLeft - startLeft)}%`,
+            }}
+          />
+          <motion.div
+            animate={{ opacity: [0.4, 0.9, 0.4] }}
+            transition={{ duration: 2.1, repeat: Infinity, ease: 'easeInOut', delay: 0.2 }}
+            className="absolute w-[2px] origin-top bg-[linear-gradient(180deg,rgba(56,189,248,0.2),rgba(56,189,248,0.9),rgba(250,204,21,0.42))] shadow-[0_0_14px_rgba(56,189,248,0.38)]"
+            style={{
+              left: `${endLeft}%`,
+              top: `${Math.min(startTop, endTop)}%`,
+              height: `${Math.abs(endTop - startTop)}%`,
+            }}
+          />
+
+          <div className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${startLeft}%`, top: `${startTop}%` }}>
+            <motion.div
+              animate={{ y: [0, -2, 0] }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+              className="relative flex h-11 w-11 items-center justify-center rounded-[1rem] border border-amber-100/70 bg-[radial-gradient(circle_at_30%_25%,rgba(255,255,255,0.42),rgba(252,211,77,0.86)_38%,rgba(146,64,14,0.92)_100%)] text-sm font-black text-amber-950 shadow-[0_14px_24px_rgba(0,0,0,0.34)]"
+            >
+              {visual.start.label}
+            </motion.div>
+          </div>
+
+          <div className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${endLeft}%`, top: `${endTop}%` }}>
+            <motion.div
+              animate={{ scale: [1, 1.08, 1], boxShadow: ['0 0 0 rgba(56,189,248,0.2)', '0 0 24px rgba(56,189,248,0.42)', '0 0 0 rgba(56,189,248,0.2)'] }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+              className="relative flex h-11 w-11 items-center justify-center rounded-[1rem] border border-sky-100/70 bg-[radial-gradient(circle_at_30%_25%,rgba(255,255,255,0.42),rgba(125,211,252,0.9)_36%,rgba(29,78,216,0.96)_100%)] text-sm font-black text-sky-950 shadow-[0_14px_24px_rgba(0,0,0,0.34)]"
+            >
+              {visual.image.label}
+            </motion.div>
+          </div>
+
+          <div className="absolute bottom-3 left-3 flex gap-1.5 md:bottom-4 md:left-4">
+            <div className="rounded-full border border-amber-200/16 bg-black/24 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.18em] text-amber-100/80">
+              Horizontal move {Math.abs(dx)}
+            </div>
+            <div className="rounded-full border border-sky-200/16 bg-black/24 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.18em] text-sky-100/80">
+              Vertical move {Math.abs(dy)}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const renderVisual = (visual: VisualData) => {
   switch (visual.type) {
     case 'tokens':
@@ -865,6 +948,8 @@ const renderVisual = (visual: VisualData) => {
       );
     case 'coordinates':
       return renderCoordinates(visual);
+    case 'transform':
+      return renderTransformTemple(visual);
     case 'sequence':
       return (
         <div className="flex w-full max-w-[22rem] flex-wrap items-center justify-center gap-1.5 rounded-[1.3rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] px-2.5 py-3 shadow-[0_18px_44px_rgba(0,0,0,0.22)] md:max-w-[26rem] md:gap-2 md:rounded-[1.6rem] md:px-4 md:py-5">

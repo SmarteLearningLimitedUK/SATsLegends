@@ -1,64 +1,58 @@
 import React from 'react';
-import iconHome from '../assets/casual_ui/icons/icon__map.png';
-import iconUser from '../assets/licensed/slices/icon_user.png';
-import iconPlay from '../assets/casual_ui/icons/icon__play.png';
-import iconBack from '../assets/licensed/slices/icon_back.png';
-import iconNext from '../assets/casual_ui/icons/icon__next.png';
-import iconStar from '../assets/casual_ui/icons/icon__star.png';
-import iconStarOutline from '../assets/casual_ui/icons/icon__star_empty.png';
-import iconQuestion from '../assets/licensed/slices/icon_question.png';
-import iconCheck from '../assets/casual_ui/icons/icon__check.png';
-import iconTrophy from '../assets/casual_ui/icons/icon__trophy.png';
-import iconTimer from '../assets/licensed/slices/icon_timer.png';
-import iconHeart from '../assets/casual_ui/icons/icon__heart.png';
-import iconHeartOutline from '../assets/licensed/slices/icon_heart_outline.png';
-import iconDoc from '../assets/licensed/slices/icon_doc.png';
-import iconGear from '../assets/casual_ui/icons/icon__gear.png';
-import iconPeople from '../assets/licensed/slices/icon_people.png';
-import iconChat from '../assets/casual_ui/icons/icon__chat.png';
-import iconInfo from '../assets/licensed/slices/icon_info.png';
-import iconRefresh from '../assets/casual_ui/icons/icon__restart.png';
-import iconX from '../assets/casual_ui/icons/icon__close.png';
-import iconMinus from '../assets/licensed/slices/icon_minus.png';
-import iconPlus from '../assets/licensed/slices/icon_plus.png';
-import iconMedal from '../assets/licensed/slices/icon_medal.png';
-import iconGem from '../assets/casual_ui/icons/icon__gem.png';
-import iconCoin from '../assets/casual_ui/icons/icon__coin.png';
-import iconBigHeart from '../assets/licensed/slices/icon_big_heart.png';
-import iconGamepad from '../assets/licensed/slices/icon_gamepad.png';
-import iconStopwatch from '../assets/licensed/slices/icon_stopwatch.png';
-import iconPlusSquare from '../assets/licensed/slices/icon_plus_square.png';
+import iconBack from '../assets/fantasy_hero/icons/back.svg';
+import iconBattle from '../assets/fantasy_hero/icons/battle.svg';
+import iconBook from '../assets/fantasy_hero/icons/book.svg';
+import iconChat from '../assets/fantasy_hero/icons/chat.svg';
+import iconCheck from '../assets/fantasy_hero/icons/check.svg';
+import iconCoin from '../assets/fantasy_hero/ui/coin.png';
+import iconGem from '../assets/fantasy_hero/ui/gem.png';
+import iconHeart from '../assets/fantasy_hero/icons/heart.svg';
+import iconHelp from '../assets/fantasy_hero/icons/help.svg';
+import iconHome from '../assets/fantasy_hero/icons/home.svg';
+import iconNext from '../assets/fantasy_hero/icons/next.svg';
+import iconRanking from '../assets/fantasy_hero/icons/ranking.svg';
+import iconRefresh from '../assets/fantasy_hero/icons/refresh.svg';
+import iconSetting from '../assets/fantasy_hero/icons/setting.svg';
+import iconSound from '../assets/fantasy_hero/icons/sound.svg';
+import iconSoundMute from '../assets/fantasy_hero/icons/sound_mute.svg';
+import iconStar from '../assets/fantasy_hero/icons/star.svg';
+import iconTimer from '../assets/fantasy_hero/icons/timer.svg';
+import iconTrophy from '../assets/fantasy_hero/icons/trophy.svg';
+import iconUser from '../assets/fantasy_hero/icons/user.svg';
+import iconX from '../assets/fantasy_hero/icons/close.svg';
 
 const ICONS = {
   home: iconHome,
   user: iconUser,
-  play: iconPlay,
+  play: iconBattle,
   back: iconBack,
   next: iconNext,
   star: iconStar,
-  starOutline: iconStarOutline,
-  question: iconQuestion,
+  starOutline: iconStar,
+  question: iconHelp,
   check: iconCheck,
   trophy: iconTrophy,
   timer: iconTimer,
   heart: iconHeart,
-  heartOutline: iconHeartOutline,
-  doc: iconDoc,
-  gear: iconGear,
-  people: iconPeople,
+  heartOutline: iconHeart,
+  doc: iconBook,
+  gear: iconSetting,
+  people: iconUser,
   chat: iconChat,
-  info: iconInfo,
+  info: iconHelp,
   refresh: iconRefresh,
   x: iconX,
-  minus: iconMinus,
-  plus: iconPlus,
-  medal: iconMedal,
+  minus: iconX,
+  plus: iconCheck,
+  medal: iconRanking,
   gem: iconGem,
   coin: iconCoin,
-  bigHeart: iconBigHeart,
-  gamepad: iconGamepad,
-  stopwatch: iconStopwatch,
-  plusSquare: iconPlusSquare,
+  bigHeart: iconHeart,
+  gamepad: iconBattle,
+  stopwatch: iconTimer,
+  plusSquare: iconCheck,
+  sound: iconSound,
+  soundMute: iconSoundMute,
 } as const;
 
 export type AssetIconName = keyof typeof ICONS;

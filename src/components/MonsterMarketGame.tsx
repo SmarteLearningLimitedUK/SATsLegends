@@ -5,6 +5,7 @@ import confetti from 'canvas-confetti';
 import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
 import { AVATARS } from '../constants';
+import fantasyWeaponsPreview from '../assets/monster_market/fantasy_weapons_preview.png';
 
 interface Currency {
   id: string;
@@ -20,6 +21,13 @@ interface ShopperProfile {
   crest: string;
   aura: string;
   badge: string;
+}
+
+interface MarketItem {
+  name: string;
+  price: number;
+  objectPosition: string;
+  scaleClass: string;
 }
 
 const CURRENCIES: Currency[] = [
@@ -44,17 +52,15 @@ const SHOPPERS: ShopperProfile[] = [
   { name: 'Zuri', title: 'Crystal Vault Collector', crest: 'Z', aura: 'from-indigo-300/55 via-blue-500/30 to-transparent', badge: 'text-blue-100' },
 ];
 
-const ITEMS = [
-  { name: 'Magic Potion', price: 4.5 },
-  { name: 'Dragon Egg', price: 12.75 },
-  { name: 'Spell Book', price: 8.2 },
-  { name: 'Hero Shield', price: 15.4 },
-  { name: 'Crystal Ball', price: 6.65 },
-  { name: 'Golden Apple', price: 2.35 },
-  { name: 'Phoenix Feather', price: 1.9 },
-  { name: 'Titan Boots', price: 24.5 },
-  { name: 'Invisibility Cloak', price: 35.8 },
-  { name: 'Sword of Light', price: 19.99 },
+const ITEMS: MarketItem[] = [
+  { name: 'Ranger Bow', price: 12.4, objectPosition: '8% 54%', scaleClass: 'scale-[2.15]' },
+  { name: 'Knight Sword', price: 16.8, objectPosition: '78% 56%', scaleClass: 'scale-[2.05]' },
+  { name: 'Twin Blade', price: 14.2, objectPosition: '64% 67%', scaleClass: 'scale-[2.1]' },
+  { name: 'Battle Axe', price: 15.6, objectPosition: '34% 26%', scaleClass: 'scale-[2.1]' },
+  { name: 'War Hammer', price: 18.35, objectPosition: '60% 18%', scaleClass: 'scale-[2.05]' },
+  { name: 'Arcane Staff', price: 11.95, objectPosition: '54% 38%', scaleClass: 'scale-[2.1]' },
+  { name: 'Tower Shield', price: 17.4, objectPosition: '84% 34%', scaleClass: 'scale-[2]' },
+  { name: 'Spiked Barrier', price: 19.2, objectPosition: '92% 34%', scaleClass: 'scale-[2]' },
 ];
 
 const PAYMENT_OPTIONS = [5, 10, 20, 50];
@@ -78,6 +84,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({ avatarId, onBack 
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(120);
   const [shopper, setShopper] = useState<ShopperProfile>(SHOPPERS[0]);
+  const [currentItem, setCurrentItem] = useState<MarketItem | null>(null);
   const [scenario, setScenario] = useState('');
   const [amountPaid, setAmountPaid] = useState(0);
   const [changeNeeded, setChangeNeeded] = useState(0);
@@ -113,7 +120,8 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({ avatarId, onBack 
     const paid = PAYMENT_OPTIONS.find(option => option > item.price) || 50;
 
     setShopper(nextShopper);
-    setScenario(`Shopping for ${item.name}`);
+    setCurrentItem(item);
+    setScenario(`Restock ${item.name}`);
     setAmountPaid(paid);
     setChangeNeeded(Number((paid - item.price).toFixed(2)));
     setTray([]);
@@ -201,14 +209,25 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({ avatarId, onBack 
           <div className="relative flex w-full flex-shrink-0 flex-row items-center gap-3 rounded-2xl border-2 border-emerald-200/22 bg-[linear-gradient(180deg,rgba(13,148,136,0.84),rgba(4,120,87,0.92))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_18px_36px_rgba(2,6,23,0.24)] backdrop-blur-sm lg:w-[37%] lg:flex-col lg:justify-center lg:p-4">
             <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${shopper.aura} opacity-85`} />
             <motion.div
-              key={shopper.name}
+              key={`${shopper.name}-${currentItem?.name || 'order'}`}
               initial={{ x: -60, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               className="relative flex h-24 w-24 shrink-0 items-center justify-center rounded-[1.8rem] border border-white/20 bg-[radial-gradient(circle_at_30%_28%,rgba(255,255,255,0.42),rgba(255,255,255,0.08)_38%,rgba(15,23,42,0.42)_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.24),0_16px_28px_rgba(2,6,23,0.35)] sm:h-28 sm:w-28 lg:h-36 lg:w-36"
             >
-              <div className={`absolute inset-[12%] rounded-[1.4rem] bg-gradient-to-br ${shopper.aura} blur-md`} />
-              <div className="relative flex h-[72%] w-[72%] items-center justify-center rounded-[1.2rem] border border-white/16 bg-slate-950/28 text-4xl font-black text-white lg:text-6xl">
-                {shopper.crest}
+              <div className={`absolute inset-[8%] rounded-[1.4rem] bg-gradient-to-br ${shopper.aura} blur-md`} />
+              <div className="relative h-[78%] w-[78%] overflow-hidden rounded-[1.2rem] border border-white/16 bg-slate-950/28">
+                {currentItem && (
+                  <img
+                    src={fantasyWeaponsPreview}
+                    alt={currentItem.name}
+                    className={`absolute inset-0 h-full w-full object-cover ${currentItem.scaleClass}`}
+                    style={{ objectPosition: currentItem.objectPosition }}
+                    draggable={false}
+                  />
+                )}
+                <div className="absolute bottom-1 right-1 flex h-7 w-7 items-center justify-center rounded-full border border-white/16 bg-slate-950/76 text-xs font-black text-white shadow-[0_8px_14px_rgba(2,6,23,0.26)] lg:h-9 lg:w-9 lg:text-base">
+                  {shopper.crest}
+                </div>
               </div>
             </motion.div>
 
@@ -217,9 +236,23 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({ avatarId, onBack 
                 <div className={`text-[10px] font-black uppercase tracking-[0.22em] ${shopper.badge}`}>{shopper.title}</div>
                 <div className="truncate text-lg font-black text-white sm:text-xl lg:text-2xl">{shopper.name}</div>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/6 px-3 py-2">
-                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-100/72">Order</div>
-                <div className="text-sm font-black leading-tight text-white sm:text-base lg:text-xl">{scenario}</div>
+              <div className="grid grid-cols-[4.6rem_1fr] gap-2 rounded-2xl border border-white/10 bg-white/6 p-2.5">
+                <div className="relative overflow-hidden rounded-[1rem] border border-white/10 bg-slate-950/40">
+                  {currentItem && (
+                    <img
+                      src={fantasyWeaponsPreview}
+                      alt={currentItem.name}
+                      className={`absolute inset-0 h-full w-full object-cover ${currentItem.scaleClass}`}
+                      style={{ objectPosition: currentItem.objectPosition }}
+                      draggable={false}
+                    />
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-100/72">Order</div>
+                  <div className="truncate text-sm font-black text-white sm:text-base lg:text-lg">{currentItem?.name || scenario}</div>
+                  <div className="mt-1 text-[11px] font-semibold leading-tight text-white/68 lg:text-sm">{scenario}</div>
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div className="rounded-2xl border border-white/10 bg-emerald-950/26 px-3 py-2">
