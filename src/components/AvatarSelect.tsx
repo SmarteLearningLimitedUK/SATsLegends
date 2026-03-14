@@ -21,7 +21,7 @@ const HERO_STYLES: Record<string, {
 }> = {
   barratt: {
     glow: 'from-emerald-300/36 via-cyan-300/18 to-transparent',
-    pedestal: 'from-emerald-300/62 via-cyan-300/24 to-transparent',
+    pedestal: 'from-cyan-200/44 via-sky-200/18 to-transparent',
     beam: 'from-emerald-200/32 via-cyan-200/10 to-transparent',
     particle: 'rgba(94,234,212,0.88)',
   },
@@ -33,7 +33,7 @@ const HERO_STYLES: Record<string, {
   },
   mochi: {
     glow: 'from-rose-300/36 via-fuchsia-300/18 to-transparent',
-    pedestal: 'from-rose-200/62 via-fuchsia-300/24 to-transparent',
+    pedestal: 'from-amber-200/36 via-rose-200/18 to-transparent',
     beam: 'from-rose-100/34 via-pink-200/10 to-transparent',
     particle: 'rgba(251,113,133,0.9)',
   },
@@ -102,9 +102,9 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
         />
 
         <div className="relative z-10 flex shrink-0 justify-center px-4 pt-[calc(env(safe-area-inset-top)+0.45rem)] md:px-8 md:pt-6">
-          <div className="hero-header-banner hero-header-banner-compact px-5 py-2 md:px-7 md:py-3">
+          <div className="hero-header-banner hero-header-banner-compact px-6 py-2.5 md:px-9 md:py-3.5">
             <h1
-              className="text-[1.52rem] font-black leading-none tracking-[-0.04em] text-[#fff7dc] md:text-[2.6rem]"
+              className="text-[1.6rem] font-black leading-none tracking-[-0.035em] text-[#fff7dc] md:text-[2.7rem]"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Choose Your Hero
@@ -121,7 +121,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
             />
             <div className={`pointer-events-none absolute left-1/2 top-[19%] z-0 h-[16rem] w-[10rem] -translate-x-1/2 rounded-[50%] bg-gradient-to-b ${selectedStyle.beam} opacity-70 blur-2xl md:h-[24rem] md:w-[14rem]`} />
             <div className={`pointer-events-none absolute bottom-[16%] left-1/2 z-0 h-20 w-[11rem] -translate-x-1/2 rounded-full bg-gradient-to-b ${selectedStyle.pedestal} blur-xl md:h-24 md:w-[14rem]`} />
-            <div className="pointer-events-none absolute bottom-[12%] left-1/2 z-0 h-10 w-[8.6rem] -translate-x-1/2 rounded-full border border-yellow-100/34 bg-[linear-gradient(180deg,rgba(255,239,172,0.28),rgba(62,255,162,0.08))] shadow-[0_0_24px_rgba(252,211,77,0.22)] md:h-12 md:w-[11rem]" />
+            <div className="pointer-events-none absolute bottom-[12%] left-1/2 z-0 h-10 w-[8.6rem] -translate-x-1/2 rounded-full border border-yellow-100/30 bg-[linear-gradient(180deg,rgba(255,239,172,0.22),rgba(135,206,250,0.05))] shadow-[0_0_18px_rgba(252,211,77,0.16)] md:h-12 md:w-[11rem]" />
 
             {PARTICLE_POSITIONS.map((particle, index) => (
               <motion.span
@@ -162,6 +162,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                 frameDurationMs={1500}
                 floating={false}
                 cycleFrames={false}
+                showBackdropGlow={false}
                 alt={carouselItems.previous.name}
                 className="h-full w-full"
                 imageClassName="object-bottom scale-[0.92] translate-y-[12%] opacity-46 saturate-[0.38] brightness-[0.68] blur-[1.5px]"
@@ -180,6 +181,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                 frameDurationMs={1500}
                 floating={false}
                 cycleFrames={false}
+                showBackdropGlow={false}
                 alt={carouselItems.next.name}
                 className="h-full w-full"
                 imageClassName="object-bottom scale-[0.92] translate-y-[12%] opacity-46 saturate-[0.38] brightness-[0.68] blur-[1.5px]"
@@ -208,6 +210,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                 frameDurationMs={1500}
                 floating={true}
                 cycleFrames={false}
+                showBackdropGlow={false}
                 alt={carouselItems.current.name}
                 className="h-full w-full"
                 imageClassName="object-bottom scale-[1.5] -translate-y-[2%] md:scale-[1.86] md:-translate-y-[5%]"

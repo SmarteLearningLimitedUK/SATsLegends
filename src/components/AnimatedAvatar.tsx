@@ -11,6 +11,7 @@ interface AnimatedAvatarProps {
   frameDurationMs?: number;
   floating?: boolean;
   cycleFrames?: boolean;
+  showBackdropGlow?: boolean;
 }
 
 const POSE_FALLBACKS: Partial<Record<AnimationState, AnimationState[]>> = {
@@ -46,6 +47,7 @@ const AnimatedAvatar: React.FC<AnimatedAvatarProps> = ({
   frameDurationMs = 1400,
   floating = true,
   cycleFrames = true,
+  showBackdropGlow = true,
 }) => {
   const frames = useMemo(() => resolveFrames(avatar, pose as AnimationState), [avatar, pose]);
   const [frameIndex, setFrameIndex] = useState(0);
@@ -84,11 +86,13 @@ const AnimatedAvatar: React.FC<AnimatedAvatarProps> = ({
           : { duration: 4.4, repeat: Infinity, ease: 'easeInOut' }
       }
     >
-      <motion.div
-        className="pointer-events-none absolute inset-[14%] rounded-full bg-white/20 blur-xl"
-        animate={{ opacity: [0.12, 0.28, 0.12], scale: [0.94, 1.08, 0.94] }}
-        transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut' }}
-      />
+      {showBackdropGlow && (
+        <motion.div
+          className="pointer-events-none absolute inset-[14%] rounded-full bg-white/20 blur-xl"
+          animate={{ opacity: [0.12, 0.28, 0.12], scale: [0.94, 1.08, 0.94] }}
+          transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut' }}
+        />
+      )}
       <AnimatePresence initial={false} mode="wait">
         <motion.img
           key={`${avatar.id}-${pose}-${frameIndex}`}
