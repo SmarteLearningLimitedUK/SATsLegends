@@ -37,24 +37,22 @@ type AmbientRegion = {
 };
 
 const ISLAND_HOTSPOTS: Record<number, IslandHotspot> = {
-  1: { x: 69, y: 82, width: 24, height: 15, labelX: 69, labelY: 91 },
-  2: { x: 27, y: 37, width: 27, height: 17, labelX: 27, labelY: 46 },
-  3: { x: 72, y: 16, width: 24, height: 16, labelX: 72, labelY: 25 },
-  4: { x: 69, y: 59, width: 23, height: 15, labelX: 69, labelY: 68 },
-  5: { x: 73, y: 36, width: 25, height: 16, labelX: 73, labelY: 45 },
-  6: { x: 28, y: 59, width: 27, height: 16, labelX: 28, labelY: 68 },
+  1: { x: 24, y: 70, width: 22, height: 15, labelX: 25, labelY: 76 },
+  2: { x: 28, y: 40, width: 24, height: 16, labelX: 29, labelY: 46 },
+  3: { x: 71, y: 55, width: 24, height: 16, labelX: 71, labelY: 61 },
+  4: { x: 68, y: 86, width: 23, height: 14, labelX: 68, labelY: 91 },
+  5: { x: 73, y: 29, width: 25, height: 16, labelX: 73, labelY: 35 },
+  6: { x: 50, y: 12, width: 26, height: 17, labelX: 50, labelY: 19 },
 };
 
 const MAP_AMBIENTS: AmbientRegion[] = [
-  { id: 'lava-island', x: 26, y: 11.5, width: 20, height: 18, effect: 'lava-spurts' },
-  { id: 'wind-island', x: 72, y: 12.5, width: 20, height: 18, effect: 'wind-wisps' },
-  { id: 'ice-island', x: 28, y: 30.5, width: 24, height: 20, effect: 'blizzard' },
-  { id: 'crystal-refract', x: 28, y: 28.5, width: 20, height: 16, effect: 'light-beams' },
-  { id: 'ruins-island', x: 73, y: 29.5, width: 23, height: 19, effect: 'dust-devils' },
-  { id: 'lush-grove', x: 29, y: 51.5, width: 22, height: 16, effect: 'butterflies' },
-  { id: 'desert-oasis', x: 69, y: 52, width: 22, height: 16, effect: 'birds' },
-  { id: 'magic-forest', x: 28, y: 74.5, width: 20, height: 22, effect: 'sparkles' },
-  { id: 'starlight-city', x: 69, y: 74.5, width: 22, height: 18, effect: 'stars' },
+  { id: 'lava-island', x: 50, y: 10, width: 24, height: 18, effect: 'lava-spurts' },
+  { id: 'starlight-city', x: 73, y: 28, width: 24, height: 18, effect: 'stars' },
+  { id: 'ice-island', x: 28, y: 39, width: 24, height: 18, effect: 'blizzard' },
+  { id: 'crystal-refract', x: 28, y: 39, width: 18, height: 14, effect: 'light-beams' },
+  { id: 'ruins-island', x: 71, y: 54, width: 24, height: 18, effect: 'dust-devils' },
+  { id: 'lush-grove', x: 24, y: 69, width: 21, height: 16, effect: 'butterflies' },
+  { id: 'desert-oasis', x: 68, y: 85, width: 22, height: 15, effect: 'birds' },
 ];
 
 const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
