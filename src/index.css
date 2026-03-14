@@ -949,6 +949,136 @@ button:disabled {
   animation: splash-glow 3.6s ease-in-out infinite alternate;
 }
 
+.hero-carousel-zone {
+  min-height: 0;
+}
+
+.hero-portal-swirl {
+  background:
+    radial-gradient(circle, rgba(110,231,255,0.14) 0%, rgba(110,231,255,0.06) 32%, rgba(110,231,255,0) 68%),
+    conic-gradient(from 0deg, rgba(255,255,255,0.06), rgba(147,197,253,0.22), rgba(255,255,255,0.04), rgba(34,211,238,0.2), rgba(255,255,255,0.06));
+  filter: blur(1px);
+  box-shadow: 0 0 34px rgba(56,189,248,0.14);
+}
+
+.hero-shrine-card {
+  position: relative;
+  width: 100%;
+  height: clamp(16rem, 54svh, 28rem);
+  padding: 0.45rem;
+  border: 0;
+  border-radius: 2rem;
+  overflow: visible;
+}
+
+.hero-shrine-card-selected {
+  height: clamp(18.2rem, 61svh, 35rem);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255,227,144,0.16), rgba(255,227,144,0) 30%),
+    url('./assets/fantasy_hero/frames/stage_deco_border.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/frames/stage_border.png') center/100% 100% no-repeat,
+    linear-gradient(180deg, rgba(80,98,171,0.98), rgba(26,34,77,0.99));
+  box-shadow:
+    0 20px 0 rgba(20,31,83,0.92),
+    0 34px 54px rgba(2,6,23,0.42),
+    0 0 0 1px rgba(255,227,144,0.18);
+}
+
+.hero-shrine-card-selected::before {
+  content: '';
+  position: absolute;
+  inset: 0.35rem;
+  border-radius: 1.72rem;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0));
+  pointer-events: none;
+}
+
+.hero-shrine-card-side {
+  height: clamp(12.2rem, 39svh, 21rem);
+  background:
+    url('./assets/fantasy_hero/frames/profile_deco.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/frames/profile_border.png') center/100% 100% no-repeat,
+    linear-gradient(180deg, rgba(40,50,94,0.88), rgba(12,18,37,0.96));
+  box-shadow:
+    0 12px 0 rgba(18,24,52,0.74),
+    0 18px 28px rgba(2,6,23,0.24);
+  filter: saturate(0.52) brightness(0.76);
+}
+
+.hero-shrine-interior {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 1.6rem;
+}
+
+.hero-shrine-interior-selected {
+  background:
+    radial-gradient(circle at 50% 16%, rgba(96,165,250,0.18), rgba(96,165,250,0) 28%),
+    radial-gradient(circle at 50% 92%, rgba(255,220,110,0.08), rgba(255,220,110,0) 28%),
+    url('./assets/fantasy_hero/frames/stage_inner.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/frames/stage_gradient.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/frames/stage_bg.png') center/100% 100% no-repeat,
+    linear-gradient(180deg, rgba(19,31,66,0.98), rgba(8,14,29,0.99));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.14),
+    inset 0 -18px 24px rgba(2,6,23,0.28);
+}
+
+.hero-shrine-interior-selected::before {
+  content: '';
+  position: absolute;
+  inset: 0.25rem;
+  border-radius: 1.35rem;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0));
+  pointer-events: none;
+}
+
+.hero-shrine-interior-side {
+  background:
+    radial-gradient(circle at 50% 12%, rgba(255,255,255,0.08), rgba(255,255,255,0) 28%),
+    url('./assets/fantasy_hero/frames/profile_inner.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/frames/profile_bg.png') center/100% 100% no-repeat,
+    linear-gradient(180deg, rgba(15,24,50,0.98), rgba(8,13,28,0.99));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    inset 0 -12px 20px rgba(2,6,23,0.22);
+}
+
+.hero-shrine-pedestal {
+  animation: splash-glow 3.8s ease-in-out infinite alternate;
+}
+
+.hero-shrine-nameplate {
+  position: absolute;
+  inset: auto 0.7rem 0.65rem;
+  border-radius: 1.1rem;
+  text-align: center;
+  background:
+    url('./assets/fantasy_hero/title/ribbon_blue.png') center/100% 100% no-repeat,
+    linear-gradient(180deg, rgba(78,112,232,0.98), rgba(44,67,170,0.99));
+  box-shadow:
+    0 8px 0 rgba(19,38,110,0.86),
+    0 18px 26px rgba(15,23,42,0.22);
+  padding: 0.72rem 0.9rem 0.78rem;
+}
+
+.hero-shrine-nameplate-selected {
+  border: 1px solid rgba(255,234,172,0.34);
+}
+
+.hero-shrine-nameplate-side {
+  inset: auto 0.45rem 0.45rem;
+  padding: 0.45rem 0.45rem 0.5rem;
+  opacity: 0.88;
+  box-shadow:
+    0 5px 0 rgba(19,38,110,0.62),
+    0 10px 16px rgba(15,23,42,0.16);
+}
+
 .hero-card-shell {
   position: relative;
   background:
@@ -1121,6 +1251,10 @@ button:disabled {
   isolation: isolate;
 }
 
+.hero-cta-button-large {
+  width: min(24.5rem, calc(100vw - 2.75rem));
+}
+
 .hero-cta-button::before {
   content: '';
   position: absolute;
@@ -1206,6 +1340,11 @@ button:disabled {
   text-shadow:
     0 1px 0 rgba(255,249,221,0.95),
     0 4px 12px rgba(122, 51, 0, 0.16);
+}
+
+.hero-cta-button-large .hero-cta-button-label {
+  padding: 1.16rem 3.2rem 1.24rem;
+  font-size: clamp(1.22rem, 4.4vw, 1.92rem);
 }
 
 .hero-cta-button:hover {
