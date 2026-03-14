@@ -501,8 +501,11 @@ const App: React.FC = () => {
               draggable={false}
             />
 
-            <div className="absolute inset-0 flex items-end justify-center pb-[calc(max(4.5rem,7vh)-15px)] md:pb-[calc(max(5.5rem,8vh)-15px)]">
+            <div className="absolute inset-0 flex items-end justify-center pb-[calc(max(4.5rem,7vh)-30px)] md:pb-[calc(max(5.5rem,8vh)-30px)]">
               <motion.button
+                initial={{ opacity: 0, y: -36, scale: 0.94 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
                 whileHover={{ scale: 1.025, y: -3 }}
                 whileTap={{ scale: 0.985, y: 1 }}
                 onClick={handleStartAdventure}
@@ -516,6 +519,38 @@ const App: React.FC = () => {
                   </span>
                 </span>
               </motion.button>
+
+              {[
+                { left: 'calc(50% - 7.5rem)', bottom: '5.4rem', delay: 0.45, size: 14 },
+                { left: 'calc(50% - 5.6rem)', bottom: '7.1rem', delay: 0.9, size: 10 },
+                { left: 'calc(50% + 5.8rem)', bottom: '7.4rem', delay: 0.6, size: 12 },
+                { left: 'calc(50% + 7.8rem)', bottom: '5.8rem', delay: 1.15, size: 16 },
+              ].map((sparkle, index) => (
+                <motion.span
+                  key={`splash-cta-sparkle-${index}`}
+                  className="splash-cta-sparkle"
+                  style={{
+                    left: sparkle.left,
+                    bottom: sparkle.bottom,
+                    width: `${sparkle.size}px`,
+                    height: `${sparkle.size}px`,
+                  }}
+                  initial={{ opacity: 0, scale: 0.4, y: 12 }}
+                  animate={{
+                    opacity: [0, 0.95, 0.5, 0],
+                    scale: [0.4, 1, 0.82, 0.5],
+                    y: [10, -8, -18, -26],
+                    rotate: [0, 18, -14, 8],
+                  }}
+                  transition={{
+                    duration: 2.4 + index * 0.25,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                    delay: sparkle.delay,
+                    repeatDelay: 0.2 + index * 0.12,
+                  }}
+                />
+              ))}
             </div>
           </div>
         );
