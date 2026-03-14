@@ -290,77 +290,130 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
         />
 
         <div className="casual-panel-strong relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.65rem] px-2 py-2 md:rounded-[2.4rem] md:px-4 md:py-4">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(103,232,249,0.16),transparent_28%),radial-gradient(circle_at_50%_56%,rgba(74,222,128,0.12),transparent_20%)]" />
+          <div className="pointer-events-none absolute left-[12%] top-[30%] h-3 w-3 rounded-full bg-cyan-200/60 blur-[1px]" />
+          <div className="pointer-events-none absolute left-[18%] top-[42%] h-2.5 w-2.5 rounded-full bg-cyan-100/40 blur-[1px]" />
+          <div className="pointer-events-none absolute right-[17%] top-[34%] h-3 w-3 rounded-full bg-emerald-200/55 blur-[1px]" />
+          <div className="pointer-events-none absolute right-[23%] top-[46%] h-2.5 w-2.5 rounded-full bg-white/35 blur-[1px]" />
+
           <div className="relative z-10 shrink-0 text-center">
             <div className="casual-ribbon-chip mx-auto inline-flex items-center gap-2 rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em] md:px-4 md:py-1.5 md:text-[10px]">
               <AssetIcon name="question" className="h-4 w-4" />
-              Match the target brew
+              Mix potion in ratio
             </div>
-            <div className="mt-2 text-[1.65rem] font-black leading-none text-white drop-shadow-[0_8px_18px_rgba(0,0,0,0.42)] md:text-[2.6rem]">
-              Brew {targetDisplay}
-            </div>
-            <div className="mt-1 text-[9px] font-semibold text-white/74 md:text-sm">
-              Tap potion tubes to pour into the active flask. Hit the exact value before time runs out.
+            <div className="mx-auto mt-2 max-w-[18rem] rounded-[1.15rem] border border-amber-200/40 bg-[linear-gradient(180deg,rgba(255,248,220,0.96),rgba(254,240,180,0.9))] px-4 py-3 text-center shadow-[0_14px_30px_rgba(0,0,0,0.22)] md:max-w-[28rem] md:rounded-[1.5rem] md:px-6 md:py-4">
+              <div className="text-[1.55rem] font-black leading-none md:text-[2.55rem]">
+                <span className="text-sky-700">{targetDisplay.split(':')[0]?.trim()}</span>
+                <span className="px-2 text-amber-900">:</span>
+                <span className="text-rose-700">{targetDisplay.split(':')[1]?.trim()}</span>
+              </div>
             </div>
           </div>
 
-          <div className="relative z-10 mt-2 flex min-h-0 flex-1 flex-col justify-center">
-            <div className="grid grid-cols-4 justify-items-center gap-x-1.5 gap-y-3 md:gap-x-3 md:gap-y-4">
-              {ingredientRows.top.map((ingredient) => (
-                <PotionTube
-                  key={ingredient.id}
-                  label={ingredient.display}
-                  layers={ingredient.palette}
-                  onClick={() => addIngredient(ingredient)}
-                  selected={pouringId === ingredient.id}
-                  tilt={pouringId === ingredient.id}
-                />
-              ))}
+          <div className="relative z-10 mt-2 grid min-h-0 flex-1 gap-3 xl:grid-cols-[minmax(0,1.25fr)_minmax(16rem,0.8fr)]">
+            <div className="relative flex min-h-[20rem] flex-col overflow-hidden rounded-[1.35rem] border border-white/12 bg-[linear-gradient(180deg,rgba(8,15,30,0.24),rgba(8,15,30,0.06))] p-2 md:min-h-[24rem] md:rounded-[1.8rem] md:p-4">
+              <div className="pointer-events-none absolute left-[14%] top-[33%] h-[22%] w-5 rounded-full bg-cyan-400/24 blur-xl" />
+              <div className="pointer-events-none absolute right-[14%] top-[33%] h-[22%] w-5 rounded-full bg-rose-400/20 blur-xl" />
+              <div className="pointer-events-none absolute inset-x-[22%] top-[28%] h-[18%] rounded-full bg-emerald-300/20 blur-3xl" />
 
-              {ingredientRows.bottom.map((ingredient) => (
-                <PotionTube
-                  key={ingredient.id}
-                  label={ingredient.display}
-                  layers={ingredient.palette}
-                  onClick={() => addIngredient(ingredient)}
-                  selected={pouringId === ingredient.id}
-                  tilt={pouringId === ingredient.id}
-                />
-              ))}
+              <div className="relative flex flex-1 items-center justify-center">
+                <div className="absolute left-[12%] top-[20%] hidden h-[28%] w-10 rounded-full border border-cyan-200/18 bg-[linear-gradient(180deg,rgba(34,211,238,0.22),rgba(34,211,238,0.02))] md:block" />
+                <div className="absolute right-[12%] top-[20%] hidden h-[28%] w-10 rounded-full border border-rose-200/18 bg-[linear-gradient(180deg,rgba(251,113,133,0.2),rgba(251,113,133,0.02))] md:block" />
 
-              <PotionTube
-                label={`Mix ${formatMixValue(currentValue)}`}
-                layers={brewTubeLayers}
-                ghost={!brewTubeLayers.length}
-                empty={!brewTubeLayers.length}
-                footer={
-                  <div className="rounded-full bg-white/10 px-2 py-0.5 text-[0.5rem] font-black uppercase tracking-[0.14em] text-cyan-100 md:text-[0.58rem]">
-                    Active
+                <div className="absolute left-[14%] top-[24%] hidden h-14 w-14 rounded-full border border-cyan-100/25 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.42),rgba(34,211,238,0.8)_40%,rgba(8,145,178,0.95)_100%)] shadow-[0_18px_28px_rgba(0,0,0,0.24)] md:flex md:items-center md:justify-center">
+                  <div className="h-6 w-6 rounded-full bg-white/18" />
+                </div>
+                <div className="absolute right-[14%] top-[24%] hidden h-14 w-14 rounded-full border border-rose-100/25 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.4),rgba(251,113,133,0.8)_40%,rgba(190,24,93,0.95)_100%)] shadow-[0_18px_28px_rgba(0,0,0,0.24)] md:flex md:items-center md:justify-center">
+                  <div className="h-6 w-6 rounded-full bg-white/18" />
+                </div>
+
+                <div className="relative flex h-[11.5rem] w-[15rem] items-end justify-center md:h-[15rem] md:w-[20rem]">
+                  <div className="absolute inset-x-[12%] top-[16%] h-[22%] rounded-full bg-emerald-200/28 blur-3xl" />
+                  <div className={`absolute left-1/2 top-[24%] h-20 w-20 -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(253,224,71,0.55),rgba(74,222,128,0)_70%)] blur-xl transition-opacity ${isExploding ? 'opacity-100' : 'opacity-70'}`} />
+                  <div className="absolute inset-x-[10%] bottom-[10%] h-8 rounded-full bg-black/30 blur-xl" />
+                  <div className="absolute bottom-[18%] h-[46%] w-[82%] rounded-[2rem] border-[5px] border-slate-500 bg-[linear-gradient(180deg,rgba(20,32,51,0.94),rgba(54,65,88,0.96))] shadow-[0_24px_42px_rgba(0,0,0,0.35)] md:border-[6px]">
+                    <div className="absolute inset-x-[10%] top-[20%] h-[52%] rounded-[1.4rem] border border-white/10 bg-[linear-gradient(180deg,rgba(52,211,153,0.7),rgba(45,212,191,0.42))]" />
+                    <div className="absolute inset-x-[18%] top-[28%] h-[18%] rounded-full bg-white/28 blur-md" />
+                    {brewLayers.length > 0 && (
+                      <div className="absolute inset-x-[16%] bottom-[18%] h-[24%] rounded-full" style={{ background: `linear-gradient(90deg, ${brewLayers.slice(-3).map((layer) => layer.palette[0]).join(',')})` }} />
+                    )}
                   </div>
-                }
-              />
+                  <div className="absolute bottom-[34%] left-[12%] h-[16%] w-[18%] rounded-full border border-white/10 bg-[linear-gradient(180deg,rgba(30,41,59,0.92),rgba(51,65,85,0.96))]" />
+                  <div className="absolute bottom-[34%] right-[12%] h-[16%] w-[18%] rounded-full border border-white/10 bg-[linear-gradient(180deg,rgba(30,41,59,0.92),rgba(51,65,85,0.96))]" />
+                  <div className="absolute bottom-[18%] h-[14%] w-[72%] rounded-[1.25rem] border border-stone-500/55 bg-[linear-gradient(180deg,rgba(71,85,105,0.95),rgba(51,65,85,0.98))]" />
+                </div>
+              </div>
 
-              <PotionTube
-                label="Clear"
-                layers={[]}
-                empty
-                onClick={resetBrew}
-                footer={
-                  <div className="rounded-full bg-white/10 px-2 py-0.5 text-[0.5rem] font-black uppercase tracking-[0.14em] text-rose-100 md:text-[0.58rem]">
-                    Reset
+              <div className="mt-2 grid grid-cols-2 gap-2 md:mt-3">
+                <div className="casual-panel-surface rounded-[1.1rem] p-2 text-center md:rounded-[1.4rem] md:p-3">
+                  <div className="text-[8px] font-black uppercase tracking-[0.18em] text-white/56 md:text-[10px]">Target Value</div>
+                  <div className="mt-1 text-[1.2rem] font-black text-white md:text-[1.65rem]">{formatMixValue(targetValue)}</div>
+                </div>
+                <div className="casual-panel-surface rounded-[1.1rem] p-2 text-center md:rounded-[1.4rem] md:p-3">
+                  <div className="text-[8px] font-black uppercase tracking-[0.18em] text-white/56 md:text-[10px]">Current Mix</div>
+                  <div className={`mt-1 text-[1.2rem] font-black md:text-[1.65rem] ${Math.abs(currentValue - targetValue) < 0.001 ? 'text-emerald-200' : currentValue > targetValue ? 'text-rose-200' : 'text-white'}`}>
+                    {formatMixValue(currentValue)}
                   </div>
-                }
-              />
+                </div>
+              </div>
             </div>
 
-            <div className="mt-3 grid grid-cols-2 gap-2 md:mt-4 md:gap-3">
-              <div className="casual-panel-surface rounded-[1.1rem] p-2 text-center md:rounded-[1.4rem] md:p-3">
-                <div className="text-[8px] font-black uppercase tracking-[0.18em] text-white/56 md:text-[10px]">Target Value</div>
-                <div className="mt-1 text-[1.2rem] font-black text-white md:text-[1.65rem]">{formatMixValue(targetValue)}</div>
+            <div className="grid gap-2 xl:grid-rows-[minmax(0,1fr)_auto]">
+              <div className="grid grid-cols-2 gap-2 md:grid-cols-4 xl:grid-cols-2 xl:gap-3">
+                {ingredientRows.top.map((ingredient) => (
+                  <PotionTube
+                    key={ingredient.id}
+                    label={ingredient.display}
+                    layers={ingredient.palette}
+                    onClick={() => addIngredient(ingredient)}
+                    selected={pouringId === ingredient.id}
+                    tilt={pouringId === ingredient.id}
+                  />
+                ))}
+
+                {ingredientRows.bottom.map((ingredient) => (
+                  <PotionTube
+                    key={ingredient.id}
+                    label={ingredient.display}
+                    layers={ingredient.palette}
+                    onClick={() => addIngredient(ingredient)}
+                    selected={pouringId === ingredient.id}
+                    tilt={pouringId === ingredient.id}
+                  />
+                ))}
               </div>
-              <div className="casual-panel-surface rounded-[1.1rem] p-2 text-center md:rounded-[1.4rem] md:p-3">
-                <div className="text-[8px] font-black uppercase tracking-[0.18em] text-white/56 md:text-[10px]">Current Mix</div>
-                <div className={`mt-1 text-[1.2rem] font-black md:text-[1.65rem] ${Math.abs(currentValue - targetValue) < 0.001 ? 'text-emerald-200' : currentValue > targetValue ? 'text-rose-200' : 'text-white'}`}>
-                  {formatMixValue(currentValue)}
+
+              <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-2 md:gap-3">
+                <PotionTube
+                  label={`Mix ${formatMixValue(currentValue)}`}
+                  layers={brewTubeLayers}
+                  ghost={!brewTubeLayers.length}
+                  empty={!brewTubeLayers.length}
+                  footer={
+                    <div className="rounded-full bg-white/10 px-2 py-0.5 text-[0.5rem] font-black uppercase tracking-[0.14em] text-cyan-100 md:text-[0.58rem]">
+                      Active
+                    </div>
+                  }
+                />
+
+                <div className="flex flex-col items-center justify-end gap-2 rounded-[1.15rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] p-2.5 shadow-[0_16px_24px_rgba(0,0,0,0.22)]">
+                  <PotionTube
+                    label="Clear"
+                    layers={[]}
+                    empty
+                    onClick={resetBrew}
+                    footer={
+                      <div className="rounded-full bg-white/10 px-2 py-0.5 text-[0.5rem] font-black uppercase tracking-[0.14em] text-rose-100 md:text-[0.58rem]">
+                        Reset
+                      </div>
+                    }
+                  />
+                  <button
+                    onClick={resetBrew}
+                    className="fantasy-cta-button w-full px-3 py-2.5 text-[0.78rem] uppercase tracking-[0.16em] md:px-4 md:py-3 md:text-sm"
+                  >
+                    Reset Brew
+                  </button>
                 </div>
               </div>
             </div>
