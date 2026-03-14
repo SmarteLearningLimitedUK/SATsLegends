@@ -945,18 +945,49 @@ button:disabled {
   pointer-events: none;
 }
 
-.hero-header-banner-compact {
-  min-width: min(19.5rem, calc(100vw - 2.4rem));
-  border-radius: 1.45rem;
+.hero-select-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,239,196,0.2);
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0) 26%),
+    linear-gradient(180deg, rgba(70,92,168,0.98), rgba(34,49,108,0.99));
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.16),
+    inset 0 1px 0 rgba(255,255,255,0.18),
     inset 0 -1px 0 rgba(255,212,120,0.08),
-    0 14px 28px rgba(2,6,23,0.28);
+    0 10px 22px rgba(2,6,23,0.24);
 }
 
-.hero-header-banner-compact::before {
-  inset: 0.24rem;
-  border-radius: 1.18rem;
+.hero-select-pill::before {
+  content: '';
+  position: absolute;
+  inset: 0.22rem;
+  border-radius: inherit;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0));
+  pointer-events: none;
+}
+
+.hero-select-pill-title {
+  min-width: min(20.5rem, calc(100vw - 2.2rem));
+}
+
+.hero-select-pill-name {
+  min-width: 7.4rem;
+  padding: 0.62rem 1.12rem 0.68rem;
+  color: #fff8e1;
+  font-family: var(--font-display);
+  font-size: clamp(0.94rem, 3.4vw, 1.08rem);
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  text-shadow: 0 2px 8px rgba(2,6,23,0.22);
+}
+
+.hero-select-pill-name:hover {
+  filter: brightness(1.03);
 }
 
 .hero-stage-pedestal {
@@ -1130,31 +1161,6 @@ button:disabled {
     0 10px 16px rgba(15,23,42,0.16);
 }
 
-.hero-name-chip {
-  position: relative;
-  border: 1px solid rgba(255,239,196,0.22);
-  border-radius: 999px;
-  padding: 0.62rem 1.1rem 0.68rem;
-  color: #fff8e1;
-  font-family: var(--font-display);
-  font-size: clamp(0.92rem, 3.6vw, 1.12rem);
-  font-weight: 900;
-  letter-spacing: 0.01em;
-  text-shadow: 0 2px 8px rgba(2,6,23,0.22);
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0) 26%),
-    url('./assets/fantasy_hero/title/ribbon_blue.png') center/100% 100% no-repeat,
-    linear-gradient(180deg, rgba(76,110,232,0.98), rgba(43,68,173,0.99));
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.18),
-    0 6px 0 rgba(21,39,111,0.82),
-    0 12px 18px rgba(15,23,42,0.16);
-}
-
-.hero-name-chip:hover {
-  filter: brightness(1.03);
-}
-
 @media (min-width: 768px) {
   .hero-carousel-stage {
     padding-top: clamp(1.5rem, 4svh, 3rem);
@@ -1193,13 +1199,8 @@ button:disabled {
 }
 
 @media (max-width: 420px) {
-  .hero-header-banner-compact {
-    min-width: min(18.2rem, calc(100vw - 2rem));
-    border-radius: 1.2rem;
-  }
-
-  .hero-header-banner-compact::before {
-    border-radius: 0.98rem;
+  .hero-select-pill-title {
+    min-width: min(18.8rem, calc(100vw - 1.8rem));
   }
 
   .hero-carousel-stage {
@@ -1220,9 +1221,10 @@ button:disabled {
     right: -0.7rem;
   }
 
-  .hero-name-chip {
-    padding: 0.56rem 1rem 0.6rem;
-    font-size: 0.88rem;
+  .hero-select-pill-name {
+    min-width: 6.6rem;
+    padding: 0.54rem 0.95rem 0.58rem;
+    font-size: 0.86rem;
   }
 
   .hero-arrow-button-clean {

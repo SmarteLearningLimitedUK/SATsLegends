@@ -102,7 +102,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
         />
 
         <div className="relative z-10 flex shrink-0 justify-center px-4 pt-[calc(env(safe-area-inset-top)+0.45rem)] md:px-8 md:pt-6">
-          <div className="hero-header-banner hero-header-banner-compact px-6 py-2.5 md:px-9 md:py-3.5">
+          <div className="hero-select-pill hero-select-pill-title px-6 py-2.5 md:px-9 md:py-3.5">
             <h1
               className="text-[1.6rem] font-black leading-none tracking-[-0.035em] text-[#fff7dc] md:text-[2.7rem]"
               style={{ fontFamily: 'var(--font-display)' }}
@@ -156,16 +156,11 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               className="hero-carousel-preview hero-carousel-preview-left"
               aria-label={`Select ${carouselItems.previous.name}`}
             >
-              <AnimatedAvatar
-                avatar={carouselItems.previous}
-                pose="thinking"
-                frameDurationMs={1500}
-                floating={false}
-                cycleFrames={false}
-                showBackdropGlow={false}
+              <motion.img
+                src={carouselItems.previous.portrait || carouselItems.previous.image}
                 alt={carouselItems.previous.name}
-                className="h-full w-full"
-                imageClassName="object-bottom scale-[0.92] translate-y-[12%] opacity-46 saturate-[0.38] brightness-[0.68] blur-[1.5px]"
+                className="h-full w-full object-contain object-bottom scale-[0.92] translate-y-[12%] opacity-46 saturate-[0.38] brightness-[0.68] blur-[1.5px] drop-shadow-[0_10px_18px_rgba(0,0,0,0.2)]"
+                draggable={false}
               />
             </motion.button>
 
@@ -175,16 +170,11 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               className="hero-carousel-preview hero-carousel-preview-right"
               aria-label={`Select ${carouselItems.next.name}`}
             >
-              <AnimatedAvatar
-                avatar={carouselItems.next}
-                pose="thinking"
-                frameDurationMs={1500}
-                floating={false}
-                cycleFrames={false}
-                showBackdropGlow={false}
+              <motion.img
+                src={carouselItems.next.portrait || carouselItems.next.image}
                 alt={carouselItems.next.name}
-                className="h-full w-full"
-                imageClassName="object-bottom scale-[0.92] translate-y-[12%] opacity-46 saturate-[0.38] brightness-[0.68] blur-[1.5px]"
+                className="h-full w-full object-contain object-bottom scale-[0.92] translate-y-[12%] opacity-46 saturate-[0.38] brightness-[0.68] blur-[1.5px] drop-shadow-[0_10px_18px_rgba(0,0,0,0.2)]"
+                draggable={false}
               />
             </motion.button>
 
@@ -232,7 +222,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
           <motion.button
             whileTap={{ scale: 0.985 }}
             onClick={() => triggerHaptic('light')}
-            className="hero-name-chip mt-2 md:mt-3"
+            className="hero-select-pill hero-select-pill-name mt-2 md:mt-3"
             aria-label={`Selected hero ${selectedAvatar.name}`}
           >
             {selectedAvatar.name}
