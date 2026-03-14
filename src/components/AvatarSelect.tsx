@@ -120,8 +120,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               transition={{ duration: 16, repeat: Infinity, ease: 'linear' }}
             />
             <div className={`pointer-events-none absolute left-1/2 top-[19%] z-0 h-[16rem] w-[10rem] -translate-x-1/2 rounded-[50%] bg-gradient-to-b ${selectedStyle.beam} opacity-70 blur-2xl md:h-[24rem] md:w-[14rem]`} />
-            <div className={`pointer-events-none absolute bottom-[16%] left-1/2 z-0 h-20 w-[11rem] -translate-x-1/2 rounded-full bg-gradient-to-b ${selectedStyle.pedestal} blur-xl md:h-24 md:w-[14rem]`} />
-            <div className="pointer-events-none absolute bottom-[12%] left-1/2 z-0 h-10 w-[8.6rem] -translate-x-1/2 rounded-full border border-yellow-100/30 bg-[linear-gradient(180deg,rgba(255,239,172,0.22),rgba(135,206,250,0.05))] shadow-[0_0_18px_rgba(252,211,77,0.16)] md:h-12 md:w-[11rem]" />
+            <div className={`pointer-events-none absolute bottom-[14%] left-1/2 z-0 h-16 w-[10rem] -translate-x-1/2 rounded-full bg-gradient-to-b ${selectedStyle.pedestal} opacity-78 blur-2xl md:h-20 md:w-[13rem]`} />
 
             {PARTICLE_POSITIONS.map((particle, index) => (
               <motion.span
