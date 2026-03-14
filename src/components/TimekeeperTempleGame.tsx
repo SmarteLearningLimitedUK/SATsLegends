@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { AvatarData } from '../types';
 import { AVATARS } from '../constants';
+import { getSatsInspiredTimeProblem, type TimeProblem } from '../content/satsInspiredQuestionBanks';
 import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
 import { Home, HelpCircle, Star, Timer, Clock, Hourglass } from './GameIcons';
@@ -15,13 +16,15 @@ interface TimekeeperTempleGameProps {
   onBack: () => void;
 }
 
-interface TimeProblem {
-  question: string;
-  options: string[];
-  answer: string;
-}
-
 const generateTimeProblem = (levelId: number): TimeProblem => {
+  const satsInspiredProblem = Math.random() < 0.7
+    ? getSatsInspiredTimeProblem(levelId)
+    : null;
+
+  if (satsInspiredProblem) {
+    return satsInspiredProblem;
+  }
+
   const types = ['read_analog', 'add_time', 'sub_time', 'duration'];
   const availableTypes = types.slice(0, Math.min(types.length, 1 + levelId));
   const type = availableTypes[Math.floor(Math.random() * availableTypes.length)];

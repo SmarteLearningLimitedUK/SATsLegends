@@ -84,7 +84,7 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
           {island.mapImage ? (
             <img
               src={island.mapImage}
-              alt={`${island.themeName} Map`}
+              alt={`${island.name} map`}
               className="absolute inset-0 h-full w-full object-cover object-top opacity-95"
               draggable={false}
             />
@@ -328,8 +328,8 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
       <div className="absolute bottom-6 left-6 right-6 z-50 pointer-events-none hidden md:flex justify-center">
         <div className="casual-panel-strong flex items-center gap-6 rounded-3xl p-4 shadow-2xl">
           <div>
-            <div className="text-[10px] font-black uppercase text-amber-400 tracking-widest">{island.category} Island</div>
-            <h1 className="text-2xl font-black text-white drop-shadow-md">{island.themeName || island.name}</h1>
+            <div className="text-[10px] font-black uppercase text-amber-400 tracking-widest">{island.themeName}</div>
+            <h1 className="text-2xl font-black text-white drop-shadow-md">{island.name}</h1>
             <div className="mt-1 text-sm font-bold text-white/72">
               Scroll down to reach the boss.
             </div>

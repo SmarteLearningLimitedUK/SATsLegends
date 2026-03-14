@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { AvatarData } from '../types';
 import { AVATARS } from '../constants';
+import { getSatsInspiredMeasurementProblem, type MeasurementProblem } from '../content/satsInspiredQuestionBanks';
 import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
 import { Home, HelpCircle, Star, Timer, Flame, Hammer } from './GameIcons';
@@ -15,13 +16,6 @@ interface MeasurementForgeGameProps {
   onBack: () => void;
 }
 
-interface MeasurementProblem {
-  question: string;
-  options: string[];
-  answer: string;
-  itemType: 'sword' | 'shield' | 'potion' | 'armor';
-}
-
 const ITEMS = {
   sword: { icon: '⚔️', color: 'text-slate-300' },
   shield: { icon: '🛡️', color: 'text-amber-600' },
@@ -30,6 +24,14 @@ const ITEMS = {
 };
 
 const generateMeasurementProblem = (levelId: number): MeasurementProblem => {
+  const satsInspiredProblem = Math.random() < 0.7
+    ? getSatsInspiredMeasurementProblem(levelId)
+    : null;
+
+  if (satsInspiredProblem) {
+    return satsInspiredProblem;
+  }
+
   const types = ['length', 'mass', 'volume'];
   const type = types[Math.floor(Math.random() * types.length)];
   

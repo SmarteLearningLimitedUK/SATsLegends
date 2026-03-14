@@ -2,6 +2,14 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { AVATARS } from '../constants';
+import {
+  type BarDatum,
+  type ChallengeQuestion,
+  getSatsInspiredChallengeQuestion,
+  type CoordinatePoint,
+  type SupportedChallengeGameType,
+  type VisualData,
+} from '../content/satsInspiredQuestionBanks';
 import { getBossEncounter } from '../bossMeta';
 import { GAME_META } from '../gameMeta';
 import { triggerHaptic } from '../haptics';
@@ -15,18 +23,6 @@ import answerPurpleDeco from '../assets/fantasy_hero/buttons/small_deco.png';
 import answerOrangeBg from '../assets/fantasy_hero/buttons/small_orange.png';
 import answerGreenBg from '../assets/fantasy_hero/buttons/primary_green.png';
 
-type SupportedChallengeGameType =
-  | 'place_value_peaks'
-  | 'calculation_clash'
-  | 'percent_pulse'
-  | 'coordinate_quest'
-  | 'transform_temple'
-  | 'scale_safari'
-  | 'chart_chase'
-  | 'mean_machine'
-  | 'equation_grove'
-  | 'rule_runner';
-
 interface CurriculumChallengeGameProps {
   gameType: SupportedChallengeGameType;
   levelId: number;
@@ -35,37 +31,6 @@ interface CurriculumChallengeGameProps {
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
   onBack: () => void;
-}
-
-interface CoordinatePoint {
-  x: number;
-  y: number;
-  label: string;
-  tone?: string;
-}
-
-interface BarDatum {
-  label: string;
-  value: number;
-  color: string;
-}
-
-type VisualData =
-  | { type: 'tokens'; items: string[]; accent?: string }
-  | { type: 'equation'; lines: string[]; badge?: string; variant?: 'standard' | 'clash' }
-  | { type: 'bars'; bars: BarDatum[]; caption?: string }
-  | { type: 'coordinates'; points: CoordinatePoint[]; min: number; max: number; caption?: string; targetLabel: string }
-  | { type: 'transform'; start: CoordinatePoint; image: CoordinatePoint; min: number; max: number; caption?: string }
-  | { type: 'sequence'; values: string[]; caption?: string }
-  | { type: 'ratio'; leftLabel: string; leftValue: string; rightLabel: string; rightValue: string; caption?: string }
-  | { type: 'pulse'; centerLabel: string; orbitLabels: string[]; meterValue: number; meterLabel: string; caption?: string };
-
-interface ChallengeQuestion {
-  prompt: string;
-  sublabel: string;
-  options: string[];
-  answerIndex: number;
-  visual: VisualData;
 }
 
 interface ChallengeTheme {
@@ -987,7 +952,15 @@ const renderVisual = (visual: VisualData) => {
   }
 };
 
-const generateQuestion = (gameType: SupportedChallengeGameType): ChallengeQuestion => {
+const generateQuestion = (gameType: SupportedChallengeGameType, levelId: number): ChallengeQuestion => {
+  const satsInspiredQuestion = Math.random() < 0.7
+    ? getSatsInspiredChallengeQuestion(gameType, levelId)
+    : null;
+
+  if (satsInspiredQuestion) {
+    return satsInspiredQuestion;
+  }
+
   switch (gameType) {
     case 'place_value_peaks':
       return generatePlaceValueQuestion();
@@ -1025,7 +998,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(95 + (levelId * QUESTION_TIME_BONUS));
   const [streak, setStreak] = useState(0);
-  const [question, setQuestion] = useState<ChallengeQuestion>(() => generateQuestion(gameType));
+  const [question, setQuestion] = useState<ChallengeQuestion>(() => generateQuestion(gameType, levelId));
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
   const [statusMessage, setStatusMessage] = useState('Keep your streak alive and stay accurate.');
@@ -1063,7 +1036,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
     setStreak(0);
     setSelectedIndex(null);
     setFeedback(null);
-    setQuestion(generateQuestion(gameType));
+    setQuestion(generateQuestion(gameType, levelId));
     setStatusMessage('Keep your streak alive and stay accurate.');
     setIsVictory(false);
     setIsGameOver(false);
@@ -1135,7 +1108,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
     }
 
     setTimeout(() => {
-      setQuestion(generateQuestion(gameType));
+      setQuestion(generateQuestion(gameType, levelId));
       setSelectedIndex(null);
       setFeedback(null);
     }, 650);

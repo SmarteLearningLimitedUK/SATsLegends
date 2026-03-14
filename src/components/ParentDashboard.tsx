@@ -11,27 +11,27 @@ interface ParentDashboardProps {
 
 const ISLAND_REPORT_META: Record<number, { domain: string; revise: string }> = {
   1: {
-    domain: 'Number & Arithmetic',
+    domain: 'Arithmetic',
     revise: 'Revisit place value, calculation methods, and number fluency.',
   },
   2: {
-    domain: 'Fractions, Decimals & Percentages',
+    domain: 'Fractions, Decimals & %',
     revise: 'Strengthen equivalence, mixed numbers, and percentages of amounts.',
   },
   3: {
-    domain: 'Geometry',
+    domain: 'Geometry & Position',
     revise: 'Practise angles, shape properties, coordinates, and transformations.',
   },
   4: {
-    domain: 'Measure, Ratio & Proportion',
+    domain: 'Measure & Proportion',
     revise: 'Focus on conversion, ratio reasoning, and scaling problems.',
   },
   5: {
-    domain: 'Statistics & Data',
+    domain: 'Data, Time & Interpretation',
     revise: 'Work on chart reading, averages, tables, and timetable interpretation.',
   },
   6: {
-    domain: 'Sequences, Reasoning & Algebra',
+    domain: 'Algebra & Logic',
     revise: 'Build confidence with patterns, rules, equations, and SATs reasoning.',
   },
 };
@@ -76,7 +76,8 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
 
       return {
         id: island.id,
-        name: island.themeName || island.name,
+        name: island.name,
+        themeName: island.themeName,
         completedCount,
         totalLevels,
         earnedStars,
@@ -207,7 +208,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
                         <div className="text-[7px] font-black uppercase tracking-[0.18em] text-white/45 md:text-[9px]">
-                          {area.domain}
+                          {area.themeName}
                         </div>
                         <div className="truncate text-[11px] font-black text-white md:text-base">
                           {area.name}
@@ -265,7 +266,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
                 <div className="mt-2 space-y-2">
                   {report.strongestAreas.map(area => (
                     <div key={area.id} className="rounded-[0.9rem] border border-emerald-300/20 bg-emerald-300/10 px-2.5 py-2 md:rounded-[1.2rem] md:px-3">
-                      <div className="text-[10px] font-black text-white md:text-sm">{area.domain}</div>
+                      <div className="text-[10px] font-black text-white md:text-sm">{area.name}</div>
                       <div className="text-[9px] text-emerald-50/78 md:text-[10px]">{area.readiness}% readiness</div>
                     </div>
                   ))}
@@ -280,7 +281,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
                 <div className="mt-2 space-y-2">
                   {report.opportunityAreas.slice(0, 2).map(area => (
                     <div key={area.id} className="rounded-[0.9rem] border border-rose-300/20 bg-rose-300/10 px-2.5 py-2 md:rounded-[1.2rem] md:px-3">
-                      <div className="text-[10px] font-black text-white md:text-sm">{area.domain}</div>
+                      <div className="text-[10px] font-black text-white md:text-sm">{area.name}</div>
                       <div className="text-[9px] text-rose-50/78 md:text-[10px]">{area.readiness}% readiness</div>
                     </div>
                   ))}
@@ -307,7 +308,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
                 {report.opportunityAreas.map(area => (
                   <div key={area.id} className="rounded-[0.95rem] border border-white/10 bg-white/8 px-2.5 py-2 text-center md:rounded-[1.2rem] md:px-3">
                     <div className="text-[8px] font-black uppercase tracking-[0.16em] text-white/45 md:text-[9px]">Focus area</div>
-                    <div className="mt-1 text-[10px] font-black leading-tight text-white md:text-xs">{area.domain}</div>
+                    <div className="mt-1 text-[10px] font-black leading-tight text-white md:text-xs">{area.name}</div>
                   </div>
                 ))}
               </div>

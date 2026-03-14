@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { AvatarData } from '../types';
 import { AVATARS } from '../constants';
+import { getSatsInspiredDataDungeonPuzzle, type DataDungeonPuzzle as Puzzle } from '../content/satsInspiredQuestionBanks';
 import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
 import { Home, HelpCircle, Star, Timer, Key, Lock, Unlock } from './GameIcons';
@@ -15,19 +16,16 @@ interface DataDungeonGameProps {
   onBack: () => void;
 }
 
-type PuzzleType = 'mean' | 'median' | 'mode' | 'range' | 'barchart';
-
-interface Puzzle {
-  id: string;
-  type: PuzzleType;
-  question: string;
-  options: number[];
-  answer: number;
-  data: number[];
-  chartData?: { label: string; value: number; color: string }[];
-}
-
 const generatePuzzle = (levelId: number): Puzzle => {
+  const satsInspiredPuzzle = Math.random() < 0.7
+    ? getSatsInspiredDataDungeonPuzzle(levelId)
+    : null;
+
+  if (satsInspiredPuzzle) {
+    return satsInspiredPuzzle;
+  }
+
+  type PuzzleType = Puzzle['type'];
   const types: PuzzleType[] = ['mean', 'median', 'mode', 'range', 'barchart'];
   // Higher levels unlock more complex types
   const availableTypes = types.slice(0, Math.min(types.length, 2 + levelId));

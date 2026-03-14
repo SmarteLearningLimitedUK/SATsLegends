@@ -38,7 +38,7 @@ export const AVATARS: AvatarData[] = CHARACTER_AVATARS;
 export const ISLANDS: IslandData[] = [
   {
     id: 1,
-    name: 'Number & Arithmetic',
+    name: 'Arithmetic',
     category: 'Maths',
     isLocked: false,
     color: 'bg-[#7ED321]',
@@ -57,7 +57,7 @@ export const ISLANDS: IslandData[] = [
   },
   {
     id: 2,
-    name: 'Fractions, Decimals & Percentages',
+    name: 'Fractions, Decimals & %',
     category: 'Maths',
     isLocked: false,
     color: 'bg-[#4B9EFF]',
@@ -68,15 +68,15 @@ export const ISLANDS: IslandData[] = [
     decorations: [],
     levels: [
       { id: 1, stars: 0, isLocked: false, gameType: 'burger_builder' },
-      { id: 2, stars: 0, isLocked: false, gameType: 'percent_pulse' },
-      { id: 3, stars: 0, isLocked: false, gameType: 'fraction_match' },
-      { id: 4, stars: 0, isLocked: false, gameType: 'cloud_collapse' },
+      { id: 2, stars: 0, isLocked: false, gameType: 'fraction_match' },
+      { id: 3, stars: 0, isLocked: false, gameType: 'cloud_collapse' },
+      { id: 4, stars: 0, isLocked: false, gameType: 'percent_pulse' },
       { id: 5, stars: 0, isLocked: false, isBoss: true, bossUnlockCoins: 700, gameType: 'crystal_core' },
     ]
   },
   {
     id: 3,
-    name: 'Geometry',
+    name: 'Geometry & Position',
     category: 'Maths',
     isLocked: false,
     color: 'bg-[#B04BFF]',
@@ -95,7 +95,7 @@ export const ISLANDS: IslandData[] = [
   },
   {
     id: 4,
-    name: 'Measure, Ratio & Proportion',
+    name: 'Measure & Proportion',
     category: 'Maths',
     isLocked: false,
     color: 'bg-[#FFD700]',
@@ -114,7 +114,7 @@ export const ISLANDS: IslandData[] = [
   },
   {
     id: 5,
-    name: 'Statistics & Data',
+    name: 'Data, Time & Interpretation',
     category: 'Maths',
     isLocked: false,
     color: 'bg-[#FF4B4B]',
@@ -125,15 +125,15 @@ export const ISLANDS: IslandData[] = [
     decorations: [],
     levels: [
       { id: 1, stars: 0, isLocked: false, gameType: 'data_dungeon' },
-      { id: 2, stars: 0, isLocked: false, gameType: 'timekeeper_temple' },
-      { id: 3, stars: 0, isLocked: false, gameType: 'chart_chase' },
-      { id: 4, stars: 0, isLocked: false, gameType: 'mean_machine' },
+      { id: 2, stars: 0, isLocked: false, gameType: 'chart_chase' },
+      { id: 3, stars: 0, isLocked: false, gameType: 'mean_machine' },
+      { id: 4, stars: 0, isLocked: false, gameType: 'timekeeper_temple' },
       { id: 5, stars: 0, isLocked: false, isBoss: true, bossUnlockCoins: 1850, gameType: 'observatory_overload' },
     ]
   },
   {
     id: 6,
-    name: 'Sequences, Reasoning & Algebra',
+    name: 'Algebra & Logic',
     category: 'Logic',
     isLocked: false,
     color: 'bg-[#FF8C00]',
@@ -143,9 +143,9 @@ export const ISLANDS: IslandData[] = [
     mapImage: world06Map,
     decorations: [],
     levels: [
-      { id: 1, stars: 0, isLocked: false, gameType: 'equation_grove' },
+      { id: 1, stars: 0, isLocked: false, gameType: 'sequence_sprint' },
       { id: 2, stars: 0, isLocked: false, gameType: 'rule_runner' },
-      { id: 3, stars: 0, isLocked: false, gameType: 'sequence_sprint' },
+      { id: 3, stars: 0, isLocked: false, gameType: 'equation_grove' },
       { id: 4, stars: 0, isLocked: false, gameType: 'logic_sort' },
       { id: 5, stars: 0, isLocked: false, isBoss: true, bossUnlockCoins: 2300, gameType: 'matrix_match' },
     ]

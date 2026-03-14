@@ -298,8 +298,8 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                     if (isUnlocked) onSelectIsland(island);
                   }}
                   disabled={!isUnlocked}
-                  title={`${island.themeName || island.name} - ${completion}% complete`}
-                  aria-label={`${island.themeName || island.name}, ${completion}% complete${isUnlocked ? '' : ', locked'}`}
+                  title={`${island.name} - ${island.themeName} - ${completion}% complete`}
+                  aria-label={`${island.name}, ${island.themeName}, ${completion}% complete${isUnlocked ? '' : ', locked'}`}
                   className={`group absolute -translate-x-1/2 -translate-y-1/2 rounded-[2rem] bg-transparent outline-none transition-all ${
                     isUnlocked ? 'cursor-pointer' : 'cursor-not-allowed'
                   } focus-visible:ring-4 focus-visible:ring-cyan-300/70`}
@@ -310,7 +310,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                     height: `${hotspot.height}%`,
                   }}
                 >
-                  <span className="sr-only">{`${island.themeName || island.name} ${completion}% complete`}</span>
+                  <span className="sr-only">{`${island.name} in ${island.themeName}, ${completion}% complete`}</span>
                   <span
                     className={`pointer-events-none absolute inset-[8%] rounded-[2rem] transition-opacity duration-200 ${
                       isUnlocked
@@ -325,7 +325,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                     if (isUnlocked) onSelectIsland(island);
                   }}
                   disabled={!isUnlocked}
-                  aria-label={`${island.themeName || island.name} label`}
+                  aria-label={`${island.name} label`}
                   className={`world-map-island-label absolute z-20 -translate-x-1/2 -translate-y-1/2 text-center text-white outline-none transition-all ${
                     isUnlocked ? 'cursor-pointer' : 'cursor-not-allowed opacity-70 grayscale-[0.15]'
                   } focus-visible:ring-4 focus-visible:ring-cyan-300/70`}
@@ -352,7 +352,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                       </span>
                     )}
                     <span className="world-map-island-label-text block text-[9px] font-black uppercase leading-none tracking-[0.06em] md:text-[10px]">
-                      {island.themeName || island.name}
+                      {island.name}
                     </span>
                   </span>
                 </button>
