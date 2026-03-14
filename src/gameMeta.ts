@@ -253,14 +253,14 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
   },
   ratio_rapids: {
     label: 'Ratio Raiders',
-    focus: 'Ratios, proportional reasoning and simplification',
+    focus: 'Ratios, scaling and proportional defence',
     rules: {
       title: 'Ratio Raiders',
-      summary: 'Split the treasure into the correct ratio, then simplify the pirate captain challenge.',
+      summary: 'Deploy sword and cannon pirates in the correct ratio to stop each attack wave before it hits the island.',
       bullets: [
-        'Drag coins into each barrel until the whole treasure is shared correctly.',
-        'Use every coin before you check the split.',
-        'The final round asks you to simplify a ratio under pressure.',
+        'Fill every defender slot using the ratio and total defenders shown at the top.',
+        'Sword pirates hold the line while cannon pirates power the island bombardment.',
+        'The final boss round asks for a perfect 4 : 1 dragon-cannon deployment.',
       ],
     },
   },
