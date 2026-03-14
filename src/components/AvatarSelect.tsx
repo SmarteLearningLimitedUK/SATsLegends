@@ -108,7 +108,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
           className="pointer-events-none absolute inset-x-[17%] top-[5%] -z-10 h-[38%] bg-center bg-no-repeat opacity-72"
           style={{ backgroundImage: `url(${splashGlow})`, backgroundSize: 'min(36rem, 84vw)' }}
         />
-        <div className={`pointer-events-none absolute left-1/2 top-[14%] -z-10 h-[28rem] w-[16rem] -translate-x-1/2 rounded-[50%] bg-gradient-to-b ${selectedStyle.beam} opacity-74 blur-2xl md:h-[34rem] md:w-[19rem]`} />
+        <div className={`pointer-events-none absolute left-1/2 top-[18%] -z-10 h-[24rem] w-[14rem] -translate-x-1/2 rounded-[50%] bg-gradient-to-b ${selectedStyle.beam} opacity-68 blur-2xl md:top-[16%] md:h-[34rem] md:w-[19rem] md:opacity-74`} />
 
         <div className="relative z-10 flex shrink-0 flex-col items-center gap-1.5 px-4 pt-[calc(env(safe-area-inset-top)+0.35rem)] text-center md:gap-2 md:px-8 md:pt-6">
           <motion.img
@@ -137,9 +137,9 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
         </div>
 
         <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center justify-center px-2 pt-1 pb-2 md:px-8 md:pt-3 md:pb-4">
-          <div className="hero-carousel-zone relative flex w-full max-w-[21rem] flex-1 items-center justify-center md:max-w-[31rem]">
+          <div className="hero-carousel-zone relative flex w-full max-w-[21rem] flex-1 items-end justify-center md:max-w-[31rem]">
             <motion.div
-              className="hero-portal-swirl pointer-events-none absolute left-1/2 top-[8%] z-0 h-32 w-32 -translate-x-1/2 rounded-full md:h-44 md:w-44"
+              className="hero-portal-swirl pointer-events-none absolute left-1/2 top-[15%] z-0 h-28 w-28 -translate-x-1/2 rounded-full md:top-[8%] md:h-44 md:w-44"
               animate={{ rotate: 360, scale: [0.98, 1.04, 0.98], opacity: [0.46, 0.72, 0.46] }}
               transition={{ duration: 16, repeat: Infinity, ease: 'linear' }}
             />
@@ -177,7 +177,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               whileHover={{ scale: 1.04, x: -1 }}
               whileTap={{ scale: 0.95, y: 1 }}
               onClick={() => selectIndex(selectedIndex - 1)}
-              className="hero-arrow-button absolute left-[0.1rem] top-[46%] z-20 -translate-y-1/2 md:left-[1.2rem]"
+              className="hero-arrow-button absolute left-[0.1rem] top-[58%] z-20 -translate-y-1/2 md:left-[1.2rem] md:top-[46%]"
               aria-label="Previous hero"
             >
               <span className="hero-arrow-button-face">
@@ -230,8 +230,8 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                             className="h-full w-full"
                             imageClassName={`object-bottom transition-transform duration-500 ${
                               isCenter
-                                ? 'scale-[1.46] -translate-y-[4%] md:scale-[1.72]'
-                                : 'scale-[0.74] translate-y-[10%] opacity-52 saturate-[0.42] brightness-[0.7] blur-[1.6px] md:scale-[0.84]'
+                                ? 'scale-[1.24] translate-y-[1%] md:scale-[1.72] md:-translate-y-[4%]'
+                                : 'scale-[0.66] translate-y-[14%] opacity-48 saturate-[0.38] brightness-[0.68] blur-[1.8px] md:scale-[0.84] md:translate-y-[10%]'
                             }`}
                           />
                         </div>
@@ -257,7 +257,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               whileHover={{ scale: 1.04, x: 1 }}
               whileTap={{ scale: 0.95, y: 1 }}
               onClick={() => selectIndex(selectedIndex + 1)}
-              className="hero-arrow-button absolute right-[0.1rem] top-[46%] z-20 -translate-y-1/2 md:right-[1.2rem]"
+              className="hero-arrow-button absolute right-[0.1rem] top-[58%] z-20 -translate-y-1/2 md:right-[1.2rem] md:top-[46%]"
               aria-label="Next hero"
             >
               <span className="hero-arrow-button-face">
