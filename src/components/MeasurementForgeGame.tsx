@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import { AvatarData } from '../types';
-import { AVATARS } from '../constants';
-import { getSatsInspiredMeasurementProblem, type MeasurementProblem } from '../content/satsInspiredQuestionBanks';
 import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
-import { Home, HelpCircle, Star, Timer, Flame, Hammer } from './GameIcons';
+import { AVATARS } from '../constants';
+import { CheckCircle2, Coins, RotateCcw, Sparkles } from './GameIcons';
 
 interface MeasurementForgeGameProps {
   levelId: number;
@@ -16,398 +14,412 @@ interface MeasurementForgeGameProps {
   onBack: () => void;
 }
 
-const ITEMS = {
-  sword: { icon: '⚔️', color: 'text-slate-300' },
-  shield: { icon: '🛡️', color: 'text-amber-600' },
-  potion: { icon: '🧪', color: 'text-emerald-400' },
-  armor: { icon: '🛡️', color: 'text-slate-400' },
+interface ScaleItem {
+  id: string;
+  name: string;
+  displayWeight: string;
+  value: number;
+  unit: 'g' | 'ml';
+  tint: string;
+  glow: string;
+}
+
+interface ScaleRound {
+  category: 'mass' | 'volume';
+  targetValue: number;
+  targetDisplay: string;
+  targetLabel: string;
+  items: ScaleItem[];
+}
+
+const MASS_ITEMS: ScaleItem[] = [
+  { id: 'ore-rock', name: 'Ore Rock', displayWeight: '250 g', value: 250, unit: 'g', tint: 'from-stone-300 via-stone-400 to-stone-700', glow: 'shadow-orange-500/25' },
+  { id: 'gem-crate', name: 'Gem Crate', displayWeight: '500 g', value: 500, unit: 'g', tint: 'from-cyan-300 via-sky-400 to-blue-700', glow: 'shadow-cyan-500/25' },
+  { id: 'gold-bar', name: 'Gold Bar', displayWeight: '1 kg', value: 1000, unit: 'g', tint: 'from-yellow-200 via-amber-300 to-orange-600', glow: 'shadow-amber-500/25' },
+  { id: 'supply-cart', name: 'Supply Cart', displayWeight: '2 kg', value: 2000, unit: 'g', tint: 'from-orange-200 via-orange-400 to-amber-700', glow: 'shadow-orange-600/25' },
+];
+
+const VOLUME_ITEMS: ScaleItem[] = [
+  { id: 'flask', name: 'Flask', displayWeight: '250 ml', value: 250, unit: 'ml', tint: 'from-cyan-200 via-sky-300 to-cyan-700', glow: 'shadow-sky-500/25' },
+  { id: 'potion-jar', name: 'Potion Jar', displayWeight: '500 ml', value: 500, unit: 'ml', tint: 'from-fuchsia-200 via-violet-400 to-purple-700', glow: 'shadow-fuchsia-500/25' },
+  { id: 'water-keg', name: 'Water Keg', displayWeight: '1 l', value: 1000, unit: 'ml', tint: 'from-emerald-200 via-teal-400 to-emerald-700', glow: 'shadow-emerald-500/25' },
+  { id: 'brew-barrel', name: 'Brew Barrel', displayWeight: '2 l', value: 2000, unit: 'ml', tint: 'from-lime-200 via-green-400 to-emerald-700', glow: 'shadow-green-500/25' },
+];
+
+const buildTargetDisplay = (totalValue: number, unit: 'g' | 'ml') => {
+  if (unit === 'g') {
+    if (totalValue >= 1000) {
+      return `${Number((totalValue / 1000).toFixed(totalValue % 1000 === 0 ? 0 : 2))} kg`;
+    }
+    return `${totalValue} g`;
+  }
+
+  if (totalValue >= 1000) {
+    return `${Number((totalValue / 1000).toFixed(totalValue % 1000 === 0 ? 0 : 2))} l`;
+  }
+  return `${totalValue} ml`;
 };
 
-const generateMeasurementProblem = (levelId: number): MeasurementProblem => {
-  const satsInspiredProblem = Math.random() < 0.7
-    ? getSatsInspiredMeasurementProblem(levelId)
-    : null;
-
-  if (satsInspiredProblem) {
-    return satsInspiredProblem;
+const pickItemsForRound = (pool: ScaleItem[], count: number) => {
+  const chosen: ScaleItem[] = [];
+  for (let index = 0; index < count; index += 1) {
+    chosen.push(pool[Math.floor(Math.random() * pool.length)]);
   }
+  return chosen;
+};
 
-  const types = ['length', 'mass', 'volume'];
-  const type = types[Math.floor(Math.random() * types.length)];
-  
-  let question = '';
-  let answer = '';
-  let options = new Set<string>();
-  let itemType: 'sword' | 'shield' | 'potion' | 'armor' = 'sword';
-
-  const randomValue = (min: number, max: number, decimals = 0) => {
-    // SATs loves specific decimals like 1.5, 1.25, 0.75, 2.5
-    if (decimals > 0 && Math.random() > 0.5) {
-      const trickyDecimals = [1.5, 1.25, 0.75, 2.5, 3.5, 0.25, 0.5];
-      return trickyDecimals[Math.floor(Math.random() * trickyDecimals.length)];
-    }
-    const val = Math.random() * (max - min) + min;
-    return Number(val.toFixed(decimals));
-  };
-
-  if (type === 'length') {
-    itemType = 'sword';
-    const conversions = [
-      { from: 'm', to: 'cm', factor: 100 },
-      { from: 'cm', to: 'mm', factor: 10 },
-      { from: 'm', to: 'mm', factor: 1000 },
-      { from: 'km', to: 'm', factor: 1000 },
-    ];
-    // Limit complexity based on level
-    const availableConversions = conversions.slice(0, Math.min(conversions.length, 1 + levelId));
-    const conv = availableConversions[Math.floor(Math.random() * availableConversions.length)];
-    
-    const val = randomValue(1, 10, levelId > 2 ? 1 : 0);
-    question = `Forge a sword that is ${val} ${conv.from} long. What is this in ${conv.to}?`;
-    answer = `${val * conv.factor} ${conv.to}`;
-    options.add(answer);
-
-    while (options.size < 4) {
-      const wrongFactors = [10, 100, 1000, 0.1, 0.01];
-      const wFactor = wrongFactors[Math.floor(Math.random() * wrongFactors.length)];
-      if (wFactor !== conv.factor) {
-        options.add(`${val * wFactor} ${conv.to}`);
-      } else {
-        options.add(`${(val + Math.floor(Math.random() * 5) + 1) * conv.factor} ${conv.to}`);
-      }
-    }
-  } else if (type === 'mass') {
-    itemType = Math.random() > 0.5 ? 'shield' : 'armor';
-    const conversions = [
-      { from: 'kg', to: 'g', factor: 1000 },
-      { from: 'g', to: 'kg', factor: 0.001 },
-    ];
-    const conv = conversions[Math.floor(Math.random() * conversions.length)];
-    
-    const val = conv.from === 'kg' ? randomValue(1, 20, levelId > 2 ? 2 : 0) : randomValue(1000, 5000, 0);
-    question = `Forge a ${itemType} weighing ${val} ${conv.from}. What is this in ${conv.to}?`;
-    
-    // Handle floating point weirdness
-    const ansVal = Number((val * conv.factor).toPrecision(5));
-    answer = `${ansVal} ${conv.to}`;
-    options.add(answer);
-
-    while (options.size < 4) {
-      const wrongFactors = [10, 100, 1000, 0.1, 0.01, 0.001];
-      const wFactor = wrongFactors[Math.floor(Math.random() * wrongFactors.length)];
-      if (wFactor !== conv.factor) {
-        options.add(`${Number((val * wFactor).toPrecision(5))} ${conv.to}`);
-      } else {
-        options.add(`${Number(((val + Math.floor(Math.random() * 5) + 1) * conv.factor).toPrecision(5))} ${conv.to}`);
-      }
-    }
-  } else {
-    itemType = 'potion';
-    const conversions = [
-      { from: 'l', to: 'ml', factor: 1000 },
-      { from: 'ml', to: 'l', factor: 0.001 },
-    ];
-    const conv = conversions[Math.floor(Math.random() * conversions.length)];
-    
-    const val = conv.from === 'l' ? randomValue(0.5, 5, levelId > 2 ? 2 : 1) : randomValue(500, 5000, 0);
-    question = `Brew a potion with ${val} ${conv.from} of liquid. What is this in ${conv.to}?`;
-    
-    const ansVal = Number((val * conv.factor).toPrecision(5));
-    answer = `${ansVal} ${conv.to}`;
-    options.add(answer);
-
-    while (options.size < 4) {
-      const wrongFactors = [10, 100, 1000, 0.1, 0.01, 0.001];
-      const wFactor = wrongFactors[Math.floor(Math.random() * wrongFactors.length)];
-      if (wFactor !== conv.factor) {
-        options.add(`${Number((val * wFactor).toPrecision(5))} ${conv.to}`);
-      } else {
-        options.add(`${Number(((val + Math.floor(Math.random() * 5) + 1) * conv.factor).toPrecision(5))} ${conv.to}`);
-      }
-    }
-  }
+const generateRound = (roundIndex: number): ScaleRound => {
+  const category = Math.random() > 0.45 ? 'mass' : 'volume';
+  const pool = category === 'mass' ? MASS_ITEMS : VOLUME_ITEMS;
+  const itemCount = Math.min(4, 2 + Math.floor(roundIndex / 2));
+  const chosenItems = pickItemsForRound(pool, itemCount);
+  const targetValue = chosenItems.reduce((sum, item) => sum + item.value, 0);
+  const unit = pool[0].unit;
 
   return {
-    question,
-    answer,
-    options: Array.from(options).sort(() => Math.random() - 0.5),
-    itemType
+    category,
+    targetValue,
+    targetDisplay: buildTargetDisplay(targetValue, unit),
+    targetLabel: category === 'mass' ? 'Balance The Weight' : 'Match The Volume',
+    items: [...pool].sort(() => Math.random() - 0.5),
   };
 };
 
-const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({ 
-  levelId, 
-  avatarId, 
-  onVictory, 
-  onGameOver, 
-  onBack 
+const formatCurrent = (value: number, unit: 'g' | 'ml') => buildTargetDisplay(value, unit);
+
+const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
+  levelId,
+  avatarId,
+  onVictory,
+  onGameOver,
+  onBack,
 }) => {
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(90);
+  const [timeLeft, setTimeLeft] = useState(105);
+  const [roundIndex, setRoundIndex] = useState(0);
+  const [round, setRound] = useState<ScaleRound>(() => generateRound(0));
+  const [selectedItems, setSelectedItems] = useState<ScaleItem[]>([]);
+  const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
+  const [streak, setStreak] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isVictory, setIsVictory] = useState(false);
-  
-  const [problem, setProblem] = useState<MeasurementProblem | null>(null);
-  const [streak, setStreak] = useState(0);
-  const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
-  const [isForging, setIsForging] = useState(false);
 
-  const avatar = AVATARS.find(a => a.id === avatarId) || AVATARS[0];
-  const targetScore = 800 + (levelId * 200);
+  const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
+  const targetScore = 1050 + levelId * 90;
+  const currentValue = selectedItems.reduce((sum, item) => sum + item.value, 0);
+  const scaleUnit = round.items[0]?.unit || 'g';
+  const progress = Math.min((score / targetScore) * 100, 100);
+  const balanceDifference = currentValue - round.targetValue;
+  const balanceTilt = Math.max(-16, Math.min(16, balanceDifference / 90));
 
   useEffect(() => {
-    setTimeLeft(90 + levelId * 10);
     setScore(0);
+    setTimeLeft(105 + levelId * 6);
+    setRoundIndex(0);
+    setRound(generateRound(0));
+    setSelectedItems([]);
+    setFeedback(null);
+    setStreak(0);
     setIsGameOver(false);
     setIsVictory(false);
-    setStreak(0);
-    setProblem(generateMeasurementProblem(levelId));
   }, [levelId]);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (timeLeft > 0 && !isGameOver && !isVictory && !feedback && !isForging) {
-      timer = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            handleTimeUp();
+    if (isGameOver || isVictory || feedback) return undefined;
+
+    const timer = setInterval(() => {
+      setTimeLeft((previous) => {
+        if (previous <= 1) {
+          clearInterval(timer);
+          if (score >= targetScore) {
+            const stars = score >= targetScore * 1.7 ? 3 : score >= targetScore * 1.25 ? 2 : 1;
+            setIsVictory(true);
+            onVictory(stars, score);
             return 0;
           }
-          return prev - 1;
-        });
-      }, 1000);
-    }
+
+          setIsGameOver(true);
+          onGameOver(score);
+          return 0;
+        }
+        return previous - 1;
+      });
+    }, 1000);
+
     return () => clearInterval(timer);
-  }, [timeLeft, isGameOver, isVictory, feedback, isForging]);
+  }, [feedback, isGameOver, isVictory, onGameOver, onVictory, score, targetScore]);
 
-  const handleTimeUp = () => {
-    if (score >= targetScore) {
-      handleWin();
-    } else {
-      setIsGameOver(true);
-      onGameOver(score);
+  const addItem = (item: ScaleItem) => {
+    if (feedback) return;
+    setSelectedItems((previous) => [...previous, item]);
+  };
+
+  const removeItem = (index: number) => {
+    if (feedback) return;
+    setSelectedItems((previous) => previous.filter((_, itemIndex) => itemIndex !== index));
+  };
+
+  const clearScale = () => {
+    if (feedback) return;
+    setSelectedItems([]);
+  };
+
+  const loadNextRound = (nextRoundIndex: number, nextScore: number) => {
+    if (nextRoundIndex >= 7 || nextScore >= targetScore) {
+      const stars = nextScore >= targetScore * 1.7 ? 3 : nextScore >= targetScore * 1.25 ? 2 : 1;
+      setIsVictory(true);
+      onVictory(stars, nextScore);
+      return;
     }
+
+    setRoundIndex(nextRoundIndex);
+    setRound(generateRound(nextRoundIndex));
+    setSelectedItems([]);
+    setFeedback(null);
   };
 
-  const handleWin = () => {
-    const stars = score >= targetScore * 2 ? 3 : score >= targetScore * 1.5 ? 2 : 1;
-    setIsVictory(true);
-    confetti({
-      particleCount: 150,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#FFD700', '#FFFFFF', '#87CEEB']
-    });
-    onVictory(stars, score);
-  };
+  const handleBalance = () => {
+    if (feedback) return;
 
-  const handleAnswer = (selected: string) => {
-    if (feedback || isGameOver || isVictory || !problem || isForging) return;
+    if (currentValue === round.targetValue) {
+      const nextScore = score + 140 + streak * 25 + Math.max(0, timeLeft);
+      const nextRoundIndex = roundIndex + 1;
 
-    setIsForging(true);
-
-    if (selected === problem.answer) {
       setFeedback('correct');
-      const points = 100 + (streak * 20);
-      setScore(prev => prev + points);
-      setStreak(prev => prev + 1);
-      
-      setTimeout(() => {
-        confetti({
-          particleCount: 40,
-          spread: 50,
-          origin: { y: 0.7 },
-          colors: ['#f97316', '#fb923c', '#fcd34d']
-        });
-        
-        setTimeout(() => {
-          setProblem(generateMeasurementProblem(levelId));
-          setFeedback(null);
-          setIsForging(false);
-        }, 1500);
-      }, 1000); // Wait for forge animation
+      setScore(nextScore);
+      setStreak((previous) => previous + 1);
 
-    } else {
-      setFeedback('incorrect');
-      setStreak(0);
-      setScore(prev => Math.max(0, prev - 30));
-      
-      setTimeout(() => {
-        setFeedback(null);
-        setIsForging(false);
-      }, 1500);
+      confetti({
+        particleCount: 70,
+        spread: 58,
+        origin: { y: 0.58 },
+        colors: ['#fde047', '#22c55e', '#38bdf8'],
+      });
+
+      window.setTimeout(() => loadNextRound(nextRoundIndex, nextScore), 1200);
+      return;
     }
+
+    setFeedback('incorrect');
+    setStreak(0);
+    setScore((previous) => Math.max(0, previous - 45));
+    window.setTimeout(() => {
+      setSelectedItems([]);
+      setFeedback(null);
+    }, 900);
   };
 
-  const progress = Math.min((score / targetScore) * 100, 100);
+  const outcomeLabel = useMemo(() => {
+    if (!feedback) return null;
+    return feedback === 'correct'
+      ? {
+          title: 'Balanced!',
+          subtitle: 'The mine scale is perfectly level.',
+          tone: 'text-emerald-300 border-emerald-300/60 bg-emerald-500/16',
+        }
+      : {
+          title: 'Off Balance!',
+          subtitle: 'Reset the load and try a better combination.',
+          tone: 'text-rose-300 border-rose-300/60 bg-rose-500/16',
+        };
+  }, [feedback]);
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden bg-stone-950 font-sans">
-      {/* Forge Background */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ 
-        backgroundImage: 'radial-gradient(circle at 50% 100%, #ea580c 0%, transparent 60%)', 
-      }} />
-      <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ 
-        backgroundImage: 'linear-gradient(45deg, #292524 25%, transparent 25%, transparent 75%, #292524 75%, #292524), linear-gradient(45deg, #292524 25%, transparent 25%, transparent 75%, #292524 75%, #292524)', 
-        backgroundSize: '40px 40px',
-        backgroundPosition: '0 0, 20px 20px'
-      }} />
+    <div className="relative flex h-full w-full flex-col items-center overflow-hidden bg-[linear-gradient(180deg,#291308_0%,#3d1906_30%,#140d0c_100%)] p-2 font-sans pt-[env(safe-area-inset-top)] md:p-4">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(250,204,21,0.22),transparent_32%),radial-gradient(circle_at_18%_78%,rgba(34,197,94,0.12),transparent_26%),radial-gradient(circle_at_85%_28%,rgba(56,189,248,0.14),transparent_24%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-[48%] bg-[linear-gradient(180deg,transparent,rgba(17,8,7,0.9))]" />
+      </div>
 
-      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-2 md:gap-6 h-full flex-1 min-h-0">
+      <div className="relative z-10 flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col gap-2 md:gap-4">
         <GameplayHUD
-          title="Measurement Forge"
+          title="Scale Master"
           avatar={avatar}
           score={score}
           targetScore={targetScore}
           timeLeft={timeLeft}
           progress={progress}
-          accentText="text-orange-900"
-          accentSoftBg="bg-orange-100/80"
-          accentBorder="border-orange-200/80"
-          progressBar="bg-gradient-to-r from-orange-400 via-amber-400 to-red-400"
-          statLabel="Heat"
+          accentText="text-amber-900"
+          accentSoftBg="bg-amber-100/80"
+          accentBorder="border-amber-200/80"
+          progressBar="bg-gradient-to-r from-emerald-400 via-yellow-300 to-orange-400"
+          statLabel="Streak"
           statValue={streak}
+          compact
         />
 
-        {/* Game Area */}
-        <div className="w-full flex-1 relative flex flex-col items-center justify-center gap-4 md:gap-8">
-          
-          {problem && (
-            <>
-              {/* Anvil & Item Area */}
-              <div className="relative w-full max-w-sm md:max-w-md aspect-[4/3] md:aspect-video flex items-end justify-center mb-4 md:mb-12">
-                {/* Anvil */}
-                <div className="absolute bottom-0 w-44 h-24 md:w-64 md:h-32 bg-stone-700 rounded-t-xl border-t-8 border-stone-500 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col items-center justify-end pb-3 md:pb-4">
-                  <div className="w-32 h-12 md:w-48 md:h-16 bg-stone-800 rounded-lg border-2 border-stone-600 flex items-center justify-center">
-                    <Flame className="h-6 w-6 md:h-8 md:w-8 text-orange-500 animate-pulse" />
+        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] border-4 border-amber-200/15 bg-[linear-gradient(180deg,rgba(55,28,12,0.94),rgba(22,12,9,0.98))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_25px_60px_rgba(0,0,0,0.35)] md:p-5">
+          <div className="mb-3 flex flex-col gap-2 rounded-[1.5rem] border border-amber-200/12 bg-black/20 p-3 md:flex-row md:items-center md:justify-between md:gap-4 md:p-4">
+            <div>
+              <div className="text-[10px] font-black uppercase tracking-[0.24em] text-amber-100/70">Round {roundIndex + 1} / 7</div>
+              <div className="mt-1 text-2xl font-black text-white md:text-3xl">{round.targetLabel}</div>
+            </div>
+            <div className="flex items-center gap-2 rounded-[1.25rem] border border-amber-200/18 bg-amber-300/10 px-4 py-3">
+              <Sparkles className="h-5 w-5 text-yellow-300" />
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/72">Target</div>
+                <div className="text-xl font-black text-amber-200 md:text-2xl">{round.targetDisplay}</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative flex min-h-0 flex-1 flex-col gap-3 lg:flex-row">
+            <div className="relative flex min-h-[20rem] flex-[1.3] flex-col justify-between overflow-hidden rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,rgba(17,24,39,0.42),rgba(25,10,7,0.72))] p-4">
+              <div className="absolute left-1/2 top-[21%] h-24 w-24 -translate-x-1/2 rounded-full bg-yellow-300/18 blur-2xl" />
+              <div className="absolute inset-x-[12%] top-[64%] h-10 rounded-full bg-black/35 blur-xl" />
+
+              <div className="text-center">
+                <div className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-100/68">Mining Camp Scale</div>
+                <div className="mt-2 text-sm font-bold text-white/72 md:text-base">
+                  Match the target by loading the correct cargo onto the left pan.
+                </div>
+              </div>
+
+              <div className="relative mx-auto mt-4 flex w-full max-w-3xl flex-1 items-end justify-center">
+                <div className="absolute bottom-[8.2rem] left-1/2 h-28 w-6 -translate-x-1/2 rounded-full bg-[linear-gradient(180deg,#eab308,#92400e)] shadow-[0_0_0_5px_rgba(120,53,15,0.32)]" />
+                <motion.div
+                  animate={{ rotate: balanceTilt }}
+                  transition={{ type: 'spring', stiffness: 80, damping: 14 }}
+                  className="absolute bottom-[10.25rem] left-1/2 h-4 w-[72%] -translate-x-1/2 rounded-full bg-[linear-gradient(180deg,#fbbf24,#78350f)] shadow-[0_12px_22px_rgba(0,0,0,0.32)]"
+                >
+                  <div className="absolute left-[10%] top-3 h-[5.8rem] w-[32%] origin-top rounded-[1.6rem] border-4 border-amber-200/16 bg-[linear-gradient(180deg,#3b1d0b,#1b120f)] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+                    <div className="flex h-full flex-wrap content-start gap-2 overflow-hidden rounded-[1rem] border border-white/8 bg-black/24 p-2">
+                      {selectedItems.length === 0 && (
+                        <div className="flex h-full w-full items-center justify-center text-center text-[10px] font-black uppercase tracking-[0.16em] text-amber-100/36">
+                          Load cargo
+                        </div>
+                      )}
+                      {selectedItems.map((item, index) => (
+                        <button
+                          key={`${item.id}-${index}`}
+                          onClick={() => removeItem(index)}
+                          className={`flex min-w-[4.25rem] flex-1 items-center justify-center rounded-full border border-white/12 bg-gradient-to-br ${item.tint} px-3 py-2 text-[10px] font-black text-slate-950 shadow-[0_12px_22px_rgba(0,0,0,0.24)]`}
+                        >
+                          {item.displayWeight}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="absolute right-[10%] top-3 h-[5.8rem] w-[32%] origin-top rounded-[1.6rem] border-4 border-amber-200/16 bg-[linear-gradient(180deg,#3b1d0b,#1b120f)] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+                    <div className="flex h-full items-center justify-center rounded-[1rem] border border-white/8 bg-black/24 p-2 text-center">
+                      <div>
+                        <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/60">Target Load</div>
+                        <div className="mt-1 text-2xl font-black text-white">{round.targetDisplay}</div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+
+                <div className="absolute bottom-[2.2rem] left-1/2 h-28 w-44 -translate-x-1/2 rounded-[2rem] border-4 border-amber-200/14 bg-[linear-gradient(180deg,#4a2815,#22120d)] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_26px_48px_rgba(0,0,0,0.34)]" />
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <div className="rounded-[1.25rem] border border-white/10 bg-black/24 p-3">
+                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/60">Current Load</div>
+                  <div className="mt-1 text-xl font-black text-white md:text-2xl">{formatCurrent(currentValue, scaleUnit)}</div>
+                </div>
+                <div className="rounded-[1.25rem] border border-white/10 bg-black/24 p-3">
+                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/60">Difference</div>
+                  <div className={`mt-1 text-xl font-black md:text-2xl ${balanceDifference === 0 ? 'text-emerald-300' : balanceDifference > 0 ? 'text-rose-300' : 'text-sky-300'}`}>
+                    {balanceDifference === 0 ? 'Perfect' : formatCurrent(Math.abs(balanceDifference), scaleUnit)}
                   </div>
                 </div>
-
-                {/* Item being forged */}
-                <AnimatePresence>
-                  {isForging && feedback === 'correct' && (
-                    <motion.div
-                      initial={{ y: -50, opacity: 0, scale: 0.5 }}
-                      animate={{ y: -100, opacity: 1, scale: 1.5 }}
-                      exit={{ opacity: 0, scale: 2, y: -150 }}
-                      transition={{ duration: 1 }}
-                      className="absolute bottom-12 md:bottom-16 text-4xl md:text-6xl drop-shadow-[0_0_15px_rgba(251,146,60,0.8)]"
-                    >
-                      {ITEMS[problem.itemType].icon}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* Hammer Animation */}
-                <AnimatePresence>
-                  {isForging && (
-                    <motion.div
-                      initial={{ rotate: 45, x: 50, y: -100 }}
-                      animate={{ rotate: -45, x: 0, y: -50 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.2, yoyo: 3 }}
-                      className="absolute bottom-12 md:bottom-16 right-1/4"
-                    >
-                      <Hammer className="h-14 w-14 md:h-24 md:w-24 text-stone-400 drop-shadow-xl" />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </div>
+            </div>
 
-              {/* Order Scroll */}
-              <div className="p-4 md:p-6 text-center max-w-2xl w-full relative transform -rotate-1 licensed-game-card">
-                <div className="absolute -top-3 -left-3 md:-top-4 md:-left-4 w-6 h-6 md:w-8 md:h-8 bg-red-700 rounded-full border-2 border-red-900 shadow-sm" />
-                <div className="absolute -top-3 -right-3 md:-top-4 md:-right-4 w-6 h-6 md:w-8 md:h-8 bg-red-700 rounded-full border-2 border-red-900 shadow-sm" />
-                <h3 className="text-base md:text-2xl text-amber-900 font-bold font-serif leading-tight">
-                  {problem.question}
-                </h3>
-              </div>
-
-              {/* Options Grid */}
-              <div className="grid grid-cols-2 gap-3 md:gap-6 w-full max-w-3xl">
-                {problem.options.map((opt, i) => (
+            <div className="flex min-h-0 flex-1 flex-col gap-3">
+              <div className="grid grid-cols-2 gap-3">
+                {round.items.map((item) => (
                   <button
-                    key={i}
-                    onClick={() => handleAnswer(opt)}
-                    disabled={!!feedback || isForging}
-                    className="relative group min-h-[4.5rem] md:min-h-[5.5rem] px-3 py-4 md:p-6 rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center licensed-answer-button"
+                    key={item.id}
+                    onClick={() => addItem(item)}
+                    disabled={!!feedback}
+                    className={`group flex min-h-[7rem] flex-col items-start justify-between overflow-hidden rounded-[1.5rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(255,255,255,0.04))] p-3 text-left shadow-[0_18px_32px_rgba(0,0,0,0.22)] transition-all hover:-translate-y-1 hover:border-amber-200/26 active:scale-[0.98] ${item.glow}`}
                   >
-                    <span className="text-xl md:text-3xl font-black text-orange-400 drop-shadow-md group-hover:text-orange-300">
-                      {opt}
-                    </span>
+                    <div className={`flex h-11 w-11 items-center justify-center rounded-[1rem] bg-gradient-to-br ${item.tint} text-lg font-black text-slate-950 shadow-[0_12px_20px_rgba(0,0,0,0.18)]`}>
+                      {item.displayWeight.split(' ')[0]}
+                    </div>
+                    <div>
+                      <div className="text-sm font-black text-white md:text-base">{item.name}</div>
+                      <div className="text-xs font-bold uppercase tracking-[0.14em] text-amber-100/64">{item.displayWeight}</div>
+                    </div>
                   </button>
                 ))}
               </div>
-            </>
-          )}
 
-          {/* Feedback Overlay */}
+              <div className="mt-auto rounded-[1.75rem] border border-white/10 bg-black/24 p-3 md:p-4">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/60">Selected Cargo</div>
+                    <div className="text-lg font-black text-white">{selectedItems.length} piece{selectedItems.length === 1 ? '' : 's'}</div>
+                  </div>
+                  <button
+                    onClick={clearScale}
+                    disabled={selectedItems.length === 0 || !!feedback}
+                    className="flex items-center gap-2 rounded-full border border-white/12 bg-white/8 px-4 py-2 text-xs font-black uppercase tracking-[0.12em] text-white transition-all hover:bg-white/12 disabled:cursor-not-allowed disabled:opacity-35"
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    Reset
+                  </button>
+                </div>
+
+                <button
+                  onClick={handleBalance}
+                  disabled={selectedItems.length === 0 || !!feedback}
+                  className="licensed-submit-button flex w-full items-center justify-center gap-2 rounded-[1.3rem] py-3 text-sm font-black uppercase tracking-[0.14em] text-white transition-all disabled:cursor-not-allowed disabled:opacity-45 md:text-base"
+                >
+                  <CheckCircle2 className="h-5 w-5" />
+                  Balance Scale
+                </button>
+              </div>
+            </div>
+          </div>
+
           <AnimatePresence>
-            {feedback && !isForging && (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.5 }}
+            {outcomeLabel && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.5 }}
-                className={`absolute inset-0 flex items-center justify-center z-20 pointer-events-none`}
+                exit={{ opacity: 0, scale: 1.05 }}
+                className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center bg-black/18 backdrop-blur-[2px]"
               >
-                <div className={`px-12 py-6 rounded-full backdrop-blur-md border-4 ${feedback === 'correct' ? 'bg-green-500/20 border-green-400' : 'bg-red-500/20 border-red-400'}`}>
-                  <span className={`text-3xl md:text-6xl font-black drop-shadow-lg ${feedback === 'correct' ? 'text-green-400' : 'text-red-500'}`}>
-                    {feedback === 'correct' ? 'MASTERPIECE!' : 'RUINED!'}
-                  </span>
+                <div className={`rounded-[2rem] border px-8 py-6 text-center shadow-[0_20px_40px_rgba(0,0,0,0.34)] ${outcomeLabel.tone}`}>
+                  <div className="text-4xl font-black">{outcomeLabel.title}</div>
+                  <div className="mt-2 text-sm font-bold text-white/82">{outcomeLabel.subtitle}</div>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
-
         </div>
 
-        <GameActionDock
-          onBack={onBack}
-          accentClass="text-white"
-        />
+        <GameActionDock onBack={onBack} accentClass="text-white" />
 
-        {/* Game Over / Victory Modals */}
         <AnimatePresence>
-        {(isGameOver || isVictory) && (
-          <motion.div 
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
-          >
-            <div className="app-modal-panel w-full max-w-md rounded-[2rem] border-4 border-stone-700 bg-stone-900 p-6 shadow-2xl flex flex-col items-center gap-5 md:rounded-[3rem] md:border-8 md:gap-8 md:p-12">
-              <div className={`text-5xl font-black ${isVictory ? 'text-orange-500' : 'text-red-500'} drop-shadow-md text-center`}>
-                {isVictory ? 'MASTER SMITH!' : 'FORGE COLD!'}
-              </div>
-
-              {isVictory && (
-                <div className="flex gap-2">
-                  {[1, 2, 3].map(s => (
-                    <motion.div
-                      key={s}
-                      initial={{ scale: 0, rotate: -20 }}
-                      animate={{ scale: 1, rotate: 0 }}
-                      transition={{ delay: s * 0.2, type: 'spring' }}
-                    >
-                      <Star className={`w-16 h-16 ${s <= (score >= targetScore * 2 ? 3 : score >= targetScore * 1.5 ? 2 : 1) ? 'fill-orange-500 text-orange-500' : 'text-stone-700'}`} />
-                    </motion.div>
-                  ))}
+          {(isGameOver || isVictory) && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.88 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/78 p-4 backdrop-blur-md"
+            >
+              <div className="licensed-overlay-card flex w-full max-w-md flex-col items-center gap-6 p-8 text-center md:p-10">
+                <div className={`text-4xl font-black md:text-5xl ${isVictory ? 'text-emerald-300' : 'text-rose-300'}`}>
+                  {isVictory ? 'Mine Cleared!' : 'Shift Over!'}
                 </div>
-              )}
-
-              <div className="text-center">
-                <div className="text-stone-500 font-black uppercase tracking-widest text-sm">Final Score</div>
-                <div className="text-6xl font-black text-white drop-shadow-sm">{score}</div>
+                <div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.24em] text-white/54">Final Score</div>
+                  <div className="mt-2 text-5xl font-black text-white">{score}</div>
+                </div>
+                <button
+                  onClick={onBack}
+                  className="licensed-submit-button flex w-full items-center justify-center gap-2 rounded-[1.35rem] py-4 text-lg font-black uppercase tracking-[0.14em] text-white"
+                >
+                  <Coins className="h-5 w-5" />
+                  Continue
+                </button>
               </div>
-
-              <button 
-                onClick={onBack}
-                className="w-full py-5 text-white text-2xl font-black rounded-2xl transition-all licensed-submit-button"
-              >
-                CONTINUE
-              </button>
-            </div>
-          </motion.div>
-        )}
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
     </div>
