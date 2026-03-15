@@ -38,7 +38,7 @@ export const AVATARS: AvatarData[] = CHARACTER_AVATARS;
 export const ISLANDS: IslandData[] = [
   {
     id: 1,
-    name: 'Arithmetic',
+    name: 'Number & Arithmetic',
     category: 'Maths',
     isLocked: false,
     color: 'bg-[#7ED321]',
@@ -50,8 +50,8 @@ export const ISLANDS: IslandData[] = [
     levels: [
       { id: 1, stars: 3, isLocked: false, gameType: 'place_value_peaks' },
       { id: 2, stars: 2, isLocked: false, gameType: 'calculation_clash' },
-      { id: 3, stars: 0, isLocked: false, gameType: 'monster_market' },
-      { id: 4, stars: 0, isLocked: false, gameType: 'prime_pop' },
+      { id: 3, stars: 0, isLocked: false, gameType: 'prime_pop' },
+      { id: 4, stars: 0, isLocked: false, gameType: 'monster_market' },
       { id: 5, stars: 0, isLocked: false, isBoss: true, bossUnlockCoins: 350, gameType: 'tower_of_factors' },
     ]
   },
@@ -95,7 +95,7 @@ export const ISLANDS: IslandData[] = [
   },
   {
     id: 4,
-    name: 'Measure & Proportion',
+    name: 'Measure & Ratio',
     category: 'Maths',
     isLocked: false,
     color: 'bg-[#FFD700]',
@@ -114,7 +114,7 @@ export const ISLANDS: IslandData[] = [
   },
   {
     id: 5,
-    name: 'Data, Time & Interpretation',
+    name: 'Data & Time',
     category: 'Maths',
     isLocked: false,
     color: 'bg-[#FF4B4B]',
@@ -124,10 +124,10 @@ export const ISLANDS: IslandData[] = [
     mapImage: world05Map,
     decorations: [],
     levels: [
-      { id: 1, stars: 0, isLocked: false, gameType: 'data_dungeon' },
+      { id: 1, stars: 0, isLocked: false, gameType: 'timekeeper_temple' },
       { id: 2, stars: 0, isLocked: false, gameType: 'chart_chase' },
-      { id: 3, stars: 0, isLocked: false, gameType: 'mean_machine' },
-      { id: 4, stars: 0, isLocked: false, gameType: 'timekeeper_temple' },
+      { id: 3, stars: 0, isLocked: false, gameType: 'data_dungeon' },
+      { id: 4, stars: 0, isLocked: false, gameType: 'mean_machine' },
       { id: 5, stars: 0, isLocked: false, isBoss: true, bossUnlockCoins: 1850, gameType: 'observatory_overload' },
     ]
   },

@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
+import GameplaySceneBackdrop from './GameplaySceneBackdrop';
 import { AVATARS } from '../constants';
 import { Castle, ChevronRight, Coins, Sparkles, Target } from './GameIcons';
 
@@ -256,10 +257,8 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
   };
 
   return (
-    <div className="relative flex h-full w-full flex-col items-center overflow-hidden bg-[linear-gradient(180deg,#112719_0%,#153a21_42%,#08120d_100%)] p-2 font-sans pt-[env(safe-area-inset-top)] md:p-4">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_15%,rgba(56,189,248,0.12),transparent_28%),radial-gradient(circle_at_18%_40%,rgba(74,222,128,0.16),transparent_24%),radial-gradient(circle_at_85%_30%,rgba(250,204,21,0.1),transparent_22%)]" />
-      </div>
+    <div className="relative flex h-full w-full flex-col items-center overflow-hidden p-2 font-sans pt-[env(safe-area-inset-top)] md:p-4">
+      <GameplaySceneBackdrop gameType="coordinate_quest" />
 
       <div className="relative z-10 flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col gap-2 md:gap-4">
         <GameplayHUD
@@ -278,24 +277,26 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
           compact
         />
 
-        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] border-4 border-emerald-200/12 bg-[linear-gradient(180deg,rgba(20,45,31,0.94),rgba(10,20,14,0.98))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_28px_60px_rgba(0,0,0,0.36)] md:p-5">
-          <div className="mb-3 flex flex-col gap-2 rounded-[1.5rem] border border-white/8 bg-black/18 p-3 md:flex-row md:items-center md:justify-between">
-            <div>
-              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-100/62">Jungle Ruins</div>
-              <div className="mt-1 text-2xl font-black text-white md:text-3xl">{round.promptTitle}</div>
-              <div className="mt-1 text-sm font-bold text-white/72 md:text-base">{round.promptText}</div>
+        <div className="licensed-board-frame relative flex min-h-0 flex-1 flex-col overflow-hidden p-3 md:p-5">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(74,222,128,0.18),transparent_24%),radial-gradient(circle_at_82%_30%,rgba(56,189,248,0.14),transparent_20%),linear-gradient(180deg,rgba(8,15,30,0.12),rgba(8,15,30,0.34))]" />
+
+          <div className="relative z-10 mb-2 flex flex-col gap-2 md:mb-3 md:flex-row md:items-center md:justify-between">
+            <div className="licensed-game-card w-full max-w-[24rem] px-4 py-3 md:max-w-[34rem] md:px-5 md:py-4">
+              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/72">Jungle Ruins</div>
+              <div className="mt-1 text-[1.45rem] font-black leading-none text-white md:text-[2rem]">{round.promptTitle}</div>
+              <div className="mt-2 text-xs font-bold text-white/78 md:text-sm">{round.promptText}</div>
             </div>
-            <div className="flex items-center gap-2 rounded-[1.2rem] border border-emerald-200/12 bg-emerald-300/10 px-4 py-3">
+            <div className="casual-ribbon-chip flex items-center gap-2 rounded-full px-4 py-2 text-[10px] md:text-xs">
               <Target className="h-5 w-5 text-yellow-300" />
               <div>
-                <div className="text-[10px] font-black uppercase tracking-[0.16em] text-emerald-100/62">Round</div>
+                <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/70">Round</div>
                 <div className="text-xl font-black text-white">{roundIndex + 1} / 7</div>
               </div>
             </div>
           </div>
 
-          <div className="flex min-h-0 flex-1 flex-col gap-3 lg:flex-row">
-            <div className="relative flex min-h-[22rem] flex-[1.1] flex-col overflow-hidden rounded-[1.75rem] border border-white/8 bg-[linear-gradient(180deg,rgba(34,85,52,0.34),rgba(10,18,13,0.72))] p-4">
+          <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-3 md:flex-row">
+            <div className="licensed-game-card-dark relative flex min-h-[18rem] flex-[1.1] flex-col overflow-hidden rounded-[1.75rem] p-4 md:min-h-0">
               <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent,rgba(8,15,11,0.55))]" />
               <div className="mb-3 flex items-center justify-between">
                 <div className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-100/62">Grid Map</div>
@@ -363,7 +364,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
             </div>
 
             <div className="flex min-h-0 flex-[0.85] flex-col gap-3">
-              <div className="rounded-[1.75rem] border border-white/8 bg-black/20 p-4">
+              <div className="licensed-game-card-dark rounded-[1.75rem] p-4">
                 <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-100/60">
                   <Sparkles className="h-4 w-4 text-yellow-300" />
                   Explorer Notes
@@ -382,7 +383,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                 </div>
               </div>
 
-              <div className="rounded-[1.75rem] border border-white/8 bg-black/20 p-4">
+              <div className="licensed-game-card-dark rounded-[1.75rem] p-4">
                 <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-100/60">
                   <Castle className="h-4 w-4 text-sky-300" />
                   Board Clues

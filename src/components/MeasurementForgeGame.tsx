@@ -264,16 +264,16 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
             </div>
           </div>
 
-          <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-3 lg:flex-row">
-            <div className="relative flex min-h-[23rem] flex-[1.35] flex-col justify-between overflow-hidden rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,rgba(8,15,30,0.24),rgba(8,15,30,0.08))] p-4 md:p-5">
+          <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-3 md:flex-row">
+            <div className="relative flex min-h-[18rem] flex-[1.35] flex-col justify-between overflow-hidden rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,rgba(17,31,58,0.22),rgba(8,15,30,0.08))] p-4 md:min-h-0 md:p-5">
               <div className="pointer-events-none absolute inset-x-[18%] top-[18%] h-20 rounded-full bg-cyan-300/10 blur-3xl md:h-24" />
               <div className="pointer-events-none absolute inset-x-[12%] bottom-[12%] h-14 rounded-full bg-black/28 blur-2xl" />
 
               <div className="flex items-start justify-between gap-3">
                 <div className="max-w-[18rem]">
-                  <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/56 md:text-xs">Mining Camp Scale</div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/56 md:text-xs">Crystal Weighbridge</div>
                   <div className="mt-1 text-sm font-bold text-white/76 md:text-base">
-                    Load the left pan with the exact cargo needed to match the target load on the right.
+                    Load the left pan with the exact cargo needed to match the glowing target load on the right.
                   </div>
                 </div>
                 <div className="rounded-[1rem] border border-white/10 bg-white/8 px-3 py-2 text-right shadow-[0_10px_20px_rgba(2,6,23,0.16)]">
@@ -285,17 +285,17 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
               </div>
 
               <div className="relative mx-auto mt-4 flex w-full max-w-3xl flex-1 items-end justify-center">
-                <div className="absolute bottom-[1.2rem] left-1/2 h-12 w-[54%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(20,184,166,0.22),rgba(20,184,166,0)_72%)] blur-xl" />
-                <div className="absolute bottom-[8.2rem] left-1/2 h-32 w-8 -translate-x-1/2 rounded-full bg-[linear-gradient(180deg,#f8d46c,#d99016_32%,#8b4a11_100%)] shadow-[0_0_0_6px_rgba(93,52,16,0.22),0_14px_24px_rgba(0,0,0,0.22)]" />
+                <div className="absolute bottom-[1.2rem] left-1/2 h-12 w-[54%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.22),rgba(56,189,248,0)_72%)] blur-xl" />
+                <div className="absolute bottom-[8.2rem] left-1/2 h-32 w-8 -translate-x-1/2 rounded-full bg-[linear-gradient(180deg,#dbeafe,#94a3b8_34%,#334155_100%)] shadow-[0_0_0_6px_rgba(59,130,246,0.14),0_14px_24px_rgba(0,0,0,0.22)]" />
                 <motion.div
                   animate={{ rotate: balanceTilt }}
                   transition={{ type: 'spring', stiffness: 80, damping: 14 }}
-                  className="absolute bottom-[10.25rem] left-1/2 h-5 w-[74%] -translate-x-1/2 rounded-full bg-[linear-gradient(180deg,#ffd96a,#d99518_34%,#7c3f10_100%)] shadow-[0_14px_24px_rgba(0,0,0,0.28)]"
+                  className="absolute bottom-[10.25rem] left-1/2 h-5 w-[74%] -translate-x-1/2 rounded-full bg-[linear-gradient(180deg,#fef3c7,#f59e0b_30%,#475569_100%)] shadow-[0_14px_24px_rgba(0,0,0,0.28)]"
                 >
-                  <div className="absolute left-[9%] top-4 h-[6.2rem] w-[34%] origin-top rounded-[1.6rem] border-[3px] border-amber-100/18 bg-[linear-gradient(180deg,rgba(49,28,17,0.96),rgba(20,13,15,0.98))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_14px_20px_rgba(0,0,0,0.18)]">
-                    <div className="flex h-full flex-wrap content-start gap-2 overflow-hidden rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(0,0,0,0.16))] p-2">
+                  <div className="absolute left-[9%] top-4 h-[6.2rem] w-[34%] origin-top rounded-[1.6rem] border-[3px] border-sky-100/18 bg-[linear-gradient(180deg,rgba(21,34,58,0.96),rgba(8,15,30,0.98))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_14px_20px_rgba(0,0,0,0.18)]">
+                    <div className="flex h-full flex-wrap content-start gap-2 overflow-hidden rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(8,15,30,0.18))] p-2">
                       {selectedItems.length === 0 && (
-                        <div className="flex h-full w-full items-center justify-center text-center text-[10px] font-black uppercase tracking-[0.16em] text-amber-100/34">
+                        <div className="flex h-full w-full items-center justify-center text-center text-[10px] font-black uppercase tracking-[0.16em] text-sky-100/34">
                           Load cargo
                         </div>
                       )}
@@ -311,17 +311,17 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                     </div>
                   </div>
 
-                  <div className="absolute right-[9%] top-4 h-[6.2rem] w-[34%] origin-top rounded-[1.6rem] border-[3px] border-amber-100/18 bg-[linear-gradient(180deg,rgba(49,28,17,0.96),rgba(20,13,15,0.98))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_14px_20px_rgba(0,0,0,0.18)]">
-                    <div className="flex h-full items-center justify-center rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(0,0,0,0.16))] p-2 text-center">
+                  <div className="absolute right-[9%] top-4 h-[6.2rem] w-[34%] origin-top rounded-[1.6rem] border-[3px] border-sky-100/18 bg-[linear-gradient(180deg,rgba(21,34,58,0.96),rgba(8,15,30,0.98))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_14px_20px_rgba(0,0,0,0.18)]">
+                    <div className="flex h-full items-center justify-center rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(8,15,30,0.18))] p-2 text-center">
                       <div>
-                        <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/60">Target Load</div>
+                        <div className="text-[10px] font-black uppercase tracking-[0.18em] text-sky-100/60">Target Load</div>
                         <div className="mt-1 text-2xl font-black text-yellow-100">{round.targetDisplay}</div>
                       </div>
                     </div>
                   </div>
                 </motion.div>
 
-                <div className="absolute bottom-[2.1rem] left-1/2 h-28 w-48 -translate-x-1/2 rounded-[2rem] border-4 border-amber-200/14 bg-[linear-gradient(180deg,#5a3119,#24140f)] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_26px_48px_rgba(0,0,0,0.3)]" />
+                <div className="absolute bottom-[2.1rem] left-1/2 h-28 w-48 -translate-x-1/2 rounded-[2rem] border-4 border-sky-200/14 bg-[linear-gradient(180deg,#334155,#0f172a)] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_26px_48px_rgba(0,0,0,0.3)]" />
               </div>
 
               <div className="mt-4 grid grid-cols-2 gap-3">
@@ -364,7 +364,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
               <div className="licensed-game-card-dark mt-auto rounded-[1.75rem] p-3 md:p-4">
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <div>
-                    <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/60">Camp Controls</div>
+                    <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/60">Forge Controls</div>
                     <div className="text-lg font-black text-white">Adjust the load, then lock it in.</div>
                   </div>
                   <button

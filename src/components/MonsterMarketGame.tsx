@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
+import GameplaySceneBackdrop from './GameplaySceneBackdrop';
 import { AVATARS } from '../constants';
 import { Coins, Sparkles, Store } from './GameIcons';
 
@@ -222,10 +223,8 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
   }, [round.items]);
 
   return (
-    <div className="relative flex h-full w-full flex-col items-center overflow-hidden bg-[linear-gradient(180deg,#10263d_0%,#14304f_38%,#08121f_100%)] p-2 font-sans pt-[env(safe-area-inset-top)] md:p-4">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(56,189,248,0.18),transparent_28%),radial-gradient(circle_at_12%_50%,rgba(250,204,21,0.12),transparent_24%),radial-gradient(circle_at_84%_38%,rgba(20,184,166,0.12),transparent_26%)]" />
-      </div>
+    <div className="relative flex h-full w-full flex-col items-center overflow-hidden p-2 font-sans pt-[env(safe-area-inset-top)] md:p-4">
+      <GameplaySceneBackdrop gameType="monster_market" />
 
       <div className="relative z-10 flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col gap-2 md:gap-4">
         <GameplayHUD
@@ -244,25 +243,27 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
           compact
         />
 
-        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] border-4 border-cyan-200/12 bg-[linear-gradient(180deg,rgba(10,44,63,0.94),rgba(7,16,31,0.98))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_28px_60px_rgba(0,0,0,0.34)] md:p-5">
-          <div className="mb-3 flex flex-col gap-2 rounded-[1.5rem] border border-white/8 bg-black/20 p-3 md:flex-row md:items-center md:justify-between">
-            <div>
-              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/64">Fantasy Marketplace</div>
-              <div className="mt-1 text-2xl font-black text-white md:text-3xl">Serve The Customer</div>
-              <div className="mt-1 text-sm font-bold text-white/72 md:text-base">{shopperMessage}</div>
+        <div className="licensed-board-frame relative flex min-h-0 flex-1 flex-col overflow-hidden p-3 md:p-5">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_12%,rgba(255,224,122,0.16),transparent_22%),radial-gradient(circle_at_16%_36%,rgba(56,189,248,0.16),transparent_24%),linear-gradient(180deg,rgba(9,19,36,0.1),rgba(9,19,36,0.32))]" />
+
+          <div className="relative z-10 mb-2 flex flex-col gap-2 md:mb-3 md:flex-row md:items-center md:justify-between">
+            <div className="licensed-game-card w-full max-w-[24rem] px-4 py-3 md:max-w-[32rem] md:px-5 md:py-4">
+              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/70">Fantasy Marketplace</div>
+              <div className="mt-1 text-[1.5rem] font-black leading-none text-white md:text-[2rem]">Serve The Customer</div>
+              <div className="mt-2 text-xs font-bold text-white/78 md:text-sm">{shopperMessage}</div>
             </div>
-            <div className="flex items-center gap-2 rounded-[1.2rem] border border-cyan-200/12 bg-cyan-300/10 px-4 py-3">
+            <div className="casual-ribbon-chip flex items-center gap-2 rounded-full px-4 py-2 text-[10px] md:text-xs">
               <Store className="h-5 w-5 text-yellow-300" />
               <div>
-                <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/62">Round</div>
+                <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/70">Round</div>
                 <div className="text-xl font-black text-white">{roundIndex + 1} / 8</div>
               </div>
             </div>
           </div>
 
-          <div className="flex min-h-0 flex-1 flex-col gap-3 lg:flex-row">
-            <div className="flex min-h-[20rem] flex-[0.95] flex-col gap-3">
-              <div className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(255,255,255,0.04))] p-4 shadow-[0_18px_40px_rgba(0,0,0,0.24)]">
+          <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-3 md:flex-row">
+            <div className="flex min-h-[17.5rem] flex-[0.95] flex-col gap-3 md:min-h-0">
+              <div className="licensed-game-card-dark relative overflow-hidden rounded-[1.75rem] p-4">
                 <div className={`absolute left-4 top-4 h-16 w-16 rounded-[1.2rem] bg-gradient-to-br ${round.shopper.tint} blur-md opacity-80`} />
                 <div className="relative flex items-center gap-4">
                   <div className={`relative flex h-20 w-20 items-center justify-center rounded-[1.5rem] bg-gradient-to-br ${round.shopper.tint} text-3xl font-black text-white shadow-[0_16px_28px_rgba(0,0,0,0.28)]`}>
@@ -278,7 +279,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
                 </div>
               </div>
 
-              <div className="rounded-[1.75rem] border border-white/8 bg-black/20 p-4">
+              <div className="licensed-game-card-dark rounded-[1.75rem] p-4">
                 <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/60">
                   <Sparkles className="h-4 w-4 text-yellow-300" />
                   Order Board
@@ -304,21 +305,21 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
 
             <div className="flex min-h-0 flex-[1.15] flex-col gap-3">
               <div className="grid grid-cols-3 gap-3">
-                <div className="rounded-[1.35rem] border border-white/10 bg-white/6 p-3">
+                <div className="licensed-game-card-dark rounded-[1.35rem] p-3">
                   <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/60">Total</div>
                   <div className="mt-1 text-xl font-black text-white md:text-2xl">{formatMoney(round.totalPence)}</div>
                 </div>
-                <div className="rounded-[1.35rem] border border-white/10 bg-white/6 p-3">
+                <div className="licensed-game-card-dark rounded-[1.35rem] p-3">
                   <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/60">Paid</div>
                   <div className="mt-1 text-xl font-black text-emerald-300 md:text-2xl">{formatMoney(round.amountPaidPence)}</div>
                 </div>
-                <div className="rounded-[1.35rem] border border-white/10 bg-white/6 p-3">
+                <div className="licensed-game-card-dark rounded-[1.35rem] p-3">
                   <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/60">Change</div>
                   <div className="mt-1 text-xl font-black text-yellow-300 md:text-2xl">{formatMoney(round.changeDuePence)}</div>
                 </div>
               </div>
 
-              <div className="rounded-[1.75rem] border border-white/8 bg-black/20 p-4">
+              <div className="licensed-game-card-dark rounded-[1.75rem] p-4">
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/60">Till</div>
                   <div className="rounded-full border border-white/10 bg-white/8 px-3 py-1 text-xs font-black text-white/82">Tap to add</div>
@@ -339,7 +340,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
                 </div>
               </div>
 
-              <div className="rounded-[1.75rem] border border-white/8 bg-black/20 p-4">
+              <div className="licensed-game-card-dark rounded-[1.75rem] p-4">
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <div>
                     <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/60">Change Tray</div>
