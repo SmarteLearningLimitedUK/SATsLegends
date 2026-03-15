@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
+import GameplaySceneBackdrop from './GameplaySceneBackdrop';
 import { AVATARS } from '../constants';
 import { CheckCircle2, Coins, RotateCcw, Sparkles } from './GameIcons';
 
@@ -225,12 +226,8 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
   }, [feedback]);
 
   return (
-    <div className="relative flex h-full w-full flex-col items-center overflow-hidden bg-[linear-gradient(180deg,#291308_0%,#3d1906_30%,#140d0c_100%)] p-2 font-sans pt-[env(safe-area-inset-top)] md:p-4">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(250,204,21,0.22),transparent_32%),radial-gradient(circle_at_18%_78%,rgba(34,197,94,0.12),transparent_26%),radial-gradient(circle_at_85%_28%,rgba(56,189,248,0.14),transparent_24%)]" />
-        <div className="absolute inset-x-0 bottom-0 h-[48%] bg-[linear-gradient(180deg,transparent,rgba(17,8,7,0.9))]" />
-      </div>
-
+    <div className="relative flex h-full w-full flex-col items-center overflow-hidden p-2 font-sans pt-[env(safe-area-inset-top)] md:p-4">
+      <GameplaySceneBackdrop gameType="measurement_forge" />
       <div className="relative z-10 flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col gap-2 md:gap-4">
         <GameplayHUD
           title="Scale Master"
@@ -248,44 +245,57 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
           compact
         />
 
-        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] border-4 border-amber-200/15 bg-[linear-gradient(180deg,rgba(55,28,12,0.94),rgba(22,12,9,0.98))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_25px_60px_rgba(0,0,0,0.35)] md:p-5">
-          <div className="mb-3 flex flex-col gap-2 rounded-[1.5rem] border border-amber-200/12 bg-black/20 p-3 md:flex-row md:items-center md:justify-between md:gap-4 md:p-4">
-            <div>
-              <div className="text-[10px] font-black uppercase tracking-[0.24em] text-amber-100/70">Round {roundIndex + 1} / 7</div>
-              <div className="mt-1 text-2xl font-black text-white md:text-3xl">{round.targetLabel}</div>
+        <div className="licensed-board-frame relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] p-3 md:p-5">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(250,204,21,0.18),transparent_24%),radial-gradient(circle_at_82%_30%,rgba(34,211,238,0.16),transparent_20%),linear-gradient(180deg,rgba(8,15,30,0.14),rgba(8,15,30,0.42))]" />
+
+          <div className="relative z-10 mb-3 flex flex-col items-center gap-2 text-center">
+            <div className="casual-ribbon-chip inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[10px]">
+              <Sparkles className="h-4 w-4" />
+              Round {roundIndex + 1} / 7
             </div>
-            <div className="flex items-center gap-2 rounded-[1.25rem] border border-amber-200/18 bg-amber-300/10 px-4 py-3">
-              <Sparkles className="h-5 w-5 text-yellow-300" />
-              <div>
-                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/72">Target</div>
-                <div className="text-xl font-black text-amber-200 md:text-2xl">{round.targetDisplay}</div>
+            <div className="licensed-game-card w-full max-w-[22rem] px-4 py-3 md:max-w-[29rem] md:px-6 md:py-4">
+              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/72 md:text-xs">Mine Order</div>
+              <div className="mt-1 text-[1.55rem] font-black leading-none text-white md:text-[2.15rem]">{round.targetLabel}</div>
+              <div className="mt-2 flex items-center justify-center gap-2">
+                <div className="fantasy-nameplate px-4 py-2 md:px-5">
+                  <span className="text-lg font-black text-white md:text-2xl">{round.targetDisplay}</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="relative flex min-h-0 flex-1 flex-col gap-3 lg:flex-row">
-            <div className="relative flex min-h-[20rem] flex-[1.3] flex-col justify-between overflow-hidden rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,rgba(17,24,39,0.42),rgba(25,10,7,0.72))] p-4">
-              <div className="absolute left-1/2 top-[21%] h-24 w-24 -translate-x-1/2 rounded-full bg-yellow-300/18 blur-2xl" />
-              <div className="absolute inset-x-[12%] top-[64%] h-10 rounded-full bg-black/35 blur-xl" />
+          <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-3 lg:flex-row">
+            <div className="relative flex min-h-[23rem] flex-[1.35] flex-col justify-between overflow-hidden rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,rgba(8,15,30,0.24),rgba(8,15,30,0.08))] p-4 md:p-5">
+              <div className="pointer-events-none absolute inset-x-[18%] top-[18%] h-20 rounded-full bg-cyan-300/10 blur-3xl md:h-24" />
+              <div className="pointer-events-none absolute inset-x-[12%] bottom-[12%] h-14 rounded-full bg-black/28 blur-2xl" />
 
-              <div className="text-center">
-                <div className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-100/68">Mining Camp Scale</div>
-                <div className="mt-2 text-sm font-bold text-white/72 md:text-base">
-                  Match the target by loading the correct cargo onto the left pan.
+              <div className="flex items-start justify-between gap-3">
+                <div className="max-w-[18rem]">
+                  <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/56 md:text-xs">Mining Camp Scale</div>
+                  <div className="mt-1 text-sm font-bold text-white/76 md:text-base">
+                    Load the left pan with the exact cargo needed to match the target load on the right.
+                  </div>
+                </div>
+                <div className="rounded-[1rem] border border-white/10 bg-white/8 px-3 py-2 text-right shadow-[0_10px_20px_rgba(2,6,23,0.16)]">
+                  <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/56">Difference</div>
+                  <div className={`mt-1 text-lg font-black md:text-2xl ${balanceDifference === 0 ? 'text-emerald-300' : balanceDifference > 0 ? 'text-rose-300' : 'text-sky-300'}`}>
+                    {balanceDifference === 0 ? 'Perfect' : formatCurrent(Math.abs(balanceDifference), scaleUnit)}
+                  </div>
                 </div>
               </div>
 
               <div className="relative mx-auto mt-4 flex w-full max-w-3xl flex-1 items-end justify-center">
-                <div className="absolute bottom-[8.2rem] left-1/2 h-28 w-6 -translate-x-1/2 rounded-full bg-[linear-gradient(180deg,#eab308,#92400e)] shadow-[0_0_0_5px_rgba(120,53,15,0.32)]" />
+                <div className="absolute bottom-[1.2rem] left-1/2 h-12 w-[54%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(20,184,166,0.22),rgba(20,184,166,0)_72%)] blur-xl" />
+                <div className="absolute bottom-[8.2rem] left-1/2 h-32 w-8 -translate-x-1/2 rounded-full bg-[linear-gradient(180deg,#f8d46c,#d99016_32%,#8b4a11_100%)] shadow-[0_0_0_6px_rgba(93,52,16,0.22),0_14px_24px_rgba(0,0,0,0.22)]" />
                 <motion.div
                   animate={{ rotate: balanceTilt }}
                   transition={{ type: 'spring', stiffness: 80, damping: 14 }}
-                  className="absolute bottom-[10.25rem] left-1/2 h-4 w-[72%] -translate-x-1/2 rounded-full bg-[linear-gradient(180deg,#fbbf24,#78350f)] shadow-[0_12px_22px_rgba(0,0,0,0.32)]"
+                  className="absolute bottom-[10.25rem] left-1/2 h-5 w-[74%] -translate-x-1/2 rounded-full bg-[linear-gradient(180deg,#ffd96a,#d99518_34%,#7c3f10_100%)] shadow-[0_14px_24px_rgba(0,0,0,0.28)]"
                 >
-                  <div className="absolute left-[10%] top-3 h-[5.8rem] w-[32%] origin-top rounded-[1.6rem] border-4 border-amber-200/16 bg-[linear-gradient(180deg,#3b1d0b,#1b120f)] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-                    <div className="flex h-full flex-wrap content-start gap-2 overflow-hidden rounded-[1rem] border border-white/8 bg-black/24 p-2">
+                  <div className="absolute left-[9%] top-4 h-[6.2rem] w-[34%] origin-top rounded-[1.6rem] border-[3px] border-amber-100/18 bg-[linear-gradient(180deg,rgba(49,28,17,0.96),rgba(20,13,15,0.98))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_14px_20px_rgba(0,0,0,0.18)]">
+                    <div className="flex h-full flex-wrap content-start gap-2 overflow-hidden rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(0,0,0,0.16))] p-2">
                       {selectedItems.length === 0 && (
-                        <div className="flex h-full w-full items-center justify-center text-center text-[10px] font-black uppercase tracking-[0.16em] text-amber-100/36">
+                        <div className="flex h-full w-full items-center justify-center text-center text-[10px] font-black uppercase tracking-[0.16em] text-amber-100/34">
                           Load cargo
                         </div>
                       )}
@@ -293,7 +303,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                         <button
                           key={`${item.id}-${index}`}
                           onClick={() => removeItem(index)}
-                          className={`flex min-w-[4.25rem] flex-1 items-center justify-center rounded-full border border-white/12 bg-gradient-to-br ${item.tint} px-3 py-2 text-[10px] font-black text-slate-950 shadow-[0_12px_22px_rgba(0,0,0,0.24)]`}
+                          className={`flex min-w-[4.25rem] flex-1 items-center justify-center rounded-full border border-white/18 bg-gradient-to-br ${item.tint} px-3 py-2 text-[10px] font-black text-slate-950 shadow-[0_10px_18px_rgba(0,0,0,0.24)]`}
                         >
                           {item.displayWeight}
                         </button>
@@ -301,29 +311,27 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                     </div>
                   </div>
 
-                  <div className="absolute right-[10%] top-3 h-[5.8rem] w-[32%] origin-top rounded-[1.6rem] border-4 border-amber-200/16 bg-[linear-gradient(180deg,#3b1d0b,#1b120f)] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-                    <div className="flex h-full items-center justify-center rounded-[1rem] border border-white/8 bg-black/24 p-2 text-center">
+                  <div className="absolute right-[9%] top-4 h-[6.2rem] w-[34%] origin-top rounded-[1.6rem] border-[3px] border-amber-100/18 bg-[linear-gradient(180deg,rgba(49,28,17,0.96),rgba(20,13,15,0.98))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_14px_20px_rgba(0,0,0,0.18)]">
+                    <div className="flex h-full items-center justify-center rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(0,0,0,0.16))] p-2 text-center">
                       <div>
                         <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/60">Target Load</div>
-                        <div className="mt-1 text-2xl font-black text-white">{round.targetDisplay}</div>
+                        <div className="mt-1 text-2xl font-black text-yellow-100">{round.targetDisplay}</div>
                       </div>
                     </div>
                   </div>
                 </motion.div>
 
-                <div className="absolute bottom-[2.2rem] left-1/2 h-28 w-44 -translate-x-1/2 rounded-[2rem] border-4 border-amber-200/14 bg-[linear-gradient(180deg,#4a2815,#22120d)] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_26px_48px_rgba(0,0,0,0.34)]" />
+                <div className="absolute bottom-[2.1rem] left-1/2 h-28 w-48 -translate-x-1/2 rounded-[2rem] border-4 border-amber-200/14 bg-[linear-gradient(180deg,#5a3119,#24140f)] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_26px_48px_rgba(0,0,0,0.3)]" />
               </div>
 
               <div className="mt-4 grid grid-cols-2 gap-3">
-                <div className="rounded-[1.25rem] border border-white/10 bg-black/24 p-3">
+                <div className="licensed-game-card-dark rounded-[1.25rem] p-3">
                   <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/60">Current Load</div>
                   <div className="mt-1 text-xl font-black text-white md:text-2xl">{formatCurrent(currentValue, scaleUnit)}</div>
                 </div>
-                <div className="rounded-[1.25rem] border border-white/10 bg-black/24 p-3">
-                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/60">Difference</div>
-                  <div className={`mt-1 text-xl font-black md:text-2xl ${balanceDifference === 0 ? 'text-emerald-300' : balanceDifference > 0 ? 'text-rose-300' : 'text-sky-300'}`}>
-                    {balanceDifference === 0 ? 'Perfect' : formatCurrent(Math.abs(balanceDifference), scaleUnit)}
-                  </div>
+                <div className="licensed-game-card-dark rounded-[1.25rem] p-3">
+                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/60">Selected Cargo</div>
+                  <div className="mt-1 text-xl font-black text-white md:text-2xl">{selectedItems.length}</div>
                 </div>
               </div>
             </div>
@@ -335,10 +343,15 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                     key={item.id}
                     onClick={() => addItem(item)}
                     disabled={!!feedback}
-                    className={`group flex min-h-[7rem] flex-col items-start justify-between overflow-hidden rounded-[1.5rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(255,255,255,0.04))] p-3 text-left shadow-[0_18px_32px_rgba(0,0,0,0.22)] transition-all hover:-translate-y-1 hover:border-amber-200/26 active:scale-[0.98] ${item.glow}`}
+                    className={`licensed-game-card-dark group flex min-h-[7.3rem] flex-col items-start justify-between overflow-hidden rounded-[1.5rem] p-3 text-left transition-all hover:-translate-y-1 active:scale-[0.98] ${item.glow}`}
                   >
-                    <div className={`flex h-11 w-11 items-center justify-center rounded-[1rem] bg-gradient-to-br ${item.tint} text-lg font-black text-slate-950 shadow-[0_12px_20px_rgba(0,0,0,0.18)]`}>
-                      {item.displayWeight.split(' ')[0]}
+                    <div className="flex items-start justify-between gap-2 w-full">
+                      <div className={`flex h-12 w-12 items-center justify-center rounded-[1rem] bg-gradient-to-br ${item.tint} text-lg font-black text-slate-950 shadow-[0_12px_20px_rgba(0,0,0,0.18)]`}>
+                        {item.displayWeight.split(' ')[0]}
+                      </div>
+                      <div className="fantasy-nameplate px-3 py-1.5 text-[10px] font-black text-white">
+                        Add
+                      </div>
                     </div>
                     <div>
                       <div className="text-sm font-black text-white md:text-base">{item.name}</div>
@@ -348,16 +361,16 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                 ))}
               </div>
 
-              <div className="mt-auto rounded-[1.75rem] border border-white/10 bg-black/24 p-3 md:p-4">
+              <div className="licensed-game-card-dark mt-auto rounded-[1.75rem] p-3 md:p-4">
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <div>
-                    <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/60">Selected Cargo</div>
-                    <div className="text-lg font-black text-white">{selectedItems.length} piece{selectedItems.length === 1 ? '' : 's'}</div>
+                    <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/60">Camp Controls</div>
+                    <div className="text-lg font-black text-white">Adjust the load, then lock it in.</div>
                   </div>
                   <button
                     onClick={clearScale}
                     disabled={selectedItems.length === 0 || !!feedback}
-                    className="flex items-center gap-2 rounded-full border border-white/12 bg-white/8 px-4 py-2 text-xs font-black uppercase tracking-[0.12em] text-white transition-all hover:bg-white/12 disabled:cursor-not-allowed disabled:opacity-35"
+                    className="fantasy-cta-button flex items-center gap-2 px-4 py-2 text-xs uppercase tracking-[0.12em] text-white disabled:cursor-not-allowed disabled:opacity-35"
                   >
                     <RotateCcw className="h-4 w-4" />
                     Reset
