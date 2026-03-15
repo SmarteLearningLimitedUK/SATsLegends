@@ -1,4 +1,4 @@
-import React, { Component, ReactNode, ErrorInfo, useEffect, useMemo, useRef } from 'react';
+import React, { Component, ReactNode, ErrorInfo, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import { IslandData, PlayerData, LevelData } from '../types';
 import AssetIcon from './AssetIcon';
@@ -49,11 +49,11 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
 const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBack, onSelectLevel }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const NODE_POSITIONS = [
-    { top: 11, left: 50 },
-    { top: 29, left: 28 },
-    { top: 48, left: 71 },
-    { top: 68, left: 33 },
-    { top: 87, left: 56 },
+    { top: 12, left: 50 },
+    { top: 31, left: 37 },
+    { top: 51, left: 64 },
+    { top: 71, left: 39 },
+    { top: 89, left: 58 },
   ];
 
   const completedLevels = player.completedLevels[island.id] || [];
@@ -69,14 +69,6 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
     scrollRef.current?.scrollTo({ top: 0, behavior: 'auto' });
   }, [island.id]);
 
-  const mapPath = useMemo(() => NODE_POSITIONS.map((point, index) => {
-    if (index === 0) return `M ${point.left} ${point.top}`;
-    const previous = NODE_POSITIONS[index - 1];
-    const controlX = (previous.left + point.left) / 2 + (index % 2 === 0 ? -8 : 8);
-    const controlY = (previous.top + point.top) / 2;
-    return `Q ${controlX} ${controlY} ${point.left} ${point.top}`;
-  }).join(' '), []);
-
   return (
     <div className="relative w-full h-full bg-slate-900 overflow-hidden font-sans">
       <div ref={scrollRef} className="absolute inset-0 overflow-y-auto overflow-x-hidden touch-pan-y hide-scrollbar">
@@ -91,51 +83,8 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
           ) : (
             <div className={`absolute inset-0 bg-gradient-to-b ${island.bgGradient || 'from-sky-400 to-sky-200'} `} />
           )}
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,17,31,0.14),rgba(7,17,31,0.26)_22%,rgba(7,17,31,0.48)_58%,rgba(7,17,31,0.72)_100%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.14),rgba(255,255,255,0)_24%),radial-gradient(circle_at_bottom,rgba(96,165,250,0.18),rgba(96,165,250,0)_26%)]" />
-
-          <svg viewBox="0 0 100 100" className="pointer-events-none absolute inset-0 h-full w-full overflow-visible">
-            <path
-              d={mapPath}
-              fill="none"
-              stroke="rgba(255,245,180,0.28)"
-              strokeWidth="1.85"
-              strokeLinecap="round"
-            />
-            <path
-              d={mapPath}
-              fill="none"
-              stroke="url(#levelPathGradient)"
-              strokeWidth="1.1"
-              strokeLinecap="round"
-              strokeDasharray="1.3 1.95"
-            />
-            <defs>
-              <linearGradient id="levelPathGradient" x1="50%" y1="0%" x2="50%" y2="100%">
-                <stop offset="0%" stopColor="#fde68a" />
-                <stop offset="100%" stopColor="#f59e0b" />
-              </linearGradient>
-            </defs>
-          </svg>
-
-          {NODE_POSITIONS.slice(0, -1).map((from, index) => {
-            const to = NODE_POSITIONS[index + 1];
-            return Array.from({ length: 6 }).map((_, dotIndex) => {
-              const t = (dotIndex + 1) / 7;
-              const x = from.left + (to.left - from.left) * t;
-              const y = from.top + (to.top - from.top) * t;
-
-              return (
-                <motion.div
-                  key={`path-dot-${index}-${dotIndex}`}
-                  className="pointer-events-none absolute h-3 w-3 rounded-full border border-yellow-100/70 bg-[linear-gradient(180deg,#ffe79a_0%,#ffb938_100%)] shadow-[0_0_12px_rgba(251,191,36,0.55)]"
-                  style={{ left: `${x}%`, top: `${y}%`, transform: 'translate(-50%, -50%)' }}
-                  animate={{ scale: [1, 1.15, 1], opacity: [0.72, 1, 0.72] }}
-                  transition={{ duration: 2 + dotIndex * 0.2, repeat: Infinity, delay: dotIndex * 0.15 }}
-                />
-              );
-            });
-          })}
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,17,31,0.08),rgba(7,17,31,0.18)_22%,rgba(7,17,31,0.36)_58%,rgba(7,17,31,0.58)_100%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),rgba(255,255,255,0)_24%),radial-gradient(circle_at_bottom,rgba(96,165,250,0.14),rgba(96,165,250,0)_26%)]" />
 
           {island.levels.map((level, index) => {
             const previousLevelsCleared = island.levels
