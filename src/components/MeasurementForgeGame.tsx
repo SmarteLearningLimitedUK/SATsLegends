@@ -15,6 +15,7 @@ import labelPurpleLong from '../assets/licensed/slices/label_purple_long.png';
 import labelGreenLong from '../assets/licensed/slices/label_green_long.png';
 import woodPlankLong from '../assets/licensed/slices/wood_plank_long_3.png';
 import iconGem from '../assets/licensed/slices/icon_gem.png';
+import scaleMasterScale from '../assets/measurement/scale_master_scale.svg';
 
 interface MeasurementForgeGameProps {
   levelId: number;
@@ -439,21 +440,15 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
               <div className="pointer-events-none absolute bottom-[12%] left-1/2 h-20 w-[72%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.24),rgba(34,211,238,0)_72%)] blur-xl" />
 
               <div className="relative flex h-full items-end justify-center">
-                <div className="absolute bottom-[7%] left-1/2 h-24 w-48 -translate-x-1/2 rounded-[2.4rem] border border-amber-100/18 bg-[linear-gradient(180deg,#8b5a24,#5b3717)] shadow-[inset_0_3px_0_rgba(255,255,255,0.12),0_20px_36px_rgba(0,0,0,0.26)] md:h-28 md:w-56">
-                  <div className="absolute inset-x-[14%] top-[18%] h-[28%] rounded-full bg-black/14 blur-md" />
-                </div>
-                <div className="absolute bottom-[21%] left-1/2 h-[32%] w-8 -translate-x-1/2 rounded-t-[1.6rem] rounded-b-[1rem] border border-amber-100/26 bg-[linear-gradient(180deg,#fde68a,#f59e0b_36%,#b45309_100%)] shadow-[0_12px_24px_rgba(217,119,6,0.28)] md:w-10" />
-                <div className="absolute bottom-[44%] left-1/2 z-10 flex h-12 w-12 -translate-x-1/2 items-center justify-center rounded-full border border-cyan-100/60 bg-[radial-gradient(circle,#dbeafe,#38bdf8_56%,#2563eb)] shadow-[0_0_0_8px_rgba(59,130,246,0.12),0_10px_20px_rgba(14,165,233,0.24)] md:h-14 md:w-14">
-                  <AssetIcon name="gem" className="h-5 w-5 md:h-6 md:w-6" />
-                </div>
-
                 <motion.div
                   animate={{ rotate: balanceTilt }}
                   transition={{ type: 'spring', stiffness: 90, damping: 15 }}
-                  className="absolute bottom-[49%] left-1/2 z-20 h-5 w-[88%] max-w-[34rem] -translate-x-1/2 rounded-full border border-amber-100/30 bg-[linear-gradient(180deg,#fef3c7,#f59e0b_38%,#a16207_100%)] shadow-[0_14px_24px_rgba(0,0,0,0.24)]"
+                  className="absolute bottom-[14%] left-1/2 z-20 w-[96%] max-w-[42rem] -translate-x-1/2"
                 >
-                  <div className="absolute left-[3.5%] top-4 h-[6rem] w-[39%] rounded-b-[2rem] rounded-t-[1rem] border border-amber-100/28 bg-[linear-gradient(180deg,#fcd34d,#d97706_42%,#92400e)] shadow-[inset_0_2px_0_rgba(255,255,255,0.18),0_16px_22px_rgba(0,0,0,0.18)] md:h-[6.75rem]">
-                    <div className="absolute inset-x-[10%] top-[12%] bottom-[10%] flex flex-wrap content-center items-center justify-center gap-1.5 rounded-b-[1.5rem] rounded-t-[0.9rem] bg-[linear-gradient(180deg,rgba(120,53,15,0.18),rgba(120,53,15,0.3))] px-2 py-2">
+                  <img src={scaleMasterScale} alt="" draggable={false} className="w-full object-contain drop-shadow-[0_18px_28px_rgba(0,0,0,0.24)]" />
+
+                  <div className="absolute left-[6.5%] top-[33.5%] h-[21%] w-[25.5%] rounded-[1.6rem]">
+                    <div className="absolute inset-x-[10%] top-[12%] bottom-[14%] flex flex-wrap content-center items-center justify-center gap-1.5 rounded-b-[1.5rem] rounded-t-[0.9rem] bg-[linear-gradient(180deg,rgba(120,53,15,0.10),rgba(120,53,15,0.22))] px-2 py-2">
                       {groupedSelectedItems.length === 0 ? (
                         <div className="text-center text-[9px] font-black uppercase tracking-[0.16em] text-amber-50/68">Drop items</div>
                       ) : (
@@ -473,8 +468,8 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                     </div>
                   </div>
 
-                  <div className="absolute right-[3.5%] top-4 flex h-[6rem] w-[39%] items-center justify-center rounded-b-[2rem] rounded-t-[1rem] border border-amber-100/28 bg-[linear-gradient(180deg,#fcd34d,#d97706_42%,#92400e)] shadow-[inset_0_2px_0_rgba(255,255,255,0.18),0_16px_22px_rgba(0,0,0,0.18)] md:h-[6.75rem]">
-                    <div className="flex h-[74%] w-[80%] flex-col items-center justify-center rounded-[1.25rem] bg-[linear-gradient(180deg,rgba(120,53,15,0.18),rgba(120,53,15,0.3))] px-2 text-center">
+                  <div className="absolute right-[6.5%] top-[33.5%] flex h-[21%] w-[25.5%] items-center justify-center rounded-[1.6rem]">
+                    <div className="flex h-[74%] w-[80%] flex-col items-center justify-center rounded-[1.25rem] bg-[linear-gradient(180deg,rgba(120,53,15,0.1),rgba(120,53,15,0.22))] px-2 text-center">
                       <div className="text-[9px] font-black uppercase tracking-[0.18em] text-amber-50/74">Target load</div>
                       <div className="mt-1 text-base font-black text-white md:text-xl">{round.targetDisplay}</div>
                     </div>
