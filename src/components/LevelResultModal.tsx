@@ -4,6 +4,7 @@ import AssetIcon from './AssetIcon';
 import { triggerHaptic } from '../haptics';
 import rewardChest from '../assets/fantasy_hero/demo_rewards/chest_02.png';
 import rewardStash from '../assets/fantasy_hero/demo_rewards/chest_01.png';
+import { RewardPanel } from './layout/ScreenPrimitives';
 
 interface LevelResultModalProps {
   isOpen: boolean;
@@ -43,10 +44,10 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
             animate={{ y: 0, scale: 1, opacity: 1 }}
             exit={{ y: 18, scale: 0.97, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 220, damping: 22 }}
-            className="app-modal-panel casual-modal-panel relative flex w-full max-w-md flex-col overflow-hidden rounded-[1.5rem] shadow-[0_30px_90px_rgba(0,0,0,0.45)] md:max-w-lg md:rounded-[2rem]"
+            className="app-modal-panel licensed-game-card-dark relative flex w-full max-w-md flex-col overflow-hidden rounded-[1.5rem] shadow-[0_30px_90px_rgba(0,0,0,0.45)] md:max-w-lg md:rounded-[2rem]"
           >
             <div className="relative z-10 flex flex-col gap-3 p-3.5 md:gap-6 md:p-8">
-              <div className="casual-panel-surface mx-auto flex h-16 w-16 items-center justify-center rounded-[1.1rem] p-2 shadow-inner md:h-28 md:w-28 md:rounded-[1.75rem]">
+              <div className="licensed-slice-paper-panel mx-auto flex h-16 w-16 items-center justify-center rounded-[1.1rem] p-2 shadow-inner md:h-28 md:w-28 md:rounded-[1.75rem]">
                 <img src={isVictory ? rewardChest : rewardStash} alt="Reward" className="h-full w-full object-contain drop-shadow-xl" />
               </div>
 
@@ -71,15 +72,15 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
               </div>
 
               <div className="grid grid-cols-3 gap-2 md:gap-3">
-                <div className="rounded-[1rem] border border-white/10 bg-white/8 p-2.5 text-center backdrop-blur-sm md:rounded-[1.35rem] md:p-4">
+                <div className="licensed-game-card rounded-[1rem] p-2.5 text-center text-white md:rounded-[1.35rem] md:p-4">
                   <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/45">Score</div>
                   <div className="mt-1 text-base font-black text-white md:mt-2 md:text-2xl">{result.score}</div>
                 </div>
-                <div className="rounded-[1rem] border border-amber-300/20 bg-amber-300/10 p-2.5 text-center backdrop-blur-sm md:rounded-[1.35rem] md:p-4">
+                <div className="licensed-game-card rounded-[1rem] p-2.5 text-center text-white md:rounded-[1.35rem] md:p-4">
                   <div className="flex items-center justify-center gap-1 text-[9px] font-black uppercase tracking-[0.2em] text-amber-100/70"><AssetIcon name="coin" className="h-3 w-3" /> Coins</div>
                   <div className="mt-1 text-base font-black text-amber-200 md:mt-2 md:text-2xl">+{result.coinsEarned}</div>
                 </div>
-                <div className="rounded-[1rem] border border-cyan-300/20 bg-cyan-300/10 p-2.5 text-center backdrop-blur-sm md:rounded-[1.35rem] md:p-4">
+                <div className="licensed-game-card rounded-[1rem] p-2.5 text-center text-white md:rounded-[1.35rem] md:p-4">
                   <div className="flex items-center justify-center gap-1 text-[9px] font-black uppercase tracking-[0.2em] text-cyan-100/75"><AssetIcon name="star" className="h-3 w-3" /> XP</div>
                   <div className="mt-1 text-base font-black text-cyan-200 md:mt-2 md:text-2xl">+{result.xpEarned}</div>
                 </div>
@@ -88,25 +89,25 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
               {(result.islandUnlockedName || (result.achievementsUnlocked?.length || 0) > 0) && (
                 <div className="space-y-2 md:space-y-3">
                   {result.islandUnlockedName && (
-                    <div className="rounded-[1.2rem] border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-100 md:rounded-[1.5rem]">
-                      <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] text-emerald-100/70 md:text-[10px]">
+                    <RewardPanel className="rounded-[1.2rem] text-sm md:rounded-[1.5rem]">
+                      <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] text-emerald-700 md:text-[10px]">
                         <AssetIcon name="trophy" className="h-3.5 w-3.5" /> New island unlocked
                       </div>
-                      <div className="mt-1 text-sm font-bold text-white md:text-base">{result.islandUnlockedName}</div>
-                    </div>
+                      <div className="mt-1 text-sm font-bold text-amber-950 md:text-base">{result.islandUnlockedName}</div>
+                    </RewardPanel>
                   )}
 
                   {(result.achievementsUnlocked?.length || 0) > 0 && (
-                    <div className="rounded-[1.2rem] border border-fuchsia-300/20 bg-fuchsia-300/10 px-4 py-3 text-sm text-fuchsia-100 md:rounded-[1.5rem]">
-                      <div className="text-[9px] font-black uppercase tracking-[0.2em] text-fuchsia-100/70 md:text-[10px]">Achievements unlocked</div>
+                    <RewardPanel className="rounded-[1.2rem] text-sm md:rounded-[1.5rem]">
+                      <div className="text-[9px] font-black uppercase tracking-[0.2em] text-fuchsia-700 md:text-[10px]">Achievements unlocked</div>
                       <div className="mt-1 flex flex-wrap gap-2">
                         {result.achievementsUnlocked?.slice(0, 3).map((achievement) => (
-                          <span key={achievement} className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-[10px] font-bold text-white md:text-xs">
+                          <span key={achievement} className="licensed-slice-cyan-pill rounded-full px-3 py-1 text-[10px] font-bold text-white md:text-xs">
                             {achievement}
                           </span>
                         ))}
                       </div>
-                    </div>
+                    </RewardPanel>
                   )}
                 </div>
               )}

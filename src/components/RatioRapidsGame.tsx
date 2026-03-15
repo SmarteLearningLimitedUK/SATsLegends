@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
+import GameplaySceneBackdrop from './GameplaySceneBackdrop';
 import AssetIcon from './AssetIcon';
 import { AVATARS } from '../constants';
 
@@ -407,21 +408,8 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
   };
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden bg-[linear-gradient(180deg,#022850_0%,#0a477b_38%,#083152_100%)]">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute inset-x-[-12%] top-[-16%] h-[46%] rounded-full bg-cyan-200/16 blur-3xl" />
-        <div className="absolute inset-x-0 top-0 h-[56%] bg-[linear-gradient(180deg,rgba(125,211,252,0.25),rgba(96,165,250,0.08),transparent)]" />
-        <div className="absolute inset-x-0 bottom-0 h-[46%] bg-[linear-gradient(180deg,rgba(8,47,73,0),rgba(8,47,73,0.16),rgba(5,20,38,0.88))]" />
-        {Array.from({ length: 9 }).map((_, index) => (
-          <motion.div
-            key={index}
-            animate={{ x: [0, 18, 0], opacity: [0.16, 0.35, 0.16] }}
-            transition={{ duration: 3 + index * 0.22, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute h-[2px] rounded-full bg-cyan-200/55"
-            style={{ left: `${6 + index * 10}%`, top: `${14 + (index % 3) * 3}%`, width: `${40 + (index % 3) * 14}px` }}
-          />
-        ))}
-      </div>
+    <div className="relative flex h-full w-full flex-col overflow-hidden pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+0.35rem)]">
+      <GameplaySceneBackdrop gameType="ratio_rapids" />
 
       <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center gap-2 p-2 md:gap-4 md:p-4">
         <div className="w-full max-w-6xl">
@@ -442,18 +430,18 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
           />
         </div>
 
-        <div className="relative flex w-full max-w-6xl min-h-0 flex-1 overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] shadow-[0_28px_64px_rgba(0,0,0,0.34)] md:rounded-[2.6rem]">
+        <div className="licensed-board-frame relative flex w-full max-w-6xl min-h-0 flex-1 overflow-hidden md:rounded-[2.6rem]">
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_28%,rgba(15,23,42,0.16)_100%)]" />
           <div className="absolute inset-x-[6%] top-[12%] h-[34%] rounded-[50%] bg-[radial-gradient(circle_at_center,rgba(186,230,253,0.22),rgba(56,189,248,0.06),transparent_72%)]" />
           <div className="absolute inset-x-0 bottom-0 h-[28%] bg-[linear-gradient(180deg,rgba(15,23,42,0),rgba(15,23,42,0.2),rgba(15,23,42,0.72))]" />
 
-          <div className="absolute left-4 top-3 z-20 flex items-center gap-2 rounded-full border border-white/12 bg-slate-950/42 px-3 py-2 shadow-[0_10px_24px_rgba(2,6,23,0.24)] md:left-5 md:top-5 md:px-4">
+          <div className="absolute left-3 top-3 z-20 flex items-center gap-1.5 rounded-full border border-white/12 bg-slate-950/42 px-2.5 py-1.5 shadow-[0_10px_24px_rgba(2,6,23,0.24)] md:left-5 md:top-5 md:gap-2 md:px-4 md:py-2">
             {Array.from({ length: MAX_HEARTS }).map((_, index) => (
               <div key={index} className={`h-5 w-5 rounded-full ${index < hearts ? 'bg-[radial-gradient(circle_at_30%_25%,#fca5a5,#ef4444_60%,#991b1b)] shadow-[0_6px_12px_rgba(239,68,68,0.35)]' : 'bg-white/12'} md:h-6 md:w-6`} />
             ))}
           </div>
 
-          <div className="absolute right-4 top-3 z-20 flex items-center gap-2 rounded-full border border-white/12 bg-slate-950/42 px-4 py-2 shadow-[0_10px_24px_rgba(2,6,23,0.24)] md:right-5 md:top-5">
+          <div className="absolute right-3 top-3 z-20 flex items-center gap-1.5 rounded-full border border-white/12 bg-slate-950/42 px-3 py-1.5 shadow-[0_10px_24px_rgba(2,6,23,0.24)] md:right-5 md:top-5 md:gap-2 md:px-4 md:py-2">
             <AssetIcon name="coin" className="h-5 w-5 md:h-6 md:w-6" />
             <div>
               <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/70 md:text-xs">Coins</div>
@@ -463,17 +451,17 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
 
           <div className="relative z-10 flex h-full w-full flex-col px-3 pb-4 pt-20 md:px-6 md:pb-6 md:pt-24">
             <div className="flex justify-center">
-              <div className="max-w-[94%] rounded-[1.5rem] border border-orange-200/22 bg-[linear-gradient(180deg,rgba(146,64,14,0.96),rgba(120,53,15,0.98))] px-5 py-3 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_16px_30px_rgba(120,53,15,0.24)] md:px-7 md:py-4">
-                <div className="text-base font-black tracking-tight text-amber-50 md:text-[1.85rem]">{round.prompt}</div>
-                <div className="mt-1 text-xs font-bold text-amber-100/82 md:text-base">{round.support}</div>
+            <div className="licensed-slice-paper-panel max-w-[94%] px-5 py-3 text-center md:px-7 md:py-4">
+                <div className="text-base font-black tracking-tight text-amber-900 md:text-[1.85rem]">{round.prompt}</div>
+                <div className="mt-1 text-xs font-bold text-amber-950/76 md:text-base">{round.support}</div>
               </div>
             </div>
 
             <div className="mt-3 flex flex-wrap items-center justify-center gap-2 md:mt-4 md:gap-3">
-              <div className="rounded-full border border-white/12 bg-slate-950/42 px-4 py-2 text-sm font-black text-white shadow-[0_10px_20px_rgba(2,6,23,0.18)] md:text-lg">
+              <div className="licensed-slice-cyan-pill flex min-h-[2.5rem] items-center justify-center rounded-[1rem] px-4 py-2 text-sm font-black md:min-h-[3rem] md:text-lg">
                 Defence ratio {formatRatio(round.ratioSword, round.ratioCannon)}
               </div>
-              <div className="rounded-full border border-white/12 bg-slate-950/42 px-4 py-2 text-sm font-black text-white shadow-[0_10px_20px_rgba(2,6,23,0.18)] md:text-lg">
+              <div className="licensed-slice-green-pill flex min-h-[2.5rem] items-center justify-center rounded-[1rem] px-4 py-2 text-sm font-black md:min-h-[3rem] md:text-lg">
                 Total defenders {round.totalSlots}
               </div>
             </div>
@@ -551,17 +539,17 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
                 </div>
               </div>
 
-              <div className="mt-2 rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.84),rgba(30,41,59,0.92))] p-3 shadow-[0_24px_36px_rgba(2,6,23,0.26)] md:p-4">
+              <div className="licensed-game-card-dark mt-2 rounded-[1.8rem] p-3 md:p-4">
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-[1fr_1fr_auto] md:items-center">
                   <div className="grid grid-cols-2 gap-3">
                     <UnitCard type="sword" selected={selectedUnit === 'sword'} placed={swordCount} onSelect={() => setSelectedUnit('sword')} />
                     <UnitCard type="cannon" selected={selectedUnit === 'cannon'} placed={cannonCount} onSelect={() => setSelectedUnit('cannon')} />
                   </div>
 
-                  <div className="rounded-[1.4rem] border border-white/12 bg-black/16 px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-                    <div className="text-[11px] font-black uppercase tracking-[0.16em] text-white/65">Current defence</div>
-                    <div className="mt-1 text-2xl font-black tracking-tight text-white md:text-3xl">{swordCount} swords / {cannonCount} cannon</div>
-                    <div className="mt-1 text-xs font-bold text-white/62 md:text-sm">
+                  <div className="licensed-slice-paper-panel rounded-[1.4rem] px-4 py-3">
+                    <div className="text-[11px] font-black uppercase tracking-[0.16em] text-amber-950/58">Current defence</div>
+                    <div className="mt-1 text-2xl font-black tracking-tight text-amber-950 md:text-3xl">{swordCount} swords / {cannonCount} cannon</div>
+                    <div className="mt-1 text-xs font-bold text-amber-950/72 md:text-sm">
                       {allSlotsFilled ? 'Ready to test the wave.' : `${round.totalSlots - swordCount - cannonCount} slots still empty.`}
                     </div>
                   </div>

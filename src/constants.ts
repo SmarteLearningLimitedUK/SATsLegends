@@ -69,7 +69,7 @@ export const ISLANDS: IslandData[] = [
     levels: [
       { id: 1, stars: 0, isLocked: false, gameType: 'burger_builder' },
       { id: 2, stars: 0, isLocked: false, gameType: 'fraction_match' },
-      { id: 3, stars: 0, isLocked: false, gameType: 'cloud_collapse' },
+      { id: 3, stars: 0, isLocked: false, gameType: 'fraction_match' },
       { id: 4, stars: 0, isLocked: false, gameType: 'percent_pulse' },
       { id: 5, stars: 0, isLocked: false, isBoss: true, bossUnlockCoins: 700, gameType: 'crystal_core' },
     ]

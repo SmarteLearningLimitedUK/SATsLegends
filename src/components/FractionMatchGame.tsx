@@ -6,6 +6,7 @@ import { getBossEncounter } from '../bossMeta';
 import BossPortrait from './BossPortrait';
 import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
+import GameplaySceneBackdrop from './GameplaySceneBackdrop';
 import { ArrowRightLeft, ArrowUpDown, Bomb, Star } from './GameIcons';
 import { triggerHaptic } from '../haptics';
 import { FRACTION_MATCH_ASSETS } from '../assets/fraction_match';
@@ -14,6 +15,7 @@ interface FractionMatchGameProps {
   levelId: number;
   avatarId: string;
   isBoss?: boolean;
+  variantGameType?: 'fraction_match' | 'cloud_collapse';
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
   onBack: () => void;
@@ -300,6 +302,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   levelId,
   avatarId,
   isBoss = false,
+  variantGameType = 'fraction_match',
   onVictory,
   onGameOver,
   onBack,
@@ -323,6 +326,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   const avatar = AVATARS.find(item => item.id === avatarId) || AVATARS[0];
   const targetScore = LEVEL_TARGET_BASE + (levelId * LEVEL_TARGET_STEP);
   const progress = Math.min((score / targetScore) * 100, 100);
+  const title = isBoss ? 'Crystal Core' : 'Crystal Match';
   const bossEncounter = isBoss ? getBossEncounter('crystal_core') : undefined;
   const bossPose = !bossEncounter
     ? 'neutral'
@@ -584,19 +588,12 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   }, [awardPoints, bossCards, bossFeedback, bossSelection, combo, finishLevel, isBoss, isGameOver, isResolving, isVictory, prepareNextBossChallenge, targetScore]);
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden bg-[radial-gradient(circle_at_top,#5b3b1a_0%,#23130b_28%,#120d0d_58%,#050608_100%)] px-2 pb-2 pt-1 md:px-4 md:pb-4">
-      <img
-        src={FRACTION_MATCH_ASSETS.board}
-        alt="Crystal Cave board background"
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-28"
-        draggable={false}
-      />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(250,204,21,0.18),transparent_24%),radial-gradient(circle_at_top_left,rgba(132,204,22,0.16),transparent_24%),radial-gradient(circle_at_bottom_right,rgba(34,211,238,0.16),transparent_28%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(9,6,3,0.28),rgba(6,8,16,0.62))]" />
+    <div className="relative flex h-full w-full flex-col overflow-hidden px-2 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] pt-[env(safe-area-inset-top)] md:px-4 md:pb-4">
+      <GameplaySceneBackdrop gameType="fraction_match" />
 
       <div className="relative z-10 flex h-full min-h-0 flex-col gap-2 md:gap-4">
         <GameplayHUD
-          title={isBoss ? 'Crystal Core' : 'Crystal Match'}
+          title={title}
           avatar={avatar}
           score={score}
           targetScore={targetScore}
@@ -611,13 +608,15 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
           statValue={isBoss ? combo : combo}
         />
 
-        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] border border-[#f7d98c]/16 bg-[linear-gradient(180deg,rgba(255,248,220,0.08),rgba(255,255,255,0.01))] p-2 shadow-[0_28px_60px_rgba(0,0,0,0.42)] md:rounded-[2.6rem] md:p-4">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,251,235,0.12),transparent_34%),linear-gradient(180deg,rgba(255,255,255,0.05),rgba(0,0,0,0.1))]" />
+        <div className="licensed-board-frame relative flex min-h-0 flex-1 flex-col overflow-hidden p-2 shadow-[0_28px_60px_rgba(0,0,0,0.42)] md:rounded-[2.6rem] md:p-4">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_24%),radial-gradient(circle_at_50%_24%,rgba(56,189,248,0.14),transparent_18%),linear-gradient(180deg,rgba(255,255,255,0.04),rgba(0,0,0,0.16))]" />
 
           <div className="relative z-10 mb-2 flex items-center justify-between gap-2 md:mb-3">
-            <div className="min-w-0 flex-1 rounded-[1.25rem] border border-[#f6dfae]/24 bg-[linear-gradient(180deg,rgba(70,42,20,0.92),rgba(26,16,10,0.88))] px-3 py-2 shadow-[0_12px_24px_rgba(0,0,0,0.3)]">
-              <div className="text-[9px] font-black uppercase tracking-[0.22em] text-amber-50/82 md:text-[10px]">{isBoss ? 'Sort The Fractions' : 'Match 3+ Equivalent Values'}</div>
-              <div className="mt-1 truncate text-[11px] font-bold text-amber-50 md:text-sm">{statusMessage}</div>
+            <div className="licensed-slice-paper-panel min-w-0 flex-1 px-3 py-2 shadow-[0_12px_24px_rgba(0,0,0,0.18)]">
+              <div className="text-[9px] font-black uppercase tracking-[0.22em] text-amber-950/64 md:text-[10px]">
+                {isBoss ? 'Sort The Fractions' : variantGameType === 'cloud_collapse' ? 'Crystal Match Chain' : 'Match 3+ Equivalent Values'}
+              </div>
+              <div className="mt-1 truncate text-[11px] font-bold text-amber-950/84 md:text-sm">{statusMessage}</div>
             </div>
 
             {bossEncounter && !isBoss && (
@@ -629,7 +628,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
 
           <div className="relative z-10 flex min-h-0 flex-1 items-center justify-center">
             {isBoss ? (
-              <div className="relative flex h-full w-full flex-col overflow-hidden rounded-[1.6rem] border border-violet-200/14 bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.14),transparent_24%),linear-gradient(180deg,rgba(34,18,55,0.82),rgba(12,10,20,0.88))] p-3 md:rounded-[2rem] md:p-5">
+              <div className="licensed-game-card-dark relative flex h-full w-full flex-col overflow-hidden rounded-[1.6rem] p-3 md:rounded-[2rem] md:p-5">
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_35%_62%,rgba(34,211,238,0.12),transparent_16%),radial-gradient(circle_at_70%_68%,rgba(251,146,60,0.12),transparent_18%)]" />
                 <div className="relative z-10 mx-auto rounded-[1.1rem] border border-orange-200/20 bg-[linear-gradient(180deg,rgba(236,125,34,0.98),rgba(176,74,18,0.98))] px-4 py-2 text-center shadow-[0_14px_28px_rgba(0,0,0,0.24)] md:rounded-[1.45rem] md:px-6 md:py-3">
                   <div className="text-[1rem] font-black leading-tight text-amber-50 drop-shadow-[0_2px_0_rgba(120,53,15,0.64)] md:text-[1.85rem]">
@@ -703,15 +702,15 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
                 <img
                   src={FRACTION_MATCH_ASSETS.board}
                   alt="Crystal board stage"
-                  className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-34 scale-[1.08]"
+                  className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-78 scale-[1.04]"
                   draggable={false}
                 />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(250,204,21,0.16),transparent_24%),linear-gradient(180deg,rgba(5,8,15,0.04),rgba(5,8,15,0.24))]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(103,232,249,0.16),transparent_24%),linear-gradient(180deg,rgba(5,8,15,0.02),rgba(5,8,15,0.18))]" />
               </div>
 
-              <div className="absolute inset-0 rounded-[2rem] border border-[#f7d98c]/26 bg-[linear-gradient(180deg,rgba(72,44,19,0.94),rgba(39,24,14,0.94))] shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_20px_38px_rgba(0,0,0,0.32)]" />
-              <div className="absolute inset-[2.6%] rounded-[1.7rem] border border-[#f7d98c]/14 bg-[linear-gradient(180deg,rgba(30,20,12,0.94),rgba(18,12,8,0.96))]" />
-              <div className="absolute inset-[6%] rounded-[1.35rem] bg-[linear-gradient(180deg,rgba(26,20,18,0.94),rgba(14,10,9,0.98))] p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] md:p-2">
+              <div className="absolute inset-0 rounded-[2rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(18,28,55,0.9),rgba(8,14,27,0.9))] shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_20px_38px_rgba(0,0,0,0.28)]" />
+              <div className="absolute inset-[2.6%] rounded-[1.7rem] border border-cyan-100/10 bg-[linear-gradient(180deg,rgba(15,24,48,0.7),rgba(8,13,26,0.78))]" />
+              <div className="absolute inset-[6%] rounded-[1.35rem] bg-[linear-gradient(180deg,rgba(10,17,33,0.26),rgba(7,12,24,0.42))] p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] md:p-2">
                 <div className="grid h-full w-full grid-cols-8 grid-rows-8 gap-1 md:gap-1.5">
                   {boardTiles.map(tile => {
                     const isSelected = selectedTile?.row === tile.row && selectedTile?.col === tile.col;

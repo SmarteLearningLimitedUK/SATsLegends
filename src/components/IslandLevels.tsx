@@ -223,8 +223,8 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
                   )}
 
                   <div className="absolute top-full mt-5 flex w-24 justify-center md:w-32">
-                    <div className="rounded-[0.95rem] border border-white/15 bg-slate-950/72 px-2 py-1 text-center shadow-[0_10px_24px_rgba(2,6,23,0.28)] backdrop-blur-md">
-                      <span className="block text-[9px] font-black uppercase leading-[1.15] tracking-[0.08em] text-white/95 md:text-[10px]">
+                    <div className="licensed-slice-paper-panel rounded-[0.95rem] px-2 py-1 text-center shadow-[0_10px_24px_rgba(2,6,23,0.28)]">
+                      <span className="block text-[9px] font-black uppercase leading-[1.15] tracking-[0.08em] text-amber-950 md:text-[10px]">
                         {gameLabel}
                       </span>
                     </div>
@@ -232,12 +232,12 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
 
                   {level.isBoss && !isUnlocked && (
                     <div className="absolute top-full mt-[3.35rem] flex w-32 justify-center md:w-40">
-                      <div className="rounded-[0.9rem] border border-yellow-300/18 bg-slate-950/78 px-2 py-1.5 text-center shadow-[0_10px_24px_rgba(2,6,23,0.32)] backdrop-blur-md">
-                        <div className="flex items-center justify-center gap-1 text-[9px] font-black text-yellow-200 md:text-[10px]">
+                      <div className="licensed-slice-paper-panel rounded-[0.9rem] px-2 py-1.5 text-center shadow-[0_10px_24px_rgba(2,6,23,0.32)]">
+                        <div className="flex items-center justify-center gap-1 text-[9px] font-black text-amber-950 md:text-[10px]">
                           <AssetIcon name="coin" className="h-3 w-3 md:h-3.5 md:w-3.5" />
                           <span>{totalCoinsEarned}/{bossCoinsNeeded}</span>
                         </div>
-                        <div className="mt-0.5 text-[8px] font-bold leading-tight text-white/72 md:text-[9px]">
+                        <div className="mt-0.5 text-[8px] font-bold leading-tight text-amber-950/72 md:text-[9px]">
                           Earn more coins and finish earlier games to unlock this boss.
                         </div>
                       </div>
@@ -256,17 +256,17 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={onBack}
-            className="pointer-events-auto casual-panel-surface rounded-full p-3 text-white shadow-xl md:p-4"
+            className="pointer-events-auto licensed-slice-orange-pill flex h-11 w-11 items-center justify-center rounded-full p-0 text-white shadow-xl md:h-12 md:w-12"
           >
             <AssetIcon name="back" className="h-6 w-6 md:h-8 md:w-8" />
           </motion.button>
 
-          <div className="pointer-events-auto casual-tab-shell flex items-center gap-2 rounded-full p-2 shadow-xl md:p-3">
-            <div className="casual-ribbon-chip flex items-center gap-1.5 rounded-full px-3 py-1">
+          <div className="pointer-events-auto licensed-game-card flex items-center gap-2 rounded-full p-2 text-white shadow-xl md:p-3">
+            <div className="licensed-slice-purple-banner flex items-center gap-1.5 rounded-full px-3 py-1 text-white">
               <AssetIcon name="star" className="w-4 h-4 md:w-5 md:h-5 text-yellow-400" />
               <span className="text-sm md:text-base font-black text-white">{earnedStars}</span>
             </div>
-            <div className="casual-ribbon-chip hidden items-center gap-1.5 rounded-full px-3 py-1 md:flex">
+            <div className="licensed-slice-cyan-pill hidden items-center gap-1.5 rounded-full px-3 py-1 text-white md:flex">
               <span className="text-[10px] uppercase font-black tracking-widest text-white/70">Complete</span>
               <span className="text-sm font-black text-white ml-1">{completion}%</span>
             </div>
@@ -275,7 +275,7 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
       </header>
 
       <div className="absolute bottom-6 left-6 right-6 z-50 pointer-events-none hidden md:flex justify-center">
-        <div className="casual-panel-strong flex items-center gap-6 rounded-3xl p-4 shadow-2xl">
+        <div className="licensed-game-card-dark flex items-center gap-6 rounded-3xl p-4 text-white shadow-2xl">
           <div>
             <div className="text-[10px] font-black uppercase text-amber-400 tracking-widest">{island.themeName}</div>
             <h1 className="text-2xl font-black text-white drop-shadow-md">{island.name}</h1>

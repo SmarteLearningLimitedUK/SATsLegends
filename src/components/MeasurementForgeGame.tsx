@@ -226,7 +226,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
   }, [feedback]);
 
   return (
-    <div className="relative flex h-full w-full flex-col items-center overflow-hidden p-2 font-sans pt-[env(safe-area-inset-top)] md:p-4">
+    <div className="relative flex h-full w-full flex-col items-center overflow-hidden p-2 font-sans pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+0.35rem)] md:p-4">
       <GameplaySceneBackdrop gameType="measurement_forge" />
       <div className="relative z-10 flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col gap-2 md:gap-4">
         <GameplayHUD
@@ -249,15 +249,15 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(250,204,21,0.18),transparent_24%),radial-gradient(circle_at_82%_30%,rgba(34,211,238,0.16),transparent_20%),linear-gradient(180deg,rgba(8,15,30,0.14),rgba(8,15,30,0.42))]" />
 
           <div className="relative z-10 mb-3 flex flex-col items-center gap-2 text-center">
-            <div className="casual-ribbon-chip inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[10px]">
+            <div className="licensed-slice-purple-banner inline-flex min-h-[2.2rem] items-center gap-2 rounded-[1rem] px-5 py-1.5 text-[10px]">
               <Sparkles className="h-4 w-4" />
               Round {roundIndex + 1} / 7
             </div>
-            <div className="licensed-game-card w-full max-w-[22rem] px-4 py-3 md:max-w-[29rem] md:px-6 md:py-4">
-              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/72 md:text-xs">Mine Order</div>
-              <div className="mt-1 text-[1.55rem] font-black leading-none text-white md:text-[2.15rem]">{round.targetLabel}</div>
+            <div className="licensed-slice-paper-panel w-full max-w-[22rem] px-4 py-3 md:max-w-[29rem] md:px-6 md:py-4">
+              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-950/60 md:text-xs">Mine Order</div>
+              <div className="mt-1 text-[1.45rem] font-black leading-none text-amber-950 md:text-[2.05rem]">{round.targetLabel}</div>
               <div className="mt-2 flex items-center justify-center gap-2">
-                <div className="fantasy-nameplate px-4 py-2 md:px-5">
+                <div className="licensed-slice-cyan-pill flex min-h-[2.5rem] items-center rounded-[1rem] px-4 py-2 md:px-5">
                   <span className="text-lg font-black text-white md:text-2xl">{round.targetDisplay}</span>
                 </div>
               </div>
@@ -265,7 +265,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
           </div>
 
           <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-3 md:flex-row">
-            <div className="relative flex min-h-[18rem] flex-[1.35] flex-col justify-between overflow-hidden rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,rgba(17,31,58,0.22),rgba(8,15,30,0.08))] p-4 md:min-h-0 md:p-5">
+            <div className="licensed-game-card-dark relative flex min-h-[15.5rem] flex-[1.35] flex-col justify-between overflow-hidden rounded-[1.75rem] p-4 md:min-h-0 md:p-5">
               <div className="pointer-events-none absolute inset-x-[18%] top-[18%] h-20 rounded-full bg-cyan-300/10 blur-3xl md:h-24" />
               <div className="pointer-events-none absolute inset-x-[12%] bottom-[12%] h-14 rounded-full bg-black/28 blur-2xl" />
 
@@ -276,8 +276,8 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                     Load the left pan with the exact cargo needed to match the glowing target load on the right.
                   </div>
                 </div>
-                <div className="rounded-[1rem] border border-white/10 bg-white/8 px-3 py-2 text-right shadow-[0_10px_20px_rgba(2,6,23,0.16)]">
-                  <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/56">Difference</div>
+                <div className="licensed-slice-paper-panel rounded-[1rem] px-3 py-2 text-right shadow-[0_10px_20px_rgba(2,6,23,0.16)]">
+                  <div className="text-[9px] font-black uppercase tracking-[0.18em] text-amber-950/54">Difference</div>
                   <div className={`mt-1 text-lg font-black md:text-2xl ${balanceDifference === 0 ? 'text-emerald-300' : balanceDifference > 0 ? 'text-rose-300' : 'text-sky-300'}`}>
                     {balanceDifference === 0 ? 'Perfect' : formatCurrent(Math.abs(balanceDifference), scaleUnit)}
                   </div>

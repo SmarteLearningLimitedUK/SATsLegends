@@ -3,8 +3,8 @@ import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
+import GameplaySceneBackdrop from './GameplaySceneBackdrop';
 import { AVATARS, POTION_POUR_LEVELS } from '../constants';
-import potionLevelBg from '../assets/level_backgrounds/potion-panic.png';
 import { triggerHaptic } from '../haptics';
 
 interface PotionPourGameProps {
@@ -390,10 +390,8 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
   const activeRecipeCount = round.recipe.reduce((sum, part) => sum + part.count, 0);
 
   return (
-    <div className="relative flex h-full w-full flex-col items-center overflow-hidden p-2 md:p-4">
-      <div className="absolute inset-0 bg-cover bg-center opacity-[0.82]" style={{ backgroundImage: `url(${potionLevelBg})` }} />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(12,18,34,0.18),rgba(12,18,34,0.4)_30%,rgba(8,12,24,0.74)_100%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(196,181,253,0.34),rgba(196,181,253,0)_26%),radial-gradient(circle_at_bottom,rgba(103,232,249,0.24),rgba(103,232,249,0)_30%)]" />
+    <div className="relative flex h-full w-full flex-col items-center overflow-hidden p-2 pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+0.35rem)] md:p-4">
+      <GameplaySceneBackdrop gameType="potion_pour" />
 
       <div className="relative z-10 flex h-full min-h-0 w-full max-w-5xl flex-1 flex-col gap-2 md:gap-3">
         <GameplayHUD
@@ -412,24 +410,24 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
           compact
         />
 
-        <div className="casual-panel-strong relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.65rem] px-2 py-2 md:rounded-[2.4rem] md:px-4 md:py-4">
+        <div className="licensed-board-frame relative flex min-h-0 flex-1 flex-col overflow-hidden px-2 py-2 md:px-4 md:py-4">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(103,232,249,0.16),transparent_28%),radial-gradient(circle_at_50%_56%,rgba(74,222,128,0.12),transparent_20%)]" />
 
           <div className="relative z-10 shrink-0 text-center">
-            <div className="casual-ribbon-chip mx-auto inline-flex items-center gap-2 rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em] md:px-4 md:py-1.5 md:text-[10px]">
+            <div className="licensed-slice-purple-banner mx-auto inline-flex min-h-[2.1rem] items-center justify-center gap-2 rounded-[1rem] px-5 py-1 text-[9px] font-black uppercase tracking-[0.2em] md:min-h-[2.5rem] md:px-6 md:text-[10px]">
               Recipe Board
             </div>
-            <div className="mx-auto mt-2 max-w-[22rem] rounded-[1.2rem] border border-amber-200/40 bg-[linear-gradient(180deg,rgba(255,248,220,0.96),rgba(254,240,180,0.9))] px-4 py-3 text-center shadow-[0_14px_30px_rgba(0,0,0,0.22)] md:max-w-[32rem] md:rounded-[1.6rem] md:px-6 md:py-4">
+            <div className="licensed-slice-paper-panel mx-auto mt-2 max-w-[22rem] px-4 py-3 text-center md:max-w-[32rem] md:px-6 md:py-4">
               <div className="text-[1.05rem] font-black leading-tight text-amber-900 md:text-[1.7rem]">{round.title}</div>
               <div className="mt-1 text-xs font-bold text-amber-950/76 md:text-base">{round.prompt}</div>
             </div>
           </div>
 
-          <div className="relative z-10 mt-2 grid min-h-0 flex-1 gap-3 xl:grid-cols-[minmax(0,1.2fr)_minmax(16rem,0.8fr)]">
-            <div className="relative flex min-h-[22rem] flex-col overflow-hidden rounded-[1.35rem] border border-white/12 bg-[linear-gradient(180deg,rgba(8,15,30,0.24),rgba(8,15,30,0.06))] p-3 md:min-h-[26rem] md:rounded-[1.8rem] md:p-4">
+          <div className="relative z-10 mt-2 grid min-h-0 flex-1 gap-3 md:grid-cols-[minmax(0,1.14fr)_minmax(15rem,0.86fr)]">
+            <div className="licensed-game-card-dark relative flex min-h-[16.25rem] flex-col overflow-hidden rounded-[1.35rem] p-3 md:min-h-0 md:rounded-[1.8rem] md:p-4">
               <div className="pointer-events-none absolute inset-x-[22%] top-[28%] h-[18%] rounded-full bg-emerald-300/20 blur-3xl" />
               <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-                <div className="rounded-[1.25rem] border border-white/12 bg-white/8 p-3 shadow-[0_16px_24px_rgba(0,0,0,0.18)]">
+                <div className="licensed-game-card rounded-[1.25rem] p-3">
                   <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/56 md:text-xs">Recipe</div>
                   <div className="mt-3 flex flex-wrap justify-center gap-2">
                     {round.recipe.map((part) => (
@@ -441,7 +439,7 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
                   <div className="mt-3 text-center text-xs font-bold text-white/72 md:text-sm">{round.support}</div>
                 </div>
 
-                <div className="rounded-[1.25rem] border border-white/12 bg-white/8 p-3 shadow-[0_16px_24px_rgba(0,0,0,0.18)]">
+                <div className="licensed-game-card rounded-[1.25rem] p-3">
                   <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/56 md:text-xs">Cauldron mix</div>
                   <div className="mt-3 flex flex-wrap justify-center gap-2">
                     {INGREDIENTS.filter((ingredient) => (currentCounts[ingredient.id] || 0) > 0).length ? (
@@ -493,7 +491,7 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
 
             <div className="grid gap-3 xl:grid-rows-[minmax(0,1fr)_auto]">
               {round.mode !== 'compare' ? (
-                <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-2">
+                <div className="grid grid-cols-2 gap-2.5 md:grid-cols-2 md:gap-3">
                   {INGREDIENTS.map((ingredient) => (
                     <ConveyorCard
                       key={ingredient.id}
@@ -504,26 +502,26 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
                   ))}
                 </div>
               ) : (
-                <div className="rounded-[1.35rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] p-4 shadow-[0_16px_24px_rgba(0,0,0,0.22)]">
+                <div className="licensed-game-card-dark rounded-[1.35rem] p-4">
                   <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/56 md:text-xs">Compare brews</div>
                   <div className="mt-2 text-sm font-bold text-white/80 md:text-base">Choose the bottle that matches the recipe ratio exactly.</div>
-                  <div className="mt-4 rounded-[1.2rem] border border-white/10 bg-black/14 px-4 py-3 text-center text-sm font-black text-amber-100 md:text-lg">
+                  <div className="licensed-slice-paper-panel mt-4 rounded-[1.2rem] px-4 py-3 text-center text-sm font-black text-amber-950 md:text-lg">
                     Target ratio {formatRatio(round.recipe)}
                   </div>
                 </div>
               )}
 
               <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-2 md:gap-3">
-                <div className="flex flex-col items-center justify-end gap-2 rounded-[1.15rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] p-2.5 shadow-[0_16px_24px_rgba(0,0,0,0.22)]">
+                <div className="licensed-game-card-dark flex flex-col items-center justify-end gap-2 rounded-[1.15rem] p-2.5">
                   <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/56 md:text-xs">Batch size</div>
                   <div className="text-3xl font-black text-white md:text-4xl">{activeRecipeCount}</div>
                 </div>
 
-                <div className="flex flex-col items-center justify-end gap-2 rounded-[1.15rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] p-2.5 shadow-[0_16px_24px_rgba(0,0,0,0.22)]">
+                <div className="licensed-game-card-dark flex flex-col items-center justify-end gap-2 rounded-[1.15rem] p-2.5">
                   <button
                     onClick={resetBrew}
                     disabled={round.mode === 'compare'}
-                    className="fantasy-cta-button w-full px-3 py-2.5 text-[0.78rem] uppercase tracking-[0.16em] disabled:opacity-45 md:px-4 md:py-3 md:text-sm"
+                    className="licensed-slice-orange-pill w-full min-h-[2.7rem] rounded-[1.15rem] px-3 py-2.5 text-[0.78rem] font-black uppercase tracking-[0.16em] text-white disabled:opacity-45 md:px-4 md:py-3 md:text-sm"
                   >
                     Reset Brew
                   </button>

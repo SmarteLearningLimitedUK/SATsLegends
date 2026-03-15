@@ -52,15 +52,15 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   cloud_collapse: {
-    label: 'Cloud Collapse',
-    focus: 'Rapid equivalence cluster clearing',
+    label: 'Crystal Match',
+    focus: 'Equivalent values match-3 play',
     rules: {
-      title: 'Cloud Collapse',
-      summary: 'Clear connected clouds of matching equivalent values before the board fills your path.',
+      title: 'Crystal Match',
+      summary: 'This lane now shares the same crystal-board match-3 gameplay as Crystal Match.',
       bullets: [
-        'Tap connected matching answers to clear bigger groups.',
-        'Large clears trigger better score bonuses than small taps.',
-        'Reach the target before the timer expires.',
+        'Swap adjacent tiles to line up 3 or more equivalent values.',
+        'Fractions and decimals can match when they represent the same amount.',
+        'Keep chaining clears to raise your score faster.',
       ],
     },
   },

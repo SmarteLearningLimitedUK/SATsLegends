@@ -6,7 +6,6 @@ import { DEFAULT_AVATAR_ID } from './assets/characters';
 import { GameScreen, IslandData, LevelData, PlayerData } from './types';
 import WorldMap from './components/WorldMap';
 import IslandLevels from './components/IslandLevels';
-import CloudCollapseGame from './components/CloudCollapseGame';
 import PotionPourGame from './components/PotionPourGame';
 import BurgerBuilderGame from './components/BurgerBuilderGame';
 import FractionMatchGame from './components/FractionMatchGame';
@@ -33,6 +32,7 @@ import AchievementsModal from './components/modals/AchievementsModal';
 import ParentDashboard from './components/ParentDashboard';
 import LevelResultModal from './components/LevelResultModal';
 import GameRulesModal from './components/GameRulesModal';
+import { GameScreenShell, HUDBar, RewardPanel } from './components/layout/ScreenPrimitives';
 import { GAME_META } from './gameMeta';
 import {
   GAME_AUDIO_STORAGE_KEY,
@@ -45,6 +45,19 @@ import splashPoster from './assets/splash.png';
 
 const PLAYER_STORAGE_KEY = 'maths_quest_player';
 const ALL_ISLAND_IDS = ISLANDS.map(island => island.id);
+const SCREEN_BEHAVIOR: Record<GameScreen, { scrollable: boolean; shell: 'splash' | 'compact' | 'playfield' }> = {
+  splash: { scrollable: false, shell: 'splash' },
+  profile_setup: { scrollable: false, shell: 'compact' },
+  avatar_selection: { scrollable: false, shell: 'playfield' },
+  world_map: { scrollable: true, shell: 'playfield' },
+  island_levels: { scrollable: true, shell: 'playfield' },
+  gameplay: { scrollable: false, shell: 'playfield' },
+  level_result: { scrollable: false, shell: 'playfield' },
+  shop: { scrollable: false, shell: 'compact' },
+  profile: { scrollable: false, shell: 'compact' },
+  settings: { scrollable: false, shell: 'compact' },
+  parent_dashboard: { scrollable: true, shell: 'playfield' },
+};
 
 const resolveAvatarId = (avatarId?: string) => (
   AVATARS.some(avatar => avatar.id === avatarId) ? avatarId! : DEFAULT_AVATAR_ID
@@ -423,7 +436,7 @@ const App: React.FC = () => {
 
     switch (selectedLevel.gameType) {
       case 'cloud_collapse':
-        return <CloudCollapseGame {...sharedProps} />;
+        return <FractionMatchGame {...sharedProps} variantGameType="cloud_collapse" isBoss={Boolean(selectedLevel.isBoss)} />;
       case 'potion_pour':
         return <PotionPourGame {...sharedProps} />;
       case 'burger_builder':
@@ -564,40 +577,47 @@ const App: React.FC = () => {
         );
       case 'profile_setup':
         return (
-          <div className="casual-panel-strong relative z-10 my-auto flex w-full max-w-sm max-h-full flex-col justify-center overflow-hidden rounded-[2rem] p-4 text-center sm:max-w-md md:max-w-3xl md:rounded-[3rem] md:p-12">
-            <div className="relative z-10 mb-5 md:mb-8">
-              <h2 className="text-[1.7rem] font-black tracking-tight text-white md:text-6xl">Name your hero</h2>
-              <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/75 md:text-sm">
-                Step 1 of 2 - profile setup
-              </p>
-            </div>
-
-            <div className="relative z-10 flex flex-col items-center gap-3.5 md:gap-5">
-              <input
-                value={draftName}
-                onChange={event => setDraftName(event.target.value.slice(0, 18))}
-                onKeyDown={event => {
-                  if (event.key === 'Enter') handleSaveProfileName();
-                }}
-                placeholder="Explorer"
-                className="w-full max-w-xl rounded-[1.25rem] border border-white/10 bg-slate-950/36 px-5 py-3 text-center text-base font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] outline-none placeholder:text-white/35 focus:border-yellow-300 md:rounded-[1.75rem] md:px-6 md:py-5 md:text-3xl"
+          <GameScreenShell className="my-auto flex items-center justify-center">
+            <div className="licensed-board-frame relative z-10 flex w-full max-w-sm flex-col gap-4 overflow-hidden p-4 text-center sm:max-w-md md:max-w-3xl md:gap-8 md:p-10">
+              <HUDBar
+                eyebrow="Step 1 of 2"
+                title="Name your hero"
+                className="justify-center text-center"
               />
-              <div className="flex gap-3 flex-wrap justify-center md:gap-4">
-                <button
-                  onClick={() => setScreen('splash')}
-                  className="game-button-secondary licensed-wood-button-secondary px-6 py-3 rounded-[1.25rem] text-sm md:px-8 md:py-4 md:rounded-2xl md:text-base"
-                >
-                  Back
-                </button>
-                <button
-                  onClick={handleSaveProfileName}
-                  className="licensed-wood-button px-8 py-3 rounded-[1.25rem] text-white text-base md:text-lg font-black transition-all md:px-10 md:py-4 md:rounded-2xl"
-                >
-                  Choose avatar
-                </button>
+
+              <RewardPanel className="mx-auto w-full max-w-xl">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-amber-900/65 md:text-sm">
+                  Pick the name that appears across your adventure, rewards, and report screens.
+                </p>
+              </RewardPanel>
+
+              <div className="relative z-10 flex flex-col items-center gap-3.5 md:gap-5">
+                <input
+                  value={draftName}
+                  onChange={event => setDraftName(event.target.value.slice(0, 18))}
+                  onKeyDown={event => {
+                    if (event.key === 'Enter') handleSaveProfileName();
+                  }}
+                  placeholder="Explorer"
+                  className="licensed-slice-paper-panel w-full max-w-xl rounded-[1.25rem] px-5 py-3 text-center text-base font-black text-amber-950 shadow-[0_14px_28px_rgba(0,0,0,0.2)] outline-none placeholder:text-amber-900/35 focus:ring-4 focus:ring-yellow-300/45 md:rounded-[1.75rem] md:px-6 md:py-5 md:text-3xl"
+                />
+                <div className="flex flex-wrap justify-center gap-3 md:gap-4">
+                  <button
+                    onClick={() => setScreen('splash')}
+                    className="game-button-secondary licensed-wood-button-secondary rounded-[1.25rem] px-6 py-3 text-sm md:rounded-2xl md:px-8 md:py-4 md:text-base"
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={handleSaveProfileName}
+                    className="licensed-wood-button rounded-[1.25rem] px-8 py-3 text-base font-black text-white transition-all md:rounded-2xl md:px-10 md:py-4 md:text-lg"
+                  >
+                    Choose avatar
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          </GameScreenShell>
         );
 
       case 'avatar_selection':
@@ -628,14 +648,54 @@ const App: React.FC = () => {
       case 'parent_dashboard':
         return <ParentDashboard player={player} onBack={goToHome} />;
 
+      case 'shop':
+      case 'profile':
+      case 'settings':
+        return (
+          <GameScreenShell className="my-auto flex items-center justify-center">
+            <div className="licensed-board-frame flex w-full max-w-md flex-col gap-4 p-4 text-center md:max-w-2xl md:gap-6 md:p-8">
+              <HUDBar eyebrow="Adventure menu" title={screen === 'shop' ? 'Shop' : screen === 'profile' ? 'Profile' : 'Settings'} className="justify-center text-center" />
+              <RewardPanel className="mx-auto max-w-xl">
+                <p className="text-sm font-black leading-relaxed text-amber-950 md:text-base">
+                  This screen is parked for the next premium UI pass. The main adventure flow is live and fully playable.
+                </p>
+              </RewardPanel>
+              <button
+                onClick={goToHome}
+                className="licensed-wood-button mx-auto rounded-[1.25rem] px-8 py-3 text-base font-black text-white md:rounded-2xl md:px-10 md:py-4 md:text-lg"
+              >
+                Return to map
+              </button>
+            </div>
+          </GameScreenShell>
+        );
+
       default:
-        return <div className="text-white">Screen {screen} not implemented</div>;
+        return (
+          <GameScreenShell className="my-auto flex items-center justify-center">
+            <div className="licensed-board-frame flex w-full max-w-md flex-col gap-4 p-4 text-center md:max-w-2xl md:gap-6 md:p-8">
+              <HUDBar eyebrow="Screen missing" title={`Screen ${screen}`} className="justify-center text-center" />
+              <RewardPanel className="mx-auto max-w-xl">
+                <p className="text-sm font-black text-amber-950 md:text-base">
+                  This route is not wired into the live adventure flow yet.
+                </p>
+              </RewardPanel>
+              <button
+                onClick={goToHome}
+                className="licensed-wood-button mx-auto rounded-[1.25rem] px-8 py-3 text-base font-black text-white md:rounded-2xl md:px-10 md:py-4 md:text-lg"
+              >
+                Return to map
+              </button>
+            </div>
+          </GameScreenShell>
+        );
     }
   };
 
+  const screenBehavior = SCREEN_BEHAVIOR[screen];
   const showBottomNav = ['world_map', 'avatar_selection', 'parent_dashboard'].includes(screen);
-  const isSplashScreen = screen === 'splash';
-  const isWideScreenScene = ['world_map', 'island_levels', 'gameplay', 'parent_dashboard'].includes(screen);
+  const isSplashScreen = screenBehavior.shell === 'splash';
+  const isWideScreenScene = screenBehavior.shell === 'playfield';
   const showCompactShell = !isWideScreenScene && !isSplashScreen;
   const isWorldMapScreen = screen === 'world_map';
   const bottomNavOffsetClass = showBottomNav
@@ -657,7 +717,8 @@ const App: React.FC = () => {
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 1.02 }}
-          className={`relative z-10 flex min-h-0 w-full flex-1 justify-center overflow-hidden pointer-events-auto ${isSplashScreen ? '' : isWideScreenScene ? '' : 'mx-auto max-w-7xl items-stretch'} ${bottomNavOffsetClass}`}
+          className={`relative z-10 flex min-h-0 w-full flex-1 justify-center pointer-events-auto ${screenBehavior.scrollable ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'} ${isSplashScreen ? '' : isWideScreenScene ? '' : 'mx-auto max-w-7xl items-stretch'} ${bottomNavOffsetClass}`}
+          style={screenBehavior.scrollable ? { WebkitOverflowScrolling: 'touch' } : undefined}
         >
           {renderScreen()}
         </motion.div>
