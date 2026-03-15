@@ -6,6 +6,7 @@ import GameActionDock from './GameActionDock';
 import GameplaySceneBackdrop from './GameplaySceneBackdrop';
 import { AVATARS } from '../constants';
 import { CheckCircle2, Coins, RotateCcw, Sparkles } from './GameIcons';
+import { BottomActionTray, GameScreenShell, PuzzleStage, RewardPanel } from './layout/ScreenPrimitives';
 
 interface MeasurementForgeGameProps {
   levelId: number;
@@ -88,6 +89,17 @@ const generateRound = (roundIndex: number): ScaleRound => {
 
 const formatCurrent = (value: number, unit: 'g' | 'ml') => buildTargetDisplay(value, unit);
 
+const getCargoBadge = (item: ScaleItem) => {
+  if (item.id.includes('ore')) return 'ORE';
+  if (item.id.includes('gem')) return 'GEM';
+  if (item.id.includes('gold')) return 'GLD';
+  if (item.id.includes('cart')) return 'CRT';
+  if (item.id.includes('flask')) return 'FLK';
+  if (item.id.includes('jar')) return 'JAR';
+  if (item.id.includes('keg')) return 'KEG';
+  return 'BRW';
+};
+
 const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
   levelId,
   avatarId,
@@ -112,6 +124,18 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
   const progress = Math.min((score / targetScore) * 100, 100);
   const balanceDifference = currentValue - round.targetValue;
   const balanceTilt = Math.max(-16, Math.min(16, balanceDifference / 90));
+  const groupedSelectedItems = useMemo(() => {
+    const groups = new Map<string, { item: ScaleItem; count: number }>();
+    selectedItems.forEach((item) => {
+      const existing = groups.get(item.id);
+      if (existing) {
+        existing.count += 1;
+      } else {
+        groups.set(item.id, { item, count: 1 });
+      }
+    });
+    return Array.from(groups.values());
+  }, [selectedItems]);
 
   useEffect(() => {
     setScore(0);
@@ -158,6 +182,15 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
   const removeItem = (index: number) => {
     if (feedback) return;
     setSelectedItems((previous) => previous.filter((_, itemIndex) => itemIndex !== index));
+  };
+
+  const removeOneOfItem = (itemId: string) => {
+    if (feedback) return;
+    setSelectedItems((previous) => {
+      const itemIndex = previous.findIndex((item) => item.id === itemId);
+      if (itemIndex === -1) return previous;
+      return previous.filter((_, index) => index !== itemIndex);
+    });
   };
 
   const clearScale = () => {
@@ -226,7 +259,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
   }, [feedback]);
 
   return (
-    <div className="relative flex h-full w-full flex-col items-center overflow-hidden p-2 font-sans pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+0.35rem)] md:p-4">
+    <GameScreenShell className="items-center p-2 font-sans pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+0.35rem)] md:p-4">
       <GameplaySceneBackdrop gameType="measurement_forge" />
       <div className="relative z-10 flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col gap-2 md:gap-4">
         <GameplayHUD
@@ -245,127 +278,121 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
           compact
         />
 
-        <div className="licensed-board-frame relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] p-3 md:p-5">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(250,204,21,0.18),transparent_24%),radial-gradient(circle_at_82%_30%,rgba(34,211,238,0.16),transparent_20%),linear-gradient(180deg,rgba(8,15,30,0.14),rgba(8,15,30,0.42))]" />
+        <PuzzleStage className="rounded-[2rem]">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_16%,rgba(250,204,21,0.18),transparent_22%),radial-gradient(circle_at_78%_28%,rgba(34,211,238,0.14),transparent_18%),linear-gradient(180deg,rgba(8,15,30,0.14),rgba(8,15,30,0.42))]" />
 
-          <div className="relative z-10 mb-3 flex flex-col items-center gap-2 text-center">
-            <div className="licensed-slice-purple-banner inline-flex min-h-[2.2rem] items-center gap-2 rounded-[1rem] px-5 py-1.5 text-[10px]">
-              <Sparkles className="h-4 w-4" />
-              Round {roundIndex + 1} / 7
-            </div>
-            <div className="licensed-slice-paper-panel w-full max-w-[22rem] px-4 py-3 md:max-w-[29rem] md:px-6 md:py-4">
-              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-950/60 md:text-xs">Mine Order</div>
-              <div className="mt-1 text-[1.45rem] font-black leading-none text-amber-950 md:text-[2.05rem]">{round.targetLabel}</div>
-              <div className="mt-2 flex items-center justify-center gap-2">
-                <div className="licensed-slice-cyan-pill flex min-h-[2.5rem] items-center rounded-[1rem] px-4 py-2 md:px-5">
-                  <span className="text-lg font-black text-white md:text-2xl">{round.targetDisplay}</span>
-                </div>
+          <div className="relative z-10 grid min-h-0 flex-1 grid-rows-[auto,minmax(0,1fr),auto] gap-3 md:grid-cols-[minmax(0,1.18fr)_minmax(18rem,0.92fr)] md:grid-rows-[auto,minmax(0,1fr)] md:gap-4">
+            <div className="flex flex-col items-center gap-2 text-center md:col-span-2">
+              <div className="licensed-slice-purple-banner inline-flex min-h-[2.1rem] items-center gap-2 rounded-[1rem] px-4 py-1.5 text-[10px] text-white md:px-5">
+                <Sparkles className="h-4 w-4" />
+                Round {roundIndex + 1} / 7
               </div>
+
+              <RewardPanel className="w-full max-w-[22rem] md:max-w-[34rem]">
+                <div className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-950/60 md:text-xs">Mine Order</div>
+                <div className="mt-1 text-[1.25rem] font-black leading-none text-amber-950 md:text-[1.9rem]">{round.targetLabel}</div>
+                <div className="mt-2 flex flex-wrap items-center justify-center gap-2">
+                  <div className="licensed-slice-cyan-pill flex min-h-[2.2rem] items-center rounded-[1rem] px-4 py-2 text-white md:min-h-[2.5rem] md:px-5">
+                    <span className="text-base font-black md:text-2xl">{round.targetDisplay}</span>
+                  </div>
+                  <div className="licensed-slice-purple-banner rounded-[1rem] px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-white md:text-xs">
+                    Current {formatCurrent(currentValue, scaleUnit)}
+                  </div>
+                  <div className={`rounded-[1rem] px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] md:text-xs ${
+                    balanceDifference === 0
+                      ? 'licensed-slice-green-pill text-white'
+                      : 'licensed-slice-orange-pill text-white'
+                  }`}>
+                    {balanceDifference === 0 ? 'Perfect balance' : `Diff ${formatCurrent(Math.abs(balanceDifference), scaleUnit)}`}
+                  </div>
+                </div>
+              </RewardPanel>
             </div>
-          </div>
 
-          <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-3 md:flex-row">
-            <div className="licensed-game-card-dark relative flex min-h-[15.5rem] flex-[1.35] flex-col justify-between overflow-hidden rounded-[1.75rem] p-4 md:min-h-0 md:p-5">
-              <div className="pointer-events-none absolute inset-x-[18%] top-[18%] h-20 rounded-full bg-cyan-300/10 blur-3xl md:h-24" />
-              <div className="pointer-events-none absolute inset-x-[12%] bottom-[12%] h-14 rounded-full bg-black/28 blur-2xl" />
-
-              <div className="flex items-start justify-between gap-3">
-                <div className="max-w-[18rem]">
+            <div className="licensed-game-card-dark relative flex min-h-[15.5rem] min-w-0 flex-col overflow-hidden rounded-[1.75rem] p-3 md:p-5">
+              <div className="flex items-center justify-between gap-2">
+                <div>
                   <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/56 md:text-xs">Crystal Weighbridge</div>
-                  <div className="mt-1 text-sm font-bold text-white/76 md:text-base">
-                    Load the left pan with the exact cargo needed to match the glowing target load on the right.
-                  </div>
+                  <div className="mt-1 text-sm font-black text-white md:text-lg">Match the glowing target load.</div>
                 </div>
-                <div className="licensed-slice-paper-panel rounded-[1rem] px-3 py-2 text-right shadow-[0_10px_20px_rgba(2,6,23,0.16)]">
-                  <div className="text-[9px] font-black uppercase tracking-[0.18em] text-amber-950/54">Difference</div>
-                  <div className={`mt-1 text-lg font-black md:text-2xl ${balanceDifference === 0 ? 'text-emerald-300' : balanceDifference > 0 ? 'text-rose-300' : 'text-sky-300'}`}>
-                    {balanceDifference === 0 ? 'Perfect' : formatCurrent(Math.abs(balanceDifference), scaleUnit)}
-                  </div>
+                <div className="licensed-slice-paper-panel rounded-[0.95rem] px-3 py-2 text-right shadow-[0_10px_20px_rgba(2,6,23,0.16)]">
+                  <div className="text-[9px] font-black uppercase tracking-[0.18em] text-amber-950/54">Cargo</div>
+                  <div className="mt-1 text-lg font-black text-amber-950 md:text-xl">{selectedItems.length}</div>
                 </div>
               </div>
 
-              <div className="relative mx-auto mt-4 flex w-full max-w-3xl flex-1 items-end justify-center">
-                <div className="absolute bottom-[1.2rem] left-1/2 h-12 w-[54%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.22),rgba(56,189,248,0)_72%)] blur-xl" />
-                <div className="absolute bottom-[8.2rem] left-1/2 h-32 w-8 -translate-x-1/2 rounded-full bg-[linear-gradient(180deg,#dbeafe,#94a3b8_34%,#334155_100%)] shadow-[0_0_0_6px_rgba(59,130,246,0.14),0_14px_24px_rgba(0,0,0,0.22)]" />
+              <div className="relative mt-3 flex min-h-0 flex-1 items-end justify-center">
+                <div className="absolute bottom-[6%] left-1/2 h-10 w-[56%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.24),rgba(56,189,248,0)_72%)] blur-xl" />
+                <div className="absolute bottom-[23%] left-1/2 h-[26%] w-6 -translate-x-1/2 rounded-full bg-[linear-gradient(180deg,#dbeafe,#94a3b8_30%,#334155_100%)] shadow-[0_0_0_6px_rgba(59,130,246,0.12),0_12px_24px_rgba(0,0,0,0.22)] md:w-8" />
                 <motion.div
                   animate={{ rotate: balanceTilt }}
                   transition={{ type: 'spring', stiffness: 80, damping: 14 }}
-                  className="absolute bottom-[10.25rem] left-1/2 h-5 w-[74%] -translate-x-1/2 rounded-full bg-[linear-gradient(180deg,#fef3c7,#f59e0b_30%,#475569_100%)] shadow-[0_14px_24px_rgba(0,0,0,0.28)]"
+                  className="absolute bottom-[47%] left-1/2 h-4 w-[78%] -translate-x-1/2 rounded-full bg-[linear-gradient(180deg,#fef3c7,#f59e0b_34%,#475569_100%)] shadow-[0_10px_20px_rgba(0,0,0,0.28)]"
                 >
-                  <div className="absolute left-[9%] top-4 h-[6.2rem] w-[34%] origin-top rounded-[1.6rem] border-[3px] border-sky-100/18 bg-[linear-gradient(180deg,rgba(21,34,58,0.96),rgba(8,15,30,0.98))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_14px_20px_rgba(0,0,0,0.18)]">
-                    <div className="flex h-full flex-wrap content-start gap-2 overflow-hidden rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(8,15,30,0.18))] p-2">
-                      {selectedItems.length === 0 && (
-                        <div className="flex h-full w-full items-center justify-center text-center text-[10px] font-black uppercase tracking-[0.16em] text-sky-100/34">
-                          Load cargo
+                  <div className="absolute left-[5%] top-3 h-[5.25rem] w-[38%] origin-top rounded-[1.35rem] border-[3px] border-sky-100/18 bg-[linear-gradient(180deg,rgba(21,34,58,0.96),rgba(8,15,30,0.98))] p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_12px_18px_rgba(0,0,0,0.18)] md:h-[5.9rem] md:w-[35%] md:p-2">
+                    <div className="flex h-full flex-wrap content-start gap-1.5 overflow-hidden rounded-[0.95rem] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(8,15,30,0.18))] p-1.5">
+                      {groupedSelectedItems.length === 0 && (
+                        <div className="flex h-full w-full items-center justify-center text-center text-[9px] font-black uppercase tracking-[0.16em] text-sky-100/34">
+                          Add cargo
                         </div>
                       )}
-                      {selectedItems.map((item, index) => (
+                      {groupedSelectedItems.map(({ item, count }) => (
                         <button
-                          key={`${item.id}-${index}`}
-                          onClick={() => removeItem(index)}
-                          className={`flex min-w-[4.25rem] flex-1 items-center justify-center rounded-full border border-white/18 bg-gradient-to-br ${item.tint} px-3 py-2 text-[10px] font-black text-slate-950 shadow-[0_10px_18px_rgba(0,0,0,0.24)]`}
+                          key={item.id}
+                          onClick={() => removeOneOfItem(item.id)}
+                          className={`flex min-h-[2rem] min-w-[4rem] flex-1 items-center justify-center gap-1 rounded-full border border-white/18 bg-gradient-to-br ${item.tint} px-2 py-1 text-[9px] font-black text-slate-950 shadow-[0_8px_14px_rgba(0,0,0,0.22)]`}
                         >
-                          {item.displayWeight}
+                          <span>{getCargoBadge(item)}</span>
+                          <span className="rounded-full bg-white/55 px-1.5 py-0.5 text-[8px]">x{count}</span>
                         </button>
                       ))}
                     </div>
                   </div>
 
-                  <div className="absolute right-[9%] top-4 h-[6.2rem] w-[34%] origin-top rounded-[1.6rem] border-[3px] border-sky-100/18 bg-[linear-gradient(180deg,rgba(21,34,58,0.96),rgba(8,15,30,0.98))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_14px_20px_rgba(0,0,0,0.18)]">
-                    <div className="flex h-full items-center justify-center rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(8,15,30,0.18))] p-2 text-center">
+                  <div className="absolute right-[5%] top-3 flex h-[5.25rem] w-[38%] origin-top items-center justify-center rounded-[1.35rem] border-[3px] border-sky-100/18 bg-[linear-gradient(180deg,rgba(21,34,58,0.96),rgba(8,15,30,0.98))] p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_12px_18px_rgba(0,0,0,0.18)] md:h-[5.9rem] md:w-[35%] md:p-2">
+                    <div className="flex h-full w-full items-center justify-center rounded-[0.95rem] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(8,15,30,0.18))] p-2 text-center">
                       <div>
-                        <div className="text-[10px] font-black uppercase tracking-[0.18em] text-sky-100/60">Target Load</div>
-                        <div className="mt-1 text-2xl font-black text-yellow-100">{round.targetDisplay}</div>
+                        <div className="text-[9px] font-black uppercase tracking-[0.18em] text-sky-100/60">Target</div>
+                        <div className="mt-1 text-lg font-black text-yellow-100 md:text-2xl">{round.targetDisplay}</div>
                       </div>
                     </div>
                   </div>
                 </motion.div>
 
-                <div className="absolute bottom-[2.1rem] left-1/2 h-28 w-48 -translate-x-1/2 rounded-[2rem] border-4 border-sky-200/14 bg-[linear-gradient(180deg,#334155,#0f172a)] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_26px_48px_rgba(0,0,0,0.3)]" />
-              </div>
-
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                <div className="licensed-game-card-dark rounded-[1.25rem] p-3">
-                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/60">Current Load</div>
-                  <div className="mt-1 text-xl font-black text-white md:text-2xl">{formatCurrent(currentValue, scaleUnit)}</div>
-                </div>
-                <div className="licensed-game-card-dark rounded-[1.25rem] p-3">
-                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/60">Selected Cargo</div>
-                  <div className="mt-1 text-xl font-black text-white md:text-2xl">{selectedItems.length}</div>
-                </div>
+                <div className="absolute bottom-[8%] left-1/2 h-20 w-36 -translate-x-1/2 rounded-[2rem] border-4 border-sky-200/14 bg-[linear-gradient(180deg,#334155,#0f172a)] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_22px_42px_rgba(0,0,0,0.3)] md:h-24 md:w-44" />
               </div>
             </div>
 
-            <div className="flex min-h-0 flex-1 flex-col gap-3">
-              <div className="grid grid-cols-2 gap-3">
+            <div className="flex min-h-0 flex-col gap-3">
+              <div className="grid grid-cols-2 gap-2 md:gap-3">
                 {round.items.map((item) => (
                   <button
                     key={item.id}
                     onClick={() => addItem(item)}
                     disabled={!!feedback}
-                    className={`licensed-game-card-dark group flex min-h-[7.3rem] flex-col items-start justify-between overflow-hidden rounded-[1.5rem] p-3 text-left transition-all hover:-translate-y-1 active:scale-[0.98] ${item.glow}`}
+                    className={`licensed-game-card group flex min-h-[5.8rem] flex-col items-start justify-between overflow-hidden rounded-[1.35rem] p-3 text-left text-white transition-all hover:-translate-y-1 active:scale-[0.98] ${item.glow} md:min-h-[7rem] md:rounded-[1.5rem]`}
                   >
-                    <div className="flex items-start justify-between gap-2 w-full">
-                      <div className={`flex h-12 w-12 items-center justify-center rounded-[1rem] bg-gradient-to-br ${item.tint} text-lg font-black text-slate-950 shadow-[0_12px_20px_rgba(0,0,0,0.18)]`}>
-                        {item.displayWeight.split(' ')[0]}
+                    <div className="flex w-full items-start justify-between gap-2">
+                      <div className={`flex h-10 w-10 items-center justify-center rounded-[0.9rem] bg-gradient-to-br ${item.tint} text-[11px] font-black text-slate-950 shadow-[0_12px_20px_rgba(0,0,0,0.18)] md:h-12 md:w-12 md:text-lg`}>
+                        {getCargoBadge(item)}
                       </div>
-                      <div className="fantasy-nameplate px-3 py-1.5 text-[10px] font-black text-white">
+                      <div className="licensed-slice-yellow-plank rounded-[0.8rem] px-2.5 py-1 text-[9px] font-black text-amber-950">
                         Add
                       </div>
                     </div>
                     <div>
-                      <div className="text-sm font-black text-white md:text-base">{item.name}</div>
-                      <div className="text-xs font-bold uppercase tracking-[0.14em] text-amber-100/64">{item.displayWeight}</div>
+                      <div className="text-xs font-black text-white md:text-base">{item.name}</div>
+                      <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-amber-100/64 md:text-xs">{item.displayWeight}</div>
                     </div>
                   </button>
                 ))}
               </div>
 
-              <div className="licensed-game-card-dark mt-auto rounded-[1.75rem] p-3 md:p-4">
+              <BottomActionTray className="mt-auto">
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <div>
                     <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/60">Forge Controls</div>
-                    <div className="text-lg font-black text-white">Adjust the load, then lock it in.</div>
+                    <div className="text-sm font-black text-white md:text-lg">Reset or lock in the load.</div>
                   </div>
                   <button
                     onClick={clearScale}
@@ -385,7 +412,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                   <CheckCircle2 className="h-5 w-5" />
                   Balance Scale
                 </button>
-              </div>
+              </BottomActionTray>
             </div>
           </div>
 
@@ -404,7 +431,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
+        </PuzzleStage>
 
         <GameActionDock onBack={onBack} accentClass="text-white" />
 
@@ -435,7 +462,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
           )}
         </AnimatePresence>
       </div>
-    </div>
+    </GameScreenShell>
   );
 };
 
