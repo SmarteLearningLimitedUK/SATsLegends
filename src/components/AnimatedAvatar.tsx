@@ -38,6 +38,8 @@ const resolveFrames = (avatar?: AvatarData, pose: AnimationState = 'idle'): stri
   return [avatar.portrait || avatar.image].filter((frame): frame is string => Boolean(frame));
 };
 
+const isVideoFrame = (frame?: string) => Boolean(frame && /\.(mp4|webm|ogg)(\?|#|$)/i.test(frame));
+
 const AnimatedAvatar: React.FC<AnimatedAvatarProps> = ({
   avatar,
   pose = 'idle',
@@ -94,17 +96,36 @@ const AnimatedAvatar: React.FC<AnimatedAvatarProps> = ({
         />
       )}
       <AnimatePresence initial={false} mode="wait">
-        <motion.img
-          key={`${avatar.id}-${pose}-${frameIndex}`}
-          src={activeFrame}
-          alt={alt || avatar.name}
-          initial={{ opacity: 0, scale: 0.94, y: 4 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 1.03, y: -4 }}
-          transition={{ duration: 0.28, ease: 'easeOut' }}
-          className={`relative z-10 h-full w-full object-contain drop-shadow-[0_10px_18px_rgba(0,0,0,0.24)] ${imageClassName}`.trim()}
-          draggable={false}
-        />
+        {isVideoFrame(activeFrame) ? (
+          <motion.video
+            key={`${avatar.id}-${pose}-${frameIndex}-video`}
+            src={activeFrame}
+            aria-label={alt || avatar.name}
+            initial={{ opacity: 0, scale: 0.94, y: 4 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 1.03, y: -4 }}
+            transition={{ duration: 0.28, ease: 'easeOut' }}
+            className={`relative z-10 h-full w-full object-contain drop-shadow-[0_10px_18px_rgba(0,0,0,0.24)] ${imageClassName}`.trim()}
+            draggable={false}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+          />
+        ) : (
+          <motion.img
+            key={`${avatar.id}-${pose}-${frameIndex}`}
+            src={activeFrame}
+            alt={alt || avatar.name}
+            initial={{ opacity: 0, scale: 0.94, y: 4 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 1.03, y: -4 }}
+            transition={{ duration: 0.28, ease: 'easeOut' }}
+            className={`relative z-10 h-full w-full object-contain drop-shadow-[0_10px_18px_rgba(0,0,0,0.24)] ${imageClassName}`.trim()}
+            draggable={false}
+          />
+        )}
       </AnimatePresence>
     </motion.div>
   );
