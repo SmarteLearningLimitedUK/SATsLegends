@@ -7,7 +7,8 @@ param(
   [Parameter(Mandatory = $true)][string]$RemoteBaseDir,
   [Parameter(Mandatory = $false)][string]$UseSsl = 'false',
   [Parameter(Mandatory = $false)][string]$AllowInsecureCertificate = 'false',
-  [Parameter(Mandatory = $false)][string]$UsePassive = 'true'
+  [Parameter(Mandatory = $false)][string]$UsePassive = 'true',
+  [Parameter(Mandatory = $false)][string]$AllowPassiveToggleFallback = 'false'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -39,6 +40,7 @@ function ConvertTo-BoolValue {
 $UseSsl = ConvertTo-BoolValue -Value $UseSsl -ParameterName 'UseSsl'
 $AllowInsecureCertificate = ConvertTo-BoolValue -Value $AllowInsecureCertificate -ParameterName 'AllowInsecureCertificate'
 $UsePassive = ConvertTo-BoolValue -Value $UsePassive -ParameterName 'UsePassive'
+$AllowPassiveToggleFallback = ConvertTo-BoolValue -Value $AllowPassiveToggleFallback -ParameterName 'AllowPassiveToggleFallback'
 
 $originalServerCertificateValidationCallback = [System.Net.ServicePointManager]::ServerCertificateValidationCallback
 if ($UseSsl -and $AllowInsecureCertificate) {
@@ -118,9 +120,17 @@ try {
     Write-Host "Uploading $relative"
 
     $uploaded = $false
+    $attempts = @(@{ UsePassive = $UsePassive; Reason = 'primary' })
 
-    foreach ($attemptUsePassive in @($UsePassive, (-not $UsePassive))) {
+    if ($AllowPassiveToggleFallback) {
+      $attempts += @{ UsePassive = (-not $UsePassive); Reason = 'passive-toggle-fallback' }
+    }
+
+    foreach ($attempt in $attempts) {
       if ($uploaded) { break }
+
+      $attemptUsePassive = [bool]$attempt.UsePassive
+      $attemptReason = [string]$attempt.Reason
 
       try {
         $uploadRequest = New-FtpRequest -Uri $uri -Method ([System.Net.WebRequestMethods+Ftp]::UploadFile)
@@ -129,9 +139,14 @@ try {
 
         $requestStream = $uploadRequest.GetRequestStream()
         $fileStream = [System.IO.File]::OpenRead($file.FullName)
-        $fileStream.CopyTo($requestStream)
-        $fileStream.Close()
-        $requestStream.Close()
+
+        try {
+          $fileStream.CopyTo($requestStream)
+        }
+        finally {
+          $fileStream.Close()
+          $requestStream.Close()
+        }
 
         $uploadResponse = $uploadRequest.GetResponse()
         $uploadResponse.Close()
@@ -139,14 +154,55 @@ try {
       }
       catch [System.Net.WebException] {
         $ftpResponse = $_.Exception.Response
+        $statusCode = $null
+
         if ($ftpResponse) {
           $statusCode = [int]$ftpResponse.StatusCode
           $ftpResponse.Close()
-          if (-not $uploaded -and $statusCode -eq 451 -and $attemptUsePassive -eq $UsePassive) {
-            Write-Warning "Upload failed with FTP 451 for $relative. Retrying with UsePassive=$(-not $UsePassive)."
+        }
+
+        if ($attemptReason -eq 'primary' -and ($statusCode -eq 451 -or $statusCode -eq 450 -or $statusCode -eq 452)) {
+          Write-Warning "Upload failed with FTP $statusCode for $relative. Retrying with UsePassive=$UsePassive."
+          Start-Sleep -Milliseconds 300
+          try {
+            $retryRequest = New-FtpRequest -Uri $uri -Method ([System.Net.WebRequestMethods+Ftp]::UploadFile)
+            $retryRequest.UsePassive = $UsePassive
+            $retryRequest.ContentLength = $file.Length
+
+            $retryRequestStream = $retryRequest.GetRequestStream()
+            $retryFileStream = [System.IO.File]::OpenRead($file.FullName)
+
+            try {
+              $retryFileStream.CopyTo($retryRequestStream)
+            }
+            finally {
+              $retryFileStream.Close()
+              $retryRequestStream.Close()
+            }
+
+            $retryResponse = $retryRequest.GetResponse()
+            $retryResponse.Close()
+            $uploaded = $true
             continue
           }
+          catch [System.Net.WebException] {
+            $retryFtpResponse = $_.Exception.Response
+            if ($retryFtpResponse) {
+              $retryStatusCode = [int]$retryFtpResponse.StatusCode
+              $retryFtpResponse.Close()
+              Write-Warning "Retry with UsePassive=$UsePassive failed for $relative (FTP $retryStatusCode)."
+            }
+            else {
+              Write-Warning "Retry with UsePassive=$UsePassive failed for $relative."
+            }
+          }
         }
+
+        if ($attemptReason -eq 'primary' -and $AllowPassiveToggleFallback -and ($statusCode -eq 451 -or $statusCode -eq 450 -or $statusCode -eq 452)) {
+          Write-Warning "Attempting passive mode fallback for $relative with UsePassive=$(-not $UsePassive)."
+          continue
+        }
+
         throw
       }
     }

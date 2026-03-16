@@ -31,5 +31,6 @@ What it does:
 - Uploads all files from `dist/` to the remote folder `sats` using explicit FTPS on port 21
 - `FTP_ALLOW_INSECURE_CERT=true` can be used if your FTPS server presents a self-signed or mismatched TLS certificate
 - `FTP_USE_PASSIVE` controls FTP passive mode (`true` default); set `false` if your server requires active mode
+- `FTP_ALLOW_PASSIVE_TOGGLE_FALLBACK` controls whether the uploader retries with opposite passive mode (`false` default)
 
 This branch no longer uses Vercel deployment files; use `Script_BuildAll.bat` for internal test uploads.

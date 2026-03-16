@@ -11,3 +11,5 @@ set "FTP_USE_SSL=false"
 set "FTP_ALLOW_INSECURE_CERT=true"
 
 set "FTP_USE_PASSIVE=true"
+
+set "FTP_ALLOW_PASSIVE_TOGGLE_FALLBACK=false"
