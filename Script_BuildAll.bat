@@ -61,9 +61,13 @@ if "%FTP_PASSWORD%"=="" (
 if "%FTP_PORT%"=="" set "FTP_PORT=21"
 if "%FTP_REMOTE_DIR%"=="" set "FTP_REMOTE_DIR=sats"
 if "%FTP_USE_SSL%"=="" set "FTP_USE_SSL=false"
+if "%FTP_ALLOW_INSECURE_CERT%"=="" set "FTP_ALLOW_INSECURE_CERT=true"
+if "%FTP_USE_PASSIVE%"=="" set "FTP_USE_PASSIVE=true"
+if "%FTP_ALLOW_PASSIVE_TOGGLE_FALLBACK%"=="" set "FTP_ALLOW_PASSIVE_TOGGLE_FALLBACK=false"
+if "%FTP_MAX_PARALLEL%"=="" set "FTP_MAX_PARALLEL=5"
 
 echo [3/3] Uploading dist\ to FTP %FTP_HOST%:%FTP_PORT%/%FTP_REMOTE_DIR% ...
-powershell -NoProfile -ExecutionPolicy Bypass -File "%UPLOAD_SCRIPT%" -LocalRoot "%SCRIPT_DIR%dist" -FtpHost "%FTP_HOST%" -Port "%FTP_PORT%" -Username "%FTP_USERNAME%" -Password "%FTP_PASSWORD%" -RemoteBaseDir "%FTP_REMOTE_DIR%" -UseSsl "%FTP_USE_SSL%"
+powershell -NoProfile -ExecutionPolicy Bypass -File "%UPLOAD_SCRIPT%" -LocalRoot "%SCRIPT_DIR%dist" -FtpHost "%FTP_HOST%" -Port "%FTP_PORT%" -Username "%FTP_USERNAME%" -Password "%FTP_PASSWORD%" -RemoteBaseDir "%FTP_REMOTE_DIR%" -UseSsl "%FTP_USE_SSL%" -AllowInsecureCertificate "%FTP_ALLOW_INSECURE_CERT%" -UsePassive "%FTP_USE_PASSIVE%" -AllowPassiveToggleFallback "%FTP_ALLOW_PASSIVE_TOGGLE_FALLBACK%" -MaxParallel "%FTP_MAX_PARALLEL%"
 if errorlevel 1 (
   echo [ERROR] FTP/FTPS upload failed.
   popd >nul
