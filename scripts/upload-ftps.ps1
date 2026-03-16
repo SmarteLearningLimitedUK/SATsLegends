@@ -1,10 +1,11 @@
 param(
   [Parameter(Mandatory = $true)][string]$LocalRoot,
-  [Parameter(Mandatory = $true)][string]$Host,
+  [Parameter(Mandatory = $true)][string]$FtpHost,
   [Parameter(Mandatory = $true)][int]$Port,
   [Parameter(Mandatory = $true)][string]$Username,
   [Parameter(Mandatory = $true)][string]$Password,
-  [Parameter(Mandatory = $true)][string]$RemoteBaseDir
+  [Parameter(Mandatory = $true)][string]$RemoteBaseDir,
+  [Parameter(Mandatory = $false)][bool]$UseSsl = $false
 )
 
 $ErrorActionPreference = 'Stop'
@@ -29,7 +30,7 @@ function New-FtpRequest {
   $request = [System.Net.FtpWebRequest]::Create($Uri)
   $request.Credentials = $credential
   $request.Method = $Method
-  $request.EnableSsl = $true
+  $request.EnableSsl = $UseSsl
   $request.UseBinary = $true
   $request.KeepAlive = $false
   return $request
@@ -45,7 +46,7 @@ function Ensure-RemoteDirectory {
 
   foreach ($part in $parts) {
     if ($current -eq '') { $current = $part } else { $current = "$current/$part" }
-    $uri = "ftp://$Host`:$Port/$current"
+    $uri = "ftp://$FtpHost`:$Port/$current"
 
     try {
       $request = New-FtpRequest -Uri $uri -Method ([System.Net.WebRequestMethods+Ftp]::MakeDirectory)
@@ -76,7 +77,7 @@ foreach ($file in $files) {
 
   Ensure-RemoteDirectory -Dir $remoteDir
 
-  $uri = "ftp://$Host`:$Port/$remotePath"
+  $uri = "ftp://$FtpHost`:$Port/$remotePath"
   Write-Host "Uploading $relative"
 
   $uploadRequest = New-FtpRequest -Uri $uri -Method ([System.Net.WebRequestMethods+Ftp]::UploadFile)
@@ -91,4 +92,9 @@ foreach ($file in $files) {
   $uploadResponse.Close()
 }
 
-Write-Host "FTPS upload complete."
+if ($UseSsl) {
+  Write-Host "FTPS upload complete."
+}
+else {
+  Write-Host "FTP upload complete."
+}
