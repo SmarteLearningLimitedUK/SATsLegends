@@ -9,3 +9,5 @@ set "FTP_REMOTE_DIR=sats"
 set "FTP_USE_SSL=false"
 
 set "FTP_ALLOW_INSECURE_CERT=true"
+
+set "FTP_USE_PASSIVE=true"

@@ -6,7 +6,8 @@ param(
   [Parameter(Mandatory = $true)][string]$Password,
   [Parameter(Mandatory = $true)][string]$RemoteBaseDir,
   [Parameter(Mandatory = $false)][string]$UseSsl = 'false',
-  [Parameter(Mandatory = $false)][string]$AllowInsecureCertificate = 'false'
+  [Parameter(Mandatory = $false)][string]$AllowInsecureCertificate = 'false',
+  [Parameter(Mandatory = $false)][string]$UsePassive = 'true'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -37,6 +38,7 @@ function ConvertTo-BoolValue {
 
 $UseSsl = ConvertTo-BoolValue -Value $UseSsl -ParameterName 'UseSsl'
 $AllowInsecureCertificate = ConvertTo-BoolValue -Value $AllowInsecureCertificate -ParameterName 'AllowInsecureCertificate'
+$UsePassive = ConvertTo-BoolValue -Value $UsePassive -ParameterName 'UsePassive'
 
 $originalServerCertificateValidationCallback = [System.Net.ServicePointManager]::ServerCertificateValidationCallback
 if ($UseSsl -and $AllowInsecureCertificate) {
@@ -65,6 +67,7 @@ function New-FtpRequest {
   $request.Method = $Method
   $request.EnableSsl = $UseSsl
   $request.UseBinary = $true
+  $request.UsePassive = $UsePassive
   $request.KeepAlive = $false
   return $request
 }
@@ -96,42 +99,68 @@ function Ensure-RemoteDirectory {
   }
 }
 
-Write-Host "Ensuring remote folder /$remoteBase exists..."
-Ensure-RemoteDirectory -Dir $remoteBase
+try {
+  Write-Host "Ensuring remote folder /$remoteBase exists..."
+  Ensure-RemoteDirectory -Dir $remoteBase
 
-$files = Get-ChildItem -LiteralPath $LocalRoot -File -Recurse
+  $files = Get-ChildItem -LiteralPath $LocalRoot -File -Recurse
 
-foreach ($file in $files) {
-  $relative = $file.FullName.Substring($LocalRoot.Length).TrimStart('\\')
-  $relative = $relative -replace '\\', '/'
+  foreach ($file in $files) {
+    $relative = $file.FullName.Substring($LocalRoot.Length).TrimStart('\\')
+    $relative = $relative -replace '\\', '/'
 
-  $remotePath = "$remoteBase/$relative"
-  $remoteDir = [System.IO.Path]::GetDirectoryName($remotePath) -replace '\\', '/'
+    $remotePath = "$remoteBase/$relative"
+    $remoteDir = [System.IO.Path]::GetDirectoryName($remotePath) -replace '\\', '/'
 
-  Ensure-RemoteDirectory -Dir $remoteDir
+    Ensure-RemoteDirectory -Dir $remoteDir
 
-  $uri = "ftp://$FtpHost`:$Port/$remotePath"
-  Write-Host "Uploading $relative"
+    $uri = "ftp://$FtpHost`:$Port/$remotePath"
+    Write-Host "Uploading $relative"
 
-  $uploadRequest = New-FtpRequest -Uri $uri -Method ([System.Net.WebRequestMethods+Ftp]::UploadFile)
-  $content = [System.IO.File]::ReadAllBytes($file.FullName)
-  $uploadRequest.ContentLength = $content.Length
+    $uploaded = $false
 
-  $requestStream = $uploadRequest.GetRequestStream()
-  $requestStream.Write($content, 0, $content.Length)
-  $requestStream.Close()
+    foreach ($attemptUsePassive in @($UsePassive, (-not $UsePassive))) {
+      if ($uploaded) { break }
 
-  $uploadResponse = $uploadRequest.GetResponse()
-  $uploadResponse.Close()
+      try {
+        $uploadRequest = New-FtpRequest -Uri $uri -Method ([System.Net.WebRequestMethods+Ftp]::UploadFile)
+        $uploadRequest.UsePassive = $attemptUsePassive
+        $uploadRequest.ContentLength = $file.Length
+
+        $requestStream = $uploadRequest.GetRequestStream()
+        $fileStream = [System.IO.File]::OpenRead($file.FullName)
+        $fileStream.CopyTo($requestStream)
+        $fileStream.Close()
+        $requestStream.Close()
+
+        $uploadResponse = $uploadRequest.GetResponse()
+        $uploadResponse.Close()
+        $uploaded = $true
+      }
+      catch [System.Net.WebException] {
+        $ftpResponse = $_.Exception.Response
+        if ($ftpResponse) {
+          $statusCode = [int]$ftpResponse.StatusCode
+          $ftpResponse.Close()
+          if (-not $uploaded -and $statusCode -eq 451 -and $attemptUsePassive -eq $UsePassive) {
+            Write-Warning "Upload failed with FTP 451 for $relative. Retrying with UsePassive=$(-not $UsePassive)."
+            continue
+          }
+        }
+        throw
+      }
+    }
+  }
+
+  if ($UseSsl) {
+    Write-Host "FTPS upload complete."
+  }
+  else {
+    Write-Host "FTP upload complete."
+  }
 }
-
-if ($UseSsl) {
-  Write-Host "FTPS upload complete."
-}
-else {
-  Write-Host "FTP upload complete."
-}
-
-if ($UseSsl -and $AllowInsecureCertificate) {
-  [System.Net.ServicePointManager]::ServerCertificateValidationCallback = $originalServerCertificateValidationCallback
+finally {
+  if ($UseSsl -and $AllowInsecureCertificate) {
+    [System.Net.ServicePointManager]::ServerCertificateValidationCallback = $originalServerCertificateValidationCallback
+  }
 }
