@@ -5,10 +5,26 @@ param(
   [Parameter(Mandatory = $true)][string]$Username,
   [Parameter(Mandatory = $true)][string]$Password,
   [Parameter(Mandatory = $true)][string]$RemoteBaseDir,
-  [Parameter(Mandatory = $false)][bool]$UseSsl = $false
+  [Parameter(Mandatory = $false)][string]$UseSsl = 'false'
 )
 
 $ErrorActionPreference = 'Stop'
+
+switch ($UseSsl.Trim().ToLowerInvariant()) {
+  '1' { $UseSsl = $true }
+  'true' { $UseSsl = $true }
+  'yes' { $UseSsl = $true }
+  'y' { $UseSsl = $true }
+  'on' { $UseSsl = $true }
+  '0' { $UseSsl = $false }
+  'false' { $UseSsl = $false }
+  'no' { $UseSsl = $false }
+  'n' { $UseSsl = $false }
+  'off' { $UseSsl = $false }
+  default {
+    throw "Invalid UseSsl value '$UseSsl'. Use true/false, yes/no, on/off, or 1/0."
+  }
+}
 
 if (-not (Test-Path -LiteralPath $LocalRoot)) {
   throw "LocalRoot not found: $LocalRoot"
