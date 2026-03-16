@@ -35,3 +35,5 @@ What it does:
 - `FTP_MAX_PARALLEL` controls concurrent upload streams (`5` default, range `1..20`)
 
 This branch no longer uses Vercel deployment files; use `Script_BuildAll.bat` for internal test uploads.
+
+For reusing this setup in other projects, see `docs/BUILD_UPLOAD_FRAMEWORK_GUIDE.md`.
