@@ -7,11 +7,7 @@ import barrattThink from './mobile/Barratt/barratt_think.png';
 import branNeutral from './mobile/Bran/bran_neutral.png';
 import branHappy from './mobile/Bran/bran_happy.png';
 import branThink from './mobile/Bran/bran_think.png';
-import branIdleVideo from './mobile/Bran/animations/bran_idle.mp4';
-import branVictoryVideo from './mobile/Bran/animations/bran_victory.mp4';
-import branThinkingVideo from './mobile/Bran/animations/bran_thinking.mp4';
-import branAttackVideo from './mobile/Bran/animations/bran_attack.mp4';
-import branSpecialVideo from './mobile/Bran/animations/bran_special.mp4';
+import branAttack from './mobile/Bran/bran_attack.png';
 
 import mochiNeutral from './mobile/Mochi/mochi_neutral.png';
 import mochiHappy from './mobile/Mochi/mochi_happy.png';
@@ -47,11 +43,11 @@ export const CHARACTER_AVATARS: AvatarData[] = [
     rarity: 'Rare',
     level: 4,
     poses: {
-      idle: [branIdleVideo],
-      victory: [branVictoryVideo],
-      thinking: [branThinkingVideo],
-      attack: [branAttackVideo],
-      special: [branSpecialVideo],
+      idle: [branNeutral, branHappy],
+      victory: [branHappy],
+      thinking: [branThink],
+      attack: [branAttack],
+      special: [branAttack],
     },
   },
   {

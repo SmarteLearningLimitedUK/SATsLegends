@@ -60,11 +60,12 @@ if "%FTP_PASSWORD%"=="" (
 )
 if "%FTP_PORT%"=="" set "FTP_PORT=21"
 if "%FTP_REMOTE_DIR%"=="" set "FTP_REMOTE_DIR=sats"
+if "%FTP_USE_SSL%"=="" set "FTP_USE_SSL=false"
 
-echo [3/3] Uploading dist\ to FTPS %FTP_HOST%:%FTP_PORT%/%FTP_REMOTE_DIR% ...
-powershell -NoProfile -ExecutionPolicy Bypass -File "%UPLOAD_SCRIPT%" -LocalRoot "%SCRIPT_DIR%dist" -Host "%FTP_HOST%" -Port "%FTP_PORT%" -Username "%FTP_USERNAME%" -Password "%FTP_PASSWORD%" -RemoteBaseDir "%FTP_REMOTE_DIR%"
+echo [3/3] Uploading dist\ to FTP %FTP_HOST%:%FTP_PORT%/%FTP_REMOTE_DIR% ...
+powershell -NoProfile -ExecutionPolicy Bypass -File "%UPLOAD_SCRIPT%" -LocalRoot "%SCRIPT_DIR%dist" -FtpHost "%FTP_HOST%" -Port "%FTP_PORT%" -Username "%FTP_USERNAME%" -Password "%FTP_PASSWORD%" -RemoteBaseDir "%FTP_REMOTE_DIR%" -UseSsl "%FTP_USE_SSL%"
 if errorlevel 1 (
-  echo [ERROR] FTPS upload failed.
+  echo [ERROR] FTP/FTPS upload failed.
   popd >nul
   exit /b 1
 )
