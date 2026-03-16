@@ -5,27 +5,44 @@ param(
   [Parameter(Mandatory = $true)][string]$Username,
   [Parameter(Mandatory = $true)][string]$Password,
   [Parameter(Mandatory = $true)][string]$RemoteBaseDir,
-  [Parameter(Mandatory = $false)][string]$UseSsl = 'false'
+  [Parameter(Mandatory = $false)][string]$UseSsl = 'false',
+  [Parameter(Mandatory = $false)][string]$AllowInsecureCertificate = 'false'
 )
 
 $ErrorActionPreference = 'Stop'
 
-switch ($UseSsl.Trim().ToLowerInvariant()) {
-  '1' { $UseSsl = $true }
-  'true' { $UseSsl = $true }
-  'yes' { $UseSsl = $true }
-  'y' { $UseSsl = $true }
-  'on' { $UseSsl = $true }
-  '0' { $UseSsl = $false }
-  'false' { $UseSsl = $false }
-  'no' { $UseSsl = $false }
-  'n' { $UseSsl = $false }
-  'off' { $UseSsl = $false }
-  default {
-    throw "Invalid UseSsl value '$UseSsl'. Use true/false, yes/no, on/off, or 1/0."
+
+function ConvertTo-BoolValue {
+  param(
+    [string]$Value,
+    [string]$ParameterName
+  )
+
+  switch ($Value.Trim().ToLowerInvariant()) {
+    '1' { return $true }
+    'true' { return $true }
+    'yes' { return $true }
+    'y' { return $true }
+    'on' { return $true }
+    '0' { return $false }
+    'false' { return $false }
+    'no' { return $false }
+    'n' { return $false }
+    'off' { return $false }
+    default {
+      throw "Invalid $ParameterName value '$Value'. Use true/false, yes/no, on/off, or 1/0."
+    }
   }
 }
 
+$UseSsl = ConvertTo-BoolValue -Value $UseSsl -ParameterName 'UseSsl'
+$AllowInsecureCertificate = ConvertTo-BoolValue -Value $AllowInsecureCertificate -ParameterName 'AllowInsecureCertificate'
+
+$originalServerCertificateValidationCallback = [System.Net.ServicePointManager]::ServerCertificateValidationCallback
+if ($UseSsl -and $AllowInsecureCertificate) {
+  Write-Warning 'AllowInsecureCertificate is enabled. TLS certificate validation is being bypassed for this process.'
+  [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }
+}
 if (-not (Test-Path -LiteralPath $LocalRoot)) {
   throw "LocalRoot not found: $LocalRoot"
 }
@@ -113,4 +130,8 @@ if ($UseSsl) {
 }
 else {
   Write-Host "FTP upload complete."
+}
+
+if ($UseSsl -and $AllowInsecureCertificate) {
+  [System.Net.ServicePointManager]::ServerCertificateValidationCallback = $originalServerCertificateValidationCallback
 }

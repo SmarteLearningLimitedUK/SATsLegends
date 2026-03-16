@@ -29,5 +29,6 @@ What it does:
 - Runs `npm install`
 - Runs `npm run build`
 - Uploads all files from `dist/` to the remote folder `sats` using explicit FTPS on port 21
+- `FTP_ALLOW_INSECURE_CERT=true` can be used if your FTPS server presents a self-signed or mismatched TLS certificate
 
 This branch no longer uses Vercel deployment files; use `Script_BuildAll.bat` for internal test uploads.
