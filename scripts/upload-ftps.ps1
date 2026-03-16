@@ -248,8 +248,36 @@ try {
 
       $ErrorActionPreference = 'Stop'
 
+      function ConvertTo-BoolInJob {
+        param([object]$Value)
+
+        if ($Value -is [bool]) { return $Value }
+
+        $text = [string]$Value
+        switch ($text.Trim().ToLowerInvariant()) {
+          '1' { return $true }
+          'true' { return $true }
+          'yes' { return $true }
+          'y' { return $true }
+          'on' { return $true }
+          '0' { return $false }
+          'false' { return $false }
+          'no' { return $false }
+          'n' { return $false }
+          'off' { return $false }
+          default { throw "Invalid boolean value '$text' inside upload job." }
+        }
+      }
+
+      $UseSsl = ConvertTo-BoolInJob -Value $UseSsl
+      $AllowInsecureCertificate = ConvertTo-BoolInJob -Value $AllowInsecureCertificate
+      $UsePassive = ConvertTo-BoolInJob -Value $UsePassive
+      $AllowPassiveToggleFallback = ConvertTo-BoolInJob -Value $AllowPassiveToggleFallback
+
       function Invoke-UploadAttempt {
-        param([bool]$AttemptUsePassive)
+        param([object]$AttemptUsePassive)
+
+        $AttemptUsePassive = ConvertTo-BoolInJob -Value $AttemptUsePassive
 
         try {
           $request = [System.Net.FtpWebRequest]::Create("ftp://$FtpHost`:$Port/$RemoteBase/$Relative")
