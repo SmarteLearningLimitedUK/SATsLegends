@@ -18,3 +18,16 @@ View your app in AI Studio: https://ai.studio/apps/a5a23fe0-08ec-40a3-9b21-e5cfb
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
+
+## One-click build + upload for internal testing (Windows)
+
+1. Copy `deploy.config.example.bat` to `deploy.config.bat`.
+2. Edit `deploy.config.bat` and set your FTP/FTPS credentials.
+3. Double-click `Script_BuildAll.bat`.
+
+What it does:
+- Runs `npm install`
+- Runs `npm run build`
+- Uploads all files from `dist/` to the remote folder `sats` using explicit FTPS on port 21
+
+This branch no longer uses Vercel deployment files; use `Script_BuildAll.bat` for internal test uploads.

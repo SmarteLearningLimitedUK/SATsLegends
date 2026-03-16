@@ -9,3 +9,5 @@ coverage/
 external-assets/
 GUI Pro-FantasyHero/
 characters/
+
+deploy.config.bat
