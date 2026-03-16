@@ -29,3 +29,5 @@ What it does:
 - Runs `npm install`
 - Runs `npm run build`
 - Uploads all files from `dist/` to the remote folder `sats` using explicit FTPS on port 21
+
+This branch no longer uses Vercel deployment files; use `Script_BuildAll.bat` for internal test uploads.
