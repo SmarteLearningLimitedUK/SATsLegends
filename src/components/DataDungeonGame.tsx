@@ -6,7 +6,8 @@ import { AVATARS } from '../constants';
 import { getSatsInspiredDataDungeonPuzzle, type DataDungeonPuzzle as Puzzle } from '../content/satsInspiredQuestionBanks';
 import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
-import { Home, HelpCircle, Star, Timer, Key, Lock, Unlock } from './GameIcons';
+import GameplaySceneBackdrop from './GameplaySceneBackdrop';
+import { Star, Timer, Lock, Unlock } from './GameIcons';
 
 interface DataDungeonGameProps {
   levelId: number;
@@ -238,18 +239,11 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
   const progress = Math.min((score / targetScore) * 100, 100);
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden bg-stone-900 font-sans">
-      {/* Dungeon Background */}
-      <div className="absolute inset-0 opacity-40 pointer-events-none" style={{ 
-        backgroundImage: `
-          linear-gradient(to right, #1c1917 2px, transparent 2px),
-          linear-gradient(to bottom, #1c1917 2px, transparent 2px)
-        `, 
-        backgroundSize: '60px 60px' 
-      }} />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_20%,#0c0a09_100%)] pointer-events-none" />
+    <div className="relative flex h-full w-full overflow-hidden font-sans">
+      <GameplaySceneBackdrop gameType="data_dungeon" />
 
-      <div className="z-10 w-full max-w-5xl flex flex-col items-center gap-3 md:gap-6 h-full flex-1 min-h-0">
+      <div className="relative z-10 flex h-full w-full min-h-0 flex-col items-center gap-2.5 px-2.5 pb-2.5 pt-[calc(0.55rem+env(safe-area-inset-top))] md:gap-3 md:px-4 md:pb-4 md:pt-4">
+        <div className="w-full max-w-5xl flex min-h-0 flex-1 flex-col items-center gap-3 md:gap-4">
         <GameplayHUD
           title="Data Dungeon"
           avatar={avatar}
@@ -265,11 +259,12 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
           statValue={streak}
         />
 
-        {/* Game Area */}
-        <div className="relative flex w-full flex-1 min-h-0 flex-col items-center justify-center perspective-1000">
+        <div className="licensed-board-frame relative flex w-full min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] p-2 md:rounded-[2.6rem] md:p-3">
+          {/* Game Area */}
+          <div className="relative flex w-full flex-1 min-h-0 flex-col items-center justify-center perspective-1000">
           
-          {/* The Door */}
-          <div className="relative flex w-full max-w-2xl flex-1 min-h-[260px] items-end justify-center md:min-h-[420px]">
+            {/* The Door */}
+            <div className="relative flex w-full max-w-2xl flex-1 min-h-[12rem] items-end justify-center md:min-h-[18rem]">
             {/* Door Frame */}
             <div className="absolute inset-0 border-[8px] md:border-[16px] border-b-0 border-stone-800 rounded-t-[2.5rem] md:rounded-t-[4rem] shadow-[inset_0_0_50px_rgba(0,0,0,0.8)] bg-black overflow-hidden flex justify-center">
               
@@ -348,25 +343,25 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
               </AnimatePresence>
 
             </div>
-          </div>
+            </div>
 
-          {/* Answer Runes */}
-          <div className="z-20 mt-3 md:mt-8 grid w-full max-w-2xl grid-cols-2 gap-2 md:grid-cols-4 md:gap-4">
-            {puzzle?.options.map((opt, i) => (
-              <button
-                key={i}
-                onClick={() => handleAnswer(opt)}
-                disabled={doorState !== 'locked'}
-                className="relative group p-3 md:p-4 rounded-[1rem] md:rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed licensed-answer-button"
-              >
-                <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent rounded-xl pointer-events-none" />
-                <span className="text-xl md:text-3xl font-black text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)] group-hover:text-amber-400">
-                  {opt}
-                </span>
-              </button>
-            ))}
+            {/* Answer Runes */}
+            <div className="z-20 mt-3 md:mt-4 grid w-full max-w-2xl grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
+              {puzzle?.options.map((opt, i) => (
+                <button
+                  key={i}
+                  onClick={() => handleAnswer(opt)}
+                  disabled={doorState !== 'locked'}
+                  className="relative group p-3 md:p-4 rounded-[1rem] md:rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed licensed-answer-button"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent rounded-xl pointer-events-none" />
+                  <span className="text-xl md:text-3xl font-black text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)] group-hover:text-amber-400">
+                    {opt}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
-
         </div>
 
         <GameActionDock
@@ -417,6 +412,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
           </motion.div>
         )}
         </AnimatePresence>
+        </div>
       </div>
     </div>
   );

@@ -37,8 +37,10 @@ const ReasoningGame: React.FC<ReasoningGameProps> = ({ gameType, isBoss = false,
   return (
     <div className="relative flex h-full w-full min-h-0 flex-col overflow-hidden">
       <GameplaySceneBackdrop gameType={gameType as any} />
-      <div className="flex min-h-0 flex-1 items-stretch justify-center overflow-hidden pt-0">
-        {renderGame()}
+      <div className="flex min-h-0 flex-1 items-stretch justify-center overflow-hidden px-2 pb-1 md:px-3">
+        <div className="licensed-board-frame relative flex w-full max-w-6xl min-h-0 flex-1 overflow-hidden rounded-[2rem] p-2 md:rounded-[2.6rem] md:p-3">
+          {renderGame()}
+        </div>
       </div>
       <div className="relative z-20 shrink-0 pb-1">
         <GameActionDock onBack={onBack} accentClass="text-slate-100" />

@@ -568,7 +568,8 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       <GameplaySceneBackdrop gameType={gameType} />
 
       <div className="relative z-10 flex h-full w-full flex-col gap-2.5 px-2.5 pb-2.5 pt-[calc(0.55rem+env(safe-area-inset-top))] md:gap-3 md:px-4 md:pb-4 md:pt-4">
-        <div className="grid shrink-0 grid-cols-[1.08fr_0.92fr] gap-2.5 md:gap-3">
+        <div className="licensed-board-frame relative flex min-h-0 flex-1 flex-col gap-2.5 overflow-hidden rounded-[2rem] p-2 md:gap-3 md:rounded-[2.6rem] md:p-3">
+          <div className="grid shrink-0 grid-cols-[1.08fr_0.92fr] gap-2.5 md:gap-3">
           <div className="min-w-0 rounded-[1.45rem] border border-white/16 bg-slate-950/55 p-2.5 shadow-[0_18px_48px_rgba(2,6,23,0.24)] backdrop-blur-xl md:rounded-[2rem] md:p-3">
             <BossPortrait encounter={encounter} pose={bossPose} className="h-[8.6rem] md:h-[10.5rem]" />
           </div>
@@ -591,7 +592,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
           </div>
         </div>
 
-        <div className="shrink-0 rounded-[1.35rem] border border-white/14 bg-slate-950/55 px-3 py-2.5 text-white shadow-[0_16px_36px_rgba(2,6,23,0.22)] backdrop-blur-xl md:rounded-[1.8rem] md:px-4 md:py-3">
+          <div className="shrink-0 rounded-[1.35rem] border border-white/14 bg-slate-950/55 px-3 py-2.5 text-white shadow-[0_16px_36px_rgba(2,6,23,0.22)] backdrop-blur-xl md:rounded-[1.8rem] md:px-4 md:py-3">
           <div className="flex items-center justify-between gap-3 text-[9px] font-black uppercase tracking-[0.22em] md:text-[10px]">
             <span className="text-white/58">Boss health</span>
             <span className="text-white/82">{bossHealth}% remaining</span>
@@ -610,7 +611,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
           </div>
         </div>
 
-        <div className="grid min-h-0 flex-1 gap-2.5 md:gap-3">
+          <div className="grid min-h-0 flex-1 gap-2.5 md:gap-3">
           <div className="rounded-[1.45rem] border border-white/16 bg-slate-950/58 p-3 text-white shadow-[0_18px_48px_rgba(2,6,23,0.24)] backdrop-blur-xl md:rounded-[2rem] md:p-4">
             <div className="flex items-start gap-3">
               <div className="hidden h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-[1rem] border border-white/15 bg-white/10 md:flex">
@@ -686,6 +687,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
                 </button>
               );
             })}
+          </div>
           </div>
         </div>
 
