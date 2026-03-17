@@ -939,7 +939,11 @@ const App: React.FC = () => {
       {!isStagedPreviewOpen && (
         <button
           onClick={() => openStagePreview(screen === 'splash' ? 'splash' : 'map')}
-          className="ui-button-primary fixed right-3 top-[calc(0.75rem+env(safe-area-inset-top))] z-[70] rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] md:right-4 md:px-5 md:text-[11px]"
+          className={`ui-button-primary fixed right-3 z-[70] rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] md:right-4 md:px-5 md:text-[11px] ${
+            screen === 'parent_dashboard'
+              ? 'top-[calc(4rem+env(safe-area-inset-top))] md:top-[calc(0.75rem+env(safe-area-inset-top))]'
+              : 'top-[calc(0.75rem+env(safe-area-inset-top))]'
+          }`}
         >
           Stage View
         </button>
