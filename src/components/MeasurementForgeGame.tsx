@@ -8,8 +8,6 @@ import { AVATARS } from '../constants';
 import AssetIcon from './AssetIcon';
 import { Coins } from './GameIcons';
 import { GameScreenShell, PuzzleStage } from './layout/ScreenPrimitives';
-import buttonOrangePill from '../assets/licensed/slices/button_orange_pill.png';
-import buttonCyanPill from '../assets/licensed/slices/button_cyan_pill.png';
 import panelPurple from '../assets/licensed/slices/panel_purple.png';
 import labelPurpleLong from '../assets/licensed/slices/label_purple_long.png';
 import labelGreenLong from '../assets/licensed/slices/label_green_long.png';
@@ -488,10 +486,9 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                   whileTap={{ scale: 0.96 }}
                   onClick={clearScale}
                   disabled={selectedItems.length === 0 || !!feedback}
-                  className="relative inline-flex h-[2rem] min-w-[4.7rem] items-center justify-center px-3 text-[9px] font-black uppercase tracking-[0.14em] text-white disabled:cursor-not-allowed disabled:opacity-35 md:h-[2.2rem] md:min-w-[5.2rem] md:text-[10px]"
+                  className="ui-button-secondary relative inline-flex h-[2rem] min-w-[4.7rem] items-center justify-center px-3 text-[9px] font-black uppercase tracking-[0.14em] text-white disabled:cursor-not-allowed disabled:opacity-35 md:h-[2.2rem] md:min-w-[5.2rem] md:text-[10px]"
                 >
-                  <img src={buttonCyanPill} alt="" draggable={false} className="absolute inset-0 h-full w-full object-fill" />
-                  <span className="relative z-10">Reset</span>
+                  Reset
                 </motion.button>
               </div>
               <div className="relative z-10 grid grid-cols-4 gap-2 md:gap-3">
@@ -511,10 +508,9 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                 whileTap={{ scale: 0.97, y: 1 }}
                 onClick={handleBalance}
                 disabled={selectedItems.length === 0 || !!feedback}
-                className="relative flex h-[4.35rem] w-full max-w-[22rem] items-center justify-center gap-3 px-6 text-lg font-black uppercase tracking-[0.12em] text-white transition-all disabled:cursor-not-allowed disabled:opacity-45 md:h-[4.75rem] md:max-w-[24rem] md:text-[1.25rem]"
+                className="ui-button-primary relative flex h-[4.35rem] w-full max-w-[22rem] items-center justify-center gap-3 px-6 text-lg font-black uppercase tracking-[0.12em] text-white transition-all disabled:cursor-not-allowed disabled:opacity-45 md:h-[4.75rem] md:max-w-[24rem] md:text-[1.25rem]"
               >
-                <img src={buttonOrangePill} alt="" draggable={false} className="absolute inset-0 h-full w-full object-fill drop-shadow-[0_14px_24px_rgba(0,0,0,0.26)]" />
-                <div className="relative z-10 flex items-center gap-3">
+                <div className="relative flex items-center gap-3">
                   <AssetIcon name="check" className="h-5 w-5 md:h-6 md:w-6" />
                   Balance
                 </div>

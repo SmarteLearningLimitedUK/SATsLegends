@@ -17,23 +17,6 @@ import vexNeutral from './mobile/Vex/vex_neutral.png';
 import vexSmile from './mobile/Vex/vex_smile.png';
 import vexThink from './mobile/Vex/vex_think.png';
 
-import emotionSvg1 from './emotions/1.svg';
-import emotionSvg2 from './emotions/2.svg';
-import emotionSvg3 from './emotions/3.svg';
-import emotionSvg4 from './emotions/4.svg';
-import emotionsGenerateVideo from './emotions/Emotions_Generate_Video.mp4';
-import emotionsReadyVideo from './emotions/Video_Ready_After_Emotional_Input.mp4';
-import blinkingToHappyVideo from './emotions/Blinking_and_Breathing_to_Happy.mp4';
-
-export const EMOTION_ASSETS = {
-  svgs: [emotionSvg1, emotionSvg2, emotionSvg3, emotionSvg4],
-  videos: {
-    generate: emotionsGenerateVideo,
-    ready: emotionsReadyVideo,
-    blinkToHappy: blinkingToHappyVideo,
-  },
-} as const;
-
 export const DEFAULT_AVATAR_ID = 'barratt';
 
 export const CHARACTER_AVATARS: AvatarData[] = [

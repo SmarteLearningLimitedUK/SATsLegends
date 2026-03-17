@@ -48,7 +48,7 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
         : 'idle';
 
   return (
-    <div className="w-full flex shrink-0 flex-col gap-1 md:gap-2">
+    <div className="game-shell-zone game-shell-zone-hud w-full flex shrink-0 flex-col gap-1 md:gap-2">
       <div className={`fantasy-hud-shell relative w-full overflow-hidden ${compact ? 'rounded-[1rem]' : 'rounded-[1.25rem]'} shadow-[0_18px_50px_rgba(15,23,42,0.24)] md:rounded-[2rem]`}>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.18),transparent_28%),linear-gradient(180deg,rgba(43,60,103,0.96),rgba(14,21,40,0.98))]" />
         <div className="absolute inset-0 border border-white/12" />

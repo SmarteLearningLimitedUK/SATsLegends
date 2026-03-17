@@ -77,7 +77,7 @@ const GameActionDock: React.FC<GameActionDockProps> = ({
   };
 
   return (
-    <div className="mt-0.5 flex shrink-0 items-center justify-center md:mt-2">
+    <div className="game-shell-zone game-shell-zone-actions mt-0.5 flex shrink-0 items-center justify-center md:mt-2">
       <div className="ui-panel-unified fantasy-dock-shell flex items-center gap-1.5 px-1.5 py-1 md:gap-3 md:px-3 md:py-2">
         <button
           onClick={() => {

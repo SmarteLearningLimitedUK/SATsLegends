@@ -45,18 +45,23 @@ import splashPoster from './assets/splash.png';
 
 const PLAYER_STORAGE_KEY = 'maths_quest_player';
 const ALL_ISLAND_IDS = ISLANDS.map(island => island.id);
-const SCREEN_BEHAVIOR: Record<GameScreen, { scrollable: boolean; shell: 'splash' | 'compact' | 'playfield' }> = {
-  splash: { scrollable: false, shell: 'splash' },
-  profile_setup: { scrollable: false, shell: 'compact' },
-  avatar_selection: { scrollable: false, shell: 'playfield' },
-  world_map: { scrollable: true, shell: 'playfield' },
-  island_levels: { scrollable: true, shell: 'playfield' },
-  gameplay: { scrollable: false, shell: 'playfield' },
-  level_result: { scrollable: false, shell: 'playfield' },
-  shop: { scrollable: false, shell: 'compact' },
-  profile: { scrollable: false, shell: 'compact' },
-  settings: { scrollable: false, shell: 'compact' },
-  parent_dashboard: { scrollable: true, shell: 'playfield' },
+const MAP_LAYOUT_SCREENS: GameScreen[] = ['world_map', 'island_levels'];
+const SCREEN_BEHAVIOR: Record<GameScreen, {
+  scrollable: boolean;
+  shell: 'splash' | 'compact' | 'playfield';
+  family: 'hub' | 'game' | 'overlay';
+}> = {
+  splash: { scrollable: false, shell: 'splash', family: 'hub' },
+  profile_setup: { scrollable: false, shell: 'compact', family: 'hub' },
+  avatar_selection: { scrollable: false, shell: 'playfield', family: 'hub' },
+  world_map: { scrollable: true, shell: 'playfield', family: 'hub' },
+  island_levels: { scrollable: true, shell: 'playfield', family: 'hub' },
+  gameplay: { scrollable: false, shell: 'playfield', family: 'game' },
+  level_result: { scrollable: false, shell: 'playfield', family: 'overlay' },
+  shop: { scrollable: false, shell: 'compact', family: 'hub' },
+  profile: { scrollable: false, shell: 'compact', family: 'hub' },
+  settings: { scrollable: false, shell: 'compact', family: 'hub' },
+  parent_dashboard: { scrollable: true, shell: 'playfield', family: 'hub' },
 };
 
 type StageOutputId =
@@ -729,7 +734,13 @@ const App: React.FC = () => {
         ) : null;
 
       case 'gameplay':
-        return renderGameplay();
+        return (
+          <div className="game-shell-host relative flex h-full w-full min-h-0 flex-col overflow-hidden">
+            <div className="game-shell-contract relative flex h-full w-full min-h-0 flex-col overflow-hidden">
+              {renderGameplay()}
+            </div>
+          </div>
+        );
 
       case 'parent_dashboard':
         return <ParentDashboard player={player} onBack={goToHome} />;
@@ -780,9 +791,9 @@ const App: React.FC = () => {
 
   const screenBehavior = SCREEN_BEHAVIOR[screen];
   const showBottomNav = ['world_map', 'avatar_selection', 'parent_dashboard'].includes(screen);
-  const isSplashScreen = screenBehavior.shell === 'splash';
-  const isWideScreenScene = screenBehavior.shell === 'playfield';
-  const showCompactShell = !isWideScreenScene && !isSplashScreen;
+  const isSplashScreen = screen === 'splash';
+  const isMapLayoutScreen = MAP_LAYOUT_SCREENS.includes(screen);
+  const isStandardShellScreen = !isMapLayoutScreen;
   const isWorldMapScreen = screen === 'world_map';
   const bottomNavOffsetClass = showBottomNav
     ? isWorldMapScreen
@@ -791,9 +802,9 @@ const App: React.FC = () => {
     : '';
 
   return (
-    <div className={`app-viewport screen-${screen.replace(/_/g, '-')} relative w-full flex flex-col items-center overflow-hidden ${isSplashScreen ? '' : isWideScreenScene ? 'licensed-playfield-bg bg-slate-950 pb-[env(safe-area-inset-bottom)]' : 'licensed-shell-bg p-3 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] md:p-8'}`}>
-      {!isSplashScreen && <div className="soft-vignette" />}
-      {showCompactShell && (
+    <div className={`app-viewport app-shell-family-${screenBehavior.family} screen-${screen.replace(/_/g, '-')} relative w-full flex flex-col items-center overflow-hidden ${isMapLayoutScreen ? 'sat-shell-map licensed-playfield-bg bg-slate-950 pb-[env(safe-area-inset-bottom)]' : 'sat-shell-standard licensed-playfield-bg bg-slate-950 px-3 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] md:px-8 md:pt-[max(1rem,env(safe-area-inset-top))] md:pb-[max(1rem,env(safe-area-inset-bottom))]'}`}>
+      {isStandardShellScreen && <div className="soft-vignette" />}
+      {isStandardShellScreen && !isSplashScreen && screen !== 'gameplay' && (
         <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-40 bg-gradient-to-b from-cyan-300/8 via-sky-300/4 to-transparent" />
       )}
 
@@ -803,7 +814,7 @@ const App: React.FC = () => {
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 1.02 }}
-          className={`relative z-10 flex min-h-0 w-full flex-1 justify-center pointer-events-auto ${screenBehavior.scrollable ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'} ${isSplashScreen ? '' : isWideScreenScene ? '' : 'mx-auto max-w-7xl items-stretch'} ${bottomNavOffsetClass}`}
+          className={`app-screen-content relative z-10 flex min-h-0 w-full flex-1 justify-center pointer-events-auto ${screenBehavior.scrollable ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'} ${isMapLayoutScreen ? 'sat-screen-map-content' : 'sat-screen-standard-content mx-auto max-w-7xl items-stretch'} ${bottomNavOffsetClass}`}
           style={screenBehavior.scrollable ? { WebkitOverflowScrolling: 'touch' } : undefined}
         >
           {renderScreen()}
@@ -895,7 +906,7 @@ const App: React.FC = () => {
       )}
 
       {
-        !isWideScreenScene && !isSplashScreen && (
+        isStandardShellScreen && !isSplashScreen && screen !== 'gameplay' && (
           <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
             <div className="cloud w-64 h-24 top-20" style={{ animationDuration: '25s' }} />
             <div className="cloud w-48 h-16 top-40" style={{ animationDuration: '40s', animationDelay: '-10s' }} />
