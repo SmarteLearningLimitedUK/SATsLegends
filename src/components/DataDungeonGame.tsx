@@ -409,7 +409,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
 
               <button 
                 onClick={onBack}
-                className="w-full py-5 text-white text-2xl font-black rounded-2xl transition-all licensed-submit-button"
+                className="ui-button-primary licensed-submit-button w-full py-5 text-white text-2xl font-black transition-all"
               >
                 CONTINUE
               </button>

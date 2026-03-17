@@ -302,7 +302,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
                   </div>
                 )}
 
-                <button onClick={onBack} className="licensed-submit-button w-full rounded-2xl py-4 text-xl font-black text-white transition-all">
+                <button onClick={onBack} className="ui-button-primary licensed-submit-button w-full py-4 text-xl font-black text-white transition-all">
                   Continue
                 </button>
               </div>

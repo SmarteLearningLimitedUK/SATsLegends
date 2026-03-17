@@ -504,7 +504,7 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
                         </div>
                         <button
                           onClick={resetBrew}
-                          className="licensed-slice-orange-pill rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white"
+                          className="ui-button-secondary licensed-slice-orange-pill px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white"
                         >
                           Reset
                         </button>
@@ -607,7 +607,7 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
               </div>
               <button
                 onClick={onBack}
-                className="fantasy-cta-button w-full px-6 py-3 text-sm uppercase tracking-[0.18em] md:px-8 md:py-4 md:text-base"
+                className="ui-button-primary fantasy-cta-button w-full px-6 py-3 text-sm uppercase tracking-[0.18em] md:px-8 md:py-4 md:text-base"
               >
                 Continue
               </button>

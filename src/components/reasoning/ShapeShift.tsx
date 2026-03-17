@@ -126,21 +126,21 @@ const ShapeShift: React.FC<ShapeShiftProps> = ({ onVictory, onGameOver, onBack }
       <div className="flex gap-3 md:gap-6 mt-1 md:mt-2">
         <button 
           onClick={rotate}
-          className="flex flex-col items-center gap-2 p-4 md:p-6 bg-white rounded-3xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all border-b-4 border-gray-200 active:border-b-0 active:translate-y-0"
+          className="ui-button-secondary flex flex-col items-center gap-2 p-4 md:p-6"
         >
           <RotateCw size={28} className="text-indigo-500" />
           <span className="text-[10px] font-black text-gray-400 uppercase">Rotate</span>
         </button>
         <button 
           onClick={flip}
-          className="flex flex-col items-center gap-2 p-4 md:p-6 bg-white rounded-3xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all border-b-4 border-gray-200 active:border-b-0 active:translate-y-0"
+          className="ui-button-secondary flex flex-col items-center gap-2 p-4 md:p-6"
         >
           <FlipHorizontal size={28} className="text-indigo-500" />
           <span className="text-[10px] font-black text-gray-400 uppercase">Flip</span>
         </button>
         <button 
           onClick={checkVictory}
-          className="flex flex-col items-center gap-2 p-4 md:p-6 bg-emerald-500 rounded-3xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all border-b-4 border-emerald-700 active:border-b-0 active:translate-y-0"
+          className="ui-button-primary flex flex-col items-center gap-2 p-4 md:p-6"
         >
           <CheckCircle2 size={28} className="text-white" />
           <span className="text-[10px] font-black text-emerald-100 uppercase">Submit</span>

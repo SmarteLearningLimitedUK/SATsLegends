@@ -2487,12 +2487,11 @@ button:disabled {
   height: 28%;
 }
 
-/* Strict Second-Pass Mockup Skin: single UI language */
+/* Final screen-lock pass: one button/panel language for all gameplay screens */
+.ui-button-primary,
 .ui-action-button,
 .game-button-primary,
-.game-button-secondary,
 .licensed-wood-button,
-.licensed-wood-button-secondary,
 .licensed-submit-button,
 .licensed-answer-button,
 .casual-action-button,
@@ -2500,7 +2499,7 @@ button:disabled {
 .hero-cta-button,
 .splash-continue-button {
   border: 1px solid rgba(255, 246, 213, 0.44) !important;
-  border-radius: 1.15rem !important;
+  border-radius: 999px !important;
   color: #fff9e5 !important;
   background:
     linear-gradient(180deg, rgba(255,255,255,0.24), rgba(255,255,255,0) 24%),
@@ -2513,60 +2512,12 @@ button:disabled {
     0 16px 28px rgba(0,0,0,0.24) !important;
 }
 
-.ui-action-button:hover,
-.game-button-primary:hover,
-.game-button-secondary:hover,
-.licensed-wood-button:hover,
-.licensed-wood-button-secondary:hover,
-.licensed-submit-button:hover,
-.licensed-answer-button:hover,
-.casual-action-button:hover,
-.fantasy-cta-button:hover,
-.hero-cta-button:hover,
-.splash-continue-button:hover {
-  filter: brightness(1.04) saturate(1.03);
-}
-
-.ui-action-button:active,
-.game-button-primary:active,
-.game-button-secondary:active,
-.licensed-wood-button:active,
-.licensed-wood-button-secondary:active,
-.licensed-submit-button:active,
-.licensed-answer-button:active,
-.casual-action-button:active,
-.fantasy-cta-button:active,
-.hero-cta-button:active,
-.splash-continue-button:active {
-  transform: translateY(2px) scale(0.99);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.3),
-    0 4px 0 rgba(138,84,12,0.84),
-    0 10px 18px rgba(0,0,0,0.2) !important;
-}
-
-.hero-cta-button-face,
-.splash-continue-button-face,
-.hero-cta-button-flare,
-.splash-continue-button-flare,
-.hero-cta-button-orb,
-.splash-continue-button::before {
-  display: none !important;
-}
-
-.hero-cta-button-label,
-.splash-continue-button-label {
-  color: inherit !important;
-  text-shadow: inherit !important;
-  -webkit-text-stroke: 0 !important;
-  padding: 0 !important;
-}
-
-.ui-icon-button,
-.game-dock-button,
-.hero-nav-button {
+.ui-button-secondary,
+.game-button-secondary,
+.licensed-wood-button-secondary,
+.licensed-slice-orange-pill {
   border: 1px solid rgba(191,219,254,0.42) !important;
-  border-radius: 1rem !important;
+  border-radius: 999px !important;
   color: #ebf6ff !important;
   background:
     linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0) 24%),
@@ -2578,89 +2529,37 @@ button:disabled {
     0 14px 22px rgba(15,23,42,0.22) !important;
 }
 
-.ui-panel-unified,
-.licensed-game-card,
-.licensed-game-card-dark,
-.licensed-board-frame,
-.casual-modal-panel,
-.casual-panel-surface,
-.casual-panel-strong,
-.fantasy-hud-shell,
-.fantasy-dock-shell {
-  border: 1px solid rgba(255,255,255,0.18) !important;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0) 22%),
-    url('./assets/casual_ui/dialogs_panels/panel_3.png') center/100% 100% no-repeat,
-    linear-gradient(180deg, rgba(30,58,138,0.94), rgba(15,23,42,0.98)) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.16),
-    0 16px 32px rgba(2,6,23,0.28) !important;
-}
-
-.world-map-island-label,
-.world-map-island-label-face,
-.world-map-island-label-face-idle,
-.world-map-island-label-face-progress,
-.world-map-island-label-face-locked {
-  border-radius: 0.95rem !important;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0) 22%),
-    url('./assets/licensed/slices/label_purple_long.png') center/100% 100% no-repeat,
-    linear-gradient(180deg, rgba(96,165,250,0.98), rgba(59,130,246,0.98)) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.2),
-    0 6px 0 rgba(29,78,216,0.72),
-    0 14px 20px rgba(15,23,42,0.2) !important;
-}
-
-/* Screen-Lock Pass: one exact UI button/panel system across all stages */
-.ui-button-primary,
-.ui-action-button,
-.game-button-primary,
-.game-button-secondary,
-.licensed-wood-button,
-.licensed-wood-button-secondary,
-.licensed-submit-button,
-.licensed-answer-button,
-.casual-action-button,
-.fantasy-cta-button {
-  border: 1px solid rgba(255, 246, 213, 0.44) !important;
-  border-radius: 1.1rem !important;
-  color: #fff9e5 !important;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.24), rgba(255,255,255,0) 24%),
-    url('./assets/licensed/slices/button_yellow_plank.png') center/100% 100% no-repeat,
-    linear-gradient(180deg, rgba(255,205,86,0.98), rgba(245,154,24,0.98)) !important;
-  text-shadow: 0 2px 0 rgba(0,0,0,0.32) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.48),
-    0 8px 0 rgba(138,84,12,0.84),
-    0 16px 28px rgba(0,0,0,0.24) !important;
-}
-
 .ui-button-primary:hover,
 .ui-action-button:hover,
 .game-button-primary:hover,
-.game-button-secondary:hover,
 .licensed-wood-button:hover,
-.licensed-wood-button-secondary:hover,
 .licensed-submit-button:hover,
 .licensed-answer-button:hover,
 .casual-action-button:hover,
-.fantasy-cta-button:hover {
+.fantasy-cta-button:hover,
+.hero-cta-button:hover,
+.splash-continue-button:hover,
+.ui-button-secondary:hover,
+.game-button-secondary:hover,
+.licensed-wood-button-secondary:hover,
+.licensed-slice-orange-pill:hover {
   filter: brightness(1.04) saturate(1.03);
 }
 
 .ui-button-primary:active,
 .ui-action-button:active,
 .game-button-primary:active,
-.game-button-secondary:active,
 .licensed-wood-button:active,
-.licensed-wood-button-secondary:active,
 .licensed-submit-button:active,
 .licensed-answer-button:active,
 .casual-action-button:active,
-.fantasy-cta-button:active {
+.fantasy-cta-button:active,
+.hero-cta-button:active,
+.splash-continue-button:active,
+.ui-button-secondary:active,
+.game-button-secondary:active,
+.licensed-wood-button-secondary:active,
+.licensed-slice-orange-pill:active {
   transform: translateY(2px) scale(0.99);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.3),
@@ -2671,7 +2570,6 @@ button:disabled {
 .ui-icon-button,
 .game-dock-button,
 .hero-nav-button,
-.licensed-slice-orange-pill,
 .hero-arrow-button,
 .hero-arrow-button-clean {
   border: 1px solid rgba(191,219,254,0.42) !important;
@@ -2707,6 +2605,22 @@ button:disabled {
     0 16px 32px rgba(2,6,23,0.28) !important;
 }
 
+.world-map-island-label,
+.world-map-island-label-face,
+.world-map-island-label-face-idle,
+.world-map-island-label-face-progress,
+.world-map-island-label-face-locked {
+  border-radius: 999px !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0) 22%),
+    url('./assets/licensed/slices/label_purple_long.png') center/100% 100% no-repeat,
+    linear-gradient(180deg, rgba(96,165,250,0.98), rgba(59,130,246,0.98)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.2),
+    0 6px 0 rgba(29,78,216,0.72),
+    0 14px 20px rgba(15,23,42,0.2) !important;
+}
+
 .hero-arrow-button-face,
 .hero-cta-button-face,
 .splash-continue-button-face,
@@ -2715,4 +2629,50 @@ button:disabled {
 .hero-cta-button-orb,
 .splash-continue-button::before {
   display: none !important;
+}
+
+/* Gameplay viewport lock: no scrolling, no overlap on short phones */
+.screen-gameplay [class*="overflow-y-auto"] {
+  overflow-y: hidden !important;
+}
+
+.screen-gameplay [class*="overflow-x-auto"] {
+  overflow-x: hidden !important;
+}
+
+@media (max-height: 860px) {
+  .screen-gameplay [class*="min-h-[31rem]"],
+  .screen-gameplay [class*="min-h-[28rem]"],
+  .screen-gameplay [class*="min-h-[25rem]"],
+  .screen-gameplay [class*="min-h-[23rem]"],
+  .screen-gameplay [class*="min-h-[20rem]"],
+  .screen-gameplay [class*="min-h-[19rem]"],
+  .screen-gameplay [class*="min-h-[18rem]"] {
+    min-height: clamp(10.5rem, 28vh, 16rem) !important;
+  }
+
+  .screen-gameplay .fantasy-hud-shell {
+    border-radius: 1rem !important;
+  }
+
+  .screen-gameplay .game-dock-button {
+    width: 3rem !important;
+    height: 3rem !important;
+  }
+}
+
+@media (max-height: 760px) {
+  .screen-gameplay [class*="min-h-[31rem]"],
+  .screen-gameplay [class*="min-h-[28rem]"],
+  .screen-gameplay [class*="min-h-[25rem]"],
+  .screen-gameplay [class*="min-h-[23rem]"],
+  .screen-gameplay [class*="min-h-[20rem]"],
+  .screen-gameplay [class*="min-h-[19rem]"],
+  .screen-gameplay [class*="min-h-[18rem]"] {
+    min-height: clamp(9rem, 24vh, 13rem) !important;
+  }
+
+  .screen-gameplay .app-modal-panel {
+    max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 0.75rem) !important;
+  }
 }

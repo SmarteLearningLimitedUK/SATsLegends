@@ -457,8 +457,8 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
 
                 <button
                   onClick={onBack}
-                  className="licensed-submit-button w-full rounded-2xl py-5 text-2xl font-black text-slate-900 transition-all"
-                >
+                className="ui-button-primary licensed-submit-button w-full py-5 text-2xl font-black text-slate-900 transition-all"
+              >
                   CONTINUE
                 </button>
               </div>

@@ -581,7 +581,7 @@ const App: React.FC = () => {
             </p>
             <button
               onClick={() => setScreen('island_levels')}
-              className="px-8 py-4 bg-white/20 text-white font-black rounded-2xl border-b-4 border-white/30"
+              className="ui-button-primary px-8 py-4 text-white font-black"
             >
               Back to island
             </button>
@@ -791,7 +791,7 @@ const App: React.FC = () => {
     : '';
 
   return (
-    <div className={`app-viewport relative w-full flex flex-col items-center overflow-hidden ${isSplashScreen ? '' : isWideScreenScene ? 'licensed-playfield-bg bg-slate-950 pb-[env(safe-area-inset-bottom)]' : 'licensed-shell-bg p-3 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] md:p-8'}`}>
+    <div className={`app-viewport screen-${screen.replace(/_/g, '-')} relative w-full flex flex-col items-center overflow-hidden ${isSplashScreen ? '' : isWideScreenScene ? 'licensed-playfield-bg bg-slate-950 pb-[env(safe-area-inset-bottom)]' : 'licensed-shell-bg p-3 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] md:p-8'}`}>
       {!isSplashScreen && <div className="soft-vignette" />}
       {showCompactShell && (
         <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-40 bg-gradient-to-b from-cyan-300/8 via-sky-300/4 to-transparent" />

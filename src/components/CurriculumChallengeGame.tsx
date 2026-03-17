@@ -1293,7 +1293,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                   </div>
                 </div>
 
-                <button onClick={onBack} className="licensed-submit-button w-full rounded-[1.2rem] py-3.5 text-base font-black text-white">
+                <button onClick={onBack} className="ui-button-primary licensed-submit-button w-full py-3.5 text-base font-black text-white">
                   Continue
                 </button>
               </div>

@@ -201,7 +201,7 @@ const LogicSort: React.FC<LogicSortProps> = ({ onVictory, onGameOver, onBack }) 
       {/* Reset Button */}
       <button 
         onClick={() => generateLevel(level)}
-        className="absolute bottom-4 right-4 md:bottom-6 md:right-6 p-3 md:p-4 bg-white/10 rounded-full text-white hover:bg-white/20 transition-all"
+        className="ui-icon-button absolute bottom-4 right-4 flex h-12 w-12 items-center justify-center p-0 text-white md:bottom-6 md:right-6 md:h-14 md:w-14"
       >
         <RefreshCw size={24} />
       </button>

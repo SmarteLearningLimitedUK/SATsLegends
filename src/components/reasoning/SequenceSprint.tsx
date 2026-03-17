@@ -242,7 +242,7 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
                 whileHover={{ scale: 1.05, y: -5 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={startGame}
-                className="px-8 md:px-16 py-4 md:py-6 text-white text-xl md:text-3xl font-black rounded-2xl md:rounded-3xl transition-all licensed-submit-button"
+                className="ui-button-primary licensed-submit-button px-8 py-4 text-xl font-black text-white transition-all md:px-16 md:py-6 md:text-3xl"
               >
                 START DASH!
               </motion.button>
@@ -255,13 +255,13 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
       <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8 flex justify-between z-30 pointer-events-none">
         <button 
           onClick={() => setLane(l => Math.max(0, l - 1))}
-          className="w-14 h-14 md:w-18 md:h-18 bg-white/20 backdrop-blur-xl rounded-3xl flex items-center justify-center text-white pointer-events-auto active:scale-90 transition-transform border border-white/30 shadow-2xl"
+          className="ui-button-secondary pointer-events-auto flex h-14 w-14 items-center justify-center p-0 text-white md:h-18 md:w-18"
         >
           <ArrowLeft size={28} />
         </button>
         <button 
           onClick={() => setLane(l => Math.min(2, l + 1))}
-          className="w-14 h-14 md:w-18 md:h-18 bg-white/20 backdrop-blur-xl rounded-3xl flex items-center justify-center text-white pointer-events-auto active:scale-90 transition-transform border border-white/30 shadow-2xl"
+          className="ui-button-secondary pointer-events-auto flex h-14 w-14 items-center justify-center p-0 text-white md:h-18 md:w-18"
         >
           <ArrowRight size={28} />
         </button>

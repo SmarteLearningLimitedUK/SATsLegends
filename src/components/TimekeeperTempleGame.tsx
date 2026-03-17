@@ -540,7 +540,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
                     type="button"
                     onClick={handleLaunch}
                     disabled={feedback !== null || isFinished}
-                    className="licensed-submit-button flex min-h-[4.6rem] w-full items-center justify-center rounded-[1.6rem] px-5 py-4 text-xl font-black text-white disabled:opacity-45 md:min-h-[5rem] md:rounded-[1.9rem] md:text-2xl"
+                    className="ui-button-primary licensed-submit-button flex min-h-[4.6rem] w-full items-center justify-center px-5 py-4 text-xl font-black text-white disabled:opacity-45 md:min-h-[5rem] md:text-2xl"
                   >
                     Launch Ship
                   </button>

@@ -559,7 +559,7 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
                     type="button"
                     onClick={handleStartBattle}
                     disabled={!allSlotsFilled || feedback !== null || isFinished}
-                    className="licensed-submit-button flex min-w-[11rem] items-center justify-center rounded-[1.5rem] px-5 py-4 text-base font-black uppercase tracking-[0.14em] text-white disabled:opacity-45 md:min-w-[13rem] md:rounded-[1.8rem] md:text-xl"
+                    className="ui-button-primary licensed-submit-button flex min-w-[11rem] items-center justify-center px-5 py-4 text-base font-black uppercase tracking-[0.14em] text-white disabled:opacity-45 md:min-w-[13rem] md:text-xl"
                   >
                     {round.mode === 'boss' ? 'Fire Dragon Cannon' : 'Start Battle'}
                   </button>

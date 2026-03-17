@@ -234,13 +234,7 @@ const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack
         <button
           onClick={useHint}
           disabled={showHint || score < 100}
-          className={`
-            flex items-center gap-3 px-6 py-3 rounded-2xl font-black transition-all border-b-4
-            ${showHint || score < 100 
-              ? 'bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed' 
-              : 'bg-yellow-400 text-white border-yellow-600 hover:bg-yellow-500 hover:-translate-y-1 active:border-b-0 active:translate-y-0'
-            }
-          `}
+          className={`ui-button-secondary flex items-center gap-3 px-6 py-3 font-black transition-all ${showHint || score < 100 ? 'cursor-not-allowed opacity-50' : ''}`}
         >
           <Lightbulb size={24} />
           <span>HINT (-100)</span>

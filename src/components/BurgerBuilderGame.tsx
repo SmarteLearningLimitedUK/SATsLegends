@@ -644,7 +644,7 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
             </AnimatePresence>
           </section>
 
-          <section className="order-1 xl:order-1 xl:row-span-2 relative flex min-h-[20rem] flex-col overflow-hidden rounded-[1.9rem] border border-white/16 bg-[linear-gradient(180deg,rgba(27,14,47,0.56),rgba(24,14,38,0.76))] p-2 shadow-[0_22px_52px_rgba(0,0,0,0.28)] md:min-h-[28rem] md:rounded-[2.6rem] md:p-3">
+          <section className="order-1 xl:order-1 xl:row-span-2 relative flex min-h-[14rem] flex-col overflow-hidden rounded-[1.9rem] border border-white/16 bg-[linear-gradient(180deg,rgba(27,14,47,0.56),rgba(24,14,38,0.76))] p-2 shadow-[0_22px_52px_rgba(0,0,0,0.28)] md:min-h-[18rem] md:rounded-[2.6rem] md:p-3">
             <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'linear-gradient(rgba(125,211,252,0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(125,211,252,0.18) 1px, transparent 1px)', backgroundSize: '42px 42px' }} />
             <div className="absolute bottom-0 left-0 right-0 h-[28%] bg-[linear-gradient(180deg,rgba(255,224,178,0),rgba(251,146,60,0.28))]" />
             <div className="absolute inset-x-[8%] top-[6%] h-10 rounded-full bg-amber-100/20 blur-3xl md:h-16" />
@@ -759,7 +759,7 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
               </div>
             </div>
 
-            <div className="mt-2 flex gap-1.5 overflow-x-auto pb-1 md:grid md:grid-cols-3 md:gap-2 lg:grid-cols-5 xl:grid-cols-9">
+            <div className="mt-2 grid grid-cols-3 gap-1.5 pb-1 sm:grid-cols-4 md:grid-cols-5 md:gap-2 lg:grid-cols-6 xl:grid-cols-9">
               {INGREDIENT_TYPES.map(ingredient => {
                 const currentCount = usedIngredientCounts.get(ingredient.name) || 0;
                 const targetCount = Math.max(1, currentOrder?.requiredIngredients.includes(ingredient.name) ? 1 : Math.ceil((currentOrder?.targetUnits || 8) / ingredient.units));
@@ -768,7 +768,7 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
                     key={ingredient.name}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleIngredientAdd(ingredient)}
-                    className="group relative flex min-h-[6rem] min-w-[5.25rem] flex-col items-center justify-end overflow-hidden rounded-[1.15rem] border border-white/12 p-1.5 shadow-[0_12px_22px_rgba(0,0,0,0.24)] md:min-h-[6rem] md:min-w-0 md:rounded-[1.4rem] md:p-2"
+                    className="group relative flex min-h-[5.4rem] flex-col items-center justify-end overflow-hidden rounded-[1.15rem] border border-white/12 p-1.5 shadow-[0_12px_22px_rgba(0,0,0,0.24)] md:min-h-[6rem] md:rounded-[1.4rem] md:p-2"
                   >
                     <div className={`absolute inset-0 bg-gradient-to-b ${ingredient.trayTone}`} />
                     <div className="absolute inset-x-[12%] top-[8%] h-[30%] rounded-full bg-white/28 blur-lg" />
@@ -814,18 +814,17 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
               <div className="flex items-center justify-end gap-2">
                 <button
                   onClick={clearBurger}
-                  className="rounded-[1rem] border border-white/14 bg-white/10 px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.16)] transition-transform hover:-translate-y-0.5 disabled:opacity-60 md:px-4 md:text-sm"
+                  className="ui-button-secondary px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white disabled:opacity-60 md:px-4 md:text-sm"
                   disabled={!burgerStack.length || isTransitioning}
                 >
                   Clear Stack
                 </button>
                 <button
                   onClick={handleServe}
-                  className="relative overflow-hidden rounded-[1rem] border border-lime-200/30 bg-[linear-gradient(180deg,#84cc16_0%,#22c55e_46%,#16a34a_100%)] px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white shadow-[0_10px_0_#166534,0_14px_26px_rgba(21,128,61,0.28)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-[0_8px_0_#166534] md:px-5 md:text-sm"
+                  className="ui-button-primary px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white disabled:cursor-not-allowed disabled:opacity-60 md:px-5 md:text-sm"
                   disabled={!burgerStack.length || isTransitioning}
                 >
-                  <span className="absolute inset-x-0 top-0 h-1/2 bg-white/12" />
-                  <span className="relative">Serve Order</span>
+                  Serve Order
                 </button>
               </div>
             </div>
@@ -885,7 +884,7 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
                   </div>
                 </div>
 
-                <button onClick={onBack} className="licensed-submit-button w-full rounded-2xl py-4 text-xl font-black text-white transition-all">
+                <button onClick={onBack} className="ui-button-primary licensed-submit-button w-full py-4 text-xl font-black text-white transition-all">
                   Continue
                 </button>
               </div>

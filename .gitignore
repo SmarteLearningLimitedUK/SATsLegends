@@ -11,3 +11,5 @@ GUI Pro-FantasyHero/
 characters/
 
 deploy.config.bat
+.vercel
+.env*.local

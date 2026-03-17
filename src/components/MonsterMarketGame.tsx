@@ -382,7 +382,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
                 <button
                   onClick={handleSubmit}
                   disabled={tray.length === 0 || !!feedback}
-                  className="licensed-submit-button mt-3 flex w-full items-center justify-center gap-2 rounded-[1.3rem] py-3 text-sm font-black uppercase tracking-[0.14em] text-white transition-all disabled:cursor-not-allowed disabled:opacity-45 md:text-base"
+                    className="ui-button-primary licensed-submit-button mt-3 flex w-full items-center justify-center gap-2 py-3 text-sm font-black uppercase tracking-[0.14em] text-white transition-all disabled:cursor-not-allowed disabled:opacity-45 md:text-base"
                 >
                   <Coins className="h-5 w-5" />
                   Give Change
@@ -433,7 +433,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
                 </div>
                 <button
                   onClick={onBack}
-                  className="licensed-submit-button flex w-full items-center justify-center gap-2 rounded-[1.35rem] py-4 text-lg font-black uppercase tracking-[0.14em] text-white"
+                  className="ui-button-primary licensed-submit-button flex w-full items-center justify-center gap-2 py-4 text-lg font-black uppercase tracking-[0.14em] text-white"
                 >
                   <Coins className="h-5 w-5" />
                   Continue
