@@ -8,9 +8,15 @@ interface GameRulesModalProps {
   isOpen: boolean;
   onClose: () => void;
   rules: GameRuleSet | null;
+  actionLabel?: string;
 }
 
-const GameRulesModal: React.FC<GameRulesModalProps> = ({ isOpen, onClose, rules }) => {
+const GameRulesModal: React.FC<GameRulesModalProps> = ({
+  isOpen,
+  onClose,
+  rules,
+  actionLabel = 'Back To Game',
+}) => {
   if (!rules) return null;
 
   return (
@@ -68,7 +74,7 @@ const GameRulesModal: React.FC<GameRulesModalProps> = ({ isOpen, onClose, rules 
               onClick={onClose}
               className="ui-button-primary mt-5 w-full rounded-[1.2rem] py-3 text-sm font-black uppercase tracking-[0.16em] text-white md:mt-6 md:rounded-[1.5rem] md:py-4 md:text-base"
             >
-              Back To Game
+              {actionLabel}
             </button>
           </motion.div>
         </motion.div>

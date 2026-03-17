@@ -288,7 +288,7 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
 
         <div className="relative w-full flex-1 min-h-0">
           {problem && (
-            <div className="relative h-full overflow-hidden rounded-[2rem] border border-orange-200/14 bg-[linear-gradient(180deg,rgba(54,19,10,0.88),rgba(17,10,10,0.96))] shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_28px_60px_rgba(0,0,0,0.4)] md:rounded-[2.6rem]">
+      <div className="licensed-board-frame relative h-full overflow-hidden rounded-[2rem] border border-orange-200/14 bg-[linear-gradient(180deg,rgba(54,19,10,0.88),rgba(17,10,10,0.96))] shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_28px_60px_rgba(0,0,0,0.4)] md:rounded-[2.6rem]">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(251,146,60,0.26),transparent_24%),linear-gradient(180deg,rgba(255,255,255,0.04),transparent_30%,rgba(0,0,0,0.24)_100%)]" />
               <div className="absolute inset-x-[26%] top-[14%] h-[26%] rounded-full bg-orange-300/16 blur-3xl" />
               <div className="absolute inset-x-0 bottom-0 h-[42%] bg-[linear-gradient(180deg,rgba(0,0,0,0),rgba(15,23,42,0.3)_12%,rgba(28,12,6,0.86)_100%)]" />

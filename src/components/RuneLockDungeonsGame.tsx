@@ -273,7 +273,7 @@ const RuneLockDungeonsGame: React.FC<RuneLockDungeonsGameProps> = ({
           />
         </div>
 
-        <div className="relative flex w-full max-w-6xl min-h-0 flex-1 overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] shadow-[0_28px_64px_rgba(0,0,0,0.34)] md:rounded-[2.6rem]">
+      <div className="licensed-board-frame relative flex w-full max-w-6xl min-h-0 flex-1 overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] shadow-[0_28px_64px_rgba(0,0,0,0.34)] md:rounded-[2.6rem]">
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02)_20%,rgba(15,23,42,0.16)_100%)]" />
           <div className="absolute inset-x-0 bottom-0 h-[32%] bg-[linear-gradient(180deg,rgba(17,24,39,0),rgba(17,24,39,0.18),rgba(9,6,15,0.96))]" />
           <div className="absolute inset-x-[22%] top-[30%] h-[18%] rounded-full bg-[radial-gradient(circle_at_center,rgba(167,139,250,0.18),rgba(167,139,250,0.06),transparent_72%)]" />

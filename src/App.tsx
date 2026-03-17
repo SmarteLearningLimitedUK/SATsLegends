@@ -102,6 +102,7 @@ type StageOutputId =
   | 'gameplay'
   | 'boss'
   | 'report';
+type GameRulesMode = 'start' | 'help';
 
 const STAGED_OUTPUT_STEPS: Array<{ id: StageOutputId; label: string; detail: string }> = [
   { id: 'splash', label: 'Splash', detail: 'Opening poster and CTA' },
@@ -157,6 +158,8 @@ const App: React.FC = () => {
   const [showQuests, setShowQuests] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
   const [showGameRules, setShowGameRules] = useState(false);
+  const [gameRulesMode, setGameRulesMode] = useState<GameRulesMode>('help');
+  const [isGameplayInstructionPending, setIsGameplayInstructionPending] = useState(false);
   const [isMuted, setIsMuted] = useState(() => localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true');
   const [levelResult, setLevelResult] = useState<null | {
     type: 'victory' | 'gameover';
@@ -215,7 +218,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const handleOpenHelp = () => {
       if (screen === 'gameplay' && selectedLevel?.gameType && GAME_META[selectedLevel.gameType]) {
-        setShowGameRules(true);
+        openGameRules('help');
       }
     };
 
@@ -232,6 +235,21 @@ const App: React.FC = () => {
       window.removeEventListener(GAME_HUD_MUTE_EVENT, handleMuteChange as EventListener);
     };
   }, [screen, selectedLevel?.gameType]);
+
+  useEffect(() => {
+    if (screen !== 'gameplay' || !selectedLevel?.gameType) {
+      setIsGameplayInstructionPending(false);
+      return;
+    }
+
+    if (!GAME_META[selectedLevel.gameType]) {
+      setIsGameplayInstructionPending(false);
+      return;
+    }
+
+    setIsGameplayInstructionPending(true);
+    openGameRules('start');
+  }, [screen, selectedLevel?.id, selectedLevel?.gameType]);
 
   const goToHome = () => {
     setSelectedLevel(null);
@@ -766,7 +784,19 @@ const App: React.FC = () => {
         return (
           <div className={`game-shell-host ${gameplayTypeClass} ${usesQuestionMatchFrame ? 'question-match-shell' : ''} relative flex h-full w-full min-h-0 flex-col overflow-hidden`.trim()}>
             <div className="game-shell-contract relative flex h-full w-full min-h-0 flex-col overflow-hidden">
-              {renderGameplay()}
+              {isGameplayInstructionPending ? (
+                <div className="flex h-full w-full min-h-0 items-center justify-center p-3 md:p-6">
+                  <div className="licensed-board-frame flex w-full max-w-xl flex-col items-center gap-3 p-5 text-center md:gap-4 md:p-8">
+                    <div className="text-xs font-black uppercase tracking-[0.2em] text-cyan-100/70">Game Briefing</div>
+                    <div className="text-lg font-black text-white md:text-2xl">
+                      {selectedLevel?.gameType ? GAME_META[selectedLevel.gameType]?.rules.title : 'How to play'}
+                    </div>
+                    <p className="max-w-md text-sm font-semibold leading-relaxed text-white/80 md:text-base">
+                      Read the instructions, then tap Start Game to begin this round.
+                    </p>
+                  </div>
+                </div>
+              ) : renderGameplay()}
             </div>
           </div>
         );
@@ -887,12 +917,13 @@ const App: React.FC = () => {
 
       <GameRulesModal
         isOpen={showGameRules}
-        onClose={() => setShowGameRules(false)}
+        onClose={closeGameRules}
         rules={
           selectedLevel?.gameType
             ? GAME_META[selectedLevel.gameType]?.rules || null
             : null
         }
+        actionLabel={gameRulesMode === 'start' ? 'Start Game' : 'Back To Game'}
       />
 
       {!isStagedPreviewOpen && (
@@ -1028,3 +1059,15 @@ export default App;
 
 
 
+  const openGameRules = (mode: GameRulesMode = 'help') => {
+    setGameRulesMode(mode);
+    setShowGameRules(true);
+  };
+
+  const closeGameRules = () => {
+    setShowGameRules(false);
+    if (screen === 'gameplay' && gameRulesMode === 'start') {
+      setIsGameplayInstructionPending(false);
+    }
+    setGameRulesMode('help');
+  };

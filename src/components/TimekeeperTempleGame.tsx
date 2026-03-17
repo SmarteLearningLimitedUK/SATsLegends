@@ -448,7 +448,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
           />
         </div>
 
-        <div className="relative flex w-full max-w-6xl min-h-0 flex-1 overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] shadow-[0_28px_64px_rgba(0,0,0,0.34)] md:rounded-[2.6rem]">
+      <div className="licensed-board-frame relative flex w-full max-w-6xl min-h-0 flex-1 overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] shadow-[0_28px_64px_rgba(0,0,0,0.34)] md:rounded-[2.6rem]">
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_28%,rgba(15,23,42,0.16)_100%)]" />
           <div className="absolute inset-x-0 bottom-0 h-[34%] bg-[linear-gradient(180deg,rgba(8,47,73,0),rgba(8,47,73,0.22),rgba(15,23,42,0.95))]" />
           <div className="absolute inset-x-[6%] bottom-[11%] h-[17%] rounded-[50%] bg-[radial-gradient(circle_at_center,rgba(147,197,253,0.28),rgba(59,130,246,0.12),transparent_68%)]" />

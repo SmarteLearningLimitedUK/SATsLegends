@@ -189,7 +189,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
           statValue={streak}
         />
 
-        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-2 shadow-[0_28px_64px_rgba(0,0,0,0.34)] md:rounded-[2.6rem] md:p-4">
+      <div className="licensed-board-frame relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-2 shadow-[0_28px_64px_rgba(0,0,0,0.34)] md:rounded-[2.6rem] md:p-4">
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(15,23,42,0.14))]" />
 
           <div className="relative z-10 mb-2 rounded-[1.35rem] border border-amber-200/16 bg-[linear-gradient(180deg,rgba(72,35,15,0.9),rgba(36,20,10,0.94))] px-4 py-3 text-center shadow-[0_18px_36px_rgba(0,0,0,0.26)] md:mb-4 md:rounded-[1.8rem]">

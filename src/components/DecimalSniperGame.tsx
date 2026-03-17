@@ -528,7 +528,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
         <div
           ref={arenaRef}
           onPointerMove={handlePointerMove}
-          className="relative flex w-full max-w-6xl flex-1 min-h-0 overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(9,23,56,0.72),rgba(3,9,22,0.88))] shadow-[0_24px_60px_rgba(2,6,23,0.4)] touch-none md:rounded-[2.6rem]"
+          className="licensed-board-frame relative flex w-full max-w-6xl flex-1 min-h-0 overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(9,23,56,0.72),rgba(3,9,22,0.88))] shadow-[0_24px_60px_rgba(2,6,23,0.4)] touch-none md:rounded-[2.6rem]"
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_22%,rgba(125,211,252,0.3),transparent_22%),radial-gradient(circle_at_18%_52%,rgba(192,132,252,0.2),transparent_22%),radial-gradient(circle_at_82%_62%,rgba(251,191,36,0.18),transparent_20%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0)_24%,rgba(2,6,23,0.3)_100%)]" />
           <div className="absolute inset-x-0 bottom-0 h-[28%] bg-[linear-gradient(180deg,rgba(2,6,23,0),rgba(2,6,23,0.12)_28%,rgba(7,12,24,0.72)_100%)]" />
