@@ -3,10 +3,10 @@ import { motion } from 'motion/react';
 import { AnimationState, AvatarData } from '../types';
 import AssetIcon from './AssetIcon';
 import AnimatedAvatar from './AnimatedAvatar';
-import sliderBgAsset from '../assets/fantasy_hero/slider/taper_bg.png';
-import sliderBorderAsset from '../assets/fantasy_hero/slider/taper_border.png';
-import sliderFillAsset from '../assets/fantasy_hero/slider/taper_fill_yellow.png';
-import titleFlagAsset from '../assets/fantasy_hero/title/flag_sky.png';
+import sliderBgAsset from '../assets/casual_ui/hud/progress_bar_3__bg.png';
+import sliderBorderAsset from '../assets/licensed/slices/progress_bar.png';
+import sliderFillAsset from '../assets/casual_ui/hud/progress_bar_3__fg.png';
+import titleFlagAsset from '../assets/licensed/slices/label_blue.png';
 
 interface GameplayHUDProps {
   title: string;

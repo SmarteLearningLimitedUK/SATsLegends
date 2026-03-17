@@ -30,16 +30,16 @@
   .game-button-primary {
     @apply rounded-[1.75rem] text-white font-black shadow-[0_8px_0_rgba(123,63,19,0.95)] transition-all active:shadow-none;
     background:
-      url('./assets/fantasy_hero/buttons/primary_deco.png') center/100% 100% no-repeat,
-      url('./assets/fantasy_hero/buttons/primary_yellow.png') center/100% 100% no-repeat;
+      url('./assets/licensed/slices/button_yellow_plank.png') center/100% 100% no-repeat,
+      linear-gradient(180deg, rgba(255,205,86,0.98), rgba(245,154,24,0.98));
     text-shadow: 0 2px 0 rgba(0,0,0,0.3);
   }
 
   .game-button-secondary {
     @apply rounded-[1.4rem] border border-white/15 text-white font-black shadow-[0_8px_24px_rgba(0,0,0,0.12)] transition-all;
     background:
-      url('./assets/fantasy_hero/buttons/primary_deco.png') center/100% 100% no-repeat,
-      url('./assets/fantasy_hero/buttons/primary_purple.png') center/100% 100% no-repeat;
+      url('./assets/licensed/slices/button_blue_tag.png') center/100% 100% no-repeat,
+      linear-gradient(180deg, rgba(96,165,250,0.98), rgba(59,130,246,0.98));
     text-shadow: 0 2px 0 rgba(0,0,0,0.3);
   }
 }
@@ -64,7 +64,7 @@ body {
   background:
     radial-gradient(circle at top, rgba(255,241,196,0.18), transparent 24%),
     radial-gradient(circle at 50% 28%, rgba(96,165,250,0.14), transparent 22%),
-    url('./assets/fantasy_hero/demo_bg/background_02.png') center/cover no-repeat,
+    url('./assets/licensed/background.jpeg') center/cover no-repeat,
     linear-gradient(180deg, #3a5b93 0%, #22365f 42%, #101827 76%, #070b13 100%);
   overscroll-behavior: none;
 }
@@ -300,12 +300,12 @@ button:disabled {
   justify-content: center;
   width: 3.4rem;
   height: 3.4rem;
-  border-radius: 999px;
+  border-radius: 1rem;
   border: 1px solid rgba(255,255,255,0.14);
   background:
-    radial-gradient(circle at top, rgba(255,255,255,0.18), rgba(255,255,255,0) 45%),
-    linear-gradient(180deg, rgba(99,102,241,0.98), rgba(49,46,129,0.98));
-  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.24), 0 4px 0 rgba(49,46,129,0.72);
+    url('./assets/casual_ui/hud/hud__action_btn.png') center/100% 100% no-repeat,
+    linear-gradient(180deg, rgba(56,189,248,0.98), rgba(37,99,235,0.98));
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.24), 0 4px 0 rgba(21,60,153,0.72);
   transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
 
@@ -319,31 +319,49 @@ button:disabled {
 }
 
 .fantasy-dock-shell {
-  border-radius: 999px;
+  border-radius: 1.4rem;
   border: 1px solid rgba(255,255,255,0.14);
   background:
+    url('./assets/casual_ui/dialogs_panels/panel_2.png') center/100% 100% no-repeat,
     linear-gradient(180deg, rgba(18,29,54,0.96), rgba(8,14,27,0.98));
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.16),
     0 18px 34px rgba(2,6,23,0.28);
 }
 
+.fantasy-hud-shell {
+  border: 1px solid rgba(255,255,255,0.18);
+  background:
+    url('./assets/casual_ui/dialogs_panels/currency_display_bar.png') center/100% 100% no-repeat,
+    linear-gradient(180deg, rgba(30,58,138,0.96), rgba(15,23,42,0.98));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.18),
+    0 18px 36px rgba(2,6,23,0.34);
+}
+
+.fantasy-hud-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0.28rem;
+  border-radius: inherit;
+  border: 1px solid rgba(255,255,255,0.08);
+  pointer-events: none;
+}
+
 
 .licensed-shell-bg {
   position: relative;
   background:
-    linear-gradient(180deg, rgba(7,17,31,0.48), rgba(7,17,31,0.88)),
-    url('./assets/fantasy_hero/demo_bg/pattern_512.png') center/520px repeat,
-    url('./assets/fantasy_hero/demo_bg/background_02.png') center/cover no-repeat,
+    linear-gradient(180deg, rgba(7,17,31,0.44), rgba(7,17,31,0.86)),
+    url('./assets/licensed/background.jpeg') center/cover no-repeat,
     linear-gradient(180deg, #5f87c8 0%, #3358a2 28%, #22365f 58%, #0f172a 100%);
 }
 
 .licensed-playfield-bg {
   position: relative;
   background:
-    linear-gradient(180deg, rgba(7,17,31,0.5), rgba(7,17,31,0.9)),
-    url('./assets/fantasy_hero/demo_bg/pattern_512.png') center/420px repeat,
-    url('./assets/fantasy_hero/demo_bg/background_03.png') center/cover no-repeat,
+    linear-gradient(180deg, rgba(7,17,31,0.48), rgba(7,17,31,0.9)),
+    url('./assets/licensed/background.jpeg') center/cover no-repeat,
     linear-gradient(180deg, #81c6ff 0%, #4973d4 24%, #223f7e 58%, #0b1221 100%);
 }
 
@@ -379,8 +397,8 @@ button:disabled {
   border: 2px solid rgba(255,255,255,0.18);
   color: #fff8ec;
   background:
-    url('./assets/fantasy_hero/buttons/primary_deco.png') center/100% 100% no-repeat,
-    url('./assets/fantasy_hero/buttons/primary_yellow.png') center/100% 100% no-repeat;
+    url('./assets/licensed/slices/button_yellow_plank.png') center/100% 100% no-repeat,
+    linear-gradient(180deg, rgba(255,205,86,0.98), rgba(245,154,24,0.98));
   box-shadow: 0 8px 0 rgba(138,84,12,0.82), 0 16px 30px rgba(0,0,0,0.22);
   text-shadow: 0 2px 0 rgba(0,0,0,0.35);
 }
@@ -393,9 +411,9 @@ button:disabled {
   border: 2px solid rgba(255,255,255,0.16);
   color: #fff7ea;
   background:
-    url('./assets/fantasy_hero/buttons/primary_deco.png') center/100% 100% no-repeat,
-    url('./assets/fantasy_hero/buttons/primary_purple.png') center/100% 100% no-repeat;
-  box-shadow: 0 8px 0 rgba(73, 44, 97, 0.7), 0 12px 24px rgba(0,0,0,0.18);
+    url('./assets/licensed/slices/button_blue_tag.png') center/100% 100% no-repeat,
+    linear-gradient(180deg, rgba(96,165,250,0.98), rgba(59,130,246,0.98));
+  box-shadow: 0 8px 0 rgba(29, 78, 216, 0.72), 0 12px 24px rgba(0,0,0,0.18);
   text-shadow: 0 2px 0 rgba(0,0,0,0.35);
 }
 
@@ -403,20 +421,18 @@ button:disabled {
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 1.6rem;
   background:
-    url('./assets/fantasy_hero/frames/card_border.png') center/100% 100% no-repeat,
-    url('./assets/fantasy_hero/frames/card_gradient.png') center/100% 100% no-repeat,
-    url('./assets/fantasy_hero/frames/card_bg.png') center/100% 100% no-repeat;
-  box-shadow: 0 12px 0 rgba(53, 67, 97, 0.6), 0 22px 40px rgba(0,0,0,0.18);
+    url('./assets/casual_ui/dialogs_panels/card_1.png') center/100% 100% no-repeat,
+    linear-gradient(180deg, rgba(30,58,138,0.94), rgba(14,23,52,0.95));
+  box-shadow: 0 10px 0 rgba(30,64,175,0.54), 0 22px 40px rgba(0,0,0,0.18);
 }
 
 .licensed-game-card-dark {
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 1.6rem;
   background:
-    url('./assets/fantasy_hero/frames/list_border.png') center/100% 100% no-repeat,
-    url('./assets/fantasy_hero/frames/list_glow.png') center/100% 100% no-repeat,
-    url('./assets/fantasy_hero/frames/list_bg.png') center/100% 100% no-repeat;
-  box-shadow: 0 10px 0 rgba(24, 32, 48, 0.8), 0 20px 32px rgba(0,0,0,0.2);
+    url('./assets/casual_ui/dialogs_panels/card_2.png') center/100% 100% no-repeat,
+    linear-gradient(180deg, rgba(23,37,84,0.96), rgba(15,23,42,0.98));
+  box-shadow: 0 10px 0 rgba(30, 41, 59, 0.78), 0 20px 32px rgba(0,0,0,0.2);
 }
 
 .licensed-panel-plank {
@@ -430,8 +446,8 @@ button:disabled {
   border: 2px solid rgba(255,255,255,0.16);
   color: #fff8ec;
   background:
-    url('./assets/fantasy_hero/buttons/primary_deco.png') center/100% 100% no-repeat,
-    url('./assets/fantasy_hero/buttons/primary_green.png') center/100% 100% no-repeat;
+    url('./assets/licensed/slices/button_green_pill.png') center/100% 100% no-repeat,
+    linear-gradient(180deg, rgba(34,197,94,0.98), rgba(22,163,74,0.98));
   box-shadow: 0 8px 0 rgba(14, 116, 144, 0.82), 0 18px 30px rgba(0,0,0,0.18);
   text-shadow: 0 2px 0 rgba(0,0,0,0.28);
 }
@@ -442,8 +458,8 @@ button:disabled {
   border: 2px solid rgba(255,255,255,0.14);
   color: #fff8ec;
   background:
-    url('./assets/fantasy_hero/buttons/primary_deco.png') center/100% 100% no-repeat,
-    url('./assets/fantasy_hero/buttons/primary_blue.png') center/100% 100% no-repeat;
+    url('./assets/licensed/slices/button_cyan_pill.png') center/100% 100% no-repeat,
+    linear-gradient(180deg, rgba(34,211,238,0.98), rgba(14,116,144,0.98));
   box-shadow: 0 7px 0 rgba(67, 56, 202, 0.62), 0 14px 24px rgba(0,0,0,0.16);
   text-shadow: 0 2px 0 rgba(0,0,0,0.28);
 }
@@ -461,10 +477,9 @@ button:disabled {
   border: 1px solid rgba(255,255,255,0.14);
   border-radius: 2rem;
   background:
-    url('./assets/fantasy_hero/frames/stage_deco_border.png') center/100% 100% no-repeat,
-    url('./assets/fantasy_hero/frames/stage_border.png') center/100% 100% no-repeat,
-    url('./assets/fantasy_hero/frames/stage_gradient.png') center/100% 100% no-repeat,
-    url('./assets/fantasy_hero/frames/stage_bg.png') center/100% 100% no-repeat;
+    url('./assets/casual_ui/dialogs_panels/panel_3.png') center/100% 100% no-repeat,
+    linear-gradient(180deg, rgba(37,99,235,0.22), rgba(15,23,42,0.32)),
+    linear-gradient(180deg, rgba(14,116,144,0.12), rgba(30,58,138,0.22));
   box-shadow: inset 0 0 0 3px rgba(255,255,255,0.1), 0 14px 0 rgba(37, 52, 82, 0.6), 0 28px 44px rgba(0,0,0,0.18);
 }
 
@@ -472,8 +487,7 @@ button:disabled {
   border: 1px solid rgba(255,255,255,0.18);
   border-radius: 2rem;
   background:
-    radial-gradient(circle at top, rgba(96,165,250,0.14), transparent 28%),
-    radial-gradient(circle at bottom right, rgba(168,85,247,0.1), transparent 28%),
+    url('./assets/licensed/slices/panel_purple.png') center/100% 100% no-repeat,
     linear-gradient(180deg, rgba(18,27,48,0.98), rgba(8,14,28,0.98));
   box-shadow: 0 12px 0 rgba(24,32,48,0.76), 0 20px 36px rgba(0,0,0,0.22);
   color: #fff7ea;
@@ -788,13 +802,13 @@ button:disabled {
 
 .casual-action-button {
   background:
-    url('./assets/fantasy_hero/buttons/primary_deco.png') center/100% 100% no-repeat,
-    url('./assets/fantasy_hero/buttons/primary_blue.png') center/100% 100% no-repeat;
+    url('./assets/licensed/slices/button_cyan_pill.png') center/100% 100% no-repeat,
+    linear-gradient(180deg, rgba(34,211,238,0.98), rgba(14,116,144,0.98));
   border: 0;
   color: #fff9e9;
   text-shadow: 0 2px 0 rgba(0,0,0,0.25);
   box-shadow:
-    0 8px 0 rgba(26,65,142,0.82),
+    0 8px 0 rgba(8,104,124,0.82),
     0 18px 30px rgba(14,116,144,0.22);
 }
 
@@ -803,7 +817,7 @@ button:disabled {
   border: 0;
   border-radius: 999px;
   background:
-    url('./assets/fantasy_hero/title/ribbon_purple.png') center/100% 100% no-repeat,
+    url('./assets/casual_ui/dialogs_panels/ribbon_1.png') center/100% 100% no-repeat,
     linear-gradient(180deg, rgba(38,54,86,0.96), rgba(22,32,56,0.96) 52%, rgba(10,16,28,0.98));
   box-shadow:
     0 18px 40px rgba(2,6,23,0.42);
@@ -924,11 +938,11 @@ button:disabled {
   font-weight: 900;
   text-shadow: 0 2px 0 rgba(0,0,0,0.34);
   background:
-    url('./assets/fantasy_hero/buttons/primary_deco.png') center/100% 100% no-repeat,
-    url('./assets/fantasy_hero/buttons/primary_blue.png') center/100% 100% no-repeat;
+    url('./assets/licensed/slices/button_yellow_plank.png') center/100% 100% no-repeat,
+    linear-gradient(180deg, rgba(255,205,86,0.98), rgba(245,154,24,0.98));
   box-shadow:
-    0 10px 0 rgba(17,39,94,0.92),
-    0 24px 38px rgba(17,39,94,0.32);
+    0 10px 0 rgba(146,64,14,0.92),
+    0 24px 38px rgba(146,64,14,0.32);
 }
 
 .fantasy-cta-button:hover {

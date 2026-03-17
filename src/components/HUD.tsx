@@ -3,10 +3,10 @@ import { motion } from 'motion/react';
 import { AnimationState, AvatarData, CloudCollapseLevelConfig } from '../types';
 import AssetIcon from './AssetIcon';
 import AnimatedAvatar from './AnimatedAvatar';
-import sliderBgAsset from '../assets/fantasy_hero/slider/play_bg.png';
-import sliderBorderAsset from '../assets/fantasy_hero/slider/play_border.png';
-import sliderFillAsset from '../assets/fantasy_hero/slider/play_fill_blue.png';
-import titleFlagAsset from '../assets/fantasy_hero/title/flag_purple.png';
+import sliderBgAsset from '../assets/casual_ui/hud/progress_bar_1__bg.png';
+import sliderBorderAsset from '../assets/licensed/slices/progress_bar.png';
+import sliderFillAsset from '../assets/casual_ui/hud/progress_bar_1__fg.png';
+import titleFlagAsset from '../assets/licensed/slices/label_purple_long.png';
 
 interface HUDProps {
   title?: string;

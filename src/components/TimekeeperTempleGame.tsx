@@ -5,6 +5,7 @@ import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
 import AssetIcon from './AssetIcon';
 import { AVATARS } from '../constants';
+import blankClockAsset from '../assets/timekeeper/blank_clock.png';
 
 interface TimekeeperTempleGameProps {
   levelId: number;
@@ -174,31 +175,22 @@ const ClockFace: React.FC<{
   const minuteRotation = minute * 6;
 
   return (
-    <div className={`relative ${sizeClass}`}>
-      <div className="absolute inset-0 rounded-full bg-[linear-gradient(180deg,#0f172a,#1e3a8a_52%,#0f172a)] shadow-[0_20px_30px_rgba(15,23,42,0.32)]" />
-      <div className="absolute inset-[4%] rounded-full border border-white/16 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.3),rgba(255,255,255,0.08)_44%,rgba(15,23,42,0.55)_78%)]" />
-      <div className="absolute inset-[11%] rounded-full border-4 border-amber-300/70 bg-[radial-gradient(circle_at_center,#fefce8,#dbeafe_48%,#bfdbfe_72%,#93c5fd_100%)] shadow-[inset_0_2px_0_rgba(255,255,255,0.3)]" />
-      {Array.from({ length: 12 }).map((_, index) => {
-        const angle = index * 30;
-        return (
-          <div
-            key={index}
-            className="absolute left-1/2 top-1/2 origin-center"
-            style={{ transform: `translate(-50%, -50%) rotate(${angle}deg)` }}
-          >
-            <div className={`relative -translate-y-[40%] h-1.5 w-1.5 rounded-full bg-slate-700 ${index % 3 === 0 ? 'scale-125' : ''}`} />
-          </div>
-        );
-      })}
-      <div
-        className="absolute left-1/2 top-1/2 h-[22%] w-1.5 origin-bottom -translate-x-1/2 -translate-y-full rounded-full bg-slate-800 shadow-[0_6px_10px_rgba(15,23,42,0.2)]"
-        style={{ transform: `translate(-50%, -100%) rotate(${hourRotation}deg)` }}
+    <div className={`relative ${sizeClass} overflow-hidden rounded-full shadow-[0_20px_30px_rgba(15,23,42,0.32)]`}>
+      <img
+        src={blankClockAsset}
+        alt="Clock face"
+        className="absolute inset-0 h-full w-full object-contain"
+        draggable={false}
       />
       <div
-        className={`absolute left-1/2 top-1/2 h-[34%] w-1 origin-bottom -translate-x-1/2 -translate-y-full rounded-full bg-gradient-to-t ${accentClass} shadow-[0_6px_10px_rgba(15,23,42,0.2)]`}
-        style={{ transform: `translate(-50%, -100%) rotate(${minuteRotation}deg)` }}
+        className="absolute left-1/2 top-1/2 h-[25%] w-[1.8%] origin-bottom -translate-x-1/2 -translate-y-full rounded-full bg-slate-900 shadow-[0_6px_10px_rgba(15,23,42,0.28)]"
+        style={{ transform: `translate(-50%, -100%) rotate(${hourRotation}deg)`, transformOrigin: 'center bottom' }}
       />
-      <div className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-[radial-gradient(circle_at_center,#fef3c7,#f59e0b)] shadow-[0_0_18px_rgba(251,191,36,0.3)]" />
+      <div
+        className={`absolute left-1/2 top-1/2 h-[36%] w-[1.2%] origin-bottom -translate-x-1/2 -translate-y-full rounded-full bg-gradient-to-t ${accentClass} shadow-[0_6px_10px_rgba(15,23,42,0.2)]`}
+        style={{ transform: `translate(-50%, -100%) rotate(${minuteRotation}deg)`, transformOrigin: 'center bottom' }}
+      />
+      <div className="absolute left-1/2 top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-[radial-gradient(circle_at_center,#fef3c7,#f59e0b)] shadow-[0_0_18px_rgba(251,191,36,0.3)]" />
     </div>
   );
 };

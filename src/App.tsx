@@ -59,6 +59,27 @@ const SCREEN_BEHAVIOR: Record<GameScreen, { scrollable: boolean; shell: 'splash'
   parent_dashboard: { scrollable: true, shell: 'playfield' },
 };
 
+type StageOutputId =
+  | 'splash'
+  | 'name'
+  | 'avatar'
+  | 'map'
+  | 'island'
+  | 'gameplay'
+  | 'boss'
+  | 'report';
+
+const STAGED_OUTPUT_STEPS: Array<{ id: StageOutputId; label: string; detail: string }> = [
+  { id: 'splash', label: 'Splash', detail: 'Opening poster and CTA' },
+  { id: 'name', label: 'Hero Name', detail: 'Profile naming screen' },
+  { id: 'avatar', label: 'Avatar', detail: 'Character selection' },
+  { id: 'map', label: 'World Map', detail: 'Island progression map' },
+  { id: 'island', label: 'Island Route', detail: 'Island level nodes' },
+  { id: 'gameplay', label: 'Gameplay', detail: 'Regular mini-game view' },
+  { id: 'boss', label: 'Boss', detail: 'Boss encounter phase' },
+  { id: 'report', label: 'Report', detail: 'Parent dashboard output' },
+];
+
 const resolveAvatarId = (avatarId?: string) => (
   AVATARS.some(avatar => avatar.id === avatarId) ? avatarId! : DEFAULT_AVATAR_ID
 );
@@ -88,6 +109,8 @@ const createDefaultPlayer = (parsed?: Partial<PlayerData> | null): PlayerData =>
 
 const App: React.FC = () => {
   const [screen, setScreen] = useState<GameScreen>('splash');
+  const [isStagedPreviewOpen, setIsStagedPreviewOpen] = useState(false);
+  const [activeStageId, setActiveStageId] = useState<StageOutputId>('splash');
   const [player, setPlayer] = useState<PlayerData>(() => {
     const saved = localStorage.getItem(PLAYER_STORAGE_KEY);
     const parsed = saved ? JSON.parse(saved) : null;
@@ -179,6 +202,66 @@ const App: React.FC = () => {
   const goToHome = () => {
     setSelectedLevel(null);
     setScreen('world_map');
+  };
+
+  const goToStage = (stageId: StageOutputId) => {
+    const firstIsland = ISLANDS[0] || null;
+    const firstPlayableLevel = firstIsland?.levels.find(level => !level.isBoss) || firstIsland?.levels[0] || null;
+    const firstBossLevel = firstIsland?.levels.find(level => level.isBoss) || firstPlayableLevel;
+
+    setActiveStageId(stageId);
+    setLevelResult(null);
+
+    switch (stageId) {
+      case 'splash':
+        setSelectedIsland(null);
+        setSelectedLevel(null);
+        setScreen('splash');
+        return;
+      case 'name':
+        setDraftName(player.playerName || 'Explorer');
+        setSelectedLevel(null);
+        setScreen('profile_setup');
+        return;
+      case 'avatar':
+        setSelectedLevel(null);
+        setScreen('avatar_selection');
+        return;
+      case 'map':
+        setSelectedLevel(null);
+        setScreen('world_map');
+        return;
+      case 'island':
+        if (!firstIsland) return;
+        setSelectedIsland(firstIsland);
+        setSelectedLevel(null);
+        setScreen('island_levels');
+        return;
+      case 'gameplay':
+        if (!firstIsland || !firstPlayableLevel) return;
+        setSelectedIsland(firstIsland);
+        setSelectedLevel(firstPlayableLevel);
+        setScreen('gameplay');
+        return;
+      case 'boss':
+        if (!firstIsland || !firstBossLevel) return;
+        setSelectedIsland(firstIsland);
+        setSelectedLevel(firstBossLevel);
+        setScreen('gameplay');
+        return;
+      case 'report':
+        setSelectedLevel(null);
+        setScreen('parent_dashboard');
+        return;
+      default:
+        return;
+    }
+  };
+
+  const openStagePreview = (stageId: StageOutputId = 'splash') => {
+    triggerHaptic('selection');
+    setIsStagedPreviewOpen(true);
+    goToStage(stageId);
   };
 
   const handleStartAdventure = () => {
@@ -523,23 +606,31 @@ const App: React.FC = () => {
             />
 
             <div className="absolute inset-0 flex items-end justify-center pb-[calc(max(4.5rem,7vh)-30px)] md:pb-[calc(max(5.5rem,8vh)-30px)]">
-              <motion.button
-                initial={{ opacity: 0, y: -36, scale: 0.94 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-                whileHover={{ scale: 1.025, y: -3 }}
-                whileTap={{ scale: 0.985, y: 1 }}
-                onClick={handleStartAdventure}
-                aria-label="Let's Go!"
-                className="splash-continue-button"
-              >
-                <span className="splash-continue-button-face">
-                  <span className="splash-continue-button-flare" />
-                  <span className="splash-continue-button-label">
-                    Let's Go!
+              <div className="flex flex-col items-center gap-2.5">
+                <motion.button
+                  initial={{ opacity: 0, y: -36, scale: 0.94 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+                  whileHover={{ scale: 1.025, y: -3 }}
+                  whileTap={{ scale: 0.985, y: 1 }}
+                  onClick={handleStartAdventure}
+                  aria-label="Let's Go!"
+                  className="splash-continue-button"
+                >
+                  <span className="splash-continue-button-face">
+                    <span className="splash-continue-button-flare" />
+                    <span className="splash-continue-button-label">
+                      Let's Go!
+                    </span>
                   </span>
-                </span>
-              </motion.button>
+                </motion.button>
+                <button
+                  onClick={() => openStagePreview('splash')}
+                  className="rounded-full border border-white/35 bg-slate-950/50 px-4 py-2 text-[11px] font-black uppercase tracking-[0.18em] text-white shadow-[0_10px_24px_rgba(2,6,23,0.42)] backdrop-blur-md transition hover:bg-slate-900/72 md:text-xs"
+                >
+                  Staged Output
+                </button>
+              </div>
 
               {[
                 { left: 'calc(50% - 7.5rem)', bottom: '5.4rem', delay: 0.45, size: 14 },
@@ -765,6 +856,48 @@ const App: React.FC = () => {
             : null
         }
       />
+
+      {!isStagedPreviewOpen && (
+        <button
+          onClick={() => openStagePreview(screen === 'splash' ? 'splash' : 'map')}
+          className="fixed right-3 top-[calc(0.75rem+env(safe-area-inset-top))] z-[70] rounded-full border border-cyan-200/40 bg-slate-950/70 px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100 shadow-[0_14px_28px_rgba(2,6,23,0.42)] backdrop-blur-md transition hover:bg-slate-900/85 md:right-4 md:px-5 md:text-[11px]"
+        >
+          Stage View
+        </button>
+      )}
+
+      {isStagedPreviewOpen && (
+        <div className="fixed right-3 top-[calc(0.75rem+env(safe-area-inset-top))] z-[70] w-[min(22rem,calc(100vw-1.5rem))] overflow-hidden rounded-[1.25rem] border border-cyan-200/30 bg-slate-950/84 p-3 text-white shadow-[0_20px_40px_rgba(2,6,23,0.5)] backdrop-blur-xl md:right-4 md:w-80">
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <div>
+              <div className="text-[9px] font-black uppercase tracking-[0.2em] text-cyan-100/65 md:text-[10px]">Review flow</div>
+              <div className="text-sm font-black md:text-base">Staged Output Panel</div>
+            </div>
+            <button
+              onClick={() => setIsStagedPreviewOpen(false)}
+              className="rounded-full border border-white/20 bg-white/8 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-white/88 transition hover:bg-white/14"
+            >
+              Close
+            </button>
+          </div>
+          <div className="grid gap-1.5">
+            {STAGED_OUTPUT_STEPS.map(step => (
+              <button
+                key={step.id}
+                onClick={() => goToStage(step.id)}
+                className={`rounded-xl border px-3 py-2 text-left transition ${
+                  activeStageId === step.id
+                    ? 'border-cyan-200/55 bg-cyan-300/18'
+                    : 'border-white/12 bg-white/4 hover:bg-white/10'
+                }`}
+              >
+                <div className="text-[11px] font-black uppercase tracking-[0.15em]">{step.label}</div>
+                <div className="mt-0.5 text-[11px] text-white/72">{step.detail}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {
         !isWideScreenScene && !isSplashScreen && (
