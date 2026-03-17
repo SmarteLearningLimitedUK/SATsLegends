@@ -615,18 +615,13 @@ const App: React.FC = () => {
                   whileTap={{ scale: 0.985, y: 1 }}
                   onClick={handleStartAdventure}
                   aria-label="Let's Go!"
-                  className="splash-continue-button"
+                  className="ui-action-button rounded-2xl px-10 py-3.5 text-lg md:px-12 md:py-4 md:text-xl"
                 >
-                  <span className="splash-continue-button-face">
-                    <span className="splash-continue-button-flare" />
-                    <span className="splash-continue-button-label">
-                      Let's Go!
-                    </span>
-                  </span>
+                  Let's Go!
                 </motion.button>
                 <button
                   onClick={() => openStagePreview('splash')}
-                  className="rounded-full border border-white/35 bg-slate-950/50 px-4 py-2 text-[11px] font-black uppercase tracking-[0.18em] text-white shadow-[0_10px_24px_rgba(2,6,23,0.42)] backdrop-blur-md transition hover:bg-slate-900/72 md:text-xs"
+                  className="ui-action-button rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.18em] md:text-xs"
                 >
                   Staged Output
                 </button>
@@ -860,7 +855,7 @@ const App: React.FC = () => {
       {!isStagedPreviewOpen && (
         <button
           onClick={() => openStagePreview(screen === 'splash' ? 'splash' : 'map')}
-          className="fixed right-3 top-[calc(0.75rem+env(safe-area-inset-top))] z-[70] rounded-full border border-cyan-200/40 bg-slate-950/70 px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100 shadow-[0_14px_28px_rgba(2,6,23,0.42)] backdrop-blur-md transition hover:bg-slate-900/85 md:right-4 md:px-5 md:text-[11px]"
+          className="ui-action-button fixed right-3 top-[calc(0.75rem+env(safe-area-inset-top))] z-[70] rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] md:right-4 md:px-5 md:text-[11px]"
         >
           Stage View
         </button>
@@ -875,7 +870,7 @@ const App: React.FC = () => {
             </div>
             <button
               onClick={() => setIsStagedPreviewOpen(false)}
-              className="rounded-full border border-white/20 bg-white/8 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-white/88 transition hover:bg-white/14"
+              className="ui-action-button rounded-lg px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em]"
             >
               Close
             </button>
@@ -887,8 +882,8 @@ const App: React.FC = () => {
                 onClick={() => goToStage(step.id)}
                 className={`rounded-xl border px-3 py-2 text-left transition ${
                   activeStageId === step.id
-                    ? 'border-cyan-200/55 bg-cyan-300/18'
-                    : 'border-white/12 bg-white/4 hover:bg-white/10'
+                    ? 'ui-action-button border-amber-200/72'
+                    : 'ui-panel-unified border-white/12 bg-white/4 hover:bg-white/10'
                 }`}
               >
                 <div className="text-[11px] font-black uppercase tracking-[0.15em]">{step.label}</div>
