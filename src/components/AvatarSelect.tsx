@@ -178,12 +178,10 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
             <motion.button
               whileTap={{ scale: 0.94, y: 1 }}
               onClick={() => selectIndex(previousIndex)}
-              className="hero-arrow-button hero-arrow-button-clean absolute left-[0.5rem] top-[54%] z-20 -translate-y-1/2 md:left-[2rem] md:top-[50%]"
+              className="ui-icon-button absolute left-[0.5rem] top-[54%] z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-xl p-0 md:left-[2rem] md:top-[50%] md:h-14 md:w-14"
               aria-label="Previous hero"
             >
-              <span className="hero-arrow-button-face">
-                <AssetIcon name="back" className="hero-arrow-icon h-[1.125rem] w-[1.125rem] md:h-6 md:w-6" />
-              </span>
+              <AssetIcon name="back" className="hero-arrow-icon h-[1.125rem] w-[1.125rem] md:h-6 md:w-6" />
             </motion.button>
 
             <motion.div
@@ -207,12 +205,10 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
             <motion.button
               whileTap={{ scale: 0.94, y: 1 }}
               onClick={() => selectIndex(nextIndex)}
-              className="hero-arrow-button hero-arrow-button-clean absolute right-[0.5rem] top-[54%] z-20 -translate-y-1/2 md:right-[2rem] md:top-[50%]"
+              className="ui-icon-button absolute right-[0.5rem] top-[54%] z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-xl p-0 md:right-[2rem] md:top-[50%] md:h-14 md:w-14"
               aria-label="Next hero"
             >
-              <span className="hero-arrow-button-face">
-                <AssetIcon name="next" className="hero-arrow-icon h-[1.125rem] w-[1.125rem] md:h-6 md:w-6" />
-              </span>
+              <AssetIcon name="next" className="hero-arrow-icon h-[1.125rem] w-[1.125rem] md:h-6 md:w-6" />
             </motion.button>
           </div>
 
@@ -232,7 +228,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               triggerHaptic('success');
               onConfirm();
             }}
-            className="ui-action-button mt-3 rounded-2xl px-10 py-3.5 text-lg font-black md:mt-4 md:px-12 md:py-4 md:text-xl"
+            className="ui-button-primary mt-3 rounded-2xl px-10 py-3.5 text-lg font-black md:mt-4 md:px-12 md:py-4 md:text-xl"
           >
             Begin Adventure
           </motion.button>

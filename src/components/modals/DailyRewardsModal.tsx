@@ -26,7 +26,7 @@ const DailyRewardsModal: React.FC<DailyRewardsModalProps> = ({ isOpen, onClose, 
           >
             <button
               onClick={onClose}
-              className="licensed-slice-orange-pill absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full p-0 text-white md:right-6 md:top-6"
+              className="ui-icon-button absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full p-0 text-white md:right-6 md:top-6"
             >
               <AssetIcon name="x" className="h-5 w-5 md:h-6 md:w-6" />
             </button>
@@ -91,8 +91,8 @@ const DailyRewardsModal: React.FC<DailyRewardsModalProps> = ({ isOpen, onClose, 
                   onClaim(currentDay.reward);
                 }}
                 className={`w-full rounded-[1.1rem] py-3.5 text-sm font-black transition-all md:rounded-3xl md:py-6 md:text-2xl ${claimedToday
-                  ? 'licensed-slice-purple-banner cursor-not-allowed text-white/70 opacity-75'
-                  : 'licensed-wood-button text-white'}`}
+                  ? 'ui-button-primary cursor-not-allowed text-white/70 opacity-75'
+                  : 'ui-button-primary text-white'}`}
               >
                 {claimedToday ? 'ALREADY CLAIMED' : 'CLAIM REWARD'}
               </motion.button>

@@ -28,7 +28,7 @@ const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, onClose, 
           >
             <button
               onClick={onClose}
-              className="licensed-slice-orange-pill absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full p-0 text-white md:right-6 md:top-6"
+              className="ui-icon-button absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full p-0 text-white md:right-6 md:top-6"
             >
               <AssetIcon name="x" className="h-5 w-5 md:h-6 md:w-6" />
             </button>

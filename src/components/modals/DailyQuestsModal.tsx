@@ -24,7 +24,7 @@ const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({ isOpen, onClose, qu
           >
             <button
               onClick={onClose}
-              className="licensed-slice-orange-pill absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full p-0 text-white md:right-6 md:top-6"
+              className="ui-icon-button absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full p-0 text-white md:right-6 md:top-6"
             >
               <AssetIcon name="x" className="h-5 w-5 md:h-6 md:w-6" />
             </button>
@@ -75,7 +75,7 @@ const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({ isOpen, onClose, qu
                             whileHover={{ scale: 1.03 }}
                             whileTap={{ scale: 0.97 }}
                             onClick={() => onClaimQuest(quest.id)}
-                            className="licensed-wood-button rounded-xl px-3 py-2 text-[9px] font-black text-white shadow-lg transition-all md:px-6 md:text-sm"
+                            className="ui-button-primary rounded-xl px-3 py-2 text-[9px] font-black text-white shadow-lg transition-all md:px-6 md:text-sm"
                           >
                             CLAIM
                           </motion.button>
@@ -101,7 +101,7 @@ const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({ isOpen, onClose, qu
               <div className="mt-4 w-full md:mt-8">
                 <button
                   onClick={onClose}
-                  className="licensed-wood-button-secondary w-full rounded-[1.1rem] py-3 text-[13px] font-black text-white transition-all md:rounded-2xl md:py-4 md:text-sm"
+                  className="ui-button-primary w-full rounded-[1.1rem] py-3 text-[13px] font-black text-white transition-all md:rounded-2xl md:py-4 md:text-sm"
                 >
                   CONTINUE ADVENTURE
                 </button>

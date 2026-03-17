@@ -256,7 +256,7 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={onBack}
-            className="pointer-events-auto licensed-slice-orange-pill flex h-11 w-11 items-center justify-center rounded-full p-0 text-white shadow-xl md:h-12 md:w-12"
+            className="pointer-events-auto ui-icon-button flex h-11 w-11 items-center justify-center rounded-full p-0 text-white shadow-xl md:h-12 md:w-12"
           >
             <AssetIcon name="back" className="h-6 w-6 md:h-8 md:w-8" />
           </motion.button>
