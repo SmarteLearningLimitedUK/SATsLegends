@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import AssetIcon from './components/AssetIcon';
 import { ACHIEVEMENTS, AVATARS, INITIAL_DAILY_QUESTS, ISLANDS } from './constants';
 import { DEFAULT_AVATAR_ID } from './assets/characters';
-import { GameScreen, IslandData, LevelData, PlayerData } from './types';
+import { GameScreen, IslandData, LevelData, MiniGameType, PlayerData } from './types';
 import WorldMap from './components/WorldMap';
 import IslandLevels from './components/IslandLevels';
 import PotionPourGame from './components/PotionPourGame';
@@ -46,6 +46,35 @@ import splashPoster from './assets/splash.png';
 const PLAYER_STORAGE_KEY = 'maths_quest_player';
 const ALL_ISLAND_IDS = ISLANDS.map(island => island.id);
 const MAP_LAYOUT_SCREENS: GameScreen[] = ['world_map', 'island_levels'];
+const QUESTION_MATCH_FRAME_GAMES: MiniGameType[] = [
+  'cloud_collapse',
+  'fraction_match',
+  'potion_pour',
+  'burger_builder',
+  'prime_pop',
+  'angle_arena',
+  'polygon_palace',
+  'data_dungeon',
+  'monster_market',
+  'ratio_rapids',
+  'timekeeper_temple',
+  'measurement_forge',
+  'tower_of_factors',
+  'place_value_peaks',
+  'chart_chase',
+  'equation_grove',
+  'coordinate_quest',
+  'calculation_clash',
+  'percent_pulse',
+  'transform_temple',
+  'scale_safari',
+  'mean_machine',
+  'rule_runner',
+  'sequence_sprint',
+  'logic_sort',
+  'shape_shift',
+  'matrix_match',
+];
 const SCREEN_BEHAVIOR: Record<GameScreen, {
   scrollable: boolean;
   shell: 'splash' | 'compact' | 'playfield';
@@ -735,7 +764,7 @@ const App: React.FC = () => {
 
       case 'gameplay':
         return (
-          <div className="game-shell-host relative flex h-full w-full min-h-0 flex-col overflow-hidden">
+          <div className={`game-shell-host ${gameplayTypeClass} ${usesQuestionMatchFrame ? 'question-match-shell' : ''} relative flex h-full w-full min-h-0 flex-col overflow-hidden`.trim()}>
             <div className="game-shell-contract relative flex h-full w-full min-h-0 flex-col overflow-hidden">
               {renderGameplay()}
             </div>
@@ -795,6 +824,9 @@ const App: React.FC = () => {
   const isMapLayoutScreen = MAP_LAYOUT_SCREENS.includes(screen);
   const isStandardShellScreen = !isMapLayoutScreen;
   const isWorldMapScreen = screen === 'world_map';
+  const selectedGameType = selectedLevel?.gameType;
+  const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
+  const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
   const bottomNavOffsetClass = showBottomNav
     ? isWorldMapScreen
       ? 'pb-[calc(6.75rem+env(safe-area-inset-bottom))] md:pb-[calc(2.4rem+env(safe-area-inset-bottom))]'
