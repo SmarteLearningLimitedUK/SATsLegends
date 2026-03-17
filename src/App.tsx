@@ -178,6 +178,14 @@ const App: React.FC = () => {
     [player.playerName, player.avatarId],
   );
 
+  const closeGameRules = () => {
+    setShowGameRules(false);
+    if (screen === 'gameplay' && gameRulesMode === 'start') {
+      setIsGameplayInstructionPending(false);
+    }
+    setGameRulesMode('help');
+  };
+
   useEffect(() => {
     if (screen === 'profile_setup') {
       setDraftName(player.playerName || '');
@@ -218,7 +226,8 @@ const App: React.FC = () => {
   useEffect(() => {
     const handleOpenHelp = () => {
       if (screen === 'gameplay' && selectedLevel?.gameType && GAME_META[selectedLevel.gameType]) {
-        openGameRules('help');
+        setGameRulesMode('help');
+        setShowGameRules(true);
       }
     };
 
@@ -248,7 +257,8 @@ const App: React.FC = () => {
     }
 
     setIsGameplayInstructionPending(true);
-    openGameRules('start');
+    setGameRulesMode('start');
+    setShowGameRules(true);
   }, [screen, selectedLevel?.id, selectedLevel?.gameType]);
 
   const goToHome = () => {
@@ -1055,19 +1065,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-
-
-
-
-  const openGameRules = (mode: GameRulesMode = 'help') => {
-    setGameRulesMode(mode);
-    setShowGameRules(true);
-  };
-
-  const closeGameRules = () => {
-    setShowGameRules(false);
-    if (screen === 'gameplay' && gameRulesMode === 'start') {
-      setIsGameplayInstructionPending(false);
-    }
-    setGameRulesMode('help');
-  };
