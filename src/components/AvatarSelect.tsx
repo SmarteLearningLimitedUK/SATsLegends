@@ -232,11 +232,9 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               triggerHaptic('success');
               onConfirm();
             }}
-            className="hero-cta-button hero-cta-button-large mt-3 md:mt-4"
+            className="ui-action-button mt-3 rounded-2xl px-10 py-3.5 text-lg font-black md:mt-4 md:px-12 md:py-4 md:text-xl"
           >
-            <span className="hero-cta-button-face">
-              <span className="hero-cta-button-label">Begin Adventure</span>
-            </span>
+            Begin Adventure
           </motion.button>
         </div>
       </div>
