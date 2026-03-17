@@ -2487,45 +2487,60 @@ button:disabled {
   height: 28%;
 }
 
-/* Final screen-lock pass: one button/panel language for all gameplay screens */
+/* Final screen-lock pass: one cohesive clean-pill language (no ribbon/plank button textures) */
 .ui-button-primary,
 .ui-action-button,
 .game-button-primary,
 .licensed-wood-button,
-.licensed-submit-button,
-.licensed-answer-button,
-.casual-action-button,
 .fantasy-cta-button,
 .hero-cta-button,
-.splash-continue-button {
-  border: 1px solid rgba(255, 246, 213, 0.44) !important;
+.splash-continue-button,
+.licensed-slice-yellow-plank {
+  border: 1px solid rgba(255, 238, 172, 0.58) !important;
   border-radius: 999px !important;
-  color: #fff9e5 !important;
+  color: #12223f !important;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.24), rgba(255,255,255,0) 24%),
-    url('./assets/licensed/slices/button_yellow_plank.png') center/100% 100% no-repeat,
-    linear-gradient(180deg, rgba(255,205,86,0.98), rgba(245,154,24,0.98)) !important;
-  text-shadow: 0 2px 0 rgba(0,0,0,0.32) !important;
+    linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0) 35%),
+    linear-gradient(180deg, #ffd85d 0%, #f8bd2e 52%, #f29f17 100%) !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.35) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.48),
-    0 8px 0 rgba(138,84,12,0.84),
-    0 16px 28px rgba(0,0,0,0.24) !important;
+    inset 0 1px 0 rgba(255,255,255,0.62),
+    0 6px 0 rgba(166, 103, 6, 0.82),
+    0 14px 22px rgba(15,23,42,0.24) !important;
+}
+
+.licensed-submit-button,
+.licensed-slice-green-pill {
+  border: 1px solid rgba(151, 255, 147, 0.56) !important;
+  border-radius: 999px !important;
+  color: #f6fff5 !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.24), rgba(255,255,255,0) 34%),
+    linear-gradient(180deg, #6bf14a 0%, #43cf28 52%, #2ea81d 100%) !important;
+  text-shadow: 0 1px 0 rgba(15, 84, 20, 0.56) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.54),
+    0 6px 0 rgba(24, 118, 31, 0.78),
+    0 14px 22px rgba(15,23,42,0.24) !important;
 }
 
 .ui-button-secondary,
 .game-button-secondary,
 .licensed-wood-button-secondary,
+.licensed-answer-button,
+.casual-action-button,
+.licensed-slice-cyan-pill,
 .licensed-slice-orange-pill {
-  border: 1px solid rgba(191,219,254,0.42) !important;
+  border: 1px solid rgba(165, 213, 255, 0.58) !important;
   border-radius: 999px !important;
-  color: #ebf6ff !important;
+  color: #f3fbff !important;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0) 24%),
-    url('./assets/licensed/slices/button_blue_tag.png') center/100% 100% no-repeat,
-    linear-gradient(180deg, rgba(59,130,246,0.98), rgba(29,78,216,0.98)) !important;
+    linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0) 34%),
+    linear-gradient(180deg, #3c9dff 0%, #2874ea 55%, #1f56be 100%) !important;
+  text-shadow: 0 1px 0 rgba(12, 58, 136, 0.64) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.32),
-    0 6px 0 rgba(21,60,153,0.86),
+    inset 0 1px 0 rgba(255,255,255,0.52),
+    0 6px 0 rgba(17, 72, 170, 0.82),
     0 14px 22px rgba(15,23,42,0.22) !important;
 }
 
@@ -2533,38 +2548,44 @@ button:disabled {
 .ui-action-button:hover,
 .game-button-primary:hover,
 .licensed-wood-button:hover,
-.licensed-submit-button:hover,
-.licensed-answer-button:hover,
-.casual-action-button:hover,
 .fantasy-cta-button:hover,
 .hero-cta-button:hover,
 .splash-continue-button:hover,
+.licensed-slice-yellow-plank:hover,
+.licensed-submit-button:hover,
+.licensed-slice-green-pill:hover,
 .ui-button-secondary:hover,
 .game-button-secondary:hover,
 .licensed-wood-button-secondary:hover,
+.licensed-answer-button:hover,
+.casual-action-button:hover,
+.licensed-slice-cyan-pill:hover,
 .licensed-slice-orange-pill:hover {
-  filter: brightness(1.04) saturate(1.03);
+  filter: brightness(1.03) saturate(1.02);
 }
 
 .ui-button-primary:active,
 .ui-action-button:active,
 .game-button-primary:active,
 .licensed-wood-button:active,
-.licensed-submit-button:active,
-.licensed-answer-button:active,
-.casual-action-button:active,
 .fantasy-cta-button:active,
 .hero-cta-button:active,
 .splash-continue-button:active,
+.licensed-slice-yellow-plank:active,
+.licensed-submit-button:active,
+.licensed-slice-green-pill:active,
 .ui-button-secondary:active,
 .game-button-secondary:active,
 .licensed-wood-button-secondary:active,
+.licensed-answer-button:active,
+.casual-action-button:active,
+.licensed-slice-cyan-pill:active,
 .licensed-slice-orange-pill:active {
   transform: translateY(2px) scale(0.99);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.3),
-    0 4px 0 rgba(138,84,12,0.84),
-    0 10px 18px rgba(0,0,0,0.2) !important;
+    inset 0 1px 0 rgba(255,255,255,0.28),
+    0 3px 0 rgba(18, 40, 86, 0.68),
+    0 8px 14px rgba(15,23,42,0.2) !important;
 }
 
 .ui-icon-button,
@@ -2572,17 +2593,16 @@ button:disabled {
 .hero-nav-button,
 .hero-arrow-button,
 .hero-arrow-button-clean {
-  border: 1px solid rgba(191,219,254,0.42) !important;
+  border: 1px solid rgba(171, 219, 255, 0.55) !important;
   border-radius: 1rem !important;
-  color: #ebf6ff !important;
+  color: #eff9ff !important;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0) 24%),
-    url('./assets/licensed/slices/button_blue_tag.png') center/100% 100% no-repeat,
-    linear-gradient(180deg, rgba(59,130,246,0.98), rgba(29,78,216,0.98)) !important;
+    linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0) 34%),
+    linear-gradient(180deg, #3b97fb 0%, #2d76ea 56%, #1f56be 100%) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.32),
-    0 6px 0 rgba(21,60,153,0.86),
-    0 14px 22px rgba(15,23,42,0.22) !important;
+    inset 0 1px 0 rgba(255,255,255,0.46),
+    0 5px 0 rgba(19, 73, 173, 0.8),
+    0 12px 20px rgba(15,23,42,0.2) !important;
 }
 
 .ui-panel-unified,
@@ -2612,8 +2632,7 @@ button:disabled {
 .world-map-island-label-face-locked {
   border-radius: 999px !important;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0) 22%),
-    url('./assets/licensed/slices/label_purple_long.png') center/100% 100% no-repeat,
+    linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0) 24%),
     linear-gradient(180deg, rgba(96,165,250,0.98), rgba(59,130,246,0.98)) !important;
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.2),
