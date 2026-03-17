@@ -210,7 +210,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
                         <div className="text-[7px] font-black uppercase tracking-[0.18em] text-white/45 md:text-[9px]">
                           {area.themeName}
                         </div>
-                        <div className="truncate text-[11px] font-black text-white md:text-base">
+                        <div className="text-[11px] font-black leading-tight text-white md:text-base">
                           {area.name}
                         </div>
                       </div>
@@ -266,7 +266,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
                 <div className="mt-2 space-y-2">
                   {report.strongestAreas.map(area => (
                     <div key={area.id} className="rounded-[0.9rem] border border-emerald-300/20 bg-emerald-300/10 px-2.5 py-2 md:rounded-[1.2rem] md:px-3">
-                      <div className="text-[10px] font-black text-white md:text-sm">{area.name}</div>
+                      <div className="text-[10px] font-black leading-tight text-white md:text-sm">{area.name}</div>
                       <div className="text-[9px] text-emerald-50/78 md:text-[10px]">{area.readiness}% readiness</div>
                     </div>
                   ))}
@@ -281,7 +281,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
                 <div className="mt-2 space-y-2">
                   {report.opportunityAreas.slice(0, 2).map(area => (
                     <div key={area.id} className="rounded-[0.9rem] border border-rose-300/20 bg-rose-300/10 px-2.5 py-2 md:rounded-[1.2rem] md:px-3">
-                      <div className="text-[10px] font-black text-white md:text-sm">{area.name}</div>
+                      <div className="text-[10px] font-black leading-tight text-white md:text-sm">{area.name}</div>
                       <div className="text-[9px] text-rose-50/78 md:text-[10px]">{area.readiness}% readiness</div>
                     </div>
                   ))}
@@ -298,8 +298,8 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
                 <AssetIcon name="gamepad" className="h-5 w-5 md:h-6 md:w-6" />
               </div>
 
-              <div className="licensed-slice-paper-panel mt-2 rounded-[1rem] px-3 py-2.5 text-amber-950 md:mt-3 md:rounded-[1.4rem] md:px-4 md:py-3.5">
-                <p className="text-[10px] leading-snug text-amber-950/82 md:text-sm">
+              <div className="licensed-slice-paper-panel mt-2 rounded-[1rem] px-3 py-2.5 text-white drop-shadow-[0_1px_1px_rgba(15,23,42,0.5)] md:mt-3 md:rounded-[1.4rem] md:px-4 md:py-3.5">
+                <p className="text-[10px] leading-snug text-white/92 md:text-sm">
                   {coachingNote}
                 </p>
               </div>
