@@ -883,7 +883,7 @@ const App: React.FC = () => {
                 className={`rounded-xl border px-3 py-2 text-left transition ${
                   activeStageId === step.id
                     ? 'ui-button-primary border-amber-200/72'
-                    : 'ui-panel-unified border-white/12 bg-white/4 hover:bg-white/10'
+                    : 'ui-button-primary border-white/25 opacity-85 hover:opacity-100'
                 }`}
               >
                 <div className="text-[11px] font-black uppercase tracking-[0.15em]">{step.label}</div>

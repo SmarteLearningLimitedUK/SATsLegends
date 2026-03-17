@@ -30,7 +30,7 @@ const GameRulesModal: React.FC<GameRulesModalProps> = ({ isOpen, onClose, rules 
           >
             <button
               onClick={onClose}
-              className="licensed-slice-orange-pill absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full p-0 text-white transition md:right-4 md:top-4"
+              className="ui-icon-button absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full p-0 text-white transition md:right-4 md:top-4"
               aria-label="Close rules"
             >
               <AssetIcon name="x" className="h-5 w-5" />
@@ -66,7 +66,7 @@ const GameRulesModal: React.FC<GameRulesModalProps> = ({ isOpen, onClose, rules 
 
             <button
               onClick={onClose}
-              className="licensed-submit-button mt-5 w-full rounded-[1.2rem] py-3 text-sm font-black uppercase tracking-[0.16em] text-white md:mt-6 md:rounded-[1.5rem] md:py-4 md:text-base"
+              className="ui-button-primary mt-5 w-full rounded-[1.2rem] py-3 text-sm font-black uppercase tracking-[0.16em] text-white md:mt-6 md:rounded-[1.5rem] md:py-4 md:text-base"
             >
               Back To Game
             </button>
