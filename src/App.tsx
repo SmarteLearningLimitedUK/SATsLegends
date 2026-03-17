@@ -615,13 +615,13 @@ const App: React.FC = () => {
                   whileTap={{ scale: 0.985, y: 1 }}
                   onClick={handleStartAdventure}
                   aria-label="Let's Go!"
-                  className="ui-action-button rounded-2xl px-10 py-3.5 text-lg md:px-12 md:py-4 md:text-xl"
+                  className="ui-button-primary rounded-2xl px-10 py-3.5 text-lg md:px-12 md:py-4 md:text-xl"
                 >
                   Let's Go!
                 </motion.button>
                 <button
                   onClick={() => openStagePreview('splash')}
-                  className="ui-action-button rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.18em] md:text-xs"
+                  className="ui-button-primary rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.18em] md:text-xs"
                 >
                   Staged Output
                 </button>
@@ -690,13 +690,13 @@ const App: React.FC = () => {
                 <div className="flex flex-wrap justify-center gap-3 md:gap-4">
                   <button
                     onClick={() => setScreen('splash')}
-                    className="game-button-secondary licensed-wood-button-secondary rounded-[1.25rem] px-6 py-3 text-sm md:rounded-2xl md:px-8 md:py-4 md:text-base"
+                    className="ui-button-primary rounded-[1.25rem] px-6 py-3 text-sm md:rounded-2xl md:px-8 md:py-4 md:text-base"
                   >
                     Back
                   </button>
                   <button
                     onClick={handleSaveProfileName}
-                    className="licensed-wood-button rounded-[1.25rem] px-8 py-3 text-base font-black text-white transition-all md:rounded-2xl md:px-10 md:py-4 md:text-lg"
+                    className="ui-button-primary rounded-[1.25rem] px-8 py-3 text-base font-black text-white transition-all md:rounded-2xl md:px-10 md:py-4 md:text-lg"
                   >
                     Choose avatar
                   </button>
@@ -748,7 +748,7 @@ const App: React.FC = () => {
               </RewardPanel>
               <button
                 onClick={goToHome}
-                className="licensed-wood-button mx-auto rounded-[1.25rem] px-8 py-3 text-base font-black text-white md:rounded-2xl md:px-10 md:py-4 md:text-lg"
+                className="ui-button-primary mx-auto rounded-[1.25rem] px-8 py-3 text-base font-black text-white md:rounded-2xl md:px-10 md:py-4 md:text-lg"
               >
                 Return to map
               </button>
@@ -768,7 +768,7 @@ const App: React.FC = () => {
               </RewardPanel>
               <button
                 onClick={goToHome}
-                className="licensed-wood-button mx-auto rounded-[1.25rem] px-8 py-3 text-base font-black text-white md:rounded-2xl md:px-10 md:py-4 md:text-lg"
+                className="ui-button-primary mx-auto rounded-[1.25rem] px-8 py-3 text-base font-black text-white md:rounded-2xl md:px-10 md:py-4 md:text-lg"
               >
                 Return to map
               </button>
@@ -855,7 +855,7 @@ const App: React.FC = () => {
       {!isStagedPreviewOpen && (
         <button
           onClick={() => openStagePreview(screen === 'splash' ? 'splash' : 'map')}
-          className="ui-action-button fixed right-3 top-[calc(0.75rem+env(safe-area-inset-top))] z-[70] rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] md:right-4 md:px-5 md:text-[11px]"
+          className="ui-button-primary fixed right-3 top-[calc(0.75rem+env(safe-area-inset-top))] z-[70] rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] md:right-4 md:px-5 md:text-[11px]"
         >
           Stage View
         </button>
@@ -870,7 +870,7 @@ const App: React.FC = () => {
             </div>
             <button
               onClick={() => setIsStagedPreviewOpen(false)}
-              className="ui-action-button rounded-lg px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em]"
+              className="ui-button-primary rounded-lg px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em]"
             >
               Close
             </button>
@@ -882,7 +882,7 @@ const App: React.FC = () => {
                 onClick={() => goToStage(step.id)}
                 className={`rounded-xl border px-3 py-2 text-left transition ${
                   activeStageId === step.id
-                    ? 'ui-action-button border-amber-200/72'
+                    ? 'ui-button-primary border-amber-200/72'
                     : 'ui-panel-unified border-white/12 bg-white/4 hover:bg-white/10'
                 }`}
               >
@@ -928,7 +928,7 @@ const App: React.FC = () => {
                 <motion.button
                   whileTap={{ scale: 0.96, y: 1 }}
                   onClick={goToHome}
-                  className={`hero-nav-button hero-nav-button-home flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'world_map' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
+                  className={`ui-icon-button hero-nav-button hero-nav-button-home flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'world_map' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
                 >
                   <AssetIcon name="home" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
                   <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Map</span>
@@ -936,7 +936,7 @@ const App: React.FC = () => {
                 <motion.button
                   whileTap={{ scale: 0.96, y: 1 }}
                   onClick={() => setScreen('avatar_selection')}
-                  className={`hero-nav-button hero-nav-button-hero flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'avatar_selection' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
+                  className={`ui-icon-button hero-nav-button hero-nav-button-hero flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'avatar_selection' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
                 >
                   <AssetIcon name="user" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
                   <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Hero</span>
@@ -944,7 +944,7 @@ const App: React.FC = () => {
                 <motion.button
                   whileTap={{ scale: 0.96, y: 1 }}
                   onClick={() => setShowQuests(true)}
-                  className="hero-nav-button hero-nav-button-idle hero-nav-button-quests relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3"
+                  className="ui-icon-button hero-nav-button hero-nav-button-idle hero-nav-button-quests relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3"
                 >
                   <AssetIcon name="doc" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
                   <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Quests</span>
@@ -955,7 +955,7 @@ const App: React.FC = () => {
                 <motion.button
                   whileTap={{ scale: 0.96, y: 1 }}
                   onClick={() => setShowAchievements(true)}
-                  className="hero-nav-button hero-nav-button-idle hero-nav-button-wins relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3"
+                  className="ui-icon-button hero-nav-button hero-nav-button-idle hero-nav-button-wins relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3"
                 >
                   <AssetIcon name="medal" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
                   <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Wins</span>
@@ -966,7 +966,7 @@ const App: React.FC = () => {
                 <motion.button
                   whileTap={{ scale: 0.96, y: 1 }}
                   onClick={() => setScreen('parent_dashboard')}
-                  className={`hero-nav-button hero-nav-button-stats flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'parent_dashboard' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
+                  className={`ui-icon-button hero-nav-button hero-nav-button-stats flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'parent_dashboard' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
                 >
                   <AssetIcon name="gear" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
                   <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Stats</span>
