@@ -859,7 +859,7 @@ const App: React.FC = () => {
   };
 
   const screenBehavior = SCREEN_BEHAVIOR[screen];
-  const showBottomNav = ['world_map', 'avatar_selection', 'parent_dashboard'].includes(screen);
+  const showBottomNav = ['world_map', 'parent_dashboard'].includes(screen);
   const isSplashScreen = screen === 'splash';
   const isMapLayoutScreen = MAP_LAYOUT_SCREENS.includes(screen);
   const isStandardShellScreen = !isMapLayoutScreen;
