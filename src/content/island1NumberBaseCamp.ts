@@ -1,0 +1,176 @@
+import { LevelData, MiniGameType } from '../types';
+
+export type NumberBaseCampMiniGameKey =
+  | 'place_value_panic'
+  | 'number_line_ninja'
+  | 'prime_pop'
+  | 'rounding_rampage'
+  | 'calculation_clash'
+  | 'factor_frenzy';
+
+export type NumberBaseCampDifficultyTier = 1 | 2 | 3 | 4 | 5;
+
+export interface NumberBaseCampLevelMetadata {
+  globalLevelId: number;
+  miniGameLevel: number;
+  difficultyTier: NumberBaseCampDifficultyTier;
+  skillTags: string[];
+}
+
+export interface NumberBaseCampMiniGameLevel extends NumberBaseCampLevelMetadata {
+  objective: string;
+}
+
+export interface NumberBaseCampMiniGamePack {
+  key: NumberBaseCampMiniGameKey;
+  name: string;
+  gameType: MiniGameType;
+  levels: NumberBaseCampMiniGameLevel[];
+}
+
+export interface PlaceValuePanicLevelConfig extends NumberBaseCampMiniGameLevel {
+  queueLimit: number;
+  timeLimitSec: number;
+  promptsToClear: number;
+  spawnIntervalMs: number;
+  decoyChance: number;
+  activeColumns: Array<'ones' | 'tens' | 'hundreds' | 'thousands'>;
+  targetScore: number;
+}
+
+const LEVELS_PER_MINIGAME = 10;
+
+const toTier = (miniGameLevel: number): NumberBaseCampDifficultyTier => (
+  Math.min(5, Math.floor((miniGameLevel - 1) / 2) + 1) as NumberBaseCampDifficultyTier
+);
+
+const basePackDefs: Array<{
+  key: NumberBaseCampMiniGameKey;
+  name: string;
+  gameType: MiniGameType;
+  skillTags: string[];
+  objectiveForLevel: (miniGameLevel: number, tier: NumberBaseCampDifficultyTier) => string;
+}> = [
+  {
+    key: 'place_value_panic',
+    name: 'Place Value Panic',
+    gameType: 'place_value_peaks',
+    skillTags: ['PLACE_VALUE', 'DIGIT_VALUE', 'NUMBER_COMPOSITION'],
+    objectiveForLevel: (miniGameLevel, tier) => (
+      tier <= 2
+        ? `Sort digits into tens and ones before the queue overflows (L${miniGameLevel}).`
+        : `Build target values across place columns under pressure (L${miniGameLevel}).`
+    ),
+  },
+  {
+    key: 'number_line_ninja',
+    name: 'Number Line Ninja',
+    gameType: 'coordinate_quest',
+    skillTags: ['NUMBER_COMPARE', 'NUMBER_ORDER', 'NEGATIVE_NUMBERS'],
+    objectiveForLevel: (miniGameLevel) => `Track and land on exact number-line targets (L${miniGameLevel}).`,
+  },
+  {
+    key: 'prime_pop',
+    name: 'Prime Pop',
+    gameType: 'prime_pop',
+    skillTags: ['PRIME_NUMBERS', 'FACTORS', 'MULTIPLES'],
+    objectiveForLevel: (miniGameLevel) => `Pop prime targets and avoid composite traps (L${miniGameLevel}).`,
+  },
+  {
+    key: 'rounding_rampage',
+    name: 'Rounding Rampage',
+    gameType: 'place_value_peaks',
+    skillTags: ['ROUNDING', 'PLACE_VALUE', 'ESTIMATION'],
+    objectiveForLevel: (miniGameLevel) => `Route values through the correct rounding gates (L${miniGameLevel}).`,
+  },
+  {
+    key: 'calculation_clash',
+    name: 'Calculation Clash',
+    gameType: 'calculation_clash',
+    skillTags: ['ADDITION', 'SUBTRACTION', 'MULTIPLICATION', 'DIVISION'],
+    objectiveForLevel: (miniGameLevel) => `Resolve arithmetic waves with fast, clean answers (L${miniGameLevel}).`,
+  },
+  {
+    key: 'factor_frenzy',
+    name: 'Factor Frenzy',
+    gameType: 'tower_of_factors',
+    skillTags: ['FACTORS', 'MULTIPLES', 'DIVISIBILITY'],
+    objectiveForLevel: (miniGameLevel) => `Identify factor and multiple links under growing pressure (L${miniGameLevel}).`,
+  },
+];
+
+let globalCounter = 1;
+
+export const NUMBER_BASE_CAMP_MINIGAME_PACKS: NumberBaseCampMiniGamePack[] = basePackDefs.map((packDef) => {
+  const levels: NumberBaseCampMiniGameLevel[] = Array.from({ length: LEVELS_PER_MINIGAME }, (_, index) => {
+    const miniGameLevel = index + 1;
+    const difficultyTier = toTier(miniGameLevel);
+    const globalLevelId = globalCounter++;
+
+    return {
+      globalLevelId,
+      miniGameLevel,
+      difficultyTier,
+      skillTags: [...packDef.skillTags],
+      objective: packDef.objectiveForLevel(miniGameLevel, difficultyTier),
+    };
+  });
+
+  return {
+    key: packDef.key,
+    name: packDef.name,
+    gameType: packDef.gameType,
+    levels,
+  };
+});
+
+const PLACE_VALUE_PANIC_COLUMNS_BY_TIER: Record<NumberBaseCampDifficultyTier, Array<'ones' | 'tens' | 'hundreds' | 'thousands'>> = {
+  1: ['ones', 'tens'],
+  2: ['ones', 'tens', 'hundreds'],
+  3: ['ones', 'tens', 'hundreds'],
+  4: ['ones', 'tens', 'hundreds', 'thousands'],
+  5: ['ones', 'tens', 'hundreds', 'thousands'],
+};
+
+export const PLACE_VALUE_PANIC_LEVELS: PlaceValuePanicLevelConfig[] = (
+  NUMBER_BASE_CAMP_MINIGAME_PACKS.find((pack) => pack.key === 'place_value_panic')?.levels || []
+).map((levelMeta) => {
+  const tier = levelMeta.difficultyTier;
+  const queueLimit = Math.max(4, 8 - (tier - 1) - (levelMeta.miniGameLevel % 2 === 0 ? 1 : 0));
+  const timeLimitSec = Math.max(38, 96 - levelMeta.miniGameLevel * 4);
+  const promptsToClear = 3 + tier;
+  const spawnIntervalMs = Math.max(650, 1680 - levelMeta.miniGameLevel * 92);
+  const decoyChance = Math.min(0.6, 0.22 + levelMeta.miniGameLevel * 0.035);
+  const targetScore = 900 + levelMeta.miniGameLevel * 250;
+
+  return {
+    ...levelMeta,
+    queueLimit,
+    timeLimitSec,
+    promptsToClear,
+    spawnIntervalMs,
+    decoyChance,
+    activeColumns: PLACE_VALUE_PANIC_COLUMNS_BY_TIER[tier],
+    targetScore,
+  };
+});
+
+export const getPlaceValuePanicLevelConfig = (miniGameLevel: number): PlaceValuePanicLevelConfig => {
+  return PLACE_VALUE_PANIC_LEVELS.find((level) => level.miniGameLevel === miniGameLevel)
+    || PLACE_VALUE_PANIC_LEVELS[0];
+};
+
+export const NUMBER_BASE_CAMP_LEVELS: LevelData[] = NUMBER_BASE_CAMP_MINIGAME_PACKS.flatMap((miniGamePack) => (
+  miniGamePack.levels.map((levelMeta) => ({
+    id: levelMeta.globalLevelId,
+    stars: 0,
+    isLocked: levelMeta.globalLevelId !== 1,
+    blueprintKey: miniGamePack.key,
+    displayName: `${miniGamePack.name} L${levelMeta.miniGameLevel}`,
+    gameType: miniGamePack.gameType,
+    miniGameKey: miniGamePack.key,
+    miniGameLevel: levelMeta.miniGameLevel,
+    difficultyTier: levelMeta.difficultyTier,
+    skillTags: levelMeta.skillTags,
+  }))
+));

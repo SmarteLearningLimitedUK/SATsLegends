@@ -6,6 +6,7 @@ import world03Map from './assets/maps/world_03.png';
 import world04Map from './assets/maps/world_04.png';
 import world05Map from './assets/maps/world_05.png';
 import world06Map from './assets/maps/world_06.png';
+import { NUMBER_BASE_CAMP_LEVELS } from './content/island1NumberBaseCamp';
 
 export const ACHIEVEMENTS: Achievement[] = [
   { id: 'first_win', title: 'First Victory', description: 'Complete your first level', icon: '🏆', type: 'levels', target: 1 },
@@ -47,14 +48,7 @@ export const ISLANDS: IslandData[] = [
     groundColor: 'bg-green-500',
     mapImage: world01Map,
     decorations: [],
-    levels: [
-      { id: 1, stars: 0, isLocked: false, blueprintKey: 'place_value_panic', displayName: 'Place Value Panic', gameType: 'place_value_peaks' },
-      { id: 2, stars: 0, isLocked: false, blueprintKey: 'number_line_ninja', displayName: 'Number Line Ninja', gameType: 'coordinate_quest' },
-      { id: 3, stars: 0, isLocked: false, blueprintKey: 'prime_pop', displayName: 'Prime Pop', gameType: 'prime_pop' },
-      { id: 4, stars: 0, isLocked: false, blueprintKey: 'rounding_rampage', displayName: 'Rounding Rampage', gameType: 'place_value_peaks' },
-      { id: 5, stars: 0, isLocked: false, blueprintKey: 'calculation_clash', displayName: 'Calculation Clash', gameType: 'calculation_clash' },
-      { id: 6, stars: 0, isLocked: false, blueprintKey: 'factor_frenzy', displayName: 'Factor Frenzy', gameType: 'tower_of_factors' },
-    ],
+    levels: NUMBER_BASE_CAMP_LEVELS,
   },
   {
     id: 2,

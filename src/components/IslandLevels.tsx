@@ -49,7 +49,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
 
 const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBack, onSelectLevel }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const NODE_POSITIONS = [
+  const LEGACY_NODE_POSITIONS = [
     { top: 12, left: 50 },
     { top: 27, left: 36 },
     { top: 42, left: 63 },
@@ -57,6 +57,17 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
     { top: 73, left: 62 },
     { top: 88, left: 42 },
   ];
+  const usesExtendedRoute = island.levels.length > LEGACY_NODE_POSITIONS.length;
+  const nodePositions = usesExtendedRoute
+    ? Array.from({ length: island.levels.length }, (_, index) => {
+        const lanePattern = [50, 35, 66, 40, 61, 44];
+        return {
+          topPx: 156 + index * 106,
+          left: lanePattern[index % lanePattern.length],
+        };
+      })
+    : LEGACY_NODE_POSITIONS;
+  const routeHeightPx = usesExtendedRoute ? Math.max(2400, 300 + island.levels.length * 106) : 1500;
 
   const completedLevels = player.completedLevels[island.id] || [];
   const nextPlayableLevelId = island.levels.find(level => !completedLevels.includes(level.id))?.id;
@@ -74,7 +85,10 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
   return (
     <div className="relative w-full h-full bg-slate-900 overflow-hidden font-sans">
       <div ref={scrollRef} className="absolute inset-0 overflow-y-auto overflow-x-hidden touch-pan-y hide-scrollbar">
-        <div className="relative mx-auto min-h-[1500px] w-full max-w-[34rem] px-3 pb-28 pt-28 md:min-h-[1700px] md:max-w-[40rem] md:px-5 md:pb-36 md:pt-32">
+        <div
+          className="relative mx-auto w-full max-w-[34rem] px-3 pb-28 pt-28 md:max-w-[40rem] md:px-5 md:pb-36 md:pt-32"
+          style={{ minHeight: `${routeHeightPx}px` }}
+        >
           {island.mapImage ? (
             <img
               src={island.mapImage}
@@ -94,14 +108,19 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
               .every(candidate => completedLevels.includes(candidate.id));
             const bossCoinsNeeded = level.bossUnlockCoins || 0;
             const hasBossCoins = totalCoinsEarned >= bossCoinsNeeded;
-            const isUnlocked = level.isBoss ? previousLevelsCleared && hasBossCoins : true;
+            const usesSequentialUnlock = island.id === 1;
+            const isUnlocked = level.isBoss
+              ? previousLevelsCleared && hasBossCoins
+              : usesSequentialUnlock
+                ? previousLevelsCleared
+                : true;
             const stars = player.levelStars?.[`${island.id}-${level.id}`] || 0;
             const isCompleted = completedLevels.includes(level.id);
             const isNextPlayable = level.id === nextPlayableLevelId && isUnlocked;
             const isPerfectClear = isCompleted && stars === 3;
             const gameLabel = getLevelLabel(level);
 
-            const pos = NODE_POSITIONS[index] || { top: 50, left: 50 };
+            const pos = nodePositions[index] || { top: 50, left: 50 };
 
             return (
               <motion.div
@@ -123,7 +142,11 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
                     : { delay: index * 0.15, type: 'spring', stiffness: 150, damping: 15 }
                 }
                 className="absolute -translate-x-1/2 -translate-y-1/2"
-                style={{ top: `${pos.top}%`, left: `${pos.left}%`, zIndex: 10 + index }}
+                style={{
+                  top: 'topPx' in pos ? `${pos.topPx}px` : `${pos.top}%`,
+                  left: `${pos.left}%`,
+                  zIndex: 10 + index,
+                }}
               >
                 <button
                   onClick={() => isUnlocked && onSelectLevel(level)}

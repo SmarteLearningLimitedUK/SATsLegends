@@ -19,6 +19,7 @@ import TimekeeperTempleGame from './components/TimekeeperTempleGame';
 import MeasurementForgeGame from './components/MeasurementForgeGame';
 import TowerOfFactorsGame from './components/TowerOfFactorsGame';
 import DecimalSniperGame from './components/DecimalSniperGame';
+import PlaceValuePanicGame from './components/PlaceValuePanicGame';
 import TreasureChartCoveGame from './components/TreasureChartCoveGame';
 import RuneLockDungeonsGame from './components/RuneLockDungeonsGame';
 import TreasurePathGame from './components/TreasurePathGame';
@@ -501,15 +502,20 @@ const App: React.FC = () => {
 
     const nextLevel = selectedIsland.levels.find(level => level.id === selectedLevel.id + 1);
     const completedInIsland = player.completedLevels[selectedIsland.id] || [];
+    const isSequentialIsland = selectedIsland.id === 1;
     setLevelResult(null);
 
-    if (nextLevel && !nextLevel.isLocked) {
+    if (nextLevel) {
       const canEnterNextLevel = nextLevel.isBoss
         ? selectedIsland.levels
             .filter(level => level.id < nextLevel.id)
             .every(level => completedInIsland.includes(level.id))
           && (player.stats?.totalCoinsEarned || 0) >= (nextLevel.bossUnlockCoins || 0)
-        : true;
+        : isSequentialIsland
+          ? selectedIsland.levels
+              .filter(level => level.id < nextLevel.id)
+              .every(level => completedInIsland.includes(level.id) || level.id === selectedLevel.id)
+          : true;
 
       if (!canEnterNextLevel) {
         setSelectedLevel(null);
@@ -615,6 +621,14 @@ const App: React.FC = () => {
       case 'tower_of_factors':
         return <TowerOfFactorsGame {...sharedProps} isBoss={Boolean(selectedLevel.isBoss)} />;
       case 'place_value_peaks':
+        if (selectedLevel.blueprintKey === 'place_value_panic') {
+          return (
+            <PlaceValuePanicGame
+              {...sharedProps}
+              miniGameLevel={selectedLevel.miniGameLevel}
+            />
+          );
+        }
         return <DecimalSniperGame {...sharedProps} isBoss={Boolean(selectedLevel.isBoss)} />;
       case 'chart_chase':
         return <TreasureChartCoveGame {...sharedProps} />;
@@ -926,10 +940,10 @@ const App: React.FC = () => {
         isOpen={Boolean(levelResult)}
         result={levelResult ? {
           ...levelResult,
-          primaryLabel: levelResult.type === 'victory' ? 'Continue' : 'Level select',
+          primaryLabel: levelResult.type === 'victory' ? 'Next level' : 'Level select',
           onPrimary: levelResult.type === 'victory' ? handleAdvanceAfterVictory : handleCloseLevelResult,
-          secondaryLabel: levelResult.type === 'victory' ? 'Map' : 'Try again',
-          onSecondary: levelResult.type === 'victory' ? goToHome : handleRetryLevel,
+          secondaryLabel: levelResult.type === 'victory' ? 'Replay' : 'Try again',
+          onSecondary: handleRetryLevel,
         } : null}
       />
 

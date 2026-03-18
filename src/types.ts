@@ -41,6 +41,11 @@ export interface LevelData {
   blueprintKey?: string;
   // Optional display override for island-specific mini-game naming.
   displayName?: string;
+  // Optional campaign lane metadata for multi-level mini-game packs.
+  miniGameKey?: string;
+  miniGameLevel?: number;
+  difficultyTier?: 1 | 2 | 3 | 4 | 5;
+  skillTags?: string[];
   isBoss?: boolean;
   bossUnlockCoins?: number;
   gameType?: MiniGameType;
