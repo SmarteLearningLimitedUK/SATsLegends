@@ -565,7 +565,6 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
       </div>
 
       <div className="flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-[0.14em] md:text-xs">
-        <span className="licensed-slice-cyan-pill rounded-full px-2.5 py-1 text-white">Round {roundIndex}/{totalRounds}</span>
         <span className="licensed-slice-cyan-pill rounded-full px-2.5 py-1 text-white">Lives {lives}</span>
         <span className="licensed-slice-cyan-pill rounded-full px-2.5 py-1 text-white">Accuracy {accuracy}%</span>
       </div>
@@ -622,7 +621,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
             className="absolute left-1/2 z-20 w-[min(92%,30rem)] -translate-x-1/2 rounded-2xl border border-cyan-100/30 bg-slate-900/85 px-4 py-3 text-center shadow-[0_12px_30px_rgba(2,6,23,0.45)]"
             style={{ top: `${Math.max(8, arenaLayout.sidePadding * 0.8)}px` }}
           >
-            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/80">Round Briefing</div>
+            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/80">Mission Briefing</div>
             <div className="mt-1 text-sm font-black text-white">Drag to aim, release to fire.</div>
             <p className="mt-1 text-[11px] font-semibold text-white/75">Hit the decimal that matches the objective.</p>
           </motion.button>

@@ -79,9 +79,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
   const {
     levelConfig,
-    resolvedMiniGameLevel,
     round,
-    roundNumber,
     roundsCleared,
     slots,
     trayTiles,
@@ -232,9 +230,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       </div>
 
       <div className="flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-[0.12em] md:text-xs">
-        <span className="pvp-stat-chip">Level {resolvedMiniGameLevel} / 10</span>
-        <span className="pvp-stat-chip">Tier {levelConfig.difficultyTier}</span>
-        <span className="pvp-stat-chip">Question {roundNumber}</span>
         <span className="pvp-stat-chip">Solved {roundsCleared}</span>
         <span className="pvp-stat-chip">Combo x{Math.max(1, combo)}</span>
       </div>

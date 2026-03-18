@@ -29,7 +29,7 @@ interface GameGroupState {
 }
 
 const GAME_SUMMARY_BY_KEY: Record<string, string> = {
-  place_value_panic: 'Sort unstable number fragments into the correct place-value channels before overload builds.',
+  place_value_panic: 'Sort unstable number fragments into the correct place-value channels at speed.',
   number_line_ninja: 'Move fast on the number line and land on exact targets with clean control.',
   prime_pop: 'Pop prime-number targets and avoid composite traps as the pace increases.',
   rounding_rampage: 'Route values into the right rounding gates under pressure.',
@@ -384,3 +384,4 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
 };
 
 export default IslandLevels;
+

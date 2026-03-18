@@ -401,7 +401,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                 <img src={labelBlueLong} alt="" draggable={false} className="absolute inset-0 h-full w-full object-fill" />
                 <div className="relative z-10 inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.16em] text-white md:text-xs">
                   <AssetIcon name="star" className="h-4 w-4" />
-                  Level {levelId} · Round {roundIndex + 1}
+                  Scale Forge
                 </div>
               </div>
 
