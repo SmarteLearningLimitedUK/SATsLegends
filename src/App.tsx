@@ -7,7 +7,7 @@ import { GameScreen, IslandData, LevelData, MiniGameType, PlayerData } from './t
 import WorldMap from './components/WorldMap';
 import IslandLevels from './components/IslandLevels';
 import PotionPourGame from './components/PotionPourGame';
-import BurgerBuilderGame from './components/BurgerBuilderGame';
+import TakeOutRushGame from './components/TakeOutRushGame';
 import FractionMatchGame from './components/FractionMatchGame';
 import PrimePopGame from './components/PrimePopGame';
 import AngleArenaGame from './components/AngleArenaGame';
@@ -50,7 +50,7 @@ const QUESTION_MATCH_FRAME_GAMES: MiniGameType[] = [
   'cloud_collapse',
   'fraction_match',
   'potion_pour',
-  'burger_builder',
+  'take_out_rush',
   'prime_pop',
   'angle_arena',
   'polygon_palace',
@@ -584,8 +584,8 @@ const App: React.FC = () => {
         return <FractionMatchGame {...sharedProps} variantGameType="cloud_collapse" isBoss={Boolean(selectedLevel.isBoss)} />;
       case 'potion_pour':
         return <PotionPourGame {...sharedProps} />;
-      case 'burger_builder':
-        return <BurgerBuilderGame {...sharedProps} />;
+      case 'take_out_rush':
+        return <TakeOutRushGame {...sharedProps} />;
       case 'fraction_match':
         return <FractionMatchGame {...sharedProps} isBoss={Boolean(selectedLevel.isBoss)} />;
       case 'prime_pop':

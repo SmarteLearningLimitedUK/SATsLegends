@@ -1,4 +1,4 @@
-import { MiniGameType } from './types';
+﻿import { MiniGameType } from './types';
 import world01Map from './assets/maps/world_01.png';
 import world02Map from './assets/maps/world_02.png';
 import world03Map from './assets/maps/world_03.png';
@@ -63,7 +63,7 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   logic_sort: REASONING_SCENE,
   shape_shift: REASONING_SCENE,
   matrix_match: REASONING_SCENE,
-  burger_builder: FRACTION_SCENE,
+  take_out_rush: FRACTION_SCENE,
   fraction_match: FRACTION_SCENE,
   crystal_core: FRACTION_SCENE,
   prime_pop: NUMBER_SCENE,

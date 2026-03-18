@@ -1,4 +1,4 @@
-import { MiniGameType } from './types';
+﻿import { MiniGameType } from './types';
 
 export interface GameRuleSet {
   title: string;
@@ -114,15 +114,15 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       'Look for colour, size, number and rotation rules before you commit.'
     ),
   },
-  burger_builder: {
-    label: 'Burger Bar',
+  take_out_rush: {
+    label: 'Take-Out Rush',
     focus: 'Fractions and mixed numbers',
     rules: {
-      title: 'Burger Bar',
-      summary: 'Build the burger so the total equals the customer order.',
+      title: 'Take-Out Rush',
+      summary: 'Fill the order tray so the total equals the take-out target.',
       bullets: [
-        'Each ingredient has a fraction value.',
-        'Match the exact total and include required ingredients.',
+        'Each portion piece has a fraction value.',
+        'Match the exact total and include required serving items.',
         'You have 45 seconds before the customer leaves.',
       ],
     },
