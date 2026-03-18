@@ -747,8 +747,8 @@ const App: React.FC = () => {
         );
       case 'profile_setup':
         return (
-          <GameScreenShell className="my-auto flex items-center justify-center">
-            <div className="licensed-board-frame relative z-10 flex w-full max-w-sm flex-col gap-4 overflow-hidden p-4 text-center sm:max-w-md md:max-w-3xl md:gap-8 md:p-10">
+          <GameScreenShell className="aaa-name-screen my-auto flex items-center justify-center">
+            <div className="licensed-board-frame aaa-name-panel relative z-10 flex w-full max-w-sm flex-col gap-4 overflow-hidden p-4 text-center sm:max-w-md md:max-w-3xl md:gap-8 md:p-10">
               <HUDBar
                 eyebrow="Step 1 of 2"
                 title="Name your hero"
@@ -769,7 +769,7 @@ const App: React.FC = () => {
                     if (event.key === 'Enter') handleSaveProfileName();
                   }}
                   placeholder="Explorer"
-                  className="licensed-slice-paper-panel w-full max-w-xl rounded-[1.25rem] px-5 py-3 text-center text-base font-black text-amber-950 shadow-[0_14px_28px_rgba(0,0,0,0.2)] outline-none placeholder:text-amber-900/35 focus:ring-4 focus:ring-yellow-300/45 md:rounded-[1.75rem] md:px-6 md:py-5 md:text-3xl"
+                  className="licensed-slice-paper-panel aaa-name-input w-full max-w-xl rounded-[1.25rem] px-5 py-3 text-center text-base font-black text-amber-950 shadow-[0_14px_28px_rgba(0,0,0,0.2)] outline-none placeholder:text-amber-900/35 focus:ring-4 focus:ring-yellow-300/45 md:rounded-[1.75rem] md:px-6 md:py-5 md:text-3xl"
                 />
                 <div className="flex flex-wrap justify-center gap-3 md:gap-4">
                   <button
