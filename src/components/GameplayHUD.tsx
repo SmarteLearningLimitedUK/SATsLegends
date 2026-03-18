@@ -6,7 +6,11 @@ import AnimatedAvatar from './AnimatedAvatar';
 import sliderBgAsset from '../assets/casual_ui/hud/progress_bar_3__bg.png';
 import sliderBorderAsset from '../assets/licensed/slices/progress_bar.png';
 import sliderFillAsset from '../assets/casual_ui/hud/progress_bar_3__fg.png';
-import titleFlagAsset from '../assets/licensed/slices/label_blue.png';
+import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
+
+const titleFlagAsset = MAIN_PNG_SKIN.textBox;
+const smallAvatarFrameAsset = MAIN_PNG_SKIN.smallAvatarFrame;
+const largeAvatarFrameAsset = MAIN_PNG_SKIN.largeAvatarFrame;
 
 interface GameplayHUDProps {
   title: string;
@@ -58,6 +62,12 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
               whileHover={{ scale: 1.06, rotate: -4 }}
               className={`${compact ? 'h-8 w-8 rounded-[0.8rem]' : 'h-9 w-9 rounded-[0.9rem]'} md:h-20 md:w-20 md:rounded-[2rem] flex items-center justify-center relative overflow-hidden shrink-0 bg-center bg-cover`}
             >
+              <img
+                src={compact ? smallAvatarFrameAsset : largeAvatarFrameAsset}
+                alt=""
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 z-20 h-full w-full object-fill"
+              />
               <div className="absolute inset-0 rounded-[inherit] border border-white/18 bg-[linear-gradient(180deg,rgba(255,255,255,0.14),rgba(17,24,39,0.18))]" />
               <AnimatedAvatar
                 avatar={avatar}
@@ -112,6 +122,7 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
       <div className={`relative w-full ${compact ? 'h-3' : 'h-4'} md:h-6 overflow-hidden rounded-full`}>
         <img src={sliderBgAsset} alt="progress bar background" className="absolute inset-0 h-full w-full object-fill opacity-95" />
         <img src={sliderBorderAsset} alt="progress bar border" className="absolute inset-0 h-full w-full object-fill opacity-95" />
+        <img src={MAIN_PNG_SKIN.separator} alt="" aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full object-fill opacity-80" />
         <div className="absolute inset-[6%] overflow-hidden rounded-full">
           <motion.div
             className="absolute inset-y-0 left-0 rounded-full overflow-hidden"

@@ -2,8 +2,7 @@ import React from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import AssetIcon from './AssetIcon';
 import { triggerHaptic } from '../haptics';
-import rewardChest from '../assets/fantasy_hero/demo_rewards/chest_02.png';
-import rewardStash from '../assets/fantasy_hero/demo_rewards/chest_01.png';
+import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
 import { RewardPanel } from './layout/ScreenPrimitives';
 
 interface LevelResultModalProps {
@@ -29,6 +28,8 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
   if (!result) return null;
 
   const isVictory = result.type === 'victory';
+  const rewardChest = MAIN_PNG_SKIN.treasureChest;
+  const rewardStash = MAIN_PNG_SKIN.treasureChest2;
 
   return (
     <AnimatePresence>

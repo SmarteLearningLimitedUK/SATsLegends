@@ -27,7 +27,9 @@ import iconPlus from '../assets/licensed/slices/icon_plus.png';
 import iconMinus from '../assets/licensed/slices/icon_minus.png';
 import iconPlusSquare from '../assets/licensed/slices/icon_plus_square.png';
 import iconBigHeart from '../assets/licensed/slices/icon_big_heart.png';
-import iconX from '../assets/licensed/slices/icon_x.png';
+import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
+
+const iconX = MAIN_PNG_SKIN.closeButton;
 
 const ICONS = {
   home: iconHome,
