@@ -7,6 +7,7 @@ import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
 
 interface GameContainerViewProps {
   gameType: MiniGameType;
+  sceneBackgroundOverride?: string;
   title: string;
   avatar?: AvatarData;
   score: number;
@@ -26,6 +27,7 @@ interface GameContainerViewProps {
 
 const GameContainerView: React.FC<GameContainerViewProps> = ({
   gameType,
+  sceneBackgroundOverride,
   title,
   avatar,
   score,
@@ -56,7 +58,11 @@ const GameContainerView: React.FC<GameContainerViewProps> = ({
 
   return (
     <div className="aaa-game-root relative flex h-full w-full min-h-0 flex-col overflow-hidden">
-      <GameplaySceneBackdrop gameType={gameType} className="aaa-game-backdrop" />
+      <GameplaySceneBackdrop
+        gameType={gameType}
+        backgroundOverride={sceneBackgroundOverride}
+        className="aaa-game-backdrop"
+      />
       <div className="aaa-game-stage relative z-10 mx-auto flex h-full min-h-0 w-full max-w-[min(100%,1100px)] flex-1 flex-col gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] pt-[calc(env(safe-area-inset-top)+0.15rem)] md:gap-3 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
         <div className="aaa-zone aaa-zone-hud w-full">
           <GameplayHUD

@@ -11,18 +11,27 @@ import panelGlow from '../assets/fantasy_hero/demo_bg/panel_inner_glow.png';
 
 interface GameplaySceneBackdropProps {
   gameType: MiniGameType;
+  backgroundOverride?: string;
   className?: string;
 }
 
-const GameplaySceneBackdrop: React.FC<GameplaySceneBackdropProps> = ({ gameType, className = '' }) => {
+const GameplaySceneBackdrop: React.FC<GameplaySceneBackdropProps> = ({
+  gameType,
+  backgroundOverride,
+  className = '',
+}) => {
   const scene = GAME_SCENE_META[gameType];
+  const backgroundImage = backgroundOverride || scene.background;
+  const isCustomBackground = Boolean(backgroundOverride);
 
   return (
     <div className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`.trim()}>
       <img
-        src={scene.background}
+        src={backgroundImage}
         alt=""
-        className="absolute inset-0 h-full w-full scale-[1.06] object-cover opacity-30 blur-[0.8px]"
+        className={`absolute inset-0 h-full w-full object-cover ${
+          isCustomBackground ? 'scale-[1.02] opacity-55 blur-[0.2px]' : 'scale-[1.06] opacity-30 blur-[0.8px]'
+        }`}
         draggable={false}
       />
       <img

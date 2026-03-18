@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { AVATARS } from '../constants';
 import GameContainerView from './GameContainerView';
 import { FRACTION_MATCH_ASSETS } from '../assets/fraction_match';
+import placeValuePanicBackground from '../assets/level_backgrounds/place_value_panicbkgrd.png';
 import {
   DigitTile,
   PlaceValueSlotKey,
@@ -390,6 +391,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   return (
     <GameContainerView
       gameType="place_value_peaks"
+      sceneBackgroundOverride={placeValuePanicBackground}
       title="Place Value Panic"
       avatar={avatar}
       score={Math.round(score)}
