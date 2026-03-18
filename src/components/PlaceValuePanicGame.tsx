@@ -351,7 +351,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   );
 
   const objectiveArea = (
-    <div className="licensed-board-frame structured-playfield-frame flex flex-col gap-2 p-3 md:gap-3 md:p-4">
+    <div className="licensed-board-frame flex flex-col gap-2 p-3 md:gap-3 md:p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/75">Objective</div>
@@ -367,7 +367,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           {isPaused ? 'Resume' : 'Pause'}
         </button>
       </div>
-      <div className="flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-[0.12em] md:text-xs">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 text-[10px] font-black uppercase tracking-[0.12em] md:text-xs">
         <span className="licensed-slice-cyan-pill rounded-full px-2.5 py-1 text-white">
           Level {resolvedMiniGameLevel} / 10
         </span>
@@ -385,8 +385,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   );
 
   const playFieldArea = (
-    <div className="relative flex h-full w-full flex-col gap-3 p-3 md:gap-4 md:p-4">
-      <div className="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
+    <div className="relative flex h-full min-h-0 w-full flex-col gap-2 p-2.5 md:gap-3 md:p-4">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 md:gap-3">
         {COLUMN_ORDER.filter((column) => activeColumns.includes(column)).map((column) => {
           const placedToken = placed[column];
 
@@ -396,7 +396,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               type="button"
               onClick={() => handleColumnTap(column)}
               disabled={resultState !== 'running' || isPaused}
-              className={`relative flex h-28 flex-col items-center justify-center overflow-hidden rounded-[1rem] border text-center shadow-[0_12px_24px_rgba(2,6,23,0.34)] transition md:h-36 md:rounded-[1.2rem] ${
+              className={`relative flex h-20 flex-col items-center justify-center overflow-hidden rounded-[1rem] border text-center shadow-[0_12px_24px_rgba(2,6,23,0.34)] transition sm:h-24 md:h-32 md:rounded-[1.2rem] ${
                 placedToken
                   ? 'border-emerald-200/55 bg-emerald-500/25'
                   : selectedTokenId
@@ -410,7 +410,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/45 md:text-xs">
                 {COLUMN_VALUES[column]}
               </div>
-              <div className="mt-1 text-4xl font-black text-white md:text-5xl">
+              <div className="mt-1 text-3xl font-black text-white sm:text-4xl md:text-5xl">
                 {placedToken ? placedToken.digit : '?'}
               </div>
             </button>
@@ -418,7 +418,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         })}
       </div>
 
-      <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col gap-2 overflow-hidden p-3 md:gap-3 md:p-4">
+      <div className="licensed-board-frame relative flex min-h-0 flex-1 flex-col gap-2 overflow-hidden p-2.5 md:gap-3 md:p-4">
         <div className="flex items-center justify-between">
           <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/75 md:text-xs">
             Digit Queue
@@ -431,7 +431,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto pr-1">
-          <div className="grid grid-cols-5 gap-2 md:grid-cols-8">
+          <div className="grid grid-cols-4 gap-2 sm:grid-cols-5 lg:grid-cols-8">
             <AnimatePresence mode="popLayout">
               {queue.map((token) => {
                 const isSelected = selectedTokenId === token.id;
@@ -443,7 +443,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                     disabled={resultState !== 'running' || isPaused}
                     onClick={() => setSelectedTokenId((previous) => previous === token.id ? null : token.id)}
                     aria-pressed={isSelected}
-                    className={`flex h-14 min-h-[56px] items-center justify-center rounded-xl border text-2xl font-black transition touch-manipulation md:h-16 md:text-3xl ${
+                    className={`flex h-12 min-h-[48px] items-center justify-center rounded-xl border text-xl font-black transition touch-manipulation sm:h-14 sm:text-2xl md:h-16 md:text-3xl ${
                       isSelected
                         ? 'border-cyan-200 bg-cyan-500/45 text-white shadow-[0_0_20px_rgba(34,211,238,0.35)]'
                         : 'border-white/20 bg-slate-900/60 text-white/90'
