@@ -9,7 +9,6 @@ import ribbonBlueAsset from '../assets/fantasy_hero/title/ribbon_blue.png';
 import cardBgAsset from '../assets/fantasy_hero/frames/card_bg.png';
 import cardBorderAsset from '../assets/fantasy_hero/frames/card_border.png';
 import cardInnerAsset from '../assets/fantasy_hero/frames/card_inner.png';
-import cardGradientAsset from '../assets/fantasy_hero/frames/card_gradient.png';
 import { PrimaryActionButton } from './layout/ScreenPrimitives';
 
 interface AvatarSelectProps {
@@ -22,13 +21,13 @@ const HERO_GLOW_STYLES: Record<string, string> = {
   barratt: 'from-cyan-300/55 via-emerald-200/28 to-transparent',
   bran: 'from-orange-300/55 via-amber-200/28 to-transparent',
   mochi: 'from-rose-300/55 via-yellow-200/25 to-transparent',
-  vex: 'from-sky-300/55 via-indigo-200/30 to-transparent',
+  vex: 'from-sky-300/55 via-cyan-200/30 to-transparent',
 };
 
 const RARITY_BADGE_TONES: Record<string, string> = {
   Common: 'from-cyan-500 to-blue-600',
   Rare: 'from-emerald-500 to-teal-600',
-  Epic: 'from-cyan-500 to-sky-600',
+  Epic: 'from-sky-500 to-blue-600',
   Legendary: 'from-amber-400 to-orange-500',
 };
 
@@ -87,8 +86,8 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
             : 'h-[63%] w-[28%] z-10 opacity-92'
         }`}
         style={{
-          backgroundImage: `url(${cardBorderAsset}), url(${cardGradientAsset}), url(${cardBgAsset}), linear-gradient(180deg,#16358f,#0e235f)`,
-          backgroundSize: '100% 100%, 100% 100%, 100% 100%, cover',
+          backgroundImage: `url(${cardBorderAsset}), url(${cardBgAsset}), linear-gradient(180deg,#1a4aa5,#0e2c75 52%,#0a1e53)`,
+          backgroundSize: '100% 100%, 100% 100%, cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
         }}
@@ -97,7 +96,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
         <div
           className="pointer-events-none absolute inset-[3.5%] rounded-[1.05rem] md:rounded-[1.35rem]"
           style={{
-            backgroundImage: `url(${cardInnerAsset}), linear-gradient(180deg,rgba(62,200,255,0.25),rgba(4,20,58,0.22))`,
+            backgroundImage: `url(${cardInnerAsset}), linear-gradient(180deg,rgba(86,206,255,0.24),rgba(6,36,92,0.24))`,
             backgroundSize: '100% 100%, cover',
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center',

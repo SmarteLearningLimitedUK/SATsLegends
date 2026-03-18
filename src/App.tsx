@@ -756,7 +756,7 @@ const App: React.FC = () => {
       case 'profile_setup':
         return (
           <GameScreenShell className="aaa-name-screen my-auto flex items-center justify-center">
-            <FramedPanel variant="surface" className="aaa-name-panel relative z-10 flex w-full max-w-sm flex-col gap-4 overflow-hidden p-4 text-center sm:max-w-md md:max-w-3xl md:gap-8 md:p-10">
+            <FramedPanel variant="paper" className="aaa-name-panel relative z-10 flex w-full max-w-sm flex-col gap-4 overflow-hidden p-4 text-center sm:max-w-md md:max-w-3xl md:gap-8 md:p-10">
               <PremiumHeaderBar
                 eyebrow="Step 1 of 2"
                 title="Name your hero"
