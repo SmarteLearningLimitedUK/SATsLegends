@@ -219,7 +219,8 @@ export const findProjectileCollision = (
 ): MovingTarget | null => {
   for (const target of targets) {
     const distance = Math.hypot(projectile.x - target.x, projectile.y - target.y);
-    if (distance <= projectile.radius + target.radius * 0.66) {
+    // Slightly forgiving collision keeps touch/aim gameplay fair on smaller screens.
+    if (distance <= projectile.radius + target.radius * 0.92) {
       return target;
     }
   }

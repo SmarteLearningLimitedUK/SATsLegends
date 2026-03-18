@@ -105,6 +105,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
   const [combo, setCombo] = useState(0);
   const [crosshairPos, setCrosshairPos] = useState({ x: 50, y: 50 });
   const gameAreaRef = useRef<HTMLDivElement>(null);
+  const bubbleNodeRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const avatar = AVATARS.find(a => a.id === avatarId) || AVATARS[0];
   const targetScore = 1000 + (levelId * 500);
@@ -170,6 +171,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     setIsGameOver(false);
     setIsVictory(false);
     setBubbles([]);
+    bubbleNodeRefs.current = {};
     setCombo(0);
   }, [levelId]);
 
@@ -270,6 +272,36 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     }
   };
 
+  const resolveBubbleFromPointer = useCallback((clientX: number, clientY: number) => {
+    let nearest: { id: string; isPrime: boolean; distance: number } | null = null;
+
+    for (const bubble of bubbles) {
+      if (bubble.isPopped) continue;
+      const node = bubbleNodeRefs.current[bubble.id];
+      if (!node) continue;
+      const rect = node.getBoundingClientRect();
+      if (rect.width <= 0 || rect.height <= 0) continue;
+
+      const centerX = rect.left + (rect.width / 2);
+      const centerY = rect.top + (rect.height / 2);
+      const distance = Math.hypot(clientX - centerX, clientY - centerY);
+      const forgivingHitRadius = Math.max(rect.width / 2, 28) + 14;
+
+      if (distance > forgivingHitRadius) continue;
+      if (!nearest || distance < nearest.distance) {
+        nearest = { id: bubble.id, isPrime: bubble.isPrime, distance };
+      }
+    }
+
+    return nearest;
+  }, [bubbles]);
+
+  const handlePlayfieldPointerDown = (clientX: number, clientY: number) => {
+    const targetBubble = resolveBubbleFromPointer(clientX, clientY);
+    if (!targetBubble) return;
+    popBubble(targetBubble.id, targetBubble.isPrime, clientX, clientY);
+  };
+
   const progress = Math.min((score / targetScore) * 100, 100);
 
   return (
@@ -305,7 +337,8 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
         <div 
           ref={gameAreaRef}
           onPointerMove={handlePointerMove}
-          className="w-full flex-1 min-h-0 relative licensed-board-frame overflow-hidden touch-none"
+          onPointerDown={(event) => handlePlayfieldPointerDown(event.clientX, event.clientY)}
+          className="w-full flex-1 min-h-0 relative licensed-board-frame overflow-hidden touch-none touch-manipulation"
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.25),transparent_28%),radial-gradient(circle_at_78%_18%,rgba(192,132,252,0.22),transparent_26%),radial-gradient(circle_at_50%_88%,rgba(74,222,128,0.2),transparent_30%),linear-gradient(180deg,rgba(7,20,45,0.2),rgba(2,6,23,0.55))]" />
           <div className="absolute inset-x-[6%] top-[7%] h-[14%] rounded-full bg-white/8 blur-3xl opacity-70" />
@@ -323,6 +356,9 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
             {bubbles.map(bubble => !bubble.isPopped && (
               <motion.div
                 key={bubble.id}
+                ref={(node) => {
+                  bubbleNodeRefs.current[bubble.id] = node;
+                }}
                 initial={{ bottom: '-22%', opacity: 0, scale: 0.72 }}
                 animate={{ bottom: '108%', opacity: [0, 1, 1], scale: [0.72, 1, 1] }}
                 exit={{ scale: 1.5, opacity: 0 }}
@@ -332,11 +368,12 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
                   scale: { duration: 0.35 }
                 }}
                 onAnimationComplete={() => {
+                  delete bubbleNodeRefs.current[bubble.id];
                   setBubbles(prev => prev.filter(item => item.id !== bubble.id || item.isPopped));
                 }}
                 onPointerDown={(e) => {
                   e.stopPropagation();
-                  popBubble(bubble.id, bubble.isPrime, e.clientX, e.clientY);
+                  handlePlayfieldPointerDown(e.clientX, e.clientY);
                 }}
                 className="absolute -translate-x-1/2 flex items-center justify-center rounded-full backdrop-blur-md md:cursor-none"
                 style={{

@@ -165,6 +165,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
 
   const arenaRef = useRef<HTMLDivElement | null>(null);
   const roundStartedAtRef = useRef<number>(Date.now());
+  const activeAimPointerIdRef = useRef<number | null>(null);
 
   const scoreRef = useRef(score);
   const livesRef = useRef(lives);
@@ -353,15 +354,16 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
 
   const handleLauncherPointerDown = useCallback((event: React.PointerEvent<HTMLButtonElement>) => {
     if (resultState !== 'running' || isPaused || projectileRef.current) return;
+    event.preventDefault();
 
     const nextPoint = getLocalPoint(event.clientX, event.clientY);
     if (!nextPoint) return;
 
+    activeAimPointerIdRef.current = event.pointerId;
     const nextAim = buildAimVector(layoutRef.current.launcherOrigin, nextPoint);
     setAimPointer(nextPoint);
     setAimVector(nextAim);
     setIsAiming(true);
-    event.currentTarget.setPointerCapture(event.pointerId);
   }, [getLocalPoint, isPaused, resultState]);
 
   const dismissInstruction = useCallback(() => {
@@ -392,6 +394,8 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
     setIsPaused(false);
     setResultState('running');
     setIsAiming(false);
+    setAimPointer(null);
+    activeAimPointerIdRef.current = null;
     roundStartedAtRef.current = Date.now();
   }, [initialTime, isBoss, levelId]);
 
@@ -458,23 +462,44 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
     if (!isAiming) return undefined;
 
     const handlePointerMove = (event: PointerEvent) => {
+      if (activeAimPointerIdRef.current !== null && event.pointerId !== activeAimPointerIdRef.current) return;
       const point = getLocalPoint(event.clientX, event.clientY);
       if (!point) return;
       setAimPointer(point);
       setAimVector(buildAimVector(layoutRef.current.launcherOrigin, point));
     };
 
-    const handlePointerUp = () => {
+    const handlePointerUp = (event: PointerEvent) => {
+      if (activeAimPointerIdRef.current !== null && event.pointerId !== activeAimPointerIdRef.current) return;
+      activeAimPointerIdRef.current = null;
       setIsAiming(false);
+      setAimPointer(null);
       fireProjectile();
     };
 
+    const handlePointerCancel = (event: PointerEvent) => {
+      if (activeAimPointerIdRef.current !== null && event.pointerId !== activeAimPointerIdRef.current) return;
+      activeAimPointerIdRef.current = null;
+      setIsAiming(false);
+      setAimPointer(null);
+    };
+
+    const handleWindowBlur = () => {
+      activeAimPointerIdRef.current = null;
+      setIsAiming(false);
+      setAimPointer(null);
+    };
+
     window.addEventListener('pointermove', handlePointerMove);
-    window.addEventListener('pointerup', handlePointerUp, { once: true });
+    window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('pointercancel', handlePointerCancel);
+    window.addEventListener('blur', handleWindowBlur);
 
     return () => {
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('pointercancel', handlePointerCancel);
+      window.removeEventListener('blur', handleWindowBlur);
     };
   }, [fireProjectile, getLocalPoint, isAiming]);
 
@@ -684,7 +709,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
           type="button"
           onPointerDown={handleLauncherPointerDown}
           disabled={resultState !== 'running' || isPaused || Boolean(projectile)}
-          className="relative h-16 w-16 touch-none rounded-full border border-cyan-100/45 bg-[radial-gradient(circle_at_35%_28%,rgba(186,230,253,0.95),rgba(14,116,144,0.9)_58%,rgba(8,47,73,0.96))] shadow-[0_10px_24px_rgba(3,37,65,0.45)] disabled:opacity-50"
+          className="relative h-20 w-20 touch-none rounded-full border border-cyan-100/45 bg-[radial-gradient(circle_at_35%_28%,rgba(186,230,253,0.95),rgba(14,116,144,0.9)_58%,rgba(8,47,73,0.96))] shadow-[0_10px_24px_rgba(3,37,65,0.45)] disabled:opacity-50"
           aria-label="Drag to aim and release to fire"
         >
           <div className="absolute inset-[22%] rounded-full border border-white/35" />

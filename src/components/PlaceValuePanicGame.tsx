@@ -336,14 +336,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     }
   };
 
-  const handleColumnDrop = (column: PlaceColumn, event: React.DragEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    const tokenId = event.dataTransfer.getData('text/plain');
-    if (tokenId) {
-      attemptPlacement(column, tokenId);
-    }
-  };
-
   const handleColumnTap = (column: PlaceColumn) => {
     if (!selectedTokenId) return;
     attemptPlacement(column, selectedTokenId);
@@ -402,9 +394,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
             <button
               key={column}
               type="button"
-              onDragOver={(event) => event.preventDefault()}
-              onDrop={(event) => handleColumnDrop(column, event)}
               onClick={() => handleColumnTap(column)}
+              disabled={resultState !== 'running' || isPaused}
               className={`relative flex h-28 flex-col items-center justify-center overflow-hidden rounded-[1rem] border text-center shadow-[0_12px_24px_rgba(2,6,23,0.34)] transition md:h-36 md:rounded-[1.2rem] ${
                 placedToken
                   ? 'border-emerald-200/55 bg-emerald-500/25'
@@ -449,10 +440,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                     key={token.id}
                     layout
                     type="button"
-                    draggable={resultState === 'running' && !isPaused}
-                    onDragStart={(event) => event.dataTransfer.setData('text/plain', token.id)}
+                    disabled={resultState !== 'running' || isPaused}
                     onClick={() => setSelectedTokenId((previous) => previous === token.id ? null : token.id)}
-                    className={`flex h-12 items-center justify-center rounded-xl border text-2xl font-black transition md:h-14 md:text-3xl ${
+                    aria-pressed={isSelected}
+                    className={`flex h-14 min-h-[56px] items-center justify-center rounded-xl border text-2xl font-black transition touch-manipulation md:h-16 md:text-3xl ${
                       isSelected
                         ? 'border-cyan-200 bg-cyan-500/45 text-white shadow-[0_0_20px_rgba(34,211,238,0.35)]'
                         : 'border-white/20 bg-slate-900/60 text-white/90'

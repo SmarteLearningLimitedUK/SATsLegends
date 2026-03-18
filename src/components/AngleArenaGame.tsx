@@ -108,6 +108,7 @@ const AngleArenaGame: React.FC<AngleArenaGameProps> = ({ levelId, avatarId, onVi
   const targetScore = 760 + (levelId * 230);
   const tolerance = Math.max(4, 10 - levelId);
   const arenaRef = useRef<HTMLDivElement>(null);
+  const dragPointerIdRef = useRef<number | null>(null);
 
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(72 + (levelId * 9));
@@ -128,6 +129,20 @@ const AngleArenaGame: React.FC<AngleArenaGameProps> = ({ levelId, avatarId, onVi
   const progress = Math.min((score / targetScore) * 100, 100);
   const power = clamp(pullStrength / 100, 0.38, 1);
 
+  const updateAimFromClientPoint = (clientX: number, clientY: number) => {
+    const rect = arenaRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    const x = ((clientX - rect.left) / rect.width) * 100;
+    const y = ((clientY - rect.top) / rect.height) * 100;
+    const dx = x - ORIGIN.x;
+    const dy = ORIGIN.y - y;
+
+    setAimAngle(clamp(roundToStep((Math.atan2(dy, dx) * 180) / Math.PI, levelId >= 3 ? 5 : 10), 25, 150));
+    setPullStrength(clamp(Math.round(Math.sqrt(dx * dx + dy * dy) * 2.4), 40, 100));
+    setReticle({ x: clamp(x, 10, 88), y: clamp(y, 18, 84) });
+  };
+
   useEffect(() => {
     setScore(0);
     setTimeLeft(72 + (levelId * 9));
@@ -144,6 +159,7 @@ const AngleArenaGame: React.FC<AngleArenaGameProps> = ({ levelId, avatarId, onVi
     setIsLaunching(false);
     setIsVictory(false);
     setIsGameOver(false);
+    dragPointerIdRef.current = null;
   }, [levelId, totalRounds]);
 
   useEffect(() => {
@@ -165,25 +181,33 @@ const AngleArenaGame: React.FC<AngleArenaGameProps> = ({ levelId, avatarId, onVi
   useEffect(() => {
     if (!dragging) return undefined;
     const handleMove = (event: PointerEvent) => {
-      const rect = arenaRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      const x = ((event.clientX - rect.left) / rect.width) * 100;
-      const y = ((event.clientY - rect.top) / rect.height) * 100;
-      const dx = x - ORIGIN.x;
-      const dy = ORIGIN.y - y;
-      setAimAngle(clamp(roundToStep((Math.atan2(dy, dx) * 180) / Math.PI, levelId >= 3 ? 5 : 10), 25, 150));
-      setPullStrength(clamp(Math.round(Math.sqrt(dx * dx + dy * dy) * 2.4), 40, 100));
-      setReticle({ x: clamp(x, 10, 88), y: clamp(y, 18, 84) });
+      if (dragPointerIdRef.current !== null && event.pointerId !== dragPointerIdRef.current) return;
+      updateAimFromClientPoint(event.clientX, event.clientY);
     };
-    const handleRelease = () => {
+    const handleRelease = (event: PointerEvent) => {
+      if (dragPointerIdRef.current !== null && event.pointerId !== dragPointerIdRef.current) return;
+      dragPointerIdRef.current = null;
       setDragging(false);
       if (!isLaunching && !isGameOver && !isVictory) launchShot();
     };
+    const handleCancel = (event: PointerEvent) => {
+      if (dragPointerIdRef.current !== null && event.pointerId !== dragPointerIdRef.current) return;
+      dragPointerIdRef.current = null;
+      setDragging(false);
+    };
+    const handleWindowBlur = () => {
+      dragPointerIdRef.current = null;
+      setDragging(false);
+    };
     window.addEventListener('pointermove', handleMove);
-    window.addEventListener('pointerup', handleRelease, { once: true });
+    window.addEventListener('pointerup', handleRelease);
+    window.addEventListener('pointercancel', handleCancel);
+    window.addEventListener('blur', handleWindowBlur);
     return () => {
       window.removeEventListener('pointermove', handleMove);
       window.removeEventListener('pointerup', handleRelease);
+      window.removeEventListener('pointercancel', handleCancel);
+      window.removeEventListener('blur', handleWindowBlur);
     };
   }, [dragging, isGameOver, isLaunching, isVictory, levelId]);
 
@@ -340,11 +364,11 @@ const AngleArenaGame: React.FC<AngleArenaGameProps> = ({ levelId, avatarId, onVi
               <div className="absolute left-[8%] bottom-[8%] z-20 w-[26%] max-w-[12rem]">
                 <button type="button" onPointerDown={(event) => {
                   if (isLaunching || isGameOver || isVictory) return;
+                  event.preventDefault();
+                  dragPointerIdRef.current = event.pointerId;
                   setDragging(true);
-                  const rect = arenaRef.current?.getBoundingClientRect();
-                  if (!rect) return;
-                  setReticle({ x: clamp(((event.clientX - rect.left) / rect.width) * 100, 10, 88), y: clamp(((event.clientY - rect.top) / rect.height) * 100, 18, 84) });
-                }} className="relative aspect-[1/1.08] w-full rounded-[2.2rem] bg-transparent">
+                  updateAimFromClientPoint(event.clientX, event.clientY);
+                }} className="relative aspect-[1/1.08] w-full touch-none rounded-[2.2rem] bg-transparent">
                   <div className="absolute bottom-[2%] left-1/2 h-6 w-[64%] -translate-x-1/2 rounded-full bg-cyan-300/16 blur-2xl" />
                   <div className="absolute bottom-[8%] left-[34%] h-[50%] w-[11%] rounded-full bg-[linear-gradient(180deg,#8b5e34,#4a2d18)] shadow-[0_10px_16px_rgba(0,0,0,0.24)]" />
                   <div className="absolute bottom-[12%] left-[56%] h-[44%] w-[11%] rounded-full bg-[linear-gradient(180deg,#8b5e34,#4a2d18)] shadow-[0_10px_16px_rgba(0,0,0,0.24)]" />
