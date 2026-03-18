@@ -115,15 +115,15 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     ),
   },
   burger_builder: {
-    label: 'Burger Bar',
-    focus: 'Fractions and mixed numbers',
+    label: 'Take-Out Rush',
+    focus: 'Fractions, equivalence and exact composition',
     rules: {
-      title: 'Burger Bar',
-      summary: 'Build the burger so the total equals the customer order.',
+      title: 'Take-Out Rush',
+      summary: 'Fill each take-out order to the exact target total before patience runs out.',
       bullets: [
-        'Each ingredient has a fraction value.',
-        'Match the exact total and include required ingredients.',
-        'You have 45 seconds before the customer leaves.',
+        'Each portion piece has a fraction value.',
+        'Match the target exactly using available pieces.',
+        'Speed and accuracy both improve your result.',
       ],
     },
   },

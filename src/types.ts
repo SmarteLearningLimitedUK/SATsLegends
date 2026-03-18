@@ -37,6 +37,10 @@ export interface LevelData {
   id: number;
   stars: number;
   isLocked: boolean;
+  // Stable content-planning key for curriculum and design mapping.
+  blueprintKey?: string;
+  // Optional display override for island-specific mini-game naming.
+  displayName?: string;
   isBoss?: boolean;
   bossUnlockCoins?: number;
   gameType?: MiniGameType;

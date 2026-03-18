@@ -12,6 +12,7 @@ interface IslandLevelsProps {
 }
 
 const getLevelLabel = (level: LevelData) => {
+  if (level.displayName) return level.displayName;
   if (!level.gameType) return `Level ${level.id}`;
   return getGameTypeLabel(level.gameType);
 };
@@ -50,10 +51,11 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
   const scrollRef = useRef<HTMLDivElement>(null);
   const NODE_POSITIONS = [
     { top: 12, left: 50 },
-    { top: 31, left: 37 },
-    { top: 51, left: 64 },
-    { top: 71, left: 39 },
-    { top: 89, left: 58 },
+    { top: 27, left: 36 },
+    { top: 42, left: 63 },
+    { top: 57, left: 38 },
+    { top: 73, left: 62 },
+    { top: 88, left: 42 },
   ];
 
   const completedLevels = player.completedLevels[island.id] || [];

@@ -34,6 +34,14 @@ const ISLAND_REPORT_META: Record<number, { domain: string; revise: string }> = {
     domain: 'Algebra & Logic',
     revise: 'Build confidence with patterns, rules, equations, and SATs reasoning.',
   },
+  7: {
+    domain: 'Data & Statistics',
+    revise: 'Practise reading tables, bar charts, line graphs, and data comparisons.',
+  },
+  8: {
+    domain: 'Mixed Reasoning',
+    revise: 'Focus on multi-step mixed-domain SATs reasoning and strategy.',
+  },
 };
 
 const getPerformanceTone = (score: number) => {

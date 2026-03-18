@@ -43,6 +43,8 @@ const ISLAND_HOTSPOTS: Record<number, IslandHotspot> = {
   4: { x: 68, y: 86, width: 23, height: 14, labelX: 68, labelY: 91 },
   5: { x: 73, y: 29, width: 25, height: 16, labelX: 73, labelY: 35 },
   6: { x: 50, y: 12, width: 26, height: 17, labelX: 50, labelY: 19 },
+  7: { x: 13, y: 26, width: 20, height: 15, labelX: 14, labelY: 31 },
+  8: { x: 88, y: 11, width: 20, height: 14, labelX: 86, labelY: 16 },
 };
 
 const MAP_AMBIENTS: AmbientRegion[] = [
@@ -53,6 +55,8 @@ const MAP_AMBIENTS: AmbientRegion[] = [
   { id: 'ruins-island', x: 71, y: 54, width: 24, height: 18, effect: 'dust-devils' },
   { id: 'lush-grove', x: 24, y: 69, width: 21, height: 16, effect: 'butterflies' },
   { id: 'desert-oasis', x: 68, y: 85, width: 22, height: 15, effect: 'birds' },
+  { id: 'data-desert', x: 13, y: 25, width: 18, height: 14, effect: 'stars' },
+  { id: 'sats-summit', x: 86, y: 10, width: 20, height: 14, effect: 'wind-wisps' },
 ];
 
 const renderAmbientEffect = (effect: AmbientRegion['effect']) => {

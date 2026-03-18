@@ -371,7 +371,7 @@ const App: React.FC = () => {
     const islandId = selectedIsland.id;
     const levelId = selectedLevel.id;
     const nextIslandId = islandId + 1;
-    const islandUnlockedName = selectedLevel.isBoss && nextIslandId <= 6
+    const islandUnlockedName = selectedLevel.isBoss && nextIslandId <= ISLANDS.length
       ? ISLANDS.find(island => island.id === nextIslandId)?.name
       : undefined;
     let achievementsUnlocked: string[] = [];
@@ -412,7 +412,7 @@ const App: React.FC = () => {
       const nextCoinTotal = prev.coins + earnedCoins;
       const unlockedIslands = prev.unlockedIslands.includes(nextIslandId) || !selectedLevel.isBoss
         ? prev.unlockedIslands
-        : [...prev.unlockedIslands, nextIslandId].filter(id => id <= 6);
+        : [...prev.unlockedIslands, nextIslandId].filter(id => id <= ISLANDS.length);
 
       ACHIEVEMENTS.forEach(achievement => {
         if (achievements.includes(achievement.id)) return;
