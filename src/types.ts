@@ -7,7 +7,7 @@ export type MiniGameType =
   | 'logic_sort'
   | 'shape_shift'
   | 'matrix_match'
-  | 'burger_builder'
+  | 'take_out_rush'
   | 'fraction_match'
   | 'crystal_core'
   | 'prime_pop'

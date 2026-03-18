@@ -2,8 +2,8 @@ $ErrorActionPreference = 'Stop'
 
 Add-Type -AssemblyName System.Drawing
 
-$sourcePath = 'D:\codexsatsgame\external-assets\game assets\burger\burgerassets.png'
-$targetRoot = 'D:\gamedevsam\SATSLegends\src\assets\burger\slices'
+$sourcePath = 'D:\codexsatsgame\external-assets\game assets\take_out\take_out_assets.png'
+$targetRoot = 'D:\gamedevsam\SATSLegends\src\assets\take_out\slices'
 
 if (Test-Path $targetRoot) {
   Remove-Item $targetRoot -Recurse -Force
@@ -12,17 +12,17 @@ if (Test-Path $targetRoot) {
 New-Item -ItemType Directory -Force -Path $targetRoot | Out-Null
 
 $slices = @(
-  @{ Name = 'top_bun'; X = 34; Y = 52; W = 404; H = 202 },
-  @{ Name = 'lettuce'; X = 502; Y = 60; W = 414; H = 150 },
-  @{ Name = 'tomato'; X = 40; Y = 284; W = 412; H = 170 },
-  @{ Name = 'onion'; X = 560; Y = 292; W = 322; H = 154 },
-  @{ Name = 'bacon'; X = 42; Y = 516; W = 414; H = 144 },
-  @{ Name = 'pickles'; X = 566; Y = 514; W = 330; H = 164 },
-  @{ Name = 'cheese'; X = 32; Y = 712; W = 418; H = 170 },
-  @{ Name = 'patty'; X = 562; Y = 650; W = 330; H = 250 },
-  @{ Name = 'ketchup'; X = 34; Y = 894; W = 406; H = 120 },
-  @{ Name = 'bbq'; X = 34; Y = 1078; W = 410; H = 118 },
-  @{ Name = 'bottom_bun'; X = 570; Y = 896; W = 330; H = 238 }
+  @{ Name = 'tray_lid'; X = 34; Y = 52; W = 404; H = 202 },
+  @{ Name = 'portion_eighth_b'; X = 502; Y = 60; W = 414; H = 150 },
+  @{ Name = 'portion_eighth_c'; X = 40; Y = 284; W = 412; H = 170 },
+  @{ Name = 'portion_eighth_d'; X = 560; Y = 292; W = 322; H = 154 },
+  @{ Name = 'portion_eighth_a'; X = 42; Y = 516; W = 414; H = 144 },
+  @{ Name = 'portion_eighth_e'; X = 566; Y = 514; W = 330; H = 164 },
+  @{ Name = 'portion_quarter'; X = 32; Y = 712; W = 418; H = 170 },
+  @{ Name = 'portion_half'; X = 562; Y = 650; W = 330; H = 250 },
+  @{ Name = 'sauce_swirl_a'; X = 34; Y = 894; W = 406; H = 120 },
+  @{ Name = 'sauce_swirl_b'; X = 34; Y = 1078; W = 410; H = 118 },
+  @{ Name = 'tray_base'; X = 570; Y = 896; W = 330; H = 238 }
 )
 
 function Remove-Backdrop {
@@ -144,3 +144,4 @@ finally {
 }
 
 Write-Output "sliced:$($slices.Count)"
+

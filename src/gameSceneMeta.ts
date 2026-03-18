@@ -63,7 +63,7 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   logic_sort: REASONING_SCENE,
   shape_shift: REASONING_SCENE,
   matrix_match: REASONING_SCENE,
-  burger_builder: FRACTION_SCENE,
+  take_out_rush: FRACTION_SCENE,
   fraction_match: FRACTION_SCENE,
   crystal_core: FRACTION_SCENE,
   prime_pop: NUMBER_SCENE,

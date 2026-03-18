@@ -7,7 +7,7 @@ import { GameScreen, IslandData, LevelData, MiniGameType, PlayerData } from './t
 import WorldMap from './components/WorldMap';
 import IslandLevels from './components/IslandLevels';
 import PotionPourGame from './components/PotionPourGame';
-import BurgerBuilderGame from './components/BurgerBuilderGame';
+import TakeOutRushGame from './components/TakeOutRushGame';
 import FractionMatchGame from './components/FractionMatchGame';
 import PrimePopGame from './components/PrimePopGame';
 import AngleArenaGame from './components/AngleArenaGame';
@@ -33,7 +33,15 @@ import AchievementsModal from './components/modals/AchievementsModal';
 import ParentDashboard from './components/ParentDashboard';
 import LevelResultModal from './components/LevelResultModal';
 import GameRulesModal from './components/GameRulesModal';
-import { GameScreenShell, HUDBar, RewardPanel } from './components/layout/ScreenPrimitives';
+import {
+  FramedPanel,
+  GameScreenShell,
+  HUDBar,
+  PrimaryActionButton,
+  PremiumHeaderBar,
+  RewardPanel,
+  SecondaryActionButton,
+} from './components/layout/ScreenPrimitives';
 import { GAME_META } from './gameMeta';
 import { getBlueprintRuleSet } from './content/islandBlueprint';
 import {
@@ -52,7 +60,7 @@ const QUESTION_MATCH_FRAME_GAMES: MiniGameType[] = [
   'cloud_collapse',
   'fraction_match',
   'potion_pour',
-  'burger_builder',
+  'take_out_rush',
   'prime_pop',
   'angle_arena',
   'polygon_palace',
@@ -598,8 +606,8 @@ const App: React.FC = () => {
         return <FractionMatchGame {...sharedProps} variantGameType="cloud_collapse" isBoss={Boolean(selectedLevel.isBoss)} />;
       case 'potion_pour':
         return <PotionPourGame {...sharedProps} />;
-      case 'burger_builder':
-        return <BurgerBuilderGame {...sharedProps} />;
+    case 'take_out_rush':
+      return <TakeOutRushGame {...sharedProps} />;
       case 'fraction_match':
         return <FractionMatchGame {...sharedProps} isBoss={Boolean(selectedLevel.isBoss)} />;
       case 'prime_pop':
@@ -748,8 +756,8 @@ const App: React.FC = () => {
       case 'profile_setup':
         return (
           <GameScreenShell className="aaa-name-screen my-auto flex items-center justify-center">
-            <div className="licensed-board-frame aaa-name-panel relative z-10 flex w-full max-w-sm flex-col gap-4 overflow-hidden p-4 text-center sm:max-w-md md:max-w-3xl md:gap-8 md:p-10">
-              <HUDBar
+            <FramedPanel variant="surface" className="aaa-name-panel relative z-10 flex w-full max-w-sm flex-col gap-4 overflow-hidden p-4 text-center sm:max-w-md md:max-w-3xl md:gap-8 md:p-10">
+              <PremiumHeaderBar
                 eyebrow="Step 1 of 2"
                 title="Name your hero"
                 className="justify-center text-center"
@@ -772,21 +780,15 @@ const App: React.FC = () => {
                   className="licensed-slice-paper-panel aaa-name-input w-full max-w-xl rounded-[1.25rem] px-5 py-3 text-center text-base font-black text-amber-950 shadow-[0_14px_28px_rgba(0,0,0,0.2)] outline-none placeholder:text-amber-900/35 focus:ring-4 focus:ring-yellow-300/45 md:rounded-[1.75rem] md:px-6 md:py-5 md:text-3xl"
                 />
                 <div className="flex flex-wrap justify-center gap-3 md:gap-4">
-                  <button
-                    onClick={() => setScreen('splash')}
-                    className="ui-button-primary rounded-[1.25rem] px-6 py-3 text-sm md:rounded-2xl md:px-8 md:py-4 md:text-base"
-                  >
+                  <SecondaryActionButton onClick={() => setScreen('splash')} className="rounded-[1.25rem] px-6 py-3 text-sm md:rounded-2xl md:px-8 md:py-4 md:text-base">
                     Back
-                  </button>
-                  <button
-                    onClick={handleSaveProfileName}
-                    className="ui-button-primary rounded-[1.25rem] px-8 py-3 text-base font-black text-white transition-all md:rounded-2xl md:px-10 md:py-4 md:text-lg"
-                  >
+                  </SecondaryActionButton>
+                  <PrimaryActionButton onClick={handleSaveProfileName} className="rounded-[1.25rem] px-8 py-3 text-base md:rounded-2xl md:px-10 md:py-4 md:text-lg">
                     Choose avatar
-                  </button>
+                  </PrimaryActionButton>
                 </div>
               </div>
-            </div>
+            </FramedPanel>
           </GameScreenShell>
         );
 
@@ -841,40 +843,34 @@ const App: React.FC = () => {
       case 'settings':
         return (
           <GameScreenShell className="my-auto flex items-center justify-center">
-            <div className="licensed-board-frame flex w-full max-w-md flex-col gap-4 p-4 text-center md:max-w-2xl md:gap-6 md:p-8">
-              <HUDBar eyebrow="Adventure menu" title={screen === 'shop' ? 'Shop' : screen === 'profile' ? 'Profile' : 'Settings'} className="justify-center text-center" />
+            <FramedPanel variant="surface" className="flex w-full max-w-md flex-col gap-4 p-4 text-center md:max-w-2xl md:gap-6 md:p-8">
+              <PremiumHeaderBar eyebrow="Adventure menu" title={screen === 'shop' ? 'Shop' : screen === 'profile' ? 'Profile' : 'Settings'} className="justify-center text-center" />
               <RewardPanel className="mx-auto max-w-xl">
                 <p className="text-sm font-black leading-relaxed text-amber-950 md:text-base">
                   This screen is parked for the next premium UI pass. The main adventure flow is live and fully playable.
                 </p>
               </RewardPanel>
-              <button
-                onClick={goToHome}
-                className="ui-button-primary mx-auto rounded-[1.25rem] px-8 py-3 text-base font-black text-white md:rounded-2xl md:px-10 md:py-4 md:text-lg"
-              >
+              <PrimaryActionButton onClick={goToHome} className="mx-auto rounded-[1.25rem] px-8 py-3 text-base md:rounded-2xl md:px-10 md:py-4 md:text-lg">
                 Return to map
-              </button>
-            </div>
+              </PrimaryActionButton>
+            </FramedPanel>
           </GameScreenShell>
         );
 
       default:
         return (
           <GameScreenShell className="my-auto flex items-center justify-center">
-            <div className="licensed-board-frame flex w-full max-w-md flex-col gap-4 p-4 text-center md:max-w-2xl md:gap-6 md:p-8">
+            <FramedPanel variant="surface" className="flex w-full max-w-md flex-col gap-4 p-4 text-center md:max-w-2xl md:gap-6 md:p-8">
               <HUDBar eyebrow="Screen missing" title={`Screen ${screen}`} className="justify-center text-center" />
               <RewardPanel className="mx-auto max-w-xl">
                 <p className="text-sm font-black text-amber-950 md:text-base">
                   This route is not wired into the live adventure flow yet.
                 </p>
               </RewardPanel>
-              <button
-                onClick={goToHome}
-                className="ui-button-primary mx-auto rounded-[1.25rem] px-8 py-3 text-base font-black text-white md:rounded-2xl md:px-10 md:py-4 md:text-lg"
-              >
+              <PrimaryActionButton onClick={goToHome} className="mx-auto rounded-[1.25rem] px-8 py-3 text-base md:rounded-2xl md:px-10 md:py-4 md:text-lg">
                 Return to map
-              </button>
-            </div>
+              </PrimaryActionButton>
+            </FramedPanel>
           </GameScreenShell>
         );
     }

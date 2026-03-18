@@ -62,8 +62,8 @@ export const ISLANDS: IslandData[] = [
     mapImage: world02Map,
     decorations: [],
     levels: [
-      { id: 1, stars: 0, isLocked: false, blueprintKey: 'take_out_rush', displayName: 'Take-Out Rush', gameType: 'burger_builder' },
-      { id: 2, stars: 0, isLocked: false, blueprintKey: 'fraction_forge', displayName: 'Fraction Forge', gameType: 'burger_builder' },
+      { id: 1, stars: 0, isLocked: false, blueprintKey: 'take_out_rush', displayName: 'Take-Out Rush', gameType: 'take_out_rush' },
+      { id: 2, stars: 0, isLocked: false, blueprintKey: 'fraction_forge', displayName: 'Fraction Forge', gameType: 'take_out_rush' },
       { id: 3, stars: 0, isLocked: false, blueprintKey: 'match3_equivalence', displayName: 'Match-3 Equivalence', gameType: 'fraction_match' },
       { id: 4, stars: 0, isLocked: false, blueprintKey: 'fraction_flow', displayName: 'Fraction Flow', gameType: 'cloud_collapse' },
       { id: 5, stars: 0, isLocked: false, blueprintKey: 'fraction_of_amount', displayName: 'Fraction of Amount', gameType: 'percent_pulse' },

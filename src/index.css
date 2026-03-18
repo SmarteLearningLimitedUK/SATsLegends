@@ -169,20 +169,20 @@ button:disabled {
   0%, 100% {
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,0.2),
-      inset 0 -4px 0 rgba(31, 12, 87, 0.92),
-      0 12px 0 rgba(52, 18, 124, 0.96),
-      0 26px 42px rgba(24, 10, 68, 0.42),
+      inset 0 -4px 0 rgba(14, 50, 112, 0.92),
+      0 12px 0 rgba(18, 69, 150, 0.96),
+      0 26px 42px rgba(7, 24, 56, 0.42),
       0 0 0 rgba(255, 194, 45, 0.16),
-      0 0 28px rgba(132, 74, 255, 0.2);
+      0 0 28px rgba(59, 130, 246, 0.2);
   }
   50% {
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,0.26),
-      inset 0 -4px 0 rgba(31, 12, 87, 0.9),
-      0 12px 0 rgba(52, 18, 124, 0.96),
-      0 28px 46px rgba(24, 10, 68, 0.48),
+      inset 0 -4px 0 rgba(14, 50, 112, 0.9),
+      0 12px 0 rgba(18, 69, 150, 0.96),
+      0 28px 46px rgba(7, 24, 56, 0.48),
       0 0 20px rgba(255, 201, 66, 0.2),
-      0 0 34px rgba(132, 74, 255, 0.28);
+      0 0 34px rgba(59, 130, 246, 0.28);
   }
 }
 
@@ -191,16 +191,16 @@ button:disabled {
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,0.18),
       inset 0 -4px 0 rgba(106, 42, 0, 0.84),
-      0 10px 0 rgba(88, 34, 104, 0.94),
-      0 24px 36px rgba(24, 10, 68, 0.34),
+      0 10px 0 rgba(18, 69, 150, 0.94),
+      0 24px 36px rgba(7, 24, 56, 0.34),
       0 0 18px rgba(255, 190, 34, 0.18);
   }
   50% {
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,0.24),
       inset 0 -4px 0 rgba(106, 42, 0, 0.84),
-      0 10px 0 rgba(88, 34, 104, 0.94),
-      0 26px 40px rgba(24, 10, 68, 0.4),
+      0 10px 0 rgba(18, 69, 150, 0.94),
+      0 26px 40px rgba(7, 24, 56, 0.4),
       0 0 30px rgba(255, 190, 34, 0.26);
   }
 }
@@ -464,7 +464,7 @@ button:disabled {
   text-shadow: 0 2px 0 rgba(0,0,0,0.28);
 }
 .licensed-answer-button:hover { filter: brightness(1.04); }
-.licensed-answer-button:active { transform: translateY(2px); box-shadow: 0 3px 0 rgba(67,56,202,0.62); }
+.licensed-answer-button:active { transform: translateY(2px); box-shadow: 0 3px 0 rgba(37,99,235,0.62); }
 
 .licensed-answer-chip {
   border: 2px solid rgba(59,130,246,0.32);
@@ -609,7 +609,7 @@ button:disabled {
   border: 1px solid rgba(255,255,255,0.14);
   background:
     radial-gradient(circle at top, rgba(96,165,250,0.18), transparent 30%),
-    radial-gradient(circle at bottom right, rgba(168,85,247,0.14), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(56,189,248,0.14), transparent 30%),
     linear-gradient(180deg, rgba(26,38,72,0.98), rgba(11,17,31,0.98));
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.1),
@@ -653,7 +653,7 @@ button:disabled {
 .casual-tab-shell {
   border: 1px solid rgba(255,255,255,0.14);
   background:
-    linear-gradient(180deg, rgba(67,56,202,0.96), rgba(37,99,235,0.98));
+    linear-gradient(180deg, rgba(37,99,235,0.96), rgba(29,78,216,0.98));
   box-shadow:
     0 18px 36px rgba(2,6,23,0.24);
 }
@@ -662,7 +662,7 @@ button:disabled {
   border: 1px solid rgba(255,255,255,0.14);
   background:
     radial-gradient(circle at top, rgba(255,255,255,0.12), transparent 30%),
-    linear-gradient(180deg, rgba(59,130,246,0.95), rgba(67,56,202,0.98));
+    linear-gradient(180deg, rgba(59,130,246,0.95), rgba(29,78,216,0.98));
   box-shadow:
     0 14px 32px rgba(2,6,23,0.24);
 }
@@ -1513,11 +1513,11 @@ button:disabled {
   border-radius: 999px;
   background:
     radial-gradient(circle at 50% -5%, rgba(255,255,255,0.24), rgba(255,255,255,0) 38%),
-    linear-gradient(180deg, #8f64ff 0%, #5f36d2 48%, #351680 100%);
+    linear-gradient(180deg, #2f8df5 0%, #1f63cf 48%, #163d8a 100%);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.18),
-    inset 0 -3px 0 rgba(42,19,102,0.86),
-    0 8px 0 rgba(49, 22, 115, 0.92),
+    inset 0 -3px 0 rgba(19,41,102,0.86),
+    0 8px 0 rgba(22,53,115,0.92),
     0 16px 22px rgba(15, 23, 42, 0.24);
   filter: drop-shadow(0 10px 18px rgba(15,23,42,0.2));
 }
@@ -1623,8 +1623,8 @@ button:disabled {
 .world-map-island-label:active {
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.16),
-    inset 0 -2px 0 rgba(42,19,102,0.86),
-    0 5px 0 rgba(49, 22, 115, 0.92),
+    inset 0 -2px 0 rgba(19,41,102,0.86),
+    0 5px 0 rgba(22,53,115,0.92),
     0 12px 16px rgba(15, 23, 42, 0.2);
 }
 
@@ -2067,11 +2067,11 @@ button:disabled {
   border-radius: 1.3rem;
   background:
     radial-gradient(circle at 50% 0%, rgba(255,255,255,0.22), rgba(255,255,255,0) 34%),
-    linear-gradient(180deg, #8c63ff 0%, #5932c8 46%, #31146f 100%);
+    linear-gradient(180deg, #2f8df5 0%, #1f63cf 46%, #163d8a 100%);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.2),
-    inset 0 -4px 0 rgba(42,19,102,0.9),
-    0 10px 0 rgba(41,18,103,0.96),
+    inset 0 -4px 0 rgba(14,50,112,0.9),
+    0 10px 0 rgba(18,69,150,0.96),
     0 18px 26px rgba(2,6,23,0.24);
 }
 
@@ -2086,19 +2086,19 @@ button:disabled {
   border-radius: 1rem;
   background:
     radial-gradient(circle at 50% 0%, rgba(255,255,255,0.18), rgba(255,255,255,0) 36%),
-    linear-gradient(180deg, #865cff 0%, #5830c6 46%, #31156f 100%);
+    linear-gradient(180deg, #2f8df5 0%, #1f63cf 46%, #163d8a 100%);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.16),
-    inset 0 -3px 0 rgba(42,19,102,0.88),
-    0 7px 0 rgba(41,18,103,0.92),
+    inset 0 -3px 0 rgba(14,50,112,0.88),
+    0 7px 0 rgba(18,69,150,0.92),
     0 16px 20px rgba(2,6,23,0.2);
 }
 
 .hero-arrow-button:active {
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.16),
-    inset 0 -3px 0 rgba(42,19,102,0.9),
-    0 5px 0 rgba(41,18,103,0.96),
+    inset 0 -3px 0 rgba(14,50,112,0.9),
+    0 5px 0 rgba(18,69,150,0.96),
     0 12px 18px rgba(2,6,23,0.18);
 }
 
@@ -2145,7 +2145,7 @@ button:disabled {
 .hero-arrow-icon {
   position: relative;
   z-index: 2;
-  color: #4a206c;
+  color: #0f3c82;
   filter:
     drop-shadow(0 1px 0 rgba(255,247,215,0.9))
     drop-shadow(0 3px 5px rgba(128,52,0,0.18));
@@ -2185,12 +2185,12 @@ button:disabled {
   border-radius: 999px;
   background:
     radial-gradient(circle at 50% -5%, rgba(255,255,255,0.24), rgba(255,255,255,0) 36%),
-    linear-gradient(180deg, #9462ff 0%, #6037d5 46%, #35157f 100%);
+    linear-gradient(180deg, #2f8df5 0%, #1f63cf 46%, #163d8a 100%);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.2),
-    inset 0 -4px 0 rgba(42,19,102,0.88),
-    0 11px 0 rgba(88, 34, 104, 0.94),
-    0 24px 36px rgba(24, 10, 68, 0.34),
+    inset 0 -4px 0 rgba(14,50,112,0.88),
+    0 11px 0 rgba(18, 69, 150, 0.94),
+    0 24px 36px rgba(7, 24, 56, 0.34),
     0 0 24px rgba(255, 190, 34, 0.18);
   animation: hero-cta-pulse 2.8s ease-in-out infinite;
   isolation: isolate;
@@ -2281,7 +2281,7 @@ button:disabled {
   line-height: 1;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: #48206f;
+  color: #173b79;
   text-shadow:
     0 1px 0 rgba(255,249,221,0.95),
     0 4px 12px rgba(122, 51, 0, 0.16);
@@ -2300,9 +2300,9 @@ button:disabled {
   transform: translateY(2px) scale(0.985);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.16),
-    inset 0 -3px 0 rgba(42,19,102,0.88),
-    0 5px 0 rgba(88, 34, 104, 0.94),
-    0 14px 24px rgba(24, 10, 68, 0.26),
+    inset 0 -3px 0 rgba(14,50,112,0.88),
+    0 5px 0 rgba(18, 69, 150, 0.94),
+    0 14px 24px rgba(7, 24, 56, 0.26),
     0 0 14px rgba(255, 190, 34, 0.14);
 }
 
@@ -2327,13 +2327,13 @@ button:disabled {
   overflow: visible;
   background:
     radial-gradient(circle at 50% -5%, rgba(255,255,255,0.3), rgba(255,255,255,0) 36%),
-    linear-gradient(180deg, #915fff 0%, #5b30c2 44%, #34157f 100%);
+    linear-gradient(180deg, #2a8af8 0%, #1f67d9 44%, #16439f 100%);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.2),
-    inset 0 -4px 0 rgba(31, 12, 87, 0.92),
-    0 12px 0 rgba(52, 18, 124, 0.96),
-    0 26px 42px rgba(24, 10, 68, 0.42),
-    0 0 28px rgba(132, 74, 255, 0.2);
+    inset 0 -4px 0 rgba(16, 50, 112, 0.9),
+    0 12px 0 rgba(18, 69, 150, 0.92),
+    0 26px 42px rgba(7, 24, 56, 0.4),
+    0 0 28px rgba(59, 130, 246, 0.2);
   animation: splash-cta-pulse 2.7s ease-in-out infinite;
   isolation: isolate;
 }
@@ -2421,7 +2421,7 @@ button:disabled {
   letter-spacing: 0.08em;
   line-height: 1;
   text-transform: uppercase;
-  color: #45216f;
+  color: #173b79;
   -webkit-text-stroke: 0.02em rgba(255, 248, 214, 0.42);
   text-shadow:
     0 1px 0 rgba(255, 247, 215, 0.92),
@@ -2446,10 +2446,10 @@ button:disabled {
   animation-play-state: paused;
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.18),
-    inset 0 -3px 0 rgba(31, 12, 87, 0.92),
-    0 7px 0 rgba(52, 18, 124, 0.96),
-    0 16px 26px rgba(24, 10, 68, 0.3),
-    0 0 22px rgba(132, 74, 255, 0.16);
+    inset 0 -3px 0 rgba(14, 50, 112, 0.92),
+    0 7px 0 rgba(18, 69, 150, 0.96),
+    0 16px 26px rgba(7, 24, 56, 0.3),
+    0 0 22px rgba(59, 130, 246, 0.16);
 }
 
 .splash-continue-button:not(:disabled):active .splash-continue-button-face {
@@ -2503,7 +2503,7 @@ button:disabled {
   height: 28%;
 }
 
-/* Final screen-lock pass: one cohesive clean-pill language (no ribbon/plank button textures) */
+/* Final art polish: enforce a single asset-driven premium GUI skin across screens */
 .ui-button-primary,
 .ui-action-button,
 .game-button-primary,
@@ -2512,31 +2512,29 @@ button:disabled {
 .hero-cta-button,
 .splash-continue-button,
 .licensed-slice-yellow-plank {
-  border: 1px solid rgba(255, 238, 172, 0.58) !important;
+  border: 1px solid rgba(255, 234, 168, 0.62) !important;
   border-radius: 999px !important;
-  color: #12223f !important;
+  color: #15213d !important;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0) 35%),
-    linear-gradient(180deg, #ffd85d 0%, #f8bd2e 52%, #f29f17 100%) !important;
-  text-shadow: 0 1px 0 rgba(255,255,255,0.35) !important;
+    url('./assets/casual_ui/inputs/btn_1.png') center/100% 100% no-repeat !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.38) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.62),
-    0 6px 0 rgba(166, 103, 6, 0.82),
+    inset 0 1px 0 rgba(255,255,255,0.58),
+    0 6px 0 rgba(140, 84, 10, 0.76),
     0 14px 22px rgba(15,23,42,0.24) !important;
 }
 
 .licensed-submit-button,
 .licensed-slice-green-pill {
-  border: 1px solid rgba(151, 255, 147, 0.56) !important;
+  border: 1px solid rgba(157, 255, 153, 0.56) !important;
   border-radius: 999px !important;
   color: #f6fff5 !important;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.24), rgba(255,255,255,0) 34%),
-    linear-gradient(180deg, #6bf14a 0%, #43cf28 52%, #2ea81d 100%) !important;
+    url('./assets/casual_ui/inputs/btn_2.png') center/100% 100% no-repeat !important;
   text-shadow: 0 1px 0 rgba(15, 84, 20, 0.56) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.54),
-    0 6px 0 rgba(24, 118, 31, 0.78),
+    inset 0 1px 0 rgba(255,255,255,0.48),
+    0 6px 0 rgba(24, 110, 32, 0.72),
     0 14px 22px rgba(15,23,42,0.24) !important;
 }
 
@@ -2551,12 +2549,11 @@ button:disabled {
   border-radius: 999px !important;
   color: #f3fbff !important;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0) 34%),
-    linear-gradient(180deg, #3c9dff 0%, #2874ea 55%, #1f56be 100%) !important;
+    url('./assets/casual_ui/inputs/btn_4.png') center/100% 100% no-repeat !important;
   text-shadow: 0 1px 0 rgba(12, 58, 136, 0.64) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.52),
-    0 6px 0 rgba(17, 72, 170, 0.82),
+    inset 0 1px 0 rgba(255,255,255,0.44),
+    0 6px 0 rgba(18, 66, 157, 0.78),
     0 14px 22px rgba(15,23,42,0.22) !important;
 }
 
@@ -2609,36 +2606,47 @@ button:disabled {
 .hero-nav-button,
 .hero-arrow-button,
 .hero-arrow-button-clean {
-  border: 1px solid rgba(171, 219, 255, 0.55) !important;
+  border: 1px solid rgba(151, 209, 255, 0.48) !important;
   border-radius: 1rem !important;
   color: #eff9ff !important;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0) 34%),
-    linear-gradient(180deg, #3b97fb 0%, #2d76ea 56%, #1f56be 100%) !important;
+    url('./assets/casual_ui/inputs/btn_5.png') center/100% 100% no-repeat !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.46),
-    0 5px 0 rgba(19, 73, 173, 0.8),
+    inset 0 1px 0 rgba(255,255,255,0.34),
+    0 5px 0 rgba(15, 48, 110, 0.74),
     0 12px 20px rgba(15,23,42,0.2) !important;
 }
 
-.ui-panel-unified,
 .licensed-game-card,
+.ui-panel-unified,
+.casual-panel-surface,
+.licensed-game-card {
+  border: 1px solid rgba(198, 230, 255, 0.24) !important;
+  background: url('./assets/casual_ui/dialogs_panels/panel_3.png') center/100% 100% no-repeat !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    0 16px 32px rgba(2,6,23,0.28) !important;
+}
+
 .licensed-game-card-dark,
 .licensed-board-frame,
 .casual-modal-panel,
-.casual-panel-surface,
 .casual-panel-strong,
 .fantasy-hud-shell,
 .fantasy-dock-shell,
 .hero-screen-shell {
-  border: 1px solid rgba(255,255,255,0.18) !important;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0) 22%),
-    url('./assets/reskin/main_png/text_box.png') center/100% 100% no-repeat,
-    linear-gradient(180deg, rgba(30,58,138,0.94), rgba(15,23,42,0.98)) !important;
+  border: 1px solid rgba(176, 220, 255, 0.24) !important;
+  background: url('./assets/casual_ui/dialogs_panels/panel.png') center/100% 100% no-repeat !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.16),
-    0 16px 32px rgba(2,6,23,0.28) !important;
+    inset 0 1px 0 rgba(255,255,255,0.1),
+    0 16px 32px rgba(2,6,23,0.3) !important;
+}
+
+.licensed-slice-paper-panel,
+.reward-panel,
+.ui-paper-panel {
+  border: 1px solid rgba(255, 235, 168, 0.38) !important;
+  background: url('./assets/casual_ui/dialogs_panels/card_1.png') center/100% 100% no-repeat !important;
 }
 
 .world-map-island-label,
@@ -2647,12 +2655,11 @@ button:disabled {
 .world-map-island-label-face-progress,
 .world-map-island-label-face-locked {
   border-radius: 999px !important;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0) 24%),
-    linear-gradient(180deg, rgba(96,165,250,0.98), rgba(59,130,246,0.98)) !important;
+  border: 1px solid rgba(172, 220, 255, 0.42) !important;
+  background: url('./assets/casual_ui/dialogs_panels/list.png') center/100% 100% no-repeat !important;
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.2),
-    0 6px 0 rgba(29,78,216,0.72),
+    0 6px 0 rgba(18, 66, 157, 0.68),
     0 14px 20px rgba(15,23,42,0.2) !important;
 }
 
@@ -2907,7 +2914,7 @@ button:disabled {
   }
 }
 
-/* Explicit no-purple profile setup (Type Name) screen */
+/* Explicit blue/gold profile setup (Type Name) screen */
 .screen-profile-setup.app-viewport.licensed-playfield-bg {
   background:
     radial-gradient(circle at 50% 10%, rgba(186, 230, 253, 0.18), rgba(186, 230, 253, 0) 28%),

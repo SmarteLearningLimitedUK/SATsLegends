@@ -114,7 +114,7 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       'Look for colour, size, number and rotation rules before you commit.'
     ),
   },
-  burger_builder: {
+  take_out_rush: {
     label: 'Take-Out Rush',
     focus: 'Fractions, equivalence and exact composition',
     rules: {

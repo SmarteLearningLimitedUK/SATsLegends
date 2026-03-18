@@ -46,7 +46,7 @@ const INGREDIENTS: IngredientType[] = [
   { id: 'crystal', label: 'Blue Crystal', short: 'BC', colors: ['#38bdf8', '#2563eb'] },
   { id: 'mushroom', label: 'Red Mushroom', short: 'RM', colors: ['#fb7185', '#be123c'] },
   { id: 'herb', label: 'Green Herb', short: 'GH', colors: ['#4ade80', '#15803d'] },
-  { id: 'gem', label: 'Azure Gem', short: 'PG', colors: ['#c084fc', '#7c3aed'] },
+  { id: 'gem', label: 'Azure Gem', short: 'AG', colors: ['#60a5fa', '#2563eb'] },
   { id: 'flower', label: 'Yellow Flower', short: 'YF', colors: ['#facc15', '#f59e0b'] },
 ];
 
@@ -492,7 +492,7 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
                       <div className="absolute bottom-[52%] left-[22%] flex h-12 w-12 items-center justify-center rounded-full bg-[radial-gradient(circle,#dbeafe,#38bdf8)] shadow-[0_10px_18px_rgba(56,189,248,0.24)] md:h-14 md:w-14">
                         <AssetIcon name="gem" className="h-5 w-5" />
                       </div>
-                      <div className="absolute bottom-[55%] right-[22%] flex h-12 w-12 items-center justify-center rounded-full bg-[radial-gradient(circle,#f5d0fe,#c084fc)] shadow-[0_10px_18px_rgba(192,132,252,0.24)] md:h-14 md:w-14">
+                        <div className="absolute bottom-[55%] right-[22%] flex h-12 w-12 items-center justify-center rounded-full bg-[radial-gradient(circle,#bfdbfe,#38bdf8)] shadow-[0_10px_18px_rgba(56,189,248,0.24)] md:h-14 md:w-14">
                         <AssetIcon name="gem" className="h-5 w-5" />
                       </div>
                     </div>

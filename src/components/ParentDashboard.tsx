@@ -3,6 +3,10 @@ import { motion } from 'motion/react';
 import { PlayerData } from '../types';
 import { ISLANDS } from '../constants';
 import AssetIcon from './AssetIcon';
+import {
+  FramedPanel,
+  PremiumProgressBar,
+} from './layout/ScreenPrimitives';
 
 interface ParentDashboardProps {
   player: PlayerData;
@@ -179,21 +183,22 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
       <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto px-4 pb-24 md:gap-4 md:px-8 md:pb-8">
         <div className="grid grid-cols-4 gap-2 md:gap-4">
           {stats.map(item => (
-            <div
+            <FramedPanel
               key={item.label}
-              className="licensed-game-card-dark rounded-[1rem] p-2.5 text-center text-white md:rounded-[1.75rem] md:p-4"
+              variant="dark"
+              className="rounded-[1rem] p-2.5 text-center md:rounded-[1.75rem] md:p-4"
             >
               <AssetIcon name={item.icon} className="mx-auto h-3.5 w-3.5 md:h-5 md:w-5" />
               <div className="mt-1 text-base font-black md:mt-2 md:text-3xl">{item.value}</div>
               <div className="text-[8px] font-black uppercase tracking-[0.18em] text-white/55 md:text-[10px]">
                 {item.label}
               </div>
-            </div>
+            </FramedPanel>
           ))}
         </div>
 
         <div className="grid min-h-0 flex-1 gap-2.5 md:grid-cols-[1.18fr_0.92fr] md:gap-4">
-          <section className="licensed-game-card-dark flex min-h-0 flex-col rounded-[1.4rem] p-3 text-white md:rounded-[2rem] md:p-5">
+          <FramedPanel variant="dark" className="flex min-h-0 flex-col rounded-[1.4rem] p-3 md:rounded-[2rem] md:p-5">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/60">Curriculum coverage</div>
@@ -232,12 +237,8 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
                       <span>{area.earnedStars}/{area.maxStars} stars</span>
                     </div>
 
-                    <div className="mt-1.5 h-2 overflow-hidden rounded-full border border-white/10 bg-black/35 md:h-2.5">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${area.readiness}%` }}
-                        className={`h-full rounded-full bg-gradient-to-r ${tone.bar}`}
-                      />
+                    <div className="mt-1.5">
+                      <PremiumProgressBar value={area.readiness} toneClass={`bg-gradient-to-r ${tone.bar}`} />
                     </div>
 
                     <div className="mt-1.5 h-[2rem] overflow-hidden text-[9px] leading-tight text-white/72 md:h-[2.35rem] md:text-[10px]">
@@ -247,10 +248,10 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
                 );
               })}
             </div>
-          </section>
+          </FramedPanel>
 
           <section className="grid min-h-0 gap-2.5 md:grid-rows-[auto_auto_1fr] md:gap-4">
-            <div className="licensed-game-card-dark rounded-[1.4rem] p-3 text-white md:rounded-[2rem] md:p-5">
+            <FramedPanel variant="dark" className="rounded-[1.4rem] p-3 md:rounded-[2rem] md:p-5">
               <div className="flex items-center gap-3">
                 <div className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-[1.3rem] border ${readinessTone.chip} md:h-24 md:w-24 md:rounded-[1.8rem]`}>
                   <span className="text-2xl font-black md:text-4xl">{report.readinessScore}%</span>
@@ -263,10 +264,10 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
                   </p>
                 </div>
               </div>
-            </div>
+            </FramedPanel>
 
             <div className="grid grid-cols-2 gap-2.5 md:gap-4">
-              <div className="licensed-game-card-dark rounded-[1.4rem] p-3 text-white md:rounded-[2rem] md:p-5">
+              <FramedPanel variant="dark" className="rounded-[1.4rem] p-3 md:rounded-[2rem] md:p-5">
                 <div className="flex items-center gap-2">
                   <AssetIcon name="star" className="h-4 w-4 text-yellow-300 md:h-5 md:w-5" />
                   <div className="text-[10px] font-black uppercase tracking-[0.24em] text-yellow-100/60">Strongest areas</div>
@@ -279,9 +280,9 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
                     </div>
                   ))}
                 </div>
-              </div>
+              </FramedPanel>
 
-              <div className="licensed-game-card-dark rounded-[1.4rem] p-3 text-white md:rounded-[2rem] md:p-5">
+              <FramedPanel variant="dark" className="rounded-[1.4rem] p-3 md:rounded-[2rem] md:p-5">
                 <div className="flex items-center gap-2">
                   <AssetIcon name="check" className="h-4 w-4 text-rose-200 md:h-5 md:w-5" />
                   <div className="text-[10px] font-black uppercase tracking-[0.24em] text-yellow-100/60">Needs revision</div>
@@ -294,10 +295,10 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
                     </div>
                   ))}
                 </div>
-              </div>
+              </FramedPanel>
             </div>
 
-            <div className="licensed-game-card-dark rounded-[1.4rem] p-3 text-white md:rounded-[2rem] md:p-5">
+            <FramedPanel variant="dark" className="rounded-[1.4rem] p-3 md:rounded-[2rem] md:p-5">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <div className="text-[10px] font-black uppercase tracking-[0.24em] text-yellow-100/60">Coaching note</div>
@@ -320,7 +321,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
                   </div>
                 ))}
               </div>
-            </div>
+            </FramedPanel>
           </section>
         </div>
       </div>

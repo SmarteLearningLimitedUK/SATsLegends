@@ -10,6 +10,7 @@ import cardBgAsset from '../assets/fantasy_hero/frames/card_bg.png';
 import cardBorderAsset from '../assets/fantasy_hero/frames/card_border.png';
 import cardInnerAsset from '../assets/fantasy_hero/frames/card_inner.png';
 import cardGradientAsset from '../assets/fantasy_hero/frames/card_gradient.png';
+import { PrimaryActionButton } from './layout/ScreenPrimitives';
 
 interface AvatarSelectProps {
   selectedId: string;
@@ -237,17 +238,21 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
             </motion.button>
           </div>
 
-          <motion.button
+          <motion.div
             whileHover={{ scale: 1.02, y: -2 }}
             whileTap={{ scale: 0.985, y: 1 }}
+            className="w-full max-w-[22rem] md:max-w-[27rem]"
+          >
+            <PrimaryActionButton
             onClick={() => {
               triggerHaptic('success');
               onConfirm();
             }}
-            className="ui-button-primary mt-3 w-full max-w-[22rem] rounded-[1.25rem] px-10 py-3.5 text-lg font-black uppercase tracking-[0.07em] md:mt-4 md:max-w-[27rem] md:rounded-[1.45rem] md:px-12 md:py-4 md:text-2xl"
-          >
+            className="mt-3 w-full rounded-[1.25rem] px-10 py-3.5 text-lg tracking-[0.07em] md:mt-4 md:rounded-[1.45rem] md:px-12 md:py-4 md:text-2xl"
+            >
             Begin Adventure
-          </motion.button>
+            </PrimaryActionButton>
+          </motion.div>
 
           <div className="mt-1 text-xs font-bold text-cyan-100/82 md:text-sm">
             Selected Hero: <span className="text-yellow-200">{selectedAvatar.name}</span>

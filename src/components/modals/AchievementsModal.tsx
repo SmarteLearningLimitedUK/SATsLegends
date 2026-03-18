@@ -3,7 +3,12 @@ import { motion, AnimatePresence } from 'motion/react';
 import AssetIcon from '../AssetIcon';
 import { PlayerData } from '../../types';
 import { ACHIEVEMENTS } from '../../constants';
-import { HUDBar, RewardPanel } from '../layout/ScreenPrimitives';
+import {
+  FramedPanel,
+  PremiumHeaderBar,
+  PremiumProgressBar,
+  RewardPanel,
+} from '../layout/ScreenPrimitives';
 
 interface AchievementsModalProps {
   isOpen: boolean;
@@ -38,28 +43,26 @@ const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, onClose, 
                 <AssetIcon name="trophy" className="h-8 w-8 md:h-12 md:w-12" />
               </div>
 
-              <HUDBar eyebrow="Collection" title="Your Badges" className="w-full justify-center text-center" />
+              <PremiumHeaderBar eyebrow="Collection" title="Your Badges" className="w-full" />
               <RewardPanel className="mb-4 mt-3 w-full max-w-xl md:mb-6">
                 <p className="text-center text-[9px] font-black uppercase tracking-[0.18em] text-amber-900/70 md:text-sm md:tracking-widest">
                   Collect them all to become a Math Master
                 </p>
               </RewardPanel>
 
-              <div className="mb-4 w-full max-w-md licensed-game-card rounded-[1.1rem] p-3 text-white md:mb-8 md:rounded-3xl md:p-4">
+              <FramedPanel className="mb-4 w-full max-w-md rounded-[1.1rem] p-3 text-white md:mb-8 md:rounded-3xl md:p-4">
                 <div className="mb-1.5 flex items-center justify-between">
                   <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70 md:text-xs md:tracking-widest">Collection Progress</span>
                   <span className="text-xs font-black text-white md:text-sm">{unlockedCount} / {totalCount}</span>
                 </div>
-                <div className="h-3 w-full overflow-hidden rounded-full border border-white/5 bg-black/40 md:h-4">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${progress}%` }}
-                    className="relative h-full bg-gradient-to-r from-yellow-300 to-yellow-500"
-                  >
-                    <div className="absolute inset-0 h-1/2 w-full bg-white/20" />
-                  </motion.div>
-                </div>
-              </div>
+                <motion.div initial={{ opacity: 0.65 }} animate={{ opacity: 1 }}>
+                  <PremiumProgressBar
+                    value={progress}
+                    className="h-3 md:h-4"
+                    toneClass="bg-gradient-to-r from-yellow-300 to-amber-400"
+                  />
+                </motion.div>
+              </FramedPanel>
 
               <div className="grid w-full grid-cols-4 gap-1.5 md:gap-4">
                 {ACHIEVEMENTS.map((achievement, idx) => {

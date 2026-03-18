@@ -745,7 +745,7 @@ const renderPercentPulse = (visual: Extract<VisualData, { type: 'pulse' }>) => {
               initial={false}
               animate={{ width: `${clamp(visual.meterValue, 8, 100)}%` }}
               transition={{ type: 'spring', stiffness: 120, damping: 18 }}
-              className="relative h-full rounded-full bg-[linear-gradient(90deg,#22d3ee_0%,#c084fc_50%,#f472b6_100%)] shadow-[0_0_18px_rgba(232,121,249,0.4)]"
+                      className="relative h-full rounded-full bg-[linear-gradient(90deg,#22d3ee_0%,#38bdf8_50%,#4ade80_100%)] shadow-[0_0_18px_rgba(56,189,248,0.38)]"
             >
               <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.16),rgba(255,255,255,0.52),rgba(255,255,255,0.16))] bg-[length:180%_100%] animate-[hud-shine_2.2s_linear_infinite]" />
             </motion.div>

@@ -3,7 +3,12 @@ import { motion, AnimatePresence } from 'motion/react';
 import AssetIcon from '../AssetIcon';
 import rewardChest from '../../assets/fantasy_hero/demo_rewards/chest_02.png';
 import { DAILY_REWARDS } from '../../constants';
-import { HUDBar, RewardPanel } from '../layout/ScreenPrimitives';
+import {
+  FramedPanel,
+  PremiumHeaderBar,
+  PrimaryActionButton,
+  RewardPanel,
+} from '../layout/ScreenPrimitives';
 
 interface DailyRewardsModalProps {
   isOpen: boolean;
@@ -36,10 +41,10 @@ const DailyRewardsModal: React.FC<DailyRewardsModalProps> = ({ isOpen, onClose, 
                 <img src={rewardChest} className="h-full w-full object-contain" alt="reward chest" />
               </div>
 
-              <HUDBar
+              <PremiumHeaderBar
                 eyebrow="Streak bonuses"
                 title="Daily Rewards"
-                className="w-full justify-center text-center"
+                className="w-full"
               />
 
               <RewardPanel className="mb-4 mt-3 w-full md:mb-6">
@@ -68,7 +73,7 @@ const DailyRewardsModal: React.FC<DailyRewardsModalProps> = ({ isOpen, onClose, 
                 })}
               </div>
 
-              <div className="mb-4 w-full licensed-game-card rounded-[1.1rem] p-3 text-white md:mb-8 md:rounded-3xl md:p-6">
+              <FramedPanel className="mb-4 w-full rounded-[1.1rem] p-3 text-white md:mb-8 md:rounded-3xl md:p-6">
                 <div className="flex items-center justify-between gap-4">
                   <div className="text-left">
                     <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/60 md:text-xs md:tracking-widest">Current Streak</div>
@@ -80,22 +85,25 @@ const DailyRewardsModal: React.FC<DailyRewardsModalProps> = ({ isOpen, onClose, 
                     ))}
                   </div>
                 </div>
-              </div>
+              </FramedPanel>
 
-              <motion.button
+              <motion.div
                 whileHover={!claimedToday ? { scale: 1.02, y: -2 } : {}}
                 whileTap={!claimedToday ? { scale: 0.98 } : {}}
-                disabled={claimedToday}
-                onClick={() => {
-                  const currentDay = DAILY_REWARDS[(streak - 1) % 7];
-                  onClaim(currentDay.reward);
-                }}
-                className={`w-full rounded-[1.1rem] py-3.5 text-sm font-black transition-all md:rounded-3xl md:py-6 md:text-2xl ${claimedToday
-                  ? 'ui-button-primary cursor-not-allowed text-white/70 opacity-75'
-                  : 'ui-button-primary text-white'}`}
               >
-                {claimedToday ? 'ALREADY CLAIMED' : 'CLAIM REWARD'}
-              </motion.button>
+                <PrimaryActionButton
+                  disabled={claimedToday}
+                  onClick={() => {
+                    const currentDay = DAILY_REWARDS[(streak - 1) % 7];
+                    onClaim(currentDay.reward);
+                  }}
+                  className={`w-full rounded-[1.1rem] py-3.5 text-sm font-black transition-all md:rounded-3xl md:py-6 md:text-2xl ${
+                    claimedToday ? 'cursor-not-allowed opacity-75' : ''
+                  }`}
+                >
+                  {claimedToday ? 'ALREADY CLAIMED' : 'CLAIM REWARD'}
+                </PrimaryActionButton>
+              </motion.div>
             </div>
           </motion.div>
         </div>

@@ -3,7 +3,13 @@ import { AnimatePresence, motion } from 'motion/react';
 import AssetIcon from './AssetIcon';
 import { triggerHaptic } from '../haptics';
 import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
-import { RewardPanel } from './layout/ScreenPrimitives';
+import {
+  FramedPanel,
+  PremiumHeaderBar,
+  PrimaryActionButton,
+  RewardPanel,
+  SecondaryActionButton,
+} from './layout/ScreenPrimitives';
 
 interface LevelResultModalProps {
   isOpen: boolean;
@@ -52,11 +58,12 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
                 <img src={isVictory ? rewardChest : rewardStash} alt="Reward" className="h-full w-full object-contain drop-shadow-xl" />
               </div>
 
-              <div className="text-center">
-                <div className="text-[10px] font-black uppercase tracking-[0.3em] text-white/60">Level complete</div>
-                <h2 className="mt-1.5 text-xl font-black text-white md:mt-2 md:text-4xl">{result.title}</h2>
-                <p className="mx-auto mt-1.5 max-w-md text-[11px] text-white/70 md:mt-2 md:text-base">{result.subtitle}</p>
-              </div>
+              <PremiumHeaderBar
+                eyebrow="Level complete"
+                title={result.title}
+                className="text-center"
+              />
+              <p className="mx-auto -mt-2 max-w-md text-center text-[11px] text-white/70 md:text-base">{result.subtitle}</p>
 
               <div className="flex items-center justify-center gap-1.5 md:gap-2">
                 {[1, 2, 3].map((star, index) => (
@@ -73,18 +80,18 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
               </div>
 
               <div className="grid grid-cols-3 gap-2 md:gap-3">
-                <div className="licensed-game-card rounded-[1rem] p-2.5 text-center text-white md:rounded-[1.35rem] md:p-4">
+                <FramedPanel className="rounded-[1rem] p-2.5 text-center md:rounded-[1.35rem] md:p-4">
                   <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/45">Score</div>
                   <div className="mt-1 text-base font-black text-white md:mt-2 md:text-2xl">{result.score}</div>
-                </div>
-                <div className="licensed-game-card rounded-[1rem] p-2.5 text-center text-white md:rounded-[1.35rem] md:p-4">
+                </FramedPanel>
+                <FramedPanel className="rounded-[1rem] p-2.5 text-center md:rounded-[1.35rem] md:p-4">
                   <div className="flex items-center justify-center gap-1 text-[9px] font-black uppercase tracking-[0.2em] text-amber-100/70"><AssetIcon name="coin" className="h-3 w-3" /> Coins</div>
                   <div className="mt-1 text-base font-black text-amber-200 md:mt-2 md:text-2xl">+{result.coinsEarned}</div>
-                </div>
-                <div className="licensed-game-card rounded-[1rem] p-2.5 text-center text-white md:rounded-[1.35rem] md:p-4">
+                </FramedPanel>
+                <FramedPanel className="rounded-[1rem] p-2.5 text-center md:rounded-[1.35rem] md:p-4">
                   <div className="flex items-center justify-center gap-1 text-[9px] font-black uppercase tracking-[0.2em] text-cyan-100/75"><AssetIcon name="star" className="h-3 w-3" /> XP</div>
                   <div className="mt-1 text-base font-black text-cyan-200 md:mt-2 md:text-2xl">+{result.xpEarned}</div>
-                </div>
+                </FramedPanel>
               </div>
 
               {(result.islandUnlockedName || (result.achievementsUnlocked?.length || 0) > 0) && (
@@ -115,27 +122,27 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
 
               <div className="mt-0.5 flex flex-col gap-2 sm:flex-row">
                 {result.onSecondary && result.secondaryLabel && (
-                  <button
+                  <SecondaryActionButton
                     onClick={() => {
                       triggerHaptic('selection');
                       result.onSecondary?.();
                     }}
-                    className="ui-button-primary flex flex-1 items-center justify-center gap-2 rounded-[1rem] px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.14em] text-white transition md:rounded-[1.2rem] md:px-5 md:py-4 md:text-sm"
+                    className="flex-1 gap-2 md:py-4"
                   >
                     <AssetIcon name="refresh" className="h-4 w-4" />
                     {result.secondaryLabel}
-                  </button>
+                  </SecondaryActionButton>
                 )}
-                <button
+                <PrimaryActionButton
                   onClick={() => {
                     triggerHaptic(isVictory ? 'success' : 'selection');
                     result.onPrimary();
                   }}
-                  className="ui-button-primary flex flex-1 items-center justify-center gap-2 rounded-[1rem] px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.14em] transition md:rounded-[1.2rem] md:px-5 md:py-4 md:text-sm"
+                  className="flex-1 gap-2 md:py-4"
                 >
                   {isVictory ? <AssetIcon name="trophy" className="h-4 w-4" /> : <AssetIcon name="refresh" className="h-4 w-4" />}
                   {result.primaryLabel}
-                </button>
+                </PrimaryActionButton>
               </div>
             </div>
           </motion.div>

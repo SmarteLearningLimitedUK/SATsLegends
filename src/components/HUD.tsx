@@ -30,7 +30,7 @@ const HUD: React.FC<HUDProps> = ({ title, score, targetScore, timeLeft, level, a
   return (
     <div className="flex w-full shrink-0 flex-col gap-1.5 px-1 py-0.5 md:gap-3 md:px-2">
       <div className="relative flex items-center justify-between overflow-hidden rounded-[1.1rem] p-2 shadow-[0_10px_30px_rgba(0,0,0,0.18)] md:rounded-[2rem] md:p-4">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(168,85,247,0.18),transparent_24%),linear-gradient(180deg,rgba(42,54,98,0.96),rgba(12,18,32,0.98))]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.18),transparent_24%),linear-gradient(180deg,rgba(42,54,98,0.96),rgba(12,18,32,0.98))]" />
         <div className="absolute inset-0 border border-white/12" />
 
         <div className="relative z-10 flex shrink-0 items-center gap-2 md:gap-4">

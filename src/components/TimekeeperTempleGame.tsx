@@ -241,7 +241,7 @@ const DockShip: React.FC<{
         <div className="mt-1 text-2xl font-black tracking-tight text-amber-50">{time}</div>
       </div>
       <div className={`relative mx-auto mt-3 h-16 w-24 ${mirrored ? '-scale-x-100' : ''}`}>
-        <div className="absolute bottom-0 left-[6%] right-[6%] h-[44%] rounded-[40%_60%_45%_55%/42%_38%_62%_58%] bg-[linear-gradient(180deg,#7c3aed,#1d4ed8_58%,#1e293b)] shadow-[0_10px_16px_rgba(29,78,216,0.22)]" />
+        <div className="absolute bottom-0 left-[6%] right-[6%] h-[44%] rounded-[40%_60%_45%_55%/42%_38%_62%_58%] bg-[linear-gradient(180deg,#38bdf8,#2563eb_58%,#1e293b)] shadow-[0_10px_16px_rgba(29,78,216,0.22)]" />
         <div className="absolute left-[42%] top-[6%] h-[38%] w-[5%] rounded-full bg-amber-300" />
         <div className="absolute left-[44%] top-[10%] h-[22%] w-[26%] -skew-x-[12deg] rounded-[0.35rem] bg-[linear-gradient(180deg,#f8fafc,#dbeafe)] shadow-[0_4px_10px_rgba(255,255,255,0.18)]" />
         <div className="absolute left-[18%] top-[48%] h-[12%] w-[28%] rounded-full bg-cyan-200/45 blur-sm" />
@@ -493,7 +493,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
                         transition={{ duration: 1.1, ease: 'easeInOut' }}
                         className="absolute left-[18%] top-[44%] h-16 w-24 md:h-20 md:w-28"
                       >
-                        <div className="absolute bottom-0 left-[6%] right-[6%] h-[44%] rounded-[40%_60%_45%_55%/42%_38%_62%_58%] bg-[linear-gradient(180deg,#7c3aed,#1d4ed8_58%,#1e293b)] shadow-[0_10px_16px_rgba(29,78,216,0.22)]" />
+                        <div className="absolute bottom-0 left-[6%] right-[6%] h-[44%] rounded-[40%_60%_45%_55%/42%_38%_62%_58%] bg-[linear-gradient(180deg,#38bdf8,#2563eb_58%,#1e293b)] shadow-[0_10px_16px_rgba(29,78,216,0.22)]" />
                         <div className="absolute left-1/2 top-[6%] h-[38%] w-[5%] -translate-x-1/2 rounded-full bg-amber-300" />
                         <div className="absolute left-[48%] top-[10%] h-[22%] w-[26%] -skew-x-[12deg] rounded-[0.35rem] bg-[linear-gradient(180deg,#f8fafc,#dbeafe)]" />
                       </motion.div>

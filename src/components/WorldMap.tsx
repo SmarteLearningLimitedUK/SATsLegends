@@ -261,7 +261,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
 
   return (
     <div
-      className="relative h-full w-full overflow-hidden md:overflow-y-auto md:overflow-x-hidden"
+      className="premium-hub-map relative h-full w-full overflow-hidden md:overflow-y-auto md:overflow-x-hidden"
       style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}
     >
       <div className="relative h-full w-full md:h-auto md:min-h-full md:aspect-[1024/1792] lg:mx-auto lg:max-w-[56rem]">

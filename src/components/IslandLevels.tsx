@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { IslandData, PlayerData, LevelData } from '../types';
 import AssetIcon from './AssetIcon';
 import { getGameLabel as getGameTypeLabel } from '../gameMeta';
+import { FramedPanel, HUDPill } from './layout/ScreenPrimitives';
 
 interface IslandLevelsProps {
   island: IslandData;
@@ -294,11 +295,11 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
             <AssetIcon name="back" className="h-6 w-6 md:h-8 md:w-8" />
           </motion.button>
 
-          <div className="pointer-events-auto licensed-game-card flex items-center gap-2 rounded-full p-2 text-white shadow-xl md:p-3">
-            <div className="licensed-slice-blue-banner flex items-center gap-1.5 rounded-full px-3 py-1 text-white">
+          <div className="pointer-events-auto flex items-center gap-2 rounded-full p-2 text-white shadow-xl md:p-3">
+            <HUDPill className="gap-1.5">
               <AssetIcon name="star" className="w-4 h-4 md:w-5 md:h-5 text-yellow-400" />
               <span className="text-sm md:text-base font-black text-white">{earnedStars}</span>
-            </div>
+            </HUDPill>
             <div className="licensed-slice-cyan-pill hidden items-center gap-1.5 rounded-full px-3 py-1 text-white md:flex">
               <span className="text-[10px] uppercase font-black tracking-widest text-white/70">Complete</span>
               <span className="text-sm font-black text-white ml-1">{completion}%</span>
@@ -308,7 +309,7 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
       </header>
 
       <div className="absolute bottom-6 left-6 right-6 z-50 pointer-events-none hidden md:flex justify-center">
-        <div className="licensed-game-card-dark flex items-center gap-6 rounded-3xl p-4 text-white shadow-2xl">
+        <FramedPanel variant="dark" className="flex items-center gap-6 rounded-3xl p-4 text-white shadow-2xl">
           <div>
             <div className="text-[10px] font-black uppercase text-amber-400 tracking-widest">{island.themeName}</div>
             <h1 className="text-2xl font-black text-white drop-shadow-md">{island.name}</h1>
@@ -316,7 +317,7 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
               Scroll down to reach the boss.
             </div>
           </div>
-        </div>
+        </FramedPanel>
       </div>
     </div>
   );
