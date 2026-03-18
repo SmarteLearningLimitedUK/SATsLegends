@@ -1,9 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { AVATARS } from '../constants';
-import { triggerHaptic } from '../haptics';
-import { getPlaceValuePanicLevelConfig } from '../content/island1NumberBaseCamp';
 import GameContainerView from './GameContainerView';
+import {
+  DigitTile,
+  PlaceValueSlotKey,
+  usePlaceValuePanicViewModel,
+} from './placeValuePanic/usePlaceValuePanicViewModel';
 
 interface PlaceValuePanicGameProps {
   levelId: number;
@@ -14,99 +17,37 @@ interface PlaceValuePanicGameProps {
   onBack: () => void;
 }
 
-type PlaceColumn = 'ones' | 'tens' | 'hundreds' | 'thousands';
-
-interface QueueDigitToken {
-  id: string;
-  digit: number;
+interface DragState {
+  tile: DigitTile;
+  pointerId: number;
+  clientX: number;
+  clientY: number;
+  offsetX: number;
+  offsetY: number;
+  width: number;
+  height: number;
 }
 
-interface PlaceValuePrompt {
-  id: string;
-  digits: Record<PlaceColumn, number>;
-  targetValue: number;
+interface SlotCandidate {
+  key: PlaceValueSlotKey;
+  distance: number;
 }
 
-interface FeedbackState {
-  id: number;
-  title: string;
-  detail: string;
-  tone: 'success' | 'warning' | 'error';
-}
-
-const COLUMN_ORDER: PlaceColumn[] = ['thousands', 'hundreds', 'tens', 'ones'];
-const COLUMN_VALUES: Record<PlaceColumn, number> = {
-  ones: 1,
-  tens: 10,
-  hundreds: 100,
-  thousands: 1000,
+const SLOT_DISPLAY_VALUES: Record<PlaceValueSlotKey, string> = {
+  thousands: '1000',
+  hundreds: '100',
+  tens: '10',
+  ones: '1',
+  tenths: '0.1',
+  hundredths: '0.01',
 };
 
-const COLUMN_LABELS: Record<PlaceColumn, string> = {
-  ones: 'Ones',
-  tens: 'Tens',
-  hundreds: 'Hundreds',
-  thousands: 'Thousands',
-};
+const MIN_TAP_TARGET = 44;
 
-const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
-
-const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
-
-const buildPrompt = (activeColumns: PlaceColumn[]): PlaceValuePrompt => {
-  const sortedColumns = [...activeColumns].sort((a, b) => COLUMN_VALUES[b] - COLUMN_VALUES[a]);
-  const digits: Record<PlaceColumn, number> = {
-    ones: 0,
-    tens: 0,
-    hundreds: 0,
-    thousands: 0,
-  };
-  const usedDigits = new Set<number>();
-
-  sortedColumns.forEach((column, index) => {
-    const needsNonZero = index === 0 && COLUMN_VALUES[column] >= 10;
-    let digit = randomInt(needsNonZero ? 1 : 0, 9);
-    while (usedDigits.has(digit)) {
-      digit = randomInt(needsNonZero ? 1 : 0, 9);
-    }
-    usedDigits.add(digit);
-    digits[column] = digit;
-  });
-
-  const targetValue = sortedColumns.reduce((sum, column) => sum + (digits[column] * COLUMN_VALUES[column]), 0);
-  return {
-    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    digits,
-    targetValue,
-  };
-};
-
-const makeToken = (digit: number): QueueDigitToken => ({
-  id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-  digit,
-});
-
-const seedQueueFromPrompt = (
-  prompt: PlaceValuePrompt,
-  activeColumns: PlaceColumn[],
-  queueLimit: number,
-): QueueDigitToken[] => {
-  const desiredCount = clamp(Math.min(4, queueLimit), 2, 4);
-  const mustHaveDigits = activeColumns.map((column) => prompt.digits[column]);
-  const seededDigits: number[] = [];
-
-  for (const digit of mustHaveDigits) {
-    if (seededDigits.length >= desiredCount) break;
-    seededDigits.push(digit);
-  }
-
-  while (seededDigits.length < desiredCount) {
-    seededDigits.push(randomInt(0, 9));
-  }
-
-  return seededDigits
-    .sort(() => Math.random() - 0.5)
-    .map((digit) => makeToken(digit));
+const feedbackToneClass = (tone: 'success' | 'warning' | 'error') => {
+  if (tone === 'success') return 'border-emerald-200/55 bg-emerald-500/28 text-emerald-50';
+  if (tone === 'error') return 'border-rose-200/55 bg-rose-500/30 text-rose-50';
+  return 'border-amber-200/55 bg-amber-500/26 text-amber-50';
 };
 
 const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
@@ -118,278 +59,190 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   onBack,
 }) => {
   const avatar = useMemo(() => AVATARS.find((item) => item.id === avatarId) || AVATARS[0], [avatarId]);
-  const resolvedMiniGameLevel = clamp(miniGameLevel || levelId, 1, 10);
-  const levelConfig = useMemo(() => getPlaceValuePanicLevelConfig(resolvedMiniGameLevel), [resolvedMiniGameLevel]);
-  const activeColumns = useMemo(
-    () => [...levelConfig.activeColumns].sort((a, b) => COLUMN_VALUES[b] - COLUMN_VALUES[a]),
-    [levelConfig.activeColumns],
-  );
 
-  const [queue, setQueue] = useState<QueueDigitToken[]>([]);
-  const [selectedTokenId, setSelectedTokenId] = useState<string | null>(null);
-  const [placed, setPlaced] = useState<Partial<Record<PlaceColumn, QueueDigitToken>>>({});
-  const [prompt, setPrompt] = useState<PlaceValuePrompt>(() => buildPrompt(levelConfig.activeColumns));
-  const [promptsCleared, setPromptsCleared] = useState(0);
-  const [score, setScore] = useState(0);
-  const [attempts, setAttempts] = useState(0);
-  const [correctPlacements, setCorrectPlacements] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(levelConfig.timeLimitSec);
-  const [feedback, setFeedback] = useState<FeedbackState | null>(null);
-  const [isPaused, setIsPaused] = useState(false);
-  const [resultState, setResultState] = useState<'running' | 'victory' | 'gameover'>('running');
+  const {
+    levelConfig,
+    resolvedMiniGameLevel,
+    round,
+    roundNumber,
+    slots,
+    trayTiles,
+    placedBySlot,
+    score,
+    combo,
+    pressure,
+    timeLeft,
+    progress,
+    accuracy,
+    feedback,
+    isPaused,
+    setIsPaused,
+    hintSlotKey,
+    lastRejectedTileId,
+    onTileGrab,
+    onDropTile,
+  } = usePlaceValuePanicViewModel({
+    levelId,
+    miniGameLevel,
+    onVictory,
+    onGameOver,
+  });
 
-  const promptStartedAtRef = useRef(Date.now());
-  const hasResolvedRef = useRef(false);
-  const scoreRef = useRef(score);
-  const attemptsRef = useRef(attempts);
-  const correctPlacementsRef = useRef(correctPlacements);
+  const [dragState, setDragState] = useState<DragState | null>(null);
+  const [hoverSlotKey, setHoverSlotKey] = useState<PlaceValueSlotKey | null>(null);
 
-  useEffect(() => { scoreRef.current = score; }, [score]);
-  useEffect(() => { attemptsRef.current = attempts; }, [attempts]);
-  useEffect(() => { correctPlacementsRef.current = correctPlacements; }, [correctPlacements]);
+  const slotRefs = useRef<Record<PlaceValueSlotKey, HTMLDivElement | null>>({
+    thousands: null,
+    hundreds: null,
+    tens: null,
+    ones: null,
+    tenths: null,
+    hundredths: null,
+  });
 
-  const setFeedbackState = (title: string, detail: string, tone: FeedbackState['tone']) => {
-    setFeedback({
-      id: Date.now(),
-      title,
-      detail,
-      tone,
+  useEffect(() => {
+    setDragState(null);
+    setHoverSlotKey(null);
+  }, [round.id]);
+
+  const activeSlots = useMemo(() => slots, [slots]);
+
+  const findSlotCandidate = (clientX: number, clientY: number): SlotCandidate | null => {
+    const availableSlots = activeSlots.filter((slot) => !slot.isFilled);
+    if (availableSlots.length === 0) return null;
+
+    let best: SlotCandidate | null = null;
+
+    for (const slot of availableSlots) {
+      const element = slotRefs.current[slot.key];
+      if (!element) continue;
+      const rect = element.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const dx = clientX - centerX;
+      const dy = clientY - centerY;
+      const distance = Math.hypot(dx, dy);
+
+      if (!best || distance < best.distance) {
+        best = { key: slot.key, distance };
+      }
+    }
+
+    if (!best) return null;
+
+    const firstSlot = slotRefs.current[availableSlots[0].key];
+    const fallbackSize = firstSlot?.getBoundingClientRect().width || 120;
+    const snapRadius = Math.max(56, Math.min(110, fallbackSize * 0.58));
+
+    return best.distance <= snapRadius ? best : null;
+  };
+
+  useEffect(() => {
+    if (!dragState) return undefined;
+
+    const handlePointerMove = (event: PointerEvent) => {
+      if (event.pointerId !== dragState.pointerId) return;
+
+      setDragState((current) => {
+        if (!current || current.pointerId !== event.pointerId) return current;
+        return {
+          ...current,
+          clientX: event.clientX,
+          clientY: event.clientY,
+        };
+      });
+
+      const candidate = findSlotCandidate(event.clientX, event.clientY);
+      setHoverSlotKey(candidate?.key || null);
+    };
+
+    const finishDrag = (event: PointerEvent) => {
+      if (event.pointerId !== dragState.pointerId) return;
+
+      const candidate = findSlotCandidate(event.clientX, event.clientY);
+      onDropTile(dragState.tile.id, candidate?.key || null);
+      setDragState(null);
+      setHoverSlotKey(null);
+    };
+
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', finishDrag);
+    window.addEventListener('pointercancel', finishDrag);
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', finishDrag);
+      window.removeEventListener('pointercancel', finishDrag);
+    };
+  }, [dragState, onDropTile, activeSlots]);
+
+  const handleTilePointerDown = (event: React.PointerEvent<HTMLButtonElement>, tile: DigitTile) => {
+    if (isPaused || tile.isPlaced) return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    onTileGrab(tile.id);
+    event.currentTarget.setPointerCapture(event.pointerId);
+
+    setDragState({
+      tile,
+      pointerId: event.pointerId,
+      clientX: event.clientX,
+      clientY: event.clientY,
+      offsetX: event.clientX - rect.left,
+      offsetY: event.clientY - rect.top,
+      width: rect.width,
+      height: rect.height,
     });
   };
-
-  const resetRound = (nextPrompt: PlaceValuePrompt) => {
-    setPrompt(nextPrompt);
-    setPlaced({});
-    setSelectedTokenId(null);
-    setQueue(seedQueueFromPrompt(nextPrompt, activeColumns, levelConfig.queueLimit));
-    promptStartedAtRef.current = Date.now();
-  };
-
-  const resolveVictory = (projectedScore?: number) => {
-    if (hasResolvedRef.current) return;
-    hasResolvedRef.current = true;
-    setResultState('victory');
-
-    const finalScore = Math.max(0, Math.round(projectedScore ?? scoreRef.current));
-    const accuracy = attemptsRef.current > 0 ? correctPlacementsRef.current / attemptsRef.current : 1;
-    const speedRatio = timeLeft / levelConfig.timeLimitSec;
-    const stars = accuracy >= 0.9 && speedRatio >= 0.25
-      ? 3
-      : accuracy >= 0.72
-        ? 2
-        : 1;
-
-    setFeedbackState('Order Complete', `Run finished with ${Math.round(accuracy * 100)}% accuracy.`, 'success');
-    triggerHaptic('success');
-    window.setTimeout(() => onVictory(stars, finalScore), 420);
-  };
-
-  const resolveGameOver = (title: string, detail: string) => {
-    if (hasResolvedRef.current) return;
-    hasResolvedRef.current = true;
-    setResultState('gameover');
-    setFeedbackState(title, detail, 'error');
-    triggerHaptic('error');
-    window.setTimeout(() => onGameOver(Math.max(0, Math.round(scoreRef.current))), 380);
-  };
-
-  useEffect(() => {
-    const initialPrompt = buildPrompt(levelConfig.activeColumns);
-    hasResolvedRef.current = false;
-    setQueue(seedQueueFromPrompt(initialPrompt, activeColumns, levelConfig.queueLimit));
-    setSelectedTokenId(null);
-    setPlaced({});
-    setPrompt(initialPrompt);
-    setPromptsCleared(0);
-    setScore(0);
-    setAttempts(0);
-    setCorrectPlacements(0);
-    setTimeLeft(levelConfig.timeLimitSec);
-    setFeedback({
-      id: Date.now(),
-      title: 'Match the target value',
-      detail: 'Place digits into the correct place-value columns.',
-      tone: 'warning',
-    });
-    setIsPaused(false);
-    setResultState('running');
-    promptStartedAtRef.current = Date.now();
-  }, [activeColumns, levelConfig.activeColumns, levelConfig.queueLimit, levelConfig.timeLimitSec]);
-
-  useEffect(() => {
-    if (queue.length > 0 || resultState !== 'running') return;
-    setQueue(seedQueueFromPrompt(prompt, activeColumns, levelConfig.queueLimit));
-  }, [activeColumns, levelConfig.queueLimit, prompt, queue.length, resultState]);
-
-  useEffect(() => {
-    if (resultState !== 'running' || isPaused) return undefined;
-    const timerId = window.setInterval(() => {
-      setTimeLeft((previous) => {
-        if (previous <= 1) {
-          window.clearInterval(timerId);
-          resolveGameOver('Time Out', 'You ran out of time before clearing the target queue.');
-          return 0;
-        }
-        return previous - 1;
-      });
-    }, 1000);
-    return () => window.clearInterval(timerId);
-  }, [isPaused, resultState]);
-
-  useEffect(() => {
-    if (resultState !== 'running' || isPaused) return undefined;
-    const spawnTimer = window.setInterval(() => {
-      setQueue((previous) => {
-        const unresolvedColumns = activeColumns.filter((column) => !placed[column]);
-        const spawnHelpful = unresolvedColumns.length > 0 && Math.random() > levelConfig.decoyChance;
-        let nextDigit: number;
-
-        if (spawnHelpful) {
-          const column = unresolvedColumns[randomInt(0, unresolvedColumns.length - 1)];
-          nextDigit = prompt.digits[column];
-        } else {
-          const blockedDigits = new Set(unresolvedColumns.map((column) => prompt.digits[column]));
-          nextDigit = randomInt(0, 9);
-          let attemptsForDecoy = 0;
-          while (blockedDigits.has(nextDigit) && attemptsForDecoy < 12) {
-            nextDigit = randomInt(0, 9);
-            attemptsForDecoy += 1;
-          }
-        }
-
-        return [...previous, makeToken(nextDigit)];
-      });
-    }, levelConfig.spawnIntervalMs);
-
-    return () => window.clearInterval(spawnTimer);
-  }, [activeColumns, isPaused, levelConfig.decoyChance, levelConfig.spawnIntervalMs, placed, prompt, resultState]);
-
-  useEffect(() => {
-    if (resultState !== 'running') return;
-    if (queue.length > levelConfig.queueLimit) {
-      resolveGameOver('Queue Overflow', 'Too many digits stacked up. Clear placements faster.');
-    }
-  }, [levelConfig.queueLimit, queue.length, resultState]);
-
-  useEffect(() => {
-    if (!feedback) return undefined;
-    const timeoutId = window.setTimeout(() => setFeedback(null), 1400);
-    return () => window.clearTimeout(timeoutId);
-  }, [feedback]);
-
-  const handlePromptClear = (projectedScore: number) => {
-    const elapsedSeconds = (Date.now() - promptStartedAtRef.current) / 1000;
-    const speedBonus = Math.max(20, Math.round(180 - elapsedSeconds * 18));
-    const clearedNext = promptsCleared + 1;
-    const nextScore = projectedScore + speedBonus;
-
-    setPromptsCleared(clearedNext);
-    setScore(nextScore);
-    setFeedbackState('Order Built', `+${speedBonus} speed bonus`, 'success');
-    triggerHaptic('success');
-
-    if (clearedNext >= levelConfig.promptsToClear) {
-      resolveVictory(nextScore);
-      return;
-    }
-
-    window.setTimeout(() => {
-      resetRound(buildPrompt(levelConfig.activeColumns));
-    }, 360);
-  };
-
-  const attemptPlacement = (column: PlaceColumn, tokenId: string) => {
-    if (resultState !== 'running' || isPaused) return;
-    const token = queue.find((item) => item.id === tokenId);
-    if (!token) return;
-
-    if (placed[column]) {
-      setFeedbackState('Column Locked', 'That column already has a digit. Choose another lane.', 'warning');
-      return;
-    }
-
-    setAttempts((previous) => previous + 1);
-    setQueue((previous) => previous.filter((item) => item.id !== tokenId));
-    setSelectedTokenId(null);
-
-    const requiredDigit = prompt.digits[column];
-    if (token.digit !== requiredDigit) {
-      setScore((previous) => Math.max(0, previous - 30));
-      setFeedbackState('Incorrect Placement', 'That digit does not match this column.', 'error');
-      triggerHaptic('error');
-      return;
-    }
-
-    const placementPoints = 110 + levelConfig.difficultyTier * 20;
-    const nextPlaced: Partial<Record<PlaceColumn, QueueDigitToken>> = { ...placed, [column]: token };
-    const projectedScore = score + placementPoints;
-
-    setPlaced(nextPlaced);
-    setCorrectPlacements((previous) => previous + 1);
-    setScore(projectedScore);
-    setFeedbackState('Correct', `+${placementPoints} points`, 'success');
-    triggerHaptic('selection');
-
-    const isPromptComplete = activeColumns.every((activeColumn) => Boolean(nextPlaced[activeColumn]));
-    if (isPromptComplete) {
-      handlePromptClear(projectedScore);
-    }
-  };
-
-  const handleColumnTap = (column: PlaceColumn) => {
-    if (!selectedTokenId) return;
-    attemptPlacement(column, selectedTokenId);
-  };
-
-  const accuracy = attempts > 0 ? correctPlacements / attempts : 1;
-  const progress = Math.min(
-    100,
-    Math.max(
-      (promptsCleared / levelConfig.promptsToClear) * 100,
-      (score / levelConfig.targetScore) * 100,
-    ),
-  );
 
   const objectiveArea = (
-    <div className="flex flex-col gap-2 p-2 md:gap-3 md:p-3">
-      <div className="flex flex-wrap items-center justify-between gap-2">
+    <div className="flex flex-col gap-2 p-2 md:gap-2.5 md:p-3">
+      <div className="flex items-start justify-between gap-2">
         <div>
-          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/75">Objective</div>
-          <div className="text-sm font-black text-white md:text-lg">
-            Place digits to build {new Intl.NumberFormat('en-GB').format(prompt.targetValue)}
+          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/75">Target</div>
+          <div className="text-lg font-black text-white md:text-2xl">{round.targetNumberDisplay}</div>
+          <div className="text-[11px] font-semibold text-cyan-100/90 md:text-xs">
+            Drag each digit into the correct place.
           </div>
         </div>
         <button
           type="button"
           onClick={() => setIsPaused((previous) => !previous)}
-          className="ui-button-primary rounded-lg px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white md:px-4 md:py-2 md:text-xs"
+          className="ui-button-primary min-h-[44px] rounded-lg px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white md:text-xs"
         >
           {isPaused ? 'Resume' : 'Pause'}
         </button>
       </div>
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 text-[10px] font-black uppercase tracking-[0.12em] md:text-xs">
-        <span className="licensed-slice-cyan-pill rounded-full px-2.5 py-1 text-white">
-          Level {resolvedMiniGameLevel} / 10
-        </span>
-        <span className="licensed-slice-cyan-pill rounded-full px-2.5 py-1 text-white">
-          Tier {levelConfig.difficultyTier}
-        </span>
-        <span className="licensed-slice-cyan-pill rounded-full px-2.5 py-1 text-white">
-          Prompt {promptsCleared + 1} / {levelConfig.promptsToClear}
-        </span>
-        <span className="licensed-slice-cyan-pill rounded-full px-2.5 py-1 text-white">
-          Accuracy {Math.round(accuracy * 100)}%
-        </span>
+
+      <div className="flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-[0.12em] md:text-xs">
+        <span className="licensed-slice-cyan-pill rounded-full px-2.5 py-1 text-white">Level {resolvedMiniGameLevel} / 10</span>
+        <span className="licensed-slice-cyan-pill rounded-full px-2.5 py-1 text-white">Tier {levelConfig.difficultyTier}</span>
+        <span className="licensed-slice-cyan-pill rounded-full px-2.5 py-1 text-white">Round {roundNumber} / {levelConfig.promptsToClear}</span>
+        <span className="licensed-slice-cyan-pill rounded-full px-2.5 py-1 text-white">Combo x{Math.max(1, combo)}</span>
       </div>
-      <div className="min-h-[2.4rem]">
+
+      <div className="rounded-xl border border-cyan-100/35 bg-slate-900/45 p-2">
+        <div className="mb-1 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/85">
+          <span>Queue Pressure</span>
+          <span>{Math.round(pressure)}%</span>
+        </div>
+        <div className="h-2 overflow-hidden rounded-full border border-white/20 bg-slate-950/70">
+          <div
+            className={`h-full rounded-full transition-all duration-150 ${
+              pressure >= 80
+                ? 'bg-rose-400'
+                : pressure >= 55
+                  ? 'bg-amber-300'
+                  : 'bg-emerald-300'
+            }`}
+            style={{ width: `${Math.min(100, pressure)}%` }}
+          />
+        </div>
+      </div>
+
+      <div className="min-h-[2.25rem]">
         {feedback ? (
-          <div className={`rounded-xl border px-3 py-1.5 text-center shadow-[0_10px_20px_rgba(2,6,23,0.28)] ${
-            feedback.tone === 'success'
-              ? 'border-emerald-200/55 bg-emerald-500/32 text-emerald-50'
-              : feedback.tone === 'error'
-                ? 'border-rose-200/55 bg-rose-500/30 text-rose-50'
-                : 'border-amber-200/55 bg-amber-500/28 text-amber-50'
-          }`}>
+          <div className={`rounded-xl border px-3 py-1.5 text-center shadow-[0_10px_20px_rgba(2,6,23,0.28)] ${feedbackToneClass(feedback.tone)}`}>
             <div className="text-[10px] font-black uppercase tracking-[0.16em] md:text-[11px]">{feedback.title}</div>
             <div className="text-[10px] font-semibold md:text-[11px]">{feedback.detail}</div>
           </div>
@@ -399,82 +252,106 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   );
 
   const playFieldArea = (
-    <div className="relative flex h-full min-h-0 w-full flex-col gap-2 p-2.5 md:gap-3 md:p-4">
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 md:gap-3">
-        {COLUMN_ORDER.filter((column) => activeColumns.includes(column)).map((column) => {
-          const placedToken = placed[column];
+    <div className="relative flex h-full min-h-0 w-full flex-col gap-2 p-2 md:gap-2.5 md:p-3">
+      <div className="flex min-h-0 flex-[0.62] flex-col gap-2">
+        <div
+          className="grid flex-1 min-h-0 gap-2 md:gap-3"
+          style={{ gridTemplateColumns: `repeat(${Math.min(4, Math.max(2, activeSlots.length))}, minmax(0, 1fr))` }}
+        >
+          {activeSlots.map((slot) => {
+            const placedTile = placedBySlot.get(slot.key);
+            const isHovered = hoverSlotKey === slot.key;
+            const isHinted = hintSlotKey === slot.key;
+            const isFilled = Boolean(placedTile);
 
-          return (
-            <button
-              key={column}
-              type="button"
-              onClick={() => handleColumnTap(column)}
-              disabled={resultState !== 'running' || isPaused}
-              className={`relative flex h-20 flex-col items-center justify-center overflow-hidden rounded-[1rem] border text-center shadow-[0_12px_24px_rgba(2,6,23,0.34)] transition sm:h-24 md:h-32 md:rounded-[1.2rem] ${
-                placedToken
-                  ? 'border-emerald-200/55 bg-emerald-500/25'
-                  : selectedTokenId
-                    ? 'border-cyan-200/60 bg-cyan-500/20'
-                    : 'border-white/16 bg-slate-900/55'
-              }`}
-            >
-              <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/75 md:text-xs">
-                {COLUMN_LABELS[column]}
+            return (
+              <div
+                key={slot.id}
+                ref={(element) => {
+                  slotRefs.current[slot.key] = element;
+                }}
+                className={`relative flex min-h-[108px] select-none flex-col items-center justify-center overflow-hidden rounded-[1rem] border px-2 text-center shadow-[0_12px_24px_rgba(2,6,23,0.34)] transition-all md:min-h-[136px] md:rounded-[1.2rem] ${
+                  isFilled
+                    ? 'border-emerald-200/60 bg-emerald-500/24'
+                    : isHovered
+                      ? 'border-cyan-200/70 bg-cyan-500/25'
+                      : isHinted
+                        ? 'border-yellow-100/80 bg-yellow-400/20 animate-pulse'
+                        : 'border-white/16 bg-slate-900/55'
+                }`}
+              >
+                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/75 md:text-xs">{slot.label}</div>
+                <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/50 md:text-xs">{SLOT_DISPLAY_VALUES[slot.key]}</div>
+                <div className="mt-1 text-3xl font-black text-white sm:text-4xl md:text-5xl">{isFilled ? placedTile?.digitValue : '?'}</div>
               </div>
-              <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/45 md:text-xs">
-                {COLUMN_VALUES[column]}
-              </div>
-              <div className="mt-1 text-3xl font-black text-white sm:text-4xl md:text-5xl">
-                {placedToken ? placedToken.digit : '?'}
-              </div>
-            </button>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
 
-      <div className="licensed-board-frame relative flex min-h-0 flex-1 flex-col gap-2 overflow-hidden p-2.5 md:gap-3 md:p-4">
+      <div className="relative flex min-h-0 flex-[0.38] flex-col gap-2 overflow-hidden rounded-2xl border border-white/16 bg-slate-900/55 p-2.5 shadow-[0_10px_22px_rgba(2,6,23,0.28)] md:gap-2.5">
         <div className="flex items-center justify-between">
-          <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/75 md:text-xs">
-            Digit Queue
-          </div>
-          <div className={`text-[10px] font-black uppercase tracking-[0.14em] md:text-xs ${
-            queue.length >= levelConfig.queueLimit ? 'text-rose-200' : 'text-white/75'
-          }`}>
-            {queue.length} / {levelConfig.queueLimit}
+          <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/75 md:text-xs">Digit Tray</div>
+          <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/75 md:text-xs">
+            Accuracy {Math.round(accuracy * 100)}%
           </div>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto pr-1">
-          <div className="grid grid-cols-4 gap-2 sm:grid-cols-5 lg:grid-cols-8">
-            <AnimatePresence mode="popLayout">
-              {queue.map((token) => {
-                const isSelected = selectedTokenId === token.id;
-                return (
-                  <motion.button
-                    key={token.id}
-                    layout
-                    type="button"
-                    disabled={resultState !== 'running' || isPaused}
-                    onClick={() => setSelectedTokenId((previous) => previous === token.id ? null : token.id)}
-                    aria-pressed={isSelected}
-                    className={`flex h-12 min-h-[48px] items-center justify-center rounded-xl border text-xl font-black transition touch-manipulation sm:h-14 sm:text-2xl md:h-16 md:text-3xl ${
-                      isSelected
-                        ? 'border-cyan-200 bg-cyan-500/45 text-white shadow-[0_0_20px_rgba(34,211,238,0.35)]'
-                        : 'border-white/20 bg-slate-900/60 text-white/90'
-                    }`}
-                    initial={{ opacity: 0, y: 8, scale: 0.86 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -10, scale: 0.7 }}
-                    transition={{ type: 'spring', stiffness: 210, damping: 20 }}
-                  >
-                    {token.digit}
-                  </motion.button>
-                );
-              })}
-            </AnimatePresence>
-          </div>
+        <div className="grid min-h-0 flex-1 auto-rows-fr grid-cols-4 gap-2 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8">
+          <AnimatePresence mode="popLayout">
+            {trayTiles.map((tile) => {
+              const isDragging = dragState?.tile.id === tile.id;
+              const isRejected = lastRejectedTileId === tile.id;
+
+              return (
+                <motion.button
+                  key={tile.id}
+                  type="button"
+                  onPointerDown={(event) => handleTilePointerDown(event, tile)}
+                  disabled={isPaused}
+                  className={`flex h-full items-center justify-center rounded-xl border text-2xl font-black transition touch-none ${
+                    isDragging
+                      ? 'opacity-25'
+                      : 'opacity-100'
+                  } ${
+                    isRejected
+                      ? 'border-rose-200/70 bg-rose-500/30'
+                      : 'border-white/20 bg-slate-900/60'
+                  } text-white/95`}
+                  style={{ minHeight: MIN_TAP_TARGET }}
+                  initial={{ opacity: 0, y: 8, scale: 0.86 }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    x: isRejected ? [0, -7, 7, -5, 5, 0] : 0,
+                  }}
+                  exit={{ opacity: 0, y: 8, scale: 0.8 }}
+                  transition={{ type: 'spring', stiffness: 230, damping: 18 }}
+                >
+                  {tile.digitValue}
+                </motion.button>
+              );
+            })}
+          </AnimatePresence>
         </div>
       </div>
+
+      {dragState ? (
+        <motion.div
+          className="pointer-events-none fixed z-[70] flex items-center justify-center rounded-xl border border-cyan-100/70 bg-cyan-500/88 text-2xl font-black text-white shadow-[0_14px_34px_rgba(2,6,23,0.42)]"
+          style={{
+            width: dragState.width,
+            height: dragState.height,
+            left: dragState.clientX - dragState.offsetX,
+            top: dragState.clientY - dragState.offsetY,
+          }}
+          initial={{ scale: 1 }}
+          animate={{ scale: 1.04 }}
+        >
+          {dragState.tile.digitValue}
+        </motion.div>
+      ) : null}
     </div>
   );
 
@@ -483,12 +360,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       gameType="place_value_peaks"
       title="Place Value Panic"
       avatar={avatar}
-      score={score}
+      score={Math.round(score)}
       targetScore={levelConfig.targetScore}
       timeLeft={timeLeft}
       progress={progress}
-      statLabel="Queue"
-      statValue={`${queue.length}/${levelConfig.queueLimit}`}
+      statLabel="Overload"
+      statValue={`${Math.round(pressure)}%`}
       objectiveArea={objectiveArea}
       playFieldArea={playFieldArea}
       isPaused={isPaused}
