@@ -3,7 +3,7 @@ import ember from './tiles/ember.png';
 import sapphire from './tiles/sapphire.png';
 import emerald from './tiles/emerald.png';
 import azure from './tiles/azure.png';
-import violet from './tiles/violet.png';
+import cobalt from './tiles/storm.png';
 import storm from './tiles/storm.png';
 import plasma from './tiles/plasma.png';
 import gold from './tiles/gold.png';
@@ -15,7 +15,7 @@ export const FRACTION_MATCH_ASSETS = {
     sapphire,
     emerald,
     azure,
-    violet,
+    cobalt,
     storm,
     plasma,
     gold,

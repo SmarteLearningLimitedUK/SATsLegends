@@ -28,12 +28,12 @@ const SHAPES: Shape[] = [
   { id: 'tri_eq', name: 'Equilateral Triangle', sides: 3, isRegular: true, palette: 'from-amber-300 via-yellow-300 to-orange-400', glow: 'shadow-[0_0_28px_rgba(251,191,36,0.3)]', svg: <polygon points="50,10 90,90 10,90" fill="currentColor" /> },
   { id: 'tri_iso', name: 'Isosceles Triangle', sides: 3, isRegular: false, palette: 'from-rose-300 via-orange-300 to-amber-400', glow: 'shadow-[0_0_28px_rgba(251,146,60,0.28)]', svg: <polygon points="50,10 70,90 30,90" fill="currentColor" /> },
   { id: 'tri_right', name: 'Right Triangle', sides: 3, isRegular: false, palette: 'from-sky-300 via-cyan-300 to-blue-400', glow: 'shadow-[0_0_28px_rgba(56,189,248,0.28)]', svg: <polygon points="10,10 10,90 90,90" fill="currentColor" /> },
-  { id: 'quad_sq', name: 'Square', sides: 4, isRegular: true, palette: 'from-fuchsia-300 via-pink-300 to-rose-400', glow: 'shadow-[0_0_28px_rgba(244,114,182,0.28)]', svg: <rect x="15" y="15" width="70" height="70" fill="currentColor" /> },
-  { id: 'quad_rect', name: 'Rectangle', sides: 4, isRegular: false, palette: 'from-blue-300 via-indigo-300 to-violet-400', glow: 'shadow-[0_0_28px_rgba(129,140,248,0.28)]', svg: <rect x="10" y="30" width="80" height="40" fill="currentColor" /> },
+  { id: 'quad_sq', name: 'Square', sides: 4, isRegular: true, palette: 'from-cyan-300 via-pink-300 to-rose-400', glow: 'shadow-[0_0_28px_rgba(244,114,182,0.28)]', svg: <rect x="15" y="15" width="70" height="70" fill="currentColor" /> },
+  { id: 'quad_rect', name: 'Rectangle', sides: 4, isRegular: false, palette: 'from-blue-300 via-indigo-300 to-sky-400', glow: 'shadow-[0_0_28px_rgba(129,140,248,0.28)]', svg: <rect x="10" y="30" width="80" height="40" fill="currentColor" /> },
   { id: 'quad_rhombus', name: 'Rhombus', sides: 4, isRegular: false, palette: 'from-lime-300 via-emerald-300 to-green-400', glow: 'shadow-[0_0_28px_rgba(74,222,128,0.28)]', svg: <polygon points="50,10 90,50 50,90 10,50" fill="currentColor" /> },
   { id: 'quad_para', name: 'Parallelogram', sides: 4, isRegular: false, palette: 'from-orange-300 via-amber-300 to-yellow-400', glow: 'shadow-[0_0_28px_rgba(251,191,36,0.3)]', svg: <polygon points="30,20 90,20 70,80 10,80" fill="currentColor" /> },
   { id: 'quad_trap', name: 'Trapezium', sides: 4, isRegular: false, palette: 'from-cyan-300 via-sky-300 to-indigo-400', glow: 'shadow-[0_0_28px_rgba(56,189,248,0.28)]', svg: <polygon points="30,20 70,20 90,80 10,80" fill="currentColor" /> },
-  { id: 'quad_kite', name: 'Kite', sides: 4, isRegular: false, palette: 'from-violet-300 via-fuchsia-300 to-pink-400', glow: 'shadow-[0_0_28px_rgba(232,121,249,0.28)]', svg: <polygon points="50,10 80,40 50,90 20,40" fill="currentColor" /> },
+  { id: 'quad_kite', name: 'Kite', sides: 4, isRegular: false, palette: 'from-sky-300 via-cyan-300 to-pink-400', glow: 'shadow-[0_0_28px_rgba(232,121,249,0.28)]', svg: <polygon points="50,10 80,40 50,90 20,40" fill="currentColor" /> },
   { id: 'pent_reg', name: 'Regular Pentagon', sides: 5, isRegular: true, palette: 'from-emerald-300 via-teal-300 to-cyan-400', glow: 'shadow-[0_0_28px_rgba(45,212,191,0.28)]', svg: <polygon points="50,10 90,38 75,85 25,85 10,38" fill="currentColor" /> },
   { id: 'hex_reg', name: 'Regular Hexagon', sides: 6, isRegular: true, palette: 'from-yellow-300 via-amber-300 to-orange-400', glow: 'shadow-[0_0_28px_rgba(251,191,36,0.3)]', svg: <polygon points="50,5 90,25 90,75 50,95 10,75 10,25" fill="currentColor" /> },
   { id: 'oct_reg', name: 'Regular Octagon', sides: 8, isRegular: true, palette: 'from-sky-300 via-blue-300 to-indigo-400', glow: 'shadow-[0_0_28px_rgba(96,165,250,0.28)]', svg: <polygon points="30,5 70,5 95,30 95,70 70,95 30,95 5,70 5,30" fill="currentColor" /> },
@@ -165,9 +165,9 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden bg-[linear-gradient(180deg,#1e1b4b_0%,#111827_42%,#09090b_100%)] px-2 pb-2 pt-1 md:px-4 md:pb-4">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute left-[6%] top-[14%] h-28 w-28 rounded-full bg-fuchsia-400/18 blur-3xl" />
+        <div className="absolute left-[6%] top-[14%] h-28 w-28 rounded-full bg-cyan-400/18 blur-3xl" />
         <div className="absolute right-[4%] top-[12%] h-28 w-28 rounded-full bg-amber-300/18 blur-3xl" />
-        <div className="absolute bottom-[8%] left-[10%] h-40 w-[36%] rounded-full bg-violet-500/12 blur-3xl" />
+        <div className="absolute bottom-[8%] left-[10%] h-40 w-[36%] rounded-full bg-sky-500/12 blur-3xl" />
         <div className="absolute inset-x-0 bottom-0 h-[46%] bg-[linear-gradient(180deg,rgba(120,53,15,0),rgba(120,53,15,0.28)_24%,rgba(41,24,13,0.86)_100%)]" />
         <div className="absolute inset-0 opacity-15" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.35) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
       </div>
@@ -181,10 +181,10 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
           timeLeft={timeLeft}
           progress={progress}
           compact
-          accentText="text-fuchsia-950"
-          accentSoftBg="bg-fuchsia-100/86"
-          accentBorder="border-fuchsia-200/88"
-          progressBar="bg-gradient-to-r from-fuchsia-300 via-pink-300 to-amber-300"
+          accentText="text-cyan-950"
+          accentSoftBg="bg-cyan-100/86"
+          accentBorder="border-cyan-200/88"
+          progressBar="bg-gradient-to-r from-cyan-300 via-pink-300 to-amber-300"
           statLabel="Streak"
           statValue={streak}
         />
@@ -270,7 +270,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
           </div>
         </div>
 
-        <GameActionDock onBack={onBack} accentClass="text-fuchsia-100" />
+        <GameActionDock onBack={onBack} accentClass="text-cyan-100" />
 
         <AnimatePresence>
           {(isGameOver || isVictory) && (
@@ -279,7 +279,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
               animate={{ scale: 1, opacity: 1 }}
               className="fixed inset-0 z-50 flex items-center justify-center bg-black/66 p-4 backdrop-blur-md"
             >
-              <div className="app-modal-panel flex w-full max-w-md flex-col items-center gap-5 rounded-[2rem] border-4 border-fuchsia-200/36 bg-[linear-gradient(180deg,#fff7ed,#f5d0fe)] p-6 shadow-2xl md:gap-7 md:p-10">
+              <div className="app-modal-panel flex w-full max-w-md flex-col items-center gap-5 rounded-[2rem] border-4 border-cyan-200/36 bg-[linear-gradient(180deg,#fff7ed,#f5d0fe)] p-6 shadow-2xl md:gap-7 md:p-10">
                 <div className={`text-center text-4xl font-black md:text-5xl ${isVictory ? 'text-emerald-600' : 'text-rose-600'}`}>
                   {isVictory ? 'Gallery Cleared' : 'Time Up'}
                 </div>

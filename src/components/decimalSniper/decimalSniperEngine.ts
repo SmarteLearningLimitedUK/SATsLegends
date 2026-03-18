@@ -22,7 +22,7 @@ export interface DroneTargetSeed {
   id: string;
   label: string;
   value: number;
-  palette: 'cyan' | 'violet' | 'amber' | 'emerald';
+  palette: 'cyan' | 'sky' | 'amber' | 'emerald';
 }
 
 export interface MovingTarget extends DroneTargetSeed {

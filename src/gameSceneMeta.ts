@@ -22,9 +22,9 @@ const NUMBER_SCENE: GameSceneMeta = {
 
 const FRACTION_SCENE: GameSceneMeta = {
   background: world02Map,
-  glow: 'from-fuchsia-300/22 via-violet-300/12 to-transparent',
-  tint: 'from-violet-300/16 via-indigo-300/10 to-slate-950/92',
-  panelTint: 'from-fuchsia-200/16 via-violet-300/10 to-transparent',
+  glow: 'from-cyan-300/22 via-sky-300/12 to-transparent',
+  tint: 'from-sky-300/16 via-indigo-300/10 to-slate-950/92',
+  panelTint: 'from-cyan-200/16 via-sky-300/10 to-transparent',
 };
 
 const GEOMETRY_SCENE: GameSceneMeta = {
@@ -50,9 +50,9 @@ const DATA_SCENE: GameSceneMeta = {
 
 const REASONING_SCENE: GameSceneMeta = {
   background: world06Map,
-  glow: 'from-emerald-300/22 via-violet-300/12 to-transparent',
+  glow: 'from-emerald-300/22 via-sky-300/12 to-transparent',
   tint: 'from-emerald-200/16 via-teal-300/10 to-slate-950/92',
-  panelTint: 'from-emerald-200/16 via-violet-300/10 to-transparent',
+  panelTint: 'from-emerald-200/16 via-sky-300/10 to-transparent',
 };
 
 export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {

@@ -57,7 +57,7 @@ const GameContainerView: React.FC<GameContainerViewProps> = ({
             accentText="text-sky-950"
             accentSoftBg="bg-sky-100/80"
             accentBorder="border-sky-200/80"
-            progressBar="bg-gradient-to-r from-cyan-400 via-sky-400 to-violet-400"
+            progressBar="bg-gradient-to-r from-cyan-400 via-sky-400 to-sky-400"
             statLabel={statLabel}
             statValue={statValue}
           />

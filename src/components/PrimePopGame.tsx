@@ -308,7 +308,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     <div className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden licensed-playfield-bg md:cursor-none">
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute left-[-8%] top-[10%] h-[32%] w-[42%] rounded-full bg-cyan-400/18 blur-3xl" />
-        <div className="absolute right-[-10%] top-[20%] h-[40%] w-[44%] rounded-full bg-fuchsia-500/14 blur-3xl" />
+        <div className="absolute right-[-10%] top-[20%] h-[40%] w-[44%] rounded-full bg-cyan-500/14 blur-3xl" />
         <div className="absolute left-[18%] bottom-[-8%] h-[34%] w-[48%] rounded-full bg-emerald-400/16 blur-3xl" />
         <div className="absolute right-[12%] bottom-[8%] h-[24%] w-[28%] rounded-full bg-amber-300/12 blur-3xl" />
       </div>

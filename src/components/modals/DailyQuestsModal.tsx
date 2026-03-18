@@ -53,7 +53,7 @@ const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({ isOpen, onClose, qu
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex min-w-0 items-start gap-3">
-                          <div className={`rounded-[0.9rem] p-2 ${isCompleted ? 'licensed-slice-green-pill text-white' : 'licensed-slice-purple-banner text-white/80'}`}>
+                          <div className={`rounded-[0.9rem] p-2 ${isCompleted ? 'licensed-slice-green-pill text-white' : 'licensed-slice-blue-banner text-white/80'}`}>
                             {isCompleted ? <AssetIcon name="check" className="h-5 w-5" /> : <AssetIcon name="play" className="h-5 w-5" />}
                           </div>
                           <div className="min-w-0">

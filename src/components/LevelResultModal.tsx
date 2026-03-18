@@ -100,7 +100,7 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
 
                   {(result.achievementsUnlocked?.length || 0) > 0 && (
                     <RewardPanel className="rounded-[1.2rem] text-sm md:rounded-[1.5rem]">
-                      <div className="text-[9px] font-black uppercase tracking-[0.2em] text-fuchsia-700 md:text-[10px]">Achievements unlocked</div>
+                      <div className="text-[9px] font-black uppercase tracking-[0.2em] text-cyan-700 md:text-[10px]">Achievements unlocked</div>
                       <div className="mt-1 flex flex-wrap gap-2">
                         {result.achievementsUnlocked?.slice(0, 3).map((achievement) => (
                           <span key={achievement} className="licensed-slice-cyan-pill rounded-full px-3 py-1 text-[10px] font-bold text-white md:text-xs">

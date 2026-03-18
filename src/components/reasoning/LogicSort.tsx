@@ -209,7 +209,7 @@ const LogicSort: React.FC<LogicSortProps> = ({ onVictory, onGameOver, onBack }) 
       {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10">
         <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500 rounded-full blur-[100px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-purple-500 rounded-full blur-[100px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-blue-500 rounded-full blur-[100px]" />
       </div>
     </div>
   );

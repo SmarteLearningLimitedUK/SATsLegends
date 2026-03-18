@@ -257,7 +257,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ level, onScoreUpdate, onMatch }) 
                   <motion.div
                     initial={{ scaleX: 0 }}
                     animate={{ scaleX: 1, opacity: [0, 1, 0] }}
-                    className="h-full w-full bg-fuchsia-300/35 blur-md"
+                    className="h-full w-full bg-cyan-300/35 blur-md"
                   />
                 )}
               </motion.div>

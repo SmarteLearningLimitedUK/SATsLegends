@@ -18,8 +18,8 @@ import GameActionDock from './GameActionDock';
 import GameplaySceneBackdrop from './GameplaySceneBackdrop';
 import GameplayHUD from './GameplayHUD';
 import { Star } from './GameIcons';
-import answerPurpleBg from '../assets/fantasy_hero/buttons/small_purple.png';
-import answerPurpleDeco from '../assets/fantasy_hero/buttons/small_deco.png';
+import answerActionBg from '../assets/fantasy_hero/buttons/small_orange.png';
+import answerDecorAsset from '../assets/fantasy_hero/buttons/small_deco.png';
 import answerOrangeBg from '../assets/fantasy_hero/buttons/small_orange.png';
 import answerGreenBg from '../assets/fantasy_hero/buttons/primary_green.png';
 
@@ -81,16 +81,16 @@ const CHALLENGE_THEMES: Record<SupportedChallengeGameType, ChallengeTheme> = {
   },
   percent_pulse: {
     title: 'Percent Pulse',
-    surface: 'from-fuchsia-300/28 via-sky-300/16 to-slate-950/88',
-    scene: 'from-fuchsia-300/22 via-cyan-300/18 to-transparent',
+    surface: 'from-cyan-300/28 via-sky-300/16 to-slate-950/88',
+    scene: 'from-cyan-300/22 via-cyan-300/18 to-transparent',
     ambient: 'bg-[radial-gradient(circle_at_top,rgba(232,121,249,0.26),transparent_26%),radial-gradient(circle_at_bottom_right,rgba(34,211,238,0.2),transparent_24%),linear-gradient(180deg,#1f1241_0%,#07111b_100%)]',
-    prompt: 'from-fuchsia-200/28 to-cyan-100/12',
-    answer: 'from-fuchsia-200/10 via-sky-200/8 to-white/4',
-    answerActive: 'from-fuchsia-300/62 via-cyan-300/58 to-blue-400/48',
-    statText: 'text-fuchsia-950',
-    statSoftBg: 'bg-fuchsia-100/85',
-    statBorder: 'border-fuchsia-200/90',
-    progress: 'bg-gradient-to-r from-cyan-300 via-fuchsia-300 to-violet-400',
+    prompt: 'from-cyan-200/28 to-cyan-100/12',
+    answer: 'from-cyan-200/10 via-sky-200/8 to-white/4',
+    answerActive: 'from-cyan-300/62 via-cyan-300/58 to-blue-400/48',
+    statText: 'text-cyan-950',
+    statSoftBg: 'bg-cyan-100/85',
+    statBorder: 'border-cyan-200/90',
+    progress: 'bg-gradient-to-r from-cyan-300 via-cyan-300 to-sky-400',
     badge: 'text-cyan-100',
   },
   coordinate_quest: {
@@ -179,17 +179,17 @@ const CHALLENGE_THEMES: Record<SupportedChallengeGameType, ChallengeTheme> = {
   },
   rule_runner: {
     title: 'Rule Runner',
-    surface: 'from-purple-300/18 via-indigo-200/12 to-slate-950/86',
-    scene: 'from-violet-300/18 via-indigo-200/12 to-transparent',
+    surface: 'from-blue-300/18 via-indigo-200/12 to-slate-950/86',
+    scene: 'from-sky-300/18 via-indigo-200/12 to-transparent',
     ambient: 'bg-[radial-gradient(circle_at_top,rgba(167,139,250,0.2),transparent_28%),linear-gradient(180deg,#1c173b_0%,#091018_100%)]',
-    prompt: 'from-violet-200/18 to-indigo-100/8',
+    prompt: 'from-sky-200/18 to-indigo-100/8',
     answer: 'from-white/10 to-white/4',
-    answerActive: 'from-violet-300/55 to-indigo-400/48',
-    statText: 'text-violet-950',
-    statSoftBg: 'bg-violet-100/85',
-    statBorder: 'border-violet-200/90',
-    progress: 'bg-gradient-to-r from-fuchsia-300 via-violet-300 to-indigo-400',
-    badge: 'text-violet-100',
+    answerActive: 'from-sky-300/55 to-indigo-400/48',
+    statText: 'text-sky-950',
+    statSoftBg: 'bg-sky-100/85',
+    statBorder: 'border-sky-200/90',
+    progress: 'bg-gradient-to-r from-cyan-300 via-sky-300 to-indigo-400',
+    badge: 'text-sky-100',
   },
 };
 
@@ -375,7 +375,7 @@ const generateCoordinateQuestion = (): ChallengeQuestion => {
     label,
     x: randomInt(-4, 4),
     y: randomInt(-4, 4),
-    tone: label === 'A' ? 'bg-cyan-300' : label === 'B' ? 'bg-emerald-300' : 'bg-violet-300',
+    tone: label === 'A' ? 'bg-cyan-300' : label === 'B' ? 'bg-emerald-300' : 'bg-sky-300',
   }));
   const target = pick(points);
   const correct = formatCoordinate(target);
@@ -690,13 +690,13 @@ const renderPercentPulse = (visual: Extract<VisualData, { type: 'pulse' }>) => {
   ];
 
   return (
-    <div className="relative w-full max-w-[22rem] overflow-hidden rounded-[1.5rem] border border-fuchsia-200/18 bg-[linear-gradient(180deg,rgba(32,14,66,0.96),rgba(7,18,32,0.98))] p-3 shadow-[0_24px_50px_rgba(0,0,0,0.3)] md:max-w-[24rem] md:rounded-[1.8rem] md:p-5">
+    <div className="relative w-full max-w-[22rem] overflow-hidden rounded-[1.5rem] border border-cyan-200/18 bg-[linear-gradient(180deg,rgba(32,14,66,0.96),rgba(7,18,32,0.98))] p-3 shadow-[0_24px_50px_rgba(0,0,0,0.3)] md:max-w-[24rem] md:rounded-[1.8rem] md:p-5">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(232,121,249,0.22),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(34,211,238,0.18),transparent_26%),linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0))]" />
-      <div className="absolute left-4 top-4 h-16 w-16 rounded-full bg-fuchsia-300/18 blur-2xl md:h-24 md:w-24" />
+      <div className="absolute left-4 top-4 h-16 w-16 rounded-full bg-cyan-300/18 blur-2xl md:h-24 md:w-24" />
       <div className="absolute bottom-3 right-4 h-16 w-16 rounded-full bg-cyan-300/16 blur-2xl md:h-24 md:w-24" />
 
       <div className="relative flex flex-col items-center">
-        <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-fuchsia-200/18 bg-white/8 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.22em] text-cyan-100 md:mb-3 md:px-3 md:text-[10px]">
+        <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-cyan-200/18 bg-white/8 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.22em] text-cyan-100 md:mb-3 md:px-3 md:text-[10px]">
           <span className="inline-flex h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.7)]" />
           Pulse Lane
         </div>
@@ -705,7 +705,7 @@ const renderPercentPulse = (visual: Extract<VisualData, { type: 'pulse' }>) => {
           <motion.div
             animate={{ scale: [0.94, 1.06, 0.94], opacity: [0.2, 0.42, 0.2] }}
             transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute h-28 w-28 rounded-full border border-fuchsia-200/28 md:h-36 md:w-36"
+            className="absolute h-28 w-28 rounded-full border border-cyan-200/28 md:h-36 md:w-36"
           />
           <motion.div
             animate={{ scale: [1, 1.22, 1], opacity: [0.16, 0.34, 0.16] }}
@@ -1215,7 +1215,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                   ? answerGreenBg
                   : isWrongSelected
                     ? answerOrangeBg
-                    : answerPurpleBg;
+                    : answerActionBg;
 
                 return (
                   <motion.button
@@ -1229,7 +1229,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                   >
                     {!isPlaceValuePeaks && <img src={answerBackground} alt="" className="absolute inset-0 h-full w-full object-fill" draggable={false} />}
                     {!isPlaceValuePeaks && !isCorrect && !isWrongSelected && (
-                      <img src={answerPurpleDeco} alt="" className="absolute inset-0 h-full w-full object-fill opacity-95" draggable={false} />
+                      <img src={answerDecorAsset} alt="" className="absolute inset-0 h-full w-full object-fill opacity-95" draggable={false} />
                     )}
                     {isPlaceValuePeaks && (
                       <div className={`absolute inset-0 ${

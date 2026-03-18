@@ -253,7 +253,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
           points: [
             { label: 'A', x: 6, y: 2, tone: 'bg-cyan-300' },
             { label: 'B', x: 2, y: 6, tone: 'bg-emerald-300' },
-            { label: 'C', x: 0, y: 3, tone: 'bg-violet-300' },
+            { label: 'C', x: 0, y: 3, tone: 'bg-sky-300' },
             { label: 'D', x: 8, y: 8, tone: 'bg-amber-300' },
           ],
         },
@@ -289,7 +289,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
           points: [
             { label: 'A', x: 1, y: 4, tone: 'bg-cyan-300' },
             { label: 'B', x: 6, y: 1, tone: 'bg-emerald-300' },
-            { label: 'C', x: 3, y: 6, tone: 'bg-violet-300' },
+            { label: 'C', x: 3, y: 6, tone: 'bg-sky-300' },
             { label: 'D', x: 4, y: 7, tone: 'bg-amber-300' },
           ],
         },
@@ -452,7 +452,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'How many more does the purple bar show than the orange bar?',
+        prompt: 'How many more does the blue bar show than the orange bar?',
         sublabel: 'Find the difference between the two bar heights.',
         options: ['2', '3', '4', '5'],
         answerIndex: 1,
@@ -461,7 +461,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
           caption: 'Potion orders',
           bars: [
             { label: 'Orange', value: 5, color: 'from-amber-300 to-orange-400' },
-            { label: 'Purple', value: 8, color: 'from-violet-300 to-fuchsia-400' },
+            { label: 'Blue', value: 8, color: 'from-sky-300 to-cyan-400' },
             { label: 'Teal', value: 6, color: 'from-cyan-300 to-sky-400' },
             { label: 'Green', value: 4, color: 'from-emerald-300 to-lime-400' },
           ],

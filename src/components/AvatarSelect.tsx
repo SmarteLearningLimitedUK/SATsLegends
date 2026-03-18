@@ -5,7 +5,7 @@ import { triggerHaptic } from '../haptics';
 import AssetIcon from './AssetIcon';
 import splashBackground from '../assets/fantasy_hero/demo_bg/background_01.png';
 import splashGlow from '../assets/fantasy_hero/demo_fx/effect_light_01.png';
-import ribbonPurpleAsset from '../assets/fantasy_hero/title/ribbon_purple.png';
+import ribbonBlueAsset from '../assets/fantasy_hero/title/ribbon_blue.png';
 import cardBgAsset from '../assets/fantasy_hero/frames/card_bg.png';
 import cardBorderAsset from '../assets/fantasy_hero/frames/card_border.png';
 import cardInnerAsset from '../assets/fantasy_hero/frames/card_inner.png';
@@ -21,13 +21,13 @@ const HERO_GLOW_STYLES: Record<string, string> = {
   barratt: 'from-cyan-300/55 via-emerald-200/28 to-transparent',
   bran: 'from-orange-300/55 via-amber-200/28 to-transparent',
   mochi: 'from-rose-300/55 via-yellow-200/25 to-transparent',
-  vex: 'from-violet-300/55 via-indigo-200/30 to-transparent',
+  vex: 'from-sky-300/55 via-indigo-200/30 to-transparent',
 };
 
 const RARITY_BADGE_TONES: Record<string, string> = {
   Common: 'from-cyan-500 to-blue-600',
   Rare: 'from-emerald-500 to-teal-600',
-  Epic: 'from-fuchsia-500 to-violet-600',
+  Epic: 'from-cyan-500 to-sky-600',
   Legendary: 'from-amber-400 to-orange-500',
 };
 
@@ -162,7 +162,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
         <div className="relative z-10 flex shrink-0 flex-col items-center px-4 pt-[calc(env(safe-area-inset-top)+0.45rem)] md:px-8 md:pt-6">
           <div className="relative text-center">
             <img
-              src={ribbonPurpleAsset}
+              src={ribbonBlueAsset}
               alt=""
               className="pointer-events-none absolute left-1/2 top-[42%] z-0 h-16 w-[16rem] -translate-x-1/2 -translate-y-1/2 opacity-95 md:h-24 md:w-[26rem]"
               draggable={false}

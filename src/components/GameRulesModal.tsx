@@ -2,7 +2,8 @@ import React from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import AssetIcon from './AssetIcon';
 import { GameRuleSet } from '../gameMeta';
-import { HUDBar, RewardPanel } from './layout/ScreenPrimitives';
+import { HUDBar } from './layout/ScreenPrimitives';
+import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
 
 interface GameRulesModalProps {
   isOpen: boolean;
@@ -18,6 +19,12 @@ const GameRulesModal: React.FC<GameRulesModalProps> = ({
   actionLabel = 'Back To Game',
 }) => {
   if (!rules) return null;
+
+  const texturedBoxStyle: React.CSSProperties = {
+    backgroundImage: `url(${MAIN_PNG_SKIN.textBox})`,
+    backgroundSize: '100% 100%',
+    backgroundRepeat: 'no-repeat',
+  };
 
   return (
     <AnimatePresence>
@@ -52,15 +59,19 @@ const GameRulesModal: React.FC<GameRulesModalProps> = ({
               )}
             />
 
-            <RewardPanel className="mt-4 text-sm font-bold text-amber-950 md:text-base">
+            <div
+              className="mt-4 rounded-[1rem] border border-cyan-200/50 px-4 py-3 text-sm font-bold text-slate-900 shadow-[0_8px_18px_rgba(2,6,23,0.16)] md:rounded-[1.2rem] md:text-base"
+              style={texturedBoxStyle}
+            >
               {rules.summary}
-            </RewardPanel>
+            </div>
 
             <div className="mt-4 flex flex-col gap-2.5 md:gap-3">
               {rules.bullets.map((bullet) => (
                 <div
                   key={bullet}
-                  className="licensed-game-card flex items-start gap-3 rounded-[1rem] px-3 py-3 text-sm font-semibold text-white md:rounded-[1.2rem] md:text-base"
+                  className="flex items-start gap-3 rounded-[1rem] border border-cyan-200/55 px-3 py-3 text-sm font-semibold text-slate-900 shadow-[0_8px_18px_rgba(2,6,23,0.16)] md:rounded-[1.2rem] md:text-base"
+                  style={texturedBoxStyle}
                 >
                   <span className="licensed-slice-yellow-plank mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-black text-amber-950">
                     !

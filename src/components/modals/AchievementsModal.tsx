@@ -82,7 +82,7 @@ const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, onClose, 
                       </div>
 
                       {!isUnlocked && (
-                        <div className="licensed-slice-purple-banner absolute right-1 top-1 rounded-full p-1 text-white md:right-2 md:top-2 md:p-1.5">
+                        <div className="licensed-slice-blue-banner absolute right-1 top-1 rounded-full p-1 text-white md:right-2 md:top-2 md:p-1.5">
                           <AssetIcon name="x" className="h-3 w-3" />
                         </div>
                       )}

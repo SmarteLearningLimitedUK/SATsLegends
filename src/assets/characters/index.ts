@@ -69,7 +69,7 @@ export const CHARACTER_AVATARS: AvatarData[] = [
     name: 'Vex',
     image: vexNeutral,
     portrait: vexNeutral,
-    color: 'bg-violet-100',
+    color: 'bg-sky-100',
     rarity: 'Legendary',
     level: 10,
     poses: {

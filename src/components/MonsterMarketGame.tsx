@@ -52,12 +52,12 @@ const CURRENCIES: Currency[] = [
   { id: '1gbp', label: 'GBP 1', valuePence: 100, type: 'coin', tint: 'from-yellow-100 via-amber-200 to-orange-500' },
   { id: '2gbp', label: 'GBP 2', valuePence: 200, type: 'coin', tint: 'from-yellow-100 via-amber-200 to-orange-600' },
   { id: '5gbp', label: 'GBP 5', valuePence: 500, type: 'note', tint: 'from-cyan-100 via-sky-200 to-cyan-600' },
-  { id: '10gbp', label: 'GBP 10', valuePence: 1000, type: 'note', tint: 'from-fuchsia-100 via-violet-200 to-violet-600' },
+  { id: '10gbp', label: 'GBP 10', valuePence: 1000, type: 'note', tint: 'from-cyan-100 via-sky-200 to-sky-600' },
 ];
 
 const SHOPPERS: Shopper[] = [
   { name: 'Brugo', title: 'Ogre Customer', tint: 'from-lime-300 via-emerald-400 to-green-700', crest: 'B' },
-  { name: 'Vela', title: 'Wizard Shopper', tint: 'from-fuchsia-200 via-violet-300 to-indigo-700', crest: 'V' },
+  { name: 'Vela', title: 'Wizard Shopper', tint: 'from-cyan-200 via-sky-300 to-indigo-700', crest: 'V' },
   { name: 'Nyx', title: 'Goblin Trader', tint: 'from-cyan-200 via-sky-300 to-blue-700', crest: 'N' },
   { name: 'Moro', title: 'Slime Buyer', tint: 'from-emerald-200 via-green-300 to-teal-700', crest: 'M' },
 ];
@@ -65,7 +65,7 @@ const SHOPPERS: Shopper[] = [
 const MARKET_ITEMS: MarketItem[] = [
   { id: 'potion', name: 'Potion Bottle', pricePence: 325, stallTint: 'from-cyan-200 via-sky-300 to-cyan-700' },
   { id: 'scroll', name: 'Ancient Scroll', pricePence: 280, stallTint: 'from-amber-100 via-yellow-200 to-orange-500' },
-  { id: 'orb', name: 'Magic Orb', pricePence: 415, stallTint: 'from-fuchsia-100 via-violet-200 to-fuchsia-600' },
+  { id: 'orb', name: 'Magic Orb', pricePence: 415, stallTint: 'from-cyan-100 via-sky-200 to-cyan-600' },
   { id: 'gem-bag', name: 'Gem Pouch', pricePence: 560, stallTint: 'from-emerald-100 via-lime-200 to-green-600' },
   { id: 'dagger', name: 'Rune Dagger', pricePence: 470, stallTint: 'from-slate-100 via-slate-300 to-slate-600' },
   { id: 'lantern', name: 'Glow Lantern', pricePence: 390, stallTint: 'from-yellow-100 via-amber-200 to-red-500' },

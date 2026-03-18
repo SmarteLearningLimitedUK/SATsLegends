@@ -295,7 +295,7 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
           </motion.button>
 
           <div className="pointer-events-auto licensed-game-card flex items-center gap-2 rounded-full p-2 text-white shadow-xl md:p-3">
-            <div className="licensed-slice-purple-banner flex items-center gap-1.5 rounded-full px-3 py-1 text-white">
+            <div className="licensed-slice-blue-banner flex items-center gap-1.5 rounded-full px-3 py-1 text-white">
               <AssetIcon name="star" className="w-4 h-4 md:w-5 md:h-5 text-yellow-400" />
               <span className="text-sm md:text-base font-black text-white">{earnedStars}</span>
             </div>

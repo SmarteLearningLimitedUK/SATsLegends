@@ -41,8 +41,8 @@ const generatePuzzle = (levelId: number): Puzzle => {
   const maxVal = 10 + levelId * 5;
 
   if (type === 'barchart') {
-    const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
-    const labels = ['Red', 'Blue', 'Green', 'Gold', 'Purple'];
+    const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#06b6d4'];
+    const labels = ['Red', 'Blue', 'Green', 'Gold', 'Teal'];
     const numBars = Math.min(3 + Math.floor(levelId / 2), 5);
     
     for (let i = 0; i < numBars; i++) {

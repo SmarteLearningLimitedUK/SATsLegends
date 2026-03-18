@@ -57,7 +57,7 @@ const TILE_FAMILIES: TileFamily[] = [
   { id: 'half', labels: ['1/2', '0.5', '2/4', '0.50'], asset: FRACTION_MATCH_ASSETS.tiles.ember, glow: 'shadow-[0_0_24px_rgba(249,115,22,0.38)]', value: 0.5 },
   { id: 'quarter', labels: ['1/4', '0.25', '2/8'], asset: FRACTION_MATCH_ASSETS.tiles.sapphire, glow: 'shadow-[0_0_24px_rgba(59,130,246,0.38)]', value: 0.25 },
   { id: 'three-quarters', labels: ['3/4', '0.75', '6/8'], asset: FRACTION_MATCH_ASSETS.tiles.emerald, glow: 'shadow-[0_0_24px_rgba(34,197,94,0.36)]', value: 0.75 },
-  { id: 'fifth', labels: ['1/5', '0.2', '2/10'], asset: FRACTION_MATCH_ASSETS.tiles.violet, glow: 'shadow-[0_0_24px_rgba(192,132,252,0.36)]', value: 0.2 },
+  { id: 'fifth', labels: ['1/5', '0.2', '2/10'], asset: FRACTION_MATCH_ASSETS.tiles.cobalt, glow: 'shadow-[0_0_24px_rgba(56,189,248,0.36)]', value: 0.2 },
   { id: 'two-fifths', labels: ['2/5', '0.4', '4/10'], asset: FRACTION_MATCH_ASSETS.tiles.gold, glow: 'shadow-[0_0_24px_rgba(250,204,21,0.38)]', value: 0.4 },
   { id: 'tenth', labels: ['1/10', '0.1', '10/100'], asset: FRACTION_MATCH_ASSETS.tiles.storm, glow: 'shadow-[0_0_24px_rgba(167,139,250,0.36)]', value: 0.1 },
   { id: 'three-tenths', labels: ['3/10', '0.3', '30/100'], asset: FRACTION_MATCH_ASSETS.tiles.plasma, glow: 'shadow-[0_0_24px_rgba(236,72,153,0.34)]', value: 0.3 },

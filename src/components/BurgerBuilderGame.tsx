@@ -7,7 +7,7 @@ import burgerLevelBg from '../assets/level_backgrounds/burger.png';
 import playBgAsset from '../assets/fantasy_hero/slider/play_bg.png';
 import playBorderAsset from '../assets/fantasy_hero/slider/play_border.png';
 import playFillBlueAsset from '../assets/fantasy_hero/slider/play_fill_blue.png';
-import ribbonPurpleAsset from '../assets/fantasy_hero/title/ribbon_purple.png';
+import ribbonBlueAsset from '../assets/fantasy_hero/title/ribbon_blue.png';
 import lineBgAsset from '../assets/fantasy_hero/title/line_bg.png';
 import coinAsset from '../assets/fantasy_hero/ui/coin.png';
 import { triggerHaptic } from '../haptics';
@@ -61,7 +61,7 @@ const INGREDIENT_TYPES: IngredientType[] = [
     units: 4,
     asset: BURGER_ASSETS.patty,
     accent: 'from-amber-100 via-orange-50 to-white',
-    trayTone: 'from-violet-500 via-fuchsia-500 to-purple-600',
+    trayTone: 'from-sky-500 via-cyan-500 to-blue-600',
     buttonImageClass: 'w-16 md:w-20',
     stackImageClass: 'w-36 md:w-44',
     shortLabel: '1/2',
@@ -110,8 +110,8 @@ const INGREDIENT_TYPES: IngredientType[] = [
     name: 'Onion',
     units: 1,
     asset: BURGER_ASSETS.onion,
-    accent: 'from-fuchsia-100 via-violet-50 to-white',
-    trayTone: 'from-fuchsia-500 via-purple-500 to-violet-600',
+    accent: 'from-cyan-100 via-sky-50 to-white',
+    trayTone: 'from-cyan-500 via-blue-500 to-sky-600',
     buttonImageClass: 'w-14 md:w-18',
     stackImageClass: 'w-32 md:w-38',
     shortLabel: '1/8',
@@ -222,16 +222,16 @@ const TavernMonster: React.FC<{ mood: CustomerMood }> = ({ mood }) => {
       ? 'from-rose-300 via-orange-300 to-amber-500'
       : 'from-lime-300 via-emerald-300 to-green-500';
   const hornTone = mood === 'sad'
-    ? 'from-red-500 to-violet-500'
-    : 'from-violet-300 to-violet-600';
+    ? 'from-red-500 to-sky-500'
+    : 'from-sky-300 to-sky-600';
 
   return (
     <div className="relative flex h-40 w-44 items-end justify-center md:h-56 md:w-60">
       <div className="absolute inset-x-[18%] bottom-0 h-10 rounded-full bg-black/35 blur-2xl md:h-14" />
       <div className={`relative h-[82%] w-full rounded-[46%_46%_32%_32%/52%_52%_30%_30%] border border-lime-100/28 bg-gradient-to-b ${shellTone} shadow-[inset_0_5px_0_rgba(255,255,255,0.22),0_26px_46px_rgba(0,0,0,0.28)]`}>
         <div className="absolute inset-x-[11%] top-[10%] h-[28%] rounded-full bg-white/16 blur-xl" />
-        <div className="absolute left-[16%] top-[6%] h-10 w-8 rotate-[-18deg] rounded-[60%_60%_20%_20%] border border-violet-100/30 bg-gradient-to-b from-violet-300 to-violet-700 shadow-[0_6px_10px_rgba(46,16,101,0.28)] md:h-14 md:w-10" />
-        <div className={`absolute right-[16%] top-[6%] h-10 w-8 rotate-[18deg] rounded-[60%_60%_20%_20%] border border-violet-100/30 bg-gradient-to-b ${hornTone} shadow-[0_6px_10px_rgba(46,16,101,0.28)] md:h-14 md:w-10`} />
+        <div className="absolute left-[16%] top-[6%] h-10 w-8 rotate-[-18deg] rounded-[60%_60%_20%_20%] border border-sky-100/30 bg-gradient-to-b from-sky-300 to-sky-700 shadow-[0_6px_10px_rgba(46,16,101,0.28)] md:h-14 md:w-10" />
+        <div className={`absolute right-[16%] top-[6%] h-10 w-8 rotate-[18deg] rounded-[60%_60%_20%_20%] border border-sky-100/30 bg-gradient-to-b ${hornTone} shadow-[0_6px_10px_rgba(46,16,101,0.28)] md:h-14 md:w-10`} />
 
         <div className="absolute left-[26%] top-[34%] h-4 w-6 rotate-[7deg] rounded-full bg-white shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] md:h-5 md:w-8">
           <div className="absolute left-[42%] top-[30%] h-2.5 w-2.5 rounded-full bg-slate-900 md:h-3 md:w-3" />

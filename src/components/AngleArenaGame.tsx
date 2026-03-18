@@ -17,7 +17,7 @@ interface AngleArenaGameProps {
 
 type RoundType = 'direct' | 'straight' | 'triangle' | 'around' | 'boss';
 type Lane = 'low' | 'mid' | 'high';
-type Theme = 'emerald' | 'violet' | 'amber' | 'cyan';
+type Theme = 'emerald' | 'sky' | 'amber' | 'cyan';
 
 interface AngleRound {
   type: RoundType;
@@ -47,7 +47,7 @@ const LANE_POS: Record<Lane, { x: number; y: number }> = {
 };
 const THEMES: Record<Theme, { glow: string; crystal: string; chip: string }> = {
   emerald: { glow: 'rgba(74,222,128,0.3)', crystal: 'linear-gradient(180deg,#bbf7d0,#4ade80 45%,#15803d)', chip: 'bg-emerald-500/18 border-emerald-200/28 text-emerald-50' },
-  violet: { glow: 'rgba(192,132,252,0.3)', crystal: 'linear-gradient(180deg,#ddd6fe,#a855f7 42%,#6b21a8)', chip: 'bg-violet-500/18 border-violet-200/28 text-violet-50' },
+  sky: { glow: 'rgba(56,189,248,0.3)', crystal: 'linear-gradient(180deg,#bae6fd,#38bdf8 42%,#0369a1)', chip: 'bg-sky-500/18 border-sky-200/28 text-sky-50' },
   amber: { glow: 'rgba(251,191,36,0.3)', crystal: 'linear-gradient(180deg,#fde68a,#f59e0b 46%,#c2410c)', chip: 'bg-amber-500/18 border-amber-200/28 text-amber-50' },
   cyan: { glow: 'rgba(34,211,238,0.3)', crystal: 'linear-gradient(180deg,#cffafe,#22d3ee 45%,#0f766e)', chip: 'bg-cyan-500/18 border-cyan-200/28 text-cyan-50' },
 };
@@ -77,18 +77,18 @@ const createRound = (levelId: number, roundNumber: number, totalRounds: number):
 
   if (type === 'direct') {
     const angle = choose([45, 60, 75, 90, 120, 135].filter((item) => item <= (levelId <= 1 ? 120 : 135)));
-    return { type, prompt: `Launch at ${angle}°`, sublabel: 'Pull the protractor sling until the launch angle matches the target.', targetAngle: angle, lane: choose(['low', 'mid', 'high']), theme: choose(['emerald', 'violet', 'amber', 'cyan']), label: choose(['Triangle Tower', 'Rune Bastion', 'Crystal Lock']), bounty: 130 + (levelId * 20) };
+    return { type, prompt: `Launch at ${angle}°`, sublabel: 'Pull the protractor sling until the launch angle matches the target.', targetAngle: angle, lane: choose(['low', 'mid', 'high']), theme: choose(['emerald', 'sky', 'amber', 'cyan']), label: choose(['Triangle Tower', 'Rune Bastion', 'Crystal Lock']), bounty: 130 + (levelId * 20) };
   }
   if (type === 'straight') {
     const known = choose([40, 50, 60, 70, 80, 90, 110, 120, 130]);
-    return { type, prompt: 'Angles on a straight line', sublabel: `Solve x + ${known}° = 180°, then launch at x°.`, targetAngle: 180 - known, lane: choose(['mid', 'high']), theme: choose(['violet', 'amber', 'cyan']), label: 'Line Lock', bounty: 150 + (levelId * 22) };
+    return { type, prompt: 'Angles on a straight line', sublabel: `Solve x + ${known}° = 180°, then launch at x°.`, targetAngle: 180 - known, lane: choose(['mid', 'high']), theme: choose(['sky', 'amber', 'cyan']), label: 'Line Lock', bounty: 150 + (levelId * 22) };
   }
   if (type === 'triangle') {
     const [a, b] = choose([[40, 50], [35, 65], [55, 45], [30, 70]]);
     return { type, prompt: 'Missing angle in a triangle', sublabel: `Find x in ${a}° + ${b}° + x = 180°, then fire.`, targetAngle: 180 - a - b, lane: choose(['low', 'mid']), theme: choose(['emerald', 'cyan', 'amber']), label: 'Triangle Seal', bounty: 160 };
   }
   const [a, b] = choose([[120, 80], [140, 90], [110, 95], [150, 70]]);
-  return { type, prompt: 'Angles around a point', sublabel: `Solve x in ${a}° + ${b}° + x = 360°, then launch.`, targetAngle: 360 - a - b, lane: choose(['mid', 'high']), theme: choose(['violet', 'emerald', 'cyan']), label: 'Compass Ring', bounty: 170 };
+  return { type, prompt: 'Angles around a point', sublabel: `Solve x in ${a}° + ${b}° + x = 360°, then launch.`, targetAngle: 360 - a - b, lane: choose(['mid', 'high']), theme: choose(['sky', 'emerald', 'cyan']), label: 'Compass Ring', bounty: 170 };
 };
 
 const buildFlight = (aimAngle: number, power: number, lane: Lane, hit: boolean, boss = false): FlightState => {

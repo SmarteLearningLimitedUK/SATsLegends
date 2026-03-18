@@ -247,7 +247,7 @@ const RuneLockDungeonsGame: React.FC<RuneLockDungeonsGameProps> = ({
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden bg-[linear-gradient(180deg,#110b1f_0%,#241230_42%,#140913_100%)]">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute inset-x-[-10%] top-[-12%] h-[32%] rounded-full bg-violet-300/10 blur-3xl" />
+        <div className="absolute inset-x-[-10%] top-[-12%] h-[32%] rounded-full bg-sky-300/10 blur-3xl" />
         <div className="absolute inset-x-0 top-0 h-[56%] bg-[linear-gradient(180deg,rgba(167,139,250,0.14),rgba(167,139,250,0.04),transparent)]" />
         <div className="absolute inset-x-0 bottom-0 h-[40%] bg-[linear-gradient(180deg,rgba(17,24,39,0),rgba(17,24,39,0.22),rgba(9,6,15,0.96))]" />
         <div className="absolute left-[12%] bottom-[16%] h-[7%] w-[18%] rounded-full bg-red-500/12 blur-2xl" />
@@ -264,10 +264,10 @@ const RuneLockDungeonsGame: React.FC<RuneLockDungeonsGameProps> = ({
             timeLeft={timeLeft}
             progress={progress}
             compact
-            accentText="text-violet-950"
-            accentSoftBg="bg-violet-100/84"
-            accentBorder="border-violet-200/88"
-            progressBar="bg-gradient-to-r from-violet-300 via-fuchsia-400 to-amber-300"
+            accentText="text-sky-950"
+            accentSoftBg="bg-sky-100/84"
+            accentBorder="border-sky-200/88"
+            progressBar="bg-gradient-to-r from-sky-300 via-cyan-400 to-amber-300"
             statLabel="Door"
             statValue={`${roundNumber}/${totalRounds}`}
           />
@@ -297,22 +297,22 @@ const RuneLockDungeonsGame: React.FC<RuneLockDungeonsGameProps> = ({
                 <div className="rounded-[1.3rem] border border-white/10 bg-black/18 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                   <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/56 md:text-xs">Rune puzzle</div>
                   <div className="mt-2 text-center text-3xl font-black tracking-tight text-white md:text-[2.7rem]">{round.prompt}</div>
-                  <div className="mt-2 text-center text-sm font-bold text-violet-100/82 md:text-base">{round.support}</div>
+                  <div className="mt-2 text-center text-sm font-bold text-sky-100/82 md:text-base">{round.support}</div>
                 </div>
 
                 <div className="relative flex flex-1 items-center justify-center overflow-hidden rounded-[1.6rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.22),rgba(9,6,15,0.16))]">
-                  <div className="absolute inset-x-[18%] top-[16%] h-[22%] rounded-full bg-violet-300/16 blur-2xl" />
+                  <div className="absolute inset-x-[18%] top-[16%] h-[22%] rounded-full bg-sky-300/16 blur-2xl" />
                   <div className="absolute bottom-[12%] left-[14%] h-[10%] w-[14%] rounded-full bg-red-500/12 blur-xl" />
                   <div className="absolute bottom-[12%] right-[14%] h-[10%] w-[14%] rounded-full bg-orange-400/12 blur-xl" />
 
                   <div className="relative h-[18rem] w-[15rem] md:h-[22rem] md:w-[18rem]">
-                    <div className="absolute inset-x-[16%] top-[8%] h-[14%] rounded-[1rem] border border-violet-200/20 bg-[linear-gradient(180deg,#4338ca,#312e81)] shadow-[0_18px_26px_rgba(49,46,129,0.24)]" />
+                    <div className="absolute inset-x-[16%] top-[8%] h-[14%] rounded-[1rem] border border-sky-200/20 bg-[linear-gradient(180deg,#4338ca,#312e81)] shadow-[0_18px_26px_rgba(49,46,129,0.24)]" />
                     <div className="absolute inset-x-[10%] top-[18%] bottom-[10%] rounded-[2rem] border-[6px] border-stone-400/55 bg-[linear-gradient(180deg,#4b5563,#1f2937_72%,#111827)] shadow-[0_24px_42px_rgba(0,0,0,0.32)]" />
                     <div className="absolute inset-x-[18%] top-[28%] h-[18%] rounded-full bg-[radial-gradient(circle_at_center,rgba(196,181,253,0.34),rgba(196,181,253,0.06),transparent_72%)]" />
-                    <div className="absolute left-1/2 top-[34%] h-[20%] w-[20%] -translate-x-1/2 rounded-full border border-violet-200/22 bg-[linear-gradient(180deg,#a78bfa,#6d28d9)] shadow-[0_0_18px_rgba(167,139,250,0.3)]" />
+                    <div className="absolute left-1/2 top-[34%] h-[20%] w-[20%] -translate-x-1/2 rounded-full border border-sky-200/22 bg-[linear-gradient(180deg,#a78bfa,#6d28d9)] shadow-[0_0_18px_rgba(167,139,250,0.3)]" />
                     <div className="absolute left-1/2 top-[35.5%] -translate-x-1/2 text-lg font-black text-white md:text-2xl">?</div>
                     <div className="absolute inset-x-[22%] bottom-[20%] h-[12%] rounded-[1rem] border border-white/10 bg-black/16" />
-                    <div className="absolute inset-x-[28%] bottom-[24%] h-[4%] rounded-full bg-violet-200/24 blur-sm" />
+                    <div className="absolute inset-x-[28%] bottom-[24%] h-[4%] rounded-full bg-sky-200/24 blur-sm" />
                   </div>
                 </div>
               </div>

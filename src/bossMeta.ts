@@ -21,8 +21,8 @@ export const BOSS_ENCOUNTERS: Partial<Record<MiniGameType, BossEncounter>> = {
     assetId: 'jelly',
     name: 'Prism Jelly',
     title: 'Crystal Core',
-    glowClass: 'from-fuchsia-300/24 via-violet-300/12 to-transparent',
-    chipClass: 'border-fuchsia-200/35 bg-fuchsia-100/14 text-fuchsia-100',
+    glowClass: 'from-cyan-300/24 via-sky-300/12 to-transparent',
+    chipClass: 'border-cyan-200/35 bg-cyan-100/14 text-cyan-100',
   },
   mirror_gate: {
     assetId: 'cyclops_slime',
@@ -49,8 +49,8 @@ export const BOSS_ENCOUNTERS: Partial<Record<MiniGameType, BossEncounter>> = {
     assetId: 'cyclops_slime',
     name: 'Oracle Slime',
     title: 'Matrix Match',
-    glowClass: 'from-violet-300/22 via-fuchsia-300/10 to-transparent',
-    chipClass: 'border-violet-200/35 bg-violet-100/14 text-violet-100',
+    glowClass: 'from-sky-300/22 via-cyan-300/10 to-transparent',
+    chipClass: 'border-sky-200/35 bg-sky-100/14 text-sky-100',
   },
 };
 

@@ -47,7 +47,7 @@ interface FeedbackState {
 }
 
 const MAX_LIVES = 3;
-const TARGET_PALETTES: DroneTargetSeed['palette'][] = ['cyan', 'violet', 'amber', 'emerald'];
+const TARGET_PALETTES: DroneTargetSeed['palette'][] = ['cyan', 'sky', 'amber', 'emerald'];
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 const randomBetween = (min: number, max: number) => Math.random() * (max - min) + min;
@@ -125,7 +125,7 @@ const buildRound = (levelId: number, roundNumber: number, isBoss: boolean): Snip
 
 const paletteStyles: Record<DroneTargetSeed['palette'], string> = {
   cyan: 'border-cyan-200/75 bg-cyan-500/30 text-cyan-50',
-  violet: 'border-violet-200/75 bg-violet-500/28 text-violet-50',
+  sky: 'border-sky-200/75 bg-sky-500/28 text-sky-50',
   amber: 'border-amber-200/75 bg-amber-500/28 text-amber-50',
   emerald: 'border-emerald-200/75 bg-emerald-500/30 text-emerald-50',
 };

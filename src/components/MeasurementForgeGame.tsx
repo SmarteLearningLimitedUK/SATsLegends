@@ -8,8 +8,8 @@ import { AVATARS } from '../constants';
 import AssetIcon from './AssetIcon';
 import { Coins } from './GameIcons';
 import { GameScreenShell, PuzzleStage } from './layout/ScreenPrimitives';
-import panelPurple from '../assets/licensed/slices/panel_purple.png';
-import labelPurpleLong from '../assets/licensed/slices/label_purple_long.png';
+import panelCardAsset from '../assets/licensed/slices/panel_paper.png';
+import labelBlueLong from '../assets/licensed/slices/label_blue.png';
 import labelGreenLong from '../assets/licensed/slices/label_green_long.png';
 import woodPlankLong from '../assets/licensed/slices/wood_plank_long_3.png';
 import iconGem from '../assets/licensed/slices/icon_gem.png';
@@ -398,7 +398,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
           <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-3 md:gap-4">
             <div className="flex flex-col items-center gap-2 text-center">
               <div className="relative inline-flex h-[2.35rem] items-center justify-center px-6 md:h-[2.55rem] md:px-7">
-                <img src={labelPurpleLong} alt="" draggable={false} className="absolute inset-0 h-full w-full object-fill" />
+                <img src={labelBlueLong} alt="" draggable={false} className="absolute inset-0 h-full w-full object-fill" />
                 <div className="relative z-10 inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.16em] text-white md:text-xs">
                   <AssetIcon name="star" className="h-4 w-4" />
                   Level {levelId} · Round {roundIndex + 1}
@@ -406,7 +406,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
               </div>
 
               <div className="relative w-full max-w-[18rem] px-4 py-3 md:max-w-[21rem] md:px-5 md:py-4">
-                <img src={panelPurple} alt="" draggable={false} className="absolute inset-0 h-full w-full object-fill drop-shadow-[0_16px_34px_rgba(15,23,42,0.28)]" />
+                <img src={panelCardAsset} alt="" draggable={false} className="absolute inset-0 h-full w-full object-fill drop-shadow-[0_16px_34px_rgba(15,23,42,0.28)]" />
                 <div className="pointer-events-none absolute left-1/2 top-0 h-11 w-11 -translate-x-1/2 -translate-y-[44%] rounded-full bg-[linear-gradient(180deg,#7dd3fc,#2563eb)] p-1 shadow-[0_10px_18px_rgba(37,99,235,0.28)]">
                   <div className="flex h-full w-full items-center justify-center rounded-full bg-[radial-gradient(circle,#dbeafe,#3b82f6)]">
                     <img src={iconGem} alt="" draggable={false} className="h-5 w-5 object-contain" />

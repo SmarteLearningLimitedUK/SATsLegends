@@ -46,7 +46,7 @@ const INGREDIENTS: IngredientType[] = [
   { id: 'crystal', label: 'Blue Crystal', short: 'BC', colors: ['#38bdf8', '#2563eb'] },
   { id: 'mushroom', label: 'Red Mushroom', short: 'RM', colors: ['#fb7185', '#be123c'] },
   { id: 'herb', label: 'Green Herb', short: 'GH', colors: ['#4ade80', '#15803d'] },
-  { id: 'gem', label: 'Purple Gem', short: 'PG', colors: ['#c084fc', '#7c3aed'] },
+  { id: 'gem', label: 'Azure Gem', short: 'PG', colors: ['#c084fc', '#7c3aed'] },
   { id: 'flower', label: 'Yellow Flower', short: 'YF', colors: ['#facc15', '#f59e0b'] },
 ];
 
@@ -414,10 +414,10 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
           targetScore={level.targetScore}
           timeLeft={timeLeft}
           progress={progress}
-          accentText="text-purple-950"
-          accentSoftBg="bg-purple-100/85"
-          accentBorder="border-purple-200/80"
-          progressBar="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400"
+          accentText="text-blue-950"
+          accentSoftBg="bg-blue-100/85"
+          accentBorder="border-blue-200/80"
+          progressBar="bg-gradient-to-r from-cyan-400 via-sky-400 to-cyan-400"
           statLabel="Brews"
           statValue={brewCount}
           compact
@@ -428,7 +428,7 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
 
           <div className="relative z-10 grid min-h-0 flex-1 grid-rows-[auto,minmax(0,1fr)] gap-3 md:gap-4">
             <div className="flex flex-col items-center gap-2 text-center">
-              <div className="licensed-slice-purple-banner inline-flex min-h-[2rem] items-center gap-2 rounded-full px-4 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white md:text-xs">
+              <div className="licensed-slice-blue-banner inline-flex min-h-[2rem] items-center gap-2 rounded-full px-4 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white md:text-xs">
                 <AssetIcon name="gem" className="h-4 w-4" />
                 Recipe board
               </div>

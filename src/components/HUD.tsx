@@ -6,7 +6,7 @@ import AnimatedAvatar from './AnimatedAvatar';
 import sliderBgAsset from '../assets/casual_ui/hud/progress_bar_1__bg.png';
 import sliderBorderAsset from '../assets/licensed/slices/progress_bar.png';
 import sliderFillAsset from '../assets/casual_ui/hud/progress_bar_1__fg.png';
-import titleFlagAsset from '../assets/licensed/slices/label_purple_long.png';
+import titleFlagAsset from '../assets/licensed/slices/label_blue.png';
 
 interface HUDProps {
   title?: string;

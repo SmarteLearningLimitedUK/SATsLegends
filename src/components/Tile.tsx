@@ -5,7 +5,7 @@ import { TileData } from '../types';
 import { clsx } from 'clsx';
 import tileBlue from '../assets/fantasy_hero/cloud_collapse/tile_blue.png';
 import tileGreen from '../assets/fantasy_hero/cloud_collapse/tile_green.png';
-import tilePurple from '../assets/fantasy_hero/cloud_collapse/tile_purple.png';
+import tileSky from '../assets/fantasy_hero/cloud_collapse/tile_blue.png';
 import tileRed from '../assets/fantasy_hero/cloud_collapse/tile_red.png';
 import tileYellow from '../assets/fantasy_hero/cloud_collapse/tile_yellow.png';
 import tileNavy from '../assets/fantasy_hero/cloud_collapse/tile_navy.png';
@@ -30,7 +30,7 @@ const TILE_ART: Record<string, string> = {
   quarter: tileRed,
   'three-quarters': tileGreen,
   'one-fifth': tileYellow,
-  ten: tilePurple,
+  ten: tileSky,
   twelve: tileNavy,
   twenty: tileBlue,
   one: tileGreen,
@@ -41,7 +41,7 @@ const TILE_TEXT: Record<string, string> = {
   quarter: 'text-amber-50',
   'three-quarters': 'text-emerald-50',
   'one-fifth': 'text-yellow-50',
-  ten: 'text-violet-50',
+  ten: 'text-sky-50',
   twelve: 'text-slate-50',
   twenty: 'text-cyan-50',
   one: 'text-emerald-50',
