@@ -548,7 +548,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
   const aimAngle = Math.atan2(aimVector.y, aimVector.x) * (180 / Math.PI);
 
   const objectiveArea = (
-    <div className="licensed-board-frame flex flex-col gap-2 p-3 md:gap-3 md:p-4">
+    <div className="licensed-board-frame structured-playfield-frame flex flex-col gap-2 p-3 md:gap-3 md:p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/75">Objective</div>

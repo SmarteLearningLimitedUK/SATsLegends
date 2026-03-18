@@ -259,7 +259,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
           statValue={streak}
         />
 
-        <div className="licensed-board-frame relative flex w-full min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] p-2 md:rounded-[2.6rem] md:p-3">
+        <div className="licensed-board-frame structured-playfield-frame relative flex w-full min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] p-2 md:rounded-[2.6rem] md:p-3">
           {/* Game Area */}
           <div className="relative flex w-full flex-1 min-h-0 flex-col items-center justify-center perspective-1000">
           

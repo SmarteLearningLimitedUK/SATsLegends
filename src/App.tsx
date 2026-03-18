@@ -818,19 +818,21 @@ const App: React.FC = () => {
         return (
           <div className={`game-shell-host ${gameplayTypeClass} ${usesQuestionMatchFrame ? 'question-match-shell' : ''} relative flex h-full w-full min-h-0 flex-col overflow-hidden`.trim()}>
             <div className="game-shell-contract relative flex h-full w-full min-h-0 flex-col overflow-hidden">
-              {isGameplayInstructionPending ? (
-                <div className="flex h-full w-full min-h-0 items-center justify-center p-3 md:p-6">
-                  <div className="licensed-board-frame flex w-full max-w-xl flex-col items-center gap-3 p-5 text-center md:gap-4 md:p-8">
-                    <div className="text-xs font-black uppercase tracking-[0.2em] text-cyan-100/70">Game Briefing</div>
-                    <div className="text-lg font-black text-white md:text-2xl">
-                      {selectedRuleSet?.title || selectedLevel?.displayName || 'How to play'}
+              <div className="structured-game-layout flex h-full w-full min-h-0 flex-1 flex-col">
+                {isGameplayInstructionPending ? (
+                  <div className="flex h-full w-full min-h-0 items-center justify-center p-3 md:p-6">
+                    <div className="licensed-board-frame structured-playfield-frame flex w-full max-w-xl flex-col items-center gap-3 p-5 text-center md:gap-4 md:p-8">
+                      <div className="text-xs font-black uppercase tracking-[0.2em] text-cyan-100/70">Game Briefing</div>
+                      <div className="text-lg font-black text-white md:text-2xl">
+                        {selectedRuleSet?.title || selectedLevel?.displayName || 'How to play'}
+                      </div>
+                      <p className="max-w-md text-sm font-semibold leading-relaxed text-white/80 md:text-base">
+                        Read the instructions, then tap Start Game to begin this round.
+                      </p>
                     </div>
-                    <p className="max-w-md text-sm font-semibold leading-relaxed text-white/80 md:text-base">
-                      Read the instructions, then tap Start Game to begin this round.
-                    </p>
                   </div>
-                </div>
-              ) : renderGameplay()}
+                ) : renderGameplay()}
+              </div>
             </div>
           </div>
         );

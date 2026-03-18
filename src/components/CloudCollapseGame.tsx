@@ -133,7 +133,7 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
           avatar={avatar}
         />
 
-        <div className="casual-panel-strong relative flex min-h-0 w-full flex-1 flex-col items-center overflow-hidden rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(18,28,55,0.985),rgba(8,14,27,0.995))] px-2 py-2 md:rounded-[2.4rem] md:px-4 md:py-4">
+          <div className="casual-panel-strong structured-playfield-frame relative flex min-h-0 w-full flex-1 flex-col items-center overflow-hidden rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(18,28,55,0.985),rgba(8,14,27,0.995))] px-2 py-2 md:rounded-[2.4rem] md:px-4 md:py-4">
           <div className="relative z-10 mb-2 flex w-full shrink-0 items-center justify-between gap-2 px-1 md:mb-3">
             <div className="casual-ribbon-chip inline-flex items-center gap-2 rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em] md:px-4 md:py-1.5 md:text-[10px]">
               <AssetIcon name="star" className="h-4 w-4" />

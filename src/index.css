@@ -2646,7 +2646,45 @@ button:disabled {
 .reward-panel,
 .ui-paper-panel {
   border: 1px solid rgba(255, 235, 168, 0.38) !important;
-  background: url('./assets/casual_ui/dialogs_panels/card_1.png') center/100% 100% no-repeat !important;
+  background: url('./assets/casual_ui/dialogs_panels/dialog__popup_1.png') center/100% 100% no-repeat !important;
+}
+
+.licensed-overlay-card,
+.app-modal-panel {
+  border: 1px solid rgba(176, 220, 255, 0.28) !important;
+  background: url('./assets/casual_ui/dialogs_panels/dialog__popup_1.png') center/100% 100% no-repeat !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    0 16px 30px rgba(2,6,23,0.28) !important;
+}
+
+.licensed-input-panel {
+  border: 1px solid rgba(164, 217, 255, 0.4) !important;
+  background: url('./assets/casual_ui/dialogs_panels/dialog__speech_box.png') center/100% 100% no-repeat !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.24),
+    0 10px 20px rgba(2,6,23,0.18) !important;
+}
+
+.licensed-panel-plank {
+  border: 1px solid rgba(176, 220, 255, 0.34) !important;
+  background: url('./assets/casual_ui/dialogs_panels/dialog__tag.png') center/100% 100% no-repeat !important;
+  text-shadow: 0 1px 0 rgba(7, 20, 39, 0.52) !important;
+}
+
+.casual-tab-shell,
+.casual-stat-shell,
+.casual-nav-shell {
+  border: 1px solid rgba(176, 220, 255, 0.3) !important;
+  background: url('./assets/casual_ui/dialogs_panels/panel_2.png') center/100% 100% no-repeat !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.14),
+    0 14px 28px rgba(2,6,23,0.24) !important;
+}
+
+.glass-panel {
+  background: url('./assets/casual_ui/dialogs_panels/panel_3.png') center/100% 100% no-repeat !important;
+  border: 1px solid rgba(176, 220, 255, 0.3) !important;
 }
 
 .world-map-island-label,
@@ -2720,6 +2758,45 @@ button:disabled {
   overflow: hidden;
 }
 
+.structured-game-layout {
+  min-height: 0;
+  height: 100%;
+  width: 100%;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.structured-game-layout > * {
+  min-height: 0;
+}
+
+.structured-game-layout .game-shell-zone-hud,
+.structured-game-layout .game-shell-zone-title,
+.structured-game-layout .game-shell-zone-actions {
+  flex: 0 0 auto;
+}
+
+.structured-game-layout .game-shell-zone-playfield,
+.structured-game-layout .game-shell-zone-playfield-wrapper {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.structured-playfield-frame {
+  flex: 1 1 auto;
+  min-height: clamp(14rem, 42vh, 34rem);
+  width: 100%;
+  max-width: min(1180px, 100%);
+  margin-inline: auto;
+}
+
+.structured-game-layout .game-shell-zone-actions {
+  margin-top: clamp(0.2rem, 0.9vh, 0.7rem);
+}
+
 .screen-gameplay .game-shell-contract > * > * {
   min-height: 0;
 }
@@ -2760,7 +2837,7 @@ button:disabled {
   border: 0 !important;
   border-radius: 1.8rem !important;
   background:
-    url('./assets/ui_frames/question_match_frame.png') center / 100% 100% no-repeat !important;
+    url('./assets/casual_ui/dialogs_panels/panel_2.png') center / 100% 100% no-repeat !important;
   box-shadow:
     0 18px 0 rgba(24, 46, 92, 0.7),
     0 28px 46px rgba(2, 6, 23, 0.3) !important;
@@ -2926,7 +3003,7 @@ button:disabled {
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0) 24%),
-    url('./assets/reskin/main_png/mission.png') center/100% 100% no-repeat,
+    url('./assets/casual_ui/dialogs_panels/dialog__popup_1.png') center/100% 100% no-repeat,
     linear-gradient(180deg, rgba(18, 49, 110, 0.98), rgba(7, 20, 39, 0.98)) !important;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.18),

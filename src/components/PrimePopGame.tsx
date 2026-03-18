@@ -46,7 +46,7 @@ const isPrime = (num: number) => {
   return true;
 };
 
-const BUBBLE_LANES = [12, 24, 36, 48, 60, 72, 84];
+const BUBBLE_LANES = [10, 22, 34, 46, 58, 70, 82, 90];
 
 const PRIME_PALETTES = [
   {
@@ -64,11 +64,32 @@ const PRIME_PALETTES = [
     text: '#f3fff9',
   },
   {
-    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.97), rgba(196,181,253,0.92) 18%, rgba(167,139,250,0.8) 45%, rgba(139,92,246,0.72) 68%, rgba(76,29,149,0.82) 100%)',
-    ring: 'rgba(233,213,255,0.74)',
-    glow: '0 0 26px rgba(167,139,250,0.34)',
+    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.97), rgba(254,202,202,0.92) 18%, rgba(248,113,113,0.8) 45%, rgba(239,68,68,0.72) 68%, rgba(127,29,29,0.82) 100%)',
+    ring: 'rgba(254,226,226,0.74)',
+    glow: '0 0 26px rgba(248,113,113,0.34)',
     sparkle: 'rgba(255,255,255,0.76)',
-    text: '#fbf7ff',
+    text: '#fff7f7',
+  },
+  {
+    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.97), rgba(252,211,77,0.92) 18%, rgba(250,204,21,0.8) 45%, rgba(245,158,11,0.72) 68%, rgba(120,53,15,0.82) 100%)',
+    ring: 'rgba(254,243,199,0.74)',
+    glow: '0 0 26px rgba(250,204,21,0.34)',
+    sparkle: 'rgba(255,255,255,0.76)',
+    text: '#fffdf2',
+  },
+  {
+    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.97), rgba(187,247,208,0.92) 18%, rgba(74,222,128,0.8) 45%, rgba(22,163,74,0.72) 68%, rgba(20,83,45,0.82) 100%)',
+    ring: 'rgba(220,252,231,0.74)',
+    glow: '0 0 26px rgba(74,222,128,0.34)',
+    sparkle: 'rgba(255,255,255,0.76)',
+    text: '#f7fff9',
+  },
+  {
+    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.97), rgba(167,243,208,0.92) 18%, rgba(45,212,191,0.8) 45%, rgba(13,148,136,0.72) 68%, rgba(19,78,74,0.82) 100%)',
+    ring: 'rgba(204,251,241,0.74)',
+    glow: '0 0 26px rgba(45,212,191,0.34)',
+    sparkle: 'rgba(255,255,255,0.76)',
+    text: '#f2fffb',
   },
 ];
 
@@ -86,6 +107,27 @@ const COMPOSITE_PALETTES = [
     glow: '0 0 24px rgba(249,115,22,0.32)',
     sparkle: 'rgba(255,242,214,0.72)',
     text: '#fffaf5',
+  },
+  {
+    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.95), rgba(253,230,138,0.9) 18%, rgba(250,204,21,0.78) 45%, rgba(234,88,12,0.68) 68%, rgba(124,45,18,0.82) 100%)',
+    ring: 'rgba(254,240,138,0.72)',
+    glow: '0 0 24px rgba(250,204,21,0.32)',
+    sparkle: 'rgba(255,244,214,0.72)',
+    text: '#fffbf3',
+  },
+  {
+    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.95), rgba(254,202,202,0.9) 18%, rgba(248,113,113,0.78) 45%, rgba(220,38,38,0.68) 68%, rgba(127,29,29,0.82) 100%)',
+    ring: 'rgba(254,226,226,0.72)',
+    glow: '0 0 24px rgba(248,113,113,0.32)',
+    sparkle: 'rgba(255,236,236,0.72)',
+    text: '#fff7f7',
+  },
+  {
+    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.95), rgba(191,219,254,0.9) 18%, rgba(96,165,250,0.78) 45%, rgba(37,99,235,0.68) 68%, rgba(30,58,138,0.82) 100%)',
+    ring: 'rgba(219,234,254,0.72)',
+    glow: '0 0 24px rgba(96,165,250,0.32)',
+    sparkle: 'rgba(232,244,255,0.72)',
+    text: '#f6fbff',
   },
 ];
 
@@ -145,7 +187,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
       const availableLanes = BUBBLE_LANES.filter(lane => !occupiedLanes.has(lane));
       const lanePool = availableLanes.length > 0 ? availableLanes : BUBBLE_LANES;
       const selectedLane = lanePool[Math.floor(Math.random() * lanePool.length)];
-      const laneJitter = (Math.random() * 3.2) - 1.6;
+      const laneJitter = (Math.random() * 2.4) - 1.2;
       const palette = palettePool[Math.floor(Math.random() * palettePool.length)];
 
       const newBubble: Bubble = {
@@ -316,7 +358,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
       {/* Background Grid */}
       <div className="absolute inset-0 opacity-20 pointer-events-none licensed-grid-backdrop" />
 
-      <div className="z-10 w-full max-w-5xl flex h-full min-h-0 flex-1 flex-col items-center gap-2 md:gap-6">
+      <div className="z-10 w-full max-w-6xl aaa-game-stage flex h-full min-h-0 flex-1 flex-col items-center gap-2 md:gap-5">
         <GameplayHUD
           title="Prime Pop"
           avatar={avatar}
@@ -338,11 +380,13 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
           ref={gameAreaRef}
           onPointerMove={handlePointerMove}
           onPointerDown={(event) => handlePlayfieldPointerDown(event.clientX, event.clientY)}
-          className="w-full flex-1 min-h-0 relative licensed-board-frame overflow-hidden touch-none touch-manipulation"
+          className="w-full flex-1 min-h-[23rem] md:min-h-[31rem] relative licensed-board-frame structured-playfield-frame overflow-hidden touch-none touch-manipulation"
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.25),transparent_28%),radial-gradient(circle_at_78%_18%,rgba(192,132,252,0.22),transparent_26%),radial-gradient(circle_at_50%_88%,rgba(74,222,128,0.2),transparent_30%),linear-gradient(180deg,rgba(7,20,45,0.2),rgba(2,6,23,0.55))]" />
           <div className="absolute inset-x-[6%] top-[7%] h-[14%] rounded-full bg-white/8 blur-3xl opacity-70" />
           <div className="absolute inset-x-0 bottom-0 h-[28%] bg-gradient-to-t from-slate-950/30 via-transparent to-transparent" />
+
+          <div className="absolute inset-x-[2.2%] top-[3.6%] bottom-[4.2%] rounded-[1.2rem] md:rounded-[1.8rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,20,46,0.06),rgba(8,20,46,0.18))] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)] pointer-events-none" />
 
           {/* Custom Crosshair */}
           <div 
@@ -352,75 +396,77 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
             <Crosshair className="w-full h-full" />
           </div>
 
-          <AnimatePresence>
-            {bubbles.map(bubble => !bubble.isPopped && (
-              <motion.div
-                key={bubble.id}
-                ref={(node) => {
-                  bubbleNodeRefs.current[bubble.id] = node;
-                }}
-                initial={{ bottom: '-22%', opacity: 0, scale: 0.72 }}
-                animate={{ bottom: '108%', opacity: [0, 1, 1], scale: [0.72, 1, 1] }}
-                exit={{ scale: 1.5, opacity: 0 }}
-                transition={{ 
-                  bottom: { duration: bubble.speed, ease: 'linear' },
-                  opacity: { duration: 0.45, times: [0, 0.1, 1] },
-                  scale: { duration: 0.35 }
-                }}
-                onAnimationComplete={() => {
-                  delete bubbleNodeRefs.current[bubble.id];
-                  setBubbles(prev => prev.filter(item => item.id !== bubble.id || item.isPopped));
-                }}
-                onPointerDown={(e) => {
-                  e.stopPropagation();
-                  handlePlayfieldPointerDown(e.clientX, e.clientY);
-                }}
-                className="absolute -translate-x-1/2 flex items-center justify-center rounded-full backdrop-blur-md md:cursor-none"
-                style={{
-                  background: bubble.palette.background,
-                  border: `2px solid ${bubble.palette.ring}`,
-                  boxShadow: `${bubble.palette.glow}, inset 0 -14px 26px rgba(15,23,42,0.28), inset 0 10px 18px rgba(255,255,255,0.18)`,
-                  left: `${bubble.x}%`,
-                  width: `${bubble.size}px`,
-                  height: `${bubble.size}px`,
-                }}
-              >
-                <div
-                  className="absolute inset-[6%] rounded-full opacity-70"
-                  style={{
-                    border: `1px solid ${bubble.palette.sparkle}`,
-                    boxShadow: bubble.isPrime ? `0 0 20px ${bubble.palette.sparkle}` : 'none',
+          <div className="absolute inset-x-[2.2%] top-[3.6%] bottom-[4.2%] overflow-hidden rounded-[1.2rem] md:rounded-[1.8rem]">
+            <AnimatePresence>
+              {bubbles.map(bubble => !bubble.isPopped && (
+                <motion.div
+                  key={bubble.id}
+                  ref={(node) => {
+                    bubbleNodeRefs.current[bubble.id] = node;
                   }}
-                />
-                <div
-                  className="absolute inset-[16%] rounded-full opacity-55"
-                  style={{
-                    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.42), transparent 62%)',
+                  initial={{ bottom: '-18%', opacity: 0, scale: 0.72 }}
+                  animate={{ bottom: '104%', opacity: [0, 1, 1], scale: [0.72, 1, 1] }}
+                  exit={{ scale: 1.5, opacity: 0 }}
+                  transition={{ 
+                    bottom: { duration: bubble.speed, ease: 'linear' },
+                    opacity: { duration: 0.45, times: [0, 0.1, 1] },
+                    scale: { duration: 0.35 }
                   }}
-                />
-                <span
-                  className="pointer-events-none text-2xl md:text-3xl font-black drop-shadow-[0_5px_14px_rgba(15,23,42,0.46)]"
-                  style={{ color: bubble.palette.text }}
+                  onAnimationComplete={() => {
+                    delete bubbleNodeRefs.current[bubble.id];
+                    setBubbles(prev => prev.filter(item => item.id !== bubble.id || item.isPopped));
+                  }}
+                  onPointerDown={(e) => {
+                    e.stopPropagation();
+                    handlePlayfieldPointerDown(e.clientX, e.clientY);
+                  }}
+                  className="absolute -translate-x-1/2 flex items-center justify-center rounded-full backdrop-blur-md md:cursor-none"
+                  style={{
+                    background: bubble.palette.background,
+                    border: `2px solid ${bubble.palette.ring}`,
+                    boxShadow: `${bubble.palette.glow}, inset 0 -14px 26px rgba(15,23,42,0.28), inset 0 10px 18px rgba(255,255,255,0.18)`,
+                    left: `${bubble.x}%`,
+                    width: `${bubble.size}px`,
+                    height: `${bubble.size}px`,
+                  }}
                 >
-                  {bubble.number}
-                </span>
-                
-                {/* Bubble reflection */}
-                <div
-                  className="absolute top-[15%] left-[18%] w-[30%] h-[20%] rounded-full rotate-[-45deg] blur-[1px] pointer-events-none"
-                  style={{ background: bubble.palette.sparkle }}
-                />
-                {bubble.isPrime && (
-                  <motion.div
-                    className="absolute inset-[-10%] rounded-full pointer-events-none"
-                    animate={{ scale: [0.96, 1.08, 0.96], opacity: [0.22, 0.42, 0.22] }}
-                    transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-                    style={{ border: `2px solid ${bubble.palette.ring}` }}
+                  <div
+                    className="absolute inset-[6%] rounded-full opacity-70"
+                    style={{
+                      border: `1px solid ${bubble.palette.sparkle}`,
+                      boxShadow: bubble.isPrime ? `0 0 20px ${bubble.palette.sparkle}` : 'none',
+                    }}
                   />
-                )}
-              </motion.div>
-            ))}
-          </AnimatePresence>
+                  <div
+                    className="absolute inset-[16%] rounded-full opacity-55"
+                    style={{
+                      background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.42), transparent 62%)',
+                    }}
+                  />
+                  <span
+                    className="pointer-events-none text-2xl md:text-3xl font-black drop-shadow-[0_5px_14px_rgba(15,23,42,0.46)]"
+                    style={{ color: bubble.palette.text }}
+                  >
+                    {bubble.number}
+                  </span>
+                  
+                  {/* Bubble reflection */}
+                  <div
+                    className="absolute top-[15%] left-[18%] w-[30%] h-[20%] rounded-full rotate-[-45deg] blur-[1px] pointer-events-none"
+                    style={{ background: bubble.palette.sparkle }}
+                  />
+                  {bubble.isPrime && (
+                    <motion.div
+                      className="absolute inset-[-10%] rounded-full pointer-events-none"
+                      animate={{ scale: [0.96, 1.08, 0.96], opacity: [0.22, 0.42, 0.22] }}
+                      transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+                      style={{ border: `2px solid ${bubble.palette.ring}` }}
+                    />
+                  )}
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
         </div>
 
         <GameActionDock

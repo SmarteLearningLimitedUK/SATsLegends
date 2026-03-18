@@ -608,7 +608,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
           statValue={isBoss ? combo : combo}
         />
 
-        <div className="licensed-board-frame relative flex min-h-0 flex-1 flex-col overflow-hidden p-2 shadow-[0_28px_60px_rgba(0,0,0,0.42)] md:rounded-[2.6rem] md:p-4">
+        <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden p-2 shadow-[0_28px_60px_rgba(0,0,0,0.42)] md:rounded-[2.6rem] md:p-4">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_24%),radial-gradient(circle_at_50%_24%,rgba(56,189,248,0.14),transparent_18%),linear-gradient(180deg,rgba(255,255,255,0.04),rgba(0,0,0,0.16))]" />
 
           <div className="relative z-10 mb-2 flex items-center justify-between gap-2 md:mb-3">

@@ -351,7 +351,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   );
 
   const objectiveArea = (
-    <div className="licensed-board-frame flex flex-col gap-2 p-3 md:gap-3 md:p-4">
+    <div className="licensed-board-frame structured-playfield-frame flex flex-col gap-2 p-3 md:gap-3 md:p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/75">Objective</div>
@@ -418,7 +418,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         })}
       </div>
 
-      <div className="licensed-board-frame relative flex min-h-0 flex-1 flex-col gap-2 overflow-hidden p-3 md:gap-3 md:p-4">
+      <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col gap-2 overflow-hidden p-3 md:gap-3 md:p-4">
         <div className="flex items-center justify-between">
           <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/75 md:text-xs">
             Digit Queue

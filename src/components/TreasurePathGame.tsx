@@ -277,7 +277,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
           compact
         />
 
-        <div className="licensed-board-frame relative flex min-h-0 flex-1 flex-col overflow-hidden p-3 md:p-5">
+        <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden p-3 md:p-5">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(74,222,128,0.18),transparent_24%),radial-gradient(circle_at_82%_30%,rgba(56,189,248,0.14),transparent_20%),linear-gradient(180deg,rgba(8,15,30,0.12),rgba(8,15,30,0.34))]" />
 
           <div className="relative z-10 mb-2 flex flex-col gap-2 md:mb-3 md:flex-row md:items-center md:justify-between">

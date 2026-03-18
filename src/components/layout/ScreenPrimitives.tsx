@@ -73,7 +73,7 @@ export const PremiumHeaderBar: React.FC<PremiumHeaderBarProps> = ({
 );
 
 export const PuzzleStage: React.FC<WrapperProps> = ({ children, className = '' }) => (
-  <div className={`game-shell-zone game-shell-zone-playfield licensed-board-frame relative flex min-h-0 flex-1 flex-col overflow-hidden p-3 md:p-5 ${className}`.trim()}>
+  <div className={`game-shell-zone game-shell-zone-playfield licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden p-3 md:p-5 ${className}`.trim()}>
     {children}
   </div>
 );

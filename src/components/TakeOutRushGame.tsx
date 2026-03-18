@@ -551,7 +551,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
           statValue={ordersServed}
         />
 
-        <div className="licensed-board-frame relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] p-2 md:rounded-[2.6rem] md:p-3">
+        <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] p-2 md:rounded-[2.6rem] md:p-3">
           <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 xl:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.92fr)] xl:grid-rows-[auto_minmax(0,1fr)] xl:gap-3">
           <section className="order-2 xl:order-2 xl:row-span-2 relative overflow-hidden rounded-[1.6rem] border border-white/18 bg-[linear-gradient(180deg,rgba(16,60,130,0.96),rgba(7,31,78,0.98))] p-2 shadow-[0_20px_42px_rgba(0,0,0,0.34)] md:rounded-[2rem] md:p-3">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,241,201,0.28),rgba(255,241,201,0)_24%)]" />

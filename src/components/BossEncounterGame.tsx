@@ -568,7 +568,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       <GameplaySceneBackdrop gameType={gameType} />
 
       <div className="relative z-10 flex h-full w-full flex-col gap-2.5 px-2.5 pb-2.5 pt-[calc(0.55rem+env(safe-area-inset-top))] md:gap-3 md:px-4 md:pb-4 md:pt-4">
-        <div className="licensed-board-frame relative flex min-h-0 flex-1 flex-col gap-2.5 overflow-hidden rounded-[2rem] p-2 md:gap-3 md:rounded-[2.6rem] md:p-3">
+        <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col gap-2.5 overflow-hidden rounded-[2rem] p-2 md:gap-3 md:rounded-[2.6rem] md:p-3">
           <div className="grid shrink-0 grid-cols-[1.08fr_0.92fr] gap-2.5 md:gap-3">
           <div className="min-w-0 rounded-[1.45rem] border border-white/16 bg-slate-950/55 p-2.5 shadow-[0_18px_48px_rgba(2,6,23,0.24)] backdrop-blur-xl md:rounded-[2rem] md:p-3">
             <BossPortrait encounter={encounter} pose={bossPose} className="h-[8.6rem] md:h-[10.5rem]" />
