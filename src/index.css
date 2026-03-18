@@ -2793,6 +2793,52 @@ button:disabled {
   margin-inline: auto;
 }
 
+/* Global game fit contract: apply to every gameplay screen with no exceptions. */
+.aaa-zone-objective .structured-playfield-frame {
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-inline: 0 !important;
+}
+
+.aaa-zone-playfield .structured-playfield-frame {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-inline: 0 !important;
+}
+
+.game-shell-zone-playfield .structured-playfield-frame,
+.game-shell-zone-playfield-wrapper .structured-playfield-frame {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-inline: 0 !important;
+}
+
+.structured-playfield-frame .structured-playfield-frame {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-inline: 0 !important;
+}
+
+.aaa-zone-playfield [class*="min-h-[31rem]"],
+.aaa-zone-playfield [class*="min-h-[28rem]"],
+.aaa-zone-playfield [class*="min-h-[25rem]"],
+.aaa-zone-playfield [class*="min-h-[23rem]"],
+.aaa-zone-playfield [class*="min-h-[20rem]"],
+.aaa-zone-playfield [class*="min-h-[19rem]"],
+.aaa-zone-playfield [class*="min-h-[18rem]"] {
+  min-height: 0 !important;
+}
+
 .structured-game-layout .game-shell-zone-actions {
   margin-top: clamp(0.2rem, 0.9vh, 0.7rem);
 }

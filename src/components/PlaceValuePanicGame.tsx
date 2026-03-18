@@ -351,7 +351,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   );
 
   const objectiveArea = (
-    <div className="licensed-board-frame flex flex-col gap-2 p-3 md:gap-3 md:p-4">
+    <div className="flex flex-col gap-2 p-2 md:gap-3 md:p-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/75">Objective</div>
@@ -380,6 +380,20 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         <span className="licensed-slice-cyan-pill rounded-full px-2.5 py-1 text-white">
           Accuracy {Math.round(accuracy * 100)}%
         </span>
+      </div>
+      <div className="min-h-[2.4rem]">
+        {feedback ? (
+          <div className={`rounded-xl border px-3 py-1.5 text-center shadow-[0_10px_20px_rgba(2,6,23,0.28)] ${
+            feedback.tone === 'success'
+              ? 'border-emerald-200/55 bg-emerald-500/32 text-emerald-50'
+              : feedback.tone === 'error'
+                ? 'border-rose-200/55 bg-rose-500/30 text-rose-50'
+                : 'border-amber-200/55 bg-amber-500/28 text-amber-50'
+          }`}>
+            <div className="text-[10px] font-black uppercase tracking-[0.16em] md:text-[11px]">{feedback.title}</div>
+            <div className="text-[10px] font-semibold md:text-[11px]">{feedback.detail}</div>
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -464,31 +478,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     </div>
   );
 
-  const feedbackLayer = (
-    <AnimatePresence>
-      {feedback && (
-        <motion.div
-          key={feedback.id}
-          initial={{ opacity: 0, y: 12, scale: 0.96 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -8, scale: 0.96 }}
-          className="pointer-events-none absolute inset-x-0 bottom-3 z-30 flex justify-center px-3 md:bottom-4"
-        >
-          <div className={`max-w-xl rounded-full border px-4 py-2 text-center shadow-[0_14px_28px_rgba(2,6,23,0.45)] md:px-5 md:py-2.5 ${
-            feedback.tone === 'success'
-              ? 'border-emerald-200/55 bg-emerald-500/32 text-emerald-50'
-              : feedback.tone === 'error'
-                ? 'border-rose-200/55 bg-rose-500/30 text-rose-50'
-                : 'border-amber-200/55 bg-amber-500/28 text-amber-50'
-          }`}>
-            <div className="text-xs font-black uppercase tracking-[0.16em]">{feedback.title}</div>
-            <div className="text-[11px] font-semibold md:text-xs">{feedback.detail}</div>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-
   return (
     <GameContainerView
       gameType="place_value_peaks"
@@ -502,7 +491,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       statValue={`${queue.length}/${levelConfig.queueLimit}`}
       objectiveArea={objectiveArea}
       playFieldArea={playFieldArea}
-      feedbackLayer={feedbackLayer}
       isPaused={isPaused}
       onResume={() => setIsPaused(false)}
       onBack={onBack}
