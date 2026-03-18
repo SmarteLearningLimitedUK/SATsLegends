@@ -821,7 +821,7 @@ const App: React.FC = () => {
               <div className="structured-game-layout flex h-full w-full min-h-0 flex-1 flex-col">
                 {isGameplayInstructionPending ? (
                   <div className="flex h-full w-full min-h-0 items-center justify-center p-3 md:p-6">
-                    <div className="licensed-board-frame structured-playfield-frame flex w-full max-w-xl flex-col items-center gap-3 p-5 text-center md:gap-4 md:p-8">
+                    <div className="single-shell-briefing-card structured-playfield-frame flex w-full max-w-xl flex-col items-center gap-3 p-5 text-center md:gap-4 md:p-8">
                       <div className="text-xs font-black uppercase tracking-[0.2em] text-cyan-100/70">Game Briefing</div>
                       <div className="text-lg font-black text-white md:text-2xl">
                         {selectedRuleSet?.title || selectedLevel?.displayName || 'How to play'}
