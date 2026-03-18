@@ -160,18 +160,29 @@ export const getPlaceValuePanicLevelConfig = (miniGameLevel: number): PlaceValue
     || PLACE_VALUE_PANIC_LEVELS[0];
 };
 
-export const NUMBER_BASE_CAMP_LEVELS: LevelData[] = NUMBER_BASE_CAMP_MINIGAME_PACKS.flatMap((miniGamePack) => (
-  miniGamePack.levels.map((levelMeta) => ({
-    id: levelMeta.globalLevelId,
-    stars: 0,
-    // Unlock the first level for each mini-game lane so every core game is testable.
-    isLocked: levelMeta.miniGameLevel !== 1,
-    blueprintKey: miniGamePack.key,
-    displayName: `${miniGamePack.name} L${levelMeta.miniGameLevel}`,
-    gameType: miniGamePack.gameType,
-    miniGameKey: miniGamePack.key,
-    miniGameLevel: levelMeta.miniGameLevel,
-    difficultyTier: levelMeta.difficultyTier,
-    skillTags: levelMeta.skillTags,
-  }))
-));
+export const NUMBER_BASE_CAMP_LEVELS: LevelData[] = (() => {
+  const ordered: LevelData[] = [];
+
+  for (let miniGameLevel = 1; miniGameLevel <= LEVELS_PER_MINIGAME; miniGameLevel += 1) {
+    for (const miniGamePack of NUMBER_BASE_CAMP_MINIGAME_PACKS) {
+      const levelMeta = miniGamePack.levels.find((level) => level.miniGameLevel === miniGameLevel);
+      if (!levelMeta) continue;
+
+      ordered.push({
+        id: ordered.length + 1,
+        stars: 0,
+        // Unlock the first level for each mini-game lane so every core game is testable.
+        isLocked: levelMeta.miniGameLevel !== 1,
+        blueprintKey: miniGamePack.key,
+        displayName: `${miniGamePack.name} L${levelMeta.miniGameLevel}`,
+        gameType: miniGamePack.gameType,
+        miniGameKey: miniGamePack.key,
+        miniGameLevel: levelMeta.miniGameLevel,
+        difficultyTier: levelMeta.difficultyTier,
+        skillTags: levelMeta.skillTags,
+      });
+    }
+  }
+
+  return ordered;
+})();
