@@ -86,6 +86,29 @@ const makeToken = (digit: number): QueueDigitToken => ({
   digit,
 });
 
+const seedQueueFromPrompt = (
+  prompt: PlaceValuePrompt,
+  activeColumns: PlaceColumn[],
+  queueLimit: number,
+): QueueDigitToken[] => {
+  const desiredCount = clamp(Math.min(4, queueLimit), 2, 4);
+  const mustHaveDigits = activeColumns.map((column) => prompt.digits[column]);
+  const seededDigits: number[] = [];
+
+  for (const digit of mustHaveDigits) {
+    if (seededDigits.length >= desiredCount) break;
+    seededDigits.push(digit);
+  }
+
+  while (seededDigits.length < desiredCount) {
+    seededDigits.push(randomInt(0, 9));
+  }
+
+  return seededDigits
+    .sort(() => Math.random() - 0.5)
+    .map((digit) => makeToken(digit));
+};
+
 const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   levelId,
   miniGameLevel,
@@ -138,7 +161,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     setPrompt(nextPrompt);
     setPlaced({});
     setSelectedTokenId(null);
-    setQueue((previous) => previous.slice(-2));
+    setQueue(seedQueueFromPrompt(nextPrompt, activeColumns, levelConfig.queueLimit));
     promptStartedAtRef.current = Date.now();
   };
 
@@ -171,11 +194,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   };
 
   useEffect(() => {
+    const initialPrompt = buildPrompt(levelConfig.activeColumns);
     hasResolvedRef.current = false;
-    setQueue([]);
+    setQueue(seedQueueFromPrompt(initialPrompt, activeColumns, levelConfig.queueLimit));
     setSelectedTokenId(null);
     setPlaced({});
-    setPrompt(buildPrompt(levelConfig.activeColumns));
+    setPrompt(initialPrompt);
     setPromptsCleared(0);
     setScore(0);
     setAttempts(0);
@@ -190,7 +214,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     setIsPaused(false);
     setResultState('running');
     promptStartedAtRef.current = Date.now();
-  }, [levelConfig.activeColumns, levelConfig.timeLimitSec]);
+  }, [activeColumns, levelConfig.activeColumns, levelConfig.queueLimit, levelConfig.timeLimitSec]);
+
+  useEffect(() => {
+    if (queue.length > 0 || resultState !== 'running') return;
+    setQueue(seedQueueFromPrompt(prompt, activeColumns, levelConfig.queueLimit));
+  }, [activeColumns, levelConfig.queueLimit, prompt, queue.length, resultState]);
 
   useEffect(() => {
     if (resultState !== 'running' || isPaused) return undefined;

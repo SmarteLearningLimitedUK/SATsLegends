@@ -103,12 +103,20 @@ const IslandLevelsContent: React.FC<IslandLevelsProps> = ({ island, player, onBa
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),rgba(255,255,255,0)_24%),radial-gradient(circle_at_bottom,rgba(96,165,250,0.14),rgba(96,165,250,0)_26%)]" />
 
           {island.levels.map((level, index) => {
-            const previousLevelsCleared = island.levels
-              .filter(candidate => candidate.id < level.id)
-              .every(candidate => completedLevels.includes(candidate.id));
+            const usesSequentialUnlock = island.id === 1;
+            const levelMiniGameLevel = level.miniGameLevel || 0;
+            const previousLevelsCleared = usesSequentialUnlock && level.miniGameKey && level.miniGameLevel
+              ? island.levels
+                .filter(candidate => (
+                  candidate.miniGameKey === level.miniGameKey
+                  && (candidate.miniGameLevel || 0) < levelMiniGameLevel
+                ))
+                .every(candidate => completedLevels.includes(candidate.id))
+              : island.levels
+                .filter(candidate => candidate.id < level.id)
+                .every(candidate => completedLevels.includes(candidate.id));
             const bossCoinsNeeded = level.bossUnlockCoins || 0;
             const hasBossCoins = totalCoinsEarned >= bossCoinsNeeded;
-            const usesSequentialUnlock = island.id === 1;
             const isUnlocked = level.isBoss
               ? previousLevelsCleared && hasBossCoins
               : usesSequentialUnlock

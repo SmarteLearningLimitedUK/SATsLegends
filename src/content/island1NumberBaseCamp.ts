@@ -164,7 +164,8 @@ export const NUMBER_BASE_CAMP_LEVELS: LevelData[] = NUMBER_BASE_CAMP_MINIGAME_PA
   miniGamePack.levels.map((levelMeta) => ({
     id: levelMeta.globalLevelId,
     stars: 0,
-    isLocked: levelMeta.globalLevelId !== 1,
+    // Unlock the first level for each mini-game lane so every core game is testable.
+    isLocked: levelMeta.miniGameLevel !== 1,
     blueprintKey: miniGamePack.key,
     displayName: `${miniGamePack.name} L${levelMeta.miniGameLevel}`,
     gameType: miniGamePack.gameType,
