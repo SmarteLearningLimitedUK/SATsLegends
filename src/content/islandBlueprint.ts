@@ -6,11 +6,36 @@ export type MiniGameRole =
   | 'application'
   | 'mixed_mastery';
 
+export type FractionSkillTag =
+  | 'FRACTION_EQUIVALENCE'
+  | 'FRACTION_SIMPLIFY'
+  | 'FRACTION_COMPARE'
+  | 'FRACTION_ORDER'
+  | 'FRACTION_ADD'
+  | 'FRACTION_SUBTRACT'
+  | 'FRACTION_OF_AMOUNT'
+  | 'FDP_EQUIVALENCE';
+
+export interface TierFrameworkStep {
+  tier: 1 | 2 | 3 | 4 | 5;
+  label: string;
+  notes: string[];
+}
+
+export interface ContentWeighting {
+  area: string;
+  percentage: number;
+}
+
 export interface MiniGameBlueprint {
   key: string;
   name: string;
   role: MiniGameRole;
+  gameplayRoles?: MiniGameRole[];
+  mechanicSummary?: string;
   curriculumObjectives: string[];
+  skillTags?: string[];
+  keySystems?: string[];
   questionTypes: string[];
   difficultyCurve: string;
   failureState: string;
@@ -22,8 +47,43 @@ export interface IslandBlueprint {
   name: string;
   domain: string;
   purpose: string;
+  satsCoverage?: string[];
+  tierFramework?: TierFrameworkStep[];
+  contentDistribution?: ContentWeighting[];
+  crossGameReinforcement?: string[];
+  designRules?: string[];
+  successCriteria?: string[];
+  islandSkillTags?: string[];
   miniGames: MiniGameBlueprint[];
 }
+
+export const STANDARD_TIER_FRAMEWORK: TierFrameworkStep[] = [
+  {
+    tier: 1,
+    label: 'Guided',
+    notes: ['visual support', 'limited choices', 'no time pressure'],
+  },
+  {
+    tier: 2,
+    label: 'Basic Fluency',
+    notes: ['simple numbers', 'no constraints', 'light timing'],
+  },
+  {
+    tier: 3,
+    label: 'Multi-Step',
+    notes: ['combining values', 'multiple valid answers', 'more choices'],
+  },
+  {
+    tier: 4,
+    label: 'Constraint',
+    notes: ['blocked options', 'forced alternatives', 'tighter timing'],
+  },
+  {
+    tier: 5,
+    label: 'Mastery',
+    notes: ['SATs-level challenge', 'mixed representations', 'minimal margin for error'],
+  },
+];
 
 export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
   {
@@ -98,35 +158,98 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
     id: 2,
     name: 'Fraction Lagoon',
     domain: 'Fractions and FDP',
-    purpose: 'Fractions as composable, visual gameplay.',
+    purpose: 'Make fractions intuitive, combinable, visual, fast, and solvable under pressure.',
+    satsCoverage: [
+      'equivalent fractions',
+      'simplifying fractions',
+      'comparing fractions',
+      'ordering fractions',
+      'adding fractions (same and different denominators)',
+      'subtracting fractions',
+      'fractions of amounts',
+      'FDP equivalence',
+    ],
+    tierFramework: STANDARD_TIER_FRAMEWORK,
+    contentDistribution: [
+      { area: 'equivalence', percentage: 30 },
+      { area: 'addition_subtraction', percentage: 25 },
+      { area: 'comparison_ordering', percentage: 20 },
+      { area: 'fractions_of_amount', percentage: 15 },
+      { area: 'simplification', percentage: 10 },
+    ],
+    crossGameReinforcement: [
+      'equivalence appears in Take-Out Rush, Match-3 Equivalence, and Fraction Flow',
+      'composition appears in Take-Out Rush and Fraction Forge',
+      'application appears in Fraction of Amount and transfer rounds',
+    ],
+    designRules: [
+      'No static question-answer loops.',
+      'Use drag/combine/sort/build/select under pressure.',
+      'Prefer multiple solution paths in Take-Out Rush and Fraction Forge.',
+      'Visual representation first; avoid symbol-only presentation.',
+      'Mistakes should teach via mismatch, overflow, instability, or missed targets.',
+    ],
+    successCriteria: [
+      'Players stop fearing fractions.',
+      'Players improve speed naturally.',
+      'Players recognise equivalence quickly.',
+      'Players combine fractions with reduced cognitive load.',
+      'Gameplay reads as puzzle-first, not worksheet-first.',
+    ],
+    islandSkillTags: [
+      'FRACTION_EQUIVALENCE',
+      'FRACTION_SIMPLIFY',
+      'FRACTION_COMPARE',
+      'FRACTION_ORDER',
+      'FRACTION_ADD',
+      'FRACTION_SUBTRACT',
+      'FRACTION_OF_AMOUNT',
+      'FDP_EQUIVALENCE',
+    ],
     miniGames: [
       {
         key: 'take_out_rush',
         name: 'Take-Out Rush',
         role: 'concept_visualisation',
-        curriculumObjectives: ['equivalent_fractions', 'fraction_addition'],
-        questionTypes: ['compose target fraction'],
-        difficultyCurve: 'blocked pieces and tighter patience',
-        failureState: 'overfill or timeout',
+        gameplayRoles: ['concept_visualisation', 'strategy', 'pressure_timing'],
+        mechanicSummary: 'Drag portion pieces into an order tray and build an exact target fraction.',
+        curriculumObjectives: ['equivalent_fractions', 'fraction_addition', 'fraction_composition'],
+        skillTags: ['FRACTION_EQUIVALENCE', 'FRACTION_ADD'],
+        keySystems: [
+          'exact match required',
+          'blocked items at higher levels',
+          'multiple valid solutions',
+        ],
+        questionTypes: ['fraction composition', 'equivalent completion'],
+        difficultyCurve: 'single piece -> multi-piece -> constrained -> timed multi-order',
+        failureState: 'overflow or patience timeout',
         replayValue: 'multiple valid compositions',
       },
       {
         key: 'fraction_forge',
         name: 'Fraction Forge',
-        role: 'application',
-        curriculumObjectives: ['add_subtract_fractions'],
-        questionTypes: ['exact total crafting'],
-        difficultyCurve: 'alternative combinations required',
-        failureState: 'target mismatch',
+        role: 'strategy',
+        gameplayRoles: ['strategy', 'application'],
+        mechanicSummary: 'Combine fraction pieces in a forge to craft the target value.',
+        curriculumObjectives: ['fraction_addition', 'fraction_subtraction', 'common_denominators'],
+        skillTags: ['FRACTION_ADD', 'FRACTION_SUBTRACT'],
+        keySystems: ['construction logic', 'unstable-result penalty for incorrect combinations'],
+        questionTypes: ['build target total', 'two-step fraction build'],
+        difficultyCurve: 'guided -> free build -> multi-step -> timed',
+        failureState: 'unstable forge result',
         replayValue: 'varied target sets',
       },
       {
         key: 'match3_equivalence',
         name: 'Match-3 Equivalence',
-        role: 'pressure_timing',
-        curriculumObjectives: ['fraction_decimal_percent_equivalence'],
-        questionTypes: ['equivalent value matching'],
-        difficultyCurve: 'higher board complexity',
+        role: 'fluency',
+        gameplayRoles: ['fluency', 'pressure_timing'],
+        mechanicSummary: 'Match equivalent fraction, decimal, and percentage values on a dynamic board.',
+        curriculumObjectives: ['fdp_equivalence', 'rapid_equivalence_recognition'],
+        skillTags: ['FRACTION_EQUIVALENCE', 'FDP_EQUIVALENCE'],
+        keySystems: ['chain reactions', 'combo scoring'],
+        questionTypes: ['equivalent set matching'],
+        difficultyCurve: 'larger boards, denser values, faster cascade windows',
         failureState: 'move starvation',
         replayValue: 'board randomisation',
       },
@@ -134,30 +257,42 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
         key: 'fraction_flow',
         name: 'Fraction Flow',
         role: 'strategy',
-        curriculumObjectives: ['compare_fractions', 'ordering'],
-        questionTypes: ['sort low-to-high'],
-        difficultyCurve: 'mixed form values',
-        failureState: 'ordering errors',
+        gameplayRoles: ['strategy', 'pressure_timing'],
+        mechanicSummary: 'Sort moving values into correct order in a live flow stream.',
+        curriculumObjectives: ['compare_fractions', 'order_fractions_decimals_percentages'],
+        skillTags: ['FRACTION_COMPARE', 'FRACTION_ORDER', 'FDP_EQUIVALENCE'],
+        keySystems: ['conveyor speed increase'],
+        questionTypes: ['ascending/descending ordering'],
+        difficultyCurve: 'mixed representations and increasing stream speed',
+        failureState: 'misordered chain',
         replayValue: 'dynamic stream values',
       },
       {
         key: 'fraction_of_amount',
         name: 'Fraction of Amount',
         role: 'application',
-        curriculumObjectives: ['fractions_of_quantities'],
-        questionTypes: ['find part of set'],
+        gameplayRoles: ['application', 'strategy'],
+        mechanicSummary: 'Split or collect exact portions of sets to meet quantity targets.',
+        curriculumObjectives: ['fractions_of_quantities', 'multiply_divide_link'],
+        skillTags: ['FRACTION_OF_AMOUNT'],
+        keySystems: ['limited moves', 'multi-step tasks at higher tiers'],
+        questionTypes: ['portion of set', 'target quantity extraction'],
         difficultyCurve: 'larger sets and multi-step',
-        failureState: 'incorrect allocation',
+        failureState: 'incorrect split or move exhaustion',
         replayValue: 'varied quantity targets',
       },
       {
         key: 'simplify_sprint',
         name: 'Simplify Sprint',
         role: 'fluency',
+        gameplayRoles: ['fluency', 'pressure_timing'],
+        mechanicSummary: 'Reduce fractions to simplest form in rapid-fire sequences.',
         curriculumObjectives: ['simplifying_fractions', 'common_factors'],
-        questionTypes: ['reduce to simplest form'],
-        difficultyCurve: 'faster simplification rounds',
-        failureState: 'timer out',
+        skillTags: ['FRACTION_SIMPLIFY'],
+        keySystems: ['rapid rounds', 'streak bonuses'],
+        questionTypes: ['simplify fraction', 'equivalent simplification'],
+        difficultyCurve: 'faster rounds with tighter error tolerance',
+        failureState: 'timer out or streak collapse',
         replayValue: 'broad fraction pool',
       },
     ],
@@ -166,66 +301,162 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
     id: 3,
     name: 'Operations Outpost',
     domain: 'Arithmetic Methods',
-    purpose: 'Secure arithmetic methods and multi-step control.',
+    purpose: 'Build speed, accuracy, method confidence, and multi-step control.',
+    satsCoverage: [
+      'addition and subtraction (formal methods)',
+      'multiplication (including long multiplication)',
+      'division (including long division)',
+      'order of operations (BODMAS)',
+      'multi-step arithmetic problems',
+      'remainders and interpretation',
+    ],
+    tierFramework: [
+      {
+        tier: 1,
+        label: 'Guided',
+        notes: ['single-step', 'small numbers', 'visual support'],
+      },
+      {
+        tier: 2,
+        label: 'Fluency',
+        notes: ['faster pace', 'larger numbers', 'less support'],
+      },
+      {
+        tier: 3,
+        label: 'Multi-Step',
+        notes: ['chained operations', 'intermediate results required'],
+      },
+      {
+        tier: 4,
+        label: 'Constraint',
+        notes: ['limited time', 'distractors', 'incorrect paths punished'],
+      },
+      {
+        tier: 5,
+        label: 'Mastery',
+        notes: ['SATs-level complexity', 'minimal support', 'high pressure'],
+      },
+    ],
+    contentDistribution: [
+      { area: 'multiplication_division', percentage: 30 },
+      { area: 'addition_subtraction', percentage: 25 },
+      { area: 'multi_step_problems', percentage: 20 },
+      { area: 'order_of_operations', percentage: 15 },
+      { area: 'remainder_interpretation', percentage: 10 },
+    ],
+    crossGameReinforcement: [
+      'multiplication appears in Calculation Clash (Advanced), Multiplication Mine, and Arithmetic Gauntlet',
+      'division and remainder logic appears in Division Dock and Remainder Run',
+      'multi-step chaining appears in Order Ops Arena and Arithmetic Gauntlet',
+    ],
+    designRules: [
+      'Avoid worksheet-like vertical method UI and long explanation text.',
+      'Prioritise interaction, movement, and chained actions.',
+      'Speed matters: streak systems, time pressure, and efficiency bonuses.',
+      'Mistakes should cost flow (combo breaks, slows, delays) more than hard-fail loops.',
+      'Multi-step thinking should emerge through chained decision sequences.',
+    ],
+    successCriteria: [
+      'Players become faster without feeling repetitive drill.',
+      'Players stop relying on manual counting strategies.',
+      'Players apply order of operations instinctively.',
+      'Players handle multi-step arithmetic fluidly under pressure.',
+      'Gameplay feels intense but fair.',
+    ],
+    islandSkillTags: [
+      'ADDITION',
+      'SUBTRACTION',
+      'MULTIPLICATION',
+      'DIVISION',
+      'LONG_MULTIPLICATION',
+      'LONG_DIVISION',
+      'ORDER_OF_OPERATIONS',
+      'MULTI_STEP_ARITHMETIC',
+      'REMAINDERS',
+    ],
     miniGames: [
       {
         key: 'calculation_clash_advanced',
         name: 'Calculation Clash Advanced',
         role: 'pressure_timing',
-        curriculumObjectives: ['mixed_operations'],
-        questionTypes: ['rapid mixed arithmetic'],
-        difficultyCurve: 'higher pace and complexity',
-        failureState: 'timer out',
+        gameplayRoles: ['fluency', 'pressure_timing'],
+        mechanicSummary: 'Solve calculations in active lanes to defeat incoming targets.',
+        curriculumObjectives: ['addition', 'subtraction', 'multiplication', 'division', 'rapid_recall'],
+        skillTags: ['ADDITION', 'SUBTRACTION', 'MULTIPLICATION', 'DIVISION'],
+        keySystems: ['approach lanes', 'wrong answers slow player', 'streak power boosts'],
+        questionTypes: ['rapid mixed arithmetic', 'lane priority calculation'],
+        difficultyCurve: 'guided pace -> dense mixed waves -> high-speed lane pressure',
+        failureState: 'flow collapse from repeated misses',
         replayValue: 'combo optimisation',
       },
       {
         key: 'multiplication_mine',
         name: 'Multiplication Mine',
         role: 'fluency',
-        curriculumObjectives: ['multiplication', 'long_multiplication'],
-        questionTypes: ['product selection'],
-        difficultyCurve: 'larger factors',
-        failureState: 'path collapse',
+        gameplayRoles: ['fluency', 'concept_visualisation'],
+        mechanicSummary: 'Break mine blocks by selecting correct multiplication outcomes.',
+        curriculumObjectives: ['multiplication', 'long_multiplication_progression'],
+        skillTags: ['MULTIPLICATION', 'LONG_MULTIPLICATION'],
+        keySystems: ['block breaking loop', 'grid-style breakdown for larger numbers'],
+        questionTypes: ['times facts', 'expanded product structure'],
+        difficultyCurve: 'facts -> larger factors -> structured long-multiplication forms',
+        failureState: 'mine route collapse',
         replayValue: 'procedural routes',
       },
       {
         key: 'division_dock',
         name: 'Division Dock',
         role: 'application',
-        curriculumObjectives: ['division', 'long_division'],
-        questionTypes: ['quotients and grouping'],
-        difficultyCurve: 'remainders and larger values',
-        failureState: 'dispatch errors',
+        gameplayRoles: ['application', 'strategy'],
+        mechanicSummary: 'Load and split cargo correctly so ships can dispatch on time.',
+        curriculumObjectives: ['division', 'long_division', 'remainders'],
+        skillTags: ['DIVISION', 'LONG_DIVISION', 'REMAINDERS'],
+        keySystems: ['cargo split validation', 'departure delays on incorrect distribution'],
+        questionTypes: ['quotient grouping', 'remainder handling'],
+        difficultyCurve: 'exact division -> remainder cases -> long-division style dispatches',
+        failureState: 'dispatch delay buildup',
         replayValue: 'rotating cargo sets',
       },
       {
         key: 'order_ops_arena',
         name: 'Order Ops Arena',
         role: 'strategy',
-        curriculumObjectives: ['order_of_operations'],
-        questionTypes: ['expression sequencing'],
-        difficultyCurve: 'nested expressions',
-        failureState: 'sequence mistakes',
+        gameplayRoles: ['strategy', 'mixed_mastery'],
+        mechanicSummary: 'Resolve expressions using the correct operation order through decision paths.',
+        curriculumObjectives: ['order_of_operations', 'multi_step_expressions'],
+        skillTags: ['ORDER_OF_OPERATIONS', 'MULTI_STEP_ARITHMETIC'],
+        keySystems: ['sequence resolution', 'trap paths for common wrong order choices'],
+        questionTypes: ['BODMAS sequence', 'expression traps'],
+        difficultyCurve: 'simple precedence -> nested multi-step -> trap-heavy branching',
+        failureState: 'sequence trap lock',
         replayValue: 'expression variations',
       },
       {
         key: 'arithmetic_gauntlet',
         name: 'Arithmetic Gauntlet',
         role: 'mixed_mastery',
-        curriculumObjectives: ['multi_step_arithmetic'],
-        questionTypes: ['linked calculations'],
-        difficultyCurve: 'longer chains',
-        failureState: 'health depletion',
+        gameplayRoles: ['mixed_mastery', 'pressure_timing'],
+        mechanicSummary: 'Maintain a continuous chain of calculations with no pause between prompts.',
+        curriculumObjectives: ['mixed_arithmetic', 'multi_step_arithmetic'],
+        skillTags: ['ADDITION', 'SUBTRACTION', 'MULTIPLICATION', 'DIVISION', 'MULTI_STEP_ARITHMETIC'],
+        keySystems: ['continuous chain', 'mistakes break streak', 'speed ramps over time'],
+        questionTypes: ['linked operation chains', 'carry-forward result steps'],
+        difficultyCurve: 'short chains -> extended mixed chains -> high-speed endurance',
+        failureState: 'streak and pace collapse',
         replayValue: 'survival scoring',
       },
       {
         key: 'remainder_run',
         name: 'Remainder Run',
         role: 'application',
-        curriculumObjectives: ['division_interpretation', 'remainders'],
-        questionTypes: ['route by quotient/remainder'],
-        difficultyCurve: 'stricter conditions',
-        failureState: 'wrong route',
+        gameplayRoles: ['application', 'strategy'],
+        mechanicSummary: 'Route values by quotient and remainder outcomes to the correct destination.',
+        curriculumObjectives: ['remainders', 'division_interpretation'],
+        skillTags: ['DIVISION', 'REMAINDERS'],
+        keySystems: ['path routing by result class'],
+        questionTypes: ['quotient/remainder route selection'],
+        difficultyCurve: 'single-route checks -> multi-lane routing -> tight timing constraints',
+        failureState: 'misroute penalties',
         replayValue: 'variable remainder goals',
       },
     ],
@@ -571,3 +802,33 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
     ],
   },
 ];
+
+export const getIslandBlueprintById = (id?: number | null) => (
+  typeof id === 'number' ? ISLAND_BLUEPRINTS.find((island) => island.id === id) : undefined
+);
+
+export const getMiniGameBlueprintByKey = (blueprintKey?: string | null) => {
+  if (!blueprintKey) return undefined;
+  for (const island of ISLAND_BLUEPRINTS) {
+    const game = island.miniGames.find((miniGame) => miniGame.key === blueprintKey);
+    if (game) return game;
+  }
+  return undefined;
+};
+
+export const getBlueprintRuleSet = (blueprintKey?: string | null) => {
+  const miniGame = getMiniGameBlueprintByKey(blueprintKey);
+  if (!miniGame) return null;
+
+  return {
+    title: miniGame.name,
+    summary: miniGame.mechanicSummary || miniGame.difficultyCurve,
+    bullets: miniGame.keySystems?.length
+      ? miniGame.keySystems.slice(0, 3)
+      : [
+          miniGame.questionTypes[0] || 'Solve the objective shown on screen.',
+          miniGame.difficultyCurve,
+          `Failure state: ${miniGame.failureState}.`,
+        ],
+  };
+};

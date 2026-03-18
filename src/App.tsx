@@ -34,6 +34,7 @@ import LevelResultModal from './components/LevelResultModal';
 import GameRulesModal from './components/GameRulesModal';
 import { GameScreenShell, HUDBar, RewardPanel } from './components/layout/ScreenPrimitives';
 import { GAME_META } from './gameMeta';
+import { getBlueprintRuleSet } from './content/islandBlueprint';
 import {
   GAME_AUDIO_STORAGE_KEY,
   GAME_HUD_HELP_EVENT,
@@ -177,6 +178,13 @@ const App: React.FC = () => {
     () => Boolean(player.playerName.trim() && player.avatarId),
     [player.playerName, player.avatarId],
   );
+  const selectedRuleSet = useMemo(
+    () => (
+      getBlueprintRuleSet(selectedLevel?.blueprintKey)
+      || (selectedLevel?.gameType ? GAME_META[selectedLevel.gameType]?.rules || null : null)
+    ),
+    [selectedLevel?.blueprintKey, selectedLevel?.gameType],
+  );
 
   const closeGameRules = () => {
     setShowGameRules(false);
@@ -225,7 +233,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const handleOpenHelp = () => {
-      if (screen === 'gameplay' && selectedLevel?.gameType && GAME_META[selectedLevel.gameType]) {
+      if (screen === 'gameplay' && selectedRuleSet) {
         setGameRulesMode('help');
         setShowGameRules(true);
       }
@@ -243,15 +251,15 @@ const App: React.FC = () => {
       window.removeEventListener(GAME_HUD_HELP_EVENT, handleOpenHelp as EventListener);
       window.removeEventListener(GAME_HUD_MUTE_EVENT, handleMuteChange as EventListener);
     };
-  }, [screen, selectedLevel?.gameType]);
+  }, [screen, selectedRuleSet]);
 
   useEffect(() => {
-    if (screen !== 'gameplay' || !selectedLevel?.gameType) {
+    if (screen !== 'gameplay' || !selectedLevel) {
       setIsGameplayInstructionPending(false);
       return;
     }
 
-    if (!GAME_META[selectedLevel.gameType]) {
+    if (!selectedRuleSet) {
       setIsGameplayInstructionPending(false);
       return;
     }
@@ -259,7 +267,7 @@ const App: React.FC = () => {
     setIsGameplayInstructionPending(true);
     setGameRulesMode('start');
     setShowGameRules(true);
-  }, [screen, selectedLevel?.id, selectedLevel?.gameType]);
+  }, [screen, selectedLevel?.id, selectedRuleSet]);
 
   const goToHome = () => {
     setSelectedLevel(null);
@@ -799,7 +807,7 @@ const App: React.FC = () => {
                   <div className="licensed-board-frame flex w-full max-w-xl flex-col items-center gap-3 p-5 text-center md:gap-4 md:p-8">
                     <div className="text-xs font-black uppercase tracking-[0.2em] text-cyan-100/70">Game Briefing</div>
                     <div className="text-lg font-black text-white md:text-2xl">
-                      {selectedLevel?.gameType ? GAME_META[selectedLevel.gameType]?.rules.title : 'How to play'}
+                      {selectedRuleSet?.title || selectedLevel?.displayName || 'How to play'}
                     </div>
                     <p className="max-w-md text-sm font-semibold leading-relaxed text-white/80 md:text-base">
                       Read the instructions, then tap Start Game to begin this round.
@@ -928,11 +936,7 @@ const App: React.FC = () => {
       <GameRulesModal
         isOpen={showGameRules}
         onClose={closeGameRules}
-        rules={
-          selectedLevel?.gameType
-            ? GAME_META[selectedLevel.gameType]?.rules || null
-            : null
-        }
+        rules={selectedRuleSet}
         actionLabel={gameRulesMode === 'start' ? 'Start Game' : 'Back To Game'}
       />
 
