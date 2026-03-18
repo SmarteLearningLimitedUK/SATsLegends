@@ -3197,12 +3197,15 @@ button:disabled {
   height: clamp(3.45rem, 8vw, 4.6rem);
   border-radius: 0.86rem;
   background:
+    url('./assets/fantasy_hero/cloud_collapse/tile_bg.png') center/100% 100% no-repeat,
     radial-gradient(circle at 50% 14%, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0) 48%),
     linear-gradient(180deg, rgba(12, 30, 56, 0.95), rgba(8, 18, 36, 0.98));
   border: 2px solid rgba(255, 199, 87, 0.72);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.22),
     inset 0 -3px 0 rgba(120, 64, 18, 0.44),
+    inset 2px 0 6px rgba(255, 219, 144, 0.2),
+    inset -2px 0 6px rgba(4, 14, 26, 0.44),
     0 10px 16px rgba(2, 6, 23, 0.34);
 }
 
@@ -3211,7 +3214,10 @@ button:disabled {
   position: absolute;
   inset: 0.2rem;
   border-radius: 0.64rem;
-  border: 1px solid rgba(255, 221, 158, 0.36);
+  border: 1px solid rgba(255, 221, 158, 0.48);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -2px 0 rgba(12, 23, 46, 0.44);
   pointer-events: none;
 }
 
@@ -3231,13 +3237,18 @@ button:disabled {
   width: calc(100% - 0.34rem);
   height: calc(100% - 0.34rem);
   border-radius: 0.62rem;
-  border: 1px solid rgba(255, 255, 255, 0.44);
+  border: 1px solid rgba(255, 247, 218, 0.7);
   background-position: center;
   background-size: 100% 100%;
   background-repeat: no-repeat;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    0 4px 8px rgba(2, 6, 23, 0.34);
+    inset 0 2px 0 rgba(255, 255, 255, 0.62),
+    inset 0 -3px 0 rgba(8, 16, 31, 0.58),
+    inset 2px 0 5px rgba(255, 255, 255, 0.2),
+    inset -2px 0 5px rgba(4, 8, 18, 0.36),
+    0 3px 0 rgba(91, 46, 12, 0.34),
+    0 9px 14px rgba(2, 6, 23, 0.46),
+    0 0 12px rgba(255, 255, 255, 0.16);
 }
 
 .pvp-slot-square-gem::before {
@@ -3246,7 +3257,20 @@ button:disabled {
   inset: 8% 16% auto;
   height: 24%;
   border-radius: 0.4rem;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+
+.pvp-slot-square-gem::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    url('./assets/fantasy_hero/cloud_collapse/tile_inner_deco.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/cloud_collapse/tile_border.png') center/100% 100% no-repeat;
+  mix-blend-mode: screen;
+  opacity: 0.55;
   pointer-events: none;
 }
 
@@ -3257,8 +3281,9 @@ button:disabled {
   font-weight: 900;
   color: #ffffff;
   text-shadow:
-    0 2px 0 rgba(2, 6, 23, 0.78),
-    0 6px 8px rgba(2, 6, 23, 0.52);
+    0 2px 0 rgba(2, 6, 23, 0.86),
+    0 8px 10px rgba(2, 6, 23, 0.6),
+    0 0 8px rgba(255, 255, 255, 0.28);
 }
 
 .pvp-slot-filled {
@@ -3328,13 +3353,18 @@ button:disabled {
   position: relative;
   overflow: hidden;
   border-radius: 0.72rem !important;
-  border: 1px solid rgba(255, 228, 170, 0.58) !important;
+  border: 1px solid rgba(255, 243, 210, 0.74) !important;
   background-position: center !important;
   background-size: 100% 100% !important;
   background-repeat: no-repeat !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.44),
-    0 6px 10px rgba(2, 6, 23, 0.34) !important;
+    inset 0 2px 0 rgba(255, 255, 255, 0.64),
+    inset 0 -3px 0 rgba(9, 16, 30, 0.54),
+    inset 2px 0 5px rgba(255, 255, 255, 0.18),
+    inset -2px 0 5px rgba(2, 6, 23, 0.34),
+    0 3px 0 rgba(94, 45, 10, 0.3),
+    0 9px 16px rgba(2, 6, 23, 0.4),
+    0 0 16px rgba(255, 255, 255, 0.14) !important;
 }
 
 .pvp-digit-gem-square::before {
@@ -3343,13 +3373,33 @@ button:disabled {
   inset: 8% 16% auto;
   height: 23%;
   border-radius: 0.42rem;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.52), rgba(255, 255, 255, 0));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+
+.pvp-digit-gem-square::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    url('./assets/fantasy_hero/cloud_collapse/tile_inner_deco.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/cloud_collapse/tile_border.png') center/100% 100% no-repeat,
+    url('./assets/fantasy_hero/cloud_collapse/tile_gradient.png') center/100% 100% no-repeat;
+  mix-blend-mode: screen;
+  opacity: 0.62;
   pointer-events: none;
 }
 
 .pvp-digit-selected {
-  filter: brightness(1.08) saturate(1.06);
-  transform: scale(1.04);
+  filter: brightness(1.14) saturate(1.16);
+  transform: scale(1.05);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.72),
+    inset 0 -3px 0 rgba(9, 16, 30, 0.56),
+    0 3px 0 rgba(94, 45, 10, 0.28),
+    0 11px 20px rgba(2, 6, 23, 0.42),
+    0 0 20px rgba(125, 211, 252, 0.42) !important;
 }
 
 .pvp-drag-ghost {
@@ -3359,6 +3409,12 @@ button:disabled {
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.72),
+    inset 0 -3px 0 rgba(9, 16, 30, 0.58),
+    0 4px 0 rgba(94, 45, 10, 0.26),
+    0 12px 22px rgba(2, 6, 23, 0.5),
+    0 0 22px rgba(125, 211, 252, 0.34) !important;
 }
 
 

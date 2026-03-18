@@ -82,12 +82,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     resolvedMiniGameLevel,
     round,
     roundNumber,
+    roundsCleared,
     slots,
     trayTiles,
     placedBySlot,
     score,
     combo,
-    pressure,
     timeLeft,
     progress,
     accuracy,
@@ -212,12 +212,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     });
   };
 
-  const pressureStateLabel = pressure >= 80
-    ? 'Critical'
-    : pressure >= 55
-      ? 'Warning'
-      : 'Stable';
-
   const objectiveArea = (
     <div className="pvp-objective flex flex-col gap-2 p-2 md:gap-2.5 md:p-3">
       <div className="flex items-start justify-between gap-2">
@@ -240,27 +234,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       <div className="flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-[0.12em] md:text-xs">
         <span className="pvp-stat-chip">Level {resolvedMiniGameLevel} / 10</span>
         <span className="pvp-stat-chip">Tier {levelConfig.difficultyTier}</span>
-        <span className="pvp-stat-chip">Round {roundNumber} / {levelConfig.promptsToClear}</span>
+        <span className="pvp-stat-chip">Question {roundNumber}</span>
+        <span className="pvp-stat-chip">Solved {roundsCleared}</span>
         <span className="pvp-stat-chip">Combo x{Math.max(1, combo)}</span>
-      </div>
-
-      <div className="pvp-pressure-card rounded-xl border border-cyan-100/35 p-2">
-        <div className="mb-1 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/85">
-          <span>Queue Pressure</span>
-          <span>{pressureStateLabel} · {Math.round(pressure)}%</span>
-        </div>
-        <div className="h-2.5 overflow-hidden rounded-full border border-white/20 bg-slate-950/70">
-          <div
-            className={`h-full rounded-full transition-all duration-150 ${
-              pressure >= 80
-                ? 'bg-rose-400'
-                : pressure >= 55
-                  ? 'bg-amber-300'
-                  : 'bg-emerald-300'
-            }`}
-            style={{ width: `${Math.min(100, pressure)}%` }}
-          />
-        </div>
       </div>
 
       <div className="min-h-[2.25rem]">
@@ -397,14 +373,13 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     <GameContainerView
       gameType="place_value_peaks"
       sceneBackgroundOverride={placeValuePanicBackground}
+      sceneMinimalDecor
       title="Place Value Panic"
       avatar={avatar}
       score={Math.round(score)}
       targetScore={levelConfig.targetScore}
       timeLeft={timeLeft}
       progress={progress}
-      statLabel="Overload"
-      statValue={`${Math.round(pressure)}%`}
       objectiveArea={objectiveArea}
       playFieldArea={playFieldArea}
       isPaused={isPaused}

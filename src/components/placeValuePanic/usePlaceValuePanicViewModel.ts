@@ -182,21 +182,11 @@ const buildRound = (levelConfig: PlaceValuePanicLevelConfig, roundIndex: number)
   };
 };
 
-const pressureRatePerSecond = (tier: number) => {
-  switch (tier) {
-    case 1: return 1.4;
-    case 2: return 1.8;
-    case 3: return 2.4;
-    case 4: return 3.0;
-    default: return 3.6;
-  }
-};
-
 export const usePlaceValuePanicViewModel = ({
   levelId,
   miniGameLevel,
   onVictory,
-  onGameOver,
+  onGameOver: _onGameOver,
 }: UsePlaceValuePanicViewModelArgs) => {
   const resolvedMiniGameLevel = clamp(miniGameLevel || levelId, 1, 10);
   const levelConfig = useMemo(
@@ -213,7 +203,6 @@ export const usePlaceValuePanicViewModel = ({
   const [attempts, setAttempts] = useState(0);
   const [correctPlacements, setCorrectPlacements] = useState(0);
   const [mistakes, setMistakes] = useState(0);
-  const [pressure, setPressure] = useState(0);
   const [timeLeft, setTimeLeft] = useState(levelConfig.timeLimitSec);
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
   const [isPaused, setIsPaused] = useState(false);
@@ -222,11 +211,9 @@ export const usePlaceValuePanicViewModel = ({
   const [lastRejectedTileId, setLastRejectedTileId] = useState<string | null>(null);
 
   const onVictoryRef = useRef(onVictory);
-  const onGameOverRef = useRef(onGameOver);
   const roundTimerRef = useRef<number | null>(null);
 
   useEffect(() => { onVictoryRef.current = onVictory; }, [onVictory]);
-  useEffect(() => { onGameOverRef.current = onGameOver; }, [onGameOver]);
 
   const setFeedbackState = useCallback((title: string, detail: string, tone: FeedbackTone) => {
     setFeedback({
@@ -255,7 +242,6 @@ export const usePlaceValuePanicViewModel = ({
     setAttempts(0);
     setCorrectPlacements(0);
     setMistakes(0);
-    setPressure(0);
     setTimeLeft(levelConfig.timeLimitSec);
     setIsPaused(false);
     setIsResolved(false);
@@ -277,38 +263,36 @@ export const usePlaceValuePanicViewModel = ({
   useEffect(() => {
     if (isResolved || isPaused) return undefined;
     const interval = window.setInterval(() => {
-      setPressure((prev) => {
-        const next = prev + (pressureRatePerSecond(levelConfig.difficultyTier) / 5);
-        if (next >= 100) {
-          setIsResolved(true);
-          setFeedbackState('System Overload', 'Queue pressure reached critical level.', 'error');
-          triggerHaptic('error');
-          window.setTimeout(() => onGameOverRef.current(Math.max(0, Math.round(score))), 320);
-          return 100;
-        }
-        return next;
-      });
-    }, 200);
-    return () => window.clearInterval(interval);
-  }, [isPaused, isResolved, levelConfig.difficultyTier, score, setFeedbackState]);
-
-  useEffect(() => {
-    if (isResolved || isPaused) return undefined;
-    const interval = window.setInterval(() => {
       setTimeLeft((prev) => {
         const next = prev - 1;
         if (next <= 0) {
           setIsResolved(true);
-          setFeedbackState('Time Out', 'You ran out of time before stabilising the queue.', 'error');
-          triggerHaptic('error');
-          window.setTimeout(() => onGameOverRef.current(Math.max(0, Math.round(score))), 320);
+          const finalScore = Math.max(0, Math.round(score));
+          const finalAccuracy = attempts > 0 ? correctPlacements / attempts : 1;
+          const performanceRatio = finalScore / Math.max(1, levelConfig.targetScore);
+          const stars = finalAccuracy >= 0.9 && performanceRatio >= 1
+            ? 3
+            : finalAccuracy >= 0.75 && performanceRatio >= 0.65
+              ? 2
+              : 1;
+          setFeedbackState('Time Complete', `Run ended. Accuracy ${Math.round(finalAccuracy * 100)}%.`, 'success');
+          triggerHaptic('success');
+          window.setTimeout(() => onVictoryRef.current(stars, finalScore), 320);
           return 0;
         }
         return next;
       });
     }, 1000);
     return () => window.clearInterval(interval);
-  }, [isPaused, isResolved, score, setFeedbackState]);
+  }, [
+    attempts,
+    correctPlacements,
+    isPaused,
+    isResolved,
+    levelConfig.targetScore,
+    score,
+    setFeedbackState,
+  ]);
 
   const placedBySlot = useMemo(() => {
     const placed = new Map<PlaceValueSlotKey, DigitTile>();
@@ -333,8 +317,8 @@ export const usePlaceValuePanicViewModel = ({
   );
 
   const progress = useMemo(
-    () => Math.round((roundsCleared / Math.max(1, levelConfig.promptsToClear)) * 100),
-    [levelConfig.promptsToClear, roundsCleared],
+    () => Math.round(((levelConfig.timeLimitSec - timeLeft) / Math.max(1, levelConfig.timeLimitSec)) * 100),
+    [levelConfig.timeLimitSec, timeLeft],
   );
 
   const accuracy = useMemo(
@@ -354,27 +338,14 @@ export const usePlaceValuePanicViewModel = ({
     setHintSlotKey(null);
   }, [levelConfig, roundNumber]);
 
-  const resolveVictory = useCallback((finalScore: number) => {
-    setIsResolved(true);
-    const speedRatio = timeLeft / Math.max(1, levelConfig.timeLimitSec);
-    const stars = accuracy >= 0.9 && speedRatio >= 0.32 ? 3 : accuracy >= 0.75 ? 2 : 1;
-    const _result: RoundResult = {
-      success: true,
-      scoreEarned: finalScore,
-      accuracy,
-      comboPeak,
-      starsAwarded: stars,
-    };
-    setFeedbackState('System Stable', `Run complete. Accuracy ${Math.round(accuracy * 100)}%.`, 'success');
-    triggerHaptic('success');
-    window.setTimeout(() => onVictoryRef.current(stars, Math.round(finalScore)), 360);
-  }, [accuracy, comboPeak, levelConfig.timeLimitSec, setFeedbackState, timeLeft]);
-
   useEffect(() => {
     if (!roundComplete || isResolved) return;
     clearRoundTimer();
     const completionBonus = 80 + levelConfig.difficultyTier * 30;
-    const speedBonus = Math.max(25, Math.round((100 - pressure) * 1.3));
+    const speedBonus = Math.max(
+      25,
+      Math.round((timeLeft / Math.max(1, levelConfig.timeLimitSec)) * 130),
+    );
     const perfectBonus = mistakes === 0 ? 120 : 0;
     const totalBonus = completionBonus + speedBonus + perfectBonus;
     const nextScore = score + totalBonus;
@@ -382,13 +353,7 @@ export const usePlaceValuePanicViewModel = ({
 
     setScore(nextScore);
     setRoundsCleared(nextCleared);
-    setPressure((prev) => Math.max(0, prev - 14));
     setFeedbackState('Board Complete', `+${totalBonus} (combo + speed + clear)`, 'success');
-
-    if (nextCleared >= levelConfig.promptsToClear) {
-      resolveVictory(nextScore);
-      return;
-    }
 
     roundTimerRef.current = window.setTimeout(() => {
       moveToNextRound();
@@ -399,15 +364,14 @@ export const usePlaceValuePanicViewModel = ({
     clearRoundTimer,
     isResolved,
     levelConfig.difficultyTier,
-    levelConfig.promptsToClear,
+    levelConfig.timeLimitSec,
     mistakes,
     moveToNextRound,
-    pressure,
-    resolveVictory,
     roundComplete,
     roundsCleared,
     score,
     setFeedbackState,
+    timeLeft,
   ]);
 
   useEffect(() => () => clearRoundTimer(), [clearRoundTimer]);
@@ -451,7 +415,6 @@ export const usePlaceValuePanicViewModel = ({
       setCombo(comboNext);
       setComboPeak((prev) => Math.max(prev, comboNext));
       setCorrectPlacements((prev) => prev + 1);
-      setPressure((prev) => Math.max(0, prev - 6));
       setFeedbackState('Correct Placement', `+${points}`, 'success');
       triggerHaptic('selection');
       return { result: 'correct' };
@@ -459,7 +422,6 @@ export const usePlaceValuePanicViewModel = ({
 
     setCombo(0);
     setMistakes((prev) => prev + 1);
-    setPressure((prev) => Math.min(100, prev + 10));
     setScore((prev) => Math.max(0, prev - 25));
     setLastRejectedTileId(tileId);
     setFeedbackState('Incorrect Slot', 'Tile returned to tray.', 'error');
@@ -493,7 +455,6 @@ export const usePlaceValuePanicViewModel = ({
     score,
     combo,
     comboPeak,
-    pressure: clamp(pressure, 0, 100),
     timeLeft,
     progress,
     roundsCleared,
