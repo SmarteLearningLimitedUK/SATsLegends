@@ -1,4 +1,4 @@
-import { AvatarData, IslandData, ShopItem, DailyQuest, MathFamily, CloudCollapseLevelConfig, PotionPourLevelConfig, Achievement } from "./types";
+﻿import { AvatarData, IslandData, ShopItem, DailyQuest, MathFamily, CloudCollapseLevelConfig, PotionPourLevelConfig, Achievement } from "./types";
 import { CHARACTER_AVATARS } from './assets/characters';
 import world01Map from './assets/maps/world_01.png';
 import world02Map from './assets/maps/world_02.png';
@@ -8,24 +8,24 @@ import world05Map from './assets/maps/world_05.png';
 import world06Map from './assets/maps/world_06.png';
 
 export const ACHIEVEMENTS: Achievement[] = [
-  { id: 'first_win', title: 'First Victory', description: 'Complete your first level', icon: '🏆', type: 'levels', target: 1 },
-  { id: 'star_collector', title: 'Star Collector', description: 'Earn 10 total stars', icon: '⭐', type: 'stars', target: 10 },
-  { id: 'rich', title: 'Money Maker', description: 'Accumulate 1000 coins', icon: '💰', type: 'coins', target: 1000 },
-  { id: 'streak_3', title: 'Dedicated Scholar', description: 'Reach a 3-day login streak', icon: '🔥', type: 'streak', target: 3 },
-  { id: 'math_master', title: 'Math Master', description: 'Complete 10 levels', icon: '🧠', type: 'levels', target: 10 },
-  { id: 'star_champion', title: 'Star Champion', description: 'Earn 50 total stars', icon: '🌟', type: 'stars', target: 50 },
-  { id: 'streak_7', title: 'Unstoppable', description: 'Reach a 7-day login streak', icon: '⚡', type: 'streak', target: 7 },
-  { id: 'gem_hoarder', title: 'Gem Hoarder', description: 'Accumulate 100 gems', icon: '💎', type: 'coins', target: 100 },
+  { id: 'first_win', title: 'First Victory', description: 'Complete your first level', icon: 'ðŸ†', type: 'levels', target: 1 },
+  { id: 'star_collector', title: 'Star Collector', description: 'Earn 10 total stars', icon: 'â­', type: 'stars', target: 10 },
+  { id: 'rich', title: 'Money Maker', description: 'Accumulate 1000 coins', icon: 'ðŸ’°', type: 'coins', target: 1000 },
+  { id: 'streak_3', title: 'Dedicated Scholar', description: 'Reach a 3-day login streak', icon: 'ðŸ”¥', type: 'streak', target: 3 },
+  { id: 'math_master', title: 'Math Master', description: 'Complete 10 levels', icon: 'ðŸ§ ', type: 'levels', target: 10 },
+  { id: 'star_champion', title: 'Star Champion', description: 'Earn 50 total stars', icon: 'ðŸŒŸ', type: 'stars', target: 50 },
+  { id: 'streak_7', title: 'Unstoppable', description: 'Reach a 7-day login streak', icon: 'âš¡', type: 'streak', target: 7 },
+  { id: 'gem_hoarder', title: 'Gem Hoarder', description: 'Accumulate 100 gems', icon: 'ðŸ’Ž', type: 'coins', target: 100 },
 ];
 
 export const DAILY_REWARDS = [
-  { day: 1, reward: { type: 'coins', amount: 100 }, icon: '💰' },
-  { day: 2, reward: { type: 'coins', amount: 200 }, icon: '💰' },
-  { day: 3, reward: { type: 'gems', amount: 5 }, icon: '💎' },
-  { day: 4, reward: { type: 'coins', amount: 500 }, icon: '💰' },
-  { day: 5, reward: { type: 'gems', amount: 10 }, icon: '💎' },
-  { day: 6, reward: { type: 'coins', amount: 1000 }, icon: '💰' },
-  { day: 7, reward: { type: 'gems', amount: 25 }, icon: '🎁' },
+  { day: 1, reward: { type: 'coins', amount: 100 }, icon: 'ðŸ’°' },
+  { day: 2, reward: { type: 'coins', amount: 200 }, icon: 'ðŸ’°' },
+  { day: 3, reward: { type: 'gems', amount: 5 }, icon: 'ðŸ’Ž' },
+  { day: 4, reward: { type: 'coins', amount: 500 }, icon: 'ðŸ’°' },
+  { day: 5, reward: { type: 'gems', amount: 10 }, icon: 'ðŸ’Ž' },
+  { day: 6, reward: { type: 'coins', amount: 1000 }, icon: 'ðŸ’°' },
+  { day: 7, reward: { type: 'gems', amount: 25 }, icon: 'ðŸŽ' },
 ];
 
 export const INITIAL_DAILY_QUESTS: DailyQuest[] = [
@@ -67,7 +67,7 @@ export const ISLANDS: IslandData[] = [
     mapImage: world02Map,
     decorations: [],
     levels: [
-      { id: 1, stars: 0, isLocked: false, gameType: 'burger_builder' },
+      { id: 1, stars: 0, isLocked: false, gameType: 'take_out_rush' },
       { id: 2, stars: 0, isLocked: false, gameType: 'fraction_match' },
       { id: 3, stars: 0, isLocked: false, gameType: 'fraction_match' },
       { id: 4, stars: 0, isLocked: false, gameType: 'percent_pulse' },
