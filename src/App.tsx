@@ -662,7 +662,7 @@ const App: React.FC = () => {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.45, ease: 'easeOut' }}
               src={splashPoster}
-              alt="Sats Hero splash screen"
+              alt="SATs Legends splash screen"
               className="absolute inset-0 h-full w-full object-cover"
               draggable={false}
             />
