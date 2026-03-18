@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { AVATARS } from '../constants';
 import GameContainerView from './GameContainerView';
+import { FRACTION_MATCH_ASSETS } from '../assets/fraction_match';
 import {
   DigitTile,
   PlaceValueSlotKey,
@@ -43,6 +44,16 @@ const SLOT_DISPLAY_VALUES: Record<PlaceValueSlotKey, string> = {
 };
 
 const MIN_TAP_TARGET = 44;
+const GEM_TEXTURES: string[] = [
+  FRACTION_MATCH_ASSETS.tiles.gold,
+  FRACTION_MATCH_ASSETS.tiles.emerald,
+  FRACTION_MATCH_ASSETS.tiles.azure,
+  FRACTION_MATCH_ASSETS.tiles.sapphire,
+  FRACTION_MATCH_ASSETS.tiles.ember,
+  FRACTION_MATCH_ASSETS.tiles.storm,
+];
+
+const getGemTexture = (digitValue: number) => GEM_TEXTURES[Math.abs(digitValue) % GEM_TEXTURES.length];
 
 const feedbackToneClass = (tone: 'success' | 'warning' | 'error') => {
   if (tone === 'success') return 'border-emerald-200/55 bg-emerald-500/28 text-emerald-50';
@@ -195,12 +206,18 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     });
   };
 
+  const pressureStateLabel = pressure >= 80
+    ? 'Critical'
+    : pressure >= 55
+      ? 'Warning'
+      : 'Stable';
+
   const objectiveArea = (
-    <div className="flex flex-col gap-2 p-2 md:gap-2.5 md:p-3">
+    <div className="pvp-objective flex flex-col gap-2 p-2 md:gap-2.5 md:p-3">
       <div className="flex items-start justify-between gap-2">
-        <div>
-          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/75">Target</div>
-          <div className="text-lg font-black text-white md:text-2xl">{round.targetNumberDisplay}</div>
+        <div className="pvp-target-chip">
+          <div className="text-[9px] font-black uppercase tracking-[0.22em] text-cyan-100/72">Target Number</div>
+          <div className="pvp-target-value text-lg font-black text-white md:text-2xl">{round.targetNumberDisplay}</div>
           <div className="text-[11px] font-semibold text-cyan-100/90 md:text-xs">
             Drag each digit into the correct place.
           </div>
@@ -208,25 +225,25 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         <button
           type="button"
           onClick={() => setIsPaused((previous) => !previous)}
-          className="ui-button-primary min-h-[44px] rounded-lg px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white md:text-xs"
+          className="ui-button-primary min-h-[44px] rounded-lg px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white md:text-xs pvp-pause-button"
         >
           {isPaused ? 'Resume' : 'Pause'}
         </button>
       </div>
 
       <div className="flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-[0.12em] md:text-xs">
-        <span className="licensed-slice-cyan-pill rounded-full px-2.5 py-1 text-white">Level {resolvedMiniGameLevel} / 10</span>
-        <span className="licensed-slice-cyan-pill rounded-full px-2.5 py-1 text-white">Tier {levelConfig.difficultyTier}</span>
-        <span className="licensed-slice-cyan-pill rounded-full px-2.5 py-1 text-white">Round {roundNumber} / {levelConfig.promptsToClear}</span>
-        <span className="licensed-slice-cyan-pill rounded-full px-2.5 py-1 text-white">Combo x{Math.max(1, combo)}</span>
+        <span className="pvp-stat-chip">Level {resolvedMiniGameLevel} / 10</span>
+        <span className="pvp-stat-chip">Tier {levelConfig.difficultyTier}</span>
+        <span className="pvp-stat-chip">Round {roundNumber} / {levelConfig.promptsToClear}</span>
+        <span className="pvp-stat-chip">Combo x{Math.max(1, combo)}</span>
       </div>
 
-      <div className="rounded-xl border border-cyan-100/35 bg-slate-900/45 p-2">
+      <div className="pvp-pressure-card rounded-xl border border-cyan-100/35 p-2">
         <div className="mb-1 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/85">
           <span>Queue Pressure</span>
-          <span>{Math.round(pressure)}%</span>
+          <span>{pressureStateLabel} · {Math.round(pressure)}%</span>
         </div>
-        <div className="h-2 overflow-hidden rounded-full border border-white/20 bg-slate-950/70">
+        <div className="h-2.5 overflow-hidden rounded-full border border-white/20 bg-slate-950/70">
           <div
             className={`h-full rounded-full transition-all duration-150 ${
               pressure >= 80
@@ -242,7 +259,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
       <div className="min-h-[2.25rem]">
         {feedback ? (
-          <div className={`rounded-xl border px-3 py-1.5 text-center shadow-[0_10px_20px_rgba(2,6,23,0.28)] ${feedbackToneClass(feedback.tone)}`}>
+          <div className={`pvp-feedback-banner rounded-xl border px-3 py-1.5 text-center shadow-[0_10px_20px_rgba(2,6,23,0.28)] ${feedbackToneClass(feedback.tone)}`}>
             <div className="text-[10px] font-black uppercase tracking-[0.16em] md:text-[11px]">{feedback.title}</div>
             <div className="text-[10px] font-semibold md:text-[11px]">{feedback.detail}</div>
           </div>
@@ -253,7 +270,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
   const playFieldArea = (
     <div className="relative flex h-full min-h-0 w-full flex-col gap-2 p-2 md:gap-2.5 md:p-3">
-      <div className="flex min-h-0 flex-[0.62] flex-col gap-2">
+      <div className="pvp-slot-grid-shell flex min-h-0 flex-[0.62] flex-col gap-2 rounded-2xl border border-white/14 bg-slate-900/35 p-2">
         <div
           className="grid flex-1 min-h-0 gap-2 md:gap-3"
           style={{ gridTemplateColumns: `repeat(${Math.min(4, Math.max(2, activeSlots.length))}, minmax(0, 1fr))` }}
@@ -270,28 +287,39 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 ref={(element) => {
                   slotRefs.current[slot.key] = element;
                 }}
-                className={`relative flex min-h-[108px] select-none flex-col items-center justify-center overflow-hidden rounded-[1rem] border px-2 text-center shadow-[0_12px_24px_rgba(2,6,23,0.34)] transition-all md:min-h-[136px] md:rounded-[1.2rem] ${
+                className={`pvp-slot relative flex min-h-[108px] select-none flex-col items-center justify-center overflow-hidden rounded-[1rem] border px-2 text-center shadow-[0_12px_24px_rgba(2,6,23,0.34)] transition-all md:min-h-[136px] md:rounded-[1.2rem] ${
                   isFilled
-                    ? 'border-emerald-200/60 bg-emerald-500/24'
+                    ? 'pvp-slot-filled'
                     : isHovered
-                      ? 'border-cyan-200/70 bg-cyan-500/25'
+                      ? 'pvp-slot-hovered'
                       : isHinted
-                        ? 'border-yellow-100/80 bg-yellow-400/20 animate-pulse'
-                        : 'border-white/16 bg-slate-900/55'
+                        ? 'animate-pulse pvp-slot-hinted'
+                        : 'pvp-slot-empty'
                 }`}
               >
-                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/75 md:text-xs">{slot.label}</div>
+                <div className="pvp-slot-label text-[10px] font-black uppercase tracking-[0.18em] text-white/75 md:text-xs">{slot.label}</div>
                 <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/50 md:text-xs">{SLOT_DISPLAY_VALUES[slot.key]}</div>
-                <div className="mt-1 text-3xl font-black text-white sm:text-4xl md:text-5xl">{isFilled ? placedTile?.digitValue : '?'}</div>
+                <div className="pvp-slot-socket mt-1">
+                  {isFilled && placedTile ? (
+                    <div
+                      className="pvp-slot-gem"
+                      style={{ backgroundImage: `url(${getGemTexture(placedTile.digitValue)})` }}
+                    >
+                      <span className="pvp-slot-gem-digit">{placedTile.digitValue}</span>
+                    </div>
+                  ) : (
+                    <div className="pvp-slot-empty-glyph">?</div>
+                  )}
+                </div>
               </div>
             );
           })}
         </div>
       </div>
 
-      <div className="relative flex min-h-0 flex-[0.38] flex-col gap-2 overflow-hidden rounded-2xl border border-white/16 bg-slate-900/55 p-2.5 shadow-[0_10px_22px_rgba(2,6,23,0.28)] md:gap-2.5">
+      <div className="pvp-tray-shell relative flex min-h-0 flex-[0.38] flex-col gap-2 overflow-hidden rounded-2xl border border-white/16 p-2.5 shadow-[0_10px_22px_rgba(2,6,23,0.28)] md:gap-2.5">
         <div className="flex items-center justify-between">
-          <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/75 md:text-xs">Digit Tray</div>
+          <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/75 md:text-xs">Digit Queue</div>
           <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/75 md:text-xs">
             Accuracy {Math.round(accuracy * 100)}%
           </div>
@@ -309,7 +337,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                   type="button"
                   onPointerDown={(event) => handleTilePointerDown(event, tile)}
                   disabled={isPaused}
-                  className={`flex h-full items-center justify-center rounded-xl border text-2xl font-black transition touch-none ${
+                  className={`pvp-digit-tile flex h-full items-center justify-center rounded-xl border text-2xl font-black transition touch-none ${
                     isDragging
                       ? 'opacity-25'
                       : 'opacity-100'
@@ -317,8 +345,11 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                     isRejected
                       ? 'border-rose-200/70 bg-rose-500/30'
                       : 'border-white/20 bg-slate-900/60'
-                  } text-white/95`}
-                  style={{ minHeight: MIN_TAP_TARGET }}
+                  } text-white/95 pvp-digit-gemface`}
+                  style={{
+                    minHeight: MIN_TAP_TARGET,
+                    backgroundImage: `url(${getGemTexture(tile.digitValue)})`,
+                  }}
                   initial={{ opacity: 0, y: 8, scale: 0.86 }}
                   animate={{
                     opacity: 1,
@@ -339,12 +370,13 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
       {dragState ? (
         <motion.div
-          className="pointer-events-none fixed z-[70] flex items-center justify-center rounded-xl border border-cyan-100/70 bg-cyan-500/88 text-2xl font-black text-white shadow-[0_14px_34px_rgba(2,6,23,0.42)]"
+          className="pvp-drag-ghost pointer-events-none fixed z-[70] flex items-center justify-center rounded-xl border border-cyan-100/70 text-2xl font-black text-white shadow-[0_14px_34px_rgba(2,6,23,0.42)]"
           style={{
             width: dragState.width,
             height: dragState.height,
             left: dragState.clientX - dragState.offsetX,
             top: dragState.clientY - dragState.offsetY,
+            backgroundImage: `url(${getGemTexture(dragState.tile.digitValue)})`,
           }}
           initial={{ scale: 1 }}
           animate={{ scale: 1.04 }}

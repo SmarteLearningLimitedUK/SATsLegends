@@ -135,13 +135,21 @@ const PLACE_VALUE_PANIC_COLUMNS_BY_TIER: Record<NumberBaseCampDifficultyTier, Ar
 export const PLACE_VALUE_PANIC_LEVELS: PlaceValuePanicLevelConfig[] = (
   NUMBER_BASE_CAMP_MINIGAME_PACKS.find((pack) => pack.key === 'place_value_panic')?.levels || []
 ).map((levelMeta) => {
-  const tier = levelMeta.difficultyTier;
-  const queueLimit = Math.max(4, 8 - (tier - 1) - (levelMeta.miniGameLevel % 2 === 0 ? 1 : 0));
-  const timeLimitSec = Math.max(38, 96 - levelMeta.miniGameLevel * 4);
-  const promptsToClear = 3 + tier;
-  const spawnIntervalMs = Math.max(650, 1680 - levelMeta.miniGameLevel * 92);
-  const decoyChance = Math.min(0.6, 0.22 + levelMeta.miniGameLevel * 0.035);
-  const targetScore = 900 + levelMeta.miniGameLevel * 250;
+  // Combined pacing groups requested:
+  // 1-2, 3-4, 5-7, 8-10
+  const combinedReferenceLevel = (
+    levelMeta.miniGameLevel <= 2 ? 2
+      : levelMeta.miniGameLevel <= 4 ? 4
+      : levelMeta.miniGameLevel <= 7 ? 7
+      : 10
+  );
+  const combinedTier = toTier(combinedReferenceLevel);
+  const queueLimit = Math.max(4, 8 - (combinedTier - 1) - (combinedReferenceLevel % 2 === 0 ? 1 : 0));
+  const timeLimitSec = 60;
+  const promptsToClear = 3 + combinedTier;
+  const spawnIntervalMs = Math.max(650, 1680 - combinedReferenceLevel * 92);
+  const decoyChance = Math.min(0.6, 0.22 + combinedReferenceLevel * 0.035);
+  const targetScore = 900 + combinedReferenceLevel * 250;
 
   return {
     ...levelMeta,
@@ -150,7 +158,7 @@ export const PLACE_VALUE_PANIC_LEVELS: PlaceValuePanicLevelConfig[] = (
     promptsToClear,
     spawnIntervalMs,
     decoyChance,
-    activeColumns: PLACE_VALUE_PANIC_COLUMNS_BY_TIER[tier],
+    activeColumns: PLACE_VALUE_PANIC_COLUMNS_BY_TIER[combinedTier],
     targetScore,
   };
 });
