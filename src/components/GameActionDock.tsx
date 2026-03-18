@@ -78,27 +78,27 @@ const GameActionDock: React.FC<GameActionDockProps> = ({
 
   return (
     <div className="game-shell-zone game-shell-zone-actions mt-0.5 flex shrink-0 items-center justify-center md:mt-2">
-      <div className="ui-panel-unified fantasy-dock-shell flex items-center gap-1.5 px-1.5 py-1 md:gap-3 md:px-3 md:py-2">
+      <div className="ui-panel-unified fantasy-dock-shell aaa-dock-shell flex items-center gap-2 px-2 py-1.5 md:gap-3 md:px-3 md:py-2">
         <button
           onClick={() => {
             triggerHaptic('tap');
             onBack();
           }}
-          className={`ui-icon-button game-dock-button ${accentClass}`}
+          className={`ui-icon-button game-dock-button aaa-dock-button ${accentClass}`}
           aria-label="Exit to map"
         >
           <AssetIcon name="home" className="h-5 w-5 md:h-7 md:w-7" />
         </button>
         <button
           onClick={toggleMute}
-          className={`ui-icon-button game-dock-button ${accentClass} ${mutedState ? 'ring-2 ring-white/60 ring-offset-2 ring-offset-transparent' : ''}`}
+          className={`ui-icon-button game-dock-button aaa-dock-button ${accentClass} ${mutedState ? 'ring-2 ring-white/60 ring-offset-2 ring-offset-transparent' : ''}`}
           aria-label={mutedState ? 'Unmute audio' : 'Mute audio'}
         >
           <AssetIcon name={mutedState ? 'soundMute' : 'sound'} className="h-5 w-5 md:h-7 md:w-7" />
         </button>
         <button
           onClick={openHelp}
-          className={`ui-icon-button game-dock-button ${accentClass}`}
+          className={`ui-icon-button game-dock-button aaa-dock-button ${accentClass}`}
           aria-label="Open rules"
         >
           <AssetIcon name="question" className="h-5 w-5 md:h-7 md:w-7" />

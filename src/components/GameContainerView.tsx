@@ -3,6 +3,7 @@ import { AvatarData, MiniGameType } from '../types';
 import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
 import GameplaySceneBackdrop from './GameplaySceneBackdrop';
+import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
 
 interface GameContainerViewProps {
   gameType: MiniGameType;
@@ -41,11 +42,23 @@ const GameContainerView: React.FC<GameContainerViewProps> = ({
   isPaused = false,
   onResume,
 }) => {
+  const objectiveShellStyle: React.CSSProperties = {
+    backgroundImage: `url(${MAIN_PNG_SKIN.mission})`,
+    backgroundSize: '100% 100%',
+    backgroundRepeat: 'no-repeat',
+  };
+
+  const playfieldShellStyle: React.CSSProperties = {
+    backgroundImage: `url(${MAIN_PNG_SKIN.textBox})`,
+    backgroundSize: '100% 100%',
+    backgroundRepeat: 'no-repeat',
+  };
+
   return (
-    <div className="relative flex h-full w-full min-h-0 flex-col overflow-hidden bg-[linear-gradient(180deg,#07122c_0%,#0c1d46_35%,#06101f_100%)]">
-      <GameplaySceneBackdrop gameType={gameType} className="opacity-92" />
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center gap-2 p-2 md:gap-3 md:p-4">
-        <div className="w-full max-w-6xl">
+    <div className="aaa-game-root relative flex h-full w-full min-h-0 flex-col overflow-hidden">
+      <GameplaySceneBackdrop gameType={gameType} className="aaa-game-backdrop" />
+      <div className="aaa-game-stage relative z-10 mx-auto flex h-full min-h-0 w-full max-w-[min(100%,1100px)] flex-1 flex-col gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] pt-[calc(env(safe-area-inset-top)+0.15rem)] md:gap-3 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
+        <div className="aaa-zone aaa-zone-hud w-full">
           <GameplayHUD
             title={title}
             avatar={avatar}
@@ -63,35 +76,49 @@ const GameContainerView: React.FC<GameContainerViewProps> = ({
           />
         </div>
 
-        <div className="w-full max-w-6xl">
-          {objectiveArea}
+        <div className="aaa-zone aaa-zone-objective w-full">
+          <div
+            className="aaa-objective-shell relative w-full overflow-hidden rounded-[1.1rem] border border-white/18 px-2 py-1.5 shadow-[0_10px_24px_rgba(2,6,23,0.28)] md:rounded-[1.35rem] md:px-3 md:py-2"
+            style={objectiveShellStyle}
+          >
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,15,33,0.08),rgba(7,15,33,0.32))]" />
+            <div className="relative z-10">{objectiveArea}</div>
+          </div>
         </div>
 
-        <div className="relative w-full max-w-6xl flex-1 min-h-0 overflow-hidden rounded-[1.6rem] border border-white/12 bg-slate-950/35 shadow-[0_20px_44px_rgba(2,6,23,0.42)] md:rounded-[2rem]">
-          {playFieldArea}
-          {feedbackLayer}
-
-          {isPaused && (
-            <div className="absolute inset-0 z-40 flex items-center justify-center bg-slate-950/70 backdrop-blur-sm">
-              <div className="licensed-board-frame flex w-full max-w-sm flex-col items-center gap-3 p-5 text-center md:max-w-md">
-                <div className="text-xs font-black uppercase tracking-[0.2em] text-cyan-100/70">Paused</div>
-                <div className="text-lg font-black text-white md:text-2xl">Take a breather</div>
-                <p className="text-sm font-semibold text-white/80">
-                  Resume when you are ready to continue the queue run.
-                </p>
-                <button
-                  type="button"
-                  onClick={onResume}
-                  className="ui-button-primary rounded-xl px-6 py-2.5 text-sm font-black uppercase tracking-[0.14em] text-white md:px-7 md:py-3"
-                >
-                  Resume
-                </button>
-              </div>
+        <div className="aaa-zone aaa-zone-playfield relative w-full min-h-0 flex-1">
+          <div
+            className="aaa-playfield-shell relative h-full w-full min-h-0 overflow-hidden rounded-[1.6rem] border border-white/15 shadow-[0_22px_44px_rgba(2,6,23,0.42)] md:rounded-[2rem]"
+            style={playfieldShellStyle}
+          >
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,28,0.3),rgba(3,10,28,0.58))]" />
+            <div className="relative z-10 h-full w-full min-h-0">
+              {playFieldArea}
             </div>
-          )}
+            {feedbackLayer}
+
+            {isPaused && (
+              <div className="absolute inset-0 z-40 flex items-center justify-center bg-slate-950/70 backdrop-blur-sm">
+                <div className="licensed-board-frame flex w-full max-w-sm flex-col items-center gap-3 p-5 text-center md:max-w-md">
+                  <div className="text-xs font-black uppercase tracking-[0.2em] text-cyan-100/70">Paused</div>
+                  <div className="text-lg font-black text-white md:text-2xl">Take a breather</div>
+                  <p className="text-sm font-semibold text-white/80">
+                    Resume when you are ready to continue the queue run.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={onResume}
+                    className="ui-button-primary rounded-xl px-6 py-2.5 text-sm font-black uppercase tracking-[0.14em] text-white md:px-7 md:py-3"
+                  >
+                    Resume
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className="w-full max-w-6xl">
+        <div className="aaa-zone aaa-zone-actions w-full">
           <GameActionDock onBack={onBack} accentClass={dockAccentClass} />
         </div>
       </div>

@@ -53,8 +53,8 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
 
   return (
     <div className="game-shell-zone game-shell-zone-hud w-full flex shrink-0 flex-col gap-1 md:gap-2">
-      <div className={`fantasy-hud-shell relative w-full overflow-hidden ${compact ? 'rounded-[1rem]' : 'rounded-[1.25rem]'} shadow-[0_18px_50px_rgba(15,23,42,0.24)] md:rounded-[2rem]`}>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.18),transparent_28%),linear-gradient(180deg,rgba(43,60,103,0.96),rgba(14,21,40,0.98))]" />
+      <div className={`fantasy-hud-shell aaa-hud-shell relative w-full overflow-hidden ${compact ? 'rounded-[1rem]' : 'rounded-[1.25rem]'} shadow-[0_18px_50px_rgba(15,23,42,0.24)] md:rounded-[2rem]`}>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(186,230,253,0.2),transparent_34%),linear-gradient(180deg,rgba(23,43,92,0.96),rgba(8,18,38,0.98))]" />
         <div className="absolute inset-0 border border-white/12" />
         <div className={`relative flex flex-col ${compact ? 'gap-0.5 p-1' : 'gap-1 p-1.5'} md:p-5 lg:flex-row lg:items-center lg:justify-between`}>
           <div className={`flex min-w-0 items-center ${compact ? 'gap-1' : 'gap-1.5'} md:gap-4`}>
@@ -87,16 +87,16 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
             </div>
           </div>
 
-          <div className={`grid w-full grid-cols-3 ${compact ? 'gap-0.5' : 'gap-1'} md:gap-3 lg:min-w-[360px]`}>
+          <div className={`grid w-full grid-cols-3 ${compact ? 'gap-0.5' : 'gap-1'} md:gap-3 lg:min-w-[390px]`}>
             {statLabel && (
-              <div className={`relative rounded-[0.75rem] md:rounded-[1.5rem] ${compact ? 'px-0.5 py-0.5' : 'px-1 py-0.75'} md:px-3 md:py-3 text-center overflow-hidden`}>
-                <div className="absolute inset-0 rounded-[inherit] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.9),rgba(226,232,240,0.92))]" />
+              <div className={`aaa-hud-stat relative rounded-[0.75rem] md:rounded-[1.5rem] ${compact ? 'px-0.5 py-0.5' : 'px-1 py-0.75'} md:px-3 md:py-3 text-center overflow-hidden`}>
+                <div className="aaa-hud-stat-surface absolute inset-0 rounded-[inherit]" />
                 <div className={`${compact ? 'text-[6px]' : 'text-[7px]'} relative md:text-xs font-black uppercase tracking-[0.16em] text-slate-600`}>{statLabel}</div>
                 <div className={`mt-0.5 md:mt-1 ${compact ? 'text-[0.82rem]' : 'text-[0.95rem]'} md:text-2xl font-black ${accentText}`}>{statValue}</div>
               </div>
             )}
-            <div className={`relative rounded-[0.75rem] md:rounded-[1.5rem] ${compact ? 'px-0.5 py-0.5' : 'px-1 py-0.75'} md:px-3 md:py-3 text-center overflow-hidden`}>
-              <div className="absolute inset-0 rounded-[inherit] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(226,232,240,0.92))]" />
+            <div className={`aaa-hud-stat relative rounded-[0.75rem] md:rounded-[1.5rem] ${compact ? 'px-0.5 py-0.5' : 'px-1 py-0.75'} md:px-3 md:py-3 text-center overflow-hidden`}>
+              <div className="aaa-hud-stat-surface absolute inset-0 rounded-[inherit]" />
               <div className={`${compact ? 'text-[6px]' : 'text-[7px]'} relative md:text-xs font-black uppercase tracking-[0.16em] text-slate-600`}>Score</div>
               <motion.div
                 key={score}
@@ -107,8 +107,8 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
                 {score}
               </motion.div>
             </div>
-            <div className={`relative rounded-[0.75rem] md:rounded-[1.5rem] ${compact ? 'px-0.5 py-0.5' : 'px-1 py-0.75'} md:px-3 md:py-3 text-center overflow-hidden`}>
-              <div className="absolute inset-0 rounded-[inherit] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(226,232,240,0.92))]" />
+            <div className={`aaa-hud-stat relative rounded-[0.75rem] md:rounded-[1.5rem] ${compact ? 'px-0.5 py-0.5' : 'px-1 py-0.75'} md:px-3 md:py-3 text-center overflow-hidden`}>
+              <div className="aaa-hud-stat-surface absolute inset-0 rounded-[inherit]" />
               <div className={`relative flex items-center justify-center ${compact ? 'gap-0.5' : 'gap-1'} md:gap-2`}>
                 <AssetIcon name="timer" className={`${compact ? 'w-2.5 h-2.5' : 'w-3 h-3'} md:w-5 md:h-5 ${timeLeft < 10 ? 'animate-pulse' : ''}`} />
                 <div className={`${compact ? 'text-[6px]' : 'text-[7px]'} md:text-xs font-black uppercase tracking-[0.16em] text-slate-600`}>Time</div>
@@ -119,7 +119,7 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
         </div>
       </div>
 
-      <div className={`relative w-full ${compact ? 'h-3' : 'h-4'} md:h-6 overflow-hidden rounded-full`}>
+      <div className={`aaa-progress-shell relative w-full ${compact ? 'h-3' : 'h-4'} md:h-6 overflow-hidden rounded-full`}>
         <img src={sliderBgAsset} alt="progress bar background" className="absolute inset-0 h-full w-full object-fill opacity-95" />
         <img src={sliderBorderAsset} alt="progress bar border" className="absolute inset-0 h-full w-full object-fill opacity-95" />
         <img src={MAIN_PNG_SKIN.separator} alt="" aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full object-fill opacity-80" />

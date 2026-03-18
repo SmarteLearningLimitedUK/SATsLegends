@@ -26,6 +26,12 @@ const GameRulesModal: React.FC<GameRulesModalProps> = ({
     backgroundRepeat: 'no-repeat',
   };
 
+  const closeButtonStyle: React.CSSProperties = {
+    backgroundImage: `url(${MAIN_PNG_SKIN.closeButton})`,
+    backgroundSize: '100% 100%',
+    backgroundRepeat: 'no-repeat',
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -44,9 +50,10 @@ const GameRulesModal: React.FC<GameRulesModalProps> = ({
             <button
               onClick={onClose}
               className="ui-icon-button absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full p-0 text-white transition md:right-4 md:top-4"
+              style={closeButtonStyle}
               aria-label="Close rules"
             >
-              <AssetIcon name="x" className="h-5 w-5" />
+              <AssetIcon name="x" className="h-5 w-5 text-slate-100 drop-shadow-[0_1px_4px_rgba(2,6,23,0.45)]" />
             </button>
 
             <HUDBar

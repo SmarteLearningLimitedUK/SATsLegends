@@ -2823,4 +2823,88 @@ button:disabled {
   }
 }
 
+/* AAA gameplay skin pass: shared shell zones, depth, and touch-safe controls */
+.aaa-game-root {
+  background:
+    radial-gradient(circle at 50% 6%, rgba(125, 211, 252, 0.14), rgba(125, 211, 252, 0) 28%),
+    radial-gradient(circle at 10% 92%, rgba(251, 191, 36, 0.12), rgba(251, 191, 36, 0) 34%),
+    linear-gradient(180deg, #07122c 0%, #0b1f46 42%, #07101f 100%);
+}
+
+.aaa-game-backdrop {
+  opacity: 0.96;
+}
+
+.aaa-zone {
+  min-height: 0;
+}
+
+.aaa-zone-objective {
+  position: relative;
+  z-index: 3;
+}
+
+.aaa-zone-playfield {
+  position: relative;
+  z-index: 2;
+}
+
+.aaa-playfield-shell::after {
+  content: '';
+  position: absolute;
+  inset: 0.45rem;
+  border-radius: 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+.aaa-hud-shell::after {
+  content: '';
+  position: absolute;
+  inset: 0.34rem;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+.aaa-hud-stat {
+  box-shadow: 0 8px 18px rgba(2, 6, 23, 0.18);
+}
+
+.aaa-hud-stat-surface {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(226, 232, 240, 0.95)),
+    linear-gradient(180deg, rgba(186, 230, 253, 0.3), rgba(148, 163, 184, 0.08));
+}
+
+.aaa-progress-shell {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 20px rgba(2, 6, 23, 0.2);
+}
+
+.aaa-dock-shell {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 14px 28px rgba(2, 6, 23, 0.26);
+}
+
+.aaa-dock-button {
+  width: clamp(3.25rem, 8.2vw, 3.8rem);
+  height: clamp(3.25rem, 8.2vw, 3.8rem);
+  min-width: 44px;
+  min-height: 44px;
+}
+
+@media (min-width: 768px) {
+  .aaa-game-stage {
+    max-width: min(1180px, calc(100vw - 3rem)) !important;
+  }
+
+  .aaa-zone-objective .aaa-objective-shell {
+    padding-inline: 0.95rem;
+  }
+}
+
 
