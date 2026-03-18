@@ -1,9 +1,9 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 
 Add-Type -AssemblyName System.Drawing
 
-$sourcePath = 'D:\codexsatsgame\external-assets\game assets\burger\burgerassets.png'
-$targetRoot = 'D:\gamedevsam\SATSLegends\src\assets\burger\slices'
+$sourcePath = 'D:\codexsatsgame\external-assets\game assets\take_out_rush\take_out_rush_assets.png'
+$targetRoot = 'D:\gamedevsam\SATSLegends\src\assets\take_out_rush\slices'
 
 if (Test-Path $targetRoot) {
   Remove-Item $targetRoot -Recurse -Force

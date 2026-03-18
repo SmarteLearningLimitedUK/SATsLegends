@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { AVATARS } from '../constants';
-import { BURGER_ASSETS } from '../assets/burger';
-import burgerLevelBg from '../assets/level_backgrounds/burger.png';
+import { TAKE_OUT_RUSH_ASSETS } from '../assets/take_out_rush';
+import takeOutRushLevelBg from '../assets/level_backgrounds/take_out_rush.png';
 import playBgAsset from '../assets/fantasy_hero/slider/play_bg.png';
 import playBorderAsset from '../assets/fantasy_hero/slider/play_border.png';
 import playFillBlueAsset from '../assets/fantasy_hero/slider/play_fill_blue.png';
@@ -17,7 +17,7 @@ import GameplayHUD from './GameplayHUD';
 import AssetIcon from './AssetIcon';
 import { Star } from './GameIcons';
 
-interface BurgerBuilderGameProps {
+interface TakeOutRushGameProps {
   levelId: number;
   avatarId: string;
   onVictory: (stars: number, score: number) => void;
@@ -27,7 +27,7 @@ interface BurgerBuilderGameProps {
 
 type CustomerMood = 'waiting' | 'happy' | 'sad';
 
-interface IngredientType {
+interface PortionPieceType {
   name: string;
   units: number;
   asset: string;
@@ -41,7 +41,7 @@ interface IngredientType {
 interface OrderRequest {
   id: string;
   targetUnits: number;
-  requiredIngredients: string[];
+  requiredPortions: string[];
   text: string;
 }
 
@@ -55,11 +55,11 @@ const MAX_MISSES = 3;
 const SCORE_TARGET_BASE = 900;
 const SCORE_TARGET_PER_LEVEL = 250;
 
-const INGREDIENT_TYPES: IngredientType[] = [
+const PORTION_PIECE_TYPES: PortionPieceType[] = [
   {
-    name: 'Patty',
+    name: 'Portion Piece A',
     units: 4,
-    asset: BURGER_ASSETS.patty,
+    asset: TAKE_OUT_RUSH_ASSETS.pieceA,
     accent: 'from-amber-100 via-orange-50 to-white',
     trayTone: 'from-violet-500 via-fuchsia-500 to-purple-600',
     buttonImageClass: 'w-16 md:w-20',
@@ -67,9 +67,9 @@ const INGREDIENT_TYPES: IngredientType[] = [
     shortLabel: '1/2',
   },
   {
-    name: 'Cheese',
+    name: 'Portion Piece B',
     units: 2,
-    asset: BURGER_ASSETS.cheese,
+    asset: TAKE_OUT_RUSH_ASSETS.pieceB,
     accent: 'from-yellow-100 via-amber-50 to-white',
     trayTone: 'from-orange-400 via-amber-400 to-yellow-500',
     buttonImageClass: 'w-14 md:w-16',
@@ -77,9 +77,9 @@ const INGREDIENT_TYPES: IngredientType[] = [
     shortLabel: '1/4',
   },
   {
-    name: 'Bacon',
+    name: 'Portion Piece C',
     units: 1,
-    asset: BURGER_ASSETS.bacon,
+    asset: TAKE_OUT_RUSH_ASSETS.pieceC,
     accent: 'from-rose-100 via-orange-50 to-white',
     trayTone: 'from-rose-500 via-red-500 to-orange-500',
     buttonImageClass: 'w-14 md:w-16',
@@ -87,9 +87,9 @@ const INGREDIENT_TYPES: IngredientType[] = [
     shortLabel: '1/8',
   },
   {
-    name: 'Lettuce',
+    name: 'Portion Piece D',
     units: 1,
-    asset: BURGER_ASSETS.lettuce,
+    asset: TAKE_OUT_RUSH_ASSETS.pieceD,
     accent: 'from-lime-100 via-emerald-50 to-white',
     trayTone: 'from-lime-400 via-emerald-400 to-green-500',
     buttonImageClass: 'w-16 md:w-20',
@@ -97,9 +97,9 @@ const INGREDIENT_TYPES: IngredientType[] = [
     shortLabel: '1/8',
   },
   {
-    name: 'Tomato',
+    name: 'Portion Piece E',
     units: 1,
-    asset: BURGER_ASSETS.tomato,
+    asset: TAKE_OUT_RUSH_ASSETS.pieceE,
     accent: 'from-red-100 via-rose-50 to-white',
     trayTone: 'from-cyan-500 via-sky-500 to-teal-500',
     buttonImageClass: 'w-16 md:w-20',
@@ -107,9 +107,9 @@ const INGREDIENT_TYPES: IngredientType[] = [
     shortLabel: '1/8',
   },
   {
-    name: 'Onion',
+    name: 'Portion Piece F',
     units: 1,
-    asset: BURGER_ASSETS.onion,
+    asset: TAKE_OUT_RUSH_ASSETS.pieceF,
     accent: 'from-fuchsia-100 via-violet-50 to-white',
     trayTone: 'from-fuchsia-500 via-purple-500 to-violet-600',
     buttonImageClass: 'w-14 md:w-18',
@@ -117,9 +117,9 @@ const INGREDIENT_TYPES: IngredientType[] = [
     shortLabel: '1/8',
   },
   {
-    name: 'Pickles',
+    name: 'Portion Piece G',
     units: 1,
-    asset: BURGER_ASSETS.pickles,
+    asset: TAKE_OUT_RUSH_ASSETS.pieceG,
     accent: 'from-emerald-100 via-lime-50 to-white',
     trayTone: 'from-emerald-500 via-lime-500 to-green-500',
     buttonImageClass: 'w-14 md:w-18',
@@ -127,9 +127,9 @@ const INGREDIENT_TYPES: IngredientType[] = [
     shortLabel: '1/8',
   },
   {
-    name: 'Ketchup',
+    name: 'Portion Piece H',
     units: 1,
-    asset: BURGER_ASSETS.ketchup,
+    asset: TAKE_OUT_RUSH_ASSETS.pieceH,
     accent: 'from-red-100 via-orange-50 to-white',
     trayTone: 'from-red-500 via-rose-500 to-pink-500',
     buttonImageClass: 'w-14 md:w-16',
@@ -137,9 +137,9 @@ const INGREDIENT_TYPES: IngredientType[] = [
     shortLabel: '1/8',
   },
   {
-    name: 'BBQ',
+    name: 'Portion Piece I',
     units: 1,
-    asset: BURGER_ASSETS.bbq,
+    asset: TAKE_OUT_RUSH_ASSETS.pieceI,
     accent: 'from-amber-100 via-orange-50 to-white',
     trayTone: 'from-amber-500 via-orange-500 to-red-500',
     buttonImageClass: 'w-14 md:w-16',
@@ -255,7 +255,7 @@ const TavernMonster: React.FC<{ mood: CustomerMood }> = ({ mood }) => {
   );
 };
 
-const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
+const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
   levelId,
   avatarId,
   onVictory,
@@ -267,13 +267,13 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
   const [isGameOver, setIsGameOver] = useState(false);
   const [isVictory, setIsVictory] = useState(false);
   const [currentOrder, setCurrentOrder] = useState<OrderRequest | null>(null);
-  const [burgerStack, setBurgerStack] = useState<IngredientType[]>([]);
+  const [trayStack, setTrayStack] = useState<PortionPieceType[]>([]);
   const [ordersServed, setOrdersServed] = useState(0);
   const [missedCustomers, setMissedCustomers] = useState(0);
   const [streak, setStreak] = useState(0);
   const [customerMood, setCustomerMood] = useState<CustomerMood>('waiting');
   const [reaction, setReaction] = useState<CustomerReaction | null>(null);
-  const [feedback, setFeedback] = useState('Build the burger to match the order exactly.');
+  const [feedback, setFeedback] = useState('Fill the tray to the target total.');
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -286,18 +286,18 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
   const createOrder = useCallback((): OrderRequest => {
     const targetUnits = TARGET_UNIT_OPTIONS[Math.floor(Math.random() * TARGET_UNIT_OPTIONS.length)];
     const requiredCount = levelId >= 5 ? 2 : 1;
-    const requiredIngredients = [...INGREDIENT_TYPES]
+    const requiredPortions = [...PORTION_PIECE_TYPES]
       .sort(() => Math.random() - 0.5)
       .slice(0, requiredCount)
       .map(item => item.name);
 
-    const ingredientText = joinWithAnd(requiredIngredients.map(item => item.toLowerCase()));
+    const portionText = joinWithAnd(requiredPortions.map(item => item.toLowerCase()));
 
     return {
       id: createId(),
       targetUnits,
-      requiredIngredients,
-      text: `I want a ${formatFractionSentence(targetUnits)} burger with ${ingredientText}.`,
+      requiredPortions,
+      text: `Fill a ${formatFractionSentence(targetUnits)} take-out order tray with ${portionText}.`,
     };
   }, [levelId]);
 
@@ -325,10 +325,10 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
     if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current);
     transitionTimeoutRef.current = setTimeout(() => {
       setCurrentOrder(createOrder());
-      setBurgerStack([]);
+      setTrayStack([]);
       setOrderTimeLeft(ORDER_DURATION);
       setCustomerMood('waiting');
-      setFeedback('Build the burger to match the order exactly.');
+      setFeedback('Fill the tray to the target total.');
       setIsTransitioning(false);
     }, 1100);
   }, [createOrder]);
@@ -355,9 +355,9 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
     setStreak(0);
     setCustomerMood('waiting');
     setReaction(null);
-    setFeedback('Build the burger to match the order exactly.');
+    setFeedback('Fill the tray to the target total.');
     setIsTransitioning(false);
-    setBurgerStack([]);
+    setTrayStack([]);
     setCurrentOrder(createOrder());
   }, [createOrder, levelId]);
 
@@ -386,91 +386,91 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
   }, [beginNextOrder, currentOrder, isGameOver, isTransitioning, isVictory, missedCustomers, onGameOver, orderTimeLeft, score]);
 
   const totalUnits = useMemo(
-    () => burgerStack.reduce((sum, ingredient) => sum + ingredient.units, 0),
-    [burgerStack],
+    () => trayStack.reduce((sum, portionPiece) => sum + portionPiece.units, 0),
+    [trayStack],
   );
 
-  const usedIngredientCounts = useMemo(() => {
+  const usedPortionCounts = useMemo(() => {
     const counts = new Map<string, number>();
-    burgerStack.forEach(ingredient => {
-      counts.set(ingredient.name, (counts.get(ingredient.name) || 0) + 1);
+    trayStack.forEach(portionPiece => {
+      counts.set(portionPiece.name, (counts.get(portionPiece.name) || 0) + 1);
     });
     return counts;
-  }, [burgerStack]);
+  }, [trayStack]);
 
   const requiredMissing = useMemo(() => {
     if (!currentOrder) return [];
-    return currentOrder.requiredIngredients.filter(name => !usedIngredientCounts.has(name));
-  }, [currentOrder, usedIngredientCounts]);
+    return currentOrder.requiredPortions.filter(name => !usedPortionCounts.has(name));
+  }, [currentOrder, usedPortionCounts]);
 
   const buildEquation = useMemo(() => {
-    if (!burgerStack.length) return 'Tap ingredients to start your fraction stack.';
-    return `${burgerStack.map(item => item.shortLabel).join(' + ')} = ${formatFractionUnits(totalUnits)}`;
-  }, [burgerStack, totalUnits]);
+    if (!trayStack.length) return 'Tap portion pieces to start building the tray.';
+    return `${trayStack.map(item => item.shortLabel).join(' + ')} = ${formatFractionUnits(totalUnits)}`;
+  }, [trayStack, totalUnits]);
 
   const orderSummary = useMemo(() => {
     if (!currentOrder) return '';
-    return `${formatFractionUnits(currentOrder.targetUnits)} burger | ${currentOrder.requiredIngredients.join(' + ')}`;
+    return `${formatFractionUnits(currentOrder.targetUnits)} tray | ${currentOrder.requiredPortions.join(' + ')}`;
   }, [currentOrder]);
 
-  const requiredIngredientVisuals = useMemo(() => {
+  const requiredPortionVisuals = useMemo(() => {
     if (!currentOrder) return [];
-    return currentOrder.requiredIngredients
-      .map(name => INGREDIENT_TYPES.find(item => item.name === name))
-      .filter((item): item is IngredientType => Boolean(item));
+    return currentOrder.requiredPortions
+      .map(name => PORTION_PIECE_TYPES.find(item => item.name === name))
+      .filter((item): item is PortionPieceType => Boolean(item));
   }, [currentOrder]);
 
   const orderChecklist = useMemo(() => {
     if (!currentOrder) return [];
 
-    const rows = requiredIngredientVisuals.map((ingredient) => ({
-      id: ingredient.name,
-      label: ingredient.name,
-      asset: ingredient.asset,
-      current: usedIngredientCounts.get(ingredient.name) || 0,
+    const rows = requiredPortionVisuals.map((portionPiece) => ({
+      id: portionPiece.name,
+      label: portionPiece.name,
+      asset: portionPiece.asset,
+      current: usedPortionCounts.get(portionPiece.name) || 0,
       target: 1,
-      tone: ingredient.trayTone,
+      tone: portionPiece.trayTone,
     }));
 
     rows.unshift({
       id: 'size',
-      label: 'Burger Size',
-      asset: BURGER_ASSETS.topBun,
+      label: 'Tray Total',
+      asset: TAKE_OUT_RUSH_ASSETS.trayTop,
       current: totalUnits,
       target: currentOrder.targetUnits,
       tone: 'from-sky-500 via-blue-500 to-indigo-600',
     });
 
     return rows;
-  }, [currentOrder, requiredIngredientVisuals, totalUnits, usedIngredientCounts]);
+  }, [currentOrder, requiredPortionVisuals, totalUnits, usedPortionCounts]);
 
   const orderProgress = useMemo(() => {
     if (!currentOrder) return 0;
     const sizeProgress = Math.min(totalUnits / currentOrder.targetUnits, 1) * 0.6;
-    const ingredientProgress = currentOrder.requiredIngredients.length
-      ? ((currentOrder.requiredIngredients.length - requiredMissing.length) / currentOrder.requiredIngredients.length) * 0.4
+    const portionProgress = currentOrder.requiredPortions.length
+      ? ((currentOrder.requiredPortions.length - requiredMissing.length) / currentOrder.requiredPortions.length) * 0.4
       : 0.4;
-    return Math.round((sizeProgress + ingredientProgress) * 100);
+    return Math.round((sizeProgress + portionProgress) * 100);
   }, [currentOrder, requiredMissing.length, totalUnits]);
 
-  const handleIngredientAdd = (ingredient: IngredientType) => {
+  const handlePortionAdd = (portionPiece: PortionPieceType) => {
     if (isGameOver || isVictory || isTransitioning) return;
-    if (burgerStack.length >= 14) {
+    if (trayStack.length >= 14) {
       triggerHaptic('warning');
-      setFeedback('That burger is towering already. Serve it or clear and rebuild.');
+      setFeedback('The tray is already full. Dispatch now or clear and rebuild.');
       return;
     }
 
     triggerHaptic('selection');
-    setBurgerStack(prev => [...prev, ingredient]);
-    setFeedback(`Added ${ingredient.name.toLowerCase()} for ${ingredient.shortLabel}.`);
+    setTrayStack(prev => [...prev, portionPiece]);
+    setFeedback(`Added ${portionPiece.name.toLowerCase()} for ${portionPiece.shortLabel}.`);
   };
 
-  const clearBurger = () => {
+  const clearTray = () => {
     if (isGameOver || isVictory || isTransitioning) return;
     triggerHaptic('light');
-    setBurgerStack([]);
-    setFeedback('Burger cleared. Start the order again.');
+    setTrayStack([]);
+    setFeedback('Tray cleared. Start the order again.');
   };
 
   const handleServe = () => {
@@ -491,16 +491,16 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
 
     if (totalUnits > currentOrder.targetUnits) {
       triggerHaptic('warning');
-      setFeedback('That burger is too large. Clear it and rebuild this order.');
+      setFeedback('That tray is overfilled. Clear it and rebuild this order.');
       return;
     }
 
-    const uniqueIngredients = usedIngredientCounts.size;
-    const layerBonus = burgerStack.length * 18;
-    const varietyBonus = uniqueIngredients * 14;
+    const uniquePortions = usedPortionCounts.size;
+    const pieceBonus = trayStack.length * 18;
+    const portionVarietyBonus = uniquePortions * 14;
     const speedBonus = orderTimeLeft * 3;
     const streakBonus = streak * 25;
-    const earnedScore = 140 + layerBonus + varietyBonus + speedBonus + streakBonus;
+    const earnedScore = 140 + pieceBonus + portionVarietyBonus + speedBonus + streakBonus;
     const newScore = score + earnedScore;
 
     setScore(newScore);
@@ -528,15 +528,15 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
     <div className="relative flex h-full w-full flex-col overflow-hidden bg-[radial-gradient(circle_at_top,#78350f_0%,#431407_42%,#0f172a_100%)] px-2 pb-2 pt-1 md:px-4 md:pb-4">
       <div
         className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-[0.92]"
-        style={{ backgroundImage: `url(${burgerLevelBg})` }}
+        style={{ backgroundImage: `url(${takeOutRushLevelBg})` }}
       />
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(34,12,56,0.42),rgba(91,33,182,0.16)_24%,rgba(20,10,3,0.54)_100%)]" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.34),rgba(255,243,199,0)_28%),radial-gradient(circle_at_bottom,rgba(249,115,22,0.3),rgba(120,53,15,0)_36%)]" />
-      <GameplaySceneBackdrop gameType="burger_builder" className="opacity-12" />
+      <GameplaySceneBackdrop gameType="take_out_rush" className="opacity-12" />
 
       <div className="relative z-10 flex h-full min-h-0 flex-col gap-2 md:gap-3">
         <GameplayHUD
-          title="Burger Bar"
+          title="Take-Out Rush"
           avatar={avatar}
           score={score}
           targetScore={targetScore}
@@ -603,12 +603,12 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
             <div className="relative grid grid-cols-[auto_1fr_auto] items-center gap-2 md:gap-3">
               <CustomerFace mood={customerMood} />
               <div className="min-w-0">
-                <div className="text-[8px] font-black uppercase tracking-[0.24em] text-amber-200/80 md:text-[10px]">Kitchen Rush</div>
+                <div className="text-[8px] font-black uppercase tracking-[0.24em] text-amber-200/80 md:text-[10px]">Dispatch Line</div>
                 <div className="mt-0.5 truncate text-sm font-black text-white md:text-lg">{orderSummary}</div>
                 <div className="mt-1 flex items-center gap-1.5 md:gap-2">
-                  {requiredIngredientVisuals.map(ingredient => (
-                    <div key={ingredient.name} className={`rounded-full bg-gradient-to-r ${ingredient.trayTone} px-2 py-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.24)]`}>
-                      <img src={ingredient.asset} alt={ingredient.name} className="h-4 w-7 object-contain md:h-5 md:w-9" draggable={false} />
+                  {requiredPortionVisuals.map(portionPiece => (
+                    <div key={portionPiece.name} className={`rounded-full bg-gradient-to-r ${portionPiece.trayTone} px-2 py-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.24)]`}>
+                      <img src={portionPiece.asset} alt={portionPiece.name} className="h-4 w-7 object-contain md:h-5 md:w-9" draggable={false} />
                     </div>
                   ))}
                 </div>
@@ -654,12 +654,12 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
               <div className="pointer-events-none absolute inset-x-3 top-1 h-6 bg-contain bg-center bg-no-repeat opacity-75 md:top-2 md:h-8" style={{ backgroundImage: `url(${lineBgAsset})` }} />
               <div className="relative flex items-center gap-3">
                 <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[1rem] bg-white/70 shadow-[inset_0_2px_0_rgba(255,255,255,0.75)] md:h-16 md:w-16">
-                  <img src={BURGER_ASSETS.topBun} alt="" className="h-8 w-10 object-contain md:h-10 md:w-12" draggable={false} />
+                  <img src={TAKE_OUT_RUSH_ASSETS.trayTop} alt="" className="h-8 w-10 object-contain md:h-10 md:w-12" draggable={false} />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-[8px] font-black uppercase tracking-[0.18em] text-amber-800/72 md:text-[10px]">Monster Order</div>
+                  <div className="text-[8px] font-black uppercase tracking-[0.18em] text-amber-800/72 md:text-[10px]">Order Queue</div>
                   <div className="mt-0.5 text-lg font-black leading-none md:text-[1.75rem]">
-                    {currentOrder ? `${formatFractionUnits(currentOrder.targetUnits)} Burger` : 'Waiting...'}
+                    {currentOrder ? `${formatFractionUnits(currentOrder.targetUnits)} Tray` : 'Waiting...'}
                   </div>
                   <div className="mt-1 truncate text-[10px] font-bold text-amber-900/80 md:text-sm">{currentOrder?.text}</div>
                 </div>
@@ -676,8 +676,8 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
                 <div className={`mt-0.5 text-sm font-black md:text-xl ${currentOrder && totalUnits > currentOrder.targetUnits ? 'text-red-300' : 'text-yellow-200'}`}>{formatFractionUnits(totalUnits)}</div>
               </div>
               <div className="rounded-[1rem] bg-white/10 px-2 py-1.5 text-center">
-                <div className="text-[8px] font-black uppercase tracking-[0.18em] text-white/56 md:text-[10px]">Layers</div>
-                <div className="mt-0.5 text-sm font-black text-lime-200 md:text-xl">{burgerStack.length}</div>
+                <div className="text-[8px] font-black uppercase tracking-[0.18em] text-white/56 md:text-[10px]">Pieces</div>
+                <div className="mt-0.5 text-sm font-black text-lime-200 md:text-xl">{trayStack.length}</div>
               </div>
             </div>
 
@@ -689,15 +689,15 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
               >
                 <TavernMonster mood={customerMood} />
               </motion.div>
-              {burgerStack.length > 0 && (
+              {trayStack.length > 0 && (
                 <motion.div
-                  key={`${burgerStack[burgerStack.length - 1]?.name}-${burgerStack.length}`}
+                  key={`${trayStack[trayStack.length - 1]?.name}-${trayStack.length}`}
                   initial={{ y: -24, opacity: 0, rotate: -4 }}
                   animate={{ y: 0, opacity: 1, rotate: 0 }}
                   className="absolute left-1/2 top-2 z-30 -translate-x-1/2 md:top-3"
                 >
                   <img
-                    src={burgerStack[burgerStack.length - 1]?.asset}
+                    src={trayStack[trayStack.length - 1]?.asset}
                     alt=""
                     className="h-10 w-20 object-contain drop-shadow-[0_12px_16px_rgba(15,23,42,0.22)] md:h-14 md:w-28"
                     draggable={false}
@@ -721,12 +721,12 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
                 <div className="absolute inset-[8%] rounded-[1.2rem] border border-amber-100/20 bg-[linear-gradient(180deg,rgba(255,224,178,0.26),rgba(255,224,178,0.08))] md:rounded-[1.6rem]" />
               </div>
               <div className="relative flex h-full w-full max-w-[290px] flex-col items-center justify-end md:max-w-[440px]">
-                <img src={BURGER_ASSETS.topBun} alt="Top bun" className="z-20 w-28 object-contain drop-shadow-[0_12px_18px_rgba(120,53,15,0.24)] md:w-56" draggable={false} />
+                <img src={TAKE_OUT_RUSH_ASSETS.trayTop} alt="Tray top marker" className="z-20 w-28 object-contain drop-shadow-[0_12px_18px_rgba(120,53,15,0.24)] md:w-56" draggable={false} />
                 <div className="relative -mt-2 flex w-full flex-1 flex-col-reverse items-center justify-start overflow-visible px-1 pb-4 pt-2 md:-mt-5 md:px-2 md:pb-7">
                   <AnimatePresence initial={false}>
-                    {burgerStack.map((ingredient, index) => (
+                    {trayStack.map((portionPiece, index) => (
                       <motion.div
-                        key={`${ingredient.name}-${index}-${burgerStack.length}`}
+                        key={`${portionPiece.name}-${index}-${trayStack.length}`}
                         initial={{ y: -18, opacity: 0, scale: 1.08 }}
                         animate={{ y: 0, opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, y: 18 }}
@@ -735,16 +735,16 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
                         style={{ zIndex: index + 1 }}
                       >
                         <img
-                          src={ingredient.asset}
-                          alt={ingredient.name}
-                          className={`${ingredient.stackImageClass} max-w-[9.2rem] md:max-w-none object-contain drop-shadow-[0_8px_14px_rgba(15,23,42,0.18)]`}
+                          src={portionPiece.asset}
+                          alt={portionPiece.name}
+                          className={`${portionPiece.stackImageClass} max-w-[9.2rem] md:max-w-none object-contain drop-shadow-[0_8px_14px_rgba(15,23,42,0.18)]`}
                           draggable={false}
                         />
                       </motion.div>
                     ))}
                   </AnimatePresence>
                 </div>
-                <img src={BURGER_ASSETS.bottomBun} alt="Bottom bun" className="relative z-30 -mt-1 w-28 object-contain drop-shadow-[0_14px_20px_rgba(120,53,15,0.24)] md:-mt-2 md:w-56" draggable={false} />
+                <img src={TAKE_OUT_RUSH_ASSETS.trayBase} alt="Tray base marker" className="relative z-30 -mt-1 w-28 object-contain drop-shadow-[0_14px_20px_rgba(120,53,15,0.24)] md:-mt-2 md:w-56" draggable={false} />
               </div>
             </div>
           </section>
@@ -752,40 +752,40 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
           <section className="order-4 xl:col-span-2 rounded-[1.4rem] border border-white/16 bg-[linear-gradient(180deg,rgba(20,15,40,0.96),rgba(36,18,52,0.98))] p-2 shadow-[0_16px_30px_rgba(15,23,42,0.22)] md:rounded-[1.8rem] md:p-3">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <div className="text-[8px] font-black uppercase tracking-[0.18em] text-amber-100/70 md:text-[10px]">Ingredient Rail</div>
-                <div className="mt-0.5 text-sm font-black text-white md:text-lg">Tap pieces to build the order</div>
+                <div className="text-[8px] font-black uppercase tracking-[0.18em] text-amber-100/70 md:text-[10px]">Portion Rail</div>
+                <div className="mt-0.5 text-sm font-black text-white md:text-lg">Tap portion pieces to build the order</div>
               </div>
               <div className="hidden rounded-full bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-white/78 md:block">
-                Max 14 layers
+                Max 14 pieces
               </div>
             </div>
 
             <div className="mt-2 grid grid-cols-3 gap-1.5 pb-1 sm:grid-cols-4 md:grid-cols-5 md:gap-2 lg:grid-cols-6 xl:grid-cols-9">
-              {INGREDIENT_TYPES.map(ingredient => {
-                const currentCount = usedIngredientCounts.get(ingredient.name) || 0;
-                const targetCount = Math.max(1, currentOrder?.requiredIngredients.includes(ingredient.name) ? 1 : Math.ceil((currentOrder?.targetUnits || 8) / ingredient.units));
+              {PORTION_PIECE_TYPES.map(portionPiece => {
+                const currentCount = usedPortionCounts.get(portionPiece.name) || 0;
+                const targetCount = Math.max(1, currentOrder?.requiredPortions.includes(portionPiece.name) ? 1 : Math.ceil((currentOrder?.targetUnits || 8) / portionPiece.units));
                 return (
                   <motion.button
-                    key={ingredient.name}
+                    key={portionPiece.name}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => handleIngredientAdd(ingredient)}
+                    onClick={() => handlePortionAdd(portionPiece)}
                     className="group relative flex min-h-[5.4rem] flex-col items-center justify-end overflow-hidden rounded-[1.15rem] border border-white/12 p-1.5 shadow-[0_12px_22px_rgba(0,0,0,0.24)] md:min-h-[6rem] md:rounded-[1.4rem] md:p-2"
                   >
-                    <div className={`absolute inset-0 bg-gradient-to-b ${ingredient.trayTone}`} />
+                    <div className={`absolute inset-0 bg-gradient-to-b ${portionPiece.trayTone}`} />
                     <div className="absolute inset-x-[12%] top-[8%] h-[30%] rounded-full bg-white/28 blur-lg" />
                     <div className="relative z-10 flex h-full w-full flex-col items-center justify-between">
                       <div className="rounded-full bg-black/18 px-2 py-0.5 text-[9px] font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] md:text-[11px]">
                         {currentCount}/{targetCount}
                       </div>
                       <img
-                        src={ingredient.asset}
-                        alt={ingredient.name}
-                        className={`${ingredient.buttonImageClass} max-h-[2rem] max-w-[2.4rem] md:max-h-[2.75rem] md:max-w-[3.2rem] object-contain drop-shadow-[0_8px_10px_rgba(15,23,42,0.22)]`}
+                        src={portionPiece.asset}
+                        alt={portionPiece.name}
+                        className={`${portionPiece.buttonImageClass} max-h-[2rem] max-w-[2.4rem] md:max-h-[2.75rem] md:max-w-[3.2rem] object-contain drop-shadow-[0_8px_10px_rgba(15,23,42,0.22)]`}
                         draggable={false}
                       />
                       <div className="text-center leading-none text-white">
-                        <div className="text-[8px] font-black md:text-[10px]">{ingredient.name}</div>
-                        <div className="mt-0.5 text-[8px] font-black text-white/80 md:text-[10px]">{ingredient.shortLabel}</div>
+                        <div className="text-[8px] font-black md:text-[10px]">{portionPiece.name}</div>
+                        <div className="mt-0.5 text-[8px] font-black text-white/80 md:text-[10px]">{portionPiece.shortLabel}</div>
                       </div>
                     </div>
                   </motion.button>
@@ -814,16 +814,16 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
               </div>
               <div className="flex items-center justify-end gap-2">
                 <button
-                  onClick={clearBurger}
+                  onClick={clearTray}
                   className="ui-button-secondary px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white disabled:opacity-60 md:px-4 md:text-sm"
-                  disabled={!burgerStack.length || isTransitioning}
+                  disabled={!trayStack.length || isTransitioning}
                 >
-                  Clear Stack
+                  Clear Tray
                 </button>
                 <button
                   onClick={handleServe}
                   className="ui-button-primary px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white disabled:cursor-not-allowed disabled:opacity-60 md:px-5 md:text-sm"
-                  disabled={!burgerStack.length || isTransitioning}
+                  disabled={!trayStack.length || isTransitioning}
                 >
                   Serve Order
                 </button>
@@ -849,7 +849,7 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
                     {isVictory ? 'Service Mastered' : 'Shift Over'}
                   </div>
                   <div className="mt-2 text-sm font-semibold text-slate-500 md:text-base">
-                    {isVictory ? 'You hit the score target and kept the orders moving.' : 'Too many customers left before their burger was ready.'}
+                    {isVictory ? 'You hit the score target and kept the orders moving.' : 'Too many customers left before their order was ready.'}
                   </div>
                 </div>
 
@@ -898,4 +898,4 @@ const BurgerBuilderGame: React.FC<BurgerBuilderGameProps> = ({
   );
 };
 
-export default BurgerBuilderGame;
+export default TakeOutRushGame;
