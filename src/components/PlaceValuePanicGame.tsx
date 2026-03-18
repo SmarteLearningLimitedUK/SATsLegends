@@ -2,8 +2,13 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { AVATARS } from '../constants';
 import GameContainerView from './GameContainerView';
-import { FRACTION_MATCH_ASSETS } from '../assets/fraction_match';
 import placeValuePanicBackground from '../assets/level_backgrounds/place_value_panicbkgrd.png';
+import squareGemBlue from '../assets/fantasy_hero/cloud_collapse/tile_blue.png';
+import squareGemGreen from '../assets/fantasy_hero/cloud_collapse/tile_green.png';
+import squareGemRed from '../assets/fantasy_hero/cloud_collapse/tile_red.png';
+import squareGemYellow from '../assets/fantasy_hero/cloud_collapse/tile_yellow.png';
+import squareGemPurple from '../assets/fantasy_hero/cloud_collapse/tile_purple.png';
+import squareGemNavy from '../assets/fantasy_hero/cloud_collapse/tile_navy.png';
 import {
   DigitTile,
   PlaceValueSlotKey,
@@ -46,12 +51,12 @@ const SLOT_DISPLAY_VALUES: Record<PlaceValueSlotKey, string> = {
 
 const MIN_TAP_TARGET = 44;
 const GEM_TEXTURES: string[] = [
-  FRACTION_MATCH_ASSETS.tiles.gold,
-  FRACTION_MATCH_ASSETS.tiles.emerald,
-  FRACTION_MATCH_ASSETS.tiles.azure,
-  FRACTION_MATCH_ASSETS.tiles.sapphire,
-  FRACTION_MATCH_ASSETS.tiles.ember,
-  FRACTION_MATCH_ASSETS.tiles.storm,
+  squareGemBlue,
+  squareGemGreen,
+  squareGemRed,
+  squareGemYellow,
+  squareGemPurple,
+  squareGemNavy,
 ];
 
 const getGemTexture = (digitValue: number) => GEM_TEXTURES[Math.abs(digitValue) % GEM_TEXTURES.length];
@@ -300,16 +305,16 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               >
                 <div className="pvp-slot-label text-[10px] font-black uppercase tracking-[0.18em] text-white/75 md:text-xs">{slot.label}</div>
                 <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/50 md:text-xs">{SLOT_DISPLAY_VALUES[slot.key]}</div>
-                <div className="pvp-slot-socket mt-1">
+                <div className="pvp-slot-square-socket mt-1">
                   {isFilled && placedTile ? (
                     <div
-                      className="pvp-slot-gem"
+                      className="pvp-slot-square-gem"
                       style={{ backgroundImage: `url(${getGemTexture(placedTile.digitValue)})` }}
                     >
-                      <span className="pvp-slot-gem-digit">{placedTile.digitValue}</span>
+                      <span className="pvp-slot-square-gem-digit">{placedTile.digitValue}</span>
                     </div>
                   ) : (
-                    <div className="pvp-slot-empty-glyph">?</div>
+                    <div className="pvp-slot-empty-square-glyph">?</div>
                   )}
                 </div>
               </div>
@@ -346,7 +351,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                     isRejected
                       ? 'border-rose-200/70 bg-rose-500/30'
                       : 'border-white/20 bg-slate-900/60'
-                  } text-white/95 pvp-digit-gemface`}
+                  } text-white/95 pvp-digit-gem-square ${isDragging ? 'pvp-digit-selected' : ''}`}
                   style={{
                     minHeight: MIN_TAP_TARGET,
                     backgroundImage: `url(${getGemTexture(tile.digitValue)})`,
