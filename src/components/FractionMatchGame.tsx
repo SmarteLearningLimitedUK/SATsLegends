@@ -7,6 +7,16 @@ import { ArrowRightLeft, ArrowUpDown, Bomb, Star } from './GameIcons';
 import { triggerHaptic } from '../haptics';
 import { FRACTION_MATCH_ASSETS } from '../assets/fraction_match';
 import coinAsset from '../assets/fantasy_hero/ui/coin.png';
+import tileBlue from '../assets/fantasy_hero/cloud_collapse/tile_blue.png';
+import tileGreen from '../assets/fantasy_hero/cloud_collapse/tile_green.png';
+import tileRed from '../assets/fantasy_hero/cloud_collapse/tile_red.png';
+import tileYellow from '../assets/fantasy_hero/cloud_collapse/tile_yellow.png';
+import tileSky from '../assets/fantasy_hero/cloud_collapse/tile_navy.png';
+import tileGradient from '../assets/fantasy_hero/cloud_collapse/tile_gradient.png';
+import tileInnerDeco from '../assets/fantasy_hero/cloud_collapse/tile_inner_deco.png';
+import tileGlow from '../assets/fantasy_hero/cloud_collapse/tile_glow.png';
+import tileFocusBorder from '../assets/fantasy_hero/cloud_collapse/tile_focus_border.png';
+import tileFocusGlow from '../assets/fantasy_hero/cloud_collapse/tile_focus_glow.png';
 
 interface FractionMatchGameProps {
   levelId: number;
@@ -60,6 +70,17 @@ const TILE_FAMILIES: TileFamily[] = [
   { id: 'three-tenths', labels: ['3/10', '0.3', '30/100'], asset: FRACTION_MATCH_ASSETS.tiles.plasma, glow: 'shadow-[0_0_24px_rgba(236,72,153,0.34)]', value: 0.3 },
   { id: 'eighth', labels: ['1/8', '0.125', '2/16'], asset: FRACTION_MATCH_ASSETS.tiles.azure, glow: 'shadow-[0_0_24px_rgba(56,189,248,0.34)]', value: 0.125 },
 ];
+
+const MATCH3_TILE_SKIN: Record<string, string> = {
+  half: tileRed,
+  quarter: tileBlue,
+  'three-quarters': tileGreen,
+  fifth: tileYellow,
+  'two-fifths': tileRed,
+  tenth: tileSky,
+  'three-tenths': tileYellow,
+  eighth: tileBlue,
+};
 
 const createId = () => Math.random().toString(36).slice(2, 11);
 const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
@@ -596,10 +617,10 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
 
           <div className="relative z-10 mb-2 rounded-[1.2rem] border border-amber-200/35 bg-[linear-gradient(180deg,rgba(255,247,222,0.96),rgba(253,230,138,0.88))] px-4 py-3 text-center shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:mb-3 md:rounded-[1.5rem] md:px-6 md:py-4">
             <div className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-900/72 md:text-xs">
-              {isBoss ? 'Fraction Challenge' : variantGameType === 'cloud_collapse' ? 'Crystal Match Challenge' : 'Fraction Match Challenge'}
+              {isBoss ? 'Fraction Challenge' : variantGameType === 'cloud_collapse' ? 'Crazy Match-3' : 'Crazy Match-3'}
             </div>
             <div className="mt-1 text-sm font-black text-amber-950 md:text-xl">
-              {statusMessage}
+              {isBoss ? statusMessage : 'Swap adjacent gems to match equivalent values.'}
             </div>
           </div>
 
@@ -673,65 +694,61 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
                 </div>
               </div>
             ) : (
-              <div className="relative aspect-square w-full max-w-[24rem] sm:max-w-[28rem] md:max-w-[34rem]">
-              <div className="absolute inset-[-3.5%] overflow-hidden rounded-[2.35rem] border border-[#f7d98c]/20 shadow-[0_20px_38px_rgba(0,0,0,0.34)]">
-                <img
-                  src={FRACTION_MATCH_ASSETS.board}
-                  alt="Crystal board stage"
-                  className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-78 scale-[1.04]"
-                  draggable={false}
-                />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(103,232,249,0.16),transparent_24%),linear-gradient(180deg,rgba(5,8,15,0.02),rgba(5,8,15,0.18))]" />
-              </div>
+              <div className="relative aspect-square w-full max-w-[24rem] sm:max-w-[29rem] md:max-w-[36rem]">
+                <div className="absolute inset-0 rounded-[1.9rem] bg-[linear-gradient(180deg,#5fae39_0%,#4c9b2e_34%,#438e2a_68%,#3d7f26_100%)] p-2 shadow-[inset_0_2px_0_rgba(255,255,255,0.3),0_16px_28px_rgba(0,0,0,0.34)] md:rounded-[2.2rem] md:p-2.5">
+                  <div className="relative h-full w-full rounded-[1.5rem] border border-[#d9ad3f] bg-[linear-gradient(180deg,#67bd3f_0%,#5ab236_42%,#4fa430_100%)] p-2 md:p-2.5">
+                    <div className="pointer-events-none absolute inset-0 rounded-[1.3rem] bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.2),transparent_30%)]" />
+                    <div className="grid h-full w-full grid-cols-8 grid-rows-8 gap-1 rounded-[1rem] bg-[linear-gradient(180deg,#59ac35,#4f9a30)] p-1 md:gap-1.5 md:p-1.5">
+                      {boardTiles.map(tile => {
+                        const isSelected = selectedTile?.row === tile.row && selectedTile?.col === tile.col;
+                        const isMatched = matchedTileIds.includes(tile.id);
+                        const family = getFamily(tile.familyId);
+                        const skin = MATCH3_TILE_SKIN[tile.familyId] || tileBlue;
 
-              <div className="absolute inset-0 rounded-[2rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(18,28,55,0.9),rgba(8,14,27,0.9))] shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_20px_38px_rgba(0,0,0,0.28)]" />
-              <div className="absolute inset-[2.6%] rounded-[1.7rem] border border-cyan-100/10 bg-[linear-gradient(180deg,rgba(15,24,48,0.7),rgba(8,13,26,0.78))]" />
-              <div className="absolute inset-[6%] rounded-[1.35rem] bg-[linear-gradient(180deg,rgba(10,17,33,0.26),rgba(7,12,24,0.42))] p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] md:p-2">
-                <div className="grid h-full w-full grid-cols-8 grid-rows-8 gap-1 md:gap-1.5">
-                  {boardTiles.map(tile => {
-                    const isSelected = selectedTile?.row === tile.row && selectedTile?.col === tile.col;
-                    const isMatched = matchedTileIds.includes(tile.id);
-                    const family = getFamily(tile.familyId);
-
-                    return (
-                      <motion.button
-                        key={tile.id}
-                        layout
-                        transition={{ type: 'spring', stiffness: 280, damping: 24 }}
-                        onClick={() => handleTileTap(tile)}
-                        disabled={isResolving || isGameOver || isVictory}
-                        className={`group relative aspect-square overflow-hidden rounded-[26%] ${family.glow} ${isSelected ? 'z-20' : ''}`}
-                        style={{
-                          gridRow: tile.row + 1,
-                          gridColumn: tile.col + 1,
-                        }}
-                        whileTap={{ scale: 0.95 }}
-                        animate={isMatched ? { scale: [1, 1.16, 0.86], rotate: [0, 2, -2, 0], opacity: [1, 1, 0.4] } : { scale: isSelected ? 1.05 : 1, opacity: 1, y: isSelected ? -1 : 0 }}
-                      >
-                        <img
-                          src={tile.asset}
-                          alt={tile.label}
-                          className="absolute inset-0 h-full w-full object-cover drop-shadow-[0_12px_18px_rgba(0,0,0,0.32)]"
-                          draggable={false}
-                        />
-                        <div className="absolute inset-0 rounded-[26%] bg-[radial-gradient(circle_at_30%_18%,rgba(255,255,255,0.42),transparent_34%),linear-gradient(180deg,rgba(255,255,255,0.12),transparent_42%,rgba(15,23,42,0.18))]" />
-                        <div className="absolute inset-x-[16%] top-[10%] h-[16%] rounded-full bg-white/30 blur-[1px]" />
-                        <div className={`absolute inset-[3%] rounded-[24%] border ${isSelected ? 'border-[#fff6bf]' : 'border-white/12'} shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]`} />
-                        <div className="absolute inset-[14%] flex items-center justify-center">
-                          <span className={`rounded-full border border-white/10 bg-slate-950/40 px-1.5 py-1 text-center font-black leading-none text-white backdrop-blur-[2px] drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)] ${tile.label.length >= 5 ? 'text-[clamp(0.34rem,1.55vw,0.82rem)]' : 'text-[clamp(0.46rem,1.95vw,1rem)]'}`}>
-                            {tile.label}
-                          </span>
-                        </div>
-                        {tile.special && (
-                          <div className="absolute right-[6%] top-[6%] flex h-5 w-5 items-center justify-center rounded-full border border-white/18 bg-slate-950/58 shadow-[0_10px_16px_rgba(0,0,0,0.34)] md:h-6 md:w-6">
-                            {renderSpecialBadge(tile.special)}
-                          </div>
-                        )}
-                      </motion.button>
-                    );
-                  })}
+                        return (
+                          <motion.button
+                            key={tile.id}
+                            layout
+                            transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+                            onClick={() => handleTileTap(tile)}
+                            disabled={isResolving || isGameOver || isVictory}
+                            className={`group relative aspect-square overflow-hidden rounded-[20%] ${family.glow} ${isSelected ? 'z-20' : ''}`}
+                            style={{
+                              gridRow: tile.row + 1,
+                              gridColumn: tile.col + 1,
+                            }}
+                            whileTap={{ scale: 0.95 }}
+                            animate={isMatched ? { scale: [1, 1.16, 0.86], rotate: [0, 2, -2, 0], opacity: [1, 1, 0.4] } : { scale: isSelected ? 1.05 : 1, opacity: 1, y: isSelected ? -1 : 0 }}
+                          >
+                            <img
+                              src={skin}
+                              alt={tile.label}
+                              className="absolute inset-0 h-full w-full object-fill drop-shadow-[0_8px_12px_rgba(0,0,0,0.3)]"
+                              draggable={false}
+                            />
+                            <img src={tileGradient} alt="" className="absolute inset-0 h-full w-full object-fill opacity-90" draggable={false} />
+                            <img src={tileInnerDeco} alt="" className="absolute inset-0 h-full w-full object-fill opacity-90" draggable={false} />
+                            <img src={tileGlow} alt="" className="absolute inset-0 h-full w-full object-fill opacity-75" draggable={false} />
+                            {isSelected && (
+                              <>
+                                <img src={tileFocusGlow} alt="" className="absolute inset-[-4%] h-[108%] w-[108%] object-fill opacity-90" draggable={false} />
+                                <img src={tileFocusBorder} alt="" className="absolute inset-0 h-full w-full object-fill opacity-100" draggable={false} />
+                              </>
+                            )}
+                            <span className={`absolute bottom-[8%] left-1/2 -translate-x-1/2 rounded-full bg-black/34 px-1 py-[2px] text-[clamp(0.3rem,1.25vw,0.58rem)] font-black leading-none text-white shadow-[0_1px_3px_rgba(0,0,0,0.6)]`}>
+                              {tile.label}
+                            </span>
+                            {tile.special && (
+                              <div className="absolute right-[6%] top-[6%] flex h-4.5 w-4.5 items-center justify-center rounded-full border border-white/18 bg-slate-950/58 shadow-[0_10px_16px_rgba(0,0,0,0.34)] md:h-5 md:w-5">
+                                {renderSpecialBadge(tile.special)}
+                              </div>
+                            )}
+                          </motion.button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
-              </div>
               </div>
             )}
           </div>

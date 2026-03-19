@@ -50,84 +50,42 @@ const BUBBLE_LANES = [10, 22, 34, 46, 58, 70, 82, 90];
 
 const PRIME_PALETTES = [
   {
-    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.96), rgba(125,211,252,0.92) 18%, rgba(56,189,248,0.78) 45%, rgba(14,165,233,0.7) 68%, rgba(8,47,73,0.74) 100%)',
-    ring: 'rgba(186,230,253,0.75)',
-    glow: '0 0 26px rgba(56,189,248,0.35)',
-    sparkle: 'rgba(255,255,255,0.7)',
-    text: '#effbff',
+    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.98), rgba(255,243,163,0.95) 20%, rgba(255,224,53,0.92) 48%, rgba(255,193,7,0.88) 72%, rgba(245,158,11,0.86) 100%)',
+    ring: 'rgba(255,211,64,0.9)',
+    glow: '0 0 26px rgba(251,191,36,0.42)',
+    sparkle: 'rgba(255,255,255,0.9)',
+    text: '#7a3e00',
   },
   {
-    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.96), rgba(134,239,172,0.92) 18%, rgba(52,211,153,0.8) 45%, rgba(16,185,129,0.72) 68%, rgba(6,78,59,0.8) 100%)',
-    ring: 'rgba(209,250,229,0.74)',
-    glow: '0 0 26px rgba(52,211,153,0.35)',
-    sparkle: 'rgba(255,255,255,0.72)',
-    text: '#f3fff9',
+    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.98), rgba(255,239,140,0.95) 20%, rgba(255,220,40,0.9) 48%, rgba(255,183,0,0.86) 72%, rgba(217,119,6,0.84) 100%)',
+    ring: 'rgba(255,224,130,0.92)',
+    glow: '0 0 24px rgba(250,204,21,0.44)',
+    sparkle: 'rgba(255,255,255,0.88)',
+    text: '#7a3e00',
   },
   {
-    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.97), rgba(254,202,202,0.92) 18%, rgba(248,113,113,0.8) 45%, rgba(239,68,68,0.72) 68%, rgba(127,29,29,0.82) 100%)',
-    ring: 'rgba(254,226,226,0.74)',
-    glow: '0 0 26px rgba(248,113,113,0.34)',
-    sparkle: 'rgba(255,255,255,0.76)',
-    text: '#fff7f7',
-  },
-  {
-    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.97), rgba(252,211,77,0.92) 18%, rgba(250,204,21,0.8) 45%, rgba(245,158,11,0.72) 68%, rgba(120,53,15,0.82) 100%)',
-    ring: 'rgba(254,243,199,0.74)',
-    glow: '0 0 26px rgba(250,204,21,0.34)',
-    sparkle: 'rgba(255,255,255,0.76)',
-    text: '#fffdf2',
-  },
-  {
-    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.97), rgba(187,247,208,0.92) 18%, rgba(74,222,128,0.8) 45%, rgba(22,163,74,0.72) 68%, rgba(20,83,45,0.82) 100%)',
-    ring: 'rgba(220,252,231,0.74)',
-    glow: '0 0 26px rgba(74,222,128,0.34)',
-    sparkle: 'rgba(255,255,255,0.76)',
-    text: '#f7fff9',
-  },
-  {
-    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.97), rgba(167,243,208,0.92) 18%, rgba(45,212,191,0.8) 45%, rgba(13,148,136,0.72) 68%, rgba(19,78,74,0.82) 100%)',
-    ring: 'rgba(204,251,241,0.74)',
-    glow: '0 0 26px rgba(45,212,191,0.34)',
-    sparkle: 'rgba(255,255,255,0.76)',
-    text: '#f2fffb',
+    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.99), rgba(255,245,180,0.95) 18%, rgba(255,223,66,0.92) 46%, rgba(251,191,36,0.88) 70%, rgba(234,88,12,0.82) 100%)',
+    ring: 'rgba(255,232,160,0.92)',
+    glow: '0 0 24px rgba(245,158,11,0.42)',
+    sparkle: 'rgba(255,255,255,0.9)',
+    text: '#6b3300',
   },
 ];
 
 const COMPOSITE_PALETTES = [
   {
-    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.95), rgba(253,224,71,0.9) 18%, rgba(251,191,36,0.76) 45%, rgba(249,115,22,0.7) 68%, rgba(120,53,15,0.82) 100%)',
-    ring: 'rgba(254,240,138,0.72)',
-    glow: '0 0 24px rgba(251,191,36,0.34)',
-    sparkle: 'rgba(255,247,200,0.72)',
-    text: '#fffdf3',
+    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.96), rgba(255,235,138,0.92) 18%, rgba(251,191,36,0.84) 46%, rgba(249,115,22,0.78) 72%, rgba(154,52,18,0.82) 100%)',
+    ring: 'rgba(255,215,110,0.84)',
+    glow: '0 0 22px rgba(249,115,22,0.34)',
+    sparkle: 'rgba(255,247,200,0.8)',
+    text: '#fffaf0',
   },
   {
-    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.95), rgba(253,186,116,0.9) 18%, rgba(251,146,60,0.78) 45%, rgba(239,68,68,0.68) 68%, rgba(127,29,29,0.82) 100%)',
-    ring: 'rgba(254,215,170,0.72)',
-    glow: '0 0 24px rgba(249,115,22,0.32)',
-    sparkle: 'rgba(255,242,214,0.72)',
-    text: '#fffaf5',
-  },
-  {
-    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.95), rgba(253,230,138,0.9) 18%, rgba(250,204,21,0.78) 45%, rgba(234,88,12,0.68) 68%, rgba(124,45,18,0.82) 100%)',
-    ring: 'rgba(254,240,138,0.72)',
-    glow: '0 0 24px rgba(250,204,21,0.32)',
-    sparkle: 'rgba(255,244,214,0.72)',
-    text: '#fffbf3',
-  },
-  {
-    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.95), rgba(254,202,202,0.9) 18%, rgba(248,113,113,0.78) 45%, rgba(220,38,38,0.68) 68%, rgba(127,29,29,0.82) 100%)',
-    ring: 'rgba(254,226,226,0.72)',
-    glow: '0 0 24px rgba(248,113,113,0.32)',
-    sparkle: 'rgba(255,236,236,0.72)',
+    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.96), rgba(255,222,120,0.92) 20%, rgba(249,115,22,0.82) 48%, rgba(220,38,38,0.74) 74%, rgba(127,29,29,0.82) 100%)',
+    ring: 'rgba(254,186,116,0.8)',
+    glow: '0 0 22px rgba(239,68,68,0.32)',
+    sparkle: 'rgba(255,242,214,0.78)',
     text: '#fff7f7',
-  },
-  {
-    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.95), rgba(191,219,254,0.9) 18%, rgba(96,165,250,0.78) 45%, rgba(37,99,235,0.68) 68%, rgba(30,58,138,0.82) 100%)',
-    ring: 'rgba(219,234,254,0.72)',
-    glow: '0 0 24px rgba(96,165,250,0.32)',
-    sparkle: 'rgba(232,244,255,0.72)',
-    text: '#f6fbff',
   },
 ];
 
@@ -347,16 +305,20 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
   const progress = Math.min((score / targetScore) * 100, 100);
 
   return (
-    <div className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden licensed-playfield-bg md:cursor-none">
+    <div
+      className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden md:cursor-none"
+      style={{
+        background:
+          'linear-gradient(180deg, #30c9d8 0%, #5ad6de 50%, #84e0e2 100%)',
+      }}
+    >
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute left-[-8%] top-[10%] h-[32%] w-[42%] rounded-full bg-cyan-400/18 blur-3xl" />
-        <div className="absolute right-[-10%] top-[20%] h-[40%] w-[44%] rounded-full bg-cyan-500/14 blur-3xl" />
-        <div className="absolute left-[18%] bottom-[-8%] h-[34%] w-[48%] rounded-full bg-emerald-400/16 blur-3xl" />
-        <div className="absolute right-[12%] bottom-[8%] h-[24%] w-[28%] rounded-full bg-amber-300/12 blur-3xl" />
+        <div className="absolute left-[-12%] top-[6%] h-[38%] w-[48%] rounded-full bg-white/30 blur-3xl" />
+        <div className="absolute left-[16%] top-[18%] h-[34%] w-[44%] rounded-full bg-white/20 blur-3xl" />
+        <div className="absolute right-[-8%] top-[12%] h-[42%] w-[46%] rounded-full bg-white/26 blur-3xl" />
+        <div className="absolute left-[-8%] bottom-[-18%] h-[52%] w-[66%] rounded-full bg-white/26 blur-3xl" />
+        <div className="absolute right-[-6%] bottom-[-12%] h-[48%] w-[58%] rounded-full bg-white/24 blur-3xl" />
       </div>
-
-      {/* Background Grid */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none licensed-grid-backdrop" />
 
       <div className="z-10 w-full max-w-6xl aaa-game-stage flex h-full min-h-0 flex-1 flex-col items-center gap-2 md:gap-5">
         <GameplayHUD
@@ -382,11 +344,13 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
           onPointerDown={(event) => handlePlayfieldPointerDown(event.clientX, event.clientY)}
           className="w-full flex-1 min-h-[23rem] md:min-h-[31rem] relative licensed-board-frame structured-playfield-frame overflow-hidden touch-none touch-manipulation"
         >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.25),transparent_28%),radial-gradient(circle_at_78%_18%,rgba(192,132,252,0.22),transparent_26%),radial-gradient(circle_at_50%_88%,rgba(74,222,128,0.2),transparent_30%),linear-gradient(180deg,rgba(7,20,45,0.2),rgba(2,6,23,0.55))]" />
-          <div className="absolute inset-x-[6%] top-[7%] h-[14%] rounded-full bg-white/8 blur-3xl opacity-70" />
-          <div className="absolute inset-x-0 bottom-0 h-[28%] bg-gradient-to-t from-slate-950/30 via-transparent to-transparent" />
-
-          <div className="absolute inset-x-[2.2%] top-[3.6%] bottom-[4.2%] rounded-[1.2rem] md:rounded-[1.8rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,20,46,0.06),rgba(8,20,46,0.18))] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)] pointer-events-none" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,#37cfdb_0%,#67dfe2_46%,#95e7e8_100%)]" />
+          <div className="absolute left-[-12%] top-[8%] h-[38%] w-[52%] rounded-full bg-white/24 blur-2xl" />
+          <div className="absolute left-[18%] top-[14%] h-[30%] w-[46%] rounded-full bg-white/16 blur-2xl" />
+          <div className="absolute right-[-10%] top-[10%] h-[42%] w-[54%] rounded-full bg-white/24 blur-2xl" />
+          <div className="absolute left-[-14%] bottom-[-18%] h-[48%] w-[68%] rounded-full bg-white/26 blur-2xl" />
+          <div className="absolute right-[-12%] bottom-[-14%] h-[44%] w-[62%] rounded-full bg-white/24 blur-2xl" />
+          <div className="absolute inset-x-[2.2%] top-[3.6%] bottom-[4.2%] rounded-[1.2rem] md:rounded-[1.8rem] border border-white/24 bg-transparent shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)] pointer-events-none" />
 
           {/* Custom Crosshair */}
           <div 
@@ -424,7 +388,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
                   style={{
                     background: bubble.palette.background,
                     border: `2px solid ${bubble.palette.ring}`,
-                    boxShadow: `${bubble.palette.glow}, inset 0 -14px 26px rgba(15,23,42,0.28), inset 0 10px 18px rgba(255,255,255,0.18)`,
+                    boxShadow: `${bubble.palette.glow}, inset 0 -10px 18px rgba(120,53,15,0.22), inset 0 10px 16px rgba(255,255,255,0.3)`,
                     left: `${bubble.x}%`,
                     width: `${bubble.size}px`,
                     height: `${bubble.size}px`,
@@ -444,7 +408,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
                     }}
                   />
                   <span
-                    className="pointer-events-none text-2xl md:text-3xl font-black drop-shadow-[0_5px_14px_rgba(15,23,42,0.46)]"
+                    className="pointer-events-none text-2xl md:text-3xl font-black drop-shadow-[0_3px_8px_rgba(120,53,15,0.42)]"
                     style={{ color: bubble.palette.text }}
                   >
                     {bubble.number}

@@ -694,6 +694,7 @@ const App: React.FC = () => {
               src={splashPoster}
               alt="SATs Legends splash screen"
               className="absolute inset-0 h-full w-full object-cover"
+              style={{ objectPosition: '50% 46%' }}
               draggable={false}
             />
 
