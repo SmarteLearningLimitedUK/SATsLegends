@@ -1,6 +1,7 @@
 import React from 'react';
 import AngleArenaGame from './AngleArenaGame';
 import BossEncounterGame from './BossEncounterGame';
+import CalculationCrashGame from './CalculationCrashGame';
 import CloudCollapseGame from './CloudCollapseGame';
 import CoordinateTranslationGame from './CoordinateTranslationGame';
 import CurriculumChallengeGame from './CurriculumChallengeGame';
@@ -8,6 +9,7 @@ import DataDungeonGame from './DataDungeonGame';
 import DataDetectiveGame from './DataDetectiveGame';
 import DecimalSniperGame from './DecimalSniperGame';
 import DivisionDockGame from './DivisionDockGame';
+import FactorFrenzyGame from './FactorFrenzyGame';
 import FractionMatchGame from './FractionMatchGame';
 import LineGraphLabGame from './LineGraphLabGame';
 import MathsVsZombiesGame from './MathsVsZombiesGame';
@@ -33,6 +35,7 @@ import TimekeeperTempleGame from './TimekeeperTempleGame';
 import TowerOfFactorsGame from './TowerOfFactorsGame';
 import TreasureChartCoveGame from './TreasureChartCoveGame';
 import TreasurePathGame from './TreasurePathGame';
+import VolumeVaultGame from './VolumeVaultGame';
 import LogicSort from './reasoning/LogicSort';
 import MatrixMatch from './reasoning/MatrixMatch';
 import ReasoningGame from './reasoning/ReasoningGame';
@@ -43,6 +46,7 @@ import { createMiniGame, MiniGame } from './MiniGame';
 export type MiniGameRegistryKey =
   | 'AngleArenaGame'
   | 'BossEncounterGame'
+  | 'CalculationCrashGame'
   | 'CloudCollapseGame'
   | 'CoordinateTranslationGame'
   | 'CurriculumChallengeGame'
@@ -50,6 +54,7 @@ export type MiniGameRegistryKey =
   | 'DataDetectiveGame'
   | 'DecimalSniperGame'
   | 'DivisionDockGame'
+  | 'FactorFrenzyGame'
   | 'FractionMatchGame'
   | 'LineGraphLabGame'
   | 'MathsVsZombiesGame'
@@ -75,6 +80,7 @@ export type MiniGameRegistryKey =
   | 'TowerOfFactorsGame'
   | 'TreasureChartCoveGame'
   | 'TreasurePathGame'
+  | 'VolumeVaultGame'
   | 'ReasoningGame'
   | 'SequenceSprint'
   | 'LogicSort'
@@ -93,6 +99,7 @@ const asMiniGame = <P extends Record<string, unknown>>(
 export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   AngleArenaGame: asMiniGame('angle_arena', AngleArenaGame),
   BossEncounterGame: asMiniGame('boss_encounter', BossEncounterGame),
+  CalculationCrashGame: asMiniGame('calculation_crash', CalculationCrashGame),
   CloudCollapseGame: asMiniGame('cloud_collapse', CloudCollapseGame),
   CoordinateTranslationGame: asMiniGame('coordinate_translation', CoordinateTranslationGame),
   CurriculumChallengeGame: asMiniGame('curriculum_challenge', CurriculumChallengeGame),
@@ -100,6 +107,7 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   DataDetectiveGame: asMiniGame('data_detective', DataDetectiveGame),
   DecimalSniperGame: asMiniGame('decimal_sniper', DecimalSniperGame),
   DivisionDockGame: asMiniGame('division_dock', DivisionDockGame),
+  FactorFrenzyGame: asMiniGame('factor_frenzy', FactorFrenzyGame),
   FractionMatchGame: asMiniGame('fraction_match', FractionMatchGame),
   LineGraphLabGame: asMiniGame('line_graph_lab', LineGraphLabGame),
   MathsVsZombiesGame: asMiniGame('maths_vs_zombies', MathsVsZombiesGame),
@@ -125,6 +133,7 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   TowerOfFactorsGame: asMiniGame('tower_of_factors', TowerOfFactorsGame),
   TreasureChartCoveGame: asMiniGame('treasure_chart_cove', TreasureChartCoveGame),
   TreasurePathGame: asMiniGame('treasure_path', TreasurePathGame),
+  VolumeVaultGame: asMiniGame('volume_vault', VolumeVaultGame),
   ReasoningGame: asMiniGame('reasoning', ReasoningGame),
   SequenceSprint: asMiniGame('sequence_sprint', SequenceSprint),
   LogicSort: asMiniGame('logic_sort', LogicSort),

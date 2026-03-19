@@ -137,8 +137,14 @@ const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKey | nul
       if (level.blueprintKey === 'perimeter_path') {
         return 'PerimeterPathGame';
       }
+      if (level.blueprintKey === 'volume_vault') {
+        return 'VolumeVaultGame';
+      }
       return 'MeasurementForgeGame';
     case 'tower_of_factors':
+      if (level.blueprintKey === 'factor_frenzy') {
+        return 'FactorFrenzyGame';
+      }
       return 'TowerOfFactorsGame';
     case 'place_value_peaks':
       if (level.blueprintKey === 'place_value_panic') {
@@ -161,7 +167,7 @@ const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKey | nul
     case 'coordinate_quest':
       return 'CoordinateTranslationGame';
     case 'calculation_clash':
-      return level.blueprintKey === 'division_dock' ? 'DivisionDockGame' : 'CurriculumChallengeGame';
+      return level.blueprintKey === 'division_dock' ? 'DivisionDockGame' : 'CalculationCrashGame';
     case 'percent_pulse':
       return 'CurriculumChallengeGame';
     case 'transform_temple':
@@ -661,8 +667,14 @@ const App: React.FC = () => {
         if (selectedLevel.blueprintKey === 'perimeter_path') {
           return renderFromRegistry('PerimeterPathGame', sharedProps);
         }
+        if (selectedLevel.blueprintKey === 'volume_vault') {
+          return renderFromRegistry('VolumeVaultGame', sharedProps);
+        }
         return renderFromRegistry('MeasurementForgeGame', sharedProps);
       case 'tower_of_factors':
+        if (selectedLevel.blueprintKey === 'factor_frenzy') {
+          return renderFromRegistry('FactorFrenzyGame', sharedProps);
+        }
         return renderFromRegistry('TowerOfFactorsGame', { ...sharedProps, isBoss: Boolean(selectedLevel.isBoss) });
       case 'place_value_peaks':
         if (selectedLevel.blueprintKey === 'place_value_panic') {
@@ -694,6 +706,7 @@ const App: React.FC = () => {
         if (selectedLevel.blueprintKey === 'division_dock') {
           return renderFromRegistry('DivisionDockGame', sharedProps);
         }
+        return renderFromRegistry('CalculationCrashGame', sharedProps);
       case 'percent_pulse':
         return renderFromRegistry('CurriculumChallengeGame', {
           ...sharedProps,
