@@ -12,6 +12,7 @@ import FractionMatchGame from './FractionMatchGame';
 import LineGraphLabGame from './LineGraphLabGame';
 import MathsVsZombiesGame from './MathsVsZombiesGame';
 import MeanMachineGame from './MeanMachineGame';
+import MedianMountainGame from './MedianMountainGame';
 import MeasurementForgeGame from './MeasurementForgeGame';
 import MonsterMarketGame from './MonsterMarketGame';
 import ModeMinerGame from './ModeMinerGame';
@@ -52,6 +53,7 @@ export type MiniGameRegistryKey =
   | 'LineGraphLabGame'
   | 'MathsVsZombiesGame'
   | 'MeanMachineGame'
+  | 'MedianMountainGame'
   | 'MeasurementForgeGame'
   | 'MonsterMarketGame'
   | 'ModeMinerGame'
@@ -100,6 +102,7 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   LineGraphLabGame: asMiniGame('line_graph_lab', LineGraphLabGame),
   MathsVsZombiesGame: asMiniGame('maths_vs_zombies', MathsVsZombiesGame),
   MeanMachineGame: asMiniGame('mean_machine', MeanMachineGame),
+  MedianMountainGame: asMiniGame('median_mountain', MedianMountainGame),
   MeasurementForgeGame: asMiniGame('measurement_forge', MeasurementForgeGame),
   MonsterMarketGame: asMiniGame('monster_market', MonsterMarketGame),
   ModeMinerGame: asMiniGame('mode_miner', ModeMinerGame),

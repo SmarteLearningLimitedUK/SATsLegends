@@ -146,6 +146,9 @@ const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKey | nul
       if (level.blueprintKey === 'line_graph_lab') {
         return 'LineGraphLabGame';
       }
+      if (level.blueprintKey === 'chart_challenge' || level.blueprintKey === 'median_mountain') {
+        return 'MedianMountainGame';
+      }
       return 'TreasureChartCoveGame';
     case 'equation_grove':
       return level.blueprintKey === 'order_ops_arena' ? 'OrderOpsArenaGame' : 'RuneLockDungeonsGame';
@@ -168,7 +171,13 @@ const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKey | nul
       if (level.blueprintKey === 'mean_machine') {
         return 'MeanMachineGame';
       }
+      if (level.blueprintKey === 'median_mountain') {
+        return 'MedianMountainGame';
+      }
     case 'rule_runner':
+      if (level.blueprintKey === 'median_mountain') {
+        return 'MedianMountainGame';
+      }
       return 'CurriculumChallengeGame';
     case 'sequence_sprint':
     case 'logic_sort':
@@ -661,6 +670,9 @@ const App: React.FC = () => {
         if (selectedLevel.blueprintKey === 'line_graph_lab') {
           return renderFromRegistry('LineGraphLabGame', sharedProps);
         }
+        if (selectedLevel.blueprintKey === 'chart_challenge' || selectedLevel.blueprintKey === 'median_mountain') {
+          return renderFromRegistry('MedianMountainGame', sharedProps);
+        }
         return renderFromRegistry('TreasureChartCoveGame', sharedProps);
       case 'equation_grove':
         if (selectedLevel.blueprintKey === 'order_ops_arena') {
@@ -696,7 +708,13 @@ const App: React.FC = () => {
         if (selectedLevel.blueprintKey === 'mean_machine') {
           return renderFromRegistry('MeanMachineGame', sharedProps);
         }
+        if (selectedLevel.blueprintKey === 'median_mountain') {
+          return renderFromRegistry('MedianMountainGame', sharedProps);
+        }
       case 'rule_runner':
+        if (selectedLevel.blueprintKey === 'median_mountain') {
+          return renderFromRegistry('MedianMountainGame', sharedProps);
+        }
         return renderFromRegistry('CurriculumChallengeGame', {
           ...sharedProps,
           gameType: selectedLevel.gameType,
