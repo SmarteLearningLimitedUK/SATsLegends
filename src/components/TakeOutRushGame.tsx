@@ -6,7 +6,6 @@ import takeOutLevelBg from '../assets/level_backgrounds/take_out.png';
 import playBgAsset from '../assets/fantasy_hero/slider/play_bg.png';
 import playBorderAsset from '../assets/fantasy_hero/slider/play_border.png';
 import playFillBlueAsset from '../assets/fantasy_hero/slider/play_fill_blue.png';
-import ribbonBlueAsset from '../assets/fantasy_hero/title/ribbon_blue.png';
 import lineBgAsset from '../assets/fantasy_hero/title/line_bg.png';
 import coinAsset from '../assets/fantasy_hero/ui/coin.png';
 import { triggerHaptic } from '../haptics';
@@ -209,46 +208,6 @@ const CustomerFace: React.FC<{ mood: CustomerMood }> = ({ mood }) => {
       <div className="absolute left-[18px] top-[21px] h-2.5 w-2.5 rounded-full bg-slate-800 md:left-[28px] md:top-[29px]" />
       <div className="absolute right-[18px] top-[21px] h-2.5 w-2.5 rounded-full bg-slate-800 md:right-[28px] md:top-[29px]" />
       <div className={`absolute bottom-[15px] md:bottom-[22px] ${mouthClasses}`} />
-    </div>
-  );
-};
-
-const TavernMonster: React.FC<{ mood: CustomerMood }> = ({ mood }) => {
-  const shellTone = mood === 'happy'
-    ? 'from-lime-300 via-emerald-300 to-green-500'
-    : mood === 'sad'
-      ? 'from-rose-300 via-orange-300 to-amber-500'
-      : 'from-lime-300 via-emerald-300 to-green-500';
-  const hornTone = mood === 'sad'
-    ? 'from-red-500 to-sky-500'
-    : 'from-sky-300 to-sky-600';
-
-  return (
-    <div className="relative flex h-40 w-44 items-end justify-center md:h-56 md:w-60">
-      <div className="absolute inset-x-[18%] bottom-0 h-10 rounded-full bg-black/35 blur-2xl md:h-14" />
-      <div className={`relative h-[82%] w-full rounded-[46%_46%_32%_32%/52%_52%_30%_30%] border border-lime-100/28 bg-gradient-to-b ${shellTone} shadow-[inset_0_5px_0_rgba(255,255,255,0.22),0_26px_46px_rgba(0,0,0,0.28)]`}>
-        <div className="absolute inset-x-[11%] top-[10%] h-[28%] rounded-full bg-white/16 blur-xl" />
-        <div className="absolute left-[16%] top-[6%] h-10 w-8 rotate-[-18deg] rounded-[60%_60%_20%_20%] border border-sky-100/30 bg-gradient-to-b from-sky-300 to-sky-700 shadow-[0_6px_10px_rgba(46,16,101,0.28)] md:h-14 md:w-10" />
-        <div className={`absolute right-[16%] top-[6%] h-10 w-8 rotate-[18deg] rounded-[60%_60%_20%_20%] border border-sky-100/30 bg-gradient-to-b ${hornTone} shadow-[0_6px_10px_rgba(46,16,101,0.28)] md:h-14 md:w-10`} />
-
-        <div className="absolute left-[26%] top-[34%] h-4 w-6 rotate-[7deg] rounded-full bg-white shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] md:h-5 md:w-8">
-          <div className="absolute left-[42%] top-[30%] h-2.5 w-2.5 rounded-full bg-slate-900 md:h-3 md:w-3" />
-        </div>
-        <div className="absolute right-[26%] top-[34%] h-4 w-6 rotate-[-7deg] rounded-full bg-white shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] md:h-5 md:w-8">
-          <div className="absolute right-[42%] top-[30%] h-2.5 w-2.5 rounded-full bg-slate-900 md:h-3 md:w-3" />
-        </div>
-
-        <div className={`absolute left-1/2 top-[50%] flex h-7 w-16 -translate-x-1/2 items-center justify-center rounded-[0_0_1.2rem_1.2rem] border-[3px] border-slate-900 bg-gradient-to-b ${
-          mood === 'sad' ? 'from-rose-500 to-amber-600' : 'from-orange-500 to-red-600'
-        } md:h-10 md:w-24 md:rounded-[0_0_1.7rem_1.7rem]`}>
-          <div className="absolute bottom-0 left-1/2 h-2 w-7 -translate-x-1/2 rounded-t-full bg-slate-900/20 md:h-3 md:w-12" />
-          <div className="absolute left-[18%] top-[-2px] h-3 w-2 rounded-b-full bg-white md:h-4 md:w-3" />
-          <div className="absolute right-[18%] top-[-2px] h-3 w-2 rounded-b-full bg-white md:h-4 md:w-3" />
-        </div>
-
-        <div className="absolute bottom-[14%] left-[20%] h-9 w-10 rounded-full bg-emerald-500/90 shadow-[inset_0_2px_0_rgba(255,255,255,0.18)] md:h-12 md:w-14" />
-        <div className="absolute bottom-[14%] right-[20%] h-9 w-10 rounded-full bg-emerald-500/90 shadow-[inset_0_2px_0_rgba(255,255,255,0.18)] md:h-12 md:w-14" />
-      </div>
     </div>
   );
 };
@@ -521,35 +480,40 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
   };
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden bg-[radial-gradient(circle_at_top,#78350f_0%,#431407_42%,#0f172a_100%)] px-2 pb-2 pt-1 md:px-4 md:pb-4">
+    <div className="relative flex h-full w-full flex-col overflow-hidden bg-[radial-gradient(circle_at_top,#6e2f1f_0%,#3f170d_42%,#12070a_100%)] px-2 pb-2 pt-1 md:px-4 md:pb-4">
       <div
         className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-[0.92]"
         style={{ backgroundImage: `url(${takeOutLevelBg})` }}
       />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(10,32,84,0.46),rgba(22,78,166,0.18)_24%,rgba(18,14,8,0.5)_100%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.34),rgba(255,243,199,0)_28%),radial-gradient(circle_at_bottom,rgba(249,115,22,0.3),rgba(120,53,15,0)_36%)]" />
-      <GameplaySceneBackdrop gameType="take_out_rush" className="opacity-12" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(126,46,24,0.44),rgba(90,36,19,0.2)_28%,rgba(18,14,8,0.5)_100%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.22),rgba(255,243,199,0)_26%),radial-gradient(circle_at_bottom,rgba(249,115,22,0.24),rgba(120,53,15,0)_38%)]" />
+      <GameplaySceneBackdrop gameType="take_out_rush" className="opacity-8" />
 
       <div className="relative z-10 flex h-full min-h-0 flex-col gap-2 md:gap-3">
-        <GameplayHUD
-          title="Take-Out Rush"
-          avatar={avatar}
-          score={score}
-          targetScore={targetScore}
-          timeLeft={orderTimeLeft}
-          progress={progress}
-          compact
-          accentText="text-amber-950"
-          accentSoftBg="bg-amber-100/86"
-          accentBorder="border-amber-200/88"
-          progressBar="bg-gradient-to-r from-amber-300 via-orange-300 to-rose-300"
-          statLabel="Served"
-          statValue={ordersServed}
-        />
+        <header className="ui-panel-unified flex items-center justify-between gap-2 rounded-[1.2rem] border border-white/14 bg-[linear-gradient(180deg,rgba(45,18,12,0.92),rgba(77,34,20,0.88))] px-3 py-2 text-white shadow-[0_12px_28px_rgba(0,0,0,0.28)] md:rounded-[1.45rem] md:px-4">
+          <button className="flex items-center gap-2 rounded-full bg-black/22 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] md:px-3 md:text-xs">
+            <span>How do I fill trays?</span>
+            <AssetIcon name="question" className="h-4 w-4" />
+          </button>
+          <div className="flex items-center gap-1.5 md:gap-2">
+            <div className="flex items-center gap-1 rounded-full bg-white/14 px-2 py-1 md:px-3">
+              <img src={coinAsset} alt="" className="h-4 w-4 md:h-5 md:w-5" draggable={false} />
+              <span className="text-xs font-black md:text-sm">{score}</span>
+            </div>
+            <div className="flex items-center gap-1 rounded-full bg-white/14 px-2 py-1 md:px-3">
+              <AssetIcon name="timer" className="h-4 w-4 md:h-5 md:w-5" />
+              <span className="text-xs font-black md:text-sm">{orderTimeLeft}s</span>
+            </div>
+            <div className="hidden items-center gap-1 rounded-full bg-white/14 px-2 py-1 md:flex md:px-3">
+              <AssetIcon name="trophy" className="h-4 w-4 md:h-5 md:w-5" />
+              <span className="text-xs font-black md:text-sm">{ordersServed}</span>
+            </div>
+          </div>
+        </header>
 
         <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] p-2 md:rounded-[2.6rem] md:p-3">
-          <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 xl:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.92fr)] xl:grid-rows-[auto_minmax(0,1fr)] xl:gap-3">
-          <section className="order-2 xl:order-2 xl:row-span-2 relative overflow-hidden rounded-[1.6rem] border border-white/18 bg-[linear-gradient(180deg,rgba(16,60,130,0.96),rgba(7,31,78,0.98))] p-2 shadow-[0_20px_42px_rgba(0,0,0,0.34)] md:rounded-[2rem] md:p-3">
+          <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 xl:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.92fr)] xl:grid-rows-[auto_minmax(0,1fr)_auto] xl:gap-3">
+          <section className="order-3 xl:order-3 relative overflow-hidden rounded-[1.6rem] border border-white/18 bg-[linear-gradient(180deg,rgba(16,60,130,0.96),rgba(7,31,78,0.98))] p-2 shadow-[0_20px_42px_rgba(0,0,0,0.34)] md:rounded-[2rem] md:p-3">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,241,201,0.28),rgba(255,241,201,0)_24%)]" />
             <div className="relative flex h-full min-h-0 flex-col rounded-[1.2rem] border border-amber-200/55 bg-[linear-gradient(180deg,rgba(255,248,231,0.98),rgba(253,230,138,0.88))] p-2 shadow-[inset_0_2px_0_rgba(255,255,255,0.6)] md:rounded-[1.6rem] md:p-3">
               <div className="pointer-events-none absolute inset-x-3 top-1 h-6 bg-contain bg-center bg-no-repeat opacity-75 md:top-2 md:h-8" style={{ backgroundImage: `url(${lineBgAsset})` }} />
@@ -594,7 +558,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
             </div>
           </section>
 
-          <section className="order-3 xl:order-3 relative overflow-hidden rounded-[1.5rem] border border-white/16 bg-[linear-gradient(180deg,rgba(14,48,115,0.96),rgba(8,25,58,0.98))] p-2 text-white shadow-[0_18px_42px_rgba(0,0,0,0.32)] md:rounded-[2.1rem] md:p-3">
+          <section className="order-1 xl:order-1 xl:col-span-2 relative overflow-hidden rounded-[1.5rem] border border-white/16 bg-[linear-gradient(180deg,rgba(14,48,115,0.96),rgba(8,25,58,0.98))] p-2 text-white shadow-[0_18px_42px_rgba(0,0,0,0.32)] md:rounded-[2.1rem] md:p-3">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,191,36,0.18),transparent_36%)]" />
             <div className="relative grid grid-cols-[auto_1fr_auto] items-center gap-2 md:gap-3">
               <CustomerFace mood={customerMood} />
@@ -641,7 +605,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
             </AnimatePresence>
           </section>
 
-          <section className="order-1 xl:order-1 xl:row-span-2 relative flex min-h-[14rem] flex-col overflow-hidden rounded-[1.9rem] border border-white/16 bg-[linear-gradient(180deg,rgba(27,14,47,0.56),rgba(24,14,38,0.76))] p-2 shadow-[0_22px_52px_rgba(0,0,0,0.28)] md:min-h-[18rem] md:rounded-[2.6rem] md:p-3">
+          <section className="order-2 xl:order-2 relative flex min-h-[14rem] flex-col overflow-hidden rounded-[1.9rem] border border-white/16 bg-[linear-gradient(180deg,rgba(27,14,47,0.56),rgba(24,14,38,0.76))] p-2 shadow-[0_22px_52px_rgba(0,0,0,0.28)] md:min-h-[18rem] md:rounded-[2.6rem] md:p-3">
             <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'linear-gradient(rgba(125,211,252,0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(125,211,252,0.18) 1px, transparent 1px)', backgroundSize: '42px 42px' }} />
             <div className="absolute bottom-0 left-0 right-0 h-[28%] bg-[linear-gradient(180deg,rgba(255,224,178,0),rgba(251,146,60,0.28))]" />
             <div className="absolute inset-x-[8%] top-[6%] h-10 rounded-full bg-amber-100/20 blur-3xl md:h-16" />
@@ -677,75 +641,62 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
               </div>
             </div>
 
-            <div className="relative z-10 mt-2 flex min-h-0 flex-1 flex-col items-center overflow-hidden rounded-[1.6rem] bg-[linear-gradient(180deg,rgba(251,191,36,0.12),rgba(251,191,36,0.02)_28%,rgba(255,255,255,0)_28%)] px-1 pt-4 md:mt-3 md:rounded-[2rem] md:px-3 md:pt-6">
-              <motion.div
-                animate={{ y: [0, -4, 0], scale: [1, 1.02, 1] }}
-                transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut' }}
-                className="relative z-10 flex flex-1 items-end justify-center"
-              >
-                <TavernMonster mood={customerMood} />
-              </motion.div>
-              {orderStack.length > 0 && (
-                <motion.div
-                  key={`${orderStack[orderStack.length - 1]?.name}-${orderStack.length}`}
-                  initial={{ y: -24, opacity: 0, rotate: -4 }}
-                  animate={{ y: 0, opacity: 1, rotate: 0 }}
-                  className="absolute left-1/2 top-2 z-30 -translate-x-1/2 md:top-3"
-                >
-                  <img
-                    src={orderStack[orderStack.length - 1]?.asset}
-                    alt=""
-                    className="h-10 w-20 object-contain drop-shadow-[0_12px_16px_rgba(15,23,42,0.22)] md:h-14 md:w-28"
-                    draggable={false}
-                  />
-                </motion.div>
-              )}
-              {reaction?.mood === 'happy' && (
-                <motion.div
-                  initial={{ scale: 0.82, opacity: 0, y: 10 }}
-                  animate={{ scale: 1, opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="absolute left-1/2 top-[14%] z-40 -translate-x-1/2 text-center"
-                >
-                    <div className="text-[1.85rem] font-black uppercase tracking-[-0.04em] text-yellow-200 drop-shadow-[0_5px_0_rgba(12,74,146,0.72)] md:text-[3rem]">
-                    Perfect!
-                  </div>
-                </motion.div>
-              )}
-              <div className="absolute bottom-3 h-12 w-[76%] rounded-full bg-amber-900/30 blur-xl md:bottom-5 md:h-16" />
-              <div className="absolute bottom-[1%] left-1/2 z-10 h-[5.2rem] w-[78%] -translate-x-1/2 rounded-[1.5rem] border border-amber-100/18 bg-[linear-gradient(180deg,rgba(180,83,9,0.96),rgba(120,53,15,0.98))] shadow-[0_18px_30px_rgba(0,0,0,0.28)] md:h-[7.4rem] md:rounded-[2rem]">
-                <div className="absolute inset-[8%] rounded-[1.2rem] border border-amber-100/20 bg-[linear-gradient(180deg,rgba(255,224,178,0.26),rgba(255,224,178,0.08))] md:rounded-[1.6rem]" />
-              </div>
-              <div className="relative flex h-full w-full max-w-[290px] flex-col items-center justify-end md:max-w-[440px]">
-                <img src={TAKE_OUT_ASSETS.trayLid} alt="Tray lid" className="z-20 w-28 object-contain drop-shadow-[0_12px_18px_rgba(120,53,15,0.24)] md:w-56" draggable={false} />
-                <div className="relative -mt-2 flex w-full flex-1 flex-col-reverse items-center justify-start overflow-visible px-1 pb-4 pt-2 md:-mt-5 md:px-2 md:pb-7">
-                  <AnimatePresence initial={false}>
-                    {orderStack.map((ingredient, index) => (
-                      <motion.div
-                        key={`${ingredient.name}-${index}-${orderStack.length}`}
-                        initial={{ y: -18, opacity: 0, scale: 1.08 }}
-                        animate={{ y: 0, opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, y: 18 }}
-                        transition={{ type: 'spring', stiffness: 220, damping: 18 }}
-                        className={`${index === 0 ? '' : '-mt-2 md:-mt-5'} relative flex items-center justify-center`}
-                        style={{ zIndex: index + 1 }}
-                      >
-                        <img
-                          src={ingredient.asset}
-                          alt={ingredient.name}
-                          className={`${ingredient.stackImageClass} max-w-[9.2rem] md:max-w-none object-contain drop-shadow-[0_8px_14px_rgba(15,23,42,0.18)]`}
-                          draggable={false}
-                        />
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
+            <div className="relative z-10 mt-2 flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.6rem] bg-[linear-gradient(180deg,rgba(251,191,36,0.14),rgba(251,191,36,0.04)_30%,rgba(255,255,255,0)_30%)] p-2 md:mt-3 md:rounded-[2rem] md:p-3">
+              <div className="grid grid-cols-3 gap-2">
+                <div className="rounded-[0.9rem] border border-white/14 bg-black/22 p-2 text-center">
+                  <div className="text-[8px] font-black uppercase tracking-[0.16em] text-white/60">Prep</div>
+                  <img src={requiredIngredientVisuals[0]?.asset || TAKE_OUT_ASSETS.sauceSwirlA} alt="" className="mx-auto mt-1 h-8 w-12 object-contain" draggable={false} />
                 </div>
-                <img src={TAKE_OUT_ASSETS.trayBase} alt="Tray base" className="relative z-30 -mt-1 w-28 object-contain drop-shadow-[0_14px_20px_rgba(120,53,15,0.24)] md:-mt-2 md:w-56" draggable={false} />
+                <div className="rounded-[0.9rem] border border-white/14 bg-black/22 p-2 text-center">
+                  <div className="text-[8px] font-black uppercase tracking-[0.16em] text-white/60">Plate</div>
+                  <img src={TAKE_OUT_ASSETS.trayLid} alt="" className="mx-auto mt-1 h-8 w-12 object-contain" draggable={false} />
+                </div>
+                <div className="rounded-[0.9rem] border border-white/14 bg-black/22 p-2 text-center">
+                  <div className="text-[8px] font-black uppercase tracking-[0.16em] text-white/60">Cook</div>
+                  <img src={requiredIngredientVisuals[1]?.asset || TAKE_OUT_ASSETS.sauceSwirlB} alt="" className="mx-auto mt-1 h-8 w-12 object-contain" draggable={false} />
+                </div>
+              </div>
+
+              <div className="relative mt-2 flex min-h-0 flex-1 flex-col items-center justify-end overflow-hidden rounded-[1.2rem] border border-amber-100/18 bg-[linear-gradient(180deg,rgba(180,83,9,0.34),rgba(120,53,15,0.64))]">
+                {reaction?.mood === 'happy' && (
+                  <motion.div
+                    initial={{ scale: 0.82, opacity: 0, y: 10 }}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute left-1/2 top-[10%] z-40 -translate-x-1/2 text-center"
+                  >
+                    <div className="text-[1.65rem] font-black uppercase tracking-[-0.04em] text-yellow-200 drop-shadow-[0_5px_0_rgba(12,74,146,0.72)] md:text-[2.4rem]">
+                      Perfect!
+                    </div>
+                  </motion.div>
+                )}
+                <div className="absolute bottom-2 h-10 w-[76%] rounded-full bg-amber-900/30 blur-xl md:bottom-4 md:h-14" />
+                <div className="relative flex h-full w-full max-w-[290px] flex-col items-center justify-end md:max-w-[400px]">
+                  <img src={TAKE_OUT_ASSETS.trayLid} alt="Tray lid" className="z-20 w-28 object-contain drop-shadow-[0_12px_18px_rgba(120,53,15,0.24)] md:w-48" draggable={false} />
+                  <div className="relative -mt-2 flex w-full flex-1 flex-col-reverse items-center justify-start overflow-visible px-1 pb-3 pt-2 md:-mt-4 md:px-2 md:pb-6">
+                    <AnimatePresence initial={false}>
+                      {orderStack.map((ingredient, index) => (
+                        <motion.div
+                          key={`${ingredient.name}-${index}-${orderStack.length}`}
+                          initial={{ y: -18, opacity: 0, scale: 1.08 }}
+                          animate={{ y: 0, opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, y: 18 }}
+                          transition={{ type: 'spring', stiffness: 220, damping: 18 }}
+                          className={`${index === 0 ? '' : '-mt-2 md:-mt-4'} relative flex items-center justify-center`}
+                          style={{ zIndex: index + 1 }}
+                        >
+                          <img src={ingredient.asset} alt={ingredient.name} className={`${ingredient.stackImageClass} max-w-[8.8rem] md:max-w-none object-contain drop-shadow-[0_8px_14px_rgba(15,23,42,0.18)]`} draggable={false} />
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                  <img src={TAKE_OUT_ASSETS.trayBase} alt="Tray base" className="relative z-30 -mt-1 w-28 object-contain drop-shadow-[0_14px_20px_rgba(120,53,15,0.24)] md:-mt-2 md:w-48" draggable={false} />
+                </div>
               </div>
             </div>
           </section>
 
-          <section className="order-4 xl:col-span-2 rounded-[1.4rem] border border-white/16 bg-[linear-gradient(180deg,rgba(20,15,40,0.96),rgba(36,18,52,0.98))] p-2 shadow-[0_16px_30px_rgba(15,23,42,0.22)] md:rounded-[1.8rem] md:p-3">
+          <section className="order-4 xl:order-4 xl:col-span-2 rounded-[1.4rem] border border-white/16 bg-[linear-gradient(180deg,rgba(20,15,40,0.96),rgba(36,18,52,0.98))] p-2 shadow-[0_16px_30px_rgba(15,23,42,0.22)] md:rounded-[1.8rem] md:p-3">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <div className="text-[8px] font-black uppercase tracking-[0.18em] text-amber-100/70 md:text-[10px]">Ingredient Rail</div>
