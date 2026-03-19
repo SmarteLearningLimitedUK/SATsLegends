@@ -7,6 +7,7 @@ import DataDungeonGame from './DataDungeonGame';
 import DecimalSniperGame from './DecimalSniperGame';
 import DivisionDockGame from './DivisionDockGame';
 import FractionMatchGame from './FractionMatchGame';
+import MathsVsZombiesGame from './MathsVsZombiesGame';
 import MeasurementForgeGame from './MeasurementForgeGame';
 import MonsterMarketGame from './MonsterMarketGame';
 import OrderOpsArenaGame from './OrderOpsArenaGame';
@@ -38,6 +39,7 @@ export type MiniGameRegistryKey =
   | 'DecimalSniperGame'
   | 'DivisionDockGame'
   | 'FractionMatchGame'
+  | 'MathsVsZombiesGame'
   | 'MeasurementForgeGame'
   | 'MonsterMarketGame'
   | 'OrderOpsArenaGame'
@@ -77,6 +79,7 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   DecimalSniperGame: asMiniGame('decimal_sniper', DecimalSniperGame),
   DivisionDockGame: asMiniGame('division_dock', DivisionDockGame),
   FractionMatchGame: asMiniGame('fraction_match', FractionMatchGame),
+  MathsVsZombiesGame: asMiniGame('maths_vs_zombies', MathsVsZombiesGame),
   MeasurementForgeGame: asMiniGame('measurement_forge', MeasurementForgeGame),
   MonsterMarketGame: asMiniGame('monster_market', MonsterMarketGame),
   OrderOpsArenaGame: asMiniGame('order_ops_arena', OrderOpsArenaGame),
