@@ -6,28 +6,8 @@ import { DEFAULT_AVATAR_ID } from './assets/characters';
 import { GameScreen, IslandData, LevelData, MiniGameType, PlayerData } from './types';
 import WorldMap from './screens/WorldMap';
 import IslandLevels from './screens/IslandLevels';
-import PotionPourGame from './games/PotionPourGame';
-import TakeOutRushGame from './games/TakeOutRushGame';
-import FractionMatchGame from './games/FractionMatchGame';
-import PrimePopGame from './games/PrimePopGame';
-import AngleArenaGame from './games/AngleArenaGame';
-import PolygonPalaceGame from './games/PolygonPalaceGame';
-import DataDungeonGame from './games/DataDungeonGame';
-import MonsterMarketGame from './games/MonsterMarketGame';
-import RatioRapidsGame from './games/RatioRapidsGame';
-import TimekeeperTempleGame from './games/TimekeeperTempleGame';
-import MeasurementForgeGame from './games/MeasurementForgeGame';
-import TowerOfFactorsGame from './games/TowerOfFactorsGame';
-import DecimalSniperGame from './games/DecimalSniperGame';
-import PlaceValuePanicGame from './games/PlaceValuePanicGame';
-import TreasureChartCoveGame from './games/TreasureChartCoveGame';
-import RuneLockDungeonsGame from './games/RuneLockDungeonsGame';
-import OrderOpsArenaGame from './games/OrderOpsArenaGame';
-import TreasurePathGame from './games/TreasurePathGame';
-import ReasoningGame from './games/reasoning/ReasoningGame';
-import CurriculumChallengeGame from './games/CurriculumChallengeGame';
-import BossEncounterGame, { isBossEncounterGameType } from './games/BossEncounterGame';
-import DivisionDockGame from './games/DivisionDockGame';
+import { getMiniGame, MiniGameRegistryKey } from './games';
+import { isBossEncounterGameType } from './games/BossEncounterGame';
 import AvatarSelect from './screens/AvatarSelect';
 import DailyRewardsModal from './components/modals/DailyRewardsModal';
 import DailyQuestsModal from './components/modals/DailyQuestsModal';
@@ -130,6 +110,63 @@ const STAGED_OUTPUT_STEPS: Array<{ id: StageOutputId; label: string; detail: str
 const resolveAvatarId = (avatarId?: string) => (
   AVATARS.some(avatar => avatar.id === avatarId) ? avatarId! : DEFAULT_AVATAR_ID
 );
+
+const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKey | null => {
+  if (level.isBoss && isBossEncounterGameType(level.gameType)) {
+    return 'BossEncounterGame';
+  }
+
+  switch (level.gameType) {
+    case 'cloud_collapse':
+    case 'fraction_match':
+      return 'FractionMatchGame';
+    case 'potion_pour':
+      return 'PotionPourGame';
+    case 'take_out_rush':
+      return 'TakeOutRushGame';
+    case 'prime_pop':
+      return 'PrimePopGame';
+    case 'angle_arena':
+      return 'AngleArenaGame';
+    case 'polygon_palace':
+      return 'PolygonPalaceGame';
+    case 'data_dungeon':
+      return 'DataDungeonGame';
+    case 'monster_market':
+      return 'MonsterMarketGame';
+    case 'ratio_rapids':
+      return 'RatioRapidsGame';
+    case 'timekeeper_temple':
+      return 'TimekeeperTempleGame';
+    case 'measurement_forge':
+      return 'MeasurementForgeGame';
+    case 'tower_of_factors':
+      return 'TowerOfFactorsGame';
+    case 'place_value_peaks':
+      return level.blueprintKey === 'place_value_panic' ? 'PlaceValuePanicGame' : 'DecimalSniperGame';
+    case 'chart_chase':
+      return 'TreasureChartCoveGame';
+    case 'equation_grove':
+      return level.blueprintKey === 'order_ops_arena' ? 'OrderOpsArenaGame' : 'RuneLockDungeonsGame';
+    case 'coordinate_quest':
+      return 'TreasurePathGame';
+    case 'calculation_clash':
+      return level.blueprintKey === 'division_dock' ? 'DivisionDockGame' : 'CurriculumChallengeGame';
+    case 'percent_pulse':
+    case 'transform_temple':
+    case 'scale_safari':
+    case 'mean_machine':
+    case 'rule_runner':
+      return 'CurriculumChallengeGame';
+    case 'sequence_sprint':
+    case 'logic_sort':
+    case 'shape_shift':
+    case 'matrix_match':
+      return 'ReasoningGame';
+    default:
+      return null;
+  }
+};
 
 const createDefaultPlayer = (parsed?: Partial<PlayerData> | null): PlayerData => ({
   playerName: parsed?.playerName || '',
@@ -279,6 +316,25 @@ const App: React.FC = () => {
     setGameRulesMode('start');
     setShowGameRules(true);
   }, [screen, selectedLevel?.id, selectedRuleSet]);
+
+  useEffect(() => {
+    if (screen !== 'gameplay' || !selectedLevel) return;
+
+    const miniGameKey = resolveMiniGameRegistryKey(selectedLevel);
+    if (!miniGameKey) return;
+
+    const miniGame = getMiniGame(miniGameKey);
+    miniGame.init();
+    miniGame.update(0);
+    miniGame.handleInput({
+      type: 'mount',
+      payload: {
+        gameType: selectedLevel.gameType,
+        levelId: selectedLevel.id,
+        blueprintKey: selectedLevel.blueprintKey,
+      },
+    });
+  }, [screen, selectedLevel]);
 
   const goToHome = () => {
     setSelectedLevel(null);
@@ -582,18 +638,9 @@ const App: React.FC = () => {
   const renderGameplay = () => {
     if (!selectedLevel) return null;
 
-    if (selectedLevel.isBoss && isBossEncounterGameType(selectedLevel.gameType)) {
-      return (
-        <BossEncounterGame
-          gameType={selectedLevel.gameType}
-          levelId={selectedLevel.id}
-          avatarId={player.avatarId}
-          onVictory={handleGameVictory}
-          onGameOver={handleGameOver}
-          onBack={() => setScreen('island_levels')}
-        />
-      );
-    }
+    const renderFromRegistry = <P extends Record<string, unknown>>(key: MiniGameRegistryKey, props: P) => (
+      getMiniGame(key).render(props)
+    );
 
     const sharedProps = {
       levelId: selectedLevel.id,
@@ -605,74 +652,84 @@ const App: React.FC = () => {
 
     switch (selectedLevel.gameType) {
       case 'cloud_collapse':
-        return <FractionMatchGame {...sharedProps} variantGameType="cloud_collapse" isBoss={Boolean(selectedLevel.isBoss)} />;
+        return renderFromRegistry('FractionMatchGame', { ...sharedProps, variantGameType: 'cloud_collapse', isBoss: Boolean(selectedLevel.isBoss) });
       case 'potion_pour':
-        return <PotionPourGame {...sharedProps} />;
-    case 'take_out_rush':
-      return <TakeOutRushGame {...sharedProps} />;
+        return renderFromRegistry('PotionPourGame', sharedProps);
+      case 'take_out_rush':
+        return renderFromRegistry('TakeOutRushGame', sharedProps);
       case 'fraction_match':
-        return <FractionMatchGame {...sharedProps} isBoss={Boolean(selectedLevel.isBoss)} />;
+        return renderFromRegistry('FractionMatchGame', { ...sharedProps, isBoss: Boolean(selectedLevel.isBoss) });
       case 'prime_pop':
-        return <PrimePopGame {...sharedProps} />;
+        return renderFromRegistry('PrimePopGame', sharedProps);
       case 'angle_arena':
-        return <AngleArenaGame {...sharedProps} />;
+        return renderFromRegistry('AngleArenaGame', sharedProps);
       case 'polygon_palace':
-        return <PolygonPalaceGame {...sharedProps} />;
+        return renderFromRegistry('PolygonPalaceGame', sharedProps);
       case 'data_dungeon':
-        return <DataDungeonGame {...sharedProps} />;
+        return renderFromRegistry('DataDungeonGame', sharedProps);
       case 'monster_market':
-        return <MonsterMarketGame {...sharedProps} />;
+        return renderFromRegistry('MonsterMarketGame', sharedProps);
       case 'ratio_rapids':
-        return <RatioRapidsGame {...sharedProps} gameTitle={selectedLevel.displayName} />;
+        return renderFromRegistry('RatioRapidsGame', { ...sharedProps, gameTitle: selectedLevel.displayName });
       case 'timekeeper_temple':
-        return <TimekeeperTempleGame {...sharedProps} />;
+        return renderFromRegistry('TimekeeperTempleGame', sharedProps);
       case 'measurement_forge':
-        return <MeasurementForgeGame {...sharedProps} />;
+        return renderFromRegistry('MeasurementForgeGame', sharedProps);
       case 'tower_of_factors':
-        return <TowerOfFactorsGame {...sharedProps} isBoss={Boolean(selectedLevel.isBoss)} />;
+        return renderFromRegistry('TowerOfFactorsGame', { ...sharedProps, isBoss: Boolean(selectedLevel.isBoss) });
       case 'place_value_peaks':
         if (selectedLevel.blueprintKey === 'place_value_panic') {
-          return (
-            <PlaceValuePanicGame
-              {...sharedProps}
-              miniGameLevel={selectedLevel.miniGameLevel}
-            />
-          );
+          return renderFromRegistry('PlaceValuePanicGame', {
+            ...sharedProps,
+            miniGameLevel: selectedLevel.miniGameLevel,
+          });
         }
-        return <DecimalSniperGame {...sharedProps} isBoss={Boolean(selectedLevel.isBoss)} />;
+        return renderFromRegistry('DecimalSniperGame', { ...sharedProps, isBoss: Boolean(selectedLevel.isBoss) });
       case 'chart_chase':
-        return <TreasureChartCoveGame {...sharedProps} />;
+        return renderFromRegistry('TreasureChartCoveGame', sharedProps);
       case 'equation_grove':
         if (selectedLevel.blueprintKey === 'order_ops_arena') {
-          return <OrderOpsArenaGame {...sharedProps} />;
+          return renderFromRegistry('OrderOpsArenaGame', sharedProps);
         }
-        return <RuneLockDungeonsGame {...sharedProps} />;
+        return renderFromRegistry('RuneLockDungeonsGame', sharedProps);
       case 'coordinate_quest':
-        return <TreasurePathGame {...sharedProps} />;
+        return renderFromRegistry('TreasurePathGame', sharedProps);
       case 'calculation_clash':
         if (selectedLevel.blueprintKey === 'division_dock') {
-          return <DivisionDockGame {...sharedProps} />;
+          return renderFromRegistry('DivisionDockGame', sharedProps);
         }
       case 'percent_pulse':
       case 'transform_temple':
       case 'scale_safari':
       case 'mean_machine':
       case 'rule_runner':
-        return <CurriculumChallengeGame gameType={selectedLevel.gameType} isBoss={Boolean(selectedLevel.isBoss)} {...sharedProps} />;
+        return renderFromRegistry('CurriculumChallengeGame', {
+          ...sharedProps,
+          gameType: selectedLevel.gameType,
+          isBoss: Boolean(selectedLevel.isBoss),
+        });
       case 'sequence_sprint':
       case 'logic_sort':
       case 'shape_shift':
       case 'matrix_match':
-        return (
-          <ReasoningGame
-            gameType={selectedLevel.gameType}
-            isBoss={Boolean(selectedLevel.isBoss)}
-            onVictory={handleGameVictory}
-            onGameOver={handleGameOver}
-            onBack={() => setScreen('island_levels')}
-          />
-        );
+        return renderFromRegistry('ReasoningGame', {
+          gameType: selectedLevel.gameType,
+          isBoss: Boolean(selectedLevel.isBoss),
+          onVictory: handleGameVictory,
+          onGameOver: handleGameOver,
+          onBack: () => setScreen('island_levels'),
+        });
       default:
+        if (selectedLevel.isBoss && isBossEncounterGameType(selectedLevel.gameType)) {
+          return renderFromRegistry('BossEncounterGame', {
+            gameType: selectedLevel.gameType,
+            levelId: selectedLevel.id,
+            avatarId: player.avatarId,
+            onVictory: handleGameVictory,
+            onGameOver: handleGameOver,
+            onBack: () => setScreen('island_levels'),
+          });
+        }
         return (
           <div className="flex flex-col items-center gap-6 p-10 bg-white/20 backdrop-blur-xl rounded-[3rem] border-4 border-white/30 my-auto text-center">
             <h2 className="text-4xl font-black text-white">Mini-game incoming</h2>

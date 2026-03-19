@@ -425,7 +425,7 @@ export const usePlaceValuePanicViewModel = ({
       setCorrectPlacements((prev) => prev + 1);
       setFeedbackState('Correct Placement', `+${points}`, 'success');
       triggerHaptic('selection');
-      return { result: 'correct' };
+      return { result: 'correct', correctSlotKey: slotKey };
     }
 
     setCombo(0);

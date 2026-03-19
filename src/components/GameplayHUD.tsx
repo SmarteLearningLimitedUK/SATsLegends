@@ -23,6 +23,8 @@ interface GameplayHUDProps {
   statLabel?: string;
   statValue?: React.ReactNode;
   compact?: boolean;
+  showTitleRow?: boolean;
+  headerAction?: React.ReactNode;
 }
 
 const GameplayHUD: React.FC<GameplayHUDProps> = ({
@@ -39,6 +41,8 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
   statLabel,
   statValue,
   compact = false,
+  showTitleRow = true,
+  headerAction,
 }) => {
   const showExtraStat = Boolean(statLabel) && statValue !== undefined && statValue !== null;
 
@@ -48,23 +52,30 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(186,230,253,0.16),transparent_36%),linear-gradient(180deg,rgba(18,40,92,0.96),rgba(7,18,40,0.98))]" />
         <div className="absolute inset-0 border border-white/12" />
 
-        <div className={`relative flex flex-col ${compact ? 'gap-1 p-1.5' : 'gap-1.5 p-2'} md:gap-2 md:p-3`}>
-          <div className="flex items-center justify-between gap-2">
-            <div className="min-w-0">
-              {!compact && <div className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-100/80">Gameplay</div>}
-              <h2 className={`${compact ? 'text-[0.92rem]' : 'text-[1.05rem]'} md:text-[1.35rem] font-black tracking-tight text-white truncate drop-shadow-[0_4px_12px_rgba(2,6,23,0.4)]`}>
-                {title}
-              </h2>
+        <div className={`relative flex flex-col ${compact ? 'gap-1 p-1.5' : 'gap-1.5 p-2'} md:gap-2 md:p-3 ${headerAction ? 'pr-12 md:pr-14' : ''}`}>
+          {headerAction ? (
+            <div className="absolute right-1.5 top-1.5 z-20 md:right-2 md:top-2">
+              {headerAction}
             </div>
+          ) : null}
+          {showTitleRow && (
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                {!compact && <div className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-100/80">Gameplay</div>}
+                <h2 className={`${compact ? 'text-[0.92rem]' : 'text-[1.05rem]'} md:text-[1.35rem] font-black tracking-tight text-white truncate drop-shadow-[0_4px_12px_rgba(2,6,23,0.4)]`}>
+                  {title}
+                </h2>
+              </div>
 
-            <div
-              className={`inline-flex shrink-0 items-center gap-1 ${compact ? 'px-2 py-[2px] text-[7px]' : 'px-2.5 py-1 text-[8px]'} md:gap-1.5 md:px-3 md:py-1 md:text-[10px] font-bold text-white drop-shadow-[0_2px_8px_rgba(2,6,23,0.4)]`}
-              style={{ backgroundImage: `url(${titleFlagAsset})`, backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat' }}
-            >
-              <AssetIcon name="star" className="h-3 w-3 md:h-3.5 md:w-3.5" />
-              <span>Target {targetScore}</span>
+              <div
+                className={`inline-flex shrink-0 items-center gap-1 ${compact ? 'px-2 py-[2px] text-[7px]' : 'px-2.5 py-1 text-[8px]'} md:gap-1.5 md:px-3 md:py-1 md:text-[10px] font-bold text-white drop-shadow-[0_2px_8px_rgba(2,6,23,0.4)]`}
+                style={{ backgroundImage: `url(${titleFlagAsset})`, backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat' }}
+              >
+                <AssetIcon name="star" className="h-3 w-3 md:h-3.5 md:w-3.5" />
+                <span>Target {targetScore}</span>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className={`grid w-full ${showExtraStat ? 'grid-cols-3' : 'grid-cols-2'} ${compact ? 'gap-1' : 'gap-1.5'} md:gap-2`}>
             {showExtraStat && (

@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Grid, TileData, MathType, MathFamily, PowerUpType } from '../types';
-import { MATH_FAMILIES } from '../constants';
+import { Grid, TileData, MathType, MathFamily, PowerUpType } from '../../types';
+import { MATH_FAMILIES } from '../../constants';
 
 export class GameService {
   static createInitialGrid(size: number, allowedTypes: MathType[]): Grid {

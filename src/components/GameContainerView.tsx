@@ -28,6 +28,9 @@ interface GameContainerViewProps {
   roundLabel?: string;
   roundValue?: React.ReactNode;
   hideDefaultDock?: boolean;
+  showHeaderTitleRow?: boolean;
+  headerAction?: React.ReactNode;
+  bottomControlsArea?: React.ReactNode;
 }
 
 const GameContainerView: React.FC<GameContainerViewProps> = ({
@@ -53,6 +56,9 @@ const GameContainerView: React.FC<GameContainerViewProps> = ({
   roundLabel = 'Round',
   roundValue = 1,
   hideDefaultDock = false,
+  showHeaderTitleRow = true,
+  headerAction,
+  bottomControlsArea,
 }) => {
   const objectiveShellStyle: React.CSSProperties = {
     backgroundImage: `url(${MAIN_PNG_SKIN.mission})`,
@@ -76,7 +82,7 @@ const GameContainerView: React.FC<GameContainerViewProps> = ({
         minimalDecor={sceneMinimalDecor}
         className="aaa-game-backdrop"
       />
-      <div className="aaa-game-stage shared-game-container relative z-10 mx-auto grid h-full min-h-0 w-full max-w-[min(100%,1100px)] flex-1 grid-rows-[auto_auto_minmax(0,1fr)_auto] gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] pt-[calc(env(safe-area-inset-top)+0.15rem)] md:gap-3 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
+      <div className="aaa-game-stage shared-game-container relative z-10 mx-auto grid h-full min-h-0 w-full max-w-[min(100%,1100px)] flex-1 grid-rows-[auto_auto_minmax(0,1fr)_auto_auto] gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] pt-[calc(env(safe-area-inset-top)+0.15rem)] md:gap-3 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
         <div className="aaa-zone aaa-zone-hud w-full">
           <GameplayHUD
             title={title}
@@ -92,6 +98,8 @@ const GameContainerView: React.FC<GameContainerViewProps> = ({
             progressBar="bg-gradient-to-r from-cyan-400 via-sky-400 to-sky-400"
             statLabel={roundLabel}
             statValue={resolvedRoundValue}
+            showTitleRow={showHeaderTitleRow}
+            headerAction={headerAction}
           />
         </div>
 
@@ -143,6 +151,9 @@ const GameContainerView: React.FC<GameContainerViewProps> = ({
               {interactionArea}
             </div>
           ) : null}
+        </div>
+        <div className="aaa-zone aaa-zone-controls w-full">
+          {bottomControlsArea}
           {!hideDefaultDock ? (
             <GameActionDock onBack={onBack} accentClass={dockAccentClass} />
           ) : null}

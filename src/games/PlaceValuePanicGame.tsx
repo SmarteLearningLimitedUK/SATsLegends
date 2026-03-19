@@ -104,6 +104,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
   const [dragState, setDragState] = useState<DragState | null>(null);
   const [hoverSlotKey, setHoverSlotKey] = useState<PlaceValueSlotKey | null>(null);
+  const [lastCorrectSlotKey, setLastCorrectSlotKey] = useState<PlaceValueSlotKey | null>(null);
   const playfieldRef = useRef<HTMLDivElement | null>(null);
 
   const slotRefs = useRef<Record<PlaceValueSlotKey, HTMLDivElement | null>>({
@@ -118,6 +119,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   useEffect(() => {
     setDragState(null);
     setHoverSlotKey(null);
+    setLastCorrectSlotKey(null);
   }, [round.id]);
 
   const activeSlots = useMemo(() => slots, [slots]);
@@ -159,7 +161,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
     const firstSlot = slotRefs.current[availableSlots[0].key];
     const fallbackSize = firstSlot?.getBoundingClientRect().width || 120;
-    const snapRadius = Math.max(56, Math.min(110, fallbackSize * 0.58));
+    const snapRadius = Math.max(84, Math.min(148, fallbackSize * 0.82));
 
     return best.distance <= snapRadius ? best : null;
   };
@@ -187,7 +189,15 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       if (event.pointerId !== dragState.pointerId) return;
 
       const candidate = findSlotCandidate(event.clientX, event.clientY);
-      onDropTile(dragState.tile.id, candidate?.key || null);
+      const dropResult = onDropTile(dragState.tile.id, candidate?.key || null);
+      if (dropResult.result === 'correct' && dropResult.correctSlotKey) {
+        setLastCorrectSlotKey(dropResult.correctSlotKey);
+        window.setTimeout(() => {
+          setLastCorrectSlotKey((current) => (
+            current === dropResult.correctSlotKey ? null : current
+          ));
+        }, 260);
+      }
       setDragState(null);
       setHoverSlotKey(null);
     };
@@ -223,31 +233,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   };
 
   const objectiveArea = (
-    <div className="pvp-objective flex flex-col gap-2 p-2 md:gap-2.5 md:p-3">
-      <div className="flex items-center justify-end gap-2">
-        <button
-          type="button"
-          onClick={() => setIsPaused((previous) => !previous)}
-          className="ui-button-primary min-h-[44px] rounded-lg px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white md:text-xs pvp-pause-button"
-        >
-          {isPaused ? 'Resume' : 'Pause'}
-        </button>
-      </div>
-
+    <div className="pvp-objective flex h-full flex-col items-center justify-center gap-2 p-2 md:gap-2.5 md:p-3">
       <div className="pvp-target-center-card">
-        <div className="text-[9px] font-black uppercase tracking-[0.22em] text-amber-950/72">Target Number</div>
+        <div className="text-[9px] font-black uppercase tracking-[0.22em] text-amber-950/72">Target</div>
         <div className="pvp-target-value pvp-target-value-center text-2xl font-black text-amber-950 md:text-4xl">
-          {round.targetNumberDisplay}
+          Build: {round.targetNumberDisplay}
         </div>
-      </div>
-
-      <div className="text-center text-[11px] font-semibold text-cyan-100/90 md:text-xs">
-        Drag each digit into the correct place.
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-[0.12em] md:text-xs">
-        <span className="pvp-stat-chip">Solved {roundsCleared}</span>
-        <span className="pvp-stat-chip">Combo x{Math.max(1, combo)}</span>
       </div>
 
       <div className="min-h-[2.25rem]">
@@ -262,17 +253,17 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   );
 
   const playFieldArea = (
-    <div ref={playfieldRef} className="relative flex h-full min-h-0 w-full flex-col gap-2 p-2 md:gap-2.5 md:p-3">
-      <div className="pvp-slot-grid-shell flex h-full min-h-0 flex-1 flex-col gap-2 rounded-2xl border border-white/14 bg-slate-900/35 p-2">
+    <div ref={playfieldRef} className="relative flex h-full min-h-0 w-full flex-col items-center justify-center gap-2 p-2 md:gap-2.5 md:p-3">
+      <div className="pvp-slot-grid-shell flex h-full min-h-0 w-full max-w-3xl flex-1 flex-col gap-2 rounded-2xl border border-white/14 bg-slate-900/35 p-2 md:p-3">
         <div
-          className="grid flex-1 min-h-0 gap-2 md:gap-3"
-          style={{ gridTemplateColumns: `repeat(${Math.min(4, Math.max(2, activeSlots.length))}, minmax(0, 1fr))` }}
+          className="grid flex-1 min-h-0 grid-cols-2 place-content-center gap-3 md:gap-4"
         >
           {activeSlots.map((slot) => {
             const placedTile = placedBySlot.get(slot.key);
             const isHovered = hoverSlotKey === slot.key;
             const isHinted = hintSlotKey === slot.key;
             const isFilled = Boolean(placedTile);
+            const isCorrectFlash = lastCorrectSlotKey === slot.key;
 
             return (
               <div
@@ -280,7 +271,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 ref={(element) => {
                   slotRefs.current[slot.key] = element;
                 }}
-                className={`pvp-slot relative flex min-h-[108px] select-none flex-col items-center justify-center overflow-hidden rounded-[1rem] border px-2 text-center shadow-[0_12px_24px_rgba(2,6,23,0.34)] transition-all md:min-h-[136px] md:rounded-[1.2rem] ${
+                className={`pvp-slot relative flex min-h-[132px] select-none flex-col items-center justify-center overflow-hidden rounded-[1rem] border px-2 text-center shadow-[0_12px_24px_rgba(2,6,23,0.34)] transition-all md:min-h-[170px] md:rounded-[1.2rem] ${
                   isFilled
                     ? 'pvp-slot-filled'
                     : isHovered
@@ -288,7 +279,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                       : isHinted
                         ? 'animate-pulse pvp-slot-hinted'
                         : 'pvp-slot-empty'
-                }`}
+                } ${isCorrectFlash ? 'pvp-slot-correct-flash' : ''}`}
               >
                 <div className="pvp-slot-label text-[10px] font-black uppercase tracking-[0.18em] text-white/75 md:text-xs">{slot.label}</div>
                 <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/50 md:text-xs">{SLOT_DISPLAY_VALUES[slot.key]}</div>
@@ -371,7 +362,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
       </div>
 
-      <div className="grid min-h-0 flex-1 auto-rows-fr grid-cols-4 gap-2 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8">
+      <div className="grid min-h-0 flex-1 auto-rows-fr grid-cols-4 gap-2 overflow-y-auto sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8">
         <AnimatePresence mode="popLayout">
           {trayTiles.map((tile) => {
             const isDragging = dragState?.tile.id === tile.id;
@@ -392,7 +383,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                     ? 'border-rose-200/70 bg-rose-500/30'
                     : 'border-white/20 bg-slate-900/60'
                 } text-white/95 ${isDragging ? 'pvp-digit-selected' : ''}`}
-                style={{ minHeight: MIN_TAP_TARGET }}
+                style={{ minHeight: Math.max(MIN_TAP_TARGET, 56) }}
                 initial={{ opacity: 0, y: 8, scale: 0.86 }}
                 animate={{
                   opacity: 1,
@@ -420,6 +411,17 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     </div>
   );
 
+  const headerPauseAction = (
+    <button
+      type="button"
+      onClick={() => setIsPaused(true)}
+      className="pvp-pause-button inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-amber-200/70 bg-gradient-to-b from-amber-300 to-amber-500 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.15em] text-amber-950 md:px-3.5 md:py-2 md:text-xs"
+      aria-label="Pause game"
+    >
+      Pause
+    </button>
+  );
+
   return (
     <GameContainerView
       gameType="place_value_peaks"
@@ -431,8 +433,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       targetScore={levelConfig.targetScore}
       timeLeft={timeLeft}
       progress={progress}
+      headerAction={headerPauseAction}
       roundLabel="Round"
       roundValue={roundsCleared + 1}
+      showHeaderTitleRow={false}
       objectiveArea={objectiveArea}
       playFieldArea={playFieldArea}
       interactionArea={interactionArea}
