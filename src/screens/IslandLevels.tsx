@@ -1,0 +1,386 @@
+import React, { useEffect, useMemo, useState } from 'react';
+import AssetIcon from '../components/AssetIcon';
+import { IslandData, LevelData, PlayerData } from '../types';
+
+interface IslandLevelsProps {
+  island: IslandData;
+  player: PlayerData;
+  onBack: () => void;
+  onSelectLevel: (level: LevelData) => void;
+}
+
+interface LevelRowState {
+  level: LevelData;
+  stars: number;
+  isCompleted: boolean;
+  isUnlocked: boolean;
+  isNextPlayable: boolean;
+  lockReason?: string;
+}
+
+interface GameGroupState {
+  id: string;
+  name: string;
+  summary: string;
+  levels: LevelRowState[];
+  totalStars: number;
+  completedCount: number;
+  hasNextPlayable: boolean;
+}
+
+const GAME_SUMMARY_BY_KEY: Record<string, string> = {
+  place_value_panic: 'Sort unstable number fragments into the correct place-value channels at speed.',
+  number_line_ninja: 'Move fast on the number line and land on exact targets with clean control.',
+  prime_pop: 'Pop prime-number targets and avoid composite traps as the pace increases.',
+  rounding_rampage: 'Route values into the right rounding gates under pressure.',
+  calculation_clash: 'Defeat incoming waves by solving calculations quickly and accurately.',
+  factor_frenzy: 'Identify factors and multiples in fast decision rounds.',
+  take_out_rush: 'Build exact order totals by combining fraction portions in the tray.',
+  fraction_forge: 'Combine and refine fractions to hit exact forged targets.',
+  match3_equivalence: 'Chain equivalent fractions, decimals, and percentages to score combos.',
+  fraction_flow: 'Order mixed fraction values correctly while the stream speeds up.',
+  fraction_of_amount: 'Take exact fractions of sets through quick allocation challenges.',
+  simplify_sprint: 'Reduce fractions to simplest form in rapid streak rounds.',
+  calculation_clash_advanced: 'High-pressure arithmetic combat with faster mixed-operation waves.',
+  multiplication_mine: 'Break through block layers using multiplication fluency and method control.',
+  division_dock: 'Split cargo accurately with quotient and remainder logic.',
+  order_ops_arena: 'Resolve expressions in the correct order to avoid trap paths.',
+  arithmetic_gauntlet: 'Survive chained calculations without breaking flow.',
+  remainder_run: 'Route values by quotient and remainder outcomes at speed.',
+  potion_panic: 'Balance potion quantities to exact ratios before instability triggers.',
+  ratio_recipes: 'Scale ingredient sets to match new serving targets precisely.',
+  share_splitter: 'Distribute totals fairly according to ratio parts.',
+  maths_vs_zombies: 'Survive zombie waves by deploying defenders in the correct maths ratio.',
+  scale_builder: 'Resize structures to exact scale factors with precision.',
+  angle_arena: 'Calibrate launch angles precisely to hit targets.',
+  polygon_palace: 'Classify shapes quickly by key geometric properties.',
+  rotation_relay: 'Rotate pieces to correct orientation with fast precision.',
+  reflection_rescue: 'Reflect shapes across mirror lines to restore patterns.',
+  translation_tracker: 'Move shapes across the grid to exact coordinates.',
+  coordinates_quest: 'Plot and identify coordinates with speed and accuracy.',
+  time_keeper_cove: 'Set clocks and solve elapsed-time dispatch challenges.',
+  conversion_canyon: 'Convert measurement units to unlock routes and systems.',
+  perimeter_path: 'Trace exact boundary lengths on irregular paths.',
+  builder_bay: 'Construct exact target areas through spatial building.',
+  volume_vault: 'Pack 3D space to match target volume exactly.',
+  measure_mix_up: 'Solve mixed multi-step measurement scenarios.',
+  data_dash: 'Scan charts fast and choose the correct lane instantly.',
+  graph_grabber: 'Extract exact values from graphs before they disappear.',
+  table_trouble: 'Read tables quickly and answer under time pressure.',
+  line_graph_lab: 'Interpret trends, intervals, and key points on line graphs.',
+  chart_challenge: 'Switch between chart types and keep streak accuracy.',
+  data_detective: 'Solve short data reasoning cases from displayed information.',
+  market_mayhem: 'Handle real-world buying, totals, and change under pressure.',
+  problem_pyramid: 'Climb linked reasoning steps where each answer affects the next.',
+  mixed_mastery: 'Rapidly switch across mixed SATs skills without losing flow.',
+  strategy_survival: 'Endure increasing mixed-problem waves with efficient decisions.',
+  timed_test_trials: 'Run timed SATs-style sets with game pacing.',
+  multi_step_marathon: 'Complete deep multi-step reasoning runs at mastery level.',
+};
+
+const toTitleCaseFromKey = (key: string) => key
+  .split(/[_-]/g)
+  .filter(Boolean)
+  .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+  .join(' ');
+
+const getLevelLabel = (level: LevelData) => level.displayName || `Level ${level.id}`;
+
+const getGroupKey = (level: LevelData) => (
+  level.miniGameKey
+  || level.blueprintKey
+  || level.displayName
+  || `${level.gameType || 'level'}-${level.id}`
+);
+
+const getGroupName = (level: LevelData) => {
+  if (level.displayName) {
+    return level.displayName.replace(/\s+L\d+$/i, '').trim();
+  }
+  if (level.miniGameKey) return toTitleCaseFromKey(level.miniGameKey);
+  if (level.blueprintKey) return toTitleCaseFromKey(level.blueprintKey);
+  return getLevelLabel(level);
+};
+
+const getGameSummary = (level: LevelData) => {
+  const key = level.miniGameKey || level.blueprintKey || level.gameType || '';
+  return GAME_SUMMARY_BY_KEY[key] || 'Take on this challenge to improve speed, accuracy, and confidence.';
+};
+
+const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onSelectLevel }) => {
+  const [expandedGameId, setExpandedGameId] = useState<string | null>(null);
+
+  const completedLevels = player.completedLevels[island.id] || [];
+  const totalCoinsEarned = player.stats?.totalCoinsEarned || 0;
+  const usesSequentialUnlock = island.id === 1;
+
+  useEffect(() => {
+    setExpandedGameId(null);
+  }, [island.id]);
+
+  const levelRows = useMemo<LevelRowState[]>(() => {
+    const rows = island.levels.map((level) => {
+      const miniGameLevel = level.miniGameLevel || 0;
+      const previousRequiredComplete = usesSequentialUnlock && level.miniGameKey && level.miniGameLevel
+        ? island.levels
+          .filter((candidate) => (
+            candidate.miniGameKey === level.miniGameKey
+            && (candidate.miniGameLevel || 0) < miniGameLevel
+          ))
+          .every((candidate) => completedLevels.includes(candidate.id))
+        : island.levels
+          .filter((candidate) => candidate.id < level.id)
+          .every((candidate) => completedLevels.includes(candidate.id));
+
+      const bossCoinsNeeded = level.bossUnlockCoins || 0;
+      const hasBossCoins = totalCoinsEarned >= bossCoinsNeeded;
+
+      const isUnlocked = level.isBoss
+        ? previousRequiredComplete && hasBossCoins
+        : usesSequentialUnlock
+          ? previousRequiredComplete
+          : true;
+
+      const stars = player.levelStars?.[`${island.id}-${level.id}`] || 0;
+      const isCompleted = completedLevels.includes(level.id);
+
+      let lockReason: string | undefined;
+      if (!isUnlocked && level.isBoss && !hasBossCoins) {
+        lockReason = `Need ${bossCoinsNeeded} total coins`;
+      } else if (!isUnlocked) {
+        lockReason = 'Complete earlier levels first';
+      }
+
+      return {
+        level,
+        stars,
+        isCompleted,
+        isUnlocked,
+        isNextPlayable: false,
+        lockReason,
+      };
+    });
+
+    const nextPlayable = rows.find((row) => row.isUnlocked && !row.isCompleted);
+    if (nextPlayable) {
+      nextPlayable.isNextPlayable = true;
+    }
+
+    return rows;
+  }, [completedLevels, island.id, island.levels, player.levelStars, totalCoinsEarned, usesSequentialUnlock]);
+
+  const gameGroups = useMemo<GameGroupState[]>(() => {
+    const groups = new Map<string, GameGroupState>();
+
+    for (const row of levelRows) {
+      const key = getGroupKey(row.level);
+      if (!groups.has(key)) {
+        groups.set(key, {
+          id: key,
+          name: getGroupName(row.level),
+          summary: getGameSummary(row.level),
+          levels: [],
+          totalStars: 0,
+          completedCount: 0,
+          hasNextPlayable: false,
+        });
+      }
+
+      const group = groups.get(key)!;
+      group.levels.push(row);
+      group.totalStars += row.stars;
+      if (row.isCompleted) group.completedCount += 1;
+      if (row.isNextPlayable) group.hasNextPlayable = true;
+    }
+
+    const ordered = Array.from(groups.values());
+
+    ordered.forEach((group) => {
+      group.levels.sort((a, b) => {
+        const left = a.level.miniGameLevel || a.level.id;
+        const right = b.level.miniGameLevel || b.level.id;
+        return left - right;
+      });
+    });
+
+    ordered.sort((a, b) => {
+      const left = a.levels[0]?.level.id || 0;
+      const right = b.levels[0]?.level.id || 0;
+      return left - right;
+    });
+
+    return ordered;
+  }, [levelRows]);
+
+  const earnedStars = levelRows.reduce((sum, row) => sum + row.stars, 0);
+  const completionPercent = Math.round((completedLevels.length / Math.max(1, island.levels.length)) * 100);
+
+  return (
+    <div className="premium-page-root relative h-full w-full overflow-hidden">
+      {island.mapImage ? (
+        <img
+          src={island.mapImage}
+          alt={`${island.name} backdrop`}
+          className="absolute inset-0 h-full w-full object-cover opacity-30"
+          draggable={false}
+        />
+      ) : null}
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,17,31,0.62),rgba(7,17,31,0.88))]" />
+
+      <div className="premium-page-content relative z-10 mx-auto flex h-full w-full max-w-4xl min-h-0 flex-col p-3 md:p-5">
+        <div className="premium-page-header mb-3 flex items-start justify-between gap-3 md:mb-4">
+          <button
+            onClick={onBack}
+            className="ui-icon-button flex h-11 w-11 items-center justify-center rounded-full p-0 text-white shadow-xl md:h-12 md:w-12"
+            aria-label="Back to islands"
+          >
+            <AssetIcon name="back" className="h-6 w-6 md:h-8 md:w-8" />
+          </button>
+
+          <div className="flex-1 text-center">
+            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/75 md:text-xs">
+              {island.themeName || island.category}
+            </div>
+            <h1 className="text-xl font-black text-white md:text-3xl">{island.name}</h1>
+            <div className="mt-1 text-xs font-semibold text-white/75 md:text-sm">
+              Expand a game to view all levels
+            </div>
+          </div>
+
+          <div className="licensed-board-frame flex min-w-[120px] flex-col items-end gap-1 rounded-xl px-3 py-2 text-white md:min-w-[150px]">
+            <div className="flex items-center gap-1.5 text-sm font-black md:text-base">
+              <AssetIcon name="star" className="h-4 w-4 text-yellow-300 md:h-5 md:w-5" />
+              <span>{earnedStars}</span>
+            </div>
+            <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/80 md:text-xs">
+              {completionPercent}% complete
+            </div>
+          </div>
+        </div>
+
+        <div className="mb-3 h-2.5 overflow-hidden rounded-full border border-white/20 bg-slate-950/60 md:mb-4">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-300 to-emerald-300 transition-all duration-300"
+            style={{ width: `${completionPercent}%` }}
+          />
+        </div>
+
+        <div className="premium-page-scroll min-h-0 flex-1 overflow-y-auto pr-1">
+          <div className="flex flex-col gap-2.5 pb-4 md:gap-3 md:pb-6">
+            {gameGroups.map((group) => {
+              const isExpanded = expandedGameId === group.id;
+              const totalPossibleStars = group.levels.length * 3;
+
+              return (
+                <div
+                  key={group.id}
+                  className="licensed-board-frame w-full rounded-2xl px-3 py-3 text-left transition md:px-4 md:py-3.5"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setExpandedGameId((current) => (current === group.id ? null : group.id))}
+                    className="flex w-full items-center gap-3 text-left md:gap-4"
+                    aria-expanded={isExpanded}
+                  >
+                    <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 md:h-12 md:w-12 ${
+                      group.completedCount === group.levels.length
+                        ? 'border-emerald-300 bg-emerald-500/25'
+                        : 'border-cyan-200/60 bg-cyan-500/20'
+                    }`}>
+                      <AssetIcon
+                        name={group.levels.some((row) => row.level.isBoss) ? 'trophy' : 'gamepad'}
+                        className="h-5 w-5 text-cyan-100 md:h-6 md:w-6"
+                      />
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-sm font-black text-white md:text-base">{group.name}</div>
+                      <div className="mt-0.5 text-[11px] font-semibold text-cyan-100/80 md:text-xs">
+                        {group.completedCount}/{group.levels.length} levels complete
+                        {group.hasNextPlayable ? ' ? Next up available' : ''}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1 text-xs font-black text-yellow-200 md:text-sm">
+                        <AssetIcon name="star" className="h-4 w-4 text-yellow-300 md:h-5 md:w-5" />
+                        <span>{group.totalStars}/{totalPossibleStars}</span>
+                      </div>
+                      <span className="ml-1 text-xs font-black text-cyan-100/80 md:text-sm">
+                        {isExpanded ? '-' : '+'}
+                      </span>
+                    </div>
+                  </button>
+
+                  {isExpanded ? (
+                    <div className="mt-3 rounded-xl border border-white/14 bg-slate-900/45 p-3">
+                      <p className="text-xs font-semibold leading-relaxed text-cyan-50/92 md:text-sm">
+                        {group.summary}
+                      </p>
+
+                      <div className="mt-3 flex flex-col gap-2">
+                        {group.levels.map((row) => {
+                          const { level, stars, isCompleted, isUnlocked, isNextPlayable, lockReason } = row;
+                          const levelLabel = level.miniGameLevel ? `Level ${level.miniGameLevel}` : `Level ${level.id}`;
+
+                          return (
+                            <div
+                              key={`${group.id}-${level.id}`}
+                              className="flex items-center gap-2 rounded-lg border border-white/12 bg-slate-950/35 px-2.5 py-2"
+                            >
+                              <div className="w-[4.2rem] shrink-0 text-xs font-black uppercase tracking-[0.08em] text-white/85 md:w-[5.1rem] md:text-sm">
+                                {levelLabel}
+                              </div>
+
+                              <div className="min-w-0 flex-1 text-[11px] font-semibold text-cyan-100/80 md:text-xs">
+                                {!isUnlocked
+                                  ? lockReason
+                                  : isNextPlayable
+                                    ? 'Next up'
+                                    : isCompleted
+                                      ? 'Completed'
+                                      : 'Available'}
+                              </div>
+
+                              {!isUnlocked ? (
+                                <span className="text-base leading-none text-slate-100/85 md:text-lg">??</span>
+                              ) : null}
+
+                              <div className="flex items-center gap-0.5 md:gap-1">
+                                {[1, 2, 3].map((value) => (
+                                  <AssetIcon
+                                    key={`${level.id}-${value}`}
+                                    name={value <= stars ? 'star' : 'starOutline'}
+                                    className={`h-4 w-4 md:h-5 md:w-5 ${value <= stars ? 'text-yellow-300' : 'text-white/35'}`}
+                                  />
+                                ))}
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={() => isUnlocked && onSelectLevel(level)}
+                                disabled={!isUnlocked}
+                                className={`ui-button-primary ml-2 rounded-lg px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-white md:text-[11px] ${
+                                  isUnlocked ? '' : 'opacity-60'
+                                }`}
+                              >
+                                {isUnlocked ? 'Play' : 'Locked'}
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default IslandLevels;
+

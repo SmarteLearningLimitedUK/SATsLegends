@@ -2,8 +2,9 @@ $ErrorActionPreference = 'Stop'
 
 Add-Type -AssemblyName System.Drawing
 
-$sourcePath = 'D:\codexsatsgame\external-assets\game assets\take_out\take_out_assets.png'
-$targetRoot = 'D:\gamedevsam\SATSLegends\src\assets\take_out\slices'
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+$sourcePath = Join-Path $repoRoot 'src\assets\level_backgrounds\take_out.png'
+$targetRoot = Join-Path $repoRoot 'src\assets\take_out\slices'
 
 if (Test-Path $targetRoot) {
   Remove-Item $targetRoot -Recurse -Force
@@ -144,4 +145,3 @@ finally {
 }
 
 Write-Output "sliced:$($slices.Count)"
-

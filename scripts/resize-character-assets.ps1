@@ -2,8 +2,9 @@ $ErrorActionPreference = 'Stop'
 
 Add-Type -AssemblyName System.Drawing
 
-$sourceRoot = 'D:\gamedevsam\SATSLegends\src\assets\characters\characters'
-$targetRoot = 'D:\gamedevsam\SATSLegends\src\assets\characters\mobile'
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+$sourceRoot = Join-Path $repoRoot 'src\assets\characters\characters'
+$targetRoot = Join-Path $repoRoot 'src\assets\characters\mobile'
 
 if (Test-Path $targetRoot) {
   Remove-Item $targetRoot -Recurse -Force

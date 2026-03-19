@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Grid, TileData, CloudCollapseLevelConfig } from '../types';
-import { GameService } from '../services/gameService';
+import { GameService } from '../systems/services/gameService';
 import Tile from './Tile';
 import boardBg from '../assets/fantasy_hero/cloud_collapse/board_bg.png';
 import boardBorder from '../assets/fantasy_hero/cloud_collapse/board_border.png';

@@ -1,36 +1,38 @@
-﻿import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import AssetIcon from './components/AssetIcon';
 import { ACHIEVEMENTS, AVATARS, INITIAL_DAILY_QUESTS, ISLANDS } from './constants';
 import { DEFAULT_AVATAR_ID } from './assets/characters';
 import { GameScreen, IslandData, LevelData, MiniGameType, PlayerData } from './types';
-import WorldMap from './components/WorldMap';
-import IslandLevels from './components/IslandLevels';
-import PotionPourGame from './components/PotionPourGame';
-import TakeOutRushGame from './components/TakeOutRushGame';
-import FractionMatchGame from './components/FractionMatchGame';
-import PrimePopGame from './components/PrimePopGame';
-import AngleArenaGame from './components/AngleArenaGame';
-import PolygonPalaceGame from './components/PolygonPalaceGame';
-import DataDungeonGame from './components/DataDungeonGame';
-import MonsterMarketGame from './components/MonsterMarketGame';
-import RatioRapidsGame from './components/RatioRapidsGame';
-import TimekeeperTempleGame from './components/TimekeeperTempleGame';
-import MeasurementForgeGame from './components/MeasurementForgeGame';
-import TowerOfFactorsGame from './components/TowerOfFactorsGame';
-import DecimalSniperGame from './components/DecimalSniperGame';
-import PlaceValuePanicGame from './components/PlaceValuePanicGame';
-import TreasureChartCoveGame from './components/TreasureChartCoveGame';
-import RuneLockDungeonsGame from './components/RuneLockDungeonsGame';
-import TreasurePathGame from './components/TreasurePathGame';
-import ReasoningGame from './components/reasoning/ReasoningGame';
-import CurriculumChallengeGame from './components/CurriculumChallengeGame';
-import BossEncounterGame, { isBossEncounterGameType } from './components/BossEncounterGame';
-import AvatarSelect from './components/AvatarSelect';
+import WorldMap from './screens/WorldMap';
+import IslandLevels from './screens/IslandLevels';
+import PotionPourGame from './games/PotionPourGame';
+import TakeOutRushGame from './games/TakeOutRushGame';
+import FractionMatchGame from './games/FractionMatchGame';
+import PrimePopGame from './games/PrimePopGame';
+import AngleArenaGame from './games/AngleArenaGame';
+import PolygonPalaceGame from './games/PolygonPalaceGame';
+import DataDungeonGame from './games/DataDungeonGame';
+import MonsterMarketGame from './games/MonsterMarketGame';
+import RatioRapidsGame from './games/RatioRapidsGame';
+import TimekeeperTempleGame from './games/TimekeeperTempleGame';
+import MeasurementForgeGame from './games/MeasurementForgeGame';
+import TowerOfFactorsGame from './games/TowerOfFactorsGame';
+import DecimalSniperGame from './games/DecimalSniperGame';
+import PlaceValuePanicGame from './games/PlaceValuePanicGame';
+import TreasureChartCoveGame from './games/TreasureChartCoveGame';
+import RuneLockDungeonsGame from './games/RuneLockDungeonsGame';
+import OrderOpsArenaGame from './games/OrderOpsArenaGame';
+import TreasurePathGame from './games/TreasurePathGame';
+import ReasoningGame from './games/reasoning/ReasoningGame';
+import CurriculumChallengeGame from './games/CurriculumChallengeGame';
+import BossEncounterGame, { isBossEncounterGameType } from './games/BossEncounterGame';
+import DivisionDockGame from './games/DivisionDockGame';
+import AvatarSelect from './screens/AvatarSelect';
 import DailyRewardsModal from './components/modals/DailyRewardsModal';
 import DailyQuestsModal from './components/modals/DailyQuestsModal';
 import AchievementsModal from './components/modals/AchievementsModal';
-import ParentDashboard from './components/ParentDashboard';
+import ParentDashboard from './screens/ParentDashboard';
 import LevelResultModal from './components/LevelResultModal';
 import GameRulesModal from './components/GameRulesModal';
 import {
@@ -41,9 +43,9 @@ import {
   PremiumHeaderBar,
   RewardPanel,
   SecondaryActionButton,
-} from './components/layout/ScreenPrimitives';
+} from './layout/ScreenPrimitives';
 import { GAME_META } from './gameMeta';
-import { getBlueprintRuleSet } from './content/islandBlueprint';
+import { getBlueprintRuleSet } from './systems/content/islandBlueprint';
 import {
   GAME_AUDIO_STORAGE_KEY,
   GAME_HUD_HELP_EVENT,
@@ -621,7 +623,7 @@ const App: React.FC = () => {
       case 'monster_market':
         return <MonsterMarketGame {...sharedProps} />;
       case 'ratio_rapids':
-        return <RatioRapidsGame {...sharedProps} />;
+        return <RatioRapidsGame {...sharedProps} gameTitle={selectedLevel.displayName} />;
       case 'timekeeper_temple':
         return <TimekeeperTempleGame {...sharedProps} />;
       case 'measurement_forge':
@@ -641,10 +643,16 @@ const App: React.FC = () => {
       case 'chart_chase':
         return <TreasureChartCoveGame {...sharedProps} />;
       case 'equation_grove':
+        if (selectedLevel.blueprintKey === 'order_ops_arena') {
+          return <OrderOpsArenaGame {...sharedProps} />;
+        }
         return <RuneLockDungeonsGame {...sharedProps} />;
       case 'coordinate_quest':
         return <TreasurePathGame {...sharedProps} />;
       case 'calculation_clash':
+        if (selectedLevel.blueprintKey === 'division_dock') {
+          return <DivisionDockGame {...sharedProps} />;
+        }
       case 'percent_pulse':
       case 'transform_temple':
       case 'scale_safari':

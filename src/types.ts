@@ -161,7 +161,7 @@ export type GameScreen =
   | 'settings'
   | 'parent_dashboard';
 
-// Sats Mastery Specific Types
+// SATs Legends specific types
 export type MathType = 'ADDITION' | 'SUBTRACTION' | 'MULTIPLICATION' | 'DIVISION' | 'FRACTIONS' | 'DECIMALS';
 export type PowerUpType = 'ROW_CLEAR' | 'COLUMN_CLEAR' | 'BOMB';
 

@@ -2,9 +2,10 @@ $ErrorActionPreference = 'Stop'
 
 Add-Type -AssemblyName System.Drawing
 
-$sourceBoard = 'D:\codexsatsgame\external-assets\game assets\match\matchboard 2.png'
-$sourceTiles = 'D:\codexsatsgame\external-assets\game assets\match\matchsquares.png'
-$targetRoot = 'D:\gamedevsam\SATSLegends\src\assets\fraction_match'
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+$sourceBoard = Join-Path $repoRoot 'src\assets\fraction_match\board_premium.png'
+$sourceTiles = Join-Path $repoRoot 'src\assets\fraction_match\board_premium.png'
+$targetRoot = Join-Path $repoRoot 'src\assets\fraction_match'
 $tileRoot = Join-Path $targetRoot 'tiles'
 
 New-Item -ItemType Directory -Force -Path $targetRoot | Out-Null

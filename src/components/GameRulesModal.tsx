@@ -2,7 +2,7 @@ import React from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import AssetIcon from './AssetIcon';
 import { GameRuleSet } from '../gameMeta';
-import { HUDBar } from './layout/ScreenPrimitives';
+import { HUDBar } from '../layout/ScreenPrimitives';
 import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
 
 interface GameRulesModalProps {

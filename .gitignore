@@ -13,4 +13,5 @@ characters/
 deploy.config.bat
 .vercel
 .env*.local
-importedassets/screen comparison/SATsLegendsendofcodex.zip
+.verify_deployroot/
+src/assets/importedassets/screen comparison/SATsLegendsendofcodex.zip

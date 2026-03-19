@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import AssetIcon from './AssetIcon';
 import { triggerHaptic } from '../haptics';
@@ -9,7 +9,7 @@ import {
   PrimaryActionButton,
   RewardPanel,
   SecondaryActionButton,
-} from './layout/ScreenPrimitives';
+} from '../layout/ScreenPrimitives';
 
 interface LevelResultModalProps {
   isOpen: boolean;

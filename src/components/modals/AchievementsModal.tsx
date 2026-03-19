@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import AssetIcon from '../AssetIcon';
 import { PlayerData } from '../../types';
@@ -8,7 +8,7 @@ import {
   PremiumHeaderBar,
   PremiumProgressBar,
   RewardPanel,
-} from '../layout/ScreenPrimitives';
+} from '../../layout/ScreenPrimitives';
 
 interface AchievementsModalProps {
   isOpen: boolean;

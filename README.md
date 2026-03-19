@@ -1,39 +1,30 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Sats Legends
 
-# Run and deploy your AI Studio app
+Sats Legends is the active React + TypeScript + Vite app in this repository.
 
-This contains everything you need to run your app locally.
-
-View your app in AI Studio: https://ai.studio/apps/a5a23fe0-08ec-40a3-9b21-e5cfbefe3020
-
-## Run Locally
-
-**Prerequisites:**  Node.js
-
+## Run locally
 
 1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+   - `npm install`
+2. Start dev server:
+   - `npm run dev`
+3. Build:
+   - `npm run build`
 
-## One-click build + upload for internal testing (Windows)
+## Active structure
 
-1. Copy `deploy.config.example.bat` to `deploy.config.bat`.
-2. Edit `deploy.config.bat` and set your FTP/FTPS credentials.
-3. Double-click `Script_BuildAll.bat`.
+- `src/`
+  - `assets/`
+  - `components/`
+  - `games/`
+  - `layout/`
+  - `screens/`
+  - `systems/`
+- `public/`
+- `docs/`
+- `scripts/`
 
-What it does:
-- Runs `npm install`
-- Runs `npm run build`
-- Uploads all files from `dist/` to the remote folder `sats` using explicit FTPS on port 21
-- `FTP_ALLOW_INSECURE_CERT=true` can be used if your FTPS server presents a self-signed or mismatched TLS certificate
-- `FTP_USE_PASSIVE` controls FTP passive mode (`true` default); set `false` if your server requires active mode
-- `FTP_ALLOW_PASSIVE_TOGGLE_FALLBACK` controls whether the uploader retries with opposite passive mode (`false` default)
-- `FTP_MAX_PARALLEL` controls concurrent upload streams (`5` default, range `1..20`)
+## Notes
 
-This branch no longer uses Vercel deployment files; use `Script_BuildAll.bat` for internal test uploads.
-
-For reusing this setup in other projects, see `docs/BUILD_UPLOAD_FRAMEWORK_GUIDE.md`.
+- `docs/BUILD_SPEC.md` is the canonical curriculum/game-plan reference.
+- `docs/SNAG_SHEET.md` is the tracking template for polish and QA snags.

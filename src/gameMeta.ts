@@ -340,11 +340,11 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     ),
   },
   scale_safari: {
-    label: 'Scale Safari',
+    label: 'Scale Builder',
     focus: 'Scale factors, conversions and proportional thinking',
     rules: {
-      title: 'Scale Safari',
-      summary: 'Resize, convert or scale quantities to match the safari target.',
+      title: 'Scale Builder',
+      summary: 'Resize, convert, or scale quantities to match the build target.',
       bullets: [
         'Use scale factors and conversion facts together.',
         'Recipe and map-style questions appear in later rounds.',
@@ -399,15 +399,15 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   equation_grove: {
-    label: 'Rune Lock Dungeons',
+    label: 'Order Ops Arena',
     focus: 'Missing numbers, simple algebra and inverse operations',
     rules: {
-      title: 'Rune Lock Dungeons',
-      summary: 'Solve the missing number and place the correct rune to blast open each dungeon door.',
+      title: 'Order Ops Arena',
+      summary: 'Resolve each expression using the correct operation order to unlock the arena gate.',
       bullets: [
-        'Most doors use missing-number equations such as add, subtract or multiply to unlock the seal.',
-        'Later rounds add multi-step locks and balancing puzzles before the trap cycle completes.',
-        'Pick the right rune quickly so the dungeon opens before the traps trigger.',
+        'Use brackets first, then multiplication/division, then addition/subtraction.',
+        'Rounds mix single and multi-step expressions with close distractor answers.',
+        'Fast accurate decisions build streaks and keep the arena under control.',
       ],
     },
   },

@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import AssetIcon from '../AssetIcon';
 import { DailyQuest } from '../../types';
@@ -9,7 +9,7 @@ import {
   PrimaryActionButton,
   RewardPanel,
   SecondaryActionButton,
-} from '../layout/ScreenPrimitives';
+} from '../../layout/ScreenPrimitives';
 
 interface DailyQuestsModalProps {
   isOpen: boolean;

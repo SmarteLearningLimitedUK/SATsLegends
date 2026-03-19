@@ -8,7 +8,7 @@ interface TutorialProps {
 
 const steps = [
   {
-    title: 'Welcome to Sats Mastery!',
+    title: 'Welcome to Sats Legends!',
     content: 'Match three or more tiles with equivalent mathematical values to clear them from the grid.',
     image: '??'
   },

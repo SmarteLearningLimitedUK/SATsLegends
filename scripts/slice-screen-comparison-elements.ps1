@@ -2,8 +2,8 @@ $ErrorActionPreference = 'Stop'
 
 Add-Type -AssemblyName System.Drawing
 
-$repoRoot = 'D:\BrainZilla\SATsLegends'
-$sourcePath = Join-Path $repoRoot 'importedassets\screen comparison\00 - elements.jpg'
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+$sourcePath = Join-Path $repoRoot 'src\assets\importedassets\screen comparison\00 - elements.jpg'
 $targetRoot = Join-Path $repoRoot 'src\assets\screen_build\slices'
 $manifestPath = Join-Path $targetRoot 'manifest.json'
 

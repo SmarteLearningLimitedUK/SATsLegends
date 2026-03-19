@@ -6,7 +6,7 @@ import world03Map from './assets/maps/world_03.png';
 import world04Map from './assets/maps/world_04.png';
 import world05Map from './assets/maps/world_05.png';
 import world06Map from './assets/maps/world_06.png';
-import { NUMBER_BASE_CAMP_LEVELS } from './content/island1NumberBaseCamp';
+import { NUMBER_BASE_CAMP_LEVELS } from './systems/content/island1NumberBaseCamp';
 
 export const ACHIEVEMENTS: Achievement[] = [
   { id: 'first_win', title: 'First Victory', description: 'Complete your first level', icon: '🏆', type: 'levels', target: 1 },
@@ -105,9 +105,9 @@ export const ISLANDS: IslandData[] = [
       { id: 1, stars: 0, isLocked: false, blueprintKey: 'potion_panic', displayName: 'Potion Panic', gameType: 'potion_pour' },
       { id: 2, stars: 0, isLocked: false, blueprintKey: 'potion_panic', displayName: 'Potion Panic', gameType: 'potion_pour' },
       { id: 3, stars: 0, isLocked: false, blueprintKey: 'share_splitter', displayName: 'Share Splitter', gameType: 'ratio_rapids' },
-      { id: 4, stars: 0, isLocked: false, blueprintKey: 'proportion_puzzle', displayName: 'Proportion Puzzle', gameType: 'ratio_rapids' },
+      { id: 4, stars: 0, isLocked: false, blueprintKey: 'maths_vs_zombies', displayName: 'Maths vs Zombies', gameType: 'ratio_rapids' },
       { id: 5, stars: 0, isLocked: false, blueprintKey: 'scale_builder', displayName: 'Scale Builder', gameType: 'scale_safari' },
-      { id: 6, stars: 0, isLocked: false, blueprintKey: 'ratio_rush', displayName: 'Ratio Rush', gameType: 'ratio_rapids' },
+      { id: 6, stars: 0, isLocked: false, blueprintKey: 'maths_vs_zombies', displayName: 'Maths vs Zombies', gameType: 'ratio_rapids' },
     ],
   },
   {
@@ -199,7 +199,7 @@ export const SHOP_ITEMS: ShopItem[] = [
   { id: 'effect_1', name: 'Sparkle Trail', type: 'effect', price: 100, currency: 'gems', isLocked: true, levelRequired: 10 },
 ];
 
-// Sats Mastery Specific Constants
+// SATs Legends specific constants
 export const CLOUD_COLLAPSE_LEVELS: CloudCollapseLevelConfig[] = [
   { id: 1, targetScore: 300, duration: 60, gridSize: 5, mathTypes: ['FRACTIONS'] },
   { id: 2, targetScore: 600, duration: 75, gridSize: 5, mathTypes: ['DECIMALS'] },
