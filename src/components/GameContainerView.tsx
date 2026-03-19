@@ -34,6 +34,7 @@ interface GameContainerViewProps {
   hudCompact?: boolean;
   dockCompact?: boolean;
   stageClassName?: string;
+  hudProgressBarClass?: string;
 }
 
 const GameContainerView: React.FC<GameContainerViewProps> = ({
@@ -65,6 +66,7 @@ const GameContainerView: React.FC<GameContainerViewProps> = ({
   hudCompact = true,
   dockCompact = false,
   stageClassName = '',
+  hudProgressBarClass = 'bg-gradient-to-r from-cyan-400 via-sky-400 to-sky-400',
 }) => {
   const objectiveShellStyle: React.CSSProperties = {
     backgroundImage: `url(${MAIN_PNG_SKIN.mission})`,
@@ -101,7 +103,7 @@ const GameContainerView: React.FC<GameContainerViewProps> = ({
             accentText="text-sky-950"
             accentSoftBg="bg-sky-100/80"
             accentBorder="border-sky-200/80"
-            progressBar="bg-gradient-to-r from-cyan-400 via-sky-400 to-sky-400"
+            progressBar={hudProgressBarClass}
             statLabel={roundLabel}
             statValue={resolvedRoundValue}
             showTitleRow={showHeaderTitleRow}

@@ -423,6 +423,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       targetScore={levelConfig.targetScore}
       timeLeft={timeLeft}
       progress={progress}
+      hudProgressBarClass="bg-gradient-to-r from-amber-300 via-yellow-300 to-cyan-300"
       hudCompact={false}
       roundLabel="Round"
       roundValue={roundsCleared + 1}
