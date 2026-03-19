@@ -3,10 +3,11 @@ import { AnimatePresence, motion } from 'motion/react';
 import { AVATARS } from '../constants';
 import GameContainerView from './GameContainerView';
 import placeValuePanicBackground from '../assets/level_backgrounds/place_value_panicbkgrd.png';
-import pvpGemBase from '../assets/place_value/jewels/gem.png';
-import pvpGemEmerald from '../assets/place_value/jewels/emerald.png';
-import pvpGemSapphire from '../assets/place_value/jewels/sapphire.png';
-import pvpGemIcon from '../assets/place_value/jewels/icon_gem.png';
+import gemBlue from '../assets/place_value/jewels/diamond_blue.png';
+import gemGreen from '../assets/place_value/jewels/diamond_green.png';
+import gemPurple from '../assets/place_value/jewels/diamond_purple.png';
+import gemRed from '../assets/place_value/jewels/diamond_red.png';
+import gemYellow from '../assets/place_value/jewels/diamond_yellow.png';
 import {
   DigitTile,
   PlaceValueSlotKey,
@@ -49,10 +50,11 @@ const SLOT_DISPLAY_VALUES: Record<PlaceValueSlotKey, string> = {
 
 const MIN_TAP_TARGET = 44;
 const GEM_TEXTURES: string[] = [
-  pvpGemBase,
-  pvpGemEmerald,
-  pvpGemSapphire,
-  pvpGemIcon,
+  gemPurple,
+  gemBlue,
+  gemYellow,
+  gemGreen,
+  gemRed,
 ];
 
 const getGemTexture = (digitValue: number) => GEM_TEXTURES[Math.abs(digitValue) % GEM_TEXTURES.length];

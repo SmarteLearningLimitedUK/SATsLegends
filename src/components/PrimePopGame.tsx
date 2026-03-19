@@ -22,6 +22,7 @@ interface Bubble {
   x: number; // percentage 0-100
   lane: number;
   createdAt: number;
+  expiresAt: number;
   speed: number;
   isPopped: boolean;
   size: number;
@@ -74,18 +75,18 @@ const PRIME_PALETTES = [
 
 const COMPOSITE_PALETTES = [
   {
-    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.96), rgba(255,235,138,0.92) 18%, rgba(251,191,36,0.84) 46%, rgba(249,115,22,0.78) 72%, rgba(154,52,18,0.82) 100%)',
-    ring: 'rgba(255,215,110,0.84)',
-    glow: '0 0 22px rgba(249,115,22,0.34)',
-    sparkle: 'rgba(255,247,200,0.8)',
-    text: '#fffaf0',
+    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.96), rgba(191,232,255,0.95) 20%, rgba(125,211,252,0.9) 48%, rgba(59,130,246,0.86) 72%, rgba(30,64,175,0.84) 100%)',
+    ring: 'rgba(147,197,253,0.88)',
+    glow: '0 0 22px rgba(56,189,248,0.34)',
+    sparkle: 'rgba(224,242,254,0.86)',
+    text: '#f8fafc',
   },
   {
-    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.96), rgba(255,222,120,0.92) 20%, rgba(249,115,22,0.82) 48%, rgba(220,38,38,0.74) 74%, rgba(127,29,29,0.82) 100%)',
-    ring: 'rgba(254,186,116,0.8)',
-    glow: '0 0 22px rgba(239,68,68,0.32)',
-    sparkle: 'rgba(255,242,214,0.78)',
-    text: '#fff7f7',
+    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.96), rgba(186,230,253,0.94) 18%, rgba(96,165,250,0.9) 46%, rgba(37,99,235,0.86) 72%, rgba(30,58,138,0.82) 100%)',
+    ring: 'rgba(191,219,254,0.86)',
+    glow: '0 0 22px rgba(59,130,246,0.34)',
+    sparkle: 'rgba(239,246,255,0.82)',
+    text: '#f8fafc',
   },
 ];
 
@@ -147,6 +148,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
       const selectedLane = lanePool[Math.floor(Math.random() * lanePool.length)];
       const laneJitter = (Math.random() * 2.4) - 1.2;
       const palette = palettePool[Math.floor(Math.random() * palettePool.length)];
+      const bubbleSpeed = 4.6 + Math.random() * 2.8 + (levelId * 0.36);
 
       const newBubble: Bubble = {
         id: Math.random().toString(36).substr(2, 9),
@@ -155,7 +157,8 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
         x: selectedLane + laneJitter,
         lane: selectedLane,
         createdAt: now,
-        speed: 4.6 + Math.random() * 2.8 + (levelId * 0.36),
+        expiresAt: now + (bubbleSpeed * 1000) + 800,
+        speed: bubbleSpeed,
         isPopped: false,
         size: 58 + Math.random() * 18,
         palette,
@@ -199,11 +202,12 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     return () => clearInterval(timer);
   }, [timeLeft, isGameOver, isVictory]);
 
-  // Cleanup bubbles that reached the top
+  // Cleanup popped and expired bubbles.
   useEffect(() => {
     const cleanupTimer = setInterval(() => {
-      setBubbles(prev => prev.filter(b => !b.isPopped));
-    }, 5000);
+      const now = Date.now();
+      setBubbles(prev => prev.filter(b => !b.isPopped && b.expiresAt > now));
+    }, 220);
     return () => clearInterval(cleanupTimer);
   }, []);
 
@@ -309,15 +313,15 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
       className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden md:cursor-none"
       style={{
         background:
-          'linear-gradient(180deg, #30c9d8 0%, #5ad6de 50%, #84e0e2 100%)',
+          'linear-gradient(180deg, #0f2f6c 0%, #1f4f9f 46%, #2b67b6 100%)',
       }}
     >
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute left-[-12%] top-[6%] h-[38%] w-[48%] rounded-full bg-white/30 blur-3xl" />
-        <div className="absolute left-[16%] top-[18%] h-[34%] w-[44%] rounded-full bg-white/20 blur-3xl" />
-        <div className="absolute right-[-8%] top-[12%] h-[42%] w-[46%] rounded-full bg-white/26 blur-3xl" />
-        <div className="absolute left-[-8%] bottom-[-18%] h-[52%] w-[66%] rounded-full bg-white/26 blur-3xl" />
-        <div className="absolute right-[-6%] bottom-[-12%] h-[48%] w-[58%] rounded-full bg-white/24 blur-3xl" />
+        <div className="absolute left-[-12%] top-[6%] h-[38%] w-[48%] rounded-full bg-cyan-200/18 blur-3xl" />
+        <div className="absolute left-[16%] top-[18%] h-[34%] w-[44%] rounded-full bg-sky-100/16 blur-3xl" />
+        <div className="absolute right-[-8%] top-[12%] h-[42%] w-[46%] rounded-full bg-blue-100/14 blur-3xl" />
+        <div className="absolute left-[-8%] bottom-[-18%] h-[52%] w-[66%] rounded-full bg-amber-200/14 blur-3xl" />
+        <div className="absolute right-[-6%] bottom-[-12%] h-[48%] w-[58%] rounded-full bg-yellow-100/12 blur-3xl" />
       </div>
 
       <div className="z-10 w-full max-w-6xl aaa-game-stage flex h-full min-h-0 flex-1 flex-col items-center gap-2 md:gap-5">
@@ -329,10 +333,10 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
           timeLeft={timeLeft}
           progress={progress}
           compact
-          accentText="text-emerald-900"
-          accentSoftBg="bg-emerald-100/80"
-          accentBorder="border-emerald-200/80"
-          progressBar="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400"
+          accentText="text-sky-900"
+          accentSoftBg="bg-sky-100/80"
+          accentBorder="border-sky-200/80"
+          progressBar="bg-gradient-to-r from-yellow-400 via-amber-300 to-sky-400"
           statLabel="Combo"
           statValue={combo}
         />
@@ -344,13 +348,22 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
           onPointerDown={(event) => handlePlayfieldPointerDown(event.clientX, event.clientY)}
           className="w-full flex-1 min-h-[23rem] md:min-h-[31rem] relative licensed-board-frame structured-playfield-frame overflow-hidden touch-none touch-manipulation"
         >
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,#37cfdb_0%,#67dfe2_46%,#95e7e8_100%)]" />
-          <div className="absolute left-[-12%] top-[8%] h-[38%] w-[52%] rounded-full bg-white/24 blur-2xl" />
-          <div className="absolute left-[18%] top-[14%] h-[30%] w-[46%] rounded-full bg-white/16 blur-2xl" />
-          <div className="absolute right-[-10%] top-[10%] h-[42%] w-[54%] rounded-full bg-white/24 blur-2xl" />
-          <div className="absolute left-[-14%] bottom-[-18%] h-[48%] w-[68%] rounded-full bg-white/26 blur-2xl" />
-          <div className="absolute right-[-12%] bottom-[-14%] h-[44%] w-[62%] rounded-full bg-white/24 blur-2xl" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,#1894d1_0%,#2ca9da_38%,#52c4e5_76%,#80daf2_100%)]" />
+          <div className="absolute left-[-12%] top-[8%] h-[38%] w-[52%] rounded-full bg-sky-100/28 blur-2xl" />
+          <div className="absolute left-[18%] top-[14%] h-[30%] w-[46%] rounded-full bg-cyan-100/20 blur-2xl" />
+          <div className="absolute right-[-10%] top-[10%] h-[42%] w-[54%] rounded-full bg-blue-100/24 blur-2xl" />
+          <div className="absolute left-[-14%] bottom-[-18%] h-[48%] w-[68%] rounded-full bg-amber-100/20 blur-2xl" />
+          <div className="absolute right-[-12%] bottom-[-14%] h-[44%] w-[62%] rounded-full bg-yellow-100/20 blur-2xl" />
           <div className="absolute inset-x-[2.2%] top-[3.6%] bottom-[4.2%] rounded-[1.2rem] md:rounded-[1.8rem] border border-white/24 bg-transparent shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)] pointer-events-none" />
+
+          <div className="absolute left-3 right-3 top-3 z-20 flex flex-wrap items-center justify-between gap-2 md:left-4 md:right-4 md:top-4">
+            <div className="rounded-full border border-cyan-100/60 bg-[linear-gradient(180deg,rgba(37,99,235,0.95),rgba(30,64,175,0.95))] px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-50 shadow-[0_8px_16px_rgba(2,6,23,0.26)] md:text-xs">
+              Pop Prime Numbers
+            </div>
+            <div className="rounded-full border border-amber-200/70 bg-[linear-gradient(180deg,rgba(251,191,36,0.98),rgba(245,158,11,0.98))] px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-amber-950 shadow-[0_8px_16px_rgba(2,6,23,0.24)] md:text-xs">
+              Prime +75 | Composite -50
+            </div>
+          </div>
 
           {/* Custom Crosshair */}
           <div 
@@ -360,7 +373,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
             <Crosshair className="w-full h-full" />
           </div>
 
-          <div className="absolute inset-x-[2.2%] top-[3.6%] bottom-[4.2%] overflow-hidden rounded-[1.2rem] md:rounded-[1.8rem]">
+          <div className="absolute inset-x-[2.2%] top-[3.6%] bottom-[4.2%] z-10 overflow-hidden rounded-[1.2rem] md:rounded-[1.8rem]">
             <AnimatePresence>
               {bubbles.map(bubble => !bubble.isPopped && (
                 <motion.div
@@ -376,15 +389,11 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
                     opacity: { duration: 0.45, times: [0, 0.1, 1] },
                     scale: { duration: 0.35 }
                   }}
-                  onAnimationComplete={() => {
-                    delete bubbleNodeRefs.current[bubble.id];
-                    setBubbles(prev => prev.filter(item => item.id !== bubble.id || item.isPopped));
-                  }}
                   onPointerDown={(e) => {
                     e.stopPropagation();
                     handlePlayfieldPointerDown(e.clientX, e.clientY);
                   }}
-                  className="absolute -translate-x-1/2 flex items-center justify-center rounded-full backdrop-blur-md md:cursor-none"
+                  className="absolute z-20 -translate-x-1/2 flex items-center justify-center rounded-full backdrop-blur-md md:cursor-none"
                   style={{
                     background: bubble.palette.background,
                     border: `2px solid ${bubble.palette.ring}`,
