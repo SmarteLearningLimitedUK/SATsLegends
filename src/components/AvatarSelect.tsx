@@ -146,7 +146,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
   };
 
   return (
-    <div className="relative flex h-full w-full items-stretch justify-center overflow-hidden px-3 pt-[calc(env(safe-area-inset-top)+0.35rem)] pb-[calc(env(safe-area-inset-bottom)+0.5rem)] md:px-6 md:pt-5 md:pb-6">
+    <div className="premium-page-root relative flex h-full w-full items-stretch justify-center overflow-hidden px-3 pt-[calc(env(safe-area-inset-top)+0.35rem)] pb-[calc(env(safe-area-inset-bottom)+0.5rem)] md:px-6 md:pt-5 md:pb-6">
       <div className="relative flex h-full w-full max-w-6xl flex-col overflow-hidden rounded-[2.35rem] border border-cyan-100/30 shadow-[0_28px_60px_rgba(2,6,23,0.45)] md:rounded-[3rem]">
         <div
           className="absolute inset-0 -z-40 bg-cover bg-center opacity-95"

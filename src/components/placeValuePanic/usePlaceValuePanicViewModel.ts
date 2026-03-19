@@ -207,11 +207,13 @@ export const usePlaceValuePanicViewModel = ({
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [isResolved, setIsResolved] = useState(false);
+  const [isForgingTransition, setIsForgingTransition] = useState(false);
   const [hintSlotKey, setHintSlotKey] = useState<PlaceValueSlotKey | null>(null);
   const [lastRejectedTileId, setLastRejectedTileId] = useState<string | null>(null);
 
   const onVictoryRef = useRef(onVictory);
   const roundTimerRef = useRef<number | null>(null);
+  const resolvedRoundIdRef = useRef<string | null>(null);
 
   useEffect(() => { onVictoryRef.current = onVictory; }, [onVictory]);
 
@@ -233,6 +235,7 @@ export const usePlaceValuePanicViewModel = ({
 
   const resetAll = useCallback(() => {
     clearRoundTimer();
+    resolvedRoundIdRef.current = null;
     setRound(buildRound(levelConfig, 1));
     setRoundNumber(1);
     setRoundsCleared(0);
@@ -245,6 +248,7 @@ export const usePlaceValuePanicViewModel = ({
     setTimeLeft(levelConfig.timeLimitSec);
     setIsPaused(false);
     setIsResolved(false);
+    setIsForgingTransition(false);
     setHintSlotKey(null);
     setLastRejectedTileId(null);
     setFeedbackState('Stabilise the number system', 'Drag each digit into the correct place.', 'warning');
@@ -333,6 +337,8 @@ export const usePlaceValuePanicViewModel = ({
 
   const moveToNextRound = useCallback(() => {
     const nextRoundIndex = roundNumber + 1;
+    resolvedRoundIdRef.current = null;
+    setIsForgingTransition(false);
     setRound(buildRound(levelConfig, nextRoundIndex));
     setRoundNumber(nextRoundIndex);
     setHintSlotKey(null);
@@ -340,6 +346,8 @@ export const usePlaceValuePanicViewModel = ({
 
   useEffect(() => {
     if (!roundComplete || isResolved) return;
+    if (resolvedRoundIdRef.current === round.id) return;
+    resolvedRoundIdRef.current = round.id;
     clearRoundTimer();
     const completionBonus = 80 + levelConfig.difficultyTier * 30;
     const speedBonus = Math.max(
@@ -351,13 +359,14 @@ export const usePlaceValuePanicViewModel = ({
     const nextScore = score + totalBonus;
     const nextCleared = roundsCleared + 1;
 
+    setIsForgingTransition(true);
     setScore(nextScore);
     setRoundsCleared(nextCleared);
-    setFeedbackState('Board Complete', `+${totalBonus} (combo + speed + clear)`, 'success');
+    setFeedbackState('FORGED!', `+${totalBonus} (combo + speed + clear)`, 'success');
 
     roundTimerRef.current = window.setTimeout(() => {
       moveToNextRound();
-    }, 280);
+    }, 700);
 
     return clearRoundTimer;
   }, [
@@ -372,6 +381,7 @@ export const usePlaceValuePanicViewModel = ({
     score,
     setFeedbackState,
     timeLeft,
+    round.id,
   ]);
 
   useEffect(() => () => clearRoundTimer(), [clearRoundTimer]);
@@ -461,6 +471,7 @@ export const usePlaceValuePanicViewModel = ({
     accuracy,
     feedback,
     isPaused,
+    isForgingTransition,
     setIsPaused,
     hintSlotKey,
     lastRejectedTileId,

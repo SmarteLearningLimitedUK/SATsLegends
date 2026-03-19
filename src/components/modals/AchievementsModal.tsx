@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import AssetIcon from '../AssetIcon';
 import { PlayerData } from '../../types';
@@ -29,7 +29,7 @@ const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, onClose, 
             initial={{ scale: 0.8, opacity: 0, y: 50 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.8, opacity: 0, y: 50 }}
-            className="app-modal-panel licensed-game-card-dark relative flex w-full max-w-xl flex-col overflow-hidden rounded-[1.75rem] p-3.5 shadow-[0_0_100px_rgba(234,179,8,0.4)] md:max-w-3xl md:rounded-[3rem] md:p-8"
+            className="app-modal-panel premium-modal-shell licensed-game-card-dark relative flex w-full max-w-xl flex-col overflow-hidden rounded-[1.75rem] p-3.5 shadow-[0_0_100px_rgba(234,179,8,0.4)] md:max-w-3xl md:rounded-[3rem] md:p-8"
           >
             <button
               onClick={onClose}

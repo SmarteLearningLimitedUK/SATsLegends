@@ -906,7 +906,7 @@ const App: React.FC = () => {
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 1.02 }}
-          className={`app-screen-content relative z-10 flex min-h-0 w-full flex-1 justify-center pointer-events-auto ${screenBehavior.scrollable ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'} ${isMapLayoutScreen ? 'sat-screen-map-content' : 'sat-screen-standard-content mx-auto max-w-7xl items-stretch'} ${bottomNavOffsetClass}`}
+          className={`app-screen-content relative z-10 flex min-h-0 w-full flex-1 justify-center pointer-events-auto ${screenBehavior.scrollable ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'} ${isMapLayoutScreen ? 'sat-screen-map-content' : 'sat-screen-standard-content items-stretch'} ${bottomNavOffsetClass}`}
           style={screenBehavior.scrollable ? { WebkitOverflowScrolling: 'touch' } : undefined}
         >
           {renderScreen()}

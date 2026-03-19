@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+ï»¿import React, { useEffect, useMemo, useState } from 'react';
 import AssetIcon from './AssetIcon';
 import { IslandData, LevelData, PlayerData } from '../types';
 
@@ -217,7 +217,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
   const completionPercent = Math.round((completedLevels.length / Math.max(1, island.levels.length)) * 100);
 
   return (
-    <div className="relative h-full w-full overflow-hidden">
+    <div className="premium-page-root relative h-full w-full overflow-hidden">
       {island.mapImage ? (
         <img
           src={island.mapImage}
@@ -228,8 +228,8 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
       ) : null}
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,17,31,0.62),rgba(7,17,31,0.88))]" />
 
-      <div className="relative z-10 mx-auto flex h-full w-full max-w-4xl min-h-0 flex-col p-3 md:p-5">
-        <div className="mb-3 flex items-start justify-between gap-3 md:mb-4">
+      <div className="premium-page-content relative z-10 mx-auto flex h-full w-full max-w-4xl min-h-0 flex-col p-3 md:p-5">
+        <div className="premium-page-header mb-3 flex items-start justify-between gap-3 md:mb-4">
           <button
             onClick={onBack}
             className="ui-icon-button flex h-11 w-11 items-center justify-center rounded-full p-0 text-white shadow-xl md:h-12 md:w-12"
@@ -266,7 +266,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
           />
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+        <div className="premium-page-scroll min-h-0 flex-1 overflow-y-auto pr-1">
           <div className="flex flex-col gap-2.5 pb-4 md:gap-3 md:pb-6">
             {gameGroups.map((group) => {
               const isExpanded = expandedGameId === group.id;
@@ -298,7 +298,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
                       <div className="truncate text-sm font-black text-white md:text-base">{group.name}</div>
                       <div className="mt-0.5 text-[11px] font-semibold text-cyan-100/80 md:text-xs">
                         {group.completedCount}/{group.levels.length} levels complete
-                        {group.hasNextPlayable ? ' • Next up available' : ''}
+                        {group.hasNextPlayable ? ' ï¿½ Next up available' : ''}
                       </div>
                     </div>
 

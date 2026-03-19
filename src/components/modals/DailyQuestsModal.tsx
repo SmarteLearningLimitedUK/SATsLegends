@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import AssetIcon from '../AssetIcon';
 import { DailyQuest } from '../../types';
@@ -27,7 +27,7 @@ const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({ isOpen, onClose, qu
             initial={{ scale: 0.8, opacity: 0, y: 50 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.8, opacity: 0, y: 50 }}
-            className="app-modal-panel licensed-game-card-dark relative flex w-full max-w-xl flex-col overflow-hidden rounded-[1.75rem] p-3.5 shadow-[0_0_100px_rgba(0,0,0,0.35)] backdrop-blur-xl md:max-w-2xl md:rounded-[3rem] md:p-8"
+            className="app-modal-panel premium-modal-shell licensed-game-card-dark relative flex w-full max-w-xl flex-col overflow-hidden rounded-[1.75rem] p-3.5 shadow-[0_0_100px_rgba(0,0,0,0.35)] backdrop-blur-xl md:max-w-2xl md:rounded-[3rem] md:p-8"
           >
             <button
               onClick={onClose}

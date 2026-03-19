@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import AssetIcon from './AssetIcon';
 import { triggerHaptic } from '../haptics';
@@ -51,7 +51,7 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
             animate={{ y: 0, scale: 1, opacity: 1 }}
             exit={{ y: 18, scale: 0.97, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 220, damping: 22 }}
-            className="app-modal-panel licensed-game-card-dark relative flex w-full max-w-md flex-col overflow-hidden rounded-[1.5rem] shadow-[0_30px_90px_rgba(0,0,0,0.45)] md:max-w-lg md:rounded-[2rem]"
+            className="app-modal-panel premium-modal-shell licensed-game-card-dark relative flex w-full max-w-md flex-col overflow-hidden rounded-[1.5rem] shadow-[0_30px_90px_rgba(0,0,0,0.45)] md:max-w-lg md:rounded-[2rem]"
           >
             <div className="relative z-10 flex flex-col gap-3 p-3.5 md:gap-6 md:p-8">
               <div className="licensed-slice-paper-panel mx-auto flex h-16 w-16 items-center justify-center rounded-[1.1rem] p-2 shadow-inner md:h-28 md:w-28 md:rounded-[1.75rem]">

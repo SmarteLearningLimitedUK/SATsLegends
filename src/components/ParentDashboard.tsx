@@ -159,10 +159,10 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
   ];
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden licensed-shell-bg">
+    <div className="premium-page-root relative flex h-full w-full flex-col overflow-hidden licensed-shell-bg">
       <div className="absolute inset-0 bg-slate-950/48" />
 
-      <header className="relative z-10 flex shrink-0 items-center justify-between px-4 pb-2.5 pt-[calc(0.75rem+env(safe-area-inset-top))] md:px-8 md:pb-4 md:pt-6">
+      <header className="premium-page-header relative z-10 shrink-0 items-center justify-between px-4 pb-2.5 pt-[calc(0.75rem+env(safe-area-inset-top))] md:px-8 md:pb-4 md:pt-6">
         <div className="flex min-w-0 items-center gap-3">
           <button
             onClick={onBack}
@@ -180,7 +180,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
         </div>
       </header>
 
-      <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto px-4 pb-24 md:gap-4 md:px-8 md:pb-8">
+      <div className="premium-page-content premium-page-scroll relative z-10 flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto px-4 pb-24 md:gap-4 md:px-8 md:pb-8">
         <div className="grid grid-cols-4 gap-2 md:gap-4">
           {stats.map(item => (
             <FramedPanel
