@@ -91,6 +91,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     accuracy,
     feedback,
     isPaused,
+    isForgingTransition,
     setIsPaused,
     hintSlotKey,
     lastRejectedTileId,
@@ -278,10 +279,13 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/50 md:text-xs">{SLOT_DISPLAY_VALUES[slot.key]}</div>
                 <div className="pvp-slot-square-socket mt-1">
                   {isFilled && placedTile ? (
-                    <div
-                      className="pvp-slot-square-gem"
-                      style={{ backgroundImage: `url(${getGemTexture(placedTile.digitValue)})` }}
-                    >
+                    <div className={`pvp-slot-square-gem ${isForgingTransition ? 'pvp-forge-pulse' : ''}`}>
+                      <img
+                        src={getGemTexture(placedTile.digitValue)}
+                        alt=""
+                        className="pvp-gem-art"
+                        draggable={false}
+                      />
                       <span className="pvp-slot-square-gem-digit">{placedTile.digitValue}</span>
                     </div>
                   ) : (
@@ -322,11 +326,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                     isRejected
                       ? 'border-rose-200/70 bg-rose-500/30'
                       : 'border-white/20 bg-slate-900/60'
-                  } text-white/95 pvp-digit-gem-square ${isDragging ? 'pvp-digit-selected' : ''}`}
-                  style={{
-                    minHeight: MIN_TAP_TARGET,
-                    backgroundImage: `url(${getGemTexture(tile.digitValue)})`,
-                  }}
+                  } text-white/95 ${isDragging ? 'pvp-digit-selected' : ''}`}
+                  style={{ minHeight: MIN_TAP_TARGET }}
                   initial={{ opacity: 0, y: 8, scale: 0.86 }}
                   animate={{
                     opacity: 1,
@@ -337,7 +338,15 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                   exit={{ opacity: 0, y: 8, scale: 0.8 }}
                   transition={{ type: 'spring', stiffness: 230, damping: 18 }}
                 >
-                  {tile.digitValue}
+                  <div className={`pvp-digit-gem-square ${isForgingTransition ? 'pvp-forge-pulse' : ''}`}>
+                    <img
+                      src={getGemTexture(tile.digitValue)}
+                      alt=""
+                      className="pvp-gem-art"
+                      draggable={false}
+                    />
+                    <span className="pvp-digit-gem-number">{tile.digitValue}</span>
+                  </div>
                 </motion.button>
               );
             })}
@@ -353,14 +362,40 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
             height: dragState.height,
             left: dragState.clientX - dragState.offsetX,
             top: dragState.clientY - dragState.offsetY,
-            backgroundImage: `url(${getGemTexture(dragState.tile.digitValue)})`,
           }}
           initial={{ scale: 1 }}
           animate={{ scale: 1.04 }}
         >
-          {dragState.tile.digitValue}
+          <img
+            src={getGemTexture(dragState.tile.digitValue)}
+            alt=""
+            className="pvp-gem-art"
+            draggable={false}
+          />
+          <span className="pvp-digit-gem-number">{dragState.tile.digitValue}</span>
         </motion.div>
       ) : null}
+
+      <AnimatePresence>
+        {isForgingTransition ? (
+          <motion.div
+            key={`forged-${round.id}`}
+            className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="pvp-forged-burst"
+              initial={{ scale: 0.8, opacity: 0, y: 12 }}
+              animate={{ scale: [0.88, 1.12, 1], opacity: [0, 1, 0.86, 0], y: [12, -6, -18] }}
+              transition={{ duration: 0.66, ease: 'easeOut' }}
+            >
+              FORGED!
+            </motion.div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 
