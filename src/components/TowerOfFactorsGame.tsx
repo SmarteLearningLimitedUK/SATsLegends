@@ -66,11 +66,21 @@ const generateFactorProblem = (levelId: number): FactorProblem => {
     options.add(shuffledFactors[index]);
   }
 
-  while (options.size < 12) {
-    const wrong = Math.floor(Math.random() * target) + 1;
-    if (!factors.includes(wrong)) {
-      options.add(wrong);
+  // Build distractors from a wider non-factor pool so generation can never deadlock.
+  // (Some targets don't have enough non-factors in 1...target to reach 12 options.)
+  const distractorUpperBound = Math.max(maxTarget, target + 18);
+  const distractorPool: number[] = [];
+  for (let candidate = 1; candidate <= distractorUpperBound; candidate += 1) {
+    if (!factors.includes(candidate) && !options.has(candidate)) {
+      distractorPool.push(candidate);
     }
+  }
+
+  const shuffledDistractors = distractorPool.sort(() => Math.random() - 0.5);
+  const desiredOptionCount = Math.min(12, options.size + shuffledDistractors.length);
+  for (const distractor of shuffledDistractors) {
+    if (options.size >= desiredOptionCount) break;
+    options.add(distractor);
   }
 
   return {

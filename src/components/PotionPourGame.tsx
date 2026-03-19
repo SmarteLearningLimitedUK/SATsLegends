@@ -2,12 +2,10 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import AssetIcon from './AssetIcon';
-import GameplayHUD from './GameplayHUD';
-import GameActionDock from './GameActionDock';
-import GameplaySceneBackdrop from './GameplaySceneBackdrop';
+import GameContainerView from './GameContainerView';
 import { AVATARS, POTION_POUR_LEVELS } from '../constants';
 import { triggerHaptic } from '../haptics';
-import { GameScreenShell, PuzzleStage } from './layout/ScreenPrimitives';
+import potionPanicBackground from '../assets/level_backgrounds/potion-panic.png';
 
 interface PotionPourGameProps {
   levelId: number;
@@ -197,7 +195,7 @@ const PotionBottle: React.FC<{
   <button
     type="button"
     onClick={onClick}
-    className={`relative flex min-h-[12rem] flex-col items-center justify-end overflow-hidden rounded-[2rem] border px-4 pb-4 pt-5 shadow-[0_24px_34px_rgba(15,23,42,0.22)] transition-transform active:scale-[0.98] ${highlight ? 'border-amber-200/70 bg-[linear-gradient(180deg,rgba(251,191,36,0.2),rgba(255,255,255,0.08),rgba(15,23,42,0.14))]' : 'border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.22))]'}`}
+    className={`relative flex min-h-[9.75rem] flex-col items-center justify-end overflow-hidden rounded-[2rem] border px-3 pb-3 pt-4 shadow-[0_24px_34px_rgba(15,23,42,0.22)] transition-transform active:scale-[0.98] md:min-h-[12rem] md:px-4 md:pb-4 md:pt-5 ${highlight ? 'border-amber-200/70 bg-[linear-gradient(180deg,rgba(251,191,36,0.2),rgba(255,255,255,0.08),rgba(15,23,42,0.14))]' : 'border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.22))]'}`}
   >
     <div className="absolute inset-x-[18%] top-[8%] h-[14%] rounded-full bg-white/18 blur-md" />
     <div className="absolute left-1/2 top-[15%] h-[10%] w-[18%] -translate-x-1/2 rounded-full border border-white/24 bg-[linear-gradient(180deg,rgba(226,232,240,0.92),rgba(148,163,184,0.95))]" />
@@ -402,181 +400,192 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
 
   const activeRecipeCount = round.recipe.reduce((sum, part) => sum + part.count, 0);
 
-  return (
-    <GameScreenShell className="items-center overflow-hidden p-2 pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+0.35rem)] md:p-4">
-      <GameplaySceneBackdrop gameType="potion_pour" />
+  const objectiveArea = (
+    <div className="flex flex-col gap-2 p-1.5 md:p-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="licensed-slice-blue-banner inline-flex min-h-[1.9rem] items-center gap-2 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-white md:text-xs">
+          <AssetIcon name="gem" className="h-3.5 w-3.5" />
+          Recipe Board
+        </div>
+        <div className="flex items-center gap-1.5">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div
+              key={`heart-${index}`}
+              className={`h-5 w-5 rounded-full md:h-6 md:w-6 ${
+                index < hearts
+                  ? 'bg-[radial-gradient(circle_at_30%_25%,#fca5a5,#ef4444_58%,#991b1b)] shadow-[0_6px_12px_rgba(239,68,68,0.35)]'
+                  : 'bg-white/12'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
 
-      <div className="relative z-10 flex h-full min-h-0 w-full max-w-5xl flex-1 flex-col gap-2 md:gap-3">
-        <GameplayHUD
-          title="Potion Brewery"
-          avatar={avatar}
-          score={score}
-          targetScore={level.targetScore}
-          timeLeft={timeLeft}
-          progress={progress}
-          accentText="text-blue-950"
-          accentSoftBg="bg-blue-100/85"
-          accentBorder="border-blue-200/80"
-          progressBar="bg-gradient-to-r from-cyan-400 via-sky-400 to-cyan-400"
-          statLabel="Brews"
-          statValue={brewCount}
-          compact
-        />
+      <div className="relative rounded-[1.35rem] border border-amber-100/28 bg-[linear-gradient(180deg,rgba(67,112,204,0.96),rgba(27,74,179,0.98))] px-3 py-2.5 shadow-[0_12px_26px_rgba(15,23,42,0.3)] md:px-4 md:py-3">
+        <div className="text-[10px] font-black uppercase tracking-[0.2em] text-yellow-100/85 md:text-xs">{round.title}</div>
+        <div className="mt-1 text-sm font-black text-white md:text-lg">{round.prompt}</div>
+        <div className="mt-2 flex flex-wrap items-center justify-center gap-2">
+          {round.recipe.map((part) => (
+            <RecipeGem
+              key={`recipe-${part.ingredientId}`}
+              ingredient={ingredientById[part.ingredientId]}
+              count={part.count}
+              ghost={round.hiddenIngredientId === part.ingredientId}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 
-        <PuzzleStage className="rounded-[2rem] px-2 py-2 md:px-4 md:py-4">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(103,232,249,0.18),transparent_18%),radial-gradient(circle_at_18%_22%,rgba(192,132,252,0.16),transparent_14%),radial-gradient(circle_at_82%_18%,rgba(74,222,128,0.16),transparent_16%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(5,10,22,0.14)_34%,rgba(5,10,22,0.28)_100%)]" />
-
-          <div className="relative z-10 grid min-h-0 flex-1 grid-rows-[auto,minmax(0,1fr)] gap-3 md:gap-4">
-            <div className="flex flex-col items-center gap-2 text-center">
-              <div className="licensed-slice-blue-banner inline-flex min-h-[2rem] items-center gap-2 rounded-full px-4 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white md:text-xs">
-                <AssetIcon name="gem" className="h-4 w-4" />
-                Recipe board
+  const playFieldArea = (
+    <div className="relative flex h-full min-h-0 w-full flex-col gap-2 p-2 md:gap-3 md:p-3">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(103,232,249,0.18),transparent_18%),radial-gradient(circle_at_18%_22%,rgba(192,132,252,0.16),transparent_14%),radial-gradient(circle_at_82%_18%,rgba(74,222,128,0.16),transparent_16%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(5,10,22,0.14)_34%,rgba(5,10,22,0.28)_100%)]" />
+      <div className="relative z-10 grid h-full min-h-0 gap-2 md:grid-cols-[minmax(0,1.2fr)_16.5rem] md:gap-3">
+        <div className="relative min-h-0 overflow-hidden rounded-[1.45rem] border border-white/14 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_18%,rgba(8,15,30,0.18)_100%)] p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_18px_34px_rgba(0,0,0,0.22)] md:p-4">
+          <div className="pointer-events-none absolute inset-x-[18%] top-[10%] h-[18%] rounded-full bg-emerald-300/18 blur-3xl" />
+          <div className="pointer-events-none absolute inset-x-[20%] bottom-[20%] h-[14%] rounded-full bg-cyan-300/16 blur-3xl" />
+          {round.mode === 'compare' && round.compareOptions ? (
+            <div className="relative z-10 grid h-full min-h-0 content-center gap-2 overflow-y-auto md:grid-cols-2 md:gap-3 md:overflow-hidden">
+              {round.compareOptions.map((option) => (
+                <PotionBottle
+                  key={option.id}
+                  recipe={option.recipe}
+                  highlight={option.correct}
+                  onClick={() => handleComparePick(option.id)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="relative z-10 flex h-full min-h-0 flex-col gap-2 md:gap-3">
+              <div className="flex w-full flex-wrap items-center justify-center gap-2">
+                <div className="licensed-slice-cyan-pill rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.13em] text-white md:text-xs">
+                  Mix {activeRecipeCount}
+                </div>
+                <div className="licensed-slice-green-pill rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.13em] text-white md:text-xs">
+                  {INGREDIENTS.filter((ingredient) => (currentCounts[ingredient.id] || 0) > 0).length || 0} ingredients
+                </div>
               </div>
-              <div className="relative w-full max-w-[20rem] rounded-[1.75rem] border border-amber-100/28 bg-[linear-gradient(180deg,rgba(94,43,145,0.96),rgba(84,33,132,0.98))] px-4 py-3 shadow-[0_16px_34px_rgba(15,23,42,0.28)] md:max-w-[28rem] md:px-5 md:py-4">
-                <div className="text-[10px] font-black uppercase tracking-[0.28em] text-yellow-100/82 md:text-xs">{round.title}</div>
-                <div className="mt-1 text-sm font-black text-white md:text-[1.45rem]">{round.prompt}</div>
-                <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
-                  {round.recipe.map((part) => (
-                    <RecipeGem
-                      key={`recipe-${part.ingredientId}`}
-                      ingredient={ingredientById[part.ingredientId]}
-                      count={part.count}
-                      ghost={round.hiddenIngredientId === part.ingredientId}
+
+              <div className="relative flex h-[clamp(9.5rem,28vh,14.5rem)] w-full items-end justify-center md:h-[clamp(10rem,31vh,16rem)]">
+                <div className="absolute bottom-[12%] h-[12%] w-[70%] rounded-full bg-black/24 blur-xl" />
+                <div className="absolute bottom-[18%] h-[16%] w-[72%] rounded-[1.2rem] border border-stone-200/12 bg-[linear-gradient(180deg,#8b5a24,#5b3717)] shadow-[inset_0_2px_0_rgba(255,255,255,0.12),0_18px_34px_rgba(0,0,0,0.24)]" />
+                <div className="absolute bottom-[24%] h-[40%] w-[78%] rounded-[2rem] border-[4px] border-slate-500/90 bg-[linear-gradient(180deg,#334155,#0f172a_78%)] shadow-[0_24px_42px_rgba(0,0,0,0.34)] md:border-[6px]">
+                  <div className="absolute inset-x-[10%] top-[18%] h-[52%] rounded-[1.4rem] border border-white/10 bg-[linear-gradient(180deg,rgba(52,211,153,0.74),rgba(45,212,191,0.42))]" />
+                  <div className="absolute inset-x-[18%] top-[26%] h-[18%] rounded-full bg-white/28 blur-md" />
+                  {INGREDIENTS.filter((ingredient) => (currentCounts[ingredient.id] || 0) > 0).length > 0 && (
+                    <div
+                      className="absolute inset-x-[16%] bottom-[18%] h-[24%] rounded-full"
+                      style={{
+                        background: `linear-gradient(90deg, ${INGREDIENTS.filter((ingredient) => (currentCounts[ingredient.id] || 0) > 0).map((ingredient) => ingredient.colors[0]).join(', ')})`,
+                      }}
+                    />
+                  )}
+                </div>
+                <div className="absolute bottom-[52%] left-[22%] flex h-10 w-10 items-center justify-center rounded-full bg-[radial-gradient(circle,#dbeafe,#38bdf8)] shadow-[0_10px_18px_rgba(56,189,248,0.24)] md:h-12 md:w-12">
+                  <AssetIcon name="gem" className="h-4 w-4 md:h-5 md:w-5" />
+                </div>
+                <div className="absolute bottom-[55%] right-[22%] flex h-10 w-10 items-center justify-center rounded-full bg-[radial-gradient(circle,#bfdbfe,#38bdf8)] shadow-[0_10px_18px_rgba(56,189,248,0.24)] md:h-12 md:w-12">
+                  <AssetIcon name="gem" className="h-4 w-4 md:h-5 md:w-5" />
+                </div>
+              </div>
+
+              <div className="w-full rounded-[1.25rem] border border-amber-100/18 bg-[linear-gradient(180deg,rgba(129,74,28,0.96),rgba(84,48,18,0.98))] p-2.5 shadow-[inset_0_2px_0_rgba(255,255,255,0.08),0_16px_28px_rgba(0,0,0,0.2)] md:p-3">
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <div className="licensed-slice-yellow-plank rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-amber-950 md:text-[10px]">
+                    Ingredient conveyor
+                  </div>
+                  <button
+                    onClick={resetBrew}
+                    className="ui-button-secondary licensed-slice-orange-pill px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white"
+                  >
+                    Reset
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
+                  {INGREDIENTS.map((ingredient) => (
+                    <ConveyorCard
+                      key={ingredient.id}
+                      ingredient={ingredient}
+                      amount={currentCounts[ingredient.id] || 0}
+                      onAdd={() => handleIngredientAdd(ingredient.id)}
                     />
                   ))}
                 </div>
-                <div className="mt-2 text-xs font-bold text-white/78 md:text-sm">{round.support}</div>
               </div>
             </div>
-            <div className="grid min-h-0 gap-3 md:grid-cols-[minmax(0,1.18fr)_18rem] md:gap-4">
-              <div className="relative min-h-[17.5rem] overflow-hidden rounded-[1.8rem] border border-white/14 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_18%,rgba(8,15,30,0.18)_100%)] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_18px_34px_rgba(0,0,0,0.22)] md:min-h-0 md:p-5">
-                <div className="pointer-events-none absolute inset-x-[18%] top-[10%] h-[18%] rounded-full bg-emerald-300/18 blur-3xl" />
-                <div className="pointer-events-none absolute inset-x-[20%] bottom-[20%] h-[14%] rounded-full bg-cyan-300/16 blur-3xl" />
-                {round.mode === 'compare' && round.compareOptions ? (
-                  <div className="relative z-10 grid h-full items-center gap-3 md:grid-cols-2">
-                    {round.compareOptions.map((option) => (
-                      <PotionBottle
-                        key={option.id}
-                        recipe={option.recipe}
-                        highlight={option.correct}
-                        onClick={() => handleComparePick(option.id)}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="relative z-10 flex h-full flex-col items-center justify-between">
-                    <div className="flex w-full items-center justify-center gap-2">
-                      <div className="licensed-slice-cyan-pill rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white md:text-xs">
-                        Mix {activeRecipeCount}
-                      </div>
-                      <div className="licensed-slice-green-pill rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white md:text-xs">
-                        {INGREDIENTS.filter((ingredient) => (currentCounts[ingredient.id] || 0) > 0).length || 0} ingredients
-                      </div>
-                    </div>
+          )}
+        </div>
 
-                    <div className="relative flex h-[14.5rem] w-full max-w-[24rem] items-end justify-center md:h-[18rem] md:max-w-[28rem]">
-                      <div className="absolute bottom-[12%] h-[12%] w-[70%] rounded-full bg-black/24 blur-xl" />
-                      <div className="absolute bottom-[18%] h-[16%] w-[72%] rounded-[1.4rem] border border-stone-200/12 bg-[linear-gradient(180deg,#8b5a24,#5b3717)] shadow-[inset_0_2px_0_rgba(255,255,255,0.12),0_18px_34px_rgba(0,0,0,0.24)]" />
-                      <div className="absolute bottom-[24%] h-[40%] w-[78%] rounded-[2.2rem] border-[5px] border-slate-500/90 bg-[linear-gradient(180deg,#334155,#0f172a_78%)] shadow-[0_24px_42px_rgba(0,0,0,0.34)] md:border-[6px]">
-                        <div className="absolute inset-x-[10%] top-[18%] h-[52%] rounded-[1.5rem] border border-white/10 bg-[linear-gradient(180deg,rgba(52,211,153,0.74),rgba(45,212,191,0.42))]" />
-                        <div className="absolute inset-x-[18%] top-[26%] h-[18%] rounded-full bg-white/28 blur-md" />
-                        {INGREDIENTS.filter((ingredient) => (currentCounts[ingredient.id] || 0) > 0).length > 0 && (
-                          <div
-                            className="absolute inset-x-[16%] bottom-[18%] h-[24%] rounded-full"
-                            style={{
-                              background: `linear-gradient(90deg, ${INGREDIENTS.filter((ingredient) => (currentCounts[ingredient.id] || 0) > 0).map((ingredient) => ingredient.colors[0]).join(', ')})`,
-                            }}
-                          />
-                        )}
-                      </div>
-                      <div className="absolute bottom-[52%] left-[22%] flex h-12 w-12 items-center justify-center rounded-full bg-[radial-gradient(circle,#dbeafe,#38bdf8)] shadow-[0_10px_18px_rgba(56,189,248,0.24)] md:h-14 md:w-14">
-                        <AssetIcon name="gem" className="h-5 w-5" />
-                      </div>
-                        <div className="absolute bottom-[55%] right-[22%] flex h-12 w-12 items-center justify-center rounded-full bg-[radial-gradient(circle,#bfdbfe,#38bdf8)] shadow-[0_10px_18px_rgba(56,189,248,0.24)] md:h-14 md:w-14">
-                        <AssetIcon name="gem" className="h-5 w-5" />
-                      </div>
-                    </div>
-
-                    <div className="w-full rounded-[1.55rem] border border-amber-100/18 bg-[linear-gradient(180deg,rgba(129,74,28,0.96),rgba(84,48,18,0.98))] p-3 shadow-[inset_0_2px_0_rgba(255,255,255,0.08),0_16px_28px_rgba(0,0,0,0.2)]">
-                      <div className="mb-2 flex items-center justify-between gap-2">
-                        <div className="licensed-slice-yellow-plank rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-amber-950 md:text-[10px]">
-                          Ingredient conveyor
-                        </div>
-                        <button
-                          onClick={resetBrew}
-                          className="ui-button-secondary licensed-slice-orange-pill px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white"
-                        >
-                          Reset
-                        </button>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
-                        {INGREDIENTS.map((ingredient) => (
-                          <ConveyorCard
-                            key={ingredient.id}
-                            ingredient={ingredient}
-                            amount={currentCounts[ingredient.id] || 0}
-                            onAdd={() => handleIngredientAdd(ingredient.id)}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex min-h-0 flex-col gap-3">
-                <div className="rounded-[1.55rem] border border-white/14 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(15,23,42,0.9))] p-3 shadow-[0_16px_28px_rgba(0,0,0,0.2)]">
-                  <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/58 md:text-xs">Current brew</div>
-                  <div className="mt-3 flex flex-wrap justify-center gap-2">
-                    {INGREDIENTS.filter((ingredient) => (currentCounts[ingredient.id] || 0) > 0).length ? (
-                      INGREDIENTS.filter((ingredient) => (currentCounts[ingredient.id] || 0) > 0).map((ingredient) => (
-                        <RecipeGem key={`mix-${ingredient.id}`} ingredient={ingredient} count={currentCounts[ingredient.id]} />
-                      ))
-                    ) : (
-                      <div className="rounded-[1rem] border border-dashed border-white/14 px-6 py-5 text-sm font-black text-white/46">
-                        Empty cauldron
-                      </div>
-                    )}
-                  </div>
+        <div className="flex min-h-0 flex-col gap-2 md:gap-3">
+          <div className="rounded-[1.25rem] border border-white/14 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(15,23,42,0.9))] p-2.5 shadow-[0_16px_28px_rgba(0,0,0,0.2)] md:p-3">
+            <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/58 md:text-xs">Current brew</div>
+            <div className="mt-2 flex flex-wrap justify-center gap-2">
+              {INGREDIENTS.filter((ingredient) => (currentCounts[ingredient.id] || 0) > 0).length ? (
+                INGREDIENTS.filter((ingredient) => (currentCounts[ingredient.id] || 0) > 0).map((ingredient) => (
+                  <RecipeGem key={`mix-${ingredient.id}`} ingredient={ingredient} count={currentCounts[ingredient.id]} />
+                ))
+              ) : (
+                <div className="rounded-[1rem] border border-dashed border-white/14 px-4 py-4 text-sm font-black text-white/46">
+                  Empty cauldron
                 </div>
-
-                <div className="mt-auto rounded-[1.55rem] border border-amber-100/18 bg-[linear-gradient(180deg,rgba(84,49,18,0.96),rgba(60,34,14,0.98))] p-3 shadow-[inset_0_2px_0_rgba(255,255,255,0.08),0_16px_28px_rgba(0,0,0,0.2)]">
-                  <div className="mb-3 flex items-center gap-2">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[linear-gradient(180deg,#fde68a,#f59e0b)] shadow-[0_8px_14px_rgba(0,0,0,0.22)]">
-                      <AssetIcon name="check" className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-50/64">Brew status</div>
-                      <div className="text-sm font-black text-white">{round.mode === 'compare' ? `Target ${formatRatio(round.recipe)}` : 'Build the exact potion ratio'}</div>
-                    </div>
-                  </div>
-                  <div className="licensed-slice-cyan-pill flex min-h-[2.8rem] items-center justify-center rounded-[1.25rem] px-4 py-2 text-sm font-black uppercase tracking-[0.14em] text-white md:text-base">
-                    Batch size {activeRecipeCount}
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
           </div>
 
-          <AnimatePresence>
-            {feedback && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.7 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.18 }}
-                className={`pointer-events-none absolute inset-0 z-30 flex items-center justify-center ${feedback.type === 'success' ? 'bg-[radial-gradient(circle,rgba(52,211,153,0.18),rgba(52,211,153,0)_48%)]' : 'bg-[radial-gradient(circle,rgba(251,113,133,0.18),rgba(251,113,133,0)_48%)]'}`}
-              >
-                <div className={`rounded-full px-6 py-4 text-xl font-black text-white shadow-[0_20px_40px_rgba(0,0,0,0.28)] md:text-3xl ${feedback.type === 'success' ? 'bg-[radial-gradient(circle,#34d399,#0f766e)]' : 'bg-[radial-gradient(circle,#fb7185,#be123c)]'}`}>
-                  {feedback.title}
-                  <div className="mt-1 text-sm font-bold md:text-lg">{feedback.subtitle}</div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </PuzzleStage>
-
-        <GameActionDock onBack={onBack} accentClass="text-white" />
+          <div className="mt-auto rounded-[1.25rem] border border-amber-100/18 bg-[linear-gradient(180deg,rgba(84,49,18,0.96),rgba(60,34,14,0.98))] p-2.5 shadow-[inset_0_2px_0_rgba(255,255,255,0.08),0_16px_28px_rgba(0,0,0,0.2)] md:p-3">
+            <div className="mb-2 flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[linear-gradient(180deg,#fde68a,#f59e0b)] shadow-[0_8px_14px_rgba(0,0,0,0.22)]">
+                <AssetIcon name="check" className="h-4 w-4" />
+              </div>
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-50/64">Brew status</div>
+                <div className="text-sm font-black text-white">{round.mode === 'compare' ? `Target ${formatRatio(round.recipe)}` : 'Build the exact potion ratio'}</div>
+              </div>
+            </div>
+            <div className="licensed-slice-cyan-pill flex min-h-[2.4rem] items-center justify-center rounded-[1.1rem] px-3 py-1.5 text-sm font-black uppercase tracking-[0.14em] text-white md:text-base">
+              Batch size {activeRecipeCount}
+            </div>
+          </div>
+        </div>
       </div>
+
+      <AnimatePresence>
+        {feedback && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.7 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.18 }}
+            className={`pointer-events-none absolute inset-0 z-30 flex items-center justify-center ${feedback.type === 'success' ? 'bg-[radial-gradient(circle,rgba(52,211,153,0.18),rgba(52,211,153,0)_48%)]' : 'bg-[radial-gradient(circle,rgba(251,113,133,0.18),rgba(251,113,133,0)_48%)]'}`}
+          >
+            <div className={`rounded-full px-6 py-4 text-xl font-black text-white shadow-[0_20px_40px_rgba(0,0,0,0.28)] md:text-3xl ${feedback.type === 'success' ? 'bg-[radial-gradient(circle,#34d399,#0f766e)]' : 'bg-[radial-gradient(circle,#fb7185,#be123c)]'}`}>
+              {feedback.title}
+              <div className="mt-1 text-sm font-bold md:text-lg">{feedback.subtitle}</div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+
+  return (
+    <>
+      <GameContainerView
+        gameType="potion_pour"
+        sceneBackgroundOverride={potionPanicBackground}
+        sceneMinimalDecor
+        title="Potion Panic"
+        avatar={avatar}
+        score={score}
+        targetScore={level.targetScore}
+        timeLeft={timeLeft}
+        progress={progress}
+        statLabel="Brews"
+        statValue={brewCount}
+        objectiveArea={objectiveArea}
+        playFieldArea={playFieldArea}
+        onBack={onBack}
+      />
 
       <AnimatePresence>
         {isFinished && (
@@ -615,7 +624,7 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
-    </GameScreenShell>
+    </>
   );
 };
 
