@@ -83,14 +83,14 @@ const GameContainerView: React.FC<GameContainerViewProps> = ({
   const resolvedRoundValue = roundValue ?? statValue ?? 1;
 
   return (
-    <div className="aaa-game-root relative flex h-full w-full min-h-0 flex-col overflow-hidden">
+    <div className="aaa-game-root mission-game-root relative flex h-full w-full min-h-0 flex-col overflow-hidden">
       <GameplaySceneBackdrop
         gameType={gameType}
         backgroundOverride={sceneBackgroundOverride}
         minimalDecor={sceneMinimalDecor}
         className="aaa-game-backdrop"
       />
-      <div className={`aaa-game-stage shared-game-container relative z-10 mx-auto grid h-full min-h-0 w-full max-w-[min(100%,1100px)] flex-1 grid-rows-[auto_auto_minmax(0,1fr)_auto_auto] gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] pt-[calc(env(safe-area-inset-top)+0.15rem)] md:gap-3 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.75rem)] ${stageClassName}`}>
+      <div className={`aaa-game-stage shared-game-container mission-game-stage relative z-10 mx-auto grid h-full min-h-0 w-full max-w-[min(100%,1100px)] flex-1 grid-rows-[auto_auto_minmax(0,1fr)_auto_auto] gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] pt-[calc(env(safe-area-inset-top)+0.15rem)] md:gap-3 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.75rem)] ${stageClassName}`}>
         <div className="aaa-zone aaa-zone-hud w-full">
           <GameplayHUD
             title={title}
@@ -113,7 +113,7 @@ const GameContainerView: React.FC<GameContainerViewProps> = ({
 
         <div className="aaa-zone aaa-zone-objective w-full">
           <div
-            className="aaa-objective-shell relative w-full overflow-hidden rounded-[1.1rem] border border-white/18 px-2 py-1.5 shadow-[0_10px_24px_rgba(2,6,23,0.28)] md:rounded-[1.35rem] md:px-3 md:py-2"
+            className="aaa-objective-shell mission-objective-shell relative w-full overflow-hidden rounded-[1.1rem] border border-white/18 px-2 py-1.5 shadow-[0_10px_24px_rgba(2,6,23,0.28)] md:rounded-[1.35rem] md:px-3 md:py-2"
             style={objectiveShellStyle}
           >
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,15,33,0.08),rgba(7,15,33,0.32))]" />
@@ -123,7 +123,7 @@ const GameContainerView: React.FC<GameContainerViewProps> = ({
 
         <div className="aaa-zone aaa-zone-playfield relative w-full min-h-0 flex-1">
           <div
-            className="aaa-playfield-shell relative h-full w-full min-h-0 overflow-hidden rounded-[1.6rem] border border-white/15 shadow-[0_22px_44px_rgba(2,6,23,0.42)] md:rounded-[2rem]"
+            className="aaa-playfield-shell mission-playfield-shell relative h-full w-full min-h-0 overflow-hidden rounded-[1.6rem] border border-white/15 shadow-[0_22px_44px_rgba(2,6,23,0.42)] md:rounded-[2rem]"
             style={playfieldShellStyle}
           >
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,28,0.3),rgba(3,10,28,0.58))]" />

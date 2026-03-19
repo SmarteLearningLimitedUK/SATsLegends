@@ -3216,7 +3216,14 @@ button:disabled {
   overflow: hidden;
 }
 
-/* Single container rule for gameplay: keep one outer shell and flatten inner framed containers. */
+/* Shared mini-game GUI update: bright fantasy blue/gold skin across all gameplay screens. */
+.screen-gameplay .game-shell-host {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 34%),
+    radial-gradient(circle at 10% 92%, rgba(250, 204, 21, 0.14), rgba(250, 204, 21, 0) 36%),
+    linear-gradient(180deg, rgba(14, 58, 143, 0.24), rgba(12, 74, 110, 0.2));
+}
+
 .single-shell-briefing-card,
 .screen-gameplay .game-shell-host .licensed-board-frame,
 .screen-gameplay .game-shell-host .licensed-game-card,
@@ -3225,14 +3232,121 @@ button:disabled {
 .screen-gameplay .game-shell-host .ui-panel-unified,
 .screen-gameplay .game-shell-host .reward-panel,
 .screen-gameplay .game-shell-host .casual-panel-surface,
-.screen-gameplay .game-shell-host .casual-panel-strong {
-  border: 1px solid rgba(193, 224, 255, 0.26) !important;
+.screen-gameplay .game-shell-host .casual-panel-strong,
+.screen-gameplay .game-shell-host .mission-panel-shell {
+  border: 1px solid rgba(250, 204, 21, 0.34) !important;
   border-radius: 1.25rem !important;
   background:
-    linear-gradient(180deg, rgba(13, 28, 57, 0.82), rgba(8, 18, 37, 0.88)) !important;
+    radial-gradient(circle at 10% 0%, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0) 42%),
+    linear-gradient(180deg, rgba(226, 242, 255, 0.3), rgba(56, 189, 248, 0.2)) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 10px 22px rgba(2, 6, 23, 0.28) !important;
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 10px 22px rgba(14, 116, 144, 0.2),
+    0 0 16px rgba(250, 204, 21, 0.12) !important;
+}
+
+.screen-gameplay .game-shell-host .fantasy-hud-shell,
+.screen-gameplay .game-shell-host .mission-header-shell {
+  border-color: rgba(250, 204, 21, 0.45) !important;
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.24), transparent 42%),
+    linear-gradient(180deg, rgba(56, 189, 248, 0.95), rgba(37, 99, 235, 0.92)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    0 14px 24px rgba(14, 116, 144, 0.24),
+    0 0 20px rgba(250, 204, 21, 0.14) !important;
+}
+
+.screen-gameplay .game-shell-host .aaa-hud-stat-surface {
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(241, 245, 249, 0.96)),
+    linear-gradient(180deg, rgba(186, 230, 253, 0.46), rgba(186, 230, 253, 0.14)) !important;
+}
+
+.screen-gameplay .game-shell-host .mission-progress-shell {
+  height: clamp(1.5rem, 3.2vh, 2rem) !important;
+  border-color: rgba(250, 204, 21, 0.62) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    0 12px 24px rgba(14, 116, 144, 0.22),
+    0 0 20px rgba(250, 204, 21, 0.24) !important;
+}
+
+.screen-gameplay .game-shell-host .hud-progress-track {
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.26),
+    0 0 10px rgba(250, 204, 21, 0.18);
+}
+
+.screen-gameplay .game-shell-host .hud-progress-fill {
+  box-shadow:
+    0 0 14px rgba(250, 204, 21, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+}
+
+.screen-gameplay .game-shell-host .hud-progress-label {
+  color: #fefce8 !important;
+  text-shadow:
+    0 1px 0 rgba(2, 6, 23, 0.45),
+    0 0 10px rgba(250, 204, 21, 0.25) !important;
+}
+
+.screen-gameplay .game-shell-host .mission-pill {
+  border-color: rgba(250, 204, 21, 0.48) !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 54%),
+    linear-gradient(180deg, rgba(125, 211, 252, 0.78), rgba(37, 99, 235, 0.72)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    0 8px 16px rgba(14, 116, 144, 0.2) !important;
+}
+
+.screen-gameplay .game-shell-host .mission-paper-shell {
+  border-color: rgba(250, 204, 21, 0.45) !important;
+  box-shadow:
+    0 10px 18px rgba(146, 64, 14, 0.18),
+    0 0 14px rgba(250, 204, 21, 0.16) !important;
+}
+
+.screen-gameplay .game-shell-host .mission-action-btn-primary {
+  border-color: rgba(255, 236, 179, 0.8) !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,0.34), rgba(255,255,255,0) 52%),
+    linear-gradient(180deg, rgba(254, 240, 138, 0.98), rgba(245, 158, 11, 0.98)) !important;
+  color: #78350f !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.38) !important;
+}
+
+.screen-gameplay .game-shell-host .mission-action-btn-secondary {
+  border-color: rgba(191, 219, 254, 0.72) !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,0.24), rgba(255,255,255,0) 52%),
+    linear-gradient(180deg, rgba(125, 211, 252, 0.95), rgba(37, 99, 235, 0.92)) !important;
+  color: #f0f9ff !important;
+}
+
+.screen-gameplay .game-shell-host .fantasy-dock-shell {
+  border-color: rgba(250, 204, 21, 0.38) !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,0.24), rgba(255,255,255,0) 56%),
+    linear-gradient(180deg, rgba(186, 230, 253, 0.34), rgba(56, 189, 248, 0.2)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    0 12px 24px rgba(14, 116, 144, 0.2) !important;
+}
+
+.screen-gameplay .game-shell-host .game-dock-button {
+  border-color: rgba(250, 204, 21, 0.42) !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,0.32), rgba(255,255,255,0) 54%),
+    linear-gradient(180deg, rgba(254, 240, 138, 0.98), rgba(245, 158, 11, 0.98)) !important;
+  color: #78350f !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.36),
+    0 10px 18px rgba(146, 64, 14, 0.2),
+    0 0 14px rgba(250, 204, 21, 0.18) !important;
 }
 
 .screen-gameplay .game-shell-host .licensed-board-frame::before,

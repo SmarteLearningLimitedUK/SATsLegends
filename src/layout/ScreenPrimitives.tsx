@@ -58,7 +58,7 @@ export const PremiumHeaderBar: React.FC<PremiumHeaderBarProps> = ({
   className = '',
 }) => (
   <div
-    className={`premium-header-bar relative overflow-hidden rounded-[1.2rem] border border-white/16 px-4 py-3 shadow-[0_12px_26px_rgba(2,6,23,0.26)] md:rounded-[1.55rem] md:px-5 md:py-4 ${className}`.trim()}
+    className={`premium-header-bar mission-header-shell relative overflow-hidden rounded-[1.2rem] border border-white/16 px-4 py-3 shadow-[0_12px_26px_rgba(2,6,23,0.26)] md:rounded-[1.55rem] md:px-5 md:py-4 ${className}`.trim()}
     style={{
       backgroundImage: `url(${GUI_SLICES.headerBar})`,
       backgroundSize: '100% 100%',
@@ -73,21 +73,21 @@ export const PremiumHeaderBar: React.FC<PremiumHeaderBarProps> = ({
 );
 
 export const PuzzleStage: React.FC<WrapperProps> = ({ children, className = '' }) => (
-  <div className={`game-shell-zone game-shell-zone-playfield licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden p-3 md:p-5 ${className}`.trim()}>
+  <div className={`game-shell-zone game-shell-zone-playfield licensed-board-frame mission-panel-shell structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden p-3 md:p-5 ${className}`.trim()}>
     {children}
   </div>
 );
 
 export const BottomActionTray: React.FC<WrapperProps> = ({ children, className = '' }) => (
   <div className={`game-shell-zone game-shell-zone-actions shrink-0 ${className}`.trim()}>
-    <div className="licensed-game-card-dark rounded-[1.5rem] p-3 md:rounded-[1.9rem] md:p-4">
+    <div className="licensed-game-card-dark mission-panel-shell rounded-[1.5rem] p-3 md:rounded-[1.9rem] md:p-4">
       {children}
     </div>
   </div>
 );
 
 export const RewardPanel: React.FC<WrapperProps> = ({ children, className = '' }) => (
-  <div className={`licensed-slice-paper-panel rounded-[1.15rem] px-4 py-3 text-amber-950 md:rounded-[1.4rem] md:px-5 md:py-4 ${className}`.trim()}>
+  <div className={`licensed-slice-paper-panel mission-paper-shell rounded-[1.15rem] px-4 py-3 text-amber-950 md:rounded-[1.4rem] md:px-5 md:py-4 ${className}`.trim()}>
     {children}
   </div>
 );
@@ -146,7 +146,7 @@ export const PrimaryActionButton: React.FC<ActionButtonProps> = ({
     type={type}
     onClick={onClick}
     disabled={disabled}
-    className={`ui-button-primary inline-flex min-h-[44px] items-center justify-center rounded-[1.05rem] border border-white/25 px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.14em] text-white md:rounded-[1.25rem] md:px-5 md:py-3 md:text-sm ${className}`.trim()}
+    className={`ui-button-primary mission-action-btn mission-action-btn-primary inline-flex min-h-[44px] items-center justify-center rounded-[1.05rem] border border-white/25 px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.14em] text-white md:rounded-[1.25rem] md:px-5 md:py-3 md:text-sm ${className}`.trim()}
     style={{
       backgroundImage: `url(${GUI_SLICES.buttonPrimary})`,
       backgroundSize: '100% 100%',
@@ -168,7 +168,7 @@ export const SecondaryActionButton: React.FC<ActionButtonProps> = ({
     type={type}
     onClick={onClick}
     disabled={disabled}
-    className={`ui-button-secondary inline-flex min-h-[44px] items-center justify-center rounded-[1.05rem] border border-white/22 px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.14em] text-white md:rounded-[1.25rem] md:px-5 md:py-3 md:text-sm ${className}`.trim()}
+    className={`ui-button-secondary mission-action-btn mission-action-btn-secondary inline-flex min-h-[44px] items-center justify-center rounded-[1.05rem] border border-white/22 px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.14em] text-white md:rounded-[1.25rem] md:px-5 md:py-3 md:text-sm ${className}`.trim()}
     style={{
       backgroundImage: `url(${GUI_SLICES.buttonSecondary})`,
       backgroundSize: '100% 100%',
@@ -186,7 +186,7 @@ type HUDPillProps = {
 
 export const HUDPill: React.FC<HUDPillProps> = ({ children, className = '' }) => (
   <div
-    className={`licensed-slice-blue-banner inline-flex min-h-[30px] items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-white md:min-h-[34px] md:px-3.5 md:text-[11px] ${className}`.trim()}
+    className={`licensed-slice-blue-banner mission-pill inline-flex min-h-[30px] items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-white md:min-h-[34px] md:px-3.5 md:text-[11px] ${className}`.trim()}
     style={{
       backgroundImage: `url(${GUI_SLICES.listPanel})`,
       backgroundSize: '100% 100%',
@@ -211,7 +211,7 @@ export const PremiumProgressBar: React.FC<PremiumProgressBarProps> = ({
   const safeValue = Math.max(0, Math.min(100, value));
   return (
     <div
-      className={`relative h-3 w-full overflow-hidden rounded-full border border-white/18 bg-black/35 md:h-3.5 ${className}`.trim()}
+      className={`relative h-4 w-full overflow-hidden rounded-full border border-white/18 bg-black/35 md:h-[1.15rem] mission-progress-shell ${className}`.trim()}
       style={{
         backgroundImage: `url(${GUI_SLICES.progressBg})`,
         backgroundSize: '100% 100%',
@@ -219,7 +219,7 @@ export const PremiumProgressBar: React.FC<PremiumProgressBarProps> = ({
       }}
     >
       <div
-        className="absolute inset-y-0 left-0 overflow-hidden rounded-full"
+        className="hud-progress-fill absolute inset-y-0 left-0 overflow-hidden rounded-full"
         style={{ width: `${safeValue}%` }}
       >
         <div
