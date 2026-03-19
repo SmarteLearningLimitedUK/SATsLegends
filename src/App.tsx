@@ -111,6 +111,9 @@ const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKey | nul
     case 'polygon_palace':
       return 'PolygonPalaceGame';
     case 'data_dungeon':
+      if (level.blueprintKey === 'data_detective') {
+        return 'DataDetectiveGame';
+      }
       return 'DataDungeonGame';
     case 'monster_market':
       return 'MonsterMarketGame';
@@ -605,6 +608,9 @@ const App: React.FC = () => {
       case 'polygon_palace':
         return renderFromRegistry('PolygonPalaceGame', sharedProps);
       case 'data_dungeon':
+        if (selectedLevel.blueprintKey === 'data_detective') {
+          return renderFromRegistry('DataDetectiveGame', sharedProps);
+        }
         return renderFromRegistry('DataDungeonGame', sharedProps);
       case 'monster_market':
         return renderFromRegistry('MonsterMarketGame', sharedProps);

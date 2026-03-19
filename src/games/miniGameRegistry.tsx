@@ -5,6 +5,7 @@ import CloudCollapseGame from './CloudCollapseGame';
 import CoordinateTranslationGame from './CoordinateTranslationGame';
 import CurriculumChallengeGame from './CurriculumChallengeGame';
 import DataDungeonGame from './DataDungeonGame';
+import DataDetectiveGame from './DataDetectiveGame';
 import DecimalSniperGame from './DecimalSniperGame';
 import DivisionDockGame from './DivisionDockGame';
 import FractionMatchGame from './FractionMatchGame';
@@ -41,6 +42,7 @@ export type MiniGameRegistryKey =
   | 'CoordinateTranslationGame'
   | 'CurriculumChallengeGame'
   | 'DataDungeonGame'
+  | 'DataDetectiveGame'
   | 'DecimalSniperGame'
   | 'DivisionDockGame'
   | 'FractionMatchGame'
@@ -85,6 +87,7 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   CoordinateTranslationGame: asMiniGame('coordinate_translation', CoordinateTranslationGame),
   CurriculumChallengeGame: asMiniGame('curriculum_challenge', CurriculumChallengeGame),
   DataDungeonGame: asMiniGame('data_dungeon', DataDungeonGame),
+  DataDetectiveGame: asMiniGame('data_detective', DataDetectiveGame),
   DecimalSniperGame: asMiniGame('decimal_sniper', DecimalSniperGame),
   DivisionDockGame: asMiniGame('division_dock', DivisionDockGame),
   FractionMatchGame: asMiniGame('fraction_match', FractionMatchGame),
