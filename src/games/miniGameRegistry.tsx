@@ -2,6 +2,7 @@ import React from 'react';
 import AngleArenaGame from './AngleArenaGame';
 import BossEncounterGame from './BossEncounterGame';
 import CloudCollapseGame from './CloudCollapseGame';
+import CoordinateTranslationGame from './CoordinateTranslationGame';
 import CurriculumChallengeGame from './CurriculumChallengeGame';
 import DataDungeonGame from './DataDungeonGame';
 import DecimalSniperGame from './DecimalSniperGame';
@@ -35,6 +36,7 @@ export type MiniGameRegistryKey =
   | 'AngleArenaGame'
   | 'BossEncounterGame'
   | 'CloudCollapseGame'
+  | 'CoordinateTranslationGame'
   | 'CurriculumChallengeGame'
   | 'DataDungeonGame'
   | 'DecimalSniperGame'
@@ -76,6 +78,7 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   AngleArenaGame: asMiniGame('angle_arena', AngleArenaGame),
   BossEncounterGame: asMiniGame('boss_encounter', BossEncounterGame),
   CloudCollapseGame: asMiniGame('cloud_collapse', CloudCollapseGame),
+  CoordinateTranslationGame: asMiniGame('coordinate_translation', CoordinateTranslationGame),
   CurriculumChallengeGame: asMiniGame('curriculum_challenge', CurriculumChallengeGame),
   DataDungeonGame: asMiniGame('data_dungeon', DataDungeonGame),
   DecimalSniperGame: asMiniGame('decimal_sniper', DecimalSniperGame),
