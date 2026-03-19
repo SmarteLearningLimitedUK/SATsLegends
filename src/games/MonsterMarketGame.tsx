@@ -22,7 +22,10 @@ import {
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import GameActionDock from '../components/GameActionDock';
-import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
+import FoodGameShell from '../components/FoodGameShell';
+import AssetIcon from '../components/AssetIcon';
+import coinAsset from '../assets/fantasy_hero/ui/coin.png';
+import takeOutLevelBg from '../assets/level_backgrounds/take_out.png';
 
 interface MonsterMarketGameProps {
   levelId: number;
@@ -66,39 +69,41 @@ const ITEMS: Item[] = [
 const PATIENCE_DECAY_MS = 220;
 const PATIENCE_DECAY_STEP = 2;
 
-const TopBar: React.FC<{ score: number; coins: number; gems: number; timer: string }> = ({ score, coins, gems, timer }) => (
-  <div className="z-50 w-full px-2 pt-2">
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-2 rounded-lg border border-blue-400/30 bg-blue-900/60 p-1 shadow-lg">
-        <div className="flex h-8 w-8 items-center justify-center rounded-md border-2 border-white bg-blue-500 text-sm font-black text-white shadow-lg">
-          5
-        </div>
-        <div className="flex flex-col">
-          <span className="text-[10px] font-bold uppercase tracking-tight text-blue-200">Chef Jon</span>
-          <div className="h-2 w-24 overflow-hidden rounded-full border border-white/10 bg-black/40">
-            <div className="h-full w-3/4 bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.6)]" />
-          </div>
-        </div>
-        <span className="px-1 text-xs font-black text-white">{score.toLocaleString()}</span>
+const TopBar: React.FC<{ score: number; coins: number; gems: number; timer: string; customersServed: number }> = ({
+  score,
+  coins,
+  gems,
+  timer,
+  customersServed,
+}) => (
+  <header className="ui-panel-unified flex items-center justify-between gap-2 rounded-[1.2rem] border border-white/14 bg-[linear-gradient(180deg,rgba(45,18,12,0.92),rgba(77,34,20,0.88))] px-3 py-2 text-white shadow-[0_12px_28px_rgba(0,0,0,0.28)] md:rounded-[1.45rem] md:px-4">
+    <button className="flex items-center gap-2 rounded-full bg-black/22 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] md:px-3 md:text-xs">
+      <span>Market Brief</span>
+      <AssetIcon name="question" className="h-4 w-4" />
+    </button>
+    <div className="flex items-center gap-1.5 md:gap-2">
+      <div className="flex items-center gap-1 rounded-full bg-white/14 px-2 py-1 md:px-3">
+        <img src={coinAsset} alt="" className="h-4 w-4 md:h-5 md:w-5" draggable={false} />
+        <span className="text-xs font-black md:text-sm">{score}</span>
       </div>
-
-      <div className="flex items-center gap-1 rounded-lg border border-yellow-400/50 bg-blue-900/80 px-3 py-1 shadow-lg">
-        <TimerIcon className="h-4 w-4 text-yellow-400" />
-        <span className="text-sm font-black text-white">{timer}</span>
+      <div className="hidden items-center gap-1 rounded-full bg-white/14 px-2 py-1 md:flex md:px-3">
+        <CircleDollarSign className="h-4 w-4 text-yellow-300" />
+        <span className="text-xs font-black md:text-sm">{coins}</span>
+      </div>
+      <div className="hidden items-center gap-1 rounded-full bg-white/14 px-2 py-1 md:flex md:px-3">
+        <GemIcon className="h-4 w-4 text-cyan-200" />
+        <span className="text-xs font-black md:text-sm">{gems}</span>
+      </div>
+      <div className="flex items-center gap-1 rounded-full bg-white/14 px-2 py-1 md:px-3">
+        <AssetIcon name="timer" className="h-4 w-4 md:h-5 md:w-5" />
+        <span className="text-xs font-black md:text-sm">{timer}</span>
+      </div>
+      <div className="hidden items-center gap-1 rounded-full bg-white/14 px-2 py-1 md:flex md:px-3">
+        <AssetIcon name="trophy" className="h-4 w-4 md:h-5 md:w-5" />
+        <span className="text-xs font-black md:text-sm">{customersServed}</span>
       </div>
     </div>
-
-    <div className="mt-2 flex justify-end gap-2">
-      <div className="flex items-center gap-1 rounded-md border border-yellow-600/30 bg-black/40 px-2 py-0.5">
-        <CircleDollarSign className="h-3 w-3 text-yellow-400" />
-        <span className="text-[10px] font-bold text-white">{coins.toLocaleString()}</span>
-      </div>
-      <div className="flex items-center gap-1 rounded-md border border-pink-600/30 bg-black/40 px-2 py-0.5">
-        <GemIcon className="h-3 w-3 text-pink-400" />
-        <span className="text-[10px] font-bold text-white">{gems}</span>
-      </div>
-    </div>
-  </div>
+  </header>
 );
 
 const GoblinCustomer: React.FC<{ customer: Customer }> = ({ customer }) => (
@@ -283,13 +288,16 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
   };
 
   return (
-    <div className="relative flex h-full w-full flex-col items-center overflow-hidden bg-[#0a1a3a] font-sans text-white select-none">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,#1e3a8a_0%,#0a1a3a_100%)]" />
-      <GameplaySceneBackdrop gameType="monster_market" />
+    <FoodGameShell gameType="monster_market" backgroundImage={takeOutLevelBg}>
+      <TopBar
+        score={score}
+        coins={coins}
+        gems={gems}
+        timer={`${timer.toString().padStart(2, '0')}s`}
+        customersServed={customersServed}
+      />
 
-      <div className="relative z-10 flex h-full w-full max-w-[500px] flex-col">
-        <TopBar score={score} coins={coins} gems={gems} timer={timer.toString().padStart(2, '0')} />
-
+      <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] p-2 md:rounded-[2.6rem] md:p-3">
         <div className="flex flex-1 flex-col items-center justify-between px-4 py-6">
           <div className="flex h-48 w-full items-center justify-center">
             <AnimatePresence mode="wait">
@@ -367,30 +375,30 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
             </button>
           </div>
         </div>
-
-        <GameActionDock onBack={onBack} accentClass="text-white" />
-
-        {!gameActive && (
-          <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-blue-950/90 p-8 text-center">
-            <Trophy className="mb-4 h-24 w-24 animate-bounce text-yellow-400" />
-            <h2 className="mb-2 text-5xl font-black italic">TIME'S UP!</h2>
-            <div className="w-full max-w-xs rounded-2xl border-2 border-blue-400 bg-blue-900/60 p-6">
-              <p className="mb-1 text-sm font-bold uppercase tracking-widest text-blue-200">Final Score</p>
-              <p className="text-4xl font-black text-white">{score.toLocaleString()}</p>
-              <p className="mt-2 text-xs font-bold uppercase tracking-wider text-blue-300">
-                Served: {customersServed}
-              </p>
-            </div>
-            <button
-              onClick={onBack}
-              className="mt-8 rounded-full bg-white px-8 py-3 text-xl font-black text-blue-900 transition-transform hover:scale-105"
-            >
-              CONTINUE
-            </button>
-          </div>
-        )}
       </div>
-    </div>
+
+      <GameActionDock onBack={onBack} accentClass="text-white" />
+
+      {!gameActive && (
+        <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-blue-950/90 p-8 text-center">
+          <Trophy className="mb-4 h-24 w-24 animate-bounce text-yellow-400" />
+          <h2 className="mb-2 text-5xl font-black italic">TIME'S UP!</h2>
+          <div className="w-full max-w-xs rounded-2xl border-2 border-blue-400 bg-blue-900/60 p-6">
+            <p className="mb-1 text-sm font-bold uppercase tracking-widest text-blue-200">Final Score</p>
+            <p className="text-4xl font-black text-white">{score.toLocaleString()}</p>
+            <p className="mt-2 text-xs font-bold uppercase tracking-wider text-blue-300">
+              Served: {customersServed}
+            </p>
+          </div>
+          <button
+            onClick={onBack}
+            className="mt-8 rounded-full bg-white px-8 py-3 text-xl font-black text-blue-900 transition-transform hover:scale-105"
+          >
+            CONTINUE
+          </button>
+        </div>
+      )}
+    </FoodGameShell>
   );
 };
 

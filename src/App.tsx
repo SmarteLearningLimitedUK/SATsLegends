@@ -139,7 +139,12 @@ const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKey | nul
     case 'calculation_clash':
       return level.blueprintKey === 'division_dock' ? 'DivisionDockGame' : 'CurriculumChallengeGame';
     case 'percent_pulse':
+      return 'CurriculumChallengeGame';
     case 'transform_temple':
+      if (level.blueprintKey === 'reflection_rescue') {
+        return 'RotationReflectionGame';
+      }
+      return 'CurriculumChallengeGame';
     case 'scale_safari':
     case 'mean_machine':
     case 'rule_runner':
@@ -147,6 +152,10 @@ const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKey | nul
     case 'sequence_sprint':
     case 'logic_sort':
     case 'shape_shift':
+      if (level.blueprintKey === 'rotation_relay') {
+        return 'RotationReflectionGame';
+      }
+      return 'ReasoningGame';
     case 'matrix_match':
       return 'ReasoningGame';
     default:
@@ -629,7 +638,20 @@ const App: React.FC = () => {
           return renderFromRegistry('DivisionDockGame', sharedProps);
         }
       case 'percent_pulse':
+        return renderFromRegistry('CurriculumChallengeGame', {
+          ...sharedProps,
+          gameType: selectedLevel.gameType,
+          isBoss: Boolean(selectedLevel.isBoss),
+        });
       case 'transform_temple':
+        if (selectedLevel.blueprintKey === 'reflection_rescue') {
+          return renderFromRegistry('RotationReflectionGame', sharedProps);
+        }
+        return renderFromRegistry('CurriculumChallengeGame', {
+          ...sharedProps,
+          gameType: selectedLevel.gameType,
+          isBoss: Boolean(selectedLevel.isBoss),
+        });
       case 'scale_safari':
       case 'mean_machine':
       case 'rule_runner':
@@ -641,6 +663,9 @@ const App: React.FC = () => {
       case 'sequence_sprint':
       case 'logic_sort':
       case 'shape_shift':
+        if (selectedLevel.blueprintKey === 'rotation_relay') {
+          return renderFromRegistry('RotationReflectionGame', sharedProps);
+        }
       case 'matrix_match':
         return renderFromRegistry('ReasoningGame', {
           gameType: selectedLevel.gameType,
