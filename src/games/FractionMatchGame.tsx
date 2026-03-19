@@ -14,7 +14,19 @@ interface FractionMatchGameProps {
 
 type GemType = 'red' | 'blue' | 'green' | 'yellow' | 'purple';
 
-type BoardCell = GemType | null;
+type TileValueFormat = 'fraction' | 'percentage' | 'decimal';
+
+interface GemValueOption {
+  label: string;
+  format: TileValueFormat;
+}
+
+interface GemCell {
+  type: GemType;
+  label: string;
+}
+
+type BoardCell = GemCell | null;
 
 const GEM_TYPES: GemType[] = ['red', 'blue', 'green', 'yellow', 'purple'];
 const GRID_SIZE = 6;
@@ -30,6 +42,39 @@ const GEM_COLORS: Record<GemType, { base: string; light: string; dark: string }>
   purple: { base: '#a855f7', light: '#c084fc', dark: '#7e22ce' },
 };
 
+const GEM_VALUE_POOLS: Record<GemType, GemValueOption[]> = {
+  red: [
+    { label: '1/2', format: 'fraction' },
+    { label: '2/4', format: 'fraction' },
+    { label: '50%', format: 'percentage' },
+    { label: '0.5', format: 'decimal' },
+  ],
+  blue: [
+    { label: '1/4', format: 'fraction' },
+    { label: '2/8', format: 'fraction' },
+    { label: '25%', format: 'percentage' },
+    { label: '0.25', format: 'decimal' },
+  ],
+  green: [
+    { label: '3/4', format: 'fraction' },
+    { label: '6/8', format: 'fraction' },
+    { label: '75%', format: 'percentage' },
+    { label: '0.75', format: 'decimal' },
+  ],
+  yellow: [
+    { label: '1/5', format: 'fraction' },
+    { label: '2/10', format: 'fraction' },
+    { label: '20%', format: 'percentage' },
+    { label: '0.2', format: 'decimal' },
+  ],
+  purple: [
+    { label: '2/5', format: 'fraction' },
+    { label: '4/10', format: 'fraction' },
+    { label: '40%', format: 'percentage' },
+    { label: '0.4', format: 'decimal' },
+  ],
+};
+
 const sleep = (ms: number) => new Promise<void>((resolve) => {
   window.setTimeout(resolve, ms);
 });
@@ -43,9 +88,9 @@ const findMatches = (board: BoardCell[]): number[] => {
   for (let row = 0; row < GRID_SIZE; row += 1) {
     for (let col = 0; col < GRID_SIZE - 2; col += 1) {
       const idx = indexFor(row, col);
-      const type = board[idx];
-      if (!type) continue;
-      if (type === board[idx + 1] && type === board[idx + 2]) {
+      const cell = board[idx];
+      if (!cell) continue;
+      if (cell.type === board[idx + 1]?.type && cell.type === board[idx + 2]?.type) {
         matches.add(idx);
         matches.add(idx + 1);
         matches.add(idx + 2);
@@ -57,9 +102,9 @@ const findMatches = (board: BoardCell[]): number[] => {
   for (let col = 0; col < GRID_SIZE; col += 1) {
     for (let row = 0; row < GRID_SIZE - 2; row += 1) {
       const idx = indexFor(row, col);
-      const type = board[idx];
-      if (!type) continue;
-      if (type === board[indexFor(row + 1, col)] && type === board[indexFor(row + 2, col)]) {
+      const cell = board[idx];
+      if (!cell) continue;
+      if (cell.type === board[indexFor(row + 1, col)]?.type && cell.type === board[indexFor(row + 2, col)]?.type) {
         matches.add(idx);
         matches.add(indexFor(row + 1, col));
         matches.add(indexFor(row + 2, col));
@@ -74,26 +119,41 @@ const wouldCreateImmediateMatch = (board: BoardCell[], row: number, col: number,
   if (col >= 2) {
     const leftA = board[indexFor(row, col - 1)];
     const leftB = board[indexFor(row, col - 2)];
-    if (leftA === gemType && leftB === gemType) return true;
+    if (leftA?.type === gemType && leftB?.type === gemType) return true;
   }
 
   if (row >= 2) {
     const aboveA = board[indexFor(row - 1, col)];
     const aboveB = board[indexFor(row - 2, col)];
-    if (aboveA === gemType && aboveB === gemType) return true;
+    if (aboveA?.type === gemType && aboveB?.type === gemType) return true;
   }
 
   return false;
 };
 
-const createInitialBoard = (): BoardCell[] => {
+const pickTileLabel = (type: GemType, includeDecimals: boolean) => {
+  const pool = includeDecimals
+    ? GEM_VALUE_POOLS[type]
+    : GEM_VALUE_POOLS[type].filter((option) => option.format !== 'decimal');
+
+  const selected = pool[Math.floor(Math.random() * pool.length)] ?? GEM_VALUE_POOLS[type][0];
+  return selected.label;
+};
+
+const buildCell = (type: GemType, includeDecimals: boolean): GemCell => ({
+  type,
+  label: pickTileLabel(type, includeDecimals),
+});
+
+const createInitialBoard = (includeDecimals: boolean): BoardCell[] => {
   const board: BoardCell[] = Array.from({ length: GRID_SIZE * GRID_SIZE }, () => null);
 
   for (let row = 0; row < GRID_SIZE; row += 1) {
     for (let col = 0; col < GRID_SIZE; col += 1) {
       const candidates = GEM_TYPES.filter((gemType) => !wouldCreateImmediateMatch(board, row, col, gemType));
       const chosenPool = candidates.length > 0 ? candidates : GEM_TYPES;
-      board[indexFor(row, col)] = chosenPool[Math.floor(Math.random() * chosenPool.length)];
+      const chosenType = chosenPool[Math.floor(Math.random() * chosenPool.length)];
+      board[indexFor(row, col)] = buildCell(chosenType, includeDecimals);
     }
   }
 
@@ -110,10 +170,11 @@ const isAdjacent = (first: number, second: number) => {
 
 const BevelledGem: React.FC<{
   type: GemType;
+  label: string;
   size?: number;
   isSelected?: boolean;
   onClick?: () => void;
-}> = ({ type, size = 46, isSelected = false, onClick }) => {
+}> = ({ type, label, size = 46, isSelected = false, onClick }) => {
   const colors = GEM_COLORS[type];
 
   return (
@@ -138,10 +199,13 @@ const BevelledGem: React.FC<{
         borderBottom: `4px solid ${colors.dark}`,
         borderRight: `4px solid ${colors.dark}`,
       }}
-      aria-label={`Gem ${type}`}
+      aria-label={`Gem ${label}`}
     >
       <div className="absolute left-0 top-0 h-full w-full bg-gradient-to-br from-white/40 via-transparent to-black/20" />
       <div className="absolute left-1.5 top-1.5 h-2 w-2 rounded-full bg-white/60 blur-[1px]" />
+      <span className="absolute inset-0 flex items-center justify-center px-0.5 text-center text-[11px] font-black leading-none text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] sm:text-xs">
+        {label}
+      </span>
 
       {isSelected && (
         <div className="absolute inset-0 animate-pulse border-2 border-white shadow-[0_0_15px_white]" />
@@ -223,10 +287,6 @@ const MatchGameShell: React.FC<{
                 {children}
               </div>
 
-              <div className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 gap-3">
-                <div className="rounded-lg border-2 border-[#fcd34d] bg-gradient-to-b from-green-400 to-green-700 px-3 py-0.5 text-[10px] font-black shadow-lg">800</div>
-                <div className="rounded-lg border-2 border-[#fcd34d] bg-gradient-to-b from-green-400 to-green-700 px-3 py-0.5 text-[10px] font-black shadow-lg">500</div>
-              </div>
             </div>
           </div>
         </div>
@@ -256,15 +316,21 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
 
   const targetScore = useMemo(() => BASE_TARGET_SCORE + (levelId * TARGET_SCORE_STEP), [levelId]);
   const levelName = useMemo(() => `Match ${Math.max(1, levelId)}`, [levelId]);
+  const includeDecimals = levelId >= 3;
+
+  const makeRandomCell = useCallback(() => {
+    const randomType = GEM_TYPES[Math.floor(Math.random() * GEM_TYPES.length)];
+    return buildCell(randomType, includeDecimals);
+  }, [includeDecimals]);
 
   const resetBoard = useCallback(() => {
     endedRef.current = false;
-    setBoard(createInitialBoard());
+    setBoard(createInitialBoard(includeDecimals));
     setSelectedIdx(null);
     setScore(0);
     setIsProcessing(false);
     setTimeLeft(ROUND_SECONDS);
-  }, []);
+  }, [includeDecimals]);
 
   useEffect(() => {
     resetBoard();
@@ -382,7 +448,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
 
         while (writeRow >= 0) {
           const refillIdx = indexFor(writeRow, col);
-          workingBoard[refillIdx] = GEM_TYPES[Math.floor(Math.random() * GEM_TYPES.length)];
+          workingBoard[refillIdx] = makeRandomCell();
           writeRow -= 1;
         }
       }
@@ -391,7 +457,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       await sleep(220);
       if (endedRef.current) return;
     }
-  }, []);
+  }, [makeRandomCell]);
 
   const handleGemClick = useCallback(async (idx: number) => {
     if (endedRef.current || isProcessing) return;
@@ -440,13 +506,14 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
         ref={boardGridRef}
         className="grid w-full max-w-[22rem] grid-cols-6 gap-1.5 sm:max-w-[26rem]"
       >
-        {board.map((type, idx) => (
+        {board.map((cell, idx) => (
           <div key={idx} className="relative" style={{ width: gemSize, height: gemSize }}>
             <AnimatePresence mode="popLayout">
-              {type && (
+              {cell && (
                 <BevelledGem
-                  key={`${idx}-${type}`}
-                  type={type}
+                  key={`${idx}-${cell.type}-${cell.label}`}
+                  type={cell.type}
+                  label={cell.label}
                   size={gemSize}
                   isSelected={selectedIdx === idx}
                   onClick={() => {
