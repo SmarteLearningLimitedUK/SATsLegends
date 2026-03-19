@@ -115,6 +115,9 @@ const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKey | nul
     case 'monster_market':
       return 'MonsterMarketGame';
     case 'ratio_rapids':
+      if (level.blueprintKey === 'share_splitter') {
+        return 'ShareSplitterGame';
+      }
       if (level.blueprintKey === 'maths_vs_zombies') {
         return 'MathsVsZombiesGame';
       }
@@ -603,6 +606,9 @@ const App: React.FC = () => {
       case 'monster_market':
         return renderFromRegistry('MonsterMarketGame', sharedProps);
       case 'ratio_rapids':
+        if (selectedLevel.blueprintKey === 'share_splitter') {
+          return renderFromRegistry('ShareSplitterGame', sharedProps);
+        }
         if (selectedLevel.blueprintKey === 'maths_vs_zombies') {
           return renderFromRegistry('MathsVsZombiesGame', sharedProps);
         }

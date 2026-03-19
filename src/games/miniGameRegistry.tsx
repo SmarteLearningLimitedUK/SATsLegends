@@ -20,6 +20,7 @@ import PrimePopGame from './PrimePopGame';
 import RatioRapidsGame from './RatioRapidsGame';
 import RotationReflectionGame from './RotationReflectionGame';
 import RuneLockDungeonsGame from './RuneLockDungeonsGame';
+import ShareSplitterGame from './ShareSplitterGame';
 import TakeOutRushGame from './TakeOutRushGame';
 import TimekeeperTempleGame from './TimekeeperTempleGame';
 import TowerOfFactorsGame from './TowerOfFactorsGame';
@@ -54,6 +55,7 @@ export type MiniGameRegistryKey =
   | 'RatioRapidsGame'
   | 'RotationReflectionGame'
   | 'RuneLockDungeonsGame'
+  | 'ShareSplitterGame'
   | 'TakeOutRushGame'
   | 'TimekeeperTempleGame'
   | 'TowerOfFactorsGame'
@@ -96,6 +98,7 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   RatioRapidsGame: asMiniGame('ratio_rapids', RatioRapidsGame),
   RotationReflectionGame: asMiniGame('rotation_reflection', RotationReflectionGame),
   RuneLockDungeonsGame: asMiniGame('rune_lock_dungeons', RuneLockDungeonsGame),
+  ShareSplitterGame: asMiniGame('share_splitter', ShareSplitterGame),
   TakeOutRushGame: asMiniGame('take_out_rush', TakeOutRushGame),
   TimekeeperTempleGame: asMiniGame('timekeeper_temple', TimekeeperTempleGame),
   TowerOfFactorsGame: asMiniGame('tower_of_factors', TowerOfFactorsGame),

@@ -49,7 +49,7 @@ const GAME_SUMMARY_BY_KEY: Record<string, string> = {
   remainder_run: 'Route values by quotient and remainder outcomes at speed.',
   potion_panic: 'Balance potion quantities to exact ratios before instability triggers.',
   ratio_recipes: 'Scale ingredient sets to match new serving targets precisely.',
-  share_splitter: 'Distribute totals fairly according to ratio parts.',
+  share_splitter: 'Share cake slices between plates to match exact ratio targets before time runs out.',
   maths_vs_zombies: 'Survive zombie waves by deploying defenders in the correct maths ratio.',
   scale_builder: 'Resize structures to exact scale factors with precision.',
   angle_arena: 'Calibrate launch angles precisely to hit targets.',
