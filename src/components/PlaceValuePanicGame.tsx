@@ -3,12 +3,10 @@ import { AnimatePresence, motion } from 'motion/react';
 import { AVATARS } from '../constants';
 import GameContainerView from './GameContainerView';
 import placeValuePanicBackground from '../assets/level_backgrounds/place_value_panicbkgrd.png';
-import squareGemBlue from '../assets/fantasy_hero/cloud_collapse/tile_blue.png';
-import squareGemGreen from '../assets/fantasy_hero/cloud_collapse/tile_green.png';
-import squareGemRed from '../assets/fantasy_hero/cloud_collapse/tile_red.png';
-import squareGemYellow from '../assets/fantasy_hero/cloud_collapse/tile_yellow.png';
-import squareGemPurple from '../assets/fantasy_hero/cloud_collapse/tile_purple.png';
-import squareGemNavy from '../assets/fantasy_hero/cloud_collapse/tile_navy.png';
+import pvpGemBase from '../assets/place_value/jewels/gem.png';
+import pvpGemEmerald from '../assets/place_value/jewels/emerald.png';
+import pvpGemSapphire from '../assets/place_value/jewels/sapphire.png';
+import pvpGemIcon from '../assets/place_value/jewels/icon_gem.png';
 import {
   DigitTile,
   PlaceValueSlotKey,
@@ -51,12 +49,10 @@ const SLOT_DISPLAY_VALUES: Record<PlaceValueSlotKey, string> = {
 
 const MIN_TAP_TARGET = 44;
 const GEM_TEXTURES: string[] = [
-  squareGemBlue,
-  squareGemGreen,
-  squareGemRed,
-  squareGemYellow,
-  squareGemPurple,
-  squareGemNavy,
+  pvpGemBase,
+  pvpGemEmerald,
+  pvpGemSapphire,
+  pvpGemIcon,
 ];
 
 const getGemTexture = (digitValue: number) => GEM_TEXTURES[Math.abs(digitValue) % GEM_TEXTURES.length];
