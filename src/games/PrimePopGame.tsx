@@ -26,13 +26,106 @@ interface Bubble {
 }
 
 const BUBBLE_TYPES: BubbleType[] = ['red', 'blue', 'green', 'yellow', 'purple'];
-const ROUND_SECONDS_BASE = 60;
-const TARGET_SCORE_BASE = 1000;
-const TARGET_SCORE_STEP = 500;
-const PRIME_POINTS = 75;
-const COMPOSITE_PENALTY = 50;
-const MIN_ACTIVE_BUBBLES = 7;
-const MAX_ACTIVE_BUBBLES = 9;
+
+interface PrimePopDifficulty {
+  roundSeconds: number;
+  targetScore: number;
+  maxNumber: number;
+  minActiveBubbles: number;
+  maxActiveBubbles: number;
+  bubbleRadiusMin: number;
+  bubbleRadiusMax: number;
+  bubbleSpeedMin: number;
+  bubbleSpeedMax: number;
+  primeSpawnChance: number;
+  trickyCompositeChance: number;
+  spawnIntervalMs: number;
+  primePoints: number;
+  compositePenalty: number;
+  comboStep: number;
+}
+
+const getPrimePopDifficulty = (levelId: number): PrimePopDifficulty => {
+  const level = Math.max(1, levelId);
+
+  if (level <= 2) {
+    return {
+      roundSeconds: 70,
+      targetScore: 950 + ((level - 1) * 120),
+      maxNumber: 30,
+      minActiveBubbles: 6,
+      maxActiveBubbles: 7,
+      bubbleRadiusMin: 9.8,
+      bubbleRadiusMax: 11.8,
+      bubbleSpeedMin: 5.8,
+      bubbleSpeedMax: 8.2,
+      primeSpawnChance: 0.62,
+      trickyCompositeChance: 0.08,
+      spawnIntervalMs: 980,
+      primePoints: 80,
+      compositePenalty: 30,
+      comboStep: 0.08,
+    };
+  }
+
+  if (level <= 4) {
+    return {
+      roundSeconds: 65,
+      targetScore: 1200 + ((level - 3) * 180),
+      maxNumber: 60,
+      minActiveBubbles: 7,
+      maxActiveBubbles: 8,
+      bubbleRadiusMin: 9.2,
+      bubbleRadiusMax: 11.0,
+      bubbleSpeedMin: 7.0,
+      bubbleSpeedMax: 10.0,
+      primeSpawnChance: 0.54,
+      trickyCompositeChance: 0.16,
+      spawnIntervalMs: 860,
+      primePoints: 75,
+      compositePenalty: 40,
+      comboStep: 0.1,
+    };
+  }
+
+  if (level <= 7) {
+    return {
+      roundSeconds: 60,
+      targetScore: 1500 + ((level - 5) * 220),
+      maxNumber: 80,
+      minActiveBubbles: 8,
+      maxActiveBubbles: 9,
+      bubbleRadiusMin: 8.6,
+      bubbleRadiusMax: 10.4,
+      bubbleSpeedMin: 8.5,
+      bubbleSpeedMax: 12.0,
+      primeSpawnChance: 0.48,
+      trickyCompositeChance: 0.22,
+      spawnIntervalMs: 760,
+      primePoints: 75,
+      compositePenalty: 50,
+      comboStep: 0.1,
+    };
+  }
+
+  return {
+    roundSeconds: 55,
+    targetScore: 1900 + ((level - 8) * 260),
+    maxNumber: 100,
+    minActiveBubbles: 9,
+    maxActiveBubbles: 10,
+    bubbleRadiusMin: 8.2,
+    bubbleRadiusMax: 9.8,
+    bubbleSpeedMin: 10.0,
+    bubbleSpeedMax: 13.5,
+    primeSpawnChance: 0.43,
+    trickyCompositeChance: 0.28,
+    spawnIntervalMs: 680,
+    primePoints: 75,
+    compositePenalty: 60,
+    comboStep: 0.12,
+  };
+};
 
 const BUBBLE_COLORS: Record<BubbleType, { base: string; light: string; dark: string }> = {
   red: { base: '#ef4444', light: '#f87171', dark: '#b91c1c' },
@@ -170,10 +263,9 @@ const GameShell: React.FC<{
 );
 
 const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, onVictory, onGameOver, onBack }) => {
-  const roundSeconds = useMemo(() => ROUND_SECONDS_BASE + (levelId * 10), [levelId]);
-  const targetScore = useMemo(() => TARGET_SCORE_BASE + (levelId * TARGET_SCORE_STEP), [levelId]);
-  const includeHardComposites = levelId >= 2;
-  const maxNumber = levelId <= 1 ? 30 : levelId === 2 ? 50 : 100;
+  const difficulty = useMemo(() => getPrimePopDifficulty(levelId), [levelId]);
+  const roundSeconds = difficulty.roundSeconds;
+  const targetScore = difficulty.targetScore;
 
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(roundSeconds);
@@ -195,29 +287,37 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, onVictory, onGameO
   const overRef = useRef(false);
 
   const pickBubbleNumber = useCallback((existingNumbers: Set<number>) => {
-    const trickyComposites = [51, 57, 87, 91, 39, 69, 93].filter((n) => n <= maxNumber);
-    const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97].filter((n) => n <= maxNumber);
+    const trickyComposites = [51, 57, 87, 91, 39, 69, 93].filter((n) => n <= difficulty.maxNumber);
+    const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97].filter((n) => n <= difficulty.maxNumber);
 
     for (let i = 0; i < 20; i += 1) {
       const random = Math.random();
-      let candidate = Math.floor(Math.random() * (maxNumber - 1)) + 2;
-      if (random < 0.45 && primes.length > 0) {
+      let candidate = Math.floor(Math.random() * (difficulty.maxNumber - 1)) + 2;
+      if (random < difficulty.primeSpawnChance && primes.length > 0) {
         candidate = primes[Math.floor(Math.random() * primes.length)];
-      } else if (includeHardComposites && random < 0.65 && trickyComposites.length > 0) {
+      } else if (random < (difficulty.primeSpawnChance + difficulty.trickyCompositeChance) && trickyComposites.length > 0) {
         candidate = trickyComposites[Math.floor(Math.random() * trickyComposites.length)];
+      } else if (isPrimeNumber(candidate)) {
+        // Favor non-prime targets outside explicit prime chance to keep risk/reward clear.
+        let reroll = candidate;
+        for (let attempt = 0; attempt < 6; attempt += 1) {
+          reroll = Math.floor(Math.random() * (difficulty.maxNumber - 1)) + 2;
+          if (!isPrimeNumber(reroll)) break;
+        }
+        candidate = reroll;
       }
       if (!existingNumbers.has(candidate)) {
         return candidate;
       }
     }
 
-    return Math.floor(Math.random() * (maxNumber - 1)) + 2;
-  }, [includeHardComposites, maxNumber]);
+    return Math.floor(Math.random() * (difficulty.maxNumber - 1)) + 2;
+  }, [difficulty.maxNumber, difficulty.primeSpawnChance, difficulty.trickyCompositeChance]);
 
   const makeBubble = useCallback((existing: Bubble[]): Bubble => {
     const existingNumbers = new Set(existing.map((bubble) => bubble.number));
     const number = pickBubbleNumber(existingNumbers);
-    const radius = 8.8 + (Math.random() * 2.4); // larger bubbles (17.6% - 22.4% diameter)
+    const radius = difficulty.bubbleRadiusMin + (Math.random() * (difficulty.bubbleRadiusMax - difficulty.bubbleRadiusMin));
     const margin = radius + 1.5;
     let x = Math.random() * (100 - (margin * 2)) + margin;
     let y = Math.random() * (72 - (margin * 2)) + margin;
@@ -237,25 +337,25 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, onVictory, onGameO
       id: nextIdRef.current++,
       x,
       y,
-      vx: (Math.random() - 0.5) * 10,
-      vy: (Math.random() - 0.5) * 8,
+      vx: (Math.random() < 0.5 ? -1 : 1) * (difficulty.bubbleSpeedMin + (Math.random() * (difficulty.bubbleSpeedMax - difficulty.bubbleSpeedMin))),
+      vy: (Math.random() < 0.5 ? -1 : 1) * ((difficulty.bubbleSpeedMin * 0.6) + (Math.random() * ((difficulty.bubbleSpeedMax * 0.8) - (difficulty.bubbleSpeedMin * 0.6)))),
       radius,
       type: BUBBLE_TYPES[Math.floor(Math.random() * BUBBLE_TYPES.length)],
       number,
       isPrime: isPrimeNumber(number),
     };
-  }, [pickBubbleNumber]);
+  }, [difficulty.bubbleRadiusMax, difficulty.bubbleRadiusMin, difficulty.bubbleSpeedMax, difficulty.bubbleSpeedMin, pickBubbleNumber]);
 
   const normalizeBubbleCount = useCallback((list: Bubble[]) => {
     let working = [...list];
-    while (working.length < MIN_ACTIVE_BUBBLES) {
+    while (working.length < difficulty.minActiveBubbles) {
       working = [...working, makeBubble(working)];
     }
-    while (working.length > MAX_ACTIVE_BUBBLES) {
+    while (working.length > difficulty.maxActiveBubbles) {
       working.pop();
     }
     return working;
-  }, [makeBubble]);
+  }, [difficulty.maxActiveBubbles, difficulty.minActiveBubbles, makeBubble]);
 
   const finalizeRound = useCallback((finalScore: number) => {
     if (overRef.current) return;
@@ -291,7 +391,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, onVictory, onGameO
 
     nextIdRef.current = 1;
     let initial: Bubble[] = [];
-    for (let i = 0; i < MIN_ACTIVE_BUBBLES; i += 1) {
+    for (let i = 0; i < difficulty.minActiveBubbles; i += 1) {
       initial = [...initial, makeBubble(initial)];
     }
     bubblesRef.current = initial;
@@ -311,19 +411,19 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, onVictory, onGameO
     spawnIntervalRef.current = setInterval(() => {
       if (overRef.current) return;
       let next = [...bubblesRef.current];
-      if (next.length < MIN_ACTIVE_BUBBLES) {
+      if (next.length < difficulty.minActiveBubbles) {
         next = normalizeBubbleCount(next);
         bubblesRef.current = next;
         setBubblesView(next);
       }
-    }, Math.max(900 - (levelId * 60), 480));
+    }, difficulty.spawnIntervalMs);
 
     return () => {
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
       if (spawnIntervalRef.current) clearInterval(spawnIntervalRef.current);
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
-  }, [finalizeRound, levelId, makeBubble, normalizeBubbleCount, roundSeconds]);
+  }, [difficulty.minActiveBubbles, difficulty.spawnIntervalMs, finalizeRound, makeBubble, normalizeBubbleCount, roundSeconds]);
 
   const popBubbleAt = useCallback((clientX: number, clientY: number) => {
     if (!gameAreaRef.current || overRef.current) return;
@@ -348,8 +448,8 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, onVictory, onGameO
     let next = bubblesRef.current.filter((bubble) => bubble.id !== nearest.id);
 
     if (nearest.isPrime) {
-      const multiplier = 1 + (comboRef.current * 0.1);
-      const earned = Math.round(PRIME_POINTS * multiplier);
+      const multiplier = 1 + (comboRef.current * difficulty.comboStep);
+      const earned = Math.round(difficulty.primePoints * multiplier);
       scoreRef.current = scoreRef.current + earned;
       comboRef.current = comboRef.current + 1;
       confetti({
@@ -359,7 +459,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, onVictory, onGameO
         colors: ['#34d399', '#10b981', '#059669'],
       });
     } else {
-      scoreRef.current = Math.max(0, scoreRef.current - COMPOSITE_PENALTY);
+      scoreRef.current = Math.max(0, scoreRef.current - difficulty.compositePenalty);
       comboRef.current = 0;
       confetti({
         particleCount: 16,
@@ -378,7 +478,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, onVictory, onGameO
     if (scoreRef.current >= targetScore) {
       finalizeRound(scoreRef.current);
     }
-  }, [finalizeRound, normalizeBubbleCount, targetScore]);
+  }, [difficulty.comboStep, difficulty.compositePenalty, difficulty.primePoints, finalizeRound, normalizeBubbleCount, targetScore]);
 
   const updateFrame = useCallback((timestamp: number) => {
     if (overRef.current) return;
