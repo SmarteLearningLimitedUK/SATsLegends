@@ -39,15 +39,15 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   potion_pour: {
-    label: 'Potion Brewery',
-    focus: 'Ratio, proportion and scaled mixtures',
+    label: 'Potion Pour Panic',
+    focus: 'Magical ratio brewing under time pressure',
     rules: {
-      title: 'Potion Brewery',
-      summary: 'Build the correct ingredient mix in the cauldron so every potion matches the recipe board.',
+      title: 'Potion Pour Panic',
+      summary: 'Brew spells by pouring potion ingredients into the cauldron in the exact ratio before the 90-second clock runs out.',
       bullets: [
-        'Most rounds ask you to add the exact ingredient counts shown in the recipe.',
-        'Later rounds can scale the batch, hide one ingredient, or ask you to compare two finished brews.',
-        'Wrong mixtures spoil the potion, so keep every ingredient in the correct ratio.',
+        'Each recipe shows a ratio and total units for the current brew.',
+        'Use plus and minus controls to pour exact amounts for each ingredient.',
+        'Only exact proportions cast successfully, so avoid overfilling one side of the ratio.',
       ],
     },
   },
@@ -341,14 +341,14 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
   },
   scale_safari: {
     label: 'Scale Builder',
-    focus: 'Scale factors, conversions and proportional thinking',
+    focus: 'Architectural scaling, proportions and dimension precision',
     rules: {
       title: 'Scale Builder',
-      summary: 'Resize, convert, or scale quantities to match the build target.',
+      summary: 'Resize blueprint structures to exact scale factors and verify precision before moving to the next project phase.',
       bullets: [
-        'Use scale factors and conversion facts together.',
-        'Recipe and map-style questions appear in later rounds.',
-        'Efficient scaling gives bigger score bonuses.',
+        'Use slider and step controls to hit the exact target scale.',
+        'Reference overlays show the original footprint for comparison.',
+        'Only exact scale verification unlocks the next structure.',
       ],
     },
   },

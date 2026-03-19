@@ -149,6 +149,9 @@ const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKey | nul
       }
       return 'CurriculumChallengeGame';
     case 'scale_safari':
+      if (level.blueprintKey === 'scale_builder') {
+        return 'ScaleBuilderGame';
+      }
     case 'mean_machine':
     case 'rule_runner':
       return 'CurriculumChallengeGame';
@@ -659,6 +662,9 @@ const App: React.FC = () => {
           isBoss: Boolean(selectedLevel.isBoss),
         });
       case 'scale_safari':
+        if (selectedLevel.blueprintKey === 'scale_builder') {
+          return renderFromRegistry('ScaleBuilderGame', sharedProps);
+        }
       case 'mean_machine':
       case 'rule_runner':
         return renderFromRegistry('CurriculumChallengeGame', {
