@@ -111,6 +111,12 @@ const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKey | nul
     case 'polygon_palace':
       return 'PolygonPalaceGame';
     case 'data_dungeon':
+      if (level.blueprintKey === 'data_dash' || level.blueprintKey === 'mode_miner') {
+        return 'ModeMinerGame';
+      }
+      if (level.blueprintKey === 'table_trouble') {
+        return 'LineGraphLabGame';
+      }
       if (level.blueprintKey === 'data_detective') {
         return 'DataDetectiveGame';
       }
@@ -137,6 +143,9 @@ const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKey | nul
     case 'place_value_peaks':
       return level.blueprintKey === 'place_value_panic' ? 'PlaceValuePanicGame' : 'DecimalSniperGame';
     case 'chart_chase':
+      if (level.blueprintKey === 'line_graph_lab') {
+        return 'LineGraphLabGame';
+      }
       return 'TreasureChartCoveGame';
     case 'equation_grove':
       return level.blueprintKey === 'order_ops_arena' ? 'OrderOpsArenaGame' : 'RuneLockDungeonsGame';
@@ -156,6 +165,9 @@ const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKey | nul
         return 'ScaleBuilderGame';
       }
     case 'mean_machine':
+      if (level.blueprintKey === 'mean_machine') {
+        return 'MeanMachineGame';
+      }
     case 'rule_runner':
       return 'CurriculumChallengeGame';
     case 'sequence_sprint':
@@ -608,6 +620,12 @@ const App: React.FC = () => {
       case 'polygon_palace':
         return renderFromRegistry('PolygonPalaceGame', sharedProps);
       case 'data_dungeon':
+        if (selectedLevel.blueprintKey === 'data_dash' || selectedLevel.blueprintKey === 'mode_miner') {
+          return renderFromRegistry('ModeMinerGame', sharedProps);
+        }
+        if (selectedLevel.blueprintKey === 'table_trouble') {
+          return renderFromRegistry('LineGraphLabGame', sharedProps);
+        }
         if (selectedLevel.blueprintKey === 'data_detective') {
           return renderFromRegistry('DataDetectiveGame', sharedProps);
         }
@@ -640,6 +658,9 @@ const App: React.FC = () => {
         }
         return renderFromRegistry('DecimalSniperGame', { ...sharedProps, isBoss: Boolean(selectedLevel.isBoss) });
       case 'chart_chase':
+        if (selectedLevel.blueprintKey === 'line_graph_lab') {
+          return renderFromRegistry('LineGraphLabGame', sharedProps);
+        }
         return renderFromRegistry('TreasureChartCoveGame', sharedProps);
       case 'equation_grove':
         if (selectedLevel.blueprintKey === 'order_ops_arena') {
@@ -672,6 +693,9 @@ const App: React.FC = () => {
           return renderFromRegistry('ScaleBuilderGame', sharedProps);
         }
       case 'mean_machine':
+        if (selectedLevel.blueprintKey === 'mean_machine') {
+          return renderFromRegistry('MeanMachineGame', sharedProps);
+        }
       case 'rule_runner':
         return renderFromRegistry('CurriculumChallengeGame', {
           ...sharedProps,

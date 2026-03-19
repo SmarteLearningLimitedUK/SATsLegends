@@ -9,9 +9,12 @@ import DataDetectiveGame from './DataDetectiveGame';
 import DecimalSniperGame from './DecimalSniperGame';
 import DivisionDockGame from './DivisionDockGame';
 import FractionMatchGame from './FractionMatchGame';
+import LineGraphLabGame from './LineGraphLabGame';
 import MathsVsZombiesGame from './MathsVsZombiesGame';
+import MeanMachineGame from './MeanMachineGame';
 import MeasurementForgeGame from './MeasurementForgeGame';
 import MonsterMarketGame from './MonsterMarketGame';
+import ModeMinerGame from './ModeMinerGame';
 import OrderOpsArenaGame from './OrderOpsArenaGame';
 import PerimeterPathGame from './PerimeterPathGame';
 import PlaceValuePanicGame from './PlaceValuePanicGame';
@@ -46,9 +49,12 @@ export type MiniGameRegistryKey =
   | 'DecimalSniperGame'
   | 'DivisionDockGame'
   | 'FractionMatchGame'
+  | 'LineGraphLabGame'
   | 'MathsVsZombiesGame'
+  | 'MeanMachineGame'
   | 'MeasurementForgeGame'
   | 'MonsterMarketGame'
+  | 'ModeMinerGame'
   | 'OrderOpsArenaGame'
   | 'PerimeterPathGame'
   | 'PlaceValuePanicGame'
@@ -91,9 +97,12 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   DecimalSniperGame: asMiniGame('decimal_sniper', DecimalSniperGame),
   DivisionDockGame: asMiniGame('division_dock', DivisionDockGame),
   FractionMatchGame: asMiniGame('fraction_match', FractionMatchGame),
+  LineGraphLabGame: asMiniGame('line_graph_lab', LineGraphLabGame),
   MathsVsZombiesGame: asMiniGame('maths_vs_zombies', MathsVsZombiesGame),
+  MeanMachineGame: asMiniGame('mean_machine', MeanMachineGame),
   MeasurementForgeGame: asMiniGame('measurement_forge', MeasurementForgeGame),
   MonsterMarketGame: asMiniGame('monster_market', MonsterMarketGame),
+  ModeMinerGame: asMiniGame('mode_miner', ModeMinerGame),
   OrderOpsArenaGame: asMiniGame('order_ops_arena', OrderOpsArenaGame),
   PerimeterPathGame: asMiniGame('perimeter_path', PerimeterPathGame),
   PlaceValuePanicGame: asMiniGame('place_value_panic', PlaceValuePanicGame),
