@@ -103,7 +103,7 @@ export const ISLANDS: IslandData[] = [
     decorations: [],
     levels: [
       { id: 1, stars: 0, isLocked: false, blueprintKey: 'potion_panic', displayName: 'Potion Panic', gameType: 'potion_pour' },
-      { id: 2, stars: 0, isLocked: false, blueprintKey: 'ratio_recipes', displayName: 'Ratio Recipes', gameType: 'potion_pour' },
+      { id: 2, stars: 0, isLocked: false, blueprintKey: 'potion_panic', displayName: 'Potion Panic', gameType: 'potion_pour' },
       { id: 3, stars: 0, isLocked: false, blueprintKey: 'share_splitter', displayName: 'Share Splitter', gameType: 'ratio_rapids' },
       { id: 4, stars: 0, isLocked: false, blueprintKey: 'proportion_puzzle', displayName: 'Proportion Puzzle', gameType: 'ratio_rapids' },
       { id: 5, stars: 0, isLocked: false, blueprintKey: 'scale_builder', displayName: 'Scale Builder', gameType: 'scale_safari' },
