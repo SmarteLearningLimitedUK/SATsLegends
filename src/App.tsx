@@ -1018,19 +1018,6 @@ const App: React.FC = () => {
         actionLabel={gameRulesMode === 'start' ? 'Start Game' : 'Back To Game'}
       />
 
-      {!isStagedPreviewOpen && (
-        <button
-          onClick={() => openStagePreview(screen === 'splash' ? 'splash' : 'map')}
-          className={`ui-button-primary fixed right-3 z-[70] rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] md:right-4 md:px-5 md:text-[11px] ${
-            screen === 'parent_dashboard'
-              ? 'top-[calc(4rem+env(safe-area-inset-top))] md:top-[calc(0.75rem+env(safe-area-inset-top))]'
-              : 'top-[calc(0.75rem+env(safe-area-inset-top))]'
-          }`}
-        >
-          Stage View
-        </button>
-      )}
-
       {isStagedPreviewOpen && (
         <div className="fixed right-3 top-[calc(0.75rem+env(safe-area-inset-top))] z-[70] w-[min(22rem,calc(100vw-1.5rem))] overflow-hidden rounded-[1.25rem] border border-cyan-200/30 bg-slate-950/84 p-3 text-white shadow-[0_20px_40px_rgba(2,6,23,0.5)] backdrop-blur-xl md:right-4 md:w-80">
           <div className="mb-2 flex items-center justify-between gap-3">
