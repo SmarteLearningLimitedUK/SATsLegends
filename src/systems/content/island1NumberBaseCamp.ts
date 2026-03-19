@@ -78,10 +78,10 @@ const basePackDefs: Array<{
   },
   {
     key: 'rounding_rampage',
-    name: 'Rounding Rampage',
+    name: 'Rounding Rocket',
     gameType: 'place_value_peaks',
     skillTags: ['ROUNDING', 'PLACE_VALUE', 'ESTIMATION'],
-    objectiveForLevel: (miniGameLevel) => `Route values through the correct rounding gates (L${miniGameLevel}).`,
+    objectiveForLevel: (miniGameLevel) => `Round mission values accurately to fuel deeper space jumps (L${miniGameLevel}).`,
   },
   {
     key: 'calculation_clash',

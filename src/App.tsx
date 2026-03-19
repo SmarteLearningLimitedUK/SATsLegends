@@ -141,7 +141,13 @@ const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKey | nul
     case 'tower_of_factors':
       return 'TowerOfFactorsGame';
     case 'place_value_peaks':
-      return level.blueprintKey === 'place_value_panic' ? 'PlaceValuePanicGame' : 'DecimalSniperGame';
+      if (level.blueprintKey === 'place_value_panic') {
+        return 'PlaceValuePanicGame';
+      }
+      if (level.blueprintKey === 'rounding_rampage') {
+        return 'RoundingRocketGame';
+      }
+      return 'DecimalSniperGame';
     case 'chart_chase':
       if (level.blueprintKey === 'line_graph_lab') {
         return 'LineGraphLabGame';
@@ -664,6 +670,9 @@ const App: React.FC = () => {
             ...sharedProps,
             miniGameLevel: selectedLevel.miniGameLevel,
           });
+        }
+        if (selectedLevel.blueprintKey === 'rounding_rampage') {
+          return renderFromRegistry('RoundingRocketGame', sharedProps);
         }
         return renderFromRegistry('DecimalSniperGame', { ...sharedProps, isBoss: Boolean(selectedLevel.isBoss) });
       case 'chart_chase':
