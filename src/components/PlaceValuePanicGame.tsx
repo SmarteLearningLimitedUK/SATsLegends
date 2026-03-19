@@ -213,14 +213,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
   const objectiveArea = (
     <div className="pvp-objective flex flex-col gap-2 p-2 md:gap-2.5 md:p-3">
-      <div className="flex items-start justify-between gap-2">
-        <div className="pvp-target-chip">
-          <div className="text-[9px] font-black uppercase tracking-[0.22em] text-cyan-100/72">Target Number</div>
-          <div className="pvp-target-value text-lg font-black text-white md:text-2xl">{round.targetNumberDisplay}</div>
-          <div className="text-[11px] font-semibold text-cyan-100/90 md:text-xs">
-            Drag each digit into the correct place.
-          </div>
-        </div>
+      <div className="flex items-center justify-end gap-2">
         <button
           type="button"
           onClick={() => setIsPaused((previous) => !previous)}
@@ -228,6 +221,17 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         >
           {isPaused ? 'Resume' : 'Pause'}
         </button>
+      </div>
+
+      <div className="pvp-target-center-card">
+        <div className="text-[9px] font-black uppercase tracking-[0.22em] text-amber-950/72">Target Number</div>
+        <div className="pvp-target-value pvp-target-value-center text-2xl font-black text-amber-950 md:text-4xl">
+          {round.targetNumberDisplay}
+        </div>
+      </div>
+
+      <div className="text-center text-[11px] font-semibold text-cyan-100/90 md:text-xs">
+        Drag each digit into the correct place.
       </div>
 
       <div className="flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-[0.12em] md:text-xs">

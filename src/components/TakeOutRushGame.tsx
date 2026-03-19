@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import { AVATARS } from '../constants';
 import { TAKE_OUT_ASSETS } from '../assets/take_out';
 import takeOutLevelBg from '../assets/level_backgrounds/take_out.png';
 import playBgAsset from '../assets/fantasy_hero/slider/play_bg.png';
@@ -13,7 +12,6 @@ import coinAsset from '../assets/fantasy_hero/ui/coin.png';
 import { triggerHaptic } from '../haptics';
 import GameActionDock from './GameActionDock';
 import GameplaySceneBackdrop from './GameplaySceneBackdrop';
-import GameplayHUD from './GameplayHUD';
 import AssetIcon from './AssetIcon';
 import { Star } from './GameIcons';
 
@@ -257,7 +255,7 @@ const TavernMonster: React.FC<{ mood: CustomerMood }> = ({ mood }) => {
 
 const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
   levelId,
-  avatarId,
+  avatarId: _avatarId,
   onVictory,
   onGameOver,
   onBack,
@@ -279,9 +277,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
   const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reactionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const avatar = AVATARS.find(item => item.id === avatarId) || AVATARS[0];
   const targetScore = SCORE_TARGET_BASE + (levelId * SCORE_TARGET_PER_LEVEL);
-  const progress = Math.min((score / targetScore) * 100, 100);
 
   const createOrder = useCallback((): OrderRequest => {
     const targetUnits = TARGET_UNIT_OPTIONS[Math.floor(Math.random() * TARGET_UNIT_OPTIONS.length)];

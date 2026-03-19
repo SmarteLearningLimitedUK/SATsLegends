@@ -1,11 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
 import AssetIcon from './AssetIcon';
-import { AVATARS } from '../constants';
 import blankClockAsset from '../assets/timekeeper/blank_clock.png';
+import sceneBackdrop from '../assets/fantasy_hero/demo_bg/background_01.png';
 
 interface TimekeeperTempleGameProps {
   levelId: number;
@@ -71,7 +70,7 @@ const formatDuration = (minutes: number) => {
   return `${hours} hour${hours > 1 ? 's' : ''} ${mins} minutes`;
 };
 
-const createHarbourChallenge = (levelId: number, roundNumber: number, totalRounds: number): HarbourChallenge => {
+const createHarbourChallenge = (levelId: number, _roundNumber: number, _totalRounds: number): HarbourChallenge => {
   const minuteStep = levelId <= 1 ? 15 : 5;
   const shipName = SHIP_NAMES[randomInt(0, SHIP_NAMES.length - 1)];
   const dockName = DOCK_NAMES[randomInt(0, DOCK_NAMES.length - 1)];
@@ -144,8 +143,8 @@ const createHarbourChallenge = (levelId: number, roundNumber: number, totalRound
   return {
     mode,
     title: 'Who Leaves First?',
-    prompt: `Compare both ship schedules and set the harbour clock to the first departure.`,
-    support: `${shipName} departs at ${formatClock(primary.hour, primary.minute)}. ${SHIP_NAMES[(randomInt(0, SHIP_NAMES.length - 1))]} departs at ${formatClock(secondary.hour, secondary.minute)}.`,
+    prompt: 'Compare both ship schedules and set the harbour clock to the first departure.',
+    support: `${shipName} departs at ${formatClock(primary.hour, primary.minute)}. ${SHIP_NAMES[randomInt(0, SHIP_NAMES.length - 1)]} departs at ${formatClock(secondary.hour, secondary.minute)}.`,
     shipName,
     dockName,
     previewHour: primary.hour,
@@ -201,8 +200,8 @@ const TimeGearControl: React.FC<{
   onIncrease: () => void;
   onDecrease: () => void;
 }> = ({ label, value, onIncrease, onDecrease }) => (
-  <div className="rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.74),rgba(30,41,59,0.9))] p-3 shadow-[0_20px_28px_rgba(2,6,23,0.22)]">
-    <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/60 md:text-xs">{label}</div>
+  <div className="rounded-[1.2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.8),rgba(30,41,59,0.9))] p-3 shadow-[0_16px_26px_rgba(2,6,23,0.22)]">
+    <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/64 md:text-xs">{label}</div>
     <div className="mt-2 flex items-center gap-2 md:gap-3">
       <button
         type="button"
@@ -225,38 +224,13 @@ const TimeGearControl: React.FC<{
   </div>
 );
 
-const DockShip: React.FC<{
-  title: string;
-  time: string;
-  active?: boolean;
-  mirrored?: boolean;
-}> = ({ title, time, active = false, mirrored = false }) => (
-  <motion.div
-    animate={{ y: [0, -8, 0], rotate: mirrored ? [1, -1, 1] : [-1, 1, -1] }}
-    transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
-    className={`relative w-[12rem] max-w-full rounded-[2rem] border px-4 pb-4 pt-3 shadow-[0_20px_30px_rgba(15,23,42,0.26)] ${active ? 'border-amber-200/50 bg-[linear-gradient(180deg,rgba(251,191,36,0.28),rgba(37,99,235,0.14),rgba(15,23,42,0.6))]' : 'border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.48))]'}`}>
-      <div className="absolute inset-x-[14%] top-[10%] h-[16%] rounded-full bg-white/14 blur-md" />
-      <div className="relative text-center">
-        <div className="text-[11px] font-black uppercase tracking-[0.18em] text-white/62">{title}</div>
-        <div className="mt-1 text-2xl font-black tracking-tight text-amber-50">{time}</div>
-      </div>
-      <div className={`relative mx-auto mt-3 h-16 w-24 ${mirrored ? '-scale-x-100' : ''}`}>
-        <div className="absolute bottom-0 left-[6%] right-[6%] h-[44%] rounded-[40%_60%_45%_55%/42%_38%_62%_58%] bg-[linear-gradient(180deg,#38bdf8,#2563eb_58%,#1e293b)] shadow-[0_10px_16px_rgba(29,78,216,0.22)]" />
-        <div className="absolute left-[42%] top-[6%] h-[38%] w-[5%] rounded-full bg-amber-300" />
-        <div className="absolute left-[44%] top-[10%] h-[22%] w-[26%] -skew-x-[12deg] rounded-[0.35rem] bg-[linear-gradient(180deg,#f8fafc,#dbeafe)] shadow-[0_4px_10px_rgba(255,255,255,0.18)]" />
-        <div className="absolute left-[18%] top-[48%] h-[12%] w-[28%] rounded-full bg-cyan-200/45 blur-sm" />
-      </div>
-    </motion.div>
-);
-
 const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
   levelId,
-  avatarId,
+  avatarId: _avatarId,
   onVictory,
   onGameOver,
   onBack,
 }) => {
-  const avatar = useMemo(() => AVATARS.find((item) => item.id === avatarId) || AVATARS[0], [avatarId]);
   const totalRounds = ROUND_GOAL_BY_LEVEL[levelId] || 5;
   const targetScore = 860 + (levelId * 210);
   const stepMinutes = levelId <= 1 ? 15 : 5;
@@ -274,7 +248,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
   const [feedback, setFeedback] = useState<null | { type: 'success' | 'error'; title: string; subtitle: string }>(null);
   const [isFinished, setIsFinished] = useState(false);
 
-  const progress = Math.min((score / targetScore) * 100, 100);
+  const selectedMeridiem = selectedHour >= 12 ? 'PM' : 'AM';
 
   const clearTimers = () => {
     timeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
@@ -411,164 +385,140 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
     timeoutsRef.current.push(nextId);
   };
 
+  const toggleMeridiem = () => {
+    if (feedback || isFinished) return;
+    setSelectedHour((previous) => (previous + 12) % 24);
+  };
+
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden bg-[linear-gradient(180deg,#041c38_0%,#0d3d68_42%,#071529_100%)]">
+    <div className="relative flex h-full w-full flex-col overflow-hidden bg-[linear-gradient(180deg,#0c1f38_0%,#112f54_46%,#0a1a30_100%)]">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute inset-x-[-10%] top-[-10%] h-[40%] rounded-full bg-cyan-200/14 blur-3xl" />
-        <div className="absolute inset-x-0 top-0 h-[58%] bg-[linear-gradient(180deg,rgba(125,211,252,0.28),rgba(96,165,250,0.08),transparent)]" />
-        <div className="absolute inset-x-0 bottom-0 h-[38%] bg-[linear-gradient(180deg,rgba(8,47,73,0),rgba(8,47,73,0.14),rgba(15,23,42,0.94))]" />
-        <div className="absolute inset-x-0 bottom-[22%] h-[22%] bg-[linear-gradient(180deg,rgba(34,197,94,0.04),rgba(20,83,45,0.14),transparent)]" />
-        {Array.from({ length: 10 }).map((_, index) => (
-          <motion.div
-            key={index}
-            animate={{ x: [0, 16, 0], opacity: [0.12, 0.3, 0.12] }}
-            transition={{ duration: 3 + index * 0.18, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute h-[2px] rounded-full bg-cyan-200/50"
-            style={{ left: `${4 + index * 10}%`, top: `${14 + (index % 3) * 3}%`, width: `${36 + (index % 4) * 12}px` }}
-          />
-        ))}
+        <img src={sceneBackdrop} alt="" className="h-full w-full object-cover opacity-45" draggable={false} />
+        <div className="absolute inset-x-0 top-0 h-[62%] bg-[linear-gradient(180deg,rgba(190,242,255,0.18),rgba(125,211,252,0.08),transparent)]" />
+        <div className="absolute inset-x-0 bottom-0 h-[44%] bg-[linear-gradient(180deg,rgba(2,6,23,0),rgba(2,6,23,0.26),rgba(2,6,23,0.88))]" />
       </div>
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center gap-2 p-2 md:gap-4 md:p-4">
-        <div className="w-full max-w-6xl">
-          <GameplayHUD
-            title="Clockwork Harbour"
-            avatar={avatar}
-            score={score}
-            targetScore={targetScore}
-            timeLeft={timeLeft}
-            progress={progress}
-            accentText="text-sky-950"
-            accentSoftBg="bg-sky-100/80"
-            accentBorder="border-sky-200/80"
-            progressBar="bg-gradient-to-r from-cyan-300 via-sky-400 to-emerald-300"
-            statLabel="Round"
-            statValue={`${roundNumber}/${totalRounds}`}
-            compact
-          />
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center gap-2 p-2 md:gap-3 md:p-4">
+        <div className="ui-panel-unified w-full max-w-5xl rounded-[1.4rem] border border-white/14 bg-[linear-gradient(180deg,rgba(9,32,58,0.94),rgba(10,42,78,0.88))] px-3 py-2 shadow-[0_14px_30px_rgba(2,6,23,0.32)] md:px-4">
+          <div className="grid grid-cols-3 items-center gap-2 text-white md:gap-3">
+            <div className="rounded-[1rem] border border-white/16 bg-black/18 px-2.5 py-1.5 md:px-3">
+              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/70 md:text-xs">Score</div>
+              <div className="mt-0.5 text-lg font-black leading-none text-white md:text-2xl">{score}</div>
+            </div>
+            <div className="rounded-[1rem] border border-white/16 bg-black/18 px-2.5 py-1.5 text-center md:px-3">
+              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/70 md:text-xs">Time</div>
+              <div className="mt-0.5 text-lg font-black leading-none text-white md:text-2xl">{timeLeft}s</div>
+            </div>
+            <div className="flex items-center justify-end gap-1.5 md:gap-2">
+              {Array.from({ length: MAX_HEARTS }).map((_, index) => (
+                <div key={index} className={`h-4 w-4 rounded-full md:h-5 md:w-5 ${index < hearts ? 'bg-[radial-gradient(circle_at_30%_25%,#fca5a5,#ef4444_60%,#991b1b)] shadow-[0_5px_12px_rgba(239,68,68,0.35)]' : 'bg-white/16'}`} />
+              ))}
+            </div>
+          </div>
         </div>
 
-      <div className="licensed-board-frame structured-playfield-frame relative flex w-full max-w-6xl min-h-0 flex-1 overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] shadow-[0_28px_64px_rgba(0,0,0,0.34)] md:rounded-[2.6rem]">
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_28%,rgba(15,23,42,0.16)_100%)]" />
-          <div className="absolute inset-x-0 bottom-0 h-[34%] bg-[linear-gradient(180deg,rgba(8,47,73,0),rgba(8,47,73,0.22),rgba(15,23,42,0.95))]" />
-          <div className="absolute inset-x-[6%] bottom-[11%] h-[17%] rounded-[50%] bg-[radial-gradient(circle_at_center,rgba(147,197,253,0.28),rgba(59,130,246,0.12),transparent_68%)]" />
+        <div className="licensed-board-frame structured-playfield-frame relative flex w-full max-w-5xl min-h-0 flex-1 overflow-hidden rounded-[2rem] border border-white/14 bg-[linear-gradient(180deg,rgba(17,63,100,0.92),rgba(10,38,67,0.9))] shadow-[0_26px_56px_rgba(0,0,0,0.34)] md:rounded-[2.4rem]">
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(255,255,255,0.03)_34%,rgba(2,6,23,0.22)_100%)]" />
 
-          <div className="absolute left-4 top-3 z-20 flex items-center gap-2 rounded-full border border-white/12 bg-slate-950/42 px-3 py-2 shadow-[0_10px_24px_rgba(2,6,23,0.24)] md:left-5 md:top-5 md:px-4">
-            {Array.from({ length: MAX_HEARTS }).map((_, index) => (
-              <div key={index} className={`h-5 w-5 rounded-full ${index < hearts ? 'bg-[radial-gradient(circle_at_30%_25%,#fca5a5,#ef4444_60%,#991b1b)] shadow-[0_6px_12px_rgba(239,68,68,0.35)]' : 'bg-white/12'} md:h-6 md:w-6`} />
-            ))}
-          </div>
+          <div className="relative z-10 flex h-full w-full flex-col px-3 py-3 md:px-5 md:py-5">
+            <div className="rounded-[1.1rem] border border-amber-200/30 bg-[linear-gradient(180deg,rgba(250,204,21,0.96),rgba(234,179,8,0.94))] px-4 py-2.5 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_12px_22px_rgba(133,77,14,0.24)] md:px-6 md:py-3">
+              <div className="text-base font-black tracking-tight text-slate-900 md:text-2xl">{challenge.title}</div>
+              <div className="mt-0.5 text-xs font-bold text-slate-800/90 md:text-base">{challenge.prompt}</div>
+            </div>
 
-          <div className="absolute right-4 top-3 z-20 rounded-full border border-white/12 bg-slate-950/42 px-4 py-2 text-center shadow-[0_10px_24px_rgba(2,6,23,0.24)] md:right-5 md:top-5">
-            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-sky-100/70 md:text-xs">Selected Time</div>
-            <div className="mt-0.5 text-lg font-black text-white md:text-2xl">{formatClock(selectedHour, selectedMinute)}</div>
-          </div>
-
-          <div className="relative z-10 flex h-full w-full flex-col px-3 pb-4 pt-20 md:px-6 md:pb-6 md:pt-24">
-            <div className="flex justify-center">
-              <div className="max-w-[94%] rounded-[1.5rem] border border-orange-200/22 bg-[linear-gradient(180deg,rgba(146,64,14,0.96),rgba(120,53,15,0.98))] px-5 py-3 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_16px_30px_rgba(120,53,15,0.24)] md:px-7 md:py-4">
-                <div className="text-base font-black tracking-tight text-amber-50 md:text-[1.9rem]">{challenge.title}</div>
-                <div className="mt-1 text-xs font-bold text-amber-100/84 md:text-base">{challenge.prompt}</div>
+            <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
+              <div className="rounded-[1rem] border border-white/16 bg-black/20 px-3 py-2 text-center shadow-[0_10px_18px_rgba(2,6,23,0.24)]">
+                <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/74">Digital</div>
+                <div className="mt-0.5 text-lg font-black text-white md:text-xl">{formatClock(selectedHour, selectedMinute)}</div>
+              </div>
+              <button
+                type="button"
+                onClick={toggleMeridiem}
+                className="rounded-[1rem] border border-white/16 bg-black/20 px-3 py-2 text-center shadow-[0_10px_18px_rgba(2,6,23,0.24)] active:scale-[0.98]"
+              >
+                <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/74">Meridiem</div>
+                <div className="mt-0.5 text-lg font-black text-amber-100 md:text-xl">{selectedMeridiem}</div>
+              </button>
+              <div className="rounded-[1rem] border border-white/16 bg-black/20 px-3 py-2 text-center shadow-[0_10px_18px_rgba(2,6,23,0.24)]">
+                <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/74">Round</div>
+                <div className="mt-0.5 text-lg font-black text-white md:text-xl">{roundNumber}/{totalRounds}</div>
+              </div>
+              <div className="rounded-[1rem] border border-white/16 bg-black/20 px-3 py-2 text-center shadow-[0_10px_18px_rgba(2,6,23,0.24)]">
+                <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/74">Target</div>
+                <div className="mt-0.5 flex items-center justify-center gap-1 text-lg font-black text-white md:text-xl">
+                  <AssetIcon name="star" className="h-4 w-4" />
+                  {targetScore}
+                </div>
               </div>
             </div>
 
-            <div className="mt-3 min-h-0 flex-1 md:mt-4">
-              <div className="grid h-full grid-cols-1 gap-4 md:grid-cols-[1.08fr_0.92fr] md:gap-6">
-                <div className="relative flex min-h-[23rem] flex-col justify-between overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(8,47,73,0.34),rgba(15,23,42,0.26))] p-4 shadow-[0_24px_40px_rgba(2,6,23,0.22)] md:min-h-[31rem] md:p-5">
-                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),transparent_30%,rgba(15,23,42,0.12)_100%)]" />
-                  <div className="absolute inset-x-0 bottom-[12%] h-[26%] bg-[radial-gradient(circle_at_center,rgba(125,211,252,0.35),rgba(59,130,246,0.18),transparent_72%)]" />
-
-                  <div className="relative flex flex-wrap items-center justify-center gap-3 md:justify-between">
-                    <DockShip title={challenge.shipName} time={formatClock(challenge.previewHour, challenge.previewMinute)} active />
-                    {challenge.secondaryShip && (
-                      <DockShip title={challenge.secondaryShip.name} time={formatClock(challenge.secondaryShip.hour, challenge.secondaryShip.minute)} mirrored />
-                    )}
-                  </div>
-
-                  <div className="relative flex flex-1 items-center justify-center">
-                    {phase === 'sailing' && (
-                      <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: [0, 1, 0], x: [0, 90, 220], y: [0, -16, -38] }}
-                        transition={{ duration: 1.1, ease: 'easeInOut' }}
-                        className="absolute left-[18%] top-[44%] h-16 w-24 md:h-20 md:w-28"
-                      >
-                        <div className="absolute bottom-0 left-[6%] right-[6%] h-[44%] rounded-[40%_60%_45%_55%/42%_38%_62%_58%] bg-[linear-gradient(180deg,#38bdf8,#2563eb_58%,#1e293b)] shadow-[0_10px_16px_rgba(29,78,216,0.22)]" />
-                        <div className="absolute left-1/2 top-[6%] h-[38%] w-[5%] -translate-x-1/2 rounded-full bg-amber-300" />
-                        <div className="absolute left-[48%] top-[10%] h-[22%] w-[26%] -skew-x-[12deg] rounded-[0.35rem] bg-[linear-gradient(180deg,#f8fafc,#dbeafe)]" />
-                      </motion.div>
-                    )}
-                    <div className="relative flex flex-col items-center gap-3">
-                      <div className="rounded-full border border-white/12 bg-slate-950/40 px-4 py-2 text-[11px] font-black uppercase tracking-[0.18em] text-white/74 shadow-[0_10px_20px_rgba(2,6,23,0.16)] md:text-xs">
-                        {challenge.dockName}
-                      </div>
-                      <ClockFace hour={selectedHour} minute={selectedMinute} />
-                      <div className="rounded-[1.2rem] border border-white/12 bg-slate-950/40 px-4 py-3 text-center shadow-[0_10px_20px_rgba(2,6,23,0.16)]">
-                        <div className="text-[11px] font-black uppercase tracking-[0.16em] text-white/62">Harbour Note</div>
-                        <div className="mt-1 text-sm font-bold text-white/92 md:text-base">{challenge.support}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex min-h-[23rem] flex-col justify-between gap-4 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.84),rgba(30,41,59,0.92))] p-4 shadow-[0_24px_40px_rgba(2,6,23,0.24)] md:min-h-[31rem] md:p-5">
-                  <div className="grid grid-cols-1 gap-3 md:gap-4">
-                    <TimeGearControl
-                      label="Hour Gear"
-                      value={`${((selectedHour + 11) % 12) + 1}`}
-                      onIncrease={() => setSelectedHour((previous) => (previous + 1) % 24)}
-                      onDecrease={() => setSelectedHour((previous) => (previous + 23) % 24)}
-                    />
-                    <TimeGearControl
-                      label="Minute Gear"
-                      value={selectedMinute.toString().padStart(2, '0')}
-                      onIncrease={() => setSelectedMinute((previous) => (previous + stepMinutes) % 60)}
-                      onDecrease={() => setSelectedMinute((previous) => (previous - stepMinutes + 60) % 60)}
-                    />
-                  </div>
-
-                  <div className="rounded-[1.5rem] border border-white/12 bg-black/18 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-                    <div className="text-[11px] font-black uppercase tracking-[0.16em] text-white/62">Schedule card</div>
-                    <div className="mt-2 text-xl font-black tracking-tight text-white md:text-[1.75rem]">{challenge.title}</div>
-                    <div className="mt-2 text-sm font-bold leading-relaxed text-white/82 md:text-base">{challenge.prompt}</div>
-                    <div className="mt-3 rounded-[1rem] border border-white/10 bg-white/6 px-4 py-3 text-sm font-bold text-sky-50/92 md:text-base">
-                      Dock target: {challenge.dockName}
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={handleLaunch}
-                    disabled={feedback !== null || isFinished}
-                    className="ui-button-primary licensed-submit-button flex min-h-[4.6rem] w-full items-center justify-center px-5 py-4 text-xl font-black text-white disabled:opacity-45 md:min-h-[5rem] md:text-2xl"
-                  >
-                    Launch Ship
-                  </button>
-                </div>
+            <div className="mt-3 flex min-h-0 flex-1 items-center justify-center">
+              <div className="relative flex h-[min(58vw,30rem)] w-[min(58vw,30rem)] max-h-[31rem] max-w-[31rem] items-center justify-center rounded-full border border-white/16 bg-[radial-gradient(circle_at_30%_24%,rgba(255,255,255,0.46),rgba(148,197,255,0.3)_34%,rgba(2,6,23,0.58)_86%)] p-4 shadow-[0_24px_42px_rgba(2,6,23,0.36)] md:p-6">
+                <ClockFace
+                  hour={selectedHour}
+                  minute={selectedMinute}
+                  sizeClass="h-[84%] w-[84%] max-h-[24rem] max-w-[24rem]"
+                  accentClass="from-sky-100 via-white to-cyan-100"
+                />
+                {phase === 'sailing' && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: [0, 1, 0], scale: [0.84, 1.05, 1.24] }}
+                    transition={{ duration: 1, ease: 'easeOut' }}
+                    className="pointer-events-none absolute inset-0 rounded-full border-4 border-cyan-200/70"
+                  />
+                )}
               </div>
+            </div>
+
+            <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-[1fr_1fr_auto] md:items-stretch">
+              <TimeGearControl
+                label="Hour"
+                value={`${((selectedHour + 11) % 12) + 1}`}
+                onIncrease={() => setSelectedHour((previous) => (previous + 1) % 24)}
+                onDecrease={() => setSelectedHour((previous) => (previous + 23) % 24)}
+              />
+              <TimeGearControl
+                label="Minute"
+                value={selectedMinute.toString().padStart(2, '0')}
+                onIncrease={() => setSelectedMinute((previous) => (previous + stepMinutes) % 60)}
+                onDecrease={() => setSelectedMinute((previous) => (previous - stepMinutes + 60) % 60)}
+              />
+              <button
+                type="button"
+                onClick={handleLaunch}
+                disabled={feedback !== null || isFinished}
+                className="ui-button-primary licensed-submit-button flex min-h-[4.2rem] w-full min-w-[10rem] items-center justify-center px-5 py-4 text-xl font-black text-white disabled:opacity-45 md:min-h-full md:text-2xl"
+              >
+                Check Time
+              </button>
+            </div>
+
+            <div className="mt-3 rounded-[1rem] border border-white/14 bg-black/20 px-4 py-2.5 text-center text-xs font-bold text-white/92 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:text-sm">
+              {challenge.support}
             </div>
           </div>
 
           <AnimatePresence>
             {feedback && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.82 }}
+                initial={{ opacity: 0, scale: 0.84 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.08 }}
-                className={`pointer-events-none absolute inset-0 z-40 flex items-center justify-center backdrop-blur-md ${feedback.type === 'success' ? 'bg-emerald-500/16' : 'bg-red-500/16'}`}
+                className={`pointer-events-none absolute inset-0 z-40 flex items-center justify-center backdrop-blur-sm ${feedback.type === 'success' ? 'bg-emerald-500/16' : 'bg-red-500/16'}`}
               >
-                <div className="rounded-[2rem] border border-white/14 bg-slate-950/60 px-8 py-6 text-center shadow-[0_24px_36px_rgba(0,0,0,0.24)]">
-                  <div className={`text-4xl font-black uppercase tracking-[0.12em] md:text-6xl ${feedback.type === 'success' ? 'text-emerald-100' : 'text-red-100'}`}>
+                <div className="rounded-[1.6rem] border border-white/14 bg-slate-950/64 px-8 py-6 text-center shadow-[0_24px_36px_rgba(0,0,0,0.24)]">
+                  <div className={`text-3xl font-black uppercase tracking-[0.12em] md:text-5xl ${feedback.type === 'success' ? 'text-emerald-100' : 'text-red-100'}`}>
                     {feedback.title}
                   </div>
-                  <div className="mt-2 text-lg font-bold text-white/92 md:text-2xl">{feedback.subtitle}</div>
+                  <div className="mt-1.5 text-base font-bold text-white/92 md:text-xl">{feedback.subtitle}</div>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
 
-        <div className="w-full max-w-6xl">
+        <div className="w-full max-w-5xl">
           <GameActionDock onBack={onBack} accentClass="text-white" />
         </div>
       </div>

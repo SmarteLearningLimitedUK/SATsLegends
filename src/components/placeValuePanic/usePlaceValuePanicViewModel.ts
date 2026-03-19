@@ -367,8 +367,6 @@ export const usePlaceValuePanicViewModel = ({
     roundTimerRef.current = window.setTimeout(() => {
       moveToNextRound();
     }, 700);
-
-    return clearRoundTimer;
   }, [
     clearRoundTimer,
     isResolved,
