@@ -19,11 +19,15 @@ interface GameContainerViewProps {
   statValue?: React.ReactNode;
   objectiveArea: React.ReactNode;
   playFieldArea: React.ReactNode;
+  interactionArea?: React.ReactNode;
   feedbackLayer?: React.ReactNode;
   onBack: () => void;
   dockAccentClass?: string;
   isPaused?: boolean;
   onResume?: () => void;
+  roundLabel?: string;
+  roundValue?: React.ReactNode;
+  hideDefaultDock?: boolean;
 }
 
 const GameContainerView: React.FC<GameContainerViewProps> = ({
@@ -40,11 +44,15 @@ const GameContainerView: React.FC<GameContainerViewProps> = ({
   statValue,
   objectiveArea,
   playFieldArea,
+  interactionArea,
   feedbackLayer,
   onBack,
   dockAccentClass = 'text-slate-100',
   isPaused = false,
   onResume,
+  roundLabel = 'Round',
+  roundValue = 1,
+  hideDefaultDock = false,
 }) => {
   const objectiveShellStyle: React.CSSProperties = {
     backgroundImage: `url(${MAIN_PNG_SKIN.mission})`,
@@ -58,6 +66,8 @@ const GameContainerView: React.FC<GameContainerViewProps> = ({
     backgroundRepeat: 'no-repeat',
   };
 
+  const resolvedRoundValue = roundValue ?? statValue ?? 1;
+
   return (
     <div className="aaa-game-root relative flex h-full w-full min-h-0 flex-col overflow-hidden">
       <GameplaySceneBackdrop
@@ -66,7 +76,7 @@ const GameContainerView: React.FC<GameContainerViewProps> = ({
         minimalDecor={sceneMinimalDecor}
         className="aaa-game-backdrop"
       />
-      <div className="aaa-game-stage relative z-10 mx-auto flex h-full min-h-0 w-full max-w-[min(100%,1100px)] flex-1 flex-col gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] pt-[calc(env(safe-area-inset-top)+0.15rem)] md:gap-3 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
+      <div className="aaa-game-stage shared-game-container relative z-10 mx-auto grid h-full min-h-0 w-full max-w-[min(100%,1100px)] flex-1 grid-rows-[auto_auto_minmax(0,1fr)_auto] gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] pt-[calc(env(safe-area-inset-top)+0.15rem)] md:gap-3 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
         <div className="aaa-zone aaa-zone-hud w-full">
           <GameplayHUD
             title={title}
@@ -80,8 +90,8 @@ const GameContainerView: React.FC<GameContainerViewProps> = ({
             accentSoftBg="bg-sky-100/80"
             accentBorder="border-sky-200/80"
             progressBar="bg-gradient-to-r from-cyan-400 via-sky-400 to-sky-400"
-            statLabel={statLabel}
-            statValue={statValue}
+            statLabel={roundLabel}
+            statValue={resolvedRoundValue}
           />
         </div>
 
@@ -127,8 +137,15 @@ const GameContainerView: React.FC<GameContainerViewProps> = ({
           </div>
         </div>
 
-        <div className="aaa-zone aaa-zone-actions w-full">
-          <GameActionDock onBack={onBack} accentClass={dockAccentClass} />
+        <div className="aaa-zone aaa-zone-actions shared-game-actions w-full">
+          {interactionArea ? (
+            <div className="shared-game-interaction-panel">
+              {interactionArea}
+            </div>
+          ) : null}
+          {!hideDefaultDock ? (
+            <GameActionDock onBack={onBack} accentClass={dockAccentClass} />
+          ) : null}
         </div>
       </div>
     </div>

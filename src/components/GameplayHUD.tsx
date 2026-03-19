@@ -40,10 +40,7 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
   statValue,
   compact = false,
 }) => {
-  const sanitizedStatLabel = typeof statLabel === 'string' && /(round|tier|level|overload)/i.test(statLabel)
-    ? undefined
-    : statLabel;
-  const showExtraStat = Boolean(sanitizedStatLabel) && statValue !== undefined && statValue !== null;
+  const showExtraStat = Boolean(statLabel) && statValue !== undefined && statValue !== null;
 
   return (
     <div className="game-shell-zone game-shell-zone-hud w-full flex shrink-0 flex-col gap-1">
@@ -73,7 +70,7 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
             {showExtraStat && (
               <div className={`aaa-hud-stat relative rounded-[0.75rem] md:rounded-[1rem] ${compact ? 'px-1 py-0.5' : 'px-1.5 py-1'} md:px-2 md:py-1.5 text-center overflow-hidden`}>
                 <div className="aaa-hud-stat-surface absolute inset-0 rounded-[inherit]" />
-                <div className={`${compact ? 'text-[6px]' : 'text-[7px]'} relative md:text-xs font-black uppercase tracking-[0.16em] text-slate-600`}>{sanitizedStatLabel}</div>
+                <div className={`${compact ? 'text-[6px]' : 'text-[7px]'} relative md:text-xs font-black uppercase tracking-[0.16em] text-slate-600`}>{statLabel}</div>
                 <div className={`mt-0.5 ${compact ? 'text-[0.82rem]' : 'text-[0.92rem]'} md:text-xl font-black ${accentText}`}>{statValue}</div>
               </div>
             )}

@@ -104,6 +104,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
   const [dragState, setDragState] = useState<DragState | null>(null);
   const [hoverSlotKey, setHoverSlotKey] = useState<PlaceValueSlotKey | null>(null);
+  const playfieldRef = useRef<HTMLDivElement | null>(null);
 
   const slotRefs = useRef<Record<PlaceValueSlotKey, HTMLDivElement | null>>({
     thousands: null,
@@ -120,6 +121,18 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   }, [round.id]);
 
   const activeSlots = useMemo(() => slots, [slots]);
+
+  const getPlayfieldRelativePoint = (clientX: number, clientY: number) => {
+    const rect = playfieldRef.current?.getBoundingClientRect();
+    if (!rect) {
+      return { x: clientX, y: clientY };
+    }
+
+    return {
+      x: clientX - rect.left,
+      y: clientY - rect.top,
+    };
+  };
 
   const findSlotCandidate = (clientX: number, clientY: number): SlotCandidate | null => {
     const availableSlots = activeSlots.filter((slot) => !slot.isFilled);
@@ -249,8 +262,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   );
 
   const playFieldArea = (
-    <div className="relative flex h-full min-h-0 w-full flex-col gap-2 p-2 md:gap-2.5 md:p-3">
-      <div className="pvp-slot-grid-shell flex min-h-0 flex-[0.62] flex-col gap-2 rounded-2xl border border-white/14 bg-slate-900/35 p-2">
+    <div ref={playfieldRef} className="relative flex h-full min-h-0 w-full flex-col gap-2 p-2 md:gap-2.5 md:p-3">
+      <div className="pvp-slot-grid-shell flex h-full min-h-0 flex-1 flex-col gap-2 rounded-2xl border border-white/14 bg-slate-900/35 p-2">
         <div
           className="grid flex-1 min-h-0 gap-2 md:gap-3"
           style={{ gridTemplateColumns: `repeat(${Math.min(4, Math.max(2, activeSlots.length))}, minmax(0, 1fr))` }}
@@ -299,83 +312,31 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           })}
         </div>
       </div>
-
-      <div className="pvp-tray-shell relative flex min-h-0 flex-[0.38] flex-col gap-2 overflow-hidden rounded-2xl border border-white/16 p-2.5 shadow-[0_10px_22px_rgba(2,6,23,0.28)] md:gap-2.5">
-        <div className="flex items-center justify-between">
-          <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/75 md:text-xs">Digit Queue</div>
-          <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/75 md:text-xs">
-            Accuracy {Math.round(accuracy * 100)}%
-          </div>
-        </div>
-
-        <div className="grid min-h-0 flex-1 auto-rows-fr grid-cols-4 gap-2 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8">
-          <AnimatePresence mode="popLayout">
-            {trayTiles.map((tile) => {
-              const isDragging = dragState?.tile.id === tile.id;
-              const isRejected = lastRejectedTileId === tile.id;
-
-              return (
-                <motion.button
-                  key={tile.id}
-                  type="button"
-                  onPointerDown={(event) => handleTilePointerDown(event, tile)}
-                  disabled={isPaused}
-                  className={`pvp-digit-tile flex h-full items-center justify-center rounded-xl border text-2xl font-black transition touch-none ${
-                    isDragging
-                      ? 'opacity-25'
-                      : 'opacity-100'
-                  } ${
-                    isRejected
-                      ? 'border-rose-200/70 bg-rose-500/30'
-                      : 'border-white/20 bg-slate-900/60'
-                  } text-white/95 ${isDragging ? 'pvp-digit-selected' : ''}`}
-                  style={{ minHeight: MIN_TAP_TARGET }}
-                  initial={{ opacity: 0, y: 8, scale: 0.86 }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    x: isRejected ? [0, -7, 7, -5, 5, 0] : 0,
-                  }}
-                  exit={{ opacity: 0, y: 8, scale: 0.8 }}
-                  transition={{ type: 'spring', stiffness: 230, damping: 18 }}
-                >
-                  <div className={`pvp-digit-gem-square ${isForgingTransition ? 'pvp-forge-pulse' : ''}`}>
-                    <img
-                      src={getGemTexture(tile.digitValue)}
-                      alt=""
-                      className="pvp-gem-art"
-                      draggable={false}
-                    />
-                    <span className="pvp-digit-gem-number">{tile.digitValue}</span>
-                  </div>
-                </motion.button>
-              );
-            })}
-          </AnimatePresence>
-        </div>
-      </div>
-
       {dragState ? (
-        <motion.div
-          className="pvp-drag-ghost pointer-events-none fixed z-[70] flex items-center justify-center rounded-xl border border-cyan-100/70 text-2xl font-black text-white shadow-[0_14px_34px_rgba(2,6,23,0.42)]"
-          style={{
-            width: dragState.width,
-            height: dragState.height,
-            left: dragState.clientX - dragState.offsetX,
-            top: dragState.clientY - dragState.offsetY,
-          }}
-          initial={{ scale: 1 }}
-          animate={{ scale: 1.04 }}
-        >
-          <img
-            src={getGemTexture(dragState.tile.digitValue)}
-            alt=""
-            className="pvp-gem-art"
-            draggable={false}
-          />
-          <span className="pvp-digit-gem-number">{dragState.tile.digitValue}</span>
-        </motion.div>
+        (() => {
+          const relativePoint = getPlayfieldRelativePoint(dragState.clientX, dragState.clientY);
+          return (
+            <motion.div
+              className="pvp-drag-ghost pointer-events-none absolute z-[70] flex items-center justify-center rounded-xl border border-cyan-100/70 text-2xl font-black text-white shadow-[0_14px_34px_rgba(2,6,23,0.42)]"
+              style={{
+                width: dragState.width,
+                height: dragState.height,
+                left: relativePoint.x - dragState.offsetX,
+                top: relativePoint.y - dragState.offsetY,
+              }}
+              initial={{ scale: 1 }}
+              animate={{ scale: 1.04 }}
+            >
+              <img
+                src={getGemTexture(dragState.tile.digitValue)}
+                alt=""
+                className="pvp-gem-art"
+                draggable={false}
+              />
+              <span className="pvp-digit-gem-number">{dragState.tile.digitValue}</span>
+            </motion.div>
+          );
+        })()
       ) : null}
 
       <AnimatePresence>
@@ -401,6 +362,64 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     </div>
   );
 
+  const interactionArea = (
+    <div className="pvp-tray-shell relative flex min-h-0 flex-col gap-2 overflow-hidden p-2.5 md:gap-2.5">
+      <div className="flex items-center justify-between">
+        <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/75 md:text-xs">Digit Queue</div>
+        <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/75 md:text-xs">
+          Accuracy {Math.round(accuracy * 100)}%
+        </div>
+      </div>
+
+      <div className="grid min-h-0 flex-1 auto-rows-fr grid-cols-4 gap-2 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8">
+        <AnimatePresence mode="popLayout">
+          {trayTiles.map((tile) => {
+            const isDragging = dragState?.tile.id === tile.id;
+            const isRejected = lastRejectedTileId === tile.id;
+
+            return (
+              <motion.button
+                key={tile.id}
+                type="button"
+                onPointerDown={(event) => handleTilePointerDown(event, tile)}
+                disabled={isPaused}
+                className={`pvp-digit-tile flex h-full items-center justify-center rounded-xl border text-2xl font-black transition touch-none ${
+                  isDragging
+                    ? 'opacity-25'
+                    : 'opacity-100'
+                } ${
+                  isRejected
+                    ? 'border-rose-200/70 bg-rose-500/30'
+                    : 'border-white/20 bg-slate-900/60'
+                } text-white/95 ${isDragging ? 'pvp-digit-selected' : ''}`}
+                style={{ minHeight: MIN_TAP_TARGET }}
+                initial={{ opacity: 0, y: 8, scale: 0.86 }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  x: isRejected ? [0, -7, 7, -5, 5, 0] : 0,
+                }}
+                exit={{ opacity: 0, y: 8, scale: 0.8 }}
+                transition={{ type: 'spring', stiffness: 230, damping: 18 }}
+              >
+                <div className={`pvp-digit-gem-square ${isForgingTransition ? 'pvp-forge-pulse' : ''}`}>
+                  <img
+                    src={getGemTexture(tile.digitValue)}
+                    alt=""
+                    className="pvp-gem-art"
+                    draggable={false}
+                  />
+                  <span className="pvp-digit-gem-number">{tile.digitValue}</span>
+                </div>
+              </motion.button>
+            );
+          })}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+
   return (
     <GameContainerView
       gameType="place_value_peaks"
@@ -412,8 +431,11 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       targetScore={levelConfig.targetScore}
       timeLeft={timeLeft}
       progress={progress}
+      roundLabel="Round"
+      roundValue={roundsCleared + 1}
       objectiveArea={objectiveArea}
       playFieldArea={playFieldArea}
+      interactionArea={interactionArea}
       isPaused={isPaused}
       onResume={() => setIsPaused(false)}
       onBack={onBack}
