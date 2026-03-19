@@ -1,11 +1,7 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { CircleDollarSign, Crosshair, Shield, Snowflake, Target, Timer as TimerIcon, Zap, Flame } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import { AvatarData } from '../types';
-import { AVATARS } from '../constants';
-import GameplayHUD from '../components/GameplayHUD';
-import GameActionDock from '../components/GameActionDock';
-import { Home, HelpCircle, Star, Timer, Crosshair } from '../components/GameIcons';
 
 interface PrimePopGameProps {
   levelId: number;
@@ -15,27 +11,44 @@ interface PrimePopGameProps {
   onBack: () => void;
 }
 
-interface Bubble {
-  id: string;
-  number: number;
-  isPrime: boolean;
-  x: number; // percentage 0-100
-  lane: number;
-  createdAt: number;
-  expiresAt: number;
-  speed: number;
-  isPopped: boolean;
-  size: number;
-  palette: {
-    background: string;
-    ring: string;
-    glow: string;
-    sparkle: string;
-    text: string;
-  };
+type BubbleType = 'red' | 'blue' | 'green' | 'yellow' | 'purple';
+
+interface Projectile {
+  id: number;
+  x: number; // percent
+  y: number; // percent
+  vx: number; // percent/second
+  vy: number; // percent/second
 }
 
-const isPrime = (num: number) => {
+interface Bubble {
+  id: number;
+  x: number; // percent
+  y: number; // percent
+  vx: number; // percent/second
+  vy: number; // percent/second
+  radius: number; // percent
+  type: BubbleType;
+  number: number;
+  isPrime: boolean;
+}
+
+const BUBBLE_COLORS: Record<BubbleType, { base: string; light: string; dark: string }> = {
+  red: { base: '#ef4444', light: '#f87171', dark: '#b91c1c' },
+  blue: { base: '#3b82f6', light: '#60a5fa', dark: '#1d4ed8' },
+  green: { base: '#22c55e', light: '#4ade80', dark: '#15803d' },
+  yellow: { base: '#eab308', light: '#facc15', dark: '#a16207' },
+  purple: { base: '#a855f7', light: '#c084fc', dark: '#7e22ce' },
+};
+
+const BUBBLE_TYPES: BubbleType[] = ['red', 'blue', 'green', 'yellow', 'purple'];
+const ROUND_SECONDS_BASE = 60;
+const TARGET_SCORE_BASE = 1000;
+const TARGET_SCORE_STEP = 500;
+const PRIME_POINTS = 75;
+const COMPOSITE_PENALTY = 50;
+
+const isPrimeNumber = (num: number) => {
   if (num <= 1) return false;
   if (num <= 3) return true;
   if (num % 2 === 0 || num % 3 === 0) return false;
@@ -47,451 +60,459 @@ const isPrime = (num: number) => {
   return true;
 };
 
-const BUBBLE_LANES = [10, 22, 34, 46, 58, 70, 82, 90];
+const BevelledBubble = ({ bubble }: { bubble: Bubble }) => {
+  const colors = BUBBLE_COLORS[bubble.type];
+  const size = `${bubble.radius * 2}%`;
 
-const PRIME_PALETTES = [
-  {
-    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.98), rgba(255,243,163,0.95) 20%, rgba(255,224,53,0.92) 48%, rgba(255,193,7,0.88) 72%, rgba(245,158,11,0.86) 100%)',
-    ring: 'rgba(255,211,64,0.9)',
-    glow: '0 0 26px rgba(251,191,36,0.42)',
-    sparkle: 'rgba(255,255,255,0.9)',
-    text: '#7a3e00',
-  },
-  {
-    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.98), rgba(255,239,140,0.95) 20%, rgba(255,220,40,0.9) 48%, rgba(255,183,0,0.86) 72%, rgba(217,119,6,0.84) 100%)',
-    ring: 'rgba(255,224,130,0.92)',
-    glow: '0 0 24px rgba(250,204,21,0.44)',
-    sparkle: 'rgba(255,255,255,0.88)',
-    text: '#7a3e00',
-  },
-  {
-    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.99), rgba(255,245,180,0.95) 18%, rgba(255,223,66,0.92) 46%, rgba(251,191,36,0.88) 70%, rgba(234,88,12,0.82) 100%)',
-    ring: 'rgba(255,232,160,0.92)',
-    glow: '0 0 24px rgba(245,158,11,0.42)',
-    sparkle: 'rgba(255,255,255,0.9)',
-    text: '#6b3300',
-  },
-];
+  return (
+    <div
+      className="relative overflow-hidden rounded-full shadow-lg"
+      style={{
+        width: size,
+        height: size,
+        backgroundColor: colors.base,
+        borderTop: `3px solid ${colors.light}`,
+        borderLeft: `3px solid ${colors.light}`,
+        borderBottom: `3px solid ${colors.dark}`,
+        borderRight: `3px solid ${colors.dark}`,
+      }}
+    >
+      <div className="absolute left-0 top-0 h-full w-full bg-gradient-to-br from-white/40 via-transparent to-black/20" />
+      <div className="absolute left-[16%] top-[16%] h-[16%] w-[16%] rounded-full bg-white/60 blur-[1px]" />
+      <span className="absolute inset-0 flex items-center justify-center text-[0.95rem] font-black text-white drop-shadow-[0_2px_3px_rgba(0,0,0,0.65)] sm:text-[1.1rem]">
+        {bubble.number}
+      </span>
+    </div>
+  );
+};
 
-const COMPOSITE_PALETTES = [
-  {
-    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.96), rgba(191,232,255,0.95) 20%, rgba(125,211,252,0.9) 48%, rgba(59,130,246,0.86) 72%, rgba(30,64,175,0.84) 100%)',
-    ring: 'rgba(147,197,253,0.88)',
-    glow: '0 0 22px rgba(56,189,248,0.34)',
-    sparkle: 'rgba(224,242,254,0.86)',
-    text: '#f8fafc',
-  },
-  {
-    background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.96), rgba(186,230,253,0.94) 18%, rgba(96,165,250,0.9) 46%, rgba(37,99,235,0.86) 72%, rgba(30,58,138,0.82) 100%)',
-    ring: 'rgba(191,219,254,0.86)',
-    glow: '0 0 22px rgba(59,130,246,0.34)',
-    sparkle: 'rgba(239,246,255,0.82)',
-    text: '#f8fafc',
-  },
-];
+const Cannon = ({ angle }: { angle: number }) => (
+  <div className="relative flex h-20 w-20 items-center justify-center">
+    <div className="absolute bottom-0 z-10 h-10 w-16 rounded-t-full border-2 border-[#78350f] bg-gradient-to-b from-[#fcd34d] to-[#b45309] shadow-xl" />
+    <motion.div
+      className="absolute bottom-5 h-14 w-8 origin-bottom rounded-t-lg border-2 border-[#78350f] bg-gradient-to-r from-[#fcd34d] via-[#f59e0b] to-[#78350f] shadow-lg"
+      style={{ rotate: angle }}
+    >
+      <div className="absolute left-0 top-0 h-3 w-full rounded-t-sm bg-black/40" />
+    </motion.div>
+  </div>
+);
 
-const PrimePopGame: React.FC<PrimePopGameProps> = ({ 
-  levelId, 
-  avatarId, 
-  onVictory, 
-  onGameOver, 
-  onBack 
-}) => {
+const GameShell: React.FC<{
+  children: React.ReactNode;
+  score: number;
+  timerProgress: number;
+  onBack: () => void;
+}> = ({ children, score, timerProgress, onBack }) => (
+  <div className="fixed inset-0 flex items-center justify-center overflow-hidden bg-[#0a1a3a] p-2 font-sans text-white select-none">
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,#1e3a8a_0%,#0a1a3a_100%)]" />
+
+    <div className="relative flex h-full w-full max-h-[850px] max-w-[450px] flex-col rounded-[2.5rem] bg-gradient-to-br from-[#fcd34d] via-[#f59e0b] to-[#78350f] p-1 shadow-[0_30px_80px_rgba(0,0,0,0.9)]">
+      <div className="m-1 flex flex-1 flex-col gap-3 rounded-[2.3rem] border-4 border-[#78350f]/50 bg-[#0a1a3a] p-3 shadow-[inset_0_0_40px_rgba(0,0,0,0.5)]">
+        <div className="flex h-12 items-center justify-between px-2">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onBack}
+              className="h-8 w-8 rounded-lg border-2 border-[#fcd34d] bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg active:scale-95"
+              aria-label="Back"
+            >
+              <Target className="m-auto h-5 w-5 text-white" />
+            </button>
+            <div className="min-w-[72px] rounded-full border border-[#fcd34d]/30 bg-black/40 px-3 py-1 text-center">
+              <span className="text-lg font-black italic text-[#fcd34d]">{score}</span>
+            </div>
+          </div>
+
+          <div className="flex max-w-[150px] flex-1 flex-col gap-1">
+            <div className="flex justify-center">
+              <TimerIcon className="h-4 w-4 text-cyan-300" />
+            </div>
+            <div className="relative h-2.5 overflow-hidden rounded-full border border-[#78350f] bg-black/80">
+              <motion.div
+                className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-300"
+                animate={{ width: `${timerProgress}%` }}
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg border-2 border-[#fcd34d] bg-gradient-to-br from-yellow-400 to-yellow-600 shadow-lg">
+              <Zap className="h-5 w-5 text-white" />
+            </div>
+          </div>
+        </div>
+
+        <div className="relative flex-1 overflow-hidden rounded-[2rem] border-[4px] border-[#f59e0b] bg-[#050b1a] shadow-[inset_0_0_30px_rgba(0,0,0,0.9)]">
+          <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+          {children}
+        </div>
+
+        <div className="flex h-24 items-center justify-between gap-2 px-2">
+          <div className="flex gap-2">
+            <button type="button" className="flex h-12 w-12 items-center justify-center rounded-xl border-2 border-[#fcd34d] bg-gradient-to-b from-blue-400 to-blue-700 shadow-lg active:scale-95">
+              <Snowflake className="h-6 w-6 text-white" />
+            </button>
+            <button type="button" className="flex h-12 w-12 items-center justify-center rounded-xl border-2 border-[#fcd34d] bg-gradient-to-b from-orange-400 to-orange-700 shadow-lg active:scale-95">
+              <Flame className="h-6 w-6 text-white" />
+            </button>
+          </div>
+
+          <div className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-[#78350f] bg-gradient-to-br from-[#fcd34d] via-[#f59e0b] to-[#b45309] shadow-2xl">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#fcd34d] bg-[#0a1a3a] shadow-inner">
+              <Crosshair className="h-8 w-8 animate-pulse text-[#fcd34d]" />
+            </div>
+          </div>
+
+          <div className="flex gap-2">
+            <button type="button" className="flex h-12 w-12 items-center justify-center rounded-xl border-2 border-[#fcd34d] bg-gradient-to-b from-sky-400 to-sky-700 shadow-lg active:scale-95">
+              <Shield className="h-6 w-6 text-white" />
+            </button>
+            <button type="button" className="flex h-12 w-12 items-center justify-center rounded-xl border-2 border-[#fcd34d] bg-gradient-to-b from-green-400 to-green-700 shadow-lg active:scale-95">
+              <CircleDollarSign className="h-6 w-6 text-white" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, onVictory, onGameOver, onBack }) => {
+  const roundSeconds = useMemo(() => ROUND_SECONDS_BASE + (levelId * 10), [levelId]);
+  const targetScore = useMemo(() => TARGET_SCORE_BASE + (levelId * TARGET_SCORE_STEP), [levelId]);
+  const includeHardComposites = levelId >= 2;
+  const maxNumber = levelId <= 1 ? 30 : levelId === 2 ? 50 : 100;
+
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(60);
-  const [isGameOver, setIsGameOver] = useState(false);
-  const [isVictory, setIsVictory] = useState(false);
-  
-  const [bubbles, setBubbles] = useState<Bubble[]>([]);
+  const [timeLeft, setTimeLeft] = useState(roundSeconds);
   const [combo, setCombo] = useState(0);
-  const [crosshairPos, setCrosshairPos] = useState({ x: 50, y: 50 });
-  const gameAreaRef = useRef<HTMLDivElement>(null);
-  const bubbleNodeRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [angle, setAngle] = useState(0);
+  const [isOver, setIsOver] = useState(false);
+  const [bubblesView, setBubblesView] = useState<Bubble[]>([]);
+  const [projectilesView, setProjectilesView] = useState<Projectile[]>([]);
 
-  const avatar = AVATARS.find(a => a.id === avatarId) || AVATARS[0];
-  const targetScore = 1000 + (levelId * 500);
+  const nextIdRef = useRef(1);
+  const requestRef = useRef<number | null>(null);
+  const lastFrameRef = useRef<number | null>(null);
+  const timerIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const spawnIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const gameAreaRef = useRef<HTMLDivElement | null>(null);
+
+  const bubblesRef = useRef<Bubble[]>([]);
+  const projectilesRef = useRef<Projectile[]>([]);
+  const scoreRef = useRef(0);
+  const comboRef = useRef(0);
+  const overRef = useRef(false);
+  const crosshairRef = useRef({ x: 50, y: 50 });
+
+  const pickBubbleNumber = useCallback(() => {
+    const trickyComposites = [51, 57, 87, 91, 39, 69, 93].filter((n) => n <= maxNumber);
+    const random = Math.random();
+
+    if (random < 0.4) {
+      const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97].filter((n) => n <= maxNumber);
+      return primes[Math.floor(Math.random() * primes.length)];
+    }
+
+    if (includeHardComposites && random < 0.6 && trickyComposites.length > 0) {
+      return trickyComposites[Math.floor(Math.random() * trickyComposites.length)];
+    }
+
+    return Math.floor(Math.random() * (maxNumber - 1)) + 2;
+  }, [includeHardComposites, maxNumber]);
 
   const spawnBubble = useCallback(() => {
-    if (isGameOver || isVictory) return;
+    if (overRef.current) return;
+    const number = pickBubbleNumber();
+    const bubble: Bubble = {
+      id: nextIdRef.current++,
+      x: Math.random() * 80 + 10,
+      y: Math.random() * 42 + 8,
+      vx: (Math.random() - 0.5) * 12,
+      vy: (Math.random() - 0.5) * 8,
+      radius: Math.random() * 2 + 5.5,
+      type: BUBBLE_TYPES[Math.floor(Math.random() * BUBBLE_TYPES.length)],
+      number,
+      isPrime: isPrimeNumber(number),
+    };
+    bubblesRef.current = [...bubblesRef.current, bubble];
+    setBubblesView([...bubblesRef.current]);
+  }, [pickBubbleNumber]);
 
-    const maxNum = levelId === 1 ? 30 : levelId === 2 ? 50 : 100;
-    const minNum = 2;
-    let num = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
-    
-    // SATs tricky composites
-    const trickyComposites = [51, 57, 87, 91, 39, 69, 93].filter(n => n <= maxNum);
-    
-    // 40% chance of prime, 20% chance of tricky composite, 40% chance of random
-    const rand = Math.random();
-    let finalNum = num;
-    
-    if (rand < 0.4) {
-      const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97].filter(n => n <= maxNum);
-      finalNum = primes[Math.floor(Math.random() * primes.length)] || num;
-    } else if (rand < 0.6 && trickyComposites.length > 0) {
-      finalNum = trickyComposites[Math.floor(Math.random() * trickyComposites.length)];
+  const finalizeRound = useCallback((finalScore: number) => {
+    if (overRef.current) return;
+    overRef.current = true;
+    setIsOver(true);
+    if (requestRef.current) cancelAnimationFrame(requestRef.current);
+    if (spawnIntervalRef.current) clearInterval(spawnIntervalRef.current);
+    if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+
+    if (finalScore >= targetScore) {
+      const stars = finalScore >= targetScore * 2 ? 3 : finalScore >= targetScore * 1.5 ? 2 : 1;
+      confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#FFD700', '#FFFFFF', '#87CEEB'],
+      });
+      onVictory(stars, finalScore);
+      return;
     }
-
-    const bubbleIsPrime = isPrime(finalNum);
-    const palettePool = bubbleIsPrime ? PRIME_PALETTES : COMPOSITE_PALETTES;
-    const now = Date.now();
-    const laneCooldown = Math.max(1050, 1500 - (levelId * 110));
-
-    setBubbles(prev => {
-      const occupiedLanes = new Set(
-        prev
-          .filter(bubble => !bubble.isPopped && now - bubble.createdAt < laneCooldown)
-          .map(bubble => bubble.lane)
-      );
-      const availableLanes = BUBBLE_LANES.filter(lane => !occupiedLanes.has(lane));
-      const lanePool = availableLanes.length > 0 ? availableLanes : BUBBLE_LANES;
-      const selectedLane = lanePool[Math.floor(Math.random() * lanePool.length)];
-      const laneJitter = (Math.random() * 2.4) - 1.2;
-      const palette = palettePool[Math.floor(Math.random() * palettePool.length)];
-      const bubbleSpeed = 4.6 + Math.random() * 2.8 + (levelId * 0.36);
-
-      const newBubble: Bubble = {
-        id: Math.random().toString(36).substr(2, 9),
-        number: finalNum,
-        isPrime: bubbleIsPrime,
-        x: selectedLane + laneJitter,
-        lane: selectedLane,
-        createdAt: now,
-        expiresAt: now + (bubbleSpeed * 1000) + 800,
-        speed: bubbleSpeed,
-        isPopped: false,
-        size: 58 + Math.random() * 18,
-        palette,
-      };
-
-      return [...prev, newBubble];
-    });
-  }, [levelId, isGameOver, isVictory]);
+    onGameOver(finalScore);
+  }, [onGameOver, onVictory, targetScore]);
 
   useEffect(() => {
-    setTimeLeft(60 + levelId * 10);
+    overRef.current = false;
+    setIsOver(false);
     setScore(0);
-    setIsGameOver(false);
-    setIsVictory(false);
-    setBubbles([]);
-    bubbleNodeRefs.current = {};
     setCombo(0);
-  }, [levelId]);
+    scoreRef.current = 0;
+    comboRef.current = 0;
+    setTimeLeft(roundSeconds);
 
-  useEffect(() => {
-    let spawnTimer: NodeJS.Timeout;
-    if (!isGameOver && !isVictory) {
-      spawnTimer = setInterval(spawnBubble, Math.max(800 - (levelId * 50), 400));
+    bubblesRef.current = [];
+    projectilesRef.current = [];
+    setBubblesView([]);
+    setProjectilesView([]);
+    lastFrameRef.current = null;
+    nextIdRef.current = 1;
+
+    for (let i = 0; i < 5; i += 1) {
+      spawnBubble();
     }
-    return () => clearInterval(spawnTimer);
-  }, [spawnBubble, isGameOver, isVictory, levelId]);
 
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (timeLeft > 0 && !isGameOver && !isVictory) {
-      timer = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            handleTimeUp();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-    return () => clearInterval(timer);
-  }, [timeLeft, isGameOver, isVictory]);
+    timerIntervalRef.current = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          finalizeRound(scoreRef.current);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
 
-  // Cleanup popped and expired bubbles.
-  useEffect(() => {
-    const cleanupTimer = setInterval(() => {
-      const now = Date.now();
-      setBubbles(prev => prev.filter(b => !b.isPopped && b.expiresAt > now));
-    }, 220);
-    return () => clearInterval(cleanupTimer);
-  }, []);
+    spawnIntervalRef.current = setInterval(() => {
+      if (bubblesRef.current.length < 8) {
+        spawnBubble();
+      }
+    }, Math.max(850 - (levelId * 55), 420));
 
-  const handleTimeUp = () => {
-    if (score >= targetScore) {
-      handleWin();
-    } else {
-      setIsGameOver(true);
-      onGameOver(score);
-    }
-  };
+    return () => {
+      if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+      if (spawnIntervalRef.current) clearInterval(spawnIntervalRef.current);
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+    };
+  }, [finalizeRound, levelId, roundSeconds, spawnBubble]);
 
-  const handleWin = () => {
-    const stars = score >= targetScore * 2 ? 3 : score >= targetScore * 1.5 ? 2 : 1;
-    setIsVictory(true);
-    confetti({
-      particleCount: 150,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#FFD700', '#FFFFFF', '#87CEEB']
+  const shoot = useCallback(() => {
+    if (overRef.current) return;
+    const rad = (angle - 90) * (Math.PI / 180);
+    const projectile: Projectile = {
+      id: nextIdRef.current++,
+      x: 50,
+      y: 92,
+      vx: Math.cos(rad) * 42,
+      vy: Math.sin(rad) * 42,
+    };
+    projectilesRef.current = [...projectilesRef.current, projectile];
+    setProjectilesView([...projectilesRef.current]);
+  }, [angle]);
+
+  const updateFrame = useCallback((timestamp: number) => {
+    if (overRef.current) return;
+    const last = lastFrameRef.current ?? timestamp;
+    const dt = Math.min((timestamp - last) / 1000, 0.05);
+    lastFrameRef.current = timestamp;
+
+    // Move projectiles.
+    const nextProjectiles = projectilesRef.current
+      .map((p) => ({ ...p, x: p.x + (p.vx * dt), y: p.y + (p.vy * dt) }))
+      .filter((p) => p.x >= -6 && p.x <= 106 && p.y >= -10 && p.y <= 106);
+
+    // Move bubbles with soft bounds.
+    const nextBubbles = bubblesRef.current.map((bubble) => {
+      let x = bubble.x + (bubble.vx * dt);
+      let y = bubble.y + (bubble.vy * dt);
+      let vx = bubble.vx;
+      let vy = bubble.vy;
+
+      if (x < 8 || x > 92) {
+        vx *= -1;
+        x = Math.max(8, Math.min(92, x));
+      }
+      if (y < 8 || y > 68) {
+        vy *= -1;
+        y = Math.max(8, Math.min(68, y));
+      }
+
+      return { ...bubble, x, y, vx, vy };
     });
-    onVictory(stars, score);
-  };
 
-  const handlePointerMove = (e: React.PointerEvent) => {
+    // Projectile-to-bubble collisions.
+    const consumedProjectileIds = new Set<number>();
+    const consumedBubbleIds = new Set<number>();
+    let scoreDelta = 0;
+    let comboDelta = 0;
+
+    for (const projectile of nextProjectiles) {
+      for (const bubble of nextBubbles) {
+        if (consumedBubbleIds.has(bubble.id)) continue;
+        const dx = projectile.x - bubble.x;
+        const dy = projectile.y - bubble.y;
+        const dist = Math.hypot(dx, dy);
+        const collisionRadius = bubble.radius + 1.2;
+
+        if (dist <= collisionRadius) {
+          consumedProjectileIds.add(projectile.id);
+          consumedBubbleIds.add(bubble.id);
+          if (bubble.isPrime) {
+            const multiplier = 1 + (comboRef.current * 0.1);
+            scoreDelta += Math.round(PRIME_POINTS * multiplier);
+            comboRef.current += 1;
+            comboDelta = comboRef.current;
+            confetti({
+              particleCount: 20,
+              spread: 38,
+              origin: { x: bubble.x / 100, y: bubble.y / 100 },
+              colors: ['#34d399', '#10b981', '#059669'],
+            });
+          } else {
+            scoreDelta -= COMPOSITE_PENALTY;
+            comboRef.current = 0;
+            comboDelta = 0;
+            confetti({
+              particleCount: 14,
+              spread: 28,
+              origin: { x: bubble.x / 100, y: bubble.y / 100 },
+              colors: ['#ef4444', '#b91c1c'],
+            });
+          }
+          break;
+        }
+      }
+    }
+
+    const remainingProjectiles = nextProjectiles.filter((p) => !consumedProjectileIds.has(p.id));
+    let remainingBubbles = nextBubbles.filter((b) => !consumedBubbleIds.has(b.id));
+
+    while (remainingBubbles.length < 5) {
+      const number = pickBubbleNumber();
+      remainingBubbles.push({
+        id: nextIdRef.current++,
+        x: Math.random() * 80 + 10,
+        y: Math.random() * 22 + 4,
+        vx: (Math.random() - 0.5) * 12,
+        vy: Math.random() * 8 + 3,
+        radius: Math.random() * 2 + 5.5,
+        type: BUBBLE_TYPES[Math.floor(Math.random() * BUBBLE_TYPES.length)],
+        number,
+        isPrime: isPrimeNumber(number),
+      });
+    }
+
+    if (scoreDelta !== 0) {
+      scoreRef.current = Math.max(0, scoreRef.current + scoreDelta);
+      setScore(scoreRef.current);
+      setCombo(comboDelta);
+    }
+
+    // Early clear when target reached.
+    if (scoreRef.current >= targetScore) {
+      finalizeRound(scoreRef.current);
+      return;
+    }
+
+    projectilesRef.current = remainingProjectiles;
+    bubblesRef.current = remainingBubbles;
+    setProjectilesView(remainingProjectiles);
+    setBubblesView(remainingBubbles);
+
+    requestRef.current = requestAnimationFrame(updateFrame);
+  }, [finalizeRound, pickBubbleNumber, targetScore]);
+
+  useEffect(() => {
+    if (isOver) return;
+    requestRef.current = requestAnimationFrame(updateFrame);
+    return () => {
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+    };
+  }, [isOver, updateFrame]);
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!gameAreaRef.current) return;
     const rect = gameAreaRef.current.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
-    setCrosshairPos({ x, y });
+    crosshairRef.current = { x, y };
+
+    const relativeX = e.clientX - rect.left - (rect.width / 2);
+    const relativeY = e.clientY - rect.top - rect.height;
+    const nextAngle = Math.atan2(relativeX, -relativeY) * (180 / Math.PI);
+    setAngle(Math.max(-60, Math.min(60, nextAngle)));
   };
 
-  const popBubble = (id: string, isPrimeBubble: boolean, clientX: number, clientY: number) => {
-    if (isGameOver || isVictory) return;
-
-    setBubbles(prev => prev.map(b => b.id === id ? { ...b, isPopped: true } : b));
-
-    if (isPrimeBubble) {
-      const comboMultiplier = 1 + (combo * 0.1);
-      const pointsEarned = Math.round(75 * comboMultiplier);
-      setScore(prev => prev + pointsEarned);
-      setCombo(prev => prev + 1);
-      
-      confetti({
-        particleCount: 30,
-        spread: 50,
-        origin: { 
-          x: clientX / window.innerWidth, 
-          y: clientY / window.innerHeight 
-        },
-        colors: ['#34d399', '#10b981', '#059669']
-      });
-    } else {
-      setScore(prev => Math.max(0, prev - 50));
-      setCombo(0);
-      
-      confetti({
-        particleCount: 20,
-        spread: 40,
-        origin: { 
-          x: clientX / window.innerWidth, 
-          y: clientY / window.innerHeight 
-        },
-        colors: ['#ef4444', '#b91c1c']
-      });
-    }
-  };
-
-  const resolveBubbleFromPointer = useCallback((clientX: number, clientY: number) => {
-    let nearest: { id: string; isPrime: boolean; distance: number } | null = null;
-
-    for (const bubble of bubbles) {
-      if (bubble.isPopped) continue;
-      const node = bubbleNodeRefs.current[bubble.id];
-      if (!node) continue;
-      const rect = node.getBoundingClientRect();
-      if (rect.width <= 0 || rect.height <= 0) continue;
-
-      const centerX = rect.left + (rect.width / 2);
-      const centerY = rect.top + (rect.height / 2);
-      const distance = Math.hypot(clientX - centerX, clientY - centerY);
-      const forgivingHitRadius = Math.max(rect.width / 2, 28) + 14;
-
-      if (distance > forgivingHitRadius) continue;
-      if (!nearest || distance < nearest.distance) {
-        nearest = { id: bubble.id, isPrime: bubble.isPrime, distance };
-      }
-    }
-
-    return nearest;
-  }, [bubbles]);
-
-  const handlePlayfieldPointerDown = (clientX: number, clientY: number) => {
-    const targetBubble = resolveBubbleFromPointer(clientX, clientY);
-    if (!targetBubble) return;
-    popBubble(targetBubble.id, targetBubble.isPrime, clientX, clientY);
-  };
-
-  const progress = Math.min((score / targetScore) * 100, 100);
+  const timerProgress = Math.max(0, Math.min(100, (timeLeft / roundSeconds) * 100));
+  const crosshair = crosshairRef.current;
 
   return (
-    <div
-      className="h-full w-full flex flex-col items-center p-2 md:p-4 relative overflow-hidden md:cursor-none"
-      style={{
-        background:
-          'linear-gradient(180deg, #0f2f6c 0%, #1f4f9f 46%, #2b67b6 100%)',
-      }}
-    >
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute left-[-12%] top-[6%] h-[38%] w-[48%] rounded-full bg-cyan-200/18 blur-3xl" />
-        <div className="absolute left-[16%] top-[18%] h-[34%] w-[44%] rounded-full bg-sky-100/16 blur-3xl" />
-        <div className="absolute right-[-8%] top-[12%] h-[42%] w-[46%] rounded-full bg-blue-100/14 blur-3xl" />
-        <div className="absolute left-[-8%] bottom-[-18%] h-[52%] w-[66%] rounded-full bg-amber-200/14 blur-3xl" />
-        <div className="absolute right-[-6%] bottom-[-12%] h-[48%] w-[58%] rounded-full bg-yellow-100/12 blur-3xl" />
-      </div>
+    <GameShell score={score} timerProgress={timerProgress} onBack={onBack}>
+      <div
+        ref={gameAreaRef}
+        className="relative h-full w-full cursor-crosshair touch-none"
+        onPointerMove={handlePointerMove}
+        onPointerDown={shoot}
+      >
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,#1ec4ea_0%,#3fd0ee_38%,#66d8f1_74%,#95e6f7_100%)]" />
+        <div className="absolute left-[-14%] top-[5%] h-[42%] w-[60%] rounded-full bg-white/22 blur-3xl" />
+        <div className="absolute right-[-10%] top-[12%] h-[42%] w-[56%] rounded-full bg-white/18 blur-3xl" />
+        <div className="absolute left-[-10%] bottom-[-20%] h-[54%] w-[70%] rounded-full bg-yellow-100/24 blur-3xl" />
 
-      <div className="z-10 w-full max-w-6xl aaa-game-stage flex h-full min-h-0 flex-1 flex-col items-center gap-2 md:gap-5">
-        <GameplayHUD
-          title="Prime Pop"
-          avatar={avatar}
-          score={score}
-          targetScore={targetScore}
-          timeLeft={timeLeft}
-          progress={progress}
-          compact
-          accentText="text-sky-900"
-          accentSoftBg="bg-sky-100/80"
-          accentBorder="border-sky-200/80"
-          progressBar="bg-gradient-to-r from-yellow-400 via-amber-300 to-sky-400"
-          statLabel="Combo"
-          statValue={combo}
-        />
+        <AnimatePresence>
+          {bubblesView.map((bubble) => (
+            <motion.div
+              key={bubble.id}
+              className="absolute -translate-x-1/2 -translate-y-1/2"
+              style={{ left: `${bubble.x}%`, top: `${bubble.y}%` }}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0, opacity: 0, filter: 'brightness(2)' }}
+            >
+              <BevelledBubble bubble={bubble} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
 
-        {/* Game Area */}
-        <div 
-          ref={gameAreaRef}
-          onPointerMove={handlePointerMove}
-          onPointerDown={(event) => handlePlayfieldPointerDown(event.clientX, event.clientY)}
-          className="w-full flex-1 min-h-[23rem] md:min-h-[31rem] relative licensed-board-frame structured-playfield-frame overflow-hidden touch-none touch-manipulation"
-        >
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,#1894d1_0%,#2ca9da_38%,#52c4e5_76%,#80daf2_100%)]" />
-          <div className="absolute left-[-12%] top-[8%] h-[38%] w-[52%] rounded-full bg-sky-100/28 blur-2xl" />
-          <div className="absolute left-[18%] top-[14%] h-[30%] w-[46%] rounded-full bg-cyan-100/20 blur-2xl" />
-          <div className="absolute right-[-10%] top-[10%] h-[42%] w-[54%] rounded-full bg-blue-100/24 blur-2xl" />
-          <div className="absolute left-[-14%] bottom-[-18%] h-[48%] w-[68%] rounded-full bg-amber-100/20 blur-2xl" />
-          <div className="absolute right-[-12%] bottom-[-14%] h-[44%] w-[62%] rounded-full bg-yellow-100/20 blur-2xl" />
-          <div className="absolute inset-x-[2.2%] top-[3.6%] bottom-[4.2%] rounded-[1.2rem] md:rounded-[1.8rem] border border-white/24 bg-transparent shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)] pointer-events-none" />
+        {projectilesView.map((projectile) => (
+          <div
+            key={projectile.id}
+            className="absolute h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border border-blue-200 bg-white shadow-[0_0_10px_white]"
+            style={{ left: `${projectile.x}%`, top: `${projectile.y}%` }}
+          />
+        ))}
 
-          <div className="absolute left-3 right-3 top-3 z-20 flex flex-wrap items-center justify-between gap-2 md:left-4 md:right-4 md:top-4">
-            <div className="rounded-full border border-cyan-100/60 bg-[linear-gradient(180deg,rgba(37,99,235,0.95),rgba(30,64,175,0.95))] px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-50 shadow-[0_8px_16px_rgba(2,6,23,0.26)] md:text-xs">
-              Pop Prime Numbers
-            </div>
-            <div className="rounded-full border border-amber-200/70 bg-[linear-gradient(180deg,rgba(251,191,36,0.98),rgba(245,158,11,0.98))] px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-amber-950 shadow-[0_8px_16px_rgba(2,6,23,0.24)] md:text-xs">
-              Prime +75 | Composite -50
-            </div>
-          </div>
-
-          {/* Custom Crosshair */}
-          <div 
-            className="absolute hidden md:block w-12 h-12 pointer-events-none z-50 -translate-x-1/2 -translate-y-1/2 text-cyan-400 opacity-80"
-            style={{ left: `${crosshairPos.x}%`, top: `${crosshairPos.y}%` }}
-          >
-            <Crosshair className="w-full h-full" />
-          </div>
-
-          <div className="absolute inset-x-[2.2%] top-[3.6%] bottom-[4.2%] z-10 overflow-hidden rounded-[1.2rem] md:rounded-[1.8rem]">
-            <AnimatePresence>
-              {bubbles.map(bubble => !bubble.isPopped && (
-                <motion.div
-                  key={bubble.id}
-                  ref={(node) => {
-                    bubbleNodeRefs.current[bubble.id] = node;
-                  }}
-                  initial={{ bottom: '-18%', opacity: 0, scale: 0.72 }}
-                  animate={{ bottom: '104%', opacity: [0, 1, 1], scale: [0.72, 1, 1] }}
-                  exit={{ scale: 1.5, opacity: 0 }}
-                  transition={{ 
-                    bottom: { duration: bubble.speed, ease: 'linear' },
-                    opacity: { duration: 0.45, times: [0, 0.1, 1] },
-                    scale: { duration: 0.35 }
-                  }}
-                  onPointerDown={(e) => {
-                    e.stopPropagation();
-                    handlePlayfieldPointerDown(e.clientX, e.clientY);
-                  }}
-                  className="absolute z-20 -translate-x-1/2 flex items-center justify-center rounded-full backdrop-blur-md md:cursor-none"
-                  style={{
-                    background: bubble.palette.background,
-                    border: `2px solid ${bubble.palette.ring}`,
-                    boxShadow: `${bubble.palette.glow}, inset 0 -10px 18px rgba(120,53,15,0.22), inset 0 10px 16px rgba(255,255,255,0.3)`,
-                    left: `${bubble.x}%`,
-                    width: `${bubble.size}px`,
-                    height: `${bubble.size}px`,
-                  }}
-                >
-                  <div
-                    className="absolute inset-[6%] rounded-full opacity-70"
-                    style={{
-                      border: `1px solid ${bubble.palette.sparkle}`,
-                      boxShadow: bubble.isPrime ? `0 0 20px ${bubble.palette.sparkle}` : 'none',
-                    }}
-                  />
-                  <div
-                    className="absolute inset-[16%] rounded-full opacity-55"
-                    style={{
-                      background: 'radial-gradient(circle at 30% 28%, rgba(255,255,255,0.42), transparent 62%)',
-                    }}
-                  />
-                  <span
-                    className="pointer-events-none text-2xl md:text-3xl font-black drop-shadow-[0_3px_8px_rgba(120,53,15,0.42)]"
-                    style={{ color: bubble.palette.text }}
-                  >
-                    {bubble.number}
-                  </span>
-                  
-                  {/* Bubble reflection */}
-                  <div
-                    className="absolute top-[15%] left-[18%] w-[30%] h-[20%] rounded-full rotate-[-45deg] blur-[1px] pointer-events-none"
-                    style={{ background: bubble.palette.sparkle }}
-                  />
-                  {bubble.isPrime && (
-                    <motion.div
-                      className="absolute inset-[-10%] rounded-full pointer-events-none"
-                      animate={{ scale: [0.96, 1.08, 0.96], opacity: [0.22, 0.42, 0.22] }}
-                      transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-                      style={{ border: `2px solid ${bubble.palette.ring}` }}
-                    />
-                  )}
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
+        <div className="pointer-events-none absolute left-1/2 top-[92%] h-32 w-0.5 -translate-x-1/2 origin-bottom bg-gradient-to-t from-white/20 to-transparent" style={{ transform: `translateX(-50%) rotate(${angle}deg)` }} />
+        <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2">
+          <Cannon angle={angle} />
         </div>
 
-        <GameActionDock
-          onBack={onBack}
-          accentClass="text-white"
-        />
+        <div
+          className="pointer-events-none absolute hidden h-12 w-12 -translate-x-1/2 -translate-y-1/2 text-cyan-400 opacity-80 md:block"
+          style={{ left: `${crosshair.x}%`, top: `${crosshair.y}%` }}
+        >
+          <Crosshair className="h-full w-full" />
+        </div>
 
-        {/* Game Over / Victory Modals */}
-        <AnimatePresence>
-        {(isGameOver || isVictory) && (
-          <motion.div 
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md cursor-default"
-          >
-            <div className="app-modal-panel licensed-overlay-card w-full max-w-md flex flex-col items-center gap-5 p-6 md:gap-8 md:p-12">
-              <div className={`text-5xl font-black ${isVictory ? 'text-emerald-400' : 'text-red-500'} drop-shadow-md text-center`}>
-                {isVictory ? 'PRIME MASTER!' : 'OUT OF TIME!'}
-              </div>
-
-              {isVictory && (
-                <div className="flex gap-2">
-                  {[1, 2, 3].map(s => (
-                    <motion.div
-                      key={s}
-                      initial={{ scale: 0, rotate: -20 }}
-                      animate={{ scale: 1, rotate: 0 }}
-                      transition={{ delay: s * 0.2, type: 'spring' }}
-                    >
-                      <Star className={`w-16 h-16 ${s <= (score >= targetScore * 2 ? 3 : score >= targetScore * 1.5 ? 2 : 1) ? 'fill-yellow-400 text-yellow-400' : 'text-slate-600'}`} />
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-
-              <div className="text-center">
-                <div className="text-slate-400 font-black uppercase tracking-widest text-sm">Final Score</div>
-                <div className="text-6xl font-black text-white drop-shadow-sm">{score}</div>
-              </div>
-
-              <button 
-                onClick={onBack}
-                className="ui-button-primary licensed-submit-button w-full py-5 text-white text-2xl font-black transition-all"
-              >
-                CONTINUE
-              </button>
-            </div>
-          </motion.div>
-        )}
-        </AnimatePresence>
+        <div className="absolute left-3 right-3 top-3 flex items-center justify-between gap-2">
+          <div className="rounded-full border border-cyan-100/60 bg-[linear-gradient(180deg,rgba(37,99,235,0.95),rgba(30,64,175,0.95))] px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-50 shadow-[0_8px_16px_rgba(2,6,23,0.26)]">
+            Pop Prime Numbers
+          </div>
+          <div className="rounded-full border border-amber-200/70 bg-[linear-gradient(180deg,rgba(251,191,36,0.98),rgba(245,158,11,0.98))] px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-amber-950 shadow-[0_8px_16px_rgba(2,6,23,0.24)]">
+            Prime +75 | Composite -50 | Combo {combo}
+          </div>
+        </div>
       </div>
-    </div>
+    </GameShell>
   );
 };
 
