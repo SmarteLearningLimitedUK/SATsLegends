@@ -3086,7 +3086,9 @@ button:disabled {
 
 .aaa-progress-shell {
   border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 20px rgba(2, 6, 23, 0.2);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 10px 24px rgba(2, 6, 23, 0.28);
 }
 
 .aaa-dock-shell {
@@ -3130,8 +3132,26 @@ button:disabled {
 }
 
 .pvp-stage-layout {
-  grid-template-rows: auto auto minmax(0, 1.7fr) minmax(8.8rem, 1fr) auto !important;
-  gap: clamp(0.3rem, 1vh, 0.6rem) !important;
+  grid-template-rows: auto auto minmax(0, 2.2fr) minmax(10rem, 1fr) auto !important;
+  gap: clamp(0.18rem, 0.65vh, 0.44rem) !important;
+}
+
+.pvp-stage-layout .aaa-zone-objective .aaa-objective-shell {
+  padding-block: clamp(0.3rem, 0.8vh, 0.5rem) !important;
+  padding-inline: clamp(0.45rem, 1.4vw, 0.75rem) !important;
+}
+
+.pvp-stage-layout .aaa-zone-playfield .aaa-playfield-shell {
+  border-radius: 1.5rem;
+}
+
+.pvp-stage-layout .shared-game-interaction-panel {
+  border-radius: 1rem;
+}
+
+.pvp-stage-layout .aaa-zone-controls {
+  padding-top: 0.1rem;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .shared-game-interaction-panel {
@@ -3250,11 +3270,11 @@ button:disabled {
   align-items: center;
   justify-content: center;
   gap: 0.14rem;
-  width: min(100%, 30rem);
+  width: min(100%, 27rem);
   margin-inline: auto;
   border-radius: 1rem;
   border: 1px solid rgba(250, 204, 21, 0.58);
-  padding: 0.38rem 0.82rem 0.5rem;
+  padding: 0.3rem 0.72rem 0.42rem;
   background:
     radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 48%),
     linear-gradient(180deg, rgba(253, 224, 71, 0.95), rgba(245, 158, 11, 0.94));
@@ -3308,7 +3328,7 @@ button:disabled {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
     0 14px 28px rgba(2, 6, 23, 0.2);
-  width: min(100%, 58rem);
+  width: min(100%, 62rem);
   margin-inline: auto;
 }
 
@@ -3343,8 +3363,8 @@ button:disabled {
   position: relative;
   display: grid;
   place-items: center;
-  width: clamp(3.8rem, 7.4vw, 4.7rem);
-  height: clamp(3.8rem, 7.4vw, 4.7rem);
+  width: clamp(4.5rem, 9vw, 5.75rem);
+  height: clamp(4.5rem, 9vw, 5.75rem);
   border-radius: 0.8rem;
   background:
     url('./assets/place_value/frames/large_avatar_frame.png') center/contain no-repeat,
@@ -3358,7 +3378,7 @@ button:disabled {
 .pvp-slot-square-socket::before {
   content: '';
   position: absolute;
-  inset: 0.52rem;
+  inset: 0.5rem;
   border-radius: 0.56rem;
   border: 1px solid rgba(186, 230, 253, 0.24);
   background: radial-gradient(circle at 50% 50%, rgba(17, 37, 70, 0.32), rgba(6, 14, 28, 0.55));
@@ -3470,8 +3490,8 @@ button:disabled {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.1),
     0 14px 28px rgba(2, 6, 23, 0.24);
-  min-height: clamp(9rem, 21vh, 13.6rem);
-  max-height: clamp(9.8rem, 26vh, 15rem);
+  min-height: clamp(10rem, 22vh, 14.2rem);
+  max-height: clamp(11rem, 27vh, 15.75rem);
   border-top-left-radius: 1.05rem;
   border-top-right-radius: 1.05rem;
 }
@@ -3499,8 +3519,8 @@ button:disabled {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: min(100%, 4.35rem);
-  height: min(100%, 4.35rem);
+  width: min(100%, 4.95rem);
+  height: min(100%, 4.95rem);
   overflow: hidden;
   border-radius: 0.58rem !important;
   box-shadow:

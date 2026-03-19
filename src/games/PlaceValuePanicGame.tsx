@@ -88,8 +88,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     progress,
     accuracy,
     feedback,
-    isPaused,
     isForgingTransition,
+    isPaused,
     setIsPaused,
     hintSlotKey,
     lastRejectedTileId,
@@ -280,6 +280,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                         ? 'animate-pulse pvp-slot-hinted'
                         : 'pvp-slot-empty'
                 } ${isCorrectFlash ? 'pvp-slot-correct-flash' : ''}`}
+                style={{ minHeight: 'clamp(10rem, 27vh, 14.25rem)' }}
               >
                 <div className="pvp-slot-label text-[10px] font-black uppercase tracking-[0.18em] text-white/75 md:text-xs">{slot.label}</div>
                 <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/50 md:text-xs">{SLOT_DISPLAY_VALUES[slot.key]}</div>
@@ -411,17 +412,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     </div>
   );
 
-  const headerPauseAction = (
-    <button
-      type="button"
-      onClick={() => setIsPaused(true)}
-      className="pvp-pause-button inline-flex min-h-[40px] min-w-[40px] items-center justify-center rounded-lg border border-amber-200/70 bg-gradient-to-b from-amber-300 to-amber-500 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.15em] text-amber-950 md:min-h-[42px] md:min-w-[42px] md:px-3 md:py-1.5 md:text-[10px]"
-      aria-label="Pause game"
-    >
-      Pause
-    </button>
-  );
-
   return (
     <GameContainerView
       gameType="place_value_peaks"
@@ -433,7 +423,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       targetScore={levelConfig.targetScore}
       timeLeft={timeLeft}
       progress={progress}
-      headerAction={headerPauseAction}
       hudCompact={false}
       roundLabel="Round"
       roundValue={roundsCleared + 1}

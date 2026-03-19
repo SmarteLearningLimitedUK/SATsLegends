@@ -45,6 +45,7 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
   headerAction,
 }) => {
   const showExtraStat = Boolean(statLabel) && statValue !== undefined && statValue !== null;
+  const progressTrackInsetClass = compact ? 'inset-[8%]' : 'inset-x-[4%] inset-y-[18%]';
 
   return (
     <div className={`game-shell-zone game-shell-zone-hud w-full flex shrink-0 flex-col ${compact ? 'gap-1' : 'gap-1.5 md:gap-2'}`}>
@@ -52,7 +53,7 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(186,230,253,0.16),transparent_36%),linear-gradient(180deg,rgba(18,40,92,0.96),rgba(7,18,40,0.98))]" />
         <div className="absolute inset-0 border border-white/12" />
 
-        <div className={`relative flex flex-col ${compact ? 'gap-1 p-1.5' : 'gap-2 p-2.5 md:gap-2.5 md:p-3'} ${headerAction ? 'pr-12 md:pr-14' : ''}`}>
+        <div className={`relative flex flex-col ${compact ? 'gap-1 p-1.5' : 'gap-2.5 p-3 md:gap-3 md:p-4'} ${headerAction ? 'pr-12 md:pr-14' : ''}`}>
           {headerAction ? (
             <div className="absolute right-1.5 top-1.5 z-20 md:right-2 md:top-2">
               {headerAction}
@@ -79,14 +80,14 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
 
           <div className={`grid w-full ${showExtraStat ? 'grid-cols-3' : 'grid-cols-2'} ${compact ? 'gap-1' : 'gap-2 md:gap-2.5'}`}>
             {showExtraStat && (
-              <div className={`aaa-hud-stat relative rounded-[0.75rem] md:rounded-[1rem] ${compact ? 'px-1 py-0.5' : 'px-1.5 py-1'} md:px-2 md:py-1.5 text-center overflow-hidden`}>
+              <div className={`aaa-hud-stat relative rounded-[0.75rem] md:rounded-[1rem] ${compact ? 'px-1 py-0.5' : 'px-2 py-1.5'} md:px-2.5 md:py-2 text-center overflow-hidden`}>
                 <div className="aaa-hud-stat-surface absolute inset-0 rounded-[inherit]" />
               <div className={`${compact ? 'text-[6px]' : 'text-[8px]'} relative md:text-xs font-black uppercase tracking-[0.16em] text-slate-600`}>{statLabel}</div>
               <div className={`mt-0.5 ${compact ? 'text-[0.82rem]' : 'text-[1rem]'} md:text-[1.2rem] font-black ${accentText}`}>{statValue}</div>
             </div>
             )}
 
-            <div className={`aaa-hud-stat relative rounded-[0.75rem] md:rounded-[1rem] ${compact ? 'px-1 py-0.5' : 'px-1.5 py-1'} md:px-2 md:py-1.5 text-center overflow-hidden`}>
+            <div className={`aaa-hud-stat relative rounded-[0.75rem] md:rounded-[1rem] ${compact ? 'px-1 py-0.5' : 'px-2 py-1.5'} md:px-2.5 md:py-2 text-center overflow-hidden`}>
               <div className="aaa-hud-stat-surface absolute inset-0 rounded-[inherit]" />
               <div className={`${compact ? 'text-[6px]' : 'text-[8px]'} relative md:text-xs font-black uppercase tracking-[0.16em] text-slate-600`}>Score</div>
               <motion.div
@@ -99,7 +100,7 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
               </motion.div>
             </div>
 
-            <div className={`aaa-hud-stat relative rounded-[0.75rem] md:rounded-[1rem] ${compact ? 'px-1 py-0.5' : 'px-1.5 py-1'} md:px-2 md:py-1.5 text-center overflow-hidden`}>
+            <div className={`aaa-hud-stat relative rounded-[0.75rem] md:rounded-[1rem] ${compact ? 'px-1 py-0.5' : 'px-2 py-1.5'} md:px-2.5 md:py-2 text-center overflow-hidden`}>
               <div className="aaa-hud-stat-surface absolute inset-0 rounded-[inherit]" />
               <div className={`relative flex items-center justify-center ${compact ? 'gap-0.5' : 'gap-1'} md:gap-2`}>
                 <AssetIcon name="timer" className={`${compact ? 'w-2.5 h-2.5' : 'w-3 h-3'} md:w-4 md:h-4 ${timeLeft < 10 ? 'animate-pulse' : ''}`} />
@@ -111,11 +112,11 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
         </div>
       </div>
 
-      <div className={`aaa-progress-shell relative w-full ${compact ? 'h-3.5 md:h-4' : 'h-4 md:h-5'} overflow-hidden rounded-full`}>
+      <div className={`aaa-progress-shell relative w-full ${compact ? 'h-3.5 md:h-4' : 'h-7 md:h-8'} overflow-hidden rounded-full`}>
         <img src={sliderBgAsset} alt="progress bar background" className="absolute inset-0 h-full w-full object-fill opacity-95" />
         <img src={sliderBorderAsset} alt="progress bar border" className="absolute inset-0 h-full w-full object-fill opacity-95" />
         <img src={MAIN_PNG_SKIN.separator} alt="" aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full object-fill opacity-80" />
-        <div className="absolute inset-[6%] overflow-hidden rounded-full">
+        <div className={`absolute ${progressTrackInsetClass} overflow-hidden rounded-full`}>
           <motion.div
             className="absolute inset-y-0 left-0 rounded-full overflow-hidden"
             initial={{ width: 0 }}
@@ -127,7 +128,7 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
             <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.15)_20%,rgba(255,255,255,0.5)_35%,rgba(255,255,255,0.15)_50%)] bg-[length:200%_100%] animate-[hud-shine_2.4s_linear_infinite]" />
           </motion.div>
         </div>
-        <div className={`absolute inset-0 flex items-center justify-center ${compact ? 'text-[6px]' : 'text-[8px]'} md:text-[10px] font-black uppercase tracking-[0.14em] text-slate-50 drop-shadow-[0_2px_8px_rgba(2,6,23,0.4)]`}>
+        <div className={`absolute inset-0 flex items-center justify-center ${compact ? 'text-[6px]' : 'text-[10px]'} md:text-[11px] font-black uppercase tracking-[0.14em] text-slate-50 drop-shadow-[0_2px_8px_rgba(2,6,23,0.4)]`}>
           {Math.round(progress)}% complete
         </div>
       </div>

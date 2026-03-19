@@ -85,27 +85,7 @@ const SCREEN_BEHAVIOR: Record<GameScreen, {
   parent_dashboard: { scrollable: true, shell: 'playfield', family: 'hub' },
 };
 
-type StageOutputId =
-  | 'splash'
-  | 'name'
-  | 'avatar'
-  | 'map'
-  | 'island'
-  | 'gameplay'
-  | 'boss'
-  | 'report';
 type GameRulesMode = 'start' | 'help';
-
-const STAGED_OUTPUT_STEPS: Array<{ id: StageOutputId; label: string; detail: string }> = [
-  { id: 'splash', label: 'Splash', detail: 'Opening poster and CTA' },
-  { id: 'name', label: 'Hero Name', detail: 'Profile naming screen' },
-  { id: 'avatar', label: 'Avatar', detail: 'Character selection' },
-  { id: 'map', label: 'World Map', detail: 'Island progression map' },
-  { id: 'island', label: 'Island Route', detail: 'Island level nodes' },
-  { id: 'gameplay', label: 'Gameplay', detail: 'Regular mini-game view' },
-  { id: 'boss', label: 'Boss', detail: 'Boss encounter phase' },
-  { id: 'report', label: 'Report', detail: 'Parent dashboard output' },
-];
 
 const resolveAvatarId = (avatarId?: string) => (
   AVATARS.some(avatar => avatar.id === avatarId) ? avatarId! : DEFAULT_AVATAR_ID
@@ -193,8 +173,6 @@ const createDefaultPlayer = (parsed?: Partial<PlayerData> | null): PlayerData =>
 
 const App: React.FC = () => {
   const [screen, setScreen] = useState<GameScreen>('splash');
-  const [isStagedPreviewOpen, setIsStagedPreviewOpen] = useState(false);
-  const [activeStageId, setActiveStageId] = useState<StageOutputId>('splash');
   const [player, setPlayer] = useState<PlayerData>(() => {
     const saved = localStorage.getItem(PLAYER_STORAGE_KEY);
     const parsed = saved ? JSON.parse(saved) : null;
@@ -339,66 +317,6 @@ const App: React.FC = () => {
   const goToHome = () => {
     setSelectedLevel(null);
     setScreen('world_map');
-  };
-
-  const goToStage = (stageId: StageOutputId) => {
-    const firstIsland = ISLANDS[0] || null;
-    const firstPlayableLevel = firstIsland?.levels.find(level => !level.isBoss) || firstIsland?.levels[0] || null;
-    const firstBossLevel = firstIsland?.levels.find(level => level.isBoss) || firstPlayableLevel;
-
-    setActiveStageId(stageId);
-    setLevelResult(null);
-
-    switch (stageId) {
-      case 'splash':
-        setSelectedIsland(null);
-        setSelectedLevel(null);
-        setScreen('splash');
-        return;
-      case 'name':
-        setDraftName(player.playerName || 'Explorer');
-        setSelectedLevel(null);
-        setScreen('profile_setup');
-        return;
-      case 'avatar':
-        setSelectedLevel(null);
-        setScreen('avatar_selection');
-        return;
-      case 'map':
-        setSelectedLevel(null);
-        setScreen('world_map');
-        return;
-      case 'island':
-        if (!firstIsland) return;
-        setSelectedIsland(firstIsland);
-        setSelectedLevel(null);
-        setScreen('island_levels');
-        return;
-      case 'gameplay':
-        if (!firstIsland || !firstPlayableLevel) return;
-        setSelectedIsland(firstIsland);
-        setSelectedLevel(firstPlayableLevel);
-        setScreen('gameplay');
-        return;
-      case 'boss':
-        if (!firstIsland || !firstBossLevel) return;
-        setSelectedIsland(firstIsland);
-        setSelectedLevel(firstBossLevel);
-        setScreen('gameplay');
-        return;
-      case 'report':
-        setSelectedLevel(null);
-        setScreen('parent_dashboard');
-        return;
-      default:
-        return;
-    }
-  };
-
-  const openStagePreview = (stageId: StageOutputId = 'splash') => {
-    triggerHaptic('selection');
-    setIsStagedPreviewOpen(true);
-    goToStage(stageId);
   };
 
   const handleStartAdventure = () => {
@@ -777,12 +695,6 @@ const App: React.FC = () => {
                 >
                   Let's Go!
                 </motion.button>
-                <button
-                  onClick={() => openStagePreview('splash')}
-                  className="ui-button-primary rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.18em] md:text-xs"
-                >
-                  Staged Output
-                </button>
               </div>
 
               {[
@@ -1017,39 +929,6 @@ const App: React.FC = () => {
         rules={selectedRuleSet}
         actionLabel={gameRulesMode === 'start' ? 'Start Game' : 'Back To Game'}
       />
-
-      {isStagedPreviewOpen && (
-        <div className="fixed right-3 top-[calc(0.75rem+env(safe-area-inset-top))] z-[70] w-[min(22rem,calc(100vw-1.5rem))] overflow-hidden rounded-[1.25rem] border border-cyan-200/30 bg-slate-950/84 p-3 text-white shadow-[0_20px_40px_rgba(2,6,23,0.5)] backdrop-blur-xl md:right-4 md:w-80">
-          <div className="mb-2 flex items-center justify-between gap-3">
-            <div>
-              <div className="text-[9px] font-black uppercase tracking-[0.2em] text-cyan-100/65 md:text-[10px]">Review flow</div>
-              <div className="text-sm font-black md:text-base">Staged Output Panel</div>
-            </div>
-            <button
-              onClick={() => setIsStagedPreviewOpen(false)}
-              className="ui-button-primary rounded-lg px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em]"
-            >
-              Close
-            </button>
-          </div>
-          <div className="grid gap-1.5">
-            {STAGED_OUTPUT_STEPS.map(step => (
-              <button
-                key={step.id}
-                onClick={() => goToStage(step.id)}
-                className={`rounded-xl border px-3 py-2 text-left transition ${
-                  activeStageId === step.id
-                    ? 'ui-button-primary border-amber-200/72'
-                    : 'ui-button-primary border-white/25 opacity-85 hover:opacity-100'
-                }`}
-              >
-                <div className="text-[11px] font-black uppercase tracking-[0.15em]">{step.label}</div>
-                <div className="mt-0.5 text-[11px] text-white/72">{step.detail}</div>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
 
       {
         isStandardShellScreen && !isSplashScreen && screen !== 'gameplay' && (
