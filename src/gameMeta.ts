@@ -239,15 +239,15 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   timekeeper_temple: {
-    label: 'Clockwork Harbour',
-    focus: 'Time, durations and schedule logic',
+    label: 'Chrono Dash: Time Trial',
+    focus: 'Rapid digital-to-analogue time conversion under pressure',
     rules: {
-      title: 'Clockwork Harbour',
-      summary: 'Set the harbour clock correctly so each ship departs on time and the docks stay in sync.',
+      title: 'Chrono Dash: Time Trial',
+      summary: 'Race against a 60-second clock by matching analogue hands to fast-changing digital timestamps.',
       bullets: [
-        'Turn the hour and minute gears until the dock clock matches the required schedule.',
-        'Rounds can ask you to read a clock, add a journey time, convert a delay or compare two departures.',
-        'Wrong launch times cause delays, so check the harbour card before you send the ship.',
+        'Drag or tap the clock face to move hour and minute hands quickly and accurately.',
+        'Keep a streak alive to build combo multipliers and trigger bonus time extensions.',
+        'Difficulty ramps from simple hour and half-hour targets to precise 5-minute intervals.',
       ],
     },
   },

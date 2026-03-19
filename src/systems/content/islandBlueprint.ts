@@ -824,7 +824,7 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
     crossGameReinforcement: [
       'spatial reasoning is reinforced across Builder Bay, Perimeter Path, and Volume Vault',
       'conversion skills are reinforced across Conversion Canyon and Measure Mix-Up',
-      'multi-step applied measurement is reinforced across Time Keeper Cove and Measure Mix-Up',
+      'multi-step applied measurement is reinforced across Chrono Dash and Measure Mix-Up',
     ],
     designRules: [
       'Interactions must feel real-world: building, measuring, filling, and timing.',
@@ -852,17 +852,17 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
     miniGames: [
       {
         key: 'time_keeper_cove',
-        name: 'Time Keeper Cove',
+        name: 'Chrono Dash: Time Trial',
         role: 'application',
         gameplayRoles: ['application', 'pressure_timing'],
-        mechanicSummary: 'Set clocks and select times to dispatch ships before departure windows close.',
+        mechanicSummary: 'Convert digital timestamps into analogue clock settings in rapid-fire bursts.',
         curriculumObjectives: ['analogue_time', 'digital_time', 'elapsed_time'],
         skillTags: ['TIME', 'ELAPSED_TIME'],
-        keySystems: ['clock hand controls', 'departure timeline validation', 'readable dual clock displays'],
-        questionTypes: ['set exact time', 'elapsed time dispatch windows'],
-        difficultyCurve: 'single clock reads -> elapsed intervals -> multi-ship dispatch timing',
-        failureState: 'incorrect time causes missed departure',
-        replayValue: 'rotating port schedules and route windows',
+        keySystems: ['interactive hand controls', 'combo-driven scoring', 'time-extension milestones'],
+        questionTypes: ['digital-to-analogue conversion', 'AM/PM precision checks'],
+        difficultyCurve: 'hour/half-hour targets -> 5-minute precision -> sustained high-speed streak play',
+        failureState: 'incorrect clock setting breaks combo momentum',
+        replayValue: 'endless randomized timestamps with escalating tempo',
       },
       {
         key: 'conversion_canyon',
