@@ -119,6 +119,9 @@ const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKey | nul
     case 'timekeeper_temple':
       return 'TimekeeperTempleGame';
     case 'measurement_forge':
+      if (level.blueprintKey === 'perimeter_path') {
+        return 'PerimeterPathGame';
+      }
       return 'MeasurementForgeGame';
     case 'tower_of_factors':
       return 'TowerOfFactorsGame';
@@ -592,6 +595,9 @@ const App: React.FC = () => {
       case 'timekeeper_temple':
         return renderFromRegistry('TimekeeperTempleGame', sharedProps);
       case 'measurement_forge':
+        if (selectedLevel.blueprintKey === 'perimeter_path') {
+          return renderFromRegistry('PerimeterPathGame', sharedProps);
+        }
         return renderFromRegistry('MeasurementForgeGame', sharedProps);
       case 'tower_of_factors':
         return renderFromRegistry('TowerOfFactorsGame', { ...sharedProps, isBoss: Boolean(selectedLevel.isBoss) });

@@ -581,10 +581,10 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, onVictory, onGameO
             Pop Prime Numbers
           </div>
           <div className="rounded-full border border-amber-200/70 bg-[linear-gradient(180deg,rgba(251,191,36,0.98),rgba(245,158,11,0.98))] px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-amber-950 shadow-[0_8px_16px_rgba(2,6,23,0.24)]">
-            Prime +75 | Non-prime -50 | Combo {combo}
+            Prime +{difficulty.primePoints} | Non-prime -{difficulty.compositePenalty} | Combo {combo}
           </div>
           <div className="w-full rounded-full border border-cyan-100/60 bg-[linear-gradient(180deg,rgba(37,99,235,0.82),rgba(30,64,175,0.82))] px-3 py-1 text-[10px] font-black tracking-[0.06em] text-cyan-50 shadow-[0_8px_16px_rgba(2,6,23,0.26)]">
-            Numbers in play: {activeNumbers.join(' • ')}
+            Numbers in play: {activeNumbers.join(' | ')}
           </div>
         </div>
       </div>
@@ -593,3 +593,4 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, onVictory, onGameO
 };
 
 export default PrimePopGame;
+
