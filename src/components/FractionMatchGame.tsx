@@ -1,15 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import { AVATARS } from '../constants';
-import { getBossEncounter } from '../bossMeta';
-import BossPortrait from './BossPortrait';
-import GameplayHUD from './GameplayHUD';
 import GameActionDock from './GameActionDock';
 import GameplaySceneBackdrop from './GameplaySceneBackdrop';
 import { ArrowRightLeft, ArrowUpDown, Bomb, Star } from './GameIcons';
 import { triggerHaptic } from '../haptics';
 import { FRACTION_MATCH_ASSETS } from '../assets/fraction_match';
+import coinAsset from '../assets/fantasy_hero/ui/coin.png';
 
 interface FractionMatchGameProps {
   levelId: number;
@@ -300,7 +297,7 @@ const createBossSortChallenge = (size: number): FractionOrderCard[] => (
 
 const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   levelId,
-  avatarId,
+  avatarId: _avatarId,
   isBoss = false,
   variantGameType = 'fraction_match',
   onVictory,
@@ -323,24 +320,8 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
 
   const scoreRef = useRef(0);
 
-  const avatar = AVATARS.find(item => item.id === avatarId) || AVATARS[0];
   const targetScore = LEVEL_TARGET_BASE + (levelId * LEVEL_TARGET_STEP);
-  const progress = Math.min((score / targetScore) * 100, 100);
   const title = isBoss ? 'Crystal Core' : 'Crystal Match';
-  const bossEncounter = isBoss ? getBossEncounter('crystal_core') : undefined;
-  const bossPose = !bossEncounter
-    ? 'neutral'
-    : isVictory
-      ? 'defeat'
-      : isGameOver
-        ? 'victory'
-        : matchedTileIds.length > 0
-          ? 'dazed'
-          : combo >= 2
-            ? 'happy'
-            : isResolving
-              ? 'attack'
-              : 'neutral';
   const bossSelectedCards = useMemo(
     () => bossSelection.map((id) => bossCards.find((card) => card.id === id)).filter((card): card is FractionOrderCard => Boolean(card)),
     [bossCards, bossSelection],
@@ -592,38 +573,34 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       <GameplaySceneBackdrop gameType="fraction_match" />
 
       <div className="relative z-10 flex h-full min-h-0 flex-col gap-2 md:gap-4">
-        <GameplayHUD
-          title={title}
-          avatar={avatar}
-          score={score}
-          targetScore={targetScore}
-          timeLeft={timeLeft}
-          progress={progress}
-          compact
-          accentText="text-amber-950"
-          accentSoftBg="bg-amber-100/85"
-          accentBorder="border-amber-200/90"
-          progressBar="bg-gradient-to-r from-lime-300 via-amber-300 to-orange-400"
-          statLabel={isBoss ? 'Solved' : 'Combo'}
-          statValue={isBoss ? combo : combo}
-        />
+        <header className="ui-panel-unified flex items-center justify-between gap-2 rounded-[1.2rem] border border-white/14 bg-[linear-gradient(180deg,rgba(17,27,64,0.92),rgba(12,22,52,0.88))] px-3 py-2 text-white shadow-[0_12px_28px_rgba(0,0,0,0.28)] md:rounded-[1.45rem] md:px-4">
+          <div className="text-xs font-black uppercase tracking-[0.2em] text-cyan-100/84 md:text-sm">{title}</div>
+          <div className="flex items-center gap-1.5 md:gap-2">
+            <div className="flex items-center gap-1 rounded-full bg-white/14 px-2 py-1 md:px-3">
+              <img src={coinAsset} alt="" className="h-4 w-4 md:h-5 md:w-5" draggable={false} />
+              <span className="text-xs font-black md:text-sm">{score}</span>
+            </div>
+            <div className="flex items-center gap-1 rounded-full bg-white/14 px-2 py-1 md:px-3">
+              <span className="text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100/80 md:text-xs">Time</span>
+              <span className="text-xs font-black md:text-sm">{timeLeft}s</span>
+            </div>
+            <div className="hidden items-center gap-1 rounded-full bg-white/14 px-2 py-1 md:flex md:px-3">
+              <span className="text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100/80 md:text-xs">Combo</span>
+              <span className="text-xs font-black md:text-sm">{combo}</span>
+            </div>
+          </div>
+        </header>
 
         <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden p-2 shadow-[0_28px_60px_rgba(0,0,0,0.42)] md:rounded-[2.6rem] md:p-4">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_24%),radial-gradient(circle_at_50%_24%,rgba(56,189,248,0.14),transparent_18%),linear-gradient(180deg,rgba(255,255,255,0.04),rgba(0,0,0,0.16))]" />
 
-          <div className="relative z-10 mb-2 flex items-center justify-between gap-2 md:mb-3">
-            <div className="licensed-slice-paper-panel min-w-0 flex-1 px-3 py-2 shadow-[0_12px_24px_rgba(0,0,0,0.18)]">
-              <div className="text-[9px] font-black uppercase tracking-[0.22em] text-amber-950/64 md:text-[10px]">
-                {isBoss ? 'Sort The Fractions' : variantGameType === 'cloud_collapse' ? 'Crystal Match Chain' : 'Match 3+ Equivalent Values'}
-              </div>
-              <div className="mt-1 truncate text-[11px] font-bold text-amber-950/84 md:text-sm">{statusMessage}</div>
+          <div className="relative z-10 mb-2 rounded-[1.2rem] border border-amber-200/35 bg-[linear-gradient(180deg,rgba(255,247,222,0.96),rgba(253,230,138,0.88))] px-4 py-3 text-center shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:mb-3 md:rounded-[1.5rem] md:px-6 md:py-4">
+            <div className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-900/72 md:text-xs">
+              {isBoss ? 'Fraction Challenge' : variantGameType === 'cloud_collapse' ? 'Crystal Match Challenge' : 'Fraction Match Challenge'}
             </div>
-
-            {bossEncounter && !isBoss && (
-              <div className="w-24 shrink-0 md:w-32">
-                <BossPortrait encounter={bossEncounter} pose={bossPose} compact />
-              </div>
-            )}
+            <div className="mt-1 text-sm font-black text-amber-950 md:text-xl">
+              {statusMessage}
+            </div>
           </div>
 
           <div className="relative z-10 flex min-h-0 flex-1 items-center justify-center">
@@ -646,18 +623,18 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
                           onClick={() => handleBossCardTap(card)}
                           disabled={isPicked || Boolean(bossFeedback) || isGameOver || isVictory}
                           whileTap={{ scale: 0.96 }}
-                          animate={isPicked ? { y: -40, opacity: 0.15, scale: 0.9 } : { y: [0, -4, 0] }}
+                          animate={isPicked ? { y: -34, opacity: 0.15, scale: 0.9 } : { y: [0, -4, 0] }}
                           transition={isPicked ? { duration: 0.22 } : { duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
-                          className="relative flex h-[7.3rem] w-[4.7rem] items-center justify-center overflow-hidden rounded-[1rem] border border-sky-200/26 bg-[linear-gradient(180deg,rgba(59,130,246,0.92),rgba(6,78,163,0.98))] shadow-[0_20px_28px_rgba(8,47,73,0.34)] md:h-[10rem] md:w-[6.5rem] md:rounded-[1.3rem]"
+                          className="relative flex h-[5.4rem] w-[5.4rem] items-center justify-center overflow-hidden rounded-full border border-amber-200/30 bg-[linear-gradient(180deg,rgba(89,54,23,0.95),rgba(58,34,17,0.98))] shadow-[0_16px_24px_rgba(8,47,73,0.34)] md:h-[6.8rem] md:w-[6.8rem]"
                         >
                           <img src={card.asset} alt="" className="absolute inset-0 h-full w-full object-cover opacity-22" draggable={false} />
                           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.35),transparent_30%)]" />
-                          <div className="absolute inset-[4%] rounded-[0.9rem] border border-white/16 md:rounded-[1.15rem]" />
-                          <div className="relative z-10 text-center text-[2rem] font-black leading-[0.78] text-amber-50 drop-shadow-[0_3px_0_rgba(30,41,59,0.9)] md:text-[3rem]">
+                          <div className="absolute inset-[6%] rounded-full border border-white/16" />
+                          <div className="relative z-10 text-center text-[1.2rem] font-black leading-[0.82] text-amber-50 drop-shadow-[0_3px_0_rgba(30,41,59,0.9)] md:text-[1.6rem]">
                             {card.label.includes('/') ? card.label.split('/').map((part, index) => (
                               <React.Fragment key={`${card.id}-${part}-${index}`}>
                                 <div>{part}</div>
-                                {index === 0 && <div className="mx-auto my-1 h-[3px] w-8 rounded-full bg-amber-50/90 md:w-11" />}
+                                {index === 0 && <div className="mx-auto my-0.5 h-[2px] w-6 rounded-full bg-amber-50/90 md:w-8" />}
                               </React.Fragment>
                             )) : card.label}
                           </div>
@@ -666,9 +643,8 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
                     })}
                   </div>
 
-                  <div className="mt-4 flex flex-1 items-end justify-between gap-3">
-                    <div className="hidden md:block w-24" />
-                    <div className="flex flex-1 items-end justify-center gap-2 md:gap-4">
+                  <div className="mt-4 flex flex-1 flex-col items-center justify-end gap-3">
+                    <div className="flex items-end justify-center gap-2 md:gap-4">
                       {bossCards.map((card, index) => {
                         const selectedCard = bossSelectedCards[index];
                         return (
@@ -690,8 +666,8 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
                         );
                       })}
                     </div>
-                    <div className="flex w-20 justify-end md:w-28">
-                      {bossEncounter && <BossPortrait encounter={bossEncounter} pose={bossPose} compact className="w-20 md:w-28" />}
+                    <div className="rounded-[1rem] border border-amber-300/24 bg-[linear-gradient(180deg,rgba(120,83,58,0.92),rgba(76,53,39,0.98))] px-6 py-2.5 text-center shadow-[inset_0_2px_0_rgba(255,255,255,0.08),0_10px_0_rgba(39,24,17,0.72),0_16px_24px_rgba(0,0,0,0.24)] md:px-10 md:py-3">
+                      <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/74 md:text-xs">Answer Slots</div>
                     </div>
                   </div>
                 </div>
@@ -758,6 +734,12 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
               </div>
               </div>
             )}
+          </div>
+        </div>
+
+        <div className="licensed-slice-paper-panel rounded-[1.1rem] border border-amber-200/28 px-4 py-2 text-center shadow-[0_10px_20px_rgba(0,0,0,0.18)] md:rounded-[1.35rem] md:px-6 md:py-3">
+          <div className="text-[11px] font-black tracking-[0.06em] text-amber-950 md:text-base">
+            {isBoss ? 'Tap the answers in ascending order to fill the slots.' : 'Match equivalent fraction values to charge the board.'}
           </div>
         </div>
 
