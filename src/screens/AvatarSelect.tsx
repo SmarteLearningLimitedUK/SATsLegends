@@ -41,6 +41,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
         alt=""
         aria-hidden
         className="avatar-select-background pointer-events-none absolute inset-0 h-full w-full object-cover"
+        style={{ objectPosition: '50% 0%' }}
         draggable={false}
       />
 
