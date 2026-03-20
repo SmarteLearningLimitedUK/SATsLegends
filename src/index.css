@@ -3903,11 +3903,11 @@ button:disabled {
 
 /* Avatar select premium card pass */
 .avatar-select-screen {
-  background-color: #020617;
+  background: transparent;
 }
 
 .avatar-select-background {
-  object-fit: contain;
+  object-fit: cover;
   object-position: center center;
 }
 
@@ -3950,9 +3950,10 @@ button:disabled {
   align-items: end;
   column-gap: clamp(0.15rem, 1vw, 0.65rem);
   padding:
-    clamp(0.7rem, 2.2vw, 1.4rem)
-    clamp(2.6rem, 9vw, 5.7rem)
-    clamp(0.9rem, 2.6vw, 1.7rem);
+    clamp(0.1rem, 0.8vw, 0.3rem)
+    clamp(1.2rem, 5.4vw, 3rem)
+    clamp(0.15rem, 1vw, 0.35rem);
+  overflow: visible;
 }
 
 .avatar-carousel-main {
@@ -3962,6 +3963,7 @@ button:disabled {
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  overflow: visible;
 }
 
 .avatar-carousel-side {
@@ -3974,9 +3976,10 @@ button:disabled {
   align-items: flex-end;
   justify-content: center;
   cursor: pointer;
-  opacity: 0.56;
+  opacity: 0.46;
   filter: saturate(0.8) brightness(0.9);
   transition: opacity 0.2s ease, filter 0.2s ease;
+  overflow: visible;
 }
 
 .avatar-carousel-side:hover {
@@ -4005,8 +4008,9 @@ button:disabled {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(2, 6, 23, 0.42);
-  backdrop-filter: blur(3px);
+  background: transparent;
+  backdrop-filter: none;
+  box-shadow: none;
 }
 
 .avatar-hero-arrow-left {
