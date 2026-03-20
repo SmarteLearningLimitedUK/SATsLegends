@@ -824,28 +824,40 @@ const App: React.FC = () => {
               draggable={false}
             />
 
-            <motion.button
-              type="button"
-              onClick={handleStartAdventure}
-              aria-label="Start"
-              initial={{ opacity: 0, y: 12, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: 0.15, duration: 0.35, ease: 'easeOut' }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="absolute bottom-[7.5%] left-1/2 h-14 w-56 -translate-x-1/2 rounded-full border-0 bg-transparent p-0 shadow-[0_8px_22px_rgba(0,0,0,0.35)] sm:h-16 sm:w-64"
-            >
-              <img
-                src={splashStartPill}
-                alt=""
+            <div className="absolute bottom-[7.5%] left-1/2 h-14 w-56 -translate-x-1/2 sm:h-16 sm:w-64">
+              <motion.div
                 aria-hidden
-                draggable={false}
-                className="absolute inset-0 h-full w-full rounded-full object-fill"
+                className="pointer-events-none absolute -inset-2 rounded-full bg-amber-300/70 blur-[16px]"
+                animate={{
+                  opacity: [0.35, 0.75, 0.35],
+                  scale: [0.96, 1.08, 0.96]
+                }}
+                transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
               />
-              <span className="relative z-10 text-lg font-black uppercase tracking-[0.12em] text-amber-900 drop-shadow-[0_1px_0_rgba(255,255,255,0.45)] sm:text-xl">
-                Start
-              </span>
-            </motion.button>
+
+              <motion.button
+                type="button"
+                onClick={handleStartAdventure}
+                aria-label="Start"
+                initial={{ opacity: 0, y: 12, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: 0.15, duration: 0.35, ease: 'easeOut' }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="relative h-full w-full rounded-full border-0 bg-transparent p-0 shadow-[0_8px_22px_rgba(0,0,0,0.35)]"
+              >
+                <img
+                  src={splashStartPill}
+                  alt=""
+                  aria-hidden
+                  draggable={false}
+                  className="absolute inset-0 h-full w-full rounded-full object-fill"
+                />
+                <span className="relative z-10 text-lg font-black uppercase tracking-[0.12em] text-amber-900 drop-shadow-[0_1px_0_rgba(255,255,255,0.45)] sm:text-xl">
+                  Start
+                </span>
+              </motion.button>
+            </div>
           </div>
         );
       case 'profile_setup':
