@@ -34,7 +34,7 @@ import {
 } from './gameHudEvents';
 import { triggerHaptic } from './haptics';
 import splashPoster from './splashscrn.jpg';
-import splashStartPill from './assets/casual_ui/hud/progress_bar_1__fg.png';
+import splashStartPill from './assets/casual_ui/inputs/btn_1.png';
 
 const PLAYER_STORAGE_KEY = 'maths_quest_player';
 const ALL_ISLAND_IDS = ISLANDS.map(island => island.id);
@@ -820,7 +820,7 @@ const App: React.FC = () => {
               src={splashPoster}
               alt="SATs Legends splash screen"
               className="absolute inset-0 h-full w-full object-cover"
-              style={{ objectPosition: '50% 50%' }}
+              style={{ objectPosition: '50% 0%' }}
               draggable={false}
             />
 
