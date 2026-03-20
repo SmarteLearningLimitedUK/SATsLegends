@@ -6,13 +6,14 @@ import {defineConfig, loadEnv} from 'vite';
 export default defineConfig(({mode}) => {
   const env = loadEnv(mode, '.', '');
   const isVercel = process.env.VERCEL === '1';
+  const geminiApiKey = env.GEMINI_API_KEY ?? process.env.GEMINI_API_KEY ?? '';
   return {
     plugins: [react(), tailwindcss()],
     // Use absolute paths on Vercel to avoid asset resolution issues on rewritten routes.
     // Keep relative paths for non-Vercel static uploads.
     base: isVercel ? '/' : './',
     define: {
-      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+      'process.env.GEMINI_API_KEY': JSON.stringify(geminiApiKey),
     },
     resolve: {
       alias: {
