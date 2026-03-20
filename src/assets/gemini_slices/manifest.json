@@ -1,0 +1,62 @@
+﻿[
+    {
+        "file":  "arrow_next_top.png",
+        "sourceRect":  "37,63,206,174",
+        "outputSize":  "206x174"
+    },
+    {
+        "file":  "home_badge.png",
+        "sourceRect":  "300,53,179,187",
+        "outputSize":  "179x187"
+    },
+    {
+        "file":  "chest_bag_top.png",
+        "sourceRect":  "540,65,175,174",
+        "outputSize":  "175x174"
+    },
+    {
+        "file":  "trophy_badge.png",
+        "sourceRect":  "767,65,181,164",
+        "outputSize":  "181x164"
+    },
+    {
+        "file":  "arrow_next_mid.png",
+        "sourceRect":  "46,298,197,172",
+        "outputSize":  "197x172"
+    },
+    {
+        "file":  "chest_bag_mid.png",
+        "sourceRect":  "308,300,173,175",
+        "outputSize":  "173x175"
+    },
+    {
+        "file":  "map_pen.png",
+        "sourceRect":  "536,298,194,165",
+        "outputSize":  "194x165"
+    },
+    {
+        "file":  "hero_helmet.png",
+        "sourceRect":  "772,297,175,177",
+        "outputSize":  "175x177"
+    },
+    {
+        "file":  "arrow_back_wand.png",
+        "sourceRect":  "76,532,166,163",
+        "outputSize":  "166x163"
+    },
+    {
+        "file":  "spellbook_quill.png",
+        "sourceRect":  "313,532,200,167",
+        "outputSize":  "200x167"
+    },
+    {
+        "file":  "open_book.png",
+        "sourceRect":  "60,768,196,149",
+        "outputSize":  "196x149"
+    },
+    {
+        "file":  "map_cross.png",
+        "sourceRect":  "304,761,201,157",
+        "outputSize":  "201x157"
+    }
+]

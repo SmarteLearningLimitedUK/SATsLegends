@@ -8,14 +8,16 @@ import heroRibbon from '../assets/casual_ui/dialogs_panels/ribbon_1.png';
 import avatarNextIcon from '../assets/importedassets/Icons/icon - next.png';
 import arrowButtonFrame from '../assets/importedassets/Icons/icon container.png';
 
-const AVATAR_FOOT_BASELINE_OFFSETS_MAIN: Record<string, number> = {
+const AVATAR_SOURCE_HEIGHT_PX = 630;
+
+const AVATAR_FOOT_BASELINE_OFFSETS_MAIN_PERCENT: Record<string, number> = {
   barratt: 0,
   bran: 1,
   vex: 1.3,
   mochi: 10.8,
 };
 
-const AVATAR_FOOT_BASELINE_OFFSETS_SIDE: Record<string, number> = {
+const AVATAR_FOOT_BASELINE_OFFSETS_SIDE_PERCENT: Record<string, number> = {
   barratt: 0,
   bran: 0.4,
   vex: 0.5,
@@ -51,12 +53,13 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
   const nextIndex = (selectedIndex + 1) % AVATARS.length;
   const previousAvatar = AVATARS[previousIndex] || selectedAvatar;
   const nextAvatar = AVATARS[nextIndex] || selectedAvatar;
+  const toPxOffset = (percent: number): number => (percent / 100) * AVATAR_SOURCE_HEIGHT_PX;
   const getMainFootOffsetStyle = (avatarId: string): React.CSSProperties => ({
-    transform: `translateY(${AVATAR_FOOT_BASELINE_OFFSETS_MAIN[avatarId] ?? 0}%) scale(${AVATAR_MAIN_VISUAL_SCALE})`,
+    transform: `translateY(${toPxOffset(AVATAR_FOOT_BASELINE_OFFSETS_MAIN_PERCENT[avatarId] ?? 0)}px) scale(${AVATAR_MAIN_VISUAL_SCALE})`,
     transformOrigin: 'bottom center',
   });
   const getSideFootOffsetStyle = (avatarId: string): React.CSSProperties => ({
-    transform: `translateY(${AVATAR_FOOT_BASELINE_OFFSETS_SIDE[avatarId] ?? 0}%) scale(${AVATAR_SIDE_VISUAL_SCALE})`,
+    transform: `translateY(${toPxOffset(AVATAR_FOOT_BASELINE_OFFSETS_SIDE_PERCENT[avatarId] ?? 0)}px) scale(${AVATAR_SIDE_VISUAL_SCALE})`,
     transformOrigin: 'bottom center',
   });
 
