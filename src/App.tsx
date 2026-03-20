@@ -33,7 +33,7 @@ import {
   GAME_HUD_MUTE_SYNC_EVENT,
 } from './gameHudEvents';
 import { triggerHaptic } from './haptics';
-import splashPoster from './assets/splash.png';
+import splashPoster from './splashscrn.jpg';
 
 const PLAYER_STORAGE_KEY = 'maths_quest_player';
 const ALL_ISLAND_IDS = ISLANDS.map(island => island.id);
