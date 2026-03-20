@@ -6,6 +6,13 @@ import avatarSelectBackground from '../assets/casual_ui/pedestal char select.png
 import splashStyleButton from '../assets/casual_ui/inputs/btn_1.png';
 import avatarNextIcon from '../assets/importedassets/Icons/icon - next.png';
 
+const AVATAR_FOOT_BASELINE_OFFSETS: Record<string, number> = {
+  barratt: 0,
+  bran: 1,
+  vex: 1.3,
+  mochi: 10.8,
+};
+
 interface AvatarSelectProps {
   selectedId: string;
   onSelect: (id: string) => void;
@@ -33,6 +40,10 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
   const nextIndex = (selectedIndex + 1) % AVATARS.length;
   const previousAvatar = AVATARS[previousIndex] || selectedAvatar;
   const nextAvatar = AVATARS[nextIndex] || selectedAvatar;
+  const getFootOffsetStyle = (avatarId: string): React.CSSProperties => ({
+    transform: `translateY(${AVATAR_FOOT_BASELINE_OFFSETS[avatarId] ?? 0}%)`,
+    transformOrigin: 'bottom center',
+  });
 
   return (
     <div className="avatar-select-screen relative h-full w-full overflow-hidden">
@@ -82,6 +93,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   alt=""
                   aria-hidden
                   className="h-[560%] w-auto object-contain object-bottom"
+                  style={getFootOffsetStyle(previousAvatar.id)}
                   draggable={false}
                 />
               </motion.button>
@@ -99,6 +111,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                     src={selectedAvatar.portrait || selectedAvatar.image}
                     alt={selectedAvatar.name}
                     className="h-[760%] w-auto object-contain object-bottom drop-shadow-[0_22px_30px_rgba(2,6,23,0.52)]"
+                    style={getFootOffsetStyle(selectedAvatar.id)}
                     draggable={false}
                   />
                 </motion.div>
@@ -117,6 +130,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   alt=""
                   aria-hidden
                   className="h-[560%] w-auto object-contain object-bottom"
+                  style={getFootOffsetStyle(nextAvatar.id)}
                   draggable={false}
                 />
               </motion.button>
