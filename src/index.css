@@ -3903,72 +3903,97 @@ button:disabled {
 
 /* Avatar select premium card pass */
 .avatar-select-screen {
-  background:
-    linear-gradient(180deg, rgba(5, 14, 31, 0.2), rgba(5, 14, 31, 0.76));
+  background-color: #020617;
 }
 
-.avatar-hero-shell {
-  backdrop-filter: blur(1px);
+.avatar-select-layout {
+  gap: 0;
 }
 
-.avatar-hero-shell::before {
-  content: '';
-  position: absolute;
-  inset: 0.35rem;
-  border-radius: inherit;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+.avatar-carousel-header {
+  display: flex;
+  justify-content: center;
   pointer-events: none;
 }
 
-.avatar-hero-header {
+.avatar-carousel-banner {
+  min-height: clamp(3.8rem, 9vh, 4.5rem);
+  width: min(100%, 26.5rem);
   display: flex;
-  justify-content: center;
-}
-
-.avatar-hero-header-pill {
-  min-height: 3rem;
-  width: min(100%, 23rem);
-  border-radius: 999px;
-  border: 1px solid rgba(186, 230, 253, 0.55);
-  display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 1rem;
+  filter: drop-shadow(0 10px 22px rgba(2, 6, 23, 0.36));
+}
+
+.avatar-carousel-banner span {
+  margin-top: -0.2rem;
+  padding-inline: 1.3rem;
   font-weight: 900;
-  font-size: clamp(1.25rem, 4.7vw, 2.1rem);
+  font-size: clamp(1.15rem, 4.5vw, 1.9rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: #f8f4df;
   text-shadow:
     0 2px 0 rgba(11, 24, 52, 0.62),
-    0 8px 14px rgba(2, 6, 23, 0.36);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.28),
-    0 10px 22px rgba(2, 6, 23, 0.28);
+    0 8px 14px rgba(2, 6, 23, 0.4);
 }
 
 .avatar-hero-stage {
-  border: 1px solid rgba(186, 230, 253, 0.28);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    0 16px 28px rgba(2, 6, 23, 0.26);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
-.avatar-hero-ray {
-  background:
-    radial-gradient(circle at 50% 36%, rgba(186, 230, 253, 0.18), rgba(186, 230, 253, 0) 52%),
-    conic-gradient(
-      from 0deg at 50% 40%,
-      rgba(255, 255, 255, 0.28) 0deg,
-      rgba(255, 255, 255, 0.02) 32deg,
-      rgba(255, 255, 255, 0.2) 66deg,
-      rgba(255, 255, 255, 0.02) 100deg,
-      rgba(255, 255, 255, 0.24) 136deg,
-      rgba(255, 255, 255, 0.02) 175deg,
-      rgba(255, 255, 255, 0.2) 220deg,
-      rgba(255, 255, 255, 0.02) 260deg,
-      rgba(255, 255, 255, 0.24) 305deg,
-      rgba(255, 255, 255, 0.04) 360deg
-    );
+.avatar-carousel-track {
+  position: relative;
+  z-index: 12;
+  width: min(100%, 46rem);
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.5fr) minmax(0, 0.95fr);
+  align-items: end;
+  column-gap: clamp(0.15rem, 1vw, 0.65rem);
+  padding:
+    clamp(0.7rem, 2.2vw, 1.4rem)
+    clamp(2.6rem, 9vw, 5.7rem)
+    clamp(0.9rem, 2.6vw, 1.7rem);
+}
+
+.avatar-carousel-main {
+  align-self: end;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.avatar-carousel-side {
+  align-self: end;
+  border: 0;
+  background: transparent;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  cursor: pointer;
   opacity: 0.56;
+  filter: saturate(0.8) brightness(0.9);
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+.avatar-carousel-side:hover {
+  opacity: 0.86;
+  filter: saturate(0.95) brightness(0.98);
+}
+
+.avatar-carousel-side-left {
+  transform: translateX(10%) scale(0.82);
+}
+
+.avatar-carousel-side-right {
+  transform: translateX(-10%) scale(0.82);
 }
 
 .avatar-hero-arrow {
@@ -4024,14 +4049,11 @@ button:disabled {
     0 16px 26px rgba(2, 6, 23, 0.28);
 }
 
-.avatar-hero-cta {
-  border: 1px solid rgba(255, 234, 168, 0.74) !important;
-  color: #1e1b4b !important;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.4),
-    0 10px 0 rgba(55, 48, 163, 0.84),
-    0 20px 34px rgba(2, 6, 23, 0.32) !important;
+.avatar-hero-cta-shell {
+  position: relative;
+  width: min(100%, 18.5rem);
+  height: clamp(3.35rem, 7.2vh, 4rem);
+  margin-inline: auto;
 }
 
 

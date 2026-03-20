@@ -3,8 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { AVATARS } from '../constants';
 import { triggerHaptic } from '../haptics';
 import AssetIcon from '../components/AssetIcon';
-import splashBackground from '../assets/fantasy_hero/demo_bg/background_01.png';
-import splashGlow from '../assets/fantasy_hero/demo_fx/effect_light_01.png';
+import avatarSelectBackground from '../assets/casual_ui/pedestal char select.png';
 import heroBanner from '../assets/casual_ui/dialogs_panels/ribbon_1.png';
 import splashStyleButton from '../assets/casual_ui/inputs/btn_1.png';
 
@@ -37,16 +36,18 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
   const nextAvatar = AVATARS[nextIndex] || selectedAvatar;
 
   return (
-    <div className="premium-page-root avatar-select-screen relative h-full w-full overflow-hidden">
-      <div
-        className="absolute inset-0 -z-30 bg-cover bg-center"
-        style={{ backgroundImage: `url(${splashBackground})` }}
-      />
-      <div className="absolute inset-0 -z-20 bg-[linear-gradient(180deg,rgba(2,8,22,0.2),rgba(2,8,22,0.76))]" />
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_22%,rgba(125,211,252,0.25),rgba(125,211,252,0)_34%)]" />
+    <div
+      className="avatar-select-screen relative h-full w-full overflow-hidden"
+      style={{
+        backgroundImage: `url(${avatarSelectBackground})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
 
-      <div className="relative z-10 mx-auto flex h-full w-full max-w-[48rem] items-center justify-center px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-[calc(env(safe-area-inset-top)+0.65rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+1rem)]">
-        <div className="avatar-select-layout relative flex h-full w-full max-h-[54rem] flex-col">
+      <div className="relative z-10 flex h-full w-full items-center justify-center px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-[calc(env(safe-area-inset-top)+0.65rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+1rem)]">
+        <div className="avatar-select-layout relative flex h-full w-full flex-col">
           <div className="avatar-carousel-header">
             <div
               className="avatar-carousel-banner"
@@ -61,13 +62,6 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
           </div>
 
           <div className="avatar-hero-stage relative mt-2 flex min-h-0 flex-1 items-center justify-center overflow-hidden md:mt-3">
-            <div className="avatar-hero-ray absolute inset-0" />
-            <div
-              className="pointer-events-none absolute inset-x-[18%] top-[6%] h-[38%] bg-center bg-no-repeat opacity-80"
-              style={{ backgroundImage: `url(${splashGlow})`, backgroundSize: 'min(29rem, 84vw)' }}
-            />
-            <div className="pointer-events-none absolute bottom-[9%] h-20 w-[68%] rounded-[999px] bg-[radial-gradient(circle,rgba(255,219,97,0.46),rgba(255,219,97,0)_74%)] blur-xl" />
-
             <motion.button
               whileTap={{ scale: 0.94 }}
               onClick={() => selectIndex(previousIndex)}
