@@ -982,11 +982,22 @@ const App: React.FC = () => {
   const selectedGameType = selectedLevel?.gameType;
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
+  const useUnboundedSplashShell = isSplashScreen;
   const bottomNavOffsetClass = showBottomNav
     ? isWorldMapScreen
       ? 'pb-[calc(6.75rem+env(safe-area-inset-bottom))] md:pb-[calc(2.4rem+env(safe-area-inset-bottom))]'
       : 'pb-[calc(6.75rem+env(safe-area-inset-bottom))] md:pb-[calc(7.25rem+env(safe-area-inset-bottom))]'
     : '';
+  const viewportShellClass = useUnboundedSplashShell
+    ? 'sat-shell-standard licensed-playfield-bg bg-slate-950'
+    : isMapLayoutScreen
+      ? 'sat-shell-map licensed-playfield-bg bg-slate-950 pb-[env(safe-area-inset-bottom)]'
+      : 'sat-shell-standard licensed-playfield-bg bg-slate-950 px-3 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] md:px-8 md:pt-[max(1rem,env(safe-area-inset-top))] md:pb-[max(1rem,env(safe-area-inset-bottom))]';
+  const contentShellClass = useUnboundedSplashShell
+    ? 'sat-screen-full-bleed items-stretch'
+    : isMapLayoutScreen
+      ? 'sat-screen-map-content'
+      : 'sat-screen-standard-content items-stretch';
   const stageStyle = {
     '--game-stage-width': `${IPHONE_STAGE_WIDTH}px`,
     '--game-stage-height': `${IPHONE_STAGE_HEIGHT}px`,
@@ -995,9 +1006,9 @@ const App: React.FC = () => {
 
   return (
     <div className="iphone-game-viewport">
-      <div className="iphone-game-stage" style={stageStyle}>
+      <div className={`iphone-game-stage${useUnboundedSplashShell ? ' iphone-game-stage-unbounded' : ''}`} style={useUnboundedSplashShell ? undefined : stageStyle}>
         <div className="iphone-game-stage-inner">
-          <div className={`app-viewport app-shell-family-${screenBehavior.family} screen-${screen.replace(/_/g, '-')} relative w-full flex flex-col items-center overflow-hidden ${isMapLayoutScreen ? 'sat-shell-map licensed-playfield-bg bg-slate-950 pb-[env(safe-area-inset-bottom)]' : 'sat-shell-standard licensed-playfield-bg bg-slate-950 px-3 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] md:px-8 md:pt-[max(1rem,env(safe-area-inset-top))] md:pb-[max(1rem,env(safe-area-inset-bottom))]'}`}>
+          <div className={`app-viewport app-shell-family-${screenBehavior.family} screen-${screen.replace(/_/g, '-')} relative w-full flex flex-col items-center overflow-hidden ${viewportShellClass}`}>
             {isStandardShellScreen && <div className="soft-vignette" />}
             {isStandardShellScreen && !isSplashScreen && screen !== 'gameplay' && (
               <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-40 bg-gradient-to-b from-cyan-300/8 via-sky-300/4 to-transparent" />
@@ -1009,7 +1020,7 @@ const App: React.FC = () => {
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.02 }}
-                className={`app-screen-content relative z-10 flex min-h-0 w-full flex-1 justify-center pointer-events-auto ${screenBehavior.scrollable ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'} ${isMapLayoutScreen ? 'sat-screen-map-content' : 'sat-screen-standard-content items-stretch'} ${bottomNavOffsetClass}`}
+                className={`app-screen-content relative z-10 flex min-h-0 w-full flex-1 justify-center pointer-events-auto ${screenBehavior.scrollable ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'} ${contentShellClass} ${bottomNavOffsetClass}`}
                 style={screenBehavior.scrollable ? { WebkitOverflowScrolling: 'touch' } : undefined}
               >
                 {renderScreen()}
