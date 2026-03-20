@@ -33,7 +33,7 @@ import {
   GAME_HUD_MUTE_SYNC_EVENT,
 } from './gameHudEvents';
 import { triggerHaptic } from './haptics';
-import splashPoster from './splashscrn.jpg';
+import splashPoster from './assets/casual_ui/splashreplace.png';
 import splashStartPill from './assets/casual_ui/inputs/btn_1.png';
 
 const PLAYER_STORAGE_KEY = 'maths_quest_player';
