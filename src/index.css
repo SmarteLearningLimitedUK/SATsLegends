@@ -3954,6 +3954,7 @@ button:disabled {
     clamp(1.2rem, 5.4vw, 3rem)
     clamp(0.15rem, 1vw, 0.35rem);
   overflow: visible;
+  transform: translateY(clamp(1.5rem, 7.8vh, 5.8rem));
 }
 
 .avatar-carousel-main {
@@ -3997,14 +3998,14 @@ button:disabled {
 
 .avatar-hero-arrow {
   position: absolute;
-  top: 50%;
+  top: 56%;
   z-index: 20;
   transform: translateY(-50%);
-  width: 3rem;
-  height: 3rem;
+  width: clamp(3.9rem, 11vw, 5.25rem);
+  height: clamp(3.9rem, 11vw, 5.25rem);
   border-radius: 999px;
   border: 0;
-  color: #f8fafc;
+  color: #1e293b;
   display: inline-flex;
   align-items: center;
   justify-content: center;

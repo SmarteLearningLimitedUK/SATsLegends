@@ -5,6 +5,7 @@ import { triggerHaptic } from '../haptics';
 import AssetIcon from '../components/AssetIcon';
 import avatarSelectBackground from '../assets/casual_ui/pedestal char select.png';
 import splashStyleButton from '../assets/casual_ui/inputs/btn_1.png';
+import avatarNavButton from '../assets/casual_ui/inputs/btn_5.png';
 
 interface AvatarSelectProps {
   selectedId: string;
@@ -59,7 +60,14 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               aria-label="Previous hero"
               type="button"
             >
-              <AssetIcon name="back" className="h-5 w-5 md:h-6 md:w-6" />
+              <img
+                src={avatarNavButton}
+                alt=""
+                aria-hidden
+                className="absolute inset-0 h-full w-full object-fill"
+                draggable={false}
+              />
+              <AssetIcon name="back" className="relative z-10 h-7 w-7 md:h-8 md:w-8" />
             </motion.button>
 
             <div className="avatar-carousel-track">
@@ -75,7 +83,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   src={previousAvatar.portrait || previousAvatar.image}
                   alt=""
                   aria-hidden
-                  className="h-[216%] w-auto object-contain object-bottom"
+                  className="h-[432%] w-auto object-contain object-bottom"
                   draggable={false}
                 />
               </motion.button>
@@ -92,7 +100,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   <img
                     src={selectedAvatar.portrait || selectedAvatar.image}
                     alt={selectedAvatar.name}
-                    className="h-[300%] w-auto object-contain object-bottom drop-shadow-[0_22px_30px_rgba(2,6,23,0.52)]"
+                    className="h-[600%] w-auto object-contain object-bottom drop-shadow-[0_22px_30px_rgba(2,6,23,0.52)]"
                     draggable={false}
                   />
                 </motion.div>
@@ -110,7 +118,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   src={nextAvatar.portrait || nextAvatar.image}
                   alt=""
                   aria-hidden
-                  className="h-[216%] w-auto object-contain object-bottom"
+                  className="h-[432%] w-auto object-contain object-bottom"
                   draggable={false}
                 />
               </motion.button>
@@ -123,7 +131,14 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               aria-label="Next hero"
               type="button"
             >
-              <AssetIcon name="next" className="h-5 w-5 md:h-6 md:w-6" />
+              <img
+                src={avatarNavButton}
+                alt=""
+                aria-hidden
+                className="absolute inset-0 h-full w-full object-fill"
+                draggable={false}
+              />
+              <AssetIcon name="next" className="relative z-10 h-7 w-7 md:h-8 md:w-8" />
             </motion.button>
           </div>
 
