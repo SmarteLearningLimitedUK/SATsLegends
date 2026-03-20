@@ -44,17 +44,37 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
     }
   }, [onSelect, selectedId]);
 
+  const playVideo = (video: HTMLVideoElement | null) => {
+    if (!video) return;
+    video.defaultMuted = true;
+    video.muted = true;
+    const playAttempt = video.play();
+    if (playAttempt && typeof playAttempt.catch === 'function') {
+      playAttempt.catch(() => {
+        // Some browsers delay autoplay; a later lifecycle callback can retry.
+      });
+    }
+  };
+
   useEffect(() => {
     const video = centerVideoRef.current;
     if (!video || !selectedAvatar.portraitVideo) return;
 
-    video.currentTime = 0;
-    const playPromise = video.play();
-    if (playPromise && typeof playPromise.catch === 'function') {
-      playPromise.catch(() => {
-        // Autoplay can be blocked on some devices; leaving silent fallback is fine.
-      });
+    const restartAndPlay = () => {
+      video.currentTime = 0;
+      playVideo(video);
+    };
+
+    if (video.readyState >= 2) {
+      restartAndPlay();
+      return;
     }
+
+    const handleLoadedData = () => restartAndPlay();
+    video.addEventListener('loadeddata', handleLoadedData, { once: true });
+    return () => {
+      video.removeEventListener('loadeddata', handleLoadedData);
+    };
   }, [selectedAvatar.id, selectedAvatar.portraitVideo]);
 
   const selectIndex = (index: number) => {
@@ -146,14 +166,29 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                 className="avatar-carousel-side avatar-carousel-side-left"
                 aria-label={`Select ${previousAvatar.name}`}
               >
-                <img
-                  src={previousAvatar.portrait || previousAvatar.image}
-                  alt=""
-                  aria-hidden
-                  className="h-[300%] w-auto object-contain object-bottom"
-                  style={getSideFootOffsetStyle(previousAvatar.id)}
-                  draggable={false}
-                />
+                {previousAvatar.portraitVideo ? (
+                  <video
+                    src={previousAvatar.portraitVideo}
+                    className="h-[300%] w-auto object-contain object-bottom"
+                    style={getSideFootOffsetStyle(previousAvatar.id)}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    preload="auto"
+                    aria-hidden
+                    onLoadedData={(event) => playVideo(event.currentTarget)}
+                  />
+                ) : (
+                  <img
+                    src={previousAvatar.portrait || previousAvatar.image}
+                    alt=""
+                    aria-hidden
+                    className="h-[300%] w-auto object-contain object-bottom"
+                    style={getSideFootOffsetStyle(previousAvatar.id)}
+                    draggable={false}
+                  />
+                )}
               </motion.button>
 
               <AnimatePresence mode="wait">
@@ -176,6 +211,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                       muted
                       playsInline
                       preload="auto"
+                      onLoadedData={(event) => playVideo(event.currentTarget)}
                     />
                   ) : (
                     <img
@@ -197,14 +233,29 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                 className="avatar-carousel-side avatar-carousel-side-right"
                 aria-label={`Select ${nextAvatar.name}`}
               >
-                <img
-                  src={nextAvatar.portrait || nextAvatar.image}
-                  alt=""
-                  aria-hidden
-                  className="h-[300%] w-auto object-contain object-bottom"
-                  style={getSideFootOffsetStyle(nextAvatar.id)}
-                  draggable={false}
-                />
+                {nextAvatar.portraitVideo ? (
+                  <video
+                    src={nextAvatar.portraitVideo}
+                    className="h-[300%] w-auto object-contain object-bottom"
+                    style={getSideFootOffsetStyle(nextAvatar.id)}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    preload="auto"
+                    aria-hidden
+                    onLoadedData={(event) => playVideo(event.currentTarget)}
+                  />
+                ) : (
+                  <img
+                    src={nextAvatar.portrait || nextAvatar.image}
+                    alt=""
+                    aria-hidden
+                    className="h-[300%] w-auto object-contain object-bottom"
+                    style={getSideFootOffsetStyle(nextAvatar.id)}
+                    draggable={false}
+                  />
+                )}
               </motion.button>
             </div>
 
