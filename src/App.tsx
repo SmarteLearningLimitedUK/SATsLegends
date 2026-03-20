@@ -827,6 +827,14 @@ const App: React.FC = () => {
               style={{ objectPosition: '50% 46%' }}
               draggable={false}
             />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute left-1/2 top-[31.3%] h-[8.4%] w-[62%] -translate-x-1/2 rounded-[999px] border border-indigo-300/30 bg-[linear-gradient(180deg,#4f2fb8_0%,#2f2c8f_100%)] shadow-[0_8px_18px_rgba(12,17,66,0.45)]"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute left-1/2 top-[31.5%] h-[7.6%] w-[57%] -translate-x-1/2 rounded-[999px] bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.2),rgba(255,255,255,0)_55%)]"
+            />
           </button>
         );
       case 'profile_setup':
