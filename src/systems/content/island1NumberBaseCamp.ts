@@ -1,4 +1,4 @@
-import { LevelData, MiniGameType } from '../types';
+import { LevelData, MiniGameType } from '../../types';
 
 export type NumberBaseCampMiniGameKey =
   | 'place_value_panic'

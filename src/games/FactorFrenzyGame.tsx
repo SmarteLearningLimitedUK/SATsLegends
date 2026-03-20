@@ -132,7 +132,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         id,
         type,
         number: n,
-        question: `Find the missing factor: ${f1} × ? = ${n}`,
+        question: `Find the missing factor: ${f1} x ? = ${n}`,
         options,
         correctAnswers: [answer],
       };

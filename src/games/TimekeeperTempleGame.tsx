@@ -457,7 +457,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
             <span className="text-[8px] font-black tracking-widest text-slate-500 uppercase">Mode: Blitz</span>
           </div>
         </div>
-        <span className="text-[8px] font-black tracking-widest text-slate-600 uppercase">© 2026 Chrono Dash Systems</span>
+        <span className="text-[8px] font-black tracking-widest text-slate-600 uppercase">(c) 2026 Chrono Dash Systems</span>
       </footer>
 
       <style>{`

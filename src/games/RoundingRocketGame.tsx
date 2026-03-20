@@ -479,7 +479,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
             <span className="text-[8px] font-black tracking-widest text-slate-500 uppercase">Fuel: {fuel}%</span>
           </div>
         </div>
-        <span className="text-[8px] font-black tracking-widest text-slate-600 uppercase">© 2026 Rounding Rocket Navigation</span>
+        <span className="text-[8px] font-black tracking-widest text-slate-600 uppercase">(c) 2026 Rounding Rocket Navigation</span>
       </footer>
 
       <style>{`

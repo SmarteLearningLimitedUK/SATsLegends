@@ -9,6 +9,7 @@ import {
   RotateCw,
   Shapes,
   Skull,
+  Target,
   Timer as TimerIcon,
   Triangle,
   Trophy,
