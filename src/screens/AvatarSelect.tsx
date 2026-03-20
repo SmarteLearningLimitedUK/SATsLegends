@@ -37,6 +37,8 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
   const selectedIndex = Math.max(0, AVATARS.findIndex((avatar) => avatar.id === selectedId));
   const selectedAvatar = AVATARS[selectedIndex] || AVATARS[0];
   const centerVideoRef = useRef<HTMLVideoElement | null>(null);
+  const leftVideoRef = useRef<HTMLVideoElement | null>(null);
+  const rightVideoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
     if (!AVATARS.some((avatar) => avatar.id === selectedId)) {
@@ -44,25 +46,74 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
     }
   }, [onSelect, selectedId]);
 
-  const playVideo = (video: HTMLVideoElement | null) => {
+  const ensureVideoPlayback = (video: HTMLVideoElement | null, restart = false) => {
     if (!video) return;
     video.defaultMuted = true;
     video.muted = true;
-    const playAttempt = video.play();
-    if (playAttempt && typeof playAttempt.catch === 'function') {
-      playAttempt.catch(() => {
-        // Some browsers delay autoplay; a later lifecycle callback can retry.
-      });
+    if (restart) {
+      if (video.readyState > 0) {
+        try {
+          video.currentTime = 0;
+        } catch {
+          // Ignore seek failures before media is ready; autoplay retries still run.
+        }
+      } else {
+        const resetWhenReady = () => {
+          try {
+            video.currentTime = 0;
+          } catch {
+            // no-op
+          }
+        };
+        video.addEventListener('loadedmetadata', resetWhenReady, { once: true });
+      }
     }
+    const attemptPlay = () => {
+      const playAttempt = video.play();
+      if (playAttempt && typeof playAttempt.catch === 'function') {
+        playAttempt.catch(() => {
+          // Some browsers delay autoplay; retries below improve reliability.
+        });
+      }
+    };
+
+    attemptPlay();
+    setTimeout(attemptPlay, 120);
+    setTimeout(attemptPlay, 380);
   };
+
+  useEffect(() => {
+    const kickVideoPlayback = () => {
+      ensureVideoPlayback(centerVideoRef.current);
+      ensureVideoPlayback(leftVideoRef.current);
+      ensureVideoPlayback(rightVideoRef.current);
+    };
+    const onVisible = () => {
+      if (!document.hidden) {
+        kickVideoPlayback();
+      }
+    };
+
+    kickVideoPlayback();
+    window.addEventListener('pointerdown', kickVideoPlayback, { passive: true });
+    window.addEventListener('touchstart', kickVideoPlayback, { passive: true });
+    window.addEventListener('focus', kickVideoPlayback);
+    document.addEventListener('visibilitychange', onVisible);
+
+    return () => {
+      window.removeEventListener('pointerdown', kickVideoPlayback);
+      window.removeEventListener('touchstart', kickVideoPlayback);
+      window.removeEventListener('focus', kickVideoPlayback);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, []);
 
   useEffect(() => {
     const video = centerVideoRef.current;
     if (!video || !selectedAvatar.portraitVideo) return;
 
     const restartAndPlay = () => {
-      video.currentTime = 0;
-      playVideo(video);
+      ensureVideoPlayback(video, true);
     };
 
     if (video.readyState >= 2) {
@@ -168,16 +219,21 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               >
                 {previousAvatar.portraitVideo ? (
                   <video
+                    ref={leftVideoRef}
                     src={previousAvatar.portraitVideo}
                     className="h-[300%] w-auto object-contain object-bottom"
                     style={getSideFootOffsetStyle(previousAvatar.id)}
+                    poster={previousAvatar.portrait || previousAvatar.image}
                     autoPlay
                     loop
                     muted
                     playsInline
+                    disablePictureInPicture
                     preload="auto"
                     aria-hidden
-                    onLoadedData={(event) => playVideo(event.currentTarget)}
+                    onLoadedMetadata={(event) => ensureVideoPlayback(event.currentTarget)}
+                    onCanPlay={(event) => ensureVideoPlayback(event.currentTarget)}
+                    onLoadedData={(event) => ensureVideoPlayback(event.currentTarget)}
                   />
                 ) : (
                   <img
@@ -206,12 +262,16 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                       src={selectedAvatar.portraitVideo}
                       className="h-[460%] w-auto object-contain object-bottom"
                       style={getMainFootOffsetStyle(selectedAvatar.id)}
+                      poster={selectedAvatar.portrait || selectedAvatar.image}
                       autoPlay
                       loop
                       muted
                       playsInline
+                      disablePictureInPicture
                       preload="auto"
-                      onLoadedData={(event) => playVideo(event.currentTarget)}
+                      onLoadedMetadata={(event) => ensureVideoPlayback(event.currentTarget, true)}
+                      onCanPlay={(event) => ensureVideoPlayback(event.currentTarget, true)}
+                      onLoadedData={(event) => ensureVideoPlayback(event.currentTarget, true)}
                     />
                   ) : (
                     <img
@@ -235,16 +295,21 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               >
                 {nextAvatar.portraitVideo ? (
                   <video
+                    ref={rightVideoRef}
                     src={nextAvatar.portraitVideo}
                     className="h-[300%] w-auto object-contain object-bottom"
                     style={getSideFootOffsetStyle(nextAvatar.id)}
+                    poster={nextAvatar.portrait || nextAvatar.image}
                     autoPlay
                     loop
                     muted
                     playsInline
+                    disablePictureInPicture
                     preload="auto"
                     aria-hidden
-                    onLoadedData={(event) => playVideo(event.currentTarget)}
+                    onLoadedMetadata={(event) => ensureVideoPlayback(event.currentTarget)}
+                    onCanPlay={(event) => ensureVideoPlayback(event.currentTarget)}
+                    onLoadedData={(event) => ensureVideoPlayback(event.currentTarget)}
                   />
                 ) : (
                   <img
