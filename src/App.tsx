@@ -34,6 +34,7 @@ import {
 } from './gameHudEvents';
 import { triggerHaptic } from './haptics';
 import splashPoster from './splashscrn.jpg';
+import splashStartPill from './assets/casual_ui/hud/progress_bar_1__fg.png';
 
 const PLAYER_STORAGE_KEY = 'maths_quest_player';
 const ALL_ISLAND_IDS = ISLANDS.map(island => island.id);
@@ -811,12 +812,7 @@ const App: React.FC = () => {
     switch (screen) {
       case 'splash':
         return (
-          <button
-            type="button"
-            onClick={handleStartAdventure}
-            aria-label="Start adventure"
-            className="relative h-full w-full overflow-hidden cursor-pointer"
-          >
+          <div className="relative h-full w-full overflow-hidden">
             <motion.img
               initial={{ opacity: 0, scale: 0.985 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -824,18 +820,33 @@ const App: React.FC = () => {
               src={splashPoster}
               alt="SATs Legends splash screen"
               className="absolute inset-0 h-full w-full object-cover"
-              style={{ objectPosition: '50% 46%' }}
+              style={{ objectPosition: '50% 50%' }}
               draggable={false}
             />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute left-1/2 top-[31.3%] h-[8.4%] w-[62%] -translate-x-1/2 rounded-[999px] border border-indigo-300/30 bg-[linear-gradient(180deg,#4f2fb8_0%,#2f2c8f_100%)] shadow-[0_8px_18px_rgba(12,17,66,0.45)]"
-            />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute left-1/2 top-[31.5%] h-[7.6%] w-[57%] -translate-x-1/2 rounded-[999px] bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.2),rgba(255,255,255,0)_55%)]"
-            />
-          </button>
+
+            <motion.button
+              type="button"
+              onClick={handleStartAdventure}
+              aria-label="Start"
+              initial={{ opacity: 0, y: 12, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: 0.15, duration: 0.35, ease: 'easeOut' }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="absolute bottom-[7.5%] left-1/2 h-14 w-56 -translate-x-1/2 rounded-full border-0 bg-transparent p-0 shadow-[0_8px_22px_rgba(0,0,0,0.35)] sm:h-16 sm:w-64"
+            >
+              <img
+                src={splashStartPill}
+                alt=""
+                aria-hidden
+                draggable={false}
+                className="absolute inset-0 h-full w-full rounded-full object-fill"
+              />
+              <span className="relative z-10 text-lg font-black uppercase tracking-[0.12em] text-amber-900 drop-shadow-[0_1px_0_rgba(255,255,255,0.45)] sm:text-xl">
+                Start
+              </span>
+            </motion.button>
+          </div>
         );
       case 'profile_setup':
         return (
