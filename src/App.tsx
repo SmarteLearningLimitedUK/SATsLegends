@@ -811,7 +811,12 @@ const App: React.FC = () => {
     switch (screen) {
       case 'splash':
         return (
-          <div className="relative h-full w-full overflow-hidden">
+          <button
+            type="button"
+            onClick={handleStartAdventure}
+            aria-label="Start adventure"
+            className="relative h-full w-full overflow-hidden cursor-pointer"
+          >
             <motion.img
               initial={{ opacity: 0, scale: 0.985 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -822,56 +827,7 @@ const App: React.FC = () => {
               style={{ objectPosition: '50% 46%' }}
               draggable={false}
             />
-
-            <div className="absolute inset-0 flex items-end justify-center pb-[calc(max(4.5rem,7vh)-30px)] md:pb-[calc(max(5.5rem,8vh)-30px)]">
-              <div className="flex flex-col items-center gap-2.5">
-                <motion.button
-                  initial={{ opacity: 0, y: -36, scale: 0.94 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-                  whileHover={{ scale: 1.025, y: -3 }}
-                  whileTap={{ scale: 0.985, y: 1 }}
-                  onClick={handleStartAdventure}
-                  aria-label="Let's Go!"
-                  className="ui-button-primary rounded-2xl px-10 py-3.5 text-lg md:px-12 md:py-4 md:text-xl"
-                >
-                  Let's Go!
-                </motion.button>
-              </div>
-
-              {[
-                { left: 'calc(50% - 7.5rem)', bottom: '5.4rem', delay: 0.45, size: 14 },
-                { left: 'calc(50% - 5.6rem)', bottom: '7.1rem', delay: 0.9, size: 10 },
-                { left: 'calc(50% + 5.8rem)', bottom: '7.4rem', delay: 0.6, size: 12 },
-                { left: 'calc(50% + 7.8rem)', bottom: '5.8rem', delay: 1.15, size: 16 },
-              ].map((sparkle, index) => (
-                <motion.span
-                  key={`splash-cta-sparkle-${index}`}
-                  className="splash-cta-sparkle"
-                  style={{
-                    left: sparkle.left,
-                    bottom: sparkle.bottom,
-                    width: `${sparkle.size}px`,
-                    height: `${sparkle.size}px`,
-                  }}
-                  initial={{ opacity: 0, scale: 0.4, y: 12 }}
-                  animate={{
-                    opacity: [0, 0.95, 0.5, 0],
-                    scale: [0.4, 1, 0.82, 0.5],
-                    y: [10, -8, -18, -26],
-                    rotate: [0, 18, -14, 8],
-                  }}
-                  transition={{
-                    duration: 2.4 + index * 0.25,
-                    repeat: Infinity,
-                    ease: 'easeInOut',
-                    delay: sparkle.delay,
-                    repeatDelay: 0.2 + index * 0.12,
-                  }}
-                />
-              ))}
-            </div>
-          </div>
+          </button>
         );
       case 'profile_setup':
         return (
