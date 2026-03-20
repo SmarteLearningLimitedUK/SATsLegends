@@ -4088,11 +4088,28 @@ button.avatar-hero-arrow:not(:disabled):active {
     0 8px 14px rgba(2, 6, 23, 0.38);
 }
 
-.avatar-hero-cta-shell {
+.avatar-hero-nameplate-under-banner {
+  margin-top: clamp(0.1rem, 0.6vh, 0.45rem);
+  margin-bottom: clamp(0.2rem, 0.9vh, 0.7rem);
   position: relative;
-  width: min(100%, 18.5rem);
-  height: clamp(3.35rem, 7.2vh, 4rem);
-  margin-inline: auto;
+  z-index: 13;
+}
+
+.avatar-hero-cta-shell {
+  position: absolute;
+  bottom: 7.5%;
+  left: 50%;
+  z-index: 26;
+  width: min(14rem, calc(100% - 2.5rem));
+  height: 3.5rem;
+  transform: translateX(-50%);
+}
+
+@media (min-width: 640px) {
+  .avatar-hero-cta-shell {
+    width: 16rem;
+    height: 4rem;
+  }
 }
 
 

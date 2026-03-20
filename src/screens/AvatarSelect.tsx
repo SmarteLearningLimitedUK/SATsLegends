@@ -85,6 +85,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               <h2 className="avatar-carousel-title">Choose Your Hero</h2>
             </div>
           </div>
+          <div className="avatar-hero-nameplate avatar-hero-nameplate-under-banner">{selectedAvatar.name}</div>
 
           <div className="avatar-hero-stage relative mt-2 flex min-h-0 flex-1 items-center justify-center overflow-visible md:mt-3">
             <motion.button
@@ -191,9 +192,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
             </motion.button>
           </div>
 
-          <div className="avatar-hero-nameplate mt-3 md:mt-4">{selectedAvatar.name}</div>
-
-          <div className="avatar-hero-cta-shell mt-3 w-full md:mt-4">
+          <div className="avatar-hero-cta-shell">
             <motion.button
               type="button"
               whileHover={{ scale: 1.02 }}
