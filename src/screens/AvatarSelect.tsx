@@ -40,17 +40,17 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
         src={avatarSelectBackground}
         alt=""
         aria-hidden
-        className="avatar-select-background pointer-events-none absolute inset-0 h-full w-full object-contain"
+        className="avatar-select-background pointer-events-none absolute inset-0 h-full w-full object-cover"
         draggable={false}
       />
 
-      <div className="relative z-10 flex h-full w-full items-center justify-center px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-[calc(env(safe-area-inset-top)+0.65rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+1rem)]">
+      <div className="relative z-10 flex h-full w-full items-center justify-center">
         <div className="avatar-select-layout relative flex h-full w-full flex-col">
           <div className="avatar-carousel-header">
             <h2 className="avatar-carousel-title">Choose Your Hero</h2>
           </div>
 
-          <div className="avatar-hero-stage relative mt-2 flex min-h-0 flex-1 items-center justify-center overflow-hidden md:mt-3">
+          <div className="avatar-hero-stage relative mt-2 flex min-h-0 flex-1 items-center justify-center overflow-visible md:mt-3">
             <motion.button
               whileTap={{ scale: 0.94 }}
               onClick={() => selectIndex(previousIndex)}
@@ -74,7 +74,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   src={previousAvatar.portrait || previousAvatar.image}
                   alt=""
                   aria-hidden
-                  className="h-[72%] w-auto object-contain object-bottom"
+                  className="h-[216%] w-auto object-contain object-bottom"
                   draggable={false}
                 />
               </motion.button>
@@ -91,7 +91,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   <img
                     src={selectedAvatar.portrait || selectedAvatar.image}
                     alt={selectedAvatar.name}
-                    className="h-[95%] w-auto object-contain object-bottom drop-shadow-[0_22px_30px_rgba(2,6,23,0.52)]"
+                    className="h-[300%] w-auto object-contain object-bottom drop-shadow-[0_22px_30px_rgba(2,6,23,0.52)]"
                     draggable={false}
                   />
                 </motion.div>
@@ -109,7 +109,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   src={nextAvatar.portrait || nextAvatar.image}
                   alt=""
                   aria-hidden
-                  className="h-[72%] w-auto object-contain object-bottom"
+                  className="h-[216%] w-auto object-contain object-bottom"
                   draggable={false}
                 />
               </motion.button>
