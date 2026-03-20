@@ -18,12 +18,12 @@ import GameActionDock from '../components/GameActionDock';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import GameplayHUD from '../components/GameplayHUD';
 import { Star } from '../components/GameIcons';
-import answerActionBg from '../assets/fantasy_hero/buttons/small_orange.png';
-import answerDecorAsset from '../assets/fantasy_hero/buttons/small_deco.png';
-import answerOrangeBg from '../assets/fantasy_hero/buttons/small_orange.png';
-import answerGreenBg from '../assets/fantasy_hero/buttons/primary_green.png';
-import answerBlueBg from '../assets/fantasy_hero/buttons/primary_blue.png';
-import answerYellowBg from '../assets/fantasy_hero/buttons/primary_yellow.png';
+import answerActionBg from '../assets/casual_ui/inputs/btn_1.png';
+import answerDecorAsset from '../assets/casual_ui/dialogs_panels/dialog__tag.png';
+import answerOrangeBg from '../assets/casual_ui/inputs/btn_1.png';
+import answerGreenBg from '../assets/casual_ui/inputs/btn_6a.png';
+import answerBlueBg from '../assets/casual_ui/inputs/btn_7.png';
+import answerYellowBg from '../assets/casual_ui/inputs/btn_8.png';
 
 interface CurriculumChallengeGameProps {
   gameType: SupportedChallengeGameType;
