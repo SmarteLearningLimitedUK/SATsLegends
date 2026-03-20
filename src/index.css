@@ -4099,7 +4099,7 @@ button.avatar-hero-arrow:not(:disabled):active {
 .avatar-hero-name-banner {
   position: relative;
   z-index: 13;
-  width: min(100%, clamp(13.5rem, 52vw, 20rem));
+  width: min(100%, clamp(16rem, 62vw, 24rem));
   aspect-ratio: 3 / 1;
   margin-inline: auto;
   display: flex;
@@ -4121,6 +4121,14 @@ button.avatar-hero-arrow:not(:disabled):active {
   filter: drop-shadow(0 6px 12px rgba(2, 6, 23, 0.32));
 }
 
+.avatar-hero-name-banner-art-cyan {
+  filter:
+    hue-rotate(152deg)
+    saturate(1.4)
+    brightness(1.08)
+    drop-shadow(0 8px 12px rgba(3, 105, 161, 0.3));
+}
+
 .avatar-hero-name-banner-text {
   position: relative;
   z-index: 2;
@@ -4128,18 +4136,18 @@ button.avatar-hero-arrow:not(:disabled):active {
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding-inline: clamp(1.1rem, 4vw, 2.2rem);
+  padding-inline: clamp(1.6rem, 5.8vw, 3.1rem);
   transform: translateY(0);
   text-align: center;
-  font-size: clamp(1.05rem, 4vw, 1.5rem);
+  font-size: clamp(1.12rem, 4.4vw, 1.62rem);
   font-weight: 900;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   line-height: 1.05;
   text-transform: capitalize;
-  color: #f8fbff;
+  color: #f4fcff;
   text-shadow:
-    0 1px 0 rgba(17, 24, 39, 0.48),
-    0 4px 10px rgba(2, 6, 23, 0.28);
+    0 1px 0 rgba(12, 74, 110, 0.54),
+    0 4px 10px rgba(2, 6, 23, 0.34);
 }
 
 .avatar-hero-cta-shell {
