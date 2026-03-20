@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { AVATARS } from '../constants';
 import { triggerHaptic } from '../haptics';
@@ -36,12 +36,26 @@ interface AvatarSelectProps {
 const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onConfirm }) => {
   const selectedIndex = Math.max(0, AVATARS.findIndex((avatar) => avatar.id === selectedId));
   const selectedAvatar = AVATARS[selectedIndex] || AVATARS[0];
+  const centerVideoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
     if (!AVATARS.some((avatar) => avatar.id === selectedId)) {
       onSelect(AVATARS[0].id);
     }
   }, [onSelect, selectedId]);
+
+  useEffect(() => {
+    const video = centerVideoRef.current;
+    if (!video || !selectedAvatar.portraitVideo) return;
+
+    video.currentTime = 0;
+    const playPromise = video.play();
+    if (playPromise && typeof playPromise.catch === 'function') {
+      playPromise.catch(() => {
+        // Autoplay can be blocked on some devices; leaving silent fallback is fine.
+      });
+    }
+  }, [selectedAvatar.id, selectedAvatar.portraitVideo]);
 
   const selectIndex = (index: number) => {
     const safeIndex = (index + AVATARS.length) % AVATARS.length;
@@ -151,13 +165,27 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   transition={{ duration: 0.24, ease: 'easeOut' }}
                   className="avatar-carousel-main"
                 >
-                  <img
-                    src={selectedAvatar.portrait || selectedAvatar.image}
-                    alt={selectedAvatar.name}
-                    className="h-[460%] w-auto object-contain object-bottom"
-                    style={getMainFootOffsetStyle(selectedAvatar.id)}
-                    draggable={false}
-                  />
+                  {selectedAvatar.portraitVideo ? (
+                    <video
+                      ref={centerVideoRef}
+                      src={selectedAvatar.portraitVideo}
+                      className="h-[460%] w-auto object-contain object-bottom"
+                      style={getMainFootOffsetStyle(selectedAvatar.id)}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="auto"
+                    />
+                  ) : (
+                    <img
+                      src={selectedAvatar.portrait || selectedAvatar.image}
+                      alt={selectedAvatar.name}
+                      className="h-[460%] w-auto object-contain object-bottom"
+                      style={getMainFootOffsetStyle(selectedAvatar.id)}
+                      draggable={false}
+                    />
+                  )}
                 </motion.div>
               </AnimatePresence>
 

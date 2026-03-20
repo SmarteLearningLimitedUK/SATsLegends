@@ -70,6 +70,7 @@ export interface AvatarData {
   name: string;
   image: string;
   portrait?: string;
+  portraitVideo?: string;
   color: string;
   rarity: 'Common' | 'Rare' | 'Epic' | 'Legendary';
   level: number;
