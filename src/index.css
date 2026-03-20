@@ -95,6 +95,14 @@ body {
   background: #020617;
 }
 
+.iphone-game-stage-unbounded {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  transform: none;
+}
+
 .iphone-game-stage-inner {
   position: relative;
   width: 100%;
@@ -635,6 +643,13 @@ button:disabled {
   width: 100%;
   max-width: min(var(--premium-page-max-width), 100%);
   margin-inline: auto;
+}
+
+.sat-screen-full-bleed {
+  min-height: 0;
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
 }
 
 .sat-screen-map-content {
