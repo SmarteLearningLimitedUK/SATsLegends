@@ -4,14 +4,24 @@ import { AVATARS } from '../constants';
 import { triggerHaptic } from '../haptics';
 import avatarSelectBackground from '../assets/casual_ui/pedestal char select.png';
 import splashStyleButton from '../assets/casual_ui/inputs/btn_1.png';
+import heroRibbon from '../assets/casual_ui/dialogs_panels/ribbon_1.png';
 import avatarNextIcon from '../assets/importedassets/Icons/icon - next.png';
 
-const AVATAR_FOOT_BASELINE_OFFSETS: Record<string, number> = {
+const AVATAR_FOOT_BASELINE_OFFSETS_MAIN: Record<string, number> = {
   barratt: 0,
   bran: 1,
   vex: 1.3,
-  mochi: 10.8,
+  mochi: 14.5,
 };
+
+const AVATAR_FOOT_BASELINE_OFFSETS_SIDE: Record<string, number> = {
+  barratt: 0,
+  bran: 0.2,
+  vex: 0.26,
+  mochi: 3.0,
+};
+const AVATAR_MAIN_VISUAL_SCALE = 4;
+const AVATAR_SIDE_VISUAL_SCALE = 4;
 
 interface AvatarSelectProps {
   selectedId: string;
@@ -40,8 +50,12 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
   const nextIndex = (selectedIndex + 1) % AVATARS.length;
   const previousAvatar = AVATARS[previousIndex] || selectedAvatar;
   const nextAvatar = AVATARS[nextIndex] || selectedAvatar;
-  const getFootOffsetStyle = (avatarId: string): React.CSSProperties => ({
-    transform: `translateY(${AVATAR_FOOT_BASELINE_OFFSETS[avatarId] ?? 0}%)`,
+  const getMainFootOffsetStyle = (avatarId: string): React.CSSProperties => ({
+    transform: `translateY(${AVATAR_FOOT_BASELINE_OFFSETS_MAIN[avatarId] ?? 0}%) scale(${AVATAR_MAIN_VISUAL_SCALE})`,
+    transformOrigin: 'bottom center',
+  });
+  const getSideFootOffsetStyle = (avatarId: string): React.CSSProperties => ({
+    transform: `translateY(${AVATAR_FOOT_BASELINE_OFFSETS_SIDE[avatarId] ?? 0}%) scale(${AVATAR_SIDE_VISUAL_SCALE})`,
     transformOrigin: 'bottom center',
   });
 
@@ -59,12 +73,20 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
       <div className="relative z-10 flex h-full w-full items-center justify-center">
         <div className="avatar-select-layout relative flex h-full w-full flex-col">
           <div className="avatar-carousel-header">
-            <h2 className="avatar-carousel-title">Choose Your Hero</h2>
+            <div className="avatar-carousel-banner">
+              <img
+                src={heroRibbon}
+                alt=""
+                aria-hidden
+                className="avatar-carousel-banner-art"
+                draggable={false}
+              />
+              <h2 className="avatar-carousel-title">Choose Your Hero</h2>
+            </div>
           </div>
 
           <div className="avatar-hero-stage relative mt-2 flex min-h-0 flex-1 items-center justify-center overflow-visible md:mt-3">
             <motion.button
-              whileTap={{ scale: 0.94 }}
               onClick={() => selectIndex(previousIndex)}
               className="avatar-hero-arrow avatar-hero-arrow-left"
               aria-label="Previous hero"
@@ -74,7 +96,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                 src={avatarNextIcon}
                 alt=""
                 aria-hidden
-                className="absolute inset-0 h-full w-full scale-x-[-1] object-contain"
+                className="absolute inset-0 z-10 h-full w-full scale-x-[-1] object-contain"
                 draggable={false}
               />
             </motion.button>
@@ -93,7 +115,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   alt=""
                   aria-hidden
                   className="h-[560%] w-auto object-contain object-bottom"
-                  style={getFootOffsetStyle(previousAvatar.id)}
+                  style={getSideFootOffsetStyle(previousAvatar.id)}
                   draggable={false}
                 />
               </motion.button>
@@ -111,7 +133,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                     src={selectedAvatar.portrait || selectedAvatar.image}
                     alt={selectedAvatar.name}
                     className="h-[760%] w-auto object-contain object-bottom drop-shadow-[0_22px_30px_rgba(2,6,23,0.52)]"
-                    style={getFootOffsetStyle(selectedAvatar.id)}
+                    style={getMainFootOffsetStyle(selectedAvatar.id)}
                     draggable={false}
                   />
                 </motion.div>
@@ -130,14 +152,13 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   alt=""
                   aria-hidden
                   className="h-[560%] w-auto object-contain object-bottom"
-                  style={getFootOffsetStyle(nextAvatar.id)}
+                  style={getSideFootOffsetStyle(nextAvatar.id)}
                   draggable={false}
                 />
               </motion.button>
             </div>
 
             <motion.button
-              whileTap={{ scale: 0.94 }}
               onClick={() => selectIndex(nextIndex)}
               className="avatar-hero-arrow avatar-hero-arrow-right"
               aria-label="Next hero"
@@ -147,7 +168,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                 src={avatarNextIcon}
                 alt=""
                 aria-hidden
-                className="absolute inset-0 h-full w-full object-contain"
+                className="absolute inset-0 z-10 h-full w-full object-contain"
                 draggable={false}
               />
             </motion.button>
