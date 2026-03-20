@@ -6,22 +6,23 @@ import avatarSelectBackground from '../assets/casual_ui/pedestal char select.png
 import splashStyleButton from '../assets/casual_ui/inputs/btn_1.png';
 import heroRibbon from '../assets/casual_ui/dialogs_panels/ribbon_1.png';
 import avatarNextIcon from '../assets/importedassets/Icons/icon - next.png';
+import arrowButtonFrame from '../assets/importedassets/Icons/icon container.png';
 
 const AVATAR_FOOT_BASELINE_OFFSETS_MAIN: Record<string, number> = {
   barratt: 0,
   bran: 1,
   vex: 1.3,
-  mochi: 14.5,
+  mochi: 10.8,
 };
 
 const AVATAR_FOOT_BASELINE_OFFSETS_SIDE: Record<string, number> = {
   barratt: 0,
-  bran: 0.2,
-  vex: 0.26,
-  mochi: 3.0,
+  bran: 0.4,
+  vex: 0.5,
+  mochi: 2.2,
 };
-const AVATAR_MAIN_VISUAL_SCALE = 4;
-const AVATAR_SIDE_VISUAL_SCALE = 4;
+const AVATAR_MAIN_VISUAL_SCALE = 1;
+const AVATAR_SIDE_VISUAL_SCALE = 1;
 
 interface AvatarSelectProps {
   selectedId: string;
@@ -87,16 +88,24 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
 
           <div className="avatar-hero-stage relative mt-2 flex min-h-0 flex-1 items-center justify-center overflow-visible md:mt-3">
             <motion.button
+              whileHover={{ scale: 1.04 }}
               onClick={() => selectIndex(previousIndex)}
               className="avatar-hero-arrow avatar-hero-arrow-left"
               aria-label="Previous hero"
               type="button"
             >
               <img
+                src={arrowButtonFrame}
+                alt=""
+                aria-hidden
+                className="avatar-hero-arrow-frame"
+                draggable={false}
+              />
+              <img
                 src={avatarNextIcon}
                 alt=""
                 aria-hidden
-                className="absolute inset-0 z-10 h-full w-full scale-x-[-1] object-contain"
+                className="avatar-hero-arrow-icon scale-x-[-1]"
                 draggable={false}
               />
             </motion.button>
@@ -114,7 +123,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   src={previousAvatar.portrait || previousAvatar.image}
                   alt=""
                   aria-hidden
-                  className="h-[560%] w-auto object-contain object-bottom"
+                  className="h-[215%] w-auto object-contain object-bottom"
                   style={getSideFootOffsetStyle(previousAvatar.id)}
                   draggable={false}
                 />
@@ -132,7 +141,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   <img
                     src={selectedAvatar.portrait || selectedAvatar.image}
                     alt={selectedAvatar.name}
-                    className="h-[760%] w-auto object-contain object-bottom drop-shadow-[0_22px_30px_rgba(2,6,23,0.52)]"
+                    className="h-[320%] w-auto object-contain object-bottom drop-shadow-[0_20px_24px_rgba(2,6,23,0.46)]"
                     style={getMainFootOffsetStyle(selectedAvatar.id)}
                     draggable={false}
                   />
@@ -151,7 +160,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   src={nextAvatar.portrait || nextAvatar.image}
                   alt=""
                   aria-hidden
-                  className="h-[560%] w-auto object-contain object-bottom"
+                  className="h-[215%] w-auto object-contain object-bottom"
                   style={getSideFootOffsetStyle(nextAvatar.id)}
                   draggable={false}
                 />
@@ -159,16 +168,24 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
             </div>
 
             <motion.button
+              whileHover={{ scale: 1.04 }}
               onClick={() => selectIndex(nextIndex)}
               className="avatar-hero-arrow avatar-hero-arrow-right"
               aria-label="Next hero"
               type="button"
             >
               <img
+                src={arrowButtonFrame}
+                alt=""
+                aria-hidden
+                className="avatar-hero-arrow-frame"
+                draggable={false}
+              />
+              <img
                 src={avatarNextIcon}
                 alt=""
                 aria-hidden
-                className="absolute inset-0 z-10 h-full w-full object-contain"
+                className="avatar-hero-arrow-icon"
                 draggable={false}
               />
             </motion.button>
