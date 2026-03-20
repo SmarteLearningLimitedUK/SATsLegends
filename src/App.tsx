@@ -284,9 +284,11 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const updateStageScale = () => {
+      const viewportWidth = window.visualViewport?.width ?? window.innerWidth;
+      const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
       const scale = Math.min(
-        window.innerWidth / IPHONE_STAGE_WIDTH,
-        window.innerHeight / IPHONE_STAGE_HEIGHT,
+        viewportWidth / IPHONE_STAGE_WIDTH,
+        viewportHeight / IPHONE_STAGE_HEIGHT,
       );
       setStageScale(Number.isFinite(scale) && scale > 0 ? scale : 1);
     };
@@ -298,6 +300,26 @@ const App: React.FC = () => {
     return () => {
       window.removeEventListener('resize', updateStageScale);
       window.removeEventListener('orientationchange', updateStageScale);
+    };
+  }, []);
+
+  useEffect(() => {
+    const visualViewport = window.visualViewport;
+    if (!visualViewport) return;
+
+    const handleViewportResize = () => {
+      const scale = Math.min(
+        visualViewport.width / IPHONE_STAGE_WIDTH,
+        visualViewport.height / IPHONE_STAGE_HEIGHT,
+      );
+      setStageScale(Number.isFinite(scale) && scale > 0 ? scale : 1);
+    };
+
+    visualViewport.addEventListener('resize', handleViewportResize);
+    visualViewport.addEventListener('scroll', handleViewportResize);
+    return () => {
+      visualViewport.removeEventListener('resize', handleViewportResize);
+      visualViewport.removeEventListener('scroll', handleViewportResize);
     };
   }, []);
 
@@ -1091,7 +1113,7 @@ const App: React.FC = () => {
 
             {
               showBottomNav && (
-                <div className={`pointer-events-none fixed inset-x-0 z-50 flex justify-center px-3 ${
+                <div className={`pointer-events-none absolute inset-x-0 z-50 flex justify-center px-3 ${
                   isWorldMapScreen
                     ? 'bottom-[calc(0.75rem+env(safe-area-inset-bottom))] md:bottom-[calc(1rem+env(safe-area-inset-bottom))]'
                     : 'bottom-[calc(0.75rem+env(safe-area-inset-bottom))] md:bottom-6'
