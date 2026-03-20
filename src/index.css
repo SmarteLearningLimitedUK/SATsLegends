@@ -54,6 +54,7 @@ body,
   height: 100%;
   width: 100%;
   overflow: hidden;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -3924,7 +3925,7 @@ button:disabled {
 
 .avatar-carousel-banner {
   position: relative;
-  width: min(100%, clamp(16rem, 60vw, 24.5rem));
+  width: min(100%, clamp(18.5rem, 70vw, 28.5rem));
   aspect-ratio: 3.1 / 1;
   display: flex;
   align-items: center;
@@ -3948,14 +3949,15 @@ button:disabled {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-inline: clamp(1.2rem, 5vw, 2.8rem);
-  transform: translateY(-2%);
+  padding-inline: clamp(1.5rem, 6vw, 3.5rem);
+  transform: translateY(0);
   font-weight: 900;
-  font-size: clamp(1rem, 3.6vw, 1.45rem);
+  font-size: clamp(1.12rem, 4.2vw, 1.72rem);
   letter-spacing: 0.085em;
   line-height: 1;
   text-transform: uppercase;
   color: #fff7d6;
+  text-align: center;
   text-shadow:
     0 2px 0 rgba(56, 17, 7, 0.42),
     0 6px 12px rgba(2, 6, 23, 0.35);
@@ -3981,7 +3983,7 @@ button:disabled {
     clamp(1.2rem, 5.4vw, 3rem)
     clamp(0.15rem, 1vw, 0.35rem);
   overflow: visible;
-  transform: translateY(clamp(-3.5rem, -5.2vh, -1.9rem));
+  transform: translateY(clamp(-5.2rem, -7.4vh, -3.2rem));
 }
 
 .avatar-carousel-main {
@@ -4092,6 +4094,52 @@ button.avatar-hero-arrow:not(:disabled):active {
   margin-bottom: clamp(0.2rem, 0.9vh, 0.7rem);
   position: relative;
   z-index: 13;
+}
+
+.avatar-hero-name-banner {
+  position: relative;
+  z-index: 13;
+  width: min(100%, clamp(11rem, 42vw, 16rem));
+  aspect-ratio: 3 / 1;
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-hero-name-banner-under-title {
+  margin-top: clamp(0.05rem, 0.3vh, 0.25rem);
+  margin-bottom: clamp(0.2rem, 0.9vh, 0.7rem);
+}
+
+.avatar-hero-name-banner-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 5px 10px rgba(2, 6, 23, 0.28));
+}
+
+.avatar-hero-name-banner-text {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding-inline: clamp(0.8rem, 3vw, 1.6rem);
+  transform: translateY(-2%);
+  text-align: center;
+  font-size: clamp(0.92rem, 3.5vw, 1.24rem);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: capitalize;
+  color: #f8fbff;
+  text-shadow:
+    0 1px 0 rgba(17, 24, 39, 0.48),
+    0 4px 10px rgba(2, 6, 23, 0.28);
 }
 
 .avatar-hero-cta-shell {

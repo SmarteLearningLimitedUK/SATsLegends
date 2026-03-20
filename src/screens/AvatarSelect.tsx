@@ -5,6 +5,7 @@ import { triggerHaptic } from '../haptics';
 import avatarSelectBackground from '../assets/casual_ui/pedestal char select.png';
 import splashStyleButton from '../assets/casual_ui/inputs/btn_1.png';
 import heroRibbon from '../assets/casual_ui/dialogs_panels/ribbon_1.png';
+import heroNameBlueRibbon from '../assets/fantasy_hero/title/ribbon_blue.png';
 import avatarNextIcon from '../assets/importedassets/Icons/icon - next.png';
 import arrowButtonFrame from '../assets/importedassets/Icons/icon container.png';
 
@@ -21,6 +22,8 @@ const AVATAR_FOOT_ANCHOR_SIDE_Y_PX: Record<string, number> = {
   vex: 4,
   mochi: 12,
 };
+const AVATAR_MAIN_GLOBAL_LIFT_PX = -92;
+const AVATAR_SIDE_GLOBAL_LIFT_PX = -70;
 const AVATAR_MAIN_VISUAL_SCALE = 1;
 const AVATAR_SIDE_VISUAL_SCALE = 1;
 
@@ -52,11 +55,11 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
   const previousAvatar = AVATARS[previousIndex] || selectedAvatar;
   const nextAvatar = AVATARS[nextIndex] || selectedAvatar;
   const getMainFootOffsetStyle = (avatarId: string): React.CSSProperties => ({
-    transform: `translateY(${AVATAR_FOOT_ANCHOR_MAIN_Y_PX[avatarId] ?? 0}px) scale(${AVATAR_MAIN_VISUAL_SCALE})`,
+    transform: `translateY(${AVATAR_MAIN_GLOBAL_LIFT_PX + (AVATAR_FOOT_ANCHOR_MAIN_Y_PX[avatarId] ?? 0)}px) scale(${AVATAR_MAIN_VISUAL_SCALE})`,
     transformOrigin: 'bottom center',
   });
   const getSideFootOffsetStyle = (avatarId: string): React.CSSProperties => ({
-    transform: `translateY(${AVATAR_FOOT_ANCHOR_SIDE_Y_PX[avatarId] ?? 0}px) scale(${AVATAR_SIDE_VISUAL_SCALE})`,
+    transform: `translateY(${AVATAR_SIDE_GLOBAL_LIFT_PX + (AVATAR_FOOT_ANCHOR_SIDE_Y_PX[avatarId] ?? 0)}px) scale(${AVATAR_SIDE_VISUAL_SCALE})`,
     transformOrigin: 'bottom center',
   });
 
@@ -85,7 +88,16 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               <h2 className="avatar-carousel-title">Choose Your Hero</h2>
             </div>
           </div>
-          <div className="avatar-hero-nameplate avatar-hero-nameplate-under-banner">{selectedAvatar.name}</div>
+          <div className="avatar-hero-name-banner avatar-hero-name-banner-under-title">
+            <img
+              src={heroNameBlueRibbon}
+              alt=""
+              aria-hidden
+              className="avatar-hero-name-banner-art"
+              draggable={false}
+            />
+            <div className="avatar-hero-name-banner-text">{selectedAvatar.name}</div>
+          </div>
 
           <div className="avatar-hero-stage relative mt-2 flex min-h-0 flex-1 items-center justify-center overflow-visible md:mt-3">
             <motion.button
@@ -124,7 +136,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   src={previousAvatar.portrait || previousAvatar.image}
                   alt=""
                   aria-hidden
-                  className="h-[215%] w-auto object-contain object-bottom"
+                  className="h-[245%] w-auto object-contain object-bottom"
                   style={getSideFootOffsetStyle(previousAvatar.id)}
                   draggable={false}
                 />
@@ -142,7 +154,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   <img
                     src={selectedAvatar.portrait || selectedAvatar.image}
                     alt={selectedAvatar.name}
-                    className="h-[320%] w-auto object-contain object-bottom"
+                    className="h-[370%] w-auto object-contain object-bottom"
                     style={getMainFootOffsetStyle(selectedAvatar.id)}
                     draggable={false}
                   />
@@ -161,7 +173,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   src={nextAvatar.portrait || nextAvatar.image}
                   alt=""
                   aria-hidden
-                  className="h-[215%] w-auto object-contain object-bottom"
+                  className="h-[245%] w-auto object-contain object-bottom"
                   style={getSideFootOffsetStyle(nextAvatar.id)}
                   draggable={false}
                 />
