@@ -827,10 +827,10 @@ const App: React.FC = () => {
             <div className="absolute bottom-[7.5%] left-1/2 h-14 w-56 -translate-x-1/2 sm:h-16 sm:w-64">
               <motion.div
                 aria-hidden
-                className="pointer-events-none absolute inset-0 rounded-full bg-amber-300/85 blur-[7px]"
+                className="pointer-events-none absolute inset-0 rounded-full bg-teal-300/80 blur-[2px]"
                 animate={{
-                  opacity: [0.5, 1, 0.5],
-                  scale: [0.99, 1.05, 0.99]
+                  opacity: [0.42, 0.92, 0.42],
+                  scale: [0.995, 1.015, 0.995]
                 }}
                 transition={{ duration: 0.75, repeat: Infinity, ease: 'easeInOut' }}
               />
