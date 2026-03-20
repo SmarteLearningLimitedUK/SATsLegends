@@ -8,24 +8,18 @@ import heroRibbon from '../assets/casual_ui/dialogs_panels/ribbon_1.png';
 import avatarNextIcon from '../assets/importedassets/Icons/icon - next.png';
 import arrowButtonFrame from '../assets/importedassets/Icons/icon container.png';
 
-const AVATAR_SOURCE_HEIGHT_PX = 630;
-
-const AVATAR_FOOT_BASELINE_OFFSETS_MAIN_PERCENT: Record<string, number> = {
+const AVATAR_FOOT_ANCHOR_MAIN_Y_PX: Record<string, number> = {
   barratt: 0,
-  bran: 1,
-  vex: 1.3,
-  mochi: 8.6,
+  bran: 6,
+  vex: 8,
+  mochi: 30,
 };
 
-const AVATAR_FOOT_BASELINE_OFFSETS_SIDE_PERCENT: Record<string, number> = {
+const AVATAR_FOOT_ANCHOR_SIDE_Y_PX: Record<string, number> = {
   barratt: 0,
-  bran: 0.4,
-  vex: 0.5,
-  mochi: 1.6,
-};
-
-const AVATAR_BOTTOM_TRIM_PERCENT: Record<string, number> = {
-  mochi: 2.1,
+  bran: 3,
+  vex: 4,
+  mochi: 12,
 };
 const AVATAR_MAIN_VISUAL_SCALE = 1;
 const AVATAR_SIDE_VISUAL_SCALE = 1;
@@ -57,23 +51,12 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
   const nextIndex = (selectedIndex + 1) % AVATARS.length;
   const previousAvatar = AVATARS[previousIndex] || selectedAvatar;
   const nextAvatar = AVATARS[nextIndex] || selectedAvatar;
-  const toPxOffset = (percent: number): number => (percent / 100) * AVATAR_SOURCE_HEIGHT_PX;
-  const getTrimStyle = (avatarId: string): React.CSSProperties => {
-    const trim = AVATAR_BOTTOM_TRIM_PERCENT[avatarId] ?? 0;
-    if (trim <= 0) {
-      return {};
-    }
-    return {
-      clipPath: `inset(0 0 ${trim}% 0)`,
-      WebkitClipPath: `inset(0 0 ${trim}% 0)`,
-    } as React.CSSProperties;
-  };
   const getMainFootOffsetStyle = (avatarId: string): React.CSSProperties => ({
-    transform: `translateY(${toPxOffset(AVATAR_FOOT_BASELINE_OFFSETS_MAIN_PERCENT[avatarId] ?? 0)}px) scale(${AVATAR_MAIN_VISUAL_SCALE})`,
+    transform: `translateY(${AVATAR_FOOT_ANCHOR_MAIN_Y_PX[avatarId] ?? 0}px) scale(${AVATAR_MAIN_VISUAL_SCALE})`,
     transformOrigin: 'bottom center',
   });
   const getSideFootOffsetStyle = (avatarId: string): React.CSSProperties => ({
-    transform: `translateY(${toPxOffset(AVATAR_FOOT_BASELINE_OFFSETS_SIDE_PERCENT[avatarId] ?? 0)}px) scale(${AVATAR_SIDE_VISUAL_SCALE})`,
+    transform: `translateY(${AVATAR_FOOT_ANCHOR_SIDE_Y_PX[avatarId] ?? 0}px) scale(${AVATAR_SIDE_VISUAL_SCALE})`,
     transformOrigin: 'bottom center',
   });
 
@@ -141,7 +124,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   alt=""
                   aria-hidden
                   className="h-[215%] w-auto object-contain object-bottom"
-                  style={{ ...getSideFootOffsetStyle(previousAvatar.id), ...getTrimStyle(previousAvatar.id) }}
+                  style={getSideFootOffsetStyle(previousAvatar.id)}
                   draggable={false}
                 />
               </motion.button>
@@ -158,8 +141,8 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   <img
                     src={selectedAvatar.portrait || selectedAvatar.image}
                     alt={selectedAvatar.name}
-                    className="h-[320%] w-auto object-contain object-bottom drop-shadow-[0_20px_24px_rgba(2,6,23,0.46)]"
-                    style={{ ...getMainFootOffsetStyle(selectedAvatar.id), ...getTrimStyle(selectedAvatar.id) }}
+                    className="h-[320%] w-auto object-contain object-bottom"
+                    style={getMainFootOffsetStyle(selectedAvatar.id)}
                     draggable={false}
                   />
                 </motion.div>
@@ -178,7 +161,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   alt=""
                   aria-hidden
                   className="h-[215%] w-auto object-contain object-bottom"
-                  style={{ ...getSideFootOffsetStyle(nextAvatar.id), ...getTrimStyle(nextAvatar.id) }}
+                  style={getSideFootOffsetStyle(nextAvatar.id)}
                   draggable={false}
                 />
               </motion.button>
