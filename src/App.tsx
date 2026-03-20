@@ -85,6 +85,9 @@ const SCREEN_BEHAVIOR: Record<GameScreen, {
   parent_dashboard: { scrollable: true, shell: 'playfield', family: 'hub' },
 };
 
+const IPHONE_STAGE_WIDTH = 390;
+const IPHONE_STAGE_HEIGHT = 844;
+
 type GameRulesMode = 'start' | 'help';
 
 const resolveAvatarId = (avatarId?: string) => (
@@ -229,6 +232,7 @@ const createDefaultPlayer = (parsed?: Partial<PlayerData> | null): PlayerData =>
 });
 
 const App: React.FC = () => {
+  const [stageScale, setStageScale] = useState(1);
   const [screen, setScreen] = useState<GameScreen>('splash');
   const [player, setPlayer] = useState<PlayerData>(() => {
     const saved = localStorage.getItem(PLAYER_STORAGE_KEY);
@@ -276,6 +280,25 @@ const App: React.FC = () => {
     }
     setGameRulesMode('help');
   };
+
+  useEffect(() => {
+    const updateStageScale = () => {
+      const scale = Math.min(
+        window.innerWidth / IPHONE_STAGE_WIDTH,
+        window.innerHeight / IPHONE_STAGE_HEIGHT,
+      );
+      setStageScale(Number.isFinite(scale) && scale > 0 ? scale : 1);
+    };
+
+    updateStageScale();
+    window.addEventListener('resize', updateStageScale);
+    window.addEventListener('orientationchange', updateStageScale);
+
+    return () => {
+      window.removeEventListener('resize', updateStageScale);
+      window.removeEventListener('orientationchange', updateStageScale);
+    };
+  }, []);
 
   useEffect(() => {
     if (screen === 'profile_setup') {
@@ -989,149 +1012,160 @@ const App: React.FC = () => {
       ? 'pb-[calc(6.75rem+env(safe-area-inset-bottom))] md:pb-[calc(2.4rem+env(safe-area-inset-bottom))]'
       : 'pb-[calc(6.75rem+env(safe-area-inset-bottom))] md:pb-[calc(7.25rem+env(safe-area-inset-bottom))]'
     : '';
+  const stageStyle = {
+    '--game-stage-width': `${IPHONE_STAGE_WIDTH}px`,
+    '--game-stage-height': `${IPHONE_STAGE_HEIGHT}px`,
+    '--game-stage-scale': `${stageScale}`,
+  } as React.CSSProperties;
 
   return (
-    <div className={`app-viewport app-shell-family-${screenBehavior.family} screen-${screen.replace(/_/g, '-')} relative w-full flex flex-col items-center overflow-hidden ${isMapLayoutScreen ? 'sat-shell-map licensed-playfield-bg bg-slate-950 pb-[env(safe-area-inset-bottom)]' : 'sat-shell-standard licensed-playfield-bg bg-slate-950 px-3 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] md:px-8 md:pt-[max(1rem,env(safe-area-inset-top))] md:pb-[max(1rem,env(safe-area-inset-bottom))]'}`}>
-      {isStandardShellScreen && <div className="soft-vignette" />}
-      {isStandardShellScreen && !isSplashScreen && screen !== 'gameplay' && (
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-40 bg-gradient-to-b from-cyan-300/8 via-sky-300/4 to-transparent" />
-      )}
+    <div className="iphone-game-viewport">
+      <div className="iphone-game-stage" style={stageStyle}>
+        <div className="iphone-game-stage-inner">
+          <div className={`app-viewport app-shell-family-${screenBehavior.family} screen-${screen.replace(/_/g, '-')} relative w-full flex flex-col items-center overflow-hidden ${isMapLayoutScreen ? 'sat-shell-map licensed-playfield-bg bg-slate-950 pb-[env(safe-area-inset-bottom)]' : 'sat-shell-standard licensed-playfield-bg bg-slate-950 px-3 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] md:px-8 md:pt-[max(1rem,env(safe-area-inset-top))] md:pb-[max(1rem,env(safe-area-inset-bottom))]'}`}>
+            {isStandardShellScreen && <div className="soft-vignette" />}
+            {isStandardShellScreen && !isSplashScreen && screen !== 'gameplay' && (
+              <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-40 bg-gradient-to-b from-cyan-300/8 via-sky-300/4 to-transparent" />
+            )}
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={screen}
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 1.02 }}
-          className={`app-screen-content relative z-10 flex min-h-0 w-full flex-1 justify-center pointer-events-auto ${screenBehavior.scrollable ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'} ${isMapLayoutScreen ? 'sat-screen-map-content' : 'sat-screen-standard-content items-stretch'} ${bottomNavOffsetClass}`}
-          style={screenBehavior.scrollable ? { WebkitOverflowScrolling: 'touch' } : undefined}
-        >
-          {renderScreen()}
-        </motion.div>
-      </AnimatePresence>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={screen}
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.02 }}
+                className={`app-screen-content relative z-10 flex min-h-0 w-full flex-1 justify-center pointer-events-auto ${screenBehavior.scrollable ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'} ${isMapLayoutScreen ? 'sat-screen-map-content' : 'sat-screen-standard-content items-stretch'} ${bottomNavOffsetClass}`}
+                style={screenBehavior.scrollable ? { WebkitOverflowScrolling: 'touch' } : undefined}
+              >
+                {renderScreen()}
+              </motion.div>
+            </AnimatePresence>
 
-      <DailyRewardsModal
-        isOpen={showDailyRewards}
-        onClose={() => setShowDailyRewards(false)}
-        streak={player.dailyStreak}
-        claimedToday={player.claimedDailyRewardToday}
-        onClaim={handleClaimDailyReward}
-      />
+            <DailyRewardsModal
+              isOpen={showDailyRewards}
+              onClose={() => setShowDailyRewards(false)}
+              streak={player.dailyStreak}
+              claimedToday={player.claimedDailyRewardToday}
+              onClaim={handleClaimDailyReward}
+            />
 
-      <DailyQuestsModal
-        isOpen={showQuests}
-        onClose={() => setShowQuests(false)}
-        quests={player.dailyQuests}
-        onClaimQuest={handleClaimQuest}
-      />
+            <DailyQuestsModal
+              isOpen={showQuests}
+              onClose={() => setShowQuests(false)}
+              quests={player.dailyQuests}
+              onClaimQuest={handleClaimQuest}
+            />
 
-      <AchievementsModal
-        isOpen={showAchievements}
-        onClose={() => setShowAchievements(false)}
-        player={player}
-      />
+            <AchievementsModal
+              isOpen={showAchievements}
+              onClose={() => setShowAchievements(false)}
+              player={player}
+            />
 
-      <LevelResultModal
-        isOpen={Boolean(levelResult)}
-        result={levelResult ? {
-          ...levelResult,
-          primaryLabel: levelResult.type === 'victory' ? 'Next level' : 'Level select',
-          onPrimary: levelResult.type === 'victory' ? handleAdvanceAfterVictory : handleCloseLevelResult,
-          secondaryLabel: levelResult.type === 'victory' ? 'Replay' : 'Try again',
-          onSecondary: handleRetryLevel,
-        } : null}
-      />
+            <LevelResultModal
+              isOpen={Boolean(levelResult)}
+              result={levelResult ? {
+                ...levelResult,
+                primaryLabel: levelResult.type === 'victory' ? 'Next level' : 'Level select',
+                onPrimary: levelResult.type === 'victory' ? handleAdvanceAfterVictory : handleCloseLevelResult,
+                secondaryLabel: levelResult.type === 'victory' ? 'Replay' : 'Try again',
+                onSecondary: handleRetryLevel,
+              } : null}
+            />
 
-      <GameRulesModal
-        isOpen={showGameRules}
-        onClose={closeGameRules}
-        rules={selectedRuleSet}
-        actionLabel={gameRulesMode === 'start' ? 'Start Game' : 'Back To Game'}
-      />
+            <GameRulesModal
+              isOpen={showGameRules}
+              onClose={closeGameRules}
+              rules={selectedRuleSet}
+              actionLabel={gameRulesMode === 'start' ? 'Start Game' : 'Back To Game'}
+            />
 
-      {
-        isStandardShellScreen && !isSplashScreen && screen !== 'gameplay' && (
-          <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-            <div className="cloud w-64 h-24 top-20" style={{ animationDuration: '25s' }} />
-            <div className="cloud w-48 h-16 top-40" style={{ animationDuration: '40s', animationDelay: '-10s' }} />
-            <div className="cloud w-80 h-32 bottom-20" style={{ animationDuration: '30s', animationDelay: '-5s' }} />
+            {
+              isStandardShellScreen && !isSplashScreen && screen !== 'gameplay' && (
+                <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+                  <div className="cloud w-64 h-24 top-20" style={{ animationDuration: '25s' }} />
+                  <div className="cloud w-48 h-16 top-40" style={{ animationDuration: '40s', animationDelay: '-10s' }} />
+                  <div className="cloud w-80 h-32 bottom-20" style={{ animationDuration: '30s', animationDelay: '-5s' }} />
+                </div>
+              )
+            }
+
+            {
+              showBottomNav && (
+                <div className={`pointer-events-none fixed inset-x-0 z-50 flex justify-center px-3 ${
+                  isWorldMapScreen
+                    ? 'bottom-[calc(0.75rem+env(safe-area-inset-bottom))] md:bottom-[calc(1rem+env(safe-area-inset-bottom))]'
+                    : 'bottom-[calc(0.75rem+env(safe-area-inset-bottom))] md:bottom-6'
+                }`}>
+                  <div className={`pointer-events-auto flex w-full max-w-3xl flex-col items-center ${
+                    isWorldMapScreen ? 'gap-2 md:gap-1' : 'gap-2 md:gap-3'
+                  }`}>
+                    <div className={`casual-ribbon-chip hidden items-center gap-2 rounded-full px-3 py-1.5 shadow-[0_12px_30px_rgba(0,0,0,0.22)] md:px-4 md:py-2 ${
+                      isWorldMapScreen ? 'lg:inline-flex' : 'md:inline-flex'
+                    }`}>
+                      <AssetIcon name="star" className="h-4 w-4" />
+                      <span className="text-[9px] font-black uppercase tracking-[0.24em] md:text-[10px]">Adventure mode</span>
+                    </div>
+                    <nav className={`casual-nav-shell flex w-full items-center justify-between rounded-[2rem] px-2 py-2 ${
+                      isWorldMapScreen
+                        ? 'max-w-[28rem] md:max-w-[32rem] md:px-3 md:py-2.5'
+                        : 'max-w-[28rem] md:max-w-3xl md:px-4 md:py-3'
+                    }`}>
+                      <motion.button
+                        whileTap={{ scale: 0.96, y: 1 }}
+                        onClick={goToHome}
+                        className={`ui-icon-button hero-nav-button hero-nav-button-home flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'world_map' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
+                      >
+                        <AssetIcon name="home" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
+                        <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Map</span>
+                      </motion.button>
+                      <motion.button
+                        whileTap={{ scale: 0.96, y: 1 }}
+                        onClick={() => setScreen('avatar_selection')}
+                        className={`ui-icon-button hero-nav-button hero-nav-button-hero flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'avatar_selection' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
+                      >
+                        <AssetIcon name="user" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
+                        <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Hero</span>
+                      </motion.button>
+                      <motion.button
+                        whileTap={{ scale: 0.96, y: 1 }}
+                        onClick={() => setShowQuests(true)}
+                        className="ui-icon-button hero-nav-button hero-nav-button-idle hero-nav-button-quests relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3"
+                      >
+                        <AssetIcon name="doc" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
+                        <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Quests</span>
+                        {(player.dailyQuests || []).some(q => q.current >= q.target && !q.isClaimed) && (
+                          <span className="absolute right-2 top-1 h-3 w-3 rounded-full border-2 border-white bg-red-500 animate-pulse" />
+                        )}
+                      </motion.button>
+                      <motion.button
+                        whileTap={{ scale: 0.96, y: 1 }}
+                        onClick={() => setShowAchievements(true)}
+                        className="ui-icon-button hero-nav-button hero-nav-button-idle hero-nav-button-wins relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3"
+                      >
+                        <AssetIcon name="medal" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
+                        <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Wins</span>
+                        {(player.achievements?.length || 0) > 0 && (
+                          <span className="absolute right-2 top-1 h-3 w-3 rounded-full border-2 border-white bg-yellow-400" />
+                        )}
+                      </motion.button>
+                      <motion.button
+                        whileTap={{ scale: 0.96, y: 1 }}
+                        onClick={() => setScreen('parent_dashboard')}
+                        className={`ui-icon-button hero-nav-button hero-nav-button-stats flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'parent_dashboard' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
+                      >
+                        <AssetIcon name="gear" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
+                        <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Stats</span>
+                      </motion.button>
+                    </nav>
+                  </div>
+                </div>
+              )
+            }
           </div>
-        )
-      }
-
-      {
-        showBottomNav && (
-          <div className={`pointer-events-none fixed inset-x-0 z-50 flex justify-center px-3 ${
-            isWorldMapScreen
-              ? 'bottom-[calc(0.75rem+env(safe-area-inset-bottom))] md:bottom-[calc(1rem+env(safe-area-inset-bottom))]'
-              : 'bottom-[calc(0.75rem+env(safe-area-inset-bottom))] md:bottom-6'
-          }`}>
-            <div className={`pointer-events-auto flex w-full max-w-3xl flex-col items-center ${
-              isWorldMapScreen ? 'gap-2 md:gap-1' : 'gap-2 md:gap-3'
-            }`}>
-              <div className={`casual-ribbon-chip hidden items-center gap-2 rounded-full px-3 py-1.5 shadow-[0_12px_30px_rgba(0,0,0,0.22)] md:px-4 md:py-2 ${
-                isWorldMapScreen ? 'lg:inline-flex' : 'md:inline-flex'
-              }`}>
-                <AssetIcon name="star" className="h-4 w-4" />
-                <span className="text-[9px] font-black uppercase tracking-[0.24em] md:text-[10px]">Adventure mode</span>
-              </div>
-              <nav className={`casual-nav-shell flex w-full items-center justify-between rounded-[2rem] px-2 py-2 ${
-                isWorldMapScreen
-                  ? 'max-w-[28rem] md:max-w-[32rem] md:px-3 md:py-2.5'
-                  : 'max-w-[28rem] md:max-w-3xl md:px-4 md:py-3'
-              }`}>
-                <motion.button
-                  whileTap={{ scale: 0.96, y: 1 }}
-                  onClick={goToHome}
-                  className={`ui-icon-button hero-nav-button hero-nav-button-home flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'world_map' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
-                >
-                  <AssetIcon name="home" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
-                  <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Map</span>
-                </motion.button>
-                <motion.button
-                  whileTap={{ scale: 0.96, y: 1 }}
-                  onClick={() => setScreen('avatar_selection')}
-                  className={`ui-icon-button hero-nav-button hero-nav-button-hero flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'avatar_selection' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
-                >
-                  <AssetIcon name="user" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
-                  <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Hero</span>
-                </motion.button>
-                <motion.button
-                  whileTap={{ scale: 0.96, y: 1 }}
-                  onClick={() => setShowQuests(true)}
-                  className="ui-icon-button hero-nav-button hero-nav-button-idle hero-nav-button-quests relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3"
-                >
-                  <AssetIcon name="doc" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
-                  <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Quests</span>
-                  {(player.dailyQuests || []).some(q => q.current >= q.target && !q.isClaimed) && (
-                    <span className="absolute right-2 top-1 h-3 w-3 rounded-full border-2 border-white bg-red-500 animate-pulse" />
-                  )}
-                </motion.button>
-                <motion.button
-                  whileTap={{ scale: 0.96, y: 1 }}
-                  onClick={() => setShowAchievements(true)}
-                  className="ui-icon-button hero-nav-button hero-nav-button-idle hero-nav-button-wins relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3"
-                >
-                  <AssetIcon name="medal" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
-                  <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Wins</span>
-                  {(player.achievements?.length || 0) > 0 && (
-                    <span className="absolute right-2 top-1 h-3 w-3 rounded-full border-2 border-white bg-yellow-400" />
-                  )}
-                </motion.button>
-                <motion.button
-                  whileTap={{ scale: 0.96, y: 1 }}
-                  onClick={() => setScreen('parent_dashboard')}
-                  className={`ui-icon-button hero-nav-button hero-nav-button-stats flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'parent_dashboard' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
-                >
-                  <AssetIcon name="gear" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
-                  <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Stats</span>
-                </motion.button>
-              </nav>
-            </div>
-          </div>
-        )
-      }
-    </div >
+        </div>
+      </div>
+    </div>
   );
 };
 
