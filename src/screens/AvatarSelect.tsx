@@ -14,14 +14,18 @@ const AVATAR_FOOT_BASELINE_OFFSETS_MAIN_PERCENT: Record<string, number> = {
   barratt: 0,
   bran: 1,
   vex: 1.3,
-  mochi: 10.8,
+  mochi: 8.6,
 };
 
 const AVATAR_FOOT_BASELINE_OFFSETS_SIDE_PERCENT: Record<string, number> = {
   barratt: 0,
   bran: 0.4,
   vex: 0.5,
-  mochi: 2.2,
+  mochi: 1.6,
+};
+
+const AVATAR_BOTTOM_TRIM_PERCENT: Record<string, number> = {
+  mochi: 2.1,
 };
 const AVATAR_MAIN_VISUAL_SCALE = 1;
 const AVATAR_SIDE_VISUAL_SCALE = 1;
@@ -54,6 +58,16 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
   const previousAvatar = AVATARS[previousIndex] || selectedAvatar;
   const nextAvatar = AVATARS[nextIndex] || selectedAvatar;
   const toPxOffset = (percent: number): number => (percent / 100) * AVATAR_SOURCE_HEIGHT_PX;
+  const getTrimStyle = (avatarId: string): React.CSSProperties => {
+    const trim = AVATAR_BOTTOM_TRIM_PERCENT[avatarId] ?? 0;
+    if (trim <= 0) {
+      return {};
+    }
+    return {
+      clipPath: `inset(0 0 ${trim}% 0)`,
+      WebkitClipPath: `inset(0 0 ${trim}% 0)`,
+    } as React.CSSProperties;
+  };
   const getMainFootOffsetStyle = (avatarId: string): React.CSSProperties => ({
     transform: `translateY(${toPxOffset(AVATAR_FOOT_BASELINE_OFFSETS_MAIN_PERCENT[avatarId] ?? 0)}px) scale(${AVATAR_MAIN_VISUAL_SCALE})`,
     transformOrigin: 'bottom center',
@@ -127,7 +141,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   alt=""
                   aria-hidden
                   className="h-[215%] w-auto object-contain object-bottom"
-                  style={getSideFootOffsetStyle(previousAvatar.id)}
+                  style={{ ...getSideFootOffsetStyle(previousAvatar.id), ...getTrimStyle(previousAvatar.id) }}
                   draggable={false}
                 />
               </motion.button>
@@ -145,7 +159,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                     src={selectedAvatar.portrait || selectedAvatar.image}
                     alt={selectedAvatar.name}
                     className="h-[320%] w-auto object-contain object-bottom drop-shadow-[0_20px_24px_rgba(2,6,23,0.46)]"
-                    style={getMainFootOffsetStyle(selectedAvatar.id)}
+                    style={{ ...getMainFootOffsetStyle(selectedAvatar.id), ...getTrimStyle(selectedAvatar.id) }}
                     draggable={false}
                   />
                 </motion.div>
@@ -164,7 +178,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   alt=""
                   aria-hidden
                   className="h-[215%] w-auto object-contain object-bottom"
-                  style={getSideFootOffsetStyle(nextAvatar.id)}
+                  style={{ ...getSideFootOffsetStyle(nextAvatar.id), ...getTrimStyle(nextAvatar.id) }}
                   draggable={false}
                 />
               </motion.button>
