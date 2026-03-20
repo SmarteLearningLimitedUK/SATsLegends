@@ -3925,7 +3925,7 @@ button:disabled {
 
 .avatar-carousel-banner {
   position: relative;
-  width: min(100%, clamp(14rem, 52vw, 21rem));
+  width: min(100%, clamp(16rem, 60vw, 24.5rem));
   aspect-ratio: 3.1 / 1;
   display: flex;
   align-items: center;
@@ -3949,10 +3949,10 @@ button:disabled {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-inline: clamp(1rem, 4vw, 2.2rem);
+  padding-inline: clamp(1.2rem, 5vw, 2.8rem);
   transform: translateY(-2%);
   font-weight: 900;
-  font-size: clamp(0.8rem, 2.8vw, 1.12rem);
+  font-size: clamp(1rem, 3.6vw, 1.45rem);
   letter-spacing: 0.085em;
   line-height: 1;
   text-transform: uppercase;
