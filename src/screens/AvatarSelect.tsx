@@ -5,7 +5,7 @@ import { triggerHaptic } from '../haptics';
 import avatarSelectBackground from '../assets/casual_ui/pedestal char select.png';
 import splashStyleButton from '../assets/casual_ui/inputs/btn_1.png';
 import heroRibbon from '../assets/casual_ui/dialogs_panels/ribbon_1.png';
-import heroNameBlueRibbon from '../assets/fantasy_hero/title/ribbon_blue.png';
+import heroNameBlueRibbon from '../assets/licensed/slices/label_blue.png';
 import avatarNextIcon from '../assets/importedassets/Icons/icon - next.png';
 import arrowButtonFrame from '../assets/importedassets/Icons/icon container.png';
 
@@ -136,7 +136,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   src={previousAvatar.portrait || previousAvatar.image}
                   alt=""
                   aria-hidden
-                  className="h-[245%] w-auto object-contain object-bottom"
+                  className="h-[275%] w-auto object-contain object-bottom"
                   style={getSideFootOffsetStyle(previousAvatar.id)}
                   draggable={false}
                 />
@@ -154,7 +154,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   <img
                     src={selectedAvatar.portrait || selectedAvatar.image}
                     alt={selectedAvatar.name}
-                    className="h-[370%] w-auto object-contain object-bottom"
+                    className="h-[420%] w-auto object-contain object-bottom"
                     style={getMainFootOffsetStyle(selectedAvatar.id)}
                     draggable={false}
                   />
@@ -173,7 +173,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   src={nextAvatar.portrait || nextAvatar.image}
                   alt=""
                   aria-hidden
-                  className="h-[245%] w-auto object-contain object-bottom"
+                  className="h-[275%] w-auto object-contain object-bottom"
                   style={getSideFootOffsetStyle(nextAvatar.id)}
                   draggable={false}
                 />
