@@ -66,7 +66,6 @@ body {
   background:
     radial-gradient(circle at top, rgba(255,241,196,0.18), transparent 24%),
     radial-gradient(circle at 50% 28%, rgba(96,165,250,0.14), transparent 22%),
-    url('./assets/licensed/background.jpeg') center/cover no-repeat,
     linear-gradient(180deg, #3a5b93 0%, #22365f 42%, #101827 76%, #070b13 100%);
   overscroll-behavior: none;
   touch-action: none;
@@ -401,7 +400,7 @@ button:disabled {
   position: relative;
   background:
     linear-gradient(180deg, rgba(7,17,31,0.44), rgba(7,17,31,0.86)),
-    url('./assets/licensed/background.jpeg') center/cover no-repeat,
+    radial-gradient(circle at 50% 18%, rgba(59,130,246,0.2), rgba(59,130,246,0) 44%),
     linear-gradient(180deg, #5f87c8 0%, #3358a2 28%, #22365f 58%, #0f172a 100%);
 }
 
@@ -409,7 +408,7 @@ button:disabled {
   position: relative;
   background:
     linear-gradient(180deg, rgba(7,17,31,0.48), rgba(7,17,31,0.9)),
-    url('./assets/licensed/background.jpeg') center/cover no-repeat,
+    radial-gradient(circle at 50% 16%, rgba(34,211,238,0.18), rgba(34,211,238,0) 42%),
     linear-gradient(180deg, #81c6ff 0%, #4973d4 24%, #223f7e 58%, #0b1221 100%);
 }
 
