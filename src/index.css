@@ -3906,6 +3906,11 @@ button:disabled {
   background-color: #020617;
 }
 
+.avatar-select-background {
+  object-fit: contain;
+  object-position: center center;
+}
+
 .avatar-select-layout {
   gap: 0;
 }
@@ -3916,26 +3921,17 @@ button:disabled {
   pointer-events: none;
 }
 
-.avatar-carousel-banner {
-  min-height: clamp(3.8rem, 9vh, 4.5rem);
-  width: min(100%, 26.5rem);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  filter: drop-shadow(0 10px 22px rgba(2, 6, 23, 0.36));
-}
-
-.avatar-carousel-banner span {
-  margin-top: -0.2rem;
-  padding-inline: 1.3rem;
+.avatar-carousel-title {
+  margin: 0;
+  padding-inline: 0.75rem;
   font-weight: 900;
-  font-size: clamp(1.15rem, 4.5vw, 1.9rem);
+  font-size: clamp(1.05rem, 4.2vw, 1.7rem);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #f8f4df;
+  color: #fef9c3;
   text-shadow:
-    0 2px 0 rgba(11, 24, 52, 0.62),
-    0 8px 14px rgba(2, 6, 23, 0.4);
+    0 2px 0 rgba(11, 24, 52, 0.55),
+    0 8px 14px rgba(2, 6, 23, 0.34);
 }
 
 .avatar-hero-stage {
@@ -4003,19 +3999,14 @@ button:disabled {
   transform: translateY(-50%);
   width: 3rem;
   height: 3rem;
-  border-radius: 0.95rem;
-  border: 1px solid rgba(255, 234, 168, 0.72);
-  color: #1e293b;
+  border-radius: 999px;
+  border: 0;
+  color: #f8fafc;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background:
-    radial-gradient(circle at 50% 16%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 54%),
-    linear-gradient(180deg, rgba(253, 224, 71, 0.98), rgba(245, 158, 11, 0.98));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.44),
-    0 8px 0 rgba(30, 64, 175, 0.74),
-    0 16px 28px rgba(2, 6, 23, 0.34);
+  background: rgba(2, 6, 23, 0.42);
+  backdrop-filter: blur(3px);
 }
 
 .avatar-hero-arrow-left {
@@ -4027,26 +4018,18 @@ button:disabled {
 }
 
 .avatar-hero-nameplate {
-  min-height: 3.1rem;
-  width: min(100%, 17rem);
+  min-height: 2.3rem;
+  width: min(100%, 18rem);
   margin-inline: auto;
-  border-radius: 999px;
-  border: 1px solid rgba(186, 230, 253, 0.5);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(1.15rem, 4.4vw, 1.65rem);
+  font-size: clamp(1.1rem, 4.2vw, 1.55rem);
   font-weight: 900;
-  color: #f4f8ff;
+  color: #f8fafc;
   text-shadow:
-    0 2px 0 rgba(30, 58, 138, 0.58),
-    0 8px 14px rgba(2, 6, 23, 0.34);
-  background:
-    linear-gradient(180deg, rgba(96, 165, 250, 0.92), rgba(37, 99, 235, 0.92));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.24),
-    0 8px 0 rgba(30, 64, 175, 0.68),
-    0 16px 26px rgba(2, 6, 23, 0.28);
+    0 2px 0 rgba(2, 6, 23, 0.62),
+    0 8px 14px rgba(2, 6, 23, 0.38);
 }
 
 .avatar-hero-cta-shell {

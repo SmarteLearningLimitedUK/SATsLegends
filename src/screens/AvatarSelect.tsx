@@ -4,7 +4,6 @@ import { AVATARS } from '../constants';
 import { triggerHaptic } from '../haptics';
 import AssetIcon from '../components/AssetIcon';
 import avatarSelectBackground from '../assets/casual_ui/pedestal char select.png';
-import heroBanner from '../assets/casual_ui/dialogs_panels/ribbon_1.png';
 import splashStyleButton from '../assets/casual_ui/inputs/btn_1.png';
 
 interface AvatarSelectProps {
@@ -36,29 +35,19 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
   const nextAvatar = AVATARS[nextIndex] || selectedAvatar;
 
   return (
-    <div
-      className="avatar-select-screen relative h-full w-full overflow-hidden"
-      style={{
-        backgroundImage: `url(${avatarSelectBackground})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-      }}
-    >
+    <div className="avatar-select-screen relative h-full w-full overflow-hidden">
+      <img
+        src={avatarSelectBackground}
+        alt=""
+        aria-hidden
+        className="avatar-select-background pointer-events-none absolute inset-0 h-full w-full object-contain"
+        draggable={false}
+      />
 
       <div className="relative z-10 flex h-full w-full items-center justify-center px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-[calc(env(safe-area-inset-top)+0.65rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+1rem)]">
         <div className="avatar-select-layout relative flex h-full w-full flex-col">
           <div className="avatar-carousel-header">
-            <div
-              className="avatar-carousel-banner"
-              style={{
-                backgroundImage: `url(${heroBanner})`,
-                backgroundSize: '100% 100%',
-                backgroundRepeat: 'no-repeat',
-              }}
-            >
-              <span>Choose Your Hero</span>
-            </div>
+            <h2 className="avatar-carousel-title">Choose Your Hero</h2>
           </div>
 
           <div className="avatar-hero-stage relative mt-2 flex min-h-0 flex-1 items-center justify-center overflow-hidden md:mt-3">
@@ -140,15 +129,6 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
           <div className="avatar-hero-nameplate mt-3 md:mt-4">{selectedAvatar.name}</div>
 
           <div className="avatar-hero-cta-shell mt-3 w-full md:mt-4">
-            <motion.div
-              aria-hidden
-              className="pointer-events-none absolute inset-0 rounded-full bg-amber-300/85 blur-[7px]"
-              animate={{
-                opacity: [0.5, 1, 0.5],
-                scale: [0.99, 1.05, 0.99]
-              }}
-              transition={{ duration: 0.75, repeat: Infinity, ease: 'easeInOut' }}
-            />
             <motion.button
               type="button"
               whileHover={{ scale: 1.02 }}
@@ -157,7 +137,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                 triggerHaptic('success');
                 onConfirm();
               }}
-              className="relative h-full w-full rounded-full border-0 bg-transparent p-0 shadow-[0_8px_22px_rgba(0,0,0,0.35)]"
+              className="relative h-full w-full rounded-full border-0 bg-transparent p-0"
               aria-label="Begin adventure"
             >
               <img
