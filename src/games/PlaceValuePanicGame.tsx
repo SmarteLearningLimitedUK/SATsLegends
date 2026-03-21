@@ -1,18 +1,7 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { AVATARS } from '../constants';
-import GameContainerView from '../components/GameContainerView';
-import placeValuePanicBackground from '../assets/level_backgrounds/place_value_panicbkgrd.png';
-import gemBlue from '../assets/place_value/jewels/diamond_blue.png';
-import gemGreen from '../assets/place_value/jewels/diamond_green.png';
-import gemPurple from '../assets/place_value/jewels/diamond_purple.png';
-import gemRed from '../assets/place_value/jewels/diamond_red.png';
-import gemYellow from '../assets/place_value/jewels/diamond_yellow.png';
-import {
-  DigitTile,
-  PlaceValueSlotKey,
-  usePlaceValuePanicViewModel,
-} from './placeValuePanic/usePlaceValuePanicViewModel';
+import placeValueBackground from '../assets/maps/place value background.png';
+import { triggerHaptic } from '../haptics';
 
 interface PlaceValuePanicGameProps {
   levelId: number;
@@ -23,420 +12,388 @@ interface PlaceValuePanicGameProps {
   onBack: () => void;
 }
 
-interface DragState {
-  tile: DigitTile;
-  pointerId: number;
-  clientX: number;
-  clientY: number;
-  offsetX: number;
-  offsetY: number;
-  width: number;
-  height: number;
+type PlaceUnit = 'tenThousands' | 'thousands' | 'hundreds' | 'tens' | 'ones';
+type TokenLocation = 'stump' | 'answer';
+
+interface Token {
+  id: string;
+  value: number;
 }
 
-interface SlotCandidate {
-  key: PlaceValueSlotKey;
-  distance: number;
+interface QuestionState {
+  id: string;
+  units: PlaceUnit[];
+  prompt: string;
+  expected: string;
+  tokenValues: number[];
 }
 
-const SLOT_DISPLAY_VALUES: Record<PlaceValueSlotKey, string> = {
-  thousands: '1000',
-  hundreds: '100',
-  tens: '10',
-  ones: '1',
-  tenths: '0.1',
-  hundredths: '0.01',
-};
+interface SelectedTokenRef {
+  location: TokenLocation;
+  index: number;
+}
 
-const MIN_TAP_TARGET = 44;
-const GEM_TEXTURES: string[] = [
-  gemPurple,
-  gemBlue,
-  gemYellow,
-  gemGreen,
-  gemRed,
+interface StumpPoint {
+  x: number;
+  y: number;
+}
+
+const GOBLIN_MAX_HEALTH = 10;
+
+const STUMP_POINTS: StumpPoint[] = [
+  { x: 13, y: 79 },
+  { x: 25, y: 81 },
+  { x: 37, y: 79 },
+  { x: 49, y: 81 },
+  { x: 61, y: 79 },
+  { x: 73, y: 81 },
+  { x: 85, y: 79 },
+  { x: 24, y: 90 },
+  { x: 38, y: 92 },
+  { x: 52, y: 90 },
+  { x: 66, y: 92 },
+  { x: 80, y: 90 },
 ];
 
-const getGemTexture = (digitValue: number) => GEM_TEXTURES[Math.abs(digitValue) % GEM_TEXTURES.length];
+const PLACE_TEXT: Record<PlaceUnit, string> = {
+  tenThousands: 'ten-thousands',
+  thousands: 'thousands',
+  hundreds: 'hundreds',
+  tens: 'tens',
+  ones: 'ones',
+};
 
-const feedbackToneClass = (tone: 'success' | 'warning' | 'error') => {
-  if (tone === 'success') return 'border-emerald-200/55 bg-emerald-500/28 text-emerald-50';
-  if (tone === 'error') return 'border-rose-200/55 bg-rose-500/30 text-rose-50';
-  return 'border-amber-200/55 bg-amber-500/26 text-amber-50';
+const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+const shuffle = <T,>(items: T[]): T[] => {
+  const clone = [...items];
+  for (let i = clone.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [clone[i], clone[j]] = [clone[j], clone[i]];
+  }
+  return clone;
+};
+
+const getUnitsForLevel = (level: number): PlaceUnit[] => {
+  if (level <= 2) return ['hundreds', 'tens', 'ones'];
+  if (level <= 6) return ['thousands', 'hundreds', 'tens', 'ones'];
+  return ['tenThousands', 'thousands', 'hundreds', 'tens', 'ones'];
+};
+
+const scoreToStars = (accuracy: number): number => {
+  if (accuracy >= 0.9) return 3;
+  if (accuracy >= 0.7) return 2;
+  return 1;
+};
+
+const makeQuestion = (miniGameLevel: number): QuestionState => {
+  const units = getUnitsForLevel(miniGameLevel);
+  const digits = units.map((unit, index) => {
+    const min = index === 0 && (unit === 'tenThousands' || unit === 'thousands' || unit === 'hundreds') ? 1 : 0;
+    return randomInt(min, 9);
+  });
+
+  const hasDistractor = miniGameLevel >= 5;
+  const distractor = hasDistractor ? randomInt(0, 9) : null;
+  const tokenValues = shuffle(hasDistractor ? [...digits, distractor as number] : [...digits]);
+  const expected = digits.join('');
+
+  const prompt = `Arrange digits to make: ${units
+    .map((unit, idx) => `${digits[idx]} ${PLACE_TEXT[unit]}`)
+    .join(', ')}.`;
+
+  return {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    units,
+    prompt,
+    expected,
+    tokenValues,
+  };
 };
 
 const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   levelId,
   miniGameLevel,
-  avatarId,
+  avatarId: _avatarId,
   onVictory,
-  onGameOver,
+  onGameOver: _onGameOver,
   onBack,
 }) => {
-  const avatar = useMemo(() => AVATARS.find((item) => item.id === avatarId) || AVATARS[0], [avatarId]);
-
-  const {
-    levelConfig,
-    round,
-    roundsCleared,
-    slots,
-    trayTiles,
-    placedBySlot,
-    score,
-    combo,
-    timeLeft,
-    progress,
-    accuracy,
-    feedback,
-    isForgingTransition,
-    isPaused,
-    setIsPaused,
-    hintSlotKey,
-    lastRejectedTileId,
-    onTileGrab,
-    onDropTile,
-  } = usePlaceValuePanicViewModel({
-    levelId,
-    miniGameLevel,
-    onVictory,
-    onGameOver,
-  });
-
-  const [dragState, setDragState] = useState<DragState | null>(null);
-  const [hoverSlotKey, setHoverSlotKey] = useState<PlaceValueSlotKey | null>(null);
-  const [lastCorrectSlotKey, setLastCorrectSlotKey] = useState<PlaceValueSlotKey | null>(null);
-  const playfieldRef = useRef<HTMLDivElement | null>(null);
-
-  const slotRefs = useRef<Record<PlaceValueSlotKey, HTMLDivElement | null>>({
-    thousands: null,
-    hundreds: null,
-    tens: null,
-    ones: null,
-    tenths: null,
-    hundredths: null,
-  });
-
-  useEffect(() => {
-    setDragState(null);
-    setHoverSlotKey(null);
-    setLastCorrectSlotKey(null);
-  }, [round.id]);
-
-  const activeSlots = useMemo(() => slots, [slots]);
-
-  const getPlayfieldRelativePoint = (clientX: number, clientY: number) => {
-    const rect = playfieldRef.current?.getBoundingClientRect();
-    if (!rect) {
-      return { x: clientX, y: clientY };
-    }
-
-    return {
-      x: clientX - rect.left,
-      y: clientY - rect.top,
-    };
-  };
-
-  const findSlotCandidate = (clientX: number, clientY: number): SlotCandidate | null => {
-    const availableSlots = activeSlots.filter((slot) => !slot.isFilled);
-    if (availableSlots.length === 0) return null;
-
-    let best: SlotCandidate | null = null;
-
-    for (const slot of availableSlots) {
-      const element = slotRefs.current[slot.key];
-      if (!element) continue;
-      const rect = element.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      const dx = clientX - centerX;
-      const dy = clientY - centerY;
-      const distance = Math.hypot(dx, dy);
-
-      if (!best || distance < best.distance) {
-        best = { key: slot.key, distance };
-      }
-    }
-
-    if (!best) return null;
-
-    const firstSlot = slotRefs.current[availableSlots[0].key];
-    const fallbackSize = firstSlot?.getBoundingClientRect().width || 120;
-    const snapRadius = Math.max(84, Math.min(148, fallbackSize * 0.82));
-
-    return best.distance <= snapRadius ? best : null;
-  };
-
-  useEffect(() => {
-    if (!dragState) return undefined;
-
-    const handlePointerMove = (event: PointerEvent) => {
-      if (event.pointerId !== dragState.pointerId) return;
-
-      setDragState((current) => {
-        if (!current || current.pointerId !== event.pointerId) return current;
-        return {
-          ...current,
-          clientX: event.clientX,
-          clientY: event.clientY,
-        };
-      });
-
-      const candidate = findSlotCandidate(event.clientX, event.clientY);
-      setHoverSlotKey(candidate?.key || null);
-    };
-
-    const finishDrag = (event: PointerEvent) => {
-      if (event.pointerId !== dragState.pointerId) return;
-
-      const candidate = findSlotCandidate(event.clientX, event.clientY);
-      const dropResult = onDropTile(dragState.tile.id, candidate?.key || null);
-      if (dropResult.result === 'correct' && dropResult.correctSlotKey) {
-        setLastCorrectSlotKey(dropResult.correctSlotKey);
-        window.setTimeout(() => {
-          setLastCorrectSlotKey((current) => (
-            current === dropResult.correctSlotKey ? null : current
-          ));
-        }, 260);
-      }
-      setDragState(null);
-      setHoverSlotKey(null);
-    };
-
-    window.addEventListener('pointermove', handlePointerMove);
-    window.addEventListener('pointerup', finishDrag);
-    window.addEventListener('pointercancel', finishDrag);
-
-    return () => {
-      window.removeEventListener('pointermove', handlePointerMove);
-      window.removeEventListener('pointerup', finishDrag);
-      window.removeEventListener('pointercancel', finishDrag);
-    };
-  }, [dragState, onDropTile, activeSlots]);
-
-  const handleTilePointerDown = (event: React.PointerEvent<HTMLButtonElement>, tile: DigitTile) => {
-    if (isPaused || tile.isPlaced) return;
-
-    const rect = event.currentTarget.getBoundingClientRect();
-    onTileGrab(tile.id);
-    event.currentTarget.setPointerCapture(event.pointerId);
-
-    setDragState({
-      tile,
-      pointerId: event.pointerId,
-      clientX: event.clientX,
-      clientY: event.clientY,
-      offsetX: event.clientX - rect.left,
-      offsetY: event.clientY - rect.top,
-      width: rect.width,
-      height: rect.height,
-    });
-  };
-
-  const objectiveArea = (
-    <div className="pvp-objective flex h-full flex-col items-center justify-center gap-1.5 px-2 py-1.5 md:gap-2 md:px-2.5 md:py-2">
-      <div className="pvp-target-center-card">
-        <div className="text-[9px] font-black uppercase tracking-[0.22em] text-amber-950/72">Target</div>
-        <div className="pvp-target-value pvp-target-value-center text-xl font-black text-amber-950 md:text-3xl">
-          Build: {round.targetNumberDisplay}
-        </div>
-      </div>
-
-      <div className="min-h-[1.75rem]">
-        {feedback ? (
-          <div className={`pvp-feedback-banner rounded-xl border px-2.5 py-1 text-center shadow-[0_10px_20px_rgba(2,6,23,0.28)] ${feedbackToneClass(feedback.tone)}`}>
-            <div className="text-[10px] font-black uppercase tracking-[0.16em] md:text-[11px]">{feedback.title}</div>
-            <div className="text-[10px] font-semibold md:text-[11px]">{feedback.detail}</div>
-          </div>
-        ) : null}
-      </div>
-    </div>
+  const resolvedLevel = useMemo(
+    () => Math.max(1, Math.min(10, miniGameLevel || levelId || 1)),
+    [levelId, miniGameLevel],
   );
 
-  const playFieldArea = (
-    <div ref={playfieldRef} className="relative flex h-full min-h-0 w-full flex-col items-center justify-start gap-1.5 p-1.5 md:gap-2 md:p-2">
-      <div className="pvp-slot-grid-shell flex h-full min-h-0 w-full max-w-4xl flex-1 flex-col gap-1.5 rounded-2xl border border-white/14 bg-slate-900/35 p-1.5 md:gap-2 md:p-2">
-        <div
-          className="grid h-full min-h-0 auto-rows-fr grid-cols-2 gap-3 md:gap-4"
-        >
-          {activeSlots.map((slot) => {
-            const placedTile = placedBySlot.get(slot.key);
-            const isHovered = hoverSlotKey === slot.key;
-            const isHinted = hintSlotKey === slot.key;
-            const isFilled = Boolean(placedTile);
-            const isCorrectFlash = lastCorrectSlotKey === slot.key;
+  const [question, setQuestion] = useState<QuestionState>(() => makeQuestion(resolvedLevel));
+  const [stumps, setStumps] = useState<Array<Token | null>>(() => Array(STUMP_POINTS.length).fill(null));
+  const [answers, setAnswers] = useState<Array<Token | null>>(() => Array(question.units.length).fill(null));
+  const [selected, setSelected] = useState<SelectedTokenRef | null>(null);
+  const [goblinHealth, setGoblinHealth] = useState<number>(GOBLIN_MAX_HEALTH);
+  const [score, setScore] = useState<number>(0);
+  const [attempts, setAttempts] = useState<number>(0);
+  const [correctAnswers, setCorrectAnswers] = useState<number>(0);
+  const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
+  const [isResolving, setIsResolving] = useState<boolean>(false);
 
-            return (
-              <div
-                key={slot.id}
-                ref={(element) => {
-                  slotRefs.current[slot.key] = element;
-                }}
-                className={`pvp-slot relative flex min-h-[148px] select-none flex-col items-center justify-center overflow-hidden rounded-[1rem] border px-2 text-center shadow-[0_12px_24px_rgba(2,6,23,0.34)] transition-all md:min-h-[184px] md:rounded-[1.2rem] ${
-                  isFilled
-                    ? 'pvp-slot-filled'
-                    : isHovered
-                      ? 'pvp-slot-hovered'
-                      : isHinted
-                        ? 'animate-pulse pvp-slot-hinted'
-                        : 'pvp-slot-empty'
-                } ${isCorrectFlash ? 'pvp-slot-correct-flash' : ''}`}
-                style={{ minHeight: 'clamp(10rem, 27vh, 14.25rem)' }}
-              >
-                <div className="pvp-slot-label text-[10px] font-black uppercase tracking-[0.18em] text-white/75 md:text-xs">{slot.label}</div>
-                <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/50 md:text-xs">{SLOT_DISPLAY_VALUES[slot.key]}</div>
-                <div className="pvp-slot-square-socket mt-1">
-                  {isFilled && placedTile ? (
-                    <div className={`pvp-slot-square-gem ${isForgingTransition ? 'pvp-forge-pulse' : ''}`}>
-                      <img
-                        src={getGemTexture(placedTile.digitValue)}
-                        alt=""
-                        className="pvp-gem-art"
-                        draggable={false}
-                      />
-                      <span className="pvp-slot-square-gem-digit">{placedTile.digitValue}</span>
-                    </div>
-                  ) : (
-                    <div className="pvp-slot-empty-square-glyph">?</div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+  const victoryDispatchedRef = useRef(false);
+
+  const distributeTokensToStumps = useCallback((tokenValues: number[], seedId: string) => {
+    const nextStumps: Array<Token | null> = Array(STUMP_POINTS.length).fill(null);
+    const openIndices = shuffle(Array.from({ length: STUMP_POINTS.length }, (_, index) => index)).slice(0, tokenValues.length);
+
+    tokenValues.forEach((value, idx) => {
+      const targetIndex = openIndices[idx];
+      nextStumps[targetIndex] = {
+        id: `${seedId}-token-${idx}`,
+        value,
+      };
+    });
+
+    return nextStumps;
+  }, []);
+
+  const resetForQuestion = useCallback((nextQuestion: QuestionState) => {
+    setQuestion(nextQuestion);
+    setStumps(distributeTokensToStumps(nextQuestion.tokenValues, nextQuestion.id));
+    setAnswers(Array(nextQuestion.units.length).fill(null));
+    setSelected(null);
+    setIsResolving(false);
+  }, [distributeTokensToStumps]);
+
+  useEffect(() => {
+    resetForQuestion(makeQuestion(resolvedLevel));
+  }, [resetForQuestion, resolvedLevel]);
+
+  const handleMoveToken = useCallback((toLocation: TokenLocation, toIndex: number) => {
+    if (!selected || isResolving) return;
+
+    const nextStumps = [...stumps];
+    const nextAnswers = [...answers];
+
+    const getToken = (location: TokenLocation, index: number): Token | null => {
+      return location === 'stump' ? nextStumps[index] : nextAnswers[index];
+    };
+
+    const setToken = (location: TokenLocation, index: number, token: Token | null) => {
+      if (location === 'stump') nextStumps[index] = token;
+      else nextAnswers[index] = token;
+    };
+
+    const sourceToken = getToken(selected.location, selected.index);
+    if (!sourceToken) {
+      setSelected(null);
+      return;
+    }
+
+    const targetToken = getToken(toLocation, toIndex);
+    setToken(toLocation, toIndex, sourceToken);
+    setToken(selected.location, selected.index, targetToken || null);
+
+    setStumps(nextStumps);
+    setAnswers(nextAnswers);
+    setSelected(null);
+    triggerHaptic('selection');
+  }, [answers, isResolving, selected, stumps]);
+
+  const handleSlotPress = useCallback((location: TokenLocation, index: number) => {
+    const token = location === 'stump' ? stumps[index] : answers[index];
+
+    if (!selected) {
+      if (!token || isResolving) return;
+      setSelected({ location, index });
+      triggerHaptic('selection');
+      return;
+    }
+
+    if (selected.location === location && selected.index === index) {
+      setSelected(null);
+      return;
+    }
+
+    handleMoveToken(location, index);
+  }, [answers, handleMoveToken, isResolving, selected, stumps]);
+
+  const advanceRound = useCallback((newHealth: number) => {
+    if (newHealth <= 0 && !victoryDispatchedRef.current) {
+      victoryDispatchedRef.current = true;
+      const finalAccuracy = attempts > 0 ? correctAnswers / attempts : 1;
+      const stars = scoreToStars(finalAccuracy);
+      window.setTimeout(() => onVictory(stars, Math.max(0, score)), 380);
+      return;
+    }
+
+    const next = makeQuestion(resolvedLevel);
+    window.setTimeout(() => {
+      setFeedback(null);
+      resetForQuestion(next);
+    }, 700);
+  }, [attempts, correctAnswers, onVictory, resetForQuestion, resolvedLevel, score]);
+
+  useEffect(() => {
+    if (isResolving) return;
+    if (answers.length === 0 || answers.some((token) => token === null)) return;
+
+    const formedAnswer = answers.map((token) => token?.value ?? '').join('');
+    const isCorrect = formedAnswer === question.expected;
+    setIsResolving(true);
+    setAttempts((prev) => prev + 1);
+
+    if (isCorrect) {
+      const gained = 120 + (resolvedLevel * 20);
+      const newHealth = Math.max(0, goblinHealth - 1);
+      setScore((prev) => prev + gained);
+      setGoblinHealth(newHealth);
+      setCorrectAnswers((prev) => prev + 1);
+      setFeedback({ tone: 'success', message: `Direct hit! Goblin HP ${newHealth}/10` });
+      triggerHaptic('success');
+      advanceRound(newHealth);
+      return;
+    }
+
+    const newHealth = Math.min(GOBLIN_MAX_HEALTH, goblinHealth + 1);
+    setGoblinHealth(newHealth);
+    setFeedback({ tone: 'error', message: `Wrong order. Goblin healed to ${newHealth}/10` });
+    triggerHaptic('warning');
+    advanceRound(newHealth);
+  }, [advanceRound, answers, goblinHealth, isResolving, question.expected, resolvedLevel]);
+
+  const answerSlotXs = useMemo(() => {
+    const spacing = question.units.length <= 3 ? 13 : 11;
+    const start = 50 - ((question.units.length - 1) * spacing) / 2;
+    return Array.from({ length: question.units.length }, (_, idx) => start + idx * spacing);
+  }, [question.units.length]);
+
+  return (
+    <div
+      className="fixed inset-0 z-20 h-screen w-screen overflow-hidden select-none"
+      style={{ touchAction: 'manipulation' }}
+    >
+      <img
+        src={placeValueBackground}
+        alt="Place Value Panic"
+        className="absolute inset-0 h-full w-full object-cover object-center"
+        draggable={false}
+      />
+
+      <button
+        type="button"
+        onClick={onBack}
+        className="absolute left-3 top-[max(0.75rem,env(safe-area-inset-top))] z-40 rounded-full bg-slate-900/70 px-3 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-white shadow-[0_8px_20px_rgba(2,6,23,0.45)]"
+      >
+        Back
+      </button>
+
+      <div className="absolute right-3 top-[max(0.75rem,env(safe-area-inset-top))] z-40 flex items-center gap-2 rounded-full bg-slate-900/70 px-3 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-white shadow-[0_8px_20px_rgba(2,6,23,0.45)]">
+        Score {score}
+      </div>
+
+      <div className="pointer-events-none absolute left-1/2 top-[16.5%] z-30 w-[74%] -translate-x-1/2 text-center">
+        <div className="text-[clamp(0.75rem,2.2vw,1.1rem)] font-black text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]">
+          {question.prompt}
         </div>
       </div>
-      {dragState ? (
-        (() => {
-          const relativePoint = getPlayfieldRelativePoint(dragState.clientX, dragState.clientY);
+
+      <div className="absolute right-[2.5%] top-[48%] z-30 w-[34%] max-w-[15rem] rounded-xl bg-slate-900/75 px-2.5 py-2 shadow-[0_10px_24px_rgba(2,6,23,0.48)]">
+        <div className="mb-1 text-center text-[9px] font-black uppercase tracking-[0.14em] text-amber-200">
+          Goblin Health {goblinHealth}/10
+        </div>
+        <div className="grid grid-cols-10 gap-1">
+          {Array.from({ length: GOBLIN_MAX_HEALTH }, (_, idx) => (
+            <span
+              key={`hp-${idx}`}
+              className={`h-2 rounded-full ${
+                idx < goblinHealth ? 'bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.7)]' : 'bg-slate-600/50'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="absolute left-1/2 top-[61%] z-30 flex w-[72%] -translate-x-1/2 items-center justify-center gap-2.5">
+        {answerSlotXs.map((x, idx) => {
+          const token = answers[idx];
+          const isSelected = selected?.location === 'answer' && selected.index === idx;
+
           return (
-            <motion.div
-              className="pvp-drag-ghost pointer-events-none absolute z-[70] flex items-center justify-center rounded-xl border border-cyan-100/70 text-2xl font-black text-white shadow-[0_14px_34px_rgba(2,6,23,0.42)]"
+            <button
+              key={`answer-slot-${idx}`}
+              type="button"
+              onClick={() => handleSlotPress('answer', idx)}
+              className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-2xl border-2 transition-all ${
+                token
+                  ? 'border-yellow-300/95 bg-gradient-to-b from-[#27438a] to-[#172d63] shadow-[0_10px_20px_rgba(15,23,42,0.5)]'
+                  : 'border-cyan-100/70 bg-[#081b45]/45'
+              } ${isSelected ? 'ring-4 ring-cyan-300/65' : ''}`}
               style={{
-                width: dragState.width,
-                height: dragState.height,
-                left: relativePoint.x - dragState.offsetX,
-                top: relativePoint.y - dragState.offsetY,
+                left: `${x}%`,
+                top: '0%',
+                width: 'clamp(3.2rem,8.4vw,4.8rem)',
+                height: 'clamp(3.2rem,8.4vw,4.8rem)',
               }}
-              initial={{ scale: 1 }}
-              animate={{ scale: 1.04 }}
             >
-              <img
-                src={getGemTexture(dragState.tile.digitValue)}
-                alt=""
-                className="pvp-gem-art"
-                draggable={false}
-              />
-              <span className="pvp-digit-gem-number">{dragState.tile.digitValue}</span>
-            </motion.div>
+              <span className={`text-[clamp(1.4rem,4vw,2.2rem)] font-black ${token ? 'text-white' : 'text-cyan-100/60'}`}>
+                {token ? token.value : '?'}
+              </span>
+            </button>
           );
-        })()
-      ) : null}
+        })}
+      </div>
+
+      <div className="absolute inset-0 z-20">
+        {STUMP_POINTS.map((point, idx) => {
+          const token = stumps[idx];
+          const isSelected = selected?.location === 'stump' && selected.index === idx;
+
+          return (
+            <button
+              key={`stump-${idx}`}
+              type="button"
+              onClick={() => handleSlotPress('stump', idx)}
+              className={`absolute -translate-x-1/2 -translate-y-1/2 ${
+                token ? 'cursor-pointer' : 'cursor-default'
+              } ${isSelected ? 'ring-4 ring-cyan-300/65 rounded-2xl' : ''}`}
+              style={{ left: `${point.x}%`, top: `${point.y}%` }}
+            >
+              {token ? (
+                <motion.div
+                  layout
+                  className="flex items-center justify-center rounded-2xl border-2 border-yellow-300/95 bg-gradient-to-b from-[#2f53a2] via-[#213f84] to-[#162a5a] px-3 py-2 shadow-[0_12px_26px_rgba(15,23,42,0.56)]"
+                  style={{
+                    width: 'clamp(3.1rem,8vw,4.7rem)',
+                    height: 'clamp(3.1rem,8vw,4.7rem)',
+                  }}
+                  whileTap={{ scale: 0.94 }}
+                >
+                  <span className="text-[clamp(1.5rem,4.2vw,2.4rem)] font-black text-white drop-shadow-[0_2px_6px_rgba(2,6,23,0.7)]">
+                    {token.value}
+                  </span>
+                </motion.div>
+              ) : (
+                <span className="block h-[clamp(2.8rem,7.8vw,4.2rem)] w-[clamp(2.8rem,7.8vw,4.2rem)] rounded-2xl border border-transparent" />
+              )}
+            </button>
+          );
+        })}
+      </div>
 
       <AnimatePresence>
-        {isForgingTransition ? (
+        {feedback ? (
           <motion.div
-            key={`forged-${round.id}`}
-            className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            key={feedback.message}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16 }}
+            className={`absolute bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 z-40 -translate-x-1/2 rounded-full border px-5 py-2 text-xs font-black uppercase tracking-[0.14em] shadow-[0_12px_28px_rgba(2,6,23,0.55)] ${
+              feedback.tone === 'success'
+                ? 'border-emerald-200/70 bg-emerald-500/35 text-emerald-50'
+                : 'border-rose-200/70 bg-rose-500/35 text-rose-50'
+            }`}
           >
-            <motion.div
-              className="pvp-forged-burst"
-              initial={{ scale: 0.8, opacity: 0, y: 12 }}
-              animate={{ scale: [0.88, 1.12, 1], opacity: [0, 1, 0.86, 0], y: [12, -6, -18] }}
-              transition={{ duration: 0.66, ease: 'easeOut' }}
-            >
-              FORGED!
-            </motion.div>
+            {feedback.message}
           </motion.div>
         ) : null}
       </AnimatePresence>
     </div>
-  );
-
-  const interactionArea = (
-    <div className="pvp-tray-shell relative flex min-h-0 flex-col gap-1.5 overflow-hidden px-2 py-1.5 md:gap-2 md:px-2.5 md:py-2">
-      <div className="flex items-center justify-between">
-        <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/75 md:text-xs">Digit Queue</div>
-        <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/75 md:text-xs">
-          Accuracy {Math.round(accuracy * 100)}%
-        </div>
-      </div>
-
-      <div className="grid min-h-0 flex-1 auto-rows-fr grid-cols-4 gap-2 overflow-y-auto sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8">
-        <AnimatePresence mode="popLayout">
-          {trayTiles.map((tile) => {
-            const isDragging = dragState?.tile.id === tile.id;
-            const isRejected = lastRejectedTileId === tile.id;
-
-            return (
-              <motion.button
-                key={tile.id}
-                type="button"
-                onPointerDown={(event) => handleTilePointerDown(event, tile)}
-                disabled={isPaused}
-                className={`pvp-digit-tile flex h-full items-center justify-center rounded-xl border text-2xl font-black transition touch-none ${
-                  isDragging
-                    ? 'opacity-25'
-                    : 'opacity-100'
-                } ${
-                  isRejected
-                    ? 'border-rose-200/70 bg-rose-500/30'
-                    : 'border-white/20 bg-slate-900/60'
-                } text-white/95 ${isDragging ? 'pvp-digit-selected' : ''}`}
-                style={{ minHeight: Math.max(MIN_TAP_TARGET, 62) }}
-                initial={{ opacity: 0, y: 8, scale: 0.86 }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                  scale: 1,
-                  x: isRejected ? [0, -7, 7, -5, 5, 0] : 0,
-                }}
-                exit={{ opacity: 0, y: 8, scale: 0.8 }}
-                transition={{ type: 'spring', stiffness: 230, damping: 18 }}
-              >
-                <div className={`pvp-digit-gem-square ${isForgingTransition ? 'pvp-forge-pulse' : ''}`}>
-                  <img
-                    src={getGemTexture(tile.digitValue)}
-                    alt=""
-                    className="pvp-gem-art"
-                    draggable={false}
-                  />
-                  <span className="pvp-digit-gem-number">{tile.digitValue}</span>
-                </div>
-              </motion.button>
-            );
-          })}
-        </AnimatePresence>
-      </div>
-    </div>
-  );
-
-  return (
-    <GameContainerView
-      gameType="place_value_peaks"
-      sceneBackgroundOverride={placeValuePanicBackground}
-      sceneMinimalDecor
-      title="Place Value Panic"
-      avatar={avatar}
-      score={Math.round(score)}
-      targetScore={levelConfig.targetScore}
-      timeLeft={timeLeft}
-      progress={progress}
-      hudProgressBarClass="bg-gradient-to-r from-amber-300 via-yellow-300 to-cyan-300"
-      hudCompact={false}
-      roundLabel="Round"
-      roundValue={roundsCleared + 1}
-      showHeaderTitleRow={false}
-      stageClassName="pvp-stage-layout"
-      objectiveArea={objectiveArea}
-      playFieldArea={playFieldArea}
-      interactionArea={interactionArea}
-      dockCompact
-      isPaused={isPaused}
-      onResume={() => setIsPaused(false)}
-      onBack={onBack}
-    />
   );
 };
 

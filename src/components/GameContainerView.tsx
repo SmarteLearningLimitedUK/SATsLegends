@@ -35,6 +35,9 @@ interface GameContainerViewProps {
   dockCompact?: boolean;
   stageClassName?: string;
   hudProgressBarClass?: string;
+  flattenObjectiveShell?: boolean;
+  flattenPlayfieldShell?: boolean;
+  interactionShell?: 'default' | 'none';
 }
 
 const GameContainerView: React.FC<GameContainerViewProps> = ({
@@ -67,6 +70,9 @@ const GameContainerView: React.FC<GameContainerViewProps> = ({
   dockCompact = false,
   stageClassName = '',
   hudProgressBarClass = 'bg-gradient-to-r from-cyan-400 via-sky-400 to-sky-400',
+  flattenObjectiveShell = false,
+  flattenPlayfieldShell = false,
+  interactionShell = 'default',
 }) => {
   const objectiveShellStyle: React.CSSProperties = {
     backgroundImage: `url(${MAIN_PNG_SKIN.mission})`,
@@ -113,20 +119,32 @@ const GameContainerView: React.FC<GameContainerViewProps> = ({
 
         <div className="aaa-zone aaa-zone-objective w-full">
           <div
-            className="aaa-objective-shell mission-objective-shell relative w-full overflow-hidden rounded-[1.1rem] border border-white/18 px-2 py-1.5 shadow-[0_10px_24px_rgba(2,6,23,0.28)] md:rounded-[1.35rem] md:px-3 md:py-2"
-            style={objectiveShellStyle}
+            className={`aaa-objective-shell mission-objective-shell relative w-full ${
+              flattenObjectiveShell
+                ? 'overflow-visible border-0 bg-transparent px-0 py-0 shadow-none'
+                : 'overflow-hidden rounded-[1.1rem] border border-white/18 px-2 py-1.5 shadow-[0_10px_24px_rgba(2,6,23,0.28)] md:rounded-[1.35rem] md:px-3 md:py-2'
+            }`}
+            style={flattenObjectiveShell ? undefined : objectiveShellStyle}
           >
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,15,33,0.08),rgba(7,15,33,0.32))]" />
+            {!flattenObjectiveShell ? (
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,15,33,0.08),rgba(7,15,33,0.32))]" />
+            ) : null}
             <div className="relative z-10">{objectiveArea}</div>
           </div>
         </div>
 
         <div className="aaa-zone aaa-zone-playfield relative w-full min-h-0 flex-1">
           <div
-            className="aaa-playfield-shell mission-playfield-shell relative h-full w-full min-h-0 overflow-hidden rounded-[1.6rem] border border-white/15 shadow-[0_22px_44px_rgba(2,6,23,0.42)] md:rounded-[2rem]"
-            style={playfieldShellStyle}
+            className={`aaa-playfield-shell mission-playfield-shell relative h-full w-full min-h-0 ${
+              flattenPlayfieldShell
+                ? 'overflow-visible border-0 bg-transparent shadow-none rounded-none'
+                : 'overflow-hidden rounded-[1.6rem] border border-white/15 shadow-[0_22px_44px_rgba(2,6,23,0.42)] md:rounded-[2rem]'
+            }`}
+            style={flattenPlayfieldShell ? undefined : playfieldShellStyle}
           >
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,28,0.3),rgba(3,10,28,0.58))]" />
+            {!flattenPlayfieldShell ? (
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,28,0.3),rgba(3,10,28,0.58))]" />
+            ) : null}
             <div className="relative z-10 h-full w-full min-h-0">
               {playFieldArea}
             </div>
@@ -155,9 +173,13 @@ const GameContainerView: React.FC<GameContainerViewProps> = ({
 
         <div className="aaa-zone aaa-zone-actions shared-game-actions w-full">
           {interactionArea ? (
-            <div className="shared-game-interaction-panel">
-              {interactionArea}
-            </div>
+            interactionShell === 'none'
+              ? <div className="min-h-0">{interactionArea}</div>
+              : (
+                <div className="shared-game-interaction-panel">
+                  {interactionArea}
+                </div>
+              )
           ) : null}
         </div>
         <div className="aaa-zone aaa-zone-controls w-full">
