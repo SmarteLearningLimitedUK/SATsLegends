@@ -45,6 +45,8 @@ interface DragState {
   height: number;
 }
 
+type GoblinEffect = 'idle' | 'hit' | 'heal';
+
 const GOBLIN_MAX_HEALTH = 10;
 
 const TARGET_ANCHORS: AnchorPoint[] = [{ x: 22 }, { x: 35 }, { x: 48 }, { x: 61 }, { x: 74 }];
@@ -218,6 +220,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const [correctAnswers, setCorrectAnswers] = useState<number>(0);
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
   const [isResolving, setIsResolving] = useState(false);
+  const [goblinEffect, setGoblinEffect] = useState<GoblinEffect>('idle');
 
   const victoryDispatchedRef = useRef(false);
   const playfieldRef = useRef<HTMLDivElement | null>(null);
@@ -243,6 +246,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     setSourceSlots(shuffle(nextSources));
     setDragState(null);
     setIsResolving(false);
+    setGoblinEffect('idle');
   }, []);
 
   useEffect(() => {
@@ -334,7 +338,16 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     };
 
     if (!candidate) {
-      setToken(dragState.fromLocation, dragState.fromIndex, dragState.token);
+      if (dragState.fromLocation === 'target') {
+        const firstOpenSource = nextSources.findIndex((item) => item === null);
+        if (firstOpenSource >= 0) {
+          nextSources[firstOpenSource] = dragState.token;
+        } else {
+          setToken(dragState.fromLocation, dragState.fromIndex, dragState.token);
+        }
+      } else {
+        setToken(dragState.fromLocation, dragState.fromIndex, dragState.token);
+      }
       setTargetSlots(nextTargets);
       setSourceSlots(nextSources);
       return;
@@ -415,6 +428,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       setCorrectAnswers((prev) => prev + 1);
       setScore((prev) => prev + (140 + resolvedLevel * 22));
       setFeedback({ tone: 'success', message: `DIRECT HIT! GOBLIN HP ${nextHealth}/10` });
+      setGoblinEffect('hit');
       triggerHaptic('success');
       advanceRound(nextHealth);
       return;
@@ -423,13 +437,15 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const nextHealth = Math.min(GOBLIN_MAX_HEALTH, goblinHealth + 1);
     setGoblinHealth(nextHealth);
     setFeedback({ tone: 'error', message: `WRONG ORDER! GOBLIN HP ${nextHealth}/10` });
+    setGoblinEffect('heal');
     triggerHaptic('warning');
     advanceRound(nextHealth);
   }, [advanceRound, goblinHealth, isResolving, question.expectedDigits, resolvedLevel, targetSlots]);
 
   const numberStyle: React.CSSProperties = {
-    WebkitTextStroke: '2px #050b1d',
-    textShadow: '0 3px 0 rgba(5,11,29,0.95), 0 0 10px rgba(148,163,184,0.42)',
+    fontFamily: '"Trebuchet MS", "Arial Rounded MT Bold", "Avenir Next", "Nunito", sans-serif',
+    letterSpacing: '0.01em',
+    textShadow: '0 2px 0 rgba(5,11,29,0.9), 0 0 8px rgba(148,163,184,0.35)',
   };
 
   return (
@@ -495,14 +511,45 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         className="pointer-events-none absolute right-[1.5%] z-30"
         style={{ top: `${layout.enemyTop}%`, width: `${layout.enemyWidth}%` }}
       >
-        <motion.img
-          src={goblinEnemy}
-          alt="Goblin enemy"
-          draggable={false}
-          className="h-auto w-full object-contain drop-shadow-[0_16px_22px_rgba(2,6,23,0.5)]"
-          animate={{ y: [0, -5, 0] }}
-          transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-        />
+        <div className="relative">
+          <motion.div
+            className="absolute inset-[10%] rounded-full blur-2xl"
+            animate={{
+              opacity: goblinEffect === 'idle' ? 0.22 : 0.52,
+              scale: goblinEffect === 'idle' ? 1 : [1, 1.12, 1],
+              backgroundColor:
+                goblinEffect === 'hit'
+                  ? 'rgba(248,113,113,0.92)'
+                  : goblinEffect === 'heal'
+                    ? 'rgba(74,222,128,0.9)'
+                    : 'rgba(56,189,248,0.55)',
+            }}
+            transition={{
+              duration: goblinEffect === 'hit' ? 0.32 : 0.45,
+              ease: 'easeInOut',
+              repeat: goblinEffect === 'idle' ? Infinity : 0,
+              repeatDelay: 1.1,
+            }}
+          />
+          <motion.img
+            src={goblinEnemy}
+            alt="Goblin enemy"
+            draggable={false}
+            className="relative h-auto w-full object-contain drop-shadow-[0_16px_22px_rgba(2,6,23,0.5)]"
+            animate={{
+              y: [0, -5, 0],
+              x: goblinEffect === 'hit' ? [0, -9, 9, -8, 8, -5, 5, 0] : 0,
+              rotate: goblinEffect === 'hit' ? [0, -2.2, 2.2, -1.8, 1.8, 0] : 0,
+              scale: goblinEffect === 'heal' ? [1, 1.03, 1] : 1,
+            }}
+            transition={{
+              y: { duration: 1.8, repeat: Infinity, ease: 'easeInOut' },
+              x: { duration: 0.35, ease: 'easeInOut' },
+              rotate: { duration: 0.35, ease: 'easeInOut' },
+              scale: { duration: 0.35, ease: 'easeInOut' },
+            }}
+          />
+        </div>
       </div>
 
       <div ref={playfieldRef} className="absolute inset-0 z-20">
