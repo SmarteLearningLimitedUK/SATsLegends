@@ -4,9 +4,8 @@ import { AVATARS } from '../constants';
 import { triggerHaptic } from '../haptics';
 import avatarSelectBackground from '../assets/casual_ui/pedestal char select.png';
 import splashStyleButton from '../assets/casual_ui/inputs/btn_1.png';
-import chooseBanner from '../assets/characters/choose.png';
+import chooseBanner from '../assets/characters/CHOOSEYOURHERO.png';
 import avatarNextIcon from '../assets/importedassets/Icons/icon - next.png';
-import mochiBanner from '../assets/characters/mochibanner.png';
 
 const AVATAR_FOOT_ANCHOR_MAIN_Y_PX: Record<string, number> = {
   barratt: 0,
@@ -21,8 +20,8 @@ const AVATAR_FOOT_ANCHOR_SIDE_Y_PX: Record<string, number> = {
   vex: 4,
   mochi: 12,
 };
-const AVATAR_MAIN_GLOBAL_LIFT_PX = -160;
-const AVATAR_SIDE_GLOBAL_LIFT_PX = -130;
+const AVATAR_MAIN_GLOBAL_LIFT_PX = -62;
+const AVATAR_SIDE_GLOBAL_LIFT_PX = -50;
 const AVATAR_MAIN_VISUAL_SCALE = 2.4;
 const AVATAR_SIDE_VISUAL_SCALE = 2.1;
 
@@ -87,16 +86,6 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               />
             </div>
           </div>
-          <div className="avatar-hero-name-banner avatar-hero-name-banner-under-title">
-            <img
-              src={mochiBanner}
-              alt=""
-              aria-hidden
-              className="avatar-hero-name-banner-art"
-              draggable={false}
-            />
-          </div>
-
           <div className="avatar-hero-stage relative mt-2 flex min-h-0 flex-1 items-center justify-center overflow-visible md:mt-3">
             <motion.button
               whileHover={{ scale: 1.04 }}

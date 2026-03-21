@@ -3925,7 +3925,7 @@ button:disabled {
 
 .avatar-carousel-banner {
   position: relative;
-  width: min(100%, clamp(18.5rem, 70vw, 28.5rem));
+  width: min(100%, clamp(23rem, 84vw, 36rem));
   aspect-ratio: 3.1 / 1;
   display: flex;
   align-items: center;
@@ -3983,7 +3983,7 @@ button:disabled {
     clamp(1.2rem, 5.4vw, 3rem)
     clamp(0.15rem, 1vw, 0.35rem);
   overflow: visible;
-  transform: translateY(clamp(-5.2rem, -7.4vh, -3.2rem));
+  transform: translateY(clamp(-2.6rem, -4.2vh, -1.5rem));
 }
 
 .avatar-carousel-main {
