@@ -16,7 +16,6 @@ type TokenLocation = 'source' | 'target';
 
 interface AnchorPoint {
   x: number;
-  y: number;
 }
 
 interface Token {
@@ -40,20 +39,20 @@ interface SelectionRef {
 const GOBLIN_MAX_HEALTH = 10;
 
 const TARGET_ANCHORS: AnchorPoint[] = [
-  { x: 26, y: 58.5 },
-  { x: 38, y: 58.5 },
-  { x: 50, y: 58.5 },
-  { x: 62, y: 58.5 },
-  { x: 74, y: 58.5 },
+  { x: 26 },
+  { x: 38 },
+  { x: 50 },
+  { x: 62 },
+  { x: 74 },
 ];
 
 const SOURCE_ANCHORS: AnchorPoint[] = [
-  { x: 18, y: 75.5 },
-  { x: 30, y: 75.5 },
-  { x: 42, y: 75.5 },
-  { x: 54, y: 75.5 },
-  { x: 66, y: 75.5 },
-  { x: 78, y: 75.5 },
+  { x: 18 },
+  { x: 30 },
+  { x: 42 },
+  { x: 54 },
+  { x: 66 },
+  { x: 78 },
 ];
 
 const ONES_WORDS = [
@@ -167,10 +166,43 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   onGameOver: _onGameOver,
   onBack,
 }) => {
+  const [viewport, setViewport] = useState(() => {
+    if (typeof window === 'undefined') {
+      return { width: 390, height: 844 };
+    }
+    return { width: window.innerWidth, height: window.innerHeight };
+  });
+
+  useEffect(() => {
+    const onResize = () => setViewport({ width: window.innerWidth, height: window.innerHeight });
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
   const resolvedLevel = useMemo(
     () => Math.max(1, Math.min(10, miniGameLevel || levelId || 1)),
     [levelId, miniGameLevel],
   );
+
+  const layout = useMemo(() => {
+    const ratio = viewport.height / Math.max(1, viewport.width);
+    const isTablet = Math.min(viewport.width, viewport.height) >= 760;
+    const isTallPhone = !isTablet && ratio > 1.95;
+
+    return {
+      questionTop: isTablet ? 11.9 : (isTallPhone ? 12.6 : 12.1),
+      questionWidth: isTablet ? 50 : 56,
+      targetY: isTablet ? 57.8 : (isTallPhone ? 58.8 : 58.2),
+      sourceY: isTablet ? 75.0 : (isTallPhone ? 76.6 : 75.8),
+      tokenWidth: isTablet ? '10.5%' : '12%',
+      targetHeight: isTablet ? '8.2%' : '9%',
+      sourceHeight: isTablet ? '9.2%' : '10%',
+      targetFont: isTablet ? 'clamp(2.4rem,4.8vw,4.25rem)' : 'clamp(2.1rem,5.8vw,4rem)',
+      sourceFont: isTablet ? 'clamp(2.3rem,4.7vw,4.1rem)' : 'clamp(2rem,5.6vw,3.9rem)',
+      healthTop: isTablet ? 40 : 44,
+      healthWidth: isTablet ? 28 : 33,
+    };
+  }, [viewport.height, viewport.width]);
 
   const [question, setQuestion] = useState<QuestionState>(() => makeQuestion(resolvedLevel));
   const [targetSlots, setTargetSlots] = useState<Array<Token | null>>([]);
@@ -331,6 +363,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       </div>
 
       <div className="pointer-events-none absolute left-1/2 top-[12.5%] z-30 w-[56%] -translate-x-1/2 text-center">
+      <div
+        className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2 text-center"
+        style={{ top: `${layout.questionTop}%`, width: `${layout.questionWidth}%` }}
+      >
         <div
           className="text-[clamp(0.74rem,2vw,1.15rem)] font-black leading-tight tracking-[0.04em] text-white"
           style={{ textShadow: '0 2px 6px rgba(2,6,23,0.62)' }}
@@ -339,7 +375,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
       </div>
 
-      <div className="absolute right-[2%] top-[44%] z-30 w-[33%] max-w-[15rem] rounded-xl bg-slate-900/72 px-2.5 py-2 shadow-[0_10px_24px_rgba(2,6,23,0.48)]">
+      <div
+        className="absolute right-[2%] z-30 max-w-[15rem] rounded-xl bg-slate-900/72 px-2.5 py-2 shadow-[0_10px_24px_rgba(2,6,23,0.48)]"
+        style={{ top: `${layout.healthTop}%`, width: `${layout.healthWidth}%` }}
+      >
         <div className="mb-1 text-center text-[9px] font-black uppercase tracking-[0.14em] text-amber-200">
           Goblin Health {goblinHealth}/10
         </div>
@@ -365,13 +404,13 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               type="button"
               onClick={() => handlePress('target', idx)}
               className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-xl ${isSelected ? 'ring-4 ring-cyan-300/70' : ''}`}
-              style={{ left: `${anchor.x}%`, top: `${anchor.y}%`, width: '12%', height: '9%' }}
+              style={{ left: `${anchor.x}%`, top: `${layout.targetY}%`, width: layout.tokenWidth, height: layout.targetHeight }}
             >
               <div className="mx-auto h-[22%] w-[80%] rounded-[999px] border border-slate-200/30 bg-black/18 shadow-[0_8px_16px_rgba(2,6,23,0.45)]" />
               {token ? (
                 <span
-                  className="mt-1 block text-[clamp(2.1rem,5.8vw,4rem)] font-black text-white"
-                  style={numberStyle}
+                  className="mt-1 block font-black text-white"
+                  style={{ ...numberStyle, fontSize: layout.targetFont }}
                 >
                   {token.value}
                 </span>
@@ -391,14 +430,14 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               type="button"
               onClick={() => handlePress('source', idx)}
               className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-xl ${isSelected ? 'ring-4 ring-cyan-300/70' : ''}`}
-              style={{ left: `${anchor.x}%`, top: `${anchor.y}%`, width: '12%', height: '10%' }}
+              style={{ left: `${anchor.x}%`, top: `${layout.sourceY}%`, width: layout.tokenWidth, height: layout.sourceHeight }}
             >
               <div className="mx-auto h-[22%] w-[80%] rounded-[999px] border border-slate-200/30 bg-black/18 shadow-[0_8px_16px_rgba(2,6,23,0.45)]" />
               {token ? (
                 <motion.span
                   layout
-                  className="mt-1 block text-[clamp(2rem,5.6vw,3.9rem)] font-black text-white"
-                  style={numberStyle}
+                  className="mt-1 block font-black text-white"
+                  style={{ ...numberStyle, fontSize: layout.sourceFont }}
                 >
                   {token.value}
                 </motion.span>
@@ -430,4 +469,3 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 };
 
 export default PlaceValuePanicGame;
-
