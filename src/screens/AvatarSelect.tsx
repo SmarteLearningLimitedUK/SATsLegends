@@ -31,16 +31,7 @@ interface AvatarSelectProps {
   onConfirm: () => void;
 }
 
-type AvatarVisual = {
-  id: string;
-  name: string;
-  image: string;
-  portrait?: string;
-  portraitVideo?: string;
-};
-
 const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onConfirm }) => {
-  const [failedVideoIds, setFailedVideoIds] = React.useState<Set<string>>(new Set());
   const selectedIndex = Math.max(0, AVATARS.findIndex((avatar) => avatar.id === selectedId));
   const selectedAvatar = AVATARS[selectedIndex] || AVATARS[0];
 
@@ -69,51 +60,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
     transform: `translateY(${AVATAR_SIDE_GLOBAL_LIFT_PX + (AVATAR_FOOT_ANCHOR_SIDE_Y_PX[avatarId] ?? 0)}px) scale(${AVATAR_SIDE_VISUAL_SCALE})`,
     transformOrigin: 'bottom center',
   });
-  const getAvatarImage = (avatar: AvatarVisual) => avatar.portrait || avatar.image;
-  const shouldUseVideo = (avatar: AvatarVisual) => Boolean(avatar.portraitVideo) && !failedVideoIds.has(avatar.id);
-  const handleVideoError = (avatarId: string) => {
-    setFailedVideoIds((prev) => {
-      if (prev.has(avatarId)) return prev;
-      const next = new Set(prev);
-      next.add(avatarId);
-      return next;
-    });
-  };
-  const renderAvatarMedia = (
-    avatar: AvatarVisual,
-    className: string,
-    style: React.CSSProperties,
-    decorative: boolean
-  ) => {
-    if (shouldUseVideo(avatar)) {
-      const videoToneClass = decorative ? 'avatar-hero-video avatar-hero-video-side' : 'avatar-hero-video avatar-hero-video-main';
-      return (
-        <video
-          src={avatar.portraitVideo}
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          onError={() => handleVideoError(avatar.id)}
-          className={`${className} ${videoToneClass} pointer-events-none`}
-          style={style}
-          aria-hidden={decorative}
-        />
-      );
-    }
-
-    return (
-      <img
-        src={getAvatarImage(avatar)}
-        alt={decorative ? '' : avatar.name}
-        aria-hidden={decorative}
-        className={className}
-        style={style}
-        draggable={false}
-      />
-    );
-  };
+  const getAvatarImage = (avatar: { portrait?: string; image: string }) => avatar.portrait || avatar.image;
 
   return (
     <div className="avatar-select-screen relative h-full w-full overflow-hidden">
@@ -169,12 +116,14 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                 className="avatar-carousel-side avatar-carousel-side-left"
                 aria-label={`Select ${previousAvatar.name}`}
               >
-                {renderAvatarMedia(
-                  previousAvatar,
-                  'h-[1440%] w-auto object-contain object-bottom',
-                  getSideFootOffsetStyle(previousAvatar.id),
-                  true
-                )}
+                <img
+                  src={getAvatarImage(previousAvatar)}
+                  alt=""
+                  aria-hidden
+                  className="h-[1440%] w-auto object-contain object-bottom"
+                  style={getSideFootOffsetStyle(previousAvatar.id)}
+                  draggable={false}
+                />
               </motion.button>
 
               <AnimatePresence mode="wait">
@@ -186,12 +135,13 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   transition={{ duration: 0.24, ease: 'easeOut' }}
                   className="avatar-carousel-main"
                 >
-                  {renderAvatarMedia(
-                    selectedAvatar,
-                    'h-[2240%] w-auto object-contain object-bottom',
-                    getMainFootOffsetStyle(selectedAvatar.id),
-                    false
-                  )}
+                  <img
+                    src={getAvatarImage(selectedAvatar)}
+                    alt={selectedAvatar.name}
+                    className="h-[2240%] w-auto object-contain object-bottom"
+                    style={getMainFootOffsetStyle(selectedAvatar.id)}
+                    draggable={false}
+                  />
                 </motion.div>
               </AnimatePresence>
 
@@ -203,12 +153,14 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                 className="avatar-carousel-side avatar-carousel-side-right"
                 aria-label={`Select ${nextAvatar.name}`}
               >
-                {renderAvatarMedia(
-                  nextAvatar,
-                  'h-[1440%] w-auto object-contain object-bottom',
-                  getSideFootOffsetStyle(nextAvatar.id),
-                  true
-                )}
+                <img
+                  src={getAvatarImage(nextAvatar)}
+                  alt=""
+                  aria-hidden
+                  className="h-[1440%] w-auto object-contain object-bottom"
+                  style={getSideFootOffsetStyle(nextAvatar.id)}
+                  draggable={false}
+                />
               </motion.button>
             </div>
 
