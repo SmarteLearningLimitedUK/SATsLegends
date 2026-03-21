@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { motion } from 'motion/react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
-import islandSelectPoster from '../assets/islandselect.png';
+import updatedIslandsPoster from '../assets/maps/updatedislands.png';
 
 interface WorldMapProps {
   player: PlayerData;
@@ -261,14 +261,14 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
 
   return (
     <div
-      className="premium-page-root premium-hub-map relative h-full w-full overflow-hidden md:overflow-y-auto md:overflow-x-hidden"
+      className="premium-page-root premium-hub-map relative h-full w-full overflow-y-auto overflow-x-hidden"
       style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}
     >
-      <div className="premium-map-stage relative h-full w-full md:h-auto md:min-h-full md:aspect-[1024/1792] lg:mx-auto lg:max-w-[56rem]">
+      <div className="premium-map-stage premium-map-stage-fullscreen relative min-h-full w-full">
         <img
-          src={islandSelectPoster}
+          src={updatedIslandsPoster}
           alt="Island select map"
-          className="absolute inset-0 h-full w-full object-cover md:object-cover md:object-top lg:object-contain"
+          className="block h-auto w-full max-w-none object-cover object-top"
           draggable={false}
         />
 

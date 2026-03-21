@@ -1008,7 +1008,9 @@ const App: React.FC = () => {
       : 'sat-shell-standard licensed-playfield-bg bg-slate-950 px-3 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] md:px-8 md:pt-[max(1rem,env(safe-area-inset-top))] md:pb-[max(1rem,env(safe-area-inset-bottom))]';
   const contentShellClass = useUnboundedSplashShell
     ? 'sat-screen-full-bleed items-stretch'
-    : isMapLayoutScreen
+    : isWorldMapScreen
+      ? 'sat-screen-full-bleed items-stretch'
+      : isMapLayoutScreen
       ? 'sat-screen-map-content'
       : 'sat-screen-standard-content items-stretch';
   const stageStyle = {

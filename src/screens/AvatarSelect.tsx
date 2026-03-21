@@ -4,26 +4,18 @@ import { AVATARS } from '../constants';
 import { triggerHaptic } from '../haptics';
 import avatarSelectBackground from '../assets/casual_ui/pedestal char select.png';
 import splashStyleButton from '../assets/casual_ui/inputs/btn_1.png';
-import chooseBanner from '../assets/characters/CHOOSEYOURHERO.png';
+import chooseBanner from '../assets/characters/choose.png';
 import avatarNextIcon from '../assets/importedassets/Icons/icon - next.png';
 
 const AVATAR_FOOT_ANCHOR_MAIN_Y_PX: Record<string, number> = {
   barratt: 0,
   bran: 6,
   vex: 8,
-  mochi: 50,
+  mochi: 60,
 };
 
-const AVATAR_FOOT_ANCHOR_SIDE_Y_PX: Record<string, number> = {
-  barratt: 0,
-  bran: 3,
-  vex: 4,
-  mochi: 32,
-};
 const AVATAR_MAIN_GLOBAL_LIFT_PX = -62;
-const AVATAR_SIDE_GLOBAL_LIFT_PX = -50;
 const AVATAR_MAIN_VISUAL_SCALE = 2.4;
-const AVATAR_SIDE_VISUAL_SCALE = 2.1;
 
 interface AvatarSelectProps {
   selectedId: string;
@@ -50,14 +42,8 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
 
   const previousIndex = (selectedIndex - 1 + AVATARS.length) % AVATARS.length;
   const nextIndex = (selectedIndex + 1) % AVATARS.length;
-  const previousAvatar = AVATARS[previousIndex] || selectedAvatar;
-  const nextAvatar = AVATARS[nextIndex] || selectedAvatar;
   const getMainFootOffsetStyle = (avatarId: string): React.CSSProperties => ({
     transform: `translateY(${AVATAR_MAIN_GLOBAL_LIFT_PX + (AVATAR_FOOT_ANCHOR_MAIN_Y_PX[avatarId] ?? 0)}px) scale(${AVATAR_MAIN_VISUAL_SCALE})`,
-    transformOrigin: 'bottom center',
-  });
-  const getSideFootOffsetStyle = (avatarId: string): React.CSSProperties => ({
-    transform: `translateY(${AVATAR_SIDE_GLOBAL_LIFT_PX + (AVATAR_FOOT_ANCHOR_SIDE_Y_PX[avatarId] ?? 0)}px) scale(${AVATAR_SIDE_VISUAL_SCALE})`,
     transformOrigin: 'bottom center',
   });
   const getAvatarImage = (avatar: { portrait?: string; image: string }) => avatar.portrait || avatar.image;
@@ -108,24 +94,6 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
             </motion.button>
 
             <div className="avatar-carousel-track">
-              <motion.button
-                type="button"
-                whileHover={{ scale: 0.92 }}
-                whileTap={{ scale: 0.86 }}
-                onClick={() => selectIndex(previousIndex)}
-                className="avatar-carousel-side avatar-carousel-side-left"
-                aria-label={`Select ${previousAvatar.name}`}
-              >
-                <img
-                  src={getAvatarImage(previousAvatar)}
-                  alt=""
-                  aria-hidden
-                  className="h-[1440%] w-auto object-contain object-bottom"
-                  style={getSideFootOffsetStyle(previousAvatar.id)}
-                  draggable={false}
-                />
-              </motion.button>
-
               <AnimatePresence mode="wait">
                 <motion.div
                   key={selectedAvatar.id}
@@ -133,7 +101,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.88, y: -18 }}
                   transition={{ duration: 0.24, ease: 'easeOut' }}
-                  className="avatar-carousel-main"
+                  className="avatar-carousel-main avatar-carousel-main-only"
                 >
                   <img
                     src={getAvatarImage(selectedAvatar)}
@@ -144,24 +112,6 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   />
                 </motion.div>
               </AnimatePresence>
-
-              <motion.button
-                type="button"
-                whileHover={{ scale: 0.92 }}
-                whileTap={{ scale: 0.86 }}
-                onClick={() => selectIndex(nextIndex)}
-                className="avatar-carousel-side avatar-carousel-side-right"
-                aria-label={`Select ${nextAvatar.name}`}
-              >
-                <img
-                  src={getAvatarImage(nextAvatar)}
-                  alt=""
-                  aria-hidden
-                  className="h-[1440%] w-auto object-contain object-bottom"
-                  style={getSideFootOffsetStyle(nextAvatar.id)}
-                  draggable={false}
-                />
-              </motion.button>
             </div>
 
             <motion.button

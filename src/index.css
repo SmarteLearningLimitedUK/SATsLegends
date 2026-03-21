@@ -710,6 +710,16 @@ button:disabled {
   width: 100%;
 }
 
+.premium-map-stage.premium-map-stage-fullscreen {
+  flex: 0 0 auto;
+  min-height: 100%;
+  height: auto;
+  width: 100%;
+  max-width: none;
+  aspect-ratio: auto;
+  margin-inline: 0;
+}
+
 .premium-modal-shell {
   width: min(94vw, 52rem);
   border-radius: clamp(1.15rem, 2.2vw, 2rem);
@@ -729,6 +739,13 @@ button:disabled {
     aspect-ratio: 1024 / 1792;
     max-width: min(56rem, 100%);
     margin-inline: auto;
+  }
+
+  .premium-map-stage.premium-map-stage-fullscreen {
+    min-height: 100%;
+    aspect-ratio: auto;
+    max-width: none;
+    margin-inline: 0;
   }
 }
 
@@ -3994,6 +4011,10 @@ button:disabled {
   align-items: flex-end;
   justify-content: center;
   overflow: visible;
+}
+
+.avatar-carousel-main.avatar-carousel-main-only {
+  grid-column: 2 / 3;
 }
 
 .avatar-carousel-side {
