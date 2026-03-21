@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { motion } from 'motion/react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
-import islandReskinPoster from '../assets/maps/islandreskin.png';
+import islandReskinPoster from '../assets/maps/islandreskin2.png';
 
 interface WorldMapProps {
   player: PlayerData;
