@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
 import islandReskinPoster from '../assets/maps/finalislandreskin.png';
-import welcomeToMathariaLogo from '../assets/maps/welcometomatharia.png';
+import welcomeMathLogo from '../assets/maps/welcomemathlogo.png';
 
 interface WorldMapProps {
   player: PlayerData;
@@ -267,18 +267,21 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
     >
       <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex justify-center px-4 pt-[max(0.75rem,env(safe-area-inset-top))]">
         <img
-          src={welcomeToMathariaLogo}
+          src={welcomeMathLogo}
           alt="Welcome to Matharia"
           className="h-auto w-[min(86vw,34rem)] select-none drop-shadow-[0_8px_20px_rgba(0,0,0,0.35)]"
           draggable={false}
         />
       </div>
 
-      <div className="premium-map-stage premium-map-stage-fullscreen relative min-h-full w-full">
+      <div
+        className="premium-map-stage premium-map-stage-fullscreen relative w-full"
+        style={{ minHeight: 'max(132dvh, calc(100vw * 2))' }}
+      >
         <img
           src={islandReskinPoster}
           alt="Island select map"
-          className="block h-auto w-full max-w-none object-cover object-top"
+          className="absolute inset-0 block h-full w-full max-w-none object-cover object-top"
           draggable={false}
         />
 
