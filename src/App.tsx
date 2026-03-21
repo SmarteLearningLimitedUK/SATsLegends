@@ -1013,6 +1013,9 @@ const App: React.FC = () => {
       : isMapLayoutScreen
       ? 'sat-screen-map-content'
       : 'sat-screen-standard-content items-stretch';
+  const useFlatScreenScaleTransition = isAvatarSelectionScreen;
+  const screenEnterScale = useFlatScreenScaleTransition ? 1 : 0.98;
+  const screenExitScale = useFlatScreenScaleTransition ? 1 : 1.02;
   const stageStyle = {
     '--game-stage-width': `${IPHONE_STAGE_WIDTH}px`,
     '--game-stage-height': `${IPHONE_STAGE_HEIGHT}px`,
@@ -1032,9 +1035,9 @@ const App: React.FC = () => {
             <AnimatePresence mode="wait">
               <motion.div
                 key={screen}
-                initial={{ opacity: 0, scale: 0.98 }}
+                initial={{ opacity: 0, scale: screenEnterScale }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.02 }}
+                exit={{ opacity: 0, scale: screenExitScale }}
                 className={`app-screen-content relative z-10 flex min-h-0 w-full flex-1 justify-center pointer-events-auto ${screenBehavior.scrollable ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'} ${contentShellClass} ${bottomNavOffsetClass}`}
                 style={screenBehavior.scrollable ? { WebkitOverflowScrolling: 'touch' } : undefined}
               >
