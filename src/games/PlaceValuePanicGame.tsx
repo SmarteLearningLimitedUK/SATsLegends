@@ -194,11 +194,11 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const isTallPhone = !isTablet && ratio > 1.95;
 
     return {
-      questionTop: isTablet ? 42.2 : (isTallPhone ? 42.8 : 42.4),
+      questionTop: isTablet ? 38.4 : (isTallPhone ? 39.1 : 38.8),
       questionWidth: isTablet ? 51 : 54,
       targetY: isTablet ? 69.6 : (isTallPhone ? 69.1 : 68.7),
       targetOffsetPx: -20,
-      sourceY: isTablet ? 84.1 : (isTallPhone ? 84.7 : 84.4),
+      sourceY: isTablet ? 79.1 : (isTallPhone ? 79.8 : 79.5),
       tokenWidth: isTablet ? '9.8%' : '11.2%',
       targetHeight: isTablet ? '11.3%' : '12.4%',
       sourceHeight: isTablet ? '10.2%' : '11.1%',
@@ -206,8 +206,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       sourceFont: isTablet ? 'clamp(2.7rem,5.7vw,4.7rem)' : 'clamp(2.3rem,6.4vw,4.35rem)',
       healthTop: isTablet ? 40 : 44,
       healthWidth: isTablet ? 16 : 19,
-      enemyTop: isTablet ? 19 : 21,
-      enemyWidth: isTablet ? 21 : 25,
+      enemyTop: isTablet ? 45.5 : (isTallPhone ? 47.5 : 46.8),
+      enemyWidth: isTablet ? 18 : 22,
     };
   }, [viewport.height, viewport.width]);
 
@@ -509,7 +509,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       </div>
 
       <div
-        className="pointer-events-none absolute right-[1.5%] z-30"
+        className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2"
         style={{ top: `${layout.enemyTop}%`, width: `${layout.enemyWidth}%` }}
       >
         <div className="relative">
