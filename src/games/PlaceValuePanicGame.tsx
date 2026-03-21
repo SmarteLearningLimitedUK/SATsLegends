@@ -362,7 +362,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         Score {score}
       </div>
 
-      <div className="pointer-events-none absolute left-1/2 top-[12.5%] z-30 w-[56%] -translate-x-1/2 text-center">
       <div
         className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2 text-center"
         style={{ top: `${layout.questionTop}%`, width: `${layout.questionWidth}%` }}
