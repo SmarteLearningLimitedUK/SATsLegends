@@ -5,8 +5,8 @@ import { triggerHaptic } from '../haptics';
 import avatarSelectBackground from '../assets/casual_ui/pedestal char select.png';
 import splashStyleButton from '../assets/casual_ui/inputs/btn_1.png';
 import heroRibbon from '../assets/casual_ui/dialogs_panels/ribbon_1.png';
-import heroNameBlueRibbon from '../assets/importedassets/Dialogs & Panels/ribbon 1.png';
 import avatarNextIcon from '../assets/importedassets/Icons/icon - next.png';
+import mochiBanner from '../assets/characters/mochibanner.png';
 
 const AVATAR_FOOT_ANCHOR_MAIN_Y_PX: Record<string, number> = {
   barratt: 0,
@@ -89,14 +89,13 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
             </div>
           </div>
           <div className="avatar-hero-name-banner avatar-hero-name-banner-under-title">
-              <img
-                src={heroNameBlueRibbon}
-                alt=""
-                aria-hidden
-                className="avatar-hero-name-banner-art avatar-hero-name-banner-art-cyan"
-                draggable={false}
-              />
-            <div className="avatar-hero-name-banner-text">{selectedAvatar.name}</div>
+            <img
+              src={mochiBanner}
+              alt=""
+              aria-hidden
+              className="avatar-hero-name-banner-art"
+              draggable={false}
+            />
           </div>
 
           <div className="avatar-hero-stage relative mt-2 flex min-h-0 flex-1 items-center justify-center overflow-visible md:mt-3">
