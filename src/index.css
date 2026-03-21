@@ -3955,6 +3955,8 @@ button:disabled {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  transform: scale(2);
+  transform-origin: center center;
   filter: drop-shadow(0 8px 14px rgba(2, 6, 23, 0.3));
 }
 

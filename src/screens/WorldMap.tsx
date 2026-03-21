@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { motion } from 'motion/react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
-import updatedIslandsPoster from '../assets/maps/updatedislands.png';
+import islandReskinPoster from '../assets/maps/islandreskin.png';
 
 interface WorldMapProps {
   player: PlayerData;
@@ -266,7 +266,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
     >
       <div className="premium-map-stage premium-map-stage-fullscreen relative min-h-full w-full">
         <img
-          src={updatedIslandsPoster}
+          src={islandReskinPoster}
           alt="Island select map"
           className="block h-auto w-full max-w-none object-cover object-top"
           draggable={false}
