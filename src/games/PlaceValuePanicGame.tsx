@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import placeValueBackground from '../assets/maps/placebk.png';
+import goblinEnemy from '../assets/bosses/goblin.png';
 import { triggerHaptic } from '../haptics';
 
 interface PlaceValuePanicGameProps {
@@ -28,6 +29,7 @@ interface QuestionState {
   prompt: string;
   expectedDigits: number[];
   tokenValues: number[];
+  placeHints: string[];
 }
 
 interface DragState {
@@ -55,7 +57,7 @@ const SOURCE_ANCHORS: AnchorPoint[] = [
   { x: 80 },
 ];
 
-const PLACE_VALUE_SLOT_COUNT = 5;
+const FULL_PLACE_VALUE_HINTS = ['Th', 'Th', 'H', 'T', 'U'] as const;
 
 const ONES_WORDS = [
   'zero',
@@ -132,15 +134,20 @@ const centeredAnchors = (anchors: AnchorPoint[], count: number): AnchorPoint[] =
   return anchors.slice(start, start + count);
 };
 
-const makeQuestion = (level: number): QuestionState => {
-  const tenThousands = randomInt(1, 9);
-  const thousands = randomInt(0, 9);
-  const hundreds = randomInt(0, 9);
-  const tens = randomInt(0, 9);
-  const units = randomInt(0, 9);
+const getSlotCountForLevel = (level: number): number => {
+  if (level <= 2) return 2; // Tens + Units
+  if (level <= 4) return 3; // Hundreds + Tens + Units
+  if (level <= 7) return 4; // Thousands + Hundreds + Tens + Units
+  return 5; // Ten-thousands + Thousands + Hundreds + Tens + Units
+};
 
-  const expectedDigits = [tenThousands, thousands, hundreds, tens, units];
+const getPlaceHints = (slotCount: number): string[] => FULL_PLACE_VALUE_HINTS.slice(FULL_PLACE_VALUE_HINTS.length - slotCount);
+
+const makeQuestion = (level: number): QuestionState => {
+  const slotCount = getSlotCountForLevel(level);
+  const expectedDigits = Array.from({ length: slotCount }, (_, idx) => randomInt(idx === 0 ? 1 : 0, 9));
   const tokenValues = shuffle([...expectedDigits]);
+  const placeHints = getPlaceHints(slotCount);
   const promptNumber = parseInt(expectedDigits.join(''), 10);
   const prompt = toWords(promptNumber).toUpperCase();
 
@@ -149,6 +156,7 @@ const makeQuestion = (level: number): QuestionState => {
     prompt,
     expectedDigits,
     tokenValues,
+    placeHints,
   };
 };
 
@@ -186,7 +194,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     return {
       questionTop: isTablet ? 13.4 : (isTallPhone ? 13.9 : 13.6),
       questionWidth: isTablet ? 41 : 46,
-      targetY: isTablet ? 58.2 : (isTallPhone ? 59.2 : 58.6),
+      targetY: isTablet ? 56.8 : (isTallPhone ? 57.5 : 57),
       sourceY: isTablet ? 75.4 : (isTallPhone ? 76.8 : 76.1),
       tokenWidth: isTablet ? '8.9%' : '10.1%',
       targetHeight: isTablet ? '10.8%' : '11.8%',
@@ -194,7 +202,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       targetFont: isTablet ? 'clamp(2.7rem,5.7vw,4.7rem)' : 'clamp(2.3rem,6.4vw,4.3rem)',
       sourceFont: isTablet ? 'clamp(2.6rem,5.5vw,4.6rem)' : 'clamp(2.2rem,6.2vw,4.2rem)',
       healthTop: isTablet ? 40 : 44,
-      healthWidth: isTablet ? 20 : 24,
+      healthWidth: isTablet ? 16 : 19,
+      enemyTop: isTablet ? 19 : 21,
+      enemyWidth: isTablet ? 21 : 25,
     };
   }, [viewport.height, viewport.width]);
 
@@ -213,8 +223,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const playfieldRef = useRef<HTMLDivElement | null>(null);
 
   const activeTargetAnchors = useMemo(
-    () => centeredAnchors(TARGET_ANCHORS, PLACE_VALUE_SLOT_COUNT),
-    [],
+    () => centeredAnchors(TARGET_ANCHORS, question.expectedDigits.length),
+    [question.expectedDigits.length],
   );
 
   const activeSourceAnchors = useMemo(
@@ -229,7 +239,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     }));
 
     setQuestion(nextQuestion);
-    setTargetSlots(Array(PLACE_VALUE_SLOT_COUNT).fill(null));
+    setTargetSlots(Array(nextQuestion.expectedDigits.length).fill(null));
     setSourceSlots(shuffle(nextSources));
     setDragState(null);
     setIsResolving(false);
@@ -463,22 +473,36 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       </div>
 
       <div
-        className="absolute right-[2%] z-30 max-w-[11rem] rounded-lg bg-slate-900/72 px-2 py-1.5 shadow-[0_10px_24px_rgba(2,6,23,0.48)]"
+        className="absolute right-[2%] z-30 max-w-[8.8rem] rounded-md bg-slate-900/72 px-1.5 py-1 shadow-[0_10px_24px_rgba(2,6,23,0.48)]"
         style={{ top: `${layout.healthTop}%`, width: `${layout.healthWidth}%` }}
       >
-        <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200">
+        <div className="mb-0.5 text-center text-[7px] font-black uppercase tracking-[0.1em] text-amber-200">
           Goblin Health {goblinHealth}/10
         </div>
         <div className="grid grid-cols-10 gap-0.5">
           {Array.from({ length: GOBLIN_MAX_HEALTH }, (_, idx) => (
             <span
               key={`hp-${idx}`}
-              className={`h-1.5 rounded-full ${
+              className={`h-1 rounded-full ${
                 idx < goblinHealth ? 'bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.75)]' : 'bg-slate-600/50'
               }`}
             />
           ))}
         </div>
+      </div>
+
+      <div
+        className="pointer-events-none absolute right-[1.5%] z-30"
+        style={{ top: `${layout.enemyTop}%`, width: `${layout.enemyWidth}%` }}
+      >
+        <motion.img
+          src={goblinEnemy}
+          alt="Goblin enemy"
+          draggable={false}
+          className="h-auto w-full object-contain drop-shadow-[0_16px_22px_rgba(2,6,23,0.5)]"
+          animate={{ y: [0, -5, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+        />
       </div>
 
       <div ref={playfieldRef} className="absolute inset-0 z-20">
@@ -494,6 +518,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               style={{ left: `${anchor.x}%`, top: `${layout.targetY}%`, width: layout.tokenWidth, height: layout.targetHeight }}
             >
               <div className="pointer-events-none absolute left-1/2 top-[4%] h-[70%] w-[90%] -translate-x-1/2 rounded-xl border-2 border-dashed border-cyan-100/85 bg-[#0f2f62]/36 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.12)]" />
+              <span className="pointer-events-none absolute left-1/2 top-[34%] -translate-x-1/2 -translate-y-1/2 text-[clamp(0.9rem,2.2vw,1.2rem)] font-black uppercase tracking-[0.08em] text-cyan-100/45">
+                {question.placeHints[idx]}
+              </span>
               {token ? (
                 <span
                   className="absolute left-1/2 top-[29%] z-10 block -translate-x-1/2 font-black text-white"
