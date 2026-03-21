@@ -45,16 +45,17 @@ interface DragState {
 
 const GOBLIN_MAX_HEALTH = 10;
 
-const TARGET_ANCHORS: AnchorPoint[] = [{ x: 31 }, { x: 45 }, { x: 59 }, { x: 73 }];
+const TARGET_ANCHORS: AnchorPoint[] = [{ x: 22 }, { x: 35 }, { x: 48 }, { x: 61 }, { x: 74 }];
 
 const SOURCE_ANCHORS: AnchorPoint[] = [
-  { x: 22 },
-  { x: 40 },
-  { x: 58 },
-  { x: 76 },
+  { x: 16 },
+  { x: 32 },
+  { x: 48 },
+  { x: 64 },
+  { x: 80 },
 ];
 
-const PLACE_VALUE_SLOT_COUNT = 4;
+const PLACE_VALUE_SLOT_COUNT = 5;
 
 const ONES_WORDS = [
   'zero',
@@ -132,12 +133,13 @@ const centeredAnchors = (anchors: AnchorPoint[], count: number): AnchorPoint[] =
 };
 
 const makeQuestion = (level: number): QuestionState => {
-  const thousands = randomInt(1, 9);
+  const tenThousands = randomInt(1, 9);
+  const thousands = randomInt(0, 9);
   const hundreds = randomInt(0, 9);
   const tens = randomInt(0, 9);
   const units = randomInt(0, 9);
 
-  const expectedDigits = [thousands, hundreds, tens, units];
+  const expectedDigits = [tenThousands, thousands, hundreds, tens, units];
   const tokenValues = shuffle([...expectedDigits]);
   const promptNumber = parseInt(expectedDigits.join(''), 10);
   const prompt = toWords(promptNumber).toUpperCase();
@@ -186,13 +188,13 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       questionWidth: isTablet ? 41 : 46,
       targetY: isTablet ? 58.2 : (isTallPhone ? 59.2 : 58.6),
       sourceY: isTablet ? 75.4 : (isTallPhone ? 76.8 : 76.1),
-      tokenWidth: isTablet ? '10.5%' : '12%',
+      tokenWidth: isTablet ? '8.9%' : '10.1%',
       targetHeight: isTablet ? '10.8%' : '11.8%',
       sourceHeight: isTablet ? '10.2%' : '11.2%',
-      targetFont: isTablet ? 'clamp(3.1rem,6.2vw,5.35rem)' : 'clamp(2.8rem,7.2vw,5rem)',
-      sourceFont: isTablet ? 'clamp(3rem,6vw,5.2rem)' : 'clamp(2.7rem,7vw,4.9rem)',
+      targetFont: isTablet ? 'clamp(2.7rem,5.7vw,4.7rem)' : 'clamp(2.3rem,6.4vw,4.3rem)',
+      sourceFont: isTablet ? 'clamp(2.6rem,5.5vw,4.6rem)' : 'clamp(2.2rem,6.2vw,4.2rem)',
       healthTop: isTablet ? 40 : 44,
-      healthWidth: isTablet ? 28 : 33,
+      healthWidth: isTablet ? 20 : 24,
     };
   }, [viewport.height, viewport.width]);
 
@@ -461,17 +463,17 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       </div>
 
       <div
-        className="absolute right-[2%] z-30 max-w-[15rem] rounded-xl bg-slate-900/72 px-2.5 py-2 shadow-[0_10px_24px_rgba(2,6,23,0.48)]"
+        className="absolute right-[2%] z-30 max-w-[11rem] rounded-lg bg-slate-900/72 px-2 py-1.5 shadow-[0_10px_24px_rgba(2,6,23,0.48)]"
         style={{ top: `${layout.healthTop}%`, width: `${layout.healthWidth}%` }}
       >
-        <div className="mb-1 text-center text-[9px] font-black uppercase tracking-[0.14em] text-amber-200">
+        <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200">
           Goblin Health {goblinHealth}/10
         </div>
-        <div className="grid grid-cols-10 gap-1">
+        <div className="grid grid-cols-10 gap-0.5">
           {Array.from({ length: GOBLIN_MAX_HEALTH }, (_, idx) => (
             <span
               key={`hp-${idx}`}
-              className={`h-2 rounded-full ${
+              className={`h-1.5 rounded-full ${
                 idx < goblinHealth ? 'bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.75)]' : 'bg-slate-600/50'
               }`}
             />
