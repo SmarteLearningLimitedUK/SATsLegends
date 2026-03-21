@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { AVATARS } from '../constants';
 import { triggerHaptic } from '../haptics';
 import avatarSelectBackground from '../assets/casual_ui/pedestal char select.png';
 import splashStyleButton from '../assets/casual_ui/inputs/btn_1.png';
 import chooseBanner from '../assets/characters/choose.png';
-import avatarNextIcon from '../assets/importedassets/Icons/icon - next.png';
+import arrowBlueIdle from '../assets/casual_ui/inputs/arrow_blue_idle.png';
+import arrowGoldPressed from '../assets/casual_ui/inputs/arrow_gold_pressed.png';
 
 const AVATAR_FOOT_ANCHOR_MAIN_Y_PX: Record<string, number> = {
   barratt: 0,
@@ -26,6 +27,7 @@ interface AvatarSelectProps {
 const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onConfirm }) => {
   const selectedIndex = Math.max(0, AVATARS.findIndex((avatar) => avatar.id === selectedId));
   const selectedAvatar = AVATARS[selectedIndex] || AVATARS[0];
+  const [pressedArrow, setPressedArrow] = useState<'left' | 'right' | null>(null);
 
   useEffect(() => {
     if (!AVATARS.some((avatar) => avatar.id === selectedId)) {
@@ -79,18 +81,18 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               className="avatar-hero-arrow avatar-hero-arrow-left"
               aria-label="Previous hero"
               type="button"
+              onPointerDown={() => setPressedArrow('left')}
+              onPointerUp={() => setPressedArrow(null)}
+              onPointerCancel={() => setPressedArrow(null)}
+              onPointerLeave={() => setPressedArrow(null)}
             >
-              <span className="avatar-hero-arrow-shell" aria-hidden>
-                <span className="avatar-hero-arrow-core">
-                  <img
-                    src={avatarNextIcon}
-                    alt=""
-                    aria-hidden
-                    className="avatar-hero-arrow-icon scale-x-[-1]"
-                    draggable={false}
-                  />
-                </span>
-              </span>
+              <img
+                src={pressedArrow === 'left' ? arrowGoldPressed : arrowBlueIdle}
+                alt=""
+                aria-hidden
+                className={`avatar-hero-arrow-art ${pressedArrow === 'left' ? 'scale-x-[-1]' : ''}`}
+                draggable={false}
+              />
             </motion.button>
 
             <div className="avatar-carousel-track">
@@ -120,18 +122,18 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               className="avatar-hero-arrow avatar-hero-arrow-right"
               aria-label="Next hero"
               type="button"
+              onPointerDown={() => setPressedArrow('right')}
+              onPointerUp={() => setPressedArrow(null)}
+              onPointerCancel={() => setPressedArrow(null)}
+              onPointerLeave={() => setPressedArrow(null)}
             >
-              <span className="avatar-hero-arrow-shell" aria-hidden>
-                <span className="avatar-hero-arrow-core">
-                  <img
-                    src={avatarNextIcon}
-                    alt=""
-                    aria-hidden
-                    className="avatar-hero-arrow-icon"
-                    draggable={false}
-                  />
-                </span>
-              </span>
+              <img
+                src={pressedArrow === 'right' ? arrowGoldPressed : arrowBlueIdle}
+                alt=""
+                aria-hidden
+                className={`avatar-hero-arrow-art ${pressedArrow === 'right' ? '' : 'scale-x-[-1]'}`}
+                draggable={false}
+              />
             </motion.button>
           </div>
 
