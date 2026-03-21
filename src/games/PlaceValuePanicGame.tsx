@@ -192,15 +192,15 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const isTallPhone = !isTablet && ratio > 1.95;
 
     return {
-      questionTop: isTablet ? 13.4 : (isTallPhone ? 13.9 : 13.6),
-      questionWidth: isTablet ? 41 : 46,
-      targetY: isTablet ? 56.8 : (isTallPhone ? 57.5 : 57),
-      sourceY: isTablet ? 75.4 : (isTallPhone ? 76.8 : 76.1),
-      tokenWidth: isTablet ? '8.9%' : '10.1%',
-      targetHeight: isTablet ? '10.8%' : '11.8%',
-      sourceHeight: isTablet ? '10.2%' : '11.2%',
-      targetFont: isTablet ? 'clamp(2.7rem,5.7vw,4.7rem)' : 'clamp(2.3rem,6.4vw,4.3rem)',
-      sourceFont: isTablet ? 'clamp(2.6rem,5.5vw,4.6rem)' : 'clamp(2.2rem,6.2vw,4.2rem)',
+      questionTop: isTablet ? 35.8 : (isTallPhone ? 35.2 : 34.7),
+      questionWidth: isTablet ? 56 : 60,
+      targetY: isTablet ? 69.6 : (isTallPhone ? 69.1 : 68.7),
+      sourceY: isTablet ? 84.1 : (isTallPhone ? 84.7 : 84.4),
+      tokenWidth: isTablet ? '9.8%' : '11.2%',
+      targetHeight: isTablet ? '11.3%' : '12.4%',
+      sourceHeight: isTablet ? '10.2%' : '11.1%',
+      targetFont: isTablet ? 'clamp(2.8rem,5.9vw,4.9rem)' : 'clamp(2.45rem,6.8vw,4.55rem)',
+      sourceFont: isTablet ? 'clamp(2.7rem,5.7vw,4.7rem)' : 'clamp(2.3rem,6.4vw,4.35rem)',
       healthTop: isTablet ? 40 : 44,
       healthWidth: isTablet ? 16 : 19,
       enemyTop: isTablet ? 19 : 21,
@@ -458,7 +458,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         style={{ top: `${layout.questionTop}%`, width: `${layout.questionWidth}%` }}
       >
         <div
-          className="mx-auto max-w-full px-[2%] text-[clamp(0.64rem,1.55vw,0.94rem)] font-black leading-tight tracking-[0.035em] text-white"
+          className="mx-auto max-w-full px-[3.5%] text-[clamp(0.72rem,1.9vw,1.12rem)] font-black leading-tight tracking-[0.03em] text-white"
           style={{
             textShadow: '0 2px 6px rgba(2,6,23,0.62)',
             display: '-webkit-box',
@@ -517,13 +517,13 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               className="absolute -translate-x-1/2 -translate-y-1/2 rounded-xl"
               style={{ left: `${anchor.x}%`, top: `${layout.targetY}%`, width: layout.tokenWidth, height: layout.targetHeight }}
             >
-              <div className="pointer-events-none absolute left-1/2 top-[4%] h-[70%] w-[90%] -translate-x-1/2 rounded-xl border-2 border-dashed border-cyan-100/85 bg-[#0f2f62]/36 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.12)]" />
-              <span className="pointer-events-none absolute left-1/2 top-[34%] -translate-x-1/2 -translate-y-1/2 text-[clamp(0.9rem,2.2vw,1.2rem)] font-black uppercase tracking-[0.08em] text-cyan-100/45">
+              <div className="pointer-events-none absolute left-1/2 top-[3%] h-[76%] w-[94%] -translate-x-1/2 rounded-xl border-2 border-dashed border-cyan-100/90 bg-[#0f2f62]/32 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.18)]" />
+              <span className="pointer-events-none absolute left-1/2 top-[41%] -translate-x-1/2 -translate-y-1/2 text-[clamp(1.1rem,2.8vw,1.45rem)] font-black uppercase tracking-[0.08em] text-cyan-100/60">
                 {question.placeHints[idx]}
               </span>
               {token ? (
                 <span
-                  className="absolute left-1/2 top-[29%] z-10 block -translate-x-1/2 font-black text-white"
+                  className="absolute left-1/2 top-[34%] z-10 block -translate-x-1/2 font-black text-white"
                   style={{ ...numberStyle, fontSize: layout.targetFont }}
                 >
                   {token.value}
@@ -550,7 +550,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               {token ? (
                 <motion.span
                   layout
-                  className="absolute left-1/2 top-[26%] block -translate-x-1/2 font-black text-white"
+                  className="absolute left-1/2 top-[33%] block -translate-x-1/2 font-black text-white"
                   style={{ ...numberStyle, fontSize: layout.sourceFont }}
                 >
                   {token.value}
