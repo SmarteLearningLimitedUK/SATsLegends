@@ -86,6 +86,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
     decorative: boolean
   ) => {
     if (shouldUseVideo(avatar)) {
+      const videoToneClass = decorative ? 'avatar-hero-video avatar-hero-video-side' : 'avatar-hero-video avatar-hero-video-main';
       return (
         <video
           src={avatar.portraitVideo}
@@ -95,7 +96,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
           playsInline
           preload="metadata"
           onError={() => handleVideoError(avatar.id)}
-          className={`${className} pointer-events-none`}
+          className={`${className} ${videoToneClass} pointer-events-none`}
           style={style}
           aria-hidden={decorative}
         />

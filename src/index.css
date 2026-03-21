@@ -4025,6 +4025,20 @@ button:disabled {
   transform: translateX(-10%) scale(0.82);
 }
 
+.avatar-hero-video {
+  background: transparent !important;
+  mix-blend-mode: screen;
+  will-change: transform, filter;
+}
+
+.avatar-hero-video-main {
+  filter: brightness(1.08) contrast(1.24) saturate(1.12);
+}
+
+.avatar-hero-video-side {
+  filter: brightness(1.04) contrast(1.18) saturate(1.05);
+}
+
 .avatar-hero-arrow {
   position: absolute;
   top: 56%;
