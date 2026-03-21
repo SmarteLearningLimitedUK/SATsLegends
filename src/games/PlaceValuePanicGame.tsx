@@ -54,8 +54,7 @@ const SOURCE_ANCHORS: AnchorPoint[] = [
   { x: 76 },
 ];
 
-const PLACE_VALUE_LABELS = ['Thousands', 'Hundreds', 'Tens', 'Units'] as const;
-const PLACE_VALUE_SHORT_LABELS = ['Th', 'H', 'T', 'U'] as const;
+const PLACE_VALUE_SLOT_COUNT = 4;
 
 const ONES_WORDS = [
   'zero',
@@ -184,14 +183,14 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
     return {
       questionTop: isTablet ? 13.4 : (isTallPhone ? 13.9 : 13.6),
-      questionWidth: isTablet ? 45 : 50,
+      questionWidth: isTablet ? 41 : 46,
       targetY: isTablet ? 58.2 : (isTallPhone ? 59.2 : 58.6),
       sourceY: isTablet ? 75.4 : (isTallPhone ? 76.8 : 76.1),
       tokenWidth: isTablet ? '10.5%' : '12%',
-      targetHeight: isTablet ? '8.2%' : '9%',
-      sourceHeight: isTablet ? '9.2%' : '10%',
-      targetFont: isTablet ? 'clamp(2.4rem,4.8vw,4.25rem)' : 'clamp(2.1rem,5.8vw,4rem)',
-      sourceFont: isTablet ? 'clamp(2.3rem,4.7vw,4.1rem)' : 'clamp(2rem,5.6vw,3.9rem)',
+      targetHeight: isTablet ? '10.8%' : '11.8%',
+      sourceHeight: isTablet ? '10.2%' : '11.2%',
+      targetFont: isTablet ? 'clamp(3.1rem,6.2vw,5.35rem)' : 'clamp(2.8rem,7.2vw,5rem)',
+      sourceFont: isTablet ? 'clamp(3rem,6vw,5.2rem)' : 'clamp(2.7rem,7vw,4.9rem)',
       healthTop: isTablet ? 40 : 44,
       healthWidth: isTablet ? 28 : 33,
     };
@@ -212,7 +211,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const playfieldRef = useRef<HTMLDivElement | null>(null);
 
   const activeTargetAnchors = useMemo(
-    () => centeredAnchors(TARGET_ANCHORS, PLACE_VALUE_LABELS.length),
+    () => centeredAnchors(TARGET_ANCHORS, PLACE_VALUE_SLOT_COUNT),
     [],
   );
 
@@ -228,7 +227,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     }));
 
     setQuestion(nextQuestion);
-    setTargetSlots(Array(PLACE_VALUE_LABELS.length).fill(null));
+    setTargetSlots(Array(PLACE_VALUE_SLOT_COUNT).fill(null));
     setSourceSlots(shuffle(nextSources));
     setDragState(null);
     setIsResolving(false);
@@ -447,8 +446,15 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         style={{ top: `${layout.questionTop}%`, width: `${layout.questionWidth}%` }}
       >
         <div
-          className="text-[clamp(0.72rem,1.8vw,1.08rem)] font-black leading-tight tracking-[0.04em] text-white"
-          style={{ textShadow: '0 2px 6px rgba(2,6,23,0.62)' }}
+          className="mx-auto max-w-full px-[2%] text-[clamp(0.64rem,1.55vw,0.94rem)] font-black leading-tight tracking-[0.035em] text-white"
+          style={{
+            textShadow: '0 2px 6px rgba(2,6,23,0.62)',
+            display: '-webkit-box',
+            WebkitBoxOrient: 'vertical',
+            WebkitLineClamp: 2,
+            overflow: 'hidden',
+            wordBreak: 'break-word',
+          }}
         >
           {question.prompt}
         </div>
@@ -485,18 +491,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               className="absolute -translate-x-1/2 -translate-y-1/2 rounded-xl"
               style={{ left: `${anchor.x}%`, top: `${layout.targetY}%`, width: layout.tokenWidth, height: layout.targetHeight }}
             >
-              <div className="pointer-events-none absolute bottom-[78%] left-1/2 -translate-x-1/2 rounded-full border border-white/25 bg-slate-900/75 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100">
-                {PLACE_VALUE_LABELS[idx]}
-              </div>
-              <div className="pointer-events-none absolute left-1/2 top-[8%] h-[54%] w-[80%] -translate-x-1/2 rounded-xl border-2 border-dashed border-cyan-100/85 bg-[#0f2f62]/36 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.12)]">
-                <span className="absolute inset-0 flex items-center justify-center text-[clamp(0.72rem,1.8vw,1rem)] font-black uppercase tracking-[0.1em] text-cyan-100/45">
-                  {PLACE_VALUE_SHORT_LABELS[idx]}
-                </span>
-              </div>
-              <div className="pointer-events-none absolute bottom-[7%] left-1/2 h-[21%] w-[82%] -translate-x-1/2 rounded-[999px] border border-slate-200/35 bg-black/22 shadow-[0_8px_16px_rgba(2,6,23,0.45)]" />
+              <div className="pointer-events-none absolute left-1/2 top-[4%] h-[70%] w-[90%] -translate-x-1/2 rounded-xl border-2 border-dashed border-cyan-100/85 bg-[#0f2f62]/36 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.12)]" />
               {token ? (
                 <span
-                  className="absolute left-1/2 top-[26%] z-10 block -translate-x-1/2 font-black text-white"
+                  className="absolute left-1/2 top-[29%] z-10 block -translate-x-1/2 font-black text-white"
                   style={{ ...numberStyle, fontSize: layout.targetFont }}
                 >
                   {token.value}
@@ -520,11 +518,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               className="absolute -translate-x-1/2 -translate-y-1/2 rounded-xl"
               style={{ left: `${anchor.x}%`, top: `${layout.sourceY}%`, width: layout.tokenWidth, height: layout.sourceHeight }}
             >
-              <div className="pointer-events-none absolute bottom-[7%] left-1/2 h-[22%] w-[82%] -translate-x-1/2 rounded-[999px] border border-slate-200/35 bg-black/22 shadow-[0_8px_16px_rgba(2,6,23,0.45)]" />
               {token ? (
                 <motion.span
                   layout
-                  className="absolute left-1/2 top-[20%] block -translate-x-1/2 font-black text-white"
+                  className="absolute left-1/2 top-[26%] block -translate-x-1/2 font-black text-white"
                   style={{ ...numberStyle, fontSize: layout.sourceFont }}
                 >
                   {token.value}
@@ -551,10 +548,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               initial={{ scale: 1 }}
               animate={{ scale: 1.03 }}
             >
-              <span className="absolute left-1/2 top-[24%] -translate-x-1/2 font-black text-white" style={{ ...numberStyle, fontSize: layout.sourceFont }}>
+              <span className="absolute left-1/2 top-[26%] -translate-x-1/2 font-black text-white" style={{ ...numberStyle, fontSize: layout.sourceFont }}>
                 {dragState.token.value}
               </span>
-              <span className="absolute bottom-[8%] left-1/2 h-[22%] w-[82%] -translate-x-1/2 rounded-[999px] border border-slate-200/35 bg-black/22" />
             </motion.div>
           );
         })()
