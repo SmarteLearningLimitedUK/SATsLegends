@@ -21,10 +21,10 @@ const AVATAR_FOOT_ANCHOR_SIDE_Y_PX: Record<string, number> = {
   vex: 4,
   mochi: 12,
 };
-const AVATAR_MAIN_GLOBAL_LIFT_PX = -92;
-const AVATAR_SIDE_GLOBAL_LIFT_PX = -70;
-const AVATAR_MAIN_VISUAL_SCALE = 1;
-const AVATAR_SIDE_VISUAL_SCALE = 1;
+const AVATAR_MAIN_GLOBAL_LIFT_PX = -160;
+const AVATAR_SIDE_GLOBAL_LIFT_PX = -130;
+const AVATAR_MAIN_VISUAL_SCALE = 2.4;
+const AVATAR_SIDE_VISUAL_SCALE = 2.1;
 
 interface AvatarSelectProps {
   selectedId: string;
