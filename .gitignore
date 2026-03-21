@@ -8,7 +8,7 @@ coverage/
 !.env.example
 external-assets/
 GUI Pro-FantasyHero/
-characters/
+/characters/
 
 deploy.config.bat
 .vercel
