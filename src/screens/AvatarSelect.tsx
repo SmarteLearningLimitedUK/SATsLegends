@@ -4,7 +4,7 @@ import { AVATARS } from '../constants';
 import { triggerHaptic } from '../haptics';
 import avatarSelectBackground from '../assets/casual_ui/pedestal char select.png';
 import splashStyleButton from '../assets/casual_ui/inputs/btn_1.png';
-import heroRibbon from '../assets/casual_ui/dialogs_panels/ribbon_1.png';
+import chooseBanner from '../assets/characters/choose.png';
 import avatarNextIcon from '../assets/importedassets/Icons/icon - next.png';
 import mochiBanner from '../assets/characters/mochibanner.png';
 
@@ -79,13 +79,12 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
           <div className="avatar-carousel-header">
             <div className="avatar-carousel-banner">
               <img
-                src={heroRibbon}
+                src={chooseBanner}
                 alt=""
                 aria-hidden
                 className="avatar-carousel-banner-art"
                 draggable={false}
               />
-              <h2 className="avatar-carousel-title">Choose Your Hero</h2>
             </div>
           </div>
           <div className="avatar-hero-name-banner avatar-hero-name-banner-under-title">
