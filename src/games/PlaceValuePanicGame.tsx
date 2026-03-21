@@ -26,34 +26,36 @@ interface Token {
 interface QuestionState {
   id: string;
   prompt: string;
-  expected: string;
+  expectedDigits: number[];
   tokenValues: number[];
-  slotCount: number;
 }
 
-interface SelectionRef {
-  location: TokenLocation;
-  index: number;
+interface DragState {
+  token: Token;
+  fromLocation: TokenLocation;
+  fromIndex: number;
+  pointerId: number;
+  clientX: number;
+  clientY: number;
+  offsetX: number;
+  offsetY: number;
+  width: number;
+  height: number;
 }
 
 const GOBLIN_MAX_HEALTH = 10;
 
-const TARGET_ANCHORS: AnchorPoint[] = [
-  { x: 26 },
-  { x: 38 },
-  { x: 50 },
-  { x: 62 },
-  { x: 74 },
-];
+const TARGET_ANCHORS: AnchorPoint[] = [{ x: 31 }, { x: 45 }, { x: 59 }, { x: 73 }];
 
 const SOURCE_ANCHORS: AnchorPoint[] = [
-  { x: 18 },
-  { x: 30 },
-  { x: 42 },
-  { x: 54 },
-  { x: 66 },
-  { x: 78 },
+  { x: 22 },
+  { x: 40 },
+  { x: 58 },
+  { x: 76 },
 ];
+
+const PLACE_VALUE_LABELS = ['Thousands', 'Hundreds', 'Tens', 'Units'] as const;
+const PLACE_VALUE_SHORT_LABELS = ['Th', 'H', 'T', 'U'] as const;
 
 const ONES_WORDS = [
   'zero',
@@ -118,12 +120,6 @@ const toWords = (n: number): string => {
   return String(n);
 };
 
-const getSlotCount = (level: number): number => {
-  if (level <= 2) return 3;
-  if (level <= 6) return 4;
-  return 5;
-};
-
 const scoreToStars = (accuracy: number): number => {
   if (accuracy >= 0.9) return 3;
   if (accuracy >= 0.7) return 2;
@@ -137,24 +133,21 @@ const centeredAnchors = (anchors: AnchorPoint[], count: number): AnchorPoint[] =
 };
 
 const makeQuestion = (level: number): QuestionState => {
-  const slotCount = getSlotCount(level);
-  const digits = Array.from({ length: slotCount }, (_, idx) => {
-    const min = idx === 0 ? 1 : 0;
-    return randomInt(min, 9);
-  });
+  const thousands = randomInt(1, 9);
+  const hundreds = randomInt(0, 9);
+  const tens = randomInt(0, 9);
+  const units = randomInt(0, 9);
 
-  const hasDistractor = level >= 5;
-  const distractor = hasDistractor ? randomInt(0, 9) : null;
-  const tokenValues = shuffle(hasDistractor ? [...digits, distractor as number] : [...digits]);
-  const expected = digits.join('');
-  const prompt = toWords(parseInt(expected, 10)).toUpperCase();
+  const expectedDigits = [thousands, hundreds, tens, units];
+  const tokenValues = shuffle([...expectedDigits]);
+  const promptNumber = parseInt(expectedDigits.join(''), 10);
+  const prompt = toWords(promptNumber).toUpperCase();
 
   return {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     prompt,
-    expected,
+    expectedDigits,
     tokenValues,
-    slotCount,
   };
 };
 
@@ -190,10 +183,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const isTallPhone = !isTablet && ratio > 1.95;
 
     return {
-      questionTop: isTablet ? 11.9 : (isTallPhone ? 12.6 : 12.1),
-      questionWidth: isTablet ? 50 : 56,
-      targetY: isTablet ? 57.8 : (isTallPhone ? 58.8 : 58.2),
-      sourceY: isTablet ? 75.0 : (isTallPhone ? 76.6 : 75.8),
+      questionTop: isTablet ? 10.6 : (isTallPhone ? 11.3 : 10.9),
+      questionWidth: isTablet ? 47 : 52,
+      targetY: isTablet ? 58.2 : (isTallPhone ? 59.2 : 58.6),
+      sourceY: isTablet ? 75.4 : (isTallPhone ? 76.8 : 76.1),
       tokenWidth: isTablet ? '10.5%' : '12%',
       targetHeight: isTablet ? '8.2%' : '9%',
       sourceHeight: isTablet ? '9.2%' : '10%',
@@ -207,7 +200,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const [question, setQuestion] = useState<QuestionState>(() => makeQuestion(resolvedLevel));
   const [targetSlots, setTargetSlots] = useState<Array<Token | null>>([]);
   const [sourceSlots, setSourceSlots] = useState<Array<Token | null>>([]);
-  const [selected, setSelected] = useState<SelectionRef | null>(null);
+  const [dragState, setDragState] = useState<DragState | null>(null);
   const [goblinHealth, setGoblinHealth] = useState<number>(GOBLIN_MAX_HEALTH);
   const [score, setScore] = useState<number>(0);
   const [attempts, setAttempts] = useState<number>(0);
@@ -216,10 +209,11 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const [isResolving, setIsResolving] = useState(false);
 
   const victoryDispatchedRef = useRef(false);
+  const playfieldRef = useRef<HTMLDivElement | null>(null);
 
   const activeTargetAnchors = useMemo(
-    () => centeredAnchors(TARGET_ANCHORS, question.slotCount),
-    [question.slotCount],
+    () => centeredAnchors(TARGET_ANCHORS, PLACE_VALUE_LABELS.length),
+    [],
   );
 
   const activeSourceAnchors = useMemo(
@@ -234,9 +228,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     }));
 
     setQuestion(nextQuestion);
-    setTargetSlots(Array(nextQuestion.slotCount).fill(null));
+    setTargetSlots(Array(PLACE_VALUE_LABELS.length).fill(null));
     setSourceSlots(shuffle(nextSources));
-    setSelected(null);
+    setDragState(null);
     setIsResolving(false);
   }, []);
 
@@ -244,8 +238,77 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     resetRound(makeQuestion(resolvedLevel));
   }, [resetRound, resolvedLevel]);
 
-  const moveToken = useCallback((toLocation: TokenLocation, toIndex: number) => {
-    if (!selected || isResolving) return;
+  const getRelativePoint = useCallback((clientX: number, clientY: number) => {
+    const rect = playfieldRef.current?.getBoundingClientRect();
+    if (!rect) return { x: clientX, y: clientY };
+    return {
+      x: clientX - rect.left,
+      y: clientY - rect.top,
+    };
+  }, []);
+
+  const beginDrag = useCallback((
+    location: TokenLocation,
+    index: number,
+    event: React.PointerEvent<HTMLButtonElement>,
+  ) => {
+    if (isResolving || dragState) return;
+    const token = location === 'target' ? targetSlots[index] : sourceSlots[index];
+    if (!token) return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    event.currentTarget.setPointerCapture(event.pointerId);
+
+    if (location === 'target') {
+      setTargetSlots((prev) => prev.map((item, slotIndex) => (slotIndex === index ? null : item)));
+    } else {
+      setSourceSlots((prev) => prev.map((item, slotIndex) => (slotIndex === index ? null : item)));
+    }
+
+    setDragState({
+      token,
+      fromLocation: location,
+      fromIndex: index,
+      pointerId: event.pointerId,
+      clientX: event.clientX,
+      clientY: event.clientY,
+      offsetX: event.clientX - rect.left,
+      offsetY: event.clientY - rect.top,
+      width: rect.width,
+      height: rect.height,
+    });
+
+    triggerHaptic('selection');
+  }, [dragState, isResolving, sourceSlots, targetSlots]);
+
+  const findDropCandidate = useCallback((clientX: number, clientY: number): { location: TokenLocation; index: number } | null => {
+    const rect = playfieldRef.current?.getBoundingClientRect();
+    if (!rect) return null;
+
+    const targetRadius = Math.max(38, rect.width * 0.06);
+
+    let best: { location: TokenLocation; index: number; distance: number } | null = null;
+
+    activeTargetAnchors.forEach((anchor, index) => {
+      const cx = rect.left + (anchor.x / 100) * rect.width;
+      const cy = rect.top + (layout.targetY / 100) * rect.height;
+      const d = Math.hypot(clientX - cx, clientY - cy);
+      if (!best || d < best.distance) best = { location: 'target', index, distance: d };
+    });
+
+    activeSourceAnchors.forEach((anchor, index) => {
+      const cx = rect.left + (anchor.x / 100) * rect.width;
+      const cy = rect.top + (layout.sourceY / 100) * rect.height;
+      const d = Math.hypot(clientX - cx, clientY - cy);
+      if (!best || d < best.distance) best = { location: 'source', index, distance: d };
+    });
+
+    if (!best || best.distance > targetRadius) return null;
+    return { location: best.location, index: best.index };
+  }, [activeSourceAnchors, activeTargetAnchors, layout.sourceY, layout.targetY]);
+
+  const placeTokenInArrays = useCallback((candidate: { location: TokenLocation; index: number } | null) => {
+    if (!dragState) return;
 
     const nextTargets = [...targetSlots];
     const nextSources = [...sourceSlots];
@@ -259,39 +322,57 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       else nextSources[index] = token;
     };
 
-    const sourceToken = getToken(selected.location, selected.index);
-    if (!sourceToken) {
-      setSelected(null);
+    if (!candidate) {
+      setToken(dragState.fromLocation, dragState.fromIndex, dragState.token);
+      setTargetSlots(nextTargets);
+      setSourceSlots(nextSources);
       return;
     }
 
-    const destinationToken = getToken(toLocation, toIndex);
-    setToken(toLocation, toIndex, sourceToken);
-    setToken(selected.location, selected.index, destinationToken || null);
+    const destinationToken = getToken(candidate.location, candidate.index);
+    setToken(candidate.location, candidate.index, dragState.token);
+
+    if (destinationToken) {
+      setToken(dragState.fromLocation, dragState.fromIndex, destinationToken);
+    }
 
     setTargetSlots(nextTargets);
     setSourceSlots(nextSources);
-    setSelected(null);
-    triggerHaptic('selection');
-  }, [isResolving, selected, sourceSlots, targetSlots]);
+  }, [dragState, sourceSlots, targetSlots]);
 
-  const handlePress = useCallback((location: TokenLocation, index: number) => {
-    const token = location === 'target' ? targetSlots[index] : sourceSlots[index];
+  useEffect(() => {
+    if (!dragState) return undefined;
 
-    if (!selected) {
-      if (!token || isResolving) return;
-      setSelected({ location, index });
+    const onMove = (event: PointerEvent) => {
+      if (event.pointerId !== dragState.pointerId) return;
+      setDragState((current) => {
+        if (!current || current.pointerId !== event.pointerId) return current;
+        return {
+          ...current,
+          clientX: event.clientX,
+          clientY: event.clientY,
+        };
+      });
+    };
+
+    const onFinish = (event: PointerEvent) => {
+      if (event.pointerId !== dragState.pointerId) return;
+      const candidate = findDropCandidate(event.clientX, event.clientY);
+      placeTokenInArrays(candidate);
+      setDragState(null);
       triggerHaptic('selection');
-      return;
-    }
+    };
 
-    if (selected.location === location && selected.index === index) {
-      setSelected(null);
-      return;
-    }
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onFinish);
+    window.addEventListener('pointercancel', onFinish);
 
-    moveToken(location, index);
-  }, [isResolving, moveToken, selected, sourceSlots, targetSlots]);
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onFinish);
+      window.removeEventListener('pointercancel', onFinish);
+    };
+  }, [dragState, findDropCandidate, placeTokenInArrays]);
 
   const advanceRound = useCallback((newHealth: number) => {
     if (newHealth <= 0 && !victoryDispatchedRef.current) {
@@ -313,8 +394,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     if (isResolving) return;
     if (targetSlots.length === 0 || targetSlots.some((token) => token === null)) return;
 
-    const formed = targetSlots.map((token) => token?.value ?? '').join('');
-    const isCorrect = formed === question.expected;
+    const isCorrect = targetSlots.every((token, index) => token?.value === question.expectedDigits[index]);
     setIsResolving(true);
     setAttempts((prev) => prev + 1);
 
@@ -334,7 +414,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     setFeedback({ tone: 'error', message: `WRONG ORDER! GOBLIN HP ${nextHealth}/10` });
     triggerHaptic('warning');
     advanceRound(nextHealth);
-  }, [advanceRound, goblinHealth, isResolving, question.expected, resolvedLevel, targetSlots]);
+  }, [advanceRound, goblinHealth, isResolving, question.expectedDigits, resolvedLevel, targetSlots]);
 
   const numberStyle: React.CSSProperties = {
     WebkitTextStroke: '2px #050b1d',
@@ -346,7 +426,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       <img
         src={placeValueBackground}
         alt="Place Value Panic"
-        className="absolute inset-0 h-full w-full object-fill object-center"
+        className="absolute inset-0 h-full w-full object-cover object-center"
         draggable={false}
       />
 
@@ -367,7 +447,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         style={{ top: `${layout.questionTop}%`, width: `${layout.questionWidth}%` }}
       >
         <div
-          className="text-[clamp(0.74rem,2vw,1.15rem)] font-black leading-tight tracking-[0.04em] text-white"
+          className="text-[clamp(0.72rem,1.8vw,1.08rem)] font-black leading-tight tracking-[0.04em] text-white"
           style={{ textShadow: '0 2px 6px rgba(2,6,23,0.62)' }}
         >
           {question.prompt}
@@ -393,27 +473,36 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
       </div>
 
-      <div className="absolute inset-0 z-20">
+      <div ref={playfieldRef} className="absolute inset-0 z-20">
         {activeTargetAnchors.map((anchor, idx) => {
           const token = targetSlots[idx];
-          const isSelected = selected?.location === 'target' && selected.index === idx;
+          const isDraggingThis = dragState?.fromLocation === 'target' && dragState.fromIndex === idx;
           return (
             <button
               key={`target-${idx}`}
               type="button"
-              onClick={() => handlePress('target', idx)}
-              className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-xl ${isSelected ? 'ring-4 ring-cyan-300/70' : ''}`}
+              onPointerDown={(event) => beginDrag('target', idx, event)}
+              className="absolute -translate-x-1/2 -translate-y-1/2 rounded-xl"
               style={{ left: `${anchor.x}%`, top: `${layout.targetY}%`, width: layout.tokenWidth, height: layout.targetHeight }}
             >
-              <div className="mx-auto h-[22%] w-[80%] rounded-[999px] border border-slate-200/30 bg-black/18 shadow-[0_8px_16px_rgba(2,6,23,0.45)]" />
+              <div className="pointer-events-none absolute bottom-[78%] left-1/2 -translate-x-1/2 rounded-full border border-white/25 bg-slate-900/75 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100">
+                {PLACE_VALUE_LABELS[idx]}
+              </div>
+              <div className="pointer-events-none absolute left-1/2 top-[8%] h-[54%] w-[80%] -translate-x-1/2 rounded-xl border-2 border-dashed border-cyan-100/85 bg-[#0f2f62]/36 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.12)]">
+                <span className="absolute inset-0 flex items-center justify-center text-[clamp(0.72rem,1.8vw,1rem)] font-black uppercase tracking-[0.1em] text-cyan-100/45">
+                  {PLACE_VALUE_SHORT_LABELS[idx]}
+                </span>
+              </div>
+              <div className="pointer-events-none absolute bottom-[7%] left-1/2 h-[21%] w-[82%] -translate-x-1/2 rounded-[999px] border border-slate-200/35 bg-black/22 shadow-[0_8px_16px_rgba(2,6,23,0.45)]" />
               {token ? (
                 <span
-                  className="mt-1 block font-black text-white"
+                  className="absolute left-1/2 top-[26%] z-10 block -translate-x-1/2 font-black text-white"
                   style={{ ...numberStyle, fontSize: layout.targetFont }}
                 >
                   {token.value}
                 </span>
               ) : null}
+              {isDraggingThis ? <span className="sr-only">Dragging</span> : null}
             </button>
           );
         })}
@@ -422,29 +511,54 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       <div className="absolute inset-0 z-20">
         {activeSourceAnchors.map((anchor, idx) => {
           const token = sourceSlots[idx];
-          const isSelected = selected?.location === 'source' && selected.index === idx;
+          const isDraggingThis = dragState?.fromLocation === 'source' && dragState.fromIndex === idx;
           return (
             <button
               key={`source-${idx}`}
               type="button"
-              onClick={() => handlePress('source', idx)}
-              className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-xl ${isSelected ? 'ring-4 ring-cyan-300/70' : ''}`}
+              onPointerDown={(event) => beginDrag('source', idx, event)}
+              className="absolute -translate-x-1/2 -translate-y-1/2 rounded-xl"
               style={{ left: `${anchor.x}%`, top: `${layout.sourceY}%`, width: layout.tokenWidth, height: layout.sourceHeight }}
             >
-              <div className="mx-auto h-[22%] w-[80%] rounded-[999px] border border-slate-200/30 bg-black/18 shadow-[0_8px_16px_rgba(2,6,23,0.45)]" />
+              <div className="pointer-events-none absolute bottom-[7%] left-1/2 h-[22%] w-[82%] -translate-x-1/2 rounded-[999px] border border-slate-200/35 bg-black/22 shadow-[0_8px_16px_rgba(2,6,23,0.45)]" />
               {token ? (
                 <motion.span
                   layout
-                  className="mt-1 block font-black text-white"
+                  className="absolute left-1/2 top-[20%] block -translate-x-1/2 font-black text-white"
                   style={{ ...numberStyle, fontSize: layout.sourceFont }}
                 >
                   {token.value}
                 </motion.span>
               ) : null}
+              {isDraggingThis ? <span className="sr-only">Dragging</span> : null}
             </button>
           );
         })}
       </div>
+
+      {dragState ? (
+        (() => {
+          const relative = getRelativePoint(dragState.clientX, dragState.clientY);
+          return (
+            <motion.div
+              className="pointer-events-none absolute z-[80] flex items-center justify-center rounded-xl"
+              style={{
+                left: relative.x - dragState.offsetX,
+                top: relative.y - dragState.offsetY,
+                width: dragState.width,
+                height: dragState.height,
+              }}
+              initial={{ scale: 1 }}
+              animate={{ scale: 1.03 }}
+            >
+              <span className="absolute left-1/2 top-[24%] -translate-x-1/2 font-black text-white" style={{ ...numberStyle, fontSize: layout.sourceFont }}>
+                {dragState.token.value}
+              </span>
+              <span className="absolute bottom-[8%] left-1/2 h-[22%] w-[82%] -translate-x-1/2 rounded-[999px] border border-slate-200/35 bg-black/22" />
+            </motion.div>
+          );
+        })()
+      ) : null}
 
       <AnimatePresence>
         {feedback ? (
