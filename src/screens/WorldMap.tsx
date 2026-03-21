@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
 import islandReskinPoster from '../assets/maps/finalislandreskin.png';
+import welcomeToMathariaLogo from '../assets/maps/welcometomatharia.png';
 
 interface WorldMapProps {
   player: PlayerData;
@@ -37,26 +38,26 @@ type AmbientRegion = {
 };
 
 const ISLAND_HOTSPOTS: Record<number, IslandHotspot> = {
-  1: { x: 24, y: 70, width: 22, height: 15, labelX: 25, labelY: 76 },
-  2: { x: 28, y: 40, width: 24, height: 16, labelX: 29, labelY: 46 },
-  3: { x: 71, y: 55, width: 24, height: 16, labelX: 71, labelY: 61 },
-  4: { x: 68, y: 86, width: 23, height: 14, labelX: 68, labelY: 91 },
-  5: { x: 73, y: 29, width: 25, height: 16, labelX: 73, labelY: 35 },
-  6: { x: 50, y: 12, width: 26, height: 17, labelX: 50, labelY: 19 },
-  7: { x: 13, y: 26, width: 20, height: 15, labelX: 14, labelY: 31 },
-  8: { x: 88, y: 11, width: 20, height: 14, labelX: 86, labelY: 16 },
+  1: { x: 24, y: 20, width: 24, height: 15, labelX: 24, labelY: 26 },
+  2: { x: 24, y: 38, width: 24, height: 15, labelX: 24, labelY: 32 },
+  3: { x: 73, y: 40, width: 24, height: 15, labelX: 73, labelY: 33 },
+  4: { x: 74, y: 57, width: 25, height: 15, labelX: 74, labelY: 50 },
+  5: { x: 25, y: 56, width: 24, height: 15, labelX: 25, labelY: 49 },
+  6: { x: 74, y: 20, width: 24, height: 15, labelX: 74, labelY: 26 },
+  7: { x: 26, y: 75, width: 24, height: 15, labelX: 26, labelY: 68 },
+  8: { x: 74, y: 75, width: 24, height: 15, labelX: 74, labelY: 68 },
 };
 
 const MAP_AMBIENTS: AmbientRegion[] = [
-  { id: 'lava-island', x: 50, y: 10, width: 24, height: 18, effect: 'lava-spurts' },
-  { id: 'starlight-city', x: 73, y: 28, width: 24, height: 18, effect: 'stars' },
-  { id: 'ice-island', x: 28, y: 39, width: 24, height: 18, effect: 'blizzard' },
-  { id: 'crystal-refract', x: 28, y: 39, width: 18, height: 14, effect: 'light-beams' },
-  { id: 'ruins-island', x: 71, y: 54, width: 24, height: 18, effect: 'dust-devils' },
-  { id: 'lush-grove', x: 24, y: 69, width: 21, height: 16, effect: 'butterflies' },
-  { id: 'desert-oasis', x: 68, y: 85, width: 22, height: 15, effect: 'birds' },
-  { id: 'data-desert', x: 13, y: 25, width: 18, height: 14, effect: 'stars' },
-  { id: 'sats-summit', x: 86, y: 10, width: 20, height: 14, effect: 'wind-wisps' },
+  { id: 'base-camp', x: 24, y: 20, width: 24, height: 16, effect: 'butterflies' },
+  { id: 'measure-mountain', x: 74, y: 20, width: 24, height: 16, effect: 'lava-spurts' },
+  { id: 'fraction-lagoon', x: 24, y: 38, width: 24, height: 16, effect: 'blizzard' },
+  { id: 'fraction-crystals', x: 24, y: 37, width: 20, height: 13, effect: 'light-beams' },
+  { id: 'operations-outpost', x: 73, y: 40, width: 24, height: 16, effect: 'stars' },
+  { id: 'geometry-gorge', x: 25, y: 56, width: 24, height: 16, effect: 'sparkles' },
+  { id: 'ratio-reef', x: 74, y: 57, width: 24, height: 16, effect: 'birds' },
+  { id: 'data-desert', x: 26, y: 75, width: 24, height: 16, effect: 'dust-devils' },
+  { id: 'sats-summit', x: 74, y: 75, width: 24, height: 16, effect: 'wind-wisps' },
 ];
 
 const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
@@ -264,6 +265,15 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
       className="premium-page-root premium-hub-map relative h-full w-full overflow-y-auto overflow-x-hidden"
       style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}
     >
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex justify-center px-4 pt-[max(0.75rem,env(safe-area-inset-top))]">
+        <img
+          src={welcomeToMathariaLogo}
+          alt="Welcome to Matharia"
+          className="h-auto w-[min(86vw,34rem)] select-none drop-shadow-[0_8px_20px_rgba(0,0,0,0.35)]"
+          draggable={false}
+        />
+      </div>
+
       <div className="premium-map-stage premium-map-stage-fullscreen relative min-h-full w-full">
         <img
           src={islandReskinPoster}

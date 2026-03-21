@@ -995,18 +995,20 @@ const App: React.FC = () => {
   const selectedGameType = selectedLevel?.gameType;
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
-  const useUnboundedSplashShell = isSplashScreen || isAvatarSelectionScreen;
+  const useUnboundedStageShell = isSplashScreen || isAvatarSelectionScreen || isWorldMapScreen;
   const bottomNavOffsetClass = showBottomNav
     ? isWorldMapScreen
       ? 'pb-[calc(6.75rem+env(safe-area-inset-bottom))] md:pb-[calc(2.4rem+env(safe-area-inset-bottom))]'
       : 'pb-[calc(6.75rem+env(safe-area-inset-bottom))] md:pb-[calc(7.25rem+env(safe-area-inset-bottom))]'
     : '';
-  const viewportShellClass = useUnboundedSplashShell
-    ? 'sat-shell-standard licensed-playfield-bg bg-slate-950'
-    : isMapLayoutScreen
+  const viewportShellClass = isWorldMapScreen
+    ? 'sat-shell-map licensed-playfield-bg bg-slate-950 pb-[env(safe-area-inset-bottom)]'
+    : useUnboundedStageShell
+      ? 'sat-shell-standard licensed-playfield-bg bg-slate-950'
+      : isMapLayoutScreen
       ? 'sat-shell-map licensed-playfield-bg bg-slate-950 pb-[env(safe-area-inset-bottom)]'
       : 'sat-shell-standard licensed-playfield-bg bg-slate-950 px-3 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] md:px-8 md:pt-[max(1rem,env(safe-area-inset-top))] md:pb-[max(1rem,env(safe-area-inset-bottom))]';
-  const contentShellClass = useUnboundedSplashShell
+  const contentShellClass = useUnboundedStageShell
     ? 'sat-screen-full-bleed items-stretch'
     : isWorldMapScreen
       ? 'sat-screen-full-bleed items-stretch'
@@ -1024,11 +1026,11 @@ const App: React.FC = () => {
 
   return (
     <div className="iphone-game-viewport">
-      <div className={`iphone-game-stage${useUnboundedSplashShell ? ' iphone-game-stage-unbounded' : ''}`} style={useUnboundedSplashShell ? undefined : stageStyle}>
+      <div className={`iphone-game-stage${useUnboundedStageShell ? ' iphone-game-stage-unbounded' : ''}`} style={useUnboundedStageShell ? undefined : stageStyle}>
         <div className="iphone-game-stage-inner">
           <div className={`app-viewport app-shell-family-${screenBehavior.family} screen-${screen.replace(/_/g, '-')} relative w-full flex flex-col items-center overflow-hidden ${viewportShellClass}`}>
-            {isStandardShellScreen && !useUnboundedSplashShell && <div className="soft-vignette" />}
-            {isStandardShellScreen && !useUnboundedSplashShell && screen !== 'gameplay' && (
+            {isStandardShellScreen && !useUnboundedStageShell && <div className="soft-vignette" />}
+            {isStandardShellScreen && !useUnboundedStageShell && screen !== 'gameplay' && (
               <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-40 bg-gradient-to-b from-cyan-300/8 via-sky-300/4 to-transparent" />
             )}
 
@@ -1085,7 +1087,7 @@ const App: React.FC = () => {
             />
 
             {
-              isStandardShellScreen && !useUnboundedSplashShell && screen !== 'gameplay' && (
+              isStandardShellScreen && !useUnboundedStageShell && screen !== 'gameplay' && (
                 <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
                   <div className="cloud w-64 h-24 top-20" style={{ animationDuration: '25s' }} />
                   <div className="cloud w-48 h-16 top-40" style={{ animationDuration: '40s', animationDelay: '-10s' }} />
