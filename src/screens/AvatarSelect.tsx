@@ -132,7 +132,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   src={getAvatarImage(previousAvatar)}
                   alt=""
                   aria-hidden
-                  className="h-[720%] w-auto object-contain object-bottom"
+                  className="h-[1440%] w-auto object-contain object-bottom"
                   style={getSideFootOffsetStyle(previousAvatar.id)}
                   draggable={false}
                 />
@@ -150,7 +150,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   <img
                     src={getAvatarImage(selectedAvatar)}
                     alt={selectedAvatar.name}
-                    className="h-[1120%] w-auto object-contain object-bottom"
+                    className="h-[2240%] w-auto object-contain object-bottom"
                     style={getMainFootOffsetStyle(selectedAvatar.id)}
                     draggable={false}
                   />
@@ -169,7 +169,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   src={getAvatarImage(nextAvatar)}
                   alt=""
                   aria-hidden
-                  className="h-[720%] w-auto object-contain object-bottom"
+                  className="h-[1440%] w-auto object-contain object-bottom"
                   style={getSideFootOffsetStyle(nextAvatar.id)}
                   draggable={false}
                 />
