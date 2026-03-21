@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import placeValueBackground from '../assets/maps/place value background.png';
+import placeValueBackground from '../assets/maps/placevalue2.png';
 import { triggerHaptic } from '../haptics';
 
 interface PlaceValuePanicGameProps {
@@ -12,8 +12,12 @@ interface PlaceValuePanicGameProps {
   onBack: () => void;
 }
 
-type PlaceUnit = 'tenThousands' | 'thousands' | 'hundreds' | 'tens' | 'ones';
-type TokenLocation = 'stump' | 'answer';
+type TokenLocation = 'source' | 'target';
+
+interface AnchorPoint {
+  x: number;
+  y: number;
+}
 
 interface Token {
   id: string;
@@ -22,46 +26,60 @@ interface Token {
 
 interface QuestionState {
   id: string;
-  units: PlaceUnit[];
   prompt: string;
   expected: string;
   tokenValues: number[];
+  slotCount: number;
 }
 
-interface SelectedTokenRef {
+interface SelectionRef {
   location: TokenLocation;
   index: number;
 }
 
-interface StumpPoint {
-  x: number;
-  y: number;
-}
-
 const GOBLIN_MAX_HEALTH = 10;
 
-const STUMP_POINTS: StumpPoint[] = [
-  { x: 13, y: 79 },
-  { x: 25, y: 81 },
-  { x: 37, y: 79 },
-  { x: 49, y: 81 },
-  { x: 61, y: 79 },
-  { x: 73, y: 81 },
-  { x: 85, y: 79 },
-  { x: 24, y: 90 },
-  { x: 38, y: 92 },
-  { x: 52, y: 90 },
-  { x: 66, y: 92 },
-  { x: 80, y: 90 },
+const TARGET_ANCHORS: AnchorPoint[] = [
+  { x: 26, y: 58.5 },
+  { x: 38, y: 58.5 },
+  { x: 50, y: 58.5 },
+  { x: 62, y: 58.5 },
+  { x: 74, y: 58.5 },
 ];
 
-const PLACE_TEXT: Record<PlaceUnit, string> = {
-  tenThousands: 'ten-thousands',
-  thousands: 'thousands',
-  hundreds: 'hundreds',
-  tens: 'tens',
-  ones: 'ones',
-};
+const SOURCE_ANCHORS: AnchorPoint[] = [
+  { x: 18, y: 75.5 },
+  { x: 30, y: 75.5 },
+  { x: 42, y: 75.5 },
+  { x: 54, y: 75.5 },
+  { x: 66, y: 75.5 },
+  { x: 78, y: 75.5 },
+];
+
+const ONES_WORDS = [
+  'zero',
+  'one',
+  'two',
+  'three',
+  'four',
+  'five',
+  'six',
+  'seven',
+  'eight',
+  'nine',
+  'ten',
+  'eleven',
+  'twelve',
+  'thirteen',
+  'fourteen',
+  'fifteen',
+  'sixteen',
+  'seventeen',
+  'eighteen',
+  'nineteen',
+];
+
+const TENS_WORDS = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
@@ -74,10 +92,37 @@ const shuffle = <T,>(items: T[]): T[] => {
   return clone;
 };
 
-const getUnitsForLevel = (level: number): PlaceUnit[] => {
-  if (level <= 2) return ['hundreds', 'tens', 'ones'];
-  if (level <= 6) return ['thousands', 'hundreds', 'tens', 'ones'];
-  return ['tenThousands', 'thousands', 'hundreds', 'tens', 'ones'];
+const toWordsUnderHundred = (n: number): string => {
+  if (n < 20) return ONES_WORDS[n];
+  const tens = Math.floor(n / 10);
+  const ones = n % 10;
+  if (ones === 0) return TENS_WORDS[tens];
+  return `${TENS_WORDS[tens]} ${ONES_WORDS[ones]}`;
+};
+
+const toWords = (n: number): string => {
+  if (n < 100) return toWordsUnderHundred(n);
+  if (n < 1000) {
+    const hundreds = Math.floor(n / 100);
+    const rest = n % 100;
+    return rest === 0
+      ? `${ONES_WORDS[hundreds]} hundred`
+      : `${ONES_WORDS[hundreds]} hundred and ${toWordsUnderHundred(rest)}`;
+  }
+  if (n < 100000) {
+    const thousands = Math.floor(n / 1000);
+    const rest = n % 1000;
+    if (rest === 0) return `${toWords(thousands)} thousand`;
+    if (rest < 100) return `${toWords(thousands)} thousand and ${toWords(rest)}`;
+    return `${toWords(thousands)} thousand ${toWords(rest)}`;
+  }
+  return String(n);
+};
+
+const getSlotCount = (level: number): number => {
+  if (level <= 2) return 3;
+  if (level <= 6) return 4;
+  return 5;
 };
 
 const scoreToStars = (accuracy: number): number => {
@@ -86,28 +131,31 @@ const scoreToStars = (accuracy: number): number => {
   return 1;
 };
 
-const makeQuestion = (miniGameLevel: number): QuestionState => {
-  const units = getUnitsForLevel(miniGameLevel);
-  const digits = units.map((unit, index) => {
-    const min = index === 0 && (unit === 'tenThousands' || unit === 'thousands' || unit === 'hundreds') ? 1 : 0;
+const centeredAnchors = (anchors: AnchorPoint[], count: number): AnchorPoint[] => {
+  if (count >= anchors.length) return anchors;
+  const start = Math.floor((anchors.length - count) / 2);
+  return anchors.slice(start, start + count);
+};
+
+const makeQuestion = (level: number): QuestionState => {
+  const slotCount = getSlotCount(level);
+  const digits = Array.from({ length: slotCount }, (_, idx) => {
+    const min = idx === 0 ? 1 : 0;
     return randomInt(min, 9);
   });
 
-  const hasDistractor = miniGameLevel >= 5;
+  const hasDistractor = level >= 5;
   const distractor = hasDistractor ? randomInt(0, 9) : null;
   const tokenValues = shuffle(hasDistractor ? [...digits, distractor as number] : [...digits]);
   const expected = digits.join('');
-
-  const prompt = `Arrange digits to make: ${units
-    .map((unit, idx) => `${digits[idx]} ${PLACE_TEXT[unit]}`)
-    .join(', ')}.`;
+  const prompt = toWords(parseInt(expected, 10)).toUpperCase();
 
   return {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    units,
     prompt,
     expected,
     tokenValues,
+    slotCount,
   };
 };
 
@@ -125,58 +173,58 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   );
 
   const [question, setQuestion] = useState<QuestionState>(() => makeQuestion(resolvedLevel));
-  const [stumps, setStumps] = useState<Array<Token | null>>(() => Array(STUMP_POINTS.length).fill(null));
-  const [answers, setAnswers] = useState<Array<Token | null>>(() => Array(question.units.length).fill(null));
-  const [selected, setSelected] = useState<SelectedTokenRef | null>(null);
+  const [targetSlots, setTargetSlots] = useState<Array<Token | null>>([]);
+  const [sourceSlots, setSourceSlots] = useState<Array<Token | null>>([]);
+  const [selected, setSelected] = useState<SelectionRef | null>(null);
   const [goblinHealth, setGoblinHealth] = useState<number>(GOBLIN_MAX_HEALTH);
   const [score, setScore] = useState<number>(0);
   const [attempts, setAttempts] = useState<number>(0);
   const [correctAnswers, setCorrectAnswers] = useState<number>(0);
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
-  const [isResolving, setIsResolving] = useState<boolean>(false);
+  const [isResolving, setIsResolving] = useState(false);
 
   const victoryDispatchedRef = useRef(false);
 
-  const distributeTokensToStumps = useCallback((tokenValues: number[], seedId: string) => {
-    const nextStumps: Array<Token | null> = Array(STUMP_POINTS.length).fill(null);
-    const openIndices = shuffle(Array.from({ length: STUMP_POINTS.length }, (_, index) => index)).slice(0, tokenValues.length);
+  const activeTargetAnchors = useMemo(
+    () => centeredAnchors(TARGET_ANCHORS, question.slotCount),
+    [question.slotCount],
+  );
 
-    tokenValues.forEach((value, idx) => {
-      const targetIndex = openIndices[idx];
-      nextStumps[targetIndex] = {
-        id: `${seedId}-token-${idx}`,
-        value,
-      };
-    });
+  const activeSourceAnchors = useMemo(
+    () => centeredAnchors(SOURCE_ANCHORS, question.tokenValues.length),
+    [question.tokenValues.length],
+  );
 
-    return nextStumps;
-  }, []);
+  const resetRound = useCallback((nextQuestion: QuestionState) => {
+    const nextSources: Array<Token | null> = nextQuestion.tokenValues.map((value, idx) => ({
+      id: `${nextQuestion.id}-token-${idx}`,
+      value,
+    }));
 
-  const resetForQuestion = useCallback((nextQuestion: QuestionState) => {
     setQuestion(nextQuestion);
-    setStumps(distributeTokensToStumps(nextQuestion.tokenValues, nextQuestion.id));
-    setAnswers(Array(nextQuestion.units.length).fill(null));
+    setTargetSlots(Array(nextQuestion.slotCount).fill(null));
+    setSourceSlots(shuffle(nextSources));
     setSelected(null);
     setIsResolving(false);
-  }, [distributeTokensToStumps]);
+  }, []);
 
   useEffect(() => {
-    resetForQuestion(makeQuestion(resolvedLevel));
-  }, [resetForQuestion, resolvedLevel]);
+    resetRound(makeQuestion(resolvedLevel));
+  }, [resetRound, resolvedLevel]);
 
-  const handleMoveToken = useCallback((toLocation: TokenLocation, toIndex: number) => {
+  const moveToken = useCallback((toLocation: TokenLocation, toIndex: number) => {
     if (!selected || isResolving) return;
 
-    const nextStumps = [...stumps];
-    const nextAnswers = [...answers];
+    const nextTargets = [...targetSlots];
+    const nextSources = [...sourceSlots];
 
-    const getToken = (location: TokenLocation, index: number): Token | null => {
-      return location === 'stump' ? nextStumps[index] : nextAnswers[index];
-    };
+    const getToken = (location: TokenLocation, index: number): Token | null => (
+      location === 'target' ? nextTargets[index] : nextSources[index]
+    );
 
     const setToken = (location: TokenLocation, index: number, token: Token | null) => {
-      if (location === 'stump') nextStumps[index] = token;
-      else nextAnswers[index] = token;
+      if (location === 'target') nextTargets[index] = token;
+      else nextSources[index] = token;
     };
 
     const sourceToken = getToken(selected.location, selected.index);
@@ -185,18 +233,18 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       return;
     }
 
-    const targetToken = getToken(toLocation, toIndex);
+    const destinationToken = getToken(toLocation, toIndex);
     setToken(toLocation, toIndex, sourceToken);
-    setToken(selected.location, selected.index, targetToken || null);
+    setToken(selected.location, selected.index, destinationToken || null);
 
-    setStumps(nextStumps);
-    setAnswers(nextAnswers);
+    setTargetSlots(nextTargets);
+    setSourceSlots(nextSources);
     setSelected(null);
     triggerHaptic('selection');
-  }, [answers, isResolving, selected, stumps]);
+  }, [isResolving, selected, sourceSlots, targetSlots]);
 
-  const handleSlotPress = useCallback((location: TokenLocation, index: number) => {
-    const token = location === 'stump' ? stumps[index] : answers[index];
+  const handlePress = useCallback((location: TokenLocation, index: number) => {
+    const token = location === 'target' ? targetSlots[index] : sourceSlots[index];
 
     if (!selected) {
       if (!token || isResolving) return;
@@ -210,8 +258,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       return;
     }
 
-    handleMoveToken(location, index);
-  }, [answers, handleMoveToken, isResolving, selected, stumps]);
+    moveToken(location, index);
+  }, [isResolving, moveToken, selected, sourceSlots, targetSlots]);
 
   const advanceRound = useCallback((newHealth: number) => {
     if (newHealth <= 0 && !victoryDispatchedRef.current) {
@@ -222,56 +270,51 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       return;
     }
 
-    const next = makeQuestion(resolvedLevel);
+    const nextQuestion = makeQuestion(resolvedLevel);
     window.setTimeout(() => {
       setFeedback(null);
-      resetForQuestion(next);
-    }, 700);
-  }, [attempts, correctAnswers, onVictory, resetForQuestion, resolvedLevel, score]);
+      resetRound(nextQuestion);
+    }, 760);
+  }, [attempts, correctAnswers, onVictory, resetRound, resolvedLevel, score]);
 
   useEffect(() => {
     if (isResolving) return;
-    if (answers.length === 0 || answers.some((token) => token === null)) return;
+    if (targetSlots.length === 0 || targetSlots.some((token) => token === null)) return;
 
-    const formedAnswer = answers.map((token) => token?.value ?? '').join('');
-    const isCorrect = formedAnswer === question.expected;
+    const formed = targetSlots.map((token) => token?.value ?? '').join('');
+    const isCorrect = formed === question.expected;
     setIsResolving(true);
     setAttempts((prev) => prev + 1);
 
     if (isCorrect) {
-      const gained = 120 + (resolvedLevel * 20);
-      const newHealth = Math.max(0, goblinHealth - 1);
-      setScore((prev) => prev + gained);
-      setGoblinHealth(newHealth);
+      const nextHealth = Math.max(0, goblinHealth - 1);
+      setGoblinHealth(nextHealth);
       setCorrectAnswers((prev) => prev + 1);
-      setFeedback({ tone: 'success', message: `Direct hit! Goblin HP ${newHealth}/10` });
+      setScore((prev) => prev + (140 + resolvedLevel * 22));
+      setFeedback({ tone: 'success', message: `DIRECT HIT! GOBLIN HP ${nextHealth}/10` });
       triggerHaptic('success');
-      advanceRound(newHealth);
+      advanceRound(nextHealth);
       return;
     }
 
-    const newHealth = Math.min(GOBLIN_MAX_HEALTH, goblinHealth + 1);
-    setGoblinHealth(newHealth);
-    setFeedback({ tone: 'error', message: `Wrong order. Goblin healed to ${newHealth}/10` });
+    const nextHealth = Math.min(GOBLIN_MAX_HEALTH, goblinHealth + 1);
+    setGoblinHealth(nextHealth);
+    setFeedback({ tone: 'error', message: `WRONG ORDER! GOBLIN HP ${nextHealth}/10` });
     triggerHaptic('warning');
-    advanceRound(newHealth);
-  }, [advanceRound, answers, goblinHealth, isResolving, question.expected, resolvedLevel]);
+    advanceRound(nextHealth);
+  }, [advanceRound, goblinHealth, isResolving, question.expected, resolvedLevel, targetSlots]);
 
-  const answerSlotXs = useMemo(() => {
-    const spacing = question.units.length <= 3 ? 13 : 11;
-    const start = 50 - ((question.units.length - 1) * spacing) / 2;
-    return Array.from({ length: question.units.length }, (_, idx) => start + idx * spacing);
-  }, [question.units.length]);
+  const numberStyle: React.CSSProperties = {
+    WebkitTextStroke: '2px #050b1d',
+    textShadow: '0 3px 0 rgba(5,11,29,0.95), 0 0 10px rgba(148,163,184,0.42)',
+  };
 
   return (
-    <div
-      className="fixed inset-0 z-20 h-screen w-screen overflow-hidden select-none"
-      style={{ touchAction: 'manipulation' }}
-    >
+    <div className="fixed inset-0 z-20 h-screen w-screen overflow-hidden select-none" style={{ touchAction: 'manipulation' }}>
       <img
         src={placeValueBackground}
         alt="Place Value Panic"
-        className="absolute inset-0 h-full w-full object-cover object-center"
+        className="absolute inset-0 h-full w-full object-fill object-center"
         draggable={false}
       />
 
@@ -283,17 +326,20 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         Back
       </button>
 
-      <div className="absolute right-3 top-[max(0.75rem,env(safe-area-inset-top))] z-40 flex items-center gap-2 rounded-full bg-slate-900/70 px-3 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-white shadow-[0_8px_20px_rgba(2,6,23,0.45)]">
+      <div className="absolute right-3 top-[max(0.75rem,env(safe-area-inset-top))] z-40 rounded-full bg-slate-900/70 px-3 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-white shadow-[0_8px_20px_rgba(2,6,23,0.45)]">
         Score {score}
       </div>
 
-      <div className="pointer-events-none absolute left-1/2 top-[16.5%] z-30 w-[74%] -translate-x-1/2 text-center">
-        <div className="text-[clamp(0.75rem,2.2vw,1.1rem)] font-black text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]">
+      <div className="pointer-events-none absolute left-1/2 top-[12.5%] z-30 w-[56%] -translate-x-1/2 text-center">
+        <div
+          className="text-[clamp(0.74rem,2vw,1.15rem)] font-black leading-tight tracking-[0.04em] text-white"
+          style={{ textShadow: '0 2px 6px rgba(2,6,23,0.62)' }}
+        >
           {question.prompt}
         </div>
       </div>
 
-      <div className="absolute right-[2.5%] top-[48%] z-30 w-[34%] max-w-[15rem] rounded-xl bg-slate-900/75 px-2.5 py-2 shadow-[0_10px_24px_rgba(2,6,23,0.48)]">
+      <div className="absolute right-[2%] top-[44%] z-30 w-[33%] max-w-[15rem] rounded-xl bg-slate-900/72 px-2.5 py-2 shadow-[0_10px_24px_rgba(2,6,23,0.48)]">
         <div className="mb-1 text-center text-[9px] font-black uppercase tracking-[0.14em] text-amber-200">
           Goblin Health {goblinHealth}/10
         </div>
@@ -302,75 +348,61 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
             <span
               key={`hp-${idx}`}
               className={`h-2 rounded-full ${
-                idx < goblinHealth ? 'bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.7)]' : 'bg-slate-600/50'
+                idx < goblinHealth ? 'bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.75)]' : 'bg-slate-600/50'
               }`}
             />
           ))}
         </div>
       </div>
 
-      <div className="absolute left-1/2 top-[61%] z-30 flex w-[72%] -translate-x-1/2 items-center justify-center gap-2.5">
-        {answerSlotXs.map((x, idx) => {
-          const token = answers[idx];
-          const isSelected = selected?.location === 'answer' && selected.index === idx;
-
+      <div className="absolute inset-0 z-20">
+        {activeTargetAnchors.map((anchor, idx) => {
+          const token = targetSlots[idx];
+          const isSelected = selected?.location === 'target' && selected.index === idx;
           return (
             <button
-              key={`answer-slot-${idx}`}
+              key={`target-${idx}`}
               type="button"
-              onClick={() => handleSlotPress('answer', idx)}
-              className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-2xl border-2 transition-all ${
-                token
-                  ? 'border-yellow-300/95 bg-gradient-to-b from-[#27438a] to-[#172d63] shadow-[0_10px_20px_rgba(15,23,42,0.5)]'
-                  : 'border-cyan-100/70 bg-[#081b45]/45'
-              } ${isSelected ? 'ring-4 ring-cyan-300/65' : ''}`}
-              style={{
-                left: `${x}%`,
-                top: '0%',
-                width: 'clamp(3.2rem,8.4vw,4.8rem)',
-                height: 'clamp(3.2rem,8.4vw,4.8rem)',
-              }}
+              onClick={() => handlePress('target', idx)}
+              className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-xl ${isSelected ? 'ring-4 ring-cyan-300/70' : ''}`}
+              style={{ left: `${anchor.x}%`, top: `${anchor.y}%`, width: '12%', height: '9%' }}
             >
-              <span className={`text-[clamp(1.4rem,4vw,2.2rem)] font-black ${token ? 'text-white' : 'text-cyan-100/60'}`}>
-                {token ? token.value : '?'}
-              </span>
+              <div className="mx-auto h-[22%] w-[80%] rounded-[999px] border border-slate-200/30 bg-black/18 shadow-[0_8px_16px_rgba(2,6,23,0.45)]" />
+              {token ? (
+                <span
+                  className="mt-1 block text-[clamp(2.1rem,5.8vw,4rem)] font-black text-white"
+                  style={numberStyle}
+                >
+                  {token.value}
+                </span>
+              ) : null}
             </button>
           );
         })}
       </div>
 
       <div className="absolute inset-0 z-20">
-        {STUMP_POINTS.map((point, idx) => {
-          const token = stumps[idx];
-          const isSelected = selected?.location === 'stump' && selected.index === idx;
-
+        {activeSourceAnchors.map((anchor, idx) => {
+          const token = sourceSlots[idx];
+          const isSelected = selected?.location === 'source' && selected.index === idx;
           return (
             <button
-              key={`stump-${idx}`}
+              key={`source-${idx}`}
               type="button"
-              onClick={() => handleSlotPress('stump', idx)}
-              className={`absolute -translate-x-1/2 -translate-y-1/2 ${
-                token ? 'cursor-pointer' : 'cursor-default'
-              } ${isSelected ? 'ring-4 ring-cyan-300/65 rounded-2xl' : ''}`}
-              style={{ left: `${point.x}%`, top: `${point.y}%` }}
+              onClick={() => handlePress('source', idx)}
+              className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-xl ${isSelected ? 'ring-4 ring-cyan-300/70' : ''}`}
+              style={{ left: `${anchor.x}%`, top: `${anchor.y}%`, width: '12%', height: '10%' }}
             >
+              <div className="mx-auto h-[22%] w-[80%] rounded-[999px] border border-slate-200/30 bg-black/18 shadow-[0_8px_16px_rgba(2,6,23,0.45)]" />
               {token ? (
-                <motion.div
+                <motion.span
                   layout
-                  className="flex items-center justify-center rounded-2xl border-2 border-yellow-300/95 bg-gradient-to-b from-[#2f53a2] via-[#213f84] to-[#162a5a] px-3 py-2 shadow-[0_12px_26px_rgba(15,23,42,0.56)]"
-                  style={{
-                    width: 'clamp(3.1rem,8vw,4.7rem)',
-                    height: 'clamp(3.1rem,8vw,4.7rem)',
-                  }}
-                  whileTap={{ scale: 0.94 }}
+                  className="mt-1 block text-[clamp(2rem,5.6vw,3.9rem)] font-black text-white"
+                  style={numberStyle}
                 >
-                  <span className="text-[clamp(1.5rem,4.2vw,2.4rem)] font-black text-white drop-shadow-[0_2px_6px_rgba(2,6,23,0.7)]">
-                    {token.value}
-                  </span>
-                </motion.div>
-              ) : (
-                <span className="block h-[clamp(2.8rem,7.8vw,4.2rem)] w-[clamp(2.8rem,7.8vw,4.2rem)] rounded-2xl border border-transparent" />
-              )}
+                  {token.value}
+                </motion.span>
+              ) : null}
             </button>
           );
         })}
@@ -398,3 +430,4 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 };
 
 export default PlaceValuePanicGame;
+
