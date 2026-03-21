@@ -194,9 +194,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const isTallPhone = !isTablet && ratio > 1.95;
 
     return {
-      questionTop: isTablet ? 35.8 : (isTallPhone ? 35.2 : 34.7),
-      questionWidth: isTablet ? 56 : 60,
+      questionTop: isTablet ? 42.2 : (isTallPhone ? 42.8 : 42.4),
+      questionWidth: isTablet ? 51 : 54,
       targetY: isTablet ? 69.6 : (isTallPhone ? 69.1 : 68.7),
+      targetOffsetPx: -20,
       sourceY: isTablet ? 84.1 : (isTallPhone ? 84.7 : 84.4),
       tokenWidth: isTablet ? '9.8%' : '11.2%',
       targetHeight: isTablet ? '11.3%' : '12.4%',
@@ -306,7 +307,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
     activeTargetAnchors.forEach((anchor, index) => {
       const cx = rect.left + (anchor.x / 100) * rect.width;
-      const cy = rect.top + (layout.targetY / 100) * rect.height;
+      const cy = rect.top + (layout.targetY / 100) * rect.height + layout.targetOffsetPx;
       const d = Math.hypot(clientX - cx, clientY - cy);
       if (!best || d < best.distance) best = { location: 'target', index, distance: d };
     });
@@ -320,7 +321,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
     if (!best || best.distance > targetRadius) return null;
     return { location: best.location, index: best.index };
-  }, [activeSourceAnchors, activeTargetAnchors, layout.sourceY, layout.targetY]);
+  }, [activeSourceAnchors, activeTargetAnchors, layout.sourceY, layout.targetOffsetPx, layout.targetY]);
 
   const placeTokenInArrays = useCallback((candidate: { location: TokenLocation; index: number } | null) => {
     if (!dragState) return;
@@ -474,7 +475,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         style={{ top: `${layout.questionTop}%`, width: `${layout.questionWidth}%` }}
       >
         <div
-          className="mx-auto max-w-full px-[3.5%] text-[clamp(0.72rem,1.9vw,1.12rem)] font-black leading-tight tracking-[0.03em] text-white"
+          className="mx-auto max-w-full px-[4.6%] text-[clamp(0.7rem,1.75vw,1.02rem)] font-black leading-tight tracking-[0.028em] text-white"
           style={{
             textShadow: '0 2px 6px rgba(2,6,23,0.62)',
             display: '-webkit-box',
@@ -562,10 +563,15 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               type="button"
               onPointerDown={(event) => beginDrag('target', idx, event)}
               className="absolute -translate-x-1/2 -translate-y-1/2 rounded-xl"
-              style={{ left: `${anchor.x}%`, top: `${layout.targetY}%`, width: layout.tokenWidth, height: layout.targetHeight }}
+              style={{
+                left: `${anchor.x}%`,
+                top: `calc(${layout.targetY}% + ${layout.targetOffsetPx}px)`,
+                width: layout.tokenWidth,
+                height: layout.targetHeight,
+              }}
             >
-              <div className="pointer-events-none absolute left-1/2 top-[3%] h-[76%] w-[94%] -translate-x-1/2 rounded-xl border-2 border-dashed border-cyan-100/90 bg-[#0f2f62]/32 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.18)]" />
-              <span className="pointer-events-none absolute left-1/2 top-[41%] -translate-x-1/2 -translate-y-1/2 text-[clamp(1.1rem,2.8vw,1.45rem)] font-black uppercase tracking-[0.08em] text-cyan-100/60">
+              <div className="pointer-events-none absolute left-1/2 top-[5%] h-[60%] w-[94%] -translate-x-1/2 rounded-xl border-2 border-dashed border-cyan-100/90 bg-[#0f2f62]/32 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.18)]" />
+              <span className="pointer-events-none absolute left-1/2 top-[35%] -translate-x-1/2 -translate-y-1/2 text-[clamp(1.1rem,2.8vw,1.45rem)] font-black uppercase tracking-[0.08em] text-cyan-100/60">
                 {question.placeHints[idx]}
               </span>
               {token ? (
