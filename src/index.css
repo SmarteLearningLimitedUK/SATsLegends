@@ -4072,6 +4072,17 @@ button:disabled {
   pointer-events: none;
   user-select: none;
   filter: drop-shadow(0 6px 12px rgba(2, 6, 23, 0.4));
+  clip-path: polygon(
+    6% 45%,
+    11% 34%,
+    54% 34%,
+    54% 17%,
+    95% 50%,
+    54% 83%,
+    54% 66%,
+    11% 66%,
+    6% 55%
+  );
   transition: transform 0.08s ease, filter 0.08s ease;
 }
 

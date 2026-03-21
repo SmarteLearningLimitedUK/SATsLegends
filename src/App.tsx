@@ -302,6 +302,13 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    // Keep strict non-scroll touch handling for gameplay screens,
+    // but allow vertical panning on the world map.
+    document.body.style.touchAction = screen === 'world_map' ? 'pan-y' : 'none';
+    document.body.style.overscrollBehaviorY = screen === 'world_map' ? 'contain' : 'none';
+  }, [screen]);
+
+  useEffect(() => {
     if (screen === 'profile_setup') {
       setDraftName(player.playerName || '');
     }

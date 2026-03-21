@@ -60,6 +60,17 @@ const MAP_AMBIENTS: AmbientRegion[] = [
   { id: 'sats-summit', x: 74, y: 75, width: 24, height: 16, effect: 'wind-wisps' },
 ];
 
+const ISLAND_LABELS: Record<number, string> = {
+  1: 'Base Camp',
+  2: 'Fraction Lagoon',
+  3: 'Ops Outpost',
+  4: 'Ratio Reef',
+  5: 'Geometry Gorge',
+  6: 'Measure Mountain',
+  7: 'Data Desert',
+  8: 'SATs Summit',
+};
+
 const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
   switch (effect) {
     case 'butterflies':
@@ -263,7 +274,13 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
   return (
     <div
       className="premium-page-root premium-hub-map relative h-full w-full overflow-y-auto overflow-x-hidden"
-      style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}
+      style={{
+        WebkitOverflowScrolling: 'touch',
+        touchAction: 'pan-y',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        overscrollBehaviorY: 'contain',
+      }}
     >
       <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex justify-center px-4 pt-[max(0.75rem,env(safe-area-inset-top))]">
         <img
@@ -369,7 +386,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                       </span>
                     )}
                     <span className="world-map-island-label-text block text-[9px] font-black uppercase leading-none tracking-[0.06em] md:text-[10px]">
-                      {island.name}
+                      {ISLAND_LABELS[island.id] || island.name}
                     </span>
                   </span>
                 </button>
