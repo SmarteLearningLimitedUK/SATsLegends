@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import placeValueBackground from '../assets/maps/placevaluepanicfinalbkgd.png';
-import pvPanicHeader from '../assets/maps/pvpanicheader.png';
 import goblinEnemy from '../assets/bosses/goblin.png';
 import { triggerHaptic } from '../haptics';
 
@@ -195,21 +194,19 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const isTallPhone = !isTablet && ratio > 1.95;
 
     return {
-      questionTop: isTablet ? 38.4 : (isTallPhone ? 39.1 : 38.8),
-      questionWidth: isTablet ? 51 : 54,
-      headerHeight: isTablet ? 22 : (isTallPhone ? 24 : 23),
-      targetY: isTablet ? 69.6 : (isTallPhone ? 69.1 : 68.7),
-      targetOffsetPx: -20,
-      sourceY: isTablet ? 79.1 : (isTallPhone ? 79.8 : 79.5),
+      questionTop: isTablet ? 21.7 : (isTallPhone ? 22.4 : 22.1),
+      questionWidth: isTablet ? 63 : 68,
+      targetY: isTablet ? 75.2 : (isTallPhone ? 74.7 : 74.9),
+      sourceY: isTablet ? 83.9 : (isTallPhone ? 84.5 : 84.2),
       tokenWidth: isTablet ? '9.8%' : '11.2%',
-      targetHeight: isTablet ? '11.3%' : '12.4%',
-      sourceHeight: isTablet ? '10.2%' : '11.1%',
+      targetHeight: isTablet ? '9.2%' : '9.8%',
+      sourceHeight: isTablet ? '8.9%' : '9.5%',
       targetFont: isTablet ? 'clamp(2.8rem,5.9vw,4.9rem)' : 'clamp(2.45rem,6.8vw,4.55rem)',
       sourceFont: isTablet ? 'clamp(2.7rem,5.7vw,4.7rem)' : 'clamp(2.3rem,6.4vw,4.35rem)',
-      healthTop: isTablet ? 40 : 44,
-      healthWidth: isTablet ? 16 : 19,
-      enemyTop: isTablet ? 45.5 : (isTallPhone ? 47.5 : 46.8),
-      enemyWidth: isTablet ? 18 : 22,
+      healthTop: isTablet ? 55 : 58,
+      healthWidth: isTablet ? 14 : 16,
+      enemyTop: isTablet ? 43.5 : (isTallPhone ? 45 : 44.4),
+      enemyWidth: isTablet ? 16 : 20,
     };
   }, [viewport.height, viewport.width]);
 
@@ -309,7 +306,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
     activeTargetAnchors.forEach((anchor, index) => {
       const cx = rect.left + (anchor.x / 100) * rect.width;
-      const cy = rect.top + (layout.targetY / 100) * rect.height + layout.targetOffsetPx;
+      const cy = rect.top + (layout.targetY / 100) * rect.height;
       const d = Math.hypot(clientX - cx, clientY - cy);
       if (!best || d < best.distance) best = { location: 'target', index, distance: d };
     });
@@ -323,7 +320,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
     if (!best || best.distance > targetRadius) return null;
     return { location: best.location, index: best.index };
-  }, [activeSourceAnchors, activeTargetAnchors, layout.sourceY, layout.targetOffsetPx, layout.targetY]);
+  }, [activeSourceAnchors, activeTargetAnchors, layout.sourceY, layout.targetY]);
 
   const placeTokenInArrays = useCallback((candidate: { location: TokenLocation; index: number } | null) => {
     if (!dragState) return;
@@ -460,14 +457,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         draggable={false}
       />
 
-      <img
-        src={pvPanicHeader}
-        alt="Place Value Panic Header"
-        className="pointer-events-none absolute left-0 top-0 z-10 w-full object-cover object-top"
-        style={{ height: `${layout.headerHeight}%` }}
-        draggable={false}
-      />
-
       <button
         type="button"
         onClick={onBack}
@@ -575,7 +564,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               className="absolute -translate-x-1/2 -translate-y-1/2 rounded-xl"
               style={{
                 left: `${anchor.x}%`,
-                top: `calc(${layout.targetY}% + ${layout.targetOffsetPx}px)`,
+                top: `${layout.targetY}%`,
                 width: layout.tokenWidth,
                 height: layout.targetHeight,
               }}
