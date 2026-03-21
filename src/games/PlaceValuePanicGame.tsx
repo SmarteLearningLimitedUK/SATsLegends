@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import placeValueBackground from '../assets/maps/placevalue2.png';
+import placeValueBackground from '../assets/maps/placebk.png';
 import { triggerHaptic } from '../haptics';
 
 interface PlaceValuePanicGameProps {
