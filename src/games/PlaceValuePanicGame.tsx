@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import placeValueBackground from '../assets/maps/placebk.png';
+import placeValueBackground from '../assets/maps/placevaluepanicfinalbkgd.png';
 import pvPanicHeader from '../assets/maps/pvpanicheader.png';
 import goblinEnemy from '../assets/bosses/goblin.png';
 import { triggerHaptic } from '../haptics';
