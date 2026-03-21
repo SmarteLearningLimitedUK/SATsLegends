@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react';
 import placeValueBackground from '../assets/maps/placepanicbkk.png';
 import goblinEnemy from '../assets/bosses/goblin.png';
+import GameActionDock from '../components/GameActionDock';
 import { triggerHaptic } from '../haptics';
 
 interface PlaceValuePanicGameProps {
@@ -647,7 +648,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
-            className={`absolute bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 z-40 -translate-x-1/2 rounded-full border px-5 py-2 text-xs font-black uppercase tracking-[0.14em] shadow-[0_12px_28px_rgba(2,6,23,0.55)] ${
+            className={`absolute bottom-[calc(env(safe-area-inset-bottom)+4.6rem)] left-1/2 z-40 -translate-x-1/2 rounded-full border px-5 py-2 text-xs font-black uppercase tracking-[0.14em] shadow-[0_12px_28px_rgba(2,6,23,0.55)] ${
               feedback.tone === 'success'
                 ? 'border-emerald-200/70 bg-emerald-500/35 text-emerald-50'
                 : 'border-rose-200/70 bg-rose-500/35 text-rose-50'
@@ -657,6 +658,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           </motion.div>
         ) : null}
       </AnimatePresence>
+
+      <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.4rem,env(safe-area-inset-bottom))] z-50 flex justify-center px-3">
+        <div className="pointer-events-auto">
+          <GameActionDock onBack={onBack} accentClass="text-slate-100" compact />
+        </div>
+      </div>
     </div>
   );
 };
