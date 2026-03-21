@@ -43,7 +43,6 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
     }
   }, [onSelect, selectedId]);
 
-
   const selectIndex = (index: number) => {
     const safeIndex = (index + AVATARS.length) % AVATARS.length;
     const avatar = AVATARS[safeIndex];
@@ -63,6 +62,8 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
     transform: `translateY(${AVATAR_SIDE_GLOBAL_LIFT_PX + (AVATAR_FOOT_ANCHOR_SIDE_Y_PX[avatarId] ?? 0)}px) scale(${AVATAR_SIDE_VISUAL_SCALE})`,
     transformOrigin: 'bottom center',
   });
+  const getAvatarImage = (avatar: { portrait?: string; image: string }) => avatar.portrait || avatar.image;
+
   return (
     <div className="avatar-select-screen relative h-full w-full overflow-hidden">
       <img
@@ -133,7 +134,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                 aria-label={`Select ${previousAvatar.name}`}
               >
                 <img
-                  src={previousAvatar.portrait || previousAvatar.image}
+                  src={getAvatarImage(previousAvatar)}
                   alt=""
                   aria-hidden
                   className="h-[360%] w-auto object-contain object-bottom"
@@ -152,7 +153,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   className="avatar-carousel-main"
                 >
                   <img
-                    src={selectedAvatar.portrait || selectedAvatar.image}
+                    src={getAvatarImage(selectedAvatar)}
                     alt={selectedAvatar.name}
                     className="h-[560%] w-auto object-contain object-bottom"
                     style={getMainFootOffsetStyle(selectedAvatar.id)}
@@ -170,7 +171,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                 aria-label={`Select ${nextAvatar.name}`}
               >
                 <img
-                  src={nextAvatar.portrait || nextAvatar.image}
+                  src={getAvatarImage(nextAvatar)}
                   alt=""
                   aria-hidden
                   className="h-[360%] w-auto object-contain object-bottom"
