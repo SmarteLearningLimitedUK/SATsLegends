@@ -183,8 +183,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const isTallPhone = !isTablet && ratio > 1.95;
 
     return {
-      questionTop: isTablet ? 10.6 : (isTallPhone ? 11.3 : 10.9),
-      questionWidth: isTablet ? 47 : 52,
+      questionTop: isTablet ? 13.4 : (isTallPhone ? 13.9 : 13.6),
+      questionWidth: isTablet ? 45 : 50,
       targetY: isTablet ? 58.2 : (isTallPhone ? 59.2 : 58.6),
       sourceY: isTablet ? 75.4 : (isTallPhone ? 76.8 : 76.1),
       tokenWidth: isTablet ? '10.5%' : '12%',
