@@ -7,7 +7,6 @@ import splashStyleButton from '../assets/casual_ui/inputs/btn_1.png';
 import heroRibbon from '../assets/casual_ui/dialogs_panels/ribbon_1.png';
 import heroNameBlueRibbon from '../assets/importedassets/Dialogs & Panels/ribbon 1.png';
 import avatarNextIcon from '../assets/importedassets/Icons/icon - next.png';
-import arrowButtonFrame from '../assets/importedassets/Icons/icon container.png';
 
 const AVATAR_FOOT_ANCHOR_MAIN_Y_PX: Record<string, number> = {
   barratt: 0,
@@ -108,20 +107,17 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               aria-label="Previous hero"
               type="button"
             >
-              <img
-                src={arrowButtonFrame}
-                alt=""
-                aria-hidden
-                className="avatar-hero-arrow-frame"
-                draggable={false}
-              />
-              <img
-                src={avatarNextIcon}
-                alt=""
-                aria-hidden
-                className="avatar-hero-arrow-icon scale-x-[-1]"
-                draggable={false}
-              />
+              <span className="avatar-hero-arrow-shell" aria-hidden>
+                <span className="avatar-hero-arrow-core">
+                  <img
+                    src={avatarNextIcon}
+                    alt=""
+                    aria-hidden
+                    className="avatar-hero-arrow-icon scale-x-[-1]"
+                    draggable={false}
+                  />
+                </span>
+              </span>
             </motion.button>
 
             <div className="avatar-carousel-track">
@@ -137,7 +133,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   src={getAvatarImage(previousAvatar)}
                   alt=""
                   aria-hidden
-                  className="h-[360%] w-auto object-contain object-bottom"
+                  className="h-[720%] w-auto object-contain object-bottom"
                   style={getSideFootOffsetStyle(previousAvatar.id)}
                   draggable={false}
                 />
@@ -155,7 +151,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   <img
                     src={getAvatarImage(selectedAvatar)}
                     alt={selectedAvatar.name}
-                    className="h-[560%] w-auto object-contain object-bottom"
+                    className="h-[1120%] w-auto object-contain object-bottom"
                     style={getMainFootOffsetStyle(selectedAvatar.id)}
                     draggable={false}
                   />
@@ -174,7 +170,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                   src={getAvatarImage(nextAvatar)}
                   alt=""
                   aria-hidden
-                  className="h-[360%] w-auto object-contain object-bottom"
+                  className="h-[720%] w-auto object-contain object-bottom"
                   style={getSideFootOffsetStyle(nextAvatar.id)}
                   draggable={false}
                 />
@@ -188,20 +184,17 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               aria-label="Next hero"
               type="button"
             >
-              <img
-                src={arrowButtonFrame}
-                alt=""
-                aria-hidden
-                className="avatar-hero-arrow-frame"
-                draggable={false}
-              />
-              <img
-                src={avatarNextIcon}
-                alt=""
-                aria-hidden
-                className="avatar-hero-arrow-icon"
-                draggable={false}
-              />
+              <span className="avatar-hero-arrow-shell" aria-hidden>
+                <span className="avatar-hero-arrow-core">
+                  <img
+                    src={avatarNextIcon}
+                    alt=""
+                    aria-hidden
+                    className="avatar-hero-arrow-icon"
+                    draggable={false}
+                  />
+                </span>
+              </span>
             </motion.button>
           </div>
 
