@@ -194,10 +194,11 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const isTallPhone = !isTablet && ratio > 1.95;
 
     return {
-      questionTop: isTablet ? 21.7 : (isTallPhone ? 22.4 : 22.1),
-      questionWidth: isTablet ? 63 : 68,
+      questionTop: isTablet ? 26.4 : (isTallPhone ? 27.2 : 26.8),
+      questionWidth: isTablet ? 58 : 63,
+      questionHeight: isTablet ? 9.8 : 10.6,
       targetY: isTablet ? 75.2 : (isTallPhone ? 74.7 : 74.9),
-      sourceY: isTablet ? 83.9 : (isTallPhone ? 84.5 : 84.2),
+      sourceY: isTablet ? 78.2 : (isTallPhone ? 79 : 78.7),
       tokenWidth: isTablet ? '9.8%' : '11.2%',
       targetHeight: isTablet ? '9.2%' : '9.8%',
       sourceHeight: isTablet ? '8.9%' : '9.5%',
@@ -452,7 +453,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     <div className="fixed inset-0 z-20 h-screen w-screen overflow-hidden select-none" style={{ touchAction: 'manipulation' }}>
       <img
         src={placeValueBackground}
-        alt="Place Value Panic"
+        alt=""
+        aria-hidden="true"
         className="absolute inset-0 h-full w-full object-cover object-center"
         draggable={false}
       />
@@ -470,11 +472,11 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       </div>
 
       <div
-        className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2 text-center"
-        style={{ top: `${layout.questionTop}%`, width: `${layout.questionWidth}%` }}
+        className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2"
+        style={{ top: `${layout.questionTop}%`, width: `${layout.questionWidth}%`, height: `${layout.questionHeight}%` }}
       >
         <div
-          className="mx-auto max-w-full px-[4.6%] text-[clamp(0.7rem,1.75vw,1.02rem)] font-black leading-tight tracking-[0.028em] text-white"
+          className="mx-auto flex h-full max-w-full items-center justify-center px-[4.6%] text-center text-[clamp(0.7rem,1.75vw,1.02rem)] font-black leading-tight tracking-[0.028em] text-white"
           style={{
             textShadow: '0 2px 6px rgba(2,6,23,0.62)',
             display: '-webkit-box',
@@ -533,7 +535,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           />
           <motion.img
             src={goblinEnemy}
-            alt="Goblin enemy"
+            alt=""
+            aria-hidden="true"
             draggable={false}
             className="relative h-auto w-full object-contain drop-shadow-[0_16px_22px_rgba(2,6,23,0.5)]"
             animate={{
