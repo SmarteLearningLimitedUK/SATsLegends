@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import placeValueBackground from '../assets/maps/placebk.png';
+import pvPanicHeader from '../assets/maps/pvpanicheader.png';
 import goblinEnemy from '../assets/bosses/goblin.png';
 import { triggerHaptic } from '../haptics';
 
@@ -196,6 +197,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     return {
       questionTop: isTablet ? 38.4 : (isTallPhone ? 39.1 : 38.8),
       questionWidth: isTablet ? 51 : 54,
+      headerHeight: isTablet ? 22 : (isTallPhone ? 24 : 23),
       targetY: isTablet ? 69.6 : (isTallPhone ? 69.1 : 68.7),
       targetOffsetPx: -20,
       sourceY: isTablet ? 79.1 : (isTallPhone ? 79.8 : 79.5),
@@ -455,6 +457,14 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         src={placeValueBackground}
         alt="Place Value Panic"
         className="absolute inset-0 h-full w-full object-cover object-center"
+        draggable={false}
+      />
+
+      <img
+        src={pvPanicHeader}
+        alt="Place Value Panic Header"
+        className="pointer-events-none absolute left-0 top-0 z-10 w-full object-cover object-top"
+        style={{ height: `${layout.headerHeight}%` }}
         draggable={false}
       />
 
