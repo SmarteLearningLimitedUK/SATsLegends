@@ -79,6 +79,8 @@ body {
 .iphone-game-viewport {
   position: fixed;
   inset: 0;
+  height: 100dvh;
+  max-height: 100dvh;
   overflow: hidden;
   background: #020617;
 }
@@ -3308,12 +3310,14 @@ button:disabled {
 .screen-gameplay .game-shell-host,
 .screen-gameplay .game-shell-contract,
 .screen-gameplay .structured-game-layout {
+  overscroll-behavior: none;
   height: 100%;
   max-height: 100dvh;
   min-height: 0;
 }
 
 .screen-gameplay .app-screen-content {
+  overflow: clip !important;
   width: 100% !important;
   max-width: none !important;
   margin: 0 !important;
