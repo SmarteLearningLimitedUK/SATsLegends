@@ -133,14 +133,21 @@ const centeredAnchors = (anchors: AnchorPoint[], count: number): AnchorPoint[] =
   return anchors.slice(start, start + count);
 };
 
+const slotCountForLevel = (level: number): number => {
+  if (level <= 2) return 2; // T, U
+  if (level <= 4) return 3; // H, T, U
+  if (level <= 7) return 4; // Th, H, T, U
+  return 5; // Th, Th, H, T, U
+};
+
 const makeQuestion = (level: number): QuestionState => {
-  const slotCount = FULL_PLACE_VALUE_HINTS.length;
+  const slotCount = slotCountForLevel(level);
   let promptNumber: number;
-  if (level <= 2) {
+  if (slotCount === 2) {
     promptNumber = randomInt(10, 99);
-  } else if (level <= 4) {
+  } else if (slotCount === 3) {
     promptNumber = randomInt(100, 999);
-  } else if (level <= 7) {
+  } else if (slotCount === 4) {
     promptNumber = randomInt(1000, 9999);
   } else {
     promptNumber = randomInt(10000, 99999);
@@ -151,7 +158,7 @@ const makeQuestion = (level: number): QuestionState => {
     .split('')
     .map((digit) => Number(digit));
   const tokenValues = shuffle([...expectedDigits]);
-  const placeHints = [...FULL_PLACE_VALUE_HINTS];
+  const placeHints = FULL_PLACE_VALUE_HINTS.slice(FULL_PLACE_VALUE_HINTS.length - slotCount);
   const prompt = toWords(promptNumber).toUpperCase();
 
   return {
@@ -209,21 +216,21 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       questionTop: isTablet ? 16.4 : (isTallPhone ? 17.0 : 16.8),
       questionWidth: isTablet ? 48 : 58,
       questionHeight: isTablet ? 11.2 : 12.0,
-      submitY: isTablet ? 80.8 : (isTallPhone ? 81.4 : 81.1),
-      submitWidth: isTablet ? 24 : 36,
-      submitHeight: isTablet ? 6.6 : 7.2,
+      submitY: isTablet ? 78.6 : (isTallPhone ? 79.2 : 78.9),
+      submitWidth: isTablet ? 28 : 44,
+      submitHeight: isTablet ? 7.8 : 8.8,
       targetY: isTablet ? 74.8 : (isTallPhone ? 75.2 : 75.0),
       sourceY: isTablet ? 36.8 : (isTallPhone ? 37.4 : 37.1),
-      targetWidth: isTablet ? '8.9%' : '9.8%',
+      targetWidth: isTablet ? '11.6%' : '13.8%',
       sourceWidth: isTablet ? '8.9%' : '9.8%',
-      targetHeight: isTablet ? '7.6%' : '8.2%',
+      targetHeight: isTablet ? '10.6%' : '12.4%',
       sourceHeight: isTablet ? '7.6%' : '8.2%',
       targetFont: isTablet ? 'clamp(2.15rem,4.7vw,3.65rem)' : 'clamp(1.95rem,5.1vw,3.25rem)',
       sourceFont: isTablet ? 'clamp(2.15rem,4.7vw,3.65rem)' : 'clamp(1.95rem,5.1vw,3.25rem)',
-      healthTop: isTablet ? 60.8 : (isTallPhone ? 62.1 : 61.7),
+      healthTop: isTablet ? 57.8 : (isTallPhone ? 59.1 : 58.7),
       healthWidth: isTablet ? 28 : 40,
       healthLeft: isTablet ? 66.7 : 69.4,
-      enemyTop: isTablet ? 48.9 : (isTallPhone ? 51.6 : 51.1),
+      enemyTop: isTablet ? 45.9 : (isTallPhone ? 48.6 : 48.1),
       enemyWidth: isTablet ? 27 : 31,
     };
   }, [viewport.height, viewport.width]);
