@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
 import islandReskinPoster from '../assets/maps/finalislandreskin.png';
 import welcomeMathLogo from '../assets/maps/welcomemathlogo.png';
+import AssetIcon from '../components/AssetIcon';
 
 interface WorldMapProps {
   player: PlayerData;
@@ -255,6 +256,27 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
 };
 
 const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
+  const formatResetCountdown = () => {
+    const now = new Date();
+    const nextMidnight = new Date(now);
+    nextMidnight.setHours(24, 0, 0, 0);
+    const diffMs = Math.max(0, nextMidnight.getTime() - now.getTime());
+    const totalMinutes = Math.floor(diffMs / 60000);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return `${hours}:${String(minutes).padStart(2, '0')}`;
+  };
+
+  const [resetCountdown, setResetCountdown] = useState<string>(() => formatResetCountdown());
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setResetCountdown(formatResetCountdown()), 30000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const totalStars = player.stats?.totalStars ?? 0;
+  const pendingTasks = (player.dailyQuests || []).filter(quest => !quest.isClaimed).length;
+
   const islandProgress = useMemo(() => {
     return ISLANDS.map(island => {
       const starredLevels = island.levels.filter(level => {
@@ -282,13 +304,50 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
         overscrollBehaviorY: 'contain',
       }}
     >
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex justify-center px-4 pt-[max(0.75rem,env(safe-area-inset-top))]">
+      <div className="pointer-events-none fixed inset-x-0 top-0 z-40 flex justify-center px-3 pt-[max(0.5rem,env(safe-area-inset-top))]">
+        <div className="world-map-top-hud pointer-events-auto">
+          <div className="world-map-stat-pill">
+            <span className="world-map-stat-icon world-map-stat-icon-coin">
+              <AssetIcon name="coin" className="h-5 w-5" />
+            </span>
+            <span className="world-map-stat-value">{player.coins.toLocaleString()}</span>
+            <span className="world-map-plus-pill">+</span>
+          </div>
+          <div className="world-map-stat-pill">
+            <span className="world-map-stat-icon world-map-stat-icon-heart">
+              <AssetIcon name="heart" className="h-5 w-5" />
+              <span className="world-map-heart-count">{player.dailyStreak}</span>
+            </span>
+            <span className="world-map-stat-value">{resetCountdown}</span>
+            <span className="world-map-plus-pill">+</span>
+          </div>
+          <div className="world-map-stat-pill">
+            <span className="world-map-stat-icon world-map-stat-icon-star">
+              <AssetIcon name="star" className="h-5 w-5" />
+            </span>
+            <span className="world-map-stat-value">{totalStars}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex justify-center px-4 pt-[calc(env(safe-area-inset-top)+3.2rem)]">
         <img
           src={welcomeMathLogo}
           alt="Welcome to Matharia"
-          className="h-auto w-[min(86vw,34rem)] select-none drop-shadow-[0_8px_20px_rgba(0,0,0,0.35)]"
+          className="h-auto w-[min(88vw,36rem)] select-none drop-shadow-[0_8px_20px_rgba(0,0,0,0.35)]"
           draggable={false}
         />
+      </div>
+
+      <div className="pointer-events-none fixed inset-x-0 z-40 flex justify-center px-4 bottom-[calc(env(safe-area-inset-bottom)+6.8rem)] md:bottom-[calc(env(safe-area-inset-bottom)+6.6rem)]">
+        <div className="world-map-cta-row pointer-events-auto">
+          <button type="button" className="world-map-cta world-map-cta-level">
+            Level {player.level}
+          </button>
+          <button type="button" className="world-map-cta world-map-cta-tasks">
+            Tasks{pendingTasks > 0 ? ` (${pendingTasks})` : ''}
+          </button>
+        </div>
       </div>
 
       <div

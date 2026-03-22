@@ -1120,7 +1120,7 @@ const App: React.FC = () => {
                       <AssetIcon name="star" className="h-4 w-4" />
                       <span className="text-[9px] font-black uppercase tracking-[0.24em] md:text-[10px]">Adventure mode</span>
                     </div>
-                    <nav className={`casual-nav-shell flex w-full items-center justify-between rounded-[2rem] px-2 py-2 ${
+                    <nav className={`casual-nav-shell ${isWorldMapScreen ? 'worldmap-bottom-nav' : ''} flex w-full items-center justify-between rounded-[2rem] px-2 py-2 ${
                       isWorldMapScreen
                         ? 'max-w-[28rem] md:max-w-[32rem] md:px-3 md:py-2.5'
                         : 'max-w-[28rem] md:max-w-3xl md:px-4 md:py-3'
@@ -1128,26 +1128,26 @@ const App: React.FC = () => {
                       <motion.button
                         whileTap={{ scale: 0.96, y: 1 }}
                         onClick={goToHome}
-                        className={`ui-icon-button hero-nav-button hero-nav-button-home flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'world_map' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
+                        className={`ui-icon-button hero-nav-button worldmap-nav-tab hero-nav-button-home flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'world_map' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
                       >
                         <AssetIcon name="home" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
-                        <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Map</span>
+                        <span className="hero-nav-label text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Home</span>
                       </motion.button>
                       <motion.button
                         whileTap={{ scale: 0.96, y: 1 }}
                         onClick={() => setScreen('avatar_selection')}
-                        className={`ui-icon-button hero-nav-button hero-nav-button-hero flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'avatar_selection' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
+                        className={`ui-icon-button hero-nav-button worldmap-nav-tab hero-nav-button-hero flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'avatar_selection' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
                       >
                         <AssetIcon name="user" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
-                        <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Hero</span>
+                        <span className="hero-nav-label text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Hero</span>
                       </motion.button>
                       <motion.button
                         whileTap={{ scale: 0.96, y: 1 }}
                         onClick={() => setShowQuests(true)}
-                        className="ui-icon-button hero-nav-button hero-nav-button-idle hero-nav-button-quests relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3"
+                        className="ui-icon-button hero-nav-button worldmap-nav-tab hero-nav-button-idle hero-nav-button-quests relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3"
                       >
                         <AssetIcon name="doc" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
-                        <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Quests</span>
+                        <span className="hero-nav-label text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Quests</span>
                         {(player.dailyQuests || []).some(q => q.current >= q.target && !q.isClaimed) && (
                           <span className="absolute right-2 top-1 h-3 w-3 rounded-full border-2 border-white bg-red-500 animate-pulse" />
                         )}
@@ -1155,10 +1155,10 @@ const App: React.FC = () => {
                       <motion.button
                         whileTap={{ scale: 0.96, y: 1 }}
                         onClick={() => setShowAchievements(true)}
-                        className="ui-icon-button hero-nav-button hero-nav-button-idle hero-nav-button-wins relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3"
+                        className="ui-icon-button hero-nav-button worldmap-nav-tab hero-nav-button-idle hero-nav-button-wins relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3"
                       >
                         <AssetIcon name="medal" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
-                        <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Wins</span>
+                        <span className="hero-nav-label text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Wins</span>
                         {(player.achievements?.length || 0) > 0 && (
                           <span className="absolute right-2 top-1 h-3 w-3 rounded-full border-2 border-white bg-yellow-400" />
                         )}
@@ -1166,10 +1166,10 @@ const App: React.FC = () => {
                       <motion.button
                         whileTap={{ scale: 0.96, y: 1 }}
                         onClick={() => setScreen('parent_dashboard')}
-                        className={`ui-icon-button hero-nav-button hero-nav-button-stats flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'parent_dashboard' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
+                        className={`ui-icon-button hero-nav-button worldmap-nav-tab hero-nav-button-stats flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'parent_dashboard' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
                       >
                         <AssetIcon name="gear" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
-                        <span className="text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Stats</span>
+                        <span className="hero-nav-label text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Stats</span>
                       </motion.button>
                     </nav>
                   </div>
