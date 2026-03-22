@@ -3,9 +3,7 @@ import {
   AlertCircle,
   CheckCircle2,
   ChevronRight,
-  Info,
   Layers,
-  LayoutGrid,
   Maximize2,
   RotateCcw,
   Ruler,
@@ -13,6 +11,15 @@ import {
   Trophy,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import GameplayHUD from '../components/GameplayHUD';
+import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
+import MiniGameTopBar from '../components/MiniGameTopBar';
+import GameActionDock from '../components/GameActionDock';
+import { AVATARS } from '../constants';
+import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
+import labelBlueAsset from '../assets/licensed/slices/label_blue.png';
+import labelGreenLongAsset from '../assets/licensed/slices/label_green_long.png';
+import buttonYellowPlankAsset from '../assets/licensed/slices/button_yellow_plank.png';
 
 interface ScaleBuilderGameProps {
   levelId: number;
@@ -75,19 +82,19 @@ const LEVELS: Level[] = [
     name: 'The Grand Hall',
     shape: { type: 'rect', baseWidth: 40, baseHeight: 120 },
     targetScale: 2.25,
-    instructions: 'Final challenge: Scale the grand hall to exactly 2.25x.',
+    instructions: 'Final challenge: scale the grand hall to exactly 2.25x.',
   },
 ];
 
 const GRID_SIZE = 20;
 
 const BlueprintGrid: React.FC = () => (
-  <div className="pointer-events-none absolute inset-0 opacity-20">
+  <div className="pointer-events-none absolute inset-0 opacity-22">
     <div
       className="absolute inset-0"
       style={{
         backgroundImage:
-          'linear-gradient(to right, #60a5fa 1px, transparent 1px), linear-gradient(to bottom, #60a5fa 1px, transparent 1px)',
+          'linear-gradient(to right, rgba(125,211,252,0.45) 1px, transparent 1px), linear-gradient(to bottom, rgba(125,211,252,0.45) 1px, transparent 1px)',
         backgroundSize: `${GRID_SIZE}px ${GRID_SIZE}px`,
       }}
     />
@@ -95,7 +102,7 @@ const BlueprintGrid: React.FC = () => (
       className="absolute inset-0"
       style={{
         backgroundImage:
-          'linear-gradient(to right, #60a5fa 2px, transparent 2px), linear-gradient(to bottom, #60a5fa 2px, transparent 2px)',
+          'linear-gradient(to right, rgba(250,204,21,0.45) 2px, transparent 2px), linear-gradient(to bottom, rgba(250,204,21,0.45) 2px, transparent 2px)',
         backgroundSize: `${GRID_SIZE * 5}px ${GRID_SIZE * 5}px`,
       }}
     />
@@ -105,16 +112,16 @@ const BlueprintGrid: React.FC = () => (
 const ShapeRenderer: React.FC<{
   shape: Shape;
   scale: number;
-  colorClass: string;
+  strokeClass: string;
   isBase?: boolean;
-}> = ({ shape, scale, colorClass, isBase = false }) => {
+}> = ({ shape, scale, strokeClass, isBase = false }) => {
   const width = shape.baseWidth * scale;
   const height = shape.baseHeight * scale;
 
   if (shape.type === 'rect') {
     return (
       <div
-        className={`absolute border-2 transition-all duration-300 ${colorClass}`}
+        className={`absolute border-2 transition-all duration-300 ${strokeClass}`}
         style={{
           width,
           height,
@@ -125,10 +132,10 @@ const ShapeRenderer: React.FC<{
       >
         {!isBase ? (
           <>
-            <div className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-mono">
+            <div className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-black tracking-wide text-yellow-100 drop-shadow-[0_2px_5px_rgba(0,0,0,0.4)]">
               {width.toFixed(1)} units
             </div>
-            <div className="absolute -left-16 top-1/2 -translate-y-1/2 -rotate-90 whitespace-nowrap text-[10px] font-mono">
+            <div className="absolute -left-16 top-1/2 -translate-y-1/2 -rotate-90 whitespace-nowrap text-[10px] font-black tracking-wide text-yellow-100 drop-shadow-[0_2px_5px_rgba(0,0,0,0.4)]">
               {height.toFixed(1)} units
             </div>
           </>
@@ -155,11 +162,11 @@ const ShapeRenderer: React.FC<{
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
-            className={colorClass.replace('border-', 'text-')}
+            className={strokeClass.replace('border-', 'text-')}
           />
         </svg>
         {!isBase ? (
-          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-mono">
+          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-black tracking-wide text-yellow-100 drop-shadow-[0_2px_5px_rgba(0,0,0,0.4)]">
             {width.toFixed(1)} units
           </div>
         ) : null}
@@ -185,11 +192,11 @@ const ShapeRenderer: React.FC<{
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
-          className={colorClass.replace('border-', 'text-')}
+          className={strokeClass.replace('border-', 'text-')}
         />
       </svg>
       {!isBase ? (
-        <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-mono">
+        <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-black tracking-wide text-yellow-100 drop-shadow-[0_2px_5px_rgba(0,0,0,0.4)]">
           {width.toFixed(1)} units
         </div>
       ) : null}
@@ -199,11 +206,13 @@ const ShapeRenderer: React.FC<{
 
 const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
   levelId,
-  avatarId: _avatarId,
+  avatarId,
   onVictory,
   onGameOver: _onGameOver,
   onBack,
 }) => {
+  const avatar = useMemo(() => AVATARS.find((item) => item.id === avatarId) || AVATARS[0], [avatarId]);
+
   const [currentLevelIdx, setCurrentLevelIdx] = useState(0);
   const [currentScale, setCurrentScale] = useState(1.0);
   const [gameState, setGameState] = useState<'start' | 'playing' | 'success' | 'complete'>('start');
@@ -213,7 +222,6 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
 
   const currentLevel = LEVELS[currentLevelIdx];
   const completedLevels = currentLevelIdx + (gameState === 'complete' ? 1 : 0);
-  const targetThreshold = useMemo(() => 6 + levelId, [levelId]);
 
   const finalScore = useMemo(() => {
     const base = 900 + (completedLevels * 220);
@@ -228,15 +236,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
     return 1;
   }, [mistakeCount]);
 
-  const handleScaleSlider = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentScale(parseFloat(event.target.value));
-    setFeedback(null);
-  };
-
-  const adjustScale = (delta: number) => {
-    setCurrentScale((previous) => Math.max(0.1, Math.min(4.0, parseFloat((previous + delta).toFixed(2)))));
-    setFeedback(null);
-  };
+  const progressPct = useMemo(() => ((currentLevelIdx + (gameState === 'complete' ? 1 : 0)) / LEVELS.length) * 100, [currentLevelIdx, gameState]);
 
   const verifyScale = () => {
     const difference = Math.abs(currentScale - currentLevel.targetScale);
@@ -263,6 +263,11 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
     setGameState('complete');
   };
 
+  const adjustScale = (delta: number) => {
+    setCurrentScale((previous) => Math.max(0.1, Math.min(4.0, parseFloat((previous + delta).toFixed(2)))));
+    setFeedback(null);
+  };
+
   const resetLevel = () => {
     setCurrentScale(1.0);
     setFeedback(null);
@@ -281,166 +286,196 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 flex flex-col overflow-hidden bg-[#0f172a] text-slate-200">
-      <header className="z-20 flex h-16 items-center justify-between border-b border-slate-700 bg-slate-900/60 px-3 backdrop-blur-md md:px-6">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={onBack}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-600 bg-slate-800 text-slate-100 transition-colors hover:bg-slate-700"
-            aria-label="Back"
-          >
-            <ChevronRight className="h-5 w-5 rotate-180" />
-          </button>
-          <div className="rounded-lg bg-blue-500 p-2">
-            <Ruler className="h-5 w-5 text-white" />
-          </div>
-          <div>
-            <h1 className="text-sm font-black uppercase tracking-widest text-white">Scale Builder</h1>
-            <p className="text-[10px] uppercase tracking-tight text-slate-400">Architectural Precision Challenge</p>
-          </div>
+    <GameScreenShell className="overflow-hidden pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+0.25rem)]">
+      <GameplaySceneBackdrop gameType="scale_safari" />
+
+      <MiniGameTopBar
+        onBack={onBack}
+        score={Math.round(finalScore)}
+        scoreLabel="Build"
+        metaLabel="Level"
+        metaValue={`${currentLevelIdx + 1}/${LEVELS.length}`}
+      />
+
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-2 px-2 pb-1 pt-[max(3.6rem,calc(env(safe-area-inset-top)+2.9rem))] md:gap-3 md:px-3">
+        <div className="mx-auto w-full max-w-6xl">
+          <GameplayHUD
+            title="Scale Builder"
+            avatar={avatar}
+            score={Math.round(finalScore)}
+            targetScore={900 + (LEVELS.length * 220) + (levelId * 60)}
+            timeLeft={LEVELS.length - currentLevelIdx}
+            progress={progressPct}
+            compact
+            accentText="text-sky-950"
+            accentSoftBg="bg-sky-100/84"
+            accentBorder="border-sky-200/88"
+            progressBar="bg-gradient-to-r from-sky-300 via-cyan-300 to-yellow-300"
+            statLabel="Mistakes"
+            statValue={mistakeCount}
+          />
         </div>
 
-        <div className="hidden items-center gap-6 md:flex">
-          <div className="text-right">
-            <span className="block text-[10px] uppercase text-slate-500">Project Phase</span>
-            <span className="text-xs font-bold text-blue-300">{currentLevel.name}</span>
-          </div>
-          <div className="h-8 w-px bg-slate-700" />
-          <div className="text-right">
-            <span className="block text-[10px] uppercase text-slate-500">Level</span>
-            <span className="text-xs font-bold text-white">
-              {currentLevelIdx + 1} / {LEVELS.length}
-            </span>
-          </div>
-        </div>
-      </header>
+        <PuzzleStage className="mx-auto w-full max-w-6xl rounded-[2.1rem] md:rounded-[2.5rem]">
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_24%,rgba(15,23,42,0.24)_100%)]" />
 
-      <main className="flex min-h-0 flex-1 flex-col md:flex-row">
-        <aside className="z-10 flex w-full shrink-0 flex-col gap-5 border-b border-slate-700 bg-slate-900/40 p-4 md:w-72 md:border-b-0 md:border-r md:p-6">
-          <section>
-            <div className="mb-3 flex items-center gap-2 text-blue-400">
-              <Info className="h-4 w-4" />
-              <h2 className="text-xs font-bold uppercase tracking-widest">Instructions</h2>
+          <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-2 p-2 md:gap-3 md:p-3">
+            <div className="relative mx-auto h-12 w-full max-w-[42rem] overflow-hidden rounded-[0.9rem] md:h-14 md:rounded-[1rem]">
+              <img src={labelBlueAsset} alt="" className="absolute inset-0 h-full w-full object-fill" draggable={false} />
+              <div className="absolute inset-0 flex items-center justify-center px-4 text-center text-[10px] font-black uppercase tracking-[0.12em] text-white md:text-xs">
+                {currentLevel.instructions}
+              </div>
             </div>
-            <p className="text-xs italic leading-relaxed text-slate-400">{currentLevel.instructions}</p>
-          </section>
 
-          <section className="rounded-xl border border-slate-700 bg-slate-800/60 p-4">
-            <div className="mb-3 flex items-center justify-between">
-              <span className="text-[10px] uppercase text-slate-500">Target Scale</span>
-              <span className="text-lg font-black text-white">{currentLevel.targetScale.toFixed(2)}x</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] uppercase text-slate-500">Current Scale</span>
-              <span className={`text-lg font-black ${gameState === 'success' ? 'text-emerald-400' : 'text-blue-400'}`}>
-                {currentScale.toFixed(2)}x
-              </span>
-            </div>
-          </section>
+            <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 lg:grid-cols-[1fr_16rem]">
+              <div className="relative min-h-[18rem] overflow-hidden rounded-[1.4rem] border border-white/14 bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.22),rgba(15,23,42,0.84)_68%)] p-2 md:min-h-[22rem] md:p-3">
+                <BlueprintGrid />
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(250,204,21,0.14),rgba(15,23,42,0.12)_62%)]" />
+                <div className="relative z-10 flex h-full w-full items-center justify-center">
+                  <div className="relative flex h-[min(58vh,25rem)] w-[min(80vw,25rem)] items-center justify-center rounded-full border border-sky-100/18 bg-[radial-gradient(circle,rgba(255,255,255,0.06),rgba(255,255,255,0.01)_54%,transparent_100%)]">
+                    <AnimatePresence>
+                      {showBase ? (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 0.35 }}
+                          exit={{ opacity: 0 }}
+                          className="absolute"
+                        >
+                          <ShapeRenderer
+                            shape={currentLevel.shape}
+                            scale={1.0}
+                            strokeClass="border-slate-300 border-dashed"
+                            isBase
+                          />
+                        </motion.div>
+                      ) : null}
+                    </AnimatePresence>
 
-          <section className="mt-auto grid grid-cols-2 gap-2 md:grid-cols-1">
-            <button
-              onClick={() => setShowBase((previous) => !previous)}
-              className={`flex items-center justify-between rounded-lg border px-4 py-3 transition-all ${
-                showBase ? 'border-blue-500/60 bg-blue-500/10 text-blue-300' : 'border-slate-700 bg-slate-800 text-slate-500'
-              }`}
-            >
-              <span className="text-[10px] font-bold uppercase">Reference Overlay</span>
-              <Layers className="h-4 w-4" />
-            </button>
-            <button
-              onClick={resetLevel}
-              className="flex items-center justify-between rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-slate-300 transition-colors hover:bg-slate-700"
-            >
-              <span className="text-[10px] font-bold uppercase">Reset Structure</span>
-              <RotateCcw className="h-4 w-4" />
-            </button>
-          </section>
-        </aside>
-
-        <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-[#0f172a] p-3 md:p-0">
-          <BlueprintGrid />
-
-          <div className="relative flex h-[min(72vw,500px)] w-[min(72vw,500px)] items-center justify-center rounded-full border border-slate-700/40 md:h-[500px] md:w-[500px]">
-            <AnimatePresence>
-              {showBase ? (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.32 }} exit={{ opacity: 0 }} className="absolute">
-                  <ShapeRenderer shape={currentLevel.shape} scale={1.0} colorClass="border-slate-400 border-dashed" isBase />
-                </motion.div>
-              ) : null}
-            </AnimatePresence>
-
-            <motion.div animate={{ scale: 1 }} className="relative z-10">
-              <ShapeRenderer
-                shape={currentLevel.shape}
-                scale={currentScale}
-                colorClass={
-                  gameState === 'success'
-                    ? 'border-emerald-400 shadow-[0_0_22px_rgba(52,211,153,0.24)]'
-                    : 'border-blue-400 shadow-[0_0_20px_rgba(96,165,250,0.16)]'
-                }
-              />
-            </motion.div>
-
-            <AnimatePresence mode="wait">
-              {gameState === 'start' ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.92 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 1.06 }}
-                  className="absolute inset-0 z-30 flex items-center justify-center bg-slate-950/86 p-8 text-center backdrop-blur-sm"
-                >
-                  <div className="max-w-md">
-                    <Sparkles className="mx-auto mb-6 h-12 w-12 text-blue-400" />
-                    <h2 className="mb-4 text-3xl font-black italic tracking-tighter text-white">ARCHITECTURAL MASTERY</h2>
-                    <p className="mb-8 text-sm leading-relaxed text-slate-400">
-                      Resize structures to exact scale factors. Precision is everything.
-                    </p>
-                    <button
-                      onClick={() => setGameState('playing')}
-                      className="rounded-full bg-blue-500 px-10 py-4 text-sm font-black uppercase tracking-widest text-white shadow-xl shadow-blue-500/20 transition-colors hover:bg-blue-400"
-                    >
-                      Initialize Blueprint
-                    </button>
+                    <ShapeRenderer
+                      shape={currentLevel.shape}
+                      scale={currentScale}
+                      strokeClass={
+                        gameState === 'success'
+                          ? 'border-emerald-300 shadow-[0_0_24px_rgba(52,211,153,0.36)]'
+                          : 'border-sky-300 shadow-[0_0_24px_rgba(56,189,248,0.3)]'
+                      }
+                    />
                   </div>
-                </motion.div>
-              ) : null}
+                </div>
+              </div>
 
-              {gameState === 'complete' ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.92 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="absolute inset-0 z-30 flex items-center justify-center bg-slate-950/90 p-8 text-center backdrop-blur-sm"
-                >
-                  <div className="max-w-md">
-                    <Trophy className="mx-auto mb-6 h-16 w-16 text-yellow-400" />
-                    <h2 className="mb-2 text-4xl font-black italic tracking-tighter text-white">CERTIFIED ARCHITECT</h2>
-                    <p className="mb-6 text-sm leading-relaxed text-slate-400">
-                      All structures verified. Spatial precision complete.
-                    </p>
-                    <div className="mb-6 rounded-xl border border-slate-600 bg-slate-800/70 px-4 py-3">
-                      <div className="text-[10px] uppercase tracking-widest text-slate-500">Build Score</div>
-                      <div className="mt-1 text-2xl font-black text-white">{finalScore}</div>
-                      <div className="mt-1 text-xs font-bold text-blue-300">Stars: {starRating}</div>
+              <div className="flex min-h-0 flex-col gap-2">
+                <div className="rounded-[1.1rem] border border-white/16 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(15,23,42,0.84))] p-3">
+                  <div className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/80">Current phase</div>
+                  <div className="mt-1 text-sm font-black text-white md:text-base">{currentLevel.name}</div>
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    <div className="rounded-xl border border-yellow-200/28 bg-yellow-500/10 px-2 py-1.5 text-center">
+                      <div className="text-[9px] font-black uppercase tracking-[0.12em] text-yellow-100/80">Target</div>
+                      <div className="text-lg font-black text-yellow-200">{currentLevel.targetScale.toFixed(2)}x</div>
                     </div>
-                    <div className="flex flex-col gap-3">
-                      <button
-                        onClick={finishAndContinue}
-                        className="rounded-full bg-emerald-500 px-10 py-4 text-sm font-black uppercase tracking-widest text-white shadow-xl shadow-emerald-500/20 transition-colors hover:bg-emerald-400"
-                      >
-                        Continue
-                      </button>
-                      <button
-                        onClick={restartProject}
-                        className="rounded-full bg-slate-700 px-10 py-4 text-sm font-black uppercase tracking-widest text-white transition-colors hover:bg-slate-600"
-                      >
-                        New Project
-                      </button>
+                    <div className="rounded-xl border border-sky-200/26 bg-sky-500/10 px-2 py-1.5 text-center">
+                      <div className="text-[9px] font-black uppercase tracking-[0.12em] text-sky-100/80">Current</div>
+                      <div className={`text-lg font-black ${gameState === 'success' ? 'text-emerald-300' : 'text-sky-200'}`}>
+                        {currentScale.toFixed(2)}x
+                      </div>
                     </div>
                   </div>
-                </motion.div>
-              ) : null}
-            </AnimatePresence>
+                </div>
+
+                <div className="rounded-[1.1rem] border border-white/16 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(15,23,42,0.84))] p-3">
+                  <div className="mb-2 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/82">
+                    <Maximize2 className="h-4 w-4" />
+                    Precision nudges
+                  </div>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {[
+                      { label: '-0.10', delta: -0.1 },
+                      { label: '+0.10', delta: 0.1 },
+                      { label: '-0.01', delta: -0.01 },
+                      { label: '+0.01', delta: 0.01 },
+                    ].map((control) => (
+                      <button
+                        key={control.label}
+                        onClick={() => adjustScale(control.delta)}
+                        disabled={gameState !== 'playing'}
+                        className="rounded-lg border border-white/20 bg-[linear-gradient(180deg,#1e3a8a,#1e293b)] px-2 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-white transition-colors hover:bg-[linear-gradient(180deg,#2563eb,#334155)] disabled:cursor-not-allowed disabled:opacity-45"
+                      >
+                        {control.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-auto flex flex-col gap-2">
+                  <button
+                    onClick={() => setShowBase((previous) => !previous)}
+                    className={`inline-flex items-center justify-center gap-2 rounded-xl border px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em] transition-all ${
+                      showBase
+                        ? 'border-cyan-200/45 bg-cyan-500/14 text-cyan-100'
+                        : 'border-white/18 bg-slate-900/40 text-slate-300'
+                    }`}
+                  >
+                    <Layers className="h-4 w-4" />
+                    {showBase ? 'Hide reference' : 'Show reference'}
+                  </button>
+                  <button
+                    onClick={resetLevel}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-[linear-gradient(180deg,#1e3a8a,#1e293b)] px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-white hover:bg-[linear-gradient(180deg,#2563eb,#334155)]"
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    Reset structure
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-[1.2rem] border border-white/16 bg-[linear-gradient(180deg,rgba(2,132,199,0.24),rgba(15,23,42,0.86))] p-2 md:p-3">
+              <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-3">
+                <div className="flex-1">
+                  <input
+                    type="range"
+                    min="0.1"
+                    max="4.0"
+                    step="0.01"
+                    value={currentScale}
+                    onChange={(event) => {
+                      setCurrentScale(parseFloat(event.target.value));
+                      setFeedback(null);
+                    }}
+                    disabled={gameState !== 'playing'}
+                    className="h-3 w-full cursor-pointer appearance-none rounded-full border border-sky-200/35 bg-sky-950 accent-yellow-300 disabled:cursor-not-allowed disabled:opacity-55"
+                  />
+                  <div className="mt-1 flex justify-between text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100/78">
+                    <span>0.10x</span>
+                    <span>2.00x</span>
+                    <span>4.00x</span>
+                  </div>
+                </div>
+
+                {gameState === 'success' ? (
+                  <button
+                    onClick={proceed}
+                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-emerald-100/40 bg-[linear-gradient(180deg,#34d399,#10b981)] px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-emerald-950 shadow-[0_10px_18px_rgba(5,150,105,0.36)]"
+                  >
+                    Next project <ChevronRight className="h-4 w-4" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={verifyScale}
+                    disabled={gameState !== 'playing'}
+                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-yellow-100/40 px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-amber-950 shadow-[0_10px_18px_rgba(180,83,9,0.32)] disabled:cursor-not-allowed disabled:opacity-50"
+                    style={{
+                      backgroundImage: `url(${buttonYellowPlankAsset})`,
+                      backgroundSize: '100% 100%',
+                      backgroundRepeat: 'no-repeat',
+                    }}
+                  >
+                    <Ruler className="h-4 w-4" />
+                    Verify scale
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
 
           <AnimatePresence>
@@ -449,106 +484,94 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className={`absolute bottom-6 rounded-full border px-6 py-3 shadow-2xl md:bottom-12 ${
+                className={`absolute bottom-20 left-1/2 z-20 -translate-x-1/2 rounded-full border px-5 py-2 shadow-2xl md:bottom-24 ${
                   feedback.type === 'success'
-                    ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300'
-                    : 'border-rose-500/50 bg-rose-500/10 text-rose-300'
+                    ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-100'
+                    : 'border-rose-500/50 bg-rose-500/10 text-rose-100'
                 }`}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   {feedback.type === 'success' ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
-                  <span className="text-[10px] font-bold uppercase tracking-wide">{feedback.message}</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.12em] md:text-xs">{feedback.message}</span>
                 </div>
               </motion.div>
             ) : null}
           </AnimatePresence>
-        </div>
 
-        <aside className="z-10 flex w-full shrink-0 flex-col gap-6 border-t border-slate-700 bg-slate-900/40 p-4 md:w-72 md:border-l md:border-t-0 md:p-6">
-          <section>
-            <div className="mb-4 flex items-center gap-2 text-blue-400">
-              <Maximize2 className="h-4 w-4" />
-              <h2 className="text-xs font-bold uppercase tracking-widest">Scale Control</h2>
-            </div>
-            <div className="space-y-6">
-              <div className="pt-3">
-                <input
-                  type="range"
-                  min="0.1"
-                  max="4.0"
-                  step="0.01"
-                  value={currentScale}
-                  onChange={handleScaleSlider}
-                  className="h-1 w-full cursor-pointer appearance-none rounded-lg bg-slate-700 accent-blue-500"
-                />
-                <div className="mt-2 flex justify-between text-[8px] font-bold uppercase text-slate-500">
-                  <span>0.1x</span>
-                  <span>2.0x</span>
-                  <span>4.0x</span>
+          <AnimatePresence mode="wait">
+            {gameState === 'start' ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.92 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.05 }}
+                className="absolute inset-0 z-30 flex items-center justify-center bg-slate-950/80 p-6 text-center backdrop-blur-sm"
+              >
+                <div className="w-full max-w-md rounded-[1.5rem] border border-white/20 bg-[linear-gradient(180deg,rgba(30,64,175,0.9),rgba(15,23,42,0.92))] p-6 shadow-[0_18px_36px_rgba(2,6,23,0.45)]">
+                  <Sparkles className="mx-auto mb-5 h-12 w-12 text-yellow-300" />
+                  <h2 className="text-3xl font-black uppercase tracking-tight text-white">Scale Builder</h2>
+                  <p className="mt-3 text-sm font-bold text-cyan-100/90">
+                    Resize each structure to the exact scale factor to pass the blueprint checks.
+                  </p>
+                  <button
+                    onClick={() => setGameState('playing')}
+                    className="mt-6 inline-flex min-h-[46px] items-center justify-center rounded-xl border border-yellow-100/45 px-6 text-sm font-black uppercase tracking-[0.14em] text-amber-950"
+                    style={{
+                      backgroundImage: `url(${buttonYellowPlankAsset})`,
+                      backgroundSize: '100% 100%',
+                      backgroundRepeat: 'no-repeat',
+                    }}
+                  >
+                    Start Build
+                  </button>
                 </div>
-              </div>
+              </motion.div>
+            ) : null}
 
-              <div className="grid grid-cols-2 gap-2">
-                <button onClick={() => adjustScale(-0.01)} className="rounded-lg border border-slate-700 bg-slate-800 p-3 text-xs transition-colors hover:bg-slate-700">
-                  -0.01
-                </button>
-                <button onClick={() => adjustScale(0.01)} className="rounded-lg border border-slate-700 bg-slate-800 p-3 text-xs transition-colors hover:bg-slate-700">
-                  +0.01
-                </button>
-                <button onClick={() => adjustScale(-0.1)} className="rounded-lg border border-slate-700 bg-slate-800 p-3 text-xs transition-colors hover:bg-slate-700">
-                  -0.10
-                </button>
-                <button onClick={() => adjustScale(0.1)} className="rounded-lg border border-slate-700 bg-slate-800 p-3 text-xs transition-colors hover:bg-slate-700">
-                  +0.10
-                </button>
-              </div>
-            </div>
-          </section>
-
-          <section className="mt-auto">
-            {gameState === 'success' ? (
-              <button
-                onClick={proceed}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-4 text-sm font-black uppercase tracking-widest text-white shadow-lg shadow-emerald-500/20 transition-colors hover:bg-emerald-400"
+            {gameState === 'complete' ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.92 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="absolute inset-0 z-30 flex items-center justify-center bg-slate-950/86 p-6 text-center backdrop-blur-sm"
               >
-                Next Project <ChevronRight className="h-4 w-4" />
-              </button>
-            ) : (
-              <button
-                onClick={verifyScale}
-                disabled={gameState !== 'playing'}
-                className={`w-full rounded-xl py-4 text-sm font-black uppercase tracking-widest shadow-lg transition-colors ${
-                  gameState === 'playing'
-                    ? 'bg-blue-500 text-white shadow-blue-500/20 hover:bg-blue-400'
-                    : 'cursor-not-allowed bg-slate-800 text-slate-600'
-                }`}
-              >
-                Verify Scale
-              </button>
-            )}
-          </section>
-        </aside>
-      </main>
+                <div className="w-full max-w-md rounded-[1.6rem] border border-white/20 bg-[linear-gradient(180deg,rgba(30,64,175,0.92),rgba(15,23,42,0.94))] p-6 shadow-[0_20px_40px_rgba(2,6,23,0.5)]">
+                  <Trophy className="mx-auto mb-5 h-14 w-14 text-yellow-300" />
+                  <h2 className="text-3xl font-black uppercase tracking-tight text-white">Architect Certified</h2>
+                  <p className="mt-3 text-sm font-bold text-cyan-100/88">All structures scaled with precision.</p>
 
-      <footer className="z-20 hidden h-8 items-center justify-between border-t border-slate-700 bg-slate-950 px-6 md:flex">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1">
-            <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
-            <span className="text-[8px] font-bold uppercase text-slate-500">System Online</span>
-          </div>
-          <div className="h-3 w-px bg-slate-800" />
-          <span className="text-[8px] font-bold uppercase tracking-widest text-slate-500">Precision Mode: Active</span>
+                  <div className="relative mx-auto mt-5 h-14 w-full max-w-[15rem] overflow-hidden rounded-[0.95rem]">
+                    <img src={labelGreenLongAsset} alt="" className="absolute inset-0 h-full w-full object-fill" draggable={false} />
+                    <div className="absolute inset-0 flex items-center justify-center text-lg font-black tracking-wide text-emerald-950">
+                      Score {Math.round(finalScore)}
+                    </div>
+                  </div>
+
+                  <div className="mt-3 text-sm font-black text-yellow-200">Stars {starRating}</div>
+
+                  <div className="mt-6 flex flex-col gap-2">
+                    <button
+                      onClick={finishAndContinue}
+                      className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-emerald-100/40 bg-[linear-gradient(180deg,#34d399,#10b981)] px-5 py-2 text-sm font-black uppercase tracking-[0.14em] text-emerald-950"
+                    >
+                      Continue
+                    </button>
+                    <button
+                      onClick={restartProject}
+                      className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-white/22 bg-[linear-gradient(180deg,#1e3a8a,#1e293b)] px-5 py-2 text-sm font-black uppercase tracking-[0.14em] text-white"
+                    >
+                      New Project
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+        </PuzzleStage>
+
+        <div className="mx-auto w-full max-w-6xl">
+          <GameActionDock onBack={onBack} compact />
         </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1 text-[8px] font-bold uppercase text-slate-500">
-            <LayoutGrid className="h-3 w-3" />
-            <span>Coord: 50.0, 50.0</span>
-          </div>
-          <div className="h-3 w-px bg-slate-800" />
-          <span className="text-[8px] font-bold uppercase text-slate-500">Build 03.19.26</span>
-        </div>
-      </footer>
-    </div>
+      </div>
+    </GameScreenShell>
   );
 };
 

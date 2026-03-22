@@ -5,6 +5,9 @@ import { Check, RefreshCcw, Timer as TimerIcon, Trophy } from 'lucide-react';
 import FoodGameShell from '../components/FoodGameShell';
 import GameActionDock from '../components/GameActionDock';
 import AssetIcon from '../components/AssetIcon';
+import { TAKE_OUT_ASSETS } from '../assets/take_out';
+import { BOSS_ASSETS } from '../assets/bosses';
+import goblinAsset from '../assets/bosses/goblin.png';
 import takeOutLevelBg from '../assets/level_backgrounds/take_out.png';
 import coinAsset from '../assets/fantasy_hero/ui/coin.png';
 
@@ -16,55 +19,84 @@ interface ShareSplitterGameProps {
   onBack: () => void;
 }
 
-interface RatioChallenge {
-  ratioA: number;
-  ratioB: number;
+interface ShareChallenge {
   totalSlices: number;
-  requiredA: number;
-  requiredB: number;
+  prompt: string;
+  requiredPerMonster: number[];
 }
 
 type FeedbackTone = 'good' | 'bad' | 'neutral';
 
+type MonsterSeat = {
+  left: string;
+  top: string;
+};
+
 const ROUND_DURATION_SECONDS = 90;
 const BASE_TARGET_SCORE = 1200;
 const TARGET_SCORE_PER_LEVEL = 180;
-const RATIO_POOL: Array<[number, number]> = [
-  [1, 1],
-  [2, 1],
-  [3, 2],
-  [4, 1],
-  [3, 1],
-  [5, 2],
-  [5, 3],
+const MONSTER_COUNT = 5;
+
+const MONSTER_SEATS: MonsterSeat[] = [
+  { left: '50%', top: '14%' },
+  { left: '80%', top: '36%' },
+  { left: '68%', top: '74%' },
+  { left: '32%', top: '74%' },
+  { left: '20%', top: '36%' },
 ];
 
-const randomFrom = <T,>(items: T[]) => items[Math.floor(Math.random() * items.length)];
+const MONSTER_AVATARS: string[] = [
+  goblinAsset,
+  BOSS_ASSETS.cyclops_slime.poses.neutral || goblinAsset,
+  BOSS_ASSETS.jelly.poses.neutral || goblinAsset,
+  BOSS_ASSETS.hydra.poses.neutral || goblinAsset,
+  BOSS_ASSETS.croc_boss.poses.neutral || goblinAsset,
+];
 
-const createChallenge = (levelId: number): RatioChallenge => {
-  const maxRatioIndex = levelId <= 2 ? 3 : levelId <= 5 ? 5 : RATIO_POOL.length - 1;
-  const ratioSelection = randomFrom(RATIO_POOL.slice(0, maxRatioIndex + 1));
-  const [ratioA, ratioB] = ratioSelection;
-  const ratioSum = ratioA + ratioB;
-  const minMultiplier = 2;
-  const maxMultiplier = levelId <= 2 ? 4 : levelId <= 5 ? 5 : 6;
-  const multiplier = Math.floor(Math.random() * (maxMultiplier - minMultiplier + 1)) + minMultiplier;
-  const totalSlices = ratioSum * multiplier;
+const createEmptyPlates = () => Array.from({ length: MONSTER_COUNT }, () => [] as string[]);
 
-  return {
-    ratioA,
-    ratioB,
-    totalSlices,
-    requiredA: ratioA * multiplier,
-    requiredB: ratioB * multiplier,
-  };
-};
+const createSlicePool = (totalSlices: number) =>
+  Array.from({ length: totalSlices }, (_, index) => `slice-${Date.now()}-${index}`);
 
 const formatTimer = (seconds: number) => {
   const safe = Math.max(0, seconds);
   const mins = Math.floor(safe / 60);
   const secs = safe % 60;
   return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+};
+
+const createChallenge = (levelId: number): ShareChallenge => {
+  const equalShareMode = levelId <= 3;
+
+  if (equalShareMode) {
+    const eachGets = Math.min(2 + Math.floor(levelId / 2), 4);
+    const totalSlices = eachGets * MONSTER_COUNT;
+    return {
+      totalSlices,
+      prompt: `Share equally: each monster must get ${eachGets} slice${eachGets === 1 ? '' : 's'}.`,
+      requiredPerMonster: Array.from({ length: MONSTER_COUNT }, () => eachGets),
+    };
+  }
+
+  const maxPerMonster = levelId <= 6 ? 4 : 5;
+  const minPerMonster = 1;
+  const requiredPerMonster = Array.from(
+    { length: MONSTER_COUNT },
+    () => Math.floor(Math.random() * (maxPerMonster - minPerMonster + 1)) + minPerMonster,
+  );
+
+  if (requiredPerMonster.every((value) => value === requiredPerMonster[0])) {
+    const randomIndex = Math.floor(Math.random() * MONSTER_COUNT);
+    requiredPerMonster[randomIndex] = Math.min(maxPerMonster, requiredPerMonster[randomIndex] + 1);
+  }
+
+  const totalSlices = requiredPerMonster.reduce((sum, value) => sum + value, 0);
+
+  return {
+    totalSlices,
+    prompt: 'Select a cake slice, then place slices onto each monster plate to match the required counts.',
+    requiredPerMonster,
+  };
 };
 
 const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
@@ -78,10 +110,11 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const [timeLeft, setTimeLeft] = useState(ROUND_DURATION_SECONDS);
   const [streak, setStreak] = useState(0);
   const [challengesSolved, setChallengesSolved] = useState(0);
-  const [challenge, setChallenge] = useState<RatioChallenge>(() => createChallenge(levelId));
-  const [plateA, setPlateA] = useState(0);
-  const [plateB, setPlateB] = useState(0);
-  const [feedback, setFeedback] = useState<string>('Split the cake slices to match the ratio.');
+  const [challenge, setChallenge] = useState<ShareChallenge>(() => createChallenge(levelId));
+  const [plates, setPlates] = useState<string[][]>(() => createEmptyPlates());
+  const [availableSlices, setAvailableSlices] = useState<string[]>(() => createSlicePool(challenge.totalSlices));
+  const [selectedSliceId, setSelectedSliceId] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<string>('Select cake slices and share them between all five monsters.');
   const [feedbackTone, setFeedbackTone] = useState<FeedbackTone>('neutral');
   const [submitting, setSubmitting] = useState(false);
   const [finished, setFinished] = useState(false);
@@ -90,7 +123,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const endedRef = useRef(false);
 
   const targetScore = BASE_TARGET_SCORE + (levelId * TARGET_SCORE_PER_LEVEL);
-  const usedSlices = plateA + plateB;
+  const usedSlices = plates.reduce((sum, plate) => sum + plate.length, 0);
   const slicesRemaining = Math.max(0, challenge.totalSlices - usedSlices);
   const progressPct = Math.min((score / targetScore) * 100, 100);
 
@@ -130,24 +163,28 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   }, [onGameOver, onVictory, targetScore]);
 
   const nextChallenge = useCallback(() => {
-    setChallenge(createChallenge(levelId));
-    setPlateA(0);
-    setPlateB(0);
+    const next = createChallenge(levelId);
+    setChallenge(next);
+    setPlates(createEmptyPlates());
+    setAvailableSlices(createSlicePool(next.totalSlices));
+    setSelectedSliceId(null);
     setSubmitting(false);
   }, [levelId]);
 
   useEffect(() => {
     endedRef.current = false;
     clearTransitionTimer();
+    const firstChallenge = createChallenge(levelId);
     setScore(0);
     setTimeLeft(ROUND_DURATION_SECONDS);
     setStreak(0);
     setChallengesSolved(0);
-    setChallenge(createChallenge(levelId));
-    setPlateA(0);
-    setPlateB(0);
+    setChallenge(firstChallenge);
+    setPlates(createEmptyPlates());
+    setAvailableSlices(createSlicePool(firstChallenge.totalSlices));
+    setSelectedSliceId(null);
     setSubmitting(false);
-    setFeedback('Split the cake slices to match the ratio.');
+    setFeedback('Select cake slices and share them between all five monsters.');
     setFeedbackTone('neutral');
     setFinished(false);
 
@@ -170,31 +207,53 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     return () => clearInterval(timer);
   }, [finishRun, finished, score, submitting]);
 
-  const adjustPlate = (plate: 'A' | 'B', delta: number) => {
-    if (submitting || finished) return;
+  const selectPoolSlice = (sliceId: string) => {
+    if (finished || submitting) return;
+    setSelectedSliceId(sliceId);
+  };
 
-    if (plate === 'A') {
-      setPlateA((previous) => Math.max(0, Math.min(challenge.totalSlices, previous + delta)));
+  const placeOnPlate = (plateIndex: number) => {
+    if (!selectedSliceId || finished || submitting) return;
+
+    if (!availableSlices.includes(selectedSliceId)) {
+      setSelectedSliceId(null);
       return;
     }
 
-    setPlateB((previous) => Math.max(0, Math.min(challenge.totalSlices, previous + delta)));
+    setAvailableSlices((previous) => previous.filter((sliceId) => sliceId !== selectedSliceId));
+    setPlates((previous) => previous.map((plate, index) => (
+      index === plateIndex ? [...plate, selectedSliceId] : plate
+    )));
+    setSelectedSliceId(null);
+  };
+
+  const removeFromPlate = (plateIndex: number, sliceId: string) => {
+    if (finished || submitting) return;
+
+    setPlates((previous) => previous.map((plate, index) => (
+      index === plateIndex ? plate.filter((entry) => entry !== sliceId) : plate
+    )));
+    setAvailableSlices((previous) => [...previous, sliceId]);
+    if (selectedSliceId === sliceId) {
+      setSelectedSliceId(null);
+    }
   };
 
   const resetAllocation = () => {
     if (submitting || finished) return;
-    setPlateA(0);
-    setPlateB(0);
-    setFeedback('Allocation reset. Build the ratio again.');
+    const allPlaced = plates.flat();
+    setPlates(createEmptyPlates());
+    setAvailableSlices((previous) => [...previous, ...allPlaced]);
+    setSelectedSliceId(null);
+    setFeedback('Slices reset. Re-serve the table.');
     setFeedbackTone('neutral');
   };
 
   const submitAllocation = () => {
     if (submitting || finished) return;
 
-    const totalUsed = plateA + plateB;
-    if (totalUsed !== challenge.totalSlices) {
-      setFeedback(`Use all ${challenge.totalSlices} slices before serving.`);
+    if (availableSlices.length > 0) {
+      setFeedback(`Serve all ${challenge.totalSlices} cake slices before confirming.`);
       setFeedbackTone('bad');
       setStreak(0);
       setScore((previous) => Math.max(0, previous - 40));
@@ -202,22 +261,23 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     }
 
     setSubmitting(true);
-    const correct = plateA === challenge.requiredA && plateB === challenge.requiredB;
+
+    const correct = plates.every((plate, index) => plate.length === challenge.requiredPerMonster[index]);
 
     if (correct) {
-      const gain = 140 + Math.floor(timeLeft * 1.2) + (streak * 30);
+      const gain = 180 + Math.floor(timeLeft * 1.4) + (streak * 35);
       const nextScore = score + gain;
       const nextSolved = challengesSolved + 1;
       setScore(nextScore);
       setStreak((previous) => previous + 1);
       setChallengesSolved(nextSolved);
-      setFeedback(`Perfect split! +${gain} points.`);
+      setFeedback(`Perfect sharing! +${gain} points.`);
       setFeedbackTone('good');
 
       confetti({
-        particleCount: 36,
-        spread: 46,
-        origin: { y: 0.65 },
+        particleCount: 42,
+        spread: 54,
+        origin: { y: 0.64 },
         colors: ['#facc15', '#38bdf8', '#4ade80'],
       });
 
@@ -228,19 +288,19 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
           return;
         }
         nextChallenge();
-      }, 680);
+      }, 700);
       return;
     }
 
     setStreak(0);
-    setScore((previous) => Math.max(0, previous - 60));
-    setFeedback(`Not quite. Need ${challenge.requiredA} : ${challenge.requiredB} slices.`);
+    setScore((previous) => Math.max(0, previous - 70));
+    setFeedback('Some plates are incorrect. Match each monster\'s required slices.');
     setFeedbackTone('bad');
 
     clearTransitionTimer();
     timeoutRef.current = setTimeout(() => {
       nextChallenge();
-    }, 780);
+    }, 820);
   };
 
   return (
@@ -261,13 +321,9 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       </div>
 
       <div className="ui-panel-unified rounded-[1.2rem] border border-white/14 bg-[linear-gradient(180deg,rgba(250,204,21,0.9),rgba(245,158,11,0.86))] px-3 py-2 text-slate-900 shadow-[0_14px_22px_rgba(15,23,42,0.22)] md:px-4 md:py-3">
-        <div className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-800/75">Cake Share: Ratio Feast</div>
-        <div className="mt-1 text-lg font-black leading-tight md:text-2xl">
-          Split {challenge.totalSlices} slices in ratio {challenge.ratioA}:{challenge.ratioB}
-        </div>
-        <div className="mt-1 text-xs font-bold text-slate-700 md:text-sm">
-          Plate Sun and Plate Moon must match the ratio exactly.
-        </div>
+        <div className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-800/75">Share Splitter: Monster Feast</div>
+        <div className="mt-1 text-lg font-black leading-tight md:text-2xl">{challenge.prompt}</div>
+        <div className="mt-1 text-xs font-bold text-slate-700 md:text-sm">Total cake slices to serve: {challenge.totalSlices}</div>
       </div>
 
       <div className="ui-panel-unified flex min-h-0 flex-1 flex-col rounded-[1.5rem] border border-white/14 bg-[linear-gradient(180deg,rgba(30,64,175,0.78),rgba(8,47,73,0.82))] p-3 shadow-[0_16px_30px_rgba(15,23,42,0.3)] md:p-4">
@@ -279,60 +335,117 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
           />
         </div>
 
-        <div className="grid flex-1 grid-cols-1 gap-3 md:grid-cols-2">
-          <div className="rounded-[1.3rem] border border-white/14 bg-[linear-gradient(180deg,rgba(56,189,248,0.3),rgba(14,116,144,0.25))] p-3">
-            <div className="flex items-center justify-between">
-              <div className="text-xs font-black uppercase tracking-[0.14em] text-cyan-100">Plate Sun</div>
-              <div className="rounded-full bg-black/28 px-2 py-0.5 text-[11px] font-black text-cyan-100">Need {challenge.requiredA}</div>
-            </div>
-            <div className="mt-3 text-center text-4xl font-black text-white md:text-5xl">{plateA}</div>
-            <div className="mt-4 grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => adjustPlate('A', -1)}
-                className="rounded-xl border border-white/22 bg-[linear-gradient(180deg,#1e293b,#0f172a)] px-3 py-2 text-sm font-black text-white shadow-[0_8px_14px_rgba(15,23,42,0.35)] active:translate-y-[1px]"
+        <div className="relative min-h-0 flex-1 overflow-hidden rounded-[1.4rem] border border-white/14 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.18),rgba(15,23,42,0.58)_66%)] p-2 md:p-4">
+          <div className="pointer-events-none absolute left-1/2 top-1/2 h-[42%] w-[60%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/18 bg-[radial-gradient(circle,rgba(250,204,21,0.18),rgba(15,23,42,0.12)_72%)]" />
+
+          {MONSTER_SEATS.map((seat, index) => {
+            const target = challenge.requiredPerMonster[index] ?? 0;
+            const served = plates[index]?.length ?? 0;
+            const avatar = MONSTER_AVATARS[index % MONSTER_AVATARS.length];
+            const meetsTarget = served === target;
+
+            return (
+              <div
+                key={`monster-seat-${index + 1}`}
+                className="absolute -translate-x-1/2 -translate-y-1/2"
+                style={{ left: seat.left, top: seat.top }}
               >
-                -1
-              </button>
-              <button
-                type="button"
-                onClick={() => adjustPlate('A', 1)}
-                className="rounded-xl border border-amber-100/40 bg-[linear-gradient(180deg,#facc15,#f59e0b)] px-3 py-2 text-sm font-black text-slate-900 shadow-[0_8px_14px_rgba(217,119,6,0.35)] active:translate-y-[1px]"
-              >
-                +1
-              </button>
+                <div className="flex flex-col items-center gap-1">
+                  <img
+                    src={avatar}
+                    alt={`Monster ${index + 1}`}
+                    className="h-12 w-12 object-contain drop-shadow-[0_8px_12px_rgba(15,23,42,0.35)] md:h-14 md:w-14"
+                    draggable={false}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => placeOnPlate(index)}
+                    className={`min-h-[3.4rem] min-w-[4.3rem] rounded-[1rem] border px-1.5 py-1 transition-all md:min-h-[3.8rem] md:min-w-[4.8rem] ${
+                      selectedSliceId
+                        ? 'border-amber-200/65 bg-[linear-gradient(180deg,rgba(251,191,36,0.3),rgba(245,158,11,0.2))] shadow-[0_10px_16px_rgba(217,119,6,0.28)]'
+                        : 'border-white/20 bg-[linear-gradient(180deg,rgba(30,41,59,0.72),rgba(15,23,42,0.72))]'
+                    }`}
+                  >
+                    <div className="grid max-h-11 grid-cols-4 justify-items-center gap-0.5 overflow-hidden md:max-h-12">
+                      {plates[index].slice(0, 8).map((sliceId) => (
+                        <button
+                          key={sliceId}
+                          type="button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            removeFromPlate(index, sliceId);
+                          }}
+                          className="rounded-md p-[1px] transition-transform hover:scale-110"
+                          title="Return slice"
+                        >
+                          <img
+                            src={TAKE_OUT_ASSETS.portionQuarter}
+                            alt="Cake slice"
+                            className="h-3.5 w-3.5 object-contain md:h-4 md:w-4"
+                            draggable={false}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </button>
+
+                  <div className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.12em] ${
+                    meetsTarget
+                      ? 'bg-emerald-500/24 text-emerald-100'
+                      : 'bg-black/26 text-cyan-100'
+                  }`}>
+                    Need {target} • Have {served}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+
+          <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1 rounded-[1rem] border border-white/16 bg-black/24 px-3 py-2 text-center">
+            <img src={TAKE_OUT_ASSETS.trayBase} alt="Cake tray" className="h-8 w-14 object-contain md:h-9 md:w-16" draggable={false} />
+            <div className="text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100">Table Center</div>
+          </div>
+        </div>
+
+        <div className="mt-3 rounded-[1.2rem] border border-white/14 bg-black/22 px-3 py-2">
+          <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+            <div className="text-[11px] font-black uppercase tracking-[0.12em] text-cyan-100">Cake Supply</div>
+            <div className="rounded-full bg-black/24 px-2 py-0.5 text-[11px] font-black text-white">
+              Remaining: <span className={slicesRemaining === 0 ? 'text-emerald-300' : 'text-amber-200'}>{slicesRemaining}</span>
+              <span className="ml-3 text-cyan-100/90">Streak: {streak}</span>
             </div>
           </div>
 
-          <div className="rounded-[1.3rem] border border-white/14 bg-[linear-gradient(180deg,rgba(34,197,94,0.28),rgba(22,101,52,0.22))] p-3">
-            <div className="flex items-center justify-between">
-              <div className="text-xs font-black uppercase tracking-[0.14em] text-emerald-100">Plate Moon</div>
-              <div className="rounded-full bg-black/28 px-2 py-0.5 text-[11px] font-black text-emerald-100">Need {challenge.requiredB}</div>
-            </div>
-            <div className="mt-3 text-center text-4xl font-black text-white md:text-5xl">{plateB}</div>
-            <div className="mt-4 grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => adjustPlate('B', -1)}
-                className="rounded-xl border border-white/22 bg-[linear-gradient(180deg,#1e293b,#0f172a)] px-3 py-2 text-sm font-black text-white shadow-[0_8px_14px_rgba(15,23,42,0.35)] active:translate-y-[1px]"
-              >
-                -1
-              </button>
-              <button
-                type="button"
-                onClick={() => adjustPlate('B', 1)}
-                className="rounded-xl border border-amber-100/40 bg-[linear-gradient(180deg,#facc15,#f59e0b)] px-3 py-2 text-sm font-black text-slate-900 shadow-[0_8px_14px_rgba(217,119,6,0.35)] active:translate-y-[1px]"
-              >
-                +1
-              </button>
+          <div className="max-h-[5.7rem] overflow-y-auto pr-1">
+            <div className="flex flex-wrap gap-1.5">
+              {availableSlices.map((sliceId) => (
+                <button
+                  key={sliceId}
+                  type="button"
+                  onClick={() => selectPoolSlice(sliceId)}
+                  className={`rounded-lg border p-1 transition-all ${
+                    selectedSliceId === sliceId
+                      ? 'border-amber-200/70 bg-[linear-gradient(180deg,rgba(250,204,21,0.38),rgba(217,119,6,0.28))] shadow-[0_10px_16px_rgba(217,119,6,0.3)]'
+                      : 'border-white/18 bg-[linear-gradient(180deg,rgba(15,23,42,0.62),rgba(30,41,59,0.6))] hover:border-cyan-200/55'
+                  }`}
+                  title="Select slice"
+                >
+                  <img
+                    src={TAKE_OUT_ASSETS.portionQuarter}
+                    alt="Cake slice"
+                    className="h-5 w-5 object-contain md:h-6 md:w-6"
+                    draggable={false}
+                  />
+                </button>
+              ))}
             </div>
           </div>
         </div>
 
         <div className="mt-3 grid grid-cols-1 gap-2 md:grid-cols-[1fr_auto_auto] md:items-center">
-          <div className="rounded-[1rem] border border-white/14 bg-black/20 px-3 py-2 text-sm font-black text-white">
-            Slices remaining: <span className={slicesRemaining === 0 ? 'text-emerald-300' : 'text-amber-200'}>{slicesRemaining}</span>
-            <span className="ml-3 text-xs font-bold text-cyan-100/90">Streak: {streak}</span>
+          <div className="rounded-[1rem] border border-white/14 bg-black/20 px-3 py-2 text-xs font-black text-cyan-100 md:text-sm">
+            Tap a slice, then tap a monster plate. Tap a placed slice to return it.
           </div>
           <button
             type="button"
@@ -348,7 +461,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
             className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-200/45 bg-[linear-gradient(180deg,#34d399,#10b981)] px-4 py-2 text-xs font-black uppercase tracking-[0.12em] text-emerald-950 shadow-[0_8px_14px_rgba(5,150,105,0.35)] active:translate-y-[1px]"
           >
             <Check className="h-4 w-4" />
-            Serve Split
+            Serve Table
           </button>
         </div>
       </div>
