@@ -220,8 +220,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       sourceHeight: isTablet ? '7.6%' : '8.2%',
       targetFont: isTablet ? 'clamp(2.15rem,4.7vw,3.65rem)' : 'clamp(1.95rem,5.1vw,3.25rem)',
       sourceFont: isTablet ? 'clamp(2.15rem,4.7vw,3.65rem)' : 'clamp(1.95rem,5.1vw,3.25rem)',
-      healthTop: isTablet ? 42.2 : (isTallPhone ? 43.1 : 42.8),
-      healthWidth: isTablet ? 20 : 30,
+      healthTop: isTablet ? 60.8 : (isTallPhone ? 62.1 : 61.7),
+      healthWidth: isTablet ? 28 : 40,
+      healthLeft: isTablet ? 66.7 : 69.4,
       enemyTop: isTablet ? 48.9 : (isTallPhone ? 51.6 : 51.1),
       enemyWidth: isTablet ? 27 : 31,
     };
@@ -526,8 +527,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
 
         <div
-          className="absolute left-1/2 z-30 max-w-[9.8rem] -translate-x-1/2 rounded-md bg-slate-900/72 px-1.5 py-1 shadow-[0_10px_24px_rgba(2,6,23,0.48)]"
-          style={{ top: `${layout.healthTop}%`, width: `${layout.healthWidth}%` }}
+          className="absolute z-30 rounded-md bg-slate-900/72 px-1.5 py-1 shadow-[0_10px_24px_rgba(2,6,23,0.48)]"
+          style={{ top: `${layout.healthTop}%`, left: `${layout.healthLeft}%`, width: `${layout.healthWidth}%` }}
         >
           <div className="mb-1 text-center text-[9px] font-black uppercase tracking-[0.1em] text-amber-200 md:text-[10px]">
             Goblin Health {goblinHealth}/10
