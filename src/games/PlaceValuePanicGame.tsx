@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import placeValueBackground from '../assets/maps/gemini-2.5-flash-image_using_the_same_aesthetic_-_create_a_dark_and_mysterious_forest_path_with_dense_f-1.jpg';
 import medDialogue from '../assets/bluedialoague/med dialogue.png';
 import medButton from '../assets/bluedialoague/med button.png';
+import blueSocket from '../assets/bluedialoague/blue socket.png';
 import goblinEnemy from '../assets/bosses/goblin.png';
 import GameActionDock from '../components/GameActionDock';
 import { triggerHaptic } from '../haptics';
@@ -212,9 +213,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       targetY: isTablet ? 73.2 : (isTallPhone ? 73.9 : 73.6),
       sourceY: isTablet ? 84.3 : (isTallPhone ? 85.2 : 84.8),
       tokenWidth: isTablet ? '8.9%' : '9.8%',
-      targetHeight: isTablet ? '7.8%' : '8.5%',
+      targetHeight: isTablet ? '6.2%' : '6.8%',
       sourceHeight: isTablet ? '7.6%' : '8.2%',
-      targetFont: isTablet ? 'clamp(2.25rem,4.9vw,3.8rem)' : 'clamp(2rem,5.4vw,3.45rem)',
+      targetFont: isTablet ? 'clamp(1.7rem,3.6vw,2.7rem)' : 'clamp(1.55rem,4.2vw,2.45rem)',
       sourceFont: isTablet ? 'clamp(2.15rem,4.7vw,3.65rem)' : 'clamp(1.95rem,5.1vw,3.25rem)',
       healthTop: isTablet ? 50.2 : 53.2,
       healthWidth: isTablet ? 24 : 29,
@@ -549,15 +550,21 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 height: layout.targetHeight,
               }}
             >
-              <div className="pointer-events-none absolute left-1/2 top-[5%] h-[60%] w-[94%] -translate-x-1/2 rounded-xl border-2 border-dashed border-cyan-100/90 bg-[#0f2f62]/32 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.18)]" />
-              <span className="pointer-events-none absolute left-1/2 top-[35%] -translate-x-1/2 -translate-y-1/2 text-[clamp(1.1rem,2.8vw,1.45rem)] font-black uppercase tracking-[0.08em] text-cyan-100/60">
+              <img
+                src={blueSocket}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+                className="pointer-events-none absolute inset-0 h-full w-full object-contain"
+              />
+              <span className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[clamp(0.92rem,2.2vw,1.25rem)] font-black uppercase tracking-[0.08em] text-cyan-100/58">
                 {question.placeHints[idx]}
               </span>
               {token ? (
                 <motion.span
                   layout
                   transition={{ type: 'spring', stiffness: 560, damping: 27, mass: 0.62 }}
-                  className="absolute left-1/2 top-[34%] z-10 block -translate-x-1/2 font-black text-white"
+                  className="absolute left-1/2 top-1/2 z-10 block -translate-x-1/2 -translate-y-1/2 font-black text-white"
                   style={{ ...numberStyle, fontSize: layout.targetFont }}
                 >
                   {token.value}
