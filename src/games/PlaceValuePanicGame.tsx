@@ -5,6 +5,7 @@ import medDialogue from '../assets/bluedialoague/med dialogue cropped.png';
 import medButton from '../assets/bluedialoague/med button cropped.png';
 import blueSocket from '../assets/bluedialoague/blue socket cropped.png';
 import goblinWiz from '../assets/bosses/goblinwiz.jpg';
+import statusTimerIcon from '../assets/fantasy_hero/ui/status_timer.png';
 import GameActionDock from '../components/GameActionDock';
 import { triggerHaptic } from '../haptics';
 
@@ -652,8 +653,19 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         draggable={false}
       />
 
-      <div className="absolute right-3 top-[max(0.75rem,env(safe-area-inset-top))] z-40 rounded-full bg-slate-900/70 px-3 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-white shadow-[0_8px_20px_rgba(2,6,23,0.45)]">
-        Time {roundTimeLeft}s
+      <div className="absolute right-3 top-[max(0.75rem,env(safe-area-inset-top))] z-40">
+        <div className="flex items-center gap-2 rounded-xl border border-cyan-200/25 bg-slate-900/78 px-3 py-2 shadow-[0_10px_24px_rgba(2,6,23,0.5)]">
+          <img
+            src={statusTimerIcon}
+            alt=""
+            aria-hidden="true"
+            draggable={false}
+            className="h-5 w-5 object-contain"
+          />
+          <span className="text-[11px] font-black uppercase tracking-[0.12em] text-white">
+            {roundTimeLeft}s
+          </span>
+        </div>
       </div>
 
       <div className="absolute inset-0 z-20" ref={playfieldRef}>
