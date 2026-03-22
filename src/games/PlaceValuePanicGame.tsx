@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import placeValueBackground from '../assets/maps/gemini-2.5-flash-image_using_the_same_aesthetic_-_create_a_dark_and_mysterious_forest_path_with_dense_f-1.jpg';
-import medDialogue from '../assets/bluedialoague/med dialogue.png';
-import medButton from '../assets/bluedialoague/med button.png';
-import blueSocket from '../assets/bluedialoague/blue socket.png';
+import medDialogue from '../assets/bluedialoague/med dialogue cropped.png';
+import medButton from '../assets/bluedialoague/med button cropped.png';
+import blueSocket from '../assets/bluedialoague/blue socket cropped.png';
 import goblinEnemy from '../assets/bosses/goblin.png';
 import GameActionDock from '../components/GameActionDock';
 import { triggerHaptic } from '../haptics';
@@ -57,13 +57,6 @@ const TARGET_ANCHORS: AnchorPoint[] = [{ x: 12 }, { x: 31 }, { x: 50 }, { x: 69 
 const SOURCE_ANCHORS: AnchorPoint[] = [{ x: 16 }, { x: 32 }, { x: 48 }, { x: 64 }, { x: 80 }];
 const FULL_PLACE_VALUE_HINTS = ['Th', 'Th', 'H', 'T', 'U'] as const;
 const TARGET_ROW_Y_OFFSET_PX = 0;
-const SOCKET_CROP_STYLE: React.CSSProperties = {
-  width: '660.65%',
-  height: '678.15%',
-  left: '-159.35%',
-  top: '-245.70%',
-  maxWidth: 'none',
-};
 
 const ONES_WORDS = [
   'zero',
@@ -213,13 +206,14 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const isTallPhone = !isTablet && ratio > 1.95;
 
     return {
-      questionTop: isTablet ? 16.6 : (isTallPhone ? 17.2 : 17.0),
-      questionWidth: isTablet ? 68 : 76,
-      questionHeight: isTablet ? 13.8 : 15.2,
-      submitY: isTablet ? 63.6 : (isTallPhone ? 64.1 : 63.9),
-      submitWidth: isTablet ? 22 : 30,
+      questionTop: isTablet ? 16.4 : (isTallPhone ? 17.0 : 16.8),
+      questionWidth: isTablet ? 48 : 58,
+      questionHeight: isTablet ? 11.2 : 12.0,
+      submitY: isTablet ? 80.8 : (isTallPhone ? 81.4 : 81.1),
+      submitWidth: isTablet ? 20 : 30,
+      submitHeight: isTablet ? 5.4 : 6.0,
       targetY: isTablet ? 74.8 : (isTallPhone ? 75.2 : 75.0),
-      sourceY: isTablet ? 68.6 : (isTallPhone ? 69.2 : 68.9),
+      sourceY: isTablet ? 36.8 : (isTallPhone ? 37.4 : 37.1),
       targetWidth: isTablet ? '8.9%' : '9.8%',
       sourceWidth: isTablet ? '8.9%' : '9.8%',
       targetHeight: isTablet ? '7.6%' : '8.2%',
@@ -502,22 +496,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2 overflow-hidden"
           style={{ top: `${layout.questionTop}%`, width: `${layout.questionWidth}%`, height: `${layout.questionHeight}%` }}
         >
-          <img
-            src={medDialogue}
-            alt=""
-            aria-hidden="true"
-            draggable={false}
-            className="absolute"
-            style={{
-              width: '284.44%',
-              height: '447.16%',
-              left: '-96.39%',
-              top: '-265.07%',
-              maxWidth: 'none',
-            }}
-          />
+          <img src={medDialogue} alt="" aria-hidden="true" draggable={false} className="absolute inset-0 h-full w-full object-contain" />
           <div
-            className="absolute inset-x-[9%] top-[18%] bottom-[18%] mx-auto flex items-center justify-center overflow-hidden text-center text-[clamp(0.58rem,1.32vw,0.82rem)] font-black uppercase leading-[1.03] tracking-[0.01em] text-white"
+            className="absolute inset-x-[9%] top-[24%] bottom-[24%] mx-auto flex items-center justify-center overflow-hidden text-center text-[clamp(0.84rem,2.1vw,1.22rem)] font-black uppercase leading-[1.06] tracking-[0.01em] text-white"
             style={{
               textShadow: '0 2px 6px rgba(2,6,23,0.62)',
               display: '-webkit-box',
@@ -571,8 +552,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 alt=""
                 aria-hidden="true"
                 draggable={false}
-                className="pointer-events-none absolute"
-                style={SOCKET_CROP_STYLE}
+                className="pointer-events-none absolute inset-0 h-full w-full object-contain"
               />
               <span className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[clamp(0.92rem,2.2vw,1.25rem)] font-black uppercase tracking-[0.08em] text-cyan-100/58">
                 {question.placeHints[idx]}
@@ -622,12 +602,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           type="button"
           onClick={handleSubmit}
           disabled={!canSubmit}
-          className="absolute left-1/2 z-40 -translate-x-1/2 transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
-          style={{ top: `${layout.submitY}%`, width: `${layout.submitWidth}%` }}
+          className="absolute left-1/2 z-40 -translate-x-1/2 overflow-hidden transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+          style={{ top: `${layout.submitY}%`, width: `${layout.submitWidth}%`, height: `${layout.submitHeight}%` }}
         >
-          <img src={medButton} alt="" aria-hidden="true" draggable={false} className="h-auto w-full" />
+          <img src={medButton} alt="" aria-hidden="true" draggable={false} className="absolute inset-0 h-full w-full object-contain" />
           <span
-            className="pointer-events-none absolute inset-0 flex items-center justify-center text-[clamp(0.72rem,1.75vw,0.98rem)] font-black uppercase tracking-[0.08em] text-white"
+            className="pointer-events-none absolute inset-x-[16%] top-1/2 -translate-y-1/2 text-center text-[clamp(0.82rem,2.2vw,1.06rem)] font-black uppercase tracking-[0.08em] text-white"
             style={{ textShadow: '0 2px 4px rgba(2,6,23,0.7)' }}
           >
             Submit
