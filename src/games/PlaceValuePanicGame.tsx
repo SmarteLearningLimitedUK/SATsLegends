@@ -53,6 +53,7 @@ interface DragState {
 type GoblinEffect = 'idle' | 'hit' | 'heal';
 
 const GOBLIN_MAX_HEALTH = 10;
+const MATCH_DURATION_SECONDS = 90;
 
 const TARGET_ANCHORS: AnchorPoint[] = [{ x: 12 }, { x: 31 }, { x: 50 }, { x: 69 }, { x: 88 }];
 const SOURCE_ANCHORS: AnchorPoint[] = [{ x: 16 }, { x: 32 }, { x: 48 }, { x: 64 }, { x: 80 }];
@@ -130,8 +131,18 @@ const scoreToStars = (accuracy: number): number => {
 
 const centeredAnchors = (anchors: AnchorPoint[], count: number): AnchorPoint[] => {
   if (count >= anchors.length) return anchors;
-  const start = Math.floor((anchors.length - count) / 2);
-  return anchors.slice(start, start + count);
+  if (count <= 0) return [];
+
+  const xs = anchors.map((a) => a.x);
+  const min = Math.min(...xs);
+  const max = Math.max(...xs);
+
+  if (count === 1) {
+    return [{ x: (min + max) / 2 }];
+  }
+
+  const step = (max - min) / (count - 1);
+  return Array.from({ length: count }, (_, idx) => ({ x: min + step * idx }));
 };
 
 const removeBlackMatteFromSprite = (src: string): Promise<string> =>
@@ -248,7 +259,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   miniGameLevel,
   avatarId: _avatarId,
   onVictory,
-  onGameOver: _onGameOver,
+  onGameOver,
   onBack,
 }) => {
   const [viewport, setViewport] = useState(() => {
@@ -315,7 +326,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const [dragState, setDragState] = useState<DragState | null>(null);
   const [goblinHealth, setGoblinHealth] = useState<number>(GOBLIN_MAX_HEALTH);
   const [score, setScore] = useState<number>(0);
-  const [roundTimeLeft, setRoundTimeLeft] = useState<number>(60);
+  const [matchTimeLeft, setMatchTimeLeft] = useState<number>(MATCH_DURATION_SECONDS);
   const [attempts, setAttempts] = useState<number>(0);
   const [correctAnswers, setCorrectAnswers] = useState<number>(0);
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
@@ -325,7 +336,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const [showHitFx, setShowHitFx] = useState(false);
 
   const victoryDispatchedRef = useRef(false);
-  const roundTimeoutLockRef = useRef(false);
+  const gameOverDispatchedRef = useRef(false);
   const playfieldRef = useRef<HTMLDivElement | null>(null);
 
   const activeTargetAnchors = useMemo(
@@ -353,11 +364,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     setIsResolving(false);
     setGoblinEffect('idle');
     setShowHitFx(false);
-    setRoundTimeLeft(60);
-    roundTimeoutLockRef.current = false;
   }, []);
 
   useEffect(() => {
+    victoryDispatchedRef.current = false;
+    gameOverDispatchedRef.current = false;
+    setMatchTimeLeft(MATCH_DURATION_SECONDS);
     resetRound(makeQuestion(resolvedLevel));
   }, [resetRound, resolvedLevel]);
 
@@ -376,12 +388,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   }, []);
 
   useEffect(() => {
-    if (isResolving) return undefined;
+    if (victoryDispatchedRef.current || gameOverDispatchedRef.current) return undefined;
     const intervalId = window.setInterval(() => {
-      setRoundTimeLeft((prev) => Math.max(0, prev - 1));
+      setMatchTimeLeft((prev) => Math.max(0, prev - 1));
     }, 1000);
     return () => window.clearInterval(intervalId);
-  }, [isResolving, question.id]);
+  }, [question.id]);
 
   useEffect(() => {
     if (goblinEffect !== 'hit') return undefined;
@@ -391,26 +403,15 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   }, [goblinEffect]);
 
   useEffect(() => {
-    if (roundTimeLeft > 0 || isResolving || roundTimeoutLockRef.current) return;
-    roundTimeoutLockRef.current = true;
+    if (matchTimeLeft > 0 || victoryDispatchedRef.current || gameOverDispatchedRef.current) return;
+    gameOverDispatchedRef.current = true;
     setIsResolving(true);
-    setAttempts((prev) => prev + 1);
-    setFeedback({ tone: 'error', message: 'TIME UP! TRY AGAIN.' });
+    setFeedback(null);
     setGoblinEffect('heal');
     triggerHaptic('warning');
-    setTargetSlots(Array(question.expectedDigits.length).fill(null));
-    setSourceSlots(initialSourceSlots.map((token) => (token ? { ...token } : null)));
-
-    const timeoutId = window.setTimeout(() => {
-      setFeedback(null);
-      setIsResolving(false);
-      setGoblinEffect('idle');
-      setRoundTimeLeft(60);
-      roundTimeoutLockRef.current = false;
-    }, 620);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [initialSourceSlots, isResolving, question.expectedDigits.length, roundTimeLeft]);
+    setDragState(null);
+    window.setTimeout(() => onGameOver(Math.max(0, score)), 220);
+  }, [matchTimeLeft, onGameOver, score]);
 
   const getRelativePoint = useCallback((clientX: number, clientY: number) => {
     const rect = playfieldRef.current?.getBoundingClientRect();
@@ -624,11 +625,11 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       return;
     }
 
-    setFeedback({ tone: 'error', message: 'WRONG ORDER! TRY AGAIN.' });
-    setGoblinEffect('heal');
-    triggerHaptic('warning');
-    setTargetSlots(Array(question.expectedDigits.length).fill(null));
-    setSourceSlots(initialSourceSlots.map((token) => (token ? { ...token } : null)));
+      setFeedback(null);
+      setGoblinEffect('heal');
+      triggerHaptic('warning');
+      setTargetSlots(Array(question.expectedDigits.length).fill(null));
+      setSourceSlots(initialSourceSlots.map((token) => (token ? { ...token } : null)));
 
     window.setTimeout(() => {
       setFeedback(null);
@@ -653,17 +654,17 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         draggable={false}
       />
 
-      <div className="absolute right-3 top-[max(0.75rem,env(safe-area-inset-top))] z-40">
+      <div className="absolute left-1/2 top-[max(0.65rem,env(safe-area-inset-top))] z-40 -translate-x-1/2">
         <div className="flex items-center gap-2 rounded-xl border border-cyan-200/25 bg-slate-900/78 px-3 py-2 shadow-[0_10px_24px_rgba(2,6,23,0.5)]">
           <img
             src={statusTimerIcon}
             alt=""
             aria-hidden="true"
             draggable={false}
-            className="h-5 w-5 object-contain"
+            className="h-5 w-5 object-contain md:h-6 md:w-6"
           />
           <span className="text-[11px] font-black uppercase tracking-[0.12em] text-white">
-            {roundTimeLeft}s
+            {matchTimeLeft}s
           </span>
         </div>
       </div>
@@ -833,19 +834,34 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 <motion.div
                   key="goblin-hit-vfx"
                   className="pointer-events-none absolute inset-[-16%]"
-                  initial={{ opacity: 0.95, scale: 0.62 }}
-                  animate={{ opacity: 0, scale: 1.28, rotate: 130 }}
+                  initial={{ opacity: 0.98, scale: 0.54 }}
+                  animate={{ opacity: 0, scale: 1.46, rotate: 160 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.48, ease: 'easeOut' }}
+                  transition={{ duration: 0.56, ease: 'easeOut' }}
                 >
-                  <div className="absolute inset-0 rounded-full border-[6px] border-rose-400/85 blur-[1px]" />
-                  <div className="absolute inset-[20%] rounded-full border-4 border-red-500/80" />
+                  <div className="absolute inset-0 rounded-full border-[8px] border-rose-400/90 blur-[1px]" />
+                  <div className="absolute inset-[18%] rounded-full border-[5px] border-red-500/85" />
+                  <div className="absolute inset-[38%] rounded-full border-[4px] border-orange-300/85" />
                   <motion.div
-                    className="absolute inset-[30%] rounded-full bg-[radial-gradient(circle,rgba(251,113,133,0.9)_0%,rgba(244,63,94,0.62)_40%,rgba(239,68,68,0)_75%)]"
-                    initial={{ scale: 0.25, opacity: 0.95 }}
-                    animate={{ scale: 1.35, opacity: 0 }}
-                    transition={{ duration: 0.42, ease: 'easeOut' }}
+                    className="absolute inset-[26%] rounded-full bg-[radial-gradient(circle,rgba(254,226,226,0.95)_0%,rgba(251,113,133,0.85)_26%,rgba(244,63,94,0.62)_52%,rgba(239,68,68,0)_84%)]"
+                    initial={{ scale: 0.22, opacity: 0.98 }}
+                    animate={{ scale: 1.6, opacity: 0 }}
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
                   />
+                  {Array.from({ length: 14 }).map((_, idx) => {
+                    const angle = (idx / 14) * Math.PI * 2;
+                    const tx = Math.cos(angle) * 88;
+                    const ty = Math.sin(angle) * 88;
+                    return (
+                      <motion.span
+                        key={`blast-particle-${idx}`}
+                        className="absolute left-1/2 top-1/2 h-2.5 w-2.5 rounded-full bg-rose-300 shadow-[0_0_12px_rgba(251,113,133,0.9)]"
+                        initial={{ x: '-50%', y: '-50%', scale: 0.35, opacity: 0.95 }}
+                        animate={{ x: `calc(-50% + ${tx}px)`, y: `calc(-50% + ${ty}px)`, scale: 0.12, opacity: 0 }}
+                        transition={{ duration: 0.48, ease: 'easeOut', delay: idx * 0.008 }}
+                      />
+                    );
+                  })}
                 </motion.div>
               ) : null}
             </AnimatePresence>
