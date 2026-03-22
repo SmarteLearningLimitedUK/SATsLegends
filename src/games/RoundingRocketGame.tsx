@@ -9,11 +9,11 @@ import {
   AlertCircle,
   CheckCircle2,
   Cpu,
-  Star,
   Globe,
-  ChevronLeft,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import GameActionDock from '../components/GameActionDock';
+import MiniGameTopBar from '../components/MiniGameTopBar';
 
 type RoundingTarget =
   | 'nearest 10'
@@ -230,39 +230,15 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
         style={{ backgroundImage: 'radial-gradient(#6366f1 1px, transparent 1px)', backgroundSize: '30px 30px', opacity: 0.1 }}
       />
 
-      <header className="z-20 flex h-14 items-center justify-between border-b border-white/10 bg-black/40 px-3 backdrop-blur-md sm:h-16 sm:px-5 md:px-8">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={onBack}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-indigo-500/40 bg-slate-900 text-indigo-300 transition hover:bg-slate-800"
-            aria-label="Back to levels"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <div className="rounded-lg bg-indigo-600 p-2 shadow-lg shadow-indigo-500/20">
-            <Rocket className="h-5 w-5 text-white" />
-          </div>
-          <div>
-            <h1 className="text-sm font-black tracking-tight text-white uppercase">Rounding Rocket</h1>
-            <p className="text-[10px] font-bold tracking-widest text-indigo-400 uppercase">Navigation Control</p>
-          </div>
-        </div>
+      <MiniGameTopBar
+        onBack={onBack}
+        score={score}
+        scoreLabel="XP"
+        metaLabel="Planet"
+        metaValue={currentPlanet.name}
+      />
 
-        <div className="flex items-center gap-3 sm:gap-5 md:gap-8">
-          <div className="flex flex-col items-end">
-            <span className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">Total XP</span>
-            <span className="text-sm font-black tabular-nums text-indigo-400">{score}</span>
-          </div>
-          <div className="h-8 w-[1px] bg-white/10" />
-          <div className="flex flex-col items-end">
-            <span className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">Target Planet</span>
-            <span className="text-sm font-black text-white uppercase">{currentPlanet.name}</span>
-          </div>
-        </div>
-      </header>
-
-      <main className="relative z-10 flex min-h-0 flex-1 flex-col p-2 sm:p-3 md:p-4">
+      <main className="relative z-10 flex min-h-0 flex-1 flex-col p-2 pb-[calc(env(safe-area-inset-bottom)+4.5rem)] pt-[calc(env(safe-area-inset-top)+3.4rem)] sm:p-3 sm:pb-[calc(env(safe-area-inset-bottom)+4.8rem)] sm:pt-[calc(env(safe-area-inset-top)+3.7rem)] md:p-4 md:pb-[calc(env(safe-area-inset-bottom)+5.2rem)] md:pt-[calc(env(safe-area-inset-top)+4rem)]">
         <AnimatePresence mode="wait">
           {(gameState === 'playing' || gameState === 'success') && currentProblem && (
             <motion.div
