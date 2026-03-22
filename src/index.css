@@ -112,6 +112,21 @@ body {
   overflow: hidden;
 }
 
+/* Keep legacy full-screen game roots constrained to the in-app stage. */
+.iphone-game-stage .fixed.inset-0 {
+  position: absolute !important;
+  inset: 0 !important;
+}
+
+/* Prevent Tailwind viewport classes from exceeding the stage container. */
+.iphone-game-stage .h-screen {
+  height: 100% !important;
+}
+
+.iphone-game-stage .w-screen {
+  width: 100% !important;
+}
+
 .safe-area-padding {
   padding-top: max(12px, env(safe-area-inset-top));
   padding-right: max(12px, env(safe-area-inset-right));

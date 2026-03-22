@@ -302,20 +302,27 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const updateStageScale = () => {
+      const viewportWidth = window.visualViewport?.width ?? window.innerWidth;
+      const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
       const scale = Math.min(
-        window.innerWidth / IPHONE_STAGE_WIDTH,
-        window.innerHeight / IPHONE_STAGE_HEIGHT,
+        viewportWidth / IPHONE_STAGE_WIDTH,
+        viewportHeight / IPHONE_STAGE_HEIGHT,
       );
       setStageScale(Number.isFinite(scale) && scale > 0 ? scale : 1);
     };
 
+    const visualViewport = window.visualViewport;
     updateStageScale();
     window.addEventListener('resize', updateStageScale);
     window.addEventListener('orientationchange', updateStageScale);
+    visualViewport?.addEventListener('resize', updateStageScale);
+    visualViewport?.addEventListener('scroll', updateStageScale);
 
     return () => {
       window.removeEventListener('resize', updateStageScale);
       window.removeEventListener('orientationchange', updateStageScale);
+      visualViewport?.removeEventListener('resize', updateStageScale);
+      visualViewport?.removeEventListener('scroll', updateStageScale);
     };
   }, []);
 
