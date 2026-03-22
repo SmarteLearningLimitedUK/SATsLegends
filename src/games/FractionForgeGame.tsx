@@ -1,0 +1,620 @@
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
+import AssetIcon from '../components/AssetIcon';
+import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
+import goblinEnemy from '../assets/bosses/goblin.png';
+import ribbonAsset from '../assets/casual_ui/dialogs_panels/ribbon_1.png';
+import { triggerHaptic } from '../haptics';
+
+interface FractionForgeGameProps {
+  levelId: number;
+  avatarId: string;
+  isBoss?: boolean;
+  onVictory: (stars: number, score: number) => void;
+  onGameOver: (score: number) => void;
+  onBack: () => void;
+}
+
+type TokenLocation = 'source' | 'target';
+
+interface AnchorPoint {
+  x: number;
+}
+
+interface FractionCard {
+  id: string;
+  numerator: number;
+  denominator: number;
+  value: number;
+}
+
+interface RoundState {
+  id: string;
+  prompt: string;
+  cards: FractionCard[];
+  sortedIds: string[];
+}
+
+interface DragState {
+  token: FractionCard;
+  fromLocation: TokenLocation;
+  fromIndex: number;
+  pointerId: number;
+  clientX: number;
+  clientY: number;
+  offsetX: number;
+  offsetY: number;
+  width: number;
+  height: number;
+}
+
+const SOURCE_ANCHORS: AnchorPoint[] = [{ x: 16 }, { x: 32 }, { x: 48 }, { x: 64 }, { x: 80 }];
+const TARGET_ANCHORS: AnchorPoint[] = [{ x: 16 }, { x: 32 }, { x: 48 }, { x: 64 }, { x: 80 }];
+const FRACTION_POOL: ReadonlyArray<readonly [number, number]> = [
+  [1, 8],
+  [1, 6],
+  [1, 5],
+  [1, 4],
+  [1, 3],
+  [3, 8],
+  [2, 5],
+  [1, 2],
+  [3, 5],
+  [2, 3],
+  [3, 4],
+  [4, 5],
+  [5, 6],
+  [7, 8],
+  [5, 4],
+  [4, 3],
+  [3, 2],
+];
+
+const shuffle = <T,>(items: T[]): T[] => {
+  const clone = [...items];
+  for (let i = clone.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [clone[i], clone[j]] = [clone[j], clone[i]];
+  }
+  return clone;
+};
+
+const centeredAnchors = (anchors: AnchorPoint[], count: number): AnchorPoint[] => {
+  if (count >= anchors.length) return anchors;
+  const start = Math.floor((anchors.length - count) / 2);
+  return anchors.slice(start, start + count);
+};
+
+const makeRound = (level: number, roundIndex: number): RoundState => {
+  const maxCards = Math.min(5, 3 + Math.floor((level + roundIndex - 1) / 4));
+  const allowImproper = level >= 6 || roundIndex >= 5;
+  const pool = allowImproper ? FRACTION_POOL : FRACTION_POOL.filter(([n, d]) => n < d);
+  const picked = shuffle([...pool]).slice(0, maxCards);
+
+  const cards: FractionCard[] = picked.map(([numerator, denominator], idx) => ({
+    id: `ff-${roundIndex}-${numerator}-${denominator}-${idx}`,
+    numerator,
+    denominator,
+    value: numerator / denominator,
+  }));
+
+  const sortedIds = [...cards]
+    .sort((a, b) => a.value - b.value)
+    .map((card) => card.id);
+
+  return {
+    id: `round-${roundIndex}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    prompt: 'Sort the fractions from smallest to largest!',
+    cards,
+    sortedIds,
+  };
+};
+
+const scoreToStars = (accuracy: number, lives: number) => {
+  if (accuracy >= 0.9 && lives >= 8) return 3;
+  if (accuracy >= 0.65 && lives >= 4) return 2;
+  return 1;
+};
+
+const FractionCardTile: React.FC<{
+  card: FractionCard;
+  onPointerDown?: (event: React.PointerEvent<HTMLButtonElement>) => void;
+  disabled?: boolean;
+  size: { width: number; height: number };
+}> = ({ card, onPointerDown, disabled = false, size }) => (
+  <motion.button
+    type="button"
+    onPointerDown={onPointerDown}
+    disabled={disabled}
+    whileTap={disabled ? undefined : { scale: 0.97 }}
+    className="relative flex cursor-grab flex-col items-center justify-center rounded-[1rem] border-2 border-cyan-200/80 bg-gradient-to-b from-sky-500 to-blue-700 text-white shadow-[0_12px_26px_rgba(8,47,111,0.6)] active:cursor-grabbing disabled:cursor-default"
+    style={{ width: size.width, height: size.height }}
+  >
+    <div className="pointer-events-none absolute inset-0 rounded-[1rem] bg-gradient-to-br from-white/28 via-transparent to-transparent" />
+    <span className="relative text-[clamp(1.55rem,4.7vw,2.65rem)] font-black leading-none drop-shadow-[0_2px_2px_rgba(0,0,0,0.55)]">
+      {card.numerator}
+    </span>
+    <span className="relative my-1 h-[2px] w-[56%] rounded-full bg-white/90 shadow-[0_0_6px_rgba(255,255,255,0.65)]" />
+    <span className="relative text-[clamp(1.55rem,4.7vw,2.65rem)] font-black leading-none drop-shadow-[0_2px_2px_rgba(0,0,0,0.55)]">
+      {card.denominator}
+    </span>
+  </motion.button>
+);
+
+const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
+  levelId,
+  avatarId: _avatarId,
+  isBoss: _isBoss = false,
+  onVictory,
+  onGameOver,
+  onBack,
+}) => {
+  const [viewport, setViewport] = useState(() => ({
+    width: typeof window === 'undefined' ? 390 : window.innerWidth,
+    height: typeof window === 'undefined' ? 844 : window.innerHeight,
+  }));
+  const [roundIndex, setRoundIndex] = useState(1);
+  const [round, setRound] = useState<RoundState>(() => makeRound(Math.max(1, levelId), 1));
+  const [targetSlots, setTargetSlots] = useState<Array<FractionCard | null>>([]);
+  const [sourceSlots, setSourceSlots] = useState<Array<FractionCard | null>>([]);
+  const [dragState, setDragState] = useState<DragState | null>(null);
+  const [timeLeft, setTimeLeft] = useState(() => Math.max(40, 58 - (Math.max(1, levelId) * 2)));
+  const [lives, setLives] = useState(10);
+  const [score, setScore] = useState(0);
+  const [attempts, setAttempts] = useState(0);
+  const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [isResolving, setIsResolving] = useState(false);
+  const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
+
+  const playfieldRef = useRef<HTMLDivElement | null>(null);
+  const endedRef = useRef(false);
+  const scoreRef = useRef(0);
+  scoreRef.current = score;
+
+  const resolvedLevel = useMemo(() => Math.max(1, Math.min(10, levelId || 1)), [levelId]);
+  const totalRounds = useMemo(() => Math.min(9, 5 + Math.floor(resolvedLevel / 2)), [resolvedLevel]);
+
+  const layout = useMemo(() => {
+    const isTablet = Math.min(viewport.width, viewport.height) >= 760;
+    const isTallPhone = !isTablet && (viewport.height / Math.max(1, viewport.width) > 1.9);
+    return {
+      sourceY: isTablet ? 34 : (isTallPhone ? 37 : 35.5),
+      targetY: isTablet ? 73 : (isTallPhone ? 75 : 73.8),
+      pedestalY: isTablet ? 81 : (isTallPhone ? 82.5 : 81.5),
+      cardSize: {
+        width: isTablet ? 116 : 90,
+        height: isTablet ? 148 : 114,
+      },
+      slotSize: {
+        width: isTablet ? 110 : 84,
+        height: isTablet ? 126 : 98,
+      },
+      goblin: {
+        top: isTablet ? 48 : (isTallPhone ? 51 : 49.5),
+        width: isTablet ? 300 : 190,
+      },
+      ribbonTop: isTablet ? 12.5 : 12.5,
+      ribbonWidth: isTablet ? 56 : 86,
+    };
+  }, [viewport.height, viewport.width]);
+
+  const activeTargetAnchors = useMemo(
+    () => centeredAnchors(TARGET_ANCHORS, round.cards.length),
+    [round.cards.length],
+  );
+  const activeSourceAnchors = useMemo(
+    () => centeredAnchors(SOURCE_ANCHORS, round.cards.length),
+    [round.cards.length],
+  );
+
+  const resetRound = useCallback((nextRound: RoundState) => {
+    setRound(nextRound);
+    setTargetSlots(Array(nextRound.cards.length).fill(null));
+    setSourceSlots(shuffle(nextRound.cards));
+    setDragState(null);
+    setIsResolving(false);
+    setFeedback(null);
+  }, []);
+
+  useEffect(() => {
+    const onResize = () => setViewport({ width: window.innerWidth, height: window.innerHeight });
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  useEffect(() => {
+    endedRef.current = false;
+    setRoundIndex(1);
+    setTimeLeft(Math.max(40, 58 - (resolvedLevel * 2)));
+    setLives(10);
+    setScore(0);
+    setAttempts(0);
+    setCorrectAnswers(0);
+    resetRound(makeRound(resolvedLevel, 1));
+  }, [resolvedLevel, resetRound]);
+
+  const beginDrag = useCallback((
+    location: TokenLocation,
+    index: number,
+    event: React.PointerEvent<HTMLButtonElement>,
+  ) => {
+    if (isResolving || dragState || endedRef.current) return;
+    const token = location === 'target' ? targetSlots[index] : sourceSlots[index];
+    if (!token) return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    event.currentTarget.setPointerCapture(event.pointerId);
+
+    if (location === 'target') {
+      setTargetSlots((prev) => prev.map((card, i) => (i === index ? null : card)));
+    } else {
+      setSourceSlots((prev) => prev.map((card, i) => (i === index ? null : card)));
+    }
+
+    setDragState({
+      token,
+      fromLocation: location,
+      fromIndex: index,
+      pointerId: event.pointerId,
+      clientX: event.clientX,
+      clientY: event.clientY,
+      offsetX: event.clientX - rect.left,
+      offsetY: event.clientY - rect.top,
+      width: rect.width,
+      height: rect.height,
+    });
+    triggerHaptic('selection');
+  }, [dragState, isResolving, sourceSlots, targetSlots]);
+
+  const findDropCandidate = useCallback((clientX: number, clientY: number): { location: TokenLocation; index: number } | null => {
+    const rect = playfieldRef.current?.getBoundingClientRect();
+    if (!rect) return null;
+
+    const threshold = Math.max(42, rect.width * 0.075);
+    let best: { location: TokenLocation; index: number; distance: number } | null = null;
+
+    activeTargetAnchors.forEach((anchor, index) => {
+      const cx = rect.left + (anchor.x / 100) * rect.width;
+      const cy = rect.top + (layout.targetY / 100) * rect.height;
+      const distance = Math.hypot(clientX - cx, clientY - cy);
+      if (!best || distance < best.distance) best = { location: 'target', index, distance };
+    });
+
+    activeSourceAnchors.forEach((anchor, index) => {
+      const cx = rect.left + (anchor.x / 100) * rect.width;
+      const cy = rect.top + (layout.sourceY / 100) * rect.height;
+      const distance = Math.hypot(clientX - cx, clientY - cy);
+      if (!best || distance < best.distance) best = { location: 'source', index, distance };
+    });
+
+    if (!best || best.distance > threshold) return null;
+    return { location: best.location, index: best.index };
+  }, [activeSourceAnchors, activeTargetAnchors, layout.sourceY, layout.targetY]);
+
+  const placeTokenInArrays = useCallback((candidate: { location: TokenLocation; index: number } | null) => {
+    if (!dragState) return;
+
+    const nextTargets = [...targetSlots];
+    const nextSources = [...sourceSlots];
+
+    const getToken = (location: TokenLocation, index: number): FractionCard | null => (
+      location === 'target' ? nextTargets[index] : nextSources[index]
+    );
+    const setToken = (location: TokenLocation, index: number, token: FractionCard | null) => {
+      if (location === 'target') nextTargets[index] = token;
+      else nextSources[index] = token;
+    };
+
+    if (!candidate) {
+      if (dragState.fromLocation === 'target') {
+        const firstOpen = nextSources.findIndex((card) => card === null);
+        if (firstOpen >= 0) {
+          nextSources[firstOpen] = dragState.token;
+        } else {
+          setToken(dragState.fromLocation, dragState.fromIndex, dragState.token);
+        }
+      } else {
+        setToken(dragState.fromLocation, dragState.fromIndex, dragState.token);
+      }
+      setTargetSlots(nextTargets);
+      setSourceSlots(nextSources);
+      return;
+    }
+
+    const destinationToken = getToken(candidate.location, candidate.index);
+    setToken(candidate.location, candidate.index, dragState.token);
+
+    if (destinationToken) {
+      setToken(dragState.fromLocation, dragState.fromIndex, destinationToken);
+    }
+
+    setTargetSlots(nextTargets);
+    setSourceSlots(nextSources);
+  }, [dragState, sourceSlots, targetSlots]);
+
+  useEffect(() => {
+    if (!dragState) return undefined;
+
+    const onMove = (event: PointerEvent) => {
+      if (event.pointerId !== dragState.pointerId) return;
+      setDragState((current) => {
+        if (!current || current.pointerId !== event.pointerId) return current;
+        return { ...current, clientX: event.clientX, clientY: event.clientY };
+      });
+    };
+
+    const onFinish = (event: PointerEvent) => {
+      if (event.pointerId !== dragState.pointerId) return;
+      const candidate = findDropCandidate(event.clientX, event.clientY);
+      placeTokenInArrays(candidate);
+      setDragState(null);
+      triggerHaptic('selection');
+    };
+
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onFinish);
+    window.addEventListener('pointercancel', onFinish);
+
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onFinish);
+      window.removeEventListener('pointercancel', onFinish);
+    };
+  }, [dragState, findDropCandidate, placeTokenInArrays]);
+
+  useEffect(() => {
+    if (endedRef.current || isResolving) return;
+    if (targetSlots.length === 0 || targetSlots.some((card) => card === null)) return;
+
+    setIsResolving(true);
+    const ordered = targetSlots.map((card) => card?.id);
+    const isCorrect = ordered.every((id, index) => id === round.sortedIds[index]);
+
+    setAttempts((prev) => prev + 1);
+
+    if (isCorrect) {
+      const awarded = 120 + Math.max(0, Math.floor(timeLeft * 1.25));
+      const nextScore = score + awarded;
+      const nextCorrect = correctAnswers + 1;
+      setScore(nextScore);
+      setCorrectAnswers(nextCorrect);
+      setFeedback({ tone: 'success', message: 'Perfect order forged!' });
+      triggerHaptic('success');
+
+      if (roundIndex >= totalRounds) {
+        endedRef.current = true;
+        const accuracy = (attempts + 1) > 0 ? (nextCorrect / (attempts + 1)) : 1;
+        const stars = scoreToStars(accuracy, lives);
+        window.setTimeout(() => onVictory(stars, nextScore), 460);
+        return;
+      }
+
+      const nextRoundIndex = roundIndex + 1;
+      window.setTimeout(() => {
+        setRoundIndex(nextRoundIndex);
+        resetRound(makeRound(resolvedLevel, nextRoundIndex));
+      }, 720);
+      return;
+    }
+
+    const nextLives = lives - 1;
+    setLives(nextLives);
+    setTimeLeft((prev) => Math.max(0, prev - 4));
+    setFeedback({ tone: 'error', message: 'Not quite. Reforge the order.' });
+    triggerHaptic('error');
+
+    if (nextLives <= 0) {
+      endedRef.current = true;
+      window.setTimeout(() => onGameOver(score), 460);
+      return;
+    }
+
+    window.setTimeout(() => {
+      resetRound(makeRound(resolvedLevel, roundIndex));
+    }, 760);
+  }, [
+    attempts,
+    correctAnswers,
+    isResolving,
+    lives,
+    onGameOver,
+    onVictory,
+    resetRound,
+    resolvedLevel,
+    round.sortedIds,
+    roundIndex,
+    score,
+    targetSlots,
+    timeLeft,
+    totalRounds,
+  ]);
+
+  useEffect(() => {
+    if (endedRef.current) return undefined;
+    const timer = window.setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          if (!endedRef.current) {
+            endedRef.current = true;
+            window.setTimeout(() => onGameOver(scoreRef.current), 120);
+          }
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [onGameOver]);
+
+  return (
+    <div className="relative h-full w-full select-none overflow-hidden">
+      <GameplaySceneBackdrop gameType="take_out_rush" className="opacity-[0.92]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#060f2ccc] via-[#0b1a4694] to-[#050b1acc]" />
+
+      <div
+        className="absolute left-0 right-0 z-30 flex items-center justify-between px-3 py-2 md:px-6"
+        style={{ top: 'calc(env(safe-area-inset-top) + 4px)' }}
+      >
+        <button
+          type="button"
+          onClick={onBack}
+          className="flex items-center gap-2 rounded-2xl border border-cyan-200/40 bg-[#0a1f56]/85 px-3 py-2 shadow-[0_10px_22px_rgba(0,0,0,0.45)]"
+        >
+          <AssetIcon name="back" className="h-5 w-5" />
+          <span className="text-xs font-black uppercase tracking-[0.14em] text-cyan-100">Back</span>
+        </button>
+
+        <div className="flex items-center gap-2 rounded-2xl border border-cyan-200/40 bg-[#0a1f56]/85 px-3 py-2 shadow-[0_10px_22px_rgba(0,0,0,0.45)]">
+          <AssetIcon name="timer" className="h-5 w-5" />
+          <span className="text-sm font-black tabular-nums text-yellow-100">{timeLeft}s</span>
+          <span className="mx-1 h-4 w-px bg-cyan-100/30" />
+          <AssetIcon name="coin" className="h-5 w-5" />
+          <span className="text-sm font-black tabular-nums text-yellow-100">{score}</span>
+        </div>
+      </div>
+
+      <div ref={playfieldRef} className="relative h-full w-full">
+        <div
+          className="pointer-events-none absolute left-1/2 z-20 -translate-x-1/2"
+          style={{ top: `${layout.ribbonTop}%`, width: `${layout.ribbonWidth}%` }}
+        >
+          <img src={ribbonAsset} alt="" className="h-auto w-full object-contain" draggable={false} />
+          <div className="absolute inset-0 flex items-center justify-center px-[10%] pt-[5%] text-center">
+            <span className="text-[clamp(0.9rem,2.5vw,2.1rem)] font-black leading-tight text-yellow-50 drop-shadow-[0_2px_2px_rgba(0,0,0,0.7)]">
+              {round.prompt}
+            </span>
+          </div>
+        </div>
+
+        {activeSourceAnchors.map((anchor, index) => {
+          const token = sourceSlots[index];
+          const hidden = dragState?.token.id === token?.id;
+          return (
+            <div
+              key={`source-${round.id}-${index}`}
+              className="absolute -translate-x-1/2 -translate-y-1/2"
+              style={{ left: `${anchor.x}%`, top: `${layout.sourceY}%` }}
+            >
+              {token && !hidden && (
+                <FractionCardTile
+                  card={token}
+                  size={layout.cardSize}
+                  onPointerDown={(event) => beginDrag('source', index, event)}
+                />
+              )}
+            </div>
+          );
+        })}
+
+        <motion.img
+          src={goblinEnemy}
+          alt=""
+          draggable={false}
+          animate={{ y: [0, -7, 0] }}
+          transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+          className="pointer-events-none absolute right-[3%] z-20 drop-shadow-[0_18px_28px_rgba(0,0,0,0.65)]"
+          style={{ top: `${layout.goblin.top}%`, width: layout.goblin.width }}
+        />
+
+        <div className="absolute right-[4%] top-[62%] z-20 rounded-xl border border-cyan-200/40 bg-[#0a1f56]/85 px-3 py-2 shadow-[0_10px_22px_rgba(0,0,0,0.45)]">
+          <div className="mb-1 text-[10px] font-black uppercase tracking-[0.15em] text-cyan-100">Lives</div>
+          <div className="flex gap-1">
+            {Array.from({ length: 10 }).map((_, idx) => (
+              <span
+                key={`life-${idx}`}
+                className={`h-2.5 w-2.5 rounded-full ${idx < lives ? 'bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.8)]' : 'bg-slate-500/35'}`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {activeTargetAnchors.map((anchor, index) => {
+          const token = targetSlots[index];
+          const hidden = dragState?.token.id === token?.id;
+          return (
+            <React.Fragment key={`target-${round.id}-${index}`}>
+              <div
+                className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-[1rem] border-2 border-dashed border-cyan-200/60 bg-cyan-200/20"
+                style={{
+                  left: `${anchor.x}%`,
+                  top: `${layout.targetY}%`,
+                  width: layout.slotSize.width,
+                  height: layout.slotSize.height,
+                }}
+              />
+              <div
+                className="pointer-events-none absolute z-[9] -translate-x-1/2 -translate-y-1/2 rounded-[0.8rem] border border-yellow-100/22 bg-gradient-to-b from-[#9a6f45] to-[#6a4728] shadow-[0_12px_20px_rgba(0,0,0,0.45)]"
+                style={{
+                  left: `${anchor.x}%`,
+                  top: `${layout.pedestalY}%`,
+                  width: layout.slotSize.width + 8,
+                  height: Math.max(26, layout.slotSize.height * 0.24),
+                }}
+              />
+
+              <div
+                className="absolute z-[11] -translate-x-1/2 -translate-y-1/2"
+                style={{ left: `${anchor.x}%`, top: `${layout.targetY}%` }}
+              >
+                {token && !hidden && (
+                  <FractionCardTile
+                    card={token}
+                    size={layout.cardSize}
+                    onPointerDown={(event) => beginDrag('target', index, event)}
+                  />
+                )}
+              </div>
+
+              {index < activeTargetAnchors.length - 1 && (
+                <div
+                  className="pointer-events-none absolute z-[12] -translate-x-1/2 -translate-y-1/2 text-cyan-200/85"
+                  style={{ left: `${(anchor.x + activeTargetAnchors[index + 1].x) / 2}%`, top: `${layout.pedestalY}%` }}
+                >
+                  <span className="text-[clamp(1.15rem,2.8vw,1.8rem)] font-black">&gt;</span>
+                </div>
+              )}
+            </React.Fragment>
+          );
+        })}
+
+        <div className="pointer-events-none absolute bottom-[calc(0.8rem+env(safe-area-inset-bottom))] left-1/2 z-20 -translate-x-1/2 rounded-full border border-cyan-100/40 bg-[#0a1f56]/82 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.14em] text-cyan-100 md:text-xs">
+          Round {Math.min(roundIndex, totalRounds)} / {totalRounds}
+        </div>
+
+        <AnimatePresence>
+          {feedback && (
+            <motion.div
+              initial={{ opacity: 0, y: 10, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.96 }}
+              className={`pointer-events-none absolute left-1/2 top-[56%] z-40 -translate-x-1/2 rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.12em] ${
+                feedback.tone === 'success'
+                  ? 'border-emerald-300/65 bg-emerald-300/20 text-emerald-50'
+                  : 'border-rose-300/65 bg-rose-300/20 text-rose-50'
+              }`}
+            >
+              {feedback.message}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {dragState && (
+          <div
+            className="pointer-events-none absolute z-50"
+            style={{
+              left: dragState.clientX - dragState.offsetX,
+              top: dragState.clientY - dragState.offsetY,
+              width: dragState.width,
+              height: dragState.height,
+            }}
+          >
+            <FractionCardTile card={dragState.token} size={{ width: dragState.width, height: dragState.height }} disabled />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default FractionForgeGame;

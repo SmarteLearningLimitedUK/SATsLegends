@@ -107,6 +107,9 @@ const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKey | nul
     case 'potion_pour':
       return 'PotionPourGame';
     case 'take_out_rush':
+      if (level.blueprintKey === 'fraction_forge') {
+        return 'FractionForgeGame';
+      }
       return 'TakeOutRushGame';
     case 'prime_pop':
       return 'PrimePopGame';
@@ -665,6 +668,9 @@ const App: React.FC = () => {
       case 'potion_pour':
         return renderFromRegistry('PotionPourGame', sharedProps);
       case 'take_out_rush':
+        if (selectedLevel.blueprintKey === 'fraction_forge') {
+          return renderFromRegistry('FractionForgeGame', sharedProps);
+        }
         return renderFromRegistry('TakeOutRushGame', sharedProps);
       case 'fraction_match':
         return renderFromRegistry('FractionMatchGame', { ...sharedProps, isBoss: Boolean(selectedLevel.isBoss) });

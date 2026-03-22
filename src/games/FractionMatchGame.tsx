@@ -1,6 +1,7 @@
 ﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { CircleDollarSign, Gem as GemIcon, ChevronLeft } from 'lucide-react';
+import { CircleDollarSign, ChevronLeft } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 
 interface FractionMatchGameProps {
   levelId: number;
@@ -219,12 +220,13 @@ const MatchGameShell: React.FC<{
   score: number;
   timerProgress: number;
   levelName: string;
+  variantGameType: 'fraction_match' | 'cloud_collapse';
   onBack: () => void;
-}> = ({ children, score, timerProgress, levelName, onBack }) => {
+}> = ({ children, score, timerProgress, levelName, variantGameType, onBack }) => {
   return (
     <div className="relative h-full w-full select-none overflow-hidden font-sans text-white">
-      <div className="absolute inset-0 bg-[#0a1a3a]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,#1e3a8a_0%,#0a1a3a_100%)]" />
+      <GameplaySceneBackdrop gameType={variantGameType} className="opacity-[0.96]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_32%,rgba(59,130,246,0.22),rgba(3,7,18,0.78)_56%)]" />
 
       <div className="pointer-events-none absolute inset-0">
         {[...Array(20)].map((_, idx) => (
@@ -238,56 +240,39 @@ const MatchGameShell: React.FC<{
         ))}
       </div>
 
-      <div className="relative z-10 mx-auto flex h-full w-full max-w-[500px] flex-col p-2 sm:p-4">
-        <div className="flex h-full flex-1 flex-col rounded-[2.5rem] bg-gradient-to-br from-[#fcd34d] via-[#f59e0b] to-[#78350f] p-1 shadow-[0_30px_80px_rgba(0,0,0,0.9)]">
-          <div className="m-1 flex min-h-0 flex-1 flex-col gap-3 rounded-[2.3rem] border-4 border-[#78350f]/50 bg-[#0a1a3a] p-4 shadow-[inset_0_0_40px_rgba(0,0,0,0.5)]">
-            <div className="relative flex h-14 items-center gap-3">
-              <button
-                type="button"
-                onClick={onBack}
-                className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-[#fcd34d] bg-gradient-to-br from-blue-400 to-blue-600 shadow-xl"
-                aria-label="Back"
-              >
-                <ChevronLeft className="h-6 w-6 text-white" />
-              </button>
-
-              <div className="flex h-10 w-10 -rotate-3 items-center justify-center rounded-xl border-2 border-[#fcd34d] bg-gradient-to-br from-blue-400 to-blue-600 shadow-xl">
-                <GemIcon className="h-6 w-6 fill-current text-white" />
-              </div>
-
-              <div className="flex flex-1 flex-col gap-1">
-                <div className="flex items-end justify-between px-1">
-                  <span className="text-xl font-black uppercase tracking-tighter text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                    {levelName}
-                  </span>
-                  <div className="flex items-center gap-1.5 rounded-md border border-[#fcd34d]/80 bg-[#0a1128]/90 px-2 py-[2px] shadow-md">
-                    <CircleDollarSign className="h-3.5 w-3.5 text-yellow-300" />
-                    <span className="text-[11px] font-black tracking-wide text-yellow-100">{score}</span>
-                  </div>
-                </div>
-                <div className="relative h-3 overflow-hidden rounded-full border border-[#78350f] bg-black/80 shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)]">
-                  <motion.div
-                    className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-blue-500 via-cyan-500 to-green-500 shadow-[0_0_10px_rgba(59,130,246,0.6)]"
-                    animate={{ width: `${timerProgress}%` }}
-                  />
-                </div>
+      <div className="relative z-10 flex h-full w-full min-h-0 flex-col">
+        <div className="flex items-center gap-3 px-3 pb-2 pt-[calc(env(safe-area-inset-top)+0.35rem)] sm:px-5">
+          <button
+            type="button"
+            onClick={onBack}
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-200/45 bg-[#0a1f56]/88 shadow-[0_8px_20px_rgba(0,0,0,0.45)]"
+            aria-label="Back"
+          >
+            <ChevronLeft className="h-5 w-5 text-cyan-100" />
+          </button>
+          <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+            <div className="flex items-center justify-between gap-2">
+              <span className="truncate text-sm font-black uppercase tracking-[0.12em] text-cyan-50 sm:text-base">
+                {levelName}
+              </span>
+              <div className="flex items-center gap-1 rounded-lg border border-yellow-200/55 bg-[#0a1f56]/92 px-2 py-1 text-xs font-black text-yellow-100">
+                <CircleDollarSign className="h-3.5 w-3.5 text-yellow-300" />
+                <span>{score}</span>
               </div>
             </div>
-
-            <div className="relative flex min-h-0 flex-1 overflow-hidden rounded-[2.5rem] border-[6px] border-[#f59e0b] bg-[#050b1a] shadow-[0_0_40px_rgba(0,0,0,1),inset_0_0_30px_rgba(0,0,0,0.9)]">
-              <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
-
-              <div className="absolute left-1/2 top-0 z-20 flex h-16 w-32 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-2xl border-4 border-[#78350f] bg-gradient-to-b from-[#fcd34d] to-[#b45309] shadow-2xl">
-                <div className="flex h-10 w-20 items-center justify-center rounded-xl border-2 border-[#fcd34d] bg-[#0a1a3a] shadow-inner">
-                  <div className="h-6 w-6 rotate-45 rounded-md border-2 border-white/40 bg-blue-500 shadow-lg" />
-                </div>
-              </div>
-
-              <div className="relative z-10 flex h-full w-full items-center justify-center p-3">
-                {children}
-              </div>
-
+            <div className="relative h-3 overflow-hidden rounded-full border border-cyan-200/45 bg-[#04102c]/90">
+              <motion.div
+                className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-sky-400 via-cyan-300 to-emerald-300"
+                animate={{ width: `${timerProgress}%` }}
+              />
             </div>
+          </div>
+        </div>
+
+        <div className="relative min-h-0 flex-1">
+          <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+          <div className="relative z-10 flex h-full w-full items-center justify-center px-2 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] pt-2 sm:px-4">
+            {children}
           </div>
         </div>
       </div>
@@ -299,7 +284,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   levelId,
   avatarId: _avatarId,
   isBoss: _isBoss = false,
-  variantGameType: _variantGameType = 'fraction_match',
+  variantGameType = 'fraction_match',
   onVictory,
   onGameOver,
   onBack,
@@ -344,9 +329,9 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       const boardWidth = node.clientWidth;
       if (boardWidth <= 0) return;
 
-      const gapPx = 6; // tailwind gap-1.5
+      const gapPx = 10; // sync with responsive gap-2 / gap-2.5
       const rawSize = Math.floor((boardWidth - (gapPx * (GRID_SIZE - 1))) / GRID_SIZE);
-      const clampedSize = Math.max(38, Math.min(68, rawSize));
+      const clampedSize = Math.max(42, Math.min(122, rawSize));
 
       setGemSize((prev) => (prev === clampedSize ? prev : clampedSize));
     };
@@ -500,11 +485,12 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       score={score}
       timerProgress={timerProgress}
       levelName={levelName}
+      variantGameType={variantGameType}
       onBack={onBack}
     >
       <div
         ref={boardGridRef}
-        className="grid w-full max-w-[22rem] grid-cols-6 gap-1.5 sm:max-w-[26rem]"
+        className="grid w-[min(94vw,94vh)] grid-cols-6 gap-2 sm:gap-2.5"
       >
         {board.map((cell, idx) => (
           <div key={idx} className="relative" style={{ width: gemSize, height: gemSize }}>

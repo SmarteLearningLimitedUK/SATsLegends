@@ -10,6 +10,7 @@ import DataDetectiveGame from './DataDetectiveGame';
 import DecimalSniperGame from './DecimalSniperGame';
 import DivisionDockGame from './DivisionDockGame';
 import FactorFrenzyGame from './FactorFrenzyGame';
+import FractionForgeGame from './FractionForgeGame';
 import FractionMatchGame from './FractionMatchGame';
 import LineGraphLabGame from './LineGraphLabGame';
 import MathsVsZombiesGame from './MathsVsZombiesGame';
@@ -56,6 +57,7 @@ export type MiniGameRegistryKey =
   | 'DecimalSniperGame'
   | 'DivisionDockGame'
   | 'FactorFrenzyGame'
+  | 'FractionForgeGame'
   | 'FractionMatchGame'
   | 'LineGraphLabGame'
   | 'MathsVsZombiesGame'
@@ -110,6 +112,7 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   DecimalSniperGame: asMiniGame('decimal_sniper', DecimalSniperGame),
   DivisionDockGame: asMiniGame('division_dock', DivisionDockGame),
   FactorFrenzyGame: asMiniGame('factor_frenzy', FactorFrenzyGame),
+  FractionForgeGame: asMiniGame('fraction_forge', FractionForgeGame),
   FractionMatchGame: asMiniGame('fraction_match', FractionMatchGame),
   LineGraphLabGame: asMiniGame('line_graph_lab', LineGraphLabGame),
   MathsVsZombiesGame: asMiniGame('maths_vs_zombies', MathsVsZombiesGame),
