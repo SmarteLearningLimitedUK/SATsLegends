@@ -321,6 +321,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const [isResolving, setIsResolving] = useState(false);
   const [goblinEffect, setGoblinEffect] = useState<GoblinEffect>('idle');
   const [goblinSpriteSrc, setGoblinSpriteSrc] = useState<string>(goblinWiz);
+  const [showHitFx, setShowHitFx] = useState(false);
 
   const victoryDispatchedRef = useRef(false);
   const roundTimeoutLockRef = useRef(false);
@@ -350,6 +351,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     setDragState(null);
     setIsResolving(false);
     setGoblinEffect('idle');
+    setShowHitFx(false);
     setRoundTimeLeft(60);
     roundTimeoutLockRef.current = false;
   }, []);
@@ -379,6 +381,13 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     }, 1000);
     return () => window.clearInterval(intervalId);
   }, [isResolving, question.id]);
+
+  useEffect(() => {
+    if (goblinEffect !== 'hit') return undefined;
+    setShowHitFx(true);
+    const timeoutId = window.setTimeout(() => setShowHitFx(false), 520);
+    return () => window.clearTimeout(timeoutId);
+  }, [goblinEffect]);
 
   useEffect(() => {
     if (roundTimeLeft > 0 || isResolving || roundTimeoutLockRef.current) return;
@@ -445,31 +454,58 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     triggerHaptic('selection');
   }, [dragState, isResolving, sourceSlots, targetSlots]);
 
-  const findDropCandidate = useCallback((clientX: number, clientY: number): { location: TokenLocation; index: number } | null => {
+  const findDropCandidate = useCallback((
+    clientX: number,
+    clientY: number,
+    fromLocation: TokenLocation,
+  ): { location: TokenLocation; index: number } | null => {
     const rect = playfieldRef.current?.getBoundingClientRect();
     if (!rect) return null;
 
-    const targetRadius = Math.max(38, rect.width * 0.06);
+    const targetPct = Number.parseFloat(layout.targetWidth) / 100;
+    const sourcePct = Number.parseFloat(layout.sourceWidth) / 100;
+    const targetRadius = Math.max(56, rect.width * Math.max(0.09, targetPct * 0.95));
+    const sourceRadius = Math.max(42, rect.width * Math.max(0.07, sourcePct * 0.72));
 
-    let best: { location: TokenLocation; index: number; distance: number } | null = null;
+    let bestTarget: { index: number; distance: number } | null = null;
+    let bestSource: { index: number; distance: number } | null = null;
 
     activeTargetAnchors.forEach((anchor, index) => {
       const cx = rect.left + (anchor.x / 100) * rect.width;
       const cy = rect.top + (layout.targetY / 100) * rect.height - TARGET_ROW_Y_OFFSET_PX;
       const d = Math.hypot(clientX - cx, clientY - cy);
-      if (!best || d < best.distance) best = { location: 'target', index, distance: d };
+      if (!bestTarget || d < bestTarget.distance) bestTarget = { index, distance: d };
     });
 
     activeSourceAnchors.forEach((anchor, index) => {
       const cx = rect.left + (anchor.x / 100) * rect.width;
       const cy = rect.top + (layout.sourceY / 100) * rect.height;
       const d = Math.hypot(clientX - cx, clientY - cy);
-      if (!best || d < best.distance) best = { location: 'source', index, distance: d };
+      if (!bestSource || d < bestSource.distance) bestSource = { index, distance: d };
     });
 
-    if (!best || best.distance > targetRadius) return null;
-    return { location: best.location, index: best.index };
-  }, [activeSourceAnchors, activeTargetAnchors, layout.sourceY, layout.targetY]);
+    // Prefer target sockets when dragging answer tokens downward from the source row.
+    if (fromLocation === 'source') {
+      if (bestTarget && bestTarget.distance <= targetRadius * 1.45) {
+        return { location: 'target', index: bestTarget.index };
+      }
+      if (bestSource && bestSource.distance <= sourceRadius) {
+        return { location: 'source', index: bestSource.index };
+      }
+      if (bestTarget && clientY >= rect.top + rect.height * 0.54) {
+        return { location: 'target', index: bestTarget.index };
+      }
+      return null;
+    }
+
+    if (bestTarget && bestTarget.distance <= targetRadius) {
+      return { location: 'target', index: bestTarget.index };
+    }
+    if (bestSource && bestSource.distance <= sourceRadius * 1.2) {
+      return { location: 'source', index: bestSource.index };
+    }
+    return null;
+  }, [activeSourceAnchors, activeTargetAnchors, layout.sourceWidth, layout.sourceY, layout.targetWidth, layout.targetY]);
 
   const placeTokenInArrays = useCallback((candidate: { location: TokenLocation; index: number } | null) => {
     if (!dragState) return;
@@ -530,7 +566,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
     const onFinish = (event: PointerEvent) => {
       if (event.pointerId !== dragState.pointerId) return;
-      const candidate = findDropCandidate(event.clientX, event.clientY);
+      const candidate = findDropCandidate(event.clientX, event.clientY, dragState.fromLocation);
       placeTokenInArrays(candidate);
       setDragState(null);
       triggerHaptic('selection');
@@ -580,7 +616,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       setGoblinHealth(nextHealth);
       setCorrectAnswers((prev) => prev + 1);
       setScore((prev) => prev + (140 + resolvedLevel * 22));
-      setFeedback({ tone: 'success', message: `DIRECT HIT! GOBLIN HP ${nextHealth}/10` });
+      setFeedback(null);
       setGoblinEffect('hit');
       triggerHaptic('success');
       advanceRound(nextHealth);
@@ -647,22 +683,23 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
 
         <div
-          className="absolute z-30 rounded-md bg-slate-900/72 px-1.5 py-1 shadow-[0_10px_24px_rgba(2,6,23,0.48)]"
-          style={{ top: `${layout.healthTop}%`, left: `${layout.healthLeft}%`, width: `${layout.healthWidth}%` }}
+          className="absolute z-30 rounded-xl border border-amber-200/35 bg-slate-900/76 p-2 shadow-[0_12px_28px_rgba(2,6,23,0.5)]"
+          style={{
+            top: `${layout.healthTop}%`,
+            left: `min(calc(50% + ${Math.max(12, layout.enemyWidth * 0.58)}%), calc(100% - max(0.75rem, env(safe-area-inset-right)) - clamp(9rem, 32vw, 14rem)))`,
+            width: 'clamp(9rem, 32vw, 14rem)',
+          }}
         >
-          <div className="mb-1 text-center text-[9px] font-black uppercase tracking-[0.1em] text-amber-200 md:text-[10px]">
+          <div className="mb-1 text-center text-[9px] font-black uppercase tracking-[0.11em] text-amber-200 md:text-[10px]">
             Goblin Health {goblinHealth}/10
           </div>
-          <div className="grid grid-cols-10 gap-0.5">
-            {Array.from({ length: GOBLIN_MAX_HEALTH }, (_, idx) => (
-              <span
-                key={`hp-${idx}`}
-                className={`h-1 rounded-full ${
-                  idx < goblinHealth ? 'bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.75)]' : 'bg-slate-600/50'
-                }`}
-                style={{ height: '0.4rem' }}
-              />
-            ))}
+          <div className="relative h-3 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/80">
+            <motion.div
+              className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-rose-500 via-rose-400 to-orange-300 shadow-[0_0_12px_rgba(251,113,133,0.75)]"
+              animate={{ width: `${(goblinHealth / GOBLIN_MAX_HEALTH) * 100}%` }}
+              transition={{ type: 'spring', stiffness: 210, damping: 26 }}
+            />
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.14)_1px,transparent_1px)] bg-[length:10%_100%]" />
           </div>
         </div>
 
@@ -779,6 +816,27 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 repeatDelay: 1.1,
               }}
             />
+            <AnimatePresence>
+              {showHitFx ? (
+                <motion.div
+                  key="goblin-hit-vfx"
+                  className="pointer-events-none absolute inset-[-16%]"
+                  initial={{ opacity: 0.95, scale: 0.62 }}
+                  animate={{ opacity: 0, scale: 1.28, rotate: 130 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.48, ease: 'easeOut' }}
+                >
+                  <div className="absolute inset-0 rounded-full border-[6px] border-rose-400/85 blur-[1px]" />
+                  <div className="absolute inset-[20%] rounded-full border-4 border-red-500/80" />
+                  <motion.div
+                    className="absolute inset-[30%] rounded-full bg-[radial-gradient(circle,rgba(251,113,133,0.9)_0%,rgba(244,63,94,0.62)_40%,rgba(239,68,68,0)_75%)]"
+                    initial={{ scale: 0.25, opacity: 0.95 }}
+                    animate={{ scale: 1.35, opacity: 0 }}
+                    transition={{ duration: 0.42, ease: 'easeOut' }}
+                  />
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
             <motion.img
               src={goblinSpriteSrc}
               alt=""
@@ -830,17 +888,13 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       ) : null}
 
       <AnimatePresence>
-        {feedback ? (
+        {feedback && feedback.tone === 'error' ? (
           <motion.div
             key={feedback.message}
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
-            className={`absolute bottom-[calc(env(safe-area-inset-bottom)+4.6rem)] left-1/2 z-40 -translate-x-1/2 rounded-full border px-5 py-2 text-xs font-black uppercase tracking-[0.14em] shadow-[0_12px_28px_rgba(2,6,23,0.55)] ${
-              feedback.tone === 'success'
-                ? 'border-emerald-200/70 bg-emerald-500/35 text-emerald-50'
-                : 'border-rose-200/70 bg-rose-500/35 text-rose-50'
-            }`}
+            className="absolute bottom-[calc(env(safe-area-inset-bottom)+4.6rem)] left-1/2 z-40 -translate-x-1/2 rounded-full border border-rose-200/70 bg-rose-500/35 px-5 py-2 text-xs font-black uppercase tracking-[0.14em] text-rose-50 shadow-[0_12px_28px_rgba(2,6,23,0.55)]"
           >
             {feedback.message}
           </motion.div>
