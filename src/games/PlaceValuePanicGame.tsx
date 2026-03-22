@@ -57,6 +57,13 @@ const TARGET_ANCHORS: AnchorPoint[] = [{ x: 12 }, { x: 31 }, { x: 50 }, { x: 69 
 const SOURCE_ANCHORS: AnchorPoint[] = [{ x: 16 }, { x: 32 }, { x: 48 }, { x: 64 }, { x: 80 }];
 const FULL_PLACE_VALUE_HINTS = ['Th', 'Th', 'H', 'T', 'U'] as const;
 const TARGET_ROW_Y_OFFSET_PX = 0;
+const SOCKET_CROP_STYLE: React.CSSProperties = {
+  width: '660.65%',
+  height: '678.15%',
+  left: '-159.35%',
+  top: '-245.70%',
+  maxWidth: 'none',
+};
 
 const ONES_WORDS = [
   'zero',
@@ -209,15 +216,15 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       questionTop: isTablet ? 16.6 : (isTallPhone ? 17.2 : 17.0),
       questionWidth: isTablet ? 68 : 76,
       questionHeight: isTablet ? 13.8 : 15.2,
-      submitY: isTablet ? 67.2 : (isTallPhone ? 67.8 : 67.5),
+      submitY: isTablet ? 63.6 : (isTallPhone ? 64.1 : 63.9),
       submitWidth: isTablet ? 22 : 30,
-      targetY: isTablet ? 80.2 : (isTallPhone ? 80.8 : 80.5),
-      sourceY: isTablet ? 73.9 : (isTallPhone ? 74.7 : 74.3),
-      targetWidth: isTablet ? '14.2%' : '16.2%',
+      targetY: isTablet ? 74.8 : (isTallPhone ? 75.2 : 75.0),
+      sourceY: isTablet ? 68.6 : (isTallPhone ? 69.2 : 68.9),
+      targetWidth: isTablet ? '8.9%' : '9.8%',
       sourceWidth: isTablet ? '8.9%' : '9.8%',
-      targetHeight: isTablet ? '9.6%' : '10.8%',
+      targetHeight: isTablet ? '7.6%' : '8.2%',
       sourceHeight: isTablet ? '7.6%' : '8.2%',
-      targetFont: isTablet ? 'clamp(1.7rem,3.6vw,2.5rem)' : 'clamp(1.55rem,4.2vw,2.35rem)',
+      targetFont: isTablet ? 'clamp(2.15rem,4.7vw,3.65rem)' : 'clamp(1.95rem,5.1vw,3.25rem)',
       sourceFont: isTablet ? 'clamp(2.15rem,4.7vw,3.65rem)' : 'clamp(1.95rem,5.1vw,3.25rem)',
       healthTop: isTablet ? 42.2 : (isTallPhone ? 43.1 : 42.8),
       healthWidth: isTablet ? 20 : 30,
@@ -559,9 +566,13 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 height: layout.targetHeight,
               }}
             >
-              <div
-                className="pointer-events-none absolute inset-0 bg-center bg-contain bg-no-repeat"
-                style={{ backgroundImage: `url(${blueSocket})` }}
+              <img
+                src={blueSocket}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+                className="pointer-events-none absolute"
+                style={SOCKET_CROP_STYLE}
               />
               <span className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[clamp(0.92rem,2.2vw,1.25rem)] font-black uppercase tracking-[0.08em] text-cyan-100/58">
                 {question.placeHints[idx]}
