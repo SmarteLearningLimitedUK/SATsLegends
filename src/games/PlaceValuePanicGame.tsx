@@ -242,6 +242,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const [dragState, setDragState] = useState<DragState | null>(null);
   const [goblinHealth, setGoblinHealth] = useState<number>(GOBLIN_MAX_HEALTH);
   const [score, setScore] = useState<number>(0);
+  const [roundTimeLeft, setRoundTimeLeft] = useState<number>(60);
   const [attempts, setAttempts] = useState<number>(0);
   const [correctAnswers, setCorrectAnswers] = useState<number>(0);
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
@@ -249,6 +250,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const [goblinEffect, setGoblinEffect] = useState<GoblinEffect>('idle');
 
   const victoryDispatchedRef = useRef(false);
+  const roundTimeoutLockRef = useRef(false);
   const playfieldRef = useRef<HTMLDivElement | null>(null);
 
   const activeTargetAnchors = useMemo(
@@ -275,11 +277,43 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     setDragState(null);
     setIsResolving(false);
     setGoblinEffect('idle');
+    setRoundTimeLeft(60);
+    roundTimeoutLockRef.current = false;
   }, []);
 
   useEffect(() => {
     resetRound(makeQuestion(resolvedLevel));
   }, [resetRound, resolvedLevel]);
+
+  useEffect(() => {
+    if (isResolving) return undefined;
+    const intervalId = window.setInterval(() => {
+      setRoundTimeLeft((prev) => Math.max(0, prev - 1));
+    }, 1000);
+    return () => window.clearInterval(intervalId);
+  }, [isResolving, question.id]);
+
+  useEffect(() => {
+    if (roundTimeLeft > 0 || isResolving || roundTimeoutLockRef.current) return;
+    roundTimeoutLockRef.current = true;
+    setIsResolving(true);
+    setAttempts((prev) => prev + 1);
+    setFeedback({ tone: 'error', message: 'TIME UP! TRY AGAIN.' });
+    setGoblinEffect('heal');
+    triggerHaptic('warning');
+    setTargetSlots(Array(question.expectedDigits.length).fill(null));
+    setSourceSlots(initialSourceSlots.map((token) => (token ? { ...token } : null)));
+
+    const timeoutId = window.setTimeout(() => {
+      setFeedback(null);
+      setIsResolving(false);
+      setGoblinEffect('idle');
+      setRoundTimeLeft(60);
+      roundTimeoutLockRef.current = false;
+    }, 620);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [initialSourceSlots, isResolving, question.expectedDigits.length, roundTimeLeft]);
 
   const getRelativePoint = useCallback((clientX: number, clientY: number) => {
     const rect = playfieldRef.current?.getBoundingClientRect();
@@ -495,16 +529,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         draggable={false}
       />
 
-      <button
-        type="button"
-        onClick={onBack}
-        className="absolute left-3 top-[max(0.75rem,env(safe-area-inset-top))] z-40 rounded-full bg-slate-900/70 px-3 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-white shadow-[0_8px_20px_rgba(2,6,23,0.45)]"
-      >
-        Back
-      </button>
-
       <div className="absolute right-3 top-[max(0.75rem,env(safe-area-inset-top))] z-40 rounded-full bg-slate-900/70 px-3 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-white shadow-[0_8px_20px_rgba(2,6,23,0.45)]">
-        Score {score}
+        Time {roundTimeLeft}s
       </div>
 
       <div className="absolute inset-0 z-20" ref={playfieldRef}>
