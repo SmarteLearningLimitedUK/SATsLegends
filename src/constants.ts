@@ -124,9 +124,7 @@ export const ISLANDS: IslandData[] = [
       { id: 1, stars: 0, isLocked: false, blueprintKey: 'angle_arena', displayName: 'Angle Arena', gameType: 'angle_arena' },
       { id: 2, stars: 0, isLocked: false, blueprintKey: 'polygon_palace', displayName: 'Polygon Palace', gameType: 'polygon_palace' },
       { id: 3, stars: 0, isLocked: false, blueprintKey: 'rotation_relay', displayName: 'Rotation Relay', gameType: 'shape_shift' },
-      { id: 4, stars: 0, isLocked: false, blueprintKey: 'reflection_rescue', displayName: 'Reflection Rescue', gameType: 'transform_temple' },
-      { id: 5, stars: 0, isLocked: false, blueprintKey: 'translation_tracker', displayName: 'Translation Tracker', gameType: 'coordinate_quest' },
-      { id: 6, stars: 0, isLocked: false, blueprintKey: 'coordinates_quest', displayName: 'Coordinates Quest', gameType: 'coordinate_quest' },
+      { id: 4, stars: 0, isLocked: false, blueprintKey: 'coordinates_quest', displayName: 'Coordinates Quest', gameType: 'coordinate_quest' },
     ],
   },
   {

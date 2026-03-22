@@ -54,8 +54,6 @@ const GAME_SUMMARY_BY_KEY: Record<string, string> = {
   angle_arena: 'Calibrate launch angles precisely to hit targets.',
   polygon_palace: 'Classify shapes quickly by key geometric properties.',
   rotation_relay: 'Rotate pieces to correct orientation with fast precision.',
-  reflection_rescue: 'Reflect shapes across mirror lines to restore patterns.',
-  translation_tracker: 'Move shapes across the grid to exact coordinates.',
   coordinates_quest: 'Plot and identify coordinates with speed and accuracy.',
   time_keeper_cove: 'Set clocks and solve elapsed-time dispatch challenges.',
   conversion_canyon: 'Convert measurement units to unlock routes and systems.',

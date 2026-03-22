@@ -183,16 +183,19 @@ const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKey | nul
       }
       return 'CoordinateTranslationGame';
     case 'calculation_clash':
+      if (level.blueprintKey === 'arithmetic_gauntlet') {
+        return 'ArithmeticGauntletGame';
+      }
       if (level.blueprintKey === 'multiplication_mine') {
         return 'MultiplicationMineGame';
+      }
+      if (level.blueprintKey === 'remainder_run') {
+        return 'RemainderRunGame';
       }
       return level.blueprintKey === 'division_dock' ? 'DivisionDockGame' : 'CalculationCrashGame';
     case 'percent_pulse':
       return 'CurriculumChallengeGame';
     case 'transform_temple':
-      if (level.blueprintKey === 'reflection_rescue') {
-        return 'RotationReflectionGame';
-      }
       return 'CurriculumChallengeGame';
     case 'scale_safari':
       if (level.blueprintKey === 'scale_builder') {
@@ -761,8 +764,14 @@ const App: React.FC = () => {
         }
         return renderFromRegistry('CoordinateTranslationGame', sharedProps);
       case 'calculation_clash':
+        if (selectedLevel.blueprintKey === 'arithmetic_gauntlet') {
+          return renderFromRegistry('ArithmeticGauntletGame', sharedProps);
+        }
         if (selectedLevel.blueprintKey === 'multiplication_mine') {
           return renderFromRegistry('MultiplicationMineGame', sharedProps);
+        }
+        if (selectedLevel.blueprintKey === 'remainder_run') {
+          return renderFromRegistry('RemainderRunGame', sharedProps);
         }
         if (selectedLevel.blueprintKey === 'division_dock') {
           return renderFromRegistry('DivisionDockGame', sharedProps);
@@ -775,9 +784,6 @@ const App: React.FC = () => {
           isBoss: Boolean(selectedLevel.isBoss),
         });
       case 'transform_temple':
-        if (selectedLevel.blueprintKey === 'reflection_rescue') {
-          return renderFromRegistry('RotationReflectionGame', sharedProps);
-        }
         return renderFromRegistry('CurriculumChallengeGame', {
           ...sharedProps,
           gameType: selectedLevel.gameType,

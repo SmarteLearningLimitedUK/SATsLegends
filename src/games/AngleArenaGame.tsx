@@ -1,18 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Brain,
-  Check,
-  Flame,
-  Play,
-  Skull,
-  Target,
-  Timer as TimerIcon,
-  Trophy,
-  X,
-  Zap,
-} from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import { Brain, Flame, Play, Skull, Target } from 'lucide-react';
+import GameplayHUD from '../components/GameplayHUD';
 import GameActionDock from '../components/GameActionDock';
+import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
+import { AVATARS } from '../constants';
+import { triggerHaptic } from '../haptics';
+import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 
 interface AngleArenaGameProps {
   levelId: number;
@@ -26,55 +20,31 @@ interface MathProblem {
   id: string;
   question: string;
   answer: number;
-  type: 'line' | 'point' | 'triangle' | 'opposite';
 }
 
 const PROBLEMS: MathProblem[] = [
-  { id: '1', question: 'Angles on a straight line: 180° - 45° = ?', answer: 135, type: 'line' },
-  { id: '2', question: 'Angles on a straight line: 180° - 120° = ?', answer: 60, type: 'line' },
-  { id: '3', question: 'Angles around a point: 360° - 270° = ?', answer: 90, type: 'point' },
-  { id: '4', question: 'Angles in a triangle: 180° - (60° + 60°) = ?', answer: 60, type: 'triangle' },
-  { id: '5', question: 'Angles in a triangle: 180° - (90° + 45°) = ?', answer: 45, type: 'triangle' },
-  { id: '6', question: 'Angles on a straight line: 180° - 155° = ?', answer: 25, type: 'line' },
-  { id: '7', question: 'Angles around a point: 360° - 315° = ?', answer: 45, type: 'point' },
-  { id: '8', question: 'Angles in a triangle: 180° - (30° + 120°) = ?', answer: 30, type: 'triangle' },
-  { id: '9', question: 'Angles on a straight line: 180° - 72° = ?', answer: 108, type: 'line' },
-  { id: '10', question: 'Angles around a point: 360° - 180° - 90° = ?', answer: 90, type: 'point' },
+  { id: '1', question: 'Angles on a straight line: 180 deg - 45 deg = ?', answer: 135 },
+  { id: '2', question: 'Angles on a straight line: 180 deg - 120 deg = ?', answer: 60 },
+  { id: '3', question: 'Angles around a point: 360 deg - 270 deg = ?', answer: 90 },
+  { id: '4', question: 'Angles in a triangle: 180 deg - (60 deg + 60 deg) = ?', answer: 60 },
+  { id: '5', question: 'Angles in a triangle: 180 deg - (90 deg + 45 deg) = ?', answer: 45 },
+  { id: '6', question: 'Angles on a straight line: 180 deg - 155 deg = ?', answer: 25 },
+  { id: '7', question: 'Angles around a point: 360 deg - 315 deg = ?', answer: 45 },
+  { id: '8', question: 'Angles in a triangle: 180 deg - (30 deg + 120 deg) = ?', answer: 30 },
+  { id: '9', question: 'Angles on a straight line: 180 deg - 72 deg = ?', answer: 108 },
+  { id: '10', question: 'Angles around a point: 360 deg - 180 deg - 90 deg = ?', answer: 90 },
 ];
 
-const TopBar: React.FC<{ score: number; streak: number; timer: string }> = ({ score, streak, timer }) => (
-  <div className="z-50 w-full px-4 pt-4">
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-3 rounded-xl border border-blue-400/30 bg-blue-900/60 p-2 shadow-lg">
-        <div className="flex flex-col items-center px-2">
-          <div className="flex items-center gap-1 text-yellow-400">
-            <Zap className="h-4 w-4 fill-current" />
-            <span className="text-lg font-black">{streak}</span>
-          </div>
-          <span className="text-[10px] font-black uppercase text-blue-200">Streak</span>
-        </div>
-        <div className="h-8 w-[2px] bg-blue-400/20" />
-        <div className="flex flex-col">
-          <span className="text-[10px] font-bold uppercase tracking-tight text-blue-200">Score</span>
-          <span className="text-xl font-black leading-none text-white">{score.toLocaleString()}</span>
-        </div>
-      </div>
-
-      <div className="flex items-center gap-2 rounded-xl border border-yellow-400/50 bg-blue-900/80 px-4 py-2 shadow-lg">
-        <TimerIcon className="h-5 w-5 text-yellow-400" />
-        <span className="text-xl font-black text-white">{timer}</span>
-      </div>
-    </div>
-  </div>
-);
+type FeedbackState = 'hit' | 'miss' | null;
 
 const AngleArenaGame: React.FC<AngleArenaGameProps> = ({
   levelId,
-  avatarId: _avatarId,
+  avatarId,
   onVictory,
   onGameOver,
   onBack,
 }) => {
+  const avatar = useMemo(() => AVATARS.find((item) => item.id === avatarId) || AVATARS[0], [avatarId]);
   const roundTime = 90 + (levelId * 6);
   const targetScore = 2600 + (levelId * 280);
 
@@ -85,10 +55,20 @@ const AngleArenaGame: React.FC<AngleArenaGameProps> = ({
   const [userAngle, setUserAngle] = useState(45);
   const [isFiring, setIsFiring] = useState(false);
   const [projectilePath, setProjectilePath] = useState<{ x: number; y: number }[]>([]);
-  const [feedback, setFeedback] = useState<'hit' | 'miss' | null>(null);
+  const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [gameActive, setGameActive] = useState(true);
+  const [bestStreak, setBestStreak] = useState(0);
 
   const endedRef = useRef(false);
+  const scoreRef = useRef(0);
+  const timersRef = useRef<number[]>([]);
+
+  const progress = Math.min((score / Math.max(1, targetScore)) * 100, 100);
+
+  const clearTimers = () => {
+    timersRef.current.forEach((timerId) => window.clearTimeout(timerId));
+    timersRef.current = [];
+  };
 
   const generateProblem = useCallback(() => {
     setCurrentProblem((previous) => {
@@ -104,18 +84,30 @@ const AngleArenaGame: React.FC<AngleArenaGameProps> = ({
     if (endedRef.current) return;
     endedRef.current = true;
     setGameActive(false);
+    clearTimers();
+
     if (won) {
       const stars = finalScore >= targetScore * 1.8 ? 3 : finalScore >= targetScore * 1.35 ? 2 : 1;
       onVictory(stars, finalScore);
       return;
     }
+
     onGameOver(finalScore);
   }, [onGameOver, onVictory, targetScore]);
 
   useEffect(() => {
+    scoreRef.current = score;
+  }, [score]);
+
+  useEffect(() => () => clearTimers(), []);
+
+  useEffect(() => {
     endedRef.current = false;
+    clearTimers();
     setScore(0);
+    scoreRef.current = 0;
     setStreak(0);
+    setBestStreak(0);
     setTimer(roundTime);
     setCurrentProblem(PROBLEMS[0]);
     setUserAngle(45);
@@ -127,18 +119,21 @@ const AngleArenaGame: React.FC<AngleArenaGameProps> = ({
 
   useEffect(() => {
     if (!gameActive || endedRef.current) return undefined;
+
     const interval = window.setInterval(() => {
       setTimer((previous) => {
         if (previous <= 1) {
           window.clearInterval(interval);
-          finishRound(score >= targetScore, score);
+          const finalScore = scoreRef.current;
+          finishRound(finalScore >= targetScore, finalScore);
           return 0;
         }
         return previous - 1;
       });
     }, 1000);
+
     return () => window.clearInterval(interval);
-  }, [finishRound, gameActive, score, targetScore]);
+  }, [finishRound, gameActive, targetScore]);
 
   const fire = () => {
     if (isFiring || !gameActive || endedRef.current) return;
@@ -146,10 +141,10 @@ const AngleArenaGame: React.FC<AngleArenaGameProps> = ({
 
     const isCorrect = userAngle === currentProblem.answer;
     const steps = 30;
-    const targetX = 80;
+    const targetX = 82;
     const targetY = 60;
-    const startX = 15;
-    const startY = 70;
+    const startX = 14;
+    const startY = 74;
     const nextPath: { x: number; y: number }[] = [];
 
     for (let index = 0; index <= steps; index += 1) {
@@ -164,193 +159,230 @@ const AngleArenaGame: React.FC<AngleArenaGameProps> = ({
 
     setProjectilePath(nextPath);
 
-    window.setTimeout(() => {
+    const resultTimer = window.setTimeout(() => {
       if (endedRef.current) return;
+
       if (isCorrect) {
         setFeedback('hit');
+        triggerHaptic('success');
         setScore((value) => {
           const earned = 1000 + (streak * 100);
           const next = value + earned;
+          scoreRef.current = next;
           if (next >= targetScore) {
-            window.setTimeout(() => finishRound(true, next), 900);
+            const finishTimer = window.setTimeout(() => finishRound(true, next), 900);
+            timersRef.current.push(finishTimer);
           } else {
-            window.setTimeout(generateProblem, 1200);
+            const nextTimer = window.setTimeout(generateProblem, 1100);
+            timersRef.current.push(nextTimer);
           }
           return next;
         });
-        setStreak((value) => value + 1);
+        setStreak((value) => {
+          const next = value + 1;
+          setBestStreak((best) => Math.max(best, next));
+          return next;
+        });
       } else {
         setFeedback('miss');
+        triggerHaptic('error');
         setStreak(0);
-        window.setTimeout(() => {
+        const resetTimer = window.setTimeout(() => {
           if (endedRef.current) return;
           setIsFiring(false);
           setFeedback(null);
-        }, 1200);
+          setProjectilePath([]);
+        }, 900);
+        timersRef.current.push(resetTimer);
       }
-    }, 1000);
+    }, 900);
+
+    timersRef.current.push(resultTimer);
   };
 
   const timerLabel = useMemo(() => timer.toString().padStart(2, '0'), [timer]);
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center overflow-hidden bg-[#050a1a] font-sans text-white select-none">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,#1e3a8a_0%,#050a1a_100%)]" />
+    <GameScreenShell className="overflow-hidden pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+0.35rem)]">
+      <GameplaySceneBackdrop gameType="angle_arena" />
 
-      <div className="relative z-10 flex h-full w-full max-w-[1000px] flex-col">
-        <TopBar score={score} streak={streak} timer={timerLabel} />
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center gap-2 p-2 md:gap-4 md:p-4">
+        <div className="w-full max-w-6xl">
+          <GameplayHUD
+            title="Angle Arena"
+            avatar={avatar}
+            score={score}
+            targetScore={targetScore}
+            timeLeft={timer}
+            progress={progress}
+            compact
+            accentText="text-sky-950"
+            accentSoftBg="bg-sky-100/84"
+            accentBorder="border-sky-200/88"
+            progressBar="bg-gradient-to-r from-cyan-300 via-sky-300 to-yellow-300"
+            statLabel="Streak"
+            statValue={`${streak}`}
+          />
+        </div>
 
-        <div className="relative mx-4 mt-4 flex-1 overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/20 shadow-2xl">
-          <div className="absolute bottom-0 left-0 right-0 h-16 border-t border-blue-400/20 bg-gradient-to-t from-blue-950 to-blue-900/40" />
+        <PuzzleStage className="w-full max-w-6xl rounded-[2.3rem] md:rounded-[2.6rem]">
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_24%,rgba(15,23,42,0.2)_100%)]" />
 
-          <div className="absolute bottom-16 left-[10%] flex flex-col items-center">
-            <div className="relative h-20 w-12 rounded-t-full border-x-4 border-t-4 border-blue-400/50 bg-blue-800">
-              <motion.div
-                animate={{ rotate: isFiring ? -20 : -userAngle }}
-                transition={{ type: 'spring', stiffness: 100 }}
-                className="absolute bottom-4 left-1/2 h-24 w-2 origin-bottom -translate-x-1/2 rounded-full border-2 border-amber-800 bg-amber-600"
-              >
-                <div className="absolute left-1/2 top-0 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-amber-900 bg-amber-700">
-                  <div className="h-4 w-4 rounded-full bg-gray-300 shadow-inner" />
+          <div className="relative z-10 flex h-full w-full flex-col px-3 pb-4 pt-14 md:px-6 md:pb-6 md:pt-20">
+            <div className="flex justify-center">
+              <div className="licensed-slice-paper-panel max-w-[95%] px-5 py-3 text-center shadow-[0_16px_30px_rgba(15,23,42,0.16)] md:px-7 md:py-4">
+                <div className="text-base font-black tracking-tight text-amber-900 md:text-[1.75rem]">
+                  Solve the angle and fire the siege shot at the target
                 </div>
-              </motion.div>
-            </div>
-            <span className="mt-2 text-[10px] font-black uppercase tracking-widest text-blue-300">Siege Engine</span>
-          </div>
-
-          <div className="absolute bottom-16 right-[15%] flex flex-col items-center">
-            <AnimatePresence>
-              {feedback !== 'hit' && (
-                <motion.div exit={{ scale: 0, rotate: 180, opacity: 0 }} className="relative">
-                  <div className="flex h-20 w-20 items-center justify-center rounded-2xl border-4 border-rose-500 bg-rose-900/60 shadow-[0_0_30px_rgba(244,63,94,0.3)]">
-                    <Skull className="h-12 w-12 animate-pulse text-rose-400" />
-                  </div>
-                  <div className="absolute -top-12 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border-2 border-blue-400 bg-white px-3 py-1 text-sm font-black text-blue-900 shadow-xl">
-                    TARGET ACQUIRED
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-            {feedback === 'hit' && (
-              <motion.div initial={{ scale: 0 }} animate={{ scale: 1.5 }} className="text-orange-500">
-                <Flame className="h-16 w-16 fill-current" />
-              </motion.div>
-            )}
-          </div>
-
-          {isFiring && projectilePath.length > 0 && (
-            <motion.div
-              className="absolute z-50 h-6 w-6 rounded-full border-2 border-gray-500 bg-gray-300 shadow-[0_0_15px_white]"
-              animate={{
-                left: projectilePath.map((point) => `${point.x}%`),
-                top: projectilePath.map((point) => `${point.y}%`),
-              }}
-              transition={{ duration: 1, ease: 'linear' }}
-            />
-          )}
-
-          <div className="absolute left-1/2 top-8 w-full max-w-md -translate-x-1/2 px-4">
-            <motion.div
-              key={currentProblem.id}
-              initial={{ y: -50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              className="rounded-2xl border-2 border-blue-400 bg-blue-950/90 p-6 text-center shadow-2xl"
-            >
-              <div className="mb-2 flex items-center justify-center gap-2">
-                <Brain className="h-4 w-4 text-purple-400" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-blue-300">Calculate Trajectory</span>
               </div>
-              <h3 className="mb-1 text-xl font-black text-white md:text-2xl">
-                {currentProblem.question}
-              </h3>
-              <p className="text-xs italic text-blue-300">Solve for the angle to hit the target!</p>
-            </motion.div>
+            </div>
+
+            <div className="mt-4 min-h-0 flex-1 overflow-y-auto md:mt-5">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-[1.2fr_1fr] md:gap-4">
+                <div className="licensed-game-card-dark relative min-h-[20rem] rounded-[1.6rem] border border-white/14 p-3 shadow-[0_16px_28px_rgba(2,6,23,0.22)] md:min-h-[22rem] md:p-4">
+                  <div className="absolute inset-x-4 bottom-3 top-4 rounded-[1.2rem] border border-sky-200/22 bg-[radial-gradient(circle_at_50%_14%,rgba(56,189,248,0.35),rgba(15,23,42,0.82)_58%)] md:inset-x-6 md:bottom-4 md:top-5" />
+                  <div className="relative z-10 h-full w-full">
+                    <div className="absolute left-1/2 top-2 w-full max-w-md -translate-x-1/2 px-2 md:top-3 md:px-4">
+                      <motion.div
+                        key={currentProblem.id}
+                        initial={{ y: -16, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="rounded-2xl border border-sky-200/24 bg-slate-900/72 p-3 text-center shadow-[0_12px_22px_rgba(2,6,23,0.2)] md:p-4"
+                      >
+                        <div className="mb-1 flex items-center justify-center gap-2">
+                          <Brain className="h-4 w-4 text-cyan-200" />
+                          <span className="text-[10px] font-black uppercase tracking-widest text-cyan-100/80">Current challenge</span>
+                        </div>
+                        <h3 className="text-sm font-black text-white md:text-xl">{currentProblem.question}</h3>
+                      </motion.div>
+                    </div>
+
+                    <div className="absolute bottom-7 left-[8%] flex flex-col items-center md:bottom-8">
+                      <div className="relative h-20 w-12 rounded-t-full border-x-4 border-t-4 border-amber-300/60 bg-slate-900/90">
+                        <motion.div
+                          animate={{ rotate: isFiring ? -20 : -userAngle }}
+                          transition={{ type: 'spring', stiffness: 110, damping: 16 }}
+                          className="absolute bottom-4 left-1/2 h-24 w-2 origin-bottom -translate-x-1/2 rounded-full border-2 border-amber-800 bg-amber-500"
+                        >
+                          <div className="absolute left-1/2 top-0 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-amber-900 bg-amber-700 shadow-[0_8px_14px_rgba(0,0,0,0.3)]" />
+                        </motion.div>
+                      </div>
+                    </div>
+
+                    <div className="absolute bottom-10 right-[12%] flex flex-col items-center md:bottom-12">
+                      <AnimatePresence>
+                        {feedback !== 'hit' && (
+                          <motion.div exit={{ scale: 0, rotate: 180, opacity: 0 }} className="relative">
+                            <div className="flex h-20 w-20 items-center justify-center rounded-2xl border-4 border-rose-400/80 bg-rose-950/50 shadow-[0_0_24px_rgba(244,63,94,0.3)]">
+                              <Skull className="h-12 w-12 text-rose-300" />
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                      {feedback === 'hit' && (
+                        <motion.div initial={{ scale: 0.4 }} animate={{ scale: 1.3 }} className="text-amber-300">
+                          <Flame className="h-16 w-16 fill-current" />
+                        </motion.div>
+                      )}
+                    </div>
+
+                    {isFiring && projectilePath.length > 0 && (
+                      <motion.div
+                        className="absolute z-50 h-5 w-5 rounded-full border-2 border-slate-400 bg-slate-200 shadow-[0_0_14px_rgba(255,255,255,0.75)]"
+                        animate={{
+                          left: projectilePath.map((point) => `${point.x}%`),
+                          top: projectilePath.map((point) => `${point.y}%`),
+                        }}
+                        transition={{ duration: 0.9, ease: 'linear' }}
+                      />
+                    )}
+                  </div>
+                </div>
+
+                <div className="licensed-game-card-dark rounded-[1.6rem] border border-white/14 p-3 shadow-[0_16px_28px_rgba(2,6,23,0.22)] md:p-4">
+                  <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Launch controls</div>
+                  <div className="mt-3 rounded-[1.1rem] border border-sky-200/22 bg-[linear-gradient(180deg,rgba(14,116,144,0.2),rgba(15,23,42,0.5))] p-3 text-center shadow-[0_12px_22px_rgba(2,6,23,0.2)] md:p-4">
+                    <div className="text-xs font-bold uppercase tracking-[0.14em] text-cyan-100/82">Selected angle</div>
+                    <div className="mt-1 text-5xl font-black text-white md:text-6xl">{userAngle}<span className="text-2xl md:text-3xl">deg</span></div>
+                  </div>
+
+                  <div className="mt-3 rounded-[1rem] border border-white/12 bg-black/18 p-3 md:mt-4">
+                    <input
+                      type="range"
+                      min="0"
+                      max="180"
+                      value={userAngle}
+                      onChange={(event) => setUserAngle(parseInt(event.target.value, 10))}
+                      disabled={isFiring || !gameActive}
+                      className="h-3.5 w-full cursor-pointer appearance-none rounded-full border border-sky-200/35 bg-sky-950 accent-amber-300 disabled:opacity-60"
+                    />
+                    <div className="mt-1 flex justify-between text-[10px] font-bold text-cyan-100/76 md:text-xs">
+                      <span>0deg</span>
+                      <span>45deg</span>
+                      <span>90deg</span>
+                      <span>135deg</span>
+                      <span>180deg</span>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={fire}
+                    disabled={isFiring || !gameActive}
+                    className="ui-button-primary mt-3 min-h-[3.4rem] w-full rounded-[1rem] px-4 py-2 text-xl font-black text-white disabled:opacity-60 md:mt-4 md:min-h-[4rem] md:text-2xl"
+                  >
+                    <span className="inline-flex items-center gap-2">
+                      <Play className="h-6 w-6 fill-current" />
+                      FIRE
+                    </span>
+                  </button>
+
+                  <div className="mt-3 rounded-[1rem] border border-white/12 bg-slate-950/38 p-3 text-center">
+                    <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/70 md:text-xs">Goal</div>
+                    <div className="mt-1 text-sm font-semibold text-white/90 md:text-base">
+                      Hit target score before time runs out.
+                    </div>
+                    <div className="mt-1 inline-flex items-center gap-1 rounded-full border border-cyan-200/30 bg-cyan-900/40 px-3 py-1 text-xs font-black text-cyan-100">
+                      <Target className="h-3.5 w-3.5" />
+                      Best streak: {bestStreak}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <AnimatePresence>
             {feedback && (
               <motion.div
-                initial={{ scale: 0, opacity: 0 }}
+                initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
-                className={`absolute left-1/2 top-1/2 z-[60] -translate-x-1/2 -translate-y-1/2 rounded-3xl border-4 px-10 py-4 text-4xl font-black text-white shadow-2xl ${
-                  feedback === 'hit' ? 'border-emerald-300 bg-emerald-500' : 'border-rose-300 bg-rose-500'
+                exit={{ scale: 0.9, opacity: 0 }}
+                className={`pointer-events-none absolute inset-0 z-40 flex items-center justify-center backdrop-blur-sm ${
+                  feedback === 'hit' ? 'bg-emerald-500/16' : 'bg-rose-500/16'
                 }`}
               >
-                {feedback === 'hit' ? 'DIRECT HIT!' : 'MISCALCULATED!'}
+                <div className={`rounded-3xl border px-8 py-4 text-center shadow-2xl ${
+                  feedback === 'hit'
+                    ? 'border-emerald-200/70 bg-emerald-500 text-white'
+                    : 'border-rose-200/70 bg-rose-500 text-white'
+                }`}
+                >
+                  <div className="text-4xl font-black uppercase md:text-5xl">
+                    {feedback === 'hit' ? 'Direct Hit' : 'Missed Shot'}
+                  </div>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
+        </PuzzleStage>
+
+        <div className="w-full max-w-6xl">
+          <GameActionDock onBack={onBack} accentClass="text-amber-100" />
         </div>
-
-        <div className="flex h-48 flex-col items-center justify-between gap-6 border-t-4 border-blue-400/50 bg-blue-950/80 p-6 md:flex-row">
-          <div className="w-full max-w-md flex-1">
-            <div className="mb-2 flex items-end justify-between">
-              <div className="flex flex-col">
-                <span className="text-[10px] font-black uppercase tracking-widest text-blue-300">Angle Meter</span>
-                <span className="text-3xl font-black leading-none text-yellow-400">{userAngle}°</span>
-              </div>
-              <div className="flex items-center gap-2 rounded-lg border border-blue-400/20 bg-blue-900/40 px-3 py-1">
-                <Target className="h-4 w-4 text-blue-400" />
-                <span className="text-xs font-bold text-blue-200">Required: ???°</span>
-              </div>
-            </div>
-            <input
-              type="range"
-              min="0"
-              max="180"
-              value={userAngle}
-              onChange={(event) => setUserAngle(parseInt(event.target.value, 10))}
-              disabled={isFiring || !gameActive}
-              className="h-4 w-full cursor-pointer appearance-none rounded-full border-2 border-blue-400/30 bg-blue-900 accent-yellow-400"
-            />
-            <div className="mt-1 flex justify-between text-[10px] font-bold text-blue-400">
-              <span>0°</span>
-              <span>45°</span>
-              <span>90°</span>
-              <span>135°</span>
-              <span>180°</span>
-            </div>
-          </div>
-
-          <button
-            onClick={fire}
-            disabled={isFiring || !gameActive}
-            className={`flex h-20 items-center gap-4 rounded-2xl px-12 text-2xl font-black tracking-tight transition-all shadow-xl ${
-              !isFiring && gameActive
-                ? 'border-b-8 border-orange-800 bg-gradient-to-b from-orange-400 to-orange-600 text-white active:translate-y-2 active:border-b-0'
-                : 'cursor-not-allowed border-2 border-blue-400/10 bg-blue-900/40 text-blue-400/40'
-            }`}
-          >
-            <Play className="h-8 w-8 fill-current" />
-            FIRE!
-          </button>
-        </div>
-
-        <GameActionDock onBack={onBack} accentClass="text-white" />
       </div>
 
-      {!gameActive && (
-        <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-blue-950/95 p-8 text-center">
-          <Trophy className="mb-6 h-32 w-32 animate-bounce text-yellow-400" />
-          <h2 className="mb-4 text-6xl font-black italic tracking-tight">SIEGE COMPLETE!</h2>
-          <div className="w-full max-w-sm rounded-3xl border-4 border-blue-400 bg-blue-900/60 p-8 shadow-2xl">
-            <p className="mb-2 text-sm font-bold uppercase tracking-widest text-blue-200">Final Score</p>
-            <p className="mb-4 text-6xl font-black text-white">{score.toLocaleString()}</p>
-            <div className="flex justify-between border-t border-white/10 pt-4 text-sm font-bold text-blue-300">
-              <span>BEST STREAK</span>
-              <span>{streak}</span>
-            </div>
-          </div>
-          <button
-            onClick={onBack}
-            className="mt-10 rounded-full bg-white px-12 py-4 text-2xl font-black text-blue-900 transition-transform hover:scale-105 shadow-[0_0_20px_rgba(255,255,255,0.4)]"
-          >
-            CONTINUE
-          </button>
-        </div>
-      )}
-    </div>
+      <div className="sr-only" aria-live="polite">Time {timerLabel}</div>
+    </GameScreenShell>
   );
 };
 

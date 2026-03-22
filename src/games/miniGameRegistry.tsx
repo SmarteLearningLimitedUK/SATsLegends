@@ -1,5 +1,6 @@
 import React from 'react';
 import AngleArenaGame from './AngleArenaGame';
+import ArithmeticGauntletGame from './ArithmeticGauntletGame';
 import BossEncounterGame from './BossEncounterGame';
 import CalculationCrashGame from './CalculationCrashGame';
 import CloudCollapseGame from './CloudCollapseGame';
@@ -29,6 +30,7 @@ import PolygonPalaceGame from './PolygonPalaceGame';
 import PotionPourGame from './PotionPourGame';
 import PrimePopGame from './PrimePopGame';
 import RatioRapidsGame from './RatioRapidsGame';
+import RemainderRunGame from './RemainderRunGame';
 import RoundingRocketGame from './RoundingRocketGame';
 import RotationReflectionGame from './RotationReflectionGame';
 import RuneLockDungeonsGame from './RuneLockDungeonsGame';
@@ -50,6 +52,7 @@ import { createMiniGame, MiniGame } from './MiniGame';
 
 export type MiniGameRegistryKey =
   | 'AngleArenaGame'
+  | 'ArithmeticGauntletGame'
   | 'BossEncounterGame'
   | 'CalculationCrashGame'
   | 'CloudCollapseGame'
@@ -79,6 +82,7 @@ export type MiniGameRegistryKey =
   | 'PotionPourGame'
   | 'PrimePopGame'
   | 'RatioRapidsGame'
+  | 'RemainderRunGame'
   | 'RoundingRocketGame'
   | 'RotationReflectionGame'
   | 'RuneLockDungeonsGame'
@@ -108,6 +112,7 @@ const asMiniGame = <P extends Record<string, unknown>>(
  */
 export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   AngleArenaGame: asMiniGame('angle_arena', AngleArenaGame),
+  ArithmeticGauntletGame: asMiniGame('arithmetic_gauntlet', ArithmeticGauntletGame),
   BossEncounterGame: asMiniGame('boss_encounter', BossEncounterGame),
   CalculationCrashGame: asMiniGame('calculation_crash', CalculationCrashGame),
   CloudCollapseGame: asMiniGame('cloud_collapse', CloudCollapseGame),
@@ -137,6 +142,7 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   PotionPourGame: asMiniGame('potion_pour', PotionPourGame),
   PrimePopGame: asMiniGame('prime_pop', PrimePopGame),
   RatioRapidsGame: asMiniGame('ratio_rapids', RatioRapidsGame),
+  RemainderRunGame: asMiniGame('remainder_run', RemainderRunGame),
   RoundingRocketGame: asMiniGame('rounding_rocket', RoundingRocketGame),
   RotationReflectionGame: asMiniGame('rotation_reflection', RotationReflectionGame),
   RuneLockDungeonsGame: asMiniGame('rune_lock_dungeons', RuneLockDungeonsGame),

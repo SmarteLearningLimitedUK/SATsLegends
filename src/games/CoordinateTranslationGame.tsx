@@ -1,8 +1,7 @@
 import TreasurePathGame from './TreasurePathGame';
 
 /**
- * Shared geometry implementation used by both:
- * - Translation Tracker
+ * Shared geometry implementation used by:
  * - Coordinates Quest
  */
 export default TreasurePathGame;

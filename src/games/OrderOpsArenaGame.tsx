@@ -5,6 +5,8 @@ import GameplayHUD from '../components/GameplayHUD';
 import GameActionDock from '../components/GameActionDock';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { AVATARS } from '../constants';
+import goblinEnemy from '../assets/bosses/goblin.png';
+import { triggerHaptic } from '../haptics';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 
 interface OrderOpsArenaGameProps {
@@ -29,12 +31,12 @@ type FeedbackState = null | {
 };
 
 const HEARTS_MAX = 3;
-const ROUNDS_BY_LEVEL: Record<number, number> = {
-  1: 6,
-  2: 7,
-  3: 8,
-  4: 9,
-  5: 10,
+const ENEMY_HEALTH_BY_LEVEL: Record<number, number> = {
+  1: 5,
+  2: 6,
+  3: 7,
+  4: 8,
+  5: 9,
   6: 10,
 };
 
@@ -62,21 +64,21 @@ const createOpsRound = (levelId: number): OpsRound => {
   if (mode === 'brackets') {
     const a = randomInt(2, 12);
     const b = randomInt(2, 10);
-    const c = randomInt(2, 6);
+    const c = randomInt(2, 7);
     const answer = (a + b) * c;
     return {
       expression: `(${a} + ${b}) × ${c}`,
       answer,
       options: makeOptions(answer),
-      hint: 'Brackets first, then multiplication.',
+      hint: 'Brackets first, then multiply.',
     };
   }
 
   if (mode === 'doubleMultiply') {
-    const a = randomInt(2, 9);
-    const b = randomInt(2, 6);
-    const c = randomInt(2, 8);
-    const d = randomInt(2, 5);
+    const a = randomInt(2, 10);
+    const b = randomInt(2, 8);
+    const c = randomInt(2, 9);
+    const d = randomInt(2, 7);
     const answer = (a * b) + (c * d);
     return {
       expression: `${a} × ${b} + ${c} × ${d}`,
@@ -86,16 +88,16 @@ const createOpsRound = (levelId: number): OpsRound => {
     };
   }
 
-  const a = randomInt(10, 40);
-  const b = randomInt(2, 9);
-  const c = randomInt(2, 6);
-  const d = randomInt(1, 12);
+  const a = randomInt(10, 45);
+  const b = randomInt(2, 10);
+  const c = randomInt(2, 7);
+  const d = randomInt(1, 14);
   const answer = a + (b * c) - d;
   return {
     expression: `${a} + ${b} × ${c} - ${d}`,
     answer,
     options: makeOptions(answer),
-    hint: 'Multiply first, then complete + and - in order.',
+    hint: 'Multiply first, then finish + and -.',
   };
 };
 
@@ -107,40 +109,51 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
   onBack,
 }) => {
   const avatar = useMemo(() => AVATARS.find((item) => item.id === avatarId) || AVATARS[0], [avatarId]);
-  const totalRounds = ROUNDS_BY_LEVEL[levelId] || 8;
-  const initialTime = 72 + (levelId * 7);
-  const targetScore = totalRounds * 210;
+  const maxEnemyHealth = ENEMY_HEALTH_BY_LEVEL[levelId] || 7;
+  const initialTime = 76 + (levelId * 7);
+  const targetScore = maxEnemyHealth * 210;
   const timersRef = useRef<number[]>([]);
+  const scoreRef = useRef(0);
 
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(initialTime);
   const [hearts, setHearts] = useState(HEARTS_MAX);
   const [streak, setStreak] = useState(0);
-  const [roundNumber, setRoundNumber] = useState(1);
+  const [enemyHealth, setEnemyHealth] = useState(maxEnemyHealth);
+  const [questionCount, setQuestionCount] = useState(1);
   const [round, setRound] = useState<OpsRound>(() => createOpsRound(levelId));
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [isFinished, setIsFinished] = useState(false);
+  const [enemyImpactTick, setEnemyImpactTick] = useState(0);
 
-  const progress = Math.min((score / targetScore) * 100, 100);
+  const progress = Math.min((score / Math.max(1, targetScore)) * 100, 100);
+  const enemyHealthPercent = (enemyHealth / maxEnemyHealth) * 100;
 
   const clearTimers = () => {
     timersRef.current.forEach((timerId) => window.clearTimeout(timerId));
     timersRef.current = [];
   };
 
+  useEffect(() => {
+    scoreRef.current = score;
+  }, [score]);
+
   useEffect(() => () => clearTimers(), []);
 
   useEffect(() => {
     clearTimers();
     setScore(0);
+    scoreRef.current = 0;
     setTimeLeft(initialTime);
     setHearts(HEARTS_MAX);
     setStreak(0);
-    setRoundNumber(1);
+    setEnemyHealth(maxEnemyHealth);
+    setQuestionCount(1);
     setRound(createOpsRound(levelId));
     setFeedback(null);
     setIsFinished(false);
-  }, [levelId, initialTime]);
+    setEnemyImpactTick(0);
+  }, [initialTime, levelId, maxEnemyHealth]);
 
   useEffect(() => {
     if (isFinished) return undefined;
@@ -149,19 +162,19 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
         if (previous <= 1) {
           window.clearInterval(interval);
           setIsFinished(true);
-          onGameOver(score);
+          onGameOver(scoreRef.current);
           return 0;
         }
         return previous - 1;
       });
     }, 1000);
     return () => window.clearInterval(interval);
-  }, [isFinished, onGameOver, score]);
+  }, [isFinished, onGameOver]);
 
-  const finishVictory = (finalScore: number) => {
+  const finishVictory = (finalScore: number, heartsLeft: number) => {
     if (isFinished) return;
     setIsFinished(true);
-    const stars = finalScore >= targetScore * 1.2 && hearts >= 2
+    const stars = finalScore >= targetScore * 1.2 && heartsLeft >= 2
       ? 3
       : finalScore >= targetScore * 0.9
         ? 2
@@ -177,17 +190,12 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
     onVictory(stars, finalScore);
   };
 
-  const moveNextRound = (updatedScore: number) => {
-    if (roundNumber >= totalRounds) {
-      finishVictory(updatedScore);
-      return;
-    }
-
+  const moveToNextQuestion = () => {
     const timeoutId = window.setTimeout(() => {
-      setRoundNumber((previous) => previous + 1);
+      setQuestionCount((previous) => previous + 1);
       setRound(createOpsRound(levelId));
       setFeedback(null);
-    }, 750);
+    }, 620);
     timersRef.current.push(timeoutId);
   };
 
@@ -198,28 +206,26 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
     setStreak(0);
     setFeedback({
       type: 'error',
-      title: 'Wrong Order',
+      title: 'Attack Missed',
       subtitle,
     });
+    triggerHaptic('error');
 
     if (nextHearts <= 0) {
       const timeoutId = window.setTimeout(() => {
         setIsFinished(true);
-        onGameOver(score);
+        onGameOver(scoreRef.current);
       }, 860);
       timersRef.current.push(timeoutId);
       return;
     }
 
-    const timeoutId = window.setTimeout(() => {
-      setRound(createOpsRound(levelId));
-      setFeedback(null);
-    }, 780);
-    timersRef.current.push(timeoutId);
+    moveToNextQuestion();
   };
 
   const handleAnswer = (choice: number) => {
     if (feedback || isFinished) return;
+
     if (choice !== round.answer) {
       loseHeart(`Correct value was ${round.answer}.`);
       return;
@@ -227,14 +233,29 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
 
     const points = 140 + (streak * 24);
     const updatedScore = score + points;
+    const nextEnemyHealth = Math.max(0, enemyHealth - 1);
+
     setScore(updatedScore);
+    scoreRef.current = updatedScore;
     setStreak((previous) => previous + 1);
+    setEnemyHealth(nextEnemyHealth);
+    setEnemyImpactTick((previous) => previous + 1);
     setFeedback({
       type: 'success',
-      title: 'Sequence Locked',
-      subtitle: `+${points} score`,
+      title: 'Direct Hit',
+      subtitle: `Enemy takes damage • +${points} score`,
     });
-    moveNextRound(updatedScore);
+    triggerHaptic('success');
+
+    if (nextEnemyHealth <= 0) {
+      const timeoutId = window.setTimeout(() => {
+        finishVictory(updatedScore, hearts);
+      }, 720);
+      timersRef.current.push(timeoutId);
+      return;
+    }
+
+    moveToNextQuestion();
   };
 
   return (
@@ -255,8 +276,8 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
             accentSoftBg="bg-sky-100/84"
             accentBorder="border-sky-200/88"
             progressBar="bg-gradient-to-r from-cyan-300 via-sky-300 to-yellow-300"
-            statLabel="Puzzle"
-            statValue={`${roundNumber}/${totalRounds}`}
+            statLabel="Enemy HP"
+            statValue={`${enemyHealth}/${maxEnemyHealth}`}
           />
         </div>
 
@@ -278,10 +299,10 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
             <div className="flex justify-center">
               <div className="licensed-slice-paper-panel max-w-[95%] px-5 py-3 text-center shadow-[0_16px_30px_rgba(15,23,42,0.16)] md:px-7 md:py-4">
                 <div className="text-base font-black tracking-tight text-amber-900 md:text-[1.75rem]">
-                  Solve using order of operations
+                  Solve operations to defeat the enemy
                 </div>
                 <div className="mt-1 text-xs font-bold text-amber-950/76 md:text-base">
-                  Brackets first, then × and ÷, then + and -
+                  Every correct answer removes enemy health.
                 </div>
               </div>
             </div>
@@ -289,17 +310,46 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
             <div className="mt-4 min-h-0 flex-1 overflow-y-auto md:mt-5">
               <div className="grid grid-cols-1 gap-3 md:grid-cols-[1.05fr_1fr] md:gap-4">
                 <div className="licensed-game-card-dark rounded-[1.6rem] border border-white/14 p-3 shadow-[0_16px_28px_rgba(2,6,23,0.22)] md:p-4">
-                  <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Expression</div>
-                  <div className="mt-3 rounded-[1.1rem] border border-sky-200/22 bg-[linear-gradient(180deg,rgba(14,116,144,0.2),rgba(15,23,42,0.5))] p-3 text-center shadow-[0_12px_22px_rgba(2,6,23,0.2)] md:p-4">
-                    <div className="text-2xl font-black tracking-tight text-white md:text-4xl">{round.expression}</div>
+                  <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Enemy target</div>
+                  <div className="mt-3 rounded-[1.1rem] border border-sky-200/22 bg-[linear-gradient(180deg,rgba(14,116,144,0.2),rgba(15,23,42,0.5))] p-3 md:p-4">
+                    <div className="flex flex-col items-center gap-3">
+                      <motion.img
+                        key={`enemy-${enemyImpactTick}`}
+                        src={goblinEnemy}
+                        alt="Enemy"
+                        className="h-40 w-auto object-contain drop-shadow-[0_14px_24px_rgba(0,0,0,0.42)] md:h-44"
+                        animate={feedback?.type === 'success' ? { x: [0, -7, 7, -4, 4, 0], scale: [1, 1.04, 1] } : { y: [0, -2, 0] }}
+                        transition={feedback?.type === 'success'
+                          ? { duration: 0.34 }
+                          : { duration: 1.8, repeat: Infinity, repeatType: 'mirror' }}
+                      />
+                      <div className="w-full max-w-sm">
+                        <div className="mb-1 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.13em] text-cyan-100/75 md:text-[11px]">
+                          <span>Enemy Health</span>
+                          <span>{enemyHealth}/{maxEnemyHealth}</span>
+                        </div>
+                        <div className="h-4 overflow-hidden rounded-full border border-white/20 bg-black/30">
+                          <motion.div
+                            animate={{ width: `${enemyHealthPercent}%` }}
+                            transition={{ duration: 0.25 }}
+                            className="h-full bg-gradient-to-r from-rose-500 via-orange-400 to-yellow-300"
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
+
                   <div className="mt-3 rounded-[1rem] border border-white/10 bg-black/18 p-2.5 text-xs font-semibold text-cyan-50/90 md:text-sm">
-                    {round.hint}
+                    Question {questionCount} • {round.hint}
                   </div>
                 </div>
 
                 <div className="licensed-game-card-dark rounded-[1.6rem] border border-white/14 p-3 shadow-[0_16px_28px_rgba(2,6,23,0.22)] md:p-4">
-                  <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Choose answer</div>
+                  <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Operation challenge</div>
+                  <div className="mt-3 rounded-[1.1rem] border border-sky-200/22 bg-[linear-gradient(180deg,rgba(14,116,144,0.2),rgba(15,23,42,0.5))] p-3 text-center shadow-[0_12px_22px_rgba(2,6,23,0.2)] md:p-4">
+                    <div className="text-2xl font-black tracking-tight text-white md:text-4xl">{round.expression}</div>
+                  </div>
+
                   <div className="mt-3 grid grid-cols-2 gap-2.5 md:gap-3">
                     {round.options.map((option) => (
                       <button
@@ -346,4 +396,3 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
 };
 
 export default OrderOpsArenaGame;
-
