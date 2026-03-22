@@ -183,6 +183,9 @@ const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKey | nul
       }
       return 'CoordinateTranslationGame';
     case 'calculation_clash':
+      if (level.blueprintKey === 'multiplication_mine') {
+        return 'MultiplicationMineGame';
+      }
       return level.blueprintKey === 'division_dock' ? 'DivisionDockGame' : 'CalculationCrashGame';
     case 'percent_pulse':
       return 'CurriculumChallengeGame';
@@ -758,6 +761,9 @@ const App: React.FC = () => {
         }
         return renderFromRegistry('CoordinateTranslationGame', sharedProps);
       case 'calculation_clash':
+        if (selectedLevel.blueprintKey === 'multiplication_mine') {
+          return renderFromRegistry('MultiplicationMineGame', sharedProps);
+        }
         if (selectedLevel.blueprintKey === 'division_dock') {
           return renderFromRegistry('DivisionDockGame', sharedProps);
         }
