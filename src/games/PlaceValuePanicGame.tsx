@@ -210,8 +210,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       questionWidth: isTablet ? 48 : 58,
       questionHeight: isTablet ? 11.2 : 12.0,
       submitY: isTablet ? 80.8 : (isTallPhone ? 81.4 : 81.1),
-      submitWidth: isTablet ? 20 : 30,
-      submitHeight: isTablet ? 5.4 : 6.0,
+      submitWidth: isTablet ? 24 : 36,
+      submitHeight: isTablet ? 6.6 : 7.2,
       targetY: isTablet ? 74.8 : (isTallPhone ? 75.2 : 75.0),
       sourceY: isTablet ? 36.8 : (isTallPhone ? 37.4 : 37.1),
       targetWidth: isTablet ? '8.9%' : '9.8%',
@@ -509,13 +509,19 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
             className="absolute inset-x-[9%] top-[24%] bottom-[24%] mx-auto flex items-center justify-center overflow-hidden text-center text-[clamp(0.84rem,2.1vw,1.22rem)] font-black uppercase leading-[1.06] tracking-[0.01em] text-white"
             style={{
               textShadow: '0 2px 6px rgba(2,6,23,0.62)',
-              display: '-webkit-box',
-              WebkitBoxOrient: 'vertical',
-              WebkitLineClamp: 2,
-              wordBreak: 'break-word',
             }}
           >
-            {question.prompt}
+            <span
+              className="block max-w-full overflow-hidden text-center"
+              style={{
+                display: '-webkit-box',
+                WebkitBoxOrient: 'vertical',
+                WebkitLineClamp: 2,
+                wordBreak: 'break-word',
+              }}
+            >
+              {question.prompt}
+            </span>
           </div>
         </div>
 
@@ -566,14 +572,17 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 {question.placeHints[idx]}
               </span>
               {token ? (
-                <motion.span
-                  layout
-                  transition={{ type: 'spring', stiffness: 560, damping: 27, mass: 0.62 }}
-                  className="absolute left-1/2 top-1/2 z-10 block -translate-x-1/2 -translate-y-1/2 font-black text-white"
-                  style={{ ...numberStyle, fontSize: layout.targetFont }}
-                >
-                  {token.value}
-                </motion.span>
+                <>
+                  <span className="pointer-events-none absolute left-1/2 top-1/2 z-[8] h-[56%] w-[66%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/28 blur-[10px]" />
+                  <motion.span
+                    layout
+                    transition={{ type: 'spring', stiffness: 560, damping: 27, mass: 0.62 }}
+                    className="absolute left-1/2 top-1/2 z-10 block -translate-x-1/2 -translate-y-1/2 font-black text-white"
+                    style={{ ...numberStyle, fontSize: layout.targetFont }}
+                  >
+                    {token.value}
+                  </motion.span>
+                </>
               ) : null}
               {isDraggingThis ? <span className="sr-only">Dragging</span> : null}
             </button>
@@ -592,14 +601,17 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               style={{ left: `${anchor.x}%`, top: `${layout.sourceY}%`, width: layout.sourceWidth, height: layout.sourceHeight }}
             >
               {token ? (
-                <motion.span
-                  layout
-                  transition={{ type: 'spring', stiffness: 560, damping: 27, mass: 0.62 }}
-                  className="absolute left-1/2 top-[33%] block -translate-x-1/2 font-black text-white"
-                  style={{ ...numberStyle, fontSize: layout.sourceFont }}
-                >
-                  {token.value}
-                </motion.span>
+                <>
+                  <span className="pointer-events-none absolute left-1/2 top-1/2 z-[8] h-[56%] w-[66%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/24 blur-[11px]" />
+                  <motion.span
+                    layout
+                    transition={{ type: 'spring', stiffness: 560, damping: 27, mass: 0.62 }}
+                    className="absolute left-1/2 top-1/2 block -translate-x-1/2 -translate-y-1/2 font-black text-white"
+                    style={{ ...numberStyle, fontSize: layout.sourceFont }}
+                  >
+                    {token.value}
+                  </motion.span>
+                </>
               ) : null}
               {isDraggingThis ? <span className="sr-only">Dragging</span> : null}
             </button>
@@ -684,8 +696,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               initial={{ scale: 1 }}
               animate={{ scale: 1.03 }}
             >
+              <span className="absolute left-1/2 top-1/2 z-[8] h-[56%] w-[66%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/24 blur-[11px]" />
               <span
-                className="absolute left-1/2 top-[26%] -translate-x-1/2 font-black text-white"
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-black text-white"
                 style={{ ...numberStyle, fontSize: layout.sourceFont }}
               >
                 {dragState.token.value}
