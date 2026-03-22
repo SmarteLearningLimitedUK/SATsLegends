@@ -230,6 +230,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const [question, setQuestion] = useState<QuestionState>(() => makeQuestion(resolvedLevel));
   const [targetSlots, setTargetSlots] = useState<Array<Token | null>>([]);
   const [sourceSlots, setSourceSlots] = useState<Array<Token | null>>([]);
+  const [initialSourceSlots, setInitialSourceSlots] = useState<Array<Token | null>>([]);
   const [dragState, setDragState] = useState<DragState | null>(null);
   const [goblinHealth, setGoblinHealth] = useState<number>(GOBLIN_MAX_HEALTH);
   const [score, setScore] = useState<number>(0);
@@ -257,10 +258,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       id: `${nextQuestion.id}-token-${idx}`,
       value,
     }));
+    const shuffledSources = shuffle(nextSources);
 
     setQuestion(nextQuestion);
     setTargetSlots(Array(nextQuestion.expectedDigits.length).fill(null));
-    setSourceSlots(shuffle(nextSources));
+    setSourceSlots(shuffledSources);
+    setInitialSourceSlots(shuffledSources.map((token) => (token ? { ...token } : null)));
     setDragState(null);
     setIsResolving(false);
     setGoblinEffect('idle');
@@ -455,13 +458,18 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       return;
     }
 
-    const nextHealth = Math.min(GOBLIN_MAX_HEALTH, goblinHealth + 1);
-    setGoblinHealth(nextHealth);
-    setFeedback({ tone: 'error', message: `WRONG ORDER! GOBLIN HP ${nextHealth}/10` });
+    setFeedback({ tone: 'error', message: 'WRONG ORDER! TRY AGAIN.' });
     setGoblinEffect('heal');
     triggerHaptic('warning');
-    advanceRound(nextHealth);
-  }, [advanceRound, canSubmit, goblinHealth, question.expectedDigits, resolvedLevel, targetSlots]);
+    setTargetSlots(Array(question.expectedDigits.length).fill(null));
+    setSourceSlots(initialSourceSlots.map((token) => (token ? { ...token } : null)));
+
+    window.setTimeout(() => {
+      setFeedback(null);
+      setIsResolving(false);
+      setGoblinEffect('idle');
+    }, 520);
+  }, [advanceRound, canSubmit, goblinHealth, initialSourceSlots, question.expectedDigits, resolvedLevel, targetSlots]);
 
   const numberStyle: React.CSSProperties = {
     fontFamily: '"Trebuchet MS", "Arial Rounded MT Bold", "Avenir Next", "Nunito", sans-serif',
