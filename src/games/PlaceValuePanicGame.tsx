@@ -206,20 +206,20 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const isTallPhone = !isTablet && ratio > 1.95;
 
     return {
-      questionTop: isTablet ? 18.2 : (isTallPhone ? 19.2 : 18.8),
+      questionTop: isTablet ? 16.6 : (isTallPhone ? 17.2 : 17.0),
       questionWidth: isTablet ? 68 : 76,
-      questionHeight: isTablet ? 12.6 : 14.4,
-      submitY: isTablet ? 75.2 : (isTallPhone ? 75.8 : 75.5),
+      questionHeight: isTablet ? 13.8 : 15.2,
+      submitY: isTablet ? 67.2 : (isTallPhone ? 67.8 : 67.5),
       submitWidth: isTablet ? 22 : 30,
-      targetY: isTablet ? 86.6 : (isTallPhone ? 87.2 : 86.9),
-      sourceY: isTablet ? 80.6 : (isTallPhone ? 81.4 : 81.0),
-      targetWidth: isTablet ? '15.6%' : '17.2%',
+      targetY: isTablet ? 80.2 : (isTallPhone ? 80.8 : 80.5),
+      sourceY: isTablet ? 73.9 : (isTallPhone ? 74.7 : 74.3),
+      targetWidth: isTablet ? '14.2%' : '16.2%',
       sourceWidth: isTablet ? '8.9%' : '9.8%',
-      targetHeight: isTablet ? '10.2%' : '11.6%',
+      targetHeight: isTablet ? '9.6%' : '10.8%',
       sourceHeight: isTablet ? '7.6%' : '8.2%',
-      targetFont: isTablet ? 'clamp(1.55rem,3.2vw,2.25rem)' : 'clamp(1.35rem,3.7vw,2.1rem)',
+      targetFont: isTablet ? 'clamp(1.7rem,3.6vw,2.5rem)' : 'clamp(1.55rem,4.2vw,2.35rem)',
       sourceFont: isTablet ? 'clamp(2.15rem,4.7vw,3.65rem)' : 'clamp(1.95rem,5.1vw,3.25rem)',
-      healthTop: isTablet ? 39.8 : (isTallPhone ? 41.5 : 41.1),
+      healthTop: isTablet ? 42.2 : (isTallPhone ? 43.1 : 42.8),
       healthWidth: isTablet ? 20 : 30,
       enemyTop: isTablet ? 48.9 : (isTallPhone ? 51.6 : 51.1),
       enemyWidth: isTablet ? 27 : 31,
@@ -495,9 +495,22 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2 overflow-hidden"
           style={{ top: `${layout.questionTop}%`, width: `${layout.questionWidth}%`, height: `${layout.questionHeight}%` }}
         >
-          <img src={medDialogue} alt="" aria-hidden="true" draggable={false} className="absolute inset-0 h-full w-full object-cover object-[50%_90%]" />
+          <img
+            src={medDialogue}
+            alt=""
+            aria-hidden="true"
+            draggable={false}
+            className="absolute"
+            style={{
+              width: '284.44%',
+              height: '447.16%',
+              left: '-96.39%',
+              top: '-265.07%',
+              maxWidth: 'none',
+            }}
+          />
           <div
-            className="absolute inset-x-[12%] top-[24%] bottom-[24%] mx-auto flex items-center justify-center overflow-hidden text-center text-[clamp(0.58rem,1.45vw,0.86rem)] font-black uppercase leading-[1.04] tracking-[0.01em] text-white"
+            className="absolute inset-x-[9%] top-[18%] bottom-[18%] mx-auto flex items-center justify-center overflow-hidden text-center text-[clamp(0.58rem,1.32vw,0.82rem)] font-black uppercase leading-[1.03] tracking-[0.01em] text-white"
             style={{
               textShadow: '0 2px 6px rgba(2,6,23,0.62)',
               display: '-webkit-box',
@@ -546,12 +559,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 height: layout.targetHeight,
               }}
             >
-              <img
-                src={blueSocket}
-                alt=""
-                aria-hidden="true"
-                draggable={false}
-                className="pointer-events-none absolute inset-0 h-full w-full object-contain"
+              <div
+                className="pointer-events-none absolute inset-0 bg-center bg-contain bg-no-repeat"
+                style={{ backgroundImage: `url(${blueSocket})` }}
               />
               <span className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[clamp(0.92rem,2.2vw,1.25rem)] font-black uppercase tracking-[0.08em] text-cyan-100/58">
                 {question.placeHints[idx]}
