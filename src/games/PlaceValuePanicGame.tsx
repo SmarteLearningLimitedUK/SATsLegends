@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import placeValueBackground from '../assets/maps/gemini-2.5-flash-image_using_the_same_aesthetic_create_a_bright_and_vibrant_meadow_golden_hues_with_vib-0.jpg';
+import placeValueBackground from '../assets/maps/gemini-2.5-flash-image_using_the_same_aesthetic_-_create_a_dark_and_mysterious_forest_path_with_dense_f-1.jpg';
 import goblinEnemy from '../assets/bosses/goblin.png';
 import GameActionDock from '../components/GameActionDock';
 import { triggerHaptic } from '../haptics';
