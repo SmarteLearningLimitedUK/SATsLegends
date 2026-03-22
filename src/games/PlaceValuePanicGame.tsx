@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react';
 import placeValueBackground from '../assets/maps/gemini-2.5-flash-image_using_the_same_aesthetic_-_create_a_dark_and_mysterious_forest_path_with_dense_f-1.jpg';
 import medDialogue from '../assets/bluedialoague/med dialogue.png';
+import medButton from '../assets/bluedialoague/med button.png';
 import goblinEnemy from '../assets/bosses/goblin.png';
 import GameActionDock from '../components/GameActionDock';
 import { triggerHaptic } from '../haptics';
@@ -206,6 +207,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     return {
       questionTop: isTablet ? 31.1 : (isTallPhone ? 31.8 : 31.4),
       questionWidth: isTablet ? 66 : 74,
+      submitY: isTablet ? 90.8 : (isTallPhone ? 91.7 : 91.2),
+      submitWidth: isTablet ? 22 : 30,
       targetY: isTablet ? 73.2 : (isTallPhone ? 73.9 : 73.6),
       sourceY: isTablet ? 84.3 : (isTallPhone ? 85.2 : 84.8),
       tokenWidth: isTablet ? '8.9%' : '9.8%',
@@ -424,9 +427,13 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     }, 760);
   }, [attempts, correctAnswers, onVictory, resetRound, resolvedLevel, score]);
 
-  useEffect(() => {
-    if (isResolving) return;
-    if (targetSlots.length === 0 || targetSlots.some((token) => token === null)) return;
+  const canSubmit = useMemo(
+    () => !isResolving && !dragState && targetSlots.length > 0 && targetSlots.every((token) => token !== null),
+    [dragState, isResolving, targetSlots],
+  );
+
+  const handleSubmit = useCallback(() => {
+    if (!canSubmit) return;
 
     const isCorrect = targetSlots.every((token, index) => token?.value === question.expectedDigits[index]);
     setIsResolving(true);
@@ -450,7 +457,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     setGoblinEffect('heal');
     triggerHaptic('warning');
     advanceRound(nextHealth);
-  }, [advanceRound, goblinHealth, isResolving, question.expectedDigits, resolvedLevel, targetSlots]);
+  }, [advanceRound, canSubmit, goblinHealth, question.expectedDigits, resolvedLevel, targetSlots]);
 
   const numberStyle: React.CSSProperties = {
     fontFamily: '"Trebuchet MS", "Arial Rounded MT Bold", "Avenir Next", "Nunito", sans-serif',
@@ -586,6 +593,22 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
             </button>
           );
         })}
+
+        <button
+          type="button"
+          onClick={handleSubmit}
+          disabled={!canSubmit}
+          className="absolute left-1/2 z-40 -translate-x-1/2 transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+          style={{ top: `${layout.submitY}%`, width: `${layout.submitWidth}%` }}
+        >
+          <img src={medButton} alt="" aria-hidden="true" draggable={false} className="h-auto w-full" />
+          <span
+            className="pointer-events-none absolute inset-0 flex items-center justify-center text-[clamp(0.72rem,1.75vw,0.98rem)] font-black uppercase tracking-[0.08em] text-white"
+            style={{ textShadow: '0 2px 4px rgba(2,6,23,0.7)' }}
+          >
+            Submit
+          </span>
+        </button>
 
         <div
           className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2"
