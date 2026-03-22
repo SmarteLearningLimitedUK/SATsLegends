@@ -53,10 +53,10 @@ type GoblinEffect = 'idle' | 'hit' | 'heal';
 
 const GOBLIN_MAX_HEALTH = 10;
 
-const TARGET_ANCHORS: AnchorPoint[] = [{ x: 22 }, { x: 35 }, { x: 48 }, { x: 61 }, { x: 74 }];
+const TARGET_ANCHORS: AnchorPoint[] = [{ x: 12 }, { x: 31 }, { x: 50 }, { x: 69 }, { x: 88 }];
 const SOURCE_ANCHORS: AnchorPoint[] = [{ x: 16 }, { x: 32 }, { x: 48 }, { x: 64 }, { x: 80 }];
 const FULL_PLACE_VALUE_HINTS = ['Th', 'Th', 'H', 'T', 'U'] as const;
-const TARGET_ROW_Y_OFFSET_PX = 30;
+const TARGET_ROW_Y_OFFSET_PX = 0;
 
 const ONES_WORDS = [
   'zero',
@@ -206,20 +206,22 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const isTallPhone = !isTablet && ratio > 1.95;
 
     return {
-      questionTop: isTablet ? 24.2 : (isTallPhone ? 25.1 : 24.8),
+      questionTop: isTablet ? 18.2 : (isTallPhone ? 19.2 : 18.8),
       questionWidth: isTablet ? 68 : 76,
-      submitY: isTablet ? 90.8 : (isTallPhone ? 91.7 : 91.2),
+      questionHeight: isTablet ? 12.6 : 14.4,
+      submitY: isTablet ? 75.2 : (isTallPhone ? 75.8 : 75.5),
       submitWidth: isTablet ? 22 : 30,
-      targetY: isTablet ? 78.2 : (isTallPhone ? 78.9 : 78.6),
-      sourceY: isTablet ? 84.3 : (isTallPhone ? 85.2 : 84.8),
-      tokenWidth: isTablet ? '8.9%' : '9.8%',
-      targetHeight: isTablet ? '6.2%' : '6.8%',
+      targetY: isTablet ? 86.6 : (isTallPhone ? 87.2 : 86.9),
+      sourceY: isTablet ? 80.6 : (isTallPhone ? 81.4 : 81.0),
+      targetWidth: isTablet ? '15.6%' : '17.2%',
+      sourceWidth: isTablet ? '8.9%' : '9.8%',
+      targetHeight: isTablet ? '10.2%' : '11.6%',
       sourceHeight: isTablet ? '7.6%' : '8.2%',
-      targetFont: isTablet ? 'clamp(1.7rem,3.6vw,2.7rem)' : 'clamp(1.55rem,4.2vw,2.45rem)',
+      targetFont: isTablet ? 'clamp(1.55rem,3.2vw,2.25rem)' : 'clamp(1.35rem,3.7vw,2.1rem)',
       sourceFont: isTablet ? 'clamp(2.15rem,4.7vw,3.65rem)' : 'clamp(1.95rem,5.1vw,3.25rem)',
-      healthTop: isTablet ? 38.4 : (isTallPhone ? 40.1 : 39.7),
+      healthTop: isTablet ? 39.8 : (isTallPhone ? 41.5 : 41.1),
       healthWidth: isTablet ? 20 : 30,
-      enemyTop: isTablet ? 43.9 : (isTallPhone ? 46.6 : 46.1),
+      enemyTop: isTablet ? 48.9 : (isTallPhone ? 51.6 : 51.1),
       enemyWidth: isTablet ? 27 : 31,
     };
   }, [viewport.height, viewport.width]);
@@ -490,23 +492,17 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
       <div className="absolute inset-0 z-20" ref={playfieldRef}>
         <div
-          className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2"
-          style={{ top: `${layout.questionTop}%`, width: `${layout.questionWidth}%` }}
+          className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2 overflow-hidden"
+          style={{ top: `${layout.questionTop}%`, width: `${layout.questionWidth}%`, height: `${layout.questionHeight}%` }}
         >
-          <img
-            src={medDialogue}
-            alt=""
-            aria-hidden="true"
-            draggable={false}
-            className="block h-auto w-full"
-          />
+          <img src={medDialogue} alt="" aria-hidden="true" draggable={false} className="absolute inset-0 h-full w-full object-cover object-[50%_90%]" />
           <div
-            className="absolute inset-x-[18%] top-[24%] bottom-[24%] mx-auto flex items-center justify-center overflow-hidden text-center text-[clamp(0.62rem,1.55vw,0.9rem)] font-black uppercase leading-[1.06] tracking-[0.01em] text-white"
+            className="absolute inset-x-[12%] top-[24%] bottom-[24%] mx-auto flex items-center justify-center overflow-hidden text-center text-[clamp(0.58rem,1.45vw,0.86rem)] font-black uppercase leading-[1.04] tracking-[0.01em] text-white"
             style={{
               textShadow: '0 2px 6px rgba(2,6,23,0.62)',
               display: '-webkit-box',
               WebkitBoxOrient: 'vertical',
-              WebkitLineClamp: 3,
+              WebkitLineClamp: 2,
               wordBreak: 'break-word',
             }}
           >
@@ -546,7 +542,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               style={{
                 left: `${anchor.x}%`,
                 top: `calc(${layout.targetY}% - ${TARGET_ROW_Y_OFFSET_PX}px)`,
-                width: layout.tokenWidth,
+                width: layout.targetWidth,
                 height: layout.targetHeight,
               }}
             >
@@ -584,7 +580,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               type="button"
               onPointerDown={(event) => beginDrag('source', idx, event)}
               className="absolute -translate-x-1/2 -translate-y-1/2 rounded-xl"
-              style={{ left: `${anchor.x}%`, top: `${layout.sourceY}%`, width: layout.tokenWidth, height: layout.sourceHeight }}
+              style={{ left: `${anchor.x}%`, top: `${layout.sourceY}%`, width: layout.sourceWidth, height: layout.sourceHeight }}
             >
               {token ? (
                 <motion.span
