@@ -4,7 +4,7 @@ import placeValueBackground from '../assets/maps/gemini-2.5-flash-image_using_th
 import medDialogue from '../assets/bluedialoague/med dialogue cropped.png';
 import medButton from '../assets/bluedialoague/med button cropped.png';
 import blueSocket from '../assets/bluedialoague/blue socket cropped.png';
-import goblinEnemy from '../assets/bosses/goblin.png';
+import goblinWiz from '../assets/bosses/goblinwiz.jpg';
 import GameActionDock from '../components/GameActionDock';
 import { triggerHaptic } from '../haptics';
 
@@ -133,6 +133,78 @@ const centeredAnchors = (anchors: AnchorPoint[], count: number): AnchorPoint[] =
   return anchors.slice(start, start + count);
 };
 
+const removeBlackMatteFromSprite = (src: string): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(src);
+          return;
+        }
+
+        ctx.drawImage(image, 0, 0);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        const width = canvas.width;
+        const height = canvas.height;
+        const visited = new Uint8Array(width * height);
+        const stack: number[] = [];
+
+        const isNearBlack = (index: number) => {
+          const r = data[index];
+          const g = data[index + 1];
+          const b = data[index + 2];
+          const max = Math.max(r, g, b);
+          const min = Math.min(r, g, b);
+          return max <= 42 && max - min <= 14;
+        };
+
+        const pushIfBlack = (x: number, y: number) => {
+          if (x < 0 || y < 0 || x >= width || y >= height) return;
+          const p = y * width + x;
+          if (visited[p]) return;
+          const i = p * 4;
+          if (!isNearBlack(i)) return;
+          visited[p] = 1;
+          stack.push(p);
+        };
+
+        for (let x = 0; x < width; x += 1) {
+          pushIfBlack(x, 0);
+          pushIfBlack(x, height - 1);
+        }
+        for (let y = 0; y < height; y += 1) {
+          pushIfBlack(0, y);
+          pushIfBlack(width - 1, y);
+        }
+
+        while (stack.length > 0) {
+          const p = stack.pop() as number;
+          const i = p * 4;
+          data[i + 3] = 0;
+          const x = p % width;
+          const y = (p / width) | 0;
+          pushIfBlack(x + 1, y);
+          pushIfBlack(x - 1, y);
+          pushIfBlack(x, y + 1);
+          pushIfBlack(x, y - 1);
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      } catch (error) {
+        reject(error);
+      }
+    };
+    image.onerror = () => reject(new Error('Failed to load goblin sprite'));
+    image.src = src;
+  });
+
 const slotCountForLevel = (level: number): number => {
   if (level <= 2) return 2; // T, U
   if (level <= 4) return 3; // H, T, U
@@ -248,6 +320,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
   const [isResolving, setIsResolving] = useState(false);
   const [goblinEffect, setGoblinEffect] = useState<GoblinEffect>('idle');
+  const [goblinSpriteSrc, setGoblinSpriteSrc] = useState<string>(goblinWiz);
 
   const victoryDispatchedRef = useRef(false);
   const roundTimeoutLockRef = useRef(false);
@@ -284,6 +357,20 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   useEffect(() => {
     resetRound(makeQuestion(resolvedLevel));
   }, [resetRound, resolvedLevel]);
+
+  useEffect(() => {
+    let mounted = true;
+    removeBlackMatteFromSprite(goblinWiz)
+      .then((processed) => {
+        if (mounted) setGoblinSpriteSrc(processed);
+      })
+      .catch(() => {
+        if (mounted) setGoblinSpriteSrc(goblinWiz);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (isResolving) return undefined;
@@ -693,7 +780,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               }}
             />
             <motion.img
-              src={goblinEnemy}
+              src={goblinSpriteSrc}
               alt=""
               aria-hidden="true"
               draggable={false}
