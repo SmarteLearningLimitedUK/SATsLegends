@@ -1,13 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import GameplayHUD from '../components/GameplayHUD';
-import GameActionDock from '../components/GameActionDock';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
-import { AVATARS } from '../constants';
 import AssetIcon from '../components/AssetIcon';
 import { Coins } from '../components/GameIcons';
-import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
+import { GameScreenShell } from '../layout/ScreenPrimitives';
+import MiniGameTopBar from '../components/MiniGameTopBar';
 import panelCardAsset from '../assets/licensed/slices/panel_paper.png';
 import labelBlueLong from '../assets/licensed/slices/label_blue.png';
 import labelGreenLong from '../assets/licensed/slices/label_green_long.png';
@@ -221,7 +219,7 @@ const ScaleItemToken: React.FC<{
 
 const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
   levelId,
-  avatarId,
+  avatarId: _avatarId,
   onVictory,
   onGameOver,
   onBack,
@@ -236,11 +234,9 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
   const [isGameOver, setIsGameOver] = useState(false);
   const [isVictory, setIsVictory] = useState(false);
 
-  const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
   const targetScore = 1050 + levelId * 90;
   const currentValue = selectedItems.reduce((sum, item) => sum + item.value, 0);
   const scaleUnit = round.items[0]?.unit || 'g';
-  const progress = Math.min((score / targetScore) * 100, 100);
   const balanceDifference = currentValue - round.targetValue;
   const balanceTilt = Math.max(-15, Math.min(15, balanceDifference / 90));
   const groupedSelectedItems = useMemo(() => {
@@ -375,24 +371,20 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
   return (
     <GameScreenShell className="items-center p-2 font-sans pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+0.35rem)] md:p-4">
       <GameplaySceneBackdrop gameType="measurement_forge" />
+      <MiniGameTopBar
+        onBack={onBack}
+        score={score}
+        metaLabel="Round"
+        metaValue={`${Math.min(roundIndex + 1, 7)} / 7`}
+        className="z-50"
+      />
+      <div className="pointer-events-none absolute right-3 top-[calc(env(safe-area-inset-top)+3.7rem)] z-40 md:right-5">
+        <div className="pvp-hud-chip pvp-hud-chip-alt">
+          Time {timeLeft}s
+        </div>
+      </div>
       <div className="relative z-10 flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col gap-2 md:gap-4">
-        <GameplayHUD
-          title="Scale Master"
-          avatar={avatar}
-          score={score}
-          targetScore={targetScore}
-          timeLeft={timeLeft}
-          progress={progress}
-          accentText="text-amber-900"
-          accentSoftBg="bg-amber-100/80"
-          accentBorder="border-amber-200/80"
-          progressBar="bg-gradient-to-r from-emerald-400 via-yellow-300 to-orange-400"
-          statLabel="Streak"
-          statValue={streak}
-          compact
-        />
-
-        <PuzzleStage className="rounded-[2rem]">
+        <div className="relative min-h-0 flex-1 overflow-hidden rounded-[2rem] border border-sky-100/20 bg-[linear-gradient(180deg,rgba(10,26,48,0.84),rgba(8,18,36,0.9)_42%,rgba(6,14,28,0.92))] shadow-[0_20px_36px_rgba(0,0,0,0.34)]">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_8%,rgba(255,255,255,0.18),transparent_18%),radial-gradient(circle_at_18%_18%,rgba(34,211,238,0.14),transparent_16%),radial-gradient(circle_at_84%_20%,rgba(250,204,21,0.18),transparent_18%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(5,10,22,0.18)_34%,rgba(5,10,22,0.34)_100%)]" />
 
           <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-3 md:gap-4">
@@ -486,7 +478,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                   whileTap={{ scale: 0.96 }}
                   onClick={clearScale}
                   disabled={selectedItems.length === 0 || !!feedback}
-                  className="ui-button-secondary relative inline-flex h-[2rem] min-w-[4.7rem] items-center justify-center px-3 text-[9px] font-black uppercase tracking-[0.14em] text-white disabled:cursor-not-allowed disabled:opacity-35 md:h-[2.2rem] md:min-w-[5.2rem] md:text-[10px]"
+                  className="relative inline-flex h-[2rem] min-w-[4.7rem] items-center justify-center rounded-full border border-sky-200/50 bg-[linear-gradient(180deg,#38bdf8,#2563eb)] px-3 text-[9px] font-black uppercase tracking-[0.14em] text-white shadow-[0_8px_16px_rgba(2,6,23,0.34)] transition-colors hover:bg-[linear-gradient(180deg,#22d3ee,#1d4ed8)] disabled:cursor-not-allowed disabled:opacity-35 md:h-[2.2rem] md:min-w-[5.2rem] md:text-[10px]"
                 >
                   Reset
                 </motion.button>
@@ -508,7 +500,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                 whileTap={{ scale: 0.97, y: 1 }}
                 onClick={handleBalance}
                 disabled={selectedItems.length === 0 || !!feedback}
-                className="ui-button-primary relative flex h-[4.35rem] w-full max-w-[22rem] items-center justify-center gap-3 px-6 text-lg font-black uppercase tracking-[0.12em] text-white transition-all disabled:cursor-not-allowed disabled:opacity-45 md:h-[4.75rem] md:max-w-[24rem] md:text-[1.25rem]"
+                className="relative flex h-[4.35rem] w-full max-w-[22rem] items-center justify-center gap-3 rounded-[1.2rem] border border-yellow-200/60 bg-[linear-gradient(180deg,#facc15,#f59e0b)] px-6 text-lg font-black uppercase tracking-[0.12em] text-slate-900 shadow-[0_14px_24px_rgba(0,0,0,0.32)] transition-all hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-45 md:h-[4.75rem] md:max-w-[24rem] md:text-[1.25rem]"
               >
                 <div className="relative flex items-center gap-3">
                   <AssetIcon name="check" className="h-5 w-5 md:h-6 md:w-6" />
@@ -533,9 +525,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
               </motion.div>
             )}
           </AnimatePresence>
-        </PuzzleStage>
-
-        <GameActionDock onBack={onBack} accentClass="text-white" />
+        </div>
 
         <AnimatePresence>
           {(isGameOver || isVictory) && (
@@ -544,7 +534,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
               animate={{ opacity: 1, scale: 1 }}
               className="fixed inset-0 z-50 flex items-center justify-center bg-black/78 p-4 backdrop-blur-md"
             >
-              <div className="licensed-overlay-card flex w-full max-w-md flex-col items-center gap-6 p-8 text-center md:p-10">
+              <div className="flex w-full max-w-md flex-col items-center gap-6 rounded-[2rem] border border-sky-200/30 bg-[linear-gradient(180deg,rgba(8,25,51,0.96),rgba(10,18,36,0.98))] p-8 text-center shadow-[0_24px_44px_rgba(0,0,0,0.44)] md:p-10">
                 <div className={`text-4xl font-black md:text-5xl ${isVictory ? 'text-emerald-300' : 'text-rose-300'}`}>
                   {isVictory ? 'Mine Cleared!' : 'Shift Over!'}
                 </div>
@@ -554,7 +544,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                 </div>
                 <button
                   onClick={onBack}
-                  className="ui-button-primary licensed-submit-button flex w-full items-center justify-center gap-2 py-4 text-lg font-black uppercase tracking-[0.14em] text-white"
+                  className="flex w-full items-center justify-center gap-2 rounded-[1.2rem] border border-yellow-200/60 bg-[linear-gradient(180deg,#facc15,#f59e0b)] py-4 text-lg font-black uppercase tracking-[0.14em] text-slate-900 shadow-[0_12px_22px_rgba(0,0,0,0.34)] transition-all hover:brightness-105"
                 >
                   <Coins className="h-5 w-5" />
                   Continue

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight, CircleDollarSign, Gem as GemIcon, Target, Timer as TimerIcon, Zap } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CircleDollarSign, Gem as GemIcon, Target, Zap } from 'lucide-react';
 import { motion } from 'motion/react';
 
 interface PerimeterPathGameProps {
@@ -246,16 +246,6 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
         <div className="relative flex flex-1 flex-col items-center justify-center gap-6 px-4">
           <Monster />
 
-          <div className="relative w-full max-w-[320px]">
-            <div className="relative z-10 rounded-xl border-4 border-blue-400 bg-gradient-to-b from-blue-600 to-blue-900 px-6 py-3 text-center shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
-              <span className="text-2xl font-black italic text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                Calculate the perimeter!
-              </span>
-            </div>
-            <div className="absolute left-[-1rem] top-1/2 z-0 h-10 w-8 -translate-y-1/2 rounded-l-lg border-y-4 border-l-4 border-blue-400 bg-blue-800" />
-            <div className="absolute right-[-1rem] top-1/2 z-0 h-10 w-8 -translate-y-1/2 rotate-180 rounded-r-lg border-y-4 border-l-4 border-blue-400 bg-blue-800" />
-          </div>
-
           {gameState && <PerimeterRectangle width={gameState.width} height={gameState.height} />}
 
           <div className="mt-2">
@@ -269,17 +259,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
           </div>
         </div>
 
-        <div className="flex h-48 items-center justify-between gap-4 border-t-4 border-blue-400/30 bg-blue-950/80 p-4 backdrop-blur-md">
-          <div className="flex flex-col items-center gap-1">
-            <div className="relative h-20 w-16">
-              <div className="absolute bottom-0 h-16 w-16 overflow-hidden rounded-full border-4 border-blue-400 bg-blue-500/40 shadow-[0_0_20px_rgba(59,130,246,0.5)]">
-                <div className="absolute inset-x-0 bottom-0 h-3/4 animate-pulse bg-blue-400/60" />
-              </div>
-              <div className="absolute left-1/2 top-0 h-8 w-6 -translate-x-1/2 rounded-t-sm border-2 border-stone-500 bg-stone-300" />
-            </div>
-            <div className="rounded-md border-2 border-[#5c3c10] bg-yellow-500 px-3 py-0.5 text-sm font-black text-[#5c3c10]">2X</div>
-          </div>
-
+        <div className="flex h-48 items-center justify-center gap-4 border-t-4 border-blue-400/30 bg-blue-950/80 p-4 backdrop-blur-md">
           <div className="relative flex flex-1 items-center justify-between rounded-xl border-4 border-[#1a2e14] bg-blue-900/60 p-2">
             <button type="button" className="text-white/40" aria-label="Previous option">
               <ChevronLeft />

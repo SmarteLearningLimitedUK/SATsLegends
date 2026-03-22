@@ -61,7 +61,6 @@ const GAME_SUMMARY_BY_KEY: Record<string, string> = {
   time_keeper_cove: 'Set clocks and solve elapsed-time dispatch challenges.',
   conversion_canyon: 'Convert measurement units to unlock routes and systems.',
   perimeter_path: 'Trace exact boundary lengths on irregular paths.',
-  builder_bay: 'Construct exact target areas through spatial building.',
   volume_vault: 'Pack 3D space to match target volume exactly.',
   measure_mix_up: 'Solve mixed multi-step measurement scenarios.',
   data_dash: 'Scan charts fast and choose the correct lane instantly.',
