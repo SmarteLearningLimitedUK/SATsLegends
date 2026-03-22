@@ -1002,6 +1002,7 @@ const App: React.FC = () => {
   const showBottomNav = ['world_map', 'parent_dashboard'].includes(screen);
   const isSplashScreen = screen === 'splash';
   const isAvatarSelectionScreen = screen === 'avatar_selection';
+  const isGameplayScreen = screen === 'gameplay';
   const isMapLayoutScreen = MAP_LAYOUT_SCREENS.includes(screen);
   const isStandardShellScreen = !isMapLayoutScreen;
   const isWorldMapScreen = screen === 'world_map';
@@ -1009,20 +1010,24 @@ const App: React.FC = () => {
   const isPlaceValuePanicGameplay = screen === 'gameplay' && selectedLevel?.blueprintKey === 'place_value_panic';
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
-  const useUnboundedStageShell = isSplashScreen || isAvatarSelectionScreen || isWorldMapScreen || isPlaceValuePanicGameplay;
+  const useUnboundedStageShell = isSplashScreen || isAvatarSelectionScreen || isWorldMapScreen || isPlaceValuePanicGameplay || isGameplayScreen;
   const bottomNavOffsetClass = showBottomNav
     ? isWorldMapScreen
       ? 'pb-[calc(6.75rem+env(safe-area-inset-bottom))] md:pb-[calc(2.4rem+env(safe-area-inset-bottom))]'
       : 'pb-[calc(6.75rem+env(safe-area-inset-bottom))] md:pb-[calc(7.25rem+env(safe-area-inset-bottom))]'
     : '';
-  const viewportShellClass = isWorldMapScreen
+  const viewportShellClass = isGameplayScreen
+    ? 'sat-shell-standard licensed-playfield-bg bg-slate-950'
+    : isWorldMapScreen
     ? 'sat-shell-map licensed-playfield-bg bg-slate-950 pb-[env(safe-area-inset-bottom)]'
     : useUnboundedStageShell
       ? 'sat-shell-standard licensed-playfield-bg bg-slate-950'
       : isMapLayoutScreen
       ? 'sat-shell-map licensed-playfield-bg bg-slate-950 pb-[env(safe-area-inset-bottom)]'
       : 'sat-shell-standard licensed-playfield-bg bg-slate-950 px-3 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] md:px-8 md:pt-[max(1rem,env(safe-area-inset-top))] md:pb-[max(1rem,env(safe-area-inset-bottom))]';
-  const contentShellClass = useUnboundedStageShell
+  const contentShellClass = isGameplayScreen
+    ? 'sat-screen-full-bleed items-stretch'
+    : useUnboundedStageShell
     ? 'sat-screen-full-bleed items-stretch'
     : isWorldMapScreen
       ? 'sat-screen-full-bleed items-stretch'
