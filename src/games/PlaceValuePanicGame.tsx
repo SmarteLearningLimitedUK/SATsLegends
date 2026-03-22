@@ -54,6 +54,7 @@ const TARGET_ANCHORS: AnchorPoint[] = [{ x: 22 }, { x: 35 }, { x: 48 }, { x: 61 
 const SOURCE_ANCHORS: AnchorPoint[] = [{ x: 16 }, { x: 32 }, { x: 48 }, { x: 64 }, { x: 80 }];
 const FULL_PLACE_VALUE_HINTS = ['Th', 'Th', 'H', 'T', 'U'] as const;
 const TARGET_ROW_Y_OFFSET_PX = 30;
+const BACKGROUND_ASPECT_RATIO = 1350 / 3000;
 
 const ONES_WORDS = [
   'zero',
@@ -176,9 +177,20 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   });
 
   useEffect(() => {
-    const onResize = () => setViewport({ width: window.innerWidth, height: window.innerHeight });
+    const onResize = () => {
+      const width = window.visualViewport?.width ?? window.innerWidth;
+      const height = window.visualViewport?.height ?? window.innerHeight;
+      setViewport({ width, height });
+    };
+    const visualViewport = window.visualViewport;
     window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
+    visualViewport?.addEventListener('resize', onResize);
+    visualViewport?.addEventListener('scroll', onResize);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      visualViewport?.removeEventListener('resize', onResize);
+      visualViewport?.removeEventListener('scroll', onResize);
+    };
   }, []);
 
   const resolvedLevel = useMemo(
@@ -192,20 +204,43 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const isTallPhone = !isTablet && ratio > 1.95;
 
     return {
-      questionTop: isTablet ? 30.8 : (isTallPhone ? 31.2 : 30.5),
-      questionWidth: isTablet ? 58 : 62,
-      questionHeight: isTablet ? 6.8 : 7.4,
-      targetY: isTablet ? 75.2 : (isTallPhone ? 74.7 : 74.9),
-      sourceY: isTablet ? 78.2 : (isTallPhone ? 79 : 78.7),
-      tokenWidth: isTablet ? '9.8%' : '11.2%',
-      targetHeight: isTablet ? '9.2%' : '9.8%',
-      sourceHeight: isTablet ? '8.9%' : '9.5%',
-      targetFont: isTablet ? 'clamp(2.8rem,5.9vw,4.9rem)' : 'clamp(2.45rem,6.8vw,4.55rem)',
-      sourceFont: isTablet ? 'clamp(2.7rem,5.7vw,4.7rem)' : 'clamp(2.3rem,6.4vw,4.35rem)',
-      healthTop: isTablet ? 50.5 : 54.2,
-      healthWidth: isTablet ? 28 : 32,
-      enemyTop: isTablet ? 37.6 : (isTallPhone ? 40.2 : 39.5),
-      enemyWidth: isTablet ? 32 : 40,
+      questionTop: isTablet ? 31.1 : (isTallPhone ? 31.8 : 31.4),
+      questionWidth: isTablet ? 61 : 66,
+      questionHeight: isTablet ? 5.7 : 6.2,
+      targetY: isTablet ? 73.2 : (isTallPhone ? 73.9 : 73.6),
+      sourceY: isTablet ? 84.3 : (isTallPhone ? 85.2 : 84.8),
+      tokenWidth: isTablet ? '8.9%' : '9.8%',
+      targetHeight: isTablet ? '7.8%' : '8.5%',
+      sourceHeight: isTablet ? '7.6%' : '8.2%',
+      targetFont: isTablet ? 'clamp(2.25rem,4.9vw,3.8rem)' : 'clamp(2rem,5.4vw,3.45rem)',
+      sourceFont: isTablet ? 'clamp(2.15rem,4.7vw,3.65rem)' : 'clamp(1.95rem,5.1vw,3.25rem)',
+      healthTop: isTablet ? 50.2 : 53.2,
+      healthWidth: isTablet ? 24 : 29,
+      enemyTop: isTablet ? 38.9 : (isTallPhone ? 41.6 : 41.1),
+      enemyWidth: isTablet ? 27 : 31,
+    };
+  }, [viewport.height, viewport.width]);
+
+  const imageFrame = useMemo(() => {
+    const viewportAspect = viewport.width / Math.max(1, viewport.height);
+    if (viewportAspect > BACKGROUND_ASPECT_RATIO) {
+      const frameHeight = viewport.height;
+      const frameWidth = frameHeight * BACKGROUND_ASPECT_RATIO;
+      return {
+        left: (viewport.width - frameWidth) / 2,
+        top: 0,
+        width: frameWidth,
+        height: frameHeight,
+      };
+    }
+
+    const frameWidth = viewport.width;
+    const frameHeight = frameWidth / BACKGROUND_ASPECT_RATIO;
+    return {
+      left: 0,
+      top: (viewport.height - frameHeight) / 2,
+      width: frameWidth,
+      height: frameHeight,
     };
   }, [viewport.height, viewport.width]);
 
@@ -448,12 +483,13 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-20 h-screen w-screen overflow-hidden select-none" style={{ touchAction: 'manipulation' }}>
+    <div className="fixed inset-0 z-20 h-screen w-screen overflow-hidden select-none bg-[#08162c]" style={{ touchAction: 'manipulation' }}>
       <img
         src={placeValueBackground}
         alt=""
         aria-hidden="true"
-        className="absolute inset-0 h-full w-full object-cover object-center"
+        className="absolute object-fill"
+        style={imageFrame}
         draggable={false}
       />
 
@@ -469,92 +505,45 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         Score {score}
       </div>
 
-      <div
-        className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2"
-        style={{ top: `${layout.questionTop}%`, width: `${layout.questionWidth}%`, height: `${layout.questionHeight}%` }}
-      >
+      <div className="absolute z-20" ref={playfieldRef} style={imageFrame}>
         <div
-          className="mx-auto flex h-full max-w-full items-center justify-center px-[4.6%] text-center text-[clamp(0.7rem,1.75vw,1.02rem)] font-black leading-tight tracking-[0.028em] text-white"
-          style={{
-            textShadow: '0 2px 6px rgba(2,6,23,0.62)',
-            display: '-webkit-box',
-            WebkitBoxOrient: 'vertical',
-            WebkitLineClamp: 2,
-            overflow: 'hidden',
-            wordBreak: 'break-word',
-          }}
+          className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2 overflow-hidden"
+          style={{ top: `${layout.questionTop}%`, width: `${layout.questionWidth}%`, height: `${layout.questionHeight}%` }}
         >
-          {question.prompt}
+          <div
+            className="mx-auto flex h-full w-full max-w-full items-center justify-center overflow-hidden px-[7%] text-center text-[clamp(0.66rem,1.62vw,0.92rem)] font-black leading-[1.08] tracking-[0.012em] text-white"
+            style={{
+              textShadow: '0 2px 6px rgba(2,6,23,0.62)',
+              display: '-webkit-box',
+              WebkitBoxOrient: 'vertical',
+              WebkitLineClamp: 2,
+              wordBreak: 'break-word',
+            }}
+          >
+            {question.prompt}
+          </div>
         </div>
-      </div>
 
-      <div
-        className="absolute right-[2%] z-30 max-w-[8.8rem] rounded-md bg-slate-900/72 px-1.5 py-1 shadow-[0_10px_24px_rgba(2,6,23,0.48)]"
-        style={{ top: `${layout.healthTop}%`, width: `${layout.healthWidth}%` }}
-      >
-        <div className="mb-1 text-center text-[9px] font-black uppercase tracking-[0.1em] text-amber-200 md:text-[10px]">
-          Goblin Health {goblinHealth}/10
+        <div
+          className="absolute right-[2%] z-30 max-w-[8.8rem] rounded-md bg-slate-900/72 px-1.5 py-1 shadow-[0_10px_24px_rgba(2,6,23,0.48)]"
+          style={{ top: `${layout.healthTop}%`, width: `${layout.healthWidth}%` }}
+        >
+          <div className="mb-1 text-center text-[9px] font-black uppercase tracking-[0.1em] text-amber-200 md:text-[10px]">
+            Goblin Health {goblinHealth}/10
+          </div>
+          <div className="grid grid-cols-10 gap-0.5">
+            {Array.from({ length: GOBLIN_MAX_HEALTH }, (_, idx) => (
+              <span
+                key={`hp-${idx}`}
+                className={`h-1 rounded-full ${
+                  idx < goblinHealth ? 'bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.75)]' : 'bg-slate-600/50'
+                }`}
+                style={{ height: '0.4rem' }}
+              />
+            ))}
+          </div>
         </div>
-        <div className="grid grid-cols-10 gap-0.5">
-          {Array.from({ length: GOBLIN_MAX_HEALTH }, (_, idx) => (
-            <span
-              key={`hp-${idx}`}
-              className={`h-1 rounded-full ${
-                idx < goblinHealth ? 'bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.75)]' : 'bg-slate-600/50'
-              }`}
-              style={{ height: '0.4rem' }}
-            />
-          ))}
-        </div>
-      </div>
 
-      <div
-        className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2"
-        style={{ top: `${layout.enemyTop}%`, width: `${layout.enemyWidth}%` }}
-      >
-        <div className="relative">
-          <motion.div
-            className="absolute inset-[10%] rounded-full blur-2xl"
-            animate={{
-              opacity: goblinEffect === 'idle' ? 0.22 : 0.52,
-              scale: goblinEffect === 'idle' ? 1 : [1, 1.12, 1],
-              backgroundColor:
-                goblinEffect === 'hit'
-                  ? 'rgba(248,113,113,0.92)'
-                  : goblinEffect === 'heal'
-                    ? 'rgba(74,222,128,0.9)'
-                    : 'rgba(56,189,248,0.55)',
-            }}
-            transition={{
-              duration: goblinEffect === 'hit' ? 0.32 : 0.45,
-              ease: 'easeInOut',
-              repeat: goblinEffect === 'idle' ? Infinity : 0,
-              repeatDelay: 1.1,
-            }}
-          />
-          <motion.img
-            src={goblinEnemy}
-            alt=""
-            aria-hidden="true"
-            draggable={false}
-            className="relative h-auto w-full object-contain drop-shadow-[0_16px_22px_rgba(2,6,23,0.5)]"
-            animate={{
-              y: [0, -5, 0],
-              x: goblinEffect === 'hit' ? [0, -9, 9, -8, 8, -5, 5, 0] : 0,
-              rotate: goblinEffect === 'hit' ? [0, -2.2, 2.2, -1.8, 1.8, 0] : 0,
-              scale: goblinEffect === 'heal' ? [1, 1.03, 1] : 1,
-            }}
-            transition={{
-              y: { duration: 1.8, repeat: Infinity, ease: 'easeInOut' },
-              x: { duration: 0.35, ease: 'easeInOut' },
-              rotate: { duration: 0.35, ease: 'easeInOut' },
-              scale: { duration: 0.35, ease: 'easeInOut' },
-            }}
-          />
-        </div>
-      </div>
-
-      <div ref={playfieldRef} className="absolute inset-0 z-20">
         {activeTargetAnchors.map((anchor, idx) => {
           const token = targetSlots[idx];
           const isDraggingThis = dragState?.fromLocation === 'target' && dragState.fromIndex === idx;
@@ -589,9 +578,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
             </button>
           );
         })}
-      </div>
 
-      <div className="absolute inset-0 z-20">
         {activeSourceAnchors.map((anchor, idx) => {
           const token = sourceSlots[idx];
           const isDraggingThis = dragState?.fromLocation === 'source' && dragState.fromIndex === idx;
@@ -617,6 +604,52 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
             </button>
           );
         })}
+
+        <div
+          className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2"
+          style={{ top: `${layout.enemyTop}%`, width: `${layout.enemyWidth}%` }}
+        >
+          <div className="relative">
+            <motion.div
+              className="absolute inset-[10%] rounded-full blur-2xl"
+              animate={{
+                opacity: goblinEffect === 'idle' ? 0.22 : 0.52,
+                scale: goblinEffect === 'idle' ? 1 : [1, 1.12, 1],
+                backgroundColor:
+                  goblinEffect === 'hit'
+                    ? 'rgba(248,113,113,0.92)'
+                    : goblinEffect === 'heal'
+                      ? 'rgba(74,222,128,0.9)'
+                      : 'rgba(56,189,248,0.55)',
+              }}
+              transition={{
+                duration: goblinEffect === 'hit' ? 0.32 : 0.45,
+                ease: 'easeInOut',
+                repeat: goblinEffect === 'idle' ? Infinity : 0,
+                repeatDelay: 1.1,
+              }}
+            />
+            <motion.img
+              src={goblinEnemy}
+              alt=""
+              aria-hidden="true"
+              draggable={false}
+              className="relative h-auto w-full object-contain drop-shadow-[0_16px_22px_rgba(2,6,23,0.5)]"
+              animate={{
+                y: [0, -5, 0],
+                x: goblinEffect === 'hit' ? [0, -9, 9, -8, 8, -5, 5, 0] : 0,
+                rotate: goblinEffect === 'hit' ? [0, -2.2, 2.2, -1.8, 1.8, 0] : 0,
+                scale: goblinEffect === 'heal' ? [1, 1.03, 1] : 1,
+              }}
+              transition={{
+                y: { duration: 1.8, repeat: Infinity, ease: 'easeInOut' },
+                x: { duration: 0.35, ease: 'easeInOut' },
+                rotate: { duration: 0.35, ease: 'easeInOut' },
+                scale: { duration: 0.35, ease: 'easeInOut' },
+              }}
+            />
+          </div>
+        </div>
       </div>
 
       {dragState ? (
