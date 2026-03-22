@@ -3,11 +3,18 @@ import { AnimatePresence, motion } from 'motion/react';
 import placeValueBackground from '../assets/maps/gemini-2.5-flash-image_using_the_same_aesthetic_-_create_a_dark_and_mysterious_forest_path_with_dense_f-1.jpg';
 import medDialogue from '../assets/bluedialoague/med dialogue cropped.png';
 import medButton from '../assets/bluedialoague/med button cropped.png';
-import blueSocket from '../assets/bluedialoague/blue socket cropped.png';
 import goblinWiz from '../assets/bosses/goblinwiz.jpg';
-import statusTimerIcon from '../assets/fantasy_hero/ui/status_timer.png';
+import shieldIcon from '../assets/casual_ui/icons/icon__shield.png';
+import hudProfileBar from '../assets/fantasy_hero/ui/uiamend_slices/hud_profile_bar.png';
+import hudTimerBar from '../assets/fantasy_hero/ui/uiamend_slices/hud_timer_bar.png';
+import socketThOne from '../assets/fantasy_hero/ui/uiamend_slices/socket_th_1.png';
+import socketThTwo from '../assets/fantasy_hero/ui/uiamend_slices/socket_th_2.png';
+import socketH from '../assets/fantasy_hero/ui/uiamend_slices/socket_h.png';
+import socketT from '../assets/fantasy_hero/ui/uiamend_slices/socket_t.png';
+import socketU from '../assets/fantasy_hero/ui/uiamend_slices/socket_u.png';
 import GameActionDock from '../components/GameActionDock';
 import { triggerHaptic } from '../haptics';
+import { AVATARS } from '../constants';
 
 interface PlaceValuePanicGameProps {
   levelId: number;
@@ -54,6 +61,7 @@ type GoblinEffect = 'idle' | 'hit' | 'heal';
 
 const GOBLIN_MAX_HEALTH = 10;
 const MATCH_DURATION_SECONDS = 90;
+const PLAYER_STORAGE_KEY = 'maths_quest_player';
 
 const TARGET_ANCHORS: AnchorPoint[] = [{ x: 12 }, { x: 31 }, { x: 50 }, { x: 69 }, { x: 88 }];
 const SOURCE_ANCHORS: AnchorPoint[] = [{ x: 16 }, { x: 32 }, { x: 48 }, { x: 64 }, { x: 80 }];
@@ -257,7 +265,7 @@ const makeQuestion = (level: number): QuestionState => {
 const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   levelId,
   miniGameLevel,
-  avatarId: _avatarId,
+  avatarId,
   onVictory,
   onGameOver,
   onBack,
@@ -290,6 +298,22 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     () => Math.max(1, Math.min(10, miniGameLevel || levelId || 1)),
     [levelId, miniGameLevel],
   );
+
+  const selectedAvatar = useMemo(
+    () => AVATARS.find((avatar) => avatar.id === avatarId) ?? AVATARS[0],
+    [avatarId],
+  );
+
+  const playerName = useMemo(() => {
+    try {
+      const saved = localStorage.getItem(PLAYER_STORAGE_KEY);
+      const parsed = saved ? JSON.parse(saved) : null;
+      const storedName = typeof parsed?.playerName === 'string' ? parsed.playerName.trim() : '';
+      return storedName || selectedAvatar.name || 'Learner';
+    } catch {
+      return selectedAvatar.name || 'Learner';
+    }
+  }, [selectedAvatar.name]);
 
   const layout = useMemo(() => {
     const ratio = viewport.height / Math.max(1, viewport.width);
@@ -606,6 +630,27 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     [dragState, isResolving, targetSlots],
   );
 
+  const timerProgress = useMemo(
+    () => Math.max(0, Math.min(1, matchTimeLeft / MATCH_DURATION_SECONDS)),
+    [matchTimeLeft],
+  );
+
+  const timerFillColor = useMemo(() => {
+    const hue = Math.round(timerProgress * 120); // 120 -> green, 0 -> red
+    return `hsl(${hue} 88% 50%)`;
+  }, [timerProgress]);
+
+  const getSocketAsset = useCallback((hint: string, index: number, total: number): string => {
+    if (hint === 'Th') {
+      if (total >= 5 && index === 0) return socketThOne;
+      if (total >= 5 && index === 1) return socketThTwo;
+      return socketThOne;
+    }
+    if (hint === 'H') return socketH;
+    if (hint === 'T') return socketT;
+    return socketU;
+  }, []);
+
   const handleSubmit = useCallback(() => {
     if (!canSubmit) return;
 
@@ -654,18 +699,56 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         draggable={false}
       />
 
-      <div className="absolute left-1/2 top-[max(0.65rem,env(safe-area-inset-top))] z-40 -translate-x-1/2">
-        <div className="flex items-center gap-2 rounded-xl border border-cyan-200/25 bg-slate-900/78 px-3 py-2 shadow-[0_10px_24px_rgba(2,6,23,0.5)]">
-          <img
-            src={statusTimerIcon}
-            alt=""
-            aria-hidden="true"
-            draggable={false}
-            className="h-5 w-5 object-contain md:h-6 md:w-6"
-          />
-          <span className="text-[11px] font-black uppercase tracking-[0.12em] text-white">
-            {matchTimeLeft}s
-          </span>
+      <div className="absolute left-[max(0.55rem,env(safe-area-inset-left))] top-[max(0.6rem,env(safe-area-inset-top))] z-40 w-[min(11.25rem,46vw)]">
+        <div className="relative w-full">
+          <img src={hudProfileBar} alt="" aria-hidden="true" draggable={false} className="h-auto w-full object-contain" />
+          <div className="absolute left-[5.5%] top-1/2 h-[70%] w-[20%] -translate-y-1/2">
+            <div className="relative h-full w-full">
+              <div className="absolute inset-[10%] overflow-hidden rounded-[30%]">
+                <img
+                  src={selectedAvatar.portrait || selectedAvatar.image}
+                  alt={selectedAvatar.name}
+                  draggable={false}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <img
+                src={shieldIcon}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+                className="pointer-events-none absolute -right-[12%] -top-[8%] h-[35%] w-[35%] object-contain drop-shadow-[0_2px_4px_rgba(2,6,23,0.65)]"
+              />
+            </div>
+          </div>
+          <div className="pointer-events-none absolute left-[30%] right-[7%] top-1/2 -translate-y-1/2 overflow-hidden text-left text-[clamp(0.62rem,2vw,0.95rem)] font-black uppercase tracking-[0.06em] text-cyan-50">
+            <span
+              className="block max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
+              style={{ textShadow: '0 1px 2px rgba(2,6,23,0.6)' }}
+            >
+              {playerName}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="absolute right-[max(0.55rem,env(safe-area-inset-right))] top-[max(0.6rem,env(safe-area-inset-top))] z-40 w-[min(10.4rem,40vw)]">
+        <div className="relative w-full">
+          <img src={hudTimerBar} alt="" aria-hidden="true" draggable={false} className="h-auto w-full object-contain" />
+          <div className="pointer-events-none absolute left-[28%] right-[5.2%] top-[40%] h-[23%] overflow-hidden rounded-full">
+            <div className="absolute inset-0 rounded-full bg-slate-900/45" />
+            <motion.div
+              className="absolute left-0 top-0 h-full rounded-full"
+              animate={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              style={{ boxShadow: '0 0 8px rgba(34,197,94,0.65)' }}
+            />
+          </div>
+          <div className="pointer-events-none absolute left-[28%] right-[5.2%] top-[35%] flex h-[35%] items-center justify-center">
+            <span className="text-[clamp(0.6rem,1.9vw,0.9rem)] font-black uppercase tracking-[0.06em] text-white">
+              {matchTimeLeft}s
+            </span>
+          </div>
         </div>
       </div>
 
@@ -733,15 +816,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               }}
             >
               <img
-                src={blueSocket}
+                src={getSocketAsset(question.placeHints[idx], idx, question.placeHints.length)}
                 alt=""
                 aria-hidden="true"
                 draggable={false}
                 className="pointer-events-none absolute inset-0 h-full w-full object-contain"
               />
-              <span className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[clamp(0.92rem,2.2vw,1.25rem)] font-black uppercase tracking-[0.08em] text-cyan-100/58">
-                {question.placeHints[idx]}
-              </span>
               {token ? (
                 <>
                   <span className="pointer-events-none absolute left-1/2 top-1/2 z-[8] h-[56%] w-[66%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/28 blur-[10px]" />
