@@ -440,19 +440,16 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
         </AnimatePresence>
       </main>
 
-      <footer className="z-20 flex h-8 items-center justify-between border-t border-white/10 bg-black/40 px-3 backdrop-blur-md sm:h-9 sm:px-5 md:h-10 md:px-8">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2">
-            <Star className="h-3 w-3 text-indigo-400" />
-            <span className="text-[8px] font-black tracking-widest text-slate-500 uppercase">Sector: Year 6 SATs</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className={`h-1.5 w-1.5 animate-pulse rounded-full ${fuel < 30 ? 'bg-rose-500' : 'bg-emerald-500'}`} />
-            <span className="text-[8px] font-black tracking-widest text-slate-500 uppercase">Fuel: {fuel}%</span>
+      {(gameState === 'playing' || gameState === 'success') && (
+        <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.4rem,env(safe-area-inset-bottom))] z-40 flex justify-center px-3">
+          <div className="pointer-events-auto flex items-center gap-2">
+            <div className={`pvp-hud-chip ${fuel < 30 ? 'text-rose-200' : 'text-emerald-100'}`}>
+              Fuel {fuel}%
+            </div>
+            <GameActionDock onBack={onBack} compact accentClass="text-slate-100" />
           </div>
         </div>
-        <span className="text-[8px] font-black tracking-widest text-slate-600 uppercase">(c) 2026 Rounding Rocket Navigation</span>
-      </footer>
+      )}
 
       <style>{`
         @keyframes shake {

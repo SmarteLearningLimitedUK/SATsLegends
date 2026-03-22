@@ -10,12 +10,12 @@ import {
   Play,
   Activity,
   Target,
-  Sword,
   Ghost,
-  ChevronLeft,
   ChevronRight,
   AlertCircle,
 } from 'lucide-react';
+import GameActionDock from '../components/GameActionDock';
+import MiniGameTopBar from '../components/MiniGameTopBar';
 
 type Operation = '+' | '-' | '*' | '/';
 type MonsterType = 'slime' | 'ghost' | 'demon' | 'boss';
@@ -389,43 +389,23 @@ const CalculationCrashGame: React.FC<CalculationCrashGameProps> = ({
     <div className="relative h-full w-full overflow-hidden bg-[#050505] text-white">
       <div className="battlefield-grid" />
 
-      <div className="relative z-10 flex h-full flex-col p-5">
-        <header className="mb-4 flex items-center justify-between rounded-2xl border border-white/10 bg-black/50 px-4 py-3 backdrop-blur-md">
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={onBack}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-900 text-zinc-300 transition hover:bg-zinc-800"
-              aria-label="Back to levels"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-400 ring-1 ring-cyan-400/30">
-              <Sword className="h-6 w-6" />
-            </div>
-            <div>
-              <h1 className="text-xl font-black tracking-tight uppercase">Calculation Crash</h1>
-              <p className="text-[10px] font-black tracking-[0.25em] text-zinc-500 uppercase">Defense Command Online</p>
-            </div>
-          </div>
+      <MiniGameTopBar
+        onBack={onBack}
+        score={state.score}
+        scoreLabel="Score"
+        metaLabel="Wave"
+        metaValue={`${state.wave}/${MAX_WAVES}`}
+      />
 
-          <div className="flex items-center gap-8">
-            <div className="text-center">
-              <p className="text-[10px] font-black tracking-widest text-zinc-500 uppercase">Wave</p>
-              <p className="font-mono text-2xl font-black text-cyan-300">{state.wave}/{MAX_WAVES}</p>
-            </div>
-            <div className="text-center">
-              <p className="text-[10px] font-black tracking-widest text-zinc-500 uppercase">Score</p>
-              <p className="font-mono text-2xl font-black text-white">{state.score.toLocaleString()}</p>
-            </div>
-            <div className="text-center">
-              <p className="text-[10px] font-black tracking-widest text-zinc-500 uppercase">Threat Queue</p>
-              <p className="font-mono text-2xl font-black text-orange-400">
-                {Math.min(monstersSpawnedInWaveRef.current, waveSpawnGoal)}/{waveSpawnGoal}
-              </p>
-            </div>
+      <div className="relative z-10 flex h-full flex-col p-5 pb-[calc(env(safe-area-inset-bottom)+4.8rem)] pt-[calc(env(safe-area-inset-top)+3.55rem)]">
+        <div className="mb-3 flex items-center justify-end gap-2">
+          <div className="pvp-hud-chip pvp-hud-chip-alt">
+            Threat {Math.min(monstersSpawnedInWaveRef.current, waveSpawnGoal)}/{waveSpawnGoal}
           </div>
-        </header>
+          <div className="pvp-hud-chip">
+            Core {state.health}%
+          </div>
+        </div>
 
         <main className="relative flex min-h-0 flex-1 overflow-hidden rounded-2xl border border-white/10 bg-[radial-gradient(circle_at_50%_50%,#111_0%,#050505_100%)]">
           <section className="base-station">
@@ -525,6 +505,14 @@ const CalculationCrashGame: React.FC<CalculationCrashGameProps> = ({
           )}
         </section>
       </div>
+
+      {state.status === 'playing' && (
+        <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.4rem,env(safe-area-inset-bottom))] z-40 flex justify-center px-3">
+          <div className="pointer-events-auto">
+            <GameActionDock onBack={onBack} compact accentClass="text-slate-100" />
+          </div>
+        </div>
+      )}
 
       <AnimatePresence>
         {state.status === 'start' && (

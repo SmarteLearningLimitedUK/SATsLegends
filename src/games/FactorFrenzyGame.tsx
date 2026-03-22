@@ -1,20 +1,17 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  Zap,
   Trophy,
   RotateCcw,
   ChevronRight,
-  AlertCircle,
   Timer,
   Flame,
-  Star,
   Target,
   Activity,
-  Award,
-  ChevronLeft,
   CheckCircle2,
 } from 'lucide-react';
+import GameActionDock from '../components/GameActionDock';
+import MiniGameTopBar from '../components/MiniGameTopBar';
 
 type FactorProblemType = 'missing_factor' | 'all_factors' | 'common_factors' | 'prime_factors';
 
@@ -338,50 +335,28 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     <div className="relative h-full w-full overflow-hidden bg-[#0a0a0f] text-white selection:bg-cyan-500/30">
       <div className="scanline" />
 
-      <div className="relative z-10 flex h-full flex-col p-6">
-        <header className="frenzy-card neon-border-cyan mb-6 flex items-center justify-between p-6">
-          <div className="flex items-center gap-4">
-            <button
-              type="button"
-              onClick={onBack}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-900 text-zinc-300 transition hover:bg-zinc-800"
-              aria-label="Back to levels"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-500/50 bg-cyan-500/10 shadow-[0_0_15px_rgba(0,242,255,0.3)]">
-              <Zap className="h-8 w-8 text-cyan-400" />
-            </div>
-            <div>
-              <h1 className="neon-text-cyan text-2xl font-black tracking-tighter italic">FACTOR FRENZY</h1>
-              <div className="flex items-center gap-2">
-                <Award className="h-3 w-3 text-pink-500" />
-                <p className="text-[10px] font-bold tracking-[0.3em] text-pink-500 uppercase">{currentLevel.name} RANK</p>
-              </div>
-            </div>
-          </div>
+      <MiniGameTopBar
+        onBack={onBack}
+        score={state.score}
+        scoreLabel="Score"
+        metaLabel="Rank"
+        metaValue={currentLevel.name}
+      />
 
-          <div className="flex gap-12">
-            <div className="text-center">
-              <p className="mb-1 text-[10px] font-black tracking-widest text-zinc-500 uppercase">Streak</p>
-              <div className="flex items-center justify-center gap-2">
-                <Flame className={`h-5 w-5 ${state.streak > 0 ? 'animate-pulse text-orange-500' : 'text-zinc-800'}`} />
-                <p className="font-mono text-3xl font-black text-white">{state.streak}</p>
-              </div>
-            </div>
-            <div className="text-center">
-              <p className="mb-1 text-[10px] font-black tracking-widest text-zinc-500 uppercase">Time Left</p>
-              <div className="flex items-center justify-center gap-2">
-                <Timer className={`h-5 w-5 ${state.timeLeft < 5 ? 'animate-bounce text-red-500' : 'text-cyan-400'}`} />
-                <p className={`font-mono text-3xl font-black ${state.timeLeft < 5 ? 'text-red-500' : 'text-white'}`}>{state.timeLeft}s</p>
-              </div>
-            </div>
-            <div className="min-w-[120px] text-right">
-              <p className="mb-1 text-[10px] font-black tracking-widest text-zinc-500 uppercase">Total Score</p>
-              <p className="neon-text-cyan font-mono text-3xl font-black">{state.score.toLocaleString()}</p>
-            </div>
+      <div className="relative z-10 flex h-full flex-col p-4 pb-[calc(env(safe-area-inset-bottom)+4.6rem)] pt-[calc(env(safe-area-inset-top)+3.45rem)] sm:p-5 sm:pb-[calc(env(safe-area-inset-bottom)+4.9rem)] sm:pt-[calc(env(safe-area-inset-top)+3.7rem)] md:p-6 md:pb-[calc(env(safe-area-inset-bottom)+5.2rem)] md:pt-[calc(env(safe-area-inset-top)+4rem)]">
+        <div className="mb-3 flex items-center justify-end gap-2 md:mb-4">
+          <div className="pvp-hud-chip pvp-hud-chip-alt inline-flex items-center gap-1.5">
+            <Flame className={`h-3.5 w-3.5 ${state.streak > 0 ? 'animate-pulse text-orange-300' : 'text-slate-300/60'}`} />
+            Streak {state.streak}
           </div>
-        </header>
+          <div className={`pvp-hud-chip inline-flex items-center gap-1.5 ${state.timeLeft < 5 ? 'text-rose-200' : ''}`}>
+            <Timer className={`h-3.5 w-3.5 ${state.timeLeft < 5 ? 'animate-bounce text-rose-300' : 'text-cyan-200'}`} />
+            {state.timeLeft}s
+          </div>
+          <div className="pvp-hud-chip pvp-hud-chip-alt">
+            Mistakes {state.mistakes}/{MAX_MISTAKES}
+          </div>
+        </div>
 
         <main className="relative flex flex-1 flex-col items-center justify-center">
           <AnimatePresence mode="wait">
@@ -528,21 +503,15 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
             )}
           </AnimatePresence>
         </main>
-
-        <footer className="mt-auto flex items-center justify-between text-[10px] font-black tracking-[0.3em] text-zinc-600 uppercase">
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <Star className="h-3 w-3 text-cyan-500" />
-              <span>Year 6 Curriculum Aligned</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Activity className="h-3 w-3 text-pink-500" />
-              <span>Live Data Feed: Active</span>
-            </div>
-          </div>
-          <div>NEON-CORE ENGINE // BUILD 2.4.0</div>
-        </footer>
       </div>
+
+      {(state.status === 'playing' || state.status === 'correct' || state.status === 'incorrect') && (
+        <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.4rem,env(safe-area-inset-bottom))] z-40 flex justify-center px-3">
+          <div className="pointer-events-auto">
+            <GameActionDock onBack={onBack} compact accentClass="text-slate-100" />
+          </div>
+        </div>
+      )}
 
       <div className="pointer-events-none fixed top-0 left-0 z-0 h-full w-full overflow-hidden">
         <div className="absolute top-[-10%] left-[-10%] h-[40%] w-[40%] rounded-full bg-cyan-500/10 blur-[120px]" />
