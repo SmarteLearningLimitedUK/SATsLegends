@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import placeValueBackground from '../assets/maps/placepanicbkk.png';
+import placeValueBackground from '../assets/maps/gemini-2.5-flash-image_using_the_same_aesthetic_create_a_bright_and_vibrant_meadow_golden_hues_with_vib-0.jpg';
 import goblinEnemy from '../assets/bosses/goblin.png';
 import GameActionDock from '../components/GameActionDock';
 import { triggerHaptic } from '../haptics';
@@ -54,7 +54,6 @@ const TARGET_ANCHORS: AnchorPoint[] = [{ x: 22 }, { x: 35 }, { x: 48 }, { x: 61 
 const SOURCE_ANCHORS: AnchorPoint[] = [{ x: 16 }, { x: 32 }, { x: 48 }, { x: 64 }, { x: 80 }];
 const FULL_PLACE_VALUE_HINTS = ['Th', 'Th', 'H', 'T', 'U'] as const;
 const TARGET_ROW_Y_OFFSET_PX = 30;
-const BACKGROUND_ASPECT_RATIO = 1350 / 3000;
 
 const ONES_WORDS = [
   'zero',
@@ -218,29 +217,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       healthWidth: isTablet ? 24 : 29,
       enemyTop: isTablet ? 38.9 : (isTallPhone ? 41.6 : 41.1),
       enemyWidth: isTablet ? 27 : 31,
-    };
-  }, [viewport.height, viewport.width]);
-
-  const imageFrame = useMemo(() => {
-    const viewportAspect = viewport.width / Math.max(1, viewport.height);
-    if (viewportAspect > BACKGROUND_ASPECT_RATIO) {
-      const frameHeight = viewport.height;
-      const frameWidth = frameHeight * BACKGROUND_ASPECT_RATIO;
-      return {
-        left: (viewport.width - frameWidth) / 2,
-        top: 0,
-        width: frameWidth,
-        height: frameHeight,
-      };
-    }
-
-    const frameWidth = viewport.width;
-    const frameHeight = frameWidth / BACKGROUND_ASPECT_RATIO;
-    return {
-      left: 0,
-      top: (viewport.height - frameHeight) / 2,
-      width: frameWidth,
-      height: frameHeight,
     };
   }, [viewport.height, viewport.width]);
 
@@ -488,8 +464,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         src={placeValueBackground}
         alt=""
         aria-hidden="true"
-        className="absolute object-fill"
-        style={imageFrame}
+        className="absolute inset-0 h-full w-full object-cover object-center"
         draggable={false}
       />
 
@@ -505,7 +480,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         Score {score}
       </div>
 
-      <div className="absolute z-20" ref={playfieldRef} style={imageFrame}>
+      <div className="absolute inset-0 z-20" ref={playfieldRef}>
         <div
           className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2 overflow-hidden"
           style={{ top: `${layout.questionTop}%`, width: `${layout.questionWidth}%`, height: `${layout.questionHeight}%` }}
