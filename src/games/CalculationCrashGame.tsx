@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Shield,
@@ -165,13 +165,13 @@ const CalculationCrashGame: React.FC<CalculationCrashGameProps> = ({
         a = Math.floor(Math.random() * 12) + 2;
         b = Math.floor(Math.random() * 12) + 2;
         answer = a * b;
-        return { problem: `${a} × ${b}`, answer, type };
+        return { problem: `${a} x ${b}`, answer, type };
       case '/':
       default:
         b = Math.floor(Math.random() * 10) + 2;
         answer = Math.floor(Math.random() * 10) + 2;
         a = b * answer;
-        return { problem: `${a} ÷ ${b}`, answer, type };
+        return { problem: `${a} / ${b}`, answer, type };
     }
   }, []);
 
@@ -200,6 +200,7 @@ const CalculationCrashGame: React.FC<CalculationCrashGameProps> = ({
   const startGame = () => {
     endedRef.current = false;
     resetWaveCounters();
+    setAnswerFeedback(null);
     setState({
       score: 0,
       health: INITIAL_HEALTH,
@@ -292,6 +293,7 @@ const CalculationCrashGame: React.FC<CalculationCrashGameProps> = ({
   const continueWave = () => {
     const nextWave = state.wave + 1;
     resetWaveCounters();
+    setAnswerFeedback(null);
     setState((previous) => ({
       ...previous,
       wave: nextWave,
@@ -303,22 +305,43 @@ const CalculationCrashGame: React.FC<CalculationCrashGameProps> = ({
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value.replace(/[^0-9]/g, '');
+    const cleaned = event.target.value.replace(/[^\d-]/g, '');
+    const value = cleaned.startsWith('-')
+      ? `-${cleaned.slice(1).replace(/-/g, '')}`
+      : cleaned.replace(/-/g, '');
     setState((previous) => ({ ...previous, inputValue: value }));
+    if (answerFeedback) setAnswerFeedback(null);
+  };
 
-    if (!value) return;
-    const numVal = parseInt(value, 10);
-    if (Number.isNaN(numVal)) return;
+  const submitAnswer = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (state.status !== 'playing') return;
 
+    const rawValue = state.inputValue.trim();
+    if (!rawValue || rawValue === '-') {
+      setAnswerFeedback({ type: 'miss', message: 'Enter an answer first.' });
+      return;
+    }
+
+    const numVal = Number(rawValue);
+    if (Number.isNaN(numVal)) {
+      setAnswerFeedback({ type: 'miss', message: 'Answer must be a number.' });
+      return;
+    }
+
+    const targetMonster = [...state.monsters]
+      .filter((monster) => monster.answer === numVal)
+      .sort((a, b) => a.x - b.x)[0];
+
+    if (!targetMonster) {
+      setState((previous) => ({ ...previous, inputValue: '' }));
+      setAnswerFeedback({ type: 'miss', message: 'No monster matches that answer.' });
+      window.setTimeout(() => inputRef.current?.focus(), 0);
+      return;
+    }
+
+    const eliminated = targetMonster.health <= 1;
     setState((previous) => {
-      if (previous.status !== 'playing') return previous;
-
-      const targetMonster = [...previous.monsters]
-        .filter((monster) => monster.answer === numVal)
-        .sort((a, b) => a.x - b.x)[0];
-
-      if (!targetMonster) return previous;
-
       const monsters: Monster[] = [];
       let scoreGain = 0;
 
@@ -344,7 +367,15 @@ const CalculationCrashGame: React.FC<CalculationCrashGameProps> = ({
       };
     });
 
-    window.setTimeout(() => inputRef.current?.focus(), 0);
+    setAnswerFeedback({
+      type: eliminated ? 'clear' : 'hit',
+      message: eliminated ? 'Target neutralized.' : 'Direct hit.',
+    });
+
+    window.setTimeout(() => {
+      setAnswerFeedback(null);
+      inputRef.current?.focus();
+    }, 900);
   };
 
   const healthPercent = Math.max(0, Math.min(100, state.health));
@@ -455,20 +486,43 @@ const CalculationCrashGame: React.FC<CalculationCrashGameProps> = ({
               <p className="text-xs font-black tracking-[0.18em] text-zinc-400 uppercase">Intercept Answer Input</p>
             </div>
             <p className="text-xs font-black tracking-[0.18em] text-zinc-500 uppercase">
-              Type a number to damage the matching monster
+              Type full answer, then fire
             </p>
           </div>
 
-          <input
-            ref={inputRef}
-            value={state.inputValue}
-            onChange={handleInputChange}
-            disabled={state.status !== 'playing'}
-            className="w-full rounded-xl border border-cyan-500/30 bg-[#0b0f16] px-4 py-4 font-mono text-3xl font-black tracking-wider text-cyan-300 outline-none placeholder:text-zinc-600 focus:border-cyan-300"
-            placeholder="ENTER ANSWER"
-            inputMode="numeric"
-            autoFocus
-          />
+          <form onSubmit={submitAnswer} className="flex gap-3">
+            <input
+              ref={inputRef}
+              value={state.inputValue}
+              onChange={handleInputChange}
+              disabled={state.status !== 'playing'}
+              className="w-full rounded-xl border border-cyan-500/30 bg-[#0b0f16] px-4 py-4 font-mono text-3xl font-black tracking-wider text-cyan-300 outline-none placeholder:text-zinc-600 focus:border-cyan-300"
+              placeholder="ENTER ANSWER"
+              inputMode="numeric"
+              autoFocus
+            />
+            <button
+              type="submit"
+              disabled={state.status !== 'playing'}
+              className="min-w-[120px] rounded-xl border border-cyan-400/40 bg-cyan-400/15 px-5 py-4 text-sm font-black uppercase tracking-[0.16em] text-cyan-200 transition hover:bg-cyan-400/25 disabled:opacity-40"
+            >
+              Fire
+            </button>
+          </form>
+
+          {answerFeedback && (
+            <div
+              className={`mt-3 rounded-xl border px-3 py-2 text-xs font-black uppercase tracking-[0.14em] ${
+                answerFeedback.type === 'clear'
+                  ? 'border-emerald-400/40 bg-emerald-500/10 text-emerald-200'
+                  : answerFeedback.type === 'hit'
+                    ? 'border-cyan-400/40 bg-cyan-500/10 text-cyan-200'
+                    : 'border-rose-400/40 bg-rose-500/10 text-rose-200'
+              }`}
+            >
+              {answerFeedback.message}
+            </div>
+          )}
         </section>
       </div>
 
@@ -643,3 +697,4 @@ const CalculationCrashGame: React.FC<CalculationCrashGameProps> = ({
 };
 
 export default CalculationCrashGame;
+
