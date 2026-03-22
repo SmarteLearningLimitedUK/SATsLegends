@@ -7,6 +7,7 @@ import goblinWiz from '../assets/bosses/goblinwiz.jpg';
 import shieldIcon from '../assets/casual_ui/icons/icon__shield.png';
 import hudProfileBar from '../assets/fantasy_hero/ui/uiamend_slices/hud_profile_bar.png';
 import hudTimerBar from '../assets/fantasy_hero/ui/uiamend_slices/hud_timer_bar.png';
+import hudTimerTrack from '../assets/fantasy_hero/ui/uiamend_slices/hud_timer_track.png';
 import socketThOne from '../assets/fantasy_hero/ui/uiamend_slices/socket_th_1.png';
 import socketThTwo from '../assets/fantasy_hero/ui/uiamend_slices/socket_th_2.png';
 import socketH from '../assets/fantasy_hero/ui/uiamend_slices/socket_h.png';
@@ -63,8 +64,6 @@ const GOBLIN_MAX_HEALTH = 10;
 const MATCH_DURATION_SECONDS = 90;
 const PLAYER_STORAGE_KEY = 'maths_quest_player';
 
-const TARGET_ANCHORS: AnchorPoint[] = [{ x: 12 }, { x: 31 }, { x: 50 }, { x: 69 }, { x: 88 }];
-const SOURCE_ANCHORS: AnchorPoint[] = [{ x: 16 }, { x: 32 }, { x: 48 }, { x: 64 }, { x: 80 }];
 const FULL_PLACE_VALUE_HINTS = ['Th', 'Th', 'H', 'T', 'U'] as const;
 const TARGET_ROW_Y_OFFSET_PX = 0;
 
@@ -137,20 +136,15 @@ const scoreToStars = (accuracy: number): number => {
   return 1;
 };
 
-const centeredAnchors = (anchors: AnchorPoint[], count: number): AnchorPoint[] => {
-  if (count >= anchors.length) return anchors;
+const centeredAnchors = (count: number, spanPercent: number, centerPercent = 50): AnchorPoint[] => {
   if (count <= 0) return [];
-
-  const xs = anchors.map((a) => a.x);
-  const min = Math.min(...xs);
-  const max = Math.max(...xs);
-
   if (count === 1) {
-    return [{ x: (min + max) / 2 }];
+    return [{ x: centerPercent }];
   }
 
-  const step = (max - min) / (count - 1);
-  return Array.from({ length: count }, (_, idx) => ({ x: min + step * idx }));
+  const left = centerPercent - spanPercent / 2;
+  const step = spanPercent / (count - 1);
+  return Array.from({ length: count }, (_, idx) => ({ x: left + step * idx }));
 };
 
 const removeBlackMatteFromSprite = (src: string): Promise<string> =>
@@ -321,25 +315,27 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const isTallPhone = !isTablet && ratio > 1.95;
 
     return {
-      questionTop: isTablet ? 16.4 : (isTallPhone ? 17.0 : 16.8),
-      questionWidth: isTablet ? 48 : 58,
-      questionHeight: isTablet ? 11.2 : 12.0,
-      submitY: isTablet ? 78.6 : (isTallPhone ? 79.2 : 78.9),
-      submitWidth: isTablet ? 28 : 44,
-      submitHeight: isTablet ? 7.8 : 8.8,
-      targetY: isTablet ? 74.8 : (isTallPhone ? 75.2 : 75.0),
-      sourceY: isTablet ? 36.8 : (isTallPhone ? 37.4 : 37.1),
-      targetWidth: isTablet ? '11.6%' : '13.8%',
-      sourceWidth: isTablet ? '8.9%' : '9.8%',
-      targetHeight: isTablet ? '10.6%' : '12.4%',
-      sourceHeight: isTablet ? '7.6%' : '8.2%',
-      targetFont: isTablet ? 'clamp(2.15rem,4.7vw,3.65rem)' : 'clamp(1.95rem,5.1vw,3.25rem)',
-      sourceFont: isTablet ? 'clamp(2.15rem,4.7vw,3.65rem)' : 'clamp(1.95rem,5.1vw,3.25rem)',
-      healthTop: isTablet ? 57.8 : (isTallPhone ? 59.1 : 58.7),
+      questionTop: isTablet ? 13.8 : (isTallPhone ? 14.8 : 14.5),
+      questionWidth: isTablet ? 46 : 56,
+      questionHeight: isTablet ? 10.5 : 11.0,
+      submitY: isTablet ? 80.4 : (isTallPhone ? 81.1 : 80.8),
+      submitWidth: isTablet ? 30 : 46,
+      submitHeight: isTablet ? 8.6 : 9.2,
+      targetY: isTablet ? 71.1 : (isTallPhone ? 72.0 : 71.7),
+      sourceY: isTablet ? 40.7 : (isTallPhone ? 41.5 : 41.2),
+      targetWidth: isTablet ? '12.8%' : '16.9%',
+      sourceWidth: isTablet ? '9.8%' : '12.2%',
+      targetHeight: isTablet ? '12.2%' : '14.8%',
+      sourceHeight: isTablet ? '8.8%' : '10.2%',
+      targetFont: isTablet ? 'clamp(2.2rem,4.9vw,3.8rem)' : 'clamp(2.1rem,5.5vw,3.55rem)',
+      sourceFont: isTablet ? 'clamp(2.05rem,4.5vw,3.45rem)' : 'clamp(1.95rem,5.1vw,3.15rem)',
+      targetSpan: isTablet ? 46 : 56,
+      sourceSpan: isTablet ? 40 : 50,
+      healthTop: isTablet ? 52.6 : (isTallPhone ? 53.7 : 53.3),
       healthWidth: isTablet ? 28 : 40,
       healthLeft: isTablet ? 66.7 : 69.4,
-      enemyTop: isTablet ? 45.9 : (isTallPhone ? 48.6 : 48.1),
-      enemyWidth: isTablet ? 27 : 31,
+      enemyTop: isTablet ? 46.2 : (isTallPhone ? 48.2 : 47.8),
+      enemyWidth: isTablet ? 29 : 33,
     };
   }, [viewport.height, viewport.width]);
 
@@ -364,13 +360,13 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const playfieldRef = useRef<HTMLDivElement | null>(null);
 
   const activeTargetAnchors = useMemo(
-    () => centeredAnchors(TARGET_ANCHORS, question.expectedDigits.length),
-    [question.expectedDigits.length],
+    () => centeredAnchors(question.expectedDigits.length, layout.targetSpan, 50),
+    [layout.targetSpan, question.expectedDigits.length],
   );
 
   const activeSourceAnchors = useMemo(
-    () => centeredAnchors(SOURCE_ANCHORS, question.tokenValues.length),
-    [question.tokenValues.length],
+    () => centeredAnchors(question.tokenValues.length, layout.sourceSpan, 50),
+    [layout.sourceSpan, question.tokenValues.length],
   );
 
   const resetRound = useCallback((nextQuestion: QuestionState) => {
@@ -699,10 +695,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         draggable={false}
       />
 
-      <div className="absolute left-[max(0.55rem,env(safe-area-inset-left))] top-[max(0.6rem,env(safe-area-inset-top))] z-40 w-[min(11.25rem,46vw)]">
+      <div className="absolute left-[max(0.55rem,env(safe-area-inset-left))] top-[max(0.5rem,env(safe-area-inset-top))] z-40 w-[min(13.8rem,52vw)]">
         <div className="relative w-full">
           <img src={hudProfileBar} alt="" aria-hidden="true" draggable={false} className="h-auto w-full object-contain" />
-          <div className="absolute left-[5.5%] top-1/2 h-[70%] w-[20%] -translate-y-1/2">
+          <div className="absolute left-[5%] top-1/2 h-[76%] w-[24%] -translate-y-1/2">
             <div className="relative h-full w-full">
               <div className="absolute inset-[10%] overflow-hidden rounded-[30%]">
                 <img
@@ -717,11 +713,11 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 alt=""
                 aria-hidden="true"
                 draggable={false}
-                className="pointer-events-none absolute -right-[12%] -top-[8%] h-[35%] w-[35%] object-contain drop-shadow-[0_2px_4px_rgba(2,6,23,0.65)]"
+                className="pointer-events-none absolute -right-[14%] -top-[8%] h-[35%] w-[35%] object-contain drop-shadow-[0_2px_4px_rgba(2,6,23,0.65)]"
               />
             </div>
           </div>
-          <div className="pointer-events-none absolute left-[30%] right-[7%] top-1/2 -translate-y-1/2 overflow-hidden text-left text-[clamp(0.62rem,2vw,0.95rem)] font-black uppercase tracking-[0.06em] text-cyan-50">
+          <div className="pointer-events-none absolute left-[32%] right-[7%] top-1/2 -translate-y-1/2 overflow-hidden text-left text-[clamp(0.76rem,2.35vw,1.06rem)] font-black uppercase tracking-[0.06em] text-cyan-50">
             <span
               className="block max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
               style={{ textShadow: '0 1px 2px rgba(2,6,23,0.6)' }}
@@ -732,20 +728,27 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
       </div>
 
-      <div className="absolute right-[max(0.55rem,env(safe-area-inset-right))] top-[max(0.6rem,env(safe-area-inset-top))] z-40 w-[min(10.4rem,40vw)]">
+      <div className="absolute right-[max(0.55rem,env(safe-area-inset-right))] top-[max(0.5rem,env(safe-area-inset-top))] z-40 w-[min(12.4rem,46vw)]">
         <div className="relative w-full">
           <img src={hudTimerBar} alt="" aria-hidden="true" draggable={false} className="h-auto w-full object-contain" />
-          <div className="pointer-events-none absolute left-[28%] right-[5.2%] top-[40%] h-[23%] overflow-hidden rounded-full">
-            <div className="absolute inset-0 rounded-full bg-slate-900/45" />
+          <div className="pointer-events-none absolute left-[28.6%] right-[4.1%] top-[38.8%] h-[24.5%] overflow-hidden rounded-full">
+            <div className="absolute inset-0 rounded-full bg-slate-900/46" />
             <motion.div
               className="absolute left-0 top-0 h-full rounded-full"
               animate={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }}
               transition={{ duration: 0.25, ease: 'easeOut' }}
               style={{ boxShadow: '0 0 8px rgba(34,197,94,0.65)' }}
             />
+            <img
+              src={hudTimerTrack}
+              alt=""
+              aria-hidden="true"
+              draggable={false}
+              className="absolute inset-0 h-full w-full object-fill"
+            />
           </div>
-          <div className="pointer-events-none absolute left-[28%] right-[5.2%] top-[35%] flex h-[35%] items-center justify-center">
-            <span className="text-[clamp(0.6rem,1.9vw,0.9rem)] font-black uppercase tracking-[0.06em] text-white">
+          <div className="pointer-events-none absolute left-[28.6%] right-[4.1%] top-[33.5%] flex h-[35%] items-center justify-center">
+            <span className="text-[clamp(0.62rem,1.9vw,0.92rem)] font-black uppercase tracking-[0.06em] text-white">
               {matchTimeLeft}s
             </span>
           </div>
