@@ -353,7 +353,7 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
       { area: 'remainder_interpretation', percentage: 10 },
     ],
     crossGameReinforcement: [
-      'multiplication appears in Calculation Clash (Advanced), Multiplication Mine, and Arithmetic Gauntlet',
+      'multiplication appears in Multiplication Mine and Arithmetic Gauntlet',
       'division and remainder logic appears in Division Dock and Remainder Run',
       'multi-step chaining appears in Order Ops Arena and Arithmetic Gauntlet',
     ],
@@ -383,20 +383,6 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
       'REMAINDERS',
     ],
     miniGames: [
-      {
-        key: 'calculation_clash_advanced',
-        name: 'Calculation Clash Advanced',
-        role: 'pressure_timing',
-        gameplayRoles: ['fluency', 'pressure_timing'],
-        mechanicSummary: 'Solve calculations in active lanes to defeat incoming targets.',
-        curriculumObjectives: ['addition', 'subtraction', 'multiplication', 'division', 'rapid_recall'],
-        skillTags: ['ADDITION', 'SUBTRACTION', 'MULTIPLICATION', 'DIVISION'],
-        keySystems: ['approach lanes', 'wrong answers slow player', 'streak power boosts'],
-        questionTypes: ['rapid mixed arithmetic', 'lane priority calculation'],
-        difficultyCurve: 'guided pace -> dense mixed waves -> high-speed lane pressure',
-        failureState: 'flow collapse from repeated misses',
-        replayValue: 'combo optimisation',
-      },
       {
         key: 'multiplication_mine',
         name: 'Multiplication Mine',

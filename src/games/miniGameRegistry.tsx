@@ -11,12 +11,14 @@ import DecimalSniperGame from './DecimalSniperGame';
 import DivisionDockGame from './DivisionDockGame';
 import FactorFrenzyGame from './FactorFrenzyGame';
 import FractionForgeGame from './FractionForgeGame';
+import FractionFlowGame from './FractionFlowGame';
 import FractionMatchGame from './FractionMatchGame';
 import LineGraphLabGame from './LineGraphLabGame';
 import MathsVsZombiesGame from './MathsVsZombiesGame';
 import MeanMachineGame from './MeanMachineGame';
 import MedianMountainGame from './MedianMountainGame';
 import MeasurementForgeGame from './MeasurementForgeGame';
+import MultiplicationMineGame from './MultiplicationMineGame';
 import MonsterMarketGame from './MonsterMarketGame';
 import ModeMinerGame from './ModeMinerGame';
 import NumberLineNinjaGame from './NumberLineNinjaGame';
@@ -59,12 +61,14 @@ export type MiniGameRegistryKey =
   | 'DivisionDockGame'
   | 'FactorFrenzyGame'
   | 'FractionForgeGame'
+  | 'FractionFlowGame'
   | 'FractionMatchGame'
   | 'LineGraphLabGame'
   | 'MathsVsZombiesGame'
   | 'MeanMachineGame'
   | 'MedianMountainGame'
   | 'MeasurementForgeGame'
+  | 'MultiplicationMineGame'
   | 'MonsterMarketGame'
   | 'ModeMinerGame'
   | 'NumberLineNinjaGame'
@@ -115,12 +119,14 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   DivisionDockGame: asMiniGame('division_dock', DivisionDockGame),
   FactorFrenzyGame: asMiniGame('factor_frenzy', FactorFrenzyGame),
   FractionForgeGame: asMiniGame('fraction_forge', FractionForgeGame),
+  FractionFlowGame: asMiniGame('fraction_flow', FractionFlowGame),
   FractionMatchGame: asMiniGame('fraction_match', FractionMatchGame),
   LineGraphLabGame: asMiniGame('line_graph_lab', LineGraphLabGame),
   MathsVsZombiesGame: asMiniGame('maths_vs_zombies', MathsVsZombiesGame),
   MeanMachineGame: asMiniGame('mean_machine', MeanMachineGame),
   MedianMountainGame: asMiniGame('median_mountain', MedianMountainGame),
   MeasurementForgeGame: asMiniGame('measurement_forge', MeasurementForgeGame),
+  MultiplicationMineGame: asMiniGame('multiplication_mine', MultiplicationMineGame),
   MonsterMarketGame: asMiniGame('monster_market', MonsterMarketGame),
   ModeMinerGame: asMiniGame('mode_miner', ModeMinerGame),
   NumberLineNinjaGame: asMiniGame('number_line_ninja', NumberLineNinjaGame),

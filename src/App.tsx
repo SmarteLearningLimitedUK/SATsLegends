@@ -102,6 +102,9 @@ const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKey | nul
 
   switch (level.gameType) {
     case 'cloud_collapse':
+      if (level.blueprintKey === 'fraction_flow') {
+        return 'FractionFlowGame';
+      }
     case 'fraction_match':
       if (level.blueprintKey === 'simplify_sprint') {
         return 'SimplifySprintGame';
@@ -667,6 +670,9 @@ const App: React.FC = () => {
 
     switch (selectedLevel.gameType) {
       case 'cloud_collapse':
+        if (selectedLevel.blueprintKey === 'fraction_flow') {
+          return renderFromRegistry('FractionFlowGame', sharedProps);
+        }
         return renderFromRegistry('FractionMatchGame', { ...sharedProps, variantGameType: 'cloud_collapse', isBoss: Boolean(selectedLevel.isBoss) });
       case 'potion_pour':
         return renderFromRegistry('PotionPourGame', sharedProps);

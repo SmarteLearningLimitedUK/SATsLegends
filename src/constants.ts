@@ -82,12 +82,11 @@ export const ISLANDS: IslandData[] = [
     mapImage: world03Map,
     decorations: [],
     levels: [
-      { id: 1, stars: 0, isLocked: false, blueprintKey: 'calculation_clash_advanced', displayName: 'Calculation Clash Advanced', gameType: 'calculation_clash' },
-      { id: 2, stars: 0, isLocked: false, blueprintKey: 'multiplication_mine', displayName: 'Multiplication Mine', gameType: 'calculation_clash' },
-      { id: 3, stars: 0, isLocked: false, blueprintKey: 'division_dock', displayName: 'Division Dock', gameType: 'calculation_clash' },
-      { id: 4, stars: 0, isLocked: false, blueprintKey: 'order_ops_arena', displayName: 'Order Ops Arena', gameType: 'equation_grove' },
-      { id: 5, stars: 0, isLocked: false, blueprintKey: 'arithmetic_gauntlet', displayName: 'Arithmetic Gauntlet', gameType: 'calculation_clash' },
-      { id: 6, stars: 0, isLocked: false, blueprintKey: 'remainder_run', displayName: 'Remainder Run', gameType: 'calculation_clash' },
+      { id: 1, stars: 0, isLocked: false, blueprintKey: 'multiplication_mine', displayName: 'Multiplication Mine', gameType: 'calculation_clash' },
+      { id: 2, stars: 0, isLocked: false, blueprintKey: 'division_dock', displayName: 'Division Dock', gameType: 'calculation_clash' },
+      { id: 3, stars: 0, isLocked: false, blueprintKey: 'order_ops_arena', displayName: 'Order Ops Arena', gameType: 'equation_grove' },
+      { id: 4, stars: 0, isLocked: false, blueprintKey: 'arithmetic_gauntlet', displayName: 'Arithmetic Gauntlet', gameType: 'calculation_clash' },
+      { id: 5, stars: 0, isLocked: false, blueprintKey: 'remainder_run', displayName: 'Remainder Run', gameType: 'calculation_clash' },
     ],
   },
   {

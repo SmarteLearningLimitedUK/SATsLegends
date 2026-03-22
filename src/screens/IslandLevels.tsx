@@ -41,7 +41,6 @@ const GAME_SUMMARY_BY_KEY: Record<string, string> = {
   fraction_flow: 'Order mixed fraction values correctly while the stream speeds up.',
   fraction_of_amount: 'Take exact fractions of sets through quick allocation challenges.',
   simplify_sprint: 'Reduce fractions to simplest form in rapid streak rounds.',
-  calculation_clash_advanced: 'High-pressure arithmetic combat with faster mixed-operation waves.',
   multiplication_mine: 'Break through block layers using multiplication fluency and method control.',
   division_dock: 'Split cargo accurately with quotient and remainder logic.',
   order_ops_arena: 'Resolve expressions in the correct order to avoid trap paths.',
