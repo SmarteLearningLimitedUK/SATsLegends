@@ -206,20 +206,20 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const isTallPhone = !isTablet && ratio > 1.95;
 
     return {
-      questionTop: isTablet ? 31.1 : (isTallPhone ? 31.8 : 31.4),
-      questionWidth: isTablet ? 66 : 74,
+      questionTop: isTablet ? 24.2 : (isTallPhone ? 25.1 : 24.8),
+      questionWidth: isTablet ? 68 : 76,
       submitY: isTablet ? 90.8 : (isTallPhone ? 91.7 : 91.2),
       submitWidth: isTablet ? 22 : 30,
-      targetY: isTablet ? 73.2 : (isTallPhone ? 73.9 : 73.6),
+      targetY: isTablet ? 78.2 : (isTallPhone ? 78.9 : 78.6),
       sourceY: isTablet ? 84.3 : (isTallPhone ? 85.2 : 84.8),
       tokenWidth: isTablet ? '8.9%' : '9.8%',
       targetHeight: isTablet ? '6.2%' : '6.8%',
       sourceHeight: isTablet ? '7.6%' : '8.2%',
       targetFont: isTablet ? 'clamp(1.7rem,3.6vw,2.7rem)' : 'clamp(1.55rem,4.2vw,2.45rem)',
       sourceFont: isTablet ? 'clamp(2.15rem,4.7vw,3.65rem)' : 'clamp(1.95rem,5.1vw,3.25rem)',
-      healthTop: isTablet ? 50.2 : 53.2,
-      healthWidth: isTablet ? 24 : 29,
-      enemyTop: isTablet ? 38.9 : (isTallPhone ? 41.6 : 41.1),
+      healthTop: isTablet ? 38.4 : (isTallPhone ? 40.1 : 39.7),
+      healthWidth: isTablet ? 20 : 30,
+      enemyTop: isTablet ? 43.9 : (isTallPhone ? 46.6 : 46.1),
       enemyWidth: isTablet ? 27 : 31,
     };
   }, [viewport.height, viewport.width]);
@@ -501,12 +501,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
             className="block h-auto w-full"
           />
           <div
-            className="absolute inset-x-[16%] top-[22%] bottom-[22%] mx-auto flex items-center justify-center overflow-hidden text-center text-[clamp(0.72rem,1.85vw,1rem)] font-black uppercase leading-[1.08] tracking-[0.012em] text-white"
+            className="absolute inset-x-[18%] top-[24%] bottom-[24%] mx-auto flex items-center justify-center overflow-hidden text-center text-[clamp(0.62rem,1.55vw,0.9rem)] font-black uppercase leading-[1.06] tracking-[0.01em] text-white"
             style={{
               textShadow: '0 2px 6px rgba(2,6,23,0.62)',
               display: '-webkit-box',
               WebkitBoxOrient: 'vertical',
-              WebkitLineClamp: 2,
+              WebkitLineClamp: 3,
               wordBreak: 'break-word',
             }}
           >
@@ -515,7 +515,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
 
         <div
-          className="absolute right-[2%] z-30 max-w-[8.8rem] rounded-md bg-slate-900/72 px-1.5 py-1 shadow-[0_10px_24px_rgba(2,6,23,0.48)]"
+          className="absolute left-1/2 z-30 max-w-[9.8rem] -translate-x-1/2 rounded-md bg-slate-900/72 px-1.5 py-1 shadow-[0_10px_24px_rgba(2,6,23,0.48)]"
           style={{ top: `${layout.healthTop}%`, width: `${layout.healthWidth}%` }}
         >
           <div className="mb-1 text-center text-[9px] font-black uppercase tracking-[0.1em] text-amber-200 md:text-[10px]">
