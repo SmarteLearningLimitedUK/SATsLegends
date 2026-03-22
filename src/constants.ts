@@ -146,7 +146,6 @@ export const ISLANDS: IslandData[] = [
       { id: 2, stars: 0, isLocked: false, blueprintKey: 'conversion_canyon', displayName: 'Conversion Canyon', gameType: 'measurement_forge' },
       { id: 3, stars: 0, isLocked: false, blueprintKey: 'perimeter_path', displayName: 'Perimeter Path', gameType: 'measurement_forge' },
       { id: 5, stars: 0, isLocked: false, blueprintKey: 'volume_vault', displayName: 'Volume Vault', gameType: 'measurement_forge' },
-      { id: 6, stars: 0, isLocked: false, blueprintKey: 'measure_mix_up', displayName: 'Measure Mix-Up', gameType: 'measurement_forge' },
     ],
   },
   {

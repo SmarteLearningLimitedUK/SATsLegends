@@ -62,7 +62,6 @@ const GAME_SUMMARY_BY_KEY: Record<string, string> = {
   conversion_canyon: 'Convert measurement units to unlock routes and systems.',
   perimeter_path: 'Trace exact boundary lengths on irregular paths.',
   volume_vault: 'Pack 3D space to match target volume exactly.',
-  measure_mix_up: 'Solve mixed multi-step measurement scenarios.',
   data_dash: 'Scan charts fast and choose the correct lane instantly.',
   graph_grabber: 'Extract exact values from graphs before they disappear.',
   table_trouble: 'Read tables quickly and answer under time pressure.',

@@ -61,7 +61,6 @@ Sats Legends
 - Perimeter Path
 - Builder Bay
 - Volume Vault
-- Measure Mix-Up
 
 ### Island 7
 - Data Dash
