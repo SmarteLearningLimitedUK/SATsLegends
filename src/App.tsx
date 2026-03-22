@@ -1143,17 +1143,6 @@ const App: React.FC = () => {
                       </motion.button>
                       <motion.button
                         whileTap={{ scale: 0.96, y: 1 }}
-                        onClick={() => setShowQuests(true)}
-                        className="ui-icon-button hero-nav-button worldmap-nav-tab hero-nav-button-idle hero-nav-button-quests relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3"
-                      >
-                        <AssetIcon name="doc" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
-                        <span className="hero-nav-label text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Quests</span>
-                        {(player.dailyQuests || []).some(q => q.current >= q.target && !q.isClaimed) && (
-                          <span className="absolute right-2 top-1 h-3 w-3 rounded-full border-2 border-white bg-red-500 animate-pulse" />
-                        )}
-                      </motion.button>
-                      <motion.button
-                        whileTap={{ scale: 0.96, y: 1 }}
                         onClick={() => setShowAchievements(true)}
                         className="ui-icon-button hero-nav-button worldmap-nav-tab hero-nav-button-idle hero-nav-button-wins relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3"
                       >

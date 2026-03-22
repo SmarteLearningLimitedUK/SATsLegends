@@ -341,9 +341,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
 
       <div className="pointer-events-none fixed inset-x-0 z-40 flex justify-center px-4 bottom-[calc(env(safe-area-inset-bottom)+6.8rem)] md:bottom-[calc(env(safe-area-inset-bottom)+6.6rem)]">
         <div className="world-map-cta-row pointer-events-auto">
-          <button type="button" className="world-map-cta world-map-cta-level">
-            Level {player.level}
-          </button>
           <button type="button" className="world-map-cta world-map-cta-tasks">
             Tasks{pendingTasks > 0 ? ` (${pendingTasks})` : ''}
           </button>

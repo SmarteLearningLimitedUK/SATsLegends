@@ -965,6 +965,10 @@ button:disabled {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(0.35rem, 1.4vw, 0.7rem);
   width: min(94vw, 33rem);
+  padding: 0.16rem;
+  border-radius: 0.9rem;
+  background: url('./assets/casual_ui/hud/slices/maphud_top_strip.png') center/100% 100% no-repeat;
+  box-shadow: 0 10px 22px rgba(30, 58, 138, 0.34);
 }
 
 .world-map-stat-pill {
@@ -975,15 +979,9 @@ button:disabled {
   align-items: center;
   gap: 0.42rem;
   border-radius: 999px;
-  border: 2px solid rgba(133, 81, 37, 0.54);
-  background:
-    radial-gradient(circle at 45% 0%, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0) 52%),
-    linear-gradient(180deg, #fff5de 0%, #f7e3bc 44%, #efd2a0 100%);
-  box-shadow:
-    inset 0 2px 0 rgba(255, 255, 255, 0.45),
-    inset 0 -2px 0 rgba(165, 112, 56, 0.56),
-    0 6px 0 rgba(121, 70, 28, 0.86),
-    0 12px 22px rgba(15, 23, 42, 0.28);
+  border: 0;
+  background: url('./assets/casual_ui/hud/slices/maphud_cta_blue.png') center/100% 100% no-repeat;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.28);
 }
 
 .world-map-stat-icon {
@@ -994,23 +992,22 @@ button:disabled {
   border-radius: 999px;
   display: grid;
   place-items: center;
-  border: 2px solid rgba(126, 68, 13, 0.5);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    0 4px 8px rgba(2, 6, 23, 0.24);
+  border: 0;
+  background: url('./assets/casual_ui/hud/slices/maphud_icon_circle_blue.png') center/100% 100% no-repeat;
+  box-shadow: 0 3px 8px rgba(2, 6, 23, 0.22);
 }
 
 .world-map-stat-icon-coin {
-  background: linear-gradient(180deg, #fde047 0%, #facc15 44%, #f59e0b 100%);
+  background: url('./assets/casual_ui/hud/slices/maphud_icon_circle_blue.png') center/100% 100% no-repeat;
 }
 
 .world-map-stat-icon-heart {
-  background: linear-gradient(180deg, #fb7185 0%, #f43f5e 48%, #be123c 100%);
-  border-color: rgba(120, 16, 46, 0.56);
+  background: url('./assets/casual_ui/hud/slices/maphud_icon_circle_blue.png') center/100% 100% no-repeat;
+  border-color: transparent;
 }
 
 .world-map-stat-icon-star {
-  background: linear-gradient(180deg, #fde68a 0%, #fbbf24 48%, #f59e0b 100%);
+  background: url('./assets/casual_ui/hud/slices/maphud_icon_circle_blue.png') center/100% 100% no-repeat;
 }
 
 .world-map-heart-count {
@@ -1035,8 +1032,8 @@ button:disabled {
   font-size: clamp(1rem, 2.9vw, 1.34rem);
   font-weight: 900;
   letter-spacing: 0.01em;
-  color: #7c2d12;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.46);
+  color: #fefce8;
+  text-shadow: 0 1px 0 rgba(30, 58, 138, 0.86), 0 0 8px rgba(250, 204, 21, 0.26);
 }
 
 .world-map-plus-pill {
@@ -1046,26 +1043,25 @@ button:disabled {
   width: 1.2rem;
   height: 1.2rem;
   border-radius: 999px;
-  border: 2px solid #14532d;
+  border: 0;
   display: grid;
   place-items: center;
-  font-size: 0.9rem;
+  font-size: 0;
   line-height: 1;
   font-weight: 900;
-  color: #fff;
-  background: linear-gradient(180deg, #84cc16 0%, #22c55e 54%, #16a34a 100%);
-  box-shadow: 0 4px 8px rgba(22, 163, 74, 0.35);
+  color: transparent;
+  background: url('./assets/casual_ui/hud/slices/maphud_icon_plus_round.png') center/100% 100% no-repeat;
+  box-shadow: 0 4px 8px rgba(245, 158, 11, 0.42);
 }
 
 .world-map-cta-row {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(0.75rem, 2.8vw, 1.4rem);
+  display: flex;
+  justify-content: center;
   width: min(94vw, 34rem);
 }
 
 .world-map-cta {
-  border: 2px solid rgba(120, 60, 20, 0.52);
+  border: 0;
   border-radius: 999px;
   min-height: clamp(3.2rem, 8.8vw, 4.2rem);
   display: grid;
@@ -1073,36 +1069,26 @@ button:disabled {
   font-size: clamp(1.05rem, 3.7vw, 1.72rem);
   font-weight: 900;
   color: #fffef6;
-  text-shadow: 0 2px 0 rgba(92, 40, 12, 0.54);
-  box-shadow:
-    inset 0 2px 0 rgba(255, 255, 255, 0.28),
-    0 7px 0 rgba(126, 67, 27, 0.84),
-    0 14px 26px rgba(2, 6, 23, 0.28);
+  text-shadow: 0 2px 0 rgba(30, 58, 138, 0.6), 0 0 8px rgba(250, 204, 21, 0.2);
+  box-shadow: 0 12px 24px rgba(2, 6, 23, 0.3);
+  width: min(72vw, 17.5rem);
 }
 
 .world-map-cta-level {
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0) 26%),
-    linear-gradient(180deg, #84cc16 0%, #22c55e 42%, #16a34a 100%);
+  background: url('./assets/casual_ui/hud/slices/maphud_cta_blue.png') center/100% 100% no-repeat;
 }
 
 .world-map-cta-tasks {
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0) 26%),
-    linear-gradient(180deg, #fde047 0%, #fbbf24 42%, #f59e0b 100%);
-  color: #7c2d12;
-  text-shadow: 0 2px 0 rgba(255, 252, 224, 0.42);
+  background: url('./assets/casual_ui/hud/slices/maphud_cta_green.png') center/100% 100% no-repeat;
+  color: #1d4ed8;
+  text-shadow: 0 2px 0 rgba(255, 252, 224, 0.46);
 }
 
 .screen-world-map .casual-nav-shell.worldmap-bottom-nav {
   border-radius: 1.05rem !important;
-  border: 2px solid rgba(164, 107, 255, 0.9) !important;
-  background:
-    linear-gradient(180deg, #a855f7 0%, #7c3aed 45%, #5b21b6 100%) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.26),
-    0 8px 0 #4c1d95,
-    0 18px 30px rgba(49, 17, 102, 0.44) !important;
+  border: 0 !important;
+  background: url('./assets/casual_ui/hud/slices/maphud_top_strip.png') center/100% 100% no-repeat !important;
+  box-shadow: 0 16px 26px rgba(30, 58, 138, 0.42) !important;
   padding: 0.4rem 0.42rem !important;
   gap: 0.32rem;
 }
@@ -1110,34 +1096,25 @@ button:disabled {
 .screen-world-map .worldmap-bottom-nav .worldmap-nav-tab {
   min-height: 3.25rem;
   border-radius: 0.8rem !important;
-  border: 1.5px solid rgba(255,255,255,0.22) !important;
-  background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.02)) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.2),
-    0 4px 0 rgba(57,22,127,0.78),
-    0 8px 16px rgba(40, 15, 90, 0.3) !important;
+  border: 0 !important;
+  background: url('./assets/casual_ui/hud/slices/maphud_tab_bg.png') center/100% 100% no-repeat !important;
+  box-shadow: 0 6px 14px rgba(30, 58, 138, 0.34) !important;
   padding: 0.3rem 0.2rem !important;
 }
 
 .screen-world-map .worldmap-bottom-nav .hero-nav-button-home {
-  order: 3;
+  order: 2;
   min-height: 4.5rem;
   transform: translateY(-0.7rem) !important;
   border-radius: 1rem !important;
-  border-color: rgba(255, 236, 179, 0.82) !important;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(255,255,255,0.26), rgba(255,255,255,0) 44%),
-    linear-gradient(180deg, #60a5fa 0%, #38bdf8 46%, #2563eb 100%) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.42),
-    0 7px 0 rgba(37,99,235,0.85),
-    0 16px 24px rgba(37,99,235,0.36) !important;
+  border-color: transparent !important;
+  background: url('./assets/casual_ui/hud/slices/maphud_home_bg.png') center/100% 100% no-repeat !important;
+  box-shadow: 0 16px 24px rgba(245, 158, 11, 0.34) !important;
 }
 
 .screen-world-map .worldmap-bottom-nav .hero-nav-button-hero { order: 1; }
-.screen-world-map .worldmap-bottom-nav .hero-nav-button-quests { order: 2; }
-.screen-world-map .worldmap-bottom-nav .hero-nav-button-wins { order: 4; }
-.screen-world-map .worldmap-bottom-nav .hero-nav-button-stats { order: 5; }
+.screen-world-map .worldmap-bottom-nav .hero-nav-button-wins { order: 3; }
+.screen-world-map .worldmap-bottom-nav .hero-nav-button-stats { order: 4; }
 
 .screen-world-map .worldmap-bottom-nav .hero-nav-label {
   display: none;
