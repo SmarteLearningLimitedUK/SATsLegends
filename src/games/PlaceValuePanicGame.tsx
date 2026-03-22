@@ -61,6 +61,7 @@ const SOURCE_ANCHORS: AnchorPoint[] = [
 ];
 
 const FULL_PLACE_VALUE_HINTS = ['Th', 'Th', 'H', 'T', 'U'] as const;
+const TARGET_ROW_Y_OFFSET_PX = 30;
 
 const ONES_WORDS = [
   'zero',
@@ -195,9 +196,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const isTallPhone = !isTablet && ratio > 1.95;
 
     return {
-      questionTop: isTablet ? 26.4 : (isTallPhone ? 27.2 : 26.8),
-      questionWidth: isTablet ? 58 : 63,
-      questionHeight: isTablet ? 9.8 : 10.6,
+      questionTop: isTablet ? 30.8 : (isTallPhone ? 31.2 : 30.5),
+      questionWidth: isTablet ? 58 : 62,
+      questionHeight: isTablet ? 6.8 : 7.4,
       targetY: isTablet ? 75.2 : (isTallPhone ? 74.7 : 74.9),
       sourceY: isTablet ? 78.2 : (isTallPhone ? 79 : 78.7),
       tokenWidth: isTablet ? '9.8%' : '11.2%',
@@ -205,10 +206,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       sourceHeight: isTablet ? '8.9%' : '9.5%',
       targetFont: isTablet ? 'clamp(2.8rem,5.9vw,4.9rem)' : 'clamp(2.45rem,6.8vw,4.55rem)',
       sourceFont: isTablet ? 'clamp(2.7rem,5.7vw,4.7rem)' : 'clamp(2.3rem,6.4vw,4.35rem)',
-      healthTop: isTablet ? 55 : 58,
-      healthWidth: isTablet ? 14 : 16,
-      enemyTop: isTablet ? 43.5 : (isTallPhone ? 45 : 44.4),
-      enemyWidth: isTablet ? 16 : 20,
+      healthTop: isTablet ? 50.5 : 54.2,
+      healthWidth: isTablet ? 28 : 32,
+      enemyTop: isTablet ? 37.6 : (isTallPhone ? 40.2 : 39.5),
+      enemyWidth: isTablet ? 32 : 40,
     };
   }, [viewport.height, viewport.width]);
 
@@ -308,7 +309,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
     activeTargetAnchors.forEach((anchor, index) => {
       const cx = rect.left + (anchor.x / 100) * rect.width;
-      const cy = rect.top + (layout.targetY / 100) * rect.height;
+      const cy = rect.top + (layout.targetY / 100) * rect.height - TARGET_ROW_Y_OFFSET_PX;
       const d = Math.hypot(clientX - cx, clientY - cy);
       if (!best || d < best.distance) best = { location: 'target', index, distance: d };
     });
@@ -495,7 +496,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         className="absolute right-[2%] z-30 max-w-[8.8rem] rounded-md bg-slate-900/72 px-1.5 py-1 shadow-[0_10px_24px_rgba(2,6,23,0.48)]"
         style={{ top: `${layout.healthTop}%`, width: `${layout.healthWidth}%` }}
       >
-        <div className="mb-0.5 text-center text-[7px] font-black uppercase tracking-[0.1em] text-amber-200">
+        <div className="mb-1 text-center text-[9px] font-black uppercase tracking-[0.1em] text-amber-200 md:text-[10px]">
           Goblin Health {goblinHealth}/10
         </div>
         <div className="grid grid-cols-10 gap-0.5">
@@ -505,6 +506,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               className={`h-1 rounded-full ${
                 idx < goblinHealth ? 'bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.75)]' : 'bg-slate-600/50'
               }`}
+              style={{ height: '0.4rem' }}
             />
           ))}
         </div>
@@ -568,7 +570,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               className="absolute -translate-x-1/2 -translate-y-1/2 rounded-xl"
               style={{
                 left: `${anchor.x}%`,
-                top: `${layout.targetY}%`,
+                top: `calc(${layout.targetY}% - ${TARGET_ROW_Y_OFFSET_PX}px)`,
                 width: layout.tokenWidth,
                 height: layout.targetHeight,
               }}
