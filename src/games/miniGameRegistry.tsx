@@ -18,6 +18,7 @@ import MedianMountainGame from './MedianMountainGame';
 import MeasurementForgeGame from './MeasurementForgeGame';
 import MonsterMarketGame from './MonsterMarketGame';
 import ModeMinerGame from './ModeMinerGame';
+import NumberLineNinjaGame from './NumberLineNinjaGame';
 import OrderOpsArenaGame from './OrderOpsArenaGame';
 import PerimeterPathGame from './PerimeterPathGame';
 import PlaceValuePanicGame from './PlaceValuePanicGame';
@@ -63,6 +64,7 @@ export type MiniGameRegistryKey =
   | 'MeasurementForgeGame'
   | 'MonsterMarketGame'
   | 'ModeMinerGame'
+  | 'NumberLineNinjaGame'
   | 'OrderOpsArenaGame'
   | 'PerimeterPathGame'
   | 'PlaceValuePanicGame'
@@ -116,6 +118,7 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   MeasurementForgeGame: asMiniGame('measurement_forge', MeasurementForgeGame),
   MonsterMarketGame: asMiniGame('monster_market', MonsterMarketGame),
   ModeMinerGame: asMiniGame('mode_miner', ModeMinerGame),
+  NumberLineNinjaGame: asMiniGame('number_line_ninja', NumberLineNinjaGame),
   OrderOpsArenaGame: asMiniGame('order_ops_arena', OrderOpsArenaGame),
   PerimeterPathGame: asMiniGame('perimeter_path', PerimeterPathGame),
   PlaceValuePanicGame: asMiniGame('place_value_panic', PlaceValuePanicGame),

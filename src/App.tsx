@@ -169,6 +169,9 @@ const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKey | nul
     case 'equation_grove':
       return level.blueprintKey === 'order_ops_arena' ? 'OrderOpsArenaGame' : 'RuneLockDungeonsGame';
     case 'coordinate_quest':
+      if (level.blueprintKey === 'number_line_ninja') {
+        return 'NumberLineNinjaGame';
+      }
       return 'CoordinateTranslationGame';
     case 'calculation_clash':
       return level.blueprintKey === 'division_dock' ? 'DivisionDockGame' : 'CalculationCrashGame';
@@ -732,6 +735,9 @@ const App: React.FC = () => {
         }
         return renderFromRegistry('RuneLockDungeonsGame', sharedProps);
       case 'coordinate_quest':
+        if (selectedLevel.blueprintKey === 'number_line_ninja') {
+          return renderFromRegistry('NumberLineNinjaGame', sharedProps);
+        }
         return renderFromRegistry('CoordinateTranslationGame', sharedProps);
       case 'calculation_clash':
         if (selectedLevel.blueprintKey === 'division_dock') {

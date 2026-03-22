@@ -50,6 +50,11 @@ interface CalculationCrashGameProps {
   onBack: () => void;
 }
 
+type AnswerFeedback = {
+  type: 'hit' | 'miss' | 'clear';
+  message: string;
+};
+
 const INITIAL_HEALTH = 100;
 const SPAWN_INTERVAL_BASE = 3000;
 const WAVE_MONSTER_COUNT_BASE = 5;
@@ -120,6 +125,7 @@ const CalculationCrashGame: React.FC<CalculationCrashGameProps> = ({
     status: 'start',
     inputValue: '',
   });
+  const [answerFeedback, setAnswerFeedback] = useState<AnswerFeedback | null>(null);
 
   const monstersSpawnedInWaveRef = useRef(0);
   const gameLoopRef = useRef<number | null>(null);

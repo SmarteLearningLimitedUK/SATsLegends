@@ -224,13 +224,13 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
   );
 
   return (
-    <div className="fixed inset-0 flex flex-col overflow-hidden bg-[#050505] font-sans text-white select-none">
+    <div className="relative flex h-full w-full flex-col overflow-hidden bg-[#050505] font-sans text-white select-none">
       <div
         className="pointer-events-none absolute inset-0"
         style={{ backgroundImage: 'radial-gradient(#6366f1 1px, transparent 1px)', backgroundSize: '30px 30px', opacity: 0.1 }}
       />
 
-      <header className="z-20 flex h-16 items-center justify-between border-b border-white/10 bg-black/40 px-8 backdrop-blur-md">
+      <header className="z-20 flex h-14 items-center justify-between border-b border-white/10 bg-black/40 px-3 backdrop-blur-md sm:h-16 sm:px-5 md:px-8">
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -249,7 +249,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-3 sm:gap-5 md:gap-8">
           <div className="flex flex-col items-end">
             <span className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">Total XP</span>
             <span className="text-sm font-black tabular-nums text-indigo-400">{score}</span>
@@ -262,7 +262,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
         </div>
       </header>
 
-      <main className="relative z-10 flex flex-1 flex-col items-center justify-center p-8">
+      <main className="relative z-10 flex min-h-0 flex-1 flex-col p-2 sm:p-3 md:p-4">
         <AnimatePresence mode="wait">
           {(gameState === 'playing' || gameState === 'success') && currentProblem && (
             <motion.div
@@ -270,37 +270,37 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.05 }}
-              className="grid w-full max-w-6xl grid-cols-1 items-stretch gap-12 lg:grid-cols-2"
+              className="grid h-full w-full min-h-0 grid-cols-1 grid-rows-[0.44fr_0.56fr] gap-2 xl:grid-cols-2 xl:grid-rows-1 xl:gap-4"
             >
-              <section className="relative flex flex-col gap-8 overflow-hidden rounded-3xl border border-white/10 bg-[#141414] p-10 shadow-2xl">
+              <section className="relative flex min-h-0 flex-col gap-3 overflow-hidden rounded-2xl border border-white/10 bg-[#141414] p-4 shadow-2xl sm:gap-4 sm:p-5">
                 <div className="absolute right-0 top-0 p-8 opacity-5">
                   <Cpu className="h-48 w-48" />
                 </div>
 
-                <div className="flex items-center gap-4">
-                  <div className="rounded-2xl bg-indigo-500/20 p-3">
-                    <Target className="h-6 w-6 text-indigo-400" />
+                <div className="flex items-center gap-2.5 sm:gap-3">
+                  <div className="rounded-xl bg-indigo-500/20 p-2 sm:rounded-2xl sm:p-3">
+                    <Target className="h-5 w-5 text-indigo-400 sm:h-6 sm:w-6" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-black tracking-tight text-white uppercase italic">Mission Objective</h2>
-                    <p className="text-sm font-bold tracking-widest text-slate-500 uppercase">Data Processing Unit</p>
+                    <h2 className="text-base font-black tracking-tight text-white uppercase italic sm:text-xl">Mission Objective</h2>
+                    <p className="text-[10px] font-bold tracking-widest text-slate-500 uppercase sm:text-xs">Data Processing Unit</p>
                   </div>
                 </div>
 
-                <div className="space-y-8">
-                  <div className="flex flex-col items-center gap-4 rounded-3xl border border-white/5 bg-black/40 p-8">
-                    <span className="text-xs font-black tracking-[0.3em] text-indigo-400 uppercase">Input Value</span>
-                    <span className="text-6xl font-black tabular-nums tracking-tighter text-white">
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="flex flex-col items-center gap-2 rounded-2xl border border-white/5 bg-black/40 p-3 sm:gap-3 sm:rounded-3xl sm:p-5">
+                    <span className="text-[10px] font-black tracking-[0.22em] text-indigo-400 uppercase sm:text-xs sm:tracking-[0.3em]">Input Value</span>
+                    <span className="text-3xl font-black tabular-nums tracking-tighter text-white sm:text-4xl md:text-5xl">
                       {currentProblem.number.toLocaleString(undefined, { maximumFractionDigits: 3 })}
                     </span>
                   </div>
 
-                  <div className="flex flex-col gap-4">
-                    <div className="flex items-center gap-3">
-                      <Zap className="h-5 w-5 text-amber-400" />
-                      <span className="text-sm font-black tracking-widest text-slate-400 uppercase">Rounding Instruction</span>
+                  <div className="flex flex-col gap-2 sm:gap-3">
+                    <div className="flex items-center gap-2">
+                      <Zap className="h-4 w-4 text-amber-400 sm:h-5 sm:w-5" />
+                      <span className="text-[10px] font-black tracking-[0.14em] text-slate-400 uppercase sm:text-xs">Rounding Instruction</span>
                     </div>
-                    <p className="text-3xl leading-tight font-bold text-white">
+                    <p className="text-lg leading-tight font-bold text-white sm:text-xl md:text-2xl">
                       Round this number to the{' '}
                       <span className="text-indigo-400 underline decoration-indigo-500/50 underline-offset-8">{currentProblem.target}</span>.
                     </p>
@@ -322,27 +322,27 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
                 </div>
               </section>
 
-              <section className="flex flex-col gap-8">
-                <div className="flex flex-1 flex-col gap-8 rounded-3xl border border-white/10 bg-[#141414] p-10 shadow-2xl">
-                  <div className="flex items-center justify-between rounded-2xl border border-white/5 bg-black/40 p-6">
-                    <span className="text-xs font-black tracking-widest text-slate-500 uppercase">Output Buffer</span>
-                    <span className="min-h-[1em] text-4xl font-black tabular-nums text-indigo-400">
+              <section className="min-h-0">
+                <div className="flex h-full min-h-0 flex-col gap-3 rounded-2xl border border-white/10 bg-[#141414] p-4 shadow-2xl sm:gap-4 sm:p-5">
+                  <div className="flex items-center justify-between rounded-xl border border-white/5 bg-black/40 p-3 sm:rounded-2xl sm:p-4">
+                    <span className="text-[10px] font-black tracking-[0.14em] text-slate-500 uppercase sm:text-xs">Output Buffer</span>
+                    <span className="min-h-[1em] text-2xl font-black tabular-nums text-indigo-400 sm:text-3xl md:text-4xl">
                       {userInput || '0'}
                       <motion.span
                         animate={{ opacity: [1, 0] }}
                         transition={{ duration: 0.8, repeat: Infinity }}
-                        className="ml-1 inline-block h-8 w-1 align-middle bg-indigo-400"
+                        className="ml-1 inline-block h-6 w-1 align-middle bg-indigo-400 sm:h-7"
                       />
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-3 gap-2 sm:gap-3">
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, '.', 0, 'DEL'].map((val) => (
                       <button
                         key={val}
                         onClick={() => handleKeypad(val.toString())}
                         disabled={gameState === 'success'}
-                        className="flex h-16 items-center justify-center rounded-xl border border-white/5 bg-white/5 text-xl font-black transition-all hover:bg-white/10 active:bg-indigo-500/20 disabled:opacity-50"
+                        className="flex h-12 items-center justify-center rounded-lg border border-white/5 bg-white/5 text-lg font-black transition-all hover:bg-white/10 active:bg-indigo-500/20 disabled:opacity-50 sm:h-14 sm:rounded-xl sm:text-xl"
                       >
                         {val}
                       </button>
@@ -355,7 +355,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         onClick={nextLevel}
-                        className="flex w-full items-center justify-center gap-3 rounded-2xl bg-indigo-600 py-6 text-sm font-black tracking-[0.2em] text-white uppercase shadow-xl shadow-indigo-500/20 transition-all hover:bg-indigo-700"
+                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3 text-[11px] font-black tracking-[0.16em] text-white uppercase shadow-xl shadow-indigo-500/20 transition-all hover:bg-indigo-700 sm:gap-3 sm:rounded-2xl sm:py-4 sm:text-sm sm:tracking-[0.2em]"
                       >
                         Initiate Next Jump <ChevronRight className="h-5 w-5" />
                       </motion.button>
@@ -363,7 +363,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
                       <button
                         onClick={handleSubmit}
                         disabled={!userInput}
-                        className="flex w-full items-center justify-center gap-3 rounded-2xl bg-white py-6 text-sm font-black tracking-[0.2em] text-black uppercase shadow-xl transition-all hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-white py-3 text-[11px] font-black tracking-[0.16em] text-black uppercase shadow-xl transition-all hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-50 sm:gap-3 sm:rounded-2xl sm:py-4 sm:text-sm sm:tracking-[0.2em]"
                       >
                         Confirm Calculation <ChevronRight className="h-5 w-5" />
                       </button>
@@ -381,7 +381,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 z-50 flex items-center justify-center bg-black/90 p-12 text-center backdrop-blur-md"
+              className="absolute inset-0 z-50 flex items-center justify-center bg-black/90 p-8 text-center backdrop-blur-md"
             >
               <div className="flex max-w-md flex-col items-center">
                 <div className="relative mb-8 flex h-24 w-24 items-center justify-center rounded-[2.5rem] bg-indigo-600 shadow-2xl shadow-indigo-500/40">
@@ -392,11 +392,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
                     className="absolute inset-0 rounded-[2.5rem] border-4 border-indigo-400"
                   />
                 </div>
-                <h2 className="mb-4 text-4xl font-black tracking-tighter text-white uppercase italic">Rounding Rocket</h2>
-                <p className="mb-8 leading-relaxed font-medium text-slate-400">
-                  The fleet needs precise navigation data. Round each value to the required accuracy,
-                  fuel your rocket, and reach the edge of the solar system.
-                </p>
+                <h2 className="mb-6 text-4xl font-black tracking-tighter text-white uppercase italic">Rounding Rocket</h2>
                 <button
                   onClick={startGame}
                   className="group flex items-center gap-3 rounded-full bg-indigo-600 px-12 py-5 text-sm font-black tracking-[0.2em] text-white uppercase shadow-2xl shadow-indigo-500/20 transition-all hover:bg-indigo-700"
@@ -455,20 +451,20 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className={`absolute bottom-12 left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 rounded-2xl border px-8 py-4 shadow-2xl ${
+              className={`absolute bottom-3 left-1/2 z-40 flex w-[min(94vw,36rem)] -translate-x-1/2 items-center justify-center gap-2 rounded-xl border px-4 py-2 text-center shadow-2xl sm:bottom-6 sm:w-auto sm:gap-3 sm:rounded-2xl sm:px-8 sm:py-4 ${
                 feedback.type === 'success'
                   ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400'
                   : 'border-rose-500/20 bg-rose-500/10 text-rose-400'
               }`}
             >
               {feedback.type === 'success' ? <CheckCircle2 className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
-              <span className="text-sm font-black tracking-wide uppercase">{feedback.message}</span>
+              <span className="text-[10px] font-black tracking-wide uppercase sm:text-sm">{feedback.message}</span>
             </motion.div>
           )}
         </AnimatePresence>
       </main>
 
-      <footer className="z-20 flex h-10 items-center justify-between border-t border-white/10 bg-black/40 px-8 backdrop-blur-md">
+      <footer className="z-20 flex h-8 items-center justify-between border-t border-white/10 bg-black/40 px-3 backdrop-blur-md sm:h-9 sm:px-5 md:h-10 md:px-8">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
             <Star className="h-3 w-3 text-indigo-400" />
