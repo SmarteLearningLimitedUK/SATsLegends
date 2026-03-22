@@ -241,40 +241,40 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
   );
 
   return (
-    <div className="relative h-full w-full overflow-hidden bg-zinc-950 text-white selection:bg-yellow-500/30">
+    <div className="relative h-full w-full overflow-hidden bg-[#071a3a] text-white selection:bg-yellow-400/35">
       <div
         className="pointer-events-none absolute inset-0 opacity-10"
-        style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }}
+        style={{ backgroundImage: 'radial-gradient(rgba(251,191,36,0.75) 1px, transparent 1px)', backgroundSize: '40px 40px' }}
       />
 
-      <div className="relative z-10 flex h-full flex-col p-6 lg:flex-row lg:gap-8">
-        <div className="flex flex-1 flex-col gap-6">
+      <div className="relative z-10 flex h-full w-full min-h-0 flex-col gap-2 p-2 md:gap-3 md:p-3 lg:flex-row lg:gap-3">
+        <div className="flex min-h-0 flex-1 flex-col gap-2 md:gap-3">
           <header className="vault-panel flex items-center justify-between p-4">
             <div className="flex items-center gap-4">
               <button
                 type="button"
                 onClick={onBack}
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-900 text-zinc-300 transition hover:bg-zinc-800"
+                className="flex h-10 w-10 items-center justify-center rounded-xl border border-blue-200/40 bg-blue-950/70 text-blue-100 transition hover:bg-blue-900"
                 aria-label="Back to levels"
               >
                 <ChevronLeft className="h-5 w-5" />
               </button>
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-800 text-yellow-500">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-amber-200/40 bg-blue-900/80 text-amber-300">
                 <ShieldCheck className="h-7 w-7" />
               </div>
               <div>
                 <h1 className="text-xl font-black tracking-tighter text-white italic">VOLUME VAULT</h1>
-                <p className="text-[10px] font-bold tracking-[0.3em] text-zinc-500 uppercase">{currentVault.name}</p>
+                <p className="text-[10px] font-bold tracking-[0.3em] text-amber-200/70 uppercase">{currentVault.name}</p>
               </div>
             </div>
             <div className="flex gap-8 text-right">
               <div>
-                <p className="text-[10px] font-black tracking-widest text-zinc-500 uppercase">Level</p>
-                <p className="font-mono text-2xl font-black text-yellow-500">{state.level}</p>
+                <p className="text-[10px] font-black tracking-widest text-blue-100/70 uppercase">Level</p>
+                <p className="font-mono text-2xl font-black text-amber-300">{state.level}</p>
               </div>
               <div>
-                <p className="text-[10px] font-black tracking-widest text-zinc-500 uppercase">Total Value</p>
-                <p className="font-mono text-2xl font-black">${state.score.toLocaleString()}</p>
+                <p className="text-[10px] font-black tracking-widest text-blue-100/70 uppercase">Total Value</p>
+                <p className="font-mono text-2xl font-black text-blue-100">${state.score.toLocaleString()}</p>
               </div>
             </div>
           </header>
@@ -288,11 +288,11 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
                   exit={{ opacity: 0, scale: 1.1 }}
                   className="flex flex-col items-center p-8 text-center"
                 >
-                  <div className="mb-8 rounded-full border-4 border-zinc-800 bg-zinc-900 p-8 shadow-2xl">
-                    <Lock className="h-24 w-24 text-zinc-600" />
+                  <div className="mb-8 rounded-full border-4 border-blue-200/25 bg-blue-950/75 p-8 shadow-2xl">
+                    <Lock className="h-24 w-24 text-amber-300/65" />
                   </div>
                   <h2 className="mb-4 text-4xl font-black tracking-tighter text-white uppercase italic">Secure Storage</h2>
-                  <p className="mb-8 max-w-md font-medium text-zinc-400">
+                  <p className="mb-8 max-w-md font-medium text-blue-100/78">
                     Calculate the volume of 3D shapes to crack the code and unlock the treasure vaults.
                   </p>
                   <button
@@ -334,16 +334,16 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
                   </div>
 
                   <div className="absolute left-8 top-8 space-y-4">
-                    <div className="flex items-center gap-3 rounded-lg border border-white/10 bg-black/60 p-3 backdrop-blur-md">
-                      <Maximize className="h-4 w-4 text-yellow-500" />
+                    <div className="flex items-center gap-3 rounded-lg border border-blue-100/18 bg-blue-950/60 p-3 backdrop-blur-md">
+                      <Maximize className="h-4 w-4 text-amber-300" />
                       <span className="text-xs font-bold tracking-widest uppercase">Length: {state.currentProblem?.length}{state.currentProblem?.unit}</span>
                     </div>
-                    <div className="flex items-center gap-3 rounded-lg border border-white/10 bg-black/60 p-3 backdrop-blur-md">
-                      <Layers className="h-4 w-4 text-yellow-500" />
+                    <div className="flex items-center gap-3 rounded-lg border border-blue-100/18 bg-blue-950/60 p-3 backdrop-blur-md">
+                      <Layers className="h-4 w-4 text-amber-300" />
                       <span className="text-xs font-bold tracking-widest uppercase">Width: {state.currentProblem?.width}{state.currentProblem?.unit}</span>
                     </div>
-                    <div className="flex items-center gap-3 rounded-lg border border-white/10 bg-black/60 p-3 backdrop-blur-md">
-                      <Box className="h-4 w-4 text-yellow-500" />
+                    <div className="flex items-center gap-3 rounded-lg border border-blue-100/18 bg-blue-950/60 p-3 backdrop-blur-md">
+                      <Box className="h-4 w-4 text-amber-300" />
                       <span className="text-xs font-bold tracking-widest uppercase">Height: {state.currentProblem?.height}{state.currentProblem?.unit}</span>
                     </div>
                   </div>
@@ -351,10 +351,10 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
                   <div className="absolute bottom-8 right-8">
                     <div className={`flex items-center gap-4 rounded-xl border-2 p-4 transition-colors ${
                       state.status === 'unlocked'
-                        ? 'border-green-500 bg-green-500/10 text-green-500'
+                        ? 'border-emerald-300/70 bg-emerald-500/20 text-emerald-200'
                         : state.status === 'failed'
-                          ? 'border-red-500 bg-red-500/10 text-red-500'
-                          : 'border-zinc-700 bg-black/60 text-zinc-400'
+                          ? 'border-rose-300/70 bg-rose-500/20 text-rose-200'
+                          : 'border-blue-200/24 bg-blue-950/66 text-blue-100/78'
                     }`}>
                       {state.status === 'unlocked' ? <Unlock className="h-6 w-6" /> : <Lock className="h-6 w-6" />}
                       <span className="text-sm font-black tracking-widest uppercase">{state.message}</span>
@@ -366,45 +366,45 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
           </div>
         </div>
 
-        <div className="flex w-full flex-col gap-6 lg:w-[400px]">
+        <div className="flex h-[42%] min-h-0 w-full flex-col gap-2 md:h-auto md:w-[380px] md:flex-none md:gap-3">
           <div className="vault-panel flex flex-1 flex-col p-8">
-            <div className="mb-8 flex items-center justify-between border-b border-zinc-800 pb-4">
+            <div className="mb-5 flex items-center justify-between border-b border-blue-100/18 pb-3 md:mb-8 md:pb-4">
               <div className="flex items-center gap-2">
-                <Settings className="h-4 w-4 text-zinc-500" />
-                <span className="text-xs font-bold tracking-widest text-zinc-500 uppercase">Manual Override</span>
+                <Settings className="h-4 w-4 text-amber-300/80" />
+                <span className="text-xs font-bold tracking-widest text-blue-100/70 uppercase">Manual Override</span>
               </div>
-              <History className="h-4 w-4 text-zinc-500" />
+              <History className="h-4 w-4 text-amber-300/80" />
             </div>
 
-            <div className="flex flex-1 flex-col gap-8">
-              <div className="vault-display flex h-24 items-center justify-end rounded-xl px-8 text-5xl">
+            <div className="flex flex-1 min-h-0 flex-col gap-4 md:gap-8">
+              <div className="vault-display flex h-20 items-center justify-end rounded-xl px-5 text-4xl md:h-24 md:px-8 md:text-5xl">
                 {inputValue || '0'}
                 <motion.span
                   animate={{ opacity: [1, 0] }}
                   transition={{ repeat: Infinity, duration: 0.8 }}
-                  className="ml-2 h-10 w-1 bg-green-500"
+                  className="ml-2 h-10 w-1 bg-amber-300"
                 />
               </div>
 
-              <div className="flex justify-center py-4">
-                <div className="relative flex h-40 w-40 items-center justify-center">
+              <div className="flex justify-center py-1 md:py-4">
+                <div className="relative flex h-32 w-32 items-center justify-center md:h-40 md:w-40">
                   <motion.div
                     animate={{ rotate: isDialRotating ? 360 : 0 }}
                     transition={{ duration: 0.9, ease: 'easeInOut' }}
                     className="vault-dial flex h-full w-full items-center justify-center"
                   >
-                    <div className="h-12 w-2 -translate-y-8 rounded-full bg-zinc-600" />
-                    <div className="absolute inset-4 rounded-full border-2 border-zinc-700/50" />
+                    <div className="h-12 w-2 -translate-y-8 rounded-full bg-amber-300/90" />
+                    <div className="absolute inset-4 rounded-full border-2 border-amber-200/40" />
                   </motion.div>
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-zinc-700 bg-zinc-900">
-                      <div className="h-2 w-2 rounded-full bg-yellow-500 shadow-[0_0_10px_#d4af37]" />
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-blue-200/35 bg-blue-950/85">
+                      <div className="h-2 w-2 rounded-full bg-amber-300 shadow-[0_0_10px_rgba(251,191,36,0.95)]" />
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-2 md:gap-3">
                 {['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'DEL'].map((key) => (
                   <button
                     key={key}
@@ -417,7 +417,7 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
                 <button
                   onClick={checkAnswer}
                   disabled={!inputValue || state.status !== 'playing'}
-                  className="vault-button col-span-2 h-14 bg-yellow-500/10 text-sm font-black text-yellow-500 hover:bg-yellow-500/20 disabled:opacity-50"
+                  className="vault-button col-span-2 h-14 border-amber-200/45 bg-amber-400/12 text-sm font-black text-amber-300 hover:bg-amber-400/24 disabled:opacity-50"
                 >
                   ENGAGE LOCK
                 </button>
@@ -427,7 +427,7 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
                 {state.status === 'unlocked' ? (
                   <button
                     onClick={nextLevel}
-                    className="flex w-full items-center justify-center gap-3 rounded-xl bg-green-500 py-5 font-black text-black transition-all hover:bg-green-400"
+                    className="flex w-full items-center justify-center gap-3 rounded-xl bg-amber-400 py-4 font-black text-slate-900 transition-all hover:bg-amber-300 md:py-5"
                   >
                     PROCEED TO NEXT VAULT
                     <ChevronRight className="h-5 w-5" />
@@ -435,7 +435,7 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
                 ) : state.status === 'failed' ? (
                   <button
                     onClick={retryCurrent}
-                    className="flex w-full items-center justify-center gap-3 rounded-xl bg-red-500 py-5 font-black text-white transition-all hover:bg-red-400"
+                    className="flex w-full items-center justify-center gap-3 rounded-xl bg-blue-500 py-4 font-black text-white transition-all hover:bg-blue-400 md:py-5"
                   >
                     <RotateCcw className="h-5 w-5" />
                     RETRY BREACH
@@ -452,30 +452,30 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="absolute inset-0 z-50 flex items-center justify-center bg-black/95 p-12 text-center backdrop-blur-xl"
+            className="absolute inset-0 z-50 flex items-center justify-center bg-[#060f20]/95 p-12 text-center backdrop-blur-xl"
           >
             <div className="flex max-w-md flex-col items-center">
-              <div className="mb-8 flex h-32 w-32 items-center justify-center rounded-full bg-yellow-500 shadow-[0_0_50px_rgba(212,175,55,0.4)]">
-                <Trophy className="h-16 w-16 text-black" />
+              <div className="mb-8 flex h-32 w-32 items-center justify-center rounded-full bg-amber-400 shadow-[0_0_50px_rgba(251,191,36,0.35)]">
+                <Trophy className="h-16 w-16 text-slate-900" />
               </div>
               <h2 className="mb-4 text-5xl font-black tracking-tighter text-white uppercase italic">Master Cracker</h2>
-              <p className="mb-12 leading-relaxed font-medium text-zinc-400">
+              <p className="mb-12 leading-relaxed font-medium text-blue-100/78">
                 You have successfully breached all high-security vaults. Your spatial calculation skills are legendary.
               </p>
               <div className="vault-panel mb-6 w-full p-8">
-                <p className="mb-2 text-[10px] font-black tracking-widest text-zinc-500 uppercase">Final Loot Value</p>
-                <p className="text-5xl font-black text-yellow-500">${state.score.toLocaleString()}</p>
+                <p className="mb-2 text-[10px] font-black tracking-widest text-blue-100/70 uppercase">Final Loot Value</p>
+                <p className="text-5xl font-black text-amber-300">${state.score.toLocaleString()}</p>
               </div>
               <div className="flex w-full flex-col gap-3">
                 <button
                   onClick={completeMission}
-                  className="flex items-center justify-center gap-3 rounded-full bg-white px-12 py-5 font-black text-black transition-all hover:bg-zinc-200"
+                  className="flex items-center justify-center gap-3 rounded-full bg-blue-400 px-12 py-5 font-black text-white transition-all hover:bg-blue-300"
                 >
                   <CheckCircle2 className="h-5 w-5" /> SUBMIT VAULT REPORT
                 </button>
                 <button
                   onClick={startExpedition}
-                  className="flex items-center justify-center gap-3 rounded-full bg-yellow-500 px-12 py-5 font-black text-black transition-all hover:bg-yellow-400"
+                  className="flex items-center justify-center gap-3 rounded-full bg-amber-400 px-12 py-5 font-black text-slate-900 transition-all hover:bg-amber-300"
                 >
                   <RotateCcw className="h-5 w-5" /> NEW EXPEDITION
                 </button>
@@ -491,7 +491,7 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
-            className="absolute bottom-12 left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 rounded-2xl border border-red-500/20 bg-red-500/10 px-8 py-4 text-red-400 shadow-2xl"
+            className="absolute bottom-12 left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 rounded-2xl border border-rose-300/35 bg-rose-500/18 px-8 py-4 text-rose-100 shadow-2xl"
           >
             <AlertCircle className="h-5 w-5" />
             <span className="text-sm font-black tracking-wide uppercase">SECURITY LOCKDOWN. EXTRACTION IN PROGRESS.</span>
@@ -499,25 +499,25 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
         )}
       </AnimatePresence>
 
-      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[8px] font-bold tracking-[0.4em] text-zinc-700 uppercase">
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[8px] font-bold tracking-[0.4em] text-blue-100/38 uppercase">
         INDUSTRIAL SECURITY PROTOCOL // V-VAULT 2.0.1
       </div>
 
       <style>{`
         .vault-panel {
-          background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
-          border: 2px solid #4a4a4a;
-          box-shadow: 10px 10px 20px #0d0d0d, -10px -10px 20px #272727;
+          background: linear-gradient(145deg, #123e7a, #0a274f);
+          border: 2px solid rgba(251, 191, 36, 0.46);
+          box-shadow: 0 12px 24px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.12);
           border-radius: 20px;
         }
 
         .vault-display {
           font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-          background: #000;
-          border: 4px solid #333;
-          color: #00ff00;
-          text-shadow: 0 0 5px #00ff00;
-          box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2);
+          background: #071934;
+          border: 3px solid rgba(59, 130, 246, 0.55);
+          color: #fde68a;
+          text-shadow: 0 0 8px rgba(251, 191, 36, 0.62);
+          box-shadow: inset 0 0 14px rgba(59, 130, 246, 0.2);
         }
 
         .vault-button {
@@ -525,26 +525,27 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
           align-items: center;
           justify-content: center;
           border-radius: 0.5rem;
-          border: 2px solid #3f3f46;
-          background: #27272a;
+          border: 2px solid rgba(59, 130, 246, 0.55);
+          background: linear-gradient(180deg, #0f2f5d, #0a2346);
+          color: #dbeafe;
           transition: all 0.2s ease;
-          box-shadow: 4px 4px 8px #0d0d0d, -2px -2px 4px #272727;
+          box-shadow: 0 8px 14px rgba(0, 0, 0, 0.28);
         }
 
         .vault-button:hover {
-          background: #3f3f46;
+          background: linear-gradient(180deg, #144079, #0d2e5e);
         }
 
         .vault-button:active {
           transform: scale(0.95);
-          background: #18181b;
+          background: linear-gradient(180deg, #0d2b54, #0a2142);
         }
 
         .vault-dial {
           border-radius: 9999px;
-          border: 8px solid #3f3f46;
-          background: #27272a;
-          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+          border: 8px solid rgba(59, 130, 246, 0.48);
+          background: radial-gradient(circle at 30% 30%, #0f3a72, #0a2346);
+          box-shadow: 0 20px 34px rgba(0, 0, 0, 0.36);
         }
 
         .shape-container {
@@ -553,8 +554,8 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
 
         .cube-face {
           position: absolute;
-          border: 2px solid rgba(255, 255, 255, 0.2);
-          background: rgba(100, 100, 100, 0.1);
+          border: 2px solid rgba(251, 191, 36, 0.46);
+          background: rgba(30, 64, 175, 0.25);
           display: flex;
           align-items: center;
           justify-content: center;
