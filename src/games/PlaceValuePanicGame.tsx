@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import placeValueBackground from '../assets/maps/gemini-2.5-flash-image_using_the_same_aesthetic_-_create_a_dark_and_mysterious_forest_path_with_dense_f-1.jpg';
+import medDialogue from '../assets/bluedialoague/med dialogue.png';
 import goblinEnemy from '../assets/bosses/goblin.png';
 import GameActionDock from '../components/GameActionDock';
 import { triggerHaptic } from '../haptics';
@@ -204,8 +205,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
     return {
       questionTop: isTablet ? 31.1 : (isTallPhone ? 31.8 : 31.4),
-      questionWidth: isTablet ? 61 : 66,
-      questionHeight: isTablet ? 5.7 : 6.2,
+      questionWidth: isTablet ? 66 : 74,
       targetY: isTablet ? 73.2 : (isTallPhone ? 73.9 : 73.6),
       sourceY: isTablet ? 84.3 : (isTallPhone ? 85.2 : 84.8),
       tokenWidth: isTablet ? '8.9%' : '9.8%',
@@ -482,11 +482,18 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
       <div className="absolute inset-0 z-20" ref={playfieldRef}>
         <div
-          className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2 overflow-hidden"
-          style={{ top: `${layout.questionTop}%`, width: `${layout.questionWidth}%`, height: `${layout.questionHeight}%` }}
+          className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2"
+          style={{ top: `${layout.questionTop}%`, width: `${layout.questionWidth}%` }}
         >
+          <img
+            src={medDialogue}
+            alt=""
+            aria-hidden="true"
+            draggable={false}
+            className="block h-auto w-full"
+          />
           <div
-            className="mx-auto flex h-full w-full max-w-full items-center justify-center overflow-hidden px-[7%] text-center text-[clamp(0.66rem,1.62vw,0.92rem)] font-black leading-[1.08] tracking-[0.012em] text-white"
+            className="absolute inset-x-[16%] top-[22%] bottom-[22%] mx-auto flex items-center justify-center overflow-hidden text-center text-[clamp(0.72rem,1.85vw,1rem)] font-black uppercase leading-[1.08] tracking-[0.012em] text-white"
             style={{
               textShadow: '0 2px 6px rgba(2,6,23,0.62)',
               display: '-webkit-box',
