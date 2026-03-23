@@ -70,7 +70,7 @@ const GOBLIN_DAMAGE_LINES = ['Ouch!', 'Hey!', 'Oof!', 'Wahhh!', 'Ugh!'] as const
 
 const FULL_PLACE_VALUE_HINTS = ['Th', 'Th', 'H', 'T', 'U'] as const;
 const TARGET_ROW_Y_OFFSET_PX = 0;
-const SOURCE_ROW_Y_OFFSET_PX = 15;
+const SOURCE_ROW_Y_OFFSET_PX = 30;
 
 const ONES_WORDS = [
   'zero',
@@ -372,7 +372,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       healthWidth: isTablet ? 28 : 40,
       healthLeft: isTablet ? 66.7 : 69.4,
       enemyTop: isTablet ? 44.8 : (isTallPhone ? 46.8 : 46.4),
-      enemyWidth: isTablet ? 34 : 40,
+      enemyWidth: isTablet ? 42 : 50,
     };
   }, [viewport.height, viewport.width]);
 
