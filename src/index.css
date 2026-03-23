@@ -4221,15 +4221,16 @@ button:disabled {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: max(50px, calc(env(safe-area-inset-top) + 8px));
+  width: 100%;
+  margin-top: max(82px, calc(env(safe-area-inset-top) + 34px));
   pointer-events: none;
 }
 
 .avatar-carousel-banner {
   position: relative;
   width: 100%;
-  max-width: clamp(36rem, 128vw, 82rem);
-  height: clamp(6.2rem, 15vh, 10.2rem);
+  max-width: clamp(28rem, 100vw, 64rem);
+  height: clamp(7rem, 16vh, 11.2rem);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4240,8 +4241,8 @@ button:disabled {
 .avatar-carousel-banner-art {
   position: absolute;
   left: 50%;
-  top: 50%;
-  width: clamp(31rem, 138vw, 88rem);
+  top: 58%;
+  width: clamp(30rem, 118vw, 74rem);
   height: auto;
   max-width: none;
   max-height: none;

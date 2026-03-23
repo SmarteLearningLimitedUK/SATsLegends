@@ -159,13 +159,13 @@ const spanForSlots = (count: number, type: 'source' | 'target') => {
     return 58;
   }
 
-  if (count <= 2) return 22;
-  if (count === 3) return 32;
-  if (count === 4) return 42;
-  if (count === 5) return 56;
-  if (count === 6) return 66;
-  if (count === 7) return 76;
-  return 82;
+  if (count <= 2) return 18;
+  if (count === 3) return 26;
+  if (count === 4) return 34;
+  if (count === 5) return 44;
+  if (count === 6) return 52;
+  if (count === 7) return 60;
+  return 66;
 };
 
 const getDistractorDigits = (expectedDigits: number[], count: number): number[] => {
@@ -360,7 +360,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       submitWidth: isTablet ? 30 : 46,
       submitHeight: isTablet ? 8.6 : 9.2,
       targetY: isTablet ? 73.8 : (isTallPhone ? 74.4 : 74.1),
-      sourceY: isTablet ? 38.9 : (isTallPhone ? 39.6 : 39.3),
+      sourceY: isTablet ? 36.2 : (isTallPhone ? 36.9 : 36.6),
       targetWidth: isTablet ? '12.8%' : '16.9%',
       sourceWidth: isTablet ? '9.8%' : '12.2%',
       targetHeight: isTablet ? '12.2%' : '14.8%',
@@ -417,15 +417,21 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
   const sourceTokenBackdropWidth = useMemo(() => {
     const count = question.tokenValues.length;
-    if (count <= 4) return '58%';
-    if (count === 5) return '64%';
-    if (count === 6) return '70%';
-    return '76%';
-  }, [question.tokenValues.length]);
+    const rowSpan = spanForSlots(count, 'source');
+    const tokenWidth = Number.parseFloat(sourceTokenWidth) || Number.parseFloat(layout.sourceWidth) || 10;
+    const sidePadding = count >= 6 ? 6 : 8;
+    const computed = rowSpan + tokenWidth + sidePadding;
+    const clamped = Math.max(52, Math.min(96, computed));
+    return `${clamped.toFixed(1)}%`;
+  }, [layout.sourceWidth, question.tokenValues.length, sourceTokenWidth]);
 
   const sourceTokenBackdropHeight = useMemo(() => {
-    return question.tokenValues.length >= 6 ? '7.8%' : '7.2%';
-  }, [question.tokenValues.length]);
+    const baseTokenHeight = Number.parseFloat(layout.sourceHeight) || 10;
+    const extraPadding = question.tokenValues.length >= 6 ? 1.8 : 1.4;
+    const computed = baseTokenHeight + extraPadding;
+    const clamped = Math.max(8.6, Math.min(12.8, computed));
+    return `${clamped.toFixed(1)}%`;
+  }, [layout.sourceHeight, question.tokenValues.length]);
 
   const questionFrameConfig = useMemo(() => {
     const promptLength = question.prompt.trim().length;
