@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import placeValueBackground from '../assets/maps/gemini-2.5-flash-image_using_the_same_aesthetic_-_create_a_dark_and_mysterious_forest_path_with_dense_f-1.jpg';
 import medDialogue from '../assets/bluedialoague/med dialogue cropped.png';
@@ -415,47 +415,60 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
   const sourceTokenBackdropWidth = useMemo(() => {
     const count = question.tokenValues.length;
-    if (count <= 4) return '64%';
-    if (count === 5) return '72%';
-    if (count === 6) return '80%';
-    return '88%';
+    if (count <= 4) return '58%';
+    if (count === 5) return '64%';
+    if (count === 6) return '70%';
+    return '76%';
   }, [question.tokenValues.length]);
 
   const sourceTokenBackdropHeight = useMemo(() => {
-    return question.tokenValues.length >= 6 ? '9.6%' : '8.8%';
+    return question.tokenValues.length >= 6 ? '7.8%' : '7.2%';
   }, [question.tokenValues.length]);
 
-  const questionTextConfig = useMemo(() => {
+  const questionTextBaseFontPx = useMemo(() => {
     const promptLength = question.prompt.trim().length;
     const isTablet = Math.min(viewport.width, viewport.height) >= 760;
-
-    let fontSize = isTablet
-      ? 'clamp(0.95rem, 1.95vw, 1.22rem)'
-      : 'clamp(0.88rem, 2.2vw, 1.14rem)';
-    let lineClamp = 3;
-
-    if (promptLength > 48) {
-      fontSize = isTablet
-        ? 'clamp(0.86rem, 1.72vw, 1.08rem)'
-        : 'clamp(0.78rem, 1.95vw, 1.0rem)';
+    if (isTablet) {
+      if (promptLength > 84) return 13;
+      if (promptLength > 66) return 14;
+      if (promptLength > 48) return 15;
+      return 16;
     }
-
-    if (promptLength > 66) {
-      fontSize = isTablet
-        ? 'clamp(0.76rem, 1.54vw, 0.98rem)'
-        : 'clamp(0.7rem, 1.7vw, 0.92rem)';
-      lineClamp = 4;
-    }
-
-    if (promptLength > 86) {
-      fontSize = isTablet
-        ? 'clamp(0.7rem, 1.4vw, 0.9rem)'
-        : 'clamp(0.64rem, 1.5vw, 0.84rem)';
-      lineClamp = 5;
-    }
-
-    return { fontSize, lineClamp };
+    if (promptLength > 84) return 11.5;
+    if (promptLength > 66) return 12.5;
+    if (promptLength > 48) return 13.5;
+    return 14.5;
   }, [question.prompt, viewport.height, viewport.width]);
+
+  const questionTextFrameRef = useRef<HTMLDivElement | null>(null);
+  const questionTextContentRef = useRef<HTMLSpanElement | null>(null);
+
+  useLayoutEffect(() => {
+    const frame = questionTextFrameRef.current;
+    const content = questionTextContentRef.current;
+    if (!frame || !content) return;
+
+    let size = questionTextBaseFontPx;
+    const minSize = 9.5;
+
+    content.style.fontSize = `${size}px`;
+    content.style.lineHeight = '1.08';
+    content.style.letterSpacing = '0.01em';
+
+    const fits = () =>
+      content.scrollHeight <= frame.clientHeight + 0.5 && content.scrollWidth <= frame.clientWidth + 0.5;
+
+    let guard = 0;
+    while (!fits() && size > minSize && guard < 28) {
+      size -= 0.5;
+      content.style.fontSize = `${size}px`;
+      guard += 1;
+    }
+
+    if (!fits()) {
+      content.style.letterSpacing = '0';
+    }
+  }, [question.prompt, questionTextBaseFontPx, viewport.height, viewport.width]);
 
   const resetRound = useCallback((nextQuestion: QuestionState) => {
     const nextSources: Array<Token | null> = nextQuestion.tokenValues.map((value, idx) => ({
@@ -883,19 +896,17 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         >
           <img src={medDialogue} alt="" aria-hidden="true" draggable={false} className="absolute inset-0 h-full w-full object-contain" />
           <div
+            ref={questionTextFrameRef}
             className="absolute inset-x-[8.5%] top-[21%] bottom-[19%] mx-auto flex items-center justify-center overflow-hidden text-center font-black uppercase tracking-[0.01em] text-white"
             style={{
               textShadow: '0 2px 6px rgba(2,6,23,0.62)',
-              fontSize: questionTextConfig.fontSize,
             }}
           >
             <span
+              ref={questionTextContentRef}
               className="block max-w-full overflow-hidden text-center"
               style={{
-                display: '-webkit-box',
-                WebkitBoxOrient: 'vertical',
-                WebkitLineClamp: questionTextConfig.lineClamp,
-                lineHeight: 1.08,
+                width: '100%',
                 maxHeight: '100%',
                 overflowWrap: 'anywhere',
                 wordBreak: 'break-word',
