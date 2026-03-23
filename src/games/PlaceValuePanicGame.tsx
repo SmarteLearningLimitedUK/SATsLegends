@@ -352,8 +352,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
     return {
       questionTop: isTablet ? 13.8 : (isTallPhone ? 14.8 : 14.5),
-      questionWidth: isTablet ? 46 : 56,
-      questionHeight: isTablet ? 10.5 : 11.0,
+      questionWidth: isTablet ? 54 : 66,
+      questionHeight: isTablet ? 13.4 : 14.8,
       submitY: isTablet ? 80.4 : (isTallPhone ? 81.1 : 80.8),
       submitWidth: isTablet ? 30 : 46,
       submitHeight: isTablet ? 8.6 : 9.2,
@@ -368,8 +368,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       healthTop: isTablet ? 52.6 : (isTallPhone ? 53.7 : 53.3),
       healthWidth: isTablet ? 28 : 40,
       healthLeft: isTablet ? 66.7 : 69.4,
-      enemyTop: isTablet ? 46.2 : (isTallPhone ? 48.2 : 47.8),
-      enemyWidth: isTablet ? 29 : 33,
+      enemyTop: isTablet ? 44.8 : (isTallPhone ? 46.8 : 46.4),
+      enemyWidth: isTablet ? 34 : 40,
     };
   }, [viewport.height, viewport.width]);
 
@@ -415,14 +415,14 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
   const sourceTokenBackdropWidth = useMemo(() => {
     const count = question.tokenValues.length;
-    if (count <= 4) return '50%';
-    if (count === 5) return '60%';
-    if (count === 6) return '70%';
-    return '80%';
+    if (count <= 4) return '64%';
+    if (count === 5) return '72%';
+    if (count === 6) return '80%';
+    return '88%';
   }, [question.tokenValues.length]);
 
   const sourceTokenBackdropHeight = useMemo(() => {
-    return question.tokenValues.length >= 6 ? '12.8%' : '11.6%';
+    return question.tokenValues.length >= 6 ? '9.6%' : '8.8%';
   }, [question.tokenValues.length]);
 
   const resetRound = useCallback((nextQuestion: QuestionState) => {
@@ -851,7 +851,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         >
           <img src={medDialogue} alt="" aria-hidden="true" draggable={false} className="absolute inset-0 h-full w-full object-contain" />
           <div
-            className="absolute inset-x-[9%] top-[24%] bottom-[24%] mx-auto flex items-center justify-center overflow-hidden text-center text-[clamp(0.84rem,2.1vw,1.22rem)] font-black uppercase leading-[1.06] tracking-[0.01em] text-white"
+            className="absolute inset-x-[7%] top-[18%] bottom-[18%] mx-auto flex items-center justify-center overflow-hidden text-center text-[clamp(0.9rem,2.35vw,1.3rem)] font-black uppercase leading-[1.08] tracking-[0.01em] text-white"
             style={{
               textShadow: '0 2px 6px rgba(2,6,23,0.62)',
             }}
@@ -861,7 +861,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               style={{
                 display: '-webkit-box',
                 WebkitBoxOrient: 'vertical',
-                WebkitLineClamp: 2,
+                WebkitLineClamp: 3,
                 wordBreak: 'break-word',
               }}
             >
@@ -996,13 +996,28 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               {enemySpeech ? (
                 <motion.div
                   key={`enemy-speech-${enemySpeech}`}
-                  initial={{ opacity: 0, y: 8, scale: 0.92 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -6, scale: 0.92 }}
-                  transition={{ duration: 0.18, ease: 'easeOut' }}
-                  className="absolute left-1/2 top-[-20%] z-40 -translate-x-1/2 rounded-full border border-white/45 bg-white/92 px-3 py-1 text-[clamp(0.62rem,1.8vw,0.86rem)] font-black uppercase tracking-[0.05em] text-slate-800 shadow-[0_8px_16px_rgba(2,6,23,0.45)]"
+                  initial={{ opacity: 0, y: 8, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: [1, 1.04, 1] }}
+                  exit={{ opacity: 0, y: -8, scale: 0.9 }}
+                  transition={{ duration: 0.22, ease: 'easeOut' }}
+                  className="absolute left-1/2 top-[-22%] z-40 -translate-x-1/2"
                 >
-                  {enemySpeech}
+                  <div className="relative">
+                    <motion.div
+                      className="absolute inset-[-8px] rounded-full bg-amber-300/35 blur-md"
+                      animate={{ opacity: [0.5, 0.9, 0.5], scale: [0.96, 1.04, 0.96] }}
+                      transition={{ duration: 0.7, repeat: Infinity, ease: 'easeInOut' }}
+                    />
+                    <div className="relative rounded-full border border-amber-200/70 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.96),rgba(254,243,199,0.94)_42%,rgba(254,215,170,0.92)_100%)] px-3.5 py-1.5 text-[clamp(0.62rem,1.8vw,0.9rem)] font-black uppercase tracking-[0.05em] text-slate-800 shadow-[0_10px_18px_rgba(2,6,23,0.45)]">
+                      {enemySpeech}
+                    </div>
+                    <div className="absolute left-1/2 top-[100%] h-2.5 w-2.5 -translate-x-1/2 rotate-45 border-b border-r border-amber-200/70 bg-amber-100/95" />
+                    <motion.span
+                      className="absolute -right-1.5 -top-1.5 h-2 w-2 rounded-full bg-amber-200/95 shadow-[0_0_10px_rgba(251,191,36,0.9)]"
+                      animate={{ scale: [0.8, 1.15, 0.8], opacity: [0.4, 1, 0.4] }}
+                      transition={{ duration: 0.55, repeat: Infinity, ease: 'easeInOut' }}
+                    />
+                  </div>
                 </motion.div>
               ) : null}
             </AnimatePresence>
