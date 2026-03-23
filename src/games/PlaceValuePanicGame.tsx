@@ -439,7 +439,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const targetHeightPct = Number.parseFloat(layout.targetHeight) || 0;
     const socketTopY = layout.targetY - targetHeightPct / 2;
     const bottomPct = 100 - socketTopY;
-    return `calc(${bottomPct.toFixed(2)}% + 2px)`;
+    return `calc(${bottomPct.toFixed(2)}% - 8px)`;
   }, [layout.targetHeight, layout.targetY]);
 
   const questionFrameConfig = useMemo(() => {
