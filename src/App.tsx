@@ -617,6 +617,8 @@ const App: React.FC = () => {
       completedInIsland.includes(levelId) || levelId === selectedLevel.id
     );
 
+    const isPlaceValuePanic = selectedLevel.blueprintKey === 'place_value_panic';
+
     // Prefer advancing inside the same mini-game lane when metadata is present.
     const laneNextLevel = selectedLevel.miniGameKey && selectedLevel.miniGameLevel
       ? selectedIsland.levels.find((level) => (
@@ -624,8 +626,18 @@ const App: React.FC = () => {
         && level.miniGameLevel === selectedLevel.miniGameLevel! + 1
       ))
       : undefined;
+    // Explicit guard: Place Value Panic should always advance to its own next level.
+    const placeValueNextLevel = isPlaceValuePanic
+      ? selectedIsland.levels
+          .filter((level) => level.blueprintKey === 'place_value_panic')
+          .sort((a, b) => ((a.miniGameLevel || a.id) - (b.miniGameLevel || b.id)))
+          .find((level) => (
+            (level.miniGameLevel || level.id)
+            > (selectedLevel.miniGameLevel || selectedLevel.id)
+          ))
+      : undefined;
     const sequentialNextLevel = selectedIsland.levels.find(level => level.id === selectedLevel.id + 1);
-    const nextLevel = laneNextLevel || sequentialNextLevel;
+    const nextLevel = placeValueNextLevel || laneNextLevel || sequentialNextLevel;
     setLevelResult(null);
 
     if (nextLevel) {
@@ -777,9 +789,17 @@ const App: React.FC = () => {
         return renderFromRegistry('TowerOfFactorsGame', { ...sharedProps, isBoss: Boolean(selectedLevel.isBoss) });
       case 'place_value_peaks':
         if (selectedLevel.blueprintKey === 'place_value_panic') {
+          const inferredMiniGameLevel = (
+            selectedLevel.miniGameLevel
+            || selectedIsland?.levels
+              .filter((level) => level.blueprintKey === 'place_value_panic')
+              .sort((a, b) => a.id - b.id)
+              .findIndex((level) => level.id === selectedLevel.id) + 1
+            || 1
+          );
           return renderFromRegistry('PlaceValuePanicGame', {
             ...sharedProps,
-            miniGameLevel: selectedLevel.miniGameLevel,
+            miniGameLevel: inferredMiniGameLevel,
           });
         }
         if (selectedLevel.blueprintKey === 'rounding_rampage') {
