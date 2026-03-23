@@ -64,6 +64,7 @@ type GoblinEffect = 'idle' | 'hit' | 'heal';
 const GOBLIN_MAX_HEALTH = 10;
 const MATCH_DURATION_SECONDS = 90;
 const PLAYER_STORAGE_KEY = 'maths_quest_player';
+const GOBLIN_DAMAGE_LINES = ['Ouch!', 'Hey!', 'Oof!', 'Wahhh!', 'Ugh!'] as const;
 
 const FULL_PLACE_VALUE_HINTS = ['Th', 'Th', 'H', 'T', 'U'] as const;
 const TARGET_ROW_Y_OFFSET_PX = 0;
@@ -387,9 +388,11 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const [goblinEffect, setGoblinEffect] = useState<GoblinEffect>('idle');
   const [goblinSpriteSrc, setGoblinSpriteSrc] = useState<string>(goblinWiz);
   const [showHitFx, setShowHitFx] = useState(false);
+  const [enemySpeech, setEnemySpeech] = useState<string | null>(null);
 
   const victoryDispatchedRef = useRef(false);
   const gameOverDispatchedRef = useRef(false);
+  const speechTimeoutRef = useRef<number | null>(null);
   const playfieldRef = useRef<HTMLDivElement | null>(null);
 
   const activeTargetAnchors = useMemo(
@@ -474,6 +477,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const timeoutId = window.setTimeout(() => setShowHitFx(false), 520);
     return () => window.clearTimeout(timeoutId);
   }, [goblinEffect]);
+
+  useEffect(() => () => {
+    if (speechTimeoutRef.current !== null) {
+      window.clearTimeout(speechTimeoutRef.current);
+    }
+  }, []);
 
   useEffect(() => {
     if (matchTimeLeft > 0 || victoryDispatchedRef.current || gameOverDispatchedRef.current) return;
@@ -703,6 +712,11 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       setScore((prev) => prev + (140 + resolvedLevel * 22));
       setFeedback(null);
       setGoblinEffect('hit');
+      setEnemySpeech(GOBLIN_DAMAGE_LINES[Math.floor(Math.random() * GOBLIN_DAMAGE_LINES.length)]);
+      if (speechTimeoutRef.current !== null) {
+        window.clearTimeout(speechTimeoutRef.current);
+      }
+      speechTimeoutRef.current = window.setTimeout(() => setEnemySpeech(null), 920);
       triggerHaptic('success');
       advanceRound(nextHealth);
       return;
@@ -861,13 +875,13 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           style={{
             top: `${layout.healthTop}%`,
             left: `min(calc(50% + ${Math.max(12, layout.enemyWidth * 0.58)}%), calc(100% - max(0.75rem, env(safe-area-inset-right)) - clamp(9rem, 32vw, 14rem)))`,
-            width: 'clamp(9rem, 32vw, 14rem)',
+            width: 'clamp(7.6rem, 24vw, 10.8rem)',
           }}
         >
-          <div className="mb-1 text-center text-[9px] font-black uppercase tracking-[0.11em] text-amber-200 md:text-[10px]">
-            Goblin Health {goblinHealth}/10
+          <div className="mb-1 text-center text-[9px] font-black uppercase tracking-[0.14em] text-amber-200 md:text-[10px]">
+            Enemy
           </div>
-          <div className="relative h-3 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/80">
+          <div className="relative h-2.5 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/80">
             <motion.div
               className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-rose-500 via-rose-400 to-orange-300 shadow-[0_0_12px_rgba(251,113,133,0.75)]"
               animate={{ width: `${(goblinHealth / GOBLIN_MAX_HEALTH) * 100}%` }}
@@ -978,6 +992,20 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           style={{ top: `${layout.enemyTop}%`, width: `${layout.enemyWidth}%` }}
         >
           <div className="relative">
+            <AnimatePresence>
+              {enemySpeech ? (
+                <motion.div
+                  key={`enemy-speech-${enemySpeech}`}
+                  initial={{ opacity: 0, y: 8, scale: 0.92 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -6, scale: 0.92 }}
+                  transition={{ duration: 0.18, ease: 'easeOut' }}
+                  className="absolute left-1/2 top-[-20%] z-40 -translate-x-1/2 rounded-full border border-white/45 bg-white/92 px-3 py-1 text-[clamp(0.62rem,1.8vw,0.86rem)] font-black uppercase tracking-[0.05em] text-slate-800 shadow-[0_8px_16px_rgba(2,6,23,0.45)]"
+                >
+                  {enemySpeech}
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
             <motion.div
               className="absolute inset-[10%] rounded-full blur-2xl"
               animate={{
