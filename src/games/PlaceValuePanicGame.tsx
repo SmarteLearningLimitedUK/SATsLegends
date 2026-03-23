@@ -427,9 +427,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
   const sourceTokenBackdropHeight = useMemo(() => {
     const baseTokenHeight = Number.parseFloat(layout.sourceHeight) || 10;
-    const extraPadding = question.tokenValues.length >= 6 ? 1.8 : 1.4;
+    const extraPadding = question.tokenValues.length >= 6 ? 0.9 : 0.7;
     const computed = baseTokenHeight + extraPadding;
-    const clamped = Math.max(8.6, Math.min(12.8, computed));
+    const clamped = Math.max(7.2, Math.min(11.6, computed));
     return `${clamped.toFixed(1)}%`;
   }, [layout.sourceHeight, question.tokenValues.length]);
 
