@@ -130,7 +130,7 @@ const toWords = (n: number): string => {
     const rest = n % 1000;
     if (rest === 0) return `${toWords(thousands)} thousand`;
     if (rest < 100) return `${toWords(thousands)} thousand and ${toWords(rest)}`;
-    return `${toWords(thousands)} thousand ${toWords(rest)}`;
+    return `${toWords(thousands)} thousand, ${toWords(rest)}`;
   }
   return String(n);
 };
