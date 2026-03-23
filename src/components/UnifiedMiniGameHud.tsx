@@ -198,6 +198,14 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
           </div>
         </div>
       </div>
+      <div className="pointer-events-none absolute right-[max(0.6rem,env(safe-area-inset-right))] top-[calc(max(0.5rem,env(safe-area-inset-top))+2.55rem)] z-[130]">
+        <span
+          className="inline-flex items-center rounded-full border border-cyan-100/55 bg-slate-900/74 px-2 py-[3px] text-[10px] font-black uppercase tracking-[0.08em] text-cyan-100"
+          style={{ textShadow: '0 1px 2px rgba(2,6,23,0.65)' }}
+        >
+          HUD v2
+        </span>
+      </div>
     </div>
   );
 };
