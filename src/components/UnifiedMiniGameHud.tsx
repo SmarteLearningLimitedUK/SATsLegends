@@ -69,7 +69,13 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
         <div className="pointer-events-none flex shrink-0 flex-row items-center">
           <div className="relative h-[clamp(2.35rem,7.1vh,3.35rem)] w-[clamp(8.8rem,42vw,13rem)]">
             <div className="pointer-events-none absolute inset-0 flex items-center">
-              <div className="flex h-[84%] w-full items-center rounded-full border border-cyan-200/35 bg-slate-900/62 px-[clamp(0.32rem,1.2vw,0.58rem)] shadow-[0_6px_16px_rgba(2,6,23,0.45)]">
+              <div
+                className="flex h-[84%] w-full items-center rounded-full px-[clamp(0.32rem,1.2vw,0.58rem)] shadow-[0_6px_16px_rgba(2,6,23,0.45)]"
+                style={{
+                  border: '1px solid rgba(147, 211, 255, 0.52)',
+                  background: 'linear-gradient(180deg, rgba(41, 108, 191, 0.88) 0%, rgba(26, 78, 159, 0.9) 100%)',
+                }}
+              >
                 <img
                   src={hourglassIcon}
                   alt=""
@@ -77,7 +83,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
                   draggable={false}
                   className="h-[72%] w-auto shrink-0 object-contain drop-shadow-[0_2px_4px_rgba(2,6,23,0.5)]"
                 />
-                <div className="relative ml-[clamp(0.3rem,1vw,0.5rem)] h-[44%] flex-1 overflow-hidden rounded-full border border-cyan-100/25 bg-slate-950/58">
+                <div className="relative ml-[clamp(0.3rem,1vw,0.5rem)] h-[44%] flex-1 overflow-hidden rounded-full border border-blue-200/35 bg-blue-950/55">
                   <motion.div
                     className="absolute inset-y-0 left-0 rounded-full"
                     animate={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }}
