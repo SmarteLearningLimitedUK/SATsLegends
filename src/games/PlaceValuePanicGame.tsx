@@ -3,9 +3,10 @@ import { AnimatePresence, motion } from 'motion/react';
 import placeValueBackground from '../assets/maps/gemini-2.5-flash-image_using_the_same_aesthetic_-_create_a_dark_and_mysterious_forest_path_with_dense_f-1.jpg';
 import medButton from '../assets/bluedialoague/med button cropped.png';
 import goblinWiz from '../assets/bosses/goblinwiz.jpg';
-import shieldIcon from '../assets/casual_ui/icons/icon__shield.png';
 import hudAvatarName from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
-import hudTimer from '../assets/ui_frames/hudfortextplace_slices/hud_timer.png';
+import hudTimerTrack from '../assets/fantasy_hero/ui/uiamend_slices/hud_timer_track.png';
+import hudTimerBar from '../assets/fantasy_hero/ui/uiamend_slices/hud_timer_bar.png';
+import hudTimerIcon from '../assets/fantasy_hero/ui/uiamend_slices/hud_timer_icon.png';
 import questionBarTiny from '../assets/ui_frames/hudfortextplace_slices/text_bar_tiny.png';
 import questionBarSmall from '../assets/ui_frames/hudfortextplace_slices/text_bar_small.png';
 import questionBarMedium from '../assets/ui_frames/hudfortextplace_slices/text_bar_medium.png';
@@ -371,7 +372,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       healthTop: isTablet ? 52.6 : (isTallPhone ? 53.7 : 53.3),
       healthWidth: isTablet ? 28 : 40,
       healthLeft: isTablet ? 66.7 : 69.4,
-      enemyTop: isTablet ? 44.8 : (isTallPhone ? 46.8 : 46.4),
       enemyWidth: isTablet ? 42 : 50,
     };
   }, [viewport.height, viewport.width]);
@@ -433,6 +433,14 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const clamped = Math.max(3.0, Math.min(5.3, computed));
     return `${clamped.toFixed(1)}%`;
   }, [layout.sourceHeight, question.tokenValues.length]);
+
+  // Anchor goblin feet to the top of the receiving sockets for consistent placement across devices.
+  const enemyBottomFromPlayfield = useMemo(() => {
+    const targetHeightPct = Number.parseFloat(layout.targetHeight) || 0;
+    const socketTopY = layout.targetY - targetHeightPct / 2;
+    const bottomPct = 100 - socketTopY;
+    return `calc(${bottomPct.toFixed(2)}% + 2px)`;
+  }, [layout.targetHeight, layout.targetY]);
 
   const questionFrameConfig = useMemo(() => {
     const promptLength = question.prompt.trim().length;
@@ -779,11 +787,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     [matchTimeLeft],
   );
 
-  const timerFillColor = useMemo(() => {
-    const hue = Math.round(timerProgress * 120); // 120 -> green, 0 -> red
-    return `hsl(${hue} 88% 50%)`;
-  }, [timerProgress]);
-
   const handleSubmit = useCallback(() => {
     if (!canSubmit) return;
 
@@ -874,16 +877,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                       className="h-full w-full object-cover"
                     />
                   </div>
-                  <img
-                    src={shieldIcon}
-                    alt=""
-                    aria-hidden="true"
-                    draggable={false}
-                    className="pointer-events-none absolute -right-[14%] -top-[8%] h-[35%] w-[35%] object-contain drop-shadow-[0_2px_4px_rgba(2,6,23,0.65)]"
-                  />
                 </div>
               </div>
-              <div className="pointer-events-none absolute left-[31%] right-[7%] top-1/2 -translate-y-1/2 overflow-hidden text-left text-[clamp(0.76rem,2.35vw,1.06rem)] font-black uppercase tracking-[0.06em] text-cyan-50">
+              <div className="pointer-events-none absolute left-[31%] right-[8.5%] top-1/2 -translate-y-1/2 overflow-hidden text-left text-[clamp(0.76rem,2.35vw,1.06rem)] font-black uppercase tracking-[0.06em] text-cyan-50">
                 <span
                   className="block max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
                   style={{ textShadow: '0 1px 2px rgba(2,6,23,0.6)' }}
@@ -898,22 +894,30 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               style={{ height: topHudLayout.rowHeight, width: topHudLayout.timerWidth }}
             >
               <img
-                src={hudTimer}
+                src={hudTimerTrack}
                 alt=""
                 aria-hidden="true"
                 draggable={false}
                 className="absolute inset-0 h-full w-full object-contain"
               />
-              <div className="pointer-events-none absolute left-[23.8%] right-[2.6%] top-[37.8%] h-[26%] overflow-hidden rounded-full">
-                <div className="absolute inset-0 rounded-full bg-slate-900/42" />
+              <img
+                src={hudTimerIcon}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+                className="pointer-events-none absolute left-[5.5%] top-1/2 h-[63%] w-auto -translate-y-1/2 object-contain"
+              />
+              <div className="pointer-events-none absolute left-[24%] right-[4.5%] top-[36%] h-[30%] overflow-hidden rounded-full">
+                <div className="absolute inset-0 rounded-full bg-slate-950/40" />
                 <motion.div
-                  className="absolute left-0 top-0 h-full rounded-full"
-                  animate={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }}
+                  className="absolute inset-y-0 left-0 overflow-hidden"
+                  animate={{ width: `${timerProgress * 100}%` }}
                   transition={{ duration: 0.25, ease: 'easeOut' }}
-                  style={{ boxShadow: '0 0 8px rgba(34,197,94,0.65)' }}
-                />
+                >
+                  <img src={hudTimerBar} alt="" aria-hidden="true" draggable={false} className="h-full w-full object-fill" />
+                </motion.div>
               </div>
-              <div className="pointer-events-none absolute left-[23.8%] right-[2.6%] top-[31%] flex h-[42%] items-center justify-center">
+              <div className="pointer-events-none absolute left-[24%] right-[4.5%] top-[30%] flex h-[46%] items-center justify-center">
                 <span className="text-[clamp(0.62rem,1.9vw,0.92rem)] font-black uppercase tracking-[0.06em] text-white">
                   {matchTimeLeft}s
                 </span>
@@ -1076,7 +1080,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
         <div
           className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2"
-          style={{ top: `${layout.enemyTop}%`, width: `${layout.enemyWidth}%` }}
+          style={{ bottom: enemyBottomFromPlayfield, width: `${layout.enemyWidth}%` }}
         >
           <div className="relative">
             <AnimatePresence>
