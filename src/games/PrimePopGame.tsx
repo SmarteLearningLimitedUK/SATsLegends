@@ -153,10 +153,13 @@ const scoreToStars = (score: number, target: number, primeAccuracy: number) => {
   return 1;
 };
 
-const PrimeBubble: React.FC<{ bubble: Bubble }> = ({ bubble }) => {
+const PrimeBubble: React.FC<{ bubble: Bubble; isPhone: boolean }> = ({ bubble, isPhone }) => {
   const tint = TINT_STYLE[bubble.tint];
-  const bubblePx = Math.round(bubble.radius * BUBBLE_PIXEL_SCALE);
-  const size = `${Math.max(104, Math.min(180, bubblePx))}px`;
+  const renderScale = isPhone ? 1.28 : 1;
+  const bubblePx = Math.round(bubble.radius * BUBBLE_PIXEL_SCALE * renderScale);
+  const minSize = isPhone ? 136 : 104;
+  const maxSize = isPhone ? 240 : 180;
+  const size = `${Math.max(minSize, Math.min(maxSize, bubblePx))}px`;
 
   return (
     <div
@@ -186,6 +189,7 @@ const PrimeBubble: React.FC<{ bubble: Bubble }> = ({ bubble }) => {
 const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictory, onGameOver, onBack }) => {
   const config = useMemo(() => getConfig(levelId), [levelId]);
   const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
+  const [isPhone, setIsPhone] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 768 : true));
 
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(config.roundSeconds);
@@ -215,6 +219,27 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
 
   const targetScore = config.targetScore;
   const progress = Math.min((score / Math.max(targetScore, 1)) * 100, 100);
+  const bubbleRuntime = useMemo(() => {
+    if (!isPhone) {
+      return {
+        minBubbles: config.minBubbles,
+        maxBubbles: config.maxBubbles,
+        minRadius: config.minRadius,
+        maxRadius: config.maxRadius,
+        minSpeed: config.minSpeed,
+        maxSpeed: config.maxSpeed,
+      };
+    }
+
+    return {
+      minBubbles: Math.max(3, config.minBubbles - 2),
+      maxBubbles: Math.max(4, config.maxBubbles - 2),
+      minRadius: config.minRadius * 1.35,
+      maxRadius: config.maxRadius * 1.45,
+      minSpeed: config.minSpeed * 0.86,
+      maxSpeed: config.maxSpeed * 0.9,
+    };
+  }, [config.maxBubbles, config.maxRadius, config.maxSpeed, config.minBubbles, config.minRadius, config.minSpeed, isPhone]);
   const cannonAngle = useMemo(() => {
     const dx = crosshair.x - CANNON_ORIGIN.x;
     const dy = crosshair.y - CANNON_ORIGIN.y;
@@ -235,6 +260,12 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
       window.clearInterval(spawnRef.current);
       spawnRef.current = null;
     }
+  }, []);
+
+  useEffect(() => {
+    const onResize = () => setIsPhone(window.innerWidth < 768);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, []);
 
   const finalize = useCallback((finalScore: number) => {
@@ -259,7 +290,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
   }, [clearLoops, onGameOver, onVictory, targetScore]);
 
   const makeBubble = useCallback((existing: Bubble[]) => {
-    const radius = randomBetween(config.minRadius, config.maxRadius);
+    const radius = randomBetween(bubbleRuntime.minRadius, bubbleRuntime.maxRadius);
     const margin = radius + 2.2;
     let x = randomBetween(margin, 100 - margin);
     let y = randomBetween(margin, 67 - margin);
@@ -299,26 +330,26 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
       id: bubbleIdRef.current++,
       x,
       y,
-      vx: (Math.random() < 0.5 ? -1 : 1) * randomBetween(config.minSpeed, config.maxSpeed),
-      vy: (Math.random() < 0.5 ? -1 : 1) * randomBetween(config.minSpeed * 0.62, config.maxSpeed * 0.75),
+      vx: (Math.random() < 0.5 ? -1 : 1) * randomBetween(bubbleRuntime.minSpeed, bubbleRuntime.maxSpeed),
+      vy: (Math.random() < 0.5 ? -1 : 1) * randomBetween(bubbleRuntime.minSpeed * 0.62, bubbleRuntime.maxSpeed * 0.75),
       radius,
       value,
       isPrime: isPrime(value),
       tint: BUBBLE_TINTS[Math.floor(Math.random() * BUBBLE_TINTS.length)],
       coreAsset: BUBBLE_CORES[Math.floor(Math.random() * BUBBLE_CORES.length)],
     };
-  }, [config.maxNumber, config.maxRadius, config.maxSpeed, config.minRadius, config.minSpeed, config.primeChance]);
+  }, [bubbleRuntime.maxRadius, bubbleRuntime.maxSpeed, bubbleRuntime.minRadius, bubbleRuntime.minSpeed, config.maxNumber, config.primeChance]);
 
   const replenishBubbles = useCallback((list: Bubble[]) => {
     let next = [...list];
-    while (next.length < config.minBubbles) {
+    while (next.length < bubbleRuntime.minBubbles) {
       next = [...next, makeBubble(next)];
     }
-    while (next.length > config.maxBubbles) {
+    while (next.length > bubbleRuntime.maxBubbles) {
       next.pop();
     }
     return next;
-  }, [config.maxBubbles, config.minBubbles, makeBubble]);
+  }, [bubbleRuntime.maxBubbles, bubbleRuntime.minBubbles, makeBubble]);
 
   useEffect(() => {
     overRef.current = false;
@@ -337,7 +368,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     setFeedback(null);
 
     let initial: Bubble[] = [];
-    for (let i = 0; i < config.minBubbles; i += 1) {
+    for (let i = 0; i < bubbleRuntime.minBubbles; i += 1) {
       initial = [...initial, makeBubble(initial)];
     }
     bubblesRef.current = initial;
@@ -364,7 +395,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     }, config.spawnEveryMs);
 
     return () => clearLoops();
-  }, [clearLoops, config.minBubbles, config.roundSeconds, config.spawnEveryMs, finalize, makeBubble, replenishBubbles]);
+  }, [bubbleRuntime.minBubbles, clearLoops, config.roundSeconds, config.spawnEveryMs, finalize, makeBubble, replenishBubbles]);
 
   const fireBullet = useCallback((clientX: number, clientY: number) => {
     if (!areaRef.current || overRef.current) return;
@@ -570,7 +601,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
                 exit={{ scale: 0.28, opacity: 0, rotate: 30 }}
                 transition={{ duration: 0.18 }}
               >
-                <PrimeBubble bubble={bubble} />
+                <PrimeBubble bubble={bubble} isPhone={isPhone} />
               </motion.div>
             ))}
           </AnimatePresence>
