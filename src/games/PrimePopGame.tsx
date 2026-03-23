@@ -5,11 +5,6 @@ import GameplayHUD from '../components/GameplayHUD';
 import GameActionDock from '../components/GameActionDock';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { AVATARS } from '../constants';
-import diamondBlue from '../assets/place_value/jewels/diamond_blue.png';
-import diamondGreen from '../assets/place_value/jewels/diamond_green.png';
-import diamondPurple from '../assets/place_value/jewels/diamond_purple.png';
-import diamondYellow from '../assets/place_value/jewels/diamond_yellow.png';
-import gemCore from '../assets/place_value/jewels/gem.png';
 
 interface PrimePopGameProps {
   levelId: number;
@@ -31,7 +26,6 @@ interface Bubble {
   value: number;
   isPrime: boolean;
   tint: BubbleTint;
-  coreAsset: string;
 }
 
 interface Bullet {
@@ -63,10 +57,9 @@ const INITIAL_LIVES = 10;
 const BULLET_SPEED = 98;
 const BULLET_RADIUS = 3.3;
 const CANNON_ORIGIN = { x: 50, y: 93 };
-const BUBBLE_PIXEL_SCALE = 10;
+const BUBBLE_PIXEL_SCALE = 8.4;
 
 const BUBBLE_TINTS: BubbleTint[] = ['blue', 'green', 'purple', 'gold', 'red'];
-const BUBBLE_CORES = [diamondBlue, diamondGreen, diamondPurple, diamondYellow, gemCore];
 
 const TINT_STYLE: Record<BubbleTint, { from: string; to: string; ring: string }> = {
   blue: { from: '#38bdf8', to: '#1d4ed8', ring: 'rgba(56,189,248,0.7)' },
@@ -155,10 +148,10 @@ const scoreToStars = (score: number, target: number, primeAccuracy: number) => {
 
 const PrimeBubble: React.FC<{ bubble: Bubble; isPhone: boolean }> = ({ bubble, isPhone }) => {
   const tint = TINT_STYLE[bubble.tint];
-  const renderScale = isPhone ? 1.28 : 1;
+  const renderScale = isPhone ? 1.06 : 1;
   const bubblePx = Math.round(bubble.radius * BUBBLE_PIXEL_SCALE * renderScale);
-  const minSize = isPhone ? 136 : 104;
-  const maxSize = isPhone ? 240 : 180;
+  const minSize = isPhone ? 92 : 84;
+  const maxSize = isPhone ? 142 : 130;
   const size = `${Math.max(minSize, Math.min(maxSize, bubblePx))}px`;
 
   return (
@@ -173,12 +166,6 @@ const PrimeBubble: React.FC<{ bubble: Bubble; isPhone: boolean }> = ({ bubble, i
       }}
     >
       <div className="absolute left-[15%] top-[12%] h-[18%] w-[18%] rounded-full bg-white/70 blur-[1px]" />
-      <img
-        src={bubble.coreAsset}
-        alt=""
-        draggable={false}
-        className="pointer-events-none absolute left-1/2 top-[58%] h-[34%] w-[34%] -translate-x-1/2 -translate-y-1/2 object-contain drop-shadow-[0_4px_6px_rgba(2,6,23,0.42)]"
-      />
       <span className="absolute inset-0 flex items-center justify-center text-[clamp(1.1rem,2.9vw,1.85rem)] font-black text-white drop-shadow-[0_3px_6px_rgba(2,6,23,0.8)]">
         {bubble.value}
       </span>
@@ -232,11 +219,11 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     }
 
     return {
-      minBubbles: Math.max(3, config.minBubbles - 2),
-      maxBubbles: Math.max(4, config.maxBubbles - 2),
-      minRadius: config.minRadius * 1.35,
-      maxRadius: config.maxRadius * 1.45,
-      minSpeed: config.minSpeed * 0.86,
+      minBubbles: Math.max(3, config.minBubbles - 1),
+      maxBubbles: Math.max(4, config.maxBubbles - 1),
+      minRadius: config.minRadius * 1.02,
+      maxRadius: config.maxRadius * 1.1,
+      minSpeed: config.minSpeed * 0.9,
       maxSpeed: config.maxSpeed * 0.9,
     };
   }, [config.maxBubbles, config.maxRadius, config.maxSpeed, config.minBubbles, config.minRadius, config.minSpeed, isPhone]);
@@ -336,7 +323,6 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
       value,
       isPrime: isPrime(value),
       tint: BUBBLE_TINTS[Math.floor(Math.random() * BUBBLE_TINTS.length)],
-      coreAsset: BUBBLE_CORES[Math.floor(Math.random() * BUBBLE_CORES.length)],
     };
   }, [bubbleRuntime.maxRadius, bubbleRuntime.maxSpeed, bubbleRuntime.minRadius, bubbleRuntime.minSpeed, config.maxNumber, config.primeChance]);
 
@@ -545,7 +531,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     <div className="fixed inset-0 z-20 h-screen w-screen overflow-hidden select-none">
       <GameplaySceneBackdrop gameType="prime_pop" />
 
-      <div className="relative z-10 flex h-full w-full flex-col p-2 pt-[env(safe-area-inset-top)] md:p-4">
+      <div className="relative z-10 flex h-full w-full flex-col pt-[env(safe-area-inset-top)]">
         <GameplayHUD
           title="Prime Pop"
           avatar={avatar}
@@ -564,7 +550,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
 
         <div
           ref={areaRef}
-          className="relative mt-2 min-h-0 flex-1 overflow-hidden rounded-[1.6rem] border-2 border-cyan-100/50 bg-[linear-gradient(180deg,rgba(6,25,55,0.56),rgba(3,12,32,0.75))]"
+          className="relative min-h-0 flex-1 overflow-hidden bg-[linear-gradient(180deg,rgba(6,25,55,0.44),rgba(3,12,32,0.62))]"
           onPointerDown={(event) => fireBullet(event.clientX, event.clientY)}
           onPointerMove={(event) => {
             if (!areaRef.current) return;
@@ -632,7 +618,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
             }}
           />
 
-          <div className="pointer-events-none absolute bottom-20 left-1/2 z-20 -translate-x-1/2">
+          <div className="pointer-events-none absolute bottom-16 left-1/2 z-20 -translate-x-1/2">
             <div className="relative h-44 w-44">
               <div className="absolute bottom-0 left-1/2 h-20 w-44 -translate-x-1/2 rounded-[2rem] border-[3px] border-amber-200/85 bg-gradient-to-b from-amber-100 via-amber-300 to-amber-600 shadow-[0_12px_24px_rgba(2,6,23,0.55)]" />
               <div className="absolute bottom-10 left-1/2 h-16 w-16 -translate-x-1/2 rounded-full border-[3px] border-amber-100/90 bg-gradient-to-b from-amber-50 via-amber-200 to-amber-500 shadow-[0_8px_16px_rgba(2,6,23,0.45)]" />
