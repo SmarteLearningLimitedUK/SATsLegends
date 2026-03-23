@@ -17,7 +17,7 @@ const MiniGameTopBar: React.FC<MiniGameTopBarProps> = ({
   metaValue,
   className = '',
 }) => (
-  <div className={`pointer-events-none absolute inset-x-0 top-0 z-40 px-3 pt-[max(0.75rem,env(safe-area-inset-top))] ${className}`.trim()}>
+  <div className={`mini-game-top-bar pointer-events-none absolute inset-x-0 top-0 z-40 px-3 pt-[max(0.75rem,env(safe-area-inset-top))] ${className}`.trim()}>
     <div className="flex items-center justify-between gap-2">
       <button
         type="button"

@@ -4,7 +4,7 @@ import { AVATARS } from '../constants';
 import { triggerHaptic } from '../haptics';
 import avatarSelectBackground from '../assets/casual_ui/pedestal char select.png';
 import splashStyleButton from '../assets/casual_ui/inputs/btn_1.png';
-import chooseBanner from '../assets/characters/schooseherban.png';
+import chooseBanner from '../assets/characters/chooseheroes.png';
 import arrowBlueIdle from '../assets/casual_ui/inputs/arrow_blue_idle.png';
 import arrowGoldPressed from '../assets/casual_ui/inputs/arrow_gold_pressed.png';
 

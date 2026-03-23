@@ -15,6 +15,7 @@ import AchievementsModal from './components/modals/AchievementsModal';
 import ParentDashboard from './screens/ParentDashboard';
 import LevelResultModal from './components/LevelResultModal';
 import GameRulesModal from './components/GameRulesModal';
+import UnifiedMiniGameHud from './components/UnifiedMiniGameHud';
 import {
   FramedPanel,
   GameScreenShell,
@@ -88,6 +89,7 @@ const SCREEN_BEHAVIOR: Record<GameScreen, {
 
 const IPHONE_STAGE_WIDTH = 390;
 const IPHONE_STAGE_HEIGHT = 844;
+const GLOBAL_MINIGAME_HUD_DURATION_SECONDS = 90;
 
 type GameRulesMode = 'start' | 'help';
 
@@ -279,6 +281,7 @@ const App: React.FC = () => {
     islandUnlockedName?: string;
     achievementsUnlocked?: string[];
   }>(null);
+  const [globalMiniGameHudTimeLeft, setGlobalMiniGameHudTimeLeft] = useState(GLOBAL_MINIGAME_HUD_DURATION_SECONDS);
 
   const hasCompletedProfile = useMemo(
     () => Boolean(player.playerName.trim() && player.avatarId),
@@ -291,6 +294,17 @@ const App: React.FC = () => {
     ),
     [selectedLevel?.blueprintKey, selectedLevel?.gameType],
   );
+
+  useEffect(() => {
+    if (screen !== 'gameplay' || !selectedLevel) return undefined;
+    setGlobalMiniGameHudTimeLeft(GLOBAL_MINIGAME_HUD_DURATION_SECONDS);
+    const timerId = window.setInterval(() => {
+      setGlobalMiniGameHudTimeLeft((prev) => Math.max(0, prev - 1));
+    }, 1000);
+    return () => {
+      window.clearInterval(timerId);
+    };
+  }, [screen, selectedLevel?.id]);
 
   const closeGameRules = () => {
     setShowGameRules(false);
@@ -676,6 +690,7 @@ const App: React.FC = () => {
     const sharedProps = {
       levelId: selectedLevel.id,
       avatarId: player.avatarId,
+      useSharedTopHud: true,
       onVictory: handleGameVictory,
       onGameOver: handleGameOver,
       onBack: () => setScreen('island_levels' as GameScreen),
@@ -973,7 +988,7 @@ const App: React.FC = () => {
 
       case 'gameplay':
         return (
-          <div className={`game-shell-host ${gameplayTypeClass} ${usesQuestionMatchFrame ? 'question-match-shell' : ''} relative flex h-full w-full min-h-0 flex-col overflow-hidden`.trim()}>
+          <div className={`game-shell-host unified-minigame-hud-enabled ${gameplayTypeClass} ${usesQuestionMatchFrame ? 'question-match-shell' : ''} relative flex h-full w-full min-h-0 flex-col overflow-hidden`.trim()}>
             <div className="game-shell-contract relative flex h-full w-full min-h-0 flex-col overflow-hidden">
               <div className="structured-game-layout flex h-full w-full min-h-0 flex-1 flex-col">
                 {isGameplayInstructionPending ? (
@@ -989,6 +1004,15 @@ const App: React.FC = () => {
                     </div>
                   </div>
                 ) : renderGameplay()}
+                {!isGameplayInstructionPending ? (
+                  <UnifiedMiniGameHud
+                    avatarImage={player.customSpriteUrl || AVATARS.find((avatar) => avatar.id === player.avatarId)?.portrait || AVATARS.find((avatar) => avatar.id === player.avatarId)?.image || AVATARS[0].image}
+                    avatarName={AVATARS.find((avatar) => avatar.id === player.avatarId)?.name || 'Hero'}
+                    playerName={player.playerName || 'Learner'}
+                    timeLeft={globalMiniGameHudTimeLeft}
+                    totalTime={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
+                  />
+                ) : null}
               </div>
             </div>
           </div>

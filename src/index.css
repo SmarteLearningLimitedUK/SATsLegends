@@ -4221,7 +4221,7 @@ button:disabled {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: clamp(0.3rem, 1.1vh, 0.7rem);
+  margin-top: max(50px, calc(env(safe-area-inset-top) + 8px));
   pointer-events: none;
 }
 
@@ -4802,6 +4802,25 @@ button.avatar-hero-arrow:not(:disabled):active {
   box-shadow:
     0 0 12px rgba(251, 191, 36, 0.65),
     0 0 18px rgba(251, 146, 60, 0.44);
+}
+
+/* Unified gameplay shell constraints + shared HUD baseline */
+.screen-gameplay .app-screen-content,
+.screen-gameplay .game-shell-host,
+.screen-gameplay .game-shell-contract,
+.screen-gameplay .structured-game-layout {
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.screen-gameplay .app-screen-content {
+  overflow: hidden !important;
+  -webkit-overflow-scrolling: auto !important;
+}
+
+.screen-gameplay .unified-minigame-hud-enabled .mini-game-top-bar {
+  display: none !important;
 }
 
 
