@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
 import hudProfileBar from '../assets/fantasy_hero/ui/uiamend_slices/hud_profile_bar.png';
@@ -12,6 +12,85 @@ interface UnifiedMiniGameHudProps {
   hidden?: boolean;
 }
 
+const cropTransparentAvatarPadding = (src: string): Promise<string> =>
+  new Promise((resolve) => {
+    const image = new Image();
+
+    image.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(src);
+          return;
+        }
+
+        ctx.drawImage(image, 0, 0);
+        const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        const width = canvas.width;
+        const height = canvas.height;
+        const alphaThreshold = 8;
+
+        let minX = width;
+        let minY = height;
+        let maxX = -1;
+        let maxY = -1;
+
+        for (let y = 0; y < height; y += 1) {
+          for (let x = 0; x < width; x += 1) {
+            const index = (y * width + x) * 4;
+            if (data[index + 3] > alphaThreshold) {
+              if (x < minX) minX = x;
+              if (y < minY) minY = y;
+              if (x > maxX) maxX = x;
+              if (y > maxY) maxY = y;
+            }
+          }
+        }
+
+        if (maxX < minX || maxY < minY) {
+          resolve(src);
+          return;
+        }
+
+        const cropWidth = maxX - minX + 1;
+        const cropHeight = maxY - minY + 1;
+        const paddingX = Math.max(2, Math.round(cropWidth * 0.03));
+        const paddingY = Math.max(2, Math.round(cropHeight * 0.03));
+
+        const outCanvas = document.createElement('canvas');
+        outCanvas.width = cropWidth + paddingX * 2;
+        outCanvas.height = cropHeight + paddingY * 2;
+        const outCtx = outCanvas.getContext('2d');
+        if (!outCtx) {
+          resolve(src);
+          return;
+        }
+
+        outCtx.drawImage(
+          image,
+          minX,
+          minY,
+          cropWidth,
+          cropHeight,
+          paddingX,
+          paddingY,
+          cropWidth,
+          cropHeight,
+        );
+
+        resolve(outCanvas.toDataURL('image/png'));
+      } catch {
+        resolve(src);
+      }
+    };
+
+    image.onerror = () => resolve(src);
+    image.src = src;
+  });
+
 const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
   avatarImage,
   avatarName,
@@ -20,6 +99,22 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
   totalTime,
   hidden = false,
 }) => {
+  const [fittedAvatarImage, setFittedAvatarImage] = useState(avatarImage);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    cropTransparentAvatarPadding(avatarImage).then((croppedSrc) => {
+      if (!cancelled) {
+        setFittedAvatarImage(croppedSrc);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [avatarImage]);
+
   const timerProgress = useMemo(
     () => Math.max(0, Math.min(1, totalTime > 0 ? timeLeft / totalTime : 0)),
     [timeLeft, totalTime],
@@ -48,7 +143,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
             <div className="absolute left-[4.1%] top-1/2 h-[79%] w-[25.6%] -translate-y-1/2">
               <div className="absolute inset-[9%] overflow-hidden rounded-[30%]">
                 <img
-                  src={avatarImage}
+                  src={fittedAvatarImage}
                   alt={avatarName}
                   draggable={false}
                   className="h-full w-full object-contain object-center drop-shadow-[0_3px_6px_rgba(2,6,23,0.45)]"
