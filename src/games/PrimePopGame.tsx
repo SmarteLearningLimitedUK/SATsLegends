@@ -166,6 +166,8 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
   const config = useMemo(() => getConfig(levelId), [levelId]);
   const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
   const [isPhone, setIsPhone] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 768 : true));
+  const onVictoryRef = useRef(onVictory);
+  const onGameOverRef = useRef(onGameOver);
 
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(config.roundSeconds);
@@ -227,6 +229,11 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
   }, []);
 
   useEffect(() => {
+    onVictoryRef.current = onVictory;
+    onGameOverRef.current = onGameOver;
+  }, [onVictory, onGameOver]);
+
+  useEffect(() => {
     const onResize = () => setIsPhone(window.innerWidth < 768);
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
@@ -247,11 +254,11 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
         origin: { y: 0.62 },
         colors: ['#fde047', '#34d399', '#38bdf8', '#ffffff'],
       });
-      onVictory(stars, finalScore);
+      onVictoryRef.current(stars, finalScore);
       return;
     }
-    onGameOver(finalScore);
-  }, [clearLoops, onGameOver, onVictory, targetScore]);
+    onGameOverRef.current(finalScore);
+  }, [clearLoops, targetScore]);
 
   const makeBubble = useCallback((existing: Bubble[]) => {
     const radius = randomBetween(bubbleRuntime.minRadius, bubbleRuntime.maxRadius);
