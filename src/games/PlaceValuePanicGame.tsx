@@ -6,7 +6,7 @@ import goblinWiz from '../assets/bosses/goblinwiz.jpg';
 import hudAvatarName from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
 import hudTimerTrack from '../assets/fantasy_hero/ui/uiamend_slices/hud_timer_track.png';
 import hudTimerBar from '../assets/fantasy_hero/ui/uiamend_slices/hud_timer_bar.png';
-import hudTimerIcon from '../assets/fantasy_hero/ui/uiamend_slices/hud_timer_icon.png';
+import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
 import questionBarTiny from '../assets/ui_frames/hudfortextplace_slices/text_bar_tiny.png';
 import questionBarSmall from '../assets/ui_frames/hudfortextplace_slices/text_bar_small.png';
 import questionBarMedium from '../assets/ui_frames/hudfortextplace_slices/text_bar_medium.png';
@@ -901,7 +901,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 className="absolute inset-0 h-full w-full object-contain"
               />
               <img
-                src={hudTimerIcon}
+                src={hourglassIcon}
                 alt=""
                 aria-hidden="true"
                 draggable={false}
