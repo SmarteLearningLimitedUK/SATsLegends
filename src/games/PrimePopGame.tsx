@@ -63,8 +63,7 @@ const INITIAL_LIVES = 10;
 const BULLET_SPEED = 98;
 const BULLET_RADIUS = 3.3;
 const CANNON_ORIGIN = { x: 50, y: 93 };
-const BUBBLE_VISUAL_SCALE = 1;
-const CANNON_VISUAL_SCALE = 3;
+const BUBBLE_PIXEL_SCALE = 10;
 
 const BUBBLE_TINTS: BubbleTint[] = ['blue', 'green', 'purple', 'gold', 'red'];
 const BUBBLE_CORES = [diamondBlue, diamondGreen, diamondPurple, diamondYellow, gemCore];
@@ -97,12 +96,12 @@ const getConfig = (levelId: number): PrimePopConfig => {
       roundSeconds: 75,
       targetScore: 900 + ((level - 1) * 80),
       maxNumber: 40,
-      minBubbles: 6,
-      maxBubbles: 7,
-      minRadius: 7.3,
-      maxRadius: 9.4,
-      minSpeed: 7.5,
-      maxSpeed: 10.5,
+      minBubbles: 4,
+      maxBubbles: 5,
+      minRadius: 12,
+      maxRadius: 15,
+      minSpeed: 6.2,
+      maxSpeed: 8.4,
       primeChance: 0.58,
       spawnEveryMs: 920,
       primePoints: 220,
@@ -116,12 +115,12 @@ const getConfig = (levelId: number): PrimePopConfig => {
       roundSeconds: 70,
       targetScore: 1150 + ((level - 4) * 95),
       maxNumber: 70,
-      minBubbles: 7,
-      maxBubbles: 8,
-      minRadius: 6.9,
-      maxRadius: 8.8,
-      minSpeed: 9.3,
-      maxSpeed: 12.2,
+      minBubbles: 5,
+      maxBubbles: 6,
+      minRadius: 10.5,
+      maxRadius: 13.5,
+      minSpeed: 7.8,
+      maxSpeed: 10,
       primeChance: 0.5,
       spawnEveryMs: 840,
       primePoints: 230,
@@ -134,12 +133,12 @@ const getConfig = (levelId: number): PrimePopConfig => {
     roundSeconds: 66,
     targetScore: 1520 + ((level - 8) * 110),
     maxNumber: 99,
-    minBubbles: 8,
-    maxBubbles: 9,
-    minRadius: 6.4,
-    maxRadius: 8.2,
-    minSpeed: 10.6,
-    maxSpeed: 13.8,
+    minBubbles: 6,
+    maxBubbles: 7,
+    minRadius: 9.5,
+    maxRadius: 12.5,
+    minSpeed: 8.8,
+    maxSpeed: 11.2,
     primeChance: 0.45,
     spawnEveryMs: 740,
     primePoints: 240,
@@ -156,8 +155,8 @@ const scoreToStars = (score: number, target: number, primeAccuracy: number) => {
 
 const PrimeBubble: React.FC<{ bubble: Bubble }> = ({ bubble }) => {
   const tint = TINT_STYLE[bubble.tint];
-  const visualVw = Math.max(20, bubble.radius * 2.6 * BUBBLE_VISUAL_SCALE);
-  const size = `clamp(96px, ${visualVw}vw, 180px)`;
+  const bubblePx = Math.round(bubble.radius * BUBBLE_PIXEL_SCALE);
+  const size = `${Math.max(104, Math.min(180, bubblePx))}px`;
 
   return (
     <div
@@ -216,6 +215,12 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
 
   const targetScore = config.targetScore;
   const progress = Math.min((score / Math.max(targetScore, 1)) * 100, 100);
+  const cannonAngle = useMemo(() => {
+    const dx = crosshair.x - CANNON_ORIGIN.x;
+    const dy = crosshair.y - CANNON_ORIGIN.y;
+    const angle = (Math.atan2(dy, dx) * 180) / Math.PI + 90;
+    return Math.max(-62, Math.min(62, angle));
+  }, [crosshair.x, crosshair.y]);
 
   const clearLoops = useCallback(() => {
     if (rafRef.current !== null) {
@@ -580,7 +585,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0 }}
               >
-                <div className="h-9 w-9 rounded-full border-2 border-white/80 bg-gradient-to-b from-yellow-200 to-amber-400 shadow-[0_0_24px_rgba(251,191,36,0.9)]" />
+                <div className="h-11 w-11 rounded-full border-2 border-white/80 bg-gradient-to-b from-yellow-100 via-amber-300 to-amber-500 shadow-[0_0_28px_rgba(251,191,36,0.95)]" />
               </motion.div>
             ))}
           </AnimatePresence>
@@ -596,14 +601,18 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
             }}
           />
 
-          <div className="pointer-events-none absolute bottom-2 left-1/2 z-20 -translate-x-1/2">
-            <div
-              className="relative h-20 w-20 sm:h-24 sm:w-24"
-              style={{ transform: `scale(${CANNON_VISUAL_SCALE})`, transformOrigin: 'center bottom' }}
-            >
-              <div className="absolute bottom-0 left-1/2 h-9 w-16 -translate-x-1/2 rounded-t-[1.1rem] border-2 border-amber-200/70 bg-gradient-to-b from-amber-200 to-amber-600 shadow-[0_10px_18px_rgba(2,6,23,0.45)]" />
-              <div className="absolute bottom-6 left-1/2 h-11 w-7 -translate-x-1/2 rounded-t-xl border-2 border-amber-200/65 bg-gradient-to-r from-amber-200 via-amber-400 to-amber-700 shadow-[0_10px_20px_rgba(2,6,23,0.5)]" />
-              <div className="absolute bottom-12 left-1/2 h-3 w-3 -translate-x-1/2 rounded-full bg-cyan-100/90 shadow-[0_0_10px_rgba(207,250,254,0.8)]" />
+          <div className="pointer-events-none absolute bottom-20 left-1/2 z-20 -translate-x-1/2">
+            <div className="relative h-44 w-44">
+              <div className="absolute bottom-0 left-1/2 h-20 w-44 -translate-x-1/2 rounded-[2rem] border-[3px] border-amber-200/85 bg-gradient-to-b from-amber-100 via-amber-300 to-amber-600 shadow-[0_12px_24px_rgba(2,6,23,0.55)]" />
+              <div className="absolute bottom-10 left-1/2 h-16 w-16 -translate-x-1/2 rounded-full border-[3px] border-amber-100/90 bg-gradient-to-b from-amber-50 via-amber-200 to-amber-500 shadow-[0_8px_16px_rgba(2,6,23,0.45)]" />
+              <div
+                className="absolute bottom-[4.6rem] left-1/2 h-24 w-12 rounded-t-[1.8rem] border-[3px] border-amber-100/90 bg-gradient-to-b from-amber-50 via-amber-200 to-amber-500 shadow-[0_12px_20px_rgba(2,6,23,0.48)]"
+                style={{ transform: `translateX(-50%) rotate(${cannonAngle}deg)`, transformOrigin: 'bottom center' }}
+              />
+              <div
+                className="absolute bottom-[10.1rem] left-1/2 h-5 w-5 rounded-full border-2 border-cyan-100/90 bg-cyan-200 shadow-[0_0_16px_rgba(125,211,252,0.85)]"
+                style={{ transform: `translateX(-50%) rotate(${cannonAngle}deg)` }}
+              />
             </div>
           </div>
 
