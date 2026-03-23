@@ -425,6 +425,38 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     return question.tokenValues.length >= 6 ? '9.6%' : '8.8%';
   }, [question.tokenValues.length]);
 
+  const questionTextConfig = useMemo(() => {
+    const promptLength = question.prompt.trim().length;
+    const isTablet = Math.min(viewport.width, viewport.height) >= 760;
+
+    let fontSize = isTablet
+      ? 'clamp(0.95rem, 1.95vw, 1.22rem)'
+      : 'clamp(0.88rem, 2.2vw, 1.14rem)';
+    let lineClamp = 3;
+
+    if (promptLength > 48) {
+      fontSize = isTablet
+        ? 'clamp(0.86rem, 1.72vw, 1.08rem)'
+        : 'clamp(0.78rem, 1.95vw, 1.0rem)';
+    }
+
+    if (promptLength > 66) {
+      fontSize = isTablet
+        ? 'clamp(0.76rem, 1.54vw, 0.98rem)'
+        : 'clamp(0.7rem, 1.7vw, 0.92rem)';
+      lineClamp = 4;
+    }
+
+    if (promptLength > 86) {
+      fontSize = isTablet
+        ? 'clamp(0.7rem, 1.4vw, 0.9rem)'
+        : 'clamp(0.64rem, 1.5vw, 0.84rem)';
+      lineClamp = 5;
+    }
+
+    return { fontSize, lineClamp };
+  }, [question.prompt, viewport.height, viewport.width]);
+
   const resetRound = useCallback((nextQuestion: QuestionState) => {
     const nextSources: Array<Token | null> = nextQuestion.tokenValues.map((value, idx) => ({
       id: `${nextQuestion.id}-token-${idx}`,
@@ -851,9 +883,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         >
           <img src={medDialogue} alt="" aria-hidden="true" draggable={false} className="absolute inset-0 h-full w-full object-contain" />
           <div
-            className="absolute inset-x-[7%] top-[18%] bottom-[18%] mx-auto flex items-center justify-center overflow-hidden text-center text-[clamp(0.9rem,2.35vw,1.3rem)] font-black uppercase leading-[1.08] tracking-[0.01em] text-white"
+            className="absolute inset-x-[8.5%] top-[21%] bottom-[19%] mx-auto flex items-center justify-center overflow-hidden text-center font-black uppercase tracking-[0.01em] text-white"
             style={{
               textShadow: '0 2px 6px rgba(2,6,23,0.62)',
+              fontSize: questionTextConfig.fontSize,
             }}
           >
             <span
@@ -861,8 +894,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               style={{
                 display: '-webkit-box',
                 WebkitBoxOrient: 'vertical',
-                WebkitLineClamp: 3,
+                WebkitLineClamp: questionTextConfig.lineClamp,
+                lineHeight: 1.08,
+                maxHeight: '100%',
+                overflowWrap: 'anywhere',
                 wordBreak: 'break-word',
+                whiteSpace: 'normal',
               }}
             >
               {question.prompt}
