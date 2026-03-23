@@ -438,7 +438,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const targetHeightPct = Number.parseFloat(layout.targetHeight) || 0;
     const socketTopY = layout.targetY - targetHeightPct / 2;
     const bottomPct = 100 - socketTopY;
-    return `calc(${bottomPct.toFixed(2)}% - 8px)`;
+    return `calc(${bottomPct.toFixed(2)}% - 13px)`;
   }, [layout.targetHeight, layout.targetY]);
 
   const questionFrameConfig = useMemo(() => {
@@ -1120,7 +1120,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               ) : null}
             </AnimatePresence>
             <motion.div
-              className="absolute inset-[10%] rounded-full blur-2xl"
+              className="absolute left-1/2 top-[66%] h-[38%] w-[56%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
               animate={{
                 opacity: goblinEffect === 'idle' ? 0.22 : 0.52,
                 scale: goblinEffect === 'idle' ? 1 : [1, 1.12, 1],
