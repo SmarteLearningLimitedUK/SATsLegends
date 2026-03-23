@@ -20,20 +20,12 @@ interface Bubble {
   id: number;
   x: number;
   y: number;
-  vx: number;
+  drift: number;
   vy: number;
   radius: number;
   value: number;
   isPrime: boolean;
   tint: BubbleTint;
-}
-
-interface Bullet {
-  id: number;
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
 }
 
 interface PrimePopConfig {
@@ -54,10 +46,7 @@ interface PrimePopConfig {
 }
 
 const INITIAL_LIVES = 10;
-const BULLET_SPEED = 98;
-const BULLET_RADIUS = 3.3;
-const CANNON_ORIGIN = { x: 50, y: 93 };
-const BUBBLE_PIXEL_SCALE = 8.4;
+const BUBBLE_PIXEL_SCALE = 7.2;
 
 const BUBBLE_TINTS: BubbleTint[] = ['blue', 'green', 'purple', 'gold', 'red'];
 
@@ -90,13 +79,13 @@ const getConfig = (levelId: number): PrimePopConfig => {
       targetScore: 900 + ((level - 1) * 80),
       maxNumber: 40,
       minBubbles: 4,
-      maxBubbles: 5,
-      minRadius: 12,
-      maxRadius: 15,
-      minSpeed: 6.2,
-      maxSpeed: 8.4,
+      maxBubbles: 6,
+      minRadius: 6.2,
+      maxRadius: 8.5,
+      minSpeed: 2.8,
+      maxSpeed: 4.1,
       primeChance: 0.58,
-      spawnEveryMs: 920,
+      spawnEveryMs: 1200,
       primePoints: 220,
       nonPrimePoints: 60,
       comboStep: 0.1,
@@ -109,13 +98,13 @@ const getConfig = (levelId: number): PrimePopConfig => {
       targetScore: 1150 + ((level - 4) * 95),
       maxNumber: 70,
       minBubbles: 5,
-      maxBubbles: 6,
-      minRadius: 10.5,
-      maxRadius: 13.5,
-      minSpeed: 7.8,
-      maxSpeed: 10,
+      maxBubbles: 7,
+      minRadius: 5.8,
+      maxRadius: 8,
+      minSpeed: 3.2,
+      maxSpeed: 4.6,
       primeChance: 0.5,
-      spawnEveryMs: 840,
+      spawnEveryMs: 1080,
       primePoints: 230,
       nonPrimePoints: 55,
       comboStep: 0.12,
@@ -127,13 +116,13 @@ const getConfig = (levelId: number): PrimePopConfig => {
     targetScore: 1520 + ((level - 8) * 110),
     maxNumber: 99,
     minBubbles: 6,
-    maxBubbles: 7,
-    minRadius: 9.5,
-    maxRadius: 12.5,
-    minSpeed: 8.8,
-    maxSpeed: 11.2,
+    maxBubbles: 8,
+    minRadius: 5.2,
+    maxRadius: 7.5,
+    minSpeed: 3.6,
+    maxSpeed: 5.2,
     primeChance: 0.45,
-    spawnEveryMs: 740,
+    spawnEveryMs: 980,
     primePoints: 240,
     nonPrimePoints: 50,
     comboStep: 0.14,
@@ -148,10 +137,10 @@ const scoreToStars = (score: number, target: number, primeAccuracy: number) => {
 
 const PrimeBubble: React.FC<{ bubble: Bubble; isPhone: boolean }> = ({ bubble, isPhone }) => {
   const tint = TINT_STYLE[bubble.tint];
-  const renderScale = isPhone ? 1.06 : 1;
+  const renderScale = isPhone ? 0.95 : 0.9;
   const bubblePx = Math.round(bubble.radius * BUBBLE_PIXEL_SCALE * renderScale);
-  const minSize = isPhone ? 92 : 84;
-  const maxSize = isPhone ? 142 : 130;
+  const minSize = isPhone ? 54 : 50;
+  const maxSize = isPhone ? 94 : 88;
   const size = `${Math.max(minSize, Math.min(maxSize, bubblePx))}px`;
 
   return (
@@ -183,24 +172,19 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
   const [lives, setLives] = useState(INITIAL_LIVES);
   const [combo, setCombo] = useState(0);
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [crosshair, setCrosshair] = useState({ x: 50, y: 35 });
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
-  const [bullets, setBullets] = useState<Bullet[]>([]);
 
-  const areaRef = useRef<HTMLDivElement | null>(null);
   const rafRef = useRef<number | null>(null);
   const timerRef = useRef<number | null>(null);
   const spawnRef = useRef<number | null>(null);
   const lastFrameRef = useRef<number | null>(null);
 
   const bubbleIdRef = useRef(1);
-  const bulletIdRef = useRef(1);
   const overRef = useRef(false);
   const scoreRef = useRef(0);
   const livesRef = useRef(INITIAL_LIVES);
   const comboRef = useRef(0);
   const bubblesRef = useRef<Bubble[]>([]);
-  const bulletsRef = useRef<Bullet[]>([]);
   const primePopsRef = useRef(0);
   const totalPopsRef = useRef(0);
 
@@ -227,13 +211,6 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
       maxSpeed: config.maxSpeed * 0.9,
     };
   }, [config.maxBubbles, config.maxRadius, config.maxSpeed, config.minBubbles, config.minRadius, config.minSpeed, isPhone]);
-  const cannonAngle = useMemo(() => {
-    const dx = crosshair.x - CANNON_ORIGIN.x;
-    const dy = crosshair.y - CANNON_ORIGIN.y;
-    const angle = (Math.atan2(dy, dx) * 180) / Math.PI + 90;
-    return Math.max(-62, Math.min(62, angle));
-  }, [crosshair.x, crosshair.y]);
-
   const clearLoops = useCallback(() => {
     if (rafRef.current !== null) {
       cancelAnimationFrame(rafRef.current);
@@ -316,9 +293,9 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     return {
       id: bubbleIdRef.current++,
       x,
-      y,
-      vx: (Math.random() < 0.5 ? -1 : 1) * randomBetween(bubbleRuntime.minSpeed, bubbleRuntime.maxSpeed),
-      vy: (Math.random() < 0.5 ? -1 : 1) * randomBetween(bubbleRuntime.minSpeed * 0.62, bubbleRuntime.maxSpeed * 0.75),
+      y: randomBetween(80, 102),
+      drift: (Math.random() < 0.5 ? -1 : 1) * randomBetween(1.1, 2.7),
+      vy: randomBetween(bubbleRuntime.minSpeed, bubbleRuntime.maxSpeed),
       radius,
       value,
       isPrime: isPrime(value),
@@ -326,22 +303,10 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     };
   }, [bubbleRuntime.maxRadius, bubbleRuntime.maxSpeed, bubbleRuntime.minRadius, bubbleRuntime.minSpeed, config.maxNumber, config.primeChance]);
 
-  const replenishBubbles = useCallback((list: Bubble[]) => {
-    let next = [...list];
-    while (next.length < bubbleRuntime.minBubbles) {
-      next = [...next, makeBubble(next)];
-    }
-    while (next.length > bubbleRuntime.maxBubbles) {
-      next.pop();
-    }
-    return next;
-  }, [bubbleRuntime.maxBubbles, bubbleRuntime.minBubbles, makeBubble]);
-
   useEffect(() => {
     overRef.current = false;
     clearLoops();
     bubbleIdRef.current = 1;
-    bulletIdRef.current = 1;
     scoreRef.current = 0;
     comboRef.current = 0;
     livesRef.current = INITIAL_LIVES;
@@ -358,9 +323,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
       initial = [...initial, makeBubble(initial)];
     }
     bubblesRef.current = initial;
-    bulletsRef.current = [];
     setBubbles(initial);
-    setBullets([]);
     lastFrameRef.current = null;
 
     timerRef.current = window.setInterval(() => {
@@ -375,43 +338,60 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
 
     spawnRef.current = window.setInterval(() => {
       if (overRef.current) return;
-      const next = replenishBubbles(bubblesRef.current);
+      if (bubblesRef.current.length >= bubbleRuntime.maxBubbles) return;
+      const next = [...bubblesRef.current, makeBubble(bubblesRef.current)];
       bubblesRef.current = next;
       setBubbles(next);
     }, config.spawnEveryMs);
 
     return () => clearLoops();
-  }, [bubbleRuntime.minBubbles, clearLoops, config.roundSeconds, config.spawnEveryMs, finalize, makeBubble, replenishBubbles]);
+  }, [bubbleRuntime.maxBubbles, bubbleRuntime.minBubbles, clearLoops, config.roundSeconds, config.spawnEveryMs, finalize, makeBubble]);
 
-  const fireBullet = useCallback((clientX: number, clientY: number) => {
-    if (!areaRef.current || overRef.current) return;
-    const rect = areaRef.current.getBoundingClientRect();
-    const targetX = ((clientX - rect.left) / rect.width) * 100;
-    const targetY = ((clientY - rect.top) / rect.height) * 100;
+  const popBubble = useCallback((bubbleId: number) => {
+    if (overRef.current) return;
+    const target = bubblesRef.current.find((bubble) => bubble.id === bubbleId);
+    if (!target) return;
 
-    setCrosshair({
-      x: Math.max(0, Math.min(100, targetX)),
-      y: Math.max(0, Math.min(100, targetY)),
-    });
+    let scoreNext = scoreRef.current;
+    let comboNext = comboRef.current;
+    let livesNext = livesRef.current;
 
-    const dx = targetX - CANNON_ORIGIN.x;
-    const rawDy = targetY - CANNON_ORIGIN.y;
-    const dy = Math.min(rawDy, -1.2); // Prevent downward fire.
-    const magnitude = Math.hypot(dx, dy) || 1;
-    const vx = (dx / magnitude) * BULLET_SPEED;
-    const vy = (dy / magnitude) * BULLET_SPEED;
+    totalPopsRef.current += 1;
 
-    const bullet: Bullet = {
-      id: bulletIdRef.current++,
-      x: CANNON_ORIGIN.x,
-      y: CANNON_ORIGIN.y,
-      vx,
-      vy,
-    };
-    const next = [...bulletsRef.current, bullet];
-    bulletsRef.current = next;
-    setBullets(next);
-  }, []);
+    if (target.isPrime) {
+      primePopsRef.current += 1;
+      const earned = Math.round(config.primePoints * (1 + comboNext * config.comboStep));
+      scoreNext += earned;
+      comboNext += 1;
+      setFeedback(`Prime +${earned}`);
+      confetti({
+        particleCount: 18,
+        spread: 26,
+        origin: { y: 0.62 },
+        colors: ['#fde047', '#22d3ee', '#34d399'],
+      });
+    } else {
+      comboNext = 0;
+      livesNext -= 1;
+      setFeedback('Not prime -1 life');
+    }
+
+    const nextBubbles = bubblesRef.current.filter((bubble) => bubble.id !== bubbleId);
+    bubblesRef.current = nextBubbles;
+    scoreRef.current = Math.max(0, scoreNext);
+    comboRef.current = Math.max(0, comboNext);
+    livesRef.current = Math.max(0, livesNext);
+
+    setBubbles(nextBubbles);
+    setScore(scoreRef.current);
+    setCombo(comboRef.current);
+    setLives(livesRef.current);
+    window.setTimeout(() => setFeedback(null), 520);
+
+    if (scoreRef.current >= targetScore || livesRef.current <= 0) {
+      finalize(scoreRef.current);
+    }
+  }, [config.comboStep, config.primePoints, finalize, targetScore]);
 
   const loop = useCallback((ts: number) => {
     if (overRef.current) return;
@@ -420,93 +400,39 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     lastFrameRef.current = ts;
 
     const movedBubbles = bubblesRef.current.map((bubble) => {
-      let x = bubble.x + (bubble.vx * dt);
-      let y = bubble.y + (bubble.vy * dt);
-      let vx = bubble.vx;
-      let vy = bubble.vy;
+      let x = bubble.x + (bubble.drift * dt);
+      const y = bubble.y - (bubble.vy * dt);
+      let drift = bubble.drift;
       const minX = bubble.radius + 2;
       const maxX = 100 - bubble.radius - 2;
-      const minY = bubble.radius + 2;
-      const maxY = 69 - bubble.radius;
 
       if (x < minX || x > maxX) {
-        vx *= -1;
+        drift *= -1;
         x = Math.max(minX, Math.min(maxX, x));
       }
-      if (y < minY || y > maxY) {
-        vy *= -1;
-        y = Math.max(minY, Math.min(maxY, y));
-      }
 
-      return { ...bubble, x, y, vx, vy };
+      return { ...bubble, x, y, drift };
     });
 
-    const movedBullets = bulletsRef.current
-      .map((bullet) => ({
-        ...bullet,
-        x: bullet.x + (bullet.vx * dt),
-        y: bullet.y + (bullet.vy * dt),
-      }))
-      .filter((bullet) => bullet.x >= -4 && bullet.x <= 104 && bullet.y >= -10 && bullet.y <= 104);
-
-    const hitBubbleIds = new Set<number>();
-    const remainingBullets: Bullet[] = [];
+    const escapedPrime = movedBubbles.filter((bubble) => bubble.y < -(bubble.radius + 3) && bubble.isPrime).length;
+    const nextBubbles = movedBubbles.filter((bubble) => bubble.y >= -(bubble.radius + 3));
     let scoreNext = scoreRef.current;
     let comboNext = comboRef.current;
     let livesNext = livesRef.current;
-    let feedbackText: string | null = null;
 
-    for (const bullet of movedBullets) {
-      if (overRef.current) break;
-      const hit = movedBubbles.find((bubble) => (
-        !hitBubbleIds.has(bubble.id)
-        && Math.hypot(bullet.x - bubble.x, bullet.y - bubble.y) <= (bubble.radius + BULLET_RADIUS)
-      ));
-
-      if (!hit) {
-        remainingBullets.push(bullet);
-        continue;
-      }
-
-      // No passthrough: bullet is consumed immediately on first collision.
-      hitBubbleIds.add(hit.id);
-      totalPopsRef.current += 1;
-      livesNext -= 1;
-
-      if (hit.isPrime) {
-        primePopsRef.current += 1;
-        const earned = Math.round(config.primePoints * (1 + comboNext * config.comboStep));
-        scoreNext += earned;
-        comboNext += 1;
-        feedbackText = `Prime hit +${earned}`;
-      } else {
-        scoreNext += config.nonPrimePoints;
-        comboNext = 0;
-        feedbackText = `Composite +${config.nonPrimePoints}`;
-      }
-    }
-
-    let nextBubbles = movedBubbles.filter((bubble) => !hitBubbleIds.has(bubble.id));
-    if (hitBubbleIds.size > 0) {
-      nextBubbles = replenishBubbles(nextBubbles);
-      setFeedback(feedbackText);
+    if (escapedPrime > 0) {
+      livesNext -= escapedPrime;
+      comboNext = 0;
+      setFeedback(`Missed prime -${escapedPrime} life${escapedPrime > 1 ? 's' : ''}`);
       window.setTimeout(() => setFeedback(null), 520);
-      confetti({
-        particleCount: 22,
-        spread: 34,
-        origin: { y: 0.62 },
-        colors: ['#fde047', '#22d3ee', '#34d399'],
-      });
     }
 
     bubblesRef.current = nextBubbles;
-    bulletsRef.current = remainingBullets;
     scoreRef.current = Math.max(0, scoreNext);
     comboRef.current = Math.max(0, comboNext);
     livesRef.current = Math.max(0, livesNext);
 
     setBubbles(nextBubbles);
-    setBullets(remainingBullets);
     setScore(scoreRef.current);
     setCombo(comboRef.current);
     setLives(livesRef.current);
@@ -517,7 +443,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     }
 
     rafRef.current = requestAnimationFrame(loop);
-  }, [config.comboStep, config.nonPrimePoints, config.primePoints, finalize, replenishBubbles, targetScore]);
+  }, [finalize, targetScore]);
 
   useEffect(() => {
     if (overRef.current) return;
@@ -548,20 +474,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
           compact
         />
 
-        <div
-          ref={areaRef}
-          className="relative min-h-0 flex-1 overflow-hidden bg-[linear-gradient(180deg,rgba(6,25,55,0.44),rgba(3,12,32,0.62))]"
-          onPointerDown={(event) => fireBullet(event.clientX, event.clientY)}
-          onPointerMove={(event) => {
-            if (!areaRef.current) return;
-            const rect = areaRef.current.getBoundingClientRect();
-            setCrosshair({
-              x: ((event.clientX - rect.left) / rect.width) * 100,
-              y: ((event.clientY - rect.top) / rect.height) * 100,
-            });
-          }}
-          style={{ touchAction: 'none' }}
-        >
+        <div className="relative min-h-0 flex-1 overflow-hidden bg-[linear-gradient(180deg,rgba(6,25,55,0.22),rgba(3,12,32,0.52))]">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(56,189,248,0.28),transparent_35%),radial-gradient(circle_at_15%_25%,rgba(196,181,253,0.2),transparent_30%),radial-gradient(circle_at_84%_30%,rgba(74,222,128,0.17),transparent_28%)]" />
 
           <div className="absolute left-2 right-2 top-2 z-20 flex flex-wrap items-center justify-between gap-2">
@@ -569,7 +482,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
               Prime +{config.primePoints}
             </div>
             <div className="rounded-full border border-white/35 bg-slate-900/55 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-white">
-              Composite +{config.nonPrimePoints}
+              Composite: -1 life
             </div>
             <div className="rounded-full border border-amber-100/60 bg-amber-500/34 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-amber-50">
               Combo x{combo}
@@ -580,58 +493,21 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
             {bubbles.map((bubble) => (
               <motion.div
                 key={bubble.id}
-                className="absolute -translate-x-1/2 -translate-y-1/2"
+                className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer"
                 style={{ left: `${bubble.x}%`, top: `${bubble.y}%` }}
                 initial={{ scale: 0.5, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.28, opacity: 0, rotate: 30 }}
                 transition={{ duration: 0.18 }}
+                onPointerDown={(event) => {
+                  event.stopPropagation();
+                  popBubble(bubble.id);
+                }}
               >
                 <PrimeBubble bubble={bubble} isPhone={isPhone} />
               </motion.div>
             ))}
           </AnimatePresence>
-
-          <AnimatePresence>
-            {bullets.map((bullet) => (
-              <motion.div
-                key={bullet.id}
-                className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2"
-                style={{ left: `${bullet.x}%`, top: `${bullet.y}%` }}
-                initial={{ opacity: 0.6, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <div className="h-11 w-11 rounded-full border-2 border-white/80 bg-gradient-to-b from-yellow-100 via-amber-300 to-amber-500 shadow-[0_0_28px_rgba(251,191,36,0.95)]" />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-
-          <div
-            className="pointer-events-none absolute z-10 hidden -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-100/80 md:block"
-            style={{
-              left: `${crosshair.x}%`,
-              top: `${crosshair.y}%`,
-              width: '2.2rem',
-              height: '2.2rem',
-              boxShadow: '0 0 18px rgba(34,211,238,0.48)',
-            }}
-          />
-
-          <div className="pointer-events-none absolute bottom-16 left-1/2 z-20 -translate-x-1/2">
-            <div className="relative h-44 w-44">
-              <div className="absolute bottom-0 left-1/2 h-20 w-44 -translate-x-1/2 rounded-[2rem] border-[3px] border-amber-200/85 bg-gradient-to-b from-amber-100 via-amber-300 to-amber-600 shadow-[0_12px_24px_rgba(2,6,23,0.55)]" />
-              <div className="absolute bottom-10 left-1/2 h-16 w-16 -translate-x-1/2 rounded-full border-[3px] border-amber-100/90 bg-gradient-to-b from-amber-50 via-amber-200 to-amber-500 shadow-[0_8px_16px_rgba(2,6,23,0.45)]" />
-              <div
-                className="absolute bottom-[4.6rem] left-1/2 h-24 w-12 rounded-t-[1.8rem] border-[3px] border-amber-100/90 bg-gradient-to-b from-amber-50 via-amber-200 to-amber-500 shadow-[0_12px_20px_rgba(2,6,23,0.48)]"
-                style={{ transform: `translateX(-50%) rotate(${cannonAngle}deg)`, transformOrigin: 'bottom center' }}
-              />
-              <div
-                className="absolute bottom-[10.1rem] left-1/2 h-5 w-5 rounded-full border-2 border-cyan-100/90 bg-cyan-200 shadow-[0_0_16px_rgba(125,211,252,0.85)]"
-                style={{ transform: `translateX(-50%) rotate(${cannonAngle}deg)` }}
-              />
-            </div>
-          </div>
 
           <AnimatePresence>
             {feedback ? (
