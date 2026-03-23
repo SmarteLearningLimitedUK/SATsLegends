@@ -450,13 +450,43 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     return `${clamped.toFixed(1)}%`;
   }, [layout.sourceHeight, question.tokenValues.length]);
 
+  const targetSocketSizing = useMemo(() => {
+    const count = question.expectedDigits.length;
+    const baseWidth = Number.parseFloat(layout.targetWidth) || 12;
+    const baseHeight = Number.parseFloat(layout.targetHeight) || 12;
+
+    let width = baseWidth;
+    let height = baseHeight;
+
+    if (count === 5) {
+      width *= 0.9;
+      height *= 0.9;
+    } else if (count === 6) {
+      width *= 0.82;
+      height *= 0.82;
+    } else if (count >= 7) {
+      width *= 0.74;
+      height *= 0.74;
+    }
+
+    const normalizedWidth = Math.max(8.8, width);
+    const normalizedHeight = Math.max(8.4, height);
+
+    return {
+      widthValue: normalizedWidth,
+      heightValue: normalizedHeight,
+      width: `${normalizedWidth.toFixed(2)}%`,
+      height: `${normalizedHeight.toFixed(2)}%`,
+    };
+  }, [layout.targetHeight, layout.targetWidth, question.expectedDigits.length]);
+
   // Anchor goblin feet to the top of the receiving sockets for consistent placement across devices.
   const enemyBottomFromPlayfield = useMemo(() => {
-    const targetHeightPct = Number.parseFloat(layout.targetHeight) || 0;
+    const targetHeightPct = targetSocketSizing.heightValue || 0;
     const socketTopY = layout.targetY - targetHeightPct / 2;
     const bottomPct = 100 - socketTopY;
     return `calc(${bottomPct.toFixed(2)}% - 23px)`;
-  }, [layout.targetHeight, layout.targetY]);
+  }, [layout.targetY, targetSocketSizing.heightValue]);
 
   const questionFrameConfig = useMemo(() => {
     const promptLength = question.prompt.trim().length;
@@ -656,7 +686,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const rect = playfieldRef.current?.getBoundingClientRect();
     if (!rect) return null;
 
-    const targetPct = Number.parseFloat(layout.targetWidth) / 100;
+    const targetPct = targetSocketSizing.widthValue / 100;
     const sourcePct = Number.parseFloat(layout.sourceWidth) / 100;
     const targetRadius = Math.max(56, rect.width * Math.max(0.09, targetPct * 0.95));
     const sourceRadius = Math.max(42, rect.width * Math.max(0.07, sourcePct * 0.72));
@@ -699,7 +729,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       return { location: 'source', index: bestSource.index };
     }
     return null;
-  }, [activeSourceAnchors, activeTargetAnchors, layout.sourceWidth, layout.sourceY, layout.targetWidth, layout.targetY]);
+  }, [activeSourceAnchors, activeTargetAnchors, layout.sourceWidth, layout.sourceY, layout.targetY, targetSocketSizing.widthValue]);
 
   const placeTokenInArrays = useCallback((candidate: { location: TokenLocation; index: number } | null) => {
     if (!dragState) return;
@@ -1007,8 +1037,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               style={{
                 left: `${anchor.x}%`,
                 top: `calc(${layout.targetY}% - ${TARGET_ROW_Y_OFFSET_PX}px)`,
-                width: layout.targetWidth,
-                height: layout.targetHeight,
+                width: targetSocketSizing.width,
+                height: targetSocketSizing.height,
               }}
             >
               <img
