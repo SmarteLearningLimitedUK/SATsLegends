@@ -9,11 +9,13 @@ import questionBarTiny from '../assets/ui_frames/hudfortextplace_slices/text_bar
 import questionBarSmall from '../assets/ui_frames/hudfortextplace_slices/text_bar_small.png';
 import questionBarMedium from '../assets/ui_frames/hudfortextplace_slices/text_bar_medium.png';
 import questionBarLarge from '../assets/ui_frames/hudfortextplace_slices/text_bar_large.png';
-import socketH from '../assets/ui_frames/hudfortextplace_slices/socket_h.png';
-import socketT from '../assets/ui_frames/hudfortextplace_slices/socket_t.png';
-import socketTh1 from '../assets/ui_frames/hudfortextplace_slices/socket_th_1.png';
-import socketTh2 from '../assets/ui_frames/hudfortextplace_slices/socket_th_2.png';
-import socketU from '../assets/ui_frames/hudfortextplace_slices/socket_u.png';
+import socketM from '../assets/casual_ui/updaed_sockets_slices/socket_m.png';
+import socketHth from '../assets/casual_ui/updaed_sockets_slices/socket_hth.png';
+import socketTth from '../assets/casual_ui/updaed_sockets_slices/socket_tth.png';
+import socketTh from '../assets/casual_ui/updaed_sockets_slices/socket_th.png';
+import socketH from '../assets/casual_ui/updaed_sockets_slices/socket_h.png';
+import socketT from '../assets/casual_ui/updaed_sockets_slices/socket_t.png';
+import socketU from '../assets/casual_ui/updaed_sockets_slices/socket_u.png';
 import GameActionDock from '../components/GameActionDock';
 import { triggerHaptic } from '../haptics';
 import { AVATARS } from '../constants';
@@ -67,7 +69,7 @@ const MATCH_DURATION_SECONDS = 90;
 const PLAYER_STORAGE_KEY = 'maths_quest_player';
 const GOBLIN_DAMAGE_LINES = ['Ouch!', 'Hey!', 'Oof!', 'Wahhh!', 'Ugh!'] as const;
 
-const FULL_PLACE_VALUE_HINTS = ['Th', 'Th', 'H', 'T', 'U'] as const;
+const FULL_PLACE_VALUE_HINTS = ['M', 'Hth', 'Tth', 'Th', 'H', 'T', 'U'] as const;
 const TARGET_ROW_Y_OFFSET_PX = 0;
 const SOURCE_ROW_Y_OFFSET_PX = 30;
 
@@ -115,23 +117,29 @@ const toWordsUnderHundred = (n: number): string => {
   return `${TENS_WORDS[tens]} ${ONES_WORDS[ones]}`;
 };
 
-const toWords = (n: number): string => {
+const toWordsUnderThousand = (n: number): string => {
   if (n < 100) return toWordsUnderHundred(n);
-  if (n < 1000) {
-    const hundreds = Math.floor(n / 100);
-    const rest = n % 100;
-    return rest === 0
-      ? `${ONES_WORDS[hundreds]} hundred`
-      : `${ONES_WORDS[hundreds]} hundred and ${toWordsUnderHundred(rest)}`;
-  }
-  if (n < 100000) {
+  const hundreds = Math.floor(n / 100);
+  const rest = n % 100;
+  return rest === 0
+    ? `${ONES_WORDS[hundreds]} hundred`
+    : `${ONES_WORDS[hundreds]} hundred and ${toWordsUnderHundred(rest)}`;
+};
+
+const toWords = (n: number): string => {
+  if (n < 1000) return toWordsUnderThousand(n);
+  if (n < 1000000) {
     const thousands = Math.floor(n / 1000);
     const rest = n % 1000;
-    if (rest === 0) return `${toWords(thousands)} thousand`;
-    if (rest < 100) return `${toWords(thousands)} thousand and ${toWords(rest)}`;
-    return `${toWords(thousands)} thousand, ${toWords(rest)}`;
+    const thousandWords = toWordsUnderThousand(thousands);
+    if (rest === 0) return `${thousandWords} thousand`;
+    if (rest < 100) return `${thousandWords} thousand and ${toWordsUnderThousand(rest)}`;
+    return `${thousandWords} thousand, ${toWordsUnderThousand(rest)}`;
   }
-  return String(n);
+  if (n === 1000000) {
+    return 'one million';
+  }
+  return n.toLocaleString('en-GB');
 };
 
 const scoreToStars = (accuracy: number): number => {
@@ -156,7 +164,10 @@ const spanForSlots = (count: number, type: 'source' | 'target') => {
     if (count <= 2) return 24;
     if (count === 3) return 36;
     if (count === 4) return 48;
-    return 58;
+    if (count === 5) return 58;
+    if (count === 6) return 68;
+    if (count === 7) return 76;
+    return 80;
   }
 
   if (count <= 2) return 18;
@@ -165,7 +176,9 @@ const spanForSlots = (count: number, type: 'source' | 'target') => {
   if (count === 5) return 44;
   if (count === 6) return 52;
   if (count === 7) return 60;
-  return 66;
+  if (count === 8) return 66;
+  if (count === 9) return 74;
+  return 80;
 };
 
 const getDistractorDigits = (expectedDigits: number[], count: number): number[] => {
@@ -247,16 +260,17 @@ const removeBlackMatteFromSprite = (src: string): Promise<string> =>
   });
 
 const slotCountForLevel = (level: number): number => {
-  // Add one receiving box per level, capped to 5 place-value slots.
-  // L1=2 (T,U), L2=3 (H,T,U), L3=4 (Th,H,T,U), L4+=5 (Th,Th,H,T,U)
-  return Math.min(5, Math.max(2, level + 1));
+  // Add one receiving box per level up to million place.
+  // L1=2 (T,U), L2=3 (H,T,U), L3=4 (Th,H,T,U), L4=5 (Tth,Th,H,T,U),
+  // L5=6 (Hth,Tth,Th,H,T,U), L6+=7 (M,Hth,Tth,Th,H,T,U)
+  return Math.min(7, Math.max(2, level + 1));
 };
 
-const getSocketAsset = (placeHint: string, slotIndex: number, placeHints: string[]) => {
-  if (placeHint === 'Th') {
-    const firstThIndex = placeHints.indexOf('Th');
-    return slotIndex === firstThIndex ? socketTh1 : socketTh2;
-  }
+const getSocketAsset = (placeHint: string, _slotIndex: number, _placeHints: string[]) => {
+  if (placeHint === 'M') return socketM;
+  if (placeHint === 'Hth') return socketHth;
+  if (placeHint === 'Tth') return socketTth;
+  if (placeHint === 'Th') return socketTh;
   if (placeHint === 'H') return socketH;
   if (placeHint === 'T') return socketT;
   return socketU;
@@ -271,8 +285,12 @@ const makeQuestion = (level: number): QuestionState => {
     promptNumber = randomInt(100, 999);
   } else if (slotCount === 4) {
     promptNumber = randomInt(1000, 9999);
-  } else {
+  } else if (slotCount === 5) {
     promptNumber = randomInt(10000, 99999);
+  } else if (slotCount === 6) {
+    promptNumber = randomInt(100000, 999999);
+  } else {
+    promptNumber = 1000000;
   }
 
   const expectedDigits = String(promptNumber)
