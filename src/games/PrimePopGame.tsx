@@ -63,7 +63,7 @@ const INITIAL_LIVES = 10;
 const BULLET_SPEED = 98;
 const BULLET_RADIUS = 3.3;
 const CANNON_ORIGIN = { x: 50, y: 93 };
-const BUBBLE_VISUAL_SCALE = 5;
+const BUBBLE_VISUAL_SCALE = 1;
 const CANNON_VISUAL_SCALE = 3;
 
 const BUBBLE_TINTS: BubbleTint[] = ['blue', 'green', 'purple', 'gold', 'red'];
@@ -156,7 +156,8 @@ const scoreToStars = (score: number, target: number, primeAccuracy: number) => {
 
 const PrimeBubble: React.FC<{ bubble: Bubble }> = ({ bubble }) => {
   const tint = TINT_STYLE[bubble.tint];
-  const size = `${bubble.radius * 2 * BUBBLE_VISUAL_SCALE}%`;
+  const visualVw = Math.max(20, bubble.radius * 2.6 * BUBBLE_VISUAL_SCALE);
+  const size = `clamp(96px, ${visualVw}vw, 180px)`;
 
   return (
     <div
