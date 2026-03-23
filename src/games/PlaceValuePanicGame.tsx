@@ -8,11 +8,7 @@ import shieldIcon from '../assets/casual_ui/icons/icon__shield.png';
 import hudProfileBar from '../assets/fantasy_hero/ui/uiamend_slices/hud_profile_bar.png';
 import hudTimerBar from '../assets/fantasy_hero/ui/uiamend_slices/hud_timer_bar.png';
 import hudTimerTrack from '../assets/fantasy_hero/ui/uiamend_slices/hud_timer_track.png';
-import socketThOne from '../assets/fantasy_hero/ui/uiamend_slices/socket_th_1.png';
-import socketThTwo from '../assets/fantasy_hero/ui/uiamend_slices/socket_th_2.png';
-import socketH from '../assets/fantasy_hero/ui/uiamend_slices/socket_h.png';
-import socketT from '../assets/fantasy_hero/ui/uiamend_slices/socket_t.png';
-import socketU from '../assets/fantasy_hero/ui/uiamend_slices/socket_u.png';
+import socketBase from '../assets/fantasy_hero/ui/uiamend_slices/socket_base.png';
 import GameActionDock from '../components/GameActionDock';
 import { triggerHaptic } from '../haptics';
 import { AVATARS } from '../constants';
@@ -146,6 +142,22 @@ const centeredAnchors = (count: number, spanPercent: number, centerPercent = 50)
   const step = spanPercent / (count - 1);
   return Array.from({ length: count }, (_, idx) => ({ x: left + step * idx }));
 };
+
+const spanForSlots = (count: number, type: 'source' | 'target') => {
+  if (type === 'target') {
+    if (count <= 2) return 24;
+    if (count === 3) return 36;
+    if (count === 4) return 48;
+    return 58;
+  }
+
+  if (count <= 2) return 22;
+  if (count === 3) return 32;
+  if (count === 4) return 42;
+  return 50;
+};
+
+const clampNumber = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 
 const removeBlackMatteFromSprite = (src: string): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -310,32 +322,77 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   }, [selectedAvatar.name]);
 
   const layout = useMemo(() => {
-    const ratio = viewport.height / Math.max(1, viewport.width);
+    const viewportWidth = Math.max(320, viewport.width);
+    const viewportHeight = Math.max(560, viewport.height);
+    const ratio = viewportHeight / Math.max(1, viewportWidth);
     const isTablet = Math.min(viewport.width, viewport.height) >= 760;
     const isTallPhone = !isTablet && ratio > 1.95;
 
+    // iOS best-practice style layout:
+    // 1) reserve top HUD strip, 2) reserve bottom dock strip,
+    // 3) stack game zones in the remaining vertical runway.
+    const dockReserve = isTablet ? 132 : (isTallPhone ? 124 : 114);
+    const hudReserve = isTablet ? 92 : 84;
+    const contentTop = hudReserve;
+    const contentBottom = viewportHeight - dockReserve;
+    const contentHeight = Math.max(360, contentBottom - contentTop);
+
+    const questionWidth = clampNumber(viewportWidth * (isTablet ? 0.46 : 0.56), 250, isTablet ? 540 : 360);
+    const questionHeight = clampNumber(contentHeight * (isTablet ? 0.14 : 0.12), isTablet ? 84 : 74, isTablet ? 128 : 100);
+    const questionTop = contentTop + (isTablet ? 6 : 8);
+
+    const sourceY = questionTop + questionHeight + contentHeight * (isTablet ? 0.16 : 0.14);
+    const sourceWidth = clampNumber(viewportWidth * (isTablet ? 0.10 : 0.125), 56, 110);
+    const sourceHeight = clampNumber(sourceWidth * 0.82, 52, 90);
+
+    let enemyWidth = clampNumber(viewportWidth * (isTablet ? 0.28 : 0.34), 170, 320);
+    let enemyTop = sourceY + contentHeight * 0.045;
+
+    const targetWidth = clampNumber(viewportWidth * (isTablet ? 0.118 : 0.152), 72, 132);
+    const targetHeight = clampNumber(targetWidth * 0.95, 70, 130);
+    let targetY = enemyTop + enemyWidth * 0.82;
+
+    const submitWidth = clampNumber(viewportWidth * (isTablet ? 0.30 : 0.46), 152, 340);
+    const submitHeight = clampNumber(contentHeight * (isTablet ? 0.11 : 0.10), 58, 90);
+    let submitY = targetY + targetHeight * 0.62 + (isTablet ? 18 : 14);
+    const maxSubmitY = contentBottom - submitHeight - 8;
+
+    if (submitY > maxSubmitY) {
+      const overshoot = submitY - maxSubmitY;
+      enemyTop -= overshoot;
+      targetY -= overshoot;
+      submitY = maxSubmitY;
+    }
+
+    enemyTop = Math.max(sourceY + 20, enemyTop);
+    targetY = Math.max(enemyTop + enemyWidth * 0.72, targetY);
+
+    const healthWidthPx = clampNumber(viewportWidth * (isTablet ? 0.26 : 0.35), 132, 236);
+    let healthLeftPx = viewportWidth / 2 + enemyWidth * 0.56;
+    healthLeftPx = Math.min(healthLeftPx, viewportWidth - healthWidthPx - 10);
+    healthLeftPx = Math.max(healthLeftPx, viewportWidth * 0.58);
+    const healthTopPx = enemyTop + enemyWidth * 0.18;
+
     return {
-      questionTop: isTablet ? 13.8 : (isTallPhone ? 14.8 : 14.5),
-      questionWidth: isTablet ? 46 : 56,
-      questionHeight: isTablet ? 10.5 : 11.0,
-      submitY: isTablet ? 80.4 : (isTallPhone ? 81.1 : 80.8),
-      submitWidth: isTablet ? 30 : 46,
-      submitHeight: isTablet ? 8.6 : 9.2,
-      targetY: isTablet ? 71.1 : (isTallPhone ? 72.0 : 71.7),
-      sourceY: isTablet ? 40.7 : (isTallPhone ? 41.5 : 41.2),
-      targetWidth: isTablet ? '12.8%' : '16.9%',
-      sourceWidth: isTablet ? '9.8%' : '12.2%',
-      targetHeight: isTablet ? '12.2%' : '14.8%',
-      sourceHeight: isTablet ? '8.8%' : '10.2%',
-      targetFont: isTablet ? 'clamp(2.2rem,4.9vw,3.8rem)' : 'clamp(2.1rem,5.5vw,3.55rem)',
-      sourceFont: isTablet ? 'clamp(2.05rem,4.5vw,3.45rem)' : 'clamp(1.95rem,5.1vw,3.15rem)',
-      targetSpan: isTablet ? 46 : 56,
-      sourceSpan: isTablet ? 40 : 50,
-      healthTop: isTablet ? 52.6 : (isTallPhone ? 53.7 : 53.3),
-      healthWidth: isTablet ? 28 : 40,
-      healthLeft: isTablet ? 66.7 : 69.4,
-      enemyTop: isTablet ? 46.2 : (isTallPhone ? 48.2 : 47.8),
-      enemyWidth: isTablet ? 29 : 33,
+      questionTop,
+      questionWidth,
+      questionHeight,
+      submitY,
+      submitWidth,
+      submitHeight,
+      targetY,
+      sourceY,
+      targetWidth,
+      sourceWidth,
+      targetHeight,
+      sourceHeight,
+      targetFont: isTablet ? 'clamp(2.1rem,4.5vw,3.5rem)' : 'clamp(1.9rem,5vw,3.3rem)',
+      sourceFont: isTablet ? 'clamp(1.95rem,4.2vw,3.25rem)' : 'clamp(1.8rem,4.7vw,3rem)',
+      healthTopPx,
+      healthWidthPx,
+      healthLeftPx,
+      enemyTop,
+      enemyWidth,
     };
   }, [viewport.height, viewport.width]);
 
@@ -360,13 +417,13 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const playfieldRef = useRef<HTMLDivElement | null>(null);
 
   const activeTargetAnchors = useMemo(
-    () => centeredAnchors(question.expectedDigits.length, layout.targetSpan, 50),
-    [layout.targetSpan, question.expectedDigits.length],
+    () => centeredAnchors(question.expectedDigits.length, spanForSlots(question.expectedDigits.length, 'target'), 50),
+    [question.expectedDigits.length],
   );
 
   const activeSourceAnchors = useMemo(
-    () => centeredAnchors(question.tokenValues.length, layout.sourceSpan, 50),
-    [layout.sourceSpan, question.tokenValues.length],
+    () => centeredAnchors(question.tokenValues.length, spanForSlots(question.tokenValues.length, 'source'), 50),
+    [question.tokenValues.length],
   );
 
   const resetRound = useCallback((nextQuestion: QuestionState) => {
@@ -484,24 +541,22 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const rect = playfieldRef.current?.getBoundingClientRect();
     if (!rect) return null;
 
-    const targetPct = Number.parseFloat(layout.targetWidth) / 100;
-    const sourcePct = Number.parseFloat(layout.sourceWidth) / 100;
-    const targetRadius = Math.max(56, rect.width * Math.max(0.09, targetPct * 0.95));
-    const sourceRadius = Math.max(42, rect.width * Math.max(0.07, sourcePct * 0.72));
+    const targetRadius = Math.max(56, layout.targetWidth * 0.72);
+    const sourceRadius = Math.max(42, layout.sourceWidth * 0.72);
 
     let bestTarget: { index: number; distance: number } | null = null;
     let bestSource: { index: number; distance: number } | null = null;
 
     activeTargetAnchors.forEach((anchor, index) => {
       const cx = rect.left + (anchor.x / 100) * rect.width;
-      const cy = rect.top + (layout.targetY / 100) * rect.height - TARGET_ROW_Y_OFFSET_PX;
+      const cy = rect.top + layout.targetY - TARGET_ROW_Y_OFFSET_PX;
       const d = Math.hypot(clientX - cx, clientY - cy);
       if (!bestTarget || d < bestTarget.distance) bestTarget = { index, distance: d };
     });
 
     activeSourceAnchors.forEach((anchor, index) => {
       const cx = rect.left + (anchor.x / 100) * rect.width;
-      const cy = rect.top + (layout.sourceY / 100) * rect.height;
+      const cy = rect.top + layout.sourceY;
       const d = Math.hypot(clientX - cx, clientY - cy);
       if (!bestSource || d < bestSource.distance) bestSource = { index, distance: d };
     });
@@ -636,17 +691,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     return `hsl(${hue} 88% 50%)`;
   }, [timerProgress]);
 
-  const getSocketAsset = useCallback((hint: string, index: number, total: number): string => {
-    if (hint === 'Th') {
-      if (total >= 5 && index === 0) return socketThOne;
-      if (total >= 5 && index === 1) return socketThTwo;
-      return socketThOne;
-    }
-    if (hint === 'H') return socketH;
-    if (hint === 'T') return socketT;
-    return socketU;
-  }, []);
-
   const handleSubmit = useCallback(() => {
     if (!canSubmit) return;
 
@@ -695,7 +739,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         draggable={false}
       />
 
-      <div className="absolute left-[max(0.55rem,env(safe-area-inset-left))] top-[max(0.5rem,env(safe-area-inset-top))] z-40 w-[min(13.8rem,52vw)]">
+      <div className="absolute left-[max(0.55rem,env(safe-area-inset-left))] top-[max(0.45rem,env(safe-area-inset-top))] z-40 w-[min(14.4rem,53vw)]">
         <div className="relative w-full">
           <img src={hudProfileBar} alt="" aria-hidden="true" draggable={false} className="h-auto w-full object-contain" />
           <div className="absolute left-[5%] top-1/2 h-[76%] w-[24%] -translate-y-1/2">
@@ -728,7 +772,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
       </div>
 
-      <div className="absolute right-[max(0.55rem,env(safe-area-inset-right))] top-[max(0.5rem,env(safe-area-inset-top))] z-40 w-[min(12.4rem,46vw)]">
+      <div className="absolute right-[max(0.55rem,env(safe-area-inset-right))] top-[max(0.45rem,env(safe-area-inset-top))] z-40 w-[min(13rem,48vw)]">
         <div className="relative w-full">
           <img src={hudTimerBar} alt="" aria-hidden="true" draggable={false} className="h-auto w-full object-contain" />
           <div className="pointer-events-none absolute left-[28.6%] right-[4.1%] top-[38.8%] h-[24.5%] overflow-hidden rounded-full">
@@ -758,7 +802,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       <div className="absolute inset-0 z-20" ref={playfieldRef}>
         <div
           className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2 overflow-hidden"
-          style={{ top: `${layout.questionTop}%`, width: `${layout.questionWidth}%`, height: `${layout.questionHeight}%` }}
+          style={{ top: `${layout.questionTop}px`, width: `${layout.questionWidth}px`, height: `${layout.questionHeight}px` }}
         >
           <img src={medDialogue} alt="" aria-hidden="true" draggable={false} className="absolute inset-0 h-full w-full object-contain" />
           <div
@@ -784,9 +828,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         <div
           className="absolute z-30 rounded-xl border border-amber-200/35 bg-slate-900/76 p-2 shadow-[0_12px_28px_rgba(2,6,23,0.5)]"
           style={{
-            top: `${layout.healthTop}%`,
-            left: `min(calc(50% + ${Math.max(12, layout.enemyWidth * 0.58)}%), calc(100% - max(0.75rem, env(safe-area-inset-right)) - clamp(9rem, 32vw, 14rem)))`,
-            width: 'clamp(9rem, 32vw, 14rem)',
+            top: `${layout.healthTopPx}px`,
+            left: `${layout.healthLeftPx}px`,
+            width: `${layout.healthWidthPx}px`,
           }}
         >
           <div className="mb-1 text-center text-[9px] font-black uppercase tracking-[0.11em] text-amber-200 md:text-[10px]">
@@ -813,18 +857,21 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               className="absolute -translate-x-1/2 -translate-y-1/2 rounded-xl"
               style={{
                 left: `${anchor.x}%`,
-                top: `calc(${layout.targetY}% - ${TARGET_ROW_Y_OFFSET_PX}px)`,
-                width: layout.targetWidth,
-                height: layout.targetHeight,
+                top: `calc(${layout.targetY}px - ${TARGET_ROW_Y_OFFSET_PX}px)`,
+                width: `${layout.targetWidth}px`,
+                height: `${layout.targetHeight}px`,
               }}
             >
               <img
-                src={getSocketAsset(question.placeHints[idx], idx, question.placeHints.length)}
+                src={socketBase}
                 alt=""
                 aria-hidden="true"
                 draggable={false}
                 className="pointer-events-none absolute inset-0 h-full w-full object-contain"
               />
+              <span className="pointer-events-none absolute left-1/2 top-[55%] z-[4] -translate-x-1/2 -translate-y-1/2 text-[clamp(0.9rem,2.3vw,1.3rem)] font-black uppercase tracking-[0.08em] text-cyan-100/56">
+                {question.placeHints[idx]}
+              </span>
               {token ? (
                 <>
                   <span className="pointer-events-none absolute left-1/2 top-1/2 z-[8] h-[56%] w-[66%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/28 blur-[10px]" />
@@ -852,7 +899,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               type="button"
               onPointerDown={(event) => beginDrag('source', idx, event)}
               className="absolute -translate-x-1/2 -translate-y-1/2 rounded-xl"
-              style={{ left: `${anchor.x}%`, top: `${layout.sourceY}%`, width: layout.sourceWidth, height: layout.sourceHeight }}
+              style={{ left: `${anchor.x}%`, top: `${layout.sourceY}px`, width: `${layout.sourceWidth}px`, height: `${layout.sourceHeight}px` }}
             >
               {token ? (
                 <>
@@ -877,7 +924,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           onClick={handleSubmit}
           disabled={!canSubmit}
           className="absolute left-1/2 z-40 -translate-x-1/2 overflow-hidden transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
-          style={{ top: `${layout.submitY}%`, width: `${layout.submitWidth}%`, height: `${layout.submitHeight}%` }}
+          style={{ top: `${layout.submitY}px`, width: `${layout.submitWidth}px`, height: `${layout.submitHeight}px` }}
         >
           <img src={medButton} alt="" aria-hidden="true" draggable={false} className="absolute inset-0 h-full w-full object-contain" />
           <span
@@ -890,7 +937,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
         <div
           className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2"
-          style={{ top: `${layout.enemyTop}%`, width: `${layout.enemyWidth}%` }}
+          style={{ top: `${layout.enemyTop}px`, width: `${layout.enemyWidth}px` }}
         >
           <div className="relative">
             <motion.div
