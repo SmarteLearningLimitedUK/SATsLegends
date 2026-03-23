@@ -1107,10 +1107,11 @@ const App: React.FC = () => {
   const isStandardShellScreen = !isMapLayoutScreen;
   const isWorldMapScreen = screen === 'world_map';
   const selectedGameType = selectedLevel?.gameType;
-  const isPlaceValuePanicGameplay = screen === 'gameplay' && selectedLevel?.blueprintKey === 'place_value_panic';
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
-  const useUnboundedStageShell = isSplashScreen || isAvatarSelectionScreen || isWorldMapScreen || isPlaceValuePanicGameplay || isGameplayScreen;
+  // Keep only pure cinematic/map screens unbounded.
+  // All gameplay runs inside the constrained stage for consistent accessibility.
+  const useUnboundedStageShell = isSplashScreen || isAvatarSelectionScreen || isWorldMapScreen;
   const bottomNavOffsetClass = showBottomNav
     ? isWorldMapScreen
       ? 'pb-[calc(6.75rem+env(safe-area-inset-bottom))] md:pb-[calc(2.4rem+env(safe-area-inset-bottom))]'
