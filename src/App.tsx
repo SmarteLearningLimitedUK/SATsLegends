@@ -611,21 +611,40 @@ const App: React.FC = () => {
       return;
     }
 
-    const nextLevel = selectedIsland.levels.find(level => level.id === selectedLevel.id + 1);
     const completedInIsland = player.completedLevels[selectedIsland.id] || [];
     const isSequentialIsland = selectedIsland.id === 1;
+    const isLevelConsideredComplete = (levelId: number) => (
+      completedInIsland.includes(levelId) || levelId === selectedLevel.id
+    );
+
+    // Prefer advancing inside the same mini-game lane when metadata is present.
+    const laneNextLevel = selectedLevel.miniGameKey && selectedLevel.miniGameLevel
+      ? selectedIsland.levels.find((level) => (
+        level.miniGameKey === selectedLevel.miniGameKey
+        && level.miniGameLevel === selectedLevel.miniGameLevel! + 1
+      ))
+      : undefined;
+    const sequentialNextLevel = selectedIsland.levels.find(level => level.id === selectedLevel.id + 1);
+    const nextLevel = laneNextLevel || sequentialNextLevel;
     setLevelResult(null);
 
     if (nextLevel) {
       const canEnterNextLevel = nextLevel.isBoss
         ? selectedIsland.levels
             .filter(level => level.id < nextLevel.id)
-            .every(level => completedInIsland.includes(level.id))
+            .every(level => isLevelConsideredComplete(level.id))
           && (player.stats?.totalCoinsEarned || 0) >= (nextLevel.bossUnlockCoins || 0)
         : isSequentialIsland
-          ? selectedIsland.levels
-              .filter(level => level.id < nextLevel.id)
-              .every(level => completedInIsland.includes(level.id) || level.id === selectedLevel.id)
+          ? nextLevel.miniGameKey && nextLevel.miniGameLevel
+            ? selectedIsland.levels
+                .filter((level) => (
+                  level.miniGameKey === nextLevel.miniGameKey
+                  && (level.miniGameLevel || 0) < (nextLevel.miniGameLevel || 0)
+                ))
+                .every(level => isLevelConsideredComplete(level.id))
+            : selectedIsland.levels
+                .filter(level => level.id < nextLevel.id)
+                .every(level => isLevelConsideredComplete(level.id))
           : true;
 
       if (!canEnterNextLevel) {
