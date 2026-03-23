@@ -140,8 +140,8 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
         <div className="pointer-events-none flex min-w-0 flex-row items-center">
           <div className="relative h-auto w-[clamp(10.6rem,52vw,14.9rem)] shrink-0">
             <img src={hudProfileBar} alt="" aria-hidden="true" draggable={false} className="h-auto w-full object-contain" />
-            <div className="absolute left-[4.1%] top-1/2 h-[79%] w-[25.6%] -translate-y-1/2">
-              <div className="absolute inset-[9%] overflow-hidden rounded-[30%]">
+            <div className="absolute inset-y-[9%] left-[4.2%] right-[6.4%] flex items-center">
+              <div className="relative h-[84%] w-[27%] shrink-0 overflow-hidden rounded-[28%]">
                 <img
                   src={fittedAvatarImage}
                   alt={avatarName}
@@ -149,14 +149,14 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
                   className="h-full w-full object-contain object-center drop-shadow-[0_3px_6px_rgba(2,6,23,0.45)]"
                 />
               </div>
-            </div>
-            <div className="pointer-events-none absolute left-[31.8%] right-[6.2%] top-1/2 -translate-y-1/2 overflow-hidden text-left text-[clamp(0.78rem,2.3vw,1.02rem)] font-black uppercase tracking-[0.055em] text-cyan-50">
-              <span
-                className="block max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
-                style={{ lineHeight: 1.08, textShadow: '0 1px 2px rgba(2,6,23,0.6)' }}
-              >
-                {playerName}
-              </span>
+              <div className="ml-[5.5%] flex min-w-0 flex-1 items-center overflow-hidden">
+                <span
+                  className="block max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-left text-[clamp(0.72rem,2.05vw,0.94rem)] font-black uppercase tracking-[0.045em] text-cyan-50"
+                  style={{ lineHeight: 1, textShadow: '0 1px 2px rgba(2,6,23,0.6)' }}
+                >
+                  {playerName}
+                </span>
+              </div>
             </div>
           </div>
         </div>
