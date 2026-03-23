@@ -1,18 +1,20 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import placeValueBackground from '../assets/maps/gemini-2.5-flash-image_using_the_same_aesthetic_-_create_a_dark_and_mysterious_forest_path_with_dense_f-1.jpg';
-import medDialogue from '../assets/bluedialoague/med dialogue cropped.png';
 import medButton from '../assets/bluedialoague/med button cropped.png';
 import goblinWiz from '../assets/bosses/goblinwiz.jpg';
 import shieldIcon from '../assets/casual_ui/icons/icon__shield.png';
-import hudProfileBar from '../assets/fantasy_hero/ui/uiamend_slices/hud_profile_bar.png';
-import hudTimerBar from '../assets/fantasy_hero/ui/uiamend_slices/hud_timer_bar.png';
-import hudTimerTrack from '../assets/fantasy_hero/ui/uiamend_slices/hud_timer_track.png';
-import socketH from '../assets/fantasy_hero/ui/uiamend_slices/socket_h.png';
-import socketT from '../assets/fantasy_hero/ui/uiamend_slices/socket_t.png';
-import socketTh1 from '../assets/fantasy_hero/ui/uiamend_slices/socket_th_1.png';
-import socketTh2 from '../assets/fantasy_hero/ui/uiamend_slices/socket_th_2.png';
-import socketU from '../assets/fantasy_hero/ui/uiamend_slices/socket_u.png';
+import hudAvatarName from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
+import hudTimer from '../assets/ui_frames/hudfortextplace_slices/hud_timer.png';
+import questionBarTiny from '../assets/ui_frames/hudfortextplace_slices/text_bar_tiny.png';
+import questionBarSmall from '../assets/ui_frames/hudfortextplace_slices/text_bar_small.png';
+import questionBarMedium from '../assets/ui_frames/hudfortextplace_slices/text_bar_medium.png';
+import questionBarLarge from '../assets/ui_frames/hudfortextplace_slices/text_bar_large.png';
+import socketH from '../assets/ui_frames/hudfortextplace_slices/socket_h.png';
+import socketT from '../assets/ui_frames/hudfortextplace_slices/socket_t.png';
+import socketTh1 from '../assets/ui_frames/hudfortextplace_slices/socket_th_1.png';
+import socketTh2 from '../assets/ui_frames/hudfortextplace_slices/socket_th_2.png';
+import socketU from '../assets/ui_frames/hudfortextplace_slices/socket_u.png';
 import GameActionDock from '../components/GameActionDock';
 import { triggerHaptic } from '../haptics';
 import { AVATARS } from '../constants';
@@ -425,6 +427,38 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     return question.tokenValues.length >= 6 ? '7.8%' : '7.2%';
   }, [question.tokenValues.length]);
 
+  const questionFrameConfig = useMemo(() => {
+    const promptLength = question.prompt.trim().length;
+    const isTablet = Math.min(viewport.width, viewport.height) >= 760;
+
+    if (promptLength <= 26) {
+      return {
+        src: questionBarTiny,
+        width: isTablet ? 40 : 56,
+        height: isTablet ? 9.2 : 11.1,
+      };
+    }
+    if (promptLength <= 44) {
+      return {
+        src: questionBarSmall,
+        width: isTablet ? 52 : 66,
+        height: isTablet ? 9.4 : 11.4,
+      };
+    }
+    if (promptLength <= 74) {
+      return {
+        src: questionBarMedium,
+        width: isTablet ? 64 : 78,
+        height: isTablet ? 9.7 : 11.7,
+      };
+    }
+    return {
+      src: questionBarLarge,
+      width: isTablet ? 74 : 88,
+      height: isTablet ? 10.0 : 12.0,
+    };
+  }, [question.prompt, viewport.height, viewport.width]);
+
   const questionTextBaseFontPx = useMemo(() => {
     const promptLength = question.prompt.trim().length;
     const isTablet = Math.min(viewport.width, viewport.height) >= 760;
@@ -787,9 +821,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   };
 
   const topHudLayout = useMemo(() => ({
-    rowHeight: 'clamp(3.05rem, 8.3vh, 4.25rem)',
-    profileWidth: 'clamp(10.2rem, 52vw, 14.4rem)',
-    timerWidth: 'clamp(9.2rem, 42vw, 12.9rem)',
+    rowHeight: 'clamp(3.1rem, 8.35vh, 4.35rem)',
+    profileWidth: 'clamp(10.4rem, 46vw, 14.6rem)',
+    timerWidth: 'clamp(11.2rem, 45vw, 17rem)',
   }), []);
 
   return (
@@ -817,15 +851,15 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               style={{ height: topHudLayout.rowHeight, width: topHudLayout.profileWidth }}
             >
               <img
-                src={hudProfileBar}
+                src={hudAvatarName}
                 alt=""
                 aria-hidden="true"
                 draggable={false}
                 className="absolute inset-0 h-full w-full object-contain"
               />
-              <div className="absolute left-[5%] top-1/2 h-[76%] w-[24%] -translate-y-1/2">
+              <div className="absolute left-[2.8%] top-1/2 h-[79%] w-[26%] -translate-y-1/2">
                 <div className="relative h-full w-full">
-                  <div className="absolute inset-[10%] overflow-hidden rounded-[30%]">
+                  <div className="absolute inset-[10%] overflow-hidden rounded-[28%]">
                     <img
                       src={selectedAvatar.portrait || selectedAvatar.image}
                       alt={selectedAvatar.name}
@@ -842,7 +876,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                   />
                 </div>
               </div>
-              <div className="pointer-events-none absolute left-[32%] right-[7%] top-1/2 -translate-y-1/2 overflow-hidden text-left text-[clamp(0.76rem,2.35vw,1.06rem)] font-black uppercase tracking-[0.06em] text-cyan-50">
+              <div className="pointer-events-none absolute left-[31%] right-[7%] top-1/2 -translate-y-1/2 overflow-hidden text-left text-[clamp(0.76rem,2.35vw,1.06rem)] font-black uppercase tracking-[0.06em] text-cyan-50">
                 <span
                   className="block max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
                   style={{ textShadow: '0 1px 2px rgba(2,6,23,0.6)' }}
@@ -857,29 +891,22 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               style={{ height: topHudLayout.rowHeight, width: topHudLayout.timerWidth }}
             >
               <img
-                src={hudTimerBar}
+                src={hudTimer}
                 alt=""
                 aria-hidden="true"
                 draggable={false}
                 className="absolute inset-0 h-full w-full object-contain"
               />
-              <div className="pointer-events-none absolute left-[28.6%] right-[4.1%] top-[38.8%] h-[24.5%] overflow-hidden rounded-full">
-                <div className="absolute inset-0 rounded-full bg-slate-900/46" />
+              <div className="pointer-events-none absolute left-[23.8%] right-[2.6%] top-[37.8%] h-[26%] overflow-hidden rounded-full">
+                <div className="absolute inset-0 rounded-full bg-slate-900/42" />
                 <motion.div
                   className="absolute left-0 top-0 h-full rounded-full"
                   animate={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }}
                   transition={{ duration: 0.25, ease: 'easeOut' }}
                   style={{ boxShadow: '0 0 8px rgba(34,197,94,0.65)' }}
                 />
-                <img
-                  src={hudTimerTrack}
-                  alt=""
-                  aria-hidden="true"
-                  draggable={false}
-                  className="absolute inset-0 h-full w-full object-fill"
-                />
               </div>
-              <div className="pointer-events-none absolute left-[28.6%] right-[4.1%] top-[33.5%] flex h-[35%] items-center justify-center">
+              <div className="pointer-events-none absolute left-[23.8%] right-[2.6%] top-[31%] flex h-[42%] items-center justify-center">
                 <span className="text-[clamp(0.62rem,1.9vw,0.92rem)] font-black uppercase tracking-[0.06em] text-white">
                   {matchTimeLeft}s
                 </span>
@@ -892,12 +919,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       <div className="absolute inset-0 z-20" ref={playfieldRef}>
         <div
           className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2 overflow-hidden"
-          style={{ top: `${layout.questionTop}%`, width: `${layout.questionWidth}%`, height: `${layout.questionHeight}%` }}
+          style={{ top: `${layout.questionTop}%`, width: `${questionFrameConfig.width}%`, height: `${questionFrameConfig.height}%` }}
         >
-          <img src={medDialogue} alt="" aria-hidden="true" draggable={false} className="absolute inset-0 h-full w-full object-contain" />
+          <img src={questionFrameConfig.src} alt="" aria-hidden="true" draggable={false} className="absolute inset-0 h-full w-full object-fill" />
           <div
             ref={questionTextFrameRef}
-            className="absolute inset-x-[8.5%] top-[21%] bottom-[19%] mx-auto flex items-center justify-center overflow-hidden text-center font-black uppercase tracking-[0.01em] text-white"
+            className="absolute inset-x-[8%] top-[20%] bottom-[20%] mx-auto flex items-center justify-center overflow-hidden text-center font-black uppercase tracking-[0.01em] text-white"
             style={{
               textShadow: '0 2px 6px rgba(2,6,23,0.62)',
             }}
