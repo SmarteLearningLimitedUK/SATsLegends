@@ -5,7 +5,6 @@ import medButton from '../assets/bluedialoague/med button cropped.png';
 import goblinWiz from '../assets/bosses/goblinwiz.jpg';
 import hudAvatarName from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
 import hudTimerTrack from '../assets/fantasy_hero/ui/uiamend_slices/hud_timer_track.png';
-import hudTimerBar from '../assets/fantasy_hero/ui/uiamend_slices/hud_timer_bar.png';
 import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
 import questionBarTiny from '../assets/ui_frames/hudfortextplace_slices/text_bar_tiny.png';
 import questionBarSmall from '../assets/ui_frames/hudfortextplace_slices/text_bar_small.png';
@@ -787,6 +786,11 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     [matchTimeLeft],
   );
 
+  const timerFillColor = useMemo(() => {
+    const hue = Math.round(timerProgress * 120);
+    return `hsl(${hue} 88% 52%)`;
+  }, [timerProgress]);
+
   const handleSubmit = useCallback(() => {
     if (!canSubmit) return;
 
@@ -908,14 +912,17 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 className="pointer-events-none absolute left-[5.5%] top-1/2 h-[63%] w-auto -translate-y-1/2 object-contain"
               />
               <div className="pointer-events-none absolute left-[24%] right-[4.5%] top-[36%] h-[30%] overflow-hidden rounded-full">
-                <div className="absolute inset-0 rounded-full bg-slate-950/40" />
+                <div className="absolute inset-0 rounded-full border border-white/15 bg-slate-950/45" />
                 <motion.div
-                  className="absolute inset-y-0 left-0 overflow-hidden"
-                  animate={{ width: `${timerProgress * 100}%` }}
+                  className="absolute inset-y-0 left-0 rounded-full"
+                  animate={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }}
                   transition={{ duration: 0.25, ease: 'easeOut' }}
-                >
-                  <img src={hudTimerBar} alt="" aria-hidden="true" draggable={false} className="h-full w-full object-fill" />
-                </motion.div>
+                  style={{
+                    boxShadow: '0 0 10px rgba(34,197,94,0.45), inset 0 1px 0 rgba(255,255,255,0.3)',
+                    backgroundImage: 'linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.08) 100%)',
+                  }}
+                />
+                <div className="absolute inset-[1px] rounded-full bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:12%_100%]" />
               </div>
               <div className="pointer-events-none absolute left-[24%] right-[4.5%] top-[30%] flex h-[46%] items-center justify-center">
                 <span className="text-[clamp(0.62rem,1.9vw,0.92rem)] font-black uppercase tracking-[0.06em] text-white">
