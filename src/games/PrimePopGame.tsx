@@ -61,8 +61,10 @@ interface PrimePopConfig {
 
 const INITIAL_LIVES = 10;
 const BULLET_SPEED = 98;
-const BULLET_RADIUS = 1.1;
+const BULLET_RADIUS = 3.3;
 const CANNON_ORIGIN = { x: 50, y: 93 };
+const BUBBLE_VISUAL_SCALE = 5;
+const CANNON_VISUAL_SCALE = 3;
 
 const BUBBLE_TINTS: BubbleTint[] = ['blue', 'green', 'purple', 'gold', 'red'];
 const BUBBLE_CORES = [diamondBlue, diamondGreen, diamondPurple, diamondYellow, gemCore];
@@ -154,7 +156,7 @@ const scoreToStars = (score: number, target: number, primeAccuracy: number) => {
 
 const PrimeBubble: React.FC<{ bubble: Bubble }> = ({ bubble }) => {
   const tint = TINT_STYLE[bubble.tint];
-  const size = `${bubble.radius * 2}%`;
+  const size = `${bubble.radius * 2 * BUBBLE_VISUAL_SCALE}%`;
 
   return (
     <div
@@ -577,7 +579,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0 }}
               >
-                <div className="h-3 w-3 rounded-full border border-white/70 bg-gradient-to-b from-yellow-200 to-amber-400 shadow-[0_0_14px_rgba(251,191,36,0.75)]" />
+                <div className="h-9 w-9 rounded-full border-2 border-white/80 bg-gradient-to-b from-yellow-200 to-amber-400 shadow-[0_0_24px_rgba(251,191,36,0.9)]" />
               </motion.div>
             ))}
           </AnimatePresence>
@@ -594,7 +596,10 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
           />
 
           <div className="pointer-events-none absolute bottom-2 left-1/2 z-20 -translate-x-1/2">
-            <div className="relative h-20 w-20 sm:h-24 sm:w-24">
+            <div
+              className="relative h-20 w-20 sm:h-24 sm:w-24"
+              style={{ transform: `scale(${CANNON_VISUAL_SCALE})`, transformOrigin: 'center bottom' }}
+            >
               <div className="absolute bottom-0 left-1/2 h-9 w-16 -translate-x-1/2 rounded-t-[1.1rem] border-2 border-amber-200/70 bg-gradient-to-b from-amber-200 to-amber-600 shadow-[0_10px_18px_rgba(2,6,23,0.45)]" />
               <div className="absolute bottom-6 left-1/2 h-11 w-7 -translate-x-1/2 rounded-t-xl border-2 border-amber-200/65 bg-gradient-to-r from-amber-200 via-amber-400 to-amber-700 shadow-[0_10px_20px_rgba(2,6,23,0.5)]" />
               <div className="absolute bottom-12 left-1/2 h-3 w-3 -translate-x-1/2 rounded-full bg-cyan-100/90 shadow-[0_0_10px_rgba(207,250,254,0.8)]" />

@@ -103,6 +103,12 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
   onGameOver,
   onBack,
 }) => {
+  const [viewport, setViewport] = useState(() => {
+    if (typeof window === 'undefined') {
+      return { width: 390, height: 844 };
+    }
+    return { width: window.innerWidth, height: window.innerHeight };
+  });
   const [gameState, setGameState] = useState<'start' | 'playing' | 'success' | 'complete'>('start');
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
@@ -121,6 +127,24 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
   };
 
   useEffect(() => () => clearTimers(), []);
+
+  useEffect(() => {
+    const onResize = () => {
+      const width = window.visualViewport?.width ?? window.innerWidth;
+      const height = window.visualViewport?.height ?? window.innerHeight;
+      setViewport({ width, height });
+    };
+
+    const vv = window.visualViewport;
+    window.addEventListener('resize', onResize);
+    vv?.addEventListener('resize', onResize);
+    vv?.addEventListener('scroll', onResize);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      vv?.removeEventListener('resize', onResize);
+      vv?.removeEventListener('scroll', onResize);
+    };
+  }, []);
 
   const startNewProblem = useCallback((lvl: number) => {
     setCurrentProblem(generateProblem(lvl));
@@ -222,9 +246,11 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
     () => PLANETS.find((planet) => distance < planet.distance) || PLANETS[PLANETS.length - 1],
     [distance],
   );
+  const isCompactViewport = viewport.height < 780 || viewport.width < 390;
+  const isUltraCompactViewport = viewport.height < 700;
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden bg-[#050505] font-sans text-white select-none">
+    <div className="fixed inset-0 z-20 flex h-[100dvh] w-screen flex-col overflow-hidden bg-[#050505] font-sans text-white select-none">
       <div
         className="pointer-events-none absolute inset-0"
         style={{ backgroundImage: 'radial-gradient(#6366f1 1px, transparent 1px)', backgroundSize: '30px 30px', opacity: 0.1 }}
@@ -238,7 +264,13 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
         metaValue={currentPlanet.name}
       />
 
-      <main className="relative z-10 flex min-h-0 flex-1 flex-col p-2 pb-[calc(env(safe-area-inset-bottom)+4.5rem)] pt-[calc(env(safe-area-inset-top)+3.4rem)] sm:p-3 sm:pb-[calc(env(safe-area-inset-bottom)+4.8rem)] sm:pt-[calc(env(safe-area-inset-top)+3.7rem)] md:p-4 md:pb-[calc(env(safe-area-inset-bottom)+5.2rem)] md:pt-[calc(env(safe-area-inset-top)+4rem)]">
+      <main
+        className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden ${isCompactViewport ? 'p-2' : 'p-2 sm:p-3 md:p-4'}`}
+        style={{
+          paddingTop: `calc(env(safe-area-inset-top) + ${isCompactViewport ? '2.95rem' : '3.35rem'})`,
+          paddingBottom: `calc(env(safe-area-inset-bottom) + ${isCompactViewport ? '4.15rem' : '4.8rem'})`,
+        }}
+      >
         <AnimatePresence mode="wait">
           {(gameState === 'playing' || gameState === 'success') && currentProblem && (
             <motion.div
@@ -246,9 +278,9 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.05 }}
-              className="grid h-full w-full min-h-0 grid-cols-1 grid-rows-[0.44fr_0.56fr] gap-2 xl:grid-cols-2 xl:grid-rows-1 xl:gap-4"
+              className={`grid h-full w-full min-h-0 grid-cols-1 ${isUltraCompactViewport ? 'grid-rows-[0.42fr_0.58fr] gap-1.5' : 'grid-rows-[0.44fr_0.56fr] gap-2'} xl:grid-cols-2 xl:grid-rows-1 ${isCompactViewport ? 'xl:gap-3' : 'xl:gap-4'}`}
             >
-              <section className="relative flex min-h-0 flex-col gap-3 overflow-hidden rounded-2xl border border-white/10 bg-[#141414] p-4 shadow-2xl sm:gap-4 sm:p-5">
+              <section className={`relative flex min-h-0 flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#141414] shadow-2xl ${isCompactViewport ? 'gap-2.5 p-3.5' : 'gap-3 p-4 sm:gap-4 sm:p-5'}`}>
                 <div className="absolute right-0 top-0 p-8 opacity-5">
                   <Cpu className="h-48 w-48" />
                 </div>
@@ -263,10 +295,10 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
                   </div>
                 </div>
 
-                <div className="space-y-3 sm:space-y-4">
+                <div className={isCompactViewport ? 'space-y-2.5' : 'space-y-3 sm:space-y-4'}>
                   <div className="flex flex-col items-center gap-2 rounded-2xl border border-white/5 bg-black/40 p-3 sm:gap-3 sm:rounded-3xl sm:p-5">
                     <span className="text-[10px] font-black tracking-[0.22em] text-indigo-400 uppercase sm:text-xs sm:tracking-[0.3em]">Input Value</span>
-                    <span className="text-3xl font-black tabular-nums tracking-tighter text-white sm:text-4xl md:text-5xl">
+                    <span className={`${isCompactViewport ? 'text-[clamp(1.45rem,6.3vw,2.25rem)]' : 'text-3xl sm:text-4xl md:text-5xl'} font-black tabular-nums tracking-tighter text-white`}>
                       {currentProblem.number.toLocaleString(undefined, { maximumFractionDigits: 3 })}
                     </span>
                   </div>
@@ -276,7 +308,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
                       <Zap className="h-4 w-4 text-amber-400 sm:h-5 sm:w-5" />
                       <span className="text-[10px] font-black tracking-[0.14em] text-slate-400 uppercase sm:text-xs">Rounding Instruction</span>
                     </div>
-                    <p className="text-lg leading-tight font-bold text-white sm:text-xl md:text-2xl">
+                    <p className={`${isCompactViewport ? 'text-base sm:text-lg' : 'text-lg sm:text-xl md:text-2xl'} leading-tight font-bold text-white`}>
                       Round this number to the{' '}
                       <span className="text-indigo-400 underline decoration-indigo-500/50 underline-offset-8">{currentProblem.target}</span>.
                     </p>
@@ -299,10 +331,10 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
               </section>
 
               <section className="min-h-0">
-                <div className="flex h-full min-h-0 flex-col gap-3 rounded-2xl border border-white/10 bg-[#141414] p-4 shadow-2xl sm:gap-4 sm:p-5">
+                <div className={`flex h-full min-h-0 flex-col rounded-2xl border border-white/10 bg-[#141414] shadow-2xl ${isCompactViewport ? 'gap-2.5 p-3.5' : 'gap-3 p-4 sm:gap-4 sm:p-5'}`}>
                   <div className="flex items-center justify-between rounded-xl border border-white/5 bg-black/40 p-3 sm:rounded-2xl sm:p-4">
                     <span className="text-[10px] font-black tracking-[0.14em] text-slate-500 uppercase sm:text-xs">Output Buffer</span>
-                    <span className="min-h-[1em] text-2xl font-black tabular-nums text-indigo-400 sm:text-3xl md:text-4xl">
+                    <span className={`${isCompactViewport ? 'text-xl sm:text-2xl' : 'text-2xl sm:text-3xl md:text-4xl'} min-h-[1em] font-black tabular-nums text-indigo-400`}>
                       {userInput || '0'}
                       <motion.span
                         animate={{ opacity: [1, 0] }}
@@ -312,13 +344,13 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                  <div className={`grid grid-cols-3 ${isCompactViewport ? 'gap-1.5 sm:gap-2' : 'gap-2 sm:gap-3'}`}>
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, '.', 0, 'DEL'].map((val) => (
                       <button
                         key={val}
                         onClick={() => handleKeypad(val.toString())}
                         disabled={gameState === 'success'}
-                        className="flex h-12 items-center justify-center rounded-lg border border-white/5 bg-white/5 text-lg font-black transition-all hover:bg-white/10 active:bg-indigo-500/20 disabled:opacity-50 sm:h-14 sm:rounded-xl sm:text-xl"
+                        className={`flex items-center justify-center rounded-lg border border-white/5 bg-white/5 font-black transition-all hover:bg-white/10 active:bg-indigo-500/20 disabled:opacity-50 ${isCompactViewport ? 'h-10 text-base sm:h-11 sm:text-lg' : 'h-12 text-lg sm:h-14 sm:rounded-xl sm:text-xl'}`}
                       >
                         {val}
                       </button>

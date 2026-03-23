@@ -260,10 +260,19 @@ const removeBlackMatteFromSprite = (src: string): Promise<string> =>
   });
 
 const slotCountForLevel = (level: number): number => {
-  // Add one receiving box per level up to million place.
-  // L1=2 (T,U), L2=3 (H,T,U), L3=4 (Th,H,T,U), L4=5 (Tth,Th,H,T,U),
-  // L5=6 (Hth,Tth,Th,H,T,U), L6+=7 (M,Hth,Tth,Th,H,T,U)
-  return Math.min(7, Math.max(2, level + 1));
+  // Gradual staged ramp:
+  // L1-2: T,U
+  // L3-4: H,T,U
+  // L5-6: Th,H,T,U
+  // L7-8: Tth,Th,H,T,U
+  // L9:   Hth,Tth,Th,H,T,U
+  // L10+: M,Hth,Tth,Th,H,T,U
+  if (level <= 2) return 2;
+  if (level <= 4) return 3;
+  if (level <= 6) return 4;
+  if (level <= 8) return 5;
+  if (level === 9) return 6;
+  return 7;
 };
 
 const getSocketAsset = (placeHint: string, _slotIndex: number, _placeHints: string[]) => {
@@ -290,7 +299,8 @@ const makeQuestion = (level: number): QuestionState => {
   } else if (slotCount === 6) {
     promptNumber = randomInt(100000, 999999);
   } else {
-    promptNumber = 1000000;
+    // Highest round supports full range up to 1,000,000.
+    promptNumber = randomInt(1, 1000000);
   }
 
   const expectedDigits = String(promptNumber)
