@@ -4,7 +4,6 @@ import placeValueBackground from '../assets/maps/gemini-2.5-flash-image_using_th
 import medButton from '../assets/bluedialoague/med button cropped.png';
 import goblinWiz from '../assets/bosses/goblinwiz.jpg';
 import hudAvatarName from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
-import hudTimerTrack from '../assets/fantasy_hero/ui/uiamend_slices/hud_timer_track.png';
 import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
 import questionBarTiny from '../assets/ui_frames/hudfortextplace_slices/text_bar_tiny.png';
 import questionBarSmall from '../assets/ui_frames/hudfortextplace_slices/text_bar_small.png';
@@ -897,37 +896,31 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               className="relative shrink-0"
               style={{ height: topHudLayout.rowHeight, width: topHudLayout.timerWidth }}
             >
-              <img
-                src={hudTimerTrack}
-                alt=""
-                aria-hidden="true"
-                draggable={false}
-                className="absolute inset-0 h-full w-full object-contain"
-              />
-              <img
-                src={hourglassIcon}
-                alt=""
-                aria-hidden="true"
-                draggable={false}
-                className="pointer-events-none absolute left-[5.5%] top-1/2 h-[63%] w-auto -translate-y-1/2 object-contain"
-              />
-              <div className="pointer-events-none absolute left-[24%] right-[4.5%] top-[36%] h-[30%] overflow-hidden rounded-full">
-                <div className="absolute inset-0 rounded-full border border-white/15 bg-slate-950/45" />
-                <motion.div
-                  className="absolute inset-y-0 left-0 rounded-full"
-                  animate={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }}
-                  transition={{ duration: 0.25, ease: 'easeOut' }}
-                  style={{
-                    boxShadow: '0 0 10px rgba(34,197,94,0.45), inset 0 1px 0 rgba(255,255,255,0.3)',
-                    backgroundImage: 'linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.08) 100%)',
-                  }}
-                />
-                <div className="absolute inset-[1px] rounded-full bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:12%_100%]" />
-              </div>
-              <div className="pointer-events-none absolute left-[24%] right-[4.5%] top-[30%] flex h-[46%] items-center justify-center">
-                <span className="text-[clamp(0.62rem,1.9vw,0.92rem)] font-black uppercase tracking-[0.06em] text-white">
-                  {matchTimeLeft}s
-                </span>
+              <div className="pointer-events-none absolute inset-0 flex items-center">
+                <div className="flex h-[82%] w-full items-center rounded-full border border-cyan-200/35 bg-slate-900/62 px-[clamp(0.35rem,1.3vw,0.62rem)] shadow-[0_6px_16px_rgba(2,6,23,0.45)]">
+                  <img
+                    src={hourglassIcon}
+                    alt=""
+                    aria-hidden="true"
+                    draggable={false}
+                    className="h-[74%] w-auto shrink-0 object-contain drop-shadow-[0_2px_4px_rgba(2,6,23,0.5)]"
+                  />
+                  <div className="relative ml-[clamp(0.32rem,1.2vw,0.56rem)] h-[44%] flex-1 overflow-hidden rounded-full border border-cyan-100/25 bg-slate-950/58">
+                    <motion.div
+                      className="absolute inset-y-0 left-0 rounded-full"
+                      animate={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }}
+                      transition={{ duration: 0.25, ease: 'easeOut' }}
+                      style={{
+                        boxShadow: '0 0 10px rgba(34,197,94,0.45), inset 0 1px 0 rgba(255,255,255,0.3)',
+                        backgroundImage: 'linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.08) 100%)',
+                      }}
+                    />
+                    <div className="absolute inset-[1px] rounded-full bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:12%_100%]" />
+                  </div>
+                  <span className="ml-[clamp(0.35rem,1.2vw,0.58rem)] shrink-0 text-[clamp(0.62rem,1.9vw,0.92rem)] font-black uppercase tracking-[0.06em] text-white">
+                    {matchTimeLeft}s
+                  </span>
+                </div>
               </div>
             </div>
           </div>
