@@ -367,9 +367,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       sourceHeight: isTablet ? '8.8%' : '10.2%',
       targetFont: isTablet ? 'clamp(2.2rem,4.9vw,3.8rem)' : 'clamp(2.1rem,5.5vw,3.55rem)',
       sourceFont: isTablet ? 'clamp(2.05rem,4.5vw,3.45rem)' : 'clamp(1.95rem,5.1vw,3.15rem)',
-      healthTop: isTablet ? 52.6 : (isTallPhone ? 53.7 : 53.3),
-      healthWidth: isTablet ? 28 : 40,
-      healthLeft: isTablet ? 66.7 : 69.4,
+      healthTop: isTablet ? 48.8 : (isTallPhone ? 49.8 : 49.4),
+      healthWidth: isTablet ? 17 : 23,
+      healthLeft: isTablet ? 67.2 : 70.2,
       enemyWidth: isTablet ? 42 : 50,
     };
   }, [viewport.height, viewport.width]);
@@ -437,7 +437,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const targetHeightPct = Number.parseFloat(layout.targetHeight) || 0;
     const socketTopY = layout.targetY - targetHeightPct / 2;
     const bottomPct = 100 - socketTopY;
-    return `calc(${bottomPct.toFixed(2)}% - 13px)`;
+    return `calc(${bottomPct.toFixed(2)}% - 23px)`;
   }, [layout.targetHeight, layout.targetY]);
 
   const questionFrameConfig = useMemo(() => {
@@ -957,17 +957,17 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
 
         <div
-          className="absolute z-30 rounded-xl border border-amber-200/35 bg-slate-900/76 p-2 shadow-[0_12px_28px_rgba(2,6,23,0.5)]"
+          className="absolute z-30 rounded-lg border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)]"
           style={{
             top: `${layout.healthTop}%`,
-            left: `min(calc(50% + ${Math.max(12, layout.enemyWidth * 0.58)}%), calc(100% - max(0.75rem, env(safe-area-inset-right)) - clamp(9rem, 32vw, 14rem)))`,
-            width: 'clamp(7.6rem, 24vw, 10.8rem)',
+            left: `min(calc(50% + ${Math.max(10, layout.enemyWidth * 0.5)}%), calc(100% - max(0.75rem, env(safe-area-inset-right)) - ${layout.healthWidth}%))`,
+            width: `${layout.healthWidth}%`,
           }}
         >
-          <div className="mb-1 text-center text-[9px] font-black uppercase tracking-[0.14em] text-amber-200 md:text-[10px]">
+          <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
             Enemy
           </div>
-          <div className="relative h-2.5 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/80">
+          <div className="relative h-2 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/80">
             <motion.div
               className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-rose-500 via-rose-400 to-orange-300 shadow-[0_0_12px_rgba(251,113,133,0.75)]"
               animate={{ width: `${(goblinHealth / GOBLIN_MAX_HEALTH) * 100}%` }}

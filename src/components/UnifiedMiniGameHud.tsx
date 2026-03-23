@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { motion } from 'motion/react';
-import shieldIcon from '../assets/casual_ui/icons/icon__shield.png';
 import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
 import hudProfileBar from '../assets/fantasy_hero/ui/uiamend_slices/hud_profile_bar.png';
 
@@ -44,26 +43,22 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
     >
       <div className="flex w-full flex-row items-center justify-between gap-[clamp(0.3rem,1.8vw,0.85rem)] py-[clamp(0.15rem,0.7vh,0.45rem)]">
         <div className="pointer-events-none flex min-w-0 flex-row items-center">
-          <div className="relative h-auto w-[clamp(9.5rem,50vw,13.8rem)] shrink-0">
+          <div className="relative h-auto w-[clamp(10.6rem,52vw,14.9rem)] shrink-0">
             <img src={hudProfileBar} alt="" aria-hidden="true" draggable={false} className="h-auto w-full object-contain" />
-            <div className="absolute left-[5%] top-1/2 h-[76%] w-[24%] -translate-y-1/2">
-              <div className="relative h-full w-full">
-                <div className="absolute inset-[10%] overflow-hidden rounded-[30%]">
-                  <img src={avatarImage} alt={avatarName} draggable={false} className="h-full w-full object-cover" />
-                </div>
+            <div className="absolute left-[4.1%] top-1/2 h-[79%] w-[25.6%] -translate-y-1/2">
+              <div className="absolute inset-[9%] overflow-hidden rounded-[30%]">
                 <img
-                  src={shieldIcon}
-                  alt=""
-                  aria-hidden="true"
+                  src={avatarImage}
+                  alt={avatarName}
                   draggable={false}
-                  className="pointer-events-none absolute -right-[14%] -top-[8%] h-[35%] w-[35%] object-contain drop-shadow-[0_2px_4px_rgba(2,6,23,0.65)]"
+                  className="h-full w-full object-contain object-center drop-shadow-[0_3px_6px_rgba(2,6,23,0.45)]"
                 />
               </div>
             </div>
-            <div className="pointer-events-none absolute left-[32%] right-[7%] top-1/2 -translate-y-1/2 overflow-hidden text-left text-[clamp(0.76rem,2.35vw,1.06rem)] font-black uppercase tracking-[0.06em] text-cyan-50">
+            <div className="pointer-events-none absolute left-[31.8%] right-[6.2%] top-1/2 -translate-y-1/2 overflow-hidden text-left text-[clamp(0.78rem,2.3vw,1.02rem)] font-black uppercase tracking-[0.055em] text-cyan-50">
               <span
                 className="block max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
-                style={{ textShadow: '0 1px 2px rgba(2,6,23,0.6)' }}
+                style={{ lineHeight: 1.08, textShadow: '0 1px 2px rgba(2,6,23,0.6)' }}
               >
                 {playerName}
               </span>
