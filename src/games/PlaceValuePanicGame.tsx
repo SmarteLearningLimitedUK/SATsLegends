@@ -8,7 +8,11 @@ import shieldIcon from '../assets/casual_ui/icons/icon__shield.png';
 import hudProfileBar from '../assets/fantasy_hero/ui/uiamend_slices/hud_profile_bar.png';
 import hudTimerBar from '../assets/fantasy_hero/ui/uiamend_slices/hud_timer_bar.png';
 import hudTimerTrack from '../assets/fantasy_hero/ui/uiamend_slices/hud_timer_track.png';
-import socketBase from '../assets/fantasy_hero/ui/uiamend_slices/socket_base.png';
+import socketH from '../assets/fantasy_hero/ui/uiamend_slices/socket_h.png';
+import socketT from '../assets/fantasy_hero/ui/uiamend_slices/socket_t.png';
+import socketTh1 from '../assets/fantasy_hero/ui/uiamend_slices/socket_th_1.png';
+import socketTh2 from '../assets/fantasy_hero/ui/uiamend_slices/socket_th_2.png';
+import socketU from '../assets/fantasy_hero/ui/uiamend_slices/socket_u.png';
 import GameActionDock from '../components/GameActionDock';
 import { triggerHaptic } from '../haptics';
 import { AVATARS } from '../constants';
@@ -154,7 +158,16 @@ const spanForSlots = (count: number, type: 'source' | 'target') => {
   if (count <= 2) return 22;
   if (count === 3) return 32;
   if (count === 4) return 42;
-  return 50;
+  if (count === 5) return 56;
+  if (count === 6) return 66;
+  if (count === 7) return 76;
+  return 82;
+};
+
+const getDistractorDigits = (expectedDigits: number[], count: number): number[] => {
+  const expectedSet = new Set(expectedDigits);
+  const pool = shuffle(Array.from({ length: 10 }, (_, n) => n).filter((n) => !expectedSet.has(n)));
+  return pool.slice(0, Math.min(count, pool.length));
 };
 
 const removeBlackMatteFromSprite = (src: string): Promise<string> =>
@@ -236,6 +249,16 @@ const slotCountForLevel = (level: number): number => {
   return 5; // Th, Th, H, T, U
 };
 
+const getSocketAsset = (placeHint: string, slotIndex: number, placeHints: string[]) => {
+  if (placeHint === 'Th') {
+    const firstThIndex = placeHints.indexOf('Th');
+    return slotIndex === firstThIndex ? socketTh1 : socketTh2;
+  }
+  if (placeHint === 'H') return socketH;
+  if (placeHint === 'T') return socketT;
+  return socketU;
+};
+
 const makeQuestion = (level: number): QuestionState => {
   const slotCount = slotCountForLevel(level);
   let promptNumber: number;
@@ -253,7 +276,8 @@ const makeQuestion = (level: number): QuestionState => {
     .padStart(slotCount, '0')
     .split('')
     .map((digit) => Number(digit));
-  const tokenValues = shuffle([...expectedDigits]);
+  const distractorDigits = getDistractorDigits(expectedDigits, 2);
+  const tokenValues = shuffle([...expectedDigits, ...distractorDigits]);
   const placeHints = FULL_PLACE_VALUE_HINTS.slice(FULL_PLACE_VALUE_HINTS.length - slotCount);
   const prompt = toWords(promptNumber).toUpperCase();
 
@@ -376,6 +400,26 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     () => centeredAnchors(question.tokenValues.length, spanForSlots(question.tokenValues.length, 'source'), 50),
     [question.tokenValues.length],
   );
+
+  const sourceTokenWidth = useMemo(() => {
+    const count = question.tokenValues.length;
+    if (count <= 4) return layout.sourceWidth;
+    if (count === 5) return '11.2%';
+    if (count === 6) return '10.3%';
+    return '9.6%';
+  }, [layout.sourceWidth, question.tokenValues.length]);
+
+  const sourceTokenBackdropWidth = useMemo(() => {
+    const count = question.tokenValues.length;
+    if (count <= 4) return '50%';
+    if (count === 5) return '60%';
+    if (count === 6) return '70%';
+    return '80%';
+  }, [question.tokenValues.length]);
+
+  const sourceTokenBackdropHeight = useMemo(() => {
+    return question.tokenValues.length >= 6 ? '12.8%' : '11.6%';
+  }, [question.tokenValues.length]);
 
   const resetRound = useCallback((nextQuestion: QuestionState) => {
     const nextSources: Array<Token | null> = nextQuestion.tokenValues.map((value, idx) => ({
@@ -692,62 +736,73 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         draggable={false}
       />
 
-      <div className="absolute left-[max(0.55rem,env(safe-area-inset-left))] top-[max(0.5rem,env(safe-area-inset-top))] z-40 w-[min(13.8rem,52vw)]">
-        <div className="relative w-full">
-          <img src={hudProfileBar} alt="" aria-hidden="true" draggable={false} className="h-auto w-full object-contain" />
-          <div className="absolute left-[5%] top-1/2 h-[76%] w-[24%] -translate-y-1/2">
-            <div className="relative h-full w-full">
-              <div className="absolute inset-[10%] overflow-hidden rounded-[30%]">
-                <img
-                  src={selectedAvatar.portrait || selectedAvatar.image}
-                  alt={selectedAvatar.name}
-                  draggable={false}
-                  className="h-full w-full object-cover"
-                />
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 z-40"
+        style={{
+          paddingTop: 'max(0.5rem, env(safe-area-inset-top))',
+          paddingLeft: 'max(0.55rem, env(safe-area-inset-left))',
+          paddingRight: 'max(0.55rem, env(safe-area-inset-right))',
+        }}
+      >
+        <div className="flex w-full flex-row items-center justify-between gap-[clamp(0.3rem,1.8vw,0.85rem)] py-[clamp(0.15rem,0.7vh,0.45rem)]">
+          <div className="pointer-events-none flex min-w-0 flex-row items-center">
+            <div className="relative h-auto w-[clamp(9.5rem,50vw,13.8rem)] shrink-0">
+              <img src={hudProfileBar} alt="" aria-hidden="true" draggable={false} className="h-auto w-full object-contain" />
+              <div className="absolute left-[5%] top-1/2 h-[76%] w-[24%] -translate-y-1/2">
+                <div className="relative h-full w-full">
+                  <div className="absolute inset-[10%] overflow-hidden rounded-[30%]">
+                    <img
+                      src={selectedAvatar.portrait || selectedAvatar.image}
+                      alt={selectedAvatar.name}
+                      draggable={false}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <img
+                    src={shieldIcon}
+                    alt=""
+                    aria-hidden="true"
+                    draggable={false}
+                    className="pointer-events-none absolute -right-[14%] -top-[8%] h-[35%] w-[35%] object-contain drop-shadow-[0_2px_4px_rgba(2,6,23,0.65)]"
+                  />
+                </div>
               </div>
-              <img
-                src={shieldIcon}
-                alt=""
-                aria-hidden="true"
-                draggable={false}
-                className="pointer-events-none absolute -right-[14%] -top-[8%] h-[35%] w-[35%] object-contain drop-shadow-[0_2px_4px_rgba(2,6,23,0.65)]"
-              />
+              <div className="pointer-events-none absolute left-[32%] right-[7%] top-1/2 -translate-y-1/2 overflow-hidden text-left text-[clamp(0.76rem,2.35vw,1.06rem)] font-black uppercase tracking-[0.06em] text-cyan-50">
+                <span
+                  className="block max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
+                  style={{ textShadow: '0 1px 2px rgba(2,6,23,0.6)' }}
+                >
+                  {playerName}
+                </span>
+              </div>
             </div>
           </div>
-          <div className="pointer-events-none absolute left-[32%] right-[7%] top-1/2 -translate-y-1/2 overflow-hidden text-left text-[clamp(0.76rem,2.35vw,1.06rem)] font-black uppercase tracking-[0.06em] text-cyan-50">
-            <span
-              className="block max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
-              style={{ textShadow: '0 1px 2px rgba(2,6,23,0.6)' }}
-            >
-              {playerName}
-            </span>
-          </div>
-        </div>
-      </div>
 
-      <div className="absolute right-[max(0.55rem,env(safe-area-inset-right))] top-[max(0.5rem,env(safe-area-inset-top))] z-40 w-[min(12.4rem,46vw)]">
-        <div className="relative w-full">
-          <img src={hudTimerBar} alt="" aria-hidden="true" draggable={false} className="h-auto w-full object-contain" />
-          <div className="pointer-events-none absolute left-[28.6%] right-[4.1%] top-[38.8%] h-[24.5%] overflow-hidden rounded-full">
-            <div className="absolute inset-0 rounded-full bg-slate-900/46" />
-            <motion.div
-              className="absolute left-0 top-0 h-full rounded-full"
-              animate={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }}
-              transition={{ duration: 0.25, ease: 'easeOut' }}
-              style={{ boxShadow: '0 0 8px rgba(34,197,94,0.65)' }}
-            />
-            <img
-              src={hudTimerTrack}
-              alt=""
-              aria-hidden="true"
-              draggable={false}
-              className="absolute inset-0 h-full w-full object-fill"
-            />
-          </div>
-          <div className="pointer-events-none absolute left-[28.6%] right-[4.1%] top-[33.5%] flex h-[35%] items-center justify-center">
-            <span className="text-[clamp(0.62rem,1.9vw,0.92rem)] font-black uppercase tracking-[0.06em] text-white">
-              {matchTimeLeft}s
-            </span>
+          <div className="pointer-events-none flex shrink-0 flex-row items-center">
+            <div className="relative h-auto w-[clamp(8.6rem,41vw,12.4rem)]">
+              <img src={hudTimerBar} alt="" aria-hidden="true" draggable={false} className="h-auto w-full object-contain" />
+              <div className="pointer-events-none absolute left-[28.6%] right-[4.1%] top-[38.8%] h-[24.5%] overflow-hidden rounded-full">
+                <div className="absolute inset-0 rounded-full bg-slate-900/46" />
+                <motion.div
+                  className="absolute left-0 top-0 h-full rounded-full"
+                  animate={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }}
+                  transition={{ duration: 0.25, ease: 'easeOut' }}
+                  style={{ boxShadow: '0 0 8px rgba(34,197,94,0.65)' }}
+                />
+                <img
+                  src={hudTimerTrack}
+                  alt=""
+                  aria-hidden="true"
+                  draggable={false}
+                  className="absolute inset-0 h-full w-full object-fill"
+                />
+              </div>
+              <div className="pointer-events-none absolute left-[28.6%] right-[4.1%] top-[33.5%] flex h-[35%] items-center justify-center">
+                <span className="text-[clamp(0.62rem,1.9vw,0.92rem)] font-black uppercase tracking-[0.06em] text-white">
+                  {matchTimeLeft}s
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -816,15 +871,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               }}
             >
               <img
-                src={socketBase}
+                src={getSocketAsset(question.placeHints[idx], idx, question.placeHints)}
                 alt=""
                 aria-hidden="true"
                 draggable={false}
                 className="pointer-events-none absolute inset-0 h-full w-full object-contain"
               />
-              <span className="pointer-events-none absolute left-1/2 top-[55%] z-[4] -translate-x-1/2 -translate-y-1/2 text-[clamp(0.9rem,2.3vw,1.3rem)] font-black uppercase tracking-[0.08em] text-cyan-100/56">
-                {question.placeHints[idx]}
-              </span>
               {token ? (
                 <>
                   <span className="pointer-events-none absolute left-1/2 top-1/2 z-[8] h-[56%] w-[66%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/28 blur-[10px]" />
@@ -851,8 +903,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               key={`source-${idx}`}
               type="button"
               onPointerDown={(event) => beginDrag('source', idx, event)}
-              className="absolute -translate-x-1/2 -translate-y-1/2 rounded-xl"
-              style={{ left: `${anchor.x}%`, top: `${layout.sourceY}%`, width: layout.sourceWidth, height: layout.sourceHeight }}
+              className="absolute z-[22] -translate-x-1/2 -translate-y-1/2 rounded-xl"
+              style={{ left: `${anchor.x}%`, top: `${layout.sourceY}%`, width: sourceTokenWidth, height: layout.sourceHeight }}
             >
               {token ? (
                 <>
@@ -871,6 +923,16 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
             </button>
           );
         })}
+
+        <div
+          className="pointer-events-none absolute left-1/2 z-[16] -translate-x-1/2 -translate-y-1/2 rounded-[1.15rem] border border-cyan-200/30 bg-slate-900/34 shadow-[0_10px_24px_rgba(2,6,23,0.42)]"
+          style={{
+            top: `${layout.sourceY}%`,
+            width: sourceTokenBackdropWidth,
+            height: sourceTokenBackdropHeight,
+            backdropFilter: 'blur(2.5px)',
+          }}
+        />
 
         <button
           type="button"
