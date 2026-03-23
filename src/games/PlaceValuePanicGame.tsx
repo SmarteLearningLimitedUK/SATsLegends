@@ -70,6 +70,7 @@ const GOBLIN_DAMAGE_LINES = ['Ouch!', 'Hey!', 'Oof!', 'Wahhh!', 'Ugh!'] as const
 
 const FULL_PLACE_VALUE_HINTS = ['Th', 'Th', 'H', 'T', 'U'] as const;
 const TARGET_ROW_Y_OFFSET_PX = 0;
+const SOURCE_ROW_Y_OFFSET_PX = 15;
 
 const ONES_WORDS = [
   'zero',
@@ -427,9 +428,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
   const sourceTokenBackdropHeight = useMemo(() => {
     const baseTokenHeight = Number.parseFloat(layout.sourceHeight) || 10;
-    const extraPadding = question.tokenValues.length >= 6 ? 0.9 : 0.7;
+    const extraPadding = question.tokenValues.length >= 6 ? 0.35 : 0.25;
     const computed = baseTokenHeight + extraPadding;
-    const clamped = Math.max(7.2, Math.min(11.6, computed));
+    const clamped = Math.max(6.0, Math.min(10.6, computed));
     return `${clamped.toFixed(1)}%`;
   }, [layout.sourceHeight, question.tokenValues.length]);
 
@@ -648,7 +649,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
     activeSourceAnchors.forEach((anchor, index) => {
       const cx = rect.left + (anchor.x / 100) * rect.width;
-      const cy = rect.top + (layout.sourceY / 100) * rect.height;
+      const cy = rect.top + (layout.sourceY / 100) * rect.height - SOURCE_ROW_Y_OFFSET_PX;
       const d = Math.hypot(clientX - cx, clientY - cy);
       if (!bestSource || d < bestSource.distance) bestSource = { index, distance: d };
     });
@@ -1022,7 +1023,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               type="button"
               onPointerDown={(event) => beginDrag('source', idx, event)}
               className="absolute z-[22] -translate-x-1/2 -translate-y-1/2 rounded-xl"
-              style={{ left: `${anchor.x}%`, top: `${layout.sourceY}%`, width: sourceTokenWidth, height: layout.sourceHeight }}
+              style={{
+                left: `${anchor.x}%`,
+                top: `calc(${layout.sourceY}% - ${SOURCE_ROW_Y_OFFSET_PX}px)`,
+                width: sourceTokenWidth,
+                height: layout.sourceHeight,
+              }}
             >
               {token ? (
                 <>
@@ -1045,7 +1051,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         <div
           className="pointer-events-none absolute left-1/2 z-[16] -translate-x-1/2 -translate-y-1/2 rounded-[1.15rem] border border-cyan-200/30 bg-slate-900/34 shadow-[0_10px_24px_rgba(2,6,23,0.42)]"
           style={{
-            top: `${layout.sourceY}%`,
+            top: `calc(${layout.sourceY}% - ${SOURCE_ROW_Y_OFFSET_PX}px)`,
             width: sourceTokenBackdropWidth,
             height: sourceTokenBackdropHeight,
             backdropFilter: 'blur(2.5px)',

@@ -4240,7 +4240,7 @@ button:disabled {
 
 .avatar-carousel-banner-art {
   position: absolute;
-  left: calc(50% - 5px);
+  left: calc(50% - 10px);
   top: 58%;
   width: clamp(30rem, 118vw, 74rem);
   height: auto;
