@@ -1,17 +1,14 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  Zap,
-  Trophy,
-  RotateCcw,
-  Play,
-  Timer,
-  CheckCircle2,
-  XCircle,
-  Flame,
-} from 'lucide-react';
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Trophy, RotateCcw, Play, CheckCircle2, Clock, Plus, Minus } from 'lucide-react';
 import GameActionDock from '../components/GameActionDock';
 import clockFaceImage from '../assets/maps/gold_rimmed_clock_transparent_trimmed.png';
+import missionBackground from '../assets/maps/harbour.jpg';
 
 interface TimekeeperTempleGameProps {
   levelId: number;
@@ -21,59 +18,17 @@ interface TimekeeperTempleGameProps {
   onBack: () => void;
 }
 
-interface TimeTarget {
-  hour: number;
-  minute: number;
-  period: 'AM' | 'PM';
+interface Time {
+  hours: number;
+  minutes: number;
 }
 
-const GAME_DURATION = 60;
+const MAX_LEVEL = 5;
 
-const scoreToStars = (score: number, targetScore: number) => {
-  if (score >= Math.round(targetScore * 1.8)) return 3;
-  if (score >= Math.round(targetScore * 1.3)) return 2;
+const scoreToStars = (score: number) => {
+  if (score >= 1700) return 3;
+  if (score >= 1000) return 2;
   return 1;
-};
-
-const AnalogueClock = ({
-  hour,
-  minute,
-  disabled,
-  sizeStyle,
-}: {
-  hour: number;
-  minute: number;
-  disabled: boolean;
-  sizeStyle?: React.CSSProperties;
-}) => {
-  return (
-    <div
-      className={`relative flex items-center justify-center transition-opacity ${disabled ? 'opacity-80' : 'opacity-100'}`}
-      style={sizeStyle}
-    >
-      <img
-        src={clockFaceImage}
-        alt=""
-        aria-hidden="true"
-        draggable={false}
-        className="absolute inset-0 h-full w-full object-contain"
-      />
-
-      <div className="z-30 h-3 w-3 rounded-full bg-indigo-300 shadow-[0_0_10px_rgba(129,140,248,0.8)]" />
-
-      <motion.div
-        animate={{ rotate: (hour % 12) * 30 + (minute / 60) * 30 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="absolute left-1/2 top-1/2 z-10 h-[24%] w-[1.9%] origin-bottom -translate-x-1/2 -translate-y-full rounded-full bg-indigo-950 shadow-[0_0_8px_rgba(255,255,255,0.38)]"
-      />
-
-      <motion.div
-        animate={{ rotate: minute * 6 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="absolute left-1/2 top-1/2 z-20 h-[34%] w-[1.15%] origin-bottom -translate-x-1/2 -translate-y-full rounded-full bg-cyan-200 shadow-[0_0_12px_rgba(186,230,253,0.7)]"
-      />
-    </div>
-  );
 };
 
 const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
@@ -83,307 +38,312 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
   onGameOver,
   onBack,
 }) => {
-  const targetScore = 900 + (levelId * 180);
-
-  const [gameState, setGameState] = useState<'start' | 'playing' | 'complete'>('start');
-  const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
+  const [gameState, setGameState] = useState<'start' | 'playing' | 'success'>('start');
+  const [targetTime, setTargetTime] = useState<Time>({ hours: 10, minutes: 10 });
+  const [currentTime, setCurrentTime] = useState<Time>({ hours: 12, minutes: 0 });
+  const [rotationHours, setRotationHours] = useState(360);
+  const [rotationMinutes, setRotationMinutes] = useState(0);
   const [score, setScore] = useState(0);
-  const [combo, setCombo] = useState(0);
-  const [bestCombo, setBestCombo] = useState(0);
-  const [target, setTarget] = useState<TimeTarget | null>(null);
-  const [userHour, setUserHour] = useState(12);
-  const [userMinute, setUserMinute] = useState(0);
-  const [userPeriod, setUserPeriod] = useState<'AM' | 'PM'>('AM');
-  const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
-  const [runSubmitted, setRunSubmitted] = useState(false);
+  const [level, setLevel] = useState(Math.max(1, levelId));
+  const [feedback, setFeedback] = useState<string | null>(null);
 
-  const timeoutsRef = useRef<number[]>([]);
-
-  const clearTimers = () => {
-    timeoutsRef.current.forEach((id) => window.clearTimeout(id));
-    timeoutsRef.current = [];
-  };
-
-  useEffect(() => () => clearTimers(), []);
-
-  const generateTarget = useCallback(() => {
-    const hour = Math.floor(Math.random() * 12) + 1;
-    const minute = Math.floor(Math.random() * 12) * 5;
-    const period: 'AM' | 'PM' = Math.random() > 0.5 ? 'AM' : 'PM';
-    setTarget({ hour, minute, period });
-
-    setUserHour(12);
-    setUserMinute(0);
-    setUserPeriod('AM');
-    setFeedback(null);
+  const generateRandomTime = useCallback(() => {
+    const hours = Math.floor(Math.random() * 12) || 12;
+    const minutes = Math.floor(Math.random() * 12) * 5;
+    return { hours, minutes };
   }, []);
 
   const startGame = () => {
-    clearTimers();
-    setScore(0);
-    setCombo(0);
-    setBestCombo(0);
-    setTimeLeft(GAME_DURATION);
-    setRunSubmitted(false);
+    const newTarget = generateRandomTime();
+    setTargetTime(newTarget);
+    setCurrentTime({ hours: 12, minutes: 0 });
+    setRotationHours(360);
+    setRotationMinutes(0);
     setGameState('playing');
-    generateTarget();
+    setFeedback(null);
   };
 
-  useEffect(() => {
-    if (gameState !== 'playing' || timeLeft <= 0) return undefined;
+  const resetRun = () => {
+    setScore(0);
+    setLevel(Math.max(1, levelId));
+    setTargetTime({ hours: 10, minutes: 10 });
+    setCurrentTime({ hours: 12, minutes: 0 });
+    setRotationHours(360);
+    setRotationMinutes(0);
+    setFeedback(null);
+    setGameState('start');
+  };
 
-    const timer = window.setInterval(() => {
-      setTimeLeft((previous) => {
-        if (previous <= 1) {
-          setGameState('complete');
-          return 0;
-        }
-        return previous - 1;
+  const checkTime = () => {
+    const targetH = targetTime.hours % 12;
+    const currentH = currentTime.hours % 12;
+
+    if (targetH === currentH && targetTime.minutes === currentTime.minutes) {
+      const nextScore = score + (100 * level);
+      setScore(nextScore);
+      setGameState('success');
+      setFeedback('Perfect Match!');
+      return;
+    }
+
+    setFeedback('Not quite right. Try again!');
+    window.setTimeout(() => setFeedback(null), 2000);
+  };
+
+  const nextLevel = () => {
+    const next = level + 1;
+    if (next > MAX_LEVEL) {
+      onVictory(scoreToStars(score), score);
+      return;
+    }
+    setLevel(next);
+    startGame();
+  };
+
+  const adjustTime = (type: 'hours' | 'minutes', amount: number) => {
+    if (gameState !== 'playing') return;
+
+    if (type === 'hours') {
+      setRotationHours((prev) => prev + (amount * 30));
+      setCurrentTime((prev) => {
+        let newHours = prev.hours + amount;
+        if (newHours > 12) newHours = 1;
+        if (newHours < 1) newHours = 12;
+        return { ...prev, hours: newHours };
       });
-    }, 1000);
-
-    return () => window.clearInterval(timer);
-  }, [gameState, timeLeft]);
-
-  const checkAnswer = () => {
-    if (!target || gameState !== 'playing') return;
-
-    const isCorrect = userHour === target.hour && userMinute === target.minute && userPeriod === target.period;
-
-    if (isCorrect) {
-      const points = 100 + (combo * 20);
-      const nextCombo = combo + 1;
-      setScore((previous) => previous + points);
-      setCombo(nextCombo);
-      setBestCombo((previous) => Math.max(previous, nextCombo));
-      setFeedback('correct');
-
-      if (nextCombo % 5 === 0) {
-        setTimeLeft((previous) => Math.min(previous + 5, GAME_DURATION));
-      }
-
-      const timeoutId = window.setTimeout(generateTarget, 400);
-      timeoutsRef.current.push(timeoutId);
       return;
     }
 
-    setCombo(0);
-    setFeedback('wrong');
-    const timeoutId = window.setTimeout(() => setFeedback(null), 600);
-    timeoutsRef.current.push(timeoutId);
+    setRotationMinutes((prev) => prev + (amount * 6));
+    setCurrentTime((prev) => {
+      let newMinutes = prev.minutes + amount;
+      if (newMinutes >= 60) newMinutes = 0;
+      if (newMinutes < 0) newMinutes = 55;
+      return { ...prev, minutes: newMinutes };
+    });
   };
 
-  const submitRun = () => {
-    if (runSubmitted) return;
-    setRunSubmitted(true);
-
-    if (score >= targetScore) {
-      onVictory(scoreToStars(score, targetScore), score);
-      return;
-    }
-
-    onGameOver(score);
-  };
-
-  const incrementHour = () => {
-    if (gameState !== 'playing') return;
-    setUserHour((prev) => (prev >= 12 ? 1 : prev + 1));
-  };
-
-  const incrementMinute = () => {
-    if (gameState !== 'playing') return;
-    setUserMinute((prev) => (prev + 5) % 60);
-  };
-
-  const topPadding = 'pt-[calc(env(safe-area-inset-top)+4.8rem)]';
+  const topPadding = 'pt-[calc(env(safe-area-inset-top)+4.95rem)]';
 
   return (
-    <div className="fixed inset-0 flex flex-col overflow-hidden bg-slate-950 font-sans text-white select-none">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-10"
-        style={{ backgroundImage: 'radial-gradient(#6366f1 1px, transparent 1px)', backgroundSize: '30px 30px' }}
+    <div className="fixed inset-0 overflow-hidden bg-[#0f172a] font-sans text-white select-none">
+      <img
+        src={missionBackground}
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
       />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(15,23,42,0.35)_45%,rgba(15,23,42,0.72))]" />
 
-      <main className={`relative z-10 flex flex-1 flex-col items-center justify-start px-4 pb-[max(6.9rem,calc(env(safe-area-inset-bottom)+5.9rem))] ${topPadding}`}>
-        <AnimatePresence mode="wait">
-          {gameState === 'playing' && target && (
+      <div className={`relative z-10 flex h-full w-full flex-col items-center ${topPadding} px-4 pb-[max(6.8rem,calc(env(safe-area-inset-bottom)+5.8rem))]`}>
+        <div className="w-full max-w-md">
+          <div className="mb-3 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-blue-400/50 bg-blue-600/30 shadow-lg backdrop-blur-md">
+                <Trophy className="h-5 w-5 text-yellow-400" />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-blue-300">Score</p>
+                <p className="text-lg font-black tabular-nums">{score.toLocaleString()}</p>
+              </div>
+            </div>
+
+            <div className="text-right">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-purple-300">Level</p>
+              <p className="text-lg font-black">{level}</p>
+            </div>
+          </div>
+
+          <main className="flex w-full flex-col items-center gap-4">
             <motion.div
-              key="game"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="flex w-full max-w-[28rem] flex-col items-center gap-5 md:gap-8"
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              className="relative flex h-[4.8rem] w-full max-w-[18rem] items-center justify-center"
             >
-              <div className="flex flex-col items-center gap-4">
-                <span className="text-xs font-black tracking-[0.3em] text-indigo-400 uppercase">Set Clock To</span>
-                <div className="group relative rounded-[1.45rem] border-2 border-indigo-500/30 bg-slate-900 px-6 py-3 shadow-[0_0_40px_rgba(99,102,241,0.1)] md:px-8 md:py-4">
-                  <div className="absolute -inset-1 rounded-[2rem] bg-indigo-500/20 opacity-0 blur-xl transition-opacity group-hover:opacity-100" />
-                  <span className="relative text-[clamp(2rem,9vw,3.4rem)] font-black tabular-nums tracking-tighter">
-                    {target.hour.toString().padStart(2, '0')}:{target.minute.toString().padStart(2, '0')}
-                    <span className="ml-3 text-[clamp(1rem,4.8vw,1.7rem)] text-indigo-400">{target.period}</span>
-                  </span>
-                </div>
+              <div className="absolute inset-0 overflow-hidden rounded-2xl border-4 border-[#334155] bg-[#1e293b] shadow-[0_0_30px_rgba(59,130,246,0.2)]">
+                <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent" />
+                <div className="absolute inset-0 m-1 rounded-xl border border-white/10" />
               </div>
 
-              <div className="flex w-full flex-col items-center gap-5 lg:flex-row lg:items-start lg:justify-center lg:gap-8">
-                <div className="relative">
-                  <AnalogueClock
-                    hour={userHour}
-                    minute={userMinute}
-                    disabled={feedback === 'correct'}
-                    sizeStyle={{ width: 'min(68vw, 18rem)', height: 'min(68vw, 18rem)' }}
-                  />
-
-                  <div className="absolute top-1/2 -right-16 flex -translate-y-1/2 flex-col gap-2.5">
-                    {(['AM', 'PM'] as const).map((period) => (
-                      <button
-                        key={period}
-                        onClick={() => setUserPeriod(period)}
-                        className={`flex h-12 w-12 items-center justify-center rounded-xl border-2 text-xs font-black transition-all ${
-                          userPeriod === period
-                            ? 'border-indigo-400 bg-indigo-500 text-white shadow-[0_0_20px_rgba(99,102,241,0.5)]'
-                            : 'border-slate-800 bg-slate-900 text-slate-500 hover:border-slate-700'
-                        }`}
-                      >
-                        {period}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex w-full max-w-[15.5rem] flex-col gap-4">
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      onClick={incrementHour}
-                      className="rounded-xl border border-cyan-300/45 bg-sky-900/80 px-2 py-2 text-xs font-black tracking-[0.08em] text-cyan-100 uppercase transition hover:brightness-110"
-                    >
-                      Hour +
-                    </button>
-                    <button
-                      onClick={incrementMinute}
-                      className="rounded-xl border border-cyan-300/45 bg-sky-900/80 px-2 py-2 text-xs font-black tracking-[0.08em] text-cyan-100 uppercase transition hover:brightness-110"
-                    >
-                      Minute +
-                    </button>
-                  </div>
-
-                  <div className="flex flex-col items-center gap-2 rounded-3xl border border-white/5 bg-slate-900/80 p-6">
-                    <span className="text-[10px] font-black tracking-widest text-slate-500 uppercase">Current Input</span>
-                    <span className="text-2xl font-black tabular-nums">
-                      {userHour.toString().padStart(2, '0')}:{userMinute.toString().padStart(2, '0')} {userPeriod}
-                    </span>
-                  </div>
-
-                  <button
-                    onClick={checkAnswer}
-                    className={`flex h-16 w-full items-center justify-center gap-3 rounded-2xl text-base font-black tracking-widest uppercase shadow-2xl transition-all ${
-                      feedback === 'correct'
-                        ? 'scale-95 bg-emerald-500 text-white'
-                        : feedback === 'wrong'
-                          ? 'animate-shake bg-rose-500 text-white'
-                          : 'bg-white text-slate-950 hover:bg-indigo-50 active:scale-95'
-                    }`}
-                  >
-                    {feedback === 'correct'
-                      ? <CheckCircle2 className="h-8 w-8" />
-                      : feedback === 'wrong'
-                        ? <XCircle className="h-8 w-8" />
-                        : 'Check'}
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {gameState === 'start' && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 z-50 flex items-center justify-center bg-slate-950/90 p-12 text-center backdrop-blur-md"
-            >
-              <div className="flex max-w-md flex-col items-center">
-                <div className="relative mb-8 flex h-24 w-24 items-center justify-center rounded-[2.5rem] bg-indigo-600 shadow-[0_0_40px_rgba(79,70,229,0.5)]">
-                  <Zap className="h-12 w-12 fill-current text-white" />
-                  <motion.div
-                    animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="absolute inset-0 rounded-[2.5rem] border-4 border-indigo-500"
-                  />
-                </div>
-                <h2 className="mb-4 text-5xl font-black tracking-tighter uppercase italic">Chrono Dash</h2>
-                <p className="mb-10 leading-relaxed font-medium text-slate-400">
-                  Convert the digital time to analogue as fast as you can.
-                  Every correct answer builds score and combo.
-                  Reach a 5x combo for bonus time.
-                </p>
-                <button
-                  onClick={startGame}
-                  className="group flex items-center gap-3 rounded-full bg-white px-16 py-6 text-sm font-black tracking-[0.3em] text-slate-950 uppercase shadow-[0_0_50px_rgba(255,255,255,0.2)] transition-all hover:bg-indigo-50"
+              <div className="relative flex items-center gap-2">
+                <span className="text-4xl font-black tracking-tighter text-blue-400 drop-shadow-[0_0_10px_rgba(96,165,250,0.5)]">
+                  {targetTime.hours.toString().padStart(2, '0')}
+                </span>
+                <motion.span
+                  animate={{ opacity: [1, 0.3, 1] }}
+                  transition={{ repeat: Infinity, duration: 1 }}
+                  className="text-3xl font-black text-blue-400/50"
                 >
-                  <Play className="h-4 w-4 fill-current transition-transform group-hover:scale-110" /> Initialize Dash
-                </button>
+                  :
+                </motion.span>
+                <span className="text-4xl font-black tracking-tighter text-blue-400 drop-shadow-[0_0_10px_rgba(96,165,250,0.5)]">
+                  {targetTime.minutes.toString().padStart(2, '0')}
+                </span>
               </div>
             </motion.div>
-          )}
 
-          {gameState === 'complete' && (
+            <div className="group relative">
+              <div className="absolute inset-0 rounded-full bg-blue-500/10 blur-3xl" />
+
+              <div className="relative flex h-[17rem] w-[17rem] items-center justify-center">
+                <img
+                  src={clockFaceImage}
+                  alt="Clock Face"
+                  className="h-full w-full object-contain drop-shadow-2xl"
+                />
+
+                <motion.div
+                  animate={{ rotate: rotationHours }}
+                  transition={{ type: 'spring', stiffness: 100, damping: 15 }}
+                  className="absolute left-1/2 bottom-1/2 z-20 h-[23%] w-[2.4%] origin-bottom -translate-x-1/2 rounded-full bg-gradient-to-t from-white to-gray-300 shadow-lg"
+                />
+
+                <motion.div
+                  animate={{ rotate: rotationMinutes }}
+                  transition={{ type: 'spring', stiffness: 120, damping: 12 }}
+                  className="absolute left-1/2 bottom-1/2 z-30 h-[33%] w-[1.2%] origin-bottom -translate-x-1/2 rounded-full bg-gradient-to-t from-blue-400 to-blue-200 shadow-lg"
+                />
+
+                <div className="absolute left-1/2 top-1/2 z-40 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-black/20 bg-gradient-to-br from-yellow-300 to-yellow-600 shadow-lg" />
+              </div>
+            </div>
+
+            <div className="grid w-full grid-cols-2 gap-5">
+              <div className="flex flex-col items-center gap-3">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-300">Hours</p>
+                <div className="flex items-center gap-3">
+                  <ControlButton onClick={() => adjustTime('hours', -1)} icon={<Minus size={20} />} color="blue" />
+                  <ControlButton onClick={() => adjustTime('hours', 1)} icon={<Plus size={20} />} color="blue" />
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center gap-3">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-purple-300">Minutes</p>
+                <div className="flex items-center gap-3">
+                  <ControlButton onClick={() => adjustTime('minutes', -5)} icon={<Minus size={20} />} color="purple" />
+                  <ControlButton onClick={() => adjustTime('minutes', 5)} icon={<Plus size={20} />} color="purple" />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex h-6 items-center justify-center">
+              <AnimatePresence>
+                {feedback && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className={`text-sm font-black tracking-wide ${feedback.includes('Perfect') ? 'text-green-400' : 'text-red-400'}`}
+                  >
+                    {feedback}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <div className="flex w-full flex-col gap-3">
+              {gameState === 'playing' && (
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={checkTime}
+                  className="w-full rounded-2xl border border-blue-400/20 bg-gradient-to-r from-blue-600 to-blue-500 py-4 text-lg font-black shadow-[0_8px_0_rgb(30,58,138)] transition-all active:translate-y-1 active:shadow-none"
+                >
+                  SUBMIT TIME
+                </motion.button>
+              )}
+
+              <button
+                onClick={resetRun}
+                className="flex items-center justify-center gap-2 text-xs font-bold tracking-widest text-gray-500 transition-colors hover:text-white"
+              >
+                <RotateCcw size={14} /> RESET CLOCK
+              </button>
+            </div>
+          </main>
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {gameState === 'start' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 p-8 backdrop-blur-xl"
+          >
+            <div className="flex flex-col items-center gap-8 text-center">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+                className="relative"
+              >
+                <Clock size={100} className="text-blue-500 opacity-20" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Play size={40} className="ml-1 text-white" />
+                </div>
+              </motion.div>
+
+              <div>
+                <h1 className="mb-2 bg-gradient-to-b from-white to-gray-400 bg-clip-text text-4xl font-black tracking-tighter text-transparent">
+                  CHRONO DASH
+                </h1>
+                <p className="mx-auto max-w-[220px] text-sm leading-relaxed font-medium text-blue-300">
+                  Use the buttons to sync the analogue clock with the digital display.
+                </p>
+              </div>
+
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={startGame}
+                className="rounded-full border-b-4 border-blue-800 bg-blue-600 px-12 py-5 text-xl font-black shadow-2xl shadow-blue-500/40"
+              >
+                START DASH
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
+
+        {gameState === 'success' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-blue-600/90 p-8 backdrop-blur-2xl"
+          >
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="absolute inset-0 z-50 flex items-center justify-center bg-slate-950/95 p-12 text-center backdrop-blur-xl"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', damping: 12 }}
+              className="mb-6 rounded-full bg-white p-6 shadow-2xl"
             >
-              <div className="flex max-w-md flex-col items-center">
-                <div className="relative mb-8">
-                  <Trophy className="h-24 w-24 text-indigo-500 drop-shadow-[0_0_20px_rgba(99,102,241,0.5)]" />
-                </div>
-                <h2 className="mb-2 text-4xl font-black tracking-tighter uppercase italic">Time&apos;s Up!</h2>
-                <p className="mb-8 font-medium text-slate-400">The dash has concluded. Here is your performance report:</p>
-
-                <div className="mb-10 grid w-full grid-cols-2 gap-4">
-                  <div className="rounded-3xl border border-white/5 bg-slate-900 p-6">
-                    <span className="mb-1 block text-[10px] font-black tracking-widest text-indigo-400 uppercase">Final Score</span>
-                    <span className="text-3xl font-black tabular-nums">{score}</span>
-                  </div>
-                  <div className="rounded-3xl border border-white/5 bg-slate-900 p-6">
-                    <span className="mb-1 block text-[10px] font-black tracking-widest text-amber-400 uppercase">Max Combo</span>
-                    <span className="text-3xl font-black tabular-nums">x{bestCombo}</span>
-                  </div>
-                </div>
-
-                <div className="flex w-full flex-col gap-3">
-                  <button
-                    onClick={submitRun}
-                    disabled={runSubmitted}
-                    className="flex items-center justify-center gap-3 rounded-full bg-indigo-600 px-16 py-6 text-sm font-black tracking-[0.2em] text-white uppercase shadow-[0_0_40px_rgba(79,70,229,0.3)] transition-all hover:bg-indigo-700 disabled:opacity-50"
-                  >
-                    <Timer className="h-4 w-4" /> Submit Run
-                  </button>
-                  <button
-                    onClick={startGame}
-                    className="flex items-center justify-center gap-3 rounded-full bg-slate-800 px-16 py-5 text-sm font-black tracking-[0.2em] text-white uppercase transition-all hover:bg-slate-700"
-                  >
-                    <RotateCcw className="h-4 w-4" /> Restart Dash
-                  </button>
-                </div>
-              </div>
+              <CheckCircle2 size={60} className="text-blue-600" />
             </motion.div>
-          )}
-        </AnimatePresence>
-      </main>
 
-      <style>{`
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-5px); }
-          75% { transform: translateX(5px); }
-        }
-        .animate-shake {
-          animation: shake 0.2s ease-in-out 0s 2;
-        }
-      `}</style>
+            <h2 className="mb-1 text-4xl font-black">EXCELLENT!</h2>
+            <p className="mb-10 text-lg font-medium text-blue-100">Time is on your side.</p>
+
+            <div className="flex w-full max-w-[240px] flex-col gap-4">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={nextLevel}
+                className="w-full rounded-2xl bg-white py-5 text-xl font-black text-blue-600 shadow-xl"
+              >
+                NEXT LEVEL
+              </motion.button>
+
+              <button
+                onClick={() => onGameOver(score)}
+                className="text-sm font-bold tracking-widest text-blue-200 uppercase transition-colors hover:text-white"
+              >
+                BACK TO MENU
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.45rem,env(safe-area-inset-bottom))] z-40 flex justify-center">
         <div className="pointer-events-auto">
@@ -393,5 +353,29 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
     </div>
   );
 };
+
+function ControlButton({
+  onClick,
+  icon,
+  color,
+}: {
+  onClick: () => void;
+  icon: React.ReactNode;
+  color: 'blue' | 'purple';
+}) {
+  const baseColor = color === 'blue' ? 'from-blue-500 to-blue-700' : 'from-purple-500 to-purple-700';
+  const borderColor = color === 'blue' ? 'border-blue-400/30' : 'border-purple-400/30';
+
+  return (
+    <motion.button
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      onClick={onClick}
+      className={`flex h-12 w-12 items-center justify-center rounded-xl border ${borderColor} bg-gradient-to-b ${baseColor} shadow-[0_4px_0_rgba(0,0,0,0.5)] transition-all active:translate-y-1 active:shadow-none`}
+    >
+      <div className="text-white drop-shadow-md">{icon}</div>
+    </motion.button>
+  );
+}
 
 export default TimekeeperTempleGame;
