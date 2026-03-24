@@ -208,7 +208,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
   };
 
   const topPadding = useSharedTopHud
-    ? 'pt-[calc(env(safe-area-inset-top)+5.9rem)]'
+    ? 'pt-[calc(env(safe-area-inset-top)+5.45rem)]'
     : 'pt-[calc(env(safe-area-inset-top)+1.2rem)]';
 
   return (
@@ -223,9 +223,9 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(4,9,26,0.2),rgba(2,7,20,0.78)_82%)]" />
 
       <main
-        className={`relative z-20 flex h-full w-full flex-col items-center ${topPadding} px-[max(1rem,env(safe-area-inset-left))] pb-[max(1rem,env(safe-area-inset-bottom))]`}
+        className={`relative z-20 flex h-full w-full flex-col items-center ${topPadding} px-[max(1rem,env(safe-area-inset-left))] pb-[max(6.2rem,calc(env(safe-area-inset-bottom)+5.4rem))]`}
       >
-        <div className="flex h-full w-full max-w-[30rem] flex-col items-center justify-between py-2">
+        <div className="flex h-full w-full max-w-[30rem] flex-col items-center justify-start gap-3 py-1">
           <section className="flex w-full flex-col items-center gap-4 text-center">
             <div className="mt-2">
               <p className="text-xs font-black tracking-[0.3em] text-amber-200 uppercase">Mission</p>
@@ -238,10 +238,10 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
               key={problem.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="relative w-full rounded-[1.4rem] border border-cyan-200/26 bg-[linear-gradient(180deg,rgba(15,31,70,0.82),rgba(6,20,54,0.92))] px-4 py-4 shadow-[0_18px_38px_rgba(2,6,23,0.52)]"
+              className="relative w-[92%] rounded-[1.05rem] border border-cyan-200/26 bg-[linear-gradient(180deg,rgba(15,31,70,0.82),rgba(6,20,54,0.92))] px-3 py-2.5 shadow-[0_14px_28px_rgba(2,6,23,0.48)]"
             >
-              <div className="rounded-[0.95rem] bg-slate-950/34 px-3 py-3.5">
-                <span className="text-[clamp(1.95rem,10.2vw,3.55rem)] font-black tabular-nums tracking-tight text-white [text-shadow:0_6px_14px_rgba(14,165,233,0.25)]">
+              <div className="rounded-[0.8rem] bg-slate-950/34 px-2.5 py-2.5">
+                <span className="text-[clamp(1.6rem,8.1vw,2.75rem)] font-black tabular-nums tracking-tight text-white [text-shadow:0_5px_12px_rgba(14,165,233,0.22)]">
                   {displayNumber}
                 </span>
               </div>
@@ -251,13 +251,13 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
               <p className="text-[clamp(1rem,4.2vw,1.35rem)] font-bold text-slate-200">Your Answer</p>
               <div className="mx-auto mt-2 inline-flex min-w-[12.5rem] items-center justify-center rounded-full border border-amber-300/62 bg-[linear-gradient(180deg,rgba(17,24,39,0.92),rgba(10,16,32,0.96))] px-5 py-2.5 shadow-[0_0_20px_rgba(250,204,21,0.28)]">
                 <span className="text-[clamp(1.4rem,6.2vw,2.25rem)] font-black tabular-nums text-amber-200">
-                  {userInput || '—'}
+                  {userInput || '--'}
                 </span>
               </div>
             </div>
           </section>
 
-          <section className="w-full">
+          <section className="mb-1 w-full">
             <div className="mb-3 grid grid-cols-3 gap-2">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, '.', 0, 'DEL'].map((key) => (
                 <button
@@ -274,7 +274,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
             <button
               onClick={submitAnswer}
               disabled={!userInput || roundEnded}
-              className="w-full rounded-[1.25rem] border border-fuchsia-300/52 bg-[linear-gradient(180deg,#1d4ed8,#7c3aed)] py-4 text-[clamp(1.1rem,5vw,1.65rem)] font-black tracking-[0.08em] text-white uppercase shadow-[0_16px_34px_rgba(59,130,246,0.4)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
+              className="w-full rounded-[1.2rem] border border-fuchsia-300/52 bg-[linear-gradient(180deg,#1d4ed8,#7c3aed)] py-3.5 text-[clamp(1.06rem,4.8vw,1.5rem)] font-black tracking-[0.08em] text-white uppercase shadow-[0_14px_28px_rgba(59,130,246,0.38)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
             >
               Submit
             </button>
@@ -311,4 +311,3 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
 };
 
 export default RoundingRocketGame;
-
