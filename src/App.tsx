@@ -1118,7 +1118,7 @@ const App: React.FC = () => {
       : 'pb-[calc(6.75rem+env(safe-area-inset-bottom))] md:pb-[calc(7.25rem+env(safe-area-inset-bottom))]'
     : '';
   const viewportShellClass = isGameplayScreen
-    ? 'sat-shell-standard licensed-playfield-bg bg-slate-950'
+    ? 'sat-shell-standard bg-transparent'
     : isWorldMapScreen
     ? 'sat-shell-map licensed-playfield-bg bg-slate-950 pb-[env(safe-area-inset-bottom)]'
     : useUnboundedStageShell

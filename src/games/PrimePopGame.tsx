@@ -45,8 +45,9 @@ interface PrimePopConfig {
   comboStep: number;
 }
 
-const INITIAL_LIVES = 10;
+const INITIAL_LIVES = 5;
 const BUBBLE_PIXEL_SCALE = 7.2;
+const DANGER_LINE_Y = 12;
 
 const BUBBLE_TINTS: BubbleTint[] = ['blue', 'green', 'purple', 'gold', 'red'];
 
@@ -428,8 +429,8 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
       });
     } else {
       comboNext = 0;
-      livesNext -= 1;
-      setFeedback('Not prime -1 life');
+      scoreNext += Math.max(0, config.nonPrimePoints);
+      setFeedback(`Composite +${Math.max(0, config.nonPrimePoints)}`);
     }
 
     const nextBubbles = bubblesRef.current.filter((bubble) => bubble.id !== bubbleId);
@@ -447,7 +448,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     if (scoreRef.current >= targetScore || livesRef.current <= 0) {
       finalize(scoreRef.current);
     }
-  }, [config.comboStep, config.primePoints, finalize, targetScore]);
+  }, [config.comboStep, config.nonPrimePoints, config.primePoints, finalize, targetScore]);
 
   const loop = useCallback((ts: number) => {
     if (overRef.current) return;
@@ -471,16 +472,19 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     });
     const movedWithoutOverlap = resolveBubbleCollisions(movedBubbles);
 
-    const escapedPrime = movedWithoutOverlap.filter((bubble) => bubble.y < -(bubble.radius + 3) && bubble.isPrime).length;
-    const nextBubbles = movedWithoutOverlap.filter((bubble) => bubble.y >= -(bubble.radius + 3));
+    const dangerPrimeHits = movedWithoutOverlap.filter((bubble) => bubble.isPrime && (bubble.y - bubble.radius) <= DANGER_LINE_Y).length;
+    const nextBubbles = movedWithoutOverlap.filter((bubble) => {
+      if ((bubble.y - bubble.radius) <= DANGER_LINE_Y && bubble.isPrime) return false;
+      return bubble.y >= -(bubble.radius + 3);
+    });
     let scoreNext = scoreRef.current;
     let comboNext = comboRef.current;
     let livesNext = livesRef.current;
 
-    if (escapedPrime > 0) {
-      livesNext -= escapedPrime;
+    if (dangerPrimeHits > 0) {
+      livesNext -= dangerPrimeHits;
       comboNext = 0;
-      setFeedback(`Missed prime -${escapedPrime} life${escapedPrime > 1 ? 's' : ''}`);
+      setFeedback(`Prime hit danger line -${dangerPrimeHits} life${dangerPrimeHits > 1 ? 's' : ''}`);
       window.setTimeout(() => setFeedback(null), 520);
     }
 
@@ -533,13 +537,23 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
 
         <div className="relative min-h-0 flex-1 overflow-hidden bg-[linear-gradient(180deg,rgba(6,25,55,0.22),rgba(3,12,32,0.52))]">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(56,189,248,0.28),transparent_35%),radial-gradient(circle_at_15%_25%,rgba(196,181,253,0.2),transparent_30%),radial-gradient(circle_at_84%_30%,rgba(74,222,128,0.17),transparent_28%)]" />
+          <div
+            className="pointer-events-none absolute left-3 right-3 z-20 rounded-full border border-rose-300/80 bg-rose-500/35"
+            style={{ top: `${DANGER_LINE_Y}%`, height: '0.34rem' }}
+          />
+          <div
+            className="pointer-events-none absolute left-1/2 z-20 -translate-x-1/2 rounded-full border border-rose-100/70 bg-rose-600/40 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-[0.14em] text-rose-50"
+            style={{ top: `calc(${DANGER_LINE_Y}% - 1.3rem)` }}
+          >
+            Danger Line
+          </div>
 
           <div className="absolute left-2 right-2 top-2 z-20 flex flex-wrap items-center justify-between gap-2">
             <div className="rounded-full border border-cyan-100/60 bg-cyan-500/35 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-white">
               Prime +{config.primePoints}
             </div>
             <div className="rounded-full border border-white/35 bg-slate-900/55 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-white">
-              Composite: -1 life
+              Prime on line: -1 life
             </div>
             <div className="rounded-full border border-amber-100/60 bg-amber-500/34 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-amber-50">
               Combo x{combo}

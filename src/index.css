@@ -3571,24 +3571,16 @@ button:disabled {
 
 /* Shared mini-game GUI update: mission-style premium blue/gold chrome applied across all gameplay screens. */
 .screen-gameplay .game-shell-host {
-  background:
-    radial-gradient(circle at 50% -6%, rgba(147, 197, 253, 0.16), rgba(147, 197, 253, 0) 34%),
-    radial-gradient(circle at 5% 95%, rgba(252, 211, 77, 0.12), rgba(252, 211, 77, 0) 34%),
-    radial-gradient(circle at 95% 95%, rgba(56, 189, 248, 0.12), rgba(56, 189, 248, 0) 36%),
-    linear-gradient(180deg, rgba(26, 54, 124, 0.26), rgba(10, 17, 40, 0.3));
-}
-
-/* Number Line Ninja: keep dojo background clean behind shared top HUD */
-.screen-gameplay .game-shell-host.game-type-number-line-ninja {
   background: transparent !important;
 }
 
-.app-viewport.screen-gameplay.game-type-number-line-ninja.licensed-playfield-bg {
+/* Gameplay root shell: remove global blue fill behind top HUD on all minigames. */
+.app-viewport.screen-gameplay {
   background: transparent !important;
 }
 
-.app-viewport.screen-gameplay.game-type-number-line-ninja.licensed-playfield-bg::before,
-.app-viewport.screen-gameplay.game-type-number-line-ninja.licensed-playfield-bg::after {
+.app-viewport.screen-gameplay::before,
+.app-viewport.screen-gameplay::after {
   display: none !important;
   content: none !important;
 }

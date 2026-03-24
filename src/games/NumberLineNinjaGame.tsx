@@ -319,7 +319,6 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
                 style={{ width: `${progress}%` }}
               />
             </div>
-            <div className="text-[10px] font-black uppercase tracking-[0.1em] text-white/90">{score}/{targetScore}</div>
             <div className="rounded-full border border-rose-200/40 bg-rose-500/20 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.1em] text-rose-100">
               Lives {lives}
             </div>

@@ -30,7 +30,7 @@ interface GameplayHUDProps {
 const GameplayHUD: React.FC<GameplayHUDProps> = ({
   title,
   avatar: _avatar,
-  score,
+  score: _score,
   targetScore,
   timeLeft,
   progress,
@@ -78,7 +78,7 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
             </div>
           )}
 
-          <div className={`grid w-full ${showExtraStat ? 'grid-cols-3' : 'grid-cols-2'} ${compact ? 'gap-1' : 'gap-2 md:gap-2.5'}`}>
+          <div className={`grid w-full ${showExtraStat ? 'grid-cols-2' : 'grid-cols-1'} ${compact ? 'gap-1' : 'gap-2 md:gap-2.5'}`}>
             {showExtraStat && (
               <div className={`aaa-hud-stat mission-hud-stat-card relative rounded-[0.75rem] md:rounded-[1rem] ${compact ? 'px-1 py-0.5' : 'px-2 py-1.5'} md:px-2.5 md:py-2 text-center overflow-hidden`}>
                 <div className="aaa-hud-stat-surface absolute inset-0 rounded-[inherit]" />
@@ -86,19 +86,6 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
               <div className={`mission-hud-stat-value mt-0.5 ${compact ? 'text-[0.82rem]' : 'text-[1rem]'} md:text-[1.2rem] font-black ${accentText}`}>{statValue}</div>
             </div>
             )}
-
-            <div className={`aaa-hud-stat mission-hud-stat-card relative rounded-[0.75rem] md:rounded-[1rem] ${compact ? 'px-1 py-0.5' : 'px-2 py-1.5'} md:px-2.5 md:py-2 text-center overflow-hidden`}>
-              <div className="aaa-hud-stat-surface absolute inset-0 rounded-[inherit]" />
-              <div className={`mission-hud-stat-label ${compact ? 'text-[6px]' : 'text-[8px]'} relative md:text-xs font-black uppercase tracking-[0.16em] text-slate-600`}>Score</div>
-              <motion.div
-                key={score}
-                initial={{ scale: 1.12 }}
-                animate={{ scale: 1 }}
-                className={`mission-hud-stat-value mt-0.5 relative ${compact ? 'text-[0.82rem]' : 'text-[1.05rem]'} md:text-[1.2rem] font-black ${accentText}`}
-              >
-                {score}
-              </motion.div>
-            </div>
 
             <div className={`aaa-hud-stat mission-hud-stat-card relative rounded-[0.75rem] md:rounded-[1rem] ${compact ? 'px-1 py-0.5' : 'px-2 py-1.5'} md:px-2.5 md:py-2 text-center overflow-hidden`}>
               <div className="aaa-hud-stat-surface absolute inset-0 rounded-[inherit]" />
