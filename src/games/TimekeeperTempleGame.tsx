@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import GameActionDock from '../components/GameActionDock';
-import clockFaceImage from '../assets/maps/gold_rimmed_clock_transparent.png';
+import clockFaceImage from '../assets/maps/gold_rimmed_clock_transparent_trimmed.png';
 
 interface TimekeeperTempleGameProps {
   levelId: number;
@@ -64,15 +64,13 @@ const AnalogueClock = ({
       <motion.div
         animate={{ rotate: (hour % 12) * 30 + (minute / 60) * 30 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="absolute z-10 h-[28%] w-2 origin-bottom rounded-full bg-indigo-950 shadow-[0_0_8px_rgba(255,255,255,0.38)]"
-        style={{ bottom: '50%' }}
+        className="absolute left-1/2 top-1/2 z-10 h-[24%] w-[1.9%] origin-bottom -translate-x-1/2 -translate-y-full rounded-full bg-indigo-950 shadow-[0_0_8px_rgba(255,255,255,0.38)]"
       />
 
       <motion.div
         animate={{ rotate: minute * 6 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="absolute z-20 h-[42%] w-1 origin-bottom rounded-full bg-cyan-200 shadow-[0_0_12px_rgba(186,230,253,0.7)]"
-        style={{ bottom: '50%' }}
+        className="absolute left-1/2 top-1/2 z-20 h-[34%] w-[1.15%] origin-bottom -translate-x-1/2 -translate-y-full rounded-full bg-cyan-200 shadow-[0_0_12px_rgba(186,230,253,0.7)]"
       />
     </div>
   );
