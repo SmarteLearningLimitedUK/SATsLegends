@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import GameActionDock from '../components/GameActionDock';
-import missionBackground from '../assets/maps/gemini-2.5-flash-image_using_the_same_aesthetic_-_create_a_dark_and_mysterious_forest_path_with_dense_f-1.jpg';
+import missionBackground from '../assets/maps/rocket launch.jpg';
 
 type RoundingTarget =
   | 'nearest 10'
