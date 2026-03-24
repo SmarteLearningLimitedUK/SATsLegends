@@ -3583,6 +3583,16 @@ button:disabled {
   background: transparent !important;
 }
 
+.app-viewport.screen-gameplay.game-type-number-line-ninja.licensed-playfield-bg {
+  background: transparent !important;
+}
+
+.app-viewport.screen-gameplay.game-type-number-line-ninja.licensed-playfield-bg::before,
+.app-viewport.screen-gameplay.game-type-number-line-ninja.licensed-playfield-bg::after {
+  display: none !important;
+  content: none !important;
+}
+
 .screen-gameplay .game-shell-host .mission-game-stage {
   gap: clamp(0.36rem, 1.1vh, 0.78rem);
 }

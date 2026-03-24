@@ -1148,7 +1148,7 @@ const App: React.FC = () => {
     <div className="iphone-game-viewport">
       <div className={`iphone-game-stage${useUnboundedStageShell ? ' iphone-game-stage-unbounded' : ''}`} style={useUnboundedStageShell ? undefined : stageStyle}>
         <div className="iphone-game-stage-inner">
-          <div className={`app-viewport app-shell-family-${screenBehavior.family} screen-${screen.replace(/_/g, '-')} relative w-full flex flex-col items-center overflow-hidden ${viewportShellClass}`}>
+          <div className={`app-viewport app-shell-family-${screenBehavior.family} screen-${screen.replace(/_/g, '-')} ${isGameplayScreen ? gameplayTypeClass : ''} relative w-full flex flex-col items-center overflow-hidden ${viewportShellClass}`}>
             {isStandardShellScreen && !useUnboundedStageShell && <div className="soft-vignette" />}
             {isStandardShellScreen && !useUnboundedStageShell && screen !== 'gameplay' && (
               <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-40 bg-gradient-to-b from-cyan-300/8 via-sky-300/4 to-transparent" />

@@ -302,16 +302,16 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
       />
 
       <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col gap-3 px-3 pb-[calc(5.25rem+env(safe-area-inset-bottom))] pt-3 md:gap-4 md:px-4 md:pb-[calc(5.75rem+env(safe-area-inset-bottom))]">
-        <section className="shrink-0 rounded-2xl border border-cyan-100/35 bg-black/42 p-3 shadow-[0_10px_24px_rgba(2,6,23,0.5)] backdrop-blur-sm md:p-4">
+        <section className="shrink-0 rounded-2xl border border-cyan-100/35 bg-black/42 p-3 text-center shadow-[0_10px_24px_rgba(2,6,23,0.5)] backdrop-blur-sm md:p-4">
           <div className="min-w-0">
-            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/70">
+            <div className="text-center text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/70">
               {current.title}
             </div>
-            <div className="mt-1 text-sm font-bold leading-snug text-white md:text-base">
+            <div className="mt-1 text-center text-sm font-bold leading-snug text-white md:text-base">
               {current.prompt}
             </div>
           </div>
-          <div className="mt-2.5 flex items-center gap-2">
+          <div className="mt-2.5 flex flex-wrap items-center justify-center gap-2">
             <div className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/70">Progress</div>
             <div className="h-2.5 flex-1 overflow-hidden rounded-full border border-cyan-100/25 bg-slate-950/65">
               <div
@@ -322,9 +322,6 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
             <div className="text-[10px] font-black uppercase tracking-[0.1em] text-white/90">{score}/{targetScore}</div>
             <div className="rounded-full border border-rose-200/40 bg-rose-500/20 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.1em] text-rose-100">
               Lives {lives}
-            </div>
-            <div className="rounded-full border border-cyan-200/40 bg-cyan-500/18 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.1em] text-cyan-100">
-              {timeLeft}s
             </div>
           </div>
         </section>
@@ -388,7 +385,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
           </div>
         </section>
 
-        <section className="shrink-0 flex flex-col gap-3 rounded-2xl border border-cyan-100/28 bg-black/36 p-3 shadow-[0_10px_20px_rgba(2,6,23,0.42)] backdrop-blur-sm md:p-4">
+        <section className="shrink-0 flex flex-col gap-3 rounded-2xl border border-cyan-100/28 bg-black/36 p-3 text-center shadow-[0_10px_20px_rgba(2,6,23,0.42)] backdrop-blur-sm md:p-4">
           <div className="grid grid-cols-2 gap-2.5 md:gap-3">
             {current.options.map((option) => {
               const active = selectedAnswers.includes(option);
@@ -398,7 +395,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
                   type="button"
                   onClick={() => toggleOption(option)}
                   disabled={locked}
-                  className={`rounded-xl border px-3 py-3 text-sm font-black transition md:text-base ${
+                  className={`rounded-xl border px-3 py-3 text-center text-sm font-black transition md:text-base ${
                     active
                       ? 'border-cyan-200 bg-cyan-400/28 text-white shadow-[0_8px_20px_rgba(6,182,212,0.25)]'
                       : 'border-white/16 bg-slate-900/45 text-white/90 hover:border-cyan-100/40'
@@ -410,8 +407,8 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
             })}
           </div>
 
-          <div className="mt-auto flex items-center justify-between gap-2">
-            <div className="text-xs font-bold text-cyan-100/76">
+          <div className="mt-auto flex flex-col items-center justify-center gap-2">
+            <div className="text-center text-xs font-bold text-cyan-100/76">
               {current.multiSelect ? 'Select all correct answers, then submit.' : 'Select one answer, then submit.'}
             </div>
             <button
