@@ -9,9 +9,13 @@ import {
   Target,
   Activity,
   CheckCircle2,
+  AlertCircle,
 } from 'lucide-react';
 import GameActionDock from '../components/GameActionDock';
-import MiniGameTopBar from '../components/MiniGameTopBar';
+import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
+import factorFrenzyBackground from '../assets/maps/facctor frenzy.jpg';
+import questionBarSmall from '../assets/ui_frames/hudfortextplace_slices/text_bar_small.png';
+import questionBarMedium from '../assets/ui_frames/hudfortextplace_slices/text_bar_medium.png';
 
 type FactorProblemType = 'missing_factor' | 'all_factors' | 'common_factors' | 'prime_factors';
 
@@ -34,6 +38,7 @@ interface FrenzyLevel {
 interface FactorFrenzyGameProps {
   levelId: number;
   avatarId: string;
+  useSharedTopHud?: boolean;
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
   onBack: () => void;
@@ -78,6 +83,7 @@ const scoreToStars = (score: number) => {
 const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   levelId: _levelId,
   avatarId: _avatarId,
+  useSharedTopHud: _useSharedTopHud,
   onVictory,
   onGameOver,
   onBack,
@@ -331,181 +337,190 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     [state.score],
   );
 
-  return (
-    <div className="relative h-full w-full overflow-hidden bg-[#0a0a0f] text-white selection:bg-cyan-500/30">
-      <div className="scanline" />
+  const questionFrame = useMemo(() => {
+    const length = state.currentProblem?.question.length || 0;
+    return length > 34 ? questionBarMedium : questionBarSmall;
+  }, [state.currentProblem?.question]);
 
-      <MiniGameTopBar
-        onBack={onBack}
-        score={state.score}
-        scoreLabel="Score"
-        metaLabel="Rank"
-        metaValue={currentLevel.name}
+  const playingState = state.status === 'playing' || state.status === 'correct' || state.status === 'incorrect';
+
+  return (
+    <div className="relative h-full w-full overflow-hidden text-white">
+      <GameplaySceneBackdrop
+        gameType="tower_of_factors"
+        backgroundOverride={factorFrenzyBackground}
+        minimalDecor
       />
 
-      <div className="relative z-10 flex h-full flex-col p-4 pb-[calc(env(safe-area-inset-bottom)+4.6rem)] pt-[calc(env(safe-area-inset-top)+3.45rem)] sm:p-5 sm:pb-[calc(env(safe-area-inset-bottom)+4.9rem)] sm:pt-[calc(env(safe-area-inset-top)+3.7rem)] md:p-6 md:pb-[calc(env(safe-area-inset-bottom)+5.2rem)] md:pt-[calc(env(safe-area-inset-top)+4rem)]">
-        <div className="mb-3 flex items-center justify-end gap-2 md:mb-4">
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.35)_0%,rgba(2,6,23,0.56)_60%,rgba(2,6,23,0.76)_100%)]" />
+
+      <div className="relative z-10 flex h-full flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.8rem)] pt-[calc(env(safe-area-inset-top)+3.45rem)] sm:px-4 sm:pt-[calc(env(safe-area-inset-top)+3.65rem)] md:px-5 md:pt-[calc(env(safe-area-inset-top)+3.9rem)]">
+        <div className="mb-2.5 flex items-center justify-end gap-1.5 sm:mb-3 sm:gap-2">
           <div className="pvp-hud-chip pvp-hud-chip-alt inline-flex items-center gap-1.5">
-            <Flame className={`h-3.5 w-3.5 ${state.streak > 0 ? 'animate-pulse text-orange-300' : 'text-slate-300/60'}`} />
+            <Flame className={`h-3.5 w-3.5 ${state.streak > 0 ? 'animate-pulse text-amber-200' : 'text-cyan-100/70'}`} />
             Streak {state.streak}
           </div>
           <div className={`pvp-hud-chip inline-flex items-center gap-1.5 ${state.timeLeft < 5 ? 'text-rose-200' : ''}`}>
             <Timer className={`h-3.5 w-3.5 ${state.timeLeft < 5 ? 'animate-bounce text-rose-300' : 'text-cyan-200'}`} />
             {state.timeLeft}s
           </div>
-          <div className="pvp-hud-chip pvp-hud-chip-alt">
-            Mistakes {state.mistakes}/{MAX_MISTAKES}
-          </div>
+          <div className="pvp-hud-chip pvp-hud-chip-alt">Mistakes {state.mistakes}/{MAX_MISTAKES}</div>
         </div>
 
-        <main className="relative flex flex-1 flex-col items-center justify-center">
+        <main className="relative flex min-h-0 flex-1 flex-col">
           <AnimatePresence mode="wait">
             {state.status === 'start' ? (
               <motion.div
                 key="start"
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, scale: 0.94 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.1 }}
-                className="frenzy-card neon-border-pink max-w-2xl p-12 text-center"
+                exit={{ opacity: 0, scale: 1.04 }}
+                className="my-auto mx-auto w-full max-w-xl rounded-3xl border border-cyan-100/35 bg-[#16356f]/84 p-6 text-center shadow-[0_20px_40px_rgba(2,6,23,0.45)]"
               >
-                <div className="mb-8 flex justify-center">
-                  <div className="relative">
-                    <Activity className="h-24 w-24 text-pink-500" />
-                    <motion.div
-                      animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                      className="absolute inset-0 rounded-full border-4 border-pink-500"
-                    />
-                  </div>
+                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full border border-amber-200/60 bg-amber-300/15">
+                  <Activity className="h-10 w-10 text-amber-100" />
                 </div>
-                <h2 className="neon-text-pink mb-6 text-5xl font-black tracking-tighter italic uppercase">Enter the Frenzy</h2>
-                <p className="mb-10 text-lg leading-relaxed font-medium text-zinc-400">
-                  Identify factors, common factors, and prime factors at lightning speed.
-                  Year 6 SATs curriculum challenges await.
+                <h2 className="text-3xl font-black uppercase tracking-tight text-amber-50 sm:text-4xl">Factor Frenzy</h2>
+                <p className="mt-2 text-sm font-semibold leading-relaxed text-cyan-50/88">
+                  Answer factor challenges quickly to build streaks and complete the run before mistakes end the round.
                 </p>
                 <button
                   onClick={startGame}
-                  className="frenzy-button border-pink-500/50 bg-pink-500/10 px-12 py-5 text-lg text-pink-500 hover:bg-pink-500/20 hover:shadow-[0_0_30px_rgba(255,0,255,0.4)]"
+                  className="mt-6 inline-flex items-center gap-2 rounded-full border border-amber-100/70 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] px-8 py-3 text-sm font-black uppercase tracking-[0.14em] text-slate-900 shadow-[0_10px_22px_rgba(0,0,0,0.32)]"
                 >
-                  START MISSION
+                  <Target className="h-4 w-4" /> Start Mission
                 </button>
               </motion.div>
             ) : state.status === 'complete' ? (
               <motion.div
                 key="complete"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="frenzy-card neon-border-cyan max-w-2xl p-12 text-center"
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="my-auto mx-auto w-full max-w-xl rounded-3xl border border-amber-200/40 bg-[#16356f]/88 p-6 text-center shadow-[0_20px_40px_rgba(2,6,23,0.5)]"
               >
-                <div className="mb-8 flex justify-center">
-                  <div className="flex h-28 w-28 items-center justify-center rounded-full bg-cyan-500/10 border border-cyan-500/40">
-                    <Trophy className="h-16 w-16 text-cyan-300" />
-                  </div>
+                <Trophy className="mx-auto h-14 w-14 text-amber-200" />
+                <h2 className="mt-3 text-3xl font-black uppercase text-amber-50 sm:text-4xl">Legend Achieved</h2>
+                <p className="mt-2 text-sm font-semibold text-cyan-50/85">You cleared the full factor run.</p>
+                <div className="mt-4 rounded-2xl border border-cyan-100/30 bg-[#0d2a5a]/80 px-4 py-3">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/80">Final Score</p>
+                  <p className="mt-1 text-4xl font-black text-amber-100">{state.score.toLocaleString()}</p>
                 </div>
-                <h2 className="neon-text-cyan mb-3 text-4xl font-black tracking-tighter italic uppercase">Legend Achieved</h2>
-                <p className="mb-8 font-medium text-zinc-400">You have cleared the full SATs factor gauntlet.</p>
-                <div className="mb-8 rounded-2xl border border-cyan-500/30 bg-cyan-500/5 p-6">
-                  <p className="text-[10px] font-black tracking-widest text-zinc-500 uppercase">Final Score</p>
-                  <p className="neon-text-cyan mt-1 font-mono text-5xl font-black">{state.score.toLocaleString()}</p>
-                </div>
-                <div className="flex flex-col gap-3">
+                <div className="mt-5 flex flex-col gap-2.5">
                   <button
                     onClick={submitRun}
-                    className="frenzy-button border-cyan-500/50 bg-cyan-500/10 text-cyan-400"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-emerald-100/60 bg-emerald-500/28 px-5 py-3 text-sm font-black uppercase tracking-[0.12em] text-emerald-50"
                   >
-                    <span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4" /> SUBMIT RUN</span>
+                    <CheckCircle2 className="h-4 w-4" /> Submit Run
                   </button>
                   <button
                     onClick={startGame}
-                    className="frenzy-button border-pink-500/40 bg-pink-500/10 text-pink-400"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-amber-100/70 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] px-5 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-900"
                   >
-                    <span className="inline-flex items-center gap-2"><RotateCcw className="h-4 w-4" /> RESTART</span>
+                    <RotateCcw className="h-4 w-4" /> Restart
                   </button>
                 </div>
               </motion.div>
             ) : (
               <motion.div
                 key={state.currentProblem?.id}
-                initial={{ opacity: 0, x: 20 }}
+                initial={{ opacity: 0, x: 16 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="flex w-full max-w-4xl flex-col items-center"
+                exit={{ opacity: 0, x: -16 }}
+                className="flex min-h-0 flex-1 flex-col"
               >
-                <div className="frenzy-card neon-border-cyan relative mb-8 w-full overflow-hidden p-10 text-center">
-                  <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-50" />
-                  <div className="mb-4 flex items-center justify-center gap-3">
-                    <Target className="h-5 w-5 text-cyan-400" />
-                    <span className="text-xs font-black tracking-[0.4em] text-zinc-500 uppercase">Objective</span>
+                <div className="relative mx-auto mb-3 h-[clamp(86px,13vh,118px)] w-[min(92%,760px)] overflow-hidden">
+                  <img
+                    src={questionFrame}
+                    alt=""
+                    aria-hidden="true"
+                    draggable={false}
+                    className="absolute inset-0 h-full w-full object-fill"
+                  />
+                  <div className="absolute inset-x-[9%] inset-y-[22%] flex items-center justify-center overflow-hidden text-center">
+                    <span
+                      className="block max-w-full overflow-hidden text-[clamp(0.88rem,2.55vw,1.22rem)] font-black uppercase tracking-[0.02em] text-white"
+                      style={{ textShadow: '0 2px 6px rgba(2,6,23,0.75)' }}
+                    >
+                      {state.currentProblem?.question}
+                    </span>
                   </div>
-                  <h3 className="mb-2 text-4xl font-black tracking-tight text-white">
-                    {state.currentProblem?.question}
-                  </h3>
-                  <p className="text-xs font-black tracking-[0.24em] text-zinc-500 uppercase">Mistakes {state.mistakes}/{MAX_MISTAKES}</p>
                 </div>
 
-                <div className="mb-12 grid grid-cols-4 gap-6">
-                  {state.currentProblem?.options.map((option, idx) => (
-                    <motion.button
-                      type="button"
-                      key={`${state.currentProblem?.id}-${option}-${idx}`}
-                      initial={{ opacity: 0, scale: 0.5 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: idx * 0.05 }}
-                      onClick={() => toggleOption(option)}
-                      className={`option-bubble ${selectedOptions.includes(option) ? 'selected' : ''}`}
-                    >
-                      {option}
-                    </motion.button>
-                  ))}
-                </div>
+                <div className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border border-cyan-100/25 bg-[#123062]/76 p-3 shadow-[0_12px_28px_rgba(2,6,23,0.4)] sm:p-4">
+                  <div className="mb-2 text-center text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/80 sm:mb-3 sm:text-xs">
+                    Select the correct answer set
+                  </div>
 
-                <div className="w-full max-w-md">
-                  {state.status === 'playing' ? (
-                    <button
-                      onClick={checkAnswer}
-                      disabled={selectedOptions.length === 0}
-                      className="frenzy-button w-full border-cyan-500/50 bg-cyan-500/10 py-5 text-cyan-400 disabled:opacity-30"
-                    >
-                      SUBMIT DATA
-                    </button>
-                  ) : (
-                    <motion.button
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      onClick={nextProblem}
-                      className={`frenzy-button flex w-full items-center justify-center gap-3 py-5 ${
-                        state.status === 'correct'
-                          ? 'border-green-500/50 bg-green-500/10 text-green-400'
-                          : 'border-red-500/50 bg-red-500/10 text-red-400'
-                      }`}
-                    >
-                      {state.status === 'correct' ? 'NEXT CHALLENGE' : state.status === 'gameover' ? 'SUBMIT LOSS' : 'TRY AGAIN'}
-                      <ChevronRight className="h-5 w-5" />
-                    </motion.button>
-                  )}
-                </div>
+                  <div className="grid grid-cols-4 gap-2.5 sm:gap-3 md:gap-4">
+                    {state.currentProblem?.options.map((option, idx) => (
+                      <motion.button
+                        type="button"
+                        key={`${state.currentProblem?.id}-${option}-${idx}`}
+                        initial={{ opacity: 0, y: 6, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{ delay: idx * 0.03 }}
+                        onClick={() => toggleOption(option)}
+                        className={`relative flex h-[clamp(62px,9vh,94px)] items-center justify-center rounded-2xl border text-[clamp(1.1rem,3.8vw,2rem)] font-black transition ${
+                          selectedOptions.includes(option)
+                            ? 'border-cyan-100 bg-[linear-gradient(180deg,#39c4f4_0%,#1278bb_100%)] text-white shadow-[0_0_0_3px_rgba(125,211,252,0.45),0_10px_22px_rgba(2,6,23,0.45)]'
+                            : 'border-amber-100/70 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] text-slate-900 shadow-[0_8px_18px_rgba(2,6,23,0.3)]'
+                        }`}
+                      >
+                        {option}
+                      </motion.button>
+                    ))}
+                  </div>
 
-                <AnimatePresence>
-                  {state.status !== 'playing' && state.status !== 'complete' && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 1.2 }}
-                      className={`pointer-events-none absolute top-1/2 left-1/2 z-20 -translate-x-1/2 -translate-y-1/2 text-8xl font-black tracking-tighter italic uppercase ${
-                        state.status === 'correct' ? 'text-green-500/40' : 'text-red-500/40'
-                      }`}
-                    >
-                      {state.status === 'correct' ? 'PERFECT' : 'FAILED'}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                  <div className="mt-3 flex items-center justify-center sm:mt-4">
+                    {state.status === 'playing' ? (
+                      <button
+                        onClick={checkAnswer}
+                        disabled={selectedOptions.length === 0}
+                        className="inline-flex w-full max-w-sm items-center justify-center rounded-2xl border border-amber-100/70 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] px-4 py-3 text-sm font-black uppercase tracking-[0.14em] text-slate-900 shadow-[0_10px_20px_rgba(2,6,23,0.35)] disabled:opacity-45"
+                      >
+                        Submit Data
+                      </button>
+                    ) : (
+                      <motion.button
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        onClick={nextProblem}
+                        className={`inline-flex w-full max-w-sm items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm font-black uppercase tracking-[0.14em] shadow-[0_10px_20px_rgba(2,6,23,0.35)] ${
+                          state.status === 'correct'
+                            ? 'border-emerald-100/70 bg-emerald-500/28 text-emerald-50'
+                            : state.status === 'gameover'
+                              ? 'border-rose-100/70 bg-rose-500/30 text-rose-50'
+                              : 'border-amber-100/70 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] text-slate-900'
+                        }`}
+                      >
+                        {state.status === 'correct' ? 'Next Challenge' : state.status === 'gameover' ? 'Submit Loss' : 'Try Again'}
+                        <ChevronRight className="h-4 w-4" />
+                      </motion.button>
+                    )}
+                  </div>
+
+                  <AnimatePresence>
+                    {state.status === 'correct' || state.status === 'incorrect' || state.status === 'gameover' ? (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 1.06 }}
+                        className={`pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-6xl font-black uppercase tracking-tight sm:text-7xl ${
+                          state.status === 'correct' ? 'text-emerald-200/35' : 'text-rose-200/35'
+                        }`}
+                      >
+                        {state.status === 'correct' ? 'Perfect' : 'Miss'}
+                      </motion.div>
+                    ) : null}
+                  </AnimatePresence>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
         </main>
       </div>
 
-      {(state.status === 'playing' || state.status === 'correct' || state.status === 'incorrect') && (
+      {playingState && (
         <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.4rem,env(safe-area-inset-bottom))] z-40 flex justify-center px-3">
           <div className="pointer-events-auto">
             <GameActionDock onBack={onBack} compact accentClass="text-slate-100" />
@@ -513,107 +528,20 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         </div>
       )}
 
-      <div className="pointer-events-none fixed top-0 left-0 z-0 h-full w-full overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] h-[40%] w-[40%] rounded-full bg-cyan-500/10 blur-[120px]" />
-        <div className="absolute right-[-10%] bottom-[-10%] h-[40%] w-[40%] rounded-full bg-pink-500/10 blur-[120px]" />
-      </div>
-
-      <style>{`
-        .frenzy-card {
-          background: rgba(255, 255, 255, 0.03);
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 24px;
-          box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
-        }
-
-        .neon-border-cyan {
-          border: 2px solid #00f2ff;
-          box-shadow: 0 0 15px #00f2ff, inset 0 0 5px #00f2ff;
-        }
-
-        .neon-border-pink {
-          border: 2px solid #ff00ff;
-          box-shadow: 0 0 15px #ff00ff, inset 0 0 5px #ff00ff;
-        }
-
-        .neon-text-cyan {
-          color: #00f2ff;
-          text-shadow: 0 0 10px #00f2ff;
-        }
-
-        .neon-text-pink {
-          color: #ff00ff;
-          text-shadow: 0 0 10px #ff00ff;
-        }
-
-        .frenzy-button {
-          position: relative;
-          overflow: hidden;
-          border-radius: 0.75rem;
-          padding: 0.75rem 1.5rem;
-          font-weight: 900;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          transition: all 0.2s ease;
-          transform: translateZ(0);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          background: rgba(255, 255, 255, 0.05);
-        }
-
-        .frenzy-button:active {
-          transform: scale(0.95);
-        }
-
-        .frenzy-button:hover {
-          border-color: #00f2ff;
-          box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
-        }
-
-        .option-bubble {
-          display: flex;
-          height: 5rem;
-          width: 5rem;
-          cursor: pointer;
-          align-items: center;
-          justify-content: center;
-          border-radius: 9999px;
-          border: 2px solid rgba(255, 255, 255, 0.2);
-          background: rgba(255, 255, 255, 0.05);
-          font-size: 1.5rem;
-          font-weight: 900;
-          transition: all 0.2s ease;
-        }
-
-        .option-bubble:hover {
-          transform: scale(1.1);
-          border-color: #9d00ff;
-          box-shadow: 0 0 20px rgba(157, 0, 255, 0.5);
-        }
-
-        .option-bubble.selected {
-          background: #9d00ff;
-          border-color: #00f2ff;
-          box-shadow: 0 0 30px #9d00ff;
-          color: white;
-        }
-
-        @keyframes scanline {
-          0% { transform: translateY(-100%); }
-          100% { transform: translateY(100%); }
-        }
-
-        .scanline {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 2px;
-          background: rgba(0, 242, 255, 0.1);
-          animation: scanline 8s linear infinite;
-          pointer-events: none;
-        }
-      `}</style>
+      <AnimatePresence>
+        {state.status === 'gameover' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="pointer-events-none absolute inset-x-0 top-[calc(env(safe-area-inset-top)+3.8rem)] z-30 flex justify-center px-4"
+          >
+            <div className="pointer-events-auto inline-flex items-center gap-2 rounded-full border border-rose-100/60 bg-rose-500/30 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-rose-50">
+              <AlertCircle className="h-4 w-4" /> Too many mistakes
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
