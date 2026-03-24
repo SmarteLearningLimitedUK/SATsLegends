@@ -5,7 +5,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Trophy, RotateCcw, Play, CheckCircle2, Clock, Plus, Minus } from 'lucide-react';
+import { RotateCcw, Play, CheckCircle2, Clock, Plus, Minus } from 'lucide-react';
 import GameActionDock from '../components/GameActionDock';
 import clockFaceImage from '../assets/maps/clockfaceblank.png';
 import missionBackground from '../assets/maps/harbour.jpg';
@@ -123,7 +123,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
     });
   };
 
-  const topPadding = 'pt-[calc(env(safe-area-inset-top)+4.95rem)]';
+  const topPadding = 'pt-[calc(env(safe-area-inset-top)+0.85rem)]';
 
   return (
     <div className="fixed inset-0 overflow-hidden bg-[#0f172a] font-sans text-white select-none">
@@ -136,26 +136,9 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
       />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(15,23,42,0.35)_45%,rgba(15,23,42,0.72))]" />
 
-      <div className={`relative z-10 flex h-full w-full flex-col items-center ${topPadding} px-4 pb-[max(6.8rem,calc(env(safe-area-inset-bottom)+5.8rem))]`}>
+      <div className={`relative z-10 flex h-full w-full flex-col items-center ${topPadding} px-4 pb-[max(6.2rem,calc(env(safe-area-inset-bottom)+5.2rem))]`}>
         <div className="w-full max-w-md">
-          <div className="mb-3 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-blue-400/50 bg-blue-600/30 shadow-lg backdrop-blur-md">
-                <Trophy className="h-5 w-5 text-yellow-400" />
-              </div>
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-blue-300">Score</p>
-                <p className="text-lg font-black tabular-nums">{score.toLocaleString()}</p>
-              </div>
-            </div>
-
-            <div className="text-right">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-purple-300">Level</p>
-              <p className="text-lg font-black">{level}</p>
-            </div>
-          </div>
-
-          <main className="flex w-full flex-col items-center gap-4">
+          <main className="flex w-full flex-col items-center gap-3">
             <motion.div
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -183,10 +166,8 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
               </div>
             </motion.div>
 
-            <div className="group relative">
-              <div className="absolute inset-0 rounded-full bg-blue-500/8 blur-2xl" />
-
-              <div className="relative flex h-[17rem] w-[17rem] items-center justify-center">
+            <div className="relative">
+              <div className="relative flex h-[14.4rem] w-[14.4rem] items-center justify-center">
                 <img
                   src={clockFaceImage}
                   alt="Clock Face"
@@ -209,8 +190,8 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
               </div>
             </div>
 
-            <div className="grid w-full grid-cols-2 gap-5">
-              <div className="flex flex-col items-center gap-3">
+            <div className="grid w-full grid-cols-2 gap-4">
+              <div className="flex flex-col items-center gap-2">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-300">Hours</p>
                 <div className="flex items-center gap-3">
                   <ControlButton onClick={() => adjustTime('hours', -1)} icon={<Minus size={20} />} color="blue" />
@@ -218,7 +199,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
                 </div>
               </div>
 
-              <div className="flex flex-col items-center gap-3">
+              <div className="flex flex-col items-center gap-2">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-purple-300">Minutes</p>
                 <div className="flex items-center gap-3">
                   <ControlButton onClick={() => adjustTime('minutes', -5)} icon={<Minus size={20} />} color="purple" />
@@ -242,13 +223,13 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
               </AnimatePresence>
             </div>
 
-            <div className="flex w-full flex-col gap-3">
+            <div className="flex w-full flex-col gap-2">
               {gameState === 'playing' && (
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={checkTime}
-                  className="w-full rounded-2xl border border-blue-400/20 bg-gradient-to-r from-blue-600 to-blue-500 py-4 text-lg font-black shadow-[0_8px_0_rgb(30,58,138)] transition-all active:translate-y-1 active:shadow-none"
+                  className="w-full rounded-2xl border border-blue-400/20 bg-gradient-to-r from-blue-600 to-blue-500 py-3 text-lg font-black shadow-[0_8px_0_rgb(30,58,138)] transition-all active:translate-y-1 active:shadow-none"
                 >
                   SUBMIT TIME
                 </motion.button>
