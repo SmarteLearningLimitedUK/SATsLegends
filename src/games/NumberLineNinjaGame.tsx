@@ -41,7 +41,7 @@ const QUESTION_BANK: NumberLineQuestion[] = [
     id: 'missing-basic',
     title: 'Missing Number',
     prompt: 'A number line goes from 0 to 20. What number is missing?',
-    lineText: '0 â€” 5 â€” ? â€” 15 â€” 20',
+    lineText: '0 - 5 - ? - 15 - 20',
     lineMin: 0,
     lineMax: 20,
     ticks: [0, 5, 10, 15, 20],
@@ -53,7 +53,7 @@ const QUESTION_BANK: NumberLineQuestion[] = [
     id: 'missing-thirds',
     title: 'Equal Parts',
     prompt: 'The line from 0 to 1 is split into 3 equal parts. What are the two missing numbers?',
-    lineText: '0 â€” ? â€” ? â€” 1',
+    lineText: '0 - ? - ? - 1',
     lineMin: 0,
     lineMax: 1,
     ticks: [0, 1 / 3, 2 / 3, 1],
@@ -65,8 +65,8 @@ const QUESTION_BANK: NumberLineQuestion[] = [
   {
     id: 'step-size',
     title: 'Step Size',
-    prompt: 'A number line shows 40 â€” 60 â€” 80 â€” 100. What is the value of each step?',
-    lineText: '40 â€” 60 â€” 80 â€” 100',
+    prompt: 'A number line shows 40 - 60 - 80 - 100. What is the value of each step?',
+    lineText: '40 - 60 - 80 - 100',
     lineMin: 40,
     lineMax: 100,
     ticks: [40, 60, 80, 100],
@@ -77,7 +77,7 @@ const QUESTION_BANK: NumberLineQuestion[] = [
     id: 'fraction-point',
     title: 'Fractions',
     prompt: 'A number line from 0 to 1 is divided into 4 equal parts. A point is on the third mark. What fraction is this?',
-    lineText: '0 â€” 1/4 â€” 1/2 â€” â€¢ â€” 1',
+    lineText: '0 - 1/4 - 1/2 - * - 1',
     lineMin: 0,
     lineMax: 1,
     ticks: [0, 0.25, 0.5, 0.75, 1],
@@ -90,20 +90,20 @@ const QUESTION_BANK: NumberLineQuestion[] = [
     id: 'decimal-mid',
     title: 'Decimals',
     prompt: 'The point is halfway between 0.2 and 0.3. What number is this?',
-    lineText: '0.1 â€” 0.2 â€” â€¢ â€” 0.3 â€” 0.4',
+    lineText: '0.1 - 0.2 - * - 0.3 - 0.4',
     lineMin: 0.1,
     lineMax: 0.4,
     ticks: [0.1, 0.2, 0.3, 0.4],
     marker: 0.25,
-    markerLabel: 'â€¢',
+    markerLabel: '*',
     options: ['0.2', '0.24', '0.25', '0.3'],
     answers: ['0.25'],
   },
   {
     id: 'negative-mid',
     title: 'Negative Numbers',
-    prompt: 'A number line shows -10 â€” -5 â€” 0 â€” 5. What number is halfway between -10 and 0?',
-    lineText: '-10 â€” -5 â€” 0 â€” 5',
+    prompt: 'A number line shows -10 - -5 - 0 - 5. What number is halfway between -10 and 0?',
+    lineText: '-10 - -5 - 0 - 5',
     lineMin: -10,
     lineMax: 5,
     ticks: [-10, -5, 0, 5],
@@ -115,7 +115,7 @@ const QUESTION_BANK: NumberLineQuestion[] = [
     id: 'reasoning-midpoint',
     title: 'Reasoning',
     prompt: 'A point lies exactly halfway between 0.6 and 1.0. What is the value of the point?',
-    lineText: '0.6 â€” â€¢ â€” 1.0',
+    lineText: '0.6 - * - 1.0',
     lineMin: 0.6,
     lineMax: 1.0,
     ticks: [0.6, 0.8, 1.0],
@@ -132,7 +132,7 @@ const QUESTION_BANK: NumberLineQuestion[] = [
     lineMax: 8,
     ticks: [0, 2, 4, 6, 8],
     range: { gt: 2, lte: 6 },
-    options: ['2 < x < 6', '2 â‰¤ x < 6', '2 < x â‰¤ 6', '2 â‰¤ x â‰¤ 6'],
+    options: ['2 < x < 6', '2 <= x < 6', '2 < x <= 6', '2 <= x <= 6'],
     answers: ['2 < x <= 6'],
   },
 ];
@@ -142,6 +142,8 @@ const normalizeAnswer = (value: string) => (
     .toLowerCase()
     .replace(/â‰¤/g, '<=')
     .replace(/â‰¥/g, '>=')
+    .replace(/≤/g, '<=')
+    .replace(/≥/g, '>=')
     .replace(/\s+/g, '')
 );
 
@@ -301,8 +303,8 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
         className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
       />
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col gap-3 px-3 pb-[calc(5.25rem+env(safe-area-inset-bottom))] pt-3 md:gap-4 md:px-4 md:pb-[calc(5.75rem+env(safe-area-inset-bottom))]">
-        <section className="shrink-0 rounded-2xl border border-cyan-100/35 bg-black/42 p-3 text-center shadow-[0_10px_24px_rgba(2,6,23,0.5)] backdrop-blur-sm md:p-4">
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col gap-2.5 px-3 pb-[calc(5.25rem+env(safe-area-inset-bottom))] pt-3 md:gap-3 md:px-4 md:pb-[calc(5.75rem+env(safe-area-inset-bottom))]">
+        <section className="shrink-0 rounded-2xl border border-cyan-100/35 bg-black/42 p-2.5 text-center shadow-[0_10px_24px_rgba(2,6,23,0.5)] backdrop-blur-sm md:p-3">
           <div className="min-w-0">
             <div className="text-center text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/70">
               {current.title}
@@ -325,7 +327,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
           </div>
         </section>
 
-        <section className="shrink-0 rounded-2xl border border-cyan-100/30 bg-black/40 p-3 shadow-[0_10px_20px_rgba(2,6,23,0.45)] backdrop-blur-sm md:p-4">
+        <section className="shrink-0 rounded-2xl border border-cyan-100/30 bg-black/40 p-2.5 shadow-[0_10px_20px_rgba(2,6,23,0.45)] backdrop-blur-sm md:p-3">
           <div className="relative mx-auto h-24 w-[95%] md:h-28">
             <div className="absolute left-0 right-0 top-1/2 h-[4px] -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-200/90 via-white/90 to-cyan-200/90" />
 
@@ -345,7 +347,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
               return (
                 <div key={`${current.id}-tick-${tick}`} className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2" style={{ left: `${left}%` }}>
                   <div className="h-6 w-[3px] rounded-full bg-white/95" />
-                  <div className="absolute top-7 left-1/2 -translate-x-1/2 whitespace-nowrap text-[11px] font-black text-white/92 md:text-xs">
+                  <div className="absolute top-7 left-1/2 -translate-x-1/2 whitespace-nowrap text-base font-black text-white/92 md:text-lg">
                     {label}
                   </div>
                 </div>
@@ -384,7 +386,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
           </div>
         </section>
 
-        <section className="shrink-0 flex flex-col gap-3 rounded-2xl border border-cyan-100/28 bg-black/36 p-3 text-center shadow-[0_10px_20px_rgba(2,6,23,0.42)] backdrop-blur-sm md:p-4">
+        <section className="shrink-0 flex flex-col gap-2.5 rounded-2xl border border-cyan-100/28 bg-black/36 p-2.5 text-center shadow-[0_10px_20px_rgba(2,6,23,0.42)] backdrop-blur-sm md:p-3">
           <div className="grid grid-cols-2 gap-2.5 md:gap-3">
             {current.options.map((option) => {
               const active = selectedAnswers.includes(option);

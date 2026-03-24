@@ -49,6 +49,7 @@ interface PrimePopConfig {
 const INITIAL_LIVES = 5;
 const BUBBLE_PIXEL_SCALE = 7.2;
 const DANGER_LINE_Y = 12;
+const PRIME_SPEED_MULTIPLIER = 1.22;
 
 const BUBBLE_TINTS: BubbleTint[] = ['blue', 'green', 'purple', 'gold', 'red'];
 
@@ -81,13 +82,13 @@ const getConfig = (levelId: number): PrimePopConfig => {
       targetScore: 900 + ((level - 1) * 80),
       maxNumber: 40,
       minBubbles: 4,
-      maxBubbles: 6,
+      maxBubbles: 7,
       minRadius: 4.8,
       maxRadius: 10.2,
       minSpeed: 2.8,
       maxSpeed: 4.1,
-      primeChance: 0.58,
-      spawnEveryMs: 700,
+      primeChance: 0.72,
+      spawnEveryMs: 500,
       primePoints: 220,
       nonPrimePoints: 60,
       comboStep: 0.1,
@@ -100,13 +101,13 @@ const getConfig = (levelId: number): PrimePopConfig => {
       targetScore: 1150 + ((level - 4) * 95),
       maxNumber: 70,
       minBubbles: 5,
-      maxBubbles: 7,
+      maxBubbles: 8,
       minRadius: 4.4,
       maxRadius: 9.6,
       minSpeed: 3.2,
       maxSpeed: 4.6,
-      primeChance: 0.5,
-      spawnEveryMs: 620,
+      primeChance: 0.66,
+      spawnEveryMs: 440,
       primePoints: 230,
       nonPrimePoints: 55,
       comboStep: 0.12,
@@ -118,13 +119,13 @@ const getConfig = (levelId: number): PrimePopConfig => {
     targetScore: 1520 + ((level - 8) * 110),
     maxNumber: 99,
     minBubbles: 6,
-    maxBubbles: 8,
+    maxBubbles: 9,
     minRadius: 4.1,
     maxRadius: 9.1,
     minSpeed: 3.6,
     maxSpeed: 5.2,
-    primeChance: 0.45,
-    spawnEveryMs: 560,
+    primeChance: 0.62,
+    spawnEveryMs: 380,
     primePoints: 240,
     nonPrimePoints: 50,
     comboStep: 0.14,
@@ -359,15 +360,17 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
       }
     }
 
+    const prime = isPrime(value);
+
     return {
       id: bubbleIdRef.current++,
       x,
       y: randomBetween(80, 102),
       drift: (Math.random() < 0.5 ? -1 : 1) * randomBetween(1.1, 2.7),
-      vy: randomBetween(bubbleRuntime.minSpeed, bubbleRuntime.maxSpeed),
+      vy: randomBetween(bubbleRuntime.minSpeed, bubbleRuntime.maxSpeed) * (prime ? PRIME_SPEED_MULTIPLIER : 1),
       radius,
       value,
-      isPrime: isPrime(value),
+      isPrime: prime,
       tint: BUBBLE_TINTS[Math.floor(Math.random() * BUBBLE_TINTS.length)],
     };
   }, [bubbleRuntime.maxRadius, bubbleRuntime.maxSpeed, bubbleRuntime.minRadius, bubbleRuntime.minSpeed, config.maxNumber, config.primeChance]);

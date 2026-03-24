@@ -1055,13 +1055,11 @@ const App: React.FC = () => {
                   />
                 ) : null}
 
-                {!isGameplayInstructionPending ? (
-                  <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.4rem,env(safe-area-inset-bottom))] z-[130] flex justify-center px-3">
-                    <div className="pointer-events-auto">
-                      <GameActionDock onBack={() => setScreen('island_levels')} compact accentClass="text-slate-100" />
-                    </div>
+                <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.4rem,env(safe-area-inset-bottom))] z-[130] flex justify-center px-3">
+                  <div className="pointer-events-auto">
+                    <GameActionDock onBack={() => setScreen('island_levels')} compact accentClass="text-slate-100" />
                   </div>
-                ) : null}
+                </div>
               </div>
             </div>
           </div>
