@@ -46,7 +46,7 @@ interface PrimePopConfig {
   comboStep: number;
 }
 
-const INITIAL_LIVES = 5;
+const INITIAL_LIVES = 10;
 const BUBBLE_PIXEL_SCALE = 7.2;
 const DANGER_LINE_Y = 12;
 const PRIME_SPEED_MULTIPLIER = 1.22;
@@ -443,8 +443,8 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
       });
     } else {
       comboNext = 0;
-      scoreNext += Math.max(0, config.nonPrimePoints);
-      setFeedback(`+${Math.max(0, config.nonPrimePoints)}`);
+      livesNext -= 1;
+      setFeedback('-1 life');
     }
 
     const nextBubbles = bubblesRef.current.filter((bubble) => bubble.id !== bubbleId);
@@ -461,7 +461,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     if (scoreRef.current >= targetScore || livesRef.current <= 0) {
       finalize(scoreRef.current);
     }
-  }, [config.comboStep, config.nonPrimePoints, config.primePoints, finalize, targetScore]);
+  }, [config.comboStep, config.primePoints, finalize, targetScore]);
 
   const loop = useCallback((ts: number) => {
     if (overRef.current) return;

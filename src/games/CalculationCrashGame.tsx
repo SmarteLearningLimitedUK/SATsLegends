@@ -204,7 +204,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
     : 'pt-[calc(env(safe-area-inset-top)+1rem)]';
 
   return (
-    <div className="relative h-full w-full overflow-hidden text-white">
+    <div className="fixed inset-0 z-20 h-screen w-screen overflow-hidden text-white">
       <img
         src={world01Map}
         alt=""
@@ -213,54 +213,53 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
         className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
       />
 
-      <div className={`relative z-10 flex h-full flex-col px-3 md:px-4 ${topPadding} pb-[calc(env(safe-area-inset-bottom)+4.9rem)]`}>
-        <section className="mx-auto w-full max-w-3xl rounded-[1.15rem] border border-amber-200/35 bg-[linear-gradient(180deg,rgba(37,24,12,0.86),rgba(17,11,7,0.9))] px-4 py-3 text-center shadow-[0_12px_28px_rgba(2,6,23,0.45)]">
-          <div className="flex items-center justify-between text-[11px] font-black uppercase tracking-[0.15em] text-amber-200/90">
-            <span>Calculation Clash</span>
-            <span>{timeLeft}s</span>
-          </div>
-          <p className="mt-1 text-[clamp(1.45rem,5.2vw,2.3rem)] font-black tracking-[0.03em] text-amber-50">
-            {question.prompt}
-          </p>
-          <p className="mt-1 text-xs font-black uppercase tracking-[0.08em] text-amber-100/90">
-            Solve as many as you can in 30 seconds
-          </p>
-        </section>
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(251,191,36,0.18),rgba(10,14,31,0.08)_36%,rgba(3,7,20,0.26)_100%)]" />
 
-        <section className="mt-2 grid grid-cols-3 gap-2 text-center">
-          <div className="rounded-xl border border-cyan-100/40 bg-slate-900/65 px-2 py-1.5">
-            <p className="text-[10px] font-black uppercase tracking-[0.08em] text-cyan-100/75">Solved</p>
-            <p className="text-lg font-black text-cyan-50">{solved}</p>
+      <main className={`relative z-10 flex h-full w-full flex-col ${topPadding} px-[max(1rem,env(safe-area-inset-left))] pb-[calc(env(safe-area-inset-bottom)+5rem)]`}>
+        <div className="mx-auto flex h-full w-full max-w-[34rem] flex-col">
+          <div className="mb-2 flex items-center justify-end">
+            <div className="rounded-full border border-amber-200/55 bg-[linear-gradient(180deg,rgba(17,24,39,0.95),rgba(2,6,23,0.95))] px-4 py-2 text-lg font-black tracking-[0.03em] text-amber-100 shadow-[0_0_16px_rgba(250,204,21,0.28)]">
+              {timeLeft}s
+            </div>
           </div>
-          <div className="rounded-xl border border-amber-100/40 bg-slate-900/65 px-2 py-1.5">
-            <p className="text-[10px] font-black uppercase tracking-[0.08em] text-amber-100/75">Streak</p>
-            <p className="text-lg font-black text-amber-100">x{streak}</p>
-          </div>
-          <div className="rounded-xl border border-emerald-100/40 bg-slate-900/65 px-2 py-1.5">
-            <p className="text-[10px] font-black uppercase tracking-[0.08em] text-emerald-100/75">Score</p>
-            <p className="text-lg font-black text-emerald-100">{score.toLocaleString()}</p>
-          </div>
-        </section>
 
-        <section className="mt-2 rounded-[1.2rem] border border-amber-200/30 bg-[linear-gradient(180deg,rgba(15,23,42,0.86),rgba(15,23,42,0.95))] px-3 py-3 shadow-[0_12px_24px_rgba(2,6,23,0.5)]">
-          <div className="rounded-full border border-amber-200/35 bg-slate-900/60 px-3 py-1 text-center text-[11px] font-black uppercase tracking-[0.08em] text-amber-200">
-            Tap the correct answer
+          <div className="my-auto w-full">
+            <section className="text-center">
+              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-200/90">Calculation Clash</p>
+              <p className="mt-2 text-[clamp(2.1rem,9.3vw,4rem)] font-black leading-none tracking-[-0.02em] text-white [text-shadow:0_4px_12px_rgba(0,0,0,0.58)]">
+                {question.prompt}
+              </p>
+              <p className="mt-3 text-[clamp(1rem,4.5vw,1.6rem)] font-bold text-amber-50/92 [text-shadow:0_2px_8px_rgba(0,0,0,0.5)]">
+                Solve as many as you can in 30s
+              </p>
+            </section>
+
+            <section className="mx-auto mt-5 w-full max-w-[30rem] rounded-[1.3rem] border border-white/20 bg-black/28 px-3 py-3 backdrop-blur-[2px] shadow-[0_14px_30px_rgba(2,6,23,0.4)]">
+              <div className="grid grid-cols-2 gap-2.5">
+                {question.options.map((option, idx) => (
+                  <button
+                    key={`${question.prompt}-${option}-${idx}`}
+                    type="button"
+                    onClick={() => handleAnswer(option)}
+                    disabled={status !== 'playing'}
+                    className="rounded-[1.05rem] border border-amber-100/70 bg-[linear-gradient(180deg,#fde68a_0%,#f59e0b_100%)] px-3 py-3 text-center text-[clamp(1.35rem,6vw,2.2rem)] font-black text-amber-950 shadow-[0_10px_18px_rgba(146,64,14,0.35)] transition active:scale-[0.98] disabled:opacity-45"
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+
+              <div className="mt-3 rounded-full border border-white/18 bg-black/38 px-3 py-1.5 text-center text-[clamp(0.92rem,3.8vw,1.28rem)] font-black tracking-[0.02em] text-amber-50">
+                Solved: {solved}
+                <span className="mx-2 text-white/65">|</span>
+                Streak: x{streak}
+                <span className="mx-2 text-white/65">|</span>
+                Score: {score.toLocaleString()}
+              </div>
+            </section>
           </div>
-          <div className="mt-2 grid grid-cols-2 gap-2">
-            {question.options.map((option, idx) => (
-              <button
-                key={`${question.prompt}-${option}-${idx}`}
-                type="button"
-                onClick={() => handleAnswer(option)}
-                disabled={status !== 'playing'}
-                className="rounded-[0.95rem] border border-amber-100/55 bg-[linear-gradient(180deg,#fcd66b_0%,#f59e0b_100%)] px-3 py-3 text-center text-[clamp(1.2rem,5.2vw,1.9rem)] font-black text-amber-950 shadow-[0_8px_16px_rgba(146,64,14,0.35)] transition active:scale-[0.98] disabled:opacity-45"
-              >
-                {option}
-              </button>
-            ))}
-          </div>
-        </section>
-      </div>
+        </div>
+      </main>
 
       <AnimatePresence>
         {feedback ? (
