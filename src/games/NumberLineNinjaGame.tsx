@@ -303,20 +303,12 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
 
       <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col gap-3 px-3 pb-[calc(5.25rem+env(safe-area-inset-bottom))] pt-3 md:gap-4 md:px-4 md:pb-[calc(5.75rem+env(safe-area-inset-bottom))]">
         <section className="shrink-0 rounded-2xl border border-cyan-100/35 bg-black/42 p-3 shadow-[0_10px_24px_rgba(2,6,23,0.5)] backdrop-blur-sm md:p-4">
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/70">
-                {current.title}
-              </div>
-              <div className="mt-1 text-sm font-bold leading-snug text-white md:text-base">
-                {current.prompt}
-              </div>
-              <div className="mt-1.5 text-xs font-black tracking-[0.08em] text-cyan-100/70">
-                {current.lineText}
-              </div>
+          <div className="min-w-0">
+            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/70">
+              {current.title}
             </div>
-            <div className="shrink-0 rounded-full border border-white/20 bg-slate-900/55 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white">
-              Q{questionIndex + 1}/{questions.length}
+            <div className="mt-1 text-sm font-bold leading-snug text-white md:text-base">
+              {current.prompt}
             </div>
           </div>
           <div className="mt-2.5 flex items-center gap-2">
@@ -396,7 +388,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
           </div>
         </section>
 
-        <section className="min-h-0 flex flex-1 flex-col gap-3 rounded-2xl border border-cyan-100/28 bg-black/36 p-3 shadow-[0_10px_20px_rgba(2,6,23,0.42)] backdrop-blur-sm md:p-4">
+        <section className="shrink-0 flex flex-col gap-3 rounded-2xl border border-cyan-100/28 bg-black/36 p-3 shadow-[0_10px_20px_rgba(2,6,23,0.42)] backdrop-blur-sm md:p-4">
           <div className="grid grid-cols-2 gap-2.5 md:gap-3">
             {current.options.map((option) => {
               const active = selectedAnswers.includes(option);

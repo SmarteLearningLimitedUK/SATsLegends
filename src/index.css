@@ -3578,6 +3578,11 @@ button:disabled {
     linear-gradient(180deg, rgba(26, 54, 124, 0.26), rgba(10, 17, 40, 0.3));
 }
 
+/* Number Line Ninja: keep dojo background clean behind shared top HUD */
+.screen-gameplay .game-shell-host.game-type-number-line-ninja {
+  background: transparent !important;
+}
+
 .screen-gameplay .game-shell-host .mission-game-stage {
   gap: clamp(0.36rem, 1.1vh, 0.78rem);
 }
