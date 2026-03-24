@@ -1054,12 +1054,12 @@ const App: React.FC = () => {
                     hideTimer={Boolean(selectedLevel && resolveMiniGameRegistryKey(selectedLevel) === 'CalculationCrashGame')}
                   />
                 ) : null}
+              </div>
+            </div>
 
-                <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.4rem,env(safe-area-inset-bottom))] z-[130] flex justify-center px-3">
-                  <div className="pointer-events-auto">
-                    <GameActionDock onBack={() => setScreen('island_levels')} compact accentClass="text-slate-100" />
-                  </div>
-                </div>
+            <div className="unified-global-dock pointer-events-none absolute inset-x-0 bottom-[max(0.45rem,calc(env(safe-area-inset-bottom)+0.2rem))] z-[240] flex justify-center px-3">
+              <div className="pointer-events-auto">
+                <GameActionDock onBack={() => setScreen('island_levels')} compact accentClass="text-slate-100" />
               </div>
             </div>
           </div>
