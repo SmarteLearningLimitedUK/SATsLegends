@@ -4831,5 +4831,39 @@ button.avatar-hero-arrow:not(:disabled):active {
   display: none !important;
 }
 
+/* Place Value Panic layout contract applied globally to all minigames. */
+.screen-gameplay .unified-minigame-hud-enabled .mission-hud-root {
+  display: none !important;
+}
+
+.screen-gameplay .unified-minigame-hud-enabled .fixed.inset-0 > header,
+.screen-gameplay .unified-minigame-hud-enabled .fixed.inset-0 > footer {
+  display: none !important;
+}
+
+.screen-gameplay .unified-minigame-hud-enabled [class*="max-w-6xl"],
+.screen-gameplay .unified-minigame-hud-enabled [class*="max-w-5xl"],
+.screen-gameplay .unified-minigame-hud-enabled [class*="max-w-4xl"] {
+  max-width: 100% !important;
+}
+
+.screen-gameplay .unified-minigame-hud-enabled .game-shell-zone-actions,
+.screen-gameplay .unified-minigame-hud-enabled .pointer-events-none.absolute.inset-x-0.bottom-\[max\(0\.4rem\,env\(safe-area-inset-bottom\)\)\] {
+  margin-top: 0.2rem !important;
+}
+
+.screen-gameplay .unified-minigame-hud-enabled .game-shell-host,
+.screen-gameplay .unified-minigame-hud-enabled .game-shell-contract,
+.screen-gameplay .unified-minigame-hud-enabled .structured-game-layout,
+.screen-gameplay .unified-minigame-hud-enabled .structured-playfield-frame {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.screen-gameplay .unified-minigame-hud-enabled main {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
 
 

@@ -136,12 +136,12 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
         paddingRight: 'max(0.55rem, env(safe-area-inset-right))',
       }}
     >
-      <div className="flex w-full flex-row items-center justify-between gap-[clamp(0.3rem,1.8vw,0.85rem)] py-[clamp(0.15rem,0.7vh,0.45rem)]">
-        <div className="pointer-events-none flex min-w-0 flex-row items-center">
-          <div className="relative h-auto w-[clamp(10.6rem,52vw,14.9rem)] shrink-0">
+      <div className="flex w-full items-center justify-between gap-[clamp(0.28rem,1.5vw,0.85rem)] py-[clamp(0.15rem,0.65vh,0.42rem)]">
+        <div className="flex min-w-0 items-center">
+          <div className="relative h-[clamp(2.45rem,6.75vh,3.35rem)] w-[clamp(10.2rem,50vw,15rem)] shrink-0">
             <img src={hudProfileBar} alt="" aria-hidden="true" draggable={false} className="h-auto w-full object-contain" />
-            <div className="absolute inset-y-[9%] left-[4.2%] right-[6.4%] flex items-center">
-              <div className="relative h-[84%] w-[27%] shrink-0 overflow-hidden rounded-[28%]">
+            <div className="absolute inset-y-[9%] left-[4.2%] right-[6.1%] flex items-center">
+              <div className="relative h-[84%] w-[26%] shrink-0 overflow-hidden rounded-[28%]">
                 <img
                   src={fittedAvatarImage}
                   alt={avatarName}
@@ -151,7 +151,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
               </div>
               <div className="ml-[5.5%] flex min-w-0 flex-1 items-center overflow-hidden">
                 <span
-                  className="block max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-left text-[clamp(0.72rem,2.05vw,0.94rem)] font-black uppercase tracking-[0.045em] text-cyan-50"
+                  className="block max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-left text-[clamp(0.72rem,2.05vw,0.98rem)] font-black uppercase tracking-[0.045em] text-cyan-50"
                   style={{ lineHeight: 1, textShadow: '0 1px 2px rgba(2,6,23,0.6)' }}
                 >
                   {playerName}
@@ -161,50 +161,38 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
           </div>
         </div>
 
-        <div className="pointer-events-none flex shrink-0 flex-row items-center">
-          <div className="relative h-[clamp(2.35rem,7.1vh,3.35rem)] w-[clamp(8.8rem,42vw,13rem)]">
-            <div className="pointer-events-none absolute inset-0 flex items-center">
-              <div
-                className="flex h-[84%] w-full items-center rounded-full px-[clamp(0.32rem,1.2vw,0.58rem)] shadow-[0_6px_16px_rgba(2,6,23,0.45)]"
+        <div className="flex shrink-0 items-center">
+          <div
+            className="flex h-[clamp(2.45rem,6.75vh,3.35rem)] w-[clamp(9.2rem,42vw,13.8rem)] items-center rounded-full px-[clamp(0.34rem,1.15vw,0.62rem)] shadow-[0_6px_16px_rgba(2,6,23,0.45)]"
+            style={{
+              border: '1px solid rgba(147, 211, 255, 0.52)',
+              background: 'linear-gradient(180deg, rgba(41, 108, 191, 0.88) 0%, rgba(26, 78, 159, 0.9) 100%)',
+            }}
+          >
+            <img
+              src={hourglassIcon}
+              alt=""
+              aria-hidden="true"
+              draggable={false}
+              className="h-[72%] w-auto shrink-0 object-contain drop-shadow-[0_2px_4px_rgba(2,6,23,0.5)]"
+            />
+            <div className="relative ml-[clamp(0.3rem,1vw,0.5rem)] h-[44%] min-w-0 flex-1 overflow-hidden rounded-full border border-blue-200/35 bg-blue-950/55">
+              <motion.div
+                className="absolute inset-y-0 left-0 rounded-full"
+                animate={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
                 style={{
-                  border: '1px solid rgba(147, 211, 255, 0.52)',
-                  background: 'linear-gradient(180deg, rgba(41, 108, 191, 0.88) 0%, rgba(26, 78, 159, 0.9) 100%)',
+                  boxShadow: '0 0 10px rgba(34,197,94,0.45), inset 0 1px 0 rgba(255,255,255,0.3)',
+                  backgroundImage: 'linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.08) 100%)',
                 }}
-              >
-                <img
-                  src={hourglassIcon}
-                  alt=""
-                  aria-hidden="true"
-                  draggable={false}
-                  className="h-[72%] w-auto shrink-0 object-contain drop-shadow-[0_2px_4px_rgba(2,6,23,0.5)]"
-                />
-                <div className="relative ml-[clamp(0.3rem,1vw,0.5rem)] h-[44%] flex-1 overflow-hidden rounded-full border border-blue-200/35 bg-blue-950/55">
-                  <motion.div
-                    className="absolute inset-y-0 left-0 rounded-full"
-                    animate={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }}
-                    transition={{ duration: 0.25, ease: 'easeOut' }}
-                    style={{
-                      boxShadow: '0 0 10px rgba(34,197,94,0.45), inset 0 1px 0 rgba(255,255,255,0.3)',
-                      backgroundImage: 'linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.08) 100%)',
-                    }}
-                  />
-                  <div className="absolute inset-[1px] rounded-full bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:12%_100%]" />
-                </div>
-                <span className="ml-[clamp(0.3rem,1vw,0.56rem)] shrink-0 text-[clamp(0.62rem,1.9vw,0.92rem)] font-black uppercase tracking-[0.06em] text-white">
-                  {Math.max(0, Math.floor(timeLeft))}s
-                </span>
-              </div>
+              />
+              <div className="absolute inset-[1px] rounded-full bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:12%_100%]" />
             </div>
+            <span className="ml-[clamp(0.28rem,0.95vw,0.56rem)] shrink-0 text-[clamp(0.62rem,1.9vw,0.92rem)] font-black uppercase tracking-[0.06em] text-white">
+              {Math.max(0, Math.floor(timeLeft))}s
+            </span>
           </div>
         </div>
-      </div>
-      <div className="pointer-events-none absolute right-[max(0.6rem,env(safe-area-inset-right))] top-[calc(max(0.5rem,env(safe-area-inset-top))+2.55rem)] z-[130]">
-        <span
-          className="inline-flex items-center rounded-full border border-cyan-100/55 bg-slate-900/74 px-2 py-[3px] text-[10px] font-black uppercase tracking-[0.08em] text-cyan-100"
-          style={{ textShadow: '0 1px 2px rgba(2,6,23,0.65)' }}
-        >
-          HUD v2
-        </span>
       </div>
     </div>
   );
