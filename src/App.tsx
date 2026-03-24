@@ -1050,6 +1050,7 @@ const App: React.FC = () => {
                     playerName={player.playerName || 'Learner'}
                     timeLeft={globalMiniGameHudTimeLeft}
                     totalTime={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
+                    hideTimer={Boolean(selectedLevel && resolveMiniGameRegistryKey(selectedLevel) === 'CalculationCrashGame')}
                   />
                 ) : null}
               </div>

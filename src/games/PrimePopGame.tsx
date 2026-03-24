@@ -382,7 +382,6 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     primePopsRef.current = 0;
     totalPopsRef.current = 0;
     setScore(0);
-    setCombo(0);
     setLives(INITIAL_LIVES);
     setTimeLeft(config.roundSeconds);
     setFeedback(null);
