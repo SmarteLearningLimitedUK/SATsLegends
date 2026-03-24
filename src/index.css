@@ -4880,6 +4880,7 @@ button.avatar-hero-arrow:not(:disabled):active {
 }
 
 .screen-gameplay .unified-minigame-hud-enabled .structured-game-layout {
+  position: relative;
   padding-top: var(--shared-minigame-hud-reserved-top) !important;
   box-sizing: border-box;
 }
@@ -4887,11 +4888,13 @@ button.avatar-hero-arrow:not(:disabled):active {
 /* Some legacy minigames still mount using `fixed inset-0`.
    Force those roots below the shared HUD so gameplay never sits behind timer/avatar. */
 .screen-gameplay .unified-minigame-hud-enabled .fixed.inset-0 {
+  position: absolute !important;
   top: var(--shared-minigame-hud-reserved-top) !important;
   right: 0 !important;
   bottom: 0 !important;
   left: 0 !important;
   height: auto !important;
+  max-height: calc(100% - var(--shared-minigame-hud-reserved-top)) !important;
 }
 
 
