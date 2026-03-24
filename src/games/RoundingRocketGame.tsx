@@ -285,16 +285,16 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
           </section>
 
           <section className="mt-auto w-full pb-1">
-            <div className="mb-2 grid grid-cols-3 gap-1.5">
+            <div className="mx-auto mb-2 grid w-[86%] max-w-[18.5rem] grid-cols-3 gap-1.5">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, '.', 0, 'DEL'].map((key) => (
                 <button
                   key={key}
                   onClick={() => handleKeypad(String(key))}
                   disabled={roundEnded || (key === '.' && !problem.target.includes('decimal'))}
-                  className={`aspect-square rounded-[1rem] border border-cyan-200/42 bg-[linear-gradient(180deg,rgba(15,31,70,0.86),rgba(6,20,54,0.94))] px-0 py-0 font-black text-cyan-50 shadow-[0_8px_14px_rgba(2,6,23,0.32)] transition hover:brightness-110 disabled:opacity-40 ${
+                  className={`h-[2.95rem] rounded-[0.82rem] border border-cyan-200/42 bg-[linear-gradient(180deg,rgba(15,31,70,0.86),rgba(6,20,54,0.94))] px-0 py-0 font-black text-cyan-50 shadow-[0_8px_14px_rgba(2,6,23,0.32)] transition hover:brightness-110 disabled:opacity-40 ${
                     key === 'DEL'
-                      ? 'text-[clamp(0.84rem,3.25vw,1rem)]'
-                      : 'text-[clamp(1.2rem,4.8vw,1.65rem)]'
+                      ? 'text-[clamp(0.76rem,2.9vw,0.92rem)]'
+                      : 'text-[clamp(1.05rem,4.1vw,1.35rem)]'
                   }`}
                 >
                   {key}

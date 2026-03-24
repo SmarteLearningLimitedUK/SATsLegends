@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ChevronRight, Play, RotateCcw, Trophy } from 'lucide-react';
 import GameActionDock from '../components/GameActionDock';
-import world01Map from '../assets/maps/world_01.png';
+import calculationClashBackground from '../assets/maps/facctor frenzy.jpg';
 
 interface CalculationCrashGameProps {
   levelId: number;
@@ -206,7 +206,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
   return (
     <div className="fixed inset-0 z-20 h-screen w-screen overflow-hidden text-white">
       <img
-        src={world01Map}
+        src={calculationClashBackground}
         alt=""
         aria-hidden="true"
         draggable={false}
@@ -225,13 +225,15 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
 
           <div className="my-auto w-full">
             <section className="text-center">
-              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-200/90">Calculation Clash</p>
-              <p className="mt-2 text-[clamp(2.1rem,9.3vw,4rem)] font-black leading-none tracking-[-0.02em] text-white [text-shadow:0_4px_12px_rgba(0,0,0,0.58)]">
-                {question.prompt}
-              </p>
-              <p className="mt-3 text-[clamp(1rem,4.5vw,1.6rem)] font-bold text-amber-50/92 [text-shadow:0_2px_8px_rgba(0,0,0,0.5)]">
-                Solve as many as you can in 30s
-              </p>
+              <div className="mx-auto w-full max-w-[31rem] rounded-[1.25rem] border border-amber-100/35 bg-[linear-gradient(180deg,rgba(2,6,23,0.82),rgba(2,6,23,0.68))] px-4 py-3 shadow-[0_14px_34px_rgba(2,6,23,0.52)] backdrop-blur-[2px]">
+                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-200/95">Calculation Clash</p>
+                <p className="mt-2 text-[clamp(2.1rem,9.3vw,4rem)] font-black leading-none tracking-[-0.02em] text-white [text-shadow:0_6px_14px_rgba(0,0,0,0.72)]">
+                  {question.prompt}
+                </p>
+                <p className="mt-3 text-[clamp(1rem,4.5vw,1.6rem)] font-bold text-amber-50/95 [text-shadow:0_3px_10px_rgba(0,0,0,0.64)]">
+                  Solve as many as you can in 30s
+                </p>
+              </div>
             </section>
 
             <section className="mx-auto mt-5 w-full max-w-[30rem] rounded-[1.3rem] border border-white/20 bg-black/28 px-3 py-3 backdrop-blur-[2px] shadow-[0_14px_30px_rgba(2,6,23,0.4)]">
