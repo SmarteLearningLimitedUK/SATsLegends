@@ -5,6 +5,7 @@ import GameplayHUD from '../components/GameplayHUD';
 import GameActionDock from '../components/GameActionDock';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { AVATARS } from '../constants';
+import primePopBackground from '../assets/maps/primepopbkground.jpg';
 
 interface PrimePopGameProps {
   levelId: number;
@@ -516,7 +517,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
 
   return (
     <div className="fixed inset-0 z-20 h-screen w-screen overflow-hidden select-none">
-      <GameplaySceneBackdrop gameType="prime_pop" />
+      <GameplaySceneBackdrop gameType="prime_pop" backgroundOverride={primePopBackground} />
 
       <div className="relative z-10 flex h-full w-full flex-col pt-[env(safe-area-inset-top)]">
         <GameplayHUD
