@@ -16,6 +16,7 @@ import ParentDashboard from './screens/ParentDashboard';
 import LevelResultModal from './components/LevelResultModal';
 import GameRulesModal from './components/GameRulesModal';
 import UnifiedMiniGameHud from './components/UnifiedMiniGameHud';
+import GameActionDock from './components/GameActionDock';
 import {
   FramedPanel,
   GameScreenShell,
@@ -1052,6 +1053,14 @@ const App: React.FC = () => {
                     totalTime={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
                     hideTimer={Boolean(selectedLevel && resolveMiniGameRegistryKey(selectedLevel) === 'CalculationCrashGame')}
                   />
+                ) : null}
+
+                {!isGameplayInstructionPending ? (
+                  <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.4rem,env(safe-area-inset-bottom))] z-[130] flex justify-center px-3">
+                    <div className="pointer-events-auto">
+                      <GameActionDock onBack={() => setScreen('island_levels')} compact accentClass="text-slate-100" />
+                    </div>
+                  </div>
                 ) : null}
               </div>
             </div>

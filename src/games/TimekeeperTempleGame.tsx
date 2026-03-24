@@ -171,7 +171,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
                 <img
                   src={clockFaceImage}
                   alt="Clock Face"
-                  className="h-full w-full object-contain"
+                  className="h-full w-full object-contain mix-blend-multiply"
                 />
 
                 <motion.div

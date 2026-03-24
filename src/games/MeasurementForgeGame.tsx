@@ -1,17 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
+import { Droplets, MinusCircle, RotateCcw, ShieldCheck } from 'lucide-react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import AssetIcon from '../components/AssetIcon';
 import { Coins } from '../components/GameIcons';
 import { GameScreenShell } from '../layout/ScreenPrimitives';
 import MiniGameTopBar from '../components/MiniGameTopBar';
+import GameActionDock from '../components/GameActionDock';
 import panelCardAsset from '../assets/licensed/slices/panel_paper.png';
 import labelBlueLong from '../assets/licensed/slices/label_blue.png';
 import labelGreenLong from '../assets/licensed/slices/label_green_long.png';
 import woodPlankLong from '../assets/licensed/slices/wood_plank_long_3.png';
-import iconGem from '../assets/licensed/slices/icon_gem.png';
-import scaleMasterScale from '../assets/measurement/scale_master_scale.svg';
 
 interface MeasurementForgeGameProps {
   levelId: number;
@@ -21,200 +21,82 @@ interface MeasurementForgeGameProps {
   onBack: () => void;
 }
 
-interface ScaleItem {
-  id: string;
-  name: string;
-  displayWeight: string;
-  value: number;
-  unit: 'g' | 'ml';
+interface ConversionRound {
+  targetGrams: number;
+  options: number[];
 }
 
-interface ScaleRound {
-  category: 'mass' | 'volume';
-  targetValue: number;
-  targetDisplay: string;
-  items: ScaleItem[];
-}
+type FeedbackState = 'correct' | 'incorrect' | null;
 
-type ScaleVisualKind = 'ingot' | 'crystal' | 'rock' | 'crate' | 'metal';
+const TOTAL_ROUNDS = 7;
 
-const MASS_ITEMS: ScaleItem[] = [
-  { id: 'ore-rock', name: 'Ore Rock', displayWeight: '250 g', value: 250, unit: 'g' },
-  { id: 'gem-crate', name: 'Crystal Cluster', displayWeight: '500 g', value: 500, unit: 'g' },
-  { id: 'gold-bar', name: 'Gold Bar', displayWeight: '1 kg', value: 1000, unit: 'g' },
-  { id: 'iron-block', name: 'Iron Block', displayWeight: '1 kg', value: 1000, unit: 'g' },
-];
-
-const VOLUME_ITEMS: ScaleItem[] = [
-  { id: 'ore-rock', name: 'Stone Flask', displayWeight: '250 ml', value: 250, unit: 'ml' },
-  { id: 'gem-crate', name: 'Crystal Flask', displayWeight: '500 ml', value: 500, unit: 'ml' },
-  { id: 'gold-bar', name: 'Golden Keg', displayWeight: '1 l', value: 1000, unit: 'ml' },
-  { id: 'iron-block', name: 'Silver Tank', displayWeight: '1 l', value: 1000, unit: 'ml' },
-];
-
-const buildTargetDisplay = (totalValue: number, unit: 'g' | 'ml') => {
-  if (unit === 'g') {
-    if (totalValue >= 1000) {
-      return `${Number((totalValue / 1000).toFixed(totalValue % 1000 === 0 ? 0 : 2))} kg`;
-    }
-    return `${totalValue} g`;
-  }
-
-  if (totalValue >= 1000) {
-    return `${Number((totalValue / 1000).toFixed(totalValue % 1000 === 0 ? 0 : 2))} l`;
-  }
-  return `${totalValue} ml`;
+const toKgLabel = (grams: number) => {
+  const kg = grams / 1000;
+  if (Number.isInteger(kg)) return `${kg} kg`;
+  return `${kg.toFixed(2).replace(/\.00$/, '')} kg`;
 };
 
-const pickItemsForRound = (pool: ScaleItem[], count: number) => {
-  const chosen: ScaleItem[] = [];
-  for (let index = 0; index < count; index += 1) {
-    chosen.push(pool[Math.floor(Math.random() * pool.length)]);
-  }
-  return chosen;
-};
+const toGramLabel = (grams: number) => `${grams.toLocaleString()} g`;
 
-const generateRound = (roundIndex: number): ScaleRound => {
-  const category = Math.random() > 0.45 ? 'mass' : 'volume';
-  const pool = category === 'mass' ? MASS_ITEMS : VOLUME_ITEMS;
-  const itemCount = Math.min(3, 2 + Math.floor(roundIndex / 3));
-  const chosenItems = pickItemsForRound(pool, itemCount);
-  const targetValue = chosenItems.reduce((sum, item) => sum + item.value, 0);
-  const unit = pool[0].unit;
+const getRoundConfig = (roundIndex: number, levelId: number) => {
+  const stage = Math.min(4, Math.floor((roundIndex + Math.max(0, levelId - 1)) / 2));
+
+  if (stage === 0) {
+    return {
+      min: 500,
+      max: 1500,
+      step: 100,
+      options: [100, 200, 300, 400, 500],
+    };
+  }
+
+  if (stage === 1) {
+    return {
+      min: 1000,
+      max: 2500,
+      step: 100,
+      options: [100, 250, 400, 500, 750],
+    };
+  }
+
+  if (stage === 2) {
+    return {
+      min: 1500,
+      max: 4000,
+      step: 250,
+      options: [250, 500, 750, 1000, 1250],
+    };
+  }
+
+  if (stage === 3) {
+    return {
+      min: 2500,
+      max: 6000,
+      step: 250,
+      options: [250, 500, 1000, 1250, 1500],
+    };
+  }
 
   return {
-    category,
-    targetValue,
-    targetDisplay: buildTargetDisplay(targetValue, unit),
-    items: pool,
+    min: 4000,
+    max: 9000,
+    step: 500,
+    options: [500, 1000, 1500, 2000, 2500],
   };
 };
 
-const formatCurrent = (value: number, unit: 'g' | 'ml') => buildTargetDisplay(value, unit);
-
-const getItemKind = (item: ScaleItem): ScaleVisualKind => {
-  if (item.id.includes('gold')) return 'ingot';
-  if (item.id.includes('gem')) return 'crystal';
-  if (item.id.includes('ore')) return 'rock';
-  if (item.id.includes('iron')) return 'metal';
-  return 'crate';
+const randomTarget = (min: number, max: number, step: number) => {
+  const count = Math.floor((max - min) / step) + 1;
+  const index = Math.floor(Math.random() * count);
+  return min + index * step;
 };
 
-const getItemPalette = (item: ScaleItem) => {
-  switch (getItemKind(item)) {
-    case 'ingot':
-      return {
-        shell: 'from-yellow-200 via-amber-300 to-orange-500',
-        edge: 'border-amber-100/70',
-        glow: 'shadow-[0_12px_20px_rgba(245,158,11,0.34)]',
-      };
-    case 'crystal':
-      return {
-        shell: 'from-cyan-200 via-sky-300 to-blue-600',
-        edge: 'border-cyan-100/80',
-        glow: 'shadow-[0_12px_20px_rgba(34,211,238,0.34)]',
-      };
-    case 'rock':
-      return {
-        shell: 'from-stone-200 via-stone-400 to-stone-700',
-        edge: 'border-stone-100/40',
-        glow: 'shadow-[0_10px_16px_rgba(68,64,60,0.28)]',
-      };
-    case 'metal':
-      return {
-        shell: 'from-slate-100 via-slate-300 to-slate-600',
-        edge: 'border-slate-100/70',
-        glow: 'shadow-[0_12px_20px_rgba(100,116,139,0.26)]',
-      };
-    case 'crate':
-    default:
-      return {
-        shell: 'from-orange-200 via-amber-500 to-orange-700',
-        edge: 'border-amber-100/55',
-        glow: 'shadow-[0_12px_18px_rgba(180,83,9,0.3)]',
-      };
-  }
-};
-
-const ScaleObjectArt: React.FC<{ item: ScaleItem; compact?: boolean }> = ({ item, compact = false }) => {
-  const palette = getItemPalette(item);
-  const size = compact ? 'h-9 w-9 md:h-10 md:w-10' : 'h-12 w-12 md:h-14 md:w-14';
-
-  switch (getItemKind(item)) {
-    case 'ingot':
-      return (
-        <div className={`relative ${size}`}>
-          <div className={`absolute inset-x-[8%] inset-y-[20%] rounded-[0.8rem] border bg-gradient-to-br ${palette.shell} ${palette.edge} ${palette.glow} skew-x-[-14deg]`} />
-          <div className="absolute inset-x-[18%] top-[26%] h-[20%] rounded-full bg-white/34 blur-[1px]" />
-        </div>
-      );
-    case 'crystal':
-      return (
-        <div className={`relative ${size}`}>
-          <div
-            className={`absolute inset-[10%] border bg-gradient-to-br ${palette.shell} ${palette.edge} ${palette.glow}`}
-            style={{ clipPath: 'polygon(50% 0%, 72% 18%, 92% 42%, 76% 100%, 24% 100%, 8% 42%, 28% 18%)' }}
-          />
-          <div className="absolute left-[40%] top-[18%] h-[50%] w-[10%] rotate-[12deg] rounded-full bg-white/36 blur-[1px]" />
-        </div>
-      );
-    case 'rock':
-      return (
-        <div className={`relative ${size}`}>
-          <div className={`absolute inset-[14%] rounded-[1rem] border bg-gradient-to-br ${palette.shell} ${palette.edge} ${palette.glow} rotate-[-8deg]`} />
-          <div className="absolute right-[26%] top-[28%] h-[14%] w-[16%] rounded-full bg-white/12" />
-        </div>
-      );
-    case 'metal':
-      return (
-        <div className={`relative ${size}`}>
-          <div className={`absolute inset-[12%] rounded-[0.95rem] border bg-gradient-to-br ${palette.shell} ${palette.edge} ${palette.glow}`} />
-          <div className="absolute inset-x-[25%] top-[20%] bottom-[20%] border-x border-slate-50/25" />
-          <div className="absolute inset-y-[34%] left-[18%] right-[18%] border-t border-b border-slate-50/20" />
-        </div>
-      );
-    case 'crate':
-    default:
-      return (
-        <div className={`relative ${size}`}>
-          <div className={`absolute inset-[12%] rounded-[0.95rem] border bg-gradient-to-br ${palette.shell} ${palette.edge} ${palette.glow}`} />
-          <div className="absolute inset-x-[28%] top-[20%] bottom-[20%] border-x border-amber-50/45" />
-          <div className="absolute inset-y-[30%] left-[18%] right-[18%] border-t border-b border-amber-50/35" />
-        </div>
-      );
-  }
-};
-
-const ScaleItemToken: React.FC<{
-  item: ScaleItem;
-  onClick?: () => void;
-  count?: number;
-  compact?: boolean;
-  disabled?: boolean;
-}> = ({ item, onClick, count, compact = false, disabled = false }) => {
-  const interactive = Boolean(onClick);
-  const Wrapper = interactive ? motion.button : 'div';
-
-  return (
-    <Wrapper
-      whileTap={interactive ? { scale: 0.96 } : undefined}
-      onClick={onClick}
-      disabled={disabled}
-      className={`relative flex flex-col items-center justify-between overflow-hidden rounded-[1.2rem] border border-amber-100/24 bg-[linear-gradient(180deg,rgba(167,107,34,0.98),rgba(116,69,22,0.98)_32%,rgba(78,45,16,0.99))] p-2 shadow-[inset_0_2px_0_rgba(255,255,255,0.16),0_12px_20px_rgba(0,0,0,0.22)] ${compact ? 'min-h-[4.35rem] min-w-[4.35rem] gap-1' : 'min-h-[6.55rem] gap-1.5'} ${interactive ? 'transition-transform hover:-translate-y-1 disabled:cursor-not-allowed disabled:opacity-45' : ''}`}
-    >
-      <div className="pointer-events-none absolute inset-x-2 top-1 h-6 rounded-full bg-white/16 blur-sm" />
-      <div className="pointer-events-none absolute inset-x-1.5 inset-y-1.5 rounded-[0.95rem] border border-amber-50/14 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_26%,rgba(0,0,0,0.12)_100%)]" />
-      <ScaleObjectArt item={item} compact={compact} />
-      <div className={`licensed-slice-yellow-plank relative z-10 rounded-full px-2 py-0.5 font-black text-amber-950 ${compact ? 'text-[8px]' : 'text-[9px] md:text-[10px]'}`}>
-        {item.displayWeight}
-      </div>
-      {typeof count === 'number' && count > 0 && (
-        <div className="absolute right-1.5 top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-[linear-gradient(180deg,#fde68a,#f59e0b)] px-1 text-[10px] font-black text-amber-950 shadow-[0_6px_12px_rgba(0,0,0,0.22)]">
-          {count}
-        </div>
-      )}
-    </Wrapper>
-  );
+const generateRound = (roundIndex: number, levelId: number): ConversionRound => {
+  const config = getRoundConfig(roundIndex, levelId);
+  return {
+    targetGrams: randomTarget(config.min, config.max, config.step),
+    options: config.options,
+  };
 };
 
 const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
@@ -225,39 +107,29 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
   onBack,
 }) => {
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(105);
+  const [timeLeft, setTimeLeft] = useState(95 + levelId * 5);
   const [roundIndex, setRoundIndex] = useState(0);
-  const [round, setRound] = useState<ScaleRound>(() => generateRound(0));
-  const [selectedItems, setSelectedItems] = useState<ScaleItem[]>([]);
-  const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
+  const [round, setRound] = useState<ConversionRound>(() => generateRound(0, levelId));
+  const [selectedGrams, setSelectedGrams] = useState<number[]>([]);
+  const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [streak, setStreak] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isVictory, setIsVictory] = useState(false);
 
-  const targetScore = 1050 + levelId * 90;
-  const currentValue = selectedItems.reduce((sum, item) => sum + item.value, 0);
-  const scaleUnit = round.items[0]?.unit || 'g';
-  const balanceDifference = currentValue - round.targetValue;
-  const balanceTilt = Math.max(-15, Math.min(15, balanceDifference / 90));
-  const groupedSelectedItems = useMemo(() => {
-    const groups = new Map<string, { item: ScaleItem; count: number }>();
-    selectedItems.forEach((item) => {
-      const existing = groups.get(item.id);
-      if (existing) {
-        existing.count += 1;
-      } else {
-        groups.set(item.id, { item, count: 1 });
-      }
-    });
-    return Array.from(groups.values());
-  }, [selectedItems]);
+  const targetScore = 1150 + levelId * 120;
+  const currentGrams = selectedGrams.reduce((sum, value) => sum + value, 0);
+  const gramsDelta = round.targetGrams - currentGrams;
+  const fillRatio = Math.max(0, Math.min(1, currentGrams / round.targetGrams));
+  const overflowRatio = currentGrams > round.targetGrams
+    ? Math.min(1, (currentGrams - round.targetGrams) / round.targetGrams)
+    : 0;
 
   useEffect(() => {
     setScore(0);
-    setTimeLeft(105 + levelId * 6);
+    setTimeLeft(95 + levelId * 5);
     setRoundIndex(0);
-    setRound(generateRound(0));
-    setSelectedItems([]);
+    setRound(generateRound(0, levelId));
+    setSelectedGrams([]);
     setFeedback(null);
     setStreak(0);
     setIsGameOver(false);
@@ -267,10 +139,10 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
   useEffect(() => {
     if (isGameOver || isVictory || feedback) return undefined;
 
-    const timer = setInterval(() => {
+    const timer = window.setInterval(() => {
       setTimeLeft((previous) => {
         if (previous <= 1) {
-          clearInterval(timer);
+          window.clearInterval(timer);
           if (score >= targetScore) {
             const stars = score >= targetScore * 1.7 ? 3 : score >= targetScore * 1.25 ? 2 : 1;
             setIsVictory(true);
@@ -286,30 +158,26 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
       });
     }, 1000);
 
-    return () => clearInterval(timer);
+    return () => window.clearInterval(timer);
   }, [feedback, isGameOver, isVictory, onGameOver, onVictory, score, targetScore]);
 
-  const addItem = (item: ScaleItem) => {
+  const addAmount = (grams: number) => {
     if (feedback) return;
-    setSelectedItems((previous) => [...previous, item]);
+    setSelectedGrams((previous) => [...previous, grams]);
   };
 
-  const removeOneOfItem = (itemId: string) => {
+  const removeLast = () => {
     if (feedback) return;
-    setSelectedItems((previous) => {
-      const itemIndex = previous.findIndex((item) => item.id === itemId);
-      if (itemIndex === -1) return previous;
-      return previous.filter((_, index) => index !== itemIndex);
-    });
+    setSelectedGrams((previous) => previous.slice(0, -1));
   };
 
-  const clearScale = () => {
+  const clearBucket = () => {
     if (feedback) return;
-    setSelectedItems([]);
+    setSelectedGrams([]);
   };
 
-  const loadNextRound = (nextRoundIndex: number, nextScore: number) => {
-    if (nextRoundIndex >= 7 || nextScore >= targetScore) {
+  const nextRound = (nextRoundIndex: number, nextScore: number) => {
+    if (nextRoundIndex >= TOTAL_ROUNDS || nextScore >= targetScore) {
       const stars = nextScore >= targetScore * 1.7 ? 3 : nextScore >= targetScore * 1.25 ? 2 : 1;
       setIsVictory(true);
       onVictory(stars, nextScore);
@@ -317,53 +185,59 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
     }
 
     setRoundIndex(nextRoundIndex);
-    setRound(generateRound(nextRoundIndex));
-    setSelectedItems([]);
+    setRound(generateRound(nextRoundIndex, levelId));
+    setSelectedGrams([]);
     setFeedback(null);
   };
 
-  const handleBalance = () => {
+  const checkFill = () => {
     if (feedback) return;
 
-    if (currentValue === round.targetValue) {
-      const nextScore = score + 140 + streak * 25 + Math.max(0, timeLeft);
+    if (currentGrams === round.targetGrams) {
+      const nextScore = score + 170 + streak * 35 + Math.max(0, Math.floor(timeLeft * 0.75));
       const nextRoundIndex = roundIndex + 1;
-
-      setFeedback('correct');
       setScore(nextScore);
+      setFeedback('correct');
       setStreak((previous) => previous + 1);
 
       confetti({
-        particleCount: 70,
-        spread: 58,
-        origin: { y: 0.58 },
+        particleCount: 85,
+        spread: 62,
+        origin: { y: 0.56 },
         colors: ['#fde047', '#22c55e', '#38bdf8'],
       });
 
-      window.setTimeout(() => loadNextRound(nextRoundIndex, nextScore), 1200);
+      window.setTimeout(() => nextRound(nextRoundIndex, nextScore), 1000);
       return;
     }
 
     setFeedback('incorrect');
     setStreak(0);
-    setScore((previous) => Math.max(0, previous - 45));
+    setScore((previous) => Math.max(0, previous - 55));
+
     window.setTimeout(() => {
-      setSelectedItems([]);
+      setSelectedGrams([]);
       setFeedback(null);
-    }, 900);
+    }, 850);
   };
+
+  const groupedAdded = useMemo(() => {
+    const groups = new Map<number, number>();
+    selectedGrams.forEach((value) => groups.set(value, (groups.get(value) ?? 0) + 1));
+    return Array.from(groups.entries()).sort((a, b) => b[0] - a[0]);
+  }, [selectedGrams]);
 
   const outcomeLabel = useMemo(() => {
     if (!feedback) return null;
     return feedback === 'correct'
       ? {
-          title: 'Balanced!',
-          subtitle: 'The weighbridge locked in perfectly.',
+          title: 'Perfect Fill!',
+          subtitle: 'Exact conversion. Bucket calibrated.',
           tone: 'text-emerald-300 border-emerald-300/60 bg-emerald-500/16',
         }
       : {
-          title: 'Off Balance!',
-          subtitle: 'Reset the load and try a better mix.',
+          title: 'Wrong Fill!',
+          subtitle: 'That amount does not match the kg target.',
           tone: 'text-rose-300 border-rose-300/60 bg-rose-500/16',
         };
   }, [feedback]);
@@ -371,21 +245,24 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
   return (
     <GameScreenShell className="items-center p-2 font-sans pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+0.35rem)] md:p-4">
       <GameplaySceneBackdrop gameType="measurement_forge" />
+
       <MiniGameTopBar
         onBack={onBack}
         score={score}
         metaLabel="Round"
-        metaValue={`${Math.min(roundIndex + 1, 7)} / 7`}
+        metaValue={`${Math.min(roundIndex + 1, TOTAL_ROUNDS)} / ${TOTAL_ROUNDS}`}
         className="z-50"
       />
+
       <div className="pointer-events-none absolute right-3 top-[calc(env(safe-area-inset-top)+3.7rem)] z-40 md:right-5">
         <div className="pvp-hud-chip pvp-hud-chip-alt">
           Time {timeLeft}s
         </div>
       </div>
+
       <div className="relative z-10 flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col gap-2 md:gap-4">
-        <div className="relative min-h-0 flex-1 overflow-hidden rounded-[2rem] border border-sky-100/20 bg-[linear-gradient(180deg,rgba(10,26,48,0.84),rgba(8,18,36,0.9)_42%,rgba(6,14,28,0.92))] shadow-[0_20px_36px_rgba(0,0,0,0.34)]">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_8%,rgba(255,255,255,0.18),transparent_18%),radial-gradient(circle_at_18%_18%,rgba(34,211,238,0.14),transparent_16%),radial-gradient(circle_at_84%_20%,rgba(250,204,21,0.18),transparent_18%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(5,10,22,0.18)_34%,rgba(5,10,22,0.34)_100%)]" />
+        <div className="relative min-h-0 flex-1 overflow-hidden rounded-[2rem] border border-sky-100/20 bg-[linear-gradient(180deg,rgba(10,26,48,0.82),rgba(8,18,36,0.9)_42%,rgba(6,14,28,0.92))] shadow-[0_20px_36px_rgba(0,0,0,0.34)]">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_8%,rgba(255,255,255,0.16),transparent_18%),radial-gradient(circle_at_18%_18%,rgba(34,211,238,0.14),transparent_16%),radial-gradient(circle_at_84%_20%,rgba(250,204,21,0.18),transparent_18%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(5,10,22,0.18)_34%,rgba(5,10,22,0.34)_100%)]" />
 
           <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-3 md:gap-4">
             <div className="flex flex-col items-center gap-2 text-center">
@@ -393,78 +270,66 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                 <img src={labelBlueLong} alt="" draggable={false} className="absolute inset-0 h-full w-full object-fill" />
                 <div className="relative z-10 inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.16em] text-white md:text-xs">
                   <AssetIcon name="star" className="h-4 w-4" />
-                  Scale Forge
+                  Conversion Canyon
                 </div>
               </div>
 
-              <div className="relative w-full max-w-[18rem] px-4 py-3 md:max-w-[21rem] md:px-5 md:py-4">
+              <div className="relative w-full max-w-[20rem] px-4 py-3 md:max-w-[24rem] md:px-5 md:py-4">
                 <img src={panelCardAsset} alt="" draggable={false} className="absolute inset-0 h-full w-full object-fill drop-shadow-[0_16px_34px_rgba(15,23,42,0.28)]" />
-                <div className="pointer-events-none absolute left-1/2 top-0 h-11 w-11 -translate-x-1/2 -translate-y-[44%] rounded-full bg-[linear-gradient(180deg,#7dd3fc,#2563eb)] p-1 shadow-[0_10px_18px_rgba(37,99,235,0.28)]">
-                  <div className="flex h-full w-full items-center justify-center rounded-full bg-[radial-gradient(circle,#dbeafe,#3b82f6)]">
-                    <img src={iconGem} alt="" draggable={false} className="h-5 w-5 object-contain" />
-                  </div>
-                </div>
                 <div className="relative z-10 flex flex-col items-center">
-                  <div className="text-[10px] font-black uppercase tracking-[0.28em] text-yellow-100/82 md:text-xs">Target</div>
-                  <div className="relative mt-1 inline-flex h-[3rem] min-w-[10rem] items-center justify-center px-5 md:h-[3.6rem] md:min-w-[12rem]">
+                  <div className="text-[10px] font-black uppercase tracking-[0.28em] text-yellow-100/82 md:text-xs">Target Fill</div>
+                  <div className="relative mt-1 inline-flex h-[3rem] min-w-[11rem] items-center justify-center px-5 md:h-[3.6rem] md:min-w-[13rem]">
                     <img src={labelGreenLong} alt="" draggable={false} className="absolute inset-0 h-full w-full object-fill" />
                     <div className="relative z-10 text-[1.2rem] font-black text-white md:text-[1.8rem]">
-                      {round.targetDisplay}
+                      {toKgLabel(round.targetGrams)}
                     </div>
                   </div>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-center justify-center gap-2">
-                <div className="licensed-slice-cyan-pill rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white md:text-xs">
-                  Current {formatCurrent(currentValue, scaleUnit)}
-                </div>
-                <div className={`${balanceDifference === 0 ? 'licensed-slice-green-pill' : 'licensed-slice-orange-pill'} rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white md:text-xs`}>
-                  {balanceDifference === 0 ? 'Perfect match' : `Off by ${formatCurrent(Math.abs(balanceDifference), scaleUnit)}`}
                 </div>
               </div>
             </div>
 
-            <div className="relative min-h-[16rem] overflow-hidden rounded-[1.95rem] border border-white/14 bg-[linear-gradient(180deg,rgba(255,255,255,0.09),rgba(255,255,255,0.02)_18%,rgba(8,15,30,0.18)_100%)] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_18px_34px_rgba(0,0,0,0.22)] md:min-h-[23rem] md:flex-1 md:p-5">
+            <div className="relative min-h-[16rem] overflow-hidden rounded-[1.95rem] border border-white/14 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_18%,rgba(8,15,30,0.2)_100%)] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_18px_34px_rgba(0,0,0,0.22)] md:min-h-[22rem] md:flex-1 md:p-5">
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(56,189,248,0.18),transparent_18%),radial-gradient(circle_at_50%_92%,rgba(250,204,21,0.12),transparent_20%)]" />
-              <div className="pointer-events-none absolute bottom-[12%] left-1/2 h-20 w-[72%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.24),rgba(34,211,238,0)_72%)] blur-xl" />
 
-              <div className="relative flex h-full items-end justify-center">
-                <motion.div
-                  animate={{ rotate: balanceTilt }}
-                  transition={{ type: 'spring', stiffness: 90, damping: 15 }}
-                  className="absolute bottom-[14%] left-1/2 z-20 w-[96%] max-w-[42rem] -translate-x-1/2"
-                >
-                  <img src={scaleMasterScale} alt="" draggable={false} className="w-full object-contain drop-shadow-[0_18px_28px_rgba(0,0,0,0.24)]" />
-
-                  <div className="absolute left-[6.5%] top-[33.5%] h-[21%] w-[25.5%] rounded-[1.6rem]">
-                    <div className="absolute inset-x-[10%] top-[12%] bottom-[14%] flex flex-wrap content-center items-center justify-center gap-1.5 rounded-b-[1.5rem] rounded-t-[0.9rem] bg-[linear-gradient(180deg,rgba(120,53,15,0.10),rgba(120,53,15,0.22))] px-2 py-2">
-                      {groupedSelectedItems.length === 0 ? (
-                        <div className="text-center text-[9px] font-black uppercase tracking-[0.16em] text-amber-50/68">Drop items</div>
-                      ) : (
-                        groupedSelectedItems.slice(0, 4).map(({ item, count }) => (
-                          <button
-                            key={item.id}
-                            onClick={() => removeOneOfItem(item.id)}
-                            className="relative flex h-10 w-10 items-center justify-center rounded-[0.95rem] bg-[linear-gradient(180deg,rgba(120,53,15,0.24),rgba(120,53,15,0.42))] shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_6px_12px_rgba(0,0,0,0.14)]"
-                          >
-                            <ScaleObjectArt item={item} compact />
-                            <div className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[linear-gradient(180deg,#fde68a,#f59e0b)] px-1 text-[9px] font-black text-amber-950 shadow-[0_4px_10px_rgba(0,0,0,0.22)]">
-                              {count}
-                            </div>
-                          </button>
-                        ))
-                      )}
-                    </div>
+              <div className="relative z-10 flex h-full flex-col items-center justify-center gap-3 md:gap-4">
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  <div className="licensed-slice-cyan-pill rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white md:text-xs">
+                    Current {toKgLabel(currentGrams)}
                   </div>
-
-                  <div className="absolute right-[6.5%] top-[33.5%] flex h-[21%] w-[25.5%] items-center justify-center rounded-[1.6rem]">
-                    <div className="flex h-[74%] w-[80%] flex-col items-center justify-center rounded-[1.25rem] bg-[linear-gradient(180deg,rgba(120,53,15,0.1),rgba(120,53,15,0.22))] px-2 text-center">
-                      <div className="text-[9px] font-black uppercase tracking-[0.18em] text-amber-50/74">Target load</div>
-                      <div className="mt-1 text-base font-black text-white md:text-xl">{round.targetDisplay}</div>
-                    </div>
+                  <div className={`${gramsDelta === 0 ? 'licensed-slice-green-pill' : 'licensed-slice-orange-pill'} rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white md:text-xs`}>
+                    {gramsDelta === 0 ? 'Exact amount' : `${toGramLabel(Math.abs(gramsDelta))} ${gramsDelta > 0 ? 'remaining' : 'over target'}`}
                   </div>
-                </motion.div>
+                </div>
+
+                <div className="relative flex h-[13rem] w-[10rem] items-end justify-center md:h-[15rem] md:w-[11rem]">
+                  <div className="absolute inset-x-1 bottom-0 h-[78%] rounded-b-[1.6rem] rounded-t-[1.2rem] border-4 border-sky-200/55 bg-[linear-gradient(180deg,rgba(15,23,42,0.55),rgba(2,132,199,0.24))] shadow-[0_18px_24px_rgba(0,0,0,0.25)]" />
+                  <motion.div
+                    animate={{ height: `${Math.max(4, fillRatio * 72)}%` }}
+                    transition={{ type: 'spring', stiffness: 80, damping: 16 }}
+                    className={`absolute inset-x-[10%] bottom-[6%] rounded-b-[1.25rem] ${overflowRatio > 0 ? 'bg-[linear-gradient(180deg,rgba(244,63,94,0.8),rgba(225,29,72,0.9))]' : 'bg-[linear-gradient(180deg,rgba(56,189,248,0.7),rgba(14,116,144,0.95))]'}`}
+                  />
+                  <div className="absolute inset-x-[16%] top-[18%] bottom-[12%] rounded-[1rem] border border-white/16" />
+                  <div className="absolute -top-2 flex items-center gap-1 rounded-full border border-sky-200/55 bg-sky-900/70 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-sky-100">
+                    <Droplets className="h-3.5 w-3.5" /> Bucket
+                  </div>
+                </div>
+
+                <div className="flex min-h-[2.2rem] flex-wrap items-center justify-center gap-1.5 px-2">
+                  {groupedAdded.length === 0 ? (
+                    <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/55">No grams added yet</div>
+                  ) : (
+                    groupedAdded.map(([grams, count]) => (
+                      <button
+                        key={`${grams}-${count}`}
+                        onClick={removeLast}
+                        disabled={!!feedback}
+                        className="rounded-full border border-yellow-100/40 bg-[linear-gradient(180deg,rgba(250,204,21,0.22),rgba(245,158,11,0.2))] px-2.5 py-1 text-[10px] font-black text-yellow-50 shadow-[0_6px_12px_rgba(0,0,0,0.2)] disabled:opacity-55"
+                      >
+                        {toGramLabel(grams)} x{count}
+                      </button>
+                    ))
+                  )}
+                </div>
               </div>
             </div>
 
@@ -472,40 +337,54 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
               <img src={woodPlankLong} alt="" draggable={false} className="absolute inset-0 h-full w-full object-fill drop-shadow-[0_16px_28px_rgba(0,0,0,0.2)]" />
               <div className="relative z-10 mb-2 flex items-center justify-between gap-2">
                 <div className="licensed-slice-yellow-plank rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-amber-950 md:text-[10px]">
-                  Weight tray
+                  Gram picks
                 </div>
                 <motion.button
                   whileTap={{ scale: 0.96 }}
-                  onClick={clearScale}
-                  disabled={selectedItems.length === 0 || !!feedback}
-                  className="relative inline-flex h-[2rem] min-w-[4.7rem] items-center justify-center rounded-full border border-sky-200/50 bg-[linear-gradient(180deg,#38bdf8,#2563eb)] px-3 text-[9px] font-black uppercase tracking-[0.14em] text-white shadow-[0_8px_16px_rgba(2,6,23,0.34)] transition-colors hover:bg-[linear-gradient(180deg,#22d3ee,#1d4ed8)] disabled:cursor-not-allowed disabled:opacity-35 md:h-[2.2rem] md:min-w-[5.2rem] md:text-[10px]"
+                  onClick={clearBucket}
+                  disabled={selectedGrams.length === 0 || !!feedback}
+                  className="relative inline-flex h-[2rem] min-w-[4.7rem] items-center justify-center gap-1 rounded-full border border-sky-200/50 bg-[linear-gradient(180deg,#38bdf8,#2563eb)] px-3 text-[9px] font-black uppercase tracking-[0.14em] text-white shadow-[0_8px_16px_rgba(2,6,23,0.34)] transition-colors hover:bg-[linear-gradient(180deg,#22d3ee,#1d4ed8)] disabled:cursor-not-allowed disabled:opacity-35 md:h-[2.2rem] md:min-w-[5.2rem] md:text-[10px]"
                 >
+                  <RotateCcw className="h-3.5 w-3.5" />
                   Reset
                 </motion.button>
               </div>
-              <div className="relative z-10 grid grid-cols-4 gap-2 md:gap-3">
-                {round.items.map((item) => (
-                  <ScaleItemToken
-                    key={item.id}
-                    item={item}
-                    onClick={() => addItem(item)}
+
+              <div className="relative z-10 grid grid-cols-5 gap-2 md:gap-3">
+                {round.options.map((grams) => (
+                  <motion.button
+                    key={`${roundIndex}-${grams}`}
+                    whileTap={{ scale: 0.96 }}
+                    onClick={() => addAmount(grams)}
                     disabled={!!feedback}
-                  />
+                    className="min-h-[4.15rem] rounded-[1rem] border border-sky-200/35 bg-[linear-gradient(180deg,#1e3a8a,#0f172a)] px-1 py-2 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_8px_16px_rgba(0,0,0,0.2)] transition-colors hover:bg-[linear-gradient(180deg,#2563eb,#1e293b)] disabled:opacity-45"
+                  >
+                    <div className="text-[9px] font-black uppercase tracking-[0.12em] text-sky-200/90">Add</div>
+                    <div className="mt-1 text-sm font-black text-white md:text-base">{grams.toLocaleString()}</div>
+                    <div className="text-[9px] font-black uppercase text-sky-100/80">g</div>
+                  </motion.button>
                 ))}
               </div>
             </div>
 
-            <div className="flex shrink-0 items-center justify-center">
+            <div className="flex shrink-0 items-center justify-center gap-2 px-2 pb-1 md:pb-2">
               <motion.button
                 whileTap={{ scale: 0.97, y: 1 }}
-                onClick={handleBalance}
-                disabled={selectedItems.length === 0 || !!feedback}
-                className="relative flex h-[4.35rem] w-full max-w-[22rem] items-center justify-center gap-3 rounded-[1.2rem] border border-yellow-200/60 bg-[linear-gradient(180deg,#facc15,#f59e0b)] px-6 text-lg font-black uppercase tracking-[0.12em] text-slate-900 shadow-[0_14px_24px_rgba(0,0,0,0.32)] transition-all hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-45 md:h-[4.75rem] md:max-w-[24rem] md:text-[1.25rem]"
+                onClick={removeLast}
+                disabled={selectedGrams.length === 0 || !!feedback}
+                className="relative flex h-[4rem] w-[8.4rem] items-center justify-center gap-2 rounded-[1.15rem] border border-slate-200/35 bg-[linear-gradient(180deg,#334155,#0f172a)] px-4 text-sm font-black uppercase tracking-[0.1em] text-white shadow-[0_12px_20px_rgba(0,0,0,0.32)] transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-45"
               >
-                <div className="relative flex items-center gap-3">
-                  <AssetIcon name="check" className="h-5 w-5 md:h-6 md:w-6" />
-                  Balance
-                </div>
+                <MinusCircle className="h-4 w-4" /> Undo
+              </motion.button>
+
+              <motion.button
+                whileTap={{ scale: 0.97, y: 1 }}
+                onClick={checkFill}
+                disabled={selectedGrams.length === 0 || !!feedback}
+                className="relative flex h-[4rem] w-full max-w-[18rem] items-center justify-center gap-3 rounded-[1.2rem] border border-yellow-200/60 bg-[linear-gradient(180deg,#facc15,#f59e0b)] px-5 text-lg font-black uppercase tracking-[0.12em] text-slate-900 shadow-[0_14px_24px_rgba(0,0,0,0.32)] transition-all hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-45"
+              >
+                <ShieldCheck className="h-5 w-5" />
+                Check Fill
               </motion.button>
             </div>
           </div>
@@ -527,6 +406,10 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
           </AnimatePresence>
         </div>
 
+        <div className="mx-auto w-full max-w-6xl">
+          <GameActionDock onBack={onBack} compact />
+        </div>
+
         <AnimatePresence>
           {(isGameOver || isVictory) && (
             <motion.div
@@ -536,7 +419,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
             >
               <div className="flex w-full max-w-md flex-col items-center gap-6 rounded-[2rem] border border-sky-200/30 bg-[linear-gradient(180deg,rgba(8,25,51,0.96),rgba(10,18,36,0.98))] p-8 text-center shadow-[0_24px_44px_rgba(0,0,0,0.44)] md:p-10">
                 <div className={`text-4xl font-black md:text-5xl ${isVictory ? 'text-emerald-300' : 'text-rose-300'}`}>
-                  {isVictory ? 'Mine Cleared!' : 'Shift Over!'}
+                  {isVictory ? 'Buckets Filled!' : 'Time Up!'}
                 </div>
                 <div>
                   <div className="text-[10px] font-black uppercase tracking-[0.24em] text-white/54">Final Score</div>

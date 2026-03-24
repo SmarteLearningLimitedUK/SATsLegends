@@ -48,8 +48,6 @@ interface DragState {
   height: number;
 }
 
-const SOURCE_ANCHORS: AnchorPoint[] = [{ x: 16 }, { x: 32 }, { x: 48 }, { x: 64 }, { x: 80 }];
-const TARGET_ANCHORS: AnchorPoint[] = [{ x: 16 }, { x: 32 }, { x: 48 }, { x: 64 }, { x: 80 }];
 const FRACTION_POOL: ReadonlyArray<readonly [number, number]> = [
   [1, 8],
   [1, 6],
@@ -79,10 +77,30 @@ const shuffle = <T,>(items: T[]): T[] => {
   return clone;
 };
 
-const centeredAnchors = (anchors: AnchorPoint[], count: number): AnchorPoint[] => {
-  if (count >= anchors.length) return anchors;
-  const start = Math.floor((anchors.length - count) / 2);
-  return anchors.slice(start, start + count);
+const clamp = (value: number, min: number, max: number): number => (
+  Math.max(min, Math.min(max, value))
+);
+
+const createRowAnchors = (
+  count: number,
+  viewportWidth: number,
+  itemWidth: number,
+  minGap: number,
+  sidePadding: number,
+): AnchorPoint[] => {
+  if (count <= 0 || viewportWidth <= 0) return [];
+  if (count === 1) return [{ x: 50 }];
+
+  const usableWidth = Math.max(0, viewportWidth - (sidePadding * 2));
+  const totalItemWidth = itemWidth * count;
+  const rawGap = (usableWidth - totalItemWidth) / (count - 1);
+  const gap = Math.max(0, rawGap < minGap ? rawGap : minGap + ((rawGap - minGap) * 0.45));
+  const totalWidth = totalItemWidth + (gap * (count - 1));
+  const start = ((viewportWidth - totalWidth) / 2) + (itemWidth / 2);
+
+  return Array.from({ length: count }, (_, index) => ({
+    x: ((start + (index * (itemWidth + gap))) / viewportWidth) * 100,
+  }));
 };
 
 const makeRound = (level: number, roundIndex: number): RoundState => {
@@ -175,37 +193,74 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   const totalRounds = useMemo(() => Math.min(9, 5 + Math.floor(resolvedLevel / 2)), [resolvedLevel]);
 
   const layout = useMemo(() => {
+    const cardCount = round.cards.length;
     const isTablet = Math.min(viewport.width, viewport.height) >= 760;
-    const isTallPhone = !isTablet && (viewport.height / Math.max(1, viewport.width) > 1.9);
+    const sidePadding = isTablet ? 56 : 16;
+    const cardGap = isTablet ? 16 : 8;
+
+    const baseCardWidth = isTablet ? 118 : 92;
+    const minCardWidth = isTablet ? 80 : 58;
+    const maxCardWidthByViewport = Math.floor(
+      (viewport.width - (sidePadding * 2) - (cardGap * Math.max(0, cardCount - 1))) / Math.max(1, cardCount),
+    );
+    const cardWidth = clamp(Math.min(baseCardWidth, maxCardWidthByViewport), minCardWidth, baseCardWidth);
+    const cardHeight = Math.round(cardWidth * 1.24);
+
+    const slotWidth = Math.round(cardWidth * 0.94);
+    const slotHeight = Math.round(cardHeight * 0.86);
+
+    const hudTopReserve = isTablet ? 98 : 84;
+    const hudBottomReserve = isTablet ? 92 : 84;
+    const usableTop = hudTopReserve;
+    const usableBottom = Math.max(usableTop + 340, viewport.height - hudBottomReserve);
+    const usableHeight = Math.max(340, usableBottom - usableTop);
+
+    const ribbonTop = usableTop + (isTablet ? 4 : 2);
+    const sourceTop = usableTop + (usableHeight * (isTablet ? 0.24 : 0.245));
+    const targetTop = usableTop + (usableHeight * (isTablet ? 0.69 : 0.705));
+    const pedestalTop = targetTop + (slotHeight * 0.58);
+
+    const goblinWidth = Math.round(
+      clamp(isTablet ? viewport.width * 0.24 : viewport.width * 0.28, isTablet ? 210 : 164, isTablet ? 330 : 220),
+    );
+    const goblinHeightEstimate = goblinWidth * 1.28;
+    const suggestedGoblinTop = sourceTop + (cardHeight * 0.28);
+    const maxGoblinTop = targetTop - (slotHeight * 1.02) - (goblinHeightEstimate * 0.42);
+    const goblinTop = Math.max(usableTop + 120, Math.min(suggestedGoblinTop, maxGoblinTop));
+
+    const livesTop = clamp(
+      goblinTop + (goblinHeightEstimate * 0.4),
+      usableTop + 155,
+      targetTop - slotHeight - 28,
+    );
+
+    const sourceAnchors = createRowAnchors(cardCount, viewport.width, cardWidth, cardGap, sidePadding);
+    const targetAnchors = createRowAnchors(cardCount, viewport.width, slotWidth, cardGap, sidePadding);
+
     return {
-      sourceY: isTablet ? 34 : (isTallPhone ? 37 : 35.5),
-      targetY: isTablet ? 73 : (isTallPhone ? 75 : 73.8),
-      pedestalY: isTablet ? 81 : (isTallPhone ? 82.5 : 81.5),
+      sourceTop,
+      targetTop,
+      pedestalTop,
       cardSize: {
-        width: isTablet ? 116 : 90,
-        height: isTablet ? 148 : 114,
+        width: cardWidth,
+        height: cardHeight,
       },
       slotSize: {
-        width: isTablet ? 110 : 84,
-        height: isTablet ? 126 : 98,
+        width: slotWidth,
+        height: slotHeight,
       },
-      goblin: {
-        top: isTablet ? 48 : (isTallPhone ? 51 : 49.5),
-        width: isTablet ? 300 : 190,
-      },
-      ribbonTop: isTablet ? 12.5 : 12.5,
+      goblinTop,
+      goblinWidth,
+      livesTop,
+      sourceAnchors,
+      targetAnchors,
+      ribbonTop,
       ribbonWidth: isTablet ? 56 : 86,
     };
-  }, [viewport.height, viewport.width]);
+  }, [round.cards.length, viewport.height, viewport.width]);
 
-  const activeTargetAnchors = useMemo(
-    () => centeredAnchors(TARGET_ANCHORS, round.cards.length),
-    [round.cards.length],
-  );
-  const activeSourceAnchors = useMemo(
-    () => centeredAnchors(SOURCE_ANCHORS, round.cards.length),
-    [round.cards.length],
-  );
+  const activeTargetAnchors = layout.targetAnchors;
+  const activeSourceAnchors = layout.sourceAnchors;
 
   const resetRound = useCallback((nextRound: RoundState) => {
     setRound(nextRound);
@@ -275,21 +330,21 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
 
     activeTargetAnchors.forEach((anchor, index) => {
       const cx = rect.left + (anchor.x / 100) * rect.width;
-      const cy = rect.top + (layout.targetY / 100) * rect.height;
+      const cy = rect.top + layout.targetTop;
       const distance = Math.hypot(clientX - cx, clientY - cy);
       if (!best || distance < best.distance) best = { location: 'target', index, distance };
     });
 
     activeSourceAnchors.forEach((anchor, index) => {
       const cx = rect.left + (anchor.x / 100) * rect.width;
-      const cy = rect.top + (layout.sourceY / 100) * rect.height;
+      const cy = rect.top + layout.sourceTop;
       const distance = Math.hypot(clientX - cx, clientY - cy);
       if (!best || distance < best.distance) best = { location: 'source', index, distance };
     });
 
     if (!best || best.distance > threshold) return null;
     return { location: best.location, index: best.index };
-  }, [activeSourceAnchors, activeTargetAnchors, layout.sourceY, layout.targetY]);
+  }, [activeSourceAnchors, activeTargetAnchors, layout.sourceTop, layout.targetTop]);
 
   const placeTokenInArrays = useCallback((candidate: { location: TokenLocation; index: number } | null) => {
     if (!dragState) return;
@@ -477,7 +532,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
       <div ref={playfieldRef} className="relative h-full w-full">
         <div
           className="pointer-events-none absolute left-1/2 z-20 -translate-x-1/2"
-          style={{ top: `${layout.ribbonTop}%`, width: `${layout.ribbonWidth}%` }}
+          style={{ top: layout.ribbonTop, width: `${layout.ribbonWidth}%` }}
         >
           <img src={ribbonAsset} alt="" className="h-auto w-full object-contain" draggable={false} />
           <div className="absolute inset-0 flex items-center justify-center px-[10%] pt-[5%] text-center">
@@ -494,7 +549,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
             <div
               key={`source-${round.id}-${index}`}
               className="absolute -translate-x-1/2 -translate-y-1/2"
-              style={{ left: `${anchor.x}%`, top: `${layout.sourceY}%` }}
+              style={{ left: `${anchor.x}%`, top: layout.sourceTop }}
             >
               {token && !hidden && (
                 <FractionCardTile
@@ -514,10 +569,13 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
           animate={{ y: [0, -7, 0] }}
           transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
           className="pointer-events-none absolute right-[3%] z-20 drop-shadow-[0_18px_28px_rgba(0,0,0,0.65)]"
-          style={{ top: `${layout.goblin.top}%`, width: layout.goblin.width }}
+          style={{ top: layout.goblinTop, width: layout.goblinWidth }}
         />
 
-        <div className="absolute right-[4%] top-[62%] z-20 rounded-xl border border-cyan-200/40 bg-[#0a1f56]/85 px-3 py-2 shadow-[0_10px_22px_rgba(0,0,0,0.45)]">
+        <div
+          className="absolute right-[4%] z-20 rounded-xl border border-cyan-200/40 bg-[#0a1f56]/85 px-3 py-2 shadow-[0_10px_22px_rgba(0,0,0,0.45)]"
+          style={{ top: layout.livesTop }}
+        >
           <div className="mb-1 text-[10px] font-black uppercase tracking-[0.15em] text-cyan-100">Lives</div>
           <div className="flex gap-1">
             {Array.from({ length: 10 }).map((_, idx) => (
@@ -538,7 +596,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
                 className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-[1rem] border-2 border-dashed border-cyan-200/60 bg-cyan-200/20"
                 style={{
                   left: `${anchor.x}%`,
-                  top: `${layout.targetY}%`,
+                  top: layout.targetTop,
                   width: layout.slotSize.width,
                   height: layout.slotSize.height,
                 }}
@@ -547,7 +605,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
                 className="pointer-events-none absolute z-[9] -translate-x-1/2 -translate-y-1/2 rounded-[0.8rem] border border-yellow-100/22 bg-gradient-to-b from-[#9a6f45] to-[#6a4728] shadow-[0_12px_20px_rgba(0,0,0,0.45)]"
                 style={{
                   left: `${anchor.x}%`,
-                  top: `${layout.pedestalY}%`,
+                  top: layout.pedestalTop,
                   width: layout.slotSize.width + 8,
                   height: Math.max(26, layout.slotSize.height * 0.24),
                 }}
@@ -555,7 +613,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
 
               <div
                 className="absolute z-[11] -translate-x-1/2 -translate-y-1/2"
-                style={{ left: `${anchor.x}%`, top: `${layout.targetY}%` }}
+                style={{ left: `${anchor.x}%`, top: layout.targetTop }}
               >
                 {token && !hidden && (
                   <FractionCardTile
@@ -569,7 +627,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
               {index < activeTargetAnchors.length - 1 && (
                 <div
                   className="pointer-events-none absolute z-[12] -translate-x-1/2 -translate-y-1/2 text-cyan-200/85"
-                  style={{ left: `${(anchor.x + activeTargetAnchors[index + 1].x) / 2}%`, top: `${layout.pedestalY}%` }}
+                  style={{ left: `${(anchor.x + activeTargetAnchors[index + 1].x) / 2}%`, top: layout.pedestalTop }}
                 >
                   <span className="text-[clamp(1.15rem,2.8vw,1.8rem)] font-black">&gt;</span>
                 </div>

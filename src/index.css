@@ -4848,6 +4848,18 @@ button.avatar-hero-arrow:not(:disabled):active {
   margin-top: 0.2rem !important;
 }
 
+/* A single global dock is rendered by App.tsx during gameplay. */
+.screen-gameplay .unified-minigame-hud-enabled .game-shell-zone-actions {
+  display: none !important;
+}
+
+/* Hide legacy per-game top bars so every minigame uses the same unified top HUD. */
+.screen-gameplay .unified-minigame-hud-enabled .fixed.inset-0 > [class*="left-0 right-0 z-30 flex items-center justify-between"],
+.screen-gameplay .unified-minigame-hud-enabled .fixed.inset-0 > [class*="inset-x-0 top-0"],
+.screen-gameplay .unified-minigame-hud-enabled .fixed.inset-0 > [class*="top-[calc(env(safe-area-inset-top)"] {
+  display: none !important;
+}
+
 .screen-gameplay .unified-minigame-hud-enabled .game-shell-host,
 .screen-gameplay .unified-minigame-hud-enabled .game-shell-contract,
 .screen-gameplay .unified-minigame-hud-enabled .structured-game-layout,
@@ -4866,6 +4878,13 @@ button.avatar-hero-arrow:not(:disabled):active {
 .screen-gameplay .unified-minigame-hud-enabled {
   --shared-minigame-hud-row-height: clamp(2.45rem, 6.75vh, 3.35rem);
   --shared-minigame-hud-padding-y: clamp(0.15rem, 0.65vh, 0.42rem);
+  --shared-minigame-dock-height: clamp(3.65rem, 8.6vh, 4.8rem);
+  --shared-minigame-dock-gap: clamp(0.35rem, 1vh, 0.7rem);
+  --shared-minigame-reserved-bottom: calc(
+    env(safe-area-inset-bottom)
+    + var(--shared-minigame-dock-height)
+    + var(--shared-minigame-dock-gap)
+  );
   --shared-minigame-hud-reserved-top: calc(
     env(safe-area-inset-top)
     + 0.5rem
@@ -4878,7 +4897,12 @@ button.avatar-hero-arrow:not(:disabled):active {
 .screen-gameplay .unified-minigame-hud-enabled .structured-game-layout {
   position: relative;
   padding-top: var(--shared-minigame-hud-reserved-top) !important;
+  padding-bottom: var(--shared-minigame-reserved-bottom) !important;
   box-sizing: border-box;
+}
+
+.screen-gameplay .unified-minigame-hud-enabled .structured-game-layout > * {
+  min-height: 0 !important;
 }
 
 /* Some legacy minigames still mount using `fixed inset-0`.
@@ -4887,10 +4911,25 @@ button.avatar-hero-arrow:not(:disabled):active {
   position: absolute !important;
   top: var(--shared-minigame-hud-reserved-top) !important;
   right: 0 !important;
-  bottom: 0 !important;
+  bottom: var(--shared-minigame-reserved-bottom) !important;
   left: 0 !important;
   height: auto !important;
-  max-height: calc(100% - var(--shared-minigame-hud-reserved-top)) !important;
+  max-height: calc(100% - var(--shared-minigame-hud-reserved-top) - var(--shared-minigame-reserved-bottom)) !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.screen-gameplay .unified-minigame-hud-enabled .fixed.inset-0 > .relative,
+.screen-gameplay .unified-minigame-hud-enabled .fixed.inset-0 > .relative > .relative {
+  min-height: 0 !important;
+  max-height: 100% !important;
+}
+
+/* Ensure any full-screen utility class stays inside the contracted gameplay viewport. */
+.screen-gameplay .unified-minigame-hud-enabled .fixed.inset-0.h-screen,
+.screen-gameplay .unified-minigame-hud-enabled .fixed.inset-0.w-screen {
+  height: auto !important;
+  width: auto !important;
 }
 
 
