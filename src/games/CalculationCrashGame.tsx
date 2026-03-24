@@ -1,15 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import {
-  AlertCircle,
-  ChevronRight,
-  Flag,
-  Play,
-  RotateCcw,
-  Trophy,
-} from 'lucide-react';
-import GameActionDock from '../components/GameActionDock';
+import { AlertCircle, ChevronRight, Play, RotateCcw, Trophy } from 'lucide-react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
+import GameActionDock from '../components/GameActionDock';
 
 interface CalculationCrashGameProps {
   levelId: number;
@@ -31,19 +24,18 @@ interface Question {
 
 const TOTAL_STEPS = 6;
 const TRACK_START_PERCENT = 10;
-const TRACK_FINISH_PERCENT = 91;
+const TRACK_FINISH_PERCENT = 90;
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
-
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
 const shuffle = <T,>(items: T[]): T[] => {
-  const arr = [...items];
-  for (let i = arr.length - 1; i > 0; i -= 1) {
+  const list = [...items];
+  for (let i = list.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+    [list[i], list[j]] = [list[j], list[i]];
   }
-  return arr;
+  return list;
 };
 
 const resolveDifficulty = (levelId: number) => clamp(levelId || 1, 1, 10);
@@ -60,18 +52,19 @@ const pickOperation = (difficulty: number): Operation => {
 const createQuestion = (levelId: number): Question => {
   const difficulty = resolveDifficulty(levelId);
   const operation = pickOperation(difficulty);
+
   let left = 0;
   let right = 0;
   let answer = 0;
 
   if (operation === '+') {
-    const max = difficulty <= 3 ? 30 : difficulty <= 6 ? 140 : 500;
-    left = randomInt(8, max);
+    const max = difficulty <= 3 ? 40 : difficulty <= 6 ? 180 : 650;
+    left = randomInt(9, max);
     right = randomInt(7, max);
     answer = left + right;
   } else if (operation === '-') {
-    const max = difficulty <= 3 ? 45 : difficulty <= 6 ? 180 : 620;
-    left = randomInt(18, max);
+    const max = difficulty <= 3 ? 50 : difficulty <= 6 ? 220 : 760;
+    left = randomInt(16, max);
     right = randomInt(6, left - 1);
     answer = left - right;
   } else if (operation === 'x') {
@@ -85,13 +78,11 @@ const createQuestion = (levelId: number): Question => {
     left = right * answer;
   }
 
+  const spread = Math.max(4, Math.round(Math.abs(answer) * 0.25));
   const distractors = new Set<number>();
-  const spread = Math.max(3, Math.round(Math.abs(answer) * 0.2));
   while (distractors.size < 3) {
     const candidate = answer + randomInt(-spread, spread);
-    if (candidate !== answer && candidate >= 0) {
-      distractors.add(candidate);
-    }
+    if (candidate !== answer && candidate >= 0) distractors.add(candidate);
   }
 
   return {
@@ -108,7 +99,7 @@ const progressToPercent = (steps: number) => {
 
 const resolveEnemyMoveInterval = (levelId: number) => {
   const difficulty = resolveDifficulty(levelId);
-  return Math.max(2600, 5200 - (difficulty * 220));
+  return Math.max(2300, 4800 - (difficulty * 220));
 };
 
 const computeStars = (correctAnswers: number, wrongAnswers: number, enemyProgress: number) => {
@@ -123,8 +114,7 @@ const computeStars = (correctAnswers: number, wrongAnswers: number, enemyProgres
 
 const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
   levelId,
-  avatarId: _avatarId,
-  useSharedTopHud: _useSharedTopHud,
+  useSharedTopHud = false,
   onVictory,
   onGameOver,
   onBack,
@@ -133,6 +123,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
   const [score, setScore] = useState(0);
   const [playerProgress, setPlayerProgress] = useState(0);
   const [enemyProgress, setEnemyProgress] = useState(0);
+  const [combo, setCombo] = useState(0);
   const [question, setQuestion] = useState<Question>(() => createQuestion(levelId));
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [wrongAnswers, setWrongAnswers] = useState(0);
@@ -140,13 +131,12 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
 
   const feedbackTimerRef = useRef<number | null>(null);
   const submittedResultRef = useRef(false);
-
   const difficulty = useMemo(() => resolveDifficulty(levelId), [levelId]);
   const playerX = useMemo(() => progressToPercent(playerProgress), [playerProgress]);
   const enemyX = useMemo(() => progressToPercent(enemyProgress), [enemyProgress]);
 
   const clearFeedbackTimer = () => {
-    if (feedbackTimerRef.current) {
+    if (feedbackTimerRef.current !== null) {
       window.clearTimeout(feedbackTimerRef.current);
       feedbackTimerRef.current = null;
     }
@@ -157,7 +147,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
     setFeedback({ tone, text });
     feedbackTimerRef.current = window.setTimeout(() => {
       setFeedback(null);
-    }, 850);
+    }, 820);
   };
 
   const startRace = () => {
@@ -167,6 +157,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
     setScore(0);
     setPlayerProgress(0);
     setEnemyProgress(0);
+    setCombo(0);
     setCorrectAnswers(0);
     setWrongAnswers(0);
     setFeedback(null);
@@ -175,48 +166,41 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
 
   useEffect(() => {
     if (status !== 'playing') return undefined;
-
     const interval = window.setInterval(() => {
       setEnemyProgress((prev) => Math.min(TOTAL_STEPS, prev + 1));
     }, resolveEnemyMoveInterval(levelId));
-
-    return () => {
-      window.clearInterval(interval);
-    };
+    return () => window.clearInterval(interval);
   }, [levelId, status]);
 
   useEffect(() => {
     if (status !== 'playing') return;
-
     if (playerProgress >= TOTAL_STEPS) {
       setStatus('won');
       return;
     }
-
     if (enemyProgress >= TOTAL_STEPS) {
       setStatus('lost');
     }
   }, [enemyProgress, playerProgress, status]);
 
   useEffect(() => {
-    if (status === 'start') {
-      setQuestion(createQuestion(levelId));
-    }
+    if (status === 'start') setQuestion(createQuestion(levelId));
   }, [levelId, status]);
 
-  useEffect(() => () => {
-    clearFeedbackTimer();
-  }, []);
+  useEffect(() => () => clearFeedbackTimer(), []);
 
   const handleAnswer = (choice: number) => {
     if (status !== 'playing') return;
 
     if (choice === question.answer) {
+      const nextCombo = combo + 1;
+      setCombo(nextCombo);
       setCorrectAnswers((prev) => prev + 1);
       setPlayerProgress((prev) => Math.min(TOTAL_STEPS, prev + 1));
-      setScore((prev) => prev + 140 + (difficulty * 14));
-      queueFeedback('success', 'Correct! You sprint ahead.');
+      setScore((prev) => prev + 120 + (difficulty * 14) + (nextCombo * 15));
+      queueFeedback('success', 'Correct! Dash boost.');
     } else {
+      setCombo(0);
       setWrongAnswers((prev) => prev + 1);
       setEnemyProgress((prev) => Math.min(TOTAL_STEPS, prev + 1));
       queueFeedback('error', `Not quite. Correct answer: ${question.answer}`);
@@ -228,8 +212,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
   const submitVictory = () => {
     if (submittedResultRef.current) return;
     submittedResultRef.current = true;
-    const stars = computeStars(correctAnswers, wrongAnswers, enemyProgress);
-    onVictory(stars, score);
+    onVictory(computeStars(correctAnswers, wrongAnswers, enemyProgress), score);
   };
 
   const submitDefeat = () => {
@@ -238,51 +221,58 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
     onGameOver(score);
   };
 
+  const topPadding = useSharedTopHud
+    ? 'pt-[calc(env(safe-area-inset-top)+5.9rem)]'
+    : 'pt-[calc(env(safe-area-inset-top)+1rem)]';
+
   return (
     <div className="relative h-full w-full overflow-hidden text-white">
       <GameplaySceneBackdrop gameType="calculation_clash" minimalDecor />
 
-      <div className="relative z-10 flex h-full flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.8rem)] pt-[calc(env(safe-area-inset-top)+3.6rem)] md:px-5">
-        <section className="mb-3 rounded-2xl border border-cyan-100/25 bg-[#16356f]/82 px-4 py-3 text-center shadow-[0_12px_28px_rgba(2,6,23,0.45)]">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/80">Calculation Cup</p>
-          <p className="mt-1 text-[clamp(1.35rem,5vw,2.25rem)] font-black tracking-[0.03em] text-white">
-            {question.prompt}
-          </p>
+      <div className={`relative z-10 flex h-full flex-col px-3 md:px-4 ${topPadding} pb-[calc(env(safe-area-inset-bottom)+4.9rem)]`}>
+        <section className="mx-auto w-full max-w-5xl">
+          <div className="rounded-[1.15rem] border border-amber-200/35 bg-[linear-gradient(180deg,rgba(37,24,12,0.86),rgba(17,11,7,0.9))] px-4 py-3 text-center shadow-[0_12px_28px_rgba(2,6,23,0.45)]">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-200/90">Calculation Cup</p>
+            <p className="mt-1 text-[clamp(1.3rem,4.8vw,2.2rem)] font-black tracking-[0.03em] text-amber-50">
+              {question.prompt}
+            </p>
+            <p className="mt-1 text-sm font-black uppercase tracking-[0.08em] text-amber-100/90">
+              First to the castle wins!
+            </p>
+          </div>
         </section>
 
-        <section className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border border-white/20 bg-[linear-gradient(180deg,rgba(226,249,255,0.86)_0%,rgba(191,236,249,0.84)_38%,rgba(125,196,226,0.88)_100%)] shadow-[0_12px_30px_rgba(2,6,23,0.38)]">
-          <div className="absolute left-[7%] top-[8%] rounded-full border border-slate-900/15 bg-white/72 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-slate-800">
-            You: {playerProgress}/{TOTAL_STEPS}
+        <section className="relative mt-2 min-h-0 flex-1 overflow-hidden rounded-3xl border border-white/20 bg-[linear-gradient(180deg,rgba(172,222,244,0.18)_0%,rgba(44,111,155,0.22)_100%)] shadow-[0_12px_30px_rgba(2,6,23,0.38)]">
+          <div className="absolute left-3 top-3 rounded-full border border-amber-200/55 bg-[linear-gradient(180deg,#fde68a,#f59e0b)] px-3 py-1 text-[11px] font-black uppercase tracking-[0.08em] text-amber-950 shadow">
+            You {playerProgress}/{TOTAL_STEPS}
           </div>
-          <div className="absolute right-[7%] top-[8%] rounded-full border border-slate-900/15 bg-white/72 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-slate-800">
-            Enemy: {enemyProgress}/{TOTAL_STEPS}
+          <div className="absolute right-3 top-3 rounded-full border border-red-200/45 bg-[linear-gradient(180deg,#ef4444,#b91c1c)] px-3 py-1 text-[11px] font-black uppercase tracking-[0.08em] text-white shadow">
+            Rival {enemyProgress}/{TOTAL_STEPS}
           </div>
 
-          <div className="absolute inset-x-[4%] top-[26%] h-[56%] overflow-hidden rounded-[1.9rem] border-2 border-slate-800/35 bg-[linear-gradient(180deg,#8da6d4_0%,#7893c4_100%)]">
-            <div className="race-road-stripes absolute inset-0 opacity-65" />
-            <div className="absolute inset-x-0 top-1/2 h-[4px] -translate-y-1/2 bg-[repeating-linear-gradient(to_right,rgba(255,255,255,0.95)_0_24px,transparent_24px_52px)] opacity-85" />
-            <div className="absolute bottom-[8%] left-0 right-0 h-[1px] bg-white/35" />
+          <div className="absolute inset-x-[4%] top-[16%] h-[52%] overflow-hidden rounded-[1.6rem] border-2 border-slate-900/35 bg-[linear-gradient(180deg,#8da6d4_0%,#7893c4_100%)]">
+            <div className="race-road-stripes absolute inset-0 opacity-70" />
+            <div className="absolute inset-x-[4%] top-1/2 h-[4px] -translate-y-1/2 bg-[repeating-linear-gradient(to_right,rgba(255,255,255,0.95)_0_22px,transparent_22px_50px)] opacity-85" />
 
-            <div className="absolute bottom-0 right-[8.2%] top-0 w-[10px] bg-[repeating-linear-gradient(180deg,#ffffff_0_10px,#1e293b_10px_20px)] opacity-92" />
-            <Flag className="absolute right-[7.2%] top-[7%] h-6 w-6 text-amber-200 drop-shadow" />
+            <div className="absolute bottom-0 right-[8.2%] top-0 w-[10px] bg-[repeating-linear-gradient(180deg,#ffffff_0_10px,#111827_10px_20px)] opacity-92" />
 
             <motion.div
-              className="absolute left-0 top-[31%]"
+              className="absolute left-0 top-[32%]"
               animate={{ x: `${playerX}%` }}
-              transition={{ type: 'spring', stiffness: 220, damping: 24 }}
+              transition={{ type: 'spring', stiffness: 230, damping: 24 }}
             >
-              <div className="flex h-[clamp(2.8rem,7vw,4.4rem)] w-[clamp(4.4rem,10vw,6.2rem)] -translate-x-1/2 items-center justify-center rounded-[1rem] border-2 border-sky-100/80 bg-[linear-gradient(145deg,#f87171,#fb7185)] shadow-[0_10px_20px_rgba(190,24,93,0.35)]">
-                <span className="text-xs font-black uppercase tracking-[0.1em]">YOU</span>
+              <div className="relative flex h-[clamp(3rem,7.8vw,4.8rem)] w-[clamp(4.8rem,11vw,6.8rem)] -translate-x-1/2 items-center justify-center rounded-[1rem] border-2 border-cyan-100/85 bg-[linear-gradient(145deg,#38bdf8,#2563eb)] shadow-[0_10px_24px_rgba(2,132,199,0.45)]">
+                <span className="text-xs font-black uppercase tracking-[0.08em]">YOU</span>
               </div>
             </motion.div>
 
             <motion.div
-              className="absolute left-0 top-[61%]"
+              className="absolute left-0 top-[63%]"
               animate={{ x: `${enemyX}%` }}
-              transition={{ type: 'spring', stiffness: 220, damping: 24 }}
+              transition={{ type: 'spring', stiffness: 230, damping: 24 }}
             >
-              <div className="flex h-[clamp(2.8rem,7vw,4.4rem)] w-[clamp(4.4rem,10vw,6.2rem)] -translate-x-1/2 items-center justify-center rounded-[1rem] border-2 border-emerald-100/85 bg-[linear-gradient(145deg,#22c55e,#14b8a6)] shadow-[0_10px_20px_rgba(13,148,136,0.35)]">
-                <span className="text-xs font-black uppercase tracking-[0.1em]">Enemy</span>
+              <div className="relative flex h-[clamp(3rem,7.8vw,4.8rem)] w-[clamp(4.8rem,11vw,6.8rem)] -translate-x-1/2 items-center justify-center rounded-[1rem] border-2 border-rose-100/85 bg-[linear-gradient(145deg,#ef4444,#b91c1c)] shadow-[0_10px_24px_rgba(220,38,38,0.45)]">
+                <span className="text-xs font-black uppercase tracking-[0.08em]">RIVAL</span>
               </div>
             </motion.div>
           </div>
@@ -294,7 +284,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
-                className={`absolute left-1/2 top-[13%] -translate-x-1/2 rounded-full border px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] ${
+                className={`absolute left-1/2 top-[8%] -translate-x-1/2 rounded-full border px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] ${
                   feedback.tone === 'success'
                     ? 'border-emerald-200/75 bg-emerald-500/20 text-emerald-950'
                     : 'border-rose-200/75 bg-rose-500/20 text-rose-950'
@@ -306,18 +296,28 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
           </AnimatePresence>
         </section>
 
-        <section className="mt-3 grid grid-cols-2 gap-2.5 md:mt-4 md:gap-3">
-          {question.options.map((option, idx) => (
-            <button
-              key={`${question.prompt}-${option}-${idx}`}
-              type="button"
-              onClick={() => handleAnswer(option)}
-              disabled={status !== 'playing'}
-              className="rounded-2xl border border-amber-100/55 bg-[linear-gradient(180deg,#fbcf6d_0%,#f59e0b_100%)] px-3 py-3 text-center text-[clamp(1.25rem,5vw,2rem)] font-black text-amber-950 shadow-[0_10px_20px_rgba(146,64,14,0.35)] transition active:scale-[0.98] disabled:opacity-45"
-            >
-              {option}
-            </button>
-          ))}
+        <section className="mt-2 rounded-[1.2rem] border border-amber-200/30 bg-[linear-gradient(180deg,rgba(15,23,42,0.86),rgba(15,23,42,0.95))] px-3 py-2.5 shadow-[0_12px_24px_rgba(2,6,23,0.5)]">
+          <div className="rounded-full border border-amber-200/35 bg-slate-900/60 px-3 py-1 text-center text-[11px] font-black uppercase tracking-[0.08em] text-amber-200">
+            Choose Wisely - Cast Your Answer!
+          </div>
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            {question.options.map((option, idx) => (
+              <button
+                key={`${question.prompt}-${option}-${idx}`}
+                type="button"
+                onClick={() => handleAnswer(option)}
+                disabled={status !== 'playing'}
+                className="rounded-[0.95rem] border border-amber-100/55 bg-[linear-gradient(180deg,#fcd66b_0%,#f59e0b_100%)] px-3 py-2.5 text-center text-[clamp(1.15rem,4.8vw,1.8rem)] font-black text-amber-950 shadow-[0_8px_16px_rgba(146,64,14,0.35)] transition active:scale-[0.98] disabled:opacity-45"
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+          <div className="mt-2 flex items-center justify-center gap-2 rounded-full border border-orange-200/40 bg-[linear-gradient(90deg,rgba(249,115,22,0.2),rgba(59,130,246,0.2))] px-3 py-1.5">
+            <span className="text-lg">🔥</span>
+            <span className="text-lg font-black uppercase tracking-[0.08em] text-amber-200">Combo x{combo}</span>
+            <span className="text-sm font-black text-cyan-200">Dash Boost!</span>
+          </div>
         </section>
       </div>
 
@@ -338,7 +338,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
             <div className="w-full max-w-xl rounded-3xl border border-cyan-300/35 bg-slate-900/95 p-8 text-center">
               <h2 className="text-4xl font-black uppercase tracking-tight text-cyan-100">Calculation Cup</h2>
               <p className="mt-3 text-sm text-cyan-50/80">
-                Beat the rival racer to the finish line. Every correct calculation advances your car one stage.
+                Beat your rival to the finish line. Correct answers push your racer forward.
               </p>
               <button
                 type="button"
@@ -363,7 +363,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
             <div className="w-full max-w-xl rounded-3xl border border-amber-300/40 bg-slate-900/96 p-8 text-center">
               <Trophy className="mx-auto h-14 w-14 text-amber-300" />
               <h2 className="mt-3 text-4xl font-black uppercase text-amber-100">Race Won</h2>
-              <p className="mt-2 text-sm text-cyan-50/80">You reached the finish line first in the Calculation Cup.</p>
+              <p className="mt-2 text-sm text-cyan-50/80">You reached the castle first in the Calculation Cup.</p>
               <p className="mt-2 text-lg font-black text-cyan-100">Score {score.toLocaleString()}</p>
               <div className="mt-6 flex justify-center gap-3">
                 <button
@@ -397,7 +397,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
             <div className="w-full max-w-xl rounded-3xl border border-rose-300/35 bg-slate-900/96 p-8 text-center">
               <AlertCircle className="mx-auto h-14 w-14 text-rose-300" />
               <h2 className="mt-3 text-4xl font-black uppercase text-rose-100">Race Lost</h2>
-              <p className="mt-2 text-sm text-cyan-50/80">The enemy crossed first. Try again and tighten your answers.</p>
+              <p className="mt-2 text-sm text-cyan-50/80">The rival crossed first. Try again and tighten your answers.</p>
               <p className="mt-2 text-lg font-black text-cyan-100">Score {score.toLocaleString()}</p>
               <div className="mt-6 flex justify-center gap-3">
                 <button
@@ -433,3 +433,4 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
 };
 
 export default CalculationCupGame;
+
