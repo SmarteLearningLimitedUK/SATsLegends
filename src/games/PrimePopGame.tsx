@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplayHUD from '../components/GameplayHUD';
 import GameActionDock from '../components/GameActionDock';
-import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { AVATARS } from '../constants';
 import primePopBackground from '../assets/maps/primepopbkground.jpg';
 
@@ -517,7 +516,13 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
 
   return (
     <div className="fixed inset-0 z-20 h-screen w-screen overflow-hidden select-none">
-      <GameplaySceneBackdrop gameType="prime_pop" backgroundOverride={primePopBackground} />
+      <img
+        src={primePopBackground}
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+      />
 
       <div className="relative z-10 flex h-full w-full flex-col pt-[env(safe-area-inset-top)]">
         <GameplayHUD
@@ -537,7 +542,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
         />
 
         <div className="relative min-h-0 flex-1 overflow-hidden bg-transparent">
-          <div className="absolute inset-[20px] z-10 overflow-hidden rounded-[1.2rem]">
+          <div className="absolute inset-[20px] z-10 overflow-hidden">
             <div
               className="pointer-events-none absolute left-0 right-0 z-20 rounded-full border border-rose-300/80 bg-rose-500/35"
               style={{ top: `${DANGER_LINE_Y}%`, height: '0.34rem' }}
