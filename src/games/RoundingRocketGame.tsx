@@ -208,7 +208,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
   };
 
   const topPadding = useSharedTopHud
-    ? 'pt-[calc(env(safe-area-inset-top)+5.45rem)]'
+    ? 'pt-[calc(env(safe-area-inset-top)+4.95rem)]'
     : 'pt-[calc(env(safe-area-inset-top)+1.2rem)]';
 
   return (
@@ -223,13 +223,13 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(4,9,26,0.2),rgba(2,7,20,0.78)_82%)]" />
 
       <main
-        className={`relative z-20 flex h-full w-full flex-col items-center ${topPadding} px-[max(1rem,env(safe-area-inset-left))] pb-[max(6.2rem,calc(env(safe-area-inset-bottom)+5.4rem))]`}
+        className={`relative z-20 flex h-full w-full flex-col items-center ${topPadding} px-[max(1rem,env(safe-area-inset-left))] pb-[max(7.4rem,calc(env(safe-area-inset-bottom)+6.25rem))]`}
       >
-        <div className="flex h-full w-full max-w-[30rem] flex-col items-center justify-start gap-3 py-1">
-          <section className="flex w-full flex-col items-center gap-4 text-center">
-            <div className="mt-2">
+        <div className="flex h-full w-full max-w-[28rem] flex-col items-center justify-start gap-2 py-0.5">
+          <section className="flex w-full flex-col items-center gap-2.5 text-center">
+            <div>
               <p className="text-xs font-black tracking-[0.3em] text-amber-200 uppercase">Mission</p>
-              <h1 className="mt-1.5 text-[clamp(1.18rem,5.4vw,1.8rem)] font-black tracking-tight text-white">
+              <h1 className="mt-1 text-[clamp(1rem,4.85vw,1.5rem)] font-black leading-tight tracking-tight text-white">
                 {missionText}
               </h1>
             </div>
@@ -238,33 +238,33 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
               key={problem.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="relative w-[92%] rounded-[1.05rem] border border-cyan-200/26 bg-[linear-gradient(180deg,rgba(15,31,70,0.82),rgba(6,20,54,0.92))] px-3 py-2.5 shadow-[0_14px_28px_rgba(2,6,23,0.48)]"
+              className="relative w-[90%] rounded-[0.95rem] border border-cyan-200/26 bg-[linear-gradient(180deg,rgba(15,31,70,0.82),rgba(6,20,54,0.92))] px-2.5 py-2 shadow-[0_12px_22px_rgba(2,6,23,0.42)]"
             >
-              <div className="rounded-[0.8rem] bg-slate-950/34 px-2.5 py-2.5">
-                <span className="text-[clamp(1.6rem,8.1vw,2.75rem)] font-black tabular-nums tracking-tight text-white [text-shadow:0_5px_12px_rgba(14,165,233,0.22)]">
+              <div className="rounded-[0.72rem] bg-slate-950/34 px-2 py-2">
+                <span className="text-[clamp(1.3rem,6.8vw,2.25rem)] font-black tabular-nums tracking-tight text-white [text-shadow:0_4px_10px_rgba(14,165,233,0.22)]">
                   {displayNumber}
                 </span>
               </div>
             </motion.div>
 
             <div className="w-full text-center">
-              <p className="text-[clamp(1rem,4.2vw,1.35rem)] font-bold text-slate-200">Your Answer</p>
-              <div className="mx-auto mt-2 inline-flex min-w-[12.5rem] items-center justify-center rounded-full border border-amber-300/62 bg-[linear-gradient(180deg,rgba(17,24,39,0.92),rgba(10,16,32,0.96))] px-5 py-2.5 shadow-[0_0_20px_rgba(250,204,21,0.28)]">
-                <span className="text-[clamp(1.4rem,6.2vw,2.25rem)] font-black tabular-nums text-amber-200">
+              <p className="text-[clamp(0.92rem,3.9vw,1.16rem)] font-bold text-slate-200">Your Answer</p>
+              <div className="mx-auto mt-1.5 inline-flex min-w-[10.5rem] items-center justify-center rounded-full border border-amber-300/62 bg-[linear-gradient(180deg,rgba(17,24,39,0.92),rgba(10,16,32,0.96))] px-4 py-2 shadow-[0_0_16px_rgba(250,204,21,0.26)]">
+                <span className="text-[clamp(1.25rem,5.8vw,1.9rem)] font-black tabular-nums text-amber-200">
                   {userInput || '--'}
                 </span>
               </div>
             </div>
           </section>
 
-          <section className="mb-1 w-full">
-            <div className="mb-3 grid grid-cols-3 gap-2">
+          <section className="w-full">
+            <div className="mb-2 grid grid-cols-3 gap-1.5">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, '.', 0, 'DEL'].map((key) => (
                 <button
                   key={key}
                   onClick={() => handleKeypad(String(key))}
                   disabled={roundEnded || (key === '.' && !problem.target.includes('decimal'))}
-                  className="rounded-[0.95rem] border border-cyan-200/42 bg-[linear-gradient(180deg,rgba(15,31,70,0.86),rgba(6,20,54,0.94))] px-2 py-3 text-[clamp(1rem,4.8vw,1.6rem)] font-black text-cyan-50 shadow-[0_10px_20px_rgba(2,6,23,0.4)] transition hover:brightness-110 disabled:opacity-40"
+                  className="rounded-[0.9rem] border border-cyan-200/42 bg-[linear-gradient(180deg,rgba(15,31,70,0.86),rgba(6,20,54,0.94))] px-2 py-2 text-[clamp(0.95rem,4.35vw,1.3rem)] font-black text-cyan-50 shadow-[0_9px_16px_rgba(2,6,23,0.35)] transition hover:brightness-110 disabled:opacity-40"
                 >
                   {key}
                 </button>
@@ -274,11 +274,10 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
             <button
               onClick={submitAnswer}
               disabled={!userInput || roundEnded}
-              className="w-full rounded-[1.2rem] border border-fuchsia-300/52 bg-[linear-gradient(180deg,#1d4ed8,#7c3aed)] py-3.5 text-[clamp(1.06rem,4.8vw,1.5rem)] font-black tracking-[0.08em] text-white uppercase shadow-[0_14px_28px_rgba(59,130,246,0.38)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
+              className="mx-auto block w-[92%] rounded-[1.05rem] border border-fuchsia-300/52 bg-[linear-gradient(180deg,#1d4ed8,#7c3aed)] py-2.5 text-[clamp(0.95rem,4.2vw,1.25rem)] font-black tracking-[0.08em] text-white uppercase shadow-[0_12px_22px_rgba(59,130,246,0.34)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
             >
               Submit
             </button>
-            <p className="mt-2 text-center text-sm font-medium text-slate-300/90">Enter the rounded value, then submit</p>
           </section>
         </div>
       </main>
