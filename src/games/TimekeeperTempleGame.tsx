@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Zap,
-  Clock,
   Trophy,
   RotateCcw,
   Play,
@@ -9,10 +8,10 @@ import {
   CheckCircle2,
   XCircle,
   Flame,
-  History,
-  ChevronLeft,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import GameActionDock from '../components/GameActionDock';
+import clockFaceImage from '../assets/maps/gold_rimmed_clock_transparent.png';
 
 interface TimekeeperTempleGameProps {
   levelId: number;
@@ -39,83 +38,42 @@ const scoreToStars = (score: number, targetScore: number) => {
 const AnalogueClock = ({
   hour,
   minute,
-  onTimeChange,
   disabled,
+  sizeStyle,
 }: {
   hour: number;
   minute: number;
-  onTimeChange: (h: number, m: number) => void;
   disabled: boolean;
+  sizeStyle?: React.CSSProperties;
 }) => {
-  const clockRef = useRef<HTMLDivElement>(null);
-
-  const handleInteraction = (e: React.MouseEvent | React.TouchEvent) => {
-    if (disabled || !clockRef.current) return;
-
-    const rect = clockRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
-
-    const angle = Math.atan2(clientY - centerY, clientX - centerX) * (180 / Math.PI) + 90;
-    const normalizedAngle = (angle + 360) % 360;
-
-    const dist = Math.sqrt(Math.pow(clientX - centerX, 2) + Math.pow(clientY - centerY, 2));
-    const radius = rect.width / 2;
-
-    if (dist > radius * 0.55) {
-      const rawMin = Math.round(normalizedAngle / 6) % 60;
-      const snappedMin = Math.round(rawMin / 5) * 5;
-      onTimeChange(hour, snappedMin % 60);
-      return;
-    }
-
-    const newHour = Math.round(normalizedAngle / 30) % 12 || 12;
-    onTimeChange(newHour, minute);
-  };
-
   return (
     <div
-      ref={clockRef}
-      onMouseDown={handleInteraction}
-      onTouchStart={handleInteraction}
-      className={`relative flex h-72 w-72 cursor-crosshair touch-none items-center justify-center rounded-full border-8 border-indigo-500 bg-slate-900 shadow-[0_0_50px_rgba(99,102,241,0.3)] transition-opacity ${disabled ? 'opacity-80' : 'opacity-100'}`}
+      className={`relative flex items-center justify-center transition-opacity ${disabled ? 'opacity-80' : 'opacity-100'}`}
+      style={sizeStyle}
     >
-      {[...Array(12)].map((_, i) => (
-        <div
-          key={i}
-          className="absolute text-lg font-black text-indigo-300/50"
-          style={{ transform: `rotate(${i * 30 + 30}deg) translateY(-110px) rotate(-${i * 30 + 30}deg)` }}
-        >
-          {i + 1}
-        </div>
-      ))}
+      <img
+        src={clockFaceImage}
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+        className="absolute inset-0 h-full w-full object-contain"
+      />
 
-      <div className="z-30 h-4 w-4 rounded-full bg-indigo-400 shadow-[0_0_10px_rgba(129,140,248,0.8)]" />
+      <div className="z-30 h-3 w-3 rounded-full bg-indigo-300 shadow-[0_0_10px_rgba(129,140,248,0.8)]" />
 
       <motion.div
         animate={{ rotate: (hour % 12) * 30 + (minute / 60) * 30 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="absolute z-10 h-20 w-2.5 origin-bottom rounded-full bg-white shadow-lg"
+        className="absolute z-10 h-[28%] w-2 origin-bottom rounded-full bg-indigo-950 shadow-[0_0_8px_rgba(255,255,255,0.38)]"
         style={{ bottom: '50%' }}
       />
 
       <motion.div
         animate={{ rotate: minute * 6 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="absolute z-20 h-28 w-1.5 origin-bottom rounded-full bg-indigo-400 shadow-[0_0_15px_rgba(129,140,248,0.5)]"
+        className="absolute z-20 h-[42%] w-1 origin-bottom rounded-full bg-cyan-200 shadow-[0_0_12px_rgba(186,230,253,0.7)]"
         style={{ bottom: '50%' }}
       />
-
-      {[...Array(60)].map((_, i) => (
-        <div
-          key={i}
-          className={`absolute w-0.5 origin-bottom ${i % 5 === 0 ? 'h-4 bg-indigo-500' : 'h-1.5 bg-slate-700'}`}
-          style={{ bottom: '50%', transform: `rotate(${i * 6}deg) translateY(-128px)` }}
-        />
-      ))}
     </div>
   );
 };
@@ -229,6 +187,18 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
     onGameOver(score);
   };
 
+  const incrementHour = () => {
+    if (gameState !== 'playing') return;
+    setUserHour((prev) => (prev >= 12 ? 1 : prev + 1));
+  };
+
+  const incrementMinute = () => {
+    if (gameState !== 'playing') return;
+    setUserMinute((prev) => (prev + 5) % 60);
+  };
+
+  const topPadding = 'pt-[calc(env(safe-area-inset-top)+4.8rem)]';
+
   return (
     <div className="fixed inset-0 flex flex-col overflow-hidden bg-slate-950 font-sans text-white select-none">
       <div
@@ -236,59 +206,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
         style={{ backgroundImage: 'radial-gradient(#6366f1 1px, transparent 1px)', backgroundSize: '30px 30px' }}
       />
 
-      <header className="z-20 flex h-20 items-center justify-between border-b border-white/10 bg-slate-900/50 px-8 backdrop-blur-xl">
-        <div className="flex items-center gap-4">
-          <button
-            type="button"
-            onClick={onBack}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-indigo-500/40 bg-slate-900 text-indigo-300 transition hover:bg-slate-800"
-            aria-label="Back to levels"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <div className="rounded-xl bg-indigo-600 p-2.5 shadow-[0_0_20px_rgba(79,70,229,0.4)]">
-            <Zap className="h-6 w-6 fill-current text-white" />
-          </div>
-          <div>
-            <h1 className="text-lg font-black tracking-tighter uppercase italic">Chrono Dash</h1>
-            <div className="flex items-center gap-2">
-              <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
-              <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Time Trial Active</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-12">
-          <div className="flex flex-col items-end">
-            <span className="mb-1 text-[10px] font-black tracking-widest text-indigo-400 uppercase">Score</span>
-            <span className="text-2xl font-black tabular-nums tracking-tight">{score.toLocaleString()}</span>
-          </div>
-
-          <div className="flex w-32 flex-col items-center">
-            <span className="mb-1 text-[10px] font-black tracking-widest text-rose-400 uppercase">Time Left</span>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-slate-800">
-              <motion.div
-                className={`h-full ${timeLeft < 10 ? 'bg-rose-500' : 'bg-indigo-500'}`}
-                initial={{ width: '100%' }}
-                animate={{ width: `${(timeLeft / GAME_DURATION) * 100}%` }}
-              />
-            </div>
-            <span className={`mt-1 text-xl font-black tabular-nums ${timeLeft < 10 ? 'animate-pulse text-rose-500' : 'text-white'}`}>
-              {timeLeft}s
-            </span>
-          </div>
-
-          <div className="flex flex-col items-end">
-            <span className="mb-1 text-[10px] font-black tracking-widest text-amber-400 uppercase">Combo</span>
-            <div className="flex items-center gap-2">
-              {combo > 0 && <Flame className="h-4 w-4 fill-current text-amber-500" />}
-              <span className="text-2xl font-black tabular-nums tracking-tight">x{combo}</span>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="relative z-10 flex flex-1 flex-col items-center justify-center p-8">
+      <main className={`relative z-10 flex flex-1 flex-col items-center justify-start px-4 pb-[max(6.9rem,calc(env(safe-area-inset-bottom)+5.9rem))] ${topPadding}`}>
         <AnimatePresence mode="wait">
           {gameState === 'playing' && target && (
             <motion.div
@@ -296,37 +214,34 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="flex flex-col items-center gap-12"
+              className="flex w-full max-w-[28rem] flex-col items-center gap-5 md:gap-8"
             >
               <div className="flex flex-col items-center gap-4">
                 <span className="text-xs font-black tracking-[0.3em] text-indigo-400 uppercase">Set Clock To</span>
-                <div className="group relative rounded-[2rem] border-2 border-indigo-500/30 bg-slate-900 px-12 py-6 shadow-[0_0_40px_rgba(99,102,241,0.1)]">
+                <div className="group relative rounded-[1.45rem] border-2 border-indigo-500/30 bg-slate-900 px-6 py-3 shadow-[0_0_40px_rgba(99,102,241,0.1)] md:px-8 md:py-4">
                   <div className="absolute -inset-1 rounded-[2rem] bg-indigo-500/20 opacity-0 blur-xl transition-opacity group-hover:opacity-100" />
-                  <span className="relative text-6xl font-black tabular-nums tracking-tighter">
+                  <span className="relative text-[clamp(2rem,9vw,3.4rem)] font-black tabular-nums tracking-tighter">
                     {target.hour.toString().padStart(2, '0')}:{target.minute.toString().padStart(2, '0')}
-                    <span className="ml-4 text-2xl text-indigo-400">{target.period}</span>
+                    <span className="ml-3 text-[clamp(1rem,4.8vw,1.7rem)] text-indigo-400">{target.period}</span>
                   </span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-16">
+              <div className="flex w-full flex-col items-center gap-5 lg:flex-row lg:items-start lg:justify-center lg:gap-8">
                 <div className="relative">
                   <AnalogueClock
                     hour={userHour}
                     minute={userMinute}
-                    onTimeChange={(h, m) => {
-                      setUserHour(h);
-                      setUserMinute(m);
-                    }}
                     disabled={feedback === 'correct'}
+                    sizeStyle={{ width: 'min(68vw, 18rem)', height: 'min(68vw, 18rem)' }}
                   />
 
-                  <div className="absolute top-1/2 -right-20 flex -translate-y-1/2 flex-col gap-3">
+                  <div className="absolute top-1/2 -right-16 flex -translate-y-1/2 flex-col gap-2.5">
                     {(['AM', 'PM'] as const).map((period) => (
                       <button
                         key={period}
                         onClick={() => setUserPeriod(period)}
-                        className={`flex h-14 w-14 items-center justify-center rounded-2xl border-2 text-sm font-black transition-all ${
+                        className={`flex h-12 w-12 items-center justify-center rounded-xl border-2 text-xs font-black transition-all ${
                           userPeriod === period
                             ? 'border-indigo-400 bg-indigo-500 text-white shadow-[0_0_20px_rgba(99,102,241,0.5)]'
                             : 'border-slate-800 bg-slate-900 text-slate-500 hover:border-slate-700'
@@ -338,17 +253,32 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-6">
+                <div className="flex w-full max-w-[15.5rem] flex-col gap-4">
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={incrementHour}
+                      className="rounded-xl border border-cyan-300/45 bg-sky-900/80 px-2 py-2 text-xs font-black tracking-[0.08em] text-cyan-100 uppercase transition hover:brightness-110"
+                    >
+                      Hour +
+                    </button>
+                    <button
+                      onClick={incrementMinute}
+                      className="rounded-xl border border-cyan-300/45 bg-sky-900/80 px-2 py-2 text-xs font-black tracking-[0.08em] text-cyan-100 uppercase transition hover:brightness-110"
+                    >
+                      Minute +
+                    </button>
+                  </div>
+
                   <div className="flex flex-col items-center gap-2 rounded-3xl border border-white/5 bg-slate-900/80 p-6">
                     <span className="text-[10px] font-black tracking-widest text-slate-500 uppercase">Current Input</span>
-                    <span className="text-3xl font-black tabular-nums">
+                    <span className="text-2xl font-black tabular-nums">
                       {userHour.toString().padStart(2, '0')}:{userMinute.toString().padStart(2, '0')} {userPeriod}
                     </span>
                   </div>
 
                   <button
                     onClick={checkAnswer}
-                    className={`flex h-24 w-48 items-center justify-center gap-3 rounded-3xl text-lg font-black tracking-widest uppercase shadow-2xl transition-all ${
+                    className={`flex h-16 w-full items-center justify-center gap-3 rounded-2xl text-base font-black tracking-widest uppercase shadow-2xl transition-all ${
                       feedback === 'correct'
                         ? 'scale-95 bg-emerald-500 text-white'
                         : feedback === 'wrong'
@@ -446,20 +376,6 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
         </AnimatePresence>
       </main>
 
-      <footer className="z-20 flex h-12 items-center justify-between border-t border-white/5 bg-slate-900/50 px-8 backdrop-blur-xl">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2">
-            <History className="h-3 w-3 text-indigo-400" />
-            <span className="text-[8px] font-black tracking-widest text-slate-500 uppercase">Session: 0319-X</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Clock className="h-3 w-3 text-indigo-400" />
-            <span className="text-[8px] font-black tracking-widest text-slate-500 uppercase">Mode: Blitz</span>
-          </div>
-        </div>
-        <span className="text-[8px] font-black tracking-widest text-slate-600 uppercase">(c) 2026 Chrono Dash Systems</span>
-      </footer>
-
       <style>{`
         @keyframes shake {
           0%, 100% { transform: translateX(0); }
@@ -470,6 +386,12 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
           animation: shake 0.2s ease-in-out 0s 2;
         }
       `}</style>
+
+      <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.45rem,env(safe-area-inset-bottom))] z-40 flex justify-center">
+        <div className="pointer-events-auto">
+          <GameActionDock onBack={onBack} compact />
+        </div>
+      </div>
     </div>
   );
 };

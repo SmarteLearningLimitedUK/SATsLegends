@@ -224,23 +224,23 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
       <main
         className={`relative z-20 flex h-full w-full flex-col items-center ${topPadding} px-[max(1rem,env(safe-area-inset-left))] pb-[max(7.4rem,calc(env(safe-area-inset-bottom)+6.25rem))]`}
       >
-        <div className="flex h-full w-full max-w-[28rem] flex-col items-center justify-start gap-2 py-0.5">
-          <section className="flex w-full flex-col items-center gap-2.5 text-center">
-            <div>
-              <p className="text-xs font-black tracking-[0.3em] text-amber-200 uppercase">Mission</p>
-              <h1 className="mt-1 text-[clamp(1rem,4.85vw,1.5rem)] font-black leading-tight tracking-tight text-white">
-                {missionText}
-              </h1>
-            </div>
-
+        <div className="flex h-full w-full max-w-[28rem] flex-col items-center py-0.5">
+          <section className="flex w-full flex-col items-center text-center">
             <motion.div
               key={problem.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="relative w-[90%] rounded-[0.95rem] border border-cyan-200/26 bg-[linear-gradient(180deg,rgba(15,31,70,0.82),rgba(6,20,54,0.92))] px-2.5 py-2 shadow-[0_12px_22px_rgba(2,6,23,0.42)]"
+              className="relative w-[92%] rounded-[0.95rem] border border-cyan-200/26 bg-[linear-gradient(180deg,rgba(15,31,70,0.82),rgba(6,20,54,0.92))] px-3 py-2.5 shadow-[0_12px_22px_rgba(2,6,23,0.42)]"
             >
+              <p className="text-[11px] font-black tracking-[0.24em] text-amber-200 uppercase">Mission</p>
+              <h1 className="mt-1 text-[clamp(0.95rem,4.2vw,1.3rem)] font-black leading-tight tracking-tight text-white">
+                {missionText}
+              </h1>
               <div className="rounded-[0.72rem] bg-slate-950/34 px-2 py-2">
-                <span className="text-[clamp(1.3rem,6.8vw,2.25rem)] font-black tabular-nums tracking-tight text-white [text-shadow:0_4px_10px_rgba(14,165,233,0.22)]">
+                <span
+                  className="text-[clamp(1.2rem,6.2vw,2rem)] font-black tabular-nums text-white [text-shadow:0_4px_10px_rgba(14,165,233,0.22)]"
+                  style={{ letterSpacing: '2px' }}
+                >
                   {displayNumber}
                 </span>
               </div>
@@ -256,7 +256,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
             </div>
           </section>
 
-          <section className="w-full">
+          <section className="mt-auto w-full pb-1">
             <div className="mb-2 grid grid-cols-3 gap-1.5">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, '.', 0, 'DEL'].map((key) => (
                 <button
