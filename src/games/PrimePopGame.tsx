@@ -536,17 +536,38 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
           compact
         />
 
-        <div className="relative min-h-0 flex-1 overflow-hidden bg-[linear-gradient(180deg,rgba(6,25,55,0.22),rgba(3,12,32,0.52))]">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(56,189,248,0.28),transparent_35%),radial-gradient(circle_at_15%_25%,rgba(196,181,253,0.2),transparent_30%),radial-gradient(circle_at_84%_30%,rgba(74,222,128,0.17),transparent_28%)]" />
-          <div
-            className="pointer-events-none absolute left-3 right-3 z-20 rounded-full border border-rose-300/80 bg-rose-500/35"
-            style={{ top: `${DANGER_LINE_Y}%`, height: '0.34rem' }}
-          />
-          <div
-            className="pointer-events-none absolute left-1/2 z-20 -translate-x-1/2 rounded-full border border-rose-100/70 bg-rose-600/40 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-[0.14em] text-rose-50"
-            style={{ top: `calc(${DANGER_LINE_Y}% - 1.3rem)` }}
-          >
-            Danger Line
+        <div className="relative min-h-0 flex-1 overflow-hidden bg-transparent">
+          <div className="absolute inset-[20px] z-10 overflow-hidden rounded-[1.2rem]">
+            <div
+              className="pointer-events-none absolute left-0 right-0 z-20 rounded-full border border-rose-300/80 bg-rose-500/35"
+              style={{ top: `${DANGER_LINE_Y}%`, height: '0.34rem' }}
+            />
+            <div
+              className="pointer-events-none absolute left-1/2 z-20 -translate-x-1/2 rounded-full border border-rose-100/70 bg-rose-600/40 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-[0.14em] text-rose-50"
+              style={{ top: `calc(${DANGER_LINE_Y}% - 1.3rem)` }}
+            >
+              Danger Line
+            </div>
+
+            <AnimatePresence>
+              {bubbles.map((bubble) => (
+                <motion.div
+                  key={bubble.id}
+                  className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+                  style={{ left: `${bubble.x}%`, top: `${bubble.y}%` }}
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.28, opacity: 0, rotate: 30 }}
+                  transition={{ duration: 0.18 }}
+                  onPointerDown={(event) => {
+                    event.stopPropagation();
+                    popBubble(bubble.id);
+                  }}
+                >
+                  <PrimeBubble bubble={bubble} isPhone={isPhone} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
 
           <div className="absolute left-2 right-2 top-2 z-20 flex flex-wrap items-center justify-between gap-2">
@@ -560,26 +581,6 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
               Combo x{combo}
             </div>
           </div>
-
-          <AnimatePresence>
-            {bubbles.map((bubble) => (
-              <motion.div
-                key={bubble.id}
-                className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer"
-                style={{ left: `${bubble.x}%`, top: `${bubble.y}%` }}
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.28, opacity: 0, rotate: 30 }}
-                transition={{ duration: 0.18 }}
-                onPointerDown={(event) => {
-                  event.stopPropagation();
-                  popBubble(bubble.id);
-                }}
-              >
-                <PrimeBubble bubble={bubble} isPhone={isPhone} />
-              </motion.div>
-            ))}
-          </AnimatePresence>
 
           <AnimatePresence>
             {feedback ? (
