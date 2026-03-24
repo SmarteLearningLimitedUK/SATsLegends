@@ -129,6 +129,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
 
   return (
     <div
+      data-unified-minigame-hud="true"
       className="pointer-events-none absolute inset-x-0 top-0 z-[120]"
       style={{
         paddingTop: 'max(0.5rem, env(safe-area-inset-top))',
@@ -138,8 +139,14 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
     >
       <div className="flex w-full items-center justify-between gap-[clamp(0.28rem,1.5vw,0.85rem)] py-[clamp(0.15rem,0.65vh,0.42rem)]">
         <div className="flex min-w-0 items-center">
-          <div className="relative h-[clamp(2.45rem,6.75vh,3.35rem)] w-[clamp(10.2rem,50vw,15rem)] shrink-0">
-            <img src={hudProfileBar} alt="" aria-hidden="true" draggable={false} className="h-auto w-full object-contain" />
+          <div className="relative h-[clamp(2.45rem,6.75vh,3.35rem)] w-[clamp(10.2rem,50vw,15rem)] shrink-0 overflow-hidden">
+            <img
+              src={hudProfileBar}
+              alt=""
+              aria-hidden="true"
+              draggable={false}
+              className="absolute inset-0 h-full w-full object-fill"
+            />
             <div className="absolute inset-y-[9%] left-[4.2%] right-[6.1%] flex items-center">
               <div className="relative h-[84%] w-[26%] shrink-0 overflow-hidden rounded-[28%]">
                 <img
