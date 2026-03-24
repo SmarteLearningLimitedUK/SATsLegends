@@ -4932,5 +4932,86 @@ button.avatar-hero-arrow:not(:disabled):active {
   width: auto !important;
 }
 
+/* ============================================================
+   Global Consistency Contract (all screens)
+   - Unified primary/submit/confirm button appearance
+   - Unified frame shells
+   - Guaranteed full-wrap backgrounds in viewport roots
+   ============================================================ */
+
+.app-viewport button[type='submit']:not(.ui-icon-button):not(.game-dock-button),
+.app-viewport button[class*='submit']:not(.ui-icon-button):not(.game-dock-button),
+.app-viewport button[class*='confirm']:not(.ui-icon-button):not(.game-dock-button),
+.app-viewport button[class*='next']:not(.ui-icon-button):not(.game-dock-button),
+.app-viewport button[class*='primary']:not(.ui-icon-button):not(.game-dock-button),
+.app-viewport .ui-button-primary,
+.app-viewport .game-button-primary,
+.app-viewport .licensed-submit-button {
+  border: 1px solid rgba(255, 234, 168, 0.72) !important;
+  border-radius: 999px !important;
+  color: #15213d !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.42) !important;
+  background:
+    url('./assets/casual_ui/inputs/btn_1.png') center/100% 100% no-repeat !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.58),
+    0 6px 0 rgba(140, 84, 10, 0.76),
+    0 14px 22px rgba(15, 23, 42, 0.24) !important;
+}
+
+.app-viewport button[type='submit']:not(.ui-icon-button):not(.game-dock-button):hover,
+.app-viewport button[class*='submit']:not(.ui-icon-button):not(.game-dock-button):hover,
+.app-viewport button[class*='confirm']:not(.ui-icon-button):not(.game-dock-button):hover,
+.app-viewport button[class*='next']:not(.ui-icon-button):not(.game-dock-button):hover,
+.app-viewport button[class*='primary']:not(.ui-icon-button):not(.game-dock-button):hover,
+.app-viewport .ui-button-primary:hover,
+.app-viewport .game-button-primary:hover,
+.app-viewport .licensed-submit-button:hover {
+  filter: brightness(1.03) saturate(1.02);
+}
+
+.app-viewport button[type='submit']:not(.ui-icon-button):not(.game-dock-button):active,
+.app-viewport button[class*='submit']:not(.ui-icon-button):not(.game-dock-button):active,
+.app-viewport button[class*='confirm']:not(.ui-icon-button):not(.game-dock-button):active,
+.app-viewport button[class*='next']:not(.ui-icon-button):not(.game-dock-button):active,
+.app-viewport button[class*='primary']:not(.ui-icon-button):not(.game-dock-button):active,
+.app-viewport .ui-button-primary:active,
+.app-viewport .game-button-primary:active,
+.app-viewport .licensed-submit-button:active {
+  transform: translateY(2px) scale(0.99);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    0 3px 0 rgba(18, 40, 86, 0.68),
+    0 8px 14px rgba(15, 23, 42, 0.2) !important;
+}
+
+.app-viewport .licensed-board-frame,
+.app-viewport .licensed-game-card,
+.app-viewport .licensed-game-card-dark,
+.app-viewport .licensed-overlay-card,
+.app-viewport .shared-game-interaction-panel,
+.app-viewport .mission-panel-shell,
+.app-viewport .aaa-objective-shell,
+.app-viewport .aaa-playfield-shell {
+  border-radius: clamp(1rem, 2.8vw, 1.5rem) !important;
+  border: 1px solid rgba(176, 220, 255, 0.28) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 16px 30px rgba(2, 6, 23, 0.28) !important;
+}
+
+.app-viewport,
+.iphone-game-stage-inner,
+.app-screen-content,
+.game-shell-host,
+.game-shell-contract,
+.structured-game-layout,
+.premium-page-root,
+.app-screen {
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+}
+
 
 
