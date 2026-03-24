@@ -35,6 +35,19 @@ const SUCCESS_EFFECT_MS = 900;
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
+const generateDecimalChallengeNumber = (target: RoundingTarget) => {
+  for (let attempt = 0; attempt < 60; attempt += 1) {
+    const value = parseFloat((Math.random() * 100).toFixed(3));
+    if (target === 'nearest whole number' && !Number.isInteger(value)) return value;
+    if (target === 'nearest 1 decimal place' && Math.round(value * 10) !== value * 10) return value;
+    if (target === 'nearest 2 decimal places' && Math.round(value * 100) !== value * 100) return value;
+  }
+  // deterministic fallback (should rarely be used)
+  if (target === 'nearest whole number') return 42.37;
+  if (target === 'nearest 1 decimal place') return 17.249;
+  return 63.457;
+};
+
 const generateProblem = (level: number): RoundingProblem => {
   let num: number;
   let target: RoundingTarget;
@@ -57,9 +70,9 @@ const generateProblem = (level: number): RoundingProblem => {
     target = 'nearest 1,000,000';
     answer = (Math.round(num / 1000000) * 1000000).toString();
   } else {
-    num = parseFloat((Math.random() * 100).toFixed(3));
     const targets: RoundingTarget[] = ['nearest whole number', 'nearest 1 decimal place', 'nearest 2 decimal places'];
     target = targets[Math.floor(Math.random() * targets.length)];
+    num = generateDecimalChallengeNumber(target);
     if (target === 'nearest whole number') {
       answer = Math.round(num).toString();
     } else if (target === 'nearest 1 decimal place') {
@@ -85,8 +98,7 @@ const scoreToStars = (score: number, correct: number, total: number) => {
 };
 
 const formatTarget = (target: RoundingTarget) => {
-  const clean = target.replace('nearest ', '');
-  return `Round to nearest ${clean}`;
+  return `Round this number to the ${target}`;
 };
 
 const formatDisplayNumber = (problem: RoundingProblem) => (
@@ -279,7 +291,11 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
                   key={key}
                   onClick={() => handleKeypad(String(key))}
                   disabled={roundEnded || (key === '.' && !problem.target.includes('decimal'))}
-                  className="rounded-[0.8rem] border border-cyan-200/42 bg-[linear-gradient(180deg,rgba(15,31,70,0.86),rgba(6,20,54,0.94))] px-2 py-1.5 text-[clamp(0.84rem,3.75vw,1.08rem)] font-black text-cyan-50 shadow-[0_8px_14px_rgba(2,6,23,0.32)] transition hover:brightness-110 disabled:opacity-40"
+                  className={`aspect-square rounded-[1rem] border border-cyan-200/42 bg-[linear-gradient(180deg,rgba(15,31,70,0.86),rgba(6,20,54,0.94))] px-0 py-0 font-black text-cyan-50 shadow-[0_8px_14px_rgba(2,6,23,0.32)] transition hover:brightness-110 disabled:opacity-40 ${
+                    key === 'DEL'
+                      ? 'text-[clamp(0.84rem,3.25vw,1rem)]'
+                      : 'text-[clamp(1.2rem,4.8vw,1.65rem)]'
+                  }`}
                 >
                   {key}
                 </button>

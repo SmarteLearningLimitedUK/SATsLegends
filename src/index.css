@@ -4844,13 +4844,17 @@ button.avatar-hero-arrow:not(:disabled):active {
 }
 
 .screen-gameplay .unified-minigame-hud-enabled .game-shell-zone-actions,
-.screen-gameplay .unified-minigame-hud-enabled .pointer-events-none.absolute.inset-x-0.bottom-\[max\(0\.4rem\,env\(safe-area-inset-bottom\)\)\] {
+.screen-gameplay .unified-minigame-hud-enabled .unified-global-dock {
   margin-top: 0.2rem !important;
 }
 
 /* A single global dock is rendered by App.tsx during gameplay. */
 .screen-gameplay .unified-minigame-hud-enabled .game-shell-zone-actions {
   display: none !important;
+}
+
+.screen-gameplay .unified-minigame-hud-enabled .unified-global-dock {
+  display: flex !important;
 }
 
 /* Hide legacy per-game top bars so every minigame uses the same unified top HUD. */
