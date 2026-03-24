@@ -278,15 +278,15 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   calculation_clash: {
-    label: 'Calculation Clash',
-    focus: 'Four operations and multi-step arithmetic',
+    label: 'Calculation Cup',
+    focus: 'Arithmetic race under pressure',
     rules: {
-      title: 'Calculation Clash',
-      summary: 'Solve each arithmetic challenge before the next wave arrives.',
+      title: 'Calculation Cup',
+      summary: 'Race an enemy to the finish line by solving each calculation correctly.',
       bullets: [
-        'Use addition, subtraction, multiplication and division accurately.',
-        'Some rounds include brackets and multi-step reasoning.',
-        'Fast precise answers power your combo meter.',
+        'Every correct answer advances your car one stage down the track.',
+        'Wrong answers give the rival racer momentum.',
+        'Use fast, accurate arithmetic to win the cup before the enemy crosses first.',
       ],
     },
   },

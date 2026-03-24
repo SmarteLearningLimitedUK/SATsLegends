@@ -80,12 +80,12 @@ const getConfig = (levelId: number): PrimePopConfig => {
       maxNumber: 40,
       minBubbles: 4,
       maxBubbles: 6,
-      minRadius: 6.2,
-      maxRadius: 8.5,
+      minRadius: 4.8,
+      maxRadius: 10.2,
       minSpeed: 2.8,
       maxSpeed: 4.1,
       primeChance: 0.58,
-      spawnEveryMs: 1200,
+      spawnEveryMs: 700,
       primePoints: 220,
       nonPrimePoints: 60,
       comboStep: 0.1,
@@ -99,12 +99,12 @@ const getConfig = (levelId: number): PrimePopConfig => {
       maxNumber: 70,
       minBubbles: 5,
       maxBubbles: 7,
-      minRadius: 5.8,
-      maxRadius: 8,
+      minRadius: 4.4,
+      maxRadius: 9.6,
       minSpeed: 3.2,
       maxSpeed: 4.6,
       primeChance: 0.5,
-      spawnEveryMs: 1080,
+      spawnEveryMs: 620,
       primePoints: 230,
       nonPrimePoints: 55,
       comboStep: 0.12,
@@ -117,12 +117,12 @@ const getConfig = (levelId: number): PrimePopConfig => {
     maxNumber: 99,
     minBubbles: 6,
     maxBubbles: 8,
-    minRadius: 5.2,
-    maxRadius: 7.5,
+    minRadius: 4.1,
+    maxRadius: 9.1,
     minSpeed: 3.6,
     maxSpeed: 5.2,
     primeChance: 0.45,
-    spawnEveryMs: 980,
+    spawnEveryMs: 560,
     primePoints: 240,
     nonPrimePoints: 50,
     comboStep: 0.14,
@@ -135,13 +135,59 @@ const scoreToStars = (score: number, target: number, primeAccuracy: number) => {
   return 1;
 };
 
+const clampBubbleInsideBounds = (bubble: Bubble): Bubble => {
+  const minX = bubble.radius + 2;
+  const maxX = 100 - bubble.radius - 2;
+  return {
+    ...bubble,
+    x: Math.max(minX, Math.min(maxX, bubble.x)),
+  };
+};
+
+const resolveBubbleCollisions = (items: Bubble[]) => {
+  if (items.length <= 1) return items;
+  const next = items.map((item) => ({ ...item }));
+  const minSeparationPadding = 2.4;
+
+  for (let pass = 0; pass < 2; pass += 1) {
+    for (let i = 0; i < next.length; i += 1) {
+      for (let j = i + 1; j < next.length; j += 1) {
+        const a = next[i];
+        const b = next[j];
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const dist = Math.hypot(dx, dy);
+        const minDist = a.radius + b.radius + minSeparationPadding;
+
+        if (dist >= minDist) continue;
+
+        const angle = dist === 0 ? Math.random() * Math.PI * 2 : Math.atan2(dy, dx);
+        const overlap = (minDist - (dist || 0.001)) * 0.5;
+        const offsetX = Math.cos(angle) * overlap;
+        const offsetY = Math.sin(angle) * overlap;
+
+        a.x -= offsetX;
+        a.y -= offsetY;
+        b.x += offsetX;
+        b.y += offsetY;
+
+        next[i] = clampBubbleInsideBounds(a);
+        next[j] = clampBubbleInsideBounds(b);
+      }
+    }
+  }
+
+  return next;
+};
+
 const PrimeBubble: React.FC<{ bubble: Bubble; isPhone: boolean }> = ({ bubble, isPhone }) => {
   const tint = TINT_STYLE[bubble.tint];
   const renderScale = isPhone ? 0.95 : 0.9;
   const bubblePx = Math.round(bubble.radius * BUBBLE_PIXEL_SCALE * renderScale);
-  const minSize = isPhone ? 54 : 50;
-  const maxSize = isPhone ? 94 : 88;
+  const minSize = isPhone ? 42 : 40;
+  const maxSize = isPhone ? 108 : 96;
   const size = `${Math.max(minSize, Math.min(maxSize, bubblePx))}px`;
+  const labelSize = Math.max(1, Math.min(2.1, bubblePx / 42));
 
   return (
     <div
@@ -155,7 +201,10 @@ const PrimeBubble: React.FC<{ bubble: Bubble; isPhone: boolean }> = ({ bubble, i
       }}
     >
       <div className="absolute left-[15%] top-[12%] h-[18%] w-[18%] rounded-full bg-white/70 blur-[1px]" />
-      <span className="absolute inset-0 flex items-center justify-center text-[clamp(1.1rem,2.9vw,1.85rem)] font-black text-white drop-shadow-[0_3px_6px_rgba(2,6,23,0.8)]">
+      <span
+        className="absolute inset-0 flex items-center justify-center font-black text-white drop-shadow-[0_3px_6px_rgba(2,6,23,0.8)]"
+        style={{ fontSize: `${labelSize}rem` }}
+      >
         {bubble.value}
       </span>
     </div>
@@ -262,15 +311,15 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
 
   const makeBubble = useCallback((existing: Bubble[]) => {
     const radius = randomBetween(bubbleRuntime.minRadius, bubbleRuntime.maxRadius);
-    const margin = radius + 2.2;
+    const margin = radius + 2.8;
     let x = randomBetween(margin, 100 - margin);
     let y = randomBetween(margin, 67 - margin);
 
-    for (let i = 0; i < 24; i += 1) {
+    for (let i = 0; i < 48; i += 1) {
       const hasOverlap = existing.some((bubble) => {
         const dx = bubble.x - x;
         const dy = bubble.y - y;
-        return Math.hypot(dx, dy) < (bubble.radius + radius + 2.1);
+        return Math.hypot(dx, dy) < (bubble.radius + radius + 2.6);
       });
       if (!hasOverlap) break;
       x = randomBetween(margin, 100 - margin);
@@ -420,9 +469,10 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
 
       return { ...bubble, x, y, drift };
     });
+    const movedWithoutOverlap = resolveBubbleCollisions(movedBubbles);
 
-    const escapedPrime = movedBubbles.filter((bubble) => bubble.y < -(bubble.radius + 3) && bubble.isPrime).length;
-    const nextBubbles = movedBubbles.filter((bubble) => bubble.y >= -(bubble.radius + 3));
+    const escapedPrime = movedWithoutOverlap.filter((bubble) => bubble.y < -(bubble.radius + 3) && bubble.isPrime).length;
+    const nextBubbles = movedWithoutOverlap.filter((bubble) => bubble.y >= -(bubble.radius + 3));
     let scoreNext = scoreRef.current;
     let comboNext = comboRef.current;
     let livesNext = livesRef.current;

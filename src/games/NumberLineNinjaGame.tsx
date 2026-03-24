@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import GameplayHUD from '../components/GameplayHUD';
 import GameActionDock from '../components/GameActionDock';
-import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { AVATARS } from '../constants';
+import insideDojoBackground from '../assets/maps/inside dojo.jpg';
 
 interface NumberLineNinjaGameProps {
   levelId: number;
@@ -294,7 +294,14 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden p-2 pt-[env(safe-area-inset-top)] md:p-4">
-      <GameplaySceneBackdrop gameType="coordinate_quest" />
+      <img
+        src={insideDojoBackground}
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+      />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.12),transparent_36%),linear-gradient(180deg,rgba(5,12,28,0.2),rgba(5,12,28,0.55))]" />
 
       <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col gap-2 md:gap-4">
         <GameplayHUD

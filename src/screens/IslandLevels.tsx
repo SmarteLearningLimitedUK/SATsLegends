@@ -33,7 +33,7 @@ const GAME_SUMMARY_BY_KEY: Record<string, string> = {
   number_line_ninja: 'Move fast on the number line and land on exact targets with clean control.',
   prime_pop: 'Pop prime-number targets and avoid composite traps as the pace increases.',
   rounding_rampage: 'Route values into the right rounding gates under pressure.',
-  calculation_clash: 'Defeat incoming waves by solving calculations quickly and accurately.',
+  calculation_clash: 'Race the enemy in Calculation Cup by solving arithmetic at speed.',
   factor_frenzy: 'Identify factors and multiples in fast decision rounds.',
   take_out_rush: 'Build exact order totals by combining fraction portions in the tray.',
   fraction_forge: 'Combine and refine fractions to hit exact forged targets.',
