@@ -1,6 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
+﻿import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import GameplayHUD from '../components/GameplayHUD';
 import GameActionDock from '../components/GameActionDock';
 import { AVATARS } from '../constants';
 import insideDojoBackground from '../assets/maps/inside dojo.jpg';
@@ -42,7 +41,7 @@ const QUESTION_BANK: NumberLineQuestion[] = [
     id: 'missing-basic',
     title: 'Missing Number',
     prompt: 'A number line goes from 0 to 20. What number is missing?',
-    lineText: '0 — 5 — ? — 15 — 20',
+    lineText: '0 â€” 5 â€” ? â€” 15 â€” 20',
     lineMin: 0,
     lineMax: 20,
     ticks: [0, 5, 10, 15, 20],
@@ -54,7 +53,7 @@ const QUESTION_BANK: NumberLineQuestion[] = [
     id: 'missing-thirds',
     title: 'Equal Parts',
     prompt: 'The line from 0 to 1 is split into 3 equal parts. What are the two missing numbers?',
-    lineText: '0 — ? — ? — 1',
+    lineText: '0 â€” ? â€” ? â€” 1',
     lineMin: 0,
     lineMax: 1,
     ticks: [0, 1 / 3, 2 / 3, 1],
@@ -66,8 +65,8 @@ const QUESTION_BANK: NumberLineQuestion[] = [
   {
     id: 'step-size',
     title: 'Step Size',
-    prompt: 'A number line shows 40 — 60 — 80 — 100. What is the value of each step?',
-    lineText: '40 — 60 — 80 — 100',
+    prompt: 'A number line shows 40 â€” 60 â€” 80 â€” 100. What is the value of each step?',
+    lineText: '40 â€” 60 â€” 80 â€” 100',
     lineMin: 40,
     lineMax: 100,
     ticks: [40, 60, 80, 100],
@@ -78,7 +77,7 @@ const QUESTION_BANK: NumberLineQuestion[] = [
     id: 'fraction-point',
     title: 'Fractions',
     prompt: 'A number line from 0 to 1 is divided into 4 equal parts. A point is on the third mark. What fraction is this?',
-    lineText: '0 — 1/4 — 1/2 — • — 1',
+    lineText: '0 â€” 1/4 â€” 1/2 â€” â€¢ â€” 1',
     lineMin: 0,
     lineMax: 1,
     ticks: [0, 0.25, 0.5, 0.75, 1],
@@ -91,20 +90,20 @@ const QUESTION_BANK: NumberLineQuestion[] = [
     id: 'decimal-mid',
     title: 'Decimals',
     prompt: 'The point is halfway between 0.2 and 0.3. What number is this?',
-    lineText: '0.1 — 0.2 — • — 0.3 — 0.4',
+    lineText: '0.1 â€” 0.2 â€” â€¢ â€” 0.3 â€” 0.4',
     lineMin: 0.1,
     lineMax: 0.4,
     ticks: [0.1, 0.2, 0.3, 0.4],
     marker: 0.25,
-    markerLabel: '•',
+    markerLabel: 'â€¢',
     options: ['0.2', '0.24', '0.25', '0.3'],
     answers: ['0.25'],
   },
   {
     id: 'negative-mid',
     title: 'Negative Numbers',
-    prompt: 'A number line shows -10 — -5 — 0 — 5. What number is halfway between -10 and 0?',
-    lineText: '-10 — -5 — 0 — 5',
+    prompt: 'A number line shows -10 â€” -5 â€” 0 â€” 5. What number is halfway between -10 and 0?',
+    lineText: '-10 â€” -5 â€” 0 â€” 5',
     lineMin: -10,
     lineMax: 5,
     ticks: [-10, -5, 0, 5],
@@ -116,7 +115,7 @@ const QUESTION_BANK: NumberLineQuestion[] = [
     id: 'reasoning-midpoint',
     title: 'Reasoning',
     prompt: 'A point lies exactly halfway between 0.6 and 1.0. What is the value of the point?',
-    lineText: '0.6 — • — 1.0',
+    lineText: '0.6 â€” â€¢ â€” 1.0',
     lineMin: 0.6,
     lineMax: 1.0,
     ticks: [0.6, 0.8, 1.0],
@@ -133,7 +132,7 @@ const QUESTION_BANK: NumberLineQuestion[] = [
     lineMax: 8,
     ticks: [0, 2, 4, 6, 8],
     range: { gt: 2, lte: 6 },
-    options: ['2 < x < 6', '2 ≤ x < 6', '2 < x ≤ 6', '2 ≤ x ≤ 6'],
+    options: ['2 < x < 6', '2 â‰¤ x < 6', '2 < x â‰¤ 6', '2 â‰¤ x â‰¤ 6'],
     answers: ['2 < x <= 6'],
   },
 ];
@@ -141,8 +140,8 @@ const QUESTION_BANK: NumberLineQuestion[] = [
 const normalizeAnswer = (value: string) => (
   value
     .toLowerCase()
-    .replace(/≤/g, '<=')
-    .replace(/≥/g, '>=')
+    .replace(/â‰¤/g, '<=')
+    .replace(/â‰¥/g, '>=')
     .replace(/\s+/g, '')
 );
 
@@ -293,7 +292,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
   const rangeEndOpen = current.range ? current.range.lt !== undefined : false;
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden p-2 pt-[env(safe-area-inset-top)] md:p-4">
+    <div className="relative flex h-full w-full min-h-0 flex-col overflow-hidden">
       <img
         src={insideDojoBackground}
         alt=""
@@ -301,160 +300,156 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
         draggable={false}
         className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
       />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.12),transparent_36%),linear-gradient(180deg,rgba(5,12,28,0.2),rgba(5,12,28,0.55))]" />
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col gap-2 md:gap-4">
-        <GameplayHUD
-          title="Number Line Ninja"
-          avatar={avatar}
-          score={score}
-          targetScore={targetScore}
-          timeLeft={timeLeft}
-          progress={progress}
-          accentText="text-indigo-900"
-          accentSoftBg="bg-indigo-100/80"
-          accentBorder="border-indigo-200/70"
-          progressBar="bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-500"
-          statLabel="Lives"
-          statValue={lives}
-          compact
-        />
-
-        <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden p-3 md:p-5">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(99,102,241,0.18),transparent_24%),radial-gradient(circle_at_82%_26%,rgba(56,189,248,0.16),transparent_24%),linear-gradient(180deg,rgba(8,15,30,0.2),rgba(8,15,30,0.46))]" />
-
-          <div className="relative z-10 mb-3 flex items-center justify-between gap-3">
-            <div className="licensed-game-card w-full max-w-[33rem] px-4 py-3 md:px-5 md:py-4">
-              <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70">
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col gap-3 px-3 pb-[calc(5.25rem+env(safe-area-inset-bottom))] pt-3 md:gap-4 md:px-4 md:pb-[calc(5.75rem+env(safe-area-inset-bottom))]">
+        <section className="shrink-0 rounded-2xl border border-cyan-100/35 bg-black/42 p-3 shadow-[0_10px_24px_rgba(2,6,23,0.5)] backdrop-blur-sm md:p-4">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/70">
                 {current.title}
               </div>
-              <div className="mt-1 text-sm font-bold text-white/92 md:text-base">
+              <div className="mt-1 text-sm font-bold leading-snug text-white md:text-base">
                 {current.prompt}
               </div>
-              <div className="mt-2 text-xs font-black tracking-[0.08em] text-cyan-100/70">
+              <div className="mt-1.5 text-xs font-black tracking-[0.08em] text-cyan-100/70">
                 {current.lineText}
               </div>
             </div>
-
-            <div className="casual-ribbon-chip shrink-0 rounded-full px-4 py-2 text-xs font-black uppercase tracking-[0.12em] text-white">
+            <div className="shrink-0 rounded-full border border-white/20 bg-slate-900/55 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white">
               Q{questionIndex + 1}/{questions.length}
             </div>
           </div>
-
-          <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-3">
-            <div className="licensed-game-card-dark relative rounded-[1.4rem] p-4 md:p-5">
-              <div className="relative mx-auto mt-4 h-24 w-[95%] md:h-28">
-                <div className="absolute left-0 right-0 top-1/2 h-[4px] -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-200/90 via-white/90 to-cyan-200/90" />
-
-                {rangeStart !== null && rangeEnd !== null ? (
-                  <div
-                    className="absolute top-1/2 h-[8px] -translate-y-1/2 rounded-full bg-amber-300/70"
-                    style={{
-                      left: `${valueToPercent(rangeStart, current.lineMin, current.lineMax)}%`,
-                      width: `${valueToPercent(rangeEnd, current.lineMin, current.lineMax) - valueToPercent(rangeStart, current.lineMin, current.lineMax)}%`,
-                    }}
-                  />
-                ) : null}
-
-                {current.ticks.map((tick) => {
-                  const left = valueToPercent(tick, current.lineMin, current.lineMax);
-                  const label = current.tickLabels?.[tick] ?? formatTick(tick);
-                  return (
-                    <div key={`${current.id}-tick-${tick}`} className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2" style={{ left: `${left}%` }}>
-                      <div className="h-6 w-[3px] rounded-full bg-white/95" />
-                      <div className="absolute top-7 left-1/2 -translate-x-1/2 whitespace-nowrap text-[11px] font-black text-white/92 md:text-xs">
-                        {label}
-                      </div>
-                    </div>
-                  );
-                })}
-
-                {current.marker !== undefined ? (
-                  <div
-                    className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
-                    style={{ left: `${valueToPercent(current.marker, current.lineMin, current.lineMax)}%` }}
-                  >
-                    <div className="h-7 w-7 rounded-full border-2 border-cyan-200 bg-cyan-400/75 shadow-[0_0_16px_rgba(34,211,238,0.55)]" />
-                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-black text-cyan-100">
-                      {current.markerLabel ?? '•'}
-                    </div>
-                  </div>
-                ) : null}
-
-                {rangeStart !== null ? (
-                  <div
-                    className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
-                    style={{ left: `${valueToPercent(rangeStart, current.lineMin, current.lineMax)}%` }}
-                  >
-                    <div className={`h-5 w-5 rounded-full border-2 border-amber-100 ${rangeStartOpen ? 'bg-slate-900' : 'bg-amber-200'}`} />
-                  </div>
-                ) : null}
-
-                {rangeEnd !== null ? (
-                  <div
-                    className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
-                    style={{ left: `${valueToPercent(rangeEnd, current.lineMin, current.lineMax)}%` }}
-                  >
-                    <div className={`h-5 w-5 rounded-full border-2 border-amber-100 ${rangeEndOpen ? 'bg-slate-900' : 'bg-amber-200'}`} />
-                  </div>
-                ) : null}
-              </div>
+          <div className="mt-2.5 flex items-center gap-2">
+            <div className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/70">Progress</div>
+            <div className="h-2.5 flex-1 overflow-hidden rounded-full border border-cyan-100/25 bg-slate-950/65">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 transition-[width] duration-300"
+                style={{ width: `${progress}%` }}
+              />
             </div>
-
-            <div className="grid grid-cols-2 gap-2.5 md:gap-3">
-              {current.options.map((option) => {
-                const active = selectedAnswers.includes(option);
-                return (
-                  <button
-                    key={`${current.id}-${option}`}
-                    type="button"
-                    onClick={() => toggleOption(option)}
-                    disabled={locked}
-                    className={`rounded-xl border px-3 py-3 text-sm font-black transition md:text-base ${
-                      active
-                        ? 'border-cyan-200 bg-cyan-400/28 text-white shadow-[0_8px_20px_rgba(6,182,212,0.25)]'
-                        : 'border-white/16 bg-slate-900/45 text-white/90 hover:border-cyan-100/40'
-                    }`}
-                  >
-                    {option}
-                  </button>
-                );
-              })}
+            <div className="text-[10px] font-black uppercase tracking-[0.1em] text-white/90">{score}/{targetScore}</div>
+            <div className="rounded-full border border-rose-200/40 bg-rose-500/20 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.1em] text-rose-100">
+              Lives {lives}
             </div>
-
-            <div className="mt-1 flex items-center justify-between gap-2">
-              <div className="text-xs font-bold text-cyan-100/76">
-                {current.multiSelect ? 'Select all correct answers, then submit.' : 'Select one answer, then submit.'}
-              </div>
-              <button
-                type="button"
-                onClick={submitAnswer}
-                disabled={locked || selectedAnswers.length === 0}
-                className="rounded-full border border-cyan-100/45 bg-cyan-400/22 px-5 py-2 text-xs font-black uppercase tracking-[0.14em] text-white disabled:opacity-45"
-              >
-                Submit
-              </button>
+            <div className="rounded-full border border-cyan-200/40 bg-cyan-500/18 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.1em] text-cyan-100">
+              {timeLeft}s
             </div>
           </div>
+        </section>
 
-          <AnimatePresence>
-            {feedback ? (
-              <motion.div
-                key={feedback.message}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                className={`absolute bottom-20 left-1/2 z-30 -translate-x-1/2 rounded-full border px-5 py-2 text-xs font-black uppercase tracking-[0.12em] shadow-[0_16px_32px_rgba(2,6,23,0.55)] ${
-                  feedback.tone === 'success'
-                    ? 'border-emerald-200/80 bg-emerald-500/30 text-emerald-50'
-                    : 'border-rose-200/80 bg-rose-500/30 text-rose-50'
-                }`}
-              >
-                {feedback.message}
-              </motion.div>
+        <section className="shrink-0 rounded-2xl border border-cyan-100/30 bg-black/40 p-3 shadow-[0_10px_20px_rgba(2,6,23,0.45)] backdrop-blur-sm md:p-4">
+          <div className="relative mx-auto h-24 w-[95%] md:h-28">
+            <div className="absolute left-0 right-0 top-1/2 h-[4px] -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-200/90 via-white/90 to-cyan-200/90" />
+
+            {rangeStart !== null && rangeEnd !== null ? (
+              <div
+                className="absolute top-1/2 h-[8px] -translate-y-1/2 rounded-full bg-amber-300/70"
+                style={{
+                  left: `${valueToPercent(rangeStart, current.lineMin, current.lineMax)}%`,
+                  width: `${valueToPercent(rangeEnd, current.lineMin, current.lineMax) - valueToPercent(rangeStart, current.lineMin, current.lineMax)}%`,
+                }}
+              />
             ) : null}
-          </AnimatePresence>
-        </div>
+
+            {current.ticks.map((tick) => {
+              const left = valueToPercent(tick, current.lineMin, current.lineMax);
+              const label = current.tickLabels?.[tick] ?? formatTick(tick);
+              return (
+                <div key={`${current.id}-tick-${tick}`} className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2" style={{ left: `${left}%` }}>
+                  <div className="h-6 w-[3px] rounded-full bg-white/95" />
+                  <div className="absolute top-7 left-1/2 -translate-x-1/2 whitespace-nowrap text-[11px] font-black text-white/92 md:text-xs">
+                    {label}
+                  </div>
+                </div>
+              );
+            })}
+
+            {current.marker !== undefined ? (
+              <div
+                className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
+                style={{ left: `${valueToPercent(current.marker, current.lineMin, current.lineMax)}%` }}
+              >
+                <div className="h-7 w-7 rounded-full border-2 border-cyan-200 bg-cyan-400/75 shadow-[0_0_16px_rgba(34,211,238,0.55)]" />
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-black text-cyan-100">
+                  {current.markerLabel ?? '•'}
+                </div>
+              </div>
+            ) : null}
+
+            {rangeStart !== null ? (
+              <div
+                className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
+                style={{ left: `${valueToPercent(rangeStart, current.lineMin, current.lineMax)}%` }}
+              >
+                <div className={`h-5 w-5 rounded-full border-2 border-amber-100 ${rangeStartOpen ? 'bg-slate-900' : 'bg-amber-200'}`} />
+              </div>
+            ) : null}
+
+            {rangeEnd !== null ? (
+              <div
+                className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
+                style={{ left: `${valueToPercent(rangeEnd, current.lineMin, current.lineMax)}%` }}
+              >
+                <div className={`h-5 w-5 rounded-full border-2 border-amber-100 ${rangeEndOpen ? 'bg-slate-900' : 'bg-amber-200'}`} />
+              </div>
+            ) : null}
+          </div>
+        </section>
+
+        <section className="min-h-0 flex flex-1 flex-col gap-3 rounded-2xl border border-cyan-100/28 bg-black/36 p-3 shadow-[0_10px_20px_rgba(2,6,23,0.42)] backdrop-blur-sm md:p-4">
+          <div className="grid grid-cols-2 gap-2.5 md:gap-3">
+            {current.options.map((option) => {
+              const active = selectedAnswers.includes(option);
+              return (
+                <button
+                  key={`${current.id}-${option}`}
+                  type="button"
+                  onClick={() => toggleOption(option)}
+                  disabled={locked}
+                  className={`rounded-xl border px-3 py-3 text-sm font-black transition md:text-base ${
+                    active
+                      ? 'border-cyan-200 bg-cyan-400/28 text-white shadow-[0_8px_20px_rgba(6,182,212,0.25)]'
+                      : 'border-white/16 bg-slate-900/45 text-white/90 hover:border-cyan-100/40'
+                  }`}
+                >
+                  {option}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="mt-auto flex items-center justify-between gap-2">
+            <div className="text-xs font-bold text-cyan-100/76">
+              {current.multiSelect ? 'Select all correct answers, then submit.' : 'Select one answer, then submit.'}
+            </div>
+            <button
+              type="button"
+              onClick={submitAnswer}
+              disabled={locked || selectedAnswers.length === 0}
+              className="rounded-full border border-cyan-100/45 bg-cyan-400/22 px-5 py-2 text-xs font-black uppercase tracking-[0.14em] text-white disabled:opacity-45"
+            >
+              Submit
+            </button>
+          </div>
+        </section>
+
+        <AnimatePresence>
+          {feedback ? (
+            <motion.div
+              key={feedback.message}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              className={`absolute bottom-[calc(5.1rem+env(safe-area-inset-bottom))] left-1/2 z-30 -translate-x-1/2 rounded-full border px-5 py-2 text-xs font-black uppercase tracking-[0.12em] shadow-[0_16px_32px_rgba(2,6,23,0.55)] ${
+                feedback.tone === 'success'
+                  ? 'border-emerald-200/80 bg-emerald-500/30 text-emerald-50'
+                  : 'border-rose-200/80 bg-rose-500/30 text-rose-50'
+              }`}
+            >
+              {feedback.message}
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
 
         <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.35rem,env(safe-area-inset-bottom))] z-40 flex justify-center">
           <div className="pointer-events-auto">
@@ -467,3 +462,4 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
 };
 
 export default NumberLineNinjaGame;
+
