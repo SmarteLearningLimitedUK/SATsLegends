@@ -31,6 +31,7 @@ interface RoundingRocketGameProps {
 }
 
 const ROUND_DURATION_SECONDS = 65;
+const SUCCESS_EFFECT_MS = 900;
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
@@ -127,6 +128,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
   const [timeLeft, setTimeLeft] = useState(ROUND_DURATION_SECONDS);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [roundEnded, setRoundEnded] = useState(false);
+  const [showLaunchFx, setShowLaunchFx] = useState(false);
 
   const endRef = useRef(false);
 
@@ -157,6 +159,18 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
     if (problem.target.includes('decimal')) return problem.answer;
     return Number(problem.answer).toLocaleString('en-GB');
   }, [problem.answer, problem.target]);
+  const sparkSeeds = useMemo(
+    () => Array.from({ length: 26 }, (_, idx) => ({
+      id: idx,
+      left: randomInt(4, 96),
+      drift: randomInt(-28, 28),
+      rise: randomInt(52, 86),
+      delay: randomInt(0, 36) / 100,
+      duration: randomInt(58, 92) / 100,
+      size: randomInt(3, 8),
+    })),
+    [],
+  );
 
   const generateNextQuestion = (nextLevel: number) => {
     setProblem(generateProblem(nextLevel));
@@ -192,7 +206,8 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
       const nextCorrect = correctAnswers + 1;
       setCorrectAnswers(nextCorrect);
       setScore((prev) => prev + (170 + (level * 20)));
-      setFeedback({ type: 'success', text: 'Correct!' });
+      setFeedback({ type: 'success', text: 'Launch successful' });
+      setShowLaunchFx(true);
       if (nextCorrect % 4 === 0) {
         nextLevel = Math.min(10, level + 1);
         setLevel(nextLevel);
@@ -203,12 +218,13 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
 
     window.setTimeout(() => {
       setFeedback(null);
+      setShowLaunchFx(false);
       if (!endRef.current) generateNextQuestion(nextLevel);
-    }, 520);
+    }, correct ? SUCCESS_EFFECT_MS : 520);
   };
 
   const topPadding = useSharedTopHud
-    ? 'pt-[calc(env(safe-area-inset-top)+4.95rem)]'
+    ? 'pt-[calc(env(safe-area-inset-top)+5.6rem)]'
     : 'pt-[calc(env(safe-area-inset-top)+1.2rem)]';
 
   return (
@@ -224,7 +240,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
       <main
         className={`relative z-20 flex h-full w-full flex-col items-center ${topPadding} px-[max(1rem,env(safe-area-inset-left))] pb-[max(7.4rem,calc(env(safe-area-inset-bottom)+6.25rem))]`}
       >
-        <div className="flex h-full w-full max-w-[28rem] flex-col items-center py-0.5">
+        <div className="flex h-full w-full max-w-[28rem] flex-col items-center pt-2.5">
           <section className="flex w-full flex-col items-center text-center">
             <motion.div
               key={problem.id}
@@ -263,7 +279,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
                   key={key}
                   onClick={() => handleKeypad(String(key))}
                   disabled={roundEnded || (key === '.' && !problem.target.includes('decimal'))}
-                  className="rounded-[0.9rem] border border-cyan-200/42 bg-[linear-gradient(180deg,rgba(15,31,70,0.86),rgba(6,20,54,0.94))] px-2 py-2 text-[clamp(0.95rem,4.35vw,1.3rem)] font-black text-cyan-50 shadow-[0_9px_16px_rgba(2,6,23,0.35)] transition hover:brightness-110 disabled:opacity-40"
+                  className="rounded-[0.8rem] border border-cyan-200/42 bg-[linear-gradient(180deg,rgba(15,31,70,0.86),rgba(6,20,54,0.94))] px-2 py-1.5 text-[clamp(0.84rem,3.75vw,1.08rem)] font-black text-cyan-50 shadow-[0_8px_14px_rgba(2,6,23,0.32)] transition hover:brightness-110 disabled:opacity-40"
                 >
                   {key}
                 </button>
@@ -275,26 +291,69 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
               disabled={!userInput || roundEnded}
               className="mx-auto block w-[92%] rounded-[1.05rem] border border-fuchsia-300/52 bg-[linear-gradient(180deg,#1d4ed8,#7c3aed)] py-2.5 text-[clamp(0.95rem,4.2vw,1.25rem)] font-black tracking-[0.08em] text-white uppercase shadow-[0_12px_22px_rgba(59,130,246,0.34)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
             >
-              Submit
+              Launch!
             </button>
           </section>
         </div>
       </main>
 
       <AnimatePresence>
+        {showLaunchFx ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="pointer-events-none absolute inset-0 z-30 overflow-hidden"
+          >
+            <motion.div
+              initial={{ opacity: 0.35 }}
+              animate={{ opacity: [0.35, 0.78, 0.45, 0.2] }}
+              transition={{ duration: 0.9, ease: 'easeOut' }}
+              className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(250,204,21,0.16),rgba(15,23,42,0.04)_45%,transparent_72%)]"
+            />
+            <motion.div
+              initial={{ opacity: 0.2, scaleY: 0.85 }}
+              animate={{ opacity: [0.2, 0.8, 0.35], scaleY: [0.85, 1.05, 0.92] }}
+              transition={{ duration: 0.9, ease: 'easeOut' }}
+              className="absolute -bottom-12 left-[-8%] right-[-8%] h-[58%] bg-[radial-gradient(ellipse_at_bottom,rgba(249,115,22,0.68),rgba(244,63,94,0.26)_38%,transparent_70%)] blur-2xl"
+            />
+            {sparkSeeds.map((spark) => (
+              <motion.span
+                key={`launch-spark-${spark.id}`}
+                initial={{ y: '112%', x: 0, opacity: 0, scale: 0.65 }}
+                animate={{
+                  y: `${spark.rise}%`,
+                  x: spark.drift,
+                  opacity: [0, 1, 0.92, 0],
+                  scale: [0.65, 1.05, 0.92, 0.4],
+                }}
+                transition={{ duration: spark.duration, delay: spark.delay, ease: 'easeOut' }}
+                style={{ left: `${spark.left}%`, width: spark.size, height: spark.size }}
+                className="absolute rounded-full bg-amber-200 shadow-[0_0_16px_rgba(251,191,36,0.95)]"
+              />
+            ))}
+          </motion.div>
+        ) : null}
+
         {feedback ? (
           <motion.div
             key={feedback.text}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            className={`pointer-events-none absolute left-1/2 top-[calc(env(safe-area-inset-top)+6.1rem)] z-50 -translate-x-1/2 rounded-full border px-4 py-1.5 text-xs font-black uppercase tracking-[0.12em] ${
+            className={`pointer-events-none absolute left-1/2 top-[calc(env(safe-area-inset-top)+6.5rem)] z-50 -translate-x-1/2 ${
               feedback.type === 'success'
-                ? 'border-emerald-300/60 bg-emerald-500/20 text-emerald-100'
-                : 'border-rose-300/60 bg-rose-500/20 text-rose-100'
+                ? 'rounded-2xl border border-amber-200/85 bg-[linear-gradient(180deg,rgba(251,191,36,0.22),rgba(245,158,11,0.18))] px-4 py-2 text-sm font-black uppercase tracking-[0.06em] text-amber-100 shadow-[0_10px_22px_rgba(245,158,11,0.4)]'
+                : 'rounded-full border border-rose-300/60 bg-rose-500/20 px-4 py-1.5 text-xs font-black uppercase tracking-[0.12em] text-rose-100'
             }`}
           >
             {feedback.text}
+            {feedback.type === 'success' ? (
+              <span
+                aria-hidden="true"
+                className="absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 border-l-[9px] border-r-[9px] border-t-[11px] border-l-transparent border-r-transparent border-t-amber-300/85"
+              />
+            ) : null}
           </motion.div>
         ) : null}
       </AnimatePresence>
