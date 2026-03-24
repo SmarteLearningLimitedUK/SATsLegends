@@ -295,6 +295,23 @@ const App: React.FC = () => {
     ),
     [selectedLevel?.blueprintKey, selectedLevel?.gameType],
   );
+  const hintRuleSet = useMemo(
+    () => (
+      selectedRuleSet
+      || (selectedLevel
+        ? {
+            title: selectedLevel.displayName || 'How To Play',
+            summary: 'Solve each challenge as accurately and quickly as you can.',
+            bullets: [
+              'Read the mission text first, then choose or place your answer.',
+              'Use the bottom bar for back, sound, and hint support.',
+              'Keep an eye on the timer and complete the objective before it ends.',
+            ],
+          }
+        : null)
+    ),
+    [selectedRuleSet, selectedLevel],
+  );
 
   useEffect(() => {
     if (screen !== 'gameplay' || !selectedLevel) return undefined;
@@ -387,7 +404,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const handleOpenHelp = () => {
-      if (screen === 'gameplay' && selectedRuleSet) {
+      if (screen === 'gameplay' && hintRuleSet) {
         setGameRulesMode('help');
         setShowGameRules(true);
       }
@@ -405,7 +422,7 @@ const App: React.FC = () => {
       window.removeEventListener(GAME_HUD_HELP_EVENT, handleOpenHelp as EventListener);
       window.removeEventListener(GAME_HUD_MUTE_EVENT, handleMuteChange as EventListener);
     };
-  }, [screen, selectedRuleSet]);
+  }, [screen, hintRuleSet]);
 
   useEffect(() => {
     if (screen !== 'gameplay' || !selectedLevel) {
@@ -1046,8 +1063,6 @@ const App: React.FC = () => {
                 ) : renderGameplay()}
                 {!isGameplayInstructionPending ? (
                   <UnifiedMiniGameHud
-                    avatarImage={player.customSpriteUrl || AVATARS.find((avatar) => avatar.id === player.avatarId)?.portrait || AVATARS.find((avatar) => avatar.id === player.avatarId)?.image || AVATARS[0].image}
-                    avatarName={AVATARS.find((avatar) => avatar.id === player.avatarId)?.name || 'Hero'}
                     playerName={player.playerName || 'Learner'}
                     timeLeft={globalMiniGameHudTimeLeft}
                     totalTime={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
@@ -1059,7 +1074,7 @@ const App: React.FC = () => {
 
             <div className="unified-global-dock pointer-events-none absolute inset-x-0 bottom-[max(0.45rem,calc(env(safe-area-inset-bottom)+0.2rem))] z-[240] flex justify-center px-3">
               <div className="pointer-events-auto">
-                <GameActionDock onBack={() => setScreen('island_levels')} compact accentClass="text-slate-100" />
+                <GameActionDock onBack={() => setScreen('island_levels')} compact accentClass="text-slate-100" variant="global" />
               </div>
             </div>
           </div>
@@ -1205,7 +1220,7 @@ const App: React.FC = () => {
             <GameRulesModal
               isOpen={showGameRules}
               onClose={closeGameRules}
-              rules={selectedRuleSet}
+              rules={hintRuleSet}
               actionLabel={gameRulesMode === 'start' ? 'Start Game' : 'Back To Game'}
             />
 

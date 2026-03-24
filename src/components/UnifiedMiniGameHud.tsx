@@ -1,11 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'motion/react';
 import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
-import hudProfileBar from '../assets/fantasy_hero/ui/uiamend_slices/hud_profile_bar.png';
 
 interface UnifiedMiniGameHudProps {
-  avatarImage: string;
-  avatarName: string;
   playerName: string;
   timeLeft: number;
   totalTime: number;
@@ -13,110 +10,13 @@ interface UnifiedMiniGameHudProps {
   hideTimer?: boolean;
 }
 
-const cropTransparentAvatarPadding = (src: string): Promise<string> =>
-  new Promise((resolve) => {
-    const image = new Image();
-
-    image.onload = () => {
-      try {
-        const canvas = document.createElement('canvas');
-        canvas.width = image.naturalWidth;
-        canvas.height = image.naturalHeight;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          resolve(src);
-          return;
-        }
-
-        ctx.drawImage(image, 0, 0);
-        const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-        const width = canvas.width;
-        const height = canvas.height;
-        const alphaThreshold = 8;
-
-        let minX = width;
-        let minY = height;
-        let maxX = -1;
-        let maxY = -1;
-
-        for (let y = 0; y < height; y += 1) {
-          for (let x = 0; x < width; x += 1) {
-            const index = (y * width + x) * 4;
-            if (data[index + 3] > alphaThreshold) {
-              if (x < minX) minX = x;
-              if (y < minY) minY = y;
-              if (x > maxX) maxX = x;
-              if (y > maxY) maxY = y;
-            }
-          }
-        }
-
-        if (maxX < minX || maxY < minY) {
-          resolve(src);
-          return;
-        }
-
-        const cropWidth = maxX - minX + 1;
-        const cropHeight = maxY - minY + 1;
-        const paddingX = Math.max(2, Math.round(cropWidth * 0.03));
-        const paddingY = Math.max(2, Math.round(cropHeight * 0.03));
-
-        const outCanvas = document.createElement('canvas');
-        outCanvas.width = cropWidth + paddingX * 2;
-        outCanvas.height = cropHeight + paddingY * 2;
-        const outCtx = outCanvas.getContext('2d');
-        if (!outCtx) {
-          resolve(src);
-          return;
-        }
-
-        outCtx.drawImage(
-          image,
-          minX,
-          minY,
-          cropWidth,
-          cropHeight,
-          paddingX,
-          paddingY,
-          cropWidth,
-          cropHeight,
-        );
-
-        resolve(outCanvas.toDataURL('image/png'));
-      } catch {
-        resolve(src);
-      }
-    };
-
-    image.onerror = () => resolve(src);
-    image.src = src;
-  });
-
 const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
-  avatarImage,
-  avatarName,
   playerName,
   timeLeft,
   totalTime,
   hidden = false,
   hideTimer = false,
 }) => {
-  const [fittedAvatarImage, setFittedAvatarImage] = useState(avatarImage);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    cropTransparentAvatarPadding(avatarImage).then((croppedSrc) => {
-      if (!cancelled) {
-        setFittedAvatarImage(croppedSrc);
-      }
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [avatarImage]);
-
   const timerProgress = useMemo(
     () => Math.max(0, Math.min(1, totalTime > 0 ? timeLeft / totalTime : 0)),
     [timeLeft, totalTime],
@@ -141,32 +41,19 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
     >
       <div className="flex w-full items-center justify-between gap-[clamp(0.28rem,1.5vw,0.85rem)] py-[clamp(0.15rem,0.65vh,0.42rem)]">
         <div className="flex min-w-0 items-center">
-          <div className="relative h-[clamp(2.45rem,6.75vh,3.35rem)] w-[clamp(10.2rem,50vw,15rem)] shrink-0 overflow-hidden">
-            <img
-              src={hudProfileBar}
-              alt=""
-              aria-hidden="true"
-              draggable={false}
-              className="absolute inset-0 h-full w-full object-fill"
-            />
-            <div className="absolute inset-y-[9%] left-[4.2%] right-[6.1%] flex items-center">
-              <div className="relative h-[84%] w-[26%] shrink-0 overflow-hidden rounded-[28%]">
-                <img
-                  src={fittedAvatarImage}
-                  alt={avatarName}
-                  draggable={false}
-                  className="h-full w-full object-contain object-center drop-shadow-[0_3px_6px_rgba(2,6,23,0.45)]"
-                />
-              </div>
-              <div className="ml-[5.5%] flex min-w-0 flex-1 items-center overflow-hidden">
-                <span
-                  className="block max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-left text-[clamp(0.72rem,2.05vw,0.98rem)] font-black uppercase tracking-[0.045em] text-cyan-50"
-                  style={{ lineHeight: 1, textShadow: '0 1px 2px rgba(2,6,23,0.6)' }}
-                >
-                  {playerName}
-                </span>
-              </div>
-            </div>
+          <div
+            className="flex h-[clamp(2.45rem,6.75vh,3.35rem)] w-[clamp(9.8rem,48vw,14.25rem)] min-w-0 items-center rounded-full px-[clamp(0.5rem,1.8vw,0.8rem)] shadow-[0_6px_16px_rgba(2,6,23,0.45)]"
+            style={{
+              border: '1px solid rgba(244, 208, 109, 0.55)',
+              background: 'linear-gradient(180deg, rgba(43, 103, 185, 0.9) 0%, rgba(26, 71, 146, 0.92) 100%)',
+            }}
+          >
+            <span
+              className="block w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-[clamp(0.76rem,2.1vw,1rem)] font-black uppercase tracking-[0.055em] text-cyan-50"
+              style={{ lineHeight: 1, textShadow: '0 1px 2px rgba(2,6,23,0.6)' }}
+            >
+              {playerName}
+            </span>
           </div>
         </div>
 
