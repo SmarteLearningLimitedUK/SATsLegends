@@ -7,7 +7,7 @@ import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Trophy, RotateCcw, Play, CheckCircle2, Clock, Plus, Minus } from 'lucide-react';
 import GameActionDock from '../components/GameActionDock';
-import clockFaceImage from '../assets/maps/gold_rimmed_clock_transparent_trimmed.png';
+import clockFaceImage from '../assets/maps/clockfaceblank.png';
 import missionBackground from '../assets/maps/harbour.jpg';
 
 interface TimekeeperTempleGameProps {
@@ -184,28 +184,28 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
             </motion.div>
 
             <div className="group relative">
-              <div className="absolute inset-0 rounded-full bg-blue-500/10 blur-3xl" />
+              <div className="absolute inset-0 rounded-full bg-blue-500/8 blur-2xl" />
 
               <div className="relative flex h-[17rem] w-[17rem] items-center justify-center">
                 <img
                   src={clockFaceImage}
                   alt="Clock Face"
-                  className="h-full w-full object-contain drop-shadow-2xl"
+                  className="h-full w-full object-contain"
                 />
 
                 <motion.div
                   animate={{ rotate: rotationHours }}
                   transition={{ type: 'spring', stiffness: 100, damping: 15 }}
-                  className="absolute left-1/2 bottom-1/2 z-20 h-[23%] w-[2.4%] origin-bottom -translate-x-1/2 rounded-full bg-gradient-to-t from-white to-gray-300 shadow-lg"
+                  className="absolute left-1/2 top-1/2 z-20 h-[23%] w-[2.4%] origin-bottom -translate-x-1/2 -translate-y-full rounded-full bg-gradient-to-t from-white to-gray-300 shadow-lg"
                 />
 
                 <motion.div
                   animate={{ rotate: rotationMinutes }}
                   transition={{ type: 'spring', stiffness: 120, damping: 12 }}
-                  className="absolute left-1/2 bottom-1/2 z-30 h-[33%] w-[1.2%] origin-bottom -translate-x-1/2 rounded-full bg-gradient-to-t from-blue-400 to-blue-200 shadow-lg"
+                  className="absolute left-1/2 top-1/2 z-30 h-[33%] w-[1.2%] origin-bottom -translate-x-1/2 -translate-y-full rounded-full bg-gradient-to-t from-blue-400 to-blue-200 shadow-lg"
                 />
 
-                <div className="absolute left-1/2 top-1/2 z-40 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-black/20 bg-gradient-to-br from-yellow-300 to-yellow-600 shadow-lg" />
+                <div className="absolute left-1/2 top-1/2 z-40 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-black/20 bg-gradient-to-br from-slate-100 to-slate-400 shadow-lg" />
               </div>
             </div>
 
