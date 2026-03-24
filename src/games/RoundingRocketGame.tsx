@@ -1,19 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Rocket,
-  Target,
-  Zap,
-  RotateCcw,
-  Play,
-  ChevronRight,
-  AlertCircle,
-  CheckCircle2,
-  Cpu,
-  Globe,
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
-import GameActionDock from '../components/GameActionDock';
-import rocket2Background from '../assets/maps/rocket2.jpg';
+import { AnimatePresence, motion } from 'motion/react';
+import AssetIcon from '../components/AssetIcon';
+import { AVATARS } from '../constants';
+import hudAvatarName from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
+import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
+import missionBackground from '../assets/maps/gemini-2.5-flash-image_using_the_same_aesthetic_-_create_a_dark_and_mysterious_forest_path_with_dense_f-1.jpg';
 
 type RoundingTarget =
   | 'nearest 10'
@@ -41,22 +32,10 @@ interface RoundingRocketGameProps {
   onBack: () => void;
 }
 
-const PLANETS = [
-  { name: 'Moon', distance: 1000 },
-  { name: 'Mars', distance: 3000 },
-  { name: 'Jupiter', distance: 6000 },
-  { name: 'Saturn', distance: 10000 },
-  { name: 'Neptune', distance: 15000 },
-  { name: 'Pluto', distance: 21000 },
-];
+const PLAYER_STORAGE_KEY = 'maths_quest_player';
+const ROUND_DURATION_SECONDS = 65;
 
-const MAX_DISTANCE = 21000;
-
-const scoreToStars = (score: number) => {
-  if (score >= 5200) return 3;
-  if (score >= 4000) return 2;
-  return 1;
-};
+const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
 const generateProblem = (level: number): RoundingProblem => {
   let num: number;
@@ -83,7 +62,6 @@ const generateProblem = (level: number): RoundingProblem => {
     num = parseFloat((Math.random() * 100).toFixed(3));
     const targets: RoundingTarget[] = ['nearest whole number', 'nearest 1 decimal place', 'nearest 2 decimal places'];
     target = targets[Math.floor(Math.random() * targets.length)];
-
     if (target === 'nearest whole number') {
       answer = Math.round(num).toString();
     } else if (target === 'nearest 1 decimal place') {
@@ -96,400 +74,395 @@ const generateProblem = (level: number): RoundingProblem => {
   return { id: Date.now() + Math.floor(Math.random() * 1000), number: num, target, answer };
 };
 
+const getRoundingStep = (target: RoundingTarget): number => {
+  switch (target) {
+    case 'nearest 10': return 10;
+    case 'nearest 100': return 100;
+    case 'nearest 1,000': return 1000;
+    case 'nearest 10,000': return 10000;
+    case 'nearest 100,000': return 100000;
+    case 'nearest 1,000,000': return 1000000;
+    case 'nearest whole number': return 1;
+    case 'nearest 1 decimal place': return 0.1;
+    case 'nearest 2 decimal places': return 0.01;
+    default: return 1;
+  }
+};
+
+const formatRoundedValue = (value: number, target: RoundingTarget): string => {
+  if (target === 'nearest 1 decimal place') return value.toFixed(1);
+  if (target === 'nearest 2 decimal places') return value.toFixed(2);
+  if (target === 'nearest whole number') return Math.round(value).toString();
+  return Math.round(value).toLocaleString('en-GB');
+};
+
+const normalizeOptionValue = (value: number, target: RoundingTarget): number => {
+  if (target === 'nearest 1 decimal place') return Number(value.toFixed(1));
+  if (target === 'nearest 2 decimal places') return Number(value.toFixed(2));
+  return Math.round(value);
+};
+
+const generateOptions = (problem: RoundingProblem): string[] => {
+  const step = getRoundingStep(problem.target);
+  const correctNumeric = normalizeOptionValue(parseFloat(problem.answer), problem.target);
+  const optionSet = new Set<number>([correctNumeric]);
+  const shifts = [-2, -1, 1, 2, -3, 3];
+
+  for (const shift of shifts) {
+    if (optionSet.size >= 3) break;
+    const candidate = normalizeOptionValue(correctNumeric + (step * shift), problem.target);
+    if (candidate >= 0) optionSet.add(candidate);
+  }
+
+  while (optionSet.size < 3) {
+    const randomShift = randomInt(-4, 4) || 1;
+    const candidate = normalizeOptionValue(correctNumeric + (step * randomShift), problem.target);
+    if (candidate >= 0) optionSet.add(candidate);
+  }
+
+  const options = Array.from(optionSet).slice(0, 3);
+  const correctFormatted = formatRoundedValue(correctNumeric, problem.target);
+  const formatted = options.map((option) => formatRoundedValue(option, problem.target));
+  if (!formatted.includes(correctFormatted)) {
+    formatted[0] = correctFormatted;
+  }
+
+  return formatted.sort(() => Math.random() - 0.5);
+};
+
+const scoreToStars = (score: number, correct: number, total: number) => {
+  const accuracy = total > 0 ? correct / total : 0;
+  if (score >= 2200 && accuracy >= 0.8) return 3;
+  if (score >= 1400 && accuracy >= 0.6) return 2;
+  return 1;
+};
+
 const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
-  levelId: _levelId,
-  avatarId: _avatarId,
+  levelId,
+  avatarId,
   onVictory,
-  onGameOver,
+  onGameOver: _onGameOver,
   onBack,
 }) => {
-  const [viewport, setViewport] = useState(() => {
-    if (typeof window === 'undefined') {
-      return { width: 390, height: 844 };
+  const selectedAvatar = useMemo(() => AVATARS.find((avatar) => avatar.id === avatarId) ?? AVATARS[0], [avatarId]);
+  const playerName = useMemo(() => {
+    if (typeof window === 'undefined') return 'Explorer';
+    const raw = window.localStorage.getItem(PLAYER_STORAGE_KEY);
+    if (!raw) return 'Explorer';
+    try {
+      const parsed = JSON.parse(raw) as { displayName?: string };
+      return parsed.displayName?.trim() || 'Explorer';
+    } catch {
+      return 'Explorer';
     }
-    return { width: window.innerWidth, height: window.innerHeight };
-  });
-  const [gameState, setGameState] = useState<'start' | 'playing' | 'success' | 'complete'>('start');
+  }, []);
+
+  const [level, setLevel] = useState(Math.max(1, levelId));
+  const [problem, setProblem] = useState<RoundingProblem>(() => generateProblem(Math.max(1, levelId)));
+  const [options, setOptions] = useState<string[]>(() => generateOptions(generateProblem(Math.max(1, levelId))));
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [score, setScore] = useState(0);
-  const [level, setLevel] = useState(1);
-  const [currentProblem, setCurrentProblem] = useState<RoundingProblem | null>(null);
-  const [userInput, setUserInput] = useState('');
-  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-  const [distance, setDistance] = useState(0);
-  const [fuel, setFuel] = useState(100);
+  const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [questionsAnswered, setQuestionsAnswered] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(ROUND_DURATION_SECONDS);
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [isMuted, setIsMuted] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
+  const [roundEnded, setRoundEnded] = useState(false);
 
-  const endedRef = useRef(false);
-  const timeoutsRef = useRef<number[]>([]);
+  const endRef = useRef(false);
 
-  const clearTimers = () => {
-    timeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
-    timeoutsRef.current = [];
-  };
-
-  useEffect(() => () => clearTimers(), []);
+  const nextQuestion = useCallback((nextLevel: number) => {
+    const generated = generateProblem(nextLevel);
+    setProblem(generated);
+    setOptions(generateOptions(generated));
+    setSelectedOption(null);
+  }, []);
 
   useEffect(() => {
-    const onResize = () => {
-      const width = window.visualViewport?.width ?? window.innerWidth;
-      const height = window.visualViewport?.height ?? window.innerHeight;
-      setViewport({ width, height });
-    };
+    if (roundEnded || endRef.current) return;
+    const timer = window.setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          window.clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
 
-    const vv = window.visualViewport;
-    window.addEventListener('resize', onResize);
-    vv?.addEventListener('resize', onResize);
-    vv?.addEventListener('scroll', onResize);
-    return () => {
-      window.removeEventListener('resize', onResize);
-      vv?.removeEventListener('resize', onResize);
-      vv?.removeEventListener('scroll', onResize);
-    };
-  }, []);
+    return () => window.clearInterval(timer);
+  }, [roundEnded]);
 
-  const startNewProblem = useCallback((lvl: number) => {
-    setCurrentProblem(generateProblem(lvl));
-    setUserInput('');
-    setFeedback(null);
-  }, []);
+  useEffect(() => {
+    if (timeLeft > 0 || endRef.current) return;
+    endRef.current = true;
+    setRoundEnded(true);
+    const stars = scoreToStars(score, correctAnswers, questionsAnswered);
+    onVictory(stars, score);
+  }, [correctAnswers, onVictory, questionsAnswered, score, timeLeft]);
 
-  const startGame = () => {
-    clearTimers();
-    endedRef.current = false;
-    setScore(0);
-    setLevel(1);
-    setDistance(0);
-    setFuel(100);
-    setGameState('playing');
-    startNewProblem(1);
-  };
+  const timerProgress = Math.max(0, Math.min(1, timeLeft / ROUND_DURATION_SECONDS));
+  const timerFillColor = `hsl(${Math.round(timerProgress * 120)}, 82%, 54%)`;
 
-  const handleKeypad = (val: string) => {
-    if (gameState !== 'playing') return;
+  const missionLabel = useMemo(() => {
+    const target = problem.target.replace('nearest ', '');
+    return `Round to nearest ${target}`;
+  }, [problem.target]);
 
-    if (val === 'DEL') {
-      setUserInput((previous) => previous.slice(0, -1));
-      return;
-    }
+  const displayNumber = useMemo(() => (
+    problem.target.includes('decimal')
+      ? problem.number.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 3 })
+      : Math.round(problem.number).toLocaleString('en-GB')
+  ), [problem.number, problem.target]);
 
-    if (val === '.') {
-      if (!userInput.includes('.')) {
-        setUserInput((previous) => (previous.length ? `${previous}.` : '0.'));
-      }
-      return;
-    }
-
-    if (userInput.length < 12) {
-      setUserInput((previous) => `${previous}${val}`);
-    }
-  };
-
-  const handleSubmit = () => {
-    if (!currentProblem || gameState !== 'playing' || endedRef.current) return;
-
-    const normalizedInput = userInput.trim();
-    if (!normalizedInput) return;
-
-    const numericMatch = parseFloat(normalizedInput) === parseFloat(currentProblem.answer);
-    const requiresExactDecimals = currentProblem.target.includes('decimal');
-    const exactFormatMatch = !requiresExactDecimals || normalizedInput === currentProblem.answer;
-    const isCorrect = numericMatch && exactFormatMatch;
+  const submitAnswer = () => {
+    if (!selectedOption || roundEnded) return;
+    const isCorrect = selectedOption === formatRoundedValue(parseFloat(problem.answer), problem.target);
+    const nextQuestionsAnswered = questionsAnswered + 1;
+    setQuestionsAnswered(nextQuestionsAnswered);
+    let nextLevel = level;
 
     if (isCorrect) {
-      const nextDistance = Math.min(MAX_DISTANCE, distance + 2100);
-      setScore((previous) => previous + 500);
-      setDistance(nextDistance);
-      setFuel((previous) => Math.min(100, previous + 15));
-      setFeedback({ type: 'success', message: 'Fuel injection successful! Boosting...' });
-      setGameState('success');
-      return;
-    }
+      const nextCorrect = correctAnswers + 1;
+      setCorrectAnswers(nextCorrect);
+      setScore((prev) => prev + (180 + (level * 18)));
+      setFeedback({ type: 'success', text: 'Correct!' });
 
-    const nextFuel = Math.max(0, fuel - 20);
-    setFuel(nextFuel);
-    setFeedback({ type: 'error', message: `Incorrect. Target was ${currentProblem.answer}.` });
-
-    const timeoutId = window.setTimeout(() => {
-      if (nextFuel <= 0) {
-        if (!endedRef.current) {
-          endedRef.current = true;
-          onGameOver(score);
-        }
-        return;
+      if (nextCorrect > 0 && nextCorrect % 4 === 0) {
+        nextLevel = Math.min(10, level + 1);
+        setLevel(nextLevel);
       }
-
-      setFeedback(null);
-      startNewProblem(level);
-    }, 1600);
-
-    timeoutsRef.current.push(timeoutId);
-  };
-
-  const nextLevel = () => {
-    if (distance >= MAX_DISTANCE) {
-      setGameState('complete');
-      return;
+    } else {
+      setFeedback({ type: 'error', text: `Correct answer: ${formatRoundedValue(parseFloat(problem.answer), problem.target)}` });
     }
 
-    const nextLvl = Math.floor(distance / 2100) + 1;
-    setLevel(nextLvl);
-    setGameState('playing');
-    startNewProblem(nextLvl);
+    window.setTimeout(() => {
+      setFeedback(null);
+      if (!endRef.current) nextQuestion(nextLevel);
+    }, 380);
   };
 
-  const submitMission = () => {
-    if (endedRef.current) return;
-    endedRef.current = true;
-    onVictory(scoreToStars(score), score);
-  };
-
-  const currentPlanet = useMemo(
-    () => PLANETS.find((planet) => distance < planet.distance) || PLANETS[PLANETS.length - 1],
-    [distance],
-  );
-  const isCompactViewport = viewport.height < 780 || viewport.width < 390;
-  const isUltraCompactViewport = viewport.height < 700;
+  const topHudLayout = useMemo(() => ({
+    rowHeight: 'clamp(3.1rem, 8.35vh, 4.35rem)',
+    profileWidth: 'clamp(10.4rem, 46vw, 14.6rem)',
+    timerWidth: 'clamp(9.8rem, 36vw, 13.2rem)',
+  }), []);
 
   return (
-    <div className="fixed inset-0 z-20 flex h-[100dvh] w-screen flex-col overflow-hidden bg-[#08162c] font-sans text-white select-none">
+    <div className="fixed inset-0 z-20 h-screen w-screen overflow-hidden bg-[#08162c] select-none">
       <img
-        src={rocket2Background}
+        src={missionBackground}
         alt=""
         aria-hidden="true"
         draggable={false}
         className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
       />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_14%,rgba(125,211,252,0.22),transparent_38%),linear-gradient(180deg,rgba(7,22,48,0.24)_0%,rgba(7,20,45,0.46)_58%,rgba(4,12,28,0.72)_100%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(4,9,26,0.24),rgba(2,7,20,0.78)_82%)]" />
 
-      <main
-        className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden ${isCompactViewport ? 'p-2' : 'p-2 sm:p-3 md:p-4'}`}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 z-40"
         style={{
-          paddingTop: `calc(env(safe-area-inset-top) + ${isCompactViewport ? '3.15rem' : '3.5rem'})`,
-          paddingBottom: `calc(env(safe-area-inset-bottom) + ${isCompactViewport ? '4.15rem' : '4.8rem'})`,
+          paddingTop: 'max(0.4rem, env(safe-area-inset-top))',
+          paddingLeft: 'max(0.55rem, env(safe-area-inset-left))',
+          paddingRight: 'max(0.55rem, env(safe-area-inset-right))',
         }}
       >
-        <AnimatePresence mode="wait">
-          {(gameState === 'playing' || gameState === 'success') && currentProblem && (
-            <motion.div
-              key={currentProblem.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.05 }}
-              className={`grid h-full w-full min-h-0 grid-cols-1 ${isUltraCompactViewport ? 'grid-rows-[0.42fr_0.58fr] gap-1.5' : 'grid-rows-[0.44fr_0.56fr] gap-2'} xl:grid-cols-2 xl:grid-rows-1 ${isCompactViewport ? 'xl:gap-3' : 'xl:gap-4'}`}
-            >
-              <section className={`relative flex min-h-0 flex-col overflow-hidden rounded-2xl border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(20,53,116,0.82),rgba(12,33,76,0.9))] shadow-[0_18px_36px_rgba(2,6,23,0.52)] ${isCompactViewport ? 'gap-2.5 p-3.5' : 'gap-3 p-4 sm:gap-4 sm:p-5'}`}>
-                <div className="absolute right-0 top-0 p-8 opacity-5">
-                  <Cpu className="h-48 w-48" />
-                </div>
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(250,204,21,0.14),transparent_52%)]" />
-
-                <div className="flex items-center gap-2.5 sm:gap-3">
-                  <div className="rounded-xl bg-amber-300/18 p-2 sm:rounded-2xl sm:p-3">
-                    <Target className="h-5 w-5 text-amber-300 sm:h-6 sm:w-6" />
-                  </div>
-                  <div>
-                    <h2 className="text-base font-black tracking-tight text-white uppercase italic sm:text-xl">Mission Objective</h2>
-                    <p className="text-[10px] font-bold tracking-widest text-cyan-100/70 uppercase sm:text-xs">Data Processing Unit</p>
-                  </div>
-                </div>
-
-                <div className={isCompactViewport ? 'space-y-2.5' : 'space-y-3 sm:space-y-4'}>
-                  <div className="flex flex-col items-center gap-2 rounded-2xl border border-cyan-100/24 bg-slate-950/34 p-3 sm:gap-3 sm:rounded-3xl sm:p-5">
-                    <span className="text-[10px] font-black tracking-[0.22em] text-amber-200 uppercase sm:text-xs sm:tracking-[0.3em]">Input Value</span>
-                    <span className={`${isCompactViewport ? 'text-[clamp(1.45rem,6.3vw,2.25rem)]' : 'text-3xl sm:text-4xl md:text-5xl'} font-black tabular-nums tracking-tighter text-white`}>
-                      {currentProblem.number.toLocaleString(undefined, { maximumFractionDigits: 3 })}
-                    </span>
-                  </div>
-
-                  <div className="flex flex-col gap-2 sm:gap-3">
-                    <div className="flex items-center gap-2">
-                      <Zap className="h-4 w-4 text-amber-300 sm:h-5 sm:w-5" />
-                      <span className="text-[10px] font-black tracking-[0.14em] text-cyan-100/72 uppercase sm:text-xs">Rounding Instruction</span>
-                    </div>
-                    <p className={`${isCompactViewport ? 'text-base sm:text-lg' : 'text-lg sm:text-xl md:text-2xl'} leading-tight font-bold text-white`}>
-                      Round this number to the{' '}
-                      <span className="text-amber-200 underline decoration-amber-300/70 underline-offset-8">{currentProblem.target}</span>.
-                    </p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-[10px] font-black tracking-widest text-cyan-100/70 uppercase">
-                      <span>Earth</span>
-                      <span>{currentPlanet.name}</span>
-                    </div>
-                    <div className="h-2 overflow-hidden rounded-full border border-cyan-100/24 bg-slate-950/42">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${(distance / MAX_DISTANCE) * 100}%` }}
-                        className="h-full bg-[linear-gradient(90deg,#22d3ee,#facc15)] shadow-[0_0_16px_rgba(250,204,21,0.38)]"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <section className="min-h-0">
-                <div className={`flex h-full min-h-0 flex-col rounded-2xl border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(15,47,108,0.84),rgba(10,28,68,0.92))] shadow-[0_18px_36px_rgba(2,6,23,0.52)] ${isCompactViewport ? 'gap-2.5 p-3.5' : 'gap-3 p-4 sm:gap-4 sm:p-5'}`}>
-                  <div className="flex items-center justify-between rounded-xl border border-cyan-100/24 bg-slate-950/36 p-3 sm:rounded-2xl sm:p-4">
-                    <span className="text-[10px] font-black tracking-[0.14em] text-cyan-100/72 uppercase sm:text-xs">Output Buffer</span>
-                    <span className={`${isCompactViewport ? 'text-xl sm:text-2xl' : 'text-2xl sm:text-3xl md:text-4xl'} min-h-[1em] font-black tabular-nums text-amber-200`}>
-                      {userInput || '0'}
-                      <motion.span
-                        animate={{ opacity: [1, 0] }}
-                        transition={{ duration: 0.8, repeat: Infinity }}
-                        className="ml-1 inline-block h-6 w-1 align-middle bg-amber-200 sm:h-7"
-                      />
-                    </span>
-                  </div>
-
-                  <div className={`grid grid-cols-3 ${isCompactViewport ? 'gap-1.5 sm:gap-2' : 'gap-2 sm:gap-3'}`}>
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, '.', 0, 'DEL'].map((val) => (
-                      <button
-                        key={val}
-                        onClick={() => handleKeypad(val.toString())}
-                        disabled={gameState === 'success'}
-                        className={`flex items-center justify-center rounded-lg border border-cyan-100/22 bg-slate-900/45 font-black text-cyan-50 transition-all hover:bg-sky-600/28 active:bg-cyan-500/25 disabled:opacity-50 ${isCompactViewport ? 'h-10 text-base sm:h-11 sm:text-lg' : 'h-12 text-lg sm:h-14 sm:rounded-xl sm:text-xl'}`}
-                      >
-                        {val}
-                      </button>
-                    ))}
-                  </div>
-
-                  <AnimatePresence mode="wait">
-                    {gameState === 'success' ? (
-                      <motion.button
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        onClick={nextLevel}
-                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-[linear-gradient(180deg,#fcd34d,#f59e0b)] py-3 text-[11px] font-black tracking-[0.16em] text-slate-900 uppercase shadow-xl shadow-amber-500/30 transition-all hover:brightness-105 sm:gap-3 sm:rounded-2xl sm:py-4 sm:text-sm sm:tracking-[0.2em]"
-                      >
-                        Initiate Next Jump <ChevronRight className="h-5 w-5" />
-                      </motion.button>
-                    ) : (
-                      <button
-                        onClick={handleSubmit}
-                        disabled={!userInput}
-                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-[linear-gradient(180deg,#38bdf8,#2563eb)] py-3 text-[11px] font-black tracking-[0.16em] text-white uppercase shadow-xl shadow-cyan-500/25 transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 sm:gap-3 sm:rounded-2xl sm:py-4 sm:text-sm sm:tracking-[0.2em]"
-                      >
-                        Confirm Calculation <ChevronRight className="h-5 w-5" />
-                      </button>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </section>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {gameState === 'start' && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 z-50 flex items-center justify-center bg-black/90 p-8 text-center backdrop-blur-md"
-            >
-              <div className="flex max-w-md flex-col items-center">
-                <div className="relative mb-8 flex h-24 w-24 items-center justify-center rounded-[2.5rem] bg-[linear-gradient(180deg,#38bdf8,#1d4ed8)] shadow-2xl shadow-cyan-500/40">
-                  <Rocket className="h-12 w-12 text-white" />
-                  <motion.div
-                    animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="absolute inset-0 rounded-[2.5rem] border-4 border-amber-300/65"
-                  />
-                </div>
-                <h2 className="mb-6 text-4xl font-black tracking-tighter text-white uppercase italic">Rounding Rocket</h2>
-                <button
-                  onClick={startGame}
-                  className="group flex items-center gap-3 rounded-full bg-[linear-gradient(180deg,#fcd34d,#f59e0b)] px-12 py-5 text-sm font-black tracking-[0.2em] text-slate-900 uppercase shadow-2xl shadow-amber-500/35 transition-all hover:brightness-105"
-                >
-                  <Play className="h-4 w-4 fill-current transition-transform group-hover:scale-110" /> Launch Mission
-                </button>
+        <div className="flex w-full items-center justify-between gap-[clamp(0.25rem,1.6vw,0.75rem)] py-[clamp(0.14rem,0.65vh,0.4rem)]">
+          <div className="relative shrink-0" style={{ height: topHudLayout.rowHeight, width: topHudLayout.profileWidth }}>
+            <img
+              src={hudAvatarName}
+              alt=""
+              aria-hidden="true"
+              draggable={false}
+              className="absolute inset-0 h-full w-full object-contain"
+            />
+            <div className="absolute left-[2.8%] top-1/2 h-[79%] w-[26%] -translate-y-1/2">
+              <div className="absolute inset-[10%] overflow-hidden rounded-[28%]">
+                <img
+                  src={selectedAvatar.portrait || selectedAvatar.image}
+                  alt={selectedAvatar.name}
+                  draggable={false}
+                  className="h-full w-full object-cover"
+                />
               </div>
-            </motion.div>
-          )}
-
-          {gameState === 'complete' && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="absolute inset-0 z-50 flex items-center justify-center bg-black/95 p-12 text-center backdrop-blur-xl"
-            >
-              <div className="flex max-w-md flex-col items-center">
-                <div className="relative mb-8">
-                  <Globe className="h-24 w-24 text-indigo-500 drop-shadow-[0_0_20px_rgba(99,102,241,0.5)]" />
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
-                    className="absolute -inset-4 rounded-full border-2 border-dashed border-indigo-400/30"
-                  />
-                </div>
-                <h2 className="mb-2 text-4xl font-black tracking-tighter text-white uppercase italic">Mission Accomplished</h2>
-                <p className="mb-8 font-medium text-slate-400">
-                  You&apos;ve reached Pluto. Rounding precision across every system is mission-ready.
-                </p>
-                <div className="mb-8 w-full rounded-[2.5rem] border border-white/10 bg-white/5 p-8 shadow-2xl">
-                  <span className="mb-1 block text-[10px] font-black tracking-widest text-slate-500 uppercase">Final Mission XP</span>
-                  <span className="text-5xl font-black tabular-nums text-indigo-400">{score}</span>
-                </div>
-                <div className="flex w-full flex-col gap-3">
-                  <button
-                    onClick={submitMission}
-                    className="flex items-center justify-center gap-3 rounded-full bg-white px-12 py-5 text-sm font-black tracking-[0.2em] text-black uppercase shadow-2xl transition-all hover:bg-slate-200"
-                  >
-                    <CheckCircle2 className="h-4 w-4" /> Submit Mission
-                  </button>
-                  <button
-                    onClick={startGame}
-                    className="flex items-center justify-center gap-3 rounded-full bg-[linear-gradient(180deg,#38bdf8,#2563eb)] px-12 py-5 text-sm font-black tracking-[0.2em] text-white uppercase shadow-2xl shadow-cyan-500/25 transition-all hover:brightness-105"
-                  >
-                    <RotateCcw className="h-4 w-4" /> New Expedition
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {feedback && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className={`absolute bottom-3 left-1/2 z-40 flex w-[min(94vw,36rem)] -translate-x-1/2 items-center justify-center gap-2 rounded-xl border px-4 py-2 text-center shadow-2xl sm:bottom-6 sm:w-auto sm:gap-3 sm:rounded-2xl sm:px-8 sm:py-4 ${
-                feedback.type === 'success'
-                  ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400'
-                  : 'border-rose-500/20 bg-rose-500/10 text-rose-400'
-              }`}
-            >
-              {feedback.type === 'success' ? <CheckCircle2 className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
-              <span className="text-[10px] font-black tracking-wide uppercase sm:text-sm">{feedback.message}</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </main>
-
-      {(gameState === 'playing' || gameState === 'success') && (
-        <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.4rem,env(safe-area-inset-bottom))] z-40 flex justify-center px-3">
-          <div className="pointer-events-auto flex items-center gap-2">
-            <div className={`pvp-hud-chip ${fuel < 30 ? 'text-rose-200' : 'text-emerald-100'}`}>
-              Fuel {fuel}%
             </div>
-            <GameActionDock onBack={onBack} compact accentClass="text-slate-100" />
+            <div className="pointer-events-none absolute left-[31%] right-[8.5%] top-1/2 -translate-y-1/2 overflow-hidden text-left text-[clamp(0.76rem,2.35vw,1.06rem)] font-black uppercase tracking-[0.06em] text-cyan-50">
+              <span className="block max-w-full overflow-hidden text-ellipsis whitespace-nowrap [text-shadow:0_1px_2px_rgba(2,6,23,0.6)]">
+                {playerName}
+              </span>
+            </div>
+          </div>
+
+          <div className="relative shrink-0" style={{ height: topHudLayout.rowHeight, width: topHudLayout.timerWidth }}>
+            <div className="pointer-events-none absolute inset-0 flex items-center">
+              <div className="flex h-[82%] w-full items-center rounded-full border border-cyan-200/35 bg-slate-900/62 px-[clamp(0.35rem,1.3vw,0.62rem)] shadow-[0_6px_16px_rgba(2,6,23,0.45)]">
+                <img
+                  src={hourglassIcon}
+                  alt=""
+                  aria-hidden="true"
+                  draggable={false}
+                  className="h-[74%] w-auto shrink-0 object-contain drop-shadow-[0_2px_4px_rgba(2,6,23,0.5)]"
+                />
+                <div className="relative ml-[clamp(0.32rem,1.2vw,0.56rem)] h-[44%] flex-1 overflow-hidden rounded-full border border-cyan-100/25 bg-slate-950/58">
+                  <motion.div
+                    className="absolute inset-y-0 left-0 rounded-full"
+                    animate={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }}
+                    transition={{ duration: 0.25, ease: 'easeOut' }}
+                    style={{
+                      boxShadow: '0 0 10px rgba(34,197,94,0.45), inset 0 1px 0 rgba(255,255,255,0.3)',
+                      backgroundImage: 'linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.08) 100%)',
+                    }}
+                  />
+                </div>
+                <span className="ml-[clamp(0.35rem,1.2vw,0.58rem)] shrink-0 text-[clamp(0.62rem,1.9vw,0.92rem)] font-black uppercase tracking-[0.06em] text-white">
+                  {timeLeft}s
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="pointer-events-auto ml-auto flex items-center gap-2">
+            <button
+              onClick={onBack}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-cyan-100/35 bg-slate-900/60 text-white shadow-[0_10px_20px_rgba(2,6,23,0.42)] transition hover:brightness-110"
+              aria-label="Back to map"
+            >
+              <AssetIcon name="home" className="h-5 w-5" />
+            </button>
+            <button
+              onClick={() => setIsMuted((prev) => !prev)}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-cyan-100/35 bg-slate-900/60 text-white shadow-[0_10px_20px_rgba(2,6,23,0.42)] transition hover:brightness-110"
+              aria-label="Toggle sound"
+            >
+              <AssetIcon name={isMuted ? 'soundMute' : 'sound'} className="h-5 w-5" />
+            </button>
+            <button
+              onClick={() => setShowHelp((prev) => !prev)}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-cyan-100/35 bg-slate-900/60 text-white shadow-[0_10px_20px_rgba(2,6,23,0.42)] transition hover:brightness-110"
+              aria-label="Toggle help"
+            >
+              <AssetIcon name="question" className="h-5 w-5" />
+            </button>
           </div>
         </div>
-      )}
+      </div>
 
-      <style>{`
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-5px); }
-          75% { transform: translateX(5px); }
-        }
-        .animate-shake {
-          animation: shake 0.2s ease-in-out 0s 2;
-        }
-      `}</style>
+      <main
+        className="relative z-20 flex h-full w-full flex-col items-center px-[max(1rem,env(safe-area-inset-left))] pb-[max(1rem,env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+5.35rem)]"
+      >
+        <div className="flex h-full w-full max-w-[32rem] flex-col items-center justify-between py-3">
+          <section className="flex w-full flex-col items-center gap-4 text-center">
+            <div className="mt-2">
+              <p className="text-xs font-black tracking-[0.32em] text-amber-200 uppercase">Mission</p>
+              <h1 className="mt-2 text-[clamp(1.45rem,6.6vw,2.05rem)] font-black tracking-tight text-white">
+                {missionLabel.split(' ').slice(0, -1).join(' ')}{' '}
+                <span className="text-amber-300">{missionLabel.split(' ').slice(-1)[0]}</span>
+              </h1>
+            </div>
+
+            <motion.div
+              key={problem.id}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="relative mt-1 w-full rounded-[1.65rem] border border-cyan-200/28 bg-[linear-gradient(180deg,rgba(15,31,70,0.82),rgba(6,20,54,0.92))] px-4 py-6 shadow-[0_20px_44px_rgba(2,6,23,0.52)]"
+            >
+              <div className="absolute inset-x-[8%] bottom-2 h-[1px] bg-cyan-300/60 blur-[0.5px]" />
+              <div className="rounded-[1rem] bg-slate-950/34 px-3 py-5">
+                <span className="text-[clamp(2.5rem,14vw,5.15rem)] font-black tabular-nums tracking-tight text-white [text-shadow:0_8px_18px_rgba(14,165,233,0.28)]">
+                  {displayNumber}
+                </span>
+              </div>
+            </motion.div>
+
+            <div className="w-full text-center">
+              <p className="text-[clamp(1.05rem,4.4vw,1.55rem)] font-bold text-slate-200">Your Answer</p>
+              <div className="mx-auto mt-2 inline-flex min-w-[13rem] items-center justify-center gap-2 rounded-full border border-amber-300/62 bg-[linear-gradient(180deg,rgba(17,24,39,0.92),rgba(10,16,32,0.96))] px-5 py-3 shadow-[0_0_24px_rgba(250,204,21,0.3)]">
+                <span className="text-[clamp(1.6rem,7vw,2.65rem)] font-black tabular-nums text-amber-200">
+                  {selectedOption ?? '—'}
+                </span>
+                {selectedOption ? (
+                  <span className="ml-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-white shadow-[0_0_16px_rgba(34,197,94,0.56)]">
+                    <AssetIcon name="check" className="h-4 w-4" />
+                  </span>
+                ) : null}
+              </div>
+            </div>
+          </section>
+
+          <section className="w-full">
+            <div className="mb-4 grid grid-cols-3 gap-3">
+              {options.map((option) => {
+                const selected = option === selectedOption;
+                return (
+                  <button
+                    key={`${problem.id}-${option}`}
+                    onClick={() => setSelectedOption(option)}
+                    className={`rounded-[1.1rem] border px-2 py-4 text-[clamp(1.05rem,5.25vw,2.2rem)] font-black tabular-nums transition ${
+                      selected
+                        ? 'border-amber-300 bg-[linear-gradient(180deg,rgba(252,211,77,0.18),rgba(250,204,21,0.06))] text-amber-200 shadow-[0_0_24px_rgba(250,204,21,0.35)]'
+                        : 'border-cyan-200/42 bg-[linear-gradient(180deg,rgba(15,31,70,0.86),rgba(6,20,54,0.94))] text-cyan-50 shadow-[0_12px_24px_rgba(2,6,23,0.46)]'
+                    }`}
+                  >
+                    {option}
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              onClick={submitAnswer}
+              disabled={!selectedOption || roundEnded}
+              className="w-full rounded-[1.35rem] border border-fuchsia-300/52 bg-[linear-gradient(180deg,#1d4ed8,#7c3aed)] py-4 text-[clamp(1.2rem,5.2vw,2rem)] font-black tracking-[0.08em] text-white uppercase shadow-[0_18px_38px_rgba(59,130,246,0.4)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
+            >
+              Confirm
+            </button>
+            <p className="mt-2 text-center text-sm font-medium text-slate-300/90">Choose the correct rounded value</p>
+          </section>
+        </div>
+      </main>
+
+      <AnimatePresence>
+        {feedback ? (
+          <motion.div
+            key={feedback.text}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className={`pointer-events-none absolute left-1/2 top-[calc(env(safe-area-inset-top)+5.1rem)] z-50 -translate-x-1/2 rounded-full border px-4 py-1.5 text-xs font-black uppercase tracking-[0.12em] ${
+              feedback.type === 'success'
+                ? 'border-emerald-300/60 bg-emerald-500/20 text-emerald-100'
+                : 'border-rose-300/60 bg-rose-500/20 text-rose-100'
+            }`}
+          >
+            {feedback.text}
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showHelp ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-60 flex items-center justify-center bg-black/65 px-6 text-center"
+          >
+            <div className="max-w-sm rounded-2xl border border-cyan-100/35 bg-slate-950/90 p-5 text-cyan-50 shadow-2xl">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">How To Play</p>
+              <p className="mt-3 text-sm leading-relaxed">
+                Read the mission, choose the correct rounded value, then press Confirm. Answer fast before the timer runs out.
+              </p>
+              <button
+                onClick={() => setShowHelp(false)}
+                className="mt-4 rounded-full border border-cyan-200/50 bg-cyan-600/25 px-4 py-2 text-xs font-black uppercase tracking-[0.14em]"
+              >
+                Continue
+              </button>
+            </div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 };

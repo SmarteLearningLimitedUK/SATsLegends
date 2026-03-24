@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplayHUD from '../components/GameplayHUD';
 import GameActionDock from '../components/GameActionDock';
+import AssetIcon from '../components/AssetIcon';
 import { AVATARS } from '../constants';
 import primePopBackground from '../assets/maps/primepopbkground.jpg';
 
@@ -222,7 +223,6 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(config.roundSeconds);
   const [lives, setLives] = useState(INITIAL_LIVES);
-  const [combo, setCombo] = useState(0);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
 
@@ -242,6 +242,18 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
 
   const targetScore = config.targetScore;
   const progress = Math.min((score / Math.max(targetScore, 1)) * 100, 100);
+  const healthHearts = useMemo(() => (
+    <div className="flex items-center justify-center gap-1">
+      {Array.from({ length: INITIAL_LIVES }).map((_, index) => (
+        <AssetIcon
+          key={`heart-${index}`}
+          name={index < lives ? 'heart' : 'heartOutline'}
+          className={`h-3.5 w-3.5 md:h-4 md:w-4 ${index < lives ? '' : 'opacity-50'}`}
+        />
+      ))}
+    </div>
+  ), [lives]);
+
   const bubbleRuntime = useMemo(() => {
     if (!isPhone) {
       return {
@@ -420,7 +432,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
       const earned = Math.round(config.primePoints * (1 + comboNext * config.comboStep));
       scoreNext += earned;
       comboNext += 1;
-      setFeedback(`Prime +${earned}`);
+      setFeedback(`+${earned}`);
       confetti({
         particleCount: 18,
         spread: 26,
@@ -430,7 +442,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     } else {
       comboNext = 0;
       scoreNext += Math.max(0, config.nonPrimePoints);
-      setFeedback(`Composite +${Math.max(0, config.nonPrimePoints)}`);
+      setFeedback(`+${Math.max(0, config.nonPrimePoints)}`);
     }
 
     const nextBubbles = bubblesRef.current.filter((bubble) => bubble.id !== bubbleId);
@@ -441,7 +453,6 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
 
     setBubbles(nextBubbles);
     setScore(scoreRef.current);
-    setCombo(comboRef.current);
     setLives(livesRef.current);
     window.setTimeout(() => setFeedback(null), 520);
 
@@ -484,7 +495,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     if (dangerPrimeHits > 0) {
       livesNext -= dangerPrimeHits;
       comboNext = 0;
-      setFeedback(`Prime hit danger line -${dangerPrimeHits} life${dangerPrimeHits > 1 ? 's' : ''}`);
+      setFeedback(`-${dangerPrimeHits} life${dangerPrimeHits > 1 ? 's' : ''}`);
       window.setTimeout(() => setFeedback(null), 520);
     }
 
@@ -495,7 +506,6 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
 
     setBubbles(nextBubbles);
     setScore(scoreRef.current);
-    setCombo(comboRef.current);
     setLives(livesRef.current);
 
     if (scoreRef.current >= targetScore || livesRef.current <= 0) {
@@ -536,8 +546,8 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
           accentSoftBg="bg-cyan-100/80"
           accentBorder="border-cyan-200/80"
           progressBar="bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500"
-          statLabel="Lives"
-          statValue={lives}
+          statLabel="Health"
+          statValue={healthHearts}
           compact
         />
 
@@ -577,18 +587,6 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
                 </motion.div>
               ))}
             </AnimatePresence>
-          </div>
-
-          <div className="absolute left-2 right-2 top-2 z-20 flex flex-wrap items-center justify-between gap-2">
-            <div className="rounded-full border border-cyan-100/60 bg-cyan-500/35 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-white">
-              Prime +{config.primePoints}
-            </div>
-            <div className="rounded-full border border-white/35 bg-slate-900/55 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-white">
-              Prime on line: -1 life
-            </div>
-            <div className="rounded-full border border-amber-100/60 bg-amber-500/34 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-amber-50">
-              Combo x{combo}
-            </div>
           </div>
 
           <AnimatePresence>
