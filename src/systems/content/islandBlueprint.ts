@@ -653,9 +653,9 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
       { area: 'mixed', percentage: 15 },
     ],
     crossGameReinforcement: [
-      'transformation fluency is reinforced across Rotation Relay and Coordinates Quest',
+      'transformation fluency is reinforced across Rotation Station and Coordinates Quest',
       'positioning skills are reinforced across Coordinates Quest and rotation tasks',
-      'angle precision from Angle Arena supports rotational control in Rotation Relay',
+      'angle precision from Angle Arena supports rotational control in Rotation Station',
     ],
     designRules: [
       'No static diagrams; players must manipulate geometry directly.',
@@ -711,7 +711,7 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
       },
       {
         key: 'rotation_relay',
-        name: 'Rotation Relay',
+        name: 'Rotation Station',
         role: 'strategy',
         gameplayRoles: ['strategy', 'application'],
         mechanicSummary: 'Rotate objects to exact target orientation with snappy directional controls.',

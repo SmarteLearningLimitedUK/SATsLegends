@@ -53,7 +53,7 @@ const GAME_SUMMARY_BY_KEY: Record<string, string> = {
   scale_builder: 'Resize blueprint structures to exact scale factors in a precision architectural challenge.',
   angle_arena: 'Calibrate launch angles precisely to hit targets.',
   polygon_palace: 'Classify shapes quickly by key geometric properties.',
-  rotation_relay: 'Rotate pieces to correct orientation with fast precision.',
+  rotation_relay: 'Rotate, predict, and match orientation using 90, 180, and 270 degree turns.',
   coordinates_quest: 'Plot and identify coordinates with speed and accuracy.',
   time_keeper_cove: 'Set clocks and solve elapsed-time dispatch challenges.',
   conversion_canyon: 'Convert measurement units to unlock routes and systems.',

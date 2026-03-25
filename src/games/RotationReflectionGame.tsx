@@ -1,360 +1,656 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  ArrowUpRight,
-  Check,
-  FlipHorizontal,
-  Ghost,
-  Play,
-  RotateCcw,
-  RotateCw,
-  Shapes,
-  Skull,
-  Target,
-  Timer as TimerIcon,
-  Triangle,
-  Trophy,
-  X,
-  Zap,
-} from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import GameActionDock from '../components/GameActionDock';
+import { triggerHaptic } from '../haptics';
+import gameplayBackground from '../assets/maps/inside dojo.jpg';
 
 interface RotationReflectionGameProps {
   levelId: number;
+  miniGameLevel?: number;
   avatarId: string;
+  useSharedTopHud?: boolean;
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
   onBack: () => void;
 }
 
-interface GameState {
-  rotation: number;
-  isFlipped: boolean;
-}
+type RotationMode = 'rotate_match' | 'predict_result' | 'identify_turn';
+type TurnDirection = 'cw' | 'acw';
+type ShapeId = 'arrow' | 'lshape' | 'tshape' | 'flag' | 'hook';
 
-interface ShapeItem {
-  id: string;
+interface ShapeDef {
+  id: ShapeId;
   name: string;
-  icon: React.ReactNode;
+  points: string;
+  fill: string;
+  stroke: string;
 }
 
-const SHAPES: ShapeItem[] = [
-  { id: 'tri', name: 'Triangle', icon: <Triangle className="h-24 w-24" /> },
-  { id: 'arrow', name: 'Arrow', icon: <ArrowUpRight className="h-24 w-24" /> },
-  { id: 'ghost', name: 'Ghost', icon: <Ghost className="h-24 w-24" /> },
-  { id: 'skull', name: 'Skull', icon: <Skull className="h-24 w-24" /> },
-  { id: 'zap', name: 'Bolt', icon: <Zap className="h-24 w-24" /> },
+interface RotationQuestion {
+  id: string;
+  stage: number;
+  mode: RotationMode;
+  shape: ShapeDef;
+  startOrientation: number;
+  targetOrientation: number;
+  direction: TurnDirection;
+  quarterTurns: number;
+  instruction: string;
+  subInstruction: string;
+  options: Array<{ id: string; label: string; orientation?: number }>;
+  correctOptionIds: string[];
+  speedRound: boolean;
+  difficultyWeight: number;
+}
+
+interface FeedbackState {
+  tone: 'success' | 'error';
+  title: string;
+  subtitle: string;
+}
+
+const SHAPES: ShapeDef[] = [
+  {
+    id: 'arrow',
+    name: 'Arrow',
+    points: '-10,-40 10,-40 10,-8 30,-8 0,40 -30,-8 -10,-8',
+    fill: '#38bdf8',
+    stroke: '#e0f2fe',
+  },
+  {
+    id: 'lshape',
+    name: 'L Shape',
+    points: '-34,-34 0,-34 0,10 28,10 28,34 -34,34',
+    fill: '#34d399',
+    stroke: '#dcfce7',
+  },
+  {
+    id: 'tshape',
+    name: 'T Shape',
+    points: '-34,-34 34,-34 34,-10 10,-10 10,34 -10,34 -10,-10 -34,-10',
+    fill: '#a78bfa',
+    stroke: '#ede9fe',
+  },
+  {
+    id: 'flag',
+    name: 'Flag',
+    points: '-26,-38 -10,-38 -10,36 -26,36 -26,-4 24,-18 24,2 -26,18',
+    fill: '#f97316',
+    stroke: '#ffedd5',
+  },
+  {
+    id: 'hook',
+    name: 'Hook',
+    points: '-30,-34 12,-34 12,-16 -8,-16 -8,4 20,4 20,34 -30,34 -30,16 0,16 0,4 -30,4',
+    fill: '#f43f5e',
+    stroke: '#ffe4e6',
+  },
 ];
 
-const ROTATION_STEPS = [0, 45, 90, 135, 180, 225, 270, 315];
+const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-const TopBar: React.FC<{ score: number; streak: number; timer: string }> = ({ score, streak, timer }) => (
-  <div className="z-50 w-full px-4 pt-4">
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-3 rounded-xl border border-blue-400/30 bg-blue-900/60 p-2 shadow-lg">
-        <div className="flex flex-col items-center px-2">
-          <div className="flex items-center gap-1 text-yellow-400">
-            <Zap className="h-4 w-4 fill-current" />
-            <span className="text-lg font-black">{streak}</span>
-          </div>
-          <span className="text-[10px] font-black uppercase text-blue-200">Streak</span>
-        </div>
-        <div className="h-8 w-[2px] bg-blue-400/20" />
-        <div className="flex flex-col">
-          <span className="text-[10px] font-bold uppercase tracking-tight text-blue-200">Score</span>
-          <span className="text-xl font-black leading-none text-white">{score.toLocaleString()}</span>
-        </div>
-      </div>
+const createId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
-      <div className="flex items-center gap-2 rounded-xl border border-yellow-400/50 bg-blue-900/80 px-4 py-2 shadow-lg">
-        <TimerIcon className="h-5 w-5 text-yellow-400" />
-        <span className="text-xl font-black text-white">{timer}</span>
-      </div>
+const normalizeOrientation = (orientation: number) => ((orientation % 4) + 4) % 4;
+
+const orientationToDegrees = (orientation: number) => normalizeOrientation(orientation) * 90;
+
+const orientationLabel = (orientation: number) => {
+  const normalized = normalizeOrientation(orientation);
+  if (normalized === 0) return 'Up';
+  if (normalized === 1) return 'Right';
+  if (normalized === 2) return 'Down';
+  return 'Left';
+};
+
+const applyQuarterTurns = (orientation: number, direction: TurnDirection, turns: number) => {
+  const delta = direction === 'cw' ? turns : -turns;
+  return normalizeOrientation(orientation + delta);
+};
+
+const roundSecondsForLevel = (level: number) => {
+  if (level <= 3) return 90;
+  if (level <= 7) return 75;
+  return 60;
+};
+
+const stageFromProgress = (baseLevel: number, solvedCount: number, timeLeft: number) => {
+  const solvedBoost = Math.floor(solvedCount / 4);
+  const urgencyBoost = timeLeft <= 15 ? 1 : 0;
+  return Math.max(1, Math.min(12, baseLevel + solvedBoost + urgencyBoost));
+};
+
+const modeForStage = (stage: number): RotationMode => {
+  const roll = Math.random();
+  if (stage <= 3) return roll < 0.72 ? 'rotate_match' : 'predict_result';
+  if (stage <= 7) {
+    if (roll < 0.38) return 'rotate_match';
+    if (roll < 0.74) return 'predict_result';
+    return 'identify_turn';
+  }
+  if (roll < 0.2) return 'rotate_match';
+  if (roll < 0.55) return 'predict_result';
+  return 'identify_turn';
+};
+
+const speedRoundForState = (solvedCount: number, stage: number) => solvedCount > 0 && solvedCount % 6 === 0 && stage >= 4;
+
+const buildTurnLabel = (turns: number, direction: TurnDirection) => {
+  if (turns === 2) return '180 deg';
+  const degrees = turns * 90;
+  const dirLabel = direction === 'cw' ? 'clockwise' : 'anticlockwise';
+  return `${degrees} deg ${dirLabel}`;
+};
+
+const createPredictOptions = (correctOrientation: number): Array<{ id: string; label: string; orientation: number }> => {
+  const candidates = [0, 1, 2, 3];
+  const shuffled = candidates.sort(() => Math.random() - 0.5);
+  const selected = [...new Set([correctOrientation, ...shuffled])].slice(0, 4);
+  return selected.map((orientation) => ({
+    id: `o-${orientation}`,
+    label: orientationLabel(orientation),
+    orientation,
+  }));
+};
+
+const createIdentifyTurnOptions = (direction: TurnDirection, turns: number) => {
+  const correct = buildTurnLabel(turns, direction);
+  const pool = [
+    '90 deg clockwise',
+    '90 deg anticlockwise',
+    '180 deg',
+    '270 deg clockwise',
+    '270 deg anticlockwise',
+  ];
+  const distractors = pool.filter((item) => item !== correct).sort(() => Math.random() - 0.5).slice(0, 3);
+  const options = [correct, ...distractors].sort(() => Math.random() - 0.5);
+  return { correct, options };
+};
+
+const createQuestion = (baseLevel: number, solvedCount: number, timeLeft: number): RotationQuestion => {
+  const stage = stageFromProgress(baseLevel, solvedCount, timeLeft);
+  const speedRound = speedRoundForState(solvedCount, stage);
+  const mode = modeForStage(stage);
+  const shape = SHAPES[randomInt(0, SHAPES.length - 1)];
+
+  const startOrientation = randomInt(0, 3);
+  const direction: TurnDirection = Math.random() < 0.5 ? 'cw' : 'acw';
+  const allowedTurns = stage <= 3 ? [1] : stage <= 7 ? [1, 2, 3] : [1, 2, 3];
+  const quarterTurns = speedRound ? 1 : allowedTurns[randomInt(0, allowedTurns.length - 1)];
+  const targetOrientation = applyQuarterTurns(startOrientation, direction, quarterTurns);
+  const turnText = buildTurnLabel(quarterTurns, direction);
+
+  if (mode === 'rotate_match') {
+    return {
+      id: createId(),
+      stage,
+      mode,
+      shape,
+      startOrientation,
+      targetOrientation,
+      direction,
+      quarterTurns,
+      instruction: 'Rotate to match the target outline.',
+      subInstruction: speedRound ? 'Speed round: use 90 deg taps quickly.' : `Hint: target is ${turnText} from start.`,
+      options: [],
+      correctOptionIds: ['match'],
+      speedRound,
+      difficultyWeight: 38 + (stage * 10) + (quarterTurns * 10),
+    };
+  }
+
+  if (mode === 'predict_result') {
+    const options = createPredictOptions(targetOrientation);
+    return {
+      id: createId(),
+      stage,
+      mode,
+      shape,
+      startOrientation,
+      targetOrientation,
+      direction,
+      quarterTurns,
+      instruction: `After a ${turnText}, which orientation is correct?`,
+      subInstruction: speedRound ? 'Tap the correct result fast.' : 'Predict before tapping.',
+      options,
+      correctOptionIds: [`o-${targetOrientation}`],
+      speedRound,
+      difficultyWeight: 44 + (stage * 11) + (quarterTurns * 8),
+    };
+  }
+
+  const identify = createIdentifyTurnOptions(direction, quarterTurns);
+  return {
+    id: createId(),
+    stage,
+    mode,
+    shape,
+    startOrientation,
+    targetOrientation,
+    direction,
+    quarterTurns,
+    instruction: 'What turn maps the left shape to the right shape?',
+    subInstruction: speedRound ? 'Speed round: identify the turn.' : 'Think clockwise or anticlockwise.',
+    options: identify.options.map((label, idx) => ({ id: `turn-${idx}`, label })),
+    correctOptionIds: identify.options
+      .map((label, idx) => ({ label, id: `turn-${idx}` }))
+      .filter((entry) => entry.label === identify.correct)
+      .map((entry) => entry.id),
+    speedRound,
+    difficultyWeight: 50 + (stage * 11) + (quarterTurns * 10),
+  };
+};
+
+const starsFromPerformance = (score: number, correct: number, attempts: number, stage: number) => {
+  const accuracy = attempts > 0 ? correct / attempts : 0;
+  const target = 1200 + (stage * 170);
+  if (score >= target * 1.2 && accuracy >= 0.78) return 3;
+  if (score >= target * 0.82 && accuracy >= 0.6) return 2;
+  return 1;
+};
+
+const ShapeCard: React.FC<{
+  shape: ShapeDef;
+  orientation: number;
+  tone?: 'target' | 'player' | 'neutral';
+  showPivot?: boolean;
+}> = ({ shape, orientation, tone = 'neutral', showPivot = true }) => {
+  const borderClass = tone === 'target'
+    ? 'border-cyan-100/34 bg-blue-950/48'
+    : tone === 'player'
+      ? 'border-amber-100/34 bg-slate-950/48'
+      : 'border-cyan-100/26 bg-slate-950/46';
+
+  return (
+    <div className={`relative flex h-[8.6rem] w-[8.6rem] items-center justify-center rounded-[1.05rem] border ${borderClass}`}>
+      <motion.svg
+        viewBox="-64 -64 128 128"
+        animate={{ rotate: orientationToDegrees(orientation) }}
+        transition={{ type: 'spring', stiffness: 220, damping: 23 }}
+        className="h-[6.2rem] w-[6.2rem]"
+        style={{ filter: 'drop-shadow(0 10px 14px rgba(2,6,23,0.48))' }}
+      >
+        <defs>
+          <linearGradient id={`shape-grad-${shape.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor={shape.fill} stopOpacity={0.98} />
+            <stop offset="100%" stopColor={shape.fill} stopOpacity={0.62} />
+          </linearGradient>
+        </defs>
+        <polygon points={shape.points} fill={`url(#shape-grad-${shape.id})`} stroke={shape.stroke} strokeWidth="4" />
+      </motion.svg>
+      {showPivot ? <span className="absolute h-1.5 w-1.5 rounded-full bg-white/70" /> : null}
     </div>
-  </div>
-);
+  );
+};
 
 const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
   levelId,
+  miniGameLevel,
   avatarId: _avatarId,
+  useSharedTopHud = false,
   onVictory,
-  onGameOver,
+  onGameOver: _onGameOver,
   onBack,
 }) => {
-  const roundTime = 60 + (levelId * 6);
-  const targetScore = 2200 + (levelId * 260);
+  const baseLevel = Math.max(1, Math.min(12, miniGameLevel || levelId || 1));
+  const initialRoundSeconds = useMemo(() => roundSecondsForLevel(baseLevel), [baseLevel]);
 
+  const [timeLeft, setTimeLeft] = useState(initialRoundSeconds);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
-  const [timer, setTimer] = useState(roundTime);
-  const [gameActive, setGameActive] = useState(true);
-  const [currentShape, setCurrentShape] = useState<ShapeItem>(SHAPES[0]);
-  const [targetState, setTargetState] = useState<GameState>({ rotation: 90, isFlipped: false });
-  const [userState, setUserState] = useState<GameState>({ rotation: 0, isFlipped: false });
-  const [moves, setMoves] = useState(0);
-  const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
+  const [attemptCount, setAttemptCount] = useState(0);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [solvedCount, setSolvedCount] = useState(0);
+  const [roundOver, setRoundOver] = useState(false);
+  const [question, setQuestion] = useState<RotationQuestion>(() => createQuestion(baseLevel, 0, initialRoundSeconds));
+  const [playerOrientation, setPlayerOrientation] = useState(0);
+  const [isLocked, setIsLocked] = useState(false);
+  const [feedback, setFeedback] = useState<FeedbackState | null>(null);
+  const [shapePulse, setShapePulse] = useState<'success' | 'error' | null>(null);
 
-  const endedRef = useRef(false);
+  const finishGuardRef = useRef(false);
+  const questionStartRef = useRef<number>(Date.now());
+  const timeoutRefs = useRef<number[]>([]);
 
-  const finishRound = useCallback((won: boolean, finalScore: number) => {
-    if (endedRef.current) return;
-    endedRef.current = true;
-    setGameActive(false);
-    if (won) {
-      const stars = finalScore >= targetScore * 1.8 ? 3 : finalScore >= targetScore * 1.35 ? 2 : 1;
-      onVictory(stars, finalScore);
-      return;
-    }
-    onGameOver(finalScore);
-  }, [onGameOver, onVictory, targetScore]);
+  const clearTimeouts = () => {
+    timeoutRefs.current.forEach((timer) => window.clearTimeout(timer));
+    timeoutRefs.current = [];
+  };
 
-  const generateProblem = useCallback(() => {
-    const shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
-    let targetRotation = 0;
-    let targetFlip = false;
-
-    do {
-      targetRotation = ROTATION_STEPS[Math.floor(Math.random() * ROTATION_STEPS.length)];
-      targetFlip = Math.random() > 0.5;
-    } while (targetRotation === 0 && !targetFlip);
-
-    setCurrentShape(shape);
-    setTargetState({ rotation: targetRotation, isFlipped: targetFlip });
-    setUserState({ rotation: 0, isFlipped: false });
-    setMoves(0);
-    setFeedback(null);
-  }, []);
+  useEffect(() => clearTimeouts, []);
 
   useEffect(() => {
-    endedRef.current = false;
+    clearTimeouts();
+    finishGuardRef.current = false;
+    setTimeLeft(initialRoundSeconds);
     setScore(0);
     setStreak(0);
-    setTimer(roundTime);
-    setGameActive(true);
-    setCurrentShape(SHAPES[0]);
-    setTargetState({ rotation: 90, isFlipped: false });
-    setUserState({ rotation: 0, isFlipped: false });
-    setMoves(0);
+    setAttemptCount(0);
+    setCorrectCount(0);
+    setSolvedCount(0);
+    setRoundOver(false);
+    const next = createQuestion(baseLevel, 0, initialRoundSeconds);
+    setQuestion(next);
+    setPlayerOrientation(next.startOrientation);
+    setIsLocked(false);
     setFeedback(null);
-    generateProblem();
-  }, [generateProblem, roundTime]);
+    setShapePulse(null);
+    questionStartRef.current = Date.now();
+  }, [baseLevel, initialRoundSeconds]);
 
   useEffect(() => {
-    if (!gameActive || endedRef.current) return undefined;
+    if (roundOver) return undefined;
     const interval = window.setInterval(() => {
-      setTimer((previous) => {
-        if (previous <= 1) {
-          window.clearInterval(interval);
-          finishRound(score >= targetScore, score);
-          return 0;
-        }
-        return previous - 1;
-      });
+      setTimeLeft((prev) => Math.max(0, prev - 1));
     }, 1000);
     return () => window.clearInterval(interval);
-  }, [finishRound, gameActive, score, targetScore]);
+  }, [roundOver]);
 
-  const rotate = (direction: 'left' | 'right') => {
-    if (!gameActive || feedback) return;
-    setMoves((value) => value + 1);
-    setUserState((previous) => {
-      let nextRotation = previous.rotation + (direction === 'right' ? 45 : -45);
-      if (nextRotation >= 360) nextRotation -= 360;
-      if (nextRotation < 0) nextRotation += 360;
-      return { ...previous, rotation: nextRotation };
-    });
-  };
+  useEffect(() => {
+    if (timeLeft > 0 || finishGuardRef.current) return;
+    finishGuardRef.current = true;
+    setRoundOver(true);
+    const finalStage = stageFromProgress(baseLevel, solvedCount, 0);
+    const stars = starsFromPerformance(score, correctCount, attemptCount, finalStage);
+    onVictory(stars, score);
+  }, [attemptCount, baseLevel, correctCount, onVictory, score, solvedCount, timeLeft]);
 
-  const flip = () => {
-    if (!gameActive || feedback) return;
-    setMoves((value) => value + 1);
-    setUserState((previous) => ({ ...previous, isFlipped: !previous.isFlipped }));
-  };
+  const timerProgress = Math.max(0, Math.min(1, timeLeft / initialRoundSeconds));
+  const timerFillColor = useMemo(() => {
+    const hue = Math.round(timerProgress * 120);
+    return `hsl(${hue} 88% 50%)`;
+  }, [timerProgress]);
 
-  const submit = () => {
-    if (!gameActive || feedback) return;
+  const moveToNextQuestion = useCallback((nextSolvedCount: number, delayMs: number) => {
+    const timeout = window.setTimeout(() => {
+      if (finishGuardRef.current) return;
+      const next = createQuestion(baseLevel, nextSolvedCount, timeLeft);
+      setQuestion(next);
+      setPlayerOrientation(next.startOrientation);
+      setFeedback(null);
+      setShapePulse(null);
+      setIsLocked(false);
+      questionStartRef.current = Date.now();
+    }, delayMs);
+    timeoutRefs.current.push(timeout);
+  }, [baseLevel, timeLeft]);
 
-    const isCorrect = userState.rotation === targetState.rotation && userState.isFlipped === targetState.isFlipped;
+  const evaluateAnswer = useCallback((isCorrect: boolean, detailText: string) => {
+    if (roundOver || isLocked) return;
+    setIsLocked(true);
+    const nextAttemptCount = attemptCount + 1;
+    const nextSolvedCount = solvedCount + 1;
+    setAttemptCount(nextAttemptCount);
+    setSolvedCount(nextSolvedCount);
+
     if (isCorrect) {
-      setFeedback('correct');
-      const moveBonus = Math.max(0, 10 - moves) * 20;
-      const earned = 500 + moveBonus + (streak * 50);
-      const newScore = score + earned;
-      setScore(newScore);
-      setStreak((value) => value + 1);
-
-      window.setTimeout(() => {
-        if (newScore >= targetScore) {
-          finishRound(true, newScore);
-          return;
-        }
-        generateProblem();
-      }, 900);
+      const elapsedMs = Math.max(220, Date.now() - questionStartRef.current);
+      const speedBonus = Math.max(16, Math.round(165 - (elapsedMs / 16)));
+      const streakMultiplier = 1 + Math.min(0.9, streak * 0.08);
+      const speedRoundBonus = question.speedRound ? 90 : 0;
+      const points = Math.round((120 + question.difficultyWeight + speedBonus + speedRoundBonus) * streakMultiplier);
+      setScore((prev) => prev + points);
+      setCorrectCount((prev) => prev + 1);
+      setStreak((prev) => prev + 1);
+      setShapePulse('success');
+      setFeedback({ tone: 'success', title: 'Perfect turn', subtitle: `+${points} points` });
+      triggerHaptic('success');
+      moveToNextQuestion(nextSolvedCount, 320);
       return;
     }
 
-    setFeedback('wrong');
+    setScore((prev) => Math.max(0, prev - 35));
     setStreak(0);
-    window.setTimeout(() => {
-      if (endedRef.current) return;
-      setFeedback(null);
-    }, 900);
+    setShapePulse('error');
+    setFeedback({ tone: 'error', title: 'Wrong orientation', subtitle: detailText });
+    triggerHaptic('error');
+    moveToNextQuestion(nextSolvedCount, 560);
+  }, [attemptCount, isLocked, moveToNextQuestion, question.difficultyWeight, question.speedRound, roundOver, solvedCount, streak]);
+
+  const handleRotate = (direction: TurnDirection) => {
+    if (roundOver || isLocked || question.mode !== 'rotate_match') return;
+    setPlayerOrientation((prev) => applyQuarterTurns(prev, direction, 1));
+    triggerHaptic('selection');
   };
 
-  const timerLabel = useMemo(() => timer.toString().padStart(2, '0'), [timer]);
+  const submitRotationMatch = () => {
+    if (question.mode !== 'rotate_match' || roundOver || isLocked) return;
+    const isCorrect = normalizeOrientation(playerOrientation) === normalizeOrientation(question.targetOrientation);
+    evaluateAnswer(
+      isCorrect,
+      `Target was ${orientationLabel(question.targetOrientation)}.`,
+    );
+  };
+
+  const handleChoiceTap = (choiceId: string) => {
+    if (roundOver || isLocked) return;
+    if (question.mode === 'predict_result') {
+      const selected = question.options.find((option) => option.id === choiceId);
+      const isCorrect = question.correctOptionIds.includes(choiceId);
+      evaluateAnswer(isCorrect, `Correct was ${orientationLabel(question.targetOrientation)}.`);
+      if (selected?.orientation !== undefined) {
+        setPlayerOrientation(selected.orientation);
+      }
+      return;
+    }
+
+    if (question.mode === 'identify_turn') {
+      const isCorrect = question.correctOptionIds.includes(choiceId);
+      const answerLabel = question.options.find((option) => question.correctOptionIds.includes(option.id))?.label || '';
+      evaluateAnswer(isCorrect, `Correct turn: ${answerLabel}.`);
+    }
+  };
+
+  const stageHint = question.stage <= 3
+    ? 'Early rounds: 90 deg turns and clear cues.'
+    : question.stage <= 7
+      ? 'Mid rounds: 90, 180, and 270 deg turns.'
+      : 'Late rounds: SATs trick orientation reasoning.';
+
+  const topPaddingClass = useSharedTopHud
+    ? 'pt-[calc(env(safe-area-inset-top)+5.75rem)]'
+    : 'pt-[max(0.5rem,env(safe-area-inset-top))]';
+
+  const shapePulseClass = shapePulse === 'success'
+    ? 'drop-shadow-[0_0_18px_rgba(74,222,128,0.7)]'
+    : shapePulse === 'error'
+      ? 'drop-shadow-[0_0_18px_rgba(251,113,133,0.65)]'
+      : '';
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center overflow-hidden bg-[#050a1a] font-sans text-white select-none">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,#1e3a8a_0%,#050a1a_100%)]" />
+    <div className="fixed inset-0 z-20 h-screen w-screen overflow-hidden bg-[#08162c] select-none">
+      <img
+        src={gameplayBackground}
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+      />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.38),rgba(2,6,23,0.42)_32%,rgba(2,6,23,0.6)_100%)]" />
 
-      <div className="relative z-10 flex h-full w-full max-w-[1000px] flex-col">
-        <TopBar score={score} streak={streak} timer={timerLabel} />
-
-        <div className="mx-4 mb-4 mt-4 flex flex-1 flex-col gap-4 md:flex-row">
-          <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/20 p-8 shadow-2xl">
-            <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-400/20 px-3 py-1">
-              <Target className="h-4 w-4 text-blue-300" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-blue-200">Target Orientation</span>
-            </div>
-
-            <div className="relative">
-              <motion.div
-                animate={{ rotate: targetState.rotation, scaleX: targetState.isFlipped ? -1 : 1 }}
-                className="text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
-              >
-                {currentShape.icon}
-              </motion.div>
-              <div className="pointer-events-none absolute inset-0 -m-8 rounded-full border-2 border-dashed border-blue-400/10" />
-            </div>
-
-            <div className="mt-8 flex gap-4">
-              <div className="rounded-lg border border-blue-400/20 bg-blue-950/60 px-4 py-1 text-[10px] font-bold text-blue-300">
-                ROT: {targetState.rotation}°
-              </div>
-              <div className="rounded-lg border border-blue-400/20 bg-blue-950/60 px-4 py-1 text-[10px] font-bold text-blue-300">
-                FLIP: {targetState.isFlipped ? 'YES' : 'NO'}
-              </div>
-            </div>
-          </div>
-
-          <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden rounded-3xl border-4 border-yellow-400/30 bg-blue-950/40 p-8 shadow-2xl">
-            <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full border border-yellow-400/30 bg-yellow-400/10 px-3 py-1">
-              <Shapes className="h-4 w-4 text-yellow-300" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-yellow-200">Your Workspace</span>
-            </div>
-
-            <div className="absolute right-4 top-4 rounded-full border border-blue-400/20 bg-blue-900/60 px-3 py-1">
-              <span className="text-[10px] font-black uppercase text-blue-300">Moves: {moves}</span>
-            </div>
-
-            <div className="relative">
-              <motion.div
-                animate={{ rotate: userState.rotation, scaleX: userState.isFlipped ? -1 : 1 }}
-                transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-                className={`text-yellow-400 drop-shadow-[0_0_20px_rgba(250,204,21,0.4)] ${feedback === 'wrong' ? 'animate-rr-shake' : ''}`}
-              >
-                {currentShape.icon}
-              </motion.div>
-              <div className="pointer-events-none absolute inset-0 -m-8 rounded-full border-2 border-dashed border-yellow-400/10" />
-            </div>
-
-            <AnimatePresence>
-              {feedback && (
-                <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0, opacity: 0 }}
-                  className={`absolute inset-0 z-50 flex items-center justify-center rounded-2xl backdrop-blur-sm ${
-                    feedback === 'correct' ? 'bg-emerald-500/20' : 'bg-rose-500/20'
-                  }`}
-                >
-                  <div className={`rounded-full p-6 shadow-2xl ${feedback === 'correct' ? 'bg-emerald-500' : 'bg-rose-500'}`}>
-                    {feedback === 'correct' ? <Check className="h-12 w-12 text-white" /> : <X className="h-12 w-12 text-white" />}
+      <main
+        className={`relative z-20 flex h-full w-full flex-col items-center ${topPaddingClass} px-[max(0.75rem,env(safe-area-inset-left))] pb-[max(7.2rem,calc(env(safe-area-inset-bottom)+6.2rem))]`}
+      >
+        <div className="flex h-full w-full max-w-[30rem] min-h-0 flex-col gap-2.5">
+          {!useSharedTopHud ? (
+            <header className="rounded-[1.15rem] border border-cyan-100/26 bg-slate-950/55 px-3 py-2 shadow-[0_12px_22px_rgba(2,6,23,0.44)]">
+              <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2.5">
+                <div>
+                  <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/72">Time attack</div>
+                  <div className="relative mt-1 h-3.5 overflow-hidden rounded-full border border-cyan-100/26 bg-blue-950/58">
+                    <motion.div
+                      className="absolute inset-y-0 left-0 rounded-full"
+                      animate={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }}
+                      transition={{ duration: 0.25, ease: 'easeOut' }}
+                      style={{ boxShadow: '0 0 12px rgba(34,197,94,0.45)' }}
+                    />
+                    <div className="absolute inset-[1px] rounded-full bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:12%_100%]" />
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+                </div>
+
+                <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
+                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Score</div>
+                  <div className="text-sm font-black text-white">{score}</div>
+                </div>
+
+                <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
+                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Streak</div>
+                  <div className="text-sm font-black text-amber-200">x{streak}</div>
+                </div>
+              </div>
+            </header>
+          ) : (
+            <header className="rounded-[1.15rem] border border-cyan-100/24 bg-slate-950/50 px-3 py-2 shadow-[0_10px_20px_rgba(2,6,23,0.42)]">
+              <div className="flex items-center justify-between gap-2.5">
+                <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
+                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Score</div>
+                  <div className="text-sm font-black text-white">{score}</div>
+                </div>
+                <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
+                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Streak</div>
+                  <div className="text-sm font-black text-amber-200">x{streak}</div>
+                </div>
+              </div>
+            </header>
+          )}
+
+          <section className="rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/54 p-3 text-center shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
+            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/72">
+              {question.speedRound ? 'Rapid rotation round' : 'Rotation Station'}
+            </div>
+            <h2 className="mt-1 text-[clamp(1rem,4.4vw,1.3rem)] font-black text-white">{question.instruction}</h2>
+            <p className="mt-1 text-[clamp(0.76rem,3.3vw,0.9rem)] font-semibold text-cyan-100/86">{question.subInstruction}</p>
+          </section>
+
+          <section className="min-h-0 flex-1 rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/54 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
+            <div className="flex h-full min-h-0 flex-col gap-3">
+              <div className="text-center text-[10px] font-black uppercase tracking-[0.17em] text-cyan-100/72">{stageHint}</div>
+
+              {question.mode === 'rotate_match' ? (
+                <div className={`grid min-h-0 flex-1 grid-cols-2 items-center gap-2.5 ${shapePulseClass}`}>
+                  <div className="flex flex-col items-center gap-1.5">
+                    <div className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/72">Target</div>
+                    <ShapeCard shape={question.shape} orientation={question.targetOrientation} tone="target" />
+                    <div className="text-[10px] font-bold text-cyan-100/80">{orientationLabel(question.targetOrientation)}</div>
+                  </div>
+                  <div className="flex flex-col items-center gap-1.5">
+                    <div className="text-[10px] font-black uppercase tracking-[0.14em] text-amber-100/72">Your shape</div>
+                    <ShapeCard shape={question.shape} orientation={playerOrientation} tone="player" />
+                    <div className="text-[10px] font-bold text-amber-100/80">{orientationLabel(playerOrientation)}</div>
+                  </div>
+                </div>
+              ) : null}
+
+              {question.mode === 'predict_result' ? (
+                <div className={`grid min-h-0 flex-1 grid-rows-[auto_1fr] gap-2.5 ${shapePulseClass}`}>
+                  <div className="flex items-center justify-center gap-3">
+                    <ShapeCard shape={question.shape} orientation={question.startOrientation} tone="neutral" />
+                    <span className="text-2xl font-black text-cyan-100/75">?</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    {question.options.map((option) => (
+                      <button
+                        key={option.id}
+                        type="button"
+                        disabled={isLocked || roundOver}
+                        onClick={() => handleChoiceTap(option.id)}
+                        className="rounded-[0.95rem] border border-cyan-100/24 bg-blue-950/44 px-2 py-2 text-center text-sm font-black text-cyan-50 transition active:scale-[0.98] disabled:opacity-55"
+                      >
+                        <div className="flex items-center justify-center pb-1.5">
+                          <ShapeCard shape={question.shape} orientation={option.orientation || 0} showPivot={false} />
+                        </div>
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              {question.mode === 'identify_turn' ? (
+                <div className={`grid min-h-0 flex-1 grid-rows-[auto_1fr] gap-2.5 ${shapePulseClass}`}>
+                  <div className="flex items-center justify-center gap-3">
+                    <ShapeCard shape={question.shape} orientation={question.startOrientation} tone="neutral" />
+                    <span className="text-2xl font-black text-cyan-100/75">to</span>
+                    <ShapeCard shape={question.shape} orientation={question.targetOrientation} tone="target" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    {question.options.map((option) => (
+                      <button
+                        key={option.id}
+                        type="button"
+                        disabled={isLocked || roundOver}
+                        onClick={() => handleChoiceTap(option.id)}
+                        className="rounded-[0.95rem] border border-amber-100/72 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] px-2 py-2.5 text-center text-sm font-black text-slate-900 shadow-[0_10px_18px_rgba(2,6,23,0.34)] transition active:scale-[0.98] disabled:opacity-55"
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </section>
+
+          {question.mode === 'rotate_match' ? (
+            <section className="shrink-0 rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/56 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
+              <div className="grid grid-cols-3 gap-2.5">
+                <button
+                  type="button"
+                  disabled={isLocked || roundOver}
+                  onClick={() => handleRotate('acw')}
+                  className="rounded-[0.95rem] border border-cyan-100/24 bg-blue-950/44 px-2 py-2.5 text-center text-sm font-black text-cyan-50 transition active:scale-[0.98] disabled:opacity-55"
+                >
+                  Rotate left 90
+                </button>
+                <button
+                  type="button"
+                  disabled={isLocked || roundOver}
+                  onClick={() => handleRotate('cw')}
+                  className="rounded-[0.95rem] border border-cyan-100/24 bg-blue-950/44 px-2 py-2.5 text-center text-sm font-black text-cyan-50 transition active:scale-[0.98] disabled:opacity-55"
+                >
+                  Rotate right 90
+                </button>
+                <button
+                  type="button"
+                  disabled={isLocked || roundOver}
+                  onClick={submitRotationMatch}
+                  className="rounded-[0.95rem] border border-amber-100/72 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] px-2 py-2.5 text-center text-sm font-black text-slate-900 shadow-[0_10px_18px_rgba(2,6,23,0.34)] transition active:scale-[0.98] disabled:opacity-55"
+                >
+                  Submit
+                </button>
+              </div>
+            </section>
+          ) : null}
         </div>
+      </main>
 
-        <div className="flex h-40 items-center justify-center gap-4 border-t-4 border-blue-400/50 bg-blue-950/80 p-6 md:gap-8">
-          <div className="flex gap-2">
-            <button
-              onClick={() => rotate('left')}
-              className="flex h-16 w-16 flex-col items-center justify-center rounded-2xl border-b-4 border-blue-700 bg-blue-900/60 transition-all hover:bg-blue-800 active:translate-y-1 active:border-b-0"
-            >
-              <RotateCcw className="h-6 w-6 text-blue-300" />
-              <span className="mt-1 text-[10px] font-black">-45°</span>
-            </button>
-            <button
-              onClick={() => rotate('right')}
-              className="flex h-16 w-16 flex-col items-center justify-center rounded-2xl border-b-4 border-blue-700 bg-blue-900/60 transition-all hover:bg-blue-800 active:translate-y-1 active:border-b-0"
-            >
-              <RotateCw className="h-6 w-6 text-blue-300" />
-              <span className="mt-1 text-[10px] font-black">+45°</span>
-            </button>
-          </div>
-
-          <button
-            onClick={flip}
-            className="flex h-16 w-24 flex-col items-center justify-center rounded-2xl border-b-4 border-indigo-700 bg-indigo-900/60 transition-all hover:bg-indigo-800 active:translate-y-1 active:border-b-0"
-          >
-            <FlipHorizontal className="h-8 w-8 text-indigo-300" />
-            <span className="mt-1 text-[10px] font-black uppercase">Mirror</span>
-          </button>
-
-          <div className="mx-2 h-16 w-[2px] bg-white/10" />
-
-          <button
-            onClick={submit}
-            disabled={feedback !== null || !gameActive}
-            className={`flex h-20 items-center gap-4 rounded-2xl px-12 text-2xl font-black tracking-widest transition-all shadow-xl ${
-              feedback === null && gameActive
-                ? 'border-b-8 border-emerald-800 bg-gradient-to-b from-emerald-400 to-emerald-600 text-white active:translate-y-2 active:border-b-0'
-                : 'cursor-not-allowed border-2 border-blue-400/10 bg-blue-900/40 text-blue-400/40'
+      <AnimatePresence>
+        {feedback ? (
+          <motion.div
+            key={`${feedback.tone}-${feedback.title}-${feedback.subtitle}`}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.08 }}
+            className={`pointer-events-none absolute left-1/2 top-[calc(env(safe-area-inset-top)+5.2rem)] z-50 -translate-x-1/2 rounded-[1rem] border px-4 py-2 text-center shadow-[0_14px_24px_rgba(2,6,23,0.45)] ${
+              feedback.tone === 'success'
+                ? 'border-emerald-100/62 bg-emerald-500/28 text-emerald-50'
+                : 'border-rose-100/62 bg-rose-500/30 text-rose-50'
             }`}
           >
-            <Play className="h-8 w-8 fill-current" />
-            SUBMIT
-          </button>
-        </div>
+            <div className="text-xs font-black uppercase tracking-[0.12em]">{feedback.title}</div>
+            <div className="mt-0.5 text-[11px] font-bold">{feedback.subtitle}</div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
 
-        <GameActionDock onBack={onBack} accentClass="text-white" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.45rem,env(safe-area-inset-bottom))] z-40 flex justify-center px-3">
+        <div className="pointer-events-auto">
+          <GameActionDock onBack={onBack} compact accentClass="text-slate-100" />
+        </div>
       </div>
-
-      {!gameActive && (
-        <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-blue-950/95 p-8 text-center">
-          <Trophy className="mb-6 h-32 w-32 animate-bounce text-yellow-400" />
-          <h2 className="mb-4 text-6xl font-black italic tracking-tight">TIME'S UP!</h2>
-          <div className="w-full max-w-sm rounded-3xl border-4 border-blue-400 bg-blue-900/60 p-8 shadow-2xl">
-            <p className="mb-2 text-sm font-bold uppercase tracking-widest text-blue-200">Final Score</p>
-            <p className="mb-4 text-6xl font-black text-white">{score.toLocaleString()}</p>
-            <div className="flex justify-between border-t border-white/10 pt-4 text-sm font-bold text-blue-300">
-              <span>BEST STREAK</span>
-              <span>{streak}</span>
-            </div>
-          </div>
-          <button
-            onClick={onBack}
-            className="mt-10 rounded-full bg-white px-12 py-4 text-2xl font-black text-blue-900 transition-transform hover:scale-105 shadow-[0_0_20px_rgba(255,255,255,0.4)]"
-          >
-            CONTINUE
-          </button>
-        </div>
-      )}
-
-      <style>{`
-        @keyframes rr-shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-10px); }
-          75% { transform: translateX(10px); }
-        }
-        .animate-rr-shake {
-          animation: rr-shake 0.2s ease-in-out 0s 2;
-        }
-      `}</style>
     </div>
   );
 };
 
 export default RotationReflectionGame;
+
