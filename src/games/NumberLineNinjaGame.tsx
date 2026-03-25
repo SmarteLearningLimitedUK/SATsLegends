@@ -3,6 +3,7 @@ import {
   ArrowLeft,
   CircleHelp,
   Heart,
+  Sparkles,
   Timer,
   UserCircle2,
   Volume2,
@@ -19,8 +20,9 @@ interface NumberLineNinjaGameProps {
 
 type FeedbackState = 'default' | 'selected' | 'correct' | 'incorrect';
 
-const ANSWERS = ['8', '10', '12', '14'] as const;
-const CORRECT_ANSWER = '10';
+const OPTIONS = ['8', '10', '12', '14'] as const;
+const CORRECT = '10';
+const ROUND_TIME_SECONDS = 83;
 
 const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
   avatarId,
@@ -28,26 +30,25 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
   onGameOver,
   onBack,
 }) => {
-  const [timeLeft, setTimeLeft] = useState(83);
+  const [timeLeft, setTimeLeft] = useState(ROUND_TIME_SECONDS);
   const [lives, setLives] = useState(3);
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [feedbackState, setFeedbackState] = useState<FeedbackState>('default');
-  const [isMuted, setIsMuted] = useState(false);
-  const [showHelp, setShowHelp] = useState(false);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<FeedbackState>('default');
   const [score, setScore] = useState(0);
+  const [muted, setMuted] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
 
-  const canSubmit = selectedAnswer !== null;
-  const isCorrect = selectedAnswer === CORRECT_ANSWER;
-  const avatarGlyph = useMemo(
+  const canSubmit = selected !== null;
+  const avatarInitial = useMemo(
     () => (avatarId?.trim()?.charAt(0)?.toUpperCase() || 'E'),
     [avatarId],
   );
 
   useEffect(() => {
-    const timerId = window.setInterval(() => {
+    const id = window.setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
-          window.clearInterval(timerId);
+          window.clearInterval(id);
           onGameOver(score);
           return 0;
         }
@@ -55,75 +56,71 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
       });
     }, 1000);
 
-    return () => window.clearInterval(timerId);
+    return () => window.clearInterval(id);
   }, [onGameOver, score]);
 
   useEffect(() => {
     if (!showHelp) return undefined;
-    const timeoutId = window.setTimeout(() => setShowHelp(false), 2200);
-    return () => window.clearTimeout(timeoutId);
+    const id = window.setTimeout(() => setShowHelp(false), 2400);
+    return () => window.clearTimeout(id);
   }, [showHelp]);
 
-  const handleSelectAnswer = (answer: string) => {
-    setSelectedAnswer(answer);
-    setFeedbackState('selected');
+  const selectOption = (value: string) => {
+    setSelected(value);
+    setFeedback('selected');
   };
 
-  const handleSubmit = () => {
-    if (!selectedAnswer) return;
+  const submit = () => {
+    if (!selected) return;
 
-    if (selectedAnswer === CORRECT_ANSWER) {
-      setFeedbackState('correct');
+    if (selected === CORRECT) {
       const nextScore = score + 120;
       setScore(nextScore);
+      setFeedback('correct');
       window.setTimeout(() => onVictory(3, nextScore), 650);
       return;
     }
 
     const nextLives = Math.max(0, lives - 1);
     setLives(nextLives);
-    setFeedbackState('incorrect');
-
+    setFeedback('incorrect');
     window.setTimeout(() => {
       if (nextLives <= 0) {
         onGameOver(score);
         return;
       }
-      setSelectedAnswer(null);
-      setFeedbackState('default');
-    }, 700);
+      setSelected(null);
+      setFeedback('default');
+    }, 760);
   };
 
   return (
-    <div className="fixed inset-0 overflow-hidden bg-slate-950 text-slate-100">
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            'radial-gradient(110% 75% at 50% 12%, rgba(59,130,246,0.26), rgba(30,41,59,0.32) 45%, rgba(2,6,23,0.92) 100%), linear-gradient(180deg, #0b1228 0%, #09142f 40%, #071021 100%)',
-        }}
-      />
-      <div className="pointer-events-none absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-cyan-300/8 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-16 right-[-2.5rem] h-60 w-60 rounded-full bg-indigo-400/10 blur-3xl" />
+    <div className="fixed inset-0 overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(120%_72%_at_50%_10%,#2dd4bf33_0%,#1d4ed833_32%,#4f46e533_58%,#0b1028_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,#101b4a_0%,#132a63_28%,#182f6f_48%,#0f214f_68%,#091437_100%)]" />
+      <div className="pointer-events-none absolute -left-16 top-20 h-56 w-56 rounded-full bg-cyan-300/30 blur-3xl" />
+      <div className="pointer-events-none absolute right-[-3rem] top-36 h-64 w-64 rounded-full bg-fuchsia-400/20 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-[-5rem] left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-amber-300/20 blur-3xl" />
+      <div className="pointer-events-none absolute inset-0 opacity-[0.22] [background:radial-gradient(circle_at_16%_22%,#ffffff_0,transparent_3px),radial-gradient(circle_at_82%_17%,#ffffff_0,transparent_2px),radial-gradient(circle_at_34%_78%,#ffffff_0,transparent_2px),radial-gradient(circle_at_64%_66%,#ffffff_0,transparent_2px)]" />
 
-      <div className="relative z-10 mx-auto flex h-full w-full max-w-[430px] flex-col px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(0.9rem,env(safe-area-inset-top))]">
-        <header className="mb-3 flex shrink-0 items-center justify-between gap-3 rounded-2xl border border-white/14 bg-slate-900/72 px-3 py-2.5 shadow-[0_12px_24px_rgba(2,6,23,0.34)] backdrop-blur-sm">
+      <div className="relative z-10 mx-auto flex h-full w-full max-w-[430px] flex-col px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(0.8rem,env(safe-area-inset-top))] text-slate-100">
+        <header className="mb-3 flex shrink-0 items-center justify-between gap-2.5 rounded-2xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(30,64,175,0.92),rgba(29,78,216,0.78))] px-3 py-2.5 shadow-[0_12px_24px_rgba(8,47,73,0.35)] backdrop-blur-sm">
           <div className="flex min-w-0 items-center gap-2.5">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-cyan-200/40 bg-cyan-500/20">
-              <UserCircle2 className="absolute h-4 w-4 text-cyan-100/40" />
-              <span className="relative text-sm font-black text-cyan-100">{avatarGlyph}</span>
+            <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-yellow-200/65 bg-[linear-gradient(180deg,#3b82f6,#2563eb)] shadow-[0_0_0_2px_rgba(251,191,36,0.25)]">
+              <UserCircle2 className="absolute h-4 w-4 text-cyan-50/55" />
+              <span className="relative text-sm font-black text-cyan-50">{avatarInitial}</span>
             </div>
             <div className="min-w-0">
-              <p className="truncate text-sm font-black tracking-[0.03em] text-cyan-50">Explorer</p>
+              <p className="truncate text-[15px] font-black tracking-[0.02em] text-cyan-50">Explorer</p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-cyan-200/35 bg-blue-500/20 px-2.5 py-1 text-xs font-black tracking-[0.03em] text-cyan-50">
+            <div className="inline-flex h-8 items-center gap-1.5 rounded-full border border-cyan-100/55 bg-cyan-300/20 px-2.5 text-xs font-black text-cyan-50 shadow-[0_0_14px_rgba(34,211,238,0.2)]">
               <Timer className="h-3.5 w-3.5" />
               <span>{timeLeft}s</span>
             </div>
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-rose-200/35 bg-rose-500/18 px-2.5 py-1 text-xs font-black tracking-[0.03em] text-rose-100">
+            <div className="inline-flex h-8 items-center gap-1.5 rounded-full border border-rose-100/55 bg-rose-400/20 px-2.5 text-xs font-black text-rose-50 shadow-[0_0_14px_rgba(251,113,133,0.2)]">
               <Heart className="h-3.5 w-3.5" />
               <span>{lives}</span>
             </div>
@@ -131,61 +128,70 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
         </header>
 
         <main className="flex min-h-0 flex-1 flex-col gap-3">
-          <section className="shrink-0 rounded-2xl border border-white/12 bg-slate-900/66 px-4 py-3 shadow-[0_10px_20px_rgba(2,6,23,0.3)]">
-            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-cyan-200/80">Missing Number</p>
+          <section className="shrink-0 rounded-2xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(15,23,42,0.58),rgba(30,41,59,0.5))] px-4 py-3 shadow-[0_12px_26px_rgba(15,23,42,0.34)]">
+            <p className="text-[11px] font-black uppercase tracking-[0.22em] text-amber-200">Missing Number</p>
             <h1 className="mt-1.5 text-[clamp(1rem,4.3vw,1.25rem)] font-black leading-snug text-white">
               A number line goes from 0 to 20. Which number is missing?
             </h1>
           </section>
 
-          <section className="rounded-2xl border border-cyan-100/20 bg-slate-900/64 px-4 py-5 shadow-[0_16px_30px_rgba(2,6,23,0.35)]">
+          <section className="relative rounded-2xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(30,58,138,0.38),rgba(15,23,42,0.5))] px-4 py-5 shadow-[0_16px_30px_rgba(15,23,42,0.34)]">
+            <div className="pointer-events-none absolute inset-x-6 top-3 h-10 rounded-full bg-cyan-300/12 blur-2xl" />
             <div className="relative mx-auto h-24 w-full max-w-[350px]">
-              <div className="absolute left-0 right-0 top-1/2 h-[5px] -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-200 via-cyan-50 to-cyan-200 shadow-[0_0_12px_rgba(103,232,249,0.18)]" />
+              <div className="absolute left-0 right-0 top-1/2 h-[5px] -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-200 via-cyan-50 to-cyan-200 shadow-[0_0_16px_rgba(103,232,249,0.3)]" />
 
               {[0, 5, 10, 15, 20].map((tick) => {
                 const leftPercent = (tick / 20) * 100;
-                const isMissingTick = tick === 10;
+                const missing = tick === 10;
                 return (
                   <div
-                    key={`tick-${tick}`}
+                    key={tick}
                     className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
                     style={{ left: `${leftPercent}%` }}
                   >
-                    <div className={`mx-auto w-[4px] rounded-full ${isMissingTick ? 'h-9 bg-amber-300' : 'h-7 bg-white/95'}`} />
+                    <div className={`mx-auto w-[4px] rounded-full ${missing ? 'h-10 bg-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.45)]' : 'h-7 bg-white/95'}`} />
                     <div className="absolute left-1/2 top-9 -translate-x-1/2">
                       <span
-                        className={`text-[clamp(1.1rem,5vw,1.35rem)] font-black ${
-                          isMissingTick
-                            ? 'rounded-full border border-amber-200/50 bg-amber-400/20 px-2 py-0.5 text-amber-100 shadow-[0_0_12px_rgba(251,191,36,0.25)]'
+                        className={`inline-flex items-center justify-center text-[clamp(1.15rem,5.2vw,1.38rem)] font-black ${
+                          missing
+                            ? 'rounded-full border border-amber-200/75 bg-[linear-gradient(180deg,rgba(251,191,36,0.3),rgba(245,158,11,0.26))] px-2.5 py-0.5 text-amber-50 shadow-[0_0_18px_rgba(251,191,36,0.42)]'
                             : 'text-white'
                         }`}
                       >
-                        {isMissingTick ? '?' : tick}
+                        {missing ? '?' : tick}
                       </span>
                     </div>
+                    {missing ? (
+                      <span className="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 text-amber-200">
+                        <Sparkles className="h-4 w-4" />
+                      </span>
+                    ) : null}
                   </div>
                 );
               })}
             </div>
           </section>
 
-          <section className="rounded-2xl border border-white/12 bg-slate-900/62 p-3.5 shadow-[0_14px_26px_rgba(2,6,23,0.34)]">
+          <section className="rounded-2xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(30,41,59,0.55),rgba(15,23,42,0.56))] p-3.5 shadow-[0_14px_26px_rgba(2,6,23,0.3)]">
             <div className="grid grid-cols-2 gap-2.5">
-              {ANSWERS.map((answer) => {
-                const selected = selectedAnswer === answer;
-                const showCorrect = feedbackState === 'correct' && answer === CORRECT_ANSWER;
-                const showWrong = feedbackState === 'incorrect' && selected && answer !== CORRECT_ANSWER;
+              {OPTIONS.map((answer) => {
+                const isSelected = selected === answer;
+                const isCorrect = feedback === 'correct' && answer === CORRECT;
+                const isWrong = feedback === 'incorrect' && isSelected && answer !== CORRECT;
                 return (
                   <button
                     key={answer}
                     type="button"
-                    onClick={() => handleSelectAnswer(answer)}
+                    onClick={() => selectOption(answer)}
                     className={[
                       'h-14 rounded-2xl border text-xl font-black transition-all duration-150',
-                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/85 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950',
-                      selected ? 'border-cyan-200/75 bg-cyan-400/26 text-cyan-50 shadow-[0_10px_18px_rgba(34,211,238,0.22)]' : 'border-white/16 bg-slate-800/76 text-white hover:border-cyan-100/35',
-                      showCorrect ? 'border-emerald-200/80 bg-emerald-500/30 text-emerald-50' : '',
-                      showWrong ? 'border-rose-200/85 bg-rose-500/32 text-rose-50' : '',
+                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950',
+                      'active:scale-[0.98] active:brightness-110',
+                      isSelected
+                        ? 'border-cyan-100/80 bg-[linear-gradient(180deg,rgba(34,211,238,0.38),rgba(59,130,246,0.34))] text-cyan-50 shadow-[0_12px_20px_rgba(34,211,238,0.26)]'
+                        : 'border-cyan-100/45 bg-[linear-gradient(180deg,rgba(37,99,235,0.28),rgba(30,58,138,0.22))] text-white hover:border-cyan-100/70 hover:bg-cyan-300/20',
+                      isCorrect ? 'border-emerald-100/90 bg-emerald-500/35 text-emerald-50' : '',
+                      isWrong ? 'border-rose-100/90 bg-rose-500/35 text-rose-50' : '',
                     ].join(' ')}
                   >
                     {answer}
@@ -197,9 +203,15 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
 
           <button
             type="button"
-            onClick={handleSubmit}
+            onClick={submit}
             disabled={!canSubmit}
-            className="mt-auto h-14 shrink-0 rounded-2xl border border-amber-200/60 bg-gradient-to-b from-amber-300 to-amber-500 text-lg font-black text-amber-950 shadow-[0_12px_20px_rgba(180,83,9,0.34)] transition-all disabled:cursor-not-allowed disabled:opacity-45"
+            className={[
+              'mt-auto h-14 shrink-0 rounded-2xl border text-lg font-black transition-all',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950',
+              canSubmit
+                ? 'border-amber-200/85 bg-[linear-gradient(180deg,#fde047_0%,#f59e0b_100%)] text-amber-950 shadow-[0_12px_20px_rgba(217,119,6,0.4)] hover:brightness-105 active:translate-y-[1px]'
+                : 'border-slate-300/25 bg-slate-700/50 text-slate-300 shadow-none',
+            ].join(' ')}
           >
             Submit
           </button>
@@ -209,23 +221,23 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
           <button
             type="button"
             onClick={onBack}
-            className="inline-flex h-12 items-center justify-center gap-1 rounded-xl border border-white/18 bg-slate-900/70 text-sm font-black text-white/90 transition hover:border-cyan-200/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/85"
+            className="inline-flex h-12 items-center justify-center gap-1 rounded-xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(37,99,235,0.45),rgba(30,58,138,0.42))] text-sm font-black text-white shadow-[0_8px_14px_rgba(2,6,23,0.24)] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
           >
             <ArrowLeft className="h-4 w-4" />
             Back
           </button>
           <button
             type="button"
-            onClick={() => setIsMuted((prev) => !prev)}
-            className="inline-flex h-12 items-center justify-center gap-1 rounded-xl border border-white/18 bg-slate-900/70 text-sm font-black text-white/90 transition hover:border-cyan-200/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/85"
+            onClick={() => setMuted((value) => !value)}
+            className="inline-flex h-12 items-center justify-center gap-1 rounded-xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(37,99,235,0.45),rgba(30,58,138,0.42))] text-sm font-black text-white shadow-[0_8px_14px_rgba(2,6,23,0.24)] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
           >
-            {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+            {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
             Sound
           </button>
           <button
             type="button"
             onClick={() => setShowHelp(true)}
-            className="inline-flex h-12 items-center justify-center gap-1 rounded-xl border border-white/18 bg-slate-900/70 text-sm font-black text-white/90 transition hover:border-cyan-200/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/85"
+            className="inline-flex h-12 items-center justify-center gap-1 rounded-xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(37,99,235,0.45),rgba(30,58,138,0.42))] text-sm font-black text-white shadow-[0_8px_14px_rgba(2,6,23,0.24)] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
           >
             <CircleHelp className="h-4 w-4" />
             Help
@@ -234,20 +246,20 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
       </div>
 
       {showHelp ? (
-        <div className="pointer-events-none absolute bottom-[max(6.25rem,calc(env(safe-area-inset-bottom)+5.5rem))] left-1/2 z-30 -translate-x-1/2 rounded-full border border-cyan-100/45 bg-slate-900/88 px-4 py-2 text-xs font-black uppercase tracking-[0.08em] text-cyan-50 shadow-[0_10px_24px_rgba(2,6,23,0.45)]">
-          Tap the missing value on the number line.
+        <div className="pointer-events-none absolute bottom-[max(6.2rem,calc(env(safe-area-inset-bottom)+5.2rem))] left-1/2 z-30 -translate-x-1/2 rounded-full border border-cyan-100/65 bg-[linear-gradient(180deg,rgba(34,211,238,0.26),rgba(30,64,175,0.32))] px-4 py-2 text-xs font-black uppercase tracking-[0.09em] text-cyan-50 shadow-[0_10px_24px_rgba(34,211,238,0.25)]">
+          Pick the missing number, then tap Submit.
         </div>
       ) : null}
 
-      {feedbackState === 'correct' ? (
-        <div className="pointer-events-none absolute top-[calc(env(safe-area-inset-top)+4.9rem)] left-1/2 z-30 -translate-x-1/2 rounded-full border border-emerald-200/80 bg-emerald-500/35 px-4 py-1.5 text-xs font-black uppercase tracking-[0.1em] text-emerald-50 shadow-[0_8px_20px_rgba(16,185,129,0.28)]">
-          Correct!
+      {feedback === 'correct' ? (
+        <div className="pointer-events-none absolute top-[calc(env(safe-area-inset-top)+4.8rem)] left-1/2 z-30 -translate-x-1/2 rounded-full border border-emerald-100/90 bg-emerald-500/35 px-4 py-1.5 text-xs font-black uppercase tracking-[0.1em] text-emerald-50 shadow-[0_10px_24px_rgba(16,185,129,0.35)]">
+          Great job!
         </div>
       ) : null}
 
-      {feedbackState === 'incorrect' ? (
-        <div className="pointer-events-none absolute top-[calc(env(safe-area-inset-top)+4.9rem)] left-1/2 z-30 -translate-x-1/2 rounded-full border border-rose-200/80 bg-rose-500/35 px-4 py-1.5 text-xs font-black uppercase tracking-[0.1em] text-rose-50 shadow-[0_8px_20px_rgba(244,63,94,0.28)]">
-          Try again
+      {feedback === 'incorrect' ? (
+        <div className="pointer-events-none absolute top-[calc(env(safe-area-inset-top)+4.8rem)] left-1/2 z-30 -translate-x-1/2 rounded-full border border-rose-100/90 bg-rose-500/35 px-4 py-1.5 text-xs font-black uppercase tracking-[0.1em] text-rose-50 shadow-[0_10px_24px_rgba(244,63,94,0.35)]">
+          Oops! Try another.
         </div>
       ) : null}
     </div>
