@@ -167,12 +167,15 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
             </motion.div>
 
             <div className="relative">
-              <div className="relative flex h-[14.4rem] w-[14.4rem] items-center justify-center">
-                <img
-                  src={clockFaceImage}
-                  alt="Clock Face"
-                  className="h-full w-full object-contain mix-blend-multiply"
-                />
+              <div className="relative flex h-[14.4rem] w-[14.4rem] items-center justify-center rounded-full">
+                <div className="absolute inset-0 rounded-full bg-blue-900/20 blur-[2px]" />
+                <div className="absolute inset-0 overflow-hidden rounded-full">
+                  <img
+                    src={clockFaceImage}
+                    alt="Clock Face"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
 
                 <motion.div
                   animate={{ rotate: rotationHours }}

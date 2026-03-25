@@ -4,7 +4,6 @@ import {
   Trophy,
   RotateCcw,
   ChevronRight,
-  Timer,
   Flame,
   Target,
   Activity,
@@ -359,10 +358,6 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
           <div className="pvp-hud-chip pvp-hud-chip-alt inline-flex items-center gap-1.5">
             <Flame className={`h-3.5 w-3.5 ${state.streak > 0 ? 'animate-pulse text-amber-200' : 'text-cyan-100/70'}`} />
             Streak {state.streak}
-          </div>
-          <div className={`pvp-hud-chip inline-flex items-center gap-1.5 ${state.timeLeft < 5 ? 'text-rose-200' : ''}`}>
-            <Timer className={`h-3.5 w-3.5 ${state.timeLeft < 5 ? 'animate-bounce text-rose-300' : 'text-cyan-200'}`} />
-            {state.timeLeft}s
           </div>
           <div className="pvp-hud-chip pvp-hud-chip-alt">Mistakes {state.mistakes}/{MAX_MISTAKES}</div>
         </div>
