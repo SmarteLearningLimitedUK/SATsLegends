@@ -3,156 +3,133 @@ import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { TAKE_OUT_ASSETS } from '../assets/take_out';
 import takeOutLevelBg from '../assets/level_backgrounds/take_out.png';
-import playBgAsset from '../assets/fantasy_hero/slider/play_bg.png';
-import playBorderAsset from '../assets/fantasy_hero/slider/play_border.png';
-import playFillBlueAsset from '../assets/fantasy_hero/slider/play_fill_blue.png';
-import lineBgAsset from '../assets/fantasy_hero/title/line_bg.png';
-import coinAsset from '../assets/fantasy_hero/ui/coin.png';
-import { triggerHaptic } from '../haptics';
 import GameActionDock from '../components/GameActionDock';
 import FoodGameShell from '../components/FoodGameShell';
-import AssetIcon from '../components/AssetIcon';
-import { Star } from '../components/GameIcons';
+import { triggerHaptic } from '../haptics';
 
 interface TakeOutRushGameProps {
   levelId: number;
+  miniGameLevel?: number;
   avatarId: string;
+  useSharedTopHud?: boolean;
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
   onBack: () => void;
 }
 
-type CustomerMood = 'waiting' | 'happy' | 'sad';
-
-interface IngredientType {
-  name: string;
-  units: number;
-  asset: string;
-  accent: string;
-  trayTone: string;
-  buttonImageClass: string;
-  stackImageClass: string;
-  shortLabel: string;
+interface Fraction {
+  n: number;
+  d: number;
 }
 
-interface OrderRequest {
+type ConstraintKind = 'ban' | 'min_items';
+
+interface OrderConstraint {
+  kind: ConstraintKind;
+  itemId?: string;
+  minItems?: number;
+}
+
+interface TakeOutOrder {
   id: string;
-  targetUnits: number;
-  requiredIngredients: string[];
+  target: Fraction;
+  constraints: OrderConstraint[];
+  stage: number;
+  text: string;
+  rushTag?: string;
+}
+
+interface FoodItem {
+  id: string;
+  name: string;
+  asset: string;
+  value: Fraction;
+  colorClass: string;
+}
+
+interface FeedbackState {
+  tone: 'success' | 'error' | 'info';
   text: string;
 }
 
-interface CustomerReaction {
-  mood: CustomerMood;
-  text: string;
-}
+const ROUND_DURATION_SECONDS = 90;
+const AUTO_VALIDATE_DELAY_MS = 140;
 
-const ORDER_DURATION = 45;
-const MAX_MISSES = 3;
-const SCORE_TARGET_BASE = 900;
-const SCORE_TARGET_PER_LEVEL = 250;
-
-const INGREDIENT_TYPES: IngredientType[] = [
+const FOOD_ITEMS: FoodItem[] = [
   {
-    name: 'Protein Pack',
-    units: 4,
-    asset: TAKE_OUT_ASSETS.portionHalf,
-    accent: 'from-amber-100 via-orange-50 to-white',
-    trayTone: 'from-sky-500 via-cyan-500 to-blue-600',
-    buttonImageClass: 'w-16 md:w-20',
-    stackImageClass: 'w-36 md:w-44',
-    shortLabel: '1/2',
-  },
-  {
-    name: 'Cheese Slice',
-    units: 2,
+    id: 'pizza_slice',
+    name: 'Pizza Slice',
     asset: TAKE_OUT_ASSETS.portionQuarter,
-    accent: 'from-yellow-100 via-amber-50 to-white',
-    trayTone: 'from-orange-400 via-amber-400 to-yellow-500',
-    buttonImageClass: 'w-14 md:w-16',
-    stackImageClass: 'w-32 md:w-40',
-    shortLabel: '1/4',
+    value: { n: 1, d: 4 },
+    colorClass: 'from-amber-300 to-orange-400',
   },
   {
-    name: 'Crunch Strip',
-    units: 1,
+    id: 'fries',
+    name: 'Fries',
     asset: TAKE_OUT_ASSETS.portionEighthA,
-    accent: 'from-rose-100 via-orange-50 to-white',
-    trayTone: 'from-rose-500 via-red-500 to-orange-500',
-    buttonImageClass: 'w-14 md:w-16',
-    stackImageClass: 'w-34 md:w-42',
-    shortLabel: '1/8',
+    value: { n: 1, d: 8 },
+    colorClass: 'from-yellow-300 to-amber-400',
   },
   {
-    name: 'Leaf Mix',
-    units: 1,
+    id: 'salad_cup',
+    name: 'Salad Cup',
     asset: TAKE_OUT_ASSETS.portionEighthB,
-    accent: 'from-lime-100 via-emerald-50 to-white',
-    trayTone: 'from-lime-400 via-emerald-400 to-green-500',
-    buttonImageClass: 'w-16 md:w-20',
-    stackImageClass: 'w-36 md:w-46',
-    shortLabel: '1/8',
+    value: { n: 1, d: 6 },
+    colorClass: 'from-emerald-300 to-lime-400',
   },
   {
-    name: 'Red Slice',
-    units: 1,
-    asset: TAKE_OUT_ASSETS.portionEighthC,
-    accent: 'from-red-100 via-rose-50 to-white',
-    trayTone: 'from-cyan-500 via-sky-500 to-teal-500',
-    buttonImageClass: 'w-16 md:w-20',
-    stackImageClass: 'w-34 md:w-42',
-    shortLabel: '1/8',
+    id: 'wrap',
+    name: 'Wrap',
+    asset: TAKE_OUT_ASSETS.portionHalf,
+    value: { n: 1, d: 2 },
+    colorClass: 'from-sky-300 to-cyan-400',
   },
   {
-    name: 'Ring Mix',
-    units: 1,
-    asset: TAKE_OUT_ASSETS.portionEighthD,
-    accent: 'from-cyan-100 via-sky-50 to-white',
-    trayTone: 'from-cyan-500 via-blue-500 to-sky-600',
-    buttonImageClass: 'w-14 md:w-18',
-    stackImageClass: 'w-32 md:w-38',
-    shortLabel: '1/8',
-  },
-  {
-    name: 'Brine Bites',
-    units: 1,
-    asset: TAKE_OUT_ASSETS.portionEighthE,
-    accent: 'from-emerald-100 via-lime-50 to-white',
-    trayTone: 'from-emerald-500 via-lime-500 to-green-500',
-    buttonImageClass: 'w-14 md:w-18',
-    stackImageClass: 'w-30 md:w-38',
-    shortLabel: '1/8',
-  },
-  {
-    name: 'Sauce Swirl A',
-    units: 1,
+    id: 'cookie',
+    name: 'Cookie',
     asset: TAKE_OUT_ASSETS.sauceSwirlA,
-    accent: 'from-red-100 via-orange-50 to-white',
-    trayTone: 'from-red-500 via-rose-500 to-pink-500',
-    buttonImageClass: 'w-14 md:w-16',
-    stackImageClass: 'w-30 md:w-36',
-    shortLabel: '1/8',
+    value: { n: 1, d: 8 },
+    colorClass: 'from-rose-300 to-red-400',
   },
   {
-    name: 'Sauce Swirl B',
-    units: 1,
+    id: 'ice_cream',
+    name: 'Ice Cream',
     asset: TAKE_OUT_ASSETS.sauceSwirlB,
-    accent: 'from-amber-100 via-orange-50 to-white',
-    trayTone: 'from-amber-500 via-orange-500 to-red-500',
-    buttonImageClass: 'w-14 md:w-16',
-    stackImageClass: 'w-30 md:w-36',
-    shortLabel: '1/8',
+    value: { n: 1, d: 3 },
+    colorClass: 'from-indigo-300 to-blue-400',
+  },
+  {
+    id: 'nuggets',
+    name: 'Nuggets',
+    asset: TAKE_OUT_ASSETS.portionEighthD,
+    value: { n: 1, d: 6 },
+    colorClass: 'from-orange-300 to-amber-500',
+  },
+  {
+    id: 'onion_rings',
+    name: 'Onion Rings',
+    asset: TAKE_OUT_ASSETS.portionEighthE,
+    value: { n: 1, d: 4 },
+    colorClass: 'from-cyan-300 to-blue-400',
+  },
+  {
+    id: 'pepper_bites',
+    name: 'Pepper Bites',
+    asset: TAKE_OUT_ASSETS.portionEighthC,
+    value: { n: 1, d: 6 },
+    colorClass: 'from-pink-300 to-rose-400',
   },
 ];
 
-const TARGET_UNIT_OPTIONS = [7, 8, 9, 10, 11, 12, 13, 14];
-
-const createId = () => Math.random().toString(36).slice(2, 11);
+const ITEM_BY_ID: Record<string, FoodItem> = FOOD_ITEMS.reduce<Record<string, FoodItem>>((map, item) => {
+  map[item.id] = item;
+  return map;
+}, {});
 
 const gcd = (a: number, b: number): number => {
   let x = Math.abs(a);
   let y = Math.abs(b);
-  while (y) {
+  while (y !== 0) {
     const temp = y;
     y = x % y;
     x = temp;
@@ -160,677 +137,597 @@ const gcd = (a: number, b: number): number => {
   return x || 1;
 };
 
-const formatFractionUnits = (units: number) => {
-  if (units === 0) return '0';
-
-  const whole = Math.floor(units / 8);
-  const remainder = units % 8;
-
-  if (!remainder) return `${whole}`;
-
-  const divisor = gcd(remainder, 8);
-  const numerator = remainder / divisor;
-  const denominator = 8 / divisor;
-
-  if (!whole) return `${numerator}/${denominator}`;
-  return `${whole} ${numerator}/${denominator}`;
+const normalize = (fraction: Fraction): Fraction => {
+  if (fraction.d === 0) return { n: 0, d: 1 };
+  const sign = fraction.d < 0 ? -1 : 1;
+  const n = fraction.n * sign;
+  const d = Math.abs(fraction.d);
+  const divisor = gcd(n, d);
+  return { n: n / divisor, d: d / divisor };
 };
 
-const formatFractionSentence = (units: number) => {
-  const whole = Math.floor(units / 8);
-  const remainder = units % 8;
-
-  if (!remainder) return `${whole}`;
-  if (!whole) return formatFractionUnits(units);
-
-  const divisor = gcd(remainder, 8);
-  const numerator = remainder / divisor;
-  const denominator = 8 / divisor;
-  return `${whole} and ${numerator}/${denominator}`;
+const addFractions = (a: Fraction, b: Fraction): Fraction => {
+  return normalize({ n: (a.n * b.d) + (b.n * a.d), d: a.d * b.d });
 };
 
-const joinWithAnd = (items: string[]) => {
-  if (items.length <= 1) return items[0] || '';
-  if (items.length === 2) return `${items[0]} and ${items[1]}`;
-  return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
+const compareFractions = (a: Fraction, b: Fraction): number => {
+  return (a.n * b.d) - (b.n * a.d);
 };
 
-const CustomerFace: React.FC<{ mood: CustomerMood }> = ({ mood }) => {
-  const faceTone = mood === 'happy' ? 'from-emerald-300 to-lime-200' : mood === 'sad' ? 'from-rose-300 to-orange-200' : 'from-sky-200 to-cyan-100';
-  const mouthClasses = mood === 'sad'
-    ? 'h-5 w-12 rounded-t-full border-x-4 border-t-4 border-x-slate-800 border-t-slate-800'
-    : mood === 'happy'
-      ? 'h-5 w-12 rounded-b-full border-b-4 border-x-4 border-b-slate-800 border-x-slate-800'
-      : 'h-1.5 w-10 rounded-full bg-slate-800';
+const equalFractions = (a: Fraction, b: Fraction): boolean => compareFractions(a, b) === 0;
 
-  return (
-    <div className={`relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br ${faceTone} shadow-[inset_0_2px_10px_rgba(255,255,255,0.6),0_12px_24px_rgba(15,23,42,0.18)] md:h-20 md:w-20`}>
-      <div className="absolute left-[18px] top-[21px] h-2.5 w-2.5 rounded-full bg-slate-800 md:left-[28px] md:top-[29px]" />
-      <div className="absolute right-[18px] top-[21px] h-2.5 w-2.5 rounded-full bg-slate-800 md:right-[28px] md:top-[29px]" />
-      <div className={`absolute bottom-[15px] md:bottom-[22px] ${mouthClasses}`} />
-    </div>
-  );
+const asDisplayFraction = (fraction: Fraction): string => {
+  const reduced = normalize(fraction);
+  if (reduced.d === 1) return `${reduced.n}`;
+  const whole = Math.trunc(reduced.n / reduced.d);
+  const remainder = Math.abs(reduced.n % reduced.d);
+  if (whole > 0 && remainder > 0) {
+    const remainderReduced = normalize({ n: remainder, d: reduced.d });
+    return `${whole} ${remainderReduced.n}/${remainderReduced.d}`;
+  }
+  return `${reduced.n}/${reduced.d}`;
+};
+
+const fractionToNumber = (fraction: Fraction): number => {
+  const reduced = normalize(fraction);
+  return reduced.n / reduced.d;
+};
+
+const pick = <T,>(list: T[]): T => list[Math.floor(Math.random() * list.length)];
+
+const shuffle = <T,>(items: T[]): T[] => {
+  const clone = [...items];
+  for (let i = clone.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [clone[i], clone[j]] = [clone[j], clone[i]];
+  }
+  return clone;
+};
+
+const stageFromProgress = (baseLevel: number, ordersServed: number, timeLeft: number): number => {
+  const servedRamp = Math.floor(ordersServed / 3);
+  const base = Math.max(1, Math.min(12, baseLevel + servedRamp));
+  if (timeLeft <= 30) return Math.min(12, base + 1);
+  return base;
+};
+
+const allowedIdsByStage = (stage: number): string[] => {
+  if (stage <= 3) {
+    return ['wrap', 'pizza_slice', 'fries', 'onion_rings'];
+  }
+  if (stage <= 7) {
+    return ['wrap', 'pizza_slice', 'fries', 'salad_cup', 'nuggets', 'onion_rings', 'cookie'];
+  }
+  return FOOD_ITEMS.map((item) => item.id);
+};
+
+const makeId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+const buildOrderText = (target: Fraction): string => {
+  return `Pack exactly ${asDisplayFraction(target)} of a tray.`;
+};
+
+const generateOrder = (stage: number): TakeOutOrder => {
+  const maxAttempts = 220;
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    const pool = allowedIdsByStage(stage);
+
+    let bannedItemId: string | undefined;
+    if (stage >= 5 && Math.random() < 0.44 && pool.length >= 5) {
+      bannedItemId = pick(pool);
+    }
+
+    const allowedIds = pool.filter((id) => id !== bannedItemId);
+    if (allowedIds.length < 2) continue;
+
+    const minItems = stage >= 8 ? 3 : stage >= 5 ? 2 : 1;
+    const maxItems = stage >= 9 ? 6 : stage >= 5 ? 5 : 4;
+    const itemCount = Math.floor(Math.random() * (maxItems - minItems + 1)) + minItems;
+
+    const selectionIds = Array.from({ length: itemCount }, () => pick(allowedIds));
+
+    let target = normalize({ n: 0, d: 1 });
+    selectionIds.forEach((id) => {
+      target = addFractions(target, ITEM_BY_ID[id].value);
+    });
+
+    if (compareFractions(target, { n: 0, d: 1 }) <= 0) continue;
+    if (compareFractions(target, { n: 1, d: 1 }) > 0) continue;
+
+    const hasVariety = new Set(selectionIds).size >= (stage >= 6 ? 2 : 1);
+    if (!hasVariety) continue;
+
+    const constraints: OrderConstraint[] = [];
+    if (bannedItemId) {
+      constraints.push({ kind: 'ban', itemId: bannedItemId });
+    }
+    if (minItems > 1) {
+      constraints.push({ kind: 'min_items', minItems });
+    }
+
+    return {
+      id: makeId(),
+      target,
+      constraints,
+      stage,
+      text: buildOrderText(target),
+      rushTag: stage >= 8 ? 'Rush Order' : undefined,
+    };
+  }
+
+  return {
+    id: makeId(),
+    target: { n: 3, d: 4 },
+    constraints: [{ kind: 'min_items', minItems: 2 }],
+    stage,
+    text: 'Pack exactly 3/4 of a tray.',
+  };
+};
+
+const starsForPerformance = (score: number, correct: number, incorrect: number): number => {
+  const total = Math.max(1, correct + incorrect);
+  const accuracy = correct / total;
+
+  if (score >= 2600 && correct >= 10 && accuracy >= 0.8) return 3;
+  if (score >= 1500 && correct >= 6 && accuracy >= 0.6) return 2;
+  return 1;
 };
 
 const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
   levelId,
-  avatarId: _avatarId,
+  miniGameLevel,
+  useSharedTopHud = false,
   onVictory,
-  onGameOver,
+  onGameOver: _onGameOver,
   onBack,
 }) => {
+  const baseLevel = Math.max(1, Math.min(12, miniGameLevel || levelId || 1));
+
+  const [timeLeft, setTimeLeft] = useState(ROUND_DURATION_SECONDS);
   const [score, setScore] = useState(0);
-  const [orderTimeLeft, setOrderTimeLeft] = useState(ORDER_DURATION);
-  const [isGameOver, setIsGameOver] = useState(false);
-  const [isVictory, setIsVictory] = useState(false);
-  const [currentOrder, setCurrentOrder] = useState<OrderRequest | null>(null);
-  const [orderStack, setOrderStack] = useState<IngredientType[]>([]);
-  const [ordersServed, setOrdersServed] = useState(0);
-  const [missedCustomers, setMissedCustomers] = useState(0);
   const [streak, setStreak] = useState(0);
-  const [customerMood, setCustomerMood] = useState<CustomerMood>('waiting');
-  const [reaction, setReaction] = useState<CustomerReaction | null>(null);
-  const [feedback, setFeedback] = useState('Fill the take-out tray to match the order exactly.');
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [ordersServed, setOrdersServed] = useState(0);
+  const [wrongOrders, setWrongOrders] = useState(0);
+  const [feedback, setFeedback] = useState<FeedbackState | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isResolvingOrder, setIsResolvingOrder] = useState(false);
+  const [showSuccessBurst, setShowSuccessBurst] = useState(false);
+  const [orderStartMs, setOrderStartMs] = useState<number>(() => Date.now());
+  const [roundFinished, setRoundFinished] = useState(false);
 
-  const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const reactionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [order, setOrder] = useState<TakeOutOrder>(() => generateOrder(stageFromProgress(baseLevel, 0, ROUND_DURATION_SECONDS)));
 
-  const targetScore = SCORE_TARGET_BASE + (levelId * SCORE_TARGET_PER_LEVEL);
+  const autoValidateTimeoutRef = useRef<number | null>(null);
+  const feedbackTimeoutRef = useRef<number | null>(null);
+  const roundFinishedRef = useRef(false);
 
-  const createOrder = useCallback((): OrderRequest => {
-    const targetUnits = TARGET_UNIT_OPTIONS[Math.floor(Math.random() * TARGET_UNIT_OPTIONS.length)];
-    const requiredCount = levelId >= 5 ? 2 : 1;
-    const requiredIngredients = [...INGREDIENT_TYPES]
-      .sort(() => Math.random() - 0.5)
-      .slice(0, requiredCount)
-      .map(item => item.name);
-
-    const ingredientText = joinWithAnd(requiredIngredients.map(item => item.toLowerCase()));
-
-    return {
-      id: createId(),
-      targetUnits,
-      requiredIngredients,
-      text: `I want a ${formatFractionSentence(targetUnits)} take-out tray with ${ingredientText}.`,
-    };
-  }, [levelId]);
-
-  const clearTransitionTimers = () => {
-    if (transitionTimeoutRef.current) {
-      clearTimeout(transitionTimeoutRef.current);
-      transitionTimeoutRef.current = null;
+  const clearTimers = () => {
+    if (autoValidateTimeoutRef.current !== null) {
+      window.clearTimeout(autoValidateTimeoutRef.current);
+      autoValidateTimeoutRef.current = null;
     }
-    if (reactionTimeoutRef.current) {
-      clearTimeout(reactionTimeoutRef.current);
-      reactionTimeoutRef.current = null;
+    if (feedbackTimeoutRef.current !== null) {
+      window.clearTimeout(feedbackTimeoutRef.current);
+      feedbackTimeoutRef.current = null;
     }
   };
 
-  useEffect(() => clearTransitionTimers, []);
-
-  const beginNextOrder = useCallback((nextMood: CustomerMood, nextReaction: string) => {
-    setIsTransitioning(true);
-    setCustomerMood(nextMood);
-    setReaction({ mood: nextMood, text: nextReaction });
-
-    if (reactionTimeoutRef.current) clearTimeout(reactionTimeoutRef.current);
-    reactionTimeoutRef.current = setTimeout(() => setReaction(null), 1100);
-
-    if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current);
-    transitionTimeoutRef.current = setTimeout(() => {
-      setCurrentOrder(createOrder());
-      setOrderStack([]);
-      setOrderTimeLeft(ORDER_DURATION);
-      setCustomerMood('waiting');
-      setFeedback('Fill the take-out tray to match the order exactly.');
-      setIsTransitioning(false);
-    }, 1100);
-  }, [createOrder]);
-
-  const finishLevel = useCallback((finalScore: number) => {
-    const stars = finalScore >= targetScore * 1.9 ? 3 : finalScore >= targetScore * 1.35 ? 2 : 1;
-    setIsVictory(true);
-    confetti({
-      particleCount: 180,
-      spread: 72,
-      origin: { y: 0.62 },
-      colors: ['#ffd166', '#f97316', '#ffffff'],
-    });
-    onVictory(stars, finalScore);
-  }, [onVictory, targetScore]);
+  useEffect(() => clearTimers, []);
 
   useEffect(() => {
-    setScore(0);
-    setOrderTimeLeft(ORDER_DURATION);
-    setIsGameOver(false);
-    setIsVictory(false);
-    setOrdersServed(0);
-    setMissedCustomers(0);
-    setStreak(0);
-    setCustomerMood('waiting');
-    setReaction(null);
-    setFeedback('Fill the take-out tray to match the order exactly.');
-    setIsTransitioning(false);
-    setOrderStack([]);
-    setCurrentOrder(createOrder());
-  }, [createOrder, levelId]);
-
-  useEffect(() => {
-    if (isGameOver || isVictory || isTransitioning || !currentOrder) return undefined;
-    if (orderTimeLeft <= 0) {
-      const nextMisses = missedCustomers + 1;
-      setMissedCustomers(nextMisses);
-      setStreak(0);
-      if (nextMisses >= MAX_MISSES) {
-        setCustomerMood('sad');
-        setReaction({ mood: 'sad', text: 'The last customer walked away.' });
-        setIsGameOver(true);
-        onGameOver(score);
-      } else {
-        beginNextOrder('sad', 'Customer left unhappy.');
-      }
-      return undefined;
-    }
-
-    const timer = setTimeout(() => {
-      setOrderTimeLeft(prev => prev - 1);
+    if (roundFinished) return undefined;
+    const timerId = window.setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          window.clearInterval(timerId);
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
 
-    return () => clearTimeout(timer);
-  }, [beginNextOrder, currentOrder, isGameOver, isTransitioning, isVictory, missedCustomers, onGameOver, orderTimeLeft, score]);
+    return () => window.clearInterval(timerId);
+  }, [roundFinished]);
 
-  const totalUnits = useMemo(
-    () => orderStack.reduce((sum, ingredient) => sum + ingredient.units, 0),
-    [orderStack],
-  );
+  useEffect(() => {
+    if (timeLeft > 0 || roundFinishedRef.current) return;
 
-  const usedIngredientCounts = useMemo(() => {
-    const counts = new Map<string, number>();
-    orderStack.forEach(ingredient => {
-      counts.set(ingredient.name, (counts.get(ingredient.name) || 0) + 1);
+    roundFinishedRef.current = true;
+    setRoundFinished(true);
+    const stars = starsForPerformance(score, ordersServed, wrongOrders);
+    onVictory(stars, score);
+  }, [onVictory, ordersServed, score, timeLeft, wrongOrders]);
+
+  const activeConstraints = useMemo(() => {
+    const bannedIds = new Set(
+      order.constraints
+        .filter((constraint) => constraint.kind === 'ban' && constraint.itemId)
+        .map((constraint) => constraint.itemId as string),
+    );
+
+    const minItems = order.constraints
+      .filter((constraint) => constraint.kind === 'min_items')
+      .reduce((max, constraint) => Math.max(max, constraint.minItems || 0), 0);
+
+    return {
+      bannedIds,
+      minItems,
+    };
+  }, [order.constraints]);
+
+  const selectedItems = useMemo(() => selectedIds.map((id) => ITEM_BY_ID[id]).filter(Boolean), [selectedIds]);
+
+  const runningTotal = useMemo(() => {
+    return selectedItems.reduce<Fraction>((sum, item) => addFractions(sum, item.value), { n: 0, d: 1 });
+  }, [selectedItems]);
+
+  const runningRatio = useMemo(() => {
+    const target = fractionToNumber(order.target);
+    const total = fractionToNumber(runningTotal);
+    if (target <= 0) return 0;
+    return total / target;
+  }, [order.target, runningTotal]);
+
+  const isExact = useMemo(() => equalFractions(runningTotal, order.target), [order.target, runningTotal]);
+
+  const constraintsMet = useMemo(() => {
+    if (activeConstraints.minItems > 0 && selectedIds.length < activeConstraints.minItems) {
+      return false;
+    }
+    const hasBanned = selectedIds.some((id) => activeConstraints.bannedIds.has(id));
+    if (hasBanned) return false;
+    return true;
+  }, [activeConstraints.bannedIds, activeConstraints.minItems, selectedIds]);
+
+  const canSubmit = selectedIds.length > 0 && !isResolvingOrder && !roundFinished;
+
+  const nextOrder = useCallback((servedCount: number, nextTimeLeft: number) => {
+    const stage = stageFromProgress(baseLevel, servedCount, nextTimeLeft);
+    setOrder(generateOrder(stage));
+    setSelectedIds([]);
+    setOrderStartMs(Date.now());
+  }, [baseLevel]);
+
+  const resolveCorrectOrder = useCallback(() => {
+    const now = Date.now();
+    const orderSolveMs = Math.max(350, now - orderStartMs);
+    const stageBonus = order.stage * 16;
+    const itemBonus = selectedIds.length * 14;
+    const speedBonus = Math.max(30, Math.round(220 - (orderSolveMs / 70)));
+    const streakBonus = streak * 22;
+    const points = 120 + stageBonus + itemBonus + speedBonus + streakBonus;
+
+    triggerHaptic('success');
+    setShowSuccessBurst(true);
+    setScore((prev) => prev + points);
+    setOrdersServed((prev) => prev + 1);
+    setStreak((prev) => prev + 1);
+    setFeedback({ tone: 'success', text: `Order perfect! +${points}` });
+
+    confetti({
+      particleCount: 64,
+      spread: 46,
+      origin: { y: 0.72 },
+      colors: ['#fde68a', '#fb923c', '#ffffff', '#60a5fa'],
     });
-    return counts;
-  }, [orderStack]);
 
-  const requiredMissing = useMemo(() => {
-    if (!currentOrder) return [];
-    return currentOrder.requiredIngredients.filter(name => !usedIngredientCounts.has(name));
-  }, [currentOrder, usedIngredientCounts]);
+    if (feedbackTimeoutRef.current !== null) {
+      window.clearTimeout(feedbackTimeoutRef.current);
+    }
 
-  const buildEquation = useMemo(() => {
-    if (!orderStack.length) return 'Tap ingredients to start your fraction stack.';
-    return `${orderStack.map(item => item.shortLabel).join(' + ')} = ${formatFractionUnits(totalUnits)}`;
-  }, [orderStack, totalUnits]);
+    feedbackTimeoutRef.current = window.setTimeout(() => {
+      setFeedback(null);
+      setShowSuccessBurst(false);
+      nextOrder(ordersServed + 1, timeLeft);
+    }, 320);
+  }, [nextOrder, order.stage, orderStartMs, ordersServed, selectedIds.length, streak, timeLeft]);
 
-  const orderSummary = useMemo(() => {
-    if (!currentOrder) return '';
-    return `${formatFractionUnits(currentOrder.targetUnits)} tray | ${currentOrder.requiredIngredients.join(' + ')}`;
-  }, [currentOrder]);
+  const resolveIncorrectOrder = useCallback(() => {
+    triggerHaptic('warning');
+    setWrongOrders((prev) => prev + 1);
+    setStreak(0);
+    setScore((prev) => Math.max(0, prev - 24));
+    setFeedback({ tone: 'error', text: `Try again. Target is ${asDisplayFraction(order.target)}.` });
 
-  const requiredIngredientVisuals = useMemo(() => {
-    if (!currentOrder) return [];
-    return currentOrder.requiredIngredients
-      .map(name => INGREDIENT_TYPES.find(item => item.name === name))
-      .filter((item): item is IngredientType => Boolean(item));
-  }, [currentOrder]);
+    if (feedbackTimeoutRef.current !== null) {
+      window.clearTimeout(feedbackTimeoutRef.current);
+    }
 
-  const orderChecklist = useMemo(() => {
-    if (!currentOrder) return [];
+    feedbackTimeoutRef.current = window.setTimeout(() => {
+      setFeedback(null);
+    }, 520);
+  }, [order.target]);
 
-    const rows = requiredIngredientVisuals.map((ingredient) => ({
-      id: ingredient.name,
-      label: ingredient.name,
-      asset: ingredient.asset,
-      current: usedIngredientCounts.get(ingredient.name) || 0,
-      target: 1,
-      tone: ingredient.trayTone,
-    }));
+  const submitOrder = useCallback((fromAuto = false) => {
+    if (isResolvingOrder || roundFinished) return;
+    setIsResolvingOrder(true);
 
-    rows.unshift({
-      id: 'size',
-      label: 'Tray Total',
-      asset: TAKE_OUT_ASSETS.trayLid,
-      current: totalUnits,
-      target: currentOrder.targetUnits,
-      tone: 'from-sky-500 via-blue-500 to-indigo-600',
-    });
+    const valid = isExact && constraintsMet;
+    if (valid) {
+      resolveCorrectOrder();
+    } else {
+      resolveIncorrectOrder();
+      if (!fromAuto) {
+        // Keep current selection so the learner can fix quickly.
+      }
+    }
 
-    return rows;
-  }, [currentOrder, requiredIngredientVisuals, totalUnits, usedIngredientCounts]);
+    window.setTimeout(() => {
+      setIsResolvingOrder(false);
+    }, 170);
+  }, [constraintsMet, isExact, isResolvingOrder, resolveCorrectOrder, resolveIncorrectOrder, roundFinished]);
 
-  const orderProgress = useMemo(() => {
-    if (!currentOrder) return 0;
-    const sizeProgress = Math.min(totalUnits / currentOrder.targetUnits, 1) * 0.6;
-    const ingredientProgress = currentOrder.requiredIngredients.length
-      ? ((currentOrder.requiredIngredients.length - requiredMissing.length) / currentOrder.requiredIngredients.length) * 0.4
-      : 0.4;
-    return Math.round((sizeProgress + ingredientProgress) * 100);
-  }, [currentOrder, requiredMissing.length, totalUnits]);
+  useEffect(() => {
+    if (roundFinished || isResolvingOrder) return;
+    if (!isExact || !constraintsMet) return;
 
-  const handleIngredientAdd = (ingredient: IngredientType) => {
-    if (isGameOver || isVictory || isTransitioning) return;
-    if (orderStack.length >= 14) {
+    if (autoValidateTimeoutRef.current !== null) {
+      window.clearTimeout(autoValidateTimeoutRef.current);
+    }
+
+    autoValidateTimeoutRef.current = window.setTimeout(() => {
+      submitOrder(true);
+    }, AUTO_VALIDATE_DELAY_MS);
+
+    return () => {
+      if (autoValidateTimeoutRef.current !== null) {
+        window.clearTimeout(autoValidateTimeoutRef.current);
+        autoValidateTimeoutRef.current = null;
+      }
+    };
+  }, [constraintsMet, isExact, isResolvingOrder, roundFinished, submitOrder]);
+
+  const addItem = (itemId: string) => {
+    if (roundFinished || isResolvingOrder) return;
+
+    if (activeConstraints.bannedIds.has(itemId)) {
       triggerHaptic('warning');
-      setFeedback('The tray is already full. Serve it or clear and rebuild.');
+      setFeedback({ tone: 'error', text: `${ITEM_BY_ID[itemId].name} is blocked for this order.` });
+      if (feedbackTimeoutRef.current !== null) window.clearTimeout(feedbackTimeoutRef.current);
+      feedbackTimeoutRef.current = window.setTimeout(() => setFeedback(null), 520);
       return;
     }
 
     triggerHaptic('selection');
-    setOrderStack(prev => [...prev, ingredient]);
-    setFeedback(`Added ${ingredient.name.toLowerCase()} for ${ingredient.shortLabel}.`);
+    setSelectedIds((prev) => [...prev, itemId]);
   };
 
-  const clearOrderStack = () => {
-    if (isGameOver || isVictory || isTransitioning) return;
+  const removeSelectedItem = (index: number) => {
+    if (roundFinished || isResolvingOrder) return;
     triggerHaptic('light');
-    setOrderStack([]);
-    setFeedback('Tray cleared. Start the order again.');
+    setSelectedIds((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleServe = () => {
-    if (!currentOrder || isGameOver || isVictory || isTransitioning) return;
-
-    if (requiredMissing.length) {
-      triggerHaptic('warning');
-      setFeedback(`Still needs ${joinWithAnd(requiredMissing.map(item => item.toLowerCase()))}.`);
-      return;
-    }
-
-    if (totalUnits < currentOrder.targetUnits) {
-      const shortBy = currentOrder.targetUnits - totalUnits;
-      triggerHaptic('warning');
-      setFeedback(`You are short by ${formatFractionUnits(shortBy)}.`);
-      return;
-    }
-
-    if (totalUnits > currentOrder.targetUnits) {
-      triggerHaptic('warning');
-      setFeedback('That order is too large. Clear it and rebuild this tray.');
-      return;
-    }
-
-    const uniqueIngredients = usedIngredientCounts.size;
-    const layerBonus = orderStack.length * 18;
-    const varietyBonus = uniqueIngredients * 14;
-    const speedBonus = orderTimeLeft * 3;
-    const streakBonus = streak * 25;
-    const earnedScore = 140 + layerBonus + varietyBonus + speedBonus + streakBonus;
-    const newScore = score + earnedScore;
-
-    setScore(newScore);
-    setOrdersServed(prev => prev + 1);
-    setStreak(prev => prev + 1);
-    setCustomerMood('happy');
-    triggerHaptic('success');
-    setFeedback(`Perfect order. +${earnedScore} points.`);
-    confetti({
-      particleCount: 60,
-      spread: 54,
-      origin: { y: 0.74 },
-      colors: ['#facc15', '#fb923c', '#ffffff'],
-    });
-
-    if (newScore >= targetScore) {
-      finishLevel(newScore);
-      return;
-    }
-
-    beginNextOrder('happy', `Order served. +${earnedScore}`);
+  const clearTray = () => {
+    if (roundFinished || isResolvingOrder) return;
+    triggerHaptic('light');
+    setSelectedIds([]);
   };
+
+  const timerProgress = Math.max(0, Math.min(1, timeLeft / ROUND_DURATION_SECONDS));
+
+  const timerFillColor = useMemo(() => {
+    const hue = Math.round(timerProgress * 120);
+    return `hsl(${hue} 88% 50%)`;
+  }, [timerProgress]);
+
+  const topOffsetClass = useSharedTopHud
+    ? 'pt-[calc(env(safe-area-inset-top)+5.7rem)]'
+    : 'pt-[max(0.2rem,env(safe-area-inset-top))]';
 
   return (
     <FoodGameShell gameType="take_out_rush" backgroundImage={takeOutLevelBg}>
-        <header className="ui-panel-unified flex items-center justify-between gap-2 rounded-[1.2rem] border border-white/14 bg-[linear-gradient(180deg,rgba(45,18,12,0.92),rgba(77,34,20,0.88))] px-3 py-2 text-white shadow-[0_12px_28px_rgba(0,0,0,0.28)] md:rounded-[1.45rem] md:px-4">
-          <button className="flex items-center gap-2 rounded-full bg-black/22 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] md:px-3 md:text-xs">
-            <span>How do I fill trays?</span>
-            <AssetIcon name="question" className="h-4 w-4" />
-          </button>
-          <div className="flex items-center gap-1.5 md:gap-2">
-            <div className="flex items-center gap-1 rounded-full bg-white/14 px-2 py-1 md:px-3">
-              <img src={coinAsset} alt="" className="h-4 w-4 md:h-5 md:w-5" draggable={false} />
-              <span className="text-xs font-black md:text-sm">{score}</span>
-            </div>
-            <div className="flex items-center gap-1 rounded-full bg-white/14 px-2 py-1 md:px-3">
-              <AssetIcon name="timer" className="h-4 w-4 md:h-5 md:w-5" />
-              <span className="text-xs font-black md:text-sm">{orderTimeLeft}s</span>
-            </div>
-            <div className="hidden items-center gap-1 rounded-full bg-white/14 px-2 py-1 md:flex md:px-3">
-              <AssetIcon name="trophy" className="h-4 w-4 md:h-5 md:w-5" />
-              <span className="text-xs font-black md:text-sm">{ordersServed}</span>
-            </div>
-          </div>
-        </header>
-
-        <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] p-2 md:rounded-[2.6rem] md:p-3">
-          <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 xl:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.92fr)] xl:grid-rows-[auto_minmax(0,1fr)_auto] xl:gap-3">
-          <section className="order-3 xl:order-3 relative overflow-hidden rounded-[1.6rem] border border-white/18 bg-[linear-gradient(180deg,rgba(16,60,130,0.96),rgba(7,31,78,0.98))] p-2 shadow-[0_20px_42px_rgba(0,0,0,0.34)] md:rounded-[2rem] md:p-3">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,241,201,0.28),rgba(255,241,201,0)_24%)]" />
-            <div className="relative flex h-full min-h-0 flex-col rounded-[1.2rem] border border-amber-200/55 bg-[linear-gradient(180deg,rgba(255,248,231,0.98),rgba(253,230,138,0.88))] p-2 shadow-[inset_0_2px_0_rgba(255,255,255,0.6)] md:rounded-[1.6rem] md:p-3">
-              <div className="pointer-events-none absolute inset-x-3 top-1 h-6 bg-contain bg-center bg-no-repeat opacity-75 md:top-2 md:h-8" style={{ backgroundImage: `url(${lineBgAsset})` }} />
-              <div className="relative mb-1.5 flex items-center justify-between gap-2">
-                <div className="min-w-0">
-                  <div className="text-[8px] font-black uppercase tracking-[0.18em] text-amber-800/70 md:text-[9px]">Order Ticket</div>
-                  <div className="truncate text-[10px] font-black text-amber-950 md:text-sm">{currentOrder?.text}</div>
-                </div>
-                <div className="flex shrink-0 items-center gap-1">
-                  {[0, 1, 2].map(pin => (
-                    <div key={pin} className="h-3 w-3 rounded-full bg-[linear-gradient(180deg,#ef4444,#991b1b)] shadow-[0_2px_0_rgba(69,10,10,0.6)] md:h-4 md:w-4" />
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid min-h-0 flex-1 auto-rows-fr gap-1.5 md:gap-2">
-                {orderChecklist.map((row, index) => (
-                  <div key={row.id} className="grid grid-cols-[2rem_minmax(0,1fr)] items-center gap-1.5 md:grid-cols-[2.6rem_minmax(0,1fr)] md:gap-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-[0.75rem] bg-white/75 shadow-[inset_0_1px_0_rgba(255,255,255,0.72)] md:h-10 md:w-10 md:rounded-[0.95rem]">
-                      <img
-                        src={row.asset}
-                        alt={row.label}
-                        className={`${index === 0 ? 'h-5 w-7 md:h-7 md:w-10' : 'h-4 w-6 md:h-6 md:w-9'} object-contain`}
-                        draggable={false}
-                      />
-                    </div>
-                    <div className={`rounded-[0.85rem] bg-gradient-to-r ${row.tone} px-2 py-1.5 text-white shadow-[0_8px_18px_rgba(15,23,42,0.16)] md:rounded-[1rem] md:px-3 md:py-2`}>
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="truncate text-[8px] font-black uppercase tracking-[0.12em] md:text-[10px]">{row.label}</span>
-                        <span className="shrink-0 text-sm font-black md:text-xl">
-                          {index === 0 ? `${formatFractionUnits(row.current)} / ${formatFractionUnits(row.target)}` : `${row.current}/${row.target}`}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-1.5 rounded-[0.95rem] border border-amber-300/45 bg-white/58 px-2 py-1.5 text-[9px] font-black text-amber-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] md:rounded-[1.15rem] md:px-3 md:py-2 md:text-[10px]">
-                {feedback}
-              </div>
-            </div>
-          </section>
-
-          <section className="order-1 xl:order-1 xl:col-span-2 relative overflow-hidden rounded-[1.5rem] border border-white/16 bg-[linear-gradient(180deg,rgba(14,48,115,0.96),rgba(8,25,58,0.98))] p-2 text-white shadow-[0_18px_42px_rgba(0,0,0,0.32)] md:rounded-[2.1rem] md:p-3">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,191,36,0.18),transparent_36%)]" />
-            <div className="relative grid grid-cols-[auto_1fr_auto] items-center gap-2 md:gap-3">
-              <CustomerFace mood={customerMood} />
-              <div className="min-w-0">
-                <div className="text-[8px] font-black uppercase tracking-[0.24em] text-amber-200/80 md:text-[10px]">Kitchen Rush</div>
-                <div className="mt-0.5 truncate text-sm font-black text-white md:text-lg">{orderSummary}</div>
-                <div className="mt-1 flex items-center gap-1.5 md:gap-2">
-                  {requiredIngredientVisuals.map(ingredient => (
-                    <div key={ingredient.name} className={`rounded-full bg-gradient-to-r ${ingredient.trayTone} px-2 py-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.24)]`}>
-                      <img src={ingredient.asset} alt={ingredient.name} className="h-4 w-7 object-contain md:h-5 md:w-9" draggable={false} />
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="flex flex-col items-end gap-1">
-                <div className="rounded-[0.95rem] bg-white/12 px-2 py-1.5 text-center md:px-3">
-                  <div className="text-[8px] font-black uppercase tracking-[0.18em] text-amber-100/80 md:text-[10px]">Served</div>
-                  <div className="mt-0.5 text-lg font-black text-yellow-200 md:text-2xl">{ordersServed}</div>
-                </div>
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: MAX_MISSES }).map((_, index) => (
-                    <div key={index} className={`flex h-5 w-5 items-center justify-center rounded-full ${index < MAX_MISSES - missedCustomers ? 'bg-white/16' : 'bg-red-500/30'} shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] md:h-7 md:w-7`}>
-                      <AssetIcon name="heart" className={`h-2.5 w-2.5 md:h-3.5 md:w-3.5 ${index < MAX_MISSES - missedCustomers ? '' : 'opacity-35 grayscale'}`} />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <AnimatePresence>
-              {reaction && (
-                <motion.div
-                  key={`${reaction.mood}-${reaction.text}`}
-                  initial={{ opacity: 0, y: -10, scale: 0.92 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                  className={`absolute right-2 top-2 rounded-full px-2 py-1 text-[9px] font-black uppercase tracking-[0.16em] shadow-lg md:right-3 md:top-3 md:px-3 md:py-1.5 md:text-xs ${
-                    reaction.mood === 'happy' ? 'bg-lime-300 text-emerald-950' : 'bg-rose-300 text-rose-950'
-                  }`}
-                >
-                  {reaction.text}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </section>
-
-          <section className="order-2 xl:order-2 relative flex min-h-[14rem] flex-col overflow-hidden rounded-[1.9rem] border border-white/16 bg-[linear-gradient(180deg,rgba(27,14,47,0.56),rgba(24,14,38,0.76))] p-2 shadow-[0_22px_52px_rgba(0,0,0,0.28)] md:min-h-[18rem] md:rounded-[2.6rem] md:p-3">
-            <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'linear-gradient(rgba(125,211,252,0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(125,211,252,0.18) 1px, transparent 1px)', backgroundSize: '42px 42px' }} />
-            <div className="absolute bottom-0 left-0 right-0 h-[28%] bg-[linear-gradient(180deg,rgba(255,224,178,0),rgba(251,146,60,0.28))]" />
-            <div className="absolute inset-x-[8%] top-[6%] h-10 rounded-full bg-amber-100/20 blur-3xl md:h-16" />
-
-            <div className="relative z-10 min-w-0 overflow-hidden rounded-[1.2rem] border border-amber-200/55 bg-[linear-gradient(180deg,rgba(255,248,231,0.98),rgba(253,230,138,0.9))] px-3 py-2.5 text-amber-950 shadow-[0_12px_26px_rgba(0,0,0,0.22)] md:rounded-[1.6rem] md:px-4 md:py-3">
-              <div className="pointer-events-none absolute inset-x-3 top-1 h-6 bg-contain bg-center bg-no-repeat opacity-75 md:top-2 md:h-8" style={{ backgroundImage: `url(${lineBgAsset})` }} />
-              <div className="relative flex items-center gap-3">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[1rem] bg-white/70 shadow-[inset_0_2px_0_rgba(255,255,255,0.75)] md:h-16 md:w-16">
-                  <img src={TAKE_OUT_ASSETS.trayLid} alt="" className="h-8 w-10 object-contain md:h-10 md:w-12" draggable={false} />
-                </div>
-                <div className="min-w-0">
-                  <div className="text-[8px] font-black uppercase tracking-[0.18em] text-amber-800/72 md:text-[10px]">Take-Out Order</div>
-                  <div className="mt-0.5 text-lg font-black leading-none md:text-[1.75rem]">
-                    {currentOrder ? `${formatFractionUnits(currentOrder.targetUnits)} Tray` : 'Waiting...'}
-                  </div>
-                  <div className="mt-1 truncate text-[10px] font-bold text-amber-900/80 md:text-sm">{currentOrder?.text}</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="relative z-10 mt-2 grid grid-cols-3 gap-1.5 rounded-[1.2rem] border border-white/12 bg-slate-950/34 p-1.5 shadow-[0_10px_24px_rgba(15,23,42,0.12)] md:gap-2 md:rounded-[1.6rem] md:p-2.5">
-              <div className="rounded-[1rem] bg-white/10 px-2 py-1.5 text-center">
-                <div className="text-[8px] font-black uppercase tracking-[0.18em] text-white/56 md:text-[10px]">Target</div>
-                <div className="mt-0.5 text-sm font-black text-white md:text-xl">{currentOrder ? formatFractionUnits(currentOrder.targetUnits) : '0'}</div>
-              </div>
-              <div className="rounded-[1rem] bg-white/10 px-2 py-1.5 text-center">
-                <div className="text-[8px] font-black uppercase tracking-[0.18em] text-white/56 md:text-[10px]">Built</div>
-                <div className={`mt-0.5 text-sm font-black md:text-xl ${currentOrder && totalUnits > currentOrder.targetUnits ? 'text-red-300' : 'text-yellow-200'}`}>{formatFractionUnits(totalUnits)}</div>
-              </div>
-              <div className="rounded-[1rem] bg-white/10 px-2 py-1.5 text-center">
-                <div className="text-[8px] font-black uppercase tracking-[0.18em] text-white/56 md:text-[10px]">Layers</div>
-                <div className="mt-0.5 text-sm font-black text-lime-200 md:text-xl">{orderStack.length}</div>
-              </div>
-            </div>
-
-            <div className="relative z-10 mt-2 flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.6rem] bg-[linear-gradient(180deg,rgba(251,191,36,0.14),rgba(251,191,36,0.04)_30%,rgba(255,255,255,0)_30%)] p-2 md:mt-3 md:rounded-[2rem] md:p-3">
-              <div className="grid grid-cols-3 gap-2">
-                <div className="rounded-[0.9rem] border border-white/14 bg-black/22 p-2 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.16em] text-white/60">Prep</div>
-                  <img src={requiredIngredientVisuals[0]?.asset || TAKE_OUT_ASSETS.sauceSwirlA} alt="" className="mx-auto mt-1 h-8 w-12 object-contain" draggable={false} />
-                </div>
-                <div className="rounded-[0.9rem] border border-white/14 bg-black/22 p-2 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.16em] text-white/60">Plate</div>
-                  <img src={TAKE_OUT_ASSETS.trayLid} alt="" className="mx-auto mt-1 h-8 w-12 object-contain" draggable={false} />
-                </div>
-                <div className="rounded-[0.9rem] border border-white/14 bg-black/22 p-2 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.16em] text-white/60">Cook</div>
-                  <img src={requiredIngredientVisuals[1]?.asset || TAKE_OUT_ASSETS.sauceSwirlB} alt="" className="mx-auto mt-1 h-8 w-12 object-contain" draggable={false} />
-                </div>
-              </div>
-
-              <div className="relative mt-2 flex min-h-0 flex-1 flex-col items-center justify-end overflow-hidden rounded-[1.2rem] border border-amber-100/18 bg-[linear-gradient(180deg,rgba(180,83,9,0.34),rgba(120,53,15,0.64))]">
-                {reaction?.mood === 'happy' && (
-                  <motion.div
-                    initial={{ scale: 0.82, opacity: 0, y: 10 }}
-                    animate={{ scale: 1, opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="absolute left-1/2 top-[10%] z-40 -translate-x-1/2 text-center"
-                  >
-                    <div className="text-[1.65rem] font-black uppercase tracking-[-0.04em] text-yellow-200 drop-shadow-[0_5px_0_rgba(12,74,146,0.72)] md:text-[2.4rem]">
-                      Perfect!
-                    </div>
-                  </motion.div>
-                )}
-                <div className="absolute bottom-2 h-10 w-[76%] rounded-full bg-amber-900/30 blur-xl md:bottom-4 md:h-14" />
-                <div className="relative flex h-full w-full max-w-[290px] flex-col items-center justify-end md:max-w-[400px]">
-                  <img src={TAKE_OUT_ASSETS.trayLid} alt="Tray lid" className="z-20 w-28 object-contain drop-shadow-[0_12px_18px_rgba(120,53,15,0.24)] md:w-48" draggable={false} />
-                  <div className="relative -mt-2 flex w-full flex-1 flex-col-reverse items-center justify-start overflow-visible px-1 pb-3 pt-2 md:-mt-4 md:px-2 md:pb-6">
-                    <AnimatePresence initial={false}>
-                      {orderStack.map((ingredient, index) => (
-                        <motion.div
-                          key={`${ingredient.name}-${index}-${orderStack.length}`}
-                          initial={{ y: -18, opacity: 0, scale: 1.08 }}
-                          animate={{ y: 0, opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, y: 18 }}
-                          transition={{ type: 'spring', stiffness: 220, damping: 18 }}
-                          className={`${index === 0 ? '' : '-mt-2 md:-mt-4'} relative flex items-center justify-center`}
-                          style={{ zIndex: index + 1 }}
-                        >
-                          <img src={ingredient.asset} alt={ingredient.name} className={`${ingredient.stackImageClass} max-w-[8.8rem] md:max-w-none object-contain drop-shadow-[0_8px_14px_rgba(15,23,42,0.18)]`} draggable={false} />
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
-                  </div>
-                  <img src={TAKE_OUT_ASSETS.trayBase} alt="Tray base" className="relative z-30 -mt-1 w-28 object-contain drop-shadow-[0_14px_20px_rgba(120,53,15,0.24)] md:-mt-2 md:w-48" draggable={false} />
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section className="order-4 xl:order-4 xl:col-span-2 rounded-[1.4rem] border border-white/16 bg-[linear-gradient(180deg,rgba(20,15,40,0.96),rgba(36,18,52,0.98))] p-2 shadow-[0_16px_30px_rgba(15,23,42,0.22)] md:rounded-[1.8rem] md:p-3">
-            <div className="flex items-center justify-between gap-3">
+      <div className={`relative z-20 flex min-h-0 flex-1 flex-col ${topOffsetClass}`}>
+        {!useSharedTopHud ? (
+          <header className="rounded-[1.25rem] border border-cyan-100/20 bg-slate-950/58 px-3 py-2.5 shadow-[0_12px_22px_rgba(2,6,23,0.46)]">
+            <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2.5">
               <div>
-                <div className="text-[8px] font-black uppercase tracking-[0.18em] text-amber-100/70 md:text-[10px]">Ingredient Rail</div>
-                <div className="mt-0.5 text-sm font-black text-white md:text-lg">Tap pieces to build the order</div>
-              </div>
-              <div className="hidden rounded-full bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-white/78 md:block">
-                Max 14 layers
-              </div>
-            </div>
-
-            <div className="mt-2 grid grid-cols-3 gap-1.5 pb-1 sm:grid-cols-4 md:grid-cols-5 md:gap-2 lg:grid-cols-6 xl:grid-cols-9">
-              {INGREDIENT_TYPES.map(ingredient => {
-                const currentCount = usedIngredientCounts.get(ingredient.name) || 0;
-                const targetCount = Math.max(1, currentOrder?.requiredIngredients.includes(ingredient.name) ? 1 : Math.ceil((currentOrder?.targetUnits || 8) / ingredient.units));
-                return (
-                  <motion.button
-                    key={ingredient.name}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => handleIngredientAdd(ingredient)}
-                    className="group relative flex min-h-[5.4rem] flex-col items-center justify-end overflow-hidden rounded-[1.15rem] border border-white/12 p-1.5 shadow-[0_12px_22px_rgba(0,0,0,0.24)] md:min-h-[6rem] md:rounded-[1.4rem] md:p-2"
-                  >
-                    <div className={`absolute inset-0 bg-gradient-to-b ${ingredient.trayTone}`} />
-                    <div className="absolute inset-x-[12%] top-[8%] h-[30%] rounded-full bg-white/28 blur-lg" />
-                    <div className="relative z-10 flex h-full w-full flex-col items-center justify-between">
-                      <div className="rounded-full bg-black/18 px-2 py-0.5 text-[9px] font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] md:text-[11px]">
-                        {currentCount}/{targetCount}
-                      </div>
-                      <img
-                        src={ingredient.asset}
-                        alt={ingredient.name}
-                        className={`${ingredient.buttonImageClass} max-h-[2rem] max-w-[2.4rem] md:max-h-[2.75rem] md:max-w-[3.2rem] object-contain drop-shadow-[0_8px_10px_rgba(15,23,42,0.22)]`}
-                        draggable={false}
-                      />
-                      <div className="text-center leading-none text-white">
-                        <div className="text-[8px] font-black md:text-[10px]">{ingredient.name}</div>
-                        <div className="mt-0.5 text-[8px] font-black text-white/80 md:text-[10px]">{ingredient.shortLabel}</div>
-                      </div>
-                    </div>
-                  </motion.button>
-                );
-              })}
-            </div>
-
-            <div className="mt-2 grid gap-2 md:mt-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
-              <div className="min-w-0">
-                <div className="relative h-4 overflow-hidden rounded-full md:h-5">
-                  <img src={playBgAsset} alt="" className="absolute inset-0 h-full w-full object-fill opacity-95" draggable={false} />
-                  <img src={playBorderAsset} alt="" className="absolute inset-0 h-full w-full object-fill opacity-95" draggable={false} />
-                  <div className="absolute inset-[10%] overflow-hidden rounded-full">
-                    <motion.div
-                      className="absolute inset-y-0 left-0 overflow-hidden rounded-full"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${orderProgress}%` }}
-                      transition={{ type: 'spring', stiffness: 90, damping: 18 }}
-                    >
-                      <img src={playFillBlueAsset} alt="" className="h-full w-full object-fill saturate-[1.35]" draggable={false} />
-                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(56,189,248,0.45),rgba(251,191,36,0.45),rgba(74,222,128,0.45))]" />
-                    </motion.div>
-                  </div>
+                <div className="text-[9px] font-black uppercase tracking-[0.18em] text-cyan-100/75">Rush Timer</div>
+                <div className="relative mt-1 h-3.5 overflow-hidden rounded-full border border-cyan-100/26 bg-blue-950/58">
+                  <motion.div
+                    className="absolute inset-y-0 left-0 rounded-full"
+                    animate={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }}
+                    transition={{ duration: 0.22, ease: 'easeOut' }}
+                    style={{ boxShadow: '0 0 12px rgba(34,197,94,0.45)' }}
+                  />
+                  <div className="absolute inset-[1px] rounded-full bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:12%_100%]" />
                 </div>
-                <div className="mt-1 truncate text-[10px] font-black text-white/88 md:text-xs">{buildEquation}</div>
               </div>
-              <div className="flex items-center justify-end gap-2">
+
+              <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
+                <div className="text-[8px] font-black uppercase tracking-[0.16em] text-cyan-100/65">Score</div>
+                <div className="text-sm font-black text-white">{score}</div>
+              </div>
+
+              <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
+                <div className="text-[8px] font-black uppercase tracking-[0.16em] text-cyan-100/65">Streak</div>
+                <div className="text-sm font-black text-amber-200">x{streak}</div>
+              </div>
+            </div>
+          </header>
+        ) : null}
+
+        <main className="relative mt-2.5 flex min-h-0 flex-1 flex-col gap-2.5 pb-[calc(env(safe-area-inset-bottom)+5.2rem)]">
+          <section className="rounded-[1.5rem] border border-cyan-100/22 bg-slate-950/56 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.44)]">
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0">
+                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/76">Current Order</div>
+                <div className="mt-0.5 text-[clamp(1rem,4.2vw,1.35rem)] font-black text-white">
+                  Target: {asDisplayFraction(order.target)}
+                </div>
+                <div className="mt-1 text-xs font-semibold text-slate-100/86">{order.text}</div>
+              </div>
+              {order.rushTag ? (
+                <div className="shrink-0 rounded-full border border-amber-100/45 bg-amber-300/24 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-amber-100">
+                  {order.rushTag}
+                </div>
+              ) : null}
+            </div>
+
+            <div className="mt-2.5 flex flex-wrap gap-2">
+              {order.constraints.length === 0 ? (
+                <span className="rounded-full border border-emerald-100/45 bg-emerald-400/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-100">
+                  No restrictions
+                </span>
+              ) : (
+                order.constraints.map((constraint, idx) => {
+                  if (constraint.kind === 'ban' && constraint.itemId) {
+                    const blocked = ITEM_BY_ID[constraint.itemId];
+                    return (
+                      <span key={`ban-${constraint.itemId}-${idx}`} className="rounded-full border border-rose-100/45 bg-rose-400/24 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-rose-100">
+                        No {blocked.name}
+                      </span>
+                    );
+                  }
+
+                  return (
+                    <span key={`min-${idx}`} className="rounded-full border border-cyan-100/40 bg-cyan-400/22 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100">
+                      Use at least {constraint.minItems} items
+                    </span>
+                  );
+                })
+              )}
+            </div>
+
+            <div className="mt-2.5 grid grid-cols-2 gap-2">
+              <div className="rounded-[0.95rem] border border-cyan-100/20 bg-blue-950/46 px-3 py-2">
+                <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/72">Running Total</div>
+                <div className="mt-1 text-xl font-black text-amber-100">{asDisplayFraction(runningTotal)}</div>
+              </div>
+              <div className="rounded-[0.95rem] border border-cyan-100/20 bg-blue-950/46 px-3 py-2">
+                <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/72">Orders Served</div>
+                <div className="mt-1 text-xl font-black text-white">{ordersServed}</div>
+              </div>
+            </div>
+
+            <div className="mt-2.5 h-3.5 overflow-hidden rounded-full border border-white/18 bg-blue-950/52">
+              <div
+                className={`h-full transition-all ${runningRatio > 1 ? 'bg-gradient-to-r from-rose-500 to-orange-400' : 'bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500'}`}
+                style={{ width: `${Math.min(100, Math.max(0, runningRatio * 100))}%` }}
+              />
+            </div>
+          </section>
+
+          <section className="grid min-h-0 flex-1 grid-rows-[auto_auto_1fr] gap-2.5 overflow-hidden">
+            <div className="rounded-[1.25rem] border border-cyan-100/20 bg-slate-950/54 p-2.5">
+              <div className="mb-1.5 flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/75">Order Tray</span>
                 <button
-                  onClick={clearOrderStack}
-                  className="ui-button-secondary px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white disabled:opacity-60 md:px-4 md:text-sm"
-                  disabled={!orderStack.length || isTransitioning}
+                  type="button"
+                  onClick={clearTray}
+                  className="rounded-full border border-white/20 bg-slate-900/56 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-white"
                 >
-                  Clear Stack
+                  Clear
                 </button>
-                <button
-                  onClick={handleServe}
-                  className="ui-button-primary px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white disabled:cursor-not-allowed disabled:opacity-60 md:px-5 md:text-sm"
-                  disabled={!orderStack.length || isTransitioning}
-                >
-                  Serve Order
-                </button>
+              </div>
+
+              <div className="flex min-h-[3.7rem] flex-wrap items-center gap-1.5 rounded-[1rem] border border-amber-100/20 bg-amber-100/10 p-1.5">
+                {selectedItems.length === 0 ? (
+                  <span className="px-2 text-xs font-semibold text-slate-200/78">Tap foods below to pack the order.</span>
+                ) : (
+                  selectedItems.map((item, index) => (
+                    <button
+                      type="button"
+                      key={`${item.id}-${index}`}
+                      onClick={() => removeSelectedItem(index)}
+                      className={`flex items-center gap-1 rounded-full border border-white/20 bg-gradient-to-r ${item.colorClass} px-2 py-1 text-[10px] font-black text-slate-950 shadow-[0_6px_12px_rgba(2,6,23,0.26)]`}
+                    >
+                      <img src={item.asset} alt="" className="h-4 w-4 object-contain" draggable={false} />
+                      <span>{asDisplayFraction(item.value)}</span>
+                    </button>
+                  ))
+                )}
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => submitOrder(false)}
+              disabled={!canSubmit}
+              className="rounded-[1.1rem] border border-amber-100/65 bg-[linear-gradient(180deg,#f8d877_0%,#f5b429_100%)] py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-900 shadow-[0_10px_20px_rgba(2,6,23,0.34)] transition active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-45"
+            >
+              Submit Order
+            </button>
+
+            <div className="min-h-0 rounded-[1.25rem] border border-cyan-100/20 bg-slate-950/54 p-2.5">
+              <div className="mb-2 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/76">Food Station</div>
+              <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+                {FOOD_ITEMS.map((item) => {
+                  const blocked = activeConstraints.bannedIds.has(item.id);
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => addItem(item.id)}
+                      disabled={blocked || roundFinished}
+                      className={`relative overflow-hidden rounded-[1rem] border p-2 transition ${
+                        blocked
+                          ? 'border-rose-200/45 bg-rose-500/22 opacity-60'
+                          : 'border-cyan-100/25 bg-blue-950/42 hover:brightness-110'
+                      }`}
+                    >
+                      <div className="mx-auto mb-1 flex h-10 w-10 items-center justify-center rounded-full bg-white/14">
+                        <img src={item.asset} alt={item.name} className="h-7 w-7 object-contain" draggable={false} />
+                      </div>
+                      <div className="text-[10px] font-black leading-tight text-white">{item.name}</div>
+                      <div className="mt-0.5 text-[11px] font-black text-amber-200">{asDisplayFraction(item.value)}</div>
+                      {blocked ? (
+                        <div className="absolute right-1 top-1 rounded-full bg-rose-300/85 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-[0.08em] text-rose-950">
+                          Ban
+                        </div>
+                      ) : null}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </section>
-          </div>
-        </div>
+        </main>
+      </div>
 
-        <GameActionDock onBack={onBack} accentClass="text-white" />
+      <AnimatePresence>
+        {feedback ? (
+          <motion.div
+            key={feedback.text}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className={`pointer-events-none absolute left-1/2 top-[calc(env(safe-area-inset-top)+4.5rem)] z-50 -translate-x-1/2 rounded-full border px-4 py-1.5 text-xs font-black uppercase tracking-[0.11em] shadow-[0_12px_22px_rgba(2,6,23,0.45)] ${
+              feedback.tone === 'success'
+                ? 'border-emerald-100/65 bg-emerald-500/28 text-emerald-50'
+                : feedback.tone === 'error'
+                  ? 'border-rose-100/65 bg-rose-500/30 text-rose-50'
+                  : 'border-cyan-100/65 bg-cyan-500/25 text-cyan-50'
+            }`}
+          >
+            {feedback.text}
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
 
-        <AnimatePresence>
-          {(isGameOver || isVictory) && (
+      <AnimatePresence>
+        {showSuccessBurst ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="pointer-events-none absolute inset-0 z-30"
+          >
             <motion.div
-              initial={{ scale: 0.82, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-md"
-            >
-              <div className="app-modal-panel flex w-full max-w-md flex-col items-center gap-5 rounded-[2rem] border-4 border-amber-300 bg-white p-6 shadow-2xl md:gap-7 md:p-10">
-                <CustomerFace mood={isVictory ? 'happy' : 'sad'} />
-                <div className="text-center">
-                  <div className={`text-4xl font-black md:text-5xl ${isVictory ? 'text-emerald-500' : 'text-rose-500'}`}>
-                    {isVictory ? 'Service Mastered' : 'Shift Over'}
-                  </div>
-                  <div className="mt-2 text-sm font-semibold text-slate-500 md:text-base">
-                    {isVictory ? 'You hit the score target and kept the orders moving.' : 'Too many customers left before their order was ready.'}
-                  </div>
-                </div>
+              initial={{ opacity: 0.2, scale: 0.9 }}
+              animate={{ opacity: [0.2, 0.7, 0.2], scale: [0.9, 1.04, 0.94] }}
+              transition={{ duration: 0.32, ease: 'easeOut' }}
+              className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(245,158,11,0.24),rgba(14,116,144,0.06)_45%,transparent_72%)]"
+            />
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
 
-                {isVictory && (
-                  <div className="flex gap-2">
-                    {[1, 2, 3].map(index => {
-                      const earnedStars = score >= targetScore * 1.9 ? 3 : score >= targetScore * 1.35 ? 2 : 1;
-                      return (
-                        <motion.div
-                          key={index}
-                          initial={{ scale: 0, rotate: -12 }}
-                          animate={{ scale: 1, rotate: 0 }}
-                          transition={{ delay: index * 0.16, type: 'spring' }}
-                        >
-                          <Star className={`h-14 w-14 ${index <= earnedStars ? 'fill-yellow-400 text-yellow-400' : 'text-slate-200'}`} />
-                        </motion.div>
-                      );
-                    })}
-                  </div>
-                )}
-
-                <div className="grid w-full grid-cols-3 gap-3">
-                  <div className="rounded-[1.2rem] bg-amber-50 p-3 text-center">
-                    <div className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-700/70">Score</div>
-                    <div className="mt-1 text-2xl font-black text-amber-950">{score}</div>
-                  </div>
-                  <div className="rounded-[1.2rem] bg-orange-50 p-3 text-center">
-                    <div className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-700/70">Served</div>
-                    <div className="mt-1 text-2xl font-black text-amber-950">{ordersServed}</div>
-                  </div>
-                  <div className="rounded-[1.2rem] bg-rose-50 p-3 text-center">
-                    <div className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-700/70">Missed</div>
-                    <div className="mt-1 text-2xl font-black text-amber-950">{missedCustomers}</div>
-                  </div>
-                </div>
-
-                <button onClick={onBack} className="ui-button-primary licensed-submit-button w-full py-4 text-xl font-black text-white transition-all">
-                  Continue
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+      <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.45rem,env(safe-area-inset-bottom))] z-40 flex justify-center px-3">
+        <div className="pointer-events-auto">
+          <GameActionDock onBack={onBack} compact accentClass="text-slate-100" />
+        </div>
+      </div>
     </FoodGameShell>
   );
 };
