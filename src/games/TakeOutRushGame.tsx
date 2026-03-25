@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import { TAKE_OUT_ASSETS } from '../assets/take_out';
 import takeOutLevelBg from '../assets/level_backgrounds/take_out.png';
+import foodSheet from '../assets/importedassets/Food102321038.jpg';
 import GameActionDock from '../components/GameActionDock';
 import FoodGameShell from '../components/FoodGameShell';
 import { triggerHaptic } from '../haptics';
@@ -42,7 +42,7 @@ interface TakeOutOrder {
 interface FoodItem {
   id: string;
   name: string;
-  asset: string;
+  sprite: { row: number; col: number };
   value: Fraction;
   colorClass: string;
 }
@@ -55,69 +55,121 @@ interface FeedbackState {
 const ROUND_DURATION_SECONDS = 90;
 const AUTO_VALIDATE_DELAY_MS = 140;
 
+const FOOD_SPRITE_ROWS = 4;
+const FOOD_SPRITE_COLS = 4;
+
 const FOOD_ITEMS: FoodItem[] = [
   {
-    id: 'pizza_slice',
-    name: 'Pizza Slice',
-    asset: TAKE_OUT_ASSETS.portionQuarter,
+    id: 'burger_meal',
+    name: 'Burger Meal',
+    sprite: { row: 0, col: 0 },
     value: { n: 1, d: 4 },
     colorClass: 'from-amber-300 to-orange-400',
   },
   {
-    id: 'fries',
-    name: 'Fries',
-    asset: TAKE_OUT_ASSETS.portionEighthA,
-    value: { n: 1, d: 8 },
-    colorClass: 'from-yellow-300 to-amber-400',
+    id: 'ribs_plate',
+    name: 'Ribs Plate',
+    sprite: { row: 0, col: 1 },
+    value: { n: 1, d: 3 },
+    colorClass: 'from-orange-300 to-amber-500',
   },
   {
-    id: 'salad_cup',
-    name: 'Salad Cup',
-    asset: TAKE_OUT_ASSETS.portionEighthB,
+    id: 'berry_dessert',
+    name: 'Berry Dessert',
+    sprite: { row: 0, col: 2 },
+    value: { n: 1, d: 8 },
+    colorClass: 'from-rose-300 to-pink-400',
+  },
+  {
+    id: 'salad_bowl',
+    name: 'Salad Bowl',
+    sprite: { row: 0, col: 3 },
     value: { n: 1, d: 6 },
     colorClass: 'from-emerald-300 to-lime-400',
   },
   {
-    id: 'wrap',
-    name: 'Wrap',
-    asset: TAKE_OUT_ASSETS.portionHalf,
+    id: 'rice_bowl',
+    name: 'Rice Bowl',
+    sprite: { row: 1, col: 0 },
     value: { n: 1, d: 2 },
     colorClass: 'from-sky-300 to-cyan-400',
   },
   {
-    id: 'cookie',
-    name: 'Cookie',
-    asset: TAKE_OUT_ASSETS.sauceSwirlA,
-    value: { n: 1, d: 8 },
-    colorClass: 'from-rose-300 to-red-400',
+    id: 'pizza_slice',
+    name: 'Pizza Slice',
+    sprite: { row: 1, col: 1 },
+    value: { n: 1, d: 4 },
+    colorClass: 'from-amber-300 to-orange-400',
   },
   {
-    id: 'ice_cream',
-    name: 'Ice Cream',
-    asset: TAKE_OUT_ASSETS.sauceSwirlB,
-    value: { n: 1, d: 3 },
-    colorClass: 'from-indigo-300 to-blue-400',
+    id: 'hotdog_combo',
+    name: 'Hotdog Combo',
+    sprite: { row: 1, col: 2 },
+    value: { n: 1, d: 6 },
+    colorClass: 'from-yellow-300 to-amber-400',
   },
   {
-    id: 'nuggets',
-    name: 'Nuggets',
-    asset: TAKE_OUT_ASSETS.portionEighthD,
+    id: 'roast_chicken',
+    name: 'Roast Chicken',
+    sprite: { row: 1, col: 3 },
     value: { n: 1, d: 6 },
     colorClass: 'from-orange-300 to-amber-500',
   },
   {
-    id: 'onion_rings',
-    name: 'Onion Rings',
-    asset: TAKE_OUT_ASSETS.portionEighthE,
+    id: 'pancakes',
+    name: 'Pancakes',
+    sprite: { row: 2, col: 0 },
+    value: { n: 1, d: 3 },
+    colorClass: 'from-amber-200 to-orange-300',
+  },
+  {
+    id: 'pizza_whole',
+    name: 'Whole Pizza',
+    sprite: { row: 2, col: 1 },
+    value: { n: 1, d: 2 },
+    colorClass: 'from-red-300 to-orange-400',
+  },
+  {
+    id: 'fries',
+    name: 'Fries',
+    sprite: { row: 2, col: 2 },
+    value: { n: 1, d: 8 },
+    colorClass: 'from-yellow-300 to-amber-400',
+  },
+  {
+    id: 'noodles',
+    name: 'Noodles',
+    sprite: { row: 2, col: 3 },
+    value: { n: 1, d: 5 },
+    colorClass: 'from-indigo-300 to-blue-400',
+  },
+  {
+    id: 'fried_chicken',
+    name: 'Fried Chicken',
+    sprite: { row: 3, col: 0 },
     value: { n: 1, d: 4 },
+    colorClass: 'from-orange-300 to-amber-400',
+  },
+  {
+    id: 'soup_bowl',
+    name: 'Soup Bowl',
+    sprite: { row: 3, col: 1 },
+    value: { n: 1, d: 5 },
     colorClass: 'from-cyan-300 to-blue-400',
   },
   {
-    id: 'pepper_bites',
-    name: 'Pepper Bites',
-    asset: TAKE_OUT_ASSETS.portionEighthC,
-    value: { n: 1, d: 6 },
-    colorClass: 'from-pink-300 to-rose-400',
+    id: 'bundt_cake',
+    name: 'Bundt Cake',
+    sprite: { row: 3, col: 2 },
+    value: { n: 1, d: 8 },
+    colorClass: 'from-rose-300 to-pink-400',
+  },
+  {
+    id: 'fish_plate',
+    name: 'Fish Plate',
+    sprite: { row: 3, col: 3 },
+    value: { n: 1, d: 4 },
+    colorClass: 'from-sky-300 to-cyan-400',
   },
 ];
 
@@ -193,10 +245,10 @@ const stageFromProgress = (baseLevel: number, ordersServed: number, timeLeft: nu
 
 const allowedIdsByStage = (stage: number): string[] => {
   if (stage <= 3) {
-    return ['wrap', 'pizza_slice', 'fries', 'onion_rings'];
+    return ['rice_bowl', 'pizza_slice', 'fries', 'fish_plate'];
   }
   if (stage <= 7) {
-    return ['wrap', 'pizza_slice', 'fries', 'salad_cup', 'nuggets', 'onion_rings', 'cookie'];
+    return ['rice_bowl', 'pizza_slice', 'fries', 'salad_bowl', 'hotdog_combo', 'fried_chicken', 'berry_dessert'];
   }
   return FOOD_ITEMS.map((item) => item.id);
 };
@@ -272,6 +324,22 @@ const starsForPerformance = (score: number, correct: number, incorrect: number):
   if (score >= 1500 && correct >= 6 && accuracy >= 0.6) return 2;
   return 1;
 };
+
+const FoodSprite: React.FC<{
+  item: FoodItem;
+  className?: string;
+}> = ({ item, className }) => (
+  <div
+    className={className}
+    style={{
+      backgroundImage: `url(${foodSheet})`,
+      backgroundSize: `${FOOD_SPRITE_COLS * 100}% ${FOOD_SPRITE_ROWS * 100}%`,
+      backgroundPosition: `${(item.sprite.col / (FOOD_SPRITE_COLS - 1)) * 100}% ${(item.sprite.row / (FOOD_SPRITE_ROWS - 1)) * 100}%`,
+      backgroundRepeat: 'no-repeat',
+    }}
+    aria-hidden="true"
+  />
+);
 
 const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
   levelId,
@@ -513,8 +581,13 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     return `hsl(${hue} 88% 50%)`;
   }, [timerProgress]);
 
+  const customerVisuals = useMemo(() => {
+    const seeded = [...FOOD_ITEMS].sort((a, b) => `${order.id}-${a.id}`.localeCompare(`${order.id}-${b.id}`));
+    return shuffle(seeded).slice(0, 3);
+  }, [order.id]);
+
   const topOffsetClass = useSharedTopHud
-    ? 'pt-[calc(env(safe-area-inset-top)+5.7rem)]'
+    ? 'pt-[calc(env(safe-area-inset-top)+5.45rem)]'
     : 'pt-[max(0.2rem,env(safe-area-inset-top))]';
 
   return (
@@ -549,15 +622,27 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
           </header>
         ) : null}
 
-        <main className="relative mt-2.5 flex min-h-0 flex-1 flex-col gap-2.5 pb-[calc(env(safe-area-inset-bottom)+5.2rem)]">
-          <section className="rounded-[1.5rem] border border-cyan-100/22 bg-slate-950/56 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.44)]">
-            <div className="flex items-start justify-between gap-2">
+        <main className="relative mt-1.5 flex min-h-0 flex-1 flex-col gap-2 pb-[calc(env(safe-area-inset-bottom)+3.9rem)]">
+          <section className="shrink-0 rounded-[1.25rem] border border-cyan-100/22 bg-slate-950/58 p-2.5 shadow-[0_10px_22px_rgba(2,6,23,0.42)]">
+            <div className="grid grid-cols-3 gap-2">
+              {customerVisuals.map((item, idx) => (
+                <div key={`${order.id}-${item.id}-${idx}`} className="rounded-[0.95rem] border border-amber-100/28 bg-slate-900/58 p-1.5 text-center">
+                  <div className="text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100/72">Order {idx + 1}</div>
+                  <div className="mt-1 flex items-center justify-center gap-1">
+                    <FoodSprite item={item} className="h-10 w-10 rounded-full bg-slate-800/45 ring-1 ring-white/20" />
+                    <span className="text-sm font-black text-amber-200">↑</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-2.5 flex items-start justify-between gap-2">
               <div className="min-w-0">
                 <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/76">Current Order</div>
-                <div className="mt-0.5 text-[clamp(1rem,4.2vw,1.35rem)] font-black text-white">
+                <div className="mt-0.5 text-[clamp(0.95rem,3.9vw,1.2rem)] font-black text-white">
                   Target: {asDisplayFraction(order.target)}
                 </div>
-                <div className="mt-1 text-xs font-semibold text-slate-100/86">{order.text}</div>
+                <div className="mt-1 text-[11px] font-semibold text-slate-100/86">{order.text}</div>
               </div>
               {order.rushTag ? (
                 <div className="shrink-0 rounded-full border border-amber-100/45 bg-amber-300/24 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-amber-100">
@@ -591,7 +676,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
               )}
             </div>
 
-            <div className="mt-2.5 grid grid-cols-2 gap-2">
+            <div className="mt-2 grid grid-cols-2 gap-2">
               <div className="rounded-[0.95rem] border border-cyan-100/20 bg-blue-950/46 px-3 py-2">
                 <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/72">Running Total</div>
                 <div className="mt-1 text-xl font-black text-amber-100">{asDisplayFraction(runningTotal)}</div>
@@ -610,9 +695,8 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
             </div>
           </section>
 
-          <section className="grid min-h-0 flex-1 grid-rows-[auto_auto_1fr] gap-2.5 overflow-hidden">
-            <div className="rounded-[1.25rem] border border-cyan-100/20 bg-slate-950/54 p-2.5">
-              <div className="mb-1.5 flex items-center justify-between">
+          <section className="shrink-0 rounded-[1.2rem] border border-cyan-100/20 bg-slate-950/54 p-2">
+            <div className="mb-1.5 flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/75">Order Tray</span>
                 <button
                   type="button"
@@ -623,7 +707,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                 </button>
               </div>
 
-              <div className="flex min-h-[3.7rem] flex-wrap items-center gap-1.5 rounded-[1rem] border border-amber-100/20 bg-amber-100/10 p-1.5">
+            <div className="flex min-h-[3.25rem] flex-wrap items-center gap-1.5 rounded-[0.9rem] border border-amber-100/20 bg-amber-100/10 p-1.5">
                 {selectedItems.length === 0 ? (
                   <span className="px-2 text-xs font-semibold text-slate-200/78">Tap foods below to pack the order.</span>
                 ) : (
@@ -634,26 +718,26 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                       onClick={() => removeSelectedItem(index)}
                       className={`flex items-center gap-1 rounded-full border border-white/20 bg-gradient-to-r ${item.colorClass} px-2 py-1 text-[10px] font-black text-slate-950 shadow-[0_6px_12px_rgba(2,6,23,0.26)]`}
                     >
-                      <img src={item.asset} alt="" className="h-4 w-4 object-contain" draggable={false} />
+                      <FoodSprite item={item} className="h-4 w-4 rounded-full ring-1 ring-white/35" />
                       <span>{asDisplayFraction(item.value)}</span>
                     </button>
                   ))
                 )}
-              </div>
             </div>
 
             <button
               type="button"
               onClick={() => submitOrder(false)}
               disabled={!canSubmit}
-              className="rounded-[1.1rem] border border-amber-100/65 bg-[linear-gradient(180deg,#f8d877_0%,#f5b429_100%)] py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-900 shadow-[0_10px_20px_rgba(2,6,23,0.34)] transition active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-45"
+              className="mt-2 h-11 w-full rounded-[1rem] border border-amber-100/65 bg-[linear-gradient(180deg,#f8d877_0%,#f5b429_100%)] text-sm font-black uppercase tracking-[0.12em] text-slate-900 shadow-[0_10px_18px_rgba(2,6,23,0.34)] transition active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-45"
             >
               Submit Order
             </button>
+          </section>
 
-            <div className="min-h-0 rounded-[1.25rem] border border-cyan-100/20 bg-slate-950/54 p-2.5">
-              <div className="mb-2 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/76">Food Station</div>
-              <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+          <section className="min-h-0 flex-1 rounded-[1.2rem] border border-cyan-100/20 bg-slate-950/54 p-2">
+              <div className="mb-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/76">Food Station</div>
+              <div className="grid grid-cols-4 gap-1.5">
                 {FOOD_ITEMS.map((item) => {
                   const blocked = activeConstraints.bannedIds.has(item.id);
                   return (
@@ -668,11 +752,11 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                           : 'border-cyan-100/25 bg-blue-950/42 hover:brightness-110'
                       }`}
                     >
-                      <div className="mx-auto mb-1 flex h-10 w-10 items-center justify-center rounded-full bg-white/14">
-                        <img src={item.asset} alt={item.name} className="h-7 w-7 object-contain" draggable={false} />
+                      <div className="mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-full bg-white/14">
+                        <FoodSprite item={item} className="h-7 w-7 rounded-full ring-1 ring-white/35" />
                       </div>
-                      <div className="text-[10px] font-black leading-tight text-white">{item.name}</div>
-                      <div className="mt-0.5 text-[11px] font-black text-amber-200">{asDisplayFraction(item.value)}</div>
+                      <div className="line-clamp-1 text-[9px] font-black leading-tight text-white">{item.name}</div>
+                      <div className="mt-0.5 text-[10px] font-black text-amber-200">{asDisplayFraction(item.value)}</div>
                       {blocked ? (
                         <div className="absolute right-1 top-1 rounded-full bg-rose-300/85 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-[0.08em] text-rose-950">
                           Ban
@@ -682,7 +766,6 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                   );
                 })}
               </div>
-            </div>
           </section>
         </main>
       </div>
