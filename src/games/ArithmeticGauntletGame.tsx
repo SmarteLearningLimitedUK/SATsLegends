@@ -1,10 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import GameplayHUD from '../components/GameplayHUD';
-import GameActionDock from '../components/GameActionDock';
-import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
-import { AVATARS } from '../constants';
+import placeValueBackground from '../assets/maps/gemini-2.5-flash-image_using_the_same_aesthetic_-_create_a_dark_and_mysterious_forest_path_with_dense_f-1.jpg';
+import medButton from '../assets/bluedialoague/med button cropped.png';
 import { triggerHaptic } from '../haptics';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 
@@ -16,7 +14,7 @@ interface ArithmeticGauntletGameProps {
   onBack: () => void;
 }
 
-type Operation = '+' | '-' | '×' | '÷';
+type Operation = '+' | '-' | '*' | '/';
 
 interface ArithmeticQuestion {
   prompt: string;
@@ -30,6 +28,7 @@ type FeedbackState = null | {
 };
 
 const ROUND_SECONDS = 60;
+const MAX_LIVES = 3;
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
@@ -38,8 +37,8 @@ const createQuestion = (levelId: number): ArithmeticQuestion => {
   const availableOps: Operation[] = resolvedLevel <= 2
     ? ['+', '-']
     : resolvedLevel <= 5
-      ? ['+', '-', '×']
-      : ['+', '-', '×', '÷'];
+      ? ['+', '-', '*']
+      : ['+', '-', '*', '/'];
 
   const op = availableOps[randomInt(0, availableOps.length - 1)];
 
@@ -57,17 +56,17 @@ const createQuestion = (levelId: number): ArithmeticQuestion => {
     return { prompt: `${a} - ${b}`, answer: a - b };
   }
 
-  if (op === '×') {
+  if (op === '*') {
     const maxFactor = Math.min(14, 7 + Math.floor(resolvedLevel / 2));
     const a = randomInt(2, maxFactor);
     const b = randomInt(2, maxFactor);
-    return { prompt: `${a} × ${b}`, answer: a * b };
+    return { prompt: `${a} * ${b}`, answer: a * b };
   }
 
   const divisor = randomInt(2, Math.min(12, 5 + Math.floor(resolvedLevel / 2)));
   const quotient = randomInt(2, Math.min(14, 7 + Math.floor(resolvedLevel / 2)));
   const dividend = divisor * quotient;
-  return { prompt: `${dividend} ÷ ${divisor}`, answer: quotient };
+  return { prompt: `${dividend} / ${divisor}`, answer: quotient };
 };
 
 const starsForScore = (score: number, targetScore: number, accuracy: number) => {
@@ -78,18 +77,18 @@ const starsForScore = (score: number, targetScore: number, accuracy: number) => 
 
 const ArithmeticGauntletGame: React.FC<ArithmeticGauntletGameProps> = ({
   levelId,
-  avatarId,
+  avatarId: _avatarId,
   onVictory,
-  onGameOver: _onGameOver,
-  onBack,
+  onGameOver,
+  onBack: _onBack,
 }) => {
-  const avatar = useMemo(() => AVATARS.find((item) => item.id === avatarId) || AVATARS[0], [avatarId]);
   const resolvedLevel = useMemo(() => Math.max(1, Math.min(10, levelId || 1)), [levelId]);
   const targetScore = useMemo(() => 1800 + (resolvedLevel * 240), [resolvedLevel]);
 
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(ROUND_SECONDS);
   const [streak, setStreak] = useState(0);
+  const [lives, setLives] = useState(MAX_LIVES);
   const [questionCount, setQuestionCount] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [question, setQuestion] = useState<ArithmeticQuestion>(() => createQuestion(resolvedLevel));
@@ -99,9 +98,6 @@ const ArithmeticGauntletGame: React.FC<ArithmeticGauntletGameProps> = ({
 
   const timersRef = useRef<number[]>([]);
   const scoreRef = useRef(0);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const progress = Math.min((score / Math.max(1, targetScore)) * 100, 100);
 
   const clearTimers = () => {
     timersRef.current.forEach((timerId) => window.clearTimeout(timerId));
@@ -120,14 +116,13 @@ const ArithmeticGauntletGame: React.FC<ArithmeticGauntletGameProps> = ({
     scoreRef.current = 0;
     setTimeLeft(ROUND_SECONDS);
     setStreak(0);
+    setLives(MAX_LIVES);
     setQuestionCount(0);
     setCorrectCount(0);
     setQuestion(createQuestion(resolvedLevel));
     setInputValue('');
     setFeedback(null);
     setIsFinished(false);
-    const timerId = window.setTimeout(() => inputRef.current?.focus(), 30);
-    timersRef.current.push(timerId);
   }, [resolvedLevel]);
 
   useEffect(() => {
@@ -158,18 +153,46 @@ const ArithmeticGauntletGame: React.FC<ArithmeticGauntletGameProps> = ({
     return () => window.clearInterval(interval);
   }, [correctCount, isFinished, onVictory, questionCount, targetScore]);
 
-  const moveNextQuestion = () => {
+  const queueNextQuestion = () => {
     const timerId = window.setTimeout(() => {
       setQuestion(createQuestion(resolvedLevel));
       setInputValue('');
       setFeedback(null);
-      inputRef.current?.focus();
-    }, 240);
+    }, 280);
     timersRef.current.push(timerId);
   };
 
-  const submitAnswer = (event: React.FormEvent) => {
-    event.preventDefault();
+  const handleKeyPress = (key: string) => {
+    if (isFinished) return;
+
+    if (key === 'DEL') {
+      setInputValue((previous) => previous.slice(0, -1));
+      return;
+    }
+
+    if (key === 'CLR') {
+      setInputValue('');
+      return;
+    }
+
+    if (key === '-') {
+      setInputValue((previous) => {
+        if (previous.startsWith('-')) return previous.slice(1);
+        return `-${previous}`;
+      });
+      return;
+    }
+
+    if (!/^[0-9]$/.test(key)) return;
+
+    setInputValue((previous) => {
+      const maxChars = previous.startsWith('-') ? 6 : 5;
+      if (previous.length >= maxChars) return previous;
+      return `${previous}${key}`;
+    });
+  };
+
+  const submitAnswer = () => {
     if (isFinished) return;
 
     const trimmed = inputValue.trim();
@@ -177,8 +200,9 @@ const ArithmeticGauntletGame: React.FC<ArithmeticGauntletGameProps> = ({
       setFeedback({
         type: 'error',
         title: 'No Input',
-        subtitle: 'Enter an answer to continue.',
+        subtitle: 'Enter an answer first.',
       });
+      triggerHaptic('error');
       return;
     }
 
@@ -189,6 +213,7 @@ const ArithmeticGauntletGame: React.FC<ArithmeticGauntletGameProps> = ({
         title: 'Invalid',
         subtitle: 'Answer must be numeric.',
       });
+      triggerHaptic('error');
       return;
     }
 
@@ -207,88 +232,116 @@ const ArithmeticGauntletGame: React.FC<ArithmeticGauntletGameProps> = ({
         subtitle: `+${gained} score`,
       });
       triggerHaptic('success');
-    } else {
-      setStreak(0);
-      setFeedback({
-        type: 'error',
-        title: 'Miss',
-        subtitle: `Correct answer: ${question.answer}`,
-      });
-      triggerHaptic('error');
+      queueNextQuestion();
+      return;
     }
 
-    moveNextQuestion();
+    const nextLives = lives - 1;
+    setLives(nextLives);
+    setStreak(0);
+    setFeedback({
+      type: 'error',
+      title: 'Miss',
+      subtitle: `Correct: ${question.answer}`,
+    });
+    triggerHaptic('error');
+
+    if (nextLives <= 0) {
+      const timerId = window.setTimeout(() => {
+        setIsFinished(true);
+        onGameOver(scoreRef.current);
+      }, 650);
+      timersRef.current.push(timerId);
+      return;
+    }
+
+    queueNextQuestion();
   };
 
+  const keypadRows = [
+    ['7', '8', '9', 'DEL'],
+    ['4', '5', '6', 'CLR'],
+    ['1', '2', '3', '-'],
+    ['0'],
+  ];
+
   return (
-    <GameScreenShell className="overflow-hidden pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+0.35rem)]">
-      <GameplaySceneBackdrop gameType="calculation_clash" />
+    <GameScreenShell className="overflow-hidden">
+      <img
+        src={placeValueBackground}
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full object-cover object-center"
+        draggable={false}
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,16,34,0.2),rgba(6,16,34,0.34)_56%,rgba(6,16,34,0.52))]" />
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center gap-2 p-2 md:gap-4 md:p-4">
-        <div className="w-full max-w-6xl">
-          <GameplayHUD
-            title="Arithmetic Gauntlet"
-            avatar={avatar}
-            score={score}
-            targetScore={targetScore}
-            timeLeft={timeLeft}
-            progress={progress}
-            compact
-            accentText="text-sky-950"
-            accentSoftBg="bg-sky-100/84"
-            accentBorder="border-sky-200/88"
-            progressBar="bg-gradient-to-r from-cyan-300 via-sky-300 to-yellow-300"
-            statLabel="Streak"
-            statValue={`${streak}`}
-          />
-        </div>
-
-        <PuzzleStage className="w-full max-w-6xl rounded-[2.3rem] md:rounded-[2.6rem]">
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] pt-[calc(env(safe-area-inset-top)+4.8rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+2.4rem)] md:pt-[calc(env(safe-area-inset-top)+5.1rem)]">
+        <PuzzleStage className="w-full max-w-5xl min-h-0 flex-1 rounded-[1.7rem] p-2 md:rounded-[2rem] md:p-3">
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_24%,rgba(15,23,42,0.2)_100%)]" />
 
-          <div className="relative z-10 flex h-full w-full flex-col px-3 pb-4 pt-14 md:px-6 md:pb-6 md:pt-20">
+          <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-2 md:px-4 md:pb-4">
             <div className="flex justify-center">
-              <div className="licensed-slice-paper-panel max-w-[95%] px-5 py-3 text-center shadow-[0_16px_30px_rgba(15,23,42,0.16)] md:px-7 md:py-4">
-                <div className="text-base font-black tracking-tight text-amber-900 md:text-[1.75rem]">
-                  Answer as many arithmetic questions as possible in 60 seconds
-                </div>
+              <div className="licensed-slice-paper-panel max-w-[96%] px-3 py-1.5 text-center shadow-[0_10px_22px_rgba(15,23,42,0.14)] md:px-6 md:py-2.5">
+                <div className="text-sm font-black tracking-tight text-amber-900 md:text-[1.18rem]">Arithmetic Gauntlet</div>
+                <div className="mt-0.5 text-[11px] font-bold text-amber-950/76 md:text-sm">Solve fast. Type answers on the calculator.</div>
               </div>
             </div>
 
-            <div className="mt-4 min-h-0 flex-1 overflow-y-auto md:mt-5">
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-[1.05fr_1fr] md:gap-4">
-                <div className="licensed-game-card-dark rounded-[1.6rem] border border-white/14 p-3 shadow-[0_16px_28px_rgba(2,6,23,0.22)] md:p-4">
-                  <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Current question</div>
-                  <div className="mt-3 rounded-[1.1rem] border border-sky-200/22 bg-[linear-gradient(180deg,rgba(14,116,144,0.2),rgba(15,23,42,0.5))] p-3 text-center shadow-[0_12px_22px_rgba(2,6,23,0.2)] md:p-4">
-                    <div className="text-3xl font-black tracking-tight text-white md:text-5xl">{question.prompt}</div>
-                  </div>
-                  <div className="mt-3 rounded-[1rem] border border-white/10 bg-black/18 p-2.5 text-xs font-semibold text-cyan-50/90 md:text-sm">
-                    Attempts: {questionCount} • Correct: {correctCount}
-                  </div>
+            <div className="mt-2 grid grid-cols-4 gap-2 md:mt-3 md:gap-3">
+              <div className="rounded-xl border border-white/20 bg-slate-950/42 px-2 py-1 text-center">
+                <div className="text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100/70">Time</div>
+                <div className="text-lg font-black text-white md:text-xl">{timeLeft}s</div>
+              </div>
+              <div className="rounded-xl border border-white/20 bg-slate-950/42 px-2 py-1 text-center">
+                <div className="text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100/70">Lives</div>
+                <div className="text-lg font-black text-white md:text-xl">{lives}/3</div>
+              </div>
+              <div className="rounded-xl border border-white/20 bg-slate-950/42 px-2 py-1 text-center">
+                <div className="text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100/70">Streak</div>
+                <div className="text-lg font-black text-white md:text-xl">x{streak}</div>
+              </div>
+              <div className="rounded-xl border border-white/20 bg-slate-950/42 px-2 py-1 text-center">
+                <div className="text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100/70">Score</div>
+                <div className="text-lg font-black text-white md:text-xl">{score}</div>
+              </div>
+            </div>
+
+            <div className="mt-2 min-h-0 flex-1 md:mt-3">
+              <div className="licensed-game-card-dark flex h-full min-h-0 flex-col rounded-[1.3rem] border border-white/14 p-2 shadow-[0_12px_22px_rgba(2,6,23,0.2)] md:rounded-[1.6rem] md:p-3">
+                <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Question {questionCount + 1}</div>
+                <div className="mt-2 rounded-[1rem] border border-sky-200/22 bg-[linear-gradient(180deg,rgba(14,116,144,0.2),rgba(15,23,42,0.5))] p-2.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.18)] md:p-3">
+                  <div className="text-2xl font-black tracking-tight text-white md:text-4xl">{question.prompt}</div>
                 </div>
 
-                <div className="licensed-game-card-dark rounded-[1.6rem] border border-white/14 p-3 shadow-[0_16px_28px_rgba(2,6,23,0.22)] md:p-4">
-                  <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Answer input</div>
-                  <form onSubmit={submitAnswer} className="mt-3 flex flex-col gap-2.5 md:gap-3">
-                    <input
-                      ref={inputRef}
-                      type="text"
-                      inputMode="numeric"
-                      value={inputValue}
-                      onChange={(event) => setInputValue(event.target.value.replace(/[^\d-]/g, ''))}
-                      disabled={isFinished}
-                      placeholder="Type answer"
-                      className="h-14 rounded-[1.05rem] border border-sky-200/25 bg-black/28 px-4 text-center text-2xl font-black text-white outline-none transition placeholder:text-cyan-100/45 focus:border-sky-300/70 disabled:opacity-60 md:h-16 md:text-3xl"
-                    />
-                    <button
-                      type="submit"
-                      disabled={isFinished}
-                      className="ui-button-primary min-h-[3.3rem] rounded-[1.05rem] px-3 py-2 text-lg font-black text-white shadow-[0_12px_22px_rgba(2,6,23,0.18)] disabled:opacity-60 md:min-h-[4rem] md:text-2xl"
-                    >
-                      Submit
-                    </button>
-                  </form>
+                <div className="mt-2 rounded-[1rem] border border-amber-200/30 bg-slate-950/48 px-3 py-2 text-center shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05)]">
+                  <div className="text-[10px] font-black uppercase tracking-[0.16em] text-amber-200/80">Answer</div>
+                  <div className="mt-0.5 min-h-[1.85rem] text-2xl font-black text-white md:text-3xl">{inputValue || '--'}</div>
                 </div>
+
+                <div className="mt-2 grid grid-cols-4 gap-2 md:mt-3 md:gap-2.5">
+                  {keypadRows.flat().map((key) => (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => handleKeyPress(key)}
+                      disabled={isFinished}
+                      className={`rounded-[0.95rem] border border-sky-200/28 bg-[linear-gradient(180deg,rgba(15,23,42,0.7),rgba(15,23,42,0.54))] px-2 py-2 text-center font-black text-white shadow-[0_8px_16px_rgba(2,6,23,0.22)] transition active:scale-[0.98] disabled:opacity-55 md:rounded-[1.08rem] md:py-2.5 ${key === '0' ? 'col-span-4 text-2xl md:text-[1.7rem]' : 'text-xl md:text-[1.5rem]'}`}
+                    >
+                      {key}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={submitAnswer}
+                  disabled={isFinished}
+                  className="relative mt-2 h-12 overflow-hidden rounded-[1rem] transition active:scale-[0.985] disabled:opacity-60 md:mt-3 md:h-14"
+                >
+                  <img src={medButton} alt="" aria-hidden="true" draggable={false} className="absolute inset-0 h-full w-full object-fill" />
+                  <span className="relative z-10 text-base font-black uppercase tracking-[0.14em] text-white [text-shadow:0_2px_4px_rgba(2,6,23,0.7)] md:text-lg">Submit</span>
+                </button>
               </div>
             </div>
           </div>
@@ -301,20 +354,14 @@ const ArithmeticGauntletGame: React.FC<ArithmeticGauntletGameProps> = ({
                 exit={{ opacity: 0, scale: 1.08 }}
                 className={`pointer-events-none absolute inset-0 z-40 flex items-center justify-center backdrop-blur-md ${feedback.type === 'success' ? 'bg-emerald-500/16' : 'bg-red-500/16'}`}
               >
-                <div className="rounded-[2rem] border border-white/14 bg-slate-950/60 px-8 py-6 text-center shadow-[0_24px_36px_rgba(0,0,0,0.24)]">
-                  <div className={`text-4xl font-black uppercase tracking-[0.12em] md:text-6xl ${feedback.type === 'success' ? 'text-emerald-100' : 'text-red-100'}`}>
-                    {feedback.title}
-                  </div>
-                  <div className="mt-2 text-lg font-bold text-white/92 md:text-2xl">{feedback.subtitle}</div>
+                <div className="rounded-[1.4rem] border border-white/14 bg-slate-950/62 px-5 py-4 text-center shadow-[0_16px_24px_rgba(0,0,0,0.24)] md:rounded-[2rem] md:px-8 md:py-6">
+                  <div className={`text-3xl font-black uppercase tracking-[0.12em] md:text-6xl ${feedback.type === 'success' ? 'text-emerald-100' : 'text-red-100'}`}>{feedback.title}</div>
+                  <div className="mt-1 text-sm font-bold text-white/92 md:mt-2 md:text-2xl">{feedback.subtitle}</div>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
         </PuzzleStage>
-
-        <div className="w-full max-w-6xl">
-          <GameActionDock onBack={onBack} accentClass="text-amber-100" />
-        </div>
       </div>
     </GameScreenShell>
   );

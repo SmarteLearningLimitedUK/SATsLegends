@@ -57,8 +57,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
   const [impactTick, setImpactTick] = useState(0);
   const completedRef = useRef(false);
 
-  const solveQuestion = (event: React.FormEvent) => {
-    event.preventDefault();
+  const solveQuestion = () => {
     if (phase !== 'playing') return;
 
     const answer = Number(input.trim());
@@ -111,6 +110,26 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
     window.setTimeout(() => setFeedback(null), 700);
   };
 
+  const appendDigit = (digit: string) => {
+    if (phase !== 'playing') return;
+    setInput((prev) => {
+      const cleaned = prev.replace(/[^\d]/g, '');
+      if (cleaned.length >= 5) return cleaned;
+      if (cleaned === '0') return digit;
+      return `${cleaned}${digit}`;
+    });
+  };
+
+  const clearInput = () => {
+    if (phase !== 'playing') return;
+    setInput('');
+  };
+
+  const deleteDigit = () => {
+    if (phase !== 'playing') return;
+    setInput((prev) => prev.slice(0, -1));
+  };
+
   return (
     <div className="relative h-full w-full overflow-hidden text-white">
       <GameplaySceneBackdrop gameType="calculation_clash" className="opacity-[0.97]" />
@@ -137,23 +156,61 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
           </p>
         </div>
 
-        <form onSubmit={solveQuestion} className="mt-4 flex w-full max-w-[460px] gap-2">
-          <input
-            value={input}
-            onChange={(event) => setInput(event.target.value.replace(/[^\d-]/g, ''))}
-            inputMode="numeric"
-            placeholder="Answer"
-            disabled={phase !== 'playing'}
-            className="h-14 flex-1 rounded-xl border border-[#95d3ff88] bg-[#0b254ecc] px-4 text-center text-2xl font-black text-white outline-none placeholder:text-white/55 focus:border-[#ffd76b]"
-          />
+        <div className="mt-4 w-full max-w-[460px]">
+          <div className="mb-3 h-14 rounded-xl border border-[#95d3ff88] bg-[#0b254ecc] px-4 text-center text-3xl font-black text-white shadow-[0_8px_18px_rgba(0,0,0,0.34)]">
+            <span className="inline-flex h-full items-center justify-center tabular-nums">
+              {input || '0'}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((digit) => (
+              <button
+                key={`digit-${digit}`}
+                type="button"
+                onClick={() => appendDigit(String(digit))}
+                disabled={phase !== 'playing'}
+                className="h-12 rounded-xl border border-[#95d3ff88] bg-[#0b254ecc] text-xl font-black text-white shadow-[0_6px_14px_rgba(0,0,0,0.32)] transition hover:bg-[#103468] disabled:opacity-60"
+              >
+                {digit}
+              </button>
+            ))}
+
+            <button
+              type="button"
+              onClick={clearInput}
+              disabled={phase !== 'playing'}
+              className="h-12 rounded-xl border border-[#89c8ff80] bg-[#0b254ecc] text-sm font-black uppercase tracking-[0.06em] text-cyan-100 shadow-[0_6px_14px_rgba(0,0,0,0.32)] transition hover:bg-[#103468] disabled:opacity-60"
+            >
+              CLR
+            </button>
+            <button
+              type="button"
+              onClick={() => appendDigit('0')}
+              disabled={phase !== 'playing'}
+              className="h-12 rounded-xl border border-[#95d3ff88] bg-[#0b254ecc] text-xl font-black text-white shadow-[0_6px_14px_rgba(0,0,0,0.32)] transition hover:bg-[#103468] disabled:opacity-60"
+            >
+              0
+            </button>
+            <button
+              type="button"
+              onClick={deleteDigit}
+              disabled={phase !== 'playing'}
+              className="h-12 rounded-xl border border-[#89c8ff80] bg-[#0b254ecc] text-sm font-black uppercase tracking-[0.06em] text-cyan-100 shadow-[0_6px_14px_rgba(0,0,0,0.32)] transition hover:bg-[#103468] disabled:opacity-60"
+            >
+              DEL
+            </button>
+          </div>
+
           <button
-            type="submit"
+            type="button"
+            onClick={solveQuestion}
             disabled={phase !== 'playing'}
-            className="h-14 rounded-xl border border-[#ffcc4b] bg-gradient-to-b from-[#ffd85e] to-[#f5a524] px-5 text-sm font-black uppercase tracking-[0.08em] text-[#3e2700] disabled:opacity-60"
+            className="mt-2 h-12 w-full rounded-xl border border-[#ffcc4b] bg-gradient-to-b from-[#ffd85e] to-[#f5a524] text-sm font-black uppercase tracking-[0.08em] text-[#3e2700] shadow-[0_8px_16px_rgba(0,0,0,0.35)] disabled:opacity-60"
           >
             Strike
           </button>
-        </form>
+        </div>
 
         <div className="relative mt-5 flex flex-1 w-full items-center justify-center">
           <AnimatePresence mode="wait">
@@ -170,7 +227,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
                   repeat: phase === 'playing' ? Infinity : 0,
                   repeatDelay: 1.2,
                 }}
-                className="relative h-[300px] w-[300px] rounded-[50%] border-[6px] border-[#5f7387] bg-[radial-gradient(circle_at_30%_25%,#9ca7b4_0%,#566777_48%,#303d49_100%)] shadow-[0_30px_55px_rgba(0,0,0,0.6)]"
+                className="relative h-[220px] w-[220px] rounded-[50%] border-[6px] border-[#5f7387] bg-[radial-gradient(circle_at_30%_25%,#9ca7b4_0%,#566777_48%,#303d49_100%)] shadow-[0_30px_55px_rgba(0,0,0,0.6)]"
               >
                 <div className="absolute inset-[12%] rounded-[50%] border border-white/12" />
                 <div className="absolute left-[22%] top-[32%] h-[3px] w-[35%] -rotate-[22deg] rounded-full bg-[#2f3a45]/80" />
