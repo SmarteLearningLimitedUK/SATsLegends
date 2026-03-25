@@ -104,14 +104,14 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
       <div className="pointer-events-none absolute inset-0 opacity-[0.22] [background:radial-gradient(circle_at_16%_22%,#ffffff_0,transparent_3px),radial-gradient(circle_at_82%_17%,#ffffff_0,transparent_2px),radial-gradient(circle_at_34%_78%,#ffffff_0,transparent_2px),radial-gradient(circle_at_64%_66%,#ffffff_0,transparent_2px)]" />
 
       <div className="relative z-10 mx-auto flex h-full w-full max-w-[430px] flex-col px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(0.8rem,env(safe-area-inset-top))] text-slate-100">
-        <header className="mb-3 flex shrink-0 items-center justify-between gap-2.5 rounded-2xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(30,64,175,0.92),rgba(29,78,216,0.78))] px-3 py-2.5 shadow-[0_12px_24px_rgba(8,47,73,0.35)] backdrop-blur-sm">
+        <header className="mb-3 flex shrink-0 items-center justify-between gap-2.5 rounded-2xl border border-amber-100/75 bg-[linear-gradient(180deg,rgba(255,239,178,0.96),rgba(245,185,63,0.95)_48%,rgba(211,138,26,0.95))] px-3 py-2.5 shadow-[0_14px_28px_rgba(180,120,20,0.35)] backdrop-blur-sm">
           <div className="flex min-w-0 items-center gap-2.5">
             <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-yellow-200/65 bg-[linear-gradient(180deg,#3b82f6,#2563eb)] shadow-[0_0_0_2px_rgba(251,191,36,0.25)]">
               <UserCircle2 className="absolute h-4 w-4 text-cyan-50/55" />
               <span className="relative text-sm font-black text-cyan-50">{avatarInitial}</span>
             </div>
             <div className="min-w-0">
-              <p className="truncate text-[15px] font-black tracking-[0.02em] text-cyan-50">Explorer</p>
+              <p className="truncate text-[15px] font-black tracking-[0.02em] text-amber-950">Explorer</p>
             </div>
           </div>
 
@@ -120,15 +120,15 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
               <Timer className="h-3.5 w-3.5" />
               <span>{timeLeft}s</span>
             </div>
-            <div className="inline-flex h-8 items-center gap-1.5 rounded-full border border-rose-100/55 bg-rose-400/20 px-2.5 text-xs font-black text-rose-50 shadow-[0_0_14px_rgba(251,113,133,0.2)]">
-              <Heart className="h-3.5 w-3.5" />
+            <div className="inline-flex h-8 items-center gap-1.5 rounded-full border border-red-200/70 bg-red-500/25 px-2.5 text-xs font-black text-red-50 shadow-[0_0_14px_rgba(239,68,68,0.35)]">
+              <Heart className="h-3.5 w-3.5 text-red-300" />
               <span>{lives}</span>
             </div>
           </div>
         </header>
 
         <main className="flex min-h-0 flex-1 flex-col gap-3">
-          <section className="shrink-0 rounded-2xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(15,23,42,0.58),rgba(30,41,59,0.5))] px-4 py-3 shadow-[0_12px_26px_rgba(15,23,42,0.34)]">
+          <section className="shrink-0 rounded-2xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(15,23,42,0.58),rgba(30,41,59,0.5))] px-4 py-3 text-center shadow-[0_12px_26px_rgba(15,23,42,0.34)]">
             <p className="text-[11px] font-black uppercase tracking-[0.22em] text-amber-200">Missing Number</p>
             <h1 className="mt-1.5 text-[clamp(1rem,4.3vw,1.25rem)] font-black leading-snug text-white">
               A number line goes from 0 to 20. Which number is missing?
