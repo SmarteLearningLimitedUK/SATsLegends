@@ -4876,6 +4876,17 @@ button.avatar-hero-arrow:not(:disabled):active {
   display: none !important;
 }
 
+/* Some minigames mount local top bars inside relative roots (not fixed wrappers).
+   Suppress those too so every game uses the shared top HUD only. */
+.screen-gameplay .unified-minigame-hud-enabled [class*="left-0 right-0 z-30 flex items-center justify-between"],
+.screen-gameplay .unified-minigame-hud-enabled [class*="inset-x-0 top-0"],
+.screen-gameplay .unified-minigame-hud-enabled [class*="top-[calc(env(safe-area-inset-top)"],
+.screen-gameplay .unified-minigame-hud-enabled .top-hud,
+.screen-gameplay .unified-minigame-hud-enabled .game-top-hud,
+.screen-gameplay .unified-minigame-hud-enabled [data-local-top-hud='true'] {
+  display: none !important;
+}
+
 .screen-gameplay .unified-minigame-hud-enabled .game-shell-host,
 .screen-gameplay .unified-minigame-hud-enabled .game-shell-contract,
 .screen-gameplay .unified-minigame-hud-enabled .structured-game-layout,
@@ -4894,8 +4905,8 @@ button.avatar-hero-arrow:not(:disabled):active {
 .screen-gameplay .unified-minigame-hud-enabled {
   --shared-minigame-hud-row-height: clamp(2.45rem, 6.75vh, 3.35rem);
   --shared-minigame-hud-padding-y: clamp(0.15rem, 0.65vh, 0.42rem);
-  --shared-minigame-dock-height: clamp(3.65rem, 8.6vh, 4.8rem);
-  --shared-minigame-dock-gap: clamp(0.35rem, 1vh, 0.7rem);
+  --shared-minigame-dock-height: clamp(1.8rem, 4.2vh, 2.4rem);
+  --shared-minigame-dock-gap: clamp(0.18rem, 0.5vh, 0.4rem);
   --shared-minigame-reserved-bottom: calc(
     env(safe-area-inset-bottom)
     + var(--shared-minigame-dock-height)
