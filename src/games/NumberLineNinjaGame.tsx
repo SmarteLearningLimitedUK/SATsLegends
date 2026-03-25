@@ -255,31 +255,41 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
           </button>
         </main>
 
-        <footer className="mt-3 grid shrink-0 grid-cols-3 gap-2.5">
-          <button
-            type="button"
-            onClick={onBack}
-            className="inline-flex h-12 items-center justify-center gap-1 rounded-xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(37,99,235,0.45),rgba(30,58,138,0.42))] text-sm font-black text-white shadow-[0_8px_14px_rgba(2,6,23,0.24)] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back
-          </button>
-          <button
-            type="button"
-            onClick={() => setMuted((value) => !value)}
-            className="inline-flex h-12 items-center justify-center gap-1 rounded-xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(37,99,235,0.45),rgba(30,58,138,0.42))] text-sm font-black text-white shadow-[0_8px_14px_rgba(2,6,23,0.24)] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
-          >
-            {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-            Sound
-          </button>
-          <button
-            type="button"
-            onClick={() => setShowHelp(true)}
-            className="inline-flex h-12 items-center justify-center gap-1 rounded-xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(37,99,235,0.45),rgba(30,58,138,0.42))] text-sm font-black text-white shadow-[0_8px_14px_rgba(2,6,23,0.24)] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
-          >
-            <CircleHelp className="h-4 w-4" />
-            Help
-          </button>
+        <footer className="mt-3 shrink-0 rounded-2xl border-2 border-amber-300/90 bg-[linear-gradient(180deg,rgba(30,64,175,0.62),rgba(30,58,138,0.72))] p-2 shadow-[0_10px_20px_rgba(2,6,23,0.42)]">
+          <div className="grid grid-cols-3 gap-2">
+            <button
+              type="button"
+              onClick={onBack}
+              className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border-2 border-amber-300/90 bg-[linear-gradient(180deg,#315db4_0%,#1f428e_100%)] text-sm font-black text-white shadow-[0_7px_12px_rgba(2,6,23,0.34)] transition hover:brightness-110 active:translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200"
+            >
+              <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[linear-gradient(180deg,#f9cf5d_0%,#f59e0b_100%)] text-slate-900 shadow-[0_2px_4px_rgba(2,6,23,0.28)]">
+                <ArrowLeft className="h-3.5 w-3.5" />
+              </span>
+              Back
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setMuted((value) => !value)}
+              className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border-2 border-amber-300/90 bg-[linear-gradient(180deg,#315db4_0%,#1f428e_100%)] text-sm font-black text-white shadow-[0_7px_12px_rgba(2,6,23,0.34)] transition hover:brightness-110 active:translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200"
+            >
+              <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[linear-gradient(180deg,#f9cf5d_0%,#f59e0b_100%)] text-slate-900 shadow-[0_2px_4px_rgba(2,6,23,0.28)]">
+                {muted ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
+              </span>
+              Sound
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowHelp(true)}
+              className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border-2 border-amber-300/90 bg-[linear-gradient(180deg,#315db4_0%,#1f428e_100%)] text-sm font-black text-white shadow-[0_7px_12px_rgba(2,6,23,0.34)] transition hover:brightness-110 active:translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200"
+            >
+              <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[linear-gradient(180deg,#f9cf5d_0%,#f59e0b_100%)] text-slate-900 shadow-[0_2px_4px_rgba(2,6,23,0.28)]">
+                <CircleHelp className="h-3.5 w-3.5" />
+              </span>
+              Help
+            </button>
+          </div>
         </footer>
       </div>
 
