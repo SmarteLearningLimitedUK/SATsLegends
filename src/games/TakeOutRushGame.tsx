@@ -419,6 +419,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
       setFeedback(null);
       setShowSuccessBurst(false);
       nextOrder(ordersServed + 1, timeLeft);
+      setIsResolvingOrder(false);
     }, 320);
   }, [nextOrder, order.stage, orderStartMs, ordersServed, selectedIds.length, streak, timeLeft]);
 
@@ -445,6 +446,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     const valid = isExact && constraintsMet;
     if (valid) {
       resolveCorrectOrder();
+      return;
     } else {
       resolveIncorrectOrder();
       if (!fromAuto) {
