@@ -95,7 +95,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 overflow-hidden">
+    <div className="relative h-full w-full overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(120%_72%_at_50%_10%,#2dd4bf33_0%,#1d4ed833_32%,#4f46e533_58%,#0b1028_100%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,#101b4a_0%,#132a63_28%,#182f6f_48%,#0f214f_68%,#091437_100%)]" />
       <div className="pointer-events-none absolute -left-16 top-20 h-56 w-56 rounded-full bg-cyan-300/30 blur-3xl" />
@@ -103,25 +103,35 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
       <div className="pointer-events-none absolute bottom-[-5rem] left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-amber-300/20 blur-3xl" />
       <div className="pointer-events-none absolute inset-0 opacity-[0.22] [background:radial-gradient(circle_at_16%_22%,#ffffff_0,transparent_3px),radial-gradient(circle_at_82%_17%,#ffffff_0,transparent_2px),radial-gradient(circle_at_34%_78%,#ffffff_0,transparent_2px),radial-gradient(circle_at_64%_66%,#ffffff_0,transparent_2px)]" />
 
-      <div className="relative z-10 mx-auto flex h-full w-full max-w-[430px] flex-col px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(0.8rem,env(safe-area-inset-top))] text-slate-100">
-        <header className="mb-3 flex shrink-0 items-center justify-between gap-2.5 rounded-2xl border border-amber-100/75 bg-[linear-gradient(180deg,rgba(255,239,178,0.96),rgba(245,185,63,0.95)_48%,rgba(211,138,26,0.95))] px-3 py-2.5 shadow-[0_14px_28px_rgba(180,120,20,0.35)] backdrop-blur-sm">
-          <div className="flex min-w-0 items-center gap-2.5">
-            <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-yellow-200/65 bg-[linear-gradient(180deg,#3b82f6,#2563eb)] shadow-[0_0_0_2px_rgba(251,191,36,0.25)]">
-              <UserCircle2 className="absolute h-4 w-4 text-cyan-50/55" />
+      <div className="relative z-10 flex h-full w-full flex-col px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(0.8rem,env(safe-area-inset-top))] text-slate-100 sm:px-4">
+        <header className="mb-3 flex shrink-0 items-center justify-between gap-2.5">
+          <div className="flex min-w-0 items-center gap-2 rounded-[1.05rem] border-2 border-amber-200/85 bg-[linear-gradient(180deg,#7a4a1f_0%,#5f3918_62%,#46280f_100%)] px-2 py-1.5 shadow-[0_12px_24px_rgba(0,0,0,0.35),0_0_18px_rgba(245,158,11,0.2)]">
+            <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.85rem] border-2 border-amber-200/90 bg-[linear-gradient(180deg,#1f5ab0_0%,#1e3f89_100%)] shadow-[0_0_0_2px_rgba(180,83,9,0.35)]">
+              <UserCircle2 className="absolute h-4 w-4 text-cyan-100/55" />
               <span className="relative text-sm font-black text-cyan-50">{avatarInitial}</span>
             </div>
-            <div className="min-w-0">
-              <p className="truncate text-[15px] font-black tracking-[0.02em] text-amber-950">Explorer</p>
+            <div className="min-w-0 pr-1">
+              <p className="truncate text-[15px] font-black uppercase tracking-[0.04em] text-amber-50">Explorer</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="inline-flex h-8 items-center gap-1.5 rounded-full border border-blue-100/65 bg-blue-500/30 px-2.5 text-xs font-black text-blue-50 shadow-[0_0_14px_rgba(59,130,246,0.32)]">
-              <Timer className="h-3.5 w-3.5" />
-              <span>{timeLeft}s</span>
+          <div className="flex min-w-0 items-center gap-2">
+            <div className="flex h-11 min-w-[170px] items-center gap-2 rounded-[1.05rem] border-2 border-cyan-100/70 bg-[linear-gradient(180deg,#1256b7_0%,#163f8d_55%,#102f70_100%)] px-2 shadow-[0_12px_24px_rgba(3,21,58,0.42)] sm:min-w-[190px]">
+              <div className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-amber-200/85 bg-[linear-gradient(180deg,#f7d77a_0%,#d0912c_100%)] text-amber-900 shadow-[0_0_10px_rgba(245,158,11,0.35)]">
+                <Timer className="h-4 w-4" />
+              </div>
+              <div className="relative h-5 flex-1 overflow-hidden rounded-full border border-cyan-100/55 bg-slate-900/45">
+                <div className="absolute inset-[2px] rounded-full bg-slate-950/55" />
+                <div
+                  className="absolute inset-y-[2px] left-[2px] rounded-full bg-[linear-gradient(90deg,#6dff4a_0%,#22d34e_55%,#14b8a6_100%)] shadow-[0_0_12px_rgba(74,222,128,0.6)] transition-all duration-500"
+                  style={{ width: `calc(${(timeLeft / ROUND_TIME_SECONDS) * 100}% - 4px)` }}
+                />
+              </div>
+              <span className="shrink-0 text-sm font-black text-cyan-50">{timeLeft}s</span>
             </div>
-            <div className="inline-flex h-8 items-center gap-1.5 rounded-full border border-blue-100/65 bg-blue-500/30 px-2.5 text-xs font-black text-blue-50 shadow-[0_0_14px_rgba(59,130,246,0.32)]">
-              <Heart className="h-3.5 w-3.5 text-red-300" />
+
+            <div className="inline-flex h-11 items-center gap-1.5 rounded-[1.05rem] border-2 border-cyan-100/70 bg-[linear-gradient(180deg,#1256b7_0%,#163f8d_55%,#102f70_100%)] px-2.5 text-sm font-black text-cyan-50 shadow-[0_10px_18px_rgba(3,21,58,0.35)]">
+              <Heart className="h-4 w-4 text-red-400" />
               <span>{lives}</span>
             </div>
           </div>
@@ -137,7 +147,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
 
           <section className="relative rounded-2xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(30,58,138,0.38),rgba(15,23,42,0.5))] px-4 py-5 shadow-[0_16px_30px_rgba(15,23,42,0.34)]">
             <div className="pointer-events-none absolute inset-x-6 top-3 h-10 rounded-full bg-cyan-300/12 blur-2xl" />
-            <div className="relative mx-auto h-24 w-full max-w-[350px]">
+            <div className="relative mx-auto h-24 w-full max-w-[560px]">
               <div className="absolute left-0 right-0 top-1/2 h-[5px] -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-200 via-cyan-50 to-cyan-200 shadow-[0_0_16px_rgba(103,232,249,0.3)]" />
 
               {[0, 5, 10, 15, 20].map((tick) => {
