@@ -313,9 +313,10 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
   onGameOver,
   onBack,
 }) => {
+  const initialChallengeRef = useRef<VolumeChallenge>(generateChallenge(Math.max(1, levelId)));
   const [sessionLevel, setSessionLevel] = useState(Math.max(1, levelId));
-  const [challenge, setChallenge] = useState<VolumeChallenge>(() => generateChallenge(Math.max(1, levelId)));
-  const [playerHeights, setPlayerHeights] = useState<GridMatrix>(() => cloneMatrix(generateChallenge(Math.max(1, levelId)).prefilledHeights));
+  const [challenge, setChallenge] = useState<VolumeChallenge>(initialChallengeRef.current);
+  const [playerHeights, setPlayerHeights] = useState<GridMatrix>(() => cloneMatrix(initialChallengeRef.current.prefilledHeights));
   const [toolMode, setToolMode] = useState<ToolMode>('place');
   const [layerView, setLayerView] = useState(1);
   const [score, setScore] = useState(0);
@@ -429,7 +430,6 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
   }, []);
 
   useEffect(() => {
-    setChallenge(generateChallenge(Math.max(1, levelId)));
     const initial = generateChallenge(Math.max(1, levelId));
     setChallenge(initial);
     setPlayerHeights(cloneMatrix(initial.prefilledHeights));

@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { RotateCcw, Play, CheckCircle2, Clock, Plus, Minus } from 'lucide-react';
+import { RotateCcw, Play, Clock, Plus, Minus } from 'lucide-react';
 import GameActionDock from '../components/GameActionDock';
 import clockFaceImage from '../assets/maps/clockfaceblank.png';
 import missionBackground from '../assets/maps/harbour.jpg';
@@ -23,81 +23,105 @@ interface Time {
   minutes: number;
 }
 
-const MAX_LEVEL = 5;
+const ROUND_DURATION_SECONDS = 90;
 
 const scoreToStars = (score: number) => {
-  if (score >= 1700) return 3;
-  if (score >= 1000) return 2;
+  if (score >= 1800) return 3;
+  if (score >= 1100) return 2;
   return 1;
 };
 
 const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
-  levelId,
+  levelId: _levelId,
   avatarId: _avatarId,
   onVictory,
-  onGameOver,
+  onGameOver: _onGameOver,
   onBack,
 }) => {
-  const [gameState, setGameState] = useState<'start' | 'playing' | 'success'>('start');
+  const [gameState, setGameState] = useState<'start' | 'playing' | 'complete'>('start');
   const [targetTime, setTargetTime] = useState<Time>({ hours: 10, minutes: 10 });
   const [currentTime, setCurrentTime] = useState<Time>({ hours: 12, minutes: 0 });
   const [rotationHours, setRotationHours] = useState(360);
   const [rotationMinutes, setRotationMinutes] = useState(0);
   const [score, setScore] = useState(0);
-  const [level, setLevel] = useState(Math.max(1, levelId));
+  const [timeLeft, setTimeLeft] = useState(ROUND_DURATION_SECONDS);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const finishedRef = useRef(false);
 
-  const generateRandomTime = useCallback(() => {
+  const generateRandomTime = useCallback((): Time => {
     const hours = Math.floor(Math.random() * 12) || 12;
     const minutes = Math.floor(Math.random() * 12) * 5;
     return { hours, minutes };
   }, []);
 
-  const startGame = () => {
+  const loadNextQuestion = useCallback(() => {
     const newTarget = generateRandomTime();
     setTargetTime(newTarget);
     setCurrentTime({ hours: 12, minutes: 0 });
     setRotationHours(360);
     setRotationMinutes(0);
-    setGameState('playing');
     setFeedback(null);
+  }, [generateRandomTime]);
+
+  const startGame = () => {
+    finishedRef.current = false;
+    setScore(0);
+    setTimeLeft(ROUND_DURATION_SECONDS);
+    setGameState('playing');
+    loadNextQuestion();
   };
 
   const resetRun = () => {
-    setScore(0);
-    setLevel(Math.max(1, levelId));
+    finishedRef.current = false;
     setTargetTime({ hours: 10, minutes: 10 });
     setCurrentTime({ hours: 12, minutes: 0 });
     setRotationHours(360);
     setRotationMinutes(0);
+    setScore(0);
+    setTimeLeft(ROUND_DURATION_SECONDS);
     setFeedback(null);
     setGameState('start');
   };
 
+  useEffect(() => {
+    if (gameState !== 'playing') return undefined;
+    const timerId = window.setInterval(() => {
+      setTimeLeft((previous) => {
+        if (previous <= 1) {
+          return 0;
+        }
+        return previous - 1;
+      });
+    }, 1000);
+    return () => window.clearInterval(timerId);
+  }, [gameState]);
+
+  useEffect(() => {
+    if (gameState !== 'playing' || timeLeft > 0 || finishedRef.current) return;
+    finishedRef.current = true;
+    setGameState('complete');
+    onVictory(scoreToStars(score), score);
+  }, [gameState, onVictory, score, timeLeft]);
+
   const checkTime = () => {
+    if (gameState !== 'playing') return;
     const targetH = targetTime.hours % 12;
     const currentH = currentTime.hours % 12;
 
     if (targetH === currentH && targetTime.minutes === currentTime.minutes) {
-      const nextScore = score + (100 * level);
+      const nextScore = score + 100 + Math.floor(timeLeft / 6);
       setScore(nextScore);
-      setGameState('success');
       setFeedback('Perfect Match!');
+      window.setTimeout(() => {
+        if (!finishedRef.current) {
+          loadNextQuestion();
+        }
+      }, 260);
       return;
     }
 
     setFeedback('Not quite right. Try again!');
     window.setTimeout(() => setFeedback(null), 2000);
-  };
-
-  const nextLevel = () => {
-    const next = level + 1;
-    if (next > MAX_LEVEL) {
-      onVictory(scoreToStars(score), score);
-      return;
-    }
-    setLevel(next);
-    startGame();
   };
 
   const adjustTime = (type: 'hours' | 'minutes', amount: number) => {
@@ -286,44 +310,6 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
               >
                 START DASH
               </motion.button>
-            </div>
-          </motion.div>
-        )}
-
-        {gameState === 'success' && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-blue-600/90 p-8 backdrop-blur-2xl"
-          >
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', damping: 12 }}
-              className="mb-6 rounded-full bg-white p-6 shadow-2xl"
-            >
-              <CheckCircle2 size={60} className="text-blue-600" />
-            </motion.div>
-
-            <h2 className="mb-1 text-4xl font-black">EXCELLENT!</h2>
-            <p className="mb-10 text-lg font-medium text-blue-100">Time is on your side.</p>
-
-            <div className="flex w-full max-w-[240px] flex-col gap-4">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={nextLevel}
-                className="w-full rounded-2xl bg-white py-5 text-xl font-black text-blue-600 shadow-xl"
-              >
-                NEXT LEVEL
-              </motion.button>
-
-              <button
-                onClick={() => onGameOver(score)}
-                className="text-sm font-bold tracking-widest text-blue-200 uppercase transition-colors hover:text-white"
-              >
-                BACK TO MENU
-              </button>
             </div>
           </motion.div>
         )}

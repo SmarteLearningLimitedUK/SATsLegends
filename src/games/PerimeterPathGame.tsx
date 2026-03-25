@@ -284,6 +284,7 @@ const PerimeterShapeRenderer: React.FC<{
       {shape.edges.map((edge) => {
         const isActive = highlightedEdgeId === edge.id;
         const labelPos = getEdgeLabelPosition(edge);
+        const labelWidth = Math.max(22, Math.min(34, edge.label.length * 2.8 + 8));
         return (
           <g
             key={edge.id}
@@ -301,11 +302,11 @@ const PerimeterShapeRenderer: React.FC<{
               strokeLinecap="round"
             />
             <rect
-              x={labelPos.x - 10}
-              y={labelPos.y - 4}
-              width={20}
-              height={8}
-              rx={3}
+              x={labelPos.x - (labelWidth / 2)}
+              y={labelPos.y - 5}
+              width={labelWidth}
+              height={10}
+              rx={3.5}
               fill={isActive ? 'rgba(250, 204, 21, 0.36)' : 'rgba(15, 23, 42, 0.66)'}
               stroke={isActive ? 'rgba(250, 204, 21, 0.75)' : 'rgba(255, 255, 255, 0.22)'}
               strokeWidth={0.45}
@@ -316,7 +317,7 @@ const PerimeterShapeRenderer: React.FC<{
               textAnchor="middle"
               dominantBaseline="middle"
               fill="#ffffff"
-              fontSize="3.3"
+              fontSize="4.35"
               fontWeight={800}
             >
               {edge.label}

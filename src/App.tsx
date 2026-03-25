@@ -91,6 +91,7 @@ const SCREEN_BEHAVIOR: Record<GameScreen, {
 const IPHONE_STAGE_WIDTH = 390;
 const IPHONE_STAGE_HEIGHT = 844;
 const GLOBAL_MINIGAME_HUD_DURATION_SECONDS = 90;
+const GLOBAL_MINIGAME_LIVES = 3;
 
 type GameRulesMode = 'start' | 'help';
 
@@ -283,6 +284,8 @@ const App: React.FC = () => {
     achievementsUnlocked?: string[];
   }>(null);
   const [globalMiniGameHudTimeLeft, setGlobalMiniGameHudTimeLeft] = useState(GLOBAL_MINIGAME_HUD_DURATION_SECONDS);
+  const [globalMiniGameLives, setGlobalMiniGameLives] = useState(GLOBAL_MINIGAME_LIVES);
+  const [globalMiniGameLifeLock, setGlobalMiniGameLifeLock] = useState(false);
 
   const hasCompletedProfile = useMemo(
     () => Boolean(player.playerName.trim() && player.avatarId),
@@ -316,6 +319,8 @@ const App: React.FC = () => {
   useEffect(() => {
     if (screen !== 'gameplay' || !selectedLevel) return undefined;
     setGlobalMiniGameHudTimeLeft(GLOBAL_MINIGAME_HUD_DURATION_SECONDS);
+    setGlobalMiniGameLives(GLOBAL_MINIGAME_LIVES);
+    setGlobalMiniGameLifeLock(false);
     const timerId = window.setInterval(() => {
       setGlobalMiniGameHudTimeLeft((prev) => Math.max(0, prev - 1));
     }, 1000);
@@ -323,6 +328,14 @@ const App: React.FC = () => {
       window.clearInterval(timerId);
     };
   }, [screen, selectedLevel?.id]);
+
+  useEffect(() => {
+    if (screen !== 'gameplay' || globalMiniGameLives > 0 || globalMiniGameLifeLock) return;
+    setGlobalMiniGameLifeLock(true);
+    window.setTimeout(() => {
+      handleGameOver(0);
+    }, 160);
+  }, [globalMiniGameLifeLock, globalMiniGameLives, screen]);
 
   const closeGameRules = () => {
     setShowGameRules(false);
@@ -423,6 +436,30 @@ const App: React.FC = () => {
       window.removeEventListener(GAME_HUD_MUTE_EVENT, handleMuteChange as EventListener);
     };
   }, [screen, hintRuleSet]);
+
+  useEffect(() => {
+    const lastPenaltyRef = { value: 0 };
+
+    const handleHapticIntent = (event: Event) => {
+      if (screen !== 'gameplay') return;
+      if (isGameplayInstructionPending) return;
+
+      const detail = (event as CustomEvent<{ intent?: string }>).detail;
+      const intent = detail?.intent;
+      if (intent !== 'error' && intent !== 'warning') return;
+
+      const now = Date.now();
+      if (now - lastPenaltyRef.value < 450) return;
+      lastPenaltyRef.value = now;
+
+      setGlobalMiniGameLives((previous) => Math.max(0, previous - 1));
+    };
+
+    window.addEventListener('sats-mastery:haptic', handleHapticIntent as EventListener);
+    return () => {
+      window.removeEventListener('sats-mastery:haptic', handleHapticIntent as EventListener);
+    };
+  }, [isGameplayInstructionPending, screen]);
 
   useEffect(() => {
     if (screen !== 'gameplay' || !selectedLevel) {
@@ -1067,6 +1104,7 @@ const App: React.FC = () => {
                   timeLeft={globalMiniGameHudTimeLeft}
                   totalTime={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
                   hideTimer={Boolean(activeMiniGameKey === 'CalculationCrashGame')}
+                  lives={globalMiniGameLives}
                 />
               </div>
             </div>
@@ -1130,7 +1168,7 @@ const App: React.FC = () => {
   // All gameplay runs inside the constrained stage for consistent accessibility.
   const useUnboundedStageShell = isSplashScreen || isAvatarSelectionScreen || isWorldMapScreen;
   const globalDockOffsetClass = showGlobalDock && !isGameplayScreen
-    ? 'pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-[calc(6.2rem+env(safe-area-inset-bottom))]'
+    ? 'pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-[calc(5.2rem+env(safe-area-inset-bottom))]'
     : '';
   const viewportShellClass = isGameplayScreen
     ? 'sat-shell-standard bg-transparent'

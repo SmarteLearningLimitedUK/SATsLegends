@@ -59,12 +59,12 @@ const GameActionDock: React.FC<GameActionDockProps> = ({
 
   const outerClass = 'mt-0.5 flex shrink-0 items-center justify-center';
 
-  const actionButtonClass = 'inline-flex h-16 w-16 items-center justify-center rounded-[1.2rem] border-2 border-cyan-100/70 bg-[linear-gradient(180deg,#4f95ff_0%,#2f6ee8_52%,#2457c4_100%)] text-white shadow-[0_10px_20px_rgba(2,6,23,0.36),inset_0_1px_0_rgba(255,255,255,0.45)] transition hover:brightness-110 active:translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200';
+  const actionButtonClass = 'inline-flex h-14 w-14 items-center justify-center rounded-[1rem] border-2 border-cyan-100/70 bg-[linear-gradient(180deg,#4f95ff_0%,#2f6ee8_52%,#2457c4_100%)] text-white shadow-[0_8px_16px_rgba(2,6,23,0.34),inset_0_1px_0_rgba(255,255,255,0.45)] transition hover:brightness-110 active:translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200';
 
   return (
     <div className={outerClass}>
-      <div className="shrink-0 rounded-[1.5rem] border border-cyan-200/40 bg-[linear-gradient(180deg,#102868_0%,#0a1b4b_100%)] p-2 shadow-[0_12px_22px_rgba(2,6,23,0.5),inset_0_1px_0_rgba(255,255,255,0.14)]">
-        <div className="grid grid-cols-3 gap-2">
+      <div className="shrink-0 rounded-[1.25rem] border border-cyan-200/40 bg-[linear-gradient(180deg,#102868_0%,#0a1b4b_100%)] p-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.46),inset_0_1px_0_rgba(255,255,255,0.14)]">
+        <div className="grid grid-cols-3 gap-1.5">
         <button
           onClick={() => {
             triggerHaptic('tap');
@@ -73,21 +73,21 @@ const GameActionDock: React.FC<GameActionDockProps> = ({
           className={actionButtonClass}
           aria-label="Back"
         >
-          <AssetIcon name="back" className="h-7 w-7 drop-shadow-[0_2px_2px_rgba(0,0,0,0.28)]" />
+          <AssetIcon name="back" className="h-6 w-6 drop-shadow-[0_2px_2px_rgba(0,0,0,0.28)]" />
         </button>
         <button
           onClick={handleToggleMute}
           className={actionButtonClass}
           aria-label={isMuted ? 'Unmute audio' : 'Mute audio'}
         >
-          <AssetIcon name={isMuted ? 'soundMute' : 'sound'} className="h-7 w-7 drop-shadow-[0_2px_2px_rgba(0,0,0,0.28)]" />
+          <AssetIcon name={isMuted ? 'soundMute' : 'sound'} className="h-6 w-6 drop-shadow-[0_2px_2px_rgba(0,0,0,0.28)]" />
         </button>
         <button
           onClick={handleOpenHelp}
           className={actionButtonClass}
           aria-label="Hint"
         >
-          <AssetIcon name="question" className="h-7 w-7 drop-shadow-[0_2px_2px_rgba(0,0,0,0.28)]" />
+          <AssetIcon name="question" className="h-6 w-6 drop-shadow-[0_2px_2px_rgba(0,0,0,0.28)]" />
         </button>
         </div>
       </div>

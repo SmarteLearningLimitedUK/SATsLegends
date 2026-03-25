@@ -23,12 +23,12 @@ interface RoundData {
 const TOTAL_ROUNDS = 5;
 
 const STAGE_DENOMS: number[][] = [
-  [50, 100, 200],
-  [100, 200, 500],
-  [100, 250, 500, 1000],
-  [250, 500, 1000, 2000],
-  [500, 1000, 2000, 5000],
-  [1000, 2000, 5000, 10000],
+  [50, 100, 150, 200, 250, 300],
+  [100, 150, 200, 250, 300, 400],
+  [100, 250, 500, 750, 1000, 1250],
+  [250, 500, 750, 1000, 1500, 2000],
+  [500, 750, 1000, 1500, 2000, 2500],
+  [500, 1000, 2000, 3000, 4000, 5000],
 ];
 
 const toKgLabel = (grams: number) => `${(grams / 1000).toLocaleString(undefined, { maximumFractionDigits: 2 })} kg`;
@@ -49,22 +49,18 @@ const shuffle = <T,>(arr: T[]) => {
 const buildRound = (levelId: number, roundIndex: number): RoundData => {
   const stage = clampStage(levelId, roundIndex);
   const denoms = STAGE_DENOMS[stage];
-  const requiredCount = Math.min(6, 2 + stage);
-  const distractorCount = Math.min(5, 2 + Math.floor(stage / 2));
+  const minimumDistinctChoices = 5;
+  const distinctChoices = shuffle(denoms).slice(0, Math.max(minimumDistinctChoices, Math.min(denoms.length, 6)));
+  const requiredCount = Math.min(4, Math.max(2, 2 + Math.floor(stage / 2)));
 
-  const required: number[] = Array.from({ length: requiredCount }, () => randomFrom(denoms));
+  const required = shuffle(distinctChoices).slice(0, requiredCount);
   const targetGrams = required.reduce((sum, grams) => sum + grams, 0);
 
-  const extras: number[] = [];
-  while (extras.length < distractorCount) {
-    const pick = randomFrom(denoms);
-    const expectedRequiredOccurrences = required.filter((v) => v === pick).length;
-    const existingOccurrences = extras.filter((v) => v === pick).length;
-    if (existingOccurrences >= expectedRequiredOccurrences + 1) continue;
-    extras.push(pick);
-  }
+  const distractorPool = distinctChoices.filter((value) => !required.includes(value));
+  const extraCopiesCount = Math.min(3, 1 + Math.floor(stage / 2));
+  const extraCopies = Array.from({ length: extraCopiesCount }, () => randomFrom(required));
 
-  const all = shuffle([...required, ...extras]);
+  const all = shuffle([...required, ...distractorPool, ...extraCopies]);
   const tokens: WeightToken[] = all.map((grams, index) => ({
     id: `${roundIndex}-${index}-${grams}-${Math.random().toString(36).slice(2, 7)}`,
     grams,
@@ -153,10 +149,8 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
 
   return (
     <div ref={rootRef} className="fixed inset-0 overflow-hidden bg-[#07122b]">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_22%,rgba(255,227,92,0.25),rgba(7,18,43,0.92)_58%,rgba(4,9,24,0.98))]" />
-
       <div className="relative z-10 flex h-full w-full flex-col items-center justify-between px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(0.75rem,env(safe-area-inset-top))]">
-        <div className="relative mt-1 w-[min(94vw,34rem)] aspect-square">
+        <div className="relative mt-1 w-[min(74vw,24rem)] aspect-square">
           <img
             src={scaleImage}
             alt="Scale"
