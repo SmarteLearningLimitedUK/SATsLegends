@@ -636,6 +636,18 @@ button:disabled {
   overflow: hidden;
 }
 
+/* Global minigame HUD/dock is rendered by App.tsx.
+   Suppress per-game local HUD and dock clones inside gameplay hosts to avoid overlap. */
+.unified-minigame-hud-enabled .game-shell-zone-hud,
+.unified-minigame-hud-enabled .mission-hud-root,
+.unified-minigame-hud-enabled .mini-game-top-bar {
+  display: none !important;
+}
+
+.unified-minigame-hud-enabled .game-shell-zone-actions {
+  display: none !important;
+}
+
 .sat-shell-standard {
   position: relative;
 }
