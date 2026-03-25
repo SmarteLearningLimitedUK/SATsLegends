@@ -15,10 +15,12 @@ interface GameActionDockProps {
   variant?: 'local' | 'global';
 }
 
-const GameActionDock: React.FC<GameActionDockProps> = ({ onBack, variant = 'local' }) => {
-  // Standardize all minigames to the Place Value Panic dock style.
-  const resolvedAccentClass = 'text-slate-100';
-  const resolvedCompact = true;
+const GameActionDock: React.FC<GameActionDockProps> = ({
+  onBack,
+  accentClass: _accentClass,
+  compact: _compact,
+  variant = 'local',
+}) => {
   const [isMuted, setIsMuted] = useState(() => localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true');
 
   useEffect(() => {
@@ -52,36 +54,50 @@ const GameActionDock: React.FC<GameActionDockProps> = ({ onBack, variant = 'loca
   };
 
   const outerClass = variant === 'global'
-    ? 'mt-0.5 flex shrink-0 items-center justify-center md:mt-2'
-    : 'game-shell-zone game-shell-zone-actions mt-0.5 flex shrink-0 items-center justify-center md:mt-2';
+    ? 'mt-0.5 flex shrink-0 items-center justify-center'
+    : 'game-shell-zone game-shell-zone-actions mt-0.5 flex shrink-0 items-center justify-center';
+
+  const actionButtonClass = 'inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border-2 border-amber-300/90 bg-[linear-gradient(180deg,#315db4_0%,#1f428e_100%)] px-2.5 text-sm font-black text-white shadow-[0_7px_12px_rgba(2,6,23,0.34)] transition hover:brightness-110 active:translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200';
+  const iconBadgeClass = 'inline-flex h-5 w-5 items-center justify-center rounded-full bg-[linear-gradient(180deg,#f9cf5d_0%,#f59e0b_100%)] text-slate-900 shadow-[0_2px_4px_rgba(2,6,23,0.28)]';
 
   return (
     <div className={outerClass}>
-      <div className={`ui-panel-unified fantasy-dock-shell aaa-dock-shell flex items-center ${resolvedCompact ? 'gap-1 px-1 py-1 md:gap-1.5 md:px-1.5 md:py-1.5' : 'gap-2 px-2 py-1.5 md:gap-3 md:px-3 md:py-2'}`}>
+      <div className="shrink-0 rounded-2xl border-2 border-amber-300/90 bg-[linear-gradient(180deg,rgba(30,64,175,0.62),rgba(30,58,138,0.72))] p-2 shadow-[0_10px_20px_rgba(2,6,23,0.42)]">
+        <div className="grid grid-cols-3 gap-2">
         <button
           onClick={() => {
             triggerHaptic('tap');
             onBack();
           }}
-          className={`ui-icon-button game-dock-button aaa-dock-button ${resolvedCompact ? 'aaa-dock-button-compact' : ''} ${resolvedAccentClass}`}
+          className={actionButtonClass}
           aria-label="Back"
         >
-          <AssetIcon name="back" className="h-5 w-5 md:h-7 md:w-7" />
+          <span className={iconBadgeClass}>
+            <AssetIcon name="back" className="h-3.5 w-3.5" />
+          </span>
+          Back
         </button>
         <button
           onClick={handleToggleMute}
-          className={`ui-icon-button game-dock-button aaa-dock-button ${resolvedCompact ? 'aaa-dock-button-compact' : ''} ${resolvedAccentClass}`}
+          className={actionButtonClass}
           aria-label={isMuted ? 'Unmute audio' : 'Mute audio'}
         >
-          <AssetIcon name={isMuted ? 'soundMute' : 'sound'} className="h-5 w-5 md:h-7 md:w-7" />
+          <span className={iconBadgeClass}>
+            <AssetIcon name={isMuted ? 'soundMute' : 'sound'} className="h-3.5 w-3.5" />
+          </span>
+          Sound
         </button>
         <button
           onClick={handleOpenHelp}
-          className={`ui-icon-button game-dock-button aaa-dock-button ${resolvedCompact ? 'aaa-dock-button-compact' : ''} ${resolvedAccentClass}`}
+          className={actionButtonClass}
           aria-label="Hint"
         >
-          <AssetIcon name="question" className="h-5 w-5 md:h-7 md:w-7" />
+          <span className={iconBadgeClass}>
+            <AssetIcon name="question" className="h-3.5 w-3.5" />
+          </span>
+          Help
         </button>
+        </div>
       </div>
     </div>
   );
