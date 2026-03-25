@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
-import heartIcon from '../assets/importedassets/Icons/icon - heart.png';
-import hudAvatarNameFrame from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
-import hudTimerFrame from '../assets/ui_frames/hudfortextplace_slices/hud_timer.png';
+import heartIcon from '../assets/casual_ui/icons/icon__heart.png';
+import hudAvatarBar from '../assets/casual_ui/updaed_sockets_slices/hud_avatar_bar.png';
+import hudTimerBar from '../assets/casual_ui/updaed_sockets_slices/hud_timer_bar.png';
 import {
   ArrowLeft,
   CircleHelp,
@@ -115,18 +115,15 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
       <div className="relative z-10 flex h-full w-full flex-col px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(0.8rem,env(safe-area-inset-top))] text-slate-100 sm:px-4">
         <header className="mb-3 flex min-h-[52px] w-full shrink-0 items-center justify-between gap-2 px-[2px]">
           <div className="flex min-w-0 items-center">
-            <div
-              className="relative shrink-0"
-              style={{ height: 'clamp(34px, 8.8vw, 44px)', width: 'clamp(86px, 22.5vw, 112px)' }}
-            >
+            <div className="relative h-[clamp(34px,8.8vw,44px)] shrink-0 aspect-[297/116]">
               <img
-                src={hudAvatarNameFrame}
+                src={hudAvatarBar}
                 alt=""
                 aria-hidden="true"
                 draggable={false}
                 className="absolute inset-0 h-full w-full object-contain"
               />
-              <div className="absolute left-[4.8%] top-1/2 h-[70%] w-[29%] -translate-y-1/2 overflow-hidden rounded-[0.54rem]">
+              <div className="absolute left-[2.8%] top-1/2 h-[79%] w-[26%] -translate-y-1/2 overflow-hidden rounded-[0.55rem]">
                 <img
                   src={avatar?.portrait || avatar?.image}
                   alt=""
@@ -135,29 +132,27 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
                   className="h-full w-full object-cover"
                 />
               </div>
-              <p className="absolute left-[37%] right-[12%] top-1/2 -translate-y-1/2 truncate text-[clamp(0.68rem,1.85vw,0.9rem)] font-black uppercase tracking-[0.045em] text-slate-100">
+              <p className="absolute left-[31%] right-[8%] top-1/2 -translate-y-1/2 truncate text-[clamp(0.68rem,1.86vw,0.9rem)] font-black uppercase tracking-[0.045em] text-slate-100">
                 Explorer
               </p>
             </div>
           </div>
 
           <div className="flex shrink-0 items-center gap-1">
-            <div
-              className="relative shrink-0"
-              style={{ height: 'clamp(34px, 8.8vw, 44px)', width: 'clamp(134px, 35.2vw, 174px)' }}
-            >
+            <div className="relative h-[clamp(34px,8.8vw,44px)] shrink-0 aspect-[312/76]">
               <img
-                src={hudTimerFrame}
+                src={hudTimerBar}
                 alt=""
                 aria-hidden="true"
                 draggable={false}
                 className="absolute inset-0 h-full w-full object-contain"
               />
-              <div className="absolute left-[22%] right-[6.4%] top-[30%] h-[40%] overflow-hidden rounded-full border border-cyan-100/45 bg-slate-950/55">
+              <div className="absolute left-[22%] right-[5.5%] top-[30%] h-[40%] overflow-hidden rounded-full bg-slate-950/58">
                 <div
-                  className="absolute inset-y-[2px] left-[2px] rounded-full bg-[linear-gradient(90deg,#6dff4a_0%,#22d34e_58%,#14b8a6_100%)] shadow-[0_0_10px_rgba(74,222,128,0.55)] transition-all duration-300"
-                  style={{ width: `calc(${timerProgress * 100}% - 4px)` }}
+                  className="absolute inset-y-[2px] left-[2px] rounded-full bg-[linear-gradient(90deg,#57f341_0%,#22d34e_58%,#11bfa8_100%)] shadow-[0_0_9px_rgba(74,222,128,0.55)] transition-all duration-300"
+                  style={{ width: `max(0px, calc(${timerProgress * 100}% - 4px))` }}
                 />
+                <div className="pointer-events-none absolute inset-[1px] rounded-full bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:12%_100%]" />
               </div>
               <span className="absolute right-[6.2%] top-1/2 -translate-y-1/2 text-[clamp(0.62rem,1.72vw,0.84rem)] font-black uppercase text-slate-100">
                 {timeLeft}s
@@ -166,7 +161,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
 
             <div
               className="inline-flex shrink-0 items-center justify-center gap-1 rounded-full border border-cyan-100/65 bg-[linear-gradient(180deg,#1f5ab0_0%,#1e3f89_100%)] px-1.5 text-[0.88rem] font-black text-slate-100 shadow-[0_8px_16px_rgba(2,6,23,0.35)]"
-              style={{ width: 'clamp(34px, 8.6vw, 42px)', height: 'clamp(34px, 8.6vw, 42px)' }}
+              style={{ width: 'clamp(34px, 8.8vw, 44px)', height: 'clamp(34px, 8.8vw, 44px)' }}
             >
               <img
                 src={heartIcon}
