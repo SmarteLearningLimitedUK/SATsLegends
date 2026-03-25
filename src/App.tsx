@@ -1064,6 +1064,7 @@ const App: React.FC = () => {
                 {!isGameplayInstructionPending ? (
                   <UnifiedMiniGameHud
                     playerName={player.playerName || 'Learner'}
+                    avatarId={player.avatarId}
                     timeLeft={globalMiniGameHudTimeLeft}
                     totalTime={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
                     hideTimer={Boolean(selectedLevel && resolveMiniGameRegistryKey(selectedLevel) === 'CalculationCrashGame')}
