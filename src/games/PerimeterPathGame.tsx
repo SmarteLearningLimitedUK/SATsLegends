@@ -1,11 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import { ShieldCheck } from 'lucide-react';
-import GameplayHUD from '../components/GameplayHUD';
 import GameActionDock from '../components/GameActionDock';
-import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
-import { AVATARS } from '../constants';
+import perimeterBackground from '../assets/maps/facctor frenzy.jpg';
 
 interface PerimeterPathGameProps {
   levelId: number;
@@ -15,266 +12,608 @@ interface PerimeterPathGameProps {
   onBack: () => void;
 }
 
-interface CageProblem {
-  length: number;
-  width: number;
-  options: number[];
-  perimeter: number;
+type InputMode = 'mcq' | 'input';
+type AnswerUnit = 'm' | 'cm';
+type Point = { x: number; y: number };
+
+interface ShapeEdge {
+  id: string;
+  from: Point;
+  to: Point;
+  label: string;
 }
 
-const TOTAL_CAPTURES = 6;
+interface ShapeModel {
+  points: Point[];
+  edges: ShapeEdge[];
+}
 
-const makeProblem = (round: number, levelId: number): CageProblem => {
-  const difficulty = Math.max(1, Math.floor((round + levelId) / 2));
-  const minSide = 2 + Math.min(6, difficulty);
-  const maxSide = minSide + 7 + Math.min(8, difficulty);
-  const length = Math.floor(Math.random() * (maxSide - minSide + 1)) + minSide;
-  const width = Math.floor(Math.random() * (maxSide - minSide + 1)) + minSide;
+interface PerimeterQuestion {
+  id: string;
+  level: number;
+  prompt: string;
+  hint: string;
+  mode: InputMode;
+  answerUnit: AnswerUnit;
+  correctPerimeter: number;
+  shape: ShapeModel;
+  options: number[];
+}
+
+interface FeedbackState {
+  type: 'correct' | 'incorrect';
+  message: string;
+}
+
+const TOTAL_TIME_SECONDS = 85;
+const TARGET_CORRECT = 12;
+
+const randInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+const shuffle = <T,>(arr: T[]) => {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+};
+
+const makeOptions = (correct: number) => {
+  const step = Math.max(2, Math.round(correct * 0.08));
+  const candidates = [
+    correct + step,
+    correct - step,
+    correct + step * 2,
+    correct - step * 2,
+    correct + Math.max(1, Math.round(step / 2)),
+    Math.max(1, correct - Math.max(1, Math.round(step / 2))),
+    Math.max(1, Math.round(correct * 0.75)),
+    Math.round(correct * 1.25),
+  ].filter((value) => value > 0 && value !== correct);
+
+  const unique = Array.from(new Set(candidates));
+  const picks = shuffle(unique).slice(0, 3);
+  return shuffle([correct, ...picks]);
+};
+
+const formatMixedLength = (cmValue: number) => {
+  if (cmValue % 100 === 0 && Math.random() > 0.35) {
+    return `${cmValue / 100} m`;
+  }
+  return `${cmValue} cm`;
+};
+
+const makeRectangleShape = (
+  length: number,
+  width: number,
+  unit: AnswerUnit,
+  hiddenEdgeId?: string,
+): { shape: ShapeModel; perimeter: number } => {
+  const points: Point[] = [
+    { x: 12, y: 18 },
+    { x: 88, y: 18 },
+    { x: 88, y: 82 },
+    { x: 12, y: 82 },
+  ];
+
   const perimeter = 2 * (length + width);
+  const topBottom = `${length} ${unit}`;
+  const leftRight = `${width} ${unit}`;
 
-  const options = new Set<number>([perimeter]);
-  while (options.size < 4) {
-    const offset = (Math.floor(Math.random() * 7) + 1) * 2;
-    const direction = Math.random() > 0.5 ? 1 : -1;
-    options.add(Math.max(8, perimeter + (direction * offset)));
+  const edges: ShapeEdge[] = [
+    { id: 'top', from: points[0], to: points[1], label: hiddenEdgeId === 'top' ? '?' : topBottom },
+    { id: 'right', from: points[1], to: points[2], label: hiddenEdgeId === 'right' ? '?' : leftRight },
+    { id: 'bottom', from: points[2], to: points[3], label: hiddenEdgeId === 'bottom' ? '?' : topBottom },
+    { id: 'left', from: points[3], to: points[0], label: hiddenEdgeId === 'left' ? '?' : leftRight },
+  ];
+
+  return { shape: { points, edges }, perimeter };
+};
+
+const makeCompoundShape = (
+  values: {
+    top: number;
+    rightTop: number;
+    notch: number;
+    innerDown: number;
+    rightBottom: number;
+    left: number;
+  },
+  labels: string[],
+): { shape: ShapeModel; perimeter: number } => {
+  const points: Point[] = [
+    { x: 12, y: 14 },
+    { x: 88, y: 14 },
+    { x: 88, y: 35 },
+    { x: 60, y: 35 },
+    { x: 60, y: 60 },
+    { x: 88, y: 60 },
+    { x: 88, y: 86 },
+    { x: 12, y: 86 },
+  ];
+
+  const edges: ShapeEdge[] = [
+    { id: 'e1', from: points[0], to: points[1], label: labels[0] },
+    { id: 'e2', from: points[1], to: points[2], label: labels[1] },
+    { id: 'e3', from: points[2], to: points[3], label: labels[2] },
+    { id: 'e4', from: points[3], to: points[4], label: labels[3] },
+    { id: 'e5', from: points[4], to: points[5], label: labels[4] },
+    { id: 'e6', from: points[5], to: points[6], label: labels[5] },
+    { id: 'e7', from: points[6], to: points[7], label: labels[6] },
+    { id: 'e8', from: points[7], to: points[0], label: labels[7] },
+  ];
+
+  const perimeter = (
+    values.top +
+    values.rightTop +
+    values.notch +
+    values.innerDown +
+    values.notch +
+    values.rightBottom +
+    values.top +
+    values.left
+  );
+
+  return { shape: { points, edges }, perimeter };
+};
+
+const generateQuestion = (level: number): PerimeterQuestion => {
+  const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+  if (level <= 3) {
+    const isSquare = Math.random() > 0.45;
+    const sideA = randInt(4 + level, 14 + level * 2);
+    const sideB = isSquare ? sideA : randInt(3 + level, 12 + level * 2);
+    const model = makeRectangleShape(sideA, sideB, 'm');
+    return {
+      id,
+      level,
+      prompt: isSquare ? 'Find the perimeter of this square.' : 'Find the perimeter of this rectangle.',
+      hint: 'Add all outer sides once.',
+      mode: 'mcq',
+      answerUnit: 'm',
+      correctPerimeter: model.perimeter,
+      shape: model.shape,
+      options: makeOptions(model.perimeter),
+    };
   }
 
+  if (level <= 6) {
+    const sideA = randInt(8 + level, 18 + level * 2);
+    const sideB = randInt(6 + level, 14 + level * 2);
+    const hidden = randomFrom(['top', 'right', 'bottom', 'left']);
+    const model = makeRectangleShape(sideA, sideB, 'm', hidden);
+    return {
+      id,
+      level,
+      prompt: 'One side is hidden. Infer it, then calculate perimeter.',
+      hint: 'Opposite sides of a rectangle are equal.',
+      mode: 'mcq',
+      answerUnit: 'm',
+      correctPerimeter: model.perimeter,
+      shape: model.shape,
+      options: makeOptions(model.perimeter),
+    };
+  }
+
+  if (level <= 10) {
+    const top = randInt(14 + level, 24 + level * 2);
+    const rightTop = randInt(4, 10);
+    const innerDown = randInt(4, 10);
+    const rightBottom = randInt(4, 10);
+    const left = rightTop + innerDown + rightBottom;
+    const notch = randInt(3, 10);
+    const labels = [
+      `${top} m`,
+      `${rightTop} m`,
+      `${notch} m`,
+      `${innerDown} m`,
+      `${notch} m`,
+      `${rightBottom} m`,
+      `${top} m`,
+      `${left} m`,
+    ];
+    const model = makeCompoundShape({ top, rightTop, notch, innerDown, rightBottom, left }, labels);
+    return {
+      id,
+      level,
+      prompt: 'Calculate the perimeter of this compound shape.',
+      hint: 'Trace the entire outer boundary.',
+      mode: 'input',
+      answerUnit: 'm',
+      correctPerimeter: model.perimeter,
+      shape: model.shape,
+      options: [],
+    };
+  }
+
+  const top = randInt(900, 2600);
+  const rightTop = randInt(250, 1100);
+  const innerDown = randInt(280, 1200);
+  const rightBottom = randInt(250, 1000);
+  const left = rightTop + innerDown + rightBottom;
+  const notch = randInt(180, 900);
+  const edgeCm = [top, rightTop, notch, innerDown, notch, rightBottom, top, left];
+  const labels = edgeCm.map((value) => formatMixedLength(value));
+  const model = makeCompoundShape({ top, rightTop, notch, innerDown, rightBottom, left }, labels);
   return {
-    length,
-    width,
-    perimeter,
-    options: Array.from(options).sort((a, b) => a - b),
+    id,
+    level,
+    prompt: 'Mixed units challenge: find perimeter in cm.',
+    hint: 'Convert every edge to cm first.',
+    mode: 'input',
+    answerUnit: 'cm',
+    correctPerimeter: model.perimeter,
+    shape: model.shape,
+    options: [],
   };
 };
 
-const CageBlueprint = ({ length, width }: { length: number; width: number }) => (
-  <div className="relative mx-auto flex h-[13rem] w-[18rem] items-center justify-center md:h-[15rem] md:w-[22rem]">
-    <div className="absolute inset-0 rounded-[1.4rem] border border-sky-100/25 bg-[linear-gradient(180deg,rgba(8,25,52,0.7),rgba(6,15,32,0.82))] shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_16px_28px_rgba(0,0,0,0.32)]" />
-    <div className="absolute inset-[12%] rounded-[1rem] border-[6px] border-amber-300/80 bg-[radial-gradient(circle_at_50%_20%,rgba(56,189,248,0.2),rgba(8,15,32,0.5)_55%,rgba(8,15,32,0.82))]" />
-    <div className="absolute inset-[12%] rounded-[1rem] border border-amber-100/40 [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:18px_18px]" />
+const randomFrom = <T,>(items: T[]) => items[Math.floor(Math.random() * items.length)];
 
-    <div className="absolute left-1/2 top-[8%] -translate-x-1/2 rounded-full border border-yellow-100/50 bg-[linear-gradient(180deg,#facc15,#f59e0b)] px-3 py-1 text-xs font-black text-amber-950 shadow-[0_8px_16px_rgba(0,0,0,0.25)]">
-      {length} m
-    </div>
-    <div className="absolute right-[8%] top-1/2 -translate-y-1/2 rounded-full border border-yellow-100/50 bg-[linear-gradient(180deg,#facc15,#f59e0b)] px-3 py-1 text-xs font-black text-amber-950 shadow-[0_8px_16px_rgba(0,0,0,0.25)]">
-      {width} m
-    </div>
-  </div>
-);
+const scoreToStars = (score: number) => {
+  if (score >= 3200) return 3;
+  if (score >= 2200) return 2;
+  return 1;
+};
+
+const getEdgeLabelPosition = (edge: ShapeEdge) => {
+  const mx = (edge.from.x + edge.to.x) / 2;
+  const my = (edge.from.y + edge.to.y) / 2;
+  const dx = edge.to.x - edge.from.x;
+  const dy = edge.to.y - edge.from.y;
+  const horizontal = Math.abs(dx) >= Math.abs(dy);
+
+  if (horizontal) {
+    return { x: mx, y: my + (my < 50 ? -7 : 7) };
+  }
+  return { x: mx + (mx < 50 ? -8 : 8), y: my };
+};
+
+const PerimeterShapeRenderer: React.FC<{
+  shape: ShapeModel;
+  highlightedEdgeId: string | null;
+  onHighlightEdge: (id: string | null) => void;
+}> = ({ shape, highlightedEdgeId, onHighlightEdge }) => {
+  const pointsAttr = shape.points.map((point) => `${point.x},${point.y}`).join(' ');
+
+  return (
+    <svg viewBox="0 0 100 100" className="h-full w-full">
+      <polygon points={pointsAttr} fill="rgba(56, 189, 248, 0.16)" stroke="rgba(125, 211, 252, 0.42)" strokeWidth="0.4" />
+      {shape.edges.map((edge) => {
+        const isActive = highlightedEdgeId === edge.id;
+        const labelPos = getEdgeLabelPosition(edge);
+        return (
+          <g
+            key={edge.id}
+            onPointerEnter={() => onHighlightEdge(edge.id)}
+            onPointerLeave={() => onHighlightEdge(null)}
+            onTouchStart={() => onHighlightEdge(edge.id)}
+          >
+            <line
+              x1={edge.from.x}
+              y1={edge.from.y}
+              x2={edge.to.x}
+              y2={edge.to.y}
+              stroke={isActive ? '#facc15' : '#7dd3fc'}
+              strokeWidth={isActive ? 2.8 : 2.1}
+              strokeLinecap="round"
+            />
+            <rect
+              x={labelPos.x - 10}
+              y={labelPos.y - 4}
+              width={20}
+              height={8}
+              rx={3}
+              fill={isActive ? 'rgba(250, 204, 21, 0.36)' : 'rgba(15, 23, 42, 0.66)'}
+              stroke={isActive ? 'rgba(250, 204, 21, 0.75)' : 'rgba(255, 255, 255, 0.22)'}
+              strokeWidth={0.45}
+            />
+            <text
+              x={labelPos.x}
+              y={labelPos.y}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fill="#ffffff"
+              fontSize="3.3"
+              fontWeight={800}
+            >
+              {edge.label}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+};
 
 const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
   levelId,
-  avatarId,
+  avatarId: _avatarId,
   onVictory,
   onGameOver,
   onBack,
 }) => {
-  const [problem, setProblem] = useState<CageProblem>(() => makeProblem(0, levelId));
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [currentLevel, setCurrentLevel] = useState(Math.max(1, levelId));
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(90 + (levelId * 5));
-  const [captures, setCaptures] = useState(0);
-  const [roundIndex, setRoundIndex] = useState(0);
-  const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
-  const [isVictory, setIsVictory] = useState(false);
-  const [isGameOver, setIsGameOver] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(TOTAL_TIME_SECONDS);
+  const [question, setQuestion] = useState<PerimeterQuestion>(() => generateQuestion(Math.max(1, levelId)));
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [inputAnswer, setInputAnswer] = useState('');
+  const [streak, setStreak] = useState(0);
+  const [bestStreak, setBestStreak] = useState(0);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [feedback, setFeedback] = useState<FeedbackState | null>(null);
+  const [shakeShape, setShakeShape] = useState(false);
+  const [highlightedEdgeId, setHighlightedEdgeId] = useState<string | null>(null);
+  const [locked, setLocked] = useState(false);
 
-  const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
-  const targetScore = 1400 + (levelId * 150);
-  const progress = Math.min(100, (captures / TOTAL_CAPTURES) * 100);
+  const endedRef = useRef(false);
 
-  const generateLevel = useCallback((nextRound: number) => {
-    setProblem(makeProblem(nextRound, levelId));
+  useEffect(() => {
+    setCurrentLevel(Math.max(1, levelId));
+    setScore(0);
+    setTimeLeft(TOTAL_TIME_SECONDS);
+    setQuestion(generateQuestion(Math.max(1, levelId)));
     setSelectedOption(null);
+    setInputAnswer('');
+    setStreak(0);
+    setBestStreak(0);
+    setCorrectCount(0);
+    setFeedback(null);
+    setShakeShape(false);
+    setLocked(false);
+    endedRef.current = false;
   }, [levelId]);
 
   useEffect(() => {
-    setScore(0);
-    setTimeLeft(90 + (levelId * 5));
-    setCaptures(0);
-    setRoundIndex(0);
-    setFeedback(null);
-    setIsVictory(false);
-    setIsGameOver(false);
-    generateLevel(0);
-  }, [generateLevel, levelId]);
-
-  useEffect(() => {
-    if (isVictory || isGameOver || feedback) return undefined;
-
-    if (timeLeft <= 0) {
-      if (captures >= Math.ceil(TOTAL_CAPTURES * 0.7) || score >= targetScore) {
-        const stars = score >= targetScore * 1.9 ? 3 : score >= targetScore * 1.35 ? 2 : 1;
-        setIsVictory(true);
-        onVictory(stars, score);
-      } else {
-        setIsGameOver(true);
-        onGameOver(score);
-      }
-      return;
-    }
-
-    const interval = window.setTimeout(() => {
-      setTimeLeft((value) => value - 1);
-    }, 1000);
-    return () => window.clearTimeout(interval);
-  }, [captures, feedback, isGameOver, isVictory, onGameOver, onVictory, score, targetScore, timeLeft]);
-
-  const advanceAfterCorrect = (nextScore: number) => {
-    const nextCaptureCount = captures + 1;
-    const nextRound = roundIndex + 1;
-    setCaptures(nextCaptureCount);
-    setRoundIndex(nextRound);
-
-    if (nextCaptureCount >= TOTAL_CAPTURES || nextScore >= targetScore) {
-      const stars = nextScore >= targetScore * 1.9 ? 3 : nextScore >= targetScore * 1.35 ? 2 : 1;
-      setIsVictory(true);
-      onVictory(stars, nextScore);
-      return;
-    }
-
-    window.setTimeout(() => {
-      setFeedback(null);
-      generateLevel(nextRound);
-    }, 600);
-  };
-
-  const handleDeployCage = () => {
-    if (selectedOption === null || feedback || isVictory || isGameOver) return;
-
-    if (selectedOption === problem.perimeter) {
-      const earned = 220 + (levelId * 35) + Math.floor(timeLeft / 2);
-      const nextScore = score + earned;
-      setScore(nextScore);
-      setFeedback('correct');
-      confetti({
-        particleCount: 60,
-        spread: 56,
-        origin: { y: 0.62 },
-        colors: ['#fde047', '#38bdf8', '#4ade80'],
+    if (endedRef.current) return undefined;
+    const timer = window.setInterval(() => {
+      setTimeLeft((previous) => {
+        const drain = currentLevel >= 11 ? 0.16 : 0.1;
+        const next = Math.max(0, previous - drain);
+        if (next <= 0.001 && !endedRef.current) {
+          endedRef.current = true;
+          onGameOver(score);
+          return 0;
+        }
+        return next;
       });
-      advanceAfterCorrect(nextScore);
+    }, 100);
+    return () => window.clearInterval(timer);
+  }, [currentLevel, onGameOver, score]);
+
+  const streakGlow = useMemo(() => Math.min(32, 6 + streak * 3.2), [streak]);
+  const timerProgress = Math.max(0, Math.min(1, timeLeft / TOTAL_TIME_SECONDS));
+
+  const goNextQuestion = () => {
+    const nextLevel = currentLevel + 1;
+    setCurrentLevel(nextLevel);
+    setQuestion(generateQuestion(nextLevel));
+    setSelectedOption(null);
+    setInputAnswer('');
+    setFeedback(null);
+    setLocked(false);
+    setHighlightedEdgeId(null);
+  };
+
+  const handleCorrect = (submitted: number) => {
+    void submitted;
+    const earned = 140 + (currentLevel * 12) + (streak * 24) + Math.floor(timeLeft * 2);
+    const nextScore = score + earned;
+    const nextStreak = streak + 1;
+    const nextCorrect = correctCount + 1;
+
+    setScore(nextScore);
+    setStreak(nextStreak);
+    setBestStreak((previous) => Math.max(previous, nextStreak));
+    setCorrectCount(nextCorrect);
+    setFeedback({ type: 'correct', message: 'Correct perimeter! Great work.' });
+    setLocked(true);
+
+    confetti({
+      particleCount: 24,
+      spread: 44,
+      origin: { y: 0.65 },
+      colors: ['#22c55e', '#fde047', '#38bdf8'],
+    });
+
+    window.setTimeout(() => {
+      if (nextCorrect >= TARGET_CORRECT && !endedRef.current) {
+        endedRef.current = true;
+        onVictory(scoreToStars(nextScore), nextScore);
+        return;
+      }
+      goNextQuestion();
+    }, 520);
+  };
+
+  const handleIncorrect = () => {
+    setScore((previous) => Math.max(0, previous - 40));
+    setStreak(0);
+    setFeedback({
+      type: 'incorrect',
+      message: `Not quite. Correct perimeter: ${question.correctPerimeter} ${question.answerUnit}`,
+    });
+    setShakeShape(true);
+    setLocked(true);
+
+    window.setTimeout(() => setShakeShape(false), 380);
+    window.setTimeout(() => goNextQuestion(), 900);
+  };
+
+  const submitAnswer = (rawAnswer: number) => {
+    if (locked || feedback) return;
+    if (rawAnswer === question.correctPerimeter) {
+      handleCorrect(rawAnswer);
       return;
     }
-
-    setFeedback('incorrect');
-    setScore((value) => Math.max(0, value - 110));
-    window.setTimeout(() => {
-      setFeedback(null);
-      setSelectedOption(null);
-    }, 550);
+    handleIncorrect();
   };
+
+  const handleOptionTap = (option: number) => {
+    if (question.mode !== 'mcq' || locked) return;
+    setSelectedOption(option);
+    submitAnswer(option);
+  };
+
+  const handleInputPad = (token: string) => {
+    if (locked || question.mode !== 'input') return;
+    if (token === 'clear') {
+      setInputAnswer('');
+      return;
+    }
+    if (token === 'back') {
+      setInputAnswer((previous) => previous.slice(0, -1));
+      return;
+    }
+    if (inputAnswer.length >= 7) return;
+    setInputAnswer((previous) => `${previous}${token}`);
+  };
+
+  const canSubmitInput = question.mode === 'input' && inputAnswer.length > 0 && !locked;
 
   return (
-    <div className="relative flex h-full w-full flex-col items-center overflow-hidden p-2 font-sans pt-[env(safe-area-inset-top)] md:p-4">
-      <GameplaySceneBackdrop gameType="measurement_forge" />
+    <div className="fixed inset-0 overflow-hidden bg-[#030817]">
+      <img
+        src={perimeterBackground}
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,8,23,0.66),rgba(3,8,23,0.38)_22%,rgba(3,8,23,0.62)_100%)]" />
 
-      <div className="relative z-10 flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col gap-2 md:gap-4">
-        <GameplayHUD
-          title="Perimeter Path"
-          avatar={avatar}
-          score={score}
-          targetScore={targetScore}
-          timeLeft={timeLeft}
-          progress={progress}
-          accentText="text-cyan-900"
-          accentSoftBg="bg-cyan-100/80"
-          accentBorder="border-cyan-200/80"
-          progressBar="bg-gradient-to-r from-sky-400 via-cyan-400 to-emerald-400"
-          statLabel="Captures"
-          statValue={`${captures}/${TOTAL_CAPTURES}`}
-          compact
-        />
+      <motion.div
+        animate={{ x: [0, 10, 0, -10, 0], y: [0, 6, 0, -6, 0] }}
+        transition={{ duration: 12, ease: 'easeInOut', repeat: Infinity }}
+        className="pointer-events-none absolute -left-20 top-24 h-44 w-44 rounded-full bg-cyan-300/14 blur-3xl"
+      />
+      <motion.div
+        animate={{ x: [0, -12, 0, 12, 0], y: [0, -8, 0, 8, 0] }}
+        transition={{ duration: 14, ease: 'easeInOut', repeat: Infinity }}
+        className="pointer-events-none absolute -right-20 bottom-32 h-48 w-48 rounded-full bg-amber-300/16 blur-3xl"
+      />
 
-        <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden p-3 md:p-5">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(56,189,248,0.22),transparent_24%),radial-gradient(circle_at_82%_22%,rgba(250,204,21,0.16),transparent_20%),linear-gradient(180deg,rgba(8,15,30,0.14),rgba(8,15,30,0.34))]" />
-
-          <div className="relative z-10 mb-3 flex items-center justify-center">
-            <div className="licensed-game-card w-full max-w-[42rem] px-4 py-3 text-center md:px-5 md:py-4">
-              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/72">Capture Mission</div>
-              <div className="mt-1 text-[1.1rem] font-black leading-tight text-white md:text-[1.4rem]">
-                Calculate the perfect cage perimeter to trap the enemy.
-              </div>
-              <div className="mt-2 text-xs font-bold text-white/76 md:text-sm">
-                Length = {problem.length} m, Width = {problem.width} m. What perimeter is needed?
-              </div>
+      <div className="relative z-10 flex h-full flex-col px-3 pb-[max(6rem,calc(env(safe-area-inset-bottom)+5rem))] pt-[max(0.55rem,env(safe-area-inset-top))]">
+        <header className="shrink-0">
+          <div className="flex items-center gap-2">
+            <div className="rounded-full border border-sky-100/30 bg-sky-950/70 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-sky-100">
+              Level {currentLevel}
+            </div>
+            <div
+              className="rounded-full border border-amber-200/55 bg-amber-400/18 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-amber-100"
+              style={{ boxShadow: `0 0 ${streakGlow}px rgba(250,204,21,0.32)` }}
+            >
+              Streak x{streak}
+            </div>
+            <div className="rounded-full border border-white/25 bg-slate-950/62 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/90">
+              {correctCount}/{TARGET_CORRECT}
             </div>
           </div>
-
-          <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-3 md:gap-4">
-            <div className="licensed-game-card-dark relative flex min-h-[15rem] items-center justify-center overflow-hidden rounded-[1.75rem] p-4 md:min-h-[18rem]">
-              <CageBlueprint length={problem.length} width={problem.width} />
+          <div className="mt-2 flex items-center gap-2">
+            <div className="relative h-3 flex-1 overflow-hidden rounded-full border border-sky-100/35 bg-slate-950/60">
               <motion.div
-                animate={feedback === 'correct' ? { scale: [1, 1.08, 1] } : {}}
-                className="absolute bottom-4 right-4 rounded-full border border-yellow-200/65 bg-[linear-gradient(180deg,rgba(250,204,21,0.92),rgba(245,158,11,0.95))] px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-amber-950 shadow-[0_10px_18px_rgba(0,0,0,0.28)]"
-              >
-                P = 2 x (L + W)
-              </motion.div>
+                animate={{ width: `${timerProgress * 100}%` }}
+                transition={{ duration: 0.15, ease: 'linear' }}
+                className="absolute inset-y-0 left-0 rounded-full bg-[linear-gradient(90deg,#22c55e,#84cc16,#facc15,#f97316,#ef4444)]"
+              />
             </div>
+            <div className="w-11 text-right text-sm font-black text-white">{Math.ceil(timeLeft)}s</div>
+          </div>
+        </header>
 
-            <div className="licensed-game-card-dark rounded-[1.5rem] p-3 md:p-4">
-              <div className="mb-3 text-center text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/65">
-                Select Perimeter (metres)
+        <main className="mt-2 flex min-h-0 flex-1 flex-col gap-2">
+          <div className="shrink-0 rounded-2xl border border-sky-100/22 bg-slate-950/56 px-3 py-2 text-center shadow-[0_8px_20px_rgba(2,6,23,0.35)]">
+            <div className="text-sm font-black text-white">{question.prompt}</div>
+            <div className="mt-0.5 text-[11px] font-semibold text-sky-100/80">{question.hint}</div>
+          </div>
+
+          <motion.div
+            animate={shakeShape ? { x: [0, -9, 8, -7, 6, -4, 0] } : { x: 0 }}
+            transition={{ duration: 0.35 }}
+            className="relative min-h-0 flex-1 overflow-hidden rounded-2xl border border-white/22 bg-slate-950/40"
+          >
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(56,189,248,0.2),transparent_28%),radial-gradient(circle_at_50%_92%,rgba(250,204,21,0.15),transparent_30%)]" />
+            <div className="relative h-full w-full p-3">
+              <PerimeterShapeRenderer
+                shape={question.shape}
+                highlightedEdgeId={highlightedEdgeId}
+                onHighlightEdge={setHighlightedEdgeId}
+              />
+            </div>
+          </motion.div>
+
+          {question.mode === 'mcq' ? (
+            <div className="shrink-0 grid grid-cols-2 gap-2">
+              {question.options.map((option) => (
+                <motion.button
+                  key={option}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => handleOptionTap(option)}
+                  disabled={locked}
+                  className={`h-14 rounded-2xl border text-xl font-black shadow-[0_8px_16px_rgba(2,6,23,0.35)] ${
+                    selectedOption === option
+                      ? 'border-yellow-200/80 bg-[linear-gradient(180deg,#fcd34d,#f59e0b)] text-amber-950'
+                      : 'border-sky-100/30 bg-slate-900/72 text-white'
+                  }`}
+                >
+                  {option}
+                </motion.button>
+              ))}
+            </div>
+          ) : (
+            <div className="shrink-0 rounded-2xl border border-sky-100/25 bg-slate-950/54 p-2.5">
+              <div className="mb-2 flex items-center justify-between">
+                <div className="text-xs font-black uppercase tracking-[0.12em] text-sky-100/78">Answer ({question.answerUnit})</div>
+                <div className="rounded-xl border border-yellow-100/40 bg-amber-400/12 px-2.5 py-1 text-sm font-black text-amber-100">
+                  {inputAnswer || '—'}
+                </div>
               </div>
-              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-                {problem.options.map((option) => (
-                  <button
-                    key={option}
-                    type="button"
-                    onClick={() => setSelectedOption(option)}
-                    className={`rounded-[1rem] border px-4 py-4 text-center text-xl font-black transition-all ${
-                      selectedOption === option
-                        ? 'border-yellow-200/80 bg-[linear-gradient(180deg,#facc15,#f59e0b)] text-amber-950 shadow-[0_12px_20px_rgba(0,0,0,0.3)]'
-                        : 'border-sky-100/25 bg-[linear-gradient(180deg,rgba(30,58,138,0.92),rgba(15,23,42,0.95))] text-white hover:-translate-y-0.5'
-                    }`}
+
+              <div className="grid grid-cols-3 gap-2">
+                {['1', '2', '3', '4', '5', '6', '7', '8', '9', 'clear', '0', 'back'].map((key) => (
+                  <motion.button
+                    key={key}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleInputPad(key)}
+                    disabled={locked}
+                    className="h-11 rounded-xl border border-sky-100/28 bg-slate-900/72 text-base font-black text-white shadow-[0_6px_12px_rgba(2,6,23,0.3)]"
                   >
-                    {option}
-                  </button>
+                    {key === 'clear' ? 'C' : key === 'back' ? '⌫' : key}
+                  </motion.button>
                 ))}
               </div>
 
-              <div className="mt-4 flex justify-center">
-                <motion.button
-                  whileTap={{ scale: 0.97 }}
-                  onClick={handleDeployCage}
-                  disabled={selectedOption === null || !!feedback}
-                  className={`flex h-[3.4rem] min-w-[12rem] items-center justify-center gap-2 rounded-[1rem] border border-yellow-200/70 bg-[linear-gradient(180deg,#facc15,#f59e0b)] px-6 text-base font-black uppercase tracking-[0.14em] text-amber-950 shadow-[0_12px_22px_rgba(0,0,0,0.3)] ${
-                    selectedOption === null || feedback ? 'opacity-50' : 'hover:brightness-105'
-                  }`}
-                >
-                  <ShieldCheck className="h-5 w-5" />
-                  Deploy Cage
-                </motion.button>
-              </div>
-            </div>
-          </div>
-
-          <AnimatePresence>
-            {feedback && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center bg-black/20 backdrop-blur-[2px]"
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={() => {
+                  if (!canSubmitInput) return;
+                  submitAnswer(Number(inputAnswer));
+                }}
+                disabled={!canSubmitInput}
+                className="mt-2.5 h-12 w-full rounded-2xl border border-yellow-200/75 bg-[linear-gradient(180deg,#fde047,#f59e0b)] text-lg font-black uppercase tracking-[0.1em] text-amber-950 shadow-[0_10px_18px_rgba(2,6,23,0.35)] disabled:opacity-45"
               >
-                <div className={`rounded-[1.6rem] border px-8 py-5 text-center shadow-[0_20px_40px_rgba(0,0,0,0.35)] ${
-                  feedback === 'correct'
-                    ? 'border-emerald-300/65 bg-emerald-500/16 text-emerald-300'
-                    : 'border-rose-300/65 bg-rose-500/16 text-rose-300'
-                }`}>
-                  <div className="text-3xl font-black">{feedback === 'correct' ? 'Cage Locked!' : 'Wrong Perimeter'}</div>
-                  <div className="mt-2 text-sm font-bold text-white/84">
-                    {feedback === 'correct'
-                      ? 'Enemy captured. Move to the next target.'
-                      : 'Recalculate and try another cage size.'}
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+                Check
+              </motion.button>
+            </div>
+          )}
 
-        <div className="mx-auto w-full max-w-6xl">
+          <div className={`shrink-0 rounded-xl border px-3 py-2 text-center text-sm font-bold ${
+            feedback?.type === 'correct'
+              ? 'border-emerald-300/45 bg-emerald-400/16 text-emerald-100'
+              : feedback?.type === 'incorrect'
+              ? 'border-rose-300/45 bg-rose-400/16 text-rose-100'
+              : 'border-white/18 bg-slate-950/44 text-white/72'
+          }`}>
+            {feedback ? feedback.message : `Score ${score} • Best streak x${bestStreak}`}
+          </div>
+        </main>
+      </div>
+
+      <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.45rem,env(safe-area-inset-bottom))] z-40 flex justify-center">
+        <div className="pointer-events-auto">
           <GameActionDock onBack={onBack} compact />
         </div>
       </div>
