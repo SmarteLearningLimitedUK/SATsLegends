@@ -116,11 +116,11 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="inline-flex h-8 items-center gap-1.5 rounded-full border border-cyan-100/55 bg-cyan-300/20 px-2.5 text-xs font-black text-cyan-50 shadow-[0_0_14px_rgba(34,211,238,0.2)]">
+            <div className="inline-flex h-8 items-center gap-1.5 rounded-full border border-blue-100/65 bg-blue-500/30 px-2.5 text-xs font-black text-blue-50 shadow-[0_0_14px_rgba(59,130,246,0.32)]">
               <Timer className="h-3.5 w-3.5" />
               <span>{timeLeft}s</span>
             </div>
-            <div className="inline-flex h-8 items-center gap-1.5 rounded-full border border-red-200/70 bg-red-500/25 px-2.5 text-xs font-black text-red-50 shadow-[0_0_14px_rgba(239,68,68,0.35)]">
+            <div className="inline-flex h-8 items-center gap-1.5 rounded-full border border-blue-100/65 bg-blue-500/30 px-2.5 text-xs font-black text-blue-50 shadow-[0_0_14px_rgba(59,130,246,0.32)]">
               <Heart className="h-3.5 w-3.5 text-red-300" />
               <span>{lives}</span>
             </div>
