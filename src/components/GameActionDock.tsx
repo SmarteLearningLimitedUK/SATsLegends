@@ -21,6 +21,10 @@ const GameActionDock: React.FC<GameActionDockProps> = ({
   compact: _compact,
   variant = 'local',
 }) => {
+  if (variant !== 'global') {
+    return null;
+  }
+
   const [isMuted, setIsMuted] = useState(() => localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true');
 
   useEffect(() => {
@@ -53,9 +57,7 @@ const GameActionDock: React.FC<GameActionDockProps> = ({
     window.dispatchEvent(new Event(GAME_HUD_HELP_EVENT));
   };
 
-  const outerClass = variant === 'global'
-    ? 'mt-0.5 flex shrink-0 items-center justify-center'
-    : 'game-shell-zone game-shell-zone-actions mt-0.5 flex shrink-0 items-center justify-center';
+  const outerClass = 'mt-0.5 flex shrink-0 items-center justify-center';
 
   const actionButtonClass = 'inline-flex h-16 w-16 items-center justify-center rounded-[1.2rem] border-2 border-cyan-100/70 bg-[linear-gradient(180deg,#4f95ff_0%,#2f6ee8_52%,#2457c4_100%)] text-white shadow-[0_10px_20px_rgba(2,6,23,0.36),inset_0_1px_0_rgba(255,255,255,0.45)] transition hover:brightness-110 active:translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200';
 
