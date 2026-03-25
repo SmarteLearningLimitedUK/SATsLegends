@@ -1115,9 +1115,7 @@ const App: React.FC = () => {
   };
 
   const screenBehavior = SCREEN_BEHAVIOR[screen];
-  const isMapScreen = screen === 'world_map' || screen === 'island_levels';
-  const showBottomNav = screen === 'world_map';
-  const showGlobalDock = !isMapScreen;
+  const showGlobalDock = true;
   const isSplashScreen = screen === 'splash';
   const isAvatarSelectionScreen = screen === 'avatar_selection';
   const isGameplayScreen = screen === 'gameplay';
@@ -1131,11 +1129,6 @@ const App: React.FC = () => {
   // Keep only pure cinematic/map screens unbounded.
   // All gameplay runs inside the constrained stage for consistent accessibility.
   const useUnboundedStageShell = isSplashScreen || isAvatarSelectionScreen || isWorldMapScreen;
-  const bottomNavOffsetClass = showBottomNav
-    ? isWorldMapScreen
-      ? 'pb-[calc(6.75rem+env(safe-area-inset-bottom))] md:pb-[calc(2.4rem+env(safe-area-inset-bottom))]'
-      : 'pb-[calc(6.75rem+env(safe-area-inset-bottom))] md:pb-[calc(7.25rem+env(safe-area-inset-bottom))]'
-    : '';
   const globalDockOffsetClass = showGlobalDock && !isGameplayScreen
     ? 'pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-[calc(6.2rem+env(safe-area-inset-bottom))]'
     : '';
@@ -1177,7 +1170,7 @@ const App: React.FC = () => {
                 initial={{ opacity: 0, scale: screenEnterScale }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: screenExitScale }}
-                className={`app-screen-content relative z-10 flex min-h-0 w-full flex-1 justify-center pointer-events-auto ${screenBehavior.scrollable ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'} ${contentShellClass} ${bottomNavOffsetClass} ${globalDockOffsetClass}`}
+                className={`app-screen-content relative z-10 flex min-h-0 w-full flex-1 justify-center pointer-events-auto ${screenBehavior.scrollable ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'} ${contentShellClass} ${globalDockOffsetClass}`}
                 style={screenBehavior.scrollable ? { WebkitOverflowScrolling: 'touch' } : undefined}
               >
                 {renderScreen()}
@@ -1260,67 +1253,6 @@ const App: React.FC = () => {
               )
             }
 
-            {
-              showBottomNav && (
-                <div className={`pointer-events-none fixed inset-x-0 z-50 flex justify-center px-3 ${
-                  isWorldMapScreen
-                    ? 'bottom-[calc(0.75rem+env(safe-area-inset-bottom))] md:bottom-[calc(1rem+env(safe-area-inset-bottom))]'
-                    : 'bottom-[calc(0.75rem+env(safe-area-inset-bottom))] md:bottom-6'
-                }`}>
-                  <div className={`pointer-events-auto flex w-full max-w-3xl flex-col items-center ${
-                    isWorldMapScreen ? 'gap-2 md:gap-1' : 'gap-2 md:gap-3'
-                  }`}>
-                    <div className={`casual-ribbon-chip hidden items-center gap-2 rounded-full px-3 py-1.5 shadow-[0_12px_30px_rgba(0,0,0,0.22)] md:px-4 md:py-2 ${
-                      isWorldMapScreen ? 'lg:inline-flex' : 'md:inline-flex'
-                    }`}>
-                      <AssetIcon name="star" className="h-4 w-4" />
-                      <span className="text-[9px] font-black uppercase tracking-[0.24em] md:text-[10px]">Adventure mode</span>
-                    </div>
-                    <nav className={`casual-nav-shell ${isWorldMapScreen ? 'worldmap-bottom-nav' : ''} flex w-full items-center justify-between rounded-[2rem] px-2 py-2 ${
-                      isWorldMapScreen
-                        ? 'max-w-[28rem] md:max-w-[32rem] md:px-3 md:py-2.5'
-                        : 'max-w-[28rem] md:max-w-3xl md:px-4 md:py-3'
-                    }`}>
-                      <motion.button
-                        whileTap={{ scale: 0.96, y: 1 }}
-                        onClick={goToHome}
-                        className={`ui-icon-button hero-nav-button worldmap-nav-tab hero-nav-button-home flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'world_map' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
-                      >
-                        <AssetIcon name="home" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
-                        <span className="hero-nav-label text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Home</span>
-                      </motion.button>
-                      <motion.button
-                        whileTap={{ scale: 0.96, y: 1 }}
-                        onClick={() => setScreen('avatar_selection')}
-                        className={`ui-icon-button hero-nav-button worldmap-nav-tab hero-nav-button-hero flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'avatar_selection' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
-                      >
-                        <AssetIcon name="user" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
-                        <span className="hero-nav-label text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Hero</span>
-                      </motion.button>
-                      <motion.button
-                        whileTap={{ scale: 0.96, y: 1 }}
-                        onClick={() => setShowAchievements(true)}
-                        className="ui-icon-button hero-nav-button worldmap-nav-tab hero-nav-button-idle hero-nav-button-wins relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3"
-                      >
-                        <AssetIcon name="medal" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
-                        <span className="hero-nav-label text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Wins</span>
-                        {(player.achievements?.length || 0) > 0 && (
-                          <span className="absolute right-2 top-1 h-3 w-3 rounded-full border-2 border-white bg-yellow-400" />
-                        )}
-                      </motion.button>
-                      <motion.button
-                        whileTap={{ scale: 0.96, y: 1 }}
-                        onClick={() => setScreen('parent_dashboard')}
-                        className={`ui-icon-button hero-nav-button worldmap-nav-tab hero-nav-button-stats flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.25rem] px-2 py-2 transition-all md:flex-none md:px-3 ${screen === 'parent_dashboard' ? 'hero-nav-button-active casual-nav-button-active scale-[1.02] shadow-lg' : 'hero-nav-button-idle'}`}
-                      >
-                        <AssetIcon name="gear" className="hero-nav-icon h-5 w-5 md:h-6 md:w-6" />
-                        <span className="hero-nav-label text-[9px] font-black uppercase tracking-[0.18em] md:text-[10px] md:tracking-[0.22em]">Stats</span>
-                      </motion.button>
-                    </nav>
-                  </div>
-                </div>
-              )
-            }
           </div>
         </div>
       </div>
