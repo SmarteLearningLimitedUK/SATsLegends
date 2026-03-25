@@ -24,6 +24,10 @@ type FeedbackState = 'default' | 'selected' | 'correct' | 'incorrect';
 const OPTIONS = ['8', '10', '12', '14'] as const;
 const CORRECT = '10';
 const ROUND_TIME_SECONDS = 83;
+const HUD_PLATE_HEIGHT = 44;
+const HUD_AVATAR_WIDTH = Math.round((HUD_PLATE_HEIGHT * 931) / 365);
+const HUD_TIMER_WIDTH = Math.round((HUD_PLATE_HEIGHT * 977) / 247);
+const HUD_LIVES_SIZE = 42;
 
 const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
   avatarId,
@@ -113,31 +117,39 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
       <div className="pointer-events-none absolute inset-0 opacity-[0.22] [background:radial-gradient(circle_at_16%_22%,#ffffff_0,transparent_3px),radial-gradient(circle_at_82%_17%,#ffffff_0,transparent_2px),radial-gradient(circle_at_34%_78%,#ffffff_0,transparent_2px),radial-gradient(circle_at_64%_66%,#ffffff_0,transparent_2px)]" />
 
       <div className="relative z-10 flex h-full w-full flex-col px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(0.8rem,env(safe-area-inset-top))] text-slate-100 sm:px-4">
-        <header className="mb-3 flex shrink-0 items-center justify-between gap-1.5">
-          <div className="relative h-[52px] w-[clamp(7.4rem,34vw,10.6rem)] shrink-0">
-            <img
-              src={hudAvatarNameFrame}
-              alt=""
-              aria-hidden="true"
-              draggable={false}
-              className="absolute inset-0 h-full w-full object-contain"
-            />
-            <div className="absolute left-[4.8%] top-1/2 h-[70%] w-[29%] -translate-y-1/2 overflow-hidden rounded-[0.58rem]">
+        <header className="mb-3 flex min-h-[52px] shrink-0 items-center justify-between gap-2 px-[2px]">
+          <div className="flex min-w-0 items-center">
+            <div
+              className="relative shrink-0"
+              style={{ height: HUD_PLATE_HEIGHT, width: HUD_AVATAR_WIDTH }}
+            >
               <img
-                src={avatar?.portrait || avatar?.image}
+                src={hudAvatarNameFrame}
                 alt=""
                 aria-hidden="true"
                 draggable={false}
-                className="h-full w-full object-contain"
+                className="absolute inset-0 h-full w-full object-contain"
               />
+              <div className="absolute left-[4.8%] top-1/2 h-[70%] w-[29%] -translate-y-1/2 overflow-hidden rounded-[0.54rem]">
+                <img
+                  src={avatar?.portrait || avatar?.image}
+                  alt=""
+                  aria-hidden="true"
+                  draggable={false}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <p className="absolute left-[37%] right-[12%] top-1/2 -translate-y-1/2 truncate text-[clamp(0.68rem,1.85vw,0.9rem)] font-black uppercase tracking-[0.045em] text-slate-100">
+                Explorer
+              </p>
             </div>
-            <p className="absolute left-[37%] right-[12%] top-1/2 -translate-y-1/2 truncate text-[clamp(0.68rem,1.78vw,0.9rem)] font-black uppercase tracking-[0.045em] text-slate-100">
-              Explorer
-            </p>
           </div>
 
-          <div className="flex min-w-0 items-center gap-1">
-            <div className="relative h-[52px] w-[clamp(7.1rem,33vw,10.4rem)] shrink-0">
+          <div className="flex shrink-0 items-center gap-1">
+            <div
+              className="relative shrink-0"
+              style={{ height: HUD_PLATE_HEIGHT, width: HUD_TIMER_WIDTH }}
+            >
               <img
                 src={hudTimerFrame}
                 alt=""
@@ -145,7 +157,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
                 draggable={false}
                 className="absolute inset-0 h-full w-full object-contain"
               />
-              <div className="absolute left-[22%] right-[6%] top-[30%] h-[40%] overflow-hidden rounded-full border border-cyan-100/45 bg-slate-950/55">
+              <div className="absolute left-[22%] right-[6.4%] top-[30%] h-[40%] overflow-hidden rounded-full border border-cyan-100/45 bg-slate-950/55">
                 <div
                   className="absolute inset-y-[2px] left-[2px] rounded-full bg-[linear-gradient(90deg,#6dff4a_0%,#22d34e_58%,#14b8a6_100%)] shadow-[0_0_10px_rgba(74,222,128,0.55)] transition-all duration-300"
                   style={{ width: `calc(${timerProgress * 100}% - 4px)` }}
@@ -156,7 +168,10 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
               </span>
             </div>
 
-            <div className="inline-flex h-10 min-w-[2.85rem] items-center justify-center gap-1 rounded-full border border-cyan-100/65 bg-[linear-gradient(180deg,#1f5ab0_0%,#1e3f89_100%)] px-1.5 text-[0.78rem] font-black text-slate-100 shadow-[0_8px_16px_rgba(2,6,23,0.35)]">
+            <div
+              className="inline-flex shrink-0 items-center justify-center gap-1 rounded-full border border-cyan-100/65 bg-[linear-gradient(180deg,#1f5ab0_0%,#1e3f89_100%)] px-1.5 text-[0.88rem] font-black text-slate-100 shadow-[0_8px_16px_rgba(2,6,23,0.35)]"
+              style={{ width: HUD_LIVES_SIZE, height: HUD_LIVES_SIZE }}
+            >
               <img
                 src={heartIcon}
                 alt=""
