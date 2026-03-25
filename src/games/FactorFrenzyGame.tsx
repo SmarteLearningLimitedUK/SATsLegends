@@ -91,6 +91,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
 
   const timerRef = useRef<number | null>(null);
+  const advanceRef = useRef<number | null>(null);
   const endedRef = useRef(false);
 
   const getFactors = (n: number): number[] => {
@@ -204,7 +205,17 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     }
   };
 
-  useEffect(() => () => clearTimer(), []);
+  const clearAdvanceTimer = () => {
+    if (advanceRef.current !== null) {
+      window.clearTimeout(advanceRef.current);
+      advanceRef.current = null;
+    }
+  };
+
+  useEffect(() => () => {
+    clearTimer();
+    clearAdvanceTimer();
+  }, []);
 
   const getLevelFromScore = useCallback((score: number) => {
     const currentLevel = [...FRENZY_LEVELS].reverse().find((level) => score >= level.threshold) || FRENZY_LEVELS[0];
@@ -324,6 +335,18 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     }));
     setSelectedOptions([]);
   };
+
+  useEffect(() => {
+    clearAdvanceTimer();
+    if (state.status !== 'correct' && state.status !== 'incorrect') return;
+
+    const delay = state.status === 'correct' ? 620 : 880;
+    advanceRef.current = window.setTimeout(() => {
+      nextProblem();
+    }, delay);
+
+    return () => clearAdvanceTimer();
+  }, [state.status]);
 
   const submitRun = () => {
     if (endedRef.current) return;
@@ -475,22 +498,20 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                       >
                         Submit Data
                       </button>
-                    ) : (
+                    ) : state.status === 'gameover' ? (
                       <motion.button
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         onClick={nextProblem}
-                        className={`inline-flex w-full max-w-sm items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm font-black uppercase tracking-[0.14em] shadow-[0_10px_20px_rgba(2,6,23,0.35)] ${
-                          state.status === 'correct'
-                            ? 'border-emerald-100/70 bg-emerald-500/28 text-emerald-50'
-                            : state.status === 'gameover'
-                              ? 'border-rose-100/70 bg-rose-500/30 text-rose-50'
-                              : 'border-amber-100/70 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] text-slate-900'
-                        }`}
+                        className="inline-flex w-full max-w-sm items-center justify-center gap-2 rounded-2xl border border-rose-100/70 bg-rose-500/30 px-4 py-3 text-sm font-black uppercase tracking-[0.14em] text-rose-50 shadow-[0_10px_20px_rgba(2,6,23,0.35)]"
                       >
-                        {state.status === 'correct' ? 'Next Challenge' : state.status === 'gameover' ? 'Submit Loss' : 'Try Again'}
+                        Submit Loss
                         <ChevronRight className="h-4 w-4" />
                       </motion.button>
+                    ) : (
+                      <div className="inline-flex w-full max-w-sm items-center justify-center rounded-2xl border border-cyan-100/45 bg-[#0d2a5a]/70 px-4 py-3 text-xs font-black uppercase tracking-[0.14em] text-cyan-100/95">
+                        {state.status === 'correct' ? 'Great answer • loading next challenge' : 'Not quite • loading next challenge'}
+                      </div>
                     )}
                   </div>
 
