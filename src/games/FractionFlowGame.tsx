@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { ChevronLeft, CircleDollarSign } from 'lucide-react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
-import AssetIcon from '../components/AssetIcon';
 import ribbonAsset from '../assets/casual_ui/dialogs_panels/ribbon_1.png';
 import { triggerHaptic } from '../haptics';
 
 interface FractionFlowGameProps {
   levelId: number;
+  miniGameLevel?: number;
   avatarId: string;
+  useSharedTopHud?: boolean;
   isBoss?: boolean;
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
@@ -151,11 +151,13 @@ const FractionCardTile: React.FC<{
 
 const FractionFlowGame: React.FC<FractionFlowGameProps> = ({
   levelId,
+  miniGameLevel,
   avatarId: _avatarId,
+  useSharedTopHud = false,
   isBoss: _isBoss = false,
   onVictory,
   onGameOver,
-  onBack,
+  onBack: _onBack,
 }) => {
   const [viewport, setViewport] = useState(() => ({
     width: typeof window === 'undefined' ? 390 : window.innerWidth,
@@ -179,15 +181,29 @@ const FractionFlowGame: React.FC<FractionFlowGameProps> = ({
   const scoreRef = useRef(0);
   scoreRef.current = score;
 
-  const resolvedLevel = useMemo(() => Math.max(1, Math.min(10, levelId || 1)), [levelId]);
+  const resolvedLevel = useMemo(
+    () => Math.max(1, Math.min(10, miniGameLevel || levelId || 1)),
+    [levelId, miniGameLevel],
+  );
   const totalRounds = useMemo(() => Math.min(10, 6 + Math.floor(resolvedLevel / 2)), [resolvedLevel]);
+  const bubbles = useMemo(
+    () => Array.from({ length: 14 }, (_, index) => ({
+      id: `bubble-${index}`,
+      left: 8 + (index * 6.1),
+      size: 8 + ((index * 3) % 12),
+      delay: (index * 0.4) % 3,
+      duration: 5.4 + ((index * 0.73) % 2.8),
+      drift: ((index % 2 === 0 ? 1 : -1) * (4 + (index % 5))),
+    })),
+    [],
+  );
 
   const layout = useMemo(() => {
     const isTablet = Math.min(viewport.width, viewport.height) >= 760;
     const isTallPhone = !isTablet && (viewport.height / Math.max(1, viewport.width) > 1.9);
     return {
-      targetY: isTablet ? 58 : (isTallPhone ? 58 : 56.5),
-      sourceY: isTablet ? 78 : (isTallPhone ? 78 : 77),
+      targetY: isTablet ? 53.5 : (isTallPhone ? 55.5 : 54.5),
+      sourceY: isTablet ? 73.5 : (isTallPhone ? 75 : 74),
       cardSize: {
         width: isTablet ? 120 : 92,
         height: isTablet ? 154 : 118,
@@ -196,8 +212,8 @@ const FractionFlowGame: React.FC<FractionFlowGameProps> = ({
         width: isTablet ? 114 : 86,
         height: isTablet ? 132 : 102,
       },
-      ribbonWidth: isTablet ? 56 : 86,
-      ribbonTop: isTablet ? 12.5 : 12.5,
+      ribbonWidth: isTablet ? 58 : 88,
+      ribbonTop: isTablet ? 7.2 : 8.2,
     };
   }, [viewport.height, viewport.width]);
 
@@ -462,28 +478,50 @@ const FractionFlowGame: React.FC<FractionFlowGameProps> = ({
     <div className="relative h-full w-full overflow-hidden select-none text-white">
       <GameplaySceneBackdrop gameType="fraction_match" className="opacity-[0.98]" />
       <div className="absolute inset-0 bg-gradient-to-b from-[#050a1bd1] via-[#07122bc4] to-[#030816eb]" />
-
-      <div className="absolute left-0 right-0 z-30 flex items-center justify-between px-3 py-2 md:px-5" style={{ top: 'calc(env(safe-area-inset-top) + 2px)' }}>
-        <button
-          type="button"
-          onClick={onBack}
-          className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-200/45 bg-[#0a1f56]/88 shadow-[0_8px_20px_rgba(0,0,0,0.45)]"
-          aria-label="Back"
-        >
-          <ChevronLeft className="h-5 w-5 text-cyan-100" />
-        </button>
-        <div className="flex items-center gap-2 rounded-xl border border-cyan-200/45 bg-[#0a1f56]/92 px-3 py-2 shadow-[0_8px_20px_rgba(0,0,0,0.45)]">
-          <AssetIcon name="timer" className="h-4 w-4" />
-          <span className="text-xs font-black tabular-nums">{timeLeft}s</span>
-          <span className="h-4 w-px bg-cyan-100/35" />
-          <CircleDollarSign className="h-4 w-4 text-yellow-300" />
-          <span className="text-xs font-black tabular-nums">{score}</span>
-        </div>
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <motion.div
+          className="absolute left-[-12%] top-[47%] h-14 w-[124%] rounded-[999px] border-t-2 border-cyan-200/40 bg-gradient-to-b from-cyan-300/22 via-cyan-300/8 to-transparent"
+          animate={{ x: [-20, 18, -20], opacity: [0.36, 0.62, 0.36] }}
+          transition={{ duration: 6.4, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute left-[-10%] top-[51%] h-12 w-[120%] rounded-[999px] border-t-2 border-blue-200/35 bg-gradient-to-b from-cyan-200/18 via-blue-300/8 to-transparent"
+          animate={{ x: [18, -14, 18], opacity: [0.28, 0.48, 0.28] }}
+          transition={{ duration: 5.3, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        {bubbles.map((bubble) => (
+          <motion.span
+            key={bubble.id}
+            className="absolute rounded-full border border-cyan-100/35 bg-cyan-200/12 shadow-[0_0_8px_rgba(34,211,238,0.35)]"
+            style={{
+              left: `${bubble.left}%`,
+              width: bubble.size,
+              height: bubble.size,
+              bottom: '-8%',
+            }}
+            animate={{
+              y: ['0%', '-122%'],
+              x: [0, bubble.drift, 0],
+              opacity: [0, 0.55, 0],
+              scale: [0.8, 1, 0.9],
+            }}
+            transition={{
+              duration: bubble.duration,
+              delay: bubble.delay,
+              repeat: Infinity,
+              ease: 'easeOut',
+            }}
+          />
+        ))}
       </div>
 
       <div
         ref={playfieldRef}
-        className="relative z-20 flex h-full w-full flex-col items-center justify-start px-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-[calc(env(safe-area-inset-top)+3.9rem)]"
+        className={`relative z-20 flex h-full w-full flex-col items-center justify-start px-4 pb-[calc(env(safe-area-inset-bottom)+5.2rem)] ${
+          useSharedTopHud
+            ? 'pt-[calc(env(safe-area-inset-top)+5.5rem)]'
+            : 'pt-[calc(env(safe-area-inset-top)+2.5rem)]'
+        }`}
       >
         <div className="relative w-[min(92vw,720px)]" style={{ marginTop: `${layout.ribbonTop}%`, maxWidth: `${layout.ribbonWidth}%` }}>
           <img src={ribbonAsset} alt="" className="h-auto w-full object-contain" draggable={false} />

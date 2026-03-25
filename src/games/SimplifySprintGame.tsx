@@ -8,7 +8,9 @@ import { triggerHaptic } from '../haptics';
 
 interface SimplifySprintGameProps {
   levelId: number;
+  miniGameLevel?: number;
   avatarId: string;
+  useSharedTopHud?: boolean;
   isBoss?: boolean;
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
@@ -128,13 +130,18 @@ const FractionView: React.FC<{ pair: FractionPair; className?: string }> = ({ pa
 
 const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
   levelId,
+  miniGameLevel,
   avatarId: _avatarId,
+  useSharedTopHud = false,
   isBoss: _isBoss = false,
   onVictory,
   onGameOver,
   onBack,
 }) => {
-  const resolvedLevel = useMemo(() => Math.max(1, Math.min(10, levelId || 1)), [levelId]);
+  const resolvedLevel = useMemo(
+    () => Math.max(1, Math.min(10, miniGameLevel || levelId || 1)),
+    [levelId, miniGameLevel],
+  );
   const totalRounds = useMemo(() => Math.min(12, 6 + Math.floor(resolvedLevel / 2)), [resolvedLevel]);
   const initialTime = useMemo(() => Math.max(36, 64 - (resolvedLevel * 2)), [resolvedLevel]);
 
@@ -246,30 +253,38 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
       <GameplaySceneBackdrop gameType="fraction_match" className="opacity-[0.98]" />
       <div className="absolute inset-0 bg-gradient-to-b from-[#050a1bd1] via-[#07122bc4] to-[#030816eb]" />
 
-      <div className="absolute left-0 right-0 z-30 flex items-center justify-between px-3 py-2 md:px-5" style={{ top: 'calc(env(safe-area-inset-top) + 2px)' }}>
-        <button
-          type="button"
-          onClick={onBack}
-          className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-200/45 bg-[#0a1f56]/88 shadow-[0_8px_20px_rgba(0,0,0,0.45)]"
-          aria-label="Back"
-        >
-          <ChevronLeft className="h-5 w-5 text-cyan-100" />
-        </button>
-        <div className="flex items-center gap-2 rounded-xl border border-cyan-200/45 bg-[#0a1f56]/92 px-3 py-2 shadow-[0_8px_20px_rgba(0,0,0,0.45)]">
-          <AssetIcon name="timer" className="h-4 w-4" />
-          <span className="text-xs font-black tabular-nums">{timeLeft}s</span>
-          <span className="h-4 w-px bg-cyan-100/35" />
-          <CircleDollarSign className="h-4 w-4 text-yellow-300" />
-          <span className="text-xs font-black tabular-nums">{score}</span>
+      {!useSharedTopHud && (
+        <div className="absolute left-0 right-0 z-30 flex items-center justify-between px-3 py-2 md:px-5" style={{ top: 'calc(env(safe-area-inset-top) + 2px)' }}>
+          <button
+            type="button"
+            onClick={onBack}
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-200/45 bg-[#0a1f56]/88 shadow-[0_8px_20px_rgba(0,0,0,0.45)]"
+            aria-label="Back"
+          >
+            <ChevronLeft className="h-5 w-5 text-cyan-100" />
+          </button>
+          <div className="flex items-center gap-2 rounded-xl border border-cyan-200/45 bg-[#0a1f56]/92 px-3 py-2 shadow-[0_8px_20px_rgba(0,0,0,0.45)]">
+            <AssetIcon name="timer" className="h-4 w-4" />
+            <span className="text-xs font-black tabular-nums">{timeLeft}s</span>
+            <span className="h-4 w-px bg-cyan-100/35" />
+            <CircleDollarSign className="h-4 w-4 text-yellow-300" />
+            <span className="text-xs font-black tabular-nums">{score}</span>
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="relative z-20 flex h-full w-full flex-col items-center justify-start px-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-[calc(env(safe-area-inset-top)+3.9rem)]">
+      <div
+        className={`relative z-20 flex h-full w-full flex-col items-center justify-start px-4 pb-[calc(env(safe-area-inset-bottom)+4.9rem)] ${
+          useSharedTopHud
+            ? 'pt-[calc(env(safe-area-inset-top)+5.45rem)]'
+            : 'pt-[calc(env(safe-area-inset-top)+3.9rem)]'
+        }`}
+      >
         <div className="relative w-[min(92vw,720px)]">
           <img src={ribbonAsset} alt="" className="h-auto w-full object-contain" draggable={false} />
-          <div className="absolute inset-0 flex items-center justify-center px-[10%] pt-[5%] text-center">
-            <span className="text-[clamp(1rem,2.8vw,2rem)] font-black leading-tight text-yellow-50 drop-shadow-[0_2px_2px_rgba(0,0,0,0.75)]">
-              Simplify this fraction
+          <div className="absolute inset-0 flex items-center justify-center px-[14%] pt-[4%] text-center">
+            <span className="max-w-[82%] text-[clamp(0.92rem,2.35vw,1.66rem)] font-black leading-[1.05] text-yellow-50 drop-shadow-[0_2px_2px_rgba(0,0,0,0.75)]">
+              Simplify This Fraction
             </span>
           </div>
         </div>

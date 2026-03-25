@@ -8,7 +8,9 @@ import { triggerHaptic } from '../haptics';
 
 interface FractionForgeGameProps {
   levelId: number;
+  miniGameLevel?: number;
   avatarId: string;
+  useSharedTopHud?: boolean;
   isBoss?: boolean;
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
@@ -161,11 +163,13 @@ const FractionCardTile: React.FC<{
 
 const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   levelId,
+  miniGameLevel,
   avatarId: _avatarId,
+  useSharedTopHud = false,
   isBoss: _isBoss = false,
   onVictory,
   onGameOver,
-  onBack,
+  onBack: _onBack,
 }) => {
   const [viewport, setViewport] = useState(() => ({
     width: typeof window === 'undefined' ? 390 : window.innerWidth,
@@ -189,7 +193,10 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   const scoreRef = useRef(0);
   scoreRef.current = score;
 
-  const resolvedLevel = useMemo(() => Math.max(1, Math.min(10, levelId || 1)), [levelId]);
+  const resolvedLevel = useMemo(
+    () => Math.max(1, Math.min(10, miniGameLevel || levelId || 1)),
+    [levelId, miniGameLevel],
+  );
   const totalRounds = useMemo(() => Math.min(9, 5 + Math.floor(resolvedLevel / 2)), [resolvedLevel]);
 
   const layout = useMemo(() => {
@@ -209,8 +216,12 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     const slotWidth = Math.round(cardWidth * 0.94);
     const slotHeight = Math.round(cardHeight * 0.86);
 
-    const hudTopReserve = isTablet ? 98 : 84;
-    const hudBottomReserve = isTablet ? 92 : 84;
+    const hudTopReserve = useSharedTopHud
+      ? (isTablet ? 138 : 122)
+      : (isTablet ? 98 : 84);
+    const hudBottomReserve = useSharedTopHud
+      ? (isTablet ? 126 : 112)
+      : (isTablet ? 92 : 84);
     const usableTop = hudTopReserve;
     const usableBottom = Math.max(usableTop + 340, viewport.height - hudBottomReserve);
     const usableHeight = Math.max(340, usableBottom - usableTop);
@@ -221,12 +232,12 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     const pedestalTop = targetTop + (slotHeight * 0.58);
 
     const goblinWidth = Math.round(
-      clamp(isTablet ? viewport.width * 0.24 : viewport.width * 0.28, isTablet ? 210 : 164, isTablet ? 330 : 220),
+      clamp(isTablet ? viewport.width * 0.26 : viewport.width * 0.3, isTablet ? 224 : 188, isTablet ? 346 : 244),
     );
     const goblinHeightEstimate = goblinWidth * 1.28;
-    const suggestedGoblinTop = sourceTop + (cardHeight * 0.28);
-    const maxGoblinTop = targetTop - (slotHeight * 1.02) - (goblinHeightEstimate * 0.42);
-    const goblinTop = Math.max(usableTop + 120, Math.min(suggestedGoblinTop, maxGoblinTop));
+    const suggestedGoblinTop = sourceTop + (cardHeight * 0.52);
+    const maxGoblinTop = targetTop - (slotHeight * 1.02) - (goblinHeightEstimate * 0.86);
+    const goblinTop = Math.max(usableTop + 138, Math.min(suggestedGoblinTop, maxGoblinTop));
 
     const livesTop = clamp(
       goblinTop + (goblinHeightEstimate * 0.4),
@@ -255,9 +266,9 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
       sourceAnchors,
       targetAnchors,
       ribbonTop,
-      ribbonWidth: isTablet ? 56 : 86,
+      ribbonWidth: isTablet ? 72 : 92,
     };
-  }, [round.cards.length, viewport.height, viewport.width]);
+  }, [round.cards.length, useSharedTopHud, viewport.height, viewport.width]);
 
   const activeTargetAnchors = layout.targetAnchors;
   const activeSourceAnchors = layout.sourceAnchors;
@@ -507,36 +518,22 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
       <GameplaySceneBackdrop gameType="take_out_rush" className="opacity-[0.92]" />
       <div className="absolute inset-0 bg-gradient-to-b from-[#060f2ccc] via-[#0b1a4694] to-[#050b1acc]" />
 
-      <div
-        className="absolute left-0 right-0 z-30 flex items-center justify-between px-3 py-2 md:px-6"
-        style={{ top: 'calc(env(safe-area-inset-top) + 4px)' }}
-      >
-        <button
-          type="button"
-          onClick={onBack}
-          className="flex items-center gap-2 rounded-2xl border border-cyan-200/40 bg-[#0a1f56]/85 px-3 py-2 shadow-[0_10px_22px_rgba(0,0,0,0.45)]"
-        >
-          <AssetIcon name="back" className="h-5 w-5" />
-          <span className="text-xs font-black uppercase tracking-[0.14em] text-cyan-100">Back</span>
-        </button>
-
-        <div className="flex items-center gap-2 rounded-2xl border border-cyan-200/40 bg-[#0a1f56]/85 px-3 py-2 shadow-[0_10px_22px_rgba(0,0,0,0.45)]">
-          <AssetIcon name="timer" className="h-5 w-5" />
-          <span className="text-sm font-black tabular-nums text-yellow-100">{timeLeft}s</span>
-          <span className="mx-1 h-4 w-px bg-cyan-100/30" />
-          <AssetIcon name="coin" className="h-5 w-5" />
-          <span className="text-sm font-black tabular-nums text-yellow-100">{score}</span>
-        </div>
-      </div>
-
       <div ref={playfieldRef} className="relative h-full w-full">
         <div
           className="pointer-events-none absolute left-1/2 z-20 -translate-x-1/2"
           style={{ top: layout.ribbonTop, width: `${layout.ribbonWidth}%` }}
         >
           <img src={ribbonAsset} alt="" className="h-auto w-full object-contain" draggable={false} />
-          <div className="absolute inset-0 flex items-center justify-center px-[10%] pt-[5%] text-center">
-            <span className="text-[clamp(0.9rem,2.5vw,2.1rem)] font-black leading-tight text-yellow-50 drop-shadow-[0_2px_2px_rgba(0,0,0,0.7)]">
+          <div className="absolute inset-0 flex items-center justify-center overflow-hidden px-[10%] pt-[5%] text-center">
+            <span
+              className="max-w-[94%] text-[clamp(0.72rem,2.1vw,1.45rem)] font-black leading-tight text-yellow-50 drop-shadow-[0_2px_2px_rgba(0,0,0,0.7)]"
+              style={{
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+              }}
+            >
               {round.prompt}
             </span>
           </div>
@@ -568,7 +565,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
           draggable={false}
           animate={{ y: [0, -7, 0] }}
           transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
-          className="pointer-events-none absolute right-[3%] z-20 drop-shadow-[0_18px_28px_rgba(0,0,0,0.65)]"
+          className="pointer-events-none absolute right-[6%] z-20 opacity-100 drop-shadow-[0_18px_28px_rgba(0,0,0,0.65)]"
           style={{ top: layout.goblinTop, width: layout.goblinWidth }}
         />
 

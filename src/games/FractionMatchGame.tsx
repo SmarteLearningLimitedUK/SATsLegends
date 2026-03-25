@@ -5,7 +5,9 @@ import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 
 interface FractionMatchGameProps {
   levelId: number;
+  miniGameLevel?: number;
   avatarId: string;
+  useSharedTopHud?: boolean;
   isBoss?: boolean;
   variantGameType?: 'fraction_match' | 'cloud_collapse';
   onVictory: (stars: number, score: number) => void;
@@ -221,8 +223,17 @@ const MatchGameShell: React.FC<{
   timerProgress: number;
   levelName: string;
   variantGameType: 'fraction_match' | 'cloud_collapse';
+  useSharedTopHud?: boolean;
   onBack: () => void;
-}> = ({ children, score, timerProgress, levelName, variantGameType, onBack }) => {
+}> = ({
+  children,
+  score,
+  timerProgress,
+  levelName,
+  variantGameType,
+  useSharedTopHud = false,
+  onBack,
+}) => {
   return (
     <div className="relative h-full w-full select-none overflow-hidden font-sans text-white">
       <GameplaySceneBackdrop gameType={variantGameType} className="opacity-[0.96]" />
@@ -241,37 +252,60 @@ const MatchGameShell: React.FC<{
       </div>
 
       <div className="relative z-10 flex h-full w-full min-h-0 flex-col">
-        <div className="flex items-center gap-3 px-3 pb-2 pt-[calc(env(safe-area-inset-top)+0.35rem)] sm:px-5">
-          <button
-            type="button"
-            onClick={onBack}
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-200/45 bg-[#0a1f56]/88 shadow-[0_8px_20px_rgba(0,0,0,0.45)]"
-            aria-label="Back"
-          >
-            <ChevronLeft className="h-5 w-5 text-cyan-100" />
-          </button>
-          <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-            <div className="flex items-center justify-between gap-2">
-              <span className="truncate text-sm font-black uppercase tracking-[0.12em] text-cyan-50 sm:text-base">
-                {levelName}
-              </span>
-              <div className="flex items-center gap-1 rounded-lg border border-yellow-200/55 bg-[#0a1f56]/92 px-2 py-1 text-xs font-black text-yellow-100">
-                <CircleDollarSign className="h-3.5 w-3.5 text-yellow-300" />
-                <span>{score}</span>
+        {!useSharedTopHud ? (
+          <div className="flex items-center gap-3 px-3 pb-2 pt-[calc(env(safe-area-inset-top)+0.35rem)] sm:px-5">
+            <button
+              type="button"
+              onClick={onBack}
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-200/45 bg-[#0a1f56]/88 shadow-[0_8px_20px_rgba(0,0,0,0.45)]"
+              aria-label="Back"
+            >
+              <ChevronLeft className="h-5 w-5 text-cyan-100" />
+            </button>
+            <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+              <div className="flex items-center justify-between gap-2">
+                <span className="truncate text-sm font-black uppercase tracking-[0.12em] text-cyan-50 sm:text-base">
+                  {levelName}
+                </span>
+                <div className="flex items-center gap-1 rounded-lg border border-yellow-200/55 bg-[#0a1f56]/92 px-2 py-1 text-xs font-black text-yellow-100">
+                  <CircleDollarSign className="h-3.5 w-3.5 text-yellow-300" />
+                  <span>{score}</span>
+                </div>
+              </div>
+              <div className="relative h-3 overflow-hidden rounded-full border border-cyan-200/45 bg-[#04102c]/90">
+                <motion.div
+                  className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-sky-400 via-cyan-300 to-emerald-300"
+                  animate={{ width: `${timerProgress}%` }}
+                />
               </div>
             </div>
-            <div className="relative h-3 overflow-hidden rounded-full border border-cyan-200/45 bg-[#04102c]/90">
-              <motion.div
-                className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-sky-400 via-cyan-300 to-emerald-300"
-                animate={{ width: `${timerProgress}%` }}
-              />
-            </div>
           </div>
-        </div>
+        ) : null}
 
-        <div className="relative min-h-0 flex-1">
+        <div className={`relative min-h-0 flex-1 ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.15rem)]' : ''}`}>
           <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-          <div className="relative z-10 flex h-full w-full items-center justify-center px-2 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] pt-2 sm:px-4">
+
+          {useSharedTopHud ? (
+            <div className="absolute inset-x-2 top-2 z-20 rounded-xl border border-cyan-100/30 bg-[#0a1f56]/70 px-3 py-2 shadow-[0_8px_16px_rgba(2,6,23,0.35)] sm:inset-x-4">
+              <div className="flex items-center justify-between gap-2">
+                <span className="truncate text-[11px] font-black uppercase tracking-[0.12em] text-cyan-50">
+                  {levelName}
+                </span>
+                <div className="flex items-center gap-1 rounded-lg border border-yellow-200/55 bg-[#0a1f56]/90 px-2 py-1 text-[11px] font-black text-yellow-100">
+                  <CircleDollarSign className="h-3.5 w-3.5 text-yellow-300" />
+                  <span>{score}</span>
+                </div>
+              </div>
+              <div className="relative mt-1.5 h-2.5 overflow-hidden rounded-full border border-cyan-200/40 bg-[#04102c]/90">
+                <motion.div
+                  className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-sky-400 via-cyan-300 to-emerald-300"
+                  animate={{ width: `${timerProgress}%` }}
+                />
+              </div>
+            </div>
+          ) : null}
+
+          <div className={`relative z-10 flex h-full w-full items-center justify-center px-2 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] ${useSharedTopHud ? 'pt-16' : 'pt-2'} sm:px-4`}>
             {children}
           </div>
         </div>
@@ -282,7 +316,9 @@ const MatchGameShell: React.FC<{
 
 const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   levelId,
+  miniGameLevel,
   avatarId: _avatarId,
+  useSharedTopHud = false,
   isBoss: _isBoss = false,
   variantGameType = 'fraction_match',
   onVictory,
@@ -299,9 +335,10 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   const endedRef = useRef(false);
   const boardGridRef = useRef<HTMLDivElement | null>(null);
 
-  const targetScore = useMemo(() => BASE_TARGET_SCORE + (levelId * TARGET_SCORE_STEP), [levelId]);
-  const levelName = useMemo(() => `Match ${Math.max(1, levelId)}`, [levelId]);
-  const includeDecimals = levelId >= 3;
+  const resolvedLevel = useMemo(() => Math.max(1, miniGameLevel || levelId || 1), [levelId, miniGameLevel]);
+  const targetScore = useMemo(() => BASE_TARGET_SCORE + (resolvedLevel * TARGET_SCORE_STEP), [resolvedLevel]);
+  const levelName = useMemo(() => `Match ${Math.max(1, resolvedLevel)}`, [resolvedLevel]);
+  const includeDecimals = resolvedLevel >= 3;
 
   const makeRandomCell = useCallback(() => {
     const randomType = GEM_TYPES[Math.floor(Math.random() * GEM_TYPES.length)];
@@ -319,7 +356,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
 
   useEffect(() => {
     resetBoard();
-  }, [levelId, resetBoard]);
+  }, [resolvedLevel, resetBoard]);
 
   useEffect(() => {
     const updateGemSize = () => {
@@ -486,6 +523,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       timerProgress={timerProgress}
       levelName={levelName}
       variantGameType={variantGameType}
+      useSharedTopHud={useSharedTopHud}
       onBack={onBack}
     >
       <div

@@ -84,8 +84,8 @@ const CHALLENGE_THEMES: Record<SupportedChallengeGameType, ChallengeTheme> = {
   percent_pulse: {
     title: 'Percent Pulse',
     surface: 'from-cyan-300/28 via-sky-300/16 to-slate-950/88',
-    scene: 'from-cyan-300/22 via-cyan-300/18 to-transparent',
-    ambient: 'bg-[radial-gradient(circle_at_top,rgba(232,121,249,0.26),transparent_26%),radial-gradient(circle_at_bottom_right,rgba(34,211,238,0.2),transparent_24%),linear-gradient(180deg,#1f1241_0%,#07111b_100%)]',
+    scene: 'from-cyan-300/22 via-sky-300/18 to-transparent',
+    ambient: 'bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.28),transparent_26%),radial-gradient(circle_at_bottom_right,rgba(56,189,248,0.22),transparent_24%),linear-gradient(180deg,#0f2b4d_0%,#07111b_100%)]',
     prompt: 'from-cyan-200/28 to-cyan-100/12',
     answer: 'from-cyan-200/10 via-sky-200/8 to-white/4',
     answerActive: 'from-cyan-300/62 via-cyan-300/58 to-blue-400/48',
@@ -1217,8 +1217,8 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                 const answerBackground = isCorrect
                   ? answerGreenBg
                   : isWrongSelected
-                    ? (isScaleBuilder || isCalculationClash ? answerYellowBg : answerOrangeBg)
-                    : (isScaleBuilder || isCalculationClash ? answerBlueBg : answerActionBg);
+                    ? (isScaleBuilder || isCalculationClash ? answerYellowBg : isPercentPulse ? answerBlueBg : answerOrangeBg)
+                    : (isScaleBuilder || isCalculationClash || isPercentPulse ? answerBlueBg : answerActionBg);
 
                 return (
                   <motion.button
@@ -1237,7 +1237,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                     }`}
                   >
                     {!isPlaceValuePeaks && <img src={answerBackground} alt="" className="absolute inset-0 h-full w-full object-fill" draggable={false} />}
-                    {!isPlaceValuePeaks && !isScaleBuilder && !isCalculationClash && !isCorrect && !isWrongSelected && (
+                    {!isPlaceValuePeaks && !isScaleBuilder && !isCalculationClash && !isPercentPulse && !isCorrect && !isWrongSelected && (
                       <img src={answerDecorAsset} alt="" className="absolute inset-0 h-full w-full object-fill opacity-95" draggable={false} />
                     )}
                     {isPlaceValuePeaks && (
