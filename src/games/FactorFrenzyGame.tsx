@@ -5,8 +5,6 @@ import {
   RotateCcw,
   ChevronRight,
   Flame,
-  Target,
-  Activity,
   CheckCircle2,
   AlertCircle,
 } from 'lucide-react';
@@ -47,7 +45,7 @@ interface LocalState {
   score: number;
   level: number;
   currentProblem: FactorProblem | null;
-  status: 'start' | 'playing' | 'correct' | 'incorrect' | 'complete' | 'gameover';
+  status: 'playing' | 'correct' | 'incorrect' | 'complete' | 'gameover';
   timeLeft: number;
   streak: number;
   mistakes: number;
@@ -65,7 +63,7 @@ const INITIAL_STATE: LocalState = {
   score: 0,
   level: 1,
   currentProblem: null,
-  status: 'start',
+  status: 'playing',
   timeLeft: 30,
   streak: 0,
   mistakes: 0,
@@ -238,6 +236,17 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   };
 
   useEffect(() => {
+    if (state.currentProblem) return;
+    const first = generateProblem(1);
+    setState((previous) => ({
+      ...previous,
+      currentProblem: first,
+      status: 'playing',
+      timeLeft: FRENZY_LEVELS[0].timeLimit,
+    }));
+  }, [state.currentProblem, generateProblem]);
+
+  useEffect(() => {
     clearTimer();
 
     if (state.status !== 'playing') return;
@@ -387,29 +396,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
         <main className="relative flex min-h-0 flex-1 flex-col">
           <AnimatePresence mode="wait">
-            {state.status === 'start' ? (
-              <motion.div
-                key="start"
-                initial={{ opacity: 0, scale: 0.94 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.04 }}
-                className="my-auto mx-auto w-full max-w-xl rounded-3xl border border-cyan-100/35 bg-[#16356f]/84 p-6 text-center shadow-[0_20px_40px_rgba(2,6,23,0.45)]"
-              >
-                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full border border-amber-200/60 bg-amber-300/15">
-                  <Activity className="h-10 w-10 text-amber-100" />
-                </div>
-                <h2 className="text-3xl font-black uppercase tracking-tight text-amber-50 sm:text-4xl">Factor Frenzy</h2>
-                <p className="mt-2 text-sm font-semibold leading-relaxed text-cyan-50/88">
-                  Answer factor challenges quickly to build streaks and complete the run before mistakes end the round.
-                </p>
-                <button
-                  onClick={startGame}
-                  className="mt-6 inline-flex items-center gap-2 rounded-full border border-amber-100/70 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] px-8 py-3 text-sm font-black uppercase tracking-[0.14em] text-slate-900 shadow-[0_10px_22px_rgba(0,0,0,0.32)]"
-                >
-                  <Target className="h-4 w-4" /> Start Mission
-                </button>
-              </motion.div>
-            ) : state.status === 'complete' ? (
+            {state.status === 'complete' ? (
               <motion.div
                 key="complete"
                 initial={{ opacity: 0, scale: 0.96 }}

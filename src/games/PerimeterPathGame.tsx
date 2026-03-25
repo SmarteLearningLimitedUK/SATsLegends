@@ -91,10 +91,10 @@ const makeRectangleShape = (
   hiddenEdgeId?: string,
 ): { shape: ShapeModel; perimeter: number } => {
   const points: Point[] = [
-    { x: 12, y: 18 },
-    { x: 88, y: 18 },
-    { x: 88, y: 82 },
-    { x: 12, y: 82 },
+    { x: 8, y: 12 },
+    { x: 92, y: 12 },
+    { x: 92, y: 88 },
+    { x: 8, y: 88 },
   ];
 
   const perimeter = 2 * (length + width);
@@ -123,14 +123,14 @@ const makeCompoundShape = (
   labels: string[],
 ): { shape: ShapeModel; perimeter: number } => {
   const points: Point[] = [
-    { x: 12, y: 14 },
-    { x: 88, y: 14 },
-    { x: 88, y: 35 },
-    { x: 60, y: 35 },
-    { x: 60, y: 60 },
-    { x: 88, y: 60 },
-    { x: 88, y: 86 },
-    { x: 12, y: 86 },
+    { x: 8, y: 10 },
+    { x: 92, y: 10 },
+    { x: 92, y: 33 },
+    { x: 59, y: 33 },
+    { x: 59, y: 61 },
+    { x: 92, y: 61 },
+    { x: 92, y: 90 },
+    { x: 8, y: 90 },
   ];
 
   const edges: ShapeEdge[] = [
@@ -266,9 +266,9 @@ const getEdgeLabelPosition = (edge: ShapeEdge) => {
   const horizontal = Math.abs(dx) >= Math.abs(dy);
 
   if (horizontal) {
-    return { x: mx, y: my + (my < 50 ? -7 : 7) };
+    return { x: mx, y: my + (my < 50 ? -8.5 : 8.5) };
   }
-  return { x: mx + (mx < 50 ? -8 : 8), y: my };
+  return { x: mx + (mx < 50 ? -10 : 10), y: my };
 };
 
 const PerimeterShapeRenderer: React.FC<{
@@ -284,7 +284,7 @@ const PerimeterShapeRenderer: React.FC<{
       {shape.edges.map((edge) => {
         const isActive = highlightedEdgeId === edge.id;
         const labelPos = getEdgeLabelPosition(edge);
-        const labelWidth = Math.max(22, Math.min(34, edge.label.length * 2.8 + 8));
+        const labelWidth = Math.max(28, Math.min(42, edge.label.length * 3.6 + 8));
         return (
           <g
             key={edge.id}
@@ -298,15 +298,15 @@ const PerimeterShapeRenderer: React.FC<{
               x2={edge.to.x}
               y2={edge.to.y}
               stroke={isActive ? '#facc15' : '#7dd3fc'}
-              strokeWidth={isActive ? 2.8 : 2.1}
+              strokeWidth={isActive ? 3.3 : 2.6}
               strokeLinecap="round"
             />
             <rect
               x={labelPos.x - (labelWidth / 2)}
-              y={labelPos.y - 5}
+              y={labelPos.y - 6.2}
               width={labelWidth}
-              height={10}
-              rx={3.5}
+              height={12.4}
+              rx={4.4}
               fill={isActive ? 'rgba(250, 204, 21, 0.36)' : 'rgba(15, 23, 42, 0.66)'}
               stroke={isActive ? 'rgba(250, 204, 21, 0.75)' : 'rgba(255, 255, 255, 0.22)'}
               strokeWidth={0.45}
@@ -317,7 +317,7 @@ const PerimeterShapeRenderer: React.FC<{
               textAnchor="middle"
               dominantBaseline="middle"
               fill="#ffffff"
-              fontSize="4.35"
+              fontSize="5.6"
               fontWeight={800}
             >
               {edge.label}
@@ -386,7 +386,6 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
   }, [currentLevel, onGameOver, score]);
 
   const streakGlow = useMemo(() => Math.min(32, 6 + streak * 3.2), [streak]);
-  const timerProgress = Math.max(0, Math.min(1, timeLeft / TOTAL_TIME_SECONDS));
 
   const goNextQuestion = () => {
     const nextLevel = currentLevel + 1;
@@ -497,9 +496,9 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
         className="pointer-events-none absolute -right-20 bottom-32 h-48 w-48 rounded-full bg-amber-300/16 blur-3xl"
       />
 
-      <div className="relative z-10 flex h-full flex-col px-3 pb-[max(6rem,calc(env(safe-area-inset-bottom)+5rem))] pt-[max(0.55rem,env(safe-area-inset-top))]">
-        <header className="shrink-0">
-          <div className="flex items-center gap-2">
+      <div className="relative z-10 flex h-full flex-col px-3 pb-[max(6rem,calc(env(safe-area-inset-bottom)+5rem))] pt-2">
+        <main className="mt-0 flex min-h-0 flex-1 flex-col gap-2">
+          <div className="shrink-0 flex items-center justify-center gap-2">
             <div className="rounded-full border border-sky-100/30 bg-sky-950/70 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-sky-100">
               Level {currentLevel}
             </div>
@@ -513,19 +512,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
               {correctCount}/{TARGET_CORRECT}
             </div>
           </div>
-          <div className="mt-2 flex items-center gap-2">
-            <div className="relative h-3 flex-1 overflow-hidden rounded-full border border-sky-100/35 bg-slate-950/60">
-              <motion.div
-                animate={{ width: `${timerProgress * 100}%` }}
-                transition={{ duration: 0.15, ease: 'linear' }}
-                className="absolute inset-y-0 left-0 rounded-full bg-[linear-gradient(90deg,#22c55e,#84cc16,#facc15,#f97316,#ef4444)]"
-              />
-            </div>
-            <div className="w-11 text-right text-sm font-black text-white">{Math.ceil(timeLeft)}s</div>
-          </div>
-        </header>
 
-        <main className="mt-2 flex min-h-0 flex-1 flex-col gap-2">
           <div className="shrink-0 rounded-2xl border border-sky-100/22 bg-slate-950/56 px-3 py-2 text-center shadow-[0_8px_20px_rgba(2,6,23,0.35)]">
             <div className="text-sm font-black text-white">{question.prompt}</div>
             <div className="mt-0.5 text-[11px] font-semibold text-sky-100/80">{question.hint}</div>
@@ -534,10 +521,10 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
           <motion.div
             animate={shakeShape ? { x: [0, -9, 8, -7, 6, -4, 0] } : { x: 0 }}
             transition={{ duration: 0.35 }}
-            className="relative min-h-0 flex-1 overflow-hidden rounded-2xl border border-white/22 bg-slate-950/40"
+            className="relative min-h-[16.5rem] flex-1 overflow-hidden rounded-2xl border border-white/22 bg-slate-950/40"
           >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(56,189,248,0.2),transparent_28%),radial-gradient(circle_at_50%_92%,rgba(250,204,21,0.15),transparent_30%)]" />
-            <div className="relative h-full w-full p-3">
+            <div className="relative h-full w-full p-1.5">
               <PerimeterShapeRenderer
                 shape={question.shape}
                 highlightedEdgeId={highlightedEdgeId}

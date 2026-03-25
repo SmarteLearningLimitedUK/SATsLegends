@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { ChevronRight, Play, RotateCcw, Trophy } from 'lucide-react';
+import { ChevronRight, RotateCcw, Trophy } from 'lucide-react';
 import GameActionDock from '../components/GameActionDock';
 import calculationClashBackground from '../assets/maps/facctor frenzy.jpg';
 
@@ -13,7 +13,7 @@ interface CalculationCrashGameProps {
   onBack: () => void;
 }
 
-type GameStatus = 'start' | 'playing' | 'complete';
+type GameStatus = 'playing' | 'complete';
 type Operation = '+' | '-' | 'x' | '/';
 
 interface Question {
@@ -103,7 +103,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
   onGameOver: _onGameOver,
   onBack,
 }) => {
-  const [status, setStatus] = useState<GameStatus>('start');
+  const [status, setStatus] = useState<GameStatus>('playing');
   const [question, setQuestion] = useState<Question>(() => createQuestion(levelId));
   const [score, setScore] = useState(0);
   const [solved, setSolved] = useState(0);
@@ -217,12 +217,6 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
 
       <main className={`relative z-10 flex h-full w-full flex-col ${topPadding} px-[max(1rem,env(safe-area-inset-left))] pb-[calc(env(safe-area-inset-bottom)+5rem)]`}>
         <div className="mx-auto flex h-full w-full max-w-[34rem] flex-col">
-          <div className="mb-2 flex items-center justify-end">
-            <div className="rounded-full border border-amber-200/55 bg-[linear-gradient(180deg,rgba(17,24,39,0.95),rgba(2,6,23,0.95))] px-4 py-2 text-lg font-black tracking-[0.03em] text-amber-100 shadow-[0_0_16px_rgba(250,204,21,0.28)]">
-              {timeLeft}s
-            </div>
-          </div>
-
           <div className="my-auto w-full">
             <section className="text-center">
               <div className="mx-auto w-full max-w-[31rem] rounded-[1.25rem] border border-amber-100/35 bg-[linear-gradient(180deg,rgba(2,6,23,0.82),rgba(2,6,23,0.68))] px-4 py-3 shadow-[0_14px_34px_rgba(2,6,23,0.52)] backdrop-blur-[2px]">
@@ -286,31 +280,6 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
           <GameActionDock onBack={onBack} compact accentClass="text-slate-100" />
         </div>
       </div>
-
-      <AnimatePresence>
-        {status === 'start' && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 z-50 flex items-center justify-center bg-slate-950/86 p-8 backdrop-blur-md"
-          >
-            <div className="w-full max-w-xl rounded-3xl border border-cyan-300/35 bg-slate-900/95 p-8 text-center">
-              <h2 className="text-4xl font-black uppercase tracking-tight text-cyan-100">Calculation Clash</h2>
-              <p className="mt-3 text-sm text-cyan-50/80">
-                Quick fire round. Answer as many problems as possible in 30 seconds.
-              </p>
-              <button
-                type="button"
-                onClick={startRound}
-                className="mt-7 inline-flex items-center gap-2 rounded-full bg-cyan-300 px-8 py-3 text-sm font-black uppercase tracking-[0.14em] text-slate-900"
-              >
-                <Play className="h-4 w-4" /> Start
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <AnimatePresence>
         {status === 'complete' && (

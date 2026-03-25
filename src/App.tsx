@@ -1081,14 +1081,6 @@ const App: React.FC = () => {
                   <div className="flex h-full w-full min-h-0 items-center justify-center p-3 md:p-6">
                     <div className="single-shell-briefing-card structured-playfield-frame relative flex w-full max-w-xl flex-col items-center gap-3 overflow-hidden rounded-[2rem] border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(18,48,112,0.88),rgba(10,29,74,0.92))] p-5 text-center shadow-[0_20px_50px_rgba(2,6,23,0.5)] md:gap-4 md:p-8">
                       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(125,211,252,0.22),transparent_38%)]" />
-                      <div className="relative flex w-full items-center justify-center gap-2">
-                        <div className="inline-flex items-center rounded-full border border-slate-100/25 bg-slate-900/60 px-4 py-1 text-sm font-black uppercase tracking-[0.08em] text-slate-100">
-                          Streak 0
-                        </div>
-                        <div className="inline-flex items-center rounded-full border border-slate-100/25 bg-slate-900/60 px-4 py-1 text-sm font-black uppercase tracking-[0.08em] text-slate-100">
-                          Mistakes {Math.max(0, GLOBAL_MINIGAME_LIVES - globalMiniGameLives)}/{GLOBAL_MINIGAME_LIVES}
-                        </div>
-                      </div>
                       <div className="relative mt-1 h-16 w-16 rounded-full border border-amber-200/60 bg-[linear-gradient(180deg,rgba(251,191,36,0.28),rgba(245,158,11,0.18))] shadow-[0_0_24px_rgba(251,191,36,0.32)]" />
                       <div className="relative text-[11px] font-black uppercase tracking-[0.2em] text-cyan-100/80">Mission Brief</div>
                       <div className="relative text-3xl font-black uppercase tracking-tight text-white md:text-4xl">
@@ -1115,7 +1107,6 @@ const App: React.FC = () => {
                   avatarId={player.avatarId}
                   timeLeft={globalMiniGameHudTimeLeft}
                   totalTime={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
-                  hideTimer={Boolean(activeMiniGameKey === 'CalculationCrashGame')}
                   lives={globalMiniGameLives}
                 />
               </div>

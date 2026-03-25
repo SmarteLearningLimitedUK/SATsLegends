@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
-import scaleImage from '../assets/maps/scale.png';
+import scaleImage from '../assets/measurement/scale_master_scale.svg';
 
 interface MeasurementForgeGameProps {
   levelId: number;
@@ -148,9 +148,9 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
   }, [currentGrams, levelId, onVictory, round.targetGrams, roundIndex, score]);
 
   return (
-    <div ref={rootRef} className="fixed inset-0 overflow-hidden bg-[#07122b]">
-      <div className="relative z-10 flex h-full w-full flex-col items-center justify-between px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(0.75rem,env(safe-area-inset-top))]">
-        <div className="relative mt-1 w-[min(74vw,24rem)] aspect-square">
+    <div ref={rootRef} className="relative h-full w-full overflow-hidden bg-[#07122b]">
+      <div className="relative z-0 flex h-full w-full flex-col items-center justify-between px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(0.2rem,env(safe-area-inset-top))]">
+        <div className="relative mt-[clamp(4.4rem,10vh,6.6rem)] w-[min(48vw,13.75rem)] aspect-[1200/760]">
           <img
             src={scaleImage}
             alt="Scale"
@@ -203,6 +203,8 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                 dragConstraints={rootRef}
                 dragSnapToOrigin
                 whileTap={{ scale: 1.08 }}
+                onClick={() => placeToken(token.id)}
+                onPointerUp={() => placeToken(token.id)}
                 onDragEnd={(_, info) => {
                   if (isInsideDrop(info.point.x, info.point.y)) {
                     placeToken(token.id);

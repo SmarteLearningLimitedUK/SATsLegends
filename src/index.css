@@ -4887,6 +4887,11 @@ button.avatar-hero-arrow:not(:disabled):active {
   display: none !important;
 }
 
+/* Never hide the shared global top HUD. */
+.screen-gameplay .unified-minigame-hud-enabled [data-unified-minigame-hud='true'] {
+  display: block !important;
+}
+
 .screen-gameplay .unified-minigame-hud-enabled .game-shell-host,
 .screen-gameplay .unified-minigame-hud-enabled .game-shell-contract,
 .screen-gameplay .unified-minigame-hud-enabled .structured-game-layout,
