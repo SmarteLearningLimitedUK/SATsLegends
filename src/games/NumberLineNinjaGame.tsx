@@ -1,11 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
+import heartIcon from '../assets/importedassets/Icons/icon - heart.png';
+import hudAvatarNameFrame from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
+import hudTimerFrame from '../assets/ui_frames/hudfortextplace_slices/hud_timer.png';
 import {
   ArrowLeft,
   CircleHelp,
   Heart,
   Sparkles,
-  Timer,
-  UserCircle2,
   Volume2,
   VolumeX,
 } from 'lucide-react';
@@ -39,8 +41,16 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
   const [showHelp, setShowHelp] = useState(false);
 
   const canSubmit = selected !== null;
-  const avatarInitial = useMemo(
-    () => (avatarId?.trim()?.charAt(0)?.toUpperCase() || 'E'),
+  const timerProgress = useMemo(
+    () => Math.max(0, Math.min(1, timeLeft / ROUND_TIME_SECONDS)),
+    [timeLeft],
+  );
+  const avatar = useMemo(
+    () => (
+      CHARACTER_AVATARS.find((entry) => entry.id === avatarId)
+      || CHARACTER_AVATARS.find((entry) => entry.id === DEFAULT_AVATAR_ID)
+      || CHARACTER_AVATARS[0]
+    ),
     [avatarId],
   );
 
@@ -104,34 +114,57 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
       <div className="pointer-events-none absolute inset-0 opacity-[0.22] [background:radial-gradient(circle_at_16%_22%,#ffffff_0,transparent_3px),radial-gradient(circle_at_82%_17%,#ffffff_0,transparent_2px),radial-gradient(circle_at_34%_78%,#ffffff_0,transparent_2px),radial-gradient(circle_at_64%_66%,#ffffff_0,transparent_2px)]" />
 
       <div className="relative z-10 flex h-full w-full flex-col px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(0.8rem,env(safe-area-inset-top))] text-slate-100 sm:px-4">
-        <header className="mb-3 flex shrink-0 items-center justify-between gap-2.5">
-          <div className="flex min-w-0 items-center gap-2 rounded-[1.05rem] border-2 border-amber-200/85 bg-[linear-gradient(180deg,#7a4a1f_0%,#5f3918_62%,#46280f_100%)] px-2 py-1.5 shadow-[0_12px_24px_rgba(0,0,0,0.35),0_0_18px_rgba(245,158,11,0.2)]">
-            <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.85rem] border-2 border-amber-200/90 bg-[linear-gradient(180deg,#1f5ab0_0%,#1e3f89_100%)] shadow-[0_0_0_2px_rgba(180,83,9,0.35)]">
-              <UserCircle2 className="absolute h-4 w-4 text-cyan-100/55" />
-              <span className="relative text-sm font-black text-cyan-50">{avatarInitial}</span>
+        <header className="mb-3 flex shrink-0 items-center justify-between gap-2">
+          <div className="relative h-[52px] w-[clamp(8.4rem,38vw,11.6rem)] shrink-0">
+            <img
+              src={hudAvatarNameFrame}
+              alt=""
+              aria-hidden="true"
+              draggable={false}
+              className="absolute inset-0 h-full w-full object-contain"
+            />
+            <div className="absolute left-[4.8%] top-1/2 h-[70%] w-[29%] -translate-y-1/2 overflow-hidden rounded-[0.58rem]">
+              <img
+                src={avatar?.portrait || avatar?.image}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+                className="h-full w-full object-contain"
+              />
             </div>
-            <div className="min-w-0 pr-1">
-              <p className="truncate text-[15px] font-black uppercase tracking-[0.04em] text-amber-50">Explorer</p>
-            </div>
+            <p className="absolute left-[38%] right-[12%] top-1/2 -translate-y-1/2 truncate text-[clamp(0.72rem,1.95vw,0.92rem)] font-black uppercase tracking-[0.05em] text-slate-100">
+              Explorer
+            </p>
           </div>
 
-          <div className="flex min-w-0 items-center gap-2">
-            <div className="flex h-11 min-w-[170px] items-center gap-2 rounded-[1.05rem] border-2 border-cyan-100/70 bg-[linear-gradient(180deg,#1256b7_0%,#163f8d_55%,#102f70_100%)] px-2 shadow-[0_12px_24px_rgba(3,21,58,0.42)] sm:min-w-[190px]">
-              <div className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-amber-200/85 bg-[linear-gradient(180deg,#f7d77a_0%,#d0912c_100%)] text-amber-900 shadow-[0_0_10px_rgba(245,158,11,0.35)]">
-                <Timer className="h-4 w-4" />
-              </div>
-              <div className="relative h-5 flex-1 overflow-hidden rounded-full border border-cyan-100/55 bg-slate-900/45">
-                <div className="absolute inset-[2px] rounded-full bg-slate-950/55" />
+          <div className="flex min-w-0 items-center gap-1.5">
+            <div className="relative h-[52px] w-[clamp(8.6rem,40vw,12.1rem)] shrink-0">
+              <img
+                src={hudTimerFrame}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+                className="absolute inset-0 h-full w-full object-contain"
+              />
+              <div className="absolute left-[22%] right-[5%] top-[30%] h-[40%] overflow-hidden rounded-full border border-cyan-100/45 bg-slate-950/55">
                 <div
-                  className="absolute inset-y-[2px] left-[2px] rounded-full bg-[linear-gradient(90deg,#6dff4a_0%,#22d34e_55%,#14b8a6_100%)] shadow-[0_0_12px_rgba(74,222,128,0.6)] transition-all duration-500"
-                  style={{ width: `calc(${(timeLeft / ROUND_TIME_SECONDS) * 100}% - 4px)` }}
+                  className="absolute inset-y-[2px] left-[2px] rounded-full bg-[linear-gradient(90deg,#6dff4a_0%,#22d34e_58%,#14b8a6_100%)] shadow-[0_0_10px_rgba(74,222,128,0.55)] transition-all duration-300"
+                  style={{ width: `calc(${timerProgress * 100}% - 4px)` }}
                 />
               </div>
-              <span className="shrink-0 text-sm font-black text-cyan-50">{timeLeft}s</span>
+              <span className="absolute right-[6.2%] top-1/2 -translate-y-1/2 text-[clamp(0.68rem,1.9vw,0.9rem)] font-black uppercase text-slate-100">
+                {timeLeft}s
+              </span>
             </div>
 
-            <div className="inline-flex h-11 items-center gap-1.5 rounded-[1.05rem] border-2 border-cyan-100/70 bg-[linear-gradient(180deg,#1256b7_0%,#163f8d_55%,#102f70_100%)] px-2.5 text-sm font-black text-cyan-50 shadow-[0_10px_18px_rgba(3,21,58,0.35)]">
-              <Heart className="h-4 w-4 text-red-400" />
+            <div className="inline-flex h-10 min-w-[3.35rem] items-center justify-center gap-1 rounded-full border border-cyan-100/65 bg-[linear-gradient(180deg,#1f5ab0_0%,#1e3f89_100%)] px-2 text-[0.82rem] font-black text-slate-100 shadow-[0_8px_16px_rgba(2,6,23,0.35)]">
+              <img
+                src={heartIcon}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+                className="h-4 w-4 object-contain"
+              />
               <span>{lives}</span>
             </div>
           </div>
