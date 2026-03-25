@@ -1,14 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
-import heartIcon from '../assets/casual_ui/icons/icon__heart.png';
-import {
-  ArrowLeft,
-  Clock3,
-  CircleHelp,
-  Sparkles,
-  Volume2,
-  VolumeX,
-} from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Sparkles } from 'lucide-react';
 
 interface NumberLineNinjaGameProps {
   levelId: number;
@@ -25,33 +16,18 @@ const CORRECT = '10';
 const ROUND_TIME_SECONDS = 83;
 
 const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
-  avatarId,
+  avatarId: _avatarId,
   onVictory,
   onGameOver,
-  onBack,
+  onBack: _onBack,
 }) => {
   const [timeLeft, setTimeLeft] = useState(ROUND_TIME_SECONDS);
   const [lives, setLives] = useState(3);
   const [selected, setSelected] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<FeedbackState>('default');
   const [score, setScore] = useState(0);
-  const [muted, setMuted] = useState(false);
-  const [showHelp, setShowHelp] = useState(false);
 
   const canSubmit = selected !== null;
-  const timerProgress = useMemo(
-    () => Math.max(0, Math.min(1, timeLeft / ROUND_TIME_SECONDS)),
-    [timeLeft],
-  );
-  const avatar = useMemo(
-    () => (
-      CHARACTER_AVATARS.find((entry) => entry.id === avatarId)
-      || CHARACTER_AVATARS.find((entry) => entry.id === DEFAULT_AVATAR_ID)
-      || CHARACTER_AVATARS[0]
-    ),
-    [avatarId],
-  );
-
   useEffect(() => {
     const id = window.setInterval(() => {
       setTimeLeft((prev) => {
@@ -66,12 +42,6 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
 
     return () => window.clearInterval(id);
   }, [onGameOver, score]);
-
-  useEffect(() => {
-    if (!showHelp) return undefined;
-    const id = window.setTimeout(() => setShowHelp(false), 2400);
-    return () => window.clearTimeout(id);
-  }, [showHelp]);
 
   const selectOption = (value: string) => {
     setSelected(value);
@@ -111,60 +81,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
       <div className="pointer-events-none absolute bottom-[-5rem] left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-amber-300/20 blur-3xl" />
       <div className="pointer-events-none absolute inset-0 opacity-[0.22] [background:radial-gradient(circle_at_16%_22%,#ffffff_0,transparent_3px),radial-gradient(circle_at_82%_17%,#ffffff_0,transparent_2px),radial-gradient(circle_at_34%_78%,#ffffff_0,transparent_2px),radial-gradient(circle_at_64%_66%,#ffffff_0,transparent_2px)]" />
 
-      <div className="relative z-10 flex h-full w-full flex-col px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(0.8rem,env(safe-area-inset-top))] text-slate-100 sm:px-4">
-        <header className="mb-3 flex min-h-[52px] w-full shrink-0 items-center justify-between gap-2 px-[2px]">
-          <div className="flex min-w-0 items-center gap-2">
-            <div className="relative h-[clamp(34px,8.8vw,44px)] w-[clamp(34px,8.8vw,44px)] shrink-0 rounded-[0.72rem] border-2 border-amber-300/95 bg-[linear-gradient(180deg,#274f92_0%,#1a356d_100%)] shadow-[0_8px_16px_rgba(2,6,23,0.42)]">
-              <div className="absolute inset-[3px] overflow-hidden rounded-[0.52rem] border border-cyan-100/40">
-                <img
-                  src={avatar?.portrait || avatar?.image}
-                  alt=""
-                  aria-hidden="true"
-                  draggable={false}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-            </div>
-            <div className="flex h-[clamp(34px,8.8vw,44px)] min-w-0 items-center rounded-[0.82rem] border-2 border-amber-300/95 bg-[linear-gradient(180deg,#2f5da8_0%,#1a3877_100%)] px-3 shadow-[0_8px_16px_rgba(2,6,23,0.42)]">
-              <p className="w-[clamp(84px,23vw,124px)] truncate text-center text-[clamp(0.68rem,1.86vw,0.9rem)] font-black uppercase tracking-[0.045em] text-slate-100">
-                Explorer
-              </p>
-            </div>
-          </div>
-
-          <div className="flex shrink-0 items-center gap-1.5">
-            <div className="flex h-[clamp(34px,8.8vw,44px)] w-[clamp(148px,39vw,184px)] items-center rounded-full border-2 border-cyan-100/55 bg-[linear-gradient(180deg,#2f5daa_0%,#1e3f88_100%)] px-1.5 shadow-[0_8px_16px_rgba(2,6,23,0.4)]">
-              <div className="inline-flex h-[74%] w-[clamp(22px,6vw,28px)] shrink-0 items-center justify-center rounded-full bg-[linear-gradient(180deg,#f9cf5d_0%,#f59e0b_100%)] text-slate-900 shadow-[0_2px_6px_rgba(2,6,23,0.35)]">
-                <Clock3 className="h-[65%] w-[65%]" />
-              </div>
-              <div className="relative ml-1.5 h-[40%] min-w-0 flex-1 overflow-hidden rounded-full border border-cyan-100/35 bg-slate-950/60">
-                <div
-                  className="absolute inset-y-[2px] left-[2px] rounded-full bg-[linear-gradient(90deg,#5cf44a_0%,#22d34e_58%,#11bfa8_100%)] shadow-[0_0_9px_rgba(74,222,128,0.55)] transition-all duration-300"
-                  style={{ width: `max(0px, calc(${timerProgress * 100}% - 4px))` }}
-                />
-                <div className="pointer-events-none absolute inset-[1px] rounded-full bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:12%_100%]" />
-              </div>
-              <span className="ml-1.5 shrink-0 text-[clamp(0.62rem,1.72vw,0.84rem)] font-black uppercase text-slate-100">
-                {timeLeft}s
-              </span>
-            </div>
-
-            <div
-              className="inline-flex shrink-0 items-center justify-center gap-1 rounded-full border border-cyan-100/65 bg-[linear-gradient(180deg,#1f5ab0_0%,#1e3f89_100%)] px-1.5 text-[0.88rem] font-black text-slate-100 shadow-[0_8px_16px_rgba(2,6,23,0.35)]"
-              style={{ width: 'clamp(34px, 8.8vw, 44px)', height: 'clamp(34px, 8.8vw, 44px)' }}
-            >
-              <img
-                src={heartIcon}
-                alt=""
-                aria-hidden="true"
-                draggable={false}
-                className="h-4 w-4 object-contain"
-              />
-              <span>{lives}</span>
-            </div>
-          </div>
-        </header>
-
+      <div className="relative z-10 flex h-full w-full flex-col px-3 pb-3 pt-1 text-slate-100 sm:px-4">
         <main className="flex min-h-0 flex-1 flex-col gap-3">
           <section className="shrink-0 rounded-2xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(15,23,42,0.58),rgba(30,41,59,0.5))] px-4 py-3 text-center shadow-[0_12px_26px_rgba(15,23,42,0.34)]">
             <p className="text-[11px] font-black uppercase tracking-[0.22em] text-amber-200">Missing Number</p>
@@ -254,50 +171,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
             Submit
           </button>
         </main>
-
-        <footer className="mt-3 shrink-0 rounded-2xl border-2 border-amber-300/90 bg-[linear-gradient(180deg,rgba(30,64,175,0.62),rgba(30,58,138,0.72))] p-2 shadow-[0_10px_20px_rgba(2,6,23,0.42)]">
-          <div className="grid grid-cols-3 gap-2">
-            <button
-              type="button"
-              onClick={onBack}
-              className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border-2 border-amber-300/90 bg-[linear-gradient(180deg,#315db4_0%,#1f428e_100%)] text-sm font-black text-white shadow-[0_7px_12px_rgba(2,6,23,0.34)] transition hover:brightness-110 active:translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200"
-            >
-              <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[linear-gradient(180deg,#f9cf5d_0%,#f59e0b_100%)] text-slate-900 shadow-[0_2px_4px_rgba(2,6,23,0.28)]">
-                <ArrowLeft className="h-3.5 w-3.5" />
-              </span>
-              Back
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setMuted((value) => !value)}
-              className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border-2 border-amber-300/90 bg-[linear-gradient(180deg,#315db4_0%,#1f428e_100%)] text-sm font-black text-white shadow-[0_7px_12px_rgba(2,6,23,0.34)] transition hover:brightness-110 active:translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200"
-            >
-              <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[linear-gradient(180deg,#f9cf5d_0%,#f59e0b_100%)] text-slate-900 shadow-[0_2px_4px_rgba(2,6,23,0.28)]">
-                {muted ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
-              </span>
-              Sound
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setShowHelp(true)}
-              className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border-2 border-amber-300/90 bg-[linear-gradient(180deg,#315db4_0%,#1f428e_100%)] text-sm font-black text-white shadow-[0_7px_12px_rgba(2,6,23,0.34)] transition hover:brightness-110 active:translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200"
-            >
-              <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[linear-gradient(180deg,#f9cf5d_0%,#f59e0b_100%)] text-slate-900 shadow-[0_2px_4px_rgba(2,6,23,0.28)]">
-                <CircleHelp className="h-3.5 w-3.5" />
-              </span>
-              Help
-            </button>
-          </div>
-        </footer>
       </div>
-
-      {showHelp ? (
-        <div className="pointer-events-none absolute bottom-[max(6.2rem,calc(env(safe-area-inset-bottom)+5.2rem))] left-1/2 z-30 -translate-x-1/2 rounded-full border border-cyan-100/65 bg-[linear-gradient(180deg,rgba(34,211,238,0.26),rgba(30,64,175,0.32))] px-4 py-2 text-xs font-black uppercase tracking-[0.09em] text-cyan-50 shadow-[0_10px_24px_rgba(34,211,238,0.25)]">
-          Pick the missing number, then tap Submit.
-        </div>
-      ) : null}
 
       {feedback === 'correct' ? (
         <div className="pointer-events-none absolute top-[calc(env(safe-area-inset-top)+4.8rem)] left-1/2 z-30 -translate-x-1/2 rounded-full border border-emerald-100/90 bg-emerald-500/35 px-4 py-1.5 text-xs font-black uppercase tracking-[0.1em] text-emerald-50 shadow-[0_10px_24px_rgba(16,185,129,0.35)]">

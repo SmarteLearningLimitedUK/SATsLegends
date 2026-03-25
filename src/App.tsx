@@ -1061,25 +1061,21 @@ const App: React.FC = () => {
                     </div>
                   </div>
                 ) : renderGameplay()}
-                {!isGameplayInstructionPending && activeMiniGameKey !== 'NumberLineNinjaGame' ? (
-                  <UnifiedMiniGameHud
-                    playerName={player.playerName || 'Learner'}
-                    avatarId={player.avatarId}
-                    timeLeft={globalMiniGameHudTimeLeft}
-                    totalTime={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
-                    hideTimer={Boolean(activeMiniGameKey === 'CalculationCrashGame')}
-                  />
-                ) : null}
+                <UnifiedMiniGameHud
+                  playerName={player.playerName || 'Learner'}
+                  avatarId={player.avatarId}
+                  timeLeft={globalMiniGameHudTimeLeft}
+                  totalTime={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
+                  hideTimer={Boolean(activeMiniGameKey === 'CalculationCrashGame')}
+                />
               </div>
             </div>
 
-            {activeMiniGameKey !== 'NumberLineNinjaGame' ? (
-              <div className="unified-global-dock pointer-events-none absolute inset-x-0 bottom-[max(0.45rem,calc(env(safe-area-inset-bottom)+0.2rem))] z-[240] flex justify-center px-3">
-                <div className="pointer-events-auto">
-                  <GameActionDock onBack={() => setScreen('island_levels')} compact accentClass="text-slate-100" variant="global" />
-                </div>
+            <div className="unified-global-dock pointer-events-none absolute inset-x-0 bottom-[max(0.45rem,calc(env(safe-area-inset-bottom)+0.2rem))] z-[240] flex justify-center px-3">
+              <div className="pointer-events-auto">
+                <GameActionDock onBack={() => setScreen('island_levels')} compact accentClass="text-slate-100" variant="global" />
               </div>
-            ) : null}
+            </div>
           </div>
         );
 
