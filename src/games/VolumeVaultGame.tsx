@@ -415,18 +415,36 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
   useEffect(() => {
     const node = boardRef.current;
     if (!node) return undefined;
-
-    const observer = new ResizeObserver((entries) => {
-      const entry = entries[0];
-      if (!entry) return;
-      setBoardSize({
-        width: entry.contentRect.width,
-        height: entry.contentRect.height,
+    const syncSize = () => {
+      const rect = node.getBoundingClientRect();
+      setBoardSize((previous) => {
+        const width = Math.max(220, Math.round(rect.width));
+        const height = Math.max(200, Math.round(rect.height));
+        if (previous.width === width && previous.height === height) {
+          return previous;
+        }
+        return { width, height };
       });
+    };
+
+    syncSize();
+
+    // Guard for browsers/environments where ResizeObserver is unavailable.
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', syncSize);
+      return () => {
+        window.removeEventListener('resize', syncSize);
+      };
+    }
+
+    const observer = new ResizeObserver(() => {
+      syncSize();
     });
     observer.observe(node);
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+    };
   }, []);
 
   useEffect(() => {
