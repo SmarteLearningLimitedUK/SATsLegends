@@ -4,21 +4,16 @@ import GameActionDock from '../components/GameActionDock';
 import missionBackground from '../assets/maps/rocket launch.jpg';
 
 type RoundingTarget =
-  | 'nearest 10'
-  | 'nearest 100'
-  | 'nearest 1,000'
-  | 'nearest 10,000'
-  | 'nearest 100,000'
-  | 'nearest 1,000,000'
-  | 'nearest whole number'
-  | 'nearest 1 decimal place'
-  | 'nearest 2 decimal places';
+  | 'nearest whole number';
 
 interface RoundingProblem {
   id: number;
   number: number;
   target: RoundingTarget;
   answer: string;
+  distractors: string[];
+  answerOptions: string[];
+  displayNumber: string;
 }
 
 interface RoundingRocketGameProps {
@@ -32,62 +27,111 @@ interface RoundingRocketGameProps {
 
 const ROUND_DURATION_SECONDS = 65;
 const SUCCESS_EFFECT_MS = 900;
+const ROUNDING_TARGET: RoundingTarget = 'nearest whole number';
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-const generateDecimalChallengeNumber = (target: RoundingTarget) => {
-  for (let attempt = 0; attempt < 60; attempt += 1) {
-    const value = parseFloat((Math.random() * 100).toFixed(3));
-    if (target === 'nearest whole number' && !Number.isInteger(value)) return value;
-    if (target === 'nearest 1 decimal place' && Math.round(value * 10) !== value * 10) return value;
-    if (target === 'nearest 2 decimal places' && Math.round(value * 100) !== value * 100) return value;
+const shuffle = <T,>(items: T[]) => {
+  const copy = [...items];
+  for (let index = copy.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [copy[index], copy[swapIndex]] = [copy[swapIndex], copy[index]];
   }
-  // deterministic fallback (should rarely be used)
-  if (target === 'nearest whole number') return 42.37;
-  if (target === 'nearest 1 decimal place') return 17.249;
-  return 63.457;
+  return copy;
 };
 
-const generateProblem = (level: number): RoundingProblem => {
-  let num: number;
-  let target: RoundingTarget;
-  let answer: string;
+const generateDecimalChallengeNumber = (level: number) => {
+  const normalizedLevel = Math.max(1, Math.min(level, 12));
+  const decimalPlaces = normalizedLevel <= 3 ? 1 : 2;
+  const decimalScale = 10 ** decimalPlaces;
 
-  if (level <= 2) {
-    num = Math.floor(Math.random() * 9000) + 100;
-    const targets: RoundingTarget[] = ['nearest 10', 'nearest 100', 'nearest 1,000'];
-    target = targets[Math.floor(Math.random() * targets.length)];
-    const factor = target === 'nearest 10' ? 10 : target === 'nearest 100' ? 100 : 1000;
-    answer = (Math.round(num / factor) * factor).toString();
-  } else if (level <= 5) {
-    num = Math.floor(Math.random() * 900000) + 10000;
-    const targets: RoundingTarget[] = ['nearest 1,000', 'nearest 10,000', 'nearest 100,000'];
-    target = targets[Math.floor(Math.random() * targets.length)];
-    const factor = target === 'nearest 1,000' ? 1000 : target === 'nearest 10,000' ? 10000 : 100000;
-    answer = (Math.round(num / factor) * factor).toString();
-  } else if (level <= 7) {
-    num = Math.floor(Math.random() * 9000000) + 1000000;
-    target = 'nearest 1,000,000';
-    answer = (Math.round(num / 1000000) * 1000000).toString();
-  } else {
-    const targets: RoundingTarget[] = ['nearest whole number', 'nearest 1 decimal place', 'nearest 2 decimal places'];
-    target = targets[Math.floor(Math.random() * targets.length)];
-    num = generateDecimalChallengeNumber(target);
-    if (target === 'nearest whole number') {
-      answer = Math.round(num).toString();
-    } else if (target === 'nearest 1 decimal place') {
-      answer = (Math.round(num * 10) / 10).toFixed(1);
-    } else {
-      answer = (Math.round(num * 100) / 100).toFixed(2);
-    }
-  }
+  const wholeMin = normalizedLevel <= 3 ? 10 : normalizedLevel <= 6 ? 100 : 1000;
+  const wholeMax = normalizedLevel <= 3 ? 99 : normalizedLevel <= 6 ? 999 : 99999;
+  const wholePart = randomInt(wholeMin, wholeMax);
+
+  const decimalPartInt = randomInt(1, decimalScale - 1); // rejects .0 by construction
+  const decimalPart = decimalPartInt / decimalScale;
+  const value = parseFloat((wholePart + decimalPart).toFixed(decimalPlaces));
+
+  return {
+    value,
+    decimalPlaces,
+  };
+};
+
+const buildDistractors = (value: number, correctAnswer: number): string[] => {
+  const decimalPart = value - Math.floor(value);
+  const wrongDirection = decimalPart >= 0.5 ? Math.floor(value) : Math.ceil(value);
+  const candidateValues = [
+    wrongDirection,
+    correctAnswer - 1,
+    correctAnswer + 1,
+    correctAnswer - 2,
+    correctAnswer + 2,
+    correctAnswer + 3,
+  ];
+  const unique = Array.from(new Set(candidateValues.filter((candidate) => candidate !== correctAnswer && candidate >= 0)));
+  return unique.slice(0, 3).map((candidate) => candidate.toString());
+};
+
+const createProblemCandidate = (level: number): RoundingProblem => {
+  const { value, decimalPlaces } = generateDecimalChallengeNumber(level);
+  const roundedWhole = Math.round(value);
+  const answer = roundedWhole.toString();
+  const distractors = buildDistractors(value, roundedWhole);
+  const answerOptions = shuffle([answer, ...distractors]).slice(0, 4);
 
   return {
     id: Date.now() + Math.floor(Math.random() * 1000),
-    number: num,
-    target,
+    number: value,
+    target: ROUNDING_TARGET,
     answer,
+    distractors,
+    answerOptions,
+    displayNumber: value.toLocaleString('en-GB', {
+      minimumFractionDigits: decimalPlaces,
+      maximumFractionDigits: decimalPlaces,
+    }),
   };
+};
+
+const isProblemValid = (problem: RoundingProblem) => {
+  if (!Number.isFinite(problem.number)) return false;
+  if (problem.target !== ROUNDING_TARGET) return false;
+
+  const decimalPart = Math.abs(problem.number - Math.trunc(problem.number));
+  if (Number.isInteger(problem.number)) return false;
+  if (decimalPart <= Number.EPSILON) return false;
+
+  const parsedAnswer = Number(problem.answer);
+  if (!Number.isInteger(parsedAnswer)) return false;
+  if (problem.answer.includes('.')) return false;
+  if (parsedAnswer !== Math.round(problem.number)) return false;
+
+  // Reject redundant/trivial transformations.
+  if (Math.round(problem.number) === problem.number) return false;
+
+  const uniqueDistractors = new Set(problem.distractors);
+  if (uniqueDistractors.size !== problem.distractors.length) return false;
+  if (problem.distractors.some((candidate) => candidate === problem.answer || !/^\d+$/.test(candidate))) return false;
+
+  // Exactly one correct option in the generated option pool.
+  if (problem.answerOptions.filter((option) => option === problem.answer).length !== 1) return false;
+  if (problem.answerOptions.some((option) => !/^\d+$/.test(option))) return false;
+
+  return true;
+};
+
+const generateProblem = (level: number): RoundingProblem => {
+  for (let attempt = 0; attempt < 80; attempt += 1) {
+    const candidate = createProblemCandidate(level);
+    if (isProblemValid(candidate)) {
+      return candidate;
+    }
+  }
+
+  // deterministic fallback
+  return createProblemCandidate(1);
 };
 
 const scoreToStars = (score: number, correct: number, total: number) => {
@@ -101,27 +145,13 @@ const formatTarget = (target: RoundingTarget) => {
   return `Round this number to the ${target}`;
 };
 
-const formatDisplayNumber = (problem: RoundingProblem) => (
-  problem.target.includes('decimal')
-    ? problem.number.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 3 })
-    : Math.round(problem.number).toLocaleString('en-GB')
-);
+const formatDisplayNumber = (problem: RoundingProblem) => problem.displayNumber;
 
 const isAnswerCorrect = (rawInput: string, problem: RoundingProblem) => {
   const trimmed = rawInput.trim();
   if (!trimmed) return false;
-  const numericInput = parseFloat(trimmed);
-  const numericAnswer = parseFloat(problem.answer);
-  if (Number.isNaN(numericInput)) return false;
-
-  if (problem.target === 'nearest 1 decimal place') {
-    return numericInput.toFixed(1) === numericAnswer.toFixed(1);
-  }
-  if (problem.target === 'nearest 2 decimal places') {
-    return numericInput.toFixed(2) === numericAnswer.toFixed(2);
-  }
-
-  return Math.round(numericInput) === Math.round(numericAnswer);
+  if (!/^\d+$/.test(trimmed)) return false;
+  return Number(trimmed) === Number(problem.answer);
 };
 
 const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
@@ -165,12 +195,15 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
     onVictory(scoreToStars(score, correctAnswers, questionsAnswered), score);
   }, [correctAnswers, onVictory, questionsAnswered, score, timeLeft]);
 
+  useEffect(() => {
+    if (isProblemValid(problem)) return;
+    setProblem(generateProblem(level));
+    setUserInput('');
+  }, [level, problem]);
+
   const missionText = useMemo(() => formatTarget(problem.target), [problem.target]);
   const displayNumber = useMemo(() => formatDisplayNumber(problem), [problem]);
-  const correctDisplay = useMemo(() => {
-    if (problem.target.includes('decimal')) return problem.answer;
-    return Number(problem.answer).toLocaleString('en-GB');
-  }, [problem.answer, problem.target]);
+  const correctDisplay = useMemo(() => Number(problem.answer).toLocaleString('en-GB'), [problem.answer]);
   const sparkSeeds = useMemo(
     () => Array.from({ length: 26 }, (_, idx) => ({
       id: idx,
@@ -193,13 +226,6 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
     if (roundEnded) return;
     if (value === 'DEL') {
       setUserInput((prev) => prev.slice(0, -1));
-      return;
-    }
-
-    if (value === '.') {
-      if (userInput.includes('.')) return;
-      if (!problem.target.includes('decimal')) return;
-      setUserInput((prev) => (prev.length ? `${prev}.` : '0.'));
       return;
     }
 
@@ -286,19 +312,27 @@ const RoundingRocketGame: React.FC<RoundingRocketGameProps> = ({
 
           <section className="mt-auto w-full pb-1">
             <div className="mx-auto mb-2 grid w-[86%] max-w-[18.5rem] grid-cols-3 gap-1.5">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, '.', 0, 'DEL'].map((key) => (
-                <button
-                  key={key}
-                  onClick={() => handleKeypad(String(key))}
-                  disabled={roundEnded || (key === '.' && !problem.target.includes('decimal'))}
-                  className={`h-[2.95rem] rounded-[0.82rem] border border-cyan-200/42 bg-[linear-gradient(180deg,rgba(15,31,70,0.86),rgba(6,20,54,0.94))] px-0 py-0 font-black text-cyan-50 shadow-[0_8px_14px_rgba(2,6,23,0.32)] transition hover:brightness-110 disabled:opacity-40 ${
-                    key === 'DEL'
-                      ? 'text-[clamp(0.76rem,2.9vw,0.92rem)]'
-                      : 'text-[clamp(1.05rem,4.1vw,1.35rem)]'
-                  }`}
-                >
-                  {key}
-                </button>
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, 'DEL'].map((key, index) => (
+                key === '' ? (
+                  <div
+                    key={`pad-space-${index}`}
+                    aria-hidden="true"
+                    className="h-[2.95rem] rounded-[0.82rem] border border-transparent opacity-0"
+                  />
+                ) : (
+                  <button
+                    key={key}
+                    onClick={() => handleKeypad(String(key))}
+                    disabled={roundEnded}
+                    className={`h-[2.95rem] rounded-[0.82rem] border border-cyan-200/42 bg-[linear-gradient(180deg,rgba(15,31,70,0.86),rgba(6,20,54,0.94))] px-0 py-0 font-black text-cyan-50 shadow-[0_8px_14px_rgba(2,6,23,0.32)] transition hover:brightness-110 disabled:opacity-40 ${
+                      key === 'DEL'
+                        ? 'text-[clamp(0.76rem,2.9vw,0.92rem)]'
+                        : 'text-[clamp(1.05rem,4.1vw,1.35rem)]'
+                    }`}
+                  >
+                    {key}
+                  </button>
+                )
               ))}
             </div>
 

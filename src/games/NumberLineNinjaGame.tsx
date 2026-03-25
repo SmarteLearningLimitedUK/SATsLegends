@@ -1,8 +1,13 @@
-﻿import React, { useEffect, useMemo, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
-import GameActionDock from '../components/GameActionDock';
-import { AVATARS } from '../constants';
-import insideDojoBackground from '../assets/maps/inside dojo.jpg';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  ArrowLeft,
+  CircleHelp,
+  Heart,
+  Timer,
+  UserCircle2,
+  Volume2,
+  VolumeX,
+} from 'lucide-react';
 
 interface NumberLineNinjaGameProps {
   levelId: number;
@@ -12,444 +17,241 @@ interface NumberLineNinjaGameProps {
   onBack: () => void;
 }
 
-interface NumberLineRange {
-  gt?: number;
-  gte?: number;
-  lt?: number;
-  lte?: number;
-}
+type FeedbackState = 'default' | 'selected' | 'correct' | 'incorrect';
 
-interface NumberLineQuestion {
-  id: string;
-  title: string;
-  prompt: string;
-  lineText: string;
-  lineMin: number;
-  lineMax: number;
-  ticks: number[];
-  tickLabels?: Record<number, string>;
-  marker?: number;
-  markerLabel?: string;
-  range?: NumberLineRange;
-  options: string[];
-  answers: string[];
-  multiSelect?: boolean;
-}
-
-const QUESTION_BANK: NumberLineQuestion[] = [
-  {
-    id: 'missing-basic',
-    title: 'Missing Number',
-    prompt: 'A number line goes from 0 to 20. What number is missing?',
-    lineText: '0 - 5 - ? - 15 - 20',
-    lineMin: 0,
-    lineMax: 20,
-    ticks: [0, 5, 10, 15, 20],
-    tickLabels: { 10: '?' },
-    options: ['8', '10', '12', '14'],
-    answers: ['10'],
-  },
-  {
-    id: 'missing-thirds',
-    title: 'Equal Parts',
-    prompt: 'The line from 0 to 1 is split into 3 equal parts. What are the two missing numbers?',
-    lineText: '0 - ? - ? - 1',
-    lineMin: 0,
-    lineMax: 1,
-    ticks: [0, 1 / 3, 2 / 3, 1],
-    tickLabels: { [1 / 3]: '?', [2 / 3]: '?' },
-    options: ['1/2', '1/3', '2/3', '3/4'],
-    answers: ['1/3', '2/3'],
-    multiSelect: true,
-  },
-  {
-    id: 'step-size',
-    title: 'Step Size',
-    prompt: 'A number line shows 40 - 60 - 80 - 100. What is the value of each step?',
-    lineText: '40 - 60 - 80 - 100',
-    lineMin: 40,
-    lineMax: 100,
-    ticks: [40, 60, 80, 100],
-    options: ['10', '15', '20', '25'],
-    answers: ['20'],
-  },
-  {
-    id: 'fraction-point',
-    title: 'Fractions',
-    prompt: 'A number line from 0 to 1 is divided into 4 equal parts. A point is on the third mark. What fraction is this?',
-    lineText: '0 - 1/4 - 1/2 - * - 1',
-    lineMin: 0,
-    lineMax: 1,
-    ticks: [0, 0.25, 0.5, 0.75, 1],
-    tickLabels: { 0: '0', 0.25: '1/4', 0.5: '1/2', 0.75: '3/4', 1: '1' },
-    marker: 0.75,
-    options: ['1/4', '1/2', '3/4', '4/4'],
-    answers: ['3/4'],
-  },
-  {
-    id: 'decimal-mid',
-    title: 'Decimals',
-    prompt: 'The point is halfway between 0.2 and 0.3. What number is this?',
-    lineText: '0.1 - 0.2 - * - 0.3 - 0.4',
-    lineMin: 0.1,
-    lineMax: 0.4,
-    ticks: [0.1, 0.2, 0.3, 0.4],
-    marker: 0.25,
-    markerLabel: '*',
-    options: ['0.2', '0.24', '0.25', '0.3'],
-    answers: ['0.25'],
-  },
-  {
-    id: 'negative-mid',
-    title: 'Negative Numbers',
-    prompt: 'A number line shows -10 - -5 - 0 - 5. What number is halfway between -10 and 0?',
-    lineText: '-10 - -5 - 0 - 5',
-    lineMin: -10,
-    lineMax: 5,
-    ticks: [-10, -5, 0, 5],
-    marker: -5,
-    options: ['-7.5', '-6', '-5', '-4'],
-    answers: ['-5'],
-  },
-  {
-    id: 'reasoning-midpoint',
-    title: 'Reasoning',
-    prompt: 'A point lies exactly halfway between 0.6 and 1.0. What is the value of the point?',
-    lineText: '0.6 - * - 1.0',
-    lineMin: 0.6,
-    lineMax: 1.0,
-    ticks: [0.6, 0.8, 1.0],
-    marker: 0.8,
-    options: ['0.7', '0.75', '0.8', '0.9'],
-    answers: ['0.8'],
-  },
-  {
-    id: 'inequality',
-    title: 'Inequalities',
-    prompt: 'The number line shows all values greater than 2 but less than or equal to 6. Write this as an inequality.',
-    lineText: 'open at 2, closed at 6',
-    lineMin: 0,
-    lineMax: 8,
-    ticks: [0, 2, 4, 6, 8],
-    range: { gt: 2, lte: 6 },
-    options: ['2 < x < 6', '2 <= x < 6', '2 < x <= 6', '2 <= x <= 6'],
-    answers: ['2 < x <= 6'],
-  },
-];
-
-const normalizeAnswer = (value: string) => (
-  value
-    .toLowerCase()
-    .replace(/â‰¤/g, '<=')
-    .replace(/â‰¥/g, '>=')
-    .replace(/≤/g, '<=')
-    .replace(/≥/g, '>=')
-    .replace(/\s+/g, '')
-);
-
-const scoreToStars = (accuracy: number, livesLeft: number): number => {
-  if (accuracy >= 0.875 && livesLeft >= 2) return 3;
-  if (accuracy >= 0.65) return 2;
-  return 1;
-};
-
-const valueToPercent = (value: number, min: number, max: number) => {
-  if (max <= min) return 0;
-  return ((value - min) / (max - min)) * 100;
-};
-
-const formatTick = (value: number) => {
-  if (Number.isInteger(value)) return String(value);
-  return value.toFixed(2).replace(/\.?0+$/, '');
-};
+const ANSWERS = ['8', '10', '12', '14'] as const;
+const CORRECT_ANSWER = '10';
 
 const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
-  levelId,
   avatarId,
   onVictory,
   onGameOver,
   onBack,
 }) => {
-  const [questionIndex, setQuestionIndex] = useState(0);
-  const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(120);
+  const [timeLeft, setTimeLeft] = useState(83);
   const [lives, setLives] = useState(3);
-  const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
-  const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
-  const [locked, setLocked] = useState(false);
-  const [correctCount, setCorrectCount] = useState(0);
-  const [isComplete, setIsComplete] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [feedbackState, setFeedbackState] = useState<FeedbackState>('default');
+  const [isMuted, setIsMuted] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
+  const [score, setScore] = useState(0);
 
-  const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
-  const questions = useMemo(() => QUESTION_BANK, []);
-  const current = questions[questionIndex];
-  const targetScore = questions.length * 140 + levelId * 20;
-  const progress = Math.min((score / Math.max(targetScore, 1)) * 100, 100);
-
-  useEffect(() => {
-    setQuestionIndex(0);
-    setScore(0);
-    setTimeLeft(120 + Math.min(levelId, 15) * 4);
-    setLives(3);
-    setSelectedAnswers([]);
-    setFeedback(null);
-    setLocked(false);
-    setCorrectCount(0);
-    setIsComplete(false);
-  }, [levelId]);
+  const canSubmit = selectedAnswer !== null;
+  const isCorrect = selectedAnswer === CORRECT_ANSWER;
+  const avatarGlyph = useMemo(
+    () => (avatarId?.trim()?.charAt(0)?.toUpperCase() || 'E'),
+    [avatarId],
+  );
 
   useEffect(() => {
-    if (isComplete || lives <= 0) return undefined;
-    const timer = window.setInterval(() => {
-      setTimeLeft((previous) => {
-        if (previous <= 1) {
-          window.clearInterval(timer);
+    const timerId = window.setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          window.clearInterval(timerId);
           onGameOver(score);
           return 0;
         }
-        return previous - 1;
+        return prev - 1;
       });
     }, 1000);
-    return () => window.clearInterval(timer);
-  }, [isComplete, lives, onGameOver, score]);
 
-  const moveNext = (wasCorrect: boolean, nextLives: number, nextScore: number) => {
-    const atLastQuestion = questionIndex >= questions.length - 1;
-    if (atLastQuestion) {
-      if (wasCorrect) {
-        const accuracy = (correctCount + 1) / questions.length;
-        const stars = scoreToStars(accuracy, nextLives);
-        setIsComplete(true);
-        window.setTimeout(() => onVictory(stars, nextScore), 520);
-      } else if (nextLives <= 0) {
-        setIsComplete(true);
-        window.setTimeout(() => onGameOver(nextScore), 420);
-      } else {
-        const accuracy = correctCount / questions.length;
-        const stars = scoreToStars(accuracy, nextLives);
-        setIsComplete(true);
-        window.setTimeout(() => onVictory(stars, nextScore), 520);
-      }
+    return () => window.clearInterval(timerId);
+  }, [onGameOver, score]);
+
+  useEffect(() => {
+    if (!showHelp) return undefined;
+    const timeoutId = window.setTimeout(() => setShowHelp(false), 2200);
+    return () => window.clearTimeout(timeoutId);
+  }, [showHelp]);
+
+  const handleSelectAnswer = (answer: string) => {
+    setSelectedAnswer(answer);
+    setFeedbackState('selected');
+  };
+
+  const handleSubmit = () => {
+    if (!selectedAnswer) return;
+
+    if (selectedAnswer === CORRECT_ANSWER) {
+      setFeedbackState('correct');
+      const nextScore = score + 120;
+      setScore(nextScore);
+      window.setTimeout(() => onVictory(3, nextScore), 650);
       return;
     }
+
+    const nextLives = Math.max(0, lives - 1);
+    setLives(nextLives);
+    setFeedbackState('incorrect');
 
     window.setTimeout(() => {
       if (nextLives <= 0) {
-        onGameOver(nextScore);
+        onGameOver(score);
         return;
       }
-      setQuestionIndex((prev) => prev + 1);
-      setSelectedAnswers([]);
-      setFeedback(null);
-      setLocked(false);
-    }, 620);
+      setSelectedAnswer(null);
+      setFeedbackState('default');
+    }, 700);
   };
-
-  const toggleOption = (option: string) => {
-    if (locked || !current) return;
-    if (current.multiSelect) {
-      setSelectedAnswers((prev) => (
-        prev.includes(option) ? prev.filter((item) => item !== option) : [...prev, option]
-      ));
-      return;
-    }
-    setSelectedAnswers([option]);
-  };
-
-  const submitAnswer = () => {
-    if (!current || locked || selectedAnswers.length === 0) return;
-    setLocked(true);
-
-    const normalizedSelected = selectedAnswers.map(normalizeAnswer).sort();
-    const normalizedExpected = current.answers.map(normalizeAnswer).sort();
-    const isCorrect = (
-      normalizedSelected.length === normalizedExpected.length
-      && normalizedExpected.every((answer, index) => normalizedSelected[index] === answer)
-    );
-
-    if (isCorrect) {
-      const gained = 140 + Math.max(0, Math.floor(timeLeft / 3));
-      const nextScore = score + gained;
-      const nextLives = lives;
-      setScore(nextScore);
-      setCorrectCount((prev) => prev + 1);
-      setFeedback({ tone: 'success', message: 'Perfect mark!' });
-      moveNext(true, nextLives, nextScore);
-      return;
-    }
-
-    const nextLives = lives - 1;
-    const nextScore = Math.max(0, score - 35);
-    setLives(nextLives);
-    setScore(nextScore);
-    setFeedback({ tone: 'error', message: `Not quite. Correct answer: ${current.answers.join(' and ')}` });
-    moveNext(false, nextLives, nextScore);
-  };
-
-  if (!current) return null;
-
-  const rangeStart = current.range ? (current.range.gte ?? current.range.gt ?? current.lineMin) : null;
-  const rangeEnd = current.range ? (current.range.lte ?? current.range.lt ?? current.lineMax) : null;
-  const rangeStartOpen = current.range ? current.range.gt !== undefined : false;
-  const rangeEndOpen = current.range ? current.range.lt !== undefined : false;
 
   return (
-    <div className="relative flex h-full w-full min-h-0 flex-col overflow-hidden">
-      <img
-        src={insideDojoBackground}
-        alt=""
-        aria-hidden="true"
-        draggable={false}
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+    <div className="fixed inset-0 overflow-hidden bg-slate-950 text-slate-100">
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(110% 75% at 50% 12%, rgba(59,130,246,0.26), rgba(30,41,59,0.32) 45%, rgba(2,6,23,0.92) 100%), linear-gradient(180deg, #0b1228 0%, #09142f 40%, #071021 100%)',
+        }}
       />
+      <div className="pointer-events-none absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-cyan-300/8 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-16 right-[-2.5rem] h-60 w-60 rounded-full bg-indigo-400/10 blur-3xl" />
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col gap-2.5 px-3 pb-[calc(5.25rem+env(safe-area-inset-bottom))] pt-3 md:gap-3 md:px-4 md:pb-[calc(5.75rem+env(safe-area-inset-bottom))]">
-        <section className="shrink-0 rounded-2xl border border-cyan-100/35 bg-black/42 p-2.5 text-center shadow-[0_10px_24px_rgba(2,6,23,0.5)] backdrop-blur-sm md:p-3">
-          <div className="min-w-0">
-            <div className="text-center text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/70">
-              {current.title}
+      <div className="relative z-10 mx-auto flex h-full w-full max-w-[430px] flex-col px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(0.9rem,env(safe-area-inset-top))]">
+        <header className="mb-3 flex shrink-0 items-center justify-between gap-3 rounded-2xl border border-white/14 bg-slate-900/72 px-3 py-2.5 shadow-[0_12px_24px_rgba(2,6,23,0.34)] backdrop-blur-sm">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-cyan-200/40 bg-cyan-500/20">
+              <UserCircle2 className="absolute h-4 w-4 text-cyan-100/40" />
+              <span className="relative text-sm font-black text-cyan-100">{avatarGlyph}</span>
             </div>
-            <div className="mt-1 text-center text-sm font-bold leading-snug text-white md:text-base">
-              {current.prompt}
-            </div>
-          </div>
-          <div className="mt-2.5 flex flex-wrap items-center justify-center gap-2">
-            <div className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/70">Progress</div>
-            <div className="h-2.5 flex-1 overflow-hidden rounded-full border border-cyan-100/25 bg-slate-950/65">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 transition-[width] duration-300"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-            <div className="rounded-full border border-rose-200/40 bg-rose-500/20 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.1em] text-rose-100">
-              Lives {lives}
+            <div className="min-w-0">
+              <p className="truncate text-sm font-black tracking-[0.03em] text-cyan-50">Explorer</p>
             </div>
           </div>
-        </section>
 
-        <section className="shrink-0 rounded-2xl border border-cyan-100/30 bg-black/40 p-2.5 shadow-[0_10px_20px_rgba(2,6,23,0.45)] backdrop-blur-sm md:p-3">
-          <div className="relative mx-auto h-24 w-[95%] md:h-28">
-            <div className="absolute left-0 right-0 top-1/2 h-[4px] -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-200/90 via-white/90 to-cyan-200/90" />
+          <div className="flex items-center gap-2">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-cyan-200/35 bg-blue-500/20 px-2.5 py-1 text-xs font-black tracking-[0.03em] text-cyan-50">
+              <Timer className="h-3.5 w-3.5" />
+              <span>{timeLeft}s</span>
+            </div>
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-rose-200/35 bg-rose-500/18 px-2.5 py-1 text-xs font-black tracking-[0.03em] text-rose-100">
+              <Heart className="h-3.5 w-3.5" />
+              <span>{lives}</span>
+            </div>
+          </div>
+        </header>
 
-            {rangeStart !== null && rangeEnd !== null ? (
-              <div
-                className="absolute top-1/2 h-[8px] -translate-y-1/2 rounded-full bg-amber-300/70"
-                style={{
-                  left: `${valueToPercent(rangeStart, current.lineMin, current.lineMax)}%`,
-                  width: `${valueToPercent(rangeEnd, current.lineMin, current.lineMax) - valueToPercent(rangeStart, current.lineMin, current.lineMax)}%`,
-                }}
-              />
-            ) : null}
+        <main className="flex min-h-0 flex-1 flex-col gap-3">
+          <section className="shrink-0 rounded-2xl border border-white/12 bg-slate-900/66 px-4 py-3 shadow-[0_10px_20px_rgba(2,6,23,0.3)]">
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-cyan-200/80">Missing Number</p>
+            <h1 className="mt-1.5 text-[clamp(1rem,4.3vw,1.25rem)] font-black leading-snug text-white">
+              A number line goes from 0 to 20. Which number is missing?
+            </h1>
+          </section>
 
-            {current.ticks.map((tick) => {
-              const left = valueToPercent(tick, current.lineMin, current.lineMax);
-              const label = current.tickLabels?.[tick] ?? formatTick(tick);
-              return (
-                <div key={`${current.id}-tick-${tick}`} className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2" style={{ left: `${left}%` }}>
-                  <div className="h-6 w-[3px] rounded-full bg-white/95" />
-                  <div className="absolute top-7 left-1/2 -translate-x-1/2 whitespace-nowrap text-base font-black text-white/92 md:text-lg">
-                    {label}
+          <section className="rounded-2xl border border-cyan-100/20 bg-slate-900/64 px-4 py-5 shadow-[0_16px_30px_rgba(2,6,23,0.35)]">
+            <div className="relative mx-auto h-24 w-full max-w-[350px]">
+              <div className="absolute left-0 right-0 top-1/2 h-[5px] -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-200 via-cyan-50 to-cyan-200 shadow-[0_0_12px_rgba(103,232,249,0.18)]" />
+
+              {[0, 5, 10, 15, 20].map((tick) => {
+                const leftPercent = (tick / 20) * 100;
+                const isMissingTick = tick === 10;
+                return (
+                  <div
+                    key={`tick-${tick}`}
+                    className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
+                    style={{ left: `${leftPercent}%` }}
+                  >
+                    <div className={`mx-auto w-[4px] rounded-full ${isMissingTick ? 'h-9 bg-amber-300' : 'h-7 bg-white/95'}`} />
+                    <div className="absolute left-1/2 top-9 -translate-x-1/2">
+                      <span
+                        className={`text-[clamp(1.1rem,5vw,1.35rem)] font-black ${
+                          isMissingTick
+                            ? 'rounded-full border border-amber-200/50 bg-amber-400/20 px-2 py-0.5 text-amber-100 shadow-[0_0_12px_rgba(251,191,36,0.25)]'
+                            : 'text-white'
+                        }`}
+                      >
+                        {isMissingTick ? '?' : tick}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-
-            {current.marker !== undefined ? (
-              <div
-                className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
-                style={{ left: `${valueToPercent(current.marker, current.lineMin, current.lineMax)}%` }}
-              >
-                <div className="h-7 w-7 rounded-full border-2 border-cyan-200 bg-cyan-400/75 shadow-[0_0_16px_rgba(34,211,238,0.55)]" />
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-black text-cyan-100">
-                  {current.markerLabel ?? '•'}
-                </div>
-              </div>
-            ) : null}
-
-            {rangeStart !== null ? (
-              <div
-                className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
-                style={{ left: `${valueToPercent(rangeStart, current.lineMin, current.lineMax)}%` }}
-              >
-                <div className={`h-5 w-5 rounded-full border-2 border-amber-100 ${rangeStartOpen ? 'bg-slate-900' : 'bg-amber-200'}`} />
-              </div>
-            ) : null}
-
-            {rangeEnd !== null ? (
-              <div
-                className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
-                style={{ left: `${valueToPercent(rangeEnd, current.lineMin, current.lineMax)}%` }}
-              >
-                <div className={`h-5 w-5 rounded-full border-2 border-amber-100 ${rangeEndOpen ? 'bg-slate-900' : 'bg-amber-200'}`} />
-              </div>
-            ) : null}
-          </div>
-        </section>
-
-        <section className="shrink-0 flex flex-col gap-2.5 rounded-2xl border border-cyan-100/28 bg-black/36 p-2.5 text-center shadow-[0_10px_20px_rgba(2,6,23,0.42)] backdrop-blur-sm md:p-3">
-          <div className="grid grid-cols-2 gap-2.5 md:gap-3">
-            {current.options.map((option) => {
-              const active = selectedAnswers.includes(option);
-              return (
-                <button
-                  key={`${current.id}-${option}`}
-                  type="button"
-                  onClick={() => toggleOption(option)}
-                  disabled={locked}
-                  className={`rounded-xl border px-3 py-3 text-center text-sm font-black transition md:text-base ${
-                    active
-                      ? 'border-cyan-200 bg-cyan-400/28 text-white shadow-[0_8px_20px_rgba(6,182,212,0.25)]'
-                      : 'border-white/16 bg-slate-900/45 text-white/90 hover:border-cyan-100/40'
-                  }`}
-                >
-                  {option}
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="mt-auto flex flex-col items-center justify-center gap-2">
-            <div className="text-center text-xs font-bold text-cyan-100/76">
-              {current.multiSelect ? 'Select all correct answers, then submit.' : 'Select one answer, then submit.'}
+                );
+              })}
             </div>
-            <button
-              type="button"
-              onClick={submitAnswer}
-              disabled={locked || selectedAnswers.length === 0}
-              className="rounded-full border border-cyan-100/45 bg-cyan-400/22 px-5 py-2 text-xs font-black uppercase tracking-[0.14em] text-white disabled:opacity-45"
-            >
-              Submit
-            </button>
-          </div>
-        </section>
+          </section>
 
-        <AnimatePresence>
-          {feedback ? (
-            <motion.div
-              key={feedback.message}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              className={`absolute bottom-[calc(5.1rem+env(safe-area-inset-bottom))] left-1/2 z-30 -translate-x-1/2 rounded-full border px-5 py-2 text-xs font-black uppercase tracking-[0.12em] shadow-[0_16px_32px_rgba(2,6,23,0.55)] ${
-                feedback.tone === 'success'
-                  ? 'border-emerald-200/80 bg-emerald-500/30 text-emerald-50'
-                  : 'border-rose-200/80 bg-rose-500/30 text-rose-50'
-              }`}
-            >
-              {feedback.message}
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
+          <section className="rounded-2xl border border-white/12 bg-slate-900/62 p-3.5 shadow-[0_14px_26px_rgba(2,6,23,0.34)]">
+            <div className="grid grid-cols-2 gap-2.5">
+              {ANSWERS.map((answer) => {
+                const selected = selectedAnswer === answer;
+                const showCorrect = feedbackState === 'correct' && answer === CORRECT_ANSWER;
+                const showWrong = feedbackState === 'incorrect' && selected && answer !== CORRECT_ANSWER;
+                return (
+                  <button
+                    key={answer}
+                    type="button"
+                    onClick={() => handleSelectAnswer(answer)}
+                    className={[
+                      'h-14 rounded-2xl border text-xl font-black transition-all duration-150',
+                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/85 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950',
+                      selected ? 'border-cyan-200/75 bg-cyan-400/26 text-cyan-50 shadow-[0_10px_18px_rgba(34,211,238,0.22)]' : 'border-white/16 bg-slate-800/76 text-white hover:border-cyan-100/35',
+                      showCorrect ? 'border-emerald-200/80 bg-emerald-500/30 text-emerald-50' : '',
+                      showWrong ? 'border-rose-200/85 bg-rose-500/32 text-rose-50' : '',
+                    ].join(' ')}
+                  >
+                    {answer}
+                  </button>
+                );
+              })}
+            </div>
+          </section>
 
-        <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.35rem,env(safe-area-inset-bottom))] z-40 flex justify-center">
-          <div className="pointer-events-auto">
-            <GameActionDock onBack={onBack} compact />
-          </div>
-        </div>
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={!canSubmit}
+            className="mt-auto h-14 shrink-0 rounded-2xl border border-amber-200/60 bg-gradient-to-b from-amber-300 to-amber-500 text-lg font-black text-amber-950 shadow-[0_12px_20px_rgba(180,83,9,0.34)] transition-all disabled:cursor-not-allowed disabled:opacity-45"
+          >
+            Submit
+          </button>
+        </main>
+
+        <footer className="mt-3 grid shrink-0 grid-cols-3 gap-2.5">
+          <button
+            type="button"
+            onClick={onBack}
+            className="inline-flex h-12 items-center justify-center gap-1 rounded-xl border border-white/18 bg-slate-900/70 text-sm font-black text-white/90 transition hover:border-cyan-200/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/85"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsMuted((prev) => !prev)}
+            className="inline-flex h-12 items-center justify-center gap-1 rounded-xl border border-white/18 bg-slate-900/70 text-sm font-black text-white/90 transition hover:border-cyan-200/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/85"
+          >
+            {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+            Sound
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowHelp(true)}
+            className="inline-flex h-12 items-center justify-center gap-1 rounded-xl border border-white/18 bg-slate-900/70 text-sm font-black text-white/90 transition hover:border-cyan-200/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/85"
+          >
+            <CircleHelp className="h-4 w-4" />
+            Help
+          </button>
+        </footer>
       </div>
+
+      {showHelp ? (
+        <div className="pointer-events-none absolute bottom-[max(6.25rem,calc(env(safe-area-inset-bottom)+5.5rem))] left-1/2 z-30 -translate-x-1/2 rounded-full border border-cyan-100/45 bg-slate-900/88 px-4 py-2 text-xs font-black uppercase tracking-[0.08em] text-cyan-50 shadow-[0_10px_24px_rgba(2,6,23,0.45)]">
+          Tap the missing value on the number line.
+        </div>
+      ) : null}
+
+      {feedbackState === 'correct' ? (
+        <div className="pointer-events-none absolute top-[calc(env(safe-area-inset-top)+4.9rem)] left-1/2 z-30 -translate-x-1/2 rounded-full border border-emerald-200/80 bg-emerald-500/35 px-4 py-1.5 text-xs font-black uppercase tracking-[0.1em] text-emerald-50 shadow-[0_8px_20px_rgba(16,185,129,0.28)]">
+          Correct!
+        </div>
+      ) : null}
+
+      {feedbackState === 'incorrect' ? (
+        <div className="pointer-events-none absolute top-[calc(env(safe-area-inset-top)+4.9rem)] left-1/2 z-30 -translate-x-1/2 rounded-full border border-rose-200/80 bg-rose-500/35 px-4 py-1.5 text-xs font-black uppercase tracking-[0.1em] text-rose-50 shadow-[0_8px_20px_rgba(244,63,94,0.28)]">
+          Try again
+        </div>
+      ) : null}
     </div>
   );
 };
 
 export default NumberLineNinjaGame;
-
