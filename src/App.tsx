@@ -1070,12 +1070,6 @@ const App: React.FC = () => {
                 />
               </div>
             </div>
-
-            <div className="unified-global-dock pointer-events-none absolute inset-x-0 bottom-[max(0.45rem,calc(env(safe-area-inset-bottom)+0.2rem))] z-[240] flex justify-center px-3">
-              <div className="pointer-events-auto">
-                <GameActionDock onBack={() => setScreen('island_levels')} compact accentClass="text-slate-100" variant="global" />
-              </div>
-            </div>
           </div>
         );
 
@@ -1121,7 +1115,9 @@ const App: React.FC = () => {
   };
 
   const screenBehavior = SCREEN_BEHAVIOR[screen];
-  const showBottomNav = ['world_map', 'parent_dashboard'].includes(screen);
+  const isMapScreen = screen === 'world_map' || screen === 'island_levels';
+  const showBottomNav = screen === 'world_map';
+  const showGlobalDock = !isMapScreen;
   const isSplashScreen = screen === 'splash';
   const isAvatarSelectionScreen = screen === 'avatar_selection';
   const isGameplayScreen = screen === 'gameplay';
@@ -1139,6 +1135,9 @@ const App: React.FC = () => {
     ? isWorldMapScreen
       ? 'pb-[calc(6.75rem+env(safe-area-inset-bottom))] md:pb-[calc(2.4rem+env(safe-area-inset-bottom))]'
       : 'pb-[calc(6.75rem+env(safe-area-inset-bottom))] md:pb-[calc(7.25rem+env(safe-area-inset-bottom))]'
+    : '';
+  const globalDockOffsetClass = showGlobalDock && !isGameplayScreen
+    ? 'pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-[calc(6.2rem+env(safe-area-inset-bottom))]'
     : '';
   const viewportShellClass = isGameplayScreen
     ? 'sat-shell-standard bg-transparent'
@@ -1178,7 +1177,7 @@ const App: React.FC = () => {
                 initial={{ opacity: 0, scale: screenEnterScale }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: screenExitScale }}
-                className={`app-screen-content relative z-10 flex min-h-0 w-full flex-1 justify-center pointer-events-auto ${screenBehavior.scrollable ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'} ${contentShellClass} ${bottomNavOffsetClass}`}
+                className={`app-screen-content relative z-10 flex min-h-0 w-full flex-1 justify-center pointer-events-auto ${screenBehavior.scrollable ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'} ${contentShellClass} ${bottomNavOffsetClass} ${globalDockOffsetClass}`}
                 style={screenBehavior.scrollable ? { WebkitOverflowScrolling: 'touch' } : undefined}
               >
                 {renderScreen()}
@@ -1223,6 +1222,43 @@ const App: React.FC = () => {
               rules={hintRuleSet}
               actionLabel={gameRulesMode === 'start' ? 'Start Game' : 'Back To Game'}
             />
+
+            {
+              showGlobalDock && (
+                <div className="global-app-dock pointer-events-none fixed inset-x-0 bottom-[calc(0.65rem+env(safe-area-inset-bottom))] z-50 flex justify-center px-3">
+                  <div className="pointer-events-auto">
+                    <GameActionDock
+                      onBack={() => {
+                        if (screen === 'gameplay') {
+                          setScreen('island_levels');
+                          return;
+                        }
+                        if (screen === 'avatar_selection') {
+                          setScreen('profile_setup');
+                          return;
+                        }
+                        if (screen === 'profile_setup') {
+                          setScreen('splash');
+                          return;
+                        }
+                        if (screen === 'shop' || screen === 'profile' || screen === 'settings' || screen === 'parent_dashboard') {
+                          goToHome();
+                          return;
+                        }
+                        if (screen === 'splash') {
+                          setScreen('splash');
+                          return;
+                        }
+                        goToHome();
+                      }}
+                      compact
+                      accentClass="text-slate-100"
+                      variant="global"
+                    />
+                  </div>
+                </div>
+              )
+            }
 
             {
               showBottomNav && (

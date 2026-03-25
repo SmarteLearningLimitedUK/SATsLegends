@@ -57,12 +57,11 @@ const GameActionDock: React.FC<GameActionDockProps> = ({
     ? 'mt-0.5 flex shrink-0 items-center justify-center'
     : 'game-shell-zone game-shell-zone-actions mt-0.5 flex shrink-0 items-center justify-center';
 
-  const actionButtonClass = 'inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border-2 border-amber-300/90 bg-[linear-gradient(180deg,#315db4_0%,#1f428e_100%)] px-2.5 text-sm font-black text-white shadow-[0_7px_12px_rgba(2,6,23,0.34)] transition hover:brightness-110 active:translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200';
-  const iconBadgeClass = 'inline-flex h-5 w-5 items-center justify-center rounded-full bg-[linear-gradient(180deg,#f9cf5d_0%,#f59e0b_100%)] text-slate-900 shadow-[0_2px_4px_rgba(2,6,23,0.28)]';
+  const actionButtonClass = 'inline-flex h-16 w-16 items-center justify-center rounded-[1.2rem] border-2 border-cyan-100/70 bg-[linear-gradient(180deg,#4f95ff_0%,#2f6ee8_52%,#2457c4_100%)] text-white shadow-[0_10px_20px_rgba(2,6,23,0.36),inset_0_1px_0_rgba(255,255,255,0.45)] transition hover:brightness-110 active:translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200';
 
   return (
     <div className={outerClass}>
-      <div className="shrink-0 rounded-2xl border-2 border-amber-300/90 bg-[linear-gradient(180deg,rgba(30,64,175,0.62),rgba(30,58,138,0.72))] p-2 shadow-[0_10px_20px_rgba(2,6,23,0.42)]">
+      <div className="shrink-0 rounded-[1.5rem] border border-cyan-200/40 bg-[linear-gradient(180deg,#102868_0%,#0a1b4b_100%)] p-2 shadow-[0_12px_22px_rgba(2,6,23,0.5),inset_0_1px_0_rgba(255,255,255,0.14)]">
         <div className="grid grid-cols-3 gap-2">
         <button
           onClick={() => {
@@ -72,30 +71,21 @@ const GameActionDock: React.FC<GameActionDockProps> = ({
           className={actionButtonClass}
           aria-label="Back"
         >
-          <span className={iconBadgeClass}>
-            <AssetIcon name="back" className="h-3.5 w-3.5" />
-          </span>
-          Back
+          <AssetIcon name="back" className="h-7 w-7 drop-shadow-[0_2px_2px_rgba(0,0,0,0.28)]" />
         </button>
         <button
           onClick={handleToggleMute}
           className={actionButtonClass}
           aria-label={isMuted ? 'Unmute audio' : 'Mute audio'}
         >
-          <span className={iconBadgeClass}>
-            <AssetIcon name={isMuted ? 'soundMute' : 'sound'} className="h-3.5 w-3.5" />
-          </span>
-          Sound
+          <AssetIcon name={isMuted ? 'soundMute' : 'sound'} className="h-7 w-7 drop-shadow-[0_2px_2px_rgba(0,0,0,0.28)]" />
         </button>
         <button
           onClick={handleOpenHelp}
           className={actionButtonClass}
           aria-label="Hint"
         >
-          <span className={iconBadgeClass}>
-            <AssetIcon name="question" className="h-3.5 w-3.5" />
-          </span>
-          Help
+          <AssetIcon name="question" className="h-7 w-7 drop-shadow-[0_2px_2px_rgba(0,0,0,0.28)]" />
         </button>
         </div>
       </div>
