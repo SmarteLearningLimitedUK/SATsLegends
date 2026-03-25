@@ -1,334 +1,943 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Check,
-  Hexagon,
-  Pentagon,
-  Shapes,
-  Square,
-  Timer as TimerIcon,
-  Trophy,
-  Triangle,
-  X,
-  Zap,
-} from 'lucide-react';
+﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import GameActionDock from '../components/GameActionDock';
+import { triggerHaptic } from '../haptics';
+import gameplayBackground from '../assets/maps/inside dojo.jpg';
 
 interface PolygonPalaceGameProps {
   levelId: number;
+  miniGameLevel?: number;
   avatarId: string;
+  useSharedTopHud?: boolean;
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
   onBack: () => void;
 }
 
-interface ShapeProperty {
-  id: string;
-  label: string;
-  check: (shape: ShapeData) => boolean;
-}
+type ShapeFamily = 'triangle' | 'quadrilateral' | 'polygon' | 'circle';
+type EqualSideMode = 'none' | 'twoPairs' | 'all';
+type QuestionMode = 'name' | 'properties' | 'sort';
 
-interface ShapeData {
+interface ShapeDefinition {
   id: string;
   name: string;
-  type: '2D' | '3D';
-  sides?: number;
-  vertices: number;
-  faces?: number;
-  isRegular: boolean;
-  hasParallelSides: boolean;
-  hasRightAngles: boolean;
-  color: string;
-  icon: React.ReactNode;
+  family: ShapeFamily;
+  sides: number;
+  rightAngles: number;
+  parallelPairs: number;
+  equalSideMode: EqualSideMode;
+  regular: boolean;
+  symmetryLines: number;
+  kind: 'polygon' | 'circle';
+  points?: string;
+  defaultRotation: number;
+  fill: string;
+  stroke: string;
 }
 
-const SHAPES: ShapeData[] = [
-  { id: 'sq', name: 'Square', type: '2D', sides: 4, vertices: 4, isRegular: true, hasParallelSides: true, hasRightAngles: true, color: 'bg-blue-500', icon: <Square className="h-10 w-10" /> },
-  { id: 'rect', name: 'Rectangle', type: '2D', sides: 4, vertices: 4, isRegular: false, hasParallelSides: true, hasRightAngles: true, color: 'bg-indigo-500', icon: <div className="h-8 w-14 rounded-sm bg-current" /> },
-  { id: 'tri-eq', name: 'Equilateral Triangle', type: '2D', sides: 3, vertices: 3, isRegular: true, hasParallelSides: false, hasRightAngles: false, color: 'bg-emerald-500', icon: <Triangle className="h-10 w-10" /> },
-  { id: 'tri-rt', name: 'Right-angled Triangle', type: '2D', sides: 3, vertices: 3, isRegular: false, hasParallelSides: false, hasRightAngles: true, color: 'bg-teal-500', icon: <div className="h-10 w-10 border-b-4 border-l-4 border-current" /> },
-  { id: 'pent', name: 'Pentagon', type: '2D', sides: 5, vertices: 5, isRegular: true, hasParallelSides: false, hasRightAngles: false, color: 'bg-amber-500', icon: <Pentagon className="h-10 w-10" /> },
-  { id: 'hex', name: 'Hexagon', type: '2D', sides: 6, vertices: 6, isRegular: true, hasParallelSides: true, hasRightAngles: false, color: 'bg-orange-500', icon: <Hexagon className="h-10 w-10" /> },
-  { id: 'oct', name: 'Octagon', type: '2D', sides: 8, vertices: 8, isRegular: true, hasParallelSides: true, hasRightAngles: false, color: 'bg-rose-500', icon: <div className="flex h-10 w-10 items-center justify-center rounded-full border-4 border-current text-[10px] font-black">8</div> },
-  { id: 'circ', name: 'Circle', type: '2D', sides: 1, vertices: 0, isRegular: true, hasParallelSides: false, hasRightAngles: false, color: 'bg-sky-500', icon: <div className="h-10 w-10 rounded-full bg-current" /> },
-  { id: 'para', name: 'Parallelogram', type: '2D', sides: 4, vertices: 4, isRegular: false, hasParallelSides: true, hasRightAngles: false, color: 'bg-violet-500', icon: <div className="h-8 w-12 skew-x-12 rounded-sm bg-current" /> },
-  { id: 'trap', name: 'Trapezium', type: '2D', sides: 4, vertices: 4, isRegular: false, hasParallelSides: true, hasRightAngles: false, color: 'bg-fuchsia-500', icon: <div className="h-8 w-12 rounded-sm bg-current [clip-path:polygon(20%_0%,80%_0%,100%_100%,0%_100%)]" /> },
-  { id: 'cube', name: 'Cube', type: '3D', faces: 6, vertices: 8, isRegular: true, hasParallelSides: true, hasRightAngles: true, color: 'bg-pink-600', icon: <div className="h-10 w-10 rounded-md border-2 border-current" /> },
-  { id: 'pyr', name: 'Square-based Pyramid', type: '3D', faces: 5, vertices: 5, isRegular: false, hasParallelSides: false, hasRightAngles: false, color: 'bg-red-600', icon: <div className="h-10 w-10 border-2 border-current [clip-path:polygon(50%_0%,100%_100%,0%_100%)]" /> },
+interface PropertyDefinition {
+  id: string;
+  label: string;
+  minStage: number;
+  maxStage?: number;
+  check: (shape: ShapeDefinition) => boolean;
+}
+
+interface SortCriterion {
+  id: string;
+  prompt: string;
+  trueLabel: string;
+  falseLabel: string;
+  minStage: number;
+  check: (shape: ShapeDefinition) => boolean;
+}
+
+interface Choice {
+  id: string;
+  label: string;
+}
+
+interface PolygonQuestion {
+  id: string;
+  stage: number;
+  mode: QuestionMode;
+  prompt: string;
+  subPrompt: string;
+  shape: ShapeDefinition;
+  shapeRotation: number;
+  choices: Choice[];
+  correctChoiceIds: string[];
+  multiSelect: boolean;
+  difficultyWeight: number;
+  speedRound: boolean;
+}
+
+const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+const createId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+const shuffle = <T,>(items: T[]): T[] => {
+  const copy = [...items];
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+};
+
+const pickRandom = <T,>(items: T[], count: number): T[] => {
+  return shuffle(items).slice(0, Math.max(0, Math.min(count, items.length)));
+};
+
+const normalizeAnswers = (answers: string[]) => [...new Set(answers)].sort((a, b) => a.localeCompare(b));
+
+const regularPolygonPoints = (sides: number, radius: number, rotationDeg = -90) => {
+  const points: string[] = [];
+  for (let i = 0; i < sides; i += 1) {
+    const angle = ((rotationDeg + ((360 / sides) * i)) * Math.PI) / 180;
+    const x = Math.cos(angle) * radius;
+    const y = Math.sin(angle) * radius;
+    points.push(`${x.toFixed(2)},${y.toFixed(2)}`);
+  }
+  return points.join(' ');
+};
+
+const SHAPES: ShapeDefinition[] = [
+  {
+    id: 'square',
+    name: 'Square',
+    family: 'quadrilateral',
+    sides: 4,
+    rightAngles: 4,
+    parallelPairs: 2,
+    equalSideMode: 'all',
+    regular: true,
+    symmetryLines: 4,
+    kind: 'polygon',
+    points: '-33,-33 33,-33 33,33 -33,33',
+    defaultRotation: 0,
+    fill: '#38bdf8',
+    stroke: '#e0f2fe',
+  },
+  {
+    id: 'rectangle',
+    name: 'Rectangle',
+    family: 'quadrilateral',
+    sides: 4,
+    rightAngles: 4,
+    parallelPairs: 2,
+    equalSideMode: 'twoPairs',
+    regular: false,
+    symmetryLines: 2,
+    kind: 'polygon',
+    points: '-44,-24 44,-24 44,24 -44,24',
+    defaultRotation: 0,
+    fill: '#60a5fa',
+    stroke: '#dbeafe',
+  },
+  {
+    id: 'triangle-equilateral',
+    name: 'Equilateral Triangle',
+    family: 'triangle',
+    sides: 3,
+    rightAngles: 0,
+    parallelPairs: 0,
+    equalSideMode: 'all',
+    regular: true,
+    symmetryLines: 3,
+    kind: 'polygon',
+    points: '0,-42 38,24 -38,24',
+    defaultRotation: 0,
+    fill: '#34d399',
+    stroke: '#d1fae5',
+  },
+  {
+    id: 'triangle-right',
+    name: 'Right Triangle',
+    family: 'triangle',
+    sides: 3,
+    rightAngles: 1,
+    parallelPairs: 0,
+    equalSideMode: 'none',
+    regular: false,
+    symmetryLines: 0,
+    kind: 'polygon',
+    points: '-38,-26 -38,28 34,28',
+    defaultRotation: 0,
+    fill: '#14b8a6',
+    stroke: '#ccfbf1',
+  },
+  {
+    id: 'triangle-isosceles',
+    name: 'Isosceles Triangle',
+    family: 'triangle',
+    sides: 3,
+    rightAngles: 0,
+    parallelPairs: 0,
+    equalSideMode: 'none',
+    regular: false,
+    symmetryLines: 1,
+    kind: 'polygon',
+    points: '0,-40 34,26 -34,26',
+    defaultRotation: 0,
+    fill: '#22d3ee',
+    stroke: '#cffafe',
+  },
+  {
+    id: 'parallelogram',
+    name: 'Parallelogram',
+    family: 'quadrilateral',
+    sides: 4,
+    rightAngles: 0,
+    parallelPairs: 2,
+    equalSideMode: 'twoPairs',
+    regular: false,
+    symmetryLines: 0,
+    kind: 'polygon',
+    points: '-40,-24 20,-24 40,24 -20,24',
+    defaultRotation: 0,
+    fill: '#818cf8',
+    stroke: '#e0e7ff',
+  },
+  {
+    id: 'rhombus',
+    name: 'Rhombus',
+    family: 'quadrilateral',
+    sides: 4,
+    rightAngles: 0,
+    parallelPairs: 2,
+    equalSideMode: 'all',
+    regular: false,
+    symmetryLines: 2,
+    kind: 'polygon',
+    points: '0,-38 36,0 0,38 -36,0',
+    defaultRotation: 0,
+    fill: '#a78bfa',
+    stroke: '#ede9fe',
+  },
+  {
+    id: 'trapezium',
+    name: 'Trapezium',
+    family: 'quadrilateral',
+    sides: 4,
+    rightAngles: 0,
+    parallelPairs: 1,
+    equalSideMode: 'none',
+    regular: false,
+    symmetryLines: 0,
+    kind: 'polygon',
+    points: '-42,-24 42,-24 22,24 -28,24',
+    defaultRotation: 0,
+    fill: '#f97316',
+    stroke: '#ffedd5',
+  },
+  {
+    id: 'kite',
+    name: 'Kite',
+    family: 'quadrilateral',
+    sides: 4,
+    rightAngles: 0,
+    parallelPairs: 0,
+    equalSideMode: 'none',
+    regular: false,
+    symmetryLines: 1,
+    kind: 'polygon',
+    points: '0,-42 28,-6 0,38 -24,-8',
+    defaultRotation: 0,
+    fill: '#f43f5e',
+    stroke: '#ffe4e6',
+  },
+  {
+    id: 'pentagon',
+    name: 'Pentagon',
+    family: 'polygon',
+    sides: 5,
+    rightAngles: 0,
+    parallelPairs: 0,
+    equalSideMode: 'all',
+    regular: true,
+    symmetryLines: 5,
+    kind: 'polygon',
+    points: regularPolygonPoints(5, 39),
+    defaultRotation: 0,
+    fill: '#f59e0b',
+    stroke: '#fef3c7',
+  },
+  {
+    id: 'hexagon',
+    name: 'Hexagon',
+    family: 'polygon',
+    sides: 6,
+    rightAngles: 0,
+    parallelPairs: 3,
+    equalSideMode: 'all',
+    regular: true,
+    symmetryLines: 6,
+    kind: 'polygon',
+    points: regularPolygonPoints(6, 38),
+    defaultRotation: 0,
+    fill: '#facc15',
+    stroke: '#fef9c3',
+  },
+  {
+    id: 'octagon',
+    name: 'Octagon',
+    family: 'polygon',
+    sides: 8,
+    rightAngles: 0,
+    parallelPairs: 4,
+    equalSideMode: 'all',
+    regular: true,
+    symmetryLines: 8,
+    kind: 'polygon',
+    points: regularPolygonPoints(8, 36),
+    defaultRotation: 0,
+    fill: '#eab308',
+    stroke: '#fef08a',
+  },
+  {
+    id: 'irregular-pentagon',
+    name: 'Irregular Pentagon',
+    family: 'polygon',
+    sides: 5,
+    rightAngles: 0,
+    parallelPairs: 0,
+    equalSideMode: 'none',
+    regular: false,
+    symmetryLines: 0,
+    kind: 'polygon',
+    points: '-33,-30 19,-40 42,0 4,36 -35,17',
+    defaultRotation: 0,
+    fill: '#fb7185',
+    stroke: '#ffe4e6',
+  },
+  {
+    id: 'circle',
+    name: 'Circle',
+    family: 'circle',
+    sides: 0,
+    rightAngles: 0,
+    parallelPairs: 0,
+    equalSideMode: 'none',
+    regular: false,
+    symmetryLines: 999,
+    kind: 'circle',
+    defaultRotation: 0,
+    fill: '#38bdf8',
+    stroke: '#dbeafe',
+  },
+];
+const EARLY_SHAPE_IDS = ['square', 'rectangle', 'triangle-equilateral', 'triangle-right', 'circle', 'pentagon'];
+const MID_SHAPE_IDS = [
+  ...EARLY_SHAPE_IDS,
+  'parallelogram',
+  'rhombus',
+  'trapezium',
+  'kite',
+  'hexagon',
+  'triangle-isosceles',
 ];
 
-const PROPERTIES: ShapeProperty[] = [
-  { id: 'p1', label: 'Has exactly 4 vertices', check: (shape) => shape.vertices === 4 },
-  { id: 'p2', label: 'Is a regular polygon', check: (shape) => shape.isRegular && shape.type === '2D' },
-  { id: 'p3', label: 'Has at least one pair of parallel sides', check: (shape) => shape.hasParallelSides },
-  { id: 'p4', label: 'Has at least one right angle', check: (shape) => shape.hasRightAngles },
-  { id: 'p5', label: 'Has more than 4 sides', check: (shape) => (shape.sides || 0) > 4 },
-  { id: 'p6', label: 'Is a 3D shape', check: (shape) => shape.type === '3D' },
-  { id: 'p7', label: 'Has fewer than 4 vertices', check: (shape) => shape.vertices < 4 },
-  { id: 'p8', label: 'Has exactly 6 faces', check: (shape) => shape.faces === 6 },
+const PROPERTY_POOL: PropertyDefinition[] = [
+  { id: 'triangle', label: 'Has 3 sides', minStage: 1, check: (shape) => shape.sides === 3 },
+  { id: 'quadrilateral', label: 'Is a quadrilateral', minStage: 1, check: (shape) => shape.sides === 4 },
+  { id: 'more-than-4', label: 'Has more than 4 sides', minStage: 2, check: (shape) => shape.sides > 4 },
+  { id: 'right-angle', label: 'Has at least one right angle', minStage: 2, check: (shape) => shape.rightAngles > 0 },
+  { id: 'two-parallel', label: 'Has 2 pairs of parallel sides', minStage: 4, check: (shape) => shape.parallelPairs === 2 },
+  { id: 'one-parallel', label: 'Has exactly 1 pair of parallel sides', minStage: 5, check: (shape) => shape.parallelPairs === 1 },
+  { id: 'no-parallel', label: 'Has no parallel sides', minStage: 6, check: (shape) => shape.parallelPairs === 0 },
+  {
+    id: 'equal-sides',
+    label: 'Has all sides equal',
+    minStage: 4,
+    check: (shape) => shape.equalSideMode === 'all' && shape.family !== 'circle',
+  },
+  { id: 'regular', label: 'Is a regular polygon', minStage: 6, check: (shape) => shape.regular && shape.family !== 'circle' },
+  { id: 'symmetry', label: 'Has at least 2 lines of symmetry', minStage: 6, check: (shape) => shape.symmetryLines >= 2 },
+  { id: 'not-polygon', label: 'Is not a polygon', minStage: 8, check: (shape) => shape.family === 'circle' },
 ];
 
-const TopBar: React.FC<{ score: number; streak: number; timer: string }> = ({ score, streak, timer }) => (
-  <div className="z-50 w-full px-4 pt-4">
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-3 rounded-xl border border-blue-400/30 bg-blue-900/60 p-2 shadow-lg">
-        <div className="flex flex-col items-center px-2">
-          <div className="flex items-center gap-1 text-yellow-400">
-            <Zap className="h-4 w-4 fill-current" />
-            <span className="text-lg font-black">{streak}</span>
-          </div>
-          <span className="text-[10px] font-black uppercase text-blue-200">Streak</span>
-        </div>
-        <div className="h-8 w-[2px] bg-blue-400/20" />
-        <div className="flex flex-col">
-          <span className="text-[10px] font-bold uppercase tracking-tight text-blue-200">Score</span>
-          <span className="text-xl font-black leading-none text-white">{score.toLocaleString()}</span>
-        </div>
-      </div>
+const SORT_CRITERIA: SortCriterion[] = [
+  {
+    id: 'sort-right-angle',
+    prompt: 'Sort this shape by right angles',
+    trueLabel: 'Has right angles',
+    falseLabel: 'No right angles',
+    minStage: 4,
+    check: (shape) => shape.rightAngles > 0,
+  },
+  {
+    id: 'sort-parallel',
+    prompt: 'Sort this shape by parallel sides',
+    trueLabel: 'Has parallel sides',
+    falseLabel: 'No parallel sides',
+    minStage: 5,
+    check: (shape) => shape.parallelPairs > 0,
+  },
+  {
+    id: 'sort-regular',
+    prompt: 'Sort this shape by regularity',
+    trueLabel: 'Regular polygon',
+    falseLabel: 'Not regular',
+    minStage: 7,
+    check: (shape) => shape.regular && shape.family !== 'circle',
+  },
+  {
+    id: 'sort-four-equal',
+    prompt: 'Sort this shape by side lengths',
+    trueLabel: '4 equal sides',
+    falseLabel: 'Not 4 equal sides',
+    minStage: 8,
+    check: (shape) => shape.sides === 4 && shape.equalSideMode === 'all',
+  },
+];
 
-      <div className="flex items-center gap-2 rounded-xl border border-yellow-400/50 bg-blue-900/80 px-4 py-2 shadow-lg">
-        <TimerIcon className="h-5 w-5 text-yellow-400" />
-        <span className="text-xl font-black text-white">{timer}</span>
-      </div>
-    </div>
-  </div>
-);
+const roundSecondsForLevel = (level: number) => {
+  if (level <= 3) return 90;
+  if (level <= 7) return 75;
+  return 60;
+};
+
+const stageFromProgress = (baseLevel: number, answeredCount: number, timeLeft: number) => {
+  const solvedBoost = Math.floor(answeredCount / 4);
+  const urgencyBoost = timeLeft <= 15 ? 1 : 0;
+  return Math.max(1, Math.min(12, baseLevel + solvedBoost + urgencyBoost));
+};
+
+const modeForStage = (stage: number): QuestionMode => {
+  const roll = Math.random();
+  if (stage <= 3) return roll < 0.8 ? 'name' : 'properties';
+  if (stage <= 7) {
+    if (roll < 0.45) return 'name';
+    if (roll < 0.84) return 'properties';
+    return 'sort';
+  }
+  if (roll < 0.2) return 'name';
+  if (roll < 0.62) return 'properties';
+  return 'sort';
+};
+
+const speedRoundForState = (answeredCount: number, stage: number) => answeredCount > 0 && answeredCount % 7 === 0 && stage >= 5;
+
+const getShapePool = (stage: number) => {
+  if (stage <= 3) return SHAPES.filter((shape) => EARLY_SHAPE_IDS.includes(shape.id));
+  if (stage <= 7) return SHAPES.filter((shape) => MID_SHAPE_IDS.includes(shape.id));
+  return SHAPES;
+};
+
+const buildNameQuestion = (shape: ShapeDefinition, stage: number, speedRound: boolean): PolygonQuestion => {
+  const pool = getShapePool(stage).filter((item) => item.id !== shape.id);
+  const distractors = pickRandom(pool, 3);
+  const choices = shuffle([
+    { id: `name-${shape.id}`, label: shape.name },
+    ...distractors.map((item) => ({ id: `name-${item.id}`, label: item.name })),
+  ]);
+
+  const prompts = [
+    'What shape is this?',
+    'Choose the best name for this shape.',
+    'Name this 2D shape.',
+  ];
+
+  return {
+    id: createId(),
+    stage,
+    mode: 'name',
+    prompt: prompts[randomInt(0, prompts.length - 1)],
+    subPrompt: speedRound ? 'Speed round: answer fast for bonus points' : 'Tap one answer',
+    shape,
+    shapeRotation: randomInt(-20, 20),
+    choices,
+    correctChoiceIds: [`name-${shape.id}`],
+    multiSelect: false,
+    difficultyWeight: 35 + (stage * 8),
+    speedRound,
+  };
+};
+
+const buildPropertyQuestion = (shape: ShapeDefinition, stage: number, speedRound: boolean): PolygonQuestion | null => {
+  const activeProperties = PROPERTY_POOL.filter((property) => (
+    stage >= property.minStage && (property.maxStage === undefined || stage <= property.maxStage)
+  ));
+  const trueProperties = activeProperties.filter((property) => property.check(shape));
+  const falseProperties = activeProperties.filter((property) => !property.check(shape));
+
+  if (trueProperties.length === 0 || falseProperties.length < 2) return null;
+
+  const optionCount = speedRound ? 4 : stage <= 3 ? 4 : stage <= 7 ? 5 : 6;
+  const targetTrueCount = stage <= 3 ? 1 : stage <= 6 ? 2 : Math.min(3, trueProperties.length);
+  const selectedTrue = pickRandom(trueProperties, targetTrueCount);
+  const selectedFalse = pickRandom(falseProperties, Math.max(1, optionCount - selectedTrue.length));
+
+  const choices = shuffle([
+    ...selectedTrue.map((property) => ({ id: property.id, label: property.label })),
+    ...selectedFalse.map((property) => ({ id: property.id, label: property.label })),
+  ]).slice(0, optionCount);
+
+  const correctChoiceIds = normalizeAnswers(
+    choices
+      .filter((choice) => selectedTrue.some((property) => property.id === choice.id))
+      .map((choice) => choice.id),
+  );
+
+  return {
+    id: createId(),
+    stage,
+    mode: 'properties',
+    prompt: 'Select all properties that match this shape.',
+    subPrompt: speedRound ? 'Speed round: keep your streak alive' : 'Some questions can have multiple answers',
+    shape,
+    shapeRotation: randomInt(-24, 24),
+    choices,
+    correctChoiceIds,
+    multiSelect: true,
+    difficultyWeight: 48 + (stage * 10) + (correctChoiceIds.length * 14),
+    speedRound,
+  };
+};
+
+const buildSortQuestion = (shape: ShapeDefinition, stage: number, speedRound: boolean): PolygonQuestion => {
+  const criteria = SORT_CRITERIA.filter((criterion) => stage >= criterion.minStage);
+  const criterion = criteria[randomInt(0, criteria.length - 1)];
+  const isTrue = criterion.check(shape);
+
+  return {
+    id: createId(),
+    stage,
+    mode: 'sort',
+    prompt: criterion.prompt,
+    subPrompt: speedRound ? 'Speed round: sort instantly' : 'Pick the correct category',
+    shape,
+    shapeRotation: randomInt(-18, 18),
+    choices: [
+      { id: 'lane-true', label: criterion.trueLabel },
+      { id: 'lane-false', label: criterion.falseLabel },
+    ],
+    correctChoiceIds: [isTrue ? 'lane-true' : 'lane-false'],
+    multiSelect: false,
+    difficultyWeight: 45 + (stage * 11),
+    speedRound,
+  };
+};
+
+const createQuestion = (baseLevel: number, answeredCount: number, timeLeft: number): PolygonQuestion => {
+  const stage = stageFromProgress(baseLevel, answeredCount, timeLeft);
+  const speedRound = speedRoundForState(answeredCount, stage);
+  const mode = modeForStage(stage);
+  const shapePool = getShapePool(stage);
+  const shape = shapePool[randomInt(0, shapePool.length - 1)];
+
+  if (mode === 'name') return buildNameQuestion(shape, stage, speedRound);
+  if (mode === 'sort') return buildSortQuestion(shape, stage, speedRound);
+  const propertyQuestion = buildPropertyQuestion(shape, stage, speedRound);
+  return propertyQuestion || buildNameQuestion(shape, stage, speedRound);
+};
+
+const starsFromPerformance = (score: number, correctCount: number, attemptCount: number, stage: number) => {
+  const accuracy = attemptCount > 0 ? correctCount / attemptCount : 0;
+  const target = 1300 + (stage * 170);
+  if (score >= target * 1.2 && accuracy >= 0.8) return 3;
+  if (score >= target * 0.82 && accuracy >= 0.6) return 2;
+  return 1;
+};
+const ShapePreview: React.FC<{
+  question: PolygonQuestion;
+  pulseTone: 'success' | 'error' | null;
+}> = ({ question, pulseTone }) => {
+  const { shape, shapeRotation } = question;
+
+  return (
+    <motion.svg
+      viewBox="-62 -62 124 124"
+      className="h-[10.8rem] w-[10.8rem] md:h-[12.4rem] md:w-[12.4rem]"
+      initial={{ opacity: 0, scale: 0.93 }}
+      animate={{
+        opacity: 1,
+        scale: 1,
+        rotate: shapeRotation + shape.defaultRotation,
+      }}
+      transition={{ duration: 0.32, ease: 'easeOut' }}
+      style={{
+        filter: pulseTone === 'success'
+          ? 'drop-shadow(0 0 16px rgba(74,222,128,0.65))'
+          : pulseTone === 'error'
+            ? 'drop-shadow(0 0 14px rgba(251,113,133,0.62))'
+            : 'drop-shadow(0 10px 18px rgba(2,6,23,0.45))',
+      }}
+    >
+      <defs>
+        <linearGradient id="shapeFill" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor={shape.fill} stopOpacity={0.98} />
+          <stop offset="100%" stopColor={shape.fill} stopOpacity={0.62} />
+        </linearGradient>
+      </defs>
+
+      {shape.kind === 'circle' ? (
+        <circle cx="0" cy="0" r="38" fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="4.2" />
+      ) : (
+        <polygon points={shape.points} fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="4.2" />
+      )}
+    </motion.svg>
+  );
+};
 
 const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
   levelId,
+  miniGameLevel,
   avatarId: _avatarId,
+  useSharedTopHud = false,
   onVictory,
-  onGameOver,
+  onGameOver: _onGameOver,
   onBack,
 }) => {
-  const roundSeconds = 60 + (levelId * 6);
-  const targetScore = 2100 + (levelId * 300);
+  const baseLevel = Math.max(1, Math.min(12, miniGameLevel || levelId || 1));
+  const initialRoundSeconds = useMemo(() => roundSecondsForLevel(baseLevel), [baseLevel]);
 
+  const [timeLeft, setTimeLeft] = useState(initialRoundSeconds);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
-  const [timer, setTimer] = useState(roundSeconds);
-  const [currentProperty, setCurrentProperty] = useState<ShapeProperty>(PROPERTIES[0]);
-  const [options, setOptions] = useState<ShapeData[]>([]);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
-  const [gameActive, setGameActive] = useState(true);
+  const [attemptCount, setAttemptCount] = useState(0);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [answeredCount, setAnsweredCount] = useState(0);
+  const [roundOver, setRoundOver] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
+  const [selectedChoiceIds, setSelectedChoiceIds] = useState<string[]>([]);
+  const [pulseTone, setPulseTone] = useState<'success' | 'error' | null>(null);
+  const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; title: string; subtitle: string } | null>(null);
+  const [question, setQuestion] = useState<PolygonQuestion>(() => createQuestion(baseLevel, 0, initialRoundSeconds));
 
   const endedRef = useRef(false);
+  const questionStartRef = useRef<number>(Date.now());
+  const timeoutsRef = useRef<number[]>([]);
 
-  const finishRound = useCallback((won: boolean, finalScore: number) => {
-    if (endedRef.current) return;
-    endedRef.current = true;
-    setGameActive(false);
-    if (won) {
-      const stars = finalScore >= targetScore * 1.85 ? 3 : finalScore >= targetScore * 1.35 ? 2 : 1;
-      onVictory(stars, finalScore);
-      return;
-    }
-    onGameOver(finalScore);
-  }, [onGameOver, onVictory, targetScore]);
+  const clearTimers = () => {
+    timeoutsRef.current.forEach((timer) => window.clearTimeout(timer));
+    timeoutsRef.current = [];
+  };
 
-  const generateRound = useCallback(() => {
-    const property = PROPERTIES[Math.floor(Math.random() * PROPERTIES.length)];
-    const shuffled = [...SHAPES].sort(() => Math.random() - 0.5);
-    const matching = shuffled.filter((shape) => property.check(shape));
-    const nonMatching = shuffled.filter((shape) => !property.check(shape));
-
-    const matchCount = Math.floor(Math.random() * 2) + 1;
-    const roundOptions = [
-      ...matching.slice(0, Math.min(matchCount, matching.length || 1)),
-      ...nonMatching.slice(0, 6 - Math.min(matchCount, matching.length || 1)),
-    ].sort(() => Math.random() - 0.5);
-
-    setCurrentProperty(property);
-    setOptions(roundOptions.slice(0, 6));
-    setSelectedIds([]);
-    setFeedback(null);
-  }, []);
+  useEffect(() => clearTimers, []);
 
   useEffect(() => {
+    clearTimers();
     endedRef.current = false;
+    setTimeLeft(initialRoundSeconds);
     setScore(0);
     setStreak(0);
-    setTimer(roundSeconds);
+    setAttemptCount(0);
+    setCorrectCount(0);
+    setAnsweredCount(0);
+    setRoundOver(false);
+    setIsLocked(false);
+    setSelectedChoiceIds([]);
+    setPulseTone(null);
     setFeedback(null);
-    setSelectedIds([]);
-    setGameActive(true);
-    generateRound();
-  }, [generateRound, roundSeconds]);
+    setQuestion(createQuestion(baseLevel, 0, initialRoundSeconds));
+    questionStartRef.current = Date.now();
+  }, [baseLevel, initialRoundSeconds]);
 
   useEffect(() => {
-    if (!gameActive || endedRef.current) return undefined;
+    if (roundOver) return undefined;
     const interval = window.setInterval(() => {
-      setTimer((previous) => {
-        if (previous <= 1) {
-          window.clearInterval(interval);
-          finishRound(score >= targetScore, score);
-          return 0;
-        }
-        return previous - 1;
-      });
+      setTimeLeft((previous) => Math.max(0, previous - 1));
     }, 1000);
     return () => window.clearInterval(interval);
-  }, [finishRound, gameActive, score, targetScore]);
+  }, [roundOver]);
 
-  const handleShapeClick = (id: string) => {
-    if (!gameActive || feedback) return;
-    setSelectedIds((previous) => (
-      previous.includes(id)
-        ? previous.filter((current) => current !== id)
-        : [...previous, id]
+  useEffect(() => {
+    if (timeLeft > 0 || endedRef.current) return;
+    endedRef.current = true;
+    setRoundOver(true);
+    const finalStage = stageFromProgress(baseLevel, answeredCount, 0);
+    const stars = starsFromPerformance(score, correctCount, attemptCount, finalStage);
+    onVictory(stars, score);
+  }, [answeredCount, attemptCount, baseLevel, correctCount, onVictory, score, timeLeft]);
+
+  const timerProgress = Math.max(0, Math.min(1, timeLeft / initialRoundSeconds));
+  const timerFillColor = useMemo(() => {
+    const hue = Math.round(timerProgress * 120);
+    return `hsl(${hue} 88% 50%)`;
+  }, [timerProgress]);
+
+  const loadNextQuestion = useCallback((nextAnsweredCount: number, delayMs: number) => {
+    const timer = window.setTimeout(() => {
+      if (endedRef.current) return;
+      setQuestion(createQuestion(baseLevel, nextAnsweredCount, timeLeft));
+      setSelectedChoiceIds([]);
+      setFeedback(null);
+      setPulseTone(null);
+      setIsLocked(false);
+      questionStartRef.current = Date.now();
+    }, delayMs);
+    timeoutsRef.current.push(timer);
+  }, [baseLevel, timeLeft]);
+
+  const evaluateSelection = useCallback((rawSelection: string[]) => {
+    if (roundOver || isLocked) return;
+    setIsLocked(true);
+
+    const nextAttemptCount = attemptCount + 1;
+    const nextAnsweredCount = answeredCount + 1;
+    const normalizedSelected = normalizeAnswers(rawSelection);
+    const normalizedExpected = normalizeAnswers(question.correctChoiceIds);
+    const isCorrect = (
+      normalizedSelected.length === normalizedExpected.length
+      && normalizedExpected.every((value, index) => normalizedSelected[index] === value)
+    );
+
+    setAttemptCount(nextAttemptCount);
+    setAnsweredCount(nextAnsweredCount);
+
+    if (isCorrect) {
+      const elapsedMs = Math.max(240, Date.now() - questionStartRef.current);
+      const speedBonus = Math.max(18, Math.round(170 - (elapsedMs / 16)));
+      const streakMultiplier = 1 + Math.min(0.95, streak * 0.08);
+      const speedRoundBonus = question.speedRound ? 85 : 0;
+      const points = Math.round((120 + question.difficultyWeight + speedBonus + speedRoundBonus) * streakMultiplier);
+
+      triggerHaptic('success');
+      setPulseTone('success');
+      setScore((prev) => prev + points);
+      setCorrectCount((prev) => prev + 1);
+      setStreak((prev) => prev + 1);
+      setFeedback({
+        tone: 'success',
+        title: 'Great classify',
+        subtitle: `+${points} points`,
+      });
+      loadNextQuestion(nextAnsweredCount, 330);
+      return;
+    }
+
+    const correctLabel = question.correctChoiceIds
+      .map((choiceId) => question.choices.find((choice) => choice.id === choiceId)?.label || choiceId)
+      .join(' • ');
+
+    triggerHaptic('error');
+    setPulseTone('error');
+    setStreak(0);
+    setScore((prev) => Math.max(0, prev - 40));
+    setFeedback({
+      tone: 'error',
+      title: 'Not this one',
+      subtitle: `Correct: ${correctLabel}`,
+    });
+    loadNextQuestion(nextAnsweredCount, 560);
+  }, [answeredCount, attemptCount, isLocked, loadNextQuestion, question, roundOver, streak]);
+  const submitProperties = () => {
+    if (isLocked || roundOver || question.mode !== 'properties') return;
+    if (selectedChoiceIds.length === 0) {
+      triggerHaptic('warning');
+      setFeedback({
+        tone: 'error',
+        title: 'Select properties',
+        subtitle: 'Pick at least one property before submit.',
+      });
+      const timeout = window.setTimeout(() => setFeedback(null), 420);
+      timeoutsRef.current.push(timeout);
+      return;
+    }
+    evaluateSelection(selectedChoiceIds);
+  };
+
+  const onChoiceTap = (choiceId: string) => {
+    if (isLocked || roundOver) return;
+    if (!question.multiSelect) {
+      evaluateSelection([choiceId]);
+      return;
+    }
+
+    setSelectedChoiceIds((previous) => (
+      previous.includes(choiceId)
+        ? previous.filter((current) => current !== choiceId)
+        : [...previous, choiceId]
     ));
   };
 
-  const handleCheck = () => {
-    if (!gameActive || feedback || selectedIds.length === 0) return;
+  const stageHint = question.stage <= 3
+    ? 'Early round: focus on sides and corners.'
+    : question.stage <= 7
+      ? 'Mid round: compare parallel lines and right angles.'
+      : 'Challenge round: watch for SATs trick distinctions.';
 
-    const correctIds = options.filter((shape) => currentProperty.check(shape)).map((shape) => shape.id);
-    const isCorrect = selectedIds.length === correctIds.length && selectedIds.every((id) => correctIds.includes(id));
-
-    if (isCorrect) {
-      setFeedback('correct');
-      const earned = 500 + (streak * 50);
-      const newScore = score + earned;
-      setScore(newScore);
-      setStreak((value) => value + 1);
-      window.setTimeout(() => {
-        if (newScore >= targetScore) {
-          finishRound(true, newScore);
-          return;
-        }
-        generateRound();
-      }, 900);
-      return;
-    }
-
-    setFeedback('wrong');
-    setStreak(0);
-    setScore((value) => Math.max(0, value - 150));
-    window.setTimeout(() => {
-      if (endedRef.current) return;
-      setFeedback(null);
-      setSelectedIds([]);
-    }, 1200);
-  };
-
-  const feedbackLabel = useMemo(() => {
-    if (!feedback) return '';
-    return feedback === 'correct' ? 'EXCELLENT!' : 'TRY AGAIN!';
-  }, [feedback]);
+  const topPaddingClass = useSharedTopHud
+    ? 'pt-[calc(env(safe-area-inset-top)+5.75rem)]'
+    : 'pt-[max(0.5rem,env(safe-area-inset-top))]';
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center overflow-hidden bg-[#050a1a] font-sans text-white select-none">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,#1e3a8a_0%,#050a1a_100%)]" />
+    <div className="fixed inset-0 z-20 h-screen w-screen overflow-hidden bg-[#08162c] select-none">
+      <img
+        src={gameplayBackground}
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+      />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.36),rgba(2,6,23,0.42)_35%,rgba(2,6,23,0.62)_100%)]" />
 
-      <div className="relative z-10 flex h-full w-full max-w-[600px] flex-col">
-        <TopBar score={score} streak={streak} timer={timer.toString().padStart(2, '0')} />
-
-        <div className="flex flex-1 flex-col items-center justify-center px-6 py-8">
-          <motion.div
-            key={currentProperty.id}
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            className="relative w-full overflow-hidden rounded-3xl border-2 border-blue-400/30 bg-blue-900/40 p-8 text-center shadow-2xl"
-          >
-            <div className="absolute left-0 top-0 h-1 w-full bg-blue-400/20" />
-            <span className="mb-4 block text-xs font-black uppercase tracking-[0.2em] text-blue-300">Classification Goal</span>
-            <h2 className="text-2xl font-black leading-tight text-white md:text-3xl">
-              Select all shapes that:
-              <span className="mt-2 block italic text-yellow-400 underline decoration-blue-400/50 underline-offset-8">
-                {currentProperty.label}
-              </span>
-            </h2>
-          </motion.div>
-
-          <div className="mt-4 flex h-12 items-center justify-center">
-            <AnimatePresence>
-              {feedback && (
-                <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0, opacity: 0 }}
-                  className={`flex items-center gap-2 rounded-full px-6 py-2 text-lg font-black shadow-xl ${
-                    feedback === 'correct' ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white'
-                  }`}
-                >
-                  {feedback === 'correct' ? <Check className="h-6 w-6" /> : <X className="h-6 w-6" />}
-                  {feedbackLabel}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          <div className="mt-4 grid w-full grid-cols-3 gap-4">
-            {options.map((shape) => {
-              const selected = selectedIds.includes(shape.id);
-              return (
-                <motion.button
-                  key={shape.id}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handleShapeClick(shape.id)}
-                  className={`group relative aspect-square overflow-hidden rounded-2xl border-4 transition-all ${
-                    selected
-                      ? 'border-yellow-400 bg-white/10 shadow-[0_0_20px_rgba(250,204,21,0.3)]'
-                      : 'border-blue-400/20 bg-blue-900/20 hover:border-blue-400/40'
-                  }`}
-                >
-                  <div className={`${shape.color} text-white drop-shadow-lg transition-transform group-hover:scale-110`}>
-                    {shape.icon}
+      <main
+        className={`relative z-20 flex h-full w-full flex-col items-center ${topPaddingClass} px-[max(0.75rem,env(safe-area-inset-left))] pb-[max(7.2rem,calc(env(safe-area-inset-bottom)+6.2rem))]`}
+      >
+        <div className="flex h-full w-full max-w-[30rem] min-h-0 flex-col gap-2.5">
+          {!useSharedTopHud ? (
+            <header className="rounded-[1.15rem] border border-cyan-100/26 bg-slate-950/55 px-3 py-2 shadow-[0_12px_22px_rgba(2,6,23,0.44)]">
+              <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2.5">
+                <div>
+                  <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/72">Time attack</div>
+                  <div className="relative mt-1 h-3.5 overflow-hidden rounded-full border border-cyan-100/26 bg-blue-950/58">
+                    <motion.div
+                      className="absolute inset-y-0 left-0 rounded-full"
+                      animate={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }}
+                      transition={{ duration: 0.25, ease: 'easeOut' }}
+                      style={{ boxShadow: '0 0 12px rgba(34,197,94,0.45)' }}
+                    />
+                    <div className="absolute inset-[1px] rounded-full bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:12%_100%]" />
                   </div>
-                  <span className="absolute bottom-2 text-[10px] font-black uppercase tracking-tight text-blue-200 opacity-0 transition-opacity group-hover:opacity-100">
-                    {shape.name}
-                  </span>
-                  {selected && (
-                    <div className="absolute right-2 top-2 rounded-full bg-yellow-400 p-0.5 shadow-lg">
-                      <Check className="h-3 w-3 font-black text-blue-900" />
-                    </div>
-                  )}
-                </motion.button>
-              );
-            })}
-          </div>
+                </div>
 
-          <button
-            onClick={handleCheck}
-            disabled={selectedIds.length === 0 || feedback !== null || !gameActive}
-            className={`mt-8 flex h-16 w-full items-center justify-center gap-3 rounded-2xl text-xl font-black tracking-widest transition-all shadow-xl ${
-              selectedIds.length > 0 && !feedback && gameActive
-                ? 'border-b-4 border-emerald-800 bg-gradient-to-b from-emerald-400 to-emerald-600 text-white active:translate-y-1 active:border-b-0'
-                : 'cursor-not-allowed border-2 border-blue-400/10 bg-blue-900/40 text-blue-400/40'
-            }`}
-          >
-            <Shapes className="h-6 w-6" />
-            SUBMIT SELECTION
-          </button>
-        </div>
+                <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
+                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Score</div>
+                  <div className="text-sm font-black text-white">{score}</div>
+                </div>
 
-        <GameActionDock onBack={onBack} accentClass="text-white" />
+                <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
+                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Streak</div>
+                  <div className="text-sm font-black text-amber-200">x{streak}</div>
+                </div>
+              </div>
+            </header>
+          ) : (
+            <header className="rounded-[1.15rem] border border-cyan-100/24 bg-slate-950/50 px-3 py-2 shadow-[0_10px_20px_rgba(2,6,23,0.42)]">
+              <div className="flex items-center justify-between gap-2.5">
+                <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
+                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Score</div>
+                  <div className="text-sm font-black text-white">{score}</div>
+                </div>
+                <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
+                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Streak</div>
+                  <div className="text-sm font-black text-amber-200">x{streak}</div>
+                </div>
+              </div>
+            </header>
+          )}
 
-        {!gameActive && (
-          <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-blue-950/95 p-8 text-center">
-            <Trophy className="mb-6 h-32 w-32 animate-bounce text-yellow-400" />
-            <h2 className="mb-4 text-6xl font-black italic tracking-tighter">TIME'S UP!</h2>
-            <div className="w-full max-w-sm rounded-3xl border-4 border-blue-400 bg-blue-900/60 p-8 shadow-2xl">
-              <p className="mb-2 text-sm font-bold uppercase tracking-widest text-blue-200">Final Score</p>
-              <p className="mb-4 text-6xl font-black text-white">{score.toLocaleString()}</p>
-              <div className="flex justify-between border-t border-white/10 pt-4 text-sm font-bold text-blue-300">
-                <span>BEST STREAK</span>
-                <span>{streak}</span>
+          <section className="rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/54 p-3 text-center shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
+            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/72">
+              {question.speedRound ? 'Challenge Round' : 'Polygon Place'}
+            </div>
+            <h2 className="mt-1 text-[clamp(1rem,4.4vw,1.3rem)] font-black text-white">{question.prompt}</h2>
+            <p className="mt-1 text-[clamp(0.76rem,3.3vw,0.9rem)] font-semibold text-cyan-100/86">{question.subPrompt}</p>
+          </section>
+
+          <section className="min-h-0 flex-1 rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/54 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
+            <div className="flex h-full min-h-0 flex-col gap-3">
+              <div className="text-center text-[10px] font-black uppercase tracking-[0.17em] text-cyan-100/72">
+                {stageHint}
+              </div>
+
+              <div className="relative flex min-h-0 flex-1 items-center justify-center rounded-[1.15rem] border border-cyan-100/16 bg-blue-950/36 p-2">
+                <ShapePreview question={question} pulseTone={pulseTone} />
               </div>
             </div>
-            <button
-              onClick={onBack}
-              className="mt-10 rounded-full bg-white px-12 py-4 text-2xl font-black text-blue-900 transition-transform hover:scale-105 shadow-[0_0_20px_rgba(255,255,255,0.4)]"
-            >
-              CONTINUE
-            </button>
-          </div>
-        )}
+          </section>
+
+          <section className="shrink-0 rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/56 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
+            {question.mode === 'name' ? (
+              <div className="grid grid-cols-2 gap-2.5">
+                {question.choices.map((choice) => (
+                  <button
+                    key={choice.id}
+                    type="button"
+                    disabled={isLocked || roundOver}
+                    onClick={() => onChoiceTap(choice.id)}
+                    className="rounded-[1rem] border border-amber-100/72 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] px-2 py-2.5 text-center text-sm font-black text-slate-900 shadow-[0_10px_18px_rgba(2,6,23,0.34)] transition active:scale-[0.98] disabled:opacity-55"
+                  >
+                    {choice.label}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+
+            {question.mode === 'sort' ? (
+              <div className="grid grid-cols-2 gap-2.5">
+                {question.choices.map((choice) => (
+                  <button
+                    key={choice.id}
+                    type="button"
+                    disabled={isLocked || roundOver}
+                    onClick={() => onChoiceTap(choice.id)}
+                    className="rounded-[1rem] border border-cyan-100/30 bg-blue-950/48 px-2 py-3 text-center text-sm font-black text-cyan-50 shadow-[0_10px_18px_rgba(2,6,23,0.34)] transition hover:border-cyan-100/48 active:scale-[0.98] disabled:opacity-55"
+                  >
+                    {choice.label}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+
+            {question.mode === 'properties' ? (
+              <div className="grid gap-2.5">
+                <div className="grid grid-cols-2 gap-2">
+                  {question.choices.map((choice) => {
+                    const selected = selectedChoiceIds.includes(choice.id);
+                    return (
+                      <button
+                        key={choice.id}
+                        type="button"
+                        disabled={isLocked || roundOver}
+                        onClick={() => onChoiceTap(choice.id)}
+                        className={`rounded-[0.92rem] border px-2 py-2 text-left text-[0.77rem] font-bold transition active:scale-[0.98] ${
+                          selected
+                            ? 'border-cyan-100/85 bg-cyan-400/28 text-white'
+                            : 'border-white/16 bg-slate-900/46 text-cyan-50/95 hover:border-cyan-100/35'
+                        } disabled:opacity-55`}
+                      >
+                        {choice.label}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button
+                  type="button"
+                  disabled={isLocked || roundOver}
+                  onClick={submitProperties}
+                  className="rounded-[1rem] border border-amber-100/72 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] py-2.5 text-sm font-black uppercase tracking-[0.14em] text-slate-900 shadow-[0_10px_18px_rgba(2,6,23,0.34)] transition active:scale-[0.98] disabled:opacity-55"
+                >
+                  Submit Properties
+                </button>
+              </div>
+            ) : null}
+          </section>
+        </div>
+      </main>
+
+      <AnimatePresence>
+        {feedback ? (
+          <motion.div
+            key={`${feedback.tone}-${feedback.title}-${feedback.subtitle}`}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.08 }}
+            className={`pointer-events-none absolute left-1/2 top-[calc(env(safe-area-inset-top)+5.2rem)] z-50 -translate-x-1/2 rounded-[1rem] border px-4 py-2 text-center shadow-[0_14px_24px_rgba(2,6,23,0.45)] ${
+              feedback.tone === 'success'
+                ? 'border-emerald-100/62 bg-emerald-500/28 text-emerald-50'
+                : 'border-rose-100/62 bg-rose-500/30 text-rose-50'
+            }`}
+          >
+            <div className="text-xs font-black uppercase tracking-[0.12em]">{feedback.title}</div>
+            <div className="mt-0.5 text-[11px] font-bold">{feedback.subtitle}</div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+
+      <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.45rem,env(safe-area-inset-bottom))] z-40 flex justify-center px-3">
+        <div className="pointer-events-auto">
+          <GameActionDock onBack={onBack} compact accentClass="text-slate-100" />
+        </div>
       </div>
     </div>
   );
 };
 
 export default PolygonPalaceGame;
+
+
