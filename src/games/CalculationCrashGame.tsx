@@ -22,7 +22,7 @@ interface Question {
   options: number[];
 }
 
-const ROUND_SECONDS = 30;
+const ROUND_SECONDS = 90;
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
@@ -223,9 +223,6 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
                 <p className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-200/95">Calculation Clash</p>
                 <p className="mt-2 text-[clamp(2.1rem,9.3vw,4rem)] font-black leading-none tracking-[-0.02em] text-white [text-shadow:0_6px_14px_rgba(0,0,0,0.72)]">
                   {question.prompt}
-                </p>
-                <p className="mt-3 text-[clamp(1rem,4.5vw,1.6rem)] font-bold text-amber-50/95 [text-shadow:0_3px_10px_rgba(0,0,0,0.64)]">
-                  Solve as many as you can in 30s
                 </p>
               </div>
             </section>

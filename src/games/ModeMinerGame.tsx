@@ -1,39 +1,13 @@
-import React, { useCallback, useRef, useState } from 'react';
-import {
-  Pickaxe,
-  Gem,
-  CheckCircle2,
-  RotateCcw,
-  ChevronLeft,
-  ChevronRight,
-  Trophy,
-  AlertCircle,
-  Play,
-  BarChart3,
-  Database,
-  Search,
-} from 'lucide-react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-} from 'recharts';
-
-interface FrequencyPoint {
-  value: string;
-  count: number;
-}
+import { Activity, CheckCircle2, Pickaxe, RotateCcw, Search, Trophy } from 'lucide-react';
+import factorFrenzyBackground from '../assets/maps/facctor frenzy.jpg';
 
 interface LevelData {
-  allNumbers: number[];
+  numbers: number[];
   mode: number;
-  frequencies: FrequencyPoint[];
+  choices: number[];
+  modeCount: number;
 }
 
 interface ModeMinerGameProps {
@@ -42,398 +16,344 @@ interface ModeMinerGameProps {
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
   onBack: () => void;
+  useSharedTopHud?: boolean;
 }
 
 const MAX_LEVEL = 10;
+const MAX_MISTAKES = 3;
+
+const shuffle = <T,>(items: T[]): T[] => {
+  const list = [...items];
+  for (let i = list.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [list[i], list[j]] = [list[j], list[i]];
+  }
+  return list;
+};
 
 const scoreToStars = (score: number) => {
-  if (score >= 2600) return 3;
-  if (score >= 2000) return 2;
+  if (score >= 2500) return 3;
+  if (score >= 1700) return 2;
   return 1;
+};
+
+const randomInRange = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+const buildLevel = (level: number): LevelData => {
+  const uniqueCount = Math.min(3 + Math.floor((level - 1) / 2), 6);
+  const totalItems = 10 + (level * 2);
+
+  const values: number[] = [];
+  while (values.length < uniqueCount) {
+    const candidate = randomInRange(2, 45);
+    if (!values.includes(candidate)) values.push(candidate);
+  }
+
+  const modeIndex = randomInRange(0, uniqueCount - 1);
+  const counts = new Array(uniqueCount).fill(1);
+  let remaining = totalItems - uniqueCount;
+
+  while (remaining > 0) {
+    const idx = randomInRange(0, uniqueCount - 1);
+    if (idx === modeIndex || counts[idx] < counts[modeIndex] - 1) {
+      counts[idx] += 1;
+      remaining -= 1;
+    }
+  }
+
+  const highestOther = Math.max(...counts.filter((_, idx) => idx !== modeIndex));
+  if (counts[modeIndex] <= highestOther) {
+    counts[modeIndex] = highestOther + 1;
+  }
+
+  const numbers: number[] = [];
+  values.forEach((value, idx) => {
+    for (let i = 0; i < counts[idx]; i += 1) numbers.push(value);
+  });
+
+  const mode = values[modeIndex];
+  const modeCount = counts[modeIndex];
+
+  const distractors = shuffle(values.filter((value) => value !== mode)).slice(0, 3);
+  while (distractors.length < 3) {
+    const near = mode + randomInRange(-5, 5);
+    if (near > 0 && near !== mode && !distractors.includes(near)) distractors.push(near);
+  }
+
+  return {
+    numbers: shuffle(numbers),
+    mode,
+    modeCount,
+    choices: shuffle([mode, ...distractors.slice(0, 3)]),
+  };
 };
 
 const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
   levelId: _levelId,
   avatarId: _avatarId,
   onVictory,
-  onGameOver: _onGameOver,
-  onBack,
+  onGameOver,
+  onBack: _onBack,
+  useSharedTopHud = true,
 }) => {
   const [gameState, setGameState] = useState<'start' | 'playing' | 'success' | 'complete'>('start');
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
+  const [streak, setStreak] = useState(0);
+  const [mistakes, setMistakes] = useState(0);
+  const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
   const [currentLevelData, setCurrentLevelData] = useState<LevelData | null>(null);
-  const [userAnswer, setUserAnswer] = useState('');
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
 
-  const generateLevel = useCallback((lvl: number) => {
-    const uniqueCount = Math.min(3 + Math.floor((lvl - 1) / 3), 8);
-    const totalItems = 10 + (lvl * 4);
-
-    const uniqueValues: number[] = [];
-    while (uniqueValues.length < uniqueCount) {
-      const val = Math.floor(Math.random() * 50) + 1;
-      if (!uniqueValues.includes(val)) uniqueValues.push(val);
-    }
-
-    const counts = uniqueValues.map(() => 1);
-    let remaining = totalItems - uniqueCount;
-
-    const modeIndex = Math.floor(Math.random() * uniqueCount);
-    const modeBonus = Math.floor(remaining * 0.4) + 2;
-    counts[modeIndex] += modeBonus;
-    remaining -= modeBonus;
-
-    while (remaining > 0) {
-      const idx = Math.floor(Math.random() * uniqueCount);
-      if (counts[idx] < counts[modeIndex] - 1) {
-        counts[idx] += 1;
-        remaining -= 1;
-      } else {
-        const canAddElsewhere = counts.some((count, i) => i !== modeIndex && count < counts[modeIndex] - 1);
-        if (!canAddElsewhere) {
-          counts[modeIndex] += remaining;
-          remaining = 0;
-        }
-      }
-    }
-
-    const allNumbers: number[] = [];
-    uniqueValues.forEach((val, i) => {
-      for (let j = 0; j < counts[i]; j += 1) {
-        allNumbers.push(val);
-      }
-    });
-
-    const shuffled = [...allNumbers].sort(() => Math.random() - 0.5);
-
-    const frequencies: FrequencyPoint[] = uniqueValues
-      .map((val, i) => ({
-        value: val.toString(),
-        count: counts[i],
-      }))
-      .sort((a, b) => parseInt(a.value, 10) - parseInt(b.value, 10));
-
-    setCurrentLevelData({
-      allNumbers: shuffled,
-      mode: uniqueValues[modeIndex],
-      frequencies,
-    });
-    setUserAnswer('');
+  const startGame = useCallback(() => {
+    setScore(0);
+    setLevel(1);
+    setStreak(0);
+    setMistakes(0);
+    setSelectedChoice(null);
+    setCurrentLevelData(buildLevel(1));
     setFeedback(null);
-    setTimeout(() => inputRef.current?.focus(), 10);
+    setGameState('playing');
   }, []);
 
-  const startGame = () => {
-    const openingLevel = 1;
-    setScore(0);
-    setLevel(openingLevel);
-    setGameState('playing');
-    generateLevel(openingLevel);
-  };
-
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
+  const handleSubmit = useCallback(() => {
     if (!currentLevelData || gameState !== 'playing') return;
 
-    const numAnswer = parseInt(userAnswer, 10);
-    if (numAnswer === currentLevelData.mode) {
-      setScore(prev => prev + 150 + (level * 30));
-      setFeedback({ type: 'success', message: 'Gem Found! That is the Mode.' });
+    if (selectedChoice === null) {
+      setFeedback({ type: 'error', message: 'Pick one number first.' });
+      window.setTimeout(() => setFeedback(null), 1200);
+      return;
+    }
+
+    if (selectedChoice === currentLevelData.mode) {
+      const earned = 120 + level * 20 + streak * 15;
+      setScore((prev) => prev + earned);
+      setStreak((prev) => prev + 1);
+      setFeedback({ type: 'success', message: `Great! ${selectedChoice} appears the most.` });
       setGameState('success');
       return;
     }
 
-    setFeedback({ type: 'error', message: 'Not the most frequent. Dig deeper!' });
-    setTimeout(() => setFeedback(null), 1500);
-  };
+    const nextMistakes = mistakes + 1;
+    setMistakes(nextMistakes);
+    setStreak(0);
+    setFeedback({ type: 'error', message: 'Not the mode. Look for the most repeated number.' });
+    window.setTimeout(() => setFeedback(null), 1300);
 
-  const nextLevel = () => {
+    if (nextMistakes >= MAX_MISTAKES) {
+      window.setTimeout(() => onGameOver(score), 550);
+    }
+  }, [currentLevelData, gameState, level, mistakes, onGameOver, score, selectedChoice, streak]);
+
+  const handleNextLevel = useCallback(() => {
     if (level < MAX_LEVEL) {
-      const nextLvl = level + 1;
-      setLevel(nextLvl);
+      const next = level + 1;
+      setLevel(next);
+      setSelectedChoice(null);
+      setCurrentLevelData(buildLevel(next));
+      setFeedback(null);
       setGameState('playing');
-      generateLevel(nextLvl);
       return;
     }
 
     setGameState('complete');
     onVictory(scoreToStars(score), score);
-  };
+  }, [level, onVictory, score]);
+
+  const topPadding = useSharedTopHud
+    ? 'pt-[calc(env(safe-area-inset-top)+5.35rem)]'
+    : 'pt-[calc(env(safe-area-inset-top)+1rem)]';
+
+  const mistakesLeft = useMemo(() => Math.max(0, MAX_MISTAKES - mistakes), [mistakes]);
 
   return (
-    <div className="fixed inset-0 flex flex-col overflow-hidden bg-stone-50 font-sans text-stone-900 select-none">
-      <header className="z-20 flex h-16 items-center justify-between border-b border-stone-200 bg-white px-6 shadow-sm">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={onBack}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-stone-300 bg-stone-100 text-stone-700 transition hover:bg-stone-200"
-            aria-label="Back to levels"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <div className="rounded-lg bg-emerald-600 p-2 shadow-lg shadow-emerald-200">
-            <Pickaxe className="h-5 w-5 text-white" />
-          </div>
-          <div>
-            <h1 className="text-sm font-black uppercase tracking-tight text-stone-800">Mode Miner</h1>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Frequency Analysis Protocol</p>
-          </div>
-        </div>
+    <div className="fixed inset-0 z-20 h-screen w-screen overflow-hidden text-white">
+      <img
+        src={factorFrenzyBackground}
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+      />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(74,222,128,0.22),rgba(3,7,20,0.46)_68%)]" />
 
-        <div className="flex items-center gap-8">
-          <div className="flex flex-col items-end">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Gems Collected</span>
-            <span className="text-sm font-black tabular-nums text-emerald-600">{score} XP</span>
-          </div>
-          <div className="h-8 w-[1px] bg-stone-200" />
-          <div className="flex flex-col items-end">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Mine Depth</span>
-            <span className="text-sm font-black text-stone-800">Level {level} / {MAX_LEVEL}</span>
-          </div>
-        </div>
-      </header>
-
-      <main className="relative flex flex-1 flex-col items-center justify-center p-8">
-        <AnimatePresence mode="wait">
-          {(gameState === 'playing' || gameState === 'success') && currentLevelData && (
-            <motion.div
-              key={level}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="flex w-full max-w-5xl flex-col gap-6"
-            >
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                <div className="flex max-h-[500px] flex-col gap-4 rounded-3xl border border-stone-100 bg-white p-6 shadow-xl shadow-stone-200/50">
-                  <div className="mb-2 flex items-center gap-3">
-                    <div className="rounded-xl bg-emerald-100 p-2">
-                      <Database className="h-5 w-5 text-emerald-600" />
-                    </div>
-                    <div>
-                      <h2 className="text-sm font-bold tracking-tight">Raw Data Set</h2>
-                      <p className="text-[10px] font-medium uppercase tracking-wider text-stone-400">Total Items: {currentLevelData.allNumbers.length}</p>
-                    </div>
+      <main className={`relative z-10 flex h-full w-full flex-col ${topPadding} px-[max(1rem,env(safe-area-inset-left))] pb-[calc(env(safe-area-inset-bottom)+4.25rem)]`}>
+        <div className="mx-auto flex h-full w-full max-w-[31rem] min-h-0 flex-col">
+          <AnimatePresence mode="wait">
+            {(gameState === 'playing' || gameState === 'success') && currentLevelData && (
+              <motion.div
+                key={level}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -16 }}
+                className="my-auto flex w-full min-h-0 flex-col gap-3 rounded-[1.45rem] border border-cyan-100/25 bg-[linear-gradient(180deg,rgba(10,26,68,0.86),rgba(7,16,46,0.88))] p-3.5 shadow-[0_18px_36px_rgba(2,6,23,0.52)] backdrop-blur-[2px]"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-cyan-900/55 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-cyan-100">
+                    <Pickaxe className="h-3.5 w-3.5" />
+                    Mode Miner
                   </div>
+                  <div className="text-right text-[11px] font-black uppercase tracking-[0.12em] text-cyan-100">
+                    L{level}/{MAX_LEVEL}
+                  </div>
+                </div>
 
-                  <div className="custom-scrollbar flex-1 overflow-y-auto pr-2">
+                <div className="rounded-2xl border border-cyan-100/18 bg-slate-900/35 px-4 py-3 text-center">
+                  <p className="text-[11px] font-black uppercase tracking-[0.16em] text-amber-200">Mission</p>
+                  <p className="mt-1 text-[clamp(1rem,4.5vw,1.3rem)] font-black leading-tight text-white">
+                    Tap the number that appears the most
+                  </p>
+                  <p className="mt-1 text-[11px] font-bold text-cyan-100/85">
+                    Mistakes left: {mistakesLeft} • Streak: x{streak}
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-cyan-100/18 bg-slate-950/35 px-3 py-3">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/85">Data Cave</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/85">
+                      {currentLevelData.numbers.length} gems
+                    </span>
+                  </div>
+                  <div className="max-h-[22vh] min-h-[18vh] overflow-y-auto pr-1">
                     <div className="flex flex-wrap gap-2">
-                      {currentLevelData.allNumbers.map((n, i) => (
-                        <motion.div
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          transition={{ delay: i * 0.01 }}
-                          key={`${n}-${i}`}
-                          className={`flex h-10 w-10 items-center justify-center rounded-lg border-2 text-xs font-black transition-all ${
-                            gameState === 'success' && n === currentLevelData.mode
-                              ? 'scale-110 border-emerald-400 bg-emerald-500 text-white shadow-lg shadow-emerald-200'
-                              : 'border-stone-100 bg-stone-50 text-stone-600'
+                      {currentLevelData.numbers.map((value, idx) => (
+                        <div
+                          key={`${value}-${idx}`}
+                          className={`flex h-9 w-9 items-center justify-center rounded-lg border text-sm font-black ${
+                            gameState === 'success' && value === currentLevelData.mode
+                              ? 'border-emerald-300 bg-emerald-500 text-white shadow-[0_0_0_2px_rgba(16,185,129,0.25)]'
+                              : 'border-cyan-200/35 bg-slate-900/60 text-cyan-50'
                           }`}
                         >
-                          {n}
-                        </motion.div>
+                          {value}
+                        </div>
                       ))}
                     </div>
                   </div>
                 </div>
 
-                <div className="lg:col-span-2 flex flex-col gap-6 rounded-3xl border border-stone-100 bg-white p-6 shadow-xl shadow-stone-200/50">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="rounded-xl bg-emerald-100 p-2">
-                        <BarChart3 className="h-5 w-5 text-emerald-600" />
-                      </div>
-                      <div>
-                        <h2 className="text-sm font-bold tracking-tight">Frequency Distribution</h2>
-                        <p className="text-[10px] font-medium uppercase tracking-wider text-stone-400">Identify the value with the highest count</p>
-                      </div>
-                    </div>
+                <div className="grid grid-cols-2 gap-2.5">
+                  {currentLevelData.choices.map((choice) => (
+                    <button
+                      key={choice}
+                      type="button"
+                      disabled={gameState === 'success'}
+                      onClick={() => setSelectedChoice(choice)}
+                      className={`rounded-xl border-2 px-3 py-3 text-center text-2xl font-black transition ${
+                        selectedChoice === choice
+                          ? 'border-amber-300 bg-[linear-gradient(180deg,#fde68a_0%,#f59e0b_100%)] text-amber-950 shadow-[0_10px_20px_rgba(245,158,11,0.35)]'
+                          : 'border-cyan-100/30 bg-slate-900/50 text-cyan-50 hover:border-cyan-100/55'
+                      }`}
+                    >
+                      {choice}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="mt-1 flex items-center justify-between gap-3">
+                  <div className="text-[11px] font-black uppercase tracking-[0.12em] text-cyan-100/85">
+                    Score: {score}
                   </div>
-
-                  <div className="h-[280px] w-full rounded-2xl border border-stone-100 bg-stone-50 p-4">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={currentLevelData.frequencies} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" vertical={false} />
-                        <XAxis
-                          dataKey="value"
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{ fontSize: 10, fontWeight: 800, fill: '#78716c' }}
-                        />
-                        <YAxis
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{ fontSize: 10, fontWeight: 800, fill: '#78716c' }}
-                        />
-                        <Tooltip
-                          cursor={{ fill: 'rgba(16, 185, 129, 0.05)' }}
-                          contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                        />
-                        <Bar dataKey="count" radius={[6, 6, 0, 0]} animationDuration={1000}>
-                          {currentLevelData.frequencies.map((entry, index) => (
-                            <Cell
-                              key={`${entry.value}-${index}`}
-                              fill={parseInt(entry.value, 10) === currentLevelData.mode && gameState === 'success' ? '#10b981' : '#d6d3d1'}
-                            />
-                          ))}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-
-                  <form onSubmit={handleSubmit} className="flex gap-4">
-                    <div className="relative flex-1">
-                      <input
-                        ref={inputRef}
-                        type="number"
-                        disabled={gameState === 'success'}
-                        value={userAnswer}
-                        onChange={(event) => setUserAnswer(event.target.value)}
-                        placeholder="What is the Mode?"
-                        className="w-full rounded-2xl border-2 border-stone-200 bg-stone-100 px-6 py-4 text-xl font-black text-stone-800 transition-all placeholder:text-stone-400 focus:border-emerald-500 focus:outline-none disabled:opacity-50"
-                      />
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-300">
-                        <Search className="h-6 w-6" />
-                      </div>
-                    </div>
-
-                    <AnimatePresence mode="wait">
-                      {gameState === 'success' ? (
-                        <motion.button
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          onClick={nextLevel}
-                          type="button"
-                          className="flex items-center gap-2 rounded-2xl bg-emerald-600 px-10 py-4 text-sm font-black uppercase tracking-widest text-white shadow-lg shadow-emerald-200 transition-all hover:bg-emerald-700"
-                        >
-                          Next Mine <ChevronRight className="h-4 w-4" />
-                        </motion.button>
-                      ) : (
-                        <button
-                          type="submit"
-                          className="flex items-center gap-2 rounded-2xl bg-stone-800 px-10 py-4 text-sm font-black uppercase tracking-widest text-white shadow-lg transition-all hover:bg-stone-900"
-                        >
-                          Extract Mode
-                        </button>
-                      )}
-                    </AnimatePresence>
-                  </form>
+                  {gameState === 'success' ? (
+                    <button
+                      type="button"
+                      onClick={handleNextLevel}
+                      className="rounded-full border border-emerald-200/80 bg-emerald-500 px-5 py-2 text-xs font-black uppercase tracking-[0.18em] text-white shadow-[0_8px_16px_rgba(16,185,129,0.35)]"
+                    >
+                      Next Level
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleSubmit}
+                      className="inline-flex items-center gap-2 rounded-full border border-cyan-100/70 bg-cyan-500 px-5 py-2 text-xs font-black uppercase tracking-[0.18em] text-slate-950 shadow-[0_8px_16px_rgba(34,211,238,0.35)]"
+                    >
+                      <Search className="h-3.5 w-3.5" />
+                      Check
+                    </button>
+                  )}
                 </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {gameState === 'start' && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 z-50 flex items-center justify-center bg-stone-50/90 p-12 text-center backdrop-blur-sm"
-            >
-              <div className="flex max-w-md flex-col items-center">
-                <div className="-rotate-6 mb-8 flex h-20 w-20 items-center justify-center rounded-3xl bg-emerald-600 shadow-2xl shadow-emerald-200">
-                  <Gem className="h-10 w-10 text-white" />
-                </div>
-                <h2 className="mb-4 text-4xl font-black uppercase tracking-tight text-stone-800">Mode Miner</h2>
-                <p className="mb-8 font-medium leading-relaxed text-stone-500">
-                  The data cave is full of repeating numbers. Find the mode: the value that appears most frequently in each set.
-                </p>
-                <button
-                  onClick={startGame}
-                  className="group flex items-center gap-3 rounded-full bg-emerald-600 px-12 py-4 text-sm font-black uppercase tracking-widest text-white shadow-xl shadow-emerald-200 transition-all hover:bg-emerald-700"
-                >
-                  <Play className="h-4 w-4 fill-current transition-transform group-hover:scale-110" /> Start Mining
-                </button>
-              </div>
-            </motion.div>
-          )}
-
-          {gameState === 'complete' && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="absolute inset-0 z-50 flex items-center justify-center bg-stone-50/95 p-12 text-center backdrop-blur-md"
-            >
-              <div className="flex max-w-md flex-col items-center">
-                <div className="relative mb-8">
-                  <Trophy className="h-24 w-24 text-amber-500 drop-shadow-lg" />
-                  <motion.div
-                    animate={{ rotate: -360 }}
-                    transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-                    className="absolute inset-0 -m-4 rounded-full border-4 border-dashed border-amber-200"
-                  />
-                </div>
-                <h2 className="mb-2 text-4xl font-black uppercase tracking-tight text-stone-800">Master Miner</h2>
-                <p className="mb-8 font-medium text-stone-500">
-                  You have analyzed all frequency distributions and extracted every mode.
-                </p>
-                <div className="mb-8 w-full rounded-3xl border border-stone-200 bg-white p-8 shadow-xl shadow-stone-200/50">
-                  <span className="mb-1 block text-[10px] font-black uppercase tracking-widest text-stone-400">Total Gems Value</span>
-                  <span className="text-5xl font-black text-emerald-600">{score} XP</span>
-                </div>
-                <button
-                  onClick={startGame}
-                  className="flex items-center gap-3 rounded-full bg-stone-800 px-12 py-4 text-sm font-black uppercase tracking-widest text-white shadow-xl shadow-stone-200 transition-all hover:bg-stone-900"
-                >
-                  <RotateCcw className="h-4 w-4" /> New Expedition
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {feedback && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className={`absolute bottom-12 left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 rounded-2xl border px-8 py-4 shadow-2xl ${
-                feedback.type === 'success'
-                  ? 'border-emerald-200 bg-emerald-50 text-emerald-600'
-                  : 'border-rose-200 bg-rose-50 text-rose-600'
-              }`}
-            >
-              {feedback.type === 'success' ? <CheckCircle2 className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
-              <span className="text-sm font-black uppercase tracking-wide">{feedback.message}</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </main>
 
-      <footer className="z-20 flex h-10 items-center justify-between border-t border-stone-200 bg-white px-6">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1.5">
-            <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
-            <span className="text-[8px] font-black uppercase tracking-widest text-stone-400">Scanner: Active</span>
-          </div>
-          <div className="h-3 w-[1px] bg-stone-200" />
-          <span className="text-[8px] font-black uppercase tracking-widest text-stone-400">Frequency Depth: {level}</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-[8px] font-black uppercase tracking-widest text-stone-400">© 2026 Mode Miner Expedition</span>
-        </div>
-      </footer>
+      <AnimatePresence>
+        {gameState === 'start' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-40 flex items-center justify-center bg-slate-950/72 p-8 text-center backdrop-blur-sm"
+          >
+            <div className="flex w-full max-w-md flex-col items-center rounded-[2rem] border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(14,34,82,0.95),rgba(8,20,54,0.95))] px-7 py-8 shadow-[0_20px_50px_rgba(2,6,23,0.6)]">
+              <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-cyan-500/20">
+                <Activity className="h-8 w-8 text-cyan-200" />
+              </div>
+              <h2 className="mb-2 text-3xl font-black uppercase tracking-tight text-white">Mode Miner</h2>
+              <p className="mb-6 text-sm font-semibold leading-relaxed text-cyan-100/90">
+                Find the number that appears most often in the data cave. Pick the correct mode before your 3 mistakes run out.
+              </p>
+              <button
+                type="button"
+                onClick={startGame}
+                className="inline-flex items-center gap-2 rounded-full border border-amber-200/85 bg-[linear-gradient(180deg,#fde047_0%,#f59e0b_100%)] px-8 py-3 text-sm font-black uppercase tracking-[0.16em] text-amber-950 shadow-[0_12px_24px_rgba(217,119,6,0.45)]"
+              >
+                <Play className="h-4 w-4 fill-current" />
+                Start Mining
+              </button>
+            </div>
+          </motion.div>
+        )}
 
-      <style>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #e7e5e4;
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #d6d3d1;
-        }
-      `}</style>
+        {gameState === 'complete' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="absolute inset-0 z-40 flex items-center justify-center bg-slate-950/78 p-8 text-center backdrop-blur-sm"
+          >
+            <div className="flex w-full max-w-md flex-col items-center rounded-[2rem] border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(14,34,82,0.95),rgba(8,20,54,0.95))] px-7 py-8 shadow-[0_20px_50px_rgba(2,6,23,0.6)]">
+              <Trophy className="mb-4 h-16 w-16 text-amber-300" />
+              <h2 className="mb-1 text-3xl font-black uppercase tracking-tight text-white">Master Miner</h2>
+              <p className="mb-5 text-sm font-semibold text-cyan-100/90">You found the mode in every cave.</p>
+              <div className="mb-6 rounded-xl border border-cyan-100/20 bg-slate-900/50 px-6 py-4">
+                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/70">Final Score</p>
+                <p className="text-4xl font-black text-amber-200">{score}</p>
+              </div>
+              <button
+                type="button"
+                onClick={startGame}
+                className="inline-flex items-center gap-2 rounded-full border border-cyan-100/70 bg-cyan-500 px-7 py-3 text-sm font-black uppercase tracking-[0.16em] text-slate-950"
+              >
+                <RotateCcw className="h-4 w-4" />
+                Play Again
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {feedback && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16 }}
+            className={`absolute left-1/2 top-[calc(env(safe-area-inset-top)+6.4rem)] z-50 -translate-x-1/2 rounded-full border px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] ${
+              feedback.type === 'success'
+                ? 'border-emerald-200/75 bg-emerald-500/25 text-emerald-50'
+                : 'border-rose-200/75 bg-rose-500/25 text-rose-50'
+            }`}
+          >
+            <span className="inline-flex items-center gap-1.5">
+              {feedback.type === 'success' ? <CheckCircle2 className="h-3.5 w-3.5" /> : null}
+              {feedback.message}
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

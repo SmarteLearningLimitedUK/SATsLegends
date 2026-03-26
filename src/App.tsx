@@ -1156,7 +1156,7 @@ const App: React.FC = () => {
   };
 
   const screenBehavior = SCREEN_BEHAVIOR[screen];
-  const showGlobalDock = true;
+  const showGlobalDock = screen !== 'splash';
   const isSplashScreen = screen === 'splash';
   const isAvatarSelectionScreen = screen === 'avatar_selection';
   const isGameplayScreen = screen === 'gameplay';

@@ -10,20 +10,8 @@ import {
   Play,
   TrendingUp,
   Scale,
-  Calculator,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-  ReferenceLine,
-} from 'recharts';
 
 interface DataPoint {
   id: string;
@@ -33,7 +21,8 @@ interface DataPoint {
 interface LevelData {
   numbers: number[];
   mean: number;
-  data: DataPoint[];
+  total: number;
+  options: number[];
 }
 
 interface MeanMachineGameProps {
@@ -64,9 +53,9 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [currentLevelData, setCurrentLevelData] = useState<LevelData | null>(null);
-  const [userAnswer, setUserAnswer] = useState('');
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLButtonElement>(null);
 
   const generateLevel = useCallback((lvl: number) => {
     const numCount = Math.min(3 + Math.floor((lvl - 1) / 2), 7);
@@ -86,17 +75,20 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     numbers.push(totalSum - currentSum);
     numbers = numbers.sort(() => Math.random() - 0.5);
 
-    const data: DataPoint[] = numbers.map((n, i) => ({
-      id: `Item ${i + 1}`,
-      value: n,
-    }));
+    const optionPool = new Set<number>([targetMean]);
+    while (optionPool.size < 4) {
+      const candidate = targetMean + Math.floor(Math.random() * 11) - 5;
+      if (candidate > 0) optionPool.add(candidate);
+    }
+    const options = Array.from(optionPool).sort(() => Math.random() - 0.5);
 
     setCurrentLevelData({
       numbers,
       mean: targetMean,
-      data,
+      total: totalSum,
+      options,
     });
-    setUserAnswer('');
+    setSelectedAnswer(null);
     setFeedback(null);
     setTimeout(() => inputRef.current?.focus(), 10);
   }, []);
@@ -113,15 +105,20 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     event.preventDefault();
     if (!currentLevelData || gameState !== 'playing') return;
 
-    const numAnswer = parseFloat(userAnswer);
-    if (numAnswer === currentLevelData.mean) {
+    if (selectedAnswer === null) {
+      setFeedback({ type: 'error', message: 'Pick one answer first.' });
+      setTimeout(() => setFeedback(null), 1400);
+      return;
+    }
+
+    if (selectedAnswer === currentLevelData.mean) {
       setScore(prev => prev + 100 + (level * 20));
       setFeedback({ type: 'success', message: 'Perfectly Balanced!' });
       setGameState('success');
       return;
     }
 
-    setFeedback({ type: 'error', message: 'The scale is off. Try again!' });
+    setFeedback({ type: 'error', message: 'Not quite. Mean = total ÷ how many numbers.' });
     setTimeout(() => setFeedback(null), 1500);
   };
 
@@ -190,61 +187,55 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                     </div>
                     <div>
                       <h2 className="text-lg font-bold tracking-tight">Calculate the Mean</h2>
-                      <p className="text-xs font-medium text-slate-400">Find the average value of the data set below.</p>
+                      <p className="text-xs font-medium text-slate-400">Step 1: Add all numbers. Step 2: Divide by how many numbers.</p>
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                </div>
+
+                <div className="w-full rounded-2xl border border-slate-100 bg-slate-50 p-6">
+                  <p className="mb-3 text-center text-xs font-black uppercase tracking-widest text-slate-500">Data Set</p>
+                  <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
                     {currentLevelData.numbers.map((n, i) => (
-                      <div key={i} className="rounded-lg border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">
+                      <div
+                        key={i}
+                        className="rounded-xl border border-slate-200 bg-white px-3 py-3 text-center text-xl font-black text-slate-700 shadow-sm"
+                      >
                         {n}
                       </div>
                     ))}
                   </div>
-                </div>
 
-                <div className="relative h-[320px] w-full rounded-2xl border border-slate-100 bg-slate-50 p-6">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={currentLevelData.data} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                      <XAxis dataKey="id" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }} />
-                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }} />
-                      <Tooltip
-                        cursor={{ fill: 'rgba(59, 130, 246, 0.05)' }}
-                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                      />
-                      <Bar dataKey="value" radius={[8, 8, 0, 0]} animationDuration={1000}>
-                        {currentLevelData.data.map((entry, index) => (
-                          <Cell key={entry.id} fill={COLORS[index % COLORS.length]} fillOpacity={gameState === 'success' ? 0.3 : 1} />
-                        ))}
-                      </Bar>
-                      {gameState === 'success' && (
-                        <ReferenceLine
-                          y={currentLevelData.mean}
-                          stroke="#2563eb"
-                          strokeWidth={4}
-                          strokeDasharray="8 8"
-                          label={{ position: 'top', value: `Mean: ${currentLevelData.mean}`, fill: '#2563eb', fontSize: 12, fontWeight: 900 }}
-                        />
-                      )}
-                    </BarChart>
-                  </ResponsiveContainer>
+                  <div className="mt-4 grid grid-cols-2 gap-3">
+                    <div className="rounded-xl border border-blue-100 bg-blue-50 px-3 py-2 text-center">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-blue-500">How many numbers?</p>
+                      <p className="text-lg font-black text-blue-700">{currentLevelData.numbers.length}</p>
+                    </div>
+                    <div className="rounded-xl border border-amber-100 bg-amber-50 px-3 py-2 text-center">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-amber-500">Add all numbers</p>
+                      <p className="text-lg font-black text-amber-700">{currentLevelData.total}</p>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex flex-col gap-4">
-                  <form onSubmit={handleSubmit} className="flex gap-4">
-                    <div className="relative flex-1">
-                      <input
-                        ref={inputRef}
-                        type="number"
-                        disabled={gameState === 'success'}
-                        value={userAnswer}
-                        onChange={(event) => setUserAnswer(event.target.value)}
-                        placeholder="Enter the mean..."
-                        className="w-full rounded-2xl border-2 border-slate-200 bg-slate-100 px-6 py-4 text-xl font-black text-slate-800 transition-all placeholder:text-slate-400 focus:border-blue-500 focus:outline-none disabled:opacity-50"
-                      />
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300">
-                        <Calculator className="h-6 w-6" />
-                      </div>
+                  <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                    <div className="grid grid-cols-2 gap-3">
+                      {currentLevelData.options.map((option, idx) => (
+                        <button
+                          key={`${option}-${idx}`}
+                          type="button"
+                          ref={idx === 0 ? inputRef : undefined}
+                          onClick={() => setSelectedAnswer(option)}
+                          disabled={gameState === 'success'}
+                          className={`rounded-xl border-2 px-4 py-3 text-xl font-black transition-all ${
+                            selectedAnswer === option
+                              ? 'border-blue-500 bg-blue-600 text-white shadow-lg shadow-blue-200'
+                              : 'border-slate-200 bg-white text-slate-800 hover:border-slate-300'
+                          }`}
+                        >
+                          {option}
+                        </button>
+                      ))}
                     </div>
 
                     <AnimatePresence mode="wait">
@@ -261,7 +252,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                       ) : (
                         <button
                           type="submit"
-                          className="flex items-center gap-2 rounded-2xl bg-slate-800 px-10 py-4 text-sm font-black uppercase tracking-widest text-white shadow-lg transition-all hover:bg-slate-900"
+                          className="mx-auto flex items-center gap-2 rounded-xl bg-slate-800 px-6 py-2.5 text-xs font-black uppercase tracking-[0.18em] text-white shadow-md transition-all hover:bg-slate-900"
                         >
                           Verify Mean
                         </button>
@@ -288,8 +279,8 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                 </div>
                 <h2 className="mb-4 text-4xl font-black uppercase tracking-tight text-slate-800">Mean Machine</h2>
                 <p className="mb-8 font-medium leading-relaxed text-slate-500">
-                  The data sets are out of balance. Calculate the mean (average) for each set to stabilize the system.
-                  Master all 10 levels to become a Data Architect.
+                  Add the numbers, divide by how many there are, then pick the correct mean.
+                  Clear all 10 rounds to master Mean Machine.
                 </p>
                 <button
                   onClick={startGame}
