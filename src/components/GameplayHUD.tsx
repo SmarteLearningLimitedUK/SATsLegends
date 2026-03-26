@@ -46,9 +46,18 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
 }) => {
   const showExtraStat = Boolean(statLabel) && statValue !== undefined && statValue !== null;
   const progressTrackInsetClass = compact ? 'inset-[8%]' : 'inset-x-[4%] inset-y-[18%]';
+  const sharedShellOwnsChrome = typeof document !== 'undefined'
+    && Boolean(document.querySelector('.screen-gameplay .unified-minigame-hud-enabled'));
+
+  if (sharedShellOwnsChrome) {
+    return null;
+  }
 
   return (
-    <div className={`game-shell-zone game-shell-zone-hud mission-hud-root w-full flex shrink-0 flex-col ${compact ? 'gap-1' : 'gap-1.5 md:gap-2'}`}>
+    <div
+      data-local-top-hud="true"
+      className={`game-shell-zone game-shell-zone-hud mission-hud-root w-full flex shrink-0 flex-col ${compact ? 'gap-1' : 'gap-1.5 md:gap-2'}`}
+    >
       <div className={`fantasy-hud-shell aaa-hud-shell mission-hud-topbar relative w-full overflow-hidden ${compact ? 'rounded-[0.95rem]' : 'rounded-[1.1rem] md:rounded-[1.4rem]'} shadow-[0_14px_36px_rgba(15,23,42,0.22)]`}>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(186,230,253,0.16),transparent_36%),linear-gradient(180deg,rgba(18,40,92,0.96),rgba(7,18,40,0.98))]" />
         <div className="absolute inset-0 border border-white/12" />

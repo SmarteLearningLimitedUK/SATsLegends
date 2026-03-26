@@ -5,6 +5,7 @@ import WorldMap from '../screens/WorldMap';
 import IslandLevels from '../screens/IslandLevels';
 import ParentDashboard from '../screens/ParentDashboard';
 import UnifiedMiniGameHud from '../components/UnifiedMiniGameHud';
+import GameplayContentViewport from '../components/GameplayContentViewport';
 import {
   FramedPanel,
   GameScreenShell,
@@ -430,28 +431,30 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         <div className={`game-shell-host unified-minigame-hud-enabled ${gameplayTypeClass} ${usesQuestionMatchFrame ? 'question-match-shell' : ''} relative flex h-full w-full min-h-0 flex-col overflow-hidden`.trim()}>
           <div className="game-shell-contract relative flex h-full w-full min-h-0 flex-col overflow-hidden">
             <div className="structured-game-layout flex h-full w-full min-h-0 flex-1 flex-col">
-              {isGameplayInstructionPending ? (
-                <div className="flex h-full w-full min-h-0 items-center justify-center p-3 md:p-6">
-                  <div className="single-shell-briefing-card structured-playfield-frame relative flex w-full max-w-xl flex-col items-center gap-3 overflow-hidden rounded-[2rem] border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(18,48,112,0.88),rgba(10,29,74,0.92))] p-5 text-center shadow-[0_20px_50px_rgba(2,6,23,0.5)] md:gap-4 md:p-8">
-                    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(125,211,252,0.22),transparent_38%)]" />
-                    <div className="relative mt-1 h-16 w-16 rounded-full border border-amber-200/60 bg-[linear-gradient(180deg,rgba(251,191,36,0.28),rgba(245,158,11,0.18))] shadow-[0_0_24px_rgba(251,191,36,0.32)]" />
-                    <div className="relative text-[11px] font-black uppercase tracking-[0.2em] text-cyan-100/80">Mission Brief</div>
-                    <div className="relative text-3xl font-black uppercase tracking-tight text-white md:text-4xl">
-                      {selectedLevel?.displayName || selectedRuleSet?.title || 'Mini Game'}
+              <GameplayContentViewport>
+                {isGameplayInstructionPending ? (
+                  <div className="flex h-full w-full min-h-0 items-center justify-center p-3 md:p-6">
+                    <div className="single-shell-briefing-card structured-playfield-frame relative flex w-full max-w-xl flex-col items-center gap-3 overflow-hidden rounded-[2rem] border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(18,48,112,0.88),rgba(10,29,74,0.92))] p-5 text-center shadow-[0_20px_50px_rgba(2,6,23,0.5)] md:gap-4 md:p-8">
+                      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(125,211,252,0.22),transparent_38%)]" />
+                      <div className="relative mt-1 h-16 w-16 rounded-full border border-amber-200/60 bg-[linear-gradient(180deg,rgba(251,191,36,0.28),rgba(245,158,11,0.18))] shadow-[0_0_24px_rgba(251,191,36,0.32)]" />
+                      <div className="relative text-[11px] font-black uppercase tracking-[0.2em] text-cyan-100/80">Mission Brief</div>
+                      <div className="relative text-3xl font-black uppercase tracking-tight text-white md:text-4xl">
+                        {selectedLevel?.displayName || selectedRuleSet?.title || 'Mini Game'}
+                      </div>
+                      <p className="relative max-w-md text-base font-semibold leading-relaxed text-cyan-50/90 md:text-lg">
+                        {hintRuleSet?.summary || 'Read the objective, then start the mission and solve as many challenges as you can before time runs out.'}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={onDismissGameplayInstruction}
+                        className="relative mt-2 inline-flex h-14 min-w-[15rem] items-center justify-center rounded-full border border-amber-100/80 bg-[linear-gradient(180deg,#fde047_0%,#f59e0b_100%)] px-8 text-lg font-black uppercase tracking-[0.12em] text-amber-950 shadow-[0_12px_24px_rgba(217,119,6,0.42)] transition hover:brightness-105 active:translate-y-[1px]"
+                      >
+                        Start Mission
+                      </button>
                     </div>
-                    <p className="relative max-w-md text-base font-semibold leading-relaxed text-cyan-50/90 md:text-lg">
-                      {hintRuleSet?.summary || 'Read the objective, then start the mission and solve as many challenges as you can before time runs out.'}
-                    </p>
-                    <button
-                      type="button"
-                      onClick={onDismissGameplayInstruction}
-                      className="relative mt-2 inline-flex h-14 min-w-[15rem] items-center justify-center rounded-full border border-amber-100/80 bg-[linear-gradient(180deg,#fde047_0%,#f59e0b_100%)] px-8 text-lg font-black uppercase tracking-[0.12em] text-amber-950 shadow-[0_12px_24px_rgba(217,119,6,0.42)] transition hover:brightness-105 active:translate-y-[1px]"
-                    >
-                      Start Mission
-                    </button>
                   </div>
-                </div>
-              ) : renderGameplay()}
+                ) : renderGameplay()}
+              </GameplayContentViewport>
               <UnifiedMiniGameHud
                 playerName={player.playerName || 'Learner'}
                 avatarId={player.avatarId}
