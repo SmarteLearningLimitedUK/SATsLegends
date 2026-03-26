@@ -9,6 +9,7 @@ import volumeBackground from '../assets/maps/facctor frenzy.jpg';
 interface VolumeVaultGameProps {
   levelId: number;
   avatarId: string;
+  useSharedTopHud?: boolean;
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
   onBack: () => void;
@@ -309,6 +310,7 @@ const toPoints = (points: number[][]) => points.map((point) => `${point[0]},${po
 const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
   levelId,
   avatarId: _avatarId,
+  useSharedTopHud = false,
   onVictory,
   onGameOver,
   onBack,
@@ -674,7 +676,8 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
       />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,10,28,0.48),rgba(4,10,28,0.22)_34%,rgba(4,10,28,0.58)_100%)]" />
 
-      <div className="relative z-10 flex h-full flex-col px-3 pb-[max(6rem,calc(env(safe-area-inset-bottom)+5rem))] pt-[max(0.6rem,env(safe-area-inset-top))]">
+      <div className={`relative z-10 flex h-full flex-col px-3 pb-[max(6rem,calc(env(safe-area-inset-bottom)+5rem))] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.2rem)]' : 'pt-[max(0.6rem,env(safe-area-inset-top))]'}`}>
+        {!useSharedTopHud && (
         <header className="shrink-0">
           <div className="flex items-center justify-between gap-2">
             <div className="rounded-full border border-sky-100/34 bg-slate-950/62 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-sky-100">
@@ -695,8 +698,9 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
             <div className="w-11 text-right text-sm font-black text-white">{Math.ceil(timeLeft)}s</div>
           </div>
         </header>
+        )}
 
-        <main className="mt-2 flex min-h-0 flex-1 flex-col gap-2">
+        <main className={`flex min-h-0 flex-1 flex-col gap-2 ${useSharedTopHud ? 'mt-0' : 'mt-2'}`}>
           <div className="rounded-2xl border border-white/20 bg-slate-950/48 px-3 py-2 text-center shadow-[0_8px_20px_rgba(2,6,23,0.34)]">
             <div className="text-sm font-black text-white">{challenge.prompt}</div>
             <div className="mt-0.5 text-xs font-semibold text-sky-100/82">{challenge.helper}</div>

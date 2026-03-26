@@ -36,6 +36,7 @@ interface Antidote {
 interface LineGraphLabGameProps {
   levelId: number;
   avatarId: string;
+  useSharedTopHud?: boolean;
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
   onBack: () => void;
@@ -53,6 +54,7 @@ const scoreToStars = (score: number) => {
 const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   levelId: _levelId,
   avatarId: _avatarId,
+  useSharedTopHud = false,
   onVictory,
   onGameOver: _onGameOver,
   onBack,
@@ -155,46 +157,48 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
 
   return (
     <div className="fixed inset-0 flex flex-col overflow-hidden bg-[#020617] font-mono text-slate-200 select-none">
-      <header className="z-20 flex h-16 items-center justify-between border-b border-emerald-900/30 bg-slate-900/50 px-6 backdrop-blur-md">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={onBack}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-700 bg-slate-800/80 text-slate-200 transition hover:bg-slate-700/80"
-            aria-label="Back to levels"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <div className="rounded-lg bg-emerald-500 p-2 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-            <FlaskConical className="h-5 w-5 text-slate-900" />
+      {!useSharedTopHud && (
+        <header className="z-20 flex h-16 items-center justify-between border-b border-emerald-900/30 bg-slate-900/50 px-6 backdrop-blur-md">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={onBack}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-700 bg-slate-800/80 text-slate-200 transition hover:bg-slate-700/80"
+              aria-label="Back to levels"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <div className="rounded-lg bg-emerald-500 p-2 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+              <FlaskConical className="h-5 w-5 text-slate-900" />
+            </div>
+            <div>
+              <h1 className="text-sm font-black uppercase tracking-widest text-white">Line Graph Lab</h1>
+              <p className="text-[10px] italic uppercase tracking-tighter text-emerald-500">Antidote Synthesis Protocol</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-sm font-black uppercase tracking-widest text-white">Line Graph Lab</h1>
-            <p className="text-[10px] italic uppercase tracking-tighter text-emerald-500">Antidote Synthesis Protocol</p>
-          </div>
-        </div>
 
-        <div className="flex items-center gap-6">
-          <div className="flex flex-col items-end">
-            <span className="text-[10px] uppercase text-slate-500">Lab Credibility</span>
-            <span className="text-xs font-bold text-emerald-400">{score} XP</span>
+          <div className="flex items-center gap-6">
+            <div className="flex flex-col items-end">
+              <span className="text-[10px] uppercase text-slate-500">Lab Credibility</span>
+              <span className="text-xs font-bold text-emerald-400">{score} XP</span>
+            </div>
+            <div className="h-8 w-[1px] bg-slate-800" />
+            <div className="flex flex-col items-end">
+              <span className="text-[10px] uppercase text-slate-500">Antidote Batch</span>
+              <span className="text-xs font-bold text-white">{level} / {MAX_LEVEL}</span>
+            </div>
           </div>
-          <div className="h-8 w-[1px] bg-slate-800" />
-          <div className="flex flex-col items-end">
-            <span className="text-[10px] uppercase text-slate-500">Antidote Batch</span>
-            <span className="text-xs font-bold text-white">{level} / {MAX_LEVEL}</span>
-          </div>
-        </div>
-      </header>
+        </header>
+      )}
 
-      <main className="flex flex-1 overflow-hidden">
-        <section className="z-10 flex w-1/3 flex-col gap-6 border-r border-emerald-900/20 bg-slate-900/20 p-8">
+      <main className={`flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.25rem)]' : ''}`}>
+        <section className="z-10 flex min-h-0 w-full flex-[0.44] flex-col gap-3 border-b border-emerald-900/20 bg-slate-900/20 p-3 sm:p-4 md:w-1/3 md:flex-1 md:gap-6 md:border-b-0 md:border-r md:p-8">
           <div className="mb-2 flex items-center gap-2 text-emerald-500">
             <ClipboardList className="h-5 w-5" />
             <h2 className="text-xs font-black uppercase tracking-widest">Antidote Recipe</h2>
           </div>
 
-          <div className="flex-1 overflow-hidden rounded-2xl border border-slate-800 bg-slate-950/50 p-6 shadow-inner">
+          <div className="min-h-0 flex-1 overflow-hidden rounded-2xl border border-slate-800 bg-slate-950/50 p-3 shadow-inner sm:p-4 md:p-6">
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-slate-800">
@@ -224,13 +228,13 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
           </div>
         </section>
 
-        <section className="z-10 flex w-2/3 flex-col gap-6 bg-slate-950/20 p-8">
+        <section className="z-10 flex min-h-0 w-full flex-[0.56] flex-col gap-3 bg-slate-950/20 p-3 sm:p-4 md:w-2/3 md:flex-1 md:gap-6 md:p-8">
           <div className="mb-2 flex items-center gap-2 text-emerald-500">
             <Activity className="h-5 w-5" />
             <h2 className="text-xs font-black uppercase tracking-widest">Synthesis Options</h2>
           </div>
 
-          <div className="grid flex-1 grid-rows-3 gap-4">
+          <div className="grid min-h-0 flex-1 grid-rows-3 gap-2 md:gap-4">
             {antidotes.map((antidote) => (
               <motion.button
                 key={antidote.id}
@@ -247,7 +251,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                   <Beaker className="h-6 w-6 text-emerald-500" />
                 </div>
 
-                <div className="h-24 flex-1">
+                <div className="h-16 flex-1 md:h-24">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={antidote.data}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />

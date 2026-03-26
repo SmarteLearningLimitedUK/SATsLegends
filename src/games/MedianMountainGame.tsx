@@ -31,6 +31,7 @@ interface LevelData {
 interface MedianMountainGameProps {
   levelId: number;
   avatarId: string;
+  useSharedTopHud?: boolean;
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
   onBack: () => void;
@@ -47,6 +48,7 @@ const scoreToStars = (score: number) => {
 const MedianMountainGame: React.FC<MedianMountainGameProps> = ({
   levelId: _levelId,
   avatarId: _avatarId,
+  useSharedTopHud = false,
   onVictory,
   onGameOver: _onGameOver,
   onBack,
@@ -156,39 +158,41 @@ const MedianMountainGame: React.FC<MedianMountainGameProps> = ({
 
   return (
     <div className="fixed inset-0 flex flex-col overflow-hidden bg-indigo-50 font-sans text-indigo-900 select-none">
-      <header className="z-20 flex h-16 items-center justify-between border-b border-indigo-200 bg-white px-6 shadow-sm">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={onBack}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-700 transition hover:bg-indigo-100"
-            aria-label="Back to levels"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <div className="rounded-lg bg-indigo-600 p-2 shadow-lg shadow-indigo-200">
-            <Mountain className="h-5 w-5 text-white" />
+      {!useSharedTopHud && (
+        <header className="z-20 flex h-16 items-center justify-between border-b border-indigo-200 bg-white px-6 shadow-sm">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={onBack}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-700 transition hover:bg-indigo-100"
+              aria-label="Back to levels"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <div className="rounded-lg bg-indigo-600 p-2 shadow-lg shadow-indigo-200">
+              <Mountain className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h1 className="text-sm font-black uppercase tracking-tight text-indigo-800">Median Mountain</h1>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Middle Path Protocol</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-sm font-black uppercase tracking-tight text-indigo-800">Median Mountain</h1>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Middle Path Protocol</p>
-          </div>
-        </div>
 
-        <div className="flex items-center gap-8">
-          <div className="flex flex-col items-end">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Mountain XP</span>
-            <span className="text-sm font-black tabular-nums text-indigo-600">{score} XP</span>
+          <div className="flex items-center gap-8">
+            <div className="flex flex-col items-end">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Mountain XP</span>
+              <span className="text-sm font-black tabular-nums text-indigo-600">{score} XP</span>
+            </div>
+            <div className="h-8 w-[1px] bg-indigo-200" />
+            <div className="flex flex-col items-end">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Ascent Progress</span>
+              <span className="text-sm font-black text-indigo-800">Level {level} / {MAX_LEVEL}</span>
+            </div>
           </div>
-          <div className="h-8 w-[1px] bg-indigo-200" />
-          <div className="flex flex-col items-end">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Ascent Progress</span>
-            <span className="text-sm font-black text-indigo-800">Level {level} / {MAX_LEVEL}</span>
-          </div>
-        </div>
-      </header>
+        </header>
+      )}
 
-      <main className="relative flex flex-1 flex-col items-center justify-center p-8">
+      <main className={`relative flex flex-1 flex-col items-center justify-center p-8 ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.25rem)]' : ''}`}>
         <AnimatePresence mode="wait">
           {(gameState === 'playing' || gameState === 'success') && currentLevelData && (
             <motion.div

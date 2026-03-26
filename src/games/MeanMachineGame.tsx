@@ -27,6 +27,7 @@ interface LevelData {
 interface MeanMachineGameProps {
   levelId: number;
   avatarId: string;
+  useSharedTopHud?: boolean;
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
   onBack: () => void;
@@ -44,6 +45,7 @@ const scoreToStars = (score: number) => {
 const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   levelId: _levelId,
   avatarId: _avatarId,
+  useSharedTopHud = false,
   onVictory,
   onGameOver: _onGameOver,
   onBack,
@@ -140,39 +142,41 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
 
   return (
     <div className="fixed inset-0 flex flex-col overflow-hidden bg-slate-50 font-sans text-slate-900 select-none">
-      <header className="z-20 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-6 shadow-sm">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={onBack}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 bg-slate-100 text-slate-700 transition hover:bg-slate-200"
-            aria-label="Back to levels"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <div className="rounded-lg bg-blue-600 p-2 shadow-lg shadow-blue-200">
-            <Scale className="h-5 w-5 text-white" />
+      {!useSharedTopHud && (
+        <header className="z-20 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-6 shadow-sm">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={onBack}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 bg-slate-100 text-slate-700 transition hover:bg-slate-200"
+              aria-label="Back to levels"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <div className="rounded-lg bg-blue-600 p-2 shadow-lg shadow-blue-200">
+              <Scale className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h1 className="text-sm font-black uppercase tracking-tight text-slate-800">Mean Machine</h1>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Central Tendency Protocol</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-sm font-black uppercase tracking-tight text-slate-800">Mean Machine</h1>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Central Tendency Protocol</p>
-          </div>
-        </div>
 
-        <div className="flex items-center gap-8">
-          <div className="flex flex-col items-end">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Efficiency</span>
-            <span className="text-sm font-black tabular-nums text-blue-600">{score} XP</span>
+          <div className="flex items-center gap-8">
+            <div className="flex flex-col items-end">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Efficiency</span>
+              <span className="text-sm font-black tabular-nums text-blue-600">{score} XP</span>
+            </div>
+            <div className="h-8 w-[1px] bg-slate-200" />
+            <div className="flex flex-col items-end">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Data Set</span>
+              <span className="text-sm font-black text-slate-800">{level} / {MAX_LEVEL}</span>
+            </div>
           </div>
-          <div className="h-8 w-[1px] bg-slate-200" />
-          <div className="flex flex-col items-end">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Data Set</span>
-            <span className="text-sm font-black text-slate-800">{level} / {MAX_LEVEL}</span>
-          </div>
-        </div>
-      </header>
+        </header>
+      )}
 
-      <main className="relative flex flex-1 flex-col items-center justify-center p-8">
+      <main className={`relative flex flex-1 flex-col items-center justify-center p-8 ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.25rem)]' : ''}`}>
         <AnimatePresence mode="wait">
           {(gameState === 'playing' || gameState === 'success') && currentLevelData && (
             <motion.div

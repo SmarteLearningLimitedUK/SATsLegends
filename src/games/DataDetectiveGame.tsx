@@ -48,6 +48,7 @@ interface Suspect {
 interface DataDetectiveGameProps {
   levelId: number;
   avatarId: string;
+  useSharedTopHud?: boolean;
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
   onBack: () => void;
@@ -80,6 +81,7 @@ const scoreToStars = (score: number) => {
 };
 
 const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
+  useSharedTopHud = false,
   onVictory,
   onBack,
 }) => {
@@ -171,40 +173,42 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
 
   return (
     <div className="fixed inset-0 flex flex-col overflow-hidden bg-[#0c0a09] font-mono text-stone-200">
-      <header className="z-20 flex h-16 items-center justify-between border-b border-stone-800 bg-stone-900/80 px-6 backdrop-blur-md">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={onBack}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-stone-700 bg-stone-800/80 text-stone-200 transition hover:bg-stone-700/80"
-            aria-label="Back to levels"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <div className="rounded-lg bg-amber-500 p-2 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
-            <Search className="h-5 w-5 text-stone-900" />
+      {!useSharedTopHud && (
+        <header className="z-20 flex h-16 items-center justify-between border-b border-stone-800 bg-stone-900/80 px-6 backdrop-blur-md">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={onBack}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-stone-700 bg-stone-800/80 text-stone-200 transition hover:bg-stone-700/80"
+              aria-label="Back to levels"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <div className="rounded-lg bg-amber-500 p-2 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+              <Search className="h-5 w-5 text-stone-900" />
+            </div>
+            <div>
+              <h1 className="text-sm font-black uppercase tracking-widest text-white">Data Detective Agency</h1>
+              <p className="text-[10px] italic uppercase tracking-tighter text-stone-500">Solving crimes with statistics</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-sm font-black uppercase tracking-widest text-white">Data Detective Agency</h1>
-            <p className="text-[10px] italic uppercase tracking-tighter text-stone-500">Solving crimes with statistics</p>
-          </div>
-        </div>
 
-        <div className="flex items-center gap-6">
-          <div className="flex flex-col items-end">
-            <span className="text-[10px] uppercase text-stone-500">Reputation</span>
-            <span className="text-xs font-bold text-amber-500">{score} PTS</span>
+          <div className="flex items-center gap-6">
+            <div className="flex flex-col items-end">
+              <span className="text-[10px] uppercase text-stone-500">Reputation</span>
+              <span className="text-xs font-bold text-amber-500">{score} PTS</span>
+            </div>
+            <div className="h-8 w-[1px] bg-stone-800" />
+            <div className="flex flex-col items-end">
+              <span className="text-[10px] uppercase text-stone-500">Case File</span>
+              <span className="text-xs font-bold text-white">{level} / {MAX_CASES}</span>
+            </div>
           </div>
-          <div className="h-8 w-[1px] bg-stone-800" />
-          <div className="flex flex-col items-end">
-            <span className="text-[10px] uppercase text-stone-500">Case File</span>
-            <span className="text-xs font-bold text-white">{level} / {MAX_CASES}</span>
-          </div>
-        </div>
-      </header>
+        </header>
+      )}
 
-      <main className="flex flex-1 overflow-hidden">
-        <section className="z-10 flex w-1/2 flex-col gap-6 border-r border-stone-800 bg-stone-900/30 p-8">
+      <main className={`flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.25rem)]' : ''}`}>
+        <section className="z-10 flex min-h-0 w-full flex-[0.46] flex-col gap-3 border-b border-stone-800 bg-stone-900/30 p-3 sm:p-4 md:w-1/2 md:flex-1 md:gap-6 md:border-b-0 md:border-r md:p-8">
           <div className="mb-2 flex items-center justify-between">
             <div className="flex items-center gap-2 text-amber-500">
               <FileText className="h-5 w-5" />
@@ -218,7 +222,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             </div>
           </div>
 
-          <div className="relative flex-1 overflow-hidden rounded-2xl border border-stone-800 bg-stone-950/50 p-6 shadow-inner">
+          <div className="relative min-h-0 flex-1 overflow-hidden rounded-2xl border border-stone-800 bg-stone-950/50 p-3 shadow-inner sm:p-4 md:p-6">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(#444_1px,transparent_1px)] opacity-5 [background-size:20px_20px]" />
 
             <ResponsiveContainer width="100%" height="100%">
@@ -288,13 +292,13 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           </div>
         </section>
 
-        <section className="z-10 flex w-1/2 flex-col gap-6 bg-stone-950/20 p-8">
+        <section className="z-10 flex min-h-0 w-full flex-[0.54] flex-col gap-3 bg-stone-950/20 p-3 sm:p-4 md:w-1/2 md:flex-1 md:gap-6 md:p-8">
           <div className="mb-2 flex items-center gap-2 text-amber-500">
             <Users className="h-5 w-5" />
             <h2 className="text-xs font-black uppercase tracking-widest">Suspect Lineup</h2>
           </div>
 
-          <div className="grid flex-1 grid-cols-2 gap-4">
+          <div className="grid min-h-0 flex-1 grid-cols-2 gap-2 md:gap-4">
             {suspects.map((suspect) => (
               <motion.button
                 key={suspect.id}
