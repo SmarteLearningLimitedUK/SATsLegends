@@ -27,13 +27,16 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
     () => Math.max(0, Math.min(1, totalTime > 0 ? timeLeft / totalTime : 0)),
     [timeLeft, totalTime],
   );
+  const timeValue = Math.max(0, Math.floor(timeLeft));
+  const isLowTime = timerProgress <= 0.3;
 
   const avatar = useMemo(() => (
     CHARACTER_AVATARS.find((entry) => entry.id === avatarId)
     || CHARACTER_AVATARS.find((entry) => entry.id === DEFAULT_AVATAR_ID)
     || CHARACTER_AVATARS[0]
   ), [avatarId]);
-  const sharedHudHeightClass = 'h-[clamp(34px,8.8vw,44px)]';
+
+  const sharedHudHeightClass = 'h-[clamp(42px,10.5vw,54px)]';
 
   if (hidden) return null;
 
@@ -47,15 +50,19 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
         paddingRight: 'max(0.55rem, env(safe-area-inset-right))',
       }}
     >
-      <div className="flex w-full items-center justify-between gap-2 px-[2px] py-[clamp(0.2rem,0.58vh,0.42rem)]">
-        <div className="flex min-w-0 items-center gap-2">
+      <div className="relative flex w-full items-center justify-between gap-2 px-[2px] py-[clamp(0.24rem,0.62vh,0.5rem)]">
+        <div className="pointer-events-none absolute inset-0 rounded-[1.15rem] bg-[linear-gradient(180deg,rgba(20,46,96,0.75)_0%,rgba(7,21,58,0.68)_100%)] shadow-[0_12px_24px_rgba(2,6,23,0.45)]" />
+        <div className="pointer-events-none absolute inset-[1px] rounded-[1.08rem] border border-cyan-200/25" />
+
+        <div className="relative flex min-w-0 items-center gap-2.5 pl-1">
           <div
-            className={`relative ${sharedHudHeightClass} w-[clamp(34px,8.8vw,44px)] shrink-0 rounded-[0.72rem] border-2 border-amber-300/95 bg-[linear-gradient(180deg,#274f92_0%,#1a356d_100%)] shadow-[0_8px_16px_rgba(2,6,23,0.42)]`}
+            className={`relative ${sharedHudHeightClass} w-[clamp(42px,10.5vw,54px)] shrink-0 rounded-[0.95rem] border-2 border-amber-300/95 bg-[linear-gradient(180deg,#2d63b7_0%,#1b3f86_100%)] shadow-[0_9px_18px_rgba(2,6,23,0.46)]`}
             style={{
               visibility: hideTimer ? 'hidden' : 'visible',
             }}
           >
-            <div className="absolute inset-[3px] overflow-hidden rounded-[0.52rem] border border-cyan-100/40">
+            <div className="pointer-events-none absolute -inset-[2px] rounded-[1rem] bg-[radial-gradient(circle,rgba(125,211,252,0.34)_0%,rgba(125,211,252,0)_72%)]" />
+            <div className="absolute inset-[3px] overflow-hidden rounded-[0.72rem] border border-cyan-100/45">
               <img
                 src={avatar?.portrait || avatar?.image}
                 alt="Player avatar"
@@ -63,59 +70,72 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
                 className="h-full w-full object-cover"
               />
             </div>
+            <div className="pointer-events-none absolute inset-0 rounded-[0.9rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.16),rgba(255,255,255,0)_45%)]" />
           </div>
 
           <div
-            className={`flex ${sharedHudHeightClass} min-w-0 w-[clamp(84px,23vw,124px)] items-center rounded-[0.82rem] border-2 border-amber-300/95 bg-[linear-gradient(180deg,#2f5da8_0%,#1a3877_100%)] px-3 shadow-[0_8px_16px_rgba(2,6,23,0.42)]`}
+            className={`relative flex ${sharedHudHeightClass} min-w-0 w-[clamp(106px,26vw,156px)] items-center rounded-[1rem] border-2 border-amber-300/95 bg-[linear-gradient(180deg,#3267b7_0%,#1a3a7c_100%)] px-3.5 shadow-[0_9px_18px_rgba(2,6,23,0.44)]`}
           >
+            <div className="pointer-events-none absolute inset-x-[6px] top-[3px] h-[30%] rounded-full bg-white/14 blur-[1px]" />
             <span
-              className="block w-full truncate text-center text-[clamp(0.68rem,1.86vw,0.9rem)] font-black uppercase tracking-[0.045em] text-slate-100"
+              className="relative block w-full truncate text-center text-[clamp(0.73rem,1.95vw,0.95rem)] font-black uppercase tracking-[0.055em] text-slate-100 [text-shadow:0_1px_0_rgba(0,0,0,0.35)]"
             >
               {playerName}
             </span>
           </div>
         </div>
 
-        <div className="flex shrink-0 items-center gap-1.5">
+        <div className="relative flex shrink-0 items-center gap-2 pr-1">
           <div
-            className={`flex ${sharedHudHeightClass} w-[clamp(148px,39vw,184px)] items-center rounded-full border-2 border-cyan-100/55 bg-[linear-gradient(180deg,#2f5daa_0%,#1e3f88_100%)] px-1.5 shadow-[0_8px_16px_rgba(2,6,23,0.4)]`}
+            className={`relative flex ${sharedHudHeightClass} w-[clamp(168px,41vw,206px)] items-center rounded-full border-2 border-cyan-100/60 bg-[linear-gradient(180deg,#2f67ba_0%,#1f458f_100%)] px-1.5 shadow-[0_9px_18px_rgba(2,6,23,0.42)]`}
             style={{
               visibility: hideTimer ? 'hidden' : 'visible',
             }}
           >
-            <div className="inline-flex h-[74%] w-[clamp(22px,6vw,28px)] shrink-0 items-center justify-center rounded-full bg-[linear-gradient(180deg,#f9cf5d_0%,#f59e0b_100%)] text-slate-900 shadow-[0_2px_6px_rgba(2,6,23,0.35)]">
+            <div className="inline-flex h-[76%] w-[clamp(24px,6.2vw,32px)] shrink-0 items-center justify-center rounded-full border border-amber-100/70 bg-[linear-gradient(180deg,#f8d86d_0%,#f59e0b_100%)] text-slate-900 shadow-[0_3px_8px_rgba(2,6,23,0.38)]">
               <img
                 src={hourglassIcon}
                 alt=""
                 aria-hidden="true"
                 draggable={false}
-                className="h-[68%] w-[68%] object-contain"
+                className="h-[70%] w-[70%] object-contain"
               />
             </div>
-            <div className="relative ml-1.5 h-[40%] min-w-0 flex-1 overflow-hidden rounded-full border border-cyan-100/35 bg-slate-950/60">
+            <div className="relative ml-1.5 h-[44%] min-w-0 flex-1 overflow-hidden rounded-full border border-cyan-100/35 bg-slate-950/60">
+              <div className="pointer-events-none absolute inset-[1px] rounded-full bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0))]" />
               <motion.div
-                className="absolute inset-y-[2px] left-[2px] rounded-full bg-[linear-gradient(90deg,#5cf44a_0%,#22d34e_58%,#11bfa8_100%)] shadow-[0_0_9px_rgba(74,222,128,0.55)]"
+                className={`absolute inset-y-[2px] left-[2px] rounded-full shadow-[0_0_10px_rgba(74,222,128,0.58)] ${
+                  isLowTime
+                    ? 'bg-[linear-gradient(90deg,#f59e0b_0%,#ef4444_100%)]'
+                    : 'bg-[linear-gradient(90deg,#5cf44a_0%,#22d34e_58%,#11bfa8_100%)]'
+                }`}
                 animate={{ width: `max(0px, calc(${timerProgress * 100}% - 4px))` }}
                 transition={{ duration: 0.25, ease: 'easeOut' }}
               />
+              <motion.div
+                className="pointer-events-none absolute inset-y-[2px] w-10 rounded-full bg-[linear-gradient(90deg,rgba(255,255,255,0)_0%,rgba(255,255,255,0.42)_50%,rgba(255,255,255,0)_100%)]"
+                animate={{ x: ['-35%', '115%'] }}
+                transition={{ duration: 1.4, repeat: Infinity, ease: 'linear' }}
+              />
               <div className="pointer-events-none absolute inset-[1px] rounded-full bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:12%_100%]" />
             </div>
-            <span className="ml-1.5 shrink-0 text-[clamp(0.62rem,1.72vw,0.84rem)] font-black uppercase text-slate-100">
-              {Math.max(0, Math.floor(timeLeft))}s
+            <span className="ml-1.5 shrink-0 text-[clamp(0.68rem,1.8vw,0.9rem)] font-black uppercase text-slate-100 [text-shadow:0_1px_0_rgba(0,0,0,0.35)]">
+              {timeValue}s
             </span>
           </div>
 
           <div
-            className={`inline-flex ${sharedHudHeightClass} w-[clamp(34px,8.8vw,44px)] shrink-0 items-center justify-center gap-1 rounded-full border border-cyan-100/65 bg-[linear-gradient(180deg,#1f5ab0_0%,#1e3f89_100%)] px-1.5 text-[0.88rem] font-black text-slate-100 shadow-[0_8px_16px_rgba(2,6,23,0.35)]`}
+            className={`relative inline-flex ${sharedHudHeightClass} w-[clamp(54px,12vw,66px)] shrink-0 items-center justify-center gap-1 rounded-full border-2 border-cyan-100/65 bg-[linear-gradient(180deg,#245db3_0%,#1e3f89_100%)] px-2 text-[clamp(0.8rem,2vw,0.96rem)] font-black text-slate-100 shadow-[0_9px_18px_rgba(2,6,23,0.4)]`}
           >
+            <div className="pointer-events-none absolute inset-[2px] rounded-full bg-[linear-gradient(180deg,rgba(255,255,255,0.2),rgba(255,255,255,0)_45%)]" />
             <img
               src={heartIcon}
               alt=""
               aria-hidden="true"
               draggable={false}
-              className="h-4 w-4 object-contain"
+              className="h-[clamp(14px,3.8vw,18px)] w-[clamp(14px,3.8vw,18px)] object-contain"
             />
-            <span>{lives}</span>
+            <span className="relative [text-shadow:0_1px_0_rgba(0,0,0,0.35)]">{lives}</span>
           </div>
         </div>
       </div>
