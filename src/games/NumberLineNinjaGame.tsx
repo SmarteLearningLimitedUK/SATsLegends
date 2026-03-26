@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Sparkles } from 'lucide-react';
-import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
+import {
+  emitMiniGameSessionEvent,
+  MiniGameShellContractProps,
+} from '../app/gameplaySessionContract';
 
 interface NumberLineNinjaGameProps {
   levelId: number;
@@ -8,16 +11,16 @@ interface NumberLineNinjaGameProps {
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
   onBack: () => void;
-  sessionState?: GameplaySessionState;
-  sessionEvents?: GameplaySessionEventHandlers;
 }
+
+type NumberLineNinjaGameShellProps = NumberLineNinjaGameProps & MiniGameShellContractProps;
 
 type FeedbackState = 'default' | 'selected' | 'correct' | 'incorrect';
 
 const OPTIONS = ['8', '10', '12', '14'] as const;
 const CORRECT = '10';
 
-const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
+const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   levelId,
   avatarId: _avatarId,
   onVictory,
@@ -50,7 +53,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
     if (hasSignalledFailure) return;
     if (isSessionActive) return;
     setHasSignalledFailure(true);
-    sessionEvents?.onGameFailed?.({
+    emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
       score,
       reason: lives <= 0 ? 'lives' : 'time',
     });
@@ -69,28 +72,28 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
       const nextScore = score + 120;
       setScore(nextScore);
       setFeedback('correct');
-      sessionEvents?.onCorrectAnswer?.({
+      emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
         score,
         metadata: {
           scoreDelta: 120,
           scoreAfter: nextScore,
         },
       });
-      sessionEvents?.onPuzzleComplete?.({
+      emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', {
         score: nextScore,
         metadata: {
           scoreDelta: 120,
         },
       });
       window.setTimeout(() => {
-        sessionEvents?.onGameComplete?.({ score: nextScore });
+        emitMiniGameSessionEvent(sessionEvents, 'game_complete', { score: nextScore });
         onVictory(3, nextScore);
       }, 650);
       return;
     }
 
     setFeedback('incorrect');
-    sessionEvents?.onIncorrectAnswer?.({
+    emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
       score,
       metadata: {
         livesBefore: lives,
@@ -99,7 +102,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
     });
     window.setTimeout(() => {
       if (lives <= 1) {
-        sessionEvents?.onGameFailed?.({
+        emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
           score,
           reason: 'lives',
         });

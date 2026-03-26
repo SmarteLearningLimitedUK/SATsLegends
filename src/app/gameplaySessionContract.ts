@@ -1,12 +1,25 @@
 import { MiniGameType } from '../types';
 
-export interface GameplaySessionState {
+/**
+ * Shell-owned mini-game session state (single source of truth).
+ */
+export interface MiniGameSessionState {
   timeLeft: number;
   totalTime: number;
   lives: number;
 }
 
-export interface GameplaySessionEventPayload {
+export type MiniGameSessionEventType =
+  | 'correct_answer'
+  | 'incorrect_answer'
+  | 'puzzle_complete'
+  | 'game_complete'
+  | 'game_failed';
+
+/**
+ * Shared payload fields mini-games can emit to the shell.
+ */
+export interface MiniGameSessionEventPayload {
   gameType?: MiniGameType;
   levelId?: number;
   score?: number;
@@ -15,10 +28,87 @@ export interface GameplaySessionEventPayload {
   metadata?: Record<string, unknown>;
 }
 
-export interface GameplaySessionEventHandlers {
-  onCorrectAnswer?: (payload?: GameplaySessionEventPayload) => void;
-  onIncorrectAnswer?: (payload?: GameplaySessionEventPayload) => void;
-  onPuzzleComplete?: (payload?: GameplaySessionEventPayload) => void;
-  onGameComplete?: (payload?: GameplaySessionEventPayload) => void;
-  onGameFailed?: (payload?: GameplaySessionEventPayload) => void;
+/**
+ * Normalized event object for optional onEvent pipelines.
+ */
+export interface MiniGameSessionEvent extends MiniGameSessionEventPayload {
+  type: MiniGameSessionEventType;
 }
+
+/**
+ * Contract mini-games use to report outcomes back to the shell.
+ */
+export interface MiniGameSessionEventHandlers {
+  onEvent?: (event: MiniGameSessionEvent) => void;
+  onCorrectAnswer?: (event: MiniGameSessionEvent) => void;
+  onIncorrectAnswer?: (event: MiniGameSessionEvent) => void;
+  onPuzzleComplete?: (event: MiniGameSessionEvent) => void;
+  onGameComplete?: (event: MiniGameSessionEvent) => void;
+  onGameFailed?: (event: MiniGameSessionEvent) => void;
+}
+
+/**
+ * Reusable mini-game shell contract (shared props boundary).
+ */
+export interface MiniGameShellContractProps {
+  sessionState?: MiniGameSessionState;
+  sessionEvents?: MiniGameSessionEventHandlers;
+}
+
+const callbackByEventType: Record<MiniGameSessionEventType, keyof MiniGameSessionEventHandlers> = {
+  correct_answer: 'onCorrectAnswer',
+  incorrect_answer: 'onIncorrectAnswer',
+  puzzle_complete: 'onPuzzleComplete',
+  game_complete: 'onGameComplete',
+  game_failed: 'onGameFailed',
+};
+
+/**
+ * Emits a standardized mini-game session event to both:
+ * - onEvent (generic stream)
+ * - typed callback for the specific event kind
+ */
+export const emitMiniGameSessionEvent = (
+  handlers: MiniGameSessionEventHandlers | undefined,
+  type: MiniGameSessionEventType,
+  payload: Omit<MiniGameSessionEvent, 'type'> = {},
+) => {
+  if (!handlers) return;
+
+  const event: MiniGameSessionEvent = { type, ...payload };
+  handlers.onEvent?.(event);
+  const callbackKey = callbackByEventType[type];
+  const callback = handlers[callbackKey];
+  if (typeof callback === 'function') {
+    callback(event);
+  }
+};
+
+/**
+ * Binds shell-level context once so mini-games don't need to re-attach it.
+ */
+export const bindMiniGameSessionHandlers = (
+  handlers: MiniGameSessionEventHandlers | undefined,
+  context: Pick<MiniGameSessionEventPayload, 'gameType' | 'levelId'>,
+): MiniGameSessionEventHandlers | undefined => {
+  if (!handlers) return undefined;
+
+  const withContext = (event: MiniGameSessionEvent): MiniGameSessionEvent => ({
+    ...event,
+    ...context,
+  });
+
+  return {
+    onEvent: handlers.onEvent ? (event) => handlers.onEvent?.(withContext(event)) : undefined,
+    onCorrectAnswer: (event) => emitMiniGameSessionEvent(handlers, 'correct_answer', withContext(event)),
+    onIncorrectAnswer: (event) => emitMiniGameSessionEvent(handlers, 'incorrect_answer', withContext(event)),
+    onPuzzleComplete: (event) => emitMiniGameSessionEvent(handlers, 'puzzle_complete', withContext(event)),
+    onGameComplete: (event) => emitMiniGameSessionEvent(handlers, 'game_complete', withContext(event)),
+    onGameFailed: (event) => emitMiniGameSessionEvent(handlers, 'game_failed', withContext(event)),
+  };
+};
+
+// Backward-compatible aliases
+export type GameplaySessionState = MiniGameSessionState;
+export type GameplaySessionEventPayload = MiniGameSessionEventPayload;
+export type GameplaySessionEventHandlers = MiniGameSessionEventHandlers;

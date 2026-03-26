@@ -20,7 +20,11 @@ import { isBossEncounterGameType } from '../games/BossEncounterGame';
 import { GameScreen, IslandData, LevelData, PlayerData } from '../types';
 import splashPoster from '../assets/casual_ui/splashrep1.png';
 import splashStartPill from '../assets/casual_ui/inputs/btn_1.png';
-import { GameplaySessionEventHandlers, GameplaySessionState } from './gameplaySessionContract';
+import {
+  bindMiniGameSessionHandlers,
+  GameplaySessionEventHandlers,
+  GameplaySessionState,
+} from './gameplaySessionContract';
 
 interface RuleSet {
   title: string;
@@ -104,34 +108,10 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       onGameOver: onGameplayOver,
       onBack: onBackToIslandLevels,
       sessionState,
-      sessionEvents: {
-        ...sessionEvents,
-        onCorrectAnswer: (payload) => sessionEvents.onCorrectAnswer?.({
-          gameType: selectedLevel.gameType,
-          levelId: selectedLevel.id,
-          ...payload,
-        }),
-        onIncorrectAnswer: (payload) => sessionEvents.onIncorrectAnswer?.({
-          gameType: selectedLevel.gameType,
-          levelId: selectedLevel.id,
-          ...payload,
-        }),
-        onPuzzleComplete: (payload) => sessionEvents.onPuzzleComplete?.({
-          gameType: selectedLevel.gameType,
-          levelId: selectedLevel.id,
-          ...payload,
-        }),
-        onGameComplete: (payload) => sessionEvents.onGameComplete?.({
-          gameType: selectedLevel.gameType,
-          levelId: selectedLevel.id,
-          ...payload,
-        }),
-        onGameFailed: (payload) => sessionEvents.onGameFailed?.({
-          gameType: selectedLevel.gameType,
-          levelId: selectedLevel.id,
-          ...payload,
-        }),
-      },
+      sessionEvents: bindMiniGameSessionHandlers(sessionEvents, {
+        gameType: selectedLevel.gameType,
+        levelId: selectedLevel.id,
+      }),
     };
 
     switch (selectedLevel.gameType) {
