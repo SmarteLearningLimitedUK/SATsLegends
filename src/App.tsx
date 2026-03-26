@@ -100,8 +100,6 @@ const App: React.FC = () => {
   const {
     globalMiniGameHudTimeLeft,
     globalMiniGameLives,
-    isGameplayInstructionPending,
-    setIsGameplayInstructionPending,
     consumeLife,
   } = useGameplaySession({
     screen,
@@ -432,7 +430,6 @@ const App: React.FC = () => {
                   selectedLevel={selectedLevel}
                   selectedRuleSet={selectedRuleSet}
                   hintRuleSet={hintRuleSet}
-                  isGameplayInstructionPending={isGameplayInstructionPending}
                   gameplayTypeClass={gameplayTypeClass}
                   usesQuestionMatchFrame={usesQuestionMatchFrame}
                   globalMiniGameHudTimeLeft={globalMiniGameHudTimeLeft}
@@ -449,10 +446,6 @@ const App: React.FC = () => {
                   onSelectIsland={handleIslandSelect}
                   onSelectLevel={handleLevelSelect}
                   onBackToIslandLevels={goToIslandLevels}
-                  onDismissGameplayInstruction={() => {
-                    triggerHaptic('tap');
-                    setIsGameplayInstructionPending(false);
-                  }}
                   onGameplayVictory={handleGameVictory}
                   onGameplayOver={handleGameOver}
                 />

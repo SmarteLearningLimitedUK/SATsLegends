@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   FlaskConical,
   Activity,
@@ -59,7 +59,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
 }) => {
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
-  const [gameState, setGameState] = useState<'start' | 'playing' | 'success' | 'complete'>('start');
+  const [gameState, setGameState] = useState<'playing' | 'success' | 'complete'>('playing');
   const [recipe, setRecipe] = useState<DataPoint[]>([]);
   const [antidotes, setAntidotes] = useState<Antidote[]>([]);
   const [correctId, setCorrectId] = useState<number | null>(null);
@@ -121,6 +121,10 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
     setGameState('playing');
     generateLevel(openingLevel);
   };
+
+  useEffect(() => {
+    generateLevel(1);
+  }, [generateLevel]);
 
   const handleAntidoteClick = (id: number) => {
     if (gameState !== 'playing') return;
@@ -190,7 +194,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
             <h2 className="text-xs font-black uppercase tracking-widest">Antidote Recipe</h2>
           </div>
 
-          <div className="flex-1 overflow-y-auto rounded-2xl border border-slate-800 bg-slate-950/50 p-6 shadow-inner">
+          <div className="flex-1 overflow-hidden rounded-2xl border border-slate-800 bg-slate-950/50 p-6 shadow-inner">
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-slate-800">
@@ -300,32 +304,6 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
       </main>
 
       <AnimatePresence>
-        {gameState === 'start' && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 z-50 flex items-center justify-center bg-slate-950/90 p-12 text-center backdrop-blur-md"
-          >
-            <div className="max-w-md">
-              <div className="mx-auto mb-8 flex h-20 w-20 rotate-12 items-center justify-center rounded-3xl bg-emerald-500 shadow-[0_0_30px_rgba(16,185,129,0.4)]">
-                <Microscope className="h-10 w-10 text-slate-900" />
-              </div>
-              <h2 className="mb-4 text-4xl font-black uppercase tracking-tighter text-white italic">Line Graph Lab</h2>
-              <p className="mb-8 text-sm leading-relaxed text-slate-400">
-                A critical outbreak is spreading. As the lead scientist, identify the correct antidote by matching
-                raw potency data to the correct synthesis graph.
-              </p>
-              <button
-                onClick={startGame}
-                className="rounded-full bg-emerald-500 px-12 py-4 text-sm font-black uppercase tracking-widest text-slate-900 shadow-xl shadow-emerald-500/20 transition-all hover:bg-emerald-400"
-              >
-                Initialize Lab
-              </button>
-            </div>
-          </motion.div>
-        )}
-
         {gameState === 'complete' && (
           <motion.div
             initial={{ opacity: 0 }}

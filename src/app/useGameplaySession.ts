@@ -16,8 +16,6 @@ interface GameplaySessionArgs {
 export interface GameplaySessionController {
   globalMiniGameHudTimeLeft: number;
   globalMiniGameLives: number;
-  isGameplayInstructionPending: boolean;
-  setIsGameplayInstructionPending: Dispatch<SetStateAction<boolean>>;
   isMuted: boolean;
   setIsMuted: Dispatch<SetStateAction<boolean>>;
   consumeLife: (amount?: number) => void;
@@ -33,7 +31,6 @@ export const useGameplaySession = ({
   const [globalMiniGameLives, setGlobalMiniGameLives] = useState(GLOBAL_MINIGAME_LIVES);
   const [globalMiniGameLifeLock, setGlobalMiniGameLifeLock] = useState(false);
   const [globalMiniGameTimeLock, setGlobalMiniGameTimeLock] = useState(false);
-  const [isGameplayInstructionPending, setIsGameplayInstructionPending] = useState(false);
   const [isMuted, setIsMuted] = useState(() => localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true');
   const consumeLife = useCallback((amount = 1) => {
     if (amount <= 0) return;
@@ -75,7 +72,6 @@ export const useGameplaySession = ({
 
     const handleHapticIntent = (event: Event) => {
       if (screen !== 'gameplay') return;
-      if (isGameplayInstructionPending) return;
 
       const detail = (event as CustomEvent<{ intent?: string }>).detail;
       const intent = detail?.intent;
@@ -92,16 +88,7 @@ export const useGameplaySession = ({
     return () => {
       window.removeEventListener('sats-mastery:haptic', handleHapticIntent as EventListener);
     };
-  }, [consumeLife, isGameplayInstructionPending, screen]);
-
-  useEffect(() => {
-    if (screen !== 'gameplay' || !selectedLevel) {
-      setIsGameplayInstructionPending(false);
-      return;
-    }
-
-    setIsGameplayInstructionPending(true);
-  }, [screen, selectedLevel?.id]);
+  }, [consumeLife, screen]);
 
   useEffect(() => {
     localStorage.setItem(GAME_AUDIO_STORAGE_KEY, String(isMuted));
@@ -126,8 +113,6 @@ export const useGameplaySession = ({
   return {
     globalMiniGameHudTimeLeft,
     globalMiniGameLives,
-    isGameplayInstructionPending,
-    setIsGameplayInstructionPending,
     isMuted,
     setIsMuted,
     consumeLife,

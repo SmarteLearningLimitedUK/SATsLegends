@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Search,
   FileText,
@@ -85,7 +85,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
 }) => {
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
-  const [gameState, setGameState] = useState<'start' | 'playing' | 'success' | 'complete'>('start');
+  const [gameState, setGameState] = useState<'playing' | 'success' | 'complete'>('playing');
   const [currentCase, setCurrentCase] = useState<StolenItem[]>([]);
   const [suspects, setSuspects] = useState<Suspect[]>([]);
   const [guiltyId, setGuiltyId] = useState<number | null>(null);
@@ -138,6 +138,10 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
     setGameState('playing');
     generateCase();
   };
+
+  useEffect(() => {
+    generateCase();
+  }, [generateCase]);
 
   const handleSuspectClick = (id: number) => {
     if (gameState !== 'playing') return;
@@ -354,32 +358,6 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
       </main>
 
       <AnimatePresence>
-        {gameState === 'start' && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 z-50 flex items-center justify-center bg-stone-950/90 p-12 text-center backdrop-blur-md"
-          >
-            <div className="max-w-md">
-              <div className="mx-auto mb-8 flex h-20 w-20 rotate-12 items-center justify-center rounded-3xl bg-amber-500 shadow-[0_0_30px_rgba(245,158,11,0.4)]">
-                <Search className="h-10 w-10 text-stone-900" />
-              </div>
-              <h2 className="mb-4 text-4xl font-black uppercase tracking-tighter text-white italic">Data Detective</h2>
-              <p className="mb-8 text-sm leading-relaxed text-stone-400">
-                A gang of monsters has been looting the city. Use your data analysis skills to match stolen-item charts
-                to the correct suspect in the lineup.
-              </p>
-              <button
-                onClick={startGame}
-                className="rounded-full bg-amber-500 px-12 py-4 text-sm font-black uppercase tracking-widest text-stone-900 shadow-xl shadow-amber-500/20 transition-all hover:bg-amber-400"
-              >
-                Open First Case
-              </button>
-            </div>
-          </motion.div>
-        )}
-
         {gameState === 'complete' && (
           <motion.div
             initial={{ opacity: 0 }}

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Activity,
   CheckCircle2,
@@ -7,7 +7,6 @@ import {
   ChevronRight,
   Trophy,
   AlertCircle,
-  Play,
   TrendingUp,
   Scale,
 } from 'lucide-react';
@@ -49,7 +48,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   onGameOver: _onGameOver,
   onBack,
 }) => {
-  const [gameState, setGameState] = useState<'start' | 'playing' | 'success' | 'complete'>('start');
+  const [gameState, setGameState] = useState<'playing' | 'success' | 'complete'>('playing');
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [currentLevelData, setCurrentLevelData] = useState<LevelData | null>(null);
@@ -100,6 +99,10 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     setGameState('playing');
     generateLevel(openingLevel);
   };
+
+  useEffect(() => {
+    generateLevel(1);
+  }, [generateLevel]);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -266,32 +269,6 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
         </AnimatePresence>
 
         <AnimatePresence>
-          {gameState === 'start' && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 z-50 flex items-center justify-center bg-slate-50/90 p-12 text-center backdrop-blur-sm"
-            >
-              <div className="flex max-w-md flex-col items-center">
-                <div className="mb-8 flex h-20 w-20 rotate-12 items-center justify-center rounded-3xl bg-blue-600 shadow-2xl shadow-blue-200">
-                  <Activity className="h-10 w-10 text-white" />
-                </div>
-                <h2 className="mb-4 text-4xl font-black uppercase tracking-tight text-slate-800">Mean Machine</h2>
-                <p className="mb-8 font-medium leading-relaxed text-slate-500">
-                  Add the numbers, divide by how many there are, then pick the correct mean.
-                  Clear all 10 rounds to master Mean Machine.
-                </p>
-                <button
-                  onClick={startGame}
-                  className="group flex items-center gap-3 rounded-full bg-blue-600 px-12 py-4 text-sm font-black uppercase tracking-widest text-white shadow-xl shadow-blue-200 transition-all hover:bg-blue-700"
-                >
-                  <Play className="h-4 w-4 fill-current transition-transform group-hover:scale-110" /> Initialize Protocol
-                </button>
-              </div>
-            </motion.div>
-          )}
-
           {gameState === 'complete' && (
             <motion.div
               initial={{ opacity: 0 }}
