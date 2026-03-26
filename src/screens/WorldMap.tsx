@@ -406,7 +406,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                         <span className="world-map-island-progress-shimmer" />
                       </span>
                     )}
-                    <span className="world-map-island-label-text block text-[9px] font-black uppercase leading-none tracking-[0.06em] md:text-[10px]">
+                    <span className="world-map-island-label-text block text-[10px] font-black uppercase leading-none tracking-[0.06em] md:text-[12px]">
                       {ISLAND_LABELS[island.id] || island.name}
                     </span>
                   </span>

@@ -6,7 +6,10 @@ export type NumberBaseCampMiniGameKey =
   | 'prime_pop'
   | 'rounding_rampage'
   | 'calculation_clash'
-  | 'factor_frenzy';
+  | 'factor_frenzy'
+  | 'chart_challenge'
+  | 'mean_machine'
+  | 'mode_miner';
 
 export type NumberBaseCampDifficultyTier = 1 | 2 | 3 | 4 | 5;
 
@@ -96,6 +99,27 @@ const basePackDefs: Array<{
     gameType: 'tower_of_factors',
     skillTags: ['FACTORS', 'MULTIPLES', 'DIVISIBILITY'],
     objectiveForLevel: (miniGameLevel) => `Identify factor and multiple links under growing pressure (L${miniGameLevel}).`,
+  },
+  {
+    key: 'chart_challenge',
+    name: 'Chart Challenge',
+    gameType: 'chart_chase',
+    skillTags: ['MEDIAN', 'DATA_INTERPRETATION', 'ORDERING'],
+    objectiveForLevel: (miniGameLevel) => `Sort and analyse data sets to find the median quickly (L${miniGameLevel}).`,
+  },
+  {
+    key: 'mean_machine',
+    name: 'Mean Machine',
+    gameType: 'mean_machine',
+    skillTags: ['MEAN', 'TOTALS', 'DIVISION'],
+    objectiveForLevel: (miniGameLevel) => `Calculate means from increasingly tricky sets (L${miniGameLevel}).`,
+  },
+  {
+    key: 'mode_miner',
+    name: 'Mode Miner',
+    gameType: 'data_dungeon',
+    skillTags: ['MODE', 'FREQUENCY', 'DATA_HANDLING'],
+    objectiveForLevel: (miniGameLevel) => `Find the most frequent value before time runs out (L${miniGameLevel}).`,
   },
 ];
 

@@ -159,10 +159,8 @@ export const ISLANDS: IslandData[] = [
     levels: [
       { id: 1, stars: 0, isLocked: false, blueprintKey: 'data_dash', displayName: 'Data Dash', gameType: 'data_dungeon' },
       { id: 2, stars: 0, isLocked: false, blueprintKey: 'graph_grabber', displayName: 'Graph Grabber', gameType: 'chart_chase' },
-      { id: 3, stars: 0, isLocked: false, blueprintKey: 'table_trouble', displayName: 'Table Trouble', gameType: 'data_dungeon' },
-      { id: 4, stars: 0, isLocked: false, blueprintKey: 'line_graph_lab', displayName: 'Line Graph Lab', gameType: 'chart_chase' },
-      { id: 5, stars: 0, isLocked: false, blueprintKey: 'chart_challenge', displayName: 'Chart Challenge', gameType: 'chart_chase' },
-      { id: 6, stars: 0, isLocked: false, blueprintKey: 'data_detective', displayName: 'Data Detective', gameType: 'data_dungeon' },
+      { id: 3, stars: 0, isLocked: false, blueprintKey: 'line_graph_lab', displayName: 'Line Graph Lab', gameType: 'chart_chase' },
+      { id: 4, stars: 0, isLocked: false, blueprintKey: 'data_detective', displayName: 'Data Detective', gameType: 'data_dungeon' },
     ],
   },
   {
