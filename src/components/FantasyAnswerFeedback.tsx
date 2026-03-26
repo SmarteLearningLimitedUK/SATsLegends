@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { CheckCircle2, Sparkles, XCircle } from 'lucide-react';
 
-export type FantasyAnswerVisualState = 'default' | 'selected' | 'correct' | 'incorrect';
+export type FantasyAnswerFeedbackState = 'default' | 'selected' | 'correct' | 'incorrect';
+export type FantasyAnswerVisualState = FantasyAnswerFeedbackState;
 
 export const deriveFantasyAnswerState = <T,>(
   option: T,
   selected: T | null,
-  feedback: 'default' | 'selected' | 'correct' | 'incorrect',
+  feedback: FantasyAnswerFeedbackState,
   correctOption?: T,
 ): FantasyAnswerVisualState => {
   if (feedback === 'correct' && option === correctOption) return 'correct';
@@ -16,7 +17,7 @@ export const deriveFantasyAnswerState = <T,>(
   return 'default';
 };
 
-interface FantasyAnswerOptionButtonProps {
+export interface FantasyAnswerOptionButtonProps {
   label: React.ReactNode;
   visualState: FantasyAnswerVisualState;
   onClick: () => void;
@@ -27,23 +28,23 @@ interface FantasyAnswerOptionButtonProps {
 const stateClassMap: Record<FantasyAnswerVisualState, string> = {
   default: [
     'border-cyan-100/45 text-white',
-    'bg-[linear-gradient(180deg,rgba(32,74,180,0.56),rgba(22,48,118,0.62))]',
-    'shadow-[0_10px_18px_rgba(2,6,23,0.32)]',
+    'bg-[linear-gradient(180deg,rgba(32,74,180,0.58),rgba(22,48,118,0.66))]',
+    'shadow-[0_12px_22px_rgba(2,6,23,0.34)]',
   ].join(' '),
   selected: [
-    'border-cyan-100/85 text-cyan-50',
-    'bg-[linear-gradient(180deg,rgba(56,189,248,0.52),rgba(59,130,246,0.48),rgba(67,56,202,0.45))]',
-    'shadow-[0_16px_30px_rgba(34,211,238,0.35)]',
+    'border-cyan-100/95 text-cyan-50',
+    'bg-[linear-gradient(180deg,rgba(56,189,248,0.64),rgba(59,130,246,0.56),rgba(67,56,202,0.55))]',
+    'shadow-[0_18px_32px_rgba(34,211,238,0.42)]',
   ].join(' '),
   correct: [
     'border-emerald-100/95 text-emerald-50',
-    'bg-[linear-gradient(180deg,rgba(74,222,128,0.56),rgba(22,163,74,0.54))]',
-    'shadow-[0_16px_30px_rgba(16,185,129,0.38)]',
+    'bg-[linear-gradient(180deg,rgba(74,222,128,0.66),rgba(22,163,74,0.6))]',
+    'shadow-[0_20px_34px_rgba(16,185,129,0.42)]',
   ].join(' '),
   incorrect: [
     'border-rose-100/95 text-rose-50',
-    'bg-[linear-gradient(180deg,rgba(251,113,133,0.55),rgba(225,29,72,0.52))]',
-    'shadow-[0_14px_28px_rgba(244,63,94,0.36)]',
+    'bg-[linear-gradient(180deg,rgba(251,113,133,0.66),rgba(225,29,72,0.58))]',
+    'shadow-[0_18px_30px_rgba(244,63,94,0.4)]',
   ].join(' '),
 };
 
@@ -71,10 +72,10 @@ export const FantasyAnswerOptionButton: React.FC<FantasyAnswerOptionButtonProps>
     type="button"
     onClick={onClick}
     disabled={disabled}
-    whileHover={disabled ? undefined : { scale: 1.015 }}
-    whileTap={disabled ? undefined : { scale: 0.98 }}
+    whileHover={disabled ? undefined : { scale: 1.018, y: -1 }}
+    whileTap={disabled ? undefined : { scale: 0.976, y: 1 }}
     className={[
-      'relative h-16 w-full overflow-hidden rounded-2xl border text-2xl font-black tracking-tight transition-all duration-150',
+      'group relative h-16 w-full overflow-hidden rounded-2xl border text-2xl font-black tracking-tight transition-all duration-150',
       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950',
       'disabled:cursor-not-allowed disabled:opacity-65',
       stateClassMap[visualState],
@@ -82,8 +83,8 @@ export const FantasyAnswerOptionButton: React.FC<FantasyAnswerOptionButtonProps>
     ].join(' ')}
     aria-pressed={visualState === 'selected'}
   >
-    <div className="pointer-events-none absolute inset-[1px] rounded-[14px] bg-[linear-gradient(180deg,rgba(255,255,255,0.18),rgba(255,255,255,0)_46%)]" />
-    <div className="pointer-events-none absolute -inset-8 rounded-full bg-cyan-200/10 blur-2xl" />
+    <div className="pointer-events-none absolute inset-[1px] rounded-[14px] bg-[linear-gradient(180deg,rgba(255,255,255,0.2),rgba(255,255,255,0)_44%)]" />
+    <div className="pointer-events-none absolute -inset-8 rounded-full bg-cyan-200/10 blur-2xl transition-opacity duration-150 group-hover:opacity-100" />
     <span className="relative inline-flex items-center gap-2 [text-shadow:0_2px_2px_rgba(0,0,0,0.28)]">
       {label}
       <AnimatePresence mode="wait" initial={false}>
@@ -103,6 +104,51 @@ export const FantasyAnswerOptionButton: React.FC<FantasyAnswerOptionButtonProps>
     </span>
   </motion.button>
 );
+
+export interface FantasyAnswerClusterProps<T extends string | number> {
+  options: readonly T[];
+  selected: T | null;
+  feedback: FantasyAnswerFeedbackState;
+  correctOption?: T;
+  onSelect: (value: T) => void;
+  disabled?: boolean;
+  columns?: 2 | 3 | 4;
+  className?: string;
+  buttonClassName?: string;
+  renderLabel?: (value: T) => React.ReactNode;
+}
+
+export const FantasyAnswerCluster = <T extends string | number>({
+  options,
+  selected,
+  feedback,
+  correctOption,
+  onSelect,
+  disabled = false,
+  columns = 2,
+  className = '',
+  buttonClassName = '',
+  renderLabel,
+}: FantasyAnswerClusterProps<T>) => {
+  const gridStyle: CSSProperties = {
+    gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+  };
+
+  return (
+    <div className={['grid gap-2.5', className].join(' ')} style={gridStyle}>
+      {options.map((value) => (
+        <FantasyAnswerOptionButton
+          key={`${value}`}
+          label={renderLabel ? renderLabel(value) : value}
+          visualState={deriveFantasyAnswerState(value, selected, feedback, correctOption)}
+          onClick={() => onSelect(value)}
+          disabled={disabled}
+          className={buttonClassName}
+        />
+      ))}
+    </div>
+  );
+};
 
 interface FantasyAnswerFeedbackBannerProps {
   state: 'correct' | 'incorrect' | null;
@@ -136,4 +182,3 @@ export const FantasyAnswerFeedbackBanner: React.FC<FantasyAnswerFeedbackBannerPr
     ) : null}
   </AnimatePresence>
 );
-

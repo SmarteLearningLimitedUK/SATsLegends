@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Sparkles } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
+import { Sparkles, WandSparkles } from 'lucide-react';
 import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
+import {
+  FantasyAnswerCluster,
+  FantasyAnswerFeedbackBanner,
+  FantasyAnswerFeedbackState,
+} from '../components/FantasyAnswerFeedback';
 
 interface NumberLineNinjaGameProps {
   levelId: number;
@@ -15,10 +21,15 @@ interface NumberLineNinjaGameProps {
 
 type NumberLineNinjaGameShellProps = NumberLineNinjaGameProps & MiniGameShellContractProps;
 
-type FeedbackState = 'default' | 'selected' | 'correct' | 'incorrect';
+const PUZZLE = {
+  question: 'A number line goes from 0 to 20. Which number is missing?',
+  options: ['8', '10', '12', '14'] as const,
+  correct: '10',
+  ticks: [0, 5, 10, 15, 20] as const,
+};
 
-const OPTIONS = ['8', '10', '12', '14'] as const;
-const CORRECT = '10';
+type OptionValue = (typeof PUZZLE.options)[number];
+type FeedbackState = FantasyAnswerFeedbackState;
 
 const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   levelId,
@@ -29,16 +40,17 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   sessionState,
   sessionEvents,
 }) => {
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<OptionValue | null>(null);
   const [feedback, setFeedback] = useState<FeedbackState>('default');
   const [score, setScore] = useState(0);
   const [hasSignalledFailure, setHasSignalledFailure] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
 
   const timeLeft = sessionState?.timeLeft ?? 0;
   const lives = sessionState?.lives ?? 0;
   const isSessionActive = timeLeft > 0 && lives > 0;
 
-  const canSubmit = selected !== null && isSessionActive;
+  const canSubmit = selected !== null && isSessionActive && feedback !== 'correct';
 
   useEffect(() => {
     if (!sessionState) return;
@@ -47,6 +59,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     setSelected(null);
     setFeedback('default');
     setScore(0);
+    setShowCelebration(false);
   }, [levelId, sessionState, sessionState?.timeLeft, sessionState?.totalTime]);
 
   useEffect(() => {
@@ -57,21 +70,23 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       score,
       reason: lives <= 0 ? 'lives' : 'time',
     });
-  }, [hasSignalledFailure, isSessionActive, lives, score, sessionEvents, timeLeft]);
+  }, [hasSignalledFailure, isSessionActive, lives, score, sessionEvents]);
 
-  const selectOption = (value: string) => {
-    if (!isSessionActive) return;
+  const selectOption = (value: OptionValue) => {
+    if (!isSessionActive || feedback === 'correct') return;
     setSelected(value);
     setFeedback('selected');
   };
 
   const submit = () => {
-    if (!selected || !isSessionActive) return;
+    if (!selected || !isSessionActive || feedback === 'correct') return;
 
-    if (selected === CORRECT) {
+    if (selected === PUZZLE.correct) {
       const nextScore = score + 120;
       setScore(nextScore);
       setFeedback('correct');
+      setShowCelebration(true);
+
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
         score,
         metadata: {
@@ -85,10 +100,12 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
           scoreDelta: 120,
         },
       });
+
+      window.setTimeout(() => setShowCelebration(false), 540);
       window.setTimeout(() => {
         emitMiniGameSessionEvent(sessionEvents, 'game_complete', { score: nextScore });
         onVictory(3, nextScore);
-      }, 650);
+      }, 700);
       return;
     }
 
@@ -100,14 +117,9 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
         livesLost: 1,
       },
     });
+
     window.setTimeout(() => {
-      if (lives <= 1) {
-        emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
-          score,
-          reason: 'lives',
-        });
-        return;
-      }
+      if (!isSessionActive) return;
       setSelected(null);
       setFeedback('default');
     }, 760);
@@ -115,117 +127,146 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
   return (
     <div className="relative h-full w-full overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(120%_72%_at_50%_10%,#2dd4bf33_0%,#1d4ed833_32%,#4f46e533_58%,#0b1028_100%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,#101b4a_0%,#132a63_28%,#182f6f_48%,#0f214f_68%,#091437_100%)]" />
-      <div className="pointer-events-none absolute -left-16 top-20 h-56 w-56 rounded-full bg-cyan-300/30 blur-3xl" />
-      <div className="pointer-events-none absolute right-[-3rem] top-36 h-64 w-64 rounded-full bg-fuchsia-400/20 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-[-5rem] left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-amber-300/20 blur-3xl" />
-      <div className="pointer-events-none absolute inset-0 opacity-[0.22] [background:radial-gradient(circle_at_16%_22%,#ffffff_0,transparent_3px),radial-gradient(circle_at_82%_17%,#ffffff_0,transparent_2px),radial-gradient(circle_at_34%_78%,#ffffff_0,transparent_2px),radial-gradient(circle_at_64%_66%,#ffffff_0,transparent_2px)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(130%_80%_at_50%_10%,#5eead433_0%,#3b82f666_32%,#1d4ed8aa_64%,#0b1028_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,#1e1b4bcc_0%,#0f172ad9_52%,#020617_f0_100%)]" />
+      <div className="pointer-events-none absolute -left-14 top-20 h-56 w-56 rounded-full bg-cyan-300/35 blur-3xl" />
+      <div className="pointer-events-none absolute -right-10 top-28 h-64 w-64 rounded-full bg-fuchsia-400/26 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-[-6rem] left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-amber-300/22 blur-3xl" />
+      <div className="pointer-events-none absolute inset-0 opacity-[0.18] [background:radial-gradient(circle_at_14%_19%,#ffffff_0,transparent_2px),radial-gradient(circle_at_84%_16%,#ffffff_0,transparent_2px),radial-gradient(circle_at_31%_72%,#ffffff_0,transparent_2px),radial-gradient(circle_at_66%_63%,#ffffff_0,transparent_2px)]" />
+
+      <FantasyAnswerFeedbackBanner
+        state={feedback === 'correct' ? 'correct' : feedback === 'incorrect' ? 'incorrect' : null}
+        correctText="Perfect cast!"
+        incorrectText="Good try. Pick another!"
+      />
+
+      <AnimatePresence initial={false}>
+        {showCelebration ? (
+          <motion.div
+            key="celebration-burst"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="pointer-events-none absolute inset-0 z-20"
+          >
+            <motion.div
+              initial={{ scale: 0.75, opacity: 0.8 }}
+              animate={{ scale: 1.45, opacity: 0 }}
+              transition={{ duration: 0.55, ease: 'easeOut' }}
+              className="absolute left-1/2 top-1/2 h-56 w-56 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-300/60 blur-2xl"
+            />
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0.7 }}
+              animate={{ scale: 1.35, opacity: 0 }}
+              transition={{ duration: 0.5, ease: 'easeOut', delay: 0.05 }}
+              className="absolute left-1/2 top-1/2 h-44 w-44 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-emerald-100/80"
+            />
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
 
       <div className="relative z-10 flex h-full w-full flex-col px-3 pb-3 pt-1 text-slate-100 sm:px-4">
         <main className="flex min-h-0 flex-1 flex-col gap-3">
-          <section className="shrink-0 rounded-2xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(15,23,42,0.58),rgba(30,41,59,0.5))] px-4 py-3 text-center shadow-[0_12px_26px_rgba(15,23,42,0.34)]">
+          <section className="shrink-0 rounded-[1.35rem] border border-cyan-100/55 bg-[linear-gradient(180deg,rgba(15,23,42,0.66),rgba(30,41,59,0.54))] px-4 py-3 text-center shadow-[0_14px_28px_rgba(15,23,42,0.4)]">
             <p className="text-[11px] font-black uppercase tracking-[0.22em] text-amber-200">Missing Number</p>
-            <h1 className="mt-1.5 text-[clamp(1rem,4.3vw,1.25rem)] font-black leading-snug text-white">
-              A number line goes from 0 to 20. Which number is missing?
+            <h1 className="mt-1.5 text-[clamp(1rem,4.3vw,1.3rem)] font-black leading-snug text-white">
+              {PUZZLE.question}
             </h1>
           </section>
 
-          <section className="relative rounded-2xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(30,58,138,0.38),rgba(15,23,42,0.5))] px-4 py-5 shadow-[0_16px_30px_rgba(15,23,42,0.34)]">
-            <div className="pointer-events-none absolute inset-x-6 top-3 h-10 rounded-full bg-cyan-300/12 blur-2xl" />
-            <div className="relative mx-auto h-24 w-full max-w-[560px]">
-              <div className="absolute left-0 right-0 top-1/2 h-[5px] -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-200 via-cyan-50 to-cyan-200 shadow-[0_0_16px_rgba(103,232,249,0.3)]" />
+          <section className="relative flex-1 overflow-hidden rounded-[1.6rem] border border-cyan-100/55 bg-[linear-gradient(180deg,rgba(56,189,248,0.2),rgba(30,58,138,0.26)_36%,rgba(15,23,42,0.64)_100%)] px-4 py-5 shadow-[0_22px_34px_rgba(2,6,23,0.45)]">
+            <div className="pointer-events-none absolute inset-x-5 top-5 h-14 rounded-full bg-cyan-300/22 blur-2xl" />
+            <div className="pointer-events-none absolute inset-x-10 bottom-6 h-20 rounded-full bg-indigo-500/16 blur-3xl" />
 
-              {[0, 5, 10, 15, 20].map((tick) => {
-                const leftPercent = (tick / 20) * 100;
-                const missing = tick === 10;
-                return (
-                  <div
-                    key={tick}
-                    className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
-                    style={{ left: `${leftPercent}%` }}
-                  >
-                    <div className={`mx-auto w-[4px] rounded-full ${missing ? 'h-10 bg-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.45)]' : 'h-7 bg-white/95'}`} />
-                    <div className="absolute left-1/2 top-9 -translate-x-1/2">
-                      <span
-                        className={`inline-flex items-center justify-center text-[clamp(1.15rem,5.2vw,1.38rem)] font-black ${
+            <div className="relative mx-auto flex h-full w-full max-w-[580px] flex-col items-center justify-center">
+              <p className="mb-4 inline-flex items-center gap-1 rounded-full border border-amber-200/60 bg-amber-300/20 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-amber-100">
+                <WandSparkles className="h-3.5 w-3.5" />
+                Cast The Missing Value
+              </p>
+
+              <div className="relative h-36 w-full">
+                <div className="absolute inset-x-2 top-1/2 h-[7px] -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-100 via-cyan-50 to-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.45)]" />
+
+                {PUZZLE.ticks.map((tick) => {
+                  const leftPercent = (tick / 20) * 100;
+                  const missing = tick === 10;
+                  return (
+                    <div
+                      key={tick}
+                      className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
+                      style={{ left: `${leftPercent}%` }}
+                    >
+                      {missing ? (
+                        <motion.div
+                          animate={{ scale: [1, 1.08, 1], opacity: [0.58, 0.9, 0.58] }}
+                          transition={{ duration: 1.35, repeat: Infinity, ease: 'easeInOut' }}
+                          className="absolute left-1/2 top-[20px] h-16 w-16 -translate-x-1/2 rounded-full bg-amber-300/35 blur-xl"
+                        />
+                      ) : null}
+
+                      <div
+                        className={`relative mx-auto w-[5px] rounded-full ${
                           missing
-                            ? 'rounded-full border border-amber-200/75 bg-[linear-gradient(180deg,rgba(251,191,36,0.3),rgba(245,158,11,0.26))] px-2.5 py-0.5 text-amber-50 shadow-[0_0_18px_rgba(251,191,36,0.42)]'
-                            : 'text-white'
+                            ? 'h-14 bg-amber-300 shadow-[0_0_16px_rgba(251,191,36,0.6)]'
+                            : 'h-9 bg-white shadow-[0_0_10px_rgba(255,255,255,0.35)]'
                         }`}
-                      >
-                        {missing ? '?' : tick}
-                      </span>
+                      />
+                      <div className="absolute left-1/2 top-12 -translate-x-1/2">
+                        <span
+                          className={`inline-flex items-center justify-center text-[clamp(1.28rem,5.7vw,1.6rem)] font-black [text-shadow:0_2px_2px_rgba(0,0,0,0.28)] ${
+                            missing
+                              ? 'rounded-full border border-amber-200/80 bg-[linear-gradient(180deg,rgba(251,191,36,0.45),rgba(245,158,11,0.3))] px-3 py-1 text-amber-50 shadow-[0_0_20px_rgba(251,191,36,0.55)]'
+                              : 'text-white'
+                          }`}
+                        >
+                          {missing ? '?' : tick}
+                        </span>
+                      </div>
+                      {missing ? (
+                        <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 text-amber-200">
+                          <Sparkles className="h-5 w-5" />
+                        </span>
+                      ) : null}
                     </div>
-                    {missing ? (
-                      <span className="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 text-amber-200">
-                        <Sparkles className="h-4 w-4" />
-                      </span>
-                    ) : null}
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </section>
 
-          <section className="rounded-2xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(30,41,59,0.55),rgba(15,23,42,0.56))] p-3.5 shadow-[0_14px_26px_rgba(2,6,23,0.3)]">
-            <div className="grid grid-cols-2 gap-2.5">
-              {OPTIONS.map((answer) => {
-                const isSelected = selected === answer;
-                const isCorrect = feedback === 'correct' && answer === CORRECT;
-                const isWrong = feedback === 'incorrect' && isSelected && answer !== CORRECT;
-                return (
-                  <button
-                    key={answer}
-                    type="button"
-                    onClick={() => selectOption(answer)}
-                    disabled={!isSessionActive}
-                    className={[
-                      'h-14 rounded-2xl border text-xl font-black transition-all duration-150',
-                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950',
-                      'active:scale-[0.98] active:brightness-110',
-                      isSelected
-                        ? 'border-cyan-100/80 bg-[linear-gradient(180deg,rgba(34,211,238,0.38),rgba(59,130,246,0.34))] text-cyan-50 shadow-[0_12px_20px_rgba(34,211,238,0.26)]'
-                        : 'border-cyan-100/45 bg-[linear-gradient(180deg,rgba(37,99,235,0.28),rgba(30,58,138,0.22))] text-white hover:border-cyan-100/70 hover:bg-cyan-300/20',
-                      isCorrect ? 'border-emerald-100/90 bg-emerald-500/35 text-emerald-50' : '',
-                      isWrong ? 'border-rose-100/90 bg-rose-500/35 text-rose-50' : '',
-                    ].join(' ')}
-                  >
-                    {answer}
-                  </button>
-                );
-              })}
-            </div>
+          <section className="rounded-[1.45rem] border border-cyan-100/55 bg-[linear-gradient(180deg,rgba(30,41,59,0.62),rgba(15,23,42,0.62))] p-3.5 shadow-[0_16px_28px_rgba(2,6,23,0.36)]">
+            <p className="mb-2 text-center text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/90">
+              Choose Your Answer
+            </p>
+            <FantasyAnswerCluster
+              options={PUZZLE.options}
+              selected={selected}
+              feedback={feedback}
+              correctOption={PUZZLE.correct}
+              onSelect={selectOption}
+              disabled={!isSessionActive || feedback === 'correct'}
+              columns={2}
+              buttonClassName="h-[3.75rem]"
+            />
           </section>
 
-          <button
+          <motion.button
             type="button"
             onClick={submit}
             disabled={!canSubmit}
+            whileTap={canSubmit ? { scale: 0.985 } : undefined}
             className={[
-              'mt-auto h-14 shrink-0 rounded-2xl border text-lg font-black transition-all',
+              'mt-auto h-14 shrink-0 rounded-[1.25rem] border text-lg font-black tracking-[0.02em] transition-all',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950',
               canSubmit
-                ? 'border-amber-200/85 bg-[linear-gradient(180deg,#fde047_0%,#f59e0b_100%)] text-amber-950 shadow-[0_12px_20px_rgba(217,119,6,0.4)] hover:brightness-105 active:translate-y-[1px]'
-                : 'border-slate-300/25 bg-slate-700/50 text-slate-300 shadow-none',
+                ? 'border-amber-100/95 bg-[linear-gradient(180deg,#fde047_0%,#f59e0b_100%)] text-amber-950 shadow-[0_14px_24px_rgba(217,119,6,0.45)] hover:brightness-105'
+                : 'border-slate-300/30 bg-slate-700/55 text-slate-300 shadow-none',
             ].join(' ')}
           >
-            Submit
-          </button>
+            {canSubmit ? 'Cast Answer' : 'Select An Answer'}
+          </motion.button>
         </main>
       </div>
-
-      {feedback === 'correct' ? (
-        <div className="pointer-events-none absolute top-[calc(env(safe-area-inset-top)+4.8rem)] left-1/2 z-30 -translate-x-1/2 rounded-full border border-emerald-100/90 bg-emerald-500/35 px-4 py-1.5 text-xs font-black uppercase tracking-[0.1em] text-emerald-50 shadow-[0_10px_24px_rgba(16,185,129,0.35)]">
-          Great job!
-        </div>
-      ) : null}
-
-      {feedback === 'incorrect' ? (
-        <div className="pointer-events-none absolute top-[calc(env(safe-area-inset-top)+4.8rem)] left-1/2 z-30 -translate-x-1/2 rounded-full border border-rose-100/90 bg-rose-500/35 px-4 py-1.5 text-xs font-black uppercase tracking-[0.1em] text-rose-50 shadow-[0_10px_24px_rgba(244,63,94,0.35)]">
-          Oops! Try another.
-        </div>
-      ) : null}
     </div>
   );
 };

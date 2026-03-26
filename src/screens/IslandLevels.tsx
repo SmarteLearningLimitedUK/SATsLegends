@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { Crown, Lock, Sparkles } from 'lucide-react';
 import AssetIcon from '../components/AssetIcon';
 import { IslandData, LevelData, PlayerData } from '../types';
 
@@ -79,8 +80,6 @@ const toTitleCaseFromKey = (key: string) => key
   .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
   .join(' ');
 
-const getLevelLabel = (level: LevelData) => level.displayName || `Level ${level.id}`;
-
 const getGroupKey = (level: LevelData) => (
   level.miniGameKey
   || level.blueprintKey
@@ -94,7 +93,7 @@ const getGroupName = (level: LevelData) => {
   }
   if (level.miniGameKey) return toTitleCaseFromKey(level.miniGameKey);
   if (level.blueprintKey) return toTitleCaseFromKey(level.blueprintKey);
-  return getLevelLabel(level);
+  return `Level ${level.id}`;
 };
 
 const getGameSummary = (level: LevelData) => {
@@ -207,6 +206,11 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
     return ordered;
   }, [levelRows]);
 
+  const nextPlayableRow = useMemo(
+    () => levelRows.find((row) => row.isNextPlayable),
+    [levelRows],
+  );
+
   const earnedStars = levelRows.reduce((sum, row) => sum + row.stars, 0);
   const completionPercent = Math.round((completedLevels.length / Math.max(1, island.levels.length)) * 100);
 
@@ -216,14 +220,15 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
         <img
           src={island.mapImage}
           alt={`${island.name} backdrop`}
-          className="absolute inset-0 h-full w-full object-cover opacity-30"
+          className="absolute inset-0 h-full w-full object-cover opacity-35"
           draggable={false}
         />
       ) : null}
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,17,31,0.62),rgba(7,17,31,0.88))]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,17,31,0.58),rgba(7,17,31,0.9))]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(110%_70%_at_50%_0%,rgba(34,211,238,0.15),rgba(2,6,23,0))]" />
 
       <div className="premium-page-content relative z-10 mx-auto flex h-full w-full max-w-4xl min-h-0 flex-col p-3 md:p-5">
-        <div className="premium-page-header mb-3 flex items-start justify-between gap-3 md:mb-4">
+        <div className="mb-3 flex items-start justify-between gap-3 md:mb-4">
           <button
             onClick={onBack}
             className="ui-icon-button flex h-11 w-11 items-center justify-center rounded-full p-0 text-white shadow-xl md:h-12 md:w-12"
@@ -233,16 +238,16 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
           </button>
 
           <div className="flex-1 text-center">
-            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/75 md:text-xs">
+            <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/80 md:text-xs">
               {island.themeName || island.category}
             </div>
             <h1 className="text-xl font-black text-white md:text-3xl">{island.name}</h1>
-            <div className="mt-1 text-xs font-semibold text-white/75 md:text-sm">
-              Expand a game to view all levels
+            <div className="mt-1 text-xs font-semibold text-white/78 md:text-sm">
+              Choose your next challenge and keep the run alive
             </div>
           </div>
 
-          <div className="licensed-board-frame flex min-w-[120px] flex-col items-end gap-1 rounded-xl px-3 py-2 text-white md:min-w-[150px]">
+          <div className="licensed-board-frame flex min-w-[124px] flex-col items-end gap-1 rounded-xl px-3 py-2 text-white md:min-w-[156px]">
             <div className="flex items-center gap-1.5 text-sm font-black md:text-base">
               <AssetIcon name="star" className="h-4 w-4 text-yellow-300 md:h-5 md:w-5" />
               <span>{earnedStars}</span>
@@ -253,12 +258,35 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
           </div>
         </div>
 
-        <div className="mb-3 h-2.5 overflow-hidden rounded-full border border-white/20 bg-slate-950/60 md:mb-4">
+        <div className="mb-3 h-2.5 overflow-hidden rounded-full border border-white/22 bg-slate-950/65 md:mb-4">
           <div
             className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-300 to-emerald-300 transition-all duration-300"
             style={{ width: `${completionPercent}%` }}
           />
         </div>
+
+        {nextPlayableRow ? (
+          <div className="mb-3 rounded-2xl border border-amber-200/70 bg-[linear-gradient(180deg,rgba(251,191,36,0.24),rgba(234,179,8,0.1),rgba(15,23,42,0.4))] p-3 shadow-[0_14px_28px_rgba(234,179,8,0.22)] md:mb-4 md:p-3.5">
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <div className="inline-flex items-center gap-1 rounded-full border border-amber-100/70 bg-amber-300/25 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.12em] text-amber-100">
+                  <Sparkles className="h-3 w-3" />
+                  Recommended Next
+                </div>
+                <div className="mt-1 truncate text-sm font-black text-white md:text-base">
+                  {getGroupName(nextPlayableRow.level)} • {nextPlayableRow.level.miniGameLevel ? `Level ${nextPlayableRow.level.miniGameLevel}` : `Level ${nextPlayableRow.level.id}`}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => onSelectLevel(nextPlayableRow.level)}
+                className="ui-button-primary shrink-0 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-white md:px-5"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        ) : null}
 
         <div className="premium-page-scroll min-h-0 flex-1 overflow-y-auto pr-1">
           <div className="flex flex-col gap-2.5 pb-4 md:gap-3 md:pb-6">
@@ -269,7 +297,11 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
               return (
                 <div
                   key={group.id}
-                  className="licensed-board-frame w-full rounded-2xl px-3 py-3 text-left transition md:px-4 md:py-3.5"
+                  className={`licensed-board-frame w-full rounded-2xl px-3 py-3 text-left transition md:px-4 md:py-3.5 ${
+                    group.hasNextPlayable
+                      ? 'border border-amber-200/60 shadow-[0_0_0_1px_rgba(251,191,36,0.25),0_16px_28px_rgba(234,179,8,0.18)]'
+                      : 'border border-white/14'
+                  }`}
                 >
                   <button
                     type="button"
@@ -277,22 +309,29 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
                     className="flex w-full items-center gap-3 text-left md:gap-4"
                     aria-expanded={isExpanded}
                   >
-                    <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 md:h-12 md:w-12 ${
+                    <div className={`relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 md:h-12 md:w-12 ${
                       group.completedCount === group.levels.length
-                        ? 'border-emerald-300 bg-emerald-500/25'
-                        : 'border-cyan-200/60 bg-cyan-500/20'
+                        ? 'border-emerald-300 bg-emerald-500/28'
+                        : group.hasNextPlayable
+                          ? 'border-amber-200 bg-amber-500/25'
+                          : 'border-cyan-200/60 bg-cyan-500/20'
                     }`}>
                       <AssetIcon
                         name={group.levels.some((row) => row.level.isBoss) ? 'trophy' : 'gamepad'}
                         className="h-5 w-5 text-cyan-100 md:h-6 md:w-6"
                       />
+                      {group.hasNextPlayable ? (
+                        <span className="absolute -right-0.5 -top-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-amber-300 text-[9px] font-black text-amber-950">
+                          !
+                        </span>
+                      ) : null}
                     </div>
 
                     <div className="min-w-0 flex-1">
                       <div className="truncate text-sm font-black text-white md:text-base">{group.name}</div>
                       <div className="mt-0.5 text-[11px] font-semibold text-cyan-100/80 md:text-xs">
-                        {group.completedCount}/{group.levels.length} levels complete
-                        {group.hasNextPlayable ? ' ? Next up available' : ''}
+                        {group.completedCount}/{group.levels.length} complete
+                        {group.hasNextPlayable ? ' • Continue available' : ''}
                       </div>
                     </div>
 
@@ -301,7 +340,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
                         <AssetIcon name="star" className="h-4 w-4 text-yellow-300 md:h-5 md:w-5" />
                         <span>{group.totalStars}/{totalPossibleStars}</span>
                       </div>
-                      <span className="ml-1 text-xs font-black text-cyan-100/80 md:text-sm">
+                      <span className="ml-1 text-xs font-black text-cyan-100/85 md:text-sm">
                         {isExpanded ? '-' : '+'}
                       </span>
                     </div>
@@ -317,29 +356,44 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
                         {group.levels.map((row) => {
                           const { level, stars, isCompleted, isUnlocked, isNextPlayable, lockReason } = row;
                           const levelLabel = level.miniGameLevel ? `Level ${level.miniGameLevel}` : `Level ${level.id}`;
+                          const isBoss = Boolean(level.isBoss);
+
+                          const rowStateClass = !isUnlocked
+                            ? 'border-slate-400/35 bg-slate-900/55'
+                            : isNextPlayable
+                              ? 'border-amber-200/80 bg-[linear-gradient(180deg,rgba(251,191,36,0.28),rgba(234,179,8,0.14),rgba(15,23,42,0.4))]'
+                              : isCompleted
+                                ? 'border-emerald-300/60 bg-[linear-gradient(180deg,rgba(34,197,94,0.24),rgba(15,23,42,0.38))]'
+                                : isBoss
+                                  ? 'border-violet-200/60 bg-[linear-gradient(180deg,rgba(139,92,246,0.3),rgba(30,41,59,0.45))]'
+                                  : 'border-cyan-200/55 bg-[linear-gradient(180deg,rgba(34,211,238,0.2),rgba(15,23,42,0.45))]';
+
+                          const statusText = !isUnlocked
+                            ? (lockReason || 'Locked')
+                            : isNextPlayable
+                              ? 'Recommended next'
+                              : isCompleted
+                                ? 'Completed'
+                                : isBoss
+                                  ? 'Boss available'
+                                  : 'Available';
 
                           return (
                             <div
                               key={`${group.id}-${level.id}`}
-                              className="flex items-center gap-2 rounded-lg border border-white/12 bg-slate-950/35 px-2.5 py-2"
+                              className={`flex items-center gap-2 rounded-xl border px-2.5 py-2 transition ${rowStateClass}`}
                             >
-                              <div className="w-[4.2rem] shrink-0 text-xs font-black uppercase tracking-[0.08em] text-white/85 md:w-[5.1rem] md:text-sm">
+                              <div className="w-[4.1rem] shrink-0 text-xs font-black uppercase tracking-[0.08em] text-white md:w-[5rem] md:text-sm">
                                 {levelLabel}
                               </div>
 
-                              <div className="min-w-0 flex-1 text-[11px] font-semibold text-cyan-100/80 md:text-xs">
-                                {!isUnlocked
-                                  ? lockReason
-                                  : isNextPlayable
-                                    ? 'Next up'
-                                    : isCompleted
-                                      ? 'Completed'
-                                      : 'Available'}
+                              <div className="min-w-0 flex-1 text-[11px] font-semibold text-cyan-50/88 md:text-xs">
+                                <span className="inline-flex items-center gap-1">
+                                  {isBoss ? <Crown className="h-3.5 w-3.5 text-amber-200" /> : null}
+                                  {!isUnlocked ? <Lock className="h-3.5 w-3.5 text-slate-200/90" /> : null}
+                                  {statusText}
+                                </span>
                               </div>
-
-                              {!isUnlocked ? (
-                                <span className="text-base leading-none text-slate-100/85 md:text-lg">??</span>
-                              ) : null}
 
                               <div className="flex items-center gap-0.5 md:gap-1">
                                 {[1, 2, 3].map((value) => (
@@ -356,10 +410,22 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
                                 onClick={() => isUnlocked && onSelectLevel(level)}
                                 disabled={!isUnlocked}
                                 className={`ui-button-primary ml-2 rounded-lg px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-white md:text-[11px] ${
-                                  isUnlocked ? '' : 'opacity-60'
+                                  !isUnlocked
+                                    ? 'opacity-60'
+                                    : isNextPlayable
+                                      ? 'ring-2 ring-amber-200/60'
+                                      : ''
                                 }`}
                               >
-                                {isUnlocked ? 'Play' : 'Locked'}
+                                {!isUnlocked
+                                  ? 'Locked'
+                                  : isNextPlayable
+                                    ? 'Start'
+                                    : isCompleted
+                                      ? 'Replay'
+                                      : isBoss
+                                        ? 'Boss'
+                                        : 'Play'}
                               </button>
                             </div>
                           );
@@ -378,4 +444,3 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
 };
 
 export default IslandLevels;
-
