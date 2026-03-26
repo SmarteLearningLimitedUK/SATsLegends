@@ -1,11 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import GameplayHUD from '../components/GameplayHUD';
-import GameActionDock from '../components/GameActionDock';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
-import { AVATARS } from '../constants';
 import { Castle, ChevronRight, Coins, Sparkles, Target } from '../components/GameIcons';
+import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 
 interface TreasurePathGameProps {
   levelId: number;
@@ -130,7 +128,7 @@ const generateRound = (): TreasureRound => {
 
 const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
   levelId,
-  avatarId,
+  avatarId: _avatarId,
   onVictory,
   onGameOver,
   onBack,
@@ -145,9 +143,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
   const [isVictory, setIsVictory] = useState(false);
   const [selectedTile, setSelectedTile] = useState<string | null>(null);
 
-  const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
   const targetScore = 950 + levelId * 100;
-  const progress = Math.min((score / targetScore) * 100, 100);
 
   const cells: GridCell[] = useMemo(() => {
     const entries: GridCell[] = [];
@@ -257,27 +253,11 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
   };
 
   return (
-    <div className="relative flex h-full w-full flex-col items-center overflow-hidden p-2 font-sans pt-[env(safe-area-inset-top)] md:p-4">
+    <GameScreenShell className="overflow-hidden">
       <GameplaySceneBackdrop gameType="coordinate_quest" />
 
-      <div className="relative z-10 flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col gap-2 md:gap-4">
-        <GameplayHUD
-          title="Treasure Path"
-          avatar={avatar}
-          score={score}
-          targetScore={targetScore}
-          timeLeft={timeLeft}
-          progress={progress}
-          accentText="text-emerald-900"
-          accentSoftBg="bg-emerald-100/80"
-          accentBorder="border-emerald-200/80"
-          progressBar="bg-gradient-to-r from-lime-400 via-emerald-400 to-sky-400"
-          statLabel="Lives"
-          statValue={lives}
-          compact
-        />
-
-        <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden p-3 md:p-5">
+      <div className="relative z-10 mx-auto flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col px-2 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] pt-[calc(env(safe-area-inset-top)+4.8rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+2.35rem)] md:pt-[calc(env(safe-area-inset-top)+5.1rem)]">
+        <PuzzleStage className="w-full min-h-0 flex-1 rounded-[1.7rem] p-2 md:rounded-[2rem] md:p-3">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(74,222,128,0.18),transparent_24%),radial-gradient(circle_at_82%_30%,rgba(56,189,248,0.14),transparent_20%),linear-gradient(180deg,rgba(8,15,30,0.12),rgba(8,15,30,0.34))]" />
 
           <div className="relative z-10 mb-2 flex flex-col gap-2 md:mb-3 md:flex-row md:items-center md:justify-between">
@@ -286,7 +266,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
               <div className="mt-1 text-[1.45rem] font-black leading-none text-white md:text-[2rem]">{round.promptTitle}</div>
               <div className="mt-2 text-xs font-bold text-white/78 md:text-sm">{round.promptText}</div>
             </div>
-            <div className="casual-ribbon-chip flex items-center gap-2 rounded-full px-4 py-2 text-[10px] md:text-xs">
+            <div className="casual-ribbon-chip flex items-center gap-2 rounded-full px-3 py-1.5 text-[10px] md:px-4 md:py-2 md:text-xs">
               <Target className="h-5 w-5 text-yellow-300" />
               <div>
                 <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/70">Round</div>
@@ -295,27 +275,27 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
             </div>
           </div>
 
-          <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-3 md:flex-row">
-            <div className="licensed-game-card-dark relative flex min-h-[18rem] flex-[1.1] flex-col overflow-hidden rounded-[1.75rem] p-4 md:min-h-0">
+          <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-0.5 md:flex-row md:gap-3 md:overflow-hidden md:pr-0">
+            <div className="licensed-game-card-dark relative flex min-h-[16.25rem] flex-[1.1] flex-col overflow-hidden rounded-[1.35rem] p-2.5 md:min-h-0 md:rounded-[1.75rem] md:p-4">
               <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent,rgba(8,15,11,0.55))]" />
-              <div className="mb-3 flex items-center justify-between">
+              <div className="mb-2 flex items-center justify-between">
                 <div className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-100/62">Grid Map</div>
                 <div className="rounded-full border border-white/10 bg-white/8 px-3 py-1 text-xs font-black text-white/82">
                   Tap the final tile
                 </div>
               </div>
 
-              <div className="mx-auto grid w-full max-w-[26rem] grid-cols-[1.5rem_repeat(5,minmax(0,1fr))] gap-2">
+              <div className="mx-auto grid w-full max-w-[23rem] grid-cols-[1.2rem_repeat(5,minmax(0,1fr))] gap-1.5 md:max-w-[26rem] md:grid-cols-[1.5rem_repeat(5,minmax(0,1fr))] md:gap-2">
                 <div />
                 {[1, 2, 3, 4, 5].map((value) => (
-                  <div key={`top-${value}`} className="text-center text-xs font-black text-emerald-100/62">
+                  <div key={`top-${value}`} className="text-center text-[11px] font-black text-emerald-100/62 md:text-xs">
                     {value}
                   </div>
                 ))}
 
                 {[5, 4, 3, 2, 1].map((rowValue) => (
                   <React.Fragment key={`row-${rowValue}`}>
-                    <div className="flex items-center justify-center text-xs font-black text-emerald-100/62">
+                    <div className="flex items-center justify-center text-[11px] font-black text-emerald-100/62 md:text-xs">
                       {rowValue}
                     </div>
                     {Array.from({ length: 5 }, (_, index) => {
@@ -332,7 +312,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                           key={key}
                           onClick={() => handleTileTap(x, y)}
                           disabled={!!feedback}
-                          className={`relative aspect-square rounded-[1rem] border text-left transition-all ${
+                          className={`relative aspect-square rounded-[0.82rem] border text-left transition-all md:rounded-[1rem] ${
                             isSelected
                               ? feedback === 'correct'
                                 ? 'border-emerald-300 bg-emerald-400/30'
@@ -363,8 +343,8 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
               </div>
             </div>
 
-            <div className="flex min-h-0 flex-[0.85] flex-col gap-3">
-              <div className="licensed-game-card-dark rounded-[1.75rem] p-4">
+            <div className="flex min-h-0 flex-[0.85] flex-col gap-2 md:gap-3">
+              <div className="licensed-game-card-dark rounded-[1.35rem] p-3 md:rounded-[1.75rem] md:p-4">
                 <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-100/60">
                   <Sparkles className="h-4 w-4 text-yellow-300" />
                   Explorer Notes
@@ -383,7 +363,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                 </div>
               </div>
 
-              <div className="licensed-game-card-dark rounded-[1.75rem] p-4">
+              <div className="licensed-game-card-dark rounded-[1.35rem] p-3 md:rounded-[1.75rem] md:p-4">
                 <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-100/60">
                   <Castle className="h-4 w-4 text-sky-300" />
                   Board Clues
@@ -418,9 +398,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
-
-        <GameActionDock onBack={onBack} accentClass="text-white" />
+        </PuzzleStage>
 
         <AnimatePresence>
           {(isGameOver || isVictory) && (
@@ -449,7 +427,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
           )}
         </AnimatePresence>
       </div>
-    </div>
+    </GameScreenShell>
   );
 };
 
