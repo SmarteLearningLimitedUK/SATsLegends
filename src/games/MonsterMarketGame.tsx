@@ -30,6 +30,7 @@ import takeOutLevelBg from '../assets/level_backgrounds/take_out.png';
 interface MonsterMarketGameProps {
   levelId: number;
   avatarId: string;
+  useSharedTopHud?: boolean;
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
   onBack: () => void;
@@ -148,6 +149,7 @@ const GoblinCustomer: React.FC<{ customer: Customer }> = ({ customer }) => (
 const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
   levelId,
   avatarId: _avatarId,
+  useSharedTopHud = false,
   onVictory,
   onGameOver,
   onBack,
@@ -289,13 +291,17 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
 
   return (
     <FoodGameShell gameType="monster_market" backgroundImage={takeOutLevelBg}>
-      <TopBar
-        score={score}
-        coins={coins}
-        gems={gems}
-        timer={`${timer.toString().padStart(2, '0')}s`}
-        customersServed={customersServed}
-      />
+      {!useSharedTopHud ? (
+        <TopBar
+          score={score}
+          coins={coins}
+          gems={gems}
+          timer={`${timer.toString().padStart(2, '0')}s`}
+          customersServed={customersServed}
+        />
+      ) : (
+        <div className="h-[max(3.6rem,calc(env(safe-area-inset-top)+2.9rem))]" />
+      )}
 
       <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] p-2 md:rounded-[2.6rem] md:p-3">
         <div className="flex flex-1 flex-col items-center justify-between px-4 py-6">

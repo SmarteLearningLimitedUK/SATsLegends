@@ -17,6 +17,7 @@ import { AnimatePresence, motion } from 'motion/react';
 interface MathsVsZombiesGameProps {
   levelId: number;
   avatarId: string;
+  useSharedTopHud?: boolean;
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
   onBack: () => void;
@@ -150,6 +151,7 @@ const TopBar = ({ score, brainPoints, health, timer, onBack }: { score: number; 
 const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   levelId,
   avatarId: _avatarId,
+  useSharedTopHud = false,
   onVictory,
   onGameOver,
   onBack,
@@ -435,10 +437,12 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     <div className="fixed inset-0 flex flex-col items-center overflow-hidden bg-[#050a1a] font-sans text-white select-none">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,#1e3a8a_0%,#050a1a_100%)]" />
 
-      <div className="relative z-10 flex h-full w-full max-w-[1000px] flex-col">
-        <TopBar score={score} brainPoints={brainPoints} health={health} timer={timerLabel} onBack={onBack} />
+      <div className={`relative z-10 flex h-full w-full max-w-[1000px] flex-col ${useSharedTopHud ? 'pt-[max(3.7rem,calc(env(safe-area-inset-top)+3.1rem))]' : ''}`}>
+        {!useSharedTopHud ? (
+          <TopBar score={score} brainPoints={brainPoints} health={health} timer={timerLabel} onBack={onBack} />
+        ) : null}
 
-        <div className="relative mx-4 mt-4 flex-1 overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/20 shadow-2xl">
+        <div className={`relative mx-4 flex-1 overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/20 shadow-2xl ${useSharedTopHud ? 'mt-2' : 'mt-4'}`}>
           {Array.from({ length: LANES }).map((_, laneIndex) => (
             <div
               key={`lane-${laneIndex}`}

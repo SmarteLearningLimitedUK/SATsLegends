@@ -8,6 +8,7 @@ import { triggerHaptic } from '../haptics';
 interface MultiplicationMineGameProps {
   levelId: number;
   avatarId: string;
+  useSharedTopHud?: boolean;
   isBoss?: boolean;
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
@@ -40,6 +41,7 @@ const starsForMistakes = (mistakes: number) => {
 const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
   levelId,
   avatarId: _avatarId,
+  useSharedTopHud = false,
   isBoss: _isBoss = false,
   onVictory,
   onGameOver: _onGameOver,
@@ -135,15 +137,17 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
       <GameplaySceneBackdrop gameType="calculation_clash" className="opacity-[0.97]" />
       <div className="absolute inset-0 bg-gradient-to-b from-[#06132ad4] via-[#081733cf] to-[#030816ec]" />
 
-      <MiniGameTopBar
-        onBack={onBack}
-        score={score}
-        scoreLabel="Score"
-        metaLabel="Rock"
-        metaValue={`${rockHealth}/${ROCK_MAX_HEALTH}`}
-      />
+      {!useSharedTopHud ? (
+        <MiniGameTopBar
+          onBack={onBack}
+          score={score}
+          scoreLabel="Score"
+          metaLabel="Rock"
+          metaValue={`${rockHealth}/${ROCK_MAX_HEALTH}`}
+        />
+      ) : null}
 
-      <div className="relative z-20 flex h-full w-full flex-col items-center px-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-[calc(env(safe-area-inset-top)+4.2rem)]">
+      <div className={`relative z-20 flex h-full w-full flex-col items-center px-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+3.2rem)]' : 'pt-[calc(env(safe-area-inset-top)+4.2rem)]'}`}>
         <div className="w-full max-w-[760px] rounded-[1.2rem] border border-[#89c8ff66] bg-[#0c2a5dd6] px-4 py-3 text-center shadow-[0_12px_30px_rgba(0,0,0,0.5)]">
           <p className="text-[clamp(0.95rem,2.8vw,1.45rem)] font-black uppercase tracking-[0.07em] text-[#ffefb1]">
             Complete multiplication answers to break the rock
