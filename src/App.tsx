@@ -361,6 +361,11 @@ const App: React.FC = () => {
   }), [consumeLife, screen]);
 
   const screenBehavior = SCREEN_BEHAVIOR[screen];
+  const backgroundIntensityClass = screenBehavior.family === 'hub'
+    ? 'bg-intensity-hub'
+    : screenBehavior.family === 'game'
+      ? 'bg-intensity-game'
+      : 'bg-intensity-overlay';
   const showGlobalDock = screen !== 'splash';
   const isSplashScreen = screen === 'splash';
   const isAvatarSelectionScreen = screen === 'avatar_selection';
@@ -405,7 +410,10 @@ const App: React.FC = () => {
     <div className="iphone-game-viewport">
       <div className={`iphone-game-stage${useUnboundedStageShell ? ' iphone-game-stage-unbounded' : ''}`} style={useUnboundedStageShell ? undefined : stageStyle}>
         <div className="iphone-game-stage-inner">
-          <div className={`app-viewport app-shell-family-${screenBehavior.family} screen-${screen.replace(/_/g, '-')} ${isGameplayScreen ? gameplayTypeClass : ''} relative w-full flex flex-col items-center overflow-hidden ${viewportShellClass}`}>
+          <div
+            data-screen-family={screenBehavior.family}
+            className={`app-viewport app-background-intensity ${backgroundIntensityClass} app-shell-family-${screenBehavior.family} screen-${screen.replace(/_/g, '-')} ${isGameplayScreen ? gameplayTypeClass : ''} relative w-full flex flex-col items-center overflow-hidden ${viewportShellClass}`}
+          >
             <AnimatePresence mode="wait">
               <motion.div
                 key={screen}

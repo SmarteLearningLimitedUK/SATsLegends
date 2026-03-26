@@ -71,7 +71,7 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/78 p-3 backdrop-blur-xl md:p-4"
+          className="fixed inset-0 z-[120] result-overlay-tier flex items-center justify-center bg-slate-950/78 p-3 backdrop-blur-xl md:p-4"
         >
           <motion.div
             initial={{ y: 28, scale: 0.94, opacity: 0 }}

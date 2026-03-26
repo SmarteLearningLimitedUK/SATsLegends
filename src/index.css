@@ -5045,5 +5045,116 @@ button.avatar-hero-arrow:not(:disabled):active {
   background-size: cover !important;
 }
 
+/* ============================================================
+   Background Intensity System
+   Tier 1: Hub/navigation
+   Tier 2: Active gameplay
+   Tier 3: Overlay/result
+   ============================================================ */
+
+.app-viewport.app-background-intensity {
+  --bg-tier-atmo-opacity: 0.18;
+  --bg-tier-vignette-opacity: 0.2;
+  --bg-tier-top-shade: 0.06;
+  --bg-tier-bottom-shade: 0.24;
+  --bg-tier-left-right-shade: 0.16;
+  --bg-tier-glow-sat: 1;
+  isolation: isolate;
+}
+
+.app-viewport.app-background-intensity::before,
+.app-viewport.app-background-intensity::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 11;
+}
+
+.app-viewport.app-background-intensity::before {
+  background:
+    radial-gradient(circle at 18% 20%, rgba(56, 189, 248, 0.75), rgba(56, 189, 248, 0) 40%),
+    radial-gradient(circle at 80% 16%, rgba(251, 191, 36, 0.6), rgba(251, 191, 36, 0) 36%),
+    radial-gradient(circle at 52% 86%, rgba(45, 212, 191, 0.52), rgba(45, 212, 191, 0) 42%);
+  opacity: var(--bg-tier-atmo-opacity);
+  mix-blend-mode: screen;
+  filter: saturate(var(--bg-tier-glow-sat));
+  animation: bg-tier-drift 15s ease-in-out infinite alternate;
+}
+
+.app-viewport.app-background-intensity::after {
+  background:
+    radial-gradient(circle at left center, rgba(2, 6, 23, var(--bg-tier-left-right-shade)), transparent 34%),
+    radial-gradient(circle at right center, rgba(2, 6, 23, var(--bg-tier-left-right-shade)), transparent 34%),
+    linear-gradient(
+      180deg,
+      rgba(2, 6, 23, var(--bg-tier-top-shade)) 0%,
+      rgba(2, 6, 23, 0) 22%,
+      rgba(2, 6, 23, 0) 65%,
+      rgba(2, 6, 23, var(--bg-tier-bottom-shade)) 100%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.013) 0px,
+      rgba(255, 255, 255, 0.013) 1px,
+      rgba(255, 255, 255, 0) 2px,
+      rgba(255, 255, 255, 0) 4px
+    );
+  opacity: var(--bg-tier-vignette-opacity);
+}
+
+/* Tier 1: Hub / navigation screens
+   Inviting and magical, but not louder than gameplay. */
+.app-viewport.app-background-intensity.bg-intensity-hub {
+  --bg-tier-atmo-opacity: 0.22;
+  --bg-tier-vignette-opacity: 0.16;
+  --bg-tier-top-shade: 0.03;
+  --bg-tier-bottom-shade: 0.18;
+  --bg-tier-left-right-shade: 0.1;
+  --bg-tier-glow-sat: 1.08;
+}
+
+/* Tier 2: Active gameplay screens
+   Slightly calmer atmosphere with stronger readability control. */
+.app-viewport.app-background-intensity.bg-intensity-game {
+  --bg-tier-atmo-opacity: 0.13;
+  --bg-tier-vignette-opacity: 0.26;
+  --bg-tier-top-shade: 0.08;
+  --bg-tier-bottom-shade: 0.3;
+  --bg-tier-left-right-shade: 0.19;
+  --bg-tier-glow-sat: 0.96;
+}
+
+/* Tier 3: Reward / result / overlays
+   Highest excitement and dramatic contrast for emotional payoff. */
+.app-viewport.app-background-intensity.bg-intensity-overlay {
+  --bg-tier-atmo-opacity: 0.3;
+  --bg-tier-vignette-opacity: 0.34;
+  --bg-tier-top-shade: 0.11;
+  --bg-tier-bottom-shade: 0.36;
+  --bg-tier-left-right-shade: 0.24;
+  --bg-tier-glow-sat: 1.15;
+}
+
+.result-overlay-tier::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 24%, rgba(251, 191, 36, 0.16), rgba(251, 191, 36, 0) 52%),
+    radial-gradient(circle at 50% 86%, rgba(56, 189, 248, 0.14), rgba(56, 189, 248, 0) 58%);
+  mix-blend-mode: screen;
+}
+
+@keyframes bg-tier-drift {
+  from {
+    transform: scale(1) translateY(0);
+  }
+  to {
+    transform: scale(1.045) translateY(-1.2%);
+  }
+}
+
 
 
