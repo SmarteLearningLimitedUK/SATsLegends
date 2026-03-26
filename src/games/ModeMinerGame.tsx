@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Activity, CheckCircle2, Pickaxe, RotateCcw, Search, Trophy } from 'lucide-react';
+import { Activity, CheckCircle2, Pickaxe, Play, RotateCcw, Search, Trophy } from 'lucide-react';
 import factorFrenzyBackground from '../assets/maps/facctor frenzy.jpg';
 
 interface LevelData {
