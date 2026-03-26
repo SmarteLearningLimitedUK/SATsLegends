@@ -476,10 +476,10 @@ const App: React.FC = () => {
               isOpen={Boolean(levelResult)}
               result={levelResult ? {
                 ...levelResult,
-                primaryLabel: levelResult.type === 'victory' ? 'Next level' : 'Level select',
-                onPrimary: levelResult.type === 'victory' ? handleAdvanceAfterVictory : handleCloseLevelResult,
-                secondaryLabel: levelResult.type === 'victory' ? 'Replay' : 'Try again',
-                onSecondary: handleRetryLevel,
+                primaryLabel: levelResult.type === 'victory' ? 'Continue adventure' : 'Try again',
+                onPrimary: levelResult.type === 'victory' ? handleAdvanceAfterVictory : handleRetryLevel,
+                secondaryLabel: levelResult.type === 'victory' ? 'Replay level' : 'Level select',
+                onSecondary: levelResult.type === 'victory' ? handleRetryLevel : handleCloseLevelResult,
               } : null}
             />
 
