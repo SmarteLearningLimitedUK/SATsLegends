@@ -71,18 +71,35 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[120] result-overlay-tier flex items-center justify-center bg-slate-950/78 p-3 backdrop-blur-xl md:p-4"
+          className="fixed inset-0 z-[120] result-overlay-tier flex items-center justify-center bg-slate-950/78 backdrop-blur-xl"
         >
-          <motion.div
-            initial={{ y: 28, scale: 0.94, opacity: 0 }}
-            animate={{ y: 0, scale: 1, opacity: 1 }}
-            exit={{ y: 18, scale: 0.97, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 220, damping: 22 }}
-            className="app-modal-panel premium-modal-shell licensed-game-card-dark relative flex w-full max-w-md flex-col overflow-hidden rounded-[1.45rem] border border-white/15 shadow-[0_32px_95px_rgba(0,0,0,0.48)] md:max-w-lg md:rounded-[1.9rem]"
-            role="dialog"
-            aria-modal="true"
-            aria-label={isVictory ? 'Victory result' : 'Round result'}
-          >
+          {!isVictory && (
+            <motion.span
+              initial={{ y: -12, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -10, opacity: 0 }}
+              className={cn(
+                'absolute left-1/2 z-[121] -translate-x-1/2 rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] md:text-[11px]',
+                statusPillTone,
+              )}
+              style={{ top: 'max(2px, env(safe-area-inset-top))' }}
+            >
+              <AssetIcon name="refresh" className="mr-1 inline h-3.5 w-3.5" />
+              {statusPill}
+            </motion.span>
+          )}
+
+          <div className="flex w-full items-center justify-center p-3 md:p-4">
+            <motion.div
+              initial={{ y: 28, scale: 0.94, opacity: 0 }}
+              animate={{ y: 0, scale: 1, opacity: 1 }}
+              exit={{ y: 18, scale: 0.97, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 220, damping: 22 }}
+              className="app-modal-panel premium-modal-shell licensed-game-card-dark relative flex w-full max-w-md flex-col overflow-hidden rounded-[1.45rem] border border-white/15 shadow-[0_32px_95px_rgba(0,0,0,0.48)] md:max-w-lg md:rounded-[1.9rem]"
+              role="dialog"
+              aria-modal="true"
+              aria-label={isVictory ? 'Victory result' : 'Round result'}
+            >
             <div className={cn(
               'pointer-events-none absolute inset-0',
               isVictory
@@ -118,13 +135,15 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
 
             <div className="relative z-10 flex flex-col gap-3 p-3.5 md:gap-5 md:p-7">
               <div className="mx-auto flex flex-col items-center gap-2 text-center md:gap-3">
-                <span className={cn(
-                  'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] md:text-[11px]',
-                  statusPillTone,
-                )}>
-                  <AssetIcon name={isVictory ? 'trophy' : 'refresh'} className="h-3.5 w-3.5" />
-                  {statusPill}
-                </span>
+                {isVictory && (
+                  <span className={cn(
+                    'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] md:text-[11px]',
+                    statusPillTone,
+                  )}>
+                    <AssetIcon name="trophy" className="h-3.5 w-3.5" />
+                    {statusPill}
+                  </span>
+                )}
 
                 <motion.div
                   initial={{ scale: 0.78, rotate: isVictory ? -10 : 8, opacity: 0 }}
@@ -247,7 +266,8 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
                 </PrimaryActionButton>
               </div>
             </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

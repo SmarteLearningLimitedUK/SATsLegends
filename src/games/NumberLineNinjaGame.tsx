@@ -6,8 +6,6 @@ import {
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
 import dojoBackground from '../assets/maps/inside dojo.jpg';
-import answerButtonIdle from '../assets/casual_ui/inputs/btn_6a.png';
-import answerButtonPressed from '../assets/casual_ui/inputs/btn_6b.png';
 
 interface NumberLineNinjaGameProps {
   levelId: number;
@@ -304,14 +302,14 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
         </div>
 
         <div className="flex min-h-0 flex-1 items-center justify-center py-1">
-          <div className="relative flex h-[50%] min-h-[300px] w-full max-w-[920px] items-center justify-center">
+          <div className="relative flex h-[44%] min-h-[240px] w-full max-w-[820px] items-center justify-center">
             <motion.div
               animate={{ opacity: [0.26, 0.54, 0.26], scale: [0.985, 1.025, 0.985] }}
               transition={{ duration: 2.3, repeat: Infinity, ease: 'easeInOut' }}
               className="pointer-events-none absolute inset-0 rounded-[999px] bg-[radial-gradient(circle_at_50%_50%,rgba(56,189,248,0.28),rgba(30,41,59,0.05)_58%,transparent_80%)]"
             />
 
-            <div className="relative w-[96%] max-w-[880px]">
+            <div className="relative w-[88%] max-w-[760px]">
               <motion.div
                 animate={{
                   boxShadow: [
@@ -322,7 +320,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                   opacity: [0.9, 1, 0.9],
                 }}
                 transition={{ duration: 1.7, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute left-[4%] right-[4%] top-1/2 h-[16px] -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-200 via-white to-cyan-200"
+                className="absolute left-[9%] right-[9%] top-1/2 h-[12px] -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-200 via-white to-cyan-200"
               />
 
               {question.labels.map((label, index) => {
@@ -337,11 +335,11 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                     style={{ left: `${pct}%` }}
                   >
                     <div
-                      className={`h-[106px] w-[10px] rounded-full ${
+                      className={`h-[84px] w-[8px] rounded-full ${
                         isMissing ? 'bg-amber-300 shadow-[0_0_20px_rgba(251,191,36,0.98)]' : 'bg-white/95'
                       }`}
                     />
-                    <div className="mt-5 flex min-h-[56px] items-center justify-center">
+                    <div className="mt-3 flex min-h-[42px] items-center justify-center">
                       {isQuestionMark ? (
                         <motion.div
                           animate={{
@@ -353,12 +351,12 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                             ],
                           }}
                           transition={{ duration: 1.05, repeat: Infinity, ease: 'easeInOut' }}
-                          className="flex h-[82px] w-[82px] items-center justify-center rounded-full border-[2.5px] border-amber-300/95 bg-slate-900/82 text-[48px] font-black text-amber-100"
+                          className="flex h-[66px] w-[66px] items-center justify-center rounded-full border-[2.5px] border-amber-300/95 bg-slate-900/82 text-[38px] font-black text-amber-100"
                         >
                           ?
                         </motion.div>
                       ) : (
-                        <span className="text-[clamp(36px,4vw,60px)] font-black tracking-tight text-white drop-shadow-[0_4px_8px_rgba(2,6,23,0.92)]">
+                        <span className="text-[clamp(30px,3.4vw,50px)] font-black tracking-tight text-white drop-shadow-[0_4px_8px_rgba(2,6,23,0.92)]">
                           {label}
                         </span>
                       )}
@@ -370,17 +368,17 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
               <motion.div
                 animate={{ y: [0, 10, 0], opacity: [0.55, 1, 0.55] }}
                 transition={{ duration: 1.05, repeat: Infinity, ease: 'easeInOut' }}
-                className="pointer-events-none absolute top-[6%] -translate-x-1/2"
+                className="pointer-events-none absolute top-[2%] -translate-x-1/2"
                 style={{ left: `${focusPct}%` }}
               >
-                <ChevronDown className="h-12 w-12 text-amber-200 drop-shadow-[0_0_16px_rgba(251,191,36,0.96)]" />
+                <ChevronDown className="h-10 w-10 text-amber-200 drop-shadow-[0_0_16px_rgba(251,191,36,0.96)]" />
               </motion.div>
             </div>
           </div>
         </div>
 
         <div className="shrink-0 pb-1 pt-3">
-          <div className="mx-auto grid w-full max-w-[860px] grid-cols-2 gap-6 sm:gap-7">
+          <div className="mx-auto grid w-full max-w-[760px] grid-cols-2 gap-4 sm:gap-5">
             {question.options.map((option) => {
               const isSelected = selectedAnswer === option;
               const isCorrect = feedbackState === 'correct' && isSelected;
@@ -393,15 +391,16 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                   onClick={() => handleAnswerTap(option)}
                   disabled={locked || didComplete || didFail || !isSessionActive}
                   whileTap={{ scale: 0.965 }}
-                  className="group relative h-[112px] w-full"
+                  className="group relative h-[76px] w-full"
                 >
-                  <img
-                    src={isSelected ? answerButtonPressed : answerButtonIdle}
-                    alt=""
-                    className="absolute inset-0 h-full w-full select-none object-fill brightness-125 saturate-150"
-                    draggable={false}
+                  <div
+                    className={`absolute inset-0 rounded-full border-2 transition-colors ${
+                      isSelected
+                        ? 'border-amber-200/90 bg-gradient-to-b from-amber-300 to-amber-500 shadow-[0_8px_0_rgba(180,83,9,0.8),0_0_26px_rgba(251,191,36,0.45)]'
+                        : 'border-cyan-100/75 bg-gradient-to-b from-cyan-400 to-blue-600 shadow-[0_8px_0_rgba(30,64,175,0.78),0_0_18px_rgba(34,211,238,0.32)]'
+                    }`}
                   />
-                  <div className="pointer-events-none absolute inset-[8%] rounded-[1.4rem] bg-gradient-to-b from-white/22 via-transparent to-transparent" />
+                  <div className="pointer-events-none absolute inset-[7%] rounded-full bg-gradient-to-b from-white/30 via-transparent to-transparent" />
 
                   <motion.div
                     initial={false}
@@ -410,8 +409,8 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                       y: isWrong ? [0, -3, 3, -2, 0] : 0,
                     }}
                     transition={{ duration: isWrong ? 0.35 : 0.4 }}
-                    className={`relative flex h-full items-center justify-center text-[clamp(42px,4.8vw,64px)] font-black tracking-tight drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)] ${
-                      isCorrect ? 'text-emerald-100' : isWrong ? 'text-rose-200' : 'text-amber-50'
+                    className={`relative flex h-full items-center justify-center text-[clamp(32px,3.8vw,46px)] font-black tracking-tight drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)] ${
+                      isCorrect ? 'text-emerald-50' : isWrong ? 'text-rose-100' : isSelected ? 'text-slate-900' : 'text-white'
                     }`}
                   >
                     {option}
@@ -422,7 +421,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                       initial={{ opacity: 0, scale: 0.7 }}
                       animate={{ opacity: [0, 1, 0], scale: [0.7, 1.08, 1.2] }}
                       transition={{ duration: 0.52 }}
-                      className="pointer-events-none absolute inset-0 rounded-[1.8rem] bg-emerald-300/35 blur-[2px]"
+                      className="pointer-events-none absolute inset-0 rounded-full bg-emerald-300/35 blur-[2px]"
                     />
                   )}
                 </motion.button>
