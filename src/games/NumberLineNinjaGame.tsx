@@ -1,5 +1,6 @@
-﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import { ChevronDown } from 'lucide-react';
 import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
@@ -277,9 +278,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     }, QUESTION_FEEDBACK_MS);
   };
 
-  const sparkClassName = feedbackState === 'correct'
-    ? 'text-emerald-200 drop-shadow-[0_0_18px_rgba(110,231,183,0.9)]'
-    : 'text-white/80';
+  const focusPct = (question.focusIndex / (question.labels.length - 1)) * 100;
 
   return (
     <div className="relative h-full w-full overflow-hidden">
@@ -290,59 +289,76 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
         draggable={false}
       />
       <div className="absolute inset-0 bg-slate-950/25" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_52%,rgba(56,189,248,0.2),transparent_58%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_52%,rgba(56,189,248,0.14),transparent_64%)]" />
 
       <div className="relative z-10 flex h-full min-h-0 flex-col px-4 pb-4 pt-3">
-        <div className="shrink-0 pt-1 text-center">
-          <p className="mx-auto max-w-[700px] text-[clamp(16px,2.2vw,28px)] font-black leading-tight text-white/95 drop-shadow-[0_2px_6px_rgba(2,6,23,0.9)]">
+        <div className="shrink-0 space-y-2 text-center">
+          <div className="mx-auto inline-flex items-center rounded-full border border-cyan-200/75 bg-cyan-500/22 px-5 py-1.5 shadow-[0_6px_16px_rgba(14,165,233,0.42)] backdrop-blur-sm">
+            <span className="text-[11px] font-black uppercase tracking-[0.28em] text-cyan-50">
+              Missing Number
+            </span>
+          </div>
+          <p className="mx-auto max-w-[720px] text-[clamp(16px,2.2vw,27px)] font-black leading-tight text-white drop-shadow-[0_2px_6px_rgba(2,6,23,0.92)]">
             {question.prompt}
           </p>
         </div>
 
-        <div className="flex min-h-0 flex-1 items-center justify-center">
-          <div className="relative flex h-[52%] min-h-[280px] w-full max-w-[900px] items-center justify-center">
+        <div className="flex min-h-0 flex-1 items-center justify-center py-1">
+          <div className="relative flex h-[50%] min-h-[300px] w-full max-w-[920px] items-center justify-center">
             <motion.div
-              animate={{ opacity: [0.34, 0.64, 0.34], scale: [0.985, 1.02, 0.985] }}
-              transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
-              className="pointer-events-none absolute inset-0 rounded-[3.4rem] bg-[radial-gradient(circle_at_50%_50%,rgba(56,189,248,0.28),rgba(15,23,42,0.12)_54%,transparent_78%)]"
+              animate={{ opacity: [0.26, 0.54, 0.26], scale: [0.985, 1.025, 0.985] }}
+              transition={{ duration: 2.3, repeat: Infinity, ease: 'easeInOut' }}
+              className="pointer-events-none absolute inset-0 rounded-[999px] bg-[radial-gradient(circle_at_50%_50%,rgba(56,189,248,0.28),rgba(30,41,59,0.05)_58%,transparent_80%)]"
             />
 
-            <div className="relative w-[95%] max-w-[860px]">
+            <div className="relative w-[96%] max-w-[880px]">
               <motion.div
                 animate={{
                   boxShadow: [
-                    '0 0 18px rgba(34,211,238,0.55)',
-                    '0 0 30px rgba(34,211,238,0.9)',
-                    '0 0 18px rgba(34,211,238,0.55)',
+                    '0 0 20px rgba(34,211,238,0.55)',
+                    '0 0 36px rgba(34,211,238,0.94)',
+                    '0 0 20px rgba(34,211,238,0.55)',
                   ],
-                  opacity: [0.92, 1, 0.92],
+                  opacity: [0.9, 1, 0.9],
                 }}
-                transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute left-[4%] right-[4%] top-1/2 h-[14px] -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-200 via-cyan-100 to-cyan-200"
+                transition={{ duration: 1.7, repeat: Infinity, ease: 'easeInOut' }}
+                className="absolute left-[4%] right-[4%] top-1/2 h-[16px] -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-200 via-white to-cyan-200"
               />
 
               {question.labels.map((label, index) => {
                 const pct = (index / (question.labels.length - 1)) * 100;
                 const isMissing = index === question.focusIndex;
-                const labelIsQuestion = label === '?';
+                const isQuestionMark = label === '?';
+
                 return (
                   <div
                     key={`${question.id}-${index}`}
                     className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
                     style={{ left: `${pct}%` }}
                   >
-                    <div className={`h-[96px] w-[9px] rounded-full ${isMissing ? 'bg-amber-300 shadow-[0_0_18px_rgba(251,191,36,0.95)]' : 'bg-white/95'}`} />
+                    <div
+                      className={`h-[106px] w-[10px] rounded-full ${
+                        isMissing ? 'bg-amber-300 shadow-[0_0_20px_rgba(251,191,36,0.98)]' : 'bg-white/95'
+                      }`}
+                    />
                     <div className="mt-5 flex min-h-[56px] items-center justify-center">
-                      {labelIsQuestion ? (
+                      {isQuestionMark ? (
                         <motion.div
-                          animate={{ scale: [1, 1.07, 1], boxShadow: ['0 0 0px rgba(245,158,11,0.25)', '0 0 24px rgba(245,158,11,0.9)', '0 0 0px rgba(245,158,11,0.25)'] }}
-                          transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}
-                          className="flex h-[74px] w-[74px] items-center justify-center rounded-full border-[2.5px] border-amber-300/95 bg-slate-900/85 text-[44px] font-black text-amber-100"
+                          animate={{
+                            scale: [1, 1.08, 1],
+                            boxShadow: [
+                              '0 0 0px rgba(245,158,11,0.25)',
+                              '0 0 28px rgba(245,158,11,0.96)',
+                              '0 0 0px rgba(245,158,11,0.25)',
+                            ],
+                          }}
+                          transition={{ duration: 1.05, repeat: Infinity, ease: 'easeInOut' }}
+                          className="flex h-[82px] w-[82px] items-center justify-center rounded-full border-[2.5px] border-amber-300/95 bg-slate-900/82 text-[48px] font-black text-amber-100"
                         >
                           ?
                         </motion.div>
                       ) : (
-                        <span className="text-[clamp(34px,3.8vw,58px)] font-black tracking-tight text-white drop-shadow-[0_4px_8px_rgba(2,6,23,0.9)]">
+                        <span className="text-[clamp(36px,4vw,60px)] font-black tracking-tight text-white drop-shadow-[0_4px_8px_rgba(2,6,23,0.92)]">
                           {label}
                         </span>
                       )}
@@ -352,23 +368,23 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
               })}
 
               <motion.div
-                animate={{ opacity: [0.4, 1, 0.4], y: [0, -6, 0] }}
-                transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
-                className={`pointer-events-none absolute left-1/2 top-[4%] -translate-x-1/2 text-4xl ${sparkClassName}`}
+                animate={{ y: [0, 10, 0], opacity: [0.55, 1, 0.55] }}
+                transition={{ duration: 1.05, repeat: Infinity, ease: 'easeInOut' }}
+                className="pointer-events-none absolute top-[6%] -translate-x-1/2"
+                style={{ left: `${focusPct}%` }}
               >
-                *
+                <ChevronDown className="h-12 w-12 text-amber-200 drop-shadow-[0_0_16px_rgba(251,191,36,0.96)]" />
               </motion.div>
             </div>
           </div>
         </div>
 
         <div className="shrink-0 pb-1 pt-3">
-          <div className="mx-auto grid w-full max-w-[840px] grid-cols-2 gap-5 sm:gap-6">
+          <div className="mx-auto grid w-full max-w-[860px] grid-cols-2 gap-6 sm:gap-7">
             {question.options.map((option) => {
               const isSelected = selectedAnswer === option;
               const isCorrect = feedbackState === 'correct' && isSelected;
               const isWrong = feedbackState === 'incorrect' && isSelected;
-              const buttonImage = isSelected ? answerButtonPressed : answerButtonIdle;
 
               return (
                 <motion.button
@@ -377,37 +393,36 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                   onClick={() => handleAnswerTap(option)}
                   disabled={locked || didComplete || didFail || !isSessionActive}
                   whileTap={{ scale: 0.965 }}
-                  className="group relative h-[108px] w-full"
+                  className="group relative h-[112px] w-full"
                 >
                   <img
-                    src={buttonImage}
+                    src={isSelected ? answerButtonPressed : answerButtonIdle}
                     alt=""
-                    className="absolute inset-0 h-full w-full select-none object-fill"
+                    className="absolute inset-0 h-full w-full select-none object-fill brightness-125 saturate-150"
                     draggable={false}
                   />
+                  <div className="pointer-events-none absolute inset-[8%] rounded-[1.4rem] bg-gradient-to-b from-white/22 via-transparent to-transparent" />
+
                   <motion.div
                     initial={false}
                     animate={{
-                      scale: isCorrect ? [1, 1.07, 1] : 1,
+                      scale: isCorrect ? [1, 1.09, 1] : isSelected ? 1.03 : 1,
                       y: isWrong ? [0, -3, 3, -2, 0] : 0,
                     }}
                     transition={{ duration: isWrong ? 0.35 : 0.4 }}
-                    className={`relative flex h-full items-center justify-center text-[clamp(40px,4.6vw,62px)] font-black tracking-tight drop-shadow-[0_3px_3px_rgba(0,0,0,0.45)] ${
-                      isCorrect
-                        ? 'text-emerald-100'
-                        : isWrong
-                          ? 'text-rose-200'
-                          : 'text-amber-50'
+                    className={`relative flex h-full items-center justify-center text-[clamp(42px,4.8vw,64px)] font-black tracking-tight drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)] ${
+                      isCorrect ? 'text-emerald-100' : isWrong ? 'text-rose-200' : 'text-amber-50'
                     }`}
                   >
                     {option}
                   </motion.div>
+
                   {isCorrect && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.7 }}
-                      animate={{ opacity: [0, 1, 0], scale: [0.7, 1.06, 1.14] }}
-                      transition={{ duration: 0.5 }}
-                      className="pointer-events-none absolute inset-0 rounded-3xl bg-emerald-300/25 blur-sm"
+                      animate={{ opacity: [0, 1, 0], scale: [0.7, 1.08, 1.2] }}
+                      transition={{ duration: 0.52 }}
+                      className="pointer-events-none absolute inset-0 rounded-[1.8rem] bg-emerald-300/35 blur-[2px]"
                     />
                   )}
                 </motion.button>
@@ -425,11 +440,13 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
             exit={{ opacity: 0, y: -8, scale: 0.95 }}
             className="pointer-events-none absolute left-1/2 top-3 z-20 -translate-x-1/2"
           >
-            <div className={`rounded-full px-5 py-2 text-sm font-black uppercase tracking-[0.24em] ${
-              feedbackState === 'correct'
-                ? 'bg-emerald-400/95 text-slate-950 shadow-[0_0_22px_rgba(52,211,153,0.85)]'
-                : 'bg-rose-500/95 text-white shadow-[0_0_20px_rgba(244,63,94,0.7)]'
-            }`}>
+            <div
+              className={`rounded-full px-5 py-2 text-sm font-black uppercase tracking-[0.24em] ${
+                feedbackState === 'correct'
+                  ? 'bg-emerald-400/95 text-slate-950 shadow-[0_0_22px_rgba(52,211,153,0.85)]'
+                  : 'bg-rose-500/95 text-white shadow-[0_0_20px_rgba(244,63,94,0.7)]'
+              }`}
+            >
               {feedbackState === 'correct' ? 'Great Hit!' : 'Try Another!'}
             </div>
           </motion.div>
@@ -440,6 +457,3 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 };
 
 export default NumberLineNinjaGame;
-
-
-
