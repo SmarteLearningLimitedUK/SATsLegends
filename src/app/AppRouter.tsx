@@ -449,7 +449,6 @@ export const AppRouter: React.FC<AppRouterProps> = ({
               </GameplayContentViewport>
               <div className="game-shell-zone game-shell-zone-actions shrink-0" aria-hidden />
               <UnifiedMiniGameHud
-                playerName={player.playerName || 'Learner'}
                 avatarId={player.avatarId}
                 timeLeft={globalMiniGameHudTimeLeft}
                 totalTime={globalMiniGameHudDurationSeconds}

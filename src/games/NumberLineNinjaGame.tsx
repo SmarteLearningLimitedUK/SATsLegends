@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Sparkles, WandSparkles } from 'lucide-react';
 import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
-import {
-  FantasyAnswerCluster,
-  FantasyAnswerFeedbackBanner,
-  FantasyAnswerFeedbackState,
-} from '../components/FantasyAnswerFeedback';
+import mapBackground from '../assets/maps/inside dojo.jpg';
+import panelMain from '../assets/casual_ui/dialogs_panels/panel.png';
+import buttonIdle from '../assets/casual_ui/inputs/btn_6a.png';
+import buttonSelected from '../assets/casual_ui/inputs/btn_6b.png';
+import buttonPrimary from '../assets/casual_ui/inputs/btn_1.png';
 
 interface NumberLineNinjaGameProps {
   levelId: number;
@@ -20,16 +20,157 @@ interface NumberLineNinjaGameProps {
 }
 
 type NumberLineNinjaGameShellProps = NumberLineNinjaGameProps & MiniGameShellContractProps;
+type FeedbackState = 'default' | 'selected' | 'correct' | 'incorrect';
 
-const PUZZLE = {
-  question: 'A number line goes from 0 to 20. Which number is missing?',
-  options: ['8', '10', '12', '14'] as const,
-  correct: '10',
-  ticks: [0, 5, 10, 15, 20] as const,
+interface NumberLineQuestion {
+  id: string;
+  eyebrow: string;
+  prompt: string;
+  ticks: readonly string[];
+  missingIndex: number;
+  options: readonly string[];
+  correct: string;
+}
+
+const QUESTIONS_PER_ROUND = 5;
+const SCORE_PER_CORRECT = 120;
+
+const QUESTION_BANK: readonly NumberLineQuestion[] = [
+  {
+    id: 'line-0-20',
+    eyebrow: 'Missing Number',
+    prompt: 'A number line goes from 0 to 20. Which number is missing?',
+    ticks: ['0', '5', '?', '15', '20'],
+    missingIndex: 2,
+    options: ['8', '10', '12', '14'],
+    correct: '10',
+  },
+  {
+    id: 'line-0-30',
+    eyebrow: 'Missing Number',
+    prompt: 'A number line goes from 0 to 30. Which number is missing?',
+    ticks: ['0', '10', '?', '30'],
+    missingIndex: 2,
+    options: ['15', '18', '20', '24'],
+    correct: '20',
+  },
+  {
+    id: 'line-step-20',
+    eyebrow: 'Step Size',
+    prompt: '40, 60, ?, 100 are equally spaced. What is the missing value?',
+    ticks: ['40', '60', '?', '100'],
+    missingIndex: 2,
+    options: ['70', '75', '80', '90'],
+    correct: '80',
+  },
+  {
+    id: 'line-negative',
+    eyebrow: 'Negative Numbers',
+    prompt: 'A number line shows -10, ?, 0, 5. What number is missing?',
+    ticks: ['-10', '?', '0', '5'],
+    missingIndex: 1,
+    options: ['-7', '-6', '-5', '-4'],
+    correct: '-5',
+  },
+  {
+    id: 'line-fractions',
+    eyebrow: 'Fractions',
+    prompt: 'From 0 to 1 in equal quarters: 0, 1/4, 1/2, ?, 1. Fill the gap.',
+    ticks: ['0', '1/4', '1/2', '?', '1'],
+    missingIndex: 3,
+    options: ['2/3', '3/4', '4/5', '5/6'],
+    correct: '3/4',
+  },
+  {
+    id: 'line-decimals',
+    eyebrow: 'Decimals',
+    prompt: 'A decimal number line shows 0.1, 0.2, ?, 0.4. What is missing?',
+    ticks: ['0.1', '0.2', '?', '0.4'],
+    missingIndex: 2,
+    options: ['0.25', '0.3', '0.35', '0.5'],
+    correct: '0.3',
+  },
+  {
+    id: 'line-decimal-midpoint',
+    eyebrow: 'Midpoint',
+    prompt: 'A point is halfway between 0.6 and 1.0. Which value belongs there?',
+    ticks: ['0.6', '?', '1.0'],
+    missingIndex: 1,
+    options: ['0.7', '0.75', '0.8', '0.9'],
+    correct: '0.8',
+  },
+];
+
+const shuffle = <T,>(values: readonly T[]): T[] => {
+  const output = [...values];
+  for (let index = output.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    const tmp = output[index];
+    output[index] = output[swapIndex];
+    output[swapIndex] = tmp;
+  }
+  return output;
 };
 
-type OptionValue = (typeof PUZZLE.options)[number];
-type FeedbackState = FantasyAnswerFeedbackState;
+const buildQuestionRun = () => {
+  const shuffled = shuffle(QUESTION_BANK);
+  return shuffled.slice(0, Math.min(QUESTIONS_PER_ROUND, shuffled.length));
+};
+
+const scoreToStars = (score: number, maxScore: number) => {
+  if (maxScore <= 0) return 1;
+  const ratio = score / maxScore;
+  if (ratio >= 0.92) return 3;
+  if (ratio >= 0.7) return 2;
+  return 1;
+};
+
+interface AssetButtonProps {
+  label: string;
+  variant: 'idle' | 'selected' | 'correct' | 'incorrect' | 'primary';
+  disabled?: boolean;
+  onClick?: () => void;
+  className?: string;
+}
+
+const AssetButton: React.FC<AssetButtonProps> = ({
+  label,
+  variant,
+  disabled = false,
+  onClick,
+  className = '',
+}) => {
+  const backgroundImage = variant === 'selected' || variant === 'correct'
+    ? buttonSelected
+    : variant === 'primary'
+      ? buttonPrimary
+      : buttonIdle;
+
+  const textClass = variant === 'incorrect'
+    ? 'text-rose-100'
+    : variant === 'primary'
+      ? 'text-amber-900'
+      : 'text-white';
+
+  return (
+    <motion.button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      whileTap={disabled ? undefined : { scale: 0.98 }}
+      whileHover={disabled ? undefined : { scale: 1.01 }}
+      className={`relative flex h-14 w-full items-center justify-center bg-transparent px-4 text-lg font-black ${textClass} disabled:opacity-60 ${className}`}
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: '100% 100%',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+      }}
+    >
+      <span className="relative z-10 [text-shadow:0_2px_1px_rgba(0,0,0,0.35)]">{label}</span>
+    </motion.button>
+  );
+};
 
 const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   levelId,
@@ -40,72 +181,105 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   sessionState,
   sessionEvents,
 }) => {
-  const [selected, setSelected] = useState<OptionValue | null>(null);
+  const [questionRun, setQuestionRun] = useState<NumberLineQuestion[]>(() => buildQuestionRun());
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [selected, setSelected] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<FeedbackState>('default');
   const [score, setScore] = useState(0);
+  const [correctCount, setCorrectCount] = useState(0);
   const [hasSignalledFailure, setHasSignalledFailure] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [pendingFinish, setPendingFinish] = useState(false);
 
   const timeLeft = sessionState?.timeLeft ?? 0;
   const lives = sessionState?.lives ?? 0;
   const isSessionActive = timeLeft > 0 && lives > 0;
-
-  const canSubmit = selected !== null && isSessionActive && feedback !== 'correct';
+  const activeQuestion = questionRun[questionIndex] ?? questionRun[0];
+  const totalQuestions = questionRun.length || QUESTIONS_PER_ROUND;
+  const maxRoundScore = totalQuestions * SCORE_PER_CORRECT;
+  const canSubmit = selected !== null && isSessionActive && !pendingFinish;
 
   useEffect(() => {
     if (!sessionState) return;
     if (sessionState.timeLeft !== sessionState.totalTime) return;
-    setHasSignalledFailure(false);
+    setQuestionRun(buildQuestionRun());
+    setQuestionIndex(0);
     setSelected(null);
     setFeedback('default');
     setScore(0);
+    setCorrectCount(0);
     setShowCelebration(false);
+    setPendingFinish(false);
+    setHasSignalledFailure(false);
   }, [levelId, sessionState, sessionState?.timeLeft, sessionState?.totalTime]);
 
   useEffect(() => {
-    if (hasSignalledFailure) return;
-    if (isSessionActive) return;
+    if (hasSignalledFailure || isSessionActive || pendingFinish) return;
     setHasSignalledFailure(true);
     emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
       score,
       reason: lives <= 0 ? 'lives' : 'time',
     });
-  }, [hasSignalledFailure, isSessionActive, lives, score, sessionEvents]);
+  }, [hasSignalledFailure, isSessionActive, lives, pendingFinish, score, sessionEvents]);
 
-  const selectOption = (value: OptionValue) => {
-    if (!isSessionActive || feedback === 'correct') return;
+  const selectOption = (value: string) => {
+    if (!isSessionActive || pendingFinish) return;
     setSelected(value);
     setFeedback('selected');
   };
 
   const submit = () => {
-    if (!selected || !isSessionActive || feedback === 'correct') return;
-
-    if (selected === PUZZLE.correct) {
-      const nextScore = score + 120;
+    if (!activeQuestion || !selected || !isSessionActive || pendingFinish) return;
+    if (selected === activeQuestion.correct) {
+      const nextScore = score + SCORE_PER_CORRECT;
+      const nextCorrectCount = correctCount + 1;
+      const isFinalQuestion = questionIndex >= totalQuestions - 1;
       setScore(nextScore);
+      setCorrectCount(nextCorrectCount);
       setFeedback('correct');
       setShowCelebration(true);
 
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
         score,
         metadata: {
-          scoreDelta: 120,
+          scoreDelta: SCORE_PER_CORRECT,
           scoreAfter: nextScore,
+          questionIndex,
+          questionId: activeQuestion.id,
         },
       });
       emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', {
         score: nextScore,
         metadata: {
-          scoreDelta: 120,
+          scoreDelta: SCORE_PER_CORRECT,
+          questionIndex,
+          questionId: activeQuestion.id,
         },
       });
 
-      window.setTimeout(() => setShowCelebration(false), 540);
+      window.setTimeout(() => setShowCelebration(false), 340);
+      if (isFinalQuestion) {
+        setPendingFinish(true);
+        window.setTimeout(() => {
+          const stars = scoreToStars(nextScore, maxRoundScore);
+          emitMiniGameSessionEvent(sessionEvents, 'game_complete', {
+            score: nextScore,
+            metadata: {
+              totalQuestions,
+              correctCount: nextCorrectCount,
+            },
+          });
+          onVictory(stars, nextScore);
+        }, 520);
+        return;
+      }
+
       window.setTimeout(() => {
-        emitMiniGameSessionEvent(sessionEvents, 'game_complete', { score: nextScore });
-        onVictory(3, nextScore);
-      }, 700);
+        if (!isSessionActive) return;
+        setQuestionIndex((current) => Math.min(current + 1, totalQuestions - 1));
+        setSelected(null);
+        setFeedback('default');
+      }, 520);
       return;
     }
 
@@ -115,157 +289,157 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       metadata: {
         livesBefore: lives,
         livesLost: 1,
+        questionIndex,
+        questionId: activeQuestion.id,
       },
     });
-
     window.setTimeout(() => {
       if (!isSessionActive) return;
       setSelected(null);
       setFeedback('default');
-    }, 760);
+    }, 560);
   };
+
+  const feedbackMessage = useMemo(() => {
+    if (feedback === 'correct') return 'Perfect! Keep going!';
+    if (feedback === 'incorrect') return 'Try another answer!';
+    if (selected) return 'Answer selected';
+    return `Question ${Math.min(questionIndex + 1, totalQuestions)} of ${totalQuestions}`;
+  }, [feedback, questionIndex, selected, totalQuestions]);
+
+  if (!activeQuestion) return null;
 
   return (
     <div className="relative h-full w-full overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(130%_80%_at_50%_10%,#5eead433_0%,#3b82f666_32%,#1d4ed8aa_64%,#0b1028_100%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,#1e1b4bcc_0%,#0f172ad9_52%,#020617_f0_100%)]" />
-      <div className="pointer-events-none absolute -left-14 top-20 h-56 w-56 rounded-full bg-cyan-300/35 blur-3xl" />
-      <div className="pointer-events-none absolute -right-10 top-28 h-64 w-64 rounded-full bg-fuchsia-400/26 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-[-6rem] left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-amber-300/22 blur-3xl" />
-      <div className="pointer-events-none absolute inset-0 opacity-[0.18] [background:radial-gradient(circle_at_14%_19%,#ffffff_0,transparent_2px),radial-gradient(circle_at_84%_16%,#ffffff_0,transparent_2px),radial-gradient(circle_at_31%_72%,#ffffff_0,transparent_2px),radial-gradient(circle_at_66%_63%,#ffffff_0,transparent_2px)]" />
-
-      <FantasyAnswerFeedbackBanner
-        state={feedback === 'correct' ? 'correct' : feedback === 'incorrect' ? 'incorrect' : null}
-        correctText="Perfect cast!"
-        incorrectText="Good try. Pick another!"
+      <img
+        src={mapBackground}
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full object-cover"
+        draggable={false}
       />
+      <div className="absolute inset-0 bg-slate-950/35" />
 
-      <AnimatePresence initial={false}>
+      <AnimatePresence>
         {showCelebration ? (
           <motion.div
-            key="celebration-burst"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="pointer-events-none absolute inset-0 z-20"
           >
             <motion.div
-              initial={{ scale: 0.75, opacity: 0.8 }}
-              animate={{ scale: 1.45, opacity: 0 }}
+              initial={{ opacity: 0.75, scale: 0.8 }}
+              animate={{ opacity: 0, scale: 1.55 }}
               transition={{ duration: 0.55, ease: 'easeOut' }}
-              className="absolute left-1/2 top-1/2 h-56 w-56 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-300/60 blur-2xl"
-            />
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0.7 }}
-              animate={{ scale: 1.35, opacity: 0 }}
-              transition={{ duration: 0.5, ease: 'easeOut', delay: 0.05 }}
-              className="absolute left-1/2 top-1/2 h-44 w-44 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-emerald-100/80"
+              className="absolute left-1/2 top-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-300/70 blur-2xl"
             />
           </motion.div>
         ) : null}
       </AnimatePresence>
 
-      <div className="relative z-10 flex h-full w-full flex-col px-3 pb-3 pt-1 text-slate-100 sm:px-4">
-        <main className="flex min-h-0 flex-1 flex-col gap-3">
-          <section className="shrink-0 rounded-[1.35rem] border border-cyan-100/55 bg-[linear-gradient(180deg,rgba(15,23,42,0.66),rgba(30,41,59,0.54))] px-4 py-3 text-center shadow-[0_14px_28px_rgba(15,23,42,0.4)]">
-            <p className="text-[11px] font-black uppercase tracking-[0.22em] text-amber-200">Missing Number</p>
-            <h1 className="mt-1.5 text-[clamp(1rem,4.3vw,1.3rem)] font-black leading-snug text-white">
-              {PUZZLE.question}
-            </h1>
-          </section>
+      <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-3 pb-3 pt-1">
+        <div className="relative mx-auto mt-1 flex min-h-0 flex-1 w-full max-w-[640px] flex-col">
+          <img
+            src={panelMain}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 h-full w-full object-fill"
+            draggable={false}
+          />
 
-          <section className="relative flex-1 overflow-hidden rounded-[1.6rem] border border-cyan-100/55 bg-[linear-gradient(180deg,rgba(56,189,248,0.2),rgba(30,58,138,0.26)_36%,rgba(15,23,42,0.64)_100%)] px-4 py-5 shadow-[0_22px_34px_rgba(2,6,23,0.45)]">
-            <div className="pointer-events-none absolute inset-x-5 top-5 h-14 rounded-full bg-cyan-300/22 blur-2xl" />
-            <div className="pointer-events-none absolute inset-x-10 bottom-6 h-20 rounded-full bg-indigo-500/16 blur-3xl" />
-
-            <div className="relative mx-auto flex h-full w-full max-w-[580px] flex-col items-center justify-center">
-              <p className="mb-4 inline-flex items-center gap-1 rounded-full border border-amber-200/60 bg-amber-300/20 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-amber-100">
-                <WandSparkles className="h-3.5 w-3.5" />
-                Cast The Missing Value
+          <div className="relative flex h-full min-h-0 flex-col px-4 pb-4 pt-4">
+            <div className="shrink-0 px-2 pb-2 text-center">
+              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-200">
+                {activeQuestion.eyebrow}
               </p>
+              <h1 className="mt-1 text-[clamp(1rem,4.15vw,1.28rem)] font-black leading-tight text-white [text-shadow:0_2px_2px_rgba(0,0,0,0.42)]">
+                {activeQuestion.prompt}
+              </h1>
+              <p className="mt-1.5 text-[11px] font-black uppercase tracking-[0.08em] text-cyan-100">
+                {feedbackMessage}
+              </p>
+            </div>
 
-              <div className="relative h-36 w-full">
-                <div className="absolute inset-x-2 top-1/2 h-[7px] -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-100 via-cyan-50 to-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.45)]" />
+            <div className="relative h-[34%] shrink-0">
+              <div className="absolute left-[7%] right-[7%] top-[42%] h-[8px] -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-100 via-cyan-200 to-cyan-100 shadow-[0_0_18px_rgba(125,211,252,0.65)]" />
 
-                {PUZZLE.ticks.map((tick) => {
-                  const leftPercent = (tick / 20) * 100;
-                  const missing = tick === 10;
-                  return (
-                    <div
-                      key={tick}
-                      className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
-                      style={{ left: `${leftPercent}%` }}
-                    >
-                      {missing ? (
-                        <motion.div
-                          animate={{ scale: [1, 1.08, 1], opacity: [0.58, 0.9, 0.58] }}
-                          transition={{ duration: 1.35, repeat: Infinity, ease: 'easeInOut' }}
-                          className="absolute left-1/2 top-[20px] h-16 w-16 -translate-x-1/2 rounded-full bg-amber-300/35 blur-xl"
-                        />
-                      ) : null}
-
-                      <div
-                        className={`relative mx-auto w-[5px] rounded-full ${
-                          missing
-                            ? 'h-14 bg-amber-300 shadow-[0_0_16px_rgba(251,191,36,0.6)]'
-                            : 'h-9 bg-white shadow-[0_0_10px_rgba(255,255,255,0.35)]'
-                        }`}
+              {activeQuestion.ticks.map((tick, index) => {
+                const leftPercent = activeQuestion.ticks.length <= 1
+                  ? 50
+                  : (index / (activeQuestion.ticks.length - 1)) * 100;
+                const missing = index === activeQuestion.missingIndex;
+                return (
+                  <div
+                    key={`${activeQuestion.id}-${tick}-${index}`}
+                    className="absolute top-[42%] -translate-x-1/2 -translate-y-1/2"
+                    style={{ left: `${leftPercent}%` }}
+                  >
+                    {missing ? (
+                      <motion.div
+                        animate={{ scale: [1, 1.08, 1], opacity: [0.55, 0.95, 0.55] }}
+                        transition={{ duration: 1.25, repeat: Infinity, ease: 'easeInOut' }}
+                        className="absolute left-1/2 top-[22px] h-14 w-14 -translate-x-1/2 rounded-full bg-amber-300/40 blur-xl"
                       />
-                      <div className="absolute left-1/2 top-12 -translate-x-1/2">
-                        <span
-                          className={`inline-flex items-center justify-center text-[clamp(1.28rem,5.7vw,1.6rem)] font-black [text-shadow:0_2px_2px_rgba(0,0,0,0.28)] ${
-                            missing
-                              ? 'rounded-full border border-amber-200/80 bg-[linear-gradient(180deg,rgba(251,191,36,0.45),rgba(245,158,11,0.3))] px-3 py-1 text-amber-50 shadow-[0_0_20px_rgba(251,191,36,0.55)]'
-                              : 'text-white'
-                          }`}
-                        >
-                          {missing ? '?' : tick}
-                        </span>
-                      </div>
-                      {missing ? (
-                        <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 text-amber-200">
-                          <Sparkles className="h-5 w-5" />
-                        </span>
-                      ) : null}
+                    ) : null}
+                    <div className={`mx-auto w-[5px] rounded-full ${missing ? 'h-14 bg-amber-300' : 'h-9 bg-white/95'}`} />
+                    <div className="absolute left-1/2 top-11 -translate-x-1/2">
+                      <span className={`inline-flex items-center justify-center whitespace-nowrap text-[clamp(1.25rem,5vw,1.55rem)] font-black ${missing ? 'text-amber-100' : 'text-white'} [text-shadow:0_2px_1px_rgba(0,0,0,0.4)]`}>
+                        {tick}
+                      </span>
                     </div>
+                    {missing ? (
+                      <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-amber-200">
+                        <Sparkles className="h-5 w-5" />
+                      </span>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="relative mt-1 min-h-0 flex-1">
+              <div className="relative grid h-full grid-cols-2 gap-2.5 p-1">
+                {activeQuestion.options.map((option) => {
+                  const selectedState = selected === option;
+                  const isCorrect = feedback === 'correct' && option === activeQuestion.correct;
+                  const isWrong = feedback === 'incorrect' && selectedState;
+                  const variant: AssetButtonProps['variant'] = isCorrect
+                    ? 'correct'
+                    : isWrong
+                      ? 'incorrect'
+                      : selectedState
+                        ? 'selected'
+                        : 'idle';
+
+                  return (
+                    <AssetButton
+                      key={`${activeQuestion.id}-${option}`}
+                      label={option}
+                      variant={variant}
+                      disabled={!isSessionActive || pendingFinish}
+                      onClick={() => selectOption(option)}
+                    />
                   );
                 })}
               </div>
             </div>
-          </section>
 
-          <section className="rounded-[1.45rem] border border-cyan-100/55 bg-[linear-gradient(180deg,rgba(30,41,59,0.62),rgba(15,23,42,0.62))] p-3.5 shadow-[0_16px_28px_rgba(2,6,23,0.36)]">
-            <p className="mb-2 text-center text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/90">
-              Choose Your Answer
-            </p>
-            <FantasyAnswerCluster
-              options={PUZZLE.options}
-              selected={selected}
-              feedback={feedback}
-              correctOption={PUZZLE.correct}
-              onSelect={selectOption}
-              disabled={!isSessionActive || feedback === 'correct'}
-              columns={2}
-              buttonClassName="h-[3.75rem]"
-            />
-          </section>
+            <div className="shrink-0 px-1 pt-1">
+              <AssetButton
+                label={canSubmit ? 'Submit' : 'Pick An Answer'}
+                variant="primary"
+                disabled={!canSubmit}
+                onClick={submit}
+                className="h-14 text-[1.02rem]"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
 
-          <motion.button
-            type="button"
-            onClick={submit}
-            disabled={!canSubmit}
-            whileTap={canSubmit ? { scale: 0.985 } : undefined}
-            className={[
-              'mt-auto h-14 shrink-0 rounded-[1.25rem] border text-lg font-black tracking-[0.02em] transition-all',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950',
-              canSubmit
-                ? 'border-amber-100/95 bg-[linear-gradient(180deg,#fde047_0%,#f59e0b_100%)] text-amber-950 shadow-[0_14px_24px_rgba(217,119,6,0.45)] hover:brightness-105'
-                : 'border-slate-300/30 bg-slate-700/55 text-slate-300 shadow-none',
-            ].join(' ')}
-          >
-            {canSubmit ? 'Cast Answer' : 'Select An Answer'}
-          </motion.button>
-        </main>
+      <div className="pointer-events-none absolute right-4 top-[30%] z-10 text-amber-100">
+        <WandSparkles className="h-5 w-5 opacity-90" />
       </div>
     </div>
   );

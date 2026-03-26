@@ -5,7 +5,6 @@ import heartIcon from '../assets/casual_ui/icons/icon__heart.png';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 
 interface UnifiedMiniGameHudProps {
-  playerName: string;
   avatarId?: string;
   timeLeft: number;
   totalTime: number;
@@ -15,7 +14,6 @@ interface UnifiedMiniGameHudProps {
 }
 
 const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
-  playerName,
   avatarId,
   timeLeft,
   totalTime,
@@ -71,17 +69,6 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
               />
             </div>
             <div className="pointer-events-none absolute inset-0 rounded-[0.9rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.16),rgba(255,255,255,0)_45%)]" />
-          </div>
-
-          <div
-            className={`relative flex ${sharedHudHeightClass} min-w-0 w-[clamp(106px,26vw,156px)] items-center rounded-[1rem] border-2 border-amber-300/95 bg-[linear-gradient(180deg,#3267b7_0%,#1a3a7c_100%)] px-3.5 shadow-[0_9px_18px_rgba(2,6,23,0.44)]`}
-          >
-            <div className="pointer-events-none absolute inset-x-[6px] top-[3px] h-[30%] rounded-full bg-white/14 blur-[1px]" />
-            <span
-              className="relative block w-full truncate text-center text-[clamp(0.73rem,1.95vw,0.95rem)] font-black uppercase tracking-[0.055em] text-slate-100 [text-shadow:0_1px_0_rgba(0,0,0,0.35)]"
-            >
-              {playerName}
-            </span>
           </div>
         </div>
 
