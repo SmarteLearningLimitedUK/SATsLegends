@@ -290,7 +290,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_52%,rgba(56,189,248,0.14),transparent_64%)]" />
 
       <div className="relative z-10 flex h-full min-h-0 flex-col px-4 pb-3 pt-2">
-        <div className="shrink-0 space-y-1.5 text-center">
+        <div className="mt-[10px] shrink-0 space-y-1.5 text-center">
           <div className="mx-auto inline-flex items-center rounded-full border border-cyan-200/75 bg-cyan-500/22 px-5 py-1.5 shadow-[0_6px_16px_rgba(14,165,233,0.42)] backdrop-blur-sm">
             <span className="text-[11px] font-black uppercase tracking-[0.28em] text-cyan-50">
               Missing Number
@@ -320,7 +320,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                   opacity: [0.9, 1, 0.9],
                 }}
                 transition={{ duration: 1.7, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute left-[11%] right-[11%] top-1/2 h-[8px] -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-200 via-white to-cyan-200"
+                className="absolute left-0 right-0 top-1/2 h-[7px] -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-200 via-white to-cyan-200"
               />
 
               {question.labels.map((label, index) => {
@@ -356,7 +356,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                           ?
                         </motion.div>
                       ) : (
-                        <span className="text-[clamp(22px,2.5vw,34px)] font-black tracking-tight text-white drop-shadow-[0_4px_8px_rgba(2,6,23,0.92)]">
+                        <span className="text-[clamp(17px,2vw,26px)] font-black tracking-tight text-white drop-shadow-[0_4px_8px_rgba(2,6,23,0.92)]">
                           {label}
                         </span>
                       )}
