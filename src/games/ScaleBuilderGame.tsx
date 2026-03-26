@@ -22,6 +22,7 @@ import buttonYellowPlankAsset from '../assets/licensed/slices/button_yellow_plan
 interface ScaleBuilderGameProps {
   levelId: number;
   avatarId: string;
+  useSharedTopHud?: boolean;
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
   onBack: () => void;
@@ -205,6 +206,7 @@ const ShapeRenderer: React.FC<{
 const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
   levelId,
   avatarId,
+  useSharedTopHud = false,
   onVictory,
   onGameOver: _onGameOver,
   onBack,
@@ -294,13 +296,15 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
     <GameScreenShell className="overflow-hidden pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+0.25rem)]">
       <GameplaySceneBackdrop gameType="scale_safari" />
 
-      <MiniGameTopBar
-        onBack={onBack}
-        score={Math.round(finalScore)}
-        scoreLabel="Build"
-        metaLabel="Level"
-        metaValue={`${currentLevelIdx + 1}/${LEVELS.length}`}
-      />
+      {!useSharedTopHud ? (
+        <MiniGameTopBar
+          onBack={onBack}
+          score={Math.round(finalScore)}
+          scoreLabel="Build"
+          metaLabel="Level"
+          metaValue={`${currentLevelIdx + 1}/${LEVELS.length}`}
+        />
+      ) : null}
 
       <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-2 px-2 pb-1 pt-[max(3.6rem,calc(env(safe-area-inset-top)+2.9rem))] md:gap-3 md:px-3">
         <div className="mx-auto w-full max-w-6xl">
