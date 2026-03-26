@@ -48,7 +48,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
         paddingRight: 'max(0.55rem, env(safe-area-inset-right))',
       }}
     >
-      <div className="relative flex w-full items-center justify-between gap-2 px-[2px] py-[clamp(0.24rem,0.62vh,0.5rem)]">
+      <div className="relative grid w-full grid-cols-[auto_1fr_auto] items-center gap-2 px-[2px] py-[clamp(0.24rem,0.62vh,0.5rem)]">
         <div className="pointer-events-none absolute inset-0 rounded-[1.15rem] bg-[linear-gradient(180deg,rgba(20,46,96,0.75)_0%,rgba(7,21,58,0.68)_100%)] shadow-[0_12px_24px_rgba(2,6,23,0.45)]" />
         <div className="pointer-events-none absolute inset-[1px] rounded-[1.08rem] border border-cyan-200/25" />
 
@@ -72,7 +72,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
           </div>
         </div>
 
-        <div className="relative flex shrink-0 items-center gap-2 pr-1">
+        <div className="relative flex min-w-0 items-center justify-center px-1">
           <div
             className={`relative flex ${sharedHudHeightClass} w-[clamp(168px,41vw,206px)] items-center rounded-full border-2 border-cyan-100/60 bg-[linear-gradient(180deg,#2f67ba_0%,#1f458f_100%)] px-1.5 shadow-[0_9px_18px_rgba(2,6,23,0.42)]`}
             style={{
@@ -110,7 +110,9 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
               {timeValue}s
             </span>
           </div>
+        </div>
 
+        <div className="relative flex shrink-0 items-center justify-end pr-1">
           <div
             className={`relative inline-flex ${sharedHudHeightClass} w-[clamp(54px,12vw,66px)] shrink-0 items-center justify-center gap-1 rounded-full border-2 border-cyan-100/65 bg-[linear-gradient(180deg,#245db3_0%,#1e3f89_100%)] px-2 text-[clamp(0.8rem,2vw,0.96rem)] font-black text-slate-100 shadow-[0_9px_18px_rgba(2,6,23,0.4)]`}
           >
