@@ -289,27 +289,22 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       <div className="absolute inset-0 bg-slate-950/25" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_52%,rgba(56,189,248,0.14),transparent_64%)]" />
 
-      <div className="relative z-10 flex h-full min-h-0 flex-col px-4 pb-3 pt-2">
-        <div className="mt-[10px] shrink-0 space-y-1.5 text-center">
-          <div className="mx-auto inline-flex items-center rounded-full border border-cyan-200/75 bg-cyan-500/22 px-5 py-1.5 shadow-[0_6px_16px_rgba(14,165,233,0.42)] backdrop-blur-sm">
-            <span className="text-[11px] font-black uppercase tracking-[0.28em] text-cyan-50">
-              Missing Number
-            </span>
-          </div>
-          <p className="mx-auto max-w-[680px] text-[clamp(15px,1.9vw,23px)] font-black leading-tight text-white drop-shadow-[0_2px_6px_rgba(2,6,23,0.92)]">
+      <div className="relative z-10 flex h-full min-h-0 flex-col px-4 pb-3 pt-1">
+        <div className="mt-[14px] shrink-0 text-center">
+          <p className="mx-auto max-w-[700px] text-[clamp(15px,1.9vw,23px)] font-black leading-tight text-white drop-shadow-[0_2px_6px_rgba(2,6,23,0.92)]">
             {question.prompt}
           </p>
         </div>
 
-        <div className="flex min-h-0 flex-1 items-center justify-center py-0.5">
-          <div className="relative flex h-[34%] min-h-[180px] w-full max-w-[700px] items-center justify-center">
+        <div className="flex min-h-0 flex-1 items-start justify-center pt-1">
+          <div className="relative flex h-[31%] min-h-[160px] w-full max-w-[680px] items-center justify-center">
             <motion.div
               animate={{ opacity: [0.26, 0.54, 0.26], scale: [0.985, 1.025, 0.985] }}
               transition={{ duration: 2.3, repeat: Infinity, ease: 'easeInOut' }}
               className="pointer-events-none absolute inset-0 rounded-[999px] bg-[radial-gradient(circle_at_50%_50%,rgba(56,189,248,0.28),rgba(30,41,59,0.05)_58%,transparent_80%)]"
             />
 
-            <div className="relative w-[78%] max-w-[600px]">
+            <div className="relative w-[76%] max-w-[560px]">
               <motion.div
                 animate={{
                   boxShadow: [
@@ -329,46 +324,53 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                 const isQuestionMark = label === '?';
 
                 return (
-                  <div
-                    key={`${question.id}-${index}`}
-                    className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
-                    style={{ left: `${pct}%` }}
-                  >
+                  <React.Fragment key={`${question.id}-${index}`}>
                     <div
-                      className={`h-[56px] w-[5px] rounded-full ${
-                        isMissing ? 'bg-amber-300 shadow-[0_0_20px_rgba(251,191,36,0.98)]' : 'bg-white/95'
-                      }`}
-                    />
-                    <div className="mt-2 flex min-h-[28px] items-center justify-center">
-                      {isQuestionMark ? (
-                        <motion.div
-                          animate={{
-                            scale: [1, 1.08, 1],
-                            boxShadow: [
-                              '0 0 0px rgba(245,158,11,0.25)',
-                              '0 0 28px rgba(245,158,11,0.96)',
-                              '0 0 0px rgba(245,158,11,0.25)',
-                            ],
-                          }}
-                          transition={{ duration: 1.05, repeat: Infinity, ease: 'easeInOut' }}
-                          className="flex h-[48px] w-[48px] items-center justify-center rounded-full border-2 border-amber-300/95 bg-slate-900/82 text-[30px] font-black text-amber-100"
-                        >
-                          ?
-                        </motion.div>
-                      ) : (
-                        <span className="text-[clamp(17px,2vw,26px)] font-black tracking-tight text-white drop-shadow-[0_4px_8px_rgba(2,6,23,0.92)]">
-                          {label}
-                        </span>
-                      )}
+                      className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
+                      style={{ left: `${pct}%` }}
+                    >
+                      <div
+                        className={`h-[52px] w-[5px] rounded-full ${
+                          isMissing ? 'bg-amber-300 shadow-[0_0_20px_rgba(251,191,36,0.98)]' : 'bg-white/95'
+                        }`}
+                      />
                     </div>
-                  </div>
+
+                    <div
+                      className="absolute -translate-x-1/2"
+                      style={{ left: `${pct}%`, top: 'calc(50% + 30px)' }}
+                    >
+                      <div className="flex h-[48px] w-[74px] items-center justify-center">
+                        {isQuestionMark ? (
+                          <motion.div
+                            animate={{
+                              scale: [1, 1.08, 1],
+                              boxShadow: [
+                                '0 0 0px rgba(245,158,11,0.25)',
+                                '0 0 28px rgba(245,158,11,0.96)',
+                                '0 0 0px rgba(245,158,11,0.25)',
+                              ],
+                            }}
+                            transition={{ duration: 1.05, repeat: Infinity, ease: 'easeInOut' }}
+                            className="flex h-[46px] w-[46px] items-center justify-center rounded-full border-2 border-amber-300/95 bg-slate-900/82 text-[28px] font-black leading-none text-amber-100"
+                          >
+                            ?
+                          </motion.div>
+                        ) : (
+                          <span className="text-[clamp(15px,1.8vw,22px)] font-black leading-none tracking-tight text-white drop-shadow-[0_4px_8px_rgba(2,6,23,0.92)]">
+                            {label}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </React.Fragment>
                 );
               })}
 
               <motion.div
                 animate={{ y: [0, 10, 0], opacity: [0.55, 1, 0.55] }}
                 transition={{ duration: 1.05, repeat: Infinity, ease: 'easeInOut' }}
-                className="pointer-events-none absolute top-[5%] -translate-x-1/2"
+                className="pointer-events-none absolute top-[1%] -translate-x-1/2"
                 style={{ left: `${focusPct}%` }}
               >
                 <ChevronDown className="h-7 w-7 text-amber-200 drop-shadow-[0_0_12px_rgba(251,191,36,0.96)]" />
