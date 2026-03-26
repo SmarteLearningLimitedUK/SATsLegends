@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Sparkles } from 'lucide-react';
+import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
 
 interface NumberLineNinjaGameProps {
   levelId: number;
@@ -7,64 +8,101 @@ interface NumberLineNinjaGameProps {
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
   onBack: () => void;
+  sessionState?: GameplaySessionState;
+  sessionEvents?: GameplaySessionEventHandlers;
 }
 
 type FeedbackState = 'default' | 'selected' | 'correct' | 'incorrect';
 
 const OPTIONS = ['8', '10', '12', '14'] as const;
 const CORRECT = '10';
-const ROUND_TIME_SECONDS = 83;
 
 const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
+  levelId,
   avatarId: _avatarId,
   onVictory,
-  onGameOver,
+  onGameOver: _onGameOver,
   onBack: _onBack,
+  sessionState,
+  sessionEvents,
 }) => {
-  const [timeLeft, setTimeLeft] = useState(ROUND_TIME_SECONDS);
-  const [lives, setLives] = useState(3);
   const [selected, setSelected] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<FeedbackState>('default');
   const [score, setScore] = useState(0);
+  const [hasSignalledFailure, setHasSignalledFailure] = useState(false);
 
-  const canSubmit = selected !== null;
+  const timeLeft = sessionState?.timeLeft ?? 0;
+  const lives = sessionState?.lives ?? 0;
+  const isSessionActive = timeLeft > 0 && lives > 0;
+
+  const canSubmit = selected !== null && isSessionActive;
+
   useEffect(() => {
-    const id = window.setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          window.clearInterval(id);
-          onGameOver(score);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    if (!sessionState) return;
+    if (sessionState.timeLeft !== sessionState.totalTime) return;
+    setHasSignalledFailure(false);
+    setSelected(null);
+    setFeedback('default');
+    setScore(0);
+  }, [levelId, sessionState, sessionState?.timeLeft, sessionState?.totalTime]);
 
-    return () => window.clearInterval(id);
-  }, [onGameOver, score]);
+  useEffect(() => {
+    if (hasSignalledFailure) return;
+    if (isSessionActive) return;
+    setHasSignalledFailure(true);
+    sessionEvents?.onGameFailed?.({
+      score,
+      reason: lives <= 0 ? 'lives' : 'time',
+    });
+  }, [hasSignalledFailure, isSessionActive, lives, score, sessionEvents, timeLeft]);
 
   const selectOption = (value: string) => {
+    if (!isSessionActive) return;
     setSelected(value);
     setFeedback('selected');
   };
 
   const submit = () => {
-    if (!selected) return;
+    if (!selected || !isSessionActive) return;
 
     if (selected === CORRECT) {
       const nextScore = score + 120;
       setScore(nextScore);
       setFeedback('correct');
-      window.setTimeout(() => onVictory(3, nextScore), 650);
+      sessionEvents?.onCorrectAnswer?.({
+        score,
+        metadata: {
+          scoreDelta: 120,
+          scoreAfter: nextScore,
+        },
+      });
+      sessionEvents?.onPuzzleComplete?.({
+        score: nextScore,
+        metadata: {
+          scoreDelta: 120,
+        },
+      });
+      window.setTimeout(() => {
+        sessionEvents?.onGameComplete?.({ score: nextScore });
+        onVictory(3, nextScore);
+      }, 650);
       return;
     }
 
-    const nextLives = Math.max(0, lives - 1);
-    setLives(nextLives);
     setFeedback('incorrect');
+    sessionEvents?.onIncorrectAnswer?.({
+      score,
+      metadata: {
+        livesBefore: lives,
+        livesLost: 1,
+      },
+    });
     window.setTimeout(() => {
-      if (nextLives <= 0) {
-        onGameOver(score);
+      if (lives <= 1) {
+        sessionEvents?.onGameFailed?.({
+          score,
+          reason: 'lives',
+        });
         return;
       }
       setSelected(null);
@@ -138,6 +176,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameProps> = ({
                     key={answer}
                     type="button"
                     onClick={() => selectOption(answer)}
+                    disabled={!isSessionActive}
                     className={[
                       'h-14 rounded-2xl border text-xl font-black transition-all duration-150',
                       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950',

@@ -16,10 +16,10 @@ import {
 } from '../layout/ScreenPrimitives';
 import { getMiniGame, MiniGameRegistryKey } from '../games';
 import { isBossEncounterGameType } from '../games/BossEncounterGame';
-import { GameScreen, IslandData, LevelData, MiniGameType, PlayerData } from '../types';
+import { GameScreen, IslandData, LevelData, PlayerData } from '../types';
 import splashPoster from '../assets/casual_ui/splashrep1.png';
 import splashStartPill from '../assets/casual_ui/inputs/btn_1.png';
-import { resolveMiniGameRegistryKey } from './miniGameResolver';
+import { GameplaySessionEventHandlers, GameplaySessionState } from './gameplaySessionContract';
 
 interface RuleSet {
   title: string;
@@ -42,6 +42,8 @@ interface AppRouterProps {
   globalMiniGameHudTimeLeft: number;
   globalMiniGameLives: number;
   globalMiniGameHudDurationSeconds: number;
+  sessionState: GameplaySessionState;
+  sessionEvents: GameplaySessionEventHandlers;
   onStartAdventure: () => void;
   onSaveProfileName: () => void;
   onAvatarSelect: (avatarId: string) => void;
@@ -71,6 +73,8 @@ export const AppRouter: React.FC<AppRouterProps> = ({
   globalMiniGameHudTimeLeft,
   globalMiniGameLives,
   globalMiniGameHudDurationSeconds,
+  sessionState,
+  sessionEvents,
   onStartAdventure,
   onSaveProfileName,
   onAvatarSelect,
@@ -98,6 +102,35 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       onVictory: onGameplayVictory,
       onGameOver: onGameplayOver,
       onBack: onBackToIslandLevels,
+      sessionState,
+      sessionEvents: {
+        ...sessionEvents,
+        onCorrectAnswer: (payload) => sessionEvents.onCorrectAnswer?.({
+          gameType: selectedLevel.gameType,
+          levelId: selectedLevel.id,
+          ...payload,
+        }),
+        onIncorrectAnswer: (payload) => sessionEvents.onIncorrectAnswer?.({
+          gameType: selectedLevel.gameType,
+          levelId: selectedLevel.id,
+          ...payload,
+        }),
+        onPuzzleComplete: (payload) => sessionEvents.onPuzzleComplete?.({
+          gameType: selectedLevel.gameType,
+          levelId: selectedLevel.id,
+          ...payload,
+        }),
+        onGameComplete: (payload) => sessionEvents.onGameComplete?.({
+          gameType: selectedLevel.gameType,
+          levelId: selectedLevel.id,
+          ...payload,
+        }),
+        onGameFailed: (payload) => sessionEvents.onGameFailed?.({
+          gameType: selectedLevel.gameType,
+          levelId: selectedLevel.id,
+          ...payload,
+        }),
+      },
     };
 
     switch (selectedLevel.gameType) {

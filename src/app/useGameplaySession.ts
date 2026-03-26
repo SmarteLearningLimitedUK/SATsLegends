@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import { GAME_HUD_MUTE_EVENT, GAME_HUD_MUTE_SYNC_EVENT } from '../gameHudEvents';
 import { GAME_AUDIO_STORAGE_KEY } from '../gameHudEvents';
 import { GameScreen, LevelData } from '../types';
@@ -10,6 +10,7 @@ interface GameplaySessionArgs {
   screen: GameScreen;
   selectedLevel: LevelData | null;
   onLifeDepleted: () => void;
+  onTimeDepleted: () => void;
 }
 
 export interface GameplaySessionController {
@@ -19,26 +20,34 @@ export interface GameplaySessionController {
   setIsGameplayInstructionPending: Dispatch<SetStateAction<boolean>>;
   isMuted: boolean;
   setIsMuted: Dispatch<SetStateAction<boolean>>;
+  consumeLife: (amount?: number) => void;
 }
 
 export const useGameplaySession = ({
   screen,
   selectedLevel,
   onLifeDepleted,
+  onTimeDepleted,
 }: GameplaySessionArgs): GameplaySessionController => {
   const [globalMiniGameHudTimeLeft, setGlobalMiniGameHudTimeLeft] = useState(GLOBAL_MINIGAME_HUD_DURATION_SECONDS);
   const [globalMiniGameLives, setGlobalMiniGameLives] = useState(GLOBAL_MINIGAME_LIVES);
   const [globalMiniGameLifeLock, setGlobalMiniGameLifeLock] = useState(false);
+  const [globalMiniGameTimeLock, setGlobalMiniGameTimeLock] = useState(false);
   const [isGameplayInstructionPending, setIsGameplayInstructionPending] = useState(false);
   const [isMuted, setIsMuted] = useState(() => localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true');
+  const consumeLife = useCallback((amount = 1) => {
+    if (amount <= 0) return;
+    setGlobalMiniGameLives((previous) => Math.max(0, previous - amount));
+  }, []);
 
   useEffect(() => {
     if (screen !== 'gameplay' || !selectedLevel) return undefined;
     setGlobalMiniGameHudTimeLeft(GLOBAL_MINIGAME_HUD_DURATION_SECONDS);
     setGlobalMiniGameLives(GLOBAL_MINIGAME_LIVES);
     setGlobalMiniGameLifeLock(false);
+    setGlobalMiniGameTimeLock(false);
     const timerId = window.setInterval(() => {
-      setGlobalMiniGameHudTimeLeft((prev) => Math.max(0, prev - 1));
+      setGlobalMiniGameHudTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
     return () => {
       window.clearInterval(timerId);
@@ -52,6 +61,14 @@ export const useGameplaySession = ({
       onLifeDepleted();
     }, 160);
   }, [globalMiniGameLifeLock, globalMiniGameLives, onLifeDepleted, screen]);
+
+  useEffect(() => {
+    if (screen !== 'gameplay' || globalMiniGameHudTimeLeft > 0 || globalMiniGameTimeLock) return;
+    setGlobalMiniGameTimeLock(true);
+    window.setTimeout(() => {
+      onTimeDepleted();
+    }, 140);
+  }, [globalMiniGameHudTimeLeft, globalMiniGameTimeLock, onTimeDepleted, screen]);
 
   useEffect(() => {
     const lastPenaltyRef = { value: 0 };
@@ -68,14 +85,14 @@ export const useGameplaySession = ({
       if (now - lastPenaltyRef.value < 450) return;
       lastPenaltyRef.value = now;
 
-      setGlobalMiniGameLives((previous) => Math.max(0, previous - 1));
+      consumeLife(1);
     };
 
     window.addEventListener('sats-mastery:haptic', handleHapticIntent as EventListener);
     return () => {
       window.removeEventListener('sats-mastery:haptic', handleHapticIntent as EventListener);
     };
-  }, [isGameplayInstructionPending, screen]);
+  }, [consumeLife, isGameplayInstructionPending, screen]);
 
   useEffect(() => {
     if (screen !== 'gameplay' || !selectedLevel) {
@@ -113,5 +130,6 @@ export const useGameplaySession = ({
     setIsGameplayInstructionPending,
     isMuted,
     setIsMuted,
+    consumeLife,
   };
 };

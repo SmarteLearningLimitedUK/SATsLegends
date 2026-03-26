@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import AssetIcon from './components/AssetIcon';
 import { GAME_META } from './gameMeta';
 import {
   GAME_HUD_HELP_EVENT,
@@ -8,7 +7,6 @@ import {
 import { triggerHaptic } from './haptics';
 import { getBlueprintRuleSet } from './systems/content/islandBlueprint';
 import {
-  ACHIEVEMENTS,
   ISLANDS,
 } from './constants';
 import DailyRewardsModal from './components/modals/DailyRewardsModal';
@@ -17,7 +15,7 @@ import AchievementsModal from './components/modals/AchievementsModal';
 import LevelResultModal from './components/LevelResultModal';
 import GameRulesModal from './components/GameRulesModal';
 import GameActionDock from './components/GameActionDock';
-import { GameScreen } from './types';
+import { IslandData, LevelData } from './types';
 import { AppRouter } from './app/AppRouter';
 import { useScreenFlow } from './app/useScreenFlow';
 import { useOverlayState } from './app/useOverlayState';
@@ -26,6 +24,7 @@ import {
   GLOBAL_MINIGAME_HUD_DURATION_SECONDS,
   useGameplaySession,
 } from './app/useGameplaySession';
+import { GameplaySessionEventHandlers, GameplaySessionState } from './app/gameplaySessionContract';
 import { useMiniGameLifecycle } from './app/useMiniGameLifecycle';
 import {
   IPHONE_STAGE_HEIGHT,
@@ -103,10 +102,12 @@ const App: React.FC = () => {
     globalMiniGameLives,
     isGameplayInstructionPending,
     setIsGameplayInstructionPending,
+    consumeLife,
   } = useGameplaySession({
     screen,
     selectedLevel,
     onLifeDepleted: () => handleGameOver(0),
+    onTimeDepleted: () => handleGameOver(0),
   });
 
   useMiniGameLifecycle({ screen, selectedLevel });
@@ -222,12 +223,12 @@ const App: React.FC = () => {
     goToWorldMap();
   };
 
-  const handleIslandSelect = (island: typeof selectedIsland extends null ? never : NonNullable<typeof selectedIsland>) => {
+  const handleIslandSelect = (island: IslandData) => {
     triggerHaptic('selection');
     selectIslandInFlow(island);
   };
 
-  const handleLevelSelect = (level: typeof selectedLevel extends null ? never : NonNullable<typeof selectedLevel>) => {
+  const handleLevelSelect = (level: LevelData) => {
     triggerHaptic('selection');
     selectLevelInFlow(level);
   };
@@ -332,6 +333,33 @@ const App: React.FC = () => {
     claimQuest(questId);
   };
 
+  const sessionState: GameplaySessionState = useMemo(() => ({
+    timeLeft: globalMiniGameHudTimeLeft,
+    totalTime: GLOBAL_MINIGAME_HUD_DURATION_SECONDS,
+    lives: globalMiniGameLives,
+  }), [globalMiniGameHudTimeLeft, globalMiniGameLives]);
+
+  const sessionEvents: GameplaySessionEventHandlers = useMemo(() => ({
+    onCorrectAnswer: () => {
+      triggerHaptic('selection');
+    },
+    onIncorrectAnswer: () => {
+      triggerHaptic('error');
+      if (screen === 'gameplay') {
+        consumeLife(1);
+      }
+    },
+    onPuzzleComplete: () => {
+      triggerHaptic('selection');
+    },
+    onGameComplete: () => {
+      triggerHaptic('success');
+    },
+    onGameFailed: () => {
+      triggerHaptic('error');
+    },
+  }), [consumeLife, screen]);
+
   const screenBehavior = SCREEN_BEHAVIOR[screen];
   const showGlobalDock = screen !== 'splash';
   const isSplashScreen = screen === 'splash';
@@ -402,6 +430,8 @@ const App: React.FC = () => {
                   globalMiniGameHudTimeLeft={globalMiniGameHudTimeLeft}
                   globalMiniGameLives={globalMiniGameLives}
                   globalMiniGameHudDurationSeconds={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
+                  sessionState={sessionState}
+                  sessionEvents={sessionEvents}
                   onStartAdventure={handleStartAdventure}
                   onSaveProfileName={handleSaveProfileName}
                   onAvatarSelect={(id) => setPlayer(prev => ({ ...prev, avatarId: id }))}
