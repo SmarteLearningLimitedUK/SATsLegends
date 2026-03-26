@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+﻿import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
@@ -275,7 +275,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
             </div>
           </div>
 
-          <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-0.5 md:flex-row md:gap-3 md:overflow-hidden md:pr-0">
+          <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-2 overflow-hidden pr-0.5 md:flex-row md:gap-3 md:pr-0">
             <div className="licensed-game-card-dark relative flex min-h-[16.25rem] flex-[1.1] flex-col overflow-hidden rounded-[1.35rem] p-2.5 md:min-h-0 md:rounded-[1.75rem] md:p-4">
               <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent,rgba(8,15,11,0.55))]" />
               <div className="mb-2 flex items-center justify-between">
@@ -432,3 +432,4 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
 };
 
 export default TreasurePathGame;
+

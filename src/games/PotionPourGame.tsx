@@ -33,7 +33,7 @@ interface Recipe {
   correctAmounts: number[];
 }
 
-type GameState = 'start' | 'playing' | 'end';
+type GameState = 'playing' | 'end';
 type Feedback = 'correct' | 'incorrect' | null;
 
 interface FinalOutcome {
@@ -78,7 +78,7 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
 }) => {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
-  const [gameState, setGameState] = useState<GameState>('start');
+  const [gameState, setGameState] = useState<GameState>('playing');
   const [currentRecipe, setCurrentRecipe] = useState<Recipe | null>(null);
   const [userAmounts, setUserAmounts] = useState<number[]>([]);
   const [feedback, setFeedback] = useState<Feedback>(null);
@@ -162,6 +162,11 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
     setGameState('playing');
     generateRecipe();
   };
+
+  useEffect(() => {
+    startGame();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (gameState !== 'playing') return;
@@ -290,28 +295,7 @@ const PotionPourGame: React.FC<PotionPourGameProps> = ({
           </div>
         </div>
 
-        {gameState === 'start' ? (
-          <div className="flex flex-1 flex-col items-center justify-center text-center">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="max-w-xl rounded-[3rem] border-4 border-purple-400/30 bg-purple-950/40 p-12 shadow-2xl"
-            >
-              <FlaskConical className="mx-auto mb-6 h-24 w-24 text-purple-400" />
-              <h2 className="mb-4 text-5xl font-black italic tracking-tighter">ALCHEMY PANIC</h2>
-              <p className="mb-8 text-lg leading-relaxed text-purple-200">
-                Brew spells by pouring potion ingredients in the correct ratio. You have{' '}
-                <span className="font-bold text-white">90 seconds</span> to complete as many brews as possible.
-              </p>
-              <button
-                onClick={startGame}
-                className="rounded-full border-b-8 border-purple-700 bg-purple-500 px-12 py-5 text-2xl font-black text-white shadow-lg transition-transform hover:scale-105 active:translate-y-2 active:border-b-0"
-              >
-                BEGIN BREWING
-              </button>
-            </motion.div>
-          </div>
-        ) : gameState === 'playing' ? (
+        {gameState === 'playing' ? (
           <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-hidden">
             <div className="relative overflow-hidden rounded-3xl border-2 border-purple-400/20 bg-purple-900/20 p-6 text-center">
               <div className="absolute left-0 top-0 h-1 w-full bg-purple-400/10" />

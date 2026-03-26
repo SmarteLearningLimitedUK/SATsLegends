@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   AlertCircle,
   CheckCircle2,
@@ -7,7 +7,6 @@ import {
   Maximize2,
   RotateCcw,
   Ruler,
-  Sparkles,
   Trophy,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
@@ -214,7 +213,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
 
   const [currentLevelIdx, setCurrentLevelIdx] = useState(0);
   const [currentScale, setCurrentScale] = useState(1.0);
-  const [gameState, setGameState] = useState<'start' | 'playing' | 'success' | 'complete'>('start');
+  const [gameState, setGameState] = useState<'playing' | 'success' | 'complete'>('playing');
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
   const [showBase, setShowBase] = useState(true);
   const [mistakeCount, setMistakeCount] = useState(0);
@@ -276,9 +275,16 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
     setCurrentLevelIdx(0);
     setCurrentScale(1.0);
     setFeedback(null);
-    setGameState('start');
+    setGameState('playing');
     setMistakeCount(0);
   };
+
+  useEffect(() => {
+    setCurrentLevelIdx(0);
+    setCurrentScale(1.0);
+    setFeedback(null);
+    setGameState('playing');
+  }, []);
 
   const finishAndContinue = () => {
     onVictory(starRating, finalScore);
@@ -486,34 +492,6 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
           </AnimatePresence>
 
           <AnimatePresence mode="wait">
-            {gameState === 'start' ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.92 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.05 }}
-                className="absolute inset-0 z-30 flex items-center justify-center bg-slate-950/80 p-6 text-center backdrop-blur-sm"
-              >
-                <div className="w-full max-w-md rounded-[1.5rem] border border-white/20 bg-[linear-gradient(180deg,rgba(30,64,175,0.9),rgba(15,23,42,0.92))] p-6 shadow-[0_18px_36px_rgba(2,6,23,0.45)]">
-                  <Sparkles className="mx-auto mb-5 h-12 w-12 text-yellow-300" />
-                  <h2 className="text-3xl font-black uppercase tracking-tight text-white">Scale Builder</h2>
-                  <p className="mt-3 text-sm font-bold text-cyan-100/90">
-                    Resize each structure to the exact scale factor to pass the blueprint checks.
-                  </p>
-                  <button
-                    onClick={() => setGameState('playing')}
-                    className="mt-6 inline-flex min-h-[46px] items-center justify-center rounded-xl border border-yellow-100/45 px-6 text-sm font-black uppercase tracking-[0.14em] text-amber-950"
-                    style={{
-                      backgroundImage: `url(${buttonYellowPlankAsset})`,
-                      backgroundSize: '100% 100%',
-                      backgroundRepeat: 'no-repeat',
-                    }}
-                  >
-                    Start Build
-                  </button>
-                </div>
-              </motion.div>
-            ) : null}
-
             {gameState === 'complete' ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.92 }}

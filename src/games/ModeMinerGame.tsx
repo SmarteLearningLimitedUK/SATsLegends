@@ -1,6 +1,6 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Activity, CheckCircle2, Pickaxe, Play, RotateCcw, Search, Trophy } from 'lucide-react';
+import { CheckCircle2, Pickaxe, RotateCcw, Search, Trophy } from 'lucide-react';
 import factorFrenzyBackground from '../assets/maps/facctor frenzy.jpg';
 
 interface LevelData {
@@ -96,7 +96,7 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
   onBack: _onBack,
   useSharedTopHud = true,
 }) => {
-  const [gameState, setGameState] = useState<'start' | 'playing' | 'success' | 'complete'>('start');
+  const [gameState, setGameState] = useState<'playing' | 'success' | 'complete'>('playing');
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [streak, setStreak] = useState(0);
@@ -114,6 +114,10 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
     setCurrentLevelData(buildLevel(1));
     setFeedback(null);
     setGameState('playing');
+  }, []);
+
+  useEffect(() => {
+    setCurrentLevelData(buildLevel(1));
   }, []);
 
   const handleSubmit = useCallback(() => {
@@ -215,7 +219,7 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
                       {currentLevelData.numbers.length} gems
                     </span>
                   </div>
-                  <div className="max-h-[22vh] min-h-[18vh] overflow-y-auto pr-1">
+                  <div className="max-h-[22vh] min-h-[18vh] overflow-hidden pr-1">
                     <div className="flex flex-wrap gap-2">
                       {currentLevelData.numbers.map((value, idx) => (
                         <div
@@ -281,33 +285,6 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
       </main>
 
       <AnimatePresence>
-        {gameState === 'start' && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 z-40 flex items-center justify-center bg-slate-950/72 p-8 text-center backdrop-blur-sm"
-          >
-            <div className="flex w-full max-w-md flex-col items-center rounded-[2rem] border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(14,34,82,0.95),rgba(8,20,54,0.95))] px-7 py-8 shadow-[0_20px_50px_rgba(2,6,23,0.6)]">
-              <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-cyan-500/20">
-                <Activity className="h-8 w-8 text-cyan-200" />
-              </div>
-              <h2 className="mb-2 text-3xl font-black uppercase tracking-tight text-white">Mode Miner</h2>
-              <p className="mb-6 text-sm font-semibold leading-relaxed text-cyan-100/90">
-                Find the number that appears most often in the data cave. Pick the correct mode before your 3 mistakes run out.
-              </p>
-              <button
-                type="button"
-                onClick={startGame}
-                className="inline-flex items-center gap-2 rounded-full border border-amber-200/85 bg-[linear-gradient(180deg,#fde047_0%,#f59e0b_100%)] px-8 py-3 text-sm font-black uppercase tracking-[0.16em] text-amber-950 shadow-[0_12px_24px_rgba(217,119,6,0.45)]"
-              >
-                <Play className="h-4 w-4 fill-current" />
-                Start Mining
-              </button>
-            </div>
-          </motion.div>
-        )}
-
         {gameState === 'complete' && (
           <motion.div
             initial={{ opacity: 0 }}

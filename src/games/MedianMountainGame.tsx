@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Mountain,
   ArrowUpDown,
@@ -8,7 +8,6 @@ import {
   ChevronRight,
   Trophy,
   AlertCircle,
-  Play,
   LayoutGrid,
   Divide,
   Calculator,
@@ -52,7 +51,7 @@ const MedianMountainGame: React.FC<MedianMountainGameProps> = ({
   onGameOver: _onGameOver,
   onBack,
 }) => {
-  const [gameState, setGameState] = useState<'start' | 'playing' | 'success' | 'complete'>('start');
+  const [gameState, setGameState] = useState<'playing' | 'success' | 'complete'>('playing');
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [currentLevelData, setCurrentLevelData] = useState<LevelData | null>(null);
@@ -112,6 +111,10 @@ const MedianMountainGame: React.FC<MedianMountainGameProps> = ({
     setGameState('playing');
     generateLevel(openingLevel);
   };
+
+  useEffect(() => {
+    generateLevel(1);
+  }, [generateLevel]);
 
   const toggleSort = () => {
     if (!currentLevelData) return;
@@ -306,31 +309,6 @@ const MedianMountainGame: React.FC<MedianMountainGameProps> = ({
         </AnimatePresence>
 
         <AnimatePresence>
-          {gameState === 'start' && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 z-50 flex items-center justify-center bg-indigo-50/90 p-12 text-center backdrop-blur-sm"
-            >
-              <div className="flex max-w-md flex-col items-center">
-                <div className="mb-8 flex h-24 w-24 rotate-3 items-center justify-center rounded-[2.5rem] bg-indigo-600 shadow-2xl shadow-indigo-200">
-                  <Mountain className="h-12 w-12 text-white" />
-                </div>
-                <h2 className="mb-4 text-4xl font-black uppercase tracking-tight text-indigo-800">Median Mountain</h2>
-                <p className="mb-8 font-medium leading-relaxed text-indigo-500">
-                  The path to the summit is hidden in the middle. Sort each set and find the exact median to advance.
-                </p>
-                <button
-                  onClick={startGame}
-                  className="group flex items-center gap-3 rounded-full bg-indigo-600 px-12 py-4 text-sm font-black uppercase tracking-widest text-white shadow-xl shadow-indigo-200 transition-all hover:bg-indigo-700"
-                >
-                  <Play className="h-4 w-4 fill-current transition-transform group-hover:scale-110" /> Begin Ascent
-                </button>
-              </div>
-            </motion.div>
-          )}
-
           {gameState === 'complete' && (
             <motion.div
               initial={{ opacity: 0 }}

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { Check, RefreshCcw, Timer as TimerIcon, Trophy } from 'lucide-react';
@@ -395,7 +395,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                       ? 'bg-emerald-500/24 text-emerald-100'
                       : 'bg-black/26 text-cyan-100'
                   }`}>
-                    Need {target} � Have {served}
+                    Need {target} • Have {served}
                   </div>
                 </div>
               </div>
@@ -417,7 +417,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
             </div>
           </div>
 
-          <div className="max-h-[5.7rem] overflow-y-auto pr-1">
+          <div className="max-h-[5.7rem] overflow-hidden pr-1">
             <div className="flex flex-wrap gap-1.5">
               {availableSlices.map((sliceId) => (
                 <button
@@ -510,3 +510,4 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 };
 
 export default ShareSplitterGame;
+

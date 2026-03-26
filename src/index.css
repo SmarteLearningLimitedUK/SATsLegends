@@ -4830,6 +4830,47 @@ button.avatar-hero-arrow:not(:disabled):active {
   overflow: hidden;
 }
 
+/* Strict gameplay viewport contract:
+   Viewport (fixed) -> HUD (fixed) -> Playfield (shrinkable) -> Actions (fixed) */
+.screen-gameplay .game-shell-host {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  max-height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.screen-gameplay .game-shell-contract {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.screen-gameplay .structured-game-layout {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.screen-gameplay .structured-game-layout > .game-shell-zone-hud,
+.screen-gameplay .structured-game-layout > .game-shell-zone-actions {
+  flex: 0 0 auto;
+  min-height: 0;
+}
+
+.screen-gameplay [data-gameplay-content-viewport='true'] {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.screen-gameplay .game-shell-host [class*='flex-1'] {
+  min-height: 0 !important;
+}
+
 .screen-gameplay .app-screen-content {
   overflow: hidden !important;
   -webkit-overflow-scrolling: auto !important;

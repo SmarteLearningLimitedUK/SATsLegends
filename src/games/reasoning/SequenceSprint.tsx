@@ -21,8 +21,7 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
   const [round, setRound] = useState<SequenceRound | null>(null);
   const [lane, setLane] = useState(1); // 0, 1, 2
   const [items, setItems] = useState<{ id: number; value: number; lane: number; y: number }[]>([]);
-  const [gameActive, setGameActive] = useState(false);
-  const [showInstructions, setShowInstructions] = useState(true);
+  const [gameActive, setGameActive] = useState(true);
   const [speed, setSpeed] = useState(3);
   
   const gameLoopRef = useRef<number | null>(null);
@@ -44,7 +43,7 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
   };
 
   useEffect(() => {
-    if (showInstructions || !round) return;
+    if (!round) return;
     
     const gameLoop = (time: number) => {
       if (!gameActive) return;
@@ -91,17 +90,17 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
     return () => {
       if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current);
     };
-  }, [gameActive, lane, round, score, showInstructions, speed]);
+  }, [gameActive, lane, round, score, speed]);
 
   useEffect(() => {
-    if (timeLeft > 0 && gameActive && !showInstructions) {
+    if (timeLeft > 0 && gameActive) {
       const timer = setInterval(() => setTimeLeft(t => t - 1), 1000);
       return () => clearInterval(timer);
     } else if (timeLeft === 0) {
       setGameActive(false);
       onVictory(3, score);
     }
-  }, [timeLeft, gameActive, showInstructions]);
+  }, [timeLeft, gameActive]);
 
   useEffect(() => {
     if (lives <= 0) {
@@ -124,9 +123,13 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
     setScore(0);
     setSpeed(3);
     lastSpawnRef.current = 0;
-    setShowInstructions(false);
     setGameActive(true);
   };
+
+  useEffect(() => {
+    startGame();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div 
@@ -211,45 +214,6 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
       >
         🏃‍♂️
       </motion.div>
-
-      {/* Instructions Overlay */}
-      <AnimatePresence>
-        {showInstructions && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 z-50 bg-blue-600/90 backdrop-blur-xl flex flex-col items-center justify-center p-12 text-center"
-          >
-            <motion.div
-              initial={{ y: 50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              className="bg-white p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] shadow-2xl border-b-[8px] md:border-b-[12px] border-gray-200 w-full max-w-lg"
-            >
-        <h2 className="text-3xl md:text-5xl font-black text-blue-600 mb-4 md:mb-6 tracking-tight">SEQUENCE SPRINT</h2>
-              <div className="space-y-3 md:space-y-6 text-gray-600 font-bold text-base md:text-xl mb-6 md:mb-10">
-                <p className="flex items-center gap-3 md:gap-4 justify-center">
-                  <span className="text-2xl md:text-3xl">🔢</span> Complete the sequence
-                </p>
-                <p className="flex items-center gap-3 md:gap-4 justify-center">
-                  <span className="text-2xl md:text-3xl">↔️</span> Use Arrows to move
-                </p>
-                <p className="flex items-center gap-3 md:gap-4 justify-center">
-                  <span className="text-2xl md:text-3xl">⭐</span> Collect the CORRECT number
-                </p>
-              </div>
-              <motion.button
-                whileHover={{ scale: 1.05, y: -5 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={startGame}
-                className="ui-button-primary licensed-submit-button px-8 py-4 text-xl font-black text-white transition-all md:px-16 md:py-6 md:text-3xl"
-              >
-                START DASH!
-              </motion.button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Controls Overlay (Mobile) */}
       <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8 flex justify-between z-30 pointer-events-none">

@@ -27,7 +27,7 @@ const fillSlice = (asset: string): React.CSSProperties => ({
 export const GameScreenShell: React.FC<WrapperProps> = ({ children, className = '' }) => (
   <section
     className={cn(
-      'app-screen app-screen-fixed premium-page-root game-shell-root relative flex h-full w-full min-h-0 flex-col overflow-hidden',
+      'app-screen app-screen-fixed premium-page-root game-shell-root relative flex h-[100dvh] max-h-[100dvh] w-full min-h-0 flex-col overflow-hidden md:h-full md:max-h-full',
       className,
     )}
   >
@@ -38,7 +38,7 @@ export const GameScreenShell: React.FC<WrapperProps> = ({ children, className = 
 export const ScrollScreenShell: React.FC<WrapperProps> = ({ children, className = '' }) => (
   <section
     className={cn(
-      'app-screen app-screen-scroll premium-page-root relative flex h-full w-full min-h-0 flex-col overflow-y-auto overflow-x-hidden',
+      'app-screen app-screen-scroll premium-page-root relative flex h-[100dvh] max-h-[100dvh] w-full min-h-0 flex-col overflow-y-auto overflow-x-hidden md:h-full md:max-h-full',
       className,
     )}
     style={{ WebkitOverflowScrolling: 'touch' }}
@@ -420,15 +420,14 @@ export const GameScreenTemplate: React.FC<GameScreenTemplateProps> = ({
     {background}
     {decorations}
     <div className="game-shell-content relative z-10 mx-auto flex h-full min-h-0 w-full max-w-[76rem] flex-1 flex-col gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] pt-[calc(env(safe-area-inset-top)+0.2rem)] md:gap-3 md:px-3 md:pb-[calc(env(safe-area-inset-bottom)+0.6rem)] md:pt-[calc(env(safe-area-inset-top)+0.35rem)]">
-      <div className="game-shell-zone game-shell-zone-hud">{hud}</div>
-      {titleStrip ? <div className="game-shell-zone game-shell-zone-title">{titleStrip}</div> : null}
+      <div className="game-shell-zone game-shell-zone-hud shrink-0">{hud}</div>
+      {titleStrip ? <div className="game-shell-zone game-shell-zone-title shrink-0">{titleStrip}</div> : null}
       <div className="game-shell-zone game-shell-zone-playfield-wrapper min-h-0 flex-1">
         <HeroPlayfieldCard>{playfield}</HeroPlayfieldCard>
       </div>
-      <div className="game-shell-zone game-shell-zone-actions">
+      <div className="game-shell-zone game-shell-zone-actions shrink-0">
         <AnswerClusterCard>{actions}</AnswerClusterCard>
       </div>
     </div>
   </GameScreenShell>
 );
-

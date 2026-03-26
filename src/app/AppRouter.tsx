@@ -428,9 +428,10 @@ export const AppRouter: React.FC<AppRouterProps> = ({
 
     case 'gameplay':
       return (
-        <div className={`game-shell-host unified-minigame-hud-enabled ${gameplayTypeClass} ${usesQuestionMatchFrame ? 'question-match-shell' : ''} relative flex h-full w-full min-h-0 flex-col overflow-hidden`.trim()}>
-          <div className="game-shell-contract relative flex h-full w-full min-h-0 flex-col overflow-hidden">
-            <div className="structured-game-layout flex h-full w-full min-h-0 flex-1 flex-col">
+        <div className={`game-shell-host unified-minigame-hud-enabled ${gameplayTypeClass} ${usesQuestionMatchFrame ? 'question-match-shell' : ''} relative flex h-[100dvh] max-h-[100dvh] w-full min-h-0 flex-col overflow-hidden md:h-full md:max-h-full`.trim()}>
+          <div className="game-shell-contract relative flex h-full max-h-full w-full min-h-0 flex-col overflow-hidden">
+            <div className="structured-game-layout flex h-full max-h-full w-full min-h-0 flex-1 flex-col overflow-hidden">
+              <div className="game-shell-zone game-shell-zone-hud shrink-0" aria-hidden />
               <GameplayContentViewport>
                 {renderGameplay()}
                 {showInlineHint ? (
@@ -446,6 +447,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
                   </div>
                 ) : null}
               </GameplayContentViewport>
+              <div className="game-shell-zone game-shell-zone-actions shrink-0" aria-hidden />
               <UnifiedMiniGameHud
                 playerName={player.playerName || 'Learner'}
                 avatarId={player.avatarId}

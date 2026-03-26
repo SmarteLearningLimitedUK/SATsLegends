@@ -12,11 +12,10 @@ interface GameplayContentViewportProps {
 const GameplayContentViewport: React.FC<GameplayContentViewportProps> = ({ children }) => (
   <div
     data-gameplay-content-viewport="true"
-    className="minigame-content-viewport relative flex h-full w-full min-h-0 flex-1 overflow-hidden"
+    className="game-shell-zone game-shell-zone-playfield minigame-content-viewport relative flex h-full w-full min-h-0 flex-1 flex-col overflow-hidden"
   >
     {children}
   </div>
 );
 
 export default GameplayContentViewport;
-

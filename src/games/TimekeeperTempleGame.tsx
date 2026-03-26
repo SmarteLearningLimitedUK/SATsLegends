@@ -5,7 +5,7 @@
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { RotateCcw, Play, Clock, Plus, Minus } from 'lucide-react';
+import { RotateCcw, Plus, Minus } from 'lucide-react';
 import GameActionDock from '../components/GameActionDock';
 import clockFaceImage from '../assets/maps/clockfaceblank.png';
 import missionBackground from '../assets/maps/harbour.jpg';
@@ -38,7 +38,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
   onGameOver: _onGameOver,
   onBack,
 }) => {
-  const [gameState, setGameState] = useState<'start' | 'playing' | 'complete'>('start');
+  const [gameState, setGameState] = useState<'playing' | 'complete'>('playing');
   const [targetTime, setTargetTime] = useState<Time>({ hours: 10, minutes: 10 });
   const [currentTime, setCurrentTime] = useState<Time>({ hours: 12, minutes: 0 });
   const [rotationHours, setRotationHours] = useState(360);
@@ -72,16 +72,13 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
   };
 
   const resetRun = () => {
-    finishedRef.current = false;
-    setTargetTime({ hours: 10, minutes: 10 });
-    setCurrentTime({ hours: 12, minutes: 0 });
-    setRotationHours(360);
-    setRotationMinutes(0);
-    setScore(0);
-    setTimeLeft(ROUND_DURATION_SECONDS);
-    setFeedback(null);
-    setGameState('start');
+    startGame();
   };
+
+  useEffect(() => {
+    startGame();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (gameState !== 'playing') return undefined;
@@ -272,48 +269,6 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
           </main>
         </div>
       </div>
-
-      <AnimatePresence>
-        {gameState === 'start' && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 p-8 backdrop-blur-xl"
-          >
-            <div className="flex flex-col items-center gap-8 text-center">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-                className="relative"
-              >
-                <Clock size={100} className="text-blue-500 opacity-20" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Play size={40} className="ml-1 text-white" />
-                </div>
-              </motion.div>
-
-              <div>
-                <h1 className="mb-2 bg-gradient-to-b from-white to-gray-400 bg-clip-text text-4xl font-black tracking-tighter text-transparent">
-                  CHRONO DASH
-                </h1>
-                <p className="mx-auto max-w-[220px] text-sm leading-relaxed font-medium text-blue-300">
-                  Use the buttons to sync the analogue clock with the digital display.
-                </p>
-              </div>
-
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={startGame}
-                className="rounded-full border-b-4 border-blue-800 bg-blue-600 px-12 py-5 text-xl font-black shadow-2xl shadow-blue-500/40"
-              >
-                START DASH
-              </motion.button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.45rem,env(safe-area-inset-bottom))] z-40 flex justify-center">
         <div className="pointer-events-auto">
