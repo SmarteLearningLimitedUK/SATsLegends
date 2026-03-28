@@ -527,16 +527,11 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
   }, [loop]);
 
   return (
-    <div className="fixed inset-0 z-20 h-screen w-screen overflow-hidden select-none">
-      <img
-        src={primePopBackground}
-        alt=""
-        aria-hidden="true"
-        draggable={false}
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
-      />
-
-      <div className="relative z-10 flex h-full w-full flex-col pt-[env(safe-area-inset-top)]">
+    <div
+      className="relative z-20 flex h-full min-h-0 w-full flex-col overflow-hidden bg-cover bg-center bg-no-repeat select-none"
+      style={{ backgroundImage: `url(${primePopBackground})` }}
+    >
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-col pt-[env(safe-area-inset-top)]">
         <GameplayHUD
           title="Prime Pop"
           avatar={avatar}
@@ -606,9 +601,9 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
           </AnimatePresence>
         </div>
 
-        <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.45rem,env(safe-area-inset-bottom))] z-40 flex justify-center">
+        <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.35rem,env(safe-area-inset-bottom))] z-40 flex justify-center px-3">
           <div className="pointer-events-auto">
-            <GameActionDock onBack={onBack} compact />
+            <GameActionDock onBack={onBack} compact variant="global" />
           </div>
         </div>
       </div>

@@ -204,14 +204,10 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
     : 'pt-[calc(env(safe-area-inset-top)+1rem)]';
 
   return (
-    <div className="fixed inset-0 z-20 h-screen w-screen overflow-hidden text-white">
-      <img
-        src={calculationClashBackground}
-        alt=""
-        aria-hidden="true"
-        draggable={false}
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
-      />
+    <div
+      className="fixed inset-0 z-20 h-screen w-screen overflow-hidden bg-cover bg-center bg-no-repeat text-white"
+      style={{ backgroundImage: `url(${calculationClashBackground})` }}
+    >
 
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(251,191,36,0.18),rgba(10,14,31,0.08)_36%,rgba(3,7,20,0.26)_100%)]" />
 

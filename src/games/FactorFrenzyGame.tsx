@@ -3,13 +3,9 @@ import { motion, AnimatePresence } from 'motion/react';
 import {
   Trophy,
   RotateCcw,
-  ChevronRight,
-  Flame,
   CheckCircle2,
-  AlertCircle,
 } from 'lucide-react';
 import GameActionDock from '../components/GameActionDock';
-import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import factorFrenzyBackground from '../assets/maps/facctor frenzy.jpg';
 import questionBarSmall from '../assets/ui_frames/hudfortextplace_slices/text_bar_small.png';
 import questionBarMedium from '../assets/ui_frames/hudfortextplace_slices/text_bar_medium.png';
@@ -45,10 +41,8 @@ interface LocalState {
   score: number;
   level: number;
   currentProblem: FactorProblem | null;
-  status: 'playing' | 'correct' | 'incorrect' | 'complete' | 'gameover';
+  status: 'playing' | 'correct' | 'incorrect' | 'complete';
   timeLeft: number;
-  streak: number;
-  mistakes: number;
 }
 
 const FRENZY_LEVELS: FrenzyLevel[] = [
@@ -65,11 +59,7 @@ const INITIAL_STATE: LocalState = {
   currentProblem: null,
   status: 'playing',
   timeLeft: 30,
-  streak: 0,
-  mistakes: 0,
 };
-
-const MAX_MISTAKES = 3;
 
 const scoreToStars = (score: number) => {
   if (score >= 14000) return 3;
@@ -82,7 +72,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   avatarId: _avatarId,
   useSharedTopHud: _useSharedTopHud,
   onVictory,
-  onGameOver,
+  onGameOver: _onGameOver,
   onBack,
 }) => {
   const [state, setState] = useState<LocalState>(INITIAL_STATE);

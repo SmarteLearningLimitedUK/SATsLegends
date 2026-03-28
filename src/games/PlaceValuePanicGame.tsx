@@ -898,14 +898,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   }), []);
 
   return (
-    <div className="fixed inset-0 z-20 h-screen w-screen overflow-hidden select-none bg-[#08162c]" style={{ touchAction: 'manipulation' }}>
-      <img
-        src={placeValueBackground}
-        alt=""
-        aria-hidden="true"
-        className="absolute inset-0 h-full w-full object-cover object-center"
-        draggable={false}
-      />
+    <div
+      className="fixed inset-0 z-20 h-screen w-screen overflow-hidden bg-[#08162c] bg-cover bg-center bg-no-repeat select-none"
+      style={{ touchAction: 'manipulation', backgroundImage: `url(${placeValueBackground})` }}
+    >
 
       {!useSharedTopHud ? (
         <div
