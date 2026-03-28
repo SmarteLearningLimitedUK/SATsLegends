@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { Layers, Minus, Plus, RotateCcw, Sparkles } from 'lucide-react';
-import GameActionDock from '../components/GameActionDock';
 import { triggerHaptic } from '../haptics';
 import volumeBackground from '../assets/maps/facctor frenzy.jpg';
 
@@ -142,7 +141,7 @@ const createMissingPrompt = (
   if (axis === 'height') {
     const oneLayer = length * depth;
     return {
-      text: `Volume is ${volume} ${unit}³. One layer holds ${oneLayer} cubes. How many layers?`,
+      text: `Volume is ${volume} ${unit}^3. One layer holds ${oneLayer} cubes. How many layers?`,
       answer: height,
       options: makeOptions(height),
     };
@@ -150,14 +149,14 @@ const createMissingPrompt = (
 
   if (axis === 'length') {
     return {
-      text: `Volume is ${volume} ${unit}³. Depth = ${depth} ${unit}, Height = ${height} ${unit}. Missing length?`,
+      text: `Volume is ${volume} ${unit}^3. Depth = ${depth} ${unit}, Height = ${height} ${unit}. Missing length?`,
       answer: length,
       options: makeOptions(length),
     };
   }
 
   return {
-    text: `Volume is ${volume} ${unit}³. Length = ${length} ${unit}, Height = ${height} ${unit}. Missing depth?`,
+    text: `Volume is ${volume} ${unit}^3. Length = ${length} ${unit}, Height = ${height} ${unit}. Missing depth?`,
     answer: depth,
     options: makeOptions(depth),
   };
@@ -666,7 +665,7 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 overflow-hidden bg-[#040a1c]">
+    <div className="relative flex h-full w-full min-h-0 flex-col overflow-hidden bg-[#040a1c]">
       <img
         src={volumeBackground}
         alt=""
@@ -676,12 +675,12 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
       />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,10,28,0.48),rgba(4,10,28,0.22)_34%,rgba(4,10,28,0.58)_100%)]" />
 
-      <div className={`relative z-10 flex h-full flex-col px-3 pb-[max(6rem,calc(env(safe-area-inset-bottom)+5rem))] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.2rem)]' : 'pt-[max(0.6rem,env(safe-area-inset-top))]'}`}>
+      <div className={`relative z-10 flex h-full min-h-0 flex-1 flex-col px-3 ${useSharedTopHud ? 'pb-2 pt-2' : 'pb-[max(6rem,calc(env(safe-area-inset-bottom)+5rem))] pt-[max(0.6rem,env(safe-area-inset-top))]'}`}>
         {!useSharedTopHud && (
         <header className="shrink-0">
           <div className="flex items-center justify-between gap-2">
             <div className="rounded-full border border-sky-100/34 bg-slate-950/62 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-sky-100">
-              Volume Vault • Lv {sessionLevel}
+              Volume Vault - Lv {sessionLevel}
             </div>
             <div className="rounded-full border border-emerald-200/45 bg-emerald-400/14 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-emerald-100">
               Streak x{streak}
@@ -705,7 +704,7 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
             <div className="text-sm font-black text-white">{challenge.prompt}</div>
             <div className="mt-0.5 text-xs font-semibold text-sky-100/82">{challenge.helper}</div>
             <div className="mt-1 text-xs font-black text-amber-100/90">
-              Target: {targetVolume} cubes • Filled: {playerVolume} • Progress: {Math.round(progressRatio * 100)}%
+              Target: {targetVolume} cubes | Filled: {playerVolume} | Progress: {Math.round(progressRatio * 100)}%
             </div>
           </div>
 
@@ -881,3 +880,5 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
 };
 
 export default VolumeVaultGame;
+
+
