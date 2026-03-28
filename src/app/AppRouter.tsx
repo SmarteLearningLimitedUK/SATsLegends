@@ -256,6 +256,11 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         if (selectedLevel.blueprintKey === 'scale_builder') {
           return renderFromRegistry('ScaleBuilderGame', sharedProps);
         }
+        return renderFromRegistry('CurriculumChallengeGame', {
+          ...sharedProps,
+          gameType: selectedLevel.gameType,
+          isBoss: Boolean(selectedLevel.isBoss),
+        });
       case 'mean_machine':
         if (selectedLevel.blueprintKey === 'mean_machine') {
           return renderFromRegistry('MeanMachineGame', sharedProps);
@@ -263,6 +268,11 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         if (selectedLevel.blueprintKey === 'median_mountain') {
           return renderFromRegistry('MedianMountainGame', sharedProps);
         }
+        return renderFromRegistry('CurriculumChallengeGame', {
+          ...sharedProps,
+          gameType: selectedLevel.gameType,
+          isBoss: Boolean(selectedLevel.isBoss),
+        });
       case 'rule_runner':
         if (selectedLevel.blueprintKey === 'median_mountain') {
           return renderFromRegistry('MedianMountainGame', sharedProps);
@@ -278,6 +288,13 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         if (selectedLevel.blueprintKey === 'rotation_relay') {
           return renderFromRegistry('RotationReflectionGame', sharedProps);
         }
+        return renderFromRegistry('ReasoningGame', {
+          gameType: selectedLevel.gameType,
+          isBoss: Boolean(selectedLevel.isBoss),
+          onVictory: onGameplayVictory,
+          onGameOver: onGameplayOver,
+          onBack: onBackToIslandLevels,
+        });
       case 'matrix_match':
         return renderFromRegistry('ReasoningGame', {
           gameType: selectedLevel.gameType,

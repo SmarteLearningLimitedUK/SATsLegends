@@ -1,5 +1,6 @@
 import React from 'react';
 import AssetIcon from './AssetIcon';
+import type { AssetIconName } from './AssetIcon';
 
 interface IconProps {
   className?: string;
@@ -10,7 +11,7 @@ const frameStyle = {
   filter: 'drop-shadow(0 2px 0 rgba(74,44,23,0.35))',
 } as const;
 
-const ImageIcon: React.FC<{name:any; className?: string; rotate?: number; size?: number}> = ({ name, className = 'w-5 h-5', rotate = 0, size }) => (
+const ImageIcon: React.FC<{name: AssetIconName; className?: string; rotate?: number; size?: number}> = ({ name, className = 'w-5 h-5', rotate = 0, size }) => (
   <span className={`inline-flex items-center justify-center ${className}`} style={{ transform: rotate ? `rotate(${rotate}deg)` : undefined, width: size, height: size }}>
     <AssetIcon name={name} className="w-full h-full" />
   </span>
