@@ -381,45 +381,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                     height: `${hotspot.height}%`,
                   }}
                 >
-                  {isUnlocked ? (
-                    <>
-                      <motion.span
-                        aria-hidden="true"
-                        className={`pointer-events-none absolute inset-[4%] rounded-[2rem] ${
-                          isRecommended
-                            ? 'border-2 border-amber-200/85'
-                            : isInProgress
-                              ? 'border-2 border-cyan-200/70'
-                              : 'border-2 border-cyan-100/45'
-                        }`}
-                        animate={{
-                          scale: isRecommended ? [1, 1.06, 1] : [1, 1.035, 1],
-                          opacity: isRecommended ? [0.5, 0.9, 0.5] : [0.35, 0.7, 0.35],
-                        }}
-                        transition={{
-                          duration: isRecommended ? 1.6 : 2.2,
-                          repeat: Infinity,
-                          ease: 'easeInOut',
-                        }}
-                      />
-                      <motion.span
-                        aria-hidden="true"
-                        className={`pointer-events-none absolute inset-[10%] rounded-[1.6rem] ${
-                          isRecommended
-                            ? 'bg-[radial-gradient(circle,rgba(253,224,71,0.22),rgba(251,191,36,0.08),rgba(2,6,23,0))]'
-                            : 'bg-[radial-gradient(circle,rgba(34,211,238,0.22),rgba(59,130,246,0.1),rgba(2,6,23,0))]'
-                        }`}
-                        animate={{ opacity: [0.35, 0.8, 0.35] }}
-                        transition={{ duration: isRecommended ? 1.5 : 2.4, repeat: Infinity, ease: 'easeInOut' }}
-                      />
-                    </>
-                  ) : (
-                    <span
-                      aria-hidden="true"
-                      className="pointer-events-none absolute inset-[6%] rounded-[1.8rem] border border-slate-100/30 bg-slate-900/35"
-                    />
-                  )}
-
                   <motion.button
                     whileTap={isUnlocked ? { scale: 0.98 } : {}}
                     whileHover={isUnlocked ? { scale: 1.02 } : {}}
