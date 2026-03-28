@@ -3,6 +3,7 @@ import confetti from 'canvas-confetti';
 import { CheckCircle2, Layers, Minus, Plus, RotateCcw, Sparkles } from 'lucide-react';
 import { triggerHaptic } from '../haptics';
 import volumeBackground from '../assets/maps/facctor frenzy.jpg';
+import vaultSpriteSheet from '../assets/vault.png';
 
 interface VolumeVaultGameProps {
   levelId: number;
@@ -45,6 +46,7 @@ interface FeedbackState {
 const FALLBACK_TIME = 90;
 const PUZZLES_TO_WIN = 6;
 const MAX_CELL_HEIGHT = 9;
+const VAULT_OPEN_SEQUENCE = [0, 2, 0, 2, 1, 3, 1, 3];
 
 const randInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
@@ -251,6 +253,9 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
   const [missingSolved, setMissingSolved] = useState(false);
   const [selectedMissingOption, setSelectedMissingOption] = useState<number | null>(null);
   const [locked, setLocked] = useState(false);
+  const [isVaultOpening, setIsVaultOpening] = useState(false);
+  const [vaultFrameIndex, setVaultFrameIndex] = useState(0);
+  const vaultAnimationTimeoutsRef = useRef<number[]>([]);
 
   const targetHeights = challenge.targetHeights;
   const prefilledHeights = challenge.prefilledHeights;
@@ -284,8 +289,14 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
   const canBuild = !challenge.missingPrompt || missingSolved;
   const isExact = missingVolume === 0 && extraVolume === 0;
 
+  const clearVaultAnimationTimers = () => {
+    vaultAnimationTimeoutsRef.current.forEach((timerId) => window.clearTimeout(timerId));
+    vaultAnimationTimeoutsRef.current = [];
+  };
+
   useEffect(() => {
     const next = generateChallenge(Math.max(1, levelId));
+    clearVaultAnimationTimers();
     setSessionLevel(Math.max(1, levelId));
     setChallenge(next);
     setPlayerHeights(cloneMatrix(next.prefilledHeights));
@@ -299,8 +310,14 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
     setMissingSolved(!next.missingPrompt);
     setSelectedMissingOption(null);
     setLocked(false);
+    setIsVaultOpening(false);
+    setVaultFrameIndex(0);
     finishedRef.current = false;
   }, [levelId]);
+
+  useEffect(() => () => {
+    clearVaultAnimationTimers();
+  }, []);
 
   useEffect(() => {
     if (useSharedTopHud || finishedRef.current) return undefined;
@@ -346,6 +363,25 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
     setLocked(false);
   };
 
+  const playVaultOpenSequence = (nextScore: number) => {
+    clearVaultAnimationTimers();
+    setIsVaultOpening(true);
+
+    VAULT_OPEN_SEQUENCE.forEach((frame, index) => {
+      const timeoutId = window.setTimeout(() => {
+        setVaultFrameIndex(frame);
+      }, index * 120);
+      vaultAnimationTimeoutsRef.current.push(timeoutId);
+    });
+
+    const completeTimeoutId = window.setTimeout(() => {
+      setIsVaultOpening(false);
+      finishedRef.current = true;
+      onVictory(scoreToStars(nextScore), nextScore);
+    }, VAULT_OPEN_SEQUENCE.length * 120 + 260);
+    vaultAnimationTimeoutsRef.current.push(completeTimeoutId);
+  };
+
   const completeChallenge = () => {
     if (locked || finishedRef.current) return;
 
@@ -371,8 +407,7 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
 
     window.setTimeout(() => {
       if (nextSolved >= PUZZLES_TO_WIN) {
-        finishedRef.current = true;
-        onVictory(scoreToStars(nextScore), nextScore);
+        playVaultOpenSequence(nextScore);
         return;
       }
       loadNextChallenge();
@@ -485,6 +520,17 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
       : feedback?.type === 'error'
         ? 'border-rose-200/50 bg-rose-500/16 text-rose-100'
         : 'border-sky-100/28 bg-slate-950/44 text-white/90';
+
+  const vaultFrameStyle = useMemo(() => {
+    const col = vaultFrameIndex % 2;
+    const row = Math.floor(vaultFrameIndex / 2);
+    return {
+      width: '200%',
+      height: '200%',
+      left: `${-col * 100}%`,
+      top: `${-row * 100}%`,
+    } as React.CSSProperties;
+  }, [vaultFrameIndex]);
 
   return (
     <div className="relative flex h-full w-full min-h-0 flex-col overflow-hidden bg-[#040a1c]">
@@ -678,8 +724,29 @@ const VolumeVaultGame: React.FC<VolumeVaultGameProps> = ({
           </div>
         </main>
       </div>
+
+      {isVaultOpening ? (
+        <div className="pointer-events-none absolute inset-0 z-40 flex items-center justify-center bg-slate-950/52">
+          <div className="relative w-[min(72vw,16rem)] overflow-hidden rounded-2xl border border-amber-200/45 bg-slate-950/45 shadow-[0_16px_36px_rgba(2,6,23,0.55)]">
+            <div className="relative aspect-square w-full overflow-hidden">
+              <img
+                src={vaultSpriteSheet}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+                className="absolute max-w-none object-cover"
+                style={vaultFrameStyle}
+              />
+            </div>
+            <div className="absolute inset-x-2 bottom-2 rounded-full border border-yellow-200/55 bg-slate-950/72 px-3 py-1 text-center text-xs font-black uppercase tracking-[0.1em] text-yellow-100">
+              Vault opening
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };
 
 export default VolumeVaultGame;
+
