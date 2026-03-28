@@ -315,14 +315,14 @@ export const AppRouter: React.FC<AppRouterProps> = ({
           });
         }
         return (
-          <div className="flex flex-col items-center gap-6 p-10 bg-white/20 backdrop-blur-xl rounded-[3rem] border-4 border-white/30 my-auto text-center">
-            <h2 className="text-4xl font-black text-white">Mini-game incoming</h2>
-            <p className="text-white/80 max-w-xl text-lg">
+          <div className="my-auto flex flex-col items-center gap-6 rounded-[2.2rem] border border-cyan-100/35 bg-[linear-gradient(180deg,rgba(18,48,102,0.84),rgba(12,31,78,0.88))] p-8 text-center shadow-[0_18px_32px_rgba(2,6,23,0.4)]">
+            <h2 className="text-4xl font-black text-amber-100">Mini-game incoming</h2>
+            <p className="max-w-xl text-lg font-semibold text-cyan-100/88">
               This slot is wired into the adventure flow, but the gameplay scene is still being built.
             </p>
             <button
               onClick={onBackToIslandLevels}
-              className="ui-button-primary px-8 py-4 text-white font-black"
+              className="ui-button-primary rounded-2xl px-8 py-4 font-black text-white"
             >
               Back to island
             </button>

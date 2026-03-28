@@ -5197,5 +5197,84 @@ button.avatar-hero-arrow:not(:disabled):active {
   }
 }
 
+/* ============================================================
+   Unified Blue/Gold Theme Lock
+   Ensures all screens/minigames inherit one consistent palette.
+   ============================================================ */
+
+.app-viewport.sat-theme-bluegold {
+  --sat-blue-950: #081631;
+  --sat-blue-900: #0e2554;
+  --sat-blue-800: #143a80;
+  --sat-blue-700: #1f57b1;
+  --sat-gold-300: #f9dd8d;
+  --sat-gold-400: #f7c958;
+  --sat-gold-500: #f2aa2b;
+  --sat-ink: #102140;
+}
+
+.app-viewport.sat-theme-bluegold .premium-page-root::before,
+.app-viewport.sat-theme-bluegold .app-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 20% 12%, rgba(56, 189, 248, 0.14), rgba(56, 189, 248, 0) 38%),
+    radial-gradient(circle at 82% 12%, rgba(251, 191, 36, 0.14), rgba(251, 191, 36, 0) 34%);
+}
+
+.app-viewport.sat-theme-bluegold .premium-page-root > *,
+.app-viewport.sat-theme-bluegold .app-screen > * {
+  position: relative;
+  z-index: 1;
+}
+
+.app-viewport.sat-theme-bluegold .licensed-board-frame,
+.app-viewport.sat-theme-bluegold .licensed-game-card,
+.app-viewport.sat-theme-bluegold .licensed-game-card-dark,
+.app-viewport.sat-theme-bluegold .licensed-overlay-card,
+.app-viewport.sat-theme-bluegold .mission-panel-shell,
+.app-viewport.sat-theme-bluegold .aaa-objective-shell,
+.app-viewport.sat-theme-bluegold .aaa-playfield-shell {
+  border-color: rgba(164, 220, 255, 0.36) !important;
+  background-color: rgba(11, 32, 78, 0.72) !important;
+}
+
+.app-viewport.sat-theme-bluegold .ui-button-primary,
+.app-viewport.sat-theme-bluegold .game-button-primary,
+.app-viewport.sat-theme-bluegold .mission-action-btn-primary {
+  border-color: rgba(255, 233, 166, 0.76) !important;
+  color: var(--sat-ink) !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.56),
+    0 6px 0 rgba(124, 72, 7, 0.75),
+    0 14px 24px rgba(8, 22, 49, 0.3) !important;
+}
+
+.app-viewport.sat-theme-bluegold .ui-button-secondary,
+.app-viewport.sat-theme-bluegold .game-button-secondary,
+.app-viewport.sat-theme-bluegold .mission-action-btn-secondary {
+  border-color: rgba(177, 222, 255, 0.56) !important;
+  color: #f5fbff !important;
+  background:
+    linear-gradient(180deg, rgba(66, 149, 244, 0.95) 0%, rgba(35, 91, 194, 0.96) 56%, rgba(22, 58, 132, 0.98) 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 6px 0 rgba(18, 53, 128, 0.78),
+    0 12px 22px rgba(8, 22, 49, 0.28) !important;
+}
+
+.app-viewport.sat-theme-bluegold .game-chip,
+.app-viewport.sat-theme-bluegold .mission-pill,
+.app-viewport.sat-theme-bluegold .hud-pill {
+  border-color: rgba(171, 221, 255, 0.42) !important;
+  color: #e9f6ff !important;
+  background:
+    linear-gradient(180deg, rgba(32, 81, 171, 0.86), rgba(14, 41, 95, 0.9)) !important;
+}
+
 
 

@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { Lock, Sparkles } from 'lucide-react';
 import { IslandData, PlayerData } from '../types';
 import { AVATARS, ISLANDS } from '../constants';
-import islandReskinPoster from '../assets/maps/finalislandreskin.png';
+import universalMapPoster from '../assets/maps/universal map.jpg';
 import welcomeMathLogo from '../assets/maps/welcomemathlogo.png';
 
 interface WorldMapProps {
@@ -341,7 +341,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
         style={{ minHeight: 'max(132dvh, calc(100vw * 2))' }}
       >
         <img
-          src={islandReskinPoster}
+          src={universalMapPoster}
           alt="Island select map"
           className="absolute inset-0 block h-full w-full max-w-none object-cover object-top"
           draggable={false}

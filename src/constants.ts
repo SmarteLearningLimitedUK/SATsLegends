@@ -1,11 +1,11 @@
 import { AvatarData, IslandData, ShopItem, DailyQuest, MathFamily, CloudCollapseLevelConfig, PotionPourLevelConfig, Achievement } from "./types";
 import { CHARACTER_AVATARS } from './assets/characters';
-import world01Map from './assets/maps/world_01.png';
-import world02Map from './assets/maps/world_02.png';
-import world03Map from './assets/maps/world_03.png';
-import world04Map from './assets/maps/world_04.png';
-import world05Map from './assets/maps/world_05.png';
-import world06Map from './assets/maps/world_06.png';
+import world01Map from './assets/maps/forect.jpg';
+import world02Map from './assets/maps/reef2.jpg';
+import world03Map from './assets/maps/castle.jpg';
+import world04Map from './assets/maps/harbour.jpg';
+import world05Map from './assets/maps/desert.jpg';
+import world06Map from './assets/maps/volcano2.jpg';
 import { NUMBER_BASE_CAMP_LEVELS } from './systems/content/island1NumberBaseCamp';
 
 export const ACHIEVEMENTS: Achievement[] = [
