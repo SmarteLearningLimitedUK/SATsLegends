@@ -43,6 +43,7 @@ import TowerOfFactorsGame from './TowerOfFactorsGame';
 import TreasureChartCoveGame from './TreasureChartCoveGame';
 import TreasurePathGame from './TreasurePathGame';
 import VolumeVaultGame from './VolumeVaultGame';
+import WhodunnitDataGame from './WhodunnitDataGame';
 import LogicSort from './reasoning/LogicSort';
 import MatrixMatch from './reasoning/MatrixMatch';
 import ReasoningGame from './reasoning/ReasoningGame';
@@ -95,6 +96,7 @@ export type MiniGameRegistryKey =
   | 'TreasureChartCoveGame'
   | 'TreasurePathGame'
   | 'VolumeVaultGame'
+  | 'WhodunnitDataGame'
   | 'ReasoningGame'
   | 'SequenceSprint'
   | 'LogicSort'
@@ -155,6 +157,7 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   TreasureChartCoveGame: asMiniGame('treasure_chart_cove', TreasureChartCoveGame),
   TreasurePathGame: asMiniGame('treasure_path', TreasurePathGame),
   VolumeVaultGame: asMiniGame('volume_vault', VolumeVaultGame),
+  WhodunnitDataGame: asMiniGame('whodunnit_data', WhodunnitDataGame),
   ReasoningGame: asMiniGame('reasoning', ReasoningGame),
   SequenceSprint: asMiniGame('sequence_sprint', SequenceSprint),
   LogicSort: asMiniGame('logic_sort', LogicSort),

@@ -165,6 +165,9 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         if (selectedLevel.blueprintKey === 'table_trouble') {
           return renderFromRegistry('LineGraphLabGame', sharedProps);
         }
+        if (selectedLevel.blueprintKey === 'whodunnit_data') {
+          return renderFromRegistry('WhodunnitDataGame', sharedProps);
+        }
         if (selectedLevel.blueprintKey === 'data_detective') {
           return renderFromRegistry('DataDetectiveGame', sharedProps);
         }

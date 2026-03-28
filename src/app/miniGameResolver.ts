@@ -37,6 +37,9 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       if (level.blueprintKey === 'table_trouble') {
         return 'LineGraphLabGame';
       }
+      if (level.blueprintKey === 'whodunnit_data') {
+        return 'WhodunnitDataGame';
+      }
       if (level.blueprintKey === 'data_detective') {
         return 'DataDetectiveGame';
       }
