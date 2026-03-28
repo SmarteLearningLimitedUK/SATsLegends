@@ -15,6 +15,7 @@ import AchievementsModal from './components/modals/AchievementsModal';
 import LevelResultModal from './components/LevelResultModal';
 import GameRulesModal from './components/GameRulesModal';
 import GameActionDock from './components/GameActionDock';
+import ViewportBossEnemy from './components/ViewportBossEnemy';
 import { IslandData, LevelData } from './types';
 import { AppRouter } from './app/AppRouter';
 import { useScreenFlow } from './app/useScreenFlow';
@@ -26,6 +27,7 @@ import {
 } from './app/useGameplaySession';
 import { GameplaySessionEventHandlers, GameplaySessionState } from './app/gameplaySessionContract';
 import { useMiniGameLifecycle } from './app/useMiniGameLifecycle';
+import { getBossVisualForLevel } from './bossVisuals';
 import {
   IPHONE_STAGE_HEIGHT,
   IPHONE_STAGE_WIDTH,
@@ -371,6 +373,10 @@ const App: React.FC = () => {
   const isMapLayoutScreen = MAP_LAYOUT_SCREENS.includes(screen);
   const isWorldMapScreen = screen === 'world_map';
   const selectedGameType = selectedLevel?.gameType;
+  const activeBossArt = useMemo(
+    () => getBossVisualForLevel(selectedLevel?.gameType, selectedLevel?.id),
+    [selectedLevel?.gameType, selectedLevel?.id],
+  );
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
   const useUnboundedStageShell = isSplashScreen || isAvatarSelectionScreen || isWorldMapScreen;
@@ -449,6 +455,14 @@ const App: React.FC = () => {
                   onGameplayVictory={handleGameVictory}
                   onGameplayOver={handleGameOver}
                 />
+
+                {isGameplayScreen && selectedLevel && !levelResult ? (
+                  <ViewportBossEnemy
+                    gameType={selectedLevel.gameType}
+                    levelId={selectedLevel.id}
+                    resultType={null}
+                  />
+                ) : null}
               </motion.div>
             </AnimatePresence>
 
@@ -475,6 +489,7 @@ const App: React.FC = () => {
 
             <LevelResultModal
               isOpen={Boolean(levelResult)}
+              enemyArt={activeBossArt || undefined}
               result={levelResult ? {
                 ...levelResult,
                 primaryLabel: levelResult.type === 'victory' ? 'Continue adventure' : 'Try again',

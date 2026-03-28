@@ -1,26 +1,24 @@
-import trayLid from './slices/tray_lid.png';
-import trayBase from './slices/tray_base.png';
-import portionHalf from './slices/portion_half.png';
-import portionQuarter from './slices/portion_quarter.png';
-import portionEighthA from './slices/portion_eighth_a.png';
-import portionEighthB from './slices/portion_eighth_b.png';
-import portionEighthC from './slices/portion_eighth_c.png';
-import portionEighthD from './slices/portion_eighth_d.png';
-import portionEighthE from './slices/portion_eighth_e.png';
-import sauceSwirlA from './slices/sauce_swirl_a.png';
-import sauceSwirlB from './slices/sauce_swirl_b.png';
+import food1 from './food/1.png';
+import food2 from './food/2.png';
+import food3 from './food/3.png';
+import food4 from './food/4.png';
+import food5 from './food/5.png';
+import food6 from './food/6.png';
+import food7 from './food/7.png';
+import food8 from './food/8.png';
+import food9 from './food/9.png';
 
 export const TAKE_OUT_ASSETS = {
-  trayLid,
-  trayBase,
-  portionHalf,
-  portionQuarter,
-  portionEighthA,
-  portionEighthB,
-  portionEighthC,
-  portionEighthD,
-  portionEighthE,
-  sauceSwirlA,
-  sauceSwirlB,
+  trayLid: food1,
+  trayBase: food2,
+  portionHalf: food3,
+  portionQuarter: food4,
+  portionEighthA: food5,
+  portionEighthB: food6,
+  portionEighthC: food7,
+  portionEighthD: food8,
+  portionEighthE: food9,
+  sauceSwirlA: food5,
+  sauceSwirlB: food6,
 };
 

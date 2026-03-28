@@ -13,6 +13,7 @@ import {
 
 interface LevelResultModalProps {
   isOpen: boolean;
+  enemyArt?: string;
   result: {
     type: 'victory' | 'gameover';
     title: string;
@@ -51,7 +52,7 @@ const StatTile: React.FC<{ label: string; value: React.ReactNode; tone?: 'score'
   );
 };
 
-const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) => {
+const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, enemyArt }) => {
   if (!result) return null;
 
   const isVictory = result.type === 'victory';
@@ -160,6 +161,35 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result }) =
                     className="h-full w-full object-contain drop-shadow-xl"
                   />
                 </motion.div>
+
+                {enemyArt ? (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{
+                      opacity: 1,
+                      y: isVictory ? 6 : 0,
+                      scale: isVictory ? 0.92 : 1,
+                      rotate: isVictory ? 10 : 0,
+                    }}
+                    transition={{ duration: 0.22, ease: 'easeOut' }}
+                    className="relative mt-0.5 rounded-[0.95rem] border border-white/22 bg-slate-900/55 p-1.5 shadow-[0_12px_22px_rgba(2,6,23,0.36)]"
+                  >
+                    <img
+                      src={enemyArt}
+                      alt={isVictory ? 'Defeated enemy' : 'Enemy'}
+                      className={`h-14 w-14 rounded-[0.7rem] object-cover md:h-16 md:w-16 ${isVictory ? 'grayscale contrast-90 saturate-75' : ''}`}
+                      draggable={false}
+                    />
+                    <span className={cn(
+                      'absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full border px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.12em]',
+                      isVictory
+                        ? 'border-emerald-100/50 bg-emerald-500/22 text-emerald-100'
+                        : 'border-rose-100/50 bg-rose-500/22 text-rose-100',
+                    )}>
+                      {isVictory ? 'Enemy Defeated' : 'Enemy Ready'}
+                    </span>
+                  </motion.div>
+                ) : null}
 
                 <h2 className={cn(
                   'text-2xl font-black tracking-tight md:text-4xl',

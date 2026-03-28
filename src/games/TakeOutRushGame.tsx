@@ -2,7 +2,15 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import takeOutLevelBg from '../assets/level_backgrounds/take_out.png';
-import foodSheet from '../assets/importedassets/Food102321038.jpg';
+import food1 from '../assets/take_out/food/1.png';
+import food2 from '../assets/take_out/food/2.png';
+import food3 from '../assets/take_out/food/3.png';
+import food4 from '../assets/take_out/food/4.png';
+import food5 from '../assets/take_out/food/5.png';
+import food6 from '../assets/take_out/food/6.png';
+import food7 from '../assets/take_out/food/7.png';
+import food8 from '../assets/take_out/food/8.png';
+import food9 from '../assets/take_out/food/9.png';
 import GameActionDock from '../components/GameActionDock';
 import FoodGameShell from '../components/FoodGameShell';
 import { triggerHaptic } from '../haptics';
@@ -42,7 +50,7 @@ interface TakeOutOrder {
 interface FoodItem {
   id: string;
   name: string;
-  sprite: { row: number; col: number };
+  image: string;
   value: Fraction;
   colorClass: string;
 }
@@ -55,121 +63,69 @@ interface FeedbackState {
 const ROUND_DURATION_SECONDS = 90;
 const AUTO_VALIDATE_DELAY_MS = 140;
 
-const FOOD_SPRITE_ROWS = 4;
-const FOOD_SPRITE_COLS = 4;
-
 const FOOD_ITEMS: FoodItem[] = [
   {
     id: 'burger_meal',
     name: 'Burger Meal',
-    sprite: { row: 0, col: 0 },
+    image: food1,
     value: { n: 1, d: 4 },
     colorClass: 'from-amber-300 to-orange-400',
   },
   {
     id: 'ribs_plate',
     name: 'Ribs Plate',
-    sprite: { row: 0, col: 1 },
+    image: food2,
     value: { n: 1, d: 3 },
     colorClass: 'from-orange-300 to-amber-500',
   },
   {
     id: 'berry_dessert',
     name: 'Berry Dessert',
-    sprite: { row: 0, col: 2 },
+    image: food3,
     value: { n: 1, d: 8 },
     colorClass: 'from-rose-300 to-pink-400',
   },
   {
     id: 'salad_bowl',
     name: 'Salad Bowl',
-    sprite: { row: 0, col: 3 },
+    image: food4,
     value: { n: 1, d: 6 },
     colorClass: 'from-emerald-300 to-lime-400',
   },
   {
     id: 'rice_bowl',
     name: 'Rice Bowl',
-    sprite: { row: 1, col: 0 },
+    image: food5,
     value: { n: 1, d: 2 },
     colorClass: 'from-sky-300 to-cyan-400',
   },
   {
     id: 'pizza_slice',
     name: 'Pizza Slice',
-    sprite: { row: 1, col: 1 },
+    image: food6,
     value: { n: 1, d: 4 },
     colorClass: 'from-amber-300 to-orange-400',
   },
   {
     id: 'hotdog_combo',
     name: 'Hotdog Combo',
-    sprite: { row: 1, col: 2 },
+    image: food7,
     value: { n: 1, d: 6 },
     colorClass: 'from-yellow-300 to-amber-400',
   },
   {
     id: 'roast_chicken',
     name: 'Roast Chicken',
-    sprite: { row: 1, col: 3 },
+    image: food8,
     value: { n: 1, d: 6 },
     colorClass: 'from-orange-300 to-amber-500',
   },
   {
-    id: 'pancakes',
-    name: 'Pancakes',
-    sprite: { row: 2, col: 0 },
-    value: { n: 1, d: 3 },
-    colorClass: 'from-amber-200 to-orange-300',
-  },
-  {
-    id: 'pizza_whole',
-    name: 'Whole Pizza',
-    sprite: { row: 2, col: 1 },
-    value: { n: 1, d: 2 },
-    colorClass: 'from-red-300 to-orange-400',
-  },
-  {
     id: 'fries',
     name: 'Fries',
-    sprite: { row: 2, col: 2 },
+    image: food9,
     value: { n: 1, d: 8 },
     colorClass: 'from-yellow-300 to-amber-400',
-  },
-  {
-    id: 'noodles',
-    name: 'Noodles',
-    sprite: { row: 2, col: 3 },
-    value: { n: 1, d: 5 },
-    colorClass: 'from-indigo-300 to-blue-400',
-  },
-  {
-    id: 'fried_chicken',
-    name: 'Fried Chicken',
-    sprite: { row: 3, col: 0 },
-    value: { n: 1, d: 4 },
-    colorClass: 'from-orange-300 to-amber-400',
-  },
-  {
-    id: 'soup_bowl',
-    name: 'Soup Bowl',
-    sprite: { row: 3, col: 1 },
-    value: { n: 1, d: 5 },
-    colorClass: 'from-cyan-300 to-blue-400',
-  },
-  {
-    id: 'bundt_cake',
-    name: 'Bundt Cake',
-    sprite: { row: 3, col: 2 },
-    value: { n: 1, d: 8 },
-    colorClass: 'from-rose-300 to-pink-400',
-  },
-  {
-    id: 'fish_plate',
-    name: 'Fish Plate',
-    sprite: { row: 3, col: 3 },
-    value: { n: 1, d: 4 },
-    colorClass: 'from-sky-300 to-cyan-400',
   },
 ];
 
@@ -245,10 +201,10 @@ const stageFromProgress = (baseLevel: number, ordersServed: number, timeLeft: nu
 
 const allowedIdsByStage = (stage: number): string[] => {
   if (stage <= 3) {
-    return ['rice_bowl', 'pizza_slice', 'fries', 'fish_plate'];
+    return ['rice_bowl', 'pizza_slice', 'fries', 'burger_meal'];
   }
   if (stage <= 7) {
-    return ['rice_bowl', 'pizza_slice', 'fries', 'salad_bowl', 'hotdog_combo', 'fried_chicken', 'berry_dessert'];
+    return ['rice_bowl', 'pizza_slice', 'fries', 'salad_bowl', 'hotdog_combo', 'roast_chicken', 'berry_dessert'];
   }
   return FOOD_ITEMS.map((item) => item.id);
 };
@@ -329,15 +285,12 @@ const FoodSprite: React.FC<{
   item: FoodItem;
   className?: string;
 }> = ({ item, className }) => (
-  <div
-    className={className}
-    style={{
-      backgroundImage: `url(${foodSheet})`,
-      backgroundSize: `${FOOD_SPRITE_COLS * 100}% ${FOOD_SPRITE_ROWS * 100}%`,
-      backgroundPosition: `${(item.sprite.col / (FOOD_SPRITE_COLS - 1)) * 100}% ${(item.sprite.row / (FOOD_SPRITE_ROWS - 1)) * 100}%`,
-      backgroundRepeat: 'no-repeat',
-    }}
+  <img
+    src={item.image}
+    alt=""
     aria-hidden="true"
+    className={className}
+    draggable={false}
   />
 );
 
