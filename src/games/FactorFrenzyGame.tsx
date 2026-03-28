@@ -247,8 +247,6 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
           return {
             ...previous,
             status: 'incorrect',
-            streak: 0,
-            mistakes: previous.mistakes + 1,
             timeLeft: 0,
           };
         }
@@ -262,12 +260,6 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
     return () => clearTimer();
   }, [state.status]);
-
-  useEffect(() => {
-    if (state.mistakes < MAX_MISTAKES || endedRef.current) return;
-    endedRef.current = true;
-    setState((previous) => ({ ...previous, status: 'gameover' }));
-  }, [state.mistakes]);
 
   const toggleOption = (value: number) => {
     if (state.status !== 'playing') return;
@@ -284,13 +276,11 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
     const correct = [...state.currentProblem.correctAnswers].sort((a, b) => a - b);
     const selected = [...selectedOptions].sort((a, b) => a - b);
-
     const isCorrect = correct.length === selected.length && correct.every((value, index) => value === selected[index]);
 
     if (isCorrect) {
       const timeBonus = state.timeLeft * 10;
-      const streakBonus = state.streak * 50;
-      const points = 500 + timeBonus + streakBonus;
+      const points = 500 + timeBonus;
 
       const newScore = state.score + points;
       const masteryReached = newScore >= 14000;
@@ -299,29 +289,17 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         ...previous,
         score: newScore,
         status: masteryReached ? 'complete' : 'correct',
-        streak: previous.streak + 1,
       }));
-
       return;
     }
 
     setState((previous) => ({
       ...previous,
       status: 'incorrect',
-      streak: 0,
-      mistakes: previous.mistakes + 1,
     }));
   };
 
   const nextProblem = () => {
-    if (state.status === 'gameover') {
-      if (!endedRef.current) {
-        endedRef.current = true;
-      }
-      onGameOver(state.score);
-      return;
-    }
-
     const { levelConfig, levelIndex } = getLevelFromScore(state.score);
     const problem = generateProblem(levelIndex);
 
@@ -353,11 +331,6 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     onVictory(scoreToStars(state.score), state.score);
   };
 
-  const currentLevel = useMemo(
-    () => [...FRENZY_LEVELS].reverse().find((level) => state.score >= level.threshold) || FRENZY_LEVELS[0],
-    [state.score],
-  );
-
   const questionFrame = useMemo(() => {
     const length = state.currentProblem?.question.length || 0;
     return length > 34 ? questionBarMedium : questionBarSmall;
@@ -366,24 +339,13 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   const playingState = state.status === 'playing' || state.status === 'correct' || state.status === 'incorrect';
 
   return (
-    <div className="relative h-full w-full overflow-hidden text-white">
-      <GameplaySceneBackdrop
-        gameType="tower_of_factors"
-        backgroundOverride={factorFrenzyBackground}
-        minimalDecor
-      />
-
+    <div
+      className="relative h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat text-white"
+      style={{ backgroundImage: `url(${factorFrenzyBackground})` }}
+    >
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.35)_0%,rgba(2,6,23,0.56)_60%,rgba(2,6,23,0.76)_100%)]" />
 
       <div className="relative z-10 flex h-full flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.8rem)] pt-[calc(env(safe-area-inset-top)+3.45rem)] sm:px-4 sm:pt-[calc(env(safe-area-inset-top)+3.65rem)] md:px-5 md:pt-[calc(env(safe-area-inset-top)+3.9rem)]">
-        <div className="mb-2.5 flex items-center justify-end gap-1.5 sm:mb-3 sm:gap-2">
-          <div className="pvp-hud-chip pvp-hud-chip-alt inline-flex items-center gap-1.5">
-            <Flame className={`h-3.5 w-3.5 ${state.streak > 0 ? 'animate-pulse text-amber-200' : 'text-cyan-100/70'}`} />
-            Streak {state.streak}
-          </div>
-          <div className="pvp-hud-chip pvp-hud-chip-alt">Mistakes {state.mistakes}/{MAX_MISTAKES}</div>
-        </div>
-
         <main className="relative flex min-h-0 flex-1 flex-col">
           <AnimatePresence mode="wait">
             {state.status === 'complete' ? (
@@ -475,16 +437,6 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                       >
                         Submit Data
                       </button>
-                    ) : state.status === 'gameover' ? (
-                      <motion.button
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        onClick={nextProblem}
-                        className="inline-flex w-full max-w-sm items-center justify-center gap-2 rounded-2xl border border-rose-100/70 bg-rose-500/30 px-4 py-3 text-sm font-black uppercase tracking-[0.14em] text-rose-50 shadow-[0_10px_20px_rgba(2,6,23,0.35)]"
-                      >
-                        Submit Loss
-                        <ChevronRight className="h-4 w-4" />
-                      </motion.button>
                     ) : (
                       <div className="inline-flex w-full max-w-sm items-center justify-center rounded-2xl border border-cyan-100/45 bg-[#0d2a5a]/70 px-4 py-3 text-xs font-black uppercase tracking-[0.14em] text-cyan-100/95">
                         {state.status === 'correct' ? 'Great answer • loading next challenge' : 'Not quite • loading next challenge'}
@@ -493,7 +445,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                   </div>
 
                   <AnimatePresence>
-                    {state.status === 'correct' || state.status === 'incorrect' || state.status === 'gameover' ? (
+                    {state.status === 'correct' || state.status === 'incorrect' ? (
                       <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -516,25 +468,10 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
       {playingState && (
         <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.4rem,env(safe-area-inset-bottom))] z-40 flex justify-center px-3">
           <div className="pointer-events-auto">
-            <GameActionDock onBack={onBack} compact accentClass="text-slate-100" />
+            <GameActionDock onBack={onBack} compact accentClass="text-slate-100" variant="global" />
           </div>
         </div>
       )}
-
-      <AnimatePresence>
-        {state.status === 'gameover' && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="pointer-events-none absolute inset-x-0 top-[calc(env(safe-area-inset-top)+3.8rem)] z-30 flex justify-center px-4"
-          >
-            <div className="pointer-events-auto inline-flex items-center gap-2 rounded-full border border-rose-100/60 bg-rose-500/30 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-rose-50">
-              <AlertCircle className="h-4 w-4" /> Too many mistakes
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };
