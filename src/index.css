@@ -5005,6 +5005,18 @@ button.avatar-hero-arrow:not(:disabled):active {
   width: auto !important;
 }
 
+/* Normalize legacy safe-area paddings inside minigames when shared shell HUD/dock is active.
+   This prevents double top/bottom reservation that can push gameplay outside viewport. */
+.screen-gameplay .unified-minigame-hud-enabled [class*='pt-[calc(env(safe-area-inset-top)+'],
+.screen-gameplay .unified-minigame-hud-enabled [class*='pt-[max('] {
+  padding-top: min(0.55rem, 2.4vh) !important;
+}
+
+.screen-gameplay .unified-minigame-hud-enabled [class*='pb-[calc(env(safe-area-inset-bottom)+'],
+.screen-gameplay .unified-minigame-hud-enabled [class*='pb-[max('] {
+  padding-bottom: min(0.6rem, 2.8vh) !important;
+}
+
 /* ============================================================
    Global Consistency Contract (all screens)
    - Unified primary/submit/confirm button appearance
