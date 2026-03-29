@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { motion } from 'motion/react';
-import { Lock, Sparkles } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import { IslandData, PlayerData } from '../types';
-import { AVATARS, ISLANDS } from '../constants';
+import { ISLANDS } from '../constants';
 import universalMapPoster from '../assets/maps/worlsmap.png';
 
 interface WorldMapProps {
@@ -255,13 +255,6 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
 };
 
 const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
-  const selectedAvatar = useMemo(
-    () => AVATARS.find((avatar) => avatar.id === player.avatarId) ?? AVATARS[0],
-    [player.avatarId],
-  );
-
-  const playerName = (player.playerName || '').trim() || 'Player';
-
   const islandProgress = useMemo(() => {
     return ISLANDS.map(island => {
       const starredLevels = island.levels.filter(level => {
@@ -303,32 +296,14 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
 
   return (
     <div
-      className="premium-page-root premium-hub-map relative h-full w-full overflow-y-auto overflow-x-hidden"
+      className="premium-page-root premium-hub-map relative h-[100dvh] max-h-[100dvh] w-full overflow-hidden"
       style={{
-        WebkitOverflowScrolling: 'touch',
-        touchAction: 'pan-y',
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        overscrollBehaviorY: 'contain',
+        touchAction: 'manipulation',
       }}
     >
-      <div className="pointer-events-none fixed inset-x-0 top-0 z-40 flex justify-center px-3 pt-[max(0.5rem,env(safe-area-inset-top))]">
-        <div className="world-map-player-chip pointer-events-auto">
-          <span className="world-map-player-avatar" aria-hidden="true">
-            <img
-              src={selectedAvatar?.portrait || selectedAvatar?.image}
-              alt={selectedAvatar?.name || 'Avatar'}
-              className="h-full w-full object-contain"
-              draggable={false}
-            />
-          </span>
-          <span className="world-map-player-name">{playerName}</span>
-        </div>
-      </div>
-
       <div
         className="premium-map-stage premium-map-stage-fullscreen relative w-full"
-        style={{ minHeight: 'max(132dvh, calc(100vw * 2))' }}
+        style={{ height: '100%', minHeight: '100dvh' }}
       >
         <img
           src={universalMapPoster}
@@ -400,19 +375,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                     ) : null}
                   </motion.button>
 
-                  {isRecommended ? (
-                    <motion.div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute -top-3 left-1/2 z-20 -translate-x-1/2 rounded-full border border-amber-100/85 bg-[linear-gradient(180deg,rgba(253,224,71,0.95),rgba(245,158,11,0.95))] px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.09em] text-amber-950 shadow-[0_10px_18px_rgba(234,179,8,0.42)]"
-                      animate={{ y: [0, -2, 0], filter: ['brightness(1)', 'brightness(1.07)', 'brightness(1)'] }}
-                      transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-                    >
-                      <span className="inline-flex items-center gap-1">
-                        <Sparkles className="h-3 w-3" />
-                        Next Quest
-                      </span>
-                    </motion.div>
-                  ) : null}
                 </div>
 
                 <button
