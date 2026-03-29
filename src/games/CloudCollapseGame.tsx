@@ -210,7 +210,7 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
 
               <div className="grid w-full grid-cols-2 gap-3">
                 <div className="casual-panel-surface rounded-[1.2rem] p-3 md:rounded-[1.5rem] md:p-4">
-                  <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/60 md:text-[10px]">Score</div>
+                  <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/60 md:text-[10px]">XP</div>
                   <div className="mt-1 text-2xl font-black text-white md:text-4xl">{score}</div>
                 </div>
                 <div className="casual-panel-surface rounded-[1.2rem] p-3 md:rounded-[1.5rem] md:p-4">
