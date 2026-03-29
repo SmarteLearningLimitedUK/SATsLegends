@@ -60,9 +60,6 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       if (level.blueprintKey === 'perimeter_path') {
         return 'PerimeterPathGame';
       }
-      if (level.blueprintKey === 'volume_vault') {
-        return 'VolumeVaultGame';
-      }
       return 'MeasurementForgeGame';
     case 'tower_of_factors':
       if (level.blueprintKey === 'factor_frenzy') {

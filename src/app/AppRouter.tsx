@@ -188,9 +188,6 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         if (selectedLevel.blueprintKey === 'perimeter_path') {
           return renderFromRegistry('PerimeterPathGame', sharedProps);
         }
-        if (selectedLevel.blueprintKey === 'volume_vault') {
-          return renderFromRegistry('VolumeVaultGame', sharedProps);
-        }
         return renderFromRegistry('MeasurementForgeGame', sharedProps);
       case 'tower_of_factors':
         if (selectedLevel.blueprintKey === 'factor_frenzy') {

@@ -142,7 +142,6 @@ export const ISLANDS: IslandData[] = [
       { id: 1, stars: 0, isLocked: false, blueprintKey: 'time_keeper_cove', displayName: 'Chrono Dash: Time Trial', gameType: 'timekeeper_temple' },
       { id: 2, stars: 0, isLocked: false, blueprintKey: 'conversion_canyon', displayName: 'Conversion Canyon', gameType: 'measurement_forge' },
       { id: 3, stars: 0, isLocked: false, blueprintKey: 'perimeter_path', displayName: 'Perimeter Path', gameType: 'measurement_forge' },
-      { id: 5, stars: 0, isLocked: false, blueprintKey: 'volume_vault', displayName: 'Volume Vault', gameType: 'measurement_forge' },
     ],
   },
   {
