@@ -468,14 +468,16 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
           <motion.div
             animate={shakeShape ? { x: [0, -9, 8, -7, 6, -4, 0] } : { x: 0 }}
             transition={{ duration: 0.35 }}
-            className="relative min-h-[16.5rem] flex-1 overflow-hidden rounded-2xl border border-white/22 bg-slate-950/40"
+            className="relative min-h-[19rem] flex-1 overflow-hidden rounded-2xl border border-white/22 bg-slate-950/40"
           >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(56,189,248,0.2),transparent_28%),radial-gradient(circle_at_50%_92%,rgba(250,204,21,0.15),transparent_30%)]" />
-            <div className="relative h-full w-full p-1.5">
+            <div className="relative h-full w-full p-1">
               <PerimeterShapeRenderer
                 shape={question.shape}
                 highlightedEdgeId={highlightedEdgeId}
                 onHighlightEdge={setHighlightedEdgeId}
+                zoom={shapeZoom}
+                labelFontSize={labelFontSize}
               />
             </div>
           </motion.div>
