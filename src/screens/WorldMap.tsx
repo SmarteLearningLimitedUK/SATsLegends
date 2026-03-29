@@ -374,7 +374,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                     }}
                     disabled={!isUnlocked}
                     aria-label={`${island.name} label, ${starredCount}/${totalLevels} cleared`}
-                    className={`world-map-island-label absolute z-20 -translate-x-1/2 -translate-y-1/2 text-center text-white outline-none transition-all ${
+                    className={`world-map-island-label absolute z-20 -translate-x-1/2 text-center text-white outline-none transition-all ${
                       isUnlocked ? 'cursor-pointer' : 'cursor-not-allowed opacity-70 grayscale-[0.15]'
                     } focus-visible:ring-4 focus-visible:ring-cyan-300/70`}
                     style={{
