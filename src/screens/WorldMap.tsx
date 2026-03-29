@@ -4,22 +4,17 @@ import { Lock } from 'lucide-react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
 import universalMapPoster from '../assets/maps/worlsmap.png';
-import mapHeading1 from '../assets/maps/mapheadings/1.png';
-import mapHeading2 from '../assets/maps/mapheadings/2.png';
-import mapHeading3 from '../assets/maps/mapheadings/3.png';
-import mapHeading4 from '../assets/maps/mapheadings/4.png';
-import mapHeading5 from '../assets/maps/mapheadings/5.png';
-import mapHeading6 from '../assets/maps/mapheadings/6.png';
 
 interface WorldMapProps {
   player: PlayerData;
   onSelectIsland: (island: IslandData) => void;
 }
 
-type IslandBannerAnchor = {
+type IslandHotspot = {
   x: number;
   y: number;
   width: number;
+  height: number;
 };
 
 type AmbientRegion = {
@@ -40,22 +35,13 @@ type AmbientRegion = {
     | 'lava-spurts';
 };
 
-const ISLAND_BANNER_ANCHORS: Record<number, IslandBannerAnchor> = {
-  1: { x: 74, y: 84.5, width: 26 },
-  2: { x: 24, y: 47.5, width: 30 },
-  3: { x: 25, y: 65.5, width: 30 },
-  4: { x: 26, y: 84.5, width: 26 },
-  5: { x: 73, y: 49, width: 31 },
-  6: { x: 74, y: 29, width: 27 },
-};
-
-const ISLAND_NAME_BANNERS: Record<number, string> = {
-  1: mapHeading1,
-  2: mapHeading2,
-  3: mapHeading3,
-  4: mapHeading4,
-  5: mapHeading5,
-  6: mapHeading6,
+const ISLAND_HOTSPOTS: Record<number, IslandHotspot> = {
+  1: { x: 74, y: 75, width: 24, height: 15 },
+  2: { x: 24, y: 38, width: 24, height: 15 },
+  3: { x: 25, y: 56, width: 24, height: 15 },
+  4: { x: 26, y: 75, width: 24, height: 15 },
+  5: { x: 73, y: 40, width: 24, height: 15 },
+  6: { x: 74, y: 20, width: 24, height: 15 },
 };
 
 const MAP_AMBIENTS: AmbientRegion[] = [
@@ -240,21 +226,11 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
 };
 
 const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
-  const islandProgress = useMemo(() => (
-    ISLANDS.map(island => {
-      const starredLevels = island.levels.filter(level => {
-        const starKey = `${island.id}-${level.id}`;
-        return (player.levelStars[starKey] || 0) >= 1;
-      });
-      const completion = Math.round((starredLevels.length / island.levels.length) * 100);
-      const isUnlocked = player.unlockedIslands.includes(island.id);
-
-      return {
-        island,
-        isUnlocked,
-        completion,
-      };
-    })
+  const islandStates = useMemo(() => (
+    ISLANDS.map(island => ({
+      island,
+      isUnlocked: player.unlockedIslands.includes(island.id),
+    }))
   ), [player]);
 
   return (
@@ -292,10 +268,9 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
         </div>
 
         <div className="absolute inset-0 z-20">
-          {islandProgress.map(({ island, isUnlocked }) => {
-            const bannerAnchor = ISLAND_BANNER_ANCHORS[island.id];
-            const bannerAsset = ISLAND_NAME_BANNERS[island.id];
-            if (!bannerAnchor || !bannerAsset) return null;
+          {islandStates.map(({ island, isUnlocked }) => {
+            const hotspot = ISLAND_HOTSPOTS[island.id];
+            if (!hotspot) return null;
 
             return (
               <motion.button
@@ -309,29 +284,21 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                 disabled={!isUnlocked}
                 title={`${island.name}${isUnlocked ? '' : ' - locked'}`}
                 aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
-                className={`absolute z-20 -translate-x-1/2 text-center outline-none transition-all ${
-                  isUnlocked ? 'cursor-pointer' : 'cursor-not-allowed opacity-80'
+                className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-[2rem] bg-transparent outline-none transition-all ${
+                  isUnlocked ? 'cursor-pointer' : 'cursor-not-allowed'
                 } focus-visible:ring-4 focus-visible:ring-cyan-300/70`}
                 style={{
-                  left: `${bannerAnchor.x}%`,
-                  top: `${bannerAnchor.y}%`,
-                  width: `${bannerAnchor.width}%`,
+                  left: `${hotspot.x}%`,
+                  top: `${hotspot.y}%`,
+                  width: `${hotspot.width}%`,
+                  height: `${hotspot.height}%`,
                 }}
               >
-                <img
-                  src={bannerAsset}
-                  alt={island.name}
-                  className={`block h-auto w-full select-none drop-shadow-[0_10px_18px_rgba(2,6,23,0.42)] ${
-                    isUnlocked ? '' : 'grayscale-[0.35] brightness-[0.88]'
-                  }`}
-                  draggable={false}
-                />
+                <span className="sr-only">{island.name}</span>
                 {!isUnlocked ? (
-                  <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                    <span className="inline-flex items-center gap-1 rounded-full border border-slate-100/35 bg-slate-900/78 px-2 py-1 text-[9px] font-black uppercase tracking-[0.08em] text-slate-100">
-                      <Lock className="h-3 w-3" />
-                      Locked
-                    </span>
+                  <span className="pointer-events-none absolute left-1/2 top-1/2 inline-flex -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-full border border-slate-100/35 bg-slate-900/78 px-2 py-1 text-[9px] font-black uppercase tracking-[0.08em] text-slate-100">
+                    <Lock className="h-3 w-3" />
+                    Locked
                   </span>
                 ) : null}
               </motion.button>
