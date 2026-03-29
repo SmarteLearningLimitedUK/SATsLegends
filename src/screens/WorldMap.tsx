@@ -404,14 +404,15 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                           ? 'world-map-island-label-face-idle'
                           : 'world-map-island-label-face-progress'
                     } ${isRecommended ? 'ring-2 ring-amber-200/85 ring-offset-2 ring-offset-blue-950/60' : ''}`}
+                    style={{
+                      minWidth: '7.25rem',
+                      padding: '0.4rem 0.75rem 0.5rem',
+                    }}
                   >
-                    <span className="world-map-island-label-text block truncate whitespace-nowrap text-[10px] font-black uppercase leading-none tracking-[0.06em] md:text-[12px]">
+                    <span className="world-map-island-label-text block truncate whitespace-nowrap text-[9px] font-black uppercase leading-none tracking-[0.05em] md:text-[11px]">
                       {ISLAND_LABELS[island.id] || island.name}
                     </span>
-                    <span className="relative z-[2] mt-0.5 block text-[9px] font-black uppercase leading-none tracking-[0.08em] text-cyan-100/92 md:text-[10px]">
-                      {completion}% Complete
-                    </span>
-                    <span className="relative z-[2] mt-1 block h-[7px] w-full overflow-hidden rounded-full border border-white/35 bg-slate-900/70 md:h-[8px]">
+                    <span className="relative z-[2] mt-1.5 block h-[6px] w-full overflow-hidden rounded-full border border-white/35 bg-slate-900/70 md:h-[7px]">
                       <span
                         className="block h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-300 to-emerald-300 transition-all duration-300"
                         style={{ width: `${completion}%` }}

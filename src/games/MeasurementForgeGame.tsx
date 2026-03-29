@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
-import scaleImage from '../assets/measurement/scale_master_scale.svg';
+import scaleSheet from '../assets/measurement/weighscaleanimsheet.png';
 
 interface MeasurementForgeGameProps {
   levelId: number;
@@ -21,6 +21,10 @@ interface RoundData {
 }
 
 const TOTAL_ROUNDS = 5;
+const SCALE_FRAME_SIZE = {
+  columns: 2,
+  rows: 3,
+} as const;
 
 const STAGE_DENOMS: number[][] = [
   [50, 100, 150, 200, 250, 300],
@@ -75,6 +79,23 @@ const scoreToStars = (XP: number) => {
   return 1;
 };
 
+type ScaleFrameKey =
+  | 'right_light'
+  | 'left_light'
+  | 'left_heavy'
+  | 'right_heavy'
+  | 'left_mid'
+  | 'balanced';
+
+const SCALE_FRAME_POSITION: Record<ScaleFrameKey, { x: number; y: number }> = {
+  right_light: { x: 0, y: 0 },
+  left_light: { x: 100, y: 0 },
+  left_heavy: { x: 0, y: 50 },
+  right_heavy: { x: 100, y: 50 },
+  left_mid: { x: 0, y: 100 },
+  balanced: { x: 100, y: 100 },
+};
+
 const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
   levelId,
   avatarId: _avatarId,
@@ -106,6 +127,21 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
     .filter((token): token is WeightToken => !!token);
 
   const currentGrams = placedTokens.reduce((sum, token) => sum + token.grams, 0);
+  const weightDelta = currentGrams - round.targetGrams;
+  const deltaRatio = round.targetGrams > 0 ? Math.abs(weightDelta) / round.targetGrams : 0;
+
+  const activeScaleFrame = useMemo<ScaleFrameKey>(() => {
+    if (Math.abs(weightDelta) <= 1) return 'balanced';
+    if (weightDelta < 0) {
+      if (deltaRatio >= 0.5) return 'left_heavy';
+      if (deltaRatio >= 0.16) return 'left_mid';
+      return 'left_light';
+    }
+    if (deltaRatio >= 0.5) return 'right_heavy';
+    return 'right_light';
+  }, [deltaRatio, weightDelta]);
+
+  const scaleFramePosition = SCALE_FRAME_POSITION[activeScaleFrame];
 
   const unplacedTokens = round.tokens.filter((token) => !placedIds.includes(token.id));
 
@@ -150,49 +186,73 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
   return (
     <div ref={rootRef} className="relative h-full w-full overflow-hidden bg-[#07122b]">
       <div className="relative z-0 flex h-full w-full flex-col items-center justify-between px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(0.2rem,env(safe-area-inset-top))]">
-        <div className="relative mt-[clamp(4.4rem,10vh,6.6rem)] w-[min(48vw,13.75rem)] aspect-[1200/760]">
-          <img
-            src={scaleImage}
-            alt="Scale"
-            draggable={false}
-            className="pointer-events-none absolute inset-0 h-full w-full select-none object-contain"
+        <motion.div
+          animate={successPulse ? { scale: [1, 1.03, 1] } : { scale: 1 }}
+          transition={{ duration: 0.42, ease: 'easeOut' }}
+          className="relative mt-[calc(clamp(4.4rem,10vh,6.6rem)+50px)] w-[min(62vw,18rem)] aspect-square"
+        >
+          <motion.div
+            aria-hidden="true"
+            animate={
+              activeScaleFrame === 'balanced'
+                ? { y: [0, -1.5, 0] }
+                : { y: [0, -3, 0], rotate: successPulse ? [0, 1, -1, 0] : 0 }
+            }
+            transition={
+              activeScaleFrame === 'balanced'
+                ? { duration: 2.2, repeat: Infinity, ease: 'easeInOut' }
+                : { duration: 1.4, repeat: Infinity, ease: 'easeInOut' }
+            }
+            className="pointer-events-none absolute inset-0"
+            style={{
+              backgroundImage: `url(${scaleSheet})`,
+              backgroundSize: `${SCALE_FRAME_SIZE.columns * 100}% ${SCALE_FRAME_SIZE.rows * 100}%`,
+              backgroundPosition: `${scaleFramePosition.x}% ${scaleFramePosition.y}%`,
+              backgroundRepeat: 'no-repeat',
+            }}
           />
 
           <div
-            className={`absolute left-1/2 top-[52.5%] w-[54%] -translate-x-1/2 -translate-y-1/2 rounded-2xl px-2 py-2 text-center ${
-              successPulse ? 'bg-emerald-400/28' : 'bg-black/24'
+            className={`absolute left-[14%] top-[17%] flex min-h-[16%] w-[23%] items-center justify-center rounded-[1.25rem] px-2 py-1.5 text-center ${
+              successPulse ? 'bg-emerald-400/24' : 'bg-slate-950/30'
             }`}
           >
-            <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/85">Target</div>
-            <div className="text-xl font-black text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.45)]">
-              {toKgLabel(round.targetGrams)}
-            </div>
-            <div className="mt-1 text-[11px] font-bold text-white/85">
-              {currentGrams.toLocaleString()} g
+            <div>
+              <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/80">Target</div>
+              <div className="text-[clamp(0.72rem,2vw,0.9rem)] font-black leading-tight text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.45)]">
+                {toKgLabel(round.targetGrams)}
+              </div>
             </div>
           </div>
 
           <div
             ref={dropRef}
-            className={`absolute left-1/2 top-[16.8%] h-[16%] w-[68%] -translate-x-1/2 rounded-[1.6rem] border-2 ${
+            className={`absolute left-[63%] top-[17%] h-[15%] w-[23%] -translate-x-1/2 rounded-[1.35rem] border-2 ${
               successPulse
-                ? 'border-emerald-300 bg-emerald-300/18'
-                : 'border-white/42 bg-white/6'
+                ? 'border-emerald-300 bg-emerald-300/20'
+                : 'border-white/38 bg-white/8'
             }`}
           />
 
-          <div className="absolute left-1/2 top-[17.5%] flex h-[15%] w-[66%] -translate-x-1/2 flex-wrap content-start justify-center gap-1.5 overflow-hidden px-2 pt-1">
+          <div className="absolute left-[63%] top-[17.6%] flex h-[14%] w-[23%] -translate-x-1/2 flex-wrap content-start justify-center gap-1 overflow-hidden px-1.5 pt-1">
             {placedTokens.map((token) => (
               <button
                 key={token.id}
                 onClick={() => removePlacedToken(token.id)}
-                className="min-w-[2.7rem] rounded-full bg-[#0b2d68]/80 px-2 py-1 text-xs font-black text-white ring-1 ring-white/30"
+                className="min-w-[2rem] rounded-full bg-[#0b2d68]/84 px-1.5 py-0.5 text-[10px] font-black text-white ring-1 ring-white/30"
               >
                 {token.grams}
               </button>
             ))}
           </div>
-        </div>
+
+          <div className="absolute left-1/2 top-[64%] w-[58%] -translate-x-1/2 rounded-[1.3rem] bg-slate-950/32 px-3 py-2 text-center">
+            <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/80">Current Weight</div>
+            <div className="text-lg font-black text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.45)]">
+              {currentGrams.toLocaleString()} g
+            </div>
+          </div>
+        </motion.div>
 
         <div className="relative w-full max-w-xl pb-1">
           <div className="flex flex-wrap items-center justify-center gap-2.5">

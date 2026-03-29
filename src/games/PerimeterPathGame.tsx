@@ -482,60 +482,23 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
             </div>
           </motion.div>
 
-          {question.mode === 'mcq' ? (
-            <div className="shrink-0 grid grid-cols-2 gap-2">
-              {question.options.map((option) => (
-                <motion.button
-                  key={option}
-                  whileTap={{ scale: 0.96 }}
-                  onClick={() => handleOptionTap(option)}
-                  disabled={locked}
-                  className={`h-14 rounded-2xl border text-xl font-black shadow-[0_8px_16px_rgba(2,6,23,0.35)] ${
-                    selectedOption === option
-                      ? 'border-yellow-200/80 bg-[linear-gradient(180deg,#fcd34d,#f59e0b)] text-amber-950'
-                      : 'border-sky-100/30 bg-slate-900/72 text-white'
-                  }`}
-                >
-                  {option}
-                </motion.button>
-              ))}
-            </div>
-          ) : (
-            <div className="shrink-0 rounded-2xl border border-sky-100/25 bg-slate-950/54 p-2.5">
-              <div className="mb-2 flex items-center justify-between">
-                <div className="text-xs font-black uppercase tracking-[0.12em] text-sky-100/78">Answer ({question.answerUnit})</div>
-                <div className="rounded-xl border border-yellow-100/40 bg-amber-400/12 px-2.5 py-1 text-sm font-black text-amber-100">
-                  {inputAnswer || '—'}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2">
-                {['1', '2', '3', '4', '5', '6', '7', '8', '9', 'clear', '0', 'back'].map((key) => (
-                  <motion.button
-                    key={key}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => handleInputPad(key)}
-                    disabled={locked}
-                    className="h-11 rounded-xl border border-sky-100/28 bg-slate-900/72 text-base font-black text-white shadow-[0_6px_12px_rgba(2,6,23,0.3)]"
-                  >
-                    {key === 'clear' ? 'C' : key === 'back' ? '⌫' : key}
-                  </motion.button>
-                ))}
-              </div>
-
+          <div className="shrink-0 grid grid-cols-2 gap-2">
+            {question.options.map((option) => (
               <motion.button
-                whileTap={{ scale: 0.97 }}
-                onClick={() => {
-                  if (!canSubmitInput) return;
-                  submitAnswer(Number(inputAnswer));
-                }}
-                disabled={!canSubmitInput}
-                className="mt-2.5 h-12 w-full rounded-2xl border border-yellow-200/75 bg-[linear-gradient(180deg,#fde047,#f59e0b)] text-lg font-black uppercase tracking-[0.1em] text-amber-950 shadow-[0_10px_18px_rgba(2,6,23,0.35)] disabled:opacity-45"
+                key={option}
+                whileTap={{ scale: 0.96 }}
+                onClick={() => handleOptionTap(option)}
+                disabled={locked}
+                className={`h-14 rounded-2xl border text-xl font-black shadow-[0_8px_16px_rgba(2,6,23,0.35)] ${
+                  selectedOption === option
+                    ? 'border-yellow-200/80 bg-[linear-gradient(180deg,#fcd34d,#f59e0b)] text-amber-950'
+                    : 'border-sky-100/30 bg-slate-900/72 text-white'
+                }`}
               >
-                Check
+                {option}
               </motion.button>
-            </div>
-          )}
+            ))}
+          </div>
 
           <div className={`shrink-0 rounded-xl border px-3 py-2 text-center text-sm font-bold ${
             feedback?.type === 'correct'
