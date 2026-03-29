@@ -309,7 +309,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
         <div
           className="relative overflow-visible"
           style={{
-            width: '118%',
+            width: '126%',
             left: '50%',
             transform: 'translateX(-50%)',
           }}
