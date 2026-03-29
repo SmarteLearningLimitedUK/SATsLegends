@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Lock, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
 import universalMapPoster from '../assets/maps/finalamendedworldmap.png';
@@ -45,8 +45,8 @@ type IslandState = {
 
 const POSITION_HOTSPOTS = {
   bottomRight: { x: 74, y: 75, width: 24, height: 15 },
-  topLeft: { x: 24, y: 38, width: 24, height: 15 },
-  middleLeft: { x: 25, y: 56, width: 24, height: 15 },
+  topLeft: { x: 23.2, y: 39.4, width: 24, height: 15 },
+  middleLeft: { x: 25, y: 57.5, width: 24, height: 15 },
   bottomLeft: { x: 26, y: 75, width: 24, height: 15 },
   middleRight: { x: 73, y: 40, width: 24, height: 15 },
   topRight: { x: 74, y: 20, width: 24, height: 15 },
@@ -296,60 +296,32 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
             const hotspot = POSITION_HOTSPOTS[ISLAND_POSITION_BY_ID[island.id]];
             if (!hotspot) return null;
 
-            const isSelected = selectedIslandId === island.id;
-            const pillTop = hotspot.y + hotspot.height / 2 + 1.15;
-            const pillWidth = island.name.length > 15 ? '7.6rem' : island.name.length > 12 ? '6.9rem' : '6.1rem';
+            const pillTop = hotspot.y + hotspot.height / 2 + 0.85;
+            const pillWidth = island.name.length > 15 ? '5.3rem' : island.name.length > 12 ? '4.9rem' : '4.5rem';
 
             return (
-              <React.Fragment key={island.id}>
-                <div
-                  className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2"
-                  style={{
-                    left: `${hotspot.x}%`,
-                    top: `${hotspot.y}%`,
-                    width: `${hotspot.width}%`,
-                    height: `${hotspot.height}%`,
-                  }}
-                >
-                  <motion.span
-                    aria-hidden="true"
-                    className="absolute inset-[10%] rounded-[2rem]"
-                    animate={{
-                      opacity: isSelected ? 0.98 : 0.76,
-                      scale: isSelected ? 1.08 : 1,
-                      boxShadow: isSelected
-                        ? '0 0 0 2px rgba(253,224,71,0.58), 0 0 32px rgba(34,211,238,0.58), 0 0 64px rgba(59,130,246,0.34)'
-                        : '0 0 0 1px rgba(255,255,255,0.12), 0 0 16px rgba(34,211,238,0.34), 0 0 28px rgba(59,130,246,0.18)',
-                    }}
-                    transition={{ duration: 0.28, ease: 'easeOut' }}
-                    style={{
-                      background: isUnlocked
-                        ? 'radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(34,211,238,0.24) 34%, rgba(37,99,235,0.16) 56%, rgba(2,6,23,0) 78%)'
-                        : 'radial-gradient(circle, rgba(255,255,255,0.06) 0%, rgba(148,163,184,0.12) 34%, rgba(15,23,42,0.1) 56%, rgba(2,6,23,0) 78%)',
-                    }}
-                  />
-                </div>
-
-                <motion.button
-                  type="button"
-                  whileTap={{ scale: 0.96 }}
-                  whileHover={{ scale: 1.02 }}
-                  onClick={() => setSelectedIslandId(island.id)}
-                  aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
-                  className={`absolute z-30 -translate-x-1/2 rounded-full border px-3 py-[0.34rem] text-center text-[7px] font-black uppercase tracking-[0.045em] text-white shadow-[0_5px_12px_rgba(2,6,23,0.26)] outline-none transition-all ${
-                    isUnlocked
-                      ? 'border-sky-200/30 bg-[linear-gradient(180deg,rgba(22,57,125,0.98),rgba(10,31,84,0.99))]'
-                      : 'border-slate-200/20 bg-[linear-gradient(180deg,rgba(56,69,96,0.95),rgba(21,29,43,0.98))] opacity-80'
-                  } focus-visible:ring-4 focus-visible:ring-cyan-300/70`}
-                  style={{
-                    left: `${hotspot.x}%`,
-                    top: `${pillTop}%`,
-                    minWidth: pillWidth,
-                  }}
-                >
-                  <span className="block truncate whitespace-nowrap">{island.name}</span>
-                </motion.button>
-              </React.Fragment>
+              <motion.button
+                key={island.id}
+                type="button"
+                whileTap={{ scale: 0.96 }}
+                whileHover={{ scale: 1.02 }}
+                onClick={() => setSelectedIslandId(island.id)}
+                aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
+                className={`absolute z-30 -translate-x-1/2 rounded-full border px-2 py-[0.28rem] text-center font-black uppercase text-cyan-50 outline-none transition-all focus-visible:ring-4 focus-visible:ring-cyan-300/70 ${
+                  isUnlocked
+                    ? 'border-sky-200/18 bg-[linear-gradient(180deg,rgba(18,45,102,0.98),rgba(8,23,67,0.99))] shadow-[0_4px_10px_rgba(2,6,23,0.22)]'
+                    : 'border-slate-200/16 bg-[linear-gradient(180deg,rgba(54,66,92,0.95),rgba(21,29,43,0.98))] opacity-80 shadow-[0_4px_10px_rgba(2,6,23,0.2)]'
+                }`}
+                style={{
+                  left: `${hotspot.x}%`,
+                  top: `${pillTop}%`,
+                  minWidth: pillWidth,
+                }}
+              >
+                <span className="block truncate whitespace-nowrap text-[6px] tracking-[0.12em] drop-shadow-[0_1px_0_rgba(255,255,255,0.12)]">
+                  {island.name}
+                </span>
+              </motion.button>
             );
           })}
         </div>
