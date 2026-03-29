@@ -13,12 +13,12 @@ import {
 interface DailyRewardsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  streak: number;
+  Combo: number;
   onClaim: (reward: { type: string, amount: number }) => void;
   claimedToday: boolean;
 }
 
-const DailyRewardsModal: React.FC<DailyRewardsModalProps> = ({ isOpen, onClose, streak, onClaim, claimedToday }) => {
+const DailyRewardsModal: React.FC<DailyRewardsModalProps> = ({ isOpen, onClose, Combo, onClaim, claimedToday }) => {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -42,7 +42,7 @@ const DailyRewardsModal: React.FC<DailyRewardsModalProps> = ({ isOpen, onClose, 
               </div>
 
               <PremiumHeaderBar
-                eyebrow="Streak bonuses"
+                eyebrow="Daily bonuses"
                 title="Daily Rewards"
                 className="w-full"
               />
@@ -55,8 +55,8 @@ const DailyRewardsModal: React.FC<DailyRewardsModalProps> = ({ isOpen, onClose, 
 
               <div className="mb-4 grid w-full grid-cols-4 gap-1.5 md:mb-8 md:grid-cols-7 md:gap-3">
                 {DAILY_REWARDS.map((day, idx) => {
-                  const isCurrent = idx + 1 === (streak % 7 || 7);
-                  const isPast = idx + 1 < (streak % 7 || 7);
+                  const isCurrent = idx + 1 === (Combo % 7 || 7);
+                  const isPast = idx + 1 < (Combo % 7 || 7);
 
                   return (
                     <div
@@ -76,12 +76,12 @@ const DailyRewardsModal: React.FC<DailyRewardsModalProps> = ({ isOpen, onClose, 
               <FramedPanel className="mb-4 w-full rounded-[1.1rem] p-3 text-white md:mb-8 md:rounded-3xl md:p-6">
                 <div className="flex items-center justify-between gap-4">
                   <div className="text-left">
-                    <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/60 md:text-xs md:tracking-widest">Current Streak</div>
-                    <div className="text-xl font-black text-white md:text-3xl">{streak} DAYS</div>
+                    <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/60 md:text-xs md:tracking-widest">Current Run</div>
+                    <div className="text-xl font-black text-white md:text-3xl">{Combo} DAYS</div>
                   </div>
                   <div className="flex gap-1">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <AssetIcon key={i} name={i < (streak % 5) ? 'star' : 'starOutline'} className="h-4 w-4 md:h-5 md:w-5" />
+                      <AssetIcon key={i} name={i < (Combo % 5) ? 'star' : 'starOutline'} className="h-4 w-4 md:h-5 md:w-5" />
                     ))}
                   </div>
                 </div>
@@ -94,7 +94,7 @@ const DailyRewardsModal: React.FC<DailyRewardsModalProps> = ({ isOpen, onClose, 
                 <PrimaryActionButton
                   disabled={claimedToday}
                   onClick={() => {
-                    const currentDay = DAILY_REWARDS[(streak - 1) % 7];
+                    const currentDay = DAILY_REWARDS[(Combo - 1) % 7];
                     onClaim(currentDay.reward);
                   }}
                   className={`w-full rounded-[1.1rem] py-3.5 text-sm font-black transition-all md:rounded-3xl md:py-6 md:text-2xl ${

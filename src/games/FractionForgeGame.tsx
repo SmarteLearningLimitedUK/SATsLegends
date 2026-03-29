@@ -12,8 +12,8 @@ interface FractionForgeGameProps {
   avatarId: string;
   useSharedTopHud?: boolean;
   isBoss?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -182,7 +182,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   const [dragState, setDragState] = useState<DragState | null>(null);
   const [timeLeft, setTimeLeft] = useState(() => Math.max(40, 58 - (Math.max(1, levelId) * 2)));
   const [lives, setLives] = useState(10);
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [isResolving, setIsResolving] = useState(false);
@@ -191,7 +191,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   const playfieldRef = useRef<HTMLDivElement | null>(null);
   const endedRef = useRef(false);
   const scoreRef = useRef(0);
-  scoreRef.current = score;
+  scoreRef.current = XP;
 
   const resolvedLevel = useMemo(
     () => Math.max(1, Math.min(10, miniGameLevel || levelId || 1)),
@@ -440,7 +440,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
 
     if (isCorrect) {
       const awarded = 120 + Math.max(0, Math.floor(timeLeft * 1.25));
-      const nextScore = score + awarded;
+      const nextScore = XP + awarded;
       const nextCorrect = correctAnswers + 1;
       setScore(nextScore);
       setCorrectAnswers(nextCorrect);
@@ -471,7 +471,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
 
     if (nextLives <= 0) {
       endedRef.current = true;
-      window.setTimeout(() => onGameOver(score), 460);
+      window.setTimeout(() => onGameOver(XP), 460);
       return;
     }
 
@@ -489,7 +489,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     resolvedLevel,
     round.sortedIds,
     roundIndex,
-    score,
+    XP,
     targetSlots,
     timeLeft,
     totalRounds,

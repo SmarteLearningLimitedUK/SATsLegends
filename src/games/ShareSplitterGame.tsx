@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { Check, RefreshCcw, Timer as TimerIcon, Trophy } from 'lucide-react';
@@ -14,8 +14,8 @@ import coinAsset from '../assets/fantasy_hero/ui/coin.png';
 interface ShareSplitterGameProps {
   levelId: number;
   avatarId: string;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -106,9 +106,9 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   onGameOver,
   onBack,
 }) => {
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(ROUND_DURATION_SECONDS);
-  const [streak, setStreak] = useState(0);
+  const [Combo, setStreak] = useState(0);
   const [challengesSolved, setChallengesSolved] = useState(0);
   const [challenge, setChallenge] = useState<ShareChallenge>(() => createChallenge(levelId));
   const [plates, setPlates] = useState<string[][]>(() => createEmptyPlates());
@@ -125,14 +125,14 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const targetScore = BASE_TARGET_SCORE + (levelId * TARGET_SCORE_PER_LEVEL);
   const usedSlices = plates.reduce((sum, plate) => sum + plate.length, 0);
   const slicesRemaining = Math.max(0, challenge.totalSlices - usedSlices);
-  const progressPct = Math.min((score / targetScore) * 100, 100);
+  const progressPct = Math.min((XP / targetScore) * 100, 100);
 
   const resultStars = useMemo(() => {
-    if (score >= targetScore * 1.8) return 3;
-    if (score >= targetScore * 1.35) return 2;
-    if (score >= targetScore) return 1;
+    if (XP >= targetScore * 1.8) return 3;
+    if (XP >= targetScore * 1.35) return 2;
+    if (XP >= targetScore) return 1;
     return 0;
-  }, [score, targetScore]);
+  }, [XP, targetScore]);
 
   const clearTransitionTimer = () => {
     if (timeoutRef.current) {
@@ -197,7 +197,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       setTimeLeft((previous) => {
         if (previous <= 1) {
           clearInterval(timer);
-          finishRun(score);
+          finishRun(XP);
           return 0;
         }
         return previous - 1;
@@ -205,7 +205,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [finishRun, finished, score, submitting]);
+  }, [finishRun, finished, XP, submitting]);
 
   const selectPoolSlice = (sliceId: string) => {
     if (finished || submitting) return;
@@ -265,8 +265,8 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     const correct = plates.every((plate, index) => plate.length === challenge.requiredPerMonster[index]);
 
     if (correct) {
-      const gain = 180 + Math.floor(timeLeft * 1.4) + (streak * 35);
-      const nextScore = score + gain;
+      const gain = 180 + Math.floor(timeLeft * 1.4) + (Combo * 35);
+      const nextScore = XP + gain;
       const nextSolved = challengesSolved + 1;
       setScore(nextScore);
       setStreak((previous) => previous + 1);
@@ -308,7 +308,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       <div className="ui-panel-unified flex items-center justify-between gap-2 rounded-[1.2rem] border border-white/16 bg-[linear-gradient(180deg,rgba(14,116,144,0.82),rgba(30,64,175,0.84))] px-3 py-2 text-white shadow-[0_10px_22px_rgba(15,23,42,0.3)] md:px-4">
         <div className="flex items-center gap-2 rounded-full bg-black/20 px-2 py-1">
           <img src={coinAsset} alt="" className="h-4 w-4 md:h-5 md:w-5" draggable={false} />
-          <span className="text-xs font-black md:text-sm">{score}</span>
+          <span className="text-xs font-black md:text-sm">{XP}</span>
         </div>
         <div className="hidden items-center gap-2 rounded-full bg-black/20 px-2 py-1 md:flex">
           <AssetIcon name="trophy" className="h-4 w-4 md:h-5 md:w-5" />
@@ -395,7 +395,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                       ? 'bg-emerald-500/24 text-emerald-100'
                       : 'bg-black/26 text-cyan-100'
                   }`}>
-                    Need {target} • Have {served}
+                    Need {target} � Have {served}
                   </div>
                 </div>
               </div>
@@ -413,7 +413,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
             <div className="text-[11px] font-black uppercase tracking-[0.12em] text-cyan-100">Cake Supply</div>
             <div className="rounded-full bg-black/24 px-2 py-0.5 text-[11px] font-black text-white">
               Remaining: <span className={slicesRemaining === 0 ? 'text-emerald-300' : 'text-amber-200'}>{slicesRemaining}</span>
-              <span className="ml-3 text-cyan-100/90">Streak: {streak}</span>
+              <span className="ml-3 text-cyan-100/90">Combo: {Combo}</span>
             </div>
           </div>
 
@@ -493,14 +493,14 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
           <div className="ui-panel-unified w-[min(92vw,26rem)] rounded-[1.6rem] border border-white/18 bg-[linear-gradient(180deg,rgba(30,64,175,0.88),rgba(15,23,42,0.9))] p-5 text-center shadow-[0_24px_40px_rgba(15,23,42,0.45)]">
             <Trophy className="mx-auto h-10 w-10 text-yellow-300" />
             <div className="mt-2 text-xl font-black text-white">Round Complete</div>
-            <div className="mt-1 text-sm font-bold text-cyan-100">Score: {score}</div>
+            <div className="mt-1 text-sm font-bold text-cyan-100">XP: {XP}</div>
             <div className="mt-1 text-sm font-bold text-cyan-100">Solved: {challengesSolved}</div>
             <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-black/22 px-3 py-1 text-xs font-black uppercase tracking-[0.14em] text-yellow-200">
               <AssetIcon name="star" className="h-4 w-4" />
               {resultStars > 0 ? `${resultStars} Star${resultStars > 1 ? 's' : ''}` : 'No Stars'}
             </div>
             <div className="mt-3 text-xs font-bold text-white/80">
-              {resultStars > 0 ? 'Great serving run.' : 'Target score not reached this time.'}
+              {resultStars > 0 ? 'Great serving run.' : 'Target XP not reached this time.'}
             </div>
           </div>
         </div>

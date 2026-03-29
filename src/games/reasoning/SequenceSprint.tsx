@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Trophy, Heart, Timer, ArrowLeft, ArrowRight } from '../../components/GameIcons';
 
 interface SequenceSprintProps {
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -15,7 +15,7 @@ interface SequenceRound {
 }
 
 const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, onBack }) => {
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [timeLeft, setTimeLeft] = useState(60);
   const [round, setRound] = useState<SequenceRound | null>(null);
@@ -71,7 +71,7 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
       });
 
       // Spawn items
-      const spawnRate = Math.max(1500, 3000 - (score / 10));
+      const spawnRate = Math.max(1500, 3000 - (XP / 10));
       if (time - lastSpawnRef.current > spawnRate) {
         const newItems = round.options.map((val, idx) => ({
           id: itemIdRef.current++,
@@ -90,7 +90,7 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
     return () => {
       if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current);
     };
-  }, [gameActive, lane, round, score, speed]);
+  }, [gameActive, lane, round, XP, speed]);
 
   useEffect(() => {
     if (timeLeft > 0 && gameActive) {
@@ -98,14 +98,14 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
       return () => clearInterval(timer);
     } else if (timeLeft === 0) {
       setGameActive(false);
-      onVictory(3, score);
+      onVictory(3, XP);
     }
   }, [timeLeft, gameActive]);
 
   useEffect(() => {
     if (lives <= 0) {
       setGameActive(false);
-      onGameOver(score);
+      onGameOver(XP);
     }
   }, [lives]);
 
@@ -141,7 +141,7 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
       <div className="absolute top-0 left-0 right-0 p-3 md:p-6 flex justify-between items-center z-20 bg-black/20 backdrop-blur-xl border-b border-white/10">
         <div className="flex items-center gap-2 md:gap-3 bg-white/20 px-4 md:px-6 py-2 md:py-3 rounded-xl md:rounded-2xl border border-white/20">
           <Trophy className="text-yellow-400 w-4 h-4 md:w-6 md:h-6 filter drop-shadow-md" />
-          <span className="text-white text-lg md:text-2xl font-black">{score}</span>
+          <span className="text-white text-lg md:text-2xl font-black">{XP}</span>
         </div>
         <div className="flex items-center gap-3 md:gap-6">
           <div className="flex gap-1 md:gap-2">

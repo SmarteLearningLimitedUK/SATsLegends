@@ -9,8 +9,8 @@ import primePopBackground from '../assets/maps/primepopbkground.jpg';
 interface PrimePopGameProps {
   levelId: number;
   avatarId: string;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -131,9 +131,9 @@ const getConfig = (levelId: number): PrimePopConfig => {
   };
 };
 
-const scoreToStars = (score: number, target: number, primeAccuracy: number) => {
-  if (score >= target * 1.35 && primeAccuracy >= 0.65) return 3;
-  if (score >= target * 0.9) return 2;
+const scoreToStars = (XP: number, target: number, primeAccuracy: number) => {
+  if (XP >= target * 1.35 && primeAccuracy >= 0.65) return 3;
+  if (XP >= target * 0.9) return 2;
   return 1;
 };
 
@@ -220,7 +220,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
   const onVictoryRef = useRef(onVictory);
   const onGameOverRef = useRef(onGameOver);
 
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(config.roundSeconds);
   const [lives, setLives] = useState(INITIAL_LIVES);
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -241,7 +241,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
   const totalPopsRef = useRef(0);
 
   const targetScore = config.targetScore;
-  const progress = Math.min((score / Math.max(targetScore, 1)) * 100, 100);
+  const progress = Math.min((XP / Math.max(targetScore, 1)) * 100, 100);
   const healthHearts = useMemo(() => (
     <div className="flex items-center justify-center gap-1">
       {Array.from({ length: INITIAL_LIVES }).map((_, index) => (
@@ -534,7 +534,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
         <GameplayHUD
           title="Prime Pop"
           avatar={avatar}
-          score={score}
+          XP={XP}
           targetScore={targetScore}
           timeLeft={timeLeft}
           progress={progress}

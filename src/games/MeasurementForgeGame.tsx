@@ -5,8 +5,8 @@ import scaleImage from '../assets/measurement/scale_master_scale.svg';
 interface MeasurementForgeGameProps {
   levelId: number;
   avatarId: string;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -69,9 +69,9 @@ const buildRound = (levelId: number, roundIndex: number): RoundData => {
   return { targetGrams, tokens };
 };
 
-const scoreToStars = (score: number) => {
-  if (score >= 2200) return 3;
-  if (score >= 1400) return 2;
+const scoreToStars = (XP: number) => {
+  if (XP >= 2200) return 3;
+  if (XP >= 1400) return 2;
   return 1;
 };
 
@@ -85,7 +85,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
   const [roundIndex, setRoundIndex] = useState(0);
   const [round, setRound] = useState<RoundData>(() => buildRound(levelId, 0));
   const [placedIds, setPlacedIds] = useState<string[]>([]);
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [successPulse, setSuccessPulse] = useState(false);
 
   const rootRef = useRef<HTMLDivElement>(null);
@@ -128,7 +128,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
     if (currentGrams !== round.targetGrams) return;
 
     setSuccessPulse(true);
-    const nextScore = score + 350 + (roundIndex * 70);
+    const nextScore = XP + 350 + (roundIndex * 70);
     setScore(nextScore);
 
     const timeout = window.setTimeout(() => {
@@ -145,7 +145,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
     }, 700);
 
     return () => window.clearTimeout(timeout);
-  }, [currentGrams, levelId, onVictory, round.targetGrams, roundIndex, score]);
+  }, [currentGrams, levelId, onVictory, round.targetGrams, roundIndex, XP]);
 
   return (
     <div ref={rootRef} className="relative h-full w-full overflow-hidden bg-[#07122b]">

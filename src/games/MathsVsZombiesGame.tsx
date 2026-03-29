@@ -18,8 +18,8 @@ interface MathsVsZombiesGameProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -107,7 +107,7 @@ const iconFor = (icon: DefenderIcon) => {
   }
 };
 
-const TopBar = ({ score, brainPoints, health, timer, onBack }: { score: number; brainPoints: number; health: number; timer: string; onBack: () => void }) => (
+const TopBar = ({ XP, brainPoints, health, timer, onBack }: { XP: number; brainPoints: number; health: number; timer: string; onBack: () => void }) => (
   <div className="z-50 w-full px-4 pt-4">
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3 rounded-xl border border-blue-400/30 bg-blue-900/60 p-2 shadow-lg">
@@ -129,8 +129,8 @@ const TopBar = ({ score, brainPoints, health, timer, onBack }: { score: number; 
         </div>
         <div className="h-8 w-[2px] bg-blue-400/20" />
         <div className="flex flex-col">
-          <span className="text-[10px] font-bold uppercase tracking-tighter text-blue-200">Score</span>
-          <span className="text-xl font-black leading-none text-white">{score.toLocaleString()}</span>
+          <span className="text-[10px] font-bold uppercase tracking-tighter text-blue-200">XP</span>
+          <span className="text-xl font-black leading-none text-white">{XP.toLocaleString()}</span>
         </div>
       </div>
 
@@ -162,7 +162,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   const fireCooldownMs = useMemo(() => Math.max(900, 1450 - (levelId * 65)), [levelId]);
   const projectileDamage = useMemo(() => 42 + (levelId * 3), [levelId]);
 
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [brainPoints, setBrainPoints] = useState(150);
   const [health, setHealth] = useState(3);
   const [timeLeft, setTimeLeft] = useState(roundSeconds);
@@ -223,13 +223,13 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     }
 
     if (won) {
-      const finalScore = score;
+      const finalScore = XP;
       const stars = finalScore >= victoryTargetScore * 1.85 ? 3 : finalScore >= victoryTargetScore * 1.35 ? 2 : 1;
       onVictory(stars, finalScore);
       return;
     }
-    onGameOver(score);
-  }, [onGameOver, onVictory, score, victoryTargetScore]);
+    onGameOver(XP);
+  }, [onGameOver, onVictory, XP, victoryTargetScore]);
 
   useEffect(() => {
     endedRef.current = false;
@@ -439,7 +439,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
       <div className={`relative z-10 flex h-full w-full max-w-[1000px] flex-col ${useSharedTopHud ? 'pt-[max(3.7rem,calc(env(safe-area-inset-top)+3.1rem))]' : ''}`}>
         {!useSharedTopHud ? (
-          <TopBar score={score} brainPoints={brainPoints} health={health} timer={timerLabel} onBack={onBack} />
+          <TopBar XP={XP} brainPoints={brainPoints} health={health} timer={timerLabel} onBack={onBack} />
         ) : null}
 
         <div className={`relative mx-4 flex-1 overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/20 shadow-2xl ${useSharedTopHud ? 'mt-2' : 'mt-4'}`}>

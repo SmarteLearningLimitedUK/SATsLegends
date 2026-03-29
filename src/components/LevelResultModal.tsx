@@ -18,7 +18,7 @@ interface LevelResultModalProps {
     type: 'victory' | 'gameover';
     title: string;
     subtitle: string;
-    score: number;
+    XP: number;
     stars: number;
     coinsEarned: number;
     xpEarned: number;
@@ -33,10 +33,10 @@ interface LevelResultModalProps {
 
 const cn = (...parts: Array<string | false | null | undefined>) => parts.filter(Boolean).join(' ');
 
-const StatTile: React.FC<{ label: string; value: React.ReactNode; tone?: 'score' | 'coins' | 'xp' }> = ({
+const StatTile: React.FC<{ label: string; value: React.ReactNode; tone?: 'XP' | 'coins' | 'xp' }> = ({
   label,
   value,
-  tone = 'score',
+  tone = 'XP',
 }) => {
   const valueClass = tone === 'coins'
     ? 'text-amber-200'
@@ -63,7 +63,7 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
     ? 'bg-emerald-400/20 text-emerald-100 border-emerald-200/45'
     : 'bg-rose-400/18 text-rose-100 border-rose-200/45';
   const fallbackFailureSupport =
-    'Great effort. Shake it off, retry quickly, and push your streak on the next run.';
+    'Great effort. Shake it off, retry quickly, and push your Combo on the next run.';
 
   return (
     <AnimatePresence>
@@ -217,7 +217,7 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
               </div>
 
               <div className="grid grid-cols-3 gap-2 md:gap-3">
-                <StatTile label="Score" value={result.score} tone="score" />
+                <StatTile label="XP" value={result.XP} tone="XP" />
                 <StatTile
                   label="Coins"
                   value={<span className="inline-flex items-center gap-1"><AssetIcon name="coin" className="h-4 w-4" /> +{result.coinsEarned}</span>}

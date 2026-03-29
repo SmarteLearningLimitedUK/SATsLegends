@@ -24,8 +24,8 @@ interface DecimalSniperGameProps {
   levelId: number;
   avatarId: string;
   isBoss?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -143,7 +143,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
   const initialTime = useMemo(() => (isBoss ? 94 : 64 + levelId * 6), [isBoss, levelId]);
   const targetScore = useMemo(() => 780 + (levelId * 220) + (isBoss ? 420 : 0), [isBoss, levelId]);
 
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(initialTime);
   const [roundIndex, setRoundIndex] = useState(1);
   const [lives, setLives] = useState(MAX_LIVES);
@@ -167,7 +167,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
   const roundStartedAtRef = useRef<number>(Date.now());
   const activeAimPointerIdRef = useRef<number | null>(null);
 
-  const scoreRef = useRef(score);
+  const scoreRef = useRef(XP);
   const livesRef = useRef(lives);
   const comboRef = useRef(combo);
   const shotsFiredRef = useRef(shotsFired);
@@ -187,7 +187,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
   );
   const layoutRef = useRef(arenaLayout);
 
-  useEffect(() => { scoreRef.current = score; }, [score]);
+  useEffect(() => { scoreRef.current = XP; }, [XP]);
   useEffect(() => { livesRef.current = lives; }, [lives]);
   useEffect(() => { comboRef.current = combo; }, [combo]);
   useEffect(() => { shotsFiredRef.current = shotsFired; }, [shotsFired]);
@@ -542,7 +542,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
   const accuracy = shotsFired > 0 ? Math.round((correctHits / shotsFired) * 100) : 100;
   const progress = Math.min(
     100,
-    Math.max(((roundIndex - 1) / totalRounds) * 100, (score / targetScore) * 100),
+    Math.max(((roundIndex - 1) / totalRounds) * 100, (XP / targetScore) * 100),
   );
 
   const aimAngle = Math.atan2(aimVector.y, aimVector.x) * (180 / Math.PI);
@@ -756,7 +756,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
       gameType="place_value_peaks"
       title="Decimal Sniper"
       avatar={avatar}
-      score={score}
+      XP={XP}
       targetScore={targetScore}
       timeLeft={timeLeft}
       progress={progress}

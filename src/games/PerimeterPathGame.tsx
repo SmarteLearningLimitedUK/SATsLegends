@@ -7,12 +7,11 @@ import perimeterBackground from '../assets/maps/facctor frenzy.jpg';
 interface PerimeterPathGameProps {
   levelId: number;
   avatarId: string;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
-type InputMode = 'mcq' | 'input';
 type AnswerUnit = 'm' | 'cm';
 type Point = { x: number; y: number };
 
@@ -33,7 +32,6 @@ interface PerimeterQuestion {
   level: number;
   prompt: string;
   hint: string;
-  mode: InputMode;
   answerUnit: AnswerUnit;
   correctPerimeter: number;
   shape: ShapeModel;
@@ -45,7 +43,6 @@ interface FeedbackState {
   message: string;
 }
 
-const TOTAL_TIME_SECONDS = 85;
 const TARGET_CORRECT = 12;
 
 const randInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -171,7 +168,6 @@ const generateQuestion = (level: number): PerimeterQuestion => {
       level,
       prompt: isSquare ? 'Find the perimeter of this square.' : 'Find the perimeter of this rectangle.',
       hint: 'Add all outer sides once.',
-      mode: 'mcq',
       answerUnit: 'm',
       correctPerimeter: model.perimeter,
       shape: model.shape,
@@ -189,7 +185,6 @@ const generateQuestion = (level: number): PerimeterQuestion => {
       level,
       prompt: 'One side is hidden. Infer it, then calculate perimeter.',
       hint: 'Opposite sides of a rectangle are equal.',
-      mode: 'mcq',
       answerUnit: 'm',
       correctPerimeter: model.perimeter,
       shape: model.shape,
@@ -220,11 +215,10 @@ const generateQuestion = (level: number): PerimeterQuestion => {
       level,
       prompt: 'Calculate the perimeter of this compound shape.',
       hint: 'Trace the entire outer boundary.',
-      mode: 'input',
       answerUnit: 'm',
       correctPerimeter: model.perimeter,
       shape: model.shape,
-      options: [],
+      options: makeOptions(model.perimeter),
     };
   }
 
@@ -242,19 +236,18 @@ const generateQuestion = (level: number): PerimeterQuestion => {
     level,
     prompt: 'Mixed units challenge: find perimeter in cm.',
     hint: 'Convert every edge to cm first.',
-    mode: 'input',
     answerUnit: 'cm',
     correctPerimeter: model.perimeter,
     shape: model.shape,
-    options: [],
+    options: makeOptions(model.perimeter),
   };
 };
 
 const randomFrom = <T,>(items: T[]) => items[Math.floor(Math.random() * items.length)];
 
-const scoreToStars = (score: number) => {
-  if (score >= 3200) return 3;
-  if (score >= 2200) return 2;
+const scoreToStars = (XP: number) => {
+  if (XP >= 3200) return 3;
+  if (XP >= 2200) return 2;
   return 1;
 };
 
@@ -275,56 +268,60 @@ const PerimeterShapeRenderer: React.FC<{
   shape: ShapeModel;
   highlightedEdgeId: string | null;
   onHighlightEdge: (id: string | null) => void;
-}> = ({ shape, highlightedEdgeId, onHighlightEdge }) => {
+  zoom: number;
+  labelFontSize: number;
+}> = ({ shape, highlightedEdgeId, onHighlightEdge, zoom, labelFontSize }) => {
   const pointsAttr = shape.points.map((point) => `${point.x},${point.y}`).join(' ');
 
   return (
     <svg viewBox="0 0 100 100" className="h-full w-full">
-      <polygon points={pointsAttr} fill="rgba(56, 189, 248, 0.16)" stroke="rgba(125, 211, 252, 0.42)" strokeWidth="0.4" />
-      {shape.edges.map((edge) => {
-        const isActive = highlightedEdgeId === edge.id;
-        const labelPos = getEdgeLabelPosition(edge);
-        const labelWidth = Math.max(28, Math.min(42, edge.label.length * 3.6 + 8));
-        return (
-          <g
-            key={edge.id}
-            onPointerEnter={() => onHighlightEdge(edge.id)}
-            onPointerLeave={() => onHighlightEdge(null)}
-            onTouchStart={() => onHighlightEdge(edge.id)}
-          >
-            <line
-              x1={edge.from.x}
-              y1={edge.from.y}
-              x2={edge.to.x}
-              y2={edge.to.y}
-              stroke={isActive ? '#facc15' : '#7dd3fc'}
-              strokeWidth={isActive ? 3.3 : 2.6}
-              strokeLinecap="round"
-            />
-            <rect
-              x={labelPos.x - (labelWidth / 2)}
-              y={labelPos.y - 6.2}
-              width={labelWidth}
-              height={12.4}
-              rx={4.4}
-              fill={isActive ? 'rgba(250, 204, 21, 0.36)' : 'rgba(15, 23, 42, 0.66)'}
-              stroke={isActive ? 'rgba(250, 204, 21, 0.75)' : 'rgba(255, 255, 255, 0.22)'}
-              strokeWidth={0.45}
-            />
-            <text
-              x={labelPos.x}
-              y={labelPos.y}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fill="#ffffff"
-              fontSize="5.6"
-              fontWeight={800}
+      <g transform={`translate(50 50) scale(${zoom}) translate(-50 -50)`}>
+        <polygon points={pointsAttr} fill="rgba(56, 189, 248, 0.16)" stroke="rgba(125, 211, 252, 0.42)" strokeWidth="0.4" />
+        {shape.edges.map((edge) => {
+          const isActive = highlightedEdgeId === edge.id;
+          const labelPos = getEdgeLabelPosition(edge);
+          const labelWidth = Math.max(30, Math.min(50, edge.label.length * 4 + 8));
+          return (
+            <g
+              key={edge.id}
+              onPointerEnter={() => onHighlightEdge(edge.id)}
+              onPointerLeave={() => onHighlightEdge(null)}
+              onTouchStart={() => onHighlightEdge(edge.id)}
             >
-              {edge.label}
-            </text>
-          </g>
-        );
-      })}
+              <line
+                x1={edge.from.x}
+                y1={edge.from.y}
+                x2={edge.to.x}
+                y2={edge.to.y}
+                stroke={isActive ? '#facc15' : '#7dd3fc'}
+                strokeWidth={isActive ? 3.4 : 2.8}
+                strokeLinecap="round"
+              />
+              <rect
+                x={labelPos.x - (labelWidth / 2)}
+                y={labelPos.y - 6.6}
+                width={labelWidth}
+                height={13.2}
+                rx={4.6}
+                fill={isActive ? 'rgba(250, 204, 21, 0.36)' : 'rgba(15, 23, 42, 0.66)'}
+                stroke={isActive ? 'rgba(250, 204, 21, 0.75)' : 'rgba(255, 255, 255, 0.22)'}
+                strokeWidth={0.45}
+              />
+              <text
+                x={labelPos.x}
+                y={labelPos.y}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fill="#ffffff"
+                fontSize={labelFontSize}
+                fontWeight={800}
+              >
+                {edge.label}
+              </text>
+            </g>
+          );
+        })}
+      </g>
     </svg>
   );
 };
@@ -337,12 +334,10 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
   onBack,
 }) => {
   const [currentLevel, setCurrentLevel] = useState(Math.max(1, levelId));
-  const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(TOTAL_TIME_SECONDS);
+  const [XP, setScore] = useState(0);
   const [question, setQuestion] = useState<PerimeterQuestion>(() => generateQuestion(Math.max(1, levelId)));
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
-  const [inputAnswer, setInputAnswer] = useState('');
-  const [streak, setStreak] = useState(0);
+  const [Combo, setStreak] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
   const [shakeShape, setShakeShape] = useState(false);
@@ -354,10 +349,8 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
   useEffect(() => {
     setCurrentLevel(Math.max(1, levelId));
     setScore(0);
-    setTimeLeft(TOTAL_TIME_SECONDS);
     setQuestion(generateQuestion(Math.max(1, levelId)));
     setSelectedOption(null);
-    setInputAnswer('');
     setStreak(0);
     setCorrectCount(0);
     setFeedback(null);
@@ -366,30 +359,11 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
     endedRef.current = false;
   }, [levelId]);
 
-  useEffect(() => {
-    if (endedRef.current) return undefined;
-    const timer = window.setInterval(() => {
-      setTimeLeft((previous) => {
-        const drain = currentLevel >= 11 ? 0.16 : 0.1;
-        const next = Math.max(0, previous - drain);
-        if (next <= 0.001 && !endedRef.current) {
-          endedRef.current = true;
-          onGameOver(score);
-          return 0;
-        }
-        return next;
-      });
-    }, 100);
-    return () => window.clearInterval(timer);
-  }, [currentLevel, onGameOver, score]);
-
-
   const goNextQuestion = () => {
     const nextLevel = currentLevel + 1;
     setCurrentLevel(nextLevel);
     setQuestion(generateQuestion(nextLevel));
     setSelectedOption(null);
-    setInputAnswer('');
     setFeedback(null);
     setLocked(false);
     setHighlightedEdgeId(null);
@@ -397,9 +371,9 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
 
   const handleCorrect = (submitted: number) => {
     void submitted;
-    const earned = 140 + (currentLevel * 12) + (streak * 24) + Math.floor(timeLeft * 2);
-    const nextScore = score + earned;
-    const nextStreak = streak + 1;
+    const earned = 220 + (currentLevel * 14) + (Combo * 26);
+    const nextScore = XP + earned;
+    const nextStreak = Combo + 1;
     const nextCorrect = correctCount + 1;
 
     setScore(nextScore);
@@ -449,26 +423,12 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
   };
 
   const handleOptionTap = (option: number) => {
-    if (question.mode !== 'mcq' || locked) return;
+    if (locked) return;
     setSelectedOption(option);
     submitAnswer(option);
   };
-
-  const handleInputPad = (token: string) => {
-    if (locked || question.mode !== 'input') return;
-    if (token === 'clear') {
-      setInputAnswer('');
-      return;
-    }
-    if (token === 'back') {
-      setInputAnswer((previous) => previous.slice(0, -1));
-      return;
-    }
-    if (inputAnswer.length >= 7) return;
-    setInputAnswer((previous) => `${previous}${token}`);
-  };
-
-  const canSubmitInput = question.mode === 'input' && inputAnswer.length > 0 && !locked;
+  const shapeZoom = currentLevel >= 11 ? 1.14 : currentLevel >= 7 ? 1.08 : 1;
+  const labelFontSize = currentLevel >= 11 ? 6.3 : 5.8;
 
   return (
     <div className="fixed inset-0 overflow-hidden bg-[#030817]">

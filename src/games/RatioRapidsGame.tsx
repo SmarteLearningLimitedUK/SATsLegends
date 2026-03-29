@@ -12,8 +12,8 @@ interface RatioRapidsGameProps {
   levelId: number;
   avatarId: string;
   gameTitle?: string;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -233,12 +233,12 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
   const targetScore = 960 + (levelId * 260);
   const timeoutsRef = useRef<number[]>([]);
 
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [coins, setCoins] = useState(450);
   const [timeLeft, setTimeLeft] = useState(54 + (levelId * 8));
   const [roundNumber, setRoundNumber] = useState(1);
   const [hearts, setHearts] = useState(MAX_HEARTS);
-  const [streak, setStreak] = useState(0);
+  const [Combo, setStreak] = useState(0);
   const [phase, setPhase] = useState<Phase>('setup');
   const [round, setRound] = useState<DefenseRound>(() => createDefenseRound(levelId, 1, totalRounds));
   const [selectedUnit, setSelectedUnit] = useState<UnitType>('sword');
@@ -246,7 +246,7 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
   const [feedback, setFeedback] = useState<null | { type: 'success' | 'error'; title: string; subtitle: string }>(null);
   const [isFinished, setIsFinished] = useState(false);
 
-  const progress = Math.min((score / targetScore) * 100, 100);
+  const progress = Math.min((XP / targetScore) * 100, 100);
   const slotLayout = SLOT_LAYOUTS[round.totalSlots] || SLOT_LAYOUTS[5];
   const swordCount = placements.filter((unit) => unit === 'sword').length;
   const cannonCount = placements.filter((unit) => unit === 'cannon').length;
@@ -288,7 +288,7 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
         if (previous <= 1) {
           window.clearInterval(timerId);
           setIsFinished(true);
-          onGameOver(score);
+          onGameOver(XP);
           return 0;
         }
         return previous - 1;
@@ -296,7 +296,7 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
     }, 1000);
 
     return () => window.clearInterval(timerId);
-  }, [isFinished, onGameOver, score]);
+  }, [isFinished, onGameOver, XP]);
 
   const resetForRound = (nextRoundNumber: number) => {
     const nextRound = createDefenseRound(levelId, nextRoundNumber, totalRounds);
@@ -339,7 +339,7 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
     if (nextHearts <= 0) {
       const timeoutId = window.setTimeout(() => {
         setIsFinished(true);
-        onGameOver(score);
+        onGameOver(XP);
       }, 950);
       timeoutsRef.current.push(timeoutId);
       return;
@@ -366,9 +366,9 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
       return;
     }
 
-    const points = 170 + (round.totalSlots * 24) + (streak * 30) + (round.mode === 'boss' ? 160 : 0);
+    const points = 170 + (round.totalSlots * 24) + (Combo * 30) + (round.mode === 'boss' ? 160 : 0);
     const coinReward = 30 + (round.totalSlots * 8) + (round.mode === 'boss' ? 90 : 0);
-    const updatedScore = score + points;
+    const updatedScore = XP + points;
 
     setScore(updatedScore);
     setCoins((previous) => previous + coinReward);
@@ -377,7 +377,7 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
     setFeedback({
       type: 'success',
       title: round.mode === 'boss' ? 'Dragon Cannon Online!' : 'Defence Activated!',
-      subtitle: `+${points} score  +${coinReward} coins`,
+      subtitle: `+${points} XP  +${coinReward} coins`,
     });
 
     const confettiId = window.setTimeout(() => {
@@ -419,7 +419,7 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
           <GameplayHUD
             title={gameTitle || 'Ratio Raiders'}
             avatar={avatar}
-            score={score}
+            XP={XP}
             targetScore={targetScore}
             timeLeft={timeLeft}
             progress={progress}

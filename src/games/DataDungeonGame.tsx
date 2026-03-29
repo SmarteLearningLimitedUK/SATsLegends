@@ -12,8 +12,8 @@ import { Star, Timer, Lock, Unlock } from '../components/GameIcons';
 interface DataDungeonGameProps {
   levelId: number;
   avatarId: string;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -146,13 +146,13 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
   onGameOver, 
   onBack 
 }) => {
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(90);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isVictory, setIsVictory] = useState(false);
   
   const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
-  const [streak, setStreak] = useState(0);
+  const [Combo, setStreak] = useState(0);
   const [doorState, setDoorState] = useState<'locked' | 'opening' | 'open'>('locked');
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
 
@@ -185,16 +185,16 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
   }, [timeLeft, isGameOver, isVictory, doorState]);
 
   const handleTimeUp = () => {
-    if (score >= targetScore) {
+    if (XP >= targetScore) {
       handleWin();
     } else {
       setIsGameOver(true);
-      onGameOver(score);
+      onGameOver(XP);
     }
   };
 
   const handleWin = () => {
-    const stars = score >= targetScore * 2 ? 3 : score >= targetScore * 1.5 ? 2 : 1;
+    const stars = XP >= targetScore * 2 ? 3 : XP >= targetScore * 1.5 ? 2 : 1;
     setIsVictory(true);
     confetti({
       particleCount: 150,
@@ -202,7 +202,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
       origin: { y: 0.6 },
       colors: ['#FFD700', '#FFFFFF', '#87CEEB']
     });
-    onVictory(stars, score);
+    onVictory(stars, XP);
   };
 
   const handleAnswer = (selectedAnswer: number) => {
@@ -212,7 +212,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
       setFeedback('correct');
       setDoorState('opening');
       
-      const points = 150 + (streak * 30);
+      const points = 150 + (Combo * 30);
       setScore(prev => prev + points);
       setStreak(prev => prev + 1);
 
@@ -236,7 +236,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
     }
   };
 
-  const progress = Math.min((score / targetScore) * 100, 100);
+  const progress = Math.min((XP / targetScore) * 100, 100);
 
   return (
     <div className="relative flex h-full w-full overflow-hidden font-sans">
@@ -247,7 +247,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
         <GameplayHUD
           title="Data Dungeon"
           avatar={avatar}
-          score={score}
+          XP={XP}
           targetScore={targetScore}
           timeLeft={timeLeft}
           progress={progress}
@@ -255,8 +255,8 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
           accentSoftBg="bg-stone-900/80"
           accentBorder="border-stone-700/90"
           progressBar="bg-gradient-to-r from-amber-600 via-yellow-500 to-yellow-300"
-          statLabel="Streak"
-          statValue={streak}
+          statLabel="Combo"
+          statValue={Combo}
         />
 
         <div className="licensed-board-frame structured-playfield-frame relative flex w-full min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] p-2 md:rounded-[2.6rem] md:p-3">
@@ -391,15 +391,15 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
                       animate={{ scale: 1, rotate: 0 }}
                       transition={{ delay: s * 0.2, type: 'spring' }}
                     >
-                      <Star className={`w-16 h-16 ${s <= (score >= targetScore * 2 ? 3 : score >= targetScore * 1.5 ? 2 : 1) ? 'fill-amber-400 text-amber-400' : 'text-stone-600'}`} />
+                      <Star className={`w-16 h-16 ${s <= (XP >= targetScore * 2 ? 3 : XP >= targetScore * 1.5 ? 2 : 1) ? 'fill-amber-400 text-amber-400' : 'text-stone-600'}`} />
                     </motion.div>
                   ))}
                 </div>
               )}
 
               <div className="text-center">
-                <div className="text-stone-400 font-black uppercase tracking-widest text-sm">Final Score</div>
-                <div className="text-6xl font-black text-white drop-shadow-sm">{score}</div>
+                <div className="text-stone-400 font-black uppercase tracking-widest text-sm">Final XP</div>
+                <div className="text-6xl font-black text-white drop-shadow-sm">{XP}</div>
               </div>
 
               <button 

@@ -10,8 +10,8 @@ interface RoundingRocketGameProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -47,10 +47,10 @@ const shuffle = <T,>(items: T[]): T[] => {
   return next;
 };
 
-const scoreToStars = (score: number, correct: number, attempts: number) => {
+const scoreToStars = (XP: number, correct: number, attempts: number) => {
   const accuracy = attempts > 0 ? correct / attempts : 0;
-  if (score >= 1800 && accuracy >= 0.86) return 3;
-  if (score >= 1100 && accuracy >= 0.65) return 2;
+  if (XP >= 1800 && accuracy >= 0.86) return 3;
+  if (XP >= 1100 && accuracy >= 0.65) return 2;
   return 1;
 };
 
@@ -129,7 +129,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
   const [selectedPad, setSelectedPad] = useState<number | null>(null);
   const [padFeedback, setPadFeedback] = useState<{ value: number; type: 'success' | 'error' } | null>(null);
   const [feedbackText, setFeedbackText] = useState<string | null>(null);
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [inputLocked, setInputLocked] = useState(false);
@@ -187,17 +187,17 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
 
     setHasSignalledFailure(true);
     emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
-      score,
+      XP,
       reason: lives <= 0 ? 'lives' : 'time',
     });
-  }, [didComplete, hasSignalledFailure, isSessionActive, lives, score, sessionEvents, sessionState]);
+  }, [didComplete, hasSignalledFailure, isSessionActive, lives, XP, sessionEvents, sessionState]);
 
   const completeRun = (finalScore: number, totalCorrect: number, totalAttempts: number) => {
     if (didComplete) return;
     setDidComplete(true);
     const stars = scoreToStars(finalScore, totalCorrect, totalAttempts);
     emitMiniGameSessionEvent(sessionEvents, 'game_complete', {
-      score: finalScore,
+      XP: finalScore,
       stars,
       metadata: {
         correctAnswers: totalCorrect,
@@ -226,7 +226,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
     if (isCorrect) {
       const pointGain = round.target === 100 ? 170 : 130;
       const streakBonus = correctAnswers > 0 && (correctAnswers + 1) % 4 === 0 ? 40 : 0;
-      const nextScore = score + pointGain + streakBonus;
+      const nextScore = XP + pointGain + streakBonus;
       const nextCorrect = correctAnswers + 1;
 
       setScore(nextScore);
@@ -236,7 +236,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
       setFeedbackText(Math.random() < 0.65 ? 'Nice!' : null);
 
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
-        score,
+        XP,
         metadata: {
           scoreAfter: nextScore,
           scoreDelta: pointGain + streakBonus,
@@ -246,7 +246,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
         },
       });
       emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', {
-        score: nextScore,
+        XP: nextScore,
         metadata: {
           roundedTo: round.target,
           selected: padValue,
@@ -270,7 +270,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
     setFeedbackText('Try Again');
 
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
-      score,
+      XP,
       metadata: {
         roundedTo: round.target,
         selected: padValue,

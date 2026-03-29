@@ -48,8 +48,8 @@ const ISLAND_REPORT_META: Record<number, { domain: string; revise: string }> = {
   },
 };
 
-const getPerformanceTone = (score: number) => {
-  if (score >= 80) {
+const getPerformanceTone = (XP: number) => {
+  if (XP >= 80) {
     return {
       chip: 'border-emerald-300/35 bg-emerald-300/15 text-emerald-100',
       bar: 'from-emerald-300 via-teal-300 to-cyan-400',
@@ -57,7 +57,7 @@ const getPerformanceTone = (score: number) => {
     };
   }
 
-  if (score >= 55) {
+  if (XP >= 55) {
     return {
       chip: 'border-amber-300/35 bg-amber-300/15 text-amber-50',
       bar: 'from-amber-200 via-orange-300 to-amber-400',
@@ -153,9 +153,9 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
 
   const stats = [
     { label: 'SATs readiness', value: `${report.readinessScore}%`, icon: 'trophy' as const },
-    { label: 'Mastery score', value: `${report.masteryPercentage}%`, icon: 'star' as const },
+    { label: 'Mastery XP', value: `${report.masteryPercentage}%`, icon: 'star' as const },
     { label: 'Games played', value: report.gamesPlayed, icon: 'gamepad' as const },
-    { label: 'Daily streak', value: report.dailyStreak, icon: 'heart' as const },
+    { label: 'Daily Combo', value: report.dailyStreak, icon: 'heart' as const },
   ];
 
   return (

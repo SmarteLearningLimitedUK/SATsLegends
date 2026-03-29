@@ -13,8 +13,8 @@ import missionBackground from '../assets/maps/harbour.jpg';
 interface TimekeeperTempleGameProps {
   levelId: number;
   avatarId: string;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -25,9 +25,9 @@ interface Time {
 
 const ROUND_DURATION_SECONDS = 90;
 
-const scoreToStars = (score: number) => {
-  if (score >= 1800) return 3;
-  if (score >= 1100) return 2;
+const scoreToStars = (XP: number) => {
+  if (XP >= 1800) return 3;
+  if (XP >= 1100) return 2;
   return 1;
 };
 
@@ -43,7 +43,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
   const [currentTime, setCurrentTime] = useState<Time>({ hours: 12, minutes: 0 });
   const [rotationHours, setRotationHours] = useState(360);
   const [rotationMinutes, setRotationMinutes] = useState(0);
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(ROUND_DURATION_SECONDS);
   const [feedback, setFeedback] = useState<string | null>(null);
   const finishedRef = useRef(false);
@@ -97,8 +97,8 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
     if (gameState !== 'playing' || timeLeft > 0 || finishedRef.current) return;
     finishedRef.current = true;
     setGameState('complete');
-    onVictory(scoreToStars(score), score);
-  }, [gameState, onVictory, score, timeLeft]);
+    onVictory(scoreToStars(XP), XP);
+  }, [gameState, onVictory, XP, timeLeft]);
 
   const checkTime = () => {
     if (gameState !== 'playing') return;
@@ -106,7 +106,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
     const currentH = currentTime.hours % 12;
 
     if (targetH === currentH && targetTime.minutes === currentTime.minutes) {
-      const nextScore = score + 100 + Math.floor(timeLeft / 6);
+      const nextScore = XP + 100 + Math.floor(timeLeft / 6);
       setScore(nextScore);
       setFeedback('Perfect Match!');
       window.setTimeout(() => {

@@ -23,8 +23,8 @@ interface ScaleBuilderGameProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -299,7 +299,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
       {!useSharedTopHud ? (
         <MiniGameTopBar
           onBack={onBack}
-          score={Math.round(finalScore)}
+          XP={Math.round(finalScore)}
           scoreLabel="Build"
           metaLabel="Level"
           metaValue={`${currentLevelIdx + 1}/${LEVELS.length}`}
@@ -311,7 +311,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
           <GameplayHUD
             title="Scale Builder"
             avatar={avatar}
-            score={Math.round(finalScore)}
+            XP={Math.round(finalScore)}
             targetScore={900 + (LEVELS.length * 220) + (levelId * 60)}
             timeLeft={LEVELS.length - currentLevelIdx}
             progress={progressPct}
@@ -510,7 +510,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                   <div className="relative mx-auto mt-5 h-14 w-full max-w-[15rem] overflow-hidden rounded-[0.95rem]">
                     <img src={labelGreenLongAsset} alt="" className="absolute inset-0 h-full w-full object-fill" draggable={false} />
                     <div className="absolute inset-0 flex items-center justify-center text-lg font-black tracking-wide text-emerald-950">
-                      Score {Math.round(finalScore)}
+                      XP {Math.round(finalScore)}
                     </div>
                   </div>
 

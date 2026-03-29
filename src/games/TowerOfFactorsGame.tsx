@@ -13,8 +13,8 @@ interface TowerOfFactorsGameProps {
   levelId: number;
   avatarId: string;
   isBoss?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -115,13 +115,13 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
   onGameOver,
   onBack,
 }) => {
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isVictory, setIsVictory] = useState(false);
   const [problem, setProblem] = useState<FactorProblem | null>(null);
   const [tower, setTower] = useState<number[]>([]);
-  const [streak, setStreak] = useState(0);
+  const [Combo, setStreak] = useState(0);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
   const [shake, setShake] = useState(false);
   const [hearts, setHearts] = useState(MAX_HEARTS);
@@ -140,7 +140,7 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
           ? 'dazed'
           : feedback === 'incorrect'
             ? 'attack'
-            : streak >= 3
+            : Combo >= 3
               ? 'happy'
               : 'neutral';
 
@@ -173,16 +173,16 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
   }, [timeLeft, isGameOver, isVictory, feedback]);
 
   const handleTimeUp = () => {
-    if (score >= targetScore) {
+    if (XP >= targetScore) {
       handleWin();
     } else {
       setIsGameOver(true);
-      onGameOver(score);
+      onGameOver(XP);
     }
   };
 
   const handleWin = () => {
-    const stars = score >= targetScore * 2 ? 3 : score >= targetScore * 1.5 ? 2 : 1;
+    const stars = XP >= targetScore * 2 ? 3 : XP >= targetScore * 1.5 ? 2 : 1;
     setIsVictory(true);
     confetti({
       particleCount: 150,
@@ -190,7 +190,7 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
       origin: { y: 0.6 },
       colors: ['#fde047', '#f8fafc', '#7dd3fc'],
     });
-    onVictory(stars, score);
+    onVictory(stars, XP);
   };
 
   const handleSelect = (num: number) => {
@@ -203,7 +203,7 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
       setTower(prev => [...prev, num]);
       setStatusMessage(`${num} is a factor of ${problem.target}. Smash the next one.`);
 
-      const points = 50 + (streak * 10);
+      const points = 50 + (Combo * 10);
       setScore(prev => prev + points);
       setStreak(prev => prev + 1);
 
@@ -244,13 +244,13 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
       if (nextHearts <= 0) {
         setTimeout(() => {
           setIsGameOver(true);
-          onGameOver(score);
+          onGameOver(XP);
         }, 250);
       }
     }
   };
 
-  const progress = Math.min((score / targetScore) * 100, 100);
+  const progress = Math.min((XP / targetScore) * 100, 100);
   const correctOptions = problem ? problem.options.filter(option => problem.factors.includes(option)) : [];
   const towerGoal = Math.max(correctOptions.length, 1);
   const remainingFactors = Math.max(correctOptions.length - tower.length, 0);
@@ -283,7 +283,7 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
         <GameplayHUD
           title="Factor Forge"
           avatar={avatar}
-          score={score}
+          XP={XP}
           targetScore={targetScore}
           timeLeft={timeLeft}
           progress={progress}
@@ -293,7 +293,7 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
           accentBorder="border-amber-200/80"
           progressBar="bg-gradient-to-r from-yellow-300 via-orange-400 to-red-500"
           statLabel="Combo"
-          statValue={streak}
+          statValue={Combo}
         />
 
         <div className="relative w-full flex-1 min-h-0">
@@ -313,7 +313,7 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
                     </div>
                     <div className="mt-2 rounded-[1rem] border border-amber-200/20 bg-[linear-gradient(180deg,rgba(251,146,60,0.92),rgba(194,65,12,0.98))] px-3 py-2 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_12px_20px_rgba(120,53,15,0.28)]">
                       <div className="flex items-center justify-between gap-2 text-amber-50">
-                        <span className="text-[0.68rem] font-black uppercase tracking-[0.16em] md:text-[0.82rem]">Combo x{Math.max(streak, 1)}</span>
+                        <span className="text-[0.68rem] font-black uppercase tracking-[0.16em] md:text-[0.82rem]">Combo x{Math.max(Combo, 1)}</span>
                         <span className="text-[1.15rem] font-black md:text-[2rem]">Target: {problem.target}</span>
                       </div>
                     </div>
@@ -454,15 +454,15 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
                         animate={{ scale: 1, rotate: 0 }}
                         transition={{ delay: value * 0.2, type: 'spring' }}
                       >
-                        <Star className={`h-16 w-16 ${value <= (score >= targetScore * 2 ? 3 : score >= targetScore * 1.5 ? 2 : 1) ? 'fill-yellow-400 text-yellow-400' : 'text-slate-600'}`} />
+                        <Star className={`h-16 w-16 ${value <= (XP >= targetScore * 2 ? 3 : XP >= targetScore * 1.5 ? 2 : 1) ? 'fill-yellow-400 text-yellow-400' : 'text-slate-600'}`} />
                       </motion.div>
                     ))}
                   </div>
                 )}
 
                 <div className="text-center">
-                  <div className="text-sm font-black uppercase tracking-widest text-slate-400">Final Score</div>
-                  <div className="text-6xl font-black text-white drop-shadow-sm">{score}</div>
+                  <div className="text-sm font-black uppercase tracking-widest text-slate-400">Final XP</div>
+                  <div className="text-6xl font-black text-white drop-shadow-sm">{XP}</div>
                 </div>
 
                 <button

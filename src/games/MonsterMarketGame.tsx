@@ -31,8 +31,8 @@ interface MonsterMarketGameProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -70,8 +70,8 @@ const ITEMS: Item[] = [
 const PATIENCE_DECAY_MS = 220;
 const PATIENCE_DECAY_STEP = 2;
 
-const TopBar: React.FC<{ score: number; coins: number; gems: number; timer: string; customersServed: number }> = ({
-  score,
+const TopBar: React.FC<{ XP: number; coins: number; gems: number; timer: string; customersServed: number }> = ({
+  XP,
   coins,
   gems,
   timer,
@@ -85,7 +85,7 @@ const TopBar: React.FC<{ score: number; coins: number; gems: number; timer: stri
     <div className="flex items-center gap-1.5 md:gap-2">
       <div className="flex items-center gap-1 rounded-full bg-white/14 px-2 py-1 md:px-3">
         <img src={coinAsset} alt="" className="h-4 w-4 md:h-5 md:w-5" draggable={false} />
-        <span className="text-xs font-black md:text-sm">{score}</span>
+        <span className="text-xs font-black md:text-sm">{XP}</span>
       </div>
       <div className="hidden items-center gap-1 rounded-full bg-white/14 px-2 py-1 md:flex md:px-3">
         <CircleDollarSign className="h-4 w-4 text-yellow-300" />
@@ -157,7 +157,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
   const baseRoundTime = 60 + (levelId * 5);
   const targetScore = 1600 + (levelId * 260);
 
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [coins, setCoins] = useState(0);
   const [gems, setGems] = useState(0);
   const [timer, setTimer] = useState(baseRoundTime);
@@ -218,7 +218,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
       setTimer((previous) => {
         if (previous <= 1) {
           window.clearInterval(gameInterval);
-          finishRound(score);
+          finishRound(XP);
           return 0;
         }
         return previous - 1;
@@ -226,7 +226,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
     }, 1000);
 
     return () => window.clearInterval(gameInterval);
-  }, [finishRound, gameActive, score]);
+  }, [finishRound, gameActive, XP]);
 
   useEffect(() => {
     if (!gameActive || !customer || feedback) return undefined;
@@ -293,7 +293,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
     <FoodGameShell gameType="monster_market" backgroundImage={takeOutLevelBg}>
       {!useSharedTopHud ? (
         <TopBar
-          score={score}
+          XP={XP}
           coins={coins}
           gems={gems}
           timer={`${timer.toString().padStart(2, '0')}s`}
@@ -390,8 +390,8 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
           <Trophy className="mb-4 h-24 w-24 animate-bounce text-yellow-400" />
           <h2 className="mb-2 text-5xl font-black italic">TIME'S UP!</h2>
           <div className="w-full max-w-xs rounded-2xl border-2 border-blue-400 bg-blue-900/60 p-6">
-            <p className="mb-1 text-sm font-bold uppercase tracking-widest text-blue-200">Final Score</p>
-            <p className="text-4xl font-black text-white">{score.toLocaleString()}</p>
+            <p className="mb-1 text-sm font-bold uppercase tracking-widest text-blue-200">Final XP</p>
+            <p className="text-4xl font-black text-white">{XP.toLocaleString()}</p>
             <p className="mt-2 text-xs font-bold uppercase tracking-wider text-blue-300">
               Served: {customersServed}
             </p>

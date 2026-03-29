@@ -85,13 +85,13 @@ const App: React.FC = () => {
     closeGameRules,
   } = useOverlayState();
 
-  const handleGameOver = useCallback((score: number) => {
+  const handleGameOver = useCallback((XP: number) => {
     triggerHaptic('error');
     setLevelResult({
       type: 'gameover',
       title: 'Round over',
       subtitle: 'No rewards lost forever. Reset, tighten the route, and take another shot.',
-      score,
+      XP,
       stars: 0,
       coinsEarned: 0,
       xpEarned: 0,
@@ -234,9 +234,9 @@ const App: React.FC = () => {
     selectLevelInFlow(level);
   };
 
-  const handleGameVictory = (stars: number, score: number) => {
+  const handleGameVictory = (stars: number, XP: number) => {
     triggerHaptic('success');
-    const result = applyGameVictory(selectedIsland, selectedLevel, stars, score);
+    const result = applyGameVictory(selectedIsland, selectedLevel, stars, XP);
     if (result) setLevelResult(result);
   };
 
@@ -480,7 +480,7 @@ const App: React.FC = () => {
             <DailyRewardsModal
               isOpen={showDailyRewards}
               onClose={() => setShowDailyRewards(false)}
-              streak={player.dailyStreak}
+              Combo={player.dailyStreak}
               claimedToday={player.claimedDailyRewardToday}
               onClaim={handleClaimDailyReward}
             />

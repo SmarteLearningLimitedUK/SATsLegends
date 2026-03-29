@@ -9,8 +9,8 @@ import GameplaySceneBackdrop from '../../components/GameplaySceneBackdrop';
 interface ReasoningGameProps {
   gameType: string;
   isBoss?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 

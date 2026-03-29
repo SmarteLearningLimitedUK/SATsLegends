@@ -2,7 +2,7 @@ import React from 'react';
 
 interface MiniGameTopBarProps {
   onBack: () => void;
-  score: number;
+  XP: number;
   scoreLabel?: string;
   metaLabel?: string;
   metaValue?: React.ReactNode;
@@ -11,8 +11,8 @@ interface MiniGameTopBarProps {
 
 const MiniGameTopBar: React.FC<MiniGameTopBarProps> = ({
   onBack,
-  score,
-  scoreLabel = 'Score',
+  XP,
+  scoreLabel = 'XP',
   metaLabel,
   metaValue,
   className = '',
@@ -34,7 +34,7 @@ const MiniGameTopBar: React.FC<MiniGameTopBarProps> = ({
           </div>
         ) : null}
         <div className="pvp-hud-chip">
-          {scoreLabel} {score.toLocaleString()}
+          {scoreLabel} {XP.toLocaleString()}
         </div>
       </div>
     </div>

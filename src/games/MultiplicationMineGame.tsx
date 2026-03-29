@@ -10,8 +10,8 @@ interface MultiplicationMineGameProps {
   avatarId: string;
   useSharedTopHud?: boolean;
   isBoss?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -53,7 +53,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
   const [rockHealth, setRockHealth] = useState(ROCK_MAX_HEALTH);
   const [correctCount, setCorrectCount] = useState(0);
   const [mistakes, setMistakes] = useState(0);
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [phase, setPhase] = useState<Phase>('playing');
   const [feedback, setFeedback] = useState<{ tone: 'ok' | 'error'; text: string } | null>(null);
   const [impactTick, setImpactTick] = useState(0);
@@ -72,7 +72,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
       const nextCorrect = correctCount + 1;
       const nextHealth = Math.max(0, rockHealth - 1);
       const gained = 120 + (resolvedLevel * 18);
-      const nextScore = score + gained;
+      const nextScore = XP + gained;
 
       setCorrectCount(nextCorrect);
       setRockHealth(nextHealth);
@@ -140,8 +140,8 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
       {!useSharedTopHud ? (
         <MiniGameTopBar
           onBack={onBack}
-          score={score}
-          scoreLabel="Score"
+          XP={XP}
+          scoreLabel="XP"
           metaLabel="Rock"
           metaValue={`${rockHealth}/${ROCK_MAX_HEALTH}`}
         />

@@ -9,15 +9,15 @@ import titleFlagAsset from '../assets/licensed/slices/label_blue.png';
 
 interface HUDProps {
   title?: string;
-  score: number;
+  XP: number;
   targetScore: number;
   timeLeft: number;
   level: CloudCollapseLevelConfig;
   avatar: AvatarData;
 }
 
-const HUD: React.FC<HUDProps> = ({ title, score, targetScore, timeLeft, level, avatar: _avatar }) => {
-  const progress = Math.min((score / targetScore) * 100, 100);
+const HUD: React.FC<HUDProps> = ({ title, XP, targetScore, timeLeft, level, avatar: _avatar }) => {
+  const progress = Math.min((XP / targetScore) * 100, 100);
 
   return (
     <div className="flex w-full shrink-0 flex-col gap-1 px-1 py-0.5 md:gap-2 md:px-2">
@@ -50,14 +50,14 @@ const HUD: React.FC<HUDProps> = ({ title, score, targetScore, timeLeft, level, a
 
             <div className="relative overflow-hidden rounded-[0.8rem] px-2 py-1 text-center md:rounded-[1rem] md:px-2.5 md:py-1.5">
               <div className="absolute inset-0 rounded-[inherit] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(226,232,240,0.92))]" />
-              <div className="relative text-[7px] font-black uppercase tracking-[0.16em] text-slate-600 md:text-[9px]">Score</div>
+              <div className="relative text-[7px] font-black uppercase tracking-[0.16em] text-slate-600 md:text-[9px]">XP</div>
               <motion.div
-                key={score}
+                key={XP}
                 initial={{ scale: 1.1 }}
                 animate={{ scale: 1 }}
                 className="relative mt-0.5 text-[11px] font-black text-slate-900 md:text-sm"
               >
-                {score}
+                {XP}
               </motion.div>
             </div>
           </div>

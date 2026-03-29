@@ -20,8 +20,8 @@ interface TakeOutRushGameProps {
   miniGameLevel?: number;
   avatarId: string;
   useSharedTopHud?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -272,12 +272,12 @@ const generateOrder = (stage: number): TakeOutOrder => {
   };
 };
 
-const starsForPerformance = (score: number, correct: number, incorrect: number): number => {
+const starsForPerformance = (XP: number, correct: number, incorrect: number): number => {
   const total = Math.max(1, correct + incorrect);
   const accuracy = correct / total;
 
-  if (score >= 2600 && correct >= 10 && accuracy >= 0.8) return 3;
-  if (score >= 1500 && correct >= 6 && accuracy >= 0.6) return 2;
+  if (XP >= 2600 && correct >= 10 && accuracy >= 0.8) return 3;
+  if (XP >= 1500 && correct >= 6 && accuracy >= 0.6) return 2;
   return 1;
 };
 
@@ -305,8 +305,8 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
   const baseLevel = Math.max(1, Math.min(12, miniGameLevel || levelId || 1));
 
   const [timeLeft, setTimeLeft] = useState(ROUND_DURATION_SECONDS);
-  const [score, setScore] = useState(0);
-  const [streak, setStreak] = useState(0);
+  const [XP, setScore] = useState(0);
+  const [Combo, setStreak] = useState(0);
   const [ordersServed, setOrdersServed] = useState(0);
   const [wrongOrders, setWrongOrders] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
@@ -355,9 +355,9 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
 
     roundFinishedRef.current = true;
     setRoundFinished(true);
-    const stars = starsForPerformance(score, ordersServed, wrongOrders);
-    onVictory(stars, score);
-  }, [onVictory, ordersServed, score, timeLeft, wrongOrders]);
+    const stars = starsForPerformance(XP, ordersServed, wrongOrders);
+    onVictory(stars, XP);
+  }, [onVictory, ordersServed, XP, timeLeft, wrongOrders]);
 
   const activeConstraints = useMemo(() => {
     const bannedIds = new Set(
@@ -415,7 +415,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     const stageBonus = order.stage * 16;
     const itemBonus = selectedIds.length * 14;
     const speedBonus = Math.max(30, Math.round(220 - (orderSolveMs / 70)));
-    const streakBonus = streak * 22;
+    const streakBonus = Combo * 22;
     const points = 120 + stageBonus + itemBonus + speedBonus + streakBonus;
 
     triggerHaptic('success');
@@ -442,7 +442,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
       nextOrder(ordersServed + 1, timeLeft);
       setIsResolvingOrder(false);
     }, 320);
-  }, [nextOrder, order.stage, orderStartMs, ordersServed, selectedIds.length, streak, timeLeft]);
+  }, [nextOrder, order.stage, orderStartMs, ordersServed, selectedIds.length, Combo, timeLeft]);
 
   const resolveIncorrectOrder = useCallback(() => {
     triggerHaptic('warning');
@@ -563,13 +563,13 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
               </div>
 
               <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
-                <div className="text-[8px] font-black uppercase tracking-[0.16em] text-cyan-100/65">Score</div>
-                <div className="text-sm font-black text-white">{score}</div>
+                <div className="text-[8px] font-black uppercase tracking-[0.16em] text-cyan-100/65">XP</div>
+                <div className="text-sm font-black text-white">{XP}</div>
               </div>
 
               <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
-                <div className="text-[8px] font-black uppercase tracking-[0.16em] text-cyan-100/65">Streak</div>
-                <div className="text-sm font-black text-amber-200">x{streak}</div>
+                <div className="text-[8px] font-black uppercase tracking-[0.16em] text-cyan-100/65">Combo</div>
+                <div className="text-sm font-black text-amber-200">x{Combo}</div>
               </div>
             </div>
           </header>

@@ -9,8 +9,8 @@ import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 interface ArithmeticGauntletGameProps {
   levelId: number;
   avatarId: string;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -69,9 +69,9 @@ const createQuestion = (levelId: number): ArithmeticQuestion => {
   return { prompt: `${dividend} / ${divisor}`, answer: quotient };
 };
 
-const starsForScore = (score: number, targetScore: number, accuracy: number) => {
-  if (score >= targetScore * 0.9 && accuracy >= 0.82) return 3;
-  if (score >= targetScore * 0.55 && accuracy >= 0.62) return 2;
+const starsForScore = (XP: number, targetScore: number, accuracy: number) => {
+  if (XP >= targetScore * 0.9 && accuracy >= 0.82) return 3;
+  if (XP >= targetScore * 0.55 && accuracy >= 0.62) return 2;
   return 1;
 };
 
@@ -85,9 +85,9 @@ const ArithmeticGauntletGame: React.FC<ArithmeticGauntletGameProps> = ({
   const resolvedLevel = useMemo(() => Math.max(1, Math.min(10, levelId || 1)), [levelId]);
   const targetScore = useMemo(() => 1800 + (resolvedLevel * 240), [resolvedLevel]);
 
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(ROUND_SECONDS);
-  const [streak, setStreak] = useState(0);
+  const [Combo, setStreak] = useState(0);
   const [lives, setLives] = useState(MAX_LIVES);
   const [questionCount, setQuestionCount] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
@@ -105,8 +105,8 @@ const ArithmeticGauntletGame: React.FC<ArithmeticGauntletGameProps> = ({
   };
 
   useEffect(() => {
-    scoreRef.current = score;
-  }, [score]);
+    scoreRef.current = XP;
+  }, [XP]);
 
   useEffect(() => () => clearTimers(), []);
 
@@ -220,8 +220,8 @@ const ArithmeticGauntletGame: React.FC<ArithmeticGauntletGameProps> = ({
     setQuestionCount((previous) => previous + 1);
 
     if (parsed === question.answer) {
-      const gained = 110 + (streak * 18);
-      const updatedScore = score + gained;
+      const gained = 110 + (Combo * 18);
+      const updatedScore = XP + gained;
       setScore(updatedScore);
       scoreRef.current = updatedScore;
       setStreak((previous) => previous + 1);
@@ -229,7 +229,7 @@ const ArithmeticGauntletGame: React.FC<ArithmeticGauntletGameProps> = ({
       setFeedback({
         type: 'success',
         title: 'Correct',
-        subtitle: `+${gained} score`,
+        subtitle: `+${gained} XP`,
       });
       triggerHaptic('success');
       queueNextQuestion();
@@ -298,12 +298,12 @@ const ArithmeticGauntletGame: React.FC<ArithmeticGauntletGameProps> = ({
                 <div className="text-lg font-black text-white md:text-xl">{lives}/3</div>
               </div>
               <div className="rounded-xl border border-white/20 bg-slate-950/42 px-2 py-1 text-center">
-                <div className="text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100/70">Streak</div>
-                <div className="text-lg font-black text-white md:text-xl">x{streak}</div>
+                <div className="text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100/70">Combo</div>
+                <div className="text-lg font-black text-white md:text-xl">x{Combo}</div>
               </div>
               <div className="rounded-xl border border-white/20 bg-slate-950/42 px-2 py-1 text-center">
-                <div className="text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100/70">Score</div>
-                <div className="text-lg font-black text-white md:text-xl">{score}</div>
+                <div className="text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100/70">XP</div>
+                <div className="text-lg font-black text-white md:text-xl">{XP}</div>
               </div>
             </div>
 

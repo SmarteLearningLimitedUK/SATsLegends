@@ -14,8 +14,8 @@ import sparkle from '../assets/fantasy_hero/cloud_collapse/sparkle.png';
 interface CloudCollapseGameProps {
   levelId: number;
   avatarId: string;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -26,7 +26,7 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
   onGameOver,
   onBack,
 }) => {
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(0);
   const [showTutorial, setShowTutorial] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
@@ -56,7 +56,7 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
       }, 1000);
     }
     return () => clearInterval(timer);
-  }, [timeLeft, isGameOver, isVictory, score]);
+  }, [timeLeft, isGameOver, isVictory, XP]);
 
   const calculateStars = (currentScore: number, target: number) => {
     if (currentScore >= target * 2) return 3;
@@ -65,7 +65,7 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
   };
 
   const handleWin = () => {
-    const stars = calculateStars(score, level.targetScore);
+    const stars = calculateStars(XP, level.targetScore);
     setIsVictory(true);
     confetti({
       particleCount: 140,
@@ -73,17 +73,17 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
       origin: { y: 0.6 },
       colors: ['#fde047', '#7dd3fc', '#86efac', '#f9a8d4'],
     });
-    onVictory(stars, score);
+    onVictory(stars, XP);
   };
 
   const handleTimeUp = () => {
-    if (score >= level.targetScore) {
+    if (XP >= level.targetScore) {
       handleWin();
       return;
     }
 
     setIsGameOver(true);
-    onGameOver(score);
+    onGameOver(XP);
   };
 
   const handleScoreUpdate = (points: number) => {
@@ -126,7 +126,7 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
       <div className="relative z-10 flex h-full min-h-0 w-full max-w-5xl flex-1 flex-col items-center gap-2 md:gap-3">
         <HUD
           title="Cloud Collapse"
-          score={score}
+          XP={XP}
           targetScore={level.targetScore}
           timeLeft={timeLeft}
           level={level as CloudCollapseLevelConfig}
@@ -201,7 +201,7 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
                     >
                       <AssetIcon
                         name="star"
-                        className={`h-8 w-8 md:h-10 md:w-10 ${starIndex <= calculateStars(score, level.targetScore) ? '' : 'opacity-25 grayscale'}`}
+                        className={`h-8 w-8 md:h-10 md:w-10 ${starIndex <= calculateStars(XP, level.targetScore) ? '' : 'opacity-25 grayscale'}`}
                       />
                     </motion.div>
                   ))}
@@ -211,7 +211,7 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
               <div className="grid w-full grid-cols-2 gap-3">
                 <div className="casual-panel-surface rounded-[1.2rem] p-3 md:rounded-[1.5rem] md:p-4">
                   <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/60 md:text-[10px]">XP</div>
-                  <div className="mt-1 text-2xl font-black text-white md:text-4xl">{score}</div>
+                  <div className="mt-1 text-2xl font-black text-white md:text-4xl">{XP}</div>
                 </div>
                 <div className="casual-panel-surface rounded-[1.2rem] p-3 md:rounded-[1.5rem] md:p-4">
                   <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/60 md:text-[10px]">Target</div>

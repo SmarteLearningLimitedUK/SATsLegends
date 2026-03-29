@@ -12,8 +12,8 @@ interface SimplifySprintGameProps {
   avatarId: string;
   useSharedTopHud?: boolean;
   isBoss?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -148,7 +148,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
   const [roundNumber, setRoundNumber] = useState(1);
   const [question, setQuestion] = useState<RoundQuestion>(() => makeQuestion(resolvedLevel, 1));
   const [timeLeft, setTimeLeft] = useState(initialTime);
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [lives, setLives] = useState(4);
   const [attempts, setAttempts] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
@@ -157,7 +157,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
 
   const scoreRef = useRef(0);
   const endedRef = useRef(false);
-  scoreRef.current = score;
+  scoreRef.current = XP;
 
   useEffect(() => {
     endedRef.current = false;
@@ -208,7 +208,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
 
     if (isCorrect) {
       const awarded = 100 + Math.max(0, Math.floor(timeLeft * 0.8)) + (resolvedLevel * 12);
-      const nextScore = score + awarded;
+      const nextScore = XP + awarded;
       const nextCorrect = correctAnswers + 1;
       setScore(nextScore);
       setCorrectAnswers(nextCorrect);
@@ -237,7 +237,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
 
     if (nextLives <= 0) {
       endedRef.current = true;
-      window.setTimeout(() => onGameOver(score), 420);
+      window.setTimeout(() => onGameOver(XP), 420);
       return;
     }
 
@@ -268,7 +268,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
             <span className="text-xs font-black tabular-nums">{timeLeft}s</span>
             <span className="h-4 w-px bg-cyan-100/35" />
             <CircleDollarSign className="h-4 w-4 text-yellow-300" />
-            <span className="text-xs font-black tabular-nums">{score}</span>
+            <span className="text-xs font-black tabular-nums">{XP}</span>
           </div>
         </div>
       )}

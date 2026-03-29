@@ -24,8 +24,8 @@ interface BossEncounterGameProps {
   gameType: SupportedBossGameType;
   levelId: number;
   avatarId: string;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -465,7 +465,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [bossPose, setBossPose] = useState<BossPose>('neutral');
   const [reaction, setReaction] = useState(REACTION_COPY.idle);
@@ -519,7 +519,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
 
     const isCorrect = index === question.answerIndex;
     const nextCorrect = isCorrect ? correctAnswers + 1 : correctAnswers;
-    const nextScore = isCorrect ? score + 180 : score;
+    const nextScore = isCorrect ? XP + 180 : XP;
     const nextHealth = Math.max(0, 100 - (nextCorrect * 10));
     const finalQuestion = currentIndex === TOTAL_QUESTIONS - 1;
 

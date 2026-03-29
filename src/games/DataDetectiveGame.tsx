@@ -49,8 +49,8 @@ interface DataDetectiveGameProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -74,9 +74,9 @@ const MONSTER_NAMES = ['Grumpy Green', 'Blue Blob', 'Purple Prowler', 'Red Rogue
 
 const MAX_CASES = 10;
 
-const scoreToStars = (score: number) => {
-  if (score >= 900) return 3;
-  if (score >= 700) return 2;
+const scoreToStars = (XP: number) => {
+  if (XP >= 900) return 3;
+  if (XP >= 700) return 2;
   return 1;
 };
 
@@ -85,7 +85,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   onVictory,
   onBack,
 }) => {
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [gameState, setGameState] = useState<'playing' | 'success' | 'complete'>('playing');
   const [currentCase, setCurrentCase] = useState<StolenItem[]>([]);
@@ -168,7 +168,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
     }
 
     setGameState('complete');
-    onVictory(scoreToStars(score), score);
+    onVictory(scoreToStars(XP), XP);
   };
 
   return (
@@ -196,7 +196,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           <div className="flex items-center gap-6">
             <div className="flex flex-col items-end">
               <span className="text-[10px] uppercase text-stone-500">Reputation</span>
-              <span className="text-xs font-bold text-amber-500">{score} PTS</span>
+              <span className="text-xs font-bold text-amber-500">{XP} PTS</span>
             </div>
             <div className="h-8 w-[1px] bg-stone-800" />
             <div className="flex flex-col items-end">
@@ -376,7 +376,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               </p>
               <div className="mb-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
                 <span className="mb-1 block text-[10px] uppercase text-stone-500">Final Reputation</span>
-                <span className="text-4xl font-black text-amber-500">{score} PTS</span>
+                <span className="text-4xl font-black text-amber-500">{XP} PTS</span>
               </div>
               <button
                 onClick={startGame}

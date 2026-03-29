@@ -11,8 +11,8 @@ interface NumberLineNinjaGameProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -45,10 +45,10 @@ const shuffle = <T,>(items: T[]): T[] => {
 
 const uniqueStrings = (values: string[]) => Array.from(new Set(values));
 
-const scoreToStars = (score: number, correct: number, attempts: number) => {
+const scoreToStars = (XP: number, correct: number, attempts: number) => {
   const accuracy = attempts > 0 ? correct / attempts : 0;
-  if (score >= 1700 && accuracy >= 0.85) return 3;
-  if (score >= 1000 && accuracy >= 0.65) return 2;
+  if (XP >= 1700 && accuracy >= 0.85) return 3;
+  if (XP >= 1000 && accuracy >= 0.65) return 2;
   return 1;
 };
 
@@ -140,7 +140,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const [question, setQuestion] = useState<NumberLineQuestion>(() => buildQuestion(Math.max(levelId, 1)));
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [feedbackState, setFeedbackState] = useState<FeedbackState>('idle');
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [locked, setLocked] = useState(false);
@@ -191,18 +191,18 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
     setDidFail(true);
     emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
-      score,
+      XP,
       reason: lives <= 0 ? 'lives' : 'time',
     });
-    onGameOver(score);
-  }, [didComplete, didFail, isSessionActive, lives, onGameOver, score, sessionEvents, sessionState]);
+    onGameOver(XP);
+  }, [didComplete, didFail, isSessionActive, lives, onGameOver, XP, sessionEvents, sessionState]);
 
   const completeRun = (finalScore: number, nextCorrect: number, nextAttempts: number) => {
     if (didComplete) return;
     setDidComplete(true);
     const stars = scoreToStars(finalScore, nextCorrect, nextAttempts);
     emitMiniGameSessionEvent(sessionEvents, 'game_complete', {
-      score: finalScore,
+      XP: finalScore,
       stars,
       metadata: { correctCount: nextCorrect, attempts: nextAttempts },
     });
@@ -228,14 +228,14 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     if (isCorrect) {
       const nextCorrect = correctCount + 1;
       const pointGain = 130 + (nextCorrect % 4 === 0 ? 30 : 0);
-      const nextScore = score + pointGain;
+      const nextScore = XP + pointGain;
 
       setCorrectCount(nextCorrect);
       setScore(nextScore);
       setFeedbackState('correct');
 
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
-        score,
+        XP,
         metadata: {
           scoreAfter: nextScore,
           selected: option,
@@ -244,7 +244,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
         },
       });
       emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', {
-        score: nextScore,
+        XP: nextScore,
         metadata: {
           selected: option,
           answer: question.answer,
@@ -264,7 +264,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     setFeedbackState('incorrect');
 
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
-      score,
+      XP,
       metadata: {
         selected: option,
         answer: question.answer,

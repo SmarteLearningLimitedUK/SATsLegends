@@ -25,8 +25,8 @@ interface PlaceValuePanicGameProps {
   miniGameLevel?: number;
   avatarId: string;
   useSharedTopHud?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -408,7 +408,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const [initialSourceSlots, setInitialSourceSlots] = useState<Array<Token | null>>([]);
   const [dragState, setDragState] = useState<DragState | null>(null);
   const [goblinHealth, setGoblinHealth] = useState<number>(GOBLIN_MAX_HEALTH);
-  const [score, setScore] = useState<number>(0);
+  const [XP, setScore] = useState<number>(0);
   const [matchTimeLeft, setMatchTimeLeft] = useState<number>(MATCH_DURATION_SECONDS);
   const [attempts, setAttempts] = useState<number>(0);
   const [correctAnswers, setCorrectAnswers] = useState<number>(0);
@@ -642,8 +642,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     setGoblinEffect('heal');
     triggerHaptic('warning');
     setDragState(null);
-    window.setTimeout(() => onGameOver(Math.max(0, score)), 220);
-  }, [matchTimeLeft, onGameOver, score]);
+    window.setTimeout(() => onGameOver(Math.max(0, XP)), 220);
+  }, [matchTimeLeft, onGameOver, XP]);
 
   const getRelativePoint = useCallback((clientX: number, clientY: number) => {
     const rect = playfieldRef.current?.getBoundingClientRect();
@@ -822,7 +822,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       victoryDispatchedRef.current = true;
       const finalAccuracy = attempts > 0 ? correctAnswers / attempts : 1;
       const stars = scoreToStars(finalAccuracy);
-      window.setTimeout(() => onVictory(stars, Math.max(0, score)), 380);
+      window.setTimeout(() => onVictory(stars, Math.max(0, XP)), 380);
       return;
     }
 
@@ -831,7 +831,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       setFeedback(null);
       resetRound(nextQuestion);
     }, 760);
-  }, [attempts, correctAnswers, onVictory, resetRound, resolvedLevel, score]);
+  }, [attempts, correctAnswers, onVictory, resetRound, resolvedLevel, XP]);
 
   const canSubmit = useMemo(
     () => !isResolving && !dragState && targetSlots.length > 0 && targetSlots.every((token) => token !== null),

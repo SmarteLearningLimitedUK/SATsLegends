@@ -10,8 +10,8 @@ interface RemainderRunGameProps {
   miniGameLevel?: number;
   avatarId: string;
   useSharedTopHud?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -166,12 +166,12 @@ const createProblem = (stage: number, solvedCount: number): RemainderProblem => 
   };
 };
 
-const starsFromPerformance = (score: number, correct: number, attempts: number, stage: number) => {
+const starsFromPerformance = (XP: number, correct: number, attempts: number, stage: number) => {
   const accuracy = attempts > 0 ? correct / attempts : 0;
   const target = 1200 + (stage * 150);
 
-  if (score >= target * 1.2 && accuracy >= 0.8) return 3;
-  if (score >= target * 0.8 && accuracy >= 0.6) return 2;
+  if (XP >= target * 1.2 && accuracy >= 0.8) return 3;
+  if (XP >= target * 0.8 && accuracy >= 0.6) return 2;
   return 1;
 };
 
@@ -199,8 +199,8 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
   const initialRoundTime = useMemo(() => roundSecondsForLevel(baseLevel), [baseLevel]);
 
   const [timeLeft, setTimeLeft] = useState(initialRoundTime);
-  const [score, setScore] = useState(0);
-  const [streak, setStreak] = useState(0);
+  const [XP, setScore] = useState(0);
+  const [Combo, setStreak] = useState(0);
   const [solvedCount, setSolvedCount] = useState(0);
   const [attemptCount, setAttemptCount] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
@@ -266,15 +266,15 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
     setIsLocked(true);
 
     const finalStage = stageFromProgress(baseLevel, solvedCount, 0);
-    const stars = starsFromPerformance(score, correctCount, attemptCount, finalStage);
+    const stars = starsFromPerformance(XP, correctCount, attemptCount, finalStage);
     confetti({
       particleCount: 120,
       spread: 64,
       origin: { y: 0.68 },
       colors: ['#facc15', '#60a5fa', '#34d399', '#ffffff'],
     });
-    onVictory(stars, score);
-  }, [attemptCount, baseLevel, correctCount, onVictory, score, solvedCount, timeLeft]);
+    onVictory(stars, XP);
+  }, [attemptCount, baseLevel, correctCount, onVictory, XP, solvedCount, timeLeft]);
 
   const timerProgress = Math.max(0, Math.min(1, timeLeft / initialRoundTime));
   const timerFillColor = useMemo(() => {
@@ -314,7 +314,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
       const elapsedMs = Math.max(250, Date.now() - questionStartRef.current);
       const speedBonus = Math.max(20, Math.round(160 - (elapsedMs / 18)));
       const difficultyBonus = 80 + (problem.stage * 14);
-      const streakMultiplier = 1 + Math.min(0.9, streak * 0.08);
+      const streakMultiplier = 1 + Math.min(0.9, Combo * 0.08);
       const speedRoundBonus = problem.speedRound ? 70 : 0;
       const points = Math.round((difficultyBonus + speedBonus + speedRoundBonus) * streakMultiplier);
 
@@ -349,7 +349,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
       subtitle: `Answer: ${problem.quotient} r ${problem.remainder}`,
     });
     moveToNextProblem(nextSolved, 520);
-  }, [attemptCount, isLocked, moveToNextProblem, problem, roundOver, solvedCount, streak]);
+  }, [attemptCount, isLocked, moveToNextProblem, problem, roundOver, solvedCount, Combo]);
 
   const submitManual = () => {
     if (roundOver || isLocked) return;
@@ -441,13 +441,13 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
                 </div>
 
                 <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.16em] text-cyan-100/65">Score</div>
-                  <div className="text-sm font-black text-white">{score}</div>
+                  <div className="text-[8px] font-black uppercase tracking-[0.16em] text-cyan-100/65">XP</div>
+                  <div className="text-sm font-black text-white">{XP}</div>
                 </div>
 
                 <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.16em] text-cyan-100/65">Streak</div>
-                  <div className="text-sm font-black text-amber-200">x{streak}</div>
+                  <div className="text-[8px] font-black uppercase tracking-[0.16em] text-cyan-100/65">Combo</div>
+                  <div className="text-sm font-black text-amber-200">x{Combo}</div>
                 </div>
               </div>
             </header>

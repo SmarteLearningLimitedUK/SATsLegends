@@ -29,7 +29,7 @@ const steps = [
   },
   {
     title: 'Your Goal',
-    content: 'Reach the target score before the timer runs out to unlock the next level and earn stars.',
+    content: 'Reach the target XP before the timer runs out to unlock the next level and earn stars.',
     image: '??'
   }
 ];

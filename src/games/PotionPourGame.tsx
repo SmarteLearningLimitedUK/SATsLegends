@@ -15,8 +15,8 @@ import potionBackground from '../assets/maps/tablekitchen.jpg';
 interface PotionPourGameProps {
   levelId: number;
   avatarId: string;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -214,7 +214,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
     if (sessionState.timeLeft <= 0 || sessionState.lives <= 0) {
       endedRef.current = true;
       emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
-        score: correctSolved * 100,
+        XP: correctSolved * 100,
         reason: sessionState.timeLeft <= 0 ? 'time_up' : 'no_lives',
       });
       onGameOver(correctSolved * 100);
@@ -263,11 +263,11 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
       setFeedback('success');
       setCorrectSolved(nextCorrect);
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
-        score: scoreNow,
+        XP: scoreNow,
         metadata: { round: nextCorrect, roundsGoal },
       });
       emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', {
-        score: scoreNow,
+        XP: scoreNow,
         metadata: { challengeId: challenge.id, stage: challenge.stage },
       });
 
@@ -278,7 +278,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
           const totalAttempts = attempts + 1;
           const stars = starsForAccuracy(nextCorrect, totalAttempts);
           emitMiniGameSessionEvent(sessionEvents, 'game_complete', {
-            score: scoreNow,
+            XP: scoreNow,
             stars,
             metadata: { totalAttempts, roundsGoal },
           });
@@ -296,7 +296,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
     setLocked(true);
     setFeedback('error');
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
-      score: correctSolved * 100,
+      XP: correctSolved * 100,
       metadata: { challengeId: challenge.id, stage: challenge.stage },
     });
     feedbackTimerRef.current = setTimeout(() => {

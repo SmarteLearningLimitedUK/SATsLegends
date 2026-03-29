@@ -12,8 +12,8 @@ interface VolumeVaultGameProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -292,10 +292,10 @@ const buildLevel = (id: number): VaultLevelConfig => {
 const VOLUME_LEVELS = Array.from({ length: 10 }, (_, i) => buildLevel(i + 1));
 const getLevel = (levelId: number) => VOLUME_LEVELS[(Math.max(1, levelId) - 1) % VOLUME_LEVELS.length];
 
-const scoreToStars = (score: number, correct: number, attempts: number) => {
+const scoreToStars = (XP: number, correct: number, attempts: number) => {
   const accuracy = attempts > 0 ? correct / attempts : 0;
-  if (score >= 1700 && accuracy >= 0.88) return 3;
-  if (score >= 1100 && accuracy >= 0.7) return 2;
+  if (XP >= 1700 && accuracy >= 0.88) return 3;
+  if (XP >= 1100 && accuracy >= 0.7) return 2;
   return 1;
 };
 
@@ -373,7 +373,7 @@ const VolumeVaultGame: React.FC<VolumeVaultGameShellProps> = ({
   const [safeState, setSafeState] = useState<VaultAnimationState>('locked');
   const [correctCount, setCorrectCount] = useState(0);
   const [attempts, setAttempts] = useState(0);
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [wrongPulse, setWrongPulse] = useState(false);
   const [didComplete, setDidComplete] = useState(false);
   const [didFail, setDidFail] = useState(false);
@@ -436,18 +436,18 @@ const VolumeVaultGame: React.FC<VolumeVaultGameShellProps> = ({
     if (isSessionActive) return;
     setDidFail(true);
     emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
-      score,
+      XP,
       reason: lives <= 0 ? 'lives' : 'time',
     });
-    onGameOver(score);
-  }, [didComplete, didFail, isSessionActive, lives, onGameOver, score, sessionEvents, sessionState]);
+    onGameOver(XP);
+  }, [didComplete, didFail, isSessionActive, lives, onGameOver, XP, sessionEvents, sessionState]);
 
   const finishRun = (finalScore: number, solved: number, tries: number) => {
     if (didComplete) return;
     setDidComplete(true);
     const stars = scoreToStars(finalScore, solved, tries);
     emitMiniGameSessionEvent(sessionEvents, 'game_complete', {
-      score: finalScore,
+      XP: finalScore,
       stars,
       metadata: { solved, tries, level: activeLevel.id },
     });
@@ -472,7 +472,7 @@ const VolumeVaultGame: React.FC<VolumeVaultGameShellProps> = ({
       setFeedback({ kind: 'error', message: result.msg });
       setWrongPulse(true);
       emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
-        score,
+        XP,
         metadata: { type: question.type, livesBefore: lives, livesLost: 1 },
       });
       queue(() => setWrongPulse(false), 360);
@@ -481,7 +481,7 @@ const VolumeVaultGame: React.FC<VolumeVaultGameShellProps> = ({
 
     const solved = correctCount + 1;
     const gain = 180 + (activeLevel.id * 20) + (solved % 3 === 0 ? 30 : 0);
-    const nextScore = score + gain;
+    const nextScore = XP + gain;
     const finalQ = questionIndex >= totalQuestions - 1;
 
     setCorrectCount(solved);
@@ -489,8 +489,8 @@ const VolumeVaultGame: React.FC<VolumeVaultGameShellProps> = ({
     setFeedback({ kind: 'success', message: finalQ ? 'Final lock released!' : 'Lock mechanism loosened!' });
     setLocked(true);
 
-    emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { score, metadata: { scoreAfter: nextScore, scoreDelta: gain, type: question.type } });
-    emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', { score: nextScore, metadata: { questionIndex: questionIndex + 1, totalQuestions } });
+    emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { XP, metadata: { scoreAfter: nextScore, scoreDelta: gain, type: question.type } });
+    emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', { XP: nextScore, metadata: { questionIndex: questionIndex + 1, totalQuestions } });
 
     if (finalQ) {
       setSafeState('unlocking');
@@ -672,7 +672,7 @@ const VolumeVaultGame: React.FC<VolumeVaultGameShellProps> = ({
             <div className="rounded-xl bg-slate-950/45 px-2 py-1">Volume: <span className="text-amber-100">{currentVolume}</span></div>
             <div className="rounded-xl bg-slate-950/45 px-2 py-1 text-right">Target: <span className="text-amber-100">{question.targetVolume ?? '--'}</span></div>
             <div className="rounded-xl bg-slate-950/45 px-2 py-1">{question.targetDimensions ? `Dims: ${formatDims(question.targetDimensions)}` : 'Dims: Free build'}</div>
-            <div className="rounded-xl bg-slate-950/45 px-2 py-1 text-right">Score: <span className="text-amber-100">{score}</span></div>
+            <div className="rounded-xl bg-slate-950/45 px-2 py-1 text-right">XP: <span className="text-amber-100">{XP}</span></div>
           </div>
         </section>
       </div>

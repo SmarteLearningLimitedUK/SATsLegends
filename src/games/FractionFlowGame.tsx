@@ -10,8 +10,8 @@ interface FractionFlowGameProps {
   avatarId: string;
   useSharedTopHud?: boolean;
   isBoss?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -170,7 +170,7 @@ const FractionFlowGame: React.FC<FractionFlowGameProps> = ({
   const [dragState, setDragState] = useState<DragState | null>(null);
   const [timeLeft, setTimeLeft] = useState(() => Math.max(38, 62 - (Math.max(1, levelId) * 2)));
   const [lives, setLives] = useState(4);
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [isResolving, setIsResolving] = useState(false);
@@ -179,7 +179,7 @@ const FractionFlowGame: React.FC<FractionFlowGameProps> = ({
   const playfieldRef = useRef<HTMLDivElement | null>(null);
   const endedRef = useRef(false);
   const scoreRef = useRef(0);
-  scoreRef.current = score;
+  scoreRef.current = XP;
 
   const resolvedLevel = useMemo(
     () => Math.max(1, Math.min(10, miniGameLevel || levelId || 1)),
@@ -423,7 +423,7 @@ const FractionFlowGame: React.FC<FractionFlowGameProps> = ({
 
     if (isCorrect) {
       const awarded = 140 + Math.max(0, Math.floor(timeLeft * 0.7)) + (resolvedLevel * 12);
-      const nextScore = score + awarded;
+      const nextScore = XP + awarded;
       const nextCorrect = correctAnswers + 1;
       setScore(nextScore);
       setCorrectAnswers(nextCorrect);
@@ -450,7 +450,7 @@ const FractionFlowGame: React.FC<FractionFlowGameProps> = ({
 
     if (nextLives <= 0) {
       endedRef.current = true;
-      window.setTimeout(() => onGameOver(score), 440);
+      window.setTimeout(() => onGameOver(XP), 440);
       return;
     }
 
@@ -468,7 +468,7 @@ const FractionFlowGame: React.FC<FractionFlowGameProps> = ({
     resolvedLevel,
     round.sortedIds,
     roundIndex,
-    score,
+    XP,
     targetSlots,
     timeLeft,
     totalRounds,

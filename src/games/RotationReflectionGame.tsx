@@ -9,8 +9,8 @@ interface RotationReflectionGameProps {
   miniGameLevel?: number;
   avatarId: string;
   useSharedTopHud?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -241,11 +241,11 @@ const createQuestion = (baseLevel: number, solvedCount: number, timeLeft: number
   };
 };
 
-const starsFromPerformance = (score: number, correct: number, attempts: number, stage: number) => {
+const starsFromPerformance = (XP: number, correct: number, attempts: number, stage: number) => {
   const accuracy = attempts > 0 ? correct / attempts : 0;
   const target = 1200 + (stage * 170);
-  if (score >= target * 1.2 && accuracy >= 0.78) return 3;
-  if (score >= target * 0.82 && accuracy >= 0.6) return 2;
+  if (XP >= target * 1.2 && accuracy >= 0.78) return 3;
+  if (XP >= target * 0.82 && accuracy >= 0.6) return 2;
   return 1;
 };
 
@@ -296,8 +296,8 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
   const initialRoundSeconds = useMemo(() => roundSecondsForLevel(baseLevel), [baseLevel]);
 
   const [timeLeft, setTimeLeft] = useState(initialRoundSeconds);
-  const [score, setScore] = useState(0);
-  const [streak, setStreak] = useState(0);
+  const [XP, setScore] = useState(0);
+  const [Combo, setStreak] = useState(0);
   const [attemptCount, setAttemptCount] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [solvedCount, setSolvedCount] = useState(0);
@@ -351,9 +351,9 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
     finishGuardRef.current = true;
     setRoundOver(true);
     const finalStage = stageFromProgress(baseLevel, solvedCount, 0);
-    const stars = starsFromPerformance(score, correctCount, attemptCount, finalStage);
-    onVictory(stars, score);
-  }, [attemptCount, baseLevel, correctCount, onVictory, score, solvedCount, timeLeft]);
+    const stars = starsFromPerformance(XP, correctCount, attemptCount, finalStage);
+    onVictory(stars, XP);
+  }, [attemptCount, baseLevel, correctCount, onVictory, XP, solvedCount, timeLeft]);
 
   const timerProgress = Math.max(0, Math.min(1, timeLeft / initialRoundSeconds));
   const timerFillColor = useMemo(() => {
@@ -386,7 +386,7 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
     if (isCorrect) {
       const elapsedMs = Math.max(220, Date.now() - questionStartRef.current);
       const speedBonus = Math.max(16, Math.round(165 - (elapsedMs / 16)));
-      const streakMultiplier = 1 + Math.min(0.9, streak * 0.08);
+      const streakMultiplier = 1 + Math.min(0.9, Combo * 0.08);
       const speedRoundBonus = question.speedRound ? 90 : 0;
       const points = Math.round((120 + question.difficultyWeight + speedBonus + speedRoundBonus) * streakMultiplier);
       setScore((prev) => prev + points);
@@ -405,7 +405,7 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
     setFeedback({ tone: 'error', title: 'Wrong orientation', subtitle: detailText });
     triggerHaptic('error');
     moveToNextQuestion(nextSolvedCount, 560);
-  }, [attemptCount, isLocked, moveToNextQuestion, question.difficultyWeight, question.speedRound, roundOver, solvedCount, streak]);
+  }, [attemptCount, isLocked, moveToNextQuestion, question.difficultyWeight, question.speedRound, roundOver, solvedCount, Combo]);
 
   const handleRotate = (direction: TurnDirection) => {
     if (roundOver || isLocked || question.mode !== 'rotate_match') return;
@@ -489,13 +489,13 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
                 </div>
 
                 <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Score</div>
-                  <div className="text-sm font-black text-white">{score}</div>
+                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">XP</div>
+                  <div className="text-sm font-black text-white">{XP}</div>
                 </div>
 
                 <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Streak</div>
-                  <div className="text-sm font-black text-amber-200">x{streak}</div>
+                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Combo</div>
+                  <div className="text-sm font-black text-amber-200">x{Combo}</div>
                 </div>
               </div>
             </header>
@@ -503,12 +503,12 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
             <header className="rounded-[1.15rem] border border-cyan-100/24 bg-slate-950/50 px-3 py-2 shadow-[0_10px_20px_rgba(2,6,23,0.42)]">
               <div className="flex items-center justify-between gap-2.5">
                 <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Score</div>
-                  <div className="text-sm font-black text-white">{score}</div>
+                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">XP</div>
+                  <div className="text-sm font-black text-white">{XP}</div>
                 </div>
                 <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Streak</div>
-                  <div className="text-sm font-black text-amber-200">x{streak}</div>
+                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Combo</div>
+                  <div className="text-sm font-black text-amber-200">x{Combo}</div>
                 </div>
               </div>
             </header>

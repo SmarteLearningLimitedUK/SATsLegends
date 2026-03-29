@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Trophy, Timer, RefreshCw } from '../../components/GameIcons';
 
 interface LogicSortProps {
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -19,7 +19,7 @@ interface Tube {
 const LogicSort: React.FC<LogicSortProps> = ({ onVictory, onGameOver, onBack }) => {
   const [tubes, setTubes] = useState<Tube[]>([]);
   const [selectedTube, setSelectedTube] = useState<number | null>(null);
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(90);
   const [level, setLevel] = useState(1);
 
@@ -75,7 +75,7 @@ const LogicSort: React.FC<LogicSortProps> = ({ onVictory, onGameOver, onBack }) 
       setTimeLeft(t => {
         if (t <= 1) {
           clearInterval(timer);
-          onGameOver(score);
+          onGameOver(XP);
           return 0;
         }
         return t - 1;
@@ -120,7 +120,7 @@ const LogicSort: React.FC<LogicSortProps> = ({ onVictory, onGameOver, onBack }) 
             setLevel(l => l + 1);
             setScore(s => s + 500);
           } else {
-            onVictory(3, score + 1000);
+            onVictory(3, XP + 1000);
           }
         }
       }
@@ -134,7 +134,7 @@ const LogicSort: React.FC<LogicSortProps> = ({ onVictory, onGameOver, onBack }) 
       <div className="w-full flex justify-between items-center">
         <div className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full border border-white/20">
           <Trophy className="text-yellow-400 w-5 h-5" />
-          <span className="text-white font-black">{score}</span>
+          <span className="text-white font-black">{XP}</span>
         </div>
         <h2 className="text-2xl font-black text-white tracking-widest uppercase">Logic Sort</h2>
         <div className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full border border-white/20">

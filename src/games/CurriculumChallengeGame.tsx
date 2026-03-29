@@ -30,8 +30,8 @@ interface CurriculumChallengeGameProps {
   levelId: number;
   avatarId: string;
   isBoss?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -891,7 +891,7 @@ const renderVisual = (visual: VisualData) => {
               <div className="mb-2 flex items-center justify-center gap-2 text-[0.7rem] font-black uppercase tracking-[0.2em] text-cyan-100/72 md:mb-3 md:text-[0.78rem]">
                 <span className="rounded-full border border-white/10 bg-white/8 px-2 py-1">Strike</span>
                 <span className="rounded-full border border-white/10 bg-white/8 px-2 py-1">Solve</span>
-                <span className="rounded-full border border-white/10 bg-white/8 px-2 py-1">Score</span>
+                <span className="rounded-full border border-white/10 bg-white/8 px-2 py-1">XP</span>
               </div>
               <div className="space-y-2">
                 {visual.lines.map((line, index) => (
@@ -1019,13 +1019,13 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
   onGameOver,
   onBack,
 }) => {
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(95 + (levelId * QUESTION_TIME_BONUS));
-  const [streak, setStreak] = useState(0);
+  const [Combo, setStreak] = useState(0);
   const [question, setQuestion] = useState<ChallengeQuestion>(() => generateQuestion(gameType, levelId));
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
-  const [statusMessage, setStatusMessage] = useState('Keep your streak alive and stay accurate.');
+  const [statusMessage, setStatusMessage] = useState('Keep your Combo alive and stay accurate.');
   const [isVictory, setIsVictory] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const scoreRef = useRef(0);
@@ -1037,7 +1037,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
   const isScaleBuilder = gameType === 'scale_safari';
   const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
   const targetScore = 780 + (levelId * 180);
-  const progress = Math.min((score / targetScore) * 100, 100);
+  const progress = Math.min((XP / targetScore) * 100, 100);
   const meta = GAME_META[gameType];
   const visualCaption = 'caption' in question.visual ? question.visual.caption : undefined;
   const bossEncounter = isBoss ? getBossEncounter(gameType) : undefined;
@@ -1051,7 +1051,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
           ? 'dazed'
           : feedback === 'incorrect'
             ? 'attack'
-            : streak >= 2
+            : Combo >= 2
               ? 'happy'
               : 'neutral';
 
@@ -1063,7 +1063,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
     setSelectedIndex(null);
     setFeedback(null);
     setQuestion(generateQuestion(gameType, levelId));
-    setStatusMessage('Keep your streak alive and stay accurate.');
+    setStatusMessage('Keep your Combo alive and stay accurate.');
     setIsVictory(false);
     setIsGameOver(false);
   }, [gameType, levelId]);
@@ -1104,13 +1104,13 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
     setFeedback(isCorrect ? 'correct' : 'incorrect');
 
     if (isCorrect) {
-      const points = 110 + (streak * 20);
+      const points = 110 + (Combo * 20);
       const newScore = scoreRef.current + points;
       triggerHaptic('success');
       scoreRef.current = newScore;
       setScore(newScore);
       setStreak((prev) => prev + 1);
-      setStatusMessage(`Correct. +${points} and your streak grows.`);
+      setStatusMessage(`Correct. +${points} and your Combo grows.`);
 
       if (newScore >= targetScore) {
         const stars = newScore >= targetScore * 1.9 ? 3 : newScore >= targetScore * 1.35 ? 2 : 1;
@@ -1141,8 +1141,8 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
   };
 
   const resultStars = useMemo(() => (
-    score >= targetScore * 1.9 ? 3 : score >= targetScore * 1.35 ? 2 : 1
-  ), [score, targetScore]);
+    XP >= targetScore * 1.9 ? 3 : XP >= targetScore * 1.35 ? 2 : 1
+  ), [XP, targetScore]);
 
   return (
     <div className={`relative flex h-full w-full flex-col overflow-hidden ${theme.ambient} px-1.5 pb-1.5 pt-1 md:px-4 md:pb-4`}>
@@ -1154,7 +1154,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
         <GameplayHUD
           title={theme.title}
           avatar={avatar}
-          score={score}
+          XP={XP}
           targetScore={targetScore}
           timeLeft={timeLeft}
           progress={progress}
@@ -1162,8 +1162,8 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
           accentSoftBg={theme.statSoftBg}
           accentBorder={theme.statBorder}
           progressBar={theme.progress}
-          statLabel="Streak"
-          statValue={streak}
+          statLabel="Combo"
+          statValue={Combo}
           compact
         />
 
@@ -1282,7 +1282,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                   {isVictory ? 'Challenge Cleared' : 'Round Over'}
                 </div>
                 <div className="text-center text-sm font-semibold text-slate-600 md:text-base">
-                  {isVictory ? 'You hit the SATs target with a premium run.' : 'You ran out of time before reaching the target score.'}
+                  {isVictory ? 'You hit the SATs target with a premium run.' : 'You ran out of time before reaching the target XP.'}
                 </div>
 
                 <div className="flex gap-2">
@@ -1293,12 +1293,12 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
 
                 <div className="grid w-full grid-cols-2 gap-3">
                   <div className="rounded-[1.2rem] bg-white/80 p-3 text-center">
-                    <div className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Score</div>
-                    <div className="mt-1 text-2xl font-black text-slate-900">{score}</div>
+                    <div className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">XP</div>
+                    <div className="mt-1 text-2xl font-black text-slate-900">{XP}</div>
                   </div>
                   <div className="rounded-[1.2rem] bg-white/80 p-3 text-center">
-                    <div className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Best Streak</div>
-                    <div className="mt-1 text-2xl font-black text-slate-900">{streak}</div>
+                    <div className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Best Combo</div>
+                    <div className="mt-1 text-2xl font-black text-slate-900">{Combo}</div>
                   </div>
                 </div>
 

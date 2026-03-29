@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Trophy, RotateCw, FlipHorizontal, CheckCircle2 } from '../../components/GameIcons';
 
 interface ShapeShiftProps {
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -19,7 +19,7 @@ interface Shape {
 const ShapeShift: React.FC<ShapeShiftProps> = ({ onVictory, onGameOver, onBack }) => {
   const [targetGrid, setTargetGrid] = useState<number[][]>([]);
   const [playerGrid, setPlayerGrid] = useState<number[][]>([]);
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [rotation, setRotation] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -58,7 +58,7 @@ const ShapeShift: React.FC<ShapeShiftProps> = ({ onVictory, onGameOver, onBack }
       if (level < 5) {
         setLevel(l => l + 1);
       } else {
-        onVictory(3, score + 1000);
+        onVictory(3, XP + 1000);
       }
     } else {
       // Shake animation or feedback
@@ -71,7 +71,7 @@ const ShapeShift: React.FC<ShapeShiftProps> = ({ onVictory, onGameOver, onBack }
       <div className="w-full flex justify-between items-center">
         <div className="flex items-center gap-2 bg-black/5 px-4 py-2 rounded-full">
           <Trophy className="text-yellow-600 w-5 h-5" />
-          <span className="text-gray-800 font-black">{score}</span>
+          <span className="text-gray-800 font-black">{XP}</span>
         </div>
         <h2 className="text-3xl font-black text-gray-800 tracking-tight">Shape Shift</h2>
         <div className="bg-black/5 px-4 py-2 rounded-full">

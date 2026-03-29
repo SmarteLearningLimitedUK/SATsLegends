@@ -37,17 +37,17 @@ interface LineGraphLabGameProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
 const COLORS = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444'];
 const MAX_LEVEL = 10;
 
-const scoreToStars = (score: number) => {
-  if (score >= 1400) return 3;
-  if (score >= 950) return 2;
+const scoreToStars = (XP: number) => {
+  if (XP >= 1400) return 3;
+  if (XP >= 950) return 2;
   return 1;
 };
 
@@ -59,7 +59,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   onGameOver: _onGameOver,
   onBack,
 }) => {
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [gameState, setGameState] = useState<'playing' | 'success' | 'complete'>('playing');
   const [recipe, setRecipe] = useState<DataPoint[]>([]);
@@ -152,7 +152,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
     }
 
     setGameState('complete');
-    onVictory(scoreToStars(score), score);
+    onVictory(scoreToStars(XP), XP);
   };
 
   return (
@@ -180,7 +180,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
           <div className="flex items-center gap-6">
             <div className="flex flex-col items-end">
               <span className="text-[10px] uppercase text-slate-500">Lab Credibility</span>
-              <span className="text-xs font-bold text-emerald-400">{score} XP</span>
+              <span className="text-xs font-bold text-emerald-400">{XP} XP</span>
             </div>
             <div className="h-8 w-[1px] bg-slate-800" />
             <div className="flex flex-col items-end">
@@ -322,7 +322,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
               </p>
               <div className="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
                 <span className="mb-1 block text-[10px] uppercase text-slate-500">Final Lab Credibility</span>
-                <span className="text-4xl font-black text-emerald-500">{score} XP</span>
+                <span className="text-4xl font-black text-emerald-500">{XP} XP</span>
               </div>
               <button
                 onClick={startGame}

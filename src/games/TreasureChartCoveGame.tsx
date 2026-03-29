@@ -8,8 +8,8 @@ import { AVATARS } from '../constants';
 interface TreasureChartCoveGameProps {
   levelId: number;
   avatarId: string;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -247,16 +247,16 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
   const targetScore = 860 + (levelId * 220);
   const timeoutsRef = useRef<number[]>([]);
 
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(84 + (levelId * 8));
   const [hearts, setHearts] = useState(MAX_HEARTS);
   const [roundNumber, setRoundNumber] = useState(1);
-  const [streak, setStreak] = useState(0);
+  const [Combo, setStreak] = useState(0);
   const [round, setRound] = useState<ChartRound>(() => createRound(levelId));
   const [feedback, setFeedback] = useState<null | { type: 'success' | 'error'; title: string; subtitle: string }>(null);
   const [isFinished, setIsFinished] = useState(false);
 
-  const progress = Math.min((score / targetScore) * 100, 100);
+  const progress = Math.min((XP / targetScore) * 100, 100);
 
   const clearTimers = () => {
     timeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
@@ -284,14 +284,14 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
         if (previous <= 1) {
           window.clearInterval(timerId);
           setIsFinished(true);
-          onGameOver(score);
+          onGameOver(XP);
           return 0;
         }
         return previous - 1;
       });
     }, 1000);
     return () => window.clearInterval(timerId);
-  }, [isFinished, onGameOver, score]);
+  }, [isFinished, onGameOver, XP]);
 
   const finishVictory = (finalScore: number) => {
     if (isFinished) return;
@@ -332,7 +332,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
     if (nextHearts <= 0) {
       const timeoutId = window.setTimeout(() => {
         setIsFinished(true);
-        onGameOver(score);
+        onGameOver(XP);
       }, 950);
       timeoutsRef.current.push(timeoutId);
       return;
@@ -348,11 +348,11 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
       return;
     }
 
-    const points = 155 + (streak * 24) + (round.mode === 'line' ? 28 : 0);
-    const updatedScore = score + points;
+    const points = 155 + (Combo * 24) + (round.mode === 'line' ? 28 : 0);
+    const updatedScore = XP + points;
     setScore(updatedScore);
     setStreak((previous) => previous + 1);
-    setFeedback({ type: 'success', title: 'Treasure Found!', subtitle: `+${points} score` });
+    setFeedback({ type: 'success', title: 'Treasure Found!', subtitle: `+${points} XP` });
     confetti({
       particleCount: 42,
       spread: 48,
@@ -376,7 +376,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
           <GameplayHUD
             title="Treasure Chart Cove"
             avatar={avatar}
-            score={score}
+            XP={XP}
             targetScore={targetScore}
             timeLeft={timeLeft}
             progress={progress}

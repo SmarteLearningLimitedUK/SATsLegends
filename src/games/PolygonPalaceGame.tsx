@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import GameActionDock from '../components/GameActionDock';
 import { triggerHaptic } from '../haptics';
@@ -9,8 +9,8 @@ interface PolygonPalaceGameProps {
   miniGameLevel?: number;
   avatarId: string;
   useSharedTopHud?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -485,7 +485,7 @@ const buildPropertyQuestion = (shape: ShapeDefinition, stage: number, speedRound
     stage,
     mode: 'properties',
     prompt: 'Select all properties that match this shape.',
-    subPrompt: speedRound ? 'Speed round: keep your streak alive' : 'Some questions can have multiple answers',
+    subPrompt: speedRound ? 'Speed round: keep your Combo alive' : 'Some questions can have multiple answers',
     shape,
     shapeRotation: randomInt(-24, 24),
     choices,
@@ -533,11 +533,11 @@ const createQuestion = (baseLevel: number, answeredCount: number, timeLeft: numb
   return propertyQuestion || buildNameQuestion(shape, stage, speedRound);
 };
 
-const starsFromPerformance = (score: number, correctCount: number, attemptCount: number, stage: number) => {
+const starsFromPerformance = (XP: number, correctCount: number, attemptCount: number, stage: number) => {
   const accuracy = attemptCount > 0 ? correctCount / attemptCount : 0;
   const target = 1300 + (stage * 170);
-  if (score >= target * 1.2 && accuracy >= 0.8) return 3;
-  if (score >= target * 0.82 && accuracy >= 0.6) return 2;
+  if (XP >= target * 1.2 && accuracy >= 0.8) return 3;
+  if (XP >= target * 0.82 && accuracy >= 0.6) return 2;
   return 1;
 };
 const ShapePreview: React.FC<{
@@ -594,8 +594,8 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
   const initialRoundSeconds = useMemo(() => roundSecondsForLevel(baseLevel), [baseLevel]);
 
   const [timeLeft, setTimeLeft] = useState(initialRoundSeconds);
-  const [score, setScore] = useState(0);
-  const [streak, setStreak] = useState(0);
+  const [XP, setScore] = useState(0);
+  const [Combo, setStreak] = useState(0);
   const [attemptCount, setAttemptCount] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [answeredCount, setAnsweredCount] = useState(0);
@@ -648,9 +648,9 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
     endedRef.current = true;
     setRoundOver(true);
     const finalStage = stageFromProgress(baseLevel, answeredCount, 0);
-    const stars = starsFromPerformance(score, correctCount, attemptCount, finalStage);
-    onVictory(stars, score);
-  }, [answeredCount, attemptCount, baseLevel, correctCount, onVictory, score, timeLeft]);
+    const stars = starsFromPerformance(XP, correctCount, attemptCount, finalStage);
+    onVictory(stars, XP);
+  }, [answeredCount, attemptCount, baseLevel, correctCount, onVictory, XP, timeLeft]);
 
   const timerProgress = Math.max(0, Math.min(1, timeLeft / initialRoundSeconds));
   const timerFillColor = useMemo(() => {
@@ -690,7 +690,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
     if (isCorrect) {
       const elapsedMs = Math.max(240, Date.now() - questionStartRef.current);
       const speedBonus = Math.max(18, Math.round(170 - (elapsedMs / 16)));
-      const streakMultiplier = 1 + Math.min(0.95, streak * 0.08);
+      const streakMultiplier = 1 + Math.min(0.95, Combo * 0.08);
       const speedRoundBonus = question.speedRound ? 85 : 0;
       const points = Math.round((120 + question.difficultyWeight + speedBonus + speedRoundBonus) * streakMultiplier);
 
@@ -710,7 +710,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
 
     const correctLabel = question.correctChoiceIds
       .map((choiceId) => question.choices.find((choice) => choice.id === choiceId)?.label || choiceId)
-      .join(' • ');
+      .join(' � ');
 
     triggerHaptic('error');
     setPulseTone('error');
@@ -722,7 +722,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
       subtitle: `Correct: ${correctLabel}`,
     });
     loadNextQuestion(nextAnsweredCount, 560);
-  }, [answeredCount, attemptCount, isLocked, loadNextQuestion, question, roundOver, streak]);
+  }, [answeredCount, attemptCount, isLocked, loadNextQuestion, question, roundOver, Combo]);
   const submitProperties = () => {
     if (isLocked || roundOver || question.mode !== 'properties') return;
     if (selectedChoiceIds.length === 0) {
@@ -795,13 +795,13 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
                 </div>
 
                 <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Score</div>
-                  <div className="text-sm font-black text-white">{score}</div>
+                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">XP</div>
+                  <div className="text-sm font-black text-white">{XP}</div>
                 </div>
 
                 <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Streak</div>
-                  <div className="text-sm font-black text-amber-200">x{streak}</div>
+                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Combo</div>
+                  <div className="text-sm font-black text-amber-200">x{Combo}</div>
                 </div>
               </div>
             </header>
@@ -809,12 +809,12 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
             <header className="rounded-[1.15rem] border border-cyan-100/24 bg-slate-950/50 px-3 py-2 shadow-[0_10px_20px_rgba(2,6,23,0.42)]">
               <div className="flex items-center justify-between gap-2.5">
                 <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Score</div>
-                  <div className="text-sm font-black text-white">{score}</div>
+                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">XP</div>
+                  <div className="text-sm font-black text-white">{XP}</div>
                 </div>
                 <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Streak</div>
-                  <div className="text-sm font-black text-amber-200">x{streak}</div>
+                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Combo</div>
+                  <div className="text-sm font-black text-amber-200">x{Combo}</div>
                 </div>
               </div>
             </header>

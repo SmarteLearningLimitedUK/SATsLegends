@@ -57,8 +57,8 @@ interface AppRouterProps {
   onSelectIsland: (island: IslandData) => void;
   onSelectLevel: (level: LevelData) => void;
   onBackToIslandLevels: () => void;
-  onGameplayVictory: (stars: number, score: number) => void;
-  onGameplayOver: (score: number) => void;
+  onGameplayVictory: (stars: number, XP: number) => void;
+  onGameplayOver: (XP: number) => void;
 }
 
 export const AppRouter: React.FC<AppRouterProps> = ({

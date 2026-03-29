@@ -5,8 +5,8 @@ import BossPortrait from '../../components/BossPortrait';
 import { getBossEncounter } from '../../bossMeta';
 
 interface MatrixMatchProps {
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
   isBoss?: boolean;
 }
@@ -30,7 +30,7 @@ const COLORS = [
 const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack, isBoss = false }) => {
   const [grid, setGrid] = useState<(MatrixItem | null)[]>([]);
   const [options, setOptions] = useState<MatrixItem[]>([]);
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
   const [level, setLevel] = useState(1);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
@@ -107,7 +107,7 @@ const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack
       const timer = setInterval(() => setTimeLeft(t => t - 1), 1000);
       return () => clearInterval(timer);
     } else if (timeLeft === 0) {
-      onGameOver(score);
+      onGameOver(XP);
     }
   }, [timeLeft, gameActive]);
 
@@ -119,7 +119,7 @@ const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack
       setScore(s => s + 200);
       setTimeout(() => {
         if (level >= 5) {
-          onVictory(3, score + 200);
+          onVictory(3, XP + 200);
         } else {
           setLevel(l => l + 1);
         }
@@ -136,7 +136,7 @@ const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack
   };
 
   const useHint = () => {
-    if (showHint || score < 100) return;
+    if (showHint || XP < 100) return;
     setScore(s => s - 100);
     setShowHint(true);
   };
@@ -147,7 +147,7 @@ const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack
       <div className="flex justify-between items-center mb-4 md:mb-6">
         <div className="flex items-center gap-3 px-6 py-3 rounded-2xl licensed-answer-chip">
           <Trophy className="text-yellow-500 w-6 h-6" />
-          <span className="text-2xl font-black text-gray-800">{score}</span>
+          <span className="text-2xl font-black text-gray-800">{XP}</span>
         </div>
         <div className="text-center">
           <h2 className="text-3xl font-black text-gray-800 tracking-tight">MATRIX MATCH</h2>
@@ -233,8 +233,8 @@ const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack
       <div className="flex justify-center">
         <button
           onClick={useHint}
-          disabled={showHint || score < 100}
-          className={`ui-button-secondary flex items-center gap-3 px-6 py-3 font-black transition-all ${showHint || score < 100 ? 'cursor-not-allowed opacity-50' : ''}`}
+          disabled={showHint || XP < 100}
+          className={`ui-button-secondary flex items-center gap-3 px-6 py-3 font-black transition-all ${showHint || XP < 100 ? 'cursor-not-allowed opacity-50' : ''}`}
         >
           <Lightbulb size={24} />
           <span>HINT (-100)</span>

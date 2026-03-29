@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
@@ -8,8 +8,8 @@ import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 interface TreasurePathGameProps {
   levelId: number;
   avatarId: string;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -133,7 +133,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
   onGameOver,
   onBack,
 }) => {
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(115);
   const [roundIndex, setRoundIndex] = useState(0);
   const [round, setRound] = useState<TreasureRound>(() => generateRound());
@@ -178,15 +178,15 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
       setTimeLeft((previous) => {
         if (previous <= 1) {
           clearInterval(timer);
-          if (score >= targetScore) {
-            const stars = score >= targetScore * 1.7 ? 3 : score >= targetScore * 1.25 ? 2 : 1;
+          if (XP >= targetScore) {
+            const stars = XP >= targetScore * 1.7 ? 3 : XP >= targetScore * 1.25 ? 2 : 1;
             setIsVictory(true);
-            onVictory(stars, score);
+            onVictory(stars, XP);
             return 0;
           }
 
           setIsGameOver(true);
-          onGameOver(score);
+          onGameOver(XP);
           return 0;
         }
         return previous - 1;
@@ -194,7 +194,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [feedback, isGameOver, isVictory, onGameOver, onVictory, score, targetScore]);
+  }, [feedback, isGameOver, isVictory, onGameOver, onVictory, XP, targetScore]);
 
   const handleAdvance = (nextScore: number, nextRoundIndex: number) => {
     if (nextRoundIndex >= 7 || nextScore >= targetScore) {
@@ -217,7 +217,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
     setSelectedTile(key);
 
     if (x === round.target.x && y === round.target.y) {
-      const nextScore = score + 150 + Math.max(0, timeLeft);
+      const nextScore = XP + 150 + Math.max(0, timeLeft);
       const nextRoundIndex = roundIndex + 1;
 
       setFeedback('correct');
@@ -241,7 +241,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
     if (remainingLives <= 0) {
       window.setTimeout(() => {
         setIsGameOver(true);
-        onGameOver(Math.max(0, score - 35));
+        onGameOver(Math.max(0, XP - 35));
       }, 700);
       return;
     }
@@ -412,8 +412,8 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                   {isVictory ? 'Path Cleared!' : 'Expedition Lost!'}
                 </div>
                 <div>
-                  <div className="text-[10px] font-black uppercase tracking-[0.24em] text-white/54">Final Score</div>
-                  <div className="mt-2 text-5xl font-black text-white">{score}</div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.24em] text-white/54">Final XP</div>
+                  <div className="mt-2 text-5xl font-black text-white">{XP}</div>
                 </div>
                 <button
                   onClick={onBack}

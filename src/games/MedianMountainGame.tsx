@@ -34,8 +34,8 @@ interface MedianMountainGameProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -44,9 +44,9 @@ type MedianMountainGameShellProps = MedianMountainGameProps & MiniGameShellContr
 const MAX_LEVEL = 10;
 const FEEDBACK_HIDE_MS = 1500;
 
-const scoreToStars = (score: number) => {
-  if (score >= 3500) return 3;
-  if (score >= 2500) return 2;
+const scoreToStars = (XP: number) => {
+  if (XP >= 3500) return 3;
+  if (XP >= 2500) return 2;
   return 1;
 };
 
@@ -63,7 +63,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
   sessionEvents,
 }) => {
   const [gameState, setGameState] = useState<'playing' | 'success' | 'complete'>('playing');
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [currentLevelData, setCurrentLevelData] = useState<LevelData | null>(null);
   const [userAnswer, setUserAnswer] = useState('');
@@ -136,17 +136,17 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
 
     setDidFail(true);
     emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
-      score,
+      XP,
       reason: lives <= 0 ? 'lives' : 'time',
     });
-    onGameOver(score);
+    onGameOver(XP);
   }, [
     currentLevelData,
     didFail,
     isSessionActive,
     lives,
     onGameOver,
-    score,
+    XP,
     sessionEvents,
     sessionState,
   ]);
@@ -184,13 +184,13 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
 
     if (isCorrect) {
       const gained = 200 + (level * 40);
-      const nextScore = score + gained;
+      const nextScore = XP + gained;
       setScore(nextScore);
       setFeedback({ type: 'success', message: 'Correct median found.' });
       setGameState('success');
 
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
-        score,
+        XP,
         metadata: {
           scoreDelta: gained,
           scoreAfter: nextScore,
@@ -198,7 +198,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
         },
       });
       emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', {
-        score: nextScore,
+        XP: nextScore,
         metadata: {
           median: currentLevelData.median,
           level,
@@ -209,7 +209,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
 
     setFeedback({ type: 'error', message: 'Not the median yet. Re-check the middle values.' });
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
-      score,
+      XP,
       metadata: {
         submitted: parsedAnswer,
         median: currentLevelData.median,
@@ -222,7 +222,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
   const finishGame = (finalScore: number) => {
     const stars = scoreToStars(finalScore);
     emitMiniGameSessionEvent(sessionEvents, 'game_complete', {
-      score: finalScore,
+      XP: finalScore,
       stars,
       metadata: { levelReached: MAX_LEVEL },
     });
@@ -233,7 +233,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
     clearFeedbackTimeout();
     if (level >= MAX_LEVEL) {
       setGameState('complete');
-      finishGame(score);
+      finishGame(XP);
       return;
     }
 
@@ -409,8 +409,8 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
               <h2 className="text-3xl font-black uppercase tracking-tight text-amber-100">Challenge Complete</h2>
               <p className="mt-2 text-sm font-semibold text-cyan-100/85">You mastered the median route.</p>
               <div className="mt-4 rounded-2xl border border-cyan-100/35 bg-[#0d2a5a]/82 p-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/75">Final Score</p>
-                <p className="mt-1 text-4xl font-black text-amber-100">{score}</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/75">Final XP</p>
+                <p className="mt-1 text-4xl font-black text-amber-100">{XP}</p>
               </div>
               <button
                 type="button"

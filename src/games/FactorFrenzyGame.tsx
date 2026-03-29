@@ -32,13 +32,13 @@ interface FactorFrenzyGameProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
 interface LocalState {
-  score: number;
+  XP: number;
   level: number;
   currentProblem: FactorProblem | null;
   status: 'playing' | 'correct' | 'incorrect' | 'complete';
@@ -54,16 +54,16 @@ const FRENZY_LEVELS: FrenzyLevel[] = [
 ];
 
 const INITIAL_STATE: LocalState = {
-  score: 0,
+  XP: 0,
   level: 1,
   currentProblem: null,
   status: 'playing',
   timeLeft: 30,
 };
 
-const scoreToStars = (score: number) => {
-  if (score >= 14000) return 3;
-  if (score >= 10000) return 2;
+const scoreToStars = (XP: number) => {
+  if (XP >= 14000) return 3;
+  if (XP >= 10000) return 2;
   return 1;
 };
 
@@ -205,8 +205,8 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     clearAdvanceTimer();
   }, []);
 
-  const getLevelFromScore = useCallback((score: number) => {
-    const currentLevel = [...FRENZY_LEVELS].reverse().find((level) => score >= level.threshold) || FRENZY_LEVELS[0];
+  const getLevelFromScore = useCallback((XP: number) => {
+    const currentLevel = [...FRENZY_LEVELS].reverse().find((level) => XP >= level.threshold) || FRENZY_LEVELS[0];
     return {
       levelConfig: currentLevel,
       levelIndex: FRENZY_LEVELS.indexOf(currentLevel) + 1,
@@ -282,12 +282,12 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
       const timeBonus = state.timeLeft * 10;
       const points = 500 + timeBonus;
 
-      const newScore = state.score + points;
+      const newScore = state.XP + points;
       const masteryReached = newScore >= 14000;
 
       setState((previous) => ({
         ...previous,
-        score: newScore,
+        XP: newScore,
         status: masteryReached ? 'complete' : 'correct',
       }));
       return;
@@ -300,7 +300,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   };
 
   const nextProblem = () => {
-    const { levelConfig, levelIndex } = getLevelFromScore(state.score);
+    const { levelConfig, levelIndex } = getLevelFromScore(state.XP);
     const problem = generateProblem(levelIndex);
 
     setState((previous) => ({
@@ -328,7 +328,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   const submitRun = () => {
     if (endedRef.current) return;
     endedRef.current = true;
-    onVictory(scoreToStars(state.score), state.score);
+    onVictory(scoreToStars(state.XP), state.XP);
   };
 
   const questionFrame = useMemo(() => {
@@ -359,8 +359,8 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                 <h2 className="mt-3 text-3xl font-black uppercase text-amber-50 sm:text-4xl">Legend Achieved</h2>
                 <p className="mt-2 text-sm font-semibold text-cyan-50/85">You cleared the full factor run.</p>
                 <div className="mt-4 rounded-2xl border border-cyan-100/30 bg-[#0d2a5a]/80 px-4 py-3">
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/80">Final Score</p>
-                  <p className="mt-1 text-4xl font-black text-amber-100">{state.score.toLocaleString()}</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/80">Final XP</p>
+                  <p className="mt-1 text-4xl font-black text-amber-100">{state.XP.toLocaleString()}</p>
                 </div>
                 <div className="mt-5 flex flex-col gap-2.5">
                   <button

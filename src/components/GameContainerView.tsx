@@ -9,7 +9,7 @@ interface GameContainerViewProps {
   sceneMinimalDecor?: boolean;
   title: string;
   avatar?: AvatarData;
-  score: number;
+  XP: number;
   targetScore: number;
   timeLeft: number;
   progress: number;

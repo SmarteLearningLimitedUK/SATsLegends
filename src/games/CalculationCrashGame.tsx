@@ -8,8 +8,8 @@ interface CalculationCrashGameProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -105,10 +105,10 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
 }) => {
   const [status, setStatus] = useState<GameStatus>('playing');
   const [question, setQuestion] = useState<Question>(() => createQuestion(levelId));
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [solved, setSolved] = useState(0);
   const [attempted, setAttempted] = useState(0);
-  const [streak, setStreak] = useState(0);
+  const [Combo, setStreak] = useState(0);
   const [timeLeft, setTimeLeft] = useState(ROUND_SECONDS);
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; text: string } | null>(null);
 
@@ -177,7 +177,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
 
     if (correct) {
       const nextSolved = solved + 1;
-      const nextStreak = streak + 1;
+      const nextStreak = Combo + 1;
       const earned = 90 + (difficulty * 12) + (nextStreak * 14);
 
       setSolved(nextSolved);
@@ -195,7 +195,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
   const submitRound = () => {
     if (submittedResultRef.current) return;
     submittedResultRef.current = true;
-    onVictoryRef.current(computeStars(solved, attempted), score);
+    onVictoryRef.current(computeStars(solved, attempted), XP);
   };
 
   const accuracy = attempted > 0 ? Math.round((solved / attempted) * 100) : 0;
@@ -241,9 +241,9 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
               <div className="mt-3 rounded-full border border-white/18 bg-black/38 px-3 py-1.5 text-center text-[clamp(0.92rem,3.8vw,1.28rem)] font-black tracking-[0.02em] text-amber-50">
                 Solved: {solved}
                 <span className="mx-2 text-white/65">|</span>
-                Streak: x{streak}
+                Combo: x{Combo}
                 <span className="mx-2 text-white/65">|</span>
-                Score: {score.toLocaleString()}
+                XP: {XP.toLocaleString()}
               </div>
             </section>
           </div>
@@ -296,8 +296,8 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
                   <p className="text-lg font-black text-amber-100">{accuracy}%</p>
                 </div>
                 <div className="rounded-xl border border-emerald-100/30 bg-slate-900/70 px-2 py-2">
-                  <p className="text-[10px] font-black uppercase tracking-[0.08em] text-emerald-100/70">Score</p>
-                  <p className="text-lg font-black text-emerald-100">{score.toLocaleString()}</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.08em] text-emerald-100/70">XP</p>
+                  <p className="text-lg font-black text-emerald-100">{XP.toLocaleString()}</p>
                 </div>
               </div>
               <div className="mt-6 flex justify-center gap-3">

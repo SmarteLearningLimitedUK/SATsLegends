@@ -11,8 +11,8 @@ interface WhodunnitDataGameProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -91,10 +91,10 @@ const shuffle = <T,>(values: T[]) => {
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 
-const scoreToStars = (score: number, solved: number, attempts: number) => {
+const scoreToStars = (XP: number, solved: number, attempts: number) => {
   const accuracy = attempts > 0 ? solved / attempts : 0;
-  if (score >= 1800 && accuracy >= 0.85) return 3;
-  if (score >= 1200 && accuracy >= 0.65) return 2;
+  if (XP >= 1800 && accuracy >= 0.85) return 3;
+  if (XP >= 1200 && accuracy >= 0.65) return 2;
   return 1;
 };
 
@@ -516,7 +516,7 @@ const WhodunnitDataGame: React.FC<WhodunnitDataShellProps> = ({
   const [caseData, setCaseData] = useState<CaseData>(() => buildCase(Math.max(levelId, 1), 0));
   const [solvedCases, setSolvedCases] = useState(0);
   const [attempts, setAttempts] = useState(0);
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackState>('idle');
   const [locked, setLocked] = useState(false);
   const [selectedSuspectId, setSelectedSuspectId] = useState<string | null>(null);
@@ -562,18 +562,18 @@ const WhodunnitDataGame: React.FC<WhodunnitDataShellProps> = ({
 
     setDidFail(true);
     emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
-      score,
+      XP,
       reason: lives <= 0 ? 'lives' : 'time',
     });
-    onGameOver(score);
-  }, [didComplete, didFail, lives, onGameOver, score, sessionActive, sessionEvents, sessionState]);
+    onGameOver(XP);
+  }, [didComplete, didFail, lives, onGameOver, XP, sessionActive, sessionEvents, sessionState]);
 
   const completeRun = (finalScore: number, finalSolved: number, finalAttempts: number) => {
     if (didComplete) return;
     setDidComplete(true);
     const stars = scoreToStars(finalScore, finalSolved, finalAttempts);
     emitMiniGameSessionEvent(sessionEvents, 'game_complete', {
-      score: finalScore,
+      XP: finalScore,
       stars,
       metadata: { solvedCases: finalSolved, attempts: finalAttempts },
     });
@@ -599,14 +599,14 @@ const WhodunnitDataGame: React.FC<WhodunnitDataShellProps> = ({
     if (isCorrect) {
       const nextSolved = solvedCases + 1;
       const gained = 170 + caseData.tier * 30;
-      const nextScore = score + gained;
+      const nextScore = XP + gained;
 
       setSolvedCases(nextSolved);
       setScore(nextScore);
       setFeedback('correct');
 
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
-        score,
+        XP,
         metadata: {
           scoreAfter: nextScore,
           solvedCases: nextSolved,
@@ -615,7 +615,7 @@ const WhodunnitDataGame: React.FC<WhodunnitDataShellProps> = ({
         },
       });
       emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', {
-        score: nextScore,
+        XP: nextScore,
         metadata: {
           selectedSuspectId: suspectId,
           answerId: caseData.answerId,
@@ -635,7 +635,7 @@ const WhodunnitDataGame: React.FC<WhodunnitDataShellProps> = ({
 
     setFeedback('incorrect');
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
-      score,
+      XP,
       metadata: {
         selectedSuspectId: suspectId,
         answerId: caseData.answerId,
@@ -791,7 +791,7 @@ const WhodunnitDataGame: React.FC<WhodunnitDataShellProps> = ({
           Tier {caseData.tier}
         </div>
         <div className="rounded-full border border-amber-200/45 bg-amber-400/16 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-100">
-          Score {score}
+          XP {XP}
         </div>
       </div>
 

@@ -8,8 +8,8 @@ import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 interface DivisionDockGameProps {
   levelId: number;
   avatarId: string;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -60,10 +60,10 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const scoreRef = useRef(0);
 
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(initialTime);
   const [hearts, setHearts] = useState(HEARTS_MAX);
-  const [streak, setStreak] = useState(0);
+  const [Combo, setStreak] = useState(0);
   const [boatsCompleted, setBoatsCompleted] = useState(0);
   const [cargoLoaded, setCargoLoaded] = useState(0);
   const [solvedCount, setSolvedCount] = useState(0);
@@ -88,8 +88,8 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
   };
 
   useEffect(() => {
-    scoreRef.current = score;
-  }, [score]);
+    scoreRef.current = XP;
+  }, [XP]);
 
   useEffect(() => () => clearTimers(), []);
 
@@ -254,8 +254,8 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
 
     const nextSolved = solvedCount + 1;
     const nextCorrect = correctAnswers + 1;
-    const points = 120 + (streak * 16) + (levelId * 10);
-    const updatedScore = score + points;
+    const points = 120 + (Combo * 16) + (levelId * 10);
+    const updatedScore = XP + points;
 
     setScore(updatedScore);
     scoreRef.current = updatedScore;
@@ -281,8 +281,8 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
           </div>
 
           <div className="absolute right-3 top-3 z-20 rounded-full border border-white/12 bg-slate-950/32 px-3 py-1.5 shadow-[0_10px_24px_rgba(2,6,23,0.2)] md:right-5 md:top-5 md:px-4 md:py-2">
-            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/70 md:text-xs">Streak</div>
-            <div className="text-lg font-black text-white md:text-2xl">{streak}</div>
+            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/70 md:text-xs">Combo</div>
+            <div className="text-lg font-black text-white md:text-2xl">{Combo}</div>
           </div>
 
           <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-16 md:px-4 md:pb-4 md:pt-20">

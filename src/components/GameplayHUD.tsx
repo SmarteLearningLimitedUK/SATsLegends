@@ -12,7 +12,7 @@ const titleFlagAsset = MAIN_PNG_SKIN.textBox;
 interface GameplayHUDProps {
   title: string;
   avatar: AvatarData | undefined;
-  score: number;
+  XP: number;
   targetScore: number;
   timeLeft: number;
   progress: number;
@@ -30,7 +30,7 @@ interface GameplayHUDProps {
 const GameplayHUD: React.FC<GameplayHUDProps> = ({
   title,
   avatar: _avatar,
-  score: _score,
+  XP: _score,
   targetScore,
   timeLeft,
   progress,

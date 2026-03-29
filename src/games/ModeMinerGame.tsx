@@ -13,8 +13,8 @@ interface LevelData {
 interface ModeMinerGameProps {
   levelId: number;
   avatarId: string;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
   useSharedTopHud?: boolean;
 }
@@ -31,9 +31,9 @@ const shuffle = <T,>(items: T[]): T[] => {
   return list;
 };
 
-const scoreToStars = (score: number) => {
-  if (score >= 2500) return 3;
-  if (score >= 1700) return 2;
+const scoreToStars = (XP: number) => {
+  if (XP >= 2500) return 3;
+  if (XP >= 1700) return 2;
   return 1;
 };
 
@@ -97,9 +97,9 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
   useSharedTopHud = true,
 }) => {
   const [gameState, setGameState] = useState<'playing' | 'success' | 'complete'>('playing');
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [level, setLevel] = useState(1);
-  const [streak, setStreak] = useState(0);
+  const [Combo, setStreak] = useState(0);
   const [mistakes, setMistakes] = useState(0);
   const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
   const [currentLevelData, setCurrentLevelData] = useState<LevelData | null>(null);
@@ -132,8 +132,8 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
     }
 
     setGameState('complete');
-    onVictory(scoreToStars(score), score);
-  }, [level, onVictory, score]);
+    onVictory(scoreToStars(XP), XP);
+  }, [level, onVictory, XP]);
 
   const handleSubmit = useCallback((choiceOverride?: number) => {
     if (!currentLevelData || gameState !== 'playing') return;
@@ -147,7 +147,7 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
     }
 
     if (activeChoice === currentLevelData.mode) {
-      const earned = 120 + level * 20 + streak * 15;
+      const earned = 120 + level * 20 + Combo * 15;
       setScore((prev) => prev + earned);
       setStreak((prev) => prev + 1);
       setFeedback({ type: 'success', message: `Great! ${activeChoice} appears the most.` });
@@ -163,9 +163,9 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
     window.setTimeout(() => setFeedback(null), 1300);
 
     if (nextMistakes >= MAX_MISTAKES) {
-      window.setTimeout(() => onGameOver(score), 550);
+      window.setTimeout(() => onGameOver(XP), 550);
     }
-  }, [currentLevelData, gameState, handleNextLevel, level, mistakes, onGameOver, score, selectedChoice, streak]);
+  }, [currentLevelData, gameState, handleNextLevel, level, mistakes, onGameOver, XP, selectedChoice, Combo]);
 
   const topPadding = useSharedTopHud
     ? 'pt-[calc(env(safe-area-inset-top)+5.35rem)]'
@@ -211,7 +211,7 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
                     Tap the number that appears the most
                   </p>
                   <p className="mt-1 text-[11px] font-bold text-cyan-100/85">
-                    Mistakes left: {mistakesLeft} • Streak: x{streak}
+                    Mistakes left: {mistakesLeft} • Combo: x{Combo}
                   </p>
                 </div>
 
@@ -265,7 +265,7 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
 
                 <div className="mt-1 flex items-center justify-between gap-3">
                   <div className="text-[11px] font-black uppercase tracking-[0.12em] text-cyan-100/85">
-                    Score: {score}
+                    XP: {XP}
                   </div>
                   {gameState === 'success' ? (
                     <button
@@ -304,8 +304,8 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
               <h2 className="mb-1 text-3xl font-black uppercase tracking-tight text-white">Master Miner</h2>
               <p className="mb-5 text-sm font-semibold text-cyan-100/90">You found the mode in every cave.</p>
               <div className="mb-6 rounded-xl border border-cyan-100/20 bg-slate-900/50 px-6 py-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/70">Final Score</p>
-                <p className="text-4xl font-black text-amber-200">{score}</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/70">Final XP</p>
+                <p className="text-4xl font-black text-amber-200">{XP}</p>
               </div>
               <button
                 type="button"

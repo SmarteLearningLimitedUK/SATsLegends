@@ -12,8 +12,8 @@ interface AngleArenaGameProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -41,10 +41,10 @@ interface ActiveShot {
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-const scoreToStars = (score: number, correct: number, attempts: number) => {
+const scoreToStars = (XP: number, correct: number, attempts: number) => {
   const accuracy = attempts > 0 ? correct / attempts : 0;
-  if (score >= 2600 && accuracy >= 0.85) return 3;
-  if (score >= 1600 && accuracy >= 0.65) return 2;
+  if (XP >= 2600 && accuracy >= 0.85) return 3;
+  if (XP >= 1600 && accuracy >= 0.65) return 2;
   return 1;
 };
 
@@ -152,8 +152,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const [feedback, setFeedback] = useState<ShotOutcome | null>(null);
   const [correctCount, setCorrectCount] = useState(0);
   const [attempts, setAttempts] = useState(0);
-  const [score, setScore] = useState(0);
-  const [streak, setStreak] = useState(0);
+  const [XP, setScore] = useState(0);
+  const [Combo, setStreak] = useState(0);
   const [didComplete, setDidComplete] = useState(false);
   const [didFail, setDidFail] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -193,7 +193,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     const stars = scoreToStars(finalScore, finalCorrect, finalAttempts);
 
     emitMiniGameSessionEvent(sessionEvents, 'game_complete', {
-      score: finalScore,
+      XP: finalScore,
       stars,
       metadata: {
         correctCount: finalCorrect,
@@ -230,11 +230,11 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
     setDidFail(true);
     emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
-      score,
+      XP,
       reason: lives <= 0 ? 'lives' : 'time',
     });
-    onGameOver(score);
-  }, [didComplete, didFail, isSessionActive, lives, onGameOver, score, sessionEvents, sessionState]);
+    onGameOver(XP);
+  }, [didComplete, didFail, isSessionActive, lives, onGameOver, XP, sessionEvents, sessionState]);
 
   const updateAngleFromPointer = (clientX: number, clientY: number) => {
     const rect = playfieldRef.current?.getBoundingClientRect();
@@ -277,9 +277,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
       if (outcome === 'hit') {
         const nextCorrect = correctCount + 1;
-        const bonus = Math.min(5, streak + 1) * 22;
+        const bonus = Math.min(5, Combo + 1) * 22;
         const gained = 150 + (levelId * 8) + bonus;
-        const nextScore = score + gained;
+        const nextScore = XP + gained;
 
         setCorrectCount(nextCorrect);
         setScore(nextScore);
@@ -287,7 +287,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         setFeedback('hit');
 
         emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
-          score,
+          XP,
           metadata: {
             scoreAfter: nextScore,
             scoreDelta: gained,
@@ -298,7 +298,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         });
 
         emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', {
-          score: nextScore,
+          XP: nextScore,
           metadata: {
             challengeKind: challenge.kind,
             selectedAngle: aimAngle,
@@ -322,7 +322,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       setFeedback(outcome);
       setStreak(0);
       emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
-        score,
+        XP,
         metadata: {
           challengeKind: challenge.kind,
           selectedAngle: aimAngle,
@@ -353,8 +353,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           </div>
           <div className="mt-1 inline-flex items-center gap-2 rounded-full border border-white/20 bg-slate-950/45 px-3 py-1 text-[10px] font-black uppercase tracking-[0.13em] text-white/90 md:text-[11px]">
             <span>Shots solved {correctCount}/{targetCorrect}</span>
-            <span className="text-cyan-200">Streak x{streak}</span>
-            <span className="text-amber-200">Score {score}</span>
+            <span className="text-cyan-200">Combo x{Combo}</span>
+            <span className="text-amber-200">XP {XP}</span>
           </div>
         </div>
 

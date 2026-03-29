@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CircleDollarSign, ChevronLeft } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
@@ -10,8 +10,8 @@ interface FractionMatchGameProps {
   useSharedTopHud?: boolean;
   isBoss?: boolean;
   variantGameType?: 'fraction_match' | 'cloud_collapse';
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -219,7 +219,7 @@ const BevelledGem: React.FC<{
 
 const MatchGameShell: React.FC<{
   children: React.ReactNode;
-  score: number;
+  XP: number;
   timerProgress: number;
   levelName: string;
   variantGameType: 'fraction_match' | 'cloud_collapse';
@@ -227,7 +227,7 @@ const MatchGameShell: React.FC<{
   onBack: () => void;
 }> = ({
   children,
-  score,
+  XP,
   timerProgress,
   levelName,
   variantGameType,
@@ -269,7 +269,7 @@ const MatchGameShell: React.FC<{
                 </span>
                 <div className="flex items-center gap-1 rounded-lg border border-yellow-200/55 bg-[#0a1f56]/92 px-2 py-1 text-xs font-black text-yellow-100">
                   <CircleDollarSign className="h-3.5 w-3.5 text-yellow-300" />
-                  <span>{score}</span>
+                  <span>{XP}</span>
                 </div>
               </div>
               <div className="relative h-3 overflow-hidden rounded-full border border-cyan-200/45 bg-[#04102c]/90">
@@ -293,7 +293,7 @@ const MatchGameShell: React.FC<{
                 </span>
                 <div className="flex items-center gap-1 rounded-lg border border-yellow-200/55 bg-[#0a1f56]/90 px-2 py-1 text-[11px] font-black text-yellow-100">
                   <CircleDollarSign className="h-3.5 w-3.5 text-yellow-300" />
-                  <span>{score}</span>
+                  <span>{XP}</span>
                 </div>
               </div>
               <div className="relative mt-1.5 h-2.5 overflow-hidden rounded-full border border-cyan-200/40 bg-[#04102c]/90">
@@ -327,7 +327,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
 }) => {
   const [board, setBoard] = useState<BoardCell[]>([]);
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [timeLeft, setTimeLeft] = useState(ROUND_SECONDS);
   const [gemSize, setGemSize] = useState(52);
@@ -411,7 +411,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   useEffect(() => {
     if (endedRef.current) return;
     if (timeLeft <= 0) {
-      finalizeRound(score);
+      finalizeRound(XP);
       return;
     }
 
@@ -420,14 +420,14 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
     }, 1000);
 
     return () => window.clearTimeout(timer);
-  }, [finalizeRound, score, timeLeft]);
+  }, [finalizeRound, XP, timeLeft]);
 
   useEffect(() => {
     if (endedRef.current) return;
-    if (score >= targetScore) {
-      finalizeRound(score);
+    if (XP >= targetScore) {
+      finalizeRound(XP);
     }
-  }, [finalizeRound, score, targetScore]);
+  }, [finalizeRound, XP, targetScore]);
 
   const processBoard = useCallback(async (inputBoard: BoardCell[]) => {
     let workingBoard = [...inputBoard];
@@ -519,7 +519,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
 
   return (
     <MatchGameShell
-      score={score}
+      XP={XP}
       timerProgress={timerProgress}
       levelName={levelName}
       variantGameType={variantGameType}

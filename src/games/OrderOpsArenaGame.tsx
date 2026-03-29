@@ -9,8 +9,8 @@ import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 interface OrderOpsArenaGameProps {
   levelId: number;
   avatarId: string;
-  onVictory: (stars: number, score: number) => void;
-  onGameOver: (score: number) => void;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
@@ -111,10 +111,10 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
   const timersRef = useRef<number[]>([]);
   const scoreRef = useRef(0);
 
-  const [score, setScore] = useState(0);
+  const [XP, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(initialTime);
   const [hearts, setHearts] = useState(HEARTS_MAX);
-  const [streak, setStreak] = useState(0);
+  const [Combo, setStreak] = useState(0);
   const [enemyHealth, setEnemyHealth] = useState(maxEnemyHealth);
   const [questionCount, setQuestionCount] = useState(1);
   const [round, setRound] = useState<OpsRound>(() => createOpsRound(levelId));
@@ -130,8 +130,8 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
   };
 
   useEffect(() => {
-    scoreRef.current = score;
-  }, [score]);
+    scoreRef.current = XP;
+  }, [XP]);
 
   useEffect(() => () => clearTimers(), []);
 
@@ -226,8 +226,8 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
       return;
     }
 
-    const points = 140 + (streak * 24);
-    const updatedScore = score + points;
+    const points = 140 + (Combo * 24);
+    const updatedScore = XP + points;
     const nextEnemyHealth = Math.max(0, enemyHealth - 1);
 
     setScore(updatedScore);
@@ -238,7 +238,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
     setFeedback({
       type: 'success',
       title: 'Direct Hit',
-      subtitle: `Enemy takes damage - +${points} score`,
+      subtitle: `Enemy takes damage - +${points} XP`,
     });
     triggerHaptic('success');
 
@@ -268,8 +268,8 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
           </div>
 
           <div className="absolute right-3 top-3 z-20 rounded-full border border-white/12 bg-slate-950/32 px-3 py-1.5 shadow-[0_10px_24px_rgba(2,6,23,0.2)] md:right-5 md:top-5 md:px-4 md:py-2">
-            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/70 md:text-xs">Streak</div>
-            <div className="text-lg font-black text-white md:text-2xl">{streak}</div>
+            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/70 md:text-xs">Combo</div>
+            <div className="text-lg font-black text-white md:text-2xl">{Combo}</div>
           </div>
 
           <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-14 md:px-4 md:pb-4 md:pt-20">
