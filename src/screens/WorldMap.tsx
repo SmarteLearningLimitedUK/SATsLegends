@@ -43,22 +43,31 @@ type IslandState = {
   totalLevels: number;
 };
 
-const ISLAND_HOTSPOTS: Record<number, IslandHotspot> = {
-  1: { x: 74, y: 75, width: 24, height: 15 },
-  2: { x: 24, y: 38, width: 24, height: 15 },
-  3: { x: 25, y: 56, width: 24, height: 15 },
-  4: { x: 26, y: 75, width: 24, height: 15 },
-  5: { x: 73, y: 40, width: 24, height: 15 },
-  6: { x: 74, y: 20, width: 24, height: 15 },
+const POSITION_HOTSPOTS = {
+  bottomRight: { x: 74, y: 75, width: 24, height: 15 },
+  topLeft: { x: 24, y: 38, width: 24, height: 15 },
+  middleLeft: { x: 25, y: 56, width: 24, height: 15 },
+  bottomLeft: { x: 26, y: 75, width: 24, height: 15 },
+  middleRight: { x: 73, y: 40, width: 24, height: 15 },
+  topRight: { x: 74, y: 20, width: 24, height: 15 },
+} satisfies Record<string, IslandHotspot>;
+
+const ISLAND_POSITION_BY_ID: Record<number, keyof typeof POSITION_HOTSPOTS> = {
+  1: 'bottomLeft',
+  2: 'bottomRight',
+  3: 'middleLeft',
+  4: 'middleRight',
+  5: 'topLeft',
+  6: 'topRight',
 };
 
 const MAP_AMBIENTS: AmbientRegion[] = [
-  { id: 'base-camp', x: 74, y: 75, width: 24, height: 16, effect: 'butterflies' },
-  { id: 'fraction-forest', x: 24, y: 38, width: 24, height: 16, effect: 'light-beams' },
-  { id: 'geometry-glacier', x: 25, y: 56, width: 24, height: 16, effect: 'blizzard' },
-  { id: 'data-desert', x: 26, y: 75, width: 24, height: 16, effect: 'dust-devils' },
-  { id: 'operations-outpost', x: 73, y: 40, width: 24, height: 16, effect: 'stars' },
-  { id: 'mount-algebra', x: 74, y: 20, width: 24, height: 16, effect: 'lava-spurts' },
+  { id: 'base-camp', x: POSITION_HOTSPOTS.bottomLeft.x, y: POSITION_HOTSPOTS.bottomLeft.y, width: 24, height: 16, effect: 'butterflies' },
+  { id: 'fraction-forest', x: POSITION_HOTSPOTS.bottomRight.x, y: POSITION_HOTSPOTS.bottomRight.y, width: 24, height: 16, effect: 'light-beams' },
+  { id: 'geometry-glacier', x: POSITION_HOTSPOTS.middleLeft.x, y: POSITION_HOTSPOTS.middleLeft.y, width: 24, height: 16, effect: 'blizzard' },
+  { id: 'data-desert', x: POSITION_HOTSPOTS.middleRight.x, y: POSITION_HOTSPOTS.middleRight.y, width: 24, height: 16, effect: 'dust-devils' },
+  { id: 'operations-outpost', x: POSITION_HOTSPOTS.topLeft.x, y: POSITION_HOTSPOTS.topLeft.y, width: 24, height: 16, effect: 'stars' },
+  { id: 'mount-algebra', x: POSITION_HOTSPOTS.topRight.x, y: POSITION_HOTSPOTS.topRight.y, width: 24, height: 16, effect: 'lava-spurts' },
 ];
 
 const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
@@ -79,7 +88,6 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
           ))}
         </>
       );
-
     case 'sparkles':
       return (
         <>
@@ -96,7 +104,6 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
           ))}
         </>
       );
-
     case 'birds':
       return (
         <>
@@ -111,7 +118,6 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
           ))}
         </>
       );
-
     case 'light-beams':
       return (
         <>
@@ -134,7 +140,6 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
           ))}
         </>
       );
-
     case 'stars':
       return (
         <>
@@ -149,7 +154,6 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
           ))}
         </>
       );
-
     case 'dust-devils':
       return (
         <>
@@ -166,7 +170,6 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
           ))}
         </>
       );
-
     case 'blizzard':
       return (
         <>
@@ -196,7 +199,6 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
           ))}
         </>
       );
-
     case 'wind-wisps':
       return (
         <>
@@ -213,7 +215,6 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
           ))}
         </>
       );
-
     case 'lava-spurts':
       return (
         <>
@@ -261,7 +262,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
       <div
         className="relative overflow-visible"
         style={{
-          width: '116%',
+          width: '108%',
           left: '50%',
           transform: 'translateX(-50%)',
         }}
@@ -292,12 +293,12 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
 
         <div className="absolute inset-0 z-20">
           {islandStates.map(({ island, isUnlocked }) => {
-            const hotspot = ISLAND_HOTSPOTS[island.id];
+            const hotspot = POSITION_HOTSPOTS[ISLAND_POSITION_BY_ID[island.id]];
             if (!hotspot) return null;
 
             const isSelected = selectedIslandId === island.id;
-            const pillTop = hotspot.y + hotspot.height / 2 + 1.8;
-            const pillWidth = island.name.length > 15 ? '8.4rem' : island.name.length > 12 ? '7.6rem' : '6.8rem';
+            const pillTop = hotspot.y + hotspot.height / 2 + 1.15;
+            const pillWidth = island.name.length > 15 ? '7.6rem' : island.name.length > 12 ? '6.9rem' : '6.1rem';
 
             return (
               <React.Fragment key={island.id}>
@@ -312,13 +313,13 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                 >
                   <motion.span
                     aria-hidden="true"
-                    className="absolute inset-[8%] rounded-[2rem]"
+                    className="absolute inset-[10%] rounded-[2rem]"
                     animate={{
-                      opacity: isSelected ? 0.98 : 0.78,
+                      opacity: isSelected ? 0.98 : 0.76,
                       scale: isSelected ? 1.08 : 1,
                       boxShadow: isSelected
                         ? '0 0 0 2px rgba(253,224,71,0.58), 0 0 32px rgba(34,211,238,0.58), 0 0 64px rgba(59,130,246,0.34)'
-                        : '0 0 0 1px rgba(255,255,255,0.12), 0 0 18px rgba(34,211,238,0.38), 0 0 36px rgba(59,130,246,0.22)',
+                        : '0 0 0 1px rgba(255,255,255,0.12), 0 0 16px rgba(34,211,238,0.34), 0 0 28px rgba(59,130,246,0.18)',
                     }}
                     transition={{ duration: 0.28, ease: 'easeOut' }}
                     style={{
@@ -335,10 +336,10 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                   whileHover={{ scale: 1.02 }}
                   onClick={() => setSelectedIslandId(island.id)}
                   aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
-                  className={`absolute z-30 -translate-x-1/2 rounded-full border px-3 py-[0.42rem] text-center text-[8px] font-black uppercase tracking-[0.06em] text-white shadow-[0_6px_14px_rgba(2,6,23,0.28)] outline-none transition-all ${
+                  className={`absolute z-30 -translate-x-1/2 rounded-full border px-3 py-[0.34rem] text-center text-[7px] font-black uppercase tracking-[0.045em] text-white shadow-[0_5px_12px_rgba(2,6,23,0.26)] outline-none transition-all ${
                     isUnlocked
-                      ? 'border-cyan-100/45 bg-[linear-gradient(180deg,rgba(73,144,255,0.98),rgba(38,92,210,0.98))]'
-                      : 'border-slate-200/28 bg-[linear-gradient(180deg,rgba(71,85,105,0.94),rgba(30,41,59,0.96))] opacity-85'
+                      ? 'border-sky-200/30 bg-[linear-gradient(180deg,rgba(22,57,125,0.98),rgba(10,31,84,0.99))]'
+                      : 'border-slate-200/20 bg-[linear-gradient(180deg,rgba(56,69,96,0.95),rgba(21,29,43,0.98))] opacity-80'
                   } focus-visible:ring-4 focus-visible:ring-cyan-300/70`}
                   style={{
                     left: `${hotspot.x}%`,
