@@ -378,6 +378,7 @@ const App: React.FC = () => {
     () => getBossVisualForLevel(selectedLevel?.gameType, selectedLevel?.id),
     [selectedLevel?.gameType, selectedLevel?.id],
   );
+  const shouldShowResultEnemyArt = selectedLevel?.blueprintKey !== 'match3_equivalence';
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
   const useUnboundedStageShell = isSplashScreen || isAvatarSelectionScreen || isWorldMapScreen;
@@ -499,7 +500,7 @@ const App: React.FC = () => {
 
             <LevelResultModal
               isOpen={Boolean(levelResult)}
-              enemyArt={activeBossArt || undefined}
+              enemyArt={shouldShowResultEnemyArt ? (activeBossArt || undefined) : undefined}
               result={levelResult ? {
                 ...levelResult,
                 primaryLabel: levelResult.type === 'victory' ? 'Continue adventure' : 'Try again',
