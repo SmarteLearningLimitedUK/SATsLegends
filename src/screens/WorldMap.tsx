@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { Lock } from 'lucide-react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
-import universalMapPoster from '../assets/maps/worlsmap.png';
+import universalMapPoster from '../assets/maps/finalamendedworldmap.png';
 
 interface WorldMapProps {
   player: PlayerData;
@@ -390,3 +390,4 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
 };
 
 export default WorldMap;
+
