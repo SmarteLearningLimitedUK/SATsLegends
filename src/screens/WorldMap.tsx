@@ -44,6 +44,15 @@ const ISLAND_HOTSPOTS: Record<number, IslandHotspot> = {
   6: { x: 74, y: 20, width: 24, height: 15 },
 };
 
+const ISLAND_LABEL_ANCHORS: Record<number, { x: number; y: number }> = {
+  1: { x: 74, y: 86 },
+  2: { x: 24, y: 50 },
+  3: { x: 25, y: 67 },
+  4: { x: 26, y: 86 },
+  5: { x: 73, y: 51 },
+  6: { x: 74, y: 32 },
+};
+
 const MAP_AMBIENTS: AmbientRegion[] = [
   { id: 'base-camp', x: 74, y: 75, width: 24, height: 16, effect: 'butterflies' },
   { id: 'fraction-forest', x: 24, y: 38, width: 24, height: 16, effect: 'light-beams' },
@@ -322,7 +331,8 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
           <div className="absolute inset-0 z-20">
             {islandProgress.map(({ island, starredCount, totalLevels, completion, isUnlocked }) => {
               const hotspot = ISLAND_HOTSPOTS[island.id];
-              if (!hotspot) return null;
+              const labelAnchor = ISLAND_LABEL_ANCHORS[island.id];
+              if (!hotspot || !labelAnchor) return null;
               const isRecommended = isUnlocked && island.id === recommendedIslandId;
 
               return (
@@ -376,8 +386,8 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                       isUnlocked ? 'cursor-pointer' : 'cursor-not-allowed opacity-70 grayscale-[0.15]'
                     } focus-visible:ring-4 focus-visible:ring-cyan-300/70`}
                     style={{
-                      left: `${hotspot.x}%`,
-                      top: `calc(${hotspot.y + hotspot.height / 2}% + 0.28rem)`,
+                      left: `${labelAnchor.x}%`,
+                      top: `${labelAnchor.y}%`,
                       textShadow: 'none',
                     }}
                   >
