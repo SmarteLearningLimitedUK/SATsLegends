@@ -3728,9 +3728,8 @@ button:disabled {
 
 .avatar-select-background {
   object-fit: cover;
-  object-position: center center;
-  transform: scale(1.12);
-  transform-origin: center center;
+  object-position: 50% 0%;
+  transform: none;
 }
 
 .avatar-select-layout {
