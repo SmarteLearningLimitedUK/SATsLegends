@@ -1910,8 +1910,8 @@ button:disabled {
 }
 
 .world-map-island-label {
-  min-width: clamp(5rem, 12vw, 6.4rem);
-  max-width: 6.6rem;
+  min-width: clamp(7.1rem, 17vw, 9.4rem);
+  max-width: clamp(7.6rem, 19vw, 10.2rem);
   padding: 0.14rem;
   border: 0;
   border-radius: 999px;
@@ -1929,11 +1929,13 @@ button:disabled {
 .world-map-island-label-face {
   position: relative;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   justify-content: center;
+  gap: 0.08rem;
   width: 100%;
-  min-height: 2.15rem;
-  padding: 0.46rem 0.8rem 0.5rem;
+  min-height: 2.7rem;
+  padding: 0.42rem 0.9rem 0.52rem;
   border-radius: 999px;
   border: 1px solid rgba(255,241,193,0.44);
   background:
@@ -2010,6 +2012,11 @@ button:disabled {
 .world-map-island-label-text {
   position: relative;
   z-index: 2;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: #fff8e1;
   text-shadow:
     0 1px 0 rgba(17,24,39,0.64),
