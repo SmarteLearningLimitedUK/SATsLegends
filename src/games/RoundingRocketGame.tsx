@@ -337,7 +337,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
         ) : null}
       </AnimatePresence>
 
-      <div className="relative z-30 flex h-full w-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+4.9rem)] pt-2">
+      <div className="relative z-30 flex h-full w-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+6.3rem)] pt-2">
         <section className="mx-auto w-full max-w-[24rem] text-center">
           <p className="text-[11px] font-black uppercase tracking-[0.22em] text-cyan-100/90">
             Round To Nearest {round.target}
@@ -408,8 +408,8 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
           </AnimatePresence>
         </main>
 
-        <section className="mx-auto w-full max-w-[24rem]">
-          <div className="grid grid-cols-3 gap-3">
+        <section className="mx-auto w-full max-w-[23rem]">
+          <div className="grid grid-cols-3 gap-2.5">
             {round.pads.map((padValue) => {
               const isSelected = selectedPad === padValue;
               const successFlash = padFeedback?.value === padValue && padFeedback.type === 'success';
@@ -423,7 +423,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
                   whileTap={(!inputLocked && isSessionActive) ? { scale: 0.96 } : undefined}
                   disabled={inputLocked || !isSessionActive || didComplete}
                   className={[
-                    'relative h-[3.65rem] rounded-[1rem] border px-2 text-center text-[clamp(1.02rem,4.4vw,1.45rem)] font-black tabular-nums text-white transition',
+                    'relative h-[3.2rem] rounded-[0.9rem] border px-1.5 text-center text-[clamp(0.95rem,4.1vw,1.25rem)] font-black tabular-nums text-white transition',
                     'shadow-[0_14px_24px_rgba(2,6,23,0.35)]',
                     successFlash
                       ? 'border-emerald-200/90 bg-[linear-gradient(180deg,#34d399_0%,#10b981_100%)] text-emerald-50'

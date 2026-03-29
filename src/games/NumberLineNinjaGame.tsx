@@ -289,7 +289,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       <div className="absolute inset-0 bg-slate-950/25" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_52%,rgba(56,189,248,0.14),transparent_64%)]" />
 
-      <div className="relative z-10 flex h-full min-h-0 flex-col px-4 pb-3 pt-1">
+      <div className="relative z-10 flex h-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+4.2rem)] pt-1">
         <div className="mt-[14px] shrink-0 text-center">
           <p className="mx-auto max-w-[700px] text-[clamp(15px,1.9vw,23px)] font-black leading-tight text-white drop-shadow-[0_2px_6px_rgba(2,6,23,0.92)]">
             {question.prompt}

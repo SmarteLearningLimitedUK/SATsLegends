@@ -234,9 +234,8 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
 
   return (
     <div
-      className="premium-page-root relative h-[100dvh] max-h-[100dvh] w-full overflow-y-auto overflow-x-hidden bg-[#07111f]"
+      className="premium-page-root relative h-full min-h-full w-full overflow-visible bg-[#07111f]"
       style={{
-        WebkitOverflowScrolling: 'touch',
         touchAction: 'pan-y',
         overscrollBehaviorY: 'contain',
       }}
@@ -257,15 +256,12 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
                 <img
                   src={heroHeading}
                   alt={`${island.name} heading`}
-                  className="h-auto w-[min(70vw,360px)] select-none drop-shadow-[0_8px_16px_rgba(2,6,23,0.45)]"
+                  className="h-auto w-[min(86vw,520px)] select-none drop-shadow-[0_12px_24px_rgba(2,6,23,0.5)]"
                   draggable={false}
                 />
               ) : (
                 <h1 className="text-xl font-black text-white md:text-3xl">{island.name}</h1>
               )}
-            </div>
-            <div className="mt-1 text-xs font-semibold text-white/78 md:text-sm">
-              Choose your next challenge and keep the run alive
             </div>
           </div>
 

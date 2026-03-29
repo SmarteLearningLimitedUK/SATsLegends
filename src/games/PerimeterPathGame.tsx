@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameActionDock from '../components/GameActionDock';
@@ -343,7 +343,6 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [inputAnswer, setInputAnswer] = useState('');
   const [streak, setStreak] = useState(0);
-  const [bestStreak, setBestStreak] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
   const [shakeShape, setShakeShape] = useState(false);
@@ -360,7 +359,6 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
     setSelectedOption(null);
     setInputAnswer('');
     setStreak(0);
-    setBestStreak(0);
     setCorrectCount(0);
     setFeedback(null);
     setShakeShape(false);
@@ -385,7 +383,6 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
     return () => window.clearInterval(timer);
   }, [currentLevel, onGameOver, score]);
 
-  const streakGlow = useMemo(() => Math.min(32, 6 + streak * 3.2), [streak]);
 
   const goNextQuestion = () => {
     const nextLevel = currentLevel + 1;
@@ -407,7 +404,6 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
 
     setScore(nextScore);
     setStreak(nextStreak);
-    setBestStreak((previous) => Math.max(previous, nextStreak));
     setCorrectCount(nextCorrect);
     setFeedback({ type: 'correct', message: 'Correct perimeter! Great work.' });
     setLocked(true);
@@ -499,15 +495,6 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
       <div className="relative z-10 flex h-full flex-col px-3 pb-[max(6rem,calc(env(safe-area-inset-bottom)+5rem))] pt-2">
         <main className="mt-0 flex min-h-0 flex-1 flex-col gap-2">
           <div className="shrink-0 flex items-center justify-center gap-2">
-            <div className="rounded-full border border-sky-100/30 bg-sky-950/70 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-sky-100">
-              Level {currentLevel}
-            </div>
-            <div
-              className="rounded-full border border-amber-200/55 bg-amber-400/18 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-amber-100"
-              style={{ boxShadow: `0 0 ${streakGlow}px rgba(250,204,21,0.32)` }}
-            >
-              Streak x{streak}
-            </div>
             <div className="rounded-full border border-white/25 bg-slate-950/62 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/90">
               {correctCount}/{TARGET_CORRECT}
             </div>
@@ -595,7 +582,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
               ? 'border-rose-300/45 bg-rose-400/16 text-rose-100'
               : 'border-white/18 bg-slate-950/44 text-white/72'
           }`}>
-            {feedback ? feedback.message : `Score ${score} • Best streak x${bestStreak}`}
+            {feedback ? feedback.message : 'Trace all outer edges once to find the perimeter.'}
           </div>
         </main>
       </div>

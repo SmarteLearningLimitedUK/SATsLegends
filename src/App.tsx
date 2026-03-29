@@ -177,8 +177,9 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    document.body.style.touchAction = screen === 'world_map' ? 'pan-y' : 'none';
-    document.body.style.overscrollBehaviorY = screen === 'world_map' ? 'contain' : 'none';
+    const allowVerticalPan = screen === 'world_map' || screen === 'island_levels';
+    document.body.style.touchAction = allowVerticalPan ? 'pan-y' : 'none';
+    document.body.style.overscrollBehaviorY = allowVerticalPan ? 'contain' : 'none';
   }, [screen]);
 
   useEffect(() => {
@@ -457,11 +458,20 @@ const App: React.FC = () => {
                 />
 
                 {isGameplayScreen && selectedLevel && !levelResult ? (
+                  selectedLevel.gameType === 'prime_pop'
+                  || selectedLevel.blueprintKey === 'number_line_ninja'
+                  || selectedLevel.blueprintKey === 'place_value_panic'
+                  || selectedLevel.blueprintKey === 'rounding_rampage'
+                  || selectedLevel.blueprintKey === 'conversion_canyon'
+                  || selectedLevel.blueprintKey === 'match3_equivalence'
+                    ? null
+                    : (
                   <ViewportBossEnemy
                     gameType={selectedLevel.gameType}
                     levelId={selectedLevel.id}
                     resultType={null}
                   />
+                    )
                 ) : null}
               </motion.div>
             </AnimatePresence>

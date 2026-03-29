@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplayHUD from '../components/GameplayHUD';
-import GameActionDock from '../components/GameActionDock';
 import AssetIcon from '../components/AssetIcon';
 import { AVATARS } from '../constants';
 import primePopBackground from '../assets/maps/primepopbkground.jpg';
@@ -601,11 +600,6 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
           </AnimatePresence>
         </div>
 
-        <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.35rem,env(safe-area-inset-bottom))] z-40 flex justify-center px-3">
-          <div className="pointer-events-auto">
-            <GameActionDock onBack={onBack} compact variant="global" />
-          </div>
-        </div>
       </div>
     </div>
   );
