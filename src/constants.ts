@@ -147,7 +147,7 @@ export const ISLANDS: IslandData[] = [
   },
   {
     id: 5,
-    name: 'SATs Summit',
+    name: 'Boss Test',
     category: 'Final Test',
     isLocked: false,
     color: 'bg-[#8F76FF]',
