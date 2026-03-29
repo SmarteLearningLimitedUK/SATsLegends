@@ -395,7 +395,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className={`absolute bottom-24 left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 rounded-full border px-6 py-3 shadow-2xl ${
+            className={`absolute bottom-[calc(env(safe-area-inset-bottom)+4.85rem)] left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 rounded-full border px-6 py-3 shadow-2xl ${
               feedback.type === 'success'
                 ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-400'
                 : 'border-rose-500/50 bg-rose-500/10 text-rose-400'

@@ -4956,10 +4956,10 @@ button.avatar-hero-arrow:not(:disabled):active {
 /* Global gameplay viewport contract:
    every minigame renders below the shared top HUD. */
 .screen-gameplay .unified-minigame-hud-enabled {
-  --shared-minigame-hud-row-height: clamp(2.45rem, 6.75vh, 3.35rem);
-  --shared-minigame-hud-padding-y: clamp(0.15rem, 0.65vh, 0.42rem);
-  --shared-minigame-dock-height: clamp(1.8rem, 4.2vh, 2.4rem);
-  --shared-minigame-dock-gap: clamp(0.18rem, 0.5vh, 0.4rem);
+  --shared-minigame-hud-row-height: clamp(2.75rem, 7.2vh, 3.5rem);
+  --shared-minigame-hud-padding-y: clamp(0.22rem, 0.72vh, 0.48rem);
+  --shared-minigame-dock-height: clamp(3.3rem, 7.4vh, 3.9rem);
+  --shared-minigame-dock-gap: clamp(0.4rem, 0.9vh, 0.7rem);
   --shared-minigame-reserved-bottom: calc(
     env(safe-area-inset-bottom)
     + var(--shared-minigame-dock-height)
@@ -4983,6 +4983,13 @@ button.avatar-hero-arrow:not(:disabled):active {
 
 .screen-gameplay .unified-minigame-hud-enabled .structured-game-layout > * {
   min-height: 0 !important;
+}
+
+.screen-gameplay .unified-minigame-hud-enabled [data-gameplay-content-viewport='true'],
+.screen-gameplay .unified-minigame-hud-enabled [data-gameplay-content-viewport='true'] > .relative {
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
 }
 
 /* Some legacy minigames still mount using `fixed inset-0`.

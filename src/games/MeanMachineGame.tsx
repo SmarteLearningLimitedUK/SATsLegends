@@ -313,7 +313,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className={`absolute bottom-12 left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 rounded-2xl border px-8 py-4 shadow-2xl ${
+              className={`absolute bottom-[calc(env(safe-area-inset-bottom)+4.4rem)] left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 rounded-2xl border px-8 py-4 shadow-2xl ${
                 feedback.type === 'success'
                   ? 'border-emerald-200 bg-emerald-50 text-emerald-600'
                   : 'border-rose-200 bg-rose-50 text-rose-600'

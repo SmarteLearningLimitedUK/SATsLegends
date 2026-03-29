@@ -473,6 +473,24 @@ export const AppRouter: React.FC<AppRouterProps> = ({
               lives={globalMiniGameLives}
             />
 
+            {showInlineHint ? (
+              <div
+                className="pointer-events-none absolute inset-x-3 z-40 flex justify-center md:inset-x-5"
+                style={{
+                  top: 'calc(var(--game-shell-top-inset) - clamp(2.7rem, 5.5vh, 3.1rem))',
+                }}
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                  className="max-w-[30rem] rounded-2xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(19,53,120,0.92),rgba(12,36,92,0.94))] px-4 py-2.5 text-center text-[11px] font-black uppercase tracking-[0.12em] text-cyan-50 shadow-[0_12px_24px_rgba(2,6,23,0.45)] md:px-5 md:py-3 md:text-xs"
+                >
+                  {inlineHintText}
+                </motion.div>
+              </div>
+            ) : null}
+
             <div
               className="structured-game-layout relative flex h-full max-h-full w-full min-h-0 flex-1 flex-col overflow-hidden"
               style={{
@@ -484,18 +502,6 @@ export const AppRouter: React.FC<AppRouterProps> = ({
             >
               <GameplayContentViewport>
                 {renderGameplay()}
-                {showInlineHint ? (
-                  <div className="pointer-events-none absolute inset-x-3 top-3 z-50 flex justify-center md:inset-x-5 md:top-4">
-                    <motion.div
-                      initial={{ opacity: 0, y: -8, scale: 0.98 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -8, scale: 0.98 }}
-                      className="max-w-[30rem] rounded-2xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(19,53,120,0.92),rgba(12,36,92,0.94))] px-4 py-2.5 text-center text-[11px] font-black uppercase tracking-[0.12em] text-cyan-50 shadow-[0_12px_24px_rgba(2,6,23,0.45)] md:px-5 md:py-3 md:text-xs"
-                    >
-                      {inlineHintText}
-                    </motion.div>
-                  </div>
-                ) : null}
               </GameplayContentViewport>
             </div>
           </div>
