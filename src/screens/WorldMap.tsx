@@ -380,7 +380,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                     style={{
                       left: `${hotspot.labelX}%`,
                       top: `${hotspot.labelY}%`,
-                      textShadow: '0 1px 0 rgba(0,0,0,0.24)',
+                      textShadow: 'none',
                     }}
                   >
                     <span
@@ -390,7 +390,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                           : completion === 0
                             ? 'world-map-island-label-face-idle'
                             : 'world-map-island-label-face-progress'
-                      } ${isRecommended ? 'ring-2 ring-amber-200/85 ring-offset-2 ring-offset-blue-950/60' : ''}`}
+                      }`}
                       style={{
                         minWidth: '7.2rem',
                         padding: '0.18rem 0.72rem 0.28rem',
@@ -418,4 +418,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
 };
 
 export default WorldMap;
+
+
 
