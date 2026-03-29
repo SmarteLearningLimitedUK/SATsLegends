@@ -305,19 +305,20 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
         overscrollBehaviorY: 'contain',
       }}
     >
-      <div
-        className="premium-map-stage premium-map-stage-fullscreen relative w-full h-auto min-h-0"
-        style={{
-          minHeight: 'max(175dvh, 1450px)',
-        }}
-      >
-        <div className="relative w-full">
+      <div className="premium-map-stage premium-map-stage-fullscreen relative w-full h-auto min-h-0">
+        <div
+          className="relative"
+          style={{
+            width: '132%',
+            left: '50%',
+            transform: 'translateX(-50%)',
+          }}
+        >
           <img
             src={universalMapPoster}
             alt="Island select map"
-            className="block h-full w-full object-fill"
+            className="block h-auto w-full"
             draggable={false}
-            style={{ minHeight: 'max(175dvh, 1450px)' }}
           />
 
           <div className="pointer-events-none absolute inset-0 z-10">
