@@ -4,6 +4,7 @@ import { Lock } from 'lucide-react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
 import universalMapPoster from '../assets/maps/worlsmap.png';
+import bluescrollmed from '../assets/bluedialoague/bluescrollmed.png';
 
 interface WorldMapProps {
   player: PlayerData;

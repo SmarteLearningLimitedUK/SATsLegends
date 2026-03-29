@@ -3729,7 +3729,7 @@ button:disabled {
 .avatar-select-background {
   object-fit: cover;
   object-position: center center;
-  transform: scale(1.06);
+  transform: scale(1.12);
   transform-origin: center center;
 }
 
