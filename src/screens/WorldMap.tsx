@@ -45,12 +45,12 @@ const ISLAND_HOTSPOTS: Record<number, IslandHotspot> = {
 };
 
 const ISLAND_LABEL_ANCHORS: Record<number, { x: number; y: number }> = {
-  1: { x: 74, y: 86 },
-  2: { x: 24, y: 50 },
-  3: { x: 25, y: 67 },
-  4: { x: 26, y: 86 },
-  5: { x: 73, y: 51 },
-  6: { x: 74, y: 32 },
+  1: { x: 74, y: 89 },
+  2: { x: 24, y: 53 },
+  3: { x: 25, y: 70 },
+  4: { x: 26, y: 89 },
+  5: { x: 73, y: 54 },
+  6: { x: 74, y: 35 },
 };
 
 const MAP_AMBIENTS: AmbientRegion[] = [
