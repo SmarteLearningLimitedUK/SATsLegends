@@ -297,7 +297,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
                   Recommended Next
                 </div>
                 <div className="mt-1 truncate text-sm font-black text-white md:text-base">
-                  {getGroupName(nextPlayableRow.level)} â€¢ {nextPlayableRow.level.miniGameLevel ? `Level ${nextPlayableRow.level.miniGameLevel}` : `Level ${nextPlayableRow.level.id}`}
+                  {getGroupName(nextPlayableRow.level)} • {nextPlayableRow.level.miniGameLevel ? `Level ${nextPlayableRow.level.miniGameLevel}` : `Level ${nextPlayableRow.level.id}`}
                 </div>
               </div>
               <button
@@ -354,7 +354,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
                       <div className="truncate text-sm font-black text-white md:text-base">{group.name}</div>
                       <div className="mt-0.5 text-[11px] font-semibold text-cyan-100/80 md:text-xs">
                         {group.completedCount}/{group.levels.length} complete
-                        {group.hasNextPlayable ? ' â€¢ Continue available' : ''}
+                        {group.hasNextPlayable ? ' • Continue available' : ''}
                       </div>
                     </div>
 
