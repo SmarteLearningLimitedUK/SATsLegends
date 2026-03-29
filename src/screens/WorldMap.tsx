@@ -298,6 +298,8 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
     <div
       className="premium-page-root premium-hub-map relative w-full min-h-full overflow-visible"
       style={{
+        height: 'auto',
+        minHeight: '200dvh',
         WebkitOverflowScrolling: 'touch',
         touchAction: 'pan-y',
         overscrollBehaviorY: 'contain',
@@ -305,10 +307,10 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
     >
       <div
         className="premium-map-stage premium-map-stage-fullscreen relative w-full"
-        style={{ minHeight: 'max(165dvh, 1500px)' }}
+        style={{ minHeight: 'max(200dvh, 1900px)', height: 'auto' }}
       >
         <div
-          className="absolute left-1/2 top-0 h-[142.857%] w-[142.857%] origin-top -translate-x-1/2 scale-[0.7]"
+          className="absolute left-1/2 top-0 h-[181.818%] w-[181.818%] origin-top -translate-x-1/2 scale-[0.55]"
           style={{ transformOrigin: 'top center' }}
         >
           <img
