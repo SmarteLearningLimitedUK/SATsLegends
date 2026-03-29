@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { Lock, Sparkles } from 'lucide-react';
 import { IslandData, PlayerData } from '../types';
 import { AVATARS, ISLANDS } from '../constants';
-import universalMapPoster from '../assets/maps/universal map.jpg';
+import universalMapPoster from '../assets/maps/worlsmap.png';
 import welcomeMathLogo from '../assets/maps/welcomemathlogo.png';
 
 interface WorldMapProps {
