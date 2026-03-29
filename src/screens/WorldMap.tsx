@@ -4,7 +4,6 @@ import { Lock } from 'lucide-react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
 import universalMapPoster from '../assets/maps/worlsmap.png';
-import bluescrollmed from '../assets/bluedialoague/bluescrollmed.png';
 
 interface WorldMapProps {
   player: PlayerData;
@@ -385,7 +384,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                     }}
                   >
                     <span
-                      className={`world-map-island-label-face ${
+                      className={`world-map-island-label-face world-map-island-label-pill ${
                         !isUnlocked
                           ? 'world-map-island-label-face-locked'
                           : completion === 0
@@ -393,12 +392,8 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                             : 'world-map-island-label-face-progress'
                       }`}
                       style={{
-                        minWidth: '8.1rem',
-                        padding: '0.28rem 0.82rem 0.34rem',
-                        backgroundImage: `url(${bluescrollmed})`,
-                        backgroundSize: '100% 100%',
-                        backgroundRepeat: 'no-repeat',
-                        backgroundPosition: 'center',
+                        minWidth: '8.75rem',
+                        padding: '0.34rem 0.9rem 0.42rem',
                       }}
                     >
                       <span className="world-map-island-label-text block truncate whitespace-nowrap text-[7px] font-black uppercase leading-none tracking-[0.03em] opacity-90 md:text-[8px]">

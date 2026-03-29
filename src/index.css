@@ -2613,14 +2613,25 @@ button:disabled {
   line-height: 1;
 }
 
-.world-map-island-label-face-locked {
-  filter: grayscale(0.22) brightness(0.9);
+.world-map-island-label-pill {
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(77, 153, 241, 0.98) 0%, rgba(41, 102, 205, 0.98) 58%, rgba(22, 61, 147, 0.99) 100%);
+  border: 1px solid rgba(171, 222, 255, 0.82);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    0 5px 14px rgba(8, 22, 49, 0.26);
 }
 
-.world-map-island-label-face-idle,
-.world-map-island-label-face-progress {
+.world-map-island-label-face-idle.world-map-island-label-pill,
+.world-map-island-label-face-progress.world-map-island-label-pill {
   filter: none;
 }
+
+.world-map-island-label-face-locked.world-map-island-label-pill {
+  filter: grayscale(0.18) brightness(0.82);
+}
+
 
 .hero-arrow-button-face,
 .hero-cta-button-face,
