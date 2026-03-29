@@ -5,8 +5,8 @@ import { triggerHaptic } from '../haptics';
 import avatarSelectBackground from '../assets/casual_ui/pedestal char select.png';
 import splashStyleButton from '../assets/casual_ui/inputs/btn_1.png';
 import chooseBanner from '../assets/characters/chooseheroes.png';
-import arrowBlueIdle from '../assets/casual_ui/inputs/arrow_blue_idle.png';
-import arrowGoldPressed from '../assets/casual_ui/inputs/arrow_gold_pressed.png';
+import arrowBackWand from '../assets/gemini_slices/arrow_back_wand.png';
+import arrowNextMid from '../assets/gemini_slices/arrow_next_mid.png';
 
 const AVATAR_FOOT_ANCHOR_MAIN_Y_PX: Record<string, number> = {
   barratt: 0,
@@ -16,7 +16,7 @@ const AVATAR_FOOT_ANCHOR_MAIN_Y_PX: Record<string, number> = {
 };
 
 const AVATAR_MAIN_GLOBAL_LIFT_PX = -62;
-const AVATAR_MAIN_VISUAL_SCALE = 2.4;
+const AVATAR_MAIN_VISUAL_SCALE = 2.16;
 
 const removeBannerMatte = (src: string): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -168,16 +168,13 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               className="avatar-hero-arrow avatar-hero-arrow-left"
               aria-label="Previous hero"
               type="button"
-              onPointerDown={() => setPressedArrow('left')}
-              onPointerUp={() => setPressedArrow(null)}
-              onPointerCancel={() => setPressedArrow(null)}
-              onPointerLeave={() => setPressedArrow(null)}
+
             >
               <img
-                src={pressedArrow === 'left' ? arrowGoldPressed : arrowBlueIdle}
+                src={arrowBackWand}
                 alt=""
                 aria-hidden
-                className={`avatar-hero-arrow-art ${pressedArrow === 'left' ? 'scale-x-[-1]' : ''}`}
+                className="avatar-hero-arrow-art"
                 draggable={false}
               />
             </motion.button>
@@ -209,16 +206,13 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               className="avatar-hero-arrow avatar-hero-arrow-right"
               aria-label="Next hero"
               type="button"
-              onPointerDown={() => setPressedArrow('right')}
-              onPointerUp={() => setPressedArrow(null)}
-              onPointerCancel={() => setPressedArrow(null)}
-              onPointerLeave={() => setPressedArrow(null)}
+
             >
               <img
-                src={pressedArrow === 'right' ? arrowGoldPressed : arrowBlueIdle}
+                src={arrowNextMid}
                 alt=""
                 aria-hidden
-                className={`avatar-hero-arrow-art ${pressedArrow === 'right' ? '' : 'scale-x-[-1]'}`}
+                className="avatar-hero-arrow-art"
                 draggable={false}
               />
             </motion.button>
@@ -255,3 +249,4 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
 };
 
 export default AvatarSelect;
+

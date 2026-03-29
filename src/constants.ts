@@ -17,6 +17,12 @@ const mergeIslandLevels = (...groups: LevelData[][]): LevelData[] => (
     }))
 );
 
+const pickLevelsByBlueprint = (levels: LevelData[], blueprintKeys: string[]): LevelData[] => (
+  levels
+    .filter((level) => !!level.blueprintKey && blueprintKeys.includes(level.blueprintKey))
+    .map((level) => ({ ...level }))
+);
+
 export const ACHIEVEMENTS: Achievement[] = [
   { id: 'first_win', title: 'First Victory', description: 'Complete your first level', icon: '\u{1F3C6}', type: 'levels', target: 1 },
   { id: 'star_collector', title: 'Star Collector', description: 'Earn 10 total stars', icon: '\u2B50', type: 'stars', target: 10 },
@@ -57,7 +63,14 @@ export const ISLANDS: IslandData[] = [
     groundColor: 'bg-green-500',
     mapImage: world01Map,
     decorations: [],
-    levels: NUMBER_BASE_CAMP_LEVELS,
+    levels: mergeIslandLevels(
+      pickLevelsByBlueprint(NUMBER_BASE_CAMP_LEVELS, [
+        'place_value_panic',
+        'number_line_ninja',
+        'prime_pop',
+        'rounding_rampage',
+      ]),
+    ),
   },
   {
     id: 2,
@@ -125,13 +138,20 @@ export const ISLANDS: IslandData[] = [
     groundColor: 'bg-amber-700',
     mapImage: world05Map,
     decorations: [],
-    levels: [
-      { id: 1, stars: 0, isLocked: false, blueprintKey: 'data_dash', displayName: 'Data Dash', gameType: 'data_dungeon' },
-      { id: 2, stars: 0, isLocked: false, blueprintKey: 'graph_grabber', displayName: 'Graph Grabber', gameType: 'chart_chase' },
-      { id: 3, stars: 0, isLocked: false, blueprintKey: 'line_graph_lab', displayName: 'Line Graph Lab', gameType: 'chart_chase' },
-      { id: 4, stars: 0, isLocked: false, blueprintKey: 'data_detective', displayName: 'Data Detective', gameType: 'data_dungeon' },
-      { id: 5, stars: 0, isLocked: false, blueprintKey: 'whodunnit_data', displayName: 'Whodunnit Data', gameType: 'data_dungeon' },
-    ],
+    levels: mergeIslandLevels(
+      pickLevelsByBlueprint(NUMBER_BASE_CAMP_LEVELS, [
+        'chart_challenge',
+        'mean_machine',
+        'mode_miner',
+      ]),
+      [
+        { id: 1, stars: 0, isLocked: false, blueprintKey: 'data_dash', displayName: 'Data Dash', gameType: 'data_dungeon' },
+        { id: 2, stars: 0, isLocked: false, blueprintKey: 'graph_grabber', displayName: 'Graph Grabber', gameType: 'chart_chase' },
+        { id: 3, stars: 0, isLocked: false, blueprintKey: 'line_graph_lab', displayName: 'Line Graph Lab', gameType: 'chart_chase' },
+        { id: 4, stars: 0, isLocked: false, blueprintKey: 'data_detective', displayName: 'Data Detective', gameType: 'data_dungeon' },
+        { id: 5, stars: 0, isLocked: false, blueprintKey: 'whodunnit_data', displayName: 'Whodunnit Data', gameType: 'data_dungeon' },
+      ],
+    ),
   },
   {
     id: 5,
@@ -145,6 +165,10 @@ export const ISLANDS: IslandData[] = [
     mapImage: world03Map,
     decorations: [],
     levels: mergeIslandLevels(
+      pickLevelsByBlueprint(NUMBER_BASE_CAMP_LEVELS, [
+        'calculation_clash',
+        'factor_frenzy',
+      ]),
       [
         { id: 1, stars: 0, isLocked: false, blueprintKey: 'multiplication_mine', displayName: 'Multiplication Mine', gameType: 'calculation_clash' },
         { id: 2, stars: 0, isLocked: false, blueprintKey: 'division_dock', displayName: 'Division Dock', gameType: 'calculation_clash' },
@@ -294,4 +318,5 @@ export const MATH_FAMILIES: MathFamily[] = [
     ]
   }
 ];
+
 
