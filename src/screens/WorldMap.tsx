@@ -295,25 +295,15 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
   }, [islandProgress]);
 
   return (
-    <div
-      className="premium-page-root premium-hub-map relative h-full w-full overflow-y-auto overflow-x-hidden"
-      style={{
-        height: 'auto',
-        minHeight: '100%',
-        WebkitOverflowScrolling: 'touch',
-        touchAction: 'pan-y',
-        overscrollBehaviorY: 'contain',
-      }}
-    >
-      <div className="premium-map-stage premium-map-stage-fullscreen relative w-full h-auto min-h-0">
-        <div
-          className="relative overflow-visible"
-          style={{
-            width: '130%',
-            left: '50%',
-            transform: 'translateX(-50%)',
-          }}
-        >
+    <div className="relative w-full overflow-visible">
+      <div
+        className="relative overflow-visible"
+        style={{
+          width: '132%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+        }}
+      >
           <img
             src={universalMapPoster}
             alt="Island select map"
@@ -429,7 +419,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
               );
             })}
           </div>
-        </div>
       </div>
     </div>
   );
