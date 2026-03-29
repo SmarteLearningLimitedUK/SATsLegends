@@ -4,17 +4,22 @@ import { Lock } from 'lucide-react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
 import universalMapPoster from '../assets/maps/worlsmap.png';
+import mapHeading1 from '../assets/maps/mapheadings/1.png';
+import mapHeading2 from '../assets/maps/mapheadings/2.png';
+import mapHeading3 from '../assets/maps/mapheadings/3.png';
+import mapHeading4 from '../assets/maps/mapheadings/4.png';
+import mapHeading5 from '../assets/maps/mapheadings/5.png';
+import mapHeading6 from '../assets/maps/mapheadings/6.png';
 
 interface WorldMapProps {
   player: PlayerData;
   onSelectIsland: (island: IslandData) => void;
 }
 
-type IslandHotspot = {
+type IslandBannerAnchor = {
   x: number;
   y: number;
   width: number;
-  height: number;
 };
 
 type AmbientRegion = {
@@ -35,15 +40,23 @@ type AmbientRegion = {
     | 'lava-spurts';
 };
 
-const ISLAND_HOTSPOTS: Record<number, IslandHotspot> = {
-  1: { x: 74, y: 75, width: 24, height: 15 },
-  2: { x: 24, y: 38, width: 24, height: 15 },
-  3: { x: 25, y: 56, width: 24, height: 15 },
-  4: { x: 26, y: 75, width: 24, height: 15 },
-  5: { x: 73, y: 40, width: 24, height: 15 },
-  6: { x: 74, y: 20, width: 24, height: 15 },
+const ISLAND_BANNER_ANCHORS: Record<number, IslandBannerAnchor> = {
+  1: { x: 74, y: 84.5, width: 26 },
+  2: { x: 24, y: 47.5, width: 30 },
+  3: { x: 25, y: 65.5, width: 30 },
+  4: { x: 26, y: 84.5, width: 26 },
+  5: { x: 73, y: 49, width: 31 },
+  6: { x: 74, y: 29, width: 27 },
 };
 
+const ISLAND_NAME_BANNERS: Record<number, string> = {
+  1: mapHeading1,
+  2: mapHeading2,
+  3: mapHeading3,
+  4: mapHeading4,
+  5: mapHeading5,
+  6: mapHeading6,
+};
 
 const MAP_AMBIENTS: AmbientRegion[] = [
   { id: 'base-camp', x: 74, y: 75, width: 24, height: 16, effect: 'butterflies' },
@@ -270,23 +283,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
     });
   }, [player]);
 
-  const recommendedIslandId = useMemo(() => {
-    const unlocked = islandProgress.filter(entry => entry.isUnlocked);
-    if (!unlocked.length) return undefined;
-
-    const inProgress = unlocked.find(entry => entry.isInProgress);
-    if (inProgress) return inProgress.island.id;
-
-    const freshUnlocked = unlocked.find(entry => entry.completion === 0);
-    if (freshUnlocked) return freshUnlocked.island.id;
-
-    const unfinished = unlocked.find(entry => !entry.isCompleted);
-    if (unfinished) return unfinished.island.id;
-
-    return unlocked[unlocked.length - 1]?.island.id;
-  }, [islandProgress]);
-
-  return (
+    return (
     <div className="relative w-full overflow-visible">
       <div
         className="relative overflow-visible"
@@ -412,6 +409,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
 };
 
 export default WorldMap;
+
 
 
 

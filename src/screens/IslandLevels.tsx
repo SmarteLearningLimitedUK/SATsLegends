@@ -231,19 +231,19 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
 
   return (
     <div
-      className="premium-page-root relative h-full min-h-full w-full overflow-visible bg-[#07111f]"
+      className="premium-page-root relative h-full min-h-0 w-full overflow-hidden bg-[#07111f]"
       style={{
-        height: 'auto',
-        minHeight: '100%',
+        height: '100%',
+        minHeight: 0,
         touchAction: 'pan-y',
         overscrollBehaviorY: 'contain',
       }}
     >
       <div
-        className="premium-page-content relative z-10 mx-auto flex min-h-full w-full max-w-4xl flex-col px-3 pb-4 pt-[calc(env(safe-area-inset-top)+0.35rem)] md:px-5 md:pb-6 md:pt-[calc(env(safe-area-inset-top)+0.5rem)]"
+        className="premium-page-content relative z-10 mx-auto flex h-full min-h-0 w-full max-w-4xl flex-col px-3 pb-4 pt-[calc(env(safe-area-inset-top)+0.35rem)] md:px-5 md:pb-6 md:pt-[calc(env(safe-area-inset-top)+0.5rem)]"
         style={{
-          flex: '0 0 auto',
-          minHeight: '100%',
+          flex: '1 1 auto',
+          minHeight: 0,
         }}
       >
         <div className="mb-3 flex items-start justify-between gap-3 md:mb-4">
@@ -311,7 +311,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
           </div>
         ) : null}
 
-        <div className="pr-1">
+        <div className="min-h-0 flex-1 overflow-y-auto pr-1" style={{ WebkitOverflowScrolling: 'touch' }}>
           <div className="flex flex-col gap-2.5 pb-[calc(env(safe-area-inset-bottom)+1rem)] md:gap-3 md:pb-[calc(env(safe-area-inset-bottom)+1.2rem)]">
             {gameGroups.map((group) => {
               const isExpanded = expandedGameId === group.id;
@@ -467,3 +467,4 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
 };
 
 export default IslandLevels;
+
