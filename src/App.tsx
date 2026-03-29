@@ -508,7 +508,7 @@ const App: React.FC = () => {
 
             {
               showGlobalDock && (
-                <div className="global-app-dock pointer-events-none fixed inset-x-0 bottom-[calc(0.65rem+env(safe-area-inset-bottom))] z-50 flex justify-center px-3">
+                <div className="global-app-dock pointer-events-none absolute inset-x-0 bottom-[calc(0.35rem+env(safe-area-inset-bottom))] z-[130] flex justify-center px-3">
                   <div className="pointer-events-auto">
                     <GameActionDock
                       onBack={handleGlobalDockBack}

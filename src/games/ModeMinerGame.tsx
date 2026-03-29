@@ -120,35 +120,6 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
     setCurrentLevelData(buildLevel(1));
   }, []);
 
-  const handleSubmit = useCallback(() => {
-    if (!currentLevelData || gameState !== 'playing') return;
-
-    if (selectedChoice === null) {
-      setFeedback({ type: 'error', message: 'Pick one number first.' });
-      window.setTimeout(() => setFeedback(null), 1200);
-      return;
-    }
-
-    if (selectedChoice === currentLevelData.mode) {
-      const earned = 120 + level * 20 + streak * 15;
-      setScore((prev) => prev + earned);
-      setStreak((prev) => prev + 1);
-      setFeedback({ type: 'success', message: `Great! ${selectedChoice} appears the most.` });
-      setGameState('success');
-      return;
-    }
-
-    const nextMistakes = mistakes + 1;
-    setMistakes(nextMistakes);
-    setStreak(0);
-    setFeedback({ type: 'error', message: 'Not the mode. Look for the most repeated number.' });
-    window.setTimeout(() => setFeedback(null), 1300);
-
-    if (nextMistakes >= MAX_MISTAKES) {
-      window.setTimeout(() => onGameOver(score), 550);
-    }
-  }, [currentLevelData, gameState, level, mistakes, onGameOver, score, selectedChoice, streak]);
-
   const handleNextLevel = useCallback(() => {
     if (level < MAX_LEVEL) {
       const next = level + 1;
@@ -163,6 +134,38 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
     setGameState('complete');
     onVictory(scoreToStars(score), score);
   }, [level, onVictory, score]);
+
+  const handleSubmit = useCallback((choiceOverride?: number) => {
+    if (!currentLevelData || gameState !== 'playing') return;
+
+    const activeChoice = choiceOverride ?? selectedChoice;
+
+    if (activeChoice === null) {
+      setFeedback({ type: 'error', message: 'Pick one number first.' });
+      window.setTimeout(() => setFeedback(null), 1200);
+      return;
+    }
+
+    if (activeChoice === currentLevelData.mode) {
+      const earned = 120 + level * 20 + streak * 15;
+      setScore((prev) => prev + earned);
+      setStreak((prev) => prev + 1);
+      setFeedback({ type: 'success', message: `Great! ${activeChoice} appears the most.` });
+      setGameState('success');
+      window.setTimeout(() => handleNextLevel(), 650);
+      return;
+    }
+
+    const nextMistakes = mistakes + 1;
+    setMistakes(nextMistakes);
+    setStreak(0);
+    setFeedback({ type: 'error', message: 'Not the mode. Look for the most repeated number.' });
+    window.setTimeout(() => setFeedback(null), 1300);
+
+    if (nextMistakes >= MAX_MISTAKES) {
+      window.setTimeout(() => onGameOver(score), 550);
+    }
+  }, [currentLevelData, gameState, handleNextLevel, level, mistakes, onGameOver, score, selectedChoice, streak]);
 
   const topPadding = useSharedTopHud
     ? 'pt-[calc(env(safe-area-inset-top)+5.35rem)]'
@@ -243,7 +246,12 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
                       key={choice}
                       type="button"
                       disabled={gameState === 'success'}
-                      onClick={() => setSelectedChoice(choice)}
+                      onClick={() => {
+                        setSelectedChoice(choice);
+                        if (choice === currentLevelData.mode) {
+                          handleSubmit(choice);
+                        }
+                      }}
                       className={`rounded-xl border-2 px-3 py-3 text-center text-2xl font-black transition ${
                         selectedChoice === choice
                           ? 'border-amber-300 bg-[linear-gradient(180deg,#fde68a_0%,#f59e0b_100%)] text-amber-950 shadow-[0_10px_20px_rgba(245,158,11,0.35)]'

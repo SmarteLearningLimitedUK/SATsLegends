@@ -2,6 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Crown, Lock, Sparkles } from 'lucide-react';
 import AssetIcon from '../components/AssetIcon';
 import { IslandData, LevelData, PlayerData } from '../types';
+import mapHeading1 from '../assets/maps/mapheadings/1.png';
+import mapHeading2 from '../assets/maps/mapheadings/2.png';
+import mapHeading3 from '../assets/maps/mapheadings/3.png';
+import mapHeading4 from '../assets/maps/mapheadings/4.png';
+import mapHeading5 from '../assets/maps/mapheadings/5.png';
+import mapHeading6 from '../assets/maps/mapheadings/6.png';
 
 interface IslandLevelsProps {
   island: IslandData;
@@ -28,6 +34,17 @@ interface GameGroupState {
   completedCount: number;
   hasNextPlayable: boolean;
 }
+
+const MAP_HEADING_BY_ISLAND: Record<number, string> = {
+  1: mapHeading1,
+  2: mapHeading2,
+  3: mapHeading3,
+  4: mapHeading4,
+  5: mapHeading5,
+  6: mapHeading6,
+  7: mapHeading6,
+  8: mapHeading6,
+};
 
 const GAME_SUMMARY_BY_KEY: Record<string, string> = {
   place_value_panic: 'Sort unstable number fragments into the correct place-value channels at speed.',
@@ -213,6 +230,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
 
   const earnedStars = levelRows.reduce((sum, row) => sum + row.stars, 0);
   const completionPercent = Math.round((completedLevels.length / Math.max(1, island.levels.length)) * 100);
+  const heroHeading = MAP_HEADING_BY_ISLAND[island.id];
 
   return (
     <div className="premium-page-root relative h-full w-full overflow-hidden">
@@ -238,10 +256,18 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
           </button>
 
           <div className="flex-1 text-center">
-            <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/80 md:text-xs">
-              {island.themeName || island.category}
+            <div className="flex justify-center">
+              {heroHeading ? (
+                <img
+                  src={heroHeading}
+                  alt={`${island.name} heading`}
+                  className="h-auto w-[min(70vw,360px)] select-none drop-shadow-[0_8px_16px_rgba(2,6,23,0.45)]"
+                  draggable={false}
+                />
+              ) : (
+                <h1 className="text-xl font-black text-white md:text-3xl">{island.name}</h1>
+              )}
             </div>
-            <h1 className="text-xl font-black text-white md:text-3xl">{island.name}</h1>
             <div className="mt-1 text-xs font-semibold text-white/78 md:text-sm">
               Choose your next challenge and keep the run alive
             </div>

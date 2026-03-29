@@ -447,11 +447,44 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       ) : null;
 
     case 'gameplay':
+      const shellStyle = {
+        '--game-shell-top-inset': 'calc(env(safe-area-inset-top) + clamp(3.35rem, 9.1vh, 4.2rem))',
+        '--game-shell-bottom-inset': 'calc(env(safe-area-inset-bottom) + clamp(3.05rem, 8.25vh, 4rem))',
+      } as React.CSSProperties;
+
       return (
-        <div className={`game-shell-host unified-minigame-hud-enabled ${gameplayTypeClass} ${usesQuestionMatchFrame ? 'question-match-shell' : ''} relative flex h-[100dvh] max-h-[100dvh] w-full min-h-0 flex-col overflow-hidden md:h-full md:max-h-full`.trim()}>
-          <div className="game-shell-contract relative flex h-full max-h-full w-full min-h-0 flex-col overflow-hidden">
-            <div className="structured-game-layout flex h-full max-h-full w-full min-h-0 flex-1 flex-col overflow-hidden">
-              <div className="game-shell-zone game-shell-zone-hud shrink-0" aria-hidden />
+        <div
+          className={`game-shell-host unified-minigame-hud-enabled ${gameplayTypeClass} ${usesQuestionMatchFrame ? 'question-match-shell' : ''} relative flex h-[100dvh] max-h-[100dvh] w-full min-h-0 flex-col overflow-hidden md:h-full md:max-h-full`.trim()}
+          style={shellStyle}
+        >
+          {selectedIsland?.mapImage ? (
+            <img
+              src={selectedIsland.mapImage}
+              alt=""
+              aria-hidden="true"
+              draggable={false}
+              className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
+            />
+          ) : null}
+          <div className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(7,20,54,0.26)_0%,rgba(7,20,54,0.36)_55%,rgba(7,20,54,0.46)_100%)]" />
+
+          <div className="game-shell-contract relative z-[2] flex h-full max-h-full w-full min-h-0 flex-col overflow-hidden">
+            <UnifiedMiniGameHud
+              avatarId={player.avatarId}
+              timeLeft={globalMiniGameHudTimeLeft}
+              totalTime={globalMiniGameHudDurationSeconds}
+              lives={globalMiniGameLives}
+            />
+
+            <div
+              className="structured-game-layout relative flex h-full max-h-full w-full min-h-0 flex-1 flex-col overflow-hidden"
+              style={{
+                paddingTop: 'var(--game-shell-top-inset)',
+                paddingBottom: 'var(--game-shell-bottom-inset)',
+                paddingLeft: 'max(0.3rem, env(safe-area-inset-left))',
+                paddingRight: 'max(0.3rem, env(safe-area-inset-right))',
+              }}
+            >
               <GameplayContentViewport>
                 {renderGameplay()}
                 {showInlineHint ? (
@@ -467,13 +500,6 @@ export const AppRouter: React.FC<AppRouterProps> = ({
                   </div>
                 ) : null}
               </GameplayContentViewport>
-              <div className="game-shell-zone game-shell-zone-actions shrink-0" aria-hidden />
-              <UnifiedMiniGameHud
-                avatarId={player.avatarId}
-                timeLeft={globalMiniGameHudTimeLeft}
-                totalTime={globalMiniGameHudDurationSeconds}
-                lives={globalMiniGameLives}
-              />
             </div>
           </div>
         </div>

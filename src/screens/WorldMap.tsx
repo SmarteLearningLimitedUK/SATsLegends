@@ -4,7 +4,6 @@ import { Lock, Sparkles } from 'lucide-react';
 import { IslandData, PlayerData } from '../types';
 import { AVATARS, ISLANDS } from '../constants';
 import universalMapPoster from '../assets/maps/worlsmap.png';
-import welcomeMathLogo from '../assets/maps/welcomemathlogo.png';
 
 interface WorldMapProps {
   player: PlayerData;
@@ -62,14 +61,14 @@ const MAP_AMBIENTS: AmbientRegion[] = [
 ];
 
 const ISLAND_LABELS: Record<number, string> = {
-  1: 'Base Camp',
+  1: 'SATs Summit',
   2: 'Fraction Lagoon',
   3: 'Ops Outpost',
   4: 'Ratio Reef',
   5: 'Geometry Gorge',
   6: 'Measure Mountain',
   7: 'Data Desert',
-  8: 'SATs Summit',
+  8: 'Base Camp',
 };
 
 const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
@@ -325,15 +324,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
           </span>
           <span className="world-map-player-name">{playerName}</span>
         </div>
-      </div>
-
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex justify-center px-4 pt-[calc(env(safe-area-inset-top)+3.2rem)]">
-        <img
-          src={welcomeMathLogo}
-          alt="Welcome to Matharia"
-          className="h-auto w-[min(88vw,36rem)] select-none drop-shadow-[0_8px_20px_rgba(0,0,0,0.35)]"
-          draggable={false}
-        />
       </div>
 
       <div

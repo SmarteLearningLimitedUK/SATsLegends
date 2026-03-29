@@ -38,9 +38,9 @@ export const getBossVisualForLevel = (
   gameType?: MiniGameType | null,
   levelId?: number,
 ): string | null => {
+  if (gameType === 'timekeeper_temple') return null;
   if (!BOSS_VIEWPORT_VISUALS.length) return null;
   const seed = `${gameType || 'unknown'}-${levelId || 0}`;
   const index = hashSeed(seed) % BOSS_VIEWPORT_VISUALS.length;
   return BOSS_VIEWPORT_VISUALS[index];
 };
-
