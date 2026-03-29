@@ -40,25 +40,28 @@ type AmbientRegion = {
 const ISLAND_HOTSPOTS: Record<number, IslandHotspot> = {
   1: { x: 74, y: 75, width: 24, height: 15, labelX: 74, labelY: 86 },
   2: { x: 24, y: 38, width: 24, height: 15, labelX: 24, labelY: 49 },
-  3: { x: 73, y: 40, width: 24, height: 15, labelX: 73, labelY: 50 },
+  3: { x: 25, y: 56, width: 24, height: 15, labelX: 25, labelY: 66 },
   4: { x: 26, y: 75, width: 24, height: 15, labelX: 26, labelY: 86 },
-  5: { x: 74, y: 20, width: 24, height: 15, labelX: 74, labelY: 31 },
+  5: { x: 73, y: 40, width: 24, height: 15, labelX: 73, labelY: 50 },
+  6: { x: 74, y: 20, width: 24, height: 15, labelX: 74, labelY: 31 },
 };
 
 const MAP_AMBIENTS: AmbientRegion[] = [
   { id: 'base-camp', x: 74, y: 75, width: 24, height: 16, effect: 'butterflies' },
-  { id: 'fraction-lagoon', x: 24, y: 38, width: 24, height: 16, effect: 'blizzard' },
+  { id: 'fraction-forest', x: 24, y: 38, width: 24, height: 16, effect: 'light-beams' },
+  { id: 'geometry-glacier', x: 25, y: 56, width: 24, height: 16, effect: 'blizzard' },
+  { id: 'data-desert', x: 26, y: 75, width: 24, height: 16, effect: 'dust-devils' },
   { id: 'operations-outpost', x: 73, y: 40, width: 24, height: 16, effect: 'stars' },
-  { id: 'discovery-desert', x: 26, y: 75, width: 24, height: 16, effect: 'dust-devils' },
-  { id: 'sats-summit', x: 74, y: 20, width: 24, height: 16, effect: 'lava-spurts' },
+  { id: 'mount-algebra', x: 74, y: 20, width: 24, height: 16, effect: 'lava-spurts' },
 ];
 
 const ISLAND_LABELS: Record<number, string> = {
   1: 'Base Camp',
-  2: 'Fraction Lagoon',
-  3: 'Ops Outpost',
-  4: 'Discovery Desert',
-  5: 'Boss Test',
+  2: 'Fraction Forest',
+  3: 'Geometry Glacier',
+  4: 'Data Desert',
+  5: 'Operations Outpost',
+  6: 'Mount Algebra',
 };
 
 const renderAmbientEffect = (effect: AmbientRegion['effect']) => {

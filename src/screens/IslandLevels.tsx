@@ -7,6 +7,7 @@ import mapHeading2 from '../assets/maps/mapheadings/2.png';
 import mapHeading3 from '../assets/maps/mapheadings/3.png';
 import mapHeading4 from '../assets/maps/mapheadings/4.png';
 import mapHeading5 from '../assets/maps/mapheadings/5.png';
+import mapHeading6 from '../assets/maps/mapheadings/6.png';
 
 interface IslandLevelsProps {
   island: IslandData;
@@ -40,6 +41,7 @@ const MAP_HEADING_BY_ISLAND: Record<number, string> = {
   3: mapHeading3,
   4: mapHeading4,
   5: mapHeading5,
+  6: mapHeading6,
 };
 
 const GAME_SUMMARY_BY_KEY: Record<string, string> = {
