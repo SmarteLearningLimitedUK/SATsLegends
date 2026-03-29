@@ -299,25 +299,25 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
       className="premium-page-root premium-hub-map relative w-full min-h-full overflow-visible"
       style={{
         height: 'auto',
-        minHeight: '200dvh',
+        minHeight: '100%',
         WebkitOverflowScrolling: 'touch',
         touchAction: 'pan-y',
         overscrollBehaviorY: 'contain',
       }}
     >
       <div
-        className="premium-map-stage premium-map-stage-fullscreen relative w-full"
-        style={{ minHeight: 'max(200dvh, 1900px)', height: 'auto' }}
+        className="premium-map-stage premium-map-stage-fullscreen relative w-full h-auto min-h-0"
+        style={{
+          minHeight: 'max(175dvh, 1450px)',
+        }}
       >
-        <div
-          className="absolute left-1/2 top-0 h-[181.818%] w-[181.818%] origin-top -translate-x-1/2 scale-[0.55]"
-          style={{ transformOrigin: 'top center' }}
-        >
+        <div className="relative w-full">
           <img
             src={universalMapPoster}
             alt="Island select map"
-            className="absolute inset-0 block h-full w-full max-w-none object-cover object-center"
+            className="block h-full w-full object-fill"
             draggable={false}
+            style={{ minHeight: 'max(175dvh, 1450px)' }}
           />
 
           <div className="pointer-events-none absolute inset-0 z-10">
@@ -338,7 +338,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
           </div>
 
           <div className="absolute inset-0 z-20">
-            {islandProgress.map(({ island, isUnlocked, isCompleted, isInProgress, starredCount, totalLevels, completion }) => {
+            {islandProgress.map(({ island, starredCount, totalLevels, completion, isUnlocked }) => {
               const hotspot = ISLAND_HOTSPOTS[island.id];
               if (!hotspot) return null;
               const isRecommended = isUnlocked && island.id === recommendedIslandId;
@@ -382,7 +382,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                         </span>
                       ) : null}
                     </motion.button>
-
                   </div>
 
                   <button
