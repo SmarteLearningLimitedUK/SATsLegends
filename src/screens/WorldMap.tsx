@@ -67,15 +67,6 @@ const MAP_AMBIENTS: AmbientRegion[] = [
   { id: 'mount-algebra', x: 74, y: 20, width: 24, height: 16, effect: 'lava-spurts' },
 ];
 
-const ISLAND_LABELS: Record<number, string> = {
-  1: 'Base Camp',
-  2: 'Fraction Forest',
-  3: 'Geometry Glacier',
-  4: 'Data Desert',
-  5: 'Operations Outpost',
-  6: 'Mount Algebra',
-};
-
 const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
   switch (effect) {
     case 'butterflies':
@@ -106,17 +97,6 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
             <span
               key={`bubble-${index}`}
               className="world-map-bubble"
-              style={{ left: item.left, bottom: item.bottom, animationDelay: item.delay, animationDuration: item.duration }}
-            />
-          ))}
-          {[
-            { left: '34%', bottom: '36%', delay: '0.8s', duration: '3.6s' },
-            { left: '58%', bottom: '52%', delay: '1.6s', duration: '3.1s' },
-            { left: '46%', bottom: '70%', delay: '2.2s', duration: '3.8s' },
-          ].map((item, index) => (
-            <span
-              key={`sparkle-${index}`}
-              className="world-map-sparkle"
               style={{ left: item.left, bottom: item.bottom, animationDelay: item.delay, animationDuration: item.duration }}
             />
           ))}
@@ -260,30 +240,24 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
 };
 
 const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
-  const islandProgress = useMemo(() => {
-    return ISLANDS.map(island => {
+  const islandProgress = useMemo(() => (
+    ISLANDS.map(island => {
       const starredLevels = island.levels.filter(level => {
         const starKey = `${island.id}-${level.id}`;
         return (player.levelStars[starKey] || 0) >= 1;
       });
       const completion = Math.round((starredLevels.length / island.levels.length) * 100);
       const isUnlocked = player.unlockedIslands.includes(island.id);
-      const isCompleted = completion >= 100;
-      const isInProgress = completion > 0 && completion < 100;
 
       return {
         island,
         isUnlocked,
-        isCompleted,
-        isInProgress,
-        starredCount: starredLevels.length,
-        totalLevels: island.levels.length,
         completion,
       };
-    });
-  }, [player]);
+    })
+  ), [player]);
 
-    return (
+  return (
     <div className="relative w-full overflow-visible">
       <div
         className="relative overflow-visible"
@@ -293,123 +267,80 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
           transform: 'translateX(-50%)',
         }}
       >
-          <img
-            src={universalMapPoster}
-            alt="Island select map"
-            className="block h-auto w-full"
-            draggable={false}
-          />
+        <img
+          src={universalMapPoster}
+          alt="Island select map"
+          className="block h-auto w-full"
+          draggable={false}
+        />
 
-          <div className="pointer-events-none absolute inset-0 z-10">
-            {MAP_AMBIENTS.map(region => (
-              <div
-                key={region.id}
-                className={`world-map-ambient world-map-ambient-${region.effect}`}
+        <div className="pointer-events-none absolute inset-0 z-10">
+          {MAP_AMBIENTS.map(region => (
+            <div
+              key={region.id}
+              className={`world-map-ambient world-map-ambient-${region.effect}`}
+              style={{
+                left: `${region.x}%`,
+                top: `${region.y}%`,
+                width: `${region.width}%`,
+                height: `${region.height}%`,
+              }}
+            >
+              {renderAmbientEffect(region.effect)}
+            </div>
+          ))}
+        </div>
+
+        <div className="absolute inset-0 z-20">
+          {islandProgress.map(({ island, isUnlocked }) => {
+            const bannerAnchor = ISLAND_BANNER_ANCHORS[island.id];
+            const bannerAsset = ISLAND_NAME_BANNERS[island.id];
+            if (!bannerAnchor || !bannerAsset) return null;
+
+            return (
+              <motion.button
+                key={island.id}
+                whileTap={isUnlocked ? { scale: 0.98 } : {}}
+                whileHover={isUnlocked ? { scale: 1.02 } : {}}
+                type="button"
+                onClick={() => {
+                  if (isUnlocked) onSelectIsland(island);
+                }}
+                disabled={!isUnlocked}
+                title={`${island.name}${isUnlocked ? '' : ' - locked'}`}
+                aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
+                className={`absolute z-20 -translate-x-1/2 text-center outline-none transition-all ${
+                  isUnlocked ? 'cursor-pointer' : 'cursor-not-allowed opacity-80'
+                } focus-visible:ring-4 focus-visible:ring-cyan-300/70`}
                 style={{
-                  left: `${region.x}%`,
-                  top: `${region.y}%`,
-                  width: `${region.width}%`,
-                  height: `${region.height}%`,
+                  left: `${bannerAnchor.x}%`,
+                  top: `${bannerAnchor.y}%`,
+                  width: `${bannerAnchor.width}%`,
                 }}
               >
-                {renderAmbientEffect(region.effect)}
-              </div>
-            ))}
-          </div>
-
-          <div className="absolute inset-0 z-20">
-            {islandProgress.map(({ island, starredCount, totalLevels, completion, isUnlocked }) => {
-              const hotspot = ISLAND_HOTSPOTS[island.id];
-              if (!hotspot) return null;
-              const isRecommended = isUnlocked && island.id === recommendedIslandId;
-
-              return (
-                <div
-                  key={island.id}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 overflow-visible"
-                  style={{
-                    left: `${hotspot.x}%`,
-                    top: `${hotspot.y}%`,
-                    width: `${hotspot.width}%`,
-                    height: `${hotspot.height}%`,
-                  }}
-                >
-                  <motion.button
-                    whileTap={isUnlocked ? { scale: 0.98 } : {}}
-                    whileHover={isUnlocked ? { scale: 1.02 } : {}}
-                    onClick={() => {
-                      if (isUnlocked) onSelectIsland(island);
-                    }}
-                    disabled={!isUnlocked}
-                    title={`${island.name} - ${island.themeName} - ${completion}% complete`}
-                    aria-label={`${island.name}, ${island.themeName}, ${completion}% complete${isUnlocked ? '' : ', locked'}`}
-                    className={`group relative h-full w-full rounded-[2rem] bg-transparent outline-none transition-all ${
-                      isUnlocked ? 'cursor-pointer' : 'cursor-not-allowed'
-                    } focus-visible:ring-4 focus-visible:ring-cyan-300/70`}
-                  >
-                    <span className="sr-only">{`${island.name} in ${island.themeName}, ${completion}% complete`}</span>
-                    <span
-                      className={`pointer-events-none absolute inset-[8%] rounded-[2rem] transition-opacity duration-200 ${
-                        isUnlocked
-                          ? 'opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 bg-[radial-gradient(circle,rgba(255,255,255,0.12),rgba(34,211,238,0.25),rgba(2,6,23,0))]'
-                          : 'opacity-100 bg-[linear-gradient(180deg,rgba(15,23,42,0.3),rgba(15,23,42,0.55))]'
-                      }`}
-                    />
-                    {!isUnlocked ? (
-                      <span className="pointer-events-none absolute left-1/2 top-1/2 inline-flex -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-full border border-slate-100/35 bg-slate-900/75 px-2 py-1 text-[10px] font-black uppercase tracking-[0.08em] text-slate-100">
-                        <Lock className="h-3.5 w-3.5" />
-                        Locked
-                      </span>
-                    ) : null}
-                  </motion.button>
-
-                  <button
-                    onClick={() => {
-                      if (isUnlocked) onSelectIsland(island);
-                    }}
-                    disabled={!isUnlocked}
-                    aria-label={`${island.name} label, ${starredCount}/${totalLevels} cleared`}
-                    className={`world-map-island-label absolute left-1/2 top-full z-20 mt-1.5 -translate-x-1/2 text-center text-white outline-none transition-all ${
-                      isUnlocked ? 'cursor-pointer' : 'cursor-not-allowed opacity-70 grayscale-[0.15]'
-                    } focus-visible:ring-4 focus-visible:ring-cyan-300/70`}
-                    style={{ textShadow: 'none' }}
-                  >
-                    <span
-                      className={`world-map-island-label-face world-map-island-label-pill ${
-                        !isUnlocked
-                          ? 'world-map-island-label-face-locked'
-                          : completion === 0
-                            ? 'world-map-island-label-face-idle'
-                            : 'world-map-island-label-face-progress'
-                      }`}
-                      style={{
-                        minWidth: '8.75rem',
-                        padding: '0.34rem 0.9rem 0.42rem',
-                      }}
-                    >
-                      <span className="world-map-island-label-text block truncate whitespace-nowrap text-[9px] font-black uppercase leading-none tracking-[0.035em] opacity-95 md:text-[10px]">
-                        {ISLAND_LABELS[island.id] || island.name}
-                      </span>
-                      <span className="relative z-[2] mt-0.5 block h-[4px] w-full overflow-hidden rounded-full border border-white/28 bg-slate-900/55 md:h-[5px]">
-                        <span
-                          className="block h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-300 to-emerald-300 transition-all duration-300"
-                          style={{ width: `${completion}%` }}
-                          aria-hidden="true"
-                        />
-                      </span>
+                <img
+                  src={bannerAsset}
+                  alt={island.name}
+                  className={`block h-auto w-full select-none drop-shadow-[0_10px_18px_rgba(2,6,23,0.42)] ${
+                    isUnlocked ? '' : 'grayscale-[0.35] brightness-[0.88]'
+                  }`}
+                  draggable={false}
+                />
+                {!isUnlocked ? (
+                  <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                    <span className="inline-flex items-center gap-1 rounded-full border border-slate-100/35 bg-slate-900/78 px-2 py-1 text-[9px] font-black uppercase tracking-[0.08em] text-slate-100">
+                      <Lock className="h-3 w-3" />
+                      Locked
                     </span>
-                  </button>
-                </div>
-              );
-            })}
-          </div>
+                  </span>
+                ) : null}
+              </motion.button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
 };
 
 export default WorldMap;
-
-
-
-
