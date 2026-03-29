@@ -234,25 +234,14 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
 
   return (
     <div
-      className="premium-page-root relative h-[100dvh] max-h-[100dvh] w-full overflow-hidden"
+      className="premium-page-root relative h-[100dvh] max-h-[100dvh] w-full overflow-y-auto overflow-x-hidden bg-[#07111f]"
       style={{
         WebkitOverflowScrolling: 'touch',
         touchAction: 'pan-y',
         overscrollBehaviorY: 'contain',
       }}
     >
-      {island.mapImage ? (
-        <img
-          src={island.mapImage}
-          alt={`${island.name} backdrop`}
-          className="absolute inset-0 h-full w-full object-cover object-[center_30%] opacity-35"
-          draggable={false}
-        />
-      ) : null}
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,17,31,0.58),rgba(7,17,31,0.9))]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(110%_70%_at_50%_0%,rgba(34,211,238,0.15),rgba(2,6,23,0))]" />
-
-      <div className="premium-page-content relative z-10 mx-auto flex h-full min-h-0 w-full max-w-4xl flex-col px-3 pb-4 pt-[calc(env(safe-area-inset-top)+0.35rem)] md:px-5 md:pb-6 md:pt-[calc(env(safe-area-inset-top)+0.5rem)]">
+      <div className="premium-page-content relative z-10 mx-auto flex min-h-full w-full max-w-4xl flex-col px-3 pb-4 pt-[calc(env(safe-area-inset-top)+0.35rem)] md:px-5 md:pb-6 md:pt-[calc(env(safe-area-inset-top)+0.5rem)]">
         <div className="mb-3 flex items-start justify-between gap-3 md:mb-4">
           <button
             onClick={onBack}
@@ -321,7 +310,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
           </div>
         ) : null}
 
-        <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden pr-1" style={{ WebkitOverflowScrolling: 'touch' }}>
+        <div className="pr-1">
           <div className="flex flex-col gap-2.5 pb-[calc(env(safe-area-inset-bottom)+1rem)] md:gap-3 md:pb-[calc(env(safe-area-inset-bottom)+1.2rem)]">
             {gameGroups.map((group) => {
               const isExpanded = expandedGameId === group.id;
