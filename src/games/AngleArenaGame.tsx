@@ -61,7 +61,7 @@ const angleTypePrompt = (target: number) => {
   if (target < 90) {
     return {
       prompt: target < 50
-        ? `Fire at an acute angle of ${target}�.`
+        ? `Fire at an acute angle of ${target}Ã‚Â°.`
         : 'Set an acute angle and launch.',
       kind: 'angle_type' as const,
     };
@@ -69,14 +69,14 @@ const angleTypePrompt = (target: number) => {
 
   if (target === 90) {
     return {
-      prompt: 'Set the catapult to a right angle (90�).',
+      prompt: 'Set the catapult to a right angle (90Ã‚Â°).',
       kind: 'angle_type' as const,
     };
   }
 
   return {
     prompt: target > 130
-      ? `Launch at an obtuse angle of ${target}�.`
+      ? `Launch at an obtuse angle of ${target}Ã‚Â°.`
       : 'Fire at an obtuse angle.',
     kind: 'angle_type' as const,
   };
@@ -88,7 +88,7 @@ const buildReasoningPrompt = (difficulty: number) => {
   if (difficulty % 2 === 0) {
     const supplement = 180 - base;
     return {
-      prompt: `The marked angle is ${base}�. Set the angle on the same straight line.`,
+      prompt: `The marked angle is ${base}Ã‚Â°. Set the angle on the same straight line.`,
       targetAngle: supplement,
       kind: 'reasoning' as const,
     };
@@ -97,7 +97,7 @@ const buildReasoningPrompt = (difficulty: number) => {
   const extra = randomInt(10, 40);
   const answer = clamp(base + extra, 10, 170);
   return {
-    prompt: `Launch at the angle that is ${extra}� more than ${base}�`,
+    prompt: `Launch at the angle that is ${extra}Ã‚Â° more than ${base}Ã‚Â°`,
     targetAngle: answer,
     kind: 'reasoning' as const,
   };
@@ -108,7 +108,7 @@ const buildChallenge = (levelId: number, solvedCount: number): AngleChallenge =>
   const roll = Math.random();
 
   let targetAngle = randomInt(20, 160);
-  let prompt = `Set the catapult to ${targetAngle}� and fire.`;
+  let prompt = `Set the catapult to ${targetAngle}Ã‚Â° and fire.`;
   let kind: ChallengeKind = 'direct_degree';
 
   if (difficulty >= 5 && roll > 0.58) {
@@ -353,8 +353,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           </div>
           <div className="mt-1 inline-flex items-center gap-2 rounded-full border border-white/20 bg-slate-950/45 px-3 py-1 text-[10px] font-black uppercase tracking-[0.13em] text-white/90 md:text-[11px]">
             <span>Shots solved {correctCount}/{targetCorrect}</span>
-            <span className="text-cyan-200">Combo x{Combo}</span>
-            <span className="text-amber-200">XP {XP}</span>
+            <span className="text-cyan-200">Tolerance {"\u00B1"}{tolerance}{"\u00B0"}</span>
           </div>
         </div>
 
@@ -426,9 +425,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
               <div className="pointer-events-none absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-amber-200/70 bg-amber-300" />
             </div>
 
-            <div className="absolute left-[10%] bottom-[2.5%] inline-flex items-center gap-1 rounded-full border border-cyan-100/35 bg-slate-950/58 px-3 py-1.5 text-xs font-black text-cyan-100 shadow-[0_8px_16px_rgba(2,6,23,0.38)] md:text-sm">
+            <div className="absolute left-[10%] bottom-[3.5%] inline-flex items-center gap-1 rounded-full border border-cyan-100/35 bg-slate-950/58 px-3 py-1.5 text-xs font-black text-cyan-100 shadow-[0_8px_16px_rgba(2,6,23,0.38)] md:text-sm">
               <Crosshair className="h-4 w-4 text-cyan-200" />
-              {aimAngle}�
+              {aimAngle}{"\u00B0"}
             </div>
 
             <div className="absolute right-[7.5%] bottom-[11%] flex h-[26%] w-[17%] items-end justify-center">
@@ -496,15 +495,15 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
                 type="button"
                 onClick={() => setAimAngle((previous) => clamp(previous - 1, 10, 170))}
                 disabled={shotState === 'launching' || !isSessionActive}
-                className="rounded-full border border-cyan-100/32 bg-cyan-500/18 px-2 py-2 text-[11px] font-black text-cyan-50 transition hover:bg-cyan-400/30 disabled:opacity-55"
+                className="rounded-full border border-cyan-100/32 bg-cyan-500/18 px-2 py-1.5 text-[10px] font-black text-cyan-50 transition hover:bg-cyan-400/30 disabled:opacity-55 md:py-2 md:text-[11px]"
               >
-                -1�
+                -1{"\u00B0"}
               </button>
               <button
                 type="button"
                 onClick={() => setAimAngle(52)}
                 disabled={shotState === 'launching' || !isSessionActive}
-                className="inline-flex items-center justify-center rounded-full border border-cyan-100/32 bg-cyan-500/18 px-2 py-2 text-[11px] font-black text-cyan-50 transition hover:bg-cyan-400/30 disabled:opacity-55"
+                className="inline-flex items-center justify-center rounded-full border border-cyan-100/32 bg-cyan-500/18 px-2 py-1.5 text-[10px] font-black text-cyan-50 transition hover:bg-cyan-400/30 disabled:opacity-55 md:py-2 md:text-[11px]"
               >
                 <RotateCcw className="mr-1 h-3.5 w-3.5" />
                 Reset
@@ -513,9 +512,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
                 type="button"
                 onClick={() => setAimAngle((previous) => clamp(previous + 1, 10, 170))}
                 disabled={shotState === 'launching' || !isSessionActive}
-                className="rounded-full border border-cyan-100/32 bg-cyan-500/18 px-2 py-2 text-[11px] font-black text-cyan-50 transition hover:bg-cyan-400/30 disabled:opacity-55"
+                className="rounded-full border border-cyan-100/32 bg-cyan-500/18 px-2 py-1.5 text-[10px] font-black text-cyan-50 transition hover:bg-cyan-400/30 disabled:opacity-55 md:py-2 md:text-[11px]"
               >
-                +1�
+                +1{"\u00B0"}
               </button>
             </div>
 
@@ -523,7 +522,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
               type="button"
               onClick={handleFire}
               disabled={shotState === 'launching' || !isSessionActive || didComplete || didFail}
-              className="inline-flex min-h-[2.9rem] items-center justify-center rounded-full border border-amber-100/45 bg-[linear-gradient(180deg,rgba(251,191,36,0.98),rgba(245,158,11,0.98))] px-4 py-2 text-[0.78rem] font-black uppercase tracking-[0.12em] text-amber-950 shadow-[0_10px_20px_rgba(217,119,6,0.35)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-55 md:min-h-[3.2rem] md:px-5 md:text-sm"
+              className="inline-flex min-h-[2.7rem] items-center justify-center rounded-full border border-amber-100/45 bg-[linear-gradient(180deg,rgba(251,191,36,0.98),rgba(245,158,11,0.98))] px-4 py-2 text-[0.74rem] font-black uppercase tracking-[0.12em] text-amber-950 shadow-[0_10px_20px_rgba(217,119,6,0.35)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-55 md:min-h-[3.1rem] md:px-5 md:text-sm"
             >
               <Send className="mr-1.5 h-4 w-4" />
               Fire

@@ -144,10 +144,10 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
     });
   };
 
-  const topPadding = 'pt-[calc(env(safe-area-inset-top)+0.85rem)]';
+  const topPadding = 'pt-[calc(env(safe-area-inset-top)+0.35rem)]';
 
   return (
-    <div className="fixed inset-0 overflow-hidden bg-[#0f172a] font-sans text-white select-none">
+    <div className="relative h-full w-full overflow-hidden bg-[#0f172a] font-sans text-white select-none">
       <img
         src={missionBackground}
         alt=""
@@ -157,13 +157,13 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
       />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(15,23,42,0.35)_45%,rgba(15,23,42,0.72))]" />
 
-      <div className={`relative z-10 flex h-full w-full flex-col items-center ${topPadding} px-4 pb-[max(6.2rem,calc(env(safe-area-inset-bottom)+5.2rem))]`}>
-        <div className="w-full max-w-md">
+      <div className={`relative z-10 flex h-full min-h-0 w-full flex-col items-center ${topPadding} px-4 pb-[calc(env(safe-area-inset-bottom)+4.8rem)]`}>
+        <div className="w-full max-w-md min-h-0">
           <main className="flex w-full flex-col items-center gap-3">
             <motion.div
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              className="relative flex h-[4.8rem] w-full max-w-[18rem] items-center justify-center"
+              className="relative flex h-[4.2rem] w-full max-w-[16rem] items-center justify-center md:h-[4.8rem] md:max-w-[18rem]"
             >
               <div className="absolute inset-0 overflow-hidden rounded-2xl border-4 border-[#334155] bg-[#1e293b] shadow-[0_0_30px_rgba(59,130,246,0.2)]">
                 <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent" />
@@ -188,7 +188,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
             </motion.div>
 
             <div className="relative">
-              <div className="relative flex h-[14.4rem] w-[14.4rem] items-center justify-center rounded-full">
+              <div className="relative flex h-[12rem] w-[12rem] items-center justify-center rounded-full md:h-[14.4rem] md:w-[14.4rem]">
                 <div className="absolute inset-0 rounded-full bg-blue-900/20 blur-[2px]" />
                 <div className="absolute inset-0 overflow-hidden rounded-full">
                   <img
@@ -214,7 +214,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
               </div>
             </div>
 
-            <div className="grid w-full grid-cols-2 gap-4">
+            <div className="grid w-full grid-cols-2 gap-3 md:gap-4">
               <div className="flex flex-col items-center gap-2">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-300">Hours</p>
                 <div className="flex items-center gap-3">
@@ -253,7 +253,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={checkTime}
-                  className="w-full rounded-2xl border border-blue-400/20 bg-gradient-to-r from-blue-600 to-blue-500 py-3 text-lg font-black shadow-[0_8px_0_rgb(30,58,138)] transition-all active:translate-y-1 active:shadow-none"
+                  className="w-full rounded-2xl border border-blue-400/20 bg-gradient-to-r from-blue-600 to-blue-500 py-2.5 text-base font-black shadow-[0_8px_0_rgb(30,58,138)] transition-all active:translate-y-1 active:shadow-none md:py-3 md:text-lg"
                 >
                   SUBMIT TIME
                 </motion.button>

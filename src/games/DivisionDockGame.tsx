@@ -270,7 +270,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
     <GameScreenShell className="overflow-hidden">
       <GameplaySceneBackdrop gameType="calculation_clash" />
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+3.4rem)] pt-[calc(env(safe-area-inset-top)+5.25rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+3.7rem)] md:pt-[calc(env(safe-area-inset-top)+5.5rem)]">
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+3.4rem)] pt-[calc(env(safe-area-inset-top)+4.85rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+3.7rem)] md:pt-[calc(env(safe-area-inset-top)+5.1rem)]">
         <PuzzleStage className="w-full max-w-6xl min-h-0 flex-1 rounded-[2rem] p-2 md:rounded-[2.4rem] md:p-4">
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_24%,rgba(15,23,42,0.2)_100%)]" />
 
@@ -278,11 +278,6 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
             {Array.from({ length: HEARTS_MAX }).map((_, index) => (
               <div key={index} className={`h-5 w-5 rounded-full ${index < hearts ? 'bg-[radial-gradient(circle_at_30%_25%,#fca5a5,#ef4444_60%,#991b1b)] shadow-[0_6px_12px_rgba(239,68,68,0.35)]' : 'bg-white/12'} md:h-6 md:w-6`} />
             ))}
-          </div>
-
-          <div className="absolute right-3 top-3 z-20 rounded-full border border-white/12 bg-slate-950/32 px-3 py-1.5 shadow-[0_10px_24px_rgba(2,6,23,0.2)] md:right-5 md:top-5 md:px-4 md:py-2">
-            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/70 md:text-xs">Combo</div>
-            <div className="text-lg font-black text-white md:text-2xl">{Combo}</div>
           </div>
 
           <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-16 md:px-4 md:pb-4 md:pt-20">
@@ -297,7 +292,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
               </div>
             </div>
 
-            <div className="mt-3 grid min-h-0 flex-1 grid-cols-1 gap-2 md:mt-4 md:grid-cols-[1.05fr_1fr] md:gap-3">
+            <div className="mt-2 grid min-h-0 flex-1 grid-cols-1 gap-2 md:mt-3 md:grid-cols-[1fr_0.95fr] md:gap-3">
               <div className="licensed-game-card-dark flex min-h-0 flex-col rounded-[1.3rem] border border-white/14 p-2.5 shadow-[0_16px_28px_rgba(2,6,23,0.22)] md:rounded-[1.6rem] md:p-4">
                 <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Equation terminal</div>
                 <div className="mt-2 rounded-[1rem] border border-sky-200/20 bg-[linear-gradient(180deg,rgba(14,116,144,0.22),rgba(14,116,144,0.08))] p-2.5 text-center md:mt-3 md:p-4">
@@ -321,21 +316,28 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
                   <button
                     type="submit"
                     disabled={Boolean(feedback) || boatDeparting || isFinished}
-                    className="ui-button-primary min-w-[7.8rem] rounded-[0.95rem] px-3 py-2 text-[11px] font-black uppercase tracking-[0.08em] text-white disabled:opacity-60 md:min-w-[10rem] md:text-base"
+                    className="ui-button-primary min-w-[6.8rem] rounded-[0.95rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.08em] text-white disabled:opacity-60 md:min-w-[8.5rem] md:text-sm"
                   >
                     Load Cargo
                   </button>
                 </form>
 
-                <div className="mt-2 rounded-[1rem] border border-white/10 bg-black/16 p-2 text-[11px] font-semibold text-cyan-50/90 md:mt-3 md:p-2.5 md:text-sm">
-                  Correct answers add cargo. Fill the boat to dispatch it.
+                <div className="mt-2 grid grid-cols-2 gap-2 md:mt-3">
+                  <div className="rounded-[1rem] border border-white/12 bg-white/8 p-2 text-center">
+                    <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/65 md:text-[11px]">Cargo</div>
+                    <div className="mt-1 text-xl font-black text-white md:text-2xl">{cargoLoaded}/{CARGO_PER_BOAT}</div>
+                  </div>
+                  <div className="rounded-[1rem] border border-white/12 bg-white/8 p-2 text-center">
+                    <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/65 md:text-[11px]">Boats</div>
+                    <div className="mt-1 text-xl font-black text-white md:text-2xl">{boatsCompleted}/{totalBoats}</div>
+                  </div>
                 </div>
               </div>
 
               <div className="licensed-game-card-dark flex min-h-0 flex-col rounded-[1.3rem] border border-white/14 p-2.5 shadow-[0_16px_28px_rgba(2,6,23,0.22)] md:rounded-[1.6rem] md:p-4">
                 <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Cargo boat</div>
 
-                <div className="relative mt-2 flex min-h-[7rem] flex-1 items-end justify-center overflow-hidden rounded-[1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(56,189,248,0.24),rgba(30,64,175,0.22)_42%,rgba(15,23,42,0.36)_100%)] p-2.5 md:mt-3 md:min-h-[8.3rem] md:p-3">
+                <div className="relative mt-2 flex min-h-[6.2rem] flex-1 items-end justify-center overflow-hidden rounded-[1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(56,189,248,0.24),rgba(30,64,175,0.22)_42%,rgba(15,23,42,0.36)_100%)] p-2.5 md:mt-3 md:min-h-[7.1rem] md:p-3">
                   <motion.div
                     animate={boatDeparting ? { x: [0, 220, 520], y: [0, -8, -10], rotate: [0, -2, -1], opacity: [1, 1, 0.55] } : { x: 0, y: 0, rotate: [0, -1, 1, 0] }}
                     transition={boatDeparting ? { duration: 1.1, ease: 'easeInOut' } : { duration: 2.1, repeat: Infinity, repeatType: 'mirror' }}
@@ -345,7 +347,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
                       <div className="absolute -top-3 left-3 right-3 h-3 rounded-full border border-amber-200/35 bg-[linear-gradient(180deg,rgba(254,243,199,0.55),rgba(217,119,6,0.45))]" />
                     </div>
 
-                    <div className="absolute inset-x-3 -top-10 flex items-end justify-center gap-1.5">
+                    <div className="absolute inset-x-3 -top-8 flex items-end justify-center gap-1.5">
                       {Array.from({ length: CARGO_PER_BOAT }).map((_, index) => (
                         <motion.div
                           key={`crate-${index}`}
@@ -353,22 +355,11 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
                           animate={index < cargoLoaded
                             ? { scale: 1, opacity: 1, y: 0 }
                             : { scale: 0.85, opacity: 0.2, y: 8 }}
-                          className="h-9 w-8 rounded-md border border-yellow-200/35 bg-[linear-gradient(180deg,rgba(250,204,21,0.7),rgba(120,53,15,0.85))] shadow-[0_7px_14px_rgba(0,0,0,0.3)]"
+                          className="h-8 w-7 rounded-md border border-yellow-200/35 bg-[linear-gradient(180deg,rgba(250,204,21,0.7),rgba(120,53,15,0.85))] shadow-[0_7px_14px_rgba(0,0,0,0.3)] md:h-9 md:w-8"
                         />
                       ))}
                     </div>
                   </motion.div>
-                </div>
-
-                <div className="mt-2 grid grid-cols-2 gap-2 md:mt-3 md:gap-3">
-                  <div className="rounded-[1rem] border border-white/12 bg-white/8 p-2 text-center">
-                    <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/65 md:text-[11px]">Cargo Loaded</div>
-                    <div className="mt-1 text-2xl font-black text-white md:text-3xl">{cargoLoaded}/{CARGO_PER_BOAT}</div>
-                  </div>
-                  <div className="rounded-[1rem] border border-white/12 bg-white/8 p-2 text-center">
-                    <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/65 md:text-[11px]">Boats Departed</div>
-                    <div className="mt-1 text-2xl font-black text-white md:text-3xl">{boatsCompleted}/{totalBoats}</div>
-                  </div>
                 </div>
               </div>
             </div>

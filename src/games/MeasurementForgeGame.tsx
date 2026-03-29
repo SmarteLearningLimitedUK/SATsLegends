@@ -185,11 +185,11 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
 
   return (
     <div ref={rootRef} className="relative h-full w-full overflow-hidden bg-[#07122b]">
-      <div className="relative z-0 flex h-full w-full flex-col items-center justify-between px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(0.2rem,env(safe-area-inset-top))]">
+      <div className="relative z-0 flex h-full w-full min-h-0 flex-col items-center justify-between px-4 pb-[calc(env(safe-area-inset-bottom)+4.8rem)] pt-1">
         <motion.div
           animate={successPulse ? { scale: [1, 1.03, 1] } : { scale: 1 }}
           transition={{ duration: 0.42, ease: 'easeOut' }}
-          className="relative mt-[calc(clamp(4.4rem,10vh,6.6rem)+50px)] w-[min(62vw,18rem)] aspect-square"
+          className="relative mt-[calc(clamp(3.2rem,7.5vh,4.8rem)+50px)] w-[min(54vw,15rem)] shrink-0 aspect-square"
         >
           <motion.div
             aria-hidden="true"
@@ -254,8 +254,8 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
           </div>
         </motion.div>
 
-        <div className="relative w-full max-w-xl pb-1">
-          <div className="flex flex-wrap items-center justify-center gap-2.5">
+        <div className="relative w-full max-w-xl shrink-0 pb-1">
+          <div className="flex flex-wrap items-center justify-center gap-2">
             {unplacedTokens.map((token) => (
               <motion.button
                 key={token.id}
@@ -270,7 +270,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                     placeToken(token.id);
                   }
                 }}
-                className="h-14 min-w-[4.2rem] rounded-2xl bg-[linear-gradient(180deg,#fef08a,#f59e0b)] px-3 text-lg font-black text-amber-900 shadow-[0_10px_16px_rgba(0,0,0,0.34)] ring-2 ring-yellow-100/70"
+                className="h-12 min-w-[3.65rem] rounded-2xl bg-[linear-gradient(180deg,#fef08a,#f59e0b)] px-2.5 text-base font-black text-amber-900 shadow-[0_10px_16px_rgba(0,0,0,0.34)] ring-2 ring-yellow-100/70 md:h-14 md:min-w-[4.2rem] md:px-3 md:text-lg"
               >
                 {token.grams}
               </motion.button>

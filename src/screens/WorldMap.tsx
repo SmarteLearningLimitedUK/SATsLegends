@@ -296,23 +296,21 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
 
   return (
     <div
-      className="premium-page-root premium-hub-map relative h-full w-full overflow-hidden"
+      className="premium-page-root premium-hub-map relative h-full w-full overflow-x-hidden overflow-y-auto"
       style={{
         WebkitOverflowScrolling: 'touch',
-        touchAction: 'none',
-        overflowY: 'hidden',
-        overflowX: 'hidden',
+        touchAction: 'pan-y',
         overscrollBehaviorY: 'contain',
       }}
     >
       <div
         className="premium-map-stage premium-map-stage-fullscreen relative w-full"
-        style={{ height: '100%', minHeight: '100dvh' }}
+        style={{ minHeight: 'max(170dvh, 1500px)' }}
       >
         <img
           src={universalMapPoster}
           alt="Island select map"
-          className="absolute inset-0 block h-full w-full max-w-none object-contain object-center"
+          className="absolute inset-0 block h-full w-full max-w-none object-cover object-center"
           draggable={false}
         />
 
@@ -405,14 +403,14 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                           : 'world-map-island-label-face-progress'
                     } ${isRecommended ? 'ring-2 ring-amber-200/85 ring-offset-2 ring-offset-blue-950/60' : ''}`}
                     style={{
-                      minWidth: '7.25rem',
-                      padding: '0.4rem 0.75rem 0.5rem',
+                      minWidth: '8.6rem',
+                      padding: '0.28rem 0.95rem 0.38rem',
                     }}
                   >
-                    <span className="world-map-island-label-text block truncate whitespace-nowrap text-[9px] font-black uppercase leading-none tracking-[0.05em] md:text-[11px]">
+                    <span className="world-map-island-label-text block truncate whitespace-nowrap text-[8px] font-black uppercase leading-none tracking-[0.04em] md:text-[9.5px]">
                       {ISLAND_LABELS[island.id] || island.name}
                     </span>
-                    <span className="relative z-[2] mt-1.5 block h-[6px] w-full overflow-hidden rounded-full border border-white/35 bg-slate-900/70 md:h-[7px]">
+                    <span className="relative z-[2] mt-1 block h-[5px] w-full overflow-hidden rounded-full border border-white/35 bg-slate-900/70 md:h-[6px]">
                       <span
                         className="block h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-300 to-emerald-300 transition-all duration-300"
                         style={{ width: `${completion}%` }}
