@@ -15,8 +15,6 @@ type IslandHotspot = {
   y: number;
   width: number;
   height: number;
-  labelX: number;
-  labelY: number;
 };
 
 type AmbientRegion = {
@@ -38,12 +36,12 @@ type AmbientRegion = {
 };
 
 const ISLAND_HOTSPOTS: Record<number, IslandHotspot> = {
-  1: { x: 74, y: 75, width: 24, height: 15, labelX: 74, labelY: 84 },
-  2: { x: 24, y: 38, width: 24, height: 15, labelX: 24, labelY: 48 },
-  3: { x: 25, y: 56, width: 24, height: 15, labelX: 25, labelY: 65 },
-  4: { x: 26, y: 75, width: 24, height: 15, labelX: 26, labelY: 84 },
-  5: { x: 73, y: 40, width: 24, height: 15, labelX: 73, labelY: 49 },
-  6: { x: 74, y: 20, width: 24, height: 15, labelX: 74, labelY: 30 },
+  1: { x: 74, y: 75, width: 24, height: 15 },
+  2: { x: 24, y: 38, width: 24, height: 15 },
+  3: { x: 25, y: 56, width: 24, height: 15 },
+  4: { x: 26, y: 75, width: 24, height: 15 },
+  5: { x: 73, y: 40, width: 24, height: 15 },
+  6: { x: 74, y: 20, width: 24, height: 15 },
 };
 
 const MAP_AMBIENTS: AmbientRegion[] = [
@@ -378,8 +376,8 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                       isUnlocked ? 'cursor-pointer' : 'cursor-not-allowed opacity-70 grayscale-[0.15]'
                     } focus-visible:ring-4 focus-visible:ring-cyan-300/70`}
                     style={{
-                      left: `${hotspot.labelX}%`,
-                      top: `${hotspot.labelY}%`,
+                      left: `${hotspot.x}%`,
+                      top: `calc(${hotspot.y + hotspot.height / 2}% + 0.28rem)`,
                       textShadow: 'none',
                     }}
                   >
@@ -396,7 +394,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                         padding: '0.34rem 0.9rem 0.42rem',
                       }}
                     >
-                      <span className="world-map-island-label-text block truncate whitespace-nowrap text-[7px] font-black uppercase leading-none tracking-[0.03em] opacity-90 md:text-[8px]">
+                      <span className="world-map-island-label-text block truncate whitespace-nowrap text-[9px] font-black uppercase leading-none tracking-[0.035em] opacity-95 md:text-[10px]">
                         {ISLAND_LABELS[island.id] || island.name}
                       </span>
                       <span className="relative z-[2] mt-0.5 block h-[4px] w-full overflow-hidden rounded-full border border-white/28 bg-slate-900/55 md:h-[5px]">

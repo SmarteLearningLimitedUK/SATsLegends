@@ -10,7 +10,7 @@ const AVATAR_FOOT_ANCHOR_MAIN_Y_PX: Record<string, number> = {
   barratt: 0,
   bran: 6,
   vex: 8,
-  mochi: 75,
+  mochi: 55,
 };
 
 const AVATAR_MAIN_GLOBAL_LIFT_PX = -62;
