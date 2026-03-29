@@ -17,6 +17,11 @@ type IslandHotspot = {
   height: number;
 };
 
+type IslandPillAnchor = {
+  x: number;
+  y: number;
+};
+
 type AmbientRegion = {
   id: string;
   x: number;
@@ -50,6 +55,15 @@ const ISLAND_HOTSPOTS: Record<number, IslandHotspot> = {
   4: { x: 26, y: 75, width: 24, height: 15 },
   5: { x: 73, y: 40, width: 24, height: 15 },
   6: { x: 74, y: 20, width: 24, height: 15 },
+};
+
+const ISLAND_PILL_ANCHORS: Record<number, IslandPillAnchor> = {
+  1: { x: 74, y: 84.2 },
+  2: { x: 24, y: 47.4 },
+  3: { x: 25, y: 65.2 },
+  4: { x: 26, y: 84.2 },
+  5: { x: 73, y: 49.0 },
+  6: { x: 74, y: 28.8 },
 };
 
 const MAP_AMBIENTS: AmbientRegion[] = [
@@ -261,7 +275,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
       <div
         className="relative overflow-visible"
         style={{
-          width: '132%',
+          width: '124%',
           left: '50%',
           transform: 'translateX(-50%)',
         }}
@@ -293,50 +307,61 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
         <div className="absolute inset-0 z-20">
           {islandStates.map(({ island, isUnlocked }) => {
             const hotspot = ISLAND_HOTSPOTS[island.id];
-            if (!hotspot) return null;
+            const pillAnchor = ISLAND_PILL_ANCHORS[island.id];
+            if (!hotspot || !pillAnchor) return null;
 
             const isSelected = selectedIslandId === island.id;
 
             return (
-              <motion.button
-                key={island.id}
-                type="button"
-                whileTap={isUnlocked ? { scale: 0.98 } : { scale: 0.98 }}
-                onClick={() => setSelectedIslandId(island.id)}
-                aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
-                className="absolute -translate-x-1/2 -translate-y-1/2 rounded-[2rem] bg-transparent outline-none focus-visible:ring-4 focus-visible:ring-cyan-300/70"
-                style={{
-                  left: `${hotspot.x}%`,
-                  top: `${hotspot.y}%`,
-                  width: `${hotspot.width}%`,
-                  height: `${hotspot.height}%`,
-                }}
-              >
-                <span className="sr-only">{island.name}</span>
-                <motion.span
-                  aria-hidden="true"
-                  className="pointer-events-none absolute inset-[4%] rounded-[2rem]"
-                  animate={{
-                    opacity: isSelected ? 0.95 : 0.72,
-                    scale: isSelected ? 1.06 : 1,
-                    boxShadow: isSelected
-                      ? '0 0 0 2px rgba(253,224,71,0.55), 0 0 28px rgba(34,211,238,0.55), 0 0 56px rgba(59,130,246,0.34)'
-                      : '0 0 0 1px rgba(255,255,255,0.14), 0 0 18px rgba(34,211,238,0.38), 0 0 36px rgba(59,130,246,0.22)',
-                  }}
-                  transition={{ duration: 0.28, ease: 'easeOut' }}
+              <React.Fragment key={island.id}>
+                <div
+                  className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2"
                   style={{
-                    background: isUnlocked
-                      ? 'radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(34,211,238,0.26) 34%, rgba(37,99,235,0.16) 56%, rgba(2,6,23,0) 78%)'
-                      : 'radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(148,163,184,0.16) 34%, rgba(15,23,42,0.12) 56%, rgba(2,6,23,0) 78%)',
+                    left: `${hotspot.x}%`,
+                    top: `${hotspot.y}%`,
+                    width: `${hotspot.width}%`,
+                    height: `${hotspot.height}%`,
                   }}
-                />
-                {!isUnlocked ? (
-                  <span className="pointer-events-none absolute left-1/2 top-1/2 inline-flex -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-full border border-slate-100/35 bg-slate-900/78 px-2 py-1 text-[9px] font-black uppercase tracking-[0.08em] text-slate-100">
-                    <Lock className="h-3 w-3" />
-                    Locked
-                  </span>
-                ) : null}
-              </motion.button>
+                >
+                  <motion.span
+                    aria-hidden="true"
+                    className="absolute inset-[8%] rounded-[2rem]"
+                    animate={{
+                      opacity: isSelected ? 0.98 : 0.78,
+                      scale: isSelected ? 1.08 : 1,
+                      boxShadow: isSelected
+                        ? '0 0 0 2px rgba(253,224,71,0.58), 0 0 32px rgba(34,211,238,0.58), 0 0 64px rgba(59,130,246,0.34)'
+                        : '0 0 0 1px rgba(255,255,255,0.12), 0 0 18px rgba(34,211,238,0.38), 0 0 36px rgba(59,130,246,0.22)',
+                    }}
+                    transition={{ duration: 0.28, ease: 'easeOut' }}
+                    style={{
+                      background: isUnlocked
+                        ? 'radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(34,211,238,0.24) 34%, rgba(37,99,235,0.16) 56%, rgba(2,6,23,0) 78%)'
+                        : 'radial-gradient(circle, rgba(255,255,255,0.06) 0%, rgba(148,163,184,0.12) 34%, rgba(15,23,42,0.1) 56%, rgba(2,6,23,0) 78%)',
+                    }}
+                  />
+                </div>
+
+                <motion.button
+                  type="button"
+                  whileTap={{ scale: 0.97 }}
+                  whileHover={{ scale: 1.02 }}
+                  onClick={() => setSelectedIslandId(island.id)}
+                  aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
+                  className={`absolute z-30 -translate-x-1/2 rounded-full border px-4 py-2 text-center text-[10px] font-black uppercase tracking-[0.08em] text-white shadow-[0_8px_18px_rgba(2,6,23,0.34)] outline-none transition-all ${
+                    isUnlocked
+                      ? 'border-cyan-100/45 bg-[linear-gradient(180deg,rgba(73,144,255,0.98),rgba(38,92,210,0.98))]'
+                      : 'border-slate-200/28 bg-[linear-gradient(180deg,rgba(71,85,105,0.94),rgba(30,41,59,0.96))] opacity-85'
+                  } focus-visible:ring-4 focus-visible:ring-cyan-300/70`}
+                  style={{
+                    left: `${pillAnchor.x}%`,
+                    top: `${pillAnchor.y}%`,
+                    minWidth: island.id === 5 ? '8.8rem' : '7.2rem',
+                  }}
+                >
+                  <span className="block truncate whitespace-nowrap">{island.name}</span>
+                </motion.button>
+              </React.Fragment>
             );
           })}
         </div>
@@ -390,4 +415,3 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
 };
 
 export default WorldMap;
-
