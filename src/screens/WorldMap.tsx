@@ -307,17 +307,18 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
     >
       <div className="premium-map-stage premium-map-stage-fullscreen relative w-full h-auto min-h-0">
         <div
-          className="relative"
+          className="relative overflow-visible"
           style={{
             width: '132%',
             left: '50%',
             transform: 'translateX(-50%)',
+            minHeight: 'max(185dvh, 1520px)',
           }}
         >
           <img
             src={universalMapPoster}
             alt="Island select map"
-            className="block h-auto w-full"
+            className="absolute inset-0 block h-full w-full object-cover"
             draggable={false}
           />
 
