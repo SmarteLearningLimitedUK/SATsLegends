@@ -83,6 +83,7 @@ const GameActionDock: React.FC<GameActionDockProps> = ({
 
         <div className={`relative grid grid-cols-3 ${compact ? 'gap-1.5' : 'gap-2'}`}>
         <button
+          type="button"
           onClick={() => {
             triggerHaptic('tap');
             onBack();
@@ -94,6 +95,7 @@ const GameActionDock: React.FC<GameActionDockProps> = ({
           <AssetIcon name="back" className={`${iconSizeClass} drop-shadow-[0_2px_2px_rgba(0,0,0,0.26)]`} />
         </button>
         <button
+          type="button"
           onClick={handleToggleMute}
           className={actionButtonClass}
           aria-label={isMuted ? 'Unmute audio' : 'Mute audio'}
@@ -106,6 +108,7 @@ const GameActionDock: React.FC<GameActionDockProps> = ({
           />
         </button>
         <button
+          type="button"
           onClick={handleOpenHelp}
           className={actionButtonClass}
           aria-label="Hint"

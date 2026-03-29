@@ -16,7 +16,6 @@ import socketTh from '../assets/casual_ui/updaed_sockets_slices/socket_th.png';
 import socketH from '../assets/casual_ui/updaed_sockets_slices/socket_h.png';
 import socketT from '../assets/casual_ui/updaed_sockets_slices/socket_t.png';
 import socketU from '../assets/casual_ui/updaed_sockets_slices/socket_u.png';
-import GameActionDock from '../components/GameActionDock';
 import { triggerHaptic } from '../haptics';
 import { AVATARS } from '../constants';
 
@@ -381,24 +380,24 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const isTallPhone = !isTablet && ratio > 1.95;
 
     return {
-      questionTop: isTablet ? 13.8 : (isTallPhone ? 14.8 : 14.5),
+      questionTop: isTablet ? 11.8 : (isTallPhone ? 12.9 : 12.6),
       questionWidth: isTablet ? 54 : 66,
       questionHeight: isTablet ? 13.4 : 14.8,
-      submitY: isTablet ? 80.4 : (isTallPhone ? 81.1 : 80.8),
+      submitY: isTablet ? 88.2 : (isTallPhone ? 88.8 : 88.5),
       submitWidth: isTablet ? 30 : 46,
       submitHeight: isTablet ? 8.6 : 9.2,
-      targetY: isTablet ? 73.8 : (isTallPhone ? 74.4 : 74.1),
-      sourceY: isTablet ? 36.2 : (isTallPhone ? 36.9 : 36.6),
+      targetY: isTablet ? 79.2 : (isTallPhone ? 80.3 : 79.9),
+      sourceY: isTablet ? 32.8 : (isTallPhone ? 33.8 : 33.5),
       targetWidth: isTablet ? '12.8%' : '16.9%',
       sourceWidth: isTablet ? '9.8%' : '12.2%',
       targetHeight: isTablet ? '12.2%' : '14.8%',
       sourceHeight: isTablet ? '8.8%' : '10.2%',
       targetFont: isTablet ? 'clamp(2.2rem,4.9vw,3.8rem)' : 'clamp(2.1rem,5.5vw,3.55rem)',
       sourceFont: isTablet ? 'clamp(2.05rem,4.5vw,3.45rem)' : 'clamp(1.95rem,5.1vw,3.15rem)',
-      healthTop: isTablet ? 48.8 : (isTallPhone ? 49.8 : 49.4),
-      healthWidth: isTablet ? 17 : 23,
-      healthLeft: isTablet ? 67.2 : 70.2,
-      enemyWidth: isTablet ? 42 : 50,
+      healthTop: isTablet ? 58.6 : (isTallPhone ? 59.2 : 58.9),
+      healthWidth: isTablet ? 16 : 21,
+      healthLeft: isTablet ? 66.4 : 68.8,
+      enemyWidth: isTablet ? 46 : 54,
     };
   }, [viewport.height, viewport.width]);
 
@@ -899,9 +898,15 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-20 h-screen w-screen overflow-hidden bg-[#08162c] bg-cover bg-center bg-no-repeat select-none"
-      style={{ touchAction: 'manipulation', backgroundImage: `url(${placeValueBackground})` }}
+      className="relative z-20 h-full w-full min-h-0 overflow-hidden select-none"
+      style={{ touchAction: 'manipulation' }}
     >
+      <div
+        className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${placeValueBackground})` }}
+      />
+      <div className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(5,16,46,0.12)_0%,rgba(5,16,46,0.08)_36%,rgba(5,16,46,0.18)_100%)]" />
+
 
       {!useSharedTopHud ? (
         <div
@@ -1116,22 +1121,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           }}
         />
 
-        <button
-          type="button"
-          onClick={handleSubmit}
-          disabled={!canSubmit}
-          className="absolute left-1/2 z-40 -translate-x-1/2 overflow-hidden transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
-          style={{ top: `${layout.submitY}%`, width: `${layout.submitWidth}%`, height: `${layout.submitHeight}%` }}
-        >
-          <img src={medButton} alt="" aria-hidden="true" draggable={false} className="absolute inset-0 h-full w-full object-contain" />
-          <span
-            className="pointer-events-none absolute inset-x-[16%] top-1/2 -translate-y-1/2 text-center text-[clamp(0.82rem,2.2vw,1.06rem)] font-black uppercase tracking-[0.08em] text-white"
-            style={{ textShadow: '0 2px 4px rgba(2,6,23,0.7)' }}
-          >
-            Submit
-          </span>
-        </button>
-
         <div
           className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2"
           style={{ bottom: enemyBottomFromPlayfield, width: `${layout.enemyWidth}%` }}
@@ -1242,6 +1231,22 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
             />
           </div>
         </div>
+
+        <button
+          type="button"
+          onClick={handleSubmit}
+          disabled={!canSubmit}
+          className="absolute left-1/2 z-40 -translate-x-1/2 overflow-hidden transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+          style={{ top: `${layout.submitY}%`, width: `${layout.submitWidth}%`, height: `${layout.submitHeight}%` }}
+        >
+          <img src={medButton} alt="" aria-hidden="true" draggable={false} className="absolute inset-0 h-full w-full object-contain" />
+          <span
+            className="pointer-events-none absolute inset-x-[16%] top-1/2 -translate-y-1/2 text-center text-[clamp(0.82rem,2.2vw,1.06rem)] font-black uppercase tracking-[0.08em] text-white"
+            style={{ textShadow: '0 2px 4px rgba(2,6,23,0.7)' }}
+          >
+            Submit
+          </span>
+        </button>
       </div>
 
       {dragState ? (
@@ -1284,12 +1289,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           </motion.div>
         ) : null}
       </AnimatePresence>
-
-      <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.4rem,env(safe-area-inset-bottom))] z-50 flex justify-center px-3">
-        <div className="pointer-events-auto">
-          <GameActionDock onBack={onBack} accentClass="text-slate-100" compact />
-        </div>
-      </div>
     </div>
   );
 };

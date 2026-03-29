@@ -235,11 +235,19 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
     <div
       className="premium-page-root relative h-full min-h-full w-full overflow-visible bg-[#07111f]"
       style={{
+        height: 'auto',
+        minHeight: '100%',
         touchAction: 'pan-y',
         overscrollBehaviorY: 'contain',
       }}
     >
-      <div className="premium-page-content relative z-10 mx-auto flex min-h-full w-full max-w-4xl flex-col px-3 pb-4 pt-[calc(env(safe-area-inset-top)+0.35rem)] md:px-5 md:pb-6 md:pt-[calc(env(safe-area-inset-top)+0.5rem)]">
+      <div
+        className="premium-page-content relative z-10 mx-auto flex min-h-full w-full max-w-4xl flex-col px-3 pb-4 pt-[calc(env(safe-area-inset-top)+0.35rem)] md:px-5 md:pb-6 md:pt-[calc(env(safe-area-inset-top)+0.5rem)]"
+        style={{
+          flex: '0 0 auto',
+          minHeight: '100%',
+        }}
+      >
         <div className="mb-3 flex items-start justify-between gap-3 md:mb-4">
           <button
             onClick={onBack}

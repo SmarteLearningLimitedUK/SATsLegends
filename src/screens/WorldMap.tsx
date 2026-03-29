@@ -296,7 +296,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
 
   return (
     <div
-      className="premium-page-root premium-hub-map relative h-full w-full overflow-x-hidden overflow-y-auto"
+      className="premium-page-root premium-hub-map relative w-full min-h-full overflow-visible"
       style={{
         WebkitOverflowScrolling: 'touch',
         touchAction: 'pan-y',
@@ -305,123 +305,128 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
     >
       <div
         className="premium-map-stage premium-map-stage-fullscreen relative w-full"
-        style={{ minHeight: 'max(170dvh, 1500px)' }}
+        style={{ minHeight: 'max(165dvh, 1500px)' }}
       >
-        <img
-          src={universalMapPoster}
-          alt="Island select map"
-          className="absolute inset-0 block h-full w-full max-w-none object-cover object-center"
-          draggable={false}
-        />
+        <div
+          className="absolute left-1/2 top-0 h-[142.857%] w-[142.857%] origin-top -translate-x-1/2 scale-[0.7]"
+          style={{ transformOrigin: 'top center' }}
+        >
+          <img
+            src={universalMapPoster}
+            alt="Island select map"
+            className="absolute inset-0 block h-full w-full max-w-none object-cover object-center"
+            draggable={false}
+          />
 
-        <div className="pointer-events-none absolute inset-0 z-10">
-          {MAP_AMBIENTS.map(region => (
-            <div
-              key={region.id}
-              className={`world-map-ambient world-map-ambient-${region.effect}`}
-              style={{
-                left: `${region.x}%`,
-                top: `${region.y}%`,
-                width: `${region.width}%`,
-                height: `${region.height}%`,
-              }}
-            >
-              {renderAmbientEffect(region.effect)}
-            </div>
-          ))}
-        </div>
+          <div className="pointer-events-none absolute inset-0 z-10">
+            {MAP_AMBIENTS.map(region => (
+              <div
+                key={region.id}
+                className={`world-map-ambient world-map-ambient-${region.effect}`}
+                style={{
+                  left: `${region.x}%`,
+                  top: `${region.y}%`,
+                  width: `${region.width}%`,
+                  height: `${region.height}%`,
+                }}
+              >
+                {renderAmbientEffect(region.effect)}
+              </div>
+            ))}
+          </div>
 
-        <div className="absolute inset-0 z-20">
-          {islandProgress.map(({ island, isUnlocked, isCompleted, isInProgress, starredCount, totalLevels, completion }) => {
-            const hotspot = ISLAND_HOTSPOTS[island.id];
-            if (!hotspot) return null;
-            const isRecommended = isUnlocked && island.id === recommendedIslandId;
+          <div className="absolute inset-0 z-20">
+            {islandProgress.map(({ island, isUnlocked, isCompleted, isInProgress, starredCount, totalLevels, completion }) => {
+              const hotspot = ISLAND_HOTSPOTS[island.id];
+              if (!hotspot) return null;
+              const isRecommended = isUnlocked && island.id === recommendedIslandId;
 
-            return (
-              <React.Fragment key={island.id}>
-                <div
-                  className="absolute -translate-x-1/2 -translate-y-1/2"
-                  style={{
-                    left: `${hotspot.x}%`,
-                    top: `${hotspot.y}%`,
-                    width: `${hotspot.width}%`,
-                    height: `${hotspot.height}%`,
-                  }}
-                >
-                  <motion.button
-                    whileTap={isUnlocked ? { scale: 0.98 } : {}}
-                    whileHover={isUnlocked ? { scale: 1.02 } : {}}
+              return (
+                <React.Fragment key={island.id}>
+                  <div
+                    className="absolute -translate-x-1/2 -translate-y-1/2"
+                    style={{
+                      left: `${hotspot.x}%`,
+                      top: `${hotspot.y}%`,
+                      width: `${hotspot.width}%`,
+                      height: `${hotspot.height}%`,
+                    }}
+                  >
+                    <motion.button
+                      whileTap={isUnlocked ? { scale: 0.98 } : {}}
+                      whileHover={isUnlocked ? { scale: 1.02 } : {}}
+                      onClick={() => {
+                        if (isUnlocked) onSelectIsland(island);
+                      }}
+                      disabled={!isUnlocked}
+                      title={`${island.name} - ${island.themeName} - ${completion}% complete`}
+                      aria-label={`${island.name}, ${island.themeName}, ${completion}% complete${isUnlocked ? '' : ', locked'}`}
+                      className={`group relative h-full w-full rounded-[2rem] bg-transparent outline-none transition-all ${
+                        isUnlocked ? 'cursor-pointer' : 'cursor-not-allowed'
+                      } focus-visible:ring-4 focus-visible:ring-cyan-300/70`}
+                    >
+                      <span className="sr-only">{`${island.name} in ${island.themeName}, ${completion}% complete`}</span>
+                      <span
+                        className={`pointer-events-none absolute inset-[8%] rounded-[2rem] transition-opacity duration-200 ${
+                          isUnlocked
+                            ? 'opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 bg-[radial-gradient(circle,rgba(255,255,255,0.12),rgba(34,211,238,0.25),rgba(2,6,23,0))]'
+                            : 'opacity-100 bg-[linear-gradient(180deg,rgba(15,23,42,0.3),rgba(15,23,42,0.55))]'
+                        }`}
+                      />
+                      {!isUnlocked ? (
+                        <span className="pointer-events-none absolute left-1/2 top-1/2 inline-flex -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-full border border-slate-100/35 bg-slate-900/75 px-2 py-1 text-[10px] font-black uppercase tracking-[0.08em] text-slate-100">
+                          <Lock className="h-3.5 w-3.5" />
+                          Locked
+                        </span>
+                      ) : null}
+                    </motion.button>
+
+                  </div>
+
+                  <button
                     onClick={() => {
                       if (isUnlocked) onSelectIsland(island);
                     }}
                     disabled={!isUnlocked}
-                    title={`${island.name} - ${island.themeName} - ${completion}% complete`}
-                    aria-label={`${island.name}, ${island.themeName}, ${completion}% complete${isUnlocked ? '' : ', locked'}`}
-                    className={`group relative h-full w-full rounded-[2rem] bg-transparent outline-none transition-all ${
-                      isUnlocked ? 'cursor-pointer' : 'cursor-not-allowed'
+                    aria-label={`${island.name} label, ${starredCount}/${totalLevels} cleared`}
+                    className={`world-map-island-label absolute z-20 -translate-x-1/2 -translate-y-1/2 text-center text-white outline-none transition-all ${
+                      isUnlocked ? 'cursor-pointer' : 'cursor-not-allowed opacity-70 grayscale-[0.15]'
                     } focus-visible:ring-4 focus-visible:ring-cyan-300/70`}
-                  >
-                    <span className="sr-only">{`${island.name} in ${island.themeName}, ${completion}% complete`}</span>
-                    <span
-                      className={`pointer-events-none absolute inset-[8%] rounded-[2rem] transition-opacity duration-200 ${
-                        isUnlocked
-                          ? 'opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 bg-[radial-gradient(circle,rgba(255,255,255,0.12),rgba(34,211,238,0.25),rgba(2,6,23,0))]'
-                          : 'opacity-100 bg-[linear-gradient(180deg,rgba(15,23,42,0.3),rgba(15,23,42,0.55))]'
-                      }`}
-                    />
-                    {!isUnlocked ? (
-                      <span className="pointer-events-none absolute left-1/2 top-1/2 inline-flex -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-full border border-slate-100/35 bg-slate-900/75 px-2 py-1 text-[10px] font-black uppercase tracking-[0.08em] text-slate-100">
-                        <Lock className="h-3.5 w-3.5" />
-                        Locked
-                      </span>
-                    ) : null}
-                  </motion.button>
-
-                </div>
-
-                <button
-                  onClick={() => {
-                    if (isUnlocked) onSelectIsland(island);
-                  }}
-                  disabled={!isUnlocked}
-                  aria-label={`${island.name} label, ${starredCount}/${totalLevels} cleared`}
-                  className={`world-map-island-label absolute z-20 -translate-x-1/2 -translate-y-1/2 text-center text-white outline-none transition-all ${
-                    isUnlocked ? 'cursor-pointer' : 'cursor-not-allowed opacity-70 grayscale-[0.15]'
-                  } focus-visible:ring-4 focus-visible:ring-cyan-300/70`}
-                  style={{
-                    left: `${hotspot.labelX}%`,
-                    top: `${hotspot.labelY}%`,
-                    textShadow: '0 1px 0 rgba(0,0,0,0.24)',
-                  }}
-                >
-                  <span
-                    className={`world-map-island-label-face ${
-                      !isUnlocked
-                        ? 'world-map-island-label-face-locked'
-                        : completion === 0
-                          ? 'world-map-island-label-face-idle'
-                          : 'world-map-island-label-face-progress'
-                    } ${isRecommended ? 'ring-2 ring-amber-200/85 ring-offset-2 ring-offset-blue-950/60' : ''}`}
                     style={{
-                      minWidth: '8.6rem',
-                      padding: '0.28rem 0.95rem 0.38rem',
+                      left: `${hotspot.labelX}%`,
+                      top: `${hotspot.labelY}%`,
+                      textShadow: '0 1px 0 rgba(0,0,0,0.24)',
                     }}
                   >
-                    <span className="world-map-island-label-text block truncate whitespace-nowrap text-[8px] font-black uppercase leading-none tracking-[0.04em] md:text-[9.5px]">
-                      {ISLAND_LABELS[island.id] || island.name}
+                    <span
+                      className={`world-map-island-label-face ${
+                        !isUnlocked
+                          ? 'world-map-island-label-face-locked'
+                          : completion === 0
+                            ? 'world-map-island-label-face-idle'
+                            : 'world-map-island-label-face-progress'
+                      } ${isRecommended ? 'ring-2 ring-amber-200/85 ring-offset-2 ring-offset-blue-950/60' : ''}`}
+                      style={{
+                        minWidth: '8.6rem',
+                        padding: '0.28rem 0.95rem 0.38rem',
+                      }}
+                    >
+                      <span className="world-map-island-label-text block truncate whitespace-nowrap text-[8px] font-black uppercase leading-none tracking-[0.04em] md:text-[9.5px]">
+                        {ISLAND_LABELS[island.id] || island.name}
+                      </span>
+                      <span className="relative z-[2] mt-1 block h-[5px] w-full overflow-hidden rounded-full border border-white/35 bg-slate-900/70 md:h-[6px]">
+                        <span
+                          className="block h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-300 to-emerald-300 transition-all duration-300"
+                          style={{ width: `${completion}%` }}
+                          aria-hidden="true"
+                        />
+                      </span>
                     </span>
-                    <span className="relative z-[2] mt-1 block h-[5px] w-full overflow-hidden rounded-full border border-white/35 bg-slate-900/70 md:h-[6px]">
-                      <span
-                        className="block h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-300 to-emerald-300 transition-all duration-300"
-                        style={{ width: `${completion}%` }}
-                        aria-hidden="true"
-                      />
-                    </span>
-                  </span>
-                </button>
-              </React.Fragment>
-            );
-          })}
+                  </button>
+                </React.Fragment>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
