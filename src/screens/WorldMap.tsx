@@ -297,7 +297,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
             if (!hotspot) return null;
 
             const pillTop = hotspot.y + hotspot.height / 2 + 0.85;
-            const pillWidth = island.name.length > 15 ? '5.3rem' : island.name.length > 12 ? '4.9rem' : '4.5rem';
+            const pillWidth = island.name.length > 15 ? '7.1rem' : island.name.length > 12 ? '6.4rem' : '5.8rem';
 
             return (
               <motion.button
@@ -307,7 +307,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                 whileHover={{ scale: 1.02 }}
                 onClick={() => setSelectedIslandId(island.id)}
                 aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
-                className={`absolute z-30 -translate-x-1/2 rounded-full border px-2 py-[0.28rem] text-center font-black uppercase text-cyan-50 outline-none transition-all focus-visible:ring-4 focus-visible:ring-cyan-300/70 ${
+                className={`absolute z-30 -translate-x-1/2 rounded-full border px-3 py-[0.38rem] text-center font-black uppercase text-cyan-50 outline-none transition-all focus-visible:ring-4 focus-visible:ring-cyan-300/70 ${
                   isUnlocked
                     ? 'border-sky-200/18 bg-[linear-gradient(180deg,rgba(18,45,102,0.98),rgba(8,23,67,0.99))] shadow-[0_4px_10px_rgba(2,6,23,0.22)]'
                     : 'border-slate-200/16 bg-[linear-gradient(180deg,rgba(54,66,92,0.95),rgba(21,29,43,0.98))] opacity-80 shadow-[0_4px_10px_rgba(2,6,23,0.2)]'
@@ -318,7 +318,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                   minWidth: pillWidth,
                 }}
               >
-                <span className="block truncate whitespace-nowrap text-[6px] tracking-[0.12em] drop-shadow-[0_1px_0_rgba(255,255,255,0.12)]">
+                <span className="block truncate whitespace-nowrap text-[8px] tracking-[0.12em] drop-shadow-[0_1px_0_rgba(255,255,255,0.12)]">
                   {island.name}
                 </span>
               </motion.button>
