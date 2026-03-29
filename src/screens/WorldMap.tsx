@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Lock } from 'lucide-react';
+import { Lock, X } from 'lucide-react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
 import universalMapPoster from '../assets/maps/finalamendedworldmap.png';
@@ -15,11 +15,6 @@ type IslandHotspot = {
   y: number;
   width: number;
   height: number;
-};
-
-type IslandPillAnchor = {
-  x: number;
-  y: number;
 };
 
 type AmbientRegion = {
@@ -55,15 +50,6 @@ const ISLAND_HOTSPOTS: Record<number, IslandHotspot> = {
   4: { x: 26, y: 75, width: 24, height: 15 },
   5: { x: 73, y: 40, width: 24, height: 15 },
   6: { x: 74, y: 20, width: 24, height: 15 },
-};
-
-const ISLAND_PILL_ANCHORS: Record<number, IslandPillAnchor> = {
-  1: { x: 74, y: 84.2 },
-  2: { x: 24, y: 47.4 },
-  3: { x: 25, y: 65.2 },
-  4: { x: 26, y: 84.2 },
-  5: { x: 73, y: 49.0 },
-  6: { x: 74, y: 28.8 },
 };
 
 const MAP_AMBIENTS: AmbientRegion[] = [
@@ -275,7 +261,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
       <div
         className="relative overflow-visible"
         style={{
-          width: '124%',
+          width: '116%',
           left: '50%',
           transform: 'translateX(-50%)',
         }}
@@ -307,10 +293,11 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
         <div className="absolute inset-0 z-20">
           {islandStates.map(({ island, isUnlocked }) => {
             const hotspot = ISLAND_HOTSPOTS[island.id];
-            const pillAnchor = ISLAND_PILL_ANCHORS[island.id];
-            if (!hotspot || !pillAnchor) return null;
+            if (!hotspot) return null;
 
             const isSelected = selectedIslandId === island.id;
+            const pillTop = hotspot.y + hotspot.height / 2 + 1.8;
+            const pillWidth = island.name.length > 15 ? '8.4rem' : island.name.length > 12 ? '7.6rem' : '6.8rem';
 
             return (
               <React.Fragment key={island.id}>
@@ -344,19 +331,19 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
 
                 <motion.button
                   type="button"
-                  whileTap={{ scale: 0.97 }}
+                  whileTap={{ scale: 0.96 }}
                   whileHover={{ scale: 1.02 }}
                   onClick={() => setSelectedIslandId(island.id)}
                   aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
-                  className={`absolute z-30 -translate-x-1/2 rounded-full border px-4 py-2 text-center text-[10px] font-black uppercase tracking-[0.08em] text-white shadow-[0_8px_18px_rgba(2,6,23,0.34)] outline-none transition-all ${
+                  className={`absolute z-30 -translate-x-1/2 rounded-full border px-3 py-[0.42rem] text-center text-[8px] font-black uppercase tracking-[0.06em] text-white shadow-[0_6px_14px_rgba(2,6,23,0.28)] outline-none transition-all ${
                     isUnlocked
                       ? 'border-cyan-100/45 bg-[linear-gradient(180deg,rgba(73,144,255,0.98),rgba(38,92,210,0.98))]'
                       : 'border-slate-200/28 bg-[linear-gradient(180deg,rgba(71,85,105,0.94),rgba(30,41,59,0.96))] opacity-85'
                   } focus-visible:ring-4 focus-visible:ring-cyan-300/70`}
                   style={{
-                    left: `${pillAnchor.x}%`,
-                    top: `${pillAnchor.y}%`,
-                    minWidth: island.id === 5 ? '8.8rem' : '7.2rem',
+                    left: `${hotspot.x}%`,
+                    top: `${pillTop}%`,
+                    minWidth: pillWidth,
                   }}
                 >
                   <span className="block truncate whitespace-nowrap">{island.name}</span>
@@ -376,7 +363,15 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
             transition={{ duration: 0.22, ease: 'easeOut' }}
             className="pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+4.8rem)] z-40 flex justify-center px-4"
           >
-            <div className="pointer-events-auto w-full max-w-[20rem] rounded-[1.35rem] border border-cyan-100/28 bg-[linear-gradient(180deg,rgba(22,56,122,0.96),rgba(9,25,63,0.98))] px-4 py-3 text-white shadow-[0_18px_32px_rgba(2,6,23,0.42)] backdrop-blur-sm">
+            <div className="pointer-events-auto relative w-full max-w-[20rem] rounded-[1.35rem] border border-cyan-100/28 bg-[linear-gradient(180deg,rgba(22,56,122,0.96),rgba(9,25,63,0.98))] px-4 py-3 text-white shadow-[0_18px_32px_rgba(2,6,23,0.42)] backdrop-blur-sm">
+              <button
+                type="button"
+                onClick={() => setSelectedIslandId(null)}
+                aria-label="Close island details"
+                className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full border border-white/18 bg-slate-950/28 text-white/90 transition hover:bg-slate-900/44"
+              >
+                <X className="h-4 w-4" />
+              </button>
               <div className="text-center text-sm font-black uppercase tracking-[0.08em] text-cyan-50">
                 {selectedIslandState.island.name}
               </div>
