@@ -3723,7 +3723,8 @@ button:disabled {
 /* Avatar select premium card pass */
 .avatar-select-screen {
   background: transparent;
-  min-height: 100%;
+  min-height: 100dvh;
+  height: 100dvh;
 }
 
 .avatar-select-background {
