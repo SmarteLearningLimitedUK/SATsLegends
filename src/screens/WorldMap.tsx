@@ -439,26 +439,15 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                           : 'world-map-island-label-face-progress'
                     } ${isRecommended ? 'ring-2 ring-amber-200/85 ring-offset-2 ring-offset-blue-950/60' : ''}`}
                   >
-                    {isUnlocked && completion > 0 && (
-                      <span
-                        className="world-map-island-progress-fill"
-                        style={{ width: `${completion}%` }}
-                        aria-hidden="true"
-                      >
-                        <span className="world-map-island-progress-shimmer" />
-                      </span>
-                    )}
                     <span className="world-map-island-label-text block text-[10px] font-black uppercase leading-none tracking-[0.06em] md:text-[12px]">
                       {ISLAND_LABELS[island.id] || island.name}
                     </span>
-                    <span className="relative z-[2] mt-[0.16rem] block text-[8px] font-black uppercase tracking-[0.11em] text-white/85 md:text-[9px]">
-                      {!isUnlocked
-                        ? 'Locked'
-                        : isCompleted
-                          ? 'Complete'
-                          : isInProgress
-                            ? 'In Progress'
-                            : 'Ready'}
+                    <span className="relative z-[2] mt-1 block h-[7px] w-full overflow-hidden rounded-full border border-white/35 bg-slate-900/70 md:h-[8px]">
+                      <span
+                        className="block h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-300 to-emerald-300 transition-all duration-300"
+                        style={{ width: `${completion}%` }}
+                        aria-hidden="true"
+                      />
                     </span>
                   </span>
                 </button>
