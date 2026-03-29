@@ -38,12 +38,12 @@ type AmbientRegion = {
 };
 
 const ISLAND_HOTSPOTS: Record<number, IslandHotspot> = {
-  1: { x: 74, y: 75, width: 24, height: 15, labelX: 74, labelY: 86 },
-  2: { x: 24, y: 38, width: 24, height: 15, labelX: 24, labelY: 49 },
-  3: { x: 25, y: 56, width: 24, height: 15, labelX: 25, labelY: 66 },
-  4: { x: 26, y: 75, width: 24, height: 15, labelX: 26, labelY: 86 },
-  5: { x: 73, y: 40, width: 24, height: 15, labelX: 73, labelY: 50 },
-  6: { x: 74, y: 20, width: 24, height: 15, labelX: 74, labelY: 31 },
+  1: { x: 74, y: 75, width: 24, height: 15, labelX: 74, labelY: 89 },
+  2: { x: 24, y: 38, width: 24, height: 15, labelX: 24, labelY: 52 },
+  3: { x: 25, y: 56, width: 24, height: 15, labelX: 25, labelY: 69 },
+  4: { x: 26, y: 75, width: 24, height: 15, labelX: 26, labelY: 89 },
+  5: { x: 73, y: 40, width: 24, height: 15, labelX: 73, labelY: 53 },
+  6: { x: 74, y: 20, width: 24, height: 15, labelX: 74, labelY: 34 },
 };
 
 const MAP_AMBIENTS: AmbientRegion[] = [
@@ -392,14 +392,14 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                             : 'world-map-island-label-face-progress'
                       } ${isRecommended ? 'ring-2 ring-amber-200/85 ring-offset-2 ring-offset-blue-950/60' : ''}`}
                       style={{
-                        minWidth: '8.6rem',
-                        padding: '0.28rem 0.95rem 0.38rem',
+                        minWidth: '7.2rem',
+                        padding: '0.18rem 0.72rem 0.28rem',
                       }}
                     >
-                      <span className="world-map-island-label-text block truncate whitespace-nowrap text-[8px] font-black uppercase leading-none tracking-[0.04em] md:text-[9.5px]">
+                      <span className="world-map-island-label-text block truncate whitespace-nowrap text-[7px] font-black uppercase leading-none tracking-[0.03em] opacity-90 md:text-[8px]">
                         {ISLAND_LABELS[island.id] || island.name}
                       </span>
-                      <span className="relative z-[2] mt-1 block h-[5px] w-full overflow-hidden rounded-full border border-white/35 bg-slate-900/70 md:h-[6px]">
+                      <span className="relative z-[2] mt-0.5 block h-[4px] w-full overflow-hidden rounded-full border border-white/28 bg-slate-900/55 md:h-[5px]">
                         <span
                           className="block h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-300 to-emerald-300 transition-all duration-300"
                           style={{ width: `${completion}%` }}
@@ -418,3 +418,4 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
 };
 
 export default WorldMap;
+
