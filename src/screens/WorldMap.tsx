@@ -38,37 +38,27 @@ type AmbientRegion = {
 };
 
 const ISLAND_HOTSPOTS: Record<number, IslandHotspot> = {
-  1: { x: 24, y: 20, width: 24, height: 15, labelX: 24, labelY: 28 },
+  1: { x: 74, y: 75, width: 24, height: 15, labelX: 74, labelY: 82 },
   2: { x: 24, y: 38, width: 24, height: 15, labelX: 24, labelY: 46 },
   3: { x: 73, y: 40, width: 24, height: 15, labelX: 73, labelY: 47 },
-  4: { x: 74, y: 57, width: 25, height: 15, labelX: 74, labelY: 64 },
-  5: { x: 25, y: 56, width: 24, height: 15, labelX: 25, labelY: 63 },
-  6: { x: 74, y: 20, width: 24, height: 15, labelX: 74, labelY: 28 },
-  7: { x: 26, y: 75, width: 24, height: 15, labelX: 26, labelY: 81 },
-  8: { x: 74, y: 75, width: 24, height: 15, labelX: 74, labelY: 83 },
+  4: { x: 26, y: 75, width: 24, height: 15, labelX: 26, labelY: 82 },
+  5: { x: 74, y: 20, width: 24, height: 15, labelX: 74, labelY: 28 },
 };
 
 const MAP_AMBIENTS: AmbientRegion[] = [
-  { id: 'base-camp', x: 24, y: 20, width: 24, height: 16, effect: 'butterflies' },
-  { id: 'measure-mountain', x: 74, y: 20, width: 24, height: 16, effect: 'lava-spurts' },
+  { id: 'base-camp', x: 74, y: 75, width: 24, height: 16, effect: 'butterflies' },
   { id: 'fraction-lagoon', x: 24, y: 38, width: 24, height: 16, effect: 'blizzard' },
-  { id: 'fraction-crystals', x: 24, y: 37, width: 20, height: 13, effect: 'light-beams' },
   { id: 'operations-outpost', x: 73, y: 40, width: 24, height: 16, effect: 'stars' },
-  { id: 'geometry-gorge', x: 25, y: 56, width: 24, height: 16, effect: 'sparkles' },
-  { id: 'ratio-reef', x: 74, y: 57, width: 24, height: 16, effect: 'birds' },
-  { id: 'data-desert', x: 26, y: 75, width: 24, height: 16, effect: 'dust-devils' },
-  { id: 'sats-summit', x: 74, y: 75, width: 24, height: 16, effect: 'wind-wisps' },
+  { id: 'discovery-desert', x: 26, y: 75, width: 24, height: 16, effect: 'dust-devils' },
+  { id: 'sats-summit', x: 74, y: 20, width: 24, height: 16, effect: 'lava-spurts' },
 ];
 
 const ISLAND_LABELS: Record<number, string> = {
-  1: 'SATs Summit',
+  1: 'Base Camp',
   2: 'Fraction Lagoon',
   3: 'Ops Outpost',
-  4: 'Ratio Reef',
-  5: 'Geometry Gorge',
-  6: 'Measure Mountain',
-  7: 'Data Desert',
-  8: 'Base Camp',
+  4: 'Discovery Desert',
+  5: 'SATs Summit',
 };
 
 const renderAmbientEffect = (effect: AmbientRegion['effect']) => {

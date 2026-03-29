@@ -1,4 +1,4 @@
-import { AvatarData, IslandData, ShopItem, DailyQuest, MathFamily, CloudCollapseLevelConfig, PotionPourLevelConfig, Achievement } from "./types";
+import { AvatarData, IslandData, LevelData, ShopItem, DailyQuest, MathFamily, CloudCollapseLevelConfig, PotionPourLevelConfig, Achievement } from "./types";
 import { CHARACTER_AVATARS } from './assets/characters';
 import world01Map from './assets/maps/forect.jpg';
 import world02Map from './assets/maps/reef2.jpg';
@@ -7,6 +7,15 @@ import world04Map from './assets/maps/harbour.jpg';
 import world05Map from './assets/maps/desert.jpg';
 import world06Map from './assets/maps/volcano2.jpg';
 import { NUMBER_BASE_CAMP_LEVELS } from './systems/content/island1NumberBaseCamp';
+
+const mergeIslandLevels = (...groups: LevelData[][]): LevelData[] => (
+  groups
+    .flat()
+    .map((level, index) => ({
+      ...level,
+      id: index + 1,
+    }))
+);
 
 export const ACHIEVEMENTS: Achievement[] = [
   { id: 'first_win', title: 'First Victory', description: 'Complete your first level', icon: '\u{1F3C6}', type: 'levels', target: 1 },
@@ -53,7 +62,7 @@ export const ISLANDS: IslandData[] = [
   {
     id: 2,
     name: 'Fraction Lagoon',
-    category: 'Fractions',
+    category: 'Fractions & Ratio',
     isLocked: false,
     color: 'bg-[#4B9EFF]',
     themeName: 'Lagoon',
@@ -61,14 +70,24 @@ export const ISLANDS: IslandData[] = [
     groundColor: 'bg-cyan-900',
     mapImage: world02Map,
     decorations: [],
-    levels: [
-      { id: 1, stars: 0, isLocked: false, blueprintKey: 'take_out_rush', displayName: 'Take-Out Rush', gameType: 'take_out_rush' },
-      { id: 2, stars: 0, isLocked: false, blueprintKey: 'fraction_forge', displayName: 'Fraction Forge', gameType: 'take_out_rush' },
-      { id: 3, stars: 0, isLocked: false, blueprintKey: 'match3_equivalence', displayName: 'Match-3 Equivalence', gameType: 'fraction_match' },
-      { id: 4, stars: 0, isLocked: false, blueprintKey: 'fraction_flow', displayName: 'Fraction Flow', gameType: 'cloud_collapse' },
-      { id: 5, stars: 0, isLocked: false, blueprintKey: 'fraction_of_amount', displayName: 'Fraction of Amount', gameType: 'percent_pulse' },
-      { id: 6, stars: 0, isLocked: false, blueprintKey: 'simplify_sprint', displayName: 'Simplify Sprint', gameType: 'fraction_match' },
-    ],
+    levels: mergeIslandLevels(
+      [
+        { id: 1, stars: 0, isLocked: false, blueprintKey: 'take_out_rush', displayName: 'Take-Out Rush', gameType: 'take_out_rush' },
+        { id: 2, stars: 0, isLocked: false, blueprintKey: 'fraction_forge', displayName: 'Fraction Forge', gameType: 'take_out_rush' },
+        { id: 3, stars: 0, isLocked: false, blueprintKey: 'match3_equivalence', displayName: 'Match-3 Equivalence', gameType: 'fraction_match' },
+        { id: 4, stars: 0, isLocked: false, blueprintKey: 'fraction_flow', displayName: 'Fraction Flow', gameType: 'cloud_collapse' },
+        { id: 5, stars: 0, isLocked: false, blueprintKey: 'fraction_of_amount', displayName: 'Fraction of Amount', gameType: 'percent_pulse' },
+        { id: 6, stars: 0, isLocked: false, blueprintKey: 'simplify_sprint', displayName: 'Simplify Sprint', gameType: 'fraction_match' },
+      ],
+      [
+        { id: 1, stars: 0, isLocked: false, blueprintKey: 'potion_panic', displayName: 'Potion Panic', gameType: 'potion_pour' },
+        { id: 2, stars: 0, isLocked: false, blueprintKey: 'potion_panic', displayName: 'Potion Panic', gameType: 'potion_pour' },
+        { id: 3, stars: 0, isLocked: false, blueprintKey: 'share_splitter', displayName: 'Share Splitter', gameType: 'ratio_rapids' },
+        { id: 4, stars: 0, isLocked: false, blueprintKey: 'maths_vs_zombies', displayName: 'Maths vs Zombies', gameType: 'ratio_rapids' },
+        { id: 5, stars: 0, isLocked: false, blueprintKey: 'scale_builder', displayName: 'Scale Builder', gameType: 'scale_safari' },
+        { id: 6, stars: 0, isLocked: false, blueprintKey: 'maths_vs_zombies', displayName: 'Maths vs Zombies', gameType: 'ratio_rapids' },
+      ],
+    ),
   },
   {
     id: 3,
@@ -81,95 +100,58 @@ export const ISLANDS: IslandData[] = [
     groundColor: 'bg-stone-400',
     mapImage: world03Map,
     decorations: [],
-    levels: [
-      { id: 1, stars: 0, isLocked: false, blueprintKey: 'multiplication_mine', displayName: 'Multiplication Mine', gameType: 'calculation_clash' },
-      { id: 2, stars: 0, isLocked: false, blueprintKey: 'division_dock', displayName: 'Division Dock', gameType: 'calculation_clash' },
-      { id: 3, stars: 0, isLocked: false, blueprintKey: 'order_ops_arena', displayName: 'Order Ops Arena', gameType: 'equation_grove' },
-      { id: 4, stars: 0, isLocked: false, blueprintKey: 'arithmetic_gauntlet', displayName: 'Arithmetic Gauntlet', gameType: 'calculation_clash' },
-      { id: 5, stars: 0, isLocked: false, blueprintKey: 'remainder_run', displayName: 'Remainder Run', gameType: 'calculation_clash' },
-    ],
+    levels: mergeIslandLevels(
+      [
+        { id: 1, stars: 0, isLocked: false, blueprintKey: 'multiplication_mine', displayName: 'Multiplication Mine', gameType: 'calculation_clash' },
+        { id: 2, stars: 0, isLocked: false, blueprintKey: 'division_dock', displayName: 'Division Dock', gameType: 'calculation_clash' },
+        { id: 3, stars: 0, isLocked: false, blueprintKey: 'order_ops_arena', displayName: 'Order Ops Arena', gameType: 'equation_grove' },
+        { id: 4, stars: 0, isLocked: false, blueprintKey: 'arithmetic_gauntlet', displayName: 'Arithmetic Gauntlet', gameType: 'calculation_clash' },
+        { id: 5, stars: 0, isLocked: false, blueprintKey: 'remainder_run', displayName: 'Remainder Run', gameType: 'calculation_clash' },
+      ],
+      [
+        { id: 1, stars: 0, isLocked: false, blueprintKey: 'market_mayhem', displayName: 'Market Mayhem', gameType: 'monster_market' },
+      ],
+    ),
   },
   {
     id: 4,
-    name: 'Ratio Reef',
-    category: 'Ratio',
+    name: 'Discovery Desert',
+    category: 'Geometry, Measure & Data',
     isLocked: false,
-    color: 'bg-[#FFD700]',
-    themeName: 'Reef',
-    bgGradient: 'from-yellow-200 to-orange-300',
-    groundColor: 'bg-yellow-600',
-    mapImage: world04Map,
+    color: 'bg-[#FF8A4B]',
+    themeName: 'Desert',
+    bgGradient: 'from-amber-200 to-orange-300',
+    groundColor: 'bg-amber-700',
+    mapImage: world05Map,
     decorations: [],
-    levels: [
-      { id: 1, stars: 0, isLocked: false, blueprintKey: 'potion_panic', displayName: 'Potion Panic', gameType: 'potion_pour' },
-      { id: 2, stars: 0, isLocked: false, blueprintKey: 'potion_panic', displayName: 'Potion Panic', gameType: 'potion_pour' },
-      { id: 3, stars: 0, isLocked: false, blueprintKey: 'share_splitter', displayName: 'Share Splitter', gameType: 'ratio_rapids' },
-      { id: 4, stars: 0, isLocked: false, blueprintKey: 'maths_vs_zombies', displayName: 'Maths vs Zombies', gameType: 'ratio_rapids' },
-      { id: 5, stars: 0, isLocked: false, blueprintKey: 'scale_builder', displayName: 'Scale Builder', gameType: 'scale_safari' },
-      { id: 6, stars: 0, isLocked: false, blueprintKey: 'maths_vs_zombies', displayName: 'Maths vs Zombies', gameType: 'ratio_rapids' },
-    ],
+    levels: mergeIslandLevels(
+      [
+        { id: 1, stars: 0, isLocked: false, blueprintKey: 'angle_arena', displayName: 'Angle Arena', gameType: 'angle_arena' },
+        { id: 2, stars: 0, isLocked: false, blueprintKey: 'polygon_palace', displayName: 'Polygon Palace', gameType: 'polygon_palace' },
+        { id: 3, stars: 0, isLocked: false, blueprintKey: 'rotation_relay', displayName: 'Rotation Station', gameType: 'shape_shift' },
+        { id: 4, stars: 0, isLocked: false, blueprintKey: 'coordinates_quest', displayName: 'Coordinates Quest', gameType: 'coordinate_quest' },
+      ],
+      [
+        { id: 1, stars: 0, isLocked: false, blueprintKey: 'time_keeper_cove', displayName: 'Chrono Dash: Time Trial', gameType: 'timekeeper_temple' },
+        { id: 2, stars: 0, isLocked: false, blueprintKey: 'conversion_canyon', displayName: 'Conversion Canyon', gameType: 'measurement_forge' },
+        { id: 3, stars: 0, isLocked: false, blueprintKey: 'perimeter_path', displayName: 'Perimeter Path', gameType: 'measurement_forge' },
+      ],
+      [
+        { id: 1, stars: 0, isLocked: false, blueprintKey: 'data_dash', displayName: 'Data Dash', gameType: 'data_dungeon' },
+        { id: 2, stars: 0, isLocked: false, blueprintKey: 'graph_grabber', displayName: 'Graph Grabber', gameType: 'chart_chase' },
+        { id: 3, stars: 0, isLocked: false, blueprintKey: 'line_graph_lab', displayName: 'Line Graph Lab', gameType: 'chart_chase' },
+        { id: 4, stars: 0, isLocked: false, blueprintKey: 'data_detective', displayName: 'Data Detective', gameType: 'data_dungeon' },
+        { id: 5, stars: 0, isLocked: false, blueprintKey: 'whodunnit_data', displayName: 'Whodunnit Data', gameType: 'data_dungeon' },
+      ],
+    ),
   },
   {
     id: 5,
-    name: 'Geometry Gorge',
-    category: 'Geometry',
-    isLocked: false,
-    color: 'bg-[#FF8A4B]',
-    themeName: 'Gorge',
-    bgGradient: 'from-orange-200 to-rose-200',
-    groundColor: 'bg-orange-700',
-    mapImage: world03Map,
-    decorations: [],
-    levels: [
-      { id: 1, stars: 0, isLocked: false, blueprintKey: 'angle_arena', displayName: 'Angle Arena', gameType: 'angle_arena' },
-      { id: 2, stars: 0, isLocked: false, blueprintKey: 'polygon_palace', displayName: 'Polygon Palace', gameType: 'polygon_palace' },
-      { id: 3, stars: 0, isLocked: false, blueprintKey: 'rotation_relay', displayName: 'Rotation Station', gameType: 'shape_shift' },
-      { id: 4, stars: 0, isLocked: false, blueprintKey: 'coordinates_quest', displayName: 'Coordinates Quest', gameType: 'coordinate_quest' },
-    ],
-  },
-  {
-    id: 6,
-    name: 'Measure Mountain',
-    category: 'Measure',
-    isLocked: false,
-    color: 'bg-[#9AD66E]',
-    themeName: 'Mountain',
-    bgGradient: 'from-emerald-200 to-cyan-200',
-    groundColor: 'bg-emerald-800',
-    mapImage: world04Map,
-    decorations: [],
-    levels: [
-      { id: 1, stars: 0, isLocked: false, blueprintKey: 'time_keeper_cove', displayName: 'Chrono Dash: Time Trial', gameType: 'timekeeper_temple' },
-      { id: 2, stars: 0, isLocked: false, blueprintKey: 'conversion_canyon', displayName: 'Conversion Canyon', gameType: 'measurement_forge' },
-      { id: 3, stars: 0, isLocked: false, blueprintKey: 'perimeter_path', displayName: 'Perimeter Path', gameType: 'measurement_forge' },
-    ],
-  },
-  {
-    id: 7,
-    name: 'Data Desert',
-    category: 'Data',
-    isLocked: false,
-    color: 'bg-[#FF4B4B]',
-    themeName: 'Desert',
-    bgGradient: 'from-slate-900 to-blue-900',
-    groundColor: 'bg-slate-800',
-    mapImage: world05Map,
-    decorations: [],
-    levels: [
-      { id: 1, stars: 0, isLocked: false, blueprintKey: 'data_dash', displayName: 'Data Dash', gameType: 'data_dungeon' },
-      { id: 2, stars: 0, isLocked: false, blueprintKey: 'graph_grabber', displayName: 'Graph Grabber', gameType: 'chart_chase' },
-      { id: 3, stars: 0, isLocked: false, blueprintKey: 'line_graph_lab', displayName: 'Line Graph Lab', gameType: 'chart_chase' },
-      { id: 4, stars: 0, isLocked: false, blueprintKey: 'data_detective', displayName: 'Data Detective', gameType: 'data_dungeon' },
-      { id: 5, stars: 0, isLocked: false, blueprintKey: 'whodunnit_data', displayName: 'Whodunnit Data', gameType: 'data_dungeon' },
-    ],
-  },
-  {
-    id: 8,
     name: 'SATs Summit',
-    category: 'Mixed',
+    category: 'Final Test',
     isLocked: false,
     color: 'bg-[#8F76FF]',
-    themeName: 'Summit',
+    themeName: 'Volcano Summit',
     bgGradient: 'from-indigo-900 to-sky-900',
     groundColor: 'bg-indigo-950',
     mapImage: world06Map,
