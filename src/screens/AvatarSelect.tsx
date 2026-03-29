@@ -5,8 +5,6 @@ import { triggerHaptic } from '../haptics';
 import avatarSelectBackground from '../assets/casual_ui/pedestal char select.png';
 import splashStyleButton from '../assets/casual_ui/inputs/btn_1.png';
 import chooseBanner from '../assets/characters/chooseheroes.png';
-import arrowBackWand from '../assets/gemini_slices/arrow_back_wand.png';
-import arrowNextMid from '../assets/gemini_slices/arrow_next_mid.png';
 
 const AVATAR_FOOT_ANCHOR_MAIN_Y_PX: Record<string, number> = {
   barratt: 0,
@@ -99,7 +97,6 @@ interface AvatarSelectProps {
 const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onConfirm }) => {
   const selectedIndex = Math.max(0, AVATARS.findIndex((avatar) => avatar.id === selectedId));
   const selectedAvatar = AVATARS[selectedIndex] || AVATARS[0];
-  const [pressedArrow, setPressedArrow] = useState<'left' | 'right' | null>(null);
   const [bannerSrc, setBannerSrc] = useState(chooseBanner);
 
   useEffect(() => {
@@ -164,18 +161,15 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
           <div className="avatar-hero-stage relative mt-2 flex min-h-0 flex-1 items-center justify-center overflow-visible md:mt-3">
             <motion.button
               whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
               onClick={() => selectIndex(previousIndex)}
               className="avatar-hero-arrow avatar-hero-arrow-left"
               aria-label="Previous hero"
               type="button"
-
             >
-              <img
-                src={arrowBackWand}
-                alt=""
+              <span
                 aria-hidden
-                className="avatar-hero-arrow-art"
-                draggable={false}
+                className="avatar-hero-arrow-glyph avatar-hero-arrow-glyph-left"
               />
             </motion.button>
 
@@ -202,18 +196,15 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
 
             <motion.button
               whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
               onClick={() => selectIndex(nextIndex)}
               className="avatar-hero-arrow avatar-hero-arrow-right"
               aria-label="Next hero"
               type="button"
-
             >
-              <img
-                src={arrowNextMid}
-                alt=""
+              <span
                 aria-hidden
-                className="avatar-hero-arrow-art"
-                draggable={false}
+                className="avatar-hero-arrow-glyph avatar-hero-arrow-glyph-right"
               />
             </motion.button>
           </div>

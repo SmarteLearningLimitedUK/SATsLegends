@@ -392,8 +392,12 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                             : 'world-map-island-label-face-progress'
                       }`}
                       style={{
-                        minWidth: '7.2rem',
-                        padding: '0.18rem 0.72rem 0.28rem',
+                        minWidth: '7.4rem',
+                        padding: '0.16rem 0.58rem 0.24rem',
+                        backgroundImage: `url(${bluescrollmed})`,
+                        backgroundSize: '100% 100%',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'center',
                       }}
                     >
                       <span className="world-map-island-label-text block truncate whitespace-nowrap text-[7px] font-black uppercase leading-none tracking-[0.03em] opacity-90 md:text-[8px]">

@@ -2591,13 +2591,27 @@ button:disabled {
   border: 1px solid rgba(176, 220, 255, 0.3) !important;
 }
 
-.world-map-island-label,
+.world-map-island-label {
+  background: transparent;
+  box-shadow: none;
+}
+
 .world-map-island-label-face,
 .world-map-island-label-face-idle,
 .world-map-island-label-face-progress,
 .world-map-island-label-face-locked {
-  background: linear-gradient(180deg, rgba(235,110,110,0.96), rgba(177,55,55,0.98));
+  background-color: transparent;
   box-shadow: none;
+  border: 0;
+}
+
+.world-map-island-label-face-locked {
+  filter: grayscale(0.22) brightness(0.9);
+}
+
+.world-map-island-label-face-idle,
+.world-map-island-label-face-progress {
+  filter: none;
 }
 
 .hero-arrow-button-face,
@@ -3709,11 +3723,14 @@ button:disabled {
 /* Avatar select premium card pass */
 .avatar-select-screen {
   background: transparent;
+  min-height: 100%;
 }
 
 .avatar-select-background {
   object-fit: cover;
   object-position: center center;
+  transform: scale(1.06);
+  transform-origin: center center;
 }
 
 .avatar-select-layout {
@@ -3849,31 +3866,38 @@ button:disabled {
   top: 56%;
   z-index: 20;
   transform: translateY(-50%);
-  width: clamp(3.35rem, 8.4vw, 4.2rem);
-  height: clamp(3.35rem, 8.4vw, 4.2rem);
+  width: clamp(3.1rem, 7.4vw, 3.8rem);
+  height: clamp(3.1rem, 7.4vw, 3.8rem);
   border-radius: 999px;
-  border: 0;
+  border: 1px solid rgba(178, 227, 255, 0.42);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: transparent;
-  backdrop-filter: none;
-  box-shadow: 0 10px 20px rgba(2, 6, 23, 0.34);
+  background: linear-gradient(180deg, rgba(74, 156, 255, 0.92), rgba(35, 88, 197, 0.95));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.32),
+    0 8px 18px rgba(2, 6, 23, 0.28);
 }
 
-.avatar-hero-arrow-art {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  pointer-events: none;
-  user-select: none;
-  filter: drop-shadow(0 6px 12px rgba(2, 6, 23, 0.4));
+.avatar-hero-arrow-glyph {
+  display: block;
+  width: 0.92rem;
+  height: 0.92rem;
+  border-top: 0.22rem solid #fff8e6;
+  border-right: 0.22rem solid #fff8e6;
+  filter: drop-shadow(0 1px 0 rgba(18, 49, 114, 0.4));
+}
 
-  transition: transform 0.08s ease, filter 0.08s ease;
+.avatar-hero-arrow-glyph-left {
+  transform: rotate(-135deg) translate(-6%, 6%);
+}
+
+.avatar-hero-arrow-glyph-right {
+  transform: rotate(45deg) translate(-6%, 6%);
 }
 
 button.avatar-hero-arrow:not(:disabled):active {
-  transform: translateY(-50%) !important;
+  transform: translateY(calc(-50% + 1px)) !important;
   filter: none !important;
 }
 
