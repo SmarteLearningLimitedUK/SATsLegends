@@ -387,37 +387,43 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
                     key={`rocket-flame-${round.id}`}
                     initial={{ opacity: 0, scaleY: 0.5 }}
                     animate={{
-                      opacity: [0.45, 1, 0.72],
-                      scaleY: [0.55, 1.16, 0.88],
-                      scaleX: [0.88, 1.08, 0.94],
+                      opacity: [0.38, 0.86, 0.62],
+                      scaleY: [0.48, 0.92, 0.72],
+                      scaleX: [0.84, 1.02, 0.9],
                     }}
                     exit={{ opacity: 0, scaleY: 0.2 }}
                     transition={{ duration: 0.24, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
-                    className="absolute left-1/2 top-[79%] z-10 h-[5.7rem] w-[3.1rem] -translate-x-1/2 rounded-b-[2rem] rounded-t-[0.4rem] bg-[radial-gradient(ellipse_at_top,#fde047_0%,#fb923c_48%,rgba(239,68,68,0.1)_100%)] shadow-[0_0_34px_rgba(249,115,22,0.82)]"
+                    className="absolute left-1/2 top-[82.6%] z-10 h-[3.6rem] w-[2.45rem] -translate-x-1/2 rounded-b-[1.7rem] rounded-t-[0.35rem] bg-[radial-gradient(ellipse_at_top,#fde68a_0%,#fb923c_42%,rgba(239,68,68,0.08)_100%)] shadow-[0_0_24px_rgba(249,115,22,0.58)]"
                   />
-                  {[0, 1, 2].map((index) => (
+                  {[0, 1, 2, 3].map((index) => (
                     <motion.span
                       key={`rocket-smoke-${round.id}-${index}`}
-                      className="absolute left-1/2 top-[88%] z-0 rounded-full bg-white/45 blur-md"
-                      initial={{ opacity: 0, x: '-50%', y: 0, scale: 0.4 }}
+                      className="absolute left-1/2 top-[87.2%] z-0 rounded-full bg-white/38 blur-md"
+                      initial={{ opacity: 0, x: '-50%', y: 0, scale: 0.36 }}
                       animate={{
-                        opacity: [0, 0.42, 0],
-                        x: ['-50%', `${-50 + (index - 1) * 10}%`, `${-50 + (index - 1) * 18}%`],
-                        y: [0, 8 + index * 4, 18 + index * 8],
-                        scale: [0.4, 0.9, 1.25],
+                        opacity: [0, 0.36, 0],
+                        x: ['-50%', `${-50 + (index - 1.5) * 8}%`, `${-50 + (index - 1.5) * 15}%`],
+                        y: [0, 10 + index * 3, 24 + index * 6],
+                        scale: [0.36, 0.82, 1.18],
                       }}
                       transition={{
-                        duration: 0.9 + index * 0.12,
+                        duration: 0.98 + index * 0.1,
                         repeat: Infinity,
                         ease: 'easeOut',
-                        delay: index * 0.16,
+                        delay: index * 0.12,
                       }}
                       style={{
-                        width: `${1.45 + index * 0.32}rem`,
-                        height: `${0.88 + index * 0.2}rem`,
+                        width: `${1.2 + index * 0.28}rem`,
+                        height: `${0.72 + index * 0.18}rem`,
                       }}
                     />
                   ))}
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: [0.18, 0.3, 0.18], scale: [0.96, 1.04, 0.98] }}
+                    transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}
+                    className="absolute left-1/2 top-[86.8%] z-0 h-[2.6rem] w-[5.3rem] -translate-x-1/2 rounded-full bg-white/18 blur-xl"
+                  />
                 </>
               ) : null}
             </AnimatePresence>

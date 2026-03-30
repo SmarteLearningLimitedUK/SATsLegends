@@ -452,7 +452,13 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                   onClick={() => handleAnswerDrop(option)}
                   disabled={locked || didComplete || didFail || !isSessionActive}
                   whileTap={{ scale: 0.985 }}
+                  animate={{
+                    scale: isCorrect ? [1, 1.16, 0.98, 1.08, 1] : 1,
+                    rotateX: isCorrect ? [0, 90, 180, 270, 360, 540, 720] : 0,
+                  }}
+                  transition={{ duration: isCorrect ? 0.72 : 0.4, ease: 'easeInOut' }}
                   className="group relative h-[72px] w-[72px] sm:h-[78px] sm:w-[78px]"
+                  style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
                 >
                     <div
                       className={`absolute inset-0 rounded-full border-[2px] transition-colors ${
@@ -466,14 +472,13 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                   <div className="pointer-events-none absolute inset-[9%] rounded-full bg-gradient-to-b from-white/30 via-transparent to-transparent" />
                   <div className="pointer-events-none absolute inset-[16%] rounded-full border border-white/12" />
 
-                    <motion.div
-                      initial={false}
-                      animate={{
-                        scale: isCorrect ? [1, 1.16, 0.98, 1.08, 1] : isSelected ? 1.03 : 1,
-                        rotate: isCorrect ? [0, 20, -20, 360, 720] : 0,
-                        y: isWrong ? [0, -3, 3, -2, 0] : 0,
-                      }}
-                      transition={{ duration: isWrong ? 0.35 : isCorrect ? 0.72 : 0.4 }}
+                      <motion.div
+                        initial={false}
+                        animate={{
+                          scale: isCorrect ? 1 : isSelected ? 1.03 : 1,
+                          y: isWrong ? [0, -3, 3, -2, 0] : 0,
+                        }}
+                      transition={{ duration: isWrong ? 0.35 : 0.4 }}
                       className={`relative flex h-full items-center justify-center px-1 text-center text-[clamp(16px,1.95vw,24px)] font-black leading-none tracking-tight drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)] ${
                         isCorrect ? 'text-emerald-50' : isWrong ? 'text-rose-100' : isSelected ? 'text-slate-900' : 'text-white'
                       }`}
@@ -511,11 +516,12 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
               y: flyingAnswer.endY - 23,
               scale: 0.64,
               opacity: 1,
-              rotate: [0, 240, 540],
+              rotateX: [0, 180, 360, 540],
             }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.58, ease: [0.2, 0.85, 0.24, 1] }}
             className="pointer-events-none absolute z-30 h-[72px] w-[72px]"
+            style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
           >
             <div className="absolute inset-0 rounded-full border-[2px] border-emerald-100/95 bg-gradient-to-b from-emerald-300 to-green-600 shadow-[0_10px_0_rgba(20,83,45,0.82),0_0_28px_rgba(74,222,128,0.78)]" />
             <div className="pointer-events-none absolute inset-[9%] rounded-full bg-gradient-to-b from-white/30 via-transparent to-transparent" />
