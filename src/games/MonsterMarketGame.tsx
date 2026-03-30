@@ -303,7 +303,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
         <div className="h-[max(3.6rem,calc(env(safe-area-inset-top)+2.9rem))]" />
       )}
 
-      <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] p-2 md:rounded-[2.6rem] md:p-3">
+      <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
         <div className="flex flex-1 flex-col items-center justify-between px-4 py-6">
           <div className="flex h-48 w-full items-center justify-center">
             <AnimatePresence mode="wait">
@@ -327,7 +327,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
             </AnimatePresence>
           </div>
 
-          <div className="min-h-[100px] w-full rounded-2xl border-2 border-blue-400/30 bg-blue-900/40 p-4">
+          <div className="min-h-[100px] w-full rounded-2xl border border-amber-100/18 bg-slate-950/28 p-4 backdrop-blur-[1px]">
             <div className="flex items-center justify-between border-b border-white/10 pb-2">
               <span className="text-xs font-bold uppercase tracking-widest text-blue-300">Current Order</span>
               <span className={`text-xl font-black ${currentTotal > (customer?.targetValue || 0) ? 'text-red-400' : 'text-yellow-400'}`}>

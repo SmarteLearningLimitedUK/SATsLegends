@@ -378,7 +378,7 @@ const App: React.FC = () => {
     () => getBossVisualForLevel(selectedLevel?.gameType, selectedLevel?.id),
     [selectedLevel?.gameType, selectedLevel?.id],
   );
-  const shouldShowResultEnemyArt = selectedLevel?.blueprintKey !== 'match3_equivalence';
+  const shouldShowResultEnemyArt = selectedLevel?.blueprintKey !== 'match3_equivalence' && selectedLevel?.gameType !== 'monster_market';
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
   const useUnboundedStageShell = isSplashScreen || isAvatarSelectionScreen || isWorldMapScreen;
@@ -465,6 +465,7 @@ const App: React.FC = () => {
                   || selectedLevel.blueprintKey === 'rounding_rampage'
                   || selectedLevel.blueprintKey === 'conversion_canyon'
                   || selectedLevel.blueprintKey === 'match3_equivalence'
+                  || selectedLevel.gameType === 'monster_market'
                     ? null
                     : (
                   <ViewportBossEnemy

@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { X } from 'lucide-react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
-import universalMapPoster from '../assets/maps/finalamendedworldmap.png';
+import universalMapPoster from '../assets/maps/Operations Outpost (768 x 2500 px).png';
 
 interface WorldMapProps {
   player: PlayerData;
@@ -59,15 +59,6 @@ const ISLAND_POSITION_BY_ID: Record<number, keyof typeof POSITION_HOTSPOTS> = {
   4: 'middleRight',
   5: 'topLeft',
   6: 'topRight',
-};
-
-const LABEL_ANCHORS: Record<number, { x: number; y: number }> = {
-  1: { x: 25.8, y: 83.6 },
-  2: { x: 74.1, y: 83.2 },
-  3: { x: 25.8, y: 65.3 },
-  4: { x: 73.9, y: 48.6 },
-  5: { x: 24.9, y: 47.1 },
-  6: { x: 73.8, y: 28.7 },
 };
 
 const MAP_AMBIENTS: AmbientRegion[] = [
@@ -268,14 +259,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
 
   return (
     <div className="relative w-full overflow-visible">
-      <div
-        className="relative overflow-visible"
-        style={{
-          width: '108%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-        }}
-      >
+      <div className="relative w-full overflow-visible">
         <img
           src={universalMapPoster}
           alt="Island select map"
@@ -305,31 +289,38 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
             const hotspot = POSITION_HOTSPOTS[ISLAND_POSITION_BY_ID[island.id]];
             if (!hotspot) return null;
 
-            const labelAnchor = LABEL_ANCHORS[island.id] ?? { x: hotspot.x, y: hotspot.y + hotspot.height / 2 + 0.85 };
-            const pillWidth = island.name.length > 15 ? '7.1rem' : island.name.length > 12 ? '6.4rem' : '5.8rem';
+            const isSelected = selectedIslandId === island.id;
 
             return (
               <motion.button
                 key={island.id}
                 type="button"
-                whileTap={{ scale: 0.96 }}
-                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                whileHover={{ scale: 1.015 }}
                 onClick={() => setSelectedIslandId(island.id)}
                 aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
-                className={`absolute z-30 -translate-x-1/2 rounded-full border px-3 py-[0.38rem] text-center font-black uppercase text-cyan-50 outline-none transition-all focus-visible:ring-4 focus-visible:ring-cyan-300/70 ${
-                  isUnlocked
-                    ? 'border-sky-200/18 bg-[linear-gradient(180deg,rgba(18,45,102,0.98),rgba(8,23,67,0.99))] shadow-[0_4px_10px_rgba(2,6,23,0.22)]'
-                    : 'border-slate-200/16 bg-[linear-gradient(180deg,rgba(54,66,92,0.95),rgba(21,29,43,0.98))] opacity-80 shadow-[0_4px_10px_rgba(2,6,23,0.2)]'
+                className={`absolute z-30 -translate-x-1/2 -translate-y-1/2 rounded-[999px] outline-none transition-all focus-visible:ring-4 focus-visible:ring-cyan-300/70 ${
+                  isUnlocked ? 'opacity-100' : 'opacity-75'
                 }`}
                 style={{
-                  left: `${labelAnchor.x}%`,
-                  top: `${labelAnchor.y}%`,
-                  minWidth: pillWidth,
+                  left: `${hotspot.x}%`,
+                  top: `${hotspot.y}%`,
+                  width: `${hotspot.width}%`,
+                  height: `${hotspot.height}%`,
                 }}
               >
-                <span className="block truncate whitespace-nowrap text-[8px] tracking-[0.12em] drop-shadow-[0_1px_0_rgba(255,255,255,0.12)]">
-                  {island.name}
-                </span>
+                <span
+                  className={`pointer-events-none absolute inset-[10%] rounded-[999px] transition-all duration-200 ${
+                    isSelected
+                      ? 'border-2 border-cyan-200/55 bg-cyan-300/12 shadow-[0_0_0_1px_rgba(186,230,253,0.18),0_0_22px_rgba(56,189,248,0.28)]'
+                      : 'border border-white/0 bg-transparent'
+                  }`}
+                />
+                {!isUnlocked ? (
+                  <span className="pointer-events-none absolute right-[10%] top-[10%] flex h-6 w-6 items-center justify-center rounded-full border border-slate-200/30 bg-slate-950/55 text-[10px] font-black text-slate-100 shadow-[0_6px_12px_rgba(2,6,23,0.28)]">
+                    🔒
+                  </span>
+                ) : null}
               </motion.button>
             );
           })}
