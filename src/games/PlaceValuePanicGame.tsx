@@ -108,6 +108,80 @@ const shuffle = <T,>(items: T[]): T[] => {
   return clone;
 };
 
+const createStaticEnemyFrame = (src: string): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(src);
+          return;
+        }
+
+        ctx.drawImage(image, 0, 0);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        const width = canvas.width;
+        const height = canvas.height;
+        const visited = new Uint8Array(width * height);
+        const stack: number[] = [];
+
+        const isNearBlack = (index: number) => {
+          const r = data[index];
+          const g = data[index + 1];
+          const b = data[index + 2];
+          const a = data[index + 3];
+          if (a === 0) return false;
+          const max = Math.max(r, g, b);
+          const min = Math.min(r, g, b);
+          return max <= 42 && max - min <= 18;
+        };
+
+        const pushIfBlack = (x: number, y: number) => {
+          if (x < 0 || y < 0 || x >= width || y >= height) return;
+          const point = y * width + x;
+          if (visited[point]) return;
+          const pixelIndex = point * 4;
+          if (!isNearBlack(pixelIndex)) return;
+          visited[point] = 1;
+          stack.push(point);
+        };
+
+        for (let x = 0; x < width; x += 1) {
+          pushIfBlack(x, 0);
+          pushIfBlack(x, height - 1);
+        }
+        for (let y = 0; y < height; y += 1) {
+          pushIfBlack(0, y);
+          pushIfBlack(width - 1, y);
+        }
+
+        while (stack.length > 0) {
+          const point = stack.pop() as number;
+          const pixelIndex = point * 4;
+          data[pixelIndex + 3] = 0;
+          const x = point % width;
+          const y = (point / width) | 0;
+          pushIfBlack(x + 1, y);
+          pushIfBlack(x - 1, y);
+          pushIfBlack(x, y + 1);
+          pushIfBlack(x, y - 1);
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      } catch (error) {
+        reject(error);
+      }
+    };
+    image.onerror = () => reject(new Error('Failed to load enemy frame'));
+    image.src = src;
+  });
+
 const toWordsUnderHundred = (n: number): string => {
   if (n < 20) return ONES_WORDS[n];
   const tens = Math.floor(n / 10);
@@ -342,6 +416,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
   const [isResolving, setIsResolving] = useState(false);
   const [goblinEffect, setGoblinEffect] = useState<GoblinEffect>('idle');
+  const [idleEnemySrc, setIdleEnemySrc] = useState<string>(animatedEnemy1);
   const [showHitFx, setShowHitFx] = useState(false);
   const [enemySpeech, setEnemySpeech] = useState<string | null>(null);
   const [slotPulseKey, setSlotPulseKey] = useState(0);
@@ -427,7 +502,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     return `calc(${bottomPct.toFixed(2)}% - 23px)`;
   }, [layout.targetY, targetSocketSizing.heightValue]);
 
-  const goblinSpriteSrc = animatedEnemy1;
+  const goblinSpriteSrc = goblinEffect === 'hit' ? animatedEnemy1 : idleEnemySrc;
 
   const questionFrameConfig = useMemo(() => {
     const promptLength = question.prompt.trim().length;
@@ -537,6 +612,21 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     }, 1000);
     return () => window.clearInterval(intervalId);
   }, [question.id]);
+
+  useEffect(() => {
+    let mounted = true;
+    createStaticEnemyFrame(animatedEnemy1)
+      .then((frame) => {
+        if (mounted) setIdleEnemySrc(frame);
+      })
+      .catch(() => {
+        if (mounted) setIdleEnemySrc(animatedEnemy1);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (goblinEffect !== 'hit') return undefined;
@@ -1155,12 +1245,13 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               ) : null}
             </AnimatePresence>
             <motion.img
-              key={goblinSpriteSrc}
+              key={goblinEffect === 'hit' ? `enemy-hit-${slotPulseKey}` : 'enemy-idle'}
               src={goblinSpriteSrc}
               alt=""
               aria-hidden="true"
               draggable={false}
               className="relative h-auto w-full object-contain drop-shadow-[0_16px_22px_rgba(2,6,23,0.5)]"
+              style={{ mixBlendMode: goblinEffect === 'hit' ? 'screen' : 'normal' }}
               animate={{
                 y: [0, -5, 0],
                 x: goblinEffect === 'hit' ? [0, -9, 9, -8, 8, -5, 5, 0] : 0,

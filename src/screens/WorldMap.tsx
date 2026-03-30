@@ -52,6 +52,15 @@ type IslandInteractionRegion = {
   ambients: AmbientRegion[];
 };
 
+const MAP_WIDTH_PX = 768;
+const MAP_HEIGHT_PX = 2500;
+
+const circleHotspot = (xPx: number, yPx: number, sizePx: number): CircleHotspot => ({
+  x: (xPx / MAP_WIDTH_PX) * 100,
+  y: (yPx / MAP_HEIGHT_PX) * 100,
+  size: (sizePx / MAP_WIDTH_PX) * 100,
+});
+
 const DECORATIVE_MAP_AMBIENTS: AmbientRegion[] = [
   {
     id: 'ratio-rapids-bubbles',
@@ -81,61 +90,47 @@ const DECORATIVE_MAP_AMBIENTS: AmbientRegion[] = [
 
 const ISLAND_INTERACTIONS: Record<number, IslandInteractionRegion> = {
   1: {
-    islandCircle: { x: 83.5, y: 92.4, size: 18 },
-    labelCircle: { x: 38, y: 96.6, size: 18 },
+    islandCircle: circleHotspot(634, 2336, 176),
+    labelCircle: circleHotspot(252, 2424, 172),
     ambients: [
       { id: 'base-camp-sparkles', x: 77.5, y: 91.2, width: 22, height: 13, effect: 'sparkles' },
     ],
   },
   2: {
-    islandCircle: { x: 78.5, y: 59.4, size: 19 },
-    labelCircle: { x: 31.5, y: 58.9, size: 18 },
+    islandCircle: circleHotspot(566, 1292, 220),
+    labelCircle: circleHotspot(256, 1317, 164),
     ambients: [
       { id: 'fraction-forest-butterflies', x: 71.5, y: 57.2, width: 24, height: 15, effect: 'butterflies' },
     ],
   },
   3: {
-    islandCircle: { x: 23.8, y: 44.3, size: 19 },
-    labelCircle: { x: 54.5, y: 45.8, size: 18 },
+    islandCircle: circleHotspot(197, 918, 214),
+    labelCircle: circleHotspot(412, 964, 164),
     ambients: [
       { id: 'geometry-glacier-snow', x: 25.2, y: 47.6, width: 24, height: 15, effect: 'falling-snow' },
     ],
   },
   4: {
-    islandCircle: { x: 23.5, y: 71.4, size: 18.5 },
-    labelCircle: { x: 50.5, y: 73.4, size: 18 },
+    islandCircle: circleHotspot(166, 1826, 212),
+    labelCircle: circleHotspot(387, 1858, 168),
     ambients: [
       { id: 'data-desert-dust', x: 25.8, y: 72.2, width: 24, height: 15, effect: 'dust-devils' },
     ],
   },
   5: {
-    islandCircle: { x: 69.5, y: 28.9, size: 18.5 },
-    labelCircle: { x: 32.5, y: 31.6, size: 18.5 },
+    islandCircle: circleHotspot(552, 562, 214),
+    labelCircle: circleHotspot(252, 548, 168),
     ambients: [
       { id: 'operations-outpost-stars', x: 70.8, y: 33.1, width: 23, height: 15, effect: 'stars' },
     ],
   },
   6: {
-    islandCircle: { x: 24, y: 13.6, size: 18.5 },
-    labelCircle: { x: 53.5, y: 13.6, size: 18.5 },
+    islandCircle: circleHotspot(244, 220, 218),
+    labelCircle: circleHotspot(476, 228, 168),
     ambients: [
       { id: 'mount-algebra-lava', x: 29.5, y: 14.5, width: 26, height: 16, effect: 'lava-spurts' },
     ],
   },
-};
-
-const getHotspotBounds = ({ islandCircle, labelCircle }: IslandInteractionRegion) => {
-  const left = Math.min(islandCircle.x - islandCircle.size / 2, labelCircle.x - labelCircle.size / 2);
-  const top = Math.min(islandCircle.y - islandCircle.size / 2, labelCircle.y - labelCircle.size / 2);
-  const right = Math.max(islandCircle.x + islandCircle.size / 2, labelCircle.x + labelCircle.size / 2);
-  const bottom = Math.max(islandCircle.y + islandCircle.size / 2, labelCircle.y + labelCircle.size / 2);
-
-  return {
-    left,
-    top,
-    width: right - left,
-    height: bottom - top,
-  };
 };
 
 const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
@@ -455,67 +450,49 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
             if (!interaction) return null;
 
             const isSelected = selectedIslandId === island.id;
-            const bounds = getHotspotBounds(interaction);
-            const islandCircleLeft = ((interaction.islandCircle.x - interaction.islandCircle.size / 2 - bounds.left) / bounds.width) * 100;
-            const islandCircleTop = ((interaction.islandCircle.y - interaction.islandCircle.size / 2 - bounds.top) / bounds.height) * 100;
-            const islandCircleWidth = (interaction.islandCircle.size / bounds.width) * 100;
-            const islandCircleHeight = (interaction.islandCircle.size / bounds.height) * 100;
-            const labelCircleLeft = ((interaction.labelCircle.x - interaction.labelCircle.size / 2 - bounds.left) / bounds.width) * 100;
-            const labelCircleTop = ((interaction.labelCircle.y - interaction.labelCircle.size / 2 - bounds.top) / bounds.height) * 100;
-            const labelCircleWidth = (interaction.labelCircle.size / bounds.width) * 100;
-            const labelCircleHeight = (interaction.labelCircle.size / bounds.height) * 100;
             const selectIsland = () => setSelectedIslandId(island.id);
 
-            return (
+            const renderCircleButton = (
+              circle: CircleHotspot,
+              keySuffix: 'island' | 'label',
+            ) => (
               <motion.button
-                key={island.id}
+                key={`${island.id}-${keySuffix}`}
                 type="button"
                 whileTap={{ scale: 0.97 }}
                 whileHover={{ scale: 1.015 }}
                 onClick={selectIsland}
                 aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
-                className={`absolute z-30 -translate-x-1/2 -translate-y-1/2 rounded-[999px] outline-none transition-all focus-visible:ring-4 focus-visible:ring-cyan-300/70 ${
+                className={`absolute z-30 -translate-x-1/2 -translate-y-1/2 rounded-full outline-none transition-all focus-visible:ring-4 focus-visible:ring-cyan-300/70 ${
                   isUnlocked ? 'opacity-100' : 'opacity-75'
                 }`}
                 style={{
-                  left: `${bounds.left + bounds.width / 2}%`,
-                  top: `${bounds.top + bounds.height / 2}%`,
-                  width: `${bounds.width}%`,
-                  height: `${bounds.height}%`,
+                  left: `${circle.x}%`,
+                  top: `${circle.y}%`,
+                  width: `${circle.size}%`,
+                  aspectRatio: '1 / 1',
                 }}
               >
                 <span
-                  className={`pointer-events-none absolute rounded-full transition-all duration-200 ${
+                  className={`pointer-events-none absolute inset-0 rounded-full transition-all duration-200 ${
                     isSelected
-                      ? 'border-2 border-cyan-200/55 bg-cyan-300/12 shadow-[0_0_0_1px_rgba(186,230,253,0.18),0_0_22px_rgba(56,189,248,0.28)]'
+                      ? 'border-2 border-cyan-200/60 bg-cyan-300/14 shadow-[0_0_0_1px_rgba(186,230,253,0.2),0_0_24px_rgba(56,189,248,0.3)]'
                       : 'border border-white/0 bg-transparent'
                   }`}
-                  style={{
-                    left: `${islandCircleLeft}%`,
-                    top: `${islandCircleTop}%`,
-                    width: `${islandCircleWidth}%`,
-                    height: `${islandCircleHeight}%`,
-                  }}
                 />
-                <span
-                  className={`pointer-events-none absolute rounded-full transition-all duration-200 ${
-                    isSelected
-                      ? 'border-2 border-cyan-200/55 bg-cyan-300/12 shadow-[0_0_0_1px_rgba(186,230,253,0.18),0_0_22px_rgba(56,189,248,0.28)]'
-                      : 'border border-white/0 bg-transparent'
-                  }`}
-                  style={{
-                    left: `${labelCircleLeft}%`,
-                    top: `${labelCircleTop}%`,
-                    width: `${labelCircleWidth}%`,
-                    height: `${labelCircleHeight}%`,
-                  }}
-                />
-                {!isUnlocked ? (
+                {!isUnlocked && keySuffix === 'island' ? (
                   <span className="pointer-events-none absolute right-[8%] top-[8%] flex h-6 w-6 items-center justify-center rounded-full border border-slate-200/30 bg-slate-950/55 text-[10px] font-black text-slate-100 shadow-[0_6px_12px_rgba(2,6,23,0.28)]">
                     {'\uD83D\uDD12'}
                   </span>
                 ) : null}
               </motion.button>
+            );
+
+            return (
+              <React.Fragment key={island.id}>
+                {renderCircleButton(interaction.islandCircle, 'island')}
+                {renderCircleButton(interaction.labelCircle, 'label')}
+              </React.Fragment>
             );
           })}
         </div>
