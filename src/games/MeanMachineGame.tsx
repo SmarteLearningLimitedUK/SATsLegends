@@ -20,7 +20,7 @@ interface RoundData {
   targetMean: number;
   correctAnswer: number;
   options: number[];
-  supportText: string;
+  activeReelIndexes: number[];
 }
 
 interface MeanMachineGameProps {
@@ -54,33 +54,55 @@ const scoreToStars = (XP: number) => {
   return 1;
 };
 
+const getActiveReelCount = (level: number) => {
+  if (level <= 2) return 2;
+  if (level <= 4) return 3;
+  if (level <= 7) return 4;
+  return 5;
+};
+
+const getActiveReelIndexes = (activeCount: number) => {
+  const start = Math.floor((REEL_COUNT - activeCount) / 2);
+  return Array.from({ length: activeCount }, (_, index) => start + index);
+};
+
 const buildMeanRound = (level: number): RoundData => {
   const useDoubleDigits = level >= 3;
   const minValue = useDoubleDigits ? 8 : 1;
   const maxValue = useDoubleDigits ? 26 + level : 9 + level;
+  const activeCount = getActiveReelCount(level);
+  const activeReelIndexes = getActiveReelIndexes(activeCount);
   const targetMean = useDoubleDigits ? randomInt(10, 18 + level) : randomInt(3, 10);
 
   let coreValues: number[] = [];
   let total = 0;
-  for (let index = 0; index < REEL_COUNT - 1; index += 1) {
+  for (let index = 0; index < activeCount - 1; index += 1) {
     const value = randomInt(minValue, maxValue);
     coreValues.push(value);
     total += value;
   }
 
-  let finalValue = targetMean * REEL_COUNT - total;
+  let finalValue = targetMean * activeCount - total;
   while (finalValue < minValue || finalValue > maxValue) {
     coreValues = [];
     total = 0;
-    for (let index = 0; index < REEL_COUNT - 1; index += 1) {
+    for (let index = 0; index < activeCount - 1; index += 1) {
       const value = randomInt(minValue, maxValue);
       coreValues.push(value);
       total += value;
     }
-    finalValue = targetMean * REEL_COUNT - total;
+    finalValue = targetMean * activeCount - total;
   }
 
-  const actualValues = shuffle([...coreValues, finalValue]);
+  const activeValues = shuffle([...coreValues, finalValue]);
+  const actualValues = Array.from({ length: REEL_COUNT }, (_, index) => {
+    const activeIndex = activeReelIndexes.indexOf(index);
+    return activeIndex >= 0 ? activeValues[activeIndex] : 0;
+  });
+  const visibleValues = Array.from({ length: REEL_COUNT }, (_, index) => {
+    const activeIndex = activeReelIndexes.indexOf(index);
+    return activeIndex >= 0 ? activeValues[activeIndex] : null;
+  });
   const optionCount = level <= 2 ? 3 : 4;
   const options = new Set<number>([targetMean]);
   while (options.size < optionCount) {
@@ -90,12 +112,12 @@ const buildMeanRound = (level: number): RoundData => {
 
   return {
     mode: 'mean',
-    visibleValues: actualValues,
+    visibleValues,
     actualValues,
     targetMean,
     correctAnswer: targetMean,
     options: shuffle(Array.from(options)),
-    supportText: 'Spin 5 reels, add the numbers, then divide by 5.',
+    activeReelIndexes,
   };
 };
 
@@ -103,32 +125,43 @@ const buildMissingRound = (level: number): RoundData => {
   const useDoubleDigits = level >= 8;
   const minValue = useDoubleDigits ? 12 : 4;
   const maxValue = useDoubleDigits ? 34 : 18 + level * 2;
+  const activeCount = getActiveReelCount(level);
+  const activeReelIndexes = getActiveReelIndexes(activeCount);
   const targetMean = useDoubleDigits ? randomInt(14, 24) : randomInt(6, 15);
-  const missingIndex = randomInt(1, REEL_COUNT - 2);
+  const missingActiveIndex = randomInt(1, Math.max(1, activeCount - 2));
+  const missingIndex = activeReelIndexes[missingActiveIndex];
 
   let visibleValues: number[] = [];
   let total = 0;
-  for (let index = 0; index < REEL_COUNT - 1; index += 1) {
+  for (let index = 0; index < activeCount - 1; index += 1) {
     const value = randomInt(minValue, maxValue);
     visibleValues.push(value);
     total += value;
   }
 
-  let missingValue = targetMean * REEL_COUNT - total;
+  let missingValue = targetMean * activeCount - total;
   while (missingValue < minValue || missingValue > maxValue) {
     visibleValues = [];
     total = 0;
-    for (let index = 0; index < REEL_COUNT - 1; index += 1) {
+    for (let index = 0; index < activeCount - 1; index += 1) {
       const value = randomInt(minValue, maxValue);
       visibleValues.push(value);
       total += value;
     }
-    missingValue = targetMean * REEL_COUNT - total;
+    missingValue = targetMean * activeCount - total;
   }
 
-  const actualValues = [...visibleValues];
-  actualValues.splice(missingIndex, 0, missingValue);
-  const visible = actualValues.map((value, index) => (index === missingIndex ? null : value));
+  const activeActualValues = [...visibleValues];
+  activeActualValues.splice(missingActiveIndex, 0, missingValue);
+  const actualValues = Array.from({ length: REEL_COUNT }, (_, index) => {
+    const activeIndex = activeReelIndexes.indexOf(index);
+    return activeIndex >= 0 ? activeActualValues[activeIndex] : 0;
+  });
+  const visible = Array.from({ length: REEL_COUNT }, (_, index) => {
+    const activeIndex = activeReelIndexes.indexOf(index);
+    if (activeIndex < 0) return null;
+    return index === missingIndex ? null : activeActualValues[activeIndex];
+  });
 
   const options = new Set<number>([missingValue]);
   while (options.size < 4) {
@@ -143,7 +176,7 @@ const buildMissingRound = (level: number): RoundData => {
     targetMean,
     correctAnswer: missingValue,
     options: shuffle(Array.from(options)),
-    supportText: 'One reel is missing. Pick the value that repairs the target mean.',
+    activeReelIndexes,
   };
 };
 
@@ -152,10 +185,11 @@ const buildRound = (level: number) => (level <= 4 ? buildMeanRound(level) : buil
 const ReelWindow: React.FC<{
   value: number | string;
   spinning: boolean;
+  isInactive?: boolean;
   isMissing?: boolean;
   isCorrectPulse?: boolean;
   isErrorPulse?: boolean;
-}> = ({ value, spinning, isMissing = false, isCorrectPulse = false, isErrorPulse = false }) => (
+}> = ({ value, spinning, isInactive = false, isMissing = false, isCorrectPulse = false, isErrorPulse = false }) => (
   <motion.div
     animate={spinning
       ? { y: [0, -5, 0, 5, 0], scale: [1, 1.02, 1] }
@@ -165,15 +199,17 @@ const ReelWindow: React.FC<{
           ? { x: [0, -5, 5, -4, 4, 0], scale: [1, 0.98, 1] }
           : { y: 0, scale: 1 }}
     transition={spinning ? { duration: 0.16, repeat: Infinity, ease: 'linear' } : { duration: 0.35 }}
-    className={`relative flex h-[2.8rem] items-center justify-center overflow-hidden rounded-[0.8rem] border shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_10px_18px_rgba(2,6,23,0.24)] md:h-[3rem] ${
-      isMissing
-        ? 'border-amber-200/70 bg-[linear-gradient(180deg,rgba(250,204,21,0.22),rgba(245,158,11,0.1))]'
-        : 'border-cyan-100/24 bg-[linear-gradient(180deg,rgba(3,14,38,0.92),rgba(6,18,48,0.98))]'
+    className={`relative flex h-[3.7rem] items-center justify-center overflow-hidden rounded-[0.9rem] border shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_10px_18px_rgba(2,6,23,0.24)] md:h-[4.15rem] ${
+      isInactive
+        ? 'border-slate-500/22 bg-[linear-gradient(180deg,rgba(51,65,85,0.56),rgba(15,23,42,0.82))] opacity-65 saturate-0'
+        : isMissing
+          ? 'border-amber-200/70 bg-[linear-gradient(180deg,rgba(250,204,21,0.22),rgba(245,158,11,0.1))]'
+          : 'border-cyan-100/24 bg-[linear-gradient(180deg,rgba(3,14,38,0.92),rgba(6,18,48,0.98))]'
     }`}
   >
     <div className="absolute inset-x-[10%] top-[12%] h-[35%] rounded-full bg-white/10 blur-sm" />
-    <div className={`relative z-10 text-[1rem] font-black tracking-[-0.03em] md:text-[1.18rem] ${isMissing ? 'text-amber-100' : 'text-white'}`}>
-      {value}
+    <div className={`relative z-10 text-[1.55rem] font-black tracking-[-0.05em] md:text-[1.9rem] ${isInactive ? 'text-slate-300/60' : isMissing ? 'text-amber-100' : 'text-white'}`}>
+      {isInactive ? '' : value}
     </div>
   </motion.div>
 );
@@ -197,7 +233,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showJackpot, setShowJackpot] = useState(false);
   const [showGlitch, setShowGlitch] = useState(false);
-  const [leverPulse, setLeverPulse] = useState(false);
+  const [spinPulse, setSpinPulse] = useState(false);
   const [machineShake, setMachineShake] = useState(false);
   const [reelSettled, setReelSettled] = useState(false);
   const [wrongPulse, setWrongPulse] = useState(false);
@@ -206,9 +242,8 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   const failureLockedRef = useRef(false);
   const answerLockedRef = useRef(false);
 
-  const timeLeft = sessionState?.timeLeft ?? 90;
   const lives = sessionState?.lives ?? 3;
-  const sessionActive = sessionState ? timeLeft > 0 && lives > 0 : true;
+  const sessionActive = lives > 0;
 
   const clearTimers = useCallback(() => {
     timersRef.current.forEach((id) => window.clearTimeout(id));
@@ -229,7 +264,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     setSelectedAnswer(null);
     setShowJackpot(false);
     setShowGlitch(false);
-    setLeverPulse(false);
+    setSpinPulse(false);
     setMachineShake(false);
     setReelSettled(false);
     setWrongPulse(false);
@@ -243,16 +278,16 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
 
   useEffect(() => {
     if (!sessionState || completionLockedRef.current || failureLockedRef.current) return;
-    if (timeLeft > 0 && lives > 0) return;
+    if (lives > 0) return;
     failureLockedRef.current = true;
     sessionEvents?.onGameFailed?.({
       gameType: 'mean_machine',
       levelId: level,
-      reason: lives <= 0 ? 'lives' : 'time',
+      reason: 'lives',
       XP,
     });
     onGameOver(XP);
-  }, [XP, level, lives, onGameOver, sessionEvents, sessionState, timeLeft]);
+  }, [XP, level, lives, onGameOver, sessionEvents, sessionState]);
 
   const finishAdventure = useCallback((finalXP: number) => {
     if (completionLockedRef.current) return;
@@ -276,7 +311,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     initialiseRound(nextLevel);
   }, [finishAdventure, initialiseRound, level]);
 
-  const handlePullLever = useCallback(() => {
+  const handleSpin = useCallback(() => {
     if (!round || gameState === 'spinning' || !sessionActive) return;
 
     clearTimers();
@@ -285,16 +320,17 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     setSelectedAnswer(null);
     setShowJackpot(false);
     setShowGlitch(false);
-    setLeverPulse(true);
+    setSpinPulse(true);
     setMachineShake(true);
     setGameState('spinning');
 
-    queueTimeout(() => setLeverPulse(false), 320);
+    queueTimeout(() => setSpinPulse(false), 320);
     queueTimeout(() => setMachineShake(false), 420);
 
     for (let tick = 0; tick < 10; tick += 1) {
       queueTimeout(() => {
         setReelDisplay(Array.from({ length: REEL_COUNT }, (_, index) => {
+          if (!round.activeReelIndexes.includes(index)) return '';
           if (round.mode === 'missing' && round.visibleValues[index] === null) return '?';
           return randomInt(level >= 6 ? 10 : 0, level >= 8 ? 38 : 18);
         }));
@@ -375,28 +411,20 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   }, [initialiseRound]);
 
   const modeCopy = useMemo(() => {
-    if (!round) return { eyebrow: 'Mean Machine', title: 'Spin the reels', prompt: 'Pull the lever to begin.' };
+    if (!round) return { eyebrow: 'Mean Machine', title: 'Spin the reels', prompt: 'Press Spin to begin.' };
     if (round.mode === 'mean') {
       return {
         eyebrow: 'Mean Spin',
-        title: 'Spin 5 reels and choose the mean.',
-        prompt: 'Add the numbers you land on. Divide by 5.',
+        title: `Spin ${round.activeReelIndexes.length} reels. Find the mean.`,
+        prompt: `Add them, then divide by ${round.activeReelIndexes.length}.`,
       };
     }
     return {
       eyebrow: 'Fix The Machine',
-      title: `Target mean = ${round.targetMean}`,
-      prompt: 'One reel is missing. Choose the number that repairs the machine.',
-    };
+      title: 'Fix the missing reel.',
+        prompt: `Choose the number that repairs the mean of ${round.activeReelIndexes.length} reels.`,
+      };
   }, [round]);
-
-  const statusLabel = useMemo(() => {
-    if (!round) return 'Pull the lever';
-    if (gameState === 'idle') return 'Pull the lever to start the round';
-    if (gameState === 'spinning') return 'Reels spinning';
-    if (round.mode === 'mean') return 'Tap the correct mean';
-    return 'Tap the missing reel value';
-  }, [gameState, round]);
 
   return (
     <div className="relative h-full w-full overflow-hidden select-none text-white">
@@ -405,14 +433,14 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
 
       <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.45rem)] pt-2 md:px-4">
         <div className="flex h-full min-h-0 flex-col gap-2.5">
-          <section className="mx-auto w-full max-w-[24rem] shrink-0 rounded-[1.2rem] border border-cyan-100/24 bg-[linear-gradient(180deg,rgba(14,45,103,0.9),rgba(8,26,72,0.96))] px-4 py-2.5 text-center shadow-[0_16px_28px_rgba(2,6,23,0.32)]">
+          <section className="mx-auto w-full max-w-[23rem] shrink-0 rounded-[1.15rem] border border-cyan-100/24 bg-[linear-gradient(180deg,rgba(14,45,103,0.9),rgba(8,26,72,0.96))] px-4 py-2 text-center shadow-[0_16px_28px_rgba(2,6,23,0.32)]">
             <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/76">
               {modeCopy.eyebrow} · Level {level}/{TOTAL_LEVELS}
             </div>
-            <div className="mt-1 text-[clamp(1rem,3.7vw,1.18rem)] font-black leading-tight text-white">
+            <div className="mt-1 text-[clamp(0.98rem,3.6vw,1.12rem)] font-black leading-tight text-white">
               {modeCopy.title}
             </div>
-            <div className="mt-0.5 text-[10px] font-semibold text-cyan-100/82">
+            <div className="mt-0.5 text-[9px] font-semibold text-cyan-100/80">
               {modeCopy.prompt}
             </div>
           </section>
@@ -422,17 +450,6 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
               <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[32%] bg-[linear-gradient(180deg,rgba(15,23,42,0),rgba(15,23,42,0.2),rgba(15,23,42,0.6))]" />
 
               <div className="relative flex h-full min-h-0 flex-col gap-2.5">
-                <div className="grid shrink-0 grid-cols-2 gap-2">
-                  <div className="rounded-[0.95rem] border border-cyan-100/24 bg-slate-950/28 px-2.5 py-1.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.18)]">
-                    <div className="text-[9px] font-black uppercase tracking-[0.18em] text-cyan-100/70">Status</div>
-                    <div className="mt-0.5 text-[11px] font-black leading-tight text-cyan-50 md:text-[13px]">{statusLabel}</div>
-                  </div>
-                  <div className="rounded-[0.95rem] border border-amber-100/24 bg-slate-950/28 px-2.5 py-1.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.18)]">
-                    <div className="text-[9px] font-black uppercase tracking-[0.18em] text-amber-100/75">Target Mean</div>
-                    <div className="mt-0.5 text-lg font-black text-amber-100 md:text-xl">{round?.targetMean ?? '?'}</div>
-                  </div>
-                </div>
-
                 <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-[1.35rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] px-1 py-0.5">
                   <motion.div
                     animate={machineShake ? { x: [0, -6, 6, -4, 4, 0] } : { x: 0 }}
@@ -445,15 +462,16 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                       src={slotMachineImage}
                       alt="Mean Machine slot machine"
                       draggable={false}
-                      className="pointer-events-none absolute inset-x-0 bottom-[-1.5%] z-[12] h-[134%] w-full object-contain"
+                      className="pointer-events-none absolute inset-x-0 bottom-[-1.5%] z-[12] h-[138%] w-full object-contain"
                     />
 
-                    <div className="absolute left-[20.2%] right-[20.2%] top-[38.7%] z-20 grid grid-cols-5 gap-[2.4%]">
+                    <div className="absolute left-[16.9%] right-[16.9%] top-[31.8%] z-20 grid grid-cols-5 gap-[2.15%]">
                       {reelDisplay.map((value, index) => (
                         <ReelWindow
                           key={`reel-${index}-${String(value)}`}
                           value={value}
-                          spinning={gameState === 'spinning'}
+                          spinning={gameState === 'spinning' && round?.activeReelIndexes.includes(index)}
+                          isInactive={Boolean(round && !round.activeReelIndexes.includes(index))}
                           isMissing={Boolean(round && round.mode === 'missing' && round.visibleValues[index] === null)}
                           isCorrectPulse={showJackpot || reelSettled}
                           isErrorPulse={wrongPulse}
@@ -461,20 +479,17 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                       ))}
                     </div>
 
-                    <div className="absolute left-[22%] top-[18.8%] z-20 flex h-[8.6%] w-[22%] items-center justify-center rounded-[0.55rem] border border-cyan-200/20 bg-[linear-gradient(180deg,rgba(3,14,38,0.92),rgba(6,18,48,0.98))] px-2 text-center text-[0.46rem] font-black uppercase tracking-[0.14em] text-cyan-100 md:text-[0.54rem]">
+                    <div className="absolute left-1/2 top-[14.2%] z-20 flex h-[7.2%] w-[33%] -translate-x-1/2 items-center justify-center rounded-[0.55rem] border border-cyan-200/20 bg-[linear-gradient(180deg,rgba(3,14,38,0.92),rgba(6,18,48,0.98))] px-2 text-center text-[0.48rem] font-black uppercase tracking-[0.14em] text-cyan-100 md:text-[0.58rem]">
                       {round?.mode === 'mean' ? 'Mean Spin' : 'Fix Machine'}
-                    </div>
-                    <div className="absolute left-[50.5%] top-[18.8%] z-20 flex h-[8.6%] w-[22%] -translate-x-1/2 items-center justify-center rounded-[0.55rem] border border-amber-200/24 bg-[linear-gradient(180deg,rgba(58,27,4,0.92),rgba(41,17,4,0.98))] px-2 text-center text-[0.48rem] font-black uppercase tracking-[0.08em] text-amber-100 md:text-[0.58rem]">
-                      Mean {round?.targetMean ?? '?'}
                     </div>
 
                     <motion.button
                       type="button"
-                      onClick={handlePullLever}
+                      onClick={handleSpin}
                       disabled={!round || gameState === 'spinning' || !sessionActive}
-                      animate={leverPulse ? { scale: [1, 0.94, 1.06, 1], y: [0, 2, -1, 0] } : { scale: [1, 1.03, 1], y: [0, -1, 0] }}
-                      transition={leverPulse ? { duration: 0.34 } : { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-                      className="absolute left-1/2 bottom-[5.7%] z-30 flex h-[11.5%] w-[30%] -translate-x-1/2 items-center justify-center rounded-[1.2rem] bg-transparent text-[0.68rem] font-black uppercase tracking-[0.16em] text-cyan-50 disabled:cursor-not-allowed disabled:opacity-65 md:text-[0.78rem]"
+                      animate={spinPulse ? { scale: [1, 0.94, 1.06, 1], y: [0, 2, -1, 0] } : { scale: [1, 1.03, 1], y: [0, -1, 0] }}
+                      transition={spinPulse ? { duration: 0.34 } : { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+                      className="absolute left-1/2 bottom-[5.7%] z-30 flex h-[11.5%] w-[30%] -translate-x-1/2 items-center justify-center rounded-[1.2rem] bg-transparent text-[0.8rem] font-black uppercase tracking-[0.16em] text-cyan-50 disabled:cursor-not-allowed disabled:opacity-65 md:text-[0.92rem]"
                       aria-label="Press the Mean Machine base button"
                     >
                       <span className="absolute inset-[6%] rounded-[1rem] bg-cyan-300/10 blur-md" />
@@ -543,12 +558,9 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
             </section>
 
             <section className="shrink-0 rounded-[1.35rem] border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(10,31,83,0.92),rgba(7,21,58,0.96))] p-3 shadow-[0_16px_26px_rgba(2,6,23,0.34)]">
-              <div className="mb-2 flex items-center justify-between gap-2">
+              <div className="mb-2 flex items-center justify-start gap-2">
                 <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/74">
-                  {round?.mode === 'mean' ? 'Choose the mean' : 'Choose the missing reel'}
-                </div>
-                <div className="rounded-full border border-cyan-100/18 bg-slate-950/26 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/74">
-                  Lives {lives}
+                  {round?.mode === 'mean' ? 'Pick the mean' : 'Pick the reel'}
                 </div>
               </div>
               <div className={`grid gap-2.5 ${round && round.options.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>

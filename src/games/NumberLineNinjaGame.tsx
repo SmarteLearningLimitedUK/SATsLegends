@@ -65,74 +65,83 @@ const formatNumber = (value: number) => {
   return value.toFixed(2).replace(/\.?0+$/, '');
 };
 
-const buildQuestion = (difficulty: number): NumberLineQuestion => {
-  const focusIndex = randomInt(1, 3);
-
-  if (difficulty <= 2) {
-    const start = randomInt(0, 4) * 5;
-    const step = [2, 5, 10][randomInt(0, 2)];
-    const values = Array.from({ length: 5 }, (_, index) => start + (step * index));
-    const answer = values[focusIndex];
-    const options = uniqueStrings([
-      formatNumber(answer),
-      formatNumber(answer + step),
-      formatNumber(Math.max(0, answer - step)),
-      formatNumber(answer + (step * 2)),
-    ]);
-
-    return {
-      id: Date.now() + Math.floor(Math.random() * 1000),
-      prompt: 'Find the missing value on the number line.',
-      labels: values.map((value, index) => (index === focusIndex ? '?' : formatNumber(value))),
-      focusIndex,
-      options: shuffle(options).slice(0, 4),
-      answer: formatNumber(answer),
-    };
-  }
-
-  if (difficulty <= 5) {
-    const start = randomInt(-4, 2) * 5;
-    const step = [5, 10][randomInt(0, 1)];
-    const values = Array.from({ length: 5 }, (_, index) => start + (step * index));
-    const answer = values[focusIndex];
-    const options = uniqueStrings([
-      formatNumber(answer),
-      formatNumber(answer + step),
-      formatNumber(answer - step),
-      formatNumber(answer + (step * 2)),
-      formatNumber(answer - (step * 2)),
-    ]);
-
-    return {
-      id: Date.now() + Math.floor(Math.random() * 1000),
-      prompt: 'Use the equal steps to solve the missing number.',
-      labels: values.map((value, index) => (index === focusIndex ? '?' : formatNumber(value))),
-      focusIndex,
-      options: shuffle(options).slice(0, 4),
-      answer: formatNumber(answer),
-    };
-  }
-
-  const base = randomInt(1, 6) / 10;
-  const step = [0.1, 0.2, 0.25][randomInt(0, 2)];
-  const values = Array.from({ length: 5 }, (_, index) => Number((base + (step * index)).toFixed(2)));
+const createQuestion = (
+  prompt: string,
+  values: number[],
+  focusIndex: number,
+  distractors: number[],
+): NumberLineQuestion => {
   const answer = values[focusIndex];
   const options = uniqueStrings([
     formatNumber(answer),
-    formatNumber(Number((answer + step).toFixed(2))),
-    formatNumber(Number((answer - step).toFixed(2))),
-    formatNumber(Number((answer + (step * 2)).toFixed(2))),
-    formatNumber(Number((answer - (step * 2)).toFixed(2))),
+    ...distractors.map((value) => formatNumber(value)),
   ]);
 
   return {
     id: Date.now() + Math.floor(Math.random() * 1000),
-    prompt: 'Read the decimal pattern and pick the missing value.',
+    prompt,
     labels: values.map((value, index) => (index === focusIndex ? '?' : formatNumber(value))),
     focusIndex,
     options: shuffle(options).slice(0, 4),
     answer: formatNumber(answer),
   };
+};
+
+const buildQuestion = (difficulty: number): NumberLineQuestion => {
+  const focusIndex = randomInt(1, 3);
+
+  if (difficulty <= 2) {
+    const start = randomInt(0, 6);
+    const step = 1;
+    const values = Array.from({ length: 5 }, (_, index) => start + (step * index));
+    return createQuestion('Count along the number line to find the missing number.', values, focusIndex, [
+      values[focusIndex] + 1,
+      Math.max(0, values[focusIndex] - 1),
+      values[focusIndex] + 2,
+    ]);
+  }
+
+  if (difficulty <= 4) {
+    const start = randomInt(0, 5) * 2;
+    const step = [2, 5][randomInt(0, 1)];
+    const values = Array.from({ length: 5 }, (_, index) => start + (step * index));
+    return createQuestion('Use the equal jumps to work out the missing number.', values, focusIndex, [
+      values[focusIndex] + step,
+      Math.max(0, values[focusIndex] - step),
+      values[focusIndex] + (step * 2),
+    ]);
+  }
+
+  if (difficulty <= 6) {
+    const start = randomInt(1, 6) * 10;
+    const step = 10;
+    const values = Array.from({ length: 5 }, (_, index) => start + (step * index));
+    return createQuestion('Count in tens to find the missing number.', values, focusIndex, [
+      values[focusIndex] + 10,
+      values[focusIndex] - 10,
+      values[focusIndex] + 20,
+    ]);
+  }
+
+  if (difficulty <= 8) {
+    const start = randomInt(-6, -2) * 5;
+    const step = 5;
+    const values = Array.from({ length: 5 }, (_, index) => start + (step * index));
+    return createQuestion('Follow the number line through negative numbers.', values, focusIndex, [
+      values[focusIndex] + 5,
+      values[focusIndex] - 5,
+      values[focusIndex] + 10,
+    ]);
+  }
+
+  const base = randomInt(1, 6) / 10;
+  const step = [0.1, 0.2, 0.25][randomInt(0, 2)];
+  const values = Array.from({ length: 5 }, (_, index) => Number((base + (step * index)).toFixed(2)));
+  return createQuestion('Read the decimal number line and choose the missing value.', values, focusIndex, [
+    Number((values[focusIndex] + step).toFixed(2)),
+    Number((values[focusIndex] - step).toFixed(2)),
+    Number((values[focusIndex] + (step * 2)).toFixed(2)),
+  ]);
 };
 
 const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
@@ -227,7 +236,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   };
 
   const advanceQuestion = () => {
-    setQuestion(buildQuestion(Math.max(levelId + Math.floor(correctCount / 2), 1)));
+    setQuestion(buildQuestion(Math.max(levelId + Math.floor(correctCount / 3), 1)));
     setSelectedAnswer(null);
     setFeedbackState('idle');
     setLocked(false);
@@ -445,36 +454,39 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                   whileTap={{ scale: 0.985 }}
                   className="group relative h-[72px] w-[72px] sm:h-[78px] sm:w-[78px]"
                 >
-                  <div
-                    className={`absolute inset-0 rounded-full border-[2px] transition-colors ${
-                      isSelected
-                        ? 'border-amber-200/90 bg-gradient-to-b from-amber-300 to-amber-500 shadow-[0_10px_0_rgba(180,83,9,0.8),0_0_26px_rgba(251,191,36,0.45)]'
-                        : 'border-cyan-100/75 bg-gradient-to-b from-cyan-400 to-blue-600 shadow-[0_10px_0_rgba(30,64,175,0.78),0_0_18px_rgba(34,211,238,0.32)]'
-                    }`}
-                  />
+                    <div
+                      className={`absolute inset-0 rounded-full border-[2px] transition-colors ${
+                        isSelected
+                          ? isCorrect
+                            ? 'border-emerald-100/95 bg-gradient-to-b from-emerald-300 to-green-600 shadow-[0_10px_0_rgba(20,83,45,0.82),0_0_30px_rgba(74,222,128,0.72)]'
+                            : 'border-amber-200/90 bg-gradient-to-b from-amber-300 to-amber-500 shadow-[0_10px_0_rgba(180,83,9,0.8),0_0_26px_rgba(251,191,36,0.45)]'
+                          : 'border-cyan-100/75 bg-gradient-to-b from-cyan-400 to-blue-600 shadow-[0_10px_0_rgba(30,64,175,0.78),0_0_18px_rgba(34,211,238,0.32)]'
+                      }`}
+                    />
                   <div className="pointer-events-none absolute inset-[9%] rounded-full bg-gradient-to-b from-white/30 via-transparent to-transparent" />
                   <div className="pointer-events-none absolute inset-[16%] rounded-full border border-white/12" />
 
-                  <motion.div
-                    initial={false}
-                    animate={{
-                      scale: isCorrect ? [1, 1.09, 1] : isSelected ? 1.03 : 1,
-                      y: isWrong ? [0, -3, 3, -2, 0] : 0,
-                    }}
-                    transition={{ duration: isWrong ? 0.35 : 0.4 }}
-                    className={`relative flex h-full items-center justify-center px-1 text-center text-[clamp(16px,1.95vw,24px)] font-black leading-none tracking-tight drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)] ${
-                      isCorrect ? 'text-emerald-50' : isWrong ? 'text-rose-100' : isSelected ? 'text-slate-900' : 'text-white'
-                    }`}
-                  >
+                    <motion.div
+                      initial={false}
+                      animate={{
+                        scale: isCorrect ? [1, 1.16, 0.98, 1.08, 1] : isSelected ? 1.03 : 1,
+                        rotate: isCorrect ? [0, 20, -20, 360, 720] : 0,
+                        y: isWrong ? [0, -3, 3, -2, 0] : 0,
+                      }}
+                      transition={{ duration: isWrong ? 0.35 : isCorrect ? 0.72 : 0.4 }}
+                      className={`relative flex h-full items-center justify-center px-1 text-center text-[clamp(16px,1.95vw,24px)] font-black leading-none tracking-tight drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)] ${
+                        isCorrect ? 'text-emerald-50' : isWrong ? 'text-rose-100' : isSelected ? 'text-slate-900' : 'text-white'
+                      }`}
+                    >
                     {option}
                   </motion.div>
 
                   {isCorrect && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.7 }}
-                      animate={{ opacity: [0, 1, 0], scale: [0.7, 1.08, 1.2] }}
-                      transition={{ duration: 0.52 }}
-                      className="pointer-events-none absolute inset-0 rounded-full bg-emerald-300/35 blur-[2px]"
+                      animate={{ opacity: [0, 1, 0.45, 0], scale: [0.7, 1.16, 1.28, 1.38] }}
+                      transition={{ duration: 0.72 }}
+                      className="pointer-events-none absolute inset-0 rounded-full bg-emerald-300/40 blur-[2px]"
                     />
                   )}
                 </motion.button>
@@ -499,14 +511,15 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
               y: flyingAnswer.endY - 23,
               scale: 0.64,
               opacity: 1,
+              rotate: [0, 240, 540],
             }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.52, ease: [0.2, 0.85, 0.24, 1] }}
+            transition={{ duration: 0.58, ease: [0.2, 0.85, 0.24, 1] }}
             className="pointer-events-none absolute z-30 h-[72px] w-[72px]"
           >
-            <div className="absolute inset-0 rounded-full border-[2px] border-amber-200/90 bg-gradient-to-b from-amber-300 to-amber-500 shadow-[0_10px_0_rgba(180,83,9,0.8),0_0_26px_rgba(251,191,36,0.55)]" />
+            <div className="absolute inset-0 rounded-full border-[2px] border-emerald-100/95 bg-gradient-to-b from-emerald-300 to-green-600 shadow-[0_10px_0_rgba(20,83,45,0.82),0_0_28px_rgba(74,222,128,0.78)]" />
             <div className="pointer-events-none absolute inset-[9%] rounded-full bg-gradient-to-b from-white/30 via-transparent to-transparent" />
-            <div className="relative flex h-full items-center justify-center px-1 text-center text-[clamp(16px,1.95vw,24px)] font-black leading-none tracking-tight text-slate-900 drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)]">
+            <div className="relative flex h-full items-center justify-center px-1 text-center text-[clamp(16px,1.95vw,24px)] font-black leading-none tracking-tight text-emerald-50 drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)]">
               {flyingAnswer.value}
             </div>
           </motion.div>

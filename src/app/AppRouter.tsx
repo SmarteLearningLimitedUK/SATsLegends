@@ -107,6 +107,11 @@ export const AppRouter: React.FC<AppRouterProps> = ({
     return 'Solve the mission quickly and accurately before time runs out.';
   }, [hintRuleSet?.summary, selectedRuleSet?.summary]);
 
+  const hideMiniGameTimer = useMemo(() => {
+    if (screen !== 'gameplay' || !selectedLevel) return false;
+    return selectedLevel.gameType === 'mean_machine' && selectedLevel.blueprintKey === 'mean_machine';
+  }, [screen, selectedLevel]);
+
   useEffect(() => {
     if (screen !== 'gameplay' || !selectedLevel) {
       setShowInlineHint(false);
@@ -455,7 +460,9 @@ export const AppRouter: React.FC<AppRouterProps> = ({
 
     case 'gameplay':
       const shellStyle = {
-        '--game-shell-top-inset': 'calc(env(safe-area-inset-top) + clamp(3.35rem, 9.1vh, 4.2rem))',
+        '--game-shell-top-inset': hideMiniGameTimer
+          ? 'calc(env(safe-area-inset-top) + clamp(2.9rem, 7.2vh, 3.45rem))'
+          : 'calc(env(safe-area-inset-top) + clamp(3.35rem, 9.1vh, 4.2rem))',
         '--game-shell-bottom-inset': 'calc(env(safe-area-inset-bottom) + clamp(3.05rem, 8.25vh, 4rem))',
       } as React.CSSProperties;
 
@@ -483,6 +490,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
               timeLeft={globalMiniGameHudTimeLeft}
               totalTime={globalMiniGameHudDurationSeconds}
               lives={globalMiniGameLives}
+              hideTimer={hideMiniGameTimer}
             />
 
             {showInlineHint ? (
