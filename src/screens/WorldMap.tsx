@@ -26,13 +26,16 @@ type AmbientRegion = {
   effect:
     | 'butterflies'
     | 'sparkles'
+    | 'bubbles'
     | 'birds'
     | 'light-beams'
     | 'stars'
     | 'dust-devils'
     | 'blizzard'
+    | 'falling-snow'
     | 'wind-wisps'
-    | 'lava-spurts';
+    | 'lava-spurts'
+    | 'math-symbols';
 };
 
 type IslandState = {
@@ -51,36 +54,28 @@ type IslandInteractionRegion = {
 
 const DECORATIVE_MAP_AMBIENTS: AmbientRegion[] = [
   {
-    id: 'data-desert-dust-main',
-    x: 29.5,
-    y: 74.8,
-    width: 28,
-    height: 17,
-    effect: 'dust-devils',
-  },
-  {
-    id: 'data-desert-birds-main',
-    x: 31.4,
-    y: 72.9,
-    width: 26,
-    height: 15,
-    effect: 'birds',
-  },
-  {
-    id: 'ratio-rapids-sparkles',
-    x: 57.4,
-    y: 83.2,
+    id: 'geometry-glacier-snow',
+    x: 25.2,
+    y: 47.6,
     width: 24,
-    height: 14,
-    effect: 'sparkles',
+    height: 15,
+    effect: 'falling-snow',
   },
   {
-    id: 'ratio-rapids-wisps',
-    x: 58.8,
-    y: 81.7,
-    width: 25,
-    height: 15,
-    effect: 'wind-wisps',
+    id: 'ratio-rapids-bubbles',
+    x: 59.2,
+    y: 82.7,
+    width: 22,
+    height: 13,
+    effect: 'bubbles',
+  },
+  {
+    id: 'arithmetic-acropolis-symbols',
+    x: 71.5,
+    y: 96.4,
+    width: 24,
+    height: 13,
+    effect: 'math-symbols',
   },
 ];
 
@@ -88,49 +83,33 @@ const ISLAND_INTERACTIONS: Record<number, IslandInteractionRegion> = {
   1: {
     islandArea: { x: 77.5, y: 91.2, width: 22, height: 13 },
     labelArea: { x: 48.5, y: 96.3, width: 31, height: 5.6 },
-    ambients: [
-      { id: 'base-camp-sparkles', x: 77.5, y: 91.1, width: 22, height: 13, effect: 'sparkles' },
-      { id: 'base-camp-butterflies', x: 77.4, y: 90.8, width: 22, height: 13, effect: 'butterflies' },
-    ],
+    ambients: [],
   },
   2: {
     islandArea: { x: 71.5, y: 57.2, width: 24, height: 15 },
     labelArea: { x: 29.5, y: 60.3, width: 28, height: 5.4 },
-    ambients: [
-      { id: 'fraction-forest-beams', x: 71.5, y: 56.8, width: 24, height: 15, effect: 'light-beams' },
-      { id: 'fraction-forest-wisps', x: 71.2, y: 57.1, width: 24, height: 15, effect: 'wind-wisps' },
-    ],
+    ambients: [],
   },
   3: {
     islandArea: { x: 25.2, y: 47.6, width: 24, height: 15 },
     labelArea: { x: 49, y: 48.8, width: 28, height: 5.4 },
-    ambients: [
-      { id: 'geometry-glacier-blizzard', x: 25.2, y: 47.6, width: 24, height: 15, effect: 'blizzard' },
-      { id: 'geometry-glacier-wisps', x: 25.5, y: 47.4, width: 24, height: 15, effect: 'wind-wisps' },
-    ],
+    ambients: [],
   },
   4: {
     islandArea: { x: 25.8, y: 72.2, width: 24, height: 15 },
     labelArea: { x: 49, y: 77.1, width: 28, height: 5.4 },
-    ambients: [
-      { id: 'data-desert-dust', x: 25.8, y: 72.1, width: 24, height: 15, effect: 'dust-devils' },
-      { id: 'data-desert-birds', x: 25.6, y: 71.9, width: 24, height: 15, effect: 'birds' },
-    ],
+    ambients: [],
   },
   5: {
     islandArea: { x: 70.8, y: 33.1, width: 23, height: 15 },
     labelArea: { x: 31.5, y: 34.5, width: 31, height: 5.4 },
-    ambients: [
-      { id: 'operations-outpost-stars', x: 70.8, y: 33.1, width: 23, height: 15, effect: 'stars' },
-      { id: 'operations-outpost-birds', x: 70.5, y: 33.2, width: 23, height: 15, effect: 'birds' },
-    ],
+    ambients: [],
   },
   6: {
     islandArea: { x: 29.5, y: 14.5, width: 26, height: 16 },
     labelArea: { x: 52.5, y: 16.1, width: 31, height: 5.6 },
     ambients: [
       { id: 'mount-algebra-lava', x: 29.5, y: 14.5, width: 26, height: 16, effect: 'lava-spurts' },
-      { id: 'mount-algebra-stars', x: 29.7, y: 14.1, width: 26, height: 16, effect: 'stars' },
     ],
   },
 };
@@ -195,6 +174,30 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
               key={`bubble-${index}`}
               className="world-map-bubble"
               style={{ left: item.left, bottom: item.bottom, animationDelay: item.delay, animationDuration: item.duration }}
+            />
+          ))}
+        </>
+      );
+    case 'bubbles':
+      return (
+        <>
+          {[
+            { left: '18%', bottom: '8%', delay: '0s', duration: '4.6s', size: '0.78rem' },
+            { left: '34%', bottom: '4%', delay: '0.8s', duration: '5.1s', size: '0.56rem' },
+            { left: '52%', bottom: '10%', delay: '1.6s', duration: '4.4s', size: '0.92rem' },
+            { left: '69%', bottom: '6%', delay: '2.2s', duration: '5.4s', size: '0.62rem' },
+          ].map((item, index) => (
+            <span
+              key={`map-bubble-${index}`}
+              className="world-map-bubble"
+              style={{
+                left: item.left,
+                bottom: item.bottom,
+                width: item.size,
+                height: item.size,
+                animationDelay: item.delay,
+                animationDuration: item.duration,
+              }}
             />
           ))}
         </>
@@ -294,6 +297,23 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
           ))}
         </>
       );
+    case 'falling-snow':
+      return (
+        <>
+          {[0, 1, 2, 3, 4, 5, 6].map(index => (
+            <span
+              key={`falling-snow-${index}`}
+              className="world-map-snowflake"
+              style={{
+                left: `${10 + index * 11}%`,
+                top: `${4 + (index % 2) * 8}%`,
+                animationDelay: `${index * 0.42}s`,
+                animationDuration: `${3.4 + (index % 3) * 0.45}s`,
+              }}
+            />
+          ))}
+        </>
+      );
     case 'wind-wisps':
       return (
         <>
@@ -307,6 +327,34 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
               className="world-map-wind-wisp"
               style={{ left: item.left, top: item.top, animationDelay: item.delay, animationDuration: item.duration }}
             />
+          ))}
+        </>
+      );
+    case 'math-symbols':
+      return (
+        <>
+          {[
+            { left: '18%', top: '20%', symbol: '+', delay: '0s', duration: '4.8s' },
+            { left: '44%', top: '10%', symbol: '=', delay: '1.1s', duration: '5.2s' },
+            { left: '68%', top: '24%', symbol: '%', delay: '2s', duration: '4.6s' },
+          ].map((item, index) => (
+            <motion.span
+              key={`math-symbol-${index}`}
+              className="absolute text-[0.95rem] font-black text-amber-100 drop-shadow-[0_2px_8px_rgba(15,23,42,0.45)]"
+              animate={{ y: [0, -8, 0], opacity: [0.82, 1, 0.82], rotate: [-2, 2, -2] }}
+              transition={{
+                duration: Number.parseFloat(item.duration),
+                delay: Number.parseFloat(item.delay),
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
+              style={{
+                left: item.left,
+                top: item.top,
+              }}
+            >
+              {item.symbol}
+            </motion.span>
           ))}
         </>
       );
