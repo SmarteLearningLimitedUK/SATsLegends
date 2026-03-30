@@ -6,7 +6,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { RotateCcw, Plus, Minus } from 'lucide-react';
-import GameActionDock from '../components/GameActionDock';
 import clockFaceImage from '../assets/maps/clockfaceblank.png';
 import missionBackground from '../assets/maps/harbour.jpg';
 
@@ -272,7 +271,6 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
 
       <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.45rem,env(safe-area-inset-bottom))] z-40 flex justify-center">
         <div className="pointer-events-auto">
-          <GameActionDock onBack={onBack} compact />
         </div>
       </div>
     </div>
@@ -304,3 +302,4 @@ function ControlButton({
 }
 
 export default TimekeeperTempleGame;
+

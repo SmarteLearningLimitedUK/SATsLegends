@@ -11,7 +11,6 @@ import {
   Trophy,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import GameActionDock from '../components/GameActionDock';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import {
   emitMiniGameSessionEvent,
@@ -445,7 +444,6 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
 
       <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.35rem,env(safe-area-inset-bottom))] z-50 flex justify-center px-3">
         <div className="pointer-events-auto">
-          <GameActionDock onBack={onBack} compact variant="global" />
         </div>
       </div>
     </div>
@@ -453,3 +451,4 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
 };
 
 export default MedianMountainGame;
+

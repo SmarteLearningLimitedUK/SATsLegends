@@ -1,9 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  Activity,
   CheckCircle2,
   RotateCcw,
-  ChevronLeft,
   ChevronRight,
   Trophy,
   AlertCircle,
@@ -11,11 +9,6 @@ import {
   Scale,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-
-interface DataPoint {
-  id: string;
-  value: number;
-}
 
 interface LevelData {
   numbers: number[];
@@ -33,7 +26,6 @@ interface MeanMachineGameProps {
   onBack: () => void;
 }
 
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'];
 const MAX_LEVEL = 10;
 
 const scoreToStars = (XP: number) => {
@@ -91,7 +83,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     });
     setSelectedAnswer(null);
     setFeedback(null);
-    setTimeout(() => inputRef.current?.focus(), 10);
+    window.setTimeout(() => inputRef.current?.focus(), 10);
   }, []);
 
   const startGame = () => {
@@ -112,7 +104,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
 
     if (selectedAnswer === null) {
       setFeedback({ type: 'error', message: 'Pick one answer first.' });
-      setTimeout(() => setFeedback(null), 1400);
+      window.setTimeout(() => setFeedback(null), 1400);
       return;
     }
 
@@ -123,8 +115,8 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
       return;
     }
 
-    setFeedback({ type: 'error', message: 'Not quite. Mean = total ÷ how many numbers.' });
-    setTimeout(() => setFeedback(null), 1500);
+    setFeedback({ type: 'error', message: 'Not quite. Mean = total divided by how many numbers.' });
+    window.setTimeout(() => setFeedback(null), 1500);
   };
 
   const nextLevel = () => {
@@ -141,92 +133,117 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 flex flex-col overflow-hidden bg-slate-50 font-sans text-slate-900 select-none">
-      {!useSharedTopHud && (
-        <header className="z-20 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-6 shadow-sm">
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={onBack}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 bg-slate-100 text-slate-700 transition hover:bg-slate-200"
-              aria-label="Back to levels"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <div className="rounded-lg bg-blue-600 p-2 shadow-lg shadow-blue-200">
-              <Scale className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <h1 className="text-sm font-black uppercase tracking-tight text-slate-800">Mean Machine</h1>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Central Tendency Protocol</p>
-            </div>
-          </div>
+    <div className="relative h-full w-full overflow-hidden select-none">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(56,189,248,0.2),rgba(56,189,248,0)_32%),radial-gradient(circle_at_18%_80%,rgba(59,130,246,0.16),rgba(59,130,246,0)_30%),radial-gradient(circle_at_82%_74%,rgba(251,191,36,0.14),rgba(251,191,36,0)_28%)]" />
 
-          <div className="flex items-center gap-8">
-            <div className="flex flex-col items-end">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Efficiency</span>
-              <span className="text-sm font-black tabular-nums text-blue-600">{XP} XP</span>
-            </div>
-            <div className="h-8 w-[1px] bg-slate-200" />
-            <div className="flex flex-col items-end">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Data Set</span>
-              <span className="text-sm font-black text-slate-800">{level} / {MAX_LEVEL}</span>
-            </div>
+      {!useSharedTopHud ? (
+        <div className="relative z-10 flex items-center justify-between px-3 pb-2 pt-3">
+          <button
+            type="button"
+            onClick={onBack}
+            className="rounded-full border border-cyan-100/35 bg-slate-950/40 px-3 py-2 text-[11px] font-black uppercase tracking-[0.16em] text-white"
+          >
+            Back
+          </button>
+          <div className="rounded-full border border-cyan-100/35 bg-slate-950/35 px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/90">
+            Mean Machine
           </div>
-        </header>
-      )}
+        </div>
+      ) : null}
 
-      <main className={`relative flex flex-1 flex-col items-center justify-center p-8 ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.25rem)]' : ''}`}>
+      <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.75rem)] pt-1">
         <AnimatePresence mode="wait">
-          {(gameState === 'playing' || gameState === 'success') && currentLevelData && (
+          {(gameState === 'playing' || gameState === 'success') && currentLevelData ? (
             <motion.div
               key={level}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="flex w-full max-w-4xl flex-col gap-8"
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -14 }}
+              className="flex h-full min-h-0 flex-col gap-3"
             >
-              <div className="flex flex-col gap-8 rounded-3xl border border-slate-100 bg-white p-8 shadow-xl shadow-slate-200/50">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="rounded-xl bg-blue-100 p-2">
-                      <TrendingUp className="h-5 w-5 text-blue-600" />
-                    </div>
-                    <div>
-                      <h2 className="text-lg font-bold tracking-tight">Calculate the Mean</h2>
-                      <p className="text-xs font-medium text-slate-400">Step 1: Add all numbers. Step 2: Divide by how many numbers.</p>
-                    </div>
-                  </div>
+              <section className="mx-auto w-full max-w-[22rem] shrink-0 rounded-[1.35rem] border border-cyan-100/28 bg-[linear-gradient(180deg,rgba(14,45,103,0.92),rgba(8,26,72,0.96))] px-4 py-3 text-center shadow-[0_16px_28px_rgba(2,6,23,0.36)]">
+                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/80">
+                  Mean Machine
                 </div>
+                <div className="mt-1 text-[clamp(1rem,3.8vw,1.2rem)] font-black text-white">
+                  Find the mean of the data set
+                </div>
+                <div className="mt-1 text-[11px] font-semibold text-cyan-100/80">
+                  Add the numbers, then divide by how many numbers there are.
+                </div>
+              </section>
 
-                <div className="w-full rounded-2xl border border-slate-100 bg-slate-50 p-6">
-                  <p className="mb-3 text-center text-xs font-black uppercase tracking-widest text-slate-500">Data Set</p>
-                  <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
-                    {currentLevelData.numbers.map((n, i) => (
-                      <div
-                        key={i}
-                        className="rounded-xl border border-slate-200 bg-white px-3 py-3 text-center text-xl font-black text-slate-700 shadow-sm"
-                      >
-                        {n}
+              <main className="flex min-h-0 flex-1 flex-col gap-3">
+                <section className="relative min-h-0 flex-1 overflow-hidden rounded-[1.7rem] border border-cyan-100/24 bg-[linear-gradient(180deg,rgba(15,41,95,0.74),rgba(6,22,62,0.9))] px-3 py-3 shadow-[0_18px_30px_rgba(2,6,23,0.34)]">
+                  <div className="pointer-events-none absolute inset-x-[12%] top-[9%] h-16 rounded-full bg-cyan-300/12 blur-2xl" />
+                  <div className="flex h-full min-h-0 flex-col gap-3">
+                    <div className="grid shrink-0 grid-cols-2 gap-2">
+                      <div className="rounded-[1.1rem] border border-cyan-100/24 bg-slate-950/26 px-3 py-2 text-center">
+                        <div className="text-[9px] font-black uppercase tracking-[0.18em] text-cyan-100/70">
+                          Data Count
+                        </div>
+                        <div className="mt-1 text-xl font-black text-cyan-50">
+                          {currentLevelData.numbers.length}
+                        </div>
                       </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-4 grid grid-cols-2 gap-3">
-                    <div className="rounded-xl border border-blue-100 bg-blue-50 px-3 py-2 text-center">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-blue-500">How many numbers?</p>
-                      <p className="text-lg font-black text-blue-700">{currentLevelData.numbers.length}</p>
+                      <div className="rounded-[1.1rem] border border-amber-100/24 bg-slate-950/26 px-3 py-2 text-center">
+                        <div className="text-[9px] font-black uppercase tracking-[0.18em] text-amber-100/75">
+                          Total
+                        </div>
+                        <div className="mt-1 text-xl font-black text-amber-100">
+                          {currentLevelData.total}
+                        </div>
+                      </div>
                     </div>
-                    <div className="rounded-xl border border-amber-100 bg-amber-50 px-3 py-2 text-center">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-amber-500">Add all numbers</p>
-                      <p className="text-lg font-black text-amber-700">{currentLevelData.total}</p>
+
+                    <div className="relative shrink-0 overflow-hidden rounded-[1.4rem] border border-cyan-100/24 bg-[linear-gradient(180deg,rgba(17,56,128,0.8),rgba(11,31,83,0.94))] px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+                      <div className="pointer-events-none absolute inset-x-[18%] top-2 h-10 rounded-full bg-cyan-300/15 blur-xl" />
+                      <div className="relative flex items-center justify-between gap-2">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full border border-cyan-100/30 bg-slate-950/28 shadow-[0_8px_14px_rgba(2,6,23,0.3)]">
+                          <Scale className="h-6 w-6 text-cyan-100" />
+                        </div>
+                        <div className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-[1.2rem] border border-cyan-100/18 bg-slate-950/25 px-3 py-2">
+                          <div className="text-center">
+                            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/70">Total</div>
+                            <div className="text-xl font-black text-white">{currentLevelData.total}</div>
+                          </div>
+                          <div className="text-lg font-black text-cyan-100/70">�</div>
+                          <div className="text-center">
+                            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/70">Count</div>
+                            <div className="text-xl font-black text-white">{currentLevelData.numbers.length}</div>
+                          </div>
+                          <div className="text-lg font-black text-cyan-100/70">=</div>
+                          <div className="flex h-12 min-w-[3.25rem] items-center justify-center rounded-[1rem] border border-amber-200/45 bg-[linear-gradient(180deg,rgba(251,191,36,0.95),rgba(245,158,11,0.95))] px-3 text-[1.55rem] font-black text-slate-950 shadow-[0_10px_18px_rgba(146,64,14,0.35)]">
+                            {selectedAnswer ?? '?'}
+                          </div>
+                        </div>
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full border border-cyan-100/30 bg-slate-950/28 shadow-[0_8px_14px_rgba(2,6,23,0.3)]">
+                          <TrendingUp className="h-6 w-6 text-cyan-100" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="min-h-0 flex-1 overflow-hidden rounded-[1.35rem] border border-cyan-100/20 bg-slate-950/18 p-3">
+                      <div className="mb-2 text-center text-[9px] font-black uppercase tracking-[0.18em] text-cyan-100/72">
+                        Data Set
+                      </div>
+                      <div className="grid h-full min-h-0 grid-cols-3 gap-2 sm:grid-cols-4">
+                        {currentLevelData.numbers.map((n, i) => (
+                          <div
+                            key={i}
+                            className="flex min-h-[3.1rem] items-center justify-center rounded-[1rem] border border-cyan-100/20 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(255,255,255,0.04))] px-2 text-[clamp(1rem,4vw,1.35rem)] font-black text-white shadow-[0_10px_16px_rgba(2,6,23,0.2)]"
+                          >
+                            {n}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
+                </section>
 
-                <div className="flex flex-col gap-4">
-                  <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                    <div className="grid grid-cols-2 gap-3">
+                <section className="shrink-0 rounded-[1.5rem] border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(10,31,83,0.92),rgba(7,21,58,0.96))] p-3 shadow-[0_16px_26px_rgba(2,6,23,0.34)]">
+                  <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+                    <div className="grid grid-cols-2 gap-2.5">
                       {currentLevelData.options.map((option, idx) => (
                         <button
                           key={`${option}-${idx}`}
@@ -234,11 +251,11 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                           ref={idx === 0 ? inputRef : undefined}
                           onClick={() => setSelectedAnswer(option)}
                           disabled={gameState === 'success'}
-                          className={`rounded-xl border-2 px-4 py-3 text-xl font-black transition-all ${
+                          className={`rounded-[1rem] border px-4 py-3 text-lg font-black transition-all ${
                             selectedAnswer === option
-                              ? 'border-blue-500 bg-blue-600 text-white shadow-lg shadow-blue-200'
-                              : 'border-slate-200 bg-white text-slate-800 hover:border-slate-300'
-                          }`}
+                              ? 'border-amber-100/85 bg-[linear-gradient(180deg,#fbbf24_0%,#f59e0b_100%)] text-slate-950 shadow-[0_12px_20px_rgba(146,64,14,0.34)]'
+                              : 'border-cyan-100/24 bg-[linear-gradient(180deg,#2563eb_0%,#1d4ed8_100%)] text-white'
+                          } ${gameState === 'success' ? 'opacity-80' : 'hover:brightness-110'}`}
                         >
                           {option}
                         </button>
@@ -248,97 +265,91 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                     <AnimatePresence mode="wait">
                       {gameState === 'success' ? (
                         <motion.button
-                          initial={{ opacity: 0, scale: 0.9 }}
+                          initial={{ opacity: 0, scale: 0.96 }}
                           animate={{ opacity: 1, scale: 1 }}
                           onClick={nextLevel}
                           type="button"
-                          className="flex items-center gap-2 rounded-2xl bg-blue-600 px-10 py-4 text-sm font-black uppercase tracking-widest text-white shadow-lg shadow-blue-200 transition-all hover:bg-blue-700"
+                          className="mx-auto flex min-h-[3rem] items-center gap-2 rounded-full bg-[linear-gradient(180deg,#f8d66b_0%,#f2a82c_100%)] px-7 py-3 text-[11px] font-black uppercase tracking-[0.16em] text-slate-950 shadow-[0_8px_0_rgba(146,87,8,0.72),0_16px_24px_rgba(2,6,23,0.22)]"
                         >
-                          Next Level <ChevronRight className="h-4 w-4" />
+                          Continue <ChevronRight className="h-4 w-4" />
                         </motion.button>
                       ) : (
                         <button
                           type="submit"
-                          className="mx-auto flex items-center gap-2 rounded-xl bg-slate-800 px-6 py-2.5 text-xs font-black uppercase tracking-[0.18em] text-white shadow-md transition-all hover:bg-slate-900"
+                          className="mx-auto flex min-h-[2.8rem] items-center gap-2 rounded-full border border-cyan-100/26 bg-[linear-gradient(180deg,#123d90_0%,#0b2b72_100%)] px-6 py-3 text-[10px] font-black uppercase tracking-[0.18em] text-white shadow-[0_12px_20px_rgba(2,6,23,0.26)] hover:brightness-110"
                         >
                           Verify Mean
                         </button>
                       )}
                     </AnimatePresence>
                   </form>
-                </div>
-              </div>
+                </section>
+              </main>
             </motion.div>
-          )}
+          ) : null}
         </AnimatePresence>
 
         <AnimatePresence>
-          {gameState === 'complete' && (
+          {gameState === 'complete' ? (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="absolute inset-0 z-50 flex items-center justify-center bg-slate-50/95 p-12 text-center backdrop-blur-md"
+              className="absolute inset-0 z-50 flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-md"
             >
-              <div className="flex max-w-md flex-col items-center">
-                <div className="relative mb-8">
-                  <Trophy className="h-24 w-24 text-yellow-500 drop-shadow-lg" />
+              <div className="w-full max-w-[20rem] rounded-[1.75rem] border border-cyan-100/24 bg-[linear-gradient(180deg,rgba(16,46,107,0.96),rgba(8,25,68,0.98))] px-5 py-6 text-center text-white shadow-[0_22px_36px_rgba(2,6,23,0.46)]">
+                <div className="relative mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full border border-amber-200/40 bg-amber-300/18">
+                  <Trophy className="h-10 w-10 text-amber-200" />
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
-                    className="absolute inset-0 -m-4 rounded-full border-4 border-dashed border-yellow-200"
+                    className="absolute inset-[-10px] rounded-full border-2 border-dashed border-amber-200/30"
                   />
                 </div>
-                <h2 className="mb-2 text-4xl font-black uppercase tracking-tight text-slate-800">System Stabilized</h2>
-                <p className="mb-8 font-medium text-slate-500">
-                  Incredible work. You have successfully calculated the mean for all complex data sets.
+                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/75">
+                  Mean Machine
+                </div>
+                <h2 className="mt-1 text-2xl font-black uppercase tracking-[0.04em] text-amber-100">
+                  Machine Calibrated
+                </h2>
+                <p className="mt-2 text-sm font-semibold leading-relaxed text-cyan-100/82">
+                  You balanced every data set and mastered the mean.
                 </p>
-                <div className="mb-8 w-full rounded-3xl border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/50">
-                  <span className="mb-1 block text-[10px] font-black uppercase tracking-widest text-slate-400">Final Credibility</span>
-                  <span className="text-5xl font-black text-blue-600">{XP} XP</span>
+                <div className="mt-4 rounded-[1.25rem] border border-cyan-100/18 bg-slate-950/24 px-4 py-4">
+                  <div className="text-[9px] font-black uppercase tracking-[0.18em] text-cyan-100/72">Final XP</div>
+                  <div className="mt-1 text-4xl font-black text-amber-100">{XP}</div>
                 </div>
                 <button
+                  type="button"
                   onClick={startGame}
-                  className="flex items-center gap-3 rounded-full bg-slate-800 px-12 py-4 text-sm font-black uppercase tracking-widest text-white shadow-xl shadow-slate-200 transition-all hover:bg-slate-900"
+                  className="mx-auto mt-5 flex min-h-[3rem] items-center gap-2 rounded-full bg-[linear-gradient(180deg,#f8d66b_0%,#f2a82c_100%)] px-7 py-3 text-[11px] font-black uppercase tracking-[0.16em] text-slate-950 shadow-[0_8px_0_rgba(146,87,8,0.72),0_16px_24px_rgba(2,6,23,0.22)]"
                 >
-                  <RotateCcw className="h-4 w-4" /> Restart Protocol
+                  <RotateCcw className="h-4 w-4" /> Restart
                 </button>
               </div>
             </motion.div>
-          )}
+          ) : null}
         </AnimatePresence>
 
         <AnimatePresence>
-          {feedback && (
+          {feedback ? (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className={`absolute bottom-[calc(env(safe-area-inset-bottom)+4.4rem)] left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 rounded-2xl border px-8 py-4 shadow-2xl ${
+              exit={{ opacity: 0, y: -18 }}
+              className={`absolute bottom-[calc(env(safe-area-inset-bottom)+4.5rem)] left-1/2 z-40 flex max-w-[18rem] -translate-x-1/2 items-center gap-2 rounded-full border px-4 py-2 text-center shadow-[0_16px_26px_rgba(2,6,23,0.34)] ${
                 feedback.type === 'success'
-                  ? 'border-emerald-200 bg-emerald-50 text-emerald-600'
-                  : 'border-rose-200 bg-rose-50 text-rose-600'
+                  ? 'border-emerald-200/55 bg-emerald-500/24 text-emerald-50'
+                  : 'border-rose-200/55 bg-rose-500/24 text-rose-50'
               }`}
             >
-              {feedback.type === 'success' ? <CheckCircle2 className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
-              <span className="text-sm font-black uppercase tracking-wide">{feedback.message}</span>
+              {feedback.type === 'success' ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <AlertCircle className="h-4 w-4 shrink-0" />}
+              <span className="text-[10px] font-black uppercase tracking-[0.12em]">
+                {feedback.message}
+              </span>
             </motion.div>
-          )}
+          ) : null}
         </AnimatePresence>
-      </main>
-
-      <footer className="z-20 flex h-10 items-center justify-between border-t border-slate-200 bg-white px-6">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1.5">
-            <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-blue-500" />
-            <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">Core Logic: Online</span>
-          </div>
-          <div className="h-3 w-[1px] bg-slate-200" />
-          <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">Difficulty: Level {level}</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">© 2026 Mean Machine Labs</span>
-        </div>
-      </footer>
+      </div>
     </div>
   );
 };

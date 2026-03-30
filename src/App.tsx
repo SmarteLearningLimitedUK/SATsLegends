@@ -465,6 +465,7 @@ const App: React.FC = () => {
                   || selectedLevel.blueprintKey === 'rounding_rampage'
                   || selectedLevel.blueprintKey === 'conversion_canyon'
                   || selectedLevel.blueprintKey === 'match3_equivalence'
+                  || selectedLevel.blueprintKey === 'mode_miner'
                   || selectedLevel.gameType === 'monster_market'
                     ? null
                     : (

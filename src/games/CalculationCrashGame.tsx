@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ChevronRight, RotateCcw, Trophy } from 'lucide-react';
-import GameActionDock from '../components/GameActionDock';
 import calculationClashBackground from '../assets/maps/facctor frenzy.jpg';
 
 interface CalculationCrashGameProps {
@@ -270,7 +269,6 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
 
       <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.4rem,env(safe-area-inset-bottom))] z-50 flex justify-center px-3">
         <div className="pointer-events-auto">
-          <GameActionDock onBack={onBack} compact accentClass="text-slate-100" />
         </div>
       </div>
 
@@ -325,3 +323,4 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
 };
 
 export default CalculationCupGame;
+

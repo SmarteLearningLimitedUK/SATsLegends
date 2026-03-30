@@ -5,7 +5,6 @@ import {
   RotateCcw,
   CheckCircle2,
 } from 'lucide-react';
-import GameActionDock from '../components/GameActionDock';
 import factorFrenzyBackground from '../assets/maps/facctor frenzy.jpg';
 import questionBarSmall from '../assets/ui_frames/hudfortextplace_slices/text_bar_small.png';
 import questionBarMedium from '../assets/ui_frames/hudfortextplace_slices/text_bar_medium.png';
@@ -468,7 +467,6 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
       {playingState && (
         <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.4rem,env(safe-area-inset-bottom))] z-40 flex justify-center px-3">
           <div className="pointer-events-auto">
-            <GameActionDock onBack={onBack} compact accentClass="text-slate-100" variant="global" />
           </div>
         </div>
       )}
@@ -477,3 +475,4 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 };
 
 export default FactorFrenzyGame;
+

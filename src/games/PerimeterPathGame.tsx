@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import GameActionDock from '../components/GameActionDock';
 import perimeterBackground from '../assets/maps/facctor frenzy.jpg';
 
 interface PerimeterPathGameProps {
@@ -514,7 +513,6 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
 
       <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.45rem,env(safe-area-inset-bottom))] z-40 flex justify-center">
         <div className="pointer-events-auto">
-          <GameActionDock onBack={onBack} compact />
         </div>
       </div>
     </div>
@@ -522,3 +520,4 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
 };
 
 export default PerimeterPathGame;
+

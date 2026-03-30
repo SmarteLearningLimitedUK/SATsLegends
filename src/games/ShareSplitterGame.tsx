@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { Check, RefreshCcw, Timer as TimerIcon, Trophy } from 'lucide-react';
 import FoodGameShell from '../components/FoodGameShell';
-import GameActionDock from '../components/GameActionDock';
 import AssetIcon from '../components/AssetIcon';
 import { TAKE_OUT_ASSETS } from '../assets/take_out';
 import { BOSS_ASSETS } from '../assets/bosses';
@@ -486,8 +485,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         </AnimatePresence>
       </div>
 
-      <GameActionDock onBack={onBack} compact />
-
       {finished ? (
         <div className="absolute inset-0 z-40 flex items-center justify-center bg-[radial-gradient(circle,rgba(15,23,42,0.74),rgba(2,6,23,0.9))]">
           <div className="ui-panel-unified w-[min(92vw,26rem)] rounded-[1.6rem] border border-white/18 bg-[linear-gradient(180deg,rgba(30,64,175,0.88),rgba(15,23,42,0.9))] p-5 text-center shadow-[0_24px_40px_rgba(15,23,42,0.45)]">
@@ -510,4 +507,5 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 };
 
 export default ShareSplitterGame;
+
 

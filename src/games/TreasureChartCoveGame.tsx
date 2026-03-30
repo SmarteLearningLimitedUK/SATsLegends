@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import GameplayHUD from '../components/GameplayHUD';
-import GameActionDock from '../components/GameActionDock';
 import { AVATARS } from '../constants';
 
 interface TreasureChartCoveGameProps {
@@ -373,21 +371,6 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
 
       <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center gap-2 p-2 md:gap-4 md:p-4">
         <div className="w-full max-w-6xl">
-          <GameplayHUD
-            title="Treasure Chart Cove"
-            avatar={avatar}
-            XP={XP}
-            targetScore={targetScore}
-            timeLeft={timeLeft}
-            progress={progress}
-            compact
-            accentText="text-amber-950"
-            accentSoftBg="bg-amber-100/84"
-            accentBorder="border-amber-200/88"
-            progressBar="bg-gradient-to-r from-cyan-300 via-sky-400 to-emerald-300"
-            statLabel="Round"
-            statValue={`${roundNumber}/${totalRounds}`}
-          />
         </div>
 
       <div className="licensed-board-frame structured-playfield-frame relative flex w-full max-w-6xl min-h-0 flex-1 overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] shadow-[0_28px_64px_rgba(0,0,0,0.34)] md:rounded-[2.6rem]">
@@ -472,7 +455,6 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
         </div>
 
         <div className="w-full max-w-6xl">
-          <GameActionDock onBack={onBack} accentClass="text-white" />
         </div>
       </div>
     </div>
@@ -480,3 +462,4 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
 };
 
 export default TreasureChartCoveGame;
+

@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import GameplayHUD from '../components/GameplayHUD';
-import GameActionDock from '../components/GameActionDock';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import AssetIcon from '../components/AssetIcon';
 import { AVATARS } from '../constants';
@@ -416,21 +414,6 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
 
       <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center gap-2 p-2 md:gap-4 md:p-4">
         <div className="w-full max-w-6xl">
-          <GameplayHUD
-            title={gameTitle || 'Ratio Raiders'}
-            avatar={avatar}
-            XP={XP}
-            targetScore={targetScore}
-            timeLeft={timeLeft}
-            progress={progress}
-            compact
-            accentText="text-amber-950"
-            accentSoftBg="bg-amber-100/84"
-            accentBorder="border-amber-200/88"
-            progressBar="bg-gradient-to-r from-cyan-300 via-blue-400 to-emerald-300"
-            statLabel="Wave"
-            statValue={`${roundNumber}/${totalRounds}`}
-          />
         </div>
 
         <PuzzleStage className="w-full max-w-6xl rounded-[2.3rem] md:rounded-[2.6rem]">
@@ -590,7 +573,6 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
         </PuzzleStage>
 
         <div className="w-full max-w-6xl">
-          <GameActionDock onBack={onBack} accentClass="text-amber-100" />
         </div>
       </div>
     </GameScreenShell>
@@ -598,3 +580,4 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
 };
 
 export default RatioRapidsGame;
+

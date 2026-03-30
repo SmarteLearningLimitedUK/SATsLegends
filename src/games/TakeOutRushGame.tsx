@@ -11,7 +11,6 @@ import food6 from '../assets/take_out/food/6.png';
 import food7 from '../assets/take_out/food/7.png';
 import food8 from '../assets/take_out/food/8.png';
 import food9 from '../assets/take_out/food/9.png';
-import GameActionDock from '../components/GameActionDock';
 import FoodGameShell from '../components/FoodGameShell';
 import { triggerHaptic } from '../haptics';
 
@@ -763,7 +762,6 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
 
       <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.45rem,env(safe-area-inset-bottom))] z-40 flex justify-center px-3">
         <div className="pointer-events-auto">
-          <GameActionDock onBack={onBack} compact accentClass="text-slate-100" />
         </div>
       </div>
     </FoodGameShell>
@@ -771,3 +769,4 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
 };
 
 export default TakeOutRushGame;
+

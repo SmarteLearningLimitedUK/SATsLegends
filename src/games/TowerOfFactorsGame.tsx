@@ -3,8 +3,6 @@ import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { AVATARS } from '../constants';
 import BossPortrait from '../components/BossPortrait';
-import GameplayHUD from '../components/GameplayHUD';
-import GameActionDock from '../components/GameActionDock';
 import { getBossEncounter } from '../bossMeta';
 import { triggerHaptic } from '../haptics';
 import { Castle, Star } from '../components/GameIcons';
@@ -280,21 +278,6 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
       </div>
 
       <div className="z-10 flex h-full min-h-0 w-full max-w-5xl flex-1 flex-col items-center gap-2 md:gap-4">
-        <GameplayHUD
-          title="Factor Forge"
-          avatar={avatar}
-          XP={XP}
-          targetScore={targetScore}
-          timeLeft={timeLeft}
-          progress={progress}
-          compact
-          accentText="text-amber-950"
-          accentSoftBg="bg-amber-100/80"
-          accentBorder="border-amber-200/80"
-          progressBar="bg-gradient-to-r from-yellow-300 via-orange-400 to-red-500"
-          statLabel="Combo"
-          statValue={Combo}
-        />
 
         <div className="relative w-full flex-1 min-h-0">
           {problem && (
@@ -428,11 +411,6 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
           </AnimatePresence>
         </div>
 
-        <GameActionDock
-          onBack={onBack}
-          accentClass="text-white"
-        />
-
         <AnimatePresence>
           {(isGameOver || isVictory) && (
             <motion.div
@@ -481,3 +459,4 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
 };
 
 export default TowerOfFactorsGame;
+

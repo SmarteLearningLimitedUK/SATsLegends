@@ -14,9 +14,7 @@ import { getBossEncounter } from '../bossMeta';
 import { GAME_META } from '../gameMeta';
 import { triggerHaptic } from '../haptics';
 import BossPortrait from '../components/BossPortrait';
-import GameActionDock from '../components/GameActionDock';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
-import GameplayHUD from '../components/GameplayHUD';
 import { Star } from '../components/GameIcons';
 import answerActionBg from '../assets/casual_ui/inputs/btn_1.png';
 import answerDecorAsset from '../assets/casual_ui/dialogs_panels/dialog__tag.png';
@@ -1151,21 +1149,6 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
       <div className="pointer-events-none absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.22) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
 
       <div className="relative z-10 flex h-full min-h-0 flex-col gap-1 md:gap-4">
-        <GameplayHUD
-          title={theme.title}
-          avatar={avatar}
-          XP={XP}
-          targetScore={targetScore}
-          timeLeft={timeLeft}
-          progress={progress}
-          accentText={theme.statText}
-          accentSoftBg={theme.statSoftBg}
-          accentBorder={theme.statBorder}
-          progressBar={theme.progress}
-          statLabel="Combo"
-          statValue={Combo}
-          compact
-        />
 
             <div className={`licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.8rem] border border-white/10 ${isCalculationClash ? 'bg-[linear-gradient(180deg,rgba(9,34,58,0.86),rgba(7,17,31,0.62))]' : isPercentPulse ? 'bg-[linear-gradient(180deg,rgba(30,12,58,0.82),rgba(7,18,32,0.42))]' : isPlaceValuePeaks ? 'bg-[linear-gradient(180deg,rgba(52,28,10,0.76),rgba(16,16,22,0.54))]' : 'bg-[linear-gradient(180deg,rgba(9,16,28,0.68),rgba(9,16,28,0.34))]'} shadow-[0_24px_64px_rgba(0,0,0,0.28)] md:rounded-[2.6rem]`}>
           <div className="flex min-h-0 flex-1 flex-col gap-1.5 p-1.5 md:gap-3 md:p-4">
@@ -1268,8 +1251,6 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
           </div>
         </div>
 
-        <GameActionDock onBack={onBack} accentClass="text-white" />
-
         <AnimatePresence>
           {(isVictory || isGameOver) && (
             <motion.div
@@ -1315,3 +1296,4 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
 };
 
 export default CurriculumChallengeGame;
+

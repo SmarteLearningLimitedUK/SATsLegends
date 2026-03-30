@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { CheckCircle2, Pickaxe, RotateCcw, Search, Trophy } from 'lucide-react';
-import factorFrenzyBackground from '../assets/maps/facctor frenzy.jpg';
 
 interface LevelData {
   numbers: number[];
@@ -94,7 +93,7 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
   onVictory,
   onGameOver,
   onBack: _onBack,
-  useSharedTopHud = true,
+  useSharedTopHud: _useSharedTopHud = true,
 }) => {
   const [gameState, setGameState] = useState<'playing' | 'success' | 'complete'>('playing');
   const [XP, setScore] = useState(0);
@@ -167,24 +166,13 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
     }
   }, [currentLevelData, gameState, handleNextLevel, level, mistakes, onGameOver, XP, selectedChoice, Combo]);
 
-  const topPadding = useSharedTopHud
-    ? 'pt-[calc(env(safe-area-inset-top)+5.35rem)]'
-    : 'pt-[calc(env(safe-area-inset-top)+1rem)]';
-
   const mistakesLeft = useMemo(() => Math.max(0, MAX_MISTAKES - mistakes), [mistakes]);
 
   return (
-    <div className="fixed inset-0 z-20 h-screen w-screen overflow-hidden text-white">
-      <img
-        src={factorFrenzyBackground}
-        alt=""
-        aria-hidden="true"
-        draggable={false}
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
-      />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(74,222,128,0.22),rgba(3,7,20,0.46)_68%)]" />
+    <div className="relative z-10 flex h-full w-full overflow-hidden text-white">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(74,222,128,0.16),rgba(3,7,20,0.16)_42%,rgba(3,7,20,0.36)_100%)]" />
 
-      <main className={`relative z-10 flex h-full w-full flex-col ${topPadding} px-[max(1rem,env(safe-area-inset-left))] pb-[calc(env(safe-area-inset-bottom)+4.25rem)]`}>
+      <main className="relative z-10 flex h-full w-full flex-col px-[max(1rem,env(safe-area-inset-left))] py-2">
         <div className="mx-auto flex h-full w-full max-w-[31rem] min-h-0 flex-col">
           <AnimatePresence mode="wait">
             {(gameState === 'playing' || gameState === 'success') && currentLevelData && (

@@ -3,7 +3,6 @@ import SequenceSprint from './SequenceSprint';
 import LogicSort from './LogicSort';
 import ShapeShift from './ShapeShift';
 import MatrixMatch from './MatrixMatch';
-import GameActionDock from '../../components/GameActionDock';
 import GameplaySceneBackdrop from '../../components/GameplaySceneBackdrop';
 
 interface ReasoningGameProps {
@@ -43,10 +42,10 @@ const ReasoningGame: React.FC<ReasoningGameProps> = ({ gameType, isBoss = false,
         </div>
       </div>
       <div className="relative z-20 shrink-0 pb-1">
-        <GameActionDock onBack={onBack} accentClass="text-slate-100" />
       </div>
     </div>
   );
 };
 
 export default ReasoningGame;
+

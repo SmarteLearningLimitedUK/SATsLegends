@@ -21,7 +21,6 @@ import {
   X,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import GameActionDock from '../components/GameActionDock';
 import FoodGameShell from '../components/FoodGameShell';
 import AssetIcon from '../components/AssetIcon';
 import coinAsset from '../assets/fantasy_hero/ui/coin.png';
@@ -383,8 +382,6 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
         </div>
       </div>
 
-      <GameActionDock onBack={onBack} accentClass="text-white" />
-
       {!gameActive && (
         <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-blue-950/90 p-8 text-center">
           <Trophy className="mb-4 h-24 w-24 animate-bounce text-yellow-400" />
@@ -409,3 +406,4 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
 };
 
 export default MonsterMarketGame;
+

@@ -4,8 +4,6 @@ import confetti from 'canvas-confetti';
 import { AvatarData } from '../types';
 import { AVATARS } from '../constants';
 import { getSatsInspiredDataDungeonPuzzle, type DataDungeonPuzzle as Puzzle } from '../systems/content/satsInspiredQuestionBanks';
-import GameplayHUD from '../components/GameplayHUD';
-import GameActionDock from '../components/GameActionDock';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { Star, Timer, Lock, Unlock } from '../components/GameIcons';
 
@@ -244,20 +242,6 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
 
       <div className="relative z-10 flex h-full w-full min-h-0 flex-col items-center gap-2.5 px-2.5 pb-2.5 pt-[calc(0.55rem+env(safe-area-inset-top))] md:gap-3 md:px-4 md:pb-4 md:pt-4">
         <div className="w-full max-w-5xl flex min-h-0 flex-1 flex-col items-center gap-3 md:gap-4">
-        <GameplayHUD
-          title="Data Dungeon"
-          avatar={avatar}
-          XP={XP}
-          targetScore={targetScore}
-          timeLeft={timeLeft}
-          progress={progress}
-          accentText="text-amber-500"
-          accentSoftBg="bg-stone-900/80"
-          accentBorder="border-stone-700/90"
-          progressBar="bg-gradient-to-r from-amber-600 via-yellow-500 to-yellow-300"
-          statLabel="Combo"
-          statValue={Combo}
-        />
 
         <div className="licensed-board-frame structured-playfield-frame relative flex w-full min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] p-2 md:rounded-[2.6rem] md:p-3">
           {/* Game Area */}
@@ -364,11 +348,6 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
           </div>
         </div>
 
-        <GameActionDock
-          onBack={onBack}
-          accentClass="text-white"
-        />
-
         {/* Game Over / Victory Modals */}
         <AnimatePresence>
         {(isGameOver || isVictory) && (
@@ -419,3 +398,4 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
 };
 
 export default DataDungeonGame;
+

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import GameplayHUD from '../components/GameplayHUD';
 import AssetIcon from '../components/AssetIcon';
 import { AVATARS } from '../constants';
 import primePopBackground from '../assets/maps/primepopbkground.jpg';
@@ -531,21 +530,6 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
       style={{ backgroundImage: `url(${primePopBackground})` }}
     >
       <div className="relative z-10 flex h-full min-h-0 w-full flex-col pt-[env(safe-area-inset-top)]">
-        <GameplayHUD
-          title="Prime Pop"
-          avatar={avatar}
-          XP={XP}
-          targetScore={targetScore}
-          timeLeft={timeLeft}
-          progress={progress}
-          accentText="text-cyan-900"
-          accentSoftBg="bg-cyan-100/80"
-          accentBorder="border-cyan-200/80"
-          progressBar="bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500"
-          statLabel="Health"
-          statValue={healthHearts}
-          compact
-        />
 
         <div className="relative min-h-0 flex-1 overflow-hidden bg-transparent">
           <div className="absolute inset-[40px] z-10 overflow-hidden">
@@ -606,3 +590,4 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
 };
 
 export default PrimePopGame;
+

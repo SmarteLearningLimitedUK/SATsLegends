@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import GameplayHUD from '../components/GameplayHUD';
-import GameActionDock from '../components/GameActionDock';
 import { AVATARS } from '../constants';
 
 interface RuneLockDungeonsGameProps {
@@ -256,21 +254,6 @@ const RuneLockDungeonsGame: React.FC<RuneLockDungeonsGameProps> = ({
 
       <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center gap-2 p-2 md:gap-4 md:p-4">
         <div className="w-full max-w-6xl">
-          <GameplayHUD
-            title="Rune Lock Dungeons"
-            avatar={avatar}
-            XP={XP}
-            targetScore={targetScore}
-            timeLeft={timeLeft}
-            progress={progress}
-            compact
-            accentText="text-sky-950"
-            accentSoftBg="bg-sky-100/84"
-            accentBorder="border-sky-200/88"
-            progressBar="bg-gradient-to-r from-sky-300 via-cyan-400 to-amber-300"
-            statLabel="Door"
-            statValue={`${roundNumber}/${totalRounds}`}
-          />
         </div>
 
       <div className="licensed-board-frame structured-playfield-frame relative flex w-full max-w-6xl min-h-0 flex-1 overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] shadow-[0_28px_64px_rgba(0,0,0,0.34)] md:rounded-[2.6rem]">
@@ -359,7 +342,6 @@ const RuneLockDungeonsGame: React.FC<RuneLockDungeonsGameProps> = ({
         </div>
 
         <div className="w-full max-w-6xl">
-          <GameActionDock onBack={onBack} accentClass="text-white" />
         </div>
       </div>
     </div>
@@ -367,3 +349,4 @@ const RuneLockDungeonsGame: React.FC<RuneLockDungeonsGameProps> = ({
 };
 
 export default RuneLockDungeonsGame;
+

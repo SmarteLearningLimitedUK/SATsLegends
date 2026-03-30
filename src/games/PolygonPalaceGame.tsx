@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import GameActionDock from '../components/GameActionDock';
 import { triggerHaptic } from '../haptics';
 import gameplayBackground from '../assets/maps/inside dojo.jpg';
 
@@ -931,7 +930,6 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
 
       <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.45rem,env(safe-area-inset-bottom))] z-40 flex justify-center px-3">
         <div className="pointer-events-auto">
-          <GameActionDock onBack={onBack} compact accentClass="text-slate-100" />
         </div>
       </div>
     </div>
@@ -939,5 +937,6 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
 };
 
 export default PolygonPalaceGame;
+
 
 

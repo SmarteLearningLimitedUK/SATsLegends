@@ -8,7 +8,6 @@ import { BossPose } from '../assets/bosses';
 import { triggerHaptic } from '../haptics';
 import AnimatedAvatar from '../components/AnimatedAvatar';
 import BossPortrait from '../components/BossPortrait';
-import GameActionDock from '../components/GameActionDock';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import AssetIcon from '../components/AssetIcon';
 
@@ -690,11 +689,10 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
           </div>
           </div>
         </div>
-
-        <GameActionDock onBack={onBack} accentClass="text-white" />
       </div>
     </div>
   );
 };
 
 export default BossEncounterGame;
+

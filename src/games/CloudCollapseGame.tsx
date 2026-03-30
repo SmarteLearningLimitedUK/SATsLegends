@@ -6,7 +6,6 @@ import { CLOUD_COLLAPSE_LEVELS, AVATARS } from '../constants';
 import HUD from '../components/HUD';
 import GameBoard from '../components/GameBoard';
 import Tutorial from '../components/Tutorial';
-import GameActionDock from '../components/GameActionDock';
 import AssetIcon from '../components/AssetIcon';
 import cloudBackdrop from '../assets/fantasy_hero/demo_bg/background_01.png';
 import sparkle from '../assets/fantasy_hero/cloud_collapse/sparkle.png';
@@ -158,12 +157,6 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
             />
           </div>
         </div>
-
-        <GameActionDock
-          onBack={onBack}
-          onHelp={() => setShowTutorial(true)}
-          accentClass="text-white"
-        />
       </div>
 
       <AnimatePresence>
@@ -236,3 +229,4 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
 };
 
 export default CloudCollapseGame;
+

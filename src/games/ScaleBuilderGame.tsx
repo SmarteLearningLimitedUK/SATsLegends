@@ -10,10 +10,8 @@ import {
   Trophy,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import GameplayHUD from '../components/GameplayHUD';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import MiniGameTopBar from '../components/MiniGameTopBar';
-import GameActionDock from '../components/GameActionDock';
 import { AVATARS } from '../constants';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 import labelGreenLongAsset from '../assets/licensed/slices/label_green_long.png';
@@ -308,21 +306,6 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
 
       <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-2 px-2 pb-1 pt-[max(3.6rem,calc(env(safe-area-inset-top)+2.9rem))] md:gap-3 md:px-3">
         <div className="mx-auto w-full max-w-6xl">
-          <GameplayHUD
-            title="Scale Builder"
-            avatar={avatar}
-            XP={Math.round(finalScore)}
-            targetScore={900 + (LEVELS.length * 220) + (levelId * 60)}
-            timeLeft={LEVELS.length - currentLevelIdx}
-            progress={progressPct}
-            compact
-            accentText="text-sky-950"
-            accentSoftBg="bg-sky-100/84"
-            accentBorder="border-sky-200/88"
-            progressBar="bg-gradient-to-r from-sky-300 via-cyan-300 to-yellow-300"
-            statLabel="Mistakes"
-            statValue={mistakeCount}
-          />
         </div>
 
         <PuzzleStage className="mx-auto w-full max-w-6xl rounded-[2.1rem] md:rounded-[2.5rem]">
@@ -537,7 +520,6 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
         </PuzzleStage>
 
         <div className="mx-auto w-full max-w-6xl">
-          <GameActionDock onBack={onBack} compact />
         </div>
       </div>
     </GameScreenShell>
@@ -545,3 +527,4 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
 };
 
 export default ScaleBuilderGame;
+
