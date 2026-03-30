@@ -42,6 +42,7 @@ interface DragAnswerState {
 
 const QUESTION_ADVANCE_MS = 620;
 const QUESTION_FEEDBACK_MS = 520;
+const SNAP_DISTANCE_PX = 86;
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
@@ -159,6 +160,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const [didFail, setDidFail] = useState(false);
   const [dragAnswer, setDragAnswer] = useState<DragAnswerState | null>(null);
   const [lineShake, setLineShake] = useState(false);
+  const [snapReady, setSnapReady] = useState(false);
 
   const timeoutIdsRef = useRef<number[]>([]);
   const dropZoneRef = useRef<HTMLDivElement | null>(null);
@@ -199,6 +201,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     setDidFail(false);
     setDragAnswer(null);
     setLineShake(false);
+    setSnapReady(false);
   }, [levelId, sessionState, sessionState?.timeLeft, sessionState?.totalTime]);
 
   useEffect(() => {
@@ -232,6 +235,24 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     setLocked(false);
     setDragAnswer(null);
     setLineShake(false);
+    setSnapReady(false);
+  };
+
+  const getDropMetrics = () => {
+    const dropRect = dropZoneRef.current?.getBoundingClientRect();
+    if (!dropRect) return null;
+    return {
+      rect: dropRect,
+      centerX: dropRect.left + (dropRect.width / 2),
+      centerY: dropRect.top + (dropRect.height / 2),
+      threshold: Math.max(SNAP_DISTANCE_PX, Math.max(dropRect.width, dropRect.height) * 1.35),
+    };
+  };
+
+  const isNearDropZone = (clientX: number, clientY: number) => {
+    const metrics = getDropMetrics();
+    if (!metrics) return false;
+    return Math.hypot(clientX - metrics.centerX, clientY - metrics.centerY) <= metrics.threshold;
   };
 
   const handleAnswerDrop = (option: string) => {
@@ -301,6 +322,8 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
     const onMove = (event: PointerEvent) => {
       if (event.pointerId !== dragAnswer.pointerId) return;
+      const isNear = isNearDropZone(event.clientX, event.clientY);
+      setSnapReady(isNear);
       setDragAnswer((current) => (current && current.pointerId === event.pointerId
         ? { ...current, clientX: event.clientX, clientY: event.clientY }
         : current));
@@ -308,13 +331,10 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
     const onUp = (event: PointerEvent) => {
       if (event.pointerId !== dragAnswer.pointerId) return;
-      const dropRect = dropZoneRef.current?.getBoundingClientRect();
-      const withinDrop = dropRect
-        ? event.clientX >= dropRect.left && event.clientX <= dropRect.right && event.clientY >= dropRect.top && event.clientY <= dropRect.bottom
-        : false;
-
+      const withinDrop = isNearDropZone(event.clientX, event.clientY);
       const option = dragAnswer.option;
       setDragAnswer(null);
+      setSnapReady(false);
       if (withinDrop) {
         handleAnswerDrop(option);
       }
@@ -328,6 +348,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
       window.removeEventListener('pointercancel', onUp);
+      setSnapReady(false);
     };
   }, [dragAnswer, handleAnswerDrop]);
 
@@ -404,15 +425,19 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                           <motion.div
                             ref={dropZoneRef}
                             animate={{
-                              scale: [1, 1.08, 1],
+                              scale: snapReady ? [1.08, 1.18, 1.08] : [1, 1.08, 1],
                               boxShadow: [
-                                '0 0 0px rgba(245,158,11,0.25)',
-                                '0 0 28px rgba(245,158,11,0.96)',
-                                '0 0 0px rgba(245,158,11,0.25)',
+                                snapReady ? '0 0 10px rgba(245,158,11,0.48)' : '0 0 0px rgba(245,158,11,0.25)',
+                                snapReady ? '0 0 34px rgba(245,158,11,1)' : '0 0 28px rgba(245,158,11,0.96)',
+                                snapReady ? '0 0 10px rgba(245,158,11,0.48)' : '0 0 0px rgba(245,158,11,0.25)',
                               ],
                             }}
                             transition={{ duration: 1.05, repeat: Infinity, ease: 'easeInOut' }}
-                            className="flex h-[46px] w-[46px] items-center justify-center rounded-full border-2 border-amber-300/95 bg-slate-900/82 text-[28px] font-black leading-none text-amber-100"
+                            className={`flex h-[46px] w-[46px] items-center justify-center rounded-full border-2 text-[28px] font-black leading-none ${
+                              snapReady
+                                ? 'border-amber-100 bg-amber-400/40 text-white'
+                                : 'border-amber-300/95 bg-slate-900/82 text-amber-100'
+                            }`}
                           >
                             ?
                           </motion.div>
@@ -515,28 +540,43 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
       <AnimatePresence>
         {dragAnswer && (
-          <motion.div
-            key={`drag-answer-${dragAnswer.option}`}
-            initial={{ scale: 0.96, opacity: 0.95 }}
-            animate={{ scale: 1.03, opacity: 1 }}
-            exit={{ scale: 0.98, opacity: 0 }}
-            className="pointer-events-none absolute z-30"
-            style={{
-              left: dragAnswer.clientX - dragAnswer.offsetX,
-              top: dragAnswer.clientY - dragAnswer.offsetY,
-              width: dragAnswer.width,
-              height: dragAnswer.height,
-            }}
-          >
-            <div className="relative h-full w-full">
-              <div className="absolute inset-0 rounded-full border-[2px] border-cyan-100/75 bg-gradient-to-b from-cyan-400 to-blue-600 shadow-[0_10px_0_rgba(30,64,175,0.78),0_0_18px_rgba(34,211,238,0.42)]" />
-              <div className="pointer-events-none absolute inset-[9%] rounded-full bg-gradient-to-b from-white/30 via-transparent to-transparent" />
-              <div className="pointer-events-none absolute inset-[16%] rounded-full border border-white/12" />
-              <div className="relative flex h-full items-center justify-center px-1 text-center text-[clamp(16px,1.95vw,24px)] font-black leading-none tracking-tight text-white drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)]">
-                {dragAnswer.option}
-              </div>
-            </div>
-          </motion.div>
+          (() => {
+            const metrics = getDropMetrics();
+            const snappedLeft = metrics ? metrics.centerX - (dragAnswer.width / 2) : dragAnswer.clientX - dragAnswer.offsetX;
+            const snappedTop = metrics ? metrics.centerY - (dragAnswer.height / 2) : dragAnswer.clientY - dragAnswer.offsetY;
+            return (
+              <motion.div
+                key={`drag-answer-${dragAnswer.option}`}
+                initial={{ scale: 0.96, opacity: 0.95 }}
+                animate={{
+                  scale: snapReady ? 1.08 : 1.03,
+                  opacity: 1,
+                  left: snapReady ? snappedLeft : dragAnswer.clientX - dragAnswer.offsetX,
+                  top: snapReady ? snappedTop : dragAnswer.clientY - dragAnswer.offsetY,
+                }}
+                exit={{ scale: 0.98, opacity: 0 }}
+                transition={{ duration: 0.14, ease: 'easeOut' }}
+                className="pointer-events-none absolute z-30"
+                style={{
+                  width: dragAnswer.width,
+                  height: dragAnswer.height,
+                }}
+              >
+                <div className="relative h-full w-full">
+                  <div className={`absolute inset-0 rounded-full border-[2px] shadow-[0_10px_0_rgba(30,64,175,0.78),0_0_18px_rgba(34,211,238,0.42)] ${
+                    snapReady
+                      ? 'border-amber-100 bg-gradient-to-b from-amber-300 to-amber-500'
+                      : 'border-cyan-100/75 bg-gradient-to-b from-cyan-400 to-blue-600'
+                  }`} />
+                  <div className="pointer-events-none absolute inset-[9%] rounded-full bg-gradient-to-b from-white/30 via-transparent to-transparent" />
+                  <div className="pointer-events-none absolute inset-[16%] rounded-full border border-white/12" />
+                  <div className="relative flex h-full items-center justify-center px-1 text-center text-[clamp(16px,1.95vw,24px)] font-black leading-none tracking-tight text-white drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)]">
+                    {dragAnswer.option}
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })()
         )}
       </AnimatePresence>
 

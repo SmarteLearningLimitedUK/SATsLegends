@@ -5,7 +5,7 @@ import {
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
 import missionBackground from '../assets/maps/rocket launch.jpg';
-import roundingRocketArt from '../assets/maps/rocket2.jpg';
+import roundingRocketArt from '../assets/rocktlogo.png';
 
 interface RoundingRocketGameProps {
   levelId: number;
