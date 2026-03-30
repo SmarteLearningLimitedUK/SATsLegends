@@ -29,6 +29,17 @@ interface NumberLineQuestion {
   answer: string;
 }
 
+interface DragAnswerState {
+  option: string;
+  pointerId: number;
+  clientX: number;
+  clientY: number;
+  offsetX: number;
+  offsetY: number;
+  width: number;
+  height: number;
+}
+
 const QUESTION_ADVANCE_MS = 620;
 const QUESTION_FEEDBACK_MS = 520;
 
@@ -146,8 +157,11 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const [locked, setLocked] = useState(false);
   const [didComplete, setDidComplete] = useState(false);
   const [didFail, setDidFail] = useState(false);
+  const [dragAnswer, setDragAnswer] = useState<DragAnswerState | null>(null);
+  const [lineShake, setLineShake] = useState(false);
 
   const timeoutIdsRef = useRef<number[]>([]);
+  const dropZoneRef = useRef<HTMLDivElement | null>(null);
 
   const goalCorrect = useMemo(
     () => Math.min(14, Math.max(7, 6 + Math.floor(levelId / 2))),
@@ -183,6 +197,8 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     setLocked(false);
     setDidComplete(false);
     setDidFail(false);
+    setDragAnswer(null);
+    setLineShake(false);
   }, [levelId, sessionState, sessionState?.timeLeft, sessionState?.totalTime]);
 
   useEffect(() => {
@@ -214,9 +230,11 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     setSelectedAnswer(null);
     setFeedbackState('idle');
     setLocked(false);
+    setDragAnswer(null);
+    setLineShake(false);
   };
 
-  const handleAnswerTap = (option: string) => {
+  const handleAnswerDrop = (option: string) => {
     if (!isSessionActive || locked || didComplete || didFail) return;
 
     const isCorrect = option === question.answer;
@@ -262,6 +280,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     }
 
     setFeedbackState('incorrect');
+    setLineShake(true);
 
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
       XP,
@@ -272,9 +291,45 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     });
 
     queueTimeout(() => {
+      setLineShake(false);
       advanceQuestion();
     }, QUESTION_FEEDBACK_MS);
   };
+
+  useEffect(() => {
+    if (!dragAnswer) return undefined;
+
+    const onMove = (event: PointerEvent) => {
+      if (event.pointerId !== dragAnswer.pointerId) return;
+      setDragAnswer((current) => (current && current.pointerId === event.pointerId
+        ? { ...current, clientX: event.clientX, clientY: event.clientY }
+        : current));
+    };
+
+    const onUp = (event: PointerEvent) => {
+      if (event.pointerId !== dragAnswer.pointerId) return;
+      const dropRect = dropZoneRef.current?.getBoundingClientRect();
+      const withinDrop = dropRect
+        ? event.clientX >= dropRect.left && event.clientX <= dropRect.right && event.clientY >= dropRect.top && event.clientY <= dropRect.bottom
+        : false;
+
+      const option = dragAnswer.option;
+      setDragAnswer(null);
+      if (withinDrop) {
+        handleAnswerDrop(option);
+      }
+    };
+
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
+
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
+    };
+  }, [dragAnswer, handleAnswerDrop]);
 
   const focusPct = (question.focusIndex / (question.labels.length - 1)) * 100;
 
@@ -297,7 +352,11 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
         </div>
 
         <div className="flex min-h-0 flex-1 items-start justify-center pt-1">
-          <div className="relative flex h-[31%] min-h-[160px] w-full max-w-[680px] items-center justify-center">
+          <motion.div
+            animate={lineShake ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
+            transition={{ duration: 0.34, ease: 'easeInOut' }}
+            className="relative flex h-[31%] min-h-[160px] w-full max-w-[680px] items-center justify-center"
+          >
             <motion.div
               animate={{ opacity: [0.26, 0.54, 0.26], scale: [0.985, 1.025, 0.985] }}
               transition={{ duration: 2.3, repeat: Infinity, ease: 'easeInOut' }}
@@ -343,6 +402,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                       <div className="flex h-[48px] w-[74px] items-center justify-center">
                         {isQuestionMark ? (
                           <motion.div
+                            ref={dropZoneRef}
                             animate={{
                               scale: [1, 1.08, 1],
                               boxShadow: [
@@ -376,24 +436,42 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                 <ChevronDown className="h-7 w-7 text-amber-200 drop-shadow-[0_0_12px_rgba(251,191,36,0.96)]" />
               </motion.div>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         <div className="shrink-0 pb-1 pt-2">
+          <div className="mb-2 text-center text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/88">
+            Drag a number into the missing slot
+          </div>
           <div className="mx-auto grid w-full max-w-[560px] grid-cols-2 gap-2.5 sm:gap-3">
             {question.options.map((option) => {
               const isSelected = selectedAnswer === option;
               const isCorrect = feedbackState === 'correct' && isSelected;
               const isWrong = feedbackState === 'incorrect' && isSelected;
+              const isDragging = dragAnswer?.option === option;
 
               return (
                 <motion.button
                   key={`${question.id}-${option}`}
                   type="button"
-                  onClick={() => handleAnswerTap(option)}
+                  onPointerDown={(event) => {
+                    if (locked || didComplete || didFail || !isSessionActive) return;
+                    const rect = event.currentTarget.getBoundingClientRect();
+                    event.currentTarget.setPointerCapture(event.pointerId);
+                    setDragAnswer({
+                      option,
+                      pointerId: event.pointerId,
+                      clientX: event.clientX,
+                      clientY: event.clientY,
+                      offsetX: event.clientX - rect.left,
+                      offsetY: event.clientY - rect.top,
+                      width: rect.width,
+                      height: rect.height,
+                    });
+                  }}
                   disabled={locked || didComplete || didFail || !isSessionActive}
-                  whileTap={{ scale: 0.965 }}
-                  className="group relative h-[48px] w-full"
+                  whileTap={{ scale: 0.985 }}
+                  className="group relative h-[48px] w-full touch-none"
                 >
                   <div
                     className={`absolute inset-0 rounded-full border-[1.5px] transition-colors ${
@@ -407,6 +485,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                   <motion.div
                     initial={false}
                     animate={{
+                      opacity: isDragging ? 0.2 : 1,
                       scale: isCorrect ? [1, 1.09, 1] : isSelected ? 1.03 : 1,
                       y: isWrong ? [0, -3, 3, -2, 0] : 0,
                     }}
@@ -432,6 +511,32 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
           </div>
         </div>
       </div>
+
+      <AnimatePresence>
+        {dragAnswer && (
+          <motion.div
+            key={`drag-answer-${dragAnswer.option}`}
+            initial={{ scale: 0.96, opacity: 0.95 }}
+            animate={{ scale: 1.03, opacity: 1 }}
+            exit={{ scale: 0.98, opacity: 0 }}
+            className="pointer-events-none absolute z-30"
+            style={{
+              left: dragAnswer.clientX - dragAnswer.offsetX,
+              top: dragAnswer.clientY - dragAnswer.offsetY,
+              width: dragAnswer.width,
+              height: dragAnswer.height,
+            }}
+          >
+            <div className="relative h-full w-full">
+              <div className="absolute inset-0 rounded-full border-[1.5px] border-cyan-100/75 bg-gradient-to-b from-cyan-400 to-blue-600 shadow-[0_8px_0_rgba(30,64,175,0.78),0_0_18px_rgba(34,211,238,0.42)]" />
+              <div className="pointer-events-none absolute inset-[8%] rounded-full bg-gradient-to-b from-white/30 via-transparent to-transparent" />
+              <div className="relative flex h-full items-center justify-center text-[clamp(20px,2.4vw,30px)] font-black tracking-tight text-white drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)]">
+                {dragAnswer.option}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {feedbackState !== 'idle' && (

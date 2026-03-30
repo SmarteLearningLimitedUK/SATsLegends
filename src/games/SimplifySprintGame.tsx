@@ -114,6 +114,18 @@ const makeQuestion = (level: number, round: number): RoundQuestion => {
   };
 };
 
+const getFactorChoices = (pair: FractionPair): number[] => {
+  const valid = Array.from({ length: 8 }, (_, index) => index + 2)
+    .filter((factor) => pair.numerator % factor === 0 && pair.denominator % factor === 0);
+  const distractors = shuffle(
+    Array.from({ length: 8 }, (_, index) => index + 2)
+      .filter((factor) => !valid.includes(factor)),
+  );
+
+  const merged = [...valid, ...distractors].slice(0, 4);
+  return shuffle(merged);
+};
+
 const scoreToStars = (accuracy: number, lives: number, timeLeft: number) => {
   if (accuracy >= 0.9 && lives >= 3 && timeLeft >= 14) return 3;
   if (accuracy >= 0.65 && lives >= 2) return 2;
@@ -154,15 +166,19 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [locked, setLocked] = useState(false);
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; text: string } | null>(null);
+  const [currentPair, setCurrentPair] = useState<FractionPair>(() => makeQuestion(resolvedLevel, 1).prompt);
+  const [fractionShake, setFractionShake] = useState(false);
+  const [fractionPulseKey, setFractionPulseKey] = useState(0);
 
   const scoreRef = useRef(0);
   const endedRef = useRef(false);
   scoreRef.current = XP;
 
   useEffect(() => {
+    const initialQuestion = makeQuestion(resolvedLevel, 1);
     endedRef.current = false;
     setRoundNumber(1);
-    setQuestion(makeQuestion(resolvedLevel, 1));
+    setQuestion(initialQuestion);
     setTimeLeft(initialTime);
     setScore(0);
     setLives(4);
@@ -170,7 +186,14 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
     setCorrectAnswers(0);
     setLocked(false);
     setFeedback(null);
+    setCurrentPair(initialQuestion.prompt);
+    setFractionShake(false);
+    setFractionPulseKey(0);
   }, [initialTime, resolvedLevel]);
+
+  useEffect(() => {
+    setCurrentPair(question.prompt);
+  }, [question]);
 
   useEffect(() => {
     if (endedRef.current) return undefined;
@@ -197,55 +220,78 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
     window.setTimeout(() => onVictory(stars, finalScore), 380);
   }, [onVictory]);
 
-  const handleOption = (option: FractionPair) => {
+  const factorChoices = useMemo(() => getFactorChoices(currentPair), [currentPair]);
+
+  const handleFactor = (factor: number) => {
     if (locked || endedRef.current) return;
     setLocked(true);
+    const isValid = currentPair.numerator % factor === 0 && currentPair.denominator % factor === 0;
 
-    const nextAttempts = attempts + 1;
-    const isCorrect = sameFraction(option, question.answer);
+    if (!isValid) {
+      const nextAttempts = attempts + 1;
+      const nextLives = lives - 1;
+      setAttempts(nextAttempts);
+      setLives(nextLives);
+      setFeedback({ tone: 'error', text: `${factor} will not simplify both numbers.` });
+      setFractionShake(true);
+      triggerHaptic('error');
 
-    setAttempts(nextAttempts);
-
-    if (isCorrect) {
-      const awarded = 100 + Math.max(0, Math.floor(timeLeft * 0.8)) + (resolvedLevel * 12);
-      const nextScore = XP + awarded;
-      const nextCorrect = correctAnswers + 1;
-      setScore(nextScore);
-      setCorrectAnswers(nextCorrect);
-      setFeedback({ tone: 'success', text: 'Correct simplification!' });
-      triggerHaptic('success');
-
-      if (roundNumber >= totalRounds) {
-        finishVictory(nextScore, nextAttempts, nextCorrect, lives, timeLeft);
+      if (nextLives <= 0) {
+        endedRef.current = true;
+        window.setTimeout(() => onGameOver(XP), 420);
         return;
       }
 
       window.setTimeout(() => {
-        const nextRound = roundNumber + 1;
-        setRoundNumber(nextRound);
-        setQuestion(makeQuestion(resolvedLevel, nextRound));
         setFeedback(null);
         setLocked(false);
-      }, 520);
+        setFractionShake(false);
+      }, 460);
       return;
     }
 
-    const nextLives = lives - 1;
-    setLives(nextLives);
-    setFeedback({ tone: 'error', text: `Not quite. ${question.answer.numerator}/${question.answer.denominator}` });
-    triggerHaptic('error');
+    const reduced = {
+      numerator: currentPair.numerator / factor,
+      denominator: currentPair.denominator / factor,
+    };
 
-    if (nextLives <= 0) {
-      endedRef.current = true;
-      window.setTimeout(() => onGameOver(XP), 420);
+    setCurrentPair(reduced);
+    setFractionPulseKey((prev) => prev + 1);
+    triggerHaptic('success');
+
+    if (!sameFraction(reduced, question.answer)) {
+      setFeedback({ tone: 'success', text: `Nice. ÷${factor} works. Keep reducing.` });
+      window.setTimeout(() => {
+        setFeedback(null);
+        setLocked(false);
+      }, 420);
+      return;
+    }
+
+    const nextAttempts = attempts + 1;
+    const awarded = 100 + Math.max(0, Math.floor(timeLeft * 0.8)) + (resolvedLevel * 12);
+    const nextScore = XP + awarded;
+    const nextCorrect = correctAnswers + 1;
+
+    setAttempts(nextAttempts);
+    setScore(nextScore);
+    setCorrectAnswers(nextCorrect);
+    setFeedback({ tone: 'success', text: 'Fraction fully simplified!' });
+
+    if (roundNumber >= totalRounds) {
+      finishVictory(nextScore, nextAttempts, nextCorrect, lives, timeLeft);
       return;
     }
 
     window.setTimeout(() => {
-      setQuestion(makeQuestion(resolvedLevel, roundNumber));
+      const nextRound = roundNumber + 1;
+      const nextQuestion = makeQuestion(resolvedLevel, nextRound);
+      setRoundNumber(nextRound);
+      setQuestion(nextQuestion);
+      setCurrentPair(nextQuestion.prompt);
       setFeedback(null);
       setLocked(false);
-    }, 560);
+    }, 520);
   };
 
   return (
@@ -293,23 +339,51 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
           Round {Math.min(roundNumber, totalRounds)} / {totalRounds}
         </div>
 
-        <div className="mt-5 rounded-[1.5rem] border-2 border-cyan-200/45 bg-gradient-to-b from-sky-500/95 to-blue-700/95 px-10 py-6 shadow-[0_18px_34px_rgba(0,0,0,0.5)]">
-          <FractionView pair={question.prompt} />
+        <div className="mt-4 rounded-full border border-cyan-200/45 bg-[#0a1f56]/78 px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-cyan-50">
+          Tap a factor to divide both numbers
+        </div>
+
+        <motion.div
+          animate={fractionShake ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
+          transition={{ duration: 0.34, ease: 'easeInOut' }}
+          className="mt-5 rounded-[1.5rem] border-2 border-cyan-200/45 bg-gradient-to-b from-sky-500/95 to-blue-700/95 px-10 py-6 shadow-[0_18px_34px_rgba(0,0,0,0.5)]"
+        >
+          <motion.div
+            key={`${question.id}-${fractionKey(currentPair)}-${fractionPulseKey}`}
+            initial={{ scale: 0.94, opacity: 0.86 }}
+            animate={{ scale: [1, 1.1, 1], opacity: 1 }}
+            transition={{ duration: 0.34, ease: 'easeOut' }}
+          >
+            <FractionView pair={currentPair} />
+          </motion.div>
+        </motion.div>
+
+        <div className="mt-3 rounded-full border border-cyan-200/45 bg-[#0a1f56]/78 px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-cyan-50">
+          Lowest terms: {question.answer.numerator}/{question.answer.denominator}
         </div>
 
         <div className="mt-6 grid w-full max-w-[740px] grid-cols-2 gap-3 md:gap-4">
-          {question.options.map((option) => (
-            <motion.button
-              key={`${question.id}-${fractionKey(option)}`}
-              type="button"
-              whileTap={{ scale: 0.97 }}
-              disabled={locked}
-              onClick={() => handleOption(option)}
-              className="rounded-[1.1rem] border border-cyan-200/45 bg-[#0a1f56]/86 px-2 py-4 shadow-[0_14px_26px_rgba(0,0,0,0.45)] transition hover:bg-[#11307c]/90 disabled:opacity-70"
-            >
-              <FractionView pair={option} className="text-cyan-50" />
-            </motion.button>
-          ))}
+          {factorChoices.map((factor) => {
+            const isValid = currentPair.numerator % factor === 0 && currentPair.denominator % factor === 0;
+            return (
+              <motion.button
+                key={`${question.id}-factor-${factor}-${fractionKey(currentPair)}`}
+                type="button"
+                whileTap={{ scale: 0.97 }}
+                disabled={locked}
+                onClick={() => handleFactor(factor)}
+                className={`rounded-[1.1rem] border px-2 py-4 shadow-[0_14px_26px_rgba(0,0,0,0.45)] transition disabled:opacity-70 ${
+                  isValid
+                    ? 'border-cyan-200/45 bg-[#0a1f56]/86 hover:bg-[#11307c]/90'
+                    : 'border-rose-200/28 bg-[#20143f]/82 hover:bg-[#34195f]/88'
+                }`}
+              >
+                <span className="text-[clamp(1.15rem,3.1vw,1.9rem)] font-black uppercase tracking-[0.08em] text-cyan-50">
+                  ÷ {factor}
+                </span>
+              </motion.button>
+            );
+          })}
         </div>
 
         <div className="mt-4 flex items-center gap-1.5 rounded-full border border-cyan-200/45 bg-[#0a1f56]/82 px-3 py-2">

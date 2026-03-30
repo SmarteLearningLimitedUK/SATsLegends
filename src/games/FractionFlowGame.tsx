@@ -175,6 +175,8 @@ const FractionFlowGame: React.FC<FractionFlowGameProps> = ({
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [isResolving, setIsResolving] = useState(false);
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; text: string } | null>(null);
+  const [boardShake, setBoardShake] = useState(false);
+  const [successPulseKey, setSuccessPulseKey] = useState(0);
 
   const playfieldRef = useRef<HTMLDivElement | null>(null);
   const endedRef = useRef(false);
@@ -234,6 +236,7 @@ const FractionFlowGame: React.FC<FractionFlowGameProps> = ({
     setDragState(null);
     setIsResolving(false);
     setFeedback(null);
+    setBoardShake(false);
   }, []);
 
   useEffect(() => {
@@ -428,6 +431,7 @@ const FractionFlowGame: React.FC<FractionFlowGameProps> = ({
       setScore(nextScore);
       setCorrectAnswers(nextCorrect);
       setFeedback({ tone: 'success', text: 'Perfect ordering!' });
+      setSuccessPulseKey((prev) => prev + 1);
       triggerHaptic('success');
 
       if (roundIndex >= totalRounds) {
@@ -446,6 +450,7 @@ const FractionFlowGame: React.FC<FractionFlowGameProps> = ({
     const nextLives = lives - 1;
     setLives(nextLives);
     setFeedback({ tone: 'error', text: 'Order is not correct. Try again!' });
+    setBoardShake(true);
     triggerHaptic('error');
 
     if (nextLives <= 0) {
@@ -515,13 +520,15 @@ const FractionFlowGame: React.FC<FractionFlowGameProps> = ({
         ))}
       </div>
 
-      <div
+      <motion.div
         ref={playfieldRef}
         className={`relative z-20 flex h-full w-full flex-col items-center justify-start px-4 pb-[calc(env(safe-area-inset-bottom)+5.2rem)] ${
           useSharedTopHud
             ? 'pt-[calc(env(safe-area-inset-top)+5.5rem)]'
             : 'pt-[calc(env(safe-area-inset-top)+2.5rem)]'
         }`}
+        animate={boardShake ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
+        transition={{ duration: 0.34, ease: 'easeInOut' }}
       >
         <div className="relative w-[min(92vw,720px)]" style={{ marginTop: `${layout.ribbonTop}%`, maxWidth: `${layout.ribbonWidth}%` }}>
           <img src={ribbonAsset} alt="" className="h-auto w-full object-contain" draggable={false} />
@@ -541,9 +548,21 @@ const FractionFlowGame: React.FC<FractionFlowGameProps> = ({
             {activeTargetAnchors.map((anchor, idx) => {
               const card = targetSlots[idx];
               return (
-                <div
+                <motion.div
                   key={`target-slot-${idx}`}
                   className="absolute -translate-x-1/2 -translate-y-1/2 rounded-[1rem] border-2 border-dashed border-cyan-100/55 bg-cyan-200/12"
+                  animate={card && successPulseKey > 0 ? {
+                    scale: [1, 1.06, 1],
+                    boxShadow: [
+                      '0 0 0 rgba(34,211,238,0)',
+                      '0 0 20px rgba(34,211,238,0.55)',
+                      '0 0 0 rgba(34,211,238,0)',
+                    ],
+                  } : {
+                    scale: 1,
+                    boxShadow: '0 0 0 rgba(34,211,238,0)',
+                  }}
+                  transition={{ duration: 0.34, ease: 'easeOut' }}
                   style={{
                     left: `${anchor.x}%`,
                     width: layout.slotSize.width,
@@ -560,7 +579,7 @@ const FractionFlowGame: React.FC<FractionFlowGameProps> = ({
                       />
                     </div>
                   )}
-                </div>
+                </motion.div>
               );
             })}
           </div>
@@ -616,7 +635,7 @@ const FractionFlowGame: React.FC<FractionFlowGameProps> = ({
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </motion.div>
 
       <AnimatePresence>
         {dragState && (

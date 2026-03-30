@@ -416,6 +416,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const [goblinSpriteSrc, setGoblinSpriteSrc] = useState<string>(goblinWiz);
   const [showHitFx, setShowHitFx] = useState(false);
   const [enemySpeech, setEnemySpeech] = useState<string | null>(null);
+  const [slotPulseKey, setSlotPulseKey] = useState(0);
+  const [boardShake, setBoardShake] = useState(false);
+  const [wrongFlash, setWrongFlash] = useState(false);
 
   const victoryDispatchedRef = useRef(false);
   const gameOverDispatchedRef = useRef(false);
@@ -860,6 +863,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       setScore((prev) => prev + (140 + resolvedLevel * 22));
       setFeedback(null);
       setGoblinEffect('hit');
+      setSlotPulseKey((prev) => prev + 1);
       setEnemySpeech(GOBLIN_DAMAGE_LINES[Math.floor(Math.random() * GOBLIN_DAMAGE_LINES.length)]);
       if (speechTimeoutRef.current !== null) {
         window.clearTimeout(speechTimeoutRef.current);
@@ -872,6 +876,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
       setFeedback(null);
       setGoblinEffect('heal');
+      setBoardShake(true);
+      setWrongFlash(true);
       triggerHaptic('warning');
       setTargetSlots(Array(question.expectedDigits.length).fill(null));
       setSourceSlots(initialSourceSlots.map((token) => (token ? { ...token } : null)));
@@ -880,6 +886,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       setFeedback(null);
       setIsResolving(false);
       setGoblinEffect('idle');
+      setBoardShake(false);
+      setWrongFlash(false);
     }, 520);
   }, [advanceRound, canSubmit, goblinHealth, initialSourceSlots, question.expectedDigits, resolvedLevel, targetSlots]);
 
@@ -978,7 +986,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
       ) : null}
 
-      <div className="absolute inset-0 z-20" ref={playfieldRef}>
+      <motion.div
+        ref={playfieldRef}
+        className="absolute inset-0 z-20"
+        animate={boardShake ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
+        transition={{ duration: 0.34, ease: 'easeInOut' }}
+      >
         <div
           className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2 overflow-hidden"
           style={{ top: `${layout.questionTop}%`, width: `${questionFrameConfig.width}%`, height: `${questionFrameConfig.height}%` }}
@@ -1032,11 +1045,21 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           const token = targetSlots[idx];
           const isDraggingThis = dragState?.fromLocation === 'target' && dragState.fromIndex === idx;
           return (
-            <button
+            <motion.button
               key={`target-${idx}`}
               type="button"
               onPointerDown={(event) => beginDrag('target', idx, event)}
               className="absolute -translate-x-1/2 -translate-y-1/2 rounded-xl"
+              animate={
+                token
+                  ? {
+                      scale: slotPulseKey > 0 ? [1, 1.08, 1] : 1,
+                    }
+                  : {
+                      scale: 1,
+                    }
+              }
+              transition={{ duration: 0.34, ease: 'easeOut' }}
               style={{
                 left: `${anchor.x}%`,
                 top: `calc(${layout.targetY}% - ${TARGET_ROW_Y_OFFSET_PX}px)`,
@@ -1053,6 +1076,16 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               />
               {token ? (
                 <>
+                  <motion.span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-[14%] rounded-[1rem]"
+                    animate={
+                      wrongFlash
+                        ? { opacity: [0, 0.9, 0], backgroundColor: ['rgba(251,113,133,0)', 'rgba(251,113,133,0.34)', 'rgba(251,113,133,0)'] }
+                        : { opacity: slotPulseKey > 0 ? [0, 0.9, 0] : 0, backgroundColor: ['rgba(34,211,238,0)', 'rgba(34,211,238,0.25)', 'rgba(34,211,238,0)'] }
+                    }
+                    transition={{ duration: 0.34, ease: 'easeOut' }}
+                  />
                   <span className="pointer-events-none absolute left-1/2 top-1/2 z-[8] h-[56%] w-[66%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/28 blur-[10px]" />
                   <motion.span
                     layout
@@ -1065,7 +1098,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 </>
               ) : null}
               {isDraggingThis ? <span className="sr-only">Dragging</span> : null}
-            </button>
+            </motion.button>
           );
         })}
 
@@ -1073,11 +1106,14 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           const token = sourceSlots[idx];
           const isDraggingThis = dragState?.fromLocation === 'source' && dragState.fromIndex === idx;
           return (
-            <button
+            <motion.button
               key={`source-${idx}`}
               type="button"
               onPointerDown={(event) => beginDrag('source', idx, event)}
               className="absolute z-[22] -translate-x-1/2 -translate-y-1/2 rounded-xl"
+              initial={{ opacity: 0, y: 14, scale: 0.94 }}
+              animate={{ opacity: token ? 1 : 0, y: 0, scale: token ? 1 : 0.94 }}
+              transition={{ duration: 0.26, ease: 'easeOut', delay: idx * 0.04 }}
               style={{
                 left: `${anchor.x}%`,
                 top: `calc(${layout.sourceY}% - ${SOURCE_ROW_Y_OFFSET_PX}px)`,
@@ -1099,7 +1135,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 </>
               ) : null}
               {isDraggingThis ? <span className="sr-only">Dragging</span> : null}
-            </button>
+            </motion.button>
           );
         })}
 
@@ -1239,7 +1275,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
             Submit
           </span>
         </button>
-      </div>
+      </motion.div>
 
       {dragState ? (
         (() => {
