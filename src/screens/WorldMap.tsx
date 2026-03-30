@@ -28,7 +28,6 @@ type AmbientRegion = {
     | 'sparkles'
     | 'bubbles'
     | 'steam'
-    | 'pie-chart'
     | 'birds'
     | 'light-beams'
     | 'stars'
@@ -56,14 +55,6 @@ type IslandInteractionRegion = {
 
 const DECORATIVE_MAP_AMBIENTS: AmbientRegion[] = [
   {
-    id: 'geometry-glacier-snow',
-    x: 25.2,
-    y: 47.6,
-    width: 24,
-    height: 15,
-    effect: 'falling-snow',
-  },
-  {
     id: 'ratio-rapids-bubbles',
     x: 59.2,
     y: 82.7,
@@ -80,14 +71,6 @@ const DECORATIVE_MAP_AMBIENTS: AmbientRegion[] = [
     effect: 'steam',
   },
   {
-    id: 'data-desert-pie-chart',
-    x: 25.8,
-    y: 72.6,
-    width: 20,
-    height: 12,
-    effect: 'pie-chart',
-  },
-  {
     id: 'arithmetic-acropolis-symbols',
     x: 71.5,
     y: 95.2,
@@ -101,27 +84,37 @@ const ISLAND_INTERACTIONS: Record<number, IslandInteractionRegion> = {
   1: {
     islandArea: { x: 77.5, y: 91.2, width: 22, height: 13 },
     labelArea: { x: 48.5, y: 96.3, width: 31, height: 5.6 },
-    ambients: [],
+    ambients: [
+      { id: 'base-camp-sparkles', x: 77.5, y: 91.2, width: 22, height: 13, effect: 'sparkles' },
+    ],
   },
   2: {
     islandArea: { x: 71.5, y: 57.2, width: 24, height: 15 },
     labelArea: { x: 29.5, y: 60.3, width: 28, height: 5.4 },
-    ambients: [],
+    ambients: [
+      { id: 'fraction-forest-butterflies', x: 71.5, y: 57.2, width: 24, height: 15, effect: 'butterflies' },
+    ],
   },
   3: {
     islandArea: { x: 25.2, y: 47.6, width: 24, height: 15 },
     labelArea: { x: 49, y: 48.8, width: 28, height: 5.4 },
-    ambients: [],
+    ambients: [
+      { id: 'geometry-glacier-snow', x: 25.2, y: 47.6, width: 24, height: 15, effect: 'falling-snow' },
+    ],
   },
   4: {
     islandArea: { x: 25.8, y: 72.2, width: 24, height: 15 },
     labelArea: { x: 49, y: 77.1, width: 28, height: 5.4 },
-    ambients: [],
+    ambients: [
+      { id: 'data-desert-dust', x: 25.8, y: 72.2, width: 24, height: 15, effect: 'dust-devils' },
+    ],
   },
   5: {
     islandArea: { x: 70.8, y: 33.1, width: 23, height: 15 },
     labelArea: { x: 31.5, y: 34.5, width: 31, height: 5.4 },
-    ambients: [],
+    ambients: [
+      { id: 'operations-outpost-stars', x: 70.8, y: 33.1, width: 23, height: 15, effect: 'stars' },
+    ],
   },
   6: {
     islandArea: { x: 29.5, y: 14.5, width: 26, height: 16 },
@@ -247,22 +240,6 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
             />
           ))}
         </>
-      );
-    case 'pie-chart':
-      return (
-        <div className="absolute left-1/2 top-1/2 h-[3.2rem] w-[3.2rem] -translate-x-1/2 -translate-y-1/2">
-          <motion.div
-            className="absolute inset-0 rounded-full border border-amber-100/65 shadow-[0_0_18px_rgba(251,191,36,0.24)]"
-            style={{
-              background:
-                'conic-gradient(from 0deg, rgba(251,191,36,0.95) 0deg 110deg, rgba(59,130,246,0.95) 110deg 220deg, rgba(16,185,129,0.95) 220deg 300deg, rgba(248,250,252,0.95) 300deg 360deg)',
-            }}
-            animate={{ rotate: 360 }}
-            transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-          />
-          <div className="absolute inset-[0.34rem] rounded-full border border-slate-950/18 bg-[radial-gradient(circle_at_40%_35%,rgba(255,255,255,0.72),rgba(255,255,255,0.08)_58%,rgba(15,23,42,0.04)_100%)]" />
-          <div className="absolute left-1/2 top-1/2 h-[0.18rem] w-[0.18rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-slate-950/45" />
-        </div>
       );
     case 'birds':
       return (
