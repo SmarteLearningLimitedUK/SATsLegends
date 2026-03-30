@@ -49,6 +49,41 @@ type IslandInteractionRegion = {
   ambients: AmbientRegion[];
 };
 
+const DECORATIVE_MAP_AMBIENTS: AmbientRegion[] = [
+  {
+    id: 'data-desert-dust-main',
+    x: 29.5,
+    y: 74.8,
+    width: 28,
+    height: 17,
+    effect: 'dust-devils',
+  },
+  {
+    id: 'data-desert-birds-main',
+    x: 31.4,
+    y: 72.9,
+    width: 26,
+    height: 15,
+    effect: 'birds',
+  },
+  {
+    id: 'ratio-rapids-sparkles',
+    x: 57.4,
+    y: 83.2,
+    width: 24,
+    height: 14,
+    effect: 'sparkles',
+  },
+  {
+    id: 'ratio-rapids-wisps',
+    x: 58.8,
+    y: 81.7,
+    width: 25,
+    height: 15,
+    effect: 'wind-wisps',
+  },
+];
+
 const ISLAND_INTERACTIONS: Record<number, IslandInteractionRegion> = {
   1: {
     islandArea: { x: 77.5, y: 91.2, width: 22, height: 13 },
@@ -328,8 +363,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
         />
 
         <div className="pointer-events-none absolute inset-0 z-10">
-          {Object.values(ISLAND_INTERACTIONS).flatMap(({ ambients }) => (
-            ambients.map(region => (
+          {[...Object.values(ISLAND_INTERACTIONS).flatMap(({ ambients }) => ambients), ...DECORATIVE_MAP_AMBIENTS].map(region => (
               <div
                 key={region.id}
                 className={`world-map-ambient world-map-ambient-${region.effect}`}
@@ -342,8 +376,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
               >
                 {renderAmbientEffect(region.effect)}
               </div>
-            ))
-          ))}
+            ))}
         </div>
 
         <div className="absolute inset-0 z-20">
