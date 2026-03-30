@@ -46,40 +46,88 @@ type IslandState = {
 type IslandInteractionRegion = {
   islandArea: IslandHotspot;
   labelArea?: IslandHotspot;
-  ambient: AmbientRegion;
+  ambients: AmbientRegion[];
 };
 
 const ISLAND_INTERACTIONS: Record<number, IslandInteractionRegion> = {
   1: {
     islandArea: { x: 77.5, y: 91.2, width: 22, height: 13 },
     labelArea: { x: 48.5, y: 96.3, width: 31, height: 5.6 },
-    ambient: { id: 'base-camp', x: 77.5, y: 91.1, width: 22, height: 13, effect: 'sparkles' },
+    ambients: [
+      { id: 'base-camp-sparkles', x: 77.5, y: 91.1, width: 22, height: 13, effect: 'sparkles' },
+      { id: 'base-camp-butterflies', x: 77.4, y: 90.8, width: 22, height: 13, effect: 'butterflies' },
+    ],
   },
   2: {
     islandArea: { x: 71.5, y: 57.2, width: 24, height: 15 },
     labelArea: { x: 29.5, y: 60.3, width: 28, height: 5.4 },
-    ambient: { id: 'fraction-forest', x: 71.5, y: 56.8, width: 24, height: 15, effect: 'light-beams' },
+    ambients: [
+      { id: 'fraction-forest-beams', x: 71.5, y: 56.8, width: 24, height: 15, effect: 'light-beams' },
+      { id: 'fraction-forest-wisps', x: 71.2, y: 57.1, width: 24, height: 15, effect: 'wind-wisps' },
+    ],
   },
   3: {
     islandArea: { x: 25.2, y: 47.6, width: 24, height: 15 },
     labelArea: { x: 49, y: 48.8, width: 28, height: 5.4 },
-    ambient: { id: 'geometry-glacier', x: 25.2, y: 47.6, width: 24, height: 15, effect: 'blizzard' },
+    ambients: [
+      { id: 'geometry-glacier-blizzard', x: 25.2, y: 47.6, width: 24, height: 15, effect: 'blizzard' },
+      { id: 'geometry-glacier-wisps', x: 25.5, y: 47.4, width: 24, height: 15, effect: 'wind-wisps' },
+    ],
   },
   4: {
     islandArea: { x: 25.8, y: 72.2, width: 24, height: 15 },
     labelArea: { x: 49, y: 77.1, width: 28, height: 5.4 },
-    ambient: { id: 'data-desert', x: 25.8, y: 72.1, width: 24, height: 15, effect: 'dust-devils' },
+    ambients: [
+      { id: 'data-desert-dust', x: 25.8, y: 72.1, width: 24, height: 15, effect: 'dust-devils' },
+      { id: 'data-desert-birds', x: 25.6, y: 71.9, width: 24, height: 15, effect: 'birds' },
+    ],
   },
   5: {
     islandArea: { x: 70.8, y: 33.1, width: 23, height: 15 },
     labelArea: { x: 31.5, y: 34.5, width: 31, height: 5.4 },
-    ambient: { id: 'operations-outpost', x: 70.8, y: 33.1, width: 23, height: 15, effect: 'stars' },
+    ambients: [
+      { id: 'operations-outpost-stars', x: 70.8, y: 33.1, width: 23, height: 15, effect: 'stars' },
+      { id: 'operations-outpost-birds', x: 70.5, y: 33.2, width: 23, height: 15, effect: 'birds' },
+    ],
   },
   6: {
     islandArea: { x: 29.5, y: 14.5, width: 26, height: 16 },
     labelArea: { x: 52.5, y: 16.1, width: 31, height: 5.6 },
-    ambient: { id: 'mount-algebra', x: 29.5, y: 14.5, width: 26, height: 16, effect: 'lava-spurts' },
+    ambients: [
+      { id: 'mount-algebra-lava', x: 29.5, y: 14.5, width: 26, height: 16, effect: 'lava-spurts' },
+      { id: 'mount-algebra-stars', x: 29.7, y: 14.1, width: 26, height: 16, effect: 'stars' },
+    ],
   },
+};
+
+const getCombinedHotspot = (islandArea: IslandHotspot, labelArea?: IslandHotspot): IslandHotspot => {
+  if (!labelArea) return islandArea;
+
+  const left = Math.min(islandArea.x - islandArea.width / 2, labelArea.x - labelArea.width / 2);
+  const right = Math.max(islandArea.x + islandArea.width / 2, labelArea.x + labelArea.width / 2);
+  const top = Math.min(islandArea.y - islandArea.height / 2, labelArea.y - labelArea.height / 2);
+  const bottom = Math.max(islandArea.y + islandArea.height / 2, labelArea.y + labelArea.height / 2);
+
+  return {
+    x: (left + right) / 2,
+    y: (top + bottom) / 2,
+    width: right - left,
+    height: bottom - top,
+  };
+};
+
+const getRelativeAreaStyle = (bounds: IslandHotspot, area: IslandHotspot) => {
+  const boundsLeft = bounds.x - bounds.width / 2;
+  const boundsTop = bounds.y - bounds.height / 2;
+  const areaLeft = area.x - area.width / 2;
+  const areaTop = area.y - area.height / 2;
+
+  return {
+    left: `${((areaLeft - boundsLeft) / bounds.width) * 100}%`,
+    top: `${((areaTop - boundsTop) / bounds.height) * 100}%`,
+    width: `${(area.width / bounds.width) * 100}%`,
+    height: `${(area.height / bounds.height) * 100}%`,
+  };
 };
 
 const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
@@ -280,19 +328,21 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
         />
 
         <div className="pointer-events-none absolute inset-0 z-10">
-          {Object.values(ISLAND_INTERACTIONS).map(({ ambient: region }) => (
-            <div
-              key={region.id}
-              className={`world-map-ambient world-map-ambient-${region.effect}`}
-              style={{
-                left: `${region.x}%`,
-                top: `${region.y}%`,
-                width: `${region.width}%`,
-                height: `${region.height}%`,
-              }}
-            >
-              {renderAmbientEffect(region.effect)}
-            </div>
+          {Object.values(ISLAND_INTERACTIONS).flatMap(({ ambients }) => (
+            ambients.map(region => (
+              <div
+                key={region.id}
+                className={`world-map-ambient world-map-ambient-${region.effect}`}
+                style={{
+                  left: `${region.x}%`,
+                  top: `${region.y}%`,
+                  width: `${region.width}%`,
+                  height: `${region.height}%`,
+                }}
+              >
+                {renderAmbientEffect(region.effect)}
+              </div>
+            ))
           ))}
         </div>
 
@@ -303,56 +353,53 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
 
             const isSelected = selectedIslandId === island.id;
             const { islandArea, labelArea } = interaction;
+            const combinedArea = getCombinedHotspot(islandArea, labelArea);
+            const islandHighlightStyle = getRelativeAreaStyle(combinedArea, islandArea);
+            const labelHighlightStyle = labelArea ? getRelativeAreaStyle(combinedArea, labelArea) : null;
             const selectIsland = () => setSelectedIslandId(island.id);
 
             return (
-              <React.Fragment key={island.id}>
-                <motion.button
-                  type="button"
-                  whileTap={{ scale: 0.97 }}
-                  whileHover={{ scale: 1.015 }}
-                  onClick={selectIsland}
-                  aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
-                  className={`absolute z-30 -translate-x-1/2 -translate-y-1/2 rounded-[999px] outline-none transition-all focus-visible:ring-4 focus-visible:ring-cyan-300/70 ${
-                    isUnlocked ? 'opacity-100' : 'opacity-75'
+              <motion.button
+                key={island.id}
+                type="button"
+                whileTap={{ scale: 0.97 }}
+                whileHover={{ scale: 1.015 }}
+                onClick={selectIsland}
+                aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
+                className={`absolute z-30 -translate-x-1/2 -translate-y-1/2 rounded-[999px] outline-none transition-all focus-visible:ring-4 focus-visible:ring-cyan-300/70 ${
+                  isUnlocked ? 'opacity-100' : 'opacity-75'
+                }`}
+                style={{
+                  left: `${combinedArea.x}%`,
+                  top: `${combinedArea.y}%`,
+                  width: `${combinedArea.width}%`,
+                  height: `${combinedArea.height}%`,
+                }}
+              >
+                <span
+                  className={`pointer-events-none absolute rounded-[999px] transition-all duration-200 ${
+                    isSelected
+                      ? 'border-2 border-cyan-200/55 bg-cyan-300/12 shadow-[0_0_0_1px_rgba(186,230,253,0.18),0_0_22px_rgba(56,189,248,0.28)]'
+                      : 'border border-white/0 bg-transparent'
                   }`}
-                  style={{
-                    left: `${islandArea.x}%`,
-                    top: `${islandArea.y}%`,
-                    width: `${islandArea.width}%`,
-                    height: `${islandArea.height}%`,
-                  }}
-                >
+                  style={islandHighlightStyle}
+                />
+                {labelHighlightStyle ? (
                   <span
-                    className={`pointer-events-none absolute inset-[10%] rounded-[999px] transition-all duration-200 ${
+                    className={`pointer-events-none absolute rounded-[999px] transition-all duration-200 ${
                       isSelected
-                        ? 'border-2 border-cyan-200/55 bg-cyan-300/12 shadow-[0_0_0_1px_rgba(186,230,253,0.18),0_0_22px_rgba(56,189,248,0.28)]'
+                        ? 'border border-cyan-100/28 bg-cyan-300/8 shadow-[0_0_18px_rgba(56,189,248,0.18)]'
                         : 'border border-white/0 bg-transparent'
                     }`}
-                  />
-                  {!isUnlocked ? (
-                    <span className="pointer-events-none absolute right-[10%] top-[10%] flex h-6 w-6 items-center justify-center rounded-full border border-slate-200/30 bg-slate-950/55 text-[10px] font-black text-slate-100 shadow-[0_6px_12px_rgba(2,6,23,0.28)]">
-                      {'\uD83D\uDD12'}
-                    </span>
-                  ) : null}
-                </motion.button>
-
-                {labelArea ? (
-                  <button
-                    type="button"
-                    tabIndex={-1}
-                    aria-hidden="true"
-                    onClick={selectIsland}
-                    className="absolute z-20 -translate-x-1/2 -translate-y-1/2 rounded-[999px] bg-transparent"
-                    style={{
-                      left: `${labelArea.x}%`,
-                      top: `${labelArea.y}%`,
-                      width: `${labelArea.width}%`,
-                      height: `${labelArea.height}%`,
-                    }}
+                    style={labelHighlightStyle}
                   />
                 ) : null}
-              </React.Fragment>
+                {!isUnlocked ? (
+                  <span className="pointer-events-none absolute right-[8%] top-[8%] flex h-6 w-6 items-center justify-center rounded-full border border-slate-200/30 bg-slate-950/55 text-[10px] font-black text-slate-100 shadow-[0_6px_12px_rgba(2,6,23,0.28)]">
+                    {'\uD83D\uDD12'}
+                  </span>
+                ) : null}
+              </motion.button>
             );
           })}
         </div>

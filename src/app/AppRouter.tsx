@@ -91,6 +91,16 @@ export const AppRouter: React.FC<AppRouterProps> = ({
 }) => {
   const [showInlineHint, setShowInlineHint] = useState(false);
 
+  const shouldUseShellBackground = useMemo(() => {
+    if (screen !== 'gameplay' || !selectedLevel) return true;
+    return !(
+      selectedLevel.blueprintKey === 'rounding_rampage'
+      || selectedLevel.gameType === 'prime_pop'
+      || selectedLevel.blueprintKey === 'prime_pop'
+      || selectedLevel.blueprintKey === 'number_line_ninja'
+    );
+  }, [screen, selectedLevel]);
+
   const inlineHintText = useMemo(() => {
     if (hintRuleSet?.summary?.trim()) return hintRuleSet.summary.trim();
     if (selectedRuleSet?.summary?.trim()) return selectedRuleSet.summary.trim();
@@ -454,7 +464,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
           className={`game-shell-host unified-minigame-hud-enabled ${gameplayTypeClass} ${usesQuestionMatchFrame ? 'question-match-shell' : ''} relative flex h-[100dvh] max-h-[100dvh] w-full min-h-0 flex-col overflow-hidden md:h-full md:max-h-full`.trim()}
           style={shellStyle}
         >
-          {selectedIsland?.mapImage ? (
+          {shouldUseShellBackground && selectedIsland?.mapImage ? (
             <img
               src={selectedIsland.mapImage}
               alt=""
@@ -463,7 +473,9 @@ export const AppRouter: React.FC<AppRouterProps> = ({
               className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
             />
           ) : null}
-          <div className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(7,20,54,0.26)_0%,rgba(7,20,54,0.36)_55%,rgba(7,20,54,0.46)_100%)]" />
+          {shouldUseShellBackground ? (
+            <div className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(7,20,54,0.26)_0%,rgba(7,20,54,0.36)_55%,rgba(7,20,54,0.46)_100%)]" />
+          ) : null}
 
           <div className="game-shell-contract relative z-[2] flex h-full max-h-full w-full min-h-0 flex-col overflow-hidden">
             <UnifiedMiniGameHud
