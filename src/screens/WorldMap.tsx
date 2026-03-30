@@ -10,10 +10,19 @@ interface WorldMapProps {
   onSelectIsland: (island: IslandData) => void;
 }
 
-type CircleHotspot = {
+type EllipseHotspot = {
+  cx: number;
+  cy: number;
+  rx: number;
+  ry: number;
+};
+
+type RectHotspot = {
   x: number;
   y: number;
-  size: number;
+  width: number;
+  height: number;
+  rx?: number;
 };
 
 type AmbientRegion = {
@@ -47,19 +56,13 @@ type IslandState = {
 };
 
 type IslandInteractionRegion = {
-  islandCircle: CircleHotspot;
-  labelCircle: CircleHotspot;
+  islandShape: EllipseHotspot;
+  labelShape: RectHotspot;
   ambients: AmbientRegion[];
 };
 
 const MAP_WIDTH_PX = 768;
 const MAP_HEIGHT_PX = 2500;
-
-const circleHotspot = (xPx: number, yPx: number, sizePx: number): CircleHotspot => ({
-  x: (xPx / MAP_WIDTH_PX) * 100,
-  y: (yPx / MAP_HEIGHT_PX) * 100,
-  size: (sizePx / MAP_WIDTH_PX) * 100,
-});
 
 const DECORATIVE_MAP_AMBIENTS: AmbientRegion[] = [
   {
@@ -90,43 +93,43 @@ const DECORATIVE_MAP_AMBIENTS: AmbientRegion[] = [
 
 const ISLAND_INTERACTIONS: Record<number, IslandInteractionRegion> = {
   1: {
-    islandCircle: circleHotspot(634, 2336, 176),
-    labelCircle: circleHotspot(252, 2424, 172),
+    islandShape: { cx: 631, cy: 2334, rx: 132, ry: 109 },
+    labelShape: { x: 24, y: 2373, width: 287, height: 68, rx: 34 },
     ambients: [
       { id: 'base-camp-sparkles', x: 77.5, y: 91.2, width: 22, height: 13, effect: 'sparkles' },
     ],
   },
   2: {
-    islandCircle: circleHotspot(566, 1292, 220),
-    labelCircle: circleHotspot(256, 1317, 164),
+    islandShape: { cx: 586, cy: 1505, rx: 154, ry: 121 },
+    labelShape: { x: 79, y: 1468, width: 291, height: 68, rx: 34 },
     ambients: [
       { id: 'fraction-forest-butterflies', x: 71.5, y: 57.2, width: 24, height: 15, effect: 'butterflies' },
     ],
   },
   3: {
-    islandCircle: circleHotspot(197, 918, 214),
-    labelCircle: circleHotspot(412, 964, 164),
+    islandShape: { cx: 179, cy: 1047, rx: 156, ry: 121 },
+    labelShape: { x: 267, y: 1118, width: 287, height: 66, rx: 33 },
     ambients: [
       { id: 'geometry-glacier-snow', x: 25.2, y: 47.6, width: 24, height: 15, effect: 'falling-snow' },
     ],
   },
   4: {
-    islandCircle: circleHotspot(166, 1826, 212),
-    labelCircle: circleHotspot(387, 1858, 168),
+    islandShape: { cx: 171, cy: 1892, rx: 150, ry: 115 },
+    labelShape: { x: 255, y: 1951, width: 272, height: 66, rx: 33 },
     ambients: [
       { id: 'data-desert-dust', x: 25.8, y: 72.2, width: 24, height: 15, effect: 'dust-devils' },
     ],
   },
   5: {
-    islandCircle: circleHotspot(552, 562, 214),
-    labelCircle: circleHotspot(252, 548, 168),
+    islandShape: { cx: 551, cy: 681, rx: 155, ry: 116 },
+    labelShape: { x: 80, y: 611, width: 292, height: 68, rx: 34 },
     ambients: [
       { id: 'operations-outpost-stars', x: 70.8, y: 33.1, width: 23, height: 15, effect: 'stars' },
     ],
   },
   6: {
-    islandCircle: circleHotspot(244, 220, 218),
-    labelCircle: circleHotspot(476, 228, 168),
+    islandShape: { cx: 229, cy: 304, rx: 164, ry: 123 },
+    labelShape: { x: 354, y: 280, width: 302, height: 68, rx: 34 },
     ambients: [
       { id: 'mount-algebra-lava', x: 29.5, y: 14.5, width: 26, height: 16, effect: 'lava-spurts' },
     ],
@@ -444,44 +447,54 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
             ))}
         </div>
 
-        <div className="absolute inset-0 z-20">
+        <svg
+          viewBox={`0 0 ${MAP_WIDTH_PX} ${MAP_HEIGHT_PX}`}
+          preserveAspectRatio="none"
+          className="absolute inset-0 z-20 h-full w-full overflow-visible"
+        >
           {islandStates.map(({ island, isUnlocked }) => {
             const interaction = ISLAND_INTERACTIONS[island.id];
             if (!interaction) return null;
 
             const selectIsland = () => setSelectedIslandId(island.id);
 
-            const renderCircleButton = (
-              circle: CircleHotspot,
-              keySuffix: 'island' | 'label',
-            ) => (
-              <motion.button
-                key={`${island.id}-${keySuffix}`}
-                type="button"
-                whileTap={{ scale: 0.97 }}
-                whileHover={{ scale: 1.015 }}
-                onClick={selectIsland}
-                aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
-                className={`absolute z-30 -translate-x-1/2 -translate-y-1/2 rounded-full outline-none transition-all focus-visible:ring-4 focus-visible:ring-cyan-300/70 ${
-                  isUnlocked ? 'opacity-100' : 'opacity-75'
-                }`}
-                style={{
-                  left: `${circle.x}%`,
-                  top: `${circle.y}%`,
-                  width: `${circle.size}%`,
-                  aspectRatio: '1 / 1',
-                }}
-              />
-            );
-
             return (
-              <React.Fragment key={island.id}>
-                {renderCircleButton(interaction.islandCircle, 'island')}
-                {renderCircleButton(interaction.labelCircle, 'label')}
-              </React.Fragment>
+              <motion.g
+                key={island.id}
+                role="button"
+                tabIndex={0}
+                whileTap={{ scale: 0.985 }}
+                onClick={selectIsland}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    selectIsland();
+                  }
+                }}
+                aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
+                style={{ cursor: 'pointer', opacity: isUnlocked ? 1 : 0.8 }}
+              >
+                <ellipse
+                  cx={interaction.islandShape.cx}
+                  cy={interaction.islandShape.cy}
+                  rx={interaction.islandShape.rx}
+                  ry={interaction.islandShape.ry}
+                  fill="transparent"
+                  pointerEvents="all"
+                />
+                <rect
+                  x={interaction.labelShape.x}
+                  y={interaction.labelShape.y}
+                  width={interaction.labelShape.width}
+                  height={interaction.labelShape.height}
+                  rx={interaction.labelShape.rx ?? 0}
+                  fill="transparent"
+                  pointerEvents="all"
+                />
+              </motion.g>
             );
           })}
-        </div>
+        </svg>
       </div>
 
       <AnimatePresence>

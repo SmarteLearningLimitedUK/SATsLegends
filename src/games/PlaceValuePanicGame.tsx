@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import medButton from '../assets/bluedialoague/med button cropped.png';
-import animatedEnemy1 from '../assets/bosses/animated enemy1.gif';
+import animatedEnemy1 from '../assets/maps/ezgif-261d69e7ae90ee8c.webp';
 import hudAvatarName from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
 import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
 import questionBarTiny from '../assets/ui_frames/hudfortextplace_slices/text_bar_tiny.png';
@@ -501,8 +501,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const bottomPct = 100 - socketTopY;
     return `calc(${bottomPct.toFixed(2)}% - 23px)`;
   }, [layout.targetY, targetSocketSizing.heightValue]);
-
-  const goblinSpriteSrc = goblinEffect === 'hit' ? animatedEnemy1 : idleEnemySrc;
 
   const questionFrameConfig = useMemo(() => {
     const promptLength = question.prompt.trim().length;
@@ -1244,18 +1242,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 </motion.div>
               ) : null}
             </AnimatePresence>
-            <motion.img
-              key={goblinEffect === 'hit' ? `enemy-hit-${slotPulseKey}` : 'enemy-idle'}
-              src={goblinSpriteSrc}
-              alt=""
-              aria-hidden="true"
-              draggable={false}
-              className="relative h-auto w-full object-contain drop-shadow-[0_16px_22px_rgba(2,6,23,0.5)]"
-              style={{
-                mixBlendMode: goblinEffect === 'hit' ? 'screen' : 'normal',
-                clipPath: goblinEffect === 'hit' ? 'ellipse(34% 43% at 50% 50%)' : 'none',
-                filter: goblinEffect === 'hit' ? 'brightness(1.08) contrast(1.1) saturate(1.04)' : 'none',
-              }}
+            <motion.div
+              className="relative"
               animate={{
                 y: [0, -5, 0],
                 x: goblinEffect === 'hit' ? [0, -9, 9, -8, 8, -5, 5, 0] : 0,
@@ -1268,7 +1256,43 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 rotate: { duration: 0.35, ease: 'easeInOut' },
                 scale: { duration: 0.35, ease: 'easeInOut' },
               }}
-            />
+            >
+              <img
+                src={idleEnemySrc}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+                className="relative h-auto w-full object-contain drop-shadow-[0_16px_22px_rgba(2,6,23,0.5)]"
+              />
+              <AnimatePresence>
+                {goblinEffect === 'hit' ? (
+                  <motion.img
+                    key={`enemy-hit-${slotPulseKey}`}
+                    src={animatedEnemy1}
+                    alt=""
+                    aria-hidden="true"
+                    draggable={false}
+                    className="absolute inset-0 h-full w-full object-contain"
+                    initial={{ opacity: 0.98 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.12, ease: 'easeOut' }}
+                    style={{
+                      mixBlendMode: 'screen',
+                      filter: 'brightness(1.08) contrast(1.1) saturate(1.04)',
+                      WebkitMaskImage: `url("${idleEnemySrc}")`,
+                      maskImage: `url("${idleEnemySrc}")`,
+                      WebkitMaskRepeat: 'no-repeat',
+                      maskRepeat: 'no-repeat',
+                      WebkitMaskPosition: 'center',
+                      maskPosition: 'center',
+                      WebkitMaskSize: 'contain',
+                      maskSize: 'contain',
+                    }}
+                  />
+                ) : null}
+              </AnimatePresence>
+            </motion.div>
           </div>
         </div>
 
