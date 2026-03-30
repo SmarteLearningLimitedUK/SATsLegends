@@ -232,7 +232,6 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
   const timerRef = useRef<number | null>(null);
   const spawnRef = useRef<number | null>(null);
   const lastFrameRef = useRef<number | null>(null);
-  const holdTimerRef = useRef<number | null>(null);
 
   const bubbleIdRef = useRef(1);
   const overRef = useRef(false);
@@ -290,10 +289,6 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     if (spawnRef.current !== null) {
       window.clearInterval(spawnRef.current);
       spawnRef.current = null;
-    }
-    if (holdTimerRef.current !== null) {
-      window.clearTimeout(holdTimerRef.current);
-      holdTimerRef.current = null;
     }
   }, []);
 
@@ -493,22 +488,16 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
   }, [config.comboStep, config.primePoints, finalize, targetScore]);
 
   const cancelHeldPop = useCallback(() => {
-    if (holdTimerRef.current !== null) {
-      window.clearTimeout(holdTimerRef.current);
-      holdTimerRef.current = null;
-    }
     setPressedBubbleId(null);
   }, []);
 
-  const beginHeldPop = useCallback((bubbleId: number) => {
-    cancelHeldPop();
+  const tapBubble = useCallback((bubbleId: number) => {
     setPressedBubbleId(bubbleId);
-    holdTimerRef.current = window.setTimeout(() => {
-      holdTimerRef.current = null;
-      setPressedBubbleId(null);
-      popBubble(bubbleId);
-    }, 120);
-  }, [cancelHeldPop, popBubble]);
+    window.setTimeout(() => {
+      setPressedBubbleId((current) => (current === bubbleId ? null : current));
+    }, 90);
+    popBubble(bubbleId);
+  }, [popBubble]);
 
   const loop = useCallback((ts: number) => {
     if (overRef.current) return;
@@ -612,16 +601,15 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
                     mistakeBubbleId === bubble.id
                       ? { scale: [1, 0.88, 0.56], opacity: [1, 0.86, 0], x: [0, -6, 6, -4, 0], filter: ['brightness(1)', 'brightness(0.7)', 'brightness(0.5)'] }
                       : pressedBubbleId === bubble.id
-                        ? { scale: [1, 1.08, 1.02], y: [0, -3, 0] }
+                        ? { scale: [1, 1.16, 1.08], y: [0, -5, -2], filter: ['brightness(1)', 'brightness(1.18)', 'brightness(1.06)'] }
                         : { scale: 1, opacity: 1 }
                   }
                   exit={{ scale: 0.28, opacity: 0, rotate: 30 }}
-                  transition={{ duration: 0.18 }}
+                  transition={{ duration: 0.12 }}
                   onPointerDown={(event) => {
                     event.stopPropagation();
-                    beginHeldPop(bubble.id);
+                    tapBubble(bubble.id);
                   }}
-                  onPointerUp={cancelHeldPop}
                   onPointerLeave={cancelHeldPop}
                   onPointerCancel={cancelHeldPop}
                 >

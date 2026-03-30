@@ -443,7 +443,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
           <div className="mb-2 text-center text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/88">
             Drag a number into the missing slot
           </div>
-          <div className="mx-auto grid w-full max-w-[560px] grid-cols-2 gap-2.5 sm:gap-3">
+          <div className="mx-auto flex w-full max-w-[560px] flex-wrap items-center justify-center gap-3 sm:gap-4">
             {question.options.map((option) => {
               const isSelected = selectedAnswer === option;
               const isCorrect = feedbackState === 'correct' && isSelected;
@@ -471,16 +471,17 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                   }}
                   disabled={locked || didComplete || didFail || !isSessionActive}
                   whileTap={{ scale: 0.985 }}
-                  className="group relative h-[48px] w-full touch-none"
+                  className="group relative h-[72px] w-[72px] touch-none sm:h-[78px] sm:w-[78px]"
                 >
                   <div
-                    className={`absolute inset-0 rounded-full border-[1.5px] transition-colors ${
+                    className={`absolute inset-0 rounded-full border-[2px] transition-colors ${
                       isSelected
-                        ? 'border-amber-200/90 bg-gradient-to-b from-amber-300 to-amber-500 shadow-[0_8px_0_rgba(180,83,9,0.8),0_0_26px_rgba(251,191,36,0.45)]'
-                        : 'border-cyan-100/75 bg-gradient-to-b from-cyan-400 to-blue-600 shadow-[0_8px_0_rgba(30,64,175,0.78),0_0_18px_rgba(34,211,238,0.32)]'
+                        ? 'border-amber-200/90 bg-gradient-to-b from-amber-300 to-amber-500 shadow-[0_10px_0_rgba(180,83,9,0.8),0_0_26px_rgba(251,191,36,0.45)]'
+                        : 'border-cyan-100/75 bg-gradient-to-b from-cyan-400 to-blue-600 shadow-[0_10px_0_rgba(30,64,175,0.78),0_0_18px_rgba(34,211,238,0.32)]'
                     }`}
                   />
-                  <div className="pointer-events-none absolute inset-[8%] rounded-full bg-gradient-to-b from-white/30 via-transparent to-transparent" />
+                  <div className="pointer-events-none absolute inset-[9%] rounded-full bg-gradient-to-b from-white/30 via-transparent to-transparent" />
+                  <div className="pointer-events-none absolute inset-[16%] rounded-full border border-white/12" />
 
                   <motion.div
                     initial={false}
@@ -490,7 +491,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                       y: isWrong ? [0, -3, 3, -2, 0] : 0,
                     }}
                     transition={{ duration: isWrong ? 0.35 : 0.4 }}
-                    className={`relative flex h-full items-center justify-center text-[clamp(20px,2.4vw,30px)] font-black tracking-tight drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)] ${
+                    className={`relative flex h-full items-center justify-center px-1 text-center text-[clamp(16px,1.95vw,24px)] font-black leading-none tracking-tight drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)] ${
                       isCorrect ? 'text-emerald-50' : isWrong ? 'text-rose-100' : isSelected ? 'text-slate-900' : 'text-white'
                     }`}
                   >
@@ -528,9 +529,10 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
             }}
           >
             <div className="relative h-full w-full">
-              <div className="absolute inset-0 rounded-full border-[1.5px] border-cyan-100/75 bg-gradient-to-b from-cyan-400 to-blue-600 shadow-[0_8px_0_rgba(30,64,175,0.78),0_0_18px_rgba(34,211,238,0.42)]" />
-              <div className="pointer-events-none absolute inset-[8%] rounded-full bg-gradient-to-b from-white/30 via-transparent to-transparent" />
-              <div className="relative flex h-full items-center justify-center text-[clamp(20px,2.4vw,30px)] font-black tracking-tight text-white drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)]">
+              <div className="absolute inset-0 rounded-full border-[2px] border-cyan-100/75 bg-gradient-to-b from-cyan-400 to-blue-600 shadow-[0_10px_0_rgba(30,64,175,0.78),0_0_18px_rgba(34,211,238,0.42)]" />
+              <div className="pointer-events-none absolute inset-[9%] rounded-full bg-gradient-to-b from-white/30 via-transparent to-transparent" />
+              <div className="pointer-events-none absolute inset-[16%] rounded-full border border-white/12" />
+              <div className="relative flex h-full items-center justify-center px-1 text-center text-[clamp(16px,1.95vw,24px)] font-black leading-none tracking-tight text-white drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)]">
                 {dragAnswer.option}
               </div>
             </div>

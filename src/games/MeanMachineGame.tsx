@@ -7,7 +7,7 @@ import {
   Trophy,
   WandSparkles,
 } from 'lucide-react';
-import slotMachineImage from '../assets/slotmachine.png';
+import slotMachineImage from '../assets/redoslot.png';
 import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
 
 type RoundMode = 'mean' | 'missing';
