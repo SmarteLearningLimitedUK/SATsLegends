@@ -174,7 +174,7 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
                   Mode Miner
                 </div>
                 <p className="mt-2 text-[clamp(1rem,4.5vw,1.25rem)] font-black leading-tight text-white">
-                  Drill the number vein that appears the most.
+                  Drill the number vein that appears most often.
                 </p>
                 <p className="mt-1 text-[11px] font-bold text-cyan-100/82">
                   Repetition is shown as rock clusters. Bigger cluster = stronger evidence.
@@ -255,6 +255,7 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
                             ? { x: [0, -4, 4, -2, 2, 0], rotate: [0, -1, 1, 0] }
                             : { scale: 1 }}
                         transition={{ duration: burst ? 0.55 : 0.4 }}
+                        aria-label={`Drill vein ${vein.value}, repeated ${vein.count} times`}
                         className={`group relative flex min-h-[8.2rem] flex-col overflow-hidden rounded-[1.15rem] border p-2.5 text-left shadow-[0_14px_24px_rgba(2,6,23,0.3)] ${
                           burst
                             ? 'border-amber-200/80 bg-[linear-gradient(180deg,#fbbf24_0%,#92400e_100%)]'
@@ -342,6 +343,7 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
+            aria-live="polite"
             className={`absolute left-1/2 top-[calc(env(safe-area-inset-top)+6.4rem)] z-50 -translate-x-1/2 rounded-full border px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] ${
               feedback.type === 'success'
                 ? 'border-emerald-200/75 bg-emerald-500/25 text-emerald-50'
