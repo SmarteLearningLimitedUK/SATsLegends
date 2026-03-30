@@ -20,6 +20,14 @@ type NumberLineNinjaGameShellProps = NumberLineNinjaGameProps & MiniGameShellCon
 
 type FeedbackState = 'idle' | 'correct' | 'incorrect';
 
+interface FlyingAnswerState {
+  value: string;
+  startX: number;
+  startY: number;
+  endX: number;
+  endY: number;
+}
+
 interface NumberLineQuestion {
   id: number;
   prompt: string;
@@ -147,8 +155,13 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const [didComplete, setDidComplete] = useState(false);
   const [didFail, setDidFail] = useState(false);
   const [lineShake, setLineShake] = useState(false);
+  const [flyingAnswer, setFlyingAnswer] = useState<FlyingAnswerState | null>(null);
+  const [confettiBurstKey, setConfettiBurstKey] = useState(0);
 
   const timeoutIdsRef = useRef<number[]>([]);
+  const playfieldRef = useRef<HTMLDivElement | null>(null);
+  const missingSlotRef = useRef<HTMLDivElement | null>(null);
+  const optionButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   const goalCorrect = useMemo(
     () => Math.min(14, Math.max(7, 6 + Math.floor(levelId / 2))),
@@ -185,6 +198,8 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     setDidComplete(false);
     setDidFail(false);
     setLineShake(false);
+    setFlyingAnswer(null);
+    setConfettiBurstKey(0);
   }, [levelId, sessionState, sessionState?.timeLeft, sessionState?.totalTime]);
 
   useEffect(() => {
@@ -217,6 +232,23 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     setFeedbackState('idle');
     setLocked(false);
     setLineShake(false);
+    setFlyingAnswer(null);
+  };
+
+  const getTravelAnimation = (option: string): FlyingAnswerState | null => {
+    const rootRect = playfieldRef.current?.getBoundingClientRect();
+    const optionRect = optionButtonRefs.current[option]?.getBoundingClientRect();
+    const slotRect = missingSlotRef.current?.getBoundingClientRect();
+
+    if (!rootRect || !optionRect || !slotRect) return null;
+
+    return {
+      value: option,
+      startX: optionRect.left - rootRect.left + (optionRect.width / 2),
+      startY: optionRect.top - rootRect.top + (optionRect.height / 2),
+      endX: slotRect.left - rootRect.left + (slotRect.width / 2),
+      endY: slotRect.top - rootRect.top + (slotRect.height / 2),
+    };
   };
 
   const handleAnswerDrop = (option: string) => {
@@ -236,6 +268,8 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       setCorrectCount(nextCorrect);
       setScore(nextScore);
       setFeedbackState('correct');
+      setFlyingAnswer(getTravelAnimation(option));
+      setConfettiBurstKey((current) => current + 1);
 
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
         XP,
@@ -260,7 +294,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
           return;
         }
         advanceQuestion();
-      }, QUESTION_ADVANCE_MS);
+      }, Math.max(QUESTION_ADVANCE_MS, 760));
       return;
     }
 
@@ -284,7 +318,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const focusPct = (question.focusIndex / (question.labels.length - 1)) * 100;
 
   return (
-    <div className="relative h-full w-full overflow-hidden">
+    <div ref={playfieldRef} className="relative h-full w-full overflow-hidden">
       <img
         src={dojoBackground}
         alt="Number line dojo backdrop"
@@ -352,6 +386,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                       <div className="flex h-[48px] w-[74px] items-center justify-center">
                         {isQuestionMark ? (
                           <motion.div
+                            ref={missingSlotRef}
                             animate={{
                               scale: [1, 1.08, 1],
                               boxShadow: [
@@ -402,6 +437,9 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                 <motion.button
                   key={`${question.id}-${option}`}
                   type="button"
+                  ref={(node) => {
+                    optionButtonRefs.current[option] = node;
+                  }}
                   onClick={() => handleAnswerDrop(option)}
                   disabled={locked || didComplete || didFail || !isSessionActive}
                   whileTap={{ scale: 0.985 }}
@@ -447,6 +485,67 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       </div>
 
       <AnimatePresence>
+        {flyingAnswer && feedbackState === 'correct' && (
+          <motion.div
+            key={`${question.id}-${flyingAnswer.value}-${confettiBurstKey}`}
+            initial={{
+              x: flyingAnswer.startX - 36,
+              y: flyingAnswer.startY - 36,
+              scale: 1,
+              opacity: 1,
+            }}
+            animate={{
+              x: flyingAnswer.endX - 23,
+              y: flyingAnswer.endY - 23,
+              scale: 0.64,
+              opacity: 1,
+            }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.52, ease: [0.2, 0.85, 0.24, 1] }}
+            className="pointer-events-none absolute z-30 h-[72px] w-[72px]"
+          >
+            <div className="absolute inset-0 rounded-full border-[2px] border-amber-200/90 bg-gradient-to-b from-amber-300 to-amber-500 shadow-[0_10px_0_rgba(180,83,9,0.8),0_0_26px_rgba(251,191,36,0.55)]" />
+            <div className="pointer-events-none absolute inset-[9%] rounded-full bg-gradient-to-b from-white/30 via-transparent to-transparent" />
+            <div className="relative flex h-full items-center justify-center px-1 text-center text-[clamp(16px,1.95vw,24px)] font-black leading-none tracking-tight text-slate-900 drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)]">
+              {flyingAnswer.value}
+            </div>
+          </motion.div>
+        )}
+
+        {feedbackState === 'correct' && confettiBurstKey > 0 && (
+          <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
+            {[
+              { left: '43%', top: '23%', color: 'bg-amber-300', delay: 0 },
+              { left: '47%', top: '20%', color: 'bg-cyan-300', delay: 0.04 },
+              { left: '51%', top: '24%', color: 'bg-emerald-300', delay: 0.08 },
+              { left: '54%', top: '21%', color: 'bg-fuchsia-300', delay: 0.02 },
+              { left: '58%', top: '25%', color: 'bg-rose-300', delay: 0.12 },
+              { left: '46%', top: '28%', color: 'bg-white', delay: 0.06 },
+              { left: '56%', top: '28%', color: 'bg-yellow-200', delay: 0.14 },
+              { left: '50%', top: '18%', color: 'bg-sky-200', delay: 0.1 },
+            ].map((piece, index) => (
+              <motion.div
+                key={`${confettiBurstKey}-${index}`}
+                initial={{ opacity: 0, scale: 0.4, x: 0, y: 0, rotate: 0 }}
+                animate={{
+                  opacity: [0, 1, 1, 0],
+                  scale: [0.4, 1, 0.9],
+                  x: [0, (index % 2 === 0 ? -1 : 1) * (18 + (index * 3))],
+                  y: [0, 20 + (index * 6), 42 + (index * 7)],
+                  rotate: [0, index % 2 === 0 ? -120 : 120],
+                }}
+                transition={{
+                  duration: 0.74,
+                  delay: piece.delay,
+                  ease: 'easeOut',
+                }}
+                className={`absolute h-3 w-2 rounded-full ${piece.color}`}
+                style={{ left: piece.left, top: piece.top }}
+              />
+            ))}
+          </div>
+        )}
+
         {feedbackState !== 'idle' && (
           <motion.div
             initial={{ opacity: 0, y: -12, scale: 0.92 }}
@@ -462,6 +561,23 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
               }`}
             >
               {feedbackState === 'correct' ? 'Great Hit!' : 'Try Another!'}
+            </div>
+          </motion.div>
+        )}
+
+        {feedbackState === 'incorrect' && (
+          <motion.div
+            key={`${question.id}-wrong-x`}
+            initial={{ opacity: 0, scale: 0.4 }}
+            animate={{
+              opacity: [0, 1, 0.95, 1, 0],
+              scale: [0.4, 1.18, 0.92, 1.15, 0.86],
+            }}
+            transition={{ duration: 0.64, times: [0, 0.2, 0.42, 0.68, 1], ease: 'easeInOut' }}
+            className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center"
+          >
+            <div className="text-[clamp(86px,18vw,150px)] font-black leading-none text-rose-300 drop-shadow-[0_0_28px_rgba(244,63,94,0.85)]">
+              X
             </div>
           </motion.div>
         )}
