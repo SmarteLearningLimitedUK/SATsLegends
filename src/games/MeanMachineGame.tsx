@@ -154,9 +154,16 @@ const ReelWindow: React.FC<{
   spinning: boolean;
   isMissing?: boolean;
   isCorrectPulse?: boolean;
-}> = ({ value, spinning, isMissing = false, isCorrectPulse = false }) => (
+  isErrorPulse?: boolean;
+}> = ({ value, spinning, isMissing = false, isCorrectPulse = false, isErrorPulse = false }) => (
   <motion.div
-    animate={spinning ? { y: [0, -5, 0, 5, 0], scale: [1, 1.02, 1] } : isCorrectPulse ? { scale: [1, 1.05, 1] } : { y: 0, scale: 1 }}
+    animate={spinning
+      ? { y: [0, -5, 0, 5, 0], scale: [1, 1.02, 1] }
+      : isCorrectPulse
+        ? { y: [0, -4, 0], scale: [1, 1.08, 1] }
+        : isErrorPulse
+          ? { x: [0, -5, 5, -4, 4, 0], scale: [1, 0.98, 1] }
+          : { y: 0, scale: 1 }}
     transition={spinning ? { duration: 0.16, repeat: Infinity, ease: 'linear' } : { duration: 0.35 }}
     className={`relative flex h-[2.8rem] items-center justify-center overflow-hidden rounded-[0.8rem] border shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_10px_18px_rgba(2,6,23,0.24)] md:h-[3rem] ${
       isMissing
@@ -192,6 +199,8 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   const [showGlitch, setShowGlitch] = useState(false);
   const [leverPulse, setLeverPulse] = useState(false);
   const [machineShake, setMachineShake] = useState(false);
+  const [reelSettled, setReelSettled] = useState(false);
+  const [wrongPulse, setWrongPulse] = useState(false);
   const timersRef = useRef<number[]>([]);
   const completionLockedRef = useRef(false);
   const failureLockedRef = useRef(false);
@@ -222,6 +231,8 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     setShowGlitch(false);
     setLeverPulse(false);
     setMachineShake(false);
+    setReelSettled(false);
+    setWrongPulse(false);
     setReelDisplay(['?', '?', '?', '?', '?']);
   }, [clearTimers]);
 
@@ -292,8 +303,10 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
 
     queueTimeout(() => {
       setReelDisplay(round.visibleValues.map((value) => (value === null ? '?' : value)));
+      setReelSettled(true);
       setGameState('answering');
     }, 900);
+    queueTimeout(() => setReelSettled(false), 1280);
   }, [clearTimers, gameState, level, queueTimeout, round, sessionActive]);
 
   const handleAnswer = useCallback((answer: number) => {
@@ -306,6 +319,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
       setXP(earnedXP);
       setShowJackpot(true);
       setMachineShake(true);
+      setReelSettled(true);
       setFeedback({
         type: 'success',
         message: round.mode === 'mean' ? 'Jackpot! Mean solved.' : 'Machine fixed! Missing reel locked in.',
@@ -328,6 +342,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
 
     setShowGlitch(true);
     setMachineShake(true);
+    setWrongPulse(true);
     setFeedback({
       type: 'error',
       message: round.mode === 'mean'
@@ -343,6 +358,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     queueTimeout(() => setMachineShake(false), 450);
     queueTimeout(() => {
       setShowGlitch(false);
+      setWrongPulse(false);
       setFeedback(null);
       setSelectedAnswer(null);
       answerLockedRef.current = false;
@@ -439,7 +455,8 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                           value={value}
                           spinning={gameState === 'spinning'}
                           isMissing={Boolean(round && round.mode === 'missing' && round.visibleValues[index] === null)}
-                          isCorrectPulse={showJackpot}
+                          isCorrectPulse={showJackpot || reelSettled}
+                          isErrorPulse={wrongPulse}
                         />
                       ))}
                     </div>
@@ -544,6 +561,8 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                       type="button"
                       onClick={() => handleAnswer(option)}
                       disabled={gameState !== 'answering' || !sessionActive}
+                      animate={selectedAnswer === option && wrongPulse ? { x: [0, -6, 6, -4, 4, 0] } : { x: 0 }}
+                      transition={{ duration: 0.28 }}
                       className={`rounded-[1rem] border px-4 py-2.5 text-base font-black transition-all ${
                         isSelected
                           ? 'border-amber-100/85 bg-[linear-gradient(180deg,#fbbf24_0%,#f59e0b_100%)] text-slate-950 shadow-[0_12px_20px_rgba(146,64,14,0.34)]'

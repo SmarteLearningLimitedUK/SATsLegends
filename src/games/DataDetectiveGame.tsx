@@ -93,6 +93,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   const [guiltyId, setGuiltyId] = useState<number | null>(null);
   const [chartType, setChartType] = useState<'bar' | 'pie'>('bar');
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [armedSuspectId, setArmedSuspectId] = useState<number | null>(null);
 
   const generateCase = useCallback(() => {
     setChartType(Math.random() > 0.5 ? 'bar' : 'pie');
@@ -132,6 +133,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
     setSuspects(newSuspects);
     setGuiltyId(correctIdx);
     setFeedback(null);
+    setArmedSuspectId(null);
   }, []);
 
   const startGame = () => {
@@ -147,6 +149,11 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
 
   const handleSuspectClick = (id: number) => {
     if (gameState !== 'playing') return;
+    if (armedSuspectId !== id) {
+      setArmedSuspectId(id);
+      setFeedback({ type: 'success', message: 'Evidence locked. Tap again to accuse this suspect.' });
+      return;
+    }
 
     if (id === guiltyId) {
       setFeedback({ type: 'success', message: 'CASE CLOSED! You found the guilty monster.' });
@@ -156,6 +163,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
     }
 
     setFeedback({ type: 'error', message: "WRONG SUSPECT! The evidence doesn't match." });
+    setArmedSuspectId(null);
     setScore(prev => Math.max(0, prev - 20));
   };
 
@@ -305,10 +313,14 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleSuspectClick(suspect.id)}
+                animate={armedSuspectId === suspect.id ? { scale: [1, 1.03, 1], y: [0, -2, 0] } : { scale: 1, y: 0 }}
+                transition={{ duration: 0.35 }}
                 className={`group relative flex flex-col rounded-2xl border-2 p-4 transition-all duration-300 ${
                   gameState === 'success' && suspect.id === guiltyId
                     ? 'border-emerald-500 bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.2)]'
-                    : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
+                    : armedSuspectId === suspect.id
+                      ? 'border-amber-400 bg-amber-500/10 shadow-[0_0_20px_rgba(245,158,11,0.18)]'
+                      : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
                 }`}
               >
                 <div className={`mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full ${suspect.color} text-stone-900 shadow-lg`}>

@@ -66,6 +66,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   const [antidotes, setAntidotes] = useState<Antidote[]>([]);
   const [correctId, setCorrectId] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [armedAntidoteId, setArmedAntidoteId] = useState<number | null>(null);
 
   const generateLevel = useCallback((targetLevel: number) => {
     const numPoints = Math.min(3 + Math.floor(targetLevel / 2), 8);
@@ -114,6 +115,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
     setAntidotes(newAntidotes);
     setCorrectId(correctIdx);
     setFeedback(null);
+    setArmedAntidoteId(null);
   }, []);
 
   const startGame = () => {
@@ -130,6 +132,11 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
 
   const handleAntidoteClick = (id: number) => {
     if (gameState !== 'playing') return;
+    if (armedAntidoteId !== id) {
+      setArmedAntidoteId(id);
+      setFeedback({ type: 'success', message: 'Graph highlighted. Tap again to confirm this antidote.' });
+      return;
+    }
 
     if (id === correctId) {
       setFeedback({ type: 'success', message: 'ANTIDOTE VERIFIED! Patient stabilizing.' });
@@ -139,6 +146,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
     }
 
     setFeedback({ type: 'error', message: 'CONTAMINATION DETECTED! Data mismatch.' });
+    setArmedAntidoteId(null);
     setScore(prev => Math.max(0, prev - 25));
   };
 
@@ -241,10 +249,14 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                 whileHover={{ scale: 1.01, backgroundColor: 'rgba(16, 185, 129, 0.05)' }}
                 whileTap={{ scale: 0.99 }}
                 onClick={() => handleAntidoteClick(antidote.id)}
+                animate={armedAntidoteId === antidote.id ? { scale: [1, 1.015, 1], boxShadow: ['0 0 0 rgba(0,0,0,0)', '0 0 18px rgba(16,185,129,0.18)', '0 0 0 rgba(0,0,0,0)'] } : { scale: 1 }}
+                transition={{ duration: 0.35 }}
                 className={`group relative flex items-center rounded-2xl border-2 p-4 transition-all duration-300 ${
                   gameState === 'success' && antidote.id === correctId
                     ? 'border-emerald-500 bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.2)]'
-                    : 'border-slate-800 bg-slate-900/50 hover:border-emerald-500/50'
+                    : armedAntidoteId === antidote.id
+                      ? 'border-emerald-400 bg-emerald-500/10'
+                      : 'border-slate-800 bg-slate-900/50 hover:border-emerald-500/50'
                 }`}
               >
                 <div className="mr-6 flex h-12 w-12 items-center justify-center rounded-xl border border-slate-800 bg-slate-950 transition-colors group-hover:border-emerald-500/50">
@@ -261,7 +273,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                         type="monotone"
                         dataKey="value"
                         stroke={antidote.color}
-                        strokeWidth={3}
+                        strokeWidth={armedAntidoteId === antidote.id ? 4.2 : 3}
                         dot={{ r: 4, fill: antidote.color }}
                         animationDuration={500}
                       />

@@ -184,6 +184,9 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
                 <div className="rounded-full border border-cyan-100/18 bg-slate-950/28 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/84">
                   L{level}/{MAX_LEVEL}
                 </div>
+                <div className="rounded-full border border-cyan-100/18 bg-slate-950/28 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/84">
+                  Combo x{Math.max(1, combo)}
+                </div>
                 <div className="rounded-full border border-amber-200/18 bg-slate-950/28 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-amber-100/84">
                   Mistakes {mistakesLeft}
                 </div>
@@ -250,9 +253,9 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
                         onClick={() => handleVeinTap(vein.value)}
                         whileTap={gameState === 'playing' ? { scale: 0.98 } : undefined}
                         animate={burst
-                          ? { scale: [1, 1.04, 1], boxShadow: ['0 0 0 rgba(0,0,0,0)', '0 0 24px rgba(250,204,21,0.38)', '0 0 0 rgba(0,0,0,0)'] }
+                          ? { scale: [1, 1.04, 0.98, 1], boxShadow: ['0 0 0 rgba(0,0,0,0)', '0 0 24px rgba(250,204,21,0.38)', '0 0 0 rgba(0,0,0,0)'] }
                           : collapsed
-                            ? { x: [0, -4, 4, -2, 2, 0], rotate: [0, -1, 1, 0] }
+                            ? { x: [0, -4, 4, -2, 2, 0], rotate: [0, -1, 1, 0], opacity: [1, 0.76, 1] }
                             : { scale: 1 }}
                         transition={{ duration: burst ? 0.55 : 0.4 }}
                         aria-label={`Drill vein ${vein.value}, repeated ${vein.count} times`}
@@ -286,7 +289,7 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
                               animate={burst
                                 ? { scale: [1, 1.18, 1], y: [0, -3, 0] }
                                 : collapsed
-                                  ? { y: [0, 4, 0], opacity: [1, 0.75, 1] }
+                                  ? { y: [0, 4, 0], opacity: [1, 0.42, 1], scale: [1, 0.9, 1] }
                                   : { scale: 1 }}
                               transition={{ duration: 0.34, delay: gemIndex * 0.03 }}
                               className={`flex h-7 items-center justify-center rounded-[0.75rem] border text-[11px] font-black ${burst ? 'border-amber-100/70 bg-amber-50/18 text-white' : 'border-cyan-100/16 bg-slate-950/34 text-cyan-50'}`}

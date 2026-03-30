@@ -224,11 +224,15 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
   const [lives, setLives] = useState(INITIAL_LIVES);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
+  const [mistakeBubbleId, setMistakeBubbleId] = useState<number | null>(null);
+  const [pressedBubbleId, setPressedBubbleId] = useState<number | null>(null);
+  const [screenShake, setScreenShake] = useState(false);
 
   const rafRef = useRef<number | null>(null);
   const timerRef = useRef<number | null>(null);
   const spawnRef = useRef<number | null>(null);
   const lastFrameRef = useRef<number | null>(null);
+  const holdTimerRef = useRef<number | null>(null);
 
   const bubbleIdRef = useRef(1);
   const overRef = useRef(false);
@@ -286,6 +290,10 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     if (spawnRef.current !== null) {
       window.clearInterval(spawnRef.current);
       spawnRef.current = null;
+    }
+    if (holdTimerRef.current !== null) {
+      window.clearTimeout(holdTimerRef.current);
+      holdTimerRef.current = null;
     }
   }, []);
 
@@ -386,6 +394,9 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     setLives(INITIAL_LIVES);
     setTimeLeft(config.roundSeconds);
     setFeedback(null);
+    setMistakeBubbleId(null);
+    setPressedBubbleId(null);
+    setScreenShake(false);
 
     let initial: Bubble[] = [];
     for (let i = 0; i < bubbleRuntime.minBubbles; i += 1) {
@@ -432,34 +443,72 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
       const earned = Math.round(config.primePoints * (1 + comboNext * config.comboStep));
       scoreNext += earned;
       comboNext += 1;
-      setFeedback(`+${earned}`);
+      setFeedback(comboNext > 1 ? `+${earned}  Combo x${comboNext}` : `+${earned}`);
       confetti({
         particleCount: 18,
         spread: 26,
         origin: { y: 0.62 },
         colors: ['#fde047', '#22d3ee', '#34d399'],
       });
+      const nextBubbles = bubblesRef.current.filter((bubble) => bubble.id !== bubbleId);
+      bubblesRef.current = nextBubbles;
+      scoreRef.current = Math.max(0, scoreNext);
+      comboRef.current = Math.max(0, comboNext);
+      livesRef.current = Math.max(0, livesNext);
+
+      setBubbles(nextBubbles);
+      setScore(scoreRef.current);
+      setLives(livesRef.current);
+      window.setTimeout(() => setFeedback(null), 520);
     } else {
       comboNext = 0;
       livesNext -= 1;
+      setMistakeBubbleId(bubbleId);
+      setScreenShake(true);
       setFeedback('-1 life');
+
+      window.setTimeout(() => {
+        const nextBubbles = bubblesRef.current.filter((bubble) => bubble.id !== bubbleId);
+        bubblesRef.current = nextBubbles;
+        scoreRef.current = Math.max(0, scoreNext);
+        comboRef.current = Math.max(0, comboNext);
+        livesRef.current = Math.max(0, livesNext);
+        setMistakeBubbleId(null);
+        setScreenShake(false);
+        setBubbles(nextBubbles);
+        setScore(scoreRef.current);
+        setLives(livesRef.current);
+        window.setTimeout(() => setFeedback(null), 520);
+
+        if (scoreRef.current >= targetScore || livesRef.current <= 0) {
+          finalize(scoreRef.current);
+        }
+      }, 190);
+      return;
     }
-
-    const nextBubbles = bubblesRef.current.filter((bubble) => bubble.id !== bubbleId);
-    bubblesRef.current = nextBubbles;
-    scoreRef.current = Math.max(0, scoreNext);
-    comboRef.current = Math.max(0, comboNext);
-    livesRef.current = Math.max(0, livesNext);
-
-    setBubbles(nextBubbles);
-    setScore(scoreRef.current);
-    setLives(livesRef.current);
-    window.setTimeout(() => setFeedback(null), 520);
 
     if (scoreRef.current >= targetScore || livesRef.current <= 0) {
       finalize(scoreRef.current);
     }
   }, [config.comboStep, config.primePoints, finalize, targetScore]);
+
+  const cancelHeldPop = useCallback(() => {
+    if (holdTimerRef.current !== null) {
+      window.clearTimeout(holdTimerRef.current);
+      holdTimerRef.current = null;
+    }
+    setPressedBubbleId(null);
+  }, []);
+
+  const beginHeldPop = useCallback((bubbleId: number) => {
+    cancelHeldPop();
+    setPressedBubbleId(bubbleId);
+    holdTimerRef.current = window.setTimeout(() => {
+      holdTimerRef.current = null;
+      setPressedBubbleId(null);
+      popBubble(bubbleId);
+    }, 120);
+  }, [cancelHeldPop, popBubble]);
 
   const loop = useCallback((ts: number) => {
     if (overRef.current) return;
@@ -531,7 +580,11 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     >
       <div className="relative z-10 flex h-full min-h-0 w-full flex-col pt-[env(safe-area-inset-top)]">
 
-        <div className="relative min-h-0 flex-1 overflow-hidden bg-transparent">
+        <motion.div
+          animate={screenShake ? { x: [0, -8, 8, -5, 5, -2, 0], y: [0, 2, -2, 0] } : { x: 0, y: 0 }}
+          transition={{ duration: 0.28 }}
+          className="relative min-h-0 flex-1 overflow-hidden bg-transparent"
+        >
           <div className="absolute inset-[40px] z-10 overflow-hidden">
             <div
               className="pointer-events-none absolute left-0 right-0 z-20 border border-white/85 shadow-[0_0_0_1px_rgba(0,0,0,0.85),0_0_12px_rgba(255,255,255,0.45)]"
@@ -555,13 +608,22 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
                   className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer"
                   style={{ left: `${bubble.x}%`, top: `${bubble.y}%` }}
                   initial={{ scale: 0.5, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
+                  animate={
+                    mistakeBubbleId === bubble.id
+                      ? { scale: [1, 0.88, 0.56], opacity: [1, 0.86, 0], x: [0, -6, 6, -4, 0], filter: ['brightness(1)', 'brightness(0.7)', 'brightness(0.5)'] }
+                      : pressedBubbleId === bubble.id
+                        ? { scale: [1, 1.08, 1.02], y: [0, -3, 0] }
+                        : { scale: 1, opacity: 1 }
+                  }
                   exit={{ scale: 0.28, opacity: 0, rotate: 30 }}
                   transition={{ duration: 0.18 }}
                   onPointerDown={(event) => {
                     event.stopPropagation();
-                    popBubble(bubble.id);
+                    beginHeldPop(bubble.id);
                   }}
+                  onPointerUp={cancelHeldPop}
+                  onPointerLeave={cancelHeldPop}
+                  onPointerCancel={cancelHeldPop}
                 >
                   <PrimeBubble bubble={bubble} isPhone={isPhone} />
                 </motion.div>
@@ -582,7 +644,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
               </motion.div>
             ) : null}
           </AnimatePresence>
-        </div>
+        </motion.div>
 
       </div>
     </div>

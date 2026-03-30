@@ -266,26 +266,42 @@ const getEdgeLabelPosition = (edge: ShapeEdge) => {
 const PerimeterShapeRenderer: React.FC<{
   shape: ShapeModel;
   highlightedEdgeId: string | null;
+  tracedEdgeIds: string[];
   onHighlightEdge: (id: string | null) => void;
+  onTraceEdge: (id: string) => void;
+  onTraceStart: () => void;
+  onTraceEnd: () => void;
   zoom: number;
   labelFontSize: number;
-}> = ({ shape, highlightedEdgeId, onHighlightEdge, zoom, labelFontSize }) => {
+}> = ({ shape, highlightedEdgeId, tracedEdgeIds, onHighlightEdge, onTraceEdge, onTraceStart, onTraceEnd, zoom, labelFontSize }) => {
   const pointsAttr = shape.points.map((point) => `${point.x},${point.y}`).join(' ');
 
   return (
-    <svg viewBox="0 0 100 100" className="h-full w-full">
+    <svg viewBox="0 0 100 100" className="h-full w-full" onPointerUp={onTraceEnd} onPointerLeave={onTraceEnd}>
       <g transform={`translate(50 50) scale(${zoom}) translate(-50 -50)`}>
         <polygon points={pointsAttr} fill="rgba(56, 189, 248, 0.16)" stroke="rgba(125, 211, 252, 0.42)" strokeWidth="0.4" />
         {shape.edges.map((edge) => {
-          const isActive = highlightedEdgeId === edge.id;
+          const isTraced = tracedEdgeIds.includes(edge.id);
+          const isActive = highlightedEdgeId === edge.id || isTraced;
           const labelPos = getEdgeLabelPosition(edge);
           const labelWidth = Math.max(30, Math.min(50, edge.label.length * 4 + 8));
           return (
             <g
               key={edge.id}
-              onPointerEnter={() => onHighlightEdge(edge.id)}
+              onPointerDown={() => {
+                onTraceStart();
+                onHighlightEdge(edge.id);
+                onTraceEdge(edge.id);
+              }}
+              onPointerEnter={() => {
+                onHighlightEdge(edge.id);
+                onTraceEdge(edge.id);
+              }}
               onPointerLeave={() => onHighlightEdge(null)}
-              onTouchStart={() => onHighlightEdge(edge.id)}
+              onTouchStart={() => {
+                onHighlightEdge(edge.id);
+                onTraceEdge(edge.id);
+              }}
             >
               <line
                 x1={edge.from.x}
@@ -293,7 +309,7 @@ const PerimeterShapeRenderer: React.FC<{
                 x2={edge.to.x}
                 y2={edge.to.y}
                 stroke={isActive ? '#facc15' : '#7dd3fc'}
-                strokeWidth={isActive ? 3.4 : 2.8}
+                strokeWidth={isTraced ? 4.1 : isActive ? 3.4 : 2.8}
                 strokeLinecap="round"
               />
               <rect
@@ -302,8 +318,8 @@ const PerimeterShapeRenderer: React.FC<{
                 width={labelWidth}
                 height={13.2}
                 rx={4.6}
-                fill={isActive ? 'rgba(250, 204, 21, 0.36)' : 'rgba(15, 23, 42, 0.66)'}
-                stroke={isActive ? 'rgba(250, 204, 21, 0.75)' : 'rgba(255, 255, 255, 0.22)'}
+                fill={isTraced ? 'rgba(250, 204, 21, 0.52)' : isActive ? 'rgba(250, 204, 21, 0.36)' : 'rgba(15, 23, 42, 0.66)'}
+                stroke={isTraced ? 'rgba(253, 224, 71, 0.95)' : isActive ? 'rgba(250, 204, 21, 0.75)' : 'rgba(255, 255, 255, 0.22)'}
                 strokeWidth={0.45}
               />
               <text
@@ -341,6 +357,8 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
   const [shakeShape, setShakeShape] = useState(false);
   const [highlightedEdgeId, setHighlightedEdgeId] = useState<string | null>(null);
+  const [tracedEdgeIds, setTracedEdgeIds] = useState<string[]>([]);
+  const [isTracing, setIsTracing] = useState(false);
   const [locked, setLocked] = useState(false);
 
   const endedRef = useRef(false);
@@ -354,6 +372,8 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
     setCorrectCount(0);
     setFeedback(null);
     setShakeShape(false);
+    setTracedEdgeIds([]);
+    setIsTracing(false);
     setLocked(false);
     endedRef.current = false;
   }, [levelId]);
@@ -366,6 +386,15 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
     setFeedback(null);
     setLocked(false);
     setHighlightedEdgeId(null);
+    setTracedEdgeIds([]);
+    setIsTracing(false);
+  };
+
+  const traceComplete = tracedEdgeIds.length === question.shape.edges.length;
+
+  const handleTraceEdge = (edgeId: string) => {
+    if (locked || !isTracing) return;
+    setTracedEdgeIds((prev) => (prev.includes(edgeId) ? prev : [...prev, edgeId]));
   };
 
   const handleCorrect = (submitted: number) => {
@@ -413,7 +442,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
   };
 
   const submitAnswer = (rawAnswer: number) => {
-    if (locked || feedback) return;
+    if (locked || feedback || !traceComplete) return;
     if (rawAnswer === question.correctPerimeter) {
       handleCorrect(rawAnswer);
       return;
@@ -422,7 +451,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
   };
 
   const handleOptionTap = (option: number) => {
-    if (locked) return;
+    if (locked || !traceComplete) return;
     setSelectedOption(option);
     submitAnswer(option);
   };
@@ -474,7 +503,11 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
               <PerimeterShapeRenderer
                 shape={question.shape}
                 highlightedEdgeId={highlightedEdgeId}
+                tracedEdgeIds={tracedEdgeIds}
                 onHighlightEdge={setHighlightedEdgeId}
+                onTraceEdge={handleTraceEdge}
+                onTraceStart={() => setIsTracing(true)}
+                onTraceEnd={() => setIsTracing(false)}
                 zoom={shapeZoom}
                 labelFontSize={labelFontSize}
               />
@@ -487,11 +520,11 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
                 key={option}
                 whileTap={{ scale: 0.96 }}
                 onClick={() => handleOptionTap(option)}
-                disabled={locked}
+                disabled={locked || !traceComplete}
                 className={`h-12 rounded-2xl border text-lg font-black shadow-[0_8px_16px_rgba(2,6,23,0.35)] md:h-14 md:text-xl ${
                   selectedOption === option
                     ? 'border-yellow-200/80 bg-[linear-gradient(180deg,#fcd34d,#f59e0b)] text-amber-950'
-                    : 'border-sky-100/30 bg-slate-900/72 text-white'
+                    : 'border-sky-100/30 bg-slate-900/72 text-white disabled:opacity-45'
                 }`}
               >
                 {option}
@@ -506,7 +539,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
               ? 'border-rose-300/45 bg-rose-400/16 text-rose-100'
               : 'border-white/18 bg-slate-950/44 text-white/72'
           }`}>
-            {feedback ? feedback.message : 'Trace all outer edges once to find the perimeter.'}
+            {feedback ? feedback.message : traceComplete ? 'Path traced. Choose the matching perimeter.' : `Trace the full outer path first (${tracedEdgeIds.length}/${question.shape.edges.length}).`}
           </div>
         </main>
       </div>

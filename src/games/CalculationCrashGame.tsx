@@ -110,6 +110,8 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
   const [Combo, setStreak] = useState(0);
   const [timeLeft, setTimeLeft] = useState(ROUND_SECONDS);
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; text: string } | null>(null);
+  const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
+  const [screenShake, setScreenShake] = useState(false);
 
   const feedbackTimerRef = useRef<number | null>(null);
   const submittedResultRef = useRef(false);
@@ -144,6 +146,8 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
     setStreak(0);
     setTimeLeft(ROUND_SECONDS);
     setFeedback(null);
+    setSelectedChoice(null);
+    setScreenShake(false);
   };
 
   useEffect(() => {
@@ -169,6 +173,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
 
   const handleAnswer = (choice: number) => {
     if (status !== 'playing') return;
+    setSelectedChoice(choice);
 
     const correct = choice === question.answer;
     const nextAttempted = attempted + 1;
@@ -182,13 +187,18 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
       setSolved(nextSolved);
       setStreak(nextStreak);
       setScore((prev) => prev + earned);
-      queueFeedback('success', `+${earned}`);
+      queueFeedback('success', nextStreak > 1 ? `+${earned} · Combo x${nextStreak}` : `+${earned}`);
     } else {
       setStreak(0);
+      setScreenShake(true);
       queueFeedback('error', `Answer: ${question.answer}`);
+      window.setTimeout(() => setScreenShake(false), 260);
     }
 
-    setQuestion(createQuestion(levelId));
+    window.setTimeout(() => {
+      setQuestion(createQuestion(levelId));
+      setSelectedChoice(null);
+    }, correct ? 140 : 180);
   };
 
   const submitRound = () => {
@@ -212,7 +222,11 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
 
       <main className={`relative z-10 flex h-full w-full flex-col ${topPadding} px-[max(1rem,env(safe-area-inset-left))] pb-[calc(env(safe-area-inset-bottom)+5rem)]`}>
         <div className="mx-auto flex h-full w-full max-w-[34rem] flex-col">
-          <div className="my-auto w-full">
+          <motion.div
+            animate={screenShake ? { x: [0, -8, 8, -5, 5, -2, 0] } : { x: 0 }}
+            transition={{ duration: 0.28 }}
+            className="my-auto w-full"
+          >
             <section className="text-center">
               <div className="mx-auto w-full max-w-[31rem] rounded-[1.25rem] border border-amber-100/35 bg-[linear-gradient(180deg,rgba(2,6,23,0.82),rgba(2,6,23,0.68))] px-4 py-3 shadow-[0_14px_34px_rgba(2,6,23,0.52)] backdrop-blur-[2px]">
                 <p className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-200/95">Calculation Clash</p>
@@ -225,15 +239,17 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
             <section className="mx-auto mt-5 w-full max-w-[30rem] rounded-[1.3rem] border border-white/20 bg-black/28 px-3 py-3 backdrop-blur-[2px] shadow-[0_14px_30px_rgba(2,6,23,0.4)]">
               <div className="grid grid-cols-2 gap-2.5">
                 {question.options.map((option, idx) => (
-                  <button
+                  <motion.button
                     key={`${question.prompt}-${option}-${idx}`}
                     type="button"
                     onClick={() => handleAnswer(option)}
                     disabled={status !== 'playing'}
-                    className="rounded-[1.05rem] border border-amber-100/70 bg-[linear-gradient(180deg,#fde68a_0%,#f59e0b_100%)] px-3 py-3 text-center text-[clamp(1.35rem,6vw,2.2rem)] font-black text-amber-950 shadow-[0_10px_18px_rgba(146,64,14,0.35)] transition active:scale-[0.98] disabled:opacity-45"
+                    whileTap={{ scale: 0.96, y: 2 }}
+                    animate={selectedChoice === option ? { scale: [1, 1.06, 1], rotate: [0, -2, 2, 0] } : { scale: 1, rotate: 0 }}
+                    className="rounded-[1.05rem] border border-amber-100/70 bg-[linear-gradient(180deg,#fde68a_0%,#f59e0b_100%)] px-3 py-3 text-center text-[clamp(1.35rem,6vw,2.2rem)] font-black text-amber-950 shadow-[0_10px_18px_rgba(146,64,14,0.35)] transition disabled:opacity-45"
                   >
                     {option}
-                  </button>
+                  </motion.button>
                 ))}
               </div>
 
@@ -245,7 +261,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
                 XP: {XP.toLocaleString()}
               </div>
             </section>
-          </div>
+          </motion.div>
         </div>
       </main>
 
