@@ -28,6 +28,8 @@ interface LevelResultModalProps {
     onPrimary: () => void;
     secondaryLabel?: string;
     onSecondary?: () => void;
+    tertiaryLabel?: string;
+    onTertiary?: () => void;
   } | null;
 }
 
@@ -268,7 +270,20 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
                 </OverlaySurface>
               )}
 
-              <div className="mt-1 flex flex-col gap-2 sm:flex-row">
+              <div className="mt-1 flex flex-col gap-2">
+                {result.onTertiary && result.tertiaryLabel ? (
+                  <SecondaryActionButton
+                    onClick={() => {
+                      triggerHaptic('selection');
+                      result.onTertiary?.();
+                    }}
+                    className="w-full gap-2 py-3 md:py-4"
+                  >
+                    <AssetIcon name="star" className="h-4 w-4" />
+                    {result.tertiaryLabel}
+                  </SecondaryActionButton>
+                ) : null}
+                <div className="flex flex-col gap-2 sm:flex-row">
                 {result.onSecondary && result.secondaryLabel && (
                   <SecondaryActionButton
                     onClick={() => {
@@ -294,6 +309,7 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
                   {isVictory ? <AssetIcon name="trophy" className="h-4 w-4" /> : <AssetIcon name="refresh" className="h-4 w-4" />}
                   {result.primaryLabel}
                 </PrimaryActionButton>
+                </div>
               </div>
             </div>
             </motion.div>

@@ -27,6 +27,7 @@ const createDefaultPlayer = (parsed?: Partial<PlayerData> | null): PlayerData =>
   dailyQuests: parsed?.dailyQuests || INITIAL_DAILY_QUESTS,
   achievements: parsed?.achievements || [],
   customSpriteUrl: parsed?.customSpriteUrl,
+  calmTokens: parsed?.calmTokens || 0,
   stats: {
     totalStars: parsed?.stats?.totalStars || 0,
     totalGamesPlayed: parsed?.stats?.totalGamesPlayed || 0,
@@ -225,6 +226,7 @@ export const usePlayerProgression = (): PlayerProgressionController => {
       subtitle: stars === 3
         ? 'You nailed the target, banked the rewards, and pushed your run forward.'
         : 'Rewards are locked in. Keep the momentum going into the next challenge.',
+      XP: score,
       score,
       stars,
       coinsEarned: earnedCoins,

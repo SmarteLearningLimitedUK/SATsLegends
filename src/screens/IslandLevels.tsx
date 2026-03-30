@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+﻿import React, { useEffect, useMemo, useState } from 'react';
 import { Crown, Lock, Sparkles } from 'lucide-react';
 import AssetIcon from '../components/AssetIcon';
 import { IslandData, LevelData, PlayerData } from '../types';
@@ -14,6 +14,10 @@ interface IslandLevelsProps {
   player: PlayerData;
   onBack: () => void;
   onSelectLevel: (level: LevelData) => void;
+  wellbeingTitle?: string;
+  wellbeingSubtitle?: string;
+  wellbeingType?: string;
+  onOpenWellbeing?: () => void;
 }
 
 interface LevelRowState {
@@ -115,7 +119,16 @@ const getGameSummary = (level: LevelData) => {
   return GAME_SUMMARY_BY_KEY[key] || 'Take on this challenge to improve speed, accuracy, and confidence.';
 };
 
-const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onSelectLevel }) => {
+const IslandLevels: React.FC<IslandLevelsProps> = ({
+  island,
+  player,
+  onBack,
+  onSelectLevel,
+  wellbeingTitle,
+  wellbeingSubtitle,
+  wellbeingType,
+  onOpenWellbeing,
+}) => {
   const [expandedGameId, setExpandedGameId] = useState<string | null>(null);
 
   const completedLevels = player.completedLevels[island.id] || [];
@@ -297,7 +310,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
                   Recommended Next
                 </div>
                 <div className="mt-1 truncate text-sm font-black text-white md:text-base">
-                  {getGroupName(nextPlayableRow.level)} � {nextPlayableRow.level.miniGameLevel ? `Level ${nextPlayableRow.level.miniGameLevel}` : `Level ${nextPlayableRow.level.id}`}
+                  {getGroupName(nextPlayableRow.level)} • {nextPlayableRow.level.miniGameLevel ? `Level ${nextPlayableRow.level.miniGameLevel}` : `Level ${nextPlayableRow.level.id}`}
                 </div>
               </div>
               <button
@@ -354,7 +367,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
                       <div className="truncate text-sm font-black text-white md:text-base">{group.name}</div>
                       <div className="mt-0.5 text-[11px] font-semibold text-cyan-100/80 md:text-xs">
                         {group.completedCount}/{group.levels.length} complete
-                        {group.hasNextPlayable ? ' � Continue available' : ''}
+                        {group.hasNextPlayable ? ' • Continue available' : ''}
                       </div>
                     </div>
 
@@ -459,6 +472,26 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
                 </div>
               );
             })}
+
+            {wellbeingTitle && onOpenWellbeing ? (
+              <div className="rounded-2xl border border-emerald-200/35 bg-[linear-gradient(180deg,rgba(16,185,129,0.18),rgba(56,189,248,0.08),rgba(15,23,42,0.4))] px-4 py-4 shadow-[0_16px_30px_rgba(16,185,129,0.12)]">
+                <div className="inline-flex items-center gap-1 rounded-full border border-emerald-100/30 bg-emerald-300/12 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-100">
+                  Calm break
+                  {wellbeingType ? <span className="text-emerald-100/70">• {wellbeingType}</span> : null}
+                </div>
+                <div className="mt-2 text-lg font-black text-cyan-50">{wellbeingTitle}</div>
+                <div className="mt-1 text-sm font-semibold leading-relaxed text-cyan-100/82">
+                  {wellbeingSubtitle || 'A short reset activity to help you breathe, settle, and feel ready for the next challenge.'}
+                </div>
+                <button
+                  type="button"
+                  onClick={onOpenWellbeing}
+                  className="mt-3 w-full rounded-xl bg-[linear-gradient(180deg,#8ff7da_0%,#63d8c8_100%)] px-4 py-3 text-sm font-black uppercase tracking-[0.14em] text-slate-950 shadow-[0_12px_24px_rgba(20,184,166,0.2)]"
+                >
+                  Take Calm Break
+                </button>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
@@ -467,4 +500,5 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({ island, player, onBack, onS
 };
 
 export default IslandLevels;
+
 

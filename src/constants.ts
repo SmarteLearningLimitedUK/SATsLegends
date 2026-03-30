@@ -51,14 +51,32 @@ export const INITIAL_DAILY_QUESTS: DailyQuest[] = [
 ];
 export const AVATARS: AvatarData[] = CHARACTER_AVATARS;
 
+const FRACTION_FOREST_LEVELS: LevelData[] = [
+  { id: 1, stars: 0, isLocked: false, blueprintKey: 'take_out_rush', displayName: 'Take-Out Rush', gameType: 'take_out_rush' },
+  { id: 2, stars: 0, isLocked: false, blueprintKey: 'fraction_forge', displayName: 'Fraction Forge', gameType: 'take_out_rush' },
+  { id: 3, stars: 0, isLocked: false, blueprintKey: 'match3_equivalence', displayName: 'Match-3 Equivalence', gameType: 'fraction_match' },
+  { id: 4, stars: 0, isLocked: false, blueprintKey: 'fraction_flow', displayName: 'Fraction Flow', gameType: 'cloud_collapse' },
+  { id: 5, stars: 0, isLocked: false, blueprintKey: 'fraction_of_amount', displayName: 'Fraction of Amount', gameType: 'percent_pulse' },
+  { id: 6, stars: 0, isLocked: false, blueprintKey: 'simplify_sprint', displayName: 'Simplify Sprint', gameType: 'fraction_match' },
+];
+
+const RATIO_RAPIDS_LEVELS: LevelData[] = [
+  { id: 1, stars: 0, isLocked: false, blueprintKey: 'potion_panic', displayName: 'Potion Panic', gameType: 'potion_pour' },
+  { id: 2, stars: 0, isLocked: false, blueprintKey: 'potion_panic', displayName: 'Potion Panic', gameType: 'potion_pour' },
+  { id: 3, stars: 0, isLocked: false, blueprintKey: 'share_splitter', displayName: 'Share Splitter', gameType: 'ratio_rapids' },
+  { id: 4, stars: 0, isLocked: false, blueprintKey: 'maths_vs_zombies', displayName: 'Maths vs Zombies', gameType: 'ratio_rapids' },
+  { id: 5, stars: 0, isLocked: false, blueprintKey: 'scale_builder', displayName: 'Scale Builder', gameType: 'scale_safari' },
+  { id: 6, stars: 0, isLocked: false, blueprintKey: 'maths_vs_zombies', displayName: 'Maths vs Zombies', gameType: 'ratio_rapids' },
+];
+
 export const ISLANDS: IslandData[] = [
   {
     id: 1,
-    name: 'Base Camp',
+    name: 'Arithmetic Acropolis',
     category: 'Number',
     isLocked: false,
     color: 'bg-[#7ED321]',
-    themeName: 'Base Camp',
+    themeName: 'Arithmetic Acropolis',
     bgGradient: 'from-sky-300 to-sky-100',
     groundColor: 'bg-green-500',
     mapImage: world01Map,
@@ -75,32 +93,15 @@ export const ISLANDS: IslandData[] = [
   {
     id: 2,
     name: 'Fraction Forest',
-    category: 'Fractions & Ratio',
+    category: 'Fractions',
     isLocked: false,
     color: 'bg-[#4B9EFF]',
-    themeName: 'Forest',
+    themeName: 'Fraction Forest',
     bgGradient: 'from-emerald-700 to-cyan-700',
     groundColor: 'bg-emerald-900',
     mapImage: world01Map,
     decorations: [],
-    levels: mergeIslandLevels(
-      [
-        { id: 1, stars: 0, isLocked: false, blueprintKey: 'take_out_rush', displayName: 'Take-Out Rush', gameType: 'take_out_rush' },
-        { id: 2, stars: 0, isLocked: false, blueprintKey: 'fraction_forge', displayName: 'Fraction Forge', gameType: 'take_out_rush' },
-        { id: 3, stars: 0, isLocked: false, blueprintKey: 'match3_equivalence', displayName: 'Match-3 Equivalence', gameType: 'fraction_match' },
-        { id: 4, stars: 0, isLocked: false, blueprintKey: 'fraction_flow', displayName: 'Fraction Flow', gameType: 'cloud_collapse' },
-        { id: 5, stars: 0, isLocked: false, blueprintKey: 'fraction_of_amount', displayName: 'Fraction of Amount', gameType: 'percent_pulse' },
-        { id: 6, stars: 0, isLocked: false, blueprintKey: 'simplify_sprint', displayName: 'Simplify Sprint', gameType: 'fraction_match' },
-      ],
-      [
-        { id: 1, stars: 0, isLocked: false, blueprintKey: 'potion_panic', displayName: 'Potion Panic', gameType: 'potion_pour' },
-        { id: 2, stars: 0, isLocked: false, blueprintKey: 'potion_panic', displayName: 'Potion Panic', gameType: 'potion_pour' },
-        { id: 3, stars: 0, isLocked: false, blueprintKey: 'share_splitter', displayName: 'Share Splitter', gameType: 'ratio_rapids' },
-        { id: 4, stars: 0, isLocked: false, blueprintKey: 'maths_vs_zombies', displayName: 'Maths vs Zombies', gameType: 'ratio_rapids' },
-        { id: 5, stars: 0, isLocked: false, blueprintKey: 'scale_builder', displayName: 'Scale Builder', gameType: 'scale_safari' },
-        { id: 6, stars: 0, isLocked: false, blueprintKey: 'maths_vs_zombies', displayName: 'Maths vs Zombies', gameType: 'ratio_rapids' },
-      ],
-    ),
+    levels: mergeIslandLevels(FRACTION_FOREST_LEVELS),
   },
   {
     id: 3,
@@ -183,11 +184,11 @@ export const ISLANDS: IslandData[] = [
   },
   {
     id: 6,
-    name: 'Mount Algebra',
+    name: 'Measurement Mountain',
     category: 'Final Test',
     isLocked: false,
     color: 'bg-[#8F76FF]',
-    themeName: 'Volcano Summit',
+    themeName: 'Measurement Mountain',
     bgGradient: 'from-indigo-900 to-sky-900',
     groundColor: 'bg-indigo-950',
     mapImage: world06Map,
@@ -199,6 +200,19 @@ export const ISLANDS: IslandData[] = [
       { id: 4, stars: 0, isLocked: false, blueprintKey: 'timed_test_trials', displayName: 'Timed Test Trials', gameType: 'calculation_clash' },
       { id: 5, stars: 0, isLocked: false, blueprintKey: 'multi_step_marathon', displayName: 'Multi-Step Marathon', gameType: 'equation_grove' },
     ],
+  },
+  {
+    id: 7,
+    name: 'Ratio Rapids',
+    category: 'Ratio',
+    isLocked: false,
+    color: 'bg-[#2CC7D9]',
+    themeName: 'Ratio Rapids',
+    bgGradient: 'from-cyan-300 to-sky-200',
+    groundColor: 'bg-cyan-700',
+    mapImage: world04Map,
+    decorations: [],
+    levels: mergeIslandLevels(RATIO_RAPIDS_LEVELS),
   },
 ];
 

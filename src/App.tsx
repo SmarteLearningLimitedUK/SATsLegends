@@ -28,6 +28,7 @@ import {
 import { GameplaySessionEventHandlers, GameplaySessionState } from './app/gameplaySessionContract';
 import { useMiniGameLifecycle } from './app/useMiniGameLifecycle';
 import { getBossVisualForLevel } from './bossVisuals';
+import { LevelResultState } from './app/types';
 import {
   IPHONE_STAGE_HEIGHT,
   IPHONE_STAGE_WIDTH,
@@ -35,6 +36,11 @@ import {
   QUESTION_MATCH_FRAME_GAMES,
   SCREEN_BEHAVIOR,
 } from './app/screenConfig';
+import { WellbeingActivityId, WellbeingCompletionState, WellbeingLaunchContext } from './wellbeing/types';
+import { createWellbeingRewardLabel } from './wellbeing/integration/wellbeingRewards';
+import { shouldSuggestWellbeing, WellbeingSignals } from './wellbeing/integration/wellbeingSuggestion';
+import WellbeingCompleteModal from './wellbeing/WellbeingCompleteModal';
+import { WELLBEING_BY_ID } from './wellbeing/data';
 
 const App: React.FC = () => {
   const [stageScale, setStageScale] = useState(1);
@@ -85,8 +91,106 @@ const App: React.FC = () => {
     closeGameRules,
   } = useOverlayState();
 
+  const [wellbeingActivityId, setWellbeingActivityId] = useState<WellbeingActivityId | null>(null);
+  const [wellbeingLaunchContext, setWellbeingLaunchContext] = useState<WellbeingLaunchContext>({ origin: 'manual' });
+  const [wellbeingCompletion, setWellbeingCompletion] = useState<WellbeingCompletionState | null>(null);
+  const [storedLevelResult, setStoredLevelResult] = useState<LevelResultState | null>(null);
+  const [wellbeingSignals, setWellbeingSignals] = useState<WellbeingSignals>({
+    consecutiveFails: 0,
+    gamesPlayedSinceBreak: 0,
+    sessionStartTime: Date.now(),
+    lastWellbeingTime: null,
+    lastSuggestionTime: null,
+  });
+
+  const openWellbeingHub = useCallback((context: WellbeingLaunchContext) => {
+    if (context.origin === 'post_fail' && levelResult) {
+      setStoredLevelResult(levelResult);
+      setLevelResult(null);
+    }
+    setWellbeingLaunchContext(context);
+    setWellbeingActivityId(null);
+    setScreen('wellbeing_hub');
+  }, [levelResult, setLevelResult, setScreen]);
+
+  const openWellbeingActivity = useCallback((activityId: WellbeingActivityId, context?: Partial<WellbeingLaunchContext>) => {
+    const resolvedContext: WellbeingLaunchContext = {
+      origin: context?.origin || wellbeingLaunchContext.origin || 'manual',
+      islandId: context?.islandId ?? wellbeingLaunchContext.islandId ?? selectedIsland?.id ?? null,
+      suggested: context?.suggested ?? wellbeingLaunchContext.suggested,
+    };
+
+    if (resolvedContext.origin === 'post_fail' && levelResult) {
+      setStoredLevelResult(levelResult);
+      setLevelResult(null);
+    }
+
+    setWellbeingLaunchContext(resolvedContext);
+    setWellbeingActivityId(activityId);
+    setScreen('wellbeing_activity');
+  }, [levelResult, selectedIsland?.id, setLevelResult, setScreen, wellbeingLaunchContext]);
+
+  const returnFromWellbeing = useCallback(() => {
+    setWellbeingActivityId(null);
+    setWellbeingCompletion(null);
+
+    if (wellbeingLaunchContext.origin === 'post_fail' && storedLevelResult) {
+      setScreen('gameplay');
+      setLevelResult(storedLevelResult);
+      setStoredLevelResult(null);
+      return;
+    }
+
+    if (wellbeingLaunchContext.origin === 'island_levels' && selectedIsland) {
+      setScreen('island_levels');
+      return;
+    }
+
+    if (wellbeingLaunchContext.origin === 'gameplay_break') {
+      setSelectedLevel(null);
+      setScreen('island_levels');
+      return;
+    }
+
+    setScreen('world_map');
+  }, [selectedIsland, setLevelResult, setScreen, setSelectedLevel, storedLevelResult, wellbeingLaunchContext.origin]);
+
+  const handleWellbeingComplete = useCallback(() => {
+    if (!wellbeingActivityId) return;
+
+    const nextCalmTokenCount = (player.calmTokens || 0) + 1;
+    setPlayer((prev) => ({
+      ...prev,
+      calmTokens: nextCalmTokenCount,
+    }));
+    setWellbeingSignals((prev) => ({
+      ...prev,
+      consecutiveFails: 0,
+      gamesPlayedSinceBreak: 0,
+      lastWellbeingTime: Date.now(),
+      lastSuggestionTime: null,
+    }));
+    setWellbeingCompletion({
+      activityId: wellbeingActivityId,
+      rewardLabel: createWellbeingRewardLabel(nextCalmTokenCount),
+    });
+  }, [player.calmTokens, setPlayer, wellbeingActivityId]);
+
   const handleGameOver = useCallback((XP: number) => {
     triggerHaptic('error');
+    let wellbeingSuggested = false;
+    const now = Date.now();
+    setWellbeingSignals((prev) => {
+      const nextSignals = {
+        ...prev,
+        consecutiveFails: prev.consecutiveFails + 1,
+        gamesPlayedSinceBreak: prev.gamesPlayedSinceBreak + 1,
+      };
+      wellbeingSuggested = shouldSuggestWellbeing(nextSignals, now);
+      return wellbeingSuggested
+        ? { ...nextSignals, lastSuggestionTime: now }
+        : nextSignals;
+    });
     setLevelResult({
       type: 'gameover',
       title: 'Round over',
@@ -96,6 +200,7 @@ const App: React.FC = () => {
       coinsEarned: 0,
       xpEarned: 0,
       achievementsUnlocked: [],
+      wellbeingSuggested,
     });
   }, [setLevelResult]);
 
@@ -236,6 +341,11 @@ const App: React.FC = () => {
 
   const handleGameVictory = (stars: number, XP: number) => {
     triggerHaptic('success');
+    setWellbeingSignals((prev) => ({
+      ...prev,
+      consecutiveFails: 0,
+      gamesPlayedSinceBreak: prev.gamesPlayedSinceBreak + 1,
+    }));
     const result = applyGameVictory(selectedIsland, selectedLevel, stars, XP);
     if (result) setLevelResult(result);
   };
@@ -367,7 +477,8 @@ const App: React.FC = () => {
     : screenBehavior.family === 'game'
       ? 'bg-intensity-game'
       : 'bg-intensity-overlay';
-  const showGlobalDock = screen !== 'splash';
+  const isWellbeingScreen = screen === 'wellbeing_hub' || screen === 'wellbeing_activity';
+  const showGlobalDock = screen !== 'splash' && !isWellbeingScreen;
   const isSplashScreen = screen === 'splash';
   const isAvatarSelectionScreen = screen === 'avatar_selection';
   const isGameplayScreen = screen === 'gameplay';
@@ -454,6 +565,12 @@ const App: React.FC = () => {
                   onSelectIsland={handleIslandSelect}
                   onSelectLevel={handleLevelSelect}
                   onBackToIslandLevels={goToIslandLevels}
+                  onOpenWellbeingHub={() => openWellbeingHub({ origin: screen === 'world_map' ? 'world_map' : 'manual', islandId: selectedIsland?.id ?? null })}
+                  onOpenWellbeingActivity={(activityId) => openWellbeingActivity(activityId, { origin: screen === 'island_levels' ? 'island_levels' : wellbeingLaunchContext.origin, islandId: selectedIsland?.id ?? null })}
+                  onExitWellbeing={returnFromWellbeing}
+                  onCompleteWellbeingActivity={handleWellbeingComplete}
+                  wellbeingActivityId={wellbeingActivityId}
+                  calmTokens={player.calmTokens || 0}
                   onGameplayVictory={handleGameVictory}
                   onGameplayOver={handleGameOver}
                 />
@@ -510,6 +627,10 @@ const App: React.FC = () => {
                 onPrimary: levelResult.type === 'victory' ? handleAdvanceAfterVictory : handleRetryLevel,
                 secondaryLabel: levelResult.type === 'victory' ? 'Replay level' : 'Level select',
                 onSecondary: levelResult.type === 'victory' ? handleRetryLevel : handleCloseLevelResult,
+                tertiaryLabel: levelResult.type === 'gameover' && levelResult.wellbeingSuggested ? 'Take A Calm Break' : undefined,
+                onTertiary: levelResult.type === 'gameover' && levelResult.wellbeingSuggested
+                  ? () => openWellbeingHub({ origin: 'post_fail', islandId: selectedIsland?.id ?? null, suggested: true })
+                  : undefined,
               } : null}
             />
 
@@ -518,6 +639,30 @@ const App: React.FC = () => {
               onClose={closeGameRules}
               rules={hintRuleSet}
               actionLabel={gameRulesMode === 'start' ? 'Start Game' : 'Back To Game'}
+              secondaryActionLabel={screen === 'gameplay' ? 'Leave For Calm Break' : undefined}
+              onSecondaryAction={screen === 'gameplay'
+                ? () => {
+                    closeGameRules();
+                    openWellbeingHub({ origin: 'gameplay_break', islandId: selectedIsland?.id ?? null });
+                  }
+                : undefined}
+            />
+
+            <WellbeingCompleteModal
+              isOpen={Boolean(wellbeingCompletion)}
+              title={wellbeingCompletion ? WELLBEING_BY_ID[wellbeingCompletion.activityId]?.title || 'Calm break' : 'Calm break'}
+              rewardLabel={wellbeingCompletion?.rewardLabel || ''}
+              onContinue={returnFromWellbeing}
+              onPlayAnother={() => {
+                setWellbeingCompletion(null);
+                setWellbeingActivityId(null);
+                setScreen('wellbeing_hub');
+              }}
+              onBackToHub={() => {
+                setWellbeingCompletion(null);
+                setWellbeingActivityId(null);
+                setScreen('wellbeing_hub');
+              }}
             />
 
             {

@@ -8,21 +8,13 @@ import universalMapPoster from '../assets/maps/Operations Outpost (768 x 2500 px
 interface WorldMapProps {
   player: PlayerData;
   onSelectIsland: (island: IslandData) => void;
+  onOpenWellbeing: () => void;
 }
 
-type EllipseHotspot = {
+type CircleHotspot = {
   cx: number;
   cy: number;
-  rx: number;
-  ry: number;
-};
-
-type RectHotspot = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  rx?: number;
+  r: number;
 };
 
 type AmbientRegion = {
@@ -56,8 +48,8 @@ type IslandState = {
 };
 
 type IslandInteractionRegion = {
-  islandShape: EllipseHotspot;
-  labelShape: RectHotspot;
+  hotspot: CircleHotspot;
+  islandId: number;
   ambients: AmbientRegion[];
 };
 
@@ -93,46 +85,51 @@ const DECORATIVE_MAP_AMBIENTS: AmbientRegion[] = [
 
 const ISLAND_INTERACTIONS: Record<number, IslandInteractionRegion> = {
   1: {
-    islandShape: { cx: 631, cy: 2334, rx: 132, ry: 109 },
-    labelShape: { x: 24, y: 2373, width: 287, height: 68, rx: 34 },
+    islandId: 1,
+    hotspot: { cx: 632, cy: 2318, r: 145 },
     ambients: [
       { id: 'base-camp-sparkles', x: 77.5, y: 91.2, width: 22, height: 13, effect: 'sparkles' },
     ],
   },
   2: {
-    islandShape: { cx: 586, cy: 1505, rx: 154, ry: 121 },
-    labelShape: { x: 79, y: 1468, width: 291, height: 68, rx: 34 },
+    islandId: 2,
+    hotspot: { cx: 557, cy: 1511, r: 155 },
     ambients: [
       { id: 'fraction-forest-butterflies', x: 71.5, y: 57.2, width: 24, height: 15, effect: 'butterflies' },
     ],
   },
   3: {
-    islandShape: { cx: 179, cy: 1047, rx: 156, ry: 121 },
-    labelShape: { x: 267, y: 1118, width: 287, height: 66, rx: 33 },
+    islandId: 3,
+    hotspot: { cx: 183, cy: 1048, r: 152 },
     ambients: [
       { id: 'geometry-glacier-snow', x: 25.2, y: 47.6, width: 24, height: 15, effect: 'falling-snow' },
     ],
   },
   4: {
-    islandShape: { cx: 171, cy: 1892, rx: 150, ry: 115 },
-    labelShape: { x: 255, y: 1951, width: 272, height: 66, rx: 33 },
+    islandId: 4,
+    hotspot: { cx: 173, cy: 1895, r: 148 },
     ambients: [
       { id: 'data-desert-dust', x: 25.8, y: 72.2, width: 24, height: 15, effect: 'dust-devils' },
     ],
   },
   5: {
-    islandShape: { cx: 551, cy: 681, rx: 155, ry: 116 },
-    labelShape: { x: 80, y: 611, width: 292, height: 68, rx: 34 },
+    islandId: 5,
+    hotspot: { cx: 556, cy: 680, r: 150 },
     ambients: [
       { id: 'operations-outpost-stars', x: 70.8, y: 33.1, width: 23, height: 15, effect: 'stars' },
     ],
   },
   6: {
-    islandShape: { cx: 229, cy: 304, rx: 164, ry: 123 },
-    labelShape: { x: 354, y: 280, width: 302, height: 68, rx: 34 },
+    islandId: 6,
+    hotspot: { cx: 231, cy: 309, r: 162 },
     ambients: [
       { id: 'mount-algebra-lava', x: 29.5, y: 14.5, width: 26, height: 16, effect: 'lava-spurts' },
     ],
+  },
+  7: {
+    islandId: 7,
+    hotspot: { cx: 178, cy: 2212, r: 138 },
+    ambients: [],
   },
 };
 
@@ -397,7 +394,7 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
   }
 };
 
-const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
+const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland, onOpenWellbeing }) => {
   const [selectedIslandId, setSelectedIslandId] = useState<number | null>(null);
 
   const islandStates = useMemo<IslandState[]>(() => (
@@ -452,15 +449,17 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
           preserveAspectRatio="none"
           className="absolute inset-0 z-20 h-full w-full overflow-visible"
         >
-          {islandStates.map(({ island, isUnlocked }) => {
-            const interaction = ISLAND_INTERACTIONS[island.id];
+          {Object.entries(ISLAND_INTERACTIONS).map(([interactionKey, interaction]) => {
+            const islandState = islandStates.find(({ island }) => island.id === interaction.islandId);
+            if (!islandState) return null;
+            const { island, isUnlocked } = islandState;
             if (!interaction) return null;
 
             const selectIsland = () => setSelectedIslandId(island.id);
 
             return (
               <motion.g
-                key={island.id}
+                key={interactionKey}
                 role="button"
                 tabIndex={0}
                 whileTap={{ scale: 0.985 }}
@@ -474,20 +473,10 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                 aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
                 style={{ cursor: 'pointer', opacity: isUnlocked ? 1 : 0.8 }}
               >
-                <ellipse
-                  cx={interaction.islandShape.cx}
-                  cy={interaction.islandShape.cy}
-                  rx={interaction.islandShape.rx}
-                  ry={interaction.islandShape.ry}
-                  fill="transparent"
-                  pointerEvents="all"
-                />
-                <rect
-                  x={interaction.labelShape.x}
-                  y={interaction.labelShape.y}
-                  width={interaction.labelShape.width}
-                  height={interaction.labelShape.height}
-                  rx={interaction.labelShape.rx ?? 0}
+                <circle
+                  cx={interaction.hotspot.cx}
+                  cy={interaction.hotspot.cy}
+                  r={interaction.hotspot.r}
                   fill="transparent"
                   pointerEvents="all"
                 />
@@ -548,6 +537,17 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
           </motion.div>
         ) : null}
       </AnimatePresence>
+
+      <div className="pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+4.8rem)] z-40 flex justify-start px-4">
+        <button
+          type="button"
+          onClick={onOpenWellbeing}
+          className="pointer-events-auto inline-flex items-center gap-2 rounded-full border border-emerald-200/28 bg-[linear-gradient(180deg,rgba(16,185,129,0.9),rgba(14,116,144,0.92))] px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-white shadow-[0_16px_28px_rgba(2,6,23,0.28)]"
+        >
+          <span className="text-base">✨</span>
+          Wellbeing Grove
+        </button>
+      </div>
     </div>
   );
 };

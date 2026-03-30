@@ -4,6 +4,9 @@ import AvatarSelect from '../screens/AvatarSelect';
 import WorldMap from '../screens/WorldMap';
 import IslandLevels from '../screens/IslandLevels';
 import ParentDashboard from '../screens/ParentDashboard';
+import WellbeingHub from '../wellbeing/WellbeingHub';
+import { WELLBEING_ACTIVITIES, WELLBEING_ACTIVITY_BY_ISLAND, WELLBEING_BY_ID } from '../wellbeing/data';
+import { WellbeingActivityId } from '../wellbeing/types';
 import UnifiedMiniGameHud from '../components/UnifiedMiniGameHud';
 import GameplayContentViewport from '../components/GameplayContentViewport';
 import {
@@ -57,6 +60,12 @@ interface AppRouterProps {
   onSelectIsland: (island: IslandData) => void;
   onSelectLevel: (level: LevelData) => void;
   onBackToIslandLevels: () => void;
+  onOpenWellbeingHub: () => void;
+  onOpenWellbeingActivity: (activityId: WellbeingActivityId) => void;
+  onExitWellbeing: () => void;
+  onCompleteWellbeingActivity: () => void;
+  wellbeingActivityId: WellbeingActivityId | null;
+  calmTokens: number;
   onGameplayVictory: (stars: number, XP: number) => void;
   onGameplayOver: (XP: number) => void;
 }
@@ -86,6 +95,12 @@ export const AppRouter: React.FC<AppRouterProps> = ({
   onSelectIsland,
   onSelectLevel,
   onBackToIslandLevels,
+  onOpenWellbeingHub,
+  onOpenWellbeingActivity,
+  onExitWellbeing,
+  onCompleteWellbeingActivity,
+  wellbeingActivityId,
+  calmTokens,
   onGameplayVictory,
   onGameplayOver,
 }) => {
@@ -446,7 +461,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       );
 
     case 'world_map':
-      return <WorldMap player={player} onSelectIsland={onSelectIsland} />;
+      return <WorldMap player={player} onSelectIsland={onSelectIsland} onOpenWellbeing={onOpenWellbeingHub} />;
 
     case 'island_levels':
       return selectedIsland ? (
@@ -455,7 +470,28 @@ export const AppRouter: React.FC<AppRouterProps> = ({
           player={player}
           onBack={onGoHome}
           onSelectLevel={onSelectLevel}
+          wellbeingTitle={WELLBEING_BY_ID[WELLBEING_ACTIVITY_BY_ISLAND[selectedIsland.id]]?.title}
+          wellbeingSubtitle={WELLBEING_BY_ID[WELLBEING_ACTIVITY_BY_ISLAND[selectedIsland.id]]?.description}
+          wellbeingType={WELLBEING_BY_ID[WELLBEING_ACTIVITY_BY_ISLAND[selectedIsland.id]]?.type}
+          onOpenWellbeing={() => onOpenWellbeingActivity(WELLBEING_ACTIVITY_BY_ISLAND[selectedIsland.id])}
         />
+      ) : null;
+
+    case 'wellbeing_hub':
+      return (
+        <WellbeingHub
+          activities={WELLBEING_ACTIVITIES}
+          calmTokens={calmTokens}
+          onSelect={onOpenWellbeingActivity}
+          onExit={onExitWellbeing}
+        />
+      );
+
+    case 'wellbeing_activity':
+      if (!wellbeingActivityId) return null;
+      const SelectedWellbeingActivity = WELLBEING_BY_ID[wellbeingActivityId]?.component;
+      return SelectedWellbeingActivity ? (
+        <SelectedWellbeingActivity onComplete={onCompleteWellbeingActivity} onExit={onExitWellbeing} />
       ) : null;
 
     case 'gameplay':

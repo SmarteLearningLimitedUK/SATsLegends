@@ -14,6 +14,8 @@ export interface ScreenFlowController {
   goToWorldMap: () => void;
   goToIslandLevels: () => void;
   goToGameplay: () => void;
+  goToWellbeingHub: () => void;
+  goToWellbeingActivity: () => void;
   handleIslandSelect: (island: IslandData) => void;
   handleLevelSelect: (level: LevelData) => void;
   handleGlobalDockBack: () => void;
@@ -34,6 +36,8 @@ export const useScreenFlow = (): ScreenFlowController => {
   const goToWorldMap = useCallback(() => setScreen('world_map'), []);
   const goToIslandLevels = useCallback(() => setScreen('island_levels'), []);
   const goToGameplay = useCallback(() => setScreen('gameplay'), []);
+  const goToWellbeingHub = useCallback(() => setScreen('wellbeing_hub'), []);
+  const goToWellbeingActivity = useCallback(() => setScreen('wellbeing_activity'), []);
 
   const handleIslandSelect = useCallback((island: IslandData) => {
     setSelectedIsland(island);
@@ -88,6 +92,8 @@ export const useScreenFlow = (): ScreenFlowController => {
     goToWorldMap,
     goToIslandLevels,
     goToGameplay,
+    goToWellbeingHub,
+    goToWellbeingActivity,
     handleIslandSelect,
     handleLevelSelect,
     handleGlobalDockBack,

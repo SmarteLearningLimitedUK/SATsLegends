@@ -126,6 +126,7 @@ export interface PlayerData {
   dailyQuests: DailyQuest[];
   customSpriteUrl?: string;
   achievements: string[];
+  calmTokens?: number;
   stats: {
     totalStars: number;
     totalGamesPlayed: number;
@@ -155,6 +156,8 @@ export type GameScreen =
   | 'world_map'
   | 'island_levels'
   | 'gameplay'
+  | 'wellbeing_hub'
+  | 'wellbeing_activity'
   | 'level_result'
   | 'shop'
   | 'profile'

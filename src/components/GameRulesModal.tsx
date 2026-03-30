@@ -10,6 +10,8 @@ interface GameRulesModalProps {
   onClose: () => void;
   rules: GameRuleSet | null;
   actionLabel?: string;
+  secondaryActionLabel?: string;
+  onSecondaryAction?: () => void;
 }
 
 const GameRulesModal: React.FC<GameRulesModalProps> = ({
@@ -17,6 +19,8 @@ const GameRulesModal: React.FC<GameRulesModalProps> = ({
   onClose,
   rules,
   actionLabel = 'Back To Game',
+  secondaryActionLabel,
+  onSecondaryAction,
 }) => {
   if (!rules) return null;
 
@@ -88,12 +92,23 @@ const GameRulesModal: React.FC<GameRulesModalProps> = ({
               ))}
             </div>
 
-            <button
-              onClick={onClose}
-              className="ui-button-primary mt-5 w-full rounded-[1.2rem] py-3 text-sm font-black uppercase tracking-[0.16em] text-white md:mt-6 md:rounded-[1.5rem] md:py-4 md:text-base"
-            >
-              {actionLabel}
-            </button>
+            <div className="mt-5 flex flex-col gap-2 md:mt-6">
+              {secondaryActionLabel && onSecondaryAction ? (
+                <button
+                  type="button"
+                  onClick={onSecondaryAction}
+                  className="w-full rounded-[1.2rem] border border-cyan-100/24 bg-white/6 py-3 text-sm font-black uppercase tracking-[0.16em] text-cyan-50 md:rounded-[1.5rem] md:py-4 md:text-base"
+                >
+                  {secondaryActionLabel}
+                </button>
+              ) : null}
+              <button
+                onClick={onClose}
+                className="ui-button-primary w-full rounded-[1.2rem] py-3 text-sm font-black uppercase tracking-[0.16em] text-white md:rounded-[1.5rem] md:py-4 md:text-base"
+              >
+                {actionLabel}
+              </button>
+            </div>
           </motion.div>
         </motion.div>
       )}
