@@ -61,6 +61,15 @@ const ISLAND_POSITION_BY_ID: Record<number, keyof typeof POSITION_HOTSPOTS> = {
   6: 'topRight',
 };
 
+const LABEL_ANCHORS: Record<number, { x: number; y: number }> = {
+  1: { x: 25.8, y: 83.6 },
+  2: { x: 74.1, y: 83.2 },
+  3: { x: 25.8, y: 65.3 },
+  4: { x: 73.9, y: 48.6 },
+  5: { x: 24.9, y: 47.1 },
+  6: { x: 73.8, y: 28.7 },
+};
+
 const MAP_AMBIENTS: AmbientRegion[] = [
   { id: 'base-camp', x: POSITION_HOTSPOTS.bottomLeft.x, y: POSITION_HOTSPOTS.bottomLeft.y, width: 24, height: 16, effect: 'butterflies' },
   { id: 'fraction-forest', x: POSITION_HOTSPOTS.bottomRight.x, y: POSITION_HOTSPOTS.bottomRight.y, width: 24, height: 16, effect: 'light-beams' },
@@ -296,7 +305,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
             const hotspot = POSITION_HOTSPOTS[ISLAND_POSITION_BY_ID[island.id]];
             if (!hotspot) return null;
 
-            const pillTop = hotspot.y + hotspot.height / 2 + 0.85;
+            const labelAnchor = LABEL_ANCHORS[island.id] ?? { x: hotspot.x, y: hotspot.y + hotspot.height / 2 + 0.85 };
             const pillWidth = island.name.length > 15 ? '7.1rem' : island.name.length > 12 ? '6.4rem' : '5.8rem';
 
             return (
@@ -313,8 +322,8 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                     : 'border-slate-200/16 bg-[linear-gradient(180deg,rgba(54,66,92,0.95),rgba(21,29,43,0.98))] opacity-80 shadow-[0_4px_10px_rgba(2,6,23,0.2)]'
                 }`}
                 style={{
-                  left: `${hotspot.x}%`,
-                  top: `${pillTop}%`,
+                  left: `${labelAnchor.x}%`,
+                  top: `${labelAnchor.y}%`,
                   minWidth: pillWidth,
                 }}
               >
