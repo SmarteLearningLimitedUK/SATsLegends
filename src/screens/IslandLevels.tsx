@@ -2,12 +2,6 @@
 import { Crown, Lock, Sparkles } from 'lucide-react';
 import AssetIcon from '../components/AssetIcon';
 import { IslandData, LevelData, PlayerData } from '../types';
-import mapHeading1 from '../assets/maps/mapheadings/1.png';
-import mapHeading2 from '../assets/maps/mapheadings/2.png';
-import mapHeading3 from '../assets/maps/mapheadings/3.png';
-import mapHeading4 from '../assets/maps/mapheadings/4.png';
-import mapHeading5 from '../assets/maps/mapheadings/5.png';
-import mapHeading6 from '../assets/maps/mapheadings/6.png';
 
 interface IslandLevelsProps {
   island: IslandData;
@@ -38,15 +32,6 @@ interface GameGroupState {
   completedCount: number;
   hasNextPlayable: boolean;
 }
-
-const MAP_HEADING_BY_ISLAND: Record<number, string> = {
-  1: mapHeading1,
-  2: mapHeading2,
-  3: mapHeading3,
-  4: mapHeading4,
-  5: mapHeading5,
-  6: mapHeading6,
-};
 
 const GAME_SUMMARY_BY_KEY: Record<string, string> = {
   place_value_panic: 'Sort unstable number fragments into the correct place-value channels at speed.',
@@ -240,7 +225,6 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
 
   const earnedStars = levelRows.reduce((sum, row) => sum + row.stars, 0);
   const completionPercent = Math.round((completedLevels.length / Math.max(1, island.levels.length)) * 100);
-  const heroHeading = MAP_HEADING_BY_ISLAND[island.id];
 
   return (
     <div
@@ -270,16 +254,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
 
           <div className="flex-1 text-center">
             <div className="flex justify-center">
-              {heroHeading ? (
-                <img
-                  src={heroHeading}
-                  alt={`${island.name} heading`}
-                  className="h-auto w-[min(86vw,520px)] select-none drop-shadow-[0_12px_24px_rgba(2,6,23,0.5)]"
-                  draggable={false}
-                />
-              ) : (
-                <h1 className="text-xl font-black text-white md:text-3xl">{island.name}</h1>
-              )}
+              <h1 className="text-xl font-black text-white drop-shadow-[0_12px_24px_rgba(2,6,23,0.5)] md:text-3xl">{island.name}</h1>
             </div>
           </div>
 
@@ -500,5 +475,6 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
 };
 
 export default IslandLevels;
+
 
 

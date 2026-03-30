@@ -461,7 +461,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       );
 
     case 'world_map':
-      return <WorldMap player={player} onSelectIsland={onSelectIsland} onOpenWellbeing={onOpenWellbeingHub} />;
+      return <WorldMap player={player} onSelectIsland={onSelectIsland} />;
 
     case 'island_levels':
       return selectedIsland ? (
@@ -487,12 +487,13 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         />
       );
 
-    case 'wellbeing_activity':
+    case 'wellbeing_activity': {
       if (!wellbeingActivityId) return null;
       const SelectedWellbeingActivity = WELLBEING_BY_ID[wellbeingActivityId]?.component;
       return SelectedWellbeingActivity ? (
         <SelectedWellbeingActivity onComplete={onCompleteWellbeingActivity} onExit={onExitWellbeing} />
       ) : null;
+    }
 
     case 'gameplay':
       const shellStyle = {
