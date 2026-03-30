@@ -27,6 +27,8 @@ type AmbientRegion = {
     | 'butterflies'
     | 'sparkles'
     | 'bubbles'
+    | 'steam'
+    | 'pie-chart'
     | 'birds'
     | 'light-beams'
     | 'stars'
@@ -70,9 +72,25 @@ const DECORATIVE_MAP_AMBIENTS: AmbientRegion[] = [
     effect: 'bubbles',
   },
   {
+    id: 'ratio-rapids-steam',
+    x: 58.8,
+    y: 81.9,
+    width: 24,
+    height: 14,
+    effect: 'steam',
+  },
+  {
+    id: 'data-desert-pie-chart',
+    x: 25.8,
+    y: 72.6,
+    width: 20,
+    height: 12,
+    effect: 'pie-chart',
+  },
+  {
     id: 'arithmetic-acropolis-symbols',
     x: 71.5,
-    y: 96.4,
+    y: 95.2,
     width: 24,
     height: 13,
     effect: 'math-symbols',
@@ -201,6 +219,50 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
             />
           ))}
         </>
+      );
+    case 'steam':
+      return (
+        <>
+          {[
+            { left: '20%', bottom: '12%', delay: '0s', duration: '5.6s', scale: 1 },
+            { left: '42%', bottom: '8%', delay: '1.1s', duration: '6.2s', scale: 0.86 },
+            { left: '63%', bottom: '14%', delay: '2.2s', duration: '5.8s', scale: 1.08 },
+          ].map((item, index) => (
+            <motion.span
+              key={`steam-${index}`}
+              className="absolute rounded-full bg-white/30 blur-md"
+              animate={{ y: [0, -14, -28], x: [0, 4, -2], opacity: [0, 0.42, 0] }}
+              transition={{
+                duration: Number.parseFloat(item.duration),
+                delay: Number.parseFloat(item.delay),
+                repeat: Infinity,
+                ease: 'easeOut',
+              }}
+              style={{
+                left: item.left,
+                bottom: item.bottom,
+                width: `${1.6 * item.scale}rem`,
+                height: `${0.85 * item.scale}rem`,
+              }}
+            />
+          ))}
+        </>
+      );
+    case 'pie-chart':
+      return (
+        <div className="absolute left-1/2 top-1/2 h-[3.2rem] w-[3.2rem] -translate-x-1/2 -translate-y-1/2">
+          <motion.div
+            className="absolute inset-0 rounded-full border border-amber-100/65 shadow-[0_0_18px_rgba(251,191,36,0.24)]"
+            style={{
+              background:
+                'conic-gradient(from 0deg, rgba(251,191,36,0.95) 0deg 110deg, rgba(59,130,246,0.95) 110deg 220deg, rgba(16,185,129,0.95) 220deg 300deg, rgba(248,250,252,0.95) 300deg 360deg)',
+            }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+          />
+          <div className="absolute inset-[0.34rem] rounded-full border border-slate-950/18 bg-[radial-gradient(circle_at_40%_35%,rgba(255,255,255,0.72),rgba(255,255,255,0.08)_58%,rgba(15,23,42,0.04)_100%)]" />
+          <div className="absolute left-1/2 top-1/2 h-[0.18rem] w-[0.18rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-slate-950/45" />
+        </div>
       );
     case 'birds':
       return (
