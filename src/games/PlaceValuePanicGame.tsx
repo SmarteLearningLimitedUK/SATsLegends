@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import medButton from '../assets/bluedialoague/med button cropped.png';
-import goblinWiz from '../assets/bosses/goblinwiz.jpg';
 import animatedEnemy1 from '../assets/bosses/animated enemy1.gif';
 import hudAvatarName from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
 import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
@@ -67,6 +66,7 @@ const GOBLIN_MAX_HEALTH = 10;
 const MATCH_DURATION_SECONDS = 90;
 const PLAYER_STORAGE_KEY = 'maths_quest_player';
 const GOBLIN_DAMAGE_LINES = ['Ouch!', 'Hey!', 'Oof!', 'Wahhh!', 'Ugh!'] as const;
+const HIT_REACTION_MS = 980;
 
 const FULL_PLACE_VALUE_HINTS = ['M', 'Hth', 'Tth', 'Th', 'H', 'T', 'U'] as const;
 const TARGET_ROW_Y_OFFSET_PX = 0;
@@ -427,7 +427,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     return `calc(${bottomPct.toFixed(2)}% - 23px)`;
   }, [layout.targetY, targetSocketSizing.heightValue]);
 
-  const goblinSpriteSrc = goblinEffect === 'hit' ? animatedEnemy1 : goblinWiz;
+  const goblinSpriteSrc = animatedEnemy1;
 
   const questionFrameConfig = useMemo(() => {
     const promptLength = question.prompt.trim().length;
@@ -541,7 +541,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   useEffect(() => {
     if (goblinEffect !== 'hit') return undefined;
     setShowHitFx(true);
-    const timeoutId = window.setTimeout(() => setShowHitFx(false), 520);
+    const timeoutId = window.setTimeout(() => setShowHitFx(false), HIT_REACTION_MS);
     return () => window.clearTimeout(timeoutId);
   }, [goblinEffect]);
 
@@ -747,7 +747,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     window.setTimeout(() => {
       setFeedback(null);
       resetRound(nextQuestion);
-    }, 760);
+    }, HIT_REACTION_MS + 140);
   }, [attempts, correctAnswers, onVictory, resetRound, resolvedLevel, XP]);
 
   const canSubmit = useMemo(
@@ -1155,6 +1155,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               ) : null}
             </AnimatePresence>
             <motion.img
+              key={goblinSpriteSrc}
               src={goblinSpriteSrc}
               alt=""
               aria-hidden="true"
