@@ -55,9 +55,6 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
         <div className="relative flex min-w-0 items-center gap-2.5 pl-1">
           <div
             className={`relative ${sharedHudHeightClass} w-[clamp(42px,10.5vw,54px)] shrink-0 rounded-[0.95rem] border-2 border-amber-300/95 bg-[linear-gradient(180deg,#2d63b7_0%,#1b3f86_100%)] shadow-[0_9px_18px_rgba(2,6,23,0.46)]`}
-            style={{
-              visibility: hideTimer ? 'hidden' : 'visible',
-            }}
           >
             <div className="pointer-events-none absolute -inset-[2px] rounded-[1rem] bg-[radial-gradient(circle,rgba(125,211,252,0.34)_0%,rgba(125,211,252,0)_72%)]" />
             <div className="absolute inset-[3px] overflow-hidden rounded-[0.72rem] border border-cyan-100/45">
