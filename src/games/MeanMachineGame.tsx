@@ -1,14 +1,13 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   AlertTriangle,
   CheckCircle2,
   RotateCcw,
-  Sparkles,
   Trophy,
   WandSparkles,
 } from 'lucide-react';
-import slotMachineImage from '../assets/slot.png';
+import slotMachineImage from '../assets/slotmachine.png';
 import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
 
 type RoundMode = 'mean' | 'missing';
@@ -159,14 +158,14 @@ const ReelWindow: React.FC<{
   <motion.div
     animate={spinning ? { y: [0, -5, 0, 5, 0], scale: [1, 1.02, 1] } : isCorrectPulse ? { scale: [1, 1.05, 1] } : { y: 0, scale: 1 }}
     transition={spinning ? { duration: 0.16, repeat: Infinity, ease: 'linear' } : { duration: 0.35 }}
-    className={`relative flex h-[3.55rem] items-center justify-center overflow-hidden rounded-[0.9rem] border shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_10px_18px_rgba(2,6,23,0.24)] md:h-[4rem] ${
+    className={`relative flex h-[2.8rem] items-center justify-center overflow-hidden rounded-[0.8rem] border shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_10px_18px_rgba(2,6,23,0.24)] md:h-[3rem] ${
       isMissing
         ? 'border-amber-200/70 bg-[linear-gradient(180deg,rgba(250,204,21,0.22),rgba(245,158,11,0.1))]'
         : 'border-cyan-100/24 bg-[linear-gradient(180deg,rgba(3,14,38,0.92),rgba(6,18,48,0.98))]'
     }`}
   >
     <div className="absolute inset-x-[10%] top-[12%] h-[35%] rounded-full bg-white/10 blur-sm" />
-    <div className={`relative z-10 text-[1.2rem] font-black tracking-[-0.03em] md:text-[1.45rem] ${isMissing ? 'text-amber-100' : 'text-white'}`}>
+    <div className={`relative z-10 text-[1rem] font-black tracking-[-0.03em] md:text-[1.18rem] ${isMissing ? 'text-amber-100' : 'text-white'}`}>
       {value}
     </div>
   </motion.div>
@@ -389,48 +388,55 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
       <div className="pointer-events-none absolute inset-x-[16%] top-[10%] h-24 rounded-full bg-cyan-300/12 blur-3xl" />
 
       <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.45rem)] pt-2 md:px-4">
-        <div className="flex h-full min-h-0 flex-col gap-3">
-          <section className="mx-auto w-full max-w-[24rem] shrink-0 rounded-[1.35rem] border border-cyan-100/24 bg-[linear-gradient(180deg,rgba(14,45,103,0.9),rgba(8,26,72,0.96))] px-4 py-3 text-center shadow-[0_16px_28px_rgba(2,6,23,0.32)]">
+        <div className="flex h-full min-h-0 flex-col gap-2.5">
+          <section className="mx-auto w-full max-w-[24rem] shrink-0 rounded-[1.2rem] border border-cyan-100/24 bg-[linear-gradient(180deg,rgba(14,45,103,0.9),rgba(8,26,72,0.96))] px-4 py-2.5 text-center shadow-[0_16px_28px_rgba(2,6,23,0.32)]">
             <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/76">
-              {modeCopy.eyebrow} � Level {level}/{TOTAL_LEVELS}
+              {modeCopy.eyebrow} · Level {level}/{TOTAL_LEVELS}
             </div>
-            <div className="mt-1 text-[clamp(1.05rem,4vw,1.3rem)] font-black leading-tight text-white">
+            <div className="mt-1 text-[clamp(1rem,3.7vw,1.18rem)] font-black leading-tight text-white">
               {modeCopy.title}
             </div>
-            <div className="mt-1 text-[11px] font-semibold text-cyan-100/82">
+            <div className="mt-0.5 text-[10px] font-semibold text-cyan-100/82">
               {modeCopy.prompt}
             </div>
           </section>
 
-          <main className="flex min-h-0 flex-1 flex-col gap-3">
-            <section className="relative min-h-0 flex-1 overflow-hidden rounded-[1.8rem] border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(10,31,83,0.78),rgba(4,17,52,0.92))] px-3 py-3 shadow-[0_20px_34px_rgba(2,6,23,0.34)]">
+          <main className="flex min-h-0 flex-1 flex-col gap-2.5">
+            <section className="relative min-h-0 flex-1 overflow-hidden rounded-[1.6rem] border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(10,31,83,0.78),rgba(4,17,52,0.92))] px-3 py-2.5 shadow-[0_20px_34px_rgba(2,6,23,0.34)]">
               <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[32%] bg-[linear-gradient(180deg,rgba(15,23,42,0),rgba(15,23,42,0.2),rgba(15,23,42,0.6))]" />
 
-              <div className="relative flex h-full min-h-0 flex-col gap-3">
+              <div className="relative flex h-full min-h-0 flex-col gap-2.5">
                 <div className="grid shrink-0 grid-cols-3 gap-2">
-                  <div className="rounded-[1.05rem] border border-cyan-100/24 bg-slate-950/28 px-3 py-2 text-center shadow-[0_10px_18px_rgba(2,6,23,0.18)]">
+                  <div className="rounded-[0.95rem] border border-cyan-100/24 bg-slate-950/28 px-2.5 py-1.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.18)]">
                     <div className="text-[9px] font-black uppercase tracking-[0.18em] text-cyan-100/70">Status</div>
-                    <div className="mt-1 text-sm font-black text-cyan-50 md:text-base">{statusLabel}</div>
+                    <div className="mt-0.5 text-[11px] font-black leading-tight text-cyan-50 md:text-[13px]">{statusLabel}</div>
                   </div>
-                  <div className="rounded-[1.05rem] border border-amber-100/24 bg-slate-950/28 px-3 py-2 text-center shadow-[0_10px_18px_rgba(2,6,23,0.18)]">
+                  <div className="rounded-[0.95rem] border border-amber-100/24 bg-slate-950/28 px-2.5 py-1.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.18)]">
                     <div className="text-[9px] font-black uppercase tracking-[0.18em] text-amber-100/75">Target Mean</div>
-                    <div className="mt-1 text-xl font-black text-amber-100 md:text-2xl">{round?.targetMean ?? '?'}</div>
+                    <div className="mt-0.5 text-lg font-black text-amber-100 md:text-xl">{round?.targetMean ?? '?'}</div>
                   </div>
-                  <div className="rounded-[1.05rem] border border-emerald-100/24 bg-slate-950/28 px-3 py-2 text-center shadow-[0_10px_18px_rgba(2,6,23,0.18)]">
+                  <div className="rounded-[0.95rem] border border-emerald-100/24 bg-slate-950/28 px-2.5 py-1.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.18)]">
                     <div className="text-[9px] font-black uppercase tracking-[0.18em] text-emerald-100/75">XP</div>
-                    <div className="mt-1 text-xl font-black text-emerald-100 md:text-2xl">{XP}</div>
+                    <div className="mt-0.5 text-lg font-black text-emerald-100 md:text-xl">{XP}</div>
                   </div>
                 </div>
 
-                <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-[1.5rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-3">
+                <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-[1.35rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] px-2 py-1.5">
                   <motion.div
                     animate={machineShake ? { x: [0, -6, 6, -4, 4, 0] } : { x: 0 }}
                     transition={{ duration: 0.34 }}
-                    className="relative mx-auto flex h-full w-full max-w-[24rem] items-center justify-center md:max-w-[27rem]"
+                    className="relative mx-auto flex h-full w-full max-w-[25rem] items-center justify-center md:max-w-[27rem]"
                   >
-                    <div className="absolute inset-x-[14%] bottom-[6%] h-[20%] rounded-full bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.14),rgba(34,211,238,0.02),transparent_72%)] blur-2xl" />
+                    <div className="absolute inset-x-[16%] bottom-[10%] h-[18%] rounded-full bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.14),rgba(34,211,238,0.02),transparent_72%)] blur-2xl" />
 
-                    <div className="absolute left-[20%] right-[19%] top-[44%] z-10 grid grid-cols-5 gap-[2.8%]">
+                    <img
+                      src={slotMachineImage}
+                      alt="Mean Machine slot machine"
+                      draggable={false}
+                      className="pointer-events-none absolute inset-x-0 bottom-[1%] z-[12] h-[108%] w-full object-contain"
+                    />
+
+                    <div className="absolute left-[20.8%] right-[20.8%] top-[39.6%] z-20 grid grid-cols-5 gap-[2.75%]">
                       {reelDisplay.map((value, index) => (
                         <ReelWindow
                           key={`reel-${index}-${String(value)}`}
@@ -442,13 +448,13 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                       ))}
                     </div>
 
-                    <div className="absolute left-[23%] top-[30%] z-10 flex h-[10%] w-[22%] items-center justify-center rounded-[0.55rem] border border-cyan-200/20 bg-[linear-gradient(180deg,rgba(3,14,38,0.92),rgba(6,18,48,0.98))] px-2 text-center text-[0.5rem] font-black uppercase tracking-[0.14em] text-cyan-100 md:text-[0.58rem]">
+                    <div className="absolute left-[22%] top-[20.5%] z-20 flex h-[8.3%] w-[22%] items-center justify-center rounded-[0.55rem] border border-cyan-200/20 bg-[linear-gradient(180deg,rgba(3,14,38,0.92),rgba(6,18,48,0.98))] px-2 text-center text-[0.46rem] font-black uppercase tracking-[0.14em] text-cyan-100 md:text-[0.54rem]">
                       {round?.mode === 'mean' ? 'Mean Spin' : 'Fix Machine'}
                     </div>
-                    <div className="absolute left-[50.5%] top-[30%] z-10 flex h-[10%] w-[22%] -translate-x-1/2 items-center justify-center rounded-[0.55rem] border border-amber-200/24 bg-[linear-gradient(180deg,rgba(58,27,4,0.92),rgba(41,17,4,0.98))] px-2 text-center text-[0.56rem] font-black uppercase tracking-[0.08em] text-amber-100 md:text-[0.65rem]">
+                    <div className="absolute left-[50.5%] top-[20.5%] z-20 flex h-[8.3%] w-[22%] -translate-x-1/2 items-center justify-center rounded-[0.55rem] border border-amber-200/24 bg-[linear-gradient(180deg,rgba(58,27,4,0.92),rgba(41,17,4,0.98))] px-2 text-center text-[0.48rem] font-black uppercase tracking-[0.08em] text-amber-100 md:text-[0.58rem]">
                       Mean {round?.targetMean ?? '?'}
                     </div>
-                    <div className="absolute left-[26%] right-[23%] bottom-[15.5%] z-10 flex items-center justify-center rounded-[0.75rem] border border-cyan-200/24 bg-[linear-gradient(180deg,rgba(3,14,38,0.92),rgba(6,18,48,0.98))] px-3 py-2 text-center text-[0.58rem] font-black uppercase tracking-[0.12em] text-cyan-100 md:text-[0.68rem]">
+                    <div className="absolute left-[22.5%] right-[22.5%] bottom-[8.5%] z-20 flex items-center justify-center rounded-[0.7rem] border border-cyan-200/24 bg-[linear-gradient(180deg,rgba(3,14,38,0.92),rgba(6,18,48,0.98))] px-3 py-1.5 text-center text-[0.48rem] font-black uppercase tracking-[0.1em] text-cyan-100 md:text-[0.56rem]">
                       {round?.supportText}
                     </div>
 
@@ -458,20 +464,13 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                       disabled={!round || gameState === 'spinning' || !sessionActive}
                       animate={leverPulse ? { rotate: [0, 12, -8, 0], y: [0, 6, -2, 0] } : { rotate: [0, 2, 0], y: [0, -2, 0] }}
                       transition={leverPulse ? { duration: 0.34 } : { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-                      className="absolute right-[2%] top-[43%] z-20 h-[22%] w-[11%] rounded-full bg-transparent disabled:cursor-not-allowed"
+                      className="absolute right-[7%] top-[34.5%] z-30 h-[18%] w-[9%] rounded-full bg-transparent disabled:cursor-not-allowed"
                       aria-label="Pull the Mean Machine lever"
                     >
                       <span className="absolute inset-0 rounded-full bg-cyan-300/18 blur-md" />
                       <span className="absolute left-1/2 top-[18%] h-[46%] w-[0.32rem] -translate-x-1/2 rounded-full bg-[linear-gradient(180deg,#93c5fd,#1d4ed8)] shadow-[0_0_16px_rgba(59,130,246,0.42)]" />
                       <span className="absolute left-1/2 top-0 h-4 w-4 -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_30%_30%,#dbeafe,#60a5fa_60%,#1d4ed8)] shadow-[0_0_18px_rgba(147,197,253,0.55)]" />
                     </motion.button>
-
-                    <img
-                      src={slotMachineImage}
-                      alt="Mean Machine slot machine"
-                      draggable={false}
-                      className="pointer-events-none absolute inset-x-0 bottom-[-20%] z-[12] h-[185%] w-full object-contain"
-                    />
 
                     <AnimatePresence>
                       {showJackpot ? (
@@ -481,7 +480,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                           exit={{ opacity: 0 }}
                           className="pointer-events-none absolute inset-0 z-30"
                         >
-                          <div className="absolute inset-x-[14%] top-[42%] h-[22%] rounded-[1.25rem] border border-amber-200/35 bg-amber-300/8 shadow-[0_0_30px_rgba(251,191,36,0.45)]" />
+                          <div className="absolute inset-x-[18%] top-[36.8%] h-[11%] rounded-[1rem] border border-amber-200/35 bg-amber-300/8 shadow-[0_0_30px_rgba(251,191,36,0.45)]" />
                           {Array.from({ length: 18 }).map((_, index) => (
                             <motion.div
                               key={`jackpot-${index}`}
@@ -493,8 +492,8 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                                 rotate: [0, 80, 160],
                               }}
                               transition={{ duration: 1, ease: 'easeOut' }}
-                              className={`absolute bottom-[24%] h-3 w-2 rounded-full ${index % 3 === 0 ? 'bg-amber-300' : index % 3 === 1 ? 'bg-cyan-300' : 'bg-emerald-300'}`}
-                              style={{ left: `${22 + index * 3.2}%` }}
+                              className={`absolute bottom-[34%] h-3 w-2 rounded-full ${index % 3 === 0 ? 'bg-amber-300' : index % 3 === 1 ? 'bg-cyan-300' : 'bg-emerald-300'}`}
+                              style={{ left: `${24 + index * 2.9}%` }}
                             />
                           ))}
                         </motion.div>
@@ -510,7 +509,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                           transition={{ duration: 0.85 }}
                           className="pointer-events-none absolute inset-0 z-30"
                         >
-                          <div className="absolute inset-x-[14%] top-[42%] h-[22%] rounded-[1.25rem] bg-[linear-gradient(90deg,transparent,rgba(248,113,113,0.12),transparent)]" />
+                          <div className="absolute inset-x-[18%] top-[36.8%] h-[11%] rounded-[1rem] bg-[linear-gradient(90deg,transparent,rgba(248,113,113,0.12),transparent)]" />
                           {Array.from({ length: 7 }).map((_, index) => (
                             <motion.div
                               key={`spark-${index}`}
@@ -518,7 +517,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                               animate={{ opacity: [0, 1, 0], scale: [0.6, 1.25, 0.9] }}
                               transition={{ duration: 0.4, delay: index * 0.05 }}
                               className="absolute text-amber-300"
-                              style={{ left: `${22 + index * 8}%`, top: `${44 + (index % 2) * 8}%` }}
+                              style={{ left: `${24 + index * 7}%`, top: `${39 + (index % 2) * 5}%` }}
                             >
                               <AlertTriangle className="h-5 w-5 md:h-6 md:w-6" />
                             </motion.div>
@@ -531,7 +530,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
               </div>
             </section>
 
-            <section className="shrink-0 rounded-[1.45rem] border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(10,31,83,0.92),rgba(7,21,58,0.96))] p-3 shadow-[0_16px_26px_rgba(2,6,23,0.34)]">
+            <section className="shrink-0 rounded-[1.35rem] border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(10,31,83,0.92),rgba(7,21,58,0.96))] p-3 shadow-[0_16px_26px_rgba(2,6,23,0.34)]">
               <div className="mb-2 flex items-center justify-between gap-2">
                 <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/74">
                   {round?.mode === 'mean' ? 'Choose the mean' : 'Choose the missing reel'}
@@ -550,7 +549,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                       type="button"
                       onClick={() => handleAnswer(option)}
                       disabled={gameState !== 'answering' || !sessionActive}
-                      className={`rounded-[1rem] border px-4 py-3 text-lg font-black transition-all ${
+                      className={`rounded-[1rem] border px-4 py-2.5 text-base font-black transition-all ${
                         isSelected
                           ? 'border-amber-100/85 bg-[linear-gradient(180deg,#fbbf24_0%,#f59e0b_100%)] text-slate-950 shadow-[0_12px_20px_rgba(146,64,14,0.34)]'
                           : 'border-cyan-100/24 bg-[linear-gradient(180deg,#2563eb_0%,#1d4ed8_100%)] text-white shadow-[0_12px_18px_rgba(2,6,23,0.22)]'
