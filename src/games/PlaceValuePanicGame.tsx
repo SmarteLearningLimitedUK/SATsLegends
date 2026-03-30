@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import placeValueBackground from '../assets/maps/gemini-2.5-flash-image_using_the_same_aesthetic_-_create_a_dark_and_mysterious_forest_path_with_dense_f-1.jpg';
 import medButton from '../assets/bluedialoague/med button cropped.png';
 import goblinWiz from '../assets/bosses/goblinwiz.jpg';
 import hudAvatarName from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
@@ -901,13 +900,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       className="relative z-20 h-full w-full min-h-0 overflow-hidden select-none"
       style={{ touchAction: 'manipulation' }}
     >
-      <div
-        className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${placeValueBackground})` }}
-      />
-      <div className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(5,16,46,0.12)_0%,rgba(5,16,46,0.08)_36%,rgba(5,16,46,0.18)_100%)]" />
-
-
       {!useSharedTopHud ? (
         <div
           className="pointer-events-none absolute inset-x-0 top-0 z-40"

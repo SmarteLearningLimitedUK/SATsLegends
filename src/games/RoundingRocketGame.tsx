@@ -5,6 +5,7 @@ import {
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
 import missionBackground from '../assets/maps/rocket launch.jpg';
+import roundingRocketArt from '../assets/roundingrocket.png';
 
 interface RoundingRocketGameProps {
   levelId: number;
@@ -35,6 +36,7 @@ interface RocketRound {
 
 const CORRECT_RESET_MS = 640;
 const FAILED_RESET_MS = 520;
+const FINAL_LAUNCH_COMPLETE_MS = 980;
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
@@ -137,6 +139,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
   const [didComplete, setDidComplete] = useState(false);
 
   const timeoutIdsRef = useRef<number[]>([]);
+  const inputLockedRef = useRef(false);
 
   const goalCorrect = useMemo(() => Math.min(14, Math.max(7, 6 + Math.floor(levelId / 2))), [levelId]);
   const timeLeft = sessionState?.timeLeft ?? 1;
@@ -154,6 +157,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
   };
 
   const resetRocketToIdle = () => {
+    inputLockedRef.current = false;
     setRocketState('idle');
     setSelectedPad(null);
     setPadFeedback(null);
@@ -175,6 +179,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
     setScore(0);
     setAttempts(0);
     setCorrectAnswers(0);
+    inputLockedRef.current = false;
     setInputLocked(false);
     setHasSignalledFailure(false);
     setDidComplete(false);
@@ -214,7 +219,9 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
   };
 
   const handlePadTap = (padValue: number) => {
-    if (!isSessionActive || inputLocked || didComplete) return;
+    if (!isSessionActive || inputLockedRef.current || inputLocked || didComplete) return;
+
+    inputLockedRef.current = true;
 
     const isCorrect = padValue === round.correctAnswer;
     const nextAttempts = attempts + 1;
@@ -254,12 +261,15 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
         },
       });
 
-      queueTimeout(() => setRocketState('launching'), 110);
-      queueTimeout(() => {
-        if (nextCorrect >= goalCorrect) {
+      if (nextCorrect >= goalCorrect) {
+        queueTimeout(() => setRocketState('launching'), 180);
+        queueTimeout(() => {
           completeRun(nextScore, nextCorrect, nextAttempts);
-          return;
-        }
+        }, FINAL_LAUNCH_COMPLETE_MS);
+        return;
+      }
+
+      queueTimeout(() => {
         loadNextRound(Math.floor(nextCorrect / 3));
       }, CORRECT_RESET_MS);
       return;
@@ -360,31 +370,53 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
             className="relative h-[clamp(8.8rem,26vh,12rem)] w-[clamp(6.6rem,22vw,9rem)]"
           >
             <div className="absolute inset-x-3 bottom-2 h-8 rounded-full bg-cyan-300/22 blur-xl" />
-
-            <div className="absolute left-1/2 top-3 h-6 w-6 -translate-x-1/2 rotate-45 rounded-[0.35rem] bg-[linear-gradient(180deg,#f8fafc,#cbd5e1)] shadow-[0_6px_10px_rgba(2,6,23,0.4)]" />
-
-            <div className="absolute left-1/2 top-7 h-[8.2rem] w-[5.1rem] -translate-x-1/2 rounded-t-[2.8rem] rounded-b-[1.8rem] border border-cyan-100/45 bg-[linear-gradient(180deg,#f8fafc_0%,#dbeafe_38%,#7dd3fc_68%,#1d4ed8_100%)] shadow-[0_16px_24px_rgba(2,6,23,0.4)]">
-              <div className="absolute left-1/2 top-5 h-5 w-5 -translate-x-1/2 rounded-full border border-cyan-100/60 bg-[radial-gradient(circle_at_30%_30%,#e0f2fe_0%,#60a5fa_70%,#1d4ed8_100%)]" />
-              <div className="absolute inset-x-2 bottom-2 h-4 rounded-full bg-slate-900/30 blur-[1px]" />
-            </div>
-
-            <div className="absolute left-[1.3rem] top-[6.7rem] h-8 w-3.5 rotate-12 rounded-[0.5rem] bg-[linear-gradient(180deg,#fb7185,#e11d48)] shadow-[0_8px_12px_rgba(190,24,93,0.42)]" />
-            <div className="absolute right-[1.3rem] top-[6.7rem] h-8 w-3.5 -rotate-12 rounded-[0.5rem] bg-[linear-gradient(180deg,#fb7185,#e11d48)] shadow-[0_8px_12px_rgba(190,24,93,0.42)]" />
+            <img
+              src={roundingRocketArt}
+              alt=""
+              aria-hidden="true"
+              draggable={false}
+              className="absolute left-1/2 top-1 h-[10.8rem] w-[7rem] -translate-x-1/2 object-contain drop-shadow-[0_16px_24px_rgba(2,6,23,0.45)]"
+            />
 
             <AnimatePresence>
               {rocketState === 'arming' || rocketState === 'launching' ? (
-                <motion.div
-                  key={`rocket-flame-${round.id}`}
-                  initial={{ opacity: 0, scaleY: 0.5 }}
-                  animate={{
-                    opacity: [0.5, 1, 0.8],
-                    scaleY: [0.5, 1.1, 0.9],
-                    scaleX: [0.9, 1.08, 0.96],
-                  }}
-                  exit={{ opacity: 0, scaleY: 0.2 }}
-                  transition={{ duration: 0.28, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
-                  className="absolute left-1/2 top-[10.4rem] h-14 w-9 -translate-x-1/2 rounded-b-[1.2rem] rounded-t-[0.3rem] bg-[radial-gradient(ellipse_at_top,#fde047_0%,#f97316_52%,rgba(239,68,68,0.12)_100%)] shadow-[0_0_24px_rgba(249,115,22,0.72)]"
-                />
+                <>
+                  <motion.div
+                    key={`rocket-flame-${round.id}`}
+                    initial={{ opacity: 0, scaleY: 0.5 }}
+                    animate={{
+                      opacity: [0.45, 1, 0.72],
+                      scaleY: [0.55, 1.16, 0.88],
+                      scaleX: [0.88, 1.08, 0.94],
+                    }}
+                    exit={{ opacity: 0, scaleY: 0.2 }}
+                    transition={{ duration: 0.24, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
+                    className="absolute left-1/2 top-[9.55rem] z-10 h-16 w-10 -translate-x-1/2 rounded-b-[1.35rem] rounded-t-[0.35rem] bg-[radial-gradient(ellipse_at_top,#fde047_0%,#fb923c_48%,rgba(239,68,68,0.1)_100%)] shadow-[0_0_28px_rgba(249,115,22,0.76)]"
+                  />
+                  {[0, 1, 2].map((index) => (
+                    <motion.span
+                      key={`rocket-smoke-${round.id}-${index}`}
+                      className="absolute left-1/2 top-[9.9rem] z-0 rounded-full bg-white/45 blur-md"
+                      initial={{ opacity: 0, x: '-50%', y: 0, scale: 0.4 }}
+                      animate={{
+                        opacity: [0, 0.42, 0],
+                        x: ['-50%', `${-50 + (index - 1) * 10}%`, `${-50 + (index - 1) * 18}%`],
+                        y: [0, 8 + index * 4, 18 + index * 8],
+                        scale: [0.4, 0.9, 1.25],
+                      }}
+                      transition={{
+                        duration: 0.9 + index * 0.12,
+                        repeat: Infinity,
+                        ease: 'easeOut',
+                        delay: index * 0.16,
+                      }}
+                      style={{
+                        width: `${1.1 + index * 0.25}rem`,
+                        height: `${0.7 + index * 0.16}rem`,
+                      }}
+                    />
+                  ))}
+                </>
               ) : null}
             </AnimatePresence>
           </motion.div>
