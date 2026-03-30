@@ -367,7 +367,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
             transition={rocketState === 'idle'
               ? { duration: 2.2, repeat: Infinity, ease: 'easeInOut' }
               : { duration: rocketState === 'launching' ? 0.58 : 0.35, ease: 'easeOut' }}
-            className="relative h-[clamp(8.8rem,26vh,12rem)] w-[clamp(6.6rem,22vw,9rem)]"
+            className="relative h-[clamp(16rem,42vh,24rem)] w-[clamp(13rem,42vw,18rem)]"
           >
             <div className="absolute inset-x-3 bottom-2 h-8 rounded-full bg-cyan-300/22 blur-xl" />
             <img
@@ -375,7 +375,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
               alt=""
               aria-hidden="true"
               draggable={false}
-              className="absolute left-1/2 top-1 h-[10.8rem] w-[7rem] -translate-x-1/2 object-contain drop-shadow-[0_16px_24px_rgba(2,6,23,0.45)]"
+              className="absolute left-1/2 top-1 h-[21.6rem] w-[14rem] -translate-x-1/2 object-contain drop-shadow-[0_16px_24px_rgba(2,6,23,0.45)]"
             />
 
             <AnimatePresence>
@@ -391,12 +391,12 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
                     }}
                     exit={{ opacity: 0, scaleY: 0.2 }}
                     transition={{ duration: 0.24, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
-                    className="absolute left-1/2 top-[9.55rem] z-10 h-16 w-10 -translate-x-1/2 rounded-b-[1.35rem] rounded-t-[0.35rem] bg-[radial-gradient(ellipse_at_top,#fde047_0%,#fb923c_48%,rgba(239,68,68,0.1)_100%)] shadow-[0_0_28px_rgba(249,115,22,0.76)]"
+                    className="absolute left-1/2 top-[18.9rem] z-10 h-20 w-12 -translate-x-1/2 rounded-b-[1.5rem] rounded-t-[0.35rem] bg-[radial-gradient(ellipse_at_top,#fde047_0%,#fb923c_48%,rgba(239,68,68,0.1)_100%)] shadow-[0_0_28px_rgba(249,115,22,0.76)]"
                   />
                   {[0, 1, 2].map((index) => (
                     <motion.span
                       key={`rocket-smoke-${round.id}-${index}`}
-                      className="absolute left-1/2 top-[9.9rem] z-0 rounded-full bg-white/45 blur-md"
+                      className="absolute left-1/2 top-[19.3rem] z-0 rounded-full bg-white/45 blur-md"
                       initial={{ opacity: 0, x: '-50%', y: 0, scale: 0.4 }}
                       animate={{
                         opacity: [0, 0.42, 0],
