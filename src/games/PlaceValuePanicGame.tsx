@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSta
 import { AnimatePresence, motion } from 'motion/react';
 import medButton from '../assets/bluedialoague/med button cropped.png';
 import goblinWiz from '../assets/bosses/goblinwiz.jpg';
+import animatedEnemy1 from '../assets/bosses/animated enemy1.gif';
 import hudAvatarName from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
 import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
 import questionBarTiny from '../assets/ui_frames/hudfortextplace_slices/text_bar_tiny.png';
@@ -185,78 +186,6 @@ const getDistractorDigits = (expectedDigits: number[], count: number): number[] 
   return pool.slice(0, Math.min(count, pool.length));
 };
 
-const removeBlackMatteFromSprite = (src: string): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => {
-      try {
-        const canvas = document.createElement('canvas');
-        canvas.width = image.naturalWidth;
-        canvas.height = image.naturalHeight;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          resolve(src);
-          return;
-        }
-
-        ctx.drawImage(image, 0, 0);
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const data = imageData.data;
-        const width = canvas.width;
-        const height = canvas.height;
-        const visited = new Uint8Array(width * height);
-        const stack: number[] = [];
-
-        const isNearBlack = (index: number) => {
-          const r = data[index];
-          const g = data[index + 1];
-          const b = data[index + 2];
-          const max = Math.max(r, g, b);
-          const min = Math.min(r, g, b);
-          return max <= 42 && max - min <= 14;
-        };
-
-        const pushIfBlack = (x: number, y: number) => {
-          if (x < 0 || y < 0 || x >= width || y >= height) return;
-          const p = y * width + x;
-          if (visited[p]) return;
-          const i = p * 4;
-          if (!isNearBlack(i)) return;
-          visited[p] = 1;
-          stack.push(p);
-        };
-
-        for (let x = 0; x < width; x += 1) {
-          pushIfBlack(x, 0);
-          pushIfBlack(x, height - 1);
-        }
-        for (let y = 0; y < height; y += 1) {
-          pushIfBlack(0, y);
-          pushIfBlack(width - 1, y);
-        }
-
-        while (stack.length > 0) {
-          const p = stack.pop() as number;
-          const i = p * 4;
-          data[i + 3] = 0;
-          const x = p % width;
-          const y = (p / width) | 0;
-          pushIfBlack(x + 1, y);
-          pushIfBlack(x - 1, y);
-          pushIfBlack(x, y + 1);
-          pushIfBlack(x, y - 1);
-        }
-
-        ctx.putImageData(imageData, 0, 0);
-        resolve(canvas.toDataURL('image/png'));
-      } catch (error) {
-        reject(error);
-      }
-    };
-    image.onerror = () => reject(new Error('Failed to load goblin sprite'));
-    image.src = src;
-  });
-
 const slotCountForLevel = (level: number): number => {
   // Gradual staged ramp:
   // L1-2: T,U
@@ -413,7 +342,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
   const [isResolving, setIsResolving] = useState(false);
   const [goblinEffect, setGoblinEffect] = useState<GoblinEffect>('idle');
-  const [goblinSpriteSrc, setGoblinSpriteSrc] = useState<string>(goblinWiz);
   const [showHitFx, setShowHitFx] = useState(false);
   const [enemySpeech, setEnemySpeech] = useState<string | null>(null);
   const [slotPulseKey, setSlotPulseKey] = useState(0);
@@ -498,6 +426,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const bottomPct = 100 - socketTopY;
     return `calc(${bottomPct.toFixed(2)}% - 23px)`;
   }, [layout.targetY, targetSocketSizing.heightValue]);
+
+  const goblinSpriteSrc = goblinEffect === 'hit' ? animatedEnemy1 : goblinWiz;
 
   const questionFrameConfig = useMemo(() => {
     const promptLength = question.prompt.trim().length;
@@ -599,20 +529,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     setMatchTimeLeft(MATCH_DURATION_SECONDS);
     resetRound(makeQuestion(resolvedLevel));
   }, [resetRound, resolvedLevel]);
-
-  useEffect(() => {
-    let mounted = true;
-    removeBlackMatteFromSprite(goblinWiz)
-      .then((processed) => {
-        if (mounted) setGoblinSpriteSrc(processed);
-      })
-      .catch(() => {
-        if (mounted) setGoblinSpriteSrc(goblinWiz);
-      });
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
   useEffect(() => {
     if (victoryDispatchedRef.current || gameOverDispatchedRef.current) return undefined;
