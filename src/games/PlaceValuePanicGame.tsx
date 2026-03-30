@@ -1251,12 +1251,16 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               aria-hidden="true"
               draggable={false}
               className="relative h-auto w-full object-contain drop-shadow-[0_16px_22px_rgba(2,6,23,0.5)]"
-              style={{ mixBlendMode: goblinEffect === 'hit' ? 'screen' : 'normal' }}
+              style={{
+                mixBlendMode: goblinEffect === 'hit' ? 'screen' : 'normal',
+                clipPath: goblinEffect === 'hit' ? 'ellipse(34% 43% at 50% 50%)' : 'none',
+                filter: goblinEffect === 'hit' ? 'brightness(1.08) contrast(1.1) saturate(1.04)' : 'none',
+              }}
               animate={{
                 y: [0, -5, 0],
                 x: goblinEffect === 'hit' ? [0, -9, 9, -8, 8, -5, 5, 0] : 0,
                 rotate: goblinEffect === 'hit' ? [0, -2.2, 2.2, -1.8, 1.8, 0] : 0,
-                scale: goblinEffect === 'heal' ? [1, 1.03, 1] : 1,
+                scale: goblinEffect === 'hit' ? [1.04, 1.08, 1.04] : goblinEffect === 'heal' ? [1, 1.03, 1] : 1,
               }}
               transition={{
                 y: { duration: 1.8, repeat: Infinity, ease: 'easeInOut' },

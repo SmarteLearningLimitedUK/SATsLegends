@@ -449,7 +449,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
             const interaction = ISLAND_INTERACTIONS[island.id];
             if (!interaction) return null;
 
-            const isSelected = selectedIslandId === island.id;
             const selectIsland = () => setSelectedIslandId(island.id);
 
             const renderCircleButton = (
@@ -472,20 +471,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                   width: `${circle.size}%`,
                   aspectRatio: '1 / 1',
                 }}
-              >
-                <span
-                  className={`pointer-events-none absolute inset-0 rounded-full transition-all duration-200 ${
-                    isSelected
-                      ? 'border-2 border-cyan-200/60 bg-cyan-300/14 shadow-[0_0_0_1px_rgba(186,230,253,0.2),0_0_24px_rgba(56,189,248,0.3)]'
-                      : 'border border-white/0 bg-transparent'
-                  }`}
-                />
-                {!isUnlocked && keySuffix === 'island' ? (
-                  <span className="pointer-events-none absolute right-[8%] top-[8%] flex h-6 w-6 items-center justify-center rounded-full border border-slate-200/30 bg-slate-950/55 text-[10px] font-black text-slate-100 shadow-[0_6px_12px_rgba(2,6,23,0.28)]">
-                    {'\uD83D\uDD12'}
-                  </span>
-                ) : null}
-              </motion.button>
+              />
             );
 
             return (
