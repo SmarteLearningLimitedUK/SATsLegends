@@ -66,7 +66,7 @@ const GOBLIN_MAX_HEALTH = 10;
 const MATCH_DURATION_SECONDS = 90;
 const PLAYER_STORAGE_KEY = 'maths_quest_player';
 const GOBLIN_DAMAGE_LINES = ['Ouch!', 'Hey!', 'Oof!', 'Wahhh!', 'Ugh!'] as const;
-const HIT_REACTION_MS = 980;
+const HIT_REACTION_MS = 900;
 
 const FULL_PLACE_VALUE_HINTS = ['M', 'Hth', 'Tth', 'Th', 'H', 'T', 'U'] as const;
 const TARGET_ROW_Y_OFFSET_PX = 0;
@@ -1252,17 +1252,19 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               }}
               transition={{
                 y: { duration: 1.8, repeat: Infinity, ease: 'easeInOut' },
-                x: { duration: 0.35, ease: 'easeInOut' },
-                rotate: { duration: 0.35, ease: 'easeInOut' },
-                scale: { duration: 0.35, ease: 'easeInOut' },
+                x: { duration: 0.9, ease: 'easeInOut' },
+                rotate: { duration: 0.9, ease: 'easeInOut' },
+                scale: { duration: 0.9, ease: 'easeInOut' },
               }}
             >
-              <img
+              <motion.img
                 src={idleEnemySrc}
                 alt=""
                 aria-hidden="true"
                 draggable={false}
                 className="relative h-auto w-full object-contain drop-shadow-[0_16px_22px_rgba(2,6,23,0.5)]"
+                animate={{ opacity: goblinEffect === 'hit' ? 0 : 1 }}
+                transition={{ duration: 0.14, ease: 'easeOut' }}
               />
               <AnimatePresence>
                 {goblinEffect === 'hit' ? (
@@ -1276,7 +1278,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                     initial={{ opacity: 0.98 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.12, ease: 'easeOut' }}
+                    transition={{ duration: 0.14, ease: 'easeOut' }}
                     style={{
                       mixBlendMode: 'screen',
                       filter: 'brightness(1.08) contrast(1.1) saturate(1.04)',
