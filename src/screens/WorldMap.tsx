@@ -43,32 +43,44 @@ type IslandState = {
   totalLevels: number;
 };
 
-const POSITION_HOTSPOTS = {
-  bottomRight: { x: 74, y: 75, width: 24, height: 15 },
-  topLeft: { x: 23.2, y: 39.4, width: 24, height: 15 },
-  middleLeft: { x: 25, y: 57.5, width: 24, height: 15 },
-  bottomLeft: { x: 26, y: 75, width: 24, height: 15 },
-  middleRight: { x: 73, y: 40, width: 24, height: 15 },
-  topRight: { x: 74, y: 20, width: 24, height: 15 },
-} satisfies Record<string, IslandHotspot>;
-
-const ISLAND_POSITION_BY_ID: Record<number, keyof typeof POSITION_HOTSPOTS> = {
-  1: 'bottomLeft',
-  2: 'bottomRight',
-  3: 'middleLeft',
-  4: 'middleRight',
-  5: 'topLeft',
-  6: 'topRight',
+type IslandInteractionRegion = {
+  islandArea: IslandHotspot;
+  labelArea?: IslandHotspot;
+  ambient: AmbientRegion;
 };
 
-const MAP_AMBIENTS: AmbientRegion[] = [
-  { id: 'base-camp', x: POSITION_HOTSPOTS.bottomLeft.x, y: POSITION_HOTSPOTS.bottomLeft.y, width: 24, height: 16, effect: 'butterflies' },
-  { id: 'fraction-forest', x: POSITION_HOTSPOTS.bottomRight.x, y: POSITION_HOTSPOTS.bottomRight.y, width: 24, height: 16, effect: 'light-beams' },
-  { id: 'geometry-glacier', x: POSITION_HOTSPOTS.middleLeft.x, y: POSITION_HOTSPOTS.middleLeft.y, width: 24, height: 16, effect: 'blizzard' },
-  { id: 'data-desert', x: POSITION_HOTSPOTS.middleRight.x, y: POSITION_HOTSPOTS.middleRight.y, width: 24, height: 16, effect: 'dust-devils' },
-  { id: 'operations-outpost', x: POSITION_HOTSPOTS.topLeft.x, y: POSITION_HOTSPOTS.topLeft.y, width: 24, height: 16, effect: 'stars' },
-  { id: 'mount-algebra', x: POSITION_HOTSPOTS.topRight.x, y: POSITION_HOTSPOTS.topRight.y, width: 24, height: 16, effect: 'lava-spurts' },
-];
+const ISLAND_INTERACTIONS: Record<number, IslandInteractionRegion> = {
+  1: {
+    islandArea: { x: 77.5, y: 91.2, width: 22, height: 13 },
+    labelArea: { x: 48.5, y: 96.3, width: 31, height: 5.6 },
+    ambient: { id: 'base-camp', x: 77.5, y: 91.1, width: 22, height: 13, effect: 'sparkles' },
+  },
+  2: {
+    islandArea: { x: 71.5, y: 57.2, width: 24, height: 15 },
+    labelArea: { x: 29.5, y: 60.3, width: 28, height: 5.4 },
+    ambient: { id: 'fraction-forest', x: 71.5, y: 56.8, width: 24, height: 15, effect: 'light-beams' },
+  },
+  3: {
+    islandArea: { x: 25.2, y: 47.6, width: 24, height: 15 },
+    labelArea: { x: 49, y: 48.8, width: 28, height: 5.4 },
+    ambient: { id: 'geometry-glacier', x: 25.2, y: 47.6, width: 24, height: 15, effect: 'blizzard' },
+  },
+  4: {
+    islandArea: { x: 25.8, y: 72.2, width: 24, height: 15 },
+    labelArea: { x: 49, y: 77.1, width: 28, height: 5.4 },
+    ambient: { id: 'data-desert', x: 25.8, y: 72.1, width: 24, height: 15, effect: 'dust-devils' },
+  },
+  5: {
+    islandArea: { x: 70.8, y: 33.1, width: 23, height: 15 },
+    labelArea: { x: 31.5, y: 34.5, width: 31, height: 5.4 },
+    ambient: { id: 'operations-outpost', x: 70.8, y: 33.1, width: 23, height: 15, effect: 'stars' },
+  },
+  6: {
+    islandArea: { x: 29.5, y: 14.5, width: 26, height: 16 },
+    labelArea: { x: 52.5, y: 16.1, width: 31, height: 5.6 },
+    ambient: { id: 'mount-algebra', x: 29.5, y: 14.5, width: 26, height: 16, effect: 'lava-spurts' },
+  },
+};
 
 const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
   switch (effect) {
@@ -268,7 +280,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
         />
 
         <div className="pointer-events-none absolute inset-0 z-10">
-          {MAP_AMBIENTS.map(region => (
+          {Object.values(ISLAND_INTERACTIONS).map(({ ambient: region }) => (
             <div
               key={region.id}
               className={`world-map-ambient world-map-ambient-${region.effect}`}
@@ -286,42 +298,61 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
 
         <div className="absolute inset-0 z-20">
           {islandStates.map(({ island, isUnlocked }) => {
-            const hotspot = POSITION_HOTSPOTS[ISLAND_POSITION_BY_ID[island.id]];
-            if (!hotspot) return null;
+            const interaction = ISLAND_INTERACTIONS[island.id];
+            if (!interaction) return null;
 
             const isSelected = selectedIslandId === island.id;
+            const { islandArea, labelArea } = interaction;
+            const selectIsland = () => setSelectedIslandId(island.id);
 
             return (
-              <motion.button
-                key={island.id}
-                type="button"
-                whileTap={{ scale: 0.97 }}
-                whileHover={{ scale: 1.015 }}
-                onClick={() => setSelectedIslandId(island.id)}
-                aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
-                className={`absolute z-30 -translate-x-1/2 -translate-y-1/2 rounded-[999px] outline-none transition-all focus-visible:ring-4 focus-visible:ring-cyan-300/70 ${
-                  isUnlocked ? 'opacity-100' : 'opacity-75'
-                }`}
-                style={{
-                  left: `${hotspot.x}%`,
-                  top: `${hotspot.y}%`,
-                  width: `${hotspot.width}%`,
-                  height: `${hotspot.height}%`,
-                }}
-              >
-                <span
-                  className={`pointer-events-none absolute inset-[10%] rounded-[999px] transition-all duration-200 ${
-                    isSelected
-                      ? 'border-2 border-cyan-200/55 bg-cyan-300/12 shadow-[0_0_0_1px_rgba(186,230,253,0.18),0_0_22px_rgba(56,189,248,0.28)]'
-                      : 'border border-white/0 bg-transparent'
+              <React.Fragment key={island.id}>
+                <motion.button
+                  type="button"
+                  whileTap={{ scale: 0.97 }}
+                  whileHover={{ scale: 1.015 }}
+                  onClick={selectIsland}
+                  aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
+                  className={`absolute z-30 -translate-x-1/2 -translate-y-1/2 rounded-[999px] outline-none transition-all focus-visible:ring-4 focus-visible:ring-cyan-300/70 ${
+                    isUnlocked ? 'opacity-100' : 'opacity-75'
                   }`}
-                />
-                {!isUnlocked ? (
-                  <span className="pointer-events-none absolute right-[10%] top-[10%] flex h-6 w-6 items-center justify-center rounded-full border border-slate-200/30 bg-slate-950/55 text-[10px] font-black text-slate-100 shadow-[0_6px_12px_rgba(2,6,23,0.28)]">
-                    🔒
-                  </span>
+                  style={{
+                    left: `${islandArea.x}%`,
+                    top: `${islandArea.y}%`,
+                    width: `${islandArea.width}%`,
+                    height: `${islandArea.height}%`,
+                  }}
+                >
+                  <span
+                    className={`pointer-events-none absolute inset-[10%] rounded-[999px] transition-all duration-200 ${
+                      isSelected
+                        ? 'border-2 border-cyan-200/55 bg-cyan-300/12 shadow-[0_0_0_1px_rgba(186,230,253,0.18),0_0_22px_rgba(56,189,248,0.28)]'
+                        : 'border border-white/0 bg-transparent'
+                    }`}
+                  />
+                  {!isUnlocked ? (
+                    <span className="pointer-events-none absolute right-[10%] top-[10%] flex h-6 w-6 items-center justify-center rounded-full border border-slate-200/30 bg-slate-950/55 text-[10px] font-black text-slate-100 shadow-[0_6px_12px_rgba(2,6,23,0.28)]">
+                      {'\uD83D\uDD12'}
+                    </span>
+                  ) : null}
+                </motion.button>
+
+                {labelArea ? (
+                  <button
+                    type="button"
+                    tabIndex={-1}
+                    aria-hidden="true"
+                    onClick={selectIsland}
+                    className="absolute z-20 -translate-x-1/2 -translate-y-1/2 rounded-[999px] bg-transparent"
+                    style={{
+                      left: `${labelArea.x}%`,
+                      top: `${labelArea.y}%`,
+                      width: `${labelArea.width}%`,
+                      height: `${labelArea.height}%`,
+                    }}
+                  />
                 ) : null}
-              </motion.button>
+              </React.Fragment>
             );
           })}
         </div>
@@ -383,3 +414,5 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
 };
 
 export default WorldMap;
+
+
