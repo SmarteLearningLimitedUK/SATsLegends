@@ -372,67 +372,62 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
       <div className="pointer-events-none absolute right-[-10%] top-[10%] h-[34%] w-[40%] rounded-full bg-[radial-gradient(circle,rgba(22,49,54,0.84)_0%,rgba(22,49,54,0.5)_42%,rgba(22,49,54,0)_74%)] blur-[10px]" />
       <div className="pointer-events-none absolute left-1/2 top-[45%] h-[24%] w-[66%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(252,191,73,0.34)_0%,rgba(252,191,73,0.18)_30%,rgba(252,191,73,0)_68%)] blur-[24px]" />
 
-      <div className="relative z-10 flex h-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+4.2rem)] pt-4">
+      <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4rem)] pt-3">
         <section className="shrink-0 text-center">
           <div className="mx-auto max-w-[720px]">
-            <p className="text-[clamp(15px,2.35vh,21px)] font-black leading-tight text-white drop-shadow-[0_3px_8px_rgba(15,23,42,0.55)]">
+            <p className="text-[clamp(14px,2.05vh,19px)] font-black leading-tight text-white drop-shadow-[0_3px_8px_rgba(15,23,42,0.55)]">
               {challenge.orderPrompt}
             </p>
-            <p className="mt-1.5 text-[clamp(11px,1.65vh,14px)] font-black text-amber-100/92 drop-shadow-[0_2px_6px_rgba(15,23,42,0.4)]">
+            <p className="mt-1 text-[clamp(10px,1.45vh,13px)] font-black text-amber-100/92 drop-shadow-[0_2px_6px_rgba(15,23,42,0.4)]">
               {challenge.orderFlavor}
             </p>
           </div>
         </section>
 
-        <section className="mt-2 shrink-0">
-          <div className="mx-auto flex w-full max-w-[760px] justify-end">
-            <div className="relative h-[138px] w-[248px]">
-              <img
-                src={blueRecipeFrame}
-                alt=""
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 h-full w-full object-fill drop-shadow-[0_10px_18px_rgba(15,23,42,0.28)]"
-              />
-              <div className="absolute inset-x-[18%] top-[-10px] h-[34px]">
-                <img
-                  src={blueRecipeHeader}
-                  alt=""
-                  aria-hidden="true"
-                  className="pointer-events-none h-full w-full object-fill"
-                />
-                <div className="absolute inset-0 flex items-center justify-center px-3">
-                  <p className="truncate text-[11px] font-black uppercase tracking-[0.03em] text-white drop-shadow-[0_2px_4px_rgba(15,23,42,0.4)]">
-                    {challenge.orderTitle}
-                  </p>
-                </div>
-              </div>
-              <div className="relative flex h-full flex-col px-5 pb-4 pt-8">
-                <div className="rounded-full border border-cyan-100/18 bg-black/12 px-3 py-1 text-center">
-                  <p className="text-[11px] font-black text-cyan-50">Ratio: {challenge.baseRatio.join(' : ')}</p>
-                </div>
-                <div className="mt-3 space-y-1.5">
-                  {activeTargets.map(({ ingredient, target }) => (
-                    <div key={`recipe-${ingredient.id}`} className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span
-                          aria-hidden="true"
-                          className="h-3.5 w-3.5 rounded-full border border-white/45"
-                          style={{ backgroundColor: ingredient.color, boxShadow: `0 0 10px ${ingredient.glow}` }}
-                        />
-                        <span className="text-[11px] font-black text-white">{ingredient.name}</span>
-                      </div>
-                      <span className="text-[11px] font-black text-amber-100">x{target}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <section className="mt-1.5 flex min-h-0 flex-1 flex-col">
           <div className="mx-auto flex w-full max-w-[760px] min-h-0 flex-1 flex-col items-center">
-            <div className="relative h-[clamp(150px,20vh,210px)] w-full max-w-[360px] shrink-0">
+            <div className="relative h-[clamp(138px,18vh,186px)] w-full max-w-[340px] shrink-0">
+              <div className="absolute right-0 top-0 z-20 h-[102px] w-[188px]">
+                <img
+                  src={blueRecipeFrame}
+                  alt=""
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 h-full w-full object-fill drop-shadow-[0_10px_18px_rgba(15,23,42,0.28)]"
+                />
+                <div className="absolute inset-x-[17%] top-[-8px] h-[28px]">
+                  <img
+                    src={blueRecipeHeader}
+                    alt=""
+                    aria-hidden="true"
+                    className="pointer-events-none h-full w-full object-fill"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center px-2">
+                    <p className="truncate text-[9px] font-black uppercase tracking-[0.03em] text-white drop-shadow-[0_2px_4px_rgba(15,23,42,0.4)]">
+                      {challenge.orderTitle}
+                    </p>
+                  </div>
+                </div>
+                <div className="relative flex h-full flex-col px-4 pb-3 pt-6">
+                  <div className="rounded-full border border-cyan-100/18 bg-black/12 px-2 py-0.5 text-center">
+                    <p className="text-[9px] font-black text-cyan-50">Ratio: {challenge.baseRatio.join(' : ')}</p>
+                  </div>
+                  <div className="mt-2 space-y-1">
+                    {activeTargets.map(({ ingredient, target }) => (
+                      <div key={`recipe-${ingredient.id}`} className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5">
+                          <span
+                            aria-hidden="true"
+                            className="h-3 w-3 rounded-full border border-white/45"
+                            style={{ backgroundColor: ingredient.color, boxShadow: `0 0 8px ${ingredient.glow}` }}
+                          />
+                          <span className="text-[9px] font-black text-white">{ingredient.name}</span>
+                        </div>
+                        <span className="text-[9px] font-black text-amber-100">x{target}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
               <div className="pointer-events-none absolute left-1/2 top-[84%] h-10 w-[62%] -translate-x-1/2 rounded-full bg-black/35 blur-md" />
               <div className="pointer-events-none absolute left-1/2 top-[75%] h-[28%] w-[54%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
               <div className="absolute left-1/2 top-[72%] flex h-[18%] w-[46%] -translate-x-1/2 items-end justify-between px-5">
@@ -446,14 +441,14 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 ))}
               </div>
               <div
-                className="absolute left-1/2 top-[8%] h-[78%] w-[96%] -translate-x-1/2 bg-no-repeat"
+                className="absolute left-1/2 top-[10%] h-[74%] w-[92%] -translate-x-1/2 bg-no-repeat"
                 style={{
                   backgroundImage: `url(${potionPanicBackdrop})`,
                   backgroundSize: '175%',
                   backgroundPosition: '71% 78%',
                 }}
               />
-              <div className="absolute left-1/2 top-[18%] h-[30%] w-[58%] -translate-x-1/2 overflow-hidden rounded-[46%]">
+              <div className="absolute left-[42%] top-[20%] h-[26%] w-[50%] -translate-x-1/2 overflow-hidden rounded-[46%]">
                 <motion.div
                   className="absolute inset-x-[8%] bottom-[8%] rounded-[42%]"
                   style={{
@@ -489,7 +484,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
             </div>
 
             <div
-              className="mt-2 grid w-full max-w-[620px] shrink-0 gap-1.5"
+              className="mt-1.5 grid w-full max-w-[560px] shrink-0 gap-1"
               style={{ gridTemplateColumns: `repeat(${Math.max(1, activeTargets.length)}, minmax(0, 1fr))` }}
             >
               {activeTargets.map(({ ingredient, current, target }) => {
@@ -502,11 +497,11 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                     onClick={() => addIngredient(index)}
                     disabled={locked}
                     aria-label={`Add ${ingredient.name} to the potion`}
-                    className="relative flex h-[clamp(64px,8.5vh,84px)] flex-col items-center justify-center rounded-[1.05rem] border border-white/28 bg-[linear-gradient(180deg,rgba(34,53,118,0.9),rgba(16,31,74,0.94))] px-2 py-1.5 shadow-[0_12px_18px_rgba(2,6,23,0.3)] transition disabled:opacity-60"
+                    className="relative flex h-[clamp(54px,7vh,70px)] flex-col items-center justify-center rounded-[0.95rem] border border-white/28 bg-[linear-gradient(180deg,rgba(34,53,118,0.9),rgba(16,31,74,0.94))] px-1.5 py-1 shadow-[0_10px_14px_rgba(2,6,23,0.28)] transition disabled:opacity-60"
                     style={{ boxShadow: `0 12px 22px rgba(2,6,23,0.34), 0 0 22px ${ingredient.glow}` }}
                   >
                     <div
-                      className="flex h-8 w-8 items-center justify-center rounded-full border border-white/45"
+                      className="flex h-7 w-7 items-center justify-center rounded-full border border-white/45"
                       style={{
                         background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.96) 0%, ${ingredient.color} 44%, rgba(52,18,30,0.96) 100%)`,
                         boxShadow: `0 0 18px ${ingredient.glow}`,
@@ -516,41 +511,41 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                         {ingredient.short}
                       </span>
                     </div>
-                    <span className="mt-1 text-[9px] font-black uppercase tracking-[0.03em] text-cyan-50">{ingredient.name}</span>
-                    <span className="text-[10px] font-black text-amber-100">x{current}/{target}</span>
+                    <span className="mt-0.5 text-[8px] font-black uppercase tracking-[0.02em] text-cyan-50">{ingredient.name}</span>
+                    <span className="text-[9px] font-black text-amber-100">x{current}/{target}</span>
                   </motion.button>
                 );
               })}
             </div>
 
             {statusText ? (
-              <div className="mt-3 w-full max-w-[520px] shrink-0 rounded-full border border-cyan-100/18 bg-slate-950/34 px-4 py-2 text-center shadow-[0_10px_18px_rgba(2,6,23,0.16)]">
-                <p className={`text-[11px] font-black ${isRecipeComplete ? 'text-emerald-200' : 'text-amber-100'}`}>
+              <div className="mt-2 w-full max-w-[420px] shrink-0 rounded-full border border-cyan-100/18 bg-slate-950/34 px-4 py-1.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.16)]">
+                <p className={`text-[10px] font-black ${isRecipeComplete ? 'text-emerald-200' : 'text-amber-100'}`}>
                   {statusText}
                 </p>
               </div>
             ) : null}
 
-            <div className="mt-2.5 flex w-full max-w-[460px] shrink-0 flex-col items-center gap-1.5">
+            <div className="mt-2 flex w-full max-w-[420px] shrink-0 flex-col items-center gap-1">
               <motion.button
                 type="button"
                 whileTap={{ scale: 0.98 }}
                 onClick={onBrew}
                 disabled={locked || !isRecipeComplete}
-                className={`inline-flex h-[50px] w-full items-center justify-center gap-2 rounded-[999px] border px-5 text-[clamp(18px,2.8vh,28px)] font-black tracking-[0.01em] transition ${
+                className={`inline-flex h-[46px] w-full items-center justify-center gap-2 rounded-[999px] border px-5 text-[clamp(17px,2.45vh,24px)] font-black tracking-[0.01em] transition ${
                   locked || !isRecipeComplete
                     ? 'border-slate-500/40 bg-[linear-gradient(180deg,rgba(27,44,95,0.62),rgba(14,25,58,0.7))] text-slate-400'
                     : 'border-cyan-100/80 bg-[linear-gradient(180deg,#5b96ff_0%,#2f67ec_62%,#204bc7_100%)] text-white shadow-[0_16px_28px_rgba(37,99,235,0.4)]'
                 }`}
               >
-                <Wand2 className="h-5 w-5" />
+                <Wand2 className="h-4.5 w-4.5" />
                 Brew Potion
               </motion.button>
               <button
                 type="button"
                 onClick={resetCurrent}
                 disabled={locked}
-                className="inline-flex h-9 items-center justify-center rounded-full px-3 text-[11px] font-black uppercase tracking-[0.1em] text-cyan-100/88 disabled:opacity-50"
+                className="inline-flex h-8 items-center justify-center rounded-full px-3 text-[10px] font-black uppercase tracking-[0.1em] text-cyan-100/88 disabled:opacity-50"
               >
                 Reset Mix
               </button>
