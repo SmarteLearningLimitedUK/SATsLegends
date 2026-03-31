@@ -8,7 +8,8 @@ import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
-import cauldrenAndPotionArt from '../assets/cauldrenandpotion.png';
+import cauldrenAndPotionArt from '../assets/coul.png';
+import potionBottleSprites from '../assets/pots.png';
 import potionPanicFrame from '../assets/potionpanic2.png';
 
 interface PotionPourGameProps {
@@ -52,13 +53,12 @@ const INGREDIENTS: Ingredient[] = [
 ];
 
 const SUCCESS_DELAY_MS = 760;
-const BOTTLE_SPRITE_ORDER = ['green', 'violet', 'red', 'gold', 'blue'] as const;
-const BOTTLE_SPRITE_INDEX: Record<string, number> = {
-  green: 0,
-  violet: 1,
-  red: 2,
-  gold: 3,
-  blue: 4,
+const POTION_SPRITES: Record<string, { x: number; y: number; w: number; h: number }> = {
+  gold: { x: 0.22, y: 0.1, w: 0.25, h: 0.36 },
+  blue: { x: 0.55, y: 0.1, w: 0.24, h: 0.36 },
+  green: { x: 0.08, y: 0.52, w: 0.31, h: 0.43 },
+  violet: { x: 0.39, y: 0.5, w: 0.28, h: 0.44 },
+  red: { x: 0.65, y: 0.5, w: 0.28, h: 0.44 },
 };
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
@@ -512,7 +512,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 const current = counts[index] || 0;
                 const target = targetByIngredient.get(index) ?? 0;
                 const isActive = activeSet.has(index);
-                const spriteIndex = BOTTLE_SPRITE_INDEX[ingredient.id] ?? index;
+                const sprite = POTION_SPRITES[ingredient.id];
                 return (
                   <motion.button
                     key={ingredient.id}
@@ -525,15 +525,22 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                     style={isActive ? { boxShadow: `0 12px 22px rgba(2,6,23,0.28), 0 0 18px ${ingredient.glow}` } : undefined}
                   >
                     <div className="pointer-events-none absolute inset-x-0 top-0 bottom-5">
-                      <div
-                        className="mx-auto h-full w-full max-w-[94px] bg-no-repeat"
-                        style={{
-                          backgroundImage: `url(${cauldrenAndPotionArt})`,
-                          backgroundSize: '500% auto',
-                          backgroundPosition: `${(spriteIndex / (BOTTLE_SPRITE_ORDER.length - 1)) * 100}% 100%`,
-                          filter: isActive ? 'none' : 'grayscale(0.45) saturate(0.7) opacity(0.8)',
-                        }}
-                      />
+                      <div className="relative mx-auto h-full w-full max-w-[92px] overflow-hidden">
+                        {sprite ? (
+                          <img
+                            src={potionBottleSprites}
+                            alt=""
+                            aria-hidden="true"
+                            className="absolute max-w-none select-none"
+                            style={{
+                              width: `${100 / sprite.w}%`,
+                              left: `-${(sprite.x / sprite.w) * 100}%`,
+                              top: `-${(sprite.y / sprite.h) * 100}%`,
+                              filter: isActive ? 'none' : 'grayscale(0.45) saturate(0.7) opacity(0.8)',
+                            }}
+                          />
+                        ) : null}
+                      </div>
                     </div>
                     <span className="relative z-10 text-[9px] font-black uppercase tracking-[0.02em] text-cyan-50">{ingredient.name}</span>
                     <span className="relative z-10 text-[10px] font-black text-amber-100">
