@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { GAME_META } from './gameMeta';
 import {
@@ -95,6 +95,7 @@ const App: React.FC = () => {
   const [wellbeingLaunchContext, setWellbeingLaunchContext] = useState<WellbeingLaunchContext>({ origin: 'manual' });
   const [wellbeingCompletion, setWellbeingCompletion] = useState<WellbeingCompletionState | null>(null);
   const [storedLevelResult, setStoredLevelResult] = useState<LevelResultState | null>(null);
+  const lastIncorrectLifeLossRef = useRef<{ signature: string; at: number }>({ signature: '', at: 0 });
   const [wellbeingSignals, setWellbeingSignals] = useState<WellbeingSignals>({
     consecutiveFails: 0,
     gamesPlayedSinceBreak: 0,
@@ -454,9 +455,19 @@ const App: React.FC = () => {
     onCorrectAnswer: () => {
       triggerHaptic('selection');
     },
-    onIncorrectAnswer: () => {
+    onIncorrectAnswer: (event) => {
       triggerHaptic('error');
       if (screen === 'gameplay') {
+        const metadataKey = JSON.stringify(event.metadata ?? {});
+        const signature = `${event.gameType ?? 'unknown'}:${event.levelId ?? 'unknown'}:${metadataKey}`;
+        const now = Date.now();
+        const isDuplicateBurst =
+          lastIncorrectLifeLossRef.current.signature === signature
+          && now - lastIncorrectLifeLossRef.current.at < 300;
+
+        if (isDuplicateBurst) return;
+
+        lastIncorrectLifeLossRef.current = { signature, at: now };
         consumeLife(1);
       }
     },
@@ -688,4 +699,7 @@ const App: React.FC = () => {
 };
 
 export default App;
+
+
+
 

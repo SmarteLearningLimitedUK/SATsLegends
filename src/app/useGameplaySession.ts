@@ -68,29 +68,6 @@ export const useGameplaySession = ({
   }, [globalMiniGameHudTimeLeft, globalMiniGameTimeLock, onTimeDepleted, screen]);
 
   useEffect(() => {
-    const lastPenaltyRef = { value: 0 };
-
-    const handleHapticIntent = (event: Event) => {
-      if (screen !== 'gameplay') return;
-
-      const detail = (event as CustomEvent<{ intent?: string }>).detail;
-      const intent = detail?.intent;
-      if (intent !== 'error' && intent !== 'warning') return;
-
-      const now = Date.now();
-      if (now - lastPenaltyRef.value < 450) return;
-      lastPenaltyRef.value = now;
-
-      consumeLife(1);
-    };
-
-    window.addEventListener('sats-mastery:haptic', handleHapticIntent as EventListener);
-    return () => {
-      window.removeEventListener('sats-mastery:haptic', handleHapticIntent as EventListener);
-    };
-  }, [consumeLife, screen]);
-
-  useEffect(() => {
     localStorage.setItem(GAME_AUDIO_STORAGE_KEY, String(isMuted));
     window.dispatchEvent(new CustomEvent(GAME_HUD_MUTE_SYNC_EVENT, { detail: { muted: isMuted } }));
     document.querySelectorAll<HTMLMediaElement>('audio, video').forEach((media) => {
