@@ -6,6 +6,8 @@ import {
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
 import dojoBackground from '../assets/maps/inside dojo.jpg';
+import monsterHitA from '../assets/bosses/ezgif-6daa70d34d8e7de3.webp';
+import monsterHitB from '../assets/bosses/ezgif-69d0cb3c40700347.webp';
 
 interface NumberLineNinjaGameProps {
   levelId: number;
@@ -39,6 +41,8 @@ interface NumberLineQuestion {
 
 const QUESTION_ADVANCE_MS = 620;
 const QUESTION_FEEDBACK_MS = 520;
+const MONSTER_HIT_REACTION_MS = 900;
+const MONSTER_DAMAGE_LINES = ['Ouch!', 'Nice hit!', 'Direct hit!', 'Pow!', 'Bullseye!'] as const;
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
@@ -52,6 +56,80 @@ const shuffle = <T,>(items: T[]): T[] => {
 };
 
 const uniqueStrings = (values: string[]) => Array.from(new Set(values));
+
+const createStaticEnemyFrame = (src: string): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(src);
+          return;
+        }
+
+        ctx.drawImage(image, 0, 0);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        const width = canvas.width;
+        const height = canvas.height;
+        const visited = new Uint8Array(width * height);
+        const stack: number[] = [];
+
+        const isNearBlack = (index: number) => {
+          const r = data[index];
+          const g = data[index + 1];
+          const b = data[index + 2];
+          const a = data[index + 3];
+          if (a === 0) return false;
+          const max = Math.max(r, g, b);
+          const min = Math.min(r, g, b);
+          return max <= 42 && max - min <= 18;
+        };
+
+        const pushIfBlack = (x: number, y: number) => {
+          if (x < 0 || y < 0 || x >= width || y >= height) return;
+          const point = y * width + x;
+          if (visited[point]) return;
+          const pixelIndex = point * 4;
+          if (!isNearBlack(pixelIndex)) return;
+          visited[point] = 1;
+          stack.push(point);
+        };
+
+        for (let x = 0; x < width; x += 1) {
+          pushIfBlack(x, 0);
+          pushIfBlack(x, height - 1);
+        }
+        for (let y = 0; y < height; y += 1) {
+          pushIfBlack(0, y);
+          pushIfBlack(width - 1, y);
+        }
+
+        while (stack.length > 0) {
+          const point = stack.pop() as number;
+          const pixelIndex = point * 4;
+          data[pixelIndex + 3] = 0;
+          const x = point % width;
+          const y = (point / width) | 0;
+          pushIfBlack(x + 1, y);
+          pushIfBlack(x - 1, y);
+          pushIfBlack(x, y + 1);
+          pushIfBlack(x, y - 1);
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      } catch (error) {
+        reject(error);
+      }
+    };
+    image.onerror = () => reject(new Error('Failed to load enemy frame'));
+    image.src = src;
+  });
 
 const scoreToStars = (XP: number, correct: number, attempts: number) => {
   const accuracy = attempts > 0 ? correct / attempts : 0;
@@ -175,12 +253,18 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const [lineShake, setLineShake] = useState(false);
   const [flyingAnswer, setFlyingAnswer] = useState<FlyingAnswerState | null>(null);
   const [confettiBurstKey, setConfettiBurstKey] = useState(0);
+  const [monsterEffect, setMonsterEffect] = useState<'idle' | 'hit'>('idle');
+  const [monsterHitFx, setMonsterHitFx] = useState(false);
+  const [monsterSpeech, setMonsterSpeech] = useState<string | null>(null);
+  const [monsterHitAnimationIndex, setMonsterHitAnimationIndex] = useState(0);
+  const [idleMonsterSrc, setIdleMonsterSrc] = useState<string>(monsterHitA);
 
   const timeoutIdsRef = useRef<number[]>([]);
   const answerLockRef = useRef(false);
   const playfieldRef = useRef<HTMLDivElement | null>(null);
   const missingSlotRef = useRef<HTMLDivElement | null>(null);
   const optionButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const monsterSpeechTimeoutRef = useRef<number | null>(null);
 
   const goalCorrect = useMemo(
     () => Math.min(14, Math.max(7, 6 + Math.floor(levelId / 2))),
@@ -220,7 +304,38 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     setLineShake(false);
     setFlyingAnswer(null);
     setConfettiBurstKey(0);
+    setMonsterEffect('idle');
+    setMonsterHitFx(false);
+    setMonsterSpeech(null);
   }, [levelId, sessionState, sessionState?.timeLeft, sessionState?.totalTime]);
+
+  useEffect(() => {
+    let mounted = true;
+    createStaticEnemyFrame(monsterHitA)
+      .then((frame) => {
+        if (mounted) setIdleMonsterSrc(frame);
+      })
+      .catch(() => {
+        if (mounted) setIdleMonsterSrc(monsterHitA);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (monsterEffect !== 'hit') return undefined;
+    setMonsterHitFx(true);
+    const timeoutId = window.setTimeout(() => setMonsterHitFx(false), MONSTER_HIT_REACTION_MS);
+    return () => window.clearTimeout(timeoutId);
+  }, [monsterEffect]);
+
+  useEffect(() => () => {
+    if (monsterSpeechTimeoutRef.current !== null) {
+      window.clearTimeout(monsterSpeechTimeoutRef.current);
+    }
+  }, []);
 
   useEffect(() => {
     if (!sessionState || didComplete || didFail) return;
@@ -254,6 +369,27 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     answerLockRef.current = false;
     setLineShake(false);
     setFlyingAnswer(null);
+    setMonsterEffect('idle');
+    setMonsterHitFx(false);
+    setMonsterSpeech(null);
+  };
+
+  const triggerMonsterHit = () => {
+    setMonsterEffect('hit');
+    setMonsterSpeech(MONSTER_DAMAGE_LINES[Math.floor(Math.random() * MONSTER_DAMAGE_LINES.length)]);
+    setMonsterHitAnimationIndex((current) => (current === 0 ? 1 : 0));
+
+    if (monsterSpeechTimeoutRef.current !== null) {
+      window.clearTimeout(monsterSpeechTimeoutRef.current);
+    }
+
+    monsterSpeechTimeoutRef.current = window.setTimeout(() => {
+      setMonsterSpeech(null);
+    }, MONSTER_HIT_REACTION_MS - 120);
+
+    queueTimeout(() => {
+      setMonsterEffect('idle');
+    }, MONSTER_HIT_REACTION_MS);
   };
 
   const getTravelAnimation = (option: string): FlyingAnswerState | null => {
@@ -293,6 +429,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       setFeedbackState('correct');
       setFlyingAnswer(getTravelAnimation(option));
       setConfettiBurstKey((current) => current + 1);
+      triggerMonsterHit();
 
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
         XP,
@@ -339,6 +476,9 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   };
 
   const focusPct = (question.focusIndex / (question.labels.length - 1)) * 100;
+  const monsterRemainingHealth = Math.max(0, goalCorrect - correctCount);
+  const monsterHealthPct = (monsterRemainingHealth / goalCorrect) * 100;
+  const activeMonsterHitSrc = monsterHitAnimationIndex === 0 ? monsterHitA : monsterHitB;
 
   return (
     <div ref={playfieldRef} className="relative h-full w-full overflow-hidden">
@@ -358,11 +498,11 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
           </p>
         </div>
 
-        <div className="flex min-h-0 flex-1 items-start justify-center pt-1">
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-start pt-1">
           <motion.div
             animate={lineShake ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
             transition={{ duration: 0.34, ease: 'easeInOut' }}
-            className="relative flex h-[31%] min-h-[160px] w-full max-w-[680px] items-center justify-center"
+            className="relative flex h-[26%] min-h-[154px] w-full max-w-[680px] items-center justify-center"
           >
             <motion.div
               animate={{ opacity: [0.26, 0.54, 0.26], scale: [0.985, 1.025, 0.985] }}
@@ -444,6 +584,128 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
               </motion.div>
             </div>
           </motion.div>
+
+          <div className="relative mt-1 flex h-[24%] min-h-[150px] w-full max-w-[520px] shrink-0 items-end justify-center">
+            <div className="absolute right-4 top-0 z-20 w-[34%] min-w-[120px] rounded-lg border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)]">
+              <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
+                Enemy
+              </div>
+              <div className="relative h-2 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/80">
+                <motion.div
+                  className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-rose-500 via-rose-400 to-orange-300 shadow-[0_0_12px_rgba(251,113,133,0.75)]"
+                  animate={{ width: `${monsterHealthPct}%` }}
+                  transition={{ type: 'spring', stiffness: 210, damping: 26 }}
+                />
+                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.14)_1px,transparent_1px)] bg-[length:10%_100%]" />
+              </div>
+            </div>
+
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 mx-auto w-[58%] max-w-[280px]">
+              <div className="relative">
+                <AnimatePresence>
+                  {monsterSpeech ? (
+                    <motion.div
+                      key={`monster-speech-${monsterSpeech}`}
+                      initial={{ opacity: 0, y: 8, scale: 0.9 }}
+                      animate={{ opacity: 1, y: 0, scale: [1, 1.04, 1] }}
+                      exit={{ opacity: 0, y: -8, scale: 0.9 }}
+                      transition={{ duration: 0.22, ease: 'easeOut' }}
+                      className="absolute left-1/2 top-[-18%] z-40 -translate-x-1/2"
+                    >
+                      <div className="relative">
+                        <motion.div
+                          className="absolute inset-[-8px] rounded-full bg-amber-300/35 blur-md"
+                          animate={{ opacity: [0.5, 0.9, 0.5], scale: [0.96, 1.04, 0.96] }}
+                          transition={{ duration: 0.7, repeat: Infinity, ease: 'easeInOut' }}
+                        />
+                        <div className="relative rounded-full border border-amber-200/70 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.96),rgba(254,243,199,0.94)_42%,rgba(254,215,170,0.92)_100%)] px-3.5 py-1.5 text-[clamp(0.62rem,1.8vw,0.9rem)] font-black uppercase tracking-[0.05em] text-slate-800 shadow-[0_10px_18px_rgba(2,6,23,0.45)]">
+                          {monsterSpeech}
+                        </div>
+                        <div className="absolute left-1/2 top-[100%] h-2.5 w-2.5 -translate-x-1/2 rotate-45 border-b border-r border-amber-200/70 bg-amber-100/95" />
+                      </div>
+                    </motion.div>
+                  ) : null}
+                </AnimatePresence>
+
+                <motion.div
+                  className="absolute left-1/2 top-[62%] h-[38%] w-[56%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
+                  animate={{
+                    opacity: monsterEffect === 'idle' ? 0.22 : 0.52,
+                    scale: monsterEffect === 'idle' ? 1 : [1, 1.12, 1],
+                    backgroundColor:
+                      monsterEffect === 'hit'
+                        ? 'rgba(248,113,113,0.92)'
+                        : 'rgba(56,189,248,0.55)',
+                  }}
+                  transition={{
+                    duration: monsterEffect === 'hit' ? 0.32 : 0.45,
+                    ease: 'easeInOut',
+                    repeat: monsterEffect === 'idle' ? Infinity : 0,
+                    repeatDelay: 1.1,
+                  }}
+                />
+
+                <AnimatePresence>
+                  {monsterHitFx ? (
+                    <motion.div
+                      key={`monster-hit-fx-${question.id}-${confettiBurstKey}`}
+                      className="pointer-events-none absolute inset-[-16%]"
+                      initial={{ opacity: 0.98, scale: 0.54 }}
+                      animate={{ opacity: 0, scale: 1.46, rotate: 160 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.56, ease: 'easeOut' }}
+                    >
+                      <div className="absolute inset-0 rounded-full border-[8px] border-rose-400/90 blur-[1px]" />
+                      <div className="absolute inset-[18%] rounded-full border-[5px] border-red-500/85" />
+                      <div className="absolute inset-[38%] rounded-full border-[4px] border-orange-300/85" />
+                    </motion.div>
+                  ) : null}
+                </AnimatePresence>
+
+                <motion.div
+                  className="relative"
+                  animate={{
+                    y: [0, -5, 0],
+                    x: monsterEffect === 'hit' ? [0, -9, 9, -8, 8, -5, 5, 0] : 0,
+                    rotate: monsterEffect === 'hit' ? [0, -2.2, 2.2, -1.8, 1.8, 0] : 0,
+                    scale: monsterEffect === 'hit' ? [1.04, 1.08, 1.04] : 1,
+                  }}
+                  transition={{
+                    y: { duration: 1.8, repeat: Infinity, ease: 'easeInOut' },
+                    x: { duration: 0.9, ease: 'easeInOut' },
+                    rotate: { duration: 0.9, ease: 'easeInOut' },
+                    scale: { duration: 0.9, ease: 'easeInOut' },
+                  }}
+                >
+                  <motion.img
+                    src={idleMonsterSrc}
+                    alt=""
+                    aria-hidden="true"
+                    draggable={false}
+                    className="relative h-auto w-full object-contain drop-shadow-[0_16px_22px_rgba(2,6,23,0.5)]"
+                    animate={{ opacity: monsterEffect === 'hit' ? 0 : 1 }}
+                    transition={{ duration: 0.14, ease: 'easeOut' }}
+                  />
+                  <AnimatePresence>
+                    {monsterEffect === 'hit' ? (
+                      <motion.img
+                        key={`monster-hit-${question.id}-${monsterHitAnimationIndex}`}
+                        src={activeMonsterHitSrc}
+                        alt=""
+                        aria-hidden="true"
+                        draggable={false}
+                        className="absolute inset-0 h-full w-full object-contain"
+                        initial={{ opacity: 0.98 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.14, ease: 'easeOut' }}
+                      />
+                    ) : null}
+                  </AnimatePresence>
+                </motion.div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="shrink-0 pb-1 pt-2">
