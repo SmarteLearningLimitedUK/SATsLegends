@@ -600,7 +600,10 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
               </div>
             </div>
 
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 mx-auto w-[58%] max-w-[280px]">
+            <div
+              className="pointer-events-none absolute inset-x-0 mx-auto w-[58%] max-w-[280px]"
+              style={{ bottom: '-100px' }}
+            >
               <div className="relative">
                 <AnimatePresence>
                   {monsterSpeech ? (
