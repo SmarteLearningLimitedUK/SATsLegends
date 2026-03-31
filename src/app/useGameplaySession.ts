@@ -32,6 +32,12 @@ export const useGameplaySession = ({
   const [globalMiniGameLifeLock, setGlobalMiniGameLifeLock] = useState(false);
   const [globalMiniGameTimeLock, setGlobalMiniGameTimeLock] = useState(false);
   const [isMuted, setIsMuted] = useState(() => localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true');
+  const isUntimedGameplay =
+    screen === 'gameplay'
+    && (
+      selectedLevel?.gameType === 'mean_machine'
+      || selectedLevel?.gameType === 'potion_pour'
+    );
   const consumeLife = useCallback((amount = 1) => {
     if (amount <= 0) return;
     setGlobalMiniGameLives((previous) => Math.max(0, previous - amount));
@@ -43,13 +49,14 @@ export const useGameplaySession = ({
     setGlobalMiniGameLives(GLOBAL_MINIGAME_LIVES);
     setGlobalMiniGameLifeLock(false);
     setGlobalMiniGameTimeLock(false);
+    if (isUntimedGameplay) return undefined;
     const timerId = window.setInterval(() => {
       setGlobalMiniGameHudTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
     return () => {
       window.clearInterval(timerId);
     };
-  }, [screen, selectedLevel?.id]);
+  }, [isUntimedGameplay, screen, selectedLevel?.id]);
 
   useEffect(() => {
     if (screen !== 'gameplay' || globalMiniGameLives > 0 || globalMiniGameLifeLock) return;
@@ -60,12 +67,12 @@ export const useGameplaySession = ({
   }, [globalMiniGameLifeLock, globalMiniGameLives, onLifeDepleted, screen]);
 
   useEffect(() => {
-    if (screen !== 'gameplay' || globalMiniGameHudTimeLeft > 0 || globalMiniGameTimeLock) return;
+    if (screen !== 'gameplay' || isUntimedGameplay || globalMiniGameHudTimeLeft > 0 || globalMiniGameTimeLock) return;
     setGlobalMiniGameTimeLock(true);
     window.setTimeout(() => {
       onTimeDepleted();
     }, 140);
-  }, [globalMiniGameHudTimeLeft, globalMiniGameTimeLock, onTimeDepleted, screen]);
+  }, [globalMiniGameHudTimeLeft, globalMiniGameTimeLock, isUntimedGameplay, onTimeDepleted, screen]);
 
   useEffect(() => {
     localStorage.setItem(GAME_AUDIO_STORAGE_KEY, String(isMuted));

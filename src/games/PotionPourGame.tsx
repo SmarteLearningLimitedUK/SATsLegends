@@ -10,7 +10,6 @@ import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
-import potionBackground from '../assets/maps/tablekitchen.jpg';
 
 interface PotionPourGameProps {
   levelId: number;
@@ -127,23 +126,23 @@ const buildPrompt = (stage: number, active: Ingredient[], ratio: number[], scale
   const joinedRatio = ratio.join(':');
 
   if (stage === 1) {
-    return `Add exactly ${target[0]} ${active[0].name} and ${target[1]} ${active[1].name} drops. This makes a ${joinedRatio} mix.`;
+    return `${active[0].name} ${target[0]}, ${active[1].name} ${target[1]}.`;
   }
   if (stage === 2) {
-    return `Make ${total} drops altogether. Keep ${active[0].name}:${active[1].name} at ${ratio[0]}:${ratio[1]}.`;
+    return `${total} drops total. ${active[0].name}:${active[1].name} = ${ratio[0]}:${ratio[1]}.`;
   }
   if (stage === 3) {
-    return `Make ${total} drops altogether. Keep ${joinedNames} at ${joinedRatio}.`;
+    return `${total} drops total. ${joinedNames} = ${joinedRatio}.`;
   }
   if (stage === 4) {
     const knownIndex = 0;
-    return `${active[knownIndex].name} must be ${target[knownIndex]} drops. Use the ratio ${joinedRatio} to work out the rest of ${joinedNames}.`;
+    return `${active[knownIndex].name} is ${target[knownIndex]}. Finish ${joinedNames}.`;
   }
   if (stage === 5) {
     const knownIndex = 1;
-    return `${active[knownIndex].name} is already ${target[knownIndex]} drops. Use the ratio ${joinedRatio} to finish the ${joinedNames} potion.`;
+    return `${active[knownIndex].name} is ${target[knownIndex]}. Finish ${joinedNames}.`;
   }
-  return `Scale the ratio ${joinedRatio} by x${scale}. Then brew the exact ${joinedNames} potion.`;
+  return `Scale ${joinedRatio} by x${scale}.`;
 };
 
 const buildHelperText = (stage: number) => {
@@ -374,30 +373,14 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
 
   return (
     <div className="relative h-full w-full overflow-hidden text-white">
-      <img
-        src={potionBackground}
-        alt=""
-        aria-hidden="true"
-        draggable={false}
-        className="absolute inset-0 h-full w-full object-cover"
-      />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(5,14,40,0.14)_0%,rgba(5,14,40,0.24)_42%,rgba(5,14,40,0.34)_100%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(56,189,248,0.12)_0%,rgba(56,189,248,0)_55%)]" />
-
       <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.4rem)] pt-2">
         <section className="shrink-0">
-          <div className="mx-auto max-w-[760px] rounded-[1.35rem] border border-cyan-100/35 bg-slate-900/60 px-4 py-3 text-center shadow-[0_14px_28px_rgba(2,6,23,0.42)]">
+          <div className="mx-auto max-w-[760px] rounded-[1.35rem] border border-cyan-100/35 bg-slate-900/68 px-4 py-3 text-center shadow-[0_14px_28px_rgba(2,6,23,0.42)]">
             <p className="text-[11px] font-black uppercase tracking-[0.14em] text-cyan-200">
               Round {correctSolved + 1}/{roundsToWinForLevel(levelId)}
             </p>
             <p className="mt-1.5 text-[clamp(0.9rem,2.15vw,1.15rem)] font-black leading-snug text-cyan-50">
               {challenge.prompt}
-            </p>
-            <p className="mt-2 text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100/80">
-              Tap bottles to add drops. Match the target mix. Press Brew to check.
-            </p>
-            <p className="mt-1 text-[10px] font-black text-amber-100/90">
-              {challenge.helperText}
             </p>
           </div>
         </section>
@@ -492,7 +475,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
               <span>You made {currentRatioForActive.join(':')}</span>
               <span>Need {targetRatioForActive.join(':')}</span>
             </div>
-            <div className="grid grid-cols-5 gap-1.5">
+            <div className="mt-2 grid grid-cols-5 gap-1.5">
               {INGREDIENTS.map((ingredient, index) => {
                 const active = activeSet.has(index);
                 const targetCount = targetByIngredient.get(index) ?? 0;

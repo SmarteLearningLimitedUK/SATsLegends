@@ -228,6 +228,17 @@ const App: React.FC = () => {
 
   const hintRuleSet = useMemo(
     () => (
+      selectedLevel?.gameType === 'potion_pour'
+        ? {
+            title: selectedLevel.displayName || 'Potion Panic',
+            summary: 'Tap the right bottles to build the exact potion, then press Brew to check it.',
+            bullets: [
+              'Watch the target mix and the goal bars for each ingredient.',
+              'Add only the ingredients in the recipe and stop when each one reaches its target.',
+              'Press Brew when your totals and ratio match the potion you need.',
+            ],
+          }
+      : (
       selectedRuleSet
       || (selectedLevel
         ? {
@@ -240,8 +251,9 @@ const App: React.FC = () => {
             ],
           }
         : null)
+      )
     ),
-    [selectedRuleSet, selectedLevel],
+    [selectedLevel, selectedRuleSet],
   );
 
   useEffect(() => {
