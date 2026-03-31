@@ -32,7 +32,10 @@ interface Ingredient {
 
 interface Challenge {
   id: string;
-  prompt: string;
+  orderTitle: string;
+  orderPrompt: string;
+  orderFlavor: string;
+  recipeLabel: string;
   stage: number;
   activeIndices: number[];
   baseRatio: number[];
@@ -116,29 +119,37 @@ const nextChallengeId = () => {
 const stageFor = (levelId: number, solved: number) => clamp(1 + Math.floor((levelId - 1) / 3) + Math.floor(solved / 3), 1, 6);
 const roundsToWinForLevel = (levelId: number) => 5 + Math.floor((levelId - 1) / 2);
 
-const buildPrompt = (stage: number, active: Ingredient[], ratio: number[], scale: number, target: number[]) => {
-  const total = target.reduce((a, b) => a + b, 0);
-  const joinedNames = active.map((ingredient) => ingredient.name).join(':');
-  const joinedRatio = ratio.join(':');
+const buildPotionName = (stage: number, active: Ingredient[]) => {
+  const lead = active[0]?.name || 'Star';
+  const support = active[1]?.name || 'Moon';
+  if (stage <= 2) return `${lead} Health Potion`;
+  if (stage === 3) return `${support} Focus Draught`;
+  if (stage === 4) return `${lead} Remedy Elixir`;
+  if (stage === 5) return `${support} Courage Tonic`;
+  return `${lead} Starlight Brew`;
+};
 
-  if (stage === 1) {
-    return `${active[0].name} ${target[0]}, ${active[1].name} ${target[1]}.`;
+const buildOrderPrompt = (potionName: string, stage: number) => {
+  if (stage <= 2) return `The village apothecary needs a ${potionName} for an early patient.`;
+  if (stage === 3) return `The apothecary wants a ${potionName} before the scholars arrive.`;
+  if (stage === 4) return `A tired traveller is waiting outside for this ${potionName}.`;
+  if (stage === 5) return `The guard captain has asked for a ${potionName} before sunset.`;
+  return `Tonight's lantern rite needs a rare ${potionName} from your cauldron.`;
+};
+
+const buildOrderFlavor = (stage: number) => {
+  if (stage <= 2) return 'Keep the recipe exact and the potion will shimmer to life.';
+  if (stage === 3) return 'A steady hand will help this brew sparkle for the village.';
+  if (stage === 4) return 'One careful mix will send the apothecary shelves glowing.';
+  if (stage === 5) return 'Brave brews need perfect balance in every drop.';
+  return 'Only a precise potion will awaken the old magic tonight.';
+};
+
+const buildRecipeLabel = (active: Ingredient[], ratio: number[]) => {
+  if (active.length === 2) {
+    return `${active[0].name} ${ratio[0]}:${ratio[1]} ${active[1].name}`;
   }
-  if (stage === 2) {
-    return `${total} drops total. ${active[0].name}:${active[1].name} = ${ratio[0]}:${ratio[1]}.`;
-  }
-  if (stage === 3) {
-    return `${total} drops total. ${joinedNames} = ${joinedRatio}.`;
-  }
-  if (stage === 4) {
-    const knownIndex = 0;
-    return `${active[knownIndex].name} is ${target[knownIndex]}. Finish ${joinedNames}.`;
-  }
-  if (stage === 5) {
-    const knownIndex = 1;
-    return `${active[knownIndex].name} is ${target[knownIndex]}. Finish ${joinedNames}.`;
-  }
-  return `Scale ${joinedRatio} by x${scale}.`;
+  return `${active.map((ingredient) => ingredient.name).join(' | ')} | ${ratio.join(':')}`;
 };
 
 const pickRatioForStage = (stage: number): number[] => {
@@ -162,10 +173,14 @@ const generateChallenge = (levelId: number, solved: number): Challenge => {
               : randomPick([2, 3]);
   const targetCounts = baseRatio.map((value) => value * scale);
   const activeIngredients = activeIndices.map((index) => INGREDIENTS[index]);
+  const orderTitle = buildPotionName(stage, activeIngredients);
 
   return {
     id: nextChallengeId(),
-    prompt: buildPrompt(stage, activeIngredients, baseRatio, scale, targetCounts),
+    orderTitle,
+    orderPrompt: buildOrderPrompt(orderTitle, stage),
+    orderFlavor: buildOrderFlavor(stage),
+    recipeLabel: buildRecipeLabel(activeIngredients, baseRatio),
     stage,
     activeIndices,
     baseRatio,
@@ -263,10 +278,10 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
       return `Too much ${joinWithAnd(overfilledTargets.map(({ ingredient }) => ingredient.name))}. Reset and try again.`;
     }
     if (remainingTargets.length > 0) {
-      return `Add ${joinWithAnd(remainingTargets.map(({ ingredient, remaining }) => `${remaining} ${ingredient.name}`))} to brew.`;
+      return `Brew ${challenge.orderTitle}: add ${joinWithAnd(remainingTargets.map(({ ingredient, remaining }) => `${remaining} ${ingredient.name}`))}.`;
     }
     return 'Build the recipe to brew.';
-  }, [isRecipeComplete, overfilledTargets, remainingTargets]);
+  }, [challenge.orderTitle, isRecipeComplete, overfilledTargets, remainingTargets]);
 
   const mixColor = useMemo(() => {
     const total = counts.reduce((a, b) => a + b, 0);
@@ -412,43 +427,26 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
     <div className="relative h-full w-full overflow-hidden text-white">
       <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.4rem)] pt-2">
         <section className="mt-1.5 shrink-0">
-          <div className="mx-auto w-full max-w-[760px] rounded-[1rem] border border-cyan-100/24 bg-slate-950/44 px-3 py-2.5 shadow-[0_10px_18px_rgba(2,6,23,0.2)]">
-            <p className="text-[10px] font-black uppercase tracking-[0.15em] text-cyan-200">Make this potion</p>
-            <div className="mt-1.5 grid gap-1.5 sm:grid-cols-2">
-              {activeTargets.map(({ ingredient, target }) => (
-                <div
-                  key={`recipe-${ingredient.id}`}
-                  className="flex items-center justify-between rounded-xl border border-cyan-100/18 bg-slate-900/34 px-3 py-1.5"
-                >
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="h-3 w-3 rounded-full"
-                      style={{ backgroundColor: ingredient.color, boxShadow: `0 0 12px ${ingredient.glow}` }}
-                    />
-                    <span className="text-sm font-black text-cyan-50">{ingredient.name}</span>
-                  </div>
-                  <span className="text-lg font-black text-amber-100">{target}</span>
-                </div>
-              ))}
-            </div>
-            <div className="mt-1.5 rounded-xl border border-cyan-100/18 bg-slate-900/34 px-3 py-1.5 text-center">
-              <p className="text-[10px] font-black uppercase tracking-[0.12em] text-cyan-200">Ratio</p>
-              <p className="mt-0.5 text-base font-black text-cyan-50">{challenge.baseRatio.join(':')}</p>
-            </div>
+          <div className="mx-auto w-full max-w-[760px] rounded-[1rem] border border-cyan-100/20 bg-[linear-gradient(180deg,rgba(8,18,44,0.62),rgba(8,18,44,0.42))] px-3 py-2.5 shadow-[0_10px_20px_rgba(2,6,23,0.18)]">
+            <p className="text-[10px] font-black uppercase tracking-[0.15em] text-cyan-200">Apothecary Order</p>
+            <p className="mt-1 text-sm font-black text-amber-100">{challenge.orderTitle}</p>
+            <p className="mt-1 text-[11px] font-bold text-cyan-50/90">{challenge.orderPrompt}</p>
+            <p className="mt-1 text-[10px] font-black text-amber-100/90">{challenge.orderFlavor}</p>
           </div>
         </section>
 
-        <section className="relative mt-1.5 flex min-h-0 flex-[0_0_24%] items-center justify-center">
-          <div className="pointer-events-none absolute left-1/2 top-[56%] h-[52%] w-[62%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-300/30 blur-[24px]" />
-          <motion.div
-            animate={{ x: 0 }}
-            transition={{ duration: 0.2 }}
-            className="relative h-[clamp(172px,24vh,218px)] w-[clamp(224px,62vw,318px)]"
-          >
-            <div className="absolute left-1/2 top-0 h-[18%] w-[78%] -translate-x-1/2 rounded-full border-4 border-slate-700/95 bg-slate-800/95 shadow-[0_10px_16px_rgba(2,6,23,0.45)]" />
+        <section className="relative mt-1.5 flex min-h-0 flex-[0_0_22%] items-center">
+          <div className="mx-auto grid w-full max-w-[760px] grid-cols-[minmax(0,1fr)_126px] items-center gap-2">
+            <motion.div
+              animate={{ x: 0 }}
+              transition={{ duration: 0.2 }}
+              className="relative h-[clamp(164px,22vh,204px)] w-full"
+            >
+              <div className="pointer-events-none absolute left-[46%] top-[56%] h-[52%] w-[62%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-300/30 blur-[24px]" />
+              <div className="absolute left-[46%] top-0 h-[18%] w-[54%] -translate-x-1/2 rounded-full border-4 border-slate-700/95 bg-slate-800/95 shadow-[0_10px_16px_rgba(2,6,23,0.45)]" />
             <div
               ref={cauldronRef}
-              className={`absolute inset-x-[9%] top-[14%] bottom-[14%] overflow-hidden rounded-[42%] border-[5px] border-slate-700/95 bg-slate-900/70 shadow-[inset_0_10px_24px_rgba(2,6,23,0.55)] ${
+              className={`absolute left-[12%] right-[20%] top-[14%] bottom-[14%] overflow-hidden rounded-[42%] border-[5px] border-slate-700/95 bg-slate-900/70 shadow-[inset_0_10px_24px_rgba(2,6,23,0.55)] ${
                 cauldronArmed ? 'ring-4 ring-cyan-300/60' : ''
               }`}
             >
@@ -471,21 +469,40 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 />
               ))}
             </div>
-            <div className="absolute bottom-0 left-1/2 h-[16%] w-[52%] -translate-x-1/2 rounded-[999px] bg-slate-900/85 blur-[0.5px]" />
+              <div className="absolute bottom-0 left-[46%] h-[16%] w-[38%] -translate-x-1/2 rounded-[999px] bg-slate-900/85 blur-[0.5px]" />
 
-            <AnimatePresence>
-              {feedback === 'success' ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.85 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 1.08 }}
-                  className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-200/80 bg-emerald-400/90 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.14em] text-slate-900 shadow-[0_0_26px_rgba(52,211,153,0.7)]"
-                >
-                  Potion Stable
-                </motion.div>
-              ) : null}
-            </AnimatePresence>
-          </motion.div>
+              <AnimatePresence>
+                {feedback === 'success' ? (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.85 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.08 }}
+                    className="absolute left-[46%] top-[42%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-200/80 bg-emerald-400/90 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.14em] text-slate-900 shadow-[0_0_26px_rgba(52,211,153,0.7)]"
+                  >
+                    Potion Stable
+                  </motion.div>
+                ) : null}
+              </AnimatePresence>
+            </motion.div>
+
+            <div className="self-start rounded-[1rem] border border-amber-200/28 bg-[linear-gradient(180deg,rgba(54,33,12,0.74),rgba(26,18,10,0.78))] px-3 py-2.5 shadow-[0_12px_22px_rgba(2,6,23,0.28)]">
+              <p className="text-[9px] font-black uppercase tracking-[0.16em] text-amber-200/90">Recipe</p>
+              <p className="mt-1 text-sm font-black text-amber-100">{challenge.orderTitle}</p>
+              <p className="mt-1 text-[11px] font-black text-cyan-50">{challenge.recipeLabel}</p>
+              <div className="mt-2 rounded-lg border border-amber-200/18 bg-black/15 px-2 py-1.5 text-center">
+                <p className="text-[9px] font-black uppercase tracking-[0.14em] text-amber-200/85">Ratio</p>
+                <p className="mt-0.5 text-base font-black text-amber-50">{challenge.baseRatio.join(':')}</p>
+              </div>
+              <div className="mt-2 space-y-1">
+                {activeTargets.map(({ ingredient, target }) => (
+                  <div key={`compact-${ingredient.id}`} className="flex items-center justify-between text-[11px] font-black text-cyan-50">
+                    <span>{ingredient.name}</span>
+                    <span className="text-amber-100">{target}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </section>
 
         <section className="mt-1.5 shrink-0">
@@ -504,7 +521,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
           </div>
         </section>
 
-        <section className="mt-1.5 flex shrink-0 flex-[0_0_18%] items-center">
+        <section className="mt-1.5 flex shrink-0 flex-[0_0_14%] items-center">
           <div
             className="mx-auto grid w-full max-w-[760px] gap-2"
             style={{ gridTemplateColumns: `repeat(${Math.max(1, activeTargets.length)}, minmax(0, 1fr))` }}
@@ -531,7 +548,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                   }}
                   disabled={locked}
                   aria-label={`Drag ${ingredient.name} into the potion`}
-                  className="relative h-[clamp(76px,10.6vh,96px)] rounded-[1.1rem] border border-cyan-100/50 bg-slate-900/74 p-1.5 text-left shadow-[0_12px_18px_rgba(2,6,23,0.38)] transition disabled:opacity-60"
+                  className="relative h-[clamp(66px,9vh,82px)] rounded-[1.05rem] border border-cyan-100/50 bg-slate-900/74 p-1.5 text-left shadow-[0_12px_18px_rgba(2,6,23,0.38)] transition disabled:opacity-60"
                   style={{ boxShadow: `0 10px 18px rgba(2,6,23,0.36), 0 0 26px ${ingredient.glow}` }}
                 >
                   <div className="pointer-events-none absolute inset-x-2 top-2 h-2 rounded-full bg-white/14 blur-[1px]" />
@@ -544,7 +561,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                       }}
                     />
                   </div>
-                  <span className="pointer-events-none absolute bottom-1 left-1/2 -translate-x-1/2 text-[9px] font-black uppercase tracking-[0.04em] text-cyan-50">
+                  <span className="pointer-events-none absolute bottom-1 left-1/2 -translate-x-1/2 text-[8px] font-black uppercase tracking-[0.04em] text-cyan-50">
                     Add {ingredient.name}
                   </span>
                   <span className="pointer-events-none absolute right-1.5 top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full border border-white/45 bg-slate-950/80 px-1 text-[10px] font-black text-white">
