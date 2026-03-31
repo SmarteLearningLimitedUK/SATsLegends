@@ -508,23 +508,21 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                     onClick={() => addIngredient(index)}
                     disabled={locked || !isActive}
                     aria-label={isActive ? `Add ${ingredient.name} to the potion` : `${ingredient.name} is not needed for this recipe`}
-                    className={`relative flex h-[clamp(78px,11vh,102px)] flex-col items-center justify-end rounded-[1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.12),rgba(15,23,42,0.24))] px-1 py-1 shadow-[0_10px_14px_rgba(2,6,23,0.24)] transition ${locked || !isActive ? 'opacity-65' : ''}`}
+                    className={`relative flex h-[clamp(88px,12vh,112px)] flex-col items-center justify-between rounded-[1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.12),rgba(15,23,42,0.24))] px-1 py-1.5 shadow-[0_10px_14px_rgba(2,6,23,0.24)] transition ${locked || !isActive ? 'opacity-65' : ''}`}
                     style={isActive ? { boxShadow: `0 12px 22px rgba(2,6,23,0.28), 0 0 18px ${ingredient.glow}` } : undefined}
                   >
-                    <div className="pointer-events-none absolute inset-x-0 top-0 bottom-5">
-                      <div className="relative mx-auto h-full w-full max-w-[92px]">
-                        {bottleArt ? (
-                          <img
-                            src={bottleArt}
-                            alt=""
-                            aria-hidden="true"
-                            className="absolute inset-0 h-full w-full object-contain select-none"
-                            style={{
-                              filter: isActive ? 'none' : 'grayscale(0.45) saturate(0.7) opacity(0.8)',
-                            }}
-                          />
-                        ) : null}
-                      </div>
+                    <div className="pointer-events-none flex h-[52px] w-full items-center justify-center">
+                      {bottleArt ? (
+                        <img
+                          src={bottleArt}
+                          alt=""
+                          aria-hidden="true"
+                          className="h-full w-auto object-contain select-none"
+                          style={{
+                            filter: isActive ? 'none' : 'grayscale(0.45) saturate(0.7) opacity(0.8)',
+                          }}
+                        />
+                      ) : null}
                     </div>
                     <span className="relative z-10 text-[9px] font-black uppercase tracking-[0.02em] text-cyan-50">{ingredient.name}</span>
                     <span className="relative z-10 text-[10px] font-black text-amber-100">
