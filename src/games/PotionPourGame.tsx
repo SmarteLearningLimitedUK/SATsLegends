@@ -8,7 +8,7 @@ import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
-import potionPanicBackdrop from '../assets/potionpanic.png';
+import cauldrenAndPotionArt from '../assets/cauldrenandpotion.png';
 import potionPanicFrame from '../assets/potionpanic2.png';
 import blueRecipeFrame from '../assets/bluedialoague/blue socket cropped.png';
 import blueRecipeHeader from '../assets/bluedialoague/med button cropped.png';
@@ -356,12 +356,6 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
     <div className="relative h-full w-full overflow-hidden text-white">
       <div className="absolute inset-0 bg-[linear-gradient(180deg,#1f2e5c_0%,#5a3f66_34%,#9a5d53_58%,#2a2336_100%)]" />
       <img
-        src={potionPanicBackdrop}
-        alt=""
-        aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[122%] max-w-none -translate-x-1/2 -translate-y-1/2 object-cover opacity-[0.18] mix-blend-screen"
-      />
-      <img
         src={potionPanicFrame}
         alt=""
         aria-hidden="true"
@@ -441,11 +435,11 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 ))}
               </div>
               <div
-                className="absolute left-1/2 top-[10%] h-[74%] w-[92%] -translate-x-1/2 bg-no-repeat"
+                className="absolute left-1/2 top-[7%] h-[78%] w-[94%] -translate-x-1/2 bg-no-repeat"
                 style={{
-                  backgroundImage: `url(${potionPanicBackdrop})`,
-                  backgroundSize: '175%',
-                  backgroundPosition: '71% 78%',
+                  backgroundImage: `url(${cauldrenAndPotionArt})`,
+                  backgroundSize: '138% auto',
+                  backgroundPosition: '50% 0%',
                 }}
               />
               <div className="absolute left-[42%] top-[20%] h-[26%] w-[50%] -translate-x-1/2 overflow-hidden rounded-[46%]">
