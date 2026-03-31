@@ -10,7 +10,6 @@ import {
 } from '../app/gameplaySessionContract';
 import cauldrenAndPotionArt from '../assets/coul.png';
 import potionBottleSprites from '../assets/pots.png';
-import potionPanicFrame from '../assets/potionpanic2.png';
 
 interface PotionPourGameProps {
   levelId: number;
@@ -363,18 +362,6 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
 
   return (
     <div className="relative h-full w-full overflow-hidden text-white">
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,#1f2e5c_0%,#5a3f66_34%,#9a5d53_58%,#2a2336_100%)]" />
-      <img
-        src={potionPanicFrame}
-        alt=""
-        aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[90%] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.16]"
-      />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[46%] bg-[linear-gradient(180deg,rgba(16,24,40,0)_0%,rgba(8,15,32,0.42)_18%,rgba(6,12,26,0.88)_100%)]" />
-      <div className="pointer-events-none absolute left-[-12%] top-[8%] h-[32%] w-[38%] rounded-full bg-[radial-gradient(circle,rgba(17,45,48,0.82)_0%,rgba(17,45,48,0.48)_42%,rgba(17,45,48,0)_72%)] blur-[10px]" />
-      <div className="pointer-events-none absolute right-[-10%] top-[10%] h-[34%] w-[40%] rounded-full bg-[radial-gradient(circle,rgba(22,49,54,0.84)_0%,rgba(22,49,54,0.5)_42%,rgba(22,49,54,0)_74%)] blur-[10px]" />
-      <div className="pointer-events-none absolute left-1/2 top-[45%] h-[24%] w-[66%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(252,191,73,0.34)_0%,rgba(252,191,73,0.18)_30%,rgba(252,191,73,0)_68%)] blur-[24px]" />
-
       <div className="relative z-10 flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+4rem)] pt-3">
         <section className="shrink-0 text-center">
           <div className="mx-auto max-w-[720px] rounded-[1.25rem] border border-white/12 bg-slate-950/18 px-4 py-2 shadow-[0_12px_24px_rgba(15,23,42,0.18)] backdrop-blur-[2px]">
@@ -523,15 +510,13 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                     <div className="pointer-events-none absolute inset-x-0 top-0 bottom-5">
                       <div className="relative mx-auto h-full w-full max-w-[92px] overflow-hidden">
                         {sprite ? (
-                          <img
-                            src={potionBottleSprites}
-                            alt=""
+                          <div
                             aria-hidden="true"
-                            className="absolute max-w-none select-none"
+                            className="absolute inset-0 bg-no-repeat"
                             style={{
-                              width: `${100 / sprite.w}%`,
-                              left: `-${(sprite.x / sprite.w) * 100}%`,
-                              top: `-${(sprite.y / sprite.h) * 100}%`,
+                              backgroundImage: `url(${potionBottleSprites})`,
+                              backgroundSize: `${100 / sprite.w}% ${100 / sprite.h}%`,
+                              backgroundPosition: `${(sprite.x / (1 - sprite.w)) * 100}% ${(sprite.y / (1 - sprite.h)) * 100}%`,
                               filter: isActive ? 'none' : 'grayscale(0.45) saturate(0.7) opacity(0.8)',
                             }}
                           />
