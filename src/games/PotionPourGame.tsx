@@ -261,17 +261,6 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
     () => activeTargets.filter(({ current, target }) => current > target),
     [activeTargets],
   );
-  const helperText = useMemo(() => {
-    if (isRecipeComplete) return 'Perfect! Your potion is ready to brew.';
-    if (overfilledTargets.length > 0) {
-      return `Too much ${joinWithAnd(overfilledTargets.map(({ ingredient }) => ingredient.name))}. Reset and try again.`;
-    }
-    const neededParts = activeTargets
-      .filter(({ remaining }) => remaining > 0)
-      .map(({ ingredient, remaining }) => `${remaining} ${ingredient.name}`);
-    return neededParts.length ? `Add ${joinWithAnd(neededParts)} to brew.` : 'Build the recipe to brew.';
-  }, [activeTargets, isRecipeComplete, overfilledTargets]);
-
   const mixColor = useMemo(() => {
     const total = counts.reduce((a, b) => a + b, 0);
     if (total <= 0) return 'rgba(71,85,105,0.9)';
@@ -368,31 +357,28 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
     <div className="relative h-full w-full overflow-hidden text-white">
       <div className="relative z-10 flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+4rem)] pt-3">
         <section className="shrink-0 text-center">
-          <div className="mx-auto max-w-[720px] rounded-[1.25rem] border border-white/12 bg-slate-950/18 px-4 py-2 shadow-[0_12px_24px_rgba(15,23,42,0.18)] backdrop-blur-[2px]">
+          <div className="mx-auto flex h-[78px] max-w-[780px] items-center justify-center rounded-[1.25rem] border border-white/12 bg-slate-950/18 px-4 py-2 shadow-[0_12px_24px_rgba(15,23,42,0.18)] backdrop-blur-[2px]">
             <p className="text-[clamp(14px,2.05vh,19px)] font-black leading-tight text-white drop-shadow-[0_3px_8px_rgba(15,23,42,0.55)]">
               {challenge.orderPrompt}
-            </p>
-            <p className="mt-1 text-[clamp(10px,1.45vh,13px)] font-black text-amber-100/92 drop-shadow-[0_2px_6px_rgba(15,23,42,0.4)]">
-              {challenge.orderFlavor}
             </p>
           </div>
         </section>
 
         <section className="min-h-0 flex-1">
           <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
-            <div className="grid min-h-0 grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-2">
-              <div className="min-h-0 rounded-[1.2rem] border border-amber-100/15 bg-[linear-gradient(180deg,rgba(31,24,47,0.55),rgba(20,17,34,0.72))] px-3 py-3 shadow-[0_12px_22px_rgba(15,23,42,0.18)]">
+            <div className="grid min-h-0 grid-cols-[0.9fr_2.1fr_0.9fr] gap-2">
+              <div className="min-h-0 rounded-[1.2rem] border border-white/12 bg-slate-950/18 px-3 py-3 shadow-[0_12px_22px_rgba(15,23,42,0.18)]">
                 <p className="text-[10px] font-black uppercase tracking-[0.12em] text-amber-100/80">Recipe</p>
-                <p className="mt-1 text-[clamp(12px,1.8vh,16px)] font-black leading-tight text-white">
+                <p className="mt-1 text-[clamp(12px,1.75vh,16px)] font-black leading-tight text-white">
                   {challenge.orderTitle}
                 </p>
                 <div className="mt-2 rounded-[1rem] border border-white/10 bg-black/18 px-3 py-2">
                   <p className="text-[10px] font-black text-cyan-100">Ratio</p>
-                  <p className="mt-0.5 text-[clamp(16px,2.1vh,22px)] font-black text-white">
+                  <p className="mt-0.5 text-[clamp(15px,2vh,20px)] font-black text-white">
                     {challenge.baseRatio.join(' : ')}
                   </p>
                 </div>
-                <div className="mt-2 space-y-2">
+                <div className="mt-2 space-y-1.5">
                   {activeTargets.map(({ ingredient, target }) => (
                     <div key={`recipe-${ingredient.id}`} className="flex items-center justify-between rounded-[0.95rem] border border-white/8 bg-white/5 px-2.5 py-2">
                       <div className="flex items-center gap-2">
@@ -409,7 +395,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 </div>
               </div>
 
-              <div className="grid min-h-0 grid-rows-[minmax(0,7fr)_minmax(0,1.6fr)] gap-2">
+              <div className="grid min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
                 <div className="relative min-h-0 overflow-hidden rounded-[1.35rem] border border-white/12 bg-slate-950/16 shadow-[0_14px_26px_rgba(15,23,42,0.18)]">
                   <div className="pointer-events-none absolute left-1/2 top-[84%] h-12 w-[68%] -translate-x-1/2 rounded-full bg-black/35 blur-md" />
                   <div className="pointer-events-none absolute left-1/2 top-[76%] h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
@@ -427,7 +413,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                     src={cauldrenAndPotionArt}
                     alt=""
                     aria-hidden="true"
-                    className="pointer-events-none absolute left-1/2 top-[4%] h-[74%] max-w-none -translate-x-1/2 object-contain"
+                    className="pointer-events-none absolute left-1/2 top-[4%] h-[76%] max-w-none -translate-x-1/2 object-contain"
                   />
                   <div className="absolute left-[41.5%] top-[20%] h-[26%] w-[50%] -translate-x-1/2 overflow-hidden rounded-[46%]">
                     <motion.div
@@ -449,47 +435,76 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                       />
                     ))}
                   </div>
-
-                  <AnimatePresence>
-                    {feedback === 'success' ? (
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.86 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 1.08 }}
-                        className="absolute left-1/2 top-[44%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-200/80 bg-emerald-400/92 px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-slate-900 shadow-[0_0_26px_rgba(52,211,153,0.7)]"
-                      >
-                        Perfect Brew
-                      </motion.div>
-                    ) : null}
-                  </AnimatePresence>
                 </div>
 
-                <div className="flex min-h-0 flex-col justify-center rounded-[1.15rem] border border-white/12 bg-slate-950/22 px-3 py-2 shadow-[0_12px_22px_rgba(15,23,42,0.14)]">
-                  <p className={`text-center text-[11px] font-black ${isRecipeComplete ? 'text-emerald-200' : 'text-amber-100'}`}>
-                    {helperText}
-                  </p>
-                  <motion.button
-                    type="button"
-                    whileTap={{ scale: 0.98 }}
-                    onClick={onBrew}
-                    disabled={locked || !isRecipeComplete}
-                    className={`mt-2 inline-flex h-[44px] w-full items-center justify-center gap-2 rounded-[999px] border px-5 text-[clamp(16px,2.25vh,22px)] font-black tracking-[0.01em] transition ${
-                      locked || !isRecipeComplete
-                        ? 'border-slate-500/40 bg-[linear-gradient(180deg,rgba(27,44,95,0.62),rgba(14,25,58,0.7))] text-slate-400'
-                        : 'border-cyan-100/80 bg-[linear-gradient(180deg,#5b96ff_0%,#2f67ec_62%,#204bc7_100%)] text-white shadow-[0_16px_28px_rgba(37,99,235,0.4)]'
-                    }`}
-                  >
-                    <Wand2 className="h-4.5 w-4.5" />
-                    Brew Potion
-                  </motion.button>
-                  <button
-                    type="button"
-                    onClick={resetCurrent}
-                    disabled={locked}
-                    className="mt-1 inline-flex h-7 items-center justify-center rounded-full px-3 text-[10px] font-black uppercase tracking-[0.1em] text-cyan-100/88 disabled:opacity-50"
-                  >
-                    Reset Mix
-                  </button>
+                <motion.button
+                  type="button"
+                  whileTap={{ scale: 0.98 }}
+                  onClick={onBrew}
+                  disabled={locked || !isRecipeComplete}
+                  className={`inline-flex h-[52px] w-full items-center justify-center gap-2 rounded-[1rem] border px-5 text-[clamp(16px,2.25vh,22px)] font-black tracking-[0.01em] transition ${
+                    locked || !isRecipeComplete
+                      ? 'border-slate-500/40 bg-[linear-gradient(180deg,rgba(27,44,95,0.62),rgba(14,25,58,0.7))] text-slate-400'
+                      : 'border-cyan-100/80 bg-[linear-gradient(180deg,#5b96ff_0%,#2f67ec_62%,#204bc7_100%)] text-white shadow-[0_16px_28px_rgba(37,99,235,0.4)]'
+                  }`}
+                >
+                  <Wand2 className="h-4.5 w-4.5" />
+                  Brew Potion
+                </motion.button>
+              </div>
+
+              <div className="min-h-0 rounded-[1.2rem] border border-white/12 bg-slate-950/18 px-3 py-3 shadow-[0_12px_22px_rgba(15,23,42,0.18)]">
+                <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
+                  <AnimatePresence mode="wait">
+                    {feedback === 'success' ? (
+                      <motion.div
+                        key="success"
+                        initial={{ opacity: 0, scale: 0.82 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        className="flex flex-col items-center gap-2"
+                      >
+                        <div className="flex h-20 w-20 items-center justify-center rounded-full border border-emerald-200/80 bg-emerald-400/92 shadow-[0_0_28px_rgba(52,211,153,0.7)]">
+                          <CheckCircle2 className="h-10 w-10 text-slate-950" />
+                        </div>
+                        <p className="text-[11px] font-black uppercase tracking-[0.14em] text-emerald-100">Perfect Brew</p>
+                      </motion.div>
+                    ) : overfilledTargets.length > 0 ? (
+                      <motion.div
+                        key="overflow"
+                        initial={{ opacity: 0, scale: 0.92 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.96 }}
+                        className="flex flex-col items-center gap-3"
+                      >
+                        <div className="h-20 w-20 rounded-full border border-amber-200/60 bg-[radial-gradient(circle,rgba(251,191,36,0.42)_0%,rgba(120,53,15,0.18)_70%)] shadow-[0_0_24px_rgba(251,191,36,0.35)]" />
+                        <p className="text-[11px] font-black leading-snug text-amber-100">
+                          Too much {joinWithAnd(overfilledTargets.map(({ ingredient }) => ingredient.name))}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={resetCurrent}
+                          disabled={locked}
+                          className="inline-flex h-8 items-center justify-center rounded-full border border-cyan-100/20 bg-white/5 px-3 text-[10px] font-black uppercase tracking-[0.1em] text-cyan-100/88 disabled:opacity-50"
+                        >
+                          Reset Mix
+                        </button>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="idle"
+                        initial={{ opacity: 0.7 }}
+                        animate={{ opacity: [0.65, 1, 0.65] }}
+                        transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
+                        className="flex flex-col items-center gap-3"
+                      >
+                        <div className={`h-20 w-20 rounded-full border ${isRecipeComplete ? 'border-cyan-100/70 bg-[radial-gradient(circle,rgba(96,165,250,0.5)_0%,rgba(30,41,59,0.12)_70%)] shadow-[0_0_24px_rgba(96,165,250,0.35)]' : 'border-white/20 bg-[radial-gradient(circle,rgba(255,255,255,0.18)_0%,rgba(30,41,59,0.12)_70%)]'}`} />
+                        <p className={`text-[11px] font-black uppercase tracking-[0.12em] ${isRecipeComplete ? 'text-cyan-100' : 'text-slate-200/88'}`}>
+                          {isRecipeComplete ? 'Ready To Brew' : 'Brewing'}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
             </div>
@@ -535,25 +550,6 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
           </div>
         </section>
       </div>
-
-      <AnimatePresence>
-        {feedback ? (
-          <motion.div
-            key={feedback}
-            initial={{ opacity: 0, scale: 0.85, y: 8 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: -10 }}
-            className="pointer-events-none absolute left-1/2 top-[36%] z-40 -translate-x-1/2"
-          >
-            <div
-              className="inline-flex items-center gap-2 rounded-full border border-emerald-200/80 bg-emerald-400/95 px-4 py-2 text-[11px] font-black uppercase tracking-[0.13em] text-slate-950 shadow-[0_0_28px_rgba(52,211,153,0.75)]"
-            >
-              <CheckCircle2 className="h-4 w-4" />
-              Perfect Brew
-            </div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
 
       {droplets.map((drop) => {
         const ingredient = INGREDIENTS[drop.index];
