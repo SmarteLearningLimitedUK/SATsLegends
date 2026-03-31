@@ -1,5 +1,6 @@
 import React from 'react';
 import { GUI_SLICES } from '../assets/reskin/guiSlices';
+import { GameUiShell } from '../components/game-ui/GameUiKit';
 
 type WrapperProps = {
   children: React.ReactNode;
@@ -25,14 +26,16 @@ const fillSlice = (asset: string): React.CSSProperties => ({
  * Screen-level shells
  */
 export const GameScreenShell: React.FC<WrapperProps> = ({ children, className = '' }) => (
-  <section
-    className={cn(
-      'app-screen app-screen-fixed premium-page-root game-shell-root relative flex h-[100dvh] max-h-[100dvh] w-full min-h-0 flex-col overflow-hidden md:h-full md:max-h-full',
-      className,
-    )}
-  >
-    {children}
-  </section>
+  <GameUiShell>
+    <section
+      className={cn(
+        'app-screen app-screen-fixed premium-page-root game-shell-root relative flex h-[100dvh] max-h-[100dvh] w-full min-h-0 flex-col overflow-hidden md:h-full md:max-h-full',
+        className,
+      )}
+    >
+      {children}
+    </section>
+  </GameUiShell>
 );
 
 export const ScrollScreenShell: React.FC<WrapperProps> = ({ children, className = '' }) => (
