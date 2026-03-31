@@ -9,7 +9,11 @@ import {
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
 import cauldrenAndPotionArt from '../assets/coul.png';
-import potionBottleSprites from '../assets/pots.png';
+import azureBottle from '../assets/potion_bottles/azure.png';
+import mossBottle from '../assets/potion_bottles/moss.png';
+import nightBottle from '../assets/potion_bottles/night.png';
+import rubyBottle from '../assets/potion_bottles/ruby.png';
+import sunBottle from '../assets/potion_bottles/sun.png';
 
 interface PotionPourGameProps {
   levelId: number;
@@ -52,12 +56,12 @@ const INGREDIENTS: Ingredient[] = [
 ];
 
 const SUCCESS_DELAY_MS = 760;
-const POTION_SPRITES: Record<string, { x: number; y: number; w: number; h: number }> = {
-  gold: { x: 0.22, y: 0.1, w: 0.25, h: 0.36 },
-  blue: { x: 0.55, y: 0.1, w: 0.24, h: 0.36 },
-  green: { x: 0.08, y: 0.52, w: 0.31, h: 0.43 },
-  violet: { x: 0.39, y: 0.5, w: 0.28, h: 0.44 },
-  red: { x: 0.65, y: 0.5, w: 0.28, h: 0.44 },
+const POTION_BOTTLE_ART: Record<string, string> = {
+  gold: sunBottle,
+  blue: azureBottle,
+  green: mossBottle,
+  violet: nightBottle,
+  red: rubyBottle,
 };
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
@@ -495,7 +499,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 const current = counts[index] || 0;
                 const target = targetByIngredient.get(index) ?? 0;
                 const isActive = activeSet.has(index);
-                const sprite = POTION_SPRITES[ingredient.id];
+                const bottleArt = POTION_BOTTLE_ART[ingredient.id];
                 return (
                   <motion.button
                     key={ingredient.id}
@@ -508,15 +512,14 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                     style={isActive ? { boxShadow: `0 12px 22px rgba(2,6,23,0.28), 0 0 18px ${ingredient.glow}` } : undefined}
                   >
                     <div className="pointer-events-none absolute inset-x-0 top-0 bottom-5">
-                      <div className="relative mx-auto h-full w-full max-w-[92px] overflow-hidden">
-                        {sprite ? (
-                          <div
+                      <div className="relative mx-auto h-full w-full max-w-[92px]">
+                        {bottleArt ? (
+                          <img
+                            src={bottleArt}
+                            alt=""
                             aria-hidden="true"
-                            className="absolute inset-0 bg-no-repeat"
+                            className="absolute inset-0 h-full w-full object-contain select-none"
                             style={{
-                              backgroundImage: `url(${potionBottleSprites})`,
-                              backgroundSize: `${100 / sprite.w}% ${100 / sprite.h}%`,
-                              backgroundPosition: `${(sprite.x / (1 - sprite.w)) * 100}% ${(sprite.y / (1 - sprite.h)) * 100}%`,
                               filter: isActive ? 'none' : 'grayscale(0.45) saturate(0.7) opacity(0.8)',
                             }}
                           />

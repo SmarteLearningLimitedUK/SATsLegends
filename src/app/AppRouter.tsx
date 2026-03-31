@@ -113,6 +113,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       'prime_pop',
       'number_line_ninja',
       'potion_pour',
+      'potion_panic',
       'cloud_collapse',
       'factor_frenzy',
       'calculation_clash',
@@ -122,7 +123,9 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       'maths_vs_zombies',
     ]);
     return !(
-      selectedLevel.gameType === 'prime_pop'
+      selectedLevel.gameType === 'potion_pour'
+      || selectedLevel.gameType === 'potion_panic'
+      || selectedLevel.gameType === 'prime_pop'
       || (selectedLevel.blueprintKey && sceneOwnedBackgrounds.has(selectedLevel.blueprintKey))
     );
   }, [screen, selectedLevel]);
