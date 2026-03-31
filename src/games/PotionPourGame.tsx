@@ -35,6 +35,7 @@ interface Ingredient {
 interface Challenge {
   id: string;
   prompt: string;
+  helperText: string;
   stage: number;
   activeIndices: number[];
   baseRatio: number[];
@@ -43,11 +44,11 @@ interface Challenge {
 }
 
 const INGREDIENTS: Ingredient[] = [
-  { id: 'red', name: 'Ruby', short: 'R', color: '#fb7185', glow: 'rgba(251,113,133,0.55)', rgb: [251, 113, 133] },
-  { id: 'blue', name: 'Azure', short: 'B', color: '#60a5fa', glow: 'rgba(96,165,250,0.55)', rgb: [96, 165, 250] },
-  { id: 'green', name: 'Moss', short: 'G', color: '#34d399', glow: 'rgba(52,211,153,0.55)', rgb: [52, 211, 153] },
-  { id: 'gold', name: 'Sun', short: 'Y', color: '#fbbf24', glow: 'rgba(251,191,36,0.55)', rgb: [251, 191, 36] },
-  { id: 'violet', name: 'Night', short: 'P', color: '#a78bfa', glow: 'rgba(167,139,250,0.55)', rgb: [167, 139, 250] },
+  { id: 'red', name: 'Ruby', short: 'R', color: '#ff4d6d', glow: 'rgba(255,77,109,0.82)', rgb: [255, 77, 109] },
+  { id: 'blue', name: 'Azure', short: 'B', color: '#38bdf8', glow: 'rgba(56,189,248,0.82)', rgb: [56, 189, 248] },
+  { id: 'green', name: 'Moss', short: 'G', color: '#22c55e', glow: 'rgba(34,197,94,0.82)', rgb: [34, 197, 94] },
+  { id: 'gold', name: 'Sun', short: 'Y', color: '#facc15', glow: 'rgba(250,204,21,0.82)', rgb: [250, 204, 21] },
+  { id: 'violet', name: 'Night', short: 'P', color: '#a855f7', glow: 'rgba(168,85,247,0.82)', rgb: [168, 85, 247] },
 ];
 
 const SUCCESS_DELAY_MS = 760;
@@ -85,49 +86,99 @@ const shuffled = <T,>(list: T[]) => {
   return next;
 };
 
+const SIMPLE_PAIR_RATIOS = [
+  [1, 1],
+  [2, 1],
+  [3, 1],
+  [3, 2],
+] as const;
+
+const SIMPLE_TRIPLE_RATIOS = [
+  [1, 1, 1],
+  [2, 1, 1],
+  [2, 2, 1],
+  [3, 1, 2],
+] as const;
+
+const HARDER_TRIPLE_RATIOS = [
+  [3, 2, 1],
+  [4, 2, 1],
+  [3, 2, 2],
+] as const;
+
+const SCALE_FOUR_RATIOS = [
+  [1, 1, 2, 2],
+  [2, 1, 1, 2],
+  [3, 2, 1, 2],
+] as const;
+
 let challengeSeed = 0;
 const nextChallengeId = () => {
   challengeSeed += 1;
   return `potion-panic-${challengeSeed}`;
 };
 
-const stageFor = (levelId: number, solved: number) => clamp(Math.floor((levelId - 1) / 2) + 1 + Math.floor(solved / 2), 1, 6);
+const stageFor = (levelId: number, solved: number) => clamp(1 + Math.floor((levelId - 1) / 3) + Math.floor(solved / 3), 1, 6);
 const roundsToWinForLevel = (levelId: number) => 5 + Math.floor((levelId - 1) / 2);
 
 const buildPrompt = (stage: number, active: Ingredient[], ratio: number[], scale: number, target: number[]) => {
-  if (stage <= 2) {
-    return `Brew ${active[0].name}:${active[1].name} in ratio ${ratio[0]}:${ratio[1]}.`;
+  const total = target.reduce((a, b) => a + b, 0);
+  const joinedNames = active.map((ingredient) => ingredient.name).join(':');
+  const joinedRatio = ratio.join(':');
+
+  if (stage === 1) {
+    return `Add exactly ${target[0]} ${active[0].name} and ${target[1]} ${active[1].name} drops. This makes a ${joinedRatio} mix.`;
+  }
+  if (stage === 2) {
+    return `Make ${total} drops altogether. Keep ${active[0].name}:${active[1].name} at ${ratio[0]}:${ratio[1]}.`;
   }
   if (stage === 3) {
-    const total = target.reduce((a, b) => a + b, 0);
-    const joinedRatio = ratio.join(':');
-    return `Use ${total} drops total in ratio ${joinedRatio} (${active.map((i) => i.name).join(':')}).`;
+    return `Make ${total} drops altogether. Keep ${joinedNames} at ${joinedRatio}.`;
   }
   if (stage === 4) {
     const knownIndex = 0;
-    return `The ratio is ${ratio.join(':')} for ${active.map((i) => i.name).join(':')}. If ${active[knownIndex].name} is ${target[knownIndex]}, complete the brew.`;
+    return `${active[knownIndex].name} must be ${target[knownIndex]} drops. Use the ratio ${joinedRatio} to work out the rest of ${joinedNames}.`;
   }
   if (stage === 5) {
-    const idxA = 0;
-    const idxB = 1;
-    const total = target.reduce((a, b) => a + b, 0);
-    return `SATs challenge: ${active[idxA].name}:${active[idxB].name} is ${ratio[idxA]}:${ratio[idxB]} and the potion uses ${total} drops. Build the correct mix.`;
+    const knownIndex = 1;
+    return `${active[knownIndex].name} is already ${target[knownIndex]} drops. Use the ratio ${joinedRatio} to finish the ${joinedNames} potion.`;
   }
-  return `Master brew: match ${active.map((ingredient, index) => `${ingredient.name} ${ratio[index]}`).join(' : ')} scaled by x${scale}.`;
+  return `Scale the ratio ${joinedRatio} by x${scale}. Then brew the exact ${joinedNames} potion.`;
+};
+
+const buildHelperText = (stage: number) => {
+  if (stage === 1) return 'Copy the exact drops named in the prompt, then press Brew.';
+  if (stage <= 3) return 'Match both the total number of drops and the target ratio.';
+  if (stage <= 5) return 'Use the known ingredient amount to work out one ratio part, then fill the rest.';
+  return 'Multiply every part of the ratio by the scale so the final drop counts are exact.';
+};
+
+const pickRatioForStage = (stage: number): number[] => {
+  if (stage === 1 || stage === 2) return [...randomPick(SIMPLE_PAIR_RATIOS)];
+  if (stage === 3 || stage === 4) return [...randomPick(SIMPLE_TRIPLE_RATIOS)];
+  if (stage === 5) return [...randomPick(HARDER_TRIPLE_RATIOS)];
+  return [...randomPick(SCALE_FOUR_RATIOS)];
 };
 
 const generateChallenge = (levelId: number, solved: number): Challenge => {
   const stage = stageFor(levelId, solved);
-  const ingredientCount = stage <= 2 ? 2 : stage <= 4 ? 3 : stage <= 5 ? 4 : 5;
+  const ingredientCount = stage <= 2 ? 2 : stage <= 5 ? 3 : 4;
   const activeIndices = shuffled([0, 1, 2, 3, 4]).slice(0, ingredientCount).sort((a, b) => a - b);
-  const baseRatio = Array.from({ length: ingredientCount }, () => Math.floor(Math.random() * 4) + 1);
-  const scale = stage <= 2 ? randomPick([1, 2]) : stage <= 4 ? randomPick([2, 3, 4]) : randomPick([3, 4, 5]);
+  const baseRatio = pickRatioForStage(stage);
+  const scale =
+    stage === 1 ? 1
+      : stage === 2 ? randomPick([2, 3])
+        : stage === 3 ? randomPick([1, 2])
+          : stage === 4 ? randomPick([2, 3])
+            : stage === 5 ? randomPick([2, 3])
+              : randomPick([2, 3]);
   const targetCounts = baseRatio.map((value) => value * scale);
   const activeIngredients = activeIndices.map((index) => INGREDIENTS[index]);
 
   return {
     id: nextChallengeId(),
     prompt: buildPrompt(stage, activeIngredients, baseRatio, scale, targetCounts),
+    helperText: buildHelperText(stage),
     stage,
     activeIndices,
     baseRatio,
@@ -185,6 +236,20 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
 
   const currentTotal = useMemo(() => counts.reduce((a, b) => a + b, 0), [counts]);
   const targetTotal = useMemo(() => challenge.targetCounts.reduce((a, b) => a + b, 0), [challenge.targetCounts]);
+  const remainingTotal = Math.max(0, targetTotal - currentTotal);
+  const activeIngredientSummary = useMemo(
+    () => challenge.activeIndices.map((idx) => `${INGREDIENTS[idx].name} ${targetByIngredient.get(idx) ?? 0}`).join(' | '),
+    [challenge.activeIndices, targetByIngredient],
+  );
+  const activeTargets = useMemo(
+    () => challenge.activeIndices.map((idx) => ({
+      index: idx,
+      ingredient: INGREDIENTS[idx],
+      current: counts[idx] || 0,
+      target: targetByIngredient.get(idx) ?? 0,
+    })),
+    [challenge.activeIndices, counts, targetByIngredient],
+  );
 
   const currentRatioForActive = useMemo(
     () => simplifyRatio(challenge.activeIndices.map((idx) => counts[idx] || 0)),
@@ -194,7 +259,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
 
   const mixColor = useMemo(() => {
     const total = counts.reduce((a, b) => a + b, 0);
-    if (total <= 0) return 'rgba(71,85,105,0.82)';
+    if (total <= 0) return 'rgba(71,85,105,0.9)';
     let r = 0;
     let g = 0;
     let b = 0;
@@ -206,7 +271,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
       g += cg * weight;
       b += cb * weight;
     });
-    return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, 0.88)`;
+    return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, 0.96)`;
   }, [counts]);
 
   useEffect(() => {
@@ -316,8 +381,8 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
         draggable={false}
         className="absolute inset-0 h-full w-full object-cover"
       />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(5,14,40,0.24)_0%,rgba(5,14,40,0.34)_42%,rgba(5,14,40,0.45)_100%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(56,189,248,0.2)_0%,rgba(56,189,248,0)_55%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(5,14,40,0.14)_0%,rgba(5,14,40,0.24)_42%,rgba(5,14,40,0.34)_100%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(56,189,248,0.12)_0%,rgba(56,189,248,0)_55%)]" />
 
       <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.4rem)] pt-2">
         <section className="shrink-0">
@@ -328,11 +393,17 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
             <p className="mt-1.5 text-[clamp(0.9rem,2.15vw,1.15rem)] font-black leading-snug text-cyan-50">
               {challenge.prompt}
             </p>
+            <p className="mt-2 text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100/80">
+              Tap bottles to add drops. Match the target mix. Press Brew to check.
+            </p>
+            <p className="mt-1 text-[10px] font-black text-amber-100/90">
+              {challenge.helperText}
+            </p>
           </div>
         </section>
 
         <section className="relative mt-2 flex min-h-0 flex-[0_0_33%] items-center justify-center">
-          <div className="pointer-events-none absolute left-1/2 top-[56%] h-[52%] w-[62%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-300/22 blur-[24px]" />
+          <div className="pointer-events-none absolute left-1/2 top-[56%] h-[52%] w-[62%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-300/30 blur-[24px]" />
           <motion.div
             animate={feedback === 'error' ? { x: [0, -8, 8, -5, 5, 0] } : { x: 0 }}
             transition={{ duration: 0.35 }}
@@ -342,14 +413,17 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
             <div className="absolute inset-x-[9%] top-[14%] bottom-[14%] overflow-hidden rounded-[42%] border-[5px] border-slate-700/95 bg-slate-900/70 shadow-[inset_0_10px_24px_rgba(2,6,23,0.55)]">
               <motion.div
                 className="absolute inset-x-[4%] bottom-[4%] rounded-[40%]"
-                style={{ backgroundColor: mixColor }}
+                style={{
+                  background: `linear-gradient(180deg, rgba(255,255,255,0.34) 0%, ${mixColor} 18%, rgba(15,23,42,0.18) 100%)`,
+                  boxShadow: `0 0 30px ${mixColor}`,
+                }}
                 animate={{ height: `${Math.min(95, Math.max(12, (currentTotal / Math.max(1, targetTotal * 1.15)) * 100))}%` }}
                 transition={{ duration: 0.32, ease: 'easeOut' }}
               />
               {Array.from({ length: 9 }).map((_, idx) => (
                 <motion.span
                   key={`bubble-${idx}`}
-                  className="absolute bottom-0 h-3.5 w-3.5 rounded-full bg-white/35"
+                  className="absolute bottom-0 h-3.5 w-3.5 rounded-full bg-white/55"
                   style={{ left: `${10 + idx * 9}%` }}
                   animate={{ y: [0, -22 - (idx % 3) * 10, -4], opacity: [0, 0.9, 0], scale: [0.7, 1.15, 0.8] }}
                   transition={{ repeat: Infinity, duration: 1.2 + (idx % 4) * 0.2, delay: idx * 0.08, ease: 'easeOut' }}
@@ -375,13 +449,55 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
 
         <section className="mt-1.5 shrink-0">
           <div className="mx-auto w-full max-w-[760px] rounded-2xl border border-cyan-100/35 bg-slate-900/58 p-2.5">
-            <div className="mt-0.5 flex items-center justify-between rounded-xl border border-cyan-100/30 bg-slate-950/52 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100">
-              <span>Current ratio {currentRatioForActive.join(':')}</span>
-              <span>Target {targetRatioForActive.join(':')}</span>
+            <div className="rounded-xl border border-cyan-100/30 bg-slate-950/52 px-3 py-2 text-center">
+              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100">
+                Need: {activeIngredientSummary}
+              </p>
+              <div className="mt-2 flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100">
+                <span>Total {currentTotal}/{targetTotal}</span>
+                <span>{remainingTotal === 0 ? 'Ready to brew' : `${remainingTotal} drops left`}</span>
+              </div>
+            </div>
+            <div className="mt-2 grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+              {activeTargets.map(({ ingredient, current, target }) => {
+                const progress = target <= 0 ? 0 : Math.min(100, (current / target) * 100);
+                return (
+                  <div
+                    key={`goal-${ingredient.id}`}
+                    className="rounded-xl border border-cyan-100/30 bg-slate-950/52 px-2 py-2"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[9px] font-black uppercase tracking-[0.08em] text-cyan-100">
+                        {ingredient.name}
+                      </span>
+                      <span className="text-[9px] font-black uppercase tracking-[0.08em] text-amber-100">
+                        {current}/{target}
+                      </span>
+                    </div>
+                    <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-slate-800/85">
+                      <div
+                        className="h-full rounded-full transition-[width] duration-300"
+                        style={{
+                          width: `${progress}%`,
+                          background: `linear-gradient(90deg, ${ingredient.color} 0%, rgba(255,255,255,0.92) 100%)`,
+                          boxShadow: `0 0 12px ${ingredient.glow}`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="mt-2 flex items-center justify-between rounded-xl border border-cyan-100/30 bg-slate-950/52 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100">
+              <span>You made {currentRatioForActive.join(':')}</span>
+              <span>Need {targetRatioForActive.join(':')}</span>
             </div>
             <div className="grid grid-cols-5 gap-1.5">
               {INGREDIENTS.map((ingredient, index) => {
                 const active = activeSet.has(index);
+                const targetCount = targetByIngredient.get(index) ?? 0;
+                const currentCount = counts[index] || 0;
+                const remainingCount = Math.max(0, targetCount - currentCount);
                 return (
                   <div
                     key={`tracker-${ingredient.id}`}
@@ -389,8 +505,17 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                       active ? 'border-cyan-100/35 bg-slate-950/55' : 'border-slate-500/25 bg-slate-900/35 opacity-45'
                     }`}
                   >
-                    <p className="text-[9px] font-black uppercase tracking-[0.1em] text-cyan-200">{ingredient.short}</p>
-                    <p className="text-sm font-black text-white">{counts[index]}/{targetByIngredient.get(index) ?? 0}</p>
+                    <p className="text-[9px] font-black uppercase tracking-[0.1em] text-cyan-200">
+                      {ingredient.name}
+                    </p>
+                    <p className="text-sm font-black text-white">{currentCount}/{targetCount}</p>
+                    {active ? (
+                      <p className="text-[9px] font-black text-amber-100/85">
+                        {remainingCount === 0 ? 'Done' : `${remainingCount} left`}
+                      </p>
+                    ) : (
+                      <p className="text-[9px] font-black text-slate-300/70">Not used</p>
+                    )}
                   </div>
                 );
               })}
@@ -403,6 +528,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
             {INGREDIENTS.map((ingredient, index) => {
               const active = activeSet.has(index);
               const count = counts[index] || 0;
+              const targetCount = targetByIngredient.get(index) ?? 0;
               return (
                 <motion.button
                   key={ingredient.id}
@@ -413,27 +539,33 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                   onClick={() => handleTapIngredient(index)}
                   disabled={!active || locked}
                   className={`relative h-[clamp(84px,12.2vh,108px)] rounded-[1.25rem] border p-1.5 text-left transition ${
-                    active
-                      ? 'border-cyan-100/50 bg-slate-900/74 shadow-[0_12px_18px_rgba(2,6,23,0.38)]'
-                      : 'border-slate-500/30 bg-slate-900/35 opacity-45 grayscale'
+                      active
+                        ? 'border-cyan-100/50 bg-slate-900/74 shadow-[0_12px_18px_rgba(2,6,23,0.38)]'
+                        : 'border-slate-500/30 bg-slate-900/35 opacity-45 grayscale'
                   }`}
-                  style={{ boxShadow: active ? `0 10px 18px rgba(2,6,23,0.36), 0 0 18px ${ingredient.glow}` : undefined }}
+                  style={{ boxShadow: active ? `0 10px 18px rgba(2,6,23,0.36), 0 0 26px ${ingredient.glow}` : undefined }}
                 >
                   <div className="pointer-events-none absolute inset-x-2 top-2 h-2 rounded-full bg-white/14 blur-[1px]" />
                   <div className="mx-auto h-[74%] w-[72%] rounded-[0.95rem] border border-white/35 bg-slate-950/45 p-1.5">
                     <div
                       className="h-full w-full rounded-[0.75rem]"
                       style={{
-                        background: `linear-gradient(180deg, ${ingredient.color}, rgba(15,23,42,0.42))`,
+                        background: `linear-gradient(180deg, rgba(255,255,255,0.38) 0%, ${ingredient.color} 24%, rgba(15,23,42,0.28) 100%)`,
+                        boxShadow: `0 0 18px ${ingredient.glow}, inset 0 0 16px rgba(255,255,255,0.16)`,
                       }}
                     />
                   </div>
                   <span className="pointer-events-none absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-black uppercase tracking-[0.07em] text-cyan-50">
-                    {ingredient.short}
+                    Add {ingredient.name}
                   </span>
                   <span className="pointer-events-none absolute right-1.5 top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full border border-white/45 bg-slate-950/80 px-1 text-[10px] font-black text-white">
                     {count}
                   </span>
+                  {active ? (
+                    <span className="pointer-events-none absolute left-1.5 top-1.5 rounded-full border border-amber-200/50 bg-slate-950/80 px-1.5 py-[1px] text-[9px] font-black uppercase tracking-[0.04em] text-amber-100">
+                      Goal {targetCount}
+                    </span>
+                  ) : null}
                 </motion.button>
               );
             })}
@@ -518,3 +650,4 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
 };
 
 export default PotionPourGame;
+

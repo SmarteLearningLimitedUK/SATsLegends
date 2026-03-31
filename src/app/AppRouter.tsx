@@ -112,6 +112,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       'rounding_rampage',
       'prime_pop',
       'number_line_ninja',
+      'potion_pour',
       'cloud_collapse',
       'factor_frenzy',
       'calculation_clash',
