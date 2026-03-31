@@ -137,19 +137,19 @@ const buildPotionName = (stage: number, active: Ingredient[]) => {
 };
 
 const buildOrderPrompt = (potionName: string, stage: number) => {
-  if (stage <= 2) return `The village apothecary needs a ${potionName} for an early patient.`;
-  if (stage === 3) return `The apothecary wants a ${potionName} before the scholars arrive.`;
-  if (stage === 4) return `A tired traveller is waiting outside for this ${potionName}.`;
-  if (stage === 5) return `The guard captain has asked for a ${potionName} before sunset.`;
-  return `Tonight's lantern rite needs a rare ${potionName} from your cauldron.`;
+  if (stage <= 2) return `Brew a ${potionName} for the village apothecary.`;
+  if (stage === 3) return `Make a ${potionName} before the scholars arrive.`;
+  if (stage === 4) return `Brew a ${potionName} for the tired traveller outside.`;
+  if (stage === 5) return `Make a ${potionName} for the guard captain before sunset.`;
+  return `Brew the special ${potionName} for tonight's lantern rite.`;
 };
 
 const buildOrderFlavor = (stage: number) => {
-  if (stage <= 2) return 'Keep the recipe exact and the potion will shimmer to life.';
-  if (stage === 3) return 'A steady hand will help this brew sparkle for the village.';
-  if (stage === 4) return 'One careful mix will send the apothecary shelves glowing.';
-  if (stage === 5) return 'Brave brews need perfect balance in every drop.';
-  return 'Only a precise potion will awaken the old magic tonight.';
+  if (stage <= 2) return 'Follow the recipe carefully.';
+  if (stage === 3) return 'Use the right mix to make it glow.';
+  if (stage === 4) return 'One careful brew will do the trick.';
+  if (stage === 5) return 'Every drop must be balanced.';
+  return 'Get the recipe exactly right to wake the magic.';
 };
 
 const pickRatioForStage = (stage: number): number[] => {
