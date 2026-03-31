@@ -260,7 +260,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
     triggerHaptic('success');
 
     if (!sameFraction(reduced, question.answer)) {
-      setFeedback({ tone: 'success', text: `Nice. ÷${factor} works. Keep reducing.` });
+      setFeedback({ tone: 'success', text: `Nice. ${factor} works. Keep reducing.` });
       window.setTimeout(() => {
         setFeedback(null);
         setLocked(false);
@@ -359,7 +359,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
         </motion.div>
 
         <div className="mt-3 rounded-full border border-cyan-200/45 bg-[#0a1f56]/78 px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-cyan-50">
-          Lowest terms: {question.answer.numerator}/{question.answer.denominator}
+          Keep going until the fraction cannot be reduced any further
         </div>
 
         <div className="mt-6 grid w-full max-w-[740px] grid-cols-2 gap-3 md:gap-4">

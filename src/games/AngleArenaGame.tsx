@@ -61,7 +61,7 @@ const angleTypePrompt = (target: number) => {
   if (target < 90) {
     return {
       prompt: target < 50
-        ? `Fire at an acute angle of ${target}Ã‚Â°.`
+        ? `Fire at an acute angle of ${target} degrees.`
         : 'Set an acute angle and launch.',
       kind: 'angle_type' as const,
     };
@@ -69,14 +69,14 @@ const angleTypePrompt = (target: number) => {
 
   if (target === 90) {
     return {
-      prompt: 'Set the catapult to a right angle (90Ã‚Â°).',
+      prompt: 'Set the catapult to a right angle (90 degrees).',
       kind: 'angle_type' as const,
     };
   }
 
   return {
     prompt: target > 130
-      ? `Launch at an obtuse angle of ${target}Ã‚Â°.`
+      ? `Launch at an obtuse angle of ${target} degrees.`
       : 'Fire at an obtuse angle.',
     kind: 'angle_type' as const,
   };
@@ -88,7 +88,7 @@ const buildReasoningPrompt = (difficulty: number) => {
   if (difficulty % 2 === 0) {
     const supplement = 180 - base;
     return {
-      prompt: `The marked angle is ${base}Ã‚Â°. Set the angle on the same straight line.`,
+      prompt: `The marked angle is ${base} degrees. Set the angle on the same straight line.`,
       targetAngle: supplement,
       kind: 'reasoning' as const,
     };
@@ -97,7 +97,7 @@ const buildReasoningPrompt = (difficulty: number) => {
   const extra = randomInt(10, 40);
   const answer = clamp(base + extra, 10, 170);
   return {
-    prompt: `Launch at the angle that is ${extra}Ã‚Â° more than ${base}Ã‚Â°`,
+    prompt: `Launch at the angle that is ${extra} degrees more than ${base} degrees.`,
     targetAngle: answer,
     kind: 'reasoning' as const,
   };
@@ -108,7 +108,7 @@ const buildChallenge = (levelId: number, solvedCount: number): AngleChallenge =>
   const roll = Math.random();
 
   let targetAngle = randomInt(20, 160);
-  let prompt = `Set the catapult to ${targetAngle}Ã‚Â° and fire.`;
+  let prompt = `Set the catapult to ${targetAngle} degrees and fire.`;
   let kind: ChallengeKind = 'direct_degree';
 
   if (difficulty >= 5 && roll > 0.58) {

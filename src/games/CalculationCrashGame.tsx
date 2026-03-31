@@ -187,7 +187,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
       setSolved(nextSolved);
       setStreak(nextStreak);
       setScore((prev) => prev + earned);
-      queueFeedback('success', nextStreak > 1 ? `+${earned} Â· Combo x${nextStreak}` : `+${earned}`);
+      queueFeedback('success', nextStreak > 1 ? `+${earned} - Combo x${nextStreak}` : `+${earned}`);
     } else {
       setStreak(0);
       setScreenShake(true);

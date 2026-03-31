@@ -66,6 +66,31 @@ const generatePuzzle = (levelId: number): Puzzle => {
       data[0] = modeVal;
       data[1] = modeVal;
       if (levelId > 2) data[2] = modeVal;
+
+      const desiredModeCount = levelId > 2 ? 3 : 2;
+      const counts: Record<number, number> = {};
+      data.forEach((value) => {
+        counts[value] = (counts[value] || 0) + 1;
+      });
+
+      for (let i = 0; i < data.length; i += 1) {
+        const current = data[i];
+        if (current === modeVal) continue;
+        if ((counts[current] || 0) < desiredModeCount) continue;
+
+        let replacement = current;
+        while (
+          replacement === current
+          || replacement === modeVal
+          || (counts[replacement] || 0) >= desiredModeCount - 1
+        ) {
+          replacement = Math.floor(Math.random() * maxVal) + 1;
+        }
+
+        counts[current] -= 1;
+        data[i] = replacement;
+        counts[replacement] = (counts[replacement] || 0) + 1;
+      }
     }
 
     // Shuffle
@@ -235,6 +260,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
   };
 
   const progress = Math.min((XP / targetScore) * 100, 100);
+  const chartMaxValue = Math.max(1, ...(puzzle?.chartData?.map((bar) => bar.value) || [1]));
 
   return (
     <div className="relative flex h-full w-full overflow-hidden font-sans">
@@ -294,7 +320,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
                               <div className="w-full relative flex items-end justify-center h-24 bg-stone-200 rounded-t-md overflow-hidden">
                                 <motion.div 
                                   initial={{ height: 0 }}
-                                  animate={{ height: `${(bar.value / 25) * 100}%` }}
+                                  animate={{ height: `${(bar.value / chartMaxValue) * 100}%` }}
                                   className="w-full absolute bottom-0"
                                   style={{ backgroundColor: bar.color }}
                                 />

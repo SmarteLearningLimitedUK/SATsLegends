@@ -77,6 +77,15 @@ const createQuestion = (
     ...distractors.map((value) => formatNumber(value)),
   ]);
 
+  let padCandidate = answer + 3;
+  while (options.length < 4) {
+    const formatted = formatNumber(padCandidate);
+    if (!options.includes(formatted)) {
+      options.push(formatted);
+    }
+    padCandidate += 1;
+  }
+
   return {
     id: Date.now() + Math.floor(Math.random() * 1000),
     prompt,
