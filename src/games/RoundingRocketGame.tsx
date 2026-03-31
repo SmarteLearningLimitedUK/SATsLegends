@@ -56,10 +56,9 @@ const scoreToStars = (XP: number, correct: number, attempts: number) => {
   return 1;
 };
 
-const nextTarget = (difficultyLevel: number): RoundTarget => {
-  if (difficultyLevel <= 2) return 10;
-  if (difficultyLevel <= 5) return Math.random() < 0.7 ? 10 : 100;
-  return Math.random() < 0.35 ? 10 : 100;
+const targetForLevel = (levelId: number): RoundTarget => {
+  if (levelId <= 3) return 10;
+  return 100;
 };
 
 const createFuelNumber = (target: RoundTarget, difficultyLevel: number) => {
@@ -101,9 +100,9 @@ const buildPadOptions = (value: number, target: RoundTarget, correctAnswer: numb
   return shuffle([correctAnswer, selected[0], selected[1]]) as [number, number, number];
 };
 
-const generateRound = (difficultyLevel: number): RocketRound => {
-  const target = nextTarget(difficultyLevel);
-  const value = createFuelNumber(target, difficultyLevel);
+const generateRound = (levelId: number, magnitudeLevel: number): RocketRound => {
+  const target = targetForLevel(levelId);
+  const value = createFuelNumber(target, magnitudeLevel);
   const correctAnswer = Math.round(value / target) * target;
   const pads = buildPadOptions(value, target, correctAnswer);
 
@@ -126,7 +125,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
   sessionState,
   sessionEvents,
 }) => {
-  const [round, setRound] = useState<RocketRound>(() => generateRound(Math.max(1, levelId)));
+  const [round, setRound] = useState<RocketRound>(() => generateRound(Math.max(1, levelId), Math.max(1, levelId)));
   const [rocketState, setRocketState] = useState<RocketState>('idle');
   const [selectedPad, setSelectedPad] = useState<number | null>(null);
   const [padFeedback, setPadFeedback] = useState<{ value: number; type: 'success' | 'error' } | null>(null);
@@ -171,7 +170,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
     if (!sessionState) return;
     if (sessionState.timeLeft !== sessionState.totalTime) return;
     clearQueuedTimeouts();
-    setRound(generateRound(Math.max(1, levelId)));
+    setRound(generateRound(Math.max(1, levelId), Math.max(1, levelId)));
     setRocketState('idle');
     setSelectedPad(null);
     setPadFeedback(null);
@@ -213,8 +212,8 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
   };
 
   const loadNextRound = (difficultyOffset: number) => {
-    const difficulty = Math.max(1, levelId + difficultyOffset);
-    setRound(generateRound(difficulty));
+    const magnitudeLevel = Math.max(1, levelId + difficultyOffset);
+    setRound(generateRound(Math.max(1, levelId), magnitudeLevel));
     resetRocketToIdle();
   };
 
@@ -350,7 +349,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
       <div className="relative z-30 flex h-full w-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+5.1rem)] pt-1">
         <section className="mx-auto w-full max-w-[22rem] shrink-0 text-center">
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/90 md:text-[11px]">
-            Round To Nearest {round.target}
+            {round.target === 10 ? 'Nearest 10' : 'Nearest 100'}
           </p>
           <div className="mt-1 rounded-[0.95rem] border border-cyan-200/35 bg-[linear-gradient(180deg,rgba(15,31,70,0.7),rgba(5,19,54,0.88))] px-4 py-1.5 shadow-[0_10px_24px_rgba(2,6,23,0.4)]">
             <span className="text-[clamp(1.55rem,6vw,2.25rem)] font-black tabular-nums tracking-[0.08em] text-white [text-shadow:0_4px_14px_rgba(34,211,238,0.3)]">

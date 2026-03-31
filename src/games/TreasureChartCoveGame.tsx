@@ -51,10 +51,17 @@ const pickShips = (count: number) => {
   }));
 };
 
-const createRound = (levelId: number): ChartRound => {
-  const modes: ChartRoundMode[] = ['highest', 'difference', 'line'];
-  if (levelId >= 2) modes.push('table');
-  const mode = modes[randomInt(0, modes.length - 1)];
+const modeForLevel = (levelId: number, roundIndex: number): ChartRoundMode => {
+  if (levelId <= 1) return 'highest';
+  if (levelId === 2) return 'difference';
+  if (levelId === 3) return 'line';
+  if (levelId === 4) return 'table';
+  const cycle: ChartRoundMode[] = ['difference', 'line', 'table', 'highest'];
+  return cycle[roundIndex % cycle.length];
+};
+
+const createRound = (levelId: number, roundIndex: number): ChartRound => {
+  const mode = modeForLevel(levelId, roundIndex);
 
   if (mode === 'highest') {
     const ships = pickShips(4);
@@ -250,7 +257,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
   const [hearts, setHearts] = useState(MAX_HEARTS);
   const [roundNumber, setRoundNumber] = useState(1);
   const [Combo, setStreak] = useState(0);
-  const [round, setRound] = useState<ChartRound>(() => createRound(levelId));
+  const [round, setRound] = useState<ChartRound>(() => createRound(levelId, 0));
   const [feedback, setFeedback] = useState<null | { type: 'success' | 'error'; title: string; subtitle: string }>(null);
   const [isFinished, setIsFinished] = useState(false);
 
@@ -270,7 +277,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
     setHearts(MAX_HEARTS);
     setRoundNumber(1);
     setStreak(0);
-    setRound(createRound(levelId));
+    setRound(createRound(levelId, 0));
     setFeedback(null);
     setIsFinished(false);
   }, [levelId]);
@@ -314,8 +321,9 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
       return;
     }
     const timeoutId = window.setTimeout(() => {
-      setRoundNumber((previous) => previous + 1);
-      setRound(createRound(levelId));
+      const nextRoundNumber = roundNumber + 1;
+      setRoundNumber(nextRoundNumber);
+      setRound(createRound(levelId, nextRoundNumber - 1));
       setFeedback(null);
     }, 1150);
     timeoutsRef.current.push(timeoutId);

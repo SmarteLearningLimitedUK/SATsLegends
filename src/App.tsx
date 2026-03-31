@@ -514,6 +514,7 @@ const App: React.FC = () => {
   );
   const shouldShowResultEnemyArt =
     selectedLevel?.blueprintKey !== 'match3_equivalence'
+    && selectedLevel?.blueprintKey !== 'share_splitter'
     && selectedLevel?.gameType !== 'monster_market'
     && selectedLevel?.gameType !== 'potion_pour';
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
@@ -609,6 +610,7 @@ const App: React.FC = () => {
                   || selectedLevel.blueprintKey === 'rounding_rampage'
                   || selectedLevel.blueprintKey === 'conversion_canyon'
                   || selectedLevel.blueprintKey === 'match3_equivalence'
+                  || selectedLevel.blueprintKey === 'share_splitter'
                   || selectedLevel.blueprintKey === 'mode_miner'
                   || selectedLevel.blueprintKey === 'mean_machine'
                   || selectedLevel.gameType === 'monster_market'

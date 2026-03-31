@@ -174,7 +174,16 @@ const createQuestion = (
   };
 };
 
-const buildQuestion = (difficulty: number): NumberLineQuestion => {
+const difficultyBandForLevel = (levelId: number) => {
+  if (levelId <= 2) return 1;
+  if (levelId <= 4) return 3;
+  if (levelId <= 6) return 5;
+  if (levelId <= 8) return 7;
+  return 9;
+};
+
+const buildQuestion = (levelId: number): NumberLineQuestion => {
+  const difficulty = difficultyBandForLevel(levelId);
   const focusIndex = randomInt(1, 3);
 
   if (difficulty <= 2) {
@@ -362,7 +371,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   };
 
   const advanceQuestion = () => {
-    setQuestion(buildQuestion(Math.max(levelId + Math.floor(correctCount / 3), 1)));
+    setQuestion(buildQuestion(Math.max(levelId, 1)));
     setSelectedAnswer(null);
     setFeedbackState('idle');
     setLocked(false);

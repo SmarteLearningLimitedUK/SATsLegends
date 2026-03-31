@@ -103,20 +103,26 @@ const buildReasoningPrompt = (difficulty: number) => {
   };
 };
 
+const challengeKindForLevel = (levelId: number): ChallengeKind => {
+  if (levelId <= 2) return 'direct_degree';
+  if (levelId <= 4) return 'angle_type';
+  return 'reasoning';
+};
+
 const buildChallenge = (levelId: number, solvedCount: number): AngleChallenge => {
   const difficulty = Math.max(1, levelId + Math.floor(solvedCount / 2));
-  const roll = Math.random();
+  const challengeKind = challengeKindForLevel(levelId);
 
   let targetAngle = randomInt(20, 160);
   let prompt = `Set the catapult to ${targetAngle} degrees and fire.`;
-  let kind: ChallengeKind = 'direct_degree';
+  let kind: ChallengeKind = challengeKind;
 
-  if (difficulty >= 5 && roll > 0.58) {
+  if (challengeKind === 'reasoning') {
     const reasoning = buildReasoningPrompt(difficulty);
     targetAngle = reasoning.targetAngle;
     prompt = reasoning.prompt;
     kind = reasoning.kind;
-  } else if (difficulty >= 3 && roll > 0.33) {
+  } else if (challengeKind === 'angle_type') {
     if (difficulty >= 8) {
       const options = [30, 45, 60, 75, 90, 105, 120, 135, 150];
       targetAngle = options[randomInt(0, options.length - 1)];
@@ -353,6 +359,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           </div>
           <div className="mt-1 inline-flex items-center gap-2 rounded-full border border-white/20 bg-slate-950/45 px-3 py-1 text-[10px] font-black uppercase tracking-[0.13em] text-white/90 md:text-[11px]">
             <span>Shots solved {correctCount}/{targetCorrect}</span>
+            <span className="text-amber-200">
+              {challenge.kind === 'direct_degree' ? 'Direct aim' : challenge.kind === 'angle_type' ? 'Angle type' : 'Reasoning'}
+            </span>
             <span className="text-cyan-200">Tolerance {"\u00B1"}{tolerance}{"\u00B0"}</span>
           </div>
         </div>
