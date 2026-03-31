@@ -8,6 +8,8 @@ import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
+import potionPanicBackdrop from '../assets/potionpanic.png';
+import potionPanicFrame from '../assets/potionpanic2.png';
 
 interface PotionPourGameProps {
   levelId: number;
@@ -351,6 +353,18 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
   return (
     <div className="relative h-full w-full overflow-hidden text-white">
       <div className="absolute inset-0 bg-[linear-gradient(180deg,#1f2e5c_0%,#5a3f66_34%,#9a5d53_58%,#2a2336_100%)]" />
+      <img
+        src={potionPanicBackdrop}
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[122%] max-w-none -translate-x-1/2 -translate-y-1/2 object-cover opacity-[0.18] mix-blend-screen"
+      />
+      <img
+        src={potionPanicFrame}
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[96%] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.34]"
+      />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[46%] bg-[linear-gradient(180deg,rgba(16,24,40,0)_0%,rgba(8,15,32,0.42)_18%,rgba(6,12,26,0.88)_100%)]" />
       <div className="pointer-events-none absolute left-[-12%] top-[8%] h-[32%] w-[38%] rounded-full bg-[radial-gradient(circle,rgba(17,45,48,0.82)_0%,rgba(17,45,48,0.48)_42%,rgba(17,45,48,0)_72%)] blur-[10px]" />
       <div className="pointer-events-none absolute right-[-10%] top-[10%] h-[34%] w-[40%] rounded-full bg-[radial-gradient(circle,rgba(22,49,54,0.84)_0%,rgba(22,49,54,0.5)_42%,rgba(22,49,54,0)_74%)] blur-[10px]" />
@@ -369,8 +383,8 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
         </section>
 
         <section className="mt-3 shrink-0">
-          <div className="mx-auto w-full max-w-[420px] rounded-[1.4rem] border border-[#8f6844] bg-[linear-gradient(180deg,#f3e0b9_0%,#ead0a1_100%)] p-[3px] shadow-[0_18px_34px_rgba(15,23,42,0.3)]">
-            <div className="overflow-hidden rounded-[1.15rem] bg-[linear-gradient(180deg,#d7b07d_0%,#f7e7c2_22%,#f3dfba_100%)]">
+          <div className="mx-auto w-full max-w-[420px] rounded-[1.4rem] border border-[#8f6844]/90 bg-[linear-gradient(180deg,#f3e0b9_0%,#ead0a1_100%)] p-[3px] shadow-[0_18px_34px_rgba(15,23,42,0.3)]">
+            <div className="overflow-hidden rounded-[1.15rem] bg-[linear-gradient(180deg,rgba(215,176,125,0.96)_0%,rgba(247,231,194,0.98)_22%,rgba(243,223,186,0.98)_100%)]">
               <div className="bg-[linear-gradient(180deg,#5e3b25_0%,#3d2418_100%)] px-4 py-3 text-center">
                 <p className="text-[clamp(18px,3vh,28px)] font-black text-amber-100 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
                   {challenge.orderTitle}
@@ -478,7 +492,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                     onClick={() => addIngredient(index)}
                     disabled={locked}
                     aria-label={`Add ${ingredient.name} to the potion`}
-                    className="relative flex h-[clamp(78px,11vh,98px)] flex-col items-center justify-center rounded-[1.2rem] border border-white/28 bg-[linear-gradient(180deg,rgba(28,42,94,0.86),rgba(14,25,58,0.92))] px-2 py-2 shadow-[0_14px_22px_rgba(2,6,23,0.34)] transition disabled:opacity-60"
+                    className="relative flex h-[clamp(78px,11vh,98px)] flex-col items-center justify-center rounded-[1.2rem] border border-white/28 bg-[linear-gradient(180deg,rgba(34,53,118,0.9),rgba(16,31,74,0.94))] px-2 py-2 shadow-[0_14px_22px_rgba(2,6,23,0.34)] transition disabled:opacity-60"
                     style={{ boxShadow: `0 12px 22px rgba(2,6,23,0.34), 0 0 22px ${ingredient.glow}` }}
                   >
                     <div
@@ -516,7 +530,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 className={`inline-flex h-[56px] w-full items-center justify-center gap-2 rounded-[999px] border px-5 text-[clamp(20px,3.2vh,32px)] font-black tracking-[0.01em] transition ${
                   locked || !isRecipeComplete
                     ? 'border-slate-500/40 bg-[linear-gradient(180deg,rgba(27,44,95,0.62),rgba(14,25,58,0.7))] text-slate-400'
-                    : 'border-cyan-100/80 bg-[linear-gradient(180deg,#4f8fff_0%,#2d5be2_100%)] text-white shadow-[0_16px_28px_rgba(37,99,235,0.4)]'
+                    : 'border-cyan-100/80 bg-[linear-gradient(180deg,#5b96ff_0%,#2f67ec_62%,#204bc7_100%)] text-white shadow-[0_16px_28px_rgba(37,99,235,0.4)]'
                 }`}
               >
                 <Wand2 className="h-6 w-6" />
