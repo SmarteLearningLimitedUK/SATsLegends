@@ -49,7 +49,6 @@ const INGREDIENTS: Ingredient[] = [
 ];
 
 const SUCCESS_DELAY_MS = 760;
-const BUMP_CLEAR_MS = 220;
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 
@@ -190,6 +189,13 @@ const joinWithAnd = (parts: string[]) => {
   return `${parts.slice(0, -1).join(', ')}, and ${parts[parts.length - 1]}`;
 };
 
+interface DragState {
+  index: number;
+  pointerId: number;
+  x: number;
+  y: number;
+}
+
 const PotionPourGame: React.FC<PotionPanicProps> = ({
   levelId,
   avatarId: _avatarId,
@@ -205,17 +211,17 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
   const [attempts, setAttempts] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackKind>(null);
   const [locked, setLocked] = useState(false);
-  const [pressedIndex, setPressedIndex] = useState<number | null>(null);
   const [droplets, setDroplets] = useState<Array<{ id: string; index: number }>>([]);
+  const [dragState, setDragState] = useState<DragState | null>(null);
+  const [cauldronArmed, setCauldronArmed] = useState(false);
 
   const endedRef = useRef(false);
   const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const bumpTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cauldronRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     return () => {
       if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current);
-      if (bumpTimerRef.current) clearTimeout(bumpTimerRef.current);
     };
   }, []);
 
@@ -230,11 +236,6 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
 
   const currentTotal = useMemo(() => counts.reduce((a, b) => a + b, 0), [counts]);
   const targetTotal = useMemo(() => challenge.targetCounts.reduce((a, b) => a + b, 0), [challenge.targetCounts]);
-  const remainingTotal = Math.max(0, targetTotal - currentTotal);
-  const activeIngredientSummary = useMemo(
-    () => challenge.activeIndices.map((idx) => `${INGREDIENTS[idx].name} ${targetByIngredient.get(idx) ?? 0}`).join(' | '),
-    [challenge.activeIndices, targetByIngredient],
-  );
   const activeTargets = useMemo(
     () => challenge.activeIndices.map((idx) => ({
       ingredient: INGREDIENTS[idx],
@@ -296,7 +297,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
     }
   }, [correctSolved, onGameOver, sessionEvents, sessionState]);
 
-  const handleTapIngredient = (index: number) => {
+  const addIngredient = (index: number) => {
     if (locked || endedRef.current || !activeSet.has(index)) return;
 
     setCounts((prev) => {
@@ -305,16 +306,60 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
       return next;
     });
 
-    setPressedIndex(index);
-    if (bumpTimerRef.current) clearTimeout(bumpTimerRef.current);
-    bumpTimerRef.current = setTimeout(() => setPressedIndex(null), BUMP_CLEAR_MS);
-
     const dropId = `${Date.now()}-${index}-${Math.random()}`;
     setDroplets((prev) => [...prev, { id: dropId, index }]);
     setTimeout(() => {
       setDroplets((prev) => prev.filter((drop) => drop.id !== dropId));
     }, 550);
   };
+
+  useEffect(() => {
+    if (!dragState) return undefined;
+
+    const updateCauldronHover = (clientX: number, clientY: number) => {
+      const cauldronBounds = cauldronRef.current?.getBoundingClientRect();
+      if (!cauldronBounds) {
+        setCauldronArmed(false);
+        return false;
+      }
+      const hovering =
+        clientX >= cauldronBounds.left
+        && clientX <= cauldronBounds.right
+        && clientY >= cauldronBounds.top
+        && clientY <= cauldronBounds.bottom;
+      setCauldronArmed(hovering);
+      return hovering;
+    };
+
+    const handlePointerMove = (event: PointerEvent) => {
+      if (event.pointerId !== dragState.pointerId) return;
+      updateCauldronHover(event.clientX, event.clientY);
+      setDragState((prev) => (
+        prev && prev.pointerId === event.pointerId
+          ? { ...prev, x: event.clientX, y: event.clientY }
+          : prev
+      ));
+    };
+
+    const handlePointerUp = (event: PointerEvent) => {
+      if (event.pointerId !== dragState.pointerId) return;
+      const droppedInCauldron = updateCauldronHover(event.clientX, event.clientY);
+      const draggedIndex = dragState.index;
+      setDragState(null);
+      setCauldronArmed(false);
+      if (droppedInCauldron) addIngredient(draggedIndex);
+    };
+
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('pointercancel', handlePointerUp);
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('pointercancel', handlePointerUp);
+    };
+  }, [activeSet, dragState, locked]);
 
   const resetCurrent = () => {
     if (locked || endedRef.current) return;
@@ -366,26 +411,14 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
   return (
     <div className="relative h-full w-full overflow-hidden text-white">
       <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.4rem)] pt-2">
-        <section className="shrink-0">
-          <div className="mx-auto flex max-w-[760px] items-center justify-between gap-3 rounded-[1.1rem] border border-cyan-100/24 bg-slate-900/44 px-4 py-2 shadow-[0_10px_18px_rgba(2,6,23,0.22)]">
-            <div className="min-w-0">
-              <p className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-200">Potion Panic</p>
-              <p className="text-[10px] font-black text-cyan-50/85">Build the recipe, then brew.</p>
-            </div>
-            <div className="shrink-0 rounded-full border border-cyan-100/28 bg-slate-950/45 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100">
-              Round {correctSolved + 1} of {roundsToWinForLevel(levelId)}
-            </div>
-          </div>
-        </section>
-
         <section className="mt-1.5 shrink-0">
-          <div className="mx-auto w-full max-w-[760px] rounded-[1.2rem] border border-cyan-100/30 bg-slate-950/52 px-4 py-3 shadow-[0_12px_22px_rgba(2,6,23,0.24)]">
-            <p className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-200">Make this potion</p>
-            <div className="mt-2 grid gap-2 sm:grid-cols-2">
+          <div className="mx-auto w-full max-w-[760px] rounded-[1rem] border border-cyan-100/24 bg-slate-950/44 px-3 py-2.5 shadow-[0_10px_18px_rgba(2,6,23,0.2)]">
+            <p className="text-[10px] font-black uppercase tracking-[0.15em] text-cyan-200">Make this potion</p>
+            <div className="mt-1.5 grid gap-1.5 sm:grid-cols-2">
               {activeTargets.map(({ ingredient, target }) => (
                 <div
                   key={`recipe-${ingredient.id}`}
-                  className="flex items-center justify-between rounded-xl border border-cyan-100/24 bg-slate-900/42 px-3 py-2"
+                  className="flex items-center justify-between rounded-xl border border-cyan-100/18 bg-slate-900/34 px-3 py-1.5"
                 >
                   <div className="flex items-center gap-2">
                     <span
@@ -398,9 +431,9 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 </div>
               ))}
             </div>
-            <div className="mt-2 rounded-xl border border-cyan-100/24 bg-slate-900/42 px-3 py-2 text-center">
+            <div className="mt-1.5 rounded-xl border border-cyan-100/18 bg-slate-900/34 px-3 py-1.5 text-center">
               <p className="text-[10px] font-black uppercase tracking-[0.12em] text-cyan-200">Ratio</p>
-              <p className="mt-1 text-lg font-black text-cyan-50">{challenge.baseRatio.join(':')}</p>
+              <p className="mt-0.5 text-base font-black text-cyan-50">{challenge.baseRatio.join(':')}</p>
             </div>
           </div>
         </section>
@@ -413,7 +446,12 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
             className="relative h-[clamp(172px,24vh,218px)] w-[clamp(224px,62vw,318px)]"
           >
             <div className="absolute left-1/2 top-0 h-[18%] w-[78%] -translate-x-1/2 rounded-full border-4 border-slate-700/95 bg-slate-800/95 shadow-[0_10px_16px_rgba(2,6,23,0.45)]" />
-            <div className="absolute inset-x-[9%] top-[14%] bottom-[14%] overflow-hidden rounded-[42%] border-[5px] border-slate-700/95 bg-slate-900/70 shadow-[inset_0_10px_24px_rgba(2,6,23,0.55)]">
+            <div
+              ref={cauldronRef}
+              className={`absolute inset-x-[9%] top-[14%] bottom-[14%] overflow-hidden rounded-[42%] border-[5px] border-slate-700/95 bg-slate-900/70 shadow-[inset_0_10px_24px_rgba(2,6,23,0.55)] ${
+                cauldronArmed ? 'ring-4 ring-cyan-300/60' : ''
+              }`}
+            >
               <motion.div
                 className="absolute inset-x-[4%] bottom-[4%] rounded-[40%]"
                 style={{
@@ -452,28 +490,15 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
 
         <section className="mt-1.5 shrink-0">
           <div className="mx-auto w-full max-w-[760px]">
-            <div className="grid gap-2 sm:grid-cols-2">
-              <div className="rounded-xl border border-cyan-100/25 bg-slate-950/42 px-3 py-2">
-                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-200">Your potion</p>
-                <div className="mt-2 space-y-1.5">
-                  {activeTargets.map(({ ingredient, current }) => (
-                    <div key={`current-${ingredient.id}`} className="flex items-center justify-between text-sm font-black">
-                      <span className="text-cyan-50">{ingredient.name}</span>
-                      <span className="text-white">{current}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="rounded-xl border border-cyan-100/25 bg-slate-950/42 px-3 py-2">
-                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-200">Still needed</p>
-                <div className="mt-2 space-y-1.5">
-                  {activeTargets.map(({ ingredient, remaining }) => (
-                    <div key={`remaining-${ingredient.id}`} className="flex items-center justify-between text-sm font-black">
-                      <span className="text-cyan-50">{ingredient.name}</span>
-                      <span className={remaining === 0 ? 'text-emerald-300' : 'text-amber-100'}>{remaining}</span>
-                    </div>
-                  ))}
-                </div>
+            <div className="rounded-xl border border-cyan-100/22 bg-slate-950/38 px-3 py-2">
+              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-200">Your potion</p>
+              <div className="mt-2 space-y-1.5">
+                {activeTargets.map(({ ingredient, current }) => (
+                  <div key={`current-${ingredient.id}`} className="flex items-center justify-between text-sm font-black">
+                    <span className="text-cyan-50">{ingredient.name}</span>
+                    <span className="text-white">{current}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -491,12 +516,21 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 <motion.button
                   key={ingredient.id}
                   type="button"
-                  whileTap={{ scale: 0.94 }}
-                  animate={pressedIndex === index ? { y: [-1, -6, 0], scale: [1, 1.06, 1] } : { y: 0, scale: 1 }}
-                  transition={{ duration: 0.2 }}
-                  onClick={() => handleTapIngredient(index)}
+                  whileTap={{ scale: 0.98 }}
+                  animate={{ y: 0, scale: 1 }}
+                  transition={{ duration: 0.15 }}
+                  onPointerDown={(event) => {
+                    if (locked) return;
+                    event.currentTarget.setPointerCapture(event.pointerId);
+                    setDragState({
+                      index,
+                      pointerId: event.pointerId,
+                      x: event.clientX,
+                      y: event.clientY,
+                    });
+                  }}
                   disabled={locked}
-                  aria-label={`Add ${ingredient.name}`}
+                  aria-label={`Drag ${ingredient.name} into the potion`}
                   className="relative h-[clamp(76px,10.6vh,96px)] rounded-[1.1rem] border border-cyan-100/50 bg-slate-900/74 p-1.5 text-left shadow-[0_12px_18px_rgba(2,6,23,0.38)] transition disabled:opacity-60"
                   style={{ boxShadow: `0 10px 18px rgba(2,6,23,0.36), 0 0 26px ${ingredient.glow}` }}
                 >
@@ -529,9 +563,12 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 ? 'text-emerald-200'
                 : overfilledTargets.length > 0
                   ? 'text-amber-100'
-                  : 'text-cyan-100'
+                : 'text-cyan-100'
             }`}>
               {helperText}
+            </p>
+            <p className="mt-1 text-[10px] font-black text-cyan-50/75">
+              Drag the ingredient tiles into the potion.
             </p>
           </div>
           <div className="mx-auto flex w-full max-w-[760px] items-center gap-2">
@@ -573,14 +610,10 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
             className="pointer-events-none absolute left-1/2 top-[36%] z-40 -translate-x-1/2"
           >
             <div
-              className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-[11px] font-black uppercase tracking-[0.13em] ${
-                feedback === 'success'
-                  ? 'border-emerald-200/80 bg-emerald-400/95 text-slate-950 shadow-[0_0_28px_rgba(52,211,153,0.75)]'
-                  : 'border-rose-200/80 bg-rose-500/95 text-white shadow-[0_0_28px_rgba(244,63,94,0.75)]'
-              }`}
+              className="inline-flex items-center gap-2 rounded-full border border-emerald-200/80 bg-emerald-400/95 px-4 py-2 text-[11px] font-black uppercase tracking-[0.13em] text-slate-950 shadow-[0_0_28px_rgba(52,211,153,0.75)]"
             >
-              {feedback === 'success' ? <CheckCircle2 className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
-              {feedback === 'success' ? 'Perfect Brew' : 'Unstable Mix'}
+              <CheckCircle2 className="h-4 w-4" />
+              Perfect Brew
             </div>
           </motion.div>
         ) : null}
@@ -605,6 +638,33 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
           />
         );
       })}
+
+      {dragState ? (
+        <div
+          className="pointer-events-none absolute inset-0 z-40"
+          aria-hidden="true"
+        >
+          <div
+            className="absolute -translate-x-1/2 -translate-y-1/2"
+            style={{ left: dragState.x, top: dragState.y }}
+          >
+            <div
+              className="flex h-20 w-20 items-center justify-center rounded-[1.15rem] border border-cyan-100/65 bg-slate-900/88 shadow-[0_14px_24px_rgba(2,6,23,0.42)]"
+              style={{
+                boxShadow: `0 12px 24px rgba(2,6,23,0.42), 0 0 24px ${INGREDIENTS[dragState.index].glow}`,
+              }}
+            >
+              <div
+                className="h-12 w-12 rounded-[0.9rem]"
+                style={{
+                  background: `linear-gradient(180deg, rgba(255,255,255,0.38) 0%, ${INGREDIENTS[dragState.index].color} 24%, rgba(15,23,42,0.28) 100%)`,
+                  boxShadow: `0 0 18px ${INGREDIENTS[dragState.index].glow}, inset 0 0 16px rgba(255,255,255,0.16)`,
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      ) : null}
 
     </div>
   );
