@@ -432,9 +432,9 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                       />
                     ))}
                   </div>
-                  <div className="absolute left-1/2 top-[2%] h-[78%] w-[104%] -translate-x-1/2 overflow-hidden">
+                  <div className="absolute left-1/2 top-[1%] h-[68%] w-[108%] -translate-x-1/2 overflow-hidden">
                     <div
-                      className="absolute left-1/2 top-0 h-[128%] w-[118%] -translate-x-1/2 bg-no-repeat"
+                      className="absolute left-1/2 top-0 h-[112%] w-[112%] -translate-x-1/2 bg-no-repeat"
                       style={{
                         backgroundImage: `url(${cauldrenAndPotionArt})`,
                         backgroundSize: '100% auto',
