@@ -432,16 +432,12 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                       />
                     ))}
                   </div>
-                  <div className="absolute left-1/2 top-[1%] h-[68%] w-[108%] -translate-x-1/2 overflow-hidden">
-                    <div
-                      className="absolute left-1/2 top-0 h-[112%] w-[112%] -translate-x-1/2 bg-no-repeat"
-                      style={{
-                        backgroundImage: `url(${cauldrenAndPotionArt})`,
-                        backgroundSize: '100% auto',
-                        backgroundPosition: '50% 0%',
-                      }}
-                    />
-                  </div>
+                  <img
+                    src={cauldrenAndPotionArt}
+                    alt=""
+                    aria-hidden="true"
+                    className="pointer-events-none absolute left-1/2 top-[4%] h-[74%] max-w-none -translate-x-1/2 object-contain"
+                  />
                   <div className="absolute left-[41.5%] top-[20%] h-[26%] w-[50%] -translate-x-1/2 overflow-hidden rounded-[46%]">
                     <motion.div
                       className="absolute inset-x-[8%] bottom-[8%] rounded-[42%]"
