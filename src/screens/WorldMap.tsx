@@ -83,7 +83,7 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
     islandId: 1,
     x: 70,
     y: 93,
-    size: 32,
+    size: 25,
     ambients: [
       { id: 'base-camp-sparkles', x: 77.5, y: 91.2, width: 22, height: 13, effect: 'sparkles' },
     ],
@@ -92,7 +92,7 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
     islandId: 2,
     x: 56,
     y: 55.5,
-    size: 35,
+    size: 27,
     ambients: [
       { id: 'fraction-forest-butterflies', x: 71.5, y: 57.2, width: 24, height: 15, effect: 'butterflies' },
     ],
@@ -101,7 +101,7 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
     islandId: 3,
     x: 42,
     y: 43.8,
-    size: 34,
+    size: 24,
     ambients: [
       { id: 'geometry-glacier-snow', x: 25.2, y: 47.6, width: 24, height: 15, effect: 'falling-snow' },
     ],
@@ -110,7 +110,7 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
     islandId: 4,
     x: 43,
     y: 69.3,
-    size: 34,
+    size: 24,
     ambients: [
       { id: 'data-desert-dust', x: 25.8, y: 72.2, width: 24, height: 15, effect: 'dust-devils' },
     ],
@@ -119,7 +119,7 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
     islandId: 5,
     x: 50.5,
     y: 29.2,
-    size: 34,
+    size: 24,
     ambients: [
       { id: 'operations-outpost-stars', x: 70.8, y: 33.1, width: 23, height: 15, effect: 'stars' },
     ],
@@ -128,7 +128,7 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
     islandId: 6,
     x: 49,
     y: 15.6,
-    size: 36,
+    size: 26,
     ambients: [
       { id: 'mount-algebra-lava', x: 29.5, y: 14.5, width: 26, height: 16, effect: 'lava-spurts' },
     ],
@@ -137,7 +137,7 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
     islandId: 7,
     x: 57,
     y: 80.8,
-    size: 34,
+    size: 23,
     ambients: [],
   },
 ];
@@ -482,7 +482,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                   left: `${hotspot.x}%`,
                   top: `${hotspot.y}%`,
                   width: `${hotspot.size}%`,
-                  height: `${hotspot.size}%`,
+                  aspectRatio: '1 / 1',
                   transform: 'translate(-50%, -50%)',
                   opacity: debugHotspots ? (isUnlocked ? 1 : 0.72) : 1,
                 }}
