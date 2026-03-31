@@ -44,7 +44,8 @@ type IslandHotspot = {
   islandId: number;
   x: number;
   y: number;
-  size: number;
+  width: number;
+  height: number;
   ambients: AmbientRegion[];
 };
 
@@ -80,64 +81,71 @@ const DECORATIVE_MAP_AMBIENTS: AmbientRegion[] = [
 
 const ISLAND_HOTSPOTS: IslandHotspot[] = [
   {
-    islandId: 1,
-    x: 70,
-    y: 93,
-    size: 25,
+    islandId: 6,
+    x: 47.4,
+    y: 17,
+    width: 65.8,
+    height: 7.7,
     ambients: [
       { id: 'base-camp-sparkles', x: 77.5, y: 91.2, width: 22, height: 13, effect: 'sparkles' },
     ],
   },
   {
-    islandId: 2,
-    x: 56,
-    y: 55.5,
-    size: 27,
+    islandId: 3,
+    x: 37.6,
+    y: 39.9,
+    width: 67.2,
+    height: 7.3,
     ambients: [
       { id: 'fraction-forest-butterflies', x: 71.5, y: 57.2, width: 24, height: 15, effect: 'butterflies' },
     ],
   },
   {
-    islandId: 3,
-    x: 42,
-    y: 43.8,
-    size: 24,
+    islandId: 4,
+    x: 57.9,
+    y: 51,
+    width: 66,
+    height: 6.8,
     ambients: [
       { id: 'geometry-glacier-snow', x: 25.2, y: 47.6, width: 24, height: 15, effect: 'falling-snow' },
     ],
   },
   {
-    islandId: 4,
-    x: 43,
-    y: 69.3,
-    size: 24,
+    islandId: 2,
+    x: 43.4,
+    y: 64.1,
+    width: 62.8,
+    height: 8.5,
     ambients: [
       { id: 'data-desert-dust', x: 25.8, y: 72.2, width: 24, height: 15, effect: 'dust-devils' },
     ],
   },
   {
     islandId: 5,
-    x: 50.5,
-    y: 29.2,
-    size: 24,
+    x: 55.2,
+    y: 29.6,
+    width: 67.3,
+    height: 7.4,
     ambients: [
       { id: 'operations-outpost-stars', x: 70.8, y: 33.1, width: 23, height: 15, effect: 'stars' },
     ],
   },
   {
-    islandId: 6,
-    x: 49,
-    y: 15.6,
-    size: 26,
+    islandId: 1,
+    x: 59.8,
+    y: 90,
+    width: 65.8,
+    height: 7.2,
     ambients: [
       { id: 'mount-algebra-lava', x: 29.5, y: 14.5, width: 26, height: 16, effect: 'lava-spurts' },
     ],
   },
   {
     islandId: 7,
-    x: 57,
-    y: 80.8,
-    size: 23,
+    x: 57.4,
+    y: 74.1,
+    width: 68.9,
+    height: 6.9,
     ambients: [],
   },
 ];
@@ -475,14 +483,14 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                 aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
                 className={`absolute rounded-full transition-all focus:outline-none focus-visible:border-2 focus-visible:border-cyan-100/90 focus-visible:bg-cyan-300/20 ${
                   debugHotspots
-                    ? 'border border-cyan-100/70 bg-cyan-400/28 shadow-[0_0_0_1px_rgba(255,255,255,0.25),0_0_24px_rgba(34,211,238,0.25)]'
+                    ? 'rounded-[1rem] border border-amber-100/80 bg-amber-300/35 shadow-[0_0_0_1px_rgba(255,255,255,0.25),0_0_24px_rgba(251,191,36,0.25)]'
                     : 'border border-transparent bg-transparent'
                 }`}
                 style={{
                   left: `${hotspot.x}%`,
                   top: `${hotspot.y}%`,
-                  width: `${hotspot.size}%`,
-                  aspectRatio: '1 / 1',
+                  width: `${hotspot.width}%`,
+                  height: `${hotspot.height}%`,
                   transform: 'translate(-50%, -50%)',
                   opacity: debugHotspots ? (isUnlocked ? 1 : 0.72) : 1,
                 }}
