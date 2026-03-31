@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { triggerHaptic } from '../haptics';
 import gameplayBackground from '../assets/maps/inside dojo.jpg';
@@ -709,7 +709,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
 
     const correctLabel = question.correctChoiceIds
       .map((choiceId) => question.choices.find((choice) => choice.id === choiceId)?.label || choiceId)
-      .join(' � ');
+      .join(' • ');
 
     triggerHaptic('error');
     setPulseTone('error');
@@ -763,7 +763,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
     : 'pt-[max(0.5rem,env(safe-area-inset-top))]';
 
   return (
-    <div className="fixed inset-0 z-20 h-screen w-screen overflow-hidden bg-[#08162c] select-none">
+    <div className="relative z-20 h-full w-full overflow-hidden bg-[#08162c] select-none">
       <img
         src={gameplayBackground}
         alt=""
@@ -937,6 +937,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
 };
 
 export default PolygonPalaceGame;
+
 
 
 

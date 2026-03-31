@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+﻿import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { GAME_META } from './gameMeta';
 import {
@@ -231,11 +231,11 @@ const App: React.FC = () => {
       || (selectedLevel
         ? {
             title: selectedLevel.displayName || 'How To Play',
-            summary: 'Solve each challenge as accurately and quickly as you can.',
+            summary: 'Follow the on-screen objective and complete the activity step by step.',
             bullets: [
-              'Read the mission text first, then choose or place your answer.',
-              'Use the bottom bar for back, sound, and hint support.',
-              'Keep an eye on the timer and complete the objective before it ends.',
+              'Read the mission text first, then choose, place, or build your answer.',
+              'Use the hint button any time you want a reminder of the rules.',
+              'If the screen gives you a visual tool or scene object, use that to solve the task.',
             ],
           }
         : null)
@@ -688,3 +688,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+

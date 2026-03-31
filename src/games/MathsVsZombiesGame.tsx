@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Zap,
   CircleDollarSign,
@@ -434,7 +434,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   }, [timeLeft]);
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center overflow-hidden bg-[#050a1a] font-sans text-white select-none">
+    <div className="relative flex h-full w-full flex-col items-center overflow-hidden bg-[#050a1a] font-sans text-white select-none">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,#1e3a8a_0%,#050a1a_100%)]" />
 
       <div className={`relative z-10 flex h-full w-full max-w-[1000px] flex-col ${useSharedTopHud ? 'pt-[max(3.7rem,calc(env(safe-area-inset-top)+3.1rem))]' : ''}`}>
@@ -555,3 +555,5 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 };
 
 export default MathsVsZombiesGame;
+
+

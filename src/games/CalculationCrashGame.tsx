@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ChevronRight, RotateCcw, Trophy } from 'lucide-react';
 import calculationClashBackground from '../assets/maps/facctor frenzy.jpg';
@@ -187,7 +187,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
       setSolved(nextSolved);
       setStreak(nextStreak);
       setScore((prev) => prev + earned);
-      queueFeedback('success', nextStreak > 1 ? `+${earned} · Combo x${nextStreak}` : `+${earned}`);
+      queueFeedback('success', nextStreak > 1 ? `+${earned} Â· Combo x${nextStreak}` : `+${earned}`);
     } else {
       setStreak(0);
       setScreenShake(true);
@@ -214,7 +214,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-20 h-screen w-screen overflow-hidden bg-cover bg-center bg-no-repeat text-white"
+      className="relative h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat text-white"
       style={{ backgroundImage: `url(${calculationClashBackground})` }}
     >
 
@@ -339,4 +339,5 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
 };
 
 export default CalculationCupGame;
+
 

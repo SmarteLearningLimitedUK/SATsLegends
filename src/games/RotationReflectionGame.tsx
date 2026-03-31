@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { triggerHaptic } from '../haptics';
 import gameplayBackground from '../assets/maps/inside dojo.jpg';
@@ -457,7 +457,7 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
       : '';
 
   return (
-    <div className="fixed inset-0 z-20 h-screen w-screen overflow-hidden bg-[#08162c] select-none">
+    <div className="relative z-20 h-full w-full overflow-hidden bg-[#08162c] select-none">
       <img
         src={gameplayBackground}
         alt=""
@@ -651,5 +651,6 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
 };
 
 export default RotationReflectionGame;
+
 
 

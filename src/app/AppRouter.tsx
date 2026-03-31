@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+﻿import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import AvatarSelect from '../screens/AvatarSelect';
 import WorldMap from '../screens/WorldMap';
@@ -108,11 +108,21 @@ export const AppRouter: React.FC<AppRouterProps> = ({
 
   const shouldUseShellBackground = useMemo(() => {
     if (screen !== 'gameplay' || !selectedLevel) return true;
+    const sceneOwnedBackgrounds = new Set([
+      'rounding_rampage',
+      'prime_pop',
+      'number_line_ninja',
+      'cloud_collapse',
+      'factor_frenzy',
+      'calculation_clash',
+      'polygon_palace',
+      'rotation_relay',
+      'remainder_run',
+      'maths_vs_zombies',
+    ]);
     return !(
-      selectedLevel.blueprintKey === 'rounding_rampage'
-      || selectedLevel.gameType === 'prime_pop'
-      || selectedLevel.blueprintKey === 'prime_pop'
-      || selectedLevel.blueprintKey === 'number_line_ninja'
+      selectedLevel.gameType === 'prime_pop'
+      || (selectedLevel.blueprintKey && sceneOwnedBackgrounds.has(selectedLevel.blueprintKey))
     );
   }, [screen, selectedLevel]);
 
@@ -605,3 +615,4 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       );
   }
 };
+

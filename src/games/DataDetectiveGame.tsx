@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+﻿import React, { useCallback, useEffect, useState } from 'react';
 import {
   Search,
   FileText,
@@ -180,9 +180,9 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 flex flex-col overflow-hidden bg-[#0c0a09] font-mono text-stone-200">
+    <div className="relative flex h-full w-full min-h-0 flex-col overflow-hidden text-slate-100"><div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(6,18,46,0.34),rgba(4,16,38,0.48)_55%,rgba(2,8,24,0.62)_100%)]" />
       {!useSharedTopHud && (
-        <header className="z-20 flex h-16 items-center justify-between border-b border-stone-800 bg-stone-900/80 px-6 backdrop-blur-md">
+        <header className="z-20 flex h-16 items-center justify-between border-b border-cyan-200/16 bg-[linear-gradient(180deg,rgba(8,26,66,0.78),rgba(5,16,42,0.84))] px-6 backdrop-blur-md">
           <div className="flex items-center gap-3">
             <button
               type="button"
@@ -215,8 +215,8 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
         </header>
       )}
 
-      <main className={`flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.25rem)]' : ''}`}>
-        <section className="z-10 flex min-h-0 w-full flex-[0.46] flex-col gap-3 border-b border-stone-800 bg-stone-900/30 p-3 sm:p-4 md:w-1/2 md:flex-1 md:gap-6 md:border-b-0 md:border-r md:p-8">
+      <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.25rem)]' : ''}`}>
+        <section className="z-10 flex min-h-0 w-full flex-[0.46] flex-col gap-3 border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(8,26,66,0.18),rgba(4,14,38,0.26))] p-3 sm:p-4 md:w-1/2 md:flex-1 md:gap-6 md:border-b-0 md:border-r md:p-8">
           <div className="mb-2 flex items-center justify-between">
             <div className="flex items-center gap-2 text-amber-500">
               <FileText className="h-5 w-5" />
@@ -230,7 +230,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             </div>
           </div>
 
-          <div className="relative min-h-0 flex-1 overflow-hidden rounded-2xl border border-stone-800 bg-stone-950/50 p-3 shadow-inner sm:p-4 md:p-6">
+          <div className="relative min-h-0 flex-1 overflow-hidden rounded-2xl border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(9,24,58,0.82),rgba(5,14,36,0.9))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-4 md:p-6">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(#444_1px,transparent_1px)] opacity-5 [background-size:20px_20px]" />
 
             <ResponsiveContainer width="100%" height="100%">
@@ -289,7 +289,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             </ResponsiveContainer>
           </div>
 
-          <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
+          <div className="rounded-xl border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(13,39,92,0.68),rgba(7,20,52,0.82))] p-4">
             <div className="flex items-start gap-3">
               <Info className="mt-0.5 h-4 w-4 text-amber-500" />
               <p className="text-[10px] italic leading-relaxed text-stone-400">
@@ -300,7 +300,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           </div>
         </section>
 
-        <section className="z-10 flex min-h-0 w-full flex-[0.54] flex-col gap-3 bg-stone-950/20 p-3 sm:p-4 md:w-1/2 md:flex-1 md:gap-6 md:p-8">
+        <section className="z-10 flex min-h-0 w-full flex-[0.54] flex-col gap-3 bg-[linear-gradient(180deg,rgba(8,16,38,0.14),rgba(5,10,26,0.24))] p-3 sm:p-4 md:w-1/2 md:flex-1 md:gap-6 md:p-8">
           <div className="mb-2 flex items-center gap-2 text-amber-500">
             <Users className="h-5 w-5" />
             <h2 className="text-xs font-black uppercase tracking-widest">Suspect Lineup</h2>
@@ -418,24 +418,11 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
-
-      <footer className="z-20 flex h-8 items-center justify-between border-t border-stone-800 bg-stone-950 px-6">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1">
-            <div className="h-2 w-2 animate-pulse rounded-full bg-amber-500" />
-            <span className="text-[8px] font-bold uppercase text-stone-500">Encrypted Connection</span>
-          </div>
-          <div className="h-3 w-[1px] bg-stone-800" />
-          <span className="text-[8px] font-bold uppercase tracking-widest text-stone-500">Evidence Analysis: Active</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-[8px] font-bold uppercase text-stone-500">DDA-SECURE-NODE-04</span>
-          <div className="h-3 w-[1px] bg-stone-800" />
-          <span className="text-[8px] font-bold uppercase text-stone-500">Build 03.19.26</span>
-        </div>
-      </footer>
     </div>
   );
 };
 
 export default DataDetectiveGame;
+
+
+
