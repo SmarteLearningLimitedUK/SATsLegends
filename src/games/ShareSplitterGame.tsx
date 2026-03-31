@@ -35,22 +35,9 @@ type DragSlice = {
   y: number;
 };
 
-type PlateSeat = {
-  left: string;
-  top: string;
-};
-
 const PLATE_COUNT = 6;
 const ROUNDS_TO_WIN = 5;
 const BASE_XP_PER_ROUND = 120;
-const PLATE_SEATS: PlateSeat[] = [
-  { left: '50%', top: '16%' },
-  { left: '78%', top: '31%' },
-  { left: '78%', top: '69%' },
-  { left: '50%', top: '84%' },
-  { left: '22%', top: '69%' },
-  { left: '22%', top: '31%' },
-];
 
 const RATIO_PATTERNS: number[][] = [
   [1, 1, 2, 2, 3, 3],
@@ -126,6 +113,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const [plates, setPlates] = useState<string[][]>(() => createEmptyPlates());
   const [remainingSlices, setRemainingSlices] = useState(challenge.totalSlices);
   const [dragSlice, setDragSlice] = useState<DragSlice | null>(null);
+  const [hoverPlateIndex, setHoverPlateIndex] = useState<number | null>(null);
   const [feedback, setFeedback] = useState('Drag one cake slice onto a plate.');
   const [feedbackTone, setFeedbackTone] = useState<FeedbackTone>('neutral');
   const [validationActive, setValidationActive] = useState(false);
@@ -152,6 +140,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setPlates(createEmptyPlates());
     setRemainingSlices(firstChallenge.totalSlices);
     setDragSlice(null);
+    setHoverPlateIndex(null);
     setFeedback('Drag one cake slice onto a plate.');
     setFeedbackTone('neutral');
     setValidationActive(false);
@@ -181,6 +170,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setPlates(createEmptyPlates());
     setRemainingSlices(next.totalSlices);
     setDragSlice(null);
+    setHoverPlateIndex(null);
     setValidationActive(false);
     setMoveHistory([]);
     setLocked(false);
@@ -197,6 +187,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     )));
     setMoveHistory((previous) => [...previous, { plateIndex, sliceId }]);
     setDragSlice(null);
+    setHoverPlateIndex(null);
     setFeedback('Nice sharing. Keep matching the ratio card.');
     setFeedbackTone('neutral');
     setValidationActive(false);
@@ -216,17 +207,35 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       });
     };
 
-    const finishDrag = (clientX: number, clientY: number) => {
-      const targetPlateIndex = plateRefs.current.findIndex((plate) => {
-        if (!plate) return false;
+    const getNearestPlate = (clientX: number, clientY: number) => {
+      let nearestIndex = -1;
+      let nearestDistance = Number.POSITIVE_INFINITY;
+      plateRefs.current.forEach((plate, index) => {
+        if (!plate) return;
         const rect = plate.getBoundingClientRect();
-        return clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom;
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const dx = clientX - centerX;
+        const dy = clientY - centerY;
+        const distance = Math.hypot(dx, dy);
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearestIndex = index;
+        }
       });
+      return { index: nearestIndex, distance: nearestDistance };
+    };
+
+    const finishDrag = (clientX: number, clientY: number) => {
+      const { index, distance } = getNearestPlate(clientX, clientY);
+      const snapRadius = 84;
+      const targetPlateIndex = distance <= snapRadius ? index : -1;
 
       if (targetPlateIndex >= 0) {
         placeOnPlate(targetPlateIndex, sliceId);
       } else {
         setDragSlice(null);
+        setHoverPlateIndex(null);
         setFeedback('Drag the cake slice onto one of the plates.');
         setFeedbackTone('neutral');
       }
@@ -238,6 +247,8 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
     const handlePointerMove = (moveEvent: PointerEvent) => {
       updatePosition(moveEvent.clientX, moveEvent.clientY);
+      const { index, distance } = getNearestPlate(moveEvent.clientX, moveEvent.clientY);
+      setHoverPlateIndex(distance <= 120 ? index : null);
     };
 
     const handlePointerUp = (upEvent: PointerEvent) => {
@@ -246,6 +257,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
     const handlePointerCancel = () => {
       setDragSlice(null);
+      setHoverPlateIndex(null);
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerup', handlePointerUp);
       window.removeEventListener('pointercancel', handlePointerCancel);
@@ -256,6 +268,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setFeedback('Drop the cake slice onto the correct plate.');
     setFeedbackTone('neutral');
     setValidationActive(false);
+    setHoverPlateIndex(null);
 
     window.addEventListener('pointermove', handlePointerMove);
     window.addEventListener('pointerup', handlePointerUp);
@@ -271,6 +284,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     )));
     setRemainingSlices((previous) => previous + 1);
     setDragSlice(null);
+    setHoverPlateIndex(null);
     setFeedback('One cake slice was moved back to the tray.');
     setFeedbackTone('neutral');
     setValidationActive(false);
@@ -282,6 +296,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setRemainingSlices(challenge.totalSlices);
     setMoveHistory([]);
     setDragSlice(null);
+    setHoverPlateIndex(null);
     setFeedback('The plates are clear. Try the ratio again.');
     setFeedbackTone('neutral');
     setValidationActive(false);
@@ -362,69 +377,48 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
           </div>
         </section>
 
-        <section className="relative min-h-0 flex-1 overflow-hidden rounded-[1.4rem] border border-white/14 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.12),rgba(15,23,42,0.52)_64%)] p-2 shadow-[0_16px_30px_rgba(15,23,42,0.28)] md:p-3">
-          <div className="pointer-events-none absolute left-1/2 top-1/2 h-[56%] w-[68%] -translate-x-1/2 -translate-y-1/2 rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.22),rgba(30,41,59,0.18))] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05)]" />
-          <div className="pointer-events-none absolute left-1/2 top-1/2 h-[44%] w-[56%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(250,204,21,0.12),rgba(15,23,42,0.04)_72%)]" />
+        <section className="shrink-0 rounded-[1.2rem] border border-white/14 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.12),rgba(15,23,42,0.52)_64%)] px-2 py-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)] md:px-3">
+          <div className="grid grid-cols-6 gap-2">
+            {plateViews.map((plate, index) => {
+              const plateTone = validationActive
+                ? plate.isCorrect
+                  ? 'border-emerald-300/70 bg-[linear-gradient(180deg,rgba(16,185,129,0.24),rgba(15,23,42,0.4))]'
+                  : 'border-amber-200/60 bg-[linear-gradient(180deg,rgba(251,191,36,0.2),rgba(15,23,42,0.42))]'
+                : hoverPlateIndex === index
+                  ? 'border-cyan-200/70 bg-[linear-gradient(180deg,rgba(56,189,248,0.22),rgba(15,23,42,0.42))]'
+                  : dragSlice
+                    ? 'border-cyan-200/40 bg-[linear-gradient(180deg,rgba(56,189,248,0.12),rgba(15,23,42,0.42))]'
+                    : 'border-white/18 bg-[linear-gradient(180deg,rgba(30,41,59,0.7),rgba(15,23,42,0.7))]';
 
-          {PLATE_SEATS.map((seat, index) => {
-            const plate = plateViews[index];
-            const plateTone = validationActive
-              ? plate.isCorrect
-                ? 'border-emerald-300/70 bg-[linear-gradient(180deg,rgba(16,185,129,0.24),rgba(15,23,42,0.4))]'
-                : 'border-amber-200/60 bg-[linear-gradient(180deg,rgba(251,191,36,0.2),rgba(15,23,42,0.42))]'
-              : dragSlice
-                ? 'border-cyan-200/55 bg-[linear-gradient(180deg,rgba(56,189,248,0.16),rgba(15,23,42,0.42))]'
-                : 'border-white/18 bg-[linear-gradient(180deg,rgba(30,41,59,0.7),rgba(15,23,42,0.7))]';
-
-            return (
-              <button
-                key={plate.id}
-                type="button"
-                ref={(node) => {
-                  plateRefs.current[index] = node;
-                }}
-                disabled={locked}
-                className={`absolute flex h-[86px] w-[86px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border p-2 text-center shadow-[0_12px_20px_rgba(2,6,23,0.24)] transition ${plateTone} ${dragSlice && !locked ? 'scale-[1.01]' : ''}`}
-                style={{ left: seat.left, top: seat.top }}
-                aria-label={`Plate ${index + 1}. ${plate.currentCakeCount} of ${plate.targetCakeCount} cakes placed.`}
-              >
-                <div className="absolute right-1 top-1 rounded-full bg-black/36 px-1.5 py-0.5 text-[10px] font-black text-white">
-                  {plate.currentCakeCount}/{plate.targetCakeCount}
-                </div>
-                <div className="grid h-full w-full grid-cols-3 place-items-center gap-0.5">
-                  {plates[index].slice(0, 6).map((sliceId) => (
-                    <img
-                      key={sliceId}
-                      src={TAKE_OUT_ASSETS.portionQuarter}
-                      alt=""
-                      className="h-4 w-4 object-contain"
-                      draggable={false}
-                    />
-                  ))}
-                </div>
-              </button>
-            );
-          })}
-
-          <AnimatePresence>
-            {dragSlice ? (
-              <motion.div
-                key={dragSlice.id}
-                initial={{ scale: 0.92, opacity: 0.9 }}
-                animate={{ scale: 1, opacity: 1, x: dragSlice.x - 24, y: dragSlice.y - 24 }}
-                exit={{ opacity: 0, scale: 0.86 }}
-                transition={{ duration: 0.08, ease: 'linear' }}
-                className="pointer-events-none fixed z-[60] h-12 w-12 rounded-full border border-amber-200/70 bg-[linear-gradient(180deg,rgba(250,204,21,0.3),rgba(180,83,9,0.2))] p-1 shadow-[0_14px_24px_rgba(217,119,6,0.35)]"
-              >
-                <img
-                  src={TAKE_OUT_ASSETS.portionQuarter}
-                  alt=""
-                  className="h-full w-full object-contain"
-                  draggable={false}
-                />
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
+              return (
+                <button
+                  key={plate.id}
+                  type="button"
+                  ref={(node) => {
+                    plateRefs.current[index] = node;
+                  }}
+                  disabled={locked}
+                  className={`relative flex h-[76px] w-full flex-col items-center justify-center rounded-full border p-2 text-center shadow-[0_12px_20px_rgba(2,6,23,0.24)] transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.03]' : dragSlice && !locked ? 'scale-[1.01]' : ''}`}
+                  aria-label={`Plate ${index + 1}. ${plate.currentCakeCount} of ${plate.targetCakeCount} cakes placed.`}
+                >
+                  <div className="absolute right-1 top-1 rounded-full bg-black/36 px-1.5 py-0.5 text-[10px] font-black text-white">
+                    {plate.currentCakeCount}/{plate.targetCakeCount}
+                  </div>
+                  <div className="grid h-full w-full grid-cols-3 place-items-center gap-0.5">
+                    {plates[index].slice(0, 6).map((sliceId) => (
+                      <img
+                        key={sliceId}
+                        src={TAKE_OUT_ASSETS.portionQuarter}
+                        alt=""
+                        className="h-4 w-4 object-contain"
+                        draggable={false}
+                      />
+                    ))}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </section>
 
         <section className="shrink-0 rounded-[1.2rem] border border-white/14 bg-black/22 px-3 py-2 shadow-[0_10px_18px_rgba(15,23,42,0.22)]">
@@ -459,6 +453,26 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
             </motion.button>
           </div>
         </section>
+
+        <AnimatePresence>
+          {dragSlice ? (
+            <motion.div
+              key={dragSlice.id}
+              initial={{ scale: 0.92, opacity: 0.9 }}
+              animate={{ scale: 1, opacity: 1, x: dragSlice.x - 24, y: dragSlice.y - 24 }}
+              exit={{ opacity: 0, scale: 0.86 }}
+              transition={{ duration: 0.08, ease: 'linear' }}
+              className="pointer-events-none fixed z-[60] h-12 w-12 rounded-full border border-amber-200/70 bg-[linear-gradient(180deg,rgba(250,204,21,0.3),rgba(180,83,9,0.2))] p-1 shadow-[0_14px_24px_rgba(217,119,6,0.35)]"
+            >
+              <img
+                src={TAKE_OUT_ASSETS.portionQuarter}
+                alt=""
+                className="h-full w-full object-contain"
+                draggable={false}
+              />
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
 
         <section className="min-h-[2.8rem] shrink-0">
           <AnimatePresence mode="wait">
