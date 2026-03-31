@@ -163,6 +163,14 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const hasMoves = moveHistory.length > 0;
   const allSlicesUsed = remainingSlices === 0;
   const allCorrect = plateViews.every((plate) => plate.isCorrect);
+  const ratioUnitTotal = useMemo(
+    () => challenge.ratios.reduce((sum, value) => sum + value, 0),
+    [challenge.ratios],
+  );
+  const ratioUnitValue = useMemo(
+    () => (ratioUnitTotal > 0 ? Math.round((challenge.totalSlices / ratioUnitTotal) * 10) / 10 : 0),
+    [challenge.totalSlices, ratioUnitTotal],
+  );
 
   const loadNextChallenge = useCallback((solvedCount: number) => {
     const next = createChallenge(levelId, solvedCount);
@@ -375,6 +383,22 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
               </div>
             ))}
           </div>
+          {ratioUnitTotal > 0 ? (
+            <div className="mt-2 rounded-[0.95rem] border border-white/10 bg-black/20 px-3 py-2">
+              <p className="text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100">Unit Value</p>
+              <div className="mt-1 flex flex-wrap items-center gap-1">
+                {Array.from({ length: Math.min(ratioUnitTotal, 12) }).map((_, index) => (
+                  <span
+                    key={`ratio-unit-${index}`}
+                    className="h-2.5 w-2.5 rounded-full border border-white/35 bg-amber-200/85 shadow-[0_0_8px_rgba(251,191,36,0.35)]"
+                  />
+                ))}
+                <span className="ml-1 text-[11px] font-black text-white">
+                  1 unit = {ratioUnitValue} slice{ratioUnitValue === 1 ? '' : 's'}
+                </span>
+              </div>
+            </div>
+          ) : null}
         </section>
 
         <section className="shrink-0 rounded-[1.2rem] border border-white/14 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.12),rgba(15,23,42,0.52)_64%)] px-2 py-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)] md:px-3">

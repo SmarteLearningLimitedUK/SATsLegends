@@ -393,6 +393,14 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
     })),
     [challenge.activeIndices, counts, targetByIngredient],
   );
+  const ratioUnitTotal = useMemo(
+    () => challenge.baseRatio.reduce((sum, value) => sum + value, 0),
+    [challenge.baseRatio],
+  );
+  const ratioUnitValue = useMemo(
+    () => (ratioUnitTotal > 0 ? Math.round((challenge.totalDrops / ratioUnitTotal) * 10) / 10 : 0),
+    [challenge.totalDrops, ratioUnitTotal],
+  );
   const isRecipeComplete = useMemo(
     () => activeTargets.length > 0 && activeTargets.every(({ current, target }) => current === target),
     [activeTargets],
@@ -525,6 +533,22 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                     {challenge.baseRatio.join(' : ')}
                   </p>
                 </div>
+                {ratioUnitTotal > 0 ? (
+                  <div className="mt-2 rounded-[1rem] border border-white/10 bg-black/18 px-3 py-2">
+                    <p className="text-[10px] font-black text-cyan-100">Unit Value</p>
+                    <div className="mt-1 flex flex-wrap items-center gap-1">
+                      {Array.from({ length: Math.min(ratioUnitTotal, 12) }).map((_, index) => (
+                        <span
+                          key={`unit-${index}`}
+                          className="h-2.5 w-2.5 rounded-full border border-white/30 bg-cyan-200/80 shadow-[0_0_8px_rgba(34,211,238,0.35)]"
+                        />
+                      ))}
+                      <span className="ml-1 text-[11px] font-black text-white">
+                        1 unit = {ratioUnitValue} drop{ratioUnitValue === 1 ? '' : 's'}
+                      </span>
+                    </div>
+                  </div>
+                ) : null}
                 {challenge.cardHint ? (
                   <div className="mt-2 rounded-[1rem] border border-white/10 bg-black/18 px-3 py-2">
                     <p className="text-[10px] font-black text-cyan-100">{cardLabels.clueLabel}</p>

@@ -144,6 +144,12 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
   const timeLeft = sessionState?.timeLeft ?? 1;
   const lives = sessionState?.lives ?? 3;
   const isSessionActive = sessionState ? timeLeft > 0 && lives > 0 : true;
+  const roundingBounds = useMemo(() => {
+    const lower = Math.floor(round.value / round.target) * round.target;
+    const upper = lower + round.target;
+    const midpoint = lower + (round.target / 2);
+    return { lower, upper, midpoint };
+  }, [round.target, round.value]);
 
   const queueTimeout = (fn: () => void, delayMs: number) => {
     const timeoutId = window.setTimeout(fn, delayMs);
@@ -355,6 +361,9 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
             <span className="text-[clamp(1.55rem,6vw,2.25rem)] font-black tabular-nums tracking-[0.08em] text-white [text-shadow:0_4px_14px_rgba(34,211,238,0.3)]">
               {round.value}
             </span>
+          </div>
+          <div className="mt-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/80">
+            Between {roundingBounds.lower} and {roundingBounds.upper} · Midpoint {roundingBounds.midpoint}
           </div>
         </section>
 
