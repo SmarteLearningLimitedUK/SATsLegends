@@ -177,6 +177,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const [confettiBurstKey, setConfettiBurstKey] = useState(0);
 
   const timeoutIdsRef = useRef<number[]>([]);
+  const answerLockRef = useRef(false);
   const playfieldRef = useRef<HTMLDivElement | null>(null);
   const missingSlotRef = useRef<HTMLDivElement | null>(null);
   const optionButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
@@ -213,6 +214,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     setAttempts(0);
     setCorrectCount(0);
     setLocked(false);
+    answerLockRef.current = false;
     setDidComplete(false);
     setDidFail(false);
     setLineShake(false);
@@ -249,6 +251,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     setSelectedAnswer(null);
     setFeedbackState('idle');
     setLocked(false);
+    answerLockRef.current = false;
     setLineShake(false);
     setFlyingAnswer(null);
   };
@@ -270,7 +273,9 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   };
 
   const handleAnswerDrop = (option: string) => {
-    if (!isSessionActive || locked || didComplete || didFail) return;
+    if (!isSessionActive || locked || answerLockRef.current || didComplete || didFail) return;
+
+    answerLockRef.current = true;
 
     const isCorrect = option === question.answer;
     const nextAttempts = attempts + 1;

@@ -10,13 +10,6 @@ interface WorldMapProps {
   onSelectIsland: (island: IslandData) => void;
 }
 
-type BoxHotspot = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
-
 type AmbientRegion = {
   id: string;
   x: number;
@@ -47,9 +40,11 @@ type IslandState = {
   totalLevels: number;
 };
 
-type IslandInteractionRegion = {
-  labelHotspot: BoxHotspot;
+type IslandHotspot = {
   islandId: number;
+  x: number;
+  y: number;
+  size: number;
   ambients: AmbientRegion[];
 };
 
@@ -83,55 +78,69 @@ const DECORATIVE_MAP_AMBIENTS: AmbientRegion[] = [
   },
 ];
 
-const ISLAND_INTERACTIONS: Record<number, IslandInteractionRegion> = {
-  1: {
+const ISLAND_HOTSPOTS: IslandHotspot[] = [
+  {
     islandId: 1,
-    labelHotspot: { x: 66, y: 93.6, width: 28, height: 4.6 },
+    x: 84.5,
+    y: 95,
+    size: 19,
     ambients: [
       { id: 'base-camp-sparkles', x: 77.5, y: 91.2, width: 22, height: 13, effect: 'sparkles' },
     ],
   },
-  2: {
+  {
     islandId: 2,
-    labelHotspot: { x: 57.5, y: 61.8, width: 28, height: 4.6 },
+    x: 70,
+    y: 49.5,
+    size: 24,
     ambients: [
       { id: 'fraction-forest-butterflies', x: 71.5, y: 57.2, width: 24, height: 15, effect: 'butterflies' },
     ],
   },
-  3: {
+  {
     islandId: 3,
-    labelHotspot: { x: 5.2, y: 45.2, width: 28, height: 4.6 },
+    x: 34,
+    y: 36.9,
+    size: 25,
     ambients: [
       { id: 'geometry-glacier-snow', x: 25.2, y: 47.6, width: 24, height: 15, effect: 'falling-snow' },
     ],
   },
-  4: {
+  {
     islandId: 4,
-    labelHotspot: { x: 6, y: 77.8, width: 28, height: 4.8 },
+    x: 33,
+    y: 68.9,
+    size: 23,
     ambients: [
       { id: 'data-desert-dust', x: 25.8, y: 72.2, width: 24, height: 15, effect: 'dust-devils' },
     ],
   },
-  5: {
+  {
     islandId: 5,
-    labelHotspot: { x: 56.8, y: 28.6, width: 30, height: 4.8 },
+    x: 64.5,
+    y: 24,
+    size: 23,
     ambients: [
       { id: 'operations-outpost-stars', x: 70.8, y: 33.1, width: 23, height: 15, effect: 'stars' },
     ],
   },
-  6: {
+  {
     islandId: 6,
-    labelHotspot: { x: 7.4, y: 13.6, width: 30, height: 4.8 },
+    x: 35.8,
+    y: 10.7,
+    size: 24,
     ambients: [
       { id: 'mount-algebra-lava', x: 29.5, y: 14.5, width: 26, height: 16, effect: 'lava-spurts' },
     ],
   },
-  7: {
+  {
     islandId: 7,
-    labelHotspot: { x: 6.2, y: 90.2, width: 28, height: 4.8 },
+    x: 79.2,
+    y: 79.9,
+    size: 22,
     ambients: [],
   },
-};
+];
 
 const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
   switch (effect) {
@@ -396,6 +405,10 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
 
 const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
   const [selectedIslandId, setSelectedIslandId] = useState<number | null>(null);
+  const debugHotspots = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return new URLSearchParams(window.location.search).get('debugHotspots') === '1';
+  }, []);
 
   const islandStates = useMemo<IslandState[]>(() => (
     ISLANDS.map(island => {
@@ -419,16 +432,19 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
 
   return (
     <div className="relative w-full overflow-visible">
-      <div className="relative w-full overflow-visible">
+      <div
+        className="relative mx-auto w-full overflow-hidden"
+        style={{ aspectRatio: `${MAP_WIDTH_PX} / ${MAP_HEIGHT_PX}` }}
+      >
         <img
           src={universalMapPoster}
           alt="Island select map"
-          className="block h-auto w-full"
+          className="absolute inset-0 h-full w-full object-cover"
           draggable={false}
         />
 
         <div className="pointer-events-none absolute inset-0 z-10">
-          {[...Object.values(ISLAND_INTERACTIONS).flatMap(({ ambients }) => ambients), ...DECORATIVE_MAP_AMBIENTS].map(region => (
+          {[...ISLAND_HOTSPOTS.flatMap(({ ambients }) => ambients), ...DECORATIVE_MAP_AMBIENTS].map(region => (
               <div
                 key={region.id}
                 className={`world-map-ambient world-map-ambient-${region.effect}`}
@@ -445,27 +461,38 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
         </div>
 
         <div className="absolute inset-0 z-20">
-          {Object.entries(ISLAND_INTERACTIONS).map(([interactionKey, interaction]) => {
-            const islandState = islandStates.find(({ island }) => island.id === interaction.islandId);
+          {ISLAND_HOTSPOTS.map((hotspot) => {
+            const islandState = islandStates.find(({ island }) => island.id === hotspot.islandId);
             if (!islandState) return null;
             const { island, isUnlocked } = islandState;
 
             return (
               <motion.button
-                key={interactionKey}
+                key={`hotspot-${island.id}`}
                 type="button"
                 whileTap={{ scale: 0.985 }}
                 onClick={() => setSelectedIslandId(island.id)}
                 aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
-                className="absolute bg-transparent"
+                className={`absolute rounded-full transition-all focus:outline-none focus-visible:border-2 focus-visible:border-cyan-100/90 focus-visible:bg-cyan-300/20 ${
+                  debugHotspots
+                    ? 'border border-cyan-100/70 bg-cyan-400/28 shadow-[0_0_0_1px_rgba(255,255,255,0.25),0_0_24px_rgba(34,211,238,0.25)]'
+                    : 'border border-transparent bg-transparent'
+                }`}
                 style={{
-                  left: `${interaction.labelHotspot.x}%`,
-                  top: `${interaction.labelHotspot.y}%`,
-                  width: `${interaction.labelHotspot.width}%`,
-                  height: `${interaction.labelHotspot.height}%`,
-                  opacity: isUnlocked ? 1 : 0.8,
+                  left: `${hotspot.x}%`,
+                  top: `${hotspot.y}%`,
+                  width: `${hotspot.size}%`,
+                  height: `${hotspot.size}%`,
+                  transform: 'translate(-50%, -50%)',
+                  opacity: debugHotspots ? (isUnlocked ? 1 : 0.72) : 1,
                 }}
-              />
+              >
+                {debugHotspots ? (
+                  <span className="pointer-events-none absolute inset-x-1 top-1/2 -translate-y-1/2 text-center text-[10px] font-black uppercase tracking-[0.08em] text-white drop-shadow-[0_2px_6px_rgba(2,6,23,0.95)]">
+                    {island.name}
+                  </span>
+                ) : null}
+              </motion.button>
             );
           })}
         </div>
