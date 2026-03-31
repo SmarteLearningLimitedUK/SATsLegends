@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   CheckCircle2,
-  RotateCcw,
   Wand2,
 } from 'lucide-react';
 import {
@@ -268,20 +267,13 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
     () => activeTargets.filter(({ current, target }) => current > target),
     [activeTargets],
   );
-  const remainingTargets = useMemo(
-    () => activeTargets.filter(({ remaining }) => remaining > 0),
-    [activeTargets],
-  );
-  const helperText = useMemo(() => {
-    if (isRecipeComplete) return 'Perfect! You are ready to brew.';
+  const statusText = useMemo(() => {
+    if (isRecipeComplete) return 'Perfect! Your potion is ready to brew.';
     if (overfilledTargets.length > 0) {
       return `Too much ${joinWithAnd(overfilledTargets.map(({ ingredient }) => ingredient.name))}. Reset and try again.`;
     }
-    if (remainingTargets.length > 0) {
-      return `Brew ${challenge.orderTitle}: add ${joinWithAnd(remainingTargets.map(({ ingredient, remaining }) => `${remaining} ${ingredient.name}`))}.`;
-    }
-    return 'Build the recipe to brew.';
-  }, [challenge.orderTitle, isRecipeComplete, overfilledTargets, remainingTargets]);
+    return '';
+  }, [isRecipeComplete, overfilledTargets]);
 
   const mixColor = useMemo(() => {
     const total = counts.reduce((a, b) => a + b, 0);
@@ -426,50 +418,81 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
   return (
     <div className="relative h-full w-full overflow-hidden text-white">
       <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.4rem)] pt-2">
-        <section className="mt-1.5 shrink-0">
-          <div className="mx-auto w-full max-w-[760px] rounded-[1rem] border border-cyan-100/20 bg-[linear-gradient(180deg,rgba(8,18,44,0.62),rgba(8,18,44,0.42))] px-3 py-2.5 shadow-[0_10px_20px_rgba(2,6,23,0.18)]">
-            <p className="text-[10px] font-black uppercase tracking-[0.15em] text-cyan-200">Apothecary Order</p>
-            <p className="mt-1 text-sm font-black text-amber-100">{challenge.orderTitle}</p>
-            <p className="mt-1 text-[11px] font-bold text-cyan-50/90">{challenge.orderPrompt}</p>
-            <p className="mt-1 text-[10px] font-black text-amber-100/90">{challenge.orderFlavor}</p>
+        <section className="mt-1 shrink-0">
+          <div className="mx-auto w-full max-w-[760px] rounded-[1rem] border border-cyan-100/12 bg-[linear-gradient(180deg,rgba(8,18,44,0.42),rgba(8,18,44,0.22))] px-3 py-2 shadow-[0_10px_20px_rgba(2,6,23,0.12)]">
+            <p className="text-sm font-black text-amber-100">{challenge.orderPrompt}</p>
+            <p className="mt-1 text-[11px] font-bold text-cyan-50/82">{challenge.orderFlavor}</p>
           </div>
         </section>
 
-        <section className="relative mt-1.5 flex min-h-0 flex-[0_0_22%] items-center">
-          <div className="mx-auto grid w-full max-w-[760px] grid-cols-[minmax(0,1fr)_126px] items-center gap-2">
+        <section className="mt-2 shrink-0">
+          <div className="mx-auto w-full max-w-[560px] rounded-[1.1rem] border border-amber-200/32 bg-[linear-gradient(180deg,rgba(54,33,12,0.82),rgba(24,16,9,0.86))] px-3 py-3 shadow-[0_14px_24px_rgba(2,6,23,0.26)]">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[9px] font-black uppercase tracking-[0.16em] text-amber-200/88">Recipe</p>
+                <p className="mt-1 text-sm font-black text-amber-50">{challenge.orderTitle}</p>
+              </div>
+              <div className="rounded-lg border border-amber-200/20 bg-black/15 px-3 py-1.5 text-center">
+                <p className="text-[9px] font-black uppercase tracking-[0.14em] text-amber-200/85">Ratio</p>
+                <p className="mt-0.5 text-base font-black text-amber-50">{challenge.baseRatio.join(' : ')}</p>
+              </div>
+            </div>
+            <div className="mt-3 space-y-1.5">
+              {activeTargets.map(({ ingredient, target }) => (
+                <div
+                  key={`recipe-${ingredient.id}`}
+                  className="flex items-center justify-between rounded-lg border border-amber-100/10 bg-black/15 px-2.5 py-2"
+                >
+                  <div className="flex items-center gap-2">
+                    <span
+                      aria-hidden="true"
+                      className="h-3.5 w-3.5 rounded-full border border-white/50"
+                      style={{ backgroundColor: ingredient.color, boxShadow: `0 0 10px ${ingredient.glow}` }}
+                    />
+                    <span className="text-[12px] font-black text-cyan-50">{ingredient.name}</span>
+                  </div>
+                  <span className="text-[12px] font-black text-amber-100">x{target}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="mt-2 flex min-h-0 flex-1 flex-col">
+          <div className="mx-auto flex w-full max-w-[760px] min-h-0 flex-1 flex-col">
             <motion.div
               animate={{ x: 0 }}
               transition={{ duration: 0.2 }}
-              className="relative h-[clamp(164px,22vh,204px)] w-full"
+              className="relative h-[clamp(176px,26vh,232px)] w-full shrink-0"
             >
-              <div className="pointer-events-none absolute left-[46%] top-[56%] h-[52%] w-[62%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-300/30 blur-[24px]" />
-              <div className="absolute left-[46%] top-0 h-[18%] w-[54%] -translate-x-1/2 rounded-full border-4 border-slate-700/95 bg-slate-800/95 shadow-[0_10px_16px_rgba(2,6,23,0.45)]" />
-            <div
-              ref={cauldronRef}
-              className={`absolute left-[12%] right-[20%] top-[14%] bottom-[14%] overflow-hidden rounded-[42%] border-[5px] border-slate-700/95 bg-slate-900/70 shadow-[inset_0_10px_24px_rgba(2,6,23,0.55)] ${
-                cauldronArmed ? 'ring-4 ring-cyan-300/60' : ''
-              }`}
-            >
-              <motion.div
-                className="absolute inset-x-[4%] bottom-[4%] rounded-[40%]"
-                style={{
-                  background: `linear-gradient(180deg, rgba(255,255,255,0.34) 0%, ${mixColor} 18%, rgba(15,23,42,0.18) 100%)`,
-                  boxShadow: `0 0 30px ${mixColor}`,
-                }}
-                animate={{ height: `${Math.min(95, Math.max(12, (currentTotal / Math.max(1, targetTotal * 1.15)) * 100))}%` }}
-                transition={{ duration: 0.32, ease: 'easeOut' }}
-              />
-              {Array.from({ length: 9 }).map((_, idx) => (
-                <motion.span
-                  key={`bubble-${idx}`}
-                  className="absolute bottom-0 h-3.5 w-3.5 rounded-full bg-white/55"
-                  style={{ left: `${10 + idx * 9}%` }}
-                  animate={{ y: [0, -22 - (idx % 3) * 10, -4], opacity: [0, 0.9, 0], scale: [0.7, 1.15, 0.8] }}
-                  transition={{ repeat: Infinity, duration: 1.2 + (idx % 4) * 0.2, delay: idx * 0.08, ease: 'easeOut' }}
+              <div className="pointer-events-none absolute left-1/2 top-[58%] h-[56%] w-[58%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-300/30 blur-[24px]" />
+              <div className="absolute left-1/2 top-[2%] h-[18%] w-[44%] -translate-x-1/2 rounded-full border-4 border-slate-700/95 bg-slate-800/95 shadow-[0_10px_16px_rgba(2,6,23,0.45)]" />
+              <div
+                ref={cauldronRef}
+                className={`absolute left-[18%] right-[18%] top-[16%] bottom-[14%] overflow-hidden rounded-[42%] border-[5px] border-slate-700/95 bg-slate-900/72 shadow-[inset_0_10px_24px_rgba(2,6,23,0.55)] ${
+                  cauldronArmed ? 'ring-4 ring-cyan-300/60' : ''
+                }`}
+              >
+                <motion.div
+                  className="absolute inset-x-[4%] bottom-[4%] rounded-[40%]"
+                  style={{
+                    background: `linear-gradient(180deg, rgba(255,255,255,0.34) 0%, ${mixColor} 18%, rgba(15,23,42,0.18) 100%)`,
+                    boxShadow: `0 0 30px ${mixColor}`,
+                  }}
+                  animate={{ height: `${Math.min(95, Math.max(12, (currentTotal / Math.max(1, targetTotal * 1.15)) * 100))}%` }}
+                  transition={{ duration: 0.32, ease: 'easeOut' }}
                 />
-              ))}
-            </div>
-              <div className="absolute bottom-0 left-[46%] h-[16%] w-[38%] -translate-x-1/2 rounded-[999px] bg-slate-900/85 blur-[0.5px]" />
+                {Array.from({ length: 9 }).map((_, idx) => (
+                  <motion.span
+                    key={`bubble-${idx}`}
+                    className="absolute bottom-0 h-3.5 w-3.5 rounded-full bg-white/55"
+                    style={{ left: `${10 + idx * 9}%` }}
+                    animate={{ y: [0, -22 - (idx % 3) * 10, -4], opacity: [0, 0.9, 0], scale: [0.7, 1.15, 0.8] }}
+                    transition={{ repeat: Infinity, duration: 1.2 + (idx % 4) * 0.2, delay: idx * 0.08, ease: 'easeOut' }}
+                  />
+                ))}
+              </div>
+              <div className="absolute bottom-0 left-1/2 h-[16%] w-[34%] -translate-x-1/2 rounded-[999px] bg-slate-900/85 blur-[0.5px]" />
 
               <AnimatePresence>
                 {feedback === 'success' ? (
@@ -477,7 +500,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                     initial={{ opacity: 0, scale: 0.85 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 1.08 }}
-                    className="absolute left-[46%] top-[42%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-200/80 bg-emerald-400/90 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.14em] text-slate-900 shadow-[0_0_26px_rgba(52,211,153,0.7)]"
+                    className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-200/80 bg-emerald-400/90 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.14em] text-slate-900 shadow-[0_0_26px_rgba(52,211,153,0.7)]"
                   >
                     Potion Stable
                   </motion.div>
@@ -485,134 +508,84 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
               </AnimatePresence>
             </motion.div>
 
-            <div className="self-start rounded-[1rem] border border-amber-200/28 bg-[linear-gradient(180deg,rgba(54,33,12,0.74),rgba(26,18,10,0.78))] px-3 py-2.5 shadow-[0_12px_22px_rgba(2,6,23,0.28)]">
-              <p className="text-[9px] font-black uppercase tracking-[0.16em] text-amber-200/90">Recipe</p>
-              <p className="mt-1 text-sm font-black text-amber-100">{challenge.orderTitle}</p>
-              <p className="mt-1 text-[11px] font-black text-cyan-50">{challenge.recipeLabel}</p>
-              <div className="mt-2 rounded-lg border border-amber-200/18 bg-black/15 px-2 py-1.5 text-center">
-                <p className="text-[9px] font-black uppercase tracking-[0.14em] text-amber-200/85">Ratio</p>
-                <p className="mt-0.5 text-base font-black text-amber-50">{challenge.baseRatio.join(':')}</p>
-              </div>
-              <div className="mt-2 space-y-1">
-                {activeTargets.map(({ ingredient, target }) => (
-                  <div key={`compact-${ingredient.id}`} className="flex items-center justify-between text-[11px] font-black text-cyan-50">
-                    <span>{ingredient.name}</span>
-                    <span className="text-amber-100">{target}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="mt-1.5 shrink-0">
-          <div className="mx-auto w-full max-w-[760px]">
-            <div className="rounded-xl border border-cyan-100/22 bg-slate-950/38 px-3 py-2">
-              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-200">Your potion</p>
-              <div className="mt-2 space-y-1.5">
-                {activeTargets.map(({ ingredient, current }) => (
-                  <div key={`current-${ingredient.id}`} className="flex items-center justify-between text-sm font-black">
-                    <span className="text-cyan-50">{ingredient.name}</span>
-                    <span className="text-white">{current}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="mt-1.5 flex shrink-0 flex-[0_0_14%] items-center">
-          <div
-            className="mx-auto grid w-full max-w-[760px] gap-2"
-            style={{ gridTemplateColumns: `repeat(${Math.max(1, activeTargets.length)}, minmax(0, 1fr))` }}
-          >
-            {activeTargets.map(({ ingredient }) => {
-              const index = INGREDIENTS.findIndex((entry) => entry.id === ingredient.id);
-              const count = counts[index] || 0;
-              return (
-                <motion.button
-                  key={ingredient.id}
-                  type="button"
-                  whileTap={{ scale: 0.98 }}
-                  animate={{ y: 0, scale: 1 }}
-                  transition={{ duration: 0.15 }}
-                  onPointerDown={(event) => {
-                    if (locked) return;
-                    event.currentTarget.setPointerCapture(event.pointerId);
-                    setDragState({
-                      index,
-                      pointerId: event.pointerId,
-                      x: event.clientX,
-                      y: event.clientY,
-                    });
-                  }}
-                  disabled={locked}
-                  aria-label={`Drag ${ingredient.name} into the potion`}
-                  className="relative h-[clamp(66px,9vh,82px)] rounded-[1.05rem] border border-cyan-100/50 bg-slate-900/74 p-1.5 text-left shadow-[0_12px_18px_rgba(2,6,23,0.38)] transition disabled:opacity-60"
-                  style={{ boxShadow: `0 10px 18px rgba(2,6,23,0.36), 0 0 26px ${ingredient.glow}` }}
-                >
-                  <div className="pointer-events-none absolute inset-x-2 top-2 h-2 rounded-full bg-white/14 blur-[1px]" />
-                  <div className="mx-auto h-[74%] w-[72%] rounded-[0.95rem] border border-white/35 bg-slate-950/45 p-1.5">
+            <div
+              className="mt-2 grid shrink-0 gap-2"
+              style={{ gridTemplateColumns: `repeat(${Math.max(1, activeTargets.length)}, minmax(0, 1fr))` }}
+            >
+              {activeTargets.map(({ ingredient, current, target }) => {
+                const index = INGREDIENTS.findIndex((entry) => entry.id === ingredient.id);
+                return (
+                  <motion.button
+                    key={ingredient.id}
+                    type="button"
+                    whileTap={{ scale: 0.98 }}
+                    animate={{ y: 0, scale: 1 }}
+                    transition={{ duration: 0.15 }}
+                    onPointerDown={(event) => {
+                      if (locked) return;
+                      event.currentTarget.setPointerCapture(event.pointerId);
+                      setDragState({
+                        index,
+                        pointerId: event.pointerId,
+                        x: event.clientX,
+                        y: event.clientY,
+                      });
+                    }}
+                    disabled={locked}
+                    aria-label={`Drag ${ingredient.name} into the potion`}
+                    className="relative flex h-[clamp(84px,11vh,104px)] flex-col items-center justify-center rounded-[1.1rem] border border-cyan-100/45 bg-slate-900/76 px-2 py-2 text-center shadow-[0_12px_18px_rgba(2,6,23,0.32)] transition disabled:opacity-60"
+                    style={{ boxShadow: `0 10px 18px rgba(2,6,23,0.36), 0 0 26px ${ingredient.glow}` }}
+                  >
                     <div
-                      className="h-full w-full rounded-[0.75rem]"
+                      className="h-10 w-10 rounded-full border border-white/40"
                       style={{
                         background: `linear-gradient(180deg, rgba(255,255,255,0.38) 0%, ${ingredient.color} 24%, rgba(15,23,42,0.28) 100%)`,
                         boxShadow: `0 0 18px ${ingredient.glow}, inset 0 0 16px rgba(255,255,255,0.16)`,
                       }}
                     />
-                  </div>
-                  <span className="pointer-events-none absolute bottom-1 left-1/2 -translate-x-1/2 text-[8px] font-black uppercase tracking-[0.04em] text-cyan-50">
-                    Add {ingredient.name}
-                  </span>
-                  <span className="pointer-events-none absolute right-1.5 top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full border border-white/45 bg-slate-950/80 px-1 text-[10px] font-black text-white">
-                    {count}
-                  </span>
-                </motion.button>
-              );
-            })}
-          </div>
-        </section>
+                    <span className="mt-1 text-[10px] font-black uppercase tracking-[0.04em] text-cyan-50">
+                      {ingredient.name}
+                    </span>
+                    <span className="text-[10px] font-black text-amber-100">{current}/{target}</span>
+                  </motion.button>
+                );
+              })}
+            </div>
 
-        <section className="mt-1.5 flex shrink-0 flex-col gap-2">
-          <div className="mx-auto w-full max-w-[760px] rounded-xl border border-cyan-100/25 bg-slate-950/42 px-3 py-2 text-center shadow-[0_10px_18px_rgba(2,6,23,0.18)]">
-            <p className={`text-[11px] font-black ${
-              isRecipeComplete
-                ? 'text-emerald-200'
-                : overfilledTargets.length > 0
-                  ? 'text-amber-100'
-                : 'text-cyan-100'
-            }`}>
-              {helperText}
-            </p>
-            <p className="mt-1 text-[10px] font-black text-cyan-50/75">
-              Drag the ingredient tiles into the potion.
-            </p>
-          </div>
-          <div className="mx-auto flex w-full max-w-[760px] items-center gap-2">
-            <motion.button
-              type="button"
-              whileTap={{ scale: 0.97 }}
-              onClick={resetCurrent}
-              disabled={locked}
-              className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-full border border-cyan-100/45 bg-slate-900/70 text-xs font-black uppercase tracking-[0.12em] text-cyan-50 disabled:opacity-50"
-            >
-              <RotateCcw className="h-4 w-4" />
-              Reset
-            </motion.button>
+            <div className="mt-2 shrink-0">
+              {statusText ? (
+                <div className="rounded-xl border border-cyan-100/20 bg-slate-950/36 px-3 py-2 text-center shadow-[0_10px_18px_rgba(2,6,23,0.16)]">
+                  <p className={`text-[11px] font-black ${isRecipeComplete ? 'text-emerald-200' : 'text-amber-100'}`}>
+                    {statusText}
+                  </p>
+                </div>
+              ) : null}
+            </div>
+
+            <div className={`mx-auto mt-2 flex w-full max-w-[760px] items-center gap-2 ${statusText ? '' : 'pt-1'}`}>
+              <button
+                type="button"
+                onClick={resetCurrent}
+                disabled={locked}
+                className="inline-flex h-11 shrink-0 items-center justify-center rounded-full px-3 text-[11px] font-black uppercase tracking-[0.1em] text-cyan-100/88 disabled:opacity-50"
+              >
+                Reset
+              </button>
             <motion.button
               type="button"
               whileTap={{ scale: 0.97 }}
               onClick={onBrew}
               disabled={locked || !isRecipeComplete}
-              className={`inline-flex h-12 flex-[1.6] items-center justify-center gap-2 rounded-full border px-4 text-sm font-black uppercase tracking-[0.13em] transition ${
+              className={`inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full border px-4 text-sm font-black uppercase tracking-[0.13em] transition ${
                 locked || !isRecipeComplete
                   ? 'border-slate-500/40 bg-slate-900/52 text-slate-400'
-                  : 'border-amber-100/85 bg-[linear-gradient(180deg,#fde68a_0%,#f59e0b_100%)] text-amber-950 shadow-[0_12px_20px_rgba(180,83,9,0.48)]'
+                  : 'border-amber-100/85 bg-[linear-gradient(180deg,#fde68a_0%,#f59e0b_100%)] text-amber-950 shadow-[0_12px_24px_rgba(180,83,9,0.55)]'
               }`}
             >
               <Wand2 className="h-5 w-5" />
               Brew Potion
             </motion.button>
+            </div>
           </div>
         </section>
       </div>
