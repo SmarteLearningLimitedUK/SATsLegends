@@ -413,7 +413,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                     src={cauldrenAndPotionArt}
                     alt=""
                     aria-hidden="true"
-                    className="pointer-events-none absolute left-1/2 top-[1%] h-[84%] max-w-none -translate-x-1/2 object-contain"
+                    className="pointer-events-none absolute left-1/2 top-[6%] h-[72%] max-w-none -translate-x-1/2 object-contain"
                   />
                   <div className="absolute left-[41.5%] top-[20%] h-[26%] w-[50%] -translate-x-1/2 overflow-hidden rounded-[46%]">
                     <motion.div
@@ -519,9 +519,6 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                       ) : null}
                     </div>
                     <span className="relative z-10 text-[9px] font-black uppercase tracking-[0.02em] text-cyan-50">{ingredient.name}</span>
-                    <span className="relative z-10 text-[10px] font-black text-amber-100">
-                      {isActive ? `x${current}/${target}` : '--'}
-                    </span>
                   </motion.button>
                 );
               })}
