@@ -107,6 +107,20 @@ const CHALLENGE_THEMES: Record<SupportedChallengeGameType, ChallengeTheme> = {
     progress: 'bg-gradient-to-r from-cyan-300 via-sky-300 to-blue-400',
     badge: 'text-cyan-100',
   },
+  coordinate_cross: {
+    title: 'Coordinate Cross',
+    surface: 'from-cyan-300/18 via-sky-200/12 to-slate-950/86',
+    scene: 'from-cyan-300/18 via-sky-200/12 to-transparent',
+    ambient: 'bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.22),transparent_28%),linear-gradient(180deg,#0f2232_0%,#071018_100%)]',
+    prompt: 'from-cyan-200/18 to-sky-100/8',
+    answer: 'from-white/10 to-white/4',
+    answerActive: 'from-cyan-300/55 to-sky-400/48',
+    statText: 'text-cyan-950',
+    statSoftBg: 'bg-cyan-100/85',
+    statBorder: 'border-cyan-200/90',
+    progress: 'bg-gradient-to-r from-cyan-300 via-sky-300 to-blue-400',
+    badge: 'text-cyan-100',
+  },
   transform_temple: {
     title: 'Transform Temple',
     surface: 'from-amber-300/18 via-yellow-200/12 to-slate-950/86',
@@ -126,6 +140,20 @@ const CHALLENGE_THEMES: Record<SupportedChallengeGameType, ChallengeTheme> = {
     surface: 'from-lime-300/18 via-yellow-200/12 to-slate-950/86',
     scene: 'from-lime-300/20 via-yellow-200/10 to-transparent',
     ambient: 'bg-[radial-gradient(circle_at_top,rgba(163,230,53,0.2),transparent_28%),linear-gradient(180deg,#223310_0%,#091018_100%)]',
+    prompt: 'from-lime-200/18 to-yellow-100/8',
+    answer: 'from-white/10 to-white/4',
+    answerActive: 'from-lime-300/55 to-yellow-400/48',
+    statText: 'text-lime-950',
+    statSoftBg: 'bg-lime-100/85',
+    statBorder: 'border-lime-200/90',
+    progress: 'bg-gradient-to-r from-lime-300 via-yellow-300 to-orange-400',
+    badge: 'text-lime-100',
+  },
+  unit_mixer: {
+    title: 'Unit Mixer',
+    surface: 'from-lime-300/18 via-yellow-200/12 to-slate-950/86',
+    scene: 'from-lime-300/20 via-yellow-200/10 to-transparent',
+    ambient: 'bg-[radial-gradient(circle_at_top,rgba(163,230,53,0.2),transparent_28%),linear-gradient(180deg,#1f2d14_0%,#091018_100%)]',
     prompt: 'from-lime-200/18 to-yellow-100/8',
     answer: 'from-white/10 to-white/4',
     answerActive: 'from-lime-300/55 to-yellow-400/48',
@@ -176,6 +204,62 @@ const CHALLENGE_THEMES: Record<SupportedChallengeGameType, ChallengeTheme> = {
     statBorder: 'border-emerald-200/90',
     progress: 'bg-gradient-to-r from-emerald-300 via-lime-300 to-yellow-400',
     badge: 'text-emerald-100',
+  },
+  formula_forge: {
+    title: 'Formula Forge',
+    surface: 'from-emerald-300/18 via-lime-200/12 to-slate-950/86',
+    scene: 'from-emerald-300/18 via-lime-200/12 to-transparent',
+    ambient: 'bg-[radial-gradient(circle_at_top,rgba(52,211,153,0.2),transparent_28%),linear-gradient(180deg,#133222_0%,#091018_100%)]',
+    prompt: 'from-emerald-200/18 to-lime-100/8',
+    answer: 'from-white/10 to-white/4',
+    answerActive: 'from-emerald-300/55 to-lime-400/48',
+    statText: 'text-emerald-950',
+    statSoftBg: 'bg-emerald-100/85',
+    statBorder: 'border-emerald-200/90',
+    progress: 'bg-gradient-to-r from-emerald-300 via-lime-300 to-yellow-400',
+    badge: 'text-emerald-100',
+  },
+  percent_power: {
+    title: 'Percent Power',
+    surface: 'from-cyan-300/28 via-sky-300/16 to-slate-950/88',
+    scene: 'from-cyan-300/22 via-sky-300/18 to-transparent',
+    ambient: 'bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.28),transparent_26%),radial-gradient(circle_at_bottom_right,rgba(56,189,248,0.22),transparent_24%),linear-gradient(180deg,#0f2b4d_0%,#07111b_100%)]',
+    prompt: 'from-cyan-200/28 to-cyan-100/12',
+    answer: 'from-cyan-200/10 via-sky-200/8 to-white/4',
+    answerActive: 'from-cyan-300/62 via-cyan-300/58 to-blue-400/48',
+    statText: 'text-cyan-950',
+    statSoftBg: 'bg-cyan-100/85',
+    statBorder: 'border-cyan-200/90',
+    progress: 'bg-gradient-to-r from-cyan-300 via-cyan-300 to-sky-400',
+    badge: 'text-cyan-100',
+  },
+  area_architect: {
+    title: 'Area Architect',
+    surface: 'from-amber-300/18 via-yellow-200/12 to-slate-950/86',
+    scene: 'from-yellow-200/18 via-amber-200/12 to-transparent',
+    ambient: 'bg-[radial-gradient(circle_at_top,rgba(250,204,21,0.22),transparent_28%),linear-gradient(180deg,#33240f_0%,#091018_100%)]',
+    prompt: 'from-amber-200/18 to-yellow-100/8',
+    answer: 'from-white/10 to-white/4',
+    answerActive: 'from-amber-300/55 to-yellow-400/48',
+    statText: 'text-amber-950',
+    statSoftBg: 'bg-amber-100/85',
+    statBorder: 'border-amber-200/90',
+    progress: 'bg-gradient-to-r from-yellow-300 via-amber-300 to-orange-400',
+    badge: 'text-amber-100',
+  },
+  ratio_fractions: {
+    title: 'Ratio Fractions',
+    surface: 'from-sky-300/18 via-cyan-200/12 to-slate-950/86',
+    scene: 'from-sky-300/18 via-cyan-200/12 to-transparent',
+    ambient: 'bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.22),transparent_28%),linear-gradient(180deg,#10283a_0%,#071018_100%)]',
+    prompt: 'from-sky-200/18 to-cyan-100/8',
+    answer: 'from-white/10 to-white/4',
+    answerActive: 'from-cyan-300/55 to-sky-400/48',
+    statText: 'text-cyan-950',
+    statSoftBg: 'bg-cyan-100/85',
+    statBorder: 'border-cyan-200/90',
+    progress: 'bg-gradient-to-r from-cyan-300 via-sky-300 to-blue-400',
+    badge: 'text-cyan-100',
   },
   rule_runner: {
     title: 'Rule Runner',
@@ -370,6 +454,49 @@ const generatePercentQuestion = (): ChallengeQuestion => {
   };
 };
 
+const generatePercentPowerQuestion = (): ChallengeQuestion => {
+  const mode = randomInt(0, 1);
+  if (mode === 0) {
+    const percent = pick([10, 15, 20, 25, 30, 40, 50, 75]);
+    const amount = pick([40, 60, 80, 120, 200, 240, 320]);
+    const correct = (amount * percent) / 100;
+    const { options, answerIndex } = makeOptions(String(correct), shuffle([String(correct + amount / 10), String(correct - amount / 20), String(amount - correct)]));
+    return {
+      prompt: `What is ${percent}% of ${amount}?`,
+      sublabel: 'Break the percentage into familiar parts.',
+      options,
+      answerIndex,
+      visual: {
+        type: 'pulse',
+        centerLabel: `${percent}%`,
+        orbitLabels: ['Use 10% or 25%', 'Scale up', 'Check the total'],
+        meterValue: percent,
+        meterLabel: `${percent}% target`,
+        caption: 'Use unit fractions or known percentages.',
+      },
+    };
+  }
+
+  const percent = pick([10, 15, 20, 25, 30, 40, 50]);
+  const whole = pick([120, 160, 200, 240, 300, 360]);
+  const part = (whole * percent) / 100;
+  const { options, answerIndex } = makeOptions(String(whole), shuffle([String(whole + 40), String(whole - 40), String(whole + 20)]));
+  return {
+    prompt: `${percent}% of a number is ${part}. What is the whole number?`,
+    sublabel: 'Find 1%, then scale to 100%.',
+    options,
+    answerIndex,
+    visual: {
+      type: 'pulse',
+      centerLabel: `${percent}% = ${part}`,
+      orbitLabels: ['1% value', 'Multiply by 100', 'Reverse %'],
+      meterValue: percent,
+      meterLabel: 'Reverse',
+      caption: 'Use the unitary method.',
+    },
+  };
+};
+
 const generateCoordinateQuestion = (): ChallengeQuestion => {
   const points = shuffle(['A', 'B', 'C', 'D']).slice(0, 4).map((label) => ({
     label,
@@ -390,6 +517,29 @@ const generateCoordinateQuestion = (): ChallengeQuestion => {
     options,
     answerIndex,
     visual: { type: 'coordinates', points, min: -4, max: 4, caption: 'Plot the beacon and claim the route.', targetLabel: target.label },
+  };
+};
+
+const generateCoordinateCrossQuestion = (): ChallengeQuestion => {
+  const points = shuffle(['Q', 'R', 'S', 'T']).slice(0, 4).map((label) => ({
+    label,
+    x: randomInt(-6, 6),
+    y: randomInt(-6, 6),
+    tone: label === 'Q' ? 'bg-cyan-300' : label === 'R' ? 'bg-emerald-300' : 'bg-sky-300',
+  }));
+  const target = pick(points);
+  const correct = formatCoordinate(target);
+  const wrong = shuffle(points.filter((point) => point.label !== target.label).map((point) => formatCoordinate(point)));
+  while (wrong.length < 3) {
+    wrong.push(formatCoordinate({ x: clamp(target.x + randomInt(-3, 3), -6, 6), y: clamp(target.y + randomInt(-3, 3), -6, 6) }));
+  }
+  const { options, answerIndex } = makeOptions(correct, wrong);
+  return {
+    prompt: `Find the coordinates for beacon ${target.label}.`,
+    sublabel: 'Use all four quadrants with confidence.',
+    options,
+    answerIndex,
+    visual: { type: 'coordinates', points, min: -6, max: 6, caption: 'Negative coordinates are part of the route.', targetLabel: target.label },
   };
 };
 
@@ -448,6 +598,30 @@ const generateScaleQuestion = (): ChallengeQuestion => {
     options,
     answerIndex,
     visual: { type: 'equation', lines: [`${value} ${conversions.from}`, `${conversions.multiplier} ${conversions.to} in 1 ${conversions.from}`], badge: 'Scale' },
+  };
+};
+
+const generateUnitMixerQuestion = (): ChallengeQuestion => {
+  const conversions = pick([
+    { from: 'km', to: 'm', multiplier: 1000, value: randomInt(2, 9) / 2 },
+    { from: 'm', to: 'cm', multiplier: 100, value: randomInt(3, 12) / 2 },
+    { from: 'kg', to: 'g', multiplier: 1000, value: randomInt(1, 7) },
+    { from: 'l', to: 'ml', multiplier: 1000, value: randomInt(2, 9) / 2 },
+  ]);
+  const correctValue = conversions.value * conversions.multiplier;
+  const correct = `${formatChallengeNumber(correctValue)} ${conversions.to}`;
+  const wrong = shuffle([
+    `${formatChallengeNumber(correctValue / 10)} ${conversions.to}`,
+    `${formatChallengeNumber(correctValue * 10)} ${conversions.to}`,
+    `${formatChallengeNumber(correctValue + conversions.multiplier)} ${conversions.to}`,
+  ]);
+  const { options, answerIndex } = makeOptions(correct, wrong);
+  return {
+    prompt: `Convert ${formatChallengeNumber(conversions.value)} ${conversions.from} to ${conversions.to}.`,
+    sublabel: `Use the conversion: 1 ${conversions.from} = ${conversions.multiplier} ${conversions.to}.`,
+    options,
+    answerIndex,
+    visual: { type: 'equation', lines: [`${formatChallengeNumber(conversions.value)} ${conversions.from}`, `= ? ${conversions.to}`], badge: 'Convert' },
   };
 };
 
@@ -511,6 +685,104 @@ const generateMeanQuestion = (): ChallengeQuestion => {
     options,
     answerIndex,
     visual: { type: 'equation', lines: [`Mean = ${targetMean}`, `${known.join(' + ')} + □ = ${targetTotal}`], badge: 'Mean' },
+  };
+};
+
+const generateAreaArchitectQuestion = (): ChallengeQuestion => {
+  const mode = randomInt(0, 2);
+  if (mode === 0) {
+    const a = pick([4, 5, 6]);
+    const b = pick([3, 4, 5]);
+    const cut = pick([2, 3]);
+    const total = (a * b) - (cut * cut);
+    const { options, answerIndex } = makeOptions(`${total} cm²`, shuffle([`${total + 4} cm²`, `${total - 4} cm²`, `${a * b} cm²`]));
+    return {
+      prompt: `An L-shape is made from a ${a} × ${b} rectangle with a ${cut} × ${cut} square cut out. What is the area?`,
+      sublabel: 'Find the big area, then subtract the cut-out.',
+      options,
+      answerIndex,
+      visual: { type: 'equation', lines: [`${a} × ${b} = ${a * b}`, `${a * b} − ${cut * cut} = ?`], badge: 'Area' },
+    };
+  }
+  if (mode === 1) {
+    const a = pick([5, 6, 7]);
+    const b = pick([3, 4]);
+    const c = pick([3, 4, 5]);
+    const d = pick([2, 3]);
+    const total = a * b + c * d;
+    const { options, answerIndex } = makeOptions(`${total} cm²`, shuffle([`${total - 4} cm²`, `${total + 6} cm²`, `${a * b} cm²`]));
+    return {
+      prompt: `Two rectangles ${a} × ${b} and ${c} × ${d} form one shape. What is the total area?`,
+      sublabel: 'Add the areas of both rectangles.',
+      options,
+      answerIndex,
+      visual: { type: 'equation', lines: [`${a} × ${b} = ${a * b}`, `${c} × ${d} = ${c * d}`], badge: 'Composite' },
+    };
+  }
+  const l = pick([6, 8, 9]);
+  const w = pick([4, 5, 6]);
+  const perimeter = 2 * (l + w);
+  const { options, answerIndex } = makeOptions(`${perimeter} cm`, shuffle([`${perimeter - 4} cm`, `${perimeter + 4} cm`, `${l * w} cm`]));
+  return {
+    prompt: `A rectangle is ${l} cm by ${w} cm. What is the perimeter?`,
+    sublabel: 'Perimeter = 2 × (length + width).',
+    options,
+    answerIndex,
+    visual: { type: 'equation', lines: [`2 × (${l} + ${w}) = ?`], badge: 'Perimeter' },
+  };
+};
+
+const generateFormulaForgeQuestion = (): ChallengeQuestion => {
+  const mode = randomInt(0, 2);
+  if (mode === 0) {
+    const l = pick([6, 7, 8, 9]);
+    const w = pick([3, 4, 5]);
+    const area = l * w;
+    const { options, answerIndex } = makeOptions(`${area} cm²`, shuffle([`${area + l} cm²`, `${area - w} cm²`, `${l + w} cm²`]));
+    return {
+      prompt: `Use Area = length × width. Find the area of a ${l} cm by ${w} cm rectangle.`,
+      sublabel: 'Apply the formula directly.',
+      options,
+      answerIndex,
+      visual: { type: 'equation', lines: ['Area = l × w', `${l} × ${w} = ?`], badge: 'Formula' },
+    };
+  }
+  if (mode === 1) {
+    const x = pick([4, 5, 6, 7]);
+    const result = 3 * x + 4;
+    const { options, answerIndex } = makeOptions(`${result}`, shuffle([`${result + 3}`, `${result - 4}`, `${result + x}`]));
+    return {
+      prompt: `A rule says y = 3x + 4. What is y when x = ${x}?`,
+      sublabel: 'Substitute and calculate.',
+      options,
+      answerIndex,
+      visual: { type: 'equation', lines: ['y = 3x + 4', `x = ${x}`], badge: 'Substitute' },
+    };
+  }
+  const y = pick([20, 25, 28, 32]);
+  const { options, answerIndex } = makeOptions(`${(y - 5) / 3}`, shuffle([`${(y - 5) / 3 + 1}`, `${(y - 5) / 3 - 1}`, `${y / 3}`]));
+  return {
+    prompt: `A rule says y = 3x + 5. If y = ${y}, what is x?`,
+    sublabel: 'Work backwards through the rule.',
+    options,
+    answerIndex,
+    visual: { type: 'equation', lines: ['y = 3x + 5', `y = ${y}`], badge: 'Reverse' },
+  };
+};
+
+const generateRatioFractionsQuestion = (): ChallengeQuestion => {
+  const red = pick([2, 3, 4]);
+  const blue = pick([1, 2, 3]);
+  const total = red + blue;
+  const correct = `${red}/${total}`;
+  const wrong = shuffle([`${blue}/${total}`, `${red}/${blue}`, `${total}/${red}`]);
+  const { options, answerIndex } = makeOptions(correct, wrong);
+  return {
+    prompt: `The ratio of red to blue is ${red} : ${blue}. What fraction are red?`,
+    sublabel: 'Use total parts to build the fraction.',
+    options,
+    answerIndex,
+    visual: { type: 'ratio', leftLabel: 'Red parts', leftValue: `${red}`, rightLabel: 'Blue parts', rightValue: `${blue}`, caption: `Red is ${red} out of ${total} parts.` },
   };
 };
 
@@ -990,18 +1262,30 @@ const generateQuestion = (gameType: SupportedChallengeGameType, levelId: number)
       return generateCalculationQuestion();
     case 'percent_pulse':
       return generatePercentQuestion();
+    case 'percent_power':
+      return generatePercentPowerQuestion();
     case 'coordinate_quest':
       return generateCoordinateQuestion();
+    case 'coordinate_cross':
+      return generateCoordinateCrossQuestion();
     case 'transform_temple':
       return generateTransformQuestion();
     case 'scale_safari':
       return generateScaleQuestion();
+    case 'unit_mixer':
+      return generateUnitMixerQuestion();
     case 'chart_chase':
       return generateChartQuestion();
     case 'mean_machine':
       return generateMeanQuestion();
+    case 'area_architect':
+      return generateAreaArchitectQuestion();
     case 'equation_grove':
       return generateEquationQuestion();
+    case 'formula_forge':
+      return generateFormulaForgeQuestion();
+    case 'ratio_fractions':
+      return generateRatioFractionsQuestion();
     case 'rule_runner':
     default:
       return generateRuleRunnerQuestion();

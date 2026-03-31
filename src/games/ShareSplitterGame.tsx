@@ -2,10 +2,21 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { Check, RefreshCcw, RotateCcw } from 'lucide-react';
-import FoodGameShell from '../components/FoodGameShell';
+import {
+  FeedbackStrip,
+  GameUiShell,
+  GameTopBar,
+  PrimaryButton,
+  SecondaryButton,
+  StoryCard,
+  TaskCard,
+} from '../components/game-ui/GameUiKit';
 import { TAKE_OUT_ASSETS } from '../assets/take_out';
+import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import GameRulesModal from '../components/GameRulesModal';
+import shareSplitterBackdrop from '../assets/level_backgrounds/take_out.png';
 
-interface ShareSplitterGameProps {
+interface ShareSplitterGameProps extends MiniGameShellContractProps {
   levelId: number;
   avatarId: string;
   onVictory: (stars: number, XP: number) => void;
@@ -104,7 +115,8 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   avatarId: _avatarId,
   onVictory,
   onGameOver: _onGameOver,
-  onBack: _onBack,
+  onBack,
+  sessionState,
 }) => {
   const [roundSolved, setRoundSolved] = useState(0);
   const [attempts, setAttempts] = useState(0);
@@ -119,6 +131,8 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const [validationActive, setValidationActive] = useState(false);
   const [moveHistory, setMoveHistory] = useState<MoveRecord[]>([]);
   const [locked, setLocked] = useState(false);
+  const [audioEnabled, setAudioEnabled] = useState(true);
+  const [showRules, setShowRules] = useState(false);
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const endedRef = useRef(false);
@@ -171,6 +185,16 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     () => (ratioUnitTotal > 0 ? Math.round((challenge.totalSlices / ratioUnitTotal) * 10) / 10 : 0),
     [challenge.totalSlices, ratioUnitTotal],
   );
+
+  const rules = useMemo(() => ({
+    title: 'Share Splitter',
+    summary: 'Use the ratio card to share the cakes across all six plates.',
+    bullets: [
+      'Drag a cake slice from the tray onto a plate.',
+      'Match each plate to the ratio shown on the task card.',
+      'Press Check when every plate looks correct.',
+    ],
+  }), []);
 
   const loadNextChallenge = useCallback((solvedCount: number) => {
     const next = createChallenge(levelId, solvedCount);
@@ -358,50 +382,78 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   };
 
   return (
-    <FoodGameShell gameType="take_out_rush">
-      <div className="flex h-full min-h-0 flex-col gap-2">
-        <section className="shrink-0 rounded-[1.2rem] border border-white/14 bg-[linear-gradient(180deg,rgba(250,204,21,0.9),rgba(245,158,11,0.86))] px-3 py-3 text-center text-slate-900 shadow-[0_14px_22px_rgba(15,23,42,0.22)]">
-          <p className="text-[clamp(14px,2vh,20px)] font-black leading-tight">{challenge.prompt}</p>
+    <GameUiShell backgroundImage={shareSplitterBackdrop}>
+      <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+3.5rem)] pt-3 text-white">
+        <section className="shrink-0">
+          <GameTopBar
+            onBack={onBack}
+            progressLabel={`Round ${roundSolved + 1} / ${ROUNDS_TO_WIN}`}
+            lives={sessionState?.lives}
+            className="mx-auto w-full"
+            audioEnabled={audioEnabled}
+            onToggleAudio={() => setAudioEnabled((previous) => !previous)}
+            onHelp={() => setShowRules(true)}
+          />
         </section>
 
-        <section className="shrink-0 rounded-[1.2rem] border border-white/14 bg-[linear-gradient(180deg,rgba(30,64,175,0.84),rgba(15,23,42,0.88))] px-3 py-3 text-white shadow-[0_12px_22px_rgba(15,23,42,0.24)]">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100/90">Ratio Card</p>
-              <p className="mt-1 text-sm font-black text-white md:text-base">Total cakes: {challenge.totalSlices}</p>
-            </div>
-            <div className="rounded-full bg-black/24 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-100">
-              Round {roundSolved + 1} of {ROUNDS_TO_WIN}
-            </div>
-          </div>
-          <div className="mt-2 grid grid-cols-6 gap-1.5">
-            {challenge.ratios.map((ratio, index) => (
-              <div key={`ratio-${index + 1}`} className="rounded-[0.95rem] border border-white/10 bg-black/18 px-2 py-2 text-center">
-                <div className="mx-auto mb-1 h-8 w-8 rounded-full border border-white/15 bg-[radial-gradient(circle,rgba(255,255,255,0.18),rgba(15,23,42,0.18))]" />
-                <p className="text-[9px] font-black uppercase tracking-[0.08em] text-cyan-100">Plate {index + 1}</p>
-                <p className="mt-0.5 text-lg font-black text-white">{ratio}</p>
-              </div>
-            ))}
-          </div>
-          {ratioUnitTotal > 0 ? (
-            <div className="mt-2 rounded-[0.95rem] border border-white/10 bg-black/20 px-3 py-2">
-              <p className="text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100">Unit Value</p>
-              <div className="mt-1 flex flex-wrap items-center gap-1">
-                {Array.from({ length: Math.min(ratioUnitTotal, 12) }).map((_, index) => (
-                  <span
-                    key={`ratio-unit-${index}`}
-                    className="h-2.5 w-2.5 rounded-full border border-white/35 bg-amber-200/85 shadow-[0_0_8px_rgba(251,191,36,0.35)]"
-                  />
-                ))}
-                <span className="ml-1 text-[11px] font-black text-white">
-                  1 unit = {ratioUnitValue} slice{ratioUnitValue === 1 ? '' : 's'}
-                </span>
-              </div>
-            </div>
-          ) : null}
+        <section className="shrink-0">
+          <StoryCard>
+            <p className="text-[clamp(13px,2vh,18px)] font-semibold text-white/90">
+              Share the cakes fairly across the plates.
+            </p>
+          </StoryCard>
         </section>
 
-        <section className="shrink-0 rounded-[1.2rem] border border-white/14 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.12),rgba(15,23,42,0.52)_64%)] px-2 py-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)] md:px-3">
+        <section className="shrink-0">
+          <TaskCard>
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-900/80">Task Card</div>
+                <div className="mt-1 text-[clamp(15px,2vh,20px)] font-black text-slate-900">Share the cakes</div>
+              </div>
+              <div className="rounded-full bg-amber-200/60 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-900">
+                Round {roundSolved + 1} of {ROUNDS_TO_WIN}
+              </div>
+            </div>
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              <div className="rounded-[1rem] border border-amber-200/40 bg-white/70 px-3 py-2">
+                <div className="text-[10px] font-black uppercase tracking-[0.14em] text-amber-900/70">Total</div>
+                <div className="mt-0.5 text-lg font-black text-slate-900">{challenge.totalSlices}</div>
+              </div>
+              <div className="rounded-[1rem] border border-amber-200/40 bg-white/70 px-3 py-2">
+                <div className="text-[10px] font-black uppercase tracking-[0.14em] text-amber-900/70">Ratio</div>
+                <div className="mt-0.5 text-lg font-black text-slate-900">{challenge.ratios.join(' : ')}</div>
+              </div>
+            </div>
+            <div className="mt-2 grid grid-cols-6 gap-1.5">
+              {challenge.ratios.map((ratio, index) => (
+                <div key={`ratio-${index + 1}`} className="rounded-[0.95rem] border border-amber-200/35 bg-white/70 px-2 py-2 text-center">
+                  <div className="mx-auto mb-1 h-7 w-7 rounded-full border border-amber-200/40 bg-white/80" />
+                  <p className="text-[9px] font-black uppercase tracking-[0.08em] text-amber-900">Plate {index + 1}</p>
+                  <p className="mt-0.5 text-base font-black text-slate-900">{ratio}</p>
+                </div>
+              ))}
+            </div>
+            {ratioUnitTotal > 0 ? (
+              <div className="mt-2 rounded-[0.95rem] border border-amber-200/35 bg-white/70 px-3 py-2">
+                <p className="text-[9px] font-black uppercase tracking-[0.12em] text-amber-900">Unit Value</p>
+                <div className="mt-1 flex flex-wrap items-center gap-1">
+                  {Array.from({ length: Math.min(ratioUnitTotal, 12) }).map((_, index) => (
+                    <span
+                      key={`ratio-unit-${index}`}
+                      className="h-2.5 w-2.5 rounded-full border border-amber-400/60 bg-amber-200/90"
+                    />
+                  ))}
+                  <span className="ml-1 text-[11px] font-black text-slate-900">
+                    1 unit = {ratioUnitValue} slice{ratioUnitValue === 1 ? '' : 's'}
+                  </span>
+                </div>
+              </div>
+            ) : null}
+          </TaskCard>
+        </section>
+
+        <section className="shrink-0 rounded-[1.4rem] border border-white/14 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.12),rgba(15,23,42,0.52)_64%)] px-2 py-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)] md:px-3">
           <div className="grid grid-cols-6 gap-2">
             {plateViews.map((plate, index) => {
               const plateTone = validationActive
@@ -445,7 +497,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
           </div>
         </section>
 
-        <section className="shrink-0 rounded-[1.2rem] border border-white/14 bg-black/22 px-3 py-2 shadow-[0_10px_18px_rgba(15,23,42,0.22)]">
+        <section className="shrink-0 rounded-[1.4rem] border border-white/14 bg-black/22 px-3 py-2 shadow-[0_10px_18px_rgba(15,23,42,0.22)]">
           <div className="mb-2 flex items-center justify-between gap-2">
             <p className="text-[11px] font-black uppercase tracking-[0.12em] text-cyan-100">Cake Supply</p>
             <p className="text-[11px] font-black text-white">{remainingSlices} left</p>
@@ -505,50 +557,38 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
-              className={`rounded-[1rem] border px-3 py-2 text-center text-sm font-black shadow-[0_10px_18px_rgba(15,23,42,0.22)] ${
-                feedbackTone === 'good'
-                  ? 'border-emerald-200/50 bg-[linear-gradient(180deg,rgba(16,185,129,0.26),rgba(5,150,105,0.18))] text-emerald-100'
-                  : feedbackTone === 'bad'
-                    ? 'border-amber-200/50 bg-[linear-gradient(180deg,rgba(251,191,36,0.22),rgba(180,83,9,0.16))] text-amber-100'
-                    : 'border-white/14 bg-black/22 text-cyan-100'
-              }`}
             >
-              {feedback}
+              <FeedbackStrip
+                tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}
+              >
+                {feedback}
+              </FeedbackStrip>
             </motion.div>
           </AnimatePresence>
         </section>
 
         <section className="shrink-0 grid grid-cols-3 gap-2">
-          <button
-            type="button"
-            onClick={undoLastMove}
-            disabled={locked || moveHistory.length === 0}
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-white/18 bg-[linear-gradient(180deg,#1e3a8a,#172554)] px-3 text-xs font-black uppercase tracking-[0.12em] text-white shadow-[0_8px_14px_rgba(15,23,42,0.35)] disabled:opacity-50"
-          >
+          <SecondaryButton onClick={undoLastMove} disabled={locked || moveHistory.length === 0}>
             <RotateCcw className="h-4 w-4" />
             Undo
-          </button>
-          <button
-            type="button"
-            onClick={resetAllocation}
-            disabled={locked || moveHistory.length === 0}
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-white/18 bg-[linear-gradient(180deg,#1e3a8a,#172554)] px-3 text-xs font-black uppercase tracking-[0.12em] text-white shadow-[0_8px_14px_rgba(15,23,42,0.35)] disabled:opacity-50"
-          >
+          </SecondaryButton>
+          <SecondaryButton onClick={resetAllocation} disabled={locked || moveHistory.length === 0}>
             <RefreshCcw className="h-4 w-4" />
             Reset
-          </button>
-          <button
-            type="button"
-            onClick={checkAllocation}
-            disabled={locked || !hasMoves}
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-emerald-200/45 bg-[linear-gradient(180deg,#34d399,#10b981)] px-3 text-xs font-black uppercase tracking-[0.12em] text-emerald-950 shadow-[0_8px_14px_rgba(5,150,105,0.35)] disabled:opacity-50"
-          >
+          </SecondaryButton>
+          <PrimaryButton onClick={checkAllocation} disabled={locked || !hasMoves}>
             <Check className="h-4 w-4" />
             Check
-          </button>
+          </PrimaryButton>
         </section>
       </div>
-    </FoodGameShell>
+
+        <GameRulesModal
+          isOpen={showRules}
+          onClose={() => setShowRules(false)}
+          rules={rules}
+        />
+    </GameUiShell>
   );
 };
 

@@ -411,6 +411,84 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       ],
     },
   },
+  formula_forge: {
+    label: 'Formula Forge',
+    focus: 'Algebra substitution and formula use',
+    rules: {
+      title: 'Formula Forge',
+      summary: 'Substitute values into rules and formulae, then calculate accurately.',
+      bullets: [
+        'Replace the letter with the given number before you solve.',
+        'Use area and rule formulas exactly as written.',
+        'Work backwards when the formula gives the answer first.',
+      ],
+    },
+  },
+  percent_power: {
+    label: 'Percent Power',
+    focus: 'Percentage of amount and reverse percentage',
+    rules: {
+      title: 'Percent Power',
+      summary: 'Find percentages of amounts and work backwards to the whole.',
+      bullets: [
+        'Break percentages into simple parts like 10%, 25%, and 50%.',
+        'Use the unitary method for reverse percentage questions.',
+        'Check that your answer is sensible for the whole amount.',
+      ],
+    },
+  },
+  area_architect: {
+    label: 'Area Architect',
+    focus: 'Area and perimeter of composite shapes',
+    rules: {
+      title: 'Area Architect',
+      summary: 'Calculate area and perimeter for compound shapes step by step.',
+      bullets: [
+        'Split shapes into rectangles and add their areas.',
+        'Subtract cut-outs carefully when shapes have holes.',
+        'Perimeter counts the outside edges only.',
+      ],
+    },
+  },
+  coordinate_cross: {
+    label: 'Coordinate Cross',
+    focus: 'Four-quadrant coordinates and movement',
+    rules: {
+      title: 'Coordinate Cross',
+      summary: 'Plot and read points in all four quadrants.',
+      bullets: [
+        'Read x first, then y every time.',
+        'Negative numbers move left or down from the origin.',
+        'Check the quadrant before you answer.',
+      ],
+    },
+  },
+  unit_mixer: {
+    label: 'Unit Mixer',
+    focus: 'Mixed unit conversions',
+    rules: {
+      title: 'Unit Mixer',
+      summary: 'Convert between length, mass, and capacity units accurately.',
+      bullets: [
+        'Remember key conversions like 1 km = 1000 m.',
+        'Move the decimal the correct number of places.',
+        'Check units and labels before you answer.',
+      ],
+    },
+  },
+  ratio_fractions: {
+    label: 'Ratio Fractions',
+    focus: 'Ratio to fraction and part-to-whole reasoning',
+    rules: {
+      title: 'Ratio Fractions',
+      summary: 'Turn ratios into fractions of the whole.',
+      bullets: [
+        'Add the ratio parts to find the total.',
+        'Write the fraction as part over total.',
+        'Check that the fraction is less than 1.',
+      ],
+    },
+  },
   rule_runner: {
     label: 'Rule Runner',
     focus: 'Input-output rules and function patterns',

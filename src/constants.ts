@@ -57,16 +57,18 @@ const FRACTION_FOREST_LEVELS: LevelData[] = [
   { id: 3, stars: 0, isLocked: false, blueprintKey: 'match3_equivalence', displayName: 'Match-3 Equivalence', gameType: 'fraction_match' },
   { id: 4, stars: 0, isLocked: false, blueprintKey: 'fraction_flow', displayName: 'Fraction Flow', gameType: 'cloud_collapse' },
   { id: 5, stars: 0, isLocked: false, blueprintKey: 'fraction_of_amount', displayName: 'Fraction of Amount', gameType: 'percent_pulse' },
-  { id: 6, stars: 0, isLocked: false, blueprintKey: 'simplify_sprint', displayName: 'Simplify Sprint', gameType: 'fraction_match' },
+  { id: 6, stars: 0, isLocked: false, blueprintKey: 'percent_power', displayName: 'Percent Power', gameType: 'percent_power' },
+  { id: 7, stars: 0, isLocked: false, blueprintKey: 'simplify_sprint', displayName: 'Simplify Sprint', gameType: 'fraction_match' },
 ];
 
 const RATIO_RAPIDS_LEVELS: LevelData[] = [
   { id: 1, stars: 0, isLocked: false, blueprintKey: 'potion_panic', displayName: 'Potion Panic', gameType: 'potion_pour' },
   { id: 2, stars: 0, isLocked: false, blueprintKey: 'potion_panic', displayName: 'Potion Panic', gameType: 'potion_pour' },
   { id: 3, stars: 0, isLocked: false, blueprintKey: 'share_splitter', displayName: 'Share Splitter', gameType: 'ratio_rapids' },
-  { id: 4, stars: 0, isLocked: false, blueprintKey: 'maths_vs_zombies', displayName: 'Maths vs Zombies', gameType: 'ratio_rapids' },
-  { id: 5, stars: 0, isLocked: false, blueprintKey: 'scale_builder', displayName: 'Scale Builder', gameType: 'scale_safari' },
-  { id: 6, stars: 0, isLocked: false, blueprintKey: 'maths_vs_zombies', displayName: 'Maths vs Zombies', gameType: 'ratio_rapids' },
+  { id: 4, stars: 0, isLocked: false, blueprintKey: 'ratio_fractions', displayName: 'Ratio Fractions', gameType: 'ratio_fractions' },
+  { id: 5, stars: 0, isLocked: false, blueprintKey: 'maths_vs_zombies', displayName: 'Maths vs Zombies', gameType: 'ratio_rapids' },
+  { id: 6, stars: 0, isLocked: false, blueprintKey: 'scale_builder', displayName: 'Scale Builder', gameType: 'scale_safari' },
+  { id: 7, stars: 0, isLocked: false, blueprintKey: 'maths_vs_zombies', displayName: 'Maths vs Zombies', gameType: 'ratio_rapids' },
 ];
 
 export const ISLANDS: IslandData[] = [
@@ -118,8 +120,10 @@ export const ISLANDS: IslandData[] = [
       [
         { id: 1, stars: 0, isLocked: false, blueprintKey: 'angle_arena', displayName: 'Angle Arena', gameType: 'angle_arena' },
         { id: 2, stars: 0, isLocked: false, blueprintKey: 'polygon_palace', displayName: 'Polygon Palace', gameType: 'polygon_palace' },
+        { id: 3, stars: 0, isLocked: false, blueprintKey: 'area_architect', displayName: 'Area Architect', gameType: 'area_architect' },
         { id: 3, stars: 0, isLocked: false, blueprintKey: 'rotation_relay', displayName: 'Rotation Station', gameType: 'shape_shift' },
         { id: 4, stars: 0, isLocked: false, blueprintKey: 'coordinates_quest', displayName: 'Coordinates Quest', gameType: 'coordinate_quest' },
+        { id: 5, stars: 0, isLocked: false, blueprintKey: 'coordinate_cross', displayName: 'Coordinate Cross', gameType: 'coordinate_cross' },
       ],
       [
         { id: 1, stars: 0, isLocked: false, blueprintKey: 'time_keeper_cove', displayName: 'Chrono Dash: Time Trial', gameType: 'timekeeper_temple' },
@@ -174,6 +178,7 @@ export const ISLANDS: IslandData[] = [
         { id: 1, stars: 0, isLocked: false, blueprintKey: 'multiplication_mine', displayName: 'Multiplication Mine', gameType: 'calculation_clash' },
         { id: 2, stars: 0, isLocked: false, blueprintKey: 'division_dock', displayName: 'Division Dock', gameType: 'calculation_clash' },
         { id: 3, stars: 0, isLocked: false, blueprintKey: 'order_ops_arena', displayName: 'Order Ops Arena', gameType: 'equation_grove' },
+        { id: 4, stars: 0, isLocked: false, blueprintKey: 'formula_forge', displayName: 'Formula Forge', gameType: 'formula_forge' },
         { id: 4, stars: 0, isLocked: false, blueprintKey: 'arithmetic_gauntlet', displayName: 'Arithmetic Gauntlet', gameType: 'calculation_clash' },
         { id: 5, stars: 0, isLocked: false, blueprintKey: 'remainder_run', displayName: 'Remainder Run', gameType: 'calculation_clash' },
       ],
@@ -195,6 +200,7 @@ export const ISLANDS: IslandData[] = [
     decorations: [],
     levels: [
       { id: 1, stars: 0, isLocked: false, blueprintKey: 'problem_pyramid', displayName: 'Problem Pyramid', gameType: 'rule_runner' },
+      { id: 2, stars: 0, isLocked: false, blueprintKey: 'unit_mixer', displayName: 'Unit Mixer', gameType: 'unit_mixer' },
       { id: 2, stars: 0, isLocked: false, blueprintKey: 'mixed_mastery', displayName: 'Mixed Mastery', gameType: 'calculation_clash' },
       { id: 3, stars: 0, isLocked: false, blueprintKey: 'strategy_survival', displayName: 'Strategy Survival', gameType: 'logic_sort' },
       { id: 4, stars: 0, isLocked: false, blueprintKey: 'timed_test_trials', displayName: 'Timed Test Trials', gameType: 'calculation_clash' },
