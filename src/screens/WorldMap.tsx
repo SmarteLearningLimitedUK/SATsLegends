@@ -413,11 +413,6 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
 
 const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
   const [selectedIslandId, setSelectedIslandId] = useState<number | null>(null);
-  const debugHotspots = useMemo(() => {
-    if (typeof window === 'undefined') return false;
-    return new URLSearchParams(window.location.search).get('debugHotspots') === '1';
-  }, []);
-
   const islandStates = useMemo<IslandState[]>(() => (
     ISLANDS.map(island => {
       const starredLevels = island.levels.filter(level => {
@@ -481,26 +476,16 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
                 whileTap={{ scale: 0.985 }}
                 onClick={() => setSelectedIslandId(island.id)}
                 aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
-                className={`absolute rounded-full transition-all focus:outline-none focus-visible:border-2 focus-visible:border-cyan-100/90 focus-visible:bg-cyan-300/20 ${
-                  debugHotspots
-                    ? 'rounded-[1rem] border border-amber-100/80 bg-amber-300/35 shadow-[0_0_0_1px_rgba(255,255,255,0.25),0_0_24px_rgba(251,191,36,0.25)]'
-                    : 'border border-transparent bg-transparent'
-                }`}
+                className="absolute border border-transparent bg-transparent transition-all focus:outline-none"
                 style={{
                   left: `${hotspot.x}%`,
                   top: `${hotspot.y}%`,
                   width: `${hotspot.width}%`,
                   height: `${hotspot.height}%`,
                   transform: 'translate(-50%, -50%)',
-                  opacity: debugHotspots ? (isUnlocked ? 1 : 0.72) : 1,
+                  opacity: 1,
                 }}
-              >
-                {debugHotspots ? (
-                  <span className="pointer-events-none absolute inset-x-1 top-1/2 -translate-y-1/2 text-center text-[10px] font-black uppercase tracking-[0.08em] text-white drop-shadow-[0_2px_6px_rgba(2,6,23,0.95)]">
-                    {island.name}
-                  </span>
-                ) : null}
-              </motion.button>
+              />
             );
           })}
         </div>
