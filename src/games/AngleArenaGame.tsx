@@ -513,7 +513,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
         <section className="shrink-0">
           <div
-            className={`w-full overflow-visible transition-all duration-300 ${gameState === 'firing' || gameState === 'projectileFlight' || gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? 'pointer-events-none max-h-0 opacity-0' : 'max-h-[220px] opacity-100'}`}
+            className={`relative z-20 w-full overflow-visible transition-all duration-300 ${gameState === 'firing' || gameState === 'projectileFlight' || gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? 'pointer-events-none max-h-0 opacity-0' : 'max-h-[360px] opacity-100 border-2 border-fuchsia-400/80'}`}
           >
             <div className="truncate whitespace-nowrap rounded-full border border-amber-200/55 bg-[linear-gradient(180deg,#f7f1e3,#f1e5cc)] px-3 py-1.5 text-center text-[clamp(12px,1.6vh,15px)] font-black text-amber-900 shadow-[0_10px_20px_rgba(15,23,42,0.2)]">
               {activeQuestion?.prompt ?? 'Choose the correct launch angle.'}
