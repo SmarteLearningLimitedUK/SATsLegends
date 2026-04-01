@@ -362,7 +362,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
   avatarId: _avatarId,
   onVictory,
   onGameOver,
-  onBack: _onBack,
+  onBack,
   sessionState,
   sessionEvents,
 }) => {
