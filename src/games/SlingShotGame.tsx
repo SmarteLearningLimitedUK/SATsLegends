@@ -4,6 +4,16 @@ import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
+import { GAME_SCENE_META } from '../gameSceneMeta';
+import angryBirdBackground from '../assets/angry_birds/background3.png';
+import angryBirdSling from '../assets/angry_birds/sling-3.png';
+import angryBirdBird from '../assets/angry_birds/red-bird3.png';
+import angryBirdPig from '../assets/angry_birds/pig_failed.png';
+import angryBirdWood from '../assets/angry_birds/wood.png';
+import angryBirdWoodTall from '../assets/angry_birds/wood2.png';
+import angryBirdColumn from '../assets/angry_birds/column.png';
+import angryBirdStars from '../assets/angry_birds/stars-edited.png';
+import angryBirdButtons from '../assets/angry_birds/selected-buttons.png';
 import {
   FeedbackStrip,
   GameTopBar,
@@ -44,6 +54,18 @@ type ShotState = {
   active: boolean;
 };
 
+type BlockKind = 'column' | 'beam';
+
+type Block = {
+  id: string;
+  kind: BlockKind;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  hp: number;
+};
+
 const CANVAS_WIDTH = 900;
 const CANVAS_HEIGHT = 520;
 const SLING_POS = { x: 130, y: 420 };
@@ -54,6 +76,7 @@ const ROUNDS_TO_WIN = 5;
 
 const FRACTIONS = ['1/2', '1/3', '2/3', '3/4', '1/4', '2/5', '4/5', '3/5'];
 const ANGLES = [30, 45, 60, 75, 90, 105, 120, 135, 150];
+const BIRD_RADIUS = 12;
 
 const pickUnique = (count: number, pool: string[]) => {
   const available = [...pool];
@@ -141,6 +164,51 @@ const createTargets = (questionType: 'fractions' | 'angles', angleChallenge: Ang
   }));
 };
 
+const createBlocks = (targets: Target[]) => (
+  targets.flatMap((target, index) => {
+    const baseY = target.y + 34;
+    const span = 70;
+    const offset = index * 6;
+    return [
+      {
+        id: `column-${target.id}-left`,
+        kind: 'column',
+        x: target.x - span / 2 - 10 + offset,
+        y: baseY,
+        width: 18,
+        height: 70,
+        hp: 2,
+      },
+      {
+        id: `column-${target.id}-right`,
+        kind: 'column',
+        x: target.x + span / 2 - 10 + offset,
+        y: baseY,
+        width: 18,
+        height: 70,
+        hp: 2,
+      },
+      {
+        id: `beam-${target.id}`,
+        kind: 'beam',
+        x: target.x - span / 2 - 8 + offset,
+        y: baseY - 24,
+        width: span + 16,
+        height: 18,
+        hp: 2,
+      },
+    ];
+  })
+);
+
+const circleRectCollision = (cx: number, cy: number, radius: number, rect: Block) => {
+  const closestX = Math.max(rect.x, Math.min(cx, rect.x + rect.width));
+  const closestY = Math.max(rect.y, Math.min(cy, rect.y + rect.height));
+  const dx = cx - closestX;
+  const dy = cy - closestY;
+  return (dx * dx + dy * dy) <= radius * radius;
+};
+
 const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
   levelId,
   onVictory,
@@ -154,6 +222,18 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number | null>(null);
+  const [assetsReady, setAssetsReady] = useState(0);
+  const imageAssets = useMemo(() => ({
+    background: new Image(),
+    sling: new Image(),
+    bird: new Image(),
+    pig: new Image(),
+    wood: new Image(),
+    woodTall: new Image(),
+    column: new Image(),
+    stars: new Image(),
+    buttons: new Image(),
+  }), []);
   const initialAngleChallenge = questionType === 'angles' ? buildAngleChallenge(levelId) : null;
   const [roundSolved, setRoundSolved] = useState(0);
   const [attempts, setAttempts] = useState(0);
@@ -161,6 +241,7 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
   const [targets, setTargets] = useState<Target[]>(
     () => createTargets(questionType, initialAngleChallenge),
   );
+  const [blocks, setBlocks] = useState<Block[]>(() => createBlocks(createTargets(questionType, initialAngleChallenge)));
   const [shot, setShot] = useState<ShotState>({
     x: SLING_POS.x,
     y: SLING_POS.y,
@@ -177,6 +258,11 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
   const [locked, setLocked] = useState(false);
   const [selectedAngle, setSelectedAngle] = useState<number | null>(null);
   const [forcedTargetId, setForcedTargetId] = useState<string | null>(null);
+  const blocksRef = useRef<Block[]>(blocks);
+
+  useEffect(() => {
+    blocksRef.current = blocks;
+  }, [blocks]);
 
   const correctTarget = useMemo(
     () => targets.find((target) => target.isCorrect),
@@ -188,7 +274,9 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
   useEffect(() => {
     const nextAngleChallenge = questionType === 'angles' ? buildAngleChallenge(levelId) : null;
     setAngleChallenge(nextAngleChallenge);
-    setTargets(createTargets(questionType, nextAngleChallenge));
+    const nextTargets = createTargets(questionType, nextAngleChallenge);
+    setTargets(nextTargets);
+    setBlocks(createBlocks(nextTargets));
     setRoundSolved(0);
     setAttempts(0);
     setShot({
@@ -236,7 +324,9 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
     setRoundSolved(nextSolved);
     const nextAngleChallenge = questionType === 'angles' ? buildAngleChallenge(levelId) : null;
     setAngleChallenge(nextAngleChallenge);
-    setTargets(createTargets(questionType, nextAngleChallenge));
+    const nextTargets = createTargets(questionType, nextAngleChallenge);
+    setTargets(nextTargets);
+    setBlocks(createBlocks(nextTargets));
     resetShot();
     setLocked(false);
     setSelectedAngle(null);
@@ -301,6 +391,22 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
         return { ...prev, x: nextX, y: nextY, active: false };
       }
 
+      const blockHit = blocksRef.current.find((block) => circleRectCollision(nextX, nextY, BIRD_RADIUS, block));
+      if (blockHit) {
+        setBlocks((current) => current
+          .map((block) => (block.id === blockHit.id ? { ...block, hp: block.hp - 1 } : block))
+          .filter((block) => block.hp > 0));
+        const bounceVx = prev.vx * 0.55;
+        const bounceVy = -prev.vy * 0.4;
+        return {
+          ...prev,
+          x: nextX,
+          y: nextY,
+          vx: bounceVx,
+          vy: bounceVy,
+        };
+      }
+
       if (nextY > CANVAS_HEIGHT + 80 || nextX > CANVAS_WIDTH + 80 || nextX < -80) {
         if (!locked) {
           setFeedback(questionType === 'angles' ? 'Missed! Try another angle.' : 'Missed! Pull back and try again.');
@@ -349,8 +455,12 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
     if (!ctx) return;
 
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    ctx.fillStyle = 'rgba(15, 23, 42, 0.3)';
-    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    if (imageAssets.background.complete) {
+      ctx.drawImage(imageAssets.background, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    } else {
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.3)';
+      ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    }
 
     ctx.strokeStyle = 'rgba(148, 163, 184, 0.45)';
     ctx.lineWidth = 2;
@@ -359,20 +469,60 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
     ctx.lineTo(860, 444);
     ctx.stroke();
 
+    const starsEarned = roundsToWin > 0
+      ? (roundSolved / roundsToWin >= 0.9 ? 3 : roundSolved / roundsToWin >= 0.6 ? 2 : roundSolved / roundsToWin >= 0.3 ? 1 : 0)
+      : 0;
+
+    if (imageAssets.stars.complete) {
+      const starRects = [
+        { sx: 0, sy: 0, sw: 200, sh: 200 },
+        { sx: 204, sy: 0, sw: 200, sh: 200 },
+        { sx: 426, sy: 0, sw: 200, sh: 200 },
+      ];
+      starRects.forEach((rect, index) => {
+        ctx.globalAlpha = starsEarned > index ? 1 : 0.35;
+        ctx.drawImage(imageAssets.stars, rect.sx, rect.sy, rect.sw, rect.sh, 18 + index * 46, 16, 40, 40);
+      });
+      ctx.globalAlpha = 1;
+    }
+
+    if (imageAssets.buttons.complete) {
+      ctx.drawImage(imageAssets.buttons, 164, 10, 60, 60, 18, 66, 32, 32);
+    }
+
+    blocksRef.current.forEach((block) => {
+      const sprite = block.kind === 'column'
+        ? imageAssets.column
+        : block.height > 22
+          ? imageAssets.woodTall
+          : imageAssets.wood;
+      if (sprite.complete) {
+        ctx.drawImage(sprite, block.x, block.y, block.width, block.height);
+      } else {
+        ctx.fillStyle = 'rgba(125, 211, 252, 0.35)';
+        ctx.fillRect(block.x, block.y, block.width, block.height);
+      }
+    });
+
     targets.forEach((target) => {
-      ctx.fillStyle = target.isCorrect ? 'rgba(52, 211, 153, 0.8)' : 'rgba(56, 189, 248, 0.8)';
-      ctx.beginPath();
-      ctx.arc(target.x, target.y, target.radius, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(255,255,255,0.7)';
-      ctx.lineWidth = 2;
-      ctx.stroke();
+      if (imageAssets.pig.complete) {
+        const size = target.radius * 2.1;
+        ctx.drawImage(imageAssets.pig, target.x - size / 2, target.y - size / 2, size, size);
+      } else {
+        ctx.fillStyle = target.isCorrect ? 'rgba(52, 211, 153, 0.8)' : 'rgba(56, 189, 248, 0.8)';
+        ctx.beginPath();
+        ctx.arc(target.x, target.y, target.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
 
       ctx.fillStyle = '#0f172a';
       ctx.font = 'bold 16px Nunito, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(target.label, target.x, target.y);
+      ctx.fillText(target.label, target.x, target.y + (target.radius + 18));
     });
 
     const shotX = dragging && dragPoint ? dragPoint.x : shot.x;
@@ -387,13 +537,39 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
       ctx.stroke();
     }
 
-    ctx.fillStyle = 'rgba(248, 113, 113, 0.9)';
+    if (imageAssets.sling.complete) {
+      const slingWidth = 120;
+      const slingHeight = 180;
+      ctx.drawImage(
+        imageAssets.sling,
+        SLING_POS.x - slingWidth * 0.45,
+        SLING_POS.y - slingHeight * 0.8,
+        slingWidth,
+        slingHeight,
+      );
+    }
+
+    ctx.strokeStyle = 'rgba(15, 23, 42, 0.85)';
+    ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.arc(shotX, shotY, 12, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+    ctx.moveTo(SLING_POS.x - 12, SLING_POS.y - 42);
+    ctx.lineTo(shotX, shotY);
+    ctx.moveTo(SLING_POS.x + 12, SLING_POS.y - 42);
+    ctx.lineTo(shotX, shotY);
     ctx.stroke();
-  }, [dragPoint, dragging, shot, targets]);
+
+    if (imageAssets.bird.complete) {
+      const birdSize = 32;
+      ctx.drawImage(imageAssets.bird, shotX - birdSize / 2, shotY - birdSize / 2, birdSize, birdSize);
+    } else {
+      ctx.fillStyle = 'rgba(248, 113, 113, 0.9)';
+      ctx.beginPath();
+      ctx.arc(shotX, shotY, 12, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+      ctx.stroke();
+    }
+  }, [assetsReady, dragPoint, dragging, shot, targets, imageAssets]);
 
   const handlePointerDown = (event: React.PointerEvent<HTMLCanvasElement>) => {
     if (interactionMode === 'select') return;
@@ -473,7 +649,9 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
   };
 
   return (
-    <GameUiShell>
+    <GameUiShell
+      backgroundImage={questionType === 'angles' ? angryBirdBackground : GAME_SCENE_META.angle_arena.background}
+    >
       <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+4rem)] pt-3 text-white">
         <section className="shrink-0">
           <GameTopBar
@@ -579,3 +757,30 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
 };
 
 export default SlingShotGame;
+  useEffect(() => {
+    const images = [
+      { img: imageAssets.background, src: angryBirdBackground },
+      { img: imageAssets.sling, src: angryBirdSling },
+      { img: imageAssets.bird, src: angryBirdBird },
+      { img: imageAssets.pig, src: angryBirdPig },
+      { img: imageAssets.wood, src: angryBirdWood },
+      { img: imageAssets.woodTall, src: angryBirdWoodTall },
+      { img: imageAssets.column, src: angryBirdColumn },
+      { img: imageAssets.stars, src: angryBirdStars },
+      { img: imageAssets.buttons, src: angryBirdButtons },
+    ];
+    images.forEach(({ img, src }) => {
+      if (img.src !== src) {
+        img.src = src;
+      }
+    });
+
+    const handleLoad = () => setAssetsReady((prev) => prev + 1);
+    images.forEach(({ img }) => {
+      if (img.complete) return;
+      img.addEventListener('load', handleLoad);
+    });
+    return () => {
+      images.forEach(({ img }) => img.removeEventListener('load', handleLoad));
+    };
+  }, [imageAssets]);
