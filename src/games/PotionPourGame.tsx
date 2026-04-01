@@ -406,14 +406,6 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
     })),
     [challenge.activeIndices, counts, targetByIngredient],
   );
-  const ratioUnitTotal = useMemo(
-    () => challenge.baseRatio.reduce((sum, value) => sum + value, 0),
-    [challenge.baseRatio],
-  );
-  const ratioUnitValue = useMemo(
-    () => (ratioUnitTotal > 0 ? Math.round((challenge.totalDrops / ratioUnitTotal) * 10) / 10 : 0),
-    [challenge.totalDrops, ratioUnitTotal],
-  );
   const isRecipeComplete = useMemo(
     () => activeTargets.length > 0 && activeTargets.every(({ current, target }) => current === target),
     [activeTargets],
@@ -624,6 +616,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
 
         <section className="min-h-0 flex-1">
           <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
+<<<<<<< HEAD
             <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] border border-white/12 bg-slate-950/16 shadow-[0_16px_30px_rgba(15,23,42,0.2)]">
               <div className="pointer-events-none absolute left-1/2 top-[84%] h-12 w-[68%] -translate-x-1/2 rounded-full bg-black/35 blur-md" />
               <div className="pointer-events-none absolute left-1/2 top-[76%] h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
@@ -634,6 +627,72 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                     className="h-12 w-7 rounded-full bg-[radial-gradient(circle at 50% 20%,rgba(255,241,180,0.95)_0%,rgba(255,170,57,0.92)_42%,rgba(255,94,32,0.9)_76%,rgba(255,94,32,0)_100%)] blur-[1px]"
                     animate={{ scaleY: [0.85, 1.1, 0.92], y: [0, -4, 0] }}
                     transition={{ repeat: Infinity, duration: 1 + idx * 0.18, ease: 'easeInOut' }}
+=======
+            <div className="grid min-h-0 grid-cols-[0.9fr_2.4fr] gap-2">
+              <div className="min-h-0 rounded-[1.2rem] border border-white/12 bg-slate-950/18 px-3 py-3 shadow-[0_12px_22px_rgba(15,23,42,0.18)]">
+                <p className="text-[10px] font-black uppercase tracking-[0.12em] text-amber-100/80">{cardLabels.header}</p>
+                <p className="mt-1 text-[clamp(12px,1.75vh,16px)] font-black leading-tight text-white">
+                  {challenge.orderTitle}
+                </p>
+                <div className="mt-2 rounded-[1rem] border border-white/10 bg-black/18 px-3 py-2">
+                  <p className="text-[10px] font-black text-cyan-100">{cardLabels.totalLabel}</p>
+                  <p className="mt-0.5 text-[clamp(14px,1.8vh,18px)] font-black text-white">
+                    {challenge.totalDrops}
+                  </p>
+                </div>
+                <div className="mt-2 rounded-[1rem] border border-white/10 bg-black/18 px-3 py-2">
+                  <p className="text-[10px] font-black text-cyan-100">{cardLabels.ratioLabel}</p>
+                  <p className="mt-0.5 text-[clamp(15px,2vh,20px)] font-black text-white">
+                    {challenge.baseRatio.join(' : ')}
+                  </p>
+                </div>
+                {challenge.cardHint ? (
+                  <div className="mt-2 rounded-[1rem] border border-white/10 bg-black/18 px-3 py-2">
+                    <p className="text-[10px] font-black text-cyan-100">{cardLabels.clueLabel}</p>
+                    <p className="mt-0.5 text-[11px] font-bold leading-snug text-white/90">
+                      {challenge.cardHint}
+                    </p>
+                  </div>
+                ) : null}
+                <div className="mt-2 space-y-1.5">
+                  {activeTargets.map(({ ingredient, target }) => (
+                    <div key={`recipe-${ingredient.id}`} className="flex items-center justify-between rounded-[0.95rem] border border-white/8 bg-white/5 px-2.5 py-2">
+                      <div className="flex items-center gap-2">
+                        <span
+                          aria-hidden="true"
+                          className="h-3.5 w-3.5 rounded-full border border-white/45"
+                          style={{ backgroundColor: ingredient.color, boxShadow: `0 0 8px ${ingredient.glow}` }}
+                        />
+                        <span className="text-[10px] font-black text-white">{ingredient.name}</span>
+                      </div>
+                      <span className="text-[10px] font-black text-amber-100">
+                        {challenge.revealTargets ? `x${target}` : ingredient.short}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
+                <div className="relative min-h-0 overflow-hidden rounded-[1.35rem] border border-white/12 bg-slate-950/16 shadow-[0_14px_26px_rgba(15,23,42,0.18)]">
+                  <div className="pointer-events-none absolute left-1/2 top-[84%] h-12 w-[68%] -translate-x-1/2 rounded-full bg-black/35 blur-md" />
+                  <div className="pointer-events-none absolute left-1/2 top-[76%] h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
+                  <div className="absolute left-1/2 top-[72%] flex h-[18%] w-[48%] -translate-x-1/2 items-end justify-between px-5">
+                    {[0, 1, 2].map((idx) => (
+                      <motion.span
+                        key={`flame-${idx}`}
+                        className="h-12 w-7 rounded-full bg-[radial-gradient(circle at 50% 20%,rgba(255,241,180,0.95)_0%,rgba(255,170,57,0.92)_42%,rgba(255,94,32,0.9)_76%,rgba(255,94,32,0)_100%)] blur-[1px]"
+                        animate={{ scaleY: [0.85, 1.1, 0.92], y: [0, -4, 0] }}
+                        transition={{ repeat: Infinity, duration: 1 + idx * 0.18, ease: 'easeInOut' }}
+                      />
+                    ))}
+                  </div>
+                  <img
+                    src={cauldrenAndPotionArt}
+                    alt=""
+                    aria-hidden="true"
+                    className="pointer-events-none absolute left-1/2 top-[6%] h-[72%] max-w-none -translate-x-1/2 object-contain"
+>>>>>>> parent of 66d31cf (game restructure1 rollback to here)
                   />
                 ))}
               </div>

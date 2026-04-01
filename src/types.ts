@@ -31,13 +31,7 @@ export type MiniGameType =
   | 'observatory_overload'
   | 'mean_machine'
   | 'equation_grove'
-  | 'rule_runner'
-  | 'formula_forge'
-  | 'percent_power'
-  | 'area_architect'
-  | 'coordinate_cross'
-  | 'unit_mixer'
-  | 'ratio_fractions';
+  | 'rule_runner';
 
 export interface LevelData {
   id: number;

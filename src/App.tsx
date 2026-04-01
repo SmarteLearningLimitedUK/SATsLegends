@@ -15,6 +15,7 @@ import AchievementsModal from './components/modals/AchievementsModal';
 import LevelResultModal from './components/LevelResultModal';
 import GameRulesModal from './components/GameRulesModal';
 import GameActionDock from './components/GameActionDock';
+import ViewportBossEnemy from './components/ViewportBossEnemy';
 import { IslandData, LevelData } from './types';
 import { AppRouter } from './app/AppRouter';
 import { useScreenFlow } from './app/useScreenFlow';
@@ -601,6 +602,27 @@ const App: React.FC = () => {
                   onGameplayOver={handleGameOver}
                 />
 
+                {isGameplayScreen && selectedLevel && !levelResult ? (
+                  selectedLevel.gameType === 'prime_pop'
+                  || selectedLevel.gameType === 'potion_pour'
+                  || selectedLevel.blueprintKey === 'number_line_ninja'
+                  || selectedLevel.blueprintKey === 'place_value_panic'
+                  || selectedLevel.blueprintKey === 'rounding_rampage'
+                  || selectedLevel.blueprintKey === 'conversion_canyon'
+                  || selectedLevel.blueprintKey === 'match3_equivalence'
+                  || selectedLevel.blueprintKey === 'share_splitter'
+                  || selectedLevel.blueprintKey === 'mode_miner'
+                  || selectedLevel.blueprintKey === 'mean_machine'
+                  || selectedLevel.gameType === 'monster_market'
+                    ? null
+                    : (
+                  <ViewportBossEnemy
+                    gameType={selectedLevel.gameType}
+                    levelId={selectedLevel.id}
+                    resultType={null}
+                  />
+                    )
+                ) : null}
               </motion.div>
             </AnimatePresence>
 

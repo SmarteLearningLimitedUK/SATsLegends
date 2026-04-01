@@ -213,20 +213,7 @@ const PrimeBubble: React.FC<{ bubble: Bubble; isPhone: boolean }> = ({ bubble, i
 };
 
 const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictory, onGameOver, onBack }) => {
-  const baseConfig = useMemo(() => getConfig(levelId), [levelId]);
-  const [practiceMode, setPracticeMode] = useState(false);
-  const config = useMemo(() => {
-    if (!practiceMode) return baseConfig;
-    return {
-      ...baseConfig,
-      roundSeconds: baseConfig.roundSeconds,
-      minBubbles: Math.max(3, baseConfig.minBubbles - 1),
-      maxBubbles: Math.max(4, baseConfig.maxBubbles - 1),
-      minSpeed: baseConfig.minSpeed * 0.75,
-      maxSpeed: baseConfig.maxSpeed * 0.75,
-      spawnEveryMs: Math.round(baseConfig.spawnEveryMs * 1.35),
-    };
-  }, [baseConfig, practiceMode]);
+  const config = useMemo(() => getConfig(levelId), [levelId]);
   const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
   const [isPhone, setIsPhone] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 768 : true));
   const onVictoryRef = useRef(onVictory);
@@ -414,19 +401,15 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     setBubbles(initial);
     lastFrameRef.current = null;
 
-    if (!practiceMode) {
-      timerRef.current = window.setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            finalize(scoreRef.current);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } else {
-      setTimeLeft(config.roundSeconds);
-    }
+    timerRef.current = window.setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          finalize(scoreRef.current);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
 
     spawnRef.current = window.setInterval(() => {
       if (overRef.current) return;
@@ -437,7 +420,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     }, config.spawnEveryMs);
 
     return () => clearLoops();
-  }, [bubbleRuntime.maxBubbles, bubbleRuntime.minBubbles, clearLoops, config.roundSeconds, config.spawnEveryMs, finalize, makeBubble, practiceMode]);
+  }, [bubbleRuntime.maxBubbles, bubbleRuntime.minBubbles, clearLoops, config.roundSeconds, config.spawnEveryMs, finalize, makeBubble]);
 
   const popBubble = useCallback((bubbleId: number) => {
     if (overRef.current) return;
@@ -585,17 +568,6 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
       style={{ backgroundImage: `url(${primePopBackground})` }}
     >
       <div className="relative z-10 flex h-full min-h-0 w-full flex-col pt-[env(safe-area-inset-top)]">
-        <div className="absolute left-3 top-3 z-30 rounded-[1rem] border border-white/20 bg-slate-950/70 px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100 shadow-[0_10px_24px_rgba(2,6,23,0.45)]">
-          <div className="mb-1 text-[9px] text-cyan-100/80">Prime check</div>
-          <div>2 · 3 · 5</div>
-          <button
-            type="button"
-            onClick={() => setPracticeMode((prev) => !prev)}
-            className="mt-1 w-full rounded-full border border-cyan-200/40 bg-cyan-500/20 px-2 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-cyan-50"
-          >
-            {practiceMode ? 'Calm Mode On' : 'Calm Mode Off'}
-          </button>
-        </div>
 
         <motion.div
           animate={screenShake ? { x: [0, -8, 8, -5, 5, -2, 0], y: [0, 2, -2, 0] } : { x: 0, y: 0 }}
