@@ -51,10 +51,10 @@ type WorldConfig = {
 };
 
 const WORLD: WorldConfig = {
-  width: 2200,
+  width: 2400,
   height: 360,
   groundY: 280,
-  launcherX: 90,
+  launcherX: 70,
   launcherY: 248,
 };
 
@@ -100,6 +100,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const projectileRef = useRef<ProjectileState | null>(null);
   const impactResultRef = useRef<ImpactResult | null>(null);
   const aimTimeoutRef = useRef<number | null>(null);
+  const bgTileOffsetRef = useRef(0);
 
   const [gameState, setGameState] = useState<GameState>('intro');
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -392,45 +393,39 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
       const backgroundImg = backgroundImageRef.current;
       if (backgroundImg && backgroundImg.complete) {
-        const bgAspect = backgroundImg.width / backgroundImg.height;
-        const viewAspect = viewWidth / viewHeight;
-        let drawW = viewWidth * 1.18;
-        let drawH = viewHeight * 1.18;
-        if (bgAspect > viewAspect) {
-          drawH = viewHeight * 1.18;
-          drawW = drawH * bgAspect;
-        } else {
-          drawW = viewWidth * 1.18;
-          drawH = drawW / bgAspect;
+        const tileH = viewHeight;
+        const tileW = tileH * (backgroundImg.width / backgroundImg.height);
+        const tilesNeeded = Math.ceil(viewWidth / tileW) + 2;
+        bgTileOffsetRef.current = (cameraXRef.current * 0.2) % tileW;
+        for (let i = 0; i < tilesNeeded; i += 1) {
+          const x = -bgTileOffsetRef.current + (i - 1) * tileW;
+          ctx.drawImage(backgroundImg, x, 0, tileW, tileH);
         }
-        const offsetX = (viewWidth - drawW) / 2;
-        const offsetY = (viewHeight - drawH) / 2;
-        ctx.drawImage(backgroundImg, offsetX - parallaxFar * 0.2, offsetY, drawW, drawH);
       } else {
         ctx.fillStyle = '#0b1731';
         ctx.fillRect(0, 0, viewWidth, viewHeight);
       }
 
+      // Parallax sky haze
+      ctx.fillStyle = 'rgba(15,23,42,0.32)';
+      ctx.fillRect(0, 0, viewWidth, viewHeight * 0.48);
+
+      // Mountains layer (slow)
       ctx.fillStyle = '#16305f';
-      ctx.fillRect(-parallaxFar, 30, WORLD.width, 80);
-      ctx.fillStyle = 'rgba(125,211,252,0.18)';
-      for (let i = 0; i < 6; i += 1) {
-        const cloudX = -parallaxFar * 1.2 + i * 320;
-        ctx.beginPath();
-        ctx.ellipse(cloudX % (WORLD.width + 400), 60 + (i % 2) * 16, 110, 26, 0, 0, Math.PI * 2);
-        ctx.fill();
-      }
+      ctx.fillRect(-parallaxFar * 0.4 - 200, 24, WORLD.width + 400, 90);
 
+      // Midground layer
       ctx.fillStyle = '#1f3d7a';
-      ctx.fillRect(-parallaxMid, 100, WORLD.width, 120);
+      ctx.fillRect(-parallaxMid * 0.6 - 200, 96, WORLD.width + 400, 140);
 
+      // Foreground ground
       ctx.fillStyle = '#1b2b4f';
-      ctx.fillRect(-parallaxNear, WORLD.groundY, WORLD.width, viewHeight - WORLD.groundY + 40);
+      ctx.fillRect(-parallaxNear - 200, WORLD.groundY, WORLD.width + 400, viewHeight - WORLD.groundY + 40);
 
       const cameraOffsetX = -cameraXRef.current;
 
       ctx.fillStyle = '#2d4a2f';
-      ctx.fillRect(cameraOffsetX, WORLD.groundY - 6, WORLD.width, 12);
+      ctx.fillRect(cameraOffsetX - 200, WORLD.groundY - 6, WORLD.width + 400, 12);
 
       const catapult = catapultImageRef.current;
       if (catapult && catapult.complete) {
@@ -514,9 +509,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
         <section className="shrink-0">
           <div
-            className={`w-full overflow-hidden transition-all duration-300 ${gameState === 'firing' || gameState === 'projectileFlight' || gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? 'max-h-0 opacity-0' : 'max-h-[200px] opacity-100'}`}
+            className={`w-full overflow-hidden transition-all duration-300 ${gameState === 'firing' || gameState === 'projectileFlight' || gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? 'pointer-events-none max-h-0 opacity-0' : 'max-h-[170px] opacity-100'}`}
           >
-            <div className="rounded-full border border-amber-200/55 bg-[linear-gradient(180deg,#f7f1e3,#f1e5cc)] px-3 py-1.5 text-center text-[clamp(12px,1.6vh,15px)] font-black text-amber-900 shadow-[0_10px_20px_rgba(15,23,42,0.2)]">
+            <div className="truncate whitespace-nowrap rounded-full border border-amber-200/55 bg-[linear-gradient(180deg,#f7f1e3,#f1e5cc)] px-3 py-1.5 text-center text-[clamp(12px,1.6vh,15px)] font-black text-amber-900 shadow-[0_10px_20px_rgba(15,23,42,0.2)]">
               {activeQuestion?.prompt ?? 'Choose the correct launch angle.'}
             </div>
             {isBeginnerLevel ? (
@@ -537,8 +532,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           </div>
         </section>
 
-        <section className="min-h-0 flex-[2.6]">
-          <div className="flex h-full w-full min-h-[64vh] items-center justify-center rounded-[1.6rem] border border-white/12 bg-slate-950/30 shadow-[0_18px_32px_rgba(2,6,23,0.4)]">
+        <section className="min-h-0 flex-[3.2]">
+          <div className="flex h-full w-full min-h-[66vh] items-center justify-center rounded-[1.6rem] border border-white/12 bg-slate-950/30 shadow-[0_18px_32px_rgba(2,6,23,0.4)]">
             <canvas
               ref={canvasRef}
               className="h-full w-full rounded-[1.6rem]"
