@@ -532,6 +532,8 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
         ? 'hint'
         : 'neutral';
 
+  const roundsToWin = roundsToWinForLevel(levelId);
+
   const rules = useMemo(() => ({
     title: 'Potion Panic',
     summary: 'Use the task card to brew the exact ratio before you press Brew.',
@@ -548,7 +550,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
         <section className="shrink-0">
           <GameTopBar
             onBack={onBack}
-            progressLabel={`Round ${roundSolved + 1} / ${roundsToWin}`}
+            progressLabel={`Round ${Math.min(correctSolved + 1, roundsToWin)} / ${roundsToWin}`}
             lives={sessionState?.lives}
             className="mx-auto w-full max-w-[780px]"
             audioEnabled={audioEnabled}
