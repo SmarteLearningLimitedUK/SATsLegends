@@ -140,18 +140,27 @@ const buildAngleChallenge = (levelId: number): AngleChallenge => {
   return { prompt, correctAngle, options };
 };
 
-const createTargets = (questionType: 'fractions' | 'angles', angleChallenge: AngleChallenge | null) => {
+const createTargets = (
+  questionType: 'fractions' | 'angles',
+  angleChallenge: AngleChallenge | null,
+  pigPositions?: { x: number; y: number }[],
+) => {
   const options = questionType === 'angles'
     ? (angleChallenge?.options ?? ANGLES.slice(0, 3))
     : pickUnique(3, FRACTIONS);
   const correctIndex = questionType === 'angles'
     ? Math.max(0, options.findIndex((option) => option === angleChallenge?.correctAngle))
     : Math.floor(Math.random() * options.length);
-  const positions = [
+  const fallbackPositions = [
     { x: 560, y: 340 },
     { x: 690, y: 280 },
     { x: 800, y: 360 },
   ];
+  const mappedPositions = pigPositions?.map((pos) => ({
+    x: mapX(pos.x),
+    y: mapY(pos.y),
+  })) ?? [];
+  const positions = mappedPositions.length >= options.length ? mappedPositions : fallbackPositions;
 
   return options.map((option, index) => ({
     id: `${option}-${index}`,
@@ -164,42 +173,215 @@ const createTargets = (questionType: 'fractions' | 'angles', angleChallenge: Ang
   }));
 };
 
-const createBlocks = (targets: Target[]) => (
-  targets.flatMap((target, index) => {
-    const baseY = target.y + 34;
-    const span = 70;
-    const offset = index * 6;
-    return [
-      {
-        id: `column-${target.id}-left`,
-        kind: 'column',
-        x: target.x - span / 2 - 10 + offset,
-        y: baseY,
-        width: 18,
-        height: 70,
-        hp: 2,
-      },
-      {
-        id: `column-${target.id}-right`,
-        kind: 'column',
-        x: target.x + span / 2 - 10 + offset,
-        y: baseY,
-        width: 18,
-        height: 70,
-        hp: 2,
-      },
-      {
-        id: `beam-${target.id}`,
-        kind: 'beam',
-        x: target.x - span / 2 - 8 + offset,
-        y: baseY - 24,
-        width: span + 16,
-        height: 18,
-        hp: 2,
-      },
-    ];
-  })
-);
+type Layout = {
+  pigs: { x: number; y: number }[];
+  blocks: Block[];
+};
+
+const SCALE_X = 900 / 1200;
+const SCALE_Y = 520 / 600;
+
+const mapX = (x: number) => x * SCALE_X;
+const mapY = (y: number) => (600 - y) * SCALE_Y;
+
+const addBlock = (blocks: Block[], kind: BlockKind, centerX: number, centerY: number, width: number, height: number, id: string) => {
+  const scaledWidth = width * SCALE_X;
+  const scaledHeight = height * SCALE_Y;
+  blocks.push({
+    id,
+    kind,
+    x: mapX(centerX) - scaledWidth / 2,
+    y: mapY(centerY) - scaledHeight / 2,
+    width: scaledWidth,
+    height: scaledHeight,
+    hp: 2,
+  });
+};
+
+const buildLayouts = (): Layout[] => {
+  const layouts: Layout[] = [];
+
+  const open_flat = (blocks: Block[], x: number, y: number, n: number, tag: string) => {
+    const y0 = y;
+    for (let i = 0; i < n; i += 1) {
+      const yi = y0 + 100 + i * 100;
+      addBlock(blocks, 'column', x, yi, 20, 85, `${tag}-open-col-${i}-a`);
+      addBlock(blocks, 'column', x + 60, yi, 20, 85, `${tag}-open-col-${i}-b`);
+      addBlock(blocks, 'beam', x + 30, yi + 50, 85, 20, `${tag}-open-beam-${i}`);
+    }
+  };
+
+  const closed_flat = (blocks: Block[], x: number, y: number, n: number, tag: string) => {
+    const y0 = y;
+    for (let i = 0; i < n; i += 1) {
+      const yi = y0 + 100 + i * 125;
+      addBlock(blocks, 'column', x + 1, yi + 22, 20, 85, `${tag}-closed-col-${i}-a`);
+      addBlock(blocks, 'column', x + 60, yi + 22, 20, 85, `${tag}-closed-col-${i}-b`);
+      addBlock(blocks, 'beam', x + 30, yi + 70, 85, 20, `${tag}-closed-beam-${i}-top`);
+      addBlock(blocks, 'beam', x + 30, yi - 30, 85, 20, `${tag}-closed-beam-${i}-bottom`);
+    }
+  };
+
+  const horizontal_pile = (blocks: Block[], x: number, y: number, n: number, tag: string) => {
+    let yy = y + 70;
+    for (let i = 0; i < n; i += 1) {
+      addBlock(blocks, 'beam', x, yy + i * 20, 85, 20, `${tag}-h-${i}`);
+    }
+  };
+
+  const vertical_pile = (blocks: Block[], x: number, y: number, n: number, tag: string) => {
+    let yy = y + 10;
+    for (let i = 0; i < n; i += 1) {
+      addBlock(blocks, 'column', x, yy + 85 + i * 85, 20, 85, `${tag}-v-${i}`);
+    }
+  };
+
+  const make = (builder: (blocks: Block[], pigs: { x: number; y: number }[]) => void) => {
+    const blocks: Block[] = [];
+    const pigs: { x: number; y: number }[] = [];
+    builder(blocks, pigs);
+    layouts.push({ blocks, pigs });
+  };
+
+  // build_0
+  make((blocks, pigs) => {
+    pigs.push({ x: 980, y: 100 }, { x: 985, y: 182 });
+    addBlock(blocks, 'column', 950, 80, 20, 85, 'b0-col-1');
+    addBlock(blocks, 'column', 1010, 80, 20, 85, 'b0-col-2');
+    addBlock(blocks, 'beam', 980, 150, 85, 20, 'b0-beam-1');
+    addBlock(blocks, 'column', 950, 200, 20, 85, 'b0-col-3');
+    addBlock(blocks, 'column', 1010, 200, 20, 85, 'b0-col-4');
+    addBlock(blocks, 'beam', 980, 240, 85, 20, 'b0-beam-2');
+  });
+
+  // build_1
+  make((blocks, pigs) => {
+    pigs.push({ x: 1000, y: 100 });
+    addBlock(blocks, 'column', 900, 80, 20, 85, 'b1-col-1');
+    addBlock(blocks, 'column', 850, 80, 20, 85, 'b1-col-2');
+    addBlock(blocks, 'column', 850, 150, 20, 85, 'b1-col-3');
+    addBlock(blocks, 'column', 1050, 150, 20, 85, 'b1-col-4');
+    addBlock(blocks, 'beam', 1105, 210, 85, 20, 'b1-beam-1');
+  });
+
+  // build_2
+  make((blocks, pigs) => {
+    pigs.push({ x: 880, y: 180 }, { x: 1000, y: 230 });
+    addBlock(blocks, 'column', 880, 80, 20, 85, 'b2-col-1');
+    addBlock(blocks, 'beam', 880, 150, 85, 20, 'b2-beam-1');
+    addBlock(blocks, 'column', 1000, 80, 20, 85, 'b2-col-2');
+    addBlock(blocks, 'column', 1000, 180, 20, 85, 'b2-col-3');
+    addBlock(blocks, 'beam', 1000, 210, 85, 20, 'b2-beam-2');
+  });
+
+  // build_3
+  make((blocks, pigs) => {
+    pigs.push({ x: 950, y: 320 }, { x: 885, y: 225 }, { x: 1005, y: 225 });
+    addBlock(blocks, 'column', 1100, 100, 20, 85, 'b3-col-1');
+    addBlock(blocks, 'beam', 1070, 152, 85, 20, 'b3-beam-1');
+    addBlock(blocks, 'column', 1040, 100, 20, 85, 'b3-col-2');
+    addBlock(blocks, 'column', 980, 100, 20, 85, 'b3-col-3');
+    addBlock(blocks, 'column', 920, 100, 20, 85, 'b3-col-4');
+    addBlock(blocks, 'beam', 950, 152, 85, 20, 'b3-beam-2');
+    addBlock(blocks, 'beam', 1010, 180, 85, 20, 'b3-beam-3');
+    addBlock(blocks, 'column', 860, 100, 20, 85, 'b3-col-5');
+    addBlock(blocks, 'column', 800, 100, 20, 85, 'b3-col-6');
+    addBlock(blocks, 'beam', 830, 152, 85, 20, 'b3-beam-4');
+    addBlock(blocks, 'beam', 890, 180, 85, 20, 'b3-beam-5');
+    addBlock(blocks, 'column', 860, 223, 20, 85, 'b3-col-7');
+    addBlock(blocks, 'column', 920, 223, 20, 85, 'b3-col-8');
+    addBlock(blocks, 'column', 980, 223, 20, 85, 'b3-col-9');
+    addBlock(blocks, 'column', 1040, 223, 20, 85, 'b3-col-10');
+    addBlock(blocks, 'beam', 890, 280, 85, 20, 'b3-beam-6');
+    addBlock(blocks, 'beam', 1010, 280, 85, 20, 'b3-beam-7');
+    addBlock(blocks, 'beam', 950, 300, 85, 20, 'b3-beam-8');
+    addBlock(blocks, 'column', 920, 350, 20, 85, 'b3-col-11');
+    addBlock(blocks, 'column', 980, 350, 20, 85, 'b3-col-12');
+    addBlock(blocks, 'beam', 950, 400, 85, 20, 'b3-beam-9');
+  });
+
+  // build_4
+  make((blocks, pigs) => {
+    pigs.push({ x: 900, y: 300 }, { x: 1000, y: 500 }, { x: 1100, y: 400 });
+  });
+
+  // build_5
+  make((blocks, pigs) => {
+    pigs.push({ x: 900, y: 70 }, { x: 1000, y: 152 });
+    for (let i = 0; i < 9; i += 1) {
+      addBlock(blocks, 'beam', 800, 70 + i * 21, 85, 20, `b5-beam-left-${i}`);
+    }
+    for (let i = 0; i < 4; i += 1) {
+      addBlock(blocks, 'beam', 1000, 70 + i * 21, 85, 20, `b5-beam-right-${i}`);
+    }
+    addBlock(blocks, 'column', 970, 176, 20, 85, 'b5-col-1');
+    addBlock(blocks, 'column', 1026, 176, 20, 85, 'b5-col-2');
+    addBlock(blocks, 'beam', 1000, 230, 85, 20, 'b5-beam-top');
+  });
+
+  // build_6
+  make((blocks, pigs) => {
+    pigs.push({ x: 920, y: 533 }, { x: 820, y: 533 }, { x: 720, y: 633 });
+    closed_flat(blocks, 895, 423, 1, 'b6');
+    vertical_pile(blocks, 900, 0, 5, 'b6-v1');
+    vertical_pile(blocks, 926, 0, 5, 'b6-v2');
+    vertical_pile(blocks, 950, 0, 5, 'b6-v3');
+  });
+
+  // build_7
+  make((blocks, pigs) => {
+    pigs.push({ x: 978, y: 180 }, { x: 978, y: 280 }, { x: 978, y: 80 });
+    open_flat(blocks, 950, 0, 3, 'b7-open');
+    vertical_pile(blocks, 850, 0, 3, 'b7-v1');
+    vertical_pile(blocks, 830, 0, 3, 'b7-v2');
+  });
+
+  // build_8
+  make((blocks, pigs) => {
+    pigs.push({ x: 1000, y: 180 }, { x: 1078, y: 280 }, { x: 900, y: 80 });
+    open_flat(blocks, 1050, 0, 3, 'b8-open1');
+    open_flat(blocks, 963, 0, 2, 'b8-open2');
+    open_flat(blocks, 880, 0, 1, 'b8-open3');
+  });
+
+  // build_9
+  make((blocks, pigs) => {
+    pigs.push({ x: 1000, y: 180 }, { x: 900, y: 180 });
+    open_flat(blocks, 1050, 0, 3, 'b9-open1');
+    open_flat(blocks, 963, 0, 2, 'b9-open2');
+    open_flat(blocks, 880, 0, 2, 'b9-open3');
+    open_flat(blocks, 790, 0, 3, 'b9-open4');
+  });
+
+  // build_10
+  make((blocks, pigs) => {
+    pigs.push({ x: 960, y: 250 }, { x: 820, y: 160 }, { x: 1100, y: 160 });
+    vertical_pile(blocks, 900, 0, 3, 'b10-v1');
+    vertical_pile(blocks, 930, 0, 3, 'b10-v2');
+    vertical_pile(blocks, 1000, 0, 3, 'b10-v3');
+    vertical_pile(blocks, 1030, 0, 3, 'b10-v4');
+    horizontal_pile(blocks, 970, 250, 2, 'b10-h1');
+    horizontal_pile(blocks, 820, 0, 4, 'b10-h2');
+    horizontal_pile(blocks, 1100, 0, 4, 'b10-h3');
+  });
+
+  // build_11
+  make((blocks, pigs) => {
+    pigs.push({ x: 820, y: 177 }, { x: 960, y: 150 }, { x: 1100, y: 130 }, { x: 890, y: 270 });
+    horizontal_pile(blocks, 800, 0, 5, 'b11-h1');
+    horizontal_pile(blocks, 950, 0, 3, 'b11-h2');
+    horizontal_pile(blocks, 1100, 0, 2, 'b11-h3');
+    vertical_pile(blocks, 745, 0, 2, 'b11-v1');
+    vertical_pile(blocks, 855, 0, 2, 'b11-v2');
+    vertical_pile(blocks, 900, 0, 2, 'b11-v3');
+    vertical_pile(blocks, 1000, 0, 2, 'b11-v4');
+    addBlock(blocks, 'beam', 875, 230, 85, 20, 'b11-beam');
+  });
+
+  return layouts;
+};
+
+const LEVEL_LAYOUTS = buildLayouts();
 
 const circleRectCollision = (cx: number, cy: number, radius: number, rect: Block) => {
   const closestX = Math.max(rect.x, Math.min(cx, rect.x + rect.width));
@@ -235,13 +417,14 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
     buttons: new Image(),
   }), []);
   const initialAngleChallenge = questionType === 'angles' ? buildAngleChallenge(levelId) : null;
+  const initialLayout = LEVEL_LAYOUTS[0];
   const [roundSolved, setRoundSolved] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [angleChallenge, setAngleChallenge] = useState<AngleChallenge | null>(initialAngleChallenge);
   const [targets, setTargets] = useState<Target[]>(
-    () => createTargets(questionType, initialAngleChallenge),
+    () => createTargets(questionType, initialAngleChallenge, initialLayout?.pigs),
   );
-  const [blocks, setBlocks] = useState<Block[]>(() => createBlocks(createTargets(questionType, initialAngleChallenge)));
+  const [blocks, setBlocks] = useState<Block[]>(() => initialLayout?.blocks ?? []);
   const [shot, setShot] = useState<ShotState>({
     x: SLING_POS.x,
     y: SLING_POS.y,
@@ -274,9 +457,10 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
   useEffect(() => {
     const nextAngleChallenge = questionType === 'angles' ? buildAngleChallenge(levelId) : null;
     setAngleChallenge(nextAngleChallenge);
-    const nextTargets = createTargets(questionType, nextAngleChallenge);
+    const nextLayout = LEVEL_LAYOUTS[0];
+    const nextTargets = createTargets(questionType, nextAngleChallenge, nextLayout?.pigs);
     setTargets(nextTargets);
-    setBlocks(createBlocks(nextTargets));
+    setBlocks(nextLayout?.blocks ?? []);
     setRoundSolved(0);
     setAttempts(0);
     setShot({
@@ -324,9 +508,10 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
     setRoundSolved(nextSolved);
     const nextAngleChallenge = questionType === 'angles' ? buildAngleChallenge(levelId) : null;
     setAngleChallenge(nextAngleChallenge);
-    const nextTargets = createTargets(questionType, nextAngleChallenge);
+    const nextLayout = LEVEL_LAYOUTS[nextSolved % LEVEL_LAYOUTS.length];
+    const nextTargets = createTargets(questionType, nextAngleChallenge, nextLayout?.pigs);
     setTargets(nextTargets);
-    setBlocks(createBlocks(nextTargets));
+    setBlocks(nextLayout?.blocks ?? []);
     resetShot();
     setLocked(false);
     setSelectedAngle(null);
