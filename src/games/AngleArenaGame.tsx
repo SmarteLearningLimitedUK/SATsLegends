@@ -12,8 +12,8 @@ import {
   SecondaryButton,
   TaskCard,
 } from '../components/game-ui/GameUiKit';
-import catapultAsset from '../assets/angle_arena/catapult.png';
-import battleBackground from '../assets/angle_arena/battlefield_bg.png';
+import catapultAsset from '../assets/angle_arena/catapultfinal.png';
+import battleBackground from '../assets/angle_arena/angle arenabkground.png';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { clamp, computeLaunchVector, stepProjectile, ProjectileState } from './angleArena/physics';
 
@@ -536,8 +536,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           </div>
         </section>
 
-        <section className="min-h-0 flex-[1.6]">
-          <div className="flex h-full w-full min-h-[34vh] items-center justify-center rounded-[1.6rem] border border-white/12 bg-slate-950/30 shadow-[0_18px_32px_rgba(2,6,23,0.4)]">
+        <section className="min-h-0 flex-[1.2]">
+          <div className="flex h-full w-full min-h-[28vh] items-center justify-center rounded-[1.6rem] border border-white/12 bg-slate-950/30 shadow-[0_18px_32px_rgba(2,6,23,0.4)]">
             <canvas
               ref={canvasRef}
               className="h-full w-full rounded-[1.6rem]"
