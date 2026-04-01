@@ -387,30 +387,13 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.fillStyle = '#0f172a';
       ctx.fillRect(cameraOffsetX + WORLD.launcherX - 20, WORLD.launcherY + 8, 40, 32);
 
-      // Target podium + small enemy (no floating panel)
+      // Target podium (no floating enemy)
       ctx.fillStyle = '#0f172a';
       ctx.fillRect(cameraOffsetX + targetX - 38, targetY - 14, 76, 14);
       ctx.fillStyle = '#1f2937';
       ctx.fillRect(cameraOffsetX + targetX - 30, targetY - 30, 60, 18);
       ctx.fillStyle = '#374151';
       ctx.fillRect(cameraOffsetX + targetX - 22, targetY - 46, 44, 16);
-
-      const enemyX = cameraOffsetX + targetX;
-      const enemyY = targetY - 64;
-      ctx.fillStyle = '#7c3aed';
-      ctx.beginPath();
-      ctx.arc(enemyX, enemyY, 16, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#111827';
-      ctx.beginPath();
-      ctx.arc(enemyX - 5, enemyY - 2, 3, 0, Math.PI * 2);
-      ctx.arc(enemyX + 5, enemyY - 2, 3, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#f8fafc';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(enemyX, enemyY + 4, 5, 0, Math.PI);
-      ctx.stroke();
 
       if (projectile) {
         projectile.trail.forEach((point) => {
