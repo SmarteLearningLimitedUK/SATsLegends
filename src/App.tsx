@@ -613,6 +613,7 @@ const App: React.FC = () => {
                   || selectedLevel.blueprintKey === 'share_splitter'
                   || selectedLevel.blueprintKey === 'mode_miner'
                   || selectedLevel.blueprintKey === 'mean_machine'
+                  || selectedLevel.gameType === 'angle_arena'
                   || selectedLevel.gameType === 'monster_market'
                     ? null
                     : (
