@@ -10,9 +10,9 @@ import {
   GameUiShell,
   PrimaryButton,
   SecondaryButton,
-  StoryCard,
   TaskCard,
 } from '../components/game-ui/GameUiKit';
+import UnifiedMiniGameHud from '../components/UnifiedMiniGameHud';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { clamp, computeLaunchVector, stepProjectile, ProjectileState } from './angleArena/physics';
 
@@ -77,7 +77,7 @@ const formatTime = (seconds: number) => {
 
 const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   levelId,
-  avatarId: _avatarId,
+  avatarId,
   useSharedTopHud: _useSharedTopHud = true,
   onVictory,
   onGameOver,
@@ -116,9 +116,12 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     [],
   );
   const activeQuestion = questions[questionIndex];
+  const isBeginnerLevel = levelId <= 2;
+  const optionList = useMemo(() => (activeQuestion?.options ?? []).slice().sort((a, b) => a - b), [activeQuestion]);
 
   const lives = sessionState?.lives ?? localLives;
   const timeLeft = sessionState?.timeLeft ?? localTimer;
+  const totalTime = sessionState?.totalTime ?? INITIAL_TIMER;
 
   useEffect(() => {
     setGameState('awaitingAnswer');
@@ -245,9 +248,21 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     setFeedback('');
     desiredAngleRef.current = answer;
     setGameState('aiming');
+  };
+
+  useEffect(() => {
+    if (selectedAnswer) {
+      desiredAngleRef.current = selectedAnswer;
+    }
+  }, [selectedAnswer]);
+
+  const handleFire = () => {
+    if (!selectedAnswer || !activeQuestion) return;
+    if (gameState !== 'aiming' && gameState !== 'awaitingAnswer') return;
+    if (aimTimeoutRef.current) window.clearTimeout(aimTimeoutRef.current);
     aimTimeoutRef.current = window.setTimeout(() => {
       setGameState('firing');
-      fireProjectile(answer);
+      fireProjectile(selectedAnswer);
     }, AIM_DELAY);
   };
 
@@ -445,7 +460,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
   return (
     <GameUiShell>
-      <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-3 text-white">
+      <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+5.2rem)] pt-3 text-white">
         <section className="shrink-0">
           <GameTopBar
             onBack={onBack}
@@ -457,48 +472,35 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         </section>
 
         <section className="shrink-0">
-          <div className="mx-auto grid w-full max-w-[760px] grid-cols-3 gap-2 text-center text-[11px] font-black uppercase tracking-[0.12em]">
-            <div className="rounded-full border border-cyan-100/25 bg-slate-950/55 px-3 py-2">Time {formatTime(timeLeft)}</div>
-            <div className="rounded-full border border-cyan-100/25 bg-slate-950/55 px-3 py-2">Score {score}</div>
-            <div className="rounded-full border border-cyan-100/25 bg-slate-950/55 px-3 py-2">Stars {stars}</div>
-          </div>
-        </section>
-
-        <section className="shrink-0">
-          <StoryCard className="mx-auto max-w-[760px]">
-            <p className="text-[clamp(13px,2vh,18px)] font-semibold text-white/90">
-              The academy wants a perfect launch to defend the training grounds.
-            </p>
-          </StoryCard>
-        </section>
-
-        <section className="shrink-0">
           <TaskCard className="mx-auto w-full max-w-[760px]">
             <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-900/80">Angle Task</div>
             <div className="mt-1 text-[clamp(14px,2.1vh,18px)] font-black text-slate-900">
               {activeQuestion?.prompt ?? 'Choose the correct launch angle.'}
             </div>
+            {isBeginnerLevel ? (
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {(activeQuestion?.options ?? []).map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => handleAnswer(option)}
+                    disabled={gameState !== 'awaitingAnswer'}
+                    className="inline-flex min-h-[3.2rem] items-center justify-center rounded-[1.3rem] border border-amber-200/60 bg-[linear-gradient(180deg,rgba(30,64,175,0.12),rgba(15,23,42,0.14))] px-3 text-[clamp(14px,2.2vh,18px)] font-black text-slate-900 shadow-[0_10px_20px_rgba(15,23,42,0.2)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-55"
+                  >
+                    {option} deg
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="mt-2 text-[11px] font-semibold text-slate-700">
+                Choose the launch angle with the controls below.
+              </div>
+            )}
           </TaskCard>
         </section>
 
-        <section className="shrink-0">
-          <div className="mx-auto grid w-full max-w-[760px] grid-cols-2 gap-2">
-            {(activeQuestion?.options ?? []).map((option) => (
-              <button
-                key={option}
-                type="button"
-                onClick={() => handleAnswer(option)}
-                disabled={gameState !== 'awaitingAnswer'}
-                className="inline-flex min-h-[3.4rem] items-center justify-center rounded-[1.4rem] border border-cyan-100/40 bg-[linear-gradient(180deg,rgba(56,189,248,0.3),rgba(15,23,42,0.8))] px-3 text-[clamp(14px,2.2vh,18px)] font-black text-cyan-50 shadow-[0_14px_24px_rgba(2,6,23,0.4)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
-              >
-                {option} deg
-              </button>
-            ))}
-          </div>
-        </section>
-
         <section className="min-h-0 flex-1">
-          <div className="mx-auto flex h-full w-full max-w-[840px] items-center justify-center rounded-[1.6rem] border border-white/12 bg-slate-950/30 shadow-[0_18px_32px_rgba(2,6,23,0.4)]">
+          <div className="mx-auto flex h-full w-full max-w-[960px] items-center justify-center rounded-[1.6rem] border border-white/12 bg-slate-950/30 shadow-[0_18px_32px_rgba(2,6,23,0.4)]">
             <canvas
               ref={canvasRef}
               className="h-full w-full rounded-[1.6rem]"
@@ -522,9 +524,62 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
                 Reset View
               </SecondaryButton>
             </div>
-          ) : null}
+          ) : (
+            <div className="mx-auto flex w-full max-w-[760px] items-center gap-2">
+              <div className="flex flex-1 items-center gap-2 rounded-[1.2rem] border border-cyan-100/24 bg-slate-950/60 px-3 py-2 text-cyan-50">
+                <span className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/80">Angle</span>
+                <div className="ml-auto flex items-center gap-2">
+                  <SecondaryButton
+                    onClick={() => {
+                      if (!optionList.length) return;
+                      setSelectedAnswer((prev) => {
+                        if (!prev) return optionList[0];
+                        const idx = optionList.indexOf(prev);
+                        return optionList[Math.max(0, idx - 1)];
+                      });
+                      if (gameState === 'awaitingAnswer') setGameState('aiming');
+                    }}
+                    disabled={(gameState !== 'awaitingAnswer' && gameState !== 'aiming') || optionList.length === 0}
+                  >
+                    -
+                  </SecondaryButton>
+                  <div className="min-w-[64px] text-center text-lg font-black">
+                    {selectedAnswer ?? '--'} deg
+                  </div>
+                  <SecondaryButton
+                    onClick={() => {
+                      if (!optionList.length) return;
+                      setSelectedAnswer((prev) => {
+                        if (!prev) return optionList[optionList.length - 1];
+                        const idx = optionList.indexOf(prev);
+                        return optionList[Math.min(optionList.length - 1, idx + 1)];
+                      });
+                      if (gameState === 'awaitingAnswer') setGameState('aiming');
+                    }}
+                    disabled={(gameState !== 'awaitingAnswer' && gameState !== 'aiming') || optionList.length === 0}
+                  >
+                    +
+                  </SecondaryButton>
+                </div>
+              </div>
+              <PrimaryButton
+                onClick={handleFire}
+                disabled={!selectedAnswer || (gameState !== 'aiming' && gameState !== 'awaitingAnswer')}
+                className="w-[40%]"
+              >
+                Fire
+              </PrimaryButton>
+            </div>
+          )}
         </section>
       </div>
+      <UnifiedMiniGameHud
+        avatarId={avatarId}
+        timeLeft={timeLeft}
+        totalTime={totalTime}
+        lives={lives}
+        onBack={onBack}
+      />
     </GameUiShell>
   );
 };
