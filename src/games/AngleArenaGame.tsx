@@ -13,6 +13,7 @@ import {
   TaskCard,
 } from '../components/game-ui/GameUiKit';
 import catapultAsset from '../assets/angle_arena/catapult.png';
+import battleBackground from '../assets/angle_arena/battlefield_bg.png';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { clamp, computeLaunchVector, stepProjectile, ProjectileState } from './angleArena/physics';
 
@@ -95,6 +96,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const desiredAngleRef = useRef(40);
   const launcherAngleRef = useRef(40);
   const catapultImageRef = useRef<HTMLImageElement | null>(null);
+  const backgroundImageRef = useRef<HTMLImageElement | null>(null);
   const projectileRef = useRef<ProjectileState | null>(null);
   const impactResultRef = useRef<ImpactResult | null>(null);
   const aimTimeoutRef = useRef<number | null>(null);
@@ -168,6 +170,12 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     const img = new Image();
     img.src = catapultAsset;
     catapultImageRef.current = img;
+  }, []);
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = battleBackground;
+    backgroundImageRef.current = img;
   }, []);
 
   const resetForNext = () => {
@@ -382,8 +390,26 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       const parallaxMid = cameraXRef.current * 0.4;
       const parallaxNear = cameraXRef.current * 0.6;
 
-      ctx.fillStyle = '#0b1731';
-      ctx.fillRect(0, 0, viewWidth, viewHeight);
+      const backgroundImg = backgroundImageRef.current;
+      if (backgroundImg && backgroundImg.complete) {
+        const bgAspect = backgroundImg.width / backgroundImg.height;
+        const viewAspect = viewWidth / viewHeight;
+        let drawW = viewWidth;
+        let drawH = viewHeight;
+        if (bgAspect > viewAspect) {
+          drawH = viewHeight;
+          drawW = drawH * bgAspect;
+        } else {
+          drawW = viewWidth;
+          drawH = drawW / bgAspect;
+        }
+        const offsetX = (viewWidth - drawW) / 2;
+        const offsetY = (viewHeight - drawH) / 2;
+        ctx.drawImage(backgroundImg, offsetX - parallaxFar * 0.2, offsetY, drawW, drawH);
+      } else {
+        ctx.fillStyle = '#0b1731';
+        ctx.fillRect(0, 0, viewWidth, viewHeight);
+      }
 
       ctx.fillStyle = '#16305f';
       ctx.fillRect(-parallaxFar, 30, WORLD.width, 80);
