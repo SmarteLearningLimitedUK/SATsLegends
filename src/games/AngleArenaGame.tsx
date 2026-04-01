@@ -393,9 +393,13 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
       const backgroundImg = backgroundImageRef.current;
       if (backgroundImg && backgroundImg.complete) {
-        const tileH = viewHeight;
-        const tileW = tileH * (backgroundImg.width / backgroundImg.height);
-        const tilesNeeded = Math.ceil(viewWidth / tileW) + 2;
+        const scale = Math.max(
+          viewWidth / backgroundImg.width,
+          viewHeight / backgroundImg.height,
+        );
+        const tileW = backgroundImg.width * scale;
+        const tileH = backgroundImg.height * scale;
+        const tilesNeeded = Math.ceil(viewWidth / tileW) + 3;
         bgTileOffsetRef.current = (cameraXRef.current * 0.2) % tileW;
         for (let i = 0; i < tilesNeeded; i += 1) {
           const x = -bgTileOffsetRef.current + (i - 1) * tileW;
@@ -509,7 +513,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
         <section className="shrink-0">
           <div
-            className={`w-full overflow-hidden transition-all duration-300 ${gameState === 'firing' || gameState === 'projectileFlight' || gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? 'pointer-events-none max-h-0 opacity-0' : 'max-h-[170px] opacity-100'}`}
+            className={`w-full overflow-visible transition-all duration-300 ${gameState === 'firing' || gameState === 'projectileFlight' || gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? 'pointer-events-none max-h-0 opacity-0' : 'max-h-[220px] opacity-100'}`}
           >
             <div className="truncate whitespace-nowrap rounded-full border border-amber-200/55 bg-[linear-gradient(180deg,#f7f1e3,#f1e5cc)] px-3 py-1.5 text-center text-[clamp(12px,1.6vh,15px)] font-black text-amber-900 shadow-[0_10px_20px_rgba(15,23,42,0.2)]">
               {activeQuestion?.prompt ?? 'Choose the correct launch angle.'}
@@ -532,8 +536,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           </div>
         </section>
 
-        <section className="min-h-0 flex-[3.2]">
-          <div className="flex h-full w-full min-h-[66vh] items-center justify-center rounded-[1.6rem] border border-white/12 bg-slate-950/30 shadow-[0_18px_32px_rgba(2,6,23,0.4)]">
+        <section className="min-h-0 flex-[1.6]">
+          <div className="flex h-full w-full min-h-[34vh] items-center justify-center rounded-[1.6rem] border border-white/12 bg-slate-950/30 shadow-[0_18px_32px_rgba(2,6,23,0.4)]">
             <canvas
               ref={canvasRef}
               className="h-full w-full rounded-[1.6rem]"
