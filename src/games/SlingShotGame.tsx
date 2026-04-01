@@ -20,6 +20,8 @@ interface SlingShotGameProps {
   onVictory: (stars: number, XP: number) => void;
   onGameOver: (XP: number) => void;
   onBack: () => void;
+  questionType?: 'fractions' | 'angles';
+  interactionMode?: 'drag' | 'select';
 }
 
 type SlingShotGameShellProps = SlingShotGameProps & MiniGameShellContractProps;
@@ -27,6 +29,7 @@ type SlingShotGameShellProps = SlingShotGameProps & MiniGameShellContractProps;
 type Target = {
   id: string;
   label: string;
+  value?: number;
   x: number;
   y: number;
   radius: number;
@@ -50,29 +53,87 @@ const LAUNCH_SCALE = 4.5;
 const ROUNDS_TO_WIN = 5;
 
 const FRACTIONS = ['1/2', '1/3', '2/3', '3/4', '1/4', '2/5', '4/5', '3/5'];
+const ANGLES = [30, 45, 60, 75, 90, 105, 120, 135, 150];
 
-const pickUnique = (count: number) => {
-  const pool = [...FRACTIONS];
+const pickUnique = (count: number, pool: string[]) => {
+  const available = [...pool];
   const chosen: string[] = [];
-  while (chosen.length < count && pool.length > 0) {
-    const index = Math.floor(Math.random() * pool.length);
-    chosen.push(pool.splice(index, 1)[0]);
+  while (chosen.length < count && available.length > 0) {
+    const index = Math.floor(Math.random() * available.length);
+    chosen.push(available.splice(index, 1)[0]);
   }
   return chosen;
 };
 
-const createTargets = () => {
-  const options = pickUnique(3);
-  const correctIndex = Math.floor(Math.random() * options.length);
+type AngleChallenge = {
+  prompt: string;
+  correctAngle: number;
+  options: number[];
+};
+
+const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
+const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+const buildAngleChallenge = (levelId: number): AngleChallenge => {
+  const kind = levelId <= 2 ? 'direct' : levelId <= 4 ? 'type' : 'reasoning';
+  let correctAngle = ANGLES[randomInt(0, ANGLES.length - 1)];
+  let prompt = `Choose the angle of ${correctAngle} degrees.`;
+
+  if (kind === 'type') {
+    if (correctAngle < 90) {
+      prompt = correctAngle < 50
+        ? `Choose the acute angle of ${correctAngle} degrees.`
+        : 'Choose an acute angle from the options.';
+    } else if (correctAngle === 90) {
+      prompt = 'Select the right angle (90 degrees).';
+    } else {
+      prompt = correctAngle > 130
+        ? `Choose the obtuse angle of ${correctAngle} degrees.`
+        : 'Pick an obtuse angle from the options.';
+    }
+  }
+
+  if (kind === 'reasoning') {
+    const base = randomInt(25, 145);
+    if (levelId % 2 === 0) {
+      correctAngle = clamp(180 - base, 10, 170);
+      prompt = `The marked angle is ${base} degrees. Choose the angle on the same straight line.`;
+    } else {
+      const extra = randomInt(10, 40);
+      correctAngle = clamp(base + extra, 10, 170);
+      prompt = `Choose the angle that is ${extra} degrees more than ${base} degrees.`;
+    }
+  }
+
+  const optionPool = new Set<number>([correctAngle]);
+  const offsets = [10, 15, 20, 25, 30, 35];
+  while (optionPool.size < 4) {
+    const offset = offsets[randomInt(0, offsets.length - 1)];
+    const direction = Math.random() > 0.5 ? 1 : -1;
+    optionPool.add(clamp(correctAngle + (offset * direction), 10, 170));
+  }
+  const options = Array.from(optionPool).sort(() => Math.random() - 0.5).slice(0, 4);
+
+  return { prompt, correctAngle, options };
+};
+
+const createTargets = (questionType: 'fractions' | 'angles', angleChallenge: AngleChallenge | null) => {
+  const options = questionType === 'angles'
+    ? (angleChallenge?.options ?? ANGLES.slice(0, 3))
+    : pickUnique(3, FRACTIONS);
+  const correctIndex = questionType === 'angles'
+    ? Math.max(0, options.findIndex((option) => option === angleChallenge?.correctAngle))
+    : Math.floor(Math.random() * options.length);
   const positions = [
     { x: 560, y: 340 },
     { x: 690, y: 280 },
     { x: 800, y: 360 },
   ];
 
-  return options.map((label, index) => ({
-    id: `${label}-${index}`,
-    label,
+  return options.map((option, index) => ({
+    id: `${option}-${index}`,
+    label: questionType === 'angles' ? `${option}°` : option,
+    value: questionType === 'angles' ? option : undefined,
     x: positions[index].x,
     y: positions[index].y,
     radius: 26,
@@ -87,13 +148,19 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
   onBack,
   sessionState,
   sessionEvents,
+  questionType = 'fractions',
+  interactionMode = 'drag',
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number | null>(null);
+  const initialAngleChallenge = questionType === 'angles' ? buildAngleChallenge(levelId) : null;
   const [roundSolved, setRoundSolved] = useState(0);
   const [attempts, setAttempts] = useState(0);
-  const [targets, setTargets] = useState<Target[]>(() => createTargets());
+  const [angleChallenge, setAngleChallenge] = useState<AngleChallenge | null>(initialAngleChallenge);
+  const [targets, setTargets] = useState<Target[]>(
+    () => createTargets(questionType, initialAngleChallenge),
+  );
   const [shot, setShot] = useState<ShotState>({
     x: SLING_POS.x,
     y: SLING_POS.y,
@@ -108,6 +175,8 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [showRules, setShowRules] = useState(false);
   const [locked, setLocked] = useState(false);
+  const [selectedAngle, setSelectedAngle] = useState<number | null>(null);
+  const [forcedTargetId, setForcedTargetId] = useState<string | null>(null);
 
   const correctTarget = useMemo(
     () => targets.find((target) => target.isCorrect),
@@ -117,7 +186,9 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
   const roundsToWin = ROUNDS_TO_WIN + Math.floor((levelId - 1) / 3);
 
   useEffect(() => {
-    setTargets(createTargets());
+    const nextAngleChallenge = questionType === 'angles' ? buildAngleChallenge(levelId) : null;
+    setAngleChallenge(nextAngleChallenge);
+    setTargets(createTargets(questionType, nextAngleChallenge));
     setRoundSolved(0);
     setAttempts(0);
     setShot({
@@ -127,10 +198,14 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
       vy: 0,
       active: false,
     });
-    setFeedback('Pull back the sling and aim for the correct fraction.');
+    setSelectedAngle(null);
+    setForcedTargetId(null);
+    setFeedback(questionType === 'angles'
+      ? 'Choose the correct angle to fire the sling.'
+      : 'Pull back the sling and aim for the correct fraction.');
     setFeedbackTone('neutral');
     setLocked(false);
-  }, [levelId]);
+  }, [levelId, questionType]);
 
   useEffect(() => {
     if (!sessionState) return;
@@ -153,14 +228,19 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
     });
     setDragging(false);
     setDragPoint(null);
+    setForcedTargetId(null);
   };
 
   const advanceRound = (wasCorrect: boolean) => {
     const nextSolved = wasCorrect ? roundSolved + 1 : roundSolved;
     setRoundSolved(nextSolved);
-    setTargets(createTargets());
+    const nextAngleChallenge = questionType === 'angles' ? buildAngleChallenge(levelId) : null;
+    setAngleChallenge(nextAngleChallenge);
+    setTargets(createTargets(questionType, nextAngleChallenge));
     resetShot();
     setLocked(false);
+    setSelectedAngle(null);
+    setForcedTargetId(null);
 
     if (wasCorrect) {
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
@@ -195,7 +275,7 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
       });
       window.setTimeout(() => advanceRound(true), 700);
     } else {
-      setFeedback('That was the wrong fraction. Try again.');
+      setFeedback(questionType === 'angles' ? 'That was the wrong angle. Try again.' : 'That was the wrong fraction. Try again.');
       setFeedbackTone('warning');
       window.setTimeout(() => advanceRound(false), 650);
     }
@@ -216,19 +296,20 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
         return Math.hypot(dx, dy) <= target.radius + 12;
       });
 
-      if (hitTarget) {
+      if (hitTarget && (!forcedTargetId || hitTarget.id === forcedTargetId)) {
         handleHit(hitTarget);
         return { ...prev, x: nextX, y: nextY, active: false };
       }
 
       if (nextY > CANVAS_HEIGHT + 80 || nextX > CANVAS_WIDTH + 80 || nextX < -80) {
         if (!locked) {
-          setFeedback('Missed! Pull back and try again.');
+          setFeedback(questionType === 'angles' ? 'Missed! Try another angle.' : 'Missed! Pull back and try again.');
           setFeedbackTone('warning');
           emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
             XP: roundSolved * 120,
           });
         }
+        setForcedTargetId(null);
         return { ...prev, x: SLING_POS.x, y: SLING_POS.y, vx: 0, vy: 0, active: false };
       }
 
@@ -315,6 +396,7 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
   }, [dragPoint, dragging, shot, targets]);
 
   const handlePointerDown = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    if (interactionMode === 'select') return;
     if (shot.active || locked) return;
     const rect = event.currentTarget.getBoundingClientRect();
     const x = ((event.clientX - rect.left) / rect.width) * CANVAS_WIDTH;
@@ -328,6 +410,7 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
   };
 
   const handlePointerMove = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    if (interactionMode === 'select') return;
     if (!dragging) return;
     const rect = event.currentTarget.getBoundingClientRect();
     const rawX = ((event.clientX - rect.left) / rect.width) * CANVAS_WIDTH;
@@ -344,6 +427,7 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
   };
 
   const handlePointerUp = () => {
+    if (interactionMode === 'select') return;
     if (!dragging || !dragPoint) return;
     const dx = SLING_POS.x - dragPoint.x;
     const dy = SLING_POS.y - dragPoint.y;
@@ -358,7 +442,33 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
       vy,
       active: true,
     });
-    setFeedback('Watch the arc and see which fraction you hit.');
+    setFeedback(questionType === 'angles'
+      ? 'Watch the sling and see which target you hit.'
+      : 'Watch the arc and see which fraction you hit.');
+    setFeedbackTone('neutral');
+  };
+
+  const fireAtAngle = (angleChoice: number) => {
+    if (interactionMode !== 'select') return;
+    if (shot.active || locked) return;
+    const target = targets.find((candidate) => candidate.value === angleChoice);
+    if (!target) return;
+
+    setSelectedAngle(angleChoice);
+    const dx = target.x - SLING_POS.x;
+    const dy = target.y - SLING_POS.y;
+    const travelTime = 0.9;
+    const vx = dx / travelTime;
+    const vy = (dy - 0.5 * GRAVITY * travelTime * travelTime) / travelTime;
+    setShot({
+      x: SLING_POS.x,
+      y: SLING_POS.y,
+      vx,
+      vy,
+      active: true,
+    });
+    setForcedTargetId(target.id);
+    setFeedback('Launching...');
     setFeedbackTone('neutral');
   };
 
@@ -380,7 +490,9 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
         <section className="shrink-0">
           <StoryCard className="mx-auto max-w-[780px]">
             <p className="text-[clamp(13px,2vh,18px)] font-semibold text-white/90">
-              A village ranger needs the right potion crate delivered.
+              {questionType === 'angles'
+                ? 'The castle ranger needs the correct launch angle for the signal.'
+                : 'A village ranger needs the right supply crate delivered.'}
             </p>
           </StoryCard>
         </section>
@@ -388,10 +500,16 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
         <section className="shrink-0">
           <TaskCard className="mx-auto w-full max-w-[780px]">
             <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-900/80">Task Card</div>
-            <div className="mt-1 text-[clamp(15px,2.2vh,20px)] font-black">Hit the correct fraction</div>
+            <div className="mt-1 text-[clamp(15px,2.2vh,20px)] font-black">
+              {questionType === 'angles' ? 'Choose the correct angle' : 'Hit the correct fraction'}
+            </div>
             <div className="mt-2 rounded-[1rem] border border-amber-200/35 bg-white/80 px-3 py-2 text-slate-900">
               <div className="text-[10px] font-black uppercase tracking-[0.14em] text-amber-900/70">Target</div>
-              <div className="mt-1 text-lg font-black text-slate-900">{correctTarget?.label ?? '—'}</div>
+              <div className="mt-1 text-lg font-black text-slate-900">
+                {questionType === 'angles'
+                  ? (angleChallenge?.prompt ?? 'Choose the correct angle.')
+                  : (correctTarget?.label ?? '—')}
+              </div>
             </div>
           </TaskCard>
         </section>
@@ -421,18 +539,39 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
         </section>
 
         <section className="shrink-0">
-          <div className="mx-auto flex w-full max-w-[780px] items-center gap-2">
-            <PrimaryButton
-              onClick={resetShot}
-              disabled={shot.active || locked}
-              className="flex-1"
-            >
-              Reset Sling
-            </PrimaryButton>
-            <SecondaryButton onClick={resetShot} disabled={shot.active || locked}>
-              Reset
-            </SecondaryButton>
-          </div>
+          {interactionMode === 'select' && questionType === 'angles' ? (
+            <div className="mx-auto grid w-full max-w-[780px] grid-rows-[auto_auto] gap-2">
+              <div className="text-center text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100 md:text-[11px]">
+                Choose the angle to fire
+              </div>
+              <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+                {(angleChallenge?.options ?? []).map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => fireAtAngle(option)}
+                    disabled={shot.active || locked}
+                    className="inline-flex min-h-[2.6rem] items-center justify-center rounded-full border border-cyan-100/32 bg-[linear-gradient(180deg,rgba(14,116,144,0.55),rgba(15,23,42,0.85))] px-3 py-2 text-[0.78rem] font-black uppercase tracking-[0.12em] text-cyan-50 shadow-[0_10px_18px_rgba(2,6,23,0.4)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55 md:min-h-[3rem] md:text-sm"
+                  >
+                    {option}°
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="mx-auto flex w-full max-w-[780px] items-center gap-2">
+              <PrimaryButton
+                onClick={resetShot}
+                disabled={shot.active || locked}
+                className="flex-1"
+              >
+                Reset Sling
+              </PrimaryButton>
+              <SecondaryButton onClick={resetShot} disabled={shot.active || locked}>
+                Reset
+              </SecondaryButton>
+            </div>
+          )}
         </section>
       </div>
     </GameUiShell>
