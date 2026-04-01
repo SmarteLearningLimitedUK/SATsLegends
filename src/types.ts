@@ -31,7 +31,8 @@ export type MiniGameType =
   | 'observatory_overload'
   | 'mean_machine'
   | 'equation_grove'
-  | 'rule_runner';
+  | 'rule_runner'
+  | 'sling_shot';
 
 export interface LevelData {
   id: number;

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Crosshair, RotateCcw, Send } from 'lucide-react';
+import { Crosshair } from 'lucide-react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import {
   emitMiniGameSessionEvent,
@@ -29,6 +29,7 @@ interface AngleChallenge {
   prompt: string;
   targetAngle: number;
   kind: ChallengeKind;
+  options: number[];
 }
 
 interface ActiveShot {
@@ -48,36 +49,29 @@ const scoreToStars = (XP: number, correct: number, attempts: number) => {
   return 1;
 };
 
-const getToleranceByLevel = (levelId: number) => {
-  if (levelId <= 3) return 5;
-  if (levelId <= 7) return 4;
-  if (levelId <= 11) return 3;
-  return 2;
-};
-
 const targetCorrectByLevel = (levelId: number) => Math.min(12, Math.max(6, 6 + Math.floor(levelId / 2)));
 
 const angleTypePrompt = (target: number) => {
   if (target < 90) {
     return {
       prompt: target < 50
-        ? `Fire at an acute angle of ${target} degrees.`
-        : 'Set an acute angle and launch.',
+        ? `Choose the acute angle of ${target} degrees.`
+        : 'Choose an acute angle from the options.',
       kind: 'angle_type' as const,
     };
   }
 
   if (target === 90) {
     return {
-      prompt: 'Set the catapult to a right angle (90 degrees).',
+      prompt: 'Select the right angle (90 degrees).',
       kind: 'angle_type' as const,
     };
   }
 
   return {
     prompt: target > 130
-      ? `Launch at an obtuse angle of ${target} degrees.`
-      : 'Fire at an obtuse angle.',
+      ? `Choose the obtuse angle of ${target} degrees.`
+      : 'Pick an obtuse angle from the options.',
     kind: 'angle_type' as const,
   };
 };
@@ -88,7 +82,7 @@ const buildReasoningPrompt = (difficulty: number) => {
   if (difficulty % 2 === 0) {
     const supplement = 180 - base;
     return {
-      prompt: `The marked angle is ${base} degrees. Set the angle on the same straight line.`,
+      prompt: `The marked angle is ${base} degrees. Choose the angle on the same straight line.`,
       targetAngle: supplement,
       kind: 'reasoning' as const,
     };
@@ -97,7 +91,7 @@ const buildReasoningPrompt = (difficulty: number) => {
   const extra = randomInt(10, 40);
   const answer = clamp(base + extra, 10, 170);
   return {
-    prompt: `Launch at the angle that is ${extra} degrees more than ${base} degrees.`,
+    prompt: `Choose the angle that is ${extra} degrees more than ${base} degrees.`,
     targetAngle: answer,
     kind: 'reasoning' as const,
   };
@@ -114,7 +108,7 @@ const buildChallenge = (levelId: number, solvedCount: number): AngleChallenge =>
   const challengeKind = challengeKindForLevel(levelId);
 
   let targetAngle = randomInt(20, 160);
-  let prompt = `Set the catapult to ${targetAngle} degrees and fire.`;
+  let prompt = `Choose the angle of ${targetAngle} degrees.`;
   let kind: ChallengeKind = challengeKind;
 
   if (challengeKind === 'reasoning') {
@@ -133,11 +127,22 @@ const buildChallenge = (levelId: number, solvedCount: number): AngleChallenge =>
     kind = typePrompt.kind;
   }
 
+  const optionPool = new Set<number>([targetAngle]);
+  const offsets = [10, 15, 20, 25, 30, 35];
+  while (optionPool.size < 4) {
+    const offset = offsets[randomInt(0, offsets.length - 1)];
+    const direction = Math.random() > 0.5 ? 1 : -1;
+    const candidate = clamp(targetAngle + (offset * direction), 10, 170);
+    optionPool.add(candidate);
+  }
+  const options = Array.from(optionPool).sort(() => Math.random() - 0.5).slice(0, 4);
+
   return {
     id: Date.now() + Math.floor(Math.random() * 1000),
     prompt,
     targetAngle,
     kind,
+    options,
   };
 };
 
@@ -151,7 +156,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   sessionState,
   sessionEvents,
 }) => {
-  const [aimAngle, setAimAngle] = useState(52);
   const [challenge, setChallenge] = useState<AngleChallenge>(() => buildChallenge(levelId, 0));
   const [shotState, setShotState] = useState<ShotState>('idle');
   const [activeShot, setActiveShot] = useState<ActiveShot | null>(null);
@@ -162,15 +166,13 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const [Combo, setStreak] = useState(0);
   const [didComplete, setDidComplete] = useState(false);
   const [didFail, setDidFail] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
+  const [selectedAngle, setSelectedAngle] = useState<number | null>(null);
 
   const playfieldRef = useRef<HTMLDivElement | null>(null);
   const timeoutIdsRef = useRef<number[]>([]);
   const shotIdRef = useRef(0);
 
   const targetCorrect = useMemo(() => targetCorrectByLevel(levelId), [levelId]);
-  const tolerance = useMemo(() => getToleranceByLevel(levelId), [levelId]);
-
   const timeLeft = sessionState?.timeLeft ?? 1;
   const lives = sessionState?.lives ?? 3;
   const isSessionActive = sessionState ? timeLeft > 0 && lives > 0 : true;
@@ -187,10 +189,10 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
   const advanceChallenge = (nextSolvedCount: number) => {
     setChallenge(buildChallenge(levelId, nextSolvedCount));
-    setAimAngle(52);
     setShotState('idle');
     setActiveShot(null);
     setFeedback(null);
+    setSelectedAngle(null);
   };
 
   const completeRun = (finalScore: number, finalCorrect: number, finalAttempts: number) => {
@@ -217,7 +219,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     if (sessionState.timeLeft !== sessionState.totalTime) return;
 
     clearQueuedTimeouts();
-    setAimAngle(52);
     setChallenge(buildChallenge(levelId, 0));
     setShotState('idle');
     setActiveShot(null);
@@ -228,6 +229,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     setStreak(0);
     setDidComplete(false);
     setDidFail(false);
+    setSelectedAngle(null);
   }, [levelId, sessionState, sessionState?.timeLeft, sessionState?.totalTime]);
 
   useEffect(() => {
@@ -242,27 +244,13 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     onGameOver(XP);
   }, [didComplete, didFail, isSessionActive, lives, onGameOver, XP, sessionEvents, sessionState]);
 
-  const updateAngleFromPointer = (clientX: number, clientY: number) => {
-    const rect = playfieldRef.current?.getBoundingClientRect();
-    if (!rect) return;
-
-    const pivotX = rect.left + (rect.width * 0.2);
-    const pivotY = rect.top + (rect.height * 0.84);
-
-    const dx = clientX - pivotX;
-    const dy = pivotY - clientY;
-    const radians = Math.atan2(dy, dx);
-    const degrees = (radians * 180) / Math.PI;
-
-    setAimAngle(Math.round(clamp(degrees, 10, 170)));
-  };
-
-  const handleFire = () => {
+  const handleFire = (angleChoice: number) => {
     if (!isSessionActive || didComplete || didFail || shotState === 'launching') return;
 
-    const error = Math.abs(aimAngle - challenge.targetAngle);
-    const isCorrect = error <= tolerance;
-    const isNear = !isCorrect && error <= tolerance + 5;
+    setSelectedAngle(angleChoice);
+    const error = Math.abs(angleChoice - challenge.targetAngle);
+    const isCorrect = angleChoice === challenge.targetAngle;
+    const isNear = !isCorrect && error <= 5;
     const outcome: ShotOutcome = isCorrect ? 'hit' : isNear ? 'near' : 'miss';
 
     shotIdRef.current += 1;
@@ -297,9 +285,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           metadata: {
             scoreAfter: nextScore,
             scoreDelta: gained,
-            selectedAngle: aimAngle,
+            selectedAngle: angleChoice,
             targetAngle: challenge.targetAngle,
-            tolerance,
           },
         });
 
@@ -307,7 +294,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           XP: nextScore,
           metadata: {
             challengeKind: challenge.kind,
-            selectedAngle: aimAngle,
+            selectedAngle: angleChoice,
             targetAngle: challenge.targetAngle,
           },
         });
@@ -331,9 +318,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         XP,
         metadata: {
           challengeKind: challenge.kind,
-          selectedAngle: aimAngle,
+          selectedAngle: angleChoice,
           targetAngle: challenge.targetAngle,
-          tolerance,
           missBy: error,
         },
       });
@@ -362,7 +348,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
             <span className="text-amber-200">
               {challenge.kind === 'direct_degree' ? 'Direct aim' : challenge.kind === 'angle_type' ? 'Angle type' : 'Reasoning'}
             </span>
-            <span className="text-cyan-200">Tolerance {"\u00B1"}{tolerance}{"\u00B0"}</span>
           </div>
         </div>
 
@@ -370,13 +355,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           <div
             ref={playfieldRef}
             className="relative min-h-0 flex-1 overflow-hidden rounded-[1.45rem] border border-cyan-200/18 bg-[linear-gradient(180deg,rgba(4,14,42,0.22),rgba(4,14,42,0.32))]"
-            onPointerMove={(event) => {
-              if (!isDragging || shotState === 'launching') return;
-              updateAngleFromPointer(event.clientX, event.clientY);
-            }}
-            onPointerUp={() => setIsDragging(false)}
-            onPointerCancel={() => setIsDragging(false)}
-            onPointerLeave={() => setIsDragging(false)}
           >
             <motion.div
               animate={{ x: parallaxDrive ? -18 : 0 }}
@@ -398,14 +376,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
             <div className="absolute left-[4.5%] bottom-[11.5%] h-[27%] w-[26%] rounded-t-[1.4rem] border border-amber-200/30 bg-[linear-gradient(180deg,rgba(51,65,85,0.84),rgba(15,23,42,0.94))] shadow-[0_12px_22px_rgba(2,6,23,0.4)]" />
 
-            <div
-              className="absolute left-[15%] bottom-[13.5%] h-[40%] w-[40%]"
-              onPointerDown={(event) => {
-                if (shotState === 'launching') return;
-                setIsDragging(true);
-                updateAngleFromPointer(event.clientX, event.clientY);
-              }}
-            >
+            <div className="absolute left-[15%] bottom-[13.5%] h-[40%] w-[40%]">
               <div
                 className="pointer-events-none absolute inset-0 rounded-full border border-cyan-200/45"
                 style={{ clipPath: 'inset(0 0 50% 0)' }}
@@ -425,7 +396,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
               })}
 
               <motion.div
-                animate={{ rotate: -aimAngle }}
+                animate={{ rotate: -Math.max(10, Math.min(170, selectedAngle ?? 60)) }}
                 transition={{ type: 'spring', stiffness: 220, damping: 26 }}
                 className="pointer-events-none absolute left-1/2 top-1/2 h-[10px] w-[58%] -translate-x-[2px] -translate-y-1/2 rounded-full border border-amber-300/58 bg-[linear-gradient(90deg,rgba(217,119,6,0.95),rgba(251,191,36,0.98),rgba(254,243,199,0.96))] shadow-[0_0_12px_rgba(251,191,36,0.4)]"
                 style={{ transformOrigin: '0% 50%' }}
@@ -436,7 +407,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
             <div className="absolute left-[10%] bottom-[3.5%] inline-flex items-center gap-1 rounded-full border border-cyan-100/35 bg-slate-950/58 px-3 py-1.5 text-xs font-black text-cyan-100 shadow-[0_8px_16px_rgba(2,6,23,0.38)] md:text-sm">
               <Crosshair className="h-4 w-4 text-cyan-200" />
-              {aimAngle}{"\u00B0"}
+              {selectedAngle ?? '--'}{"\u00B0"}
             </div>
 
             <div className="absolute right-[7.5%] bottom-[11%] flex h-[26%] w-[17%] items-end justify-center">
@@ -498,44 +469,23 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         </div>
 
         <div className="mt-2 shrink-0">
-          <div className="mx-auto grid w-full max-w-[44rem] grid-cols-[1fr_auto] items-center gap-2 rounded-[1.15rem] border border-cyan-100/22 bg-slate-950/54 px-2.5 py-2 md:gap-3 md:px-3">
-            <div className="grid grid-cols-3 gap-1.5 md:gap-2">
-              <button
-                type="button"
-                onClick={() => setAimAngle((previous) => clamp(previous - 1, 10, 170))}
-                disabled={shotState === 'launching' || !isSessionActive}
-                className="rounded-full border border-cyan-100/32 bg-cyan-500/18 px-2 py-1.5 text-[10px] font-black text-cyan-50 transition hover:bg-cyan-400/30 disabled:opacity-55 md:py-2 md:text-[11px]"
-              >
-                -1{"\u00B0"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setAimAngle(52)}
-                disabled={shotState === 'launching' || !isSessionActive}
-                className="inline-flex items-center justify-center rounded-full border border-cyan-100/32 bg-cyan-500/18 px-2 py-1.5 text-[10px] font-black text-cyan-50 transition hover:bg-cyan-400/30 disabled:opacity-55 md:py-2 md:text-[11px]"
-              >
-                <RotateCcw className="mr-1 h-3.5 w-3.5" />
-                Reset
-              </button>
-              <button
-                type="button"
-                onClick={() => setAimAngle((previous) => clamp(previous + 1, 10, 170))}
-                disabled={shotState === 'launching' || !isSessionActive}
-                className="rounded-full border border-cyan-100/32 bg-cyan-500/18 px-2 py-1.5 text-[10px] font-black text-cyan-50 transition hover:bg-cyan-400/30 disabled:opacity-55 md:py-2 md:text-[11px]"
-              >
-                +1{"\u00B0"}
-              </button>
+          <div className="mx-auto grid w-full max-w-[44rem] grid-rows-[auto_auto] gap-2 rounded-[1.15rem] border border-cyan-100/22 bg-slate-950/54 px-2.5 py-2 md:gap-3 md:px-3">
+            <div className="text-center text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100 md:text-[11px]">
+              Choose the correct angle to fire
             </div>
-
-            <button
-              type="button"
-              onClick={handleFire}
-              disabled={shotState === 'launching' || !isSessionActive || didComplete || didFail}
-              className="inline-flex min-h-[2.7rem] items-center justify-center rounded-full border border-amber-100/45 bg-[linear-gradient(180deg,rgba(251,191,36,0.98),rgba(245,158,11,0.98))] px-4 py-2 text-[0.74rem] font-black uppercase tracking-[0.12em] text-amber-950 shadow-[0_10px_20px_rgba(217,119,6,0.35)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-55 md:min-h-[3.1rem] md:px-5 md:text-sm"
-            >
-              <Send className="mr-1.5 h-4 w-4" />
-              Fire
-            </button>
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+              {challenge.options.map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => handleFire(option)}
+                  disabled={shotState === 'launching' || !isSessionActive || didComplete || didFail}
+                  className="inline-flex min-h-[2.6rem] items-center justify-center rounded-full border border-cyan-100/32 bg-[linear-gradient(180deg,rgba(14,116,144,0.55),rgba(15,23,42,0.85))] px-3 py-2 text-[0.78rem] font-black uppercase tracking-[0.12em] text-cyan-50 shadow-[0_10px_18px_rgba(2,6,23,0.4)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55 md:min-h-[3rem] md:text-sm"
+                >
+                  {option}{"\u00B0"}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

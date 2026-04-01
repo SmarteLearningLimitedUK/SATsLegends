@@ -58,6 +58,7 @@ const GAME_SUMMARY_BY_KEY: Record<string, string> = {
   share_splitter: 'Share cake slices between plates to match exact ratio targets before time runs out.',
   maths_vs_zombies: 'Survive zombie waves by deploying defenders in the correct maths ratio.',
   ratio_fractions: 'Turn ratios into fractions of the whole.',
+  sling_shot: 'Pull back, aim, and hit the correct fraction target.',
   scale_builder: 'Resize blueprint structures to exact scale factors in a precision architectural challenge.',
   angle_arena: 'Calibrate launch angles precisely to hit targets.',
   polygon_palace: 'Classify shapes quickly by key geometric properties.',

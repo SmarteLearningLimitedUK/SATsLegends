@@ -68,7 +68,7 @@ const RATIO_RAPIDS_LEVELS: LevelData[] = [
   { id: 4, stars: 0, isLocked: false, blueprintKey: 'ratio_fractions', displayName: 'Ratio Fractions', gameType: 'ratio_fractions' },
   { id: 5, stars: 0, isLocked: false, blueprintKey: 'maths_vs_zombies', displayName: 'Maths vs Zombies', gameType: 'ratio_rapids' },
   { id: 6, stars: 0, isLocked: false, blueprintKey: 'scale_builder', displayName: 'Scale Builder', gameType: 'scale_safari' },
-  { id: 7, stars: 0, isLocked: false, blueprintKey: 'maths_vs_zombies', displayName: 'Maths vs Zombies', gameType: 'ratio_rapids' },
+  { id: 7, stars: 0, isLocked: false, blueprintKey: 'sling_shot', displayName: 'Sling Shot Skies', gameType: 'sling_shot' },
 ];
 
 export const ISLANDS: IslandData[] = [

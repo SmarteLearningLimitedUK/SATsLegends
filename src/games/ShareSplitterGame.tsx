@@ -174,6 +174,15 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     };
   }), [challenge.ratios, challenge.targetCounts, plates]);
 
+  const ratioUnitTotal = useMemo(
+    () => challenge.ratios.reduce((sum, value) => sum + value, 0),
+    [challenge.ratios],
+  );
+  const ratioUnitValue = useMemo(
+    () => (ratioUnitTotal > 0 ? challenge.totalSlices / ratioUnitTotal : 0),
+    [challenge.totalSlices, ratioUnitTotal],
+  );
+
   const hasMoves = moveHistory.length > 0;
   const allSlicesUsed = remainingSlices === 0;
   const allCorrect = plateViews.every((plate) => plate.isCorrect);
@@ -388,34 +397,12 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
           />
         </section>
 
-<<<<<<< HEAD
         <section className="shrink-0">
           <StoryCard>
             <p className="text-[clamp(13px,2vh,18px)] font-semibold text-white/90">
               Share the cakes fairly across the plates.
             </p>
           </StoryCard>
-=======
-        <section className="shrink-0 rounded-[1.2rem] border border-white/14 bg-[linear-gradient(180deg,rgba(30,64,175,0.84),rgba(15,23,42,0.88))] px-3 py-3 text-white shadow-[0_12px_22px_rgba(15,23,42,0.24)]">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100/90">Ratio Card</p>
-              <p className="mt-1 text-sm font-black text-white md:text-base">Total cakes: {challenge.totalSlices}</p>
-            </div>
-            <div className="rounded-full bg-black/24 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-100">
-              Round {roundSolved + 1} of {ROUNDS_TO_WIN}
-            </div>
-          </div>
-          <div className="mt-2 grid grid-cols-6 gap-1.5">
-            {challenge.ratios.map((ratio, index) => (
-              <div key={`ratio-${index + 1}`} className="rounded-[0.95rem] border border-white/10 bg-black/18 px-2 py-2 text-center">
-                <div className="mx-auto mb-1 h-8 w-8 rounded-full border border-white/15 bg-[radial-gradient(circle,rgba(255,255,255,0.18),rgba(15,23,42,0.18))]" />
-                <p className="text-[9px] font-black uppercase tracking-[0.08em] text-cyan-100">Plate {index + 1}</p>
-                <p className="mt-0.5 text-lg font-black text-white">{ratio}</p>
-              </div>
-            ))}
-          </div>
->>>>>>> parent of 66d31cf (game restructure1 rollback to here)
         </section>
 
         <section className="shrink-0">

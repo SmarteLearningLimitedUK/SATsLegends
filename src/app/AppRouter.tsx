@@ -225,10 +225,15 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         if (selectedLevel.blueprintKey === 'share_splitter') {
           return renderFromRegistry('ShareSplitterGame', sharedProps);
         }
+        if (selectedLevel.blueprintKey === 'sling_shot') {
+          return renderFromRegistry('SlingShotGame', sharedProps);
+        }
         if (selectedLevel.blueprintKey === 'maths_vs_zombies') {
           return renderFromRegistry('MathsVsZombiesGame', sharedProps);
         }
         return renderFromRegistry('RatioRapidsGame', { ...sharedProps, gameTitle: selectedLevel.displayName });
+      case 'sling_shot':
+        return renderFromRegistry('SlingShotGame', sharedProps);
       case 'timekeeper_temple':
         return renderFromRegistry('TimekeeperTempleGame', sharedProps);
       case 'measurement_forge':

@@ -36,6 +36,7 @@ import RotationReflectionGame from './RotationReflectionGame';
 import RuneLockDungeonsGame from './RuneLockDungeonsGame';
 import ScaleBuilderGame from './ScaleBuilderGame';
 import ShareSplitterGame from './ShareSplitterGame';
+import SlingShotGame from './SlingShotGame';
 import SimplifySprintGame from './SimplifySprintGame';
 import TakeOutRushGame from './TakeOutRushGame';
 import TimekeeperTempleGame from './TimekeeperTempleGame';
@@ -88,6 +89,7 @@ export type MiniGameRegistryKey =
   | 'RuneLockDungeonsGame'
   | 'ScaleBuilderGame'
   | 'ShareSplitterGame'
+  | 'SlingShotGame'
   | 'SimplifySprintGame'
   | 'TakeOutRushGame'
   | 'TimekeeperTempleGame'
@@ -148,6 +150,7 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   RuneLockDungeonsGame: asMiniGame('rune_lock_dungeons', RuneLockDungeonsGame),
   ScaleBuilderGame: asMiniGame('scale_builder', ScaleBuilderGame),
   ShareSplitterGame: asMiniGame('share_splitter', ShareSplitterGame),
+  SlingShotGame: asMiniGame('sling_shot', SlingShotGame),
   SimplifySprintGame: asMiniGame('simplify_sprint', SimplifySprintGame),
   TakeOutRushGame: asMiniGame('take_out_rush', TakeOutRushGame),
   TimekeeperTempleGame: asMiniGame('timekeeper_temple', TimekeeperTempleGame),
