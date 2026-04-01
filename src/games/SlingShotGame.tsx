@@ -899,6 +899,36 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
     setFeedbackTone('neutral');
   };
 
+  useEffect(() => {
+    const images = [
+      { img: imageAssets.background, src: angryBirdBackground },
+      { img: imageAssets.sling, src: angryBirdSling },
+      { img: imageAssets.bird, src: angryBirdBird },
+      { img: imageAssets.pig, src: angryBirdPig },
+      { img: imageAssets.wood, src: angryBirdWood },
+      { img: imageAssets.woodTall, src: angryBirdWoodTall },
+      { img: imageAssets.column, src: angryBirdColumn },
+      { img: imageAssets.stars, src: angryBirdStars },
+      { img: imageAssets.buttons, src: angryBirdButtons },
+      { img: imageAssets.walls, src: angryBirdWalls },
+      { img: imageAssets.zeroGravity, src: angryBirdZeroGravity },
+    ];
+    images.forEach(({ img, src }) => {
+      if (img.src !== src) {
+        img.src = src;
+      }
+    });
+
+    const handleLoad = () => setAssetsReady((prev) => prev + 1);
+    images.forEach(({ img }) => {
+      if (img.complete) return;
+      img.addEventListener('load', handleLoad);
+    });
+    return () => {
+      images.forEach(({ img }) => img.removeEventListener('load', handleLoad));
+    };
+  }, [imageAssets]);
+
   return (
     <GameUiShell
       backgroundImage={questionType === 'angles' ? angryBirdBackground : GAME_SCENE_META.angle_arena.background}
@@ -1020,32 +1050,3 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
 };
 
 export default SlingShotGame;
-  useEffect(() => {
-    const images = [
-      { img: imageAssets.background, src: angryBirdBackground },
-      { img: imageAssets.sling, src: angryBirdSling },
-      { img: imageAssets.bird, src: angryBirdBird },
-      { img: imageAssets.pig, src: angryBirdPig },
-      { img: imageAssets.wood, src: angryBirdWood },
-      { img: imageAssets.woodTall, src: angryBirdWoodTall },
-      { img: imageAssets.column, src: angryBirdColumn },
-      { img: imageAssets.stars, src: angryBirdStars },
-      { img: imageAssets.buttons, src: angryBirdButtons },
-      { img: imageAssets.walls, src: angryBirdWalls },
-      { img: imageAssets.zeroGravity, src: angryBirdZeroGravity },
-    ];
-    images.forEach(({ img, src }) => {
-      if (img.src !== src) {
-        img.src = src;
-      }
-    });
-
-    const handleLoad = () => setAssetsReady((prev) => prev + 1);
-    images.forEach(({ img }) => {
-      if (img.complete) return;
-      img.addEventListener('load', handleLoad);
-    });
-    return () => {
-      images.forEach(({ img }) => img.removeEventListener('load', handleLoad));
-    };
-  }, [imageAssets]);
