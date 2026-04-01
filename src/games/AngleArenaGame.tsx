@@ -396,7 +396,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         const scale = Math.max(
           viewWidth / backgroundImg.width,
           viewHeight / backgroundImg.height,
-        );
+        ) * 1.18;
         const tileW = backgroundImg.width * scale;
         const tileH = backgroundImg.height * scale;
         const tilesNeeded = Math.ceil(viewWidth / tileW) + 3;
@@ -411,19 +411,19 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       }
 
       // Parallax sky haze
-      ctx.fillStyle = 'rgba(15,23,42,0.32)';
+      ctx.fillStyle = 'rgba(15,23,42,0.2)';
       ctx.fillRect(0, 0, viewWidth, viewHeight * 0.48);
 
       // Mountains layer (slow)
-      ctx.fillStyle = '#16305f';
+      ctx.fillStyle = 'rgba(22,48,95,0.35)';
       ctx.fillRect(-parallaxFar * 0.4 - 200, 24, WORLD.width + 400, 90);
 
       // Midground layer
-      ctx.fillStyle = '#1f3d7a';
+      ctx.fillStyle = 'rgba(31,61,122,0.45)';
       ctx.fillRect(-parallaxMid * 0.6 - 200, 96, WORLD.width + 400, 140);
 
       // Foreground ground
-      ctx.fillStyle = '#1b2b4f';
+      ctx.fillStyle = 'rgba(27,43,79,0.55)';
       ctx.fillRect(-parallaxNear - 200, WORLD.groundY, WORLD.width + 400, viewHeight - WORLD.groundY + 40);
 
       const cameraOffsetX = -cameraXRef.current;
@@ -513,7 +513,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
         <section className="shrink-0">
           <div
-            className={`relative z-20 w-full overflow-visible transition-all duration-300 ${gameState === 'firing' || gameState === 'projectileFlight' || gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? 'pointer-events-none max-h-0 opacity-0' : 'max-h-[360px] opacity-100 border-2 border-fuchsia-400/80'}`}
+            className={`relative z-20 w-full overflow-visible transition-all duration-300 ${gameState === 'firing' || gameState === 'projectileFlight' || gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? 'pointer-events-none max-h-0 opacity-0' : 'max-h-[360px] opacity-100'}`}
           >
             <div className="truncate whitespace-nowrap rounded-full border border-amber-200/55 bg-[linear-gradient(180deg,#f7f1e3,#f1e5cc)] px-3 py-1.5 text-center text-[clamp(12px,1.6vh,15px)] font-black text-amber-900 shadow-[0_10px_20px_rgba(15,23,42,0.2)]">
               {activeQuestion?.prompt ?? 'Choose the correct launch angle.'}
@@ -526,9 +526,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
                     type="button"
                     onClick={() => handleAnswer(option)}
                     disabled={gameState !== 'awaitingAnswer'}
-                    className="inline-flex min-h-[2.6rem] items-center justify-center rounded-[1.2rem] border border-amber-200/60 bg-[linear-gradient(180deg,rgba(30,64,175,0.12),rgba(15,23,42,0.14))] px-3 text-[clamp(13px,2vh,17px)] font-black text-slate-900 shadow-[0_10px_20px_rgba(15,23,42,0.2)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-55"
+                    className="inline-flex min-h-[2.6rem] items-center justify-center rounded-[1.2rem] border border-amber-200/60 bg-[linear-gradient(180deg,rgba(30,64,175,0.45),rgba(15,23,42,0.45))] px-3 text-[clamp(13px,2vh,17px)] font-black text-slate-100 shadow-[0_10px_20px_rgba(15,23,42,0.2)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
                   >
-                    {option} deg
+                    {option}°
                   </button>
                 ))}
               </div>
