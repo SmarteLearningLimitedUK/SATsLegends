@@ -7,7 +7,6 @@ import ParentDashboard from '../screens/ParentDashboard';
 import WellbeingHub from '../wellbeing/WellbeingHub';
 import { WELLBEING_ACTIVITIES, WELLBEING_ACTIVITY_BY_ISLAND, WELLBEING_BY_ID } from '../wellbeing/data';
 import { WellbeingActivityId } from '../wellbeing/types';
-import UnifiedMiniGameHud from '../components/UnifiedMiniGameHud';
 import GameplayContentViewport from '../components/GameplayContentViewport';
 import {
   FramedPanel,
@@ -576,14 +575,6 @@ export const AppRouter: React.FC<AppRouterProps> = ({
               </GameplayContentViewport>
             </div>
 
-            <UnifiedMiniGameHud
-              avatarId={player.avatarId}
-              timeLeft={globalMiniGameHudTimeLeft}
-              totalTime={globalMiniGameHudDurationSeconds}
-              lives={globalMiniGameLives}
-              hideTimer={hideMiniGameTimer}
-              onBack={onBackToIslandLevels}
-            />
           </div>
         </div>
       );

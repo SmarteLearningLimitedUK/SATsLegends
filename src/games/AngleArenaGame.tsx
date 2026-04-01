@@ -12,7 +12,6 @@ import {
   SecondaryButton,
   TaskCard,
 } from '../components/game-ui/GameUiKit';
-import UnifiedMiniGameHud from '../components/UnifiedMiniGameHud';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { clamp, computeLaunchVector, stepProjectile, ProjectileState } from './angleArena/physics';
 
@@ -402,13 +401,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.fillStyle = '#0f172a';
       ctx.fillRect(cameraOffsetX + WORLD.launcherX - 20, WORLD.launcherY + 8, 40, 32);
 
-      // Target podium (no floating enemy)
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(cameraOffsetX + targetX - 38, targetY - 14, 76, 14);
-      ctx.fillStyle = '#1f2937';
-      ctx.fillRect(cameraOffsetX + targetX - 30, targetY - 30, 60, 18);
-      ctx.fillStyle = '#374151';
-      ctx.fillRect(cameraOffsetX + targetX - 22, targetY - 46, 44, 16);
 
       if (projectile) {
         projectile.trail.forEach((point) => {
@@ -425,9 +417,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       }
 
       if (impactResultRef.current === 'hit' && cameraModeRef.current === 'hold') {
-        ctx.fillStyle = 'rgba(250,204,21,0.65)';
+        ctx.fillStyle = 'rgba(250,204,21,0.45)';
         ctx.beginPath();
-        ctx.arc(cameraOffsetX + targetX, targetY - 30, 36, 0, Math.PI * 2);
+        ctx.arc(cameraOffsetX + targetX, targetY - 30, 28, 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -460,7 +452,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
   return (
     <GameUiShell>
-      <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+5.2rem)] pt-3 text-white">
+      <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-3 text-white">
         <section className="shrink-0">
           <GameTopBar
             onBack={onBack}
@@ -573,13 +565,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           )}
         </section>
       </div>
-      <UnifiedMiniGameHud
-        avatarId={avatarId}
-        timeLeft={timeLeft}
-        totalTime={totalTime}
-        lives={lives}
-        onBack={onBack}
-      />
     </GameUiShell>
   );
 };
