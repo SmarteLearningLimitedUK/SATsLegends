@@ -452,7 +452,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
   return (
     <GameUiShell>
-      <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-3 text-white">
+      <div className="flex h-full min-h-0 flex-col gap-1.5 px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2.5 text-white">
         <section className="shrink-0">
           <GameTopBar
             onBack={onBack}
@@ -464,35 +464,32 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         </section>
 
         <section className="shrink-0">
-          <TaskCard className="mx-auto w-full max-w-[760px]">
-            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-900/80">Angle Task</div>
-            <div className="mt-1 text-[clamp(14px,2.1vh,18px)] font-black text-slate-900">
+          <div
+            className={`mx-auto w-full max-w-[900px] overflow-hidden transition-all duration-300 ${gameState === 'projectileFlight' || gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? 'max-h-0 opacity-0' : 'max-h-[220px] opacity-100'}`}
+          >
+            <div className="rounded-full border border-amber-200/55 bg-[linear-gradient(180deg,#f7f1e3,#f1e5cc)] px-3 py-2 text-center text-[clamp(13px,1.8vh,16px)] font-black text-amber-900 shadow-[0_10px_20px_rgba(15,23,42,0.2)]">
               {activeQuestion?.prompt ?? 'Choose the correct launch angle.'}
             </div>
             {isBeginnerLevel ? (
-              <div className="mt-3 grid grid-cols-2 gap-2">
+              <div className="mt-2 grid grid-cols-2 gap-2">
                 {(activeQuestion?.options ?? []).map((option) => (
                   <button
                     key={option}
                     type="button"
                     onClick={() => handleAnswer(option)}
                     disabled={gameState !== 'awaitingAnswer'}
-                    className="inline-flex min-h-[3.2rem] items-center justify-center rounded-[1.3rem] border border-amber-200/60 bg-[linear-gradient(180deg,rgba(30,64,175,0.12),rgba(15,23,42,0.14))] px-3 text-[clamp(14px,2.2vh,18px)] font-black text-slate-900 shadow-[0_10px_20px_rgba(15,23,42,0.2)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-55"
+                    className="inline-flex min-h-[2.6rem] items-center justify-center rounded-[1.2rem] border border-amber-200/60 bg-[linear-gradient(180deg,rgba(30,64,175,0.12),rgba(15,23,42,0.14))] px-3 text-[clamp(13px,2vh,17px)] font-black text-slate-900 shadow-[0_10px_20px_rgba(15,23,42,0.2)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-55"
                   >
                     {option} deg
                   </button>
                 ))}
               </div>
-            ) : (
-              <div className="mt-2 text-[11px] font-semibold text-slate-700">
-                Choose the launch angle with the controls below.
-              </div>
-            )}
-          </TaskCard>
+            ) : null}
+          </div>
         </section>
 
-        <section className="min-h-0 flex-1">
-          <div className="mx-auto flex h-full w-full max-w-[960px] items-center justify-center rounded-[1.6rem] border border-white/12 bg-slate-950/30 shadow-[0_18px_32px_rgba(2,6,23,0.4)]">
+        <section className="min-h-0 flex-[1.35]">
+          <div className="mx-auto flex h-full w-full max-w-[1100px] items-center justify-center rounded-[1.6rem] border border-white/12 bg-slate-950/30 shadow-[0_18px_32px_rgba(2,6,23,0.4)]">
             <canvas
               ref={canvasRef}
               className="h-full w-full rounded-[1.6rem]"
@@ -517,8 +514,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
               </SecondaryButton>
             </div>
           ) : (
-            <div className="mx-auto flex w-full max-w-[760px] items-center gap-2">
-              <div className="flex flex-1 items-center gap-2 rounded-[1.2rem] border border-cyan-100/24 bg-slate-950/60 px-3 py-2 text-cyan-50">
+            <div className="mx-auto flex w-full max-w-[900px] items-center gap-2">
+              <div className="flex flex-1 items-center gap-2 rounded-[1.1rem] border border-cyan-100/24 bg-slate-950/60 px-2.5 py-1.5 text-cyan-50">
                 <span className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/80">Angle</span>
                 <div className="ml-auto flex items-center gap-2">
                   <SecondaryButton
@@ -535,7 +532,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
                   >
                     -
                   </SecondaryButton>
-                  <div className="min-w-[64px] text-center text-lg font-black">
+                  <div className="min-w-[54px] text-center text-[clamp(14px,2.2vh,18px)] font-black">
                     {selectedAnswer ?? '--'} deg
                   </div>
                   <SecondaryButton
@@ -557,7 +554,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
               <PrimaryButton
                 onClick={handleFire}
                 disabled={!selectedAnswer || (gameState !== 'aiming' && gameState !== 'awaitingAnswer')}
-                className="w-[40%]"
+                className="w-[34%] min-h-[2.9rem]"
               >
                 Fire
               </PrimaryButton>
