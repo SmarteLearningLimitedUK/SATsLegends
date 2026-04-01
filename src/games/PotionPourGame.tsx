@@ -406,14 +406,6 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
     })),
     [challenge.activeIndices, counts, targetByIngredient],
   );
-  const ratioUnitTotal = useMemo(
-    () => challenge.baseRatio.reduce((sum, value) => sum + value, 0),
-    [challenge.baseRatio],
-  );
-  const ratioUnitValue = useMemo(
-    () => (ratioUnitTotal > 0 ? Math.round((challenge.totalDrops / ratioUnitTotal) * 10) / 10 : 0),
-    [challenge.totalDrops, ratioUnitTotal],
-  );
   const isRecipeComplete = useMemo(
     () => activeTargets.length > 0 && activeTargets.every(({ current, target }) => current === target),
     [activeTargets],

@@ -51,6 +51,19 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       ],
     },
   },
+  sling_shot: {
+    label: 'Sling Shot Skies',
+    focus: 'Aim and match the correct fraction target',
+    rules: {
+      title: 'Sling Shot Skies',
+      summary: 'Pull back the sling and hit the target with the correct fraction.',
+      bullets: [
+        'Drag back the sling to set the launch power.',
+        'Aim for the target that matches the fraction on the task card.',
+        'Reset and try again if you miss.',
+      ],
+    },
+  },
   cloud_collapse: {
     label: 'Crystal Match',
     focus: 'Equivalent values match-3 play',
@@ -168,11 +181,11 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     focus: 'Angles, missing angles and angle reasoning',
     rules: {
       title: 'Angle Siege',
-      summary: 'Pull back the protractor sling and launch at the correct angle to shatter the target.',
+      summary: 'Solve the angle prompt, select the correct angle, and watch the sling fire at the target.',
       bullets: [
         'Some rounds ask for a direct angle, while others hide the answer inside a geometry clue.',
-        'Release the sling as close as you can to the correct target angle.',
-        'Final rounds can turn missing-angle maths into the boss shot itself.',
+        'Select the angle choice that matches the prompt to launch the sling.',
+        'Later rounds include missing-angle reasoning and larger numbers.',
       ],
     },
   },

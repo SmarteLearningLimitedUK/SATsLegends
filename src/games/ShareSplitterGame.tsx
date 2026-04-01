@@ -174,17 +174,18 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     };
   }), [challenge.ratios, challenge.targetCounts, plates]);
 
-  const hasMoves = moveHistory.length > 0;
-  const allSlicesUsed = remainingSlices === 0;
-  const allCorrect = plateViews.every((plate) => plate.isCorrect);
   const ratioUnitTotal = useMemo(
     () => challenge.ratios.reduce((sum, value) => sum + value, 0),
     [challenge.ratios],
   );
   const ratioUnitValue = useMemo(
-    () => (ratioUnitTotal > 0 ? Math.round((challenge.totalSlices / ratioUnitTotal) * 10) / 10 : 0),
+    () => (ratioUnitTotal > 0 ? challenge.totalSlices / ratioUnitTotal : 0),
     [challenge.totalSlices, ratioUnitTotal],
   );
+
+  const hasMoves = moveHistory.length > 0;
+  const allSlicesUsed = remainingSlices === 0;
+  const allCorrect = plateViews.every((plate) => plate.isCorrect);
 
   const rules = useMemo(() => ({
     title: 'Share Splitter',

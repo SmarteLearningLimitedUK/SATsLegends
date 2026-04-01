@@ -3,18 +3,12 @@ export type SupportedChallengeGameType =
   | 'calculation_clash'
   | 'percent_pulse'
   | 'coordinate_quest'
-  | 'coordinate_cross'
   | 'transform_temple'
   | 'scale_safari'
-  | 'unit_mixer'
   | 'chart_chase'
   | 'mean_machine'
   | 'equation_grove'
-  | 'rule_runner'
-  | 'formula_forge'
-  | 'percent_power'
-  | 'area_architect'
-  | 'ratio_fractions';
+  | 'rule_runner';
 
 export interface CoordinatePoint {
   x: number;
@@ -302,44 +296,6 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
       },
     },
   ],
-  coordinate_cross: [
-    {
-      minLevel: 1,
-      value: {
-        prompt: 'Which coordinates match point Q in the four quadrants?',
-        sublabel: 'Read x first, then y, even when the values are negative.',
-        options: ['(-3, 2)', '(3, -2)', '(-2, 3)', '(2, -3)'],
-        answerIndex: 0,
-        visual: {
-          type: 'coordinates',
-          min: -6,
-          max: 6,
-          targetLabel: 'Q',
-          caption: 'Four-quadrant coordinates are a Year 6 must-know.',
-          points: [
-            { label: 'Q', x: -3, y: 2, tone: 'bg-cyan-300' },
-            { label: 'R', x: 3, y: -2, tone: 'bg-emerald-300' },
-            { label: 'S', x: -2, y: 3, tone: 'bg-sky-300' },
-            { label: 'T', x: 2, y: -3, tone: 'bg-amber-300' },
-          ],
-        },
-      },
-    },
-    {
-      minLevel: 2,
-      value: {
-        prompt: 'Point A is at (-4, -1). Move 3 right and 5 up. Where does it finish?',
-        sublabel: 'Add the translations carefully across the axes.',
-        options: ['(-1, 4)', '(-7, 4)', '(-1, -6)', '(1, 4)'],
-        answerIndex: 0,
-        visual: {
-          type: 'equation',
-          lines: ['Start at (-4, -1)', '+3 on x, +5 on y', 'Final position = ?'],
-          badge: 'Quadrants',
-        },
-      },
-    },
-  ],
   transform_temple: [
     {
       minLevel: 1,
@@ -451,38 +407,6 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
           rightValue: '?',
           caption: 'The shorter tower is one-half as tall.',
         },
-      },
-    },
-  ],
-  unit_mixer: [
-    {
-      minLevel: 1,
-      value: {
-        prompt: 'Convert 3.2 km to metres.',
-        sublabel: 'Move the digits 3 places for kilometres to metres.',
-        options: ['320 m', '3,200 m', '32,000 m', '3,200,000 m'],
-        answerIndex: 1,
-        visual: { type: 'equation', lines: ['1 km = 1,000 m', '3.2 km = ? m'], badge: 'Convert' },
-      },
-    },
-    {
-      minLevel: 2,
-      value: {
-        prompt: 'Convert 4,500 ml to litres.',
-        sublabel: 'Remember 1,000 ml makes 1 litre.',
-        options: ['0.45 l', '4.5 l', '45 l', '450 l'],
-        answerIndex: 1,
-        visual: { type: 'equation', lines: ['1,000 ml = 1 l', '4,500 ml = ? l'], badge: 'Unit' },
-      },
-    },
-    {
-      minLevel: 3,
-      value: {
-        prompt: 'Convert 0.85 m to cm.',
-        sublabel: 'Multiply by 100 to move to centimetres.',
-        options: ['8.5 cm', '85 cm', '850 cm', '0.085 cm'],
-        answerIndex: 1,
-        visual: { type: 'equation', lines: ['1 m = 100 cm', '0.85 m = ? cm'], badge: 'Scale' },
       },
     },
   ],
@@ -616,138 +540,6 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
         options: ['5', '6', '7', '8'],
         answerIndex: 2,
         visual: { type: 'equation', lines: ['black = (white × 3) + 4', 'black = 25'], badge: 'Inverse' },
-      },
-    },
-  ],
-  formula_forge: [
-    {
-      minLevel: 1,
-      value: {
-        prompt: 'A rectangle has length 7 cm and width 4 cm. What is its area?',
-        sublabel: 'Use Area = length × width.',
-        options: ['11 cm²', '28 cm²', '44 cm²', '14 cm²'],
-        answerIndex: 1,
-        visual: { type: 'equation', lines: ['Area = l × w', '7 × 4 = ?'], badge: 'Formula' },
-      },
-    },
-    {
-      minLevel: 2,
-      value: {
-        prompt: 'A rule is y = 3x + 5. What is y when x = 6?',
-        sublabel: 'Substitute the value for x, then calculate.',
-        options: ['18', '23', '25', '33'],
-        answerIndex: 1,
-        visual: { type: 'equation', lines: ['y = 3x + 5', 'x = 6'], badge: 'Substitute' },
-      },
-    },
-    {
-      minLevel: 3,
-      value: {
-        prompt: 'A rule is n = 5p − 4. If n = 21, what is p?',
-        sublabel: 'Work backwards to solve for p.',
-        options: ['3', '4', '5', '6'],
-        answerIndex: 2,
-        visual: { type: 'equation', lines: ['n = 5p − 4', 'n = 21'], badge: 'Rearrange' },
-      },
-    },
-  ],
-  percent_power: [
-    {
-      minLevel: 1,
-      value: {
-        prompt: 'What is 30% of 250?',
-        sublabel: 'Use 10% = 25, then scale up.',
-        options: ['50', '70', '75', '90'],
-        answerIndex: 2,
-        visual: {
-          type: 'pulse',
-          centerLabel: '30%',
-          orbitLabels: ['10% = 25', '3 × 10%', 'Find the part'],
-          meterValue: 30,
-          meterLabel: '30% target',
-          caption: 'Build from 10% steps.',
-        },
-      },
-    },
-    {
-      minLevel: 2,
-      value: {
-        prompt: '15% of a number is 36. What is the whole number?',
-        sublabel: 'Find 1%, then scale to 100%.',
-        options: ['180', '200', '240', '360'],
-        answerIndex: 0,
-        visual: {
-          type: 'pulse',
-          centerLabel: '15% = 36',
-          orbitLabels: ['1% = 2.4', '100% = ?', 'Scale up'],
-          meterValue: 15,
-          meterLabel: 'Reverse %',
-          caption: 'Use unitary method.',
-        },
-      },
-    },
-  ],
-  area_architect: [
-    {
-      minLevel: 1,
-      value: {
-        prompt: 'An L-shape is made from a 6 × 4 rectangle and a 2 × 2 cut-out. What is the area?',
-        sublabel: 'Find the big area, then subtract the missing square.',
-        options: ['16 cm²', '20 cm²', '24 cm²', '28 cm²'],
-        answerIndex: 2,
-        visual: { type: 'equation', lines: ['6 × 4 = 24', '24 − 4 = ?'], badge: 'Area' },
-      },
-    },
-    {
-      minLevel: 2,
-      value: {
-        prompt: 'A shape is made from two rectangles: 5 × 3 and 4 × 2. What is the total area?',
-        sublabel: 'Add the areas of each rectangle.',
-        options: ['23 cm²', '25 cm²', '27 cm²', '29 cm²'],
-        answerIndex: 1,
-        visual: { type: 'equation', lines: ['5 × 3 = 15', '4 × 2 = 8', 'Total = 23'], badge: 'Composite' },
-      },
-    },
-    {
-      minLevel: 3,
-      value: {
-        prompt: 'A rectangle is 9 cm by 6 cm. What is the perimeter?',
-        sublabel: 'Perimeter = 2 × (length + width).',
-        options: ['30 cm', '36 cm', '42 cm', '54 cm'],
-        answerIndex: 2,
-        visual: { type: 'equation', lines: ['2 × (9 + 6) = ?', 'Perimeter in cm'], badge: 'Perimeter' },
-      },
-    },
-  ],
-  ratio_fractions: [
-    {
-      minLevel: 1,
-      value: {
-        prompt: 'The ratio of red to blue beads is 2 : 3. What fraction are red?',
-        sublabel: 'Add the parts to find the total, then compare.',
-        options: ['2/3', '3/2', '2/5', '3/5'],
-        answerIndex: 2,
-        visual: { type: 'ratio', leftLabel: 'Red parts', leftValue: '2', rightLabel: 'Blue parts', rightValue: '3', caption: 'Red is 2 out of 5 parts.' },
-      },
-    },
-    {
-      minLevel: 2,
-      value: {
-        prompt: 'The ratio of apples to oranges is 3 : 2. What fraction are oranges?',
-        sublabel: 'Use the total number of parts.',
-        options: ['2/3', '2/5', '3/5', '5/2'],
-        answerIndex: 1,
-        visual: { type: 'ratio', leftLabel: 'Apples', leftValue: '3', rightLabel: 'Oranges', rightValue: '2', caption: 'Oranges are 2 out of 5 parts.' },
-      },
-    },
-    {
-      minLevel: 3,
-      value: {
-        prompt: 'The ratio of cats to dogs is 4 : 1. What fraction are dogs?',
-        sublabel: 'Total parts = 5.',
-        options: ['1/4', '1/5', '4/5', '5/1'],
-        answerIndex: 1,
-        visual: { type: 'ratio', leftLabel: 'Cats', leftValue: '4', rightLabel: 'Dogs', rightValue: '1', caption: 'Dogs are 1 out of 5 parts.' },
       },
     },
   ],

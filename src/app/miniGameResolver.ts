@@ -19,6 +19,8 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       return 'FractionMatchGame';
     case 'potion_pour':
       return 'PotionPourGame';
+    case 'sling_shot':
+      return 'SlingShotGame';
     case 'take_out_rush':
       if (level.blueprintKey === 'fraction_forge') {
         return 'FractionForgeGame';

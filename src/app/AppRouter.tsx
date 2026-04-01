@@ -225,10 +225,15 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         if (selectedLevel.blueprintKey === 'share_splitter') {
           return renderFromRegistry('ShareSplitterGame', sharedProps);
         }
+        if (selectedLevel.blueprintKey === 'sling_shot') {
+          return renderFromRegistry('SlingShotGame', sharedProps);
+        }
         if (selectedLevel.blueprintKey === 'maths_vs_zombies') {
           return renderFromRegistry('MathsVsZombiesGame', sharedProps);
         }
         return renderFromRegistry('RatioRapidsGame', { ...sharedProps, gameTitle: selectedLevel.displayName });
+      case 'sling_shot':
+        return renderFromRegistry('SlingShotGame', sharedProps);
       case 'timekeeper_temple':
         return renderFromRegistry('TimekeeperTempleGame', sharedProps);
       case 'measurement_forge':
@@ -513,11 +518,11 @@ export const AppRouter: React.FC<AppRouterProps> = ({
     }
 
     case 'gameplay':
-      const shellStyle = {
-        '--game-shell-top-inset': hideMiniGameTimer
-          ? 'calc(env(safe-area-inset-top) + clamp(2.9rem, 7.2vh, 3.45rem))'
-          : 'calc(env(safe-area-inset-top) + clamp(3.35rem, 9.1vh, 4.2rem))',
-        '--game-shell-bottom-inset': 'calc(env(safe-area-inset-bottom) + clamp(3.05rem, 8.25vh, 4rem))',
+    const shellStyle = {
+        '--game-shell-top-inset': 'calc(env(safe-area-inset-top) + 0.8rem)',
+        '--game-shell-bottom-inset': hideMiniGameTimer
+          ? 'calc(env(safe-area-inset-bottom) + clamp(3.3rem, 8.2vh, 3.95rem))'
+          : 'calc(env(safe-area-inset-bottom) + clamp(3.6rem, 9.2vh, 4.4rem))',
       } as React.CSSProperties;
 
       return (
@@ -539,14 +544,6 @@ export const AppRouter: React.FC<AppRouterProps> = ({
           ) : null}
 
           <div className="game-shell-contract relative z-[2] flex h-full max-h-full w-full min-h-0 flex-col overflow-hidden">
-            <UnifiedMiniGameHud
-              avatarId={player.avatarId}
-              timeLeft={globalMiniGameHudTimeLeft}
-              totalTime={globalMiniGameHudDurationSeconds}
-              lives={globalMiniGameLives}
-              hideTimer={hideMiniGameTimer}
-            />
-
             {showInlineHint ? (
               <div
                 className="pointer-events-none absolute inset-x-3 z-40 flex justify-center md:inset-x-5"
@@ -578,6 +575,15 @@ export const AppRouter: React.FC<AppRouterProps> = ({
                 {renderGameplay()}
               </GameplayContentViewport>
             </div>
+
+            <UnifiedMiniGameHud
+              avatarId={player.avatarId}
+              timeLeft={globalMiniGameHudTimeLeft}
+              totalTime={globalMiniGameHudDurationSeconds}
+              lives={globalMiniGameLives}
+              hideTimer={hideMiniGameTimer}
+              onBack={onBackToIslandLevels}
+            />
           </div>
         </div>
       );

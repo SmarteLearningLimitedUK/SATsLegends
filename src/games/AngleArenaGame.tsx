@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   emitMiniGameSessionEvent,
@@ -15,11 +16,15 @@ import {
 } from '../components/game-ui/GameUiKit';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { clamp, computeLaunchVector, stepProjectile, ProjectileState } from './angleArena/physics';
+=======
+import React from 'react';
+import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import SlingShotGame from './SlingShotGame';
+>>>>>>> b33d9a4cc27c7320b7a529f090ae8976a0f2736c
 
 interface AngleArenaGameProps {
   levelId: number;
   avatarId: string;
-  useSharedTopHud?: boolean;
   onVictory: (stars: number, XP: number) => void;
   onGameOver: (XP: number) => void;
   onBack: () => void;
@@ -27,6 +32,7 @@ interface AngleArenaGameProps {
 
 type AngleArenaGameShellProps = AngleArenaGameProps & MiniGameShellContractProps;
 
+<<<<<<< HEAD
 type GameState =
   | 'intro'
   | 'awaitingAnswer'
@@ -504,5 +510,14 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     </GameUiShell>
   );
 };
+=======
+const AngleArenaGame: React.FC<AngleArenaGameShellProps> = (props) => (
+  <SlingShotGame
+    {...props}
+    questionType="angles"
+    interactionMode="select"
+  />
+);
+>>>>>>> b33d9a4cc27c7320b7a529f090ae8976a0f2736c
 
 export default AngleArenaGame;
