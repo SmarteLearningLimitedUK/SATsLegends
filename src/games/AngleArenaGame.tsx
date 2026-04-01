@@ -115,7 +115,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     [],
   );
   const activeQuestion = questions[questionIndex];
-  const isBeginnerLevel = levelId <= 2;
+  const isBeginnerLevel = levelId <= 3;
   const optionList = useMemo(() => (activeQuestion?.options ?? []).slice().sort((a, b) => a - b), [activeQuestion]);
 
   const lives = sessionState?.lives ?? localLives;
@@ -247,6 +247,13 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     setFeedback('');
     desiredAngleRef.current = answer;
     setGameState('aiming');
+    if (isBeginnerLevel) {
+      if (aimTimeoutRef.current) window.clearTimeout(aimTimeoutRef.current);
+      aimTimeoutRef.current = window.setTimeout(() => {
+        setGameState('firing');
+        fireProjectile(answer);
+      }, AIM_DELAY);
+    }
   };
 
   useEffect(() => {
@@ -459,13 +466,13 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
             progressLabel={`Question ${questionIndex + 1} / ${questions.length}`}
             lives={lives}
             audioEnabled
-            className="mx-auto w-full max-w-[760px]"
+            className="w-full"
           />
         </section>
 
         <section className="shrink-0">
           <div
-            className={`mx-auto w-full max-w-[900px] overflow-hidden transition-all duration-300 ${gameState === 'projectileFlight' || gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? 'max-h-0 opacity-0' : 'max-h-[220px] opacity-100'}`}
+            className={`w-full overflow-hidden transition-all duration-300 ${gameState === 'firing' || gameState === 'projectileFlight' || gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? 'max-h-0 opacity-0' : 'max-h-[220px] opacity-100'}`}
           >
             <div className="rounded-full border border-amber-200/55 bg-[linear-gradient(180deg,#f7f1e3,#f1e5cc)] px-3 py-2 text-center text-[clamp(13px,1.8vh,16px)] font-black text-amber-900 shadow-[0_10px_20px_rgba(15,23,42,0.2)]">
               {activeQuestion?.prompt ?? 'Choose the correct launch angle.'}
@@ -488,8 +495,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           </div>
         </section>
 
-        <section className="min-h-0 flex-[1.35]">
-          <div className="mx-auto flex h-full w-full max-w-[1100px] items-center justify-center rounded-[1.6rem] border border-white/12 bg-slate-950/30 shadow-[0_18px_32px_rgba(2,6,23,0.4)]">
+        <section className="min-h-0 flex-[1.6]">
+          <div className="flex h-full w-full items-center justify-center rounded-[1.6rem] border border-white/12 bg-slate-950/30 shadow-[0_18px_32px_rgba(2,6,23,0.4)]">
             <canvas
               ref={canvasRef}
               className="h-full w-full rounded-[1.6rem]"
@@ -498,14 +505,14 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         </section>
 
         <section className="shrink-0">
-          <FeedbackStrip className="mx-auto w-full max-w-[760px]" tone={gameState === 'resolvedCorrect' ? 'success' : gameState === 'resolvedIncorrect' ? 'warning' : 'neutral'}>
+          <FeedbackStrip className="w-full" tone={gameState === 'resolvedCorrect' ? 'success' : gameState === 'resolvedIncorrect' ? 'warning' : 'neutral'}>
             {feedback || 'Choose an angle to fire the launcher.'}
           </FeedbackStrip>
         </section>
 
         <section className="shrink-0">
           {gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? (
-            <div className="mx-auto flex w-full max-w-[760px] items-center gap-2">
+            <div className="flex w-full items-center gap-2">
               <PrimaryButton onClick={handleNext} className="flex-1">
                 Next
               </PrimaryButton>
@@ -513,8 +520,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
                 Reset View
               </SecondaryButton>
             </div>
-          ) : (
-            <div className="mx-auto flex w-full max-w-[900px] items-center gap-2">
+          ) : !isBeginnerLevel ? (
+            <div className="flex w-full items-center gap-2">
               <div className="flex flex-1 items-center gap-2 rounded-[1.1rem] border border-cyan-100/24 bg-slate-950/60 px-2.5 py-1.5 text-cyan-50">
                 <span className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/80">Angle</span>
                 <div className="ml-auto flex items-center gap-2">
@@ -559,7 +566,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
                 Fire
               </PrimaryButton>
             </div>
-          )}
+          ) : null}
         </section>
       </div>
     </GameUiShell>
