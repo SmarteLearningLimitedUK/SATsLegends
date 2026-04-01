@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
 import heartIcon from '../assets/casual_ui/icons/icon__heart.png';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
+import GameActionDock from './GameActionDock';
 
 interface UnifiedMiniGameHudProps {
   avatarId?: string;
@@ -11,6 +12,7 @@ interface UnifiedMiniGameHudProps {
   hidden?: boolean;
   hideTimer?: boolean;
   lives?: number;
+  onBack?: () => void;
 }
 
 const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
@@ -20,6 +22,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
   hidden = false,
   hideTimer = false,
   lives = 3,
+  onBack,
 }) => {
   const timerProgress = useMemo(
     () => Math.max(0, Math.min(1, totalTime > 0 ? timeLeft / totalTime : 0)),
@@ -41,14 +44,18 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
   return (
     <div
       data-unified-minigame-hud="true"
-      className="pointer-events-none absolute inset-x-0 top-0 z-[120]"
+      className="pointer-events-none absolute inset-x-0 bottom-0 z-[120]"
       style={{
-        paddingTop: 'max(0.5rem, env(safe-area-inset-top))',
+        paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))',
         paddingLeft: 'max(0.55rem, env(safe-area-inset-left))',
         paddingRight: 'max(0.55rem, env(safe-area-inset-right))',
       }}
     >
-      <div className={`relative grid w-full items-center gap-2 px-[2px] py-[clamp(0.24rem,0.62vh,0.5rem)] ${hideTimer ? 'grid-cols-[auto_auto] justify-between' : 'grid-cols-[auto_1fr_auto]'}`}>
+      <div
+        className={`relative grid w-full items-center gap-2 px-[2px] py-[clamp(0.24rem,0.62vh,0.5rem)] ${
+          hideTimer ? 'grid-cols-[auto_auto_auto] justify-between' : 'grid-cols-[auto_1fr_auto_auto]'
+        }`}
+      >
         <div className="pointer-events-none absolute inset-0 rounded-[1.15rem] bg-[linear-gradient(180deg,rgba(20,46,96,0.75)_0%,rgba(7,21,58,0.68)_100%)] shadow-[0_12px_24px_rgba(2,6,23,0.45)]" />
         <div className="pointer-events-none absolute inset-[1px] rounded-[1.08rem] border border-cyan-200/25" />
 
@@ -105,6 +112,12 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
             </span>
           </div>
         </div>
+
+        {onBack ? (
+          <div className="relative flex shrink-0 items-center justify-end pr-1 pointer-events-auto">
+            <GameActionDock onBack={onBack} compact variant="global" />
+          </div>
+        ) : null}
 
         <div className="relative flex shrink-0 items-center justify-end pr-1">
           <div

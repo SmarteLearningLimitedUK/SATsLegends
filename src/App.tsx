@@ -500,7 +500,7 @@ const App: React.FC = () => {
       ? 'bg-intensity-game'
       : 'bg-intensity-overlay';
   const isWellbeingScreen = screen === 'wellbeing_hub' || screen === 'wellbeing_activity';
-  const showGlobalDock = screen !== 'splash' && !isWellbeingScreen;
+  const showGlobalDock = screen !== 'splash' && !isWellbeingScreen && screen !== 'gameplay';
   const isSplashScreen = screen === 'splash';
   const isAvatarSelectionScreen = screen === 'avatar_selection';
   const isGameplayScreen = screen === 'gameplay';
