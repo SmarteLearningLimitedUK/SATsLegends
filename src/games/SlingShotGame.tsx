@@ -14,6 +14,8 @@ import angryBirdWoodTall from '../assets/angry_birds/wood2.png';
 import angryBirdColumn from '../assets/angry_birds/column.png';
 import angryBirdStars from '../assets/angry_birds/stars-edited.png';
 import angryBirdButtons from '../assets/angry_birds/selected-buttons.png';
+import angryBirdWalls from '../assets/angry_birds/walls.png';
+import angryBirdZeroGravity from '../assets/angry_birds/gravity-zero.png';
 import {
   FeedbackStrip,
   GameTopBar,
@@ -73,6 +75,8 @@ const MAX_PULL = 120;
 const GRAVITY = 980;
 const LAUNCH_SCALE = 4.5;
 const ROUNDS_TO_WIN = 5;
+const BASE_BIRDS = 4;
+const ZERO_GRAVITY_BONUS = 4;
 
 const FRACTIONS = ['1/2', '1/3', '2/3', '3/4', '1/4', '2/5', '4/5', '3/5'];
 const ANGLES = [30, 45, 60, 75, 90, 105, 120, 135, 150];
@@ -415,6 +419,8 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
     column: new Image(),
     stars: new Image(),
     buttons: new Image(),
+    walls: new Image(),
+    zeroGravity: new Image(),
   }), []);
   const initialAngleChallenge = questionType === 'angles' ? buildAngleChallenge(levelId) : null;
   const initialLayout = LEVEL_LAYOUTS[0];
@@ -442,6 +448,11 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
   const [selectedAngle, setSelectedAngle] = useState<number | null>(null);
   const [forcedTargetId, setForcedTargetId] = useState<string | null>(null);
   const blocksRef = useRef<Block[]>(blocks);
+  const [zeroGravity, setZeroGravity] = useState(false);
+  const [wallEnabled, setWallEnabled] = useState(false);
+  const [birdsRemaining, setBirdsRemaining] = useState(BASE_BIRDS);
+  const [paused, setPaused] = useState(false);
+  const endedRef = useRef(false);
 
   useEffect(() => {
     blocksRef.current = blocks;
@@ -455,6 +466,7 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
   const roundsToWin = ROUNDS_TO_WIN + Math.floor((levelId - 1) / 3);
 
   useEffect(() => {
+    endedRef.current = false;
     const nextAngleChallenge = questionType === 'angles' ? buildAngleChallenge(levelId) : null;
     setAngleChallenge(nextAngleChallenge);
     const nextLayout = LEVEL_LAYOUTS[0];
@@ -472,12 +484,14 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
     });
     setSelectedAngle(null);
     setForcedTargetId(null);
+    setPaused(false);
+    setBirdsRemaining(zeroGravity ? BASE_BIRDS + ZERO_GRAVITY_BONUS : BASE_BIRDS);
     setFeedback(questionType === 'angles'
       ? 'Choose the correct angle to fire the sling.'
       : 'Pull back the sling and aim for the correct fraction.');
     setFeedbackTone('neutral');
     setLocked(false);
-  }, [levelId, questionType]);
+  }, [levelId, questionType, zeroGravity]);
 
   useEffect(() => {
     if (!sessionState) return;
@@ -503,6 +517,18 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
     setForcedTargetId(null);
   };
 
+  const checkOutOfBirds = (score: number) => {
+    if (endedRef.current) return;
+    if (birdsRemaining > 0) return;
+    if (roundSolved >= roundsToWin) return;
+    endedRef.current = true;
+    emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
+      XP: score,
+      reason: 'no_birds',
+    });
+    onGameOver(score);
+  };
+
   const advanceRound = (wasCorrect: boolean) => {
     const nextSolved = wasCorrect ? roundSolved + 1 : roundSolved;
     setRoundSolved(nextSolved);
@@ -516,6 +542,7 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
     setLocked(false);
     setSelectedAngle(null);
     setForcedTargetId(null);
+    setBirdsRemaining(zeroGravity ? BASE_BIRDS + ZERO_GRAVITY_BONUS : BASE_BIRDS);
 
     if (wasCorrect) {
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
@@ -529,6 +556,7 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
 
     if (wasCorrect && nextSolved >= roundsToWin) {
       const stars = nextSolved >= roundsToWin ? 3 : 2;
+      endedRef.current = true;
       emitMiniGameSessionEvent(sessionEvents, 'game_complete', {
         XP: nextSolved * 120,
         stars,
@@ -552,6 +580,7 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
     } else {
       setFeedback(questionType === 'angles' ? 'That was the wrong angle. Try again.' : 'That was the wrong fraction. Try again.');
       setFeedbackTone('warning');
+      checkOutOfBirds(roundSolved * 120);
       window.setTimeout(() => advanceRound(false), 650);
     }
   };
@@ -559,9 +588,10 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
   const stepPhysics = (delta: number) => {
     if (!shot.active) return;
     const dt = Math.min(0.032, delta / 1000);
+    const gravityScale = zeroGravity ? 0.12 : 1;
     setShot((prev) => {
       const nextVx = prev.vx;
-      const nextVy = prev.vy + GRAVITY * dt;
+      const nextVy = prev.vy + GRAVITY * gravityScale * dt;
       const nextX = prev.x + nextVx * dt;
       const nextY = prev.y + nextVy * dt;
 
@@ -601,7 +631,15 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
           });
         }
         setForcedTargetId(null);
+        checkOutOfBirds(roundSolved * 120);
         return { ...prev, x: SLING_POS.x, y: SLING_POS.y, vx: 0, vy: 0, active: false };
+      }
+
+      if (wallEnabled && nextX > CANVAS_WIDTH - 24) {
+        return { ...prev, x: CANVAS_WIDTH - 24, y: nextY, vx: -Math.abs(nextVx) * 0.6, vy: nextVy };
+      }
+      if (wallEnabled && nextX < 24) {
+        return { ...prev, x: 24, y: nextY, vx: Math.abs(nextVx) * 0.6, vy: nextVy };
       }
 
       return {
@@ -621,7 +659,9 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
       }
       const delta = timestamp - lastTimeRef.current;
       lastTimeRef.current = timestamp;
-      stepPhysics(delta);
+      if (!paused) {
+        stepPhysics(delta);
+      }
       animationRef.current = requestAnimationFrame(tick);
     };
 
@@ -654,6 +694,10 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
     ctx.lineTo(860, 444);
     ctx.stroke();
 
+    if (wallEnabled && imageAssets.walls.complete) {
+      ctx.drawImage(imageAssets.walls, CANVAS_WIDTH - 70, 80, 60, 360);
+    }
+
     const starsEarned = roundsToWin > 0
       ? (roundSolved / roundsToWin >= 0.9 ? 3 : roundSolved / roundsToWin >= 0.6 ? 2 : roundSolved / roundsToWin >= 0.3 ? 1 : 0)
       : 0;
@@ -673,6 +717,18 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
 
     if (imageAssets.buttons.complete) {
       ctx.drawImage(imageAssets.buttons, 164, 10, 60, 60, 18, 66, 32, 32);
+    }
+
+    if (imageAssets.bird.complete) {
+      const birdSize = 26;
+      const maxIcons = Math.min(6, birdsRemaining);
+      for (let i = 0; i < maxIcons; i += 1) {
+        ctx.drawImage(imageAssets.bird, 18 + i * 26, CANVAS_HEIGHT - 54, birdSize, birdSize);
+      }
+    }
+
+    if (zeroGravity && imageAssets.zeroGravity.complete) {
+      ctx.drawImage(imageAssets.zeroGravity, 60, 12, 48, 48);
     }
 
     blocksRef.current.forEach((block) => {
@@ -757,8 +813,10 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
   }, [assetsReady, dragPoint, dragging, shot, targets, imageAssets]);
 
   const handlePointerDown = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    if (paused) return;
     if (interactionMode === 'select') return;
     if (shot.active || locked) return;
+    if (birdsRemaining <= 0) return;
     const rect = event.currentTarget.getBoundingClientRect();
     const x = ((event.clientX - rect.left) / rect.width) * CANVAS_WIDTH;
     const y = ((event.clientY - rect.top) / rect.height) * CANVAS_HEIGHT;
@@ -771,6 +829,7 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
   };
 
   const handlePointerMove = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    if (paused) return;
     if (interactionMode === 'select') return;
     if (!dragging) return;
     const rect = event.currentTarget.getBoundingClientRect();
@@ -788,14 +847,17 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
   };
 
   const handlePointerUp = () => {
+    if (paused) return;
     if (interactionMode === 'select') return;
     if (!dragging || !dragPoint) return;
+    if (birdsRemaining <= 0) return;
     const dx = SLING_POS.x - dragPoint.x;
     const dy = SLING_POS.y - dragPoint.y;
     const vx = dx * LAUNCH_SCALE;
     const vy = dy * LAUNCH_SCALE;
     setDragging(false);
     setDragPoint(null);
+    setBirdsRemaining((prev) => Math.max(0, prev - 1));
     setShot({
       x: SLING_POS.x,
       y: SLING_POS.y,
@@ -810,8 +872,10 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
   };
 
   const fireAtAngle = (angleChoice: number) => {
+    if (paused) return;
     if (interactionMode !== 'select') return;
     if (shot.active || locked) return;
+    if (birdsRemaining <= 0) return;
     const target = targets.find((candidate) => candidate.value === angleChoice);
     if (!target) return;
 
@@ -819,8 +883,10 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
     const dx = target.x - SLING_POS.x;
     const dy = target.y - SLING_POS.y;
     const travelTime = 0.9;
+    const gravityScale = zeroGravity ? 0.12 : 1;
     const vx = dx / travelTime;
-    const vy = (dy - 0.5 * GRAVITY * travelTime * travelTime) / travelTime;
+    const vy = (dy - 0.5 * GRAVITY * gravityScale * travelTime * travelTime) / travelTime;
+    setBirdsRemaining((prev) => Math.max(0, prev - 1));
     setShot({
       x: SLING_POS.x,
       y: SLING_POS.y,
@@ -848,6 +914,18 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
             onToggleAudio={() => setAudioEnabled((prev) => !prev)}
             onHelp={() => setShowRules(true)}
           />
+        </section>
+
+        <section className="shrink-0 flex items-center justify-center gap-2">
+          <SecondaryButton onClick={() => setPaused((prev) => !prev)} disabled={locked}>
+            {paused ? 'Resume' : 'Pause'}
+          </SecondaryButton>
+          <SecondaryButton onClick={() => setZeroGravity((prev) => !prev)} disabled={locked}>
+            {zeroGravity ? 'Gravity On' : 'Zero Gravity'}
+          </SecondaryButton>
+          <SecondaryButton onClick={() => setWallEnabled((prev) => !prev)} disabled={locked}>
+            {wallEnabled ? 'Wall Off' : 'Wall On'}
+          </SecondaryButton>
         </section>
 
         <section className="shrink-0">
@@ -953,6 +1031,8 @@ export default SlingShotGame;
       { img: imageAssets.column, src: angryBirdColumn },
       { img: imageAssets.stars, src: angryBirdStars },
       { img: imageAssets.buttons, src: angryBirdButtons },
+      { img: imageAssets.walls, src: angryBirdWalls },
+      { img: imageAssets.zeroGravity, src: angryBirdZeroGravity },
     ];
     images.forEach(({ img, src }) => {
       if (img.src !== src) {
