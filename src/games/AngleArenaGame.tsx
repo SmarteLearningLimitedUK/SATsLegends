@@ -54,7 +54,7 @@ const WORLD: WorldConfig = {
   width: 2200,
   height: 360,
   groundY: 280,
-  launcherX: 160,
+  launcherX: 90,
   launcherY: 248,
 };
 
@@ -394,13 +394,13 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       if (backgroundImg && backgroundImg.complete) {
         const bgAspect = backgroundImg.width / backgroundImg.height;
         const viewAspect = viewWidth / viewHeight;
-        let drawW = viewWidth;
-        let drawH = viewHeight;
+        let drawW = viewWidth * 1.18;
+        let drawH = viewHeight * 1.18;
         if (bgAspect > viewAspect) {
-          drawH = viewHeight;
+          drawH = viewHeight * 1.18;
           drawW = drawH * bgAspect;
         } else {
-          drawW = viewWidth;
+          drawW = viewWidth * 1.18;
           drawH = drawW / bgAspect;
         }
         const offsetX = (viewWidth - drawW) / 2;
@@ -514,9 +514,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
         <section className="shrink-0">
           <div
-            className={`w-full overflow-hidden transition-all duration-300 ${gameState === 'firing' || gameState === 'projectileFlight' || gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? 'max-h-0 opacity-0' : 'max-h-[220px] opacity-100'}`}
+            className={`w-full overflow-hidden transition-all duration-300 ${gameState === 'firing' || gameState === 'projectileFlight' || gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? 'max-h-0 opacity-0' : 'max-h-[200px] opacity-100'}`}
           >
-            <div className="rounded-full border border-amber-200/55 bg-[linear-gradient(180deg,#f7f1e3,#f1e5cc)] px-3 py-2 text-center text-[clamp(13px,1.8vh,16px)] font-black text-amber-900 shadow-[0_10px_20px_rgba(15,23,42,0.2)]">
+            <div className="rounded-full border border-amber-200/55 bg-[linear-gradient(180deg,#f7f1e3,#f1e5cc)] px-3 py-1.5 text-center text-[clamp(12px,1.6vh,15px)] font-black text-amber-900 shadow-[0_10px_20px_rgba(15,23,42,0.2)]">
               {activeQuestion?.prompt ?? 'Choose the correct launch angle.'}
             </div>
             {isBeginnerLevel ? (
@@ -537,8 +537,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           </div>
         </section>
 
-        <section className="min-h-0 flex-[2.3]">
-          <div className="flex h-full w-full min-h-[56vh] items-center justify-center rounded-[1.6rem] border border-white/12 bg-slate-950/30 shadow-[0_18px_32px_rgba(2,6,23,0.4)]">
+        <section className="min-h-0 flex-[2.6]">
+          <div className="flex h-full w-full min-h-[64vh] items-center justify-center rounded-[1.6rem] border border-white/12 bg-slate-950/30 shadow-[0_18px_32px_rgba(2,6,23,0.4)]">
             <canvas
               ref={canvasRef}
               className="h-full w-full rounded-[1.6rem]"
