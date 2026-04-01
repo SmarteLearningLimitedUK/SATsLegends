@@ -60,6 +60,7 @@ const WORLD: WorldConfig = {
 const GRAVITY = 980;
 const AIM_DELAY = 380;
 const POST_IMPACT_HOLD = 900;
+const HIT_SHAKE_DURATION = 520;
 const CAMERA_RETURN_TIME = 600;
 const PROJECTILE_RADIUS = 10;
 const TARGET_RADIUS = 34;
@@ -90,6 +91,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const cameraXRef = useRef(0);
   const cameraModeRef = useRef<CameraMode>('start');
   const cameraHoldUntilRef = useRef<number | null>(null);
+  const hitShakeRef = useRef<number | null>(null);
   const desiredAngleRef = useRef(40);
   const launcherAngleRef = useRef(40);
   const projectileRef = useRef<ProjectileState | null>(null);
@@ -217,6 +219,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
     cameraModeRef.current = 'hold';
     cameraHoldUntilRef.current = performance.now() + POST_IMPACT_HOLD;
+    if (result === 'hit') {
+      hitShakeRef.current = performance.now() + HIT_SHAKE_DURATION;
+    }
   };
 
   const fireProjectile = (angleDeg: number) => {
@@ -330,8 +335,18 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       }
       cameraXRef.current += (targetCameraX - cameraX) * 0.08;
 
+      let shakeX = 0;
+      let shakeY = 0;
+      if (hitShakeRef.current && timestamp < hitShakeRef.current) {
+        const phase = (hitShakeRef.current - timestamp) / HIT_SHAKE_DURATION;
+        const strength = 4 * phase;
+        shakeX = Math.sin(timestamp * 0.04) * strength;
+        shakeY = Math.cos(timestamp * 0.05) * strength;
+      }
+
       ctx.save();
       ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      ctx.translate(shakeX, shakeY);
       ctx.clearRect(0, 0, viewWidth, viewHeight);
 
       const parallaxFar = cameraXRef.current * 0.2;
@@ -343,6 +358,13 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
       ctx.fillStyle = '#16305f';
       ctx.fillRect(-parallaxFar, 30, WORLD.width, 80);
+      ctx.fillStyle = 'rgba(125,211,252,0.18)';
+      for (let i = 0; i < 6; i += 1) {
+        const cloudX = -parallaxFar * 1.2 + i * 320;
+        ctx.beginPath();
+        ctx.ellipse(cloudX % (WORLD.width + 400), 60 + (i % 2) * 16, 110, 26, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       ctx.fillStyle = '#1f3d7a';
       ctx.fillRect(-parallaxMid, 100, WORLD.width, 120);
@@ -365,10 +387,30 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.fillStyle = '#0f172a';
       ctx.fillRect(cameraOffsetX + WORLD.launcherX - 20, WORLD.launcherY + 8, 40, 32);
 
-      ctx.fillStyle = '#6b21a8';
-      ctx.fillRect(cameraOffsetX + targetX - 30, targetY - 40, 60, 40);
-      ctx.fillStyle = '#a855f7';
-      ctx.fillRect(cameraOffsetX + targetX - 26, targetY - 76, 52, 36);
+      // Target podium + small enemy (no floating panel)
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(cameraOffsetX + targetX - 38, targetY - 14, 76, 14);
+      ctx.fillStyle = '#1f2937';
+      ctx.fillRect(cameraOffsetX + targetX - 30, targetY - 30, 60, 18);
+      ctx.fillStyle = '#374151';
+      ctx.fillRect(cameraOffsetX + targetX - 22, targetY - 46, 44, 16);
+
+      const enemyX = cameraOffsetX + targetX;
+      const enemyY = targetY - 64;
+      ctx.fillStyle = '#7c3aed';
+      ctx.beginPath();
+      ctx.arc(enemyX, enemyY, 16, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#111827';
+      ctx.beginPath();
+      ctx.arc(enemyX - 5, enemyY - 2, 3, 0, Math.PI * 2);
+      ctx.arc(enemyX + 5, enemyY - 2, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#f8fafc';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(enemyX, enemyY + 4, 5, 0, Math.PI);
+      ctx.stroke();
 
       if (projectile) {
         projectile.trail.forEach((point) => {
