@@ -12,6 +12,7 @@ import {
   SecondaryButton,
   TaskCard,
 } from '../components/game-ui/GameUiKit';
+import catapultAsset from '../assets/angle_arena/catapult.png';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { clamp, computeLaunchVector, stepProjectile, ProjectileState } from './angleArena/physics';
 
@@ -93,6 +94,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const hitShakeRef = useRef<number | null>(null);
   const desiredAngleRef = useRef(40);
   const launcherAngleRef = useRef(40);
+  const catapultImageRef = useRef<HTMLImageElement | null>(null);
   const projectileRef = useRef<ProjectileState | null>(null);
   const impactResultRef = useRef<ImpactResult | null>(null);
   const aimTimeoutRef = useRef<number | null>(null);
@@ -160,6 +162,12 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
       if (aimTimeoutRef.current) window.clearTimeout(aimTimeoutRef.current);
     };
+  }, []);
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = catapultAsset;
+    catapultImageRef.current = img;
   }, []);
 
   const resetForNext = () => {
@@ -249,8 +257,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     setGameState('aiming');
     if (isBeginnerLevel) {
       if (aimTimeoutRef.current) window.clearTimeout(aimTimeoutRef.current);
+      setGameState('firing');
       aimTimeoutRef.current = window.setTimeout(() => {
-        setGameState('firing');
         fireProjectile(answer);
       }, AIM_DELAY);
     }
@@ -266,8 +274,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     if (!selectedAnswer || !activeQuestion) return;
     if (gameState !== 'aiming' && gameState !== 'awaitingAnswer') return;
     if (aimTimeoutRef.current) window.clearTimeout(aimTimeoutRef.current);
+    setGameState('firing');
     aimTimeoutRef.current = window.setTimeout(() => {
-      setGameState('firing');
       fireProjectile(selectedAnswer);
     }, AIM_DELAY);
   };
@@ -398,15 +406,23 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.fillStyle = '#2d4a2f';
       ctx.fillRect(cameraOffsetX, WORLD.groundY - 6, WORLD.width, 12);
 
-      ctx.save();
-      ctx.translate(cameraOffsetX + WORLD.launcherX, WORLD.launcherY);
-      ctx.rotate(-launcherAngleRef.current * (Math.PI / 180));
-      ctx.fillStyle = '#f59e0b';
-      ctx.fillRect(0, -6, 70, 12);
-      ctx.restore();
-
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(cameraOffsetX + WORLD.launcherX - 20, WORLD.launcherY + 8, 40, 32);
+      const catapult = catapultImageRef.current;
+      if (catapult && catapult.complete) {
+        ctx.save();
+        ctx.translate(cameraOffsetX + WORLD.launcherX, WORLD.launcherY + 8);
+        ctx.rotate(-launcherAngleRef.current * (Math.PI / 180));
+        ctx.drawImage(catapult, -36, -44, 96, 88);
+        ctx.restore();
+      } else {
+        ctx.save();
+        ctx.translate(cameraOffsetX + WORLD.launcherX, WORLD.launcherY);
+        ctx.rotate(-launcherAngleRef.current * (Math.PI / 180));
+        ctx.fillStyle = '#f59e0b';
+        ctx.fillRect(0, -6, 70, 12);
+        ctx.restore();
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(cameraOffsetX + WORLD.launcherX - 20, WORLD.launcherY + 8, 40, 32);
+      }
 
 
       if (projectile) {
