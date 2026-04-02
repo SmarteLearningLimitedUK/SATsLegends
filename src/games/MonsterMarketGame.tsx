@@ -1,23 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { LucideIcon } from 'lucide-react';
 import {
-  Apple,
-  Beef,
-  Beer,
   Check,
-  Cherry,
   CircleDollarSign,
-  Coffee,
-  Cookie,
-  Fish,
-  Flame,
   Gem as GemIcon,
-  Grape,
-  IceCream,
-  Pizza,
   Timer as TimerIcon,
   Trophy,
-  Wine,
   X,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
@@ -25,6 +12,15 @@ import FoodGameShell from '../components/FoodGameShell';
 import AssetIcon from '../components/AssetIcon';
 import coinAsset from '../assets/fantasy_hero/ui/coin.png';
 import takeOutLevelBg from '../assets/level_backgrounds/take_out.png';
+import food1 from '../assets/take_out/food/1.png';
+import food2 from '../assets/take_out/food/2.png';
+import food3 from '../assets/take_out/food/3.png';
+import food4 from '../assets/take_out/food/4.png';
+import food5 from '../assets/take_out/food/5.png';
+import food6 from '../assets/take_out/food/6.png';
+import food7 from '../assets/take_out/food/7.png';
+import food8 from '../assets/take_out/food/8.png';
+import food9 from '../assets/take_out/food/9.png';
 
 interface MonsterMarketGameProps {
   levelId: number;
@@ -42,7 +38,7 @@ interface Item {
   name: string;
   value: number;
   color: string;
-  Icon: LucideIcon;
+  image: string;
 }
 
 interface Customer {
@@ -52,18 +48,15 @@ interface Customer {
 }
 
 const ITEMS: Item[] = [
-  { id: 1, name: 'Mana Bread', value: 5, color: 'bg-amber-600', Icon: Cookie },
-  { id: 2, name: 'Health Potion', value: 10, color: 'bg-red-500', Icon: Flame },
-  { id: 3, name: 'Stamina Brew', value: 15, color: 'bg-green-500', Icon: Coffee },
-  { id: 4, name: 'Dragon Fruit', value: 20, color: 'bg-pink-500', Icon: Apple },
-  { id: 5, name: 'Ice Crystal', value: 25, color: 'bg-blue-400', Icon: IceCream },
-  { id: 6, name: 'Dwarf Ale', value: 30, color: 'bg-yellow-700', Icon: Beer },
-  { id: 7, name: 'Elven Wine', value: 35, color: 'bg-sky-600', Icon: Wine },
-  { id: 8, name: 'Cave Fish', value: 40, color: 'bg-cyan-600', Icon: Fish },
-  { id: 9, name: 'Orc Steak', value: 45, color: 'bg-rose-800', Icon: Beef },
-  { id: 10, name: 'Fire Berries', value: 50, color: 'bg-orange-600', Icon: Cherry },
-  { id: 11, name: 'Magic Grapes', value: 55, color: 'bg-indigo-600', Icon: Grape },
-  { id: 12, name: 'Royal Feast', value: 60, color: 'bg-yellow-500', Icon: Pizza },
+  { id: 1, name: 'Mana Bread', value: 5, color: 'bg-amber-600', image: food1 },
+  { id: 2, name: 'Health Potion', value: 10, color: 'bg-red-500', image: food2 },
+  { id: 3, name: 'Stamina Brew', value: 15, color: 'bg-green-500', image: food3 },
+  { id: 4, name: 'Dragon Fruit', value: 20, color: 'bg-pink-500', image: food4 },
+  { id: 5, name: 'Ice Crystal', value: 25, color: 'bg-blue-400', image: food5 },
+  { id: 6, name: 'Dwarf Ale', value: 30, color: 'bg-yellow-700', image: food6 },
+  { id: 7, name: 'Elven Wine', value: 35, color: 'bg-sky-600', image: food7 },
+  { id: 8, name: 'Cave Fish', value: 40, color: 'bg-cyan-600', image: food8 },
+  { id: 9, name: 'Royal Feast', value: 45, color: 'bg-orange-600', image: food9 },
 ];
 
 const PATIENCE_DECAY_MS = 220;
@@ -303,8 +296,8 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
       )}
 
       <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
-        <div className="flex flex-1 flex-col items-center justify-between px-4 py-6">
-          <div className="flex h-48 w-full items-center justify-center">
+        <div className="flex flex-1 flex-col items-center gap-3 px-4 py-4 md:gap-4">
+          <div className="flex h-36 w-full items-center justify-center md:h-44">
             <AnimatePresence mode="wait">
               {customer && !feedback && <GoblinCustomer key={customer.id} customer={customer} />}
               {feedback && (
@@ -326,7 +319,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
             </AnimatePresence>
           </div>
 
-          <div className="min-h-[100px] w-full rounded-2xl border border-amber-100/18 bg-slate-950/28 p-4 backdrop-blur-[1px]">
+          <div className="min-h-[86px] w-full rounded-2xl border border-amber-100/18 bg-slate-950/28 p-3 backdrop-blur-[1px] md:p-4">
             <div className="flex items-center justify-between border-b border-white/10 pb-2">
               <span className="text-xs font-bold uppercase tracking-widest text-blue-300">Current Order</span>
               <span className={`text-xl font-black ${currentTotal > (customer?.targetValue || 0) ? 'text-red-400' : 'text-yellow-400'}`}>
@@ -339,15 +332,15 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
                   key={`${item.id}-${index}`}
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className={`${item.color} flex h-8 w-8 items-center justify-center rounded-md border border-white/20 shadow-lg`}
+                  className={`${item.color} flex h-8 w-8 items-center justify-center rounded-md border border-white/20 shadow-lg md:h-9 md:w-9`}
                 >
-                  <item.Icon className="h-4 w-4 text-white" />
+                  <img src={item.image} alt={item.name} className="h-5 w-5 object-contain drop-shadow-md md:h-6 md:w-6" draggable={false} />
                 </motion.div>
               ))}
             </div>
           </div>
 
-          <div className="mt-4 grid w-full grid-cols-4 gap-3">
+          <div className="mt-3 grid w-full grid-cols-3 gap-2 md:grid-cols-4 md:gap-3">
             {ITEMS.map((item) => (
               <motion.button
                 key={item.id}
@@ -358,23 +351,23 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
               >
                 <div className="absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100 bg-black/10" />
                 <div className="relative z-10 flex h-full flex-col items-center justify-center">
-                  <item.Icon className="h-8 w-8 text-white drop-shadow-md" />
+                  <img src={item.image} alt={item.name} className="h-8 w-8 object-contain drop-shadow-md md:h-9 md:w-9" draggable={false} />
                   <span className="mt-1 rounded-full bg-black/40 px-1.5 text-[10px] font-black">{item.value}</span>
                 </div>
               </motion.button>
             ))}
           </div>
 
-          <div className="mt-6 flex w-full gap-4">
+          <div className="mt-3 flex w-full gap-3">
             <button
               onClick={handleClear}
-              className="flex h-14 flex-1 items-center justify-center gap-2 rounded-xl border-b-4 border-red-800 bg-red-600 text-lg font-black transition-all active:translate-y-1 active:border-b-0"
+              className="flex h-12 flex-1 items-center justify-center gap-2 rounded-xl border-b-4 border-red-800 bg-red-600 text-base font-black transition-all active:translate-y-1 active:border-b-0 md:h-14 md:text-lg"
             >
               <X className="h-6 w-6" /> CLEAR
             </button>
             <button
               onClick={handleServe}
-              className="flex h-14 flex-[2] items-center justify-center gap-2 rounded-xl border-b-4 border-orange-800 bg-gradient-to-b from-yellow-400 to-orange-600 text-xl font-black text-white shadow-lg transition-all active:translate-y-1 active:border-b-0"
+              className="flex h-12 flex-[2] items-center justify-center gap-2 rounded-xl border-b-4 border-orange-800 bg-gradient-to-b from-yellow-400 to-orange-600 text-lg font-black text-white shadow-lg transition-all active:translate-y-1 active:border-b-0 md:h-14 md:text-xl"
             >
               <Check className="h-8 w-8" /> SERVE ORDER
             </button>

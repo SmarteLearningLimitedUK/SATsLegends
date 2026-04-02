@@ -5,9 +5,11 @@ export type SupportedChallengeGameType =
   | 'coordinate_quest'
   | 'transform_temple'
   | 'scale_safari'
+  | 'unit_mixer'
   | 'chart_chase'
   | 'mean_machine'
   | 'equation_grove'
+  | 'formula_forge'
   | 'rule_runner';
 
 export interface CoordinatePoint {
@@ -540,6 +542,130 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
         options: ['5', '6', '7', '8'],
         answerIndex: 2,
         visual: { type: 'equation', lines: ['black = (white × 3) + 4', 'black = 25'], badge: 'Inverse' },
+      },
+    },
+  ],
+  unit_mixer: [
+    {
+      minLevel: 1,
+      value: {
+        prompt: 'Convert 3.5 km to metres.',
+        sublabel: 'Remember that 1 km = 1000 m.',
+        options: ['3,500 m', '350 m', '35,000 m', '3.5 m'],
+        answerIndex: 0,
+        visual: { type: 'equation', lines: ['3.5 km', '× 1000 = ? m'], badge: 'Convert' },
+      },
+    },
+    {
+      minLevel: 1,
+      value: {
+        prompt: 'Convert 420 cm to metres.',
+        sublabel: 'Divide by 100 to move from cm to m.',
+        options: ['4.2 m', '42 m', '0.42 m', '420 m'],
+        answerIndex: 0,
+        visual: { type: 'equation', lines: ['420 cm', '÷ 100 = ? m'], badge: 'Length' },
+      },
+    },
+    {
+      minLevel: 2,
+      value: {
+        prompt: 'A bottle holds 1.2 litres. How many millilitres is that?',
+        sublabel: 'Litres to millilitres is ×1000.',
+        options: ['1,200 ml', '120 ml', '12,000 ml', '0.12 ml'],
+        answerIndex: 0,
+        visual: { type: 'equation', lines: ['1.2 l', '× 1000 = ? ml'], badge: 'Capacity' },
+      },
+    },
+    {
+      minLevel: 2,
+      value: {
+        prompt: 'Convert 2.75 kg to grams.',
+        sublabel: 'Kilograms to grams is ×1000.',
+        options: ['2,750 g', '275 g', '27,500 g', '2.75 g'],
+        answerIndex: 0,
+        visual: { type: 'equation', lines: ['2.75 kg', '× 1000 = ? g'], badge: 'Mass' },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'A rope is 1.8 m long. How many centimetres is this?',
+        sublabel: 'Multiply by 100.',
+        options: ['180 cm', '18 cm', '1,800 cm', '1.8 cm'],
+        answerIndex: 0,
+        visual: { type: 'equation', lines: ['1.8 m', '× 100 = ? cm'], badge: 'Length' },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'A recipe needs 450 ml of juice. How many litres is that?',
+        sublabel: 'Millilitres to litres is ÷1000.',
+        options: ['0.45 l', '4.5 l', '45 l', '0.045 l'],
+        answerIndex: 0,
+        visual: { type: 'equation', lines: ['450 ml', '÷ 1000 = ? l'], badge: 'Capacity' },
+      },
+    },
+  ],
+  formula_forge: [
+    {
+      minLevel: 1,
+      value: {
+        prompt: 'Use A = l × w. Find the area when l = 8 cm and w = 5 cm.',
+        sublabel: 'Multiply the two values.',
+        options: ['40 cm²', '13 cm²', '26 cm²', '85 cm²'],
+        answerIndex: 0,
+        visual: { type: 'equation', lines: ['A = l × w', '8 × 5 = ?'], badge: 'Area' },
+      },
+    },
+    {
+      minLevel: 1,
+      value: {
+        prompt: 'Use P = 2(l + w). Find the perimeter when l = 6 cm and w = 4 cm.',
+        sublabel: 'Add first, then double.',
+        options: ['20 cm', '10 cm', '24 cm', '18 cm'],
+        answerIndex: 0,
+        visual: { type: 'equation', lines: ['P = 2(l + w)', '2(6 + 4) = ?'], badge: 'Perimeter' },
+      },
+    },
+    {
+      minLevel: 2,
+      value: {
+        prompt: 'Use A = (b × h) ÷ 2. Find the area when b = 12 cm and h = 5 cm.',
+        sublabel: 'Multiply then halve.',
+        options: ['30 cm²', '60 cm²', '17 cm²', '24 cm²'],
+        answerIndex: 0,
+        visual: { type: 'equation', lines: ['A = (b × h) ÷ 2', '(12 × 5) ÷ 2 = ?'], badge: 'Triangle' },
+      },
+    },
+    {
+      minLevel: 2,
+      value: {
+        prompt: 'A rule says y = 4x − 3. What is y when x = 6?',
+        sublabel: 'Substitute, then calculate.',
+        options: ['21', '27', '15', '9'],
+        answerIndex: 0,
+        visual: { type: 'equation', lines: ['y = 4x − 3', 'x = 6'], badge: 'Substitute' },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'A rule says y = 2x + 5. If y = 19, what is x?',
+        sublabel: 'Work backwards through the rule.',
+        options: ['7', '9', '12', '14'],
+        answerIndex: 0,
+        visual: { type: 'equation', lines: ['y = 2x + 5', 'y = 19'], badge: 'Reverse' },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'Use V = l × w × h. Find the volume when l = 4 cm, w = 3 cm, h = 5 cm.',
+        sublabel: 'Multiply all three values.',
+        options: ['60 cm³', '12 cm³', '20 cm³', '75 cm³'],
+        answerIndex: 0,
+        visual: { type: 'equation', lines: ['V = l × w × h', '4 × 3 × 5 = ?'], badge: 'Volume' },
       },
     },
   ],
