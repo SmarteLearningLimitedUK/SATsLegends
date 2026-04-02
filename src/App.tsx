@@ -15,6 +15,7 @@ import AchievementsModal from './components/modals/AchievementsModal';
 import LevelResultModal from './components/LevelResultModal';
 import GameRulesModal from './components/GameRulesModal';
 import GameActionDock from './components/GameActionDock';
+import UnifiedMiniGameHud from './components/UnifiedMiniGameHud';
 import { IslandData, LevelData } from './types';
 import { AppRouter } from './app/AppRouter';
 import { useScreenFlow } from './app/useScreenFlow';
@@ -544,6 +545,9 @@ const App: React.FC = () => {
   const useFlatScreenScaleTransition = isAvatarSelectionScreen;
   const screenEnterScale = useFlatScreenScaleTransition ? 1 : 0.98;
   const screenExitScale = useFlatScreenScaleTransition ? 1 : 1.02;
+  const hideShellTimer = !isGameplayScreen
+    || (selectedLevel?.gameType === 'mean_machine' && selectedLevel.blueprintKey === 'mean_machine')
+    || selectedLevel?.gameType === 'potion_pour';
   const isTabletStage = typeof window !== 'undefined'
     && Math.min(
       window.visualViewport?.width ?? window.innerWidth,
@@ -610,6 +614,16 @@ const App: React.FC = () => {
                 {null}
               </motion.div>
             </AnimatePresence>
+
+            <UnifiedMiniGameHud
+              avatarId={player.avatarId}
+              timeLeft={globalMiniGameHudTimeLeft}
+              totalTime={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
+              lives={globalMiniGameLives}
+              hideTimer={hideShellTimer}
+              onBack={isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
+              variant={isGameplayScreen ? 'gameplay' : 'hub'}
+            />
 
             <DailyRewardsModal
               isOpen={showDailyRewards}
