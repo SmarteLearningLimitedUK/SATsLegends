@@ -506,7 +506,6 @@ const App: React.FC = () => {
       ? 'bg-intensity-game'
       : 'bg-intensity-overlay';
   const isWellbeingScreen = screen === 'wellbeing_hub' || screen === 'wellbeing_activity';
-  const showGlobalDock = screen !== 'splash' && !isWellbeingScreen && screen !== 'gameplay';
   const isSplashScreen = screen === 'splash';
   const isAvatarSelectionScreen = screen === 'avatar_selection';
   const isGameplayScreen = screen === 'gameplay';
@@ -521,7 +520,7 @@ const App: React.FC = () => {
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
   const useUnboundedStageShell = isSplashScreen || isAvatarSelectionScreen || isWorldMapScreen;
-  const globalDockOffsetClass = showGlobalDock && !isGameplayScreen
+  const globalDockOffsetClass = screen !== 'splash' && !isGameplayScreen
     ? 'pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-[calc(5.2rem+env(safe-area-inset-bottom))]'
     : '';
   const viewportShellClass = isGameplayScreen
@@ -615,15 +614,17 @@ const App: React.FC = () => {
               </motion.div>
             </AnimatePresence>
 
-            <UnifiedMiniGameHud
-              avatarId={player.avatarId}
-              timeLeft={globalMiniGameHudTimeLeft}
-              totalTime={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
-              lives={globalMiniGameLives}
-              hideTimer={hideShellTimer}
-              onBack={isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
-              variant={isGameplayScreen ? 'gameplay' : 'hub'}
-            />
+            {screen !== 'splash' ? (
+              <UnifiedMiniGameHud
+                avatarId={player.avatarId}
+                timeLeft={globalMiniGameHudTimeLeft}
+                totalTime={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
+                lives={globalMiniGameLives}
+                hideTimer={hideShellTimer}
+                onBack={isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
+                variant={isGameplayScreen ? 'gameplay' : 'hub'}
+              />
+            ) : null}
 
             <DailyRewardsModal
               isOpen={showDailyRewards}
@@ -693,20 +694,7 @@ const App: React.FC = () => {
               }}
             />
 
-            {
-              showGlobalDock && (
-                <div className="global-app-dock pointer-events-none absolute inset-x-0 bottom-[calc(0.35rem+env(safe-area-inset-bottom))] z-[130] flex justify-center px-3">
-                  <div className="pointer-events-auto">
-                    <GameActionDock
-                      onBack={handleGlobalDockBack}
-                      compact
-                      accentClass="text-slate-100"
-                      variant="global"
-                    />
-                  </div>
-                </div>
-              )
-            }
+            {null}
 
           </div>
         </div>
