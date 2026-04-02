@@ -175,49 +175,6 @@ const UnitCard: React.FC<{
   </button>
 );
 
-const ShipEnemy: React.FC<{
-  index: number;
-  phase: Phase;
-  boss: boolean;
-}> = ({ index, phase, boss }) => (
-  <motion.div
-    initial={false}
-    animate={{
-      x: phase === 'battle' ? 26 + (index * 6) : 0,
-      y: phase === 'battle' ? 14 + ((index % 2) * 6) : [0, -8, 0],
-      rotate: phase === 'battle' ? 3 : [-1, 1, -1],
-      opacity: phase === 'breach' ? 0.45 : 1,
-      scale: boss ? 1.05 : 1,
-    }}
-    transition={phase === 'battle'
-      ? { duration: 0.9, delay: index * 0.05 }
-      : { duration: 2.4 + (index * 0.12), repeat: Infinity, ease: 'easeInOut' }}
-    className={`absolute ${boss ? 'h-24 w-24 md:h-28 md:w-28' : 'h-16 w-16 md:h-20 md:w-20'}`}
-    style={{ left: `${10 + index * 14}%`, top: `${12 + ((index + 1) % 2) * 7}%` }}
-  >
-    {boss ? (
-      <div className="relative h-full w-full">
-        <div className="absolute inset-x-[14%] top-[16%] h-[34%] rounded-[999px] bg-[linear-gradient(180deg,#f97316,#b91c1c)] shadow-[0_10px_20px_rgba(153,27,27,0.35)]" />
-        <div className="absolute left-[20%] top-[36%] h-[34%] w-[60%] rounded-[46%_54%_52%_48%/52%_54%_46%_48%] bg-[linear-gradient(180deg,#166534,#14532d)] shadow-[0_14px_22px_rgba(20,83,45,0.35)]" />
-        <div className="absolute left-[14%] top-[44%] h-[18%] w-[16%] rounded-full bg-emerald-700" />
-        <div className="absolute right-[14%] top-[44%] h-[18%] w-[16%] rounded-full bg-emerald-700" />
-        <div className="absolute left-[30%] top-[42%] h-[8%] w-[10%] rounded-full bg-amber-200 shadow-[0_0_10px_rgba(251,191,36,0.45)]" />
-        <div className="absolute right-[30%] top-[42%] h-[8%] w-[10%] rounded-full bg-amber-200 shadow-[0_0_10px_rgba(251,191,36,0.45)]" />
-        <div className="absolute left-[28%] top-[60%] h-[8%] w-[44%] rounded-full bg-red-950/80" />
-        <div className="absolute left-[18%] top-[26%] h-[18%] w-[10%] rotate-[-30deg] rounded-full bg-orange-300" />
-        <div className="absolute right-[18%] top-[26%] h-[18%] w-[10%] rotate-[30deg] rounded-full bg-orange-300" />
-      </div>
-    ) : (
-      <div className="relative h-full w-full">
-        <div className="absolute inset-x-[18%] bottom-[20%] h-[32%] rounded-[40%_60%_52%_48%/45%_45%_55%_55%] bg-[linear-gradient(180deg,#1d4ed8,#1e3a8a)] shadow-[0_10px_16px_rgba(30,58,138,0.3)]" />
-        <div className="absolute left-1/2 top-[18%] h-[42%] w-[6%] -translate-x-1/2 rounded-full bg-amber-300" />
-        <div className="absolute left-[42%] top-[18%] h-[28%] w-[28%] -skew-x-[12deg] rounded-[0.4rem] bg-[linear-gradient(180deg,#f8fafc,#dbeafe)] shadow-[0_4px_10px_rgba(255,255,255,0.18)]" />
-        <div className="absolute left-[30%] top-[54%] h-[10%] w-[40%] rounded-full bg-cyan-200/55 blur-sm" />
-      </div>
-    )}
-  </motion.div>
-);
-
 const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
   levelId,
   avatarId,
@@ -455,15 +412,6 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
             <div className="relative mt-3 flex min-h-0 flex-1 flex-col justify-between md:mt-4">
               <div className="relative flex min-h-[19rem] flex-1 items-center justify-center overflow-hidden md:min-h-[25rem]">
                 <div className="absolute inset-x-[10%] top-[4%] h-[32%] rounded-[50%] bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.18),rgba(59,130,246,0.06),transparent_72%)]" />
-
-                {Array.from({ length: enemyDisplayCount }).map((_, index) => (
-                  <ShipEnemy
-                    key={`${roundNumber}-${index}`}
-                    index={index}
-                    phase={phase}
-                    boss={round.mode === 'boss'}
-                  />
-                ))}
 
                 <div className="absolute inset-x-[9%] bottom-[10%] top-[26%]">
                   <div className="absolute inset-x-[12%] bottom-[0%] h-[44%] rounded-[50%] bg-[radial-gradient(circle_at_center,rgba(251,191,36,0.32),rgba(34,197,94,0.14),transparent_72%)]" />

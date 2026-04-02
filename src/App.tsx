@@ -513,10 +513,8 @@ const App: React.FC = () => {
     [selectedLevel?.gameType, selectedLevel?.id],
   );
   const shouldShowResultEnemyArt =
-    selectedLevel?.blueprintKey !== 'match3_equivalence'
-    && selectedLevel?.blueprintKey !== 'share_splitter'
-    && selectedLevel?.gameType !== 'monster_market'
-    && selectedLevel?.gameType !== 'potion_pour';
+    selectedLevel?.blueprintKey === 'place_value_panic'
+    || selectedLevel?.blueprintKey === 'number_line_ninja';
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
   const useUnboundedStageShell = isSplashScreen || isAvatarSelectionScreen || isWorldMapScreen;
@@ -603,26 +601,16 @@ const App: React.FC = () => {
                 />
 
                 {isGameplayScreen && selectedLevel && !levelResult ? (
-                  selectedLevel.gameType === 'prime_pop'
-                  || selectedLevel.gameType === 'potion_pour'
+                  selectedLevel.blueprintKey === 'place_value_panic'
                   || selectedLevel.blueprintKey === 'number_line_ninja'
-                  || selectedLevel.blueprintKey === 'place_value_panic'
-                  || selectedLevel.blueprintKey === 'rounding_rampage'
-                  || selectedLevel.blueprintKey === 'conversion_canyon'
-                  || selectedLevel.blueprintKey === 'match3_equivalence'
-                  || selectedLevel.blueprintKey === 'share_splitter'
-                  || selectedLevel.blueprintKey === 'mode_miner'
-                  || selectedLevel.blueprintKey === 'mean_machine'
-                  || selectedLevel.gameType === 'angle_arena'
-                  || selectedLevel.gameType === 'monster_market'
-                    ? null
-                    : (
+                    ? (
                   <ViewportBossEnemy
                     gameType={selectedLevel.gameType}
                     levelId={selectedLevel.id}
                     resultType={null}
                   />
                     )
+                    : null
                 ) : null}
               </motion.div>
             </AnimatePresence>

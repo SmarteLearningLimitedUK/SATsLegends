@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react';
 import AssetIcon from '../components/AssetIcon';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
-import zombieEnemy from '../assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_create_me_a_zombie-0.jpg';
 import ribbonAsset from '../assets/casual_ui/dialogs_panels/ribbon_1.png';
 import { triggerHaptic } from '../haptics';
 
@@ -558,16 +557,6 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
             </div>
           );
         })}
-
-        <motion.img
-          src={zombieEnemy}
-          alt=""
-          draggable={false}
-          animate={{ y: [0, -7, 0] }}
-          transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
-          className="pointer-events-none absolute right-[6%] z-20 opacity-100 drop-shadow-[0_18px_28px_rgba(0,0,0,0.65)]"
-          style={{ top: layout.goblinTop, width: layout.goblinWidth }}
-        />
 
         <div
           className="absolute right-[4%] z-20 rounded-xl border border-cyan-200/40 bg-[#0a1f56]/85 px-3 py-2 shadow-[0_10px_22px_rgba(0,0,0,0.45)]"

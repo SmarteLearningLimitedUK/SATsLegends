@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
-import goblinEnemy from '../assets/bosses/goblin.png';
 import { triggerHaptic } from '../haptics';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 
@@ -120,7 +119,6 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
   const [round, setRound] = useState<OpsRound>(() => createOpsRound(levelId));
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [isFinished, setIsFinished] = useState(false);
-  const [enemyImpactTick, setEnemyImpactTick] = useState(0);
 
   const enemyHealthPercent = (enemyHealth / maxEnemyHealth) * 100;
 
@@ -147,7 +145,6 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
     setRound(createOpsRound(levelId));
     setFeedback(null);
     setIsFinished(false);
-    setEnemyImpactTick(0);
   }, [initialTime, levelId, maxEnemyHealth]);
 
   useEffect(() => {
@@ -234,11 +231,10 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
     scoreRef.current = updatedScore;
     setStreak((previous) => previous + 1);
     setEnemyHealth(nextEnemyHealth);
-    setEnemyImpactTick((previous) => previous + 1);
     setFeedback({
       type: 'success',
       title: 'Direct Hit',
-      subtitle: `Enemy takes damage - +${points} XP`,
+      subtitle: `Progress boosted - +${points} XP`,
     });
     triggerHaptic('success');
 
@@ -276,10 +272,10 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
             <div className="flex justify-center">
               <div className="licensed-slice-paper-panel max-w-[96%] px-3 py-1.5 text-center shadow-[0_10px_22px_rgba(15,23,42,0.14)] md:px-6 md:py-2.5">
                 <div className="text-sm font-black tracking-tight text-amber-900 md:text-[1.2rem]">
-                  Solve operations to defeat the enemy
+                  Solve operations to build your progress
                 </div>
                 <div className="mt-0.5 text-[11px] font-bold text-amber-950/76 md:text-sm">
-                  Every correct answer removes enemy health.
+                  Every correct answer fills the progress bar.
                 </div>
               </div>
             </div>
@@ -287,22 +283,12 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
             <div className="mt-2 min-h-0 flex-1 md:mt-3">
               <div className="grid h-full min-h-0 grid-cols-[0.9fr_1.1fr] gap-2 md:grid-cols-[1.02fr_1fr] md:gap-3">
                 <div className="licensed-game-card-dark min-h-0 rounded-[1.2rem] border border-white/14 p-2 shadow-[0_12px_22px_rgba(2,6,23,0.18)] md:rounded-[1.5rem] md:p-3">
-                  <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Enemy target</div>
+                  <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Target progress</div>
                   <div className="mt-1.5 rounded-[1rem] border border-sky-200/22 bg-[linear-gradient(180deg,rgba(14,116,144,0.2),rgba(15,23,42,0.5))] p-2 md:mt-2 md:p-3">
                     <div className="flex flex-col items-center gap-3">
-                      <motion.img
-                        key={`enemy-${enemyImpactTick}`}
-                        src={goblinEnemy}
-                        alt="Enemy"
-                        className="h-24 w-auto object-contain drop-shadow-[0_14px_24px_rgba(0,0,0,0.42)] md:h-36"
-                        animate={feedback?.type === 'success' ? { x: [0, -7, 7, -4, 4, 0], scale: [1, 1.04, 1] } : { y: [0, -2, 0] }}
-                        transition={feedback?.type === 'success'
-                          ? { duration: 0.34 }
-                          : { duration: 1.8, repeat: Infinity, repeatType: 'mirror' }}
-                      />
                       <div className="w-full max-w-sm">
                         <div className="mb-1 flex items-center justify-between text-[9px] font-black uppercase tracking-[0.13em] text-cyan-100/75 md:text-[11px]">
-                          <span>Enemy Health</span>
+                          <span>Progress</span>
                           <span>{enemyHealth}/{maxEnemyHealth}</span>
                         </div>
                         <div className="h-3 overflow-hidden rounded-full border border-white/20 bg-black/30 md:h-4">
