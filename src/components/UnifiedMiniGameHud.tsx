@@ -70,7 +70,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
           hideTimer ? 'grid-cols-[auto_auto_auto] justify-between' : 'grid-cols-[auto_1fr_auto_auto]'
         }`}
       >
-        <div className={`pointer-events-none absolute inset-0 ${shellRadiusClass} bg-[linear-gradient(180deg,rgba(20,46,96,0.75)_0%,rgba(7,21,58,0.68)_100%)] shadow-[0_12px_24px_rgba(2,6,23,0.45)]`} />
+        <div className={`pointer-events-none absolute inset-0 ${shellRadiusClass} ${variant === 'hub' ? 'bg-[linear-gradient(180deg,rgba(20,46,96,0.55)_0%,rgba(7,21,58,0.5)_100%)]' : 'bg-[linear-gradient(180deg,rgba(20,46,96,0.75)_0%,rgba(7,21,58,0.68)_100%)]'} shadow-[0_12px_24px_rgba(2,6,23,0.45)]`} />
         <div className={`pointer-events-none absolute inset-[1px] ${variant === 'hub' ? 'rounded-[0.92rem]' : 'rounded-[1.08rem]'} border border-cyan-200/25`} />
 
         <div className="relative flex min-w-0 items-center gap-2.5 pl-1">
