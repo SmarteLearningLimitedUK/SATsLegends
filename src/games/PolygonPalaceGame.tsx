@@ -752,11 +752,6 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
     ));
   };
 
-  const stageHint = question.stage <= 3
-    ? 'Early round: focus on sides and corners.'
-    : question.stage <= 7
-      ? 'Mid round: compare parallel lines and right angles.'
-      : 'Challenge round: watch for SATs trick distinctions.';
 
   const topPaddingClass = useSharedTopHud
     ? 'pt-[calc(env(safe-area-inset-top)+5.75rem)]'
@@ -777,48 +772,6 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
         className={`relative z-20 flex h-full w-full flex-col items-center ${topPaddingClass} px-[max(0.75rem,env(safe-area-inset-left))] pb-[max(7.2rem,calc(env(safe-area-inset-bottom)+6.2rem))]`}
       >
         <div className="flex h-full w-full max-w-[30rem] min-h-0 flex-col gap-2.5">
-          {!useSharedTopHud ? (
-            <header className="rounded-[1.15rem] border border-cyan-100/26 bg-slate-950/55 px-3 py-2 shadow-[0_12px_22px_rgba(2,6,23,0.44)]">
-              <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2.5">
-                <div>
-                  <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/72">Time attack</div>
-                  <div className="relative mt-1 h-3.5 overflow-hidden rounded-full border border-cyan-100/26 bg-blue-950/58">
-                    <motion.div
-                      className="absolute inset-y-0 left-0 rounded-full"
-                      animate={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }}
-                      transition={{ duration: 0.25, ease: 'easeOut' }}
-                      style={{ boxShadow: '0 0 12px rgba(34,197,94,0.45)' }}
-                    />
-                    <div className="absolute inset-[1px] rounded-full bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:12%_100%]" />
-                  </div>
-                </div>
-
-                <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">XP</div>
-                  <div className="text-sm font-black text-white">{XP}</div>
-                </div>
-
-                <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Combo</div>
-                  <div className="text-sm font-black text-amber-200">x{Combo}</div>
-                </div>
-              </div>
-            </header>
-          ) : (
-            <header className="rounded-[1.15rem] border border-cyan-100/24 bg-slate-950/50 px-3 py-2 shadow-[0_10px_20px_rgba(2,6,23,0.42)]">
-              <div className="flex items-center justify-between gap-2.5">
-                <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">XP</div>
-                  <div className="text-sm font-black text-white">{XP}</div>
-                </div>
-                <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Combo</div>
-                  <div className="text-sm font-black text-amber-200">x{Combo}</div>
-                </div>
-              </div>
-            </header>
-          )}
-
           <section className="rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/54 p-3 text-center shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
             <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/72">
               {question.speedRound ? 'Challenge Round' : 'Polygon Place'}
@@ -828,14 +781,8 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
           </section>
 
           <section className="min-h-0 flex-1 rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/54 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
-            <div className="flex h-full min-h-0 flex-col gap-3">
-              <div className="text-center text-[10px] font-black uppercase tracking-[0.17em] text-cyan-100/72">
-                {stageHint}
-              </div>
-
-              <div className="relative flex min-h-0 flex-1 items-center justify-center rounded-[1.15rem] border border-cyan-100/16 bg-blue-950/36 p-2">
-                <ShapePreview question={question} pulseTone={pulseTone} />
-              </div>
+            <div className="relative flex h-full min-h-0 flex-1 items-center justify-center rounded-[1.15rem] border border-cyan-100/16 bg-blue-950/36 p-2">
+              <ShapePreview question={question} pulseTone={pulseTone} />
             </div>
           </section>
 

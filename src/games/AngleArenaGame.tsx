@@ -54,7 +54,7 @@ const WORLD: WorldConfig = {
   width: 2400,
   height: 360,
   groundY: 280,
-  launcherX: 70,
+  launcherX: 1200,
   launcherY: 248,
 };
 
@@ -363,6 +363,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       let targetCameraX = 0;
       if (cameraModeRef.current === 'follow' && projectile) {
         targetCameraX = clamp(projectile.x - viewWidth * 0.35, 0, WORLD.width - viewWidth);
+      } else if (cameraModeRef.current === 'start') {
+        targetCameraX = clamp(WORLD.launcherX - viewWidth * 0.35, 0, WORLD.width - viewWidth);
       } else if (cameraModeRef.current === 'hold') {
         targetCameraX = clamp(targetX - viewWidth * 0.5, 0, WORLD.width - viewWidth);
         if (cameraHoldUntilRef.current && timestamp >= cameraHoldUntilRef.current) {
@@ -423,17 +425,39 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         const rocketHeight = 56;
         ctx.drawImage(
           catapult,
-          cameraOffsetX + WORLD.launcherX - 10,
+          cameraOffsetX + WORLD.launcherX - 48,
           WORLD.launcherY - rocketHeight + 12,
           rocketWidth,
           rocketHeight,
         );
       } else {
         ctx.fillStyle = '#f59e0b';
-        ctx.fillRect(cameraOffsetX + WORLD.launcherX, WORLD.launcherY - 20, 72, 18);
+        ctx.fillRect(cameraOffsetX + WORLD.launcherX - 48, WORLD.launcherY - 20, 72, 18);
         ctx.fillStyle = '#0f172a';
-        ctx.fillRect(cameraOffsetX + WORLD.launcherX - 10, WORLD.launcherY - 6, 30, 24);
+        ctx.fillRect(cameraOffsetX + WORLD.launcherX - 58, WORLD.launcherY - 6, 30, 24);
       }
+
+      // Enemy on a podium near the target
+      ctx.save();
+      ctx.translate(cameraOffsetX + targetX, targetY);
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.roundRect(-34, 10, 68, 26, 12);
+      ctx.fill();
+      ctx.fillStyle = '#1e3a8a';
+      ctx.beginPath();
+      ctx.roundRect(-28, 6, 56, 18, 10);
+      ctx.fill();
+      ctx.fillStyle = '#f43f5e';
+      ctx.beginPath();
+      ctx.arc(0, -6, 18, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(-6, -10, 4, 0, Math.PI * 2);
+      ctx.arc(6, -10, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
 
 
       if (projectile) {
