@@ -381,13 +381,6 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     return selectedItems.reduce<Fraction>((sum, item) => addFractions(sum, item.value), { n: 0, d: 1 });
   }, [selectedItems]);
 
-  const runningRatio = useMemo(() => {
-    const target = fractionToNumber(order.target);
-    const total = fractionToNumber(runningTotal);
-    if (target <= 0) return 0;
-    return total / target;
-  }, [order.target, runningTotal]);
-
   const isExact = useMemo(() => equalFractions(runningTotal, order.target), [order.target, runningTotal]);
 
   const constraintsMet = useMemo(() => {
@@ -533,11 +526,6 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     return `hsl(${hue} 88% 50%)`;
   }, [timerProgress]);
 
-  const customerVisuals = useMemo(() => {
-    const seeded = [...FOOD_ITEMS].sort((a, b) => `${order.id}-${a.id}`.localeCompare(`${order.id}-${b.id}`));
-    return shuffle(seeded).slice(0, 3);
-  }, [order.id]);
-
   const topOffsetClass = useSharedTopHud
     ? 'pt-[calc(env(safe-area-inset-top)+5.45rem)]'
     : 'pt-[max(0.2rem,env(safe-area-inset-top))]';
@@ -576,7 +564,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
 
         <main className="relative mt-1.5 flex min-h-0 flex-1 flex-col gap-2 pb-[calc(env(safe-area-inset-bottom)+3.9rem)]">
           <section className="shrink-0 rounded-[1.25rem] border border-cyan-100/22 bg-slate-950/58 p-2.5 shadow-[0_10px_22px_rgba(2,6,23,0.42)]">
-            <div className="grid grid-cols-3 gap-2">
+            <div className="REMOVED_X">
               {customerVisuals.map((item, idx) => (
                 <div key={`${order.id}-${item.id}-${idx}`} className="rounded-[0.95rem] border border-amber-100/28 bg-slate-900/58 p-1.5 text-center">
                   <div className="text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100/72">Order {idx + 1}</div>
@@ -769,4 +757,6 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
 };
 
 export default TakeOutRushGame;
+
+
 
