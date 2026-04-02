@@ -244,18 +244,6 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
 
   const targetScore = config.targetScore;
   const progress = Math.min((XP / Math.max(targetScore, 1)) * 100, 100);
-  const healthHearts = useMemo(() => (
-    <div className="flex items-center justify-center gap-1">
-      {Array.from({ length: INITIAL_LIVES }).map((_, index) => (
-        <AssetIcon
-          key={`heart-${index}`}
-          name={index < lives ? 'heart' : 'heartOutline'}
-          className={`h-3.5 w-3.5 md:h-4 md:w-4 ${index < lives ? '' : 'opacity-50'}`}
-        />
-      ))}
-    </div>
-  ), [lives]);
-
   const bubbleRuntime = useMemo(() => {
     if (!isPhone) {
       return {

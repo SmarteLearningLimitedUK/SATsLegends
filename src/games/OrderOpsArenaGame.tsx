@@ -257,18 +257,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
         <PuzzleStage className="w-full max-w-6xl min-h-0 flex-1 rounded-[1.7rem] p-2 md:rounded-[2rem] md:p-3">
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_24%,rgba(15,23,42,0.2)_100%)]" />
 
-          <div className="absolute left-3 top-3 z-20 flex items-center gap-1.5 rounded-full border border-white/12 bg-slate-950/32 px-2.5 py-1.5 shadow-[0_10px_24px_rgba(2,6,23,0.2)] md:left-5 md:top-5 md:gap-2 md:px-4 md:py-2">
-            {Array.from({ length: HEARTS_MAX }).map((_, index) => (
-              <div key={index} className={`h-5 w-5 rounded-full ${index < hearts ? 'bg-[radial-gradient(circle_at_30%_25%,#fca5a5,#ef4444_60%,#991b1b)] shadow-[0_6px_12px_rgba(239,68,68,0.35)]' : 'bg-white/12'} md:h-6 md:w-6`} />
-            ))}
-          </div>
-
-          <div className="absolute right-3 top-3 z-20 rounded-full border border-white/12 bg-slate-950/32 px-3 py-1.5 shadow-[0_10px_24px_rgba(2,6,23,0.2)] md:right-5 md:top-5 md:px-4 md:py-2">
-            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/70 md:text-xs">Combo</div>
-            <div className="text-lg font-black text-white md:text-2xl">{Combo}</div>
-          </div>
-
-          <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-14 md:px-4 md:pb-4 md:pt-20">
+          <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-10 md:px-4 md:pb-4 md:pt-14">
             <div className="flex justify-center">
               <div className="licensed-slice-paper-panel max-w-[96%] px-3 py-1.5 text-center shadow-[0_10px_22px_rgba(15,23,42,0.14)] md:px-6 md:py-2.5">
                 <div className="text-sm font-black tracking-tight text-amber-900 md:text-[1.2rem]">

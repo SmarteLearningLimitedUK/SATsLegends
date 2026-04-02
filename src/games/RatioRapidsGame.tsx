@@ -378,12 +378,6 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
           <div className="absolute inset-x-[6%] top-[12%] h-[34%] rounded-[50%] bg-[radial-gradient(circle_at_center,rgba(186,230,253,0.22),rgba(56,189,248,0.06),transparent_72%)]" />
           <div className="absolute inset-x-0 bottom-0 h-[28%] bg-[linear-gradient(180deg,rgba(15,23,42,0),rgba(15,23,42,0.16),rgba(15,23,42,0.58))]" />
 
-          <div className="absolute left-3 top-3 z-20 flex items-center gap-1.5 rounded-full border border-white/12 bg-slate-950/32 px-2.5 py-1.5 shadow-[0_10px_24px_rgba(2,6,23,0.2)] md:left-5 md:top-5 md:gap-2 md:px-4 md:py-2">
-            {Array.from({ length: MAX_HEARTS }).map((_, index) => (
-              <div key={index} className={`h-5 w-5 rounded-full ${index < hearts ? 'bg-[radial-gradient(circle_at_30%_25%,#fca5a5,#ef4444_60%,#991b1b)] shadow-[0_6px_12px_rgba(239,68,68,0.35)]' : 'bg-white/12'} md:h-6 md:w-6`} />
-            ))}
-          </div>
-
           <div className="absolute right-3 top-3 z-20 flex items-center gap-1.5 rounded-full border border-white/12 bg-slate-950/32 px-3 py-1.5 shadow-[0_10px_24px_rgba(2,6,23,0.2)] md:right-5 md:top-5 md:gap-2 md:px-4 md:py-2">
             <AssetIcon name="coin" className="h-5 w-5 md:h-6 md:w-6" />
             <div>
@@ -392,7 +386,7 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
             </div>
           </div>
 
-          <div className="relative z-10 flex h-full w-full flex-col px-3 pb-4 pt-20 md:px-6 md:pb-6 md:pt-24">
+          <div className="relative z-10 flex h-full w-full flex-col px-3 pb-4 pt-16 md:px-6 md:pb-6 md:pt-20">
             <div className="flex justify-center">
             <div className="licensed-slice-paper-panel max-w-[94%] px-5 py-3 text-center shadow-[0_16px_30px_rgba(15,23,42,0.16)] md:px-7 md:py-4">
                 <div className="text-base font-black tracking-tight text-amber-900 md:text-[1.85rem]">{round.prompt}</div>

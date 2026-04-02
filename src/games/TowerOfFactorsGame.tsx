@@ -289,16 +289,9 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
               <div className="relative z-10 flex h-full flex-col p-3 md:p-5">
                 <div className="grid grid-cols-[1fr_auto] items-start gap-3">
                   <div className="rounded-[1.25rem] border border-white/10 bg-black/20 px-3 py-2.5 shadow-[0_12px_24px_rgba(0,0,0,0.22)]">
-                    <div className="flex items-center gap-1.5">
-                      {Array.from({ length: MAX_HEARTS }).map((_, index) => (
-                        <div key={index} className={`h-6 w-6 rounded-full ${index < hearts ? 'bg-[radial-gradient(circle_at_30%_25%,#fca5a5,#ef4444_58%,#991b1b)] shadow-[0_6px_12px_rgba(239,68,68,0.35)]' : 'bg-white/10'} md:h-7 md:w-7`} />
-                      ))}
-                    </div>
-                    <div className="mt-2 rounded-[1rem] border border-amber-200/20 bg-[linear-gradient(180deg,rgba(251,146,60,0.92),rgba(194,65,12,0.98))] px-3 py-2 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_12px_20px_rgba(120,53,15,0.28)]">
-                      <div className="flex items-center justify-between gap-2 text-amber-50">
-                        <span className="text-[0.68rem] font-black uppercase tracking-[0.16em] md:text-[0.82rem]">Combo x{Math.max(Combo, 1)}</span>
-                        <span className="text-[1.15rem] font-black md:text-[2rem]">Target: {problem.target}</span>
-                      </div>
+                    <div className="rounded-[1rem] border border-amber-200/20 bg-[linear-gradient(180deg,rgba(251,146,60,0.92),rgba(194,65,12,0.98))] px-3 py-2 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_12px_20px_rgba(120,53,15,0.28)]">
+                      <div className="text-[0.68rem] font-black uppercase tracking-[0.16em] text-amber-50/88 md:text-[0.82rem]">Target</div>
+                      <div className="mt-1 text-[1.15rem] font-black text-amber-50 md:text-[2rem]">{problem.target}</div>
                     </div>
                   </div>
 

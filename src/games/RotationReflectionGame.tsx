@@ -486,10 +486,6 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
                   <div className="text-sm font-black text-white">{XP}</div>
                 </div>
 
-                <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Combo</div>
-                  <div className="text-sm font-black text-amber-200">x{Combo}</div>
-                </div>
               </div>
             </header>
           ) : (
@@ -498,10 +494,6 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
                 <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
                   <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">XP</div>
                   <div className="text-sm font-black text-white">{XP}</div>
-                </div>
-                <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">Combo</div>
-                  <div className="text-sm font-black text-amber-200">x{Combo}</div>
                 </div>
               </div>
             </header>

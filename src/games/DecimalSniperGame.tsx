@@ -565,7 +565,6 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
       </div>
 
       <div className="flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-[0.14em] md:text-xs">
-        <span className="licensed-slice-cyan-pill rounded-full px-2.5 py-1 text-white">Lives {lives}</span>
         <span className="licensed-slice-cyan-pill rounded-full px-2.5 py-1 text-white">Accuracy {accuracy}%</span>
       </div>
     </div>
@@ -595,18 +594,6 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
             height: `${arenaLayout.playfieldRect.height}px`,
           }}
         />
-      </div>
-
-      <div
-        className="absolute left-3 top-2.5 rounded-full border border-white/14 bg-slate-950/52 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white md:left-4 md:top-3"
-      >
-        Lives {lives}
-      </div>
-
-      <div
-        className="absolute right-3 top-2.5 rounded-full border border-white/14 bg-slate-950/52 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white md:right-4 md:top-3"
-      >
-        Combo x{Math.max(combo, 1)}
       </div>
 
       <AnimatePresence>
@@ -760,8 +747,8 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
       targetScore={targetScore}
       timeLeft={timeLeft}
       progress={progress}
-      statLabel="Combo"
-      statValue={`x${Math.max(combo, 1)}`}
+      statLabel="Accuracy"
+      statValue={`${accuracy}%`}
       objectiveArea={objectiveArea}
       playFieldArea={playFieldArea}
       feedbackLayer={feedbackLayer}

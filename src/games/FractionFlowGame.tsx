@@ -609,16 +609,6 @@ const FractionFlowGame: React.FC<FractionFlowGameProps> = ({
           </div>
         </div>
 
-        <div className="mt-auto flex items-center gap-1.5 rounded-full border border-cyan-200/45 bg-[#0a1f56]/82 px-3 py-2">
-          {Array.from({ length: 4 }).map((_, idx) => (
-            <span
-              key={`life-${idx}`}
-              className={`h-2.5 w-2.5 rounded-full ${idx < lives ? 'bg-rose-400 shadow-[0_0_7px_rgba(251,113,133,0.8)]' : 'bg-slate-500/40'}`}
-            />
-          ))}
-          <span className="ml-1 text-[10px] font-black uppercase tracking-[0.13em] text-cyan-50">Lives</span>
-        </div>
-
         <AnimatePresence>
           {feedback && (
             <motion.div

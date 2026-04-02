@@ -318,8 +318,6 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
           <div className="flex items-center gap-2 rounded-xl border border-cyan-200/45 bg-[#0a1f56]/92 px-3 py-2 shadow-[0_8px_20px_rgba(0,0,0,0.45)]">
             <span className="text-xs font-black tabular-nums text-cyan-50">{timeLeft}s</span>
             <span className="h-4 w-px bg-cyan-100/35" />
-            <span className="text-xs font-black tabular-nums text-rose-200">{lives}</span>
-            <span className="h-4 w-px bg-cyan-100/35" />
             <CircleDollarSign className="h-4 w-4 text-yellow-300" />
             <span className="text-xs font-black tabular-nums text-yellow-100">{XP}</span>
           </div>

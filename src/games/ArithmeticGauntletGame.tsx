@@ -288,18 +288,10 @@ const ArithmeticGauntletGame: React.FC<ArithmeticGauntletGameProps> = ({
               </div>
             </div>
 
-            <div className="mt-2 grid grid-cols-4 gap-2 md:mt-3 md:gap-3">
+            <div className="mt-2 grid grid-cols-2 gap-2 md:mt-3 md:gap-3">
               <div className="rounded-xl border border-white/20 bg-slate-950/42 px-2 py-1 text-center">
                 <div className="text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100/70">Time</div>
                 <div className="text-lg font-black text-white md:text-xl">{timeLeft}s</div>
-              </div>
-              <div className="rounded-xl border border-white/20 bg-slate-950/42 px-2 py-1 text-center">
-                <div className="text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100/70">Lives</div>
-                <div className="text-lg font-black text-white md:text-xl">{lives}/3</div>
-              </div>
-              <div className="rounded-xl border border-white/20 bg-slate-950/42 px-2 py-1 text-center">
-                <div className="text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100/70">Combo</div>
-                <div className="text-lg font-black text-white md:text-xl">x{Combo}</div>
               </div>
               <div className="rounded-xl border border-white/20 bg-slate-950/42 px-2 py-1 text-center">
                 <div className="text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100/70">XP</div>

@@ -238,12 +238,6 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     const maxGoblinTop = targetTop - (slotHeight * 1.02) - (goblinHeightEstimate * 0.86);
     const goblinTop = Math.max(usableTop + 138, Math.min(suggestedGoblinTop, maxGoblinTop));
 
-    const livesTop = clamp(
-      goblinTop + (goblinHeightEstimate * 0.4),
-      usableTop + 155,
-      targetTop - slotHeight - 28,
-    );
-
     const sourceAnchors = createRowAnchors(cardCount, viewport.width, cardWidth, cardGap, sidePadding);
     const targetAnchors = createRowAnchors(cardCount, viewport.width, slotWidth, cardGap, sidePadding);
 
@@ -261,7 +255,6 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
       },
       goblinTop,
       goblinWidth,
-      livesTop,
       sourceAnchors,
       targetAnchors,
       ribbonTop,
@@ -557,21 +550,6 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
             </div>
           );
         })}
-
-        <div
-          className="absolute right-[4%] z-20 rounded-xl border border-cyan-200/40 bg-[#0a1f56]/85 px-3 py-2 shadow-[0_10px_22px_rgba(0,0,0,0.45)]"
-          style={{ top: layout.livesTop }}
-        >
-          <div className="mb-1 text-[10px] font-black uppercase tracking-[0.15em] text-cyan-100">Lives</div>
-          <div className="flex gap-1">
-            {Array.from({ length: 10 }).map((_, idx) => (
-              <span
-                key={`life-${idx}`}
-                className={`h-2.5 w-2.5 rounded-full ${idx < lives ? 'bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.8)]' : 'bg-slate-500/35'}`}
-              />
-            ))}
-          </div>
-        </div>
 
         {activeTargetAnchors.map((anchor, index) => {
           const token = targetSlots[index];

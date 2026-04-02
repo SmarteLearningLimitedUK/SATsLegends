@@ -184,9 +184,6 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
                 <div className="rounded-full border border-cyan-100/18 bg-slate-950/28 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/84">
                   L{level}/{MAX_LEVEL}
                 </div>
-                <div className="rounded-full border border-cyan-100/18 bg-slate-950/28 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/84">
-                  Combo x{Math.max(1, combo)}
-                </div>
                 <div className="rounded-full border border-amber-200/18 bg-slate-950/28 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-amber-100/84">
                   Mistakes {mistakesLeft}
                 </div>

@@ -385,13 +385,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_28%,rgba(15,23,42,0.16)_100%)]" />
           <div className="absolute inset-x-[6%] bottom-[14%] h-[22%] rounded-[50%] bg-[radial-gradient(circle_at_center,rgba(251,191,36,0.22),rgba(59,130,246,0.12),transparent_72%)]" />
 
-          <div className="absolute left-4 top-3 z-20 flex items-center gap-2 rounded-full border border-white/12 bg-slate-950/42 px-3 py-2 shadow-[0_10px_24px_rgba(2,6,23,0.24)] md:left-5 md:top-5 md:px-4">
-            {Array.from({ length: MAX_HEARTS }).map((_, index) => (
-              <div key={index} className={`h-5 w-5 rounded-full ${index < hearts ? 'bg-[radial-gradient(circle_at_30%_25%,#fca5a5,#ef4444_60%,#991b1b)] shadow-[0_6px_12px_rgba(239,68,68,0.35)]' : 'bg-white/12'} md:h-6 md:w-6`} />
-            ))}
-          </div>
-
-          <div className="relative z-10 flex h-full w-full flex-col px-3 pb-4 pt-20 md:px-6 md:pb-6 md:pt-24">
+          <div className="relative z-10 flex h-full w-full flex-col px-3 pb-4 pt-16 md:px-6 md:pb-6 md:pt-20">
             <div className="flex justify-center">
               <div className="max-w-[94%] rounded-[1.5rem] border border-orange-200/22 bg-[linear-gradient(180deg,rgba(146,64,14,0.96),rgba(120,53,15,0.98))] px-5 py-3 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_16px_30px_rgba(120,53,15,0.24)] md:px-7 md:py-4">
                 <div className="text-base font-black tracking-tight text-amber-50 md:text-[1.9rem]">{round.title}</div>
