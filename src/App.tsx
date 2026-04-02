@@ -15,7 +15,6 @@ import AchievementsModal from './components/modals/AchievementsModal';
 import LevelResultModal from './components/LevelResultModal';
 import GameRulesModal from './components/GameRulesModal';
 import GameActionDock from './components/GameActionDock';
-import ViewportBossEnemy from './components/ViewportBossEnemy';
 import { IslandData, LevelData } from './types';
 import { AppRouter } from './app/AppRouter';
 import { useScreenFlow } from './app/useScreenFlow';
@@ -517,9 +516,7 @@ const App: React.FC = () => {
     () => getBossVisualForLevel(selectedLevel?.gameType, selectedLevel?.id),
     [selectedLevel?.gameType, selectedLevel?.id],
   );
-  const shouldShowResultEnemyArt =
-    selectedLevel?.blueprintKey === 'place_value_panic'
-    || selectedLevel?.blueprintKey === 'number_line_ninja';
+  const shouldShowResultEnemyArt = false;
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
   const useUnboundedStageShell = isSplashScreen || isAvatarSelectionScreen || isWorldMapScreen;
@@ -610,18 +607,7 @@ const App: React.FC = () => {
                   onGameplayOver={handleGameOver}
                 />
 
-                {isGameplayScreen && selectedLevel && !levelResult ? (
-                  selectedLevel.blueprintKey === 'place_value_panic'
-                  || selectedLevel.blueprintKey === 'number_line_ninja'
-                    ? (
-                  <ViewportBossEnemy
-                    gameType={selectedLevel.gameType}
-                    levelId={selectedLevel.id}
-                    resultType={null}
-                  />
-                    )
-                    : null
-                ) : null}
+                {null}
               </motion.div>
             </AnimatePresence>
 
