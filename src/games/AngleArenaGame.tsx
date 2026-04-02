@@ -243,9 +243,10 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     }
   };
 
-  const fireProjectile = (angleDeg: number) => {
+  const fireProjectile = (angleDeg?: number) => {
     if (!activeQuestion) return;
-    const { vx, vy } = computeLaunchVector(angleDeg, activeQuestion.launchSpeed);
+    const resolvedAngle = Number.isFinite(angleDeg) ? (angleDeg as number) : desiredAngleRef.current;
+    const { vx, vy } = computeLaunchVector(resolvedAngle, activeQuestion.launchSpeed);
     projectileRef.current = {
       x: WORLD.launcherX,
       y: WORLD.launcherY,
