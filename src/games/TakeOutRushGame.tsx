@@ -211,7 +211,7 @@ const allowedIdsByStage = (stage: number): string[] => {
 const makeId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
 const buildOrderText = (target: Fraction): string => {
-  return `Pack exactly ${asDisplayFraction(target)} of a tray.`;
+  return `Target fraction: ${asDisplayFraction(target)}.`;
 };
 
 const generateOrder = (stage: number): TakeOutOrder => {
@@ -267,7 +267,7 @@ const generateOrder = (stage: number): TakeOutOrder => {
     target: { n: 3, d: 4 },
     constraints: [{ kind: 'min_items', minItems: 2 }],
     stage,
-    text: 'Pack exactly 3/4 of a tray.',
+    text: 'Target fraction: 3/4.',
   };
 };
 
