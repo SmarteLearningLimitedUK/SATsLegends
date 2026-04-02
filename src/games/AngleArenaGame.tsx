@@ -54,7 +54,7 @@ const WORLD: WorldConfig = {
   width: 2400,
   height: 360,
   groundY: 280,
-  launcherX: 1200,
+  launcherX: 220,
   launcherY: 248,
 };
 
@@ -112,7 +112,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const [localTimer, setLocalTimer] = useState(INITIAL_TIMER);
   const [stars, setStars] = useState(0);
 
-  const questions = useMemo(
+  const rawQuestions = useMemo(
     () => buildAngleQuestions({
       launcherX: WORLD.launcherX,
       groundY: WORLD.groundY,
@@ -120,6 +120,20 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     }),
     [],
   );
+  const questions = useMemo(() => (
+    rawQuestions.map((question) => {
+      const shouldShift = question.correctAnswer >= 120;
+      const launcherX = shouldShift ? 460 : 220;
+      const { vx, vy } = computeLaunchVector(question.correctAnswer, question.launchSpeed);
+      const estimatedRange = Math.max(0, (vx * vx) / (GRAVITY * Math.max(0.2, Math.tan((question.correctAnswer * Math.PI) / 180))));
+      const targetX = clamp(launcherX + (Number.isFinite(estimatedRange) ? estimatedRange : 900) * 0.5, launcherX + 320, launcherX + 1400);
+      return {
+        ...question,
+        launcherX,
+        targetX,
+      };
+    })
+  ), [rawQuestions]);
   const activeQuestion = questions[questionIndex];
   const isBeginnerLevel = levelId <= 3;
   const optionList = useMemo(() => (activeQuestion?.options ?? []).slice().sort((a, b) => a - b), [activeQuestion]);
@@ -248,8 +262,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     if (!activeQuestion) return;
     const resolvedAngle = Number.isFinite(angleDeg) ? (angleDeg as number) : desiredAngleRef.current;
     const { vx, vy } = computeLaunchVector(resolvedAngle, activeQuestion.launchSpeed);
+    const launcherX = activeQuestion.launcherX ?? WORLD.launcherX;
     projectileRef.current = {
-      x: WORLD.launcherX,
+      x: launcherX,
       y: WORLD.launcherY,
       vx,
       vy,
@@ -332,7 +347,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       }
 
       const projectile = projectileRef.current;
-      const targetX = activeQuestion?.targetX ?? WORLD.width - 260;
+      const targetX = clamp(activeQuestion?.targetX ?? WORLD.width - 260, 220, WORLD.width - 220);
       const targetY = activeQuestion?.targetY ?? WORLD.groundY - 42;
       const correctAnswer = activeQuestion?.correctAnswer ?? 0;
       const allowHit = selectedAnswerRef.current === correctAnswer;
@@ -364,7 +379,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       if (cameraModeRef.current === 'follow' && projectile) {
         targetCameraX = clamp(projectile.x - viewWidth * 0.35, 0, WORLD.width - viewWidth);
       } else if (cameraModeRef.current === 'start') {
-        targetCameraX = clamp(WORLD.launcherX - viewWidth * 0.35, 0, WORLD.width - viewWidth);
+        targetCameraX = clamp((activeQuestion?.launcherX ?? WORLD.launcherX) - viewWidth * 0.35, 0, WORLD.width - viewWidth);
       } else if (cameraModeRef.current === 'hold') {
         targetCameraX = clamp(targetX - viewWidth * 0.5, 0, WORLD.width - viewWidth);
         if (cameraHoldUntilRef.current && timestamp >= cameraHoldUntilRef.current) {
@@ -420,21 +435,22 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       const cameraOffsetX = -cameraXRef.current;
 
       const catapult = catapultImageRef.current;
+      const launcherX = activeQuestion?.launcherX ?? WORLD.launcherX;
       if (catapult && catapult.complete) {
         const rocketWidth = 96;
         const rocketHeight = 56;
         ctx.drawImage(
           catapult,
-          cameraOffsetX + WORLD.launcherX - 48,
+          cameraOffsetX + launcherX - 48,
           WORLD.launcherY - rocketHeight + 12,
           rocketWidth,
           rocketHeight,
         );
       } else {
         ctx.fillStyle = '#f59e0b';
-        ctx.fillRect(cameraOffsetX + WORLD.launcherX - 48, WORLD.launcherY - 20, 72, 18);
+        ctx.fillRect(cameraOffsetX + launcherX - 48, WORLD.launcherY - 20, 72, 18);
         ctx.fillStyle = '#0f172a';
-        ctx.fillRect(cameraOffsetX + WORLD.launcherX - 58, WORLD.launcherY - 6, 30, 24);
+        ctx.fillRect(cameraOffsetX + launcherX - 58, WORLD.launcherY - 6, 30, 24);
       }
 
       // Enemy on a podium near the target

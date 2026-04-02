@@ -771,8 +771,8 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
       <main
         className={`relative z-20 flex h-full w-full flex-col items-center ${topPaddingClass} px-[max(0.75rem,env(safe-area-inset-left))] pb-[max(7.2rem,calc(env(safe-area-inset-bottom)+6.2rem))]`}
       >
-        <div className="flex h-full w-full max-w-[30rem] min-h-0 flex-col gap-2.5">
-          <section className="rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/54 p-3 text-center shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
+        <div className="flex h-full w-full max-w-[30rem] min-h-0 flex-col gap-3">
+          <section className="shrink-0 rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/54 p-3 text-center shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
             <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/72">
               {question.speedRound ? 'Challenge Round' : 'Polygon Place'}
             </div>
