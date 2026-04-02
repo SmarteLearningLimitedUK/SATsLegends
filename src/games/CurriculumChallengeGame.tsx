@@ -1489,14 +1489,10 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                   ))}
                 </div>
 
-                <div className="grid w-full grid-cols-2 gap-3">
+                <div className="grid w-full grid-cols-1 gap-3">
                   <div className="rounded-[1.2rem] bg-white/80 p-3 text-center">
                     <div className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">XP</div>
                     <div className="mt-1 text-2xl font-black text-slate-900">{XP}</div>
-                  </div>
-                  <div className="rounded-[1.2rem] bg-white/80 p-3 text-center">
-                    <div className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Best Combo</div>
-                    <div className="mt-1 text-2xl font-black text-slate-900">{Combo}</div>
                   </div>
                 </div>
 
