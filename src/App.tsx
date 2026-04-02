@@ -32,6 +32,8 @@ import { LevelResultState } from './app/types';
 import {
   IPHONE_STAGE_HEIGHT,
   IPHONE_STAGE_WIDTH,
+  IPAD_STAGE_HEIGHT,
+  IPAD_STAGE_WIDTH,
   MAP_LAYOUT_SCREENS,
   QUESTION_MATCH_FRAME_GAMES,
   SCREEN_BEHAVIOR,
@@ -272,9 +274,12 @@ const App: React.FC = () => {
     const updateStageScale = () => {
       const viewportWidth = window.visualViewport?.width ?? window.innerWidth;
       const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+      const isTabletViewport = Math.min(viewportWidth, viewportHeight) >= 700;
+      const baseWidth = isTabletViewport ? IPAD_STAGE_WIDTH : IPHONE_STAGE_WIDTH;
+      const baseHeight = isTabletViewport ? IPAD_STAGE_HEIGHT : IPHONE_STAGE_HEIGHT;
       const scale = Math.min(
-        viewportWidth / IPHONE_STAGE_WIDTH,
-        viewportHeight / IPHONE_STAGE_HEIGHT,
+        viewportWidth / baseWidth,
+        viewportHeight / baseHeight,
       );
       setStageScale(Number.isFinite(scale) && scale > 0 ? scale : 1);
     };
@@ -542,9 +547,14 @@ const App: React.FC = () => {
   const useFlatScreenScaleTransition = isAvatarSelectionScreen;
   const screenEnterScale = useFlatScreenScaleTransition ? 1 : 0.98;
   const screenExitScale = useFlatScreenScaleTransition ? 1 : 1.02;
+  const isTabletStage = typeof window !== 'undefined'
+    && Math.min(
+      window.visualViewport?.width ?? window.innerWidth,
+      window.visualViewport?.height ?? window.innerHeight,
+    ) >= 700;
   const stageStyle = {
-    '--game-stage-width': `${IPHONE_STAGE_WIDTH}px`,
-    '--game-stage-height': `${IPHONE_STAGE_HEIGHT}px`,
+    '--game-stage-width': `${isTabletStage ? IPAD_STAGE_WIDTH : IPHONE_STAGE_WIDTH}px`,
+    '--game-stage-height': `${isTabletStage ? IPAD_STAGE_HEIGHT : IPHONE_STAGE_HEIGHT}px`,
     '--game-stage-scale': `${stageScale}`,
   } as React.CSSProperties;
 

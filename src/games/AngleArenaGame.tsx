@@ -12,7 +12,7 @@ import {
   SecondaryButton,
   TaskCard,
 } from '../components/game-ui/GameUiKit';
-import catapultAsset from '../assets/angle_arena/catapultfinal.png';
+import catapultAsset from '../assets/rocktlogo.png';
 import battleBackground from '../assets/angle_arena/angle arenabkground.png';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { clamp, computeLaunchVector, stepProjectile, ProjectileState } from './angleArena/physics';
@@ -414,20 +414,20 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
       const catapult = catapultImageRef.current;
       if (catapult && catapult.complete) {
-        ctx.save();
-        ctx.translate(cameraOffsetX + WORLD.launcherX, WORLD.launcherY + 8);
-        ctx.rotate(-launcherAngleRef.current * (Math.PI / 180));
-        ctx.drawImage(catapult, -36, -44, 96, 88);
-        ctx.restore();
+        const rocketWidth = 96;
+        const rocketHeight = 56;
+        ctx.drawImage(
+          catapult,
+          cameraOffsetX + WORLD.launcherX - 10,
+          WORLD.launcherY - rocketHeight + 12,
+          rocketWidth,
+          rocketHeight,
+        );
       } else {
-        ctx.save();
-        ctx.translate(cameraOffsetX + WORLD.launcherX, WORLD.launcherY);
-        ctx.rotate(-launcherAngleRef.current * (Math.PI / 180));
         ctx.fillStyle = '#f59e0b';
-        ctx.fillRect(0, -6, 70, 12);
-        ctx.restore();
+        ctx.fillRect(cameraOffsetX + WORLD.launcherX, WORLD.launcherY - 20, 72, 18);
         ctx.fillStyle = '#0f172a';
-        ctx.fillRect(cameraOffsetX + WORLD.launcherX - 20, WORLD.launcherY + 8, 40, 32);
+        ctx.fillRect(cameraOffsetX + WORLD.launcherX - 10, WORLD.launcherY - 6, 30, 24);
       }
 
 
