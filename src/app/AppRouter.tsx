@@ -224,15 +224,10 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         if (selectedLevel.blueprintKey === 'share_splitter') {
           return renderFromRegistry('ShareSplitterGame', sharedProps);
         }
-        if (selectedLevel.blueprintKey === 'sling_shot') {
-          return renderFromRegistry('SlingShotGame', sharedProps);
-        }
         if (selectedLevel.blueprintKey === 'maths_vs_zombies') {
           return renderFromRegistry('MathsVsZombiesGame', sharedProps);
         }
         return renderFromRegistry('RatioRapidsGame', { ...sharedProps, gameTitle: selectedLevel.displayName });
-      case 'sling_shot':
-        return renderFromRegistry('SlingShotGame', sharedProps);
       case 'timekeeper_temple':
         return renderFromRegistry('TimekeeperTempleGame', sharedProps);
       case 'measurement_forge':
@@ -303,6 +298,10 @@ export const AppRouter: React.FC<AppRouterProps> = ({
           gameType: selectedLevel.gameType,
           isBoss: Boolean(selectedLevel.isBoss),
         });
+      case 'area_architect':
+        return renderFromRegistry('AreaArchitectGame', sharedProps);
+      case 'ratio_fractions':
+        return renderFromRegistry('RatioFractionsGame', sharedProps);
       case 'scale_safari':
         if (selectedLevel.blueprintKey === 'scale_builder') {
           return renderFromRegistry('ScaleBuilderGame', sharedProps);

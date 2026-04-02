@@ -107,20 +107,6 @@ const CHALLENGE_THEMES: Record<SupportedChallengeGameType, ChallengeTheme> = {
     progress: 'bg-gradient-to-r from-cyan-300 via-sky-300 to-blue-400',
     badge: 'text-cyan-100',
   },
-  coordinate_cross: {
-    title: 'Coordinate Cross',
-    surface: 'from-cyan-300/18 via-sky-200/12 to-slate-950/86',
-    scene: 'from-cyan-300/18 via-sky-200/12 to-transparent',
-    ambient: 'bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.22),transparent_28%),linear-gradient(180deg,#0f2232_0%,#071018_100%)]',
-    prompt: 'from-cyan-200/18 to-sky-100/8',
-    answer: 'from-white/10 to-white/4',
-    answerActive: 'from-cyan-300/55 to-sky-400/48',
-    statText: 'text-cyan-950',
-    statSoftBg: 'bg-cyan-100/85',
-    statBorder: 'border-cyan-200/90',
-    progress: 'bg-gradient-to-r from-cyan-300 via-sky-300 to-blue-400',
-    badge: 'text-cyan-100',
-  },
   transform_temple: {
     title: 'Transform Temple',
     surface: 'from-amber-300/18 via-yellow-200/12 to-slate-950/86',
@@ -231,34 +217,6 @@ const CHALLENGE_THEMES: Record<SupportedChallengeGameType, ChallengeTheme> = {
     statSoftBg: 'bg-cyan-100/85',
     statBorder: 'border-cyan-200/90',
     progress: 'bg-gradient-to-r from-cyan-300 via-cyan-300 to-sky-400',
-    badge: 'text-cyan-100',
-  },
-  area_architect: {
-    title: 'Area Architect',
-    surface: 'from-amber-300/18 via-yellow-200/12 to-slate-950/86',
-    scene: 'from-yellow-200/18 via-amber-200/12 to-transparent',
-    ambient: 'bg-[radial-gradient(circle_at_top,rgba(250,204,21,0.22),transparent_28%),linear-gradient(180deg,#33240f_0%,#091018_100%)]',
-    prompt: 'from-amber-200/18 to-yellow-100/8',
-    answer: 'from-white/10 to-white/4',
-    answerActive: 'from-amber-300/55 to-yellow-400/48',
-    statText: 'text-amber-950',
-    statSoftBg: 'bg-amber-100/85',
-    statBorder: 'border-amber-200/90',
-    progress: 'bg-gradient-to-r from-yellow-300 via-amber-300 to-orange-400',
-    badge: 'text-amber-100',
-  },
-  ratio_fractions: {
-    title: 'Ratio Fractions',
-    surface: 'from-sky-300/18 via-cyan-200/12 to-slate-950/86',
-    scene: 'from-sky-300/18 via-cyan-200/12 to-transparent',
-    ambient: 'bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.22),transparent_28%),linear-gradient(180deg,#10283a_0%,#071018_100%)]',
-    prompt: 'from-sky-200/18 to-cyan-100/8',
-    answer: 'from-white/10 to-white/4',
-    answerActive: 'from-cyan-300/55 to-sky-400/48',
-    statText: 'text-cyan-950',
-    statSoftBg: 'bg-cyan-100/85',
-    statBorder: 'border-cyan-200/90',
-    progress: 'bg-gradient-to-r from-cyan-300 via-sky-300 to-blue-400',
     badge: 'text-cyan-100',
   },
   rule_runner: {
@@ -1266,8 +1224,6 @@ const generateQuestion = (gameType: SupportedChallengeGameType, levelId: number)
       return generatePercentPowerQuestion();
     case 'coordinate_quest':
       return generateCoordinateQuestion();
-    case 'coordinate_cross':
-      return generateCoordinateCrossQuestion();
     case 'transform_temple':
       return generateTransformQuestion();
     case 'scale_safari':
@@ -1278,14 +1234,10 @@ const generateQuestion = (gameType: SupportedChallengeGameType, levelId: number)
       return generateChartQuestion();
     case 'mean_machine':
       return generateMeanQuestion();
-    case 'area_architect':
-      return generateAreaArchitectQuestion();
     case 'equation_grove':
       return generateEquationQuestion();
     case 'formula_forge':
       return generateFormulaForgeQuestion();
-    case 'ratio_fractions':
-      return generateRatioFractionsQuestion();
     case 'rule_runner':
     default:
       return generateRuleRunnerQuestion();

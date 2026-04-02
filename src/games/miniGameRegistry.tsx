@@ -1,6 +1,7 @@
 import React from 'react';
 import AngleArenaGame from './AngleArenaGame';
 import ArithmeticGauntletGame from './ArithmeticGauntletGame';
+import AreaArchitectGame from './AreaArchitectGame';
 import BossEncounterGame from './BossEncounterGame';
 import CalculationCrashGame from './CalculationCrashGame';
 import CloudCollapseGame from './CloudCollapseGame';
@@ -30,13 +31,13 @@ import PolygonPalaceGame from './PolygonPalaceGame';
 import PotionPourGame from './PotionPourGame';
 import PrimePopGame from './PrimePopGame';
 import RatioRapidsGame from './RatioRapidsGame';
+import RatioFractionsGame from './RatioFractionsGame';
 import RemainderRunGame from './RemainderRunGame';
 import RoundingRocketGame from './RoundingRocketGame';
 import RotationReflectionGame from './RotationReflectionGame';
 import RuneLockDungeonsGame from './RuneLockDungeonsGame';
 import ScaleBuilderGame from './ScaleBuilderGame';
 import ShareSplitterGame from './ShareSplitterGame';
-import SlingShotGame from './SlingShotGame';
 import SimplifySprintGame from './SimplifySprintGame';
 import TakeOutRushGame from './TakeOutRushGame';
 import TimekeeperTempleGame from './TimekeeperTempleGame';
@@ -54,6 +55,7 @@ import { createMiniGame, MiniGame } from './MiniGame';
 export type MiniGameRegistryKey =
   | 'AngleArenaGame'
   | 'ArithmeticGauntletGame'
+  | 'AreaArchitectGame'
   | 'BossEncounterGame'
   | 'CalculationCrashGame'
   | 'CloudCollapseGame'
@@ -83,13 +85,13 @@ export type MiniGameRegistryKey =
   | 'PotionPourGame'
   | 'PrimePopGame'
   | 'RatioRapidsGame'
+  | 'RatioFractionsGame'
   | 'RemainderRunGame'
   | 'RoundingRocketGame'
   | 'RotationReflectionGame'
   | 'RuneLockDungeonsGame'
   | 'ScaleBuilderGame'
   | 'ShareSplitterGame'
-  | 'SlingShotGame'
   | 'SimplifySprintGame'
   | 'TakeOutRushGame'
   | 'TimekeeperTempleGame'
@@ -115,6 +117,7 @@ const asMiniGame = <P extends Record<string, unknown>>(
 export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   AngleArenaGame: asMiniGame('angle_arena', AngleArenaGame),
   ArithmeticGauntletGame: asMiniGame('arithmetic_gauntlet', ArithmeticGauntletGame),
+  AreaArchitectGame: asMiniGame('area_architect', AreaArchitectGame),
   BossEncounterGame: asMiniGame('boss_encounter', BossEncounterGame),
   CalculationCrashGame: asMiniGame('calculation_crash', CalculationCrashGame),
   CloudCollapseGame: asMiniGame('cloud_collapse', CloudCollapseGame),
@@ -144,13 +147,13 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   PotionPourGame: asMiniGame('potion_pour', PotionPourGame),
   PrimePopGame: asMiniGame('prime_pop', PrimePopGame),
   RatioRapidsGame: asMiniGame('ratio_rapids', RatioRapidsGame),
+  RatioFractionsGame: asMiniGame('ratio_fractions', RatioFractionsGame),
   RemainderRunGame: asMiniGame('remainder_run', RemainderRunGame),
   RoundingRocketGame: asMiniGame('rounding_rocket', RoundingRocketGame),
   RotationReflectionGame: asMiniGame('rotation_reflection', RotationReflectionGame),
   RuneLockDungeonsGame: asMiniGame('rune_lock_dungeons', RuneLockDungeonsGame),
   ScaleBuilderGame: asMiniGame('scale_builder', ScaleBuilderGame),
   ShareSplitterGame: asMiniGame('share_splitter', ShareSplitterGame),
-  SlingShotGame: asMiniGame('sling_shot', SlingShotGame),
   SimplifySprintGame: asMiniGame('simplify_sprint', SimplifySprintGame),
   TakeOutRushGame: asMiniGame('take_out_rush', TakeOutRushGame),
   TimekeeperTempleGame: asMiniGame('timekeeper_temple', TimekeeperTempleGame),

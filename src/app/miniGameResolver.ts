@@ -19,8 +19,6 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       return 'FractionMatchGame';
     case 'potion_pour':
       return 'PotionPourGame';
-    case 'sling_shot':
-      return 'SlingShotGame';
     case 'take_out_rush':
       if (level.blueprintKey === 'fraction_forge') {
         return 'FractionForgeGame';
@@ -105,11 +103,12 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
     case 'percent_pulse':
     case 'percent_power':
     case 'formula_forge':
-    case 'area_architect':
-    case 'coordinate_cross':
     case 'unit_mixer':
-    case 'ratio_fractions':
       return 'CurriculumChallengeGame';
+    case 'area_architect':
+      return 'AreaArchitectGame';
+    case 'ratio_fractions':
+      return 'RatioFractionsGame';
     case 'transform_temple':
       return 'CurriculumChallengeGame';
     case 'scale_safari':

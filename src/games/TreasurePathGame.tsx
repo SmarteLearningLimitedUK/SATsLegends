@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
-import { Castle, ChevronRight, Coins, Sparkles, Target } from '../components/GameIcons';
+import { Coins } from '../components/GameIcons';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 
 interface TreasurePathGameProps {
@@ -92,18 +92,9 @@ const buildMovementRound = () => {
 
 const generateRound = (): TreasureRound => {
   const directMode = Math.random() > 0.4;
-  const traps = new Set<string>();
-
-  while (traps.size < 4) {
-    traps.add(coordinateKey(randomInt(GRID_SIZE), randomInt(GRID_SIZE)));
-  }
 
   if (directMode) {
     let target = { x: randomInt(GRID_SIZE), y: randomInt(GRID_SIZE) };
-    while (traps.has(coordinateKey(target.x, target.y))) {
-      target = { x: randomInt(GRID_SIZE), y: randomInt(GRID_SIZE) };
-    }
-
     const start = { x: randomInt(GRID_SIZE), y: randomInt(GRID_SIZE) };
 
     return {
@@ -112,17 +103,14 @@ const generateRound = (): TreasureRound => {
       promptType: 'coordinate',
       start,
       target,
-      traps: Array.from(traps),
+      traps: [],
     };
   }
 
   const movement = buildMovementRound();
-  traps.delete(coordinateKey(movement.start.x, movement.start.y));
-  traps.delete(coordinateKey(movement.target.x, movement.target.y));
-
   return {
     ...movement,
-    traps: Array.from(traps),
+    traps: [],
   };
 };
 
@@ -260,30 +248,18 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
         <PuzzleStage className="w-full min-h-0 flex-1 rounded-[1.7rem] p-2 md:rounded-[2rem] md:p-3">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(74,222,128,0.18),transparent_24%),radial-gradient(circle_at_82%_30%,rgba(56,189,248,0.14),transparent_20%),linear-gradient(180deg,rgba(8,15,30,0.12),rgba(8,15,30,0.34))]" />
 
-          <div className="relative z-10 mb-2 flex flex-col gap-2 md:mb-3 md:flex-row md:items-center md:justify-between">
-            <div className="licensed-game-card w-full max-w-[24rem] px-4 py-3 md:max-w-[34rem] md:px-5 md:py-4">
-              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/72">Jungle Ruins</div>
-              <div className="mt-1 text-[1.45rem] font-black leading-none text-white md:text-[2rem]">{round.promptTitle}</div>
+          <div className="relative z-10 mb-2">
+            <div className="licensed-game-card w-full px-4 py-3 md:px-5 md:py-4">
+              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/72">Coordinate Quest</div>
+              <div className="mt-1 text-[1.35rem] font-black leading-none text-white md:text-[1.8rem]">{round.promptTitle}</div>
               <div className="mt-2 text-xs font-bold text-white/78 md:text-sm">{round.promptText}</div>
-            </div>
-            <div className="casual-ribbon-chip flex items-center gap-2 rounded-full px-3 py-1.5 text-[10px] md:px-4 md:py-2 md:text-xs">
-              <Target className="h-5 w-5 text-yellow-300" />
-              <div>
-                <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/70">Round</div>
-                <div className="text-xl font-black text-white">{roundIndex + 1} / 7</div>
-              </div>
             </div>
           </div>
 
-          <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-2 overflow-hidden pr-0.5 md:flex-row md:gap-3 md:pr-0">
-            <div className="licensed-game-card-dark relative flex min-h-[16.25rem] flex-[1.1] flex-col overflow-hidden rounded-[1.35rem] p-2.5 md:min-h-0 md:rounded-[1.75rem] md:p-4">
+          <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-2 overflow-hidden pr-0.5 md:gap-3 md:pr-0">
+            <div className="licensed-game-card-dark relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.35rem] p-2.5 md:rounded-[1.75rem] md:p-4">
               <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent,rgba(8,15,11,0.55))]" />
-              <div className="mb-2 flex items-center justify-between">
-                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-100/62">Grid Map</div>
-                <div className="rounded-full border border-white/10 bg-white/8 px-3 py-1 text-xs font-black text-white/82">
-                  Tap the final tile
-                </div>
-              </div>
+              <div className="mb-2 text-[10px] font-black uppercase tracking-[0.18em] text-emerald-100/62">Grid map</div>
 
               <div className="mx-auto grid w-full max-w-[23rem] grid-cols-[1.2rem_repeat(5,minmax(0,1fr))] gap-1.5 md:max-w-[26rem] md:grid-cols-[1.5rem_repeat(5,minmax(0,1fr))] md:gap-2">
                 <div />
@@ -303,8 +279,6 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                       const y = rowValue;
                       const key = coordinateKey(x, y);
                       const isStart = x === round.start.x && y === round.start.y;
-                      const isTarget = x === round.target.x && y === round.target.y;
-                      const isTrap = round.traps.includes(key);
                       const isSelected = selectedTile === key;
 
                       return (
@@ -321,12 +295,6 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                           }`}
                         >
                           <div className="absolute inset-[10%] rounded-[0.8rem] border border-black/8 bg-[radial-gradient(circle_at_40%_30%,rgba(255,255,255,0.18),transparent_28%),linear-gradient(180deg,rgba(255,255,255,0.06),rgba(0,0,0,0.08))]" />
-                          {isTrap && (
-                            <div className="absolute left-2 top-2 h-2.5 w-2.5 rounded-full bg-rose-400/70 shadow-[0_0_10px_rgba(244,63,94,0.45)]" />
-                          )}
-                          {isTarget && (
-                            <div className="absolute right-2 top-2 h-3 w-3 rounded-full bg-yellow-300/80 shadow-[0_0_12px_rgba(253,224,71,0.55)]" />
-                          )}
                           {isStart && (
                             <motion.div
                               layout
@@ -340,39 +308,6 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                     })}
                   </React.Fragment>
                 ))}
-              </div>
-            </div>
-
-            <div className="flex min-h-0 flex-[0.85] flex-col gap-2 md:gap-3">
-              <div className="licensed-game-card-dark rounded-[1.35rem] p-3 md:rounded-[1.75rem] md:p-4">
-                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-100/60">
-                  <Sparkles className="h-4 w-4 text-yellow-300" />
-                  Explorer Notes
-                </div>
-                <div className="mt-3 rounded-[1.2rem] border border-white/10 bg-white/6 p-3">
-                  <div className="text-xs font-black uppercase tracking-[0.16em] text-emerald-100/60">Starting Tile</div>
-                  <div className="mt-1 text-2xl font-black text-white">({round.start.x}, {round.start.y})</div>
-                </div>
-                <div className="mt-3 rounded-[1.2rem] border border-white/10 bg-white/6 p-3">
-                  <div className="text-xs font-black uppercase tracking-[0.16em] text-emerald-100/60">Goal</div>
-                  <div className="mt-1 text-sm font-bold text-white/80">
-                    {round.promptType === 'coordinate'
-                      ? 'Plot the treasure coordinates exactly.'
-                      : 'Work out the final square after following the route.'}
-                  </div>
-                </div>
-              </div>
-
-              <div className="licensed-game-card-dark rounded-[1.35rem] p-3 md:rounded-[1.75rem] md:p-4">
-                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-100/60">
-                  <Castle className="h-4 w-4 text-sky-300" />
-                  Board Clues
-                </div>
-                <ul className="mt-3 space-y-2 text-sm font-bold text-white/76">
-                  <li>x is horizontal and y is vertical.</li>
-                  <li>Avoid red trap markers while you search.</li>
-                  <li>The gold marker shows the hidden treasure tile.</li>
-                </ul>
               </div>
             </div>
           </div>

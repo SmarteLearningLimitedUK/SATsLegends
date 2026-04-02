@@ -440,12 +440,6 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
     }
   };
 
-  const stageHint = question.stage <= 3
-    ? 'Early rounds: 90 deg turns and clear cues.'
-    : question.stage <= 7
-      ? 'Mid rounds: 90, 180, and 270 deg turns.'
-      : 'Late rounds: SATs trick orientation reasoning.';
-
   const topPaddingClass = useSharedTopHud
     ? 'pt-[calc(env(safe-area-inset-top)+5.75rem)]'
     : 'pt-[max(0.5rem,env(safe-area-inset-top))]';
@@ -514,17 +508,12 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
           )}
 
           <section className="rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/54 p-3 text-center shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
-            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/72">
-              {question.speedRound ? 'Rapid rotation round' : 'Rotation Station'}
-            </div>
-            <h2 className="mt-1 text-[clamp(1rem,4.4vw,1.3rem)] font-black text-white">{question.instruction}</h2>
+            <h2 className="text-[clamp(1rem,4.4vw,1.3rem)] font-black text-white">{question.instruction}</h2>
             <p className="mt-1 text-[clamp(0.76rem,3.3vw,0.9rem)] font-semibold text-cyan-100/86">{question.subInstruction}</p>
           </section>
 
           <section className="min-h-0 flex-1 rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/54 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
             <div className="flex h-full min-h-0 flex-col gap-3">
-              <div className="text-center text-[10px] font-black uppercase tracking-[0.17em] text-cyan-100/72">{stageHint}</div>
-
               {question.mode === 'rotate_match' ? (
                 <div className={`grid min-h-0 flex-1 grid-cols-2 items-center gap-2.5 ${shapePulseClass}`}>
                   <div className="flex flex-col items-center gap-1.5">

@@ -1,14 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import {
-  AlertCircle,
-  CheckCircle2,
-  ChevronRight,
-  Layers,
-  Maximize2,
-  RotateCcw,
-  Ruler,
-  Trophy,
-} from 'lucide-react';
+import { ChevronRight, Layers, Ruler, Trophy } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import MiniGameTopBar from '../components/MiniGameTopBar';
@@ -311,131 +302,86 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
         <PuzzleStage className="mx-auto w-full max-w-6xl rounded-[2.1rem] md:rounded-[2.5rem]">
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_24%,rgba(15,23,42,0.24)_100%)]" />
 
-          <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-2 p-2 md:gap-3 md:p-3">
-            <div className="grid min-h-0 flex-1 grid-cols-1 gap-2">
-              <div className="mb-1 grid grid-cols-1 gap-2 rounded-[1rem] border border-white/14 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(15,23,42,0.84))] p-2 sm:grid-cols-3">
-                <div className="sm:col-span-1">
-                  <div className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/80">Current phase</div>
-                  <div className="truncate text-sm font-black text-white md:text-base">{currentLevel.name}</div>
-                </div>
-                <div className="rounded-xl border border-yellow-200/28 bg-yellow-500/10 px-2 py-1 text-center">
-                  <div className="text-[9px] font-black uppercase tracking-[0.12em] text-yellow-100/80">Target</div>
-                  <div className="text-lg font-black text-yellow-200">{currentLevel.targetScale.toFixed(2)}x</div>
-                </div>
-                <div className="rounded-xl border border-sky-200/26 bg-sky-500/10 px-2 py-1 text-center">
-                  <div className="text-[9px] font-black uppercase tracking-[0.12em] text-sky-100/80">Current</div>
-                  <div className={`text-lg font-black ${gameState === 'success' ? 'text-emerald-300' : 'text-sky-200'}`}>
-                    {currentScale.toFixed(2)}x
-                  </div>
-                </div>
+          <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-2 p-2 md:p-3">
+            <div className="rounded-[1rem] border border-white/14 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(15,23,42,0.84))] p-3">
+              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/78">Scale Builder</div>
+              <div className="mt-1 text-sm font-black text-white">{currentLevel.instructions}</div>
+              <div className="mt-2 flex items-center gap-3 text-sm font-black text-white/90">
+                <span className="rounded-full border border-yellow-200/40 bg-yellow-500/15 px-3 py-1">
+                  Target {currentLevel.targetScale.toFixed(2)}x
+                </span>
+                <span className={`rounded-full border px-3 py-1 ${gameState === 'success' ? 'border-emerald-200/50 bg-emerald-500/16 text-emerald-100' : 'border-sky-200/40 bg-sky-500/14 text-sky-100'}`}>
+                  Current {currentScale.toFixed(2)}x
+                </span>
               </div>
+            </div>
 
-              <div className="relative min-h-[20rem] overflow-hidden rounded-[1.4rem] border border-white/14 bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.22),rgba(15,23,42,0.84)_68%)] p-2 md:min-h-[25rem] md:p-3">
-                <BlueprintGrid />
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(250,204,21,0.14),rgba(15,23,42,0.12)_62%)]" />
-                <div className="relative z-10 flex h-full w-full items-center justify-center">
-                  <div className="relative flex h-[min(64vh,30rem)] w-[min(90vw,30rem)] items-center justify-center rounded-full border border-sky-100/18 bg-[radial-gradient(circle,rgba(255,255,255,0.06),rgba(255,255,255,0.01)_54%,transparent_100%)]">
-                    <AnimatePresence>
-                      {showBase ? (
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 0.35 }}
-                          exit={{ opacity: 0 }}
-                          className="absolute"
-                        >
-                          <ShapeRenderer
-                            shape={currentLevel.shape}
-                            scale={1.0}
-                            strokeClass="border-slate-300 border-dashed"
-                            isBase
-                          />
-                        </motion.div>
-                      ) : null}
-                    </AnimatePresence>
-
-                    <ShapeRenderer
-                      shape={currentLevel.shape}
-                      scale={currentScale}
-                      strokeClass={
-                        gameState === 'success'
-                          ? 'border-emerald-300 shadow-[0_0_24px_rgba(52,211,153,0.36)]'
-                          : 'border-sky-300 shadow-[0_0_24px_rgba(56,189,248,0.3)]'
-                      }
-                    />
-                  </div>
+            <div className="relative min-h-0 flex-1 overflow-hidden rounded-[1.4rem] border border-white/14 bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.22),rgba(15,23,42,0.84)_68%)] p-2">
+              <BlueprintGrid />
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(250,204,21,0.12),rgba(15,23,42,0.1)_62%)]" />
+              <div className="relative z-10 flex h-full w-full items-center justify-center">
+                <div className="relative flex h-[min(56vh,24rem)] w-[min(82vw,24rem)] items-center justify-center rounded-full border border-sky-100/18 bg-[radial-gradient(circle,rgba(255,255,255,0.06),rgba(255,255,255,0.01)_54%,transparent_100%)]">
+                  {showBase ? (
+                    <div className="absolute opacity-40">
+                      <ShapeRenderer
+                        shape={currentLevel.shape}
+                        scale={1.0}
+                        strokeClass="border-slate-300 border-dashed"
+                        isBase
+                      />
+                    </div>
+                  ) : null}
+                  <ShapeRenderer
+                    shape={currentLevel.shape}
+                    scale={currentScale}
+                    strokeClass={
+                      gameState === 'success'
+                        ? 'border-emerald-300 shadow-[0_0_24px_rgba(52,211,153,0.36)]'
+                        : 'border-sky-300 shadow-[0_0_24px_rgba(56,189,248,0.3)]'
+                    }
+                  />
                 </div>
               </div>
             </div>
 
-            <div className="rounded-[1.2rem] border border-white/16 bg-[linear-gradient(180deg,rgba(2,132,199,0.24),rgba(15,23,42,0.86))] p-2 md:p-3">
-              <div className="mb-2 flex flex-wrap items-center gap-2">
-                <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/82">
-                  <Maximize2 className="h-4 w-4" />
-                  Precision nudges
-                </div>
+            <div className="rounded-[1.1rem] border border-white/16 bg-[linear-gradient(180deg,rgba(2,132,199,0.2),rgba(15,23,42,0.86))] p-2">
+              <div className="mb-2 flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/82">
+                <span>Adjust the scale</span>
                 <button
                   onClick={() => setShowBase((previous) => !previous)}
-                  className={`inline-flex items-center justify-center gap-2 rounded-xl border px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] transition-all ${
-                    showBase
-                      ? 'border-cyan-200/45 bg-cyan-500/14 text-cyan-100'
-                      : 'border-white/18 bg-slate-900/40 text-slate-300'
-                  }`}
+                  className="rounded-full border border-white/20 bg-slate-900/40 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-white/80"
                 >
-                  <Layers className="h-4 w-4" />
-                  {showBase ? 'Hide reference' : 'Show reference'}
+                  {showBase ? 'Hide guide' : 'Show guide'}
+                </button>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  onClick={() => adjustScale(-0.25)}
+                  disabled={gameState !== 'playing'}
+                  className="rounded-lg border border-white/20 bg-[linear-gradient(180deg,#1e3a8a,#1e293b)] px-2 py-2 text-xs font-black uppercase tracking-[0.12em] text-white disabled:opacity-45"
+                >
+                  -0.25
                 </button>
                 <button
                   onClick={resetLevel}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-[linear-gradient(180deg,#1e3a8a,#1e293b)] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-white hover:bg-[linear-gradient(180deg,#2563eb,#334155)]"
+                  disabled={gameState !== 'playing'}
+                  className="rounded-lg border border-white/20 bg-[linear-gradient(180deg,#1e3a8a,#1e293b)] px-2 py-2 text-xs font-black uppercase tracking-[0.12em] text-white disabled:opacity-45"
                 >
-                  <RotateCcw className="h-4 w-4" />
                   Reset
                 </button>
+                <button
+                  onClick={() => adjustScale(0.25)}
+                  disabled={gameState !== 'playing'}
+                  className="rounded-lg border border-white/20 bg-[linear-gradient(180deg,#1e3a8a,#1e293b)] px-2 py-2 text-xs font-black uppercase tracking-[0.12em] text-white disabled:opacity-45"
+                >
+                  +0.25
+                </button>
               </div>
-
-              <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-3">
-                <div className="flex-1">
-                  <input
-                    type="range"
-                    min="0.1"
-                    max="4.0"
-                    step="0.01"
-                    value={currentScale}
-                    onChange={(event) => {
-                      setCurrentScale(parseFloat(event.target.value));
-                      setFeedback(null);
-                    }}
-                    disabled={gameState !== 'playing'}
-                    className="h-3 w-full cursor-pointer appearance-none rounded-full border border-sky-200/35 bg-sky-950 accent-yellow-300 disabled:cursor-not-allowed disabled:opacity-55"
-                  />
-                  <div className="mt-1 flex justify-between text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100/78">
-                    <span>0.10x</span>
-                    <span>2.00x</span>
-                    <span>4.00x</span>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-1.5 md:w-[15rem]">
-                  {[
-                    { label: '-0.10', delta: -0.1 },
-                    { label: '+0.10', delta: 0.1 },
-                    { label: '-0.01', delta: -0.01 },
-                    { label: '+0.01', delta: 0.01 },
-                  ].map((control) => (
-                    <button
-                      key={control.label}
-                      onClick={() => adjustScale(control.delta)}
-                      disabled={gameState !== 'playing'}
-                      className="rounded-lg border border-white/20 bg-[linear-gradient(180deg,#1e3a8a,#1e293b)] px-2 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-white transition-colors hover:bg-[linear-gradient(180deg,#2563eb,#334155)] disabled:cursor-not-allowed disabled:opacity-45"
-                    >
-                      {control.label}
-                    </button>
-                  ))}
-                </div>
-
+              <div className="mt-2 grid grid-cols-2 gap-2">
                 {gameState === 'success' ? (
                   <button
                     onClick={proceed}
-                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-emerald-100/40 bg-[linear-gradient(180deg,#34d399,#10b981)] px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-emerald-950 shadow-[0_10px_18px_rgba(5,150,105,0.36)]"
+                    className="col-span-2 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-emerald-100/40 bg-[linear-gradient(180deg,#34d399,#10b981)] px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-emerald-950 shadow-[0_10px_18px_rgba(5,150,105,0.36)]"
                   >
                     Next project <ChevronRight className="h-4 w-4" />
                   </button>
@@ -443,7 +389,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                   <button
                     onClick={verifyScale}
                     disabled={gameState !== 'playing'}
-                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-yellow-100/40 px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-amber-950 shadow-[0_10px_18px_rgba(180,83,9,0.32)] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="col-span-2 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-yellow-100/40 px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-amber-950 shadow-[0_10px_18px_rgba(180,83,9,0.32)] disabled:cursor-not-allowed disabled:opacity-50"
                     style={{
                       backgroundImage: `url(${buttonYellowPlankAsset})`,
                       backgroundSize: '100% 100%',
@@ -451,7 +397,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                     }}
                   >
                     <Ruler className="h-4 w-4" />
-                    Verify scale
+                    Check scale
                   </button>
                 )}
               </div>
@@ -470,10 +416,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                     : 'border-rose-500/50 bg-rose-500/10 text-rose-100'
                 }`}
               >
-                <div className="flex items-center gap-2">
-                  {feedback.type === 'success' ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
-                  <span className="text-[10px] font-black uppercase tracking-[0.12em] md:text-xs">{feedback.message}</span>
-                </div>
+                <div className="text-[10px] font-black uppercase tracking-[0.12em] md:text-xs">{feedback.message}</div>
               </motion.div>
             ) : null}
           </AnimatePresence>

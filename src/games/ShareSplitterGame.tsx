@@ -46,16 +46,16 @@ type DragSlice = {
   y: number;
 };
 
-const PLATE_COUNT = 6;
+const PLATE_COUNT = 5;
 const ROUNDS_TO_WIN = 5;
 const BASE_XP_PER_ROUND = 120;
 
 const RATIO_PATTERNS: number[][] = [
-  [1, 1, 2, 2, 3, 3],
-  [1, 1, 1, 2, 2, 3],
-  [1, 2, 1, 2, 3, 3],
-  [1, 1, 2, 3, 2, 3],
-  [1, 1, 2, 2, 2, 4],
+  [1, 1, 2, 2, 3],
+  [1, 1, 1, 2, 3],
+  [1, 2, 1, 2, 3],
+  [1, 1, 2, 3, 3],
+  [1, 2, 2, 2, 3],
 ];
 
 const createEmptyPlates = () => Array.from({ length: PLATE_COUNT }, () => [] as string[]);
@@ -85,10 +85,10 @@ const shareModeForLevel = (levelId: number): ShareChallenge['mode'] => {
 };
 
 const buildSharePrompt = (mode: ShareChallenge['mode'], totalSlices: number, ratioText: string) => {
-  if (mode === 'direct_share') return `Share ${totalSlices} cake slices so the plates match the ratio ${ratioText}.`;
-  if (mode === 'scaled_share') return `Use all ${totalSlices} cake slices and keep the plates in the ratio ${ratioText}.`;
-  if (mode === 'bigger_share') return `Work out the larger share. Use ${totalSlices} cake slices in the ratio ${ratioText}.`;
-  return `Check each plate carefully. Share ${totalSlices} cake slices in the ratio ${ratioText}.`;
+  if (mode === 'direct_share') return `Share ${totalSlices} slices from the serving plate in the ratio ${ratioText}.`;
+  if (mode === 'scaled_share') return `Use all ${totalSlices} slices to match the ratio ${ratioText}.`;
+  if (mode === 'bigger_share') return `Work out the shares for the ratio ${ratioText} using ${totalSlices} slices.`;
+  return `Check each plate carefully. Share ${totalSlices} slices in the ratio ${ratioText}.`;
 };
 
 const createChallenge = (levelId: number, solved: number): ShareChallenge => {
@@ -126,7 +126,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const [remainingSlices, setRemainingSlices] = useState(challenge.totalSlices);
   const [dragSlice, setDragSlice] = useState<DragSlice | null>(null);
   const [hoverPlateIndex, setHoverPlateIndex] = useState<number | null>(null);
-  const [feedback, setFeedback] = useState('Drag one cake slice onto a plate.');
+  const [feedback, setFeedback] = useState('Drag slices from the serving plate onto the five plates.');
   const [feedbackTone, setFeedbackTone] = useState<FeedbackTone>('neutral');
   const [validationActive, setValidationActive] = useState(false);
   const [moveHistory, setMoveHistory] = useState<MoveRecord[]>([]);
@@ -155,7 +155,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setRemainingSlices(firstChallenge.totalSlices);
     setDragSlice(null);
     setHoverPlateIndex(null);
-    setFeedback('Drag one cake slice onto a plate.');
+    setFeedback('Drag slices from the serving plate onto the five plates.');
     setFeedbackTone('neutral');
     setValidationActive(false);
     setMoveHistory([]);
@@ -174,24 +174,15 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     };
   }), [challenge.ratios, challenge.targetCounts, plates]);
 
-  const ratioUnitTotal = useMemo(
-    () => challenge.ratios.reduce((sum, value) => sum + value, 0),
-    [challenge.ratios],
-  );
-  const ratioUnitValue = useMemo(
-    () => (ratioUnitTotal > 0 ? challenge.totalSlices / ratioUnitTotal : 0),
-    [challenge.totalSlices, ratioUnitTotal],
-  );
-
   const hasMoves = moveHistory.length > 0;
   const allSlicesUsed = remainingSlices === 0;
   const allCorrect = plateViews.every((plate) => plate.isCorrect);
 
   const rules = useMemo(() => ({
     title: 'Share Splitter',
-    summary: 'Use the ratio card to share the cakes across all six plates.',
+    summary: 'Use the ratio card to share the cakes across all five plates.',
     bullets: [
-      'Drag a cake slice from the tray onto a plate.',
+      'Drag slices from the serving plate onto a plate.',
       'Match each plate to the ratio shown on the task card.',
       'Press Check when every plate looks correct.',
     ],
@@ -207,7 +198,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setValidationActive(false);
     setMoveHistory([]);
     setLocked(false);
-    setFeedback('Drag one cake slice onto a plate.');
+    setFeedback('Drag slices from the serving plate onto the five plates.');
     setFeedbackTone('neutral');
   }, [levelId]);
 
@@ -399,9 +390,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
         <section className="shrink-0">
           <StoryCard>
-            <p className="text-[clamp(13px,2vh,18px)] font-semibold text-white/90">
-              Share the cakes fairly across the plates.
-            </p>
+            <p className="text-[clamp(13px,2vh,18px)] font-semibold text-white/90">{challenge.prompt}</p>
           </StoryCard>
         </section>
 
@@ -409,8 +398,8 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
           <TaskCard>
             <div className="flex items-center justify-between gap-3">
               <div>
-                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-900/80">Task Card</div>
-                <div className="mt-1 text-[clamp(15px,2vh,20px)] font-black text-slate-900">Share the cakes</div>
+                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-900/80">Task</div>
+                <div className="mt-1 text-[clamp(15px,2vh,20px)] font-black text-slate-900">Match the ratio</div>
               </div>
               <div className="rounded-full bg-amber-200/60 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-900">
                 Round {roundSolved + 1} of {ROUNDS_TO_WIN}
@@ -418,7 +407,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
             </div>
             <div className="mt-2 grid grid-cols-2 gap-2">
               <div className="rounded-[1rem] border border-amber-200/40 bg-white/70 px-3 py-2">
-                <div className="text-[10px] font-black uppercase tracking-[0.14em] text-amber-900/70">Total</div>
+                <div className="text-[10px] font-black uppercase tracking-[0.14em] text-amber-900/70">Total slices</div>
                 <div className="mt-0.5 text-lg font-black text-slate-900">{challenge.totalSlices}</div>
               </div>
               <div className="rounded-[1rem] border border-amber-200/40 bg-white/70 px-3 py-2">
@@ -426,36 +415,11 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                 <div className="mt-0.5 text-lg font-black text-slate-900">{challenge.ratios.join(' : ')}</div>
               </div>
             </div>
-            <div className="mt-2 grid grid-cols-6 gap-1.5">
-              {challenge.ratios.map((ratio, index) => (
-                <div key={`ratio-${index + 1}`} className="rounded-[0.95rem] border border-amber-200/35 bg-white/70 px-2 py-2 text-center">
-                  <div className="mx-auto mb-1 h-7 w-7 rounded-full border border-amber-200/40 bg-white/80" />
-                  <p className="text-[9px] font-black uppercase tracking-[0.08em] text-amber-900">Plate {index + 1}</p>
-                  <p className="mt-0.5 text-base font-black text-slate-900">{ratio}</p>
-                </div>
-              ))}
-            </div>
-            {ratioUnitTotal > 0 ? (
-              <div className="mt-2 rounded-[0.95rem] border border-amber-200/35 bg-white/70 px-3 py-2">
-                <p className="text-[9px] font-black uppercase tracking-[0.12em] text-amber-900">Unit Value</p>
-                <div className="mt-1 flex flex-wrap items-center gap-1">
-                  {Array.from({ length: Math.min(ratioUnitTotal, 12) }).map((_, index) => (
-                    <span
-                      key={`ratio-unit-${index}`}
-                      className="h-2.5 w-2.5 rounded-full border border-amber-400/60 bg-amber-200/90"
-                    />
-                  ))}
-                  <span className="ml-1 text-[11px] font-black text-slate-900">
-                    1 unit = {ratioUnitValue} slice{ratioUnitValue === 1 ? '' : 's'}
-                  </span>
-                </div>
-              </div>
-            ) : null}
           </TaskCard>
         </section>
 
         <section className="shrink-0 rounded-[1.4rem] border border-white/14 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.12),rgba(15,23,42,0.52)_64%)] px-2 py-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)] md:px-3">
-          <div className="grid grid-cols-6 gap-2">
+          <div className="grid grid-cols-5 gap-2">
             {plateViews.map((plate, index) => {
               const plateTone = validationActive
                 ? plate.isCorrect
@@ -498,10 +462,10 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
           </div>
         </section>
 
-        <section className="shrink-0 rounded-[1.4rem] border border-white/14 bg-black/22 px-3 py-2 shadow-[0_10px_18px_rgba(15,23,42,0.22)]">
+        <section className="shrink-0 rounded-[1.4rem] border border-white/14 bg-black/22 px-3 py-3 shadow-[0_10px_18px_rgba(15,23,42,0.22)]">
           <div className="mb-2 flex items-center justify-between gap-2">
-            <p className="text-[11px] font-black uppercase tracking-[0.12em] text-cyan-100">Cake Supply</p>
-            <p className="text-[11px] font-black text-white">{remainingSlices} left</p>
+            <p className="text-[11px] font-black uppercase tracking-[0.12em] text-cyan-100">Serving plate</p>
+            <p className="text-[11px] font-black text-white">{remainingSlices} slices left</p>
           </div>
           <div className="flex items-center justify-center">
             <motion.button
@@ -509,21 +473,21 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
               whileTap={remainingSlices > 0 && !locked ? { scale: 0.96 } : undefined}
               onPointerDown={handleSourcePointerDown}
               disabled={locked || remainingSlices <= 0}
-              className={`relative flex h-16 w-full max-w-[11rem] items-center justify-center rounded-[1.15rem] border border-white/18 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(30,41,59,0.7))] shadow-[0_12px_18px_rgba(15,23,42,0.28)] ${locked || remainingSlices <= 0 ? 'opacity-55' : ''}`}
+              className={`relative flex h-[76px] w-full max-w-[12rem] items-center justify-center rounded-full border border-white/18 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(30,41,59,0.7))] shadow-[0_12px_18px_rgba(15,23,42,0.28)] ${locked || remainingSlices <= 0 ? 'opacity-55' : ''}`}
               aria-label={remainingSlices > 0 ? 'Drag one cake slice onto a plate' : 'No cake slices left'}
             >
-              <div className="absolute inset-y-2 left-3 flex items-center">
-                <img
-                  src={TAKE_OUT_ASSETS.portionQuarter}
-                  alt=""
-                  className="h-10 w-10 object-contain"
-                  draggable={false}
-                />
-              </div>
-              <div className="text-center">
-                <p className="text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100">Drag A Slice</p>
-                <p className="mt-0.5 text-sm font-black text-white">From the cake stand</p>
-              </div>
+              <img
+                src={TAKE_OUT_ASSETS.trayBase}
+                alt=""
+                className="h-14 w-14 object-contain"
+                draggable={false}
+              />
+              <img
+                src={TAKE_OUT_ASSETS.portionQuarter}
+                alt=""
+                className="absolute left-3 top-1/2 h-8 w-8 -translate-y-1/2 object-contain"
+                draggable={false}
+              />
               <div className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/34 px-2 py-1 text-[11px] font-black text-white">
                 {remainingSlices}
               </div>

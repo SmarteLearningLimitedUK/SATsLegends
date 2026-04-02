@@ -480,23 +480,16 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
         className="pointer-events-none absolute -right-20 bottom-32 h-48 w-48 rounded-full bg-amber-300/16 blur-3xl"
       />
 
-      <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.8rem)] pt-1">
+      <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+2.4rem)] pt-[calc(env(safe-area-inset-top)+0.4rem)]">
         <main className="mt-0 flex min-h-0 flex-1 flex-col gap-2">
-          <div className="shrink-0 flex items-center justify-center gap-2">
-            <div className="rounded-full border border-white/25 bg-slate-950/62 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-white/90">
-              {correctCount}/{TARGET_CORRECT}
-            </div>
-          </div>
-
           <div className="shrink-0 rounded-2xl border border-sky-100/22 bg-slate-950/56 px-3 py-2 text-center shadow-[0_8px_20px_rgba(2,6,23,0.35)]">
             <div className="text-sm font-black text-white">{question.prompt}</div>
-            <div className="mt-0.5 text-[11px] font-semibold text-sky-100/80">{question.hint}</div>
           </div>
 
           <motion.div
             animate={shakeShape ? { x: [0, -9, 8, -7, 6, -4, 0] } : { x: 0 }}
             transition={{ duration: 0.35 }}
-            className="relative min-h-[14rem] flex-1 overflow-hidden rounded-2xl border border-white/22 bg-slate-950/40 md:min-h-[16rem]"
+            className="relative min-h-[16rem] flex-1 overflow-hidden rounded-2xl border border-white/22 bg-slate-950/40 md:min-h-[18rem]"
           >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(56,189,248,0.2),transparent_28%),radial-gradient(circle_at_50%_92%,rgba(250,204,21,0.15),transparent_30%)]" />
             <div className="relative h-full w-full p-1">

@@ -32,7 +32,8 @@ export type MiniGameType =
   | 'mean_machine'
   | 'equation_grove'
   | 'rule_runner'
-  | 'sling_shot';
+  | 'area_architect'
+  | 'ratio_fractions';
 
 export interface LevelData {
   id: number;

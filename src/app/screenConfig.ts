@@ -30,7 +30,6 @@ export const QUESTION_MATCH_FRAME_GAMES: MiniGameType[] = [
   'rule_runner',
   'formula_forge',
   'area_architect',
-  'coordinate_cross',
   'ratio_fractions',
   'sequence_sprint',
   'logic_sort',
