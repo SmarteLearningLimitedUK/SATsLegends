@@ -19,17 +19,33 @@ interface MultiplicationQuestion {
   a: number;
   b: number;
   answer: number;
+  options: number[];
 }
 
 type Phase = 'playing' | 'exploding' | 'treasure';
 
 const ROCK_MAX_HEALTH = 5;
 
+const makeOptions = (correct: number) => {
+  const spread = Math.max(3, Math.round(correct * 0.18));
+  const wrongs = new Set<number>();
+
+  while (wrongs.size < 3) {
+    const candidate = Math.max(0, correct + Math.floor(Math.random() * (spread * 2 + 1)) - spread);
+    if (candidate !== correct) {
+      wrongs.add(candidate);
+    }
+  }
+
+  return [...wrongs, correct].sort(() => Math.random() - 0.5);
+};
+
 const makeQuestion = (level: number, solved: number): MultiplicationQuestion => {
   const progression = Math.min(12, 6 + level + Math.floor(solved / 2));
   const a = 2 + Math.floor(Math.random() * (progression - 1));
   const b = 2 + Math.floor(Math.random() * (progression - 1));
-  return { a, b, answer: a * b };
+  const answer = a * b;
+  return { a, b, answer, options: makeOptions(answer) };
 };
 
 const starsForMistakes = (mistakes: number) => {
@@ -49,7 +65,6 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
 }) => {
   const resolvedLevel = useMemo(() => Math.max(1, Math.min(10, levelId || 1)), [levelId]);
   const [question, setQuestion] = useState<MultiplicationQuestion>(() => makeQuestion(resolvedLevel, 0));
-  const [input, setInput] = useState('');
   const [rockHealth, setRockHealth] = useState(ROCK_MAX_HEALTH);
   const [correctCount, setCorrectCount] = useState(0);
   const [mistakes, setMistakes] = useState(0);
@@ -57,18 +72,14 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
   const [phase, setPhase] = useState<Phase>('playing');
   const [feedback, setFeedback] = useState<{ tone: 'ok' | 'error'; text: string } | null>(null);
   const [impactTick, setImpactTick] = useState(0);
+  const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
   const completedRef = useRef(false);
 
-  const solveQuestion = () => {
+  const solveQuestion = (selectedAnswer: number) => {
     if (phase !== 'playing') return;
+    setSelectedChoice(selectedAnswer);
 
-    const answer = Number(input.trim());
-    if (Number.isNaN(answer)) {
-      setFeedback({ tone: 'error', text: 'Enter a number first.' });
-      return;
-    }
-
-    if (answer === question.answer) {
+    if (selectedAnswer === question.answer) {
       const nextCorrect = correctCount + 1;
       const nextHealth = Math.max(0, rockHealth - 1);
       const gained = 120 + (resolvedLevel * 18);
@@ -77,7 +88,6 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
       setCorrectCount(nextCorrect);
       setRockHealth(nextHealth);
       setScore(nextScore);
-      setInput('');
       setImpactTick((prev) => prev + 1);
       setFeedback({
         tone: 'ok',
@@ -100,36 +110,19 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
       window.setTimeout(() => {
         setQuestion(makeQuestion(resolvedLevel, nextCorrect));
         setFeedback(null);
+        setSelectedChoice(null);
       }, 320);
       return;
     }
 
     setMistakes((prev) => prev + 1);
-    setInput('');
     setFeedback({ tone: 'error', text: 'Not quite. Try again.' });
     setImpactTick((prev) => prev + 1);
     triggerHaptic('error');
-    window.setTimeout(() => setFeedback(null), 700);
-  };
-
-  const appendDigit = (digit: string) => {
-    if (phase !== 'playing') return;
-    setInput((prev) => {
-      const cleaned = prev.replace(/[^\d]/g, '');
-      if (cleaned.length >= 5) return cleaned;
-      if (cleaned === '0') return digit;
-      return `${cleaned}${digit}`;
-    });
-  };
-
-  const clearInput = () => {
-    if (phase !== 'playing') return;
-    setInput('');
-  };
-
-  const deleteDigit = () => {
-    if (phase !== 'playing') return;
-    setInput((prev) => prev.slice(0, -1));
+    window.setTimeout(() => {
+      setFeedback(null);
+      setSelectedChoice(null);
+    }, 700);
   };
 
   return (
@@ -160,60 +153,26 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
           </p>
         </div>
 
-        <div className="mt-4 w-full max-w-[460px]">
-          <div className="mb-3 h-14 rounded-xl border border-[#95d3ff88] bg-[#0b254ecc] px-4 text-center text-3xl font-black text-white shadow-[0_8px_18px_rgba(0,0,0,0.34)]">
-            <span className="inline-flex h-full items-center justify-center tabular-nums">
-              {input || '0'}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-3 gap-2">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((digit) => (
-              <button
-                key={`digit-${digit}`}
+        <div className="mt-4 w-full max-w-[520px]">
+          <div className="grid grid-cols-2 gap-2.5">
+            {question.options.map((option) => (
+              <motion.button
+                key={`${question.prompt}-${option}`}
                 type="button"
-                onClick={() => appendDigit(String(digit))}
+                onClick={() => solveQuestion(option)}
                 disabled={phase !== 'playing'}
-                className="h-12 rounded-xl border border-[#95d3ff88] bg-[#0b254ecc] text-xl font-black text-white shadow-[0_6px_14px_rgba(0,0,0,0.32)] transition hover:bg-[#103468] disabled:opacity-60"
+                whileTap={{ scale: 0.96, y: 2 }}
+                animate={selectedChoice === option ? { scale: [1, 1.05, 1] } : { scale: 1 }}
+                className={`h-16 rounded-2xl border px-3 text-center text-[clamp(1.35rem,5vw,2.1rem)] font-black shadow-[0_8px_16px_rgba(0,0,0,0.35)] transition ${
+                  selectedChoice === option
+                    ? 'border-[#ffe08a] bg-gradient-to-b from-[#ffe082] to-[#f5a524] text-[#3e2700]'
+                    : 'border-[#95d3ff88] bg-[#0b254ecc] text-white hover:bg-[#103468]'
+                } disabled:opacity-60`}
               >
-                {digit}
-              </button>
+                {option}
+              </motion.button>
             ))}
-
-            <button
-              type="button"
-              onClick={clearInput}
-              disabled={phase !== 'playing'}
-              className="h-12 rounded-xl border border-[#89c8ff80] bg-[#0b254ecc] text-sm font-black uppercase tracking-[0.06em] text-cyan-100 shadow-[0_6px_14px_rgba(0,0,0,0.32)] transition hover:bg-[#103468] disabled:opacity-60"
-            >
-              CLR
-            </button>
-            <button
-              type="button"
-              onClick={() => appendDigit('0')}
-              disabled={phase !== 'playing'}
-              className="h-12 rounded-xl border border-[#95d3ff88] bg-[#0b254ecc] text-xl font-black text-white shadow-[0_6px_14px_rgba(0,0,0,0.32)] transition hover:bg-[#103468] disabled:opacity-60"
-            >
-              0
-            </button>
-            <button
-              type="button"
-              onClick={deleteDigit}
-              disabled={phase !== 'playing'}
-              className="h-12 rounded-xl border border-[#89c8ff80] bg-[#0b254ecc] text-sm font-black uppercase tracking-[0.06em] text-cyan-100 shadow-[0_6px_14px_rgba(0,0,0,0.32)] transition hover:bg-[#103468] disabled:opacity-60"
-            >
-              DEL
-            </button>
           </div>
-
-          <button
-            type="button"
-            onClick={solveQuestion}
-            disabled={phase !== 'playing'}
-            className="mt-2 h-12 w-full rounded-xl border border-[#ffcc4b] bg-gradient-to-b from-[#ffd85e] to-[#f5a524] text-sm font-black uppercase tracking-[0.08em] text-[#3e2700] shadow-[0_8px_16px_rgba(0,0,0,0.35)] disabled:opacity-60"
-          >
-            Strike
-          </button>
         </div>
 
         <div className="relative mt-5 flex flex-1 w-full items-center justify-center">

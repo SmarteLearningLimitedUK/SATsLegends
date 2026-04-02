@@ -1,36 +1,35 @@
-﻿import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  FlaskConical,
   Activity,
+  AlertCircle,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
+  ClipboardList,
   Info,
   Trophy,
-  AlertCircle,
-  Beaker,
-  Microscope,
-  ClipboardList,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
-  LineChart,
+  CartesianGrid,
   Line,
+  LineChart,
+  ResponsiveContainer,
   XAxis,
   YAxis,
-  CartesianGrid,
-  ResponsiveContainer,
 } from 'recharts';
 
 interface DataPoint {
-  time: number;
+  label: string;
   value: number;
 }
 
-interface Antidote {
-  id: number;
-  data: DataPoint[];
-  color: string;
+interface RoundData {
+  graph: DataPoint[];
+  question: string;
+  options: string[];
+  correctAnswer: string;
+  helper: string;
 }
 
 interface LineGraphLabGameProps {
@@ -42,13 +41,152 @@ interface LineGraphLabGameProps {
   onBack: () => void;
 }
 
-const COLORS = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444'];
 const MAX_LEVEL = 10;
+const X_AXIS_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+const QUESTION_TYPES = ['value_at_point', 'highest_day', 'lowest_day', 'difference'] as const;
 
 const scoreToStars = (XP: number) => {
   if (XP >= 1400) return 3;
   if (XP >= 950) return 2;
   return 1;
+};
+
+const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
+
+const shuffle = <T,>(items: T[]) => {
+  const next = [...items];
+  for (let i = next.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [next[i], next[j]] = [next[j], next[i]];
+  }
+  return next;
+};
+
+const generateGraph = (level: number): DataPoint[] => {
+  const points: DataPoint[] = [];
+  let current = 20 + Math.floor(Math.random() * 18);
+
+  for (let i = 0; i < X_AXIS_LABELS.length; i += 1) {
+    const stepSize = level <= 3 ? 8 : level <= 6 ? 12 : 16;
+    current = clamp(current + Math.floor((Math.random() - 0.5) * stepSize), 8, 92);
+    points.push({
+      label: X_AXIS_LABELS[i],
+      value: Math.round(current / 2) * 2,
+    });
+  }
+
+  return points.map((point, index, arr) => {
+    let adjusted = point.value;
+    if (index > 0 && adjusted === arr[index - 1].value) {
+      adjusted = clamp(adjusted + 4, 8, 96);
+    }
+    return { ...point, value: adjusted };
+  });
+};
+
+const uniqueHighestIndex = (graph: DataPoint[]) => {
+  const values = graph.map(point => point.value);
+  const max = Math.max(...values);
+  return values.indexOf(max) === values.lastIndexOf(max) ? values.indexOf(max) : -1;
+};
+
+const uniqueLowestIndex = (graph: DataPoint[]) => {
+  const values = graph.map(point => point.value);
+  const min = Math.min(...values);
+  return values.indexOf(min) === values.lastIndexOf(min) ? values.indexOf(min) : -1;
+};
+
+const buildValueQuestion = (graph: DataPoint[]): RoundData => {
+  const targetIndex = Math.floor(Math.random() * graph.length);
+  const target = graph[targetIndex];
+  const wrongs = shuffle([
+    `${clamp(target.value - 10, 0, 100)}`,
+    `${clamp(target.value + 10, 0, 100)}`,
+    `${clamp(target.value + 20, 0, 100)}`,
+    `${clamp(target.value - 20, 0, 100)}`,
+  ]).filter(value => Number(value) !== target.value);
+
+  const options = shuffle([`${target.value}`, ...wrongs.slice(0, 3)]);
+  return {
+    graph,
+    question: `What is the value on ${target.label}?`,
+    options,
+    correctAnswer: `${target.value}`,
+    helper: 'Read the plotted point and match it to the y-axis.',
+  };
+};
+
+const buildHighestDayQuestion = (graph: DataPoint[]): RoundData | null => {
+  const highestIndex = uniqueHighestIndex(graph);
+  if (highestIndex === -1) return null;
+
+  return {
+    graph,
+    question: 'Which day has the highest value?',
+    options: shuffle(graph.map(point => point.label)).slice(0, 4).includes(graph[highestIndex].label)
+      ? shuffle(graph.map(point => point.label).slice(0, 4))
+      : shuffle([graph[highestIndex].label, ...shuffle(graph.filter((_, i) => i !== highestIndex).map(point => point.label)).slice(0, 3)]),
+    correctAnswer: graph[highestIndex].label,
+    helper: 'Look for the highest point on the line.',
+  };
+};
+
+const buildLowestDayQuestion = (graph: DataPoint[]): RoundData | null => {
+  const lowestIndex = uniqueLowestIndex(graph);
+  if (lowestIndex === -1) return null;
+
+  return {
+    graph,
+    question: 'Which day has the lowest value?',
+    options: shuffle([graph[lowestIndex].label, ...shuffle(graph.filter((_, i) => i !== lowestIndex).map(point => point.label)).slice(0, 3)]),
+    correctAnswer: graph[lowestIndex].label,
+    helper: 'Find the point closest to the bottom of the graph.',
+  };
+};
+
+const buildDifferenceQuestion = (graph: DataPoint[]): RoundData => {
+  const startIndex = Math.floor(Math.random() * (graph.length - 1));
+  const endIndex = startIndex + 1 + Math.floor(Math.random() * (graph.length - startIndex - 1));
+  const difference = Math.abs(graph[endIndex].value - graph[startIndex].value);
+  const wrongs = shuffle([
+    `${difference + 4}`,
+    `${Math.max(0, difference - 4)}`,
+    `${difference + 8}`,
+    `${Math.max(0, difference - 8)}`,
+  ]).filter(value => Number(value) !== difference);
+
+  return {
+    graph,
+    question: `What is the difference between ${graph[startIndex].label} and ${graph[endIndex].label}?`,
+    options: shuffle([`${difference}`, ...wrongs.slice(0, 3)]),
+    correctAnswer: `${difference}`,
+    helper: 'Compare the two y-axis values, then subtract.',
+  };
+};
+
+const generateRound = (level: number): RoundData => {
+  let graph = generateGraph(level);
+  let built: RoundData | null = null;
+  let attempts = 0;
+
+  while (!built && attempts < 20) {
+    attempts += 1;
+    graph = generateGraph(level);
+    const allowedTypes =
+      level <= 3
+        ? ['value_at_point', 'highest_day'] as const
+        : level <= 6
+          ? ['value_at_point', 'highest_day', 'lowest_day'] as const
+          : QUESTION_TYPES;
+    const type = allowedTypes[Math.floor(Math.random() * allowedTypes.length)];
+
+    if (type === 'value_at_point') built = buildValueQuestion(graph);
+    if (type === 'highest_day') built = buildHighestDayQuestion(graph);
+    if (type === 'lowest_day') built = buildLowestDayQuestion(graph);
+    if (type === 'difference') built = buildDifferenceQuestion(graph);
+  }
+
+  return built ?? buildValueQuestion(graph);
 };
 
 const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
@@ -59,103 +197,50 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   onGameOver: _onGameOver,
   onBack,
 }) => {
-  const [XP, setScore] = useState(0);
+  const [XP, setXP] = useState(0);
   const [level, setLevel] = useState(1);
   const [gameState, setGameState] = useState<'playing' | 'success' | 'complete'>('playing');
-  const [recipe, setRecipe] = useState<DataPoint[]>([]);
-  const [antidotes, setAntidotes] = useState<Antidote[]>([]);
-  const [correctId, setCorrectId] = useState<number | null>(null);
+  const [round, setRound] = useState<RoundData | null>(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-  const [armedAntidoteId, setArmedAntidoteId] = useState<number | null>(null);
 
-  const generateLevel = useCallback((targetLevel: number) => {
-    const numPoints = Math.min(3 + Math.floor(targetLevel / 2), 8);
-
-    const correctData: DataPoint[] = [];
-    let lastValue = 50;
-    for (let i = 0; i < numPoints; i += 1) {
-      const change = (Math.random() - 0.5) * 40;
-      lastValue = Math.max(10, Math.min(90, lastValue + change));
-      correctData.push({ time: i * 10, value: Math.round(lastValue) });
-    }
-    setRecipe(correctData);
-
-    const correctIdx = Math.floor(Math.random() * 3);
-    const newAntidotes = Array.from({ length: 3 }, (_, i) => {
-      if (i === correctIdx) {
-        return {
-          id: i,
-          data: correctData,
-          color: COLORS[i % COLORS.length],
-        };
-      }
-
-      let decoyData: DataPoint[];
-      const diffThreshold = Math.max(5, 20 - targetLevel);
-      do {
-        decoyData = correctData.map(p => ({
-          ...p,
-          value: Math.max(
-            10,
-            Math.min(
-              90,
-              p.value + (Math.random() > 0.5 ? 1 : -1) * (Math.random() * diffThreshold + 5),
-            ),
-          ),
-        }));
-      } while (JSON.stringify(decoyData) === JSON.stringify(correctData));
-
-      return {
-        id: i,
-        data: decoyData,
-        color: COLORS[i % COLORS.length],
-      };
-    });
-
-    setAntidotes(newAntidotes);
-    setCorrectId(correctIdx);
+  const loadLevel = useCallback((targetLevel: number) => {
+    setRound(generateRound(targetLevel));
+    setSelectedAnswer(null);
     setFeedback(null);
-    setArmedAntidoteId(null);
+    setGameState('playing');
   }, []);
 
+  useEffect(() => {
+    loadLevel(1);
+  }, [loadLevel]);
+
   const startGame = () => {
-    const openingLevel = 1;
-    setScore(0);
-    setLevel(openingLevel);
-    setGameState('playing');
-    generateLevel(openingLevel);
+    setXP(0);
+    setLevel(1);
+    loadLevel(1);
   };
 
-  useEffect(() => {
-    generateLevel(1);
-  }, [generateLevel]);
+  const handleAnswer = (answer: string) => {
+    if (!round || gameState !== 'playing') return;
 
-  const handleAntidoteClick = (id: number) => {
-    if (gameState !== 'playing') return;
-    if (armedAntidoteId !== id) {
-      setArmedAntidoteId(id);
-      setFeedback({ type: 'success', message: 'Graph highlighted. Tap again to confirm this antidote.' });
-      return;
-    }
+    setSelectedAnswer(answer);
 
-    if (id === correctId) {
-      setFeedback({ type: 'success', message: 'ANTIDOTE VERIFIED! Patient stabilizing.' });
+    if (answer === round.correctAnswer) {
+      setFeedback({ type: 'success', message: 'Correct. The graph matches your reading.' });
+      setXP(prev => prev + 100 + level * 10);
       setGameState('success');
-      setScore(prev => prev + 100 + (level * 10));
       return;
     }
 
-    setFeedback({ type: 'error', message: 'CONTAMINATION DETECTED! Data mismatch.' });
-    setArmedAntidoteId(null);
-    setScore(prev => Math.max(0, prev - 25));
+    setFeedback({ type: 'error', message: `Not quite. ${round.helper}` });
   };
 
   const nextLevel = () => {
     if (level < MAX_LEVEL) {
-      const upcoming = level + 1;
-      setLevel(upcoming);
-      setGameState('playing');
-      generateLevel(upcoming);
+      const next = level + 1;
+      setLevel(next);
+      loadLevel(next);
       return;
     }
 
@@ -163,10 +248,20 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
     onVictory(scoreToStars(XP), XP);
   };
 
+  const yTicks = useMemo(() => {
+    if (!round) return [0, 20, 40, 60, 80, 100];
+    const maxValue = Math.max(...round.graph.map(point => point.value));
+    const ceiling = Math.ceil((maxValue + 8) / 10) * 10;
+    const top = clamp(ceiling, 40, 100);
+    return Array.from({ length: 6 }, (_, index) => Math.round((top / 5) * index));
+  }, [round]);
+
   return (
-    <div className="relative flex h-full w-full min-h-0 flex-col overflow-hidden text-slate-100 select-none"><div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(4,18,44,0.34),rgba(4,18,44,0.48)_55%,rgba(2,8,24,0.62)_100%)]" />
+    <div className="relative flex h-full w-full min-h-0 flex-col overflow-hidden select-none text-slate-100">
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(4,18,44,0.34),rgba(4,18,44,0.48)_55%,rgba(2,8,24,0.62)_100%)]" />
+
       {!useSharedTopHud && (
-        <header className="z-20 flex h-16 items-center justify-between border-b border-emerald-900/30 bg-slate-900/50 px-6 backdrop-blur-md">
+        <header className="z-20 flex h-16 items-center justify-between border-b border-emerald-900/30 bg-slate-900/50 px-4 backdrop-blur-md sm:px-6">
           <div className="flex items-center gap-3">
             <button
               type="button"
@@ -177,142 +272,150 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
               <ChevronLeft className="h-5 w-5" />
             </button>
             <div className="rounded-lg bg-emerald-500 p-2 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-              <FlaskConical className="h-5 w-5 text-slate-900" />
+              <Activity className="h-5 w-5 text-slate-900" />
             </div>
             <div>
               <h1 className="text-sm font-black uppercase tracking-widest text-white">Line Graph Lab</h1>
-              <p className="text-[10px] italic uppercase tracking-tighter text-emerald-500">Antidote Synthesis Protocol</p>
+              <p className="text-[10px] uppercase tracking-tighter text-emerald-400">Read one graph. Answer one question.</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
             <div className="flex flex-col items-end">
-              <span className="text-[10px] uppercase text-slate-500">Lab Credibility</span>
-              <span className="text-xs font-bold text-emerald-400">{XP} XP</span>
+              <span className="text-[10px] uppercase text-slate-500">XP</span>
+              <span className="text-xs font-bold text-emerald-400">{XP}</span>
             </div>
-            <div className="h-8 w-[1px] bg-slate-800" />
+            <div className="h-8 w-px bg-slate-800" />
             <div className="flex flex-col items-end">
-              <span className="text-[10px] uppercase text-slate-500">Antidote Batch</span>
+              <span className="text-[10px] uppercase text-slate-500">Round</span>
               <span className="text-xs font-bold text-white">{level} / {MAX_LEVEL}</span>
             </div>
           </div>
         </header>
       )}
 
-      <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.25rem)]' : ''}`}>
-        <section className="z-10 flex min-h-0 w-full flex-[0.44] flex-col gap-3 border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(8,26,66,0.18),rgba(4,14,38,0.26))] p-3 sm:p-4 md:w-1/3 md:flex-1 md:gap-6 md:border-b-0 md:border-r md:p-8">
-          <div className="mb-2 flex items-center gap-2 text-emerald-500">
+      <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.25rem)]' : ''}`}>
+        <section className="flex flex-col gap-3 p-3 sm:gap-4 sm:p-4 md:p-6">
+          <div className="flex items-center gap-2 text-emerald-400">
             <ClipboardList className="h-5 w-5" />
-            <h2 className="text-xs font-black uppercase tracking-widest">Antidote Recipe</h2>
+            <h2 className="text-xs font-black uppercase tracking-widest">Question</h2>
           </div>
 
-          <div className="min-h-0 flex-1 overflow-hidden rounded-2xl border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(9,24,58,0.82),rgba(5,14,36,0.9))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-4 md:p-6">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b border-slate-800">
-                  <th className="pb-3 text-[10px] font-black uppercase text-slate-500">Time (ms)</th>
-                  <th className="pb-3 text-[10px] font-black uppercase text-slate-500">Potency (%)</th>
-                </tr>
-              </thead>
-              <tbody className="text-sm">
-                {recipe.map((point, i) => (
-                  <tr key={i} className="border-b border-slate-900/50 transition-colors hover:bg-emerald-500/5">
-                    <td className="py-3 font-bold text-slate-400">{point.time}</td>
-                    <td className="py-3 font-black text-emerald-400">{point.value}%</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="rounded-xl border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(13,39,92,0.68),rgba(7,20,52,0.82))] p-4">
-            <div className="flex items-start gap-3">
-              <Info className="mt-0.5 h-4 w-4 text-emerald-500" />
-              <p className="text-[10px] italic leading-relaxed text-slate-400">
-                Match the potency readings above to the correct synthesis graph.
-                Look for specific peaks and valleys in the data points.
-              </p>
+          <div className="rounded-2xl border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(9,24,58,0.86),rgba(5,14,36,0.92))] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+            <p className="text-base font-black leading-snug text-white sm:text-lg">
+              {round?.question}
+            </p>
+            <div className="mt-2 flex items-start gap-2 text-[11px] text-slate-300 sm:text-xs">
+              <Info className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+              <p>{round?.helper}</p>
             </div>
           </div>
         </section>
 
-        <section className="z-10 flex min-h-0 w-full flex-[0.56] flex-col gap-3 bg-[linear-gradient(180deg,rgba(8,16,38,0.14),rgba(5,10,26,0.24))] p-3 sm:p-4 md:w-2/3 md:flex-1 md:gap-6 md:p-8">
-          <div className="mb-2 flex items-center gap-2 text-emerald-500">
-            <Activity className="h-5 w-5" />
-            <h2 className="text-xs font-black uppercase tracking-widest">Synthesis Options</h2>
+        <section className="flex min-h-0 flex-1 flex-col gap-3 px-3 pb-3 sm:gap-4 sm:px-4 sm:pb-4 md:px-6 md:pb-6">
+          <div className="min-h-0 flex-[1.15] rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,61,0.88),rgba(4,12,30,0.95))] p-3 shadow-[0_16px_40px_rgba(3,12,30,0.28)] sm:p-4 md:p-5">
+            <div className="mb-2 flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-black uppercase tracking-[0.24em] text-emerald-300">Live Graph</h3>
+                <p className="text-[11px] text-slate-400">One graph at a time with full axes.</p>
+              </div>
+              <div className="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-200">
+                Values
+              </div>
+            </div>
+
+            <div className="h-full min-h-[15rem] w-full rounded-2xl border border-slate-700/60 bg-slate-950/35 p-2 sm:min-h-[17rem] md:min-h-[18rem]">
+              {round && (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={round.graph}
+                    margin={{ top: 18, right: 16, left: 0, bottom: 16 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
+                    <XAxis
+                      dataKey="label"
+                      tick={{ fill: '#dbeafe', fontSize: 12, fontWeight: 700 }}
+                      axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
+                      tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
+                      label={{ value: 'Day', position: 'insideBottom', offset: -6, fill: '#93c5fd', fontSize: 12 }}
+                    />
+                    <YAxis
+                      ticks={yTicks}
+                      domain={[0, yTicks[yTicks.length - 1]]}
+                      tick={{ fill: '#dbeafe', fontSize: 12, fontWeight: 700 }}
+                      axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
+                      tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
+                      label={{ value: 'Value', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12 }}
+                      width={42}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#34d399"
+                      strokeWidth={4}
+                      dot={{ r: 5, strokeWidth: 2, fill: '#34d399', stroke: '#ecfeff' }}
+                      activeDot={{ r: 6, fill: '#6ee7b7', stroke: '#f0fdfa', strokeWidth: 2 }}
+                      animationDuration={350}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
+            </div>
           </div>
 
-          <div className="grid min-h-0 flex-1 grid-rows-3 gap-2 md:gap-4">
-            {antidotes.map((antidote) => (
-              <motion.button
-                key={antidote.id}
-                whileHover={{ scale: 1.01, backgroundColor: 'rgba(16, 185, 129, 0.05)' }}
-                whileTap={{ scale: 0.99 }}
-                onClick={() => handleAntidoteClick(antidote.id)}
-                animate={armedAntidoteId === antidote.id ? { scale: [1, 1.015, 1], boxShadow: ['0 0 0 rgba(0,0,0,0)', '0 0 18px rgba(16,185,129,0.18)', '0 0 0 rgba(0,0,0,0)'] } : { scale: 1 }}
-                transition={{ duration: 0.35 }}
-                className={`group relative flex items-center rounded-2xl border-2 p-4 transition-all duration-300 ${
-                  gameState === 'success' && antidote.id === correctId
-                    ? 'border-emerald-500 bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.2)]'
-                    : armedAntidoteId === antidote.id
-                      ? 'border-emerald-400 bg-emerald-500/10'
-                      : 'border-slate-800 bg-slate-900/50 hover:border-emerald-500/50'
-                }`}
-              >
-                <div className="mr-6 flex h-12 w-12 items-center justify-center rounded-xl border border-slate-800 bg-slate-950 transition-colors group-hover:border-emerald-500/50">
-                  <Beaker className="h-6 w-6 text-emerald-500" />
-                </div>
+          <div className="grid grid-cols-2 gap-3">
+            {round?.options.map(option => {
+              const isSelected = selectedAnswer === option;
+              const isCorrect = gameState === 'success' && option === round.correctAnswer;
+              const isWrongSelected = selectedAnswer === option && feedback?.type === 'error';
 
-                <div className="h-16 flex-1 md:h-24">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={antidote.data}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-                      <XAxis hide dataKey="time" />
-                      <YAxis hide domain={[0, 100]} />
-                      <Line
-                        type="monotone"
-                        dataKey="value"
-                        stroke={antidote.color}
-                        strokeWidth={armedAntidoteId === antidote.id ? 4.2 : 3}
-                        dot={{ r: 4, fill: antidote.color }}
-                        animationDuration={500}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-
-                <div className="ml-6 text-right">
-                  <span className="mb-1 block text-[10px] uppercase text-slate-500">Batch ID</span>
-                  <span className="text-xs font-black text-white">#{antidote.id + 1024}</span>
-                </div>
-
-                {gameState === 'success' && antidote.id === correctId && (
-                  <div className="absolute right-2 top-2">
-                    <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-                  </div>
-                )}
-              </motion.button>
-            ))}
+              return (
+                <motion.button
+                  key={option}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => handleAnswer(option)}
+                  disabled={gameState === 'success'}
+                  className={`min-h-[4.5rem] rounded-2xl border px-3 py-4 text-center transition-all sm:min-h-[5rem] sm:px-4 ${
+                    isCorrect
+                      ? 'border-emerald-400 bg-emerald-500/15 text-emerald-100 shadow-[0_0_22px_rgba(16,185,129,0.18)]'
+                      : isWrongSelected
+                        ? 'border-rose-400 bg-rose-500/12 text-rose-100'
+                        : isSelected
+                          ? 'border-cyan-300 bg-cyan-400/10 text-white'
+                          : 'border-slate-700 bg-slate-900/55 text-slate-100 hover:border-emerald-400/60 hover:bg-slate-800/70'
+                  } ${gameState === 'success' ? 'cursor-default' : ''}`}
+                >
+                  <span className="text-base font-black leading-tight sm:text-lg">{option}</span>
+                </motion.button>
+              );
+            })}
           </div>
 
-          <div className="mt-4">
+          <div className="min-h-[4rem]">
             <AnimatePresence mode="wait">
               {gameState === 'success' ? (
                 <motion.button
+                  key="next"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   onClick={nextLevel}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-4 text-sm font-black uppercase tracking-widest text-slate-900 shadow-lg shadow-emerald-500/20 transition-all hover:bg-emerald-400"
+                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-500 py-4 text-sm font-black uppercase tracking-widest text-slate-900 shadow-lg shadow-emerald-500/20 transition-all hover:bg-emerald-400"
                 >
-                  Next Antidote Batch <ChevronRight className="h-4 w-4" />
+                  Next Graph <ChevronRight className="h-4 w-4" />
                 </motion.button>
               ) : (
-                <div className="rounded-xl border border-slate-800 bg-slate-900/20 p-4 text-center">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
-                    Select the synthesis graph that matches the recipe data
+                <motion.div
+                  key="instruction"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="rounded-2xl border border-slate-800 bg-slate-950/35 px-4 py-3 text-center"
+                >
+                  <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400 sm:text-xs">
+                    Choose one of the four answers from the graph.
                   </span>
-                </div>
+                </motion.div>
               )}
             </AnimatePresence>
           </div>
@@ -324,23 +427,23 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="absolute inset-0 z-50 flex items-center justify-center bg-slate-950/95 p-12 text-center backdrop-blur-xl"
+            className="absolute inset-0 z-50 flex items-center justify-center bg-slate-950/95 p-8 text-center backdrop-blur-xl"
           >
             <div className="max-w-md">
               <Trophy className="mx-auto mb-8 h-20 w-20 text-yellow-400" />
-              <h2 className="mb-2 text-4xl font-black uppercase tracking-tighter text-white italic">Legendary Scientist</h2>
+              <h2 className="mb-2 text-4xl font-black uppercase tracking-tighter text-white">Graph Mastery</h2>
               <p className="mb-8 text-sm leading-relaxed text-slate-400">
-                The outbreak has been contained. Your precision in data analysis has saved thousands of lives.
+                You read every line graph carefully and answered with precision.
               </p>
               <div className="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
-                <span className="mb-1 block text-[10px] uppercase text-slate-500">Final Lab Credibility</span>
-                <span className="text-4xl font-black text-emerald-500">{XP} XP</span>
+                <span className="mb-1 block text-[10px] uppercase text-slate-500">Final XP</span>
+                <span className="text-4xl font-black text-emerald-500">{XP}</span>
               </div>
               <button
                 onClick={startGame}
                 className="rounded-full bg-stone-100 px-12 py-4 text-sm font-black uppercase tracking-widest text-stone-900 transition-all hover:bg-white"
               >
-                New Research
+                Play Again
               </button>
             </div>
           </motion.div>
@@ -353,14 +456,14 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className={`absolute bottom-[calc(env(safe-area-inset-bottom)+4.85rem)] left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 rounded-full border px-6 py-3 shadow-2xl ${
+            className={`absolute bottom-[calc(env(safe-area-inset-bottom)+4.85rem)] left-1/2 z-40 flex w-[min(92%,32rem)] -translate-x-1/2 items-center justify-center gap-3 rounded-full border px-5 py-3 text-center shadow-2xl ${
               feedback.type === 'success'
-                ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-400'
-                : 'border-rose-500/50 bg-rose-500/10 text-rose-400'
+                ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300'
+                : 'border-rose-500/50 bg-rose-500/10 text-rose-300'
             }`}
           >
-            {feedback.type === 'success' ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
-            <span className="text-xs font-bold uppercase tracking-wide">{feedback.message}</span>
+            {feedback.type === 'success' ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <AlertCircle className="h-4 w-4 shrink-0" />}
+            <span className="text-[11px] font-bold uppercase tracking-wide sm:text-xs">{feedback.message}</span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -369,4 +472,3 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
 };
 
 export default LineGraphLabGame;
-

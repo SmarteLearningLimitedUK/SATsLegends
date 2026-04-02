@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  Info,
   Trophy,
   AlertCircle,
   Ghost,
@@ -216,7 +215,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
       )}
 
       <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.25rem)]' : ''}`}>
-        <section className="z-10 flex min-h-0 w-full flex-[0.46] flex-col gap-3 border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(8,26,66,0.18),rgba(4,14,38,0.26))] p-3 sm:p-4 md:w-1/2 md:flex-1 md:gap-6 md:border-b-0 md:border-r md:p-8">
+        <section className="z-10 flex min-h-0 w-full flex-[0.42] flex-col gap-2 border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(8,26,66,0.18),rgba(4,14,38,0.26))] p-3 sm:p-4 md:w-1/2 md:flex-1 md:gap-4 md:border-b-0 md:border-r md:p-6">
           <div className="mb-2 flex items-center justify-between">
             <div className="flex items-center gap-2 text-amber-500">
               <FileText className="h-5 w-5" />
@@ -230,83 +229,82 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             </div>
           </div>
 
-          <div className="relative min-h-0 flex-1 overflow-hidden rounded-2xl border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(9,24,58,0.82),rgba(5,14,36,0.9))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-4 md:p-6">
+          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(9,24,58,0.82),rgba(5,14,36,0.9))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-4 md:p-5">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(#444_1px,transparent_1px)] opacity-5 [background-size:20px_20px]" />
 
-            <ResponsiveContainer width="100%" height="100%">
-              {chartType === 'bar' ? (
-                <BarChart data={currentCase} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
-                  <XAxis
-                    dataKey="name"
-                    stroke="#78716c"
-                    fontSize={10}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <YAxis
-                    stroke="#78716c"
-                    fontSize={10}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <Tooltip
-                    contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #444', borderRadius: '8px', fontSize: '10px' }}
-                    itemStyle={{ color: '#fff' }}
-                  />
-                  <Bar dataKey="amount" radius={[4, 4, 0, 0]}>
-                    {currentCase.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              ) : (
-                <PieChart>
-                  <Pie
-                    data={currentCase}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={100}
-                    paddingAngle={5}
-                    dataKey="amount"
-                  >
-                    {currentCase.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #444', borderRadius: '8px', fontSize: '10px' }}
-                  />
-                  <Legend
-                    verticalAlign="bottom"
-                    height={36}
-                    iconType="circle"
-                    wrapperStyle={{ fontSize: '10px', paddingTop: '20px' }}
-                  />
-                </PieChart>
-              )}
-            </ResponsiveContainer>
-          </div>
+            <div className="relative h-[12.5rem] min-h-[12.5rem] w-full sm:h-[14rem] sm:min-h-[14rem] md:h-full md:min-h-[15rem]">
+              <ResponsiveContainer width="100%" height="100%">
+                {chartType === 'bar' ? (
+                  <BarChart data={currentCase} margin={{ top: 16, right: 12, left: -12, bottom: 8 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                    <XAxis
+                      dataKey="name"
+                      stroke="#a8a29e"
+                      fontSize={10}
+                      tickLine={false}
+                      axisLine={false}
+                      interval={0}
+                    />
+                    <YAxis
+                      stroke="#a8a29e"
+                      fontSize={10}
+                      tickLine={false}
+                      axisLine={false}
+                      width={24}
+                    />
+                    <Tooltip
+                      contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #444', borderRadius: '8px', fontSize: '10px' }}
+                      itemStyle={{ color: '#fff' }}
+                    />
+                    <Bar dataKey="amount" radius={[4, 4, 0, 0]}>
+                      {currentCase.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                ) : (
+                  <PieChart margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
+                    <Pie
+                      data={currentCase}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius="34%"
+                      outerRadius="66%"
+                      paddingAngle={3}
+                      dataKey="amount"
+                    >
+                      {currentCase.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #444', borderRadius: '8px', fontSize: '10px' }}
+                    />
+                  </PieChart>
+                )}
+              </ResponsiveContainer>
+            </div>
 
-          <div className="rounded-xl border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(13,39,92,0.68),rgba(7,20,52,0.82))] p-4">
-            <div className="flex items-start gap-3">
-              <Info className="mt-0.5 h-4 w-4 text-amber-500" />
-              <p className="text-[10px] italic leading-relaxed text-stone-400">
-                Analyze the chart above. Each segment or bar represents the quantity of a specific stolen item.
-                Compare these values with the numbers found in the suspect lineup to identify the thief.
-              </p>
+            <div className="mt-3 grid grid-cols-2 gap-2 sm:gap-3">
+              {currentCase.map(item => (
+                <div key={item.name} className="flex items-center gap-2 rounded-lg border border-stone-800/90 bg-stone-950/35 px-2.5 py-2">
+                  <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
+                  <span className="min-w-0 truncate text-[10px] font-bold uppercase tracking-wide text-stone-300">
+                    {item.name}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
-        <section className="z-10 flex min-h-0 w-full flex-[0.54] flex-col gap-3 bg-[linear-gradient(180deg,rgba(8,16,38,0.14),rgba(5,10,26,0.24))] p-3 sm:p-4 md:w-1/2 md:flex-1 md:gap-6 md:p-8">
+        <section className="z-10 flex min-h-0 w-full flex-[0.58] flex-col gap-2 bg-[linear-gradient(180deg,rgba(8,16,38,0.14),rgba(5,10,26,0.24))] p-3 sm:p-4 md:w-1/2 md:flex-1 md:gap-4 md:p-6">
           <div className="mb-2 flex items-center gap-2 text-amber-500">
             <Users className="h-5 w-5" />
             <h2 className="text-xs font-black uppercase tracking-widest">Suspect Lineup</h2>
           </div>
 
-          <div className="grid min-h-0 flex-1 grid-cols-2 gap-2 md:gap-4">
+          <div className="grid min-h-0 flex-1 grid-cols-2 gap-2 md:gap-3">
             {suspects.map((suspect) => (
               <motion.button
                 key={suspect.id}
@@ -315,7 +313,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                 onClick={() => handleSuspectClick(suspect.id)}
                 animate={armedSuspectId === suspect.id ? { scale: [1, 1.03, 1], y: [0, -2, 0] } : { scale: 1, y: 0 }}
                 transition={{ duration: 0.35 }}
-                className={`group relative flex flex-col rounded-2xl border-2 p-4 transition-all duration-300 ${
+                className={`group relative flex min-h-0 flex-col rounded-2xl border-2 p-3 transition-all duration-300 md:p-4 ${
                   gameState === 'success' && suspect.id === guiltyId
                     ? 'border-emerald-500 bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.2)]'
                     : armedSuspectId === suspect.id
@@ -323,17 +321,17 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                       : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
                 }`}
               >
-                <div className={`mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full ${suspect.color} text-stone-900 shadow-lg`}>
+                <div className={`mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full ${suspect.color} text-stone-900 shadow-lg md:mb-3 md:h-14 md:w-14`}>
                   {suspect.icon}
                 </div>
 
-                <h3 className="mb-4 text-center text-xs font-black uppercase tracking-tighter text-white">
+                <h3 className="mb-2 text-center text-[11px] font-black uppercase tracking-tight text-white md:mb-3 md:text-xs">
                   {suspect.name}
                 </h3>
 
-                <div className="mt-auto grid grid-cols-2 gap-2">
+                <div className="mt-auto grid grid-cols-2 gap-1.5 md:gap-2">
                   {suspect.items.map((amount, i) => (
-                    <div key={i} className="flex items-center justify-between rounded-lg border border-stone-800 bg-stone-950/50 p-2">
+                    <div key={i} className="flex items-center justify-between rounded-lg border border-stone-800 bg-stone-950/50 p-1.5 md:p-2">
                       <span className="mr-1 truncate text-[8px] font-bold uppercase text-stone-500">{ITEMS[i].name.split(' ')[1]}</span>
                       <span className="text-xs font-black text-amber-400">{amount}</span>
                     </div>
@@ -349,7 +347,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             ))}
           </div>
 
-          <div className="mt-auto">
+          <div className="mt-auto pt-1">
             <AnimatePresence mode="wait">
               {gameState === 'success' ? (
                 <motion.button
@@ -362,7 +360,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                   Next Case File <ChevronRight className="h-4 w-4" />
                 </motion.button>
               ) : (
-                <div className="rounded-xl border border-stone-800 bg-stone-900/20 p-4 text-center">
+                <div className="rounded-xl border border-stone-800 bg-stone-900/20 p-3 text-center">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-stone-500">
                     Select the suspect whose items match the evidence
                   </span>

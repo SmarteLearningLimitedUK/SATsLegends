@@ -478,29 +478,6 @@ const generateCoordinateQuestion = (): ChallengeQuestion => {
   };
 };
 
-const generateCoordinateCrossQuestion = (): ChallengeQuestion => {
-  const points = shuffle(['Q', 'R', 'S', 'T']).slice(0, 4).map((label) => ({
-    label,
-    x: randomInt(-6, 6),
-    y: randomInt(-6, 6),
-    tone: label === 'Q' ? 'bg-cyan-300' : label === 'R' ? 'bg-emerald-300' : 'bg-sky-300',
-  }));
-  const target = pick(points);
-  const correct = formatCoordinate(target);
-  const wrong = shuffle(points.filter((point) => point.label !== target.label).map((point) => formatCoordinate(point)));
-  while (wrong.length < 3) {
-    wrong.push(formatCoordinate({ x: clamp(target.x + randomInt(-3, 3), -6, 6), y: clamp(target.y + randomInt(-3, 3), -6, 6) }));
-  }
-  const { options, answerIndex } = makeOptions(correct, wrong);
-  return {
-    prompt: `Find the coordinates for beacon ${target.label}.`,
-    sublabel: 'Use all four quadrants with confidence.',
-    options,
-    answerIndex,
-    visual: { type: 'coordinates', points, min: -6, max: 6, caption: 'Negative coordinates are part of the route.', targetLabel: target.label },
-  };
-};
-
 const generateTransformQuestion = (): ChallengeQuestion => {
   const start = { x: randomInt(-3, 1), y: randomInt(-2, 3), label: 'A', tone: 'bg-amber-300' };
   const dx = pick([-3, -2, -1, 1, 2, 3]);

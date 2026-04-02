@@ -25,6 +25,7 @@ import ModeMinerGame from './ModeMinerGame';
 import NumberLineNinjaGame from './NumberLineNinjaGame';
 import OrderOpsArenaGame from './OrderOpsArenaGame';
 import PerimeterPathGame from './PerimeterPathGame';
+import PercentPowerGame from './PercentPowerGame';
 import PlaceValuePanicGame from './PlaceValuePanicGame';
 import PolygonPalaceGame from './PolygonPalaceGame';
 import PotionPourGame from './PotionPourGame';
@@ -43,7 +44,6 @@ import TimekeeperTempleGame from './TimekeeperTempleGame';
 import TowerOfFactorsGame from './TowerOfFactorsGame';
 import TreasureChartCoveGame from './TreasureChartCoveGame';
 import TreasurePathGame from './TreasurePathGame';
-import WhodunnitDataGame from './WhodunnitDataGame';
 import LogicSort from './reasoning/LogicSort';
 import MatrixMatch from './reasoning/MatrixMatch';
 import ReasoningGame from './reasoning/ReasoningGame';
@@ -78,6 +78,7 @@ export type MiniGameRegistryKey =
   | 'NumberLineNinjaGame'
   | 'OrderOpsArenaGame'
   | 'PerimeterPathGame'
+  | 'PercentPowerGame'
   | 'PlaceValuePanicGame'
   | 'PolygonPalaceGame'
   | 'PotionPourGame'
@@ -96,7 +97,6 @@ export type MiniGameRegistryKey =
   | 'TowerOfFactorsGame'
   | 'TreasureChartCoveGame'
   | 'TreasurePathGame'
-  | 'WhodunnitDataGame'
   | 'ReasoningGame'
   | 'SequenceSprint'
   | 'LogicSort'
@@ -139,6 +139,7 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   NumberLineNinjaGame: asMiniGame('number_line_ninja', NumberLineNinjaGame),
   OrderOpsArenaGame: asMiniGame('order_ops_arena', OrderOpsArenaGame),
   PerimeterPathGame: asMiniGame('perimeter_path', PerimeterPathGame),
+  PercentPowerGame: asMiniGame('percent_power', PercentPowerGame),
   PlaceValuePanicGame: asMiniGame('place_value_panic', PlaceValuePanicGame),
   PolygonPalaceGame: asMiniGame('polygon_palace', PolygonPalaceGame),
   PotionPourGame: asMiniGame('potion_pour', PotionPourGame),
@@ -157,7 +158,6 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   TowerOfFactorsGame: asMiniGame('tower_of_factors', TowerOfFactorsGame),
   TreasureChartCoveGame: asMiniGame('treasure_chart_cove', TreasureChartCoveGame),
   TreasurePathGame: asMiniGame('treasure_path', TreasurePathGame),
-  WhodunnitDataGame: asMiniGame('whodunnit_data', WhodunnitDataGame),
   ReasoningGame: asMiniGame('reasoning', ReasoningGame),
   SequenceSprint: asMiniGame('sequence_sprint', SequenceSprint),
   LogicSort: asMiniGame('logic_sort', LogicSort),

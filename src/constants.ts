@@ -149,11 +149,10 @@ export const ISLANDS: IslandData[] = [
         'mode_miner',
       ]),
       [
-        { id: 1, stars: 0, isLocked: false, blueprintKey: 'data_dash', displayName: 'Data Dash', gameType: 'data_dungeon' },
         { id: 2, stars: 0, isLocked: false, blueprintKey: 'graph_grabber', displayName: 'Graph Grabber', gameType: 'chart_chase' },
         { id: 3, stars: 0, isLocked: false, blueprintKey: 'line_graph_lab', displayName: 'Line Graph Lab', gameType: 'chart_chase' },
         { id: 4, stars: 0, isLocked: false, blueprintKey: 'data_detective', displayName: 'Data Detective', gameType: 'data_dungeon' },
-        { id: 5, stars: 0, isLocked: false, blueprintKey: 'whodunnit_data', displayName: 'Whodunnit Data', gameType: 'data_dungeon' },
+        { id: 5, stars: 0, isLocked: false, blueprintKey: 'whodunnit_data', displayName: 'Data Detective: Whodunnit', gameType: 'data_dungeon' },
       ],
     ),
   },

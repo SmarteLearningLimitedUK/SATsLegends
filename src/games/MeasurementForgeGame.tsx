@@ -36,6 +36,21 @@ const STAGE_DENOMS: number[][] = [
 ];
 
 const toKgLabel = (grams: number) => `${(grams / 1000).toLocaleString(undefined, { maximumFractionDigits: 2 })} kg`;
+const toGramLabel = (grams: number) => `${grams.toLocaleString()} g`;
+
+const getMeasurementDisplay = (grams: number) => {
+  if (grams >= 1000) {
+    return {
+      primary: toKgLabel(grams),
+      secondary: toGramLabel(grams),
+    };
+  }
+
+  return {
+    primary: toGramLabel(grams),
+    secondary: toKgLabel(grams),
+  };
+};
 
 const clampStage = (levelId: number, roundIndex: number) => Math.min(STAGE_DENOMS.length - 1, Math.max(0, levelId - 1 + roundIndex));
 
@@ -239,9 +254,10 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
               <button
                 key={token.id}
                 onClick={() => removePlacedToken(token.id)}
-                className="min-w-[2rem] rounded-full bg-[#0b2d68]/84 px-1.5 py-0.5 text-[10px] font-black text-white ring-1 ring-white/30"
+                className="flex min-w-[2.9rem] flex-col items-center rounded-xl bg-[#0b2d68]/84 px-1.5 py-1 text-white ring-1 ring-white/30"
               >
-                {token.grams}
+                <span className="text-[10px] font-black leading-none">{getMeasurementDisplay(token.grams).primary}</span>
+                <span className="mt-0.5 text-[8px] font-bold leading-none text-white/70">{getMeasurementDisplay(token.grams).secondary}</span>
               </button>
             ))}
           </div>
@@ -249,8 +265,9 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
           <div className="absolute left-1/2 top-[64%] w-[58%] -translate-x-1/2 rounded-[1.3rem] bg-slate-950/32 px-3 py-2 text-center">
             <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/80">Current Weight</div>
             <div className="text-lg font-black text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.45)]">
-              {currentGrams.toLocaleString()} g
+              {toGramLabel(currentGrams)}
             </div>
+            <div className="text-[10px] font-bold text-white/70">{toKgLabel(currentGrams)}</div>
           </div>
         </motion.div>
 
@@ -270,9 +287,12 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                     placeToken(token.id);
                   }
                 }}
-                className="h-12 min-w-[3.65rem] rounded-2xl bg-[linear-gradient(180deg,#fef08a,#f59e0b)] px-2.5 text-base font-black text-amber-900 shadow-[0_10px_16px_rgba(0,0,0,0.34)] ring-2 ring-yellow-100/70 md:h-14 md:min-w-[4.2rem] md:px-3 md:text-lg"
+                className="flex h-14 min-w-[5.6rem] flex-col items-center justify-center rounded-2xl bg-[linear-gradient(180deg,#fef08a,#f59e0b)] px-2.5 text-amber-900 shadow-[0_10px_16px_rgba(0,0,0,0.34)] ring-2 ring-yellow-100/70 md:h-[4.15rem] md:min-w-[6.2rem] md:px-3"
               >
-                {token.grams}
+                <span className="text-sm font-black leading-none md:text-base">{getMeasurementDisplay(token.grams).primary}</span>
+                <span className="mt-1 text-[10px] font-bold leading-none text-amber-950/80 md:text-[11px]">
+                  {getMeasurementDisplay(token.grams).secondary}
+                </span>
               </motion.button>
             ))}
           </div>

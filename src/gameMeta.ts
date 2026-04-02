@@ -463,19 +463,6 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       ],
     },
   },
-  coordinate_cross: {
-    label: 'Coordinate Cross',
-    focus: 'Four-quadrant coordinates and movement',
-    rules: {
-      title: 'Coordinate Cross',
-      summary: 'Plot and read points in all four quadrants.',
-      bullets: [
-        'Read x first, then y every time.',
-        'Negative numbers move left or down from the origin.',
-        'Check the quadrant before you answer.',
-      ],
-    },
-  },
   unit_mixer: {
     label: 'Unit Mixer',
     focus: 'Mixed unit conversions',

@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from 'motion/react';
 import { ChevronLeft, CircleDollarSign } from 'lucide-react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import AssetIcon from '../components/AssetIcon';
-import ribbonAsset from '../assets/casual_ui/dialogs_panels/ribbon_1.png';
 import { triggerHaptic } from '../haptics';
 
 interface SimplifySprintGameProps {
@@ -326,13 +325,8 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
             : 'pt-[calc(env(safe-area-inset-top)+3.9rem)]'
         }`}
       >
-        <div className="relative w-[min(92vw,720px)]">
-          <img src={ribbonAsset} alt="" className="h-auto w-full object-contain" draggable={false} />
-          <div className="absolute inset-0 flex items-center justify-center px-[14%] pt-[4%] text-center">
-            <span className="max-w-[82%] text-[clamp(0.92rem,2.35vw,1.66rem)] font-black leading-[1.05] text-yellow-50 drop-shadow-[0_2px_2px_rgba(0,0,0,0.75)]">
-              Simplify This Fraction
-            </span>
-          </div>
+        <div className="rounded-full border border-cyan-200/45 bg-[#0a1f56]/78 px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-cyan-50">
+          Simplify this fraction
         </div>
 
         <div className="mt-2 rounded-2xl border border-cyan-200/45 bg-[#0a1f56]/72 px-4 py-2 text-xs font-black uppercase tracking-[0.13em] text-cyan-50">
@@ -384,16 +378,6 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
               </motion.button>
             );
           })}
-        </div>
-
-        <div className="mt-4 flex items-center gap-1.5 rounded-full border border-cyan-200/45 bg-[#0a1f56]/82 px-3 py-2">
-          {Array.from({ length: 4 }).map((_, idx) => (
-            <span
-              key={`life-${idx}`}
-              className={`h-2.5 w-2.5 rounded-full ${idx < lives ? 'bg-rose-400 shadow-[0_0_7px_rgba(251,113,133,0.8)]' : 'bg-slate-500/40'}`}
-            />
-          ))}
-          <span className="ml-1 text-[10px] font-black uppercase tracking-[0.13em] text-cyan-50">Lives</span>
         </div>
 
         <AnimatePresence>

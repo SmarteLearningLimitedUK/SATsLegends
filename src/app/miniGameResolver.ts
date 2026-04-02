@@ -28,16 +28,13 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
     case 'polygon_palace':
       return 'PolygonPalaceGame';
     case 'data_dungeon':
-      if (level.blueprintKey === 'data_dash' || level.blueprintKey === 'mode_miner') {
+      if (level.blueprintKey === 'mode_miner') {
         return 'ModeMinerGame';
       }
       if (level.blueprintKey === 'table_trouble') {
         return 'LineGraphLabGame';
       }
-      if (level.blueprintKey === 'whodunnit_data') {
-        return 'WhodunnitDataGame';
-      }
-      if (level.blueprintKey === 'data_detective') {
+      if (level.blueprintKey === 'whodunnit_data' || level.blueprintKey === 'data_detective') {
         return 'DataDetectiveGame';
       }
       return 'DataDungeonGame';
@@ -98,10 +95,11 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       }
       return level.blueprintKey === 'division_dock' ? 'DivisionDockGame' : 'CalculationCrashGame';
     case 'percent_pulse':
-    case 'percent_power':
     case 'formula_forge':
     case 'unit_mixer':
       return 'CurriculumChallengeGame';
+    case 'percent_power':
+      return 'PercentPowerGame';
     case 'area_architect':
       return 'AreaArchitectGame';
     case 'ratio_fractions':

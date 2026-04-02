@@ -202,16 +202,13 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       case 'polygon_palace':
         return renderFromRegistry('PolygonPalaceGame', sharedProps);
       case 'data_dungeon':
-        if (selectedLevel.blueprintKey === 'data_dash' || selectedLevel.blueprintKey === 'mode_miner') {
+        if (selectedLevel.blueprintKey === 'mode_miner') {
           return renderFromRegistry('ModeMinerGame', sharedProps);
         }
         if (selectedLevel.blueprintKey === 'table_trouble') {
           return renderFromRegistry('LineGraphLabGame', sharedProps);
         }
-        if (selectedLevel.blueprintKey === 'whodunnit_data') {
-          return renderFromRegistry('WhodunnitDataGame', sharedProps);
-        }
-        if (selectedLevel.blueprintKey === 'data_detective') {
+        if (selectedLevel.blueprintKey === 'whodunnit_data' || selectedLevel.blueprintKey === 'data_detective') {
           return renderFromRegistry('DataDetectiveGame', sharedProps);
         }
         return renderFromRegistry('DataDungeonGame', sharedProps);
@@ -289,6 +286,13 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         }
         return renderFromRegistry('CalculationCrashGame', sharedProps);
       case 'percent_pulse':
+        return renderFromRegistry('CurriculumChallengeGame', {
+          ...sharedProps,
+          gameType: selectedLevel.gameType,
+          isBoss: Boolean(selectedLevel.isBoss),
+        });
+      case 'percent_power':
+        return renderFromRegistry('PercentPowerGame', sharedProps);
       case 'transform_temple':
         return renderFromRegistry('CurriculumChallengeGame', {
           ...sharedProps,

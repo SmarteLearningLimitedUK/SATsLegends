@@ -255,10 +255,6 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
 
               <div className="mt-3 rounded-full border border-white/18 bg-black/38 px-3 py-1.5 text-center text-[clamp(0.92rem,3.8vw,1.28rem)] font-black tracking-[0.02em] text-amber-50">
                 Solved: {solved}
-                <span className="mx-2 text-white/65">|</span>
-                Combo: x{Combo}
-                <span className="mx-2 text-white/65">|</span>
-                XP: {XP.toLocaleString()}
               </div>
             </section>
           </motion.div>

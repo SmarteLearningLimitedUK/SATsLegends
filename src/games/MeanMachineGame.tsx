@@ -36,6 +36,15 @@ interface MeanMachineGameProps {
 
 const TOTAL_LEVELS = 10;
 const REEL_COUNT = 5;
+const REEL_LAYOUT = [
+  { left: 14.8, width: 13.35 },
+  { left: 30.15, width: 13.35 },
+  { left: 45.45, width: 13.35 },
+  { left: 60.75, width: 13.35 },
+  { left: 76.05, width: 13.35 },
+] as const;
+const REEL_TOP = 28.1;
+const REEL_HEIGHT = 59.8;
 
 const shuffle = <T,>(values: T[]): T[] => {
   const next = [...values];
@@ -199,7 +208,7 @@ const ReelWindow: React.FC<{
           ? { x: [0, -5, 5, -4, 4, 0], scale: [1, 0.98, 1] }
           : { y: 0, scale: 1 }}
     transition={spinning ? { duration: 0.16, repeat: Infinity, ease: 'linear' } : { duration: 0.35 }}
-    className={`relative flex h-[3.7rem] items-center justify-center overflow-hidden rounded-[0.9rem] border shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_10px_18px_rgba(2,6,23,0.24)] md:h-[4.15rem] ${
+    className={`relative flex h-full w-full items-center justify-center overflow-hidden rounded-[0.9rem] border shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_10px_18px_rgba(2,6,23,0.24)] ${
       isInactive
         ? 'border-slate-500/22 bg-[linear-gradient(180deg,rgba(51,65,85,0.56),rgba(15,23,42,0.82))] opacity-65 saturate-0'
         : isMissing
@@ -208,7 +217,7 @@ const ReelWindow: React.FC<{
     }`}
   >
     <div className="absolute inset-x-[10%] top-[12%] h-[35%] rounded-full bg-white/10 blur-sm" />
-    <div className={`relative z-10 text-[1.55rem] font-black tracking-[-0.05em] md:text-[1.9rem] ${isInactive ? 'text-slate-300/60' : isMissing ? 'text-amber-100' : 'text-white'}`}>
+    <div className={`relative z-10 text-[clamp(1.85rem,4.5vw,2.85rem)] font-black tracking-[-0.05em] ${isInactive ? 'text-slate-300/60' : isMissing ? 'text-amber-100' : 'text-white'}`}>
       {isInactive ? '' : value}
     </div>
   </motion.div>
@@ -465,8 +474,17 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                       className="pointer-events-none absolute inset-x-0 bottom-[-1.5%] z-[12] h-[138%] w-full object-contain"
                     />
 
-                    <div className="absolute left-[16.9%] right-[16.9%] top-[31.8%] z-20 grid grid-cols-5 gap-[2.15%]">
-                      {reelDisplay.map((value, index) => (
+                    {reelDisplay.map((value, index) => (
+                      <div
+                        key={`reel-shell-${index}`}
+                        className="absolute z-20"
+                        style={{
+                          left: `${REEL_LAYOUT[index].left}%`,
+                          top: `${REEL_TOP}%`,
+                          width: `${REEL_LAYOUT[index].width}%`,
+                          height: `${REEL_HEIGHT}%`,
+                        }}
+                      >
                         <ReelWindow
                           key={`reel-${index}-${String(value)}`}
                           value={value}
@@ -476,8 +494,8 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                           isCorrectPulse={showJackpot || reelSettled}
                           isErrorPulse={wrongPulse}
                         />
-                      ))}
-                    </div>
+                      </div>
+                    ))}
 
                     <div className="absolute left-1/2 top-[14.2%] z-20 flex h-[7.2%] w-[33%] -translate-x-1/2 items-center justify-center rounded-[0.55rem] border border-cyan-200/20 bg-[linear-gradient(180deg,rgba(3,14,38,0.92),rgba(6,18,48,0.98))] px-2 text-center text-[0.48rem] font-black uppercase tracking-[0.14em] text-cyan-100 md:text-[0.58rem]">
                       {round?.mode === 'mean' ? 'Mean Spin' : 'Fix Machine'}

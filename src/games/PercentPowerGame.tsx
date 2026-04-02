@@ -1,0 +1,470 @@
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
+import confetti from 'canvas-confetti';
+import { ChevronLeft, CircleDollarSign, Zap } from 'lucide-react';
+import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
+import { triggerHaptic } from '../haptics';
+import {
+  emitMiniGameSessionEvent,
+  type GameplaySessionEventHandlers,
+  type GameplaySessionState,
+} from '../app/gameplaySessionContract';
+
+interface PercentPowerGameProps {
+  levelId: number;
+  miniGameLevel?: number;
+  avatarId: string;
+  useSharedTopHud?: boolean;
+  onVictory: (stars: number, XP: number) => void;
+  onGameOver: (XP: number) => void;
+  onBack: () => void;
+  sessionState?: GameplaySessionState;
+  sessionEvents?: GameplaySessionEventHandlers;
+}
+
+interface PercentPowerQuestion {
+  id: string;
+  prompt: string;
+  helper: string;
+  options: string[];
+  answerIndex: number;
+  badge: string;
+  coreLabel: string;
+  sideLabel: string;
+}
+
+const FALLBACK_LIVES = 3;
+const FALLBACK_TIMER = 80;
+
+const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+const shuffle = <T,>(items: T[]): T[] => {
+  const clone = [...items];
+  for (let index = clone.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [clone[index], clone[swapIndex]] = [clone[swapIndex], clone[index]];
+  }
+  return clone;
+};
+
+const makeOptions = (correct: string, wrongValues: string[]) => {
+  const options = shuffle([correct, ...wrongValues.slice(0, 3)]);
+  return {
+    options,
+    answerIndex: options.indexOf(correct),
+  };
+};
+
+const scoreToStars = (accuracy: number, remainingLives: number) => {
+  if (accuracy >= 0.9 && remainingLives >= 2) return 3;
+  if (accuracy >= 0.7 && remainingLives >= 1) return 2;
+  return 1;
+};
+
+const buildDirectQuestion = (): PercentPowerQuestion => {
+  const percent = [10, 20, 25, 40, 50, 75][randomInt(0, 5)];
+  const amount = [24, 40, 60, 80, 120, 160, 200][randomInt(0, 6)];
+  const answer = (amount * percent) / 100;
+  const { options, answerIndex } = makeOptions(
+    `${answer}`,
+    [`${answer + amount / 10}`, `${Math.max(1, answer - amount / 20)}`, `${amount - answer}`],
+  );
+
+  return {
+    id: `direct-${percent}-${amount}-${Math.random().toString(36).slice(2, 7)}`,
+    prompt: `What is ${percent}% of ${amount}?`,
+    helper: 'Use 10%, 25%, 50% or known fraction facts to build the answer.',
+    options,
+    answerIndex,
+    badge: 'Percent of amount',
+    coreLabel: `${percent}%`,
+    sideLabel: `Whole ${amount}`,
+  };
+};
+
+const buildReverseQuestion = (): PercentPowerQuestion => {
+  const percent = [10, 20, 25, 40, 50][randomInt(0, 4)];
+  const whole = [80, 120, 160, 200, 240, 320][randomInt(0, 5)];
+  const part = (whole * percent) / 100;
+  const { options, answerIndex } = makeOptions(
+    `${whole}`,
+    [`${whole + 40}`, `${Math.max(10, whole - 40)}`, `${whole + 20}`],
+  );
+
+  return {
+    id: `reverse-${percent}-${whole}-${Math.random().toString(36).slice(2, 7)}`,
+    prompt: `${percent}% of a number is ${part}. What is the whole number?`,
+    helper: 'Find 1% or 10%, then scale up to the full amount.',
+    options,
+    answerIndex,
+    badge: 'Reverse percentage',
+    coreLabel: `${part}`,
+    sideLabel: `${percent}% chunk`,
+  };
+};
+
+const buildIncreaseQuestion = (): PercentPowerQuestion => {
+  const base = [40, 60, 80, 120, 160][randomInt(0, 4)];
+  const percent = [10, 20, 25, 50][randomInt(0, 3)];
+  const answer = base + ((base * percent) / 100);
+  const { options, answerIndex } = makeOptions(
+    `${answer}`,
+    [`${base - ((base * percent) / 100)}`, `${base + percent}`, `${base + ((base * 10) / 100)}`],
+  );
+
+  return {
+    id: `increase-${base}-${percent}-${Math.random().toString(36).slice(2, 7)}`,
+    prompt: `A power crystal has ${base} units. It gains ${percent}%. What is the new total?`,
+    helper: 'Work out the percentage gain first, then add it to the original amount.',
+    options,
+    answerIndex,
+    badge: 'Increase',
+    coreLabel: `+${percent}%`,
+    sideLabel: `Start ${base}`,
+  };
+};
+
+const buildQuestion = (level: number, round: number): PercentPowerQuestion => {
+  if (level <= 2) {
+    return buildDirectQuestion();
+  }
+  if (level <= 4) {
+    return round % 2 === 0 ? buildReverseQuestion() : buildDirectQuestion();
+  }
+  return [buildDirectQuestion, buildReverseQuestion, buildIncreaseQuestion][round % 3]();
+};
+
+const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
+  levelId,
+  miniGameLevel,
+  useSharedTopHud = false,
+  onVictory,
+  onGameOver,
+  onBack,
+  sessionState,
+  sessionEvents,
+}) => {
+  const resolvedLevel = useMemo(() => Math.max(1, Math.min(10, miniGameLevel || levelId || 1)), [levelId, miniGameLevel]);
+  const totalRounds = useMemo(() => Math.min(10, 5 + Math.floor(resolvedLevel / 2)), [resolvedLevel]);
+  const [roundNumber, setRoundNumber] = useState(1);
+  const [question, setQuestion] = useState<PercentPowerQuestion>(() => buildQuestion(resolvedLevel, 1));
+  const [XP, setScore] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
+  const [statusText, setStatusText] = useState('Choose the answer that powers the core correctly.');
+  const [attempts, setAttempts] = useState(0);
+  const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [localLives, setLocalLives] = useState(FALLBACK_LIVES);
+  const [localTimer, setLocalTimer] = useState(FALLBACK_TIMER);
+  const [isLocked, setLocked] = useState(false);
+  const scoreRef = useRef(0);
+  const didEndRef = useRef(false);
+
+  const lives = sessionState?.lives ?? localLives;
+  const timeLeft = sessionState?.timeLeft ?? localTimer;
+  const totalTime = sessionState?.totalTime ?? FALLBACK_TIMER;
+
+  useEffect(() => {
+    scoreRef.current = XP;
+  }, [XP]);
+
+  useEffect(() => {
+    didEndRef.current = false;
+    scoreRef.current = 0;
+    setRoundNumber(1);
+    setQuestion(buildQuestion(resolvedLevel, 1));
+    setScore(0);
+    setSelectedIndex(null);
+    setFeedback(null);
+    setStatusText('Choose the answer that powers the core correctly.');
+    setAttempts(0);
+    setCorrectAnswers(0);
+    setLocalLives(FALLBACK_LIVES);
+    setLocalTimer(FALLBACK_TIMER);
+    setLocked(false);
+  }, [resolvedLevel]);
+
+  useEffect(() => {
+    if (sessionState || didEndRef.current) return undefined;
+    const timerId = window.setInterval(() => {
+      setLocalTimer((previous) => {
+        if (previous <= 1) {
+          window.clearInterval(timerId);
+          return 0;
+        }
+        return previous - 1;
+      });
+    }, 1000);
+    return () => window.clearInterval(timerId);
+  }, [sessionState]);
+
+  useEffect(() => {
+    if (didEndRef.current) return;
+    if (timeLeft > 0 && lives > 0) return;
+    didEndRef.current = true;
+    emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
+      score: scoreRef.current,
+      reason: timeLeft <= 0 ? 'time' : 'lives',
+    });
+    onGameOver(scoreRef.current);
+  }, [lives, onGameOver, sessionEvents, timeLeft]);
+
+  const finishVictory = useCallback((finalScore: number, finalAttempts: number, finalCorrect: number, remainingLives: number) => {
+    if (didEndRef.current) return;
+    didEndRef.current = true;
+    const accuracy = finalAttempts > 0 ? finalCorrect / finalAttempts : 1;
+    const stars = scoreToStars(accuracy, remainingLives);
+    emitMiniGameSessionEvent(sessionEvents, 'game_complete', {
+      score: finalScore,
+      stars,
+      metadata: { accuracy },
+    });
+    confetti({
+      particleCount: 90,
+      spread: 54,
+      origin: { y: 0.62 },
+      colors: ['#67e8f9', '#fef08a', '#ffffff'],
+    });
+    window.setTimeout(() => onVictory(stars, finalScore), 320);
+  }, [onVictory, sessionEvents]);
+
+  const advanceQuestion = useCallback((nextRound: number) => {
+    const nextQuestion = buildQuestion(resolvedLevel, nextRound);
+    setRoundNumber(nextRound);
+    setQuestion(nextQuestion);
+    setSelectedIndex(null);
+    setFeedback(null);
+    setLocked(false);
+  }, [resolvedLevel]);
+
+  const handleAnswer = (index: number) => {
+    if (isLocked || didEndRef.current) return;
+    setLocked(true);
+    setSelectedIndex(index);
+
+    const isCorrect = index === question.answerIndex;
+    const nextAttempts = attempts + 1;
+    setAttempts(nextAttempts);
+
+    if (isCorrect) {
+      const award = 110 + (resolvedLevel * 14) + Math.max(0, Math.floor(timeLeft * 0.35));
+      const nextScore = XP + award;
+      const nextCorrect = correctAnswers + 1;
+      setFeedback('correct');
+      setScore(nextScore);
+      setCorrectAnswers(nextCorrect);
+      setStatusText(`Correct. +${award} power added.`);
+      triggerHaptic('success');
+      emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
+        score: nextScore,
+        metadata: { round: roundNumber, questionId: question.id },
+      });
+      emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', {
+        score: nextScore,
+        metadata: { round: roundNumber, totalRounds },
+      });
+
+      if (roundNumber >= totalRounds) {
+        finishVictory(nextScore, nextAttempts, nextCorrect, lives);
+        return;
+      }
+
+      window.setTimeout(() => {
+        advanceQuestion(roundNumber + 1);
+      }, 540);
+      return;
+    }
+
+    setFeedback('incorrect');
+    setStatusText('Not this one. Recheck the percentage clue.');
+    triggerHaptic('warning');
+    emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
+      score: XP,
+      metadata: { round: roundNumber, questionId: question.id, selectedIndex: index },
+    });
+
+    if (!sessionState) {
+      setLocalLives((previous) => Math.max(0, previous - 1));
+    }
+
+    if (roundNumber >= totalRounds && !sessionState && lives - 1 <= 0) {
+      return;
+    }
+
+    window.setTimeout(() => {
+      if (didEndRef.current) return;
+      advanceQuestion(Math.min(totalRounds, roundNumber + 1));
+    }, 620);
+  };
+
+  const meterProgress = Math.max(0, Math.min(1, roundNumber / totalRounds));
+  const timerProgress = Math.max(0, Math.min(1, timeLeft / Math.max(1, totalTime)));
+
+  return (
+    <div className="relative h-full w-full overflow-hidden text-white">
+      <GameplaySceneBackdrop gameType="percent_power" className="opacity-[0.98]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(103,232,249,0.22),transparent_30%),linear-gradient(180deg,rgba(7,31,62,0.72),rgba(4,13,28,0.92))]" />
+
+      {!useSharedTopHud ? (
+        <div className="absolute left-0 right-0 top-[calc(env(safe-area-inset-top)+2px)] z-30 flex items-center justify-between px-3">
+          <button
+            type="button"
+            onClick={onBack}
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-200/45 bg-[#0a1f56]/88 shadow-[0_8px_20px_rgba(0,0,0,0.45)]"
+            aria-label="Back"
+          >
+            <ChevronLeft className="h-5 w-5 text-cyan-100" />
+          </button>
+          <div className="flex items-center gap-2 rounded-xl border border-cyan-200/45 bg-[#0a1f56]/92 px-3 py-2 shadow-[0_8px_20px_rgba(0,0,0,0.45)]">
+            <span className="text-xs font-black tabular-nums text-cyan-50">{timeLeft}s</span>
+            <span className="h-4 w-px bg-cyan-100/35" />
+            <span className="text-xs font-black tabular-nums text-rose-200">{lives}</span>
+            <span className="h-4 w-px bg-cyan-100/35" />
+            <CircleDollarSign className="h-4 w-4 text-yellow-300" />
+            <span className="text-xs font-black tabular-nums text-yellow-100">{XP}</span>
+          </div>
+        </div>
+      ) : null}
+
+      <div
+        className={`relative z-20 flex h-full w-full flex-col items-center px-4 pb-[calc(env(safe-area-inset-bottom)+4.8rem)] ${
+          useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.4rem)]' : 'pt-[calc(env(safe-area-inset-top)+3.8rem)]'
+        }`}
+      >
+        <div className="w-full max-w-[44rem] rounded-[1.6rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(9,23,50,0.8),rgba(5,15,34,0.74))] p-3 shadow-[0_20px_44px_rgba(0,0,0,0.3)]">
+          <div className="flex items-center justify-between gap-3">
+            <div className="rounded-full border border-cyan-200/30 bg-cyan-300/12 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100">
+              {question.badge}
+            </div>
+            <div className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/80">
+              Round {roundNumber}/{totalRounds}
+            </div>
+          </div>
+          <div className="mt-2 text-center text-[1.02rem] font-black leading-tight text-white md:text-[1.32rem]">
+            {question.prompt}
+          </div>
+          <div className="mt-1 text-center text-[11px] font-semibold text-cyan-100/70 md:text-[12px]">
+            {question.helper}
+          </div>
+        </div>
+
+        <div className="mt-3 flex w-full max-w-[44rem] items-center gap-2 rounded-full border border-cyan-200/26 bg-[#071a38]/76 px-3 py-2">
+          <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-950/70">
+            <motion.div
+              className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-300 to-emerald-300"
+              animate={{ width: `${meterProgress * 100}%` }}
+            />
+          </div>
+          <div className="w-16 text-right text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/78">
+            Progress
+          </div>
+        </div>
+
+        <div className="relative mt-4 flex w-full max-w-[44rem] flex-1 min-h-0 flex-col items-center justify-center rounded-[2rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(10,30,64,0.72),rgba(4,12,26,0.9))] px-4 py-5 shadow-[0_22px_60px_rgba(0,0,0,0.34)]">
+          <motion.div
+            className="absolute inset-x-[12%] top-[12%] h-24 rounded-full bg-cyan-300/12 blur-3xl"
+            animate={{ opacity: [0.42, 0.88, 0.42], scale: [0.98, 1.04, 0.98] }}
+            transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+          />
+
+          <motion.div
+            className="relative flex h-[11.5rem] w-[11.5rem] items-center justify-center rounded-full border border-cyan-100/30 bg-[radial-gradient(circle,rgba(125,211,252,0.34),rgba(14,116,144,0.22)_38%,rgba(8,20,40,0.12)_68%,rgba(8,20,40,0)_100%)] shadow-[0_0_45px_rgba(34,211,238,0.2)] md:h-[13rem] md:w-[13rem]"
+            animate={
+              feedback === 'correct'
+                ? { scale: [1, 1.08, 1], rotate: [0, 4, -4, 0] }
+                : feedback === 'incorrect'
+                  ? { x: [0, -8, 8, -6, 6, 0] }
+                  : { scale: [1, 1.02, 1] }
+            }
+            transition={{ duration: 0.45, ease: 'easeInOut' }}
+          >
+            <div className="absolute inset-[11%] rounded-full border border-cyan-100/25 bg-[radial-gradient(circle,rgba(255,255,255,0.24),rgba(34,211,238,0.1)_46%,rgba(8,20,40,0.16)_70%)]" />
+            <div className="absolute inset-[24%] rounded-full border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(255,255,255,0.16),rgba(12,74,110,0.12))] shadow-[inset_0_1px_14px_rgba(255,255,255,0.08)]" />
+            <Zap className="absolute top-[18%] h-6 w-6 text-cyan-100/85" />
+            <div className="relative z-10 text-center">
+              <div className="text-[0.85rem] font-black uppercase tracking-[0.12em] text-cyan-100/76">
+                {question.sideLabel}
+              </div>
+              <div className="mt-1 text-[2rem] font-black leading-none text-white md:text-[2.6rem]">
+                {question.coreLabel}
+              </div>
+            </div>
+          </motion.div>
+
+          <div className="mt-5 flex w-full max-w-[18rem] items-center gap-2 rounded-full border border-cyan-200/26 bg-[#071a38]/72 px-3 py-2">
+            <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-950/70">
+              <motion.div
+                className="h-full rounded-full bg-gradient-to-r from-emerald-300 via-cyan-300 to-sky-300"
+                animate={{ width: `${timerProgress * 100}%` }}
+              />
+            </div>
+            <div className="text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100/78">
+              {timeLeft}s
+            </div>
+          </div>
+
+          <AnimatePresence>
+            <motion.div
+              key={statusText}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className={`mt-4 rounded-full border px-4 py-2 text-center text-[11px] font-black uppercase tracking-[0.12em] ${
+                feedback === 'correct'
+                  ? 'border-emerald-300/60 bg-emerald-300/18 text-emerald-50'
+                  : feedback === 'incorrect'
+                    ? 'border-rose-300/60 bg-rose-300/18 text-rose-50'
+                    : 'border-cyan-200/26 bg-[#071a38]/72 text-cyan-100/82'
+              }`}
+            >
+              {statusText}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        <div className="mt-4 grid w-full max-w-[44rem] grid-cols-2 gap-3">
+          {question.options.map((option, index) => {
+            const isSelected = index === selectedIndex;
+            const isCorrect = feedback === 'correct' && index === question.answerIndex;
+            const isIncorrect = feedback === 'incorrect' && isSelected;
+
+            return (
+              <motion.button
+                key={`${question.id}-${option}`}
+                type="button"
+                whileTap={{ scale: 0.985 }}
+                onClick={() => handleAnswer(index)}
+                disabled={isLocked || didEndRef.current}
+                className={`relative min-h-[3.2rem] overflow-hidden rounded-[1.2rem] border px-3 py-2 text-center shadow-[0_14px_24px_rgba(0,0,0,0.26)] transition ${
+                  isCorrect
+                    ? 'border-emerald-200/70 bg-[linear-gradient(180deg,rgba(52,211,153,0.9),rgba(5,150,105,0.86))]'
+                    : isIncorrect
+                      ? 'border-rose-200/70 bg-[linear-gradient(180deg,rgba(251,146,60,0.92),rgba(225,29,72,0.88))]'
+                      : isSelected
+                        ? 'border-cyan-100/55 bg-[linear-gradient(180deg,rgba(56,189,248,0.45),rgba(14,116,144,0.62))]'
+                        : 'border-cyan-100/24 bg-[linear-gradient(180deg,rgba(13,39,84,0.94),rgba(8,24,51,0.96))]'
+                }`}
+              >
+                <div className="absolute inset-x-[8%] top-[12%] h-[34%] rounded-full bg-white/12 blur-md" />
+                <div className="relative z-10 flex items-center gap-2.5">
+                  <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-[0.7rem] border text-[10px] font-black uppercase ${
+                    isCorrect || isIncorrect || isSelected
+                      ? 'border-black/10 bg-white/36 text-slate-900'
+                      : 'border-white/16 bg-white/10 text-white'
+                  }`}>
+                    {String.fromCharCode(65 + index)}
+                  </div>
+                  <div className="flex-1 text-center text-[0.96rem] font-black leading-none text-white md:text-[1.16rem]">
+                    {option}
+                  </div>
+                </div>
+              </motion.button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default PercentPowerGame;
