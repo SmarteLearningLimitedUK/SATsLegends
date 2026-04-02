@@ -410,26 +410,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         ctx.fillRect(0, 0, viewWidth, viewHeight);
       }
 
-      // Parallax sky haze
-      ctx.fillStyle = 'rgba(15,23,42,0.2)';
-      ctx.fillRect(0, 0, viewWidth, viewHeight * 0.48);
-
-      // Mountains layer (slow)
-      ctx.fillStyle = 'rgba(22,48,95,0.35)';
-      ctx.fillRect(-parallaxFar * 0.4 - 200, 24, WORLD.width + 400, 90);
-
-      // Midground layer
-      ctx.fillStyle = 'rgba(31,61,122,0.45)';
-      ctx.fillRect(-parallaxMid * 0.6 - 200, 96, WORLD.width + 400, 140);
-
-      // Foreground ground
-      ctx.fillStyle = 'rgba(27,43,79,0.55)';
-      ctx.fillRect(-parallaxNear - 200, WORLD.groundY, WORLD.width + 400, viewHeight - WORLD.groundY + 40);
-
       const cameraOffsetX = -cameraXRef.current;
-
-      ctx.fillStyle = '#2d4a2f';
-      ctx.fillRect(cameraOffsetX - 200, WORLD.groundY - 6, WORLD.width + 400, 12);
 
       const catapult = catapultImageRef.current;
       if (catapult && catapult.complete) {
