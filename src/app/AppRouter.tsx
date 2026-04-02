@@ -286,6 +286,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         }
         return renderFromRegistry('CalculationCrashGame', sharedProps);
       case 'percent_pulse':
+      case 'change_counter':
         return renderFromRegistry('CurriculumChallengeGame', {
           ...sharedProps,
           gameType: selectedLevel.gameType,

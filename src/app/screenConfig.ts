@@ -13,6 +13,7 @@ export const QUESTION_MATCH_FRAME_GAMES: MiniGameType[] = [
   'data_dungeon',
   'monster_market',
   'ratio_rapids',
+  'change_counter',
   'timekeeper_temple',
   'measurement_forge',
   'tower_of_factors',

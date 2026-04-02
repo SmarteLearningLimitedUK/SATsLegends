@@ -228,6 +228,19 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       ],
     },
   },
+  change_counter: {
+    label: 'Change Counter',
+    focus: 'Money and giving the correct change',
+    rules: {
+      title: 'Change Counter',
+      summary: 'Work out how much change to give after each purchase.',
+      bullets: [
+        'Read the price and the amount paid.',
+        'Subtract the cost from the amount paid.',
+        'Select the exact change to give back.',
+      ],
+    },
+  },
   tower_of_factors: {
     label: 'Factor Forge',
     focus: 'Factors, multiples and factor fluency',

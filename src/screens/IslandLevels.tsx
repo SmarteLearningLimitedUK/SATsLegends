@@ -68,6 +68,7 @@ const GAME_SUMMARY_BY_KEY: Record<string, string> = {
   area_architect: 'Build and measure areas using unit squares.',
   unit_mixer: 'Convert between mixed units across length, mass, and capacity.',
   perimeter_path: 'Trace exact boundary lengths on irregular paths.',
+  change_counter: 'Work out the exact change to give back in each purchase.',
   graph_grabber: 'Extract exact values from graphs before they disappear.',
   table_trouble: 'Read tables quickly and answer under time pressure.',
   line_graph_lab: 'Interpret trends, intervals, and key points on line graphs.',

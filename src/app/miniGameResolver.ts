@@ -95,6 +95,7 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       }
       return level.blueprintKey === 'division_dock' ? 'DivisionDockGame' : 'CalculationCrashGame';
     case 'percent_pulse':
+    case 'change_counter':
     case 'formula_forge':
     case 'unit_mixer':
       return 'CurriculumChallengeGame';

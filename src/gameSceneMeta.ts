@@ -71,6 +71,7 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   polygon_palace: GEOMETRY_SCENE,
   data_dungeon: DATA_SCENE,
   monster_market: NUMBER_SCENE,
+  change_counter: NUMBER_SCENE,
   tower_of_factors: NUMBER_SCENE,
   measurement_forge: RATIO_SCENE,
   timekeeper_temple: DATA_SCENE,

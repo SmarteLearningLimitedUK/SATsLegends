@@ -5,6 +5,7 @@ export type SupportedChallengeGameType =
   | 'coordinate_quest'
   | 'transform_temple'
   | 'scale_safari'
+  | 'change_counter'
   | 'unit_mixer'
   | 'chart_chase'
   | 'mean_machine'
@@ -542,6 +543,108 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
         options: ['5', '6', '7', '8'],
         answerIndex: 2,
         visual: { type: 'equation', lines: ['black = (white × 3) + 4', 'black = 25'], badge: 'Inverse' },
+      },
+    },
+  ],
+  change_counter: [
+    {
+      minLevel: 1,
+      value: {
+        prompt: 'A scarf costs £1.20 and the customer pays £2.00. How much change?',
+        sublabel: 'Subtract the cost from the amount paid.',
+        options: ['£0.80', '£0.20', '£1.20', '£1.80'],
+        answerIndex: 0,
+        visual: { type: 'ratio', leftLabel: 'Cost', leftValue: '£1.20', rightLabel: 'Paid', rightValue: '£2.00', caption: 'Find the change' },
+      },
+    },
+    {
+      minLevel: 1,
+      value: {
+        prompt: 'A lantern costs £3.40 and the customer pays £4.00. How much change?',
+        sublabel: 'Work out the difference between paid and cost.',
+        options: ['£0.60', '£0.40', '£1.60', '£0.90'],
+        answerIndex: 0,
+        visual: { type: 'ratio', leftLabel: 'Cost', leftValue: '£3.40', rightLabel: 'Paid', rightValue: '£4.00', caption: 'Find the change' },
+      },
+    },
+    {
+      minLevel: 2,
+      value: {
+        prompt: 'A map costs £2.75 and the customer pays £5.00. How much change?',
+        sublabel: 'Keep the pounds and pence aligned.',
+        options: ['£2.25', '£2.75', '£1.25', '£3.25'],
+        answerIndex: 0,
+        visual: { type: 'ratio', leftLabel: 'Cost', leftValue: '£2.75', rightLabel: 'Paid', rightValue: '£5.00', caption: 'Find the change' },
+      },
+    },
+    {
+      minLevel: 2,
+      value: {
+        prompt: 'A torch costs £6.50 and the customer pays £10.00. How much change?',
+        sublabel: 'Subtract the price from the amount paid.',
+        options: ['£3.50', '£4.50', '£2.50', '£5.00'],
+        answerIndex: 0,
+        visual: { type: 'ratio', leftLabel: 'Cost', leftValue: '£6.50', rightLabel: 'Paid', rightValue: '£10.00', caption: 'Find the change' },
+      },
+    },
+    {
+      minLevel: 2,
+      value: {
+        prompt: 'A potion costs £7.80 and the customer pays £10.00. How much change?',
+        sublabel: 'Count on from £7.80 to £10.00.',
+        options: ['£2.20', '£2.80', '£1.20', '£3.20'],
+        answerIndex: 0,
+        visual: { type: 'ratio', leftLabel: 'Cost', leftValue: '£7.80', rightLabel: 'Paid', rightValue: '£10.00', caption: 'Find the change' },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'A charm costs £4.95 and the customer pays £5.00. How much change?',
+        sublabel: 'Watch the pence carefully.',
+        options: ['£0.05', '£0.50', '£0.45', '£1.05'],
+        answerIndex: 0,
+        visual: { type: 'ratio', leftLabel: 'Cost', leftValue: '£4.95', rightLabel: 'Paid', rightValue: '£5.00', caption: 'Find the change' },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'A compass costs £9.75 and the customer pays £10.00. How much change?',
+        sublabel: 'Find the difference in pence.',
+        options: ['£0.25', '£0.75', '£1.25', '£0.05'],
+        answerIndex: 0,
+        visual: { type: 'ratio', leftLabel: 'Cost', leftValue: '£9.75', rightLabel: 'Paid', rightValue: '£10.00', caption: 'Find the change' },
+      },
+    },
+    {
+      minLevel: 4,
+      value: {
+        prompt: 'A cloak costs £8.30 and the customer pays £20.00. How much change?',
+        sublabel: 'Subtract the cost from £20.00.',
+        options: ['£11.70', '£10.70', '£12.70', '£8.30'],
+        answerIndex: 0,
+        visual: { type: 'ratio', leftLabel: 'Cost', leftValue: '£8.30', rightLabel: 'Paid', rightValue: '£20.00', caption: 'Find the change' },
+      },
+    },
+    {
+      minLevel: 4,
+      value: {
+        prompt: 'A telescope costs £12.40 and the customer pays £15.00. How much change?',
+        sublabel: 'Keep pounds and pence aligned.',
+        options: ['£2.60', '£2.40', '£3.60', '£1.60'],
+        answerIndex: 0,
+        visual: { type: 'ratio', leftLabel: 'Cost', leftValue: '£12.40', rightLabel: 'Paid', rightValue: '£15.00', caption: 'Find the change' },
+      },
+    },
+    {
+      minLevel: 5,
+      value: {
+        prompt: 'A rucksack costs £13.60 and the customer pays £20.00. How much change?',
+        sublabel: 'Subtract the cost from the amount paid.',
+        options: ['£6.40', '£4.60', '£7.40', '£5.40'],
+        answerIndex: 0,
+        visual: { type: 'ratio', leftLabel: 'Cost', leftValue: '£13.60', rightLabel: 'Paid', rightValue: '£20.00', caption: 'Find the change' },
       },
     },
   ],
