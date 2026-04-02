@@ -18,25 +18,33 @@ const MiniGameTopBar: React.FC<MiniGameTopBarProps> = ({
   metaLabel,
   metaValue,
   className = '',
-}) => (
-  <div className={`mini-game-top-bar pointer-events-none absolute inset-x-0 top-0 z-40 px-3 pt-[max(0.75rem,env(safe-area-inset-top))] ${className}`.trim()}>
-    <div className="flex items-center justify-between gap-2">
-      <div className="pointer-events-auto">
-        <IconButton icon={<ArrowLeft className="h-5 w-5" />} label="Back" onClick={onBack} />
-      </div>
+}) => {
+  const shouldHideLocalHud =
+    typeof document !== 'undefined'
+    && Boolean(document.querySelector('[data-unified-minigame-hud="true"]'));
 
-      <div className="pointer-events-auto flex items-center gap-2">
-        {metaLabel && metaValue !== undefined && metaValue !== null ? (
+  if (shouldHideLocalHud) return null;
+
+  return (
+    <div className={`mini-game-top-bar pointer-events-none absolute inset-x-0 top-0 z-40 px-3 pt-[max(0.75rem,env(safe-area-inset-top))] ${className}`.trim()}>
+      <div className="flex items-center justify-between gap-2">
+        <div className="pointer-events-auto">
+          <IconButton icon={<ArrowLeft className="h-5 w-5" />} label="Back" onClick={onBack} />
+        </div>
+
+        <div className="pointer-events-auto flex items-center gap-2">
+          {metaLabel && metaValue !== undefined && metaValue !== null ? (
+            <div className="inline-flex h-10 items-center rounded-full border border-white/20 bg-white/10 px-3 text-xs font-black uppercase tracking-[0.1em] text-white">
+              {metaLabel} {metaValue}
+            </div>
+          ) : null}
           <div className="inline-flex h-10 items-center rounded-full border border-white/20 bg-white/10 px-3 text-xs font-black uppercase tracking-[0.1em] text-white">
-            {metaLabel} {metaValue}
+            {scoreLabel} {XP.toLocaleString()}
           </div>
-        ) : null}
-        <div className="inline-flex h-10 items-center rounded-full border border-white/20 bg-white/10 px-3 text-xs font-black uppercase tracking-[0.1em] text-white">
-          {scoreLabel} {XP.toLocaleString()}
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default MiniGameTopBar;

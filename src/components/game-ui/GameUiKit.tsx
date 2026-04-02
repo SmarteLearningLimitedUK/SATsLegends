@@ -188,35 +188,43 @@ export const GameTopBar: React.FC<GameTopBarProps> = ({
   onToggleAudio,
   onHelp,
   className,
-}) => (
-  <div className={cn('flex items-center justify-between gap-2', className)}>
-    <div className="flex items-center gap-2">
-      <IconButton icon={<ArrowLeft className="h-5 w-5" />} label="Back" onClick={onBack} />
-      {progressLabel ? (
-        <div className="inline-flex h-10 items-center rounded-full border border-white/20 bg-white/10 px-3 text-xs font-black uppercase tracking-[0.1em] text-white">
-          {progressLabel}
-        </div>
-      ) : null}
+}) => {
+  const shouldHideLocalHud =
+    typeof document !== 'undefined'
+    && Boolean(document.querySelector('[data-unified-minigame-hud="true"]'));
+
+  if (shouldHideLocalHud) return null;
+
+  return (
+    <div className={cn('flex items-center justify-between gap-2', className)}>
+      <div className="flex items-center gap-2">
+        <IconButton icon={<ArrowLeft className="h-5 w-5" />} label="Back" onClick={onBack} />
+        {progressLabel ? (
+          <div className="inline-flex h-10 items-center rounded-full border border-white/20 bg-white/10 px-3 text-xs font-black uppercase tracking-[0.1em] text-white">
+            {progressLabel}
+          </div>
+        ) : null}
+      </div>
+      <div className="flex items-center gap-2">
+        {typeof lives === 'number' ? (
+          <div className="inline-flex h-10 items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 text-xs font-black uppercase tracking-[0.1em] text-white">
+            <Heart className="h-4 w-4 text-rose-200" />
+            {lives}
+          </div>
+        ) : null}
+        <IconButton
+          icon={audioEnabled === false ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+          label="Audio"
+          onClick={onToggleAudio}
+          disabled={!onToggleAudio}
+        />
+        <IconButton
+          icon={<HelpCircle className="h-5 w-5" />}
+          label="Help"
+          onClick={onHelp}
+          disabled={!onHelp}
+        />
+      </div>
     </div>
-    <div className="flex items-center gap-2">
-      {typeof lives === 'number' ? (
-        <div className="inline-flex h-10 items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 text-xs font-black uppercase tracking-[0.1em] text-white">
-          <Heart className="h-4 w-4 text-rose-200" />
-          {lives}
-        </div>
-      ) : null}
-      <IconButton
-        icon={audioEnabled === false ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
-        label="Audio"
-        onClick={onToggleAudio}
-        disabled={!onToggleAudio}
-      />
-      <IconButton
-        icon={<HelpCircle className="h-5 w-5" />}
-        label="Help"
-        onClick={onHelp}
-        disabled={!onHelp}
-      />
-    </div>
-  </div>
-);
+  );
+};

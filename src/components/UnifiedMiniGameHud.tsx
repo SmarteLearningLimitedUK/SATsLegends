@@ -42,18 +42,21 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
   ), [avatarId]);
 
   const sharedHudHeightClass = variant === 'hub'
-    ? 'h-[clamp(36px,8.2vw,46px)]'
-    : 'h-[clamp(42px,10.5vw,54px)]';
+    ? 'h-[clamp(34px,7.8vw,44px)]'
+    : 'h-[clamp(40px,10vw,54px)]';
   const rootPaddingClass = variant === 'hub'
-    ? 'px-[1px] py-[clamp(0.18rem,0.45vh,0.38rem)]'
-    : 'px-[2px] py-[clamp(0.24rem,0.62vh,0.5rem)]';
+    ? 'px-[6px] py-[clamp(0.22rem,0.5vh,0.4rem)]'
+    : 'px-[8px] py-[clamp(0.28rem,0.7vh,0.55rem)]';
   const timerWidthClass = variant === 'hub'
-    ? 'w-[clamp(140px,34vw,190px)]'
-    : 'w-[clamp(168px,41vw,206px)]';
+    ? 'w-[clamp(160px,38vw,220px)]'
+    : 'w-[clamp(190px,44vw,240px)]';
   const avatarSizeClass = variant === 'hub'
-    ? 'w-[clamp(36px,8.2vw,46px)]'
-    : 'w-[clamp(42px,10.5vw,54px)]';
-  const shellRadiusClass = variant === 'hub' ? 'rounded-[1rem]' : 'rounded-[1.15rem]';
+    ? 'w-[clamp(34px,7.8vw,44px)]'
+    : 'w-[clamp(40px,10vw,54px)]';
+  const shellRadiusClass = variant === 'hub' ? 'rounded-[1.1rem]' : 'rounded-[1.25rem]';
+  const topBarWidthClass = variant === 'hub'
+    ? 'w-[min(92vw,480px)]'
+    : 'w-[min(94vw,520px)]';
 
   if (hidden) return null;
 
@@ -63,15 +66,15 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
       className="pointer-events-none absolute inset-x-0 inset-y-0 z-[120]"
     >
       <div
-        className="absolute inset-x-0 top-0"
+        className="absolute inset-x-0 top-0 flex justify-center"
         style={{
-          paddingTop: 'max(0.5rem, env(safe-area-inset-top))',
+          paddingTop: 'max(0.65rem, env(safe-area-inset-top))',
           paddingLeft: 'max(0.55rem, env(safe-area-inset-left))',
           paddingRight: 'max(0.55rem, env(safe-area-inset-right))',
         }}
       >
         <div
-          className={`relative grid w-full items-center gap-2 ${rootPaddingClass} ${
+          className={`relative ${topBarWidthClass} grid items-center gap-2 ${rootPaddingClass} ${
             hideTimer ? 'grid-cols-[auto_auto] justify-between' : 'grid-cols-[auto_1fr_auto]'
           }`}
         >
@@ -134,7 +137,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
 
           <div className="relative flex shrink-0 items-center justify-end pr-1">
             <div
-              className={`relative inline-flex ${sharedHudHeightClass} ${variant === 'hub' ? 'w-[clamp(48px,10vw,60px)]' : 'w-[clamp(54px,12vw,66px)]'} shrink-0 items-center justify-center gap-1 rounded-full border-2 border-cyan-100/65 bg-[linear-gradient(180deg,#245db3_0%,#1e3f89_100%)] px-2 font-black text-slate-100 shadow-[0_9px_18px_rgba(2,6,23,0.4)] ${variant === 'hub' ? 'text-[clamp(0.7rem,1.8vw,0.85rem)]' : 'text-[clamp(0.8rem,2vw,0.96rem)]'}`}
+              className={`relative inline-flex ${sharedHudHeightClass} ${variant === 'hub' ? 'w-[clamp(52px,12vw,66px)]' : 'w-[clamp(58px,13vw,74px)]'} shrink-0 items-center justify-center gap-1 rounded-full border-2 border-cyan-100/65 bg-[linear-gradient(180deg,#245db3_0%,#1e3f89_100%)] px-2 font-black text-slate-100 shadow-[0_9px_18px_rgba(2,6,23,0.4)] ${variant === 'hub' ? 'text-[clamp(0.7rem,1.8vw,0.85rem)]' : 'text-[clamp(0.8rem,2vw,0.96rem)]'}`}
             >
               <div className={`pointer-events-none absolute inset-[2px] ${variant === 'hub' ? 'rounded-[0.9rem]' : 'rounded-full'} bg-[linear-gradient(180deg,rgba(255,255,255,0.2),rgba(255,255,255,0)_45%)]`} />
               <img

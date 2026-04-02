@@ -507,6 +507,7 @@ const App: React.FC = () => {
       : 'bg-intensity-overlay';
   const isWellbeingScreen = screen === 'wellbeing_hub' || screen === 'wellbeing_activity';
   const isSplashScreen = screen === 'splash';
+  const isStartScreen = isSplashScreen || screen === 'profile_setup' || screen === 'avatar_selection';
   const isAvatarSelectionScreen = screen === 'avatar_selection';
   const isGameplayScreen = screen === 'gameplay';
   const isMapLayoutScreen = MAP_LAYOUT_SCREENS.includes(screen);
@@ -614,7 +615,7 @@ const App: React.FC = () => {
               </motion.div>
             </AnimatePresence>
 
-            {screen !== 'splash' ? (
+            {!isStartScreen ? (
               <UnifiedMiniGameHud
                 avatarId={player.avatarId}
                 timeLeft={globalMiniGameHudTimeLeft}
