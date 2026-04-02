@@ -573,22 +573,6 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 <div className="mt-0.5 text-lg font-black text-slate-900">{challenge.baseRatio.join(' : ')}</div>
               </div>
             </div>
-            {ratioUnitTotal > 0 ? (
-              <div className="mt-2 rounded-[1rem] border border-amber-200/35 bg-white/70 px-3 py-2">
-                <div className="text-[10px] font-black uppercase tracking-[0.14em] text-amber-900/70">Unit Value</div>
-                <div className="mt-1 flex flex-wrap items-center gap-1">
-                  {Array.from({ length: Math.min(ratioUnitTotal, 12) }).map((_, index) => (
-                    <span
-                      key={`unit-${index}`}
-                      className="h-2.5 w-2.5 rounded-full border border-amber-400/60 bg-amber-200/90"
-                    />
-                  ))}
-                  <span className="ml-1 text-[11px] font-black text-slate-900">
-                    1 unit = {ratioUnitValue} drop{ratioUnitValue === 1 ? '' : 's'}
-                  </span>
-                </div>
-              </div>
-            ) : null}
             {challenge.cardHint ? (
               <div className="mt-2 rounded-[1rem] border border-amber-200/30 bg-white/70 px-3 py-2 text-[11px] font-semibold text-slate-700">
                 {challenge.cardHint}

@@ -31,6 +31,7 @@ interface ShareChallenge {
   targetCounts: number[];
   prompt: string;
   mode: 'direct_share' | 'scaled_share' | 'bigger_share' | 'exam_share';
+  plateCount: number;
 }
 
 type FeedbackTone = 'good' | 'bad' | 'neutral';
@@ -46,19 +47,32 @@ type DragSlice = {
   y: number;
 };
 
-const PLATE_COUNT = 5;
+const MAX_PLATE_COUNT = 4;
 const ROUNDS_TO_WIN = 5;
 const BASE_XP_PER_ROUND = 120;
 
-const RATIO_PATTERNS: number[][] = [
-  [1, 1, 2, 2, 3],
-  [1, 1, 1, 2, 3],
-  [1, 2, 1, 2, 3],
-  [1, 1, 2, 3, 3],
-  [1, 2, 2, 2, 3],
-];
+const RATIO_PATTERNS_BY_COUNT: Record<number, number[][]> = {
+  2: [
+    [1, 1],
+    [2, 1],
+    [3, 1],
+    [3, 2],
+  ],
+  3: [
+    [1, 1, 2],
+    [2, 1, 1],
+    [3, 2, 1],
+    [2, 2, 1],
+  ],
+  4: [
+    [1, 1, 2, 2],
+    [1, 2, 2, 3],
+    [2, 1, 2, 3],
+    [1, 1, 2, 3],
+  ],
+};
 
-const createEmptyPlates = () => Array.from({ length: PLATE_COUNT }, () => [] as string[]);
+const createEmptyPlates = (plateCount: number) => Array.from({ length: plateCount }, () => [] as string[]);
 
 let challengeSeed = 0;
 const nextChallengeId = () => {
@@ -93,7 +107,9 @@ const buildSharePrompt = (mode: ShareChallenge['mode'], totalSlices: number, rat
 
 const createChallenge = (levelId: number, solved: number): ShareChallenge => {
   const mode = shareModeForLevel(levelId);
-  const pattern = [...randomPick(RATIO_PATTERNS)];
+  const plateCount = levelId <= 1 ? 2 : levelId <= 3 ? 3 : MAX_PLATE_COUNT;
+  const patternOptions = RATIO_PATTERNS_BY_COUNT[plateCount] || RATIO_PATTERNS_BY_COUNT[2];
+  const pattern = [...randomPick(patternOptions)];
   const totalUnits = pattern.reduce((sum, value) => sum + value, 0);
   const unitValue = mode === 'direct_share' ? 1 : mode === 'scaled_share' ? 2 : 3;
   const totalSlices = totalUnits * unitValue;
@@ -107,6 +123,7 @@ const createChallenge = (levelId: number, solved: number): ShareChallenge => {
     targetCounts,
     prompt: buildSharePrompt(mode, totalSlices, ratioText),
     mode,
+    plateCount,
   };
 };
 
@@ -122,11 +139,11 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const [attempts, setAttempts] = useState(0);
   const [xpEarned, setXpEarned] = useState(0);
   const [challenge, setChallenge] = useState<ShareChallenge>(() => createChallenge(levelId, 0));
-  const [plates, setPlates] = useState<string[][]>(() => createEmptyPlates());
+  const [plates, setPlates] = useState<string[][]>(() => createEmptyPlates(challenge.plateCount));
   const [remainingSlices, setRemainingSlices] = useState(challenge.totalSlices);
   const [dragSlice, setDragSlice] = useState<DragSlice | null>(null);
   const [hoverPlateIndex, setHoverPlateIndex] = useState<number | null>(null);
-  const [feedback, setFeedback] = useState('Drag slices from the serving plate onto the five plates.');
+  const [feedback, setFeedback] = useState('Drag slices from the serving plate onto the plates.');
   const [feedbackTone, setFeedbackTone] = useState<FeedbackTone>('neutral');
   const [validationActive, setValidationActive] = useState(false);
   const [moveHistory, setMoveHistory] = useState<MoveRecord[]>([]);
@@ -151,11 +168,11 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setAttempts(0);
     setXpEarned(0);
     setChallenge(firstChallenge);
-    setPlates(createEmptyPlates());
+    setPlates(createEmptyPlates(firstChallenge.plateCount));
     setRemainingSlices(firstChallenge.totalSlices);
     setDragSlice(null);
     setHoverPlateIndex(null);
-    setFeedback('Drag slices from the serving plate onto the five plates.');
+    setFeedback(`Drag slices from the serving plate onto the ${firstChallenge.plateCount} plates.`);
     setFeedbackTone('neutral');
     setValidationActive(false);
     setMoveHistory([]);
@@ -180,7 +197,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
   const rules = useMemo(() => ({
     title: 'Share Splitter',
-    summary: 'Use the ratio card to share the cakes across all five plates.',
+    summary: 'Use the ratio card to share the cakes across all plates.',
     bullets: [
       'Drag slices from the serving plate onto a plate.',
       'Match each plate to the ratio shown on the task card.',
@@ -191,14 +208,14 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const loadNextChallenge = useCallback((solvedCount: number) => {
     const next = createChallenge(levelId, solvedCount);
     setChallenge(next);
-    setPlates(createEmptyPlates());
+    setPlates(createEmptyPlates(next.plateCount));
     setRemainingSlices(next.totalSlices);
     setDragSlice(null);
     setHoverPlateIndex(null);
     setValidationActive(false);
     setMoveHistory([]);
     setLocked(false);
-    setFeedback('Drag slices from the serving plate onto the five plates.');
+    setFeedback(`Drag slices from the serving plate onto the ${next.plateCount} plates.`);
     setFeedbackTone('neutral');
   }, [levelId]);
 
@@ -316,7 +333,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
   const resetAllocation = () => {
     if (locked || moveHistory.length === 0) return;
-    setPlates(createEmptyPlates());
+    setPlates(createEmptyPlates(challenge.plateCount));
     setRemainingSlices(challenge.totalSlices);
     setMoveHistory([]);
     setDragSlice(null);
@@ -419,7 +436,10 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         </section>
 
         <section className="shrink-0 rounded-[1.4rem] border border-white/14 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.12),rgba(15,23,42,0.52)_64%)] px-2 py-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)] md:px-3">
-          <div className="grid grid-cols-5 gap-2">
+          <div
+            className="grid gap-2"
+            style={{ gridTemplateColumns: `repeat(${challenge.plateCount}, minmax(0, 1fr))` }}
+          >
             {plateViews.map((plate, index) => {
               const plateTone = validationActive
                 ? plate.isCorrect

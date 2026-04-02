@@ -615,7 +615,7 @@ const App: React.FC = () => {
               </motion.div>
             </AnimatePresence>
 
-            {!isStartScreen ? (
+            {!isStartScreen && !isMapLayoutScreen ? (
               <UnifiedMiniGameHud
                 avatarId={player.avatarId}
                 timeLeft={globalMiniGameHudTimeLeft}

@@ -66,9 +66,7 @@ const RATIO_RAPIDS_LEVELS: LevelData[] = [
   { id: 2, stars: 0, isLocked: false, blueprintKey: 'potion_panic', displayName: 'Potion Panic', gameType: 'potion_pour' },
   { id: 3, stars: 0, isLocked: false, blueprintKey: 'share_splitter', displayName: 'Share Splitter', gameType: 'ratio_rapids' },
   { id: 4, stars: 0, isLocked: false, blueprintKey: 'ratio_fractions', displayName: 'Ratio Fractions', gameType: 'ratio_fractions' },
-  { id: 5, stars: 0, isLocked: false, blueprintKey: 'maths_vs_zombies', displayName: 'Maths vs Zombies', gameType: 'ratio_rapids' },
-  { id: 6, stars: 0, isLocked: false, blueprintKey: 'scale_builder', displayName: 'Scale Builder', gameType: 'scale_safari' },
-  { id: 7, stars: 0, isLocked: false, blueprintKey: 'sling_shot', displayName: 'Sling Shot Skies', gameType: 'sling_shot' },
+  { id: 5, stars: 0, isLocked: false, blueprintKey: 'scale_builder', displayName: 'Scale Builder', gameType: 'scale_safari' },
 ];
 
 export const ISLANDS: IslandData[] = [
@@ -90,6 +88,9 @@ export const ISLANDS: IslandData[] = [
         'prime_pop',
         'rounding_rampage',
       ]),
+      [
+        { id: 1, stars: 0, isLocked: false, blueprintKey: 'maths_vs_zombies', displayName: 'Maths vs Zombies', gameType: 'ratio_rapids' },
+      ],
     ),
   },
   {
@@ -123,7 +124,6 @@ export const ISLANDS: IslandData[] = [
         { id: 3, stars: 0, isLocked: false, blueprintKey: 'area_architect', displayName: 'Area Architect', gameType: 'area_architect' },
         { id: 3, stars: 0, isLocked: false, blueprintKey: 'rotation_relay', displayName: 'Rotation Station', gameType: 'shape_shift' },
         { id: 4, stars: 0, isLocked: false, blueprintKey: 'coordinates_quest', displayName: 'Coordinates Quest', gameType: 'coordinate_quest' },
-        { id: 5, stars: 0, isLocked: false, blueprintKey: 'coordinate_cross', displayName: 'Coordinate Cross', gameType: 'coordinate_cross' },
       ],
       [
         { id: 1, stars: 0, isLocked: false, blueprintKey: 'time_keeper_cove', displayName: 'Chrono Dash: Time Trial', gameType: 'timekeeper_temple' },
