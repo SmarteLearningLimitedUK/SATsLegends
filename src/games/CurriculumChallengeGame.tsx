@@ -1195,8 +1195,37 @@ const renderVisual = (visual: VisualData) => {
   }
 };
 
+const generateChangeCounterQuestion = (): ChallengeQuestion => {
+  const bank: ChallengeQuestion[] = [
+    {
+      prompt: 'A compass costs £4.70 and the customer pays £6.00. How much change?',
+      sublabel: 'Subtract the cost from the amount paid.',
+      options: ['£1.30', '£0.70', '£2.30', '£1.70'],
+      answerIndex: 0,
+      visual: { type: 'ratio', leftLabel: 'Cost', leftValue: '£4.70', rightLabel: 'Paid', rightValue: '£6.00', caption: 'Find the change' },
+    },
+    {
+      prompt: 'A map costs £2.45 and the customer pays £5.00. How much change?',
+      sublabel: 'Keep pounds and pence aligned.',
+      options: ['£2.55', '£2.45', '£3.55', '£1.55'],
+      answerIndex: 0,
+      visual: { type: 'ratio', leftLabel: 'Cost', leftValue: '£2.45', rightLabel: 'Paid', rightValue: '£5.00', caption: 'Find the change' },
+    },
+    {
+      prompt: 'A torch costs £8.20 and the customer pays £10.00. How much change?',
+      sublabel: 'Count on from the cost to the amount paid.',
+      options: ['£1.80', '£2.20', '£0.80', '£3.20'],
+      answerIndex: 0,
+      visual: { type: 'ratio', leftLabel: 'Cost', leftValue: '£8.20', rightLabel: 'Paid', rightValue: '£10.00', caption: 'Find the change' },
+    },
+  ];
+
+  return bank[Math.floor(Math.random() * bank.length)];
+};
+
 const generateQuestion = (gameType: SupportedChallengeGameType, levelId: number): ChallengeQuestion => {
-  const satsInspiredQuestion = Math.random() < 0.7
+  const shouldUseSats = gameType === 'change_counter' ? true : Math.random() < 0.7;
+  const satsInspiredQuestion = shouldUseSats
     ? getSatsInspiredChallengeQuestion(gameType, levelId)
     : null;
 
@@ -1219,6 +1248,8 @@ const generateQuestion = (gameType: SupportedChallengeGameType, levelId: number)
       return generateTransformQuestion();
     case 'scale_safari':
       return generateScaleQuestion();
+    case 'change_counter':
+      return generateChangeCounterQuestion();
     case 'unit_mixer':
       return generateUnitMixerQuestion();
     case 'chart_chase':
@@ -1261,7 +1292,8 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
   const isPlaceValuePeaks = gameType === 'place_value_peaks';
   const isScaleBuilder = gameType === 'scale_safari';
   const isRuleRunner = gameType === 'rule_runner';
-  const usesBlueAnswers = isScaleBuilder || isCalculationClash || isPercentPulse || isRuleRunner;
+  const isChangeCounter = gameType === 'change_counter';
+  const usesBlueAnswers = isScaleBuilder || isCalculationClash || isPercentPulse || isRuleRunner || isChangeCounter;
   const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
   const targetScore = 780 + (levelId * 180);
   const progress = Math.min((XP / targetScore) * 100, 100);
