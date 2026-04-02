@@ -95,6 +95,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const hitShakeRef = useRef<number | null>(null);
   const desiredAngleRef = useRef(40);
   const launcherAngleRef = useRef(40);
+  const selectedAnswerRef = useRef<number | null>(null);
   const catapultImageRef = useRef<HTMLImageElement | null>(null);
   const backgroundImageRef = useRef<HTMLImageElement | null>(null);
   const projectileRef = useRef<ProjectileState | null>(null);
@@ -216,7 +217,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         XP: nextScore,
         metadata: {
           questionId: activeQuestion?.id,
-          selected: selectedAnswer,
+          selected: selectedAnswerRef.current,
         },
       });
       setGameState('resolvedCorrect');
@@ -227,7 +228,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         XP: score,
         metadata: {
           questionId: activeQuestion?.id,
-          selected: selectedAnswer,
+          selected: selectedAnswerRef.current,
         },
       });
       if (!sessionState) {
@@ -261,6 +262,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
   const handleAnswer = (answer: number) => {
     if (gameState !== 'awaitingAnswer' || !activeQuestion) return;
+    selectedAnswerRef.current = answer;
     setSelectedAnswer(answer);
     setFeedback('');
     desiredAngleRef.current = answer;
@@ -277,12 +279,14 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   useEffect(() => {
     if (selectedAnswer) {
       desiredAngleRef.current = selectedAnswer;
+      selectedAnswerRef.current = selectedAnswer;
     }
   }, [selectedAnswer]);
 
   const handleFire = () => {
     if (!selectedAnswer || !activeQuestion) return;
     if (gameState !== 'aiming' && gameState !== 'awaitingAnswer') return;
+    selectedAnswerRef.current = selectedAnswer;
     if (aimTimeoutRef.current) window.clearTimeout(aimTimeoutRef.current);
     setGameState('firing');
     aimTimeoutRef.current = window.setTimeout(() => {
@@ -331,7 +335,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       const targetX = activeQuestion?.targetX ?? WORLD.width - 260;
       const targetY = activeQuestion?.targetY ?? WORLD.groundY - 42;
       const correctAnswer = activeQuestion?.correctAnswer ?? 0;
-      const allowHit = selectedAnswer === correctAnswer;
+      const allowHit = selectedAnswerRef.current === correctAnswer;
 
       if (projectile?.active) {
         if (allowHit) {
