@@ -182,9 +182,6 @@ export const AppRouter: React.FC<AppRouterProps> = ({
 
     switch (selectedLevel.gameType) {
       case 'cloud_collapse':
-        if (selectedLevel.blueprintKey === 'fraction_flow') {
-          return renderFromRegistry('FractionFlowGame', sharedProps);
-        }
         return renderFromRegistry('FractionMatchGame', { ...sharedProps, variantGameType: 'cloud_collapse', isBoss: Boolean(selectedLevel.isBoss) });
       case 'potion_pour':
         return renderFromRegistry('PotionPourGame', sharedProps);

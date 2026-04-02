@@ -1395,13 +1395,15 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
             <div className={`casual-panel-strong relative shrink-0 overflow-hidden ${isPlaceValuePeaks ? 'rounded-[1.25rem] border border-amber-200/18 bg-[linear-gradient(180deg,rgba(124,45,18,0.88),rgba(83,33,13,0.92))]' : 'rounded-[1.35rem]'} px-3 py-3 text-center md:rounded-[2rem] md:px-5 md:py-5`}>
               <div className={`absolute inset-x-5 top-0 h-20 rounded-full bg-gradient-to-br ${isPlaceValuePeaks ? 'from-yellow-200/18 via-orange-300/12 to-transparent' : theme.prompt} blur-3xl`} />
               <div className="relative z-10 flex flex-col items-center">
-                <div className={`${isPlaceValuePeaks ? 'mb-2 rounded-[0.9rem] border border-amber-200/24 bg-[linear-gradient(180deg,rgba(251,146,60,0.3),rgba(194,65,12,0.18))] px-3 py-1.5 text-amber-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]' : `casual-ribbon-chip mb-2 inline-flex items-center justify-center rounded-full px-3 py-1 text-[8px] font-black uppercase tracking-[0.18em] md:mb-3 md:px-4 md:py-1.5 md:text-[10px] ${theme.badge}`}`}>
-                  {isPlaceValuePeaks ? 'Highest Number Dash' : meta.focus}
-                </div>
-                <div className={`${isCalculationClash ? 'text-[1.15rem]' : isPlaceValuePeaks ? 'text-[1.18rem]' : 'text-[1.28rem]'} max-w-[18rem] font-black leading-[0.95] text-white md:max-w-[30rem] md:text-[2.25rem]`}>
+                {!isPercentPulse ? (
+                  <div className={`${isPlaceValuePeaks ? 'mb-2 rounded-[0.9rem] border border-amber-200/24 bg-[linear-gradient(180deg,rgba(251,146,60,0.3),rgba(194,65,12,0.18))] px-3 py-1.5 text-amber-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]' : `casual-ribbon-chip mb-2 inline-flex items-center justify-center rounded-full px-3 py-1 text-[8px] font-black uppercase tracking-[0.18em] md:mb-3 md:px-4 md:py-1.5 md:text-[10px] ${theme.badge}`}`}>
+                    {isPlaceValuePeaks ? 'Highest Number Dash' : meta.focus}
+                  </div>
+                ) : null}
+                <div className={`${isPercentPulse ? 'text-[1.02rem] leading-[1.05] md:text-[1.55rem]' : isCalculationClash ? 'text-[1.15rem]' : isPlaceValuePeaks ? 'text-[1.18rem]' : 'text-[1.28rem]'} max-w-[18rem] font-black text-white md:max-w-[30rem] ${isPercentPulse ? '' : 'leading-[0.95]'} `}>
                   {question.prompt}
                 </div>
-                <div className="mt-1 max-w-[18rem] text-[9px] font-semibold leading-snug text-white/70 md:mt-2 md:max-w-[30rem] md:text-sm">
+                <div className={`mt-1 max-w-[18rem] font-semibold leading-snug text-white/70 md:mt-2 md:max-w-[30rem] ${isPercentPulse ? 'text-[8px] md:text-[11px]' : 'text-[9px] md:text-sm'}`}>
                   {question.sublabel}
                 </div>
               </div>
@@ -1445,14 +1447,16 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                     whileTap={{ scale: 0.985 }}
                     onClick={() => handleAnswer(index)}
                     disabled={Boolean(feedback) || isVictory || isGameOver}
-                    className={`relative flex min-h-[3.55rem] w-full shrink-0 items-center justify-center overflow-hidden px-3 py-2 text-center shadow-[0_16px_26px_rgba(0,0,0,0.24)] transition-transform md:min-h-[4.7rem] md:px-5 md:py-3 ${
+                    className={`relative flex w-full shrink-0 items-center justify-center overflow-hidden px-3 py-2 text-center shadow-[0_16px_26px_rgba(0,0,0,0.24)] transition-transform ${
                       isPlaceValuePeaks
-                        ? 'rounded-[1.1rem] border border-stone-400/24 bg-[linear-gradient(180deg,rgba(132,94,64,0.92),rgba(84,58,40,0.98))] shadow-[inset_0_2px_0_rgba(255,255,255,0.12),0_10px_0_rgba(41,24,14,0.72),0_18px_26px_rgba(0,0,0,0.24)] md:rounded-[1.35rem]'
+                        ? 'min-h-[3.55rem] rounded-[1.1rem] border border-stone-400/24 bg-[linear-gradient(180deg,rgba(132,94,64,0.92),rgba(84,58,40,0.98))] shadow-[inset_0_2px_0_rgba(255,255,255,0.12),0_10px_0_rgba(41,24,14,0.72),0_18px_26px_rgba(0,0,0,0.24)] md:min-h-[4.7rem] md:rounded-[1.35rem] md:px-5 md:py-3'
                         : isScaleBuilder
-                          ? 'rounded-[1.05rem] border border-sky-100/26 shadow-[0_16px_26px_rgba(0,0,0,0.24)] md:rounded-[1.2rem]'
+                          ? 'min-h-[3.55rem] rounded-[1.05rem] border border-sky-100/26 shadow-[0_16px_26px_rgba(0,0,0,0.24)] md:min-h-[4.7rem] md:rounded-[1.2rem] md:px-5 md:py-3'
                           : isCalculationClash
-                            ? 'rounded-[1.05rem] border border-sky-100/24 shadow-[0_16px_26px_rgba(0,0,0,0.24)] md:rounded-[1.2rem]'
-                          : 'rounded-[999px]'
+                            ? 'min-h-[3.55rem] rounded-[1.05rem] border border-sky-100/24 shadow-[0_16px_26px_rgba(0,0,0,0.24)] md:min-h-[4.7rem] md:rounded-[1.2rem] md:px-5 md:py-3'
+                            : isPercentPulse
+                              ? 'min-h-[2.85rem] rounded-[1.05rem] border border-cyan-100/24 shadow-[0_14px_22px_rgba(0,0,0,0.22)] md:min-h-[3.7rem] md:rounded-[1.2rem] md:px-4 md:py-2.5'
+                              : 'min-h-[3.55rem] rounded-[999px] md:min-h-[4.7rem] md:px-5 md:py-3'
                     }`}
                   >
                     {!isPlaceValuePeaks && <img src={answerBackground} alt="" className="absolute inset-0 h-full w-full object-fill" draggable={false} />}
@@ -1473,10 +1477,10 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                     )}
                     <div className={`absolute inset-x-[8%] top-[10%] h-[34%] ${isPlaceValuePeaks ? 'rounded-[0.9rem]' : 'rounded-full'} bg-white/18 blur-md`} />
                     <div className="relative z-10 flex w-full items-center gap-2.5 md:gap-3">
-                      <div className={`flex h-7 w-7 shrink-0 items-center justify-center border text-[9px] font-black uppercase md:h-8 md:w-8 md:text-[11px] ${isPlaceValuePeaks ? 'rounded-[0.7rem] border-amber-100/14 bg-black/14 text-amber-50' : isScaleBuilder || isCalculationClash ? `rounded-[0.65rem] ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/45 text-slate-900' : 'border-white/16 bg-white/12 text-white'}` : `rounded-full ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/35 text-slate-900' : 'border-white/14 bg-white/10 text-white'}`}`}>
+                      <div className={`flex shrink-0 items-center justify-center border font-black uppercase ${isPercentPulse ? 'h-6 w-6 rounded-[0.55rem] text-[8px] md:h-7 md:w-7 md:text-[10px]' : 'h-7 w-7 text-[9px] md:h-8 md:w-8 md:text-[11px]'} ${isPlaceValuePeaks ? 'rounded-[0.7rem] border-amber-100/14 bg-black/14 text-amber-50' : isScaleBuilder || isCalculationClash || isPercentPulse ? `rounded-[0.65rem] ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/45 text-slate-900' : 'border-white/16 bg-white/12 text-white'}` : `rounded-full ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/35 text-slate-900' : 'border-white/14 bg-white/10 text-white'}`}`}>
                         {String.fromCharCode(65 + index)}
                       </div>
-                      <div className={`flex-1 text-center ${isPlaceValuePeaks ? 'text-[1.1rem] md:text-[1.7rem] text-amber-50' : isScaleBuilder || isCalculationClash ? 'text-[1rem] md:text-[1.35rem] text-white' : 'text-[1.02rem] md:text-[1.45rem] text-white'} font-black leading-none tracking-[-0.02em] drop-shadow-[0_2px_2px_rgba(0,0,0,0.42)]`}>
+                      <div className={`flex-1 text-center ${isPlaceValuePeaks ? 'text-[1.1rem] md:text-[1.7rem] text-amber-50' : isPercentPulse ? 'text-[0.9rem] md:text-[1.12rem] text-white' : isScaleBuilder || isCalculationClash ? 'text-[1rem] md:text-[1.35rem] text-white' : 'text-[1.02rem] md:text-[1.45rem] text-white'} font-black leading-none tracking-[-0.02em] drop-shadow-[0_2px_2px_rgba(0,0,0,0.42)]`}>
                         {option}
                       </div>
                     </div>

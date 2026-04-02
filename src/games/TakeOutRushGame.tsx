@@ -530,6 +530,11 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     ? 'pt-[calc(env(safe-area-inset-top)+5.45rem)]'
     : 'pt-[max(0.2rem,env(safe-area-inset-top))]';
 
+  const availableItems = useMemo(
+    () => allowedIdsByStage(order.stage).map((id) => ITEM_BY_ID[id]).filter(Boolean),
+    [order.stage],
+  );
+
   return (
     <FoodGameShell gameType="take_out_rush" backgroundImage={takeOutLevelBg}>
       <div className={`relative z-20 flex min-h-0 flex-1 flex-col ${topOffsetClass}`}>
@@ -564,25 +569,12 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
 
         <main className="relative mt-1.5 flex min-h-0 flex-1 flex-col gap-2 pb-[calc(env(safe-area-inset-bottom)+3.9rem)]">
           <section className="shrink-0 rounded-[1.25rem] border border-cyan-100/22 bg-slate-950/58 p-2.5 shadow-[0_10px_22px_rgba(2,6,23,0.42)]">
-            <div className="REMOVED_X">
-              {customerVisuals.map((item, idx) => (
-                <div key={`${order.id}-${item.id}-${idx}`} className="rounded-[0.95rem] border border-amber-100/28 bg-slate-900/58 p-1.5 text-center">
-                  <div className="text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100/72">Order {idx + 1}</div>
-                  <div className="mt-1 flex items-center justify-center gap-1">
-                    <FoodSprite item={item} className="h-10 w-10 rounded-full bg-slate-800/45 ring-1 ring-white/20" />
-                    <span className="text-sm font-black text-amber-200">↑</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-2.5 flex items-start justify-between gap-2">
+            <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
                 <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/76">Current Order</div>
                 <div className="mt-0.5 text-[clamp(0.95rem,3.9vw,1.2rem)] font-black text-white">
                   Target: {asDisplayFraction(order.target)}
                 </div>
-                <div className="mt-1 text-[11px] font-semibold text-slate-100/86">{order.text}</div>
               </div>
               {order.rushTag ? (
                 <div className="shrink-0 rounded-full border border-amber-100/45 bg-amber-300/24 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-amber-100">
@@ -591,7 +583,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
               ) : null}
             </div>
 
-            <div className="mt-2.5 flex flex-wrap gap-2">
+            <div className="mt-2 flex flex-wrap gap-2">
               {order.constraints.length === 0 ? (
                 <span className="rounded-full border border-emerald-100/45 bg-emerald-400/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-100">
                   No restrictions
@@ -615,142 +607,88 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                 })
               )}
             </div>
+          </section>
 
-            <div className="mt-2 grid grid-cols-2 gap-2">
-              <div className="rounded-[0.95rem] border border-cyan-100/20 bg-blue-950/46 px-3 py-2">
-                <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/72">Running Total</div>
-                <div className="mt-1 text-xl font-black text-amber-100">{asDisplayFraction(runningTotal)}</div>
-              </div>
-              <div className="rounded-[0.95rem] border border-cyan-100/20 bg-blue-950/46 px-3 py-2">
-                <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/72">Orders Served</div>
-                <div className="mt-1 text-xl font-black text-white">{ordersServed}</div>
-              </div>
+          <section className="rounded-[1.25rem] border border-cyan-100/18 bg-blue-950/46 p-2.5 shadow-[0_10px_18px_rgba(2,6,23,0.42)]">
+            <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/72">
+              <span>Tray</span>
+              <button
+                type="button"
+                onClick={clearTray}
+                disabled={selectedIds.length === 0 || isResolvingOrder}
+                className="rounded-full border border-white/18 bg-slate-900/54 px-2 py-0.5 text-[9px] font-black uppercase text-cyan-100/80 transition disabled:opacity-50"
+              >
+                Reset
+              </button>
             </div>
 
-            <div className="mt-2.5 h-3.5 overflow-hidden rounded-full border border-white/18 bg-blue-950/52">
-              <div
-                className={`h-full transition-all ${runningRatio > 1 ? 'bg-gradient-to-r from-rose-500 to-orange-400' : 'bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500'}`}
-                style={{ width: `${Math.min(100, Math.max(0, runningRatio * 100))}%` }}
-              />
+            <div className="mt-2 flex min-h-[3.25rem] flex-wrap gap-2">
+              {selectedItems.length === 0 ? (
+                <div className="text-[11px] font-semibold text-cyan-100/55">Tap items below to add them.</div>
+              ) : (
+                selectedItems.map((item, index) => (
+                  <button
+                    key={`${item.id}-${index}`}
+                    type="button"
+                    onClick={() => removeSelectedItem(index)}
+                    className="flex items-center gap-2 rounded-full border border-white/14 bg-slate-900/40 px-2.5 py-1 text-left text-[11px] font-semibold text-white transition hover:border-white/30"
+                  >
+                    <FoodSprite item={item} className="h-6 w-6 object-contain" />
+                    <span className="truncate">{item.name}</span>
+                  </button>
+                ))
+              )}
             </div>
           </section>
 
-          <section className="shrink-0 rounded-[1.2rem] border border-cyan-100/20 bg-slate-950/54 p-2">
-            <div className="mb-1.5 flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/75">Order Tray</span>
+          <section className="rounded-[1.25rem] border border-cyan-100/16 bg-slate-950/50 p-2.5 shadow-[0_8px_18px_rgba(2,6,23,0.4)]">
+            <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/72">Menu</div>
+            <div className="mt-2 grid grid-cols-3 gap-2">
+              {availableItems.map((item) => (
                 <button
+                  key={item.id}
                   type="button"
-                  onClick={clearTray}
-                  className="rounded-full border border-white/20 bg-slate-900/56 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-white"
+                  onClick={() => addItem(item.id)}
+                  disabled={isResolvingOrder || roundFinished}
+                  className="group flex flex-col items-center justify-center rounded-[1rem] border border-white/12 bg-slate-900/46 px-2 py-2 text-[11px] font-semibold text-white transition hover:border-white/30 disabled:opacity-50"
                 >
-                  Clear
+                  <div className={`mb-1 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${item.colorClass} shadow-[0_8px_14px_rgba(15,23,42,0.4)]`}>
+                    <FoodSprite item={item} className="h-7 w-7 object-contain" />
+                  </div>
+                  <span className="text-center text-[10px] font-semibold">{item.name}</span>
+                  <span className="mt-0.5 text-[9px] text-cyan-100/70">{asDisplayFraction(item.value)}</span>
                 </button>
-              </div>
-
-            <div className="flex min-h-[3.25rem] flex-wrap items-center gap-1.5 rounded-[0.9rem] border border-amber-100/20 bg-amber-100/10 p-1.5">
-                {selectedItems.length === 0 ? (
-                  <span className="px-2 text-xs font-semibold text-slate-200/78">Tap foods below to pack the order.</span>
-                ) : (
-                  selectedItems.map((item, index) => (
-                    <button
-                      type="button"
-                      key={`${item.id}-${index}`}
-                      onClick={() => removeSelectedItem(index)}
-                      className={`flex items-center gap-1 rounded-full border border-white/20 bg-gradient-to-r ${item.colorClass} px-2 py-1 text-[10px] font-black text-slate-950 shadow-[0_6px_12px_rgba(2,6,23,0.26)]`}
-                    >
-                      <FoodSprite item={item} className="h-4 w-4 rounded-full ring-1 ring-white/35" />
-                      <span>{asDisplayFraction(item.value)}</span>
-                    </button>
-                  ))
-                )}
+              ))}
             </div>
-
-            <button
-              type="button"
-              onClick={() => submitOrder(false)}
-              disabled={!canSubmit}
-              className="mt-2 h-11 w-full rounded-[1rem] border border-amber-100/65 bg-[linear-gradient(180deg,#f8d877_0%,#f5b429_100%)] text-sm font-black uppercase tracking-[0.12em] text-slate-900 shadow-[0_10px_18px_rgba(2,6,23,0.34)] transition active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-45"
-            >
-              Submit Order
-            </button>
           </section>
 
-          <section className="min-h-0 flex-1 rounded-[1.2rem] border border-cyan-100/20 bg-slate-950/54 p-2">
-              <div className="mb-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/76">Food Station</div>
-              <div className="grid grid-cols-4 gap-1.5">
-                {FOOD_ITEMS.map((item) => {
-                  const blocked = activeConstraints.bannedIds.has(item.id);
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => addItem(item.id)}
-                      disabled={blocked || roundFinished}
-                      className={`relative overflow-hidden rounded-[1rem] border p-2 transition ${
-                        blocked
-                          ? 'border-rose-200/45 bg-rose-500/22 opacity-60'
-                          : 'border-cyan-100/25 bg-blue-950/42 hover:brightness-110'
-                      }`}
-                    >
-                      <div className="mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-full bg-white/14">
-                        <FoodSprite item={item} className="h-7 w-7 rounded-full ring-1 ring-white/35" />
-                      </div>
-                      <div className="line-clamp-1 text-[9px] font-black leading-tight text-white">{item.name}</div>
-                      <div className="mt-0.5 text-[10px] font-black text-amber-200">{asDisplayFraction(item.value)}</div>
-                      {blocked ? (
-                        <div className="absolute right-1 top-1 rounded-full bg-rose-300/85 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-[0.08em] text-rose-950">
-                          Ban
-                        </div>
-                      ) : null}
-                    </button>
-                  );
-                })}
+          <section className="mt-auto rounded-[1.25rem] border border-cyan-100/20 bg-slate-950/55 px-3 py-2 shadow-[0_12px_22px_rgba(2,6,23,0.46)]">
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0 text-[11px] font-semibold text-cyan-100/70">
+                {feedback?.text ?? (isExact && constraintsMet ? 'Ready to send!' : 'Build the order to match the target.')}
               </div>
+              <button
+                type="button"
+                onClick={() => submitOrder(false)}
+                disabled={!canSubmit}
+                className="rounded-full bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 px-4 py-2 text-sm font-black text-slate-900 shadow-[0_10px_18px_rgba(251,146,60,0.4)] transition disabled:opacity-50"
+              >
+                Send Order
+              </button>
+            </div>
           </section>
+
+          <AnimatePresence>
+            {showSuccessBurst ? (
+              <motion.div
+                className="pointer-events-none absolute inset-0 rounded-[2rem] border border-amber-200/40 bg-amber-100/5"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              />
+            ) : null}
+          </AnimatePresence>
         </main>
-      </div>
-
-      <AnimatePresence>
-        {feedback ? (
-          <motion.div
-            key={feedback.text}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className={`pointer-events-none absolute left-1/2 top-[calc(env(safe-area-inset-top)+4.5rem)] z-50 -translate-x-1/2 rounded-full border px-4 py-1.5 text-xs font-black uppercase tracking-[0.11em] shadow-[0_12px_22px_rgba(2,6,23,0.45)] ${
-              feedback.tone === 'success'
-                ? 'border-emerald-100/65 bg-emerald-500/28 text-emerald-50'
-                : feedback.tone === 'error'
-                  ? 'border-rose-100/65 bg-rose-500/30 text-rose-50'
-                  : 'border-cyan-100/65 bg-cyan-500/25 text-cyan-50'
-            }`}
-          >
-            {feedback.text}
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {showSuccessBurst ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="pointer-events-none absolute inset-0 z-30"
-          >
-            <motion.div
-              initial={{ opacity: 0.2, scale: 0.9 }}
-              animate={{ opacity: [0.2, 0.7, 0.2], scale: [0.9, 1.04, 0.94] }}
-              transition={{ duration: 0.32, ease: 'easeOut' }}
-              className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(245,158,11,0.24),rgba(14,116,144,0.06)_45%,transparent_72%)]"
-            />
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
-
-      <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.45rem,env(safe-area-inset-bottom))] z-40 flex justify-center px-3">
-        <div className="pointer-events-auto">
-        </div>
       </div>
     </FoodGameShell>
   );

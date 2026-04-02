@@ -43,7 +43,6 @@ const GAME_SUMMARY_BY_KEY: Record<string, string> = {
   take_out_rush: 'Build exact order totals by combining fraction portions in the tray.',
   fraction_forge: 'Combine and refine fractions to hit exact forged targets.',
   match3_equivalence: 'Chain equivalent fractions, decimals, and percentages to XP combos.',
-  fraction_flow: 'Order mixed fraction values correctly while the stream speeds up.',
   fraction_of_amount: 'Take exact fractions of sets through quick allocation challenges.',
   percent_power: 'Solve percentage of amount and reverse percentage challenges.',
   simplify_sprint: 'Reduce fractions to simplest form in rapid Combo rounds.',

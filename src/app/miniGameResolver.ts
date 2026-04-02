@@ -9,9 +9,6 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
 
   switch (level.gameType) {
     case 'cloud_collapse':
-      if (level.blueprintKey === 'fraction_flow') {
-        return 'FractionFlowGame';
-      }
     case 'fraction_match':
       if (level.blueprintKey === 'simplify_sprint') {
         return 'SimplifySprintGame';
