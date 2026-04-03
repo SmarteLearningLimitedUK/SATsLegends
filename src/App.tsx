@@ -573,6 +573,9 @@ const App: React.FC = () => {
                 initial={{ opacity: 0, scale: screenEnterScale }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: screenExitScale }}
+                data-qa-root="screen"
+                data-qa-screen={screen}
+                data-qa-scrollable={screenBehavior.scrollable ? 'true' : 'false'}
                 className={`app-screen-content relative z-10 flex min-h-0 w-full flex-1 justify-center pointer-events-auto ${screenBehavior.scrollable ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'} ${contentShellClass} ${globalDockOffsetClass}`}
                 style={screenBehavior.scrollable ? { WebkitOverflowScrolling: 'touch' } : undefined}
               >

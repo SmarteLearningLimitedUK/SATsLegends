@@ -12,9 +12,9 @@ const cn = (...parts: Array<string | false | null | undefined>) => parts.filter(
 const ROLE_CARD_BASE =
   'relative overflow-hidden border border-white/16 shadow-[0_14px_28px_rgba(2,6,23,0.34)]';
 
-const ROLE_RADIUS_HUD = 'rounded-[1.1rem] md:rounded-[1.45rem]';
-const ROLE_RADIUS_CARD = 'rounded-[1.3rem] md:rounded-[1.8rem]';
-const ROLE_RADIUS_PANEL = 'rounded-[1.05rem] md:rounded-[1.35rem]';
+const ROLE_RADIUS_HUD = 'rounded-[1rem] md:rounded-[1.35rem]';
+const ROLE_RADIUS_CARD = 'rounded-[1.15rem] md:rounded-[1.6rem]';
+const ROLE_RADIUS_PANEL = 'rounded-[0.95rem] md:rounded-[1.2rem]';
 
 const fillSlice = (asset: string): React.CSSProperties => ({
   backgroundImage: `url(${asset})`,
@@ -102,7 +102,7 @@ export const MissionStrip: React.FC<MissionStripProps> = ({
     className={cn(
       ROLE_CARD_BASE,
       ROLE_RADIUS_HUD,
-      'mission-strip mission-header-shell px-4 py-3 md:px-5 md:py-4',
+      'mission-strip mission-header-shell px-3 py-2.5 md:px-4 md:py-3',
       tone === 'focus'
         ? 'shadow-[0_16px_34px_rgba(8,145,178,0.22)]'
         : 'shadow-[0_12px_26px_rgba(2,6,23,0.28)]',
@@ -142,7 +142,7 @@ export const PremiumHeaderBar: React.FC<PremiumHeaderBarProps> = ({
 export const HeroPlayfieldCard: React.FC<WrapperProps> = ({ children, className = '' }) => (
   <div
     className={cn(
-      'game-shell-zone game-shell-zone-playfield licensed-board-frame mission-panel-shell structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden p-3 md:p-5',
+      'game-shell-zone game-shell-zone-playfield licensed-board-frame mission-panel-shell structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden p-2.5 md:p-4',
       ROLE_CARD_BASE,
       ROLE_RADIUS_CARD,
       className,
@@ -164,7 +164,7 @@ export const AnswerClusterCard: React.FC<WrapperProps> = ({ children, className 
   <div className={cn('game-shell-zone game-shell-zone-actions shrink-0', className)}>
     <div
       className={cn(
-        'licensed-game-card-dark mission-panel-shell p-3 md:p-4',
+        'licensed-game-card-dark mission-panel-shell p-2.5 md:p-3',
         ROLE_CARD_BASE,
         ROLE_RADIUS_CARD,
       )}
@@ -204,10 +204,10 @@ export const PrimaryActionCTA: React.FC<ActionButtonProps> = ({
     disabled={disabled}
     className={cn(
       'ui-button-primary gameplay-cta-primary mission-action-btn mission-action-btn-primary',
-      'inline-flex min-h-[46px] items-center justify-center rounded-[1.05rem] border border-white/24',
-      'px-5 py-2.5 text-[11px] font-black uppercase tracking-[0.14em] text-white',
+      'inline-flex min-h-[44px] items-center justify-center rounded-[0.95rem] border border-white/24',
+      'px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white',
       'disabled:cursor-not-allowed disabled:opacity-60',
-      'md:min-h-[50px] md:rounded-[1.25rem] md:px-6 md:py-3 md:text-sm',
+      'md:min-h-[48px] md:rounded-[1.1rem] md:px-5 md:py-2.5 md:text-xs',
       className,
     )}
     style={fillSlice(GUI_SLICES.buttonPrimary)}
@@ -237,10 +237,10 @@ export const SecondaryUtilityButton: React.FC<ActionButtonProps> = ({
     disabled={disabled}
     className={cn(
       'ui-button-secondary gameplay-cta-secondary mission-action-btn mission-action-btn-secondary',
-      'inline-flex min-h-[42px] items-center justify-center rounded-[1rem] border border-white/20',
-      'px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white',
+      'inline-flex min-h-[40px] items-center justify-center rounded-[0.9rem] border border-white/20',
+      'px-3 py-1.5 text-[9.5px] font-black uppercase tracking-[0.14em] text-white',
       'disabled:cursor-not-allowed disabled:opacity-60',
-      'md:min-h-[46px] md:rounded-[1.2rem] md:px-5 md:py-2.5 md:text-xs',
+      'md:min-h-[44px] md:rounded-[1.05rem] md:px-4 md:py-2 md:text-[10px]',
       className,
     )}
     style={fillSlice(GUI_SLICES.buttonSecondary)}
@@ -260,7 +260,7 @@ export const SecondaryActionButton = SecondaryUtilityButton;
 export const UtilityControlsRow: React.FC<WrapperProps> = ({ children, className = '' }) => (
   <div
     className={cn(
-      'game-utility-controls-row flex w-full items-center justify-center gap-2.5 md:gap-3',
+      'game-utility-controls-row flex w-full items-center justify-center gap-2 md:gap-2.5',
       className,
     )}
   >
@@ -298,7 +298,7 @@ export const OverlaySurface: React.FC<OverlaySurfaceProps> = ({
       className={cn(
         ROLE_CARD_BASE,
         ROLE_RADIUS_PANEL,
-        'overlay-surface p-3 md:p-4',
+        'overlay-surface p-2.5 md:p-3',
         variantClass,
         className,
       )}
@@ -334,7 +334,7 @@ export const FramedPanel: React.FC<FramedPanelProps> = ({
 export const RewardPanel: React.FC<WrapperProps> = ({ children, className = '' }) => (
   <div
     className={cn(
-      'licensed-slice-paper-panel mission-paper-shell px-4 py-3 text-amber-950 md:px-5 md:py-4',
+      'licensed-slice-paper-panel mission-paper-shell px-3 py-2.5 text-amber-950 md:px-4 md:py-3',
       ROLE_CARD_BASE,
       ROLE_RADIUS_PANEL,
       className,
@@ -353,7 +353,7 @@ type HUDPillProps = {
 export const HUDPill: React.FC<HUDPillProps> = ({ children, className = '' }) => (
   <div
     className={cn(
-      'licensed-slice-blue-banner mission-pill inline-flex min-h-[30px] items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-white md:min-h-[34px] md:px-3.5 md:text-[11px]',
+      'licensed-slice-blue-banner mission-pill inline-flex min-h-[28px] items-center gap-1.5 rounded-full px-2.5 py-1 text-[9.5px] font-black uppercase tracking-[0.16em] text-white md:min-h-[32px] md:px-3 md:text-[10px]',
       className,
     )}
     style={fillSlice(GUI_SLICES.listPanel)}
@@ -377,7 +377,7 @@ export const PremiumProgressBar: React.FC<PremiumProgressBarProps> = ({
   return (
     <div
       className={cn(
-        'relative h-4 w-full overflow-hidden rounded-full border border-white/18 bg-black/35 md:h-[1.15rem] mission-progress-shell',
+      'relative h-3.5 w-full overflow-hidden rounded-full border border-white/18 bg-black/35 md:h-4 mission-progress-shell',
         className,
       )}
       style={fillSlice(GUI_SLICES.progressBg)}
@@ -422,7 +422,7 @@ export const GameScreenTemplate: React.FC<GameScreenTemplateProps> = ({
   <GameScreenShell className={cn('game-screen-template', className)}>
     {background}
     {decorations}
-    <div className="game-shell-content relative z-10 mx-auto flex h-full min-h-0 w-full max-w-full flex-1 flex-col gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] pt-[calc(env(safe-area-inset-top)+0.2rem)] md:gap-3 md:px-3 md:pb-[calc(env(safe-area-inset-bottom)+0.6rem)] md:pt-[calc(env(safe-area-inset-top)+0.35rem)]">
+    <div className="game-shell-content relative z-10 mx-auto flex h-full min-h-0 w-full max-w-full flex-1 flex-col gap-1.5 px-1.5 pb-[calc(env(safe-area-inset-bottom)+0.3rem)] pt-[calc(env(safe-area-inset-top)+0.15rem)] md:gap-2.5 md:px-2 md:pb-[calc(env(safe-area-inset-bottom)+0.45rem)] md:pt-[calc(env(safe-area-inset-top)+0.3rem)]">
       <div className="game-shell-zone game-shell-zone-hud shrink-0">{hud}</div>
       {titleStrip ? <div className="game-shell-zone game-shell-zone-title shrink-0">{titleStrip}</div> : null}
       <div className="game-shell-zone game-shell-zone-playfield-wrapper min-h-0 flex-1">

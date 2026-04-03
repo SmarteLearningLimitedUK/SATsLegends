@@ -59,9 +59,9 @@ export const GAME_UI_TOKENS = {
     full: 999,
   },
   buttonHeights: {
-    icon: 48,
-    secondary: 54,
-    primary: 62,
+    icon: 44,
+    secondary: 48,
+    primary: 56,
   },
 };
 
@@ -74,7 +74,7 @@ export const IconButton: React.FC<IconButtonProps> = ({ icon, label, onClick, di
     disabled={disabled}
     aria-label={label}
     className={cn(
-      'ui-icon-button inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/20',
+      'ui-icon-button inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20',
       'bg-white/10 text-white shadow-[0_10px_20px_rgba(15,23,42,0.28)]',
       'transition active:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-60',
     )}
@@ -119,8 +119,8 @@ export const PrimaryButton: React.FC<ButtonProps> = ({ children, className, onCl
     onClick={onClick}
     disabled={disabled}
     className={cn(
-      'ui-button-primary inline-flex h-[62px] w-full items-center justify-center gap-2 rounded-[2rem] border',
-      'px-5 text-[clamp(15px,2.2vh,20px)] font-black tracking-[0.01em]',
+      'ui-button-primary inline-flex h-[56px] w-full items-center justify-center gap-2 rounded-[1.8rem] border',
+      'px-4 text-[clamp(14px,2vh,18px)] font-black tracking-[0.01em]',
       'transition disabled:cursor-not-allowed disabled:opacity-60',
       className,
     )}
@@ -135,8 +135,8 @@ export const SecondaryButton: React.FC<ButtonProps> = ({ children, className, on
     onClick={onClick}
     disabled={disabled}
     className={cn(
-      'ui-button-secondary inline-flex h-[54px] items-center justify-center rounded-[1.6rem] border',
-      'px-4 text-[11px] font-black uppercase tracking-[0.1em]',
+      'ui-button-secondary inline-flex h-[48px] items-center justify-center rounded-[1.4rem] border',
+      'px-3 text-[10px] font-black uppercase tracking-[0.1em]',
       'transition disabled:cursor-not-allowed disabled:opacity-50',
       className,
     )}
@@ -148,7 +148,7 @@ export const SecondaryButton: React.FC<ButtonProps> = ({ children, className, on
 export const StoryCard: React.FC<WrapperProps> = ({ children, className }) => (
   <div
     className={cn(
-      'licensed-game-card mission-panel-shell rounded-[1.25rem] px-4 py-2 text-center text-slate-100',
+      'licensed-game-card mission-panel-shell rounded-[1.1rem] px-3 py-2 text-center text-slate-100',
       className,
     )}
   >
@@ -159,7 +159,7 @@ export const StoryCard: React.FC<WrapperProps> = ({ children, className }) => (
 export const TaskCard: React.FC<WrapperProps> = ({ children, className }) => (
   <div
     className={cn(
-      'licensed-game-card mission-panel-shell rounded-[1.25rem] px-4 py-3 text-slate-100',
+      'licensed-game-card mission-panel-shell rounded-[1.1rem] px-3 py-2.5 text-slate-100',
       className,
     )}
   >
@@ -174,7 +174,7 @@ export const FeedbackStrip: React.FC<{ tone?: FeedbackTone; children: React.Reac
 }) => (
   <div
     className={cn(
-      'licensed-game-card mission-panel-shell rounded-[1.25rem] border px-4 py-2 text-center text-sm font-black shadow-[0_10px_18px_rgba(15,23,42,0.22)]',
+      'licensed-game-card mission-panel-shell rounded-[1.1rem] border px-3 py-2 text-center text-[13px] font-black shadow-[0_10px_18px_rgba(15,23,42,0.22)]',
       tone === 'success'
         ? 'border-emerald-200/50 text-emerald-50'
         : tone === 'warning'
@@ -203,19 +203,19 @@ export const GameTopBar: React.FC<GameTopBarProps> = ({
   if (shouldHideLocalHud) return null;
 
   return (
-    <div className={cn('flex items-center justify-between gap-2', className)}>
-      <div className="flex items-center gap-2">
+    <div className={cn('flex items-center justify-between gap-1.5', className)}>
+      <div className="flex items-center gap-1.5">
         <IconButton icon={<ArrowLeft className="h-5 w-5" />} label="Back" onClick={onBack} />
         {progressLabel ? (
-          <div className="inline-flex h-10 items-center rounded-full border border-white/20 bg-white/10 px-3 text-xs font-black uppercase tracking-[0.1em] text-white">
+          <div className="inline-flex h-9 items-center rounded-full border border-white/20 bg-white/10 px-2.5 text-[10px] font-black uppercase tracking-[0.1em] text-white">
             {progressLabel}
           </div>
         ) : null}
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5">
         {typeof lives === 'number' ? (
-          <div className="inline-flex h-10 items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 text-xs font-black uppercase tracking-[0.1em] text-white">
-            <Heart className="h-4 w-4 text-rose-200" />
+          <div className="inline-flex h-9 items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-2.5 text-[10px] font-black uppercase tracking-[0.1em] text-white">
+            <Heart className="h-3.5 w-3.5 text-rose-200" />
             {lives}
           </div>
         ) : null}

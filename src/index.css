@@ -4758,6 +4758,14 @@ button.avatar-hero-arrow:not(:disabled):active {
   --sat-gold-400: #f7c958;
   --sat-gold-500: #f2aa2b;
   --sat-ink: #102140;
+  --sat-primary-top: #f9dd8d;
+  --sat-primary-mid: #f6c457;
+  --sat-primary-bottom: #f0a527;
+  --sat-secondary-top: #78b8ff;
+  --sat-secondary-mid: #3f82ee;
+  --sat-secondary-bottom: #2657c8;
+  --sat-surface: rgba(12, 33, 78, 0.92);
+  --sat-surface-dark: rgba(9, 22, 56, 0.96);
 }
 
 .app-viewport.sat-theme-bluegold .premium-page-root::before,
@@ -4795,6 +4803,9 @@ button.avatar-hero-arrow:not(:disabled):active {
   border-color: rgba(255, 233, 166, 0.76) !important;
   color: var(--sat-ink) !important;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,0)),
+    linear-gradient(180deg, var(--sat-primary-top) 0%, var(--sat-primary-mid) 55%, var(--sat-primary-bottom) 100%) !important;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.56),
     0 6px 0 rgba(124, 72, 7, 0.75),
@@ -4807,7 +4818,7 @@ button.avatar-hero-arrow:not(:disabled):active {
   border-color: rgba(177, 222, 255, 0.56) !important;
   color: #f5fbff !important;
   background:
-    linear-gradient(180deg, rgba(66, 149, 244, 0.95) 0%, rgba(35, 91, 194, 0.96) 56%, rgba(22, 58, 132, 0.98) 100%) !important;
+    linear-gradient(180deg, var(--sat-secondary-top) 0%, var(--sat-secondary-mid) 56%, var(--sat-secondary-bottom) 100%) !important;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.28),
     0 6px 0 rgba(18, 53, 128, 0.78),
@@ -4821,6 +4832,42 @@ button.avatar-hero-arrow:not(:disabled):active {
   color: #e9f6ff !important;
   background:
     linear-gradient(180deg, rgba(32, 81, 171, 0.86), rgba(14, 41, 95, 0.9)) !important;
+}
+
+.app-viewport.sat-theme-bluegold .licensed-submit-button,
+.app-viewport.sat-theme-bluegold .licensed-wood-button {
+  border-color: rgba(255, 233, 166, 0.7) !important;
+  color: var(--sat-ink) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,0)),
+    linear-gradient(180deg, var(--sat-primary-top) 0%, var(--sat-primary-mid) 55%, var(--sat-primary-bottom) 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 6px 0 rgba(124, 72, 7, 0.7),
+    0 14px 24px rgba(8, 22, 49, 0.28) !important;
+}
+
+.app-viewport.sat-theme-bluegold .licensed-wood-button-secondary,
+.app-viewport.sat-theme-bluegold .licensed-answer-button {
+  border-color: rgba(177, 222, 255, 0.56) !important;
+  color: #f5fbff !important;
+  background:
+    linear-gradient(180deg, var(--sat-secondary-top) 0%, var(--sat-secondary-mid) 56%, var(--sat-secondary-bottom) 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    0 6px 0 rgba(18, 53, 128, 0.76),
+    0 12px 22px rgba(8, 22, 49, 0.26) !important;
+}
+
+.app-viewport.sat-theme-bluegold .licensed-game-card,
+.app-viewport.sat-theme-bluegold .licensed-game-card-dark,
+.app-viewport.sat-theme-bluegold .licensed-overlay-card {
+  background-color: var(--sat-surface) !important;
+}
+
+.app-viewport.sat-theme-bluegold .licensed-game-card-dark,
+.app-viewport.sat-theme-bluegold .licensed-overlay-card {
+  background-color: var(--sat-surface-dark) !important;
 }
 
 
