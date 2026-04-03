@@ -200,11 +200,11 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
 
   return (
     <div ref={rootRef} className="relative h-full w-full overflow-hidden bg-[#07122b]">
-      <div className="relative z-0 flex h-full w-full min-h-0 flex-col items-center justify-between px-4 pb-[calc(env(safe-area-inset-bottom)+4.8rem)] pt-1">
+      <div className="relative z-0 flex h-full w-full min-h-0 flex-col items-center justify-start gap-3 px-4 pb-[calc(env(safe-area-inset-bottom)+4.2rem)] pt-[calc(env(safe-area-inset-top)+0.6rem)]">
         <motion.div
           animate={successPulse ? { scale: [1, 1.03, 1] } : { scale: 1 }}
           transition={{ duration: 0.42, ease: 'easeOut' }}
-          className="relative mt-[calc(clamp(3.2rem,7.5vh,4.8rem)+50px)] w-[min(54vw,15rem)] shrink-0 aspect-square"
+          className="relative mt-1 w-[min(72vw,18rem)] shrink-0 aspect-square md:w-[min(46vw,20rem)]"
         >
           <motion.div
             aria-hidden="true"
@@ -228,7 +228,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
           />
 
           <div
-            className={`absolute left-[14%] top-[17%] flex min-h-[16%] w-[23%] items-center justify-center rounded-[1.25rem] px-2 py-1.5 text-center ${
+            className={`absolute left-[12%] top-[12%] flex min-h-[17%] w-[26%] items-center justify-center rounded-[1.25rem] px-2 py-1.5 text-center ${
               successPulse ? 'bg-emerald-400/24' : 'bg-slate-950/30'
             }`}
           >
@@ -242,14 +242,14 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
 
           <div
             ref={dropRef}
-            className={`absolute left-[63%] top-[17%] h-[15%] w-[23%] -translate-x-1/2 rounded-[1.35rem] border-2 ${
+            className={`absolute left-[78%] top-[12%] h-[17%] w-[26%] -translate-x-1/2 rounded-[1.35rem] border-2 ${
               successPulse
                 ? 'border-emerald-300 bg-emerald-300/20'
                 : 'border-white/38 bg-white/8'
             }`}
           />
 
-          <div className="absolute left-[63%] top-[17.6%] flex h-[14%] w-[23%] -translate-x-1/2 flex-wrap content-start justify-center gap-1 overflow-hidden px-1.5 pt-1">
+          <div className="absolute left-[78%] top-[12.6%] flex h-[16%] w-[26%] -translate-x-1/2 flex-wrap content-start justify-center gap-1 overflow-hidden px-1.5 pt-1">
             {placedTokens.map((token) => (
               <button
                 key={token.id}
@@ -262,7 +262,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
             ))}
           </div>
 
-          <div className="absolute left-1/2 top-[64%] w-[58%] -translate-x-1/2 rounded-[1.3rem] bg-slate-950/32 px-3 py-2 text-center">
+          <div className="absolute left-1/2 top-[68%] w-[62%] -translate-x-1/2 rounded-[1.3rem] bg-slate-950/32 px-3 py-2 text-center">
             <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/80">Current Weight</div>
             <div className="text-lg font-black text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.45)]">
               {toGramLabel(currentGrams)}
@@ -271,8 +271,8 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
           </div>
         </motion.div>
 
-        <div className="relative w-full max-w-xl shrink-0 pb-1">
-          <div className="flex flex-wrap items-center justify-center gap-2">
+        <div className="relative w-full max-w-[22rem] shrink-0 pb-1 md:max-w-[28rem]">
+          <div className="flex flex-wrap items-center justify-center gap-2.5">
             {unplacedTokens.map((token) => (
               <motion.button
                 key={token.id}
@@ -287,7 +287,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                     placeToken(token.id);
                   }
                 }}
-                className="flex h-14 min-w-[5.6rem] flex-col items-center justify-center rounded-2xl bg-[linear-gradient(180deg,#fef08a,#f59e0b)] px-2.5 text-amber-900 shadow-[0_10px_16px_rgba(0,0,0,0.34)] ring-2 ring-yellow-100/70 md:h-[4.15rem] md:min-w-[6.2rem] md:px-3"
+                className="flex h-12 min-w-[5rem] flex-col items-center justify-center rounded-2xl bg-[linear-gradient(180deg,#fef08a,#f59e0b)] px-2 text-amber-900 shadow-[0_10px_16px_rgba(0,0,0,0.34)] ring-2 ring-yellow-100/70 md:h-[4.05rem] md:min-w-[6rem] md:px-3"
               >
                 <span className="text-sm font-black leading-none md:text-base">{getMeasurementDisplay(token.grams).primary}</span>
                 <span className="mt-1 text-[10px] font-bold leading-none text-amber-950/80 md:text-[11px]">

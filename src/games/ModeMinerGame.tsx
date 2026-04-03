@@ -34,7 +34,7 @@ const scoreToStars = (XP: number) => {
 };
 
 const buildLevel = (level: number): LevelData => {
-  const uniqueCount = Math.min(4 + Math.floor((level - 1) / 2), 6);
+  const uniqueCount = Math.min(3 + Math.floor((level - 1) / 2), 5);
   const values: number[] = [];
 
   while (values.length < uniqueCount) {
@@ -165,7 +165,7 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_12%,rgba(56,189,248,0.16),transparent_30%),radial-gradient(circle_at_50%_100%,rgba(250,204,21,0.12),transparent_25%),linear-gradient(180deg,rgba(2,6,23,0.25),rgba(2,6,23,0.68))]" />
 
       <main className="relative z-10 flex h-full w-full flex-col px-[max(1rem,env(safe-area-inset-left))] py-2">
-        <div className="mx-auto flex h-full w-full max-w-[31rem] min-h-0 flex-col gap-2.5">
+        <div className="mx-auto flex h-full w-full max-w-[30rem] min-h-0 flex-col gap-2.5">
           <section className="shrink-0 rounded-[1.3rem] border border-cyan-100/25 bg-[linear-gradient(180deg,rgba(10,26,68,0.86),rgba(7,16,46,0.88))] px-4 py-3 shadow-[0_18px_36px_rgba(2,6,23,0.52)]">
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -173,11 +173,11 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
                   <Pickaxe className="h-3.5 w-3.5" />
                   Mode Miner
                 </div>
-                <p className="mt-2 text-[clamp(1rem,4.5vw,1.25rem)] font-black leading-tight text-white">
-                  Drill the number vein that appears most often.
+                <p className="mt-2 text-[clamp(1rem,4.2vw,1.2rem)] font-black leading-tight text-white">
+                  Tap the number with the biggest cluster.
                 </p>
-                <p className="mt-1 text-[11px] font-bold text-cyan-100/82">
-                  Repetition is shown as rock clusters. Bigger cluster = stronger evidence.
+                <p className="mt-1 text-[11px] font-bold text-cyan-100/80">
+                  Bigger pile means the value appears more often.
                 </p>
               </div>
               <div className="grid gap-1.5 text-right">
@@ -192,119 +192,87 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
           </section>
 
           <section className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.5rem] border border-cyan-100/24 bg-[linear-gradient(180deg,rgba(9,24,58,0.85),rgba(6,15,38,0.94))] px-3 py-3 shadow-[0_18px_36px_rgba(2,6,23,0.52)]">
-            <div className="pointer-events-none absolute inset-x-[8%] top-[9%] h-16 rounded-full bg-cyan-300/10 blur-2xl" />
+            <div className="pointer-events-none absolute inset-x-[8%] top-[10%] h-14 rounded-full bg-cyan-300/10 blur-2xl" />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[30%] bg-[linear-gradient(180deg,rgba(2,6,23,0),rgba(2,6,23,0.5))]" />
 
-            <div className="relative z-10 flex shrink-0 items-center justify-between gap-3 rounded-[1.15rem] border border-cyan-100/18 bg-slate-950/28 px-3 py-2.5">
-              <div className="min-w-0">
-                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/76">Hero Tool</p>
-                <p className="mt-0.5 text-sm font-black text-white">Mining Drill</p>
+            <div className="relative z-10 flex min-h-0 flex-1 flex-col justify-center">
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-cyan-100/82">Rock Wall</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-cyan-100/82">
+                  {currentLevelData?.veins.reduce((sum, vein) => sum + vein.count, 0) ?? 0} stones
+                </span>
               </div>
-              <motion.div
-                animate={drillState === 'drilling'
-                  ? { rotate: [0, -10, 10, -8, 8, 0], scale: [1, 1.08, 1.02] }
-                  : drillState === 'overheat'
-                    ? { rotate: [0, -18, 18, -12, 12, 0], y: [0, -2, 0] }
-                    : { y: [0, -3, 0] }}
-                transition={drillState === 'idle'
-                  ? { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }
-                  : { duration: 0.45 }}
-                className="relative flex h-16 w-24 shrink-0 items-center justify-center rounded-[1.1rem] border border-cyan-100/22 bg-[linear-gradient(180deg,#1e3a8a_0%,#0f172a_100%)] shadow-[0_12px_24px_rgba(2,6,23,0.35)]"
-              >
-                <span className={`absolute inset-0 rounded-[1.1rem] ${drillState === 'drilling' ? 'bg-amber-300/20' : drillState === 'overheat' ? 'bg-rose-400/18' : 'bg-cyan-300/10'} blur-sm`} />
-                <Pickaxe className={`relative z-10 h-8 w-8 ${drillState === 'overheat' ? 'text-rose-200' : 'text-amber-200'}`} />
-              </motion.div>
-            </div>
 
-            <motion.div
-              animate={drillState === 'drilling'
-                ? { scale: [1, 1.02, 1] }
-                : drillState === 'overheat'
-                  ? { scale: [1, 0.985, 1], y: [0, 6, 0] }
-                  : { scale: 1 }}
-              transition={{ duration: 0.36 }}
-              className="relative mt-2.5 flex min-h-0 flex-1 overflow-hidden rounded-[1.35rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(30,41,59,0.66),rgba(15,23,42,0.9))] px-3 py-3"
-            >
-              <div className="absolute inset-0 opacity-55 [background-image:linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:24px_24px]" />
-              <div className="relative z-10 flex w-full min-h-0 flex-col justify-center">
-                <div className="mb-2 flex items-center justify-between gap-2">
-                  <span className="text-[10px] font-black uppercase tracking-[0.15em] text-cyan-100/82">Rock Wall</span>
-                  <span className="text-[10px] font-black uppercase tracking-[0.15em] text-cyan-100/82">
-                    {currentLevelData?.veins.reduce((sum, vein) => sum + vein.count, 0) ?? 0} stones
-                  </span>
-                </div>
+              <div className="grid min-h-0 flex-1 grid-cols-2 gap-2.5 sm:grid-cols-3">
+                {currentLevelData?.veins.map((vein, index) => {
+                  const isMode = vein.value === currentLevelData.mode;
+                  const isActive = activeVein === vein.value;
+                  const burst = gameState === 'success' && isMode;
+                  const collapsed = drillState === 'overheat' && isActive;
+                  const columns = vein.count >= 6 ? 3 : 2;
 
-                <div className="grid min-h-0 flex-1 grid-cols-2 gap-2.5 overflow-hidden sm:grid-cols-3">
-                  {currentLevelData?.veins.map((vein, index) => {
-                    const isMode = vein.value === currentLevelData.mode;
-                    const isActive = activeVein === vein.value;
-                    const burst = gameState === 'success' && isMode;
-                    const collapsed = drillState === 'overheat' && isActive;
-                    const columns = vein.count >= 6 ? 3 : 2;
-
-                    return (
-                      <motion.button
-                        key={`${level}-${vein.value}`}
-                        type="button"
-                        disabled={gameState === 'success'}
-                        onClick={() => handleVeinTap(vein.value)}
-                        whileTap={gameState === 'playing' ? { scale: 0.98 } : undefined}
-                        animate={burst
-                          ? { scale: [1, 1.04, 0.98, 1], boxShadow: ['0 0 0 rgba(0,0,0,0)', '0 0 24px rgba(250,204,21,0.38)', '0 0 0 rgba(0,0,0,0)'] }
+                  return (
+                    <motion.button
+                      key={`${level}-${vein.value}`}
+                      type="button"
+                      disabled={gameState === 'success'}
+                      onClick={() => handleVeinTap(vein.value)}
+                      whileTap={gameState === 'playing' ? { scale: 0.98 } : undefined}
+                      animate={burst
+                        ? { scale: [1, 1.04, 0.98, 1], boxShadow: ['0 0 0 rgba(0,0,0,0)', '0 0 24px rgba(250,204,21,0.38)', '0 0 0 rgba(0,0,0,0)'] }
+                        : collapsed
+                          ? { x: [0, -4, 4, -2, 2, 0], rotate: [0, -1, 1, 0], opacity: [1, 0.76, 1] }
+                          : { scale: 1 }}
+                      transition={{ duration: burst ? 0.55 : 0.4 }}
+                      aria-label={`Drill vein ${vein.value}, repeated ${vein.count} times`}
+                      className={`group relative flex min-h-[7.4rem] flex-col overflow-hidden rounded-[1.15rem] border p-2.5 text-left shadow-[0_14px_24px_rgba(2,6,23,0.3)] ${
+                        burst
+                          ? 'border-amber-200/80 bg-[linear-gradient(180deg,#fbbf24_0%,#92400e_100%)]'
                           : collapsed
-                            ? { x: [0, -4, 4, -2, 2, 0], rotate: [0, -1, 1, 0], opacity: [1, 0.76, 1] }
-                            : { scale: 1 }}
-                        transition={{ duration: burst ? 0.55 : 0.4 }}
-                        aria-label={`Drill vein ${vein.value}, repeated ${vein.count} times`}
-                        className={`group relative flex min-h-[8.2rem] flex-col overflow-hidden rounded-[1.15rem] border p-2.5 text-left shadow-[0_14px_24px_rgba(2,6,23,0.3)] ${
-                          burst
-                            ? 'border-amber-200/80 bg-[linear-gradient(180deg,#fbbf24_0%,#92400e_100%)]'
-                            : collapsed
-                              ? 'border-rose-200/60 bg-[linear-gradient(180deg,#7f1d1d_0%,#1f2937_100%)]'
-                              : isActive
-                                ? 'border-cyan-200/80 bg-[linear-gradient(180deg,#1d4ed8_0%,#0f172a_100%)]'
-                                : `border-cyan-100/18 bg-[linear-gradient(180deg,var(--tw-gradient-stops))] ${veinPalette[index % veinPalette.length]}`
-                        }`}
+                            ? 'border-rose-200/60 bg-[linear-gradient(180deg,#7f1d1d_0%,#1f2937_100%)]'
+                            : isActive
+                              ? 'border-cyan-200/80 bg-[linear-gradient(180deg,#1d4ed8_0%,#0f172a_100%)]'
+                              : `border-cyan-100/18 bg-[linear-gradient(180deg,var(--tw-gradient-stops))] ${veinPalette[index % veinPalette.length]}`
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100/76">Vein</p>
+                          <p className="text-[clamp(1.1rem,3.8vw,1.4rem)] font-black text-white">{vein.value}</p>
+                        </div>
+                        <div className={`rounded-full px-2 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${burst ? 'bg-amber-100/20 text-amber-50' : 'bg-slate-950/28 text-cyan-100/82'}`}>
+                          x{vein.count}
+                        </div>
+                      </div>
+
+                      <div
+                        className="mt-2 grid flex-1 content-start gap-1.5"
+                        style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
                       >
-                        <div className="flex items-center justify-between gap-2">
-                          <div>
-                            <p className="text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100/76">Vein</p>
-                            <p className="text-[clamp(1.15rem,4vw,1.5rem)] font-black text-white">{vein.value}</p>
-                          </div>
-                          <div className={`rounded-full px-2 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${burst ? 'bg-amber-100/20 text-amber-50' : 'bg-slate-950/28 text-cyan-100/82'}`}>
-                            x{vein.count}
-                          </div>
-                        </div>
+                        {Array.from({ length: vein.count }).map((_, gemIndex) => (
+                          <motion.div
+                            key={`${vein.value}-${gemIndex}`}
+                            animate={burst
+                              ? { scale: [1, 1.18, 1], y: [0, -3, 0] }
+                              : collapsed
+                                ? { y: [0, 4, 0], opacity: [1, 0.42, 1], scale: [1, 0.9, 1] }
+                                : { scale: 1 }}
+                            transition={{ duration: 0.34, delay: gemIndex * 0.03 }}
+                            className={`flex h-7 items-center justify-center rounded-[0.75rem] border text-[11px] font-black ${burst ? 'border-amber-100/70 bg-amber-50/18 text-white' : 'border-cyan-100/16 bg-slate-950/34 text-cyan-50'}`}
+                          >
+                            {vein.value}
+                          </motion.div>
+                        ))}
+                      </div>
 
-                        <div
-                          className="mt-2 grid flex-1 content-start gap-1.5"
-                          style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
-                        >
-                          {Array.from({ length: vein.count }).map((_, gemIndex) => (
-                            <motion.div
-                              key={`${vein.value}-${gemIndex}`}
-                              animate={burst
-                                ? { scale: [1, 1.18, 1], y: [0, -3, 0] }
-                                : collapsed
-                                  ? { y: [0, 4, 0], opacity: [1, 0.42, 1], scale: [1, 0.9, 1] }
-                                  : { scale: 1 }}
-                              transition={{ duration: 0.34, delay: gemIndex * 0.03 }}
-                              className={`flex h-7 items-center justify-center rounded-[0.75rem] border text-[11px] font-black ${burst ? 'border-amber-100/70 bg-amber-50/18 text-white' : 'border-cyan-100/16 bg-slate-950/34 text-cyan-50'}`}
-                            >
-                              {vein.value}
-                            </motion.div>
-                          ))}
-                        </div>
-
-                        {burst ? (
-                          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(250,204,21,0.28),transparent_58%)]" />
-                        ) : null}
-                      </motion.button>
-                    );
-                  })}
-                </div>
+                      {burst ? (
+                        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(250,204,21,0.28),transparent_58%)]" />
+                      ) : null}
+                    </motion.button>
+                  );
+                })}
               </div>
-            </motion.div>
+            </div>
           </section>
         </div>
       </main>

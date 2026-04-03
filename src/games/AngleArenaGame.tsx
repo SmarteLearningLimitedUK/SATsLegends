@@ -15,7 +15,7 @@ import {
 import catapultAsset from '../assets/rocktlogo.png';
 import battleBackground from '../assets/angle_arena/angle arenabkground.png';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
-import { clamp, computeLaunchVector, stepProjectile, ProjectileState } from './angleArena/physics';
+import { computeLaunchVector, stepProjectile, ProjectileState } from './angleArena/physics';
 
 interface AngleArenaGameProps {
   levelId: number;
@@ -38,36 +38,16 @@ type GameState =
   | 'levelComplete'
   | 'gameOver';
 
-type CameraMode = 'start' | 'follow' | 'hold' | 'return';
-
 type ImpactResult = 'hit' | 'miss';
 
-type WorldConfig = {
-  width: number;
-  height: number;
-  groundY: number;
-  launcherX: number;
-  launcherY: number;
-};
-
-const WORLD: WorldConfig = {
-  width: 2400,
-  height: 360,
-  groundY: 280,
-  launcherX: 220,
-  launcherY: 248,
-};
-
-const GRAVITY = 980;
 const AIM_DELAY = 380;
-const POST_IMPACT_HOLD = 900;
 const HIT_SHAKE_DURATION = 520;
-const CAMERA_RETURN_TIME = 600;
 const PROJECTILE_RADIUS = 10;
-const TARGET_RADIUS = 34;
+const TARGET_RADIUS = 30;
 const INITIAL_TIMER = 90;
 const INITIAL_LIVES = 3;
 const POINTS_PER_HIT = 250;
+const ENEMY_DISTANCE_RATIO = 0.34;
 
 const formatTime = (seconds: number) => {
   const clamped = Math.max(0, Math.floor(seconds));
@@ -89,19 +69,14 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationRef = useRef<number | null>(null);
   const lastFrameRef = useRef<number | null>(null);
-  const cameraXRef = useRef(0);
-  const cameraModeRef = useRef<CameraMode>('start');
-  const cameraHoldUntilRef = useRef<number | null>(null);
   const hitShakeRef = useRef<number | null>(null);
   const desiredAngleRef = useRef(40);
-  const launcherAngleRef = useRef(40);
   const selectedAnswerRef = useRef<number | null>(null);
   const catapultImageRef = useRef<HTMLImageElement | null>(null);
   const backgroundImageRef = useRef<HTMLImageElement | null>(null);
   const projectileRef = useRef<ProjectileState | null>(null);
   const impactResultRef = useRef<ImpactResult | null>(null);
   const aimTimeoutRef = useRef<number | null>(null);
-  const bgTileOffsetRef = useRef(0);
 
   const [gameState, setGameState] = useState<GameState>('intro');
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -114,26 +89,13 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
   const rawQuestions = useMemo(
     () => buildAngleQuestions({
-      launcherX: WORLD.launcherX,
-      groundY: WORLD.groundY,
-      gravity: GRAVITY,
+      launcherX: 0,
+      groundY: 0,
+      gravity: 0,
     }),
     [],
   );
-  const questions = useMemo(() => (
-    rawQuestions.map((question) => {
-      const shouldShift = question.correctAnswer >= 120;
-      const launcherX = shouldShift ? 460 : 220;
-      const { vx, vy } = computeLaunchVector(question.correctAnswer, question.launchSpeed);
-      const estimatedRange = Math.max(0, (vx * vx) / (GRAVITY * Math.max(0.2, Math.tan((question.correctAnswer * Math.PI) / 180))));
-      const targetX = clamp(launcherX + (Number.isFinite(estimatedRange) ? estimatedRange : 900) * 0.5, launcherX + 320, launcherX + 1400);
-      return {
-        ...question,
-        launcherX,
-        targetX,
-      };
-    })
-  ), [rawQuestions]);
+  const questions = useMemo(() => rawQuestions, [rawQuestions]);
   const activeQuestion = questions[questionIndex];
   const isBeginnerLevel = levelId <= 3;
   const optionList = useMemo(() => (activeQuestion?.options ?? []).slice().sort((a, b) => a - b), [activeQuestion]);
@@ -199,8 +161,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     setFeedback('');
     impactResultRef.current = null;
     projectileRef.current = null;
-    cameraModeRef.current = 'return';
-    cameraHoldUntilRef.current = performance.now() + CAMERA_RETURN_TIME;
     setGameState('awaitingAnswer');
   };
 
@@ -251,8 +211,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       setGameState('resolvedIncorrect');
     }
 
-    cameraModeRef.current = 'hold';
-    cameraHoldUntilRef.current = performance.now() + POST_IMPACT_HOLD;
     if (result === 'hit') {
       hitShakeRef.current = performance.now() + HIT_SHAKE_DURATION;
     }
@@ -260,18 +218,21 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
   const fireProjectile = (angleDeg?: number) => {
     if (!activeQuestion) return;
+    const canvas = canvasRef.current;
+    const viewWidth = canvas ? canvas.width / window.devicePixelRatio : 320;
+    const viewHeight = canvas ? canvas.height / window.devicePixelRatio : 320;
+    const originX = viewWidth / 2;
+    const originY = viewHeight / 2;
     const resolvedAngle = Number.isFinite(angleDeg) ? (angleDeg as number) : desiredAngleRef.current;
     const { vx, vy } = computeLaunchVector(resolvedAngle, activeQuestion.launchSpeed);
-    const launcherX = activeQuestion.launcherX ?? WORLD.launcherX;
     projectileRef.current = {
-      x: launcherX,
-      y: WORLD.launcherY,
+      x: originX,
+      y: originY,
       vx,
       vy,
       active: true,
       trail: [],
     };
-    cameraModeRef.current = 'follow';
     setGameState('projectileFlight');
   };
 
@@ -339,18 +300,21 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       const viewWidth = canvas.width / window.devicePixelRatio;
       const viewHeight = canvas.height / window.devicePixelRatio;
 
-      const desiredAngle = desiredAngleRef.current;
-      launcherAngleRef.current += (desiredAngle - launcherAngleRef.current) * 0.12;
-
       if (projectileRef.current?.active) {
-        projectileRef.current = stepProjectile(projectileRef.current, delta, GRAVITY);
+        projectileRef.current = stepProjectile(projectileRef.current, delta, 0);
       }
 
       const projectile = projectileRef.current;
-      const targetX = clamp(activeQuestion?.targetX ?? WORLD.width - 260, 220, WORLD.width - 220);
-      const targetY = activeQuestion?.targetY ?? WORLD.groundY - 42;
       const correctAnswer = activeQuestion?.correctAnswer ?? 0;
+      const enemyAngle = ((correctAnswer % 360) + 360) % 360;
       const allowHit = selectedAnswerRef.current === correctAnswer;
+
+      const centerX = viewWidth / 2;
+      const centerY = viewHeight / 2;
+      const enemyDistance = Math.min(viewWidth, viewHeight) * ENEMY_DISTANCE_RATIO;
+      const enemyRadians = (enemyAngle * Math.PI) / 180;
+      const targetX = centerX + Math.cos(enemyRadians) * enemyDistance;
+      const targetY = centerY - Math.sin(enemyRadians) * enemyDistance;
 
       if (projectile?.active) {
         if (allowHit) {
@@ -363,37 +327,16 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           }
         }
 
-        if (projectile.active && projectile.y >= WORLD.groundY) {
-          projectile.active = false;
-          handleResolve('miss');
-        }
-
-        if (projectile.active && (projectile.x > WORLD.width || projectile.y < 0)) {
+        if (projectile.active && (
+          projectile.x < -PROJECTILE_RADIUS
+          || projectile.x > viewWidth + PROJECTILE_RADIUS
+          || projectile.y < -PROJECTILE_RADIUS
+          || projectile.y > viewHeight + PROJECTILE_RADIUS
+        )) {
           projectile.active = false;
           handleResolve('miss');
         }
       }
-
-      const cameraX = cameraXRef.current;
-      let targetCameraX = 0;
-      if (cameraModeRef.current === 'follow' && projectile) {
-        targetCameraX = clamp(projectile.x - viewWidth * 0.35, 0, WORLD.width - viewWidth);
-      } else if (cameraModeRef.current === 'start') {
-        targetCameraX = clamp((activeQuestion?.launcherX ?? WORLD.launcherX) - viewWidth * 0.35, 0, WORLD.width - viewWidth);
-      } else if (cameraModeRef.current === 'hold') {
-        targetCameraX = clamp(targetX - viewWidth * 0.5, 0, WORLD.width - viewWidth);
-        if (cameraHoldUntilRef.current && timestamp >= cameraHoldUntilRef.current) {
-          cameraModeRef.current = 'return';
-          cameraHoldUntilRef.current = timestamp + CAMERA_RETURN_TIME;
-        }
-      } else if (cameraModeRef.current === 'return') {
-        targetCameraX = 0;
-        if (cameraHoldUntilRef.current && timestamp >= cameraHoldUntilRef.current) {
-          cameraModeRef.current = 'start';
-          cameraHoldUntilRef.current = null;
-        }
-      }
-      cameraXRef.current += (targetCameraX - cameraX) * 0.08;
 
       let shakeX = 0;
       let shakeY = 0;
@@ -409,10 +352,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.translate(shakeX, shakeY);
       ctx.clearRect(0, 0, viewWidth, viewHeight);
 
-      const parallaxFar = cameraXRef.current * 0.2;
-      const parallaxMid = cameraXRef.current * 0.4;
-      const parallaxNear = cameraXRef.current * 0.6;
-
       const backgroundImg = backgroundImageRef.current;
       if (backgroundImg && backgroundImg.complete) {
         const scale = Math.max(
@@ -421,41 +360,36 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         ) * 1.18;
         const tileW = backgroundImg.width * scale;
         const tileH = backgroundImg.height * scale;
-        const tilesNeeded = Math.ceil(viewWidth / tileW) + 3;
-        bgTileOffsetRef.current = (cameraXRef.current * 0.2) % tileW;
-        for (let i = 0; i < tilesNeeded; i += 1) {
-          const x = -bgTileOffsetRef.current + (i - 1) * tileW;
-          ctx.drawImage(backgroundImg, x, 0, tileW, tileH);
-        }
+        const offsetX = (viewWidth - tileW) / 2;
+        const offsetY = (viewHeight - tileH) / 2;
+        ctx.drawImage(backgroundImg, offsetX, offsetY, tileW, tileH);
       } else {
         ctx.fillStyle = '#0b1731';
         ctx.fillRect(0, 0, viewWidth, viewHeight);
       }
 
-      const cameraOffsetX = -cameraXRef.current;
-
       const catapult = catapultImageRef.current;
-      const launcherX = activeQuestion?.launcherX ?? WORLD.launcherX;
+      const launcherX = centerX;
       if (catapult && catapult.complete) {
         const rocketWidth = 96;
         const rocketHeight = 56;
         ctx.drawImage(
           catapult,
-          cameraOffsetX + launcherX - 48,
-          WORLD.launcherY - rocketHeight + 12,
+          launcherX - 48,
+          centerY - rocketHeight / 2,
           rocketWidth,
           rocketHeight,
         );
       } else {
         ctx.fillStyle = '#f59e0b';
-        ctx.fillRect(cameraOffsetX + launcherX - 48, WORLD.launcherY - 20, 72, 18);
+        ctx.fillRect(launcherX - 48, centerY - 10, 72, 18);
         ctx.fillStyle = '#0f172a';
-        ctx.fillRect(cameraOffsetX + launcherX - 58, WORLD.launcherY - 6, 30, 24);
+        ctx.fillRect(launcherX - 58, centerY + 6, 30, 24);
       }
 
       // Enemy on a podium near the target
       ctx.save();
-      ctx.translate(cameraOffsetX + targetX, targetY);
+      ctx.translate(targetX, targetY);
       ctx.fillStyle = '#0f172a';
       ctx.beginPath();
       ctx.roundRect(-34, 10, 68, 26, 12);
@@ -480,20 +414,20 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         projectile.trail.forEach((point) => {
           ctx.fillStyle = `rgba(125,211,252,${0.35 * point.alpha})`;
           ctx.beginPath();
-          ctx.arc(cameraOffsetX + point.x, point.y, 6 * point.alpha, 0, Math.PI * 2);
+          ctx.arc(point.x, point.y, 6 * point.alpha, 0, Math.PI * 2);
           ctx.fill();
         });
 
         ctx.fillStyle = '#f8fafc';
         ctx.beginPath();
-        ctx.arc(cameraOffsetX + projectile.x, projectile.y, PROJECTILE_RADIUS, 0, Math.PI * 2);
+        ctx.arc(projectile.x, projectile.y, PROJECTILE_RADIUS, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      if (impactResultRef.current === 'hit' && cameraModeRef.current === 'hold') {
+      if (impactResultRef.current === 'hit') {
         ctx.fillStyle = 'rgba(250,204,21,0.45)';
         ctx.beginPath();
-        ctx.arc(cameraOffsetX + targetX, targetY - 30, 28, 0, Math.PI * 2);
+        ctx.arc(targetX, targetY - 30, 28, 0, Math.PI * 2);
         ctx.fill();
       }
 

@@ -422,7 +422,7 @@ export const GameScreenTemplate: React.FC<GameScreenTemplateProps> = ({
   <GameScreenShell className={cn('game-screen-template', className)}>
     {background}
     {decorations}
-    <div className="game-shell-content relative z-10 mx-auto flex h-full min-h-0 w-full max-w-[76rem] flex-1 flex-col gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] pt-[calc(env(safe-area-inset-top)+0.2rem)] md:gap-3 md:px-3 md:pb-[calc(env(safe-area-inset-bottom)+0.6rem)] md:pt-[calc(env(safe-area-inset-top)+0.35rem)]">
+    <div className="game-shell-content relative z-10 mx-auto flex h-full min-h-0 w-full max-w-full flex-1 flex-col gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] pt-[calc(env(safe-area-inset-top)+0.2rem)] md:gap-3 md:px-3 md:pb-[calc(env(safe-area-inset-bottom)+0.6rem)] md:pt-[calc(env(safe-area-inset-top)+0.35rem)]">
       <div className="game-shell-zone game-shell-zone-hud shrink-0">{hud}</div>
       {titleStrip ? <div className="game-shell-zone game-shell-zone-title shrink-0">{titleStrip}</div> : null}
       <div className="game-shell-zone game-shell-zone-playfield-wrapper min-h-0 flex-1">

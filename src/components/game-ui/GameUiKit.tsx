@@ -74,7 +74,7 @@ export const IconButton: React.FC<IconButtonProps> = ({ icon, label, onClick, di
     disabled={disabled}
     aria-label={label}
     className={cn(
-      'inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/20',
+      'ui-icon-button inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/20',
       'bg-white/10 text-white shadow-[0_10px_20px_rgba(15,23,42,0.28)]',
       'transition active:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-60',
     )}
@@ -86,7 +86,10 @@ export const IconButton: React.FC<IconButtonProps> = ({ icon, label, onClick, di
 export const GameUiShell: React.FC<GameUiShellProps> = ({ children, className, backgroundImage }) => (
   <div
     className={cn(
-      'relative flex h-full w-full flex-col overflow-hidden bg-[radial-gradient(circle_at_top,#0f172a_0%,#0b1224_45%,#050914_100%)]',
+      'relative flex h-full w-full flex-col overflow-hidden',
+      typeof document !== 'undefined' && document.querySelector('[data-gameplay-content-viewport="true"]') && !backgroundImage
+        ? 'bg-transparent'
+        : 'bg-[radial-gradient(circle_at_top,#0f172a_0%,#0b1224_45%,#050914_100%)]',
       className,
     )}
   >
@@ -96,8 +99,14 @@ export const GameUiShell: React.FC<GameUiShellProps> = ({ children, className, b
         style={{ backgroundImage: `url(${backgroundImage})` }}
       />
     ) : null}
-    <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.4),rgba(2,6,23,0.75))]" />
-    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.18),rgba(59,130,246,0)_45%)]" />
+    {(!backgroundImage && typeof document !== 'undefined' && document.querySelector('[data-gameplay-content-viewport="true"]'))
+      ? null
+      : (
+        <>
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.4),rgba(2,6,23,0.75))]" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.18),rgba(59,130,246,0)_45%)]" />
+        </>
+      )}
     <div className="relative z-10 flex h-full min-h-0 flex-col">
       {children}
     </div>
@@ -110,9 +119,8 @@ export const PrimaryButton: React.FC<ButtonProps> = ({ children, className, onCl
     onClick={onClick}
     disabled={disabled}
     className={cn(
-      'inline-flex h-[62px] w-full items-center justify-center gap-2 rounded-[2rem] border',
-      'border-cyan-100/80 bg-[linear-gradient(180deg,#5b96ff_0%,#2f67ec_62%,#204bc7_100%)]',
-      'px-5 text-[clamp(15px,2.2vh,20px)] font-black tracking-[0.01em] text-white shadow-[0_16px_28px_rgba(37,99,235,0.4)]',
+      'ui-button-primary inline-flex h-[62px] w-full items-center justify-center gap-2 rounded-[2rem] border',
+      'px-5 text-[clamp(15px,2.2vh,20px)] font-black tracking-[0.01em]',
       'transition disabled:cursor-not-allowed disabled:opacity-60',
       className,
     )}
@@ -127,8 +135,8 @@ export const SecondaryButton: React.FC<ButtonProps> = ({ children, className, on
     onClick={onClick}
     disabled={disabled}
     className={cn(
-      'inline-flex h-[54px] items-center justify-center rounded-[1.6rem] border border-white/20',
-      'bg-white/5 px-4 text-[11px] font-black uppercase tracking-[0.1em] text-cyan-100/90',
+      'ui-button-secondary inline-flex h-[54px] items-center justify-center rounded-[1.6rem] border',
+      'px-4 text-[11px] font-black uppercase tracking-[0.1em]',
       'transition disabled:cursor-not-allowed disabled:opacity-50',
       className,
     )}
@@ -140,8 +148,7 @@ export const SecondaryButton: React.FC<ButtonProps> = ({ children, className, on
 export const StoryCard: React.FC<WrapperProps> = ({ children, className }) => (
   <div
     className={cn(
-      'rounded-[1.5rem] border border-white/12 bg-slate-950/24 px-4 py-2 text-center shadow-[0_12px_24px_rgba(15,23,42,0.18)]',
-      'backdrop-blur-[2px]',
+      'licensed-game-card mission-panel-shell rounded-[1.25rem] px-4 py-2 text-center text-slate-100',
       className,
     )}
   >
@@ -152,7 +159,7 @@ export const StoryCard: React.FC<WrapperProps> = ({ children, className }) => (
 export const TaskCard: React.FC<WrapperProps> = ({ children, className }) => (
   <div
     className={cn(
-      'rounded-[1.5rem] border border-amber-200/35 bg-[#f7f1e3] px-4 py-3 text-slate-900 shadow-[0_14px_26px_rgba(15,23,42,0.2)]',
+      'licensed-game-card mission-panel-shell rounded-[1.25rem] px-4 py-3 text-slate-100',
       className,
     )}
   >
@@ -167,12 +174,12 @@ export const FeedbackStrip: React.FC<{ tone?: FeedbackTone; children: React.Reac
 }) => (
   <div
     className={cn(
-      'rounded-full border px-4 py-2 text-center text-sm font-black shadow-[0_10px_18px_rgba(15,23,42,0.22)]',
+      'licensed-game-card mission-panel-shell rounded-[1.25rem] border px-4 py-2 text-center text-sm font-black shadow-[0_10px_18px_rgba(15,23,42,0.22)]',
       tone === 'success'
-        ? 'border-emerald-200/50 bg-emerald-500/24 text-emerald-50'
+        ? 'border-emerald-200/50 text-emerald-50'
         : tone === 'warning'
-          ? 'border-amber-200/50 bg-amber-300/20 text-amber-100'
-          : 'border-cyan-100/20 bg-slate-950/35 text-cyan-100',
+          ? 'border-amber-200/50 text-amber-100'
+          : 'border-cyan-100/20 text-cyan-100',
       className,
     )}
   >
