@@ -149,6 +149,11 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       return undefined;
     }
 
+    if (selectedLevel.gameType === 'take_out_rush') {
+      setShowInlineHint(false);
+      return undefined;
+    }
+
     setShowInlineHint(true);
     const timeoutId = window.setTimeout(() => {
       setShowInlineHint(false);

@@ -14,6 +14,8 @@ type WrapperProps = {
 
 type GameUiShellProps = WrapperProps & {
   backgroundImage?: string;
+  overlayDisabled?: boolean;
+  backgroundOpacity?: number;
 };
 
 type ButtonProps = {
@@ -83,7 +85,13 @@ export const IconButton: React.FC<IconButtonProps> = ({ icon, label, onClick, di
   </button>
 );
 
-export const GameUiShell: React.FC<GameUiShellProps> = ({ children, className, backgroundImage }) => (
+export const GameUiShell: React.FC<GameUiShellProps> = ({
+  children,
+  className,
+  backgroundImage,
+  overlayDisabled = false,
+  backgroundOpacity = 0.5,
+}) => (
   <div
     className={cn(
       'relative flex h-full w-full flex-col overflow-hidden',
@@ -95,18 +103,20 @@ export const GameUiShell: React.FC<GameUiShellProps> = ({ children, className, b
   >
     {backgroundImage ? (
       <div
-        className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-[0.5]"
-        style={{ backgroundImage: `url(${backgroundImage})` }}
+        className="pointer-events-none absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${backgroundImage})`, opacity: backgroundOpacity }}
       />
     ) : null}
-    {(!backgroundImage && typeof document !== 'undefined' && document.querySelector('[data-gameplay-content-viewport="true"]'))
-      ? null
-      : (
-        <>
-          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.4),rgba(2,6,23,0.75))]" />
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.18),rgba(59,130,246,0)_45%)]" />
-        </>
-      )}
+    {overlayDisabled ? null : (
+      (!backgroundImage && typeof document !== 'undefined' && document.querySelector('[data-gameplay-content-viewport="true"]'))
+        ? null
+        : (
+          <>
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.4),rgba(2,6,23,0.75))]" />
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.18),rgba(59,130,246,0)_45%)]" />
+          </>
+        )
+    )}
     <div className="relative z-10 flex h-full min-h-0 flex-col">
       {children}
     </div>

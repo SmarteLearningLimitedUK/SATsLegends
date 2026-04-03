@@ -52,101 +52,80 @@ type IslandHotspot = {
 const MAP_WIDTH_PX = 768;
 const MAP_HEIGHT_PX = 2500;
 
-const DECORATIVE_MAP_AMBIENTS: AmbientRegion[] = [
-  {
-    id: 'ratio-rapids-bubbles',
-    x: 59.2,
-    y: 82.7,
-    width: 22,
-    height: 13,
-    effect: 'bubbles',
-  },
-  {
-    id: 'ratio-rapids-steam',
-    x: 58.8,
-    y: 81.9,
-    width: 24,
-    height: 14,
-    effect: 'steam',
-  },
-  {
-    id: 'arithmetic-acropolis-symbols',
-    x: 71.5,
-    y: 95.2,
-    width: 24,
-    height: 13,
-    effect: 'math-symbols',
-  },
-];
-
 const ISLAND_HOTSPOTS: IslandHotspot[] = [
   {
     islandId: 6,
-    x: 47.4,
-    y: 17,
-    width: 65.8,
-    height: 7.7,
+    x: 56,
+    y: 15.5,
+    width: 40,
+    height: 5.6,
     ambients: [
-      { id: 'base-camp-sparkles', x: 77.5, y: 91.2, width: 22, height: 13, effect: 'sparkles' },
+      { id: 'measurement-lava', x: 62, y: 48, width: 26, height: 20, effect: 'lava-spurts' },
+      { id: 'measurement-stars', x: 18, y: 18, width: 24, height: 20, effect: 'stars' },
     ],
   },
   {
     islandId: 3,
-    x: 37.6,
-    y: 39.9,
-    width: 67.2,
-    height: 7.3,
+    x: 50,
+    y: 47.5,
+    width: 40,
+    height: 5.6,
     ambients: [
-      { id: 'fraction-forest-butterflies', x: 71.5, y: 57.2, width: 24, height: 15, effect: 'butterflies' },
+      { id: 'fraction-forest-butterflies', x: 20, y: 20, width: 32, height: 26, effect: 'butterflies' },
     ],
   },
   {
     islandId: 4,
-    x: 57.9,
-    y: 51,
-    width: 66,
-    height: 6.8,
+    x: 48,
+    y: 38.5,
+    width: 40,
+    height: 5.6,
     ambients: [
-      { id: 'geometry-glacier-snow', x: 25.2, y: 47.6, width: 24, height: 15, effect: 'falling-snow' },
+      { id: 'geometry-glacier-snow', x: 16, y: 10, width: 34, height: 30, effect: 'falling-snow' },
     ],
   },
   {
     islandId: 2,
-    x: 43.4,
-    y: 64.1,
-    width: 62.8,
-    height: 8.5,
+    x: 55,
+    y: 60.5,
+    width: 40,
+    height: 5.6,
     ambients: [
-      { id: 'data-desert-dust', x: 25.8, y: 72.2, width: 24, height: 15, effect: 'dust-devils' },
+      { id: 'data-desert-dust', x: 22, y: 25, width: 30, height: 24, effect: 'dust-devils' },
     ],
   },
   {
     islandId: 5,
-    x: 55.2,
-    y: 29.6,
-    width: 67.3,
-    height: 7.4,
+    x: 43,
+    y: 26.5,
+    width: 42,
+    height: 5.6,
     ambients: [
-      { id: 'operations-outpost-stars', x: 70.8, y: 33.1, width: 23, height: 15, effect: 'stars' },
+      { id: 'operations-outpost-stars', x: 18, y: 20, width: 28, height: 22, effect: 'stars' },
+      { id: 'operations-outpost-beams', x: 60, y: 12, width: 28, height: 24, effect: 'light-beams' },
     ],
   },
   {
     islandId: 1,
-    x: 59.8,
-    y: 90,
-    width: 65.8,
-    height: 7.2,
+    x: 52,
+    y: 86.5,
+    width: 44,
+    height: 5.6,
     ambients: [
-      { id: 'mount-algebra-lava', x: 29.5, y: 14.5, width: 26, height: 16, effect: 'lava-spurts' },
+      { id: 'acropolis-math', x: 18, y: 24, width: 30, height: 24, effect: 'math-symbols' },
+      { id: 'acropolis-bubbles', x: 56, y: 56, width: 28, height: 22, effect: 'bubbles' },
     ],
   },
   {
     islandId: 7,
-    x: 57.4,
-    y: 74.1,
-    width: 68.9,
-    height: 6.9,
-    ambients: [],
+    x: 44,
+    y: 69.5,
+    width: 40,
+    height: 5.6,
+    ambients: [
+      { id: 'ratio-rapids-steam', x: 18, y: 22, width: 32, height: 24, effect: 'steam' },
+      { id: 'ratio-rapids-bubbles', x: 56, y: 54, width: 30, height: 24, effect: 'bubbles' },
+    ],
   },
 ];
 
@@ -446,23 +425,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
           draggable={false}
         />
 
-        <div className="pointer-events-none absolute inset-0 z-10">
-          {[...ISLAND_HOTSPOTS.flatMap(({ ambients }) => ambients), ...DECORATIVE_MAP_AMBIENTS].map(region => (
-              <div
-                key={region.id}
-                className={`world-map-ambient world-map-ambient-${region.effect}`}
-                style={{
-                  left: `${region.x}%`,
-                  top: `${region.y}%`,
-                  width: `${region.width}%`,
-                  height: `${region.height}%`,
-                }}
-              >
-                {renderAmbientEffect(region.effect)}
-              </div>
-            ))}
-        </div>
-
         <div className="absolute inset-0 z-20">
           {ISLAND_HOTSPOTS.map((hotspot) => {
             const islandState = islandStates.find(({ island }) => island.id === hotspot.islandId);
@@ -470,22 +432,42 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
             const { island, isUnlocked } = islandState;
 
             return (
-              <motion.button
+              <div
                 key={`hotspot-${island.id}`}
-                type="button"
-                whileTap={{ scale: 0.985 }}
-                onClick={() => setSelectedIslandId(island.id)}
-                aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
-                className="absolute border border-transparent bg-transparent transition-all focus:outline-none"
+                className="absolute"
                 style={{
                   left: `${hotspot.x}%`,
                   top: `${hotspot.y}%`,
                   width: `${hotspot.width}%`,
                   height: `${hotspot.height}%`,
                   transform: 'translate(-50%, -50%)',
-                  opacity: 1,
                 }}
-              />
+              >
+                <div className="pointer-events-none absolute inset-0 z-10">
+                  {hotspot.ambients.map(region => (
+                    <div
+                      key={region.id}
+                      className={`world-map-ambient world-map-ambient-${region.effect}`}
+                      style={{
+                        left: `${region.x}%`,
+                        top: `${region.y}%`,
+                        width: `${region.width}%`,
+                        height: `${region.height}%`,
+                      }}
+                    >
+                      {renderAmbientEffect(region.effect)}
+                    </div>
+                  ))}
+                </div>
+                <motion.button
+                  type="button"
+                  whileTap={{ scale: 0.985 }}
+                  onClick={() => setSelectedIslandId(island.id)}
+                  aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
+                  className="absolute inset-0 z-20 border border-transparent bg-transparent transition-all focus:outline-none"
+                  style={{ opacity: 1 }}
+                />
+              </div>
             );
           })}
         </div>
