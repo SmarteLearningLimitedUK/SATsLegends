@@ -13,7 +13,6 @@ export const QUESTION_MATCH_FRAME_GAMES: MiniGameType[] = [
   'data_dungeon',
   'monster_market',
   'ratio_rapids',
-  'change_counter',
   'timekeeper_temple',
   'measurement_forge',
   'tower_of_factors',
@@ -22,7 +21,6 @@ export const QUESTION_MATCH_FRAME_GAMES: MiniGameType[] = [
   'equation_grove',
   'coordinate_quest',
   'calculation_clash',
-  'percent_pulse',
   'percent_power',
   'transform_temple',
   'scale_safari',
@@ -32,9 +30,7 @@ export const QUESTION_MATCH_FRAME_GAMES: MiniGameType[] = [
   'formula_forge',
   'area_architect',
   'ratio_fractions',
-  'sequence_sprint',
   'logic_sort',
-  'shape_shift',
   'matrix_match',
 ];
 

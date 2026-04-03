@@ -10,6 +10,7 @@ import AnimatedAvatar from '../components/AnimatedAvatar';
 import BossPortrait from '../components/BossPortrait';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import AssetIcon from '../components/AssetIcon';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 export type SupportedBossGameType =
   | 'tower_of_factors'
@@ -627,7 +628,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
                   Boss encounter
                 </div>
                 <h1 className="mt-1 text-base font-black leading-tight text-white md:text-[1.75rem]">
-                  {question.prompt}
+                  {formatFantasyPrompt(question.prompt)}
                 </h1>
                 <p className="mt-1.5 text-[10px] leading-snug text-white/74 md:text-sm">
                   {question.clue}

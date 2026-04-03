@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { AVATARS } from '../constants';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface RuneLockDungeonsGameProps {
   levelId: number;
@@ -265,7 +266,9 @@ const RuneLockDungeonsGame: React.FC<RuneLockDungeonsGameProps> = ({
             <div className="flex justify-center">
               <div className="max-w-[94%] rounded-[1.5rem] border border-orange-200/22 bg-[linear-gradient(180deg,rgba(146,64,14,0.96),rgba(120,53,15,0.98))] px-5 py-3 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_16px_30px_rgba(120,53,15,0.24)] md:px-7 md:py-4">
                 <div className="text-base font-black tracking-tight text-amber-50 md:text-[1.9rem]">{round.title}</div>
-                <div className="mt-1 text-xs font-bold text-amber-100/84 md:text-base">{round.prompt}</div>
+                <div className="mt-1 text-xs font-bold text-amber-100/84 md:text-base">
+                  {formatFantasyPrompt(round.prompt)}
+                </div>
               </div>
             </div>
 
@@ -273,7 +276,9 @@ const RuneLockDungeonsGame: React.FC<RuneLockDungeonsGameProps> = ({
               <div className="flex min-h-[23rem] flex-col justify-between gap-4 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(24,24,27,0.8),rgba(39,39,42,0.92))] p-4 shadow-[0_24px_40px_rgba(2,6,23,0.22)] md:min-h-[31rem] md:p-5">
                 <div className="rounded-[1.3rem] border border-white/10 bg-black/18 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                   <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/56 md:text-xs">Rune puzzle</div>
-                  <div className="mt-2 text-center text-3xl font-black tracking-tight text-white md:text-[2.7rem]">{round.prompt}</div>
+                  <div className="mt-2 text-center text-3xl font-black tracking-tight text-white md:text-[2.7rem]">
+                    {formatFantasyPrompt(round.prompt)}
+                  </div>
                   <div className="mt-2 text-center text-sm font-bold text-sky-100/82 md:text-base">{round.support}</div>
                 </div>
 

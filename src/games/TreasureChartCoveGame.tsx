@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { AVATARS } from '../constants';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface TreasureChartCoveGameProps {
   levelId: number;
@@ -377,24 +378,23 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
         <div className="absolute inset-x-0 bottom-[14%] h-[20%] bg-[radial-gradient(circle_at_center,rgba(125,211,252,0.18),rgba(59,130,246,0.08),transparent_72%)]" />
       </div>
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center gap-2 p-2 md:gap-4 md:p-4">
-        <div className="w-full max-w-6xl">
-        </div>
-
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2 md:gap-3 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.8rem)] md:pt-3">
       <div className="licensed-board-frame structured-playfield-frame relative flex w-full max-w-6xl min-h-0 flex-1 overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] shadow-[0_28px_64px_rgba(0,0,0,0.34)] md:rounded-[2.6rem]">
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_28%,rgba(15,23,42,0.16)_100%)]" />
           <div className="absolute inset-x-[6%] bottom-[14%] h-[22%] rounded-[50%] bg-[radial-gradient(circle_at_center,rgba(251,191,36,0.22),rgba(59,130,246,0.12),transparent_72%)]" />
 
-          <div className="relative z-10 flex h-full w-full flex-col px-3 pb-4 pt-16 md:px-6 md:pb-6 md:pt-20">
+          <div className="relative z-10 flex h-full w-full flex-col px-3 pb-3 pt-6 md:px-6 md:pb-4 md:pt-8">
             <div className="flex justify-center">
               <div className="max-w-[94%] rounded-[1.5rem] border border-orange-200/22 bg-[linear-gradient(180deg,rgba(146,64,14,0.96),rgba(120,53,15,0.98))] px-5 py-3 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_16px_30px_rgba(120,53,15,0.24)] md:px-7 md:py-4">
                 <div className="text-base font-black tracking-tight text-amber-50 md:text-[1.9rem]">{round.title}</div>
-                <div className="mt-1 text-xs font-bold text-amber-100/84 md:text-base">{round.prompt}</div>
+                <div className="mt-1 text-xs font-bold text-amber-100/84 md:text-base">
+                  {formatFantasyPrompt(round.prompt)}
+                </div>
               </div>
             </div>
 
-            <div className="mt-3 grid min-h-0 flex-1 grid-cols-1 gap-4 md:mt-4 md:grid-cols-[1.02fr_0.98fr] md:gap-6">
-              <div className="flex min-h-[23rem] flex-col justify-between gap-4 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(8,47,73,0.34),rgba(15,23,42,0.26))] p-4 shadow-[0_24px_40px_rgba(2,6,23,0.22)] md:min-h-[31rem] md:p-5">
+            <div className="mt-3 grid min-h-0 flex-1 grid-cols-1 gap-3 md:mt-3 md:grid-cols-[1.02fr_0.98fr] md:gap-4">
+              <div className="flex min-h-0 flex-1 flex-col justify-between gap-3 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(8,47,73,0.34),rgba(15,23,42,0.26))] p-4 shadow-[0_24px_40px_rgba(2,6,23,0.22)] md:p-5">
                 {round.mode === 'line' && round.lineDays ? (
                   <LineGraphBoard days={round.lineDays} label={round.boardLabel} />
                 ) : round.mode === 'table' ? (
@@ -409,26 +409,26 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
                 </div>
               </div>
 
-              <div className="flex min-h-[23rem] flex-col justify-between gap-4 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.84),rgba(30,41,59,0.92))] p-4 shadow-[0_24px_40px_rgba(2,6,23,0.24)] md:min-h-[31rem] md:p-5">
-                <div className="grid grid-cols-2 gap-3">
+              <div className="flex min-h-0 flex-1 flex-col justify-between gap-3 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.84),rgba(30,41,59,0.92))] p-4 shadow-[0_24px_40px_rgba(2,6,23,0.24)] md:p-5">
+                <div className="grid grid-cols-2 gap-2">
                   {round.ships.map((ship) => (
                     <ShipCard key={`ship-${ship.id}`} label={ship.label} color={ship.color} active={round.answer === ship.label} />
                   ))}
                 </div>
 
-                <div className={`grid gap-3 ${round.options.length <= 2 ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-2'}`}>
+                <div className={`grid gap-2 ${round.options.length <= 2 ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-2'}`}>
                   {round.options.map((choice, index) => (
                     <motion.button
                       key={`${choice}-${index}`}
                       whileTap={{ scale: 0.97 }}
                       onClick={() => handleChoice(choice)}
                       disabled={feedback !== null || isFinished}
-                      className="relative overflow-hidden rounded-[1.5rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(15,23,42,0.48))] px-4 py-4 text-left shadow-[0_18px_28px_rgba(15,23,42,0.22)] disabled:opacity-45"
+                      className="relative overflow-hidden rounded-[1.5rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(15,23,42,0.48))] px-4 py-3 text-left shadow-[0_18px_28px_rgba(15,23,42,0.22)] disabled:opacity-45"
                     >
                       <div className="absolute inset-x-[10%] top-[10%] h-[18%] rounded-full bg-white/10 blur-md" />
                       <div className="relative">
                         <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/58">Choice</div>
-                        <div className="mt-2 text-xl font-black tracking-tight text-amber-50 md:text-2xl">{choice}</div>
+                        <div className="mt-2 text-lg font-black tracking-tight text-amber-50 md:text-2xl">{choice}</div>
                       </div>
                     </motion.button>
                   ))}
@@ -456,8 +456,6 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
           </AnimatePresence>
         </div>
 
-        <div className="w-full max-w-6xl">
-        </div>
       </div>
     </div>
   );

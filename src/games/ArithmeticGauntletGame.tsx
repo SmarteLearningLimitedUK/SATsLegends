@@ -5,6 +5,7 @@ import placeValueBackground from '../assets/maps/gemini-2.5-flash-image_using_th
 import medButton from '../assets/bluedialoague/med button cropped.png';
 import { triggerHaptic } from '../haptics';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface ArithmeticGauntletGameProps {
   levelId: number;
@@ -303,7 +304,9 @@ const ArithmeticGauntletGame: React.FC<ArithmeticGauntletGameProps> = ({
               <div className="licensed-game-card-dark flex h-full min-h-0 flex-col rounded-[1.3rem] border border-white/14 p-2 shadow-[0_12px_22px_rgba(2,6,23,0.2)] md:rounded-[1.6rem] md:p-3">
                 <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Question {questionCount + 1}</div>
                 <div className="mt-2 rounded-[1rem] border border-sky-200/22 bg-[linear-gradient(180deg,rgba(14,116,144,0.2),rgba(15,23,42,0.5))] p-2.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.18)] md:p-3">
-                  <div className="text-2xl font-black tracking-tight text-white md:text-4xl">{question.prompt}</div>
+                  <div className="text-2xl font-black tracking-tight text-white md:text-4xl">
+                    {formatFantasyPrompt(question.prompt)}
+                  </div>
                 </div>
 
                 <div className="mt-2 rounded-[1rem] border border-amber-200/30 bg-slate-950/48 px-3 py-2 text-center shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05)]">

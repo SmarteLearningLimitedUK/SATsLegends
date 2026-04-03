@@ -15,6 +15,7 @@ import { TAKE_OUT_ASSETS } from '../assets/take_out';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import GameRulesModal from '../components/GameRulesModal';
 import shareSplitterBackdrop from '../assets/level_backgrounds/take_out.png';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface ShareSplitterGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -407,7 +408,9 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
         <section className="shrink-0">
           <StoryCard>
-            <p className="text-[clamp(13px,2vh,18px)] font-semibold text-white/90">{challenge.prompt}</p>
+            <p className="text-[clamp(13px,2vh,18px)] font-semibold text-white/90">
+              {formatFantasyPrompt(challenge.prompt)}
+            </p>
           </StoryCard>
         </section>
 

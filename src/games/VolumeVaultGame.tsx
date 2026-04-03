@@ -7,6 +7,7 @@ import {
 } from '../app/gameplaySessionContract';
 import vaultSprite from '../assets/vault.png';
 import vaultBackdrop from '../assets/maps/dungeon.jpg';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface VolumeVaultGameProps {
   levelId: number;
@@ -585,7 +586,9 @@ const VolumeVaultGame: React.FC<VolumeVaultGameShellProps> = ({
 
         <section className="shrink-0 pt-1.5">
           <motion.div animate={wrongPulse ? { x: [0, -8, 8, -5, 5, 0] } : { x: 0 }} transition={{ duration: 0.3 }} className="mx-auto w-full max-w-[760px] rounded-[1.35rem] border border-cyan-100/35 bg-slate-900/58 px-4 py-2.5 text-center shadow-[0_14px_24px_rgba(2,6,23,0.38)]">
-            <p className="text-[clamp(0.8rem,1.9vw,1.02rem)] font-black leading-snug text-cyan-50">{question.prompt}</p>
+            <p className="text-[clamp(0.8rem,1.9vw,1.02rem)] font-black leading-snug text-cyan-50">
+              {formatFantasyPrompt(question.prompt)}
+            </p>
           </motion.div>
         </section>
 

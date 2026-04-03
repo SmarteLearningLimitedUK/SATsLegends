@@ -9,6 +9,7 @@ import {
 } from '../components/game-ui/GameUiKit';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import areaBackdrop from '../assets/level_backgrounds/place_value_panicbkgrd.png';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface AreaArchitectGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -189,7 +190,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
               <div>
                 <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-900/80">Area Architect</div>
                 <div className="mt-1 text-[clamp(15px,2vh,20px)] font-black text-slate-900">
-                  {question.prompt}
+                  {formatFantasyPrompt(question.prompt)}
                 </div>
               </div>
               <div className="rounded-full bg-amber-200/60 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-900">

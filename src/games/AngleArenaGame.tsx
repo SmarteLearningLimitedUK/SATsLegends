@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
@@ -10,12 +10,13 @@ import {
   GameUiShell,
   PrimaryButton,
   SecondaryButton,
-  TaskCard,
 } from '../components/game-ui/GameUiKit';
 import catapultAsset from '../assets/rocktlogo.png';
 import battleBackground from '../assets/angle_arena/angle arenabkground.png';
+import { BOSS_ASSETS } from '../assets/bosses';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { computeLaunchVector, stepProjectile, ProjectileState } from './angleArena/physics';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface AngleArenaGameProps {
   levelId: number;
@@ -74,6 +75,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const selectedAnswerRef = useRef<number | null>(null);
   const catapultImageRef = useRef<HTMLImageElement | null>(null);
   const backgroundImageRef = useRef<HTMLImageElement | null>(null);
+  const bossImageRef = useRef<HTMLImageElement | null>(null);
   const projectileRef = useRef<ProjectileState | null>(null);
   const impactResultRef = useRef<ImpactResult | null>(null);
   const aimTimeoutRef = useRef<number | null>(null);
@@ -154,6 +156,14 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     const img = new Image();
     img.src = battleBackground;
     backgroundImageRef.current = img;
+  }, []);
+
+  useEffect(() => {
+    const bossImage = BOSS_ASSETS.croc_boss?.poses?.neutral || BOSS_ASSETS.croc_boss?.poses?.attack;
+    if (!bossImage) return;
+    const img = new Image();
+    img.src = bossImage;
+    bossImageRef.current = img;
   }, []);
 
   const resetForNext = () => {
@@ -387,26 +397,23 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         ctx.fillRect(launcherX - 58, centerY + 6, 30, 24);
       }
 
-      // Enemy on a podium near the target
+      // Boss enemy anchored at the target point
       ctx.save();
       ctx.translate(targetX, targetY);
-      ctx.fillStyle = '#0f172a';
+      ctx.fillStyle = 'rgba(15,23,42,0.45)';
       ctx.beginPath();
-      ctx.roundRect(-34, 10, 68, 26, 12);
+      ctx.ellipse(0, 36, 44, 16, 0, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillStyle = '#1e3a8a';
-      ctx.beginPath();
-      ctx.roundRect(-28, 6, 56, 18, 10);
-      ctx.fill();
-      ctx.fillStyle = '#f43f5e';
-      ctx.beginPath();
-      ctx.arc(0, -6, 18, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#0f172a';
-      ctx.beginPath();
-      ctx.arc(-6, -10, 4, 0, Math.PI * 2);
-      ctx.arc(6, -10, 4, 0, Math.PI * 2);
-      ctx.fill();
+      const boss = bossImageRef.current;
+      if (boss && boss.complete) {
+        const bossSize = Math.min(viewWidth, viewHeight) * 0.24;
+        ctx.drawImage(boss, -bossSize / 2, -bossSize / 2 - 8, bossSize, bossSize);
+      } else {
+        ctx.fillStyle = '#f43f5e';
+        ctx.beginPath();
+        ctx.arc(0, 0, 24, 0, Math.PI * 2);
+        ctx.fill();
+      }
       ctx.restore();
 
 
@@ -427,7 +434,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       if (impactResultRef.current === 'hit') {
         ctx.fillStyle = 'rgba(250,204,21,0.45)';
         ctx.beginPath();
-        ctx.arc(targetX, targetY - 30, 28, 0, Math.PI * 2);
+        ctx.arc(targetX, targetY, 34, 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -473,10 +480,10 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
         <section className="shrink-0">
           <div
-            className={`relative z-20 w-full overflow-visible transition-all duration-300 ${gameState === 'firing' || gameState === 'projectileFlight' || gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? 'pointer-events-none max-h-0 opacity-0' : 'max-h-[240px] opacity-100'}`}
+            className={`relative z-20 w-full transition-all duration-300 ${gameState === 'firing' || gameState === 'projectileFlight' || gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? 'pointer-events-none max-h-0 opacity-0' : 'max-h-[240px] opacity-100'}`}
           >
-            <div className="truncate whitespace-nowrap rounded-full border border-amber-200/55 bg-[linear-gradient(180deg,#f7f1e3,#f1e5cc)] px-3 py-1 text-center text-[clamp(12px,1.4vh,14px)] font-black text-amber-900 shadow-[0_10px_20px_rgba(15,23,42,0.2)]">
-              {activeQuestion?.prompt ?? 'Choose the correct launch angle.'}
+            <div className="mission-panel-shell licensed-game-card rounded-[1.25rem] px-3 py-2 text-center text-[clamp(12px,1.6vh,15px)] font-black text-cyan-50">
+              {formatFantasyPrompt(activeQuestion?.prompt ?? 'Choose the correct launch angle.')}
             </div>
             {isBeginnerLevel ? (
               <div className="mt-1.5 grid grid-cols-2 gap-1.5">
@@ -486,7 +493,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
                     type="button"
                     onClick={() => handleAnswer(option)}
                     disabled={gameState !== 'awaitingAnswer'}
-                    className="inline-flex min-h-[2.35rem] items-center justify-center rounded-[1.1rem] border border-amber-200/60 bg-[linear-gradient(180deg,rgba(30,64,175,0.45),rgba(15,23,42,0.45))] px-3 text-[clamp(12px,1.9vh,16px)] font-black text-slate-100 shadow-[0_10px_20px_rgba(15,23,42,0.2)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
+                    className="licensed-answer-button inline-flex min-h-[2.35rem] items-center justify-center px-3 text-[clamp(12px,1.9vh,16px)] font-black text-slate-100 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
                   >
                     {option}°
                   </button>
@@ -496,8 +503,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           </div>
         </section>
 
-        <section className="min-h-0 flex-[1.6]">
-          <div className="flex h-full w-full min-h-[30vh] items-center justify-center rounded-[1.6rem] border border-white/12 bg-slate-950/30 shadow-[0_18px_32px_rgba(2,6,23,0.4)]">
+        <section className="min-h-0 flex-[1.8]">
+          <div className="relative flex h-full w-full min-h-[34vh] items-center justify-center overflow-hidden rounded-[1.6rem] shadow-[0_18px_32px_rgba(2,6,23,0.4)]">
             <canvas
               ref={canvasRef}
               className="h-full w-full rounded-[1.6rem]"
@@ -575,3 +582,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 };
 
 export default AngleArenaGame;
+
+
+

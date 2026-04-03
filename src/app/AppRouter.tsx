@@ -285,16 +285,12 @@ export const AppRouter: React.FC<AppRouterProps> = ({
           return renderFromRegistry('DivisionDockGame', sharedProps);
         }
         return renderFromRegistry('CalculationCrashGame', sharedProps);
-      case 'percent_pulse':
-      case 'change_counter':
-        return renderFromRegistry('CurriculumChallengeGame', {
-          ...sharedProps,
-          gameType: selectedLevel.gameType,
-          isBoss: Boolean(selectedLevel.isBoss),
-        });
       case 'percent_power':
         return renderFromRegistry('PercentPowerGame', sharedProps);
       case 'transform_temple':
+        if (selectedLevel.blueprintKey === 'rotation_relay') {
+          return renderFromRegistry('RotationReflectionGame', sharedProps);
+        }
         return renderFromRegistry('CurriculumChallengeGame', {
           ...sharedProps,
           gameType: selectedLevel.gameType,
@@ -334,12 +330,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
           gameType: selectedLevel.gameType,
           isBoss: Boolean(selectedLevel.isBoss),
         });
-      case 'sequence_sprint':
       case 'logic_sort':
-      case 'shape_shift':
-        if (selectedLevel.blueprintKey === 'rotation_relay') {
-          return renderFromRegistry('RotationReflectionGame', sharedProps);
-        }
         return renderFromRegistry('ReasoningGame', {
           gameType: selectedLevel.gameType,
           isBoss: Boolean(selectedLevel.isBoss),

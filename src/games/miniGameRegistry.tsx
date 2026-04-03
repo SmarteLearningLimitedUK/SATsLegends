@@ -47,8 +47,6 @@ import TreasurePathGame from './TreasurePathGame';
 import LogicSort from './reasoning/LogicSort';
 import MatrixMatch from './reasoning/MatrixMatch';
 import ReasoningGame from './reasoning/ReasoningGame';
-import SequenceSprint from './reasoning/SequenceSprint';
-import ShapeShift from './reasoning/ShapeShift';
 import { createMiniGame, MiniGame } from './MiniGame';
 
 export type MiniGameRegistryKey =
@@ -98,9 +96,7 @@ export type MiniGameRegistryKey =
   | 'TreasureChartCoveGame'
   | 'TreasurePathGame'
   | 'ReasoningGame'
-  | 'SequenceSprint'
   | 'LogicSort'
-  | 'ShapeShift'
   | 'MatrixMatch';
 
 const asMiniGame = <P extends Record<string, unknown>>(
@@ -159,9 +155,7 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   TreasureChartCoveGame: asMiniGame('treasure_chart_cove', TreasureChartCoveGame),
   TreasurePathGame: asMiniGame('treasure_path', TreasurePathGame),
   ReasoningGame: asMiniGame('reasoning', ReasoningGame),
-  SequenceSprint: asMiniGame('sequence_sprint', SequenceSprint),
   LogicSort: asMiniGame('logic_sort', LogicSort),
-  ShapeShift: asMiniGame('shape_shift', ShapeShift),
   MatrixMatch: asMiniGame('matrix_match', MatrixMatch),
 };
 

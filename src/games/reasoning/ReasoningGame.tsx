@@ -1,7 +1,5 @@
 import React from 'react';
-import SequenceSprint from './SequenceSprint';
 import LogicSort from './LogicSort';
-import ShapeShift from './ShapeShift';
 import MatrixMatch from './MatrixMatch';
 import GameplaySceneBackdrop from '../../components/GameplaySceneBackdrop';
 
@@ -16,12 +14,8 @@ interface ReasoningGameProps {
 const ReasoningGame: React.FC<ReasoningGameProps> = ({ gameType, isBoss = false, onVictory, onGameOver, onBack }) => {
   const renderGame = () => {
     switch (gameType) {
-      case 'sequence_sprint':
-        return <SequenceSprint onVictory={onVictory} onGameOver={onGameOver} onBack={onBack} />;
       case 'logic_sort':
         return <LogicSort onVictory={onVictory} onGameOver={onGameOver} onBack={onBack} />;
-      case 'shape_shift':
-        return <ShapeShift onVictory={onVictory} onGameOver={onGameOver} onBack={onBack} />;
       case 'matrix_match':
         return <MatrixMatch onVictory={onVictory} onGameOver={onGameOver} onBack={onBack} isBoss={isBoss} />;
       default:

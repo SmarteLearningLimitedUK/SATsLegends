@@ -2,6 +2,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { ChevronRight, RotateCcw, Trophy } from 'lucide-react';
 import calculationClashBackground from '../assets/maps/facctor frenzy.jpg';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface CalculationCrashGameProps {
   levelId: number;
@@ -231,7 +232,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
               <div className="mx-auto w-full max-w-[31rem] rounded-[1.25rem] border border-amber-100/35 bg-[linear-gradient(180deg,rgba(2,6,23,0.82),rgba(2,6,23,0.68))] px-4 py-3 shadow-[0_14px_34px_rgba(2,6,23,0.52)] backdrop-blur-[2px]">
                 <p className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-200/95">Calculation Clash</p>
                 <p className="mt-2 text-[clamp(2.1rem,9.3vw,4rem)] font-black leading-none tracking-[-0.02em] text-white [text-shadow:0_6px_14px_rgba(0,0,0,0.72)]">
-                  {question.prompt}
+                  {formatFantasyPrompt(question.prompt)}
                 </p>
               </div>
             </section>

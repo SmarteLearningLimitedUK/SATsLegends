@@ -55,9 +55,8 @@ const FRACTION_FOREST_LEVELS: LevelData[] = [
   { id: 1, stars: 0, isLocked: false, blueprintKey: 'take_out_rush', displayName: 'Take-Out Rush', gameType: 'take_out_rush' },
   { id: 2, stars: 0, isLocked: false, blueprintKey: 'fraction_forge', displayName: 'Fraction Forge', gameType: 'take_out_rush' },
   { id: 3, stars: 0, isLocked: false, blueprintKey: 'match3_equivalence', displayName: 'Match-3 Equivalence', gameType: 'fraction_match' },
-  { id: 4, stars: 0, isLocked: false, blueprintKey: 'fraction_of_amount', displayName: 'Fraction of Amount', gameType: 'percent_pulse' },
-  { id: 5, stars: 0, isLocked: false, blueprintKey: 'percent_power', displayName: 'Percent Power', gameType: 'percent_power' },
-  { id: 6, stars: 0, isLocked: false, blueprintKey: 'simplify_sprint', displayName: 'Simplify Sprint', gameType: 'fraction_match' },
+  { id: 4, stars: 0, isLocked: false, blueprintKey: 'percent_power', displayName: 'Percent Power', gameType: 'percent_power' },
+  { id: 5, stars: 0, isLocked: false, blueprintKey: 'simplify_sprint', displayName: 'Simplify Sprint', gameType: 'fraction_match' },
 ];
 
 const RATIO_RAPIDS_LEVELS: LevelData[] = [
@@ -121,7 +120,7 @@ export const ISLANDS: IslandData[] = [
         { id: 1, stars: 0, isLocked: false, blueprintKey: 'angle_arena', displayName: 'Angle Arena', gameType: 'angle_arena' },
         { id: 2, stars: 0, isLocked: false, blueprintKey: 'polygon_palace', displayName: 'Polygon Palace', gameType: 'polygon_palace' },
         { id: 3, stars: 0, isLocked: false, blueprintKey: 'area_architect', displayName: 'Area Architect', gameType: 'area_architect' },
-        { id: 3, stars: 0, isLocked: false, blueprintKey: 'rotation_relay', displayName: 'Rotation Station', gameType: 'shape_shift' },
+        { id: 3, stars: 0, isLocked: false, blueprintKey: 'rotation_relay', displayName: 'Rotation Station', gameType: 'transform_temple' },
         { id: 4, stars: 0, isLocked: false, blueprintKey: 'coordinates_quest', displayName: 'Coordinates Quest', gameType: 'coordinate_quest' },
       ],
       [
@@ -199,11 +198,10 @@ export const ISLANDS: IslandData[] = [
     levels: [
       { id: 1, stars: 0, isLocked: false, blueprintKey: 'problem_pyramid', displayName: 'Problem Pyramid', gameType: 'rule_runner' },
       { id: 2, stars: 0, isLocked: false, blueprintKey: 'unit_mixer', displayName: 'Unit Mixer', gameType: 'unit_mixer' },
-      { id: 3, stars: 0, isLocked: false, blueprintKey: 'change_counter', displayName: 'Change Counter', gameType: 'change_counter' },
-      { id: 4, stars: 0, isLocked: false, blueprintKey: 'mixed_mastery', displayName: 'Mixed Mastery', gameType: 'calculation_clash' },
-      { id: 5, stars: 0, isLocked: false, blueprintKey: 'strategy_survival', displayName: 'Strategy Survival', gameType: 'logic_sort' },
-      { id: 6, stars: 0, isLocked: false, blueprintKey: 'timed_test_trials', displayName: 'Timed Test Trials', gameType: 'calculation_clash' },
-      { id: 7, stars: 0, isLocked: false, blueprintKey: 'multi_step_marathon', displayName: 'Multi-Step Marathon', gameType: 'equation_grove' },
+      { id: 3, stars: 0, isLocked: false, blueprintKey: 'mixed_mastery', displayName: 'Mixed Mastery', gameType: 'calculation_clash' },
+      { id: 4, stars: 0, isLocked: false, blueprintKey: 'strategy_survival', displayName: 'Strategy Survival', gameType: 'logic_sort' },
+      { id: 5, stars: 0, isLocked: false, blueprintKey: 'timed_test_trials', displayName: 'Timed Test Trials', gameType: 'calculation_clash' },
+      { id: 6, stars: 0, isLocked: false, blueprintKey: 'multi_step_marathon', displayName: 'Multi-Step Marathon', gameType: 'equation_grove' },
     ],
   },
   {

@@ -25,6 +25,7 @@ import {
   StoryCard,
   TaskCard,
 } from '../components/game-ui/GameUiKit';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface SlingShotGameProps {
   levelId: number;
@@ -978,7 +979,7 @@ const SlingShotGame: React.FC<SlingShotGameShellProps> = ({
               <div className="text-[10px] font-black uppercase tracking-[0.14em] text-amber-900/70">Target</div>
               <div className="mt-1 text-lg font-black text-slate-900">
                 {questionType === 'angles'
-                  ? (angleChallenge?.prompt ?? 'Choose the correct angle.')
+                  ? formatFantasyPrompt(angleChallenge?.prompt ?? 'Choose the correct angle.')
                   : (correctTarget?.label ?? '—')}
               </div>
             </div>

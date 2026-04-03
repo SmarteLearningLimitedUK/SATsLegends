@@ -5,7 +5,6 @@ export type NumberBaseCampMiniGameKey =
   | 'number_line_ninja'
   | 'prime_pop'
   | 'rounding_rampage'
-  | 'calculation_clash'
   | 'factor_frenzy'
   | 'chart_challenge'
   | 'mean_machine'
@@ -85,13 +84,6 @@ const basePackDefs: Array<{
     gameType: 'place_value_peaks',
     skillTags: ['ROUNDING', 'PLACE_VALUE', 'ESTIMATION'],
     objectiveForLevel: (miniGameLevel) => `Round mission values accurately to fuel deeper space jumps (L${miniGameLevel}).`,
-  },
-  {
-    key: 'calculation_clash',
-    name: 'Calculation Clash',
-    gameType: 'calculation_clash',
-    skillTags: ['ADDITION', 'SUBTRACTION', 'MULTIPLICATION', 'DIVISION'],
-    objectiveForLevel: (miniGameLevel) => `Resolve arithmetic waves with fast, clean answers (L${miniGameLevel}).`,
   },
   {
     key: 'factor_frenzy',

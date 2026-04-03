@@ -22,6 +22,7 @@ import answerOrangeBg from '../assets/casual_ui/inputs/btn_1.png';
 import answerGreenBg from '../assets/casual_ui/inputs/btn_6a.png';
 import answerBlueBg from '../assets/casual_ui/inputs/btn_7.png';
 import answerYellowBg from '../assets/casual_ui/inputs/btn_8.png';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface CurriculumChallengeGameProps {
   gameType: SupportedChallengeGameType;
@@ -79,20 +80,6 @@ const CHALLENGE_THEMES: Record<SupportedChallengeGameType, ChallengeTheme> = {
     progress: 'bg-gradient-to-r from-cyan-300 via-sky-300 to-yellow-300',
     badge: 'text-cyan-100',
   },
-  percent_pulse: {
-    title: 'Percent Pulse',
-    surface: 'from-cyan-300/28 via-sky-300/16 to-slate-950/88',
-    scene: 'from-cyan-300/22 via-sky-300/18 to-transparent',
-    ambient: 'bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.28),transparent_26%),radial-gradient(circle_at_bottom_right,rgba(56,189,248,0.22),transparent_24%),linear-gradient(180deg,#0f2b4d_0%,#07111b_100%)]',
-    prompt: 'from-cyan-200/28 to-cyan-100/12',
-    answer: 'from-cyan-200/10 via-sky-200/8 to-white/4',
-    answerActive: 'from-cyan-300/62 via-cyan-300/58 to-blue-400/48',
-    statText: 'text-cyan-950',
-    statSoftBg: 'bg-cyan-100/85',
-    statBorder: 'border-cyan-200/90',
-    progress: 'bg-gradient-to-r from-cyan-300 via-cyan-300 to-sky-400',
-    badge: 'text-cyan-100',
-  },
   coordinate_quest: {
     title: 'Coordinate Quest',
     surface: 'from-sky-300/18 via-cyan-200/12 to-slate-950/86',
@@ -134,20 +121,6 @@ const CHALLENGE_THEMES: Record<SupportedChallengeGameType, ChallengeTheme> = {
     statBorder: 'border-lime-200/90',
     progress: 'bg-gradient-to-r from-lime-300 via-yellow-300 to-orange-400',
     badge: 'text-lime-100',
-  },
-  change_counter: {
-    title: 'Change Counter',
-    surface: 'from-amber-300/18 via-yellow-200/12 to-slate-950/86',
-    scene: 'from-amber-300/18 via-yellow-200/10 to-transparent',
-    ambient: 'bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.22),transparent_28%),linear-gradient(180deg,#2a240f_0%,#091018_100%)]',
-    prompt: 'from-amber-200/18 to-yellow-100/8',
-    answer: 'from-white/10 to-white/4',
-    answerActive: 'from-amber-300/55 to-yellow-400/48',
-    statText: 'text-amber-950',
-    statSoftBg: 'bg-amber-100/85',
-    statBorder: 'border-amber-200/90',
-    progress: 'bg-gradient-to-r from-amber-300 via-yellow-300 to-orange-400',
-    badge: 'text-amber-100',
   },
   unit_mixer: {
     title: 'Unit Mixer',
@@ -264,15 +237,6 @@ const makeOptions = (correct: string, wrongOptions: string[]) => {
   };
 };
 
-const fractionToPercentSet = [
-  { fraction: '1/2', decimal: '0.5', percent: '50%' },
-  { fraction: '1/4', decimal: '0.25', percent: '25%' },
-  { fraction: '3/4', decimal: '0.75', percent: '75%' },
-  { fraction: '1/5', decimal: '0.2', percent: '20%' },
-  { fraction: '3/5', decimal: '0.6', percent: '60%' },
-  { fraction: '3/8', decimal: '0.375', percent: '37.5%' },
-];
-
 const generatePlaceValueQuestion = (): ChallengeQuestion => {
   const mode = randomInt(0, 2);
 
@@ -373,56 +337,6 @@ const generateCalculationQuestion = (): ChallengeQuestion => {
     options,
     answerIndex,
     visual: { type: 'ratio', leftLabel: 'Rows', leftValue: String(rows), rightLabel: 'Seats per row', rightValue: String(columns), caption: 'Find total seats, then subtract broken seats.' },
-  };
-};
-
-const generatePercentQuestion = (): ChallengeQuestion => {
-  const mode = randomInt(0, 1);
-  if (mode === 0) {
-    const sample = pick(fractionToPercentSet);
-    const forms = [sample.fraction, sample.decimal, sample.percent];
-    const promptForm = pick(forms);
-    const correct = forms.find((item) => item !== promptForm) || sample.percent;
-    const wrong = shuffle(
-      fractionToPercentSet
-        .filter((item) => item.percent !== sample.percent)
-        .slice(0, 3)
-        .map((item) => pick([item.fraction, item.decimal, item.percent])),
-    );
-    const { options, answerIndex } = makeOptions(correct, wrong);
-    return {
-      prompt: `Which answer is equivalent to ${promptForm}?`,
-      sublabel: 'Link fractions, decimals and percentages confidently.',
-      options,
-      answerIndex,
-      visual: {
-        type: 'pulse',
-        centerLabel: promptForm,
-        orbitLabels: [...forms.filter((item) => item !== promptForm), 'Same pulse'],
-        meterValue: Number.parseFloat(sample.percent),
-        meterLabel: sample.percent,
-        caption: 'Read the glow and find the equivalent form.',
-      },
-    };
-  }
-
-  const percent = pick([10, 20, 25, 50, 75]);
-  const amount = pick([24, 36, 48, 60, 80, 120, 200]);
-  const correct = (amount * percent) / 100;
-  const { options, answerIndex } = makeOptions(String(correct), shuffle([String(correct + amount / 10), String(correct - amount / 20), String(amount - correct)]));
-  return {
-    prompt: `What is ${percent}% of ${amount}?`,
-    sublabel: 'Use a known fraction or decimal equivalent.',
-    options,
-    answerIndex,
-    visual: {
-      type: 'pulse',
-      centerLabel: `${percent}%`,
-      orbitLabels: [`Whole ${amount}`, `1% = ${formatChallengeNumber(amount / 100)}`, 'Find the share'],
-      meterValue: percent,
-      meterLabel: `${percent}% target`,
-      caption: 'Charge the pulse by spotting the correct portion.',
-    },
   };
 };
 
@@ -1224,7 +1138,7 @@ const generateChangeCounterQuestion = (): ChallengeQuestion => {
 };
 
 const generateQuestion = (gameType: SupportedChallengeGameType, levelId: number): ChallengeQuestion => {
-  const shouldUseSats = gameType === 'change_counter' ? true : Math.random() < 0.7;
+  const shouldUseSats = Math.random() < 0.7;
   const satsInspiredQuestion = shouldUseSats
     ? getSatsInspiredChallengeQuestion(gameType, levelId)
     : null;
@@ -1238,8 +1152,6 @@ const generateQuestion = (gameType: SupportedChallengeGameType, levelId: number)
       return generatePlaceValueQuestion();
     case 'calculation_clash':
       return generateCalculationQuestion();
-    case 'percent_pulse':
-      return generatePercentQuestion();
     case 'percent_power':
       return generatePercentPowerQuestion();
     case 'coordinate_quest':
@@ -1248,8 +1160,6 @@ const generateQuestion = (gameType: SupportedChallengeGameType, levelId: number)
       return generateTransformQuestion();
     case 'scale_safari':
       return generateScaleQuestion();
-    case 'change_counter':
-      return generateChangeCounterQuestion();
     case 'unit_mixer':
       return generateUnitMixerQuestion();
     case 'chart_chase':
@@ -1288,12 +1198,10 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
 
   const theme = CHALLENGE_THEMES[gameType];
   const isCalculationClash = gameType === 'calculation_clash';
-  const isPercentPulse = gameType === 'percent_pulse';
   const isPlaceValuePeaks = gameType === 'place_value_peaks';
   const isScaleBuilder = gameType === 'scale_safari';
   const isRuleRunner = gameType === 'rule_runner';
-  const isChangeCounter = gameType === 'change_counter';
-  const usesBlueAnswers = isScaleBuilder || isCalculationClash || isPercentPulse || isRuleRunner || isChangeCounter;
+  const usesBlueAnswers = isScaleBuilder || isCalculationClash || isRuleRunner;
   const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
   const targetScore = 780 + (levelId * 180);
   const progress = Math.min((XP / targetScore) * 100, 100);
@@ -1411,7 +1319,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
 
       <div className="relative z-10 flex h-full min-h-0 flex-col gap-1 md:gap-4">
 
-            <div className={`licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.8rem] border border-white/10 ${isCalculationClash ? 'bg-[linear-gradient(180deg,rgba(9,34,58,0.86),rgba(7,17,31,0.62))]' : isPercentPulse ? 'bg-[linear-gradient(180deg,rgba(30,12,58,0.82),rgba(7,18,32,0.42))]' : isPlaceValuePeaks ? 'bg-[linear-gradient(180deg,rgba(52,28,10,0.76),rgba(16,16,22,0.54))]' : 'bg-[linear-gradient(180deg,rgba(9,16,28,0.68),rgba(9,16,28,0.34))]'} shadow-[0_24px_64px_rgba(0,0,0,0.28)] md:rounded-[2.6rem]`}>
+        <div className={`licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.8rem] border border-white/10 ${isCalculationClash ? 'bg-[linear-gradient(180deg,rgba(9,34,58,0.86),rgba(7,17,31,0.62))]' : isPlaceValuePeaks ? 'bg-[linear-gradient(180deg,rgba(52,28,10,0.76),rgba(16,16,22,0.54))]' : 'bg-[linear-gradient(180deg,rgba(9,16,28,0.68),rgba(9,16,28,0.34))]'} shadow-[0_24px_64px_rgba(0,0,0,0.28)] md:rounded-[2.6rem]`}>
           <div className="flex min-h-0 flex-1 flex-col gap-1.5 p-1.5 md:gap-3 md:p-4">
             {bossEncounter && (
               <BossPortrait encounter={bossEncounter} pose={bossPose} compact className="shrink-0" />
@@ -1420,15 +1328,13 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
             <div className={`casual-panel-strong relative shrink-0 overflow-hidden ${isPlaceValuePeaks ? 'rounded-[1.25rem] border border-amber-200/18 bg-[linear-gradient(180deg,rgba(124,45,18,0.88),rgba(83,33,13,0.92))]' : 'rounded-[1.35rem]'} px-3 py-3 text-center md:rounded-[2rem] md:px-5 md:py-5`}>
               <div className={`absolute inset-x-5 top-0 h-20 rounded-full bg-gradient-to-br ${isPlaceValuePeaks ? 'from-yellow-200/18 via-orange-300/12 to-transparent' : theme.prompt} blur-3xl`} />
               <div className="relative z-10 flex flex-col items-center">
-                {!isPercentPulse ? (
-                  <div className={`${isPlaceValuePeaks ? 'mb-2 rounded-[0.9rem] border border-amber-200/24 bg-[linear-gradient(180deg,rgba(251,146,60,0.3),rgba(194,65,12,0.18))] px-3 py-1.5 text-amber-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]' : `casual-ribbon-chip mb-2 inline-flex items-center justify-center rounded-full px-3 py-1 text-[8px] font-black uppercase tracking-[0.18em] md:mb-3 md:px-4 md:py-1.5 md:text-[10px] ${theme.badge}`}`}>
-                    {isPlaceValuePeaks ? 'Highest Number Dash' : meta.focus}
-                  </div>
-                ) : null}
-                <div className={`${isPercentPulse ? 'text-[1.02rem] leading-[1.05] md:text-[1.55rem]' : isCalculationClash ? 'text-[1.15rem]' : isPlaceValuePeaks ? 'text-[1.18rem]' : 'text-[1.28rem]'} max-w-[18rem] font-black text-white md:max-w-[30rem] ${isPercentPulse ? '' : 'leading-[0.95]'} `}>
-                  {question.prompt}
+                <div className={`${isPlaceValuePeaks ? 'mb-2 rounded-[0.9rem] border border-amber-200/24 bg-[linear-gradient(180deg,rgba(251,146,60,0.3),rgba(194,65,12,0.18))] px-3 py-1.5 text-amber-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]' : `casual-ribbon-chip mb-2 inline-flex items-center justify-center rounded-full px-3 py-1 text-[8px] font-black uppercase tracking-[0.18em] md:mb-3 md:px-4 md:py-1.5 md:text-[10px] ${theme.badge}`}`}>
+                  {isPlaceValuePeaks ? 'Highest Number Dash' : meta.focus}
                 </div>
-                <div className={`mt-1 max-w-[18rem] font-semibold leading-snug text-white/70 md:mt-2 md:max-w-[30rem] ${isPercentPulse ? 'text-[8px] md:text-[11px]' : 'text-[9px] md:text-sm'}`}>
+                <div className={`${isCalculationClash ? 'text-[1.15rem]' : isPlaceValuePeaks ? 'text-[1.18rem]' : 'text-[1.28rem]'} max-w-[18rem] font-black text-white md:max-w-[30rem] leading-[0.95]`}>
+                  {formatFantasyPrompt(question.prompt)}
+                </div>
+                <div className="mt-1 max-w-[18rem] text-[9px] font-semibold leading-snug text-white/70 md:mt-2 md:max-w-[30rem] md:text-sm">
                   {question.sublabel}
                 </div>
               </div>
@@ -1479,9 +1385,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                           ? 'min-h-[3.55rem] rounded-[1.05rem] border border-sky-100/26 shadow-[0_16px_26px_rgba(0,0,0,0.24)] md:min-h-[4.7rem] md:rounded-[1.2rem] md:px-5 md:py-3'
                           : isCalculationClash
                             ? 'min-h-[3.55rem] rounded-[1.05rem] border border-sky-100/24 shadow-[0_16px_26px_rgba(0,0,0,0.24)] md:min-h-[4.7rem] md:rounded-[1.2rem] md:px-5 md:py-3'
-                            : isPercentPulse
-                              ? 'min-h-[2.85rem] rounded-[1.05rem] border border-cyan-100/24 shadow-[0_14px_22px_rgba(0,0,0,0.22)] md:min-h-[3.7rem] md:rounded-[1.2rem] md:px-4 md:py-2.5'
-                              : 'min-h-[3.55rem] rounded-[999px] md:min-h-[4.7rem] md:px-5 md:py-3'
+                          : 'min-h-[3.55rem] rounded-[999px] md:min-h-[4.7rem] md:px-5 md:py-3'
                     }`}
                   >
                     {!isPlaceValuePeaks && <img src={answerBackground} alt="" className="absolute inset-0 h-full w-full object-fill" draggable={false} />}
@@ -1502,10 +1406,10 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                     )}
                     <div className={`absolute inset-x-[8%] top-[10%] h-[34%] ${isPlaceValuePeaks ? 'rounded-[0.9rem]' : 'rounded-full'} bg-white/18 blur-md`} />
                     <div className="relative z-10 flex w-full items-center gap-2.5 md:gap-3">
-                      <div className={`flex shrink-0 items-center justify-center border font-black uppercase ${isPercentPulse ? 'h-6 w-6 rounded-[0.55rem] text-[8px] md:h-7 md:w-7 md:text-[10px]' : 'h-7 w-7 text-[9px] md:h-8 md:w-8 md:text-[11px]'} ${isPlaceValuePeaks ? 'rounded-[0.7rem] border-amber-100/14 bg-black/14 text-amber-50' : usesBlueAnswers ? `rounded-[0.65rem] ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/45 text-slate-900' : 'border-white/16 bg-white/12 text-white'}` : `rounded-full ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/35 text-slate-900' : 'border-white/14 bg-white/10 text-white'}`}`}>
+                      <div className={`flex h-7 w-7 shrink-0 items-center justify-center border text-[9px] font-black uppercase md:h-8 md:w-8 md:text-[11px] ${isPlaceValuePeaks ? 'rounded-[0.7rem] border-amber-100/14 bg-black/14 text-amber-50' : usesBlueAnswers ? `rounded-[0.65rem] ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/45 text-slate-900' : 'border-white/16 bg-white/12 text-white'}` : `rounded-full ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/35 text-slate-900' : 'border-white/14 bg-white/10 text-white'}`}`}>
                         {String.fromCharCode(65 + index)}
                       </div>
-                      <div className={`flex-1 text-center ${isPlaceValuePeaks ? 'text-[1.1rem] md:text-[1.7rem] text-amber-50' : isPercentPulse ? 'text-[0.9rem] md:text-[1.12rem] text-white' : isScaleBuilder || isCalculationClash || isRuleRunner ? 'text-[1rem] md:text-[1.35rem] text-white' : 'text-[1.02rem] md:text-[1.45rem] text-white'} font-black leading-none tracking-[-0.02em] drop-shadow-[0_2px_2px_rgba(0,0,0,0.42)]`}>
+                      <div className={`flex-1 text-center ${isPlaceValuePeaks ? 'text-[1.1rem] md:text-[1.7rem] text-amber-50' : isScaleBuilder || isCalculationClash || isRuleRunner ? 'text-[1rem] md:text-[1.35rem] text-white' : 'text-[1.02rem] md:text-[1.45rem] text-white'} font-black leading-none tracking-[-0.02em] drop-shadow-[0_2px_2px_rgba(0,0,0,0.42)]`}>
                         {option}
                       </div>
                     </div>
@@ -1557,4 +1461,5 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
 };
 
 export default CurriculumChallengeGame;
+
 

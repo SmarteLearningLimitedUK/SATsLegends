@@ -77,19 +77,6 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       ],
     },
   },
-  sequence_sprint: {
-    label: 'Sequence Sprint',
-    focus: 'Next-term sequence spotting',
-    rules: {
-      title: 'Sequence Sprint',
-      summary: 'Read the pattern quickly and choose the next value before the route closes.',
-      bullets: [
-        'Look for the rule linking each term to the next.',
-        'This game is about continuing number patterns at speed.',
-        'Keep streaks alive to score faster.',
-      ],
-    },
-  },
   logic_sort: {
     label: 'Logic Sort',
     focus: 'Classification and reasoning',
@@ -100,20 +87,6 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
         'Read the hidden rule from the clues on screen.',
         'Move pieces only when you are confident of the pattern.',
         'Clean runs without errors build bigger rewards.',
-      ],
-    },
-  },
-  shape_shift: {
-    label: 'Shape Shift',
-    focus: 'Spatial reasoning',
-    mode: 'special',
-    rules: {
-      title: 'Shape Shift',
-      summary: 'Transform the shape until it matches the target pattern.',
-      bullets: [
-        'Rotate, reflect or flip the shape as needed.',
-        'Compare your build to the target before locking it in.',
-        'This reads more like a side challenge than a core island lane right now.',
       ],
     },
   },
@@ -228,19 +201,6 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       ],
     },
   },
-  change_counter: {
-    label: 'Change Counter',
-    focus: 'Money and giving the correct change',
-    rules: {
-      title: 'Change Counter',
-      summary: 'Work out how much change to give after each purchase.',
-      bullets: [
-        'Read the price and the amount paid.',
-        'Subtract the cost from the amount paid.',
-        'Select the exact change to give back.',
-      ],
-    },
-  },
   tower_of_factors: {
     label: 'Factor Forge',
     focus: 'Factors, multiples and factor fluency',
@@ -313,19 +273,6 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
         'Every correct answer advances your car one stage down the track.',
         'Wrong answers give the rival racer momentum.',
         'Use fast, accurate arithmetic to win the cup before the enemy crosses first.',
-      ],
-    },
-  },
-  percent_pulse: {
-    label: 'Percent Pulse',
-    focus: 'Fractions, decimals and percentages',
-    rules: {
-      title: 'Percent Pulse',
-      summary: 'Convert between percentages, fractions and decimals in a rhythm-like equivalence run.',
-      bullets: [
-        'Switch between % symbols, decimals and fractions confidently.',
-        'Some rounds ask for a percentage of a quantity.',
-        'Rhythm-like streaks increase your score gain.',
       ],
     },
   },

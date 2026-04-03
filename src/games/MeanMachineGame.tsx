@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import slotMachineImage from '../assets/redoslot.png';
 import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 type RoundMode = 'mean' | 'missing';
 type GameState = 'idle' | 'spinning' | 'answering' | 'resolved';
@@ -450,7 +451,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
               {modeCopy.title}
             </div>
             <div className="mt-0.5 text-[9px] font-semibold text-cyan-100/80">
-              {modeCopy.prompt}
+              {formatFantasyPrompt(modeCopy.prompt)}
             </div>
           </section>
 

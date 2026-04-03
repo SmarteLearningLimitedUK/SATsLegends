@@ -4,6 +4,7 @@ import confetti from 'canvas-confetti';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { Coins } from '../components/GameIcons';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface TreasurePathGameProps {
   levelId: number;
@@ -252,7 +253,9 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
             <div className="licensed-game-card w-full px-4 py-3 md:px-5 md:py-4">
               <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/72">Coordinate Quest</div>
               <div className="mt-1 text-[1.35rem] font-black leading-none text-white md:text-[1.8rem]">{round.promptTitle}</div>
-              <div className="mt-2 text-xs font-bold text-white/78 md:text-sm">{round.promptText}</div>
+              <div className="mt-2 text-xs font-bold text-white/78 md:text-sm">
+                {formatFantasyPrompt(round.promptText)}
+              </div>
             </div>
           </div>
 

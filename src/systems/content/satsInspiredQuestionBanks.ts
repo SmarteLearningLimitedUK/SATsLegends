@@ -1,11 +1,9 @@
 export type SupportedChallengeGameType =
   | 'place_value_peaks'
   | 'calculation_clash'
-  | 'percent_pulse'
   | 'coordinate_quest'
   | 'transform_temple'
   | 'scale_safari'
-  | 'change_counter'
   | 'unit_mixer'
   | 'chart_chase'
   | 'mean_machine'
@@ -166,76 +164,6 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
         options: ['28', '30', '32', '35'],
         answerIndex: 1,
         visual: { type: 'ratio', leftLabel: 'Boxes', leftValue: '35', rightLabel: 'Packets each', rightValue: '48', caption: 'Total packets ÷ 56 each day' },
-      },
-    },
-  ],
-  percent_pulse: [
-    {
-      minLevel: 1,
-      value: {
-        prompt: 'Which answer is equivalent to 0.375?',
-        sublabel: 'Link the decimal to its percentage form.',
-        options: ['3.75%', '37.5%', '35%', '75%'],
-        answerIndex: 1,
-        visual: {
-          type: 'pulse',
-          centerLabel: '0.375',
-          orbitLabels: ['fraction', 'decimal', 'percentage'],
-          meterValue: 37.5,
-          meterLabel: '37.5%',
-          caption: 'Find the matching form.',
-        },
-      },
-    },
-    {
-      minLevel: 1,
-      value: {
-        prompt: 'What is 15% of 80?',
-        sublabel: 'Use 10% and 5% to build the answer.',
-        options: ['12', '8', '15', '20'],
-        answerIndex: 0,
-        visual: {
-          type: 'pulse',
-          centerLabel: '15%',
-          orbitLabels: ['10% = 8', '5% = 4', 'Combine both'],
-          meterValue: 15,
-          meterLabel: '15% target',
-          caption: 'Charge the pulse by combining known percentages.',
-        },
-      },
-    },
-    {
-      minLevel: 2,
-      value: {
-        prompt: 'Three out of four equal parts are shaded. What percentage is shaded?',
-        sublabel: 'Convert the fraction of the whole into a percentage.',
-        options: ['25%', '50%', '75%', '80%'],
-        answerIndex: 2,
-        visual: {
-          type: 'pulse',
-          centerLabel: '3/4',
-          orbitLabels: ['0.75', '75%', 'whole shape'],
-          meterValue: 75,
-          meterLabel: '75%',
-          caption: 'A SATs-style percentage-of-shape prompt.',
-        },
-      },
-    },
-    {
-      minLevel: 3,
-      value: {
-        prompt: '30 pupils out of 120 chose the trip. What percentage chose the trip?',
-        sublabel: 'Turn the fraction into an equivalent percentage.',
-        options: ['20%', '25%', '30%', '40%'],
-        answerIndex: 1,
-        visual: {
-          type: 'pulse',
-          centerLabel: '30 out of 120',
-          orbitLabels: ['quarter of the whole', 'fraction to %', 'same proportion'],
-          meterValue: 25,
-          meterLabel: '25%',
-          caption: 'Reduce the proportion before converting.',
-        },
       },
     },
   ],
@@ -546,13 +474,6 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
       },
     },
   ],
-  change_counter: [
-    {
-      minLevel: 1,
-      value: {
-        prompt: 'A scarf costs £1.20 and the customer pays £2.00. How much change?',
-        sublabel: 'Subtract the cost from the amount paid.',
-        options: ['£0.80', '£0.20', '£1.20', '£1.80'],
         answerIndex: 0,
         visual: { type: 'ratio', leftLabel: 'Cost', leftValue: '£1.20', rightLabel: 'Paid', rightValue: '£2.00', caption: 'Find the change' },
       },
@@ -1040,3 +961,7 @@ export const getSatsInspiredMeasurementProblem = (levelId: number): MeasurementP
 
 export const getSatsInspiredTimeProblem = (levelId: number): TimeProblem | null =>
   selectBankValue(TIMEKEEPER_BANK, levelId);
+
+
+
+

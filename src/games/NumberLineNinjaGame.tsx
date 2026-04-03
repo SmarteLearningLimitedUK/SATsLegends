@@ -8,6 +8,7 @@ import {
 import dojoBackground from '../assets/maps/inside dojo.jpg';
 import monsterHitA from '../assets/bosses/ezgif-6daa70d34d8e7de3.webp';
 import monsterHitB from '../assets/bosses/ezgif-69d0cb3c40700347.webp';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface NumberLineNinjaGameProps {
   levelId: number;
@@ -503,7 +504,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       <div className="relative z-10 flex h-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+4.2rem)] pt-1">
         <div className="mt-[14px] shrink-0 text-center">
           <p className="mx-auto max-w-[700px] text-[clamp(15px,1.9vw,23px)] font-black leading-tight text-white drop-shadow-[0_2px_6px_rgba(2,6,23,0.92)]">
-            {question.prompt}
+            {formatFantasyPrompt(question.prompt)}
           </p>
         </div>
 

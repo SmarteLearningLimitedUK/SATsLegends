@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   CheckCircle2,
@@ -318,7 +318,7 @@ const generateChallenge = (levelId: number, solved: number): Challenge => {
     const leadIngredient = activeIngredients[0];
     cardHint = `The healer has already poured ${targetCounts[givenRatioIndex]} ${givenIngredient.name} drops. How many ${leadIngredient.name} drops are needed?`;
   } else if (mode === 'multi_step') {
-    cardHint = `Use ${totalDrops} drops altogether and keep the ratio balanced.`;
+    cardHint = `Use ${totalDrops} drops altogether and Keep the mix balanced.`;
   }
 
   const orderTitle = buildPotionName(stage, activeIngredients);
@@ -386,7 +386,6 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
   }, []);
 
   const activeSet = useMemo(() => new Set(challenge.activeIndices), [challenge.activeIndices]);
-  const cardLabels = useMemo(() => cardLabelsForMode(challenge.mode), [challenge.mode]);
   const targetByIngredient = useMemo(() => {
     const map = new Map<number, number>();
     challenge.activeIndices.forEach((index, ratioIndex) => {
@@ -399,6 +398,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
   const targetTotal = useMemo(() => challenge.targetCounts.reduce((a, b) => a + b, 0), [challenge.targetCounts]);
   const activeTargets = useMemo(
     () => challenge.activeIndices.map((idx) => ({
+      index: idx,
       ingredient: INGREDIENTS[idx],
       current: counts[idx] || 0,
       target: targetByIngredient.get(idx) ?? 0,
@@ -430,6 +430,32 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
     });
     return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, 0.96)`;
   }, [counts]);
+
+  const recipeTokens = useMemo(
+    () => activeTargets.flatMap(({ ingredient, target }) => (
+      Array.from({ length: Math.min(8, target) }, (_, idx) => ({
+        id: `${ingredient.id}-${idx}`,
+        color: ingredient.color,
+        glow: ingredient.glow,
+      }))
+    )),
+    [activeTargets],
+  );
+
+  const nextNeeded = useMemo(
+    () => activeTargets.find(({ remaining }) => remaining > 0) || null,
+    [activeTargets],
+  );
+
+  const stepHint = nextNeeded
+    ? `Add ${nextNeeded.remaining} ${nextNeeded.ingredient.name} drop${nextNeeded.remaining > 1 ? 's' : ''}`
+    : 'Recipe complete. Brew when ready.';
+
+  const ingredientGridClass = activeTargets.length <= 2
+    ? 'grid-cols-2'
+    : activeTargets.length === 3
+      ? 'grid-cols-3'
+      : 'grid-cols-5';
 
   useEffect(() => {
     if (!sessionState || endedRef.current) return;
@@ -512,9 +538,9 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
     : overfilledTargets.length > 0
       ? `Too much ${joinWithAnd(overfilledTargets.map(({ ingredient }) => ingredient.name))}.`
       : isRecipeComplete
-        ? 'Ratio complete. Brew the potion.'
+        ? 'Recipe complete. Brew the potion.'
         : currentTotal > 0
-          ? 'Good start. Keep the ratio balanced.'
+          ? 'Good start. Keep the mix balanced.'
           : 'Add drops to begin.';
 
   const feedbackTone: FeedbackKind | 'hint' | 'neutral' =
@@ -528,11 +554,11 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
 
   const rules = useMemo(() => ({
     title: 'Potion Panic',
-    summary: 'Use the task card to brew the exact ratio before you press Brew.',
+    summary: 'Match the recipe card to brew the potion.',
     bullets: [
       'Tap ingredient bottles to add drops to the cauldron.',
-      'Use the ratio and total on the task card to plan your mix.',
-      'Press Brew only when the recipe is complete.',
+      'Use the recipe card to see how many drops to add.',
+      'Press Brew only when the mix is complete.',
     ],
   }), []);
 
@@ -553,54 +579,54 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
 
         <section className="shrink-0">
           <StoryCard className="mx-auto max-w-[780px]">
-            <p className="text-[clamp(13px,2vh,18px)] font-semibold text-white/90">
-              The village apothecary needs a {challenge.orderTitle.toLowerCase()}.
-            </p>
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/70">Create</p>
+            <p className="text-[clamp(16px,2.4vh,22px)] font-black text-white">{challenge.orderTitle}</p>
+            <p className="text-[11px] font-semibold text-cyan-100/80">Use the correct ratio of ingredients.</p>
           </StoryCard>
         </section>
 
         <section className="shrink-0">
           <TaskCard className="mx-auto w-full max-w-[780px]">
-            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-900/80">Task Card</div>
-            <div className="mt-1 text-[clamp(15px,2.2vh,20px)] font-black">{challenge.orderTitle}</div>
-            <div className="mt-2 grid grid-cols-2 gap-2">
-              <div className="rounded-[1rem] border border-amber-200/40 bg-white/70 px-3 py-2">
-                <div className="text-[10px] font-black uppercase tracking-[0.14em] text-amber-900/70">{cardLabels.totalLabel}</div>
-                <div className="mt-0.5 text-lg font-black text-slate-900">{challenge.totalDrops}</div>
-              </div>
-              <div className="rounded-[1rem] border border-amber-200/40 bg-white/70 px-3 py-2">
-                <div className="text-[10px] font-black uppercase tracking-[0.14em] text-amber-900/70">{cardLabels.ratioLabel}</div>
-                <div className="mt-0.5 text-lg font-black text-slate-900">{challenge.baseRatio.join(' : ')}</div>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/70">Recipe</div>
+              <div className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/70">
+                Total {challenge.totalDrops} drops
               </div>
             </div>
-            {challenge.cardHint ? (
-              <div className="mt-2 rounded-[1rem] border border-amber-200/30 bg-white/70 px-3 py-2 text-[11px] font-semibold text-slate-700">
-                {challenge.cardHint}
-              </div>
-            ) : null}
             <div className="mt-2 grid gap-1.5">
               {activeTargets.map(({ ingredient, target }) => (
-                <div key={`recipe-${ingredient.id}`} className="flex items-center justify-between rounded-[0.95rem] border border-amber-200/30 bg-white/80 px-2.5 py-2">
+                <div key={`recipe-${ingredient.id}`} className="flex items-center justify-between rounded-[0.95rem] border border-white/10 bg-white/10 px-2.5 py-2">
                   <div className="flex items-center gap-2">
                     <span
                       aria-hidden="true"
                       className="h-3.5 w-3.5 rounded-full border border-white/45"
                       style={{ backgroundColor: ingredient.color, boxShadow: `0 0 8px ${ingredient.glow}` }}
                     />
-                    <span className="text-[11px] font-black text-slate-800">{ingredient.name}</span>
+                    <span className="text-[12px] font-black text-white">{ingredient.name}</span>
                   </div>
-                  <span className="text-[11px] font-black text-amber-900">
-                    {challenge.revealTargets ? `x${target}` : ingredient.short}
-                  </span>
+                  <span className="text-[11px] font-black text-cyan-50">{target} drops</span>
                 </div>
               ))}
             </div>
+            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+              {recipeTokens.map((token) => (
+                <span
+                  key={token.id}
+                  className="h-3 w-3 rounded-full border border-white/40"
+                  style={{ backgroundColor: token.color, boxShadow: `0 0 8px ${token.glow}` }}
+                />
+              ))}
+            </div>
+            <div className="mt-2 text-[11px] font-semibold text-cyan-100/85">{stepHint}</div>
           </TaskCard>
         </section>
 
         <section className="min-h-0 flex-1">
           <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
             <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] border border-white/12 bg-slate-950/16 shadow-[0_16px_30px_rgba(15,23,42,0.2)]">
+              <div className="pointer-events-none absolute left-4 top-4 rounded-full border border-cyan-100/30 bg-slate-950/40 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100">
+                Add drops to match the recipe
+              </div>
               <div className="pointer-events-none absolute left-1/2 top-[84%] h-12 w-[68%] -translate-x-1/2 rounded-full bg-black/35 blur-md" />
               <div className="pointer-events-none absolute left-1/2 top-[76%] h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
               <div className="absolute left-1/2 top-[72%] flex h-[18%] w-[48%] -translate-x-1/2 items-end justify-between px-5">
@@ -657,8 +683,8 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
               </AnimatePresence>
             </div>
 
-            <div className="grid shrink-0 grid-cols-5 gap-1.5">
-              {INGREDIENTS.map((ingredient, index) => {
+            <div className={`grid shrink-0 ${ingredientGridClass} gap-1.5`}>
+              {activeTargets.map(({ ingredient, index, current, target }) => {
                 const isActive = activeSet.has(index);
                 const bottleArt = POTION_BOTTLE_ART[ingredient.id];
                 return (
@@ -686,6 +712,9 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                       ) : null}
                     </div>
                     <span className="relative z-10 text-[9px] font-black uppercase tracking-[0.02em] text-cyan-50">{ingredient.name}</span>
+                    <span className="relative z-10 text-[10px] font-black text-cyan-100">
+                      {current}/{target}
+                    </span>
                   </motion.button>
                 );
               })}
@@ -706,7 +735,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
           <div className="mx-auto flex w-full max-w-[780px] items-center gap-2">
             <PrimaryButton onClick={onBrew} disabled={locked || !isRecipeComplete} className="flex-1">
               <Wand2 className="h-4.5 w-4.5" />
-              Brew Potion
+              {isRecipeComplete ? 'Brew Potion' : 'Complete recipe to brew'}
             </PrimaryButton>
             <SecondaryButton onClick={resetCurrent} disabled={locked}>
               Reset
@@ -746,4 +775,8 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
 };
 
 export default PotionPourGame;
+
+
+
+
 

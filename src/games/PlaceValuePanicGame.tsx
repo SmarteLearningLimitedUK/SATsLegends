@@ -17,6 +17,7 @@ import socketT from '../assets/casual_ui/updaed_sockets_slices/socket_t.png';
 import socketU from '../assets/casual_ui/updaed_sockets_slices/socket_u.png';
 import { triggerHaptic } from '../haptics';
 import { AVATARS } from '../constants';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface PlaceValuePanicGameProps {
   levelId: number;
@@ -1019,7 +1020,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 whiteSpace: 'normal',
               }}
             >
-              {question.prompt}
+              {formatFantasyPrompt(question.prompt)}
             </span>
           </div>
         </div>

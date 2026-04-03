@@ -94,8 +94,6 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
         return 'RemainderRunGame';
       }
       return level.blueprintKey === 'division_dock' ? 'DivisionDockGame' : 'CalculationCrashGame';
-    case 'percent_pulse':
-    case 'change_counter':
     case 'formula_forge':
     case 'unit_mixer':
       return 'CurriculumChallengeGame';
@@ -106,6 +104,9 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
     case 'ratio_fractions':
       return 'RatioFractionsGame';
     case 'transform_temple':
+      if (level.blueprintKey === 'rotation_relay') {
+        return 'RotationReflectionGame';
+      }
       return 'CurriculumChallengeGame';
     case 'scale_safari':
       if (level.blueprintKey === 'scale_builder') {
@@ -123,12 +124,7 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
         return 'MedianMountainGame';
       }
       return 'CurriculumChallengeGame';
-    case 'sequence_sprint':
     case 'logic_sort':
-    case 'shape_shift':
-      if (level.blueprintKey === 'rotation_relay') {
-        return 'RotationReflectionGame';
-      }
       return 'ReasoningGame';
     case 'matrix_match':
       return 'ReasoningGame';
