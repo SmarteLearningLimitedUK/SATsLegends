@@ -29,6 +29,7 @@ export type MiniGameType =
   | 'mean_machine'
   | 'equation_grove'
   | 'rule_runner'
+  | 'percent_power'
   | 'area_architect'
   | 'ratio_fractions';
 

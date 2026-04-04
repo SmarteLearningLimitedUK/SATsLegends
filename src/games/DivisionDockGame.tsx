@@ -270,28 +270,28 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
     <GameScreenShell className="overflow-hidden">
       <GameplaySceneBackdrop gameType="calculation_clash" />
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+3.4rem)] pt-[calc(env(safe-area-inset-top)+4.45rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+3.7rem)] md:pt-[calc(env(safe-area-inset-top)+4.8rem)]">
-        <PuzzleStage className="w-full max-w-5xl min-h-0 flex-1 rounded-[2rem] p-2 md:rounded-[2.4rem] md:p-4">
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+3.2rem)] pt-[calc(env(safe-area-inset-top)+4.2rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+3.6rem)] md:pt-[calc(env(safe-area-inset-top)+4.6rem)]">
+        <PuzzleStage className="w-full max-w-5xl min-h-0 flex-1 rounded-[2rem] p-2 md:rounded-[2.4rem] md:p-3">
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_24%,rgba(15,23,42,0.2)_100%)]" />
 
-          <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-3 md:px-4 md:pb-4 md:pt-4">
+          <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-2.5 md:px-3 md:pb-3 md:pt-3">
             <div className="flex justify-center">
-              <div className="licensed-slice-paper-panel max-w-[96%] px-4 py-2.5 text-center shadow-[0_16px_30px_rgba(15,23,42,0.16)] md:px-6 md:py-3">
-                <div className="text-[0.92rem] font-black tracking-tight text-amber-900 md:text-[1.28rem]">
-                  Solve the division equation to load cargo
+              <div className="licensed-slice-paper-panel max-w-[96%] px-3 py-2 text-center shadow-[0_14px_26px_rgba(15,23,42,0.16)] md:px-5 md:py-2.5">
+                <div className="text-[0.9rem] font-black tracking-tight text-amber-900 md:text-[1.15rem]">
+                  Solve the division to load cargo
                 </div>
-                <div className="mt-1 text-[0.68rem] font-bold text-amber-950/76 md:text-[0.92rem]">
+                <div className="mt-0.5 text-[0.66rem] font-bold text-amber-950/76 md:text-[0.86rem]">
                   Fill {CARGO_PER_BOAT} crates to dispatch each boat.
                 </div>
               </div>
             </div>
 
-            <div className="mt-2 grid min-h-0 flex-1 grid-cols-1 gap-2.5 md:mt-3 md:grid-cols-[1.05fr_0.95fr] md:gap-3">
+            <div className="mt-2 grid min-h-0 flex-1 grid-cols-1 gap-2.5 lg:mt-3 lg:grid-cols-[1.1fr_0.9fr] lg:gap-3">
               <div className="licensed-game-card-dark flex min-h-0 flex-col rounded-[1.3rem] border border-white/14 p-2.5 shadow-[0_16px_28px_rgba(2,6,23,0.22)] md:rounded-[1.6rem] md:p-4">
                 <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Equation terminal</div>
                 <div className="mt-2 rounded-[1rem] border border-sky-200/20 bg-[linear-gradient(180deg,rgba(14,116,144,0.22),rgba(14,116,144,0.08))] p-3 text-center md:mt-3 md:p-4">
                   <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/70 md:text-xs">Current equation</div>
-                  <div className="mt-1 text-[1.9rem] font-black text-white md:text-[3.35rem]">
+                  <div className="mt-1 text-[clamp(1.6rem,4.2vw,2.7rem)] font-black text-white">
                     {question.dividend} ÷ {question.divisor} = ?
                   </div>
                 </div>
@@ -305,12 +305,12 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
                     onChange={(event) => setUserAnswer(event.target.value.replace(/[^\d-]/g, ''))}
                     disabled={Boolean(feedback) || boatDeparting || isFinished}
                     placeholder="Quotient"
-                    className="h-12 flex-1 rounded-[0.95rem] border border-sky-200/25 bg-black/28 px-4 text-center text-[1.35rem] font-black text-white outline-none transition placeholder:text-cyan-100/45 focus:border-sky-300/70 disabled:opacity-60 md:h-14 md:text-2xl"
+                    className="h-11 flex-1 rounded-[0.95rem] border border-sky-200/25 bg-black/28 px-3 text-center text-[1.2rem] font-black text-white outline-none transition placeholder:text-cyan-100/45 focus:border-sky-300/70 disabled:opacity-60 md:h-12 md:text-2xl"
                   />
                   <button
                     type="submit"
                     disabled={Boolean(feedback) || boatDeparting || isFinished}
-                    className="ui-button-primary min-w-[6.8rem] rounded-[0.95rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.08em] text-white disabled:opacity-60 md:min-w-[8.5rem] md:text-sm"
+                    className="ui-button-primary min-w-[6.4rem] rounded-[0.95rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.08em] text-white disabled:opacity-60 md:min-w-[8rem] md:text-sm"
                   >
                     Load Cargo
                   </button>
@@ -331,13 +331,13 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
               <div className="licensed-game-card-dark flex min-h-0 flex-col rounded-[1.3rem] border border-white/14 p-2.5 shadow-[0_16px_28px_rgba(2,6,23,0.22)] md:rounded-[1.6rem] md:p-4">
                 <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Cargo boat</div>
 
-                <div className="relative mt-2 flex min-h-[7rem] flex-1 items-end justify-center overflow-hidden rounded-[1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(56,189,248,0.24),rgba(30,64,175,0.22)_42%,rgba(15,23,42,0.36)_100%)] p-2.5 md:mt-3 md:min-h-[8.5rem] md:p-3">
+                <div className="relative mt-2 flex min-h-[6.4rem] flex-1 items-end justify-center overflow-hidden rounded-[1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(56,189,248,0.24),rgba(30,64,175,0.22)_42%,rgba(15,23,42,0.36)_100%)] p-2 md:mt-3 md:min-h-[7.2rem] md:p-2.5">
                   <motion.div
                     animate={boatDeparting ? { x: [0, 220, 520], y: [0, -8, -10], rotate: [0, -2, -1], opacity: [1, 1, 0.55] } : { x: 0, y: 0, rotate: [0, -1, 1, 0] }}
                     transition={boatDeparting ? { duration: 1.1, ease: 'easeInOut' } : { duration: 2.1, repeat: Infinity, repeatType: 'mirror' }}
                     className="relative w-[90%] max-w-[22rem]"
                   >
-                    <div className="relative h-14 rounded-b-[1.4rem] rounded-t-[0.7rem] border border-amber-200/35 bg-[linear-gradient(180deg,rgba(251,191,36,0.25),rgba(120,53,15,0.75))] shadow-[0_12px_20px_rgba(0,0,0,0.35)] md:h-16">
+                    <div className="relative h-12 rounded-b-[1.4rem] rounded-t-[0.7rem] border border-amber-200/35 bg-[linear-gradient(180deg,rgba(251,191,36,0.25),rgba(120,53,15,0.75))] shadow-[0_12px_20px_rgba(0,0,0,0.35)] md:h-14">
                       <div className="absolute -top-3 left-3 right-3 h-3 rounded-full border border-amber-200/35 bg-[linear-gradient(180deg,rgba(254,243,199,0.55),rgba(217,119,6,0.45))]" />
                     </div>
 
@@ -349,7 +349,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
                           animate={index < cargoLoaded
                             ? { scale: 1, opacity: 1, y: 0 }
                             : { scale: 0.85, opacity: 0.2, y: 8 }}
-                          className="h-8 w-7 rounded-md border border-yellow-200/35 bg-[linear-gradient(180deg,rgba(250,204,21,0.7),rgba(120,53,15,0.85))] shadow-[0_7px_14px_rgba(0,0,0,0.3)] md:h-9 md:w-8"
+                          className="h-7 w-6 rounded-md border border-yellow-200/35 bg-[linear-gradient(180deg,rgba(250,204,21,0.7),rgba(120,53,15,0.85))] shadow-[0_7px_14px_rgba(0,0,0,0.3)] md:h-8 md:w-7"
                         />
                       ))}
                     </div>

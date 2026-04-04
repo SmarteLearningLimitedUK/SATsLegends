@@ -83,6 +83,7 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   chart_chase: DATA_SCENE,
   observatory_overload: DATA_SCENE,
   mean_machine: DATA_SCENE,
+  percent_power: RATIO_SCENE,
   equation_grove: REASONING_SCENE,
   rule_runner: REASONING_SCENE,
 };

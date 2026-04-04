@@ -157,6 +157,13 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
   }, [deltaRatio, weightDelta]);
 
   const scaleFramePosition = SCALE_FRAME_POSITION[activeScaleFrame];
+  const scaleFrameCss = `${scaleFramePosition.x}% ${scaleFramePosition.y}%`;
+  const wobbleAnimation = activeScaleFrame === 'balanced'
+    ? { y: [0, -1.5, 0] }
+    : { y: [0, -3, 0], rotate: successPulse ? [0, 1, -1, 0] : 0 };
+  const wobbleTransition = activeScaleFrame === 'balanced'
+    ? { duration: 2.2, repeat: Infinity, ease: 'easeInOut' }
+    : { duration: 1.4, repeat: Infinity, ease: 'easeInOut' };
 
   const unplacedTokens = round.tokens.filter((token) => !placedIds.includes(token.id));
 
@@ -200,36 +207,33 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
 
   return (
     <div ref={rootRef} className="relative h-full w-full overflow-hidden bg-[#07122b]">
-      <div className="relative z-0 flex h-full w-full min-h-0 flex-col items-center justify-start gap-3 px-4 pb-[calc(env(safe-area-inset-bottom)+4.2rem)] pt-[calc(env(safe-area-inset-top)+0.6rem)]">
+      <div className="relative z-0 flex h-full w-full min-h-0 flex-col items-center justify-start gap-4 px-4 pb-[calc(env(safe-area-inset-bottom)+4.2rem)] pt-[calc(env(safe-area-inset-top)+0.6rem)]">
         <motion.div
           animate={successPulse ? { scale: [1, 1.03, 1] } : { scale: 1 }}
           transition={{ duration: 0.42, ease: 'easeOut' }}
-          className="relative mt-1 w-[min(72vw,18rem)] shrink-0 aspect-square md:w-[min(46vw,20rem)]"
+          className="relative mt-1 w-[min(84vw,22rem)] shrink-0 aspect-square md:w-[min(52vw,24rem)]"
         >
+          <div className="absolute inset-0 rounded-[2rem] border border-white/12 bg-[radial-gradient(circle_at_top,rgba(148,163,184,0.16),rgba(15,23,42,0.55))] shadow-[0_22px_50px_rgba(2,6,23,0.45)]" />
           <motion.div
             aria-hidden="true"
-            animate={
-              activeScaleFrame === 'balanced'
-                ? { y: [0, -1.5, 0] }
-                : { y: [0, -3, 0], rotate: successPulse ? [0, 1, -1, 0] : 0 }
-            }
-            transition={
-              activeScaleFrame === 'balanced'
-                ? { duration: 2.2, repeat: Infinity, ease: 'easeInOut' }
-                : { duration: 1.4, repeat: Infinity, ease: 'easeInOut' }
-            }
+            animate={{ ...wobbleAnimation, backgroundPosition: scaleFrameCss }}
+            transition={{
+              backgroundPosition: { type: 'spring', stiffness: 120, damping: 18 },
+              y: wobbleTransition,
+              rotate: wobbleTransition,
+            }}
             className="pointer-events-none absolute inset-0"
+            initial={false}
             style={{
               backgroundImage: `url(${scaleSheet})`,
               backgroundSize: `${SCALE_FRAME_SIZE.columns * 100}% ${SCALE_FRAME_SIZE.rows * 100}%`,
-              backgroundPosition: `${scaleFramePosition.x}% ${scaleFramePosition.y}%`,
               backgroundRepeat: 'no-repeat',
             }}
           />
 
           <div
-            className={`absolute left-[12%] top-[12%] flex min-h-[17%] w-[26%] items-center justify-center rounded-[1.25rem] px-2 py-1.5 text-center ${
-              successPulse ? 'bg-emerald-400/24' : 'bg-slate-950/30'
+            className={`absolute left-[11%] top-[10%] flex min-h-[18%] w-[28%] items-center justify-center rounded-[1.35rem] px-2 py-1.5 text-center ${
+              successPulse ? 'bg-emerald-400/26' : 'bg-slate-950/38'
             }`}
           >
             <div>
@@ -242,14 +246,14 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
 
           <div
             ref={dropRef}
-            className={`absolute left-[78%] top-[12%] h-[17%] w-[26%] -translate-x-1/2 rounded-[1.35rem] border-2 ${
+            className={`absolute left-[79%] top-[10%] h-[18%] w-[28%] -translate-x-1/2 rounded-[1.45rem] border-2 ${
               successPulse
                 ? 'border-emerald-300 bg-emerald-300/20'
                 : 'border-white/38 bg-white/8'
             }`}
           />
 
-          <div className="absolute left-[78%] top-[12.6%] flex h-[16%] w-[26%] -translate-x-1/2 flex-wrap content-start justify-center gap-1 overflow-hidden px-1.5 pt-1">
+          <div className="absolute left-[79%] top-[10.6%] flex h-[16.5%] w-[28%] -translate-x-1/2 flex-wrap content-start justify-center gap-1 overflow-hidden px-1.5 pt-1">
             {placedTokens.map((token) => (
               <button
                 key={token.id}
@@ -262,7 +266,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
             ))}
           </div>
 
-          <div className="absolute left-1/2 top-[68%] w-[62%] -translate-x-1/2 rounded-[1.3rem] bg-slate-950/32 px-3 py-2 text-center">
+          <div className="absolute left-1/2 top-[70%] w-[66%] -translate-x-1/2 rounded-[1.4rem] bg-slate-950/36 px-3 py-2 text-center">
             <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/80">Current Weight</div>
             <div className="text-lg font-black text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.45)]">
               {toGramLabel(currentGrams)}
@@ -271,7 +275,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
           </div>
         </motion.div>
 
-        <div className="relative w-full max-w-[22rem] shrink-0 pb-1 md:max-w-[28rem]">
+        <div className="relative w-full max-w-[24rem] shrink-0 pb-1 md:max-w-[30rem]">
           <div className="flex flex-wrap items-center justify-center gap-2.5">
             {unplacedTokens.map((token) => (
               <motion.button

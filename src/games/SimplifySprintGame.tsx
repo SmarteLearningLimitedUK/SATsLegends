@@ -166,6 +166,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
   const [locked, setLocked] = useState(false);
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; text: string } | null>(null);
   const [currentPair, setCurrentPair] = useState<FractionPair>(() => makeQuestion(resolvedLevel, 1).prompt);
+  const [startPair, setStartPair] = useState<FractionPair>(() => makeQuestion(resolvedLevel, 1).prompt);
   const [fractionShake, setFractionShake] = useState(false);
   const [fractionPulseKey, setFractionPulseKey] = useState(0);
 
@@ -186,12 +187,14 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
     setLocked(false);
     setFeedback(null);
     setCurrentPair(initialQuestion.prompt);
+    setStartPair(initialQuestion.prompt);
     setFractionShake(false);
     setFractionPulseKey(0);
   }, [initialTime, resolvedLevel]);
 
   useEffect(() => {
     setCurrentPair(question.prompt);
+    setStartPair(question.prompt);
   }, [question]);
 
   useEffect(() => {
@@ -220,6 +223,9 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
   }, [onVictory]);
 
   const factorChoices = useMemo(() => getFactorChoices(currentPair), [currentPair]);
+  const startGcd = useMemo(() => gcd(startPair.numerator, startPair.denominator), [startPair]);
+  const currentGcd = useMemo(() => gcd(currentPair.numerator, currentPair.denominator), [currentPair]);
+  const simplifyProgress = startGcd <= 1 ? 1 : Math.max(0, Math.min(1, 1 - (currentGcd - 1) / (startGcd - 1)));
 
   const handleFactor = (factor: number) => {
     if (locked || endedRef.current) return;
@@ -325,38 +331,62 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
             : 'pt-[calc(env(safe-area-inset-top)+3.9rem)]'
         }`}
       >
-        <div className="rounded-full border border-cyan-200/45 bg-[#0a1f56]/78 px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-cyan-50">
-          Simplify this fraction
+        <div className="w-full max-w-[760px] rounded-[1.3rem] border border-cyan-200/40 bg-[#0a1f56]/74 px-4 py-3 text-center text-[12px] font-black uppercase tracking-[0.16em] text-cyan-50 shadow-[0_10px_24px_rgba(0,0,0,0.35)]">
+          Simplify Sprint
         </div>
 
-        <div className="mt-2 rounded-2xl border border-cyan-200/45 bg-[#0a1f56]/72 px-4 py-2 text-xs font-black uppercase tracking-[0.13em] text-cyan-50">
-          Round {Math.min(roundNumber, totalRounds)} / {totalRounds}
+        <div className="mt-2 flex w-full max-w-[760px] items-center justify-between gap-3">
+          <div className="rounded-full border border-cyan-200/35 bg-[#0a1f56]/72 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-50">
+            Round {Math.min(roundNumber, totalRounds)} / {totalRounds}
+          </div>
+          <div className="rounded-full border border-cyan-200/35 bg-[#0a1f56]/72 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-50">
+            Tap a factor rune to reduce
+          </div>
         </div>
 
-        <div className="mt-4 rounded-full border border-cyan-200/45 bg-[#0a1f56]/78 px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-cyan-50">
-          Tap a factor to divide both numbers
-        </div>
+        <div className="mt-4 flex w-full max-w-[760px] flex-1 min-h-0 flex-col items-center justify-center gap-3 rounded-[2rem] border border-cyan-200/20 bg-[linear-gradient(180deg,rgba(11,35,82,0.86),rgba(6,18,42,0.92))] px-4 py-5 shadow-[0_22px_50px_rgba(0,0,0,0.45)]">
+          <div className="flex w-full items-center gap-3">
+            <div className="flex-1">
+              <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Simplify meter</div>
+              <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-slate-950/70">
+                <motion.div
+                  className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-300 to-emerald-300"
+                  animate={{ width: `${simplifyProgress * 100}%` }}
+                />
+              </div>
+            </div>
+            <div className="rounded-full border border-cyan-200/30 bg-[#081c45]/80 px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-cyan-50">
+              gcd {currentGcd}
+            </div>
+          </div>
 
-        <motion.div
-          animate={fractionShake ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
-          transition={{ duration: 0.34, ease: 'easeInOut' }}
-          className="mt-5 rounded-[1.5rem] border-2 border-cyan-200/45 bg-gradient-to-b from-sky-500/95 to-blue-700/95 px-10 py-6 shadow-[0_18px_34px_rgba(0,0,0,0.5)]"
-        >
           <motion.div
-            key={`${question.id}-${fractionKey(currentPair)}-${fractionPulseKey}`}
-            initial={{ scale: 0.94, opacity: 0.86 }}
-            animate={{ scale: [1, 1.1, 1], opacity: 1 }}
-            transition={{ duration: 0.34, ease: 'easeOut' }}
+            animate={fractionShake ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
+            transition={{ duration: 0.34, ease: 'easeInOut' }}
+            className="relative mt-2 rounded-[1.7rem] border-2 border-cyan-200/45 bg-gradient-to-b from-sky-500/95 to-blue-700/95 px-10 py-6 shadow-[0_18px_34px_rgba(0,0,0,0.5)]"
           >
-            <FractionView pair={currentPair} />
+            <motion.div
+              className="absolute inset-0 rounded-[1.7rem] border border-cyan-200/30 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.22),transparent_60%)]"
+              animate={{ opacity: [0.35, 0.7, 0.35] }}
+              transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            <motion.div
+              key={`${question.id}-${fractionKey(currentPair)}-${fractionPulseKey}`}
+              initial={{ scale: 0.94, opacity: 0.86 }}
+              animate={{ scale: [1, 1.1, 1], opacity: 1 }}
+              transition={{ duration: 0.34, ease: 'easeOut' }}
+              className="relative"
+            >
+              <FractionView pair={currentPair} />
+            </motion.div>
           </motion.div>
-        </motion.div>
 
-        <div className="mt-3 rounded-full border border-cyan-200/45 bg-[#0a1f56]/78 px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-cyan-50">
-          Keep going until the fraction cannot be reduced any further
+          <div className="rounded-full border border-cyan-200/35 bg-[#0a1f56]/72 px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-cyan-50">
+            Reduce until it cannot simplify further
+          </div>
         </div>
 
-        <div className="mt-6 grid w-full max-w-[740px] grid-cols-2 gap-3 md:gap-4">
+        <div className="mt-4 grid w-full max-w-[760px] grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
           {factorChoices.map((factor) => {
             const isValid = currentPair.numerator % factor === 0 && currentPair.denominator % factor === 0;
             return (
@@ -372,7 +402,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
                     : 'border-rose-200/28 bg-[#20143f]/82 hover:bg-[#34195f]/88'
                 }`}
               >
-                <span className="text-[clamp(1.15rem,3.1vw,1.9rem)] font-black uppercase tracking-[0.08em] text-cyan-50">
+                <span className="text-[clamp(1.1rem,2.7vw,1.7rem)] font-black uppercase tracking-[0.1em] text-cyan-50">
                   ÷ {factor}
                 </span>
               </motion.button>

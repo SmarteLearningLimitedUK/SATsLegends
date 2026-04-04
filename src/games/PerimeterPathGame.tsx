@@ -391,6 +391,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
   };
 
   const traceComplete = tracedEdgeIds.length === question.shape.edges.length;
+  const tracingRequired = currentLevel < 7;
 
   const handleTraceEdge = (edgeId: string) => {
     if (locked || !isTracing) return;
@@ -442,7 +443,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
   };
 
   const submitAnswer = (rawAnswer: number) => {
-    if (locked || feedback || !traceComplete) return;
+    if (locked || feedback || (tracingRequired && !traceComplete)) return;
     if (rawAnswer === question.correctPerimeter) {
       handleCorrect(rawAnswer);
       return;
@@ -451,12 +452,12 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
   };
 
   const handleOptionTap = (option: number) => {
-    if (locked || !traceComplete) return;
+    if (locked || (tracingRequired && !traceComplete)) return;
     setSelectedOption(option);
     submitAnswer(option);
   };
-  const shapeZoom = currentLevel >= 11 ? 1.14 : currentLevel >= 7 ? 1.08 : 1;
-  const labelFontSize = currentLevel >= 11 ? 6.3 : 5.8;
+  const shapeZoom = currentLevel >= 11 ? 0.92 : currentLevel >= 7 ? 0.88 : 0.84;
+  const labelFontSize = currentLevel >= 11 ? 5.6 : 5.2;
 
   return (
     <div className="relative h-full w-full overflow-hidden bg-[#030817]">
@@ -489,18 +490,18 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
           <motion.div
             animate={shakeShape ? { x: [0, -9, 8, -7, 6, -4, 0] } : { x: 0 }}
             transition={{ duration: 0.35 }}
-            className="relative min-h-[10.5rem] flex-1 overflow-hidden rounded-2xl border border-white/22 bg-slate-950/40 sm:min-h-[12rem] md:min-h-[15rem]"
+            className="relative min-h-[9rem] flex-1 overflow-hidden rounded-2xl border border-white/22 bg-slate-950/40 sm:min-h-[10.5rem] md:min-h-[13rem] lg:min-h-[14rem]"
           >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(56,189,248,0.2),transparent_28%),radial-gradient(circle_at_50%_92%,rgba(250,204,21,0.15),transparent_30%)]" />
             <div className="relative h-full w-full p-0.5 sm:p-1">
               <PerimeterShapeRenderer
                 shape={question.shape}
-                highlightedEdgeId={highlightedEdgeId}
+                highlightedEdgeId={tracingRequired ? highlightedEdgeId : null}
                 tracedEdgeIds={tracedEdgeIds}
-                onHighlightEdge={setHighlightedEdgeId}
-                onTraceEdge={handleTraceEdge}
-                onTraceStart={() => setIsTracing(true)}
-                onTraceEnd={() => setIsTracing(false)}
+                onHighlightEdge={tracingRequired ? setHighlightedEdgeId : () => undefined}
+                onTraceEdge={tracingRequired ? handleTraceEdge : () => undefined}
+                onTraceStart={tracingRequired ? () => setIsTracing(true) : () => undefined}
+                onTraceEnd={tracingRequired ? () => setIsTracing(false) : () => undefined}
                 zoom={shapeZoom}
                 labelFontSize={labelFontSize}
               />
@@ -513,7 +514,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
                 key={option}
                 whileTap={{ scale: 0.96 }}
                 onClick={() => handleOptionTap(option)}
-                disabled={locked || !traceComplete}
+                disabled={locked || (tracingRequired && !traceComplete)}
                 className={`h-10 rounded-2xl border text-base font-black shadow-[0_8px_16px_rgba(2,6,23,0.35)] sm:h-11 sm:text-lg md:h-13 md:text-xl ${
                   selectedOption === option
                     ? 'border-yellow-200/80 bg-[linear-gradient(180deg,#fcd34d,#f59e0b)] text-amber-950'
@@ -532,7 +533,9 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
               ? 'border-rose-300/45 bg-rose-400/16 text-rose-100'
               : 'border-white/18 bg-slate-950/44 text-white/72'
           }`}>
-            {feedback ? feedback.message : traceComplete ? 'Path traced. Choose the matching perimeter.' : `Trace the full outer path first (${tracedEdgeIds.length}/${question.shape.edges.length}).`}
+            {feedback ? feedback.message : tracingRequired
+              ? (traceComplete ? 'Path traced. Choose the matching perimeter.' : `Trace the full outer path first (${tracedEdgeIds.length}/${question.shape.edges.length}).`)
+              : 'Choose the matching perimeter.'}
           </div>
         </main>
       </div>
