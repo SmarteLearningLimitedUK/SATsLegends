@@ -24,6 +24,7 @@ interface RatioFractionQuestion {
   ratioA: number;
   ratioB: number;
   partLabel: string;
+  showDots: boolean;
   correct: string;
   options: string[];
 }
@@ -42,7 +43,12 @@ const shuffle = <T,>(items: T[]) => {
 
 const fractionText = (numerator: number, denominator: number) => `${numerator}/${denominator}`;
 
-const buildRatioQuestion = (ratioA: number, ratioB: number, partLabel: string): RatioFractionQuestion => {
+const buildRatioQuestion = (
+  ratioA: number,
+  ratioB: number,
+  partLabel: string,
+  showDots = true,
+): RatioFractionQuestion => {
   const total = ratioA + ratioB;
   const correct = partLabel === 'first' ? fractionText(ratioA, total) : fractionText(ratioB, total);
   const distractors = new Set<string>();
@@ -71,20 +77,21 @@ const buildRatioQuestion = (ratioA: number, ratioB: number, partLabel: string): 
     ratioA,
     ratioB,
     partLabel,
+    showDots,
     correct,
     options: shuffle([correct, ...Array.from(distractors)]),
   };
 };
 
 const QUESTION_BANK: RatioFractionQuestion[] = [
-  buildRatioQuestion(2, 3, 'first'),
-  buildRatioQuestion(1, 4, 'second'),
-  buildRatioQuestion(3, 2, 'first'),
-  buildRatioQuestion(1, 2, 'second'),
-  buildRatioQuestion(4, 1, 'first'),
-  buildRatioQuestion(2, 5, 'second'),
-  buildRatioQuestion(3, 1, 'second'),
-  buildRatioQuestion(5, 3, 'first'),
+  buildRatioQuestion(2, 3, 'first', true),
+  buildRatioQuestion(1, 4, 'second', true),
+  buildRatioQuestion(3, 2, 'first', true),
+  buildRatioQuestion(1, 2, 'second', true),
+  buildRatioQuestion(4, 1, 'first', false),
+  buildRatioQuestion(2, 5, 'second', false),
+  buildRatioQuestion(3, 1, 'second', false),
+  buildRatioQuestion(5, 3, 'first', false),
 ];
 
 const starsForAccuracy = (correct: number, attempts: number) => {
@@ -154,7 +161,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   };
 
   return (
-    <GameUiShell backgroundImage={ratioBackdrop}>
+    <GameUiShell backgroundImage={ratioBackdrop} backgroundOpacity={0.85}>
       <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+3.5rem)] pt-3 text-white">
         <section className="shrink-0">
           <StoryCard>
@@ -165,7 +172,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
         </section>
 
         <section className="shrink-0">
-          <TaskCard>
+          <TaskCard className="bg-[linear-gradient(180deg,rgba(255,255,255,0.95),rgba(245,250,255,0.9))]">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-900/80">Ratio Fractions</div>
@@ -178,18 +185,24 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
               </div>
             </div>
 
-            <div className="mt-3 flex items-center justify-center gap-2">
-              {Array.from({ length: question.ratioA }).map((_, index) => (
-                <span key={`a-${index}`} className="h-4 w-4 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(248,113,113,0.6)]" />
-              ))}
-              {Array.from({ length: question.ratioB }).map((_, index) => (
-                <span key={`b-${index}`} className="h-4 w-4 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]" />
-              ))}
-            </div>
+            {question.showDots ? (
+              <div className="mt-3 flex items-center justify-center gap-2">
+                {Array.from({ length: question.ratioA }).map((_, index) => (
+                  <span key={`a-${index}`} className="h-4 w-4 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(248,113,113,0.6)]" />
+                ))}
+                {Array.from({ length: question.ratioB }).map((_, index) => (
+                  <span key={`b-${index}`} className="h-4 w-4 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]" />
+                ))}
+              </div>
+            ) : (
+              <div className="mt-3 text-center text-[11px] font-semibold text-slate-600">
+                Use the ratio to work out the fraction.
+              </div>
+            )}
           </TaskCard>
         </section>
 
-        <section className="min-h-0 flex-1 rounded-[1.4rem] border border-white/14 bg-black/25 p-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)]">
+        <section className="min-h-0 flex-1 rounded-[1.4rem] border border-white/14 bg-white/10 p-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)]">
           <div className="grid h-full min-h-0 grid-cols-2 gap-2">
             {question.options.map((option) => (
               <motion.button
@@ -197,12 +210,12 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                 whileTap={{ scale: 0.96 }}
                 onClick={() => handleAnswer(option)}
                 disabled={locked}
-                className={`flex h-full min-h-[5.5rem] items-center justify-center rounded-[1rem] border text-xl font-black shadow-[0_12px_20px_rgba(2,6,23,0.28)] transition ${
+                className={`flex h-full min-h-[5.5rem] items-center justify-center rounded-[1rem] border text-xl font-black shadow-[0_12px_20px_rgba(2,6,23,0.2)] transition ${
                   selected === option
                     ? option === question.correct
-                      ? 'border-emerald-200/70 bg-emerald-400/35 text-emerald-50'
-                      : 'border-rose-200/70 bg-rose-400/35 text-rose-50'
-                    : 'border-white/18 bg-slate-900/70 text-white'
+                      ? 'border-emerald-200/70 bg-emerald-300/50 text-emerald-950'
+                      : 'border-rose-200/70 bg-rose-300/50 text-rose-950'
+                    : 'border-white/30 bg-white/15 text-white'
                 }`}
               >
                 {option}

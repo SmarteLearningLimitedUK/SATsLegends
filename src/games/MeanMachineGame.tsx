@@ -38,14 +38,14 @@ interface MeanMachineGameProps {
 const TOTAL_LEVELS = 10;
 const REEL_COUNT = 5;
 const REEL_LAYOUT = [
-  { left: 14.8, width: 13.35 },
-  { left: 30.15, width: 13.35 },
-  { left: 45.45, width: 13.35 },
-  { left: 60.75, width: 13.35 },
-  { left: 76.05, width: 13.35 },
+  { left: 15.62, width: 11.9 },
+  { left: 30.67, width: 12.19 },
+  { left: 45.9, width: 12.67 },
+  { left: 61.62, width: 12.48 },
+  { left: 77.24, width: 12.0 },
 ] as const;
-const REEL_TOP = 28.1;
-const REEL_HEIGHT = 59.8;
+const REEL_TOP = 27.8;
+const REEL_HEIGHT = 58.7;
 
 const shuffle = <T,>(values: T[]): T[] => {
   const next = [...values];

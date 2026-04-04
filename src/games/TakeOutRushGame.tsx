@@ -571,7 +571,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
 
         <main className="relative mt-1.5 flex min-h-0 flex-1 flex-col gap-2 pb-[calc(env(safe-area-inset-bottom)+3.9rem)]">
           <section className="relative flex min-h-[16rem] flex-1 items-start justify-center">
-            <div className="pointer-events-none absolute left-1/2 top-6 w-[64%] -translate-x-1/2 text-center text-white">
+            <div className="pointer-events-none absolute left-1/2 top-[9%] w-[62%] -translate-x-1/2 text-center text-white">
               <div className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-100/90 drop-shadow-[0_2px_8px_rgba(2,6,23,0.6)]">
                 Target Order
               </div>
@@ -580,7 +580,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
               </div>
             </div>
 
-            <div className="absolute left-1/2 top-[48%] -translate-x-1/2">
+            <div className="absolute left-1/2 top-[44%] -translate-x-1/2">
               <div className="relative h-28 w-28 overflow-hidden">
                 <img
                   src={goblinEnemy}
@@ -597,19 +597,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
 
           <div className="flex flex-col gap-2">
             <section className="rounded-[1.25rem] p-2">
-              <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/72">
-                <span>Menu</span>
-                <button
-                  type="button"
-                  onClick={clearTray}
-                  disabled={selectedIds.length === 0 || isResolvingOrder}
-                  className="rounded-full border border-white/18 bg-slate-900/54 px-2 py-0.5 text-[9px] font-black uppercase text-cyan-100/80 transition disabled:opacity-50"
-                >
-                  Reset
-                </button>
-              </div>
-
-              <div className="mt-1 flex min-h-[3.9rem] flex-wrap gap-1.5 rounded-[0.7rem] bg-[linear-gradient(180deg,#d04a4a_0%,#a82424_100%)] px-2 py-2 shadow-[0_12px_20px_rgba(120,17,17,0.4)]">
+              <div className="mt-1 flex min-h-[3.9rem] flex-wrap items-center justify-center gap-2 rounded-[0.7rem] bg-slate-950/35 px-2 py-2">
                 {selectedItems.length === 0 ? (
                   <div className="text-[10px] font-semibold text-amber-100">Tray empty.</div>
                 ) : (
@@ -627,7 +615,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                 )}
               </div>
 
-              <div className="mt-2 grid max-h-[11rem] grid-cols-4 gap-2 overflow-y-auto rounded-[0.9rem] bg-slate-950/70 p-2 pr-1">
+              <div className="mt-2 flex flex-wrap items-center justify-center gap-2 rounded-[0.9rem] bg-slate-950/45 p-2">
                 {availableItems.map((item) => {
                   const isBanned = activeConstraints.bannedIds.has(item.id);
                   return (
@@ -636,13 +624,9 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                       type="button"
                       onClick={() => addItem(item.id)}
                       disabled={isResolvingOrder || roundFinished || isBanned}
-                      className={`group flex flex-col items-center justify-center rounded-[0.9rem] border border-white/12 px-1.5 py-2 text-[10px] font-semibold text-white transition hover:border-white/30 disabled:opacity-50 ${isBanned ? 'bg-slate-900/30 grayscale' : 'bg-slate-900/46'}`}
+                      className={`group flex items-center justify-center rounded-full border border-white/12 px-2.5 py-2 text-[10px] font-semibold text-white transition hover:border-white/30 disabled:opacity-50 ${isBanned ? 'bg-slate-900/30 grayscale' : 'bg-slate-900/46'}`}
                     >
-                      <div className={`mb-1 flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br ${item.colorClass} shadow-[0_8px_14px_rgba(15,23,42,0.4)]`}>
-                        <FoodSprite item={item} className="h-6 w-6 object-contain" />
-                      </div>
-                      <span className="text-center text-[9px] font-semibold">{item.name}</span>
-                      <span className="mt-0.5 text-[8px] text-cyan-100/70">{asDisplayFraction(item.value)}</span>
+                      <FoodSprite item={item} className="h-6 w-6 object-contain" />
                     </button>
                   );
                 })}
@@ -652,16 +636,26 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
             <section className="rounded-[1.25rem] border border-cyan-100/20 bg-slate-950/55 px-3 py-2 shadow-[0_12px_22px_rgba(2,6,23,0.46)]">
               <div className="flex items-center justify-between gap-2">
                 <div className="min-w-0 text-[11px] font-semibold text-cyan-100/70">
-                  {feedback?.text ?? (isExact && constraintsMet ? 'Ready to send!' : 'Build the order to match the target.')}
+                  {feedback?.text ?? (isExact && constraintsMet ? 'Ready to send!' : '')}
                 </div>
-                <button
-                  type="button"
-                  onClick={() => submitOrder(false)}
-                  disabled={!canSubmit}
-                  className="rounded-full bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 px-4 py-2 text-sm font-black text-slate-900 shadow-[0_10px_18px_rgba(251,146,60,0.4)] transition disabled:opacity-50"
-                >
-                  Send Order
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={clearTray}
+                    disabled={selectedIds.length === 0 || isResolvingOrder}
+                    className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-2 text-[10px] font-black uppercase text-cyan-100/80 transition disabled:opacity-50"
+                  >
+                    Reset
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => submitOrder(false)}
+                    disabled={!canSubmit}
+                    className="rounded-full bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 px-4 py-2 text-sm font-black text-slate-900 shadow-[0_10px_18px_rgba(251,146,60,0.4)] transition disabled:opacity-50"
+                  >
+                    Send Order
+                  </button>
+                </div>
               </div>
             </section>
           </div>

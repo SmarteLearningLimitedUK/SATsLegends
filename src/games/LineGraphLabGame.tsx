@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Activity,
   AlertCircle,
@@ -203,12 +203,15 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   const [round, setRound] = useState<RoundData | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [probeIndex, setProbeIndex] = useState<number | null>(null);
+  const chartWrapRef = useRef<HTMLDivElement | null>(null);
 
   const loadLevel = useCallback((targetLevel: number) => {
     setRound(generateRound(targetLevel));
     setSelectedAnswer(null);
     setFeedback(null);
     setGameState('playing');
+    setProbeIndex(null);
   }, []);
 
   useEffect(() => {
@@ -256,6 +259,28 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
     return Array.from({ length: 6 }, (_, index) => Math.round((top / 5) * index));
   }, [round]);
 
+  const updateProbe = useCallback((clientX: number) => {
+    if (!round || !chartWrapRef.current) return;
+    const rect = chartWrapRef.current.getBoundingClientRect();
+    const clamped = Math.max(0, Math.min(rect.width, clientX - rect.left));
+    const ratio = rect.width <= 0 ? 0 : clamped / rect.width;
+    const index = Math.round(ratio * (round.graph.length - 1));
+    setProbeIndex(clamp(index, 0, round.graph.length - 1));
+  }, [round]);
+
+  const handleProbePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    updateProbe(event.clientX);
+  };
+
+  const handleProbePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.buttons !== 1) return;
+    updateProbe(event.clientX);
+  };
+
+  const probePoint = useMemo(() => (
+    round && probeIndex !== null ? round.graph[probeIndex] : null
+  ), [probeIndex, round]);
+
   return (
     <div className="relative flex h-full w-full min-h-0 flex-col overflow-hidden select-none text-slate-100">
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(4,18,44,0.34),rgba(4,18,44,0.48)_55%,rgba(2,8,24,0.62)_100%)]" />
@@ -295,25 +320,25 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
       )}
 
       <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.25rem)]' : ''}`}>
-        <section className="flex flex-col gap-3 p-3 sm:gap-4 sm:p-4 md:p-6">
+        <section className="flex flex-col gap-2 p-3 sm:gap-3 sm:p-4 md:p-5">
           <div className="flex items-center gap-2 text-emerald-400">
             <ClipboardList className="h-5 w-5" />
             <h2 className="text-xs font-black uppercase tracking-widest">Question</h2>
           </div>
 
-          <div className="rounded-2xl border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(9,24,58,0.86),rgba(5,14,36,0.92))] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-            <p className="text-base font-black leading-snug text-white sm:text-lg">
+          <div className="rounded-2xl border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(12,32,70,0.82),rgba(7,18,45,0.9))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+            <p className="text-[clamp(0.95rem,2.8vw,1.1rem)] font-black leading-snug text-white">
               {round?.question}
             </p>
-            <div className="mt-2 flex items-start gap-2 text-[11px] text-slate-300 sm:text-xs">
-              <Info className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+            <div className="mt-1 flex items-start gap-2 text-[10px] text-slate-300 sm:text-[11px]">
+              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400" />
               <p>{round?.helper}</p>
             </div>
           </div>
         </section>
 
-        <section className="flex min-h-0 flex-1 flex-col gap-3 px-3 pb-3 sm:gap-4 sm:px-4 sm:pb-4 md:px-6 md:pb-6">
-          <div className="min-h-0 flex-[1.15] rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,61,0.88),rgba(4,12,30,0.95))] p-3 shadow-[0_16px_40px_rgba(3,12,30,0.28)] sm:p-4 md:p-5">
+        <section className="flex min-h-0 flex-1 flex-col gap-2 px-3 pb-3 sm:gap-3 sm:px-4 sm:pb-4 md:px-5 md:pb-5">
+          <div className="min-h-0 flex-[1.25] rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,61,0.85),rgba(4,12,30,0.92))] p-3 shadow-[0_16px_40px_rgba(3,12,30,0.26)] sm:p-4 md:p-5">
             <div className="mb-2 flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-black uppercase tracking-[0.24em] text-emerald-300">Live Graph</h3>
@@ -324,7 +349,12 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
               </div>
             </div>
 
-            <div className="h-full min-h-[15rem] w-full rounded-2xl border border-slate-700/60 bg-slate-950/35 p-2 sm:min-h-[17rem] md:min-h-[18rem]">
+            <div
+              ref={chartWrapRef}
+              onPointerDown={handleProbePointerDown}
+              onPointerMove={handleProbePointerMove}
+              className="relative h-full min-h-[14rem] w-full rounded-2xl border border-slate-700/60 bg-slate-950/35 p-2 sm:min-h-[16rem] md:min-h-[17rem]"
+            >
               {round && (
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
@@ -353,12 +383,38 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                       dataKey="value"
                       stroke="#34d399"
                       strokeWidth={4}
-                      dot={{ r: 5, strokeWidth: 2, fill: '#34d399', stroke: '#ecfeff' }}
-                      activeDot={{ r: 6, fill: '#6ee7b7', stroke: '#f0fdfa', strokeWidth: 2 }}
+                      dot={(props) => {
+                        const { cx, cy, payload, index } = props as { cx?: number; cy?: number; payload?: DataPoint; index?: number };
+                        if (cx == null || cy == null || !payload) return null;
+                        const isProbe = index === probeIndex;
+                        return (
+                          <circle
+                            cx={cx}
+                            cy={cy}
+                            r={isProbe ? 8 : 5}
+                            fill={isProbe ? '#facc15' : '#34d399'}
+                            stroke={isProbe ? '#fef3c7' : '#ecfeff'}
+                            strokeWidth={isProbe ? 3 : 2}
+                          />
+                        );
+                      }}
+                      activeDot={{ r: 7, fill: '#6ee7b7', stroke: '#f0fdfa', strokeWidth: 2 }}
                       animationDuration={350}
                     />
                   </LineChart>
                 </ResponsiveContainer>
+              )}
+              <div className="pointer-events-none absolute left-3 top-3 rounded-full border border-cyan-200/30 bg-cyan-200/15 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100">
+                Tap or drag to probe
+              </div>
+              {probePoint && (
+                <motion.div
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full border border-amber-200/50 bg-amber-200/20 px-3 py-1 text-[11px] font-black text-amber-100 shadow-[0_0_20px_rgba(251,191,36,0.25)]"
+                >
+                  {probePoint.label}: {probePoint.value}
+                </motion.div>
               )}
             </div>
           </div>
@@ -375,7 +431,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleAnswer(option)}
                   disabled={gameState === 'success'}
-                  className={`min-h-[4.5rem] rounded-2xl border px-3 py-4 text-center transition-all sm:min-h-[5rem] sm:px-4 ${
+                  className={`min-h-[3.6rem] rounded-2xl border px-3 py-3 text-center transition-all sm:min-h-[4rem] sm:px-4 ${
                     isCorrect
                       ? 'border-emerald-400 bg-emerald-500/15 text-emerald-100 shadow-[0_0_22px_rgba(16,185,129,0.18)]'
                       : isWrongSelected
@@ -385,7 +441,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                           : 'border-slate-700 bg-slate-900/55 text-slate-100 hover:border-emerald-400/60 hover:bg-slate-800/70'
                   } ${gameState === 'success' ? 'cursor-default' : ''}`}
                 >
-                  <span className="text-base font-black leading-tight sm:text-lg">{option}</span>
+                  <span className="text-sm font-black leading-tight sm:text-base">{option}</span>
                 </motion.button>
               );
             })}

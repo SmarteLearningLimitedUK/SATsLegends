@@ -27,7 +27,7 @@ import {
   PieChart,
   Pie,
   Cell,
-  Legend,
+  LabelList,
 } from 'recharts';
 
 interface StolenItem {
@@ -215,7 +215,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
       )}
 
       <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.25rem)]' : ''}`}>
-        <section className="z-10 flex min-h-0 w-full flex-[0.42] flex-col gap-2 border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(8,26,66,0.18),rgba(4,14,38,0.26))] p-3 sm:p-4 md:w-1/2 md:flex-1 md:gap-4 md:border-b-0 md:border-r md:p-6">
+        <section className="z-10 flex min-h-0 w-full flex-[0.42] flex-col gap-2 border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] p-3 sm:p-4 md:w-1/2 md:flex-1 md:gap-4 md:border-b-0 md:border-r md:p-6">
           <div className="mb-2 flex items-center justify-between">
             <div className="flex items-center gap-2 text-amber-500">
               <FileText className="h-5 w-5" />
@@ -229,10 +229,10 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             </div>
           </div>
 
-          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(9,24,58,0.82),rgba(5,14,36,0.9))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-4 md:p-5">
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(#444_1px,transparent_1px)] opacity-5 [background-size:20px_20px]" />
+          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(255,255,255,0.14),rgba(9,24,58,0.6))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-4 md:p-5">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.3)_1px,transparent_1px)] opacity-7 [background-size:20px_20px]" />
 
-            <div className="relative h-[12.5rem] min-h-[12.5rem] w-full sm:h-[14rem] sm:min-h-[14rem] md:h-full md:min-h-[15rem]">
+            <div className="relative w-full" style={{ height: 'clamp(12rem, 32vh, 16rem)' }}>
               <ResponsiveContainer width="100%" height="100%">
                 {chartType === 'bar' ? (
                   <BarChart data={currentCase} margin={{ top: 16, right: 12, left: -12, bottom: 8 }}>
@@ -260,6 +260,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                       {currentCase.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
+                      <LabelList dataKey="amount" position="top" fill="#f1f5f9" fontSize={10} fontWeight={700} />
                     </Bar>
                   </BarChart>
                 ) : (
@@ -272,6 +273,25 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                       outerRadius="66%"
                       paddingAngle={3}
                       dataKey="amount"
+                      label={({ cx, cy, midAngle, innerRadius, outerRadius, value }) => {
+                        const radius = innerRadius + (outerRadius - innerRadius) * 0.7;
+                        const rad = (-midAngle * Math.PI) / 180;
+                        const x = cx + radius * Math.cos(rad);
+                        const y = cy + radius * Math.sin(rad);
+                        return (
+                          <text
+                            x={x}
+                            y={y}
+                            fill="#f8fafc"
+                            fontSize={11}
+                            fontWeight={700}
+                            textAnchor="middle"
+                            dominantBaseline="central"
+                          >
+                            {value}
+                          </text>
+                        );
+                      }}
                     >
                       {currentCase.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
@@ -287,18 +307,21 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
 
             <div className="mt-3 grid grid-cols-2 gap-2 sm:gap-3">
               {currentCase.map(item => (
-                <div key={item.name} className="flex items-center gap-2 rounded-lg border border-stone-800/90 bg-stone-950/35 px-2.5 py-2">
+                <div key={item.name} className="flex items-center justify-between gap-2 rounded-lg border border-white/10 bg-white/8 px-2.5 py-2">
+                  <div className="flex items-center gap-2">
                   <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
                   <span className="min-w-0 truncate text-[10px] font-bold uppercase tracking-wide text-stone-300">
                     {item.name}
                   </span>
+                  </div>
+                  <span className="text-xs font-black text-white">{item.amount}</span>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="z-10 flex min-h-0 w-full flex-[0.58] flex-col gap-2 bg-[linear-gradient(180deg,rgba(8,16,38,0.14),rgba(5,10,26,0.24))] p-3 sm:p-4 md:w-1/2 md:flex-1 md:gap-4 md:p-6">
+        <section className="z-10 flex min-h-0 w-full flex-[0.58] flex-col gap-2 bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] p-3 sm:p-4 md:w-1/2 md:flex-1 md:gap-4 md:p-6">
           <div className="mb-2 flex items-center gap-2 text-amber-500">
             <Users className="h-5 w-5" />
             <h2 className="text-xs font-black uppercase tracking-widest">Suspect Lineup</h2>
@@ -321,7 +344,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                       : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
                 }`}
               >
-                <div className={`mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full ${suspect.color} text-stone-900 shadow-lg md:mb-3 md:h-14 md:w-14`}>
+                <div className={`mx-auto mb-2 flex h-11 w-11 items-center justify-center rounded-full ${suspect.color} text-stone-900 shadow-lg md:mb-3 md:h-13 md:w-13`}>
                   {suspect.icon}
                 </div>
 
@@ -331,9 +354,9 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
 
                 <div className="mt-auto grid grid-cols-2 gap-1.5 md:gap-2">
                   {suspect.items.map((amount, i) => (
-                    <div key={i} className="flex items-center justify-between rounded-lg border border-stone-800 bg-stone-950/50 p-1.5 md:p-2">
-                      <span className="mr-1 truncate text-[8px] font-bold uppercase text-stone-500">{ITEMS[i].name.split(' ')[1]}</span>
-                      <span className="text-xs font-black text-amber-400">{amount}</span>
+                    <div key={i} className="flex items-center justify-between rounded-lg border border-white/10 bg-white/6 p-1.5 md:p-2">
+                      <span className="mr-1 truncate text-[8px] font-bold uppercase text-stone-300">{ITEMS[i].name.split(' ')[1]}</span>
+                      <span className="text-xs font-black text-amber-300">{amount}</span>
                     </div>
                   ))}
                 </div>
