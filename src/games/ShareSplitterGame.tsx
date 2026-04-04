@@ -267,10 +267,26 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       return { index: nearestIndex, distance: nearestDistance };
     };
 
+    const getHitPlateIndex = (clientX: number, clientY: number) => {
+      const padding = 20;
+      let hitIndex = -1;
+      plateRefs.current.forEach((plate, index) => {
+        if (!plate) return;
+        const rect = plate.getBoundingClientRect();
+        const withinX = clientX >= rect.left - padding && clientX <= rect.right + padding;
+        const withinY = clientY >= rect.top - padding && clientY <= rect.bottom + padding;
+        if (withinX && withinY) {
+          hitIndex = index;
+        }
+      });
+      return hitIndex;
+    };
+
     const finishDrag = (clientX: number, clientY: number) => {
       const { index, distance } = getNearestPlate(clientX, clientY);
-      const snapRadius = 84;
-      const targetPlateIndex = distance <= snapRadius ? index : -1;
+      const snapRadius = 120;
+      const hitIndex = getHitPlateIndex(clientX, clientY);
+      const targetPlateIndex = hitIndex >= 0 ? hitIndex : distance <= snapRadius ? index : -1;
 
       if (targetPlateIndex >= 0) {
         placeOnPlate(targetPlateIndex, sliceId);
@@ -288,8 +304,13 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
     const handlePointerMove = (moveEvent: PointerEvent) => {
       updatePosition(moveEvent.clientX, moveEvent.clientY);
+      const hitIndex = getHitPlateIndex(moveEvent.clientX, moveEvent.clientY);
+      if (hitIndex >= 0) {
+        setHoverPlateIndex(hitIndex);
+        return;
+      }
       const { index, distance } = getNearestPlate(moveEvent.clientX, moveEvent.clientY);
-      setHoverPlateIndex(distance <= 120 ? index : null);
+      setHoverPlateIndex(distance <= 140 ? index : null);
     };
 
     const handlePointerUp = (upEvent: PointerEvent) => {
@@ -403,7 +424,8 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
               </div>
 
               <div
-                className="absolute inset-x-3 bottom-4 top-[36%]"
+                className="absolute inset-x-3 bottom-4"
+                style={{ top: 'calc(36% + 30px)' }}
               >
                 <div
                   className="grid h-full w-full gap-2"

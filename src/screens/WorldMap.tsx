@@ -65,7 +65,7 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
     ],
   },
   {
-    islandId: 3,
+    islandId: 2,
     x: 70,
     y: 50.5,
     width: 40,
@@ -75,7 +75,7 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
     ],
   },
   {
-    islandId: 4,
+    islandId: 3,
     x: 28,
     y: 38.5,
     width: 40,
@@ -85,7 +85,7 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
     ],
   },
   {
-    islandId: 2,
+    islandId: 4,
     x: 30,
     y: 62.5,
     width: 40,
