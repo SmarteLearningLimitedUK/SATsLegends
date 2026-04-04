@@ -6,7 +6,7 @@ import MiniGameTopBar from '../components/MiniGameTopBar';
 import { AVATARS } from '../constants';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 import labelGreenLongAsset from '../assets/licensed/slices/label_green_long.png';
-import buttonYellowPlankAsset from '../assets/licensed/slices/button_yellow_plank.png';
+import { PrimaryButton } from '../components/game-ui/GameUiKit';
 
 interface ScaleBuilderGameProps {
   levelId: number;
@@ -295,18 +295,15 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
         />
       ) : null}
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-2 px-2 pb-1 pt-[max(3.6rem,calc(env(safe-area-inset-top)+2.9rem))] md:gap-3 md:px-3">
-        <div className="mx-auto w-full max-w-6xl">
-        </div>
-
-        <PuzzleStage className="mx-auto w-full max-w-6xl rounded-[2.1rem] md:rounded-[2.5rem]">
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-2 px-2 pb-1 pt-[max(3.4rem,calc(env(safe-area-inset-top)+2.6rem))] md:gap-3 md:px-3">
+        <PuzzleStage className="mx-auto flex h-full w-full max-w-[780px] min-h-0 flex-1 flex-col rounded-[2rem] md:rounded-[2.4rem]">
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_24%,rgba(15,23,42,0.24)_100%)]" />
 
-          <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-2 p-2 md:p-3">
-            <div className="rounded-[1rem] border border-white/14 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(15,23,42,0.84))] p-3">
+          <div className="relative z-10 grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-2 p-2 md:p-3">
+            <div className="rounded-[1rem] border border-white/14 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(15,23,42,0.84))] p-2">
               <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/78">Scale Builder</div>
-              <div className="mt-1 text-sm font-black text-white">{currentLevel.instructions}</div>
-              <div className="mt-2 flex items-center gap-3 text-sm font-black text-white/90">
+              <div className="mt-1 line-clamp-2 text-[clamp(12px,1.8vh,15px)] font-black text-white">{currentLevel.instructions}</div>
+              <div className="mt-2 flex flex-wrap items-center gap-2 text-[clamp(11px,1.7vh,13px)] font-black text-white/90">
                 <span className="rounded-full border border-yellow-200/40 bg-yellow-500/15 px-3 py-1">
                   Target {currentLevel.targetScale.toFixed(2)}x
                 </span>
@@ -320,7 +317,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
               <BlueprintGrid />
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(250,204,21,0.12),rgba(15,23,42,0.1)_62%)]" />
               <div className="relative z-10 flex h-full w-full items-center justify-center">
-                <div className="relative flex h-[min(56vh,24rem)] w-[min(82vw,24rem)] items-center justify-center rounded-full border border-sky-100/18 bg-[radial-gradient(circle,rgba(255,255,255,0.06),rgba(255,255,255,0.01)_54%,transparent_100%)]">
+                <div className="relative flex h-[min(60vh,26rem)] w-[min(84vw,26rem)] items-center justify-center rounded-full border border-sky-100/18 bg-[radial-gradient(circle,rgba(255,255,255,0.06),rgba(255,255,255,0.01)_54%,transparent_100%)]">
                   {showBase ? (
                     <div className="absolute opacity-40">
                       <ShapeRenderer
@@ -386,19 +383,14 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                     Next project <ChevronRight className="h-4 w-4" />
                   </button>
                 ) : (
-                  <button
+                  <PrimaryButton
                     onClick={verifyScale}
                     disabled={gameState !== 'playing'}
-                    className="col-span-2 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-yellow-100/40 px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-amber-950 shadow-[0_10px_18px_rgba(180,83,9,0.32)] disabled:cursor-not-allowed disabled:opacity-50"
-                    style={{
-                      backgroundImage: `url(${buttonYellowPlankAsset})`,
-                      backgroundSize: '100% 100%',
-                      backgroundRepeat: 'no-repeat',
-                    }}
+                    className="col-span-2"
                   >
                     <Ruler className="h-4 w-4" />
-                    Check scale
-                  </button>
+                    Check Scale
+                  </PrimaryButton>
                 )}
               </div>
             </div>
@@ -462,8 +454,6 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
           </AnimatePresence>
         </PuzzleStage>
 
-        <div className="mx-auto w-full max-w-6xl">
-        </div>
       </div>
     </GameScreenShell>
   );
