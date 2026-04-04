@@ -61,6 +61,7 @@ interface Challenge {
   totalDrops: number;
   revealTargets: boolean;
   cardHint?: string;
+  batchLabel?: 'single' | 'double' | 'triple' | 'half';
 }
 
 type ChallengeMode = Challenge['mode'];
@@ -68,9 +69,9 @@ type ChallengeMode = Challenge['mode'];
 const INGREDIENTS: Ingredient[] = [
   { id: 'red', name: 'Ruby', short: 'R', color: '#ff4d6d', glow: 'rgba(255,77,109,0.82)', rgb: [255, 77, 109] },
   { id: 'blue', name: 'Azure', short: 'B', color: '#38bdf8', glow: 'rgba(56,189,248,0.82)', rgb: [56, 189, 248] },
-  { id: 'green', name: 'Moss', short: 'G', color: '#22c55e', glow: 'rgba(34,197,94,0.82)', rgb: [34, 197, 94] },
-  { id: 'gold', name: 'Sun', short: 'Y', color: '#facc15', glow: 'rgba(250,204,21,0.82)', rgb: [250, 204, 21] },
-  { id: 'violet', name: 'Night', short: 'P', color: '#a855f7', glow: 'rgba(168,85,247,0.82)', rgb: [168, 85, 247] },
+  { id: 'green', name: 'Oak', short: 'O', color: '#22c55e', glow: 'rgba(34,197,94,0.82)', rgb: [34, 197, 94] },
+  { id: 'gold', name: 'Clarity', short: 'C', color: '#facc15', glow: 'rgba(250,204,21,0.82)', rgb: [250, 204, 21] },
+  { id: 'violet', name: 'Syrup', short: 'S', color: '#a855f7', glow: 'rgba(168,85,247,0.82)', rgb: [168, 85, 247] },
 ];
 
 const SUCCESS_DELAY_MS = 760;
@@ -151,6 +152,15 @@ const WORD_PAIR_RATIOS = [
   [4, 3],
 ] as const;
 
+const HALF_BATCH_RATIOS = [
+  [4, 10],
+  [6, 8],
+  [8, 12],
+  [4, 6, 2],
+  [6, 10, 4],
+  [8, 12, 6],
+] as const;
+
 let challengeSeed = 0;
 const nextChallengeId = () => {
   challengeSeed += 1;
@@ -194,32 +204,46 @@ const stageForMode = (mode: ChallengeMode): number => {
 };
 const roundsToWinForLevel = (levelId: number) => 5 + Math.floor((levelId - 1) / 2);
 
-const buildPotionName = (stage: number, active: Ingredient[]) => {
+const buildPotionName = (active: Ingredient[]) => {
   const lead = active[0]?.name || 'Star';
-  const support = active[1]?.name || 'Moon';
-  if (stage <= 2) return `${lead} Frog's Breath`;
-  if (stage === 3) return `${support} Moonmist Draught`;
-  if (stage === 4) return `${lead} Dragonfire Elixir`;
-  if (stage === 5) return `${support} Phoenix Whisper Tonic`;
-  return `${lead} Starlight Hexbrew`;
+  if (lead === 'Azure') return 'Azure Cleanse';
+  if (lead === 'Oak') return 'Heart of Oak';
+  if (lead === 'Ruby') return 'Crimson Courage';
+  if (lead === 'Clarity') return 'Solar Clarity';
+  if (lead === 'Syrup') return 'Midnight Syrup';
+  return `${lead} Elixir`;
+};
+
+const batchLabelText = (label?: Challenge['batchLabel']) => {
+  if (label === 'double') return 'double batch';
+  if (label === 'triple') return 'triple batch';
+  if (label === 'half') return 'half batch';
+  return '';
 };
 
 const buildOrderPrompt = (
   potionName: string,
   stage: number,
   ratioText: string,
-  totalDrops: number,
-  revealTargets: boolean,
+  batchLabel?: Challenge['batchLabel'],
   cardHint?: string,
 ) => {
-  if (revealTargets) {
-    return `Brew a ${potionName} by following the recipe card.`;
+  if (stage === 1) {
+    return `We need to brew an ${potionName} at a ${ratioText} ratio. ${cardHint || 'Some drops are already in the cauldron.'}`;
   }
-  if (stage === 2) return `Brew ${potionName} using ${totalDrops} drops in the ratio ${ratioText}.`;
-  if (stage === 3) return `${cardHint || 'Some drops are already in the cauldron.'} Work out the rest using the ratio ${ratioText}.`;
-  if (stage === 4) return `An apprentice mixed this potion wrongly. Fix it so the ratio is ${ratioText}.`;
-  if (stage === 5) return `A village healer needs ${potionName}. ${cardHint || `Use the ratio ${ratioText}.`}`;
-  return `A master brewer needs ${totalDrops} drops of ${potionName}. Solve the ratio ${ratioText} to finish it.`;
+  if (stage === 2) {
+    return `Brew ${potionName} at a ${ratioText} ratio${batchLabelText(batchLabel) ? ` for a ${batchLabelText(batchLabel)}` : ''}.`;
+  }
+  if (stage === 3) {
+    return `${cardHint || 'Some drops are already in the cauldron.'} Finish the mix at ${ratioText}.`;
+  }
+  if (stage === 4) {
+    return `Fix the ${potionName} so the ratio is ${ratioText}${batchLabelText(batchLabel) ? ` for a ${batchLabelText(batchLabel)}` : ''}.`;
+  }
+  if (stage === 5) {
+    return `${potionName} is a courage potion made at ${ratioText}. ${batchLabelText(batchLabel) ? `Brew a ${batchLabelText(batchLabel)}.` : ''}`;
+  }
+  return `Master mix: ${potionName} at ${ratioText}${batchLabelText(batchLabel) ? ` for a ${batchLabelText(batchLabel)}` : ''}.`;
 };
 
 const cardLabelsForMode = (mode: ChallengeMode) => {
@@ -282,17 +306,20 @@ const buildOrderFlavor = (stage: number) => {
 const generateChallenge = (levelId: number, solved: number): Challenge => {
   const mode = modeForLevel(levelId);
   const stage = stageForMode(mode);
-  const activeIndices =
+  let activeIndices =
     stage <= 5
       ? shuffled([0, 1, 2, 3, 4]).slice(0, 2).sort((a, b) => a - b)
       : shuffled([0, 1, 2, 3, 4]).slice(0, 3).sort((a, b) => a - b);
-  const activeIngredients = activeIndices.map((index) => INGREDIENTS[index]);
-
   let baseRatio: number[] = [...randomPick(SIMPLE_PAIR_RATIOS)];
   let scale = 1;
   let revealTargets = false;
   let startCounts = Array.from({ length: INGREDIENTS.length }, () => 0);
   let cardHint: string | undefined;
+  let batchLabel: Challenge['batchLabel'] = 'single';
+
+  if (stage >= 4 && Math.random() < 0.45) {
+    batchLabel = randomPick(['double', 'triple', 'half']);
+  }
 
   if (mode === 'direct_recipe') {
     baseRatio = [...randomPick(SIMPLE_PAIR_RATIOS)];
@@ -315,10 +342,23 @@ const generateChallenge = (levelId: number, solved: number): Challenge => {
     scale = randomPick(stage >= 6 ? [4, 5, 6] : [2, 3, 4]);
   }
 
-  const targetCounts = baseRatio.map((value) => value * scale);
-  const totalDrops = targetCounts.reduce((sum, value) => sum + value, 0);
+  if (batchLabel === 'half') {
+    baseRatio = [...randomPick(HALF_BATCH_RATIOS)];
+    scale = 0.5;
+  } else if (batchLabel === 'double') {
+    scale = Math.max(scale, 2);
+  } else if (batchLabel === 'triple') {
+    scale = Math.max(scale, 3);
+  }
 
-  if (mode === 'missing_value') {
+  if (levelId <= 1) {
+    activeIndices = [1, 3];
+    baseRatio = [2, 5];
+    scale = 1;
+    batchLabel = 'single';
+    startCounts[1] = baseRatio[0];
+    cardHint = `${INGREDIENTS[1].name} is already in the cauldron. Add the rest.`;
+  } else if (mode === 'missing_value') {
     const givenRatioIndex = 1;
     const givenIngredient = activeIngredients[givenRatioIndex];
     startCounts[activeIndices[givenRatioIndex]] = targetCounts[givenRatioIndex];
@@ -339,13 +379,16 @@ const generateChallenge = (levelId: number, solved: number): Challenge => {
     cardHint = `Use ${totalDrops} drops altogether and Keep the mix balanced.`;
   }
 
-  const orderTitle = buildPotionName(stage, activeIngredients);
-  const ratioText = baseRatio.join(':');
+  const targetCounts = baseRatio.map((value) => Math.round(value * scale));
+  const totalDrops = targetCounts.reduce((sum, value) => sum + value, 0);
+  const activeIngredients = activeIndices.map((index) => INGREDIENTS[index]);
+  const orderTitle = buildPotionName(activeIngredients);
+  const ratioText = simplifyRatio(targetCounts).join(':');
 
   return {
     id: nextChallengeId(),
     orderTitle,
-    orderPrompt: buildOrderPrompt(orderTitle, stage, ratioText, totalDrops, revealTargets, cardHint),
+    orderPrompt: buildOrderPrompt(orderTitle, stage, ratioText, batchLabel, cardHint),
     orderFlavor: buildOrderFlavor(stage),
     stage,
     mode,
@@ -357,6 +400,7 @@ const generateChallenge = (levelId: number, solved: number): Challenge => {
     totalDrops,
     revealTargets,
     cardHint,
+    batchLabel,
   };
 };
 
@@ -425,6 +469,15 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
     })),
     [challenge.activeIndices, counts, targetByIngredient],
   );
+  const lockedIngredientIds = useMemo(() => {
+    const locked = new Set<number>();
+    activeTargets.forEach(({ index, target }) => {
+      if ((challenge.startCounts[index] || 0) >= target && target > 0) {
+        locked.add(index);
+      }
+    });
+    return locked;
+  }, [activeTargets, challenge.startCounts]);
   const isRecipeComplete = useMemo(
     () => activeTargets.length > 0 && activeTargets.every(({ current, target }) => current === target),
     [activeTargets],
@@ -480,7 +533,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
   }, [correctSolved, onGameOver, sessionEvents, sessionState]);
 
   const addIngredient = (index: number) => {
-    if (locked || endedRef.current || !activeSet.has(index)) return;
+    if (locked || endedRef.current || !activeSet.has(index) || lockedIngredientIds.has(index)) return;
 
     setCounts((prev) => {
       const next = [...prev];
@@ -504,7 +557,6 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
   const onBrew = () => {
     if (locked || endedRef.current) return;
 
-    setAttempts((prev) => prev + 1);
     if (!isRecipeComplete) {
       setFeedback(null);
       setAttempts((prev) => prev + 1);
@@ -608,6 +660,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 <div className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-100/80">Target Recipe</div>
                 <div className="mt-1 text-[clamp(1rem,3.6vw,1.35rem)] font-black text-white">{challenge.orderTitle}</div>
                 <div className="mt-0.5 text-[12px] font-black text-amber-100">Ratio {ratioText}</div>
+                <div className="mt-1 text-[10px] font-semibold text-cyan-100/85">{challenge.orderPrompt}</div>
               </div>
 
               <div className="pointer-events-none absolute left-1/2 top-[84%] h-12 w-[68%] -translate-x-1/2 rounded-full bg-black/35 blur-md" />
@@ -669,6 +722,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
             <div className={`grid shrink-0 ${ingredientGridClass} gap-1.5`}>
               {activeTargets.map(({ ingredient, index, current, target }) => {
                 const isActive = activeSet.has(index);
+                const isLockedIngredient = lockedIngredientIds.has(index);
                 const bottleArt = POTION_BOTTLE_ART[ingredient.id];
                 return (
                   <motion.button
@@ -676,10 +730,10 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                     type="button"
                     whileTap={isActive ? { scale: 0.96, y: 2 } : undefined}
                     onClick={() => addIngredient(index)}
-                    disabled={locked || !isActive}
+                    disabled={locked || !isActive || isLockedIngredient}
                     aria-label={isActive ? `Add ${ingredient.name} to the potion` : `${ingredient.name} is not needed for this recipe`}
-                    className={`relative flex h-[clamp(84px,11vh,104px)] flex-col items-center justify-between rounded-[1.25rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.12),rgba(15,23,42,0.24))] px-1 py-1.5 shadow-[0_10px_14px_rgba(2,6,23,0.24)] transition ${locked || !isActive ? 'opacity-65' : ''}`}
-                    style={isActive ? { boxShadow: `0 12px 22px rgba(2,6,23,0.28), 0 0 18px ${ingredient.glow}` } : undefined}
+                    className={`relative flex h-[clamp(84px,11vh,104px)] flex-col items-center justify-between rounded-[1.25rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.12),rgba(15,23,42,0.24))] px-1 py-1.5 shadow-[0_10px_14px_rgba(2,6,23,0.24)] transition ${locked || !isActive || isLockedIngredient ? 'opacity-60 grayscale' : ''}`}
+                    style={isActive && !isLockedIngredient ? { boxShadow: `0 12px 22px rgba(2,6,23,0.28), 0 0 18px ${ingredient.glow}` } : undefined}
                   >
                     <div className="pointer-events-none flex h-[48px] w-full items-center justify-center">
                       {bottleArt ? (
