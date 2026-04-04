@@ -484,9 +484,23 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
   };
 
   const onBrew = () => {
-    if (locked || endedRef.current || !isRecipeComplete) return;
+    if (locked || endedRef.current) return;
 
     setAttempts((prev) => prev + 1);
+    if (!isRecipeComplete) {
+      setFeedback(null);
+      setAttempts((prev) => prev + 1);
+      emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
+        XP: correctSolved * 100,
+        metadata: { challengeId: challenge.id, stage: challenge.stage },
+      });
+      setLocked(true);
+      feedbackTimerRef.current = setTimeout(() => {
+        setLocked(false);
+      }, 420);
+      return;
+    }
+
     const nextCorrect = correctSolved + 1;
     const scoreNow = nextCorrect * 100;
     const roundsGoal = roundsToWinForLevel(levelId);
@@ -532,7 +546,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
       : isRecipeComplete
         ? 'Ready to brew.'
         : currentTotal > 0
-          ? 'Good start. Keep the mix balanced.'
+          ? 'Not quite. Check the recipe.'
           : 'Choose ingredients to begin.';
 
   const feedbackTone: FeedbackKind | 'hint' | 'neutral' =
@@ -703,9 +717,9 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
 
         <section className="shrink-0">
           <div className="mx-auto flex w-full max-w-[780px] items-center gap-2">
-            <PrimaryButton onClick={onBrew} disabled={locked || !isRecipeComplete} className="flex-1">
+            <PrimaryButton onClick={onBrew} disabled={locked} className="flex-1">
               <Wand2 className="h-4.5 w-4.5" />
-              {isRecipeComplete ? 'Brew Potion' : 'Complete recipe to brew'}
+              {isRecipeComplete ? 'Brew Potion' : 'Brew Potion'}
             </PrimaryButton>
             <SecondaryButton onClick={resetCurrent} disabled={locked}>
               Reset
