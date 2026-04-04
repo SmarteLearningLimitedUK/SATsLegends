@@ -14,8 +14,6 @@ import {
   GameTopBar,
   PrimaryButton,
   SecondaryButton,
-  StoryCard,
-  TaskCard,
 } from '../components/game-ui/GameUiKit';
 import GameRulesModal from '../components/GameRulesModal';
 import cauldrenAndPotionArt from '../assets/coul.png';
@@ -356,12 +354,19 @@ const generateChallenge = (levelId: number, solved: number): Challenge => {
     baseRatio = [2, 5];
     scale = 1;
     batchLabel = 'single';
-    startCounts[1] = baseRatio[0];
+  }
+
+  const targetCounts = baseRatio.map((value) => Math.round(value * scale));
+  const totalDrops = targetCounts.reduce((sum, value) => sum + value, 0);
+  const activeIngredients = activeIndices.map((index) => INGREDIENTS[index]);
+
+  if (levelId <= 1) {
+    startCounts[1] = targetCounts[0] || 0;
     cardHint = `${INGREDIENTS[1].name} is already in the cauldron. Add the rest.`;
   } else if (mode === 'missing_value') {
     const givenRatioIndex = 1;
-    const givenIngredient = activeIngredients[givenRatioIndex];
     startCounts[activeIndices[givenRatioIndex]] = targetCounts[givenRatioIndex];
+    const givenIngredient = activeIngredients[givenRatioIndex];
     cardHint = `${givenIngredient.name} already has ${targetCounts[givenRatioIndex]} drops in the cauldron.`;
   } else if (mode === 'fix_mistake') {
     const shortIndex = targetCounts[1] > targetCounts[0] ? 1 : 0;
@@ -379,9 +384,6 @@ const generateChallenge = (levelId: number, solved: number): Challenge => {
     cardHint = `Use ${totalDrops} drops altogether and Keep the mix balanced.`;
   }
 
-  const targetCounts = baseRatio.map((value) => Math.round(value * scale));
-  const totalDrops = targetCounts.reduce((sum, value) => sum + value, 0);
-  const activeIngredients = activeIndices.map((index) => INGREDIENTS[index]);
   const orderTitle = buildPotionName(activeIngredients);
   const ratioText = simplifyRatio(targetCounts).join(':');
 
@@ -656,11 +658,11 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
         <section className="min-h-0 flex-1">
           <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto_auto] gap-2">
             <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] border border-white/12 bg-white/5 shadow-[0_16px_30px_rgba(15,23,42,0.2)]">
-              <div className="pointer-events-none absolute left-1/2 top-4 w-[70%] -translate-x-1/2 text-center">
-                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-100/80">Target Recipe</div>
-                <div className="mt-1 text-[clamp(1rem,3.6vw,1.35rem)] font-black text-white">{challenge.orderTitle}</div>
-                <div className="mt-0.5 text-[12px] font-black text-amber-100">Ratio {ratioText}</div>
-                <div className="mt-1 text-[10px] font-semibold text-cyan-100/85">{challenge.orderPrompt}</div>
+              <div className="pointer-events-none absolute left-1/2 top-4 w-[78%] -translate-x-1/2 text-center">
+                <div className="text-[18px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Recipe</div>
+                <div className="mt-1 text-[clamp(2rem,6.5vw,2.6rem)] font-black text-white">{challenge.orderTitle}</div>
+                <div className="mt-1 text-[20px] font-black text-amber-100">Ratio {ratioText}</div>
+                <div className="mt-2 text-[16px] font-semibold text-cyan-100/90">{challenge.orderPrompt}</div>
               </div>
 
               <div className="pointer-events-none absolute left-1/2 top-[84%] h-12 w-[68%] -translate-x-1/2 rounded-full bg-black/35 blur-md" />
@@ -679,9 +681,9 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 src={cauldrenAndPotionArt}
                 alt=""
                 aria-hidden="true"
-                className="pointer-events-none absolute left-1/2 top-[16%] h-[68%] max-w-none -translate-x-1/2 object-contain"
+                className="pointer-events-none absolute left-1/2 top-[36%] h-[42%] max-w-none -translate-x-1/2 object-contain"
               />
-              <div className="absolute left-1/2 top-[34%] h-[23%] w-[46%] -translate-x-1/2 overflow-hidden rounded-[46%]">
+              <div className="absolute left-1/2 top-[48%] h-[14%] w-[34%] -translate-x-1/2 overflow-hidden rounded-[46%]">
                 <motion.div
                   className="absolute inset-x-[8%] bottom-[8%] rounded-[42%]"
                   style={{
