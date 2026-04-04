@@ -9,7 +9,8 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from '../components/game-ui/GameUiKit';
-import { TAKE_OUT_ASSETS } from '../assets/take_out';
+import birthdayCakeAsset from '../assets/birthdaycake.png';
+import cakeSliceAsset from '../assets/cakeslice.png';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import GameRulesModal from '../components/GameRulesModal';
 import shareSplitterBackdrop from '../assets/level_backgrounds/take_out.png';
@@ -49,7 +50,8 @@ type DragSlice = {
 const MAX_PLATE_COUNT = 4;
 const ROUNDS_TO_WIN = 5;
 const BASE_XP_PER_ROUND = 120;
-const CAKE_ASSET = TAKE_OUT_ASSETS.portionEighthE;
+const CAKE_SLICE_ASSET = cakeSliceAsset;
+const BIRTHDAY_CAKE_ASSET = birthdayCakeAsset;
 
 const RATIO_PATTERNS_BY_COUNT: Record<number, number[][]> = {
   2: [
@@ -460,7 +462,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                           {plates[index].slice(0, 6).map((sliceId) => (
                             <img
                               key={sliceId}
-                              src={CAKE_ASSET}
+                              src={CAKE_SLICE_ASSET}
                               alt=""
                               className="h-5 w-5 object-contain"
                               draggable={false}
@@ -489,13 +491,13 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                   aria-label={remainingSlices > 0 ? 'Drag one cake onto a plate' : 'No cakes left'}
                 >
                   <img
-                    src={TAKE_OUT_ASSETS.trayBase}
+                    src={BIRTHDAY_CAKE_ASSET}
                     alt=""
                     className="h-14 w-14 object-contain"
                     draggable={false}
                   />
                   <img
-                    src={CAKE_ASSET}
+                    src={CAKE_SLICE_ASSET}
                     alt=""
                     className="absolute left-3 top-1/2 h-8 w-8 -translate-y-1/2 object-contain"
                     draggable={false}
@@ -520,7 +522,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
               className="pointer-events-none fixed z-[60] h-12 w-12 rounded-full border border-amber-200/70 bg-[linear-gradient(180deg,rgba(250,204,21,0.3),rgba(180,83,9,0.2))] p-1 shadow-[0_14px_24px_rgba(217,119,6,0.35)]"
             >
               <img
-                src={CAKE_ASSET}
+                src={CAKE_SLICE_ASSET}
                 alt=""
                 className="h-full w-full object-contain"
                 draggable={false}
