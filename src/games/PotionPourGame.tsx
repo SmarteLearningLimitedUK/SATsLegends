@@ -396,6 +396,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
 
   const currentTotal = useMemo(() => counts.reduce((a, b) => a + b, 0), [counts]);
   const targetTotal = useMemo(() => challenge.targetCounts.reduce((a, b) => a + b, 0), [challenge.targetCounts]);
+  const ratioText = useMemo(() => simplifyRatio(challenge.targetCounts).join(':'), [challenge.targetCounts]);
   const activeTargets = useMemo(
     () => challenge.activeIndices.map((idx) => ({
       index: idx,
@@ -441,15 +442,6 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
     )),
     [activeTargets],
   );
-
-  const nextNeeded = useMemo(
-    () => activeTargets.find(({ remaining }) => remaining > 0) || null,
-    [activeTargets],
-  );
-
-  const stepHint = nextNeeded
-    ? `Add ${nextNeeded.remaining} ${nextNeeded.ingredient.name} drop${nextNeeded.remaining > 1 ? 's' : ''}`
-    : 'Recipe complete. Brew when ready.';
 
   const ingredientGridClass = activeTargets.length <= 2
     ? 'grid-cols-2'
@@ -538,10 +530,10 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
     : overfilledTargets.length > 0
       ? `Too much ${joinWithAnd(overfilledTargets.map(({ ingredient }) => ingredient.name))}.`
       : isRecipeComplete
-        ? 'Recipe complete. Brew the potion.'
+        ? 'Ready to brew.'
         : currentTotal > 0
           ? 'Good start. Keep the mix balanced.'
-          : 'Add drops to begin.';
+          : 'Choose ingredients to begin.';
 
   const feedbackTone: FeedbackKind | 'hint' | 'neutral' =
     feedback === 'success'
@@ -577,56 +569,34 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
           />
         </section>
 
-        <section className="shrink-0">
-          <StoryCard className="mx-auto max-w-[780px]">
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/70">Create</p>
-            <p className="text-[clamp(16px,2.4vh,22px)] font-black text-white">{challenge.orderTitle}</p>
-            <p className="text-[11px] font-semibold text-cyan-100/80">Use the correct ratio of ingredients.</p>
-          </StoryCard>
-        </section>
-
-        <section className="shrink-0">
-          <TaskCard className="mx-auto w-full max-w-[780px]">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/70">Recipe</div>
-              <div className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/70">
-                Total {challenge.totalDrops} drops
-              </div>
-            </div>
-            <div className="mt-2 grid gap-1.5">
-              {activeTargets.map(({ ingredient, target }) => (
-                <div key={`recipe-${ingredient.id}`} className="flex items-center justify-between rounded-[0.95rem] border border-white/10 bg-white/10 px-2.5 py-2">
-                  <div className="flex items-center gap-2">
-                    <span
-                      aria-hidden="true"
-                      className="h-3.5 w-3.5 rounded-full border border-white/45"
-                      style={{ backgroundColor: ingredient.color, boxShadow: `0 0 8px ${ingredient.glow}` }}
-                    />
-                    <span className="text-[12px] font-black text-white">{ingredient.name}</span>
-                  </div>
-                  <span className="text-[11px] font-black text-cyan-50">{target} drops</span>
-                </div>
-              ))}
-            </div>
-            <div className="mt-2 flex flex-wrap items-center gap-1.5">
-              {recipeTokens.map((token) => (
-                <span
-                  key={token.id}
-                  className="h-3 w-3 rounded-full border border-white/40"
-                  style={{ backgroundColor: token.color, boxShadow: `0 0 8px ${token.glow}` }}
-                />
-              ))}
-            </div>
-            <div className="mt-2 text-[11px] font-semibold text-cyan-100/85">{stepHint}</div>
-          </TaskCard>
-        </section>
-
         <section className="min-h-0 flex-1">
-          <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
-            <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] border border-white/12 bg-slate-950/16 shadow-[0_16px_30px_rgba(15,23,42,0.2)]">
-              <div className="pointer-events-none absolute left-4 top-4 rounded-full border border-cyan-100/30 bg-slate-950/40 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100">
-                Add drops to match the recipe
+          <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto_auto] gap-2">
+            <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] border border-white/12 bg-slate-950/12 shadow-[0_16px_30px_rgba(15,23,42,0.2)]">
+              <div className="pointer-events-none absolute left-1/2 top-4 w-[70%] -translate-x-1/2 text-center">
+                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-100/80">Target Recipe</div>
+                <div className="mt-1 text-[clamp(1rem,3.6vw,1.35rem)] font-black text-white">{challenge.orderTitle}</div>
+                <div className="mt-0.5 text-[12px] font-black text-amber-100">Ratio {ratioText}</div>
               </div>
+
+              <div className="pointer-events-none absolute right-3 top-4 w-[9.2rem] rounded-[1rem] border border-white/12 bg-slate-950/40 px-2 py-2 text-[10px]">
+                <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/70">Recipe</div>
+                <div className="mt-1 grid gap-1">
+                  {activeTargets.map(({ ingredient, target }) => (
+                    <div key={`recipe-mini-${ingredient.id}`} className="flex items-center justify-between text-[10px] font-semibold text-white">
+                      <span className="flex items-center gap-1.5">
+                        <span
+                          aria-hidden="true"
+                          className="h-2.5 w-2.5 rounded-full border border-white/40"
+                          style={{ backgroundColor: ingredient.color, boxShadow: `0 0 6px ${ingredient.glow}` }}
+                        />
+                        {ingredient.name}
+                      </span>
+                      <span className="text-cyan-100">x{target}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <div className="pointer-events-none absolute left-1/2 top-[84%] h-12 w-[68%] -translate-x-1/2 rounded-full bg-black/35 blur-md" />
               <div className="pointer-events-none absolute left-1/2 top-[76%] h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
               <div className="absolute left-1/2 top-[72%] flex h-[18%] w-[48%] -translate-x-1/2 items-end justify-between px-5">
@@ -643,7 +613,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 src={cauldrenAndPotionArt}
                 alt=""
                 aria-hidden="true"
-                className="pointer-events-none absolute left-1/2 top-[6%] h-[72%] max-w-none -translate-x-1/2 object-contain"
+                className="pointer-events-none absolute left-1/2 top-[2%] h-[80%] max-w-none -translate-x-1/2 object-contain"
               />
               <div className="absolute left-[41.5%] top-[20%] h-[26%] w-[50%] -translate-x-1/2 overflow-hidden rounded-[46%]">
                 <motion.div
@@ -681,6 +651,29 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                   </motion.div>
                 ) : null}
               </AnimatePresence>
+            </div>
+
+            <div className="rounded-[0.85rem] bg-[linear-gradient(180deg,#c63a3a_0%,#a32323_100%)] px-3 py-2 shadow-[0_12px_20px_rgba(120,17,17,0.35)]">
+              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-amber-100/90">Tray</div>
+              <div className="mt-1 flex min-h-[2.6rem] flex-wrap gap-2">
+                {activeTargets.every(({ current }) => current === 0) ? (
+                  <div className="text-[11px] font-semibold text-amber-100/80">Tray empty.</div>
+                ) : (
+                  activeTargets.filter(({ current }) => current > 0).map(({ ingredient, current, target }) => (
+                    <div
+                      key={`tray-${ingredient.id}`}
+                      className="flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-2 py-1 text-[10px] font-semibold text-white"
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="h-2.5 w-2.5 rounded-full border border-white/40"
+                        style={{ backgroundColor: ingredient.color, boxShadow: `0 0 6px ${ingredient.glow}` }}
+                      />
+                      {ingredient.name} {current}/{target}
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
 
             <div className={`grid shrink-0 ${ingredientGridClass} gap-1.5`}>
