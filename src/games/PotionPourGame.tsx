@@ -120,11 +120,29 @@ const SIMPLE_PAIR_RATIOS = [
   [3, 2],
 ] as const;
 
+const ADVANCED_PAIR_RATIOS = [
+  [4, 1],
+  [5, 2],
+  [5, 3],
+  [7, 2],
+  [7, 3],
+  [8, 3],
+  [9, 4],
+] as const;
+
 const SIMPLE_TRIPLE_RATIOS = [
   [1, 1, 1],
   [2, 1, 1],
   [2, 2, 1],
   [3, 1, 2],
+] as const;
+
+const ADVANCED_TRIPLE_RATIOS = [
+  [3, 2, 1],
+  [4, 2, 1],
+  [4, 3, 2],
+  [5, 3, 2],
+  [5, 4, 3],
 ] as const;
 
 const WORD_PAIR_RATIOS = [
@@ -281,20 +299,20 @@ const generateChallenge = (levelId: number, solved: number): Challenge => {
     scale = 1;
     revealTargets = true;
   } else if (mode === 'scale_recipe') {
-    baseRatio = [...randomPick(SIMPLE_PAIR_RATIOS)];
-    scale = randomPick([2, 3, 4]);
+    baseRatio = [...randomPick(stage >= 4 ? ADVANCED_PAIR_RATIOS : SIMPLE_PAIR_RATIOS)];
+    scale = randomPick(stage >= 4 ? [3, 4, 5] : [2, 3, 4]);
   } else if (mode === 'missing_value') {
-    baseRatio = [...randomPick(WORD_PAIR_RATIOS)];
-    scale = randomPick([2, 3, 4]);
+    baseRatio = [...randomPick(stage >= 4 ? WORD_PAIR_RATIOS.concat(ADVANCED_PAIR_RATIOS as unknown as number[][]) : WORD_PAIR_RATIOS)];
+    scale = randomPick(stage >= 5 ? [3, 4, 5] : [2, 3, 4]);
   } else if (mode === 'fix_mistake') {
-    baseRatio = [...randomPick(SIMPLE_PAIR_RATIOS.filter((ratio) => ratio[0] !== ratio[1]))];
-    scale = randomPick([2, 3]);
+    baseRatio = [...randomPick((stage >= 4 ? ADVANCED_PAIR_RATIOS : SIMPLE_PAIR_RATIOS).filter((ratio) => ratio[0] !== ratio[1]))];
+    scale = randomPick(stage >= 5 ? [3, 4, 5] : [2, 3]);
   } else if (mode === 'word_problem') {
-    baseRatio = [...randomPick(WORD_PAIR_RATIOS)];
-    scale = randomPick([2, 3, 4]);
+    baseRatio = [...randomPick(stage >= 5 ? WORD_PAIR_RATIOS.concat(ADVANCED_PAIR_RATIOS as unknown as number[][]) : WORD_PAIR_RATIOS)];
+    scale = randomPick(stage >= 5 ? [3, 4, 5, 6] : [2, 3, 4]);
   } else {
-    baseRatio = [...randomPick(SIMPLE_TRIPLE_RATIOS)];
-    scale = randomPick([2, 3, 4]);
+    baseRatio = [...randomPick(stage >= 6 ? ADVANCED_TRIPLE_RATIOS : SIMPLE_TRIPLE_RATIOS)];
+    scale = randomPick(stage >= 6 ? [4, 5, 6] : [2, 3, 4]);
   }
 
   const targetCounts = baseRatio.map((value) => value * scale);
@@ -592,25 +610,6 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 <div className="mt-0.5 text-[12px] font-black text-amber-100">Ratio {ratioText}</div>
               </div>
 
-              <div className="pointer-events-none absolute right-3 top-4 w-[9.2rem] rounded-[1rem] border border-white/12 bg-slate-950/40 px-2 py-2 text-[10px]">
-                <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/70">Recipe</div>
-                <div className="mt-1 grid gap-1">
-                  {activeTargets.map(({ ingredient, target }) => (
-                    <div key={`recipe-mini-${ingredient.id}`} className="flex items-center justify-between text-[10px] font-semibold text-white">
-                      <span className="flex items-center gap-1.5">
-                        <span
-                          aria-hidden="true"
-                          className="h-2.5 w-2.5 rounded-full border border-white/40"
-                          style={{ backgroundColor: ingredient.color, boxShadow: `0 0 6px ${ingredient.glow}` }}
-                        />
-                        {ingredient.name}
-                      </span>
-                      <span className="text-cyan-100">x{target}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
               <div className="pointer-events-none absolute left-1/2 top-[84%] h-12 w-[68%] -translate-x-1/2 rounded-full bg-black/35 blur-md" />
               <div className="pointer-events-none absolute left-1/2 top-[76%] h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
               <div className="absolute left-1/2 top-[72%] flex h-[18%] w-[48%] -translate-x-1/2 items-end justify-between px-5">
@@ -627,9 +626,9 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 src={cauldrenAndPotionArt}
                 alt=""
                 aria-hidden="true"
-                className="pointer-events-none absolute left-1/2 top-[10%] h-[80%] max-w-none -translate-x-1/2 object-contain"
+                className="pointer-events-none absolute left-1/2 top-[16%] h-[68%] max-w-none -translate-x-1/2 object-contain"
               />
-              <div className="absolute left-1/2 top-[30%] h-[26%] w-[50%] -translate-x-1/2 overflow-hidden rounded-[46%]">
+              <div className="absolute left-1/2 top-[34%] h-[23%] w-[46%] -translate-x-1/2 overflow-hidden rounded-[46%]">
                 <motion.div
                   className="absolute inset-x-[8%] bottom-[8%] rounded-[42%]"
                   style={{
