@@ -555,7 +555,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
   }), []);
 
   return (
-    <GameUiShell backgroundImage={potionPanicBackdrop}>
+    <GameUiShell backgroundImage={potionPanicBackdrop} backgroundOpacity={1}>
       <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+4rem)] pt-3 text-white">
         <section className="shrink-0">
           <GameTopBar
@@ -571,7 +571,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
 
         <section className="min-h-0 flex-1">
           <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto_auto] gap-2">
-            <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] border border-white/12 bg-slate-950/12 shadow-[0_16px_30px_rgba(15,23,42,0.2)]">
+            <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] border border-white/12 bg-white/5 shadow-[0_16px_30px_rgba(15,23,42,0.2)]">
               <div className="pointer-events-none absolute left-1/2 top-4 w-[70%] -translate-x-1/2 text-center">
                 <div className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-100/80">Target Recipe</div>
                 <div className="mt-1 text-[clamp(1rem,3.6vw,1.35rem)] font-black text-white">{challenge.orderTitle}</div>
@@ -613,9 +613,9 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 src={cauldrenAndPotionArt}
                 alt=""
                 aria-hidden="true"
-                className="pointer-events-none absolute left-1/2 top-[2%] h-[80%] max-w-none -translate-x-1/2 object-contain"
+                className="pointer-events-none absolute left-1/2 top-[10%] h-[80%] max-w-none -translate-x-1/2 object-contain"
               />
-              <div className="absolute left-[41.5%] top-[20%] h-[26%] w-[50%] -translate-x-1/2 overflow-hidden rounded-[46%]">
+              <div className="absolute left-1/2 top-[30%] h-[26%] w-[50%] -translate-x-1/2 overflow-hidden rounded-[46%]">
                 <motion.div
                   className="absolute inset-x-[8%] bottom-[8%] rounded-[42%]"
                   style={{
@@ -651,29 +651,6 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                   </motion.div>
                 ) : null}
               </AnimatePresence>
-            </div>
-
-            <div className="rounded-[0.85rem] bg-[linear-gradient(180deg,#c63a3a_0%,#a32323_100%)] px-3 py-2 shadow-[0_12px_20px_rgba(120,17,17,0.35)]">
-              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-amber-100/90">Tray</div>
-              <div className="mt-1 flex min-h-[2.6rem] flex-wrap gap-2">
-                {activeTargets.every(({ current }) => current === 0) ? (
-                  <div className="text-[11px] font-semibold text-amber-100/80">Tray empty.</div>
-                ) : (
-                  activeTargets.filter(({ current }) => current > 0).map(({ ingredient, current, target }) => (
-                    <div
-                      key={`tray-${ingredient.id}`}
-                      className="flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-2 py-1 text-[10px] font-semibold text-white"
-                    >
-                      <span
-                        aria-hidden="true"
-                        className="h-2.5 w-2.5 rounded-full border border-white/40"
-                        style={{ backgroundColor: ingredient.color, boxShadow: `0 0 6px ${ingredient.glow}` }}
-                      />
-                      {ingredient.name} {current}/{target}
-                    </div>
-                  ))
-                )}
-              </div>
             </div>
 
             <div className={`grid shrink-0 ${ingredientGridClass} gap-1.5`}>
