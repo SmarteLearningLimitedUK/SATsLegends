@@ -55,10 +55,10 @@ const MAP_HEIGHT_PX = 2500;
 const ISLAND_HOTSPOTS: IslandHotspot[] = [
   {
     islandId: 6,
-    x: 56,
-    y: 15.5,
-    width: 40,
-    height: 5.6,
+    x: 30,
+    y: 14,
+    width: 42,
+    height: 13,
     ambients: [
       { id: 'measurement-lava', x: 62, y: 48, width: 26, height: 20, effect: 'lava-spurts' },
       { id: 'measurement-stars', x: 18, y: 18, width: 24, height: 20, effect: 'stars' },
@@ -66,40 +66,40 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
   },
   {
     islandId: 3,
-    x: 50,
-    y: 47.5,
+    x: 70,
+    y: 50.5,
     width: 40,
-    height: 5.6,
+    height: 12.5,
     ambients: [
       { id: 'fraction-forest-butterflies', x: 20, y: 20, width: 32, height: 26, effect: 'butterflies' },
     ],
   },
   {
     islandId: 4,
-    x: 48,
+    x: 28,
     y: 38.5,
     width: 40,
-    height: 5.6,
+    height: 12.5,
     ambients: [
       { id: 'geometry-glacier-snow', x: 16, y: 10, width: 34, height: 30, effect: 'falling-snow' },
     ],
   },
   {
     islandId: 2,
-    x: 55,
-    y: 60.5,
+    x: 30,
+    y: 62.5,
     width: 40,
-    height: 5.6,
+    height: 12.5,
     ambients: [
       { id: 'data-desert-dust', x: 22, y: 25, width: 30, height: 24, effect: 'dust-devils' },
     ],
   },
   {
     islandId: 5,
-    x: 43,
-    y: 26.5,
-    width: 42,
-    height: 5.6,
+    x: 62,
+    y: 26,
+    width: 34,
+    height: 12,
     ambients: [
       { id: 'operations-outpost-stars', x: 18, y: 20, width: 28, height: 22, effect: 'stars' },
       { id: 'operations-outpost-beams', x: 60, y: 12, width: 28, height: 24, effect: 'light-beams' },
@@ -107,10 +107,10 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
   },
   {
     islandId: 1,
-    x: 52,
-    y: 86.5,
-    width: 44,
-    height: 5.6,
+    x: 74,
+    y: 88,
+    width: 34,
+    height: 12,
     ambients: [
       { id: 'acropolis-math', x: 18, y: 24, width: 30, height: 24, effect: 'math-symbols' },
       { id: 'acropolis-bubbles', x: 56, y: 56, width: 28, height: 22, effect: 'bubbles' },
@@ -118,10 +118,10 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
   },
   {
     islandId: 7,
-    x: 44,
-    y: 69.5,
-    width: 40,
-    height: 5.6,
+    x: 68,
+    y: 74.5,
+    width: 34,
+    height: 12,
     ambients: [
       { id: 'ratio-rapids-steam', x: 18, y: 22, width: 32, height: 24, effect: 'steam' },
       { id: 'ratio-rapids-bubbles', x: 56, y: 54, width: 30, height: 24, effect: 'bubbles' },
