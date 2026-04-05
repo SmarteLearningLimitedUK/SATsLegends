@@ -97,7 +97,9 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
     case 'formula_forge':
       return 'FormulaForgeGame';
     case 'unit_mixer':
-      return 'CurriculumChallengeGame';
+      return 'UnitMixerGame';
+    case 'change_counter':
+      return 'ChangeCounterGame';
     case 'percent_power':
       return 'PercentPowerGame';
     case 'area_architect':

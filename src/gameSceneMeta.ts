@@ -87,4 +87,6 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   equation_grove: REASONING_SCENE,
   rule_runner: REASONING_SCENE,
   formula_forge: NUMBER_SCENE,
+  unit_mixer: REASONING_SCENE,
+  change_counter: REASONING_SCENE,
 };

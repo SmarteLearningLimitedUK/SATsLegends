@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { triggerHaptic } from '../haptics';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
+import boatsSprite from '../assets/boats.jpg';
 
 interface DivisionDockGameProps {
   levelId: number;
@@ -26,22 +27,15 @@ type FeedbackState = null | {
 };
 
 const HEARTS_MAX = 3;
-const CARGO_PER_BOAT = 5;
-const TOTAL_BOATS_BY_LEVEL: Record<number, number> = {
-  1: 3,
-  2: 3,
-  3: 4,
-  4: 4,
-  5: 5,
-  6: 5,
-};
+const DOCK_COUNT = 3;
+const ROUNDS_TO_WIN = 5;
+const BOAT_SPRITE_GRID = { columns: 2, rows: 2 } as const;
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
 const createDivisionQuestion = (levelId: number, solved: number): DivisionQuestion => {
-  const maxDivisor = Math.min(12, 4 + levelId + Math.floor(solved / 4));
-  const divisor = randomInt(2, maxDivisor);
-  const answer = randomInt(2, Math.min(12, 5 + levelId + Math.floor(solved / 5)));
+  const divisor = DOCK_COUNT;
+  const answer = randomInt(2, Math.min(12, 4 + levelId + Math.floor(solved / 3)));
   const dividend = divisor * answer;
   return { dividend, divisor, answer };
 };
@@ -53,39 +47,29 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
   onGameOver,
   onBack: _onBack,
 }) => {
-  const totalBoats = TOTAL_BOATS_BY_LEVEL[levelId] || 4;
   const initialTime = 78 + (levelId * 6);
 
   const timersRef = useRef<number[]>([]);
-  const inputRef = useRef<HTMLInputElement>(null);
   const scoreRef = useRef(0);
 
   const [XP, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(initialTime);
   const [hearts, setHearts] = useState(HEARTS_MAX);
   const [Combo, setStreak] = useState(0);
-  const [boatsCompleted, setBoatsCompleted] = useState(0);
-  const [cargoLoaded, setCargoLoaded] = useState(0);
+  const [roundSolved, setRoundSolved] = useState(0);
+  const [boatLoads, setBoatLoads] = useState<number[]>(() => Array.from({ length: DOCK_COUNT }, () => 0));
   const [solvedCount, setSolvedCount] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [question, setQuestion] = useState<DivisionQuestion>(() => createDivisionQuestion(levelId, 0));
-  const [userAnswer, setUserAnswer] = useState('');
   const [feedback, setFeedback] = useState<FeedbackState>(null);
-  const [boatDeparting, setBoatDeparting] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
-
-  const currentBoat = Math.min(totalBoats, boatsCompleted + 1);
 
   const clearTimers = () => {
     timersRef.current.forEach((timerId) => window.clearTimeout(timerId));
     timersRef.current = [];
   };
 
-  const focusInputSoon = () => {
-    const timerId = window.setTimeout(() => inputRef.current?.focus(), 40);
-    timersRef.current.push(timerId);
-  };
 
   useEffect(() => {
     scoreRef.current = XP;
@@ -101,17 +85,14 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
     setTimeLeft(initialTime);
     setHearts(HEARTS_MAX);
     setStreak(0);
-    setBoatsCompleted(0);
-    setCargoLoaded(0);
+    setRoundSolved(0);
+    setBoatLoads(Array.from({ length: DOCK_COUNT }, () => 0));
     setSolvedCount(0);
     setAttempts(0);
     setCorrectAnswers(0);
     setQuestion(openingQuestion);
-    setUserAnswer('');
     setFeedback(null);
-    setBoatDeparting(false);
     setIsFinished(false);
-    focusInputSoon();
   }, [initialTime, levelId]);
 
   useEffect(() => {
@@ -171,83 +152,63 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
 
     const timerId = window.setTimeout(() => {
       setQuestion(createDivisionQuestion(levelId, solvedCount));
-      setUserAnswer('');
+      setBoatLoads(Array.from({ length: DOCK_COUNT }, () => 0));
       setFeedback(null);
-      focusInputSoon();
     }, 620);
     timersRef.current.push(timerId);
   };
 
-  const handleCorrectAnswer = (updatedScore: number, nextSolved: number, nextAttempts: number, nextCorrect: number) => {
-    const nextCargo = cargoLoaded + 1;
-    setCargoLoaded(nextCargo);
+  const boatFramePosition = useMemo(() => (
+    Array.from({ length: DOCK_COUNT }, (_, index) => {
+      const frame = index % (BOAT_SPRITE_GRID.columns * BOAT_SPRITE_GRID.rows);
+      const column = frame % BOAT_SPRITE_GRID.columns;
+      const row = Math.floor(frame / BOAT_SPRITE_GRID.columns);
+      return {
+        x: `${column * 100}%`,
+        y: `${row * 100}%`,
+      };
+    })
+  ), []);
+
+  const remainingGoods = Math.max(0, question.dividend - boatLoads.reduce((sum, count) => sum + count, 0));
+  const allUsed = remainingGoods === 0;
+  const allEqual = boatLoads.every((count) => count === question.answer);
+
+  const addToBoat = (index: number) => {
+    if (isFinished || remainingGoods <= 0) return;
+    setBoatLoads((previous) => previous.map((count, i) => (i === index ? count + 1 : count)));
     setFeedback({
       type: 'success',
-      title: 'Cargo Loaded',
-      subtitle: `Correct! +1 crate (${nextCargo}/${CARGO_PER_BOAT})`,
+      title: 'Loaded',
+      subtitle: `Boat ${index + 1} +1 crate`,
     });
     triggerHaptic('success');
-
-    if (nextCargo < CARGO_PER_BOAT) {
-      const timerId = window.setTimeout(() => {
-        setQuestion(createDivisionQuestion(levelId, nextSolved));
-        setUserAnswer('');
-        setFeedback(null);
-        focusInputSoon();
-      }, 420);
-      timersRef.current.push(timerId);
-      return;
-    }
-
-    setBoatDeparting(true);
-    const departureId = window.setTimeout(() => {
-      setFeedback({
-        type: 'success',
-        title: 'Boat Departed',
-        subtitle: `Boat ${currentBoat} dispatched with full cargo.`,
-      });
-    }, 380);
-    timersRef.current.push(departureId);
-
-    const advanceId = window.setTimeout(() => {
-      const nextBoatsCompleted = boatsCompleted + 1;
-      setBoatsCompleted(nextBoatsCompleted);
-      setCargoLoaded(0);
-      setBoatDeparting(false);
-
-      if (nextBoatsCompleted >= totalBoats) {
-        finishVictory(updatedScore, nextAttempts, nextCorrect, hearts);
-        return;
-      }
-
-      setQuestion(createDivisionQuestion(levelId, nextSolved));
-      setUserAnswer('');
-      setFeedback(null);
-      focusInputSoon();
-    }, 1200);
-    timersRef.current.push(advanceId);
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (isFinished || boatDeparting) return;
+  const resetBoats = () => {
+    setBoatLoads(Array.from({ length: DOCK_COUNT }, () => 0));
+    setFeedback({
+      type: 'error',
+      title: 'Reset',
+      subtitle: 'All crates returned to the dock.',
+    });
+  };
 
-    const trimmed = userAnswer.trim();
-    if (!trimmed || trimmed === '-') {
-      setFeedback({ type: 'error', title: 'No Answer', subtitle: 'Enter a quotient to load cargo.' });
-      return;
-    }
-
-    const parsed = Number(trimmed);
-    if (Number.isNaN(parsed)) {
-      setFeedback({ type: 'error', title: 'Invalid Input', subtitle: 'Answer must be a number.' });
-      return;
-    }
-
+  const checkShare = () => {
+    if (isFinished) return;
     const nextAttempts = attempts + 1;
     setAttempts(nextAttempts);
 
-    if (parsed !== question.answer) {
+    if (!allUsed) {
+      setFeedback({
+        type: 'error',
+        title: 'Keep Sharing',
+        subtitle: `Use all ${question.dividend} crates before checking.`,
+      });
+      return;
+    }
+
+    if (!allEqual) {
       handleWrongAnswer();
       return;
     }
@@ -262,8 +223,24 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
     setSolvedCount(nextSolved);
     setCorrectAnswers(nextCorrect);
     setStreak((previous) => previous + 1);
+    setRoundSolved((prev) => prev + 1);
+    setFeedback({
+      type: 'success',
+      title: 'Perfect Share',
+      subtitle: `Each boat has ${question.answer} crates.`,
+    });
 
-    handleCorrectAnswer(updatedScore, nextSolved, nextAttempts, nextCorrect);
+    if (nextSolved >= ROUNDS_TO_WIN) {
+      finishVictory(updatedScore, nextAttempts, nextCorrect, hearts);
+      return;
+    }
+
+    const timerId = window.setTimeout(() => {
+      setQuestion(createDivisionQuestion(levelId, nextSolved));
+      setBoatLoads(Array.from({ length: DOCK_COUNT }, () => 0));
+      setFeedback(null);
+    }, 720);
+    timersRef.current.push(timerId);
   };
 
   return (
@@ -278,17 +255,17 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
             <div className="flex justify-center">
               <div className="licensed-slice-paper-panel max-w-[96%] px-3 py-2 text-center shadow-[0_14px_26px_rgba(15,23,42,0.16)] md:px-5 md:py-2.5">
                 <div className="text-[0.9rem] font-black tracking-tight text-amber-900 md:text-[1.15rem]">
-                  Solve the division to load cargo
+                  Share the cargo equally between the boats
                 </div>
                 <div className="mt-0.5 text-[0.66rem] font-bold text-amber-950/76 md:text-[0.86rem]">
-                  Fill {CARGO_PER_BOAT} crates to dispatch each boat.
+                  Tap a boat to load one crate.
                 </div>
               </div>
             </div>
 
             <div className="mt-2 grid min-h-0 flex-1 grid-cols-1 gap-2.5 lg:mt-3 lg:grid-cols-[1.1fr_0.9fr] lg:gap-3">
               <div className="licensed-game-card-dark flex min-h-0 flex-col rounded-[1.3rem] border border-white/14 p-2.5 shadow-[0_16px_28px_rgba(2,6,23,0.22)] md:rounded-[1.6rem] md:p-4">
-                <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Equation terminal</div>
+                <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Cargo brief</div>
                 <div className="mt-2 rounded-[1rem] border border-sky-200/20 bg-[linear-gradient(180deg,rgba(14,116,144,0.22),rgba(14,116,144,0.08))] p-3 text-center md:mt-3 md:p-4">
                   <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/70 md:text-xs">Current equation</div>
                   <div className="mt-1 text-[clamp(1.6rem,4.2vw,2.7rem)] font-black text-white">
@@ -296,71 +273,74 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
                   </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="mt-3 flex gap-2 md:mt-3.5 md:gap-3">
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    inputMode="numeric"
-                    value={userAnswer}
-                    onChange={(event) => setUserAnswer(event.target.value.replace(/[^\d-]/g, ''))}
-                    disabled={Boolean(feedback) || boatDeparting || isFinished}
-                    placeholder="Quotient"
-                    className="h-11 flex-1 rounded-[0.95rem] border border-sky-200/25 bg-black/28 px-3 text-center text-[1.2rem] font-black text-white outline-none transition placeholder:text-cyan-100/45 focus:border-sky-300/70 disabled:opacity-60 md:h-12 md:text-2xl"
-                  />
-                  <button
-                    type="submit"
-                    disabled={Boolean(feedback) || boatDeparting || isFinished}
-                    className="ui-button-primary min-w-[6.4rem] rounded-[0.95rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.08em] text-white disabled:opacity-60 md:min-w-[8rem] md:text-sm"
-                  >
-                    Load Cargo
-                  </button>
-                </form>
-
-                <div className="mt-2 grid grid-cols-2 gap-2 md:mt-3">
+                <div className="mt-3 grid grid-cols-2 gap-2 md:mt-3">
                   <div className="rounded-[1rem] border border-white/12 bg-white/8 p-2 text-center">
                     <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/65 md:text-[11px]">Cargo</div>
-                    <div className="mt-1 text-xl font-black text-white md:text-2xl">{cargoLoaded}/{CARGO_PER_BOAT}</div>
+                    <div className="mt-1 text-xl font-black text-white md:text-2xl">{question.dividend - remainingGoods}/{question.dividend}</div>
                   </div>
                   <div className="rounded-[1rem] border border-white/12 bg-white/8 p-2 text-center">
                     <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/65 md:text-[11px]">Boats</div>
-                    <div className="mt-1 text-xl font-black text-white md:text-2xl">{boatsCompleted}/{totalBoats}</div>
+                    <div className="mt-1 text-xl font-black text-white md:text-2xl">{roundSolved}/{ROUNDS_TO_WIN}</div>
                   </div>
+                </div>
+
+                <div className="mt-2 rounded-[1rem] border border-white/12 bg-white/8 p-2 text-center">
+                  <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/65 md:text-[11px]">Crates left</div>
+                  <div className="mt-1 text-2xl font-black text-amber-100 md:text-3xl">{remainingGoods}</div>
                 </div>
               </div>
 
               <div className="licensed-game-card-dark flex min-h-0 flex-col rounded-[1.3rem] border border-white/14 p-2.5 shadow-[0_16px_28px_rgba(2,6,23,0.22)] md:rounded-[1.6rem] md:p-4">
-                <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Cargo boat</div>
+                <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Dockyard</div>
 
-                <div className="relative mt-2 flex min-h-[6.4rem] flex-1 items-end justify-center overflow-hidden rounded-[1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(56,189,248,0.24),rgba(30,64,175,0.22)_42%,rgba(15,23,42,0.36)_100%)] p-2 md:mt-3 md:min-h-[7.2rem] md:p-2.5">
-                  <motion.div
-                    animate={boatDeparting ? { x: [0, 220, 520], y: [0, -8, -10], rotate: [0, -2, -1], opacity: [1, 1, 0.55] } : { x: 0, y: 0, rotate: [0, -1, 1, 0] }}
-                    transition={boatDeparting ? { duration: 1.1, ease: 'easeInOut' } : { duration: 2.1, repeat: Infinity, repeatType: 'mirror' }}
-                    className="relative w-[90%] max-w-[22rem]"
-                  >
-                    <div className="relative h-12 rounded-b-[1.4rem] rounded-t-[0.7rem] border border-amber-200/35 bg-[linear-gradient(180deg,rgba(251,191,36,0.25),rgba(120,53,15,0.75))] shadow-[0_12px_20px_rgba(0,0,0,0.35)] md:h-14">
-                      <div className="absolute -top-3 left-3 right-3 h-3 rounded-full border border-amber-200/35 bg-[linear-gradient(180deg,rgba(254,243,199,0.55),rgba(217,119,6,0.45))]" />
-                    </div>
-
-                    <div className="absolute inset-x-3 -top-8 flex items-end justify-center gap-1.5">
-                      {Array.from({ length: CARGO_PER_BOAT }).map((_, index) => (
-                        <motion.div
-                          key={`crate-${index}`}
-                          initial={{ scale: 0.85, opacity: 0.2 }}
-                          animate={index < cargoLoaded
-                            ? { scale: 1, opacity: 1, y: 0 }
-                            : { scale: 0.85, opacity: 0.2, y: 8 }}
-                          className="h-7 w-6 rounded-md border border-yellow-200/35 bg-[linear-gradient(180deg,rgba(250,204,21,0.7),rgba(120,53,15,0.85))] shadow-[0_7px_14px_rgba(0,0,0,0.3)] md:h-8 md:w-7"
+                <div className="mt-2 grid min-h-[10rem] flex-1 grid-cols-1 gap-2 md:mt-3 md:gap-3">
+                  {boatLoads.map((count, index) => (
+                    <button
+                      key={`boat-${index}`}
+                      type="button"
+                      onClick={() => addToBoat(index)}
+                      disabled={isFinished || remainingGoods <= 0}
+                      className="flex items-center gap-3 rounded-[1rem] border border-white/12 bg-[linear-gradient(180deg,rgba(56,189,248,0.18),rgba(15,23,42,0.7))] px-3 py-2 text-left shadow-[0_10px_18px_rgba(2,6,23,0.2)] transition active:scale-[0.98] disabled:opacity-60"
+                    >
+                      <div className="relative h-16 w-20 overflow-hidden rounded-lg border border-white/18 bg-black/30">
+                        <div
+                          className="absolute inset-0"
+                          style={{
+                            backgroundImage: `url(${boatsSprite})`,
+                            backgroundSize: `${BOAT_SPRITE_GRID.columns * 100}% ${BOAT_SPRITE_GRID.rows * 100}%`,
+                            backgroundPosition: `${boatFramePosition[index].x} ${boatFramePosition[index].y}`,
+                            backgroundRepeat: 'no-repeat',
+                          }}
                         />
-                      ))}
-                    </div>
-                  </motion.div>
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-[11px] font-black uppercase tracking-[0.12em] text-cyan-100/80">Dock {index + 1}</div>
+                        <div className="mt-1 text-lg font-black text-white">{count} crates</div>
+                      </div>
+                      <div className="rounded-full border border-amber-200/35 bg-amber-200/10 px-3 py-1 text-[11px] font-black text-amber-100">
+                        +1
+                      </div>
+                    </button>
+                  ))}
                 </div>
 
-                <div className="mt-2 rounded-[1rem] border border-white/12 bg-white/8 p-3 text-center md:mt-3">
-                  <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/65 md:text-[11px]">Boat progress</div>
-                  <div className="mt-1 text-lg font-black text-white md:text-[1.6rem]">
-                    Boat {Math.min(boatsCompleted + 1, totalBoats)} of {totalBoats}
-                  </div>
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={resetBoats}
+                    disabled={isFinished}
+                    className="ui-button-secondary rounded-[0.95rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white disabled:opacity-60"
+                  >
+                    Reset
+                  </button>
+                  <button
+                    type="button"
+                    onClick={checkShare}
+                    disabled={isFinished}
+                    className="ui-button-primary rounded-[0.95rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white disabled:opacity-60"
+                  >
+                    Check
+                  </button>
                 </div>
               </div>
             </div>

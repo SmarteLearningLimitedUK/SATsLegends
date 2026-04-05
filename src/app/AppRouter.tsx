@@ -273,6 +273,10 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         return renderFromRegistry('RuneLockDungeonsGame', sharedProps);
       case 'formula_forge':
         return renderFromRegistry('FormulaForgeGame', sharedProps);
+      case 'unit_mixer':
+        return renderFromRegistry('UnitMixerGame', sharedProps);
+      case 'change_counter':
+        return renderFromRegistry('ChangeCounterGame', sharedProps);
       case 'coordinate_quest':
         if (selectedLevel.blueprintKey === 'number_line_ninja') {
           return renderFromRegistry('NumberLineNinjaGame', sharedProps);

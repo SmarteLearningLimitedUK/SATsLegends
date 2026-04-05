@@ -25,6 +25,7 @@ export const QUESTION_MATCH_FRAME_GAMES: MiniGameType[] = [
   'transform_temple',
   'scale_safari',
   'unit_mixer',
+  'change_counter',
   'mean_machine',
   'rule_runner',
   'formula_forge',

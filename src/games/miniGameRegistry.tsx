@@ -5,6 +5,7 @@ import AreaArchitectGame from './AreaArchitectGame';
 import BossEncounterGame from './BossEncounterGame';
 import CalculationCrashGame from './CalculationCrashGame';
 import CloudCollapseGame from './CloudCollapseGame';
+import ChangeCounterGame from './ChangeCounterGame';
 import CoordinateTranslationGame from './CoordinateTranslationGame';
 import CurriculumChallengeGame from './CurriculumChallengeGame';
 import DataDungeonGame from './DataDungeonGame';
@@ -45,6 +46,7 @@ import TimekeeperTempleGame from './TimekeeperTempleGame';
 import TowerOfFactorsGame from './TowerOfFactorsGame';
 import TreasureChartCoveGame from './TreasureChartCoveGame';
 import TreasurePathGame from './TreasurePathGame';
+import UnitMixerGame from './UnitMixerGame';
 import LogicSort from './reasoning/LogicSort';
 import MatrixMatch from './reasoning/MatrixMatch';
 import ReasoningGame from './reasoning/ReasoningGame';
@@ -57,6 +59,7 @@ export type MiniGameRegistryKey =
   | 'BossEncounterGame'
   | 'CalculationCrashGame'
   | 'CloudCollapseGame'
+  | 'ChangeCounterGame'
   | 'CoordinateTranslationGame'
   | 'CurriculumChallengeGame'
   | 'DataDungeonGame'
@@ -97,6 +100,7 @@ export type MiniGameRegistryKey =
   | 'TowerOfFactorsGame'
   | 'TreasureChartCoveGame'
   | 'TreasurePathGame'
+  | 'UnitMixerGame'
   | 'ReasoningGame'
   | 'LogicSort'
   | 'MatrixMatch';
@@ -116,6 +120,7 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   AreaArchitectGame: asMiniGame('area_architect', AreaArchitectGame),
   BossEncounterGame: asMiniGame('boss_encounter', BossEncounterGame),
   CalculationCrashGame: asMiniGame('calculation_crash', CalculationCrashGame),
+  ChangeCounterGame: asMiniGame('change_counter', ChangeCounterGame),
   CloudCollapseGame: asMiniGame('cloud_collapse', CloudCollapseGame),
   CoordinateTranslationGame: asMiniGame('coordinate_translation', CoordinateTranslationGame),
   CurriculumChallengeGame: asMiniGame('curriculum_challenge', CurriculumChallengeGame),
@@ -157,6 +162,7 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   TowerOfFactorsGame: asMiniGame('tower_of_factors', TowerOfFactorsGame),
   TreasureChartCoveGame: asMiniGame('treasure_chart_cove', TreasureChartCoveGame),
   TreasurePathGame: asMiniGame('treasure_path', TreasurePathGame),
+  UnitMixerGame: asMiniGame('unit_mixer', UnitMixerGame),
   ReasoningGame: asMiniGame('reasoning', ReasoningGame),
   LogicSort: asMiniGame('logic_sort', LogicSort),
   MatrixMatch: asMiniGame('matrix_match', MatrixMatch),

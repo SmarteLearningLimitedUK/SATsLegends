@@ -32,7 +32,9 @@ export type MiniGameType =
   | 'percent_power'
   | 'area_architect'
   | 'ratio_fractions'
-  | 'formula_forge';
+  | 'formula_forge'
+  | 'unit_mixer'
+  | 'change_counter';
 
 export interface LevelData {
   id: number;

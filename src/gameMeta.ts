@@ -436,6 +436,19 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       ],
     },
   },
+  change_counter: {
+    label: 'Change Counter',
+    focus: 'Money, totals, and giving change',
+    rules: {
+      title: 'Change Counter',
+      summary: 'Work out the exact change after each purchase.',
+      bullets: [
+        'Subtract the cost from the amount paid.',
+        'Use pounds and pence carefully.',
+        'Double-check the change makes sense before you commit.',
+      ],
+    },
+  },
   ratio_fractions: {
     label: 'Ratio Fractions',
     focus: 'Ratio to fraction and part-to-whole reasoning',
