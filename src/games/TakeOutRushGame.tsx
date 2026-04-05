@@ -12,7 +12,6 @@ import food7 from '../assets/take_out/food/7.png';
 import food8 from '../assets/take_out/food/8.png';
 import food9 from '../assets/take_out/food/9.png';
 import FoodGameShell from '../components/FoodGameShell';
-import goblinEnemy from '../assets/bosses/goblin.png';
 import targetOrderBoard from '../assets/Target Order.png';
 import { triggerHaptic } from '../haptics';
 
@@ -589,34 +588,6 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                     {asDisplayFraction(order.target)}
                   </div>
                 </div>
-                <div className="absolute inset-x-[12%] bottom-[12%] flex h-[22%] items-center justify-center gap-2">
-                  {selectedItems.length === 0 ? (
-                    <div className="text-[10px] font-semibold text-amber-100">Tray empty.</div>
-                  ) : (
-                    selectedItems.map((item, index) => (
-                      <button
-                        key={`${item.id}-${index}`}
-                        type="button"
-                        onClick={() => removeSelectedItem(index)}
-                        className="flex items-center justify-center rounded-full bg-black/35 px-2 py-1 text-[10px] font-semibold text-white ring-1 ring-white/25"
-                      >
-                        <FoodSprite item={item} className="h-9 w-9 object-contain" />
-                      </button>
-                    ))
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="absolute left-1/2 top-[62%] -translate-x-1/2">
-              <div className="relative h-32 w-32 overflow-hidden">
-                <img
-                  src={goblinEnemy}
-                  alt=""
-                  aria-hidden="true"
-                  className="absolute left-1/2 top-0 h-[200px] w-[200px] -translate-x-1/2 object-cover"
-                  draggable={false}
-                />
               </div>
             </div>
           </section>
@@ -625,7 +596,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
 
           <div className="flex flex-col gap-2">
             <section className="rounded-[1.25rem] p-2 -mt-6">
-              <div className="mt-2 flex flex-wrap items-center justify-center gap-2 rounded-[0.9rem] bg-slate-950/45 p-2">
+              <div className="mt-1 grid grid-cols-5 items-center justify-center gap-2">
                 {availableItems.map((item) => {
                   const isBanned = activeConstraints.bannedIds.has(item.id);
                   return (
@@ -634,9 +605,12 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                       type="button"
                       onClick={() => addItem(item.id)}
                       disabled={isResolvingOrder || roundFinished || isBanned}
-                      className={`group flex items-center justify-center rounded-full border border-white/12 px-3.5 py-3.5 text-[10px] font-semibold text-white transition hover:border-white/30 disabled:opacity-50 ${isBanned ? 'bg-slate-900/30 grayscale' : 'bg-slate-900/46'}`}
+                      className={`group flex flex-col items-center justify-center rounded-[0.9rem] border border-white/12 px-2.5 py-2 text-[10px] font-semibold text-white shadow-[0_10px_18px_rgba(0,0,0,0.28)] transition hover:border-white/30 disabled:opacity-50 ${isBanned ? 'bg-slate-900/40 grayscale' : 'bg-slate-950/70'}`}
                     >
-                      <FoodSprite item={item} className="h-12 w-12 object-contain" />
+                      <FoodSprite item={item} className="h-10 w-10 object-contain" />
+                      <div className="mt-1 text-[10px] font-black text-amber-100 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
+                        {asDisplayFraction(item.value)}
+                      </div>
                     </button>
                   );
                 })}
