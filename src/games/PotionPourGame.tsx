@@ -439,6 +439,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
   const [correctSolved, setCorrectSolved] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackKind>(null);
+  const [hasBrewed, setHasBrewed] = useState(false);
   const [locked, setLocked] = useState(false);
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [showRules, setShowRules] = useState(false);
@@ -452,6 +453,10 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
       if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    setHasBrewed(false);
+  }, [challenge.id]);
 
   const activeSet = useMemo(() => new Set(challenge.activeIndices), [challenge.activeIndices]);
   const targetByIngredient = useMemo(() => {
@@ -558,10 +563,12 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
     if (locked || endedRef.current) return;
     setCounts([...challenge.startCounts]);
     setFeedback(null);
+    setHasBrewed(false);
   };
 
   const onBrew = () => {
     if (locked || endedRef.current) return;
+    setHasBrewed(true);
 
     if (!isRecipeComplete) {
       setFeedback(null);
@@ -662,7 +669,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
         <section className="min-h-0 flex-1">
           <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto_auto] gap-2">
             <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] border border-white/12 bg-white/5 shadow-[0_16px_30px_rgba(15,23,42,0.2)]">
-              <div className="pointer-events-none absolute left-1/2 top-4 w-[78%] -translate-x-1/2 text-center">
+              <div className="pointer-events-none absolute left-1/2 top-4 w-[78%] -translate-x-1/2 rounded-[1.35rem] bg-slate-950/40 px-4 py-3 text-center backdrop-blur-sm">
                 <div className="text-[18px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Recipe</div>
                 <div className="mt-1 text-[clamp(2rem,6.5vw,2.6rem)] font-black text-white">{challenge.orderTitle}</div>
                 <div className="mt-1 text-[20px] font-black text-amber-100">Ratio {ratioText}</div>
@@ -685,9 +692,9 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 src={cauldrenAndPotionArt}
                 alt=""
                 aria-hidden="true"
-                className="pointer-events-none absolute left-1/2 bottom-[6%] h-[42%] max-w-none -translate-x-1/2 object-contain"
+                className="pointer-events-none absolute left-1/2 bottom-[6%] h-[42%] max-w-none -translate-x-1/2 translate-y-[10px] object-contain"
               />
-              <div className="absolute left-1/2 bottom-[26%] h-[14%] w-[34%] -translate-x-1/2 overflow-hidden rounded-[46%]">
+              <div className="absolute left-1/2 bottom-[26%] h-[14%] w-[34%] -translate-x-1/2 translate-y-[10px] overflow-hidden rounded-[46%]">
                 <motion.div
                   className="absolute inset-x-[8%] bottom-[8%] rounded-[42%]"
                   style={{
@@ -765,14 +772,16 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
           </div>
         </section>
 
-        <section className="shrink-0">
-          <FeedbackStrip
-            tone={feedbackTone === 'success' ? 'success' : feedbackTone === 'hint' ? 'warning' : 'neutral'}
-            className="mx-auto w-full max-w-[780px]"
-          >
-            {feedbackMessage}
-          </FeedbackStrip>
-        </section>
+        {hasBrewed ? (
+          <section className="shrink-0">
+            <FeedbackStrip
+              tone={feedbackTone === 'success' ? 'success' : feedbackTone === 'hint' ? 'warning' : 'neutral'}
+              className="mx-auto w-full max-w-[780px]"
+            >
+              {feedbackMessage}
+            </FeedbackStrip>
+          </section>
+        ) : null}
 
         <section className="shrink-0">
           <div className="mx-auto flex w-full max-w-[780px] items-center gap-2">

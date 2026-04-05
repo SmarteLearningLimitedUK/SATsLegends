@@ -435,13 +435,13 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                   {plateViews.map((plate, index) => {
                     const plateTone = validationActive
                       ? plate.isCorrect
-                        ? 'border-emerald-300/70 bg-[linear-gradient(180deg,rgba(16,185,129,0.24),rgba(15,23,42,0.4))]'
-                        : 'border-amber-200/60 bg-[linear-gradient(180deg,rgba(251,191,36,0.2),rgba(15,23,42,0.42))]'
+                        ? 'border-emerald-300/70 bg-[linear-gradient(180deg,rgba(226,252,243,0.9),rgba(186,247,231,0.78))]'
+                        : 'border-amber-200/70 bg-[linear-gradient(180deg,rgba(255,243,205,0.9),rgba(255,232,176,0.78))]'
                       : hoverPlateIndex === index
-                        ? 'border-cyan-200/70 bg-[linear-gradient(180deg,rgba(56,189,248,0.22),rgba(15,23,42,0.42))]'
+                        ? 'border-cyan-200/80 bg-[linear-gradient(180deg,rgba(240,249,255,0.92),rgba(214,241,255,0.76))]'
                         : dragSlice
-                          ? 'border-cyan-200/40 bg-[linear-gradient(180deg,rgba(56,189,248,0.12),rgba(15,23,42,0.42))]'
-                          : 'border-white/18 bg-[linear-gradient(180deg,rgba(30,41,59,0.7),rgba(15,23,42,0.7))]';
+                          ? 'border-cyan-200/60 bg-[linear-gradient(180deg,rgba(244,250,255,0.86),rgba(216,236,250,0.72))]'
+                          : 'border-white/50 bg-[linear-gradient(180deg,rgba(255,255,255,0.88),rgba(224,233,243,0.68))]';
 
                     return (
                       <button
@@ -451,7 +451,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                           plateRefs.current[index] = node;
                         }}
                         disabled={locked}
-                        className={`relative flex h-[92px] w-full flex-col items-center justify-center rounded-full border p-2 text-center shadow-[0_12px_20px_rgba(2,6,23,0.24)] transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.03]' : dragSlice && !locked ? 'scale-[1.01]' : ''}`}
+                        className={`relative flex h-[92px] w-full translate-y-[20px] flex-col items-center justify-center rounded-full border p-2 text-center shadow-[0_12px_20px_rgba(2,6,23,0.24)] transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.03]' : dragSlice && !locked ? 'scale-[1.01]' : ''}`}
                         aria-label={`Plate ${index + 1}. ${plate.currentCakeCount} of ${plate.targetCakeCount} cakes placed.`}
                       >
                         <div className="grid h-full w-full grid-cols-3 place-items-center gap-0.5">
@@ -460,7 +460,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                               key={sliceId}
                               src={CAKE_SLICE_ASSET}
                               alt=""
-                              className="h-5 w-5 object-contain"
+                              className="h-10 w-10 object-contain"
                               draggable={false}
                             />
                           ))}
@@ -492,12 +492,14 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                     className="h-14 w-14 object-contain"
                     draggable={false}
                   />
-                  <img
-                    src={CAKE_SLICE_ASSET}
-                    alt=""
-                    className="absolute left-3 top-1/2 h-8 w-8 -translate-y-1/2 object-contain"
-                    draggable={false}
-                  />
+                  {dragSlice ? (
+                    <img
+                      src={CAKE_SLICE_ASSET}
+                      alt=""
+                      className="absolute left-3 top-1/2 h-8 w-8 -translate-y-1/2 object-contain"
+                      draggable={false}
+                    />
+                  ) : null}
                   <div className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/34 px-2 py-1 text-[11px] font-black text-white">
                     {remainingSlices}
                   </div>
