@@ -22,6 +22,7 @@ import answerOrangeBg from '../assets/casual_ui/inputs/btn_1.png';
 import answerGreenBg from '../assets/casual_ui/inputs/btn_6a.png';
 import answerBlueBg from '../assets/casual_ui/inputs/btn_7.png';
 import answerYellowBg from '../assets/casual_ui/inputs/btn_8.png';
+import boatSpriteSheet from '../assets/boats.jpg';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface CurriculumChallengeGameProps {
@@ -214,6 +215,15 @@ const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 const formatCoordinate = (point: { x: number; y: number }) => `(${point.x}, ${point.y})`;
 const formatChallengeNumber = (value: number) => value.toLocaleString('en-GB', { maximumFractionDigits: 2 });
+const getBoatSpriteStyle = (index: number): React.CSSProperties => {
+  const col = index % 5;
+  const row = Math.floor(index / 5);
+  return {
+    backgroundImage: `url(${boatSpriteSheet})`,
+    backgroundSize: '500% 500%',
+    backgroundPosition: `${col * 25}% ${row * 25}%`,
+  };
+};
 
 const makeOptions = (correct: string, wrongOptions: string[]) => {
   const options = shuffle([correct, ...wrongOptions.slice(0, 3)]);
@@ -1317,9 +1327,9 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
               isPlaceValuePeaks
                 ? 'rounded-[1.25rem] border border-amber-200/18 bg-[linear-gradient(180deg,rgba(124,45,18,0.88),rgba(83,33,13,0.92))]'
                 : isChartChase
-                  ? 'rounded-[1.35rem] border border-sky-200/30 bg-[linear-gradient(180deg,rgba(255,255,255,0.26),rgba(255,255,255,0.12))]'
+                  ? 'rounded-[1.2rem] border border-sky-200/25 bg-[linear-gradient(180deg,rgba(15,23,42,0.65),rgba(30,41,59,0.35))]'
                   : 'rounded-[1.35rem]'
-              } ${isChartChase ? 'px-2.5 py-2.5 md:px-4 md:py-3.5' : 'px-3 py-3 md:px-5 md:py-5'} text-center md:rounded-[2rem]`}>
+              } ${isChartChase ? 'px-2.5 py-2 md:px-3 md:py-3' : 'px-3 py-3 md:px-5 md:py-5'} text-center md:rounded-[2rem]`}>
               <div className={`absolute inset-x-5 top-0 h-20 rounded-full bg-gradient-to-br ${isPlaceValuePeaks ? 'from-yellow-200/18 via-orange-300/12 to-transparent' : theme.prompt} blur-3xl`} />
               <div className="relative z-10 flex flex-col items-center">
                 <div className={`${isPlaceValuePeaks ? 'mb-2 rounded-[0.9rem] border border-amber-200/24 bg-[linear-gradient(180deg,rgba(251,146,60,0.3),rgba(194,65,12,0.18))] px-3 py-1.5 text-amber-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]' : `casual-ribbon-chip mb-2 inline-flex items-center justify-center rounded-full px-3 py-1 text-[8px] font-black uppercase tracking-[0.18em] md:mb-3 md:px-4 md:py-1.5 md:text-[10px] ${theme.badge}`}`}>
@@ -1348,7 +1358,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   className="flex min-h-0 w-full items-center justify-center overflow-hidden"
                 >
-                  <div className={`w-full overflow-hidden ${isChartChase ? 'max-h-[10.5rem] md:max-h-[14rem]' : 'max-h-[10.5rem] md:max-h-[15rem]'}`}>
+                  <div className={`w-full overflow-hidden ${isChartChase ? 'max-h-[8.2rem] md:max-h-[11rem]' : 'max-h-[10.5rem] md:max-h-[15rem]'}`}>
                     <div className="flex h-full w-full items-center justify-center">
                       {renderVisual(question.visual)}
                     </div>
@@ -1388,9 +1398,9 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                         : isScaleBuilder || isRuleRunner
                           ? 'min-h-[3.55rem] rounded-[1.05rem] border border-sky-100/26 shadow-[0_16px_26px_rgba(0,0,0,0.24)] md:min-h-[4.7rem] md:rounded-[1.2rem] md:px-5 md:py-3'
                           : isCalculationClash
-                            ? 'min-h-[3.55rem] rounded-[1.05rem] border border-sky-100/24 shadow-[0_16px_26px_rgba(0,0,0,0.24)] md:min-h-[4.7rem] md:rounded-[1.2rem] md:px-5 md:py-3'
+                          ? 'min-h-[3.55rem] rounded-[1.05rem] border border-sky-100/24 shadow-[0_16px_26px_rgba(0,0,0,0.24)] md:min-h-[4.7rem] md:rounded-[1.2rem] md:px-5 md:py-3'
                           : isChartChase
-                            ? 'min-h-[3.1rem] rounded-[1rem] md:min-h-[4rem] md:px-4 md:py-2.5'
+                            ? 'min-h-[2.7rem] rounded-[0.95rem] md:min-h-[3.6rem] md:px-4 md:py-2'
                             : 'min-h-[3.55rem] rounded-[999px] md:min-h-[4.7rem] md:px-5 md:py-3'
                     }`}
                   >
@@ -1415,6 +1425,12 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                       <div className={`flex h-7 w-7 shrink-0 items-center justify-center border text-[9px] font-black uppercase md:h-8 md:w-8 md:text-[11px] ${isPlaceValuePeaks ? 'rounded-[0.7rem] border-amber-100/14 bg-black/14 text-amber-50' : usesBlueAnswers ? `rounded-[0.65rem] ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/45 text-slate-900' : 'border-white/16 bg-white/12 text-white'}` : `rounded-full ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/35 text-slate-900' : 'border-white/14 bg-white/10 text-white'}`}`}>
                         {String.fromCharCode(65 + index)}
                       </div>
+                      {isChartChase && (
+                        <div
+                          className="h-9 w-12 shrink-0 rounded-[0.7rem] border border-white/30 bg-white/10 shadow-[inset_0_1px_2px_rgba(255,255,255,0.2)]"
+                          style={getBoatSpriteStyle(index)}
+                        />
+                      )}
                       <div className={`flex-1 text-center ${isPlaceValuePeaks ? 'text-[1.1rem] md:text-[1.7rem] text-amber-50' : isScaleBuilder || isCalculationClash || isRuleRunner ? 'text-[1rem] md:text-[1.35rem] text-white' : 'text-[1.02rem] md:text-[1.45rem] text-white'} font-black leading-none tracking-[-0.02em] drop-shadow-[0_2px_2px_rgba(0,0,0,0.42)]`}>
                         {option}
                       </div>
