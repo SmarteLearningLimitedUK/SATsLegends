@@ -86,4 +86,5 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   percent_power: RATIO_SCENE,
   equation_grove: REASONING_SCENE,
   rule_runner: REASONING_SCENE,
+  formula_forge: NUMBER_SCENE,
 };

@@ -271,6 +271,8 @@ export const AppRouter: React.FC<AppRouterProps> = ({
           return renderFromRegistry('OrderOpsArenaGame', sharedProps);
         }
         return renderFromRegistry('RuneLockDungeonsGame', sharedProps);
+      case 'formula_forge':
+        return renderFromRegistry('FormulaForgeGame', sharedProps);
       case 'coordinate_quest':
         if (selectedLevel.blueprintKey === 'number_line_ninja') {
           return renderFromRegistry('NumberLineNinjaGame', sharedProps);

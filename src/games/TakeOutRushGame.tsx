@@ -580,24 +580,24 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
               </div>
             </div>
 
-            <div className="absolute left-1/2 top-[44%] -translate-x-1/2">
-              <div className="relative h-28 w-28 overflow-hidden">
+            <div className="absolute left-1/2 top-[62%] -translate-x-1/2">
+              <div className="relative h-32 w-32 overflow-hidden">
                 <img
                   src={goblinEnemy}
                   alt=""
                   aria-hidden="true"
-                  className="absolute left-1/2 top-0 h-[180px] w-[180px] -translate-x-1/2 object-cover"
+                  className="absolute left-1/2 top-0 h-[200px] w-[200px] -translate-x-1/2 object-cover"
                   draggable={false}
                 />
               </div>
             </div>
           </section>
 
-          <div className="flex-1" />
+          <div className="h-2" />
 
           <div className="flex flex-col gap-2">
-            <section className="rounded-[1.25rem] p-2">
-              <div className="mt-1 flex min-h-[3.9rem] flex-wrap items-center justify-center gap-2 rounded-[0.7rem] bg-slate-950/35 px-2 py-2">
+            <section className="rounded-[1.25rem] p-2 -mt-6">
+              <div className="mt-1 flex min-h-[4.6rem] flex-wrap items-center justify-center gap-2 rounded-[0.7rem] bg-slate-950/35 px-2 py-2">
                 {selectedItems.length === 0 ? (
                   <div className="text-[10px] font-semibold text-amber-100">Tray empty.</div>
                 ) : (
@@ -608,7 +608,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                       onClick={() => removeSelectedItem(index)}
                       className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-2 py-1 text-left text-[10px] font-semibold text-white transition hover:border-white/40"
                     >
-                      <FoodSprite item={item} className="h-5 w-5 object-contain" />
+                      <FoodSprite item={item} className="h-11 w-11 object-contain" />
                       <span className="truncate">{item.name}</span>
                     </button>
                   ))
@@ -624,9 +624,9 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                       type="button"
                       onClick={() => addItem(item.id)}
                       disabled={isResolvingOrder || roundFinished || isBanned}
-                      className={`group flex items-center justify-center rounded-full border border-white/12 px-2.5 py-2 text-[10px] font-semibold text-white transition hover:border-white/30 disabled:opacity-50 ${isBanned ? 'bg-slate-900/30 grayscale' : 'bg-slate-900/46'}`}
+                      className={`group flex items-center justify-center rounded-full border border-white/12 px-3.5 py-3.5 text-[10px] font-semibold text-white transition hover:border-white/30 disabled:opacity-50 ${isBanned ? 'bg-slate-900/30 grayscale' : 'bg-slate-900/46'}`}
                     >
-                      <FoodSprite item={item} className="h-6 w-6 object-contain" />
+                      <FoodSprite item={item} className="h-12 w-12 object-contain" />
                     </button>
                   );
                 })}

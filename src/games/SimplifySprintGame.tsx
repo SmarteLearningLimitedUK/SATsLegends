@@ -302,7 +302,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
   return (
     <div className="relative h-full w-full overflow-hidden select-none text-white">
       <GameplaySceneBackdrop gameType="fraction_match" className="opacity-[0.98]" />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#050a1bd1] via-[#07122bc4] to-[#030816eb]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(56,189,248,0.32),transparent_42%),radial-gradient(circle_at_85%_12%,rgba(250,204,21,0.24),transparent_46%),radial-gradient(circle_at_40%_88%,rgba(244,114,182,0.2),transparent_50%),linear-gradient(180deg,rgba(3,12,34,0.86),rgba(7,24,52,0.86)_45%,rgba(2,10,24,0.92))]" />
 
       {!useSharedTopHud && (
         <div className="absolute left-0 right-0 z-30 flex items-center justify-between px-3 py-2 md:px-5" style={{ top: 'calc(env(safe-area-inset-top) + 2px)' }}>
@@ -331,31 +331,31 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
             : 'pt-[calc(env(safe-area-inset-top)+3.9rem)]'
         }`}
       >
-        <div className="w-full max-w-[760px] rounded-[1.3rem] border border-cyan-200/40 bg-[#0a1f56]/74 px-4 py-3 text-center text-[12px] font-black uppercase tracking-[0.16em] text-cyan-50 shadow-[0_10px_24px_rgba(0,0,0,0.35)]">
+        <div className="w-full max-w-[760px] rounded-[1.3rem] border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(56,189,248,0.22),rgba(15,23,42,0.88))] px-4 py-3 text-center text-[12px] font-black uppercase tracking-[0.16em] text-cyan-50 shadow-[0_10px_24px_rgba(0,0,0,0.35)]">
           Simplify Sprint
         </div>
 
         <div className="mt-2 flex w-full max-w-[760px] items-center justify-between gap-3">
-          <div className="rounded-full border border-cyan-200/35 bg-[#0a1f56]/72 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-50">
+          <div className="rounded-full border border-emerald-200/35 bg-[linear-gradient(180deg,rgba(34,197,94,0.2),rgba(15,23,42,0.78))] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-50">
             Round {Math.min(roundNumber, totalRounds)} / {totalRounds}
           </div>
-          <div className="rounded-full border border-cyan-200/35 bg-[#0a1f56]/72 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-50">
+          <div className="rounded-full border border-amber-200/35 bg-[linear-gradient(180deg,rgba(251,191,36,0.22),rgba(15,23,42,0.78))] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-amber-50">
             Tap a factor rune to reduce
           </div>
         </div>
 
-        <div className="mt-4 flex w-full max-w-[760px] flex-1 min-h-0 flex-col items-center justify-center gap-3 rounded-[2rem] border border-cyan-200/20 bg-[linear-gradient(180deg,rgba(11,35,82,0.86),rgba(6,18,42,0.92))] px-4 py-5 shadow-[0_22px_50px_rgba(0,0,0,0.45)]">
+        <div className="mt-4 flex w-full max-w-[760px] flex-1 min-h-0 flex-col items-center justify-center gap-3 rounded-[2rem] border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(15,118,110,0.32),rgba(30,64,175,0.34),rgba(15,23,42,0.86))] px-4 py-5 shadow-[0_22px_50px_rgba(0,0,0,0.45)]">
           <div className="flex w-full items-center gap-3">
             <div className="flex-1">
               <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Simplify meter</div>
               <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-slate-950/70">
                 <motion.div
-                  className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-300 to-emerald-300"
+                  className="h-full rounded-full bg-gradient-to-r from-emerald-300 via-cyan-300 to-violet-300"
                   animate={{ width: `${simplifyProgress * 100}%` }}
                 />
               </div>
             </div>
-            <div className="rounded-full border border-cyan-200/30 bg-[#081c45]/80 px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-cyan-50">
+            <div className="rounded-full border border-violet-200/30 bg-[linear-gradient(180deg,rgba(139,92,246,0.22),rgba(15,23,42,0.8))] px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-violet-50">
               gcd {currentGcd}
             </div>
           </div>
@@ -363,7 +363,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
           <motion.div
             animate={fractionShake ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
             transition={{ duration: 0.34, ease: 'easeInOut' }}
-            className="relative mt-2 rounded-[1.7rem] border-2 border-cyan-200/45 bg-gradient-to-b from-sky-500/95 to-blue-700/95 px-10 py-6 shadow-[0_18px_34px_rgba(0,0,0,0.5)]"
+            className="relative mt-2 rounded-[1.7rem] border-2 border-cyan-100/50 bg-gradient-to-b from-cyan-400/95 via-sky-500/95 to-indigo-700/95 px-10 py-6 shadow-[0_18px_34px_rgba(0,0,0,0.5)]"
           >
             <motion.div
               className="absolute inset-0 rounded-[1.7rem] border border-cyan-200/30 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.22),transparent_60%)]"
@@ -381,7 +381,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
             </motion.div>
           </motion.div>
 
-          <div className="rounded-full border border-cyan-200/35 bg-[#0a1f56]/72 px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-cyan-50">
+          <div className="rounded-full border border-sky-200/40 bg-[linear-gradient(180deg,rgba(14,116,144,0.28),rgba(15,23,42,0.78))] px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-cyan-50">
             Reduce until it cannot simplify further
           </div>
         </div>
@@ -398,8 +398,8 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
                 onClick={() => handleFactor(factor)}
                 className={`rounded-[1.1rem] border px-2 py-4 shadow-[0_14px_26px_rgba(0,0,0,0.45)] transition disabled:opacity-70 ${
                   isValid
-                    ? 'border-cyan-200/45 bg-[#0a1f56]/86 hover:bg-[#11307c]/90'
-                    : 'border-rose-200/28 bg-[#20143f]/82 hover:bg-[#34195f]/88'
+                    ? 'border-emerald-200/50 bg-[linear-gradient(180deg,rgba(16,185,129,0.3),rgba(15,23,42,0.86))] hover:bg-[linear-gradient(180deg,rgba(34,197,94,0.36),rgba(15,23,42,0.86))]'
+                    : 'border-amber-200/40 bg-[linear-gradient(180deg,rgba(251,146,60,0.28),rgba(15,23,42,0.86))] hover:bg-[linear-gradient(180deg,rgba(244,114,182,0.28),rgba(15,23,42,0.86))]'
                 }`}
               >
                 <span className="text-[clamp(1.1rem,2.7vw,1.7rem)] font-black uppercase tracking-[0.1em] text-cyan-50">

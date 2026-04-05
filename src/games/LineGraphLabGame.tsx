@@ -447,7 +447,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
             })}
           </div>
 
-          <div className="min-h-[4rem]">
+          <div className="min-h-[3.2rem]">
             <AnimatePresence mode="wait">
               {gameState === 'success' ? (
                 <motion.button
@@ -460,19 +460,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                 >
                   Next Graph <ChevronRight className="h-4 w-4" />
                 </motion.button>
-              ) : (
-                <motion.div
-                  key="instruction"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="rounded-2xl border border-slate-800 bg-slate-950/35 px-4 py-3 text-center"
-                >
-                  <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400 sm:text-xs">
-                    Choose one of the four answers from the graph.
-                  </span>
-                </motion.div>
-              )}
+              ) : null}
             </AnimatePresence>
           </div>
         </section>

@@ -110,6 +110,10 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [armedSuspectId, setArmedSuspectId] = useState<number | null>(null);
 
+  const maxCaseValue = Math.max(...currentCase.map((item) => item.amount), 0);
+  const barAxisMax = Math.max(1, maxCaseValue);
+  const barTicks = Array.from({ length: barAxisMax + 1 }, (_, index) => index);
+
   const generateCase = useCallback(() => {
     const nextMode: CaseMode = Math.random() > 0.5 ? 'detective' : 'whodunnit';
     setCaseMode(nextMode);
@@ -266,28 +270,31 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             <div className="relative w-full" style={{ height: 'clamp(10rem, 26vh, 14rem)' }}>
               <ResponsiveContainer width="100%" height="100%">
                 {chartType === 'bar' ? (
-                  <BarChart data={currentCase} margin={{ top: 16, right: 12, left: -12, bottom: 8 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
-                    <XAxis
-                      dataKey="name"
-                      stroke="#a8a29e"
-                      fontSize={10}
-                      tickLine={false}
-                      axisLine={false}
-                      interval={0}
-                    />
+                    <BarChart data={currentCase} margin={{ top: 16, right: 12, left: -12, bottom: 8 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                      <XAxis
+                        dataKey="name"
+                        stroke="#a8a29e"
+                        fontSize={10}
+                        tickLine={false}
+                        axisLine={false}
+                        interval={0}
+                      />
                     <YAxis
+                      ticks={barTicks}
+                      domain={[0, barAxisMax]}
                       stroke="#a8a29e"
                       fontSize={10}
                       tickLine={false}
                       axisLine={false}
+                      allowDecimals={false}
                       width={24}
                     />
                     <Tooltip
                       contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #444', borderRadius: '8px', fontSize: '10px' }}
                       itemStyle={{ color: '#fff' }}
                     />
-                    <Bar dataKey="amount" radius={[4, 4, 0, 0]}>
+                    <Bar dataKey="amount" radius={[4, 4, 0, 0]} isAnimationActive={false}>
                       {currentCase.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
@@ -296,15 +303,16 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                   </BarChart>
                 ) : (
                   <PieChart margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
-                    <Pie
-                      data={currentCase}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius="34%"
-                      outerRadius="66%"
-                      paddingAngle={3}
-                      dataKey="amount"
-                      label={({ cx, cy, midAngle, innerRadius, outerRadius, value }) => {
+                  <Pie
+                    data={currentCase}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius="34%"
+                    outerRadius="66%"
+                    paddingAngle={3}
+                    dataKey="amount"
+                    isAnimationActive={false}
+                    label={({ cx, cy, midAngle, innerRadius, outerRadius, value }) => {
                         const radius = innerRadius + (outerRadius - innerRadius) * 0.7;
                         const rad = (-midAngle * Math.PI) / 180;
                         const x = cx + radius * Math.cos(rad);

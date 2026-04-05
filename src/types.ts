@@ -31,7 +31,8 @@ export type MiniGameType =
   | 'rule_runner'
   | 'percent_power'
   | 'area_architect'
-  | 'ratio_fractions';
+  | 'ratio_fractions'
+  | 'formula_forge';
 
 export interface LevelData {
   id: number;

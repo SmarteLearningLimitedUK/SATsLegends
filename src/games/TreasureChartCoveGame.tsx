@@ -145,15 +145,15 @@ const ShipCard: React.FC<{
   active?: boolean;
   small?: boolean;
 }> = ({ label, color, active = false, small = false }) => (
-  <div className={`relative overflow-hidden rounded-[1.4rem] border px-3 py-3 shadow-[0_18px_28px_rgba(15,23,42,0.22)] ${active ? 'border-amber-200/55 bg-[linear-gradient(180deg,rgba(251,191,36,0.24),rgba(15,23,42,0.28))]' : 'border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.5))]'} ${small ? 'min-h-[6rem]' : 'min-h-[7rem]'}`}>
+  <div className={`relative overflow-hidden rounded-[1.4rem] border px-3 py-3 shadow-[0_18px_28px_rgba(15,23,42,0.22)] ${active ? 'border-amber-200/55 bg-[linear-gradient(180deg,rgba(251,191,36,0.24),rgba(15,23,42,0.28))]' : 'border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.5))]'} ${small ? 'min-h-[4.6rem]' : 'min-h-[5.4rem]'}`}>
     <div className="absolute inset-x-[12%] top-[10%] h-[18%] rounded-full bg-white/12 blur-md" />
     <div className="relative flex flex-col items-center">
-      <div className={`relative ${small ? 'h-10 w-16' : 'h-12 w-20'}`}>
+      <div className={`relative ${small ? 'h-9 w-14' : 'h-11 w-18'}`}>
         <div className={`absolute bottom-0 left-[6%] right-[6%] h-[44%] rounded-[40%_60%_45%_55%/42%_38%_62%_58%] bg-gradient-to-b ${color} shadow-[0_10px_16px_rgba(15,23,42,0.16)]`} />
         <div className="absolute left-1/2 top-[6%] h-[38%] w-[5%] -translate-x-1/2 rounded-full bg-amber-300" />
         <div className="absolute left-[44%] top-[10%] h-[22%] w-[26%] -skew-x-[12deg] rounded-[0.35rem] bg-[linear-gradient(180deg,#f8fafc,#dbeafe)]" />
       </div>
-      <div className={`mt-2 text-center font-black tracking-tight text-white ${small ? 'text-sm' : 'text-base md:text-lg'}`}>{label}</div>
+      <div className={`mt-2 text-center font-black tracking-tight text-white ${small ? 'text-xs' : 'text-sm md:text-base'}`}>{label}</div>
     </div>
   </div>
 );
@@ -161,25 +161,25 @@ const ShipCard: React.FC<{
 const CoinBarBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships, label }) => {
   const maxValue = Math.max(...ships.map((ship) => ship.value));
   return (
-    <div className="rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.24))] p-4 shadow-[0_18px_28px_rgba(15,23,42,0.22)]">
-      <div className="text-[11px] font-black uppercase tracking-[0.18em] text-white/62 md:text-xs">{label}</div>
-      <div className="mt-3 grid grid-cols-4 items-end gap-3 md:gap-4">
+    <div className="rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.24))] p-2.5 shadow-[0_18px_28px_rgba(15,23,42,0.22)]">
+      <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/62 md:text-[11px]">{label}</div>
+      <div className="mt-3 grid grid-cols-4 items-end gap-2 md:gap-3">
         {ships.map((ship) => (
           <div key={ship.id} className="flex flex-col items-center gap-2">
-            <div className="flex h-36 w-full items-end justify-center md:h-44">
+            <div className="flex h-20 w-full items-end justify-center md:h-24">
               <div className="relative flex w-full max-w-[4rem] flex-col justify-end gap-1">
                 {Array.from({ length: ship.value }).map((_, index) => (
                   <div
                     key={`${ship.id}-coin-${index}`}
-                    className={`h-3 rounded-full bg-gradient-to-r ${ship.color} shadow-[0_3px_8px_rgba(15,23,42,0.16)]`}
+                    className={`h-2.5 rounded-full bg-gradient-to-r ${ship.color} shadow-[0_3px_8px_rgba(15,23,42,0.16)]`}
                     style={{ opacity: 0.4 + ((index + 1) / (maxValue + 2)) }}
                   />
                 ))}
               </div>
             </div>
             <div className="text-center">
-              <div className="text-sm font-black text-white md:text-base">{ship.label}</div>
-              <div className="text-xs font-bold text-amber-100/80 md:text-sm">{ship.value} chests</div>
+              <div className="text-[11px] font-black text-white md:text-sm">{ship.label}</div>
+              <div className="text-[10px] font-bold text-amber-100/80 md:text-xs">{ship.value} chests</div>
             </div>
           </div>
         ))}
@@ -198,9 +198,9 @@ const LineGraphBoard: React.FC<{ days: Array<{ label: string; value: number }>; 
   const path = points.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`).join(' ');
 
   return (
-    <div className="rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.24))] p-4 shadow-[0_18px_28px_rgba(15,23,42,0.22)]">
-      <div className="text-[11px] font-black uppercase tracking-[0.18em] text-white/62 md:text-xs">{label}</div>
-      <svg viewBox="0 0 100 100" className="mt-3 h-48 w-full md:h-56">
+    <div className="rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.24))] p-2.5 shadow-[0_18px_28px_rgba(15,23,42,0.22)]">
+      <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/62 md:text-[11px]">{label}</div>
+      <svg viewBox="0 0 100 100" className="mt-3 h-24 w-full md:h-28">
         <rect x="6" y="8" width="88" height="80" rx="8" fill="rgba(15,23,42,0.18)" stroke="rgba(255,255,255,0.12)" />
         {Array.from({ length: 4 }).map((_, index) => (
           <line
@@ -228,13 +228,13 @@ const LineGraphBoard: React.FC<{ days: Array<{ label: string; value: number }>; 
 };
 
 const TableBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships, label }) => (
-  <div className="rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.24))] p-4 shadow-[0_18px_28px_rgba(15,23,42,0.22)]">
-    <div className="text-[11px] font-black uppercase tracking-[0.18em] text-white/62 md:text-xs">{label}</div>
-    <div className="mt-3 space-y-2">
+    <div className="rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.24))] p-2.5 shadow-[0_18px_28px_rgba(15,23,42,0.22)]">
+    <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/62 md:text-[11px]">{label}</div>
+    <div className="mt-3 space-y-1.5">
       {ships.map((ship) => (
-        <div key={ship.id} className="grid grid-cols-[1fr_auto] items-center rounded-[1rem] border border-white/10 bg-black/14 px-4 py-3">
-          <div className="text-sm font-black text-white md:text-base">{ship.label}</div>
-          <div className="rounded-full border border-amber-200/20 bg-amber-400/10 px-3 py-1 text-sm font-black text-amber-50">{ship.value} chests</div>
+        <div key={ship.id} className="grid grid-cols-[1fr_auto] items-center rounded-[1rem] border border-white/10 bg-black/14 px-2.5 py-1.5">
+          <div className="text-xs font-black text-white md:text-sm">{ship.label}</div>
+          <div className="rounded-full border border-amber-200/20 bg-amber-400/10 px-3 py-1 text-xs font-black text-amber-50">{ship.value} chests</div>
         </div>
       ))}
     </div>
@@ -385,16 +385,16 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
 
           <div className="relative z-10 flex h-full w-full flex-col px-3 pb-3 pt-4 md:px-5 md:pb-4 md:pt-5">
             <div className="flex justify-center">
-              <div className="max-w-[94%] rounded-[1.5rem] border border-orange-200/22 bg-[linear-gradient(180deg,rgba(146,64,14,0.96),rgba(120,53,15,0.98))] px-5 py-3 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_16px_30px_rgba(120,53,15,0.24)] md:px-7 md:py-4">
-                <div className="text-base font-black tracking-tight text-amber-50 md:text-[1.9rem]">{round.title}</div>
-                <div className="mt-1 text-xs font-bold text-amber-100/84 md:text-base">
+              <div className="max-w-[94%] rounded-[1.5rem] border border-orange-200/22 bg-[linear-gradient(180deg,rgba(146,64,14,0.96),rgba(120,53,15,0.98))] px-4 py-2 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_16px_30px_rgba(120,53,15,0.24)] md:px-5 md:py-3">
+                <div className="text-sm font-black tracking-tight text-amber-50 md:text-[1.3rem]">{round.title}</div>
+                <div className="mt-1 text-[10px] font-bold text-amber-100/84 md:text-xs">
                   {formatFantasyPrompt(round.prompt)}
                 </div>
               </div>
             </div>
 
-            <div className="mt-3 grid min-h-0 flex-1 grid-cols-1 gap-3 md:mt-3 md:grid-cols-[1.02fr_0.98fr] md:gap-3">
-              <div className="flex min-h-0 flex-1 flex-col justify-between gap-2.5 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(8,47,73,0.34),rgba(15,23,42,0.26))] p-3 shadow-[0_24px_40px_rgba(2,6,23,0.22)] md:p-4">
+            <div className="mt-2 grid min-h-0 flex-1 grid-cols-1 gap-2 md:mt-2 md:grid-cols-[1.02fr_0.98fr] md:gap-2">
+              <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(8,47,73,0.34),rgba(15,23,42,0.26))] p-2.5 shadow-[0_24px_40px_rgba(2,6,23,0.22)] md:p-3">
                 {round.mode === 'line' && round.lineDays ? (
                   <LineGraphBoard days={round.lineDays} label={round.boardLabel} />
                 ) : round.mode === 'table' ? (
@@ -403,32 +403,32 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
                   <CoinBarBoard ships={round.ships} label={round.boardLabel} />
                 )}
 
-                <div className="rounded-[1.2rem] border border-white/12 bg-black/14 px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+                <div className="rounded-[1.2rem] border border-white/12 bg-black/14 px-2.5 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
                   <div className="text-[11px] font-black uppercase tracking-[0.16em] text-white/62">Captain note</div>
-                  <div className="mt-2 text-sm font-bold leading-relaxed text-white/88 md:text-base">{round.support}</div>
+                  <div className="mt-1.5 text-xs font-bold leading-relaxed text-white/88 md:text-sm">{round.support}</div>
                 </div>
               </div>
 
-              <div className="flex min-h-0 flex-1 flex-col justify-between gap-2.5 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.84),rgba(30,41,59,0.92))] p-3 shadow-[0_24px_40px_rgba(2,6,23,0.24)] md:p-4">
-                <div className="grid grid-cols-2 gap-2">
+              <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.84),rgba(30,41,59,0.92))] p-2.5 shadow-[0_24px_40px_rgba(2,6,23,0.24)] md:p-3">
+                <div className="grid grid-cols-2 gap-1.5">
                   {round.ships.map((ship) => (
                     <ShipCard key={`ship-${ship.id}`} label={ship.label} color={ship.color} active={round.answer === ship.label} small />
                   ))}
                 </div>
 
-                <div className={`grid gap-2 ${round.options.length <= 2 ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-2'}`}>
+                <div className={`grid gap-1.5 ${round.options.length <= 2 ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-2'}`}>
                   {round.options.map((choice, index) => (
                     <motion.button
                       key={`${choice}-${index}`}
                       whileTap={{ scale: 0.97 }}
                       onClick={() => handleChoice(choice)}
                       disabled={feedback !== null || isFinished}
-                      className="relative overflow-hidden rounded-[1.35rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(15,23,42,0.48))] px-3 py-2.5 text-left shadow-[0_18px_28px_rgba(15,23,42,0.22)] disabled:opacity-45"
+                      className="relative overflow-hidden rounded-[1.35rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(15,23,42,0.48))] px-3 py-2 text-left shadow-[0_18px_28px_rgba(15,23,42,0.22)] disabled:opacity-45"
                     >
                       <div className="absolute inset-x-[10%] top-[10%] h-[18%] rounded-full bg-white/10 blur-md" />
                       <div className="relative">
                         <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/58">Choice</div>
-                        <div className="mt-2 text-[1.05rem] font-black tracking-tight text-amber-50 md:text-xl">{choice}</div>
+                        <div className="mt-1.5 text-[0.95rem] font-black tracking-tight text-amber-50 md:text-lg">{choice}</div>
                       </div>
                     </motion.button>
                   ))}

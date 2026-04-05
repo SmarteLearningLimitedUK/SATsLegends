@@ -253,63 +253,63 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
     <GameScreenShell className="overflow-hidden">
       <GameplaySceneBackdrop gameType="equation_grove" />
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] pt-[calc(env(safe-area-inset-top)+4.8rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+2.4rem)] md:pt-[calc(env(safe-area-inset-top)+5.15rem)]">
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] pt-[calc(env(safe-area-inset-top)+4.6rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+2.4rem)] md:pt-[calc(env(safe-area-inset-top)+4.95rem)]">
         <PuzzleStage className="w-full max-w-6xl min-h-0 flex-1 rounded-[1.7rem] p-2 md:rounded-[2rem] md:p-3">
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_24%,rgba(15,23,42,0.2)_100%)]" />
 
-          <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-10 md:px-4 md:pb-4 md:pt-14">
+          <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-6 md:px-4 md:pb-4 md:pt-10">
             <div className="flex justify-center">
-              <div className="licensed-slice-paper-panel max-w-[96%] px-3 py-1.5 text-center shadow-[0_10px_22px_rgba(15,23,42,0.14)] md:px-6 md:py-2.5">
-                <div className="text-sm font-black tracking-tight text-amber-900 md:text-[1.2rem]">
-                  Solve operations to build your progress
+              <div className="max-w-[96%] rounded-[1.35rem] border border-amber-200/50 bg-[linear-gradient(180deg,rgba(251,191,36,0.35),rgba(245,158,11,0.18))] px-4 py-2 text-center shadow-[0_12px_26px_rgba(15,23,42,0.18)] md:px-6 md:py-2.5">
+                <div className="text-sm font-black tracking-tight text-amber-50 md:text-[1.15rem]">
+                  Solve the order using the correct operation order
                 </div>
-                <div className="mt-0.5 text-[11px] font-bold text-amber-950/76 md:text-sm">
-                  Every correct answer fills the progress bar.
+                <div className="mt-0.5 text-[11px] font-bold text-amber-100/90 md:text-sm">
+                  Each correct answer powers the progress bar.
                 </div>
               </div>
             </div>
 
-            <div className="mt-2 min-h-0 flex-1 md:mt-3">
-              <div className="grid h-full min-h-0 grid-cols-[0.9fr_1.1fr] gap-2 md:grid-cols-[1.02fr_1fr] md:gap-3">
-                <div className="licensed-game-card-dark min-h-0 rounded-[1.2rem] border border-white/14 p-2 shadow-[0_12px_22px_rgba(2,6,23,0.18)] md:rounded-[1.5rem] md:p-3">
-                  <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Target progress</div>
-                  <div className="mt-1.5 rounded-[1rem] border border-sky-200/22 bg-[linear-gradient(180deg,rgba(14,116,144,0.2),rgba(15,23,42,0.5))] p-2 md:mt-2 md:p-3">
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="w-full max-w-sm">
-                        <div className="mb-1 flex items-center justify-between text-[9px] font-black uppercase tracking-[0.13em] text-cyan-100/75 md:text-[11px]">
-                          <span>Progress</span>
-                          <span>{enemyHealth}/{maxEnemyHealth}</span>
-                        </div>
-                        <div className="h-3 overflow-hidden rounded-full border border-white/20 bg-black/30 md:h-4">
-                          <motion.div
-                            animate={{ width: `${enemyHealthPercent}%` }}
-                            transition={{ duration: 0.25 }}
-                            className="h-full bg-gradient-to-r from-rose-500 via-orange-400 to-yellow-300"
-                          />
-                        </div>
-                      </div>
+            <div className="mt-3 min-h-0 flex-1 md:mt-4">
+              <div className="grid h-full min-h-0 grid-rows-[auto_1fr] gap-2 md:gap-3">
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-[1.1fr_0.9fr] md:gap-3">
+                  <div className="rounded-[1.3rem] border border-amber-200/20 bg-[linear-gradient(180deg,rgba(251,191,36,0.18),rgba(15,23,42,0.7))] p-3 shadow-[0_12px_22px_rgba(2,6,23,0.18)] md:p-4">
+                    <div className="text-[11px] font-black uppercase tracking-[0.16em] text-amber-100/90 md:text-xs">Order of operations</div>
+                    <div className="mt-2 rounded-[1rem] border border-amber-200/30 bg-[linear-gradient(180deg,rgba(245,158,11,0.3),rgba(15,23,42,0.6))] p-3 text-center shadow-[0_10px_18px_rgba(2,6,23,0.18)] md:p-4">
+                      <div className="text-2xl font-black tracking-tight text-white md:text-4xl">{round.expression}</div>
                     </div>
                   </div>
 
-                  <div className="mt-2 rounded-[1rem] border border-white/10 bg-black/18 p-2 text-[11px] font-semibold text-cyan-50/90 md:mt-3 md:p-2.5 md:text-sm">
-                    Question {questionCount} - {round.hint}
+                  <div className="rounded-[1.3rem] border border-white/16 bg-[linear-gradient(180deg,rgba(30,64,175,0.24),rgba(15,23,42,0.78))] p-3 shadow-[0_12px_22px_rgba(2,6,23,0.18)] md:p-4">
+                    <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/85 md:text-xs">Progress arena</div>
+                    <div className="mt-2 rounded-[1rem] border border-cyan-200/22 bg-[linear-gradient(180deg,rgba(56,189,248,0.22),rgba(15,23,42,0.5))] p-3">
+                      <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.13em] text-cyan-100/80 md:text-[11px]">
+                        <span>Progress</span>
+                        <span>{enemyHealth}/{maxEnemyHealth}</span>
+                      </div>
+                      <div className="mt-2 h-3.5 overflow-hidden rounded-full border border-white/20 bg-black/30 md:h-4">
+                        <motion.div
+                          animate={{ width: `${enemyHealthPercent}%` }}
+                          transition={{ duration: 0.25 }}
+                          className="h-full bg-gradient-to-r from-emerald-400 via-cyan-300 to-sky-300"
+                        />
+                      </div>
+                    </div>
+                    <div className="mt-3 rounded-[0.9rem] border border-white/10 bg-black/18 p-2 text-[11px] font-semibold text-cyan-50/90 md:text-sm">
+                      Question {questionCount} · {round.hint}
+                    </div>
                   </div>
                 </div>
 
-                <div className="licensed-game-card-dark min-h-0 rounded-[1.3rem] border border-white/14 p-2 shadow-[0_12px_22px_rgba(2,6,23,0.18)] md:rounded-[1.6rem] md:p-3">
-                  <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Operation challenge</div>
-                  <div className="mt-2 rounded-[1rem] border border-sky-200/22 bg-[linear-gradient(180deg,rgba(14,116,144,0.2),rgba(15,23,42,0.5))] p-2 text-center shadow-[0_10px_18px_rgba(2,6,23,0.18)] md:mt-3 md:p-3">
-                    <div className="text-xl font-black tracking-tight text-white md:text-3xl">{round.expression}</div>
-                  </div>
-
-                  <div className="mt-2 grid grid-cols-2 gap-2 md:mt-3 md:gap-2.5">
+                <div className="rounded-[1.5rem] border border-white/16 bg-[linear-gradient(180deg,rgba(17,94,89,0.2),rgba(15,23,42,0.86))] p-3 shadow-[0_16px_28px_rgba(2,6,23,0.2)] md:p-4">
+                  <div className="text-[11px] font-black uppercase tracking-[0.16em] text-emerald-100/85 md:text-xs">Pick the result</div>
+                  <div className="mt-3 grid grid-cols-2 gap-2 md:gap-3">
                     {round.options.map((option) => (
                       <button
                         key={`${round.expression}-${option}`}
                         type="button"
                         onClick={() => handleAnswer(option)}
                         disabled={Boolean(feedback) || isFinished}
-                        className="ui-button-primary min-h-[2.85rem] rounded-[0.95rem] px-2 py-1.5 text-base font-black text-white shadow-[0_10px_18px_rgba(2,6,23,0.16)] disabled:opacity-60 md:min-h-[3.35rem] md:text-xl"
+                        className="ui-button-primary min-h-[3.2rem] rounded-[1.1rem] px-2 py-2 text-base font-black text-white shadow-[0_12px_20px_rgba(2,6,23,0.2)] disabled:opacity-60 md:min-h-[3.8rem] md:text-2xl"
                       >
                         {option}
                       </button>
