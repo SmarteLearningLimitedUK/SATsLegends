@@ -33,6 +33,7 @@ export const QUESTION_MATCH_FRAME_GAMES: MiniGameType[] = [
   'ratio_fractions',
   'logic_sort',
   'matrix_match',
+  'reasoning_quest',
 ];
 
 export const SCREEN_BEHAVIOR: Record<GameScreen, {

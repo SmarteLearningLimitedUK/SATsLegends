@@ -100,6 +100,8 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       return 'UnitMixerGame';
     case 'change_counter':
       return 'ChangeCounterGame';
+    case 'reasoning_quest':
+      return 'ReasoningQuestGame';
     case 'percent_power':
       return 'PercentPowerGame';
     case 'area_architect':

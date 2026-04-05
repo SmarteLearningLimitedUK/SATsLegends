@@ -449,6 +449,19 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       ],
     },
   },
+  reasoning_quest: {
+    label: 'Reasoning Quest',
+    focus: 'Multi-step reasoning across key topics',
+    rules: {
+      title: 'Reasoning Quest',
+      summary: 'Solve multi-step puzzles to unlock the next path.',
+      bullets: [
+        'Each question is a short scenario.',
+        'Work through the steps before choosing an answer.',
+        'Correct answers unlock the next challenge.',
+      ],
+    },
+  },
   ratio_fractions: {
     label: 'Ratio Fractions',
     focus: 'Ratio to fraction and part-to-whole reasoning',

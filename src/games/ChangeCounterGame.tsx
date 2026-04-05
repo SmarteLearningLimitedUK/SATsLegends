@@ -20,6 +20,7 @@ interface ChangeCounterGameProps {
 
 interface ChangeQuestion {
   id: string;
+  kind: 'fluency' | 'reasoning';
   item: string;
   costPence: number;
   paidPence: number;
@@ -41,6 +42,7 @@ const formatMoney = (pence: number) => (
 const QUESTION_BANK: ChangeQuestion[] = [
   {
     id: 'c1',
+    kind: 'reasoning',
     item: 'herb bundle',
     costPence: 275,
     paidPence: 500,
@@ -49,6 +51,7 @@ const QUESTION_BANK: ChangeQuestion[] = [
   },
   {
     id: 'c2',
+    kind: 'reasoning',
     item: 'healing tonic',
     costPence: 420,
     paidPence: 1000,
@@ -57,6 +60,7 @@ const QUESTION_BANK: ChangeQuestion[] = [
   },
   {
     id: 'c3',
+    kind: 'reasoning',
     item: 'glow lamp',
     costPence: 185,
     paidPence: 200,
@@ -65,6 +69,7 @@ const QUESTION_BANK: ChangeQuestion[] = [
   },
   {
     id: 'c4',
+    kind: 'reasoning',
     item: 'rope coil',
     costPence: 360,
     paidPence: 500,
@@ -73,6 +78,7 @@ const QUESTION_BANK: ChangeQuestion[] = [
   },
   {
     id: 'c5',
+    kind: 'reasoning',
     item: 'crystal shard',
     costPence: 995,
     paidPence: 1000,
@@ -81,6 +87,7 @@ const QUESTION_BANK: ChangeQuestion[] = [
   },
   {
     id: 'c6',
+    kind: 'reasoning',
     item: 'travel cloak',
     costPence: 1230,
     paidPence: 2000,
@@ -89,6 +96,7 @@ const QUESTION_BANK: ChangeQuestion[] = [
   },
   {
     id: 'c7',
+    kind: 'reasoning',
     item: 'quest map',
     costPence: 78,
     paidPence: 100,
@@ -97,6 +105,7 @@ const QUESTION_BANK: ChangeQuestion[] = [
   },
   {
     id: 'c8',
+    kind: 'reasoning',
     item: 'lantern oil',
     costPence: 648,
     paidPence: 1000,

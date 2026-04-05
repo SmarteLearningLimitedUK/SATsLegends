@@ -27,6 +27,7 @@ interface GivenValue {
 
 interface FormulaRound {
   id: string;
+  kind: 'fluency' | 'reasoning';
   title: string;
   formula: string;
   prompt: string;
@@ -78,6 +79,7 @@ const buildAreaRound = (mode: SolveMode, level: number): FormulaRound => {
     const missing = Math.random() > 0.5 ? 'l' : 'w';
     return {
       id: `area-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      kind: 'reasoning',
       title: 'Rectangle Area',
       formula: 'A = l × w',
       prompt: `Find ${missing === 'l' ? 'l' : 'w'} when A = ${area}.`,
@@ -93,6 +95,7 @@ const buildAreaRound = (mode: SolveMode, level: number): FormulaRound => {
 
   return {
     id: `area-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    kind: 'fluency',
     title: 'Rectangle Area',
     formula: 'A = l × w',
     prompt: 'Find the area.',
@@ -114,6 +117,7 @@ const buildPerimeterRound = (mode: SolveMode, level: number): FormulaRound => {
     const answer = missing === 'l' ? length : width;
     return {
       id: `perimeter-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      kind: 'reasoning',
       title: 'Rectangle Perimeter',
       formula: 'P = 2(l + w)',
       prompt: `Find ${missing === 'l' ? 'l' : 'w'} when P = ${perimeter}.`,
@@ -129,6 +133,7 @@ const buildPerimeterRound = (mode: SolveMode, level: number): FormulaRound => {
 
   return {
     id: `perimeter-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    kind: 'fluency',
     title: 'Rectangle Perimeter',
     formula: 'P = 2(l + w)',
     prompt: 'Find the perimeter.',
@@ -146,6 +151,7 @@ const buildTriangleRound = (level: number): FormulaRound => {
   const area = (base * height) / 2;
   return {
     id: `triangle-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    kind: 'fluency',
     title: 'Triangle Area',
     formula: 'A = (b × h) ÷ 2',
     prompt: 'Find the area.',
@@ -168,6 +174,7 @@ const buildVolumeRound = (mode: SolveMode, level: number): FormulaRound => {
     const answer = missing === 'l' ? length : height;
     return {
       id: `volume-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      kind: 'reasoning',
       title: 'Cuboid Volume',
       formula: 'V = l × w × h',
       prompt: `Find ${missing === 'l' ? 'l' : 'h'} when V = ${volume}.`,
@@ -183,6 +190,7 @@ const buildVolumeRound = (mode: SolveMode, level: number): FormulaRound => {
 
   return {
     id: `volume-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    kind: 'fluency',
     title: 'Cuboid Volume',
     formula: 'V = l × w × h',
     prompt: 'Find the volume.',

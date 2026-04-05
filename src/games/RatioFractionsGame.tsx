@@ -20,6 +20,7 @@ interface RatioFractionsGameProps extends MiniGameShellContractProps {
 
 interface RatioFractionQuestion {
   id: string;
+  kind: 'fluency' | 'reasoning';
   prompt: string;
   ratioA: number;
   ratioB: number;
@@ -73,6 +74,7 @@ const buildRatioQuestion = (
 
   return {
     id: `${ratioA}-${ratioB}-${partLabel}-${Math.random().toString(36).slice(2, 6)}`,
+    kind: 'fluency',
     prompt: `A potion mix uses the ratio ${ratioA}:${ratioB}. What fraction of the mix is ${partLabel === 'first' ? 'the first' : 'the second'} ingredient?`,
     ratioA,
     ratioB,

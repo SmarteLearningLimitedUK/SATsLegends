@@ -277,6 +277,8 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         return renderFromRegistry('UnitMixerGame', sharedProps);
       case 'change_counter':
         return renderFromRegistry('ChangeCounterGame', sharedProps);
+      case 'reasoning_quest':
+        return renderFromRegistry('ReasoningQuestGame', sharedProps);
       case 'coordinate_quest':
         if (selectedLevel.blueprintKey === 'number_line_ninja') {
           return renderFromRegistry('NumberLineNinjaGame', sharedProps);

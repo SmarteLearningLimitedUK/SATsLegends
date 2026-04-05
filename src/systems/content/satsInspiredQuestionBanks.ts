@@ -11,6 +11,8 @@ export type SupportedChallengeGameType =
   | 'formula_forge'
   | 'rule_runner';
 
+export type QuestionKind = 'fluency' | 'reasoning';
+
 export interface CoordinatePoint {
   x: number;
   y: number;
@@ -35,6 +37,7 @@ export type VisualData =
   | { type: 'pulse'; centerLabel: string; orbitLabels: string[]; meterValue: number; meterLabel: string; caption?: string };
 
 export interface ChallengeQuestion {
+  kind?: QuestionKind;
   prompt: string;
   sublabel: string;
   options: string[];
@@ -46,6 +49,7 @@ export type DataDungeonPuzzleType = 'mean' | 'median' | 'mode' | 'range' | 'barc
 
 export interface DataDungeonPuzzle {
   id: string;
+  kind?: QuestionKind;
   type: DataDungeonPuzzleType;
   question: string;
   options: number[];
@@ -55,6 +59,7 @@ export interface DataDungeonPuzzle {
 }
 
 export interface MeasurementProblem {
+  kind?: QuestionKind;
   question: string;
   options: string[];
   answer: string;
@@ -62,6 +67,7 @@ export interface MeasurementProblem {
 }
 
 export interface TimeProblem {
+  kind?: QuestionKind;
   question: string;
   options: string[];
   answer: string;
@@ -76,10 +82,15 @@ const cloneBankEntry = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as 
 
 const pick = <T>(items: T[]): T => items[Math.floor(Math.random() * items.length)];
 
-const selectBankValue = <T>(bank: BankEntry<T>[], levelId: number): T | null => {
+const ensureKind = <T extends { kind?: QuestionKind }>(value: T): T => ({
+  ...value,
+  kind: value.kind ?? 'fluency',
+});
+
+const selectBankValue = <T extends { kind?: QuestionKind }>(bank: BankEntry<T>[], levelId: number): T | null => {
   const eligible = bank.filter(entry => entry.minLevel <= levelId);
   if (!eligible.length) return null;
-  return cloneBankEntry(pick(eligible).value);
+  return ensureKind(cloneBankEntry(pick(eligible).value));
 };
 
 const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQuestion>[]> = {
@@ -129,41 +140,41 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'Calculate 84 + 6 × 7',
-        sublabel: 'Use the order of operations just like in Paper 1.',
-        options: ['630', '126', '90', '588'],
-        answerIndex: 1,
-        visual: { type: 'equation', lines: ['84 + 6 × 7', 'Multiply first, then add.'], badge: 'BODMAS', variant: 'clash' },
+        prompt: 'Calculate 84 + 67',
+        sublabel: 'Add the two numbers.',
+        options: ['141', '151', '161', '171'],
+        answerIndex: 0,
+        visual: { type: 'equation', lines: ['84 + 67', '= ?'], badge: 'Add', variant: 'clash' },
       },
     },
     {
       minLevel: 1,
       value: {
-        prompt: 'Work out (960 ÷ 12) + 37',
-        sublabel: 'Solve the bracket first.',
-        options: ['117', '80', '73', '127'],
-        answerIndex: 0,
-        visual: { type: 'equation', lines: ['(960 ÷ 12) + 37', 'Division before addition.'], badge: 'Clash', variant: 'clash' },
+        prompt: 'Work out 960 ÷ 12',
+        sublabel: 'Divide 960 by 12.',
+        options: ['70', '80', '90', '120'],
+        answerIndex: 1,
+        visual: { type: 'equation', lines: ['960 ÷ 12', '= ?'], badge: 'Divide', variant: 'clash' },
       },
     },
     {
       minLevel: 2,
       value: {
-        prompt: 'A concert sells 248 tickets on Friday and 317 on Saturday. 85 are refunded. How many tickets count in total?',
-        sublabel: 'This is a multi-step SATs story problem.',
-        options: ['650', '565', '480', '563'],
-        answerIndex: 2,
-        visual: { type: 'ratio', leftLabel: 'Friday', leftValue: '248', rightLabel: 'Saturday', rightValue: '317', caption: 'Add the two totals, then subtract 85 refunds.' },
+        prompt: 'Calculate 47 × 6',
+        sublabel: 'Multiply the two numbers.',
+        options: ['252', '262', '282', '292'],
+        answerIndex: 1,
+        visual: { type: 'equation', lines: ['47 × 6', '= ?'], badge: 'Multiply', variant: 'clash' },
       },
     },
     {
       minLevel: 3,
       value: {
-        prompt: '35 boxes each hold 48 packets. The shop sells 56 packets a day. How many days for all packets to be sold?',
-        sublabel: 'Find the total first, then divide.',
-        options: ['28', '30', '32', '35'],
-        answerIndex: 1,
-        visual: { type: 'ratio', leftLabel: 'Boxes', leftValue: '35', rightLabel: 'Packets each', rightValue: '48', caption: 'Total packets ÷ 56 each day' },
+        prompt: 'Calculate 734 – 286',
+        sublabel: 'Subtract carefully.',
+        options: ['448', '458', '468', '478'],
+        answerIndex: 0,
+        visual: { type: 'equation', lines: ['734 – 286', '= ?'], badge: 'Subtract', variant: 'clash' },
       },
     },
   ],

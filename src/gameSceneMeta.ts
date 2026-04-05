@@ -89,4 +89,5 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   formula_forge: NUMBER_SCENE,
   unit_mixer: REASONING_SCENE,
   change_counter: REASONING_SCENE,
+  reasoning_quest: REASONING_SCENE,
 };

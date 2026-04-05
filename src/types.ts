@@ -34,7 +34,8 @@ export type MiniGameType =
   | 'ratio_fractions'
   | 'formula_forge'
   | 'unit_mixer'
-  | 'change_counter';
+  | 'change_counter'
+  | 'reasoning_quest';
 
 export interface LevelData {
   id: number;

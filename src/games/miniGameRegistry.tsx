@@ -38,6 +38,7 @@ import RemainderRunGame from './RemainderRunGame';
 import RoundingRocketGame from './RoundingRocketGame';
 import RotationReflectionGame from './RotationReflectionGame';
 import RuneLockDungeonsGame from './RuneLockDungeonsGame';
+import ReasoningQuestGame from './ReasoningQuestGame';
 import ScaleBuilderGame from './ScaleBuilderGame';
 import ShareSplitterGame from './ShareSplitterGame';
 import SimplifySprintGame from './SimplifySprintGame';
@@ -92,6 +93,7 @@ export type MiniGameRegistryKey =
   | 'RoundingRocketGame'
   | 'RotationReflectionGame'
   | 'RuneLockDungeonsGame'
+  | 'ReasoningQuestGame'
   | 'ScaleBuilderGame'
   | 'ShareSplitterGame'
   | 'SimplifySprintGame'
@@ -154,6 +156,7 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   RoundingRocketGame: asMiniGame('rounding_rocket', RoundingRocketGame),
   RotationReflectionGame: asMiniGame('rotation_reflection', RotationReflectionGame),
   RuneLockDungeonsGame: asMiniGame('rune_lock_dungeons', RuneLockDungeonsGame),
+  ReasoningQuestGame: asMiniGame('reasoning_quest', ReasoningQuestGame),
   ScaleBuilderGame: asMiniGame('scale_builder', ScaleBuilderGame),
   ShareSplitterGame: asMiniGame('share_splitter', ShareSplitterGame),
   SimplifySprintGame: asMiniGame('simplify_sprint', SimplifySprintGame),

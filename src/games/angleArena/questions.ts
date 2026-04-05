@@ -1,6 +1,7 @@
 ﻿// Auto-generated Angle Arena question bank for SATs Legends
 export type AngleQuestion = {
   id: number;
+  kind: 'fluency' | 'reasoning';
   prompt: string;
   options: number[];
   correctAnswer: number;
@@ -23,6 +24,7 @@ type BuildConfig = {
 
 type BankEntry = {
   id: string;
+  kind?: 'fluency' | 'reasoning';
   difficulty: AngleQuestion['difficulty'];
   topic: string;
   question_text: string;
@@ -37,6 +39,15 @@ type BankEntry = {
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 
 const parseAngle = (value: string) => Number(value.replace('°', '').trim());
+const resolveKind = (entry: BankEntry): 'fluency' | 'reasoning' => {
+  if (entry.kind) return entry.kind;
+  const topic = entry.topic.toLowerCase();
+  if (topic.includes('multi_step') || topic.includes('word_problem') || topic.includes('ratio')) {
+    return 'reasoning';
+  }
+  if (entry.question_text.toLowerCase().includes('ratio')) return 'reasoning';
+  return 'fluency';
+};
 
 const buildTarget = (launcherX: number, angleDeg: number, speed: number, gravity: number) => {
   const radians = (angleDeg * Math.PI) / 180;
@@ -60,6 +71,7 @@ const toAngleQuestion = (
   const targetY = groundY - targetHeight;
   return {
     id: index + 1,
+    kind: resolveKind(entry),
     prompt: entry.question_text,
     options,
     correctAnswer: correct,
@@ -880,9 +892,14 @@ const questionBank: BankEntry[] = [
 
 export const buildAngleQuestions = ({ launcherX, groundY, gravity }: BuildConfig): AngleQuestion[] => {
   const speed = 520;
-  return questionBank.map((entry, index) =>
+  const all = questionBank.map((entry, index) =>
     toAngleQuestion(entry, index, speed, launcherX, groundY, gravity, 54),
   );
+  const fluency = all.filter((question) => question.kind === 'fluency');
+  const reasoning = all.filter((question) => question.kind === 'reasoning');
+  const maxReasoning = Math.max(1, Math.min(reasoning.length, Math.round(fluency.length * 0.3)));
+  const selectedReasoning = reasoning.slice(0, maxReasoning);
+  return [...fluency, ...selectedReasoning];
 };
 
 

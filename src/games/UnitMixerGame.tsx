@@ -20,6 +20,7 @@ interface UnitMixerGameProps {
 }
 
 interface UnitMixerQuestion {
+  kind: 'fluency' | 'reasoning';
   prompt: string;
   sublabel: string;
   options: string[];
@@ -34,6 +35,7 @@ const TOTAL_ROUNDS = 6;
 
 const fallbackQuestions: UnitMixerQuestion[] = [
   {
+    kind: 'fluency',
     prompt: 'Convert 3.5 km to metres.',
     sublabel: 'Remember that 1 km = 1000 m.',
     options: ['3,500 m', '350 m', '35,000 m', '3.5 m'],
@@ -41,6 +43,7 @@ const fallbackQuestions: UnitMixerQuestion[] = [
     visualLines: ['3.5 km', 'x 1000 = ? m'],
   },
   {
+    kind: 'fluency',
     prompt: 'Convert 420 cm to metres.',
     sublabel: 'Divide by 100 to move from cm to m.',
     options: ['4.2 m', '42 m', '0.42 m', '420 m'],
@@ -48,6 +51,7 @@ const fallbackQuestions: UnitMixerQuestion[] = [
     visualLines: ['420 cm', '/ 100 = ? m'],
   },
   {
+    kind: 'fluency',
     prompt: 'A bottle holds 1.2 litres. How many millilitres is that?',
     sublabel: 'Litres to millilitres is x1000.',
     options: ['1,200 ml', '120 ml', '12,000 ml', '0.12 ml'],
@@ -55,6 +59,7 @@ const fallbackQuestions: UnitMixerQuestion[] = [
     visualLines: ['1.2 l', 'x 1000 = ? ml'],
   },
   {
+    kind: 'fluency',
     prompt: 'Convert 2.75 kg to grams.',
     sublabel: 'Kilograms to grams is x1000.',
     options: ['2,750 g', '275 g', '27,500 g', '2.75 g'],
@@ -88,6 +93,7 @@ const resolveQuestion = (levelId: number): UnitMixerQuestion => {
   const options = shuffle(question.options);
   const correct = question.options[question.answerIndex];
   return {
+    kind: 'fluency',
     prompt: sanitizeText(question.prompt),
     sublabel: sanitizeText(question.sublabel),
     options,
