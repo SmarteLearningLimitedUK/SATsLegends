@@ -145,7 +145,6 @@ export const ISLANDS: IslandData[] = [
       pickLevelsByBlueprint(NUMBER_BASE_CAMP_LEVELS, [
         'chart_challenge',
         'mean_machine',
-        'mode_miner',
       ]),
       [
         { id: 2, stars: 0, isLocked: false, blueprintKey: 'graph_grabber', displayName: 'Graph Grabber', gameType: 'chart_chase' },
