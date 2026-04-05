@@ -53,6 +53,8 @@ interface DataDetectiveGameProps {
   onBack: () => void;
 }
 
+type CaseMode = 'detective' | 'whodunnit';
+
 const ITEMS = [
   { name: 'Shiny Gems', color: '#60a5fa' },
   { name: 'Magic Cookies', color: '#f59e0b' },
@@ -70,6 +72,18 @@ const MONSTER_ICONS = [
 ];
 
 const MONSTER_NAMES = ['Grumpy Green', 'Blue Blob', 'Purple Prowler', 'Red Rogue'];
+const DETECTIVE_BRIEFS = [
+  'Match the evidence totals to the suspect report.',
+  'Check the chart carefully before accusing.',
+  'Find the suspect whose stash matches the data.',
+  'Use the totals to close this case.',
+];
+const WHODUNNIT_BRIEFS = [
+  'Who took the items? Use the clues to decide.',
+  'Compare the clue chart to each suspect.',
+  'Spot the thief by reading the evidence graph.',
+  'Find the culprit hiding in the numbers.',
+];
 
 const MAX_CASES = 10;
 
@@ -91,10 +105,17 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   const [suspects, setSuspects] = useState<Suspect[]>([]);
   const [guiltyId, setGuiltyId] = useState<number | null>(null);
   const [chartType, setChartType] = useState<'bar' | 'pie'>('bar');
+  const [caseMode, setCaseMode] = useState<CaseMode>('detective');
+  const [caseBrief, setCaseBrief] = useState(DETECTIVE_BRIEFS[0]);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [armedSuspectId, setArmedSuspectId] = useState<number | null>(null);
 
   const generateCase = useCallback(() => {
+    const nextMode: CaseMode = Math.random() > 0.5 ? 'detective' : 'whodunnit';
+    setCaseMode(nextMode);
+    setCaseBrief(nextMode === 'whodunnit'
+      ? WHODUNNIT_BRIEFS[Math.floor(Math.random() * WHODUNNIT_BRIEFS.length)]
+      : DETECTIVE_BRIEFS[Math.floor(Math.random() * DETECTIVE_BRIEFS.length)]);
     setChartType(Math.random() > 0.5 ? 'bar' : 'pie');
 
     const caseData = ITEMS.map(item => ({
@@ -179,7 +200,8 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   };
 
   return (
-    <div className="relative flex h-full w-full min-h-0 flex-col overflow-hidden text-slate-100"><div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(6,18,46,0.34),rgba(4,16,38,0.48)_55%,rgba(2,8,24,0.62)_100%)]" />
+    <div className="relative flex h-full w-full min-h-0 flex-col overflow-hidden text-slate-100">
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(6,18,46,0.34),rgba(4,16,38,0.48)_55%,rgba(2,8,24,0.62)_100%)]" />
       {!useSharedTopHud && (
         <header className="z-20 flex h-16 items-center justify-between border-b border-cyan-200/16 bg-[linear-gradient(180deg,rgba(8,26,66,0.78),rgba(5,16,42,0.84))] px-6 backdrop-blur-md">
           <div className="flex items-center gap-3">
@@ -195,8 +217,12 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               <Search className="h-5 w-5 text-stone-900" />
             </div>
             <div>
-              <h1 className="text-sm font-black uppercase tracking-widest text-white">Data Detective Agency</h1>
-              <p className="text-[10px] italic uppercase tracking-tighter text-stone-500">Solving crimes with statistics</p>
+              <h1 className="text-sm font-black uppercase tracking-widest text-white">
+                {caseMode === 'whodunnit' ? 'Whodunnit Files' : 'Data Detective Agency'}
+              </h1>
+              <p className="text-[10px] italic uppercase tracking-tighter text-stone-500">
+                {caseMode === 'whodunnit' ? 'Clues hidden in the charts' : 'Solving crimes with statistics'}
+              </p>
             </div>
           </div>
 
@@ -215,11 +241,16 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
       )}
 
       <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.25rem)]' : ''}`}>
-        <section className="z-10 flex min-h-0 w-full flex-[0.42] flex-col gap-2 border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] p-3 sm:p-4 md:w-1/2 md:flex-1 md:gap-4 md:border-b-0 md:border-r md:p-6">
+        <section className="z-10 flex min-h-0 w-full flex-[0.42] flex-col gap-2 overflow-hidden border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] p-3 sm:p-4 md:w-1/2 md:flex-1 md:gap-3 md:border-b-0 md:border-r md:p-5">
+          <div className="rounded-xl border border-cyan-100/16 bg-slate-900/40 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-cyan-100/80">
+            {caseBrief}
+          </div>
           <div className="mb-2 flex items-center justify-between">
             <div className="flex items-center gap-2 text-amber-500">
               <FileText className="h-5 w-5" />
-              <h2 className="text-xs font-black uppercase tracking-widest">Evidence: Stolen Items</h2>
+              <h2 className="text-xs font-black uppercase tracking-widest">
+                {caseMode === 'whodunnit' ? 'Clue Board' : 'Evidence: Stolen Items'}
+              </h2>
             </div>
             <div className="flex items-center gap-2 rounded-full border border-stone-700 bg-stone-800 px-3 py-1">
               {chartType === 'bar'
@@ -229,10 +260,10 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             </div>
           </div>
 
-          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(255,255,255,0.14),rgba(9,24,58,0.6))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-4 md:p-5">
+          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(255,255,255,0.14),rgba(9,24,58,0.6))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-4 md:p-4">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.3)_1px,transparent_1px)] opacity-7 [background-size:20px_20px]" />
 
-            <div className="relative w-full" style={{ height: 'clamp(12rem, 32vh, 16rem)' }}>
+            <div className="relative w-full" style={{ height: 'clamp(10rem, 26vh, 14rem)' }}>
               <ResponsiveContainer width="100%" height="100%">
                 {chartType === 'bar' ? (
                   <BarChart data={currentCase} margin={{ top: 16, right: 12, left: -12, bottom: 8 }}>
@@ -305,7 +336,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               </ResponsiveContainer>
             </div>
 
-            <div className="mt-3 grid grid-cols-2 gap-2 sm:gap-3">
+            <div className="mt-3 grid grid-cols-2 gap-2 sm:gap-2">
               {currentCase.map(item => (
                 <div key={item.name} className="flex items-center justify-between gap-2 rounded-lg border border-white/10 bg-white/8 px-2.5 py-2">
                   <div className="flex items-center gap-2">
@@ -321,13 +352,13 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           </div>
         </section>
 
-        <section className="z-10 flex min-h-0 w-full flex-[0.58] flex-col gap-2 bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] p-3 sm:p-4 md:w-1/2 md:flex-1 md:gap-4 md:p-6">
+        <section className="z-10 flex min-h-0 w-full flex-[0.58] flex-col gap-2 overflow-hidden bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] p-3 sm:p-4 md:w-1/2 md:flex-1 md:gap-3 md:p-5">
           <div className="mb-2 flex items-center gap-2 text-amber-500">
             <Users className="h-5 w-5" />
             <h2 className="text-xs font-black uppercase tracking-widest">Suspect Lineup</h2>
           </div>
 
-          <div className="grid min-h-0 flex-1 grid-cols-2 gap-2 md:gap-3">
+          <div className="grid min-h-0 flex-1 auto-rows-[minmax(0,1fr)] grid-cols-2 gap-2 md:gap-3">
             {suspects.map((suspect) => (
               <motion.button
                 key={suspect.id}
@@ -336,7 +367,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                 onClick={() => handleSuspectClick(suspect.id)}
                 animate={armedSuspectId === suspect.id ? { scale: [1, 1.03, 1], y: [0, -2, 0] } : { scale: 1, y: 0 }}
                 transition={{ duration: 0.35 }}
-                className={`group relative flex min-h-0 flex-col rounded-2xl border-2 p-3 transition-all duration-300 md:p-4 ${
+                className={`group relative flex min-h-0 flex-col rounded-2xl border-2 p-2.5 transition-all duration-300 md:p-3 ${
                   gameState === 'success' && suspect.id === guiltyId
                     ? 'border-emerald-500 bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.2)]'
                     : armedSuspectId === suspect.id
@@ -344,17 +375,17 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                       : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
                 }`}
               >
-                <div className={`mx-auto mb-2 flex h-11 w-11 items-center justify-center rounded-full ${suspect.color} text-stone-900 shadow-lg md:mb-3 md:h-13 md:w-13`}>
+                <div className={`mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full ${suspect.color} text-stone-900 shadow-lg md:mb-2.5 md:h-12 md:w-12`}>
                   {suspect.icon}
                 </div>
 
-                <h3 className="mb-2 text-center text-[11px] font-black uppercase tracking-tight text-white md:mb-3 md:text-xs">
+                <h3 className="mb-2 text-center text-[11px] font-black uppercase tracking-tight text-white md:mb-2 md:text-xs">
                   {suspect.name}
                 </h3>
 
                 <div className="mt-auto grid grid-cols-2 gap-1.5 md:gap-2">
                   {suspect.items.map((amount, i) => (
-                    <div key={i} className="flex items-center justify-between rounded-lg border border-white/10 bg-white/6 p-1.5 md:p-2">
+                    <div key={i} className="flex items-center justify-between rounded-lg border border-white/10 bg-white/6 p-1.5 md:p-1.5">
                       <span className="mr-1 truncate text-[8px] font-bold uppercase text-stone-300">{ITEMS[i].name.split(' ')[1]}</span>
                       <span className="text-xs font-black text-amber-300">{amount}</span>
                     </div>
@@ -370,7 +401,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             ))}
           </div>
 
-          <div className="mt-auto pt-1">
+          <div className="mt-auto flex flex-col gap-2 pt-1">
             <AnimatePresence mode="wait">
               {gameState === 'success' ? (
                 <motion.button
@@ -385,11 +416,22 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               ) : (
                 <div className="rounded-xl border border-stone-800 bg-stone-900/20 p-3 text-center">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-stone-500">
-                    Select the suspect whose items match the evidence
+                    {caseMode === 'whodunnit'
+                      ? 'Pick the culprit whose stash matches the clues'
+                      : 'Select the suspect whose items match the evidence'}
                   </span>
                 </div>
               )}
             </AnimatePresence>
+            {feedback && (
+              <div className={`rounded-full border px-4 py-2 text-center text-[11px] font-bold uppercase tracking-wide ${
+                feedback.type === 'success'
+                  ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-200'
+                  : 'border-rose-500/50 bg-rose-500/10 text-rose-200'
+              }`}>
+                {feedback.message}
+              </div>
+            )}
           </div>
         </section>
       </main>
@@ -422,23 +464,9 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
         )}
       </AnimatePresence>
 
-      <AnimatePresence>
-        {feedback && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className={`absolute bottom-[calc(env(safe-area-inset-bottom)+4.85rem)] left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 rounded-full border px-6 py-3 shadow-2xl ${
-              feedback.type === 'success'
-                ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-400'
-                : 'border-rose-500/50 bg-rose-500/10 text-rose-400'
-            }`}
-          >
-            {feedback.type === 'success' ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
-            <span className="text-xs font-bold uppercase tracking-wide">{feedback.message}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/**
+        feedback banner moved into the right panel to avoid overlap on smaller viewports
+      */}
     </div>
   );
 };

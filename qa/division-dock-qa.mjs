@@ -58,10 +58,24 @@ const openDivisionDock = async (page) => {
   await page.waitForTimeout(900);
 
   await clickIfVisible(page.getByRole('button', { name: /Operations Outpost/i }), 2200);
+  await page.waitForTimeout(800);
+
+  await clickIfVisible(page.getByRole('button', { name: /Explore Island/i }), 2000);
   await page.waitForTimeout(900);
 
   const levelCard = page.locator('button', { hasText: /Division Dock/i }).first();
-  await clickIfVisible(levelCard, 2000);
+  let found = await levelCard.isVisible().catch(() => false);
+  let attempts = 0;
+  while (!found && attempts < 6) {
+    await page.mouse.wheel(0, 600);
+    await page.waitForTimeout(450);
+    found = await levelCard.isVisible().catch(() => false);
+    attempts += 1;
+  }
+  if (found) {
+    await levelCard.scrollIntoViewIfNeeded();
+    await levelCard.click();
+  }
   await page.waitForTimeout(700);
 
   const playButton = page.locator('button', { hasText: /Start|Play|Continue/i }).first();
