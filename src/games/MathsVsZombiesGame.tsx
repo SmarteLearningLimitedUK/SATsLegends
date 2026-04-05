@@ -1,18 +1,7 @@
-ï»¿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Zap,
-  CircleDollarSign,
-  Timer as TimerIcon,
-  Shield,
-  Sword,
-  Skull,
-  Flame,
-  Heart,
-  Crosshair,
-  Target,
-  Brain,
-} from 'lucide-react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Timer as TimerIcon, Heart, Target, Brain } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 
 interface MathsVsZombiesGameProps {
   levelId: number;
@@ -23,88 +12,113 @@ interface MathsVsZombiesGameProps {
   onBack: () => void;
 }
 
-interface Ratio {
-  numerator: number;
-  denominator: number;
-  label: string;
-  value: number;
-}
-
-type DefenderIcon = 'shield' | 'zap' | 'sword' | 'flame' | 'target';
-
-interface DefenderType {
-  id: number;
-  ratio: Ratio;
-  color: string;
-  icon: DefenderIcon;
-  cost: number;
-}
+type ZombieState = 'appear' | 'walk' | 'hit' | 'attack' | 'die';
 
 interface Zombie {
   id: number;
   lane: number;
   x: number; // 0..100
-  fraction: { n: number; d: number };
-  ratioValue: number;
   health: number;
+  maxHealth: number;
   speed: number; // percent per second
+  state: ZombieState;
+  frameIndex: number;
+  frameTime: number;
+  stateTime: number;
 }
 
-interface Projectile {
-  id: number;
-  lane: number;
-  x: number;
-  ratioValue: number;
-  color: string;
+interface Question {
+  prompt: string;
+  options: number[];
+  correctIndex: number;
 }
 
-interface Defender {
-  id: number;
-  lane: number;
-  slot: number;
-  ratioValue: number;
-  color: string;
-  icon: DefenderIcon;
-  lastShot: number;
-}
+const LANES = 4;
+const SPAWN_X = 96;
+const TARGET_X = 8;
+const ZOMBIE_SIZE = 70;
+const ANIM_FPS = 8;
 
-const LANES = 5;
-const SLOTS = 5;
-const SLOT_WIDTH = 12;
-const SPAWN_X = 102;
-const ZOMBIE_HIT_THRESHOLD = 3.8;
-const PROJECTILE_SPEED = 30;
+const loadFrames = (record: Record<string, string>) => (
+  Object.entries(record)
+    .sort(([a], [b]) => {
+      const anum = Number(a.match(/(\d+)/)?.[1] ?? 0);
+      const bnum = Number(b.match(/(\d+)/)?.[1] ?? 0);
+      return anum - bnum;
+    })
+    .map(([, value]) => value)
+);
 
-const RATIOS: Ratio[] = [
-  { numerator: 1, denominator: 2, label: '1:2', value: 0.5 },
-  { numerator: 1, denominator: 3, label: '1:3', value: 1 / 3 },
-  { numerator: 2, denominator: 3, label: '2:3', value: 2 / 3 },
-  { numerator: 1, denominator: 1, label: '1:1', value: 1.0 },
-  { numerator: 3, denominator: 4, label: '3:4', value: 0.75 },
-];
+const zombieAppearFrames = loadFrames(import.meta.glob('../assets/zombies/appear/*.png', { eager: true, import: 'default' }) as Record<string, string>);
+const zombieWalkFrames = loadFrames(import.meta.glob('../assets/zombies/walk/*.png', { eager: true, import: 'default' }) as Record<string, string>);
+const zombieHitFrames = loadFrames(import.meta.glob('../assets/zombies/attack/*.png', { eager: true, import: 'default' }) as Record<string, string>);
+const zombieDieFrames = loadFrames(import.meta.glob('../assets/zombies/die/*.png', { eager: true, import: 'default' }) as Record<string, string>);
+const zombieIdleFrames = loadFrames(import.meta.glob('../assets/zombies/idle/*.png', { eager: true, import: 'default' }) as Record<string, string>);
 
-const DEFENDER_TYPES: DefenderType[] = [
-  { id: 1, ratio: RATIOS[0], color: 'bg-blue-500', icon: 'shield', cost: 50 },
-  { id: 2, ratio: RATIOS[1], color: 'bg-cyan-500', icon: 'zap', cost: 50 },
-  { id: 3, ratio: RATIOS[2], color: 'bg-emerald-500', icon: 'sword', cost: 50 },
-  { id: 4, ratio: RATIOS[3], color: 'bg-amber-500', icon: 'flame', cost: 50 },
-  { id: 5, ratio: RATIOS[4], color: 'bg-rose-500', icon: 'target', cost: 50 },
-];
+const FRAMES_BY_STATE: Record<ZombieState, string[]> = {
+  appear: zombieAppearFrames,
+  walk: zombieWalkFrames,
+  hit: zombieHitFrames,
+  attack: zombieHitFrames,
+  die: zombieDieFrames,
+};
 
-const iconFor = (icon: DefenderIcon) => {
-  switch (icon) {
-    case 'shield':
-      return <Shield className="h-6 w-6" />;
-    case 'zap':
-      return <Zap className="h-6 w-6" />;
-    case 'sword':
-      return <Sword className="h-6 w-6" />;
-    case 'flame':
-      return <Flame className="h-6 w-6" />;
-    case 'target':
-    default:
-      return <Target className="h-6 w-6" />;
+const stateDuration = (state: ZombieState) => {
+  const frameCount = FRAMES_BY_STATE[state]?.length || 1;
+  return frameCount / ANIM_FPS;
+};
+
+const maxZombiesForLevel = (levelId: number) => {
+  if (levelId <= 2) return 1;
+  if (levelId <= 4) return 2;
+  if (levelId <= 6) return 3;
+  return 4;
+};
+
+const buildQuestion = (levelId: number): Question => {
+  const maxBase = levelId <= 2 ? 10 : levelId <= 4 ? 25 : levelId <= 6 ? 40 : 70;
+  const ops = levelId <= 2
+    ? ['+', '-']
+    : levelId <= 4
+      ? ['+', '-', '×']
+      : ['+', '-', '×', '÷'];
+
+  const op = ops[Math.floor(Math.random() * ops.length)];
+  let a = Math.floor(Math.random() * maxBase) + 2;
+  let b = Math.floor(Math.random() * maxBase) + 2;
+  let answer = 0;
+  let prompt = '';
+
+  if (op === '+') {
+    answer = a + b;
+    prompt = `${a} + ${b}`;
+  } else if (op === '-') {
+    if (b > a) [a, b] = [b, a];
+    answer = a - b;
+    prompt = `${a} - ${b}`;
+  } else if (op === '×') {
+    a = Math.floor(Math.random() * 8) + 2;
+    b = Math.floor(Math.random() * 8) + 2;
+    answer = a * b;
+    prompt = `${a} × ${b}`;
+  } else {
+    answer = a;
+    const product = a * b;
+    prompt = `${product} ÷ ${b}`;
   }
+
+  const options = new Set<number>([answer]);
+  while (options.size < 4) {
+    const delta = Math.floor(Math.random() * 6) + 1;
+    const candidate = Math.random() < 0.5 ? answer + delta : answer - delta;
+    if (candidate > 0) options.add(candidate);
+  }
+  const shuffled = Array.from(options).sort(() => Math.random() - 0.5);
+  return {
+    prompt,
+    options: shuffled,
+    correctIndex: shuffled.indexOf(answer),
+  };
 };
 
 const TopBar = ({ XP, brainPoints, health, timer, onBack }: { XP: number; brainPoints: number; health: number; timer: string; onBack: () => void }) => (
@@ -150,67 +164,64 @@ const TopBar = ({ XP, brainPoints, health, timer, onBack }: { XP: number; brainP
 
 const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   levelId,
-  avatarId: _avatarId,
+  avatarId,
   useSharedTopHud = false,
   onVictory,
   onGameOver,
   onBack,
 }) => {
   const roundSeconds = useMemo(() => 70 + (levelId * 6), [levelId]);
-  const victoryTargetScore = useMemo(() => 1900 + (levelId * 300), [levelId]);
-  const baseZombieHealth = useMemo(() => 100 + (levelId * 12), [levelId]);
-  const fireCooldownMs = useMemo(() => Math.max(900, 1450 - (levelId * 65)), [levelId]);
-  const projectileDamage = useMemo(() => 42 + (levelId * 3), [levelId]);
+  const victoryTargetScore = useMemo(() => 1200 + (levelId * 220), [levelId]);
+  const baseZombieHealth = useMemo(() => Math.max(2, Math.min(5, 2 + Math.floor(levelId / 3))), [levelId]);
+  const spawnDelayMs = useMemo(() => Math.max(1200, 2600 - (levelId * 130)), [levelId]);
 
   const [XP, setScore] = useState(0);
-  const [brainPoints, setBrainPoints] = useState(150);
+  const [zombiesDefeated, setZombiesDefeated] = useState(0);
   const [health, setHealth] = useState(3);
   const [timeLeft, setTimeLeft] = useState(roundSeconds);
   const [zombies, setZombies] = useState<Zombie[]>([]);
-  const [defenders, setDefenders] = useState<Defender[]>([]);
-  const [projectiles, setProjectiles] = useState<Projectile[]>([]);
-  const [selectedDefenderId, setSelectedDefenderId] = useState<number | null>(null);
+  const [question, setQuestion] = useState<Question>(() => buildQuestion(levelId));
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [feedback, setFeedback] = useState('');
+  const [locked, setLocked] = useState(false);
   const [wave, setWave] = useState(1);
   const [gameActive, setGameActive] = useState(true);
 
   const rafRef = useRef<number | null>(null);
   const lastTimeRef = useRef(0);
   const spawnTimerRef = useRef(0);
-  const brainTimerRef = useRef(0);
   const endedRef = useRef(false);
   const idRef = useRef(1);
 
-  const defendersRef = useRef<Defender[]>([]);
   const zombiesRef = useRef<Zombie[]>([]);
-  const projectilesRef = useRef<Projectile[]>([]);
-
-  useEffect(() => { defendersRef.current = defenders; }, [defenders]);
   useEffect(() => { zombiesRef.current = zombies; }, [zombies]);
-  useEffect(() => { projectilesRef.current = projectiles; }, [projectiles]);
 
-  const selectedDefender = DEFENDER_TYPES.find((type) => type.id === selectedDefenderId) || null;
+  const avatarImage = useMemo(() => (
+    CHARACTER_AVATARS.find((avatar) => avatar.id === avatarId)?.image
+      ?? CHARACTER_AVATARS.find((avatar) => avatar.id === DEFAULT_AVATAR_ID)?.image
+  ), [avatarId]);
 
   const spawnZombie = useCallback(() => {
     const lane = Math.floor(Math.random() * LANES);
-    const ratio = RATIOS[Math.floor(Math.random() * RATIOS.length)];
-    const multiplier = Math.floor(Math.random() * 4) + 1;
-    const n = ratio.numerator * multiplier;
-    const d = ratio.denominator * multiplier;
-
+    const maxZombies = maxZombiesForLevel(levelId);
+    if (zombiesRef.current.length >= maxZombies) return;
     const zombie: Zombie = {
       id: idRef.current++,
       lane,
       x: SPAWN_X,
-      fraction: { n, d },
-      ratioValue: ratio.value,
       health: baseZombieHealth,
-      speed: 2.6 + (wave * 0.36),
+      maxHealth: baseZombieHealth,
+      speed: 6 + (wave * 0.6),
+      state: 'appear',
+      frameIndex: 0,
+      frameTime: 0,
+      stateTime: 0,
     };
 
     const next = [...zombiesRef.current, zombie];
     zombiesRef.current = next;
     setZombies(next);
-  }, [baseZombieHealth, wave]);
+  }, [baseZombieHealth, levelId, wave]);
 
   const finishGame = useCallback((won: boolean) => {
     if (endedRef.current) return;
@@ -235,22 +246,20 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     endedRef.current = false;
     setGameActive(true);
     setScore(0);
-    setBrainPoints(150);
+    setZombiesDefeated(0);
     setHealth(3);
     setTimeLeft(roundSeconds);
     setWave(1);
-    setSelectedDefenderId(null);
-    setDefenders([]);
     setZombies([]);
-    setProjectiles([]);
-    defendersRef.current = [];
     zombiesRef.current = [];
-    projectilesRef.current = [];
+    setQuestion(buildQuestion(levelId));
+    setSelectedAnswer(null);
+    setFeedback('');
+    setLocked(false);
     idRef.current = 1;
     spawnTimerRef.current = 0;
-    brainTimerRef.current = 0;
     lastTimeRef.current = 0;
-  }, [roundSeconds]);
+  }, [levelId, roundSeconds]);
 
   useEffect(() => {
     if (!gameActive || endedRef.current) return;
@@ -285,118 +294,78 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     const dt = deltaMs / 1000;
     lastTimeRef.current = timestamp;
 
-    // brain points generation
-    brainTimerRef.current += deltaMs;
-    if (brainTimerRef.current >= 950) {
-      brainTimerRef.current = 0;
-      setBrainPoints((value) => value + 12);
-    }
-
-    // spawn pacing
     spawnTimerRef.current += deltaMs;
-    const spawnRate = Math.max(900, 3000 - (wave * 190));
-    if (spawnTimerRef.current >= spawnRate) {
+    if (spawnTimerRef.current >= spawnDelayMs) {
       spawnTimerRef.current = 0;
       spawnZombie();
     }
 
-    const now = Date.now();
-    const defendersWork = defendersRef.current.map((defender) => ({ ...defender }));
-    const zombiesWork = zombiesRef.current.map((zombie) => ({ ...zombie }));
-    const projectilesWork = projectilesRef.current.map((projectile) => ({ ...projectile }));
-
-    // defenders shoot if zombie in lane and cooldown complete
-    for (const defender of defendersWork) {
-      if (now - defender.lastShot < fireCooldownMs) continue;
-      const laneZombieExists = zombiesWork.some(
-        (zombie) => zombie.lane === defender.lane && zombie.x > ((defender.slot * SLOT_WIDTH) + 4),
-      );
-      if (!laneZombieExists) continue;
-
-      projectilesWork.push({
-        id: idRef.current++,
-        lane: defender.lane,
-        x: (defender.slot * SLOT_WIDTH) + 6,
-        ratioValue: defender.ratioValue,
-        color: defender.color,
-      });
-      defender.lastShot = now;
-    }
-
-    // move projectiles
-    for (const projectile of projectilesWork) {
-      projectile.x += PROJECTILE_SPEED * dt;
-    }
-
-    // move zombies
-    for (const zombie of zombiesWork) {
-      zombie.x -= zombie.speed * dt;
-    }
-
-    // collisions
-    let scoreDelta = 0;
-    const projectileRemove = new Set<number>();
-    const zombieRemove = new Set<number>();
-    for (const projectile of projectilesWork) {
-      for (const zombie of zombiesWork) {
-        if (projectile.lane !== zombie.lane) continue;
-        if (zombieRemove.has(zombie.id)) continue;
-        if (Math.abs(zombie.x - projectile.x) > ZOMBIE_HIT_THRESHOLD) continue;
-
-        projectileRemove.add(projectile.id);
-        if (Math.abs(zombie.ratioValue - projectile.ratioValue) < 0.001) {
-          zombie.health -= projectileDamage;
-          if (zombie.health <= 0) {
-            zombieRemove.add(zombie.id);
-            scoreDelta += 260;
-          }
-        }
-        break;
-      }
-    }
-
-    // base breaches
     let breaches = 0;
-    for (const zombie of zombiesWork) {
-      if (zombie.x <= 0 && !zombieRemove.has(zombie.id)) {
-        zombieRemove.add(zombie.id);
+    const zombiesNext = zombiesRef.current.map((zombie) => {
+      let nextX = zombie.x;
+      if (zombie.state !== 'attack' && zombie.state !== 'die') {
+        nextX -= zombie.speed * dt;
+      }
+
+      let nextState = zombie.state;
+      let nextStateTime = zombie.stateTime + dt;
+      let nextFrameTime = zombie.frameTime + dt;
+      let nextFrameIndex = zombie.frameIndex;
+
+      const frames = FRAMES_BY_STATE[nextState] ?? zombieWalkFrames;
+      if (nextFrameTime >= 1 / ANIM_FPS) {
+        nextFrameIndex = (nextFrameIndex + 1) % frames.length;
+        nextFrameTime = 0;
+      }
+
+      if (nextState === 'appear' && nextStateTime >= stateDuration('appear')) {
+        nextState = 'walk';
+        nextStateTime = 0;
+      }
+
+      if (nextState === 'hit' && nextStateTime >= stateDuration('hit')) {
+        nextState = zombie.health <= 0 ? 'die' : 'walk';
+        nextStateTime = 0;
+      }
+
+      if (nextState === 'die' && nextStateTime >= stateDuration('die')) {
+        return null;
+      }
+
+      if (nextX <= TARGET_X && nextState !== 'attack' && nextState !== 'die') {
+        nextState = 'attack';
+        nextStateTime = 0;
         breaches += 1;
       }
-    }
 
-    let nextHealth = health;
+      if (nextState === 'attack' && nextStateTime >= stateDuration('attack')) {
+        return null;
+      }
+
+      return {
+        ...zombie,
+        x: nextX,
+        state: nextState,
+        frameIndex: nextFrameIndex,
+        frameTime: nextFrameTime,
+        stateTime: nextStateTime,
+      } as Zombie;
+    }).filter(Boolean) as Zombie[];
+
     if (breaches > 0) {
-      nextHealth = Math.max(0, health - breaches);
-      setHealth(nextHealth);
+      setHealth((value) => Math.max(0, value - breaches));
     }
 
-    const zombiesNext = zombiesWork.filter((zombie) => !zombieRemove.has(zombie.id));
-    const projectilesNext = projectilesWork.filter((projectile) => !projectileRemove.has(projectile.id) && projectile.x < 110);
-
-    defendersRef.current = defendersWork;
     zombiesRef.current = zombiesNext;
-    projectilesRef.current = projectilesNext;
-    setDefenders(defendersWork);
     setZombies(zombiesNext);
-    setProjectiles(projectilesNext);
 
-    if (scoreDelta > 0) {
-      setScore((value) => {
-        const next = value + scoreDelta;
-        if (next >= victoryTargetScore && !endedRef.current) {
-          window.setTimeout(() => finishGame(true), 0);
-        }
-        return next;
-      });
-    }
-
-    if (nextHealth <= 0 && !endedRef.current) {
+    if (health - breaches <= 0 && !endedRef.current) {
       finishGame(false);
       return;
     }
 
     rafRef.current = requestAnimationFrame(updateFrame);
-  }, [fireCooldownMs, finishGame, gameActive, health, projectileDamage, spawnZombie, victoryTargetScore, wave]);
+  }, [finishGame, gameActive, health, spawnDelayMs, spawnZombie]);
 
   useEffect(() => {
     if (!gameActive || endedRef.current) return;
@@ -406,25 +375,59 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     };
   }, [gameActive, updateFrame]);
 
-  const handleGridClick = (lane: number, slot: number) => {
-    if (!selectedDefender || !gameActive || endedRef.current) return;
-    if (defendersRef.current.some((defender) => defender.lane === lane && defender.slot === slot)) return;
-    if (brainPoints < selectedDefender.cost) return;
+  const handleAnswer = (index: number) => {
+    if (!gameActive || endedRef.current || locked) return;
+    setLocked(true);
+    setSelectedAnswer(index);
 
-    setBrainPoints((value) => value - selectedDefender.cost);
-    const defender: Defender = {
-      id: idRef.current++,
-      lane,
-      slot,
-      ratioValue: selectedDefender.ratio.value,
-      color: selectedDefender.color,
-      icon: selectedDefender.icon,
-      lastShot: Date.now(),
-    };
-    const next = [...defendersRef.current, defender];
-    defendersRef.current = next;
-    setDefenders(next);
-    setSelectedDefenderId(null);
+    if (index === question.correctIndex) {
+      setFeedback('Great hit!');
+      const targetZombie = zombiesRef.current.reduce((closest, zombie) => (
+        zombie.x < (closest?.x ?? Infinity) ? zombie : closest
+      ), null as Zombie | null);
+
+      if (targetZombie) {
+        const next = zombiesRef.current.map((zombie) => {
+          if (zombie.id !== targetZombie.id) return zombie;
+          const nextHealth = zombie.health - 1;
+          return {
+            ...zombie,
+            health: nextHealth,
+            state: nextHealth <= 0 ? 'die' : 'hit',
+            stateTime: 0,
+            frameIndex: 0,
+            frameTime: 0,
+          };
+        });
+        zombiesRef.current = next;
+        setZombies(next);
+        if (targetZombie.health - 1 <= 0) {
+          setScore((value) => {
+            const nextScore = value + 220;
+            if (nextScore >= victoryTargetScore && !endedRef.current) {
+              window.setTimeout(() => finishGame(true), 0);
+            }
+            return nextScore;
+          });
+          setZombiesDefeated((value) => value + 1);
+        } else {
+          setScore((value) => value + 120);
+        }
+      }
+    } else {
+      setFeedback('Close! Try the next one.');
+      setHealth((value) => Math.max(0, value - 1));
+      if (health <= 1) {
+        finishGame(false);
+      }
+    }
+
+    window.setTimeout(() => {
+      setQuestion(buildQuestion(levelId));
+      setSelectedAnswer(null);
+      setFeedback('');
+      setLocked(false);
+    }, 750);
   };
 
   const timerLabel = useMemo(() => {
@@ -439,78 +442,57 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
       <div className={`relative z-10 flex h-full w-full max-w-[1000px] flex-col ${useSharedTopHud ? 'pt-[max(3.7rem,calc(env(safe-area-inset-top)+3.1rem))]' : ''}`}>
         {!useSharedTopHud ? (
-          <TopBar XP={XP} brainPoints={brainPoints} health={health} timer={timerLabel} onBack={onBack} />
+          <TopBar XP={XP} brainPoints={zombiesDefeated} health={health} timer={timerLabel} onBack={onBack} />
         ) : null}
 
         <div className={`relative mx-4 flex-1 overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/20 shadow-2xl ${useSharedTopHud ? 'mt-2' : 'mt-4'}`}>
-          {Array.from({ length: LANES }).map((_, laneIndex) => (
-            <div
-              key={`lane-${laneIndex}`}
-              className="absolute left-0 right-0 flex h-[20%] items-center border-b border-blue-400/10"
-              style={{ top: `${laneIndex * 20}%` }}
-            >
-              {Array.from({ length: SLOTS }).map((__, slotIndex) => (
-                <div
-                  key={`slot-${laneIndex}-${slotIndex}`}
-                  onClick={() => handleGridClick(laneIndex, slotIndex)}
-                  className="h-full cursor-pointer border-r border-blue-400/10 transition-colors hover:bg-white/5"
-                  style={{ width: `${SLOT_WIDTH}%` }}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_85%,rgba(56,189,248,0.16),transparent_48%)]" />
+          <div className="absolute bottom-4 left-6 flex flex-col items-center gap-2">
+            <div className="text-[11px] font-black uppercase tracking-[0.18em] text-cyan-100">You</div>
+            <div className="flex h-[110px] w-[110px] items-center justify-center rounded-3xl border-2 border-cyan-200/50 bg-white/10 shadow-[0_12px_24px_rgba(2,6,23,0.3)]">
+              {avatarImage ? (
+                <img
+                  src={avatarImage}
+                  alt=""
+                  className="h-[92px] w-auto object-contain"
+                  draggable={false}
                 />
-              ))}
+              ) : null}
             </div>
-          ))}
-
-          {defenders.map((defender) => (
-            <motion.div
-              key={defender.id}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              className={`absolute ${defender.color} flex items-center justify-center rounded-xl border-2 border-white/30 shadow-lg`}
-              style={{
-                top: `${(defender.lane * 20) + 2}%`,
-                left: `${(defender.slot * SLOT_WIDTH) + 1}%`,
-                width: '10%',
-                height: '16%',
-              }}
-            >
-              {iconFor(defender.icon)}
-            </motion.div>
-          ))}
-
-          {projectiles.map((projectile) => (
-            <div
-              key={projectile.id}
-              className={`absolute h-4 w-4 rounded-full ${projectile.color} border border-white shadow-[0_0_10px_white]`}
-              style={{ top: `${(projectile.lane * 20) + 8}%`, left: `${projectile.x}%` }}
-            />
-          ))}
+          </div>
 
           <AnimatePresence>
-            {zombies.map((zombie) => (
-              <motion.div
-                key={zombie.id}
-                initial={{ x: 45, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
-                className="absolute flex flex-col items-center"
-                style={{
-                  top: `${(zombie.lane * 20) + 2}%`,
-                  left: `${zombie.x}%`,
-                  width: '12%',
-                  height: '16%',
-                }}
-              >
-                <div className="mb-1 whitespace-nowrap rounded-md border-2 border-blue-400 bg-white px-2 py-0.5 text-xs font-black text-blue-900 shadow-lg">
-                  {zombie.fraction.n}/{zombie.fraction.d}
-                </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-gray-400 bg-gradient-to-b from-gray-600 to-gray-900 shadow-xl">
-                  <Skull className="h-8 w-8 text-gray-300" />
-                </div>
-                <div className="mt-1 h-1 w-10 overflow-hidden rounded-full bg-black/40">
-                  <div className="h-full bg-red-500" style={{ width: `${Math.max(0, Math.min(100, zombie.health / baseZombieHealth * 100))}%` }} />
-                </div>
-              </motion.div>
-            ))}
+            {zombies.map((zombie) => {
+              const frameList = FRAMES_BY_STATE[zombie.state] ?? zombieWalkFrames;
+              const frame = frameList[zombie.frameIndex % frameList.length] ?? zombieWalkFrames[0];
+              return (
+                <motion.div
+                  key={zombie.id}
+                  initial={{ opacity: 0, x: 40 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, scale: 0.7 }}
+                  className="absolute flex flex-col items-center gap-1"
+                  style={{
+                    top: `${10 + zombie.lane * 22}%`,
+                    left: `${zombie.x}%`,
+                    width: `${ZOMBIE_SIZE}px`,
+                  }}
+                >
+                  <img
+                    src={frame}
+                    alt=""
+                    className="h-[70px] w-auto object-contain drop-shadow-[0_8px_14px_rgba(2,6,23,0.45)]"
+                    draggable={false}
+                  />
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-black/40">
+                    <div
+                      className="h-full bg-emerald-300"
+                      style={{ width: `${Math.max(0, Math.min(100, (zombie.health / zombie.maxHealth) * 100))}%` }}
+                    />
+                  </div>
+                </motion.div>
+              );
+            })}
           </AnimatePresence>
 
           <div className="absolute right-3 top-3 rounded-full border border-amber-200/70 bg-[linear-gradient(180deg,rgba(251,191,36,0.98),rgba(245,158,11,0.98))] px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-amber-950 shadow-[0_8px_16px_rgba(2,6,23,0.24)]">
@@ -518,35 +500,38 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           </div>
         </div>
 
-        <div className="flex h-32 items-center justify-center gap-4 border-t-4 border-blue-400/50 bg-blue-950/80 px-8">
-          {DEFENDER_TYPES.map((type) => (
-            <button
-              key={type.id}
-              onClick={() => setSelectedDefenderId(type.id)}
-              className={`relative flex flex-col items-center rounded-2xl p-2 transition-all ${selectedDefenderId === type.id ? 'scale-110 border-2 border-white bg-white/20' : 'hover:bg-white/10'} ${brainPoints < type.cost ? 'opacity-50 grayscale' : ''}`}
-            >
-              <div className={`${type.color} flex h-14 w-14 items-center justify-center rounded-xl border-2 border-white/20 shadow-xl`}>
-                {iconFor(type.icon)}
-              </div>
-              <span className="mt-1 text-xs font-black text-yellow-400">{type.ratio.label}</span>
-              <div className="mt-0.5 flex items-center gap-1">
-                <Brain className="h-3 w-3 text-cyan-300" />
-                <span className="text-[10px] font-bold">{type.cost}</span>
-              </div>
-            </button>
-          ))}
-
-          <div className="ml-8 flex flex-col gap-1 border-l border-white/10 pl-8">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-blue-300">Selected</span>
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-dashed border-blue-400/50">
-              {selectedDefender ? (
-                <div className={`${selectedDefender.color} flex h-12 w-12 items-center justify-center rounded-lg`}>
-                  {iconFor(selectedDefender.icon)}
-                </div>
-              ) : (
-                <Crosshair className="h-6 w-6 text-blue-400/30" />
-              )}
+        <div className="mx-4 mt-4 rounded-3xl border border-blue-400/40 bg-blue-950/70 p-4 shadow-xl">
+          <div className="mb-3 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Target className="h-5 w-5 text-yellow-400" />
+              <span className="text-lg font-black text-white">Solve the sum</span>
             </div>
+            <div className="flex items-center gap-2 rounded-xl border border-blue-400/40 bg-blue-800/60 px-3 py-1">
+              <Brain className="h-4 w-4 text-cyan-200" />
+              <span className="text-sm font-bold">{feedback || 'Pick the correct answer.'}</span>
+            </div>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-center text-2xl font-black text-white">
+            {question.prompt} = ?
+          </div>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            {question.options.map((option, index) => (
+              <button
+                key={`${option}-${index}`}
+                type="button"
+                onClick={() => handleAnswer(index)}
+                disabled={locked}
+                className={`rounded-2xl border-2 px-3 py-3 text-lg font-black transition ${
+                  locked && selectedAnswer === index
+                    ? index === question.correctIndex
+                      ? 'border-emerald-300 bg-emerald-400/40 text-emerald-100'
+                      : 'border-rose-300 bg-rose-400/35 text-rose-100'
+                    : 'border-blue-300/50 bg-blue-800/60 text-white hover:bg-blue-700/70'
+                }`}
+              >
+                {option}
+              </button>
+            ))}
           </div>
         </div>
       </div>
@@ -555,5 +540,3 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 };
 
 export default MathsVsZombiesGame;
-
-
