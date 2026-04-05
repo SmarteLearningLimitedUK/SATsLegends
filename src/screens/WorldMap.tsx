@@ -424,7 +424,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
 
   const selectedIslandState = islandStates.find(entry => entry.island.id === selectedIslandId) ?? null;
   const actionDock = (
-    <div className="pointer-events-none absolute inset-x-0 bottom-[env(safe-area-inset-bottom)] z-40 flex justify-center">
+    <div className="pointer-events-none fixed inset-x-0 bottom-[env(safe-area-inset-bottom)] z-50 flex justify-center">
       <div className="pointer-events-auto flex items-center gap-2 rounded-[1.2rem] border border-cyan-100/30 bg-slate-950/70 px-3 py-2 shadow-[0_12px_24px_rgba(2,6,23,0.4)]">
         <button
           type="button"

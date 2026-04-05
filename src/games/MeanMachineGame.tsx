@@ -7,7 +7,9 @@ import {
   Trophy,
   WandSparkles,
 } from 'lucide-react';
-import slotMachineImage from '../assets/redoslot.png';
+import meanMachineImage from '../assets/mean.png';
+import medianMachineImage from '../assets/median.png';
+import modeMachineImage from '../assets/mode.png';
 import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
@@ -37,16 +39,17 @@ interface MeanMachineGameProps {
 }
 
 const TOTAL_LEVELS = 10;
-const REEL_COUNT = 5;
+const REEL_COUNT = 8;
 const REEL_LAYOUT = [
-  { left: 16.8, width: 10.6 },
-  { left: 31.6, width: 10.6 },
-  { left: 46.4, width: 10.6 },
-  { left: 61.2, width: 10.6 },
-  { left: 76.0, width: 10.6 },
+  { left: 20, top: 37, width: 12, height: 12 },
+  { left: 36, top: 37, width: 12, height: 12 },
+  { left: 52, top: 37, width: 12, height: 12 },
+  { left: 68, top: 37, width: 12, height: 12 },
+  { left: 20, top: 52, width: 12, height: 12 },
+  { left: 36, top: 52, width: 12, height: 12 },
+  { left: 52, top: 52, width: 12, height: 12 },
+  { left: 68, top: 52, width: 12, height: 12 },
 ] as const;
-const REEL_TOP = 37.2;
-const REEL_HEIGHT = 30.8;
 
 const shuffle = <T,>(values: T[]): T[] => {
   const next = [...values];
@@ -73,8 +76,10 @@ const getActiveReelCount = (level: number) => {
 };
 
 const getActiveReelIndexes = (activeCount: number) => {
-  const start = Math.floor((REEL_COUNT - activeCount) / 2);
-  return Array.from({ length: activeCount }, (_, index) => start + index);
+  if (activeCount <= 4) return Array.from({ length: activeCount }, (_, index) => index);
+  const topRow = [0, 1, 2, 3];
+  const remaining = activeCount - 4;
+  return topRow.concat(Array.from({ length: remaining }, (_, index) => 4 + index));
 };
 
 const clampOddCount = (count: number) => {
@@ -310,16 +315,16 @@ const ReelWindow: React.FC<{
           ? { x: [0, -5, 5, -4, 4, 0], scale: [1, 0.98, 1] }
           : { y: 0, scale: 1 }}
     transition={spinning ? { duration: 0.16, repeat: Infinity, ease: 'linear' } : { duration: 0.35 }}
-    className={`relative flex h-full w-full items-center justify-center overflow-hidden rounded-[0.9rem] border shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_10px_18px_rgba(2,6,23,0.24)] ${
+    className={`relative flex h-full w-full items-center justify-center overflow-hidden rounded-[0.9rem] border shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_10px_18px_rgba(2,6,23,0.24)] ${
       isInactive
-        ? 'border-slate-500/22 bg-[linear-gradient(180deg,rgba(51,65,85,0.56),rgba(15,23,42,0.82))] opacity-65 saturate-0'
+        ? 'border-slate-200/40 bg-[linear-gradient(180deg,rgba(255,255,255,0.65),rgba(226,232,240,0.6))] opacity-70 saturate-0'
         : isMissing
-          ? 'border-amber-200/70 bg-[linear-gradient(180deg,rgba(250,204,21,0.22),rgba(245,158,11,0.1))]'
-          : 'border-cyan-100/24 bg-[linear-gradient(180deg,rgba(3,14,38,0.92),rgba(6,18,48,0.98))]'
+          ? 'border-amber-300/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(255,247,235,0.88))]'
+          : 'border-slate-200/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(241,245,249,0.94))]'
     }`}
   >
-    <div className="absolute inset-x-[10%] top-[12%] h-[35%] rounded-full bg-white/10 blur-sm" />
-    <div className={`relative z-10 text-[clamp(1.85rem,4.5vw,2.85rem)] font-black tracking-[-0.05em] ${isInactive ? 'text-slate-300/60' : isMissing ? 'text-amber-100' : 'text-white'}`}>
+    <div className="absolute inset-x-[10%] top-[12%] h-[35%] rounded-full bg-white/30 blur-sm" />
+    <div className={`relative z-10 text-[clamp(1.85rem,4.5vw,2.85rem)] font-black tracking-[-0.05em] ${isInactive ? 'text-slate-400/70' : 'text-slate-950'}`}>
       {isInactive ? '' : value}
     </div>
   </motion.div>
@@ -339,7 +344,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   const [XP, setXP] = useState(0);
   const [gameState, setGameState] = useState<GameState>('idle');
   const [round, setRound] = useState<RoundData | null>(null);
-  const [reelDisplay, setReelDisplay] = useState<Array<number | string>>(['?', '?', '?', '?', '?']);
+  const [reelDisplay, setReelDisplay] = useState<Array<number | string>>(Array.from({ length: REEL_COUNT }, () => '?'));
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showJackpot, setShowJackpot] = useState(false);
@@ -379,7 +384,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     setMachineShake(false);
     setReelSettled(false);
     setWrongPulse(false);
-    setReelDisplay(['?', '?', '?', '?', '?']);
+    setReelDisplay(Array.from({ length: REEL_COUNT }, () => '?'));
   }, [clearTimers]);
 
   useEffect(() => {
@@ -557,9 +562,15 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     return {
       eyebrow: 'Fix The Machine',
       title: 'Fix the missing reel.',
-        prompt: `Choose the number that repairs the mean of ${round.activeReelIndexes.length} reels.`,
-      };
+      prompt: `Choose the number that repairs the mean of ${round.activeReelIndexes.length} reels.`,
+    };
   }, [round]);
+
+  const machineImage = useMemo(() => {
+    if (round?.mode === 'median') return medianMachineImage;
+    if (round?.mode === 'mode') return modeMachineImage;
+    return meanMachineImage;
+  }, [round?.mode]);
 
   return (
     <div className="relative h-full w-full overflow-hidden select-none text-white">
@@ -595,7 +606,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
 
                     <div className="relative w-full max-w-[24rem] md:max-w-[26rem]" style={{ aspectRatio: '4 / 5' }}>
                       <img
-                        src={slotMachineImage}
+                        src={machineImage}
                         alt="Mean Machine slot machine"
                         draggable={false}
                         className="pointer-events-none absolute inset-0 z-[12] h-full w-full object-contain"
@@ -607,9 +618,9 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                           className="absolute z-20"
                           style={{
                             left: `${REEL_LAYOUT[index].left}%`,
-                            top: `${REEL_TOP}%`,
+                            top: `${REEL_LAYOUT[index].top}%`,
                             width: `${REEL_LAYOUT[index].width}%`,
-                            height: `${REEL_HEIGHT}%`,
+                            height: `${REEL_LAYOUT[index].height}%`,
                           }}
                         >
                           <ReelWindow
