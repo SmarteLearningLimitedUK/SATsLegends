@@ -16,6 +16,9 @@ export interface ScreenFlowController {
   goToGameplay: () => void;
   goToWellbeingHub: () => void;
   goToWellbeingActivity: () => void;
+  goToShop: () => void;
+  goToAchievements: () => void;
+  goToParentDashboard: () => void;
   handleIslandSelect: (island: IslandData) => void;
   handleLevelSelect: (level: LevelData) => void;
   handleGlobalDockBack: () => void;
@@ -38,6 +41,9 @@ export const useScreenFlow = (): ScreenFlowController => {
   const goToGameplay = useCallback(() => setScreen('gameplay'), []);
   const goToWellbeingHub = useCallback(() => setScreen('wellbeing_hub'), []);
   const goToWellbeingActivity = useCallback(() => setScreen('wellbeing_activity'), []);
+  const goToShop = useCallback(() => setScreen('shop'), []);
+  const goToAchievements = useCallback(() => setScreen('achievements_tracker'), []);
+  const goToParentDashboard = useCallback(() => setScreen('parent_dashboard'), []);
 
   const handleIslandSelect = useCallback((island: IslandData) => {
     setSelectedIsland(island);
@@ -66,7 +72,7 @@ export const useScreenFlow = (): ScreenFlowController => {
       return;
     }
 
-    if (screen === 'shop' || screen === 'profile' || screen === 'settings' || screen === 'parent_dashboard') {
+    if (screen === 'shop' || screen === 'profile' || screen === 'settings' || screen === 'parent_dashboard' || screen === 'achievements_tracker') {
       goToHome();
       return;
     }
@@ -94,6 +100,9 @@ export const useScreenFlow = (): ScreenFlowController => {
     goToGameplay,
     goToWellbeingHub,
     goToWellbeingActivity,
+    goToShop,
+    goToAchievements,
+    goToParentDashboard,
     handleIslandSelect,
     handleLevelSelect,
     handleGlobalDockBack,

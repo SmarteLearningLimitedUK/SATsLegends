@@ -4,6 +4,8 @@ import AvatarSelect from '../screens/AvatarSelect';
 import WorldMap from '../screens/WorldMap';
 import IslandLevels from '../screens/IslandLevels';
 import ParentDashboard from '../screens/ParentDashboard';
+import CharacterShop from '../screens/CharacterShop';
+import AchievementTracker from '../screens/AchievementTracker';
 import WellbeingHub from '../wellbeing/WellbeingHub';
 import { WELLBEING_ACTIVITIES, WELLBEING_ACTIVITY_BY_ISLAND, WELLBEING_BY_ID } from '../wellbeing/data';
 import { WellbeingActivityId } from '../wellbeing/types';
@@ -67,6 +69,10 @@ interface AppRouterProps {
   calmTokens: number;
   onGameplayVictory: (stars: number, XP: number) => void;
   onGameplayOver: (XP: number) => void;
+  onOpenShop: () => void;
+  onOpenAchievements: () => void;
+  onOpenParentReport: () => void;
+  onUpdatePlayer: (updater: (prev: PlayerData) => PlayerData) => void;
 }
 
 export const AppRouter: React.FC<AppRouterProps> = ({
@@ -102,6 +108,10 @@ export const AppRouter: React.FC<AppRouterProps> = ({
   calmTokens,
   onGameplayVictory,
   onGameplayOver,
+  onOpenShop,
+  onOpenAchievements,
+  onOpenParentReport,
+  onUpdatePlayer,
 }) => {
   const [showInlineHint, setShowInlineHint] = useState(false);
 
@@ -487,7 +497,15 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       );
 
     case 'world_map':
-      return <WorldMap player={player} onSelectIsland={onSelectIsland} />;
+      return (
+        <WorldMap
+          player={player}
+          onSelectIsland={onSelectIsland}
+          onOpenShop={onOpenShop}
+          onOpenAchievements={onOpenAchievements}
+          onOpenParentReport={onOpenParentReport}
+        />
+      );
 
     case 'island_levels':
       return selectedIsland ? (
@@ -502,6 +520,18 @@ export const AppRouter: React.FC<AppRouterProps> = ({
           onOpenWellbeing={() => onOpenWellbeingActivity(WELLBEING_ACTIVITY_BY_ISLAND[selectedIsland.id])}
         />
       ) : null;
+
+    case 'shop':
+      return (
+        <CharacterShop
+          player={player}
+          onBack={onGoHome}
+          onUpdatePlayer={onUpdatePlayer}
+        />
+      );
+
+    case 'achievements_tracker':
+      return <AchievementTracker player={player} onBack={onGoHome} />;
 
     case 'wellbeing_hub':
       return (
@@ -587,13 +617,12 @@ export const AppRouter: React.FC<AppRouterProps> = ({
     case 'parent_dashboard':
       return <ParentDashboard player={player} onBack={onGoHome} />;
 
-    case 'shop':
     case 'profile':
     case 'settings':
       return (
         <GameScreenShell className="my-auto flex items-center justify-center">
           <FramedPanel variant="surface" className="flex w-full max-w-md flex-col gap-4 p-4 text-center md:max-w-2xl md:gap-6 md:p-8">
-            <PremiumHeaderBar eyebrow="Adventure menu" title={screen === 'shop' ? 'Shop' : screen === 'profile' ? 'Profile' : 'Settings'} className="justify-center text-center" />
+            <PremiumHeaderBar eyebrow="Adventure menu" title={screen === 'profile' ? 'Profile' : 'Settings'} className="justify-center text-center" />
             <RewardPanel className="mx-auto max-w-xl">
               <p className="text-sm font-black leading-relaxed text-amber-950 md:text-base">
                 This screen is parked for the next premium UI pass. The main adventure flow is live and fully playable.

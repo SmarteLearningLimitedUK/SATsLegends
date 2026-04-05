@@ -337,8 +337,8 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
           </div>
         </section>
 
-        <section className="flex min-h-0 flex-1 flex-col gap-2 px-3 pb-3 sm:gap-3 sm:px-4 sm:pb-4 md:px-5 md:pb-5">
-          <div className="min-h-0 flex-[1.25] rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,61,0.85),rgba(4,12,30,0.92))] p-3 shadow-[0_16px_40px_rgba(3,12,30,0.26)] sm:p-4 md:p-5">
+        <section className="flex min-h-0 flex-1 flex-col gap-3 px-3 pb-3 sm:gap-4 sm:px-4 sm:pb-4 md:px-5 md:pb-5">
+          <div className="min-h-0 flex-[1] rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,61,0.85),rgba(4,12,30,0.92))] p-3 shadow-[0_16px_40px_rgba(3,12,30,0.26)] sm:p-4 md:p-5">
             <div className="mb-2 flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-black uppercase tracking-[0.24em] text-emerald-300">Live Graph</h3>
@@ -353,7 +353,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
               ref={chartWrapRef}
               onPointerDown={handleProbePointerDown}
               onPointerMove={handleProbePointerMove}
-              className="relative h-full min-h-[14rem] w-full rounded-2xl border border-slate-700/60 bg-slate-950/35 p-2 sm:min-h-[16rem] md:min-h-[17rem]"
+              className="relative h-full min-h-[12.5rem] w-full rounded-2xl border border-slate-700/60 bg-slate-950/35 p-2 sm:min-h-[14rem] md:min-h-[15rem]"
             >
               {round && (
                 <ResponsiveContainer width="100%" height="100%">
@@ -419,7 +419,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 pt-1">
             {round?.options.map(option => {
               const isSelected = selectedAnswer === option;
               const isCorrect = gameState === 'success' && option === round.correctAnswer;

@@ -463,7 +463,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
     submitAnswer(option);
   };
   const shapeZoom = currentLevel >= 11 ? 0.92 : currentLevel >= 7 ? 0.88 : 0.84;
-  const labelFontSize = currentLevel >= 11 ? 5.6 : 5.2;
+  const labelFontSize = currentLevel >= 11 ? 4.6 : 4.2;
 
   return (
     <div className="relative h-full w-full overflow-hidden bg-[#030817]">

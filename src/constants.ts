@@ -177,9 +177,6 @@ export const ISLANDS: IslandData[] = [
         { id: 4, stars: 0, isLocked: false, blueprintKey: 'arithmetic_gauntlet', displayName: 'Arithmetic Gauntlet', gameType: 'calculation_clash' },
         { id: 5, stars: 0, isLocked: false, blueprintKey: 'remainder_run', displayName: 'Remainder Run', gameType: 'calculation_clash' },
       ],
-      [
-        { id: 1, stars: 0, isLocked: false, blueprintKey: 'market_mayhem', displayName: 'Market Mayhem', gameType: 'monster_market' },
-      ],
     ),
   },
   {

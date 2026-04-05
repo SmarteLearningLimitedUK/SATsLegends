@@ -76,7 +76,7 @@ const GameContainerView: React.FC<GameContainerViewProps> = (props) => {
         minimalDecor={sceneMinimalDecor}
         className="aaa-game-backdrop"
       />
-      <div className={`aaa-game-stage shared-game-container mission-game-stage relative z-10 mx-auto grid h-full min-h-0 w-full max-w-full flex-1 grid-rows-[auto_minmax(0,1fr)_auto] gap-2 px-0 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] pt-[0.2rem] md:gap-3 md:px-0 md:pb-[calc(env(safe-area-inset-bottom)+0.75rem)] ${stageClassName}`}>
+      <div className={`aaa-game-stage shared-game-container mission-game-stage relative z-10 mx-auto grid h-full min-h-0 w-full max-w-full flex-1 grid-rows-[auto_minmax(0,1fr)_auto] gap-1 px-0 pb-[calc(env(safe-area-inset-bottom)+0.08rem)] pt-[0.06rem] md:gap-1.5 md:px-0 md:pb-[calc(env(safe-area-inset-bottom)+0.12rem)] ${stageClassName}`}>
         <div className="aaa-zone aaa-zone-objective w-full">
           <div
             className={`aaa-objective-shell mission-objective-shell relative w-full ${

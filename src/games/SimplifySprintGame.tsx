@@ -402,7 +402,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
                 onClick={() => handleFactor(factor)}
                 className={`rounded-[1.1rem] border px-2 py-4 shadow-[0_14px_26px_rgba(0,0,0,0.45)] transition disabled:opacity-70 ${
                   isValid
-                    ? 'border-emerald-200/50 bg-[linear-gradient(180deg,rgba(16,185,129,0.3),rgba(15,23,42,0.86))] hover:bg-[linear-gradient(180deg,rgba(34,197,94,0.36),rgba(15,23,42,0.86))]'
+                    ? 'border-cyan-200/45 bg-[linear-gradient(180deg,rgba(56,189,248,0.26),rgba(15,23,42,0.86))] hover:bg-[linear-gradient(180deg,rgba(59,130,246,0.3),rgba(15,23,42,0.86))]'
                     : 'border-amber-200/40 bg-[linear-gradient(180deg,rgba(251,146,60,0.28),rgba(15,23,42,0.86))] hover:bg-[linear-gradient(180deg,rgba(244,114,182,0.28),rgba(15,23,42,0.86))]'
                 }`}
               >

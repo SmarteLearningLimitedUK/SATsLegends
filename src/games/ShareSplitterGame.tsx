@@ -13,7 +13,6 @@ import birthdayCakeAsset from '../assets/birthdaycake.png';
 import cakeSliceAsset from '../assets/cakeslice.png';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import GameRulesModal from '../components/GameRulesModal';
-import shareSplitterBackdrop from '../assets/level_backgrounds/take_out.png';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface ShareSplitterGameProps extends MiniGameShellContractProps {
@@ -399,7 +398,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   };
 
   return (
-    <GameUiShell backgroundImage={shareSplitterBackdrop}>
+    <GameUiShell>
       <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+3.5rem)] pt-3 text-white">
         <section className="shrink-0">
           <GameTopBar
@@ -455,9 +454,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                         className={`relative flex h-[92px] w-full flex-col items-center justify-center rounded-full border p-2 text-center shadow-[0_12px_20px_rgba(2,6,23,0.24)] transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.03]' : dragSlice && !locked ? 'scale-[1.01]' : ''}`}
                         aria-label={`Plate ${index + 1}. ${plate.currentCakeCount} of ${plate.targetCakeCount} cakes placed.`}
                       >
-                        <div className="absolute right-1 top-1 rounded-full bg-black/36 px-1.5 py-0.5 text-[10px] font-black text-white">
-                          {plate.currentCakeCount}/{plate.targetCakeCount}
-                        </div>
                         <div className="grid h-full w-full grid-cols-3 place-items-center gap-0.5">
                           {plates[index].slice(0, 6).map((sliceId) => (
                             <img

@@ -142,7 +142,7 @@ export const PremiumHeaderBar: React.FC<PremiumHeaderBarProps> = ({
 export const HeroPlayfieldCard: React.FC<WrapperProps> = ({ children, className = '' }) => (
   <div
     className={cn(
-      'game-shell-zone game-shell-zone-playfield licensed-board-frame mission-panel-shell structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden p-2.5 md:p-4',
+      'game-shell-zone game-shell-zone-playfield licensed-board-frame mission-panel-shell structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden p-1.5 md:p-2.5',
       ROLE_CARD_BASE,
       ROLE_RADIUS_CARD,
       className,
@@ -164,7 +164,7 @@ export const AnswerClusterCard: React.FC<WrapperProps> = ({ children, className 
   <div className={cn('game-shell-zone game-shell-zone-actions shrink-0', className)}>
     <div
       className={cn(
-        'licensed-game-card-dark mission-panel-shell p-2.5 md:p-3',
+        'licensed-game-card-dark mission-panel-shell p-1.5 md:p-2',
         ROLE_CARD_BASE,
         ROLE_RADIUS_CARD,
       )}
@@ -422,7 +422,7 @@ export const GameScreenTemplate: React.FC<GameScreenTemplateProps> = ({
   <GameScreenShell className={cn('game-screen-template', className)}>
     {background}
     {decorations}
-    <div className="game-shell-content relative z-10 mx-auto flex h-full min-h-0 w-full max-w-full flex-1 flex-col gap-1.5 px-1.5 pb-[calc(env(safe-area-inset-bottom)+0.3rem)] pt-[calc(env(safe-area-inset-top)+0.15rem)] md:gap-2.5 md:px-2 md:pb-[calc(env(safe-area-inset-bottom)+0.45rem)] md:pt-[calc(env(safe-area-inset-top)+0.3rem)]">
+    <div className="game-shell-content relative z-10 mx-auto flex h-full min-h-0 w-full max-w-full flex-1 flex-col gap-1 px-1 pb-[calc(env(safe-area-inset-bottom)+0.08rem)] pt-[calc(env(safe-area-inset-top)+0.04rem)] md:gap-1.5 md:px-1.5 md:pb-[calc(env(safe-area-inset-bottom)+0.1rem)] md:pt-[calc(env(safe-area-inset-top)+0.08rem)]">
       <div className="game-shell-zone game-shell-zone-hud shrink-0">{hud}</div>
       {titleStrip ? <div className="game-shell-zone game-shell-zone-title shrink-0">{titleStrip}</div> : null}
       <div className="game-shell-zone game-shell-zone-playfield-wrapper min-h-0 flex-1">

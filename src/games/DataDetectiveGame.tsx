@@ -245,7 +245,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
       )}
 
       <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.25rem)]' : ''}`}>
-        <section className="z-10 flex min-h-0 w-full flex-[0.42] flex-col gap-2 overflow-hidden border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] p-3 sm:p-4 md:w-1/2 md:flex-1 md:gap-3 md:border-b-0 md:border-r md:p-5">
+        <section className="z-10 flex min-h-0 w-full flex-[0.42] flex-col gap-2.5 overflow-hidden border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] p-3 sm:p-4 md:w-1/2 md:flex-1 md:gap-3 md:border-b-0 md:border-r md:p-5">
           <div className="rounded-xl border border-cyan-100/16 bg-slate-900/40 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-cyan-100/80">
             {caseBrief}
           </div>
@@ -267,15 +267,15 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(255,255,255,0.14),rgba(9,24,58,0.6))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-4 md:p-4">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.3)_1px,transparent_1px)] opacity-7 [background-size:20px_20px]" />
 
-            <div className="relative w-full" style={{ height: 'clamp(10rem, 26vh, 14rem)' }}>
+            <div className="relative w-full" style={{ height: 'clamp(9rem, 22vh, 12.5rem)' }}>
               <ResponsiveContainer width="100%" height="100%">
                 {chartType === 'bar' ? (
-                    <BarChart data={currentCase} margin={{ top: 16, right: 12, left: -12, bottom: 8 }}>
+                    <BarChart data={currentCase} margin={{ top: 12, right: 10, left: -6, bottom: 6 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
                       <XAxis
                         dataKey="name"
                         stroke="#a8a29e"
-                        fontSize={10}
+                        fontSize={9}
                         tickLine={false}
                         axisLine={false}
                         interval={0}
@@ -284,11 +284,11 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                       ticks={barTicks}
                       domain={[0, barAxisMax]}
                       stroke="#a8a29e"
-                      fontSize={10}
+                      fontSize={9}
                       tickLine={false}
                       axisLine={false}
                       allowDecimals={false}
-                      width={24}
+                      width={28}
                     />
                     <Tooltip
                       contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #444', borderRadius: '8px', fontSize: '10px' }}
@@ -302,18 +302,18 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                     </Bar>
                   </BarChart>
                 ) : (
-                  <PieChart margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
+                  <PieChart margin={{ top: 4, right: 4, left: 4, bottom: 4 }}>
                   <Pie
                     data={currentCase}
                     cx="50%"
                     cy="50%"
-                    innerRadius="34%"
-                    outerRadius="66%"
+                    innerRadius="32%"
+                    outerRadius="62%"
                     paddingAngle={3}
                     dataKey="amount"
                     isAnimationActive={false}
                     label={({ cx, cy, midAngle, innerRadius, outerRadius, value }) => {
-                        const radius = innerRadius + (outerRadius - innerRadius) * 0.7;
+                        const radius = innerRadius + (outerRadius - innerRadius) * 0.68;
                         const rad = (-midAngle * Math.PI) / 180;
                         const x = cx + radius * Math.cos(rad);
                         const y = cy + radius * Math.sin(rad);
@@ -322,7 +322,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                             x={x}
                             y={y}
                             fill="#f8fafc"
-                            fontSize={11}
+                            fontSize={10}
                             fontWeight={700}
                             textAnchor="middle"
                             dominantBaseline="central"
@@ -344,16 +344,16 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               </ResponsiveContainer>
             </div>
 
-            <div className="mt-3 grid grid-cols-2 gap-2 sm:gap-2">
+            <div className="mt-2 grid grid-cols-2 gap-1.5 sm:gap-2">
               {currentCase.map(item => (
-                <div key={item.name} className="flex items-center justify-between gap-2 rounded-lg border border-white/10 bg-white/8 px-2.5 py-2">
+                <div key={item.name} className="flex items-center justify-between gap-2 rounded-lg border border-white/10 bg-white/8 px-2.5 py-1.5">
                   <div className="flex items-center gap-2">
                   <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
-                  <span className="min-w-0 truncate text-[10px] font-bold uppercase tracking-wide text-stone-300">
+                  <span className="min-w-0 truncate text-[9px] font-bold uppercase tracking-wide text-stone-300">
                     {item.name}
                   </span>
                   </div>
-                  <span className="text-xs font-black text-white">{item.amount}</span>
+                  <span className="text-[11px] font-black text-white">{item.amount}</span>
                 </div>
               ))}
             </div>

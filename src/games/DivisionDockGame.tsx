@@ -245,12 +245,11 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
   };
 
   return (
-    <GameScreenShell className="overflow-hidden">
-      <GameplaySceneBackdrop gameType="calculation_clash" />
+    <GameScreenShell className="overflow-hidden bg-transparent">
 
       <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+3.2rem)] pt-[calc(env(safe-area-inset-top)+4.2rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+3.6rem)] md:pt-[calc(env(safe-area-inset-top)+4.6rem)]">
         <PuzzleStage className="w-full max-w-5xl min-h-0 flex-1 rounded-[2rem] p-2 md:rounded-[2.4rem] md:p-3">
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_24%,rgba(15,23,42,0.2)_100%)]" />
+          <div className="absolute inset-0 bg-transparent" />
 
           <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-2.5 md:px-3 md:pb-3 md:pt-3">
             <div className="flex justify-center">
@@ -294,7 +293,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
               <div className="licensed-game-card-dark flex min-h-0 flex-col rounded-[1.3rem] border border-white/14 p-2.5 shadow-[0_16px_28px_rgba(2,6,23,0.22)] md:rounded-[1.6rem] md:p-4">
                 <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Dockyard</div>
 
-                <div className="mt-2 grid min-h-[10rem] flex-1 grid-cols-1 gap-2 md:mt-3 md:gap-3">
+                <div className="mt-2 grid min-h-0 flex-1 grid-cols-1 gap-2 md:mt-3 md:gap-3">
                   {boatLoads.map((count, index) => (
                     <button
                       key={`boat-${index}`}
@@ -303,7 +302,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
                       disabled={isFinished || remainingGoods <= 0}
                       className="flex items-center gap-3 rounded-[1rem] border border-white/12 bg-[linear-gradient(180deg,rgba(56,189,248,0.18),rgba(15,23,42,0.7))] px-3 py-2 text-left shadow-[0_10px_18px_rgba(2,6,23,0.2)] transition active:scale-[0.98] disabled:opacity-60"
                     >
-                      <div className="relative h-16 w-20 overflow-hidden rounded-lg border border-white/18 bg-black/30">
+                      <div className="relative h-16 w-20 overflow-hidden rounded-lg border border-white/18 bg-transparent">
                         <div
                           className="absolute inset-0"
                           style={{

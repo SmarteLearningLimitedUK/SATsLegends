@@ -96,6 +96,74 @@ export interface ShopItem {
   levelRequired?: number;
 }
 
+export type ShopCategory = 'outfit' | 'hat' | 'accessory' | 'handheld' | 'trail' | 'skin';
+export type ShopUnlockType = 'currency' | 'event' | 'starter';
+export type ShopRarity = 'Common' | 'Rare' | 'Epic' | 'Legendary';
+
+export interface CosmeticShopItem {
+  itemId: string;
+  name: string;
+  category: ShopCategory;
+  price: number;
+  rarity?: ShopRarity;
+  iconKey?: string;
+  unlockType: ShopUnlockType;
+  characterCompatibility?: string[];
+}
+
+export interface PlayerShopState {
+  ownedItemIds: string[];
+  equippedByCategory: Record<ShopCategory, string | null>;
+}
+
+export interface TopicStat {
+  topicId: string;
+  attempts: number;
+  completions: number;
+  accuracy: number;
+  avgTimeSec: number;
+  lastPlayed: number | null;
+}
+
+export interface GameStat {
+  gameId: string;
+  attempts: number;
+  correct: number;
+  incorrect: number;
+  sessions: number;
+  completions: number;
+  accuracy: number;
+  avgScore: number;
+  totalTimeSec: number;
+  lastPlayed: number | null;
+}
+
+export interface PlayerTelemetry {
+  sessionsPlayed: number;
+  totalPlayTimeSec: number;
+  correctAnswers: number;
+  incorrectAnswers: number;
+  currentCorrectStreak: number;
+  bestCorrectStreak: number;
+  topicStats: Record<string, TopicStat>;
+  gameStats: Record<string, GameStat>;
+}
+
+export interface PlayerAchievementState {
+  earned: string[];
+  progress: Record<string, number>;
+  claimed: string[];
+  updatedAt?: number;
+}
+
+export interface ParentReportSummary {
+  needsPractice: string[];
+  mostPlayed: string[];
+  nextFocus: string[];
+  excelling: string[];
+  updatedAt: number;
+}
+
 export interface Achievement {
   id: string;
   title: string;
@@ -131,6 +199,10 @@ export interface PlayerData {
   customSpriteUrl?: string;
   achievements: string[];
   calmTokens?: number;
+  shopState?: PlayerShopState;
+  telemetry?: PlayerTelemetry;
+  achievementState?: PlayerAchievementState;
+  reportCache?: ParentReportSummary;
   stats: {
     totalStars: number;
     totalGamesPlayed: number;
@@ -164,6 +236,7 @@ export type GameScreen =
   | 'wellbeing_activity'
   | 'level_result'
   | 'shop'
+  | 'achievements_tracker'
   | 'profile'
   | 'settings'
   | 'parent_dashboard';

@@ -1,8 +1,10 @@
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { DEFAULT_AVATAR_ID } from '../assets/characters';
-import { ACHIEVEMENTS, AVATARS, INITIAL_DAILY_QUESTS, ISLANDS } from '../constants';
+import { AVATARS, INITIAL_DAILY_QUESTS, ISLANDS } from '../constants';
 import { IslandData, LevelData, PlayerData } from '../types';
 import { LevelResultState } from './types';
+import { createTelemetryState } from '../systems/progression/telemetry';
+import { getStarterItemIds } from '../systems/progression/shopCatalog';
 
 export const PLAYER_STORAGE_KEY = 'maths_quest_player';
 const ALL_ISLAND_IDS = ISLANDS.map(island => island.id);
@@ -28,6 +30,27 @@ const createDefaultPlayer = (parsed?: Partial<PlayerData> | null): PlayerData =>
   achievements: parsed?.achievements || [],
   customSpriteUrl: parsed?.customSpriteUrl,
   calmTokens: parsed?.calmTokens || 0,
+  shopState: {
+    ownedItemIds: Array.from(new Set([
+      ...getStarterItemIds(),
+      ...(parsed?.shopState?.ownedItemIds || []),
+    ])),
+    equippedByCategory: parsed?.shopState?.equippedByCategory || {
+      outfit: null,
+      hat: null,
+      accessory: null,
+      handheld: null,
+      trail: null,
+      skin: null,
+    },
+  },
+  telemetry: createTelemetryState(parsed?.telemetry),
+  achievementState: parsed?.achievementState || {
+    earned: parsed?.achievements || [],
+    progress: {},
+    claimed: [],
+    updatedAt: Date.now(),
+  },
   stats: {
     totalStars: parsed?.stats?.totalStars || 0,
     totalGamesPlayed: parsed?.stats?.totalGamesPlayed || 0,
@@ -150,7 +173,7 @@ export const usePlayerProgression = (): PlayerProgressionController => {
     const islandUnlockedName = selectedLevel.isBoss && nextIslandId <= ISLANDS.length
       ? ISLANDS.find(island => island.id === nextIslandId)?.name
       : undefined;
-    let achievementsUnlocked: string[] = [];
+    const achievementsUnlocked: string[] = [];
 
     setPlayer(prev => {
       const completedLevels = { ...prev.completedLevels };
@@ -183,28 +206,10 @@ export const usePlayerProgression = (): PlayerProgressionController => {
         totalCoinsEarned: (prev.stats?.totalCoinsEarned || 0) + earnedCoins,
       };
 
-      const achievements = [...(prev.achievements || [])];
-      const totalCompletedLevels = Object.values(completedLevels).flat().length;
       const nextCoinTotal = prev.coins + earnedCoins;
       const unlockedIslands = prev.unlockedIslands.includes(nextIslandId) || !selectedLevel.isBoss
         ? prev.unlockedIslands
         : [...prev.unlockedIslands, nextIslandId].filter(id => id <= ISLANDS.length);
-
-      ACHIEVEMENTS.forEach(achievement => {
-        if (achievements.includes(achievement.id)) return;
-
-        let unlocked = false;
-        if (achievement.type === 'levels' && totalCompletedLevels >= achievement.target) unlocked = true;
-        if (achievement.type === 'stars' && stats.totalStars >= achievement.target) unlocked = true;
-        if (achievement.type === 'coins' && nextCoinTotal >= achievement.target) unlocked = true;
-        if (achievement.type === 'streak' && prev.dailyStreak >= achievement.target) unlocked = true;
-
-        if (unlocked) achievements.push(achievement.id);
-      });
-
-      achievementsUnlocked = achievements
-        .filter(id => !prev.achievements.includes(id))
-        .map(id => ACHIEVEMENTS.find(achievement => achievement.id === id)?.title || id);
 
       return {
         ...prev,
@@ -216,7 +221,7 @@ export const usePlayerProgression = (): PlayerProgressionController => {
         unlockedIslands,
         dailyQuests: updatedQuests,
         stats,
-        achievements,
+        achievements: prev.achievements || [],
       };
     });
 

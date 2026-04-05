@@ -4,10 +4,15 @@ import { X } from 'lucide-react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
 import universalMapPoster from '../assets/maps/Operations Outpost (768 x 2500 px).png';
+import AssetIcon from '../components/AssetIcon';
+import ParentGateOverlay from '../components/ParentGateOverlay';
 
 interface WorldMapProps {
   player: PlayerData;
   onSelectIsland: (island: IslandData) => void;
+  onOpenShop: () => void;
+  onOpenAchievements: () => void;
+  onOpenParentReport: () => void;
 }
 
 type AmbientRegion = {
@@ -390,8 +395,15 @@ const renderAmbientEffect = (effect: AmbientRegion['effect']) => {
   }
 };
 
-const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
+const WorldMap: React.FC<WorldMapProps> = ({
+  player,
+  onSelectIsland,
+  onOpenShop,
+  onOpenAchievements,
+  onOpenParentReport,
+}) => {
   const [selectedIslandId, setSelectedIslandId] = useState<number | null>(null);
+  const [showParentGate, setShowParentGate] = useState(false);
   const islandStates = useMemo<IslandState[]>(() => (
     ISLANDS.map(island => {
       const starredLevels = island.levels.filter(level => {
@@ -523,7 +535,47 @@ const WorldMap: React.FC<WorldMapProps> = ({ player, onSelectIsland }) => {
             </div>
           </motion.div>
         ) : null}
-      </AnimatePresence>    </div>
+      </AnimatePresence>
+    </div>
+
+    <div className="pointer-events-none absolute inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+0.8rem)] z-40 flex justify-center">
+      <div className="pointer-events-auto flex items-center gap-2 rounded-[1.2rem] border border-cyan-100/30 bg-slate-950/70 px-3 py-2 shadow-[0_12px_24px_rgba(2,6,23,0.4)]">
+        <button
+          type="button"
+          onClick={onOpenShop}
+          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white"
+          aria-label="Open shop"
+        >
+          <AssetIcon name="coin" className="h-5 w-5" />
+        </button>
+        <button
+          type="button"
+          onClick={onOpenAchievements}
+          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white"
+          aria-label="Open achievements"
+        >
+          <AssetIcon name="trophy" className="h-5 w-5" />
+        </button>
+        <button
+          type="button"
+          onClick={() => setShowParentGate(true)}
+          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white"
+          aria-label="Open parent report"
+        >
+          <AssetIcon name="people" className="h-5 w-5" />
+        </button>
+      </div>
+    </div>
+
+    <ParentGateOverlay
+      isOpen={showParentGate}
+      onClose={() => setShowParentGate(false)}
+      onUnlock={() => {
+        setShowParentGate(false);
+        onOpenParentReport();
+      }}
+    />
+  </div>
   );
 };
 

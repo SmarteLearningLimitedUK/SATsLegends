@@ -605,9 +605,6 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                     ))
                   )}
                 </div>
-                <div className="absolute right-[14%] bottom-[16%] rounded-full bg-black/40 px-2 py-1 text-[10px] font-black text-white">
-                  {remainingSlices}
-                </div>
               </div>
             </div>
 

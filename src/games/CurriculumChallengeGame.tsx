@@ -1321,7 +1321,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
         style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.22) 1px, transparent 1px)', backgroundSize: '24px 24px' }}
       />
 
-      <div className="relative z-10 flex h-full min-h-0 flex-col gap-1 md:gap-4">
+      <div className={`relative z-10 flex h-full min-h-0 flex-col ${isChartChase ? 'gap-1 md:gap-2' : 'gap-1 md:gap-4'}`}>
 
         <div className={`licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.8rem] border border-white/10 ${isCalculationClash ? 'bg-[linear-gradient(180deg,rgba(9,34,58,0.86),rgba(7,17,31,0.62))]' : isPlaceValuePeaks ? 'bg-[linear-gradient(180deg,rgba(52,28,10,0.76),rgba(16,16,22,0.54))]' : 'bg-[linear-gradient(180deg,rgba(9,16,28,0.68),rgba(9,16,28,0.34))]'} shadow-[0_24px_64px_rgba(0,0,0,0.28)] md:rounded-[2.6rem]`}>
           <div className="flex min-h-0 flex-1 flex-col gap-1.5 p-1.5 md:gap-3 md:p-4">
@@ -1335,16 +1335,16 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                 : isChartChase
                   ? 'rounded-[1.35rem] border border-sky-200/30 bg-[linear-gradient(180deg,rgba(255,255,255,0.26),rgba(255,255,255,0.12))]'
                   : 'rounded-[1.35rem]'
-              } px-3 py-3 text-center md:rounded-[2rem] md:px-5 md:py-5`}>
+              } ${isChartChase ? 'px-2.5 py-2.5 md:px-4 md:py-3.5' : 'px-3 py-3 md:px-5 md:py-5'} text-center md:rounded-[2rem]`}>
               <div className={`absolute inset-x-5 top-0 h-20 rounded-full bg-gradient-to-br ${isPlaceValuePeaks ? 'from-yellow-200/18 via-orange-300/12 to-transparent' : theme.prompt} blur-3xl`} />
               <div className="relative z-10 flex flex-col items-center">
                 <div className={`${isPlaceValuePeaks ? 'mb-2 rounded-[0.9rem] border border-amber-200/24 bg-[linear-gradient(180deg,rgba(251,146,60,0.3),rgba(194,65,12,0.18))] px-3 py-1.5 text-amber-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]' : `casual-ribbon-chip mb-2 inline-flex items-center justify-center rounded-full px-3 py-1 text-[8px] font-black uppercase tracking-[0.18em] md:mb-3 md:px-4 md:py-1.5 md:text-[10px] ${theme.badge}`}`}>
                   {isPlaceValuePeaks ? 'Highest Number Dash' : meta.focus}
                 </div>
-                <div className={`${isCalculationClash ? 'text-[1.15rem]' : isPlaceValuePeaks ? 'text-[1.18rem]' : 'text-[1.28rem]'} max-w-[18rem] font-black text-white md:max-w-[30rem] leading-[0.95]`}>
+                <div className={`${isCalculationClash ? 'text-[1.15rem]' : isPlaceValuePeaks ? 'text-[1.18rem]' : isChartChase ? 'text-[1.05rem]' : 'text-[1.28rem]'} max-w-[18rem] font-black text-white md:max-w-[30rem] leading-[0.95]`}>
                   {formatFantasyPrompt(question.prompt)}
                 </div>
-                <div className="mt-1 max-w-[18rem] text-[9px] font-semibold leading-snug text-white/70 md:mt-2 md:max-w-[30rem] md:text-sm">
+                <div className={`mt-1 max-w-[18rem] font-semibold leading-snug text-white/70 md:mt-2 md:max-w-[30rem] ${isChartChase ? 'text-[8px] md:text-[11px]' : 'text-[9px] md:text-sm'}`}>
                   {question.sublabel}
                 </div>
               </div>
@@ -1364,13 +1364,13 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   className="flex min-h-0 w-full items-center justify-center overflow-hidden"
                 >
-                  <div className={`w-full overflow-hidden ${isChartChase ? 'max-h-[14rem] md:max-h-[18rem]' : 'max-h-[10.5rem] md:max-h-[15rem]'}`}>
+                  <div className={`w-full overflow-hidden ${isChartChase ? 'max-h-[10.5rem] md:max-h-[14rem]' : 'max-h-[10.5rem] md:max-h-[15rem]'}`}>
                     <div className="flex h-full w-full items-center justify-center">
                       {renderVisual(question.visual)}
                     </div>
                   </div>
                 </motion.div>
-                <div className={`w-full rounded-[1rem] px-3 py-2 text-center text-[9px] font-bold shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:rounded-[1.15rem] md:px-4 md:py-2.5 md:text-sm ${
+                <div className={`w-full rounded-[1rem] px-3 py-2 text-center font-bold shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:rounded-[1.15rem] md:px-4 md:py-2.5 ${isChartChase ? 'text-[8px] md:text-[11px]' : 'text-[9px] md:text-sm'} ${
                   isChartChase ? 'bg-white/18 text-slate-900' : 'bg-black/22 text-white/84'
                 }`}>
                   {visualCaption || statusMessage}
@@ -1378,7 +1378,9 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
               </div>
             </div>
 
-            <div className={`flex min-h-0 flex-1 flex-col ${isPlaceValuePeaks ? 'gap-2 md:gap-3' : 'gap-1.5 md:gap-2.5'}`}>
+            <div className={`flex min-h-0 flex-1 flex-col ${
+              isPlaceValuePeaks ? 'gap-2 md:gap-3' : isChartChase ? 'gap-1 md:gap-2' : 'gap-1.5 md:gap-2.5'
+            }`}>
               {question.options.map((option, index) => {
                 const isSelected = index === selectedIndex;
                 const isCorrect = feedback === 'correct' && index === question.answerIndex;
@@ -1403,7 +1405,9 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                           ? 'min-h-[3.55rem] rounded-[1.05rem] border border-sky-100/26 shadow-[0_16px_26px_rgba(0,0,0,0.24)] md:min-h-[4.7rem] md:rounded-[1.2rem] md:px-5 md:py-3'
                           : isCalculationClash
                             ? 'min-h-[3.55rem] rounded-[1.05rem] border border-sky-100/24 shadow-[0_16px_26px_rgba(0,0,0,0.24)] md:min-h-[4.7rem] md:rounded-[1.2rem] md:px-5 md:py-3'
-                          : 'min-h-[3.55rem] rounded-[999px] md:min-h-[4.7rem] md:px-5 md:py-3'
+                          : isChartChase
+                            ? 'min-h-[3.1rem] rounded-[1rem] md:min-h-[4rem] md:px-4 md:py-2.5'
+                            : 'min-h-[3.55rem] rounded-[999px] md:min-h-[4.7rem] md:px-5 md:py-3'
                     }`}
                   >
                     {!isPlaceValuePeaks && <img src={answerBackground} alt="" className="absolute inset-0 h-full w-full object-fill" draggable={false} />}

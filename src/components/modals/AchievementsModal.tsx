@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import AssetIcon from '../AssetIcon';
 import { PlayerData } from '../../types';
-import { ACHIEVEMENTS } from '../../constants';
+import { ACHIEVEMENT_CATALOG } from '../../systems/progression/achievementCatalog';
 import {
   FramedPanel,
   PremiumHeaderBar,
@@ -17,8 +17,8 @@ interface AchievementsModalProps {
 }
 
 const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, onClose, player }) => {
-  const unlockedCount = player.achievements?.length || 0;
-  const totalCount = ACHIEVEMENTS.length;
+  const unlockedCount = player.achievementState?.earned?.length || 0;
+  const totalCount = ACHIEVEMENT_CATALOG.length;
   const progress = Math.round((unlockedCount / totalCount) * 100) || 0;
 
   return (
@@ -65,8 +65,8 @@ const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, onClose, 
               </FramedPanel>
 
               <div className="grid w-full grid-cols-4 gap-1.5 md:gap-4">
-                {ACHIEVEMENTS.map((achievement, idx) => {
-                  const isUnlocked = (player.achievements || []).includes(achievement.id);
+                {ACHIEVEMENT_CATALOG.map((achievement, idx) => {
+                  const isUnlocked = (player.achievementState?.earned || []).includes(achievement.id);
 
                   return (
                     <motion.div
@@ -76,9 +76,11 @@ const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, onClose, 
                       transition={{ delay: idx * 0.05 }}
                       className={`licensed-game-card relative flex flex-col items-center rounded-[0.9rem] p-1.5 text-center text-white transition-all md:rounded-3xl md:p-4 ${isUnlocked ? 'shadow-[0_10px_20px_rgba(0,0,0,0.2)]' : 'opacity-60 grayscale'}`}
                     >
-                      <div className="relative z-10 text-xl md:text-5xl">{achievement.icon}</div>
+                      <div className="relative z-10 flex h-8 w-8 items-center justify-center md:h-12 md:w-12">
+                        <AssetIcon name={(achievement.iconKey as any) || 'trophy'} className="h-6 w-6 md:h-8 md:w-8" />
+                      </div>
                       <div className={`relative z-10 mt-1 text-[8px] font-black leading-tight md:mt-2 md:text-sm ${isUnlocked ? 'text-white drop-shadow-md' : 'text-white/50'}`}>
-                        {achievement.title}
+                        {achievement.name}
                       </div>
                       <div className="relative z-10 mt-1 hidden text-[10px] font-bold leading-tight text-white/70 md:block">
                         {achievement.description}

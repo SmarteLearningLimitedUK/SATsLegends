@@ -276,11 +276,11 @@ const ArithmeticGauntletGame: React.FC<ArithmeticGauntletGameProps> = ({
         className="absolute inset-0 h-full w-full object-cover object-center"
         draggable={false}
       />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,16,34,0.2),rgba(6,16,34,0.34)_56%,rgba(6,16,34,0.52))]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(6,16,34,0.2),rgba(6,16,34,0.34)_56%,rgba(6,16,34,0.52))]" />
 
       <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] pt-[calc(env(safe-area-inset-top)+4.8rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+2.4rem)] md:pt-[calc(env(safe-area-inset-top)+5.1rem)]">
         <PuzzleStage className="w-full max-w-5xl min-h-0 flex-1 rounded-[1.7rem] p-2 md:rounded-[2rem] md:p-3">
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_24%,rgba(15,23,42,0.2)_100%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_24%,rgba(15,23,42,0.2)_100%)]" />
 
           <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-2 md:px-4 md:pb-4">
             <div className="flex justify-center">

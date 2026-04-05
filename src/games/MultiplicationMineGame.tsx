@@ -27,8 +27,8 @@ interface MultiplicationQuestion {
 type Phase = 'playing' | 'exploding' | 'treasure';
 
 const ROCK_MAX_HEALTH = 5;
-const ROCK_SPRITE_GRID = { columns: 4, rows: 4 } as const;
-const ROCK_SPRITE_FRAMES = 6;
+const ROCK_SPRITE_GRID = { columns: 3, rows: 3 } as const;
+const ROCK_SPRITE_FRAMES = 9;
 
 const makeOptions = (correct: number) => {
   const spread = Math.max(3, Math.round(correct * 0.18));
@@ -81,8 +81,9 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
 
   const rockFrameIndex = useMemo(() => {
     const damage = ROCK_MAX_HEALTH - rockHealth;
-    const clamped = Math.max(0, Math.min(ROCK_SPRITE_FRAMES - 1, damage));
-    return phase === 'exploding' ? ROCK_SPRITE_FRAMES - 1 : clamped;
+    const progress = ROCK_MAX_HEALTH <= 0 ? 0 : damage / ROCK_MAX_HEALTH;
+    const frame = Math.round(progress * (ROCK_SPRITE_FRAMES - 1));
+    return phase === 'exploding' ? ROCK_SPRITE_FRAMES - 1 : Math.max(0, Math.min(ROCK_SPRITE_FRAMES - 1, frame));
   }, [phase, rockHealth]);
 
   const rockFramePosition = useMemo(() => {
@@ -209,10 +210,10 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
                   repeat: phase === 'playing' ? Infinity : 0,
                   repeatDelay: 1.2,
                 }}
-                className="relative h-[220px] w-[220px] overflow-hidden rounded-[2rem] border-[5px] border-[#5f7387] bg-[#1a2430] shadow-[0_30px_55px_rgba(0,0,0,0.6)]"
+                className="relative h-[240px] w-[240px] overflow-hidden bg-transparent shadow-[0_30px_55px_rgba(0,0,0,0.6)]"
               >
                 <div
-                  className="absolute inset-0"
+                  className="absolute inset-0 bg-transparent [mix-blend-mode:multiply]"
                   style={{
                     backgroundImage: `url(${rockSprite})`,
                     backgroundSize: `${ROCK_SPRITE_GRID.columns * 100}% ${ROCK_SPRITE_GRID.rows * 100}%`,

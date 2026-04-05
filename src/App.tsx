@@ -16,7 +16,7 @@ import LevelResultModal from './components/LevelResultModal';
 import GameRulesModal from './components/GameRulesModal';
 import GameActionDock from './components/GameActionDock';
 import UnifiedMiniGameHud from './components/UnifiedMiniGameHud';
-import { IslandData, LevelData } from './types';
+import { IslandData, LevelData, PlayerData } from './types';
 import { AppRouter } from './app/AppRouter';
 import { useScreenFlow } from './app/useScreenFlow';
 import { useOverlayState } from './app/useOverlayState';
@@ -25,7 +25,7 @@ import {
   GLOBAL_MINIGAME_HUD_DURATION_SECONDS,
   useGameplaySession,
 } from './app/useGameplaySession';
-import { GameplaySessionEventHandlers, GameplaySessionState } from './app/gameplaySessionContract';
+import { GameplaySessionEventHandlers, GameplaySessionEventPayload, GameplaySessionState } from './app/gameplaySessionContract';
 import { useMiniGameLifecycle } from './app/useMiniGameLifecycle';
 import { getBossVisualForLevel } from './bossVisuals';
 import { LevelResultState } from './app/types';
@@ -43,6 +43,8 @@ import { createWellbeingRewardLabel } from './wellbeing/integration/wellbeingRew
 import { shouldSuggestWellbeing, WellbeingSignals } from './wellbeing/integration/wellbeingSuggestion';
 import WellbeingCompleteModal from './wellbeing/WellbeingCompleteModal';
 import { WELLBEING_BY_ID } from './wellbeing/data';
+import { applyTelemetryEvent } from './systems/progression/telemetry';
+import { reconcileAchievementState } from './systems/progression/achievementCatalog';
 
 const App: React.FC = () => {
   const [stageScale, setStageScale] = useState(1);
@@ -62,6 +64,9 @@ const App: React.FC = () => {
     handleIslandSelect: selectIslandInFlow,
     handleLevelSelect: selectLevelInFlow,
     handleGlobalDockBack,
+    goToShop,
+    goToAchievements,
+    goToParentDashboard,
   } = useScreenFlow();
 
   const {
@@ -76,6 +81,18 @@ const App: React.FC = () => {
     claimQuest,
     applyGameVictory,
   } = usePlayerProgression();
+
+  const handleUpdatePlayer = useCallback((updater: (prev: PlayerData) => PlayerData) => {
+    setPlayer((prev) => {
+      const next = updater(prev);
+      const achievementState = reconcileAchievementState(next);
+      return {
+        ...next,
+        achievementState,
+        achievements: achievementState.earned,
+      };
+    });
+  }, [setPlayer]);
 
   const {
     showDailyRewards,
@@ -98,6 +115,7 @@ const App: React.FC = () => {
   const [wellbeingCompletion, setWellbeingCompletion] = useState<WellbeingCompletionState | null>(null);
   const [storedLevelResult, setStoredLevelResult] = useState<LevelResultState | null>(null);
   const lastIncorrectLifeLossRef = useRef<{ signature: string; at: number }>({ signature: '', at: 0 });
+  const levelFailCountsRef = useRef<Record<string, number>>({});
   const [wellbeingSignals, setWellbeingSignals] = useState<WellbeingSignals>({
     consecutiveFails: 0,
     gamesPlayedSinceBreak: 0,
@@ -183,13 +201,19 @@ const App: React.FC = () => {
     triggerHaptic('error');
     let wellbeingSuggested = false;
     const now = Date.now();
+    const levelKey = selectedIsland && selectedLevel ? `${selectedIsland.id}-${selectedLevel.id}` : null;
+    let levelFailCount = 0;
+    if (levelKey) {
+      levelFailCountsRef.current[levelKey] = (levelFailCountsRef.current[levelKey] || 0) + 1;
+      levelFailCount = levelFailCountsRef.current[levelKey];
+    }
     setWellbeingSignals((prev) => {
       const nextSignals = {
         ...prev,
         consecutiveFails: prev.consecutiveFails + 1,
         gamesPlayedSinceBreak: prev.gamesPlayedSinceBreak + 1,
       };
-      wellbeingSuggested = shouldSuggestWellbeing(nextSignals, now);
+      wellbeingSuggested = levelFailCount >= 3 || shouldSuggestWellbeing(nextSignals, now);
       return wellbeingSuggested
         ? { ...nextSignals, lastSuggestionTime: now }
         : nextSignals;
@@ -197,7 +221,9 @@ const App: React.FC = () => {
     setLevelResult({
       type: 'gameover',
       title: 'Round over',
-      subtitle: 'No rewards lost forever. Reset, tighten the route, and take another shot.',
+      subtitle: wellbeingSuggested
+        ? 'Three tough rounds in a row. Want to take a minute in a calm break?'
+        : 'No rewards lost forever. Reset, tighten the route, and take another shot.',
       XP,
       stars: 0,
       coinsEarned: 0,
@@ -205,7 +231,13 @@ const App: React.FC = () => {
       achievementsUnlocked: [],
       wellbeingSuggested,
     });
-  }, [setLevelResult]);
+  }, [selectedIsland, selectedLevel, setLevelResult]);
+
+  const handleResetFailCount = useCallback(() => {
+    if (!selectedIsland || !selectedLevel) return;
+    const levelKey = `${selectedIsland.id}-${selectedLevel.id}`;
+    levelFailCountsRef.current[levelKey] = 0;
+  }, [selectedIsland, selectedLevel]);
 
   const {
     globalMiniGameHudTimeLeft,
@@ -364,6 +396,7 @@ const App: React.FC = () => {
       consecutiveFails: 0,
       gamesPlayedSinceBreak: prev.gamesPlayedSinceBreak + 1,
     }));
+    handleResetFailCount();
     const result = applyGameVictory(selectedIsland, selectedLevel, stars, XP);
     if (result) setLevelResult(result);
   };
@@ -468,12 +501,41 @@ const App: React.FC = () => {
     lives: globalMiniGameLives,
   }), [globalMiniGameHudTimeLeft, globalMiniGameLives]);
 
+  const buildTelemetryContext = useCallback((event?: GameplaySessionEventPayload) => {
+    const durationSec = sessionState.totalTime && sessionState.timeLeft >= 0
+      ? Math.max(0, Math.round(sessionState.totalTime - sessionState.timeLeft))
+      : undefined;
+    return {
+      gameType: event?.gameType ?? selectedLevel?.gameType,
+      levelId: event?.levelId ?? selectedLevel?.id,
+      blueprintKey: selectedLevel?.blueprintKey,
+      skillTags: selectedLevel?.skillTags,
+      score: typeof event?.score === 'number' ? event?.score : undefined,
+      durationSec,
+    };
+  }, [selectedLevel?.blueprintKey, selectedLevel?.gameType, selectedLevel?.id, selectedLevel?.skillTags, sessionState.timeLeft, sessionState.totalTime]);
+
+  const recordTelemetryEvent = useCallback((type: 'correct_answer' | 'incorrect_answer' | 'game_complete' | 'game_failed', event?: GameplaySessionEventPayload) => {
+    const context = buildTelemetryContext(event);
+    setPlayer((prev) => {
+      const next = applyTelemetryEvent(prev, type, context);
+      const achievementState = reconcileAchievementState(next);
+      return {
+        ...next,
+        achievementState,
+        achievements: achievementState.earned,
+      };
+    });
+  }, [buildTelemetryContext, setPlayer]);
+
   const sessionEvents: GameplaySessionEventHandlers = useMemo(() => ({
-    onCorrectAnswer: () => {
+    onCorrectAnswer: (event) => {
       triggerHaptic('selection');
+      recordTelemetryEvent('correct_answer', event);
     },
     onIncorrectAnswer: (event) => {
       triggerHaptic('error');
+      recordTelemetryEvent('incorrect_answer', event);
       if (screen === 'gameplay') {
         const metadataKey = JSON.stringify(event.metadata ?? {});
         const signature = `${event.gameType ?? 'unknown'}:${event.levelId ?? 'unknown'}:${metadataKey}`;
@@ -491,13 +553,15 @@ const App: React.FC = () => {
     onPuzzleComplete: () => {
       triggerHaptic('selection');
     },
-    onGameComplete: () => {
+    onGameComplete: (event) => {
       triggerHaptic('success');
+      recordTelemetryEvent('game_complete', event);
     },
-    onGameFailed: () => {
+    onGameFailed: (event) => {
       triggerHaptic('error');
+      recordTelemetryEvent('game_failed', event);
     },
-  }), [consumeLife, screen]);
+  }), [consumeLife, recordTelemetryEvent, screen]);
 
   const screenBehavior = SCREEN_BEHAVIOR[screen];
   const backgroundIntensityClass = screenBehavior.family === 'hub'
@@ -612,6 +676,10 @@ const App: React.FC = () => {
                   calmTokens={player.calmTokens || 0}
                   onGameplayVictory={handleGameVictory}
                   onGameplayOver={handleGameOver}
+                  onOpenShop={goToShop}
+                  onOpenAchievements={goToAchievements}
+                  onOpenParentReport={goToParentDashboard}
+                  onUpdatePlayer={handleUpdatePlayer}
                 />
 
                 {null}

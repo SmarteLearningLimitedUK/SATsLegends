@@ -1076,20 +1076,6 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
     ],
     miniGames: [
       {
-        key: 'market_mayhem',
-        name: 'Market Mayhem',
-        role: 'application',
-        gameplayRoles: ['application', 'strategy'],
-        mechanicSummary: 'Buy, combine, and calculate totals in dynamic shop scenarios under budget constraints.',
-        curriculumObjectives: ['money', 'operations', 'multi_step_reasoning', 'real_world_problem_solving'],
-        skillTags: ['REAL_WORLD_PROBLEM', 'MIXED_ARITHMETIC', 'MULTI_STEP_REASONING'],
-        keySystems: ['basket total calculator', 'budget checks', 'change-required validation'],
-        questionTypes: ['multi-item totals', 'change and affordability checks'],
-        difficultyCurve: 'single-basket totals -> multi-basket planning -> constrained timed market runs',
-        failureState: 'incorrect total or insufficient funds',
-        replayValue: 'dynamic market inventories and pricing variations',
-      },
-      {
         key: 'problem_pyramid',
         name: 'Problem Pyramid',
         role: 'strategy',

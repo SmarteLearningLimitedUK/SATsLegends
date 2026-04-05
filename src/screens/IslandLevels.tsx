@@ -73,7 +73,6 @@ const GAME_SUMMARY_BY_KEY: Record<string, string> = {
   line_graph_lab: 'Interpret trends, intervals, and key points on line graphs.',
   chart_challenge: 'Switch between chart types and keep Combo accuracy.',
   data_detective: 'Solve short data reasoning cases from displayed information.',
-  market_mayhem: 'Handle real-world buying, totals, and change under pressure.',
   problem_pyramid: 'Climb linked reasoning steps where each answer affects the next.',
   mixed_mastery: 'Rapidly switch across mixed SATs skills without losing flow.',
   strategy_survival: 'Endure increasing mixed-problem waves with efficient decisions.',
