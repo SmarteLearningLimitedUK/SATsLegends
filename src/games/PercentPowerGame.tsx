@@ -379,27 +379,30 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
             <div className="absolute inset-[11%] rounded-full border border-cyan-100/25 bg-[radial-gradient(circle,rgba(255,255,255,0.24),rgba(34,211,238,0.1)_46%,rgba(8,20,40,0.16)_70%)]" />
             <div className="absolute inset-[24%] rounded-full border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(255,255,255,0.16),rgba(12,74,110,0.12))] shadow-[inset_0_1px_14px_rgba(255,255,255,0.08)]" />
             <Zap className="absolute top-[18%] h-6 w-6 text-cyan-100/85" />
-            <div className="relative z-10 text-center">
-              <div className="text-[0.85rem] font-black uppercase tracking-[0.12em] text-cyan-100/76">
-                {question.sideLabel}
-              </div>
-              <div className="mt-1 text-[2rem] font-black leading-none text-white md:text-[2.6rem]">
-                {question.coreLabel}
-              </div>
-            </div>
-          </motion.div>
-
-          <div className="mt-5 flex w-full max-w-[18rem] items-center gap-2 rounded-full border border-cyan-200/26 bg-[#071a38]/72 px-3 py-2">
-            <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-950/70">
-              <motion.div
-                className="h-full rounded-full bg-gradient-to-r from-emerald-300 via-cyan-300 to-sky-300"
-                animate={{ width: `${timerProgress * 100}%` }}
+            <motion.div
+              className="relative z-10 flex flex-col items-center justify-center gap-2"
+              animate={feedback === 'correct'
+                ? { scale: [1, 1.18, 1] }
+                : feedback === 'incorrect'
+                  ? { scale: [1, 1.14, 1] }
+                  : { scale: [1, 1.06, 1] }}
+              transition={feedback === 'correct'
+                ? { duration: 0.5, ease: 'easeOut' }
+                : feedback === 'incorrect'
+                  ? { duration: 0.45, ease: 'easeOut' }
+                  : { duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <Zap
+                className={`h-10 w-10 md:h-12 md:w-12 ${
+                  feedback === 'correct'
+                    ? 'text-emerald-300 drop-shadow-[0_0_16px_rgba(16,185,129,0.65)]'
+                    : feedback === 'incorrect'
+                      ? 'text-rose-300 drop-shadow-[0_0_16px_rgba(248,113,113,0.65)]'
+                      : 'text-cyan-100/90'
+                }`}
               />
-            </div>
-            <div className="text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100/78">
-              {timeLeft}s
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           <AnimatePresence>
             <motion.div

@@ -284,7 +284,7 @@ const PerimeterShapeRenderer: React.FC<{
           const isTraced = tracedEdgeIds.includes(edge.id);
           const isActive = highlightedEdgeId === edge.id || isTraced;
           const labelPos = getEdgeLabelPosition(edge);
-          const labelWidth = Math.max(30, Math.min(50, edge.label.length * 4 + 8));
+          const labelWidth = Math.max(22, Math.min(40, edge.label.length * 3.5 + 6));
           return (
             <g
               key={edge.id}
@@ -314,10 +314,10 @@ const PerimeterShapeRenderer: React.FC<{
               />
               <rect
                 x={labelPos.x - (labelWidth / 2)}
-                y={labelPos.y - 6.6}
+                y={labelPos.y - 5.4}
                 width={labelWidth}
-                height={13.2}
-                rx={4.6}
+                height={10.8}
+                rx={3.6}
                 fill={isTraced ? 'rgba(250, 204, 21, 0.52)' : isActive ? 'rgba(250, 204, 21, 0.36)' : 'rgba(15, 23, 42, 0.66)'}
                 stroke={isTraced ? 'rgba(253, 224, 71, 0.95)' : isActive ? 'rgba(250, 204, 21, 0.75)' : 'rgba(255, 255, 255, 0.22)'}
                 strokeWidth={0.45}

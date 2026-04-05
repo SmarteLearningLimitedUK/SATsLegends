@@ -157,7 +157,6 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
   }, [deltaRatio, weightDelta]);
 
   const scaleFramePosition = SCALE_FRAME_POSITION[activeScaleFrame];
-  const scaleFrameCss = `${scaleFramePosition.x}% ${scaleFramePosition.y}%`;
   const wobbleAnimation = activeScaleFrame === 'balanced'
     ? { y: [0, -1.5, 0] }
     : { y: [0, -3, 0], rotate: successPulse ? [0, 1, -1, 0] : 0 };
@@ -216,20 +215,25 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
           <div className="absolute inset-0 rounded-[2rem] border border-white/12 bg-[radial-gradient(circle_at_top,rgba(148,163,184,0.16),rgba(15,23,42,0.55))] shadow-[0_22px_50px_rgba(2,6,23,0.45)]" />
           <motion.div
             aria-hidden="true"
-            animate={{ ...wobbleAnimation, backgroundPosition: scaleFrameCss }}
-            transition={{
-              backgroundPosition: { type: 'spring', stiffness: 120, damping: 18 },
-              y: wobbleTransition,
-              rotate: wobbleTransition,
-            }}
+            animate={wobbleAnimation}
+            transition={wobbleTransition}
             className="pointer-events-none absolute inset-0"
-            initial={false}
-            style={{
-              backgroundImage: `url(${scaleSheet})`,
-              backgroundSize: `${SCALE_FRAME_SIZE.columns * 100}% ${SCALE_FRAME_SIZE.rows * 100}%`,
-              backgroundRepeat: 'no-repeat',
-            }}
-          />
+          >
+            <motion.div
+              className="absolute inset-0"
+              initial={false}
+              animate={{
+                backgroundPositionX: `${scaleFramePosition.x}%`,
+                backgroundPositionY: `${scaleFramePosition.y}%`,
+              }}
+              transition={{ type: 'spring', stiffness: 120, damping: 18 }}
+              style={{
+                backgroundImage: `url(${scaleSheet})`,
+                backgroundSize: `${SCALE_FRAME_SIZE.columns * 100}% ${SCALE_FRAME_SIZE.rows * 100}%`,
+                backgroundRepeat: 'no-repeat',
+              }}
+            />
+          </motion.div>
 
           <div
             className={`absolute left-[11%] top-[10%] flex min-h-[18%] w-[28%] items-center justify-center rounded-[1.35rem] px-2 py-1.5 text-center ${

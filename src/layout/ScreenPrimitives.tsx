@@ -110,7 +110,7 @@ export const MissionStrip: React.FC<MissionStripProps> = ({
     )}
     style={fillSlice(GUI_SLICES.headerBar)}
   >
-    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,12,32,0.12),rgba(4,12,32,0.3))]" />
+    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,12,32,0.06),rgba(4,12,32,0.16))]" />
     <div className="relative z-10">
       {children ?? (title ? <ShellHUDRow eyebrow={eyebrow} title={title} trailing={trailing} /> : null)}
     </div>

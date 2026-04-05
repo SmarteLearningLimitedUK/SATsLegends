@@ -383,7 +383,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_28%,rgba(15,23,42,0.16)_100%)]" />
           <div className="absolute inset-x-[6%] bottom-[14%] h-[22%] rounded-[50%] bg-[radial-gradient(circle_at_center,rgba(251,191,36,0.22),rgba(59,130,246,0.12),transparent_72%)]" />
 
-          <div className="relative z-10 flex h-full w-full flex-col px-3 pb-3 pt-6 md:px-6 md:pb-4 md:pt-8">
+          <div className="relative z-10 flex h-full w-full flex-col px-3 pb-3 pt-4 md:px-5 md:pb-4 md:pt-5">
             <div className="flex justify-center">
               <div className="max-w-[94%] rounded-[1.5rem] border border-orange-200/22 bg-[linear-gradient(180deg,rgba(146,64,14,0.96),rgba(120,53,15,0.98))] px-5 py-3 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_16px_30px_rgba(120,53,15,0.24)] md:px-7 md:py-4">
                 <div className="text-base font-black tracking-tight text-amber-50 md:text-[1.9rem]">{round.title}</div>
@@ -393,8 +393,8 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
               </div>
             </div>
 
-            <div className="mt-3 grid min-h-0 flex-1 grid-cols-1 gap-3 md:mt-3 md:grid-cols-[1.02fr_0.98fr] md:gap-4">
-              <div className="flex min-h-0 flex-1 flex-col justify-between gap-3 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(8,47,73,0.34),rgba(15,23,42,0.26))] p-4 shadow-[0_24px_40px_rgba(2,6,23,0.22)] md:p-5">
+            <div className="mt-3 grid min-h-0 flex-1 grid-cols-1 gap-3 md:mt-3 md:grid-cols-[1.02fr_0.98fr] md:gap-3">
+              <div className="flex min-h-0 flex-1 flex-col justify-between gap-2.5 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(8,47,73,0.34),rgba(15,23,42,0.26))] p-3 shadow-[0_24px_40px_rgba(2,6,23,0.22)] md:p-4">
                 {round.mode === 'line' && round.lineDays ? (
                   <LineGraphBoard days={round.lineDays} label={round.boardLabel} />
                 ) : round.mode === 'table' ? (
@@ -403,16 +403,16 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
                   <CoinBarBoard ships={round.ships} label={round.boardLabel} />
                 )}
 
-                <div className="rounded-[1.4rem] border border-white/12 bg-black/14 px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+                <div className="rounded-[1.2rem] border border-white/12 bg-black/14 px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
                   <div className="text-[11px] font-black uppercase tracking-[0.16em] text-white/62">Captain note</div>
                   <div className="mt-2 text-sm font-bold leading-relaxed text-white/88 md:text-base">{round.support}</div>
                 </div>
               </div>
 
-              <div className="flex min-h-0 flex-1 flex-col justify-between gap-3 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.84),rgba(30,41,59,0.92))] p-4 shadow-[0_24px_40px_rgba(2,6,23,0.24)] md:p-5">
+              <div className="flex min-h-0 flex-1 flex-col justify-between gap-2.5 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.84),rgba(30,41,59,0.92))] p-3 shadow-[0_24px_40px_rgba(2,6,23,0.24)] md:p-4">
                 <div className="grid grid-cols-2 gap-2">
                   {round.ships.map((ship) => (
-                    <ShipCard key={`ship-${ship.id}`} label={ship.label} color={ship.color} active={round.answer === ship.label} />
+                    <ShipCard key={`ship-${ship.id}`} label={ship.label} color={ship.color} active={round.answer === ship.label} small />
                   ))}
                 </div>
 
@@ -423,12 +423,12 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
                       whileTap={{ scale: 0.97 }}
                       onClick={() => handleChoice(choice)}
                       disabled={feedback !== null || isFinished}
-                      className="relative overflow-hidden rounded-[1.5rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(15,23,42,0.48))] px-4 py-3 text-left shadow-[0_18px_28px_rgba(15,23,42,0.22)] disabled:opacity-45"
+                      className="relative overflow-hidden rounded-[1.35rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(15,23,42,0.48))] px-3 py-2.5 text-left shadow-[0_18px_28px_rgba(15,23,42,0.22)] disabled:opacity-45"
                     >
                       <div className="absolute inset-x-[10%] top-[10%] h-[18%] rounded-full bg-white/10 blur-md" />
                       <div className="relative">
                         <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/58">Choice</div>
-                        <div className="mt-2 text-lg font-black tracking-tight text-amber-50 md:text-2xl">{choice}</div>
+                        <div className="mt-2 text-[1.05rem] font-black tracking-tight text-amber-50 md:text-xl">{choice}</div>
                       </div>
                     </motion.button>
                   ))}
