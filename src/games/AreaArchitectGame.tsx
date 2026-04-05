@@ -23,6 +23,7 @@ type Cell = { x: number; y: number };
 
 interface AreaQuestion {
   id: string;
+  kind: 'fluency' | 'reasoning';
   prompt: string;
   gridSize: number;
   cells: Cell[];
@@ -68,6 +69,7 @@ const buildQuestion = (gridSize: number, cells: Cell[], prompt: string): AreaQue
 
   return {
     id: `${gridSize}-${correct}-${Math.random().toString(36).slice(2, 6)}`,
+    kind: 'fluency',
     prompt,
     gridSize,
     cells,

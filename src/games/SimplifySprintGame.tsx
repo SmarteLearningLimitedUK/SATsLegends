@@ -21,11 +21,14 @@ interface FractionPair {
   denominator: number;
 }
 
+type QuestionKind = 'fluency' | 'reasoning';
+
 interface RoundQuestion {
   id: string;
   prompt: FractionPair;
   answer: FractionPair;
   options: FractionPair[];
+  kind: QuestionKind;
 }
 
 const gcd = (a: number, b: number): number => {
@@ -110,6 +113,7 @@ const makeQuestion = (level: number, round: number): RoundQuestion => {
     prompt,
     answer,
     options: shuffle(options),
+    kind: 'fluency',
   };
 };
 

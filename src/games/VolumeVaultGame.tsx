@@ -22,6 +22,7 @@ type VolumeVaultGameShellProps = VolumeVaultGameProps & MiniGameShellContractPro
 type ChallengeType = 'buildTargetVolume' | 'buildCuboid' | 'countVolume' | 'fillMissingCubes' | 'chooseCorrectShape';
 type BoardState = number[][];
 type VaultAnimationState = 'locked' | 'shudder' | 'unlocking' | 'open';
+type QuestionKind = 'fluency' | 'reasoning';
 
 interface BoardSize { rows: number; cols: number; maxHeight: number }
 interface CuboidDimensions { length: number; width: number; height: number }
@@ -42,6 +43,7 @@ interface VolumeQuestion {
   missingCubeTarget?: number;
   shapeChoices?: ShapeChoice[];
   correctShapeChoiceId?: string;
+  kind: QuestionKind;
 }
 
 interface VaultLevelConfig {
@@ -133,6 +135,7 @@ const makeBuildTarget = (targetVolume: number, boardSize: BoardSize): VolumeQues
   boardSize,
   initialBoard: createBoard(boardSize.rows, boardSize.cols, 0),
   targetVolume,
+  kind: 'fluency',
 });
 
 const makeBuildCuboid = (dims: CuboidDimensions, boardSize: BoardSize): VolumeQuestion => {
@@ -147,6 +150,7 @@ const makeBuildCuboid = (dims: CuboidDimensions, boardSize: BoardSize): VolumeQu
     targetVolume: dims.length * dims.width * dims.height,
     expectedBoard: expected,
     ghostBoard: expected,
+    kind: 'fluency',
   };
 };
 
@@ -161,6 +165,7 @@ const makeCount = (shape: BoardState, boardSize: BoardSize): VolumeQuestion => {
     correctCountAnswer: answer,
     targetVolume: answer,
     countOptions: countOptions(answer),
+    kind: 'fluency',
   };
 };
 
@@ -178,6 +183,7 @@ const makeFill = (dims: CuboidDimensions, boardSize: BoardSize, missing: number)
     targetDimensions: dims,
     targetVolume: sumBoard(full),
     missingCubeTarget: Math.max(0, sumBoard(full) - sumBoard(initial)),
+    kind: 'fluency',
   };
 };
 
@@ -198,6 +204,7 @@ const makeChoose = (targetVolume: number, shapes: BoardState[]): VolumeQuestion 
     targetVolume,
     shapeChoices,
     correctShapeChoiceId: correct.id,
+    kind: 'fluency',
   };
 };
 

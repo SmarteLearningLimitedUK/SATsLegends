@@ -16,6 +16,7 @@ interface RotationReflectionGameProps {
 type RotationMode = 'rotate_match' | 'predict_result' | 'identify_turn';
 type TurnDirection = 'cw' | 'acw';
 type ShapeId = 'arrow' | 'lshape' | 'tshape' | 'flag' | 'hook';
+type QuestionKind = 'fluency' | 'reasoning';
 
 interface ShapeDef {
   id: ShapeId;
@@ -40,6 +41,7 @@ interface RotationQuestion {
   correctOptionIds: string[];
   speedRound: boolean;
   difficultyWeight: number;
+  kind: QuestionKind;
 }
 
 interface FeedbackState {
@@ -195,6 +197,7 @@ const createQuestion = (baseLevel: number, solvedCount: number, timeLeft: number
       correctOptionIds: ['match'],
       speedRound,
       difficultyWeight: 38 + (stage * 10) + (quarterTurns * 10),
+      kind: 'fluency',
     };
   }
 
@@ -215,6 +218,7 @@ const createQuestion = (baseLevel: number, solvedCount: number, timeLeft: number
       correctOptionIds: [`o-${targetOrientation}`],
       speedRound,
       difficultyWeight: 44 + (stage * 11) + (quarterTurns * 8),
+      kind: 'fluency',
     };
   }
 
@@ -237,6 +241,7 @@ const createQuestion = (baseLevel: number, solvedCount: number, timeLeft: number
       .map((entry) => entry.id),
     speedRound,
     difficultyWeight: 50 + (stage * 11) + (quarterTurns * 10),
+    kind: 'fluency',
   };
 };
 

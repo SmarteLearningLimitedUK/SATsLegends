@@ -29,12 +29,15 @@ interface BossEncounterGameProps {
   onBack: () => void;
 }
 
+type QuestionKind = 'fluency' | 'reasoning';
+
 interface BossQuestion {
   prompt: string;
   clue: string;
   options: string[];
   answerIndex: number;
   dataPoints: string[];
+  kind?: QuestionKind;
 }
 
 const TOTAL_QUESTIONS = 10;
@@ -460,7 +463,11 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   const avatar = AVATARS.find(item => item.id === avatarId) || AVATARS[0];
   const encounter = getBossEncounter(gameType);
   const questions = useMemo(
-    () => Array.from({ length: TOTAL_QUESTIONS }, () => QUESTION_GENERATORS[gameType]()),
+    () => Array.from({ length: TOTAL_QUESTIONS }, () => {
+      const base = QUESTION_GENERATORS[gameType]();
+      const kind: QuestionKind = base.kind ?? (gameType === 'matrix_match' ? 'reasoning' : 'fluency');
+      return { ...base, kind };
+    }),
     [gameType, levelId],
   );
   const [currentIndex, setCurrentIndex] = useState(0);

@@ -13,6 +13,7 @@ interface PerimeterPathGameProps {
 
 type AnswerUnit = 'm' | 'cm';
 type Point = { x: number; y: number };
+type QuestionKind = 'fluency' | 'reasoning';
 
 interface ShapeEdge {
   id: string;
@@ -35,6 +36,7 @@ interface PerimeterQuestion {
   correctPerimeter: number;
   shape: ShapeModel;
   options: number[];
+  kind: QuestionKind;
 }
 
 interface FeedbackState {
@@ -171,6 +173,7 @@ const generateQuestion = (level: number): PerimeterQuestion => {
       correctPerimeter: model.perimeter,
       shape: model.shape,
       options: makeOptions(model.perimeter),
+      kind: 'fluency',
     };
   }
 
@@ -188,6 +191,7 @@ const generateQuestion = (level: number): PerimeterQuestion => {
       correctPerimeter: model.perimeter,
       shape: model.shape,
       options: makeOptions(model.perimeter),
+      kind: 'fluency',
     };
   }
 
@@ -218,6 +222,7 @@ const generateQuestion = (level: number): PerimeterQuestion => {
       correctPerimeter: model.perimeter,
       shape: model.shape,
       options: makeOptions(model.perimeter),
+      kind: 'fluency',
     };
   }
 
@@ -239,6 +244,7 @@ const generateQuestion = (level: number): PerimeterQuestion => {
     correctPerimeter: model.perimeter,
     shape: model.shape,
     options: makeOptions(model.perimeter),
+    kind: 'fluency',
   };
 };
 

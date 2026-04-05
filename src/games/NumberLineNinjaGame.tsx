@@ -33,6 +33,7 @@ interface FlyingAnswerState {
 
 interface NumberLineQuestion {
   id: number;
+  kind: 'fluency' | 'reasoning';
   prompt: string;
   labels: string[];
   focusIndex: number;
@@ -167,6 +168,7 @@ const createQuestion = (
 
   return {
     id: Date.now() + Math.floor(Math.random() * 1000),
+    kind: 'fluency',
     prompt,
     labels: values.map((value, index) => (index === focusIndex ? '?' : formatNumber(value))),
     focusIndex,

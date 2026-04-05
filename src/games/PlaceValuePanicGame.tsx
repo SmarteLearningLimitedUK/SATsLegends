@@ -30,6 +30,7 @@ interface PlaceValuePanicGameProps {
 }
 
 type TokenLocation = 'source' | 'target';
+type QuestionKind = 'fluency' | 'reasoning';
 
 interface AnchorPoint {
   x: number;
@@ -46,6 +47,7 @@ interface QuestionState {
   expectedDigits: number[];
   tokenValues: number[];
   placeHints: string[];
+  kind: QuestionKind;
 }
 
 interface DragState {
@@ -320,6 +322,7 @@ const makeQuestion = (level: number): QuestionState => {
     expectedDigits,
     tokenValues,
     placeHints,
+    kind: 'fluency',
   };
 };
 

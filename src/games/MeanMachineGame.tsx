@@ -16,6 +16,7 @@ type GameState = 'idle' | 'spinning' | 'answering' | 'resolved';
 
 interface RoundData {
   mode: RoundMode;
+  kind: 'fluency' | 'reasoning';
   visibleValues: Array<number | null>;
   actualValues: number[];
   targetMean: number;
@@ -127,6 +128,7 @@ const buildMeanRound = (level: number): RoundData => {
 
   return {
     mode: 'mean',
+    kind: 'fluency',
     visibleValues,
     actualValues,
     targetMean,
@@ -164,6 +166,7 @@ const buildMedianRound = (level: number): RoundData => {
 
   return {
     mode: 'median',
+    kind: 'fluency',
     visibleValues,
     actualValues,
     targetMean: median,
@@ -213,6 +216,7 @@ const buildModeRound = (level: number): RoundData => {
 
   return {
     mode: 'mode',
+    kind: 'fluency',
     visibleValues,
     actualValues,
     targetMean: modeValue,
@@ -272,6 +276,7 @@ const buildMissingRound = (level: number): RoundData => {
 
   return {
     mode: 'missing',
+    kind: 'reasoning',
     visibleValues: visible,
     actualValues,
     targetMean,

@@ -24,6 +24,7 @@ interface PercentPowerGameProps {
 
 interface PercentPowerQuestion {
   id: string;
+  kind: 'fluency' | 'reasoning';
   prompt: string;
   helper: string;
   options: string[];
@@ -72,6 +73,7 @@ const buildDirectQuestion = (): PercentPowerQuestion => {
 
   return {
     id: `direct-${percent}-${amount}-${Math.random().toString(36).slice(2, 7)}`,
+    kind: 'fluency',
     prompt: `What is ${percent}% of ${amount}?`,
     helper: 'Use 10%, 25%, 50% or known fraction facts to build the answer.',
     options,
@@ -93,6 +95,7 @@ const buildReverseQuestion = (): PercentPowerQuestion => {
 
   return {
     id: `reverse-${percent}-${whole}-${Math.random().toString(36).slice(2, 7)}`,
+    kind: 'fluency',
     prompt: `${percent}% of a number is ${part}. What is the whole number?`,
     helper: 'Find 1% or 10%, then scale up to the full amount.',
     options,
@@ -114,6 +117,7 @@ const buildIncreaseQuestion = (): PercentPowerQuestion => {
 
   return {
     id: `increase-${base}-${percent}-${Math.random().toString(36).slice(2, 7)}`,
+    kind: 'fluency',
     prompt: `A power crystal has ${base} units. It gains ${percent}%. What is the new total?`,
     helper: 'Work out the percentage gain first, then add it to the original amount.',
     options,

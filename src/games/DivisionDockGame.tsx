@@ -15,6 +15,7 @@ interface DivisionDockGameProps {
 }
 
 interface DivisionQuestion {
+  kind: 'fluency' | 'reasoning';
   dividend: number;
   divisor: number;
   answer: number;
@@ -37,7 +38,7 @@ const createDivisionQuestion = (levelId: number, solved: number): DivisionQuesti
   const divisor = DOCK_COUNT;
   const answer = randomInt(2, Math.min(12, 4 + levelId + Math.floor(solved / 3)));
   const dividend = divisor * answer;
-  return { dividend, divisor, answer };
+  return { kind: 'fluency', dividend, divisor, answer };
 };
 
 const DivisionDockGame: React.FC<DivisionDockGameProps> = ({

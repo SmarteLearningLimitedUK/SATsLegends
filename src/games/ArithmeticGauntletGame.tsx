@@ -18,6 +18,7 @@ interface ArithmeticGauntletGameProps {
 type Operation = '+' | '-' | '*' | '/';
 
 interface ArithmeticQuestion {
+  kind: 'fluency' | 'reasoning';
   prompt: string;
   answer: number;
 }
@@ -47,27 +48,27 @@ const createQuestion = (levelId: number): ArithmeticQuestion => {
     const max = 20 + (resolvedLevel * 8);
     const a = randomInt(4, max);
     const b = randomInt(3, max);
-    return { prompt: `${a} + ${b}`, answer: a + b };
+    return { kind: 'fluency', prompt: `${a} + ${b}`, answer: a + b };
   }
 
   if (op === '-') {
     const max = 24 + (resolvedLevel * 9);
     const a = randomInt(8, max);
     const b = randomInt(2, a - 1);
-    return { prompt: `${a} - ${b}`, answer: a - b };
+    return { kind: 'fluency', prompt: `${a} - ${b}`, answer: a - b };
   }
 
   if (op === '*') {
     const maxFactor = Math.min(14, 7 + Math.floor(resolvedLevel / 2));
     const a = randomInt(2, maxFactor);
     const b = randomInt(2, maxFactor);
-    return { prompt: `${a} * ${b}`, answer: a * b };
+    return { kind: 'fluency', prompt: `${a} * ${b}`, answer: a * b };
   }
 
   const divisor = randomInt(2, Math.min(12, 5 + Math.floor(resolvedLevel / 2)));
   const quotient = randomInt(2, Math.min(14, 7 + Math.floor(resolvedLevel / 2)));
   const dividend = divisor * quotient;
-  return { prompt: `${dividend} / ${divisor}`, answer: quotient };
+  return { kind: 'fluency', prompt: `${dividend} / ${divisor}`, answer: quotient };
 };
 
 const starsForScore = (XP: number, targetScore: number, accuracy: number) => {

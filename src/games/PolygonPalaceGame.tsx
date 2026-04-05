@@ -16,6 +16,7 @@ interface PolygonPalaceGameProps {
 type ShapeFamily = 'triangle' | 'quadrilateral' | 'polygon' | 'circle';
 type EqualSideMode = 'none' | 'twoPairs' | 'all';
 type QuestionMode = 'name' | 'properties' | 'sort';
+type QuestionKind = 'fluency' | 'reasoning';
 
 interface ShapeDefinition {
   id: string;
@@ -69,6 +70,7 @@ interface PolygonQuestion {
   multiSelect: boolean;
   difficultyWeight: number;
   speedRound: boolean;
+  kind: QuestionKind;
 }
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -451,6 +453,7 @@ const buildNameQuestion = (shape: ShapeDefinition, stage: number, speedRound: bo
     multiSelect: false,
     difficultyWeight: 35 + (stage * 8),
     speedRound,
+    kind: 'fluency',
   };
 };
 
@@ -492,6 +495,7 @@ const buildPropertyQuestion = (shape: ShapeDefinition, stage: number, speedRound
     multiSelect: true,
     difficultyWeight: 48 + (stage * 10) + (correctChoiceIds.length * 14),
     speedRound,
+    kind: 'fluency',
   };
 };
 
@@ -516,6 +520,7 @@ const buildSortQuestion = (shape: ShapeDefinition, stage: number, speedRound: bo
     multiSelect: false,
     difficultyWeight: 45 + (stage * 11),
     speedRound,
+    kind: 'fluency',
   };
 };
 

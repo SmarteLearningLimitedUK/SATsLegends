@@ -17,6 +17,7 @@ interface MultiplicationMineGameProps {
 }
 
 interface MultiplicationQuestion {
+  kind: 'fluency' | 'reasoning';
   a: number;
   b: number;
   answer: number;
@@ -48,7 +49,7 @@ const makeQuestion = (level: number, solved: number): MultiplicationQuestion => 
   const a = 2 + Math.floor(Math.random() * (progression - 1));
   const b = 2 + Math.floor(Math.random() * (progression - 1));
   const answer = a * b;
-  return { a, b, answer, options: makeOptions(answer) };
+  return { kind: 'fluency', a, b, answer, options: makeOptions(answer) };
 };
 
 const starsForMistakes = (mistakes: number) => {

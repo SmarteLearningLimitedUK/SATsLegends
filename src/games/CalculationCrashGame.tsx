@@ -17,6 +17,7 @@ type GameStatus = 'playing' | 'complete';
 type Operation = '+' | '-' | 'x' | '/';
 
 interface Question {
+  kind: 'fluency' | 'reasoning';
   prompt: string;
   answer: number;
   options: number[];
@@ -83,6 +84,7 @@ const createQuestion = (levelId: number): Question => {
   }
 
   return {
+    kind: 'fluency',
     prompt: `${left} ${operation} ${right} = ?`,
     answer,
     options: shuffle([answer, ...Array.from(distractors)]),
