@@ -44,8 +44,8 @@ const REEL_LAYOUT = [
   { left: 61.2, width: 10.6 },
   { left: 76.0, width: 10.6 },
 ] as const;
-const REEL_TOP = 28.6;
-const REEL_HEIGHT = 54.2;
+const REEL_TOP = 31.2;
+const REEL_HEIGHT = 46.4;
 
 const shuffle = <T,>(values: T[]): T[] => {
   const next = [...values];
