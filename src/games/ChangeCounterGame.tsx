@@ -130,7 +130,12 @@ const buildQuestion = (levelId: number, roundIndex: number): ChangeQuestion => {
   const candidate = bank[roundIndex % bank.length];
   const twistEligible = candidate.paidPence + 100 > candidate.costPence * 2;
   const twist = levelId >= 5 && roundIndex % 2 === 1 && twistEligible;
-  if (!twist) return candidate;
+  if (!twist) {
+    return {
+      ...candidate,
+      options: shuffle(candidate.options),
+    };
+  }
 
   const newCost = candidate.costPence * 2;
   const newPaid = candidate.paidPence + 100;

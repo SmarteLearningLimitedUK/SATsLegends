@@ -63,6 +63,15 @@ const fallbackQuestions: UnitMixerQuestion[] = [
   },
 ];
 
+const shuffle = <T,>(items: T[]) => {
+  const copy = [...items];
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+};
+
 const sanitizeText = (text: string) => (
   text
     .replace(/Ã—/g, 'x')
@@ -76,11 +85,13 @@ const resolveQuestion = (levelId: number): UnitMixerQuestion => {
   const visualLines = question.visual.type === 'equation'
     ? question.visual.lines.map(sanitizeText)
     : [sanitizeText(question.prompt)];
+  const options = shuffle(question.options);
+  const correct = question.options[question.answerIndex];
   return {
     prompt: sanitizeText(question.prompt),
     sublabel: sanitizeText(question.sublabel),
-    options: question.options,
-    answerIndex: question.answerIndex,
+    options,
+    answerIndex: Math.max(0, options.indexOf(correct)),
     visualLines,
   };
 };
