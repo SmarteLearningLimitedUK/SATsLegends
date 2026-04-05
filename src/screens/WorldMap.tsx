@@ -423,6 +423,36 @@ const WorldMap: React.FC<WorldMapProps> = ({
   ), [player]);
 
   const selectedIslandState = islandStates.find(entry => entry.island.id === selectedIslandId) ?? null;
+  const actionDock = (
+    <div className="pointer-events-none absolute inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+0.8rem)] z-40 flex justify-center">
+      <div className="pointer-events-auto flex items-center gap-2 rounded-[1.2rem] border border-cyan-100/30 bg-slate-950/70 px-3 py-2 shadow-[0_12px_24px_rgba(2,6,23,0.4)]">
+        <button
+          type="button"
+          onClick={onOpenShop}
+          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white"
+          aria-label="Open shop"
+        >
+          <AssetIcon name="coin" className="h-5 w-5" />
+        </button>
+        <button
+          type="button"
+          onClick={onOpenAchievements}
+          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white"
+          aria-label="Open achievements"
+        >
+          <AssetIcon name="trophy" className="h-5 w-5" />
+        </button>
+        <button
+          type="button"
+          onClick={() => setShowParentGate(true)}
+          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white"
+          aria-label="Open parent report"
+        >
+          <AssetIcon name="people" className="h-5 w-5" />
+        </button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="relative w-full overflow-visible">
@@ -536,46 +566,18 @@ const WorldMap: React.FC<WorldMapProps> = ({
           </motion.div>
         ) : null}
       </AnimatePresence>
-    </div>
 
-    <div className="pointer-events-none absolute inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+0.8rem)] z-40 flex justify-center">
-      <div className="pointer-events-auto flex items-center gap-2 rounded-[1.2rem] border border-cyan-100/30 bg-slate-950/70 px-3 py-2 shadow-[0_12px_24px_rgba(2,6,23,0.4)]">
-        <button
-          type="button"
-          onClick={onOpenShop}
-          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white"
-          aria-label="Open shop"
-        >
-          <AssetIcon name="coin" className="h-5 w-5" />
-        </button>
-        <button
-          type="button"
-          onClick={onOpenAchievements}
-          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white"
-          aria-label="Open achievements"
-        >
-          <AssetIcon name="trophy" className="h-5 w-5" />
-        </button>
-        <button
-          type="button"
-          onClick={() => setShowParentGate(true)}
-          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white"
-          aria-label="Open parent report"
-        >
-          <AssetIcon name="people" className="h-5 w-5" />
-        </button>
-      </div>
-    </div>
+      {actionDock}
 
-    <ParentGateOverlay
-      isOpen={showParentGate}
-      onClose={() => setShowParentGate(false)}
-      onUnlock={() => {
-        setShowParentGate(false);
-        onOpenParentReport();
-      }}
-    />
-  </div>
+      <ParentGateOverlay
+        isOpen={showParentGate}
+        onClose={() => setShowParentGate(false)}
+        onUnlock={() => {
+          setShowParentGate(false);
+          onOpenParentReport();
+        }}
+      />
+    </div>
   );
 };
 
