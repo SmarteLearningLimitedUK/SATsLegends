@@ -135,7 +135,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
 
     setDidFail(true);
     emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
-      XP,
+      score: XP,
       reason: lives <= 0 ? 'lives' : 'time',
     });
     onGameOver(XP);
@@ -189,7 +189,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
       setGameState('success');
 
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
-        XP,
+        score: XP,
         metadata: {
           scoreDelta: gained,
           scoreAfter: nextScore,
@@ -197,7 +197,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
         },
       });
       emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', {
-        XP: nextScore,
+        score: nextScore,
         metadata: {
           median: currentLevelData.median,
           level,
@@ -208,7 +208,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
 
     setFeedback({ type: 'error', message: 'Not the median yet. Re-check the middle values.' });
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
-      XP,
+      score: XP,
       metadata: {
         submitted: parsedAnswer,
         median: currentLevelData.median,
@@ -221,7 +221,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
   const finishGame = (finalScore: number) => {
     const stars = scoreToStars(finalScore);
     emitMiniGameSessionEvent(sessionEvents, 'game_complete', {
-      XP: finalScore,
+      score: finalScore,
       stars,
       metadata: { levelReached: MAX_LEVEL },
     });

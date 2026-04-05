@@ -444,7 +444,7 @@ const VolumeVaultGame: React.FC<VolumeVaultGameShellProps> = ({
     if (isSessionActive) return;
     setDidFail(true);
     emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
-      XP,
+      score: XP,
       reason: lives <= 0 ? 'lives' : 'time',
     });
     onGameOver(XP);
@@ -455,7 +455,7 @@ const VolumeVaultGame: React.FC<VolumeVaultGameShellProps> = ({
     setDidComplete(true);
     const stars = scoreToStars(finalScore, solved, tries);
     emitMiniGameSessionEvent(sessionEvents, 'game_complete', {
-      XP: finalScore,
+      score: finalScore,
       stars,
       metadata: { solved, tries, level: activeLevel.id },
     });
@@ -480,7 +480,7 @@ const VolumeVaultGame: React.FC<VolumeVaultGameShellProps> = ({
       setFeedback({ kind: 'error', message: result.msg });
       setWrongPulse(true);
       emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
-        XP,
+        score: XP,
         metadata: { type: question.type, livesBefore: lives, livesLost: 1 },
       });
       queue(() => setWrongPulse(false), 360);
@@ -497,8 +497,8 @@ const VolumeVaultGame: React.FC<VolumeVaultGameShellProps> = ({
     setFeedback({ kind: 'success', message: finalQ ? 'Final lock released!' : 'Lock mechanism loosened!' });
     setLocked(true);
 
-    emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { XP, metadata: { scoreAfter: nextScore, scoreDelta: gain, type: question.type } });
-    emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', { XP: nextScore, metadata: { questionIndex: questionIndex + 1, totalQuestions } });
+    emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { score: XP, metadata: { scoreAfter: nextScore, scoreDelta: gain, type: question.type } });
+    emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', { score: nextScore, metadata: { questionIndex: questionIndex + 1, totalQuestions } });
 
     if (finalQ) {
       setSafeState('unlocking');

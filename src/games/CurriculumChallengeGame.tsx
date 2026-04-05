@@ -192,20 +192,6 @@ const CHALLENGE_THEMES: Record<SupportedChallengeGameType, ChallengeTheme> = {
     progress: 'bg-gradient-to-r from-emerald-300 via-lime-300 to-yellow-400',
     badge: 'text-emerald-100',
   },
-  percent_power: {
-    title: 'Percent Power',
-    surface: 'from-cyan-300/28 via-sky-300/16 to-slate-950/88',
-    scene: 'from-cyan-300/22 via-sky-300/18 to-transparent',
-    ambient: 'bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.28),transparent_26%),radial-gradient(circle_at_bottom_right,rgba(56,189,248,0.22),transparent_24%),linear-gradient(180deg,#0f2b4d_0%,#07111b_100%)]',
-    prompt: 'from-cyan-200/28 to-cyan-100/12',
-    answer: 'from-cyan-200/10 via-sky-200/8 to-white/4',
-    answerActive: 'from-cyan-300/62 via-cyan-300/58 to-blue-400/48',
-    statText: 'text-cyan-950',
-    statSoftBg: 'bg-cyan-100/85',
-    statBorder: 'border-cyan-200/90',
-    progress: 'bg-gradient-to-r from-cyan-300 via-cyan-300 to-sky-400',
-    badge: 'text-cyan-100',
-  },
   rule_runner: {
     title: 'Rule Runner',
     surface: 'from-blue-300/18 via-indigo-200/12 to-slate-950/86',
@@ -1152,8 +1138,6 @@ const generateQuestion = (gameType: SupportedChallengeGameType, levelId: number)
       return generatePlaceValueQuestion();
     case 'calculation_clash':
       return generateCalculationQuestion();
-    case 'percent_power':
-      return generatePercentPowerQuestion();
     case 'coordinate_quest':
       return generateCoordinateQuestion();
     case 'transform_temple':

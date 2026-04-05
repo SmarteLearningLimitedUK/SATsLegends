@@ -100,7 +100,7 @@ const resolveTopicTags = (context: TelemetryContext): string[] => {
   if (context.gameType && GAME_TOPIC_MAP[context.gameType]) return normalizeTopicTags(GAME_TOPIC_MAP[context.gameType] || []);
   if (context.gameType) {
     const meta = GAME_META[context.gameType];
-    if (meta?.title) return normalizeTopicTags([meta.title.toLowerCase().replace(/\s+/g, '_')]);
+    if (meta?.label) return normalizeTopicTags([meta.label.toLowerCase().replace(/\s+/g, '_')]);
   }
   return context.gameType ? [context.gameType] : ['general'];
 };

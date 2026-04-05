@@ -355,7 +355,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
     setDidFail(true);
     emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
-      XP,
+      score: XP,
       reason: lives <= 0 ? 'lives' : 'time',
     });
     onGameOver(XP);
@@ -366,7 +366,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     setDidComplete(true);
     const stars = scoreToStars(finalScore, nextCorrect, nextAttempts);
     emitMiniGameSessionEvent(sessionEvents, 'game_complete', {
-      XP: finalScore,
+      score: finalScore,
       stars,
       metadata: { correctCount: nextCorrect, attempts: nextAttempts },
     });
@@ -444,7 +444,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       triggerMonsterHit();
 
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
-        XP,
+        score: XP,
         metadata: {
           scoreAfter: nextScore,
           selected: option,
@@ -453,7 +453,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
         },
       });
       emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', {
-        XP: nextScore,
+        score: nextScore,
         metadata: {
           selected: option,
           answer: question.answer,
@@ -474,7 +474,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     setLineShake(true);
 
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
-      XP,
+      score: XP,
       metadata: {
         selected: option,
         answer: question.answer,

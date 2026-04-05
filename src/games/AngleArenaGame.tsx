@@ -124,7 +124,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     if (sessionState.timeLeft <= 0 || sessionState.lives <= 0) {
       setGameState('gameOver');
       emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
-        XP: score,
+        score,
         reason: sessionState.timeLeft <= 0 ? 'time' : 'lives',
       });
       onGameOver(score);
@@ -179,7 +179,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     setStars(earnedStars);
     setGameState('levelComplete');
     emitMiniGameSessionEvent(sessionEvents, 'game_complete', {
-      XP: finalScore,
+      score: finalScore,
       stars: earnedStars,
       metadata: {
         correct: finalScore / POINTS_PER_HIT,
@@ -198,7 +198,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       setFeedback('Great shot!');
       triggerHaptic('success');
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
-        XP: nextScore,
+        score: nextScore,
         metadata: {
           questionId: activeQuestion?.id,
           selected: selectedAnswerRef.current,
@@ -209,7 +209,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       setFeedback('Missed target. Try again.');
       triggerHaptic('error');
       emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
-        XP: score,
+        score,
         metadata: {
           questionId: activeQuestion?.id,
           selected: selectedAnswerRef.current,

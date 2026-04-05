@@ -191,7 +191,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
 
     setHasSignalledFailure(true);
     emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
-      XP,
+      score: XP,
       reason: lives <= 0 ? 'lives' : 'time',
     });
   }, [didComplete, hasSignalledFailure, isSessionActive, lives, XP, sessionEvents, sessionState]);
@@ -201,7 +201,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
     setDidComplete(true);
     const stars = scoreToStars(finalScore, totalCorrect, totalAttempts);
     emitMiniGameSessionEvent(sessionEvents, 'game_complete', {
-      XP: finalScore,
+      score: finalScore,
       stars,
       metadata: {
         correctAnswers: totalCorrect,
@@ -242,7 +242,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
       setFeedbackText(Math.random() < 0.65 ? 'Nice!' : null);
 
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
-        XP,
+        score: XP,
         metadata: {
           scoreAfter: nextScore,
           scoreDelta: pointGain + streakBonus,
@@ -252,7 +252,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
         },
       });
       emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', {
-        XP: nextScore,
+        score: nextScore,
         metadata: {
           roundedTo: round.target,
           selected: padValue,
@@ -279,7 +279,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
     setFeedbackText('Try Again');
 
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
-      XP,
+      score: XP,
       metadata: {
         roundedTo: round.target,
         selected: padValue,

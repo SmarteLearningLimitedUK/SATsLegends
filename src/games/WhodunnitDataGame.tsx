@@ -562,7 +562,7 @@ const WhodunnitDataGame: React.FC<WhodunnitDataShellProps> = ({
 
     setDidFail(true);
     emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
-      XP,
+      score: XP,
       reason: lives <= 0 ? 'lives' : 'time',
     });
     onGameOver(XP);
@@ -573,7 +573,7 @@ const WhodunnitDataGame: React.FC<WhodunnitDataShellProps> = ({
     setDidComplete(true);
     const stars = scoreToStars(finalScore, finalSolved, finalAttempts);
     emitMiniGameSessionEvent(sessionEvents, 'game_complete', {
-      XP: finalScore,
+      score: finalScore,
       stars,
       metadata: { solvedCases: finalSolved, attempts: finalAttempts },
     });
@@ -606,7 +606,7 @@ const WhodunnitDataGame: React.FC<WhodunnitDataShellProps> = ({
       setFeedback('correct');
 
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
-        XP,
+        score: XP,
         metadata: {
           scoreAfter: nextScore,
           solvedCases: nextSolved,
@@ -615,7 +615,7 @@ const WhodunnitDataGame: React.FC<WhodunnitDataShellProps> = ({
         },
       });
       emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', {
-        XP: nextScore,
+        score: nextScore,
         metadata: {
           selectedSuspectId: suspectId,
           answerId: caseData.answerId,
@@ -635,7 +635,7 @@ const WhodunnitDataGame: React.FC<WhodunnitDataShellProps> = ({
 
     setFeedback('incorrect');
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
-      XP,
+      score: XP,
       metadata: {
         selectedSuspectId: suspectId,
         answerId: caseData.answerId,

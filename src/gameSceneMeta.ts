@@ -84,6 +84,8 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   observatory_overload: DATA_SCENE,
   mean_machine: DATA_SCENE,
   percent_power: RATIO_SCENE,
+  area_architect: GEOMETRY_SCENE,
+  ratio_fractions: RATIO_SCENE,
   equation_grove: REASONING_SCENE,
   rule_runner: REASONING_SCENE,
   formula_forge: NUMBER_SCENE,

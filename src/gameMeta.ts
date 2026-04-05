@@ -51,19 +51,6 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       ],
     },
   },
-  sling_shot: {
-    label: 'Sling Shot Skies',
-    focus: 'Aim and match the correct fraction target',
-    rules: {
-      title: 'Sling Shot Skies',
-      summary: 'Pull back the sling and hit the target with the correct fraction.',
-      bullets: [
-        'Drag back the sling to set the launch power.',
-        'Aim for the target that matches the fraction on the task card.',
-        'Reset and try again if you miss.',
-      ],
-    },
-  },
   cloud_collapse: {
     label: 'Crystal Match',
     focus: 'Equivalent values match-3 play',

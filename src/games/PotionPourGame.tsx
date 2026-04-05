@@ -101,9 +101,9 @@ const simplifyRatio = (values: number[]) => {
   return values.map((v) => (v > 0 ? v / divisor : 0));
 };
 
-const randomPick = <T,>(list: T[]) => list[Math.floor(Math.random() * list.length)];
+const randomPick = <T,>(list: readonly T[]) => list[Math.floor(Math.random() * list.length)];
 
-const shuffled = <T,>(list: T[]) => {
+const shuffled = <T,>(list: readonly T[]) => {
   const next = [...list];
   for (let i = next.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -112,14 +112,18 @@ const shuffled = <T,>(list: T[]) => {
   return next;
 };
 
-const SIMPLE_PAIR_RATIOS = [
+type PairRatio = [number, number];
+type TripleRatio = [number, number, number];
+type Ratio = PairRatio | TripleRatio;
+
+const SIMPLE_PAIR_RATIOS: PairRatio[] = [
   [1, 1],
   [2, 1],
   [3, 1],
   [3, 2],
-] as const;
+];
 
-const ADVANCED_PAIR_RATIOS = [
+const ADVANCED_PAIR_RATIOS: PairRatio[] = [
   [4, 1],
   [5, 2],
   [5, 3],
@@ -127,37 +131,37 @@ const ADVANCED_PAIR_RATIOS = [
   [7, 3],
   [8, 3],
   [9, 4],
-] as const;
+];
 
-const SIMPLE_TRIPLE_RATIOS = [
+const SIMPLE_TRIPLE_RATIOS: TripleRatio[] = [
   [1, 1, 1],
   [2, 1, 1],
   [2, 2, 1],
   [3, 1, 2],
-] as const;
+];
 
-const ADVANCED_TRIPLE_RATIOS = [
+const ADVANCED_TRIPLE_RATIOS: TripleRatio[] = [
   [3, 2, 1],
   [4, 2, 1],
   [4, 3, 2],
   [5, 3, 2],
   [5, 4, 3],
-] as const;
+];
 
-const WORD_PAIR_RATIOS = [
+const WORD_PAIR_RATIOS: PairRatio[] = [
   [2, 3],
   [3, 2],
   [4, 3],
-] as const;
+];
 
-const HALF_BATCH_RATIOS = [
+const HALF_BATCH_RATIOS: Ratio[] = [
   [4, 10],
   [6, 8],
   [8, 12],
   [4, 6, 2],
   [6, 10, 4],
   [8, 12, 6],
-] as const;
+];
 
 let challengeSeed = 0;
 const nextChallengeId = () => {
@@ -327,13 +331,13 @@ const generateChallenge = (levelId: number, solved: number): Challenge => {
     baseRatio = [...randomPick(stage >= 4 ? ADVANCED_PAIR_RATIOS : SIMPLE_PAIR_RATIOS)];
     scale = randomPick(stage >= 4 ? [3, 4, 5] : [2, 3, 4]);
   } else if (mode === 'missing_value') {
-    baseRatio = [...randomPick(stage >= 4 ? WORD_PAIR_RATIOS.concat(ADVANCED_PAIR_RATIOS as unknown as number[][]) : WORD_PAIR_RATIOS)];
+    baseRatio = [...randomPick(stage >= 4 ? WORD_PAIR_RATIOS.concat(ADVANCED_PAIR_RATIOS) : WORD_PAIR_RATIOS)];
     scale = randomPick(stage >= 5 ? [3, 4, 5] : [2, 3, 4]);
   } else if (mode === 'fix_mistake') {
     baseRatio = [...randomPick((stage >= 4 ? ADVANCED_PAIR_RATIOS : SIMPLE_PAIR_RATIOS).filter((ratio) => ratio[0] !== ratio[1]))];
     scale = randomPick(stage >= 5 ? [3, 4, 5] : [2, 3]);
   } else if (mode === 'word_problem') {
-    baseRatio = [...randomPick(stage >= 5 ? WORD_PAIR_RATIOS.concat(ADVANCED_PAIR_RATIOS as unknown as number[][]) : WORD_PAIR_RATIOS)];
+    baseRatio = [...randomPick(stage >= 5 ? WORD_PAIR_RATIOS.concat(ADVANCED_PAIR_RATIOS) : WORD_PAIR_RATIOS)];
     scale = randomPick(stage >= 5 ? [3, 4, 5, 6] : [2, 3, 4]);
   } else {
     baseRatio = [...randomPick(stage >= 6 ? ADVANCED_TRIPLE_RATIOS : SIMPLE_TRIPLE_RATIOS)];
@@ -527,7 +531,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
     if (sessionState.timeLeft <= 0 || sessionState.lives <= 0) {
       endedRef.current = true;
       emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
-        XP: correctSolved * 100,
+        score: correctSolved * 100,
         reason: sessionState.timeLeft <= 0 ? 'time_up' : 'no_lives',
       });
       onGameOver(correctSolved * 100);
@@ -563,7 +567,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
       setFeedback(null);
       setAttempts((prev) => prev + 1);
       emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
-        XP: correctSolved * 100,
+        score: correctSolved * 100,
         metadata: { challengeId: challenge.id, stage: challenge.stage },
       });
       setLocked(true);
@@ -581,11 +585,11 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
     setFeedback('success');
     setCorrectSolved(nextCorrect);
     emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
-      XP: scoreNow,
+      score: scoreNow,
       metadata: { round: nextCorrect, roundsGoal },
     });
     emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', {
-      XP: scoreNow,
+      score: scoreNow,
       metadata: { challengeId: challenge.id, stage: challenge.stage },
     });
 
@@ -596,7 +600,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
         const totalAttempts = attempts + 1;
         const stars = starsForAccuracy(nextCorrect, totalAttempts);
         emitMiniGameSessionEvent(sessionEvents, 'game_complete', {
-          XP: scoreNow,
+          score: scoreNow,
           stars,
           metadata: { totalAttempts, roundsGoal },
         });
