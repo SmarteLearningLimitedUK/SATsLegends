@@ -13,6 +13,7 @@ import food8 from '../assets/take_out/food/8.png';
 import food9 from '../assets/take_out/food/9.png';
 import FoodGameShell from '../components/FoodGameShell';
 import goblinEnemy from '../assets/bosses/goblin.png';
+import targetOrderBoard from '../assets/Target Order.png';
 import { triggerHaptic } from '../haptics';
 
 interface TakeOutRushGameProps {
@@ -571,12 +572,42 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
 
         <main className="relative mt-1.5 flex min-h-0 flex-1 flex-col gap-2 pb-[calc(env(safe-area-inset-bottom)+3.9rem)]">
           <section className="relative flex min-h-[16rem] flex-1 items-start justify-center">
-            <div className="pointer-events-none absolute left-1/2 top-[9%] w-[62%] -translate-x-1/2 text-center text-white">
-              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-100/90 drop-shadow-[0_2px_8px_rgba(2,6,23,0.6)]">
-                Target Order
-              </div>
-              <div className="mt-1 text-[clamp(1.35rem,5vw,1.8rem)] font-black text-amber-100 drop-shadow-[0_2px_10px_rgba(2,6,23,0.7)]">
-                {asDisplayFraction(order.target)}
+            <div className="absolute left-1/2 top-[6%] w-[min(88vw,20rem)] -translate-x-1/2">
+              <div className="relative">
+                <img
+                  src={targetOrderBoard}
+                  alt=""
+                  aria-hidden="true"
+                  draggable={false}
+                  className="pointer-events-none h-auto w-full object-contain"
+                />
+                <div className="absolute inset-x-[16%] top-[14%] text-center text-white">
+                  <div className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-100/90 drop-shadow-[0_2px_6px_rgba(2,6,23,0.6)]">
+                    Target Order
+                  </div>
+                  <div className="mt-1 text-[clamp(1.2rem,5vw,1.7rem)] font-black text-amber-100 drop-shadow-[0_2px_8px_rgba(2,6,23,0.7)]">
+                    {asDisplayFraction(order.target)}
+                  </div>
+                </div>
+                <div className="absolute inset-x-[12%] bottom-[12%] flex h-[22%] items-center justify-center gap-2">
+                  {selectedItems.length === 0 ? (
+                    <div className="text-[10px] font-semibold text-amber-100">Tray empty.</div>
+                  ) : (
+                    selectedItems.map((item, index) => (
+                      <button
+                        key={`${item.id}-${index}`}
+                        type="button"
+                        onClick={() => removeSelectedItem(index)}
+                        className="flex items-center justify-center rounded-full bg-black/35 px-2 py-1 text-[10px] font-semibold text-white ring-1 ring-white/25"
+                      >
+                        <FoodSprite item={item} className="h-9 w-9 object-contain" />
+                      </button>
+                    ))
+                  )}
+                </div>
+                <div className="absolute right-[14%] bottom-[16%] rounded-full bg-black/40 px-2 py-1 text-[10px] font-black text-white">
+                  {remainingSlices}
+                </div>
               </div>
             </div>
 
@@ -597,24 +628,6 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
 
           <div className="flex flex-col gap-2">
             <section className="rounded-[1.25rem] p-2 -mt-6">
-              <div className="mt-1 flex min-h-[4.6rem] flex-wrap items-center justify-center gap-2 rounded-[0.7rem] bg-slate-950/35 px-2 py-2">
-                {selectedItems.length === 0 ? (
-                  <div className="text-[10px] font-semibold text-amber-100">Tray empty.</div>
-                ) : (
-                  selectedItems.map((item, index) => (
-                    <button
-                      key={`${item.id}-${index}`}
-                      type="button"
-                      onClick={() => removeSelectedItem(index)}
-                      className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-2 py-1 text-left text-[10px] font-semibold text-white transition hover:border-white/40"
-                    >
-                      <FoodSprite item={item} className="h-11 w-11 object-contain" />
-                      <span className="truncate">{item.name}</span>
-                    </button>
-                  ))
-                )}
-              </div>
-
               <div className="mt-2 flex flex-wrap items-center justify-center gap-2 rounded-[0.9rem] bg-slate-950/45 p-2">
                 {availableItems.map((item) => {
                   const isBanned = activeConstraints.bannedIds.has(item.id);

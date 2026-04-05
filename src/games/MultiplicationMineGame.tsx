@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
+import rockSprite from '../assets/rocksprite.jpg';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import MiniGameTopBar from '../components/MiniGameTopBar';
 import { triggerHaptic } from '../haptics';
@@ -25,6 +26,8 @@ interface MultiplicationQuestion {
 type Phase = 'playing' | 'exploding' | 'treasure';
 
 const ROCK_MAX_HEALTH = 5;
+const ROCK_SPRITE_GRID = { columns: 4, rows: 4 } as const;
+const ROCK_SPRITE_FRAMES = 6;
 
 const makeOptions = (correct: number) => {
   const spread = Math.max(3, Math.round(correct * 0.18));
@@ -74,6 +77,21 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
   const [impactTick, setImpactTick] = useState(0);
   const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
   const completedRef = useRef(false);
+
+  const rockFrameIndex = useMemo(() => {
+    const damage = ROCK_MAX_HEALTH - rockHealth;
+    const clamped = Math.max(0, Math.min(ROCK_SPRITE_FRAMES - 1, damage));
+    return phase === 'exploding' ? ROCK_SPRITE_FRAMES - 1 : clamped;
+  }, [phase, rockHealth]);
+
+  const rockFramePosition = useMemo(() => {
+    const column = rockFrameIndex % ROCK_SPRITE_GRID.columns;
+    const row = Math.floor(rockFrameIndex / ROCK_SPRITE_GRID.columns);
+    return {
+      x: -column * 100,
+      y: -row * 100,
+    };
+  }, [rockFrameIndex]);
 
   const solveQuestion = (selectedAnswer: number) => {
     if (phase !== 'playing') return;
@@ -190,12 +208,17 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
                   repeat: phase === 'playing' ? Infinity : 0,
                   repeatDelay: 1.2,
                 }}
-                className="relative h-[220px] w-[220px] rounded-[50%] border-[6px] border-[#5f7387] bg-[radial-gradient(circle_at_30%_25%,#9ca7b4_0%,#566777_48%,#303d49_100%)] shadow-[0_30px_55px_rgba(0,0,0,0.6)]"
+                className="relative h-[220px] w-[220px] overflow-hidden rounded-[2rem] border-[5px] border-[#5f7387] bg-[#1a2430] shadow-[0_30px_55px_rgba(0,0,0,0.6)]"
               >
-                <div className="absolute inset-[12%] rounded-[50%] border border-white/12" />
-                <div className="absolute left-[22%] top-[32%] h-[3px] w-[35%] -rotate-[22deg] rounded-full bg-[#2f3a45]/80" />
-                <div className="absolute left-[44%] top-[45%] h-[4px] w-[25%] rotate-[30deg] rounded-full bg-[#2f3a45]/85" />
-                <div className="absolute left-[30%] top-[59%] h-[3px] w-[32%] rotate-[8deg] rounded-full bg-[#2f3a45]/80" />
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    backgroundImage: `url(${rockSprite})`,
+                    backgroundSize: `${ROCK_SPRITE_GRID.columns * 100}% ${ROCK_SPRITE_GRID.rows * 100}%`,
+                    backgroundPosition: `${rockFramePosition.x}% ${rockFramePosition.y}%`,
+                    backgroundRepeat: 'no-repeat',
+                  }}
+                />
 
                 <div className="absolute -bottom-10 left-1/2 flex -translate-x-1/2 gap-2">
                   {Array.from({ length: ROCK_MAX_HEALTH }).map((_, idx) => (
