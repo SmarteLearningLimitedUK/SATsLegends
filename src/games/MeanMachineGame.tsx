@@ -41,14 +41,14 @@ interface MeanMachineGameProps {
 const TOTAL_LEVELS = 10;
 const REEL_COUNT = 8;
 const REEL_LAYOUT = [
-  { left: 20, top: 37, width: 12, height: 12 },
-  { left: 36, top: 37, width: 12, height: 12 },
-  { left: 52, top: 37, width: 12, height: 12 },
-  { left: 68, top: 37, width: 12, height: 12 },
-  { left: 20, top: 52, width: 12, height: 12 },
-  { left: 36, top: 52, width: 12, height: 12 },
-  { left: 52, top: 52, width: 12, height: 12 },
-  { left: 68, top: 52, width: 12, height: 12 },
+  { left: 20, top: 35.8, width: 12.2, height: 12.2 },
+  { left: 35.8, top: 35.8, width: 12.2, height: 12.2 },
+  { left: 51.6, top: 35.8, width: 12.2, height: 12.2 },
+  { left: 67.4, top: 35.8, width: 12.2, height: 12.2 },
+  { left: 20, top: 51.8, width: 12.2, height: 12.2 },
+  { left: 35.8, top: 51.8, width: 12.2, height: 12.2 },
+  { left: 51.6, top: 51.8, width: 12.2, height: 12.2 },
+  { left: 67.4, top: 51.8, width: 12.2, height: 12.2 },
 ] as const;
 
 const shuffle = <T,>(values: T[]): T[] => {
@@ -324,7 +324,7 @@ const ReelWindow: React.FC<{
     }`}
   >
     <div className="absolute inset-x-[10%] top-[12%] h-[35%] rounded-full bg-white/30 blur-sm" />
-    <div className={`relative z-10 text-[clamp(1.85rem,4.5vw,2.85rem)] font-black tracking-[-0.05em] ${isInactive ? 'text-slate-400/70' : 'text-slate-950'}`}>
+    <div className={`relative z-10 text-[clamp(1.7rem,4.1vw,2.5rem)] font-semibold tracking-[-0.02em] ${isInactive ? 'text-slate-400/70' : 'text-black'}`}>
       {isInactive ? '' : value}
     </div>
   </motion.div>
@@ -596,15 +596,15 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
               <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[32%] bg-[linear-gradient(180deg,rgba(15,23,42,0),rgba(15,23,42,0.2),rgba(15,23,42,0.6))]" />
 
               <div className="relative flex h-full min-h-0 flex-col gap-2.5">
-                <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-[1.35rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] px-1 py-1">
+                <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-[1.35rem] border border-transparent bg-transparent px-1 py-1">
                   <motion.div
                     animate={machineShake ? { x: [0, -6, 6, -4, 4, 0] } : { x: 0 }}
                     transition={{ duration: 0.34 }}
-                    className="relative mx-auto flex h-full w-full max-w-[26rem] items-center justify-center md:max-w-[28rem]"
+                    className="relative mx-auto flex h-full w-full max-w-[28.5rem] items-center justify-center md:max-w-[30rem]"
                   >
                     <div className="absolute inset-x-[16%] bottom-[10%] h-[20%] rounded-full bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.14),rgba(34,211,238,0.02),transparent_72%)] blur-2xl" />
 
-                    <div className="relative w-full max-w-[24rem] md:max-w-[26rem]" style={{ aspectRatio: '4 / 5' }}>
+                    <div className="relative w-full max-w-[26.5rem] md:max-w-[28.5rem]" style={{ aspectRatio: '4 / 5' }}>
                       <img
                         src={machineImage}
                         alt="Mean Machine slot machine"
@@ -714,13 +714,13 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
               </div>
             </section>
 
-            <section className="shrink-0 rounded-[1.35rem] border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(10,31,83,0.92),rgba(7,21,58,0.96))] p-3 shadow-[0_16px_26px_rgba(2,6,23,0.34)]">
+            <section className="shrink-0 rounded-[1.35rem] border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(10,31,83,0.92),rgba(7,21,58,0.96))] p-2.5 shadow-[0_16px_26px_rgba(2,6,23,0.34)]">
               <div className="mb-2 flex items-center justify-start gap-2">
                 <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/74">
                   {round?.mode === 'mean' ? 'Pick the mean' : 'Pick the reel'}
                 </div>
               </div>
-              <div className={`grid gap-2.5 ${round && round.options.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
+              <div className={`grid gap-2 ${round && round.options.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
                 {round?.options.map((option, index) => {
                   const isSelected = selectedAnswer === option;
                   return (
@@ -732,7 +732,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                       disabled={gameState !== 'answering' || !sessionActive}
                       animate={selectedAnswer === option && wrongPulse ? { x: [0, -6, 6, -4, 4, 0] } : { x: 0 }}
                       transition={{ duration: 0.28 }}
-                      className={`rounded-[1rem] border px-4 py-2.5 text-base font-black transition-all ${
+                      className={`rounded-[0.9rem] border px-3 py-2 text-sm font-black transition-all ${
                         isSelected
                           ? 'border-amber-100/85 bg-[linear-gradient(180deg,#fbbf24_0%,#f59e0b_100%)] text-slate-950 shadow-[0_12px_20px_rgba(146,64,14,0.34)]'
                           : 'border-cyan-100/24 bg-[linear-gradient(180deg,#2563eb_0%,#1d4ed8_100%)] text-white shadow-[0_12px_18px_rgba(2,6,23,0.22)]'
