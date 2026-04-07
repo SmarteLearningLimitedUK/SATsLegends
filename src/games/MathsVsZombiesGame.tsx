@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+ï»¿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Timer as TimerIcon, Heart, Target, Brain } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
@@ -80,8 +80,8 @@ const buildQuestion = (levelId: number): Question => {
   const ops = levelId <= 2
     ? ['+', '-']
     : levelId <= 4
-      ? ['+', '-', '×']
-      : ['+', '-', '×', '÷'];
+      ? ['+', '-', 'Ã—']
+      : ['+', '-', 'Ã—', 'Ã·'];
 
   const op = ops[Math.floor(Math.random() * ops.length)];
   let a = Math.floor(Math.random() * maxBase) + 2;
@@ -96,15 +96,15 @@ const buildQuestion = (levelId: number): Question => {
     if (b > a) [a, b] = [b, a];
     answer = a - b;
     prompt = `${a} - ${b}`;
-  } else if (op === '×') {
+  } else if (op === 'Ã—') {
     a = Math.floor(Math.random() * 8) + 2;
     b = Math.floor(Math.random() * 8) + 2;
     answer = a * b;
-    prompt = `${a} × ${b}`;
+    prompt = `${a} Ã— ${b}`;
   } else {
     answer = a;
     const product = a * b;
-    prompt = `${product} ÷ ${b}`;
+    prompt = `${product} Ã· ${b}`;
   }
 
   const options = new Set<number>([answer]);
@@ -172,7 +172,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 }) => {
   const roundSeconds = useMemo(() => 70 + (levelId * 6), [levelId]);
   const victoryTargetScore = useMemo(() => 1200 + (levelId * 220), [levelId]);
-  const baseZombieHealth = useMemo(() => Math.max(2, Math.min(5, 2 + Math.floor(levelId / 3))), [levelId]);
+  const baseZombieHealth = useMemo(() => 1, []);
   const spawnDelayMs = useMemo(() => Math.max(1200, 2600 - (levelId * 130)), [levelId]);
 
   const [XP, setScore] = useState(0);
@@ -379,9 +379,8 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     if (!gameActive || endedRef.current || locked) return;
     setLocked(true);
     setSelectedAnswer(index);
-
     if (index === question.correctIndex) {
-      setFeedback('Great hit!');
+      setFeedback('Zombie down!');
       const targetZombie = zombiesRef.current.reduce((closest, zombie) => (
         zombie.x < (closest?.x ?? Infinity) ? zombie : closest
       ), null as Zombie | null);
@@ -389,11 +388,10 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       if (targetZombie) {
         const next = zombiesRef.current.map((zombie) => {
           if (zombie.id !== targetZombie.id) return zombie;
-          const nextHealth = zombie.health - 1;
           return {
             ...zombie,
-            health: nextHealth,
-            state: nextHealth <= 0 ? 'die' : 'hit',
+            health: 0,
+            state: 'die',
             stateTime: 0,
             frameIndex: 0,
             frameTime: 0,
@@ -401,18 +399,14 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
         });
         zombiesRef.current = next;
         setZombies(next);
-        if (targetZombie.health - 1 <= 0) {
-          setScore((value) => {
-            const nextScore = value + 220;
-            if (nextScore >= victoryTargetScore && !endedRef.current) {
-              window.setTimeout(() => finishGame(true), 0);
-            }
-            return nextScore;
-          });
-          setZombiesDefeated((value) => value + 1);
-        } else {
-          setScore((value) => value + 120);
-        }
+        setScore((value) => {
+          const nextScore = value + 220;
+          if (nextScore >= victoryTargetScore && !endedRef.current) {
+            window.setTimeout(() => finishGame(true), 0);
+          }
+          return nextScore;
+        });
+        setZombiesDefeated((value) => value + 1);
       }
     } else {
       setFeedback('Close! Try the next one.');
@@ -421,7 +415,6 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
         finishGame(false);
       }
     }
-
     window.setTimeout(() => {
       setQuestion(buildQuestion(levelId));
       setSelectedAnswer(null);
@@ -540,3 +533,10 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 };
 
 export default MathsVsZombiesGame;
+
+
+
+
+
+
+
