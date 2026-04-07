@@ -1,0 +1,45 @@
+{
+  "results": [
+    {
+      "island": "Arithmetic Acropolis",
+      "label": "Play",
+      "status": "ok"
+    },
+    {
+      "island": "Fraction Forest",
+      "label": "Play",
+      "status": "ok"
+    },
+    {
+      "island": "Geometry Glacier",
+      "label": "Play",
+      "status": "ok"
+    },
+    {
+      "island": "Data Desert",
+      "label": "Play",
+      "status": "unknown"
+    },
+    {
+      "island": "Operations Outpost",
+      "label": "Play",
+      "status": "ok"
+    },
+    {
+      "island": "Measurement Mountain",
+      "label": "Play",
+      "status": "ok"
+    },
+    {
+      "island": "Ratio Rapids",
+      "label": "Play",
+      "status": "ok"
+    }
+  ],
+  "consoleErrors": [
+    {
+      "type": "pageerror",
+      "message": "shuffle is not defined"
+    }
+  ]
+}
