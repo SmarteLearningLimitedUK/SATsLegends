@@ -79,51 +79,68 @@ const maxZombiesForLevel = (levelId: number) => {
 };
 
 const buildQuestion = (levelId: number): Question => {
-  const maxBase = levelId <= 2 ? 12 : levelId <= 4 ? 25 : levelId <= 6 ? 50 : 90;
-  const ops = levelId <= 2
-    ? ['+']
-    : levelId <= 4
-      ? ['+', '-']
-      : levelId <= 6
-        ? ['+', '-', '×']
-        : ['+', '-', '×', '÷'];
+  const roll = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-  const op = ops[Math.floor(Math.random() * ops.length)];
-  let a = Math.floor(Math.random() * maxBase) + 2;
-  let b = Math.floor(Math.random() * maxBase) + 2;
+  let opPool: Array<'+' | '-' | '×' | '÷'> = ['+', '-'];
+  let a = 0;
+  let b = 0;
+  let c = 0;
   let answer = 0;
   let prompt = '';
+
+  if (levelId <= 2) {
+    // Two-number add/sub within small range.
+    opPool = ['+', '-'];
+    a = roll(3, 18);
+    b = roll(2, 15);
+  } else if (levelId === 3) {
+    // Two-number add/sub with three-digit values.
+    opPool = ['+', '-'];
+    a = roll(120, 980);
+    b = roll(110, 890);
+  } else if (levelId <= 5) {
+    // Introduce multiplication/division with manageable factors.
+    opPool = ['×', '÷'];
+    a = roll(2, 12);
+    b = roll(2, 12);
+  } else if (levelId <= 7) {
+    // Negatives appear with add/sub in a tighter range.
+    opPool = ['+', '-'];
+    a = roll(-20, 20);
+    b = roll(-18, 18);
+  } else {
+    // Larger numbers into thousands with mixed add/sub.
+    opPool = ['+', '-'];
+    a = roll(350, 1900);
+    b = roll(220, 1600);
+  }
+
+  const op = opPool[Math.floor(Math.random() * opPool.length)];
 
   if (op === '+') {
     answer = a + b;
     prompt = `${a} + ${b}`;
   } else if (op === '-') {
-    if (levelId >= 7 && Math.random() < 0.35) {
-      answer = a - b;
-      prompt = `${a} - ${b}`;
-    } else {
-      if (b > a) [a, b] = [b, a];
-      answer = a - b;
-      prompt = `${a} - ${b}`;
+    if (levelId <= 2 || levelId === 3 || levelId >= 8) {
+      if (a < b) [a, b] = [b, a];
     }
+    answer = a - b;
+    prompt = `${a} - ${b}`;
   } else if (op === '×') {
-    a = Math.floor(Math.random() * (levelId >= 7 ? 10 : 8)) + 2;
-    b = Math.floor(Math.random() * (levelId >= 7 ? 10 : 8)) + 2;
     answer = a * b;
     prompt = `${a} × ${b}`;
   } else {
-    a = Math.floor(Math.random() * (levelId >= 7 ? 10 : 8)) + 2;
-    b = Math.floor(Math.random() * (levelId >= 7 ? 10 : 8)) + 2;
-    answer = a;
+    // Build a clean division question.
     const product = a * b;
+    answer = a;
     prompt = `${product} ÷ ${b}`;
   }
 
   const options = new Set<number>([answer]);
   while (options.size < 4) {
-    const delta = Math.floor(Math.random() * 6) + 1;
+    const delta = Math.floor(Math.random() * 8) + 1;
     const candidate = Math.random() < 0.5 ? answer + delta : answer - delta;
-    if (candidate > 0) options.add(candidate);
+    if (candidate !== answer) options.add(candidate);
   }
   const shuffled = Array.from(options).sort(() => Math.random() - 0.5);
   return {

@@ -313,10 +313,12 @@ const App: React.FC = () => {
       const isTabletViewport = isIPad || Math.min(viewportWidth, viewportHeight) >= 700;
       const baseWidth = isTabletViewport ? IPAD_STAGE_WIDTH : IPHONE_STAGE_WIDTH;
       const baseHeight = isTabletViewport ? IPAD_STAGE_HEIGHT : IPHONE_STAGE_HEIGHT;
-      const scale = Math.min(
+      const rawScale = Math.min(
         viewportWidth / baseWidth,
         viewportHeight / baseHeight,
       );
+      const maxScale = isTabletViewport ? 0.9 : 1;
+      const scale = Math.min(rawScale, maxScale);
       setStageScale(Number.isFinite(scale) && scale > 0 ? scale : 1);
     };
 
