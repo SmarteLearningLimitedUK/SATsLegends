@@ -5,7 +5,6 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  ClipboardList,
   Info,
   Trophy,
 } from 'lucide-react';
@@ -321,11 +320,6 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
 
       <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.25rem)]' : ''}`}>
         <section className="flex flex-col gap-2 p-3 sm:gap-3 sm:p-4 md:p-5">
-          <div className="flex items-center gap-2 text-emerald-400">
-            <ClipboardList className="h-5 w-5" />
-            <h2 className="text-xs font-black uppercase tracking-widest">Question</h2>
-          </div>
-
           <div className="rounded-2xl border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(12,32,70,0.82),rgba(7,18,45,0.9))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
             <p className="text-[clamp(0.95rem,2.8vw,1.1rem)] font-black leading-snug text-white">
               {round?.question}
@@ -338,11 +332,12 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
         </section>
 
         <section className="flex min-h-0 flex-1 flex-col gap-3 px-3 pb-3 sm:gap-4 sm:px-4 sm:pb-4 md:px-5 md:pb-5">
-          <div className="min-h-0 flex-[1] rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,61,0.85),rgba(4,12,30,0.92))] p-3 shadow-[0_16px_40px_rgba(3,12,30,0.26)] sm:p-4 md:p-5">
-            <div className="mb-2 flex items-center justify-between">
+          <div className="mt-2 min-h-0 flex-[1] rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,61,0.85),rgba(4,12,30,0.92))] p-3 shadow-[0_16px_40px_rgba(3,12,30,0.26)] sm:p-4 md:p-5">
+            <div className="mb-2 flex items-start justify-between gap-3">
               <div>
                 <h3 className="text-sm font-black uppercase tracking-[0.24em] text-emerald-300">Live Graph</h3>
                 <p className="text-[11px] text-slate-400">One graph at a time with full axes.</p>
+                <p className="mt-1 text-[10px] font-semibold text-cyan-100/80">Tap or drag to probe.</p>
               </div>
               <div className="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-200">
                 Values
@@ -404,9 +399,6 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                   </LineChart>
                 </ResponsiveContainer>
               )}
-              <div className="pointer-events-none absolute left-3 top-3 rounded-full border border-cyan-200/30 bg-cyan-200/15 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100">
-                Tap or drag to probe
-              </div>
               {probePoint && (
                 <motion.div
                   initial={{ opacity: 0, y: 4 }}
@@ -419,7 +411,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 pt-1">
+          <div className="mt-auto grid grid-cols-2 gap-3 pt-2">
             {round?.options.map(option => {
               const isSelected = selectedAnswer === option;
               const isCorrect = gameState === 'success' && option === round.correctAnswer;

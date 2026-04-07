@@ -221,6 +221,7 @@ const getBoatSpriteStyle = (index: number): React.CSSProperties => {
   return {
     backgroundImage: `url(${boatSpriteSheet})`,
     backgroundSize: '500% 500%',
+    backgroundRepeat: 'no-repeat',
     backgroundPosition: `${col * 25}% ${row * 25}%`,
   };
 };

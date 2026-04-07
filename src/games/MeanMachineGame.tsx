@@ -717,7 +717,13 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
             <section className="shrink-0 rounded-[1.35rem] border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(10,31,83,0.92),rgba(7,21,58,0.96))] p-2.5 shadow-[0_16px_26px_rgba(2,6,23,0.34)]">
               <div className="mb-2 flex items-center justify-start gap-2">
                 <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/74">
-                  {round?.mode === 'mean' ? 'Pick the mean' : 'Pick the reel'}
+                  {round?.mode === 'mean'
+                    ? 'Pick the mean'
+                    : round?.mode === 'median'
+                      ? 'Pick the median'
+                      : round?.mode === 'mode'
+                        ? 'Pick the mode'
+                        : 'Pick the number'}
                 </div>
               </div>
               <div className={`grid gap-2 ${round && round.options.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
