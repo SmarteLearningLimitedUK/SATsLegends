@@ -247,33 +247,33 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
   return (
     <GameScreenShell className="overflow-hidden bg-transparent">
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+3.2rem)] pt-[calc(env(safe-area-inset-top)+4.2rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+3.6rem)] md:pt-[calc(env(safe-area-inset-top)+4.6rem)]">
-        <PuzzleStage className="w-full max-w-5xl min-h-0 flex-1 rounded-[2rem] p-2 md:rounded-[2.4rem] md:p-3">
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+2.6rem)] pt-[calc(env(safe-area-inset-top)+3.6rem)] md:px-3 md:pb-[calc(env(safe-area-inset-bottom)+3rem)] md:pt-[calc(env(safe-area-inset-top)+4rem)]">
+        <PuzzleStage className="w-full max-w-5xl min-h-0 flex-1 rounded-[1.6rem] p-2 md:rounded-[2rem] md:p-2.5">
           <div className="absolute inset-0 bg-transparent" />
 
-          <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-2.5 md:px-3 md:pb-3 md:pt-3">
+          <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-2 md:px-2.5 md:pb-2 md:pt-2.5">
             <div className="flex justify-center">
-              <div className="licensed-slice-paper-panel max-w-[96%] px-3 py-2 text-center shadow-[0_14px_26px_rgba(15,23,42,0.16)] md:px-5 md:py-2.5">
-                <div className="text-[0.9rem] font-black tracking-tight text-amber-900 md:text-[1.15rem]">
+              <div className="licensed-slice-paper-panel max-w-[96%] px-3 py-1.5 text-center shadow-[0_14px_26px_rgba(15,23,42,0.16)] md:px-4 md:py-2">
+                <div className="text-[0.82rem] font-black tracking-tight text-amber-900 md:text-[1.05rem]">
                   Share the cargo equally between the boats
                 </div>
-                <div className="mt-0.5 text-[0.66rem] font-bold text-amber-950/76 md:text-[0.86rem]">
+                <div className="mt-0.5 text-[0.6rem] font-bold text-amber-950/76 md:text-[0.78rem]">
                   Tap a boat to load one crate.
                 </div>
               </div>
             </div>
 
-            <div className="mt-2 grid min-h-0 flex-1 grid-cols-1 gap-2.5 lg:mt-3 lg:grid-cols-[1.1fr_0.9fr] lg:gap-3">
-              <div className="licensed-game-card-dark flex min-h-0 flex-col rounded-[1.3rem] border border-white/14 p-2.5 shadow-[0_16px_28px_rgba(2,6,23,0.22)] md:rounded-[1.6rem] md:p-4">
+            <div className="mt-1.5 grid min-h-0 flex-1 grid-cols-1 gap-2 lg:mt-2 lg:grid-cols-[1.05fr_0.95fr] lg:gap-2.5">
+              <div className="licensed-game-card-dark flex min-h-0 flex-col rounded-[1.15rem] border border-white/14 p-2.5 shadow-[0_16px_28px_rgba(2,6,23,0.22)] md:rounded-[1.4rem] md:p-3">
                 <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Cargo brief</div>
-                <div className="mt-2 rounded-[1rem] border border-sky-200/20 bg-[linear-gradient(180deg,rgba(14,116,144,0.22),rgba(14,116,144,0.08))] p-3 text-center md:mt-3 md:p-4">
+                <div className="mt-2 rounded-[0.95rem] border border-sky-200/20 bg-[linear-gradient(180deg,rgba(14,116,144,0.22),rgba(14,116,144,0.08))] p-2.5 text-center md:mt-2.5 md:p-3">
                   <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/70 md:text-xs">Current equation</div>
-                  <div className="mt-1 text-[clamp(1.6rem,4.2vw,2.7rem)] font-black text-white">
+                  <div className="mt-1 text-[clamp(1.4rem,4vw,2.3rem)] font-black text-white">
                     {question.dividend} ÷ {question.divisor} = ?
                   </div>
                 </div>
 
-                <div className="mt-3 grid grid-cols-2 gap-2 md:mt-3">
+                <div className="mt-2 grid grid-cols-2 gap-2 md:mt-2">
                   <div className="rounded-[1rem] border border-white/12 bg-white/8 p-2 text-center">
                     <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/65 md:text-[11px]">Cargo</div>
                     <div className="mt-1 text-xl font-black text-white md:text-2xl">{question.dividend - remainingGoods}/{question.dividend}</div>
@@ -284,25 +284,25 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
                   </div>
                 </div>
 
-                <div className="mt-2 rounded-[1rem] border border-white/12 bg-white/8 p-2 text-center">
+                <div className="mt-2 rounded-[0.95rem] border border-white/12 bg-white/8 p-2 text-center">
                   <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/65 md:text-[11px]">Crates left</div>
                   <div className="mt-1 text-2xl font-black text-amber-100 md:text-3xl">{remainingGoods}</div>
                 </div>
               </div>
 
-              <div className="licensed-game-card-dark flex min-h-0 flex-col rounded-[1.3rem] border border-white/14 p-2.5 shadow-[0_16px_28px_rgba(2,6,23,0.22)] md:rounded-[1.6rem] md:p-4">
+              <div className="licensed-game-card-dark flex min-h-0 flex-col rounded-[1.15rem] border border-white/14 p-2.5 shadow-[0_16px_28px_rgba(2,6,23,0.22)] md:rounded-[1.4rem] md:p-3">
                 <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Dockyard</div>
 
-                <div className="mt-2 grid min-h-0 flex-1 grid-cols-1 gap-2 md:mt-3 md:gap-3">
+                <div className="mt-2 grid min-h-0 flex-1 grid-cols-1 gap-1.5 md:mt-2.5 md:gap-2.5">
                   {boatLoads.map((count, index) => (
                     <button
                       key={`boat-${index}`}
                       type="button"
                       onClick={() => addToBoat(index)}
                       disabled={isFinished || remainingGoods <= 0}
-                      className="flex items-center gap-3 rounded-[1rem] border border-white/12 bg-[linear-gradient(180deg,rgba(56,189,248,0.18),rgba(15,23,42,0.7))] px-3 py-2 text-left shadow-[0_10px_18px_rgba(2,6,23,0.2)] transition active:scale-[0.98] disabled:opacity-60"
+                      className="flex items-center gap-3 rounded-[1rem] border border-white/12 bg-[linear-gradient(180deg,rgba(56,189,248,0.18),rgba(15,23,42,0.7))] px-3 py-1.5 text-left shadow-[0_10px_18px_rgba(2,6,23,0.2)] transition active:scale-[0.98] disabled:opacity-60"
                     >
-                      <div className="relative h-16 w-20 overflow-hidden rounded-lg border border-white/18 bg-transparent">
+                      <div className="relative h-14 w-16 overflow-hidden rounded-lg border border-white/18 bg-transparent">
                         <div
                           className="absolute inset-0"
                           style={{
@@ -315,7 +315,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
                       </div>
                       <div className="flex-1">
                         <div className="text-[11px] font-black uppercase tracking-[0.12em] text-cyan-100/80">Dock {index + 1}</div>
-                        <div className="mt-1 text-lg font-black text-white">{count} crates</div>
+                        <div className="mt-0.5 text-base font-black text-white">{count} crates</div>
                       </div>
                       <div className="rounded-full border border-amber-200/35 bg-amber-200/10 px-3 py-1 text-[11px] font-black text-amber-100">
                         +1
@@ -355,7 +355,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
                 className={`pointer-events-none absolute inset-0 z-40 flex items-center justify-center backdrop-blur-md ${feedback.type === 'success' ? 'bg-emerald-500/16' : 'bg-red-500/16'}`}
               >
                 <div className="rounded-[2rem] border border-white/14 bg-slate-950/60 px-8 py-6 text-center shadow-[0_24px_36px_rgba(0,0,0,0.24)]">
-                  <div className={`text-4xl font-black uppercase tracking-[0.12em] md:text-6xl ${feedback.type === 'success' ? 'text-emerald-100' : 'text-red-100'}`}>
+                  <div className={`text-4xl font-black uppercase tracking-[0.12em] md:text-6xl ${feedback.type === 'success' ? 'text-emerald-100' : 'text-amber-100'}`}>
                     {feedback.title}
                   </div>
                   <div className="mt-2 text-lg font-bold text-white/92 md:text-2xl">{feedback.subtitle}</div>

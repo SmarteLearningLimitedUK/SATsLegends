@@ -136,7 +136,7 @@ const TopBar = ({ XP, brainPoints, health, timer, onBack }: { XP: number; brainP
         <div className="flex flex-col items-center">
           <div className="flex items-center gap-1">
             {Array.from({ length: 3 }).map((_, index) => (
-              <Heart key={index} className={`h-4 w-4 ${index < health ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
+              <Heart key={index} className={`h-4 w-4 ${index < health ? 'fill-red-500 text-amber-500' : 'text-gray-600'}`} />
             ))}
           </div>
           <span className="mt-1 text-[10px] font-black uppercase text-blue-200">Base Health</span>
@@ -525,7 +525,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
                   locked && selectedAnswer === index
                     ? index === question.correctIndex
                       ? 'border-emerald-300 bg-emerald-400/40 text-emerald-100'
-                      : 'border-rose-300 bg-rose-400/35 text-rose-100'
+                      : 'border-rose-300 bg-rose-400/35 text-amber-100'
                     : 'border-blue-300/50 bg-blue-800/60 text-white hover:bg-blue-700/70'
                 }`}
               >

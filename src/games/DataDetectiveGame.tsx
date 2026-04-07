@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Search,
   FileText,
@@ -244,12 +244,12 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
         </header>
       )}
 
-      <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.25rem)]' : ''}`}>
-        <section className="z-10 flex min-h-0 w-full flex-[0.42] flex-col gap-2.5 overflow-hidden border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] p-3 sm:p-4 md:w-1/2 md:flex-1 md:gap-3 md:border-b-0 md:border-r md:p-5">
-          <div className="rounded-xl border border-cyan-100/16 bg-slate-900/40 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-cyan-100/80">
+      <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.05rem)]' : ''}`}>
+        <section className="z-10 flex min-h-0 w-full flex-[0.42] flex-col gap-2 overflow-hidden border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] p-2 sm:p-3 md:w-1/2 md:flex-1 md:gap-3 md:border-b-0 md:border-r md:p-5">
+          <div className="rounded-xl border border-cyan-100/16 bg-slate-900/40 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-cyan-100/80">
             {caseBrief}
           </div>
-          <div className="mb-2 flex items-center justify-between">
+          <div className="mb-1 flex items-center justify-between">
             <div className="flex items-center gap-2 text-amber-500">
               <FileText className="h-5 w-5" />
               <h2 className="text-xs font-black uppercase tracking-widest">
@@ -264,10 +264,10 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             </div>
           </div>
 
-          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(255,255,255,0.14),rgba(9,24,58,0.6))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-4 md:p-4">
+          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(255,255,255,0.14),rgba(9,24,58,0.6))] p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-3 md:p-4">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.3)_1px,transparent_1px)] opacity-7 [background-size:20px_20px]" />
 
-            <div className="relative w-full" style={{ height: 'clamp(9rem, 22vh, 12.5rem)' }}>
+            <div className="relative w-full" style={{ height: 'clamp(7.5rem, 18vh, 10.5rem)' }}>
               <ResponsiveContainer width="100%" height="100%">
                 {chartType === 'bar' ? (
                     <BarChart data={currentCase} margin={{ top: 12, right: 10, left: -6, bottom: 6 }}>
@@ -344,29 +344,29 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               </ResponsiveContainer>
             </div>
 
-            <div className="mt-2 grid grid-cols-2 gap-1.5 sm:gap-2">
+            <div className="mt-1.5 grid grid-cols-2 gap-1 sm:gap-1.5">
               {currentCase.map(item => (
-                <div key={item.name} className="flex items-center justify-between gap-2 rounded-lg border border-white/10 bg-white/8 px-2.5 py-1.5">
+                <div key={item.name} className="flex items-center justify-between gap-2 rounded-lg border border-white/10 bg-white/8 px-2 py-1">
                   <div className="flex items-center gap-2">
                   <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
-                  <span className="min-w-0 truncate text-[9px] font-bold uppercase tracking-wide text-stone-300">
+                  <span className="min-w-0 truncate text-[8px] font-bold uppercase tracking-wide text-stone-300">
                     {item.name}
                   </span>
                   </div>
-                  <span className="text-[11px] font-black text-white">{item.amount}</span>
+                  <span className="text-[10px] font-black text-white">{item.amount}</span>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="z-10 flex min-h-0 w-full flex-[0.58] flex-col gap-2 overflow-hidden bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] p-3 sm:p-4 md:w-1/2 md:flex-1 md:gap-3 md:p-5">
-          <div className="mb-2 flex items-center gap-2 text-amber-500">
+        <section className="z-10 flex min-h-0 w-full flex-[0.58] flex-col gap-2 overflow-hidden bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] p-2 sm:p-3 md:w-1/2 md:flex-1 md:gap-3 md:p-5">
+          <div className="mb-1 flex items-center gap-2 text-amber-500">
             <Users className="h-5 w-5" />
             <h2 className="text-xs font-black uppercase tracking-widest">Suspect Lineup</h2>
           </div>
 
-          <div className="grid min-h-0 flex-1 auto-rows-[minmax(0,1fr)] grid-cols-2 gap-2 md:gap-3">
+          <div className="grid min-h-0 flex-1 auto-rows-[minmax(0,1fr)] grid-cols-2 gap-1.5 md:gap-3">
             {suspects.map((suspect) => (
               <motion.button
                 key={suspect.id}
@@ -383,19 +383,19 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                       : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
                 }`}
               >
-                <div className={`mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full ${suspect.color} text-stone-900 shadow-lg md:mb-2.5 md:h-12 md:w-12`}>
+                <div className={`mx-auto mb-1.5 flex h-9 w-9 items-center justify-center rounded-full ${suspect.color} text-stone-900 shadow-lg md:mb-2.5 md:h-12 md:w-12`}>
                   {suspect.icon}
                 </div>
 
-                <h3 className="mb-2 text-center text-[11px] font-black uppercase tracking-tight text-white md:mb-2 md:text-xs">
+                <h3 className="mb-1.5 text-center text-[10px] font-black uppercase tracking-tight text-white md:mb-2 md:text-xs">
                   {suspect.name}
                 </h3>
 
-                <div className="mt-auto grid grid-cols-2 gap-1.5 md:gap-2">
+                <div className="mt-auto grid grid-cols-2 gap-1 md:gap-2">
                   {suspect.items.map((amount, i) => (
-                    <div key={i} className="flex items-center justify-between rounded-lg border border-white/10 bg-white/6 p-1.5 md:p-1.5">
-                      <span className="mr-1 truncate text-[8px] font-bold uppercase text-stone-300">{ITEMS[i].name.split(' ')[1]}</span>
-                      <span className="text-xs font-black text-amber-300">{amount}</span>
+                    <div key={i} className="flex items-center justify-between rounded-lg border border-white/10 bg-white/6 px-1.5 py-1 md:p-1.5">
+                      <span className="mr-1 truncate text-[7px] font-bold uppercase text-stone-300">{ITEMS[i].name.split(' ')[1]}</span>
+                      <span className="text-[10px] font-black text-amber-300">{amount}</span>
                     </div>
                   ))}
                 </div>
@@ -409,7 +409,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             ))}
           </div>
 
-          <div className="mt-auto flex flex-col gap-2 pt-1">
+          <div className="mt-auto flex flex-col gap-1.5 pt-0.5">
             <AnimatePresence mode="wait">
               {gameState === 'success' ? (
                 <motion.button
@@ -422,8 +422,8 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                   Next Case File <ChevronRight className="h-4 w-4" />
                 </motion.button>
               ) : (
-                <div className="rounded-xl border border-stone-800 bg-stone-900/20 p-3 text-center">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-stone-500">
+                <div className="rounded-xl border border-stone-800 bg-stone-900/20 p-2 text-center">
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-stone-500">
                     {caseMode === 'whodunnit'
                       ? 'Pick the culprit whose stash matches the clues'
                       : 'Select the suspect whose items match the evidence'}
@@ -432,10 +432,10 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               )}
             </AnimatePresence>
             {feedback && (
-              <div className={`rounded-full border px-4 py-2 text-center text-[11px] font-bold uppercase tracking-wide ${
+              <div className={`rounded-full border px-3 py-1.5 text-center text-[10px] font-bold uppercase tracking-wide ${
                 feedback.type === 'success'
                   ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-200'
-                  : 'border-rose-500/50 bg-rose-500/10 text-rose-200'
+                  : 'border-rose-500/50 bg-rose-500/10 text-amber-200'
               }`}>
                 {feedback.message}
               </div>

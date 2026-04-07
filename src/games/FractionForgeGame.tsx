@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react';
 import AssetIcon from '../components/AssetIcon';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
-import ribbonAsset from '../assets/casual_ui/dialogs_panels/ribbon_1.png';
 import { triggerHaptic } from '../haptics';
 
 interface FractionForgeGameProps {
@@ -225,9 +224,8 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     const usableBottom = Math.max(usableTop + 340, viewport.height - hudBottomReserve);
     const usableHeight = Math.max(340, usableBottom - usableTop);
 
-    const ribbonTop = usableTop + (isTablet ? 4 : 2);
-    const sourceTop = usableTop + (usableHeight * (isTablet ? 0.24 : 0.245));
-    const targetTop = usableTop + (usableHeight * (isTablet ? 0.69 : 0.705));
+    const sourceTop = usableTop + (usableHeight * (isTablet ? 0.32 : 0.3));
+    const targetTop = usableTop + (usableHeight * (isTablet ? 0.62 : 0.6));
     const pedestalTop = targetTop + (slotHeight * 0.58);
 
     const goblinWidth = Math.round(
@@ -257,8 +255,6 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
       goblinWidth,
       sourceAnchors,
       targetAnchors,
-      ribbonTop,
-      ribbonWidth: isTablet ? 72 : 92,
     };
   }, [round.cards.length, useSharedTopHud, viewport.height, viewport.width]);
 
@@ -511,24 +507,10 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
       <div className="absolute inset-0 bg-gradient-to-b from-[#060f2ccc] via-[#0b1a4694] to-[#050b1acc]" />
 
       <div ref={playfieldRef} className="relative h-full w-full">
-        <div
-          className="pointer-events-none absolute left-1/2 z-20 -translate-x-1/2"
-          style={{ top: layout.ribbonTop, width: `${layout.ribbonWidth}%` }}
-        >
-          <img src={ribbonAsset} alt="" className="h-auto w-full object-contain" draggable={false} />
-          <div className="absolute inset-0 flex items-center justify-center overflow-hidden px-[10%] pt-[5%] text-center">
-            <span
-              className="max-w-[94%] text-[clamp(0.72rem,2.1vw,1.45rem)] font-black leading-tight text-yellow-50 drop-shadow-[0_2px_2px_rgba(0,0,0,0.7)]"
-              style={{
-                display: '-webkit-box',
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
-              }}
-            >
-              {round.prompt}
-            </span>
-          </div>
+        <div className="pointer-events-none absolute left-1/2 top-[4%] z-20 w-[min(88%,32rem)] -translate-x-1/2 rounded-[1rem] border border-cyan-200/30 bg-slate-950/50 px-4 py-2 text-center shadow-[0_12px_22px_rgba(2,6,23,0.45)]">
+          <span className="text-[clamp(0.9rem,2.3vw,1.35rem)] font-black leading-tight text-cyan-50 drop-shadow-[0_2px_2px_rgba(0,0,0,0.6)]">
+            {round.prompt}
+          </span>
         </div>
 
         {activeSourceAnchors.map((anchor, index) => {
@@ -565,16 +547,6 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
                   height: layout.slotSize.height,
                 }}
               />
-              <div
-                className="pointer-events-none absolute z-[9] -translate-x-1/2 -translate-y-1/2 rounded-[0.8rem] border border-yellow-100/22 bg-gradient-to-b from-[#9a6f45] to-[#6a4728] shadow-[0_12px_20px_rgba(0,0,0,0.45)]"
-                style={{
-                  left: `${anchor.x}%`,
-                  top: layout.pedestalTop,
-                  width: layout.slotSize.width + 8,
-                  height: Math.max(26, layout.slotSize.height * 0.24),
-                }}
-              />
-
               <div
                 className="absolute z-[11] -translate-x-1/2 -translate-y-1/2"
                 style={{ left: `${anchor.x}%`, top: layout.targetTop }}
@@ -613,7 +585,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
               className={`pointer-events-none absolute left-1/2 top-[56%] z-40 -translate-x-1/2 rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.12em] ${
                 feedback.tone === 'success'
                   ? 'border-emerald-300/65 bg-emerald-300/20 text-emerald-50'
-                  : 'border-rose-300/65 bg-rose-300/20 text-rose-50'
+                  : 'border-rose-300/65 bg-rose-300/20 text-amber-50'
               }`}
             >
               {feedback.message}

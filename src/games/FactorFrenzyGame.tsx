@@ -450,7 +450,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 1.06 }}
                         className={`pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-6xl font-black uppercase tracking-tight sm:text-7xl ${
-                          state.status === 'correct' ? 'text-emerald-200/35' : 'text-rose-200/35'
+                          state.status === 'correct' ? 'text-emerald-200/35' : 'text-amber-200/35'
                         }`}
                       >
                         {state.status === 'correct' ? 'Perfect' : 'Miss'}

@@ -1324,11 +1324,12 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
               <BossPortrait encounter={bossEncounter} pose={bossPose} compact className="shrink-0" />
             )}
 
+            {!isChartChase && (
             <div className={`casual-panel-strong relative shrink-0 overflow-hidden ${
               isPlaceValuePeaks
                 ? 'rounded-[1.25rem] border border-amber-200/18 bg-[linear-gradient(180deg,rgba(124,45,18,0.88),rgba(83,33,13,0.92))]'
                 : isChartChase
-                  ? 'rounded-[1.2rem] border border-sky-200/25 bg-[linear-gradient(180deg,rgba(15,23,42,0.65),rgba(30,41,59,0.35))]'
+                  ? 'rounded-[1.2rem] border border-transparent bg-transparent'
                   : 'rounded-[1.35rem]'
               } ${isChartChase ? 'px-2.5 py-2 md:px-3 md:py-3' : 'px-3 py-3 md:px-5 md:py-5'} text-center md:rounded-[2rem]`}>
               <div className={`absolute inset-x-5 top-0 h-20 rounded-full bg-gradient-to-br ${isPlaceValuePeaks ? 'from-yellow-200/18 via-orange-300/12 to-transparent' : theme.prompt} blur-3xl`} />
@@ -1344,6 +1345,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                 </div>
               </div>
             </div>
+            )}
 
             <div className={`casual-panel-surface relative flex min-h-0 shrink overflow-hidden ${
               isPlaceValuePeaks
@@ -1353,23 +1355,35 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                   : 'rounded-[1.25rem]'
               } px-2 py-2 md:rounded-[1.8rem] md:px-4 md:py-4`}>
               <div className="relative z-10 flex min-h-0 w-full flex-col items-center justify-center gap-2">
+                {isChartChase && (
+                  <div className="w-full px-1 text-center">
+                    <div className="text-[0.98rem] font-black leading-tight text-white md:text-[1.08rem]">
+                      {formatFantasyPrompt(question.prompt)}
+                    </div>
+                    <div className="mt-1 text-[9px] font-semibold text-white/70 md:text-[11px]">
+                      {question.sublabel}
+                    </div>
+                  </div>
+                )}
                 <motion.div
                   key={`${question.prompt}-${question.sublabel}`}
                   initial={{ opacity: 0, y: 8, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   className="flex min-h-0 w-full items-center justify-center overflow-hidden"
                 >
-                  <div className={`w-full overflow-hidden ${isChartChase ? 'max-h-[8.2rem] md:max-h-[11rem]' : 'max-h-[10.5rem] md:max-h-[15rem]'}`}>
+                  <div className={`w-full overflow-hidden ${isChartChase ? 'max-h-[7.25rem] md:max-h-[9.5rem]' : 'max-h-[10.5rem] md:max-h-[15rem]'}`}>
                     <div className="flex h-full w-full items-center justify-center">
                       {renderVisual(question.visual)}
                     </div>
                   </div>
                 </motion.div>
-                <div className={`w-full rounded-[1rem] px-3 py-2 text-center font-bold shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:rounded-[1.15rem] md:px-4 md:py-2.5 ${isChartChase ? 'text-[8px] md:text-[11px]' : 'text-[9px] md:text-sm'} ${
-                  isChartChase ? 'bg-white/18 text-slate-900' : 'bg-black/22 text-white/84'
-                }`}>
-                  {visualCaption || statusMessage}
-                </div>
+                {!isChartChase && (
+                  <div className={`w-full rounded-[1rem] px-3 py-2 text-center font-bold shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:rounded-[1.15rem] md:px-4 md:py-2.5 ${isChartChase ? 'text-[8px] md:text-[11px]' : 'text-[9px] md:text-sm'} ${
+                    isChartChase ? 'bg-white/18 text-slate-900' : 'bg-black/22 text-white/84'
+                  }`}>
+                    {visualCaption || statusMessage}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -1401,7 +1415,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                           : isCalculationClash
                           ? 'min-h-[3.55rem] rounded-[1.05rem] border border-sky-100/24 shadow-[0_16px_26px_rgba(0,0,0,0.24)] md:min-h-[4.7rem] md:rounded-[1.2rem] md:px-5 md:py-3'
                           : isChartChase
-                            ? 'min-h-[2.7rem] rounded-[0.95rem] md:min-h-[3.6rem] md:px-4 md:py-2'
+                            ? 'min-h-[2.35rem] rounded-[0.95rem] md:min-h-[3.1rem] md:px-4 md:py-2'
                             : 'min-h-[3.55rem] rounded-[999px] md:min-h-[4.7rem] md:px-5 md:py-3'
                     }`}
                   >
@@ -1451,7 +1465,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
               className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/62 p-4 backdrop-blur-md"
             >
               <div className="app-modal-panel flex w-full max-w-md flex-col items-center gap-5 rounded-[2rem] border border-white/20 bg-[linear-gradient(180deg,rgba(255,247,228,0.98),rgba(245,232,202,0.96))] p-6 text-slate-900 shadow-[0_24px_70px_rgba(0,0,0,0.32)] md:gap-6 md:p-8">
-                <div className={`text-center text-4xl font-black ${isVictory ? 'text-emerald-600' : 'text-rose-600'} md:text-5xl`}>
+                <div className={`text-center text-4xl font-black ${isVictory ? 'text-emerald-600' : 'text-amber-600'} md:text-5xl`}>
                   {isVictory ? 'Challenge Cleared' : 'Round Over'}
                 </div>
                 <div className="text-center text-sm font-semibold text-slate-600 md:text-base">

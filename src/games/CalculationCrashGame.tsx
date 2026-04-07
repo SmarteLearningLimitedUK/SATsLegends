@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ChevronRight, RotateCcw, Trophy } from 'lucide-react';
 import calculationClashBackground from '../assets/maps/facctor frenzy.jpg';
@@ -274,7 +274,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
             className={`absolute left-1/2 top-[calc(env(safe-area-inset-top)+6.2rem)] z-30 -translate-x-1/2 rounded-full border px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] ${
               feedback.tone === 'success'
                 ? 'border-emerald-200/75 bg-emerald-500/25 text-emerald-50'
-                : 'border-rose-200/75 bg-rose-500/25 text-rose-50'
+                : 'border-rose-200/75 bg-rose-500/25 text-amber-50'
             }`}
           >
             {feedback.text}

@@ -318,25 +318,24 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
         </header>
       )}
 
-      <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.25rem)]' : ''}`}>
-        <section className="flex flex-col gap-2 p-3 sm:gap-3 sm:p-4 md:p-5">
-          <div className="rounded-2xl border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(12,32,70,0.82),rgba(7,18,45,0.9))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-            <p className="text-[clamp(0.95rem,2.8vw,1.1rem)] font-black leading-snug text-white">
+      <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.05rem)]' : ''}`}>
+        <section className="flex flex-col gap-1.5 p-2 sm:gap-2.5 sm:p-3 md:p-4">
+          <div className="rounded-2xl border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(12,32,70,0.82),rgba(7,18,45,0.9))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-3">
+            <p className="text-[clamp(0.9rem,2.6vw,1.02rem)] font-black leading-snug text-white">
               {round?.question}
             </p>
-            <div className="mt-1 flex items-start gap-2 text-[10px] text-slate-300 sm:text-[11px]">
+            <div className="mt-0.5 flex items-start gap-2 text-[9px] text-slate-300 sm:text-[10px]">
               <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400" />
               <p>{round?.helper}</p>
             </div>
           </div>
         </section>
 
-        <section className="flex min-h-0 flex-1 flex-col gap-3 px-3 pb-3 sm:gap-4 sm:px-4 sm:pb-4 md:px-5 md:pb-5">
-          <div className="mt-2 min-h-0 flex-[1] rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,61,0.85),rgba(4,12,30,0.92))] p-3 shadow-[0_16px_40px_rgba(3,12,30,0.26)] sm:p-4 md:p-5">
-            <div className="mb-2 flex items-start justify-between gap-3">
+        <section className="flex min-h-0 flex-1 flex-col gap-2 px-2 pb-2 sm:gap-3 sm:px-3 sm:pb-3 md:px-4 md:pb-4">
+          <div className="mt-0.5 min-h-0 flex-[1] rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,61,0.85),rgba(4,12,30,0.92))] p-2.5 shadow-[0_16px_40px_rgba(3,12,30,0.26)] sm:p-4 md:p-5">
+            <div className="mb-1 flex items-center justify-between gap-3">
               <div>
                 <h3 className="text-sm font-black uppercase tracking-[0.24em] text-emerald-300">Live Graph</h3>
-                <p className="text-[11px] text-slate-400">One graph at a time with full axes.</p>
                 <p className="mt-1 text-[10px] font-semibold text-cyan-100/80">Tap or drag to probe.</p>
               </div>
               <div className="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-200">
@@ -348,7 +347,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
               ref={chartWrapRef}
               onPointerDown={handleProbePointerDown}
               onPointerMove={handleProbePointerMove}
-              className="relative h-full min-h-[12.5rem] w-full rounded-2xl border border-slate-700/60 bg-slate-950/35 p-2 sm:min-h-[14rem] md:min-h-[15rem]"
+              className="relative h-full min-h-[9.2rem] w-full rounded-2xl border border-slate-700/60 bg-slate-950/35 p-2 sm:min-h-[10.5rem] md:min-h-[12rem]"
             >
               {round && (
                 <ResponsiveContainer width="100%" height="100%">
@@ -411,7 +410,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
             </div>
           </div>
 
-          <div className="mt-auto grid grid-cols-2 gap-3 pt-2">
+          <div className="mt-auto grid grid-cols-2 gap-2 pt-1">
             {round?.options.map(option => {
               const isSelected = selectedAnswer === option;
               const isCorrect = gameState === 'success' && option === round.correctAnswer;
@@ -423,17 +422,17 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleAnswer(option)}
                   disabled={gameState === 'success'}
-                  className={`min-h-[3.6rem] rounded-2xl border px-3 py-3 text-center transition-all sm:min-h-[4rem] sm:px-4 ${
+                  className={`min-h-[3.1rem] rounded-2xl border px-3 py-2.5 text-center transition-all sm:min-h-[3.4rem] sm:px-4 ${
                     isCorrect
                       ? 'border-emerald-400 bg-emerald-500/15 text-emerald-100 shadow-[0_0_22px_rgba(16,185,129,0.18)]'
                       : isWrongSelected
-                        ? 'border-rose-400 bg-rose-500/12 text-rose-100'
+                        ? 'border-rose-400 bg-rose-500/12 text-amber-100'
                         : isSelected
                           ? 'border-cyan-300 bg-cyan-400/10 text-white'
                           : 'border-slate-700 bg-slate-900/55 text-slate-100 hover:border-emerald-400/60 hover:bg-slate-800/70'
                   } ${gameState === 'success' ? 'cursor-default' : ''}`}
                 >
-                  <span className="text-sm font-black leading-tight sm:text-base">{option}</span>
+                  <span className="text-[0.92rem] font-black leading-tight sm:text-base">{option}</span>
                 </motion.button>
               );
             })}
@@ -495,7 +494,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
             className={`absolute bottom-[calc(env(safe-area-inset-bottom)+4.85rem)] left-1/2 z-40 flex w-[min(92%,32rem)] -translate-x-1/2 items-center justify-center gap-3 rounded-full border px-5 py-3 text-center shadow-2xl ${
               feedback.type === 'success'
                 ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300'
-                : 'border-rose-500/50 bg-rose-500/10 text-rose-300'
+                : 'border-rose-500/50 bg-rose-500/10 text-amber-300'
             }`}
           >
             {feedback.type === 'success' ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <AlertCircle className="h-4 w-4 shrink-0" />}

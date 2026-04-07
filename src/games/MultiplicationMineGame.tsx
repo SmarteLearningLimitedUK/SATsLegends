@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
-import rockSprite from '../assets/rocksprite.jpg';
+import rockSprite from '../assets/rocksprite.png';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import MiniGameTopBar from '../components/MiniGameTopBar';
 import { triggerHaptic } from '../haptics';
@@ -29,6 +29,7 @@ type Phase = 'playing' | 'exploding' | 'treasure';
 const ROCK_MAX_HEALTH = 5;
 const ROCK_SPRITE_GRID = { columns: 3, rows: 3 } as const;
 const ROCK_SPRITE_FRAMES = 9;
+const ROCK_DAMAGE_SEQUENCE = [0, 1, 4, 7, 8, 8] as const;
 
 const makeOptions = (correct: number) => {
   const spread = Math.max(3, Math.round(correct * 0.18));
@@ -81,9 +82,9 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
 
   const rockFrameIndex = useMemo(() => {
     const damage = ROCK_MAX_HEALTH - rockHealth;
-    const progress = ROCK_MAX_HEALTH <= 0 ? 0 : damage / ROCK_MAX_HEALTH;
-    const frame = Math.round(progress * (ROCK_SPRITE_FRAMES - 1));
-    return phase === 'exploding' ? ROCK_SPRITE_FRAMES - 1 : Math.max(0, Math.min(ROCK_SPRITE_FRAMES - 1, frame));
+    const clampedDamage = Math.max(0, Math.min(ROCK_MAX_HEALTH, damage));
+    const sequenceFrame = ROCK_DAMAGE_SEQUENCE[clampedDamage] ?? ROCK_SPRITE_FRAMES - 1;
+    return phase === 'exploding' ? ROCK_SPRITE_FRAMES - 1 : sequenceFrame;
   }, [phase, rockHealth]);
 
   const rockFramePosition = useMemo(() => {
@@ -213,7 +214,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
                 className="relative h-[240px] w-[240px] overflow-hidden bg-transparent shadow-[0_30px_55px_rgba(0,0,0,0.6)]"
               >
                 <div
-                  className="absolute inset-0 bg-transparent [mix-blend-mode:multiply]"
+                  className="absolute inset-0 bg-transparent"
                   style={{
                     backgroundImage: `url(${rockSprite})`,
                     backgroundSize: `${ROCK_SPRITE_GRID.columns * 100}% ${ROCK_SPRITE_GRID.rows * 100}%`,
@@ -297,7 +298,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
               className={`mb-1 rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.11em] ${
                 feedback.tone === 'ok'
                   ? 'border-emerald-300/60 bg-emerald-300/15 text-emerald-100'
-                  : 'border-rose-300/60 bg-rose-300/15 text-rose-100'
+                  : 'border-rose-300/60 bg-rose-300/15 text-amber-100'
               }`}
             >
               {feedback.text}

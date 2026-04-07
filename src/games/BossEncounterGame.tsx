@@ -576,7 +576,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
               { label: 'Question', value: `${Math.min(currentIndex + 1, TOTAL_QUESTIONS)}/${TOTAL_QUESTIONS}`, tone: 'text-cyan-100' },
               { label: 'Correct', value: `${correctAnswers}/${TOTAL_QUESTIONS}`, tone: 'text-emerald-100' },
               { label: 'Need', value: `${PASS_MARK}/10`, tone: 'text-amber-100' },
-              { label: 'Accuracy', value: `${accuracy}%`, tone: accuracy >= 80 ? 'text-emerald-100' : 'text-rose-100' },
+              { label: 'Accuracy', value: `${accuracy}%`, tone: accuracy >= 80 ? 'text-emerald-100' : 'text-amber-100' },
             ].map(item => (
               <div
                 key={item.label}
@@ -664,7 +664,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
                 : isCorrect
                   ? 'border-emerald-300/45 bg-emerald-300/16 text-emerald-50'
                   : isSelected
-                    ? 'border-rose-300/45 bg-rose-300/16 text-rose-50'
+                    ? 'border-rose-300/45 bg-rose-300/16 text-amber-50'
                     : 'border-white/10 bg-slate-950/36 text-white/42';
 
               return (

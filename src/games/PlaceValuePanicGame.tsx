@@ -1353,7 +1353,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
-            className="absolute bottom-[calc(env(safe-area-inset-bottom)+4.6rem)] left-1/2 z-40 -translate-x-1/2 rounded-full border border-rose-200/70 bg-rose-500/35 px-5 py-2 text-xs font-black uppercase tracking-[0.14em] text-rose-50 shadow-[0_12px_28px_rgba(2,6,23,0.55)]"
+            className="absolute bottom-[calc(env(safe-area-inset-bottom)+4.6rem)] left-1/2 z-40 -translate-x-1/2 rounded-full border border-rose-200/70 bg-rose-500/35 px-5 py-2 text-xs font-black uppercase tracking-[0.14em] text-amber-50 shadow-[0_12px_28px_rgba(2,6,23,0.55)]"
           >
             {feedback.message}
           </motion.div>

@@ -151,7 +151,7 @@ const SequenceSprint: React.FC<SequenceSprintProps> = ({ onVictory, onGameOver, 
                 animate={i < lives ? { scale: [1, 1.2, 1] } : {}}
                 transition={{ duration: 0.5 }}
               >
-                <Heart className={`w-6 h-6 md:w-8 md:h-8 ${i < lives ? 'text-red-500 fill-red-500 filter drop-shadow-md' : 'text-white/20'}`} />
+                <Heart className={`w-6 h-6 md:w-8 md:h-8 ${i < lives ? 'text-amber-500 fill-red-500 filter drop-shadow-md' : 'text-white/20'}`} />
               </motion.div>
             ))}
           </div>

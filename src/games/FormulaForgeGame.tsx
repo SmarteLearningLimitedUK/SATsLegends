@@ -414,7 +414,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
                 className={`pointer-events-none absolute inset-0 z-40 flex items-center justify-center backdrop-blur-md ${feedback.tone === 'success' ? 'bg-emerald-500/16' : 'bg-red-500/16'}`}
               >
                 <div className="rounded-[1.6rem] border border-white/14 bg-slate-950/62 px-6 py-5 text-center shadow-[0_18px_28px_rgba(0,0,0,0.24)] md:rounded-[2rem] md:px-8 md:py-6">
-                  <div className={`text-3xl font-black uppercase tracking-[0.12em] md:text-5xl ${feedback.tone === 'success' ? 'text-emerald-100' : 'text-red-100'}`}>{feedback.title}</div>
+                  <div className={`text-3xl font-black uppercase tracking-[0.12em] md:text-5xl ${feedback.tone === 'success' ? 'text-emerald-100' : 'text-amber-100'}`}>{feedback.title}</div>
                   <div className="mt-1 text-sm font-bold text-white/92 md:mt-2 md:text-xl">{feedback.subtitle}</div>
                 </div>
               </motion.div>

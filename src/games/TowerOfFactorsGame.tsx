@@ -340,7 +340,7 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
                       >
                         <span className="text-3xl font-black text-amber-50 drop-shadow-[0_4px_0_rgba(41,24,14,0.8)] md:text-5xl">{option}</span>
                         {feedback === 'incorrect' && !isCorrect && (
-                          <span className="absolute -right-2 -bottom-2 text-2xl font-black text-red-500 md:text-4xl">x</span>
+                          <span className="absolute -right-2 -bottom-2 text-2xl font-black text-amber-500 md:text-4xl">x</span>
                         )}
                       </motion.button>
                     );
@@ -395,7 +395,7 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
                 className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center"
               >
                 <div className="rounded-full border-4 border-red-300 bg-red-500/18 px-6 py-3 backdrop-blur-md md:px-12 md:py-6">
-                  <span className="text-3xl font-black text-red-400 drop-shadow-lg md:text-6xl">
+                  <span className="text-3xl font-black text-amber-400 drop-shadow-lg md:text-6xl">
                     TIMBER!
                   </span>
                 </div>
@@ -412,7 +412,7 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
               className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md"
             >
               <div className="app-modal-panel licensed-overlay-card flex w-full max-w-md flex-col items-center gap-5 p-6 md:gap-8 md:p-12">
-                <div className={`text-center text-5xl font-black drop-shadow-md ${isVictory ? 'text-lime-400' : 'text-red-500'}`}>
+                <div className={`text-center text-5xl font-black drop-shadow-md ${isVictory ? 'text-lime-400' : 'text-amber-500'}`}>
                   {isVictory ? 'MASTER BUILDER!' : 'RUINS!'}
                 </div>
 

@@ -271,7 +271,7 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
                     selectedIndex === index
                       ? index === question.answerIndex
                         ? 'border-emerald-200/70 bg-emerald-300/50 text-emerald-950'
-                        : 'border-rose-200/70 bg-rose-300/50 text-rose-950'
+                        : 'border-rose-200/70 bg-rose-300/50 text-amber-950'
                       : 'border-white/30 bg-white/15 text-white'
                   }`}
                 >

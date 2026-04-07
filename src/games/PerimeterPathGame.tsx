@@ -536,7 +536,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
             feedback?.type === 'correct'
               ? 'border-emerald-300/45 bg-emerald-400/16 text-emerald-100'
               : feedback?.type === 'incorrect'
-              ? 'border-rose-300/45 bg-rose-400/16 text-rose-100'
+              ? 'border-rose-300/45 bg-rose-400/16 text-amber-100'
               : 'border-white/18 bg-slate-950/44 text-white/72'
           }`}>
             {feedback ? feedback.message : tracingRequired

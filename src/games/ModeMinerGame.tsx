@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { CheckCircle2, Pickaxe, RotateCcw, Trophy, TriangleAlert } from 'lucide-react';
 
@@ -315,7 +315,7 @@ const ModeMinerGame: React.FC<ModeMinerGameProps> = ({
             className={`absolute left-1/2 top-[calc(env(safe-area-inset-top)+6.4rem)] z-50 -translate-x-1/2 rounded-full border px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] ${
               feedback.type === 'success'
                 ? 'border-emerald-200/75 bg-emerald-500/25 text-emerald-50'
-                : 'border-rose-200/75 bg-rose-500/25 text-rose-50'
+                : 'border-rose-200/75 bg-rose-500/25 text-amber-50'
             }`}
           >
             <span className="inline-flex items-center gap-1.5">

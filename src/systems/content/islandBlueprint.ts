@@ -1,4 +1,4 @@
-export type MiniGameRole =
+﻿export type MiniGameRole =
   | 'concept_visualisation'
   | 'fluency'
   | 'strategy'
@@ -314,11 +314,7 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
       { area: 'order_of_operations', percentage: 15 },
       { area: 'remainder_interpretation', percentage: 10 },
     ],
-    crossGameReinforcement: [
-      'multiplication appears in Multiplication Mine and Arithmetic Gauntlet',
-      'division and remainder logic appears in Division Dock and Remainder Run',
-      'multi-step chaining appears in Order Ops Arena and Arithmetic Gauntlet',
-    ],
+    crossGameReinforcement: [      'division and remainder logic appears in Division Dock and Remainder Run',    ],
     designRules: [
       'Avoid worksheet-like vertical method UI and long explanation text.',
       'Prioritise interaction, movement, and chained actions.',
@@ -386,22 +382,7 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
         difficultyCurve: 'simple precedence -> nested multi-step -> trap-heavy branching',
         failureState: 'sequence trap lock',
         replayValue: 'expression variations',
-      },
-      {
-        key: 'arithmetic_gauntlet',
-        name: 'Arithmetic Gauntlet',
-        role: 'mixed_mastery',
-        gameplayRoles: ['mixed_mastery', 'pressure_timing'],
-        mechanicSummary: 'Maintain a continuous chain of calculations with no pause between prompts.',
-        curriculumObjectives: ['mixed_arithmetic', 'multi_step_arithmetic'],
-        skillTags: ['ADDITION', 'SUBTRACTION', 'MULTIPLICATION', 'DIVISION', 'MULTI_STEP_ARITHMETIC'],
-        keySystems: ['continuous chain', 'mistakes break streak', 'speed ramps over time'],
-        questionTypes: ['linked operation chains', 'carry-forward result steps'],
-        difficultyCurve: 'short chains -> extended mixed chains -> high-speed endurance',
-        failureState: 'streak and pace collapse',
-        replayValue: 'survival scoring',
-      },
-      {
+      },      {
         key: 'remainder_run',
         name: 'Remainder Run',
         role: 'application',
@@ -1185,3 +1166,4 @@ export const getBlueprintRuleSet = (blueprintKey?: string | null) => {
         ],
   };
 };
+

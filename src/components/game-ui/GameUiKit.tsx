@@ -225,7 +225,7 @@ export const GameTopBar: React.FC<GameTopBarProps> = ({
       <div className="flex items-center gap-1.5">
         {typeof lives === 'number' ? (
           <div className="inline-flex h-9 items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-2.5 text-[10px] font-black uppercase tracking-[0.1em] text-white">
-            <Heart className="h-3.5 w-3.5 text-rose-200" />
+            <Heart className="h-3.5 w-3.5 text-amber-200" />
             {lives}
           </div>
         ) : null}

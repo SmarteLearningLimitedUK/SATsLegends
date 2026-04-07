@@ -1,4 +1,4 @@
-import { MiniGameRegistryKey } from '../games';
+﻿import { MiniGameRegistryKey } from '../games';
 import { isBossEncounterGameType } from '../games/bossEncounterTypes';
 import { LevelData } from '../types';
 
@@ -84,9 +84,7 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       }
       return 'CoordinateTranslationGame';
     case 'calculation_clash':
-      if (level.blueprintKey === 'arithmetic_gauntlet') {
-        return 'ArithmeticGauntletGame';
-      }
+
       if (level.blueprintKey === 'multiplication_mine') {
         return 'MultiplicationMineGame';
       }
@@ -128,6 +126,9 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       if (level.blueprintKey === 'median_mountain') {
         return 'MedianMountainGame';
       }
+      if (level.blueprintKey === 'problem_pyramid') {
+        return 'ProblemPyramidGame';
+      }
       return 'CurriculumChallengeGame';
     case 'logic_sort':
       return 'ReasoningGame';
@@ -137,4 +138,5 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       return null;
   }
 };
+
 

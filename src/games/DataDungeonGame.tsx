@@ -343,7 +343,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
                     {/* Feedback Overlay */}
                     {feedback && (
                       <div className={`absolute inset-0 flex items-center justify-center rounded-xl backdrop-blur-sm ${feedback === 'correct' ? 'bg-green-500/20' : 'bg-red-500/20'}`}>
-                        <span className={`text-2xl md:text-4xl font-black drop-shadow-lg ${feedback === 'correct' ? 'text-green-500' : 'text-red-500'}`}>
+                        <span className={`text-2xl md:text-4xl font-black drop-shadow-lg ${feedback === 'correct' ? 'text-green-500' : 'text-amber-500'}`}>
                           {feedback === 'correct' ? 'CORRECT!' : 'INCORRECT!'}
                         </span>
                       </div>
@@ -383,7 +383,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
           >
             <div className="app-modal-panel w-full max-w-md rounded-[2rem] border-4 border-stone-600 bg-stone-800 p-6 shadow-2xl flex flex-col items-center gap-5 md:rounded-[3rem] md:border-8 md:gap-8 md:p-12">
-              <div className={`text-5xl font-black ${isVictory ? 'text-amber-400' : 'text-red-500'} drop-shadow-md text-center`}>
+              <div className={`text-5xl font-black ${isVictory ? 'text-amber-400' : 'text-amber-500'} drop-shadow-md text-center`}>
                 {isVictory ? 'DUNGEON CLEARED!' : 'TRAPPED!'}
               </div>
 

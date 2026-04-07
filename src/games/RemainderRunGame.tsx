@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { triggerHaptic } from '../haptics';
@@ -627,7 +627,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
             className={`pointer-events-none absolute left-1/2 top-[calc(env(safe-area-inset-top)+5.1rem)] z-50 -translate-x-1/2 rounded-[1rem] border px-4 py-2 text-center shadow-[0_14px_24px_rgba(2,6,23,0.45)] ${
               feedback.tone === 'success'
                 ? 'border-emerald-100/62 bg-emerald-500/28 text-emerald-50'
-                : 'border-rose-100/62 bg-rose-500/30 text-rose-50'
+                : 'border-rose-100/62 bg-rose-500/30 text-amber-50'
             }`}
           >
             <div className="text-xs font-black uppercase tracking-[0.12em]">{feedback.title}</div>

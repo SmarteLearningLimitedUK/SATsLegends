@@ -102,7 +102,7 @@ const GameplayHUD: React.FC<GameplayHUDProps> = ({
                 <AssetIcon name="timer" className={`${compact ? 'w-2.5 h-2.5' : 'w-3 h-3'} md:w-4 md:h-4 ${timeLeft < 10 ? 'animate-pulse' : ''}`} />
                 <div className={`mission-hud-stat-label ${compact ? 'text-[6px]' : 'text-[8px]'} md:text-xs font-black uppercase tracking-[0.16em] text-slate-600`}>Time</div>
               </div>
-              <div className={`mission-hud-stat-value mt-0.5 relative ${compact ? 'text-[0.82rem]' : 'text-[1.02rem]'} md:text-[1.2rem] font-black ${timeLeft < 10 ? 'text-red-500' : accentText}`}>{timeLeft}s</div>
+              <div className={`mission-hud-stat-value mt-0.5 relative ${compact ? 'text-[0.82rem]' : 'text-[1.02rem]'} md:text-[1.2rem] font-black ${timeLeft < 10 ? 'text-amber-500' : accentText}`}>{timeLeft}s</div>
             </div>
           </div>
         </div>

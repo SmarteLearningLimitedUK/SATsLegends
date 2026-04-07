@@ -771,7 +771,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                         }}
                       transition={{ duration: isWrong ? 0.35 : 0.4 }}
                       className={`relative flex h-full items-center justify-center px-1 text-center text-[clamp(16px,1.95vw,24px)] font-black leading-none tracking-tight drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)] ${
-                        isCorrect ? 'text-emerald-50' : isWrong ? 'text-rose-100' : isSelected ? 'text-slate-900' : 'text-white'
+                        isCorrect ? 'text-emerald-50' : isWrong ? 'text-amber-100' : isSelected ? 'text-slate-900' : 'text-white'
                       }`}
                     >
                     {option}
@@ -886,7 +886,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
             transition={{ duration: 0.64, times: [0, 0.2, 0.42, 0.68, 1], ease: 'easeInOut' }}
             className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center"
           >
-            <div className="text-[clamp(86px,18vw,150px)] font-black leading-none text-rose-300 drop-shadow-[0_0_28px_rgba(244,63,94,0.85)]">
+            <div className="text-[clamp(86px,18vw,150px)] font-black leading-none text-amber-300 drop-shadow-[0_0_28px_rgba(244,63,94,0.85)]">
               X
             </div>
           </motion.div>

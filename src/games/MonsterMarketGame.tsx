@@ -306,7 +306,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
                   animate={{ scale: 1.16 }}
                   exit={{ scale: 0 }}
                   className={`text-4xl font-black italic drop-shadow-2xl ${
-                    feedback === 'correct' ? 'text-green-400' : 'text-red-400'
+                    feedback === 'correct' ? 'text-green-400' : 'text-amber-400'
                   }`}
                 >
                   {feedback === 'correct'
@@ -322,7 +322,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
           <div className="min-h-[86px] w-full rounded-2xl border border-amber-100/18 bg-slate-950/28 p-3 backdrop-blur-[1px] md:p-4">
             <div className="flex items-center justify-between border-b border-white/10 pb-2">
               <span className="text-xs font-bold uppercase tracking-widest text-blue-300">Current Order</span>
-              <span className={`text-xl font-black ${currentTotal > (customer?.targetValue || 0) ? 'text-red-400' : 'text-yellow-400'}`}>
+              <span className={`text-xl font-black ${currentTotal > (customer?.targetValue || 0) ? 'text-amber-400' : 'text-yellow-400'}`}>
                 {currentTotal} / {customer?.targetValue || 0}
               </span>
             </div>

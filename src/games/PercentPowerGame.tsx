@@ -301,8 +301,8 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
     }, 620);
   };
 
-  const meterProgress = Math.max(0, Math.min(1, roundNumber / totalRounds));
   const timerProgress = Math.max(0, Math.min(1, timeLeft / Math.max(1, totalTime)));
+  const coreFill = Math.max(0, Math.min(1, correctAnswers / Math.max(1, totalRounds)));
 
   return (
     <div className="relative h-full w-full overflow-hidden text-white">
@@ -350,18 +350,6 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
           </div>
         </div>
 
-        <div className="mt-3 flex w-full max-w-[44rem] items-center gap-2 rounded-full border border-cyan-200/26 bg-[#071a38]/76 px-3 py-2">
-          <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-950/70">
-            <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-300 to-emerald-300"
-              animate={{ width: `${meterProgress * 100}%` }}
-            />
-          </div>
-          <div className="w-16 text-right text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/78">
-            Progress
-          </div>
-        </div>
-
         <div className="relative mt-4 flex w-full max-w-[44rem] flex-1 min-h-0 flex-col items-center justify-center rounded-[2rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(10,30,64,0.72),rgba(4,12,26,0.9))] px-4 py-5 shadow-[0_22px_60px_rgba(0,0,0,0.34)]">
           <motion.div
             className="absolute inset-x-[12%] top-[12%] h-24 rounded-full bg-cyan-300/12 blur-3xl"
@@ -380,9 +368,15 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
             }
             transition={{ duration: 0.45, ease: 'easeInOut' }}
           >
+            <div className="absolute inset-[7%] overflow-hidden rounded-full">
+              <motion.div
+                className="absolute bottom-0 left-0 w-full bg-[linear-gradient(180deg,rgba(34,197,94,0.65),rgba(16,185,129,0.25))]"
+                animate={{ height: `${coreFill * 100}%` }}
+                transition={{ duration: 0.45, ease: 'easeOut' }}
+              />
+            </div>
             <div className="absolute inset-[11%] rounded-full border border-cyan-100/25 bg-[radial-gradient(circle,rgba(255,255,255,0.24),rgba(34,211,238,0.1)_46%,rgba(8,20,40,0.16)_70%)]" />
             <div className="absolute inset-[24%] rounded-full border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(255,255,255,0.16),rgba(12,74,110,0.12))] shadow-[inset_0_1px_14px_rgba(255,255,255,0.08)]" />
-            <Zap className="absolute top-[18%] h-6 w-6 text-cyan-100/85" />
             <motion.div
               className="relative z-10 flex flex-col items-center justify-center gap-2"
               animate={feedback === 'correct'
@@ -401,7 +395,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
                   feedback === 'correct'
                     ? 'text-emerald-300 drop-shadow-[0_0_16px_rgba(16,185,129,0.65)]'
                     : feedback === 'incorrect'
-                      ? 'text-rose-300 drop-shadow-[0_0_16px_rgba(248,113,113,0.65)]'
+                      ? 'text-amber-300 drop-shadow-[0_0_16px_rgba(248,113,113,0.65)]'
                       : 'text-cyan-100/90'
                 }`}
               />
@@ -418,7 +412,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
                 feedback === 'correct'
                   ? 'border-emerald-300/60 bg-emerald-300/18 text-emerald-50'
                   : feedback === 'incorrect'
-                    ? 'border-rose-300/60 bg-rose-300/18 text-rose-50'
+                    ? 'border-rose-300/60 bg-rose-300/18 text-amber-50'
                     : 'border-cyan-200/26 bg-[#071a38]/72 text-cyan-100/82'
               }`}
             >

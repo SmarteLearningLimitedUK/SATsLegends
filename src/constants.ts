@@ -173,9 +173,7 @@ export const ISLANDS: IslandData[] = [
         { id: 1, stars: 0, isLocked: false, blueprintKey: 'multiplication_mine', displayName: 'Multiplication Mine', gameType: 'calculation_clash' },
         { id: 2, stars: 0, isLocked: false, blueprintKey: 'division_dock', displayName: 'Division Dock', gameType: 'calculation_clash' },
         { id: 3, stars: 0, isLocked: false, blueprintKey: 'order_ops_arena', displayName: 'Order Ops Arena', gameType: 'equation_grove' },
-        { id: 4, stars: 0, isLocked: false, blueprintKey: 'formula_forge', displayName: 'Formula Forge', gameType: 'formula_forge' },
-        { id: 4, stars: 0, isLocked: false, blueprintKey: 'arithmetic_gauntlet', displayName: 'Arithmetic Gauntlet', gameType: 'calculation_clash' },
-        { id: 5, stars: 0, isLocked: false, blueprintKey: 'remainder_run', displayName: 'Remainder Run', gameType: 'calculation_clash' },
+        { id: 4, stars: 0, isLocked: false, blueprintKey: 'formula_forge', displayName: 'Formula Forge', gameType: 'formula_forge' },        { id: 5, stars: 0, isLocked: false, blueprintKey: 'remainder_run', displayName: 'Remainder Run', gameType: 'calculation_clash' },
       ],
     ),
   },
@@ -332,5 +330,6 @@ export const MATH_FAMILIES: MathFamily[] = [
     ]
   }
 ];
+
 
 

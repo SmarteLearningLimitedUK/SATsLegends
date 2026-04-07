@@ -433,7 +433,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
             className={`absolute bottom-[calc(env(safe-area-inset-bottom)+5.4rem)] left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-2xl border px-5 py-2.5 text-xs font-black uppercase tracking-[0.12em] shadow-[0_14px_28px_rgba(2,6,23,0.45)] ${
               feedback.type === 'success'
                 ? 'border-emerald-200/70 bg-emerald-500/30 text-emerald-50'
-                : 'border-rose-200/70 bg-rose-500/28 text-rose-50'
+                : 'border-rose-200/70 bg-rose-500/28 text-amber-50'
             }`}
           >
             {feedback.type === 'success' ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}

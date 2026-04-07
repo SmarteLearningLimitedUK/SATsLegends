@@ -437,7 +437,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
                 exit={{ opacity: 0, y: -8 }}
                 className={`mb-2 rounded-full border px-4 py-1 text-sm font-black uppercase tracking-[0.08em] ${
                   rocketState === 'failed'
-                    ? 'border-rose-200/55 bg-rose-500/25 text-rose-100'
+                    ? 'border-rose-200/55 bg-rose-500/25 text-amber-100'
                     : 'border-amber-200/70 bg-amber-300/22 text-amber-100'
                 }`}
               >
@@ -467,7 +467,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
                     successFlash
                       ? 'border-emerald-200/90 bg-[linear-gradient(180deg,#34d399_0%,#10b981_100%)] text-emerald-50'
                       : errorFlash
-                        ? 'border-rose-100/90 bg-[linear-gradient(180deg,#fb7185_0%,#e11d48_100%)] text-rose-50'
+                        ? 'border-rose-100/90 bg-[linear-gradient(180deg,#fb7185_0%,#e11d48_100%)] text-amber-50'
                         : isSelected
                           ? 'border-amber-100/90 bg-[linear-gradient(180deg,#fbbf24_0%,#f59e0b_100%)] text-amber-950'
                           : 'border-cyan-100/45 bg-[linear-gradient(180deg,#0ea5e9_0%,#2563eb_58%,#1d4ed8_100%)]',

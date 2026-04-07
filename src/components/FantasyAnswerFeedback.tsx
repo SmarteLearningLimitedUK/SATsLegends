@@ -42,7 +42,7 @@ const stateClassMap: Record<FantasyAnswerVisualState, string> = {
     'shadow-[0_20px_34px_rgba(16,185,129,0.42)]',
   ].join(' '),
   incorrect: [
-    'border-rose-100/95 text-rose-50',
+    'border-rose-100/95 text-amber-50',
     'bg-[linear-gradient(180deg,rgba(251,113,133,0.66),rgba(225,29,72,0.58))]',
     'shadow-[0_18px_30px_rgba(244,63,94,0.4)]',
   ].join(' '),
@@ -53,7 +53,7 @@ const StateIcon: React.FC<{ visualState: FantasyAnswerVisualState }> = ({ visual
     return <CheckCircle2 className="h-5 w-5 text-emerald-100/95" />;
   }
   if (visualState === 'incorrect') {
-    return <XCircle className="h-5 w-5 text-rose-100/95" />;
+    return <XCircle className="h-5 w-5 text-amber-100/95" />;
   }
   if (visualState === 'selected') {
     return <Sparkles className="h-4 w-4 text-cyan-100/95" />;
@@ -174,7 +174,7 @@ export const FantasyAnswerFeedbackBanner: React.FC<FantasyAnswerFeedbackBannerPr
           'text-xs font-black uppercase tracking-[0.1em] shadow-[0_12px_26px_rgba(2,6,23,0.35)]',
           state === 'correct'
             ? 'border-emerald-100/90 bg-emerald-500/35 text-emerald-50'
-            : 'border-rose-100/90 bg-rose-500/35 text-rose-50',
+            : 'border-rose-100/90 bg-rose-500/35 text-amber-50',
         ].join(' ')}
       >
         {state === 'correct' ? correctText : incorrectText}

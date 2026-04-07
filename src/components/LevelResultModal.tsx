@@ -63,7 +63,7 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
   const statusPill = isVictory ? 'Victory' : 'Round Ended';
   const statusPillTone = isVictory
     ? 'bg-emerald-400/20 text-emerald-100 border-emerald-200/45'
-    : 'bg-rose-400/18 text-rose-100 border-rose-200/45';
+    : 'bg-rose-400/18 text-amber-100 border-rose-200/45';
   const fallbackFailureSupport =
     'Great effort. Shake it off, retry quickly, and push your Combo on the next run.';
 
@@ -186,7 +186,7 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
                       'absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full border px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.12em]',
                       isVictory
                         ? 'border-emerald-100/50 bg-emerald-500/22 text-emerald-100'
-                        : 'border-rose-100/50 bg-rose-500/22 text-rose-100',
+                        : 'border-rose-100/50 bg-rose-500/22 text-amber-100',
                     )}>
                       {isVictory ? 'Enemy Defeated' : 'Enemy Ready'}
                     </span>
@@ -195,7 +195,7 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
 
                 <h2 className={cn(
                   'text-2xl font-black tracking-tight md:text-4xl',
-                  isVictory ? 'text-amber-100' : 'text-rose-100',
+                  isVictory ? 'text-amber-100' : 'text-amber-100',
                 )}>
                   {result.title}
                 </h2>
@@ -260,7 +260,7 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
 
               {!isVictory && (
                 <OverlaySurface variant="surface" className="rounded-[1.1rem] p-3 text-center md:rounded-[1.35rem] md:p-4">
-                  <div className="inline-flex items-center justify-center gap-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-rose-100/90 md:text-[11px]">
+                  <div className="inline-flex items-center justify-center gap-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/90 md:text-[11px]">
                     <AssetIcon name="heart" className="h-3.5 w-3.5" />
                     Keep The Run Going
                   </div>

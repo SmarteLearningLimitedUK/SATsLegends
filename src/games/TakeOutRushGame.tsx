@@ -580,6 +580,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                   draggable={false}
                   className="pointer-events-none h-auto w-full object-contain"
                 />
+                <div className="pointer-events-none absolute inset-x-[12%] top-[9%] h-[26%] rounded-[0.75rem] bg-black/85" />
                 <div className="absolute inset-x-[16%] top-[14%] text-center text-white">
                   <div className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-100/90 drop-shadow-[0_2px_6px_rgba(2,6,23,0.6)]">
                     Target Order

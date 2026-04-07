@@ -47,9 +47,7 @@ const GAME_SUMMARY_BY_KEY: Record<string, string> = {
   multiplication_mine: 'Answer multiplication questions to shatter the mine rock and reveal hidden treasure.',
   division_dock: 'Split cargo accurately with quotient and remainder logic.',
   order_ops_arena: 'Resolve expressions in the correct order to avoid trap paths.',
-  formula_forge: 'Substitute into formulae and solve for missing values.',
-  arithmetic_gauntlet: 'Survive chained calculations without breaking flow.',
-  remainder_run: 'Route values by quotient and remainder outcomes at speed.',
+  formula_forge: 'Substitute into formulae and solve for missing values.',  remainder_run: 'Route values by quotient and remainder outcomes at speed.',
   potion_panic: 'Brew spell potions by pouring exact ratios before the 90-second clock expires.',
   ratio_recipes: 'Scale ingredient sets to match new serving targets precisely.',
   share_splitter: 'Share cake slices between plates to match exact ratio targets before time runs out.',
@@ -478,6 +476,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
 };
 
 export default IslandLevels;
+
 
 
 

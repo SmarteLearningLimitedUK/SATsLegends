@@ -326,7 +326,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                 <div className={`rounded-[2rem] border px-8 py-6 text-center shadow-[0_20px_40px_rgba(0,0,0,0.34)] ${
                   feedback === 'correct'
                     ? 'border-emerald-300/60 bg-emerald-500/16 text-emerald-300'
-                    : 'border-rose-300/60 bg-rose-500/16 text-rose-300'
+                    : 'border-rose-300/60 bg-rose-500/16 text-amber-300'
                 }`}>
                   <div className="text-4xl font-black">{feedback === 'correct' ? 'Treasure Found!' : 'Trap Triggered!'}</div>
                   <div className="mt-2 text-sm font-bold text-white/82">
@@ -346,7 +346,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
               className="fixed inset-0 z-50 flex items-center justify-center bg-black/78 p-4 backdrop-blur-md"
             >
               <div className="licensed-overlay-card flex w-full max-w-md flex-col items-center gap-6 p-8 text-center md:p-10">
-                <div className={`text-4xl font-black md:text-5xl ${isVictory ? 'text-emerald-300' : 'text-rose-300'}`}>
+                <div className={`text-4xl font-black md:text-5xl ${isVictory ? 'text-emerald-300' : 'text-amber-300'}`}>
                   {isVictory ? 'Path Cleared!' : 'Expedition Lost!'}
                 </div>
                 <div>

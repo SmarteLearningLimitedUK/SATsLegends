@@ -233,7 +233,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
                 selected === option
                   ? option === question.correct
                     ? 'border-emerald-200/70 bg-emerald-400/35 text-emerald-50'
-                    : 'border-rose-200/70 bg-rose-400/35 text-rose-50'
+                    : 'border-rose-200/70 bg-rose-400/35 text-amber-50'
                   : 'border-white/18 bg-slate-900/70 text-white'
               }`}
             >

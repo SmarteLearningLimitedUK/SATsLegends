@@ -423,7 +423,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
               className={`mt-3 rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.12em] ${
                 feedback.tone === 'success'
                   ? 'border-emerald-300/65 bg-emerald-300/20 text-emerald-50'
-                  : 'border-rose-300/65 bg-rose-300/20 text-rose-50'
+                  : 'border-rose-300/65 bg-rose-300/20 text-amber-50'
               }`}
             >
               {feedback.text}

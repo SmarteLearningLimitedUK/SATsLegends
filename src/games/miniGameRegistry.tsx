@@ -1,6 +1,5 @@
 import React, { lazy } from 'react';
 const AngleArenaGame = lazy(() => import('./AngleArenaGame'));
-const ArithmeticGauntletGame = lazy(() => import('./ArithmeticGauntletGame'));
 const AreaArchitectGame = lazy(() => import('./AreaArchitectGame'));
 const BossEncounterGame = lazy(() => import('./BossEncounterGame'));
 const CalculationCrashGame = lazy(() => import('./CalculationCrashGame'));
@@ -30,6 +29,7 @@ const PerimeterPathGame = lazy(() => import('./PerimeterPathGame'));
 const PercentPowerGame = lazy(() => import('./PercentPowerGame'));
 const PlaceValuePanicGame = lazy(() => import('./PlaceValuePanicGame'));
 const PolygonPalaceGame = lazy(() => import('./PolygonPalaceGame'));
+const ProblemPyramidGame = lazy(() => import('./ProblemPyramidGame'));
 const PotionPourGame = lazy(() => import('./PotionPourGame'));
 const PrimePopGame = lazy(() => import('./PrimePopGame'));
 const RatioRapidsGame = lazy(() => import('./RatioRapidsGame'));
@@ -55,7 +55,6 @@ import { createMiniGame, MiniGame } from './MiniGame';
 
 export type MiniGameRegistryKey =
   | 'AngleArenaGame'
-  | 'ArithmeticGauntletGame'
   | 'AreaArchitectGame'
   | 'BossEncounterGame'
   | 'CalculationCrashGame'
@@ -85,6 +84,7 @@ export type MiniGameRegistryKey =
   | 'PercentPowerGame'
   | 'PlaceValuePanicGame'
   | 'PolygonPalaceGame'
+  | 'ProblemPyramidGame'
   | 'PotionPourGame'
   | 'PrimePopGame'
   | 'RatioRapidsGame'
@@ -118,7 +118,6 @@ const asMiniGame = <P extends Record<string, unknown>>(
  */
 export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   AngleArenaGame: asMiniGame('angle_arena', AngleArenaGame),
-  ArithmeticGauntletGame: asMiniGame('arithmetic_gauntlet', ArithmeticGauntletGame),
   AreaArchitectGame: asMiniGame('area_architect', AreaArchitectGame),
   BossEncounterGame: asMiniGame('boss_encounter', BossEncounterGame),
   CalculationCrashGame: asMiniGame('calculation_crash', CalculationCrashGame),
@@ -148,6 +147,7 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   PercentPowerGame: asMiniGame('percent_power', PercentPowerGame),
   PlaceValuePanicGame: asMiniGame('place_value_panic', PlaceValuePanicGame),
   PolygonPalaceGame: asMiniGame('polygon_palace', PolygonPalaceGame),
+  ProblemPyramidGame: asMiniGame('problem_pyramid', ProblemPyramidGame),
   PotionPourGame: asMiniGame('potion_pour', PotionPourGame),
   PrimePopGame: asMiniGame('prime_pop', PrimePopGame),
   RatioRapidsGame: asMiniGame('ratio_rapids', RatioRapidsGame),

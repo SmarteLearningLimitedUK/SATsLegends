@@ -727,7 +727,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
               feedback.tone === 'success'
                 ? 'border-emerald-200/55 bg-emerald-500/32 text-emerald-50'
                 : feedback.tone === 'error'
-                  ? 'border-rose-200/55 bg-rose-500/30 text-rose-50'
+                  ? 'border-rose-200/55 bg-rose-500/30 text-amber-50'
                   : 'border-amber-200/55 bg-amber-500/28 text-amber-50'
             }`}
           >

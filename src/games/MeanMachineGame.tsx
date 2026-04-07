@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   AlertTriangle,
@@ -41,14 +41,14 @@ interface MeanMachineGameProps {
 const TOTAL_LEVELS = 10;
 const REEL_COUNT = 8;
 const REEL_LAYOUT = [
-  { left: 20, top: 35.8, width: 12.2, height: 12.2 },
-  { left: 35.8, top: 35.8, width: 12.2, height: 12.2 },
-  { left: 51.6, top: 35.8, width: 12.2, height: 12.2 },
-  { left: 67.4, top: 35.8, width: 12.2, height: 12.2 },
-  { left: 20, top: 51.8, width: 12.2, height: 12.2 },
-  { left: 35.8, top: 51.8, width: 12.2, height: 12.2 },
-  { left: 51.6, top: 51.8, width: 12.2, height: 12.2 },
-  { left: 67.4, top: 51.8, width: 12.2, height: 12.2 },
+  { left: 23.5, top: 39.6, width: 10.7, height: 13.2 },
+  { left: 36.4, top: 39.6, width: 10.7, height: 13.2 },
+  { left: 49.4, top: 39.6, width: 10.7, height: 13.2 },
+  { left: 62.3, top: 39.6, width: 10.7, height: 13.2 },
+  { left: 23.5, top: 54.1, width: 10.7, height: 12.6 },
+  { left: 36.4, top: 54.1, width: 10.7, height: 12.6 },
+  { left: 49.4, top: 54.1, width: 10.7, height: 12.6 },
+  { left: 62.3, top: 54.1, width: 10.7, height: 12.6 },
 ] as const;
 
 const shuffle = <T,>(values: T[]): T[] => {
@@ -581,7 +581,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
         <div className="flex h-full min-h-0 flex-col gap-2.5">
           <section className="mx-auto w-full max-w-[23rem] shrink-0 rounded-[1.15rem] border border-cyan-100/24 bg-[linear-gradient(180deg,rgba(14,45,103,0.9),rgba(8,26,72,0.96))] px-4 py-2 text-center shadow-[0_16px_28px_rgba(2,6,23,0.32)]">
             <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/76">
-              {modeCopy.eyebrow} · Level {level}/{TOTAL_LEVELS}
+              {modeCopy.eyebrow} � Level {level}/{TOTAL_LEVELS}
             </div>
             <div className="mt-1 text-[clamp(0.98rem,3.6vw,1.12rem)] font-black leading-tight text-white">
               {modeCopy.title}
@@ -592,8 +592,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
           </section>
 
           <main className="flex min-h-0 flex-1 flex-col gap-2.5">
-            <section className="relative min-h-0 flex-1 overflow-hidden rounded-[1.6rem] border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(10,31,83,0.78),rgba(4,17,52,0.92))] px-2 py-2 shadow-[0_20px_34px_rgba(2,6,23,0.34)]">
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[32%] bg-[linear-gradient(180deg,rgba(15,23,42,0),rgba(15,23,42,0.2),rgba(15,23,42,0.6))]" />
+            <section className="relative min-h-0 flex-1 overflow-hidden rounded-[1.6rem] border border-transparent bg-transparent px-2 py-2 shadow-none">
 
               <div className="relative flex h-full min-h-0 flex-col gap-2.5">
                 <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-[1.35rem] border border-transparent bg-transparent px-1 py-1">
@@ -635,18 +634,20 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                         </div>
                       ))}
 
-                      <div className="absolute left-1/2 top-[14.2%] z-20 flex h-[7.2%] w-[33%] -translate-x-1/2 items-center justify-center rounded-[0.55rem] border border-cyan-200/20 bg-[linear-gradient(180deg,rgba(3,14,38,0.92),rgba(6,18,48,0.98))] px-2 text-center text-[0.48rem] font-black uppercase tracking-[0.14em] text-cyan-100 md:text-[0.58rem]">
-                        {round?.mode === 'mean' ? 'Mean Spin' : 'Fix Machine'}
-                      </div>
-
                       <motion.button
                         type="button"
                         onClick={handleSpin}
                         disabled={!round || gameState === 'spinning' || !sessionActive}
                         animate={spinPulse ? { scale: [1, 0.94, 1.06, 1], y: [0, 2, -1, 0] } : { scale: [1, 1.03, 1], y: [0, -1, 0] }}
                         transition={spinPulse ? { duration: 0.34 } : { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-                        className="absolute left-1/2 bottom-[5.7%] z-30 flex h-[11.5%] w-[30%] -translate-x-1/2 items-center justify-center rounded-[1.2rem] bg-transparent text-[0.8rem] font-black uppercase tracking-[0.16em] text-cyan-50 disabled:cursor-not-allowed disabled:opacity-65 md:text-[0.92rem]"
+                        className="absolute z-30 flex items-center justify-center rounded-[1.2rem] bg-transparent text-[0.8rem] font-black uppercase tracking-[0.16em] text-cyan-50 disabled:cursor-not-allowed disabled:opacity-65 md:text-[0.92rem]"
                         aria-label="Press the Mean Machine base button"
+                        style={{
+                          left: '31.7%',
+                          top: '79.6%',
+                          width: '31.2%',
+                          height: '6.9%',
+                        }}
                       >
                         <span className="absolute inset-[6%] rounded-[1rem] bg-cyan-300/10 blur-md" />
                         <span className="absolute inset-0 rounded-[1.2rem] border border-cyan-200/22 bg-[linear-gradient(180deg,rgba(37,99,235,0.12),rgba(29,78,216,0.04))]" />
@@ -717,13 +718,21 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
             <section className="shrink-0 rounded-[1.35rem] border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(10,31,83,0.92),rgba(7,21,58,0.96))] p-2.5 shadow-[0_16px_26px_rgba(2,6,23,0.34)]">
               <div className="mb-2 flex items-center justify-start gap-2">
                 <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/74">
-                  {round?.mode === 'mean'
-                    ? 'Pick the mean'
-                    : round?.mode === 'median'
-                      ? 'Pick the median'
-                      : round?.mode === 'mode'
-                        ? 'Pick the mode'
-                        : 'Pick the number'}
+                  {round?.mode === 'mean' ? (
+                    <>
+                      Pick the <span className="underline decoration-amber-200/90 underline-offset-[3px]">MEAN</span>
+                    </>
+                  ) : round?.mode === 'median' ? (
+                    <>
+                      Pick the <span className="underline decoration-amber-200/90 underline-offset-[3px]">MEDIAN</span>
+                    </>
+                  ) : round?.mode === 'mode' ? (
+                    <>
+                      Pick the <span className="underline decoration-amber-200/90 underline-offset-[3px]">MODE</span>
+                    </>
+                  ) : (
+                    'Pick the number'
+                  )}
                 </div>
               </div>
               <div className={`grid gap-2 ${round && round.options.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
@@ -799,7 +808,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
               className={`absolute bottom-[calc(env(safe-area-inset-bottom)+4.45rem)] left-1/2 z-40 flex max-w-[19rem] -translate-x-1/2 items-center gap-2 rounded-full border px-4 py-2 text-center shadow-[0_16px_26px_rgba(2,6,23,0.34)] ${
                 feedback.type === 'success'
                   ? 'border-emerald-200/55 bg-emerald-500/24 text-emerald-50'
-                  : 'border-rose-200/55 bg-rose-500/24 text-rose-50'
+                  : 'border-rose-200/55 bg-rose-500/24 text-amber-50'
               }`}
             >
               {feedback.type === 'success' ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <WandSparkles className="h-4 w-4 shrink-0" />}

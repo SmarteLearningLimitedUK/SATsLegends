@@ -442,7 +442,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                 className={`absolute bottom-[calc(env(safe-area-inset-bottom)+4.6rem)] left-1/2 z-20 -translate-x-1/2 rounded-full border px-5 py-2 shadow-2xl ${
                   feedback.type === 'success'
                     ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-100'
-                    : 'border-rose-500/50 bg-rose-500/10 text-rose-100'
+                    : 'border-rose-500/50 bg-rose-500/10 text-amber-100'
                 }`}
               >
                 <div className="text-[10px] font-black uppercase tracking-[0.12em] md:text-xs">{feedback.message}</div>

@@ -572,7 +572,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
               }}
             />
             <div
-              className="pointer-events-none absolute left-1/2 z-20 -translate-x-1/2 rounded-full border border-rose-100/70 bg-rose-600/40 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-[0.14em] text-rose-50"
+              className="pointer-events-none absolute left-1/2 z-20 -translate-x-1/2 rounded-full border border-rose-100/70 bg-rose-600/40 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-[0.14em] text-amber-50"
               style={{ top: `calc(${DANGER_LINE_Y}% - 1.3rem)` }}
             >
               Danger Line
