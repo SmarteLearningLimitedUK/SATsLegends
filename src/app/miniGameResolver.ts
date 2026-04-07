@@ -1,5 +1,5 @@
 import { MiniGameRegistryKey } from '../games';
-import { isBossEncounterGameType } from '../games/BossEncounterGame';
+import { isBossEncounterGameType } from '../games/bossEncounterTypes';
 import { LevelData } from '../types';
 
 export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKey | null => {
@@ -137,3 +137,4 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       return null;
   }
 };
+

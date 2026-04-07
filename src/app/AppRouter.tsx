@@ -20,7 +20,7 @@ import {
   SecondaryActionButton,
 } from '../layout/ScreenPrimitives';
 import { getMiniGame, MiniGameRegistryKey } from '../games';
-import { isBossEncounterGameType } from '../games/BossEncounterGame';
+import { isBossEncounterGameType } from '../games/bossEncounterTypes';
 import { GameScreen, IslandData, LevelData, PlayerData } from '../types';
 import splashPoster from '../assets/casual_ui/splashrep1.png';
 import splashStartPill from '../assets/casual_ui/inputs/btn_1.png';
@@ -663,6 +663,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       );
   }
 };
+
 
 
 
