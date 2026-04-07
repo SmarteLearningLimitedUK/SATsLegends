@@ -256,8 +256,8 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     const updatePosition = (clientX: number, clientY: number) => {
       setDragSlice({
         id: sliceId,
-        x: clientX,
-        y: clientY,
+        x: clientX - 20,
+        y: clientY - 20,
       });
     };
 

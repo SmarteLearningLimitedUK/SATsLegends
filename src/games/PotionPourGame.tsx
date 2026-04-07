@@ -283,24 +283,25 @@ const buildOrderPrompt = (
   ratioText: string,
   batchLabel?: Challenge['batchLabel'],
   cardHint?: string,
+  shareNote?: string,
 ) => {
   const usageNote = 'Use all shown potions.';
   if (stage === 1) {
-    return `We need to brew an ${potionName} at a ${ratioText} ratio. ${cardHint || 'Some drops are already in the cauldron.'} ${usageNote}`;
+    return `We need to brew an ${potionName} at a ${ratioText} ratio. ${shareNote || ''} ${cardHint || 'Some drops are already in the cauldron.'} ${usageNote}`.trim();
   }
   if (stage === 2) {
-    return `Brew ${potionName} at a ${ratioText} ratio${batchLabelText(batchLabel) ? ` for a ${batchLabelText(batchLabel)}` : ''}. ${usageNote}`;
+    return `Brew ${potionName} at a ${ratioText} ratio${batchLabelText(batchLabel) ? ` for a ${batchLabelText(batchLabel)}` : ''}. ${shareNote || ''} ${usageNote}`.trim();
   }
   if (stage === 3) {
-    return `${cardHint || 'Some drops are already in the cauldron.'} Finish the mix at ${ratioText}. ${usageNote}`;
+    return `${cardHint || 'Some drops are already in the cauldron.'} Finish the mix at ${ratioText}. ${shareNote || ''} ${usageNote}`.trim();
   }
   if (stage === 4) {
-    return `Fix the ${potionName} so the ratio is ${ratioText}${batchLabelText(batchLabel) ? ` for a ${batchLabelText(batchLabel)}` : ''}. ${usageNote}`;
+    return `Fix the ${potionName} so the ratio is ${ratioText}${batchLabelText(batchLabel) ? ` for a ${batchLabelText(batchLabel)}` : ''}. ${shareNote || ''} ${usageNote}`.trim();
   }
   if (stage === 5) {
-    return `${potionName} is a courage potion made at ${ratioText}. ${batchLabelText(batchLabel) ? `Brew a ${batchLabelText(batchLabel)}.` : ''} ${usageNote}`;
+    return `${potionName} is a courage potion made at ${ratioText}. ${shareNote || ''} ${batchLabelText(batchLabel) ? `Brew a ${batchLabelText(batchLabel)}.` : ''} ${usageNote}`.trim();
   }
-  return `Master mix: ${potionName} at ${ratioText}${batchLabelText(batchLabel) ? ` for a ${batchLabelText(batchLabel)}` : ''}. ${usageNote}`;
+  return `Master mix: ${potionName} at ${ratioText}${batchLabelText(batchLabel) ? ` for a ${batchLabelText(batchLabel)}` : ''}. ${shareNote || ''} ${usageNote}`.trim();
 };
 
 const cardLabelsForMode = (mode: ChallengeMode) => {
@@ -444,6 +445,15 @@ const generateChallenge = (levelId: number, solved: number): Challenge => {
   const targetCounts = baseRatio.map((value) => Math.round(value * scale));
   const totalDrops = targetCounts.reduce((sum, value) => sum + value, 0);
   const activeIngredients = activeIndices.map((index) => INGREDIENTS[index]);
+  const shareMax = Math.max(...targetCounts);
+  const shareMin = Math.min(...targetCounts);
+  const shareMaxIndex = targetCounts.findIndex((value) => value === shareMax);
+  const shareMinIndex = targetCounts.findIndex((value) => value === shareMin);
+  const shareLargest = activeIngredients[shareMaxIndex]?.name;
+  const shareSmallest = activeIngredients[shareMinIndex]?.name;
+  const shareNote = shareLargest && shareSmallest && shareMax !== shareMin
+    ? `${shareLargest} is the largest share and ${shareSmallest} is the smaller share.`
+    : 'The shares are equal.';
 
   if (levelId <= 1) {
     startCounts[1] = targetCounts[0] || 0;
@@ -475,7 +485,7 @@ const generateChallenge = (levelId: number, solved: number): Challenge => {
   return {
     id: nextChallengeId(),
     orderTitle,
-    orderPrompt: buildOrderPrompt(orderTitle, stage, ratioText, batchLabel, cardHint),
+    orderPrompt: buildOrderPrompt(orderTitle, stage, ratioText, batchLabel, cardHint, shareNote),
     orderFlavor: buildOrderFlavor(stage),
     stage,
     mode,

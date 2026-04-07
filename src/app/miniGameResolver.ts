@@ -115,6 +115,7 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       if (level.blueprintKey === 'scale_builder') {
         return 'ScaleBuilderGame';
       }
+      return null;
     case 'mean_machine':
       if (level.blueprintKey === 'mean_machine') {
         return 'MeanMachineGame';
@@ -122,6 +123,7 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       if (level.blueprintKey === 'median_mountain') {
         return 'MedianMountainGame';
       }
+      return null;
     case 'rule_runner':
       if (level.blueprintKey === 'median_mountain') {
         return 'MedianMountainGame';
