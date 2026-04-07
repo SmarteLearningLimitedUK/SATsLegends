@@ -390,7 +390,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                       : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
                 }`}
               >
-                <div className={`mx-auto mb-1.5 flex h-9 w-9 items-center justify-center overflow-hidden rounded-full ${suspect.color} text-stone-900 shadow-lg md:mb-2.5 md:h-12 md:w-12`}>
+                <div className="mx-auto mb-2 flex h-24 w-24 items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-transparent shadow-lg md:mb-3 md:h-28 md:w-28">
                   {suspect.portrait && (
                     <img
                       src={suspect.portrait}

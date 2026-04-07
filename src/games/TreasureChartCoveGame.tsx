@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import { AVATARS } from '../constants';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface TreasureChartCoveGameProps {
@@ -139,25 +138,6 @@ const createRound = (levelId: number, roundIndex: number): ChartRound => {
   };
 };
 
-const ShipCard: React.FC<{
-  label: string;
-  color: string;
-  active?: boolean;
-  small?: boolean;
-}> = ({ label, color, active = false, small = false }) => (
-  <div className={`relative overflow-hidden rounded-[1.4rem] border px-3 py-3 shadow-[0_18px_28px_rgba(15,23,42,0.22)] ${active ? 'border-amber-200/55 bg-[linear-gradient(180deg,rgba(251,191,36,0.24),rgba(15,23,42,0.28))]' : 'border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.5))]'} ${small ? 'min-h-[4.6rem]' : 'min-h-[5.4rem]'}`}>
-    <div className="absolute inset-x-[12%] top-[10%] h-[18%] rounded-full bg-white/12 blur-md" />
-    <div className="relative flex flex-col items-center">
-      <div className={`relative ${small ? 'h-9 w-14' : 'h-11 w-18'}`}>
-        <div className={`absolute bottom-0 left-[6%] right-[6%] h-[44%] rounded-[40%_60%_45%_55%/42%_38%_62%_58%] bg-gradient-to-b ${color} shadow-[0_10px_16px_rgba(15,23,42,0.16)]`} />
-        <div className="absolute left-1/2 top-[6%] h-[38%] w-[5%] -translate-x-1/2 rounded-full bg-amber-300" />
-        <div className="absolute left-[44%] top-[10%] h-[22%] w-[26%] -skew-x-[12deg] rounded-[0.35rem] bg-[linear-gradient(180deg,#f8fafc,#dbeafe)]" />
-      </div>
-      <div className={`mt-2 text-center font-black tracking-tight text-white ${small ? 'text-xs' : 'text-sm md:text-base'}`}>{label}</div>
-    </div>
-  </div>
-);
-
 const CoinBarBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships, label }) => {
   const maxValue = Math.max(...ships.map((ship) => ship.value));
   return (
@@ -243,12 +223,11 @@ const TableBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships, la
 
 const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
   levelId,
-  avatarId,
+  avatarId: _avatarId,
   onVictory,
   onGameOver,
-  onBack,
+  onBack: _onBack,
 }) => {
-  const avatar = useMemo(() => AVATARS.find((item) => item.id === avatarId) || AVATARS[0], [avatarId]);
   const totalRounds = ROUND_GOAL_BY_LEVEL[levelId] || 5;
   const targetScore = 860 + (levelId * 220);
   const timeoutsRef = useRef<number[]>([]);
@@ -385,9 +364,9 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
 
           <div className="relative z-10 flex h-full w-full flex-col px-3 pb-3 pt-4 md:px-5 md:pb-4 md:pt-5">
             <div className="flex justify-center">
-              <div className="max-w-[94%] rounded-[1.5rem] border border-orange-200/22 bg-[linear-gradient(180deg,rgba(146,64,14,0.96),rgba(120,53,15,0.98))] px-4 py-2 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_16px_30px_rgba(120,53,15,0.24)] md:px-5 md:py-3">
-                <div className="text-sm font-black tracking-tight text-amber-50 md:text-[1.3rem]">{round.title}</div>
-                <div className="mt-1 text-[10px] font-bold text-amber-100/84 md:text-xs">
+              <div className="max-w-[96%] rounded-[1rem] px-2 py-1.5 text-center md:px-4 md:py-2">
+                <div className="text-sm font-black tracking-tight text-white md:text-[1.3rem]">{round.title}</div>
+                <div className="mt-1 text-[10px] font-bold text-cyan-100/90 md:text-xs">
                   {formatFantasyPrompt(round.prompt)}
                 </div>
               </div>
@@ -410,12 +389,6 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
               </div>
 
               <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.84),rgba(30,41,59,0.92))] p-2.5 shadow-[0_24px_40px_rgba(2,6,23,0.24)] md:p-3">
-                <div className="grid grid-cols-2 gap-1.5">
-                  {round.ships.map((ship) => (
-                    <ShipCard key={`ship-${ship.id}`} label={ship.label} color={ship.color} active={round.answer === ship.label} small />
-                  ))}
-                </div>
-
                 <div className={`grid gap-1.5 ${round.options.length <= 2 ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-2'}`}>
                   {round.options.map((choice, index) => (
                     <motion.button

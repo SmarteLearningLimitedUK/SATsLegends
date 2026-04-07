@@ -387,12 +387,12 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
               </div>
               <div className="grid grid-cols-3 gap-2">
                 <button
-                  onClick={() => adjustDimension('width', currentLevel.targetScale >= 1 ? 0.25 : -0.25)}
+                  onClick={() => adjustDimension('width', -0.25)}
                   disabled={gameState !== 'playing'}
                   className="rounded-lg border border-white/20 bg-[linear-gradient(180deg,#1e3a8a,#1e293b)] px-2 py-2 text-xs font-black uppercase tracking-[0.12em] text-white disabled:opacity-45"
                 >
                   {isDimensionMode
-                    ? `L${currentLevel.targetScale >= 1 ? '+' : '-'}0.25`
+                    ? 'L-0.25'
                     : '-0.25'}
                 </button>
                 <button
@@ -403,12 +403,12 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                   Reset
                 </button>
                 <button
-                  onClick={() => adjustDimension('height', currentLevel.targetScale >= 1 ? 0.25 : -0.25)}
+                  onClick={() => adjustDimension('height', 0.25)}
                   disabled={gameState !== 'playing'}
                   className="rounded-lg border border-white/20 bg-[linear-gradient(180deg,#1e3a8a,#1e293b)] px-2 py-2 text-xs font-black uppercase tracking-[0.12em] text-white disabled:opacity-45"
                 >
                   {isDimensionMode
-                    ? `W${currentLevel.targetScale >= 1 ? '+' : '-'}0.25`
+                    ? 'W+0.25'
                     : '+0.25'}
                 </button>
               </div>

@@ -316,16 +316,15 @@ const ReelWindow: React.FC<{
           ? { x: [0, -5, 5, -4, 4, 0], scale: [1, 0.98, 1] }
           : { y: 0, scale: 1 }}
     transition={spinning ? { duration: 0.16, repeat: Infinity, ease: 'linear' } : { duration: 0.35 }}
-    className={`relative flex h-full w-full items-center justify-center overflow-hidden rounded-[0.9rem] border shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_10px_18px_rgba(2,6,23,0.24)] ${
+    className={`relative flex h-full w-full items-center justify-center overflow-hidden rounded-[0.9rem] border shadow-[0_10px_18px_rgba(2,6,23,0.24)] ${
       isInactive
-        ? 'border-slate-200/40 bg-[linear-gradient(180deg,rgba(255,255,255,0.65),rgba(226,232,240,0.6))] opacity-70 saturate-0'
+        ? 'border-slate-200/30 bg-transparent opacity-70 saturate-0'
         : isMissing
-          ? 'border-amber-300/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(255,247,235,0.88))]'
-          : 'border-slate-200/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(241,245,249,0.94))]'
+          ? 'border-amber-300/70 bg-transparent'
+          : 'border-cyan-100/30 bg-transparent'
     }`}
   >
-    <div className="absolute inset-x-[10%] top-[12%] h-[35%] rounded-full bg-white/30 blur-sm" />
-    <div className={`relative z-10 text-[clamp(1.7rem,4.1vw,2.5rem)] font-semibold tracking-[-0.02em] ${isInactive ? 'text-slate-400/70' : 'text-black'}`}>
+    <div className={`relative z-10 text-[clamp(1.7rem,4.1vw,2.5rem)] font-semibold tracking-[-0.02em] ${isInactive ? 'text-slate-400/70' : 'text-white'}`}>
       {isInactive ? '' : value}
     </div>
   </motion.div>
@@ -584,7 +583,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
             <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/76">
               {modeCopy.eyebrow} · Level {level}/{TOTAL_LEVELS}
             </div>
-            <div className="mt-1 text-[clamp(0.98rem,3.6vw,1.12rem)] font-black leading-tight text-white">
+            <div className="mt-1 text-[clamp(1.2rem,4.4vw,1.5rem)] font-black leading-tight text-white">
               {modeCopy.title}
             </div>
             <div className="mt-0.5 text-[9px] font-semibold text-cyan-100/80">

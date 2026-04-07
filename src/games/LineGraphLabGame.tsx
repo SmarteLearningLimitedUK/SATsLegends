@@ -410,7 +410,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
             </div>
           </div>
 
-          <div className="mt-auto grid grid-cols-2 gap-2 pt-1">
+          <div className="mt-auto grid grid-cols-2 gap-2 pt-4">
             {round?.options.map(option => {
               const isSelected = selectedAnswer === option;
               const isCorrect = gameState === 'success' && option === round.correctAnswer;

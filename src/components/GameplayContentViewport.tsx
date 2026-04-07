@@ -15,6 +15,10 @@ const GameplayContentViewport: React.FC<GameplayContentViewportProps> = ({ child
   const [contentScale, setContentScale] = useState(1);
 
   useLayoutEffect(() => {
+    if (typeof ResizeObserver === 'undefined') {
+      setContentScale(1);
+      return;
+    }
     let frameId: number | null = null;
     const observer = new ResizeObserver(() => {
       if (frameId !== null) cancelAnimationFrame(frameId);
@@ -25,11 +29,17 @@ const GameplayContentViewport: React.FC<GameplayContentViewportProps> = ({ child
 
         const containerWidth = container.clientWidth;
         const containerHeight = container.clientHeight;
-        if (!containerWidth || !containerHeight) return;
+        if (!containerWidth || !containerHeight) {
+          setContentScale(1);
+          return;
+        }
 
         const contentWidth = content.scrollWidth;
         const contentHeight = content.scrollHeight;
-        if (!contentWidth || !contentHeight) return;
+        if (!contentWidth || !contentHeight) {
+          setContentScale(1);
+          return;
+        }
 
         const nextScale = Math.min(
           1,

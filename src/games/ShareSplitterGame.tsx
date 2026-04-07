@@ -156,6 +156,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const endedRef = useRef(false);
   const plateRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const sliceSeedRef = useRef(0);
+  const dragActiveRef = useRef(false);
 
   useEffect(() => () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -249,9 +250,11 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
   const handleSourcePointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
     if (locked || remainingSlices <= 0) return;
+    if (dragActiveRef.current || dragSlice) return;
     const sliceId = `${challenge.id}-slice-${sliceSeedRef.current}`;
     sliceSeedRef.current += 1;
     const pointerId = event.pointerId;
+    dragActiveRef.current = true;
 
     const updatePosition = (clientX: number, clientY: number) => {
       setDragSlice({
@@ -296,6 +299,8 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     };
 
     const finishDrag = (clientX: number, clientY: number) => {
+      if (!dragActiveRef.current) return;
+      dragActiveRef.current = false;
       const { index, distance } = getNearestPlate(clientX, clientY);
       const snapRadius = 95;
       const hitIndex = getHitPlateIndex(clientX, clientY);
@@ -313,6 +318,9 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerup', handlePointerUp);
       window.removeEventListener('pointercancel', handlePointerCancel);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
+      window.removeEventListener('touchcancel', handleTouchEnd);
     };
 
     const handlePointerMove = (moveEvent: PointerEvent) => {
@@ -351,6 +359,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     };
 
     const handlePointerCancel = () => {
+      dragActiveRef.current = false;
       setDragSlice(null);
       setHoverPlateIndex(null);
       window.removeEventListener('pointermove', handlePointerMove);
