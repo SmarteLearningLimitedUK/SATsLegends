@@ -12,8 +12,17 @@ const player = {
   xp: 0,
   coins: 200,
   gems: 10,
-  unlockedIslands: [1, 2, 3, 4, 5, 6, 7],
-  completedLevels: {},
+  unlockedIslands: [1, 2, 3, 4, 5, 6, 7, 8],
+  completedLevels: {
+    1: Array.from({ length: 60 }, (_, i) => i + 1),
+    2: Array.from({ length: 60 }, (_, i) => i + 1),
+    3: Array.from({ length: 60 }, (_, i) => i + 1),
+    4: Array.from({ length: 60 }, (_, i) => i + 1),
+    5: Array.from({ length: 60 }, (_, i) => i + 1),
+    6: Array.from({ length: 60 }, (_, i) => i + 1),
+    7: Array.from({ length: 60 }, (_, i) => i + 1),
+    8: Array.from({ length: 60 }, (_, i) => i + 1),
+  },
   levelStars: {},
   lastLoginDate: today,
   dailyStreak: 1,
@@ -24,7 +33,7 @@ const player = {
   stats: {
     totalStars: 0,
     totalGamesPlayed: 0,
-    totalCoinsEarned: 0,
+    totalCoinsEarned: 5000,
   },
 };
 
@@ -35,6 +44,7 @@ const islands = [
   'Data Desert',
   'Operations Outpost',
   'Measurement Mountain',
+  'Cursed Colosseum',
   'Ratio Rapids',
 ];
 
@@ -116,43 +126,48 @@ const run = async () => {
     await clickIfVisible(page.getByRole('button', { name: /explore island/i }), 1500);
     await page.waitForTimeout(900);
 
-    // Expand all game groups
     const groupButtons = page.locator('button[aria-expanded]');
     const groupCount = await groupButtons.count();
-    for (let i = 0; i < groupCount; i += 1) {
-      const groupButton = groupButtons.nth(i);
-      const expanded = await groupButton.getAttribute('aria-expanded');
-      if (expanded !== 'true') {
-        await groupButton.click();
-        await page.waitForTimeout(250);
+    const levelTargets = [];
+
+    for (let g = 0; g < groupCount; g += 1) {
+      const groupButton = groupButtons.nth(g);
+      await groupButton.click();
+      await page.waitForTimeout(250);
+      const container = groupButton.locator('xpath=ancestor::div[contains(@class,"licensed-board-frame")]');
+      const levelButtons = container.locator('button', { hasText: /Start|Play|Replay|Boss/i });
+      const levelCount = await levelButtons.count();
+      for (let i = 0; i < levelCount; i += 1) {
+        const label = (await levelButtons.nth(i).textContent())?.trim() || `level-${g + 1}-${i + 1}`;
+        levelTargets.push({ groupIndex: g, levelIndex: i, label });
       }
     }
 
-    const playButtons = page.locator('button', { hasText: /Start|Play|Replay|Boss/i });
-    const playCount = await playButtons.count();
-    const debugCounts = await page.evaluate(() => {
-      const buttons = Array.from(document.querySelectorAll('button'));
-      const playLike = buttons.filter((btn) => /(start|play|replay|boss)/i.test(btn.textContent || ''));
-      const expanded = buttons.filter((btn) => btn.hasAttribute('aria-expanded'));
-      return { playLike: playLike.length, expanded: expanded.length };
-    });
-
-    if (playCount === 0) {
+    if (levelTargets.length === 0) {
       await page.screenshot({ path: `${outputDir}/qa-init-${safeName(island)}-levels.png`, fullPage: false });
-      results.push({ island, status: 'no-play-buttons', debug: { groupCount, playCount, ...debugCounts } });
+      results.push({ island, status: 'no-play-buttons', debug: { groupCount } });
       continue;
     }
 
-    for (let i = 0; i < playCount; i += 1) {
-      const playButton = playButtons.nth(i);
-      const label = (await playButton.textContent())?.trim() || `level-${i + 1}`;
-      await playButton.click();
+    for (const target of levelTargets) {
+      const groupButtonsRepeat = page.locator('button[aria-expanded]');
+      const groupButton = groupButtonsRepeat.nth(target.groupIndex);
+      await groupButton.click();
+      await page.waitForTimeout(200);
+      const containerRepeat = groupButton.locator('xpath=ancestor::div[contains(@class,"licensed-board-frame")]');
+      const playButtonsRepeat = containerRepeat.locator('button', { hasText: /Start|Play|Replay|Boss/i });
+      const playCountRepeat = await playButtonsRepeat.count();
+      if (target.levelIndex >= playCountRepeat) {
+        results.push({ island, label: target.label, status: 'missing-button' });
+        continue;
+      }
+
+      await playButtonsRepeat.nth(target.levelIndex).click();
       const status = await waitForGameplay(page);
-      await page.screenshot({ path: `${outputDir}/qa-init-${safeName(island)}-${i + 1}.png`, fullPage: false });
+      await page.screenshot({ path: `${outputDir}/qa-init-${safeName(island)}-${safeName(target.label)}.png`, fullPage: false });
 
-      results.push({ island, label, status });
+      results.push({ island, label: target.label, status });
 
-      // Try to go back to levels
       const backButton = page.getByRole('button', { name: /back/i }).first();
       await clickIfVisible(backButton, 1200);
       await page.waitForTimeout(600);

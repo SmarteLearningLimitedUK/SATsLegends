@@ -262,11 +262,12 @@ const getEdgeLabelPosition = (edge: ShapeEdge) => {
   const dx = edge.to.x - edge.from.x;
   const dy = edge.to.y - edge.from.y;
   const horizontal = Math.abs(dx) >= Math.abs(dy);
+  const offset = horizontal ? 5.2 : 6;
 
   if (horizontal) {
-    return { x: mx, y: my + (my < 50 ? -8.5 : 8.5) };
+    return { x: mx, y: my + (my < 50 ? -offset : offset) };
   }
-  return { x: mx + (mx < 50 ? -10 : 10), y: my };
+  return { x: mx + (mx < 50 ? -offset : offset), y: my };
 };
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
@@ -292,10 +293,10 @@ const PerimeterShapeRenderer: React.FC<{
           const isTraced = tracedEdgeIds.includes(edge.id);
           const isActive = highlightedEdgeId === edge.id || isTraced;
           const labelPos = getEdgeLabelPosition(edge);
-          const labelWidth = Math.max(18, Math.min(28, edge.label.length * 2.6 + 4));
-          const labelHeight = 8;
-          const safeX = clamp(labelPos.x, (labelWidth / 2) + 1.5, 100 - (labelWidth / 2) - 1.5);
-          const safeY = clamp(labelPos.y, 6, 94);
+          const labelWidth = Math.max(14, Math.min(22, edge.label.length * 2.15 + 3));
+          const labelHeight = 7;
+          const safeX = clamp(labelPos.x, (labelWidth / 2) + 1, 100 - (labelWidth / 2) - 1);
+          const safeY = clamp(labelPos.y, 5.5, 94.5);
           return (
             <g
               key={edge.id}
@@ -328,7 +329,7 @@ const PerimeterShapeRenderer: React.FC<{
                 y={safeY - (labelHeight / 2)}
                 width={labelWidth}
                 height={labelHeight}
-                rx={3.6}
+                rx={3}
                 fill={isTraced ? 'rgba(250, 204, 21, 0.52)' : isActive ? 'rgba(250, 204, 21, 0.36)' : 'rgba(15, 23, 42, 0.66)'}
                 stroke={isTraced ? 'rgba(253, 224, 71, 0.95)' : isActive ? 'rgba(250, 204, 21, 0.75)' : 'rgba(255, 255, 255, 0.22)'}
                 strokeWidth={0.45}
