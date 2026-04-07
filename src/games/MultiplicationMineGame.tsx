@@ -29,7 +29,7 @@ interface MultiplicationQuestion {
 
 type Phase = 'playing' | 'exploding' | 'treasure';
 
-const ROCK_MAX_HEALTH = 5;
+const ROCK_MAX_HEALTH = 4;
 const ROCK_FRAMES = [rockStage18, rockStage19, rockStage20, rockStage21];
 
 const makeOptions = (correct: number) => {
@@ -84,8 +84,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
   const rockFrameIndex = useMemo(() => {
     const damage = ROCK_MAX_HEALTH - rockHealth;
     const clampedDamage = Math.max(0, Math.min(ROCK_MAX_HEALTH, damage));
-    const ratio = clampedDamage / ROCK_MAX_HEALTH;
-    const frame = Math.min(ROCK_FRAMES.length - 1, Math.floor(ratio * ROCK_FRAMES.length));
+    const frame = Math.min(ROCK_FRAMES.length - 1, clampedDamage);
     return phase === 'exploding' ? ROCK_FRAMES.length - 1 : frame;
   }, [phase, rockHealth]);
 
