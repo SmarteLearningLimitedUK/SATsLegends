@@ -230,22 +230,23 @@ const buildOrderPrompt = (
   batchLabel?: Challenge['batchLabel'],
   cardHint?: string,
 ) => {
+  const usageNote = 'Use all shown potions.';
   if (stage === 1) {
-    return `We need to brew an ${potionName} at a ${ratioText} ratio. ${cardHint || 'Some drops are already in the cauldron.'}`;
+    return `We need to brew an ${potionName} at a ${ratioText} ratio. ${cardHint || 'Some drops are already in the cauldron.'} ${usageNote}`;
   }
   if (stage === 2) {
-    return `Brew ${potionName} at a ${ratioText} ratio${batchLabelText(batchLabel) ? ` for a ${batchLabelText(batchLabel)}` : ''}.`;
+    return `Brew ${potionName} at a ${ratioText} ratio${batchLabelText(batchLabel) ? ` for a ${batchLabelText(batchLabel)}` : ''}. ${usageNote}`;
   }
   if (stage === 3) {
-    return `${cardHint || 'Some drops are already in the cauldron.'} Finish the mix at ${ratioText}.`;
+    return `${cardHint || 'Some drops are already in the cauldron.'} Finish the mix at ${ratioText}. ${usageNote}`;
   }
   if (stage === 4) {
-    return `Fix the ${potionName} so the ratio is ${ratioText}${batchLabelText(batchLabel) ? ` for a ${batchLabelText(batchLabel)}` : ''}.`;
+    return `Fix the ${potionName} so the ratio is ${ratioText}${batchLabelText(batchLabel) ? ` for a ${batchLabelText(batchLabel)}` : ''}. ${usageNote}`;
   }
   if (stage === 5) {
-    return `${potionName} is a courage potion made at ${ratioText}. ${batchLabelText(batchLabel) ? `Brew a ${batchLabelText(batchLabel)}.` : ''}`;
+    return `${potionName} is a courage potion made at ${ratioText}. ${batchLabelText(batchLabel) ? `Brew a ${batchLabelText(batchLabel)}.` : ''} ${usageNote}`;
   }
-  return `Master mix: ${potionName} at ${ratioText}${batchLabelText(batchLabel) ? ` for a ${batchLabelText(batchLabel)}` : ''}.`;
+  return `Master mix: ${potionName} at ${ratioText}${batchLabelText(batchLabel) ? ` for a ${batchLabelText(batchLabel)}` : ''}. ${usageNote}`;
 };
 
 const cardLabelsForMode = (mode: ChallengeMode) => {
@@ -746,10 +747,10 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                       onClick={() => addIngredient(index)}
                       disabled={locked || !isActive || isLockedIngredient}
                       aria-label={isActive ? `Add ${ingredient.name} to the potion` : `${ingredient.name} is not needed for this recipe`}
-                      className={`relative flex h-[clamp(84px,11vh,104px)] flex-col items-center justify-between rounded-[1.25rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.12),rgba(15,23,42,0.24))] px-1 py-1.5 shadow-[0_10px_14px_rgba(2,6,23,0.24)] transition ${locked || !isActive || isLockedIngredient ? 'opacity-60 grayscale' : ''}`}
+                      className={`relative flex h-[clamp(70px,9.5vh,92px)] flex-col items-center justify-between rounded-[1.1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.12),rgba(15,23,42,0.24))] px-1 py-1 shadow-[0_10px_14px_rgba(2,6,23,0.24)] transition ${locked || !isActive || isLockedIngredient ? 'opacity-60 grayscale' : ''}`}
                       style={isActive && !isLockedIngredient ? { boxShadow: `0 12px 22px rgba(2,6,23,0.28), 0 0 18px ${ingredient.glow}` } : undefined}
                     >
-                      <div className="pointer-events-none flex h-[48px] w-full items-center justify-center">
+                      <div className="pointer-events-none flex h-[40px] w-full items-center justify-center">
                         {bottleArt ? (
                           <img
                             src={bottleArt}

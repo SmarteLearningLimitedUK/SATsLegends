@@ -37,7 +37,7 @@ interface Question {
 const LANES = 4;
 const SPAWN_X = 96;
 const TARGET_X = 8;
-const ZOMBIE_SIZE = 70;
+const ZOMBIE_SIZE = 52;
 const ANIM_FPS = 8;
 
 const loadFrames = (record: Record<string, string>) => (
@@ -214,7 +214,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       x: SPAWN_X,
       health: baseZombieHealth,
       maxHealth: baseZombieHealth,
-      speed: 6 + (wave * 0.6),
+      speed: 3.2 + (wave * 0.35),
       state: 'appear',
       frameIndex: 0,
       frameTime: 0,
@@ -446,16 +446,14 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_85%,rgba(56,189,248,0.16),transparent_48%)]" />
           <div className="absolute bottom-4 left-6 flex flex-col items-center gap-2">
             <div className="text-[11px] font-black uppercase tracking-[0.18em] text-cyan-100">You</div>
-            <div className="flex h-[88px] w-[88px] items-center justify-center rounded-2xl border-2 border-cyan-200/60 bg-white/10 p-1 shadow-[0_10px_20px_rgba(2,6,23,0.3)]">
-              {avatarImage ? (
-                <img
-                  src={avatarImage}
-                  alt=""
-                  className="h-[80px] w-auto object-contain"
-                  draggable={false}
-                />
-              ) : null}
-            </div>
+            {avatarImage ? (
+              <img
+                src={avatarImage}
+                alt=""
+                className="h-[84px] w-auto object-contain drop-shadow-[0_10px_20px_rgba(2,6,23,0.45)]"
+                draggable={false}
+              />
+            ) : null}
           </div>
 
           <AnimatePresence>
@@ -479,7 +477,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
                   <img
                     src={frame}
                     alt=""
-                    className="h-[70px] w-auto object-contain drop-shadow-[0_8px_14px_rgba(2,6,23,0.45)]"
+                    className="h-[52px] w-auto object-contain drop-shadow-[0_8px_14px_rgba(2,6,23,0.45)]"
                     draggable={false}
                   />
                   <div className="h-2 w-full overflow-hidden rounded-full bg-black/40">
