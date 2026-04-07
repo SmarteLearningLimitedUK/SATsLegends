@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { X } from 'lucide-react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
-import universalMapPoster from '../assets/maps/Operations Outpost (768 x 2500 px).png';
+import universalMapPoster from '../assets/maps/finalmap.png';
 import AssetIcon from '../components/AssetIcon';
 import ParentGateOverlay from '../components/ParentGateOverlay';
 
@@ -58,6 +58,17 @@ const MAP_WIDTH_PX = 768;
 const MAP_HEIGHT_PX = 2500;
 
 const ISLAND_HOTSPOTS: IslandHotspot[] = [
+  {
+    islandId: 8,
+    x: 52,
+    y: 5,
+    width: 44,
+    height: 11,
+    ambients: [
+      { id: 'cursed-colosseum-stars', x: 18, y: 18, width: 28, height: 22, effect: 'stars' },
+      { id: 'cursed-colosseum-wisps', x: 58, y: 26, width: 30, height: 24, effect: 'wind-wisps' },
+    ],
+  },
   {
     islandId: 6,
     x: 30,

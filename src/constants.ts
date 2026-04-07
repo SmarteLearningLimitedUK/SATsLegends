@@ -67,6 +67,13 @@ const RATIO_RAPIDS_LEVELS: LevelData[] = [
   { id: 5, stars: 0, isLocked: false, blueprintKey: 'scale_builder', displayName: 'Scale Builder', gameType: 'scale_safari' },
 ];
 
+const CURSED_COLOSSEUM_LEVELS: LevelData[] = [
+  { id: 1, stars: 0, isLocked: false, blueprintKey: 'reasoning_quest', displayName: 'Reasoning Quest', gameType: 'reasoning_quest' },
+  { id: 2, stars: 0, isLocked: false, blueprintKey: 'multi_step_marathon', displayName: 'Multi-Step Marathon', gameType: 'equation_grove' },
+  { id: 3, stars: 0, isLocked: false, blueprintKey: 'strategy_survival', displayName: 'Strategy Survival', gameType: 'logic_sort' },
+  { id: 4, stars: 0, isLocked: false, blueprintKey: 'mixed_mastery', displayName: 'Mixed Mastery', gameType: 'calculation_clash' },
+];
+
 export const ISLANDS: IslandData[] = [
   {
     id: 1,
@@ -192,12 +199,21 @@ export const ISLANDS: IslandData[] = [
       { id: 1, stars: 0, isLocked: false, blueprintKey: 'problem_pyramid', displayName: 'Problem Pyramid', gameType: 'rule_runner' },
       { id: 2, stars: 0, isLocked: false, blueprintKey: 'unit_mixer', displayName: 'Unit Mixer', gameType: 'unit_mixer' },
       { id: 3, stars: 0, isLocked: false, blueprintKey: 'change_counter', displayName: 'Change Counter', gameType: 'change_counter' },
-      { id: 4, stars: 0, isLocked: false, blueprintKey: 'reasoning_quest', displayName: 'Reasoning Quest', gameType: 'reasoning_quest' },
-      { id: 5, stars: 0, isLocked: false, blueprintKey: 'mixed_mastery', displayName: 'Mixed Mastery', gameType: 'calculation_clash' },
-      { id: 6, stars: 0, isLocked: false, blueprintKey: 'strategy_survival', displayName: 'Strategy Survival', gameType: 'logic_sort' },
-      { id: 7, stars: 0, isLocked: false, blueprintKey: 'timed_test_trials', displayName: 'Timed Test Trials', gameType: 'calculation_clash' },
-      { id: 8, stars: 0, isLocked: false, blueprintKey: 'multi_step_marathon', displayName: 'Multi-Step Marathon', gameType: 'equation_grove' },
+      { id: 4, stars: 0, isLocked: false, blueprintKey: 'timed_test_trials', displayName: 'Timed Test Trials', gameType: 'calculation_clash' },
     ],
+  },
+  {
+    id: 8,
+    name: 'Cursed Colosseum',
+    category: 'Boss Island',
+    isLocked: false,
+    color: 'bg-[#2C2A4A]',
+    themeName: 'Cursed Colosseum',
+    bgGradient: 'from-slate-900 to-indigo-950',
+    groundColor: 'bg-slate-900',
+    mapImage: world06Map,
+    decorations: [],
+    levels: mergeIslandLevels(CURSED_COLOSSEUM_LEVELS),
   },
   {
     id: 7,
