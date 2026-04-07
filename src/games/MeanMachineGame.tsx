@@ -316,12 +316,8 @@ const ReelWindow: React.FC<{
           ? { x: [0, -5, 5, -4, 4, 0], scale: [1, 0.98, 1] }
           : { y: 0, scale: 1 }}
     transition={spinning ? { duration: 0.16, repeat: Infinity, ease: 'linear' } : { duration: 0.35 }}
-    className={`relative flex h-full w-full items-center justify-center overflow-hidden rounded-[0.9rem] border shadow-[0_10px_18px_rgba(2,6,23,0.24)] ${
-      isInactive
-        ? 'border-slate-200/30 bg-transparent opacity-70 saturate-0'
-        : isMissing
-          ? 'border-amber-300/70 bg-transparent'
-          : 'border-cyan-100/30 bg-transparent'
+    className={`relative flex h-full w-full items-center justify-center overflow-hidden rounded-[0.9rem] border border-transparent bg-transparent shadow-none ${
+      isInactive ? 'opacity-50 saturate-0' : ''
     }`}
   >
     <div className={`relative z-10 text-[clamp(1.7rem,4.1vw,2.5rem)] font-semibold tracking-[-0.02em] ${isInactive ? 'text-slate-400/70' : 'text-white'}`}>
@@ -607,7 +603,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                         src={machineImage}
                         alt="Mean Machine slot machine"
                         draggable={false}
-                        className="pointer-events-none absolute inset-0 z-[12] h-full w-full object-contain"
+                        className="pointer-events-none absolute inset-0 z-[12] h-full w-full object-contain mix-blend-multiply"
                       />
 
                       {reelDisplay.map((value, index) => (

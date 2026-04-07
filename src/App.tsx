@@ -317,7 +317,7 @@ const App: React.FC = () => {
         viewportWidth / baseWidth,
         viewportHeight / baseHeight,
       );
-      const maxScale = isTabletViewport ? 0.7 : 1;
+      const maxScale = isTabletViewport ? 0.85 : 1;
       const scale = Math.min(rawScale, maxScale);
       setStageScale(Number.isFinite(scale) && scale > 0 ? scale : 1);
     };
