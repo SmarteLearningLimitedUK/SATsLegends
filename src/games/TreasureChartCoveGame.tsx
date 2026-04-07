@@ -11,13 +11,14 @@ interface TreasureChartCoveGameProps {
   onBack: () => void;
 }
 
-type ChartRoundMode = 'highest' | 'difference' | 'line' | 'table';
+type ChartRoundMode = 'highest' | 'difference' | 'line' | 'table' | 'pie';
 
 interface ShipDatum {
   id: string;
   label: string;
   value: number;
   color: string;
+  solidColor: string;
 }
 
 interface ChartRound {
@@ -35,10 +36,10 @@ interface ChartRound {
 const MAX_HEARTS = 4;
 const ROUND_GOAL_BY_LEVEL = [0, 4, 5, 5, 6];
 const SHIP_POOL = [
-  { id: 'sun', label: 'Sunfin', color: 'from-amber-300 to-yellow-500' },
-  { id: 'mist', label: 'Mistwake', color: 'from-sky-300 to-cyan-500' },
-  { id: 'jade', label: 'Jadehook', color: 'from-emerald-300 to-green-500' },
-  { id: 'ruby', label: 'Ruby Tide', color: 'from-rose-300 to-red-500' },
+  { id: 'sun', label: 'Sunfin', color: 'from-amber-300 to-yellow-500', solidColor: '#fbbf24' },
+  { id: 'mist', label: 'Mistwake', color: 'from-sky-300 to-cyan-500', solidColor: '#38bdf8' },
+  { id: 'jade', label: 'Jadehook', color: 'from-emerald-300 to-green-500', solidColor: '#34d399' },
+  { id: 'ruby', label: 'Ruby Tide', color: 'from-rose-300 to-red-500', solidColor: '#fb7185' },
 ];
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -55,8 +56,9 @@ const modeForLevel = (levelId: number, roundIndex: number): ChartRoundMode => {
   if (levelId <= 1) return 'highest';
   if (levelId === 2) return 'difference';
   if (levelId === 3) return 'line';
-  if (levelId === 4) return 'table';
-  const cycle: ChartRoundMode[] = ['difference', 'line', 'table', 'highest'];
+  if (levelId === 4) return 'pie';
+  if (levelId === 5) return 'table';
+  const cycle: ChartRoundMode[] = ['difference', 'line', 'pie', 'table', 'highest'];
   return cycle[roundIndex % cycle.length];
 };
 
@@ -68,10 +70,10 @@ const createRound = (levelId: number, roundIndex: number): ChartRound => {
     const winner = ships.reduce((best, ship) => (ship.value > best.value ? ship : best), ships[0]);
     return {
       mode,
-      title: 'Most Treasure',
-      prompt: 'Tap the ship with the highest treasure haul.',
-      support: 'Read the coin-stack chart, then pick the richest ship.',
-      boardLabel: 'Treasure haul chart',
+      title: 'Most Crates',
+      prompt: 'Which ship has the most crates?',
+      support: 'Use the bar chart to compare each ship.',
+      boardLabel: 'Crates by ship',
       ships,
       options: ships.map((ship) => ship.label),
       answer: winner.label,
@@ -94,9 +96,9 @@ const createRound = (levelId: number, roundIndex: number): ChartRound => {
     return {
       mode,
       title: 'Find The Difference',
-      prompt: `How many more chests did ${first.label} bring than ${second.label}?`,
-      support: 'Compare the two chart values, then choose the right treasure pile.',
-      boardLabel: 'Dock inventory chart',
+      prompt: `How many more crates did ${first.label} have than ${second.label}?`,
+      support: 'Compare just those two bars on the chart.',
+      boardLabel: 'Crates by ship',
       ships,
       options: options.sort(() => Math.random() - 0.5),
       answer: difference.toString(),
@@ -108,19 +110,40 @@ const createRound = (levelId: number, roundIndex: number): ChartRound => {
       label,
       value: randomInt(2, 8) + (index % 2 === 0 ? 1 : 0),
     }));
-    const peak = days.reduce((best, day) => (day.value > best.value ? day : best), days[0]);
-    const ships = pickShips(3);
+    const targetDay = days[randomInt(0, days.length - 1)];
+    const options = Array.from(new Set([
+      targetDay.value.toString(),
+      Math.max(1, targetDay.value + 1).toString(),
+      Math.max(1, targetDay.value + 2).toString(),
+      Math.max(1, targetDay.value - 1).toString(),
+    ])).slice(0, 4);
+    while (options.length < 4) options.push((targetDay.value + options.length + 1).toString());
 
     return {
       mode,
-      title: 'Best Treasure Day',
-      prompt: 'Which day had the highest treasure count?',
-      support: 'Read the rope line and pick the day where the treasure peaked.',
-      boardLabel: 'Treasure over five days',
-      ships,
+      title: 'Line Read',
+      prompt: `How many crates were logged on ${targetDay.label}?`,
+      support: 'Trace the line up from the day label.',
+      boardLabel: 'Crates over five days',
       lineDays: days,
-      options: days.map((day) => day.label),
-      answer: peak.label,
+      options: options.sort(() => Math.random() - 0.5),
+      answer: targetDay.value.toString(),
+    };
+  }
+
+  if (mode === 'pie') {
+    const ships = pickShips(4);
+    const winner = ships.reduce((best, ship) => (ship.value > best.value ? ship : best), ships[0]);
+
+    return {
+      mode,
+      title: 'Largest Share',
+      prompt: 'Which ship owns the largest slice?',
+      support: 'Compare the pie slices to find the biggest share.',
+      boardLabel: 'Share of crates',
+      ships,
+      options: ships.map((ship) => ship.label),
+      answer: winner.label,
     };
   }
 
@@ -128,9 +151,9 @@ const createRound = (levelId: number, roundIndex: number): ChartRound => {
   const target = ships[randomInt(0, ships.length - 1)];
   return {
     mode: 'table',
-    title: 'Sort To The Correct Dock',
-    prompt: `Which ship should dock at the ${target.value}-chest marker?`,
-    support: 'Use the harbour ledger to match the ship to the correct dock value.',
+    title: 'Dock Match',
+    prompt: `Which ship matches ${target.value} crates?`,
+    support: 'Use the ledger to match the exact value.',
     boardLabel: 'Harbour ledger',
     ships,
     options: ships.map((ship) => ship.label),
@@ -203,6 +226,42 @@ const LineGraphBoard: React.FC<{ days: Array<{ label: string; value: number }>; 
           </g>
         ))}
       </svg>
+    </div>
+  );
+};
+
+const PieShareBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships, label }) => {
+  const total = ships.reduce((sum, ship) => sum + ship.value, 0);
+  let current = 0;
+  const gradientStops = ships.map((ship) => {
+    const start = current;
+    const share = (ship.value / total) * 100;
+    current += share;
+    return `${ship.solidColor} ${start.toFixed(2)}% ${current.toFixed(2)}%`;
+  });
+
+  return (
+    <div className="rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.24))] p-2.5 shadow-[0_18px_28px_rgba(15,23,42,0.22)]">
+      <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/62 md:text-[11px]">{label}</div>
+      <div className="mt-3 flex items-center justify-between gap-3">
+        <div
+          className="h-24 w-24 rounded-full border border-white/12 shadow-[inset_0_0_0_8px_rgba(15,23,42,0.22)] md:h-28 md:w-28"
+          style={{
+            background: `conic-gradient(${gradientStops.join(', ')})`,
+          }}
+        />
+        <div className="flex flex-1 flex-col gap-1.5">
+          {ships.map((ship) => (
+            <div key={ship.id} className="flex items-center justify-between rounded-lg border border-white/10 bg-white/6 px-2 py-1">
+              <div className="flex items-center gap-2">
+                <span className={`h-3 w-3 rounded-full bg-gradient-to-r ${ship.color}`} />
+                <span className="text-[10px] font-bold text-white">{ship.label}</span>
+              </div>
+              <span className="text-[10px] font-black text-amber-100">{ship.value}</span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
@@ -378,6 +437,8 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
                   <LineGraphBoard days={round.lineDays} label={round.boardLabel} />
                 ) : round.mode === 'table' ? (
                   <TableBoard ships={round.ships} label={round.boardLabel} />
+                ) : round.mode === 'pie' ? (
+                  <PieShareBoard ships={round.ships} label={round.boardLabel} />
                 ) : (
                   <CoinBarBoard ships={round.ships} label={round.boardLabel} />
                 )}

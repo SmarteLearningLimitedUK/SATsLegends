@@ -256,7 +256,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
       )}
 
       <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.05rem)]' : ''}`}>
-        <section className="z-10 flex min-h-0 w-full flex-[0.42] flex-col gap-2 overflow-hidden border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] px-2 pb-2 pt-3 sm:px-3 sm:pb-3 sm:pt-4 md:w-1/2 md:flex-1 md:gap-3 md:border-b-0 md:border-r md:p-5">
+        <section className="z-10 flex min-h-0 w-full flex-[0.52] flex-col gap-2 overflow-hidden border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] px-2 pb-2 pt-3 sm:px-3 sm:pb-3 sm:pt-4 md:w-1/2 md:flex-1 md:gap-3 md:border-b-0 md:border-r md:p-5">
           <div className="rounded-xl border border-cyan-100/16 bg-slate-900/40 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-cyan-100/80">
             {caseBrief}
           </div>
@@ -278,7 +278,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(255,255,255,0.14),rgba(9,24,58,0.6))] p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-3 md:p-4">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.3)_1px,transparent_1px)] opacity-7 [background-size:20px_20px]" />
 
-            <div className="relative w-full" style={{ height: 'clamp(7.5rem, 18vh, 10.5rem)' }}>
+            <div className="relative w-full" style={{ height: 'clamp(9.5rem, 26vh, 14rem)' }}>
               <ResponsiveContainer width="100%" height="100%">
                 {chartType === 'bar' ? (
                     <BarChart data={currentCase} margin={{ top: 12, right: 10, left: -6, bottom: 6 }}>
@@ -375,7 +375,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           </div>
 
           <div className="relative min-h-0 flex-1">
-            <div className={`grid min-h-0 h-full auto-rows-[minmax(0,1fr)] grid-cols-2 gap-1.5 md:gap-3 ${selectedSuspect ? 'opacity-0 pointer-events-none' : ''}`}>
+            <div className={`grid min-h-0 h-full auto-rows-[minmax(0,1fr)] grid-cols-4 gap-1 md:gap-2 ${selectedSuspect ? 'opacity-0 pointer-events-none' : ''}`}>
               {suspects.map((suspect) => (
                 <motion.button
                   key={suspect.id}
@@ -383,19 +383,19 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleSuspectClick(suspect.id)}
                   transition={{ duration: 0.35 }}
-                  className={`group relative flex min-h-0 items-center justify-center rounded-2xl border-2 p-2.5 transition-all duration-300 md:p-3 ${
+                  className={`group relative flex min-h-0 items-center justify-center rounded-[1.35rem] border-2 p-1 transition-all duration-300 ${
                     gameState === 'success' && suspect.id === guiltyId
                       ? 'border-emerald-500 bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.2)]'
                       : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
                   }`}
                 >
-                  <div className="mx-auto flex h-28 w-28 items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-transparent shadow-lg md:h-32 md:w-32">
+                  <div className="relative h-full w-full overflow-hidden rounded-[1.05rem] border border-white/16 bg-transparent shadow-lg">
                     {suspect.portrait && (
                       <img
                         src={suspect.portrait}
                         alt=""
                         draggable={false}
-                        className="h-full w-full object-cover"
+                        className="absolute inset-0 h-full w-full object-cover"
                       />
                     )}
                   </div>
