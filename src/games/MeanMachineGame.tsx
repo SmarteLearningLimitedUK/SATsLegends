@@ -598,12 +598,13 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                     className="relative mx-auto flex h-full w-full max-w-[28.5rem] items-center justify-center md:max-w-[30rem]"
                   >
 
-                    <div className="relative w-full max-w-[26.5rem] md:max-w-[28.5rem]" style={{ aspectRatio: '4 / 5' }}>
+                    <div className="relative w-full max-w-[26.5rem] md:max-w-[28.5rem] isolate" style={{ aspectRatio: '4 / 5' }}>
                       <img
                         src={machineImage}
                         alt="Mean Machine slot machine"
                         draggable={false}
                         className="pointer-events-none absolute inset-0 z-[12] h-full w-full object-contain mix-blend-multiply"
+                        style={{ filter: 'brightness(0.9) contrast(1.1)' }}
                       />
 
                       {reelDisplay.map((value, index) => (
