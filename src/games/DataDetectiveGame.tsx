@@ -41,7 +41,8 @@ interface Suspect {
   name: string;
   items: number[];
   color: string;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
+  portrait?: string;
 }
 
 interface DataDetectiveGameProps {
@@ -72,6 +73,14 @@ const MONSTER_ICONS = [
 ];
 
 const MONSTER_NAMES = ['Grumpy Green', 'Blue Blob', 'Purple Prowler', 'Red Rogue'];
+const loadSortedImages = (record: Record<string, string>) => (
+  Object.entries(record)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([, value]) => value)
+);
+const MUGSHOT_IMAGES = loadSortedImages(
+  import.meta.glob('../assets/datadetective/mugshots/*.png', { eager: true, import: 'default' }) as Record<string, string>,
+);
 const DETECTIVE_BRIEFS = [
   'Match the evidence totals to the suspect report.',
   'Check the chart carefully before accusing.',
@@ -129,6 +138,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
     setCurrentCase(caseData);
 
     const correctIdx = Math.floor(Math.random() * 4);
+    const shuffledMugshots = shuffle(MUGSHOT_IMAGES).slice(0, 4);
     const newSuspects = Array.from({ length: 4 }, (_, i) => {
       if (i === correctIdx) {
         return {
@@ -137,6 +147,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           items: caseData.map(d => d.amount),
           color: MONSTER_COLORS[i],
           icon: MONSTER_ICONS[i],
+          portrait: shuffledMugshots[i],
         };
       }
 
@@ -151,6 +162,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
         items: randomItems,
         color: MONSTER_COLORS[i],
         icon: MONSTER_ICONS[i],
+        portrait: shuffledMugshots[i],
       };
     });
 
@@ -383,8 +395,17 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                       : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
                 }`}
               >
-                <div className={`mx-auto mb-1.5 flex h-9 w-9 items-center justify-center rounded-full ${suspect.color} text-stone-900 shadow-lg md:mb-2.5 md:h-12 md:w-12`}>
-                  {suspect.icon}
+                <div className={`mx-auto mb-1.5 flex h-9 w-9 items-center justify-center overflow-hidden rounded-full ${suspect.color} text-stone-900 shadow-lg md:mb-2.5 md:h-12 md:w-12`}>
+                  {suspect.portrait ? (
+                    <img
+                      src={suspect.portrait}
+                      alt=""
+                      draggable={false}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    suspect.icon
+                  )}
                 </div>
 
                 <h3 className="mb-1.5 text-center text-[10px] font-black uppercase tracking-tight text-white md:mb-2 md:text-xs">
