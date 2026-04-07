@@ -67,6 +67,10 @@ const useAlphaKeyImage = (src: string, threshold = 220) => {
   const [processed, setProcessed] = useState(src);
 
   useEffect(() => {
+    if (typeof window === 'undefined' || typeof Image === 'undefined') {
+      setProcessed(src);
+      return;
+    }
     let isActive = true;
     const image = new Image();
     image.crossOrigin = 'anonymous';
@@ -88,24 +92,24 @@ const useAlphaKeyImage = (src: string, threshold = 220) => {
         setProcessed(src);
         return;
       }
-      ctx.drawImage(image, 0, 0);
-      const imageData = ctx.getImageData(0, 0, width, height);
-      const data = imageData.data;
-      for (let i = 0; i < data.length; i += 4) {
-        const red = data[i];
-        const green = data[i + 1];
-        const blue = data[i + 2];
-        const max = Math.max(red, green, blue);
-        const min = Math.min(red, green, blue);
-        const brightness = (red + green + blue) / 3;
-        const lowSaturation = max - min <= 18;
-
-        if (brightness >= threshold && lowSaturation) {
-          data[i + 3] = 0;
-        }
-      }
-      ctx.putImageData(imageData, 0, 0);
       try {
+        ctx.drawImage(image, 0, 0);
+        const imageData = ctx.getImageData(0, 0, width, height);
+        const data = imageData.data;
+        for (let i = 0; i < data.length; i += 4) {
+          const red = data[i];
+          const green = data[i + 1];
+          const blue = data[i + 2];
+          const max = Math.max(red, green, blue);
+          const min = Math.min(red, green, blue);
+          const brightness = (red + green + blue) / 3;
+          const lowSaturation = max - min <= 18;
+
+          if (brightness >= threshold && lowSaturation) {
+            data[i + 3] = 0;
+          }
+        }
+        ctx.putImageData(imageData, 0, 0);
         setProcessed(canvas.toDataURL('image/png'));
       } catch {
         setProcessed(src);
