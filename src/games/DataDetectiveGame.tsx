@@ -8,12 +8,8 @@ import {
   ChevronRight,
   Trophy,
   AlertCircle,
-  Ghost,
-  Fingerprint,
   PieChart as PieChartIcon,
   BarChart3,
-  ShieldAlert,
-  Dna,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
@@ -41,7 +37,6 @@ interface Suspect {
   name: string;
   items: number[];
   color: string;
-  icon?: React.ReactNode;
   portrait?: string;
 }
 
@@ -64,13 +59,6 @@ const ITEMS = [
 ];
 
 const MONSTER_COLORS = ['bg-emerald-500', 'bg-blue-500', 'bg-purple-500', 'bg-rose-500'];
-
-const MONSTER_ICONS = [
-  <Ghost className="h-12 w-12" />,
-  <Fingerprint className="h-12 w-12" />,
-  <Dna className="h-12 w-12" />,
-  <ShieldAlert className="h-12 w-12" />,
-];
 
 const MONSTER_NAMES = ['Grumpy Green', 'Blue Blob', 'Purple Prowler', 'Red Rogue'];
 const loadSortedImages = (record: Record<string, string>) => (
@@ -146,7 +134,6 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           name: MONSTER_NAMES[i],
           items: caseData.map(d => d.amount),
           color: MONSTER_COLORS[i],
-          icon: MONSTER_ICONS[i],
           portrait: shuffledMugshots[i],
         };
       }
@@ -161,7 +148,6 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
         name: MONSTER_NAMES[i],
         items: randomItems,
         color: MONSTER_COLORS[i],
-        icon: MONSTER_ICONS[i],
         portrait: shuffledMugshots[i],
       };
     });
@@ -396,15 +382,13 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                 }`}
               >
                 <div className={`mx-auto mb-1.5 flex h-9 w-9 items-center justify-center overflow-hidden rounded-full ${suspect.color} text-stone-900 shadow-lg md:mb-2.5 md:h-12 md:w-12`}>
-                  {suspect.portrait ? (
+                  {suspect.portrait && (
                     <img
                       src={suspect.portrait}
                       alt=""
                       draggable={false}
                       className="h-full w-full object-cover"
                     />
-                  ) : (
-                    suspect.icon
                   )}
                 </div>
 

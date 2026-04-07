@@ -182,10 +182,10 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
               src={pyramidImage}
               alt=""
               draggable={false}
-              className="pointer-events-none absolute inset-0 h-full w-full object-contain opacity-85"
+              className="pointer-events-none absolute inset-0 h-full w-full object-contain opacity-90 scale-[1.12]"
             />
             <motion.div
-              animate={glow ? { scale: [1, 1.04, 1] } : { scale: 1 }}
+              animate={glow ? { scale: [1.08, 1.12, 1.08] } : { scale: 1.08 }}
               transition={{ duration: 0.6, ease: 'easeInOut' }}
               className="relative z-10 flex flex-col items-center gap-2"
             >
