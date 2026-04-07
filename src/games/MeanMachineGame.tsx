@@ -63,6 +63,67 @@ const shuffle = <T,>(values: T[]): T[] => {
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
+const useAlphaKeyImage = (src: string, threshold = 220) => {
+  const [processed, setProcessed] = useState(src);
+
+  useEffect(() => {
+    let isActive = true;
+    const image = new Image();
+    image.crossOrigin = 'anonymous';
+    image.src = src;
+
+    image.onload = () => {
+      if (!isActive) return;
+      const canvas = document.createElement('canvas');
+      const width = image.naturalWidth || image.width;
+      const height = image.naturalHeight || image.height;
+      if (!width || !height) {
+        setProcessed(src);
+        return;
+      }
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        setProcessed(src);
+        return;
+      }
+      ctx.drawImage(image, 0, 0);
+      const imageData = ctx.getImageData(0, 0, width, height);
+      const data = imageData.data;
+      for (let i = 0; i < data.length; i += 4) {
+        const red = data[i];
+        const green = data[i + 1];
+        const blue = data[i + 2];
+        const max = Math.max(red, green, blue);
+        const min = Math.min(red, green, blue);
+        const brightness = (red + green + blue) / 3;
+        const lowSaturation = max - min <= 18;
+
+        if (brightness >= threshold && lowSaturation) {
+          data[i + 3] = 0;
+        }
+      }
+      ctx.putImageData(imageData, 0, 0);
+      try {
+        setProcessed(canvas.toDataURL('image/png'));
+      } catch {
+        setProcessed(src);
+      }
+    };
+
+    image.onerror = () => {
+      if (isActive) setProcessed(src);
+    };
+
+    return () => {
+      isActive = false;
+    };
+  }, [src, threshold]);
+
+  return processed;
+};
+
 const scoreToStars = (XP: number) => {
   if (XP >= 2400) return 3;
   if (XP >= 1700) return 2;
@@ -567,6 +628,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     if (round?.mode === 'mode') return modeMachineImage;
     return meanMachineImage;
   }, [round?.mode]);
+  const alphaKeyedMachineImage = useAlphaKeyImage(machineImage);
 
   return (
     <div className="relative h-full w-full overflow-hidden select-none text-white">
@@ -600,11 +662,10 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
 
                     <div className="relative w-full max-w-[26.5rem] md:max-w-[28.5rem] isolate" style={{ aspectRatio: '4 / 5' }}>
                       <img
-                        src={machineImage}
+                        src={alphaKeyedMachineImage}
                         alt="Mean Machine slot machine"
                         draggable={false}
-                        className="pointer-events-none absolute inset-0 z-[12] h-full w-full object-contain mix-blend-multiply"
-                        style={{ filter: 'brightness(0.9) contrast(1.1)' }}
+                        className="pointer-events-none absolute inset-0 z-[12] h-full w-full object-contain"
                       />
 
                       {reelDisplay.map((value, index) => (
