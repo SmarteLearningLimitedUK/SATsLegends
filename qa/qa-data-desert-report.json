@@ -1,0 +1,25 @@
+{
+  "results": [
+    {
+      "island": "Data Desert",
+      "group": "Mean Machine",
+      "status": "ok"
+    },
+    {
+      "island": "Data Desert",
+      "group": "Graph Grabber",
+      "status": "ok"
+    },
+    {
+      "island": "Data Desert",
+      "group": "Line Graph Lab",
+      "status": "ok"
+    },
+    {
+      "island": "Data Desert",
+      "group": "Data Detective",
+      "status": "ok"
+    }
+  ],
+  "consoleErrors": []
+}

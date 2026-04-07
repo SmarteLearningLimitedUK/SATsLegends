@@ -242,8 +242,8 @@ const PieShareBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships,
 
   return (
     <div className="rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.24))] p-2.5 shadow-[0_18px_28px_rgba(15,23,42,0.22)]">
-      <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/62 md:text-[11px]">{label}</div>
-      <div className="mt-3 flex items-center justify-between gap-3">
+      <div className="text-[11px] font-black uppercase tracking-[0.18em] text-white/70 md:text-xs">{label}</div>
+            <div className="mt-3 flex items-center justify-between gap-3">
         <div
           className="h-24 w-24 rounded-full border border-white/12 shadow-[inset_0_0_0_8px_rgba(15,23,42,0.22)] md:h-28 md:w-28"
           style={{
@@ -255,9 +255,9 @@ const PieShareBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships,
             <div key={ship.id} className="flex items-center justify-between rounded-lg border border-white/10 bg-white/6 px-2 py-1">
               <div className="flex items-center gap-2">
                 <span className={`h-3 w-3 rounded-full bg-gradient-to-r ${ship.color}`} />
-                <span className="text-[10px] font-bold text-white">{ship.label}</span>
+                <span className="text-[11px] font-bold text-white">{ship.label}</span>
               </div>
-              <span className="text-[10px] font-black text-amber-100">{ship.value}</span>
+              <span className="text-[11px] font-black text-amber-100">{ship.value}</span>
             </div>
           ))}
         </div>
@@ -268,7 +268,7 @@ const PieShareBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships,
 
 const TableBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships, label }) => (
     <div className="rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.24))] p-2.5 shadow-[0_18px_28px_rgba(15,23,42,0.22)]">
-    <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/62 md:text-[11px]">{label}</div>
+      <div className="text-[11px] font-black uppercase tracking-[0.18em] text-white/70 md:text-xs">{label}</div>
     <div className="mt-3 space-y-1.5">
       {ships.map((ship) => (
         <div key={ship.id} className="grid grid-cols-[1fr_auto] items-center rounded-[1rem] border border-white/10 bg-black/14 px-2.5 py-1.5">
@@ -425,7 +425,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
             <div className="flex justify-center">
               <div className="max-w-[96%] rounded-[1rem] px-2 py-1.5 text-center md:px-4 md:py-2">
                 <div className="text-sm font-black tracking-tight text-white md:text-[1.3rem]">{round.title}</div>
-                <div className="mt-1 text-[10px] font-bold text-cyan-100/90 md:text-xs">
+                <div className="mt-1 text-[12px] font-bold text-cyan-100/90 md:text-sm">
                   {formatFantasyPrompt(round.prompt)}
                 </div>
               </div>
