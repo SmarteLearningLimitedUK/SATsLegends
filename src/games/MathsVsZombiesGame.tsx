@@ -176,7 +176,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   const roundSeconds = useMemo(() => 70 + (levelId * 6), [levelId]);
   const victoryTargetScore = useMemo(() => 1200 + (levelId * 220), [levelId]);
   const baseZombieHealth = useMemo(() => 1, []);
-  const spawnDelayMs = useMemo(() => Math.max(1200, 2600 - (levelId * 130)), [levelId]);
+  const spawnDelayMs = useMemo(() => Math.max(1800, 3400 - (levelId * 120)), [levelId]);
 
   const [XP, setScore] = useState(0);
   const [zombiesDefeated, setZombiesDefeated] = useState(0);
@@ -446,12 +446,12 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_85%,rgba(56,189,248,0.16),transparent_48%)]" />
           <div className="absolute bottom-4 left-6 flex flex-col items-center gap-2">
             <div className="text-[11px] font-black uppercase tracking-[0.18em] text-cyan-100">You</div>
-            <div className="flex h-[110px] w-[110px] items-center justify-center rounded-3xl border-2 border-cyan-200/50 bg-white/10 shadow-[0_12px_24px_rgba(2,6,23,0.3)]">
+            <div className="flex h-[88px] w-[88px] items-center justify-center rounded-2xl border-2 border-cyan-200/60 bg-white/10 p-1 shadow-[0_10px_20px_rgba(2,6,23,0.3)]">
               {avatarImage ? (
                 <img
                   src={avatarImage}
                   alt=""
-                  className="h-[92px] w-auto object-contain"
+                  className="h-[80px] w-auto object-contain"
                   draggable={false}
                 />
               ) : null}
