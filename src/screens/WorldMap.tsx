@@ -491,7 +491,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
                 style={{
                   left: `${hotspot.x}%`,
                   top: `${hotspot.y}%`,
-                  width: `${hotspot.width}%`,
+                  width: `${hotspot.width * 1.5}%`,
                   height: `${hotspot.height}%`,
                   transform: 'translate(-50%, -50%)',
                 }}

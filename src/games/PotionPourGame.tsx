@@ -114,6 +114,7 @@ const shuffled = <T,>(list: readonly T[]) => {
 
 type PairRatio = [number, number];
 type TripleRatio = [number, number, number];
+type QuadRatio = [number, number, number, number];
 type Ratio = PairRatio | TripleRatio;
 
 const SIMPLE_PAIR_RATIOS: PairRatio[] = [
@@ -121,16 +122,28 @@ const SIMPLE_PAIR_RATIOS: PairRatio[] = [
   [2, 1],
   [3, 1],
   [3, 2],
+  [4, 3],
+  [5, 2],
+  [5, 4],
+  [6, 5],
 ];
 
 const ADVANCED_PAIR_RATIOS: PairRatio[] = [
   [4, 1],
+  [5, 1],
   [5, 2],
   [5, 3],
+  [6, 1],
+  [6, 5],
   [7, 2],
   [7, 3],
+  [7, 4],
   [8, 3],
+  [8, 5],
   [9, 4],
+  [9, 5],
+  [10, 3],
+  [11, 4],
 ];
 
 const SIMPLE_TRIPLE_RATIOS: TripleRatio[] = [
@@ -138,6 +151,9 @@ const SIMPLE_TRIPLE_RATIOS: TripleRatio[] = [
   [2, 1, 1],
   [2, 2, 1],
   [3, 1, 2],
+  [3, 1, 1],
+  [3, 2, 1],
+  [4, 2, 1],
 ];
 
 const ADVANCED_TRIPLE_RATIOS: TripleRatio[] = [
@@ -146,21 +162,59 @@ const ADVANCED_TRIPLE_RATIOS: TripleRatio[] = [
   [4, 3, 2],
   [5, 3, 2],
   [5, 4, 3],
+  [6, 4, 2],
+  [6, 5, 3],
+  [7, 4, 3],
+];
+
+const SIMPLE_QUAD_RATIOS: QuadRatio[] = [
+  [1, 1, 1, 1],
+  [2, 1, 1, 1],
+  [2, 2, 1, 1],
+  [3, 2, 1, 2],
+  [3, 3, 2, 1],
+];
+
+const ADVANCED_QUAD_RATIOS: QuadRatio[] = [
+  [3, 2, 1, 4],
+  [4, 2, 3, 1],
+  [5, 3, 2, 4],
+  [6, 4, 3, 2],
+  [7, 4, 3, 5],
+  [8, 5, 4, 3],
 ];
 
 const WORD_PAIR_RATIOS: PairRatio[] = [
   [2, 3],
   [3, 2],
   [4, 3],
+  [5, 3],
+  [6, 5],
+  [7, 5],
 ];
 
-const HALF_BATCH_RATIOS: Ratio[] = [
+const HALF_BATCH_PAIR_RATIOS: PairRatio[] = [
   [4, 10],
   [6, 8],
   [8, 12],
+  [6, 14],
+  [10, 12],
+  [12, 18],
+];
+
+const HALF_BATCH_TRIPLE_RATIOS: TripleRatio[] = [
   [4, 6, 2],
   [6, 10, 4],
   [8, 12, 6],
+  [10, 14, 6],
+  [12, 16, 8],
+];
+
+const HALF_BATCH_QUAD_RATIOS: QuadRatio[] = [
+  [4, 6, 2, 4],
+  [6, 8, 4, 2],
+  [8, 10, 6, 4],
+  [10, 12, 8, 6],
 ];
 
 let challengeSeed = 0;
@@ -204,7 +258,7 @@ const stageForMode = (mode: ChallengeMode): number => {
       return 6;
   }
 };
-const roundsToWinForLevel = (levelId: number) => 5 + Math.floor((levelId - 1) / 2);
+const roundsToWinForLevel = (levelId: number) => 7 + Math.floor((levelId - 1) / 2);
 
 const buildPotionName = (active: Ingredient[]) => {
   const lead = active[0]?.name || 'Star';
@@ -309,10 +363,16 @@ const buildOrderFlavor = (stage: number) => {
 const generateChallenge = (levelId: number, solved: number): Challenge => {
   const mode = modeForLevel(levelId);
   const stage = stageForMode(mode);
+  const maxIngredients = INGREDIENTS.length;
+  const activeCount = levelId >= 10
+    ? Math.min(5, maxIngredients)
+    : levelId >= 7
+      ? Math.min(4, maxIngredients)
+      : levelId >= 4
+        ? Math.min(3, maxIngredients)
+        : 2;
   let activeIndices =
-    stage <= 5
-      ? shuffled([0, 1, 2, 3, 4]).slice(0, 2).sort((a, b) => a - b)
-      : shuffled([0, 1, 2, 3, 4]).slice(0, 3).sort((a, b) => a - b);
+    shuffled([0, 1, 2, 3, 4]).slice(0, activeCount).sort((a, b) => a - b);
   let baseRatio: number[] = [...randomPick(SIMPLE_PAIR_RATIOS)];
   let scale = 1;
   let revealTargets = false;
@@ -324,29 +384,49 @@ const generateChallenge = (levelId: number, solved: number): Challenge => {
     batchLabel = randomPick(['double', 'triple', 'half']);
   }
 
+  const pickPairRatio = () => [...randomPick(stage >= 4 ? ADVANCED_PAIR_RATIOS : SIMPLE_PAIR_RATIOS)];
+  const pickTripleRatio = () => [...randomPick(stage >= 6 ? ADVANCED_TRIPLE_RATIOS : SIMPLE_TRIPLE_RATIOS)];
+  const pickQuadRatio = () => [...randomPick(stage >= 7 ? ADVANCED_QUAD_RATIOS : SIMPLE_QUAD_RATIOS)];
+
+  const selectBaseRatio = () => {
+    if (activeCount === 4) return pickQuadRatio();
+    if (activeCount === 3) return pickTripleRatio();
+    return pickPairRatio();
+  };
+
   if (mode === 'direct_recipe') {
-    baseRatio = [...randomPick(SIMPLE_PAIR_RATIOS)];
+    baseRatio = selectBaseRatio();
     scale = 1;
     revealTargets = true;
   } else if (mode === 'scale_recipe') {
-    baseRatio = [...randomPick(stage >= 4 ? ADVANCED_PAIR_RATIOS : SIMPLE_PAIR_RATIOS)];
-    scale = randomPick(stage >= 4 ? [3, 4, 5] : [2, 3, 4]);
+    baseRatio = selectBaseRatio();
+    scale = randomPick(stage >= 4 ? [3, 4, 5, 6, 7, 8] : [2, 3, 4, 5, 6]);
   } else if (mode === 'missing_value') {
-    baseRatio = [...randomPick(stage >= 4 ? WORD_PAIR_RATIOS.concat(ADVANCED_PAIR_RATIOS) : WORD_PAIR_RATIOS)];
-    scale = randomPick(stage >= 5 ? [3, 4, 5] : [2, 3, 4]);
+    baseRatio = activeCount === 2
+      ? [...randomPick(stage >= 4 ? WORD_PAIR_RATIOS.concat(ADVANCED_PAIR_RATIOS) : WORD_PAIR_RATIOS)]
+      : selectBaseRatio();
+    scale = randomPick(stage >= 5 ? [3, 4, 5, 6, 7, 8] : [2, 3, 4, 5]);
   } else if (mode === 'fix_mistake') {
-    baseRatio = [...randomPick((stage >= 4 ? ADVANCED_PAIR_RATIOS : SIMPLE_PAIR_RATIOS).filter((ratio) => ratio[0] !== ratio[1]))];
-    scale = randomPick(stage >= 5 ? [3, 4, 5] : [2, 3]);
+    baseRatio = selectBaseRatio();
+    scale = randomPick(stage >= 5 ? [3, 4, 5, 6, 7] : [2, 3, 4]);
   } else if (mode === 'word_problem') {
-    baseRatio = [...randomPick(stage >= 5 ? WORD_PAIR_RATIOS.concat(ADVANCED_PAIR_RATIOS) : WORD_PAIR_RATIOS)];
-    scale = randomPick(stage >= 5 ? [3, 4, 5, 6] : [2, 3, 4]);
+    baseRatio = activeCount === 2
+      ? [...randomPick(stage >= 5 ? WORD_PAIR_RATIOS.concat(ADVANCED_PAIR_RATIOS) : WORD_PAIR_RATIOS)]
+      : selectBaseRatio();
+    scale = randomPick(stage >= 5 ? [3, 4, 5, 6, 7, 8] : [2, 3, 4, 5]);
   } else {
-    baseRatio = [...randomPick(stage >= 6 ? ADVANCED_TRIPLE_RATIOS : SIMPLE_TRIPLE_RATIOS)];
-    scale = randomPick(stage >= 6 ? [4, 5, 6] : [2, 3, 4]);
+    baseRatio = selectBaseRatio();
+    scale = randomPick(stage >= 6 ? [4, 5, 6, 7, 8] : [2, 3, 4, 5]);
   }
 
   if (batchLabel === 'half') {
-    baseRatio = [...randomPick(HALF_BATCH_RATIOS)];
+    if (activeCount === 4) {
+      baseRatio = [...randomPick(HALF_BATCH_QUAD_RATIOS)];
+    } else if (activeCount === 3) {
+      baseRatio = [...randomPick(HALF_BATCH_TRIPLE_RATIOS)];
+    } else {
+      baseRatio = [...randomPick(HALF_BATCH_PAIR_RATIOS)];
+    }
     scale = 0.5;
   } else if (batchLabel === 'double') {
     scale = Math.max(scale, 2);
@@ -693,9 +773,9 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 src={cauldrenAndPotionArt}
                 alt=""
                 aria-hidden="true"
-                className="pointer-events-none absolute left-1/2 bottom-[8%] h-[42%] max-w-none -translate-x-1/2 -translate-y-[5px] object-contain"
+                className="pointer-events-none absolute left-1/2 bottom-[7%] h-[42%] max-w-none -translate-x-1/2 translate-y-[5px] object-contain"
               />
-              <div className="absolute left-1/2 bottom-[28%] h-[14%] w-[34%] -translate-x-1/2 -translate-y-[5px] overflow-hidden rounded-[46%]">
+              <div className="absolute left-1/2 bottom-[27%] h-[14%] w-[34%] -translate-x-1/2 translate-y-[5px] overflow-hidden rounded-[46%]">
                 <motion.div
                   className="absolute inset-x-[8%] bottom-[8%] rounded-[42%]"
                   style={{

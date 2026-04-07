@@ -235,6 +235,18 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setValidationActive(false);
   };
 
+  const getClientPoint = (evt: PointerEvent | TouchEvent | React.PointerEvent) => {
+    const anyEvt = evt as TouchEvent;
+    if ('touches' in anyEvt && anyEvt.touches.length > 0) {
+      return { x: anyEvt.touches[0].clientX, y: anyEvt.touches[0].clientY };
+    }
+    if ('changedTouches' in anyEvt && anyEvt.changedTouches.length > 0) {
+      return { x: anyEvt.changedTouches[0].clientX, y: anyEvt.changedTouches[0].clientY };
+    }
+    const pointerEvt = evt as PointerEvent;
+    return { x: pointerEvt.clientX || 0, y: pointerEvt.clientY || 0 };
+  };
+
   const handleSourcePointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
     if (locked || remainingSlices <= 0) return;
     const sliceId = `${challenge.id}-slice-${sliceSeedRef.current}`;
@@ -304,18 +316,38 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     };
 
     const handlePointerMove = (moveEvent: PointerEvent) => {
-      updatePosition(moveEvent.clientX, moveEvent.clientY);
-      const hitIndex = getHitPlateIndex(moveEvent.clientX, moveEvent.clientY);
+      const point = getClientPoint(moveEvent);
+      updatePosition(point.x, point.y);
+      const hitIndex = getHitPlateIndex(point.x, point.y);
       if (hitIndex >= 0) {
         setHoverPlateIndex(hitIndex);
         return;
       }
-      const { index, distance } = getNearestPlate(moveEvent.clientX, moveEvent.clientY);
+      const { index, distance } = getNearestPlate(point.x, point.y);
       setHoverPlateIndex(distance <= 100 ? index : null);
     };
 
     const handlePointerUp = (upEvent: PointerEvent) => {
-      finishDrag(upEvent.clientX, upEvent.clientY);
+      const point = getClientPoint(upEvent);
+      finishDrag(point.x, point.y);
+    };
+
+    const handleTouchMove = (touchEvent: TouchEvent) => {
+      const point = getClientPoint(touchEvent);
+      updatePosition(point.x, point.y);
+      const hitIndex = getHitPlateIndex(point.x, point.y);
+      if (hitIndex >= 0) {
+        setHoverPlateIndex(hitIndex);
+        return;
+      }
+      const { index, distance } = getNearestPlate(point.x, point.y);
+      setHoverPlateIndex(distance <= 100 ? index : null);
+      touchEvent.preventDefault();
+    };
+
+    const handleTouchEnd = (touchEvent: TouchEvent) => {
+      const point = getClientPoint(touchEvent);
+      finishDrag(point.x, point.y);
     };
 
     const handlePointerCancel = () => {
@@ -324,9 +356,13 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerup', handlePointerUp);
       window.removeEventListener('pointercancel', handlePointerCancel);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
+      window.removeEventListener('touchcancel', handleTouchEnd);
     };
 
-    updatePosition(event.clientX, event.clientY);
+    const startPoint = getClientPoint(event);
+    updatePosition(startPoint.x, startPoint.y);
     event.currentTarget.setPointerCapture(pointerId);
     setFeedback('Drop the cake onto the correct plate.');
     setFeedbackTone('neutral');
@@ -336,6 +372,9 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     window.addEventListener('pointermove', handlePointerMove);
     window.addEventListener('pointerup', handlePointerUp);
     window.addEventListener('pointercancel', handlePointerCancel);
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
+    window.addEventListener('touchend', handleTouchEnd);
+    window.addEventListener('touchcancel', handleTouchEnd);
   };
 
   const resetAllocation = () => {
