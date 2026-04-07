@@ -94,7 +94,7 @@ const basePackDefs: Array<{
   },
   {
     key: 'chart_challenge',
-    name: 'Chart Challenge',
+    name: 'Median Master',
     gameType: 'chart_chase',
     skillTags: ['MEDIAN', 'DATA_INTERPRETATION', 'ORDERING'],
     objectiveForLevel: (miniGameLevel) => `Sort and analyse data sets to find the median quickly (L${miniGameLevel}).`,

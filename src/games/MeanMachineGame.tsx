@@ -536,11 +536,11 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
       setFeedback({
         type: 'success',
         message: round.mode === 'mean'
-          ? 'Jackpot! Mean solved.'
+          ? 'Jackpot! MEAN solved.'
           : round.mode === 'median'
-            ? 'Median locked in! Perfect.'
+            ? 'MEDIAN locked in! Perfect.'
             : round.mode === 'mode'
-              ? 'Mode found! Reels aligned.'
+              ? 'MODE found! Reels aligned.'
               : 'Machine fixed! Missing reel locked in.',
       });
       setGameState('resolved');
@@ -565,12 +565,12 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     setFeedback({
       type: 'error',
       message: round.mode === 'mean'
-        ? `Machine glitch. Add them, then divide by ${round.activeReelIndexes.length}.`
+        ? `Machine glitch. Add them, then divide by ${round.activeReelIndexes.length} to get the MEAN.`
         : round.mode === 'median'
-          ? 'Median missed. Order the numbers, then pick the middle.'
+          ? 'MEDIAN missed. Order the numbers, then pick the middle.'
           : round.mode === 'mode'
-            ? 'Mode missed. Pick the most frequent number.'
-            : 'Wrong repair. That missing reel misses the target mean.',
+            ? 'MODE missed. Pick the most frequent number.'
+            : 'Wrong repair. That missing reel misses the target MEAN.',
     });
     setGameState('resolved');
     sessionEvents?.onIncorrectAnswer?.({
@@ -598,32 +598,32 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   }, [initialiseRound]);
 
   const modeCopy = useMemo(() => {
-    if (!round) return { eyebrow: 'Mean Machine', title: 'Spin the reels', prompt: 'Press Spin to begin.' };
+    if (!round) return { eyebrow: 'MEAN Machine', title: 'Spin the reels', prompt: 'Press Spin to begin.' };
     if (round.mode === 'mean') {
       return {
-        eyebrow: 'Mean Spin',
-        title: `Spin ${round.activeReelIndexes.length} reels. Find the mean.`,
-        prompt: `Add them, then divide by ${round.activeReelIndexes.length}.`,
+        eyebrow: 'MEAN Spin',
+        title: `Spin ${round.activeReelIndexes.length} reels. Find the MEAN.`,
+        prompt: `Add them, then divide by ${round.activeReelIndexes.length} to get the MEAN.`,
       };
     }
     if (round.mode === 'median') {
       return {
-        eyebrow: 'Median Lock',
-        title: 'Order the values. Find the median.',
+        eyebrow: 'MEDIAN Lock',
+        title: 'Order the values. Find the MEDIAN.',
         prompt: 'Pick the middle number when the reels are ordered.',
       };
     }
     if (round.mode === 'mode') {
       return {
-        eyebrow: 'Mode Match',
-        title: 'Find the most frequent number.',
-        prompt: 'The mode appears more than any other value.',
+        eyebrow: 'MODE Match',
+        title: 'Find the most frequent number. (MODE)',
+        prompt: 'The MODE appears more than any other value.',
       };
     }
     return {
       eyebrow: 'Fix The Machine',
       title: 'Fix the missing reel.',
-      prompt: `Choose the number that repairs the mean of ${round.activeReelIndexes.length} reels.`,
+      prompt: `Choose the number that repairs the MEAN of ${round.activeReelIndexes.length} reels.`,
     };
   }, [round]);
 
@@ -667,7 +667,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                     <div className="relative w-full max-w-[26.5rem] md:max-w-[28.5rem] isolate" style={{ aspectRatio: '4 / 5' }}>
                       <img
                         src={alphaKeyedMachineImage}
-                        alt="Mean Machine slot machine"
+                        alt="MEAN Machine slot machine"
                         draggable={false}
                         className="pointer-events-none absolute inset-0 z-[12] h-full w-full object-contain"
                       />
@@ -702,7 +702,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                         animate={spinPulse ? { scale: [1, 0.94, 1.06, 1], y: [0, 2, -1, 0] } : { scale: [1, 1.03, 1], y: [0, -1, 0] }}
                         transition={spinPulse ? { duration: 0.34 } : { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
                         className="absolute z-30 flex items-center justify-center rounded-[1.2rem] bg-transparent text-[0.8rem] font-black uppercase tracking-[0.16em] text-cyan-50 disabled:cursor-not-allowed disabled:opacity-65 md:text-[0.92rem]"
-                        aria-label="Press the Mean Machine base button"
+                        aria-label="Press the MEAN Machine base button"
                         style={{
                           left: '31.7%',
                           top: '79.6%',
@@ -839,7 +839,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                     className="absolute inset-[-10px] rounded-full border-2 border-dashed border-amber-200/30"
                   />
                 </div>
-                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/75">Mean Machine</div>
+                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/75">MEAN Machine</div>
                 <h2 className="mt-1 text-2xl font-black uppercase tracking-[0.04em] text-amber-100">Jackpot Calibrated</h2>
                 <p className="mt-2 text-sm font-semibold leading-relaxed text-cyan-100/82">
                   Every reel landed perfectly. Launching rewards now.

@@ -273,7 +273,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
               <ChevronLeft className="h-5 w-5" />
             </button>
             <div className="rounded-full border border-amber-200/55 bg-[#123062]/75 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-amber-100">
-              Chart Challenge
+              Median Master
             </div>
           </div>
         )}

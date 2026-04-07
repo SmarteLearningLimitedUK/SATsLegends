@@ -150,7 +150,6 @@ export const ISLANDS: IslandData[] = [
     decorations: [],
     levels: mergeIslandLevels(
       pickLevelsByBlueprint(NUMBER_BASE_CAMP_LEVELS, [
-        'chart_challenge',
         'mean_machine',
       ]),
       [
@@ -213,7 +212,10 @@ export const ISLANDS: IslandData[] = [
     groundColor: 'bg-slate-900',
     mapImage: world06Map,
     decorations: [],
-    levels: mergeIslandLevels(CURSED_COLOSSEUM_LEVELS),
+    levels: mergeIslandLevels(
+      CURSED_COLOSSEUM_LEVELS,
+      pickLevelsByBlueprint(NUMBER_BASE_CAMP_LEVELS, ['chart_challenge']),
+    ),
   },
   {
     id: 7,

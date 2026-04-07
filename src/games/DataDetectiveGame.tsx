@@ -114,7 +114,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   const [caseMode, setCaseMode] = useState<CaseMode>('detective');
   const [caseBrief, setCaseBrief] = useState(DETECTIVE_BRIEFS[0]);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-  const [armedSuspectId, setArmedSuspectId] = useState<number | null>(null);
+  const [selectedSuspectId, setSelectedSuspectId] = useState<number | null>(null);
 
   const maxCaseValue = Math.max(...currentCase.map((item) => item.amount), 0);
   const barAxisMax = Math.max(1, maxCaseValue);
@@ -164,7 +164,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
     setSuspects(newSuspects);
     setGuiltyId(correctIdx);
     setFeedback(null);
-    setArmedSuspectId(null);
+    setSelectedSuspectId(null);
   }, []);
 
   const startGame = () => {
@@ -180,12 +180,12 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
 
   const handleSuspectClick = (id: number) => {
     if (gameState !== 'playing') return;
-    if (armedSuspectId !== id) {
-      setArmedSuspectId(id);
-      setFeedback({ type: 'success', message: 'Evidence locked. Tap again to accuse this suspect.' });
-      return;
-    }
+    setSelectedSuspectId(id);
+    setFeedback(null);
+  };
 
+  const handleAccuse = (id: number) => {
+    if (gameState !== 'playing') return;
     if (id === guiltyId) {
       setFeedback({ type: 'success', message: 'CASE CLOSED! You found the guilty monster.' });
       setGameState('success');
@@ -194,9 +194,13 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
     }
 
     setFeedback({ type: 'error', message: "WRONG SUSPECT! The evidence doesn't match." });
-    setArmedSuspectId(null);
+    setSelectedSuspectId(null);
     setScore(prev => Math.max(0, prev - 20));
   };
+
+  const selectedSuspect = selectedSuspectId !== null
+    ? suspects.find((suspect) => suspect.id === selectedSuspectId) || null
+    : null;
 
   const nextCase = () => {
     if (level < MAX_CASES) {
@@ -353,14 +357,11 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
 
             <div className="mt-1.5 grid grid-cols-2 gap-1 sm:gap-1.5">
               {currentCase.map(item => (
-                <div key={item.name} className="flex items-center justify-between gap-2 rounded-lg border border-white/10 bg-white/8 px-2 py-1">
-                  <div className="flex items-center gap-2">
+                <div key={item.name} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/8 px-2 py-1">
                   <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
                   <span className="min-w-0 truncate text-[8px] font-bold uppercase tracking-wide text-stone-300">
                     {item.name}
                   </span>
-                  </div>
-                  <span className="text-[10px] font-black text-white">{item.amount}</span>
                 </div>
               ))}
             </div>
@@ -373,54 +374,99 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             <h2 className="text-xs font-black uppercase tracking-widest">Suspect Lineup</h2>
           </div>
 
-          <div className="grid min-h-0 flex-1 auto-rows-[minmax(0,1fr)] grid-cols-2 gap-1.5 md:gap-3">
-            {suspects.map((suspect) => (
-              <motion.button
-                key={suspect.id}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => handleSuspectClick(suspect.id)}
-                animate={armedSuspectId === suspect.id ? { scale: [1, 1.03, 1], y: [0, -2, 0] } : { scale: 1, y: 0 }}
-                transition={{ duration: 0.35 }}
-                className={`group relative flex min-h-0 flex-col rounded-2xl border-2 p-2.5 transition-all duration-300 md:p-3 ${
-                  gameState === 'success' && suspect.id === guiltyId
-                    ? 'border-emerald-500 bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.2)]'
-                    : armedSuspectId === suspect.id
-                      ? 'border-amber-400 bg-amber-500/10 shadow-[0_0_20px_rgba(245,158,11,0.18)]'
+          <div className="relative min-h-0 flex-1">
+            <div className={`grid min-h-0 h-full auto-rows-[minmax(0,1fr)] grid-cols-2 gap-1.5 md:gap-3 ${selectedSuspect ? 'opacity-0 pointer-events-none' : ''}`}>
+              {suspects.map((suspect) => (
+                <motion.button
+                  key={suspect.id}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => handleSuspectClick(suspect.id)}
+                  transition={{ duration: 0.35 }}
+                  className={`group relative flex min-h-0 items-center justify-center rounded-2xl border-2 p-2.5 transition-all duration-300 md:p-3 ${
+                    gameState === 'success' && suspect.id === guiltyId
+                      ? 'border-emerald-500 bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.2)]'
                       : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
-                }`}
-              >
-                <div className="mx-auto mb-2 flex h-24 w-24 items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-transparent shadow-lg md:mb-3 md:h-28 md:w-28">
-                  {suspect.portrait && (
-                    <img
-                      src={suspect.portrait}
-                      alt=""
-                      draggable={false}
-                      className="h-full w-full object-cover"
-                    />
-                  )}
-                </div>
-
-                <h3 className="mb-1.5 text-center text-[10px] font-black uppercase tracking-tight text-white md:mb-2 md:text-xs">
-                  {suspect.name}
-                </h3>
-
-                <div className="mt-auto grid grid-cols-2 gap-1 md:gap-2">
-                  {suspect.items.map((amount, i) => (
-                    <div key={i} className="flex items-center justify-between rounded-lg border border-white/10 bg-white/6 px-1.5 py-1 md:p-1.5">
-                      <span className="mr-1 truncate text-[7px] font-bold uppercase text-stone-300">{ITEMS[i].name.split(' ')[1]}</span>
-                      <span className="text-[10px] font-black text-amber-300">{amount}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {gameState === 'success' && suspect.id === guiltyId && (
-                  <div className="absolute right-2 top-2">
-                    <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                  }`}
+                >
+                  <div className="mx-auto flex h-28 w-28 items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-transparent shadow-lg md:h-32 md:w-32">
+                    {suspect.portrait && (
+                      <img
+                        src={suspect.portrait}
+                        alt=""
+                        draggable={false}
+                        className="h-full w-full object-cover"
+                      />
+                    )}
                   </div>
-                )}
-              </motion.button>
-            ))}
+
+                  {gameState === 'success' && suspect.id === guiltyId && (
+                    <div className="absolute right-2 top-2">
+                      <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                    </div>
+                  )}
+                </motion.button>
+              ))}
+            </div>
+
+            <AnimatePresence>
+              {selectedSuspect && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="absolute inset-0 flex items-center justify-center"
+                >
+                  <div className="w-full max-w-[20rem] rounded-2xl border border-white/18 bg-[linear-gradient(180deg,rgba(9,24,58,0.96),rgba(4,12,28,0.98))] p-4 shadow-[0_24px_48px_rgba(0,0,0,0.45)]">
+                    <div className="flex items-center gap-3">
+                      <div className="h-16 w-16 overflow-hidden rounded-2xl border border-white/20">
+                        {selectedSuspect.portrait && (
+                          <img
+                            src={selectedSuspect.portrait}
+                            alt=""
+                            draggable={false}
+                            className="h-full w-full object-cover"
+                          />
+                        )}
+                      </div>
+                      <div>
+                        <div className="text-xs font-black uppercase tracking-[0.14em] text-amber-300">Suspect</div>
+                        <div className="text-lg font-black text-white">{selectedSuspect.name}</div>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 space-y-2">
+                      {selectedSuspect.items.map((amount, index) => (
+                        <div key={`${selectedSuspect.id}-item-${index}`} className="flex items-center justify-between rounded-xl border border-white/12 bg-white/6 px-3 py-2">
+                          <div className="flex items-center gap-2">
+                            <span className="h-3 w-3 rounded-full" style={{ backgroundColor: ITEMS[index].color }} />
+                            <span className="text-xs font-bold text-white">{ITEMS[index].name}</span>
+                          </div>
+                          <span className="text-sm font-black text-amber-200">{amount}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="mt-4 flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedSuspectId(null)}
+                        className="flex-1 rounded-xl border border-white/16 bg-white/8 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-white"
+                      >
+                        Close
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleAccuse(selectedSuspect.id)}
+                        className="flex-1 rounded-xl bg-amber-400 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-slate-900"
+                      >
+                        Accuse
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           <div className="mt-auto flex flex-col gap-1.5 pt-0.5">

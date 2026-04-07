@@ -69,7 +69,7 @@ const GAME_SUMMARY_BY_KEY: Record<string, string> = {
   graph_grabber: 'Extract exact values from graphs before they disappear.',
   table_trouble: 'Read tables quickly and answer under time pressure.',
   line_graph_lab: 'Interpret trends, intervals, and key points on line graphs.',
-  chart_challenge: 'Switch between chart types and keep Combo accuracy.',
+  chart_challenge: 'Lock the median quickly from charted data sets.',
   data_detective: 'Solve short data reasoning cases from displayed information.',
   problem_pyramid: 'Climb linked reasoning steps where each answer affects the next.',
   mixed_mastery: 'Rapidly switch across mixed SATs skills without losing flow.',

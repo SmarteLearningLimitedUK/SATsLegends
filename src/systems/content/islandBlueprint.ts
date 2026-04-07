@@ -867,9 +867,9 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
       { area: 'reasoning', percentage: 10 },
     ],
     crossGameReinforcement: [
-        'comparison is reinforced across Data Detective and Chart Challenge',
+        'comparison is reinforced across Data Detective and Median Master',
       'extraction speed is reinforced across Graph Grabber and Table Trouble',
-      'trend interpretation in Line Graph Lab supports mixed rounds in Chart Challenge',
+      'trend interpretation in Line Graph Lab supports mixed rounds in Median Master',
     ],
     designRules: [
       'Speed is critical: reward quick reading and penalise hesitation.',
@@ -937,7 +937,7 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
       },
       {
         key: 'chart_challenge',
-        name: 'Chart Challenge',
+        name: 'Median Master',
         role: 'mixed_mastery',
         gameplayRoles: ['mixed_mastery', 'pressure_timing', 'fluency'],
         mechanicSummary: 'Respond to mixed chart formats in rapid succession without breaking flow.',
