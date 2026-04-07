@@ -167,7 +167,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
       <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+3.5rem)] pt-3 text-white">
         <section className="shrink-0">
           <StoryCard>
-            <p className="text-[clamp(13px,2vh,18px)] font-semibold text-white/90">
+            <p className="text-[clamp(15px,2.2vh,20px)] font-black text-white">
               Help the apothecary measure ingredients fairly.
             </p>
           </StoryCard>
@@ -177,8 +177,8 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
           <TaskCard className="bg-[linear-gradient(180deg,rgba(255,255,255,0.95),rgba(245,250,255,0.9))]">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-900/80">Ratio Fractions</div>
-                <div className="mt-1 text-[clamp(15px,2vh,20px)] font-black text-slate-900">
+                <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-900/90">Ratio Fractions</div>
+                <div className="mt-1 text-[clamp(17px,2.2vh,22px)] font-black text-slate-950">
                   {question.prompt}
                 </div>
               </div>
@@ -190,14 +190,20 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             {question.showDots ? (
               <div className="mt-3 flex items-center justify-center gap-2">
                 {Array.from({ length: question.ratioA }).map((_, index) => (
-                  <span key={`a-${index}`} className="h-4 w-4 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(248,113,113,0.6)]" />
+                  <span
+                    key={`a-${index}`}
+                    className="h-5 w-5 rounded-full border border-white/70 bg-rose-400 shadow-[0_0_10px_rgba(248,113,113,0.65)]"
+                  />
                 ))}
                 {Array.from({ length: question.ratioB }).map((_, index) => (
-                  <span key={`b-${index}`} className="h-4 w-4 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]" />
+                  <span
+                    key={`b-${index}`}
+                    className="h-5 w-5 rounded-full border border-white/70 bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.65)]"
+                  />
                 ))}
               </div>
             ) : (
-              <div className="mt-3 text-center text-[11px] font-semibold text-slate-600">
+              <div className="mt-3 text-center text-[12px] font-semibold text-slate-700">
                 Use the ratio to work out the fraction.
               </div>
             )}

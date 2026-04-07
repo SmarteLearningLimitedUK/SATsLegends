@@ -99,12 +99,13 @@ const BlueprintGrid: React.FC = () => (
 
 const ShapeRenderer: React.FC<{
   shape: Shape;
-  scale: number;
+  scaleX: number;
+  scaleY: number;
   strokeClass: string;
   isBase?: boolean;
-}> = ({ shape, scale, strokeClass, isBase = false }) => {
-  const width = shape.baseWidth * scale;
-  const height = shape.baseHeight * scale;
+}> = ({ shape, scaleX, scaleY, strokeClass, isBase = false }) => {
+  const width = shape.baseWidth * scaleX;
+  const height = shape.baseHeight * scaleY;
 
   if (shape.type === 'rect') {
     return (
@@ -162,7 +163,7 @@ const ShapeRenderer: React.FC<{
     );
   }
 
-  const thickness = 30 * scale;
+  const thickness = 30 * Math.min(scaleX, scaleY);
   return (
     <div
       className="absolute transition-all duration-300"
@@ -204,6 +205,8 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
 
   const [currentLevelIdx, setCurrentLevelIdx] = useState(0);
   const [currentScale, setCurrentScale] = useState(1.0);
+  const [widthScale, setWidthScale] = useState(1.0);
+  const [heightScale, setHeightScale] = useState(1.0);
   const [gameState, setGameState] = useState<'playing' | 'success' | 'complete'>('playing');
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
   const [showBase, setShowBase] = useState(true);
@@ -227,15 +230,20 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
 
   const progressPct = useMemo(() => ((currentLevelIdx + (gameState === 'complete' ? 1 : 0)) / LEVELS.length) * 100, [currentLevelIdx, gameState]);
 
+  const isDimensionMode = currentLevel.id >= 2;
+
   const verifyScale = () => {
-    const difference = Math.abs(currentScale - currentLevel.targetScale);
+    const widthDiff = Math.abs(widthScale - currentLevel.targetScale);
+    const heightDiff = Math.abs(heightScale - currentLevel.targetScale);
+    const difference = Math.max(widthDiff, heightDiff);
     if (difference < 0.01) {
       setFeedback({ type: 'success', message: 'Perfect scale. Structure integrity verified.' });
       setGameState('success');
       return;
     }
 
-    const direction = currentScale < currentLevel.targetScale ? 'larger' : 'smaller';
+    const averageScale = (widthScale + heightScale) / 2;
+    const direction = averageScale < currentLevel.targetScale ? 'larger' : 'smaller';
     setFeedback({ type: 'error', message: `Inaccurate scale. Try making it slightly ${direction}.` });
     setMistakeCount((previous) => previous + 1);
   };
@@ -254,17 +262,36 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
 
   const adjustScale = (delta: number) => {
     setCurrentScale((previous) => Math.max(0.1, Math.min(4.0, parseFloat((previous + delta).toFixed(2)))));
+    setWidthScale((previous) => Math.max(0.1, Math.min(4.0, parseFloat((previous + delta).toFixed(2)))));
+    setHeightScale((previous) => Math.max(0.1, Math.min(4.0, parseFloat((previous + delta).toFixed(2)))));
+    setFeedback(null);
+  };
+
+  const adjustDimension = (dimension: 'width' | 'height', delta: number) => {
+    if (!isDimensionMode) {
+      adjustScale(delta);
+      return;
+    }
+    if (dimension === 'width') {
+      setWidthScale((previous) => Math.max(0.1, Math.min(4.0, parseFloat((previous + delta).toFixed(2)))));
+    } else {
+      setHeightScale((previous) => Math.max(0.1, Math.min(4.0, parseFloat((previous + delta).toFixed(2)))));
+    }
     setFeedback(null);
   };
 
   const resetLevel = () => {
     setCurrentScale(1.0);
+    setWidthScale(1.0);
+    setHeightScale(1.0);
     setFeedback(null);
   };
 
   const restartProject = () => {
     setCurrentLevelIdx(0);
     setCurrentScale(1.0);
+    setWidthScale(1.0);
+    setHeightScale(1.0);
     setFeedback(null);
     setGameState('playing');
     setMistakeCount(0);
@@ -273,6 +300,8 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
   useEffect(() => {
     setCurrentLevelIdx(0);
     setCurrentScale(1.0);
+    setWidthScale(1.0);
+    setHeightScale(1.0);
     setFeedback(null);
     setGameState('playing');
   }, []);
@@ -308,7 +337,9 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                   Target {currentLevel.targetScale.toFixed(2)}x
                 </span>
                 <span className={`rounded-full border px-3 py-1 ${gameState === 'success' ? 'border-emerald-200/50 bg-emerald-500/16 text-emerald-100' : 'border-sky-200/40 bg-sky-500/14 text-sky-100'}`}>
-                  Current {currentScale.toFixed(2)}x
+                  {isDimensionMode
+                    ? `L ${widthScale.toFixed(2)}x · W ${heightScale.toFixed(2)}x`
+                    : `Current ${currentScale.toFixed(2)}x`}
                 </span>
               </div>
             </div>
@@ -322,7 +353,8 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                     <div className="absolute opacity-40">
                       <ShapeRenderer
                         shape={currentLevel.shape}
-                        scale={1.0}
+                        scaleX={1.0}
+                        scaleY={1.0}
                         strokeClass="border-slate-300 border-dashed"
                         isBase
                       />
@@ -330,7 +362,8 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                   ) : null}
                   <ShapeRenderer
                     shape={currentLevel.shape}
-                    scale={currentScale}
+                    scaleX={isDimensionMode ? widthScale : currentScale}
+                    scaleY={isDimensionMode ? heightScale : currentScale}
                     strokeClass={
                       gameState === 'success'
                         ? 'border-emerald-300 shadow-[0_0_24px_rgba(52,211,153,0.36)]'
@@ -353,11 +386,13 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
               </div>
               <div className="grid grid-cols-3 gap-2">
                 <button
-                  onClick={() => adjustScale(-0.25)}
+                  onClick={() => adjustDimension('width', currentLevel.targetScale >= 1 ? 0.25 : -0.25)}
                   disabled={gameState !== 'playing'}
                   className="rounded-lg border border-white/20 bg-[linear-gradient(180deg,#1e3a8a,#1e293b)] px-2 py-2 text-xs font-black uppercase tracking-[0.12em] text-white disabled:opacity-45"
                 >
-                  -0.25
+                  {isDimensionMode
+                    ? `L${currentLevel.targetScale >= 1 ? '+' : '-'}0.25`
+                    : '-0.25'}
                 </button>
                 <button
                   onClick={resetLevel}
@@ -367,11 +402,13 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                   Reset
                 </button>
                 <button
-                  onClick={() => adjustScale(0.25)}
+                  onClick={() => adjustDimension('height', currentLevel.targetScale >= 1 ? 0.25 : -0.25)}
                   disabled={gameState !== 'playing'}
                   className="rounded-lg border border-white/20 bg-[linear-gradient(180deg,#1e3a8a,#1e293b)] px-2 py-2 text-xs font-black uppercase tracking-[0.12em] text-white disabled:opacity-45"
                 >
-                  +0.25
+                  {isDimensionMode
+                    ? `W${currentLevel.targetScale >= 1 ? '+' : '-'}0.25`
+                    : '+0.25'}
                 </button>
               </div>
               <div className="mt-2 grid grid-cols-2 gap-2">
