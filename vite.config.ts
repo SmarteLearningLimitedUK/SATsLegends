@@ -26,5 +26,17 @@ export default defineConfig(({ mode }) => {
       // Do not modify - file watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
     },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['react', 'react-dom'],
+            motion: ['motion/react'],
+            charts: ['recharts'],
+            lucide: ['lucide-react'],
+          },
+        },
+      },
+    },
   };
 });

@@ -31,9 +31,11 @@ const createDefaultState = (): MiniGameState => ({
  * Adapter for React-based mini-games so each game exposes a consistent runtime interface.
  * This does not alter gameplay logic; it only standardizes the host contract.
  */
+type MiniGameComponent<P> = React.ComponentType<P> | React.LazyExoticComponent<React.ComponentType<P>>;
+
 export const createMiniGame = <P extends Record<string, unknown>>(
   id: string,
-  Component: React.ComponentType<P>,
+  Component: MiniGameComponent<P>,
 ): MiniGame<P> => {
   let state: MiniGameState = createDefaultState();
 
@@ -66,4 +68,3 @@ export const createMiniGame = <P extends Record<string, unknown>>(
     },
   };
 };
-

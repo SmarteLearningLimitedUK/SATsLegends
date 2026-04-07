@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import { MiniGameType } from '../types';
 import { AVATARS } from '../constants';
 import { getBossEncounter } from '../bossMeta';
 import { BossPose } from '../assets/bosses';
@@ -11,14 +10,7 @@ import BossPortrait from '../components/BossPortrait';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import AssetIcon from '../components/AssetIcon';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
-
-export type SupportedBossGameType =
-  | 'tower_of_factors'
-  | 'crystal_core'
-  | 'mirror_gate'
-  | 'scales_of_the_sun'
-  | 'observatory_overload'
-  | 'matrix_match';
+import { isBossEncounterGameType, SupportedBossGameType } from './bossEncounterTypes';
 
 interface BossEncounterGameProps {
   gameType: SupportedBossGameType;
@@ -43,9 +35,7 @@ interface BossQuestion {
 const TOTAL_QUESTIONS = 10;
 const PASS_MARK = 8;
 
-export const isBossEncounterGameType = (gameType?: MiniGameType | null): gameType is SupportedBossGameType => (
-  ['tower_of_factors', 'crystal_core', 'mirror_gate', 'scales_of_the_sun', 'observatory_overload', 'matrix_match'].includes(gameType || '')
-);
+export { isBossEncounterGameType };
 
 const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;

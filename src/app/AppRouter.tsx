@@ -1,4 +1,4 @@
-ï»¿import React, { useEffect, useMemo, useState } from 'react';
+import React, { Suspense, useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import AvatarSelect from '../screens/AvatarSelect';
 import WorldMap from '../screens/WorldMap';
@@ -178,7 +178,17 @@ export const AppRouter: React.FC<AppRouterProps> = ({
     if (!selectedLevel) return null;
 
     const renderFromRegistry = <P extends Record<string, unknown>>(key: MiniGameRegistryKey, props: P) => (
-      getMiniGame(key).render(props)
+      <Suspense
+        fallback={(
+          <div className="flex h-full w-full items-center justify-center rounded-[2rem] border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(10,31,83,0.72),rgba(6,19,56,0.86))] text-center shadow-[0_18px_36px_rgba(2,6,23,0.35)]">
+            <div className="px-6 py-8 text-sm font-black uppercase tracking-[0.2em] text-cyan-100/80">
+              Loading game…
+            </div>
+          </div>
+        )}
+      >
+        {getMiniGame(key).render(props)}
+      </Suspense>
     );
 
     const sharedProps = {
@@ -653,4 +663,6 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       );
   }
 };
+
+
 
