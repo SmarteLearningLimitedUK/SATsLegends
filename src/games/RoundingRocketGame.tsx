@@ -366,7 +366,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
             transition={rocketState === 'idle'
               ? { duration: 2.2, repeat: Infinity, ease: 'easeInOut' }
               : { duration: rocketState === 'launching' ? 0.58 : 0.35, ease: 'easeOut' }}
-            className="relative h-[clamp(18rem,42vh,24rem)] w-[clamp(14rem,58vw,20rem)] overflow-visible"
+            className="relative h-[clamp(16rem,36vh,21rem)] w-[clamp(12rem,50vw,18rem)] overflow-visible"
           >
             <div className="absolute inset-x-[18%] bottom-[10%] h-10 rounded-full bg-cyan-300/22 blur-xl" />
             <div className="absolute inset-x-[2%] top-0 bottom-[9%] overflow-hidden">
@@ -375,7 +375,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
                 alt=""
                 aria-hidden="true"
                 draggable={false}
-                className="absolute left-1/2 top-[-12%] h-[134%] w-[134%] -translate-x-1/2 object-cover object-center drop-shadow-[0_20px_28px_rgba(2,6,23,0.45)]"
+                className="absolute left-1/2 top-[-6%] h-[118%] w-[118%] -translate-x-1/2 object-contain object-center drop-shadow-[0_18px_24px_rgba(2,6,23,0.45)]"
               />
             </div>
 

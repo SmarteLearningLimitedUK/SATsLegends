@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { ChevronRight, RotateCcw, Trophy } from 'lucide-react';
 import calculationClashBackground from '../assets/maps/facctor frenzy.jpg';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
+import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 
 interface CalculationCrashGameProps {
   levelId: number;
@@ -316,7 +317,10 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
               <div className="mt-6 flex justify-center gap-3">
                 <button
                   type="button"
-                  onClick={startRound}
+                  onClick={() => {
+                    window.dispatchEvent(new Event(GAME_HUD_RESTART_EVENT));
+                    startRound();
+                  }}
                   className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-black uppercase tracking-[0.14em] text-slate-900"
                 >
                   <RotateCcw className="h-4 w-4" /> Replay

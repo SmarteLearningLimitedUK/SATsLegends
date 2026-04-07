@@ -5,6 +5,7 @@ import {
   RotateCcw,
   CheckCircle2,
 } from 'lucide-react';
+import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import factorFrenzyBackground from '../assets/maps/facctor frenzy.jpg';
 import questionBarSmall from '../assets/ui_frames/hudfortextplace_slices/text_bar_small.png';
 import questionBarMedium from '../assets/ui_frames/hudfortextplace_slices/text_bar_medium.png';
@@ -369,7 +370,10 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                     <CheckCircle2 className="h-4 w-4" /> Submit Run
                   </button>
                   <button
-                    onClick={startGame}
+                    onClick={() => {
+                      window.dispatchEvent(new Event(GAME_HUD_RESTART_EVENT));
+                      startGame();
+                    }}
                     className="inline-flex items-center justify-center gap-2 rounded-2xl border border-amber-100/70 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] px-5 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-900"
                   >
                     <RotateCcw className="h-4 w-4" /> Restart

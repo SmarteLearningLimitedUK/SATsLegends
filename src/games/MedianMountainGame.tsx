@@ -16,6 +16,7 @@ import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
+import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 
 interface NumberItem {
   id: number;
@@ -413,7 +414,10 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
               </div>
               <button
                 type="button"
-                onClick={startGame}
+                onClick={() => {
+                  window.dispatchEvent(new Event(GAME_HUD_RESTART_EVENT));
+                  startGame();
+                }}
                 className="mt-5 inline-flex items-center gap-2 rounded-2xl border border-amber-100/70 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] px-6 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-900 shadow-[0_10px_22px_rgba(2,6,23,0.35)]"
               >
                 <RotateCcw className="h-4 w-4" />

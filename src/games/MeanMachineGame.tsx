@@ -7,6 +7,7 @@ import {
   Trophy,
   WandSparkles,
 } from 'lucide-react';
+import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import meanMachineImage from '../assets/mean.png';
 import medianMachineImage from '../assets/median.png';
 import modeMachineImage from '../assets/mode.png';
@@ -788,7 +789,10 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                 </div>
                 <button
                   type="button"
-                  onClick={restart}
+                  onClick={() => {
+                    window.dispatchEvent(new Event(GAME_HUD_RESTART_EVENT));
+                    restart();
+                  }}
                   className="mx-auto mt-5 flex min-h-[3rem] items-center gap-2 rounded-full bg-[linear-gradient(180deg,#f8d66b_0%,#f2a82c_100%)] px-7 py-3 text-[11px] font-black uppercase tracking-[0.16em] text-slate-950 shadow-[0_8px_0_rgba(146,87,8,0.72),0_16px_24px_rgba(2,6,23,0.22)]"
                 >
                   <RotateCcw className="h-4 w-4" /> Restart

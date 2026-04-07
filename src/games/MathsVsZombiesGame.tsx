@@ -79,12 +79,14 @@ const maxZombiesForLevel = (levelId: number) => {
 };
 
 const buildQuestion = (levelId: number): Question => {
-  const maxBase = levelId <= 2 ? 10 : levelId <= 4 ? 25 : levelId <= 6 ? 40 : 70;
+  const maxBase = levelId <= 2 ? 12 : levelId <= 4 ? 25 : levelId <= 6 ? 50 : 90;
   const ops = levelId <= 2
-    ? ['+', '-']
+    ? ['+']
     : levelId <= 4
-      ? ['+', '-', '×']
-      : ['+', '-', '×', '÷'];
+      ? ['+', '-']
+      : levelId <= 6
+        ? ['+', '-', '×']
+        : ['+', '-', '×', '÷'];
 
   const op = ops[Math.floor(Math.random() * ops.length)];
   let a = Math.floor(Math.random() * maxBase) + 2;
@@ -96,15 +98,22 @@ const buildQuestion = (levelId: number): Question => {
     answer = a + b;
     prompt = `${a} + ${b}`;
   } else if (op === '-') {
-    if (b > a) [a, b] = [b, a];
-    answer = a - b;
-    prompt = `${a} - ${b}`;
+    if (levelId >= 7 && Math.random() < 0.35) {
+      answer = a - b;
+      prompt = `${a} - ${b}`;
+    } else {
+      if (b > a) [a, b] = [b, a];
+      answer = a - b;
+      prompt = `${a} - ${b}`;
+    }
   } else if (op === '×') {
-    a = Math.floor(Math.random() * 8) + 2;
-    b = Math.floor(Math.random() * 8) + 2;
+    a = Math.floor(Math.random() * (levelId >= 7 ? 10 : 8)) + 2;
+    b = Math.floor(Math.random() * (levelId >= 7 ? 10 : 8)) + 2;
     answer = a * b;
     prompt = `${a} × ${b}`;
   } else {
+    a = Math.floor(Math.random() * (levelId >= 7 ? 10 : 8)) + 2;
+    b = Math.floor(Math.random() * (levelId >= 7 ? 10 : 8)) + 2;
     answer = a;
     const product = a * b;
     prompt = `${product} ÷ ${b}`;
@@ -176,7 +185,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   const roundSeconds = useMemo(() => 70 + (levelId * 6), [levelId]);
   const victoryTargetScore = useMemo(() => 1200 + (levelId * 220), [levelId]);
   const baseZombieHealth = useMemo(() => 1, []);
-  const spawnDelayMs = useMemo(() => Math.max(1800, 3400 - (levelId * 120)), [levelId]);
+  const spawnDelayMs = useMemo(() => Math.max(2300, 4200 - (levelId * 150)), [levelId]);
 
   const [XP, setScore] = useState(0);
   const [zombiesDefeated, setZombiesDefeated] = useState(0);
@@ -214,7 +223,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       x: SPAWN_X,
       health: baseZombieHealth,
       maxHealth: baseZombieHealth,
-      speed: 3.2 + (wave * 0.35),
+      speed: 2.2 + (wave * 0.25) + Math.max(0, levelId - 1) * 0.12,
       state: 'appear',
       frameIndex: 0,
       frameTime: 0,

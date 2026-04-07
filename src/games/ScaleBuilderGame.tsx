@@ -7,6 +7,7 @@ import { AVATARS } from '../constants';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 import labelGreenLongAsset from '../assets/licensed/slices/label_green_long.png';
 import { PrimaryButton } from '../components/game-ui/GameUiKit';
+import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 
 interface ScaleBuilderGameProps {
   levelId: number;
@@ -479,7 +480,10 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                       Continue
                     </button>
                     <button
-                      onClick={restartProject}
+                      onClick={() => {
+                        window.dispatchEvent(new Event(GAME_HUD_RESTART_EVENT));
+                        restartProject();
+                      }}
                       className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-white/22 bg-[linear-gradient(180deg,#1e3a8a,#1e293b)] px-5 py-2 text-sm font-black uppercase tracking-[0.14em] text-white"
                     >
                       New Project

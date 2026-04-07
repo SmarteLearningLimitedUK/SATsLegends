@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { GAME_META } from './gameMeta';
 import {
   GAME_HUD_HELP_EVENT,
+  GAME_HUD_RESTART_EVENT,
 } from './gameHudEvents';
 import { triggerHaptic } from './haptics';
 import { getBlueprintRuleSet } from './systems/content/islandBlueprint';
@@ -114,6 +115,7 @@ const App: React.FC = () => {
   const [wellbeingLaunchContext, setWellbeingLaunchContext] = useState<WellbeingLaunchContext>({ origin: 'manual' });
   const [wellbeingCompletion, setWellbeingCompletion] = useState<WellbeingCompletionState | null>(null);
   const [storedLevelResult, setStoredLevelResult] = useState<LevelResultState | null>(null);
+  const [gameplayRestartKey, setGameplayRestartKey] = useState(0);
   const lastIncorrectLifeLossRef = useRef<{ signature: string; at: number }>({ signature: '', at: 0 });
   const levelFailCountsRef = useRef<Record<string, number>>({});
   const [wellbeingSignals, setWellbeingSignals] = useState<WellbeingSignals>({
@@ -306,7 +308,9 @@ const App: React.FC = () => {
     const updateStageScale = () => {
       const viewportWidth = window.visualViewport?.width ?? window.innerWidth;
       const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
-      const isTabletViewport = Math.min(viewportWidth, viewportHeight) >= 700;
+      const ua = navigator.userAgent || '';
+      const isIPad = /iPad/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      const isTabletViewport = isIPad || Math.min(viewportWidth, viewportHeight) >= 700;
       const baseWidth = isTabletViewport ? IPAD_STAGE_WIDTH : IPHONE_STAGE_WIDTH;
       const baseHeight = isTabletViewport ? IPAD_STAGE_HEIGHT : IPHONE_STAGE_HEIGHT;
       const scale = Math.min(
@@ -356,6 +360,17 @@ const App: React.FC = () => {
       window.removeEventListener(GAME_HUD_HELP_EVENT, handleOpenHelp as EventListener);
     };
   }, [hintRuleSet, screen, setGameRulesMode, setShowGameRules]);
+
+  useEffect(() => {
+    const handleRestart = () => {
+      setGameplayRestartKey((prev) => prev + 1);
+    };
+
+    window.addEventListener(GAME_HUD_RESTART_EVENT, handleRestart as EventListener);
+    return () => {
+      window.removeEventListener(GAME_HUD_RESTART_EVENT, handleRestart as EventListener);
+    };
+  }, []);
 
   const handleStartAdventure = () => {
     triggerHaptic('tap');
@@ -409,6 +424,7 @@ const App: React.FC = () => {
 
   const handleRetryLevel = () => {
     setLevelResult(null);
+    setGameplayRestartKey((prev) => prev + 1);
     goToGameplay();
   };
 
@@ -612,11 +628,13 @@ const App: React.FC = () => {
   const hideShellTimer = !isGameplayScreen
     || (selectedLevel?.gameType === 'mean_machine' && selectedLevel.blueprintKey === 'mean_machine')
     || selectedLevel?.gameType === 'potion_pour';
-  const isTabletStage = typeof window !== 'undefined'
-    && Math.min(
-      window.visualViewport?.width ?? window.innerWidth,
-      window.visualViewport?.height ?? window.innerHeight,
-    ) >= 700;
+  const isTabletStage = typeof window !== 'undefined' && (() => {
+    const viewportWidth = window.visualViewport?.width ?? window.innerWidth;
+    const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+    const ua = navigator.userAgent || '';
+    const isIPad = /iPad/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    return isIPad || Math.min(viewportWidth, viewportHeight) >= 700;
+  })();
   const stageStyle = {
     '--game-stage-width': `${isTabletStage ? IPAD_STAGE_WIDTH : IPHONE_STAGE_WIDTH}px`,
     '--game-stage-height': `${isTabletStage ? IPAD_STAGE_HEIGHT : IPHONE_STAGE_HEIGHT}px`,
@@ -653,6 +671,7 @@ const App: React.FC = () => {
                   selectedRuleSet={selectedRuleSet}
                   hintRuleSet={hintRuleSet}
                   gameplayTypeClass={gameplayTypeClass}
+                  gameplayRestartKey={gameplayRestartKey}
                   usesQuestionMatchFrame={usesQuestionMatchFrame}
                   globalMiniGameHudTimeLeft={globalMiniGameHudTimeLeft}
                   globalMiniGameLives={globalMiniGameLives}

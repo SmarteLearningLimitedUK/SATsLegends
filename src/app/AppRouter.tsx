@@ -46,6 +46,7 @@ interface AppRouterProps {
   selectedRuleSet: RuleSet | null;
   hintRuleSet: RuleSet | null;
   gameplayTypeClass: string;
+  gameplayRestartKey: number;
   usesQuestionMatchFrame: boolean;
   globalMiniGameHudTimeLeft: number;
   globalMiniGameLives: number;
@@ -85,6 +86,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
   selectedRuleSet,
   hintRuleSet,
   gameplayTypeClass,
+  gameplayRestartKey,
   usesQuestionMatchFrame,
   globalMiniGameHudTimeLeft,
   globalMiniGameLives,
@@ -179,6 +181,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
 
     const renderFromRegistry = <P extends Record<string, unknown>>(key: MiniGameRegistryKey, props: P) => (
       <Suspense
+        key={`${key}-${selectedLevel.id}-${gameplayRestartKey}`}
         fallback={(
           <div className="flex h-full w-full items-center justify-center rounded-[2rem] border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(10,31,83,0.72),rgba(6,19,56,0.86))] text-center shadow-[0_18px_36px_rgba(2,6,23,0.35)]">
             <div className="px-6 py-8 text-sm font-black uppercase tracking-[0.2em] text-cyan-100/80">
