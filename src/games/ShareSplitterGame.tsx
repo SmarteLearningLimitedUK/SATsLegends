@@ -269,7 +269,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     };
 
     const getHitPlateIndex = (clientX: number, clientY: number) => {
-      const padding = 0;
+      const padding = 14;
       let hitIndex = -1;
       plateRefs.current.forEach((plate, index) => {
         if (!plate) return;
@@ -285,7 +285,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
     const finishDrag = (clientX: number, clientY: number) => {
       const { index, distance } = getNearestPlate(clientX, clientY);
-      const snapRadius = 70;
+      const snapRadius = 95;
       const hitIndex = getHitPlateIndex(clientX, clientY);
       const targetPlateIndex = hitIndex >= 0 ? hitIndex : distance <= snapRadius ? index : -1;
 
@@ -311,7 +311,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         return;
       }
       const { index, distance } = getNearestPlate(moveEvent.clientX, moveEvent.clientY);
-      setHoverPlateIndex(distance <= 80 ? index : null);
+      setHoverPlateIndex(distance <= 100 ? index : null);
     };
 
     const handlePointerUp = (upEvent: PointerEvent) => {

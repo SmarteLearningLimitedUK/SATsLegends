@@ -269,6 +269,8 @@ const getEdgeLabelPosition = (edge: ShapeEdge) => {
   return { x: mx + (mx < 50 ? -10 : 10), y: my };
 };
 
+const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
+
 const PerimeterShapeRenderer: React.FC<{
   shape: ShapeModel;
   highlightedEdgeId: string | null;
@@ -290,7 +292,9 @@ const PerimeterShapeRenderer: React.FC<{
           const isTraced = tracedEdgeIds.includes(edge.id);
           const isActive = highlightedEdgeId === edge.id || isTraced;
           const labelPos = getEdgeLabelPosition(edge);
-          const labelWidth = Math.max(22, Math.min(40, edge.label.length * 3.5 + 6));
+          const labelWidth = Math.max(22, Math.min(34, edge.label.length * 3.2 + 6));
+          const safeX = clamp(labelPos.x, (labelWidth / 2) + 2, 100 - (labelWidth / 2) - 2);
+          const safeY = clamp(labelPos.y, 7, 93);
           return (
             <g
               key={edge.id}
@@ -319,8 +323,8 @@ const PerimeterShapeRenderer: React.FC<{
                 strokeLinecap="round"
               />
               <rect
-                x={labelPos.x - (labelWidth / 2)}
-                y={labelPos.y - 5.4}
+                x={safeX - (labelWidth / 2)}
+                y={safeY - 5.4}
                 width={labelWidth}
                 height={10.8}
                 rx={3.6}
@@ -329,8 +333,8 @@ const PerimeterShapeRenderer: React.FC<{
                 strokeWidth={0.45}
               />
               <text
-                x={labelPos.x}
-                y={labelPos.y}
+                x={safeX}
+                y={safeY}
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fill="#ffffff"

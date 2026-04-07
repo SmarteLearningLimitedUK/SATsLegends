@@ -669,7 +669,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
         <section className="min-h-0 flex-1">
           <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto_auto] gap-2">
             <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] border border-white/12 bg-white/5 shadow-[0_16px_30px_rgba(15,23,42,0.2)]">
-              <div className="pointer-events-none absolute left-1/2 top-3 w-[68%] -translate-x-1/2 rounded-[1.05rem] bg-slate-950/40 px-3 py-2 text-center backdrop-blur-sm">
+              <div className="pointer-events-none absolute left-1/2 top-3 w-[82%] -translate-x-1/2 rounded-[1.05rem] bg-slate-950/40 px-3 py-2 text-center backdrop-blur-sm">
                 <div className="text-[12px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Recipe</div>
                 <div className="mt-0.5 text-[clamp(1.35rem,5.2vw,1.8rem)] font-black text-white">{challenge.orderTitle}</div>
                 <div className="mt-0.5 text-[13px] font-black text-amber-100">Ratio {ratioText}</div>
@@ -692,9 +692,9 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 src={cauldrenAndPotionArt}
                 alt=""
                 aria-hidden="true"
-                className="pointer-events-none absolute left-1/2 bottom-[6%] h-[42%] max-w-none -translate-x-1/2 translate-y-[10px] object-contain"
+                className="pointer-events-none absolute left-1/2 bottom-[8%] h-[42%] max-w-none -translate-x-1/2 -translate-y-[5px] object-contain"
               />
-              <div className="absolute left-1/2 bottom-[26%] h-[14%] w-[34%] -translate-x-1/2 translate-y-[10px] overflow-hidden rounded-[46%]">
+              <div className="absolute left-1/2 bottom-[28%] h-[14%] w-[34%] -translate-x-1/2 -translate-y-[5px] overflow-hidden rounded-[46%]">
                 <motion.div
                   className="absolute inset-x-[8%] bottom-[8%] rounded-[42%]"
                   style={{
@@ -732,42 +732,44 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
               </AnimatePresence>
             </div>
 
-            <div className={`grid shrink-0 ${ingredientGridClass} gap-1.5`}>
-              {activeTargets.map(({ ingredient, index, current, target }) => {
-                const isActive = activeSet.has(index);
-                const isLockedIngredient = lockedIngredientIds.has(index);
-                const bottleArt = POTION_BOTTLE_ART[ingredient.id];
-                return (
-                  <motion.button
-                    key={ingredient.id}
-                    type="button"
-                    whileTap={isActive ? { scale: 0.96, y: 2 } : undefined}
-                    onClick={() => addIngredient(index)}
-                    disabled={locked || !isActive || isLockedIngredient}
-                    aria-label={isActive ? `Add ${ingredient.name} to the potion` : `${ingredient.name} is not needed for this recipe`}
-                    className={`relative flex h-[clamp(84px,11vh,104px)] flex-col items-center justify-between rounded-[1.25rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.12),rgba(15,23,42,0.24))] px-1 py-1.5 shadow-[0_10px_14px_rgba(2,6,23,0.24)] transition ${locked || !isActive || isLockedIngredient ? 'opacity-60 grayscale' : ''}`}
-                    style={isActive && !isLockedIngredient ? { boxShadow: `0 12px 22px rgba(2,6,23,0.28), 0 0 18px ${ingredient.glow}` } : undefined}
-                  >
-                    <div className="pointer-events-none flex h-[48px] w-full items-center justify-center">
-                      {bottleArt ? (
-                        <img
-                          src={bottleArt}
-                          alt=""
-                          aria-hidden="true"
-                          className="h-full w-auto object-contain select-none"
-                          style={{
-                            filter: isActive ? 'none' : 'grayscale(0.45) saturate(0.7) opacity(0.8)',
-                          }}
-                        />
-                      ) : null}
-                    </div>
-                    <span className="relative z-10 text-[9px] font-black uppercase tracking-[0.02em] text-cyan-50">{ingredient.name}</span>
-                    <span className="relative z-10 text-[10px] font-black text-cyan-100">
-                      {current}/{target}
-                    </span>
-                  </motion.button>
-                );
-              })}
+            <div className="shrink-0 rounded-[1.35rem] border border-white/14 bg-black/28 px-2.5 py-2 shadow-[0_12px_22px_rgba(2,6,23,0.24)]">
+              <div className={`grid ${ingredientGridClass} gap-1.5`}>
+                {activeTargets.map(({ ingredient, index, current, target }) => {
+                  const isActive = activeSet.has(index);
+                  const isLockedIngredient = lockedIngredientIds.has(index);
+                  const bottleArt = POTION_BOTTLE_ART[ingredient.id];
+                  return (
+                    <motion.button
+                      key={ingredient.id}
+                      type="button"
+                      whileTap={isActive ? { scale: 0.96, y: 2 } : undefined}
+                      onClick={() => addIngredient(index)}
+                      disabled={locked || !isActive || isLockedIngredient}
+                      aria-label={isActive ? `Add ${ingredient.name} to the potion` : `${ingredient.name} is not needed for this recipe`}
+                      className={`relative flex h-[clamp(84px,11vh,104px)] flex-col items-center justify-between rounded-[1.25rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.12),rgba(15,23,42,0.24))] px-1 py-1.5 shadow-[0_10px_14px_rgba(2,6,23,0.24)] transition ${locked || !isActive || isLockedIngredient ? 'opacity-60 grayscale' : ''}`}
+                      style={isActive && !isLockedIngredient ? { boxShadow: `0 12px 22px rgba(2,6,23,0.28), 0 0 18px ${ingredient.glow}` } : undefined}
+                    >
+                      <div className="pointer-events-none flex h-[48px] w-full items-center justify-center">
+                        {bottleArt ? (
+                          <img
+                            src={bottleArt}
+                            alt=""
+                            aria-hidden="true"
+                            className="h-full w-auto object-contain select-none"
+                            style={{
+                              filter: isActive ? 'none' : 'grayscale(0.45) saturate(0.7) opacity(0.8)',
+                            }}
+                          />
+                        ) : null}
+                      </div>
+                      <span className="relative z-10 text-[9px] font-black uppercase tracking-[0.02em] text-cyan-50">{ingredient.name}</span>
+                      <span className="relative z-10 text-[10px] font-black text-cyan-100">
+                        {current}/{target}
+                      </span>
+                    </motion.button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </section>

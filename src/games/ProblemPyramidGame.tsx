@@ -151,25 +151,25 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
 
   return (
     <GameUiShell backgroundImage={pyramidBackdrop} backgroundOpacity={0.82}>
-      <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+3.6rem)] pt-3 text-white">
+      <div className="flex h-full min-h-0 flex-col gap-1.5 px-3 pb-[calc(env(safe-area-inset-bottom)+2.8rem)] pt-2 text-white">
         <section className="shrink-0">
-          <StoryCard>
-            <p className="text-[clamp(15px,2.2vh,20px)] font-black text-white">
+          <StoryCard className="px-2.5 py-1.5">
+            <p className="text-[clamp(13px,2vh,17px)] font-black text-white">
               Align the number pyramid to unlock the summit.
             </p>
           </StoryCard>
         </section>
 
         <section className="shrink-0">
-          <TaskCard className="bg-[linear-gradient(180deg,rgba(255,255,255,0.95),rgba(245,250,255,0.9))]">
+          <TaskCard className="bg-[linear-gradient(180deg,rgba(255,255,255,0.95),rgba(245,250,255,0.9))] px-2.5 py-2">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-900/90">Problem Pyramid</div>
-                <div className="mt-1 text-[clamp(17px,2.2vh,22px)] font-black text-slate-950">
+                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-900/90">Problem Pyramid</div>
+                <div className="mt-0.5 text-[clamp(15px,2.1vh,19px)] font-black text-slate-950">
                   Find the top number.
                 </div>
               </div>
-              <div className="rounded-full bg-amber-200/60 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-900">
+              <div className="rounded-full bg-amber-200/60 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-[0.12em] text-amber-900">
                 Round {roundIndex + 1} / {ROUNDS_TO_WIN}
               </div>
             </div>
@@ -211,7 +211,7 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
                 whileTap={{ scale: 0.96 }}
                 onClick={() => handleAnswer(option)}
                 disabled={locked}
-                className={`flex min-h-[3.2rem] items-center justify-center rounded-[0.95rem] border text-[1.05rem] font-black shadow-[0_10px_18px_rgba(2,6,23,0.22)] transition ${
+                className={`flex min-h-[2.6rem] items-center justify-center rounded-[0.95rem] border text-[0.98rem] font-black shadow-[0_10px_18px_rgba(2,6,23,0.22)] transition ${
                   selected === option
                     ? option === round.top
                       ? 'border-emerald-200/70 bg-emerald-300/50 text-emerald-950'

@@ -2,6 +2,7 @@
 import { Timer as TimerIcon, Heart, Target, Brain } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
+import zombieFallback from '../assets/zombies/zombie.png';
 
 interface MathsVsZombiesGameProps {
   levelId: number;
@@ -49,11 +50,13 @@ const loadFrames = (record: Record<string, string>) => (
     .map(([, value]) => value)
 );
 
-const zombieAppearFrames = loadFrames(import.meta.glob('../assets/zombies/appear/*.png', { eager: true, import: 'default' }) as Record<string, string>);
-const zombieWalkFrames = loadFrames(import.meta.glob('../assets/zombies/walk/*.png', { eager: true, import: 'default' }) as Record<string, string>);
-const zombieHitFrames = loadFrames(import.meta.glob('../assets/zombies/attack/*.png', { eager: true, import: 'default' }) as Record<string, string>);
-const zombieDieFrames = loadFrames(import.meta.glob('../assets/zombies/die/*.png', { eager: true, import: 'default' }) as Record<string, string>);
-const zombieIdleFrames = loadFrames(import.meta.glob('../assets/zombies/idle/*.png', { eager: true, import: 'default' }) as Record<string, string>);
+const ensureFrames = (frames: string[]) => (frames.length ? frames : [zombieFallback]);
+
+const zombieAppearFrames = ensureFrames(loadFrames(import.meta.glob('../assets/zombies/appear/*.png', { eager: true, import: 'default' }) as Record<string, string>));
+const zombieWalkFrames = ensureFrames(loadFrames(import.meta.glob('../assets/zombies/walk/*.png', { eager: true, import: 'default' }) as Record<string, string>));
+const zombieHitFrames = ensureFrames(loadFrames(import.meta.glob('../assets/zombies/attack/*.png', { eager: true, import: 'default' }) as Record<string, string>));
+const zombieDieFrames = ensureFrames(loadFrames(import.meta.glob('../assets/zombies/die/*.png', { eager: true, import: 'default' }) as Record<string, string>));
+const zombieIdleFrames = ensureFrames(loadFrames(import.meta.glob('../assets/zombies/idle/*.png', { eager: true, import: 'default' }) as Record<string, string>));
 
 const FRAMES_BY_STATE: Record<ZombieState, string[]> = {
   appear: zombieAppearFrames,
@@ -313,8 +316,9 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       let nextFrameIndex = zombie.frameIndex;
 
       const frames = FRAMES_BY_STATE[nextState] ?? zombieWalkFrames;
+      const frameCount = frames.length || 1;
       if (nextFrameTime >= 1 / ANIM_FPS) {
-        nextFrameIndex = (nextFrameIndex + 1) % frames.length;
+        nextFrameIndex = (nextFrameIndex + 1) % frameCount;
         nextFrameTime = 0;
       }
 
@@ -457,7 +461,8 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           <AnimatePresence>
             {zombies.map((zombie) => {
               const frameList = FRAMES_BY_STATE[zombie.state] ?? zombieWalkFrames;
-              const frame = frameList[zombie.frameIndex % frameList.length] ?? zombieWalkFrames[0];
+              const safeFrameList = frameList.length ? frameList : [zombieFallback];
+              const frame = safeFrameList[zombie.frameIndex % safeFrameList.length];
               return (
                 <motion.div
                   key={zombie.id}
