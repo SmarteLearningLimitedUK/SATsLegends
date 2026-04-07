@@ -142,11 +142,15 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
       const bossCoinsNeeded = level.bossUnlockCoins || 0;
       const hasBossCoins = totalCoinsEarned >= bossCoinsNeeded;
 
-      const isUnlocked = level.isBoss
+      let isUnlocked = level.isBoss
         ? previousRequiredComplete && hasBossCoins
         : usesSequentialUnlock
           ? previousRequiredComplete
           : true;
+
+      if (level.blueprintKey === 'maths_vs_zombies') {
+        isUnlocked = true;
+      }
 
       const stars = player.levelStars?.[`${island.id}-${level.id}`] || 0;
       const isCompleted = completedLevels.includes(level.id);
@@ -476,6 +480,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
 };
 
 export default IslandLevels;
+
 
 
 

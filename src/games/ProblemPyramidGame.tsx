@@ -8,6 +8,7 @@ import {
   TaskCard,
 } from '../components/game-ui/GameUiKit';
 import pyramidBackdrop from '../assets/level_backgrounds/take_out.png';
+import pyramidImage from '../assets/pyramid.png';
 
 interface ProblemPyramidGameProps {
   levelId: number;
@@ -176,11 +177,17 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
         </section>
 
         <section className="min-h-0 flex-1 rounded-[1.4rem] border border-white/14 bg-white/10 p-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)]">
-          <div className="flex h-full min-h-0 flex-col items-center justify-center gap-3">
+          <div className="relative flex h-full min-h-0 flex-col items-center justify-center gap-3">
+            <img
+              src={pyramidImage}
+              alt=""
+              draggable={false}
+              className="pointer-events-none absolute inset-0 h-full w-full object-contain opacity-85"
+            />
             <motion.div
               animate={glow ? { scale: [1, 1.04, 1] } : { scale: 1 }}
               transition={{ duration: 0.6, ease: 'easeInOut' }}
-              className="flex flex-col items-center gap-2"
+              className="relative z-10 flex flex-col items-center gap-2"
             >
               <div className={blockClass(true)}>?</div>
               <div className="flex items-center gap-2">

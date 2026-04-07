@@ -609,7 +609,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                 </div>
               </div>
             </div>
-            <div className="absolute left-1/2 top-[48%] w-[min(62vw,15.5rem)] -translate-x-1/2">
+            <div className="pointer-events-none absolute left-1/2 bottom-[6%] w-[min(58vw,15rem)] -translate-x-1/2">
               <img
                 src={orderMonster}
                 alt=""

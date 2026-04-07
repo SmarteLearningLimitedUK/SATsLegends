@@ -245,7 +245,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
       )}
 
       <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.05rem)]' : ''}`}>
-        <section className="z-10 flex min-h-0 w-full flex-[0.42] flex-col gap-2 overflow-hidden border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] p-2 sm:p-3 md:w-1/2 md:flex-1 md:gap-3 md:border-b-0 md:border-r md:p-5">
+        <section className="z-10 flex min-h-0 w-full flex-[0.42] flex-col gap-2 overflow-hidden border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] px-2 pb-2 pt-3 sm:px-3 sm:pb-3 sm:pt-4 md:w-1/2 md:flex-1 md:gap-3 md:border-b-0 md:border-r md:p-5">
           <div className="rounded-xl border border-cyan-100/16 bg-slate-900/40 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-cyan-100/80">
             {caseBrief}
           </div>
@@ -360,7 +360,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           </div>
         </section>
 
-        <section className="z-10 flex min-h-0 w-full flex-[0.58] flex-col gap-2 overflow-hidden bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] p-2 sm:p-3 md:w-1/2 md:flex-1 md:gap-3 md:p-5">
+        <section className="z-10 flex min-h-0 w-full flex-[0.58] flex-col gap-2 overflow-hidden bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] px-2 pb-2 pt-3 sm:px-3 sm:pb-3 sm:pt-4 md:w-1/2 md:flex-1 md:gap-3 md:p-5">
           <div className="mb-1 flex items-center gap-2 text-amber-500">
             <Users className="h-5 w-5" />
             <h2 className="text-xs font-black uppercase tracking-widest">Suspect Lineup</h2>
@@ -421,15 +421,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                 >
                   Next Case File <ChevronRight className="h-4 w-4" />
                 </motion.button>
-              ) : (
-                <div className="rounded-xl border border-stone-800 bg-stone-900/20 p-2 text-center">
-                  <span className="text-[9px] font-bold uppercase tracking-widest text-stone-500">
-                    {caseMode === 'whodunnit'
-                      ? 'Pick the culprit whose stash matches the clues'
-                      : 'Select the suspect whose items match the evidence'}
-                  </span>
-                </div>
-              )}
+              ) : null}
             </AnimatePresence>
             {feedback && (
               <div className={`rounded-full border px-3 py-1.5 text-center text-[10px] font-bold uppercase tracking-wide ${

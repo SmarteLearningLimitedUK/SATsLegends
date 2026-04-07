@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   AlertTriangle,
@@ -581,7 +581,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
         <div className="flex h-full min-h-0 flex-col gap-2.5">
           <section className="mx-auto w-full max-w-[23rem] shrink-0 rounded-[1.15rem] border border-cyan-100/24 bg-[linear-gradient(180deg,rgba(14,45,103,0.9),rgba(8,26,72,0.96))] px-4 py-2 text-center shadow-[0_16px_28px_rgba(2,6,23,0.32)]">
             <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/76">
-              {modeCopy.eyebrow} � Level {level}/{TOTAL_LEVELS}
+              {modeCopy.eyebrow} · Level {level}/{TOTAL_LEVELS}
             </div>
             <div className="mt-1 text-[clamp(0.98rem,3.6vw,1.12rem)] font-black leading-tight text-white">
               {modeCopy.title}
@@ -601,7 +601,6 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                     transition={{ duration: 0.34 }}
                     className="relative mx-auto flex h-full w-full max-w-[28.5rem] items-center justify-center md:max-w-[30rem]"
                   >
-                    <div className="absolute inset-x-[16%] bottom-[10%] h-[20%] rounded-full bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.14),rgba(34,211,238,0.02),transparent_72%)] blur-2xl" />
 
                     <div className="relative w-full max-w-[26.5rem] md:max-w-[28.5rem]" style={{ aspectRatio: '4 / 5' }}>
                       <img
@@ -822,3 +821,4 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
 };
 
 export default MeanMachineGame;
+
