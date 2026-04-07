@@ -13,6 +13,7 @@ import food8 from '../assets/take_out/food/8.png';
 import food9 from '../assets/take_out/food/9.png';
 import FoodGameShell from '../components/FoodGameShell';
 import targetOrderBoard from '../assets/Target Order.png';
+import defaultMonster from '../assets/bosses/goblin.png';
 import { triggerHaptic } from '../haptics';
 
 interface TakeOutRushGameProps {
@@ -128,6 +129,22 @@ const FOOD_ITEMS: FoodItem[] = [
     colorClass: 'from-yellow-300 to-amber-400',
   },
 ];
+
+const loadSortedImages = (record: Record<string, string>) => (
+  Object.entries(record)
+    .sort(([a], [b]) => {
+      const anum = Number(a.match(/(\d+)/)?.[1] ?? 0);
+      const bnum = Number(b.match(/(\d+)/)?.[1] ?? 0);
+      return anum - bnum;
+    })
+    .map(([, value]) => value)
+);
+
+const takeOutMonsterImages = loadSortedImages(
+  import.meta.glob('../assets/take_out/monsters/*.png', { eager: true, import: 'default' }) as Record<string, string>,
+);
+
+const MONSTER_IMAGES = [defaultMonster, ...takeOutMonsterImages];
 
 const ITEM_BY_ID: Record<string, FoodItem> = FOOD_ITEMS.reduce<Record<string, FoodItem>>((map, item) => {
   map[item.id] = item;
@@ -535,6 +552,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     () => allowedIdsByStage(order.stage).map((id) => ITEM_BY_ID[id]).filter(Boolean),
     [order.stage],
   );
+  const orderMonster = useMemo(() => pick(MONSTER_IMAGES), [order.id]);
 
   return (
     <FoodGameShell
@@ -590,6 +608,14 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                   </div>
                 </div>
               </div>
+            </div>
+            <div className="absolute left-1/2 top-[48%] w-[min(62vw,15.5rem)] -translate-x-1/2">
+              <img
+                src={orderMonster}
+                alt=""
+                draggable={false}
+                className="h-auto w-full object-contain drop-shadow-[0_12px_22px_rgba(2,6,23,0.45)]"
+              />
             </div>
           </section>
 
