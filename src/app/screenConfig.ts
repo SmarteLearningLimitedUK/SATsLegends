@@ -57,7 +57,7 @@ export const SCREEN_BEHAVIOR: Record<GameScreen, {
   parent_dashboard: { scrollable: true, shell: 'playfield', family: 'hub' },
 };
 
-export const IPHONE_STAGE_WIDTH = 390;
-export const IPHONE_STAGE_HEIGHT = 844;
-export const IPAD_STAGE_WIDTH = 768;
-export const IPAD_STAGE_HEIGHT = 1024;
+export const IPHONE_STAGE_WIDTH = 1024;
+export const IPHONE_STAGE_HEIGHT = 1536;
+export const IPAD_STAGE_WIDTH = 1024;
+export const IPAD_STAGE_HEIGHT = 1536;

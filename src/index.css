@@ -89,8 +89,8 @@ body {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: var(--game-stage-width, 390px);
-  height: var(--game-stage-height, 844px);
+  width: var(--game-stage-width, 1024px);
+  height: var(--game-stage-height, 1536px);
   transform: translate(-50%, -50%) scale(var(--game-stage-scale, 1));
   transform-origin: center center;
   overflow: hidden;
