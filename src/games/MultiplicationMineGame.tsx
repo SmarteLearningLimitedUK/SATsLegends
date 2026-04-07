@@ -1,7 +1,10 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
-import rockSprite from '../assets/rocksprite.png';
+import rockStage18 from '../assets/mine/18.png';
+import rockStage19 from '../assets/mine/19.png';
+import rockStage20 from '../assets/mine/20.png';
+import rockStage21 from '../assets/mine/21.png';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import MiniGameTopBar from '../components/MiniGameTopBar';
 import { triggerHaptic } from '../haptics';
@@ -27,9 +30,7 @@ interface MultiplicationQuestion {
 type Phase = 'playing' | 'exploding' | 'treasure';
 
 const ROCK_MAX_HEALTH = 5;
-const ROCK_SPRITE_GRID = { columns: 3, rows: 3 } as const;
-const ROCK_SPRITE_FRAMES = 9;
-const ROCK_DAMAGE_SEQUENCE = [0, 1, 4, 7, 8, 8] as const;
+const ROCK_FRAMES = [rockStage18, rockStage19, rockStage20, rockStage21];
 
 const makeOptions = (correct: number) => {
   const spread = Math.max(3, Math.round(correct * 0.18));
@@ -83,18 +84,10 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
   const rockFrameIndex = useMemo(() => {
     const damage = ROCK_MAX_HEALTH - rockHealth;
     const clampedDamage = Math.max(0, Math.min(ROCK_MAX_HEALTH, damage));
-    const sequenceFrame = ROCK_DAMAGE_SEQUENCE[clampedDamage] ?? ROCK_SPRITE_FRAMES - 1;
-    return phase === 'exploding' ? ROCK_SPRITE_FRAMES - 1 : sequenceFrame;
+    const ratio = clampedDamage / ROCK_MAX_HEALTH;
+    const frame = Math.min(ROCK_FRAMES.length - 1, Math.floor(ratio * ROCK_FRAMES.length));
+    return phase === 'exploding' ? ROCK_FRAMES.length - 1 : frame;
   }, [phase, rockHealth]);
-
-  const rockFramePosition = useMemo(() => {
-    const column = rockFrameIndex % ROCK_SPRITE_GRID.columns;
-    const row = Math.floor(rockFrameIndex / ROCK_SPRITE_GRID.columns);
-    return {
-      x: -column * 100,
-      y: -row * 100,
-    };
-  }, [rockFrameIndex]);
 
   const solveQuestion = (selectedAnswer: number) => {
     if (phase !== 'playing') return;
@@ -213,14 +206,11 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
                 }}
                 className="relative h-[240px] w-[240px] overflow-hidden bg-transparent shadow-[0_30px_55px_rgba(0,0,0,0.6)]"
               >
-                <div
-                  className="absolute inset-0 bg-transparent"
-                  style={{
-                    backgroundImage: `url(${rockSprite})`,
-                    backgroundSize: `${ROCK_SPRITE_GRID.columns * 100}% ${ROCK_SPRITE_GRID.rows * 100}%`,
-                    backgroundPosition: `${rockFramePosition.x}% ${rockFramePosition.y}%`,
-                    backgroundRepeat: 'no-repeat',
-                  }}
+                <img
+                  src={ROCK_FRAMES[rockFrameIndex]}
+                  alt=""
+                  draggable={false}
+                  className="absolute inset-0 h-full w-full object-contain"
                 />
 
                 <div className="absolute -bottom-10 left-1/2 flex -translate-x-1/2 gap-2">
