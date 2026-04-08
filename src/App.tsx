@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { GAME_META } from './gameMeta';
+import { GAME_META, GameRuleSet } from './gameMeta';
 import {
   GAME_HUD_HELP_EVENT,
   GAME_HUD_RESTART_EVENT,
@@ -256,15 +256,56 @@ const App: React.FC = () => {
 
   const selectedRuleSet = useMemo(
     () => (
-      getBlueprintRuleSet(selectedLevel?.blueprintKey)
-      || (selectedLevel?.gameType ? GAME_META[selectedLevel.gameType]?.rules || null : null)
+      (selectedLevel?.gameType ? GAME_META[selectedLevel.gameType]?.rules || null : null)
+      || getBlueprintRuleSet(selectedLevel?.blueprintKey)
     ),
     [selectedLevel?.blueprintKey, selectedLevel?.gameType],
   );
 
+  const buildKidRules = useCallback((rules: GameRuleSet | null) => {
+    if (!rules) return null;
+    const combined = `${rules.summary} ${rules.bullets.join(' ')}`.toLowerCase();
+    const line1 = 'Read the question at the top.';
+    let line2 = 'Use the tools on screen to find the answer.';
+    let line3 = 'Tap the main button when you are ready.';
+
+    if (combined.includes('drag') || combined.includes('drop') || combined.includes('place')) {
+      line2 = 'Drag items to the right spot.';
+    } else if (combined.includes('swap') || combined.includes('match')) {
+      line2 = 'Swap tiles to make a match.';
+    } else if (combined.includes('tap') && !combined.includes('drag')) {
+      line2 = 'Tap the right choice.';
+    }
+
+    if (combined.includes('angle') || combined.includes('launch') || combined.includes('fire')) {
+      line2 = 'Choose the angle, then fire.';
+    }
+    if (combined.includes('ratio')) {
+      line2 = 'Use the ratio to build the correct mix.';
+    }
+    if (combined.includes('graph') || combined.includes('chart')) {
+      line2 = 'Read the chart, then choose the correct answer.';
+    }
+    if (combined.includes('time')) {
+      line2 = 'Set the time to match the question.';
+    }
+    if (combined.includes('measure') || combined.includes('scale') || combined.includes('weight')) {
+      line2 = 'Add the right amounts to match the target.';
+    }
+    if (combined.includes('check')) {
+      line3 = 'Tap Check when you are ready.';
+    }
+
+    return {
+      title: rules.title,
+      summary: `Here is how to play ${rules.title}.`,
+      bullets: [line1, line2, line3],
+    };
+  }, []);
+
   const hintRuleSet = useMemo(
-    () => (
-      selectedLevel?.gameType === 'potion_pour'
+    () => {
+      const baseRules = selectedLevel?.gameType === 'potion_pour'
         ? {
             title: selectedLevel.displayName || 'Potion Panic',
             summary: 'Tap the right bottles to build the exact potion, then press Brew to check it.',
@@ -274,22 +315,20 @@ const App: React.FC = () => {
               'Press Brew when your totals and ratio match the potion you need.',
             ],
           }
-      : (
-      selectedRuleSet
-      || (selectedLevel
-        ? {
-            title: selectedLevel.displayName || 'How To Play',
-            summary: 'Follow the on-screen objective and complete the activity step by step.',
-            bullets: [
-              'Read the mission text first, then choose, place, or build your answer.',
-              'Use the hint button any time you want a reminder of the rules.',
-              'If the screen gives you a visual tool or scene object, use that to solve the task.',
-            ],
-          }
-        : null)
-      )
-    ),
-    [selectedLevel, selectedRuleSet],
+        : (selectedRuleSet || (selectedLevel
+          ? {
+              title: selectedLevel.displayName || 'How To Play',
+              summary: 'Follow the on-screen objective and complete the activity step by step.',
+              bullets: [
+                'Read the mission text first, then choose, place, or build your answer.',
+                'Use the hint button any time you want a reminder of the rules.',
+                'If the screen gives you a visual tool or scene object, use that to solve the task.',
+              ],
+            }
+          : null));
+      return buildKidRules(baseRules);
+    },
+    [buildKidRules, selectedLevel, selectedRuleSet],
   );
 
   useEffect(() => {
@@ -344,10 +383,10 @@ const App: React.FC = () => {
   }, [screen]);
 
   useEffect(() => {
-    if (screen !== 'gameplay' || !selectedLevel) return;
-    setShowGameRules(false);
-    setGameRulesMode('help');
-  }, [screen, selectedLevel?.id, setGameRulesMode, setShowGameRules]);
+    if (screen !== 'gameplay' || !selectedLevel || !hintRuleSet) return;
+    setGameRulesMode('start');
+    setShowGameRules(true);
+  }, [screen, selectedLevel?.id, hintRuleSet, setGameRulesMode, setShowGameRules]);
 
   useEffect(() => {
     const handleOpenHelp = () => {

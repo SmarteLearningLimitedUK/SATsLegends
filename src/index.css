@@ -4890,12 +4890,16 @@ button.avatar-hero-arrow:not(:disabled):active {
   font-weight: 700;
   color: rgba(226, 232, 240, 0.85);
 }
-
-
-
-
-
-
-
-
+.screen-gameplay .game-shell-host .mission-panel-shell,
+.screen-gameplay .game-shell-host .licensed-slice-paper-panel,
+.screen-gameplay .game-shell-host .licensed-slice-blue-banner,
+.screen-gameplay .game-shell-host .licensed-slice-yellow-plank,
+.screen-gameplay .game-shell-host .licensed-slice-orange-pill,
+.screen-gameplay .game-shell-host .licensed-slice-cyan-pill {
+  border: 1px solid rgba(198, 230, 255, 0.35) !important;
+  border-radius: 1.1rem !important;
+  background: rgba(6, 16, 36, 0.68) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 14px 26px rgba(2,6,23,0.28) !important;
+  text-align: center;
+}
 
