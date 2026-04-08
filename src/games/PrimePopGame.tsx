@@ -563,20 +563,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
           className="relative min-h-0 flex-1 overflow-hidden bg-transparent"
         >
           <div className="absolute inset-[40px] z-10 overflow-hidden">
-            <div
-              className="pointer-events-none absolute left-0 right-0 z-20 border border-white/85 shadow-[0_0_0_1px_rgba(0,0,0,0.85),0_0_12px_rgba(255,255,255,0.45)]"
-              style={{
-                top: `${DANGER_LINE_Y}%`,
-                height: '0.5rem',
-                backgroundImage: 'repeating-linear-gradient(90deg, #ffffff 0 10px, #111111 10px 20px)',
-              }}
-            />
-            <div
-              className="pointer-events-none absolute left-1/2 z-20 -translate-x-1/2 rounded-full border border-rose-100/70 bg-rose-600/40 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-[0.14em] text-amber-50"
-              style={{ top: `calc(${DANGER_LINE_Y}% - 1.3rem)` }}
-            >
-              Danger Line
-            </div>
+            
 
             <AnimatePresence>
               {bubbles.map((bubble) => (
@@ -628,4 +615,6 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
 };
 
 export default PrimePopGame;
+
+
 

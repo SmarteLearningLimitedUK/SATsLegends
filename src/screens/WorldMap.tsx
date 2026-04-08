@@ -1,4 +1,4 @@
-﻿import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { X } from 'lucide-react';
 import { IslandData, PlayerData } from '../types';
@@ -415,6 +415,13 @@ const WorldMap: React.FC<WorldMapProps> = ({
 }) => {
   const [selectedIslandId, setSelectedIslandId] = useState<number | null>(null);
   const [showParentGate, setShowParentGate] = useState(false);
+  const [ambientEnabled, setAmbientEnabled] = useState(false);
+
+  useEffect(() => {
+    setAmbientEnabled(false);
+    const timer = window.setTimeout(() => setAmbientEnabled(true), 60);
+    return () => window.clearTimeout(timer);
+  }, []);
   const islandStates = useMemo<IslandState[]>(() => (
     ISLANDS.map(island => {
       const starredLevels = island.levels.filter(level => {
@@ -497,7 +504,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
                 }}
               >
                 <div className="pointer-events-none absolute inset-0 z-10">
-                  {hotspot.ambients.map(region => (
+                  {ambientEnabled ? hotspot.ambients.map(region => (
                     <div
                       key={region.id}
                       className={`world-map-ambient world-map-ambient-${region.effect}`}
@@ -510,7 +517,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
                     >
                       {renderAmbientEffect(region.effect)}
                     </div>
-                  ))}
+                  )) : null}
                 </div>
                 <motion.button
                   type="button"
@@ -593,6 +600,12 @@ const WorldMap: React.FC<WorldMapProps> = ({
 };
 
 export default WorldMap;
+
+
+
+
+
+
 
 
 

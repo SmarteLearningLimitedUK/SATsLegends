@@ -305,7 +305,17 @@ const App: React.FC = () => {
 
   const hintRuleSet = useMemo(
     () => {
-      const baseRules = selectedLevel?.gameType === 'potion_pour'
+      const baseRules = selectedLevel?.blueprintKey === 'place_value_panic'
+        ? {
+            title: selectedLevel.displayName || 'Place Value Panic',
+            summary: 'Sort the digits into the correct place-value slots to build the target number.',
+            bullets: [
+              'Read the number at the top and check each place-value column.',
+              'Drag the digits into the correct column slots.',
+              'When every digit is in the right place, the round clears.',
+            ],
+          }
+        : selectedLevel?.gameType === 'potion_pour'
         ? {
             title: selectedLevel.displayName || 'Potion Panic',
             summary: 'Tap the right bottles to build the exact potion, then press Brew to check it.',
@@ -384,6 +394,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (screen !== 'gameplay' || !selectedLevel || !hintRuleSet) return;
+    if (selectedLevel.blueprintKey === 'rounding_rocket') return;
     setGameRulesMode('start');
     setShowGameRules(true);
   }, [screen, selectedLevel?.id, hintRuleSet, setGameRulesMode, setShowGameRules]);
