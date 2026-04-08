@@ -158,7 +158,7 @@ export const SecondaryButton: React.FC<ButtonProps> = ({ children, className, on
 export const StoryCard: React.FC<WrapperProps> = ({ children, className }) => (
   <div
     className={cn(
-      'licensed-game-card mission-panel-shell rounded-[1.1rem] px-3 py-2 text-center text-slate-100',
+      'game-question-card licensed-game-card mission-panel-shell rounded-[1.1rem] px-3 py-2 text-center text-slate-100',
       className,
     )}
   >
@@ -169,7 +169,7 @@ export const StoryCard: React.FC<WrapperProps> = ({ children, className }) => (
 export const TaskCard: React.FC<WrapperProps> = ({ children, className }) => (
   <div
     className={cn(
-      'licensed-game-card mission-panel-shell rounded-[1.1rem] px-3 py-2.5 text-slate-100',
+      'game-question-card licensed-game-card mission-panel-shell rounded-[1.1rem] px-3 py-2.5 text-slate-100',
       className,
     )}
   >
@@ -245,3 +245,5 @@ export const GameTopBar: React.FC<GameTopBarProps> = ({
     </div>
   );
 };
+
+
