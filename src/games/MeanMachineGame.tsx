@@ -642,13 +642,13 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
       <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.45rem)] pt-2 md:px-4">
         <div className="flex h-full min-h-0 flex-col gap-2.5">
           <section className="mx-auto w-full max-w-[23rem] shrink-0 rounded-[1.15rem] border border-cyan-100/24 bg-[linear-gradient(180deg,rgba(14,45,103,0.9),rgba(8,26,72,0.96))] px-4 py-2 text-center shadow-[0_16px_28px_rgba(2,6,23,0.32)]">
-            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/76">
+            <div className="text-[11px] font-black uppercase tracking-[0.18em] text-cyan-100/76">
               {modeCopy.eyebrow} · Level {level}/{TOTAL_LEVELS}
             </div>
             <div className="mt-1 text-[clamp(1.2rem,4.4vw,1.5rem)] font-black leading-tight text-white">
               {modeCopy.title}
             </div>
-            <div className="mt-0.5 text-[9px] font-semibold text-cyan-100/80">
+            <div className="mt-0.5 text-[11px] font-semibold text-cyan-100/80">
               {formatFantasyPrompt(modeCopy.prompt)}
             </div>
           </section>
@@ -661,10 +661,10 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                   <motion.div
                     animate={machineShake ? { x: [0, -6, 6, -4, 4, 0] } : { x: 0 }}
                     transition={{ duration: 0.34 }}
-                    className="relative mx-auto flex h-full w-full max-w-[28.5rem] items-center justify-center md:max-w-[30rem]"
+                    className="relative mx-auto flex h-full w-full max-w-[32rem] items-center justify-center md:max-w-[34rem]"
                   >
 
-                    <div className="relative w-full max-w-[26.5rem] md:max-w-[28.5rem] isolate" style={{ aspectRatio: '4 / 5' }}>
+                    <div className="relative w-full max-w-[30rem] md:max-w-[32rem] isolate" style={{ aspectRatio: '4 / 5' }}>
                       <img
                         src={alphaKeyedMachineImage}
                         alt="MEAN Machine slot machine"
@@ -701,7 +701,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                         disabled={!round || gameState === 'spinning' || !sessionActive}
                         animate={spinPulse ? { scale: [1, 0.94, 1.06, 1], y: [0, 2, -1, 0] } : { scale: [1, 1.03, 1], y: [0, -1, 0] }}
                         transition={spinPulse ? { duration: 0.34 } : { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-                        className="absolute z-30 flex items-center justify-center rounded-[1.2rem] bg-transparent text-[0.8rem] font-black uppercase tracking-[0.16em] text-cyan-50 disabled:cursor-not-allowed disabled:opacity-65 md:text-[0.92rem]"
+                        className="absolute z-30 flex items-center justify-center rounded-[1.2rem] bg-transparent text-[0.98rem] font-black uppercase tracking-[0.18em] text-cyan-50 disabled:cursor-not-allowed disabled:opacity-65 md:text-[1.05rem]"
                         aria-label="Press the MEAN Machine base button"
                         style={{
                           left: '31.7%',
@@ -778,7 +778,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
 
             <section className="shrink-0 rounded-[1.35rem] border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(10,31,83,0.92),rgba(7,21,58,0.96))] p-2.5 shadow-[0_16px_26px_rgba(2,6,23,0.34)]">
               <div className="mb-2 flex items-center justify-start gap-2">
-                <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/74">
+                <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/74">
                   {round?.mode === 'mean' ? (
                     <>
                       Pick the <span className="underline decoration-amber-200/90 underline-offset-[3px]">MEAN</span>
@@ -876,7 +876,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
               }`}
             >
               {feedback.type === 'success' ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <WandSparkles className="h-4 w-4 shrink-0" />}
-              <span className="text-[10px] font-black uppercase tracking-[0.12em]">{feedback.message}</span>
+              <span className="text-[11px] font-black uppercase tracking-[0.12em]">{feedback.message}</span>
             </motion.div>
           ) : null}
         </AnimatePresence>

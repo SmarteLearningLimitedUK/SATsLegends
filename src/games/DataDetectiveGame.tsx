@@ -76,7 +76,7 @@ const loadSortedImages = (record: Record<string, string>) => (
     .map(([, value]) => value)
 );
 const MUGSHOT_IMAGES = loadSortedImages(
-  import.meta.glob('../assets/datadetective/mugshots/*.png', { eager: true, import: 'default' }) as Record<string, string>,
+  import.meta.glob('../assets/bosses/portraits/*.png', { eager: true, import: 'default' }) as Record<string, string>,
 );
 const DETECTIVE_BRIEFS = [
   'Match the evidence totals to the suspect report.',
@@ -375,7 +375,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           </div>
 
           <div className="relative min-h-0 flex-1">
-            <div className={`grid min-h-0 h-full auto-rows-[minmax(0,1fr)] grid-cols-4 gap-1 md:gap-2 ${selectedSuspect ? 'opacity-0 pointer-events-none' : ''}`}>
+            <div className={`grid grid-cols-4 gap-1 md:gap-2 content-start items-start ${selectedSuspect ? 'opacity-0 pointer-events-none' : ''}`}>
               {suspects.map((suspect) => (
                 <motion.button
                   key={suspect.id}
@@ -383,7 +383,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleSuspectClick(suspect.id)}
                   transition={{ duration: 0.35 }}
-                  className={`group relative flex min-h-0 items-center justify-center rounded-[1.35rem] border-2 p-1 transition-all duration-300 ${
+                  className={`group relative flex w-full aspect-[3/4] items-center justify-center rounded-[1.2rem] border-2 p-1 transition-all duration-300 ${
                     gameState === 'success' && suspect.id === guiltyId
                       ? 'border-emerald-500 bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.2)]'
                       : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
