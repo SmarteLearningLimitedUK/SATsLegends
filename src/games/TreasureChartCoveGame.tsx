@@ -165,7 +165,7 @@ const CoinBarBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships, 
   const maxValue = Math.max(...ships.map((ship) => ship.value));
   return (
     <div className="rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.24))] p-2.5 shadow-[0_18px_28px_rgba(15,23,42,0.22)]">
-      <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/62 md:text-[11px]">{label}</div>
+      <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/62 md:text-[10px]">{label}</div>
       <div className="mt-3 grid grid-cols-4 items-end gap-2 md:gap-3">
         {ships.map((ship) => (
           <div key={ship.id} className="flex flex-col items-center gap-2">
@@ -202,7 +202,7 @@ const LineGraphBoard: React.FC<{ days: Array<{ label: string; value: number }>; 
 
   return (
     <div className="rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.24))] p-2.5 shadow-[0_18px_28px_rgba(15,23,42,0.22)]">
-      <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/62 md:text-[11px]">{label}</div>
+      <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/62 md:text-[10px]">{label}</div>
       <svg viewBox="0 0 100 100" className="mt-3 h-24 w-full md:h-28">
         <rect x="6" y="8" width="88" height="80" rx="8" fill="rgba(15,23,42,0.18)" stroke="rgba(255,255,255,0.12)" />
         {Array.from({ length: 4 }).map((_, index) => (
@@ -242,7 +242,7 @@ const PieShareBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships,
 
   return (
     <div className="rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.24))] p-2.5 shadow-[0_18px_28px_rgba(15,23,42,0.22)]">
-      <div className="text-[11px] font-black uppercase tracking-[0.18em] text-white/70 md:text-xs">{label}</div>
+      <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/70 md:text-[10px]">{label}</div>
             <div className="mt-3 flex items-center justify-between gap-3">
         <div
           className="h-24 w-24 rounded-full border border-white/12 shadow-[inset_0_0_0_8px_rgba(15,23,42,0.22)] md:h-28 md:w-28"
@@ -268,7 +268,7 @@ const PieShareBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships,
 
 const TableBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships, label }) => (
     <div className="rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.24))] p-2.5 shadow-[0_18px_28px_rgba(15,23,42,0.22)]">
-      <div className="text-[11px] font-black uppercase tracking-[0.18em] text-white/70 md:text-xs">{label}</div>
+      <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/70 md:text-[10px]">{label}</div>
     <div className="mt-3 space-y-1.5">
       {ships.map((ship) => (
         <div key={ship.id} className="grid grid-cols-[1fr_auto] items-center rounded-[1rem] border border-white/10 bg-black/14 px-2.5 py-1.5">
@@ -423,11 +423,9 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
 
           <div className="relative z-10 flex h-full w-full flex-col px-3 pb-3 pt-4 md:px-5 md:pb-4 md:pt-5">
             <div className="flex justify-center">
-              <div className="max-w-[96%] rounded-[1rem] px-2 py-1.5 text-center md:px-4 md:py-2">
-                <div className="text-sm font-black tracking-tight text-white md:text-[1.3rem]">{round.title}</div>
-                <div className="mt-1 text-[12px] font-bold text-cyan-100/90 md:text-sm">
-                  {formatFantasyPrompt(round.prompt)}
-                </div>
+              <div className="game-question-card w-full max-w-[96%]">
+                <div className="question-title">{round.title}</div>
+                <div className="question-subtitle">{formatFantasyPrompt(round.prompt)}</div>
               </div>
             </div>
 
@@ -442,27 +440,22 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
                 ) : (
                   <CoinBarBoard ships={round.ships} label={round.boardLabel} />
                 )}
-
-                <div className="rounded-[1.2rem] border border-white/12 bg-black/14 px-2.5 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-                  <div className="text-[11px] font-black uppercase tracking-[0.16em] text-white/62">Captain note</div>
-                  <div className="mt-1.5 text-xs font-bold leading-relaxed text-white/88 md:text-sm">{round.support}</div>
-                </div>
               </div>
 
               <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.84),rgba(30,41,59,0.92))] p-2.5 shadow-[0_24px_40px_rgba(2,6,23,0.24)] md:p-3">
-                <div className={`grid gap-1.5 ${round.options.length <= 2 ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-2'}`}>
+                <div className="grid grid-cols-4 gap-1.5">
                   {round.options.map((choice, index) => (
                     <motion.button
                       key={`${choice}-${index}`}
                       whileTap={{ scale: 0.97 }}
                       onClick={() => handleChoice(choice)}
                       disabled={feedback !== null || isFinished}
-                      className="relative overflow-hidden rounded-[1.35rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(15,23,42,0.48))] px-3 py-2 text-left shadow-[0_18px_28px_rgba(15,23,42,0.22)] disabled:opacity-45"
+                      className="relative overflow-hidden rounded-[1rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(15,23,42,0.48))] px-2 py-2 text-left shadow-[0_14px_22px_rgba(15,23,42,0.22)] disabled:opacity-45"
                     >
                       <div className="absolute inset-x-[10%] top-[10%] h-[18%] rounded-full bg-white/10 blur-md" />
                       <div className="relative">
                         <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/58">Choice</div>
-                        <div className="mt-1.5 text-[0.95rem] font-black tracking-tight text-amber-50 md:text-lg">{choice}</div>
+                        <div className="mt-1.5 text-[0.85rem] font-black tracking-tight text-amber-50 md:text-base">{choice}</div>
                       </div>
                     </motion.button>
                   ))}

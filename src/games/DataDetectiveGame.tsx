@@ -257,8 +257,9 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
 
       <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.05rem)]' : ''}`}>
         <section className="z-10 flex min-h-0 w-full flex-[0.52] flex-col gap-2 overflow-hidden border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] px-2 pb-2 pt-3 sm:px-3 sm:pb-3 sm:pt-4 md:w-1/2 md:flex-1 md:gap-3 md:border-b-0 md:border-r md:p-5">
-          <div className="rounded-xl border border-cyan-100/16 bg-slate-900/40 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-cyan-100/80">
-            {caseBrief}
+          <div className="game-question-card">
+            <div className="question-title">{caseMode === 'whodunnit' ? 'Who took the loot?' : 'Match the evidence totals.'}</div>
+            <div className="question-subtitle">{caseBrief}</div>
           </div>
           <div className="mb-1 flex items-center justify-between">
             <div className="flex items-center gap-2 text-amber-500">
@@ -374,8 +375,8 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             <h2 className="text-xs font-black uppercase tracking-widest">Suspect Lineup</h2>
           </div>
 
-          <div className="relative min-h-0 flex-1">
-            <div className={`grid grid-cols-4 gap-1 md:gap-2 content-start items-start ${selectedSuspect ? 'opacity-0 pointer-events-none' : ''}`}>
+          <div className="relative flex min-h-0 flex-1 flex-col">
+            <div className={`mt-auto grid grid-cols-4 gap-1 md:gap-2 content-start items-start ${selectedSuspect ? 'opacity-0 pointer-events-none' : ''}`}>
               {suspects.map((suspect) => (
                 <motion.button
                   key={suspect.id}
@@ -417,7 +418,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                   exit={{ opacity: 0, scale: 0.95 }}
                   className="absolute inset-0 flex items-center justify-center"
                 >
-                  <div className="w-full max-w-[20rem] rounded-2xl border border-white/18 bg-[linear-gradient(180deg,rgba(9,24,58,0.96),rgba(4,12,28,0.98))] p-4 shadow-[0_24px_48px_rgba(0,0,0,0.45)]">
+                  <div className="w-full max-w-[20rem] max-h-[70vh] overflow-hidden rounded-2xl border border-white/18 bg-[linear-gradient(180deg,rgba(9,24,58,0.96),rgba(4,12,28,0.98))] p-4 shadow-[0_24px_48px_rgba(0,0,0,0.45)]">
                     <div className="flex items-center gap-3">
                       <div className="h-16 w-16 overflow-hidden rounded-2xl border border-white/20">
                         {selectedSuspect.portrait && (
@@ -435,7 +436,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                       </div>
                     </div>
 
-                    <div className="mt-4 space-y-2">
+                    <div className="mt-4 max-h-[38vh] space-y-2 overflow-y-auto pr-1">
                       {selectedSuspect.items.map((amount, index) => (
                         <div key={`${selectedSuspect.id}-item-${index}`} className="flex items-center justify-between rounded-xl border border-white/12 bg-white/6 px-3 py-2">
                           <div className="flex items-center gap-2">

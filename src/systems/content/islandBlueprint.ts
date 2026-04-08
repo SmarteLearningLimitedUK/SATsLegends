@@ -123,7 +123,7 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
         replayValue: 'procedural target waves',
       },
       {
-        key: 'rounding_rampage',
+        key: 'rounding_rocket',
         name: 'Rounding Rocket',
         role: 'fluency',
         gameplayRoles: ['fluency', 'pressure_timing'],

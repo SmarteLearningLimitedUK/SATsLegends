@@ -599,11 +599,8 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                   className="pointer-events-none h-auto w-full object-contain"
                 />
                 <div className="pointer-events-none absolute inset-x-[12%] top-[9%] h-[26%] rounded-[0.75rem] bg-black/85" />
-                <div className="absolute inset-x-[16%] top-[14%] text-center text-white">
-                  <div className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-100/90 drop-shadow-[0_2px_6px_rgba(2,6,23,0.6)]">
-                    Target Order
-                  </div>
-                  <div className="mt-1 text-[clamp(1.2rem,5vw,1.7rem)] font-black text-amber-100 drop-shadow-[0_2px_8px_rgba(2,6,23,0.7)]">
+                <div className="absolute inset-x-[16%] top-[16%] text-center text-white">
+                  <div className="text-[clamp(1.25rem,5.2vw,1.8rem)] font-black text-amber-100 drop-shadow-[0_2px_8px_rgba(2,6,23,0.7)]">
                     {asDisplayFraction(order.target)}
                   </div>
                 </div>

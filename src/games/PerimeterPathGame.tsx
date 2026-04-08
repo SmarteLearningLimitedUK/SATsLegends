@@ -293,10 +293,10 @@ const PerimeterShapeRenderer: React.FC<{
           const isTraced = tracedEdgeIds.includes(edge.id);
           const isActive = highlightedEdgeId === edge.id || isTraced;
           const labelPos = getEdgeLabelPosition(edge);
-          const labelWidth = Math.max(14, Math.min(22, edge.label.length * 2.15 + 3));
-          const labelHeight = 7;
-          const safeX = clamp(labelPos.x, (labelWidth / 2) + 1, 100 - (labelWidth / 2) - 1);
-          const safeY = clamp(labelPos.y, 5.5, 94.5);
+          const labelWidth = Math.max(10, Math.min(18, edge.label.length * 1.6 + 2));
+          const labelHeight = 5.5;
+          const safeX = clamp(labelPos.x, (labelWidth / 2) + 0.8, 100 - (labelWidth / 2) - 0.8);
+          const safeY = clamp(labelPos.y, 6, 94);
           return (
             <g
               key={edge.id}
@@ -480,18 +480,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
         draggable={false}
         className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
       />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,8,23,0.66),rgba(3,8,23,0.38)_22%,rgba(3,8,23,0.62)_100%)]" />
-
-      <motion.div
-        animate={{ x: [0, 10, 0, -10, 0], y: [0, 6, 0, -6, 0] }}
-        transition={{ duration: 12, ease: 'easeInOut', repeat: Infinity }}
-        className="pointer-events-none absolute -left-20 top-24 h-44 w-44 rounded-full bg-cyan-300/14 blur-3xl"
-      />
-      <motion.div
-        animate={{ x: [0, -12, 0, 12, 0], y: [0, -8, 0, 8, 0] }}
-        transition={{ duration: 14, ease: 'easeInOut', repeat: Infinity }}
-        className="pointer-events-none absolute -right-20 bottom-32 h-48 w-48 rounded-full bg-amber-300/16 blur-3xl"
-      />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,8,23,0.45),rgba(3,8,23,0.45))]" />
 
       <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-[calc(env(safe-area-inset-top)+0.2rem)]">
         <main className="mt-0 flex min-h-0 flex-1 flex-col gap-1.5 sm:gap-2">

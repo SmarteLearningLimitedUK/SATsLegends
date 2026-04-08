@@ -467,12 +467,12 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.38),rgba(2,6,23,0.42)_32%,rgba(2,6,23,0.6)_100%)]" />
 
       <main
-        className={`relative z-20 flex h-full w-full flex-col items-center ${topPaddingClass} px-[max(0.75rem,env(safe-area-inset-left))] pb-[max(7.2rem,calc(env(safe-area-inset-bottom)+6.2rem))]`}
+        className={`relative z-20 flex h-full w-full flex-col items-center ${topPaddingClass} px-[max(0.75rem,env(safe-area-inset-left))] pb-[calc(env(safe-area-inset-bottom)+2.6rem)]`}
       >
         <div className="flex h-full w-full max-w-[30rem] min-h-0 flex-col gap-2.5">
           {!useSharedTopHud ? (
             <header className="rounded-[1.15rem] border border-cyan-100/26 bg-slate-950/55 px-3 py-2 shadow-[0_12px_22px_rgba(2,6,23,0.44)]">
-              <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2.5">
+              <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2.5">
                 <div>
                   <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/72">Time attack</div>
                   <div className="relative mt-1 h-3.5 overflow-hidden rounded-full border border-cyan-100/26 bg-blue-950/58">
@@ -486,20 +486,11 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
                   </div>
                 </div>
 
-                <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">XP</div>
-                  <div className="text-sm font-black text-white">{XP}</div>
-                </div>
-
               </div>
             </header>
           ) : (
             <header className="rounded-[1.15rem] border border-cyan-100/24 bg-slate-950/50 px-3 py-2 shadow-[0_10px_20px_rgba(2,6,23,0.42)]">
               <div className="flex items-center justify-between gap-2.5">
-                <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.15em] text-cyan-100/66">XP</div>
-                  <div className="text-sm font-black text-white">{XP}</div>
-                </div>
               </div>
             </header>
           )}

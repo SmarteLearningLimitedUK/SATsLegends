@@ -91,7 +91,7 @@ export const ISLANDS: IslandData[] = [
         'place_value_panic',
         'number_line_ninja',
         'prime_pop',
-        'rounding_rampage',
+        'rounding_rocket',
       ]),
       [
         { id: 1, stars: 0, isLocked: false, blueprintKey: 'maths_vs_zombies', displayName: 'Maths vs Zombies', gameType: 'ratio_rapids' },

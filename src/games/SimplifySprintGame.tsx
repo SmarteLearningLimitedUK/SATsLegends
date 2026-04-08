@@ -391,27 +391,20 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
         </div>
 
         <div className="mt-4 grid w-full max-w-[760px] grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
-          {factorChoices.map((factor) => {
-            const isValid = currentPair.numerator % factor === 0 && currentPair.denominator % factor === 0;
-            return (
-              <motion.button
-                key={`${question.id}-factor-${factor}-${fractionKey(currentPair)}`}
-                type="button"
-                whileTap={{ scale: 0.97 }}
-                disabled={locked}
-                onClick={() => handleFactor(factor)}
-                className={`rounded-[1.1rem] border px-2 py-4 shadow-[0_14px_26px_rgba(0,0,0,0.45)] transition disabled:opacity-70 ${
-                  isValid
-                    ? 'border-cyan-200/45 bg-[linear-gradient(180deg,rgba(56,189,248,0.26),rgba(15,23,42,0.86))] hover:bg-[linear-gradient(180deg,rgba(59,130,246,0.3),rgba(15,23,42,0.86))]'
-                    : 'border-amber-200/40 bg-[linear-gradient(180deg,rgba(251,146,60,0.28),rgba(15,23,42,0.86))] hover:bg-[linear-gradient(180deg,rgba(244,114,182,0.28),rgba(15,23,42,0.86))]'
-                }`}
-              >
-                <span className="text-[clamp(1.1rem,2.7vw,1.7rem)] font-black uppercase tracking-[0.1em] text-cyan-50">
-                  ÷ {factor}
-                </span>
-              </motion.button>
-            );
-          })}
+          {factorChoices.map((factor) => (
+            <motion.button
+              key={`${question.id}-factor-${factor}-${fractionKey(currentPair)}`}
+              type="button"
+              whileTap={{ scale: 0.97 }}
+              disabled={locked}
+              onClick={() => handleFactor(factor)}
+              className="rounded-[1.1rem] border border-cyan-200/45 bg-[linear-gradient(180deg,rgba(56,189,248,0.26),rgba(15,23,42,0.86))] px-2 py-4 shadow-[0_14px_26px_rgba(0,0,0,0.45)] transition hover:bg-[linear-gradient(180deg,rgba(59,130,246,0.3),rgba(15,23,42,0.86))] disabled:opacity-70"
+            >
+              <span className="text-[clamp(1.1rem,2.7vw,1.7rem)] font-black uppercase tracking-[0.1em] text-cyan-50">
+                ÷ {factor}
+              </span>
+            </motion.button>
+          ))}
         </div>
 
         <AnimatePresence>
@@ -436,3 +429,4 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
 };
 
 export default SimplifySprintGame;
+

@@ -2424,8 +2424,7 @@ button:disabled {
   text-shadow: 0 1px 0 rgba(255,255,255,0.38) !important;
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.58),
-    0 6px 0 rgba(140, 84, 10, 0.76),
-    0 14px 22px rgba(15,23,42,0.24) !important;
+    0 10px 20px rgba(15,23,42,0.24) !important;
 }
 
 .licensed-submit-button,
@@ -2438,8 +2437,7 @@ button:disabled {
   text-shadow: 0 1px 0 rgba(15, 84, 20, 0.56) !important;
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.48),
-    0 6px 0 rgba(24, 110, 32, 0.72),
-    0 14px 22px rgba(15,23,42,0.24) !important;
+    0 10px 20px rgba(15,23,42,0.24) !important;
 }
 
 .ui-button-secondary,
@@ -4868,6 +4866,29 @@ button.avatar-hero-arrow:not(:disabled):active {
 .app-viewport.sat-theme-bluegold .licensed-game-card-dark,
 .app-viewport.sat-theme-bluegold .licensed-overlay-card {
   background-color: var(--sat-surface-dark) !important;
+}
+
+.game-question-card {
+  border: 1px solid rgba(198, 230, 255, 0.35);
+  border-radius: 1.1rem;
+  background: rgba(6, 16, 36, 0.68);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 14px 26px rgba(2,6,23,0.28);
+  padding: 0.6rem 0.9rem;
+  text-align: center;
+}
+
+.game-question-card .question-title {
+  font-size: clamp(0.95rem, 2.6vw, 1.25rem);
+  font-weight: 900;
+  color: #f8fafc;
+  letter-spacing: 0.01em;
+}
+
+.game-question-card .question-subtitle {
+  margin-top: 0.15rem;
+  font-size: clamp(0.72rem, 2.2vw, 0.92rem);
+  font-weight: 700;
+  color: rgba(226, 232, 240, 0.85);
 }
 
 

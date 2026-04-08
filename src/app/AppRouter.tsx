@@ -120,7 +120,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
   const shouldUseShellBackground = useMemo(() => {
     if (screen !== 'gameplay' || !selectedLevel) return true;
     const sceneOwnedBackgrounds = new Set([
-      'rounding_rampage',
+      'rounding_rocket',
       'prime_pop',
       'number_line_ninja',
       'potion_pour',
@@ -277,7 +277,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
             miniGameLevel: inferredMiniGameLevel,
           });
         }
-        if (selectedLevel.blueprintKey === 'rounding_rampage') {
+        if (selectedLevel.blueprintKey === 'rounding_rocket') {
           return renderFromRegistry('RoundingRocketGame', sharedProps);
         }
         return renderFromRegistry('DecimalSniperGame', { ...sharedProps, isBoss: Boolean(selectedLevel.isBoss) });

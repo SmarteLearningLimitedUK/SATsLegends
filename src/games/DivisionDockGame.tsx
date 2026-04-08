@@ -138,7 +138,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
     setFeedback({
       type: 'error',
       title: 'Not Loaded',
-      subtitle: `${question.dividend} Ã· ${question.divisor} = ${question.answer}`,
+      subtitle: `${question.dividend} ÷ ${question.divisor} = ${question.answer}`,
     });
     triggerHaptic('error');
 
@@ -253,12 +253,9 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
 
           <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-2 md:px-2.5 md:pb-2 md:pt-2.5">
             <div className="flex justify-center">
-              <div className="licensed-slice-paper-panel max-w-[96%] px-3 py-1.5 text-center shadow-[0_14px_26px_rgba(15,23,42,0.16)] md:px-4 md:py-2">
-                <div className="text-[0.82rem] font-black tracking-tight text-amber-900 md:text-[1.05rem]">
-                  Share the cargo equally between the boats
-                </div>
-                <div className="mt-0.5 text-[0.6rem] font-bold text-amber-950/76 md:text-[0.78rem]">
-                  Tap a boat to load one crate.
+              <div className="game-question-card max-w-[96%] px-3 py-2 text-center">
+                <div className="question-title">
+                  Share {question.dividend} crates equally between {question.divisor} boats.
                 </div>
               </div>
             </div>
@@ -269,7 +266,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
                 <div className="mt-2 rounded-[0.95rem] border border-sky-200/20 bg-[linear-gradient(180deg,rgba(14,116,144,0.22),rgba(14,116,144,0.08))] p-2.5 text-center md:mt-2.5 md:p-3">
                   <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/70 md:text-xs">Current equation</div>
                   <div className="mt-1 text-[clamp(1.4rem,4vw,2.3rem)] font-black text-white">
-                    {question.dividend} Ã· {question.divisor} = ?
+                    {question.dividend} ÷ {question.divisor} = ?
                   </div>
                 </div>
 
@@ -371,3 +368,8 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
 };
 
 export default DivisionDockGame;
+
+
+
+
+

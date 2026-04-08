@@ -11,7 +11,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from '../components/game-ui/GameUiKit';
-import catapultAsset from '../assets/rocktlogo.png';
+import catapultAsset from '../assets/angle_arena/catapultfinal.png';
 import battleBackground from '../assets/angle_arena/angle arenabkground.png';
 import { BOSS_ASSETS } from '../assets/bosses';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
@@ -76,6 +76,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const catapultImageRef = useRef<HTMLImageElement | null>(null);
   const backgroundImageRef = useRef<HTMLImageElement | null>(null);
   const bossImageRef = useRef<HTMLImageElement | null>(null);
+  const bossProcessedRef = useRef<HTMLCanvasElement | null>(null);
   const projectileRef = useRef<ProjectileState | null>(null);
   const impactResultRef = useRef<ImpactResult | null>(null);
   const aimTimeoutRef = useRef<number | null>(null);
@@ -164,6 +165,26 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     const img = new Image();
     img.src = bossImage;
     bossImageRef.current = img;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      ctx.drawImage(img, 0, 0);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        if (r > 245 && g > 245 && b > 245) {
+          data[i + 3] = 0;
+        }
+      }
+      ctx.putImageData(imageData, 0, 0);
+      bossProcessedRef.current = canvas;
+    };
   }, []);
 
   const resetForNext = () => {
@@ -363,6 +384,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.clearRect(0, 0, viewWidth, viewHeight);
 
       const backgroundImg = backgroundImageRef.current;
+      const scrollX = projectile?.active ? projectile.x - centerX : 0;
       if (backgroundImg && backgroundImg.complete) {
         const scale = Math.max(
           viewWidth / backgroundImg.width,
@@ -370,9 +392,13 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         ) * 1.18;
         const tileW = backgroundImg.width * scale;
         const tileH = backgroundImg.height * scale;
-        const offsetX = (viewWidth - tileW) / 2;
+        const parallax = -scrollX * 0.25;
+        const offsetX = ((viewWidth - tileW) / 2) + parallax;
         const offsetY = (viewHeight - tileH) / 2;
-        ctx.drawImage(backgroundImg, offsetX, offsetY, tileW, tileH);
+        const startX = offsetX - tileW;
+        for (let x = startX; x < viewWidth + tileW; x += tileW) {
+          ctx.drawImage(backgroundImg, x, offsetY, tileW, tileH);
+        }
       } else {
         ctx.fillStyle = '#0b1731';
         ctx.fillRect(0, 0, viewWidth, viewHeight);
@@ -381,11 +407,11 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       const catapult = catapultImageRef.current;
       const launcherX = centerX;
       if (catapult && catapult.complete) {
-        const rocketWidth = 96;
-        const rocketHeight = 56;
+        const rocketWidth = 120;
+        const rocketHeight = 84;
         ctx.drawImage(
           catapult,
-          launcherX - 48,
+          launcherX - rocketWidth / 2,
           centerY - rocketHeight / 2,
           rocketWidth,
           rocketHeight,
@@ -400,14 +426,18 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       // Boss enemy anchored at the target point
       ctx.save();
       ctx.translate(targetX, targetY);
-      ctx.fillStyle = 'rgba(15,23,42,0.45)';
+      ctx.fillStyle = 'rgba(15,23,42,0.5)';
       ctx.beginPath();
-      ctx.ellipse(0, 36, 44, 16, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, 40, 52, 16, 0, 0, Math.PI * 2);
       ctx.fill();
-      const boss = bossImageRef.current;
-      if (boss && boss.complete) {
+      ctx.fillStyle = '#734b22';
+      ctx.fillRect(-42, 18, 84, 22);
+      ctx.fillStyle = '#5b3717';
+      ctx.fillRect(-46, 34, 92, 12);
+      const boss = bossProcessedRef.current;
+      if (boss) {
         const bossSize = Math.min(viewWidth, viewHeight) * 0.24;
-        ctx.drawImage(boss, -bossSize / 2, -bossSize / 2 - 8, bossSize, bossSize);
+        ctx.drawImage(boss, -bossSize / 2, -bossSize / 2 - 12, bossSize, bossSize);
       } else {
         ctx.fillStyle = '#f43f5e';
         ctx.beginPath();
@@ -482,8 +512,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           <div
             className={`relative z-20 w-full transition-all duration-300 ${gameState === 'firing' || gameState === 'projectileFlight' || gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? 'pointer-events-none max-h-0 opacity-0' : 'max-h-[240px] opacity-100'}`}
           >
-            <div className="mission-panel-shell licensed-game-card rounded-[1.25rem] px-3 py-2 text-center text-[clamp(12px,1.6vh,15px)] font-black text-cyan-50">
-              {formatFantasyPrompt(activeQuestion?.prompt ?? 'Choose the correct launch angle.')}
+            <div className="game-question-card">
+              <div className="question-title">{formatFantasyPrompt(activeQuestion?.prompt ?? 'Choose the correct launch angle.')}</div>
             </div>
             {isBeginnerLevel ? (
               <div className="mt-1.5 grid grid-cols-2 gap-1.5">

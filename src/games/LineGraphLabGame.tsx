@@ -320,28 +320,14 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
 
       <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.05rem)]' : ''}`}>
         <section className="flex flex-col gap-1.5 p-2 sm:gap-2.5 sm:p-3 md:p-4">
-          <div className="rounded-2xl border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(12,32,70,0.82),rgba(7,18,45,0.9))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-3">
-            <p className="text-[clamp(0.9rem,2.6vw,1.02rem)] font-black leading-snug text-white">
-              {round?.question}
-            </p>
-            <div className="mt-0.5 flex items-start gap-2 text-[9px] text-slate-300 sm:text-[10px]">
-              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400" />
-              <p>{round?.helper}</p>
-            </div>
+          <div className="game-question-card">
+            <div className="question-title text-center">{round?.question}</div>
+            <div className="question-subtitle text-center">{round?.helper}</div>
           </div>
         </section>
 
         <section className="flex min-h-0 flex-1 flex-col gap-2 px-2 pb-2 sm:gap-3 sm:px-3 sm:pb-3 md:px-4 md:pb-4">
-          <div className="mt-0.5 min-h-0 flex-[1] rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,61,0.85),rgba(4,12,30,0.92))] p-2.5 shadow-[0_16px_40px_rgba(3,12,30,0.26)] sm:p-4 md:p-5">
-            <div className="mb-1 flex items-center justify-between gap-3">
-              <div>
-                <h3 className="text-sm font-black uppercase tracking-[0.24em] text-emerald-300">Live Graph</h3>
-                <p className="mt-1 text-[10px] font-semibold text-cyan-100/80">Tap or drag to probe.</p>
-              </div>
-              <div className="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-200">
-                Values
-              </div>
-            </div>
+          <div className="mt-0.5 min-h-0 flex-[1.2] rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,61,0.85),rgba(4,12,30,0.92))] p-2.5 shadow-[0_16px_40px_rgba(3,12,30,0.26)] sm:p-4 md:p-5">
 
             <div
               ref={chartWrapRef}
@@ -410,7 +396,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
             </div>
           </div>
 
-          <div className="mt-auto grid grid-cols-2 gap-2 pt-4">
+          <div className="mt-auto grid grid-cols-2 gap-2 pt-6">
             {round?.options.map(option => {
               const isSelected = selectedAnswer === option;
               const isCorrect = gameState === 'success' && option === round.correctAnswer;

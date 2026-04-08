@@ -64,7 +64,7 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       if (level.blueprintKey === 'place_value_panic') {
         return 'PlaceValuePanicGame';
       }
-      if (level.blueprintKey === 'rounding_rampage') {
+      if (level.blueprintKey === 'rounding_rocket') {
         return 'RoundingRocketGame';
       }
       return 'DecimalSniperGame';

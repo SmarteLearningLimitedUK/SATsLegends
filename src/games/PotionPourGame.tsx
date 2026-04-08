@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   CheckCircle2,
@@ -760,7 +760,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
         <section className="min-h-0 flex-1">
           <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto_auto] gap-2">
             <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] border border-white/12 bg-white/5 shadow-[0_16px_30px_rgba(15,23,42,0.2)]">
-              <div className="pointer-events-none absolute left-1/2 top-3 w-[82%] -translate-x-1/2 rounded-[1.05rem] bg-slate-950/40 px-3 py-2 text-center backdrop-blur-sm">
+              <div className="pointer-events-none absolute left-1/2 top-3 w-[90%] -translate-x-1/2 rounded-[1.05rem] bg-slate-950/65 px-3 py-2 text-center backdrop-blur-sm">
                 <div className="text-[12px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Recipe</div>
                 <div className="mt-0.5 text-[clamp(1.35rem,5.2vw,1.8rem)] font-black text-white">{challenge.orderTitle}</div>
                 <div className="mt-0.5 text-[13px] font-black text-amber-100">Ratio {ratioText}</div>
@@ -783,7 +783,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 src={cauldrenAndPotionArt}
                 alt=""
                 aria-hidden="true"
-                className="pointer-events-none absolute left-1/2 bottom-[7%] h-[42%] max-w-none -translate-x-1/2 translate-y-[5px] object-contain"
+                className="pointer-events-none absolute left-1/2 bottom-[10%] h-[42%] max-w-none -translate-x-1/2 translate-y-[-8px] object-contain"
               />
               <div className="absolute left-1/2 bottom-[27%] h-[14%] w-[34%] -translate-x-1/2 translate-y-[5px] overflow-hidden rounded-[46%]">
                 <motion.div
@@ -920,6 +920,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
 };
 
 export default PotionPourGame;
+
 
 
 

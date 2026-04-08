@@ -4,10 +4,7 @@ import { motion } from 'motion/react';
 import {
   FeedbackStrip,
   GameUiShell,
-  StoryCard,
-  TaskCard,
 } from '../components/game-ui/GameUiKit';
-import pyramidBackdrop from '../assets/level_backgrounds/take_out.png';
 import pyramidImage from '../assets/pyramid.png';
 
 interface ProblemPyramidGameProps {
@@ -88,7 +85,7 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
   const [selected, setSelected] = useState<number | null>(null);
   const [locked, setLocked] = useState(false);
   const [glow, setGlow] = useState(false);
-  const [feedback, setFeedback] = useState('Find the number at the top of the pyramid.');
+  const [feedback, setFeedback] = useState('');
   const [feedbackTone, setFeedbackTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
 
   const round = useMemo(() => buildRound(levelId, roundIndex + 1), [levelId, roundIndex]);
@@ -121,7 +118,7 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
         setSelected(null);
         setLocked(false);
         setGlow(false);
-        setFeedback('Find the number at the top of the pyramid.');
+        setFeedback('');
         setFeedbackTone('neutral');
       }, 750);
       return;
@@ -133,14 +130,14 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
     window.setTimeout(() => {
       setLocked(false);
       setSelected(null);
-      setFeedback('Find the number at the top of the pyramid.');
+      setFeedback('');
       setFeedbackTone('neutral');
       setRoundIndex((prev) => prev + 1);
     }, 800);
   };
 
   const blockClass = (isTop?: boolean) => (
-    `flex h-[3.2rem] w-[4.2rem] items-center justify-center rounded-[0.9rem] border text-[1.1rem] font-black shadow-[0_10px_18px_rgba(2,6,23,0.25)] md:h-[3.8rem] md:w-[4.8rem] md:text-[1.35rem] ${
+    `flex h-[3.6rem] w-[4.8rem] items-center justify-center rounded-[0.95rem] border text-[1.2rem] font-black shadow-[0_10px_18px_rgba(2,6,23,0.25)] md:h-[4.2rem] md:w-[5.4rem] md:text-[1.5rem] ${
       glow
         ? 'border-emerald-200/80 bg-emerald-300/35 text-emerald-950 shadow-[0_0_18px_rgba(16,185,129,0.55)]'
         : isTop
@@ -150,30 +147,13 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
   );
 
   return (
-    <GameUiShell backgroundImage={pyramidBackdrop} backgroundOpacity={0.82}>
+    <GameUiShell className="bg-transparent" overlayDisabled>
       <div className="flex h-full min-h-0 flex-col gap-1.5 px-3 pb-[calc(env(safe-area-inset-bottom)+2.8rem)] pt-2 text-white">
         <section className="shrink-0">
-          <StoryCard className="px-2.5 py-1.5">
-            <p className="text-[clamp(13px,2vh,17px)] font-black text-white">
-              Align the number pyramid to unlock the summit.
-            </p>
-          </StoryCard>
-        </section>
-
-        <section className="shrink-0">
-          <TaskCard className="bg-[linear-gradient(180deg,rgba(255,255,255,0.95),rgba(245,250,255,0.9))] px-2.5 py-2">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-900/90">Problem Pyramid</div>
-                <div className="mt-0.5 text-[clamp(15px,2.1vh,19px)] font-black text-slate-950">
-                  Find the top number.
-                </div>
-              </div>
-              <div className="rounded-full bg-amber-200/60 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-[0.12em] text-amber-900">
-                Round {roundIndex + 1} / {ROUNDS_TO_WIN}
-              </div>
-            </div>
-          </TaskCard>
+          <div className="game-question-card px-3 py-2 text-center">
+            <div className="question-title">Find the top number in the pyramid.</div>
+            <div className="question-subtitle">Round {roundIndex + 1} / {ROUNDS_TO_WIN}</div>
+          </div>
         </section>
 
         <section className="min-h-0 flex-1 rounded-[1.4rem] border border-white/14 bg-white/10 p-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)]">
@@ -182,10 +162,10 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
               src={pyramidImage}
               alt=""
               draggable={false}
-              className="pointer-events-none absolute inset-0 h-full w-full object-contain opacity-90 scale-[1.12]"
+              className="pointer-events-none absolute inset-0 h-full w-full object-contain opacity-90 scale-[1.2]"
             />
             <motion.div
-              animate={glow ? { scale: [1.08, 1.12, 1.08] } : { scale: 1.08 }}
+              animate={glow ? { scale: [1.05, 1.1, 1.05] } : { scale: 1.05 }}
               transition={{ duration: 0.6, ease: 'easeInOut' }}
               className="relative z-10 flex flex-col items-center gap-2"
             >
@@ -225,11 +205,13 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
           </div>
         </section>
 
-        <section className="shrink-0">
-          <FeedbackStrip tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}>
-            {feedback}
-          </FeedbackStrip>
-        </section>
+        {feedback ? (
+          <section className="shrink-0">
+            <FeedbackStrip tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}>
+              {feedback}
+            </FeedbackStrip>
+          </section>
+        ) : null}
       </div>
     </GameUiShell>
   );

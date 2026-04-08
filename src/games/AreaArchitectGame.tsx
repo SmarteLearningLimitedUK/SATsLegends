@@ -176,7 +176,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
   };
 
   return (
-    <GameUiShell backgroundImage={areaBackdrop}>
+    <GameUiShell backgroundImage={areaBackdrop} overlayDisabled>
       <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+3.5rem)] pt-3 text-white">
         <section className="shrink-0">
           <StoryCard>

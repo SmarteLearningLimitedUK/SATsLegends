@@ -895,11 +895,7 @@ export const buildAngleQuestions = ({ launcherX, groundY, gravity }: BuildConfig
   const all = questionBank.map((entry, index) =>
     toAngleQuestion(entry, index, speed, launcherX, groundY, gravity, 54),
   );
-  const fluency = all.filter((question) => question.kind === 'fluency');
-  const reasoning = all.filter((question) => question.kind === 'reasoning');
-  const maxReasoning = Math.max(1, Math.min(reasoning.length, Math.round(fluency.length * 0.3)));
-  const selectedReasoning = reasoning.slice(0, maxReasoning);
-  return [...fluency, ...selectedReasoning];
+  return all.sort(() => Math.random() - 0.5);
 };
 
 

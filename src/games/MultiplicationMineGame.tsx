@@ -203,7 +203,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
                   repeat: phase === 'playing' ? Infinity : 0,
                   repeatDelay: 1.2,
                 }}
-                className="relative h-[240px] w-[240px] overflow-hidden bg-transparent shadow-[0_30px_55px_rgba(0,0,0,0.6)]"
+                className="relative h-[240px] w-[240px] overflow-hidden bg-transparent"
               >
                 <img
                   src={ROCK_FRAMES[rockFrameIndex]}

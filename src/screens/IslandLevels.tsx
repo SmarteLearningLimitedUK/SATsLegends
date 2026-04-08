@@ -37,7 +37,7 @@ const GAME_SUMMARY_BY_KEY: Record<string, string> = {
   place_value_panic: 'Sort unstable number fragments into the correct place-value channels at speed.',
   number_line_ninja: 'Move fast on the number line and land on exact targets with clean control.',
   prime_pop: 'Pop prime-number targets and avoid composite traps as the pace increases.',
-  rounding_rampage: 'Route values into the right rounding gates under pressure.',
+  rounding_rocket: 'Route values into the right rounding gates under pressure.',
   factor_frenzy: 'Identify factors and multiples in fast decision rounds.',
   take_out_rush: 'Build exact order totals by combining fraction portions in the tray.',
   fraction_forge: 'Combine and refine fractions to hit exact forged targets.',
@@ -389,7 +389,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                             : isNextPlayable
                               ? 'Recommended next'
                               : isCompleted
-                                ? 'Completed'
+                                ? ''
                                 : isBoss
                                   ? 'Boss available'
                                   : 'Available';

@@ -1,5 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
+import weighScale from '../assets/weigh.png';
+import gemBlue from '../assets/place_value/jewels/diamond_blue.png';
+import gemGreen from '../assets/place_value/jewels/diamond_green.png';
+import gemPurple from '../assets/place_value/jewels/diamond_purple.png';
+import gemRed from '../assets/place_value/jewels/diamond_red.png';
+import gemYellow from '../assets/place_value/jewels/diamond_yellow.png';
+import gemEmerald from '../assets/place_value/jewels/emerald.png';
+import gemSapphire from '../assets/place_value/jewels/sapphire.png';
 
 interface MeasurementForgeGameProps {
   levelId: number;
@@ -12,6 +20,7 @@ interface MeasurementForgeGameProps {
 interface WeightToken {
   id: string;
   grams: number;
+  gem: string;
 }
 
 interface RoundData {
@@ -20,6 +29,7 @@ interface RoundData {
 }
 
 const TOTAL_ROUNDS = 5;
+const GEM_IMAGES = [gemBlue, gemGreen, gemPurple, gemRed, gemYellow, gemEmerald, gemSapphire];
 
 const STAGE_DENOMS: number[][] = [
   [50, 100, 150, 200, 250, 300],
@@ -75,9 +85,11 @@ const buildRound = (levelId: number, roundIndex: number): RoundData => {
   const extraCopies = Array.from({ length: extraCopiesCount }, () => randomFrom(required));
 
   const all = shuffle([...required, ...distractorPool, ...extraCopies]);
+  const shuffledGems = shuffle(GEM_IMAGES);
   const tokens: WeightToken[] = all.map((grams, index) => ({
     id: `${roundIndex}-${index}-${grams}-${Math.random().toString(36).slice(2, 7)}`,
     grams,
+    gem: shuffledGems[index % shuffledGems.length],
   }));
 
   return { targetGrams, tokens };
@@ -193,12 +205,20 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
               successPulse ? 'border-emerald-300 bg-emerald-300/12' : 'border-white/38 bg-white/8'
             }`}
           >
+            <img
+              src={weighScale}
+              alt=""
+              aria-hidden="true"
+              draggable={false}
+              className="pointer-events-none absolute inset-0 h-full w-full object-contain opacity-90"
+            />
             {placedTokens.map((token) => (
               <button
                 key={token.id}
                 onClick={() => removePlacedToken(token.id)}
-                className="flex min-w-[2.9rem] flex-col items-center rounded-xl bg-[#0b2d68]/84 px-1.5 py-1 text-white ring-1 ring-white/30"
+                className="relative z-10 flex min-w-[2.9rem] flex-col items-center rounded-xl bg-[#0b2d68]/84 px-1.5 py-1 text-white ring-1 ring-white/30"
               >
+                <img src={token.gem} alt="" className="h-6 w-6 object-contain" draggable={false} />
                 <span className="text-[10px] font-black leading-none">{getMeasurementDisplay(token.grams).primary}</span>
                 <span className="mt-0.5 text-[8px] font-bold leading-none text-white/70">{getMeasurementDisplay(token.grams).secondary}</span>
               </button>
@@ -222,10 +242,11 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                     placeToken(token.id);
                   }
                 }}
-                className="flex h-12 min-w-[5rem] flex-col items-center justify-center rounded-2xl bg-[linear-gradient(180deg,#fef08a,#f59e0b)] px-2 text-amber-900 shadow-[0_10px_16px_rgba(0,0,0,0.34)] ring-2 ring-yellow-100/70 md:h-[4.05rem] md:min-w-[6rem] md:px-3"
+                className="flex h-12 min-w-[5rem] flex-col items-center justify-center rounded-2xl bg-[linear-gradient(180deg,rgba(15,23,42,0.82),rgba(15,23,42,0.55))] px-2 text-white shadow-[0_10px_16px_rgba(0,0,0,0.34)] ring-2 ring-white/10 md:h-[4.05rem] md:min-w-[6rem] md:px-3"
               >
+                <img src={token.gem} alt="" className="h-6 w-6 object-contain md:h-8 md:w-8" draggable={false} />
                 <span className="text-sm font-black leading-none md:text-base">{getMeasurementDisplay(token.grams).primary}</span>
-                <span className="mt-1 text-[10px] font-bold leading-none text-amber-950/80 md:text-[11px]">
+                <span className="mt-1 text-[10px] font-bold leading-none text-white/70 md:text-[11px]">
                   {getMeasurementDisplay(token.grams).secondary}
                 </span>
               </motion.button>

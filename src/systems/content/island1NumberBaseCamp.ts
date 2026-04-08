@@ -4,7 +4,7 @@ export type NumberBaseCampMiniGameKey =
   | 'place_value_panic'
   | 'number_line_ninja'
   | 'prime_pop'
-  | 'rounding_rampage'
+  | 'rounding_rocket'
   | 'factor_frenzy'
   | 'chart_challenge'
   | 'mean_machine'
@@ -79,7 +79,7 @@ const basePackDefs: Array<{
     objectiveForLevel: (miniGameLevel) => `Pop prime targets and avoid composite traps (L${miniGameLevel}).`,
   },
   {
-    key: 'rounding_rampage',
+    key: 'rounding_rocket',
     name: 'Rounding Rocket',
     gameType: 'place_value_peaks',
     skillTags: ['ROUNDING', 'PLACE_VALUE', 'ESTIMATION'],
