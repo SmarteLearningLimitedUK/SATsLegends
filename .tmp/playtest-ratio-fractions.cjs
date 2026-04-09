@@ -40,6 +40,25 @@ const closeAnyModal = async (page) => {
   return false;
 };
 
+const parseCorrectFraction = async (page) => {
+  const prompt = await page.locator('.question-subtitle').first().innerText().catch(() => '');
+  const targetMatch = /fraction is ([a-z]+)/i.exec(prompt);
+  const target = targetMatch ? targetMatch[1].toLowerCase() : '';
+  const cardText = await page.locator('.game-question-card').first().innerText().catch(() => '');
+  const pairs = [...cardText.matchAll(/([A-Za-z]+)\s+(\d+)/g)];
+  const labelMap = {};
+  for (const match of pairs) {
+    const label = match[1].toLowerCase();
+    const value = Number(match[2]);
+    if (['fuel', 'oxygen', 'oxidiser', 'additive', 'propellant'].includes(label)) {
+      labelMap[label] = value;
+    }
+  }
+  const total = Object.values(labelMap).reduce((sum, val) => sum + val, 0);
+  if (!target || !labelMap[target] || !total) return null;
+  return `${labelMap[target]}/${total}`;
+};
+
 (async () => {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 1024, height: 1536 } });
@@ -76,24 +95,19 @@ const closeAnyModal = async (page) => {
   await page.waitForTimeout(900);
   await takeShot(page, '05-after-avatar.png');
 
-  // Map -> scroll to Ratio Rapids island if needed
-  let foundRatioRapids = false;
-  for (let i = 0; i < 5; i += 1) {
-    const ratioRapids = page.getByText(/ratio rapids/i);
+  let found = false;
+  for (let i = 0; i < 6; i += 1) {
+    const ratioRapids = page.getByText('Ratio Rapids');
     if (await ratioRapids.count()) {
       await ratioRapids.first().click().catch(() => {});
-      foundRatioRapids = true;
+      found = true;
       break;
     }
     await page.mouse.wheel(0, 900);
     await page.waitForTimeout(500);
   }
-  if (!foundRatioRapids) {
-    // fallback to measurement mountain
-    const measurementIsland = page.getByText(/measurement mountain/i);
-    if (await measurementIsland.count()) {
-      await measurementIsland.first().click().catch(() => {});
-    }
+  if (!found) {
+    await clickFirst(page, ['ratio rapids']);
   }
   await page.waitForTimeout(700);
   await clickFirst(page, ['explore island', 'explore']);
@@ -110,15 +124,39 @@ const closeAnyModal = async (page) => {
   }
   await takeShot(page, '07-after-level-select.png');
 
-  await clickFirst(page, ['start', 'play', 'begin', 'enter']);
+  await clickFirst(page, ['play', 'start', 'begin', 'enter']);
   await page.waitForTimeout(1200);
-  await takeShot(page, '08-gameplay.png');
+  await takeShot(page, '08-how-to-play.png');
 
-  const answerButtons = page.locator('button').filter({ hasText: /\d+\/\d+|\d+/ });
-  if (await answerButtons.count()) {
-    await answerButtons.first().click().catch(() => {});
-    await page.waitForTimeout(1800);
-    await takeShot(page, '09-after-answer.png');
+  await clickFirst(page, ['start game']);
+  await page.waitForTimeout(1200);
+  await takeShot(page, '09-gameplay.png');
+
+  for (let step = 0; step < 12; step += 1) {
+    const resultText = page.getByText(/level complete|try again/i);
+    if (await resultText.count()) {
+      await takeShot(page, `result-${step}.png`);
+      break;
+    }
+    const correct = await parseCorrectFraction(page);
+    if (correct) {
+      const answerButton = page.getByRole('button', { name: new RegExp(`^${correct}$`) });
+      if (await answerButton.count()) {
+        await answerButton.first().click().catch(() => {});
+      } else {
+        const fallback = page.locator('button').filter({ hasText: correct });
+        if (await fallback.count()) {
+          await fallback.first().click().catch(() => {});
+        }
+      }
+    } else {
+      const anyAnswer = page.locator('button').filter({ hasText: /\d+\/\d+|\d+/ });
+      if (await anyAnswer.count()) {
+        await anyAnswer.first().click().catch(() => {});
+      }
+    }
+    await page.waitForTimeout(1600);
+    await takeShot(page, `answer-step-${step}.png`);
   }
 
   await browser.close();
