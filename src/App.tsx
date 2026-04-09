@@ -204,6 +204,7 @@ const App: React.FC = () => {
   const [gameplayRestartKey, setGameplayRestartKey] = useState(0);
   const lastIncorrectLifeLossRef = useRef<{ signature: string; at: number }>({ signature: '', at: 0 });
   const levelFailCountsRef = useRef<Record<string, number>>({});
+  const handleGameOverRef = useRef<(XP: number) => void>(() => {});
   const [wellbeingSignals, setWellbeingSignals] = useState<WellbeingSignals>({
     consecutiveFails: 0,
     gamesPlayedSinceBreak: 0,
@@ -285,6 +286,25 @@ const App: React.FC = () => {
     });
   }, [player.calmTokens, setPlayer, wellbeingActivityId]);
 
+  const {
+    globalMiniGameHudTimeLeft,
+    globalMiniGameLives,
+    consumeLife,
+  } = useGameplaySession({
+    screen,
+    selectedLevel,
+    onLifeDepleted: () => handleGameOverRef.current(0),
+    onTimeDepleted: () => handleGameOverRef.current(0),
+  });
+
+  useMiniGameLifecycle({ screen, selectedLevel });
+
+  const sessionState: GameplaySessionState = useMemo(() => ({
+    timeLeft: globalMiniGameHudTimeLeft,
+    totalTime: GLOBAL_MINIGAME_HUD_DURATION_SECONDS,
+    lives: globalMiniGameLives,
+  }), [globalMiniGameHudTimeLeft, globalMiniGameLives]);
+
   const handleGameOver = useCallback((XP: number) => {
     triggerHaptic('error');
     let wellbeingSuggested = false;
@@ -349,24 +369,15 @@ const App: React.FC = () => {
     });
   }, [completeProgressionLevel, selectedIsland, selectedLevel, sessionMetrics.correct, sessionMetrics.hintsUsed, sessionMetrics.incorrect, sessionState.lives, sessionState.timeLeft, sessionState.totalTime, setLevelResult]);
 
+  useEffect(() => {
+    handleGameOverRef.current = handleGameOver;
+  }, [handleGameOver]);
+
   const handleResetFailCount = useCallback(() => {
     if (!selectedIsland || !selectedLevel) return;
     const levelKey = `${selectedIsland.id}-${selectedLevel.id}`;
     levelFailCountsRef.current[levelKey] = 0;
   }, [selectedIsland, selectedLevel]);
-
-  const {
-    globalMiniGameHudTimeLeft,
-    globalMiniGameLives,
-    consumeLife,
-  } = useGameplaySession({
-    screen,
-    selectedLevel,
-    onLifeDepleted: () => handleGameOver(0),
-    onTimeDepleted: () => handleGameOver(0),
-  });
-
-  useMiniGameLifecycle({ screen, selectedLevel });
 
   useEffect(() => {
     if (screen === 'gameplay' && selectedLevel) {
@@ -714,12 +725,6 @@ const App: React.FC = () => {
     triggerHaptic('success');
     claimQuest(questId);
   };
-
-  const sessionState: GameplaySessionState = useMemo(() => ({
-    timeLeft: globalMiniGameHudTimeLeft,
-    totalTime: GLOBAL_MINIGAME_HUD_DURATION_SECONDS,
-    lives: globalMiniGameLives,
-  }), [globalMiniGameHudTimeLeft, globalMiniGameLives]);
 
   const buildTelemetryContext = useCallback((event?: GameplaySessionEventPayload) => {
     const durationSec = sessionState.totalTime && sessionState.timeLeft >= 0
