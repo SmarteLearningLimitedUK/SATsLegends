@@ -466,7 +466,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   };
 
   return (
-    <GameUiShell backgroundImage={shareSplitterBackground} backgroundOpacity={1}>
+    <GameUiShell backgroundImage={shareSplitterBackground} backgroundOpacity={1} overlayDisabled>
       <GameScreenLayout
         className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2 text-white"
         top={(
