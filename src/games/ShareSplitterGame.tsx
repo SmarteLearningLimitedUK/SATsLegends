@@ -9,6 +9,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from '../components/game-ui/GameUiKit';
+import shareSplitterBackground from '../assets/maps/partytable.jpg';
 import birthdayCakeAsset from '../assets/birthdaycake.png';
 import cakeSliceAsset from '../assets/cakeslice.png';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
@@ -446,7 +447,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   };
 
   return (
-    <GameUiShell>
+    <GameUiShell backgroundImage={shareSplitterBackground} backgroundOpacity={1}>
       <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+3.5rem)] pt-3 text-white">
         <section className="shrink-0">
           <GameTopBar

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
+import chartCoveBackground from '../assets/maps/graph grabbermap.jpg';
 
 interface TreasureChartCoveGameProps {
   levelId: number;
@@ -408,7 +409,10 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
   };
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden bg-[linear-gradient(180deg,#05294d_0%,#0b4f7d_42%,#072037_100%)]">
+    <div
+      className="relative flex h-full w-full flex-col overflow-hidden bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: `url(${chartCoveBackground})` }}
+    >
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute inset-x-[-10%] top-[-12%] h-[42%] rounded-full bg-cyan-200/14 blur-3xl" />
         <div className="absolute inset-x-0 top-0 h-[58%] bg-[linear-gradient(180deg,rgba(125,211,252,0.26),rgba(96,165,250,0.08),transparent)]" />

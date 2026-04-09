@@ -1,10 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+ï»¿import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { triggerHaptic } from '../haptics';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 import boatsSprite from '../assets/boats.jpg';
+import dockBackground from '../assets/maps/harbour.jpg';
 
 interface DivisionDockGameProps {
   levelId: number;
@@ -138,7 +139,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
     setFeedback({
       type: 'error',
       title: 'Not Loaded',
-      subtitle: `${question.dividend} ÷ ${question.divisor} = ${question.answer}`,
+      subtitle: `${question.dividend} Ã· ${question.divisor} = ${question.answer}`,
     });
     triggerHaptic('error');
 
@@ -246,6 +247,10 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
 
   return (
     <GameScreenShell className="overflow-hidden bg-transparent">
+      <div
+        className="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${dockBackground})` }}
+      />
 
       <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+2.6rem)] pt-[calc(env(safe-area-inset-top)+3.6rem)] md:px-3 md:pb-[calc(env(safe-area-inset-bottom)+3rem)] md:pt-[calc(env(safe-area-inset-top)+4rem)]">
         <PuzzleStage className="w-full max-w-5xl min-h-0 flex-1 rounded-[1.6rem] p-2 md:rounded-[2rem] md:p-2.5">
@@ -266,7 +271,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
                 <div className="mt-2 rounded-[0.95rem] border border-sky-200/20 bg-[linear-gradient(180deg,rgba(14,116,144,0.22),rgba(14,116,144,0.08))] p-2.5 text-center md:mt-2.5 md:p-3">
                   <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/70 md:text-xs">Current equation</div>
                   <div className="mt-1 text-[clamp(1.4rem,4vw,2.3rem)] font-black text-white">
-                    {question.dividend} ÷ {question.divisor} = ?
+                    {question.dividend} Ã· {question.divisor} = ?
                   </div>
                 </div>
 
@@ -368,6 +373,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
 };
 
 export default DivisionDockGame;
+
 
 
 

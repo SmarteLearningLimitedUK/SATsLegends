@@ -5,6 +5,8 @@ import world03Map from './assets/maps/castle.jpg';
 import world04Map from './assets/maps/harbour.jpg';
 import world05Map from './assets/maps/desert.jpg';
 import world06Map from './assets/maps/volcano2.jpg';
+import scaleBackground from './assets/maps/scale.png';
+import chartChaseBackground from './assets/maps/graph grabbermap.jpg';
 
 export interface GameSceneMeta {
   background: string;
@@ -55,6 +57,16 @@ const REASONING_SCENE: GameSceneMeta = {
   panelTint: 'from-emerald-200/16 via-sky-300/10 to-transparent',
 };
 
+const SCALE_SCENE: GameSceneMeta = {
+  ...RATIO_SCENE,
+  background: scaleBackground,
+};
+
+const CHART_CHASE_SCENE: GameSceneMeta = {
+  ...DATA_SCENE,
+  background: chartChaseBackground,
+};
+
 export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   quiz: NUMBER_SCENE,
   potion_pour: RATIO_SCENE,
@@ -78,9 +90,9 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   coordinate_quest: GEOMETRY_SCENE,
   transform_temple: GEOMETRY_SCENE,
   mirror_gate: GEOMETRY_SCENE,
-  scale_safari: RATIO_SCENE,
-  scales_of_the_sun: RATIO_SCENE,
-  chart_chase: DATA_SCENE,
+  scale_safari: SCALE_SCENE,
+  scales_of_the_sun: SCALE_SCENE,
+  chart_chase: CHART_CHASE_SCENE,
   observatory_overload: DATA_SCENE,
   mean_machine: DATA_SCENE,
   percent_power: RATIO_SCENE,
