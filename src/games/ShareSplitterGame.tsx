@@ -492,7 +492,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         )}
         main={(
           <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
-            <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] border border-white/12 px-2 py-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)] md:px-3">
+            <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] px-2 py-3 md:px-3">
               <div
                 className="absolute inset-x-3 bottom-4"
                 style={{ top: 'calc(36% + 30px)' }}
