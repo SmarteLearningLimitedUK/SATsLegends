@@ -53,11 +53,10 @@ const GameRulesModal: React.FC<GameRulesModalProps> = ({
           >
             <button
               onClick={onClose}
-              className="ui-icon-button absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full p-0 text-white transition md:right-4 md:top-4"
-              style={closeButtonStyle}
+              className="ui-close-button absolute right-3 top-3 z-20 md:right-4 md:top-4"
               aria-label="Close rules"
             >
-              <AssetIcon name="x" className="h-5 w-5 text-slate-100 drop-shadow-[0_1px_4px_rgba(2,6,23,0.45)]" />
+              <span aria-hidden="true">×</span>
             </button>
 
             <HUDBar

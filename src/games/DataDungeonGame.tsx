@@ -387,10 +387,10 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
               <button
                 type="button"
                 onClick={onBack}
-                className="ui-icon-button absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full p-0 text-white"
+                className="ui-close-button absolute right-4 top-4 z-20"
                 aria-label="Close result"
               >
-                <AssetIcon name="x" className="h-5 w-5" />
+                <span aria-hidden="true">×</span>
               </button>
 
               <div className={`text-5xl font-black ${isVictory ? 'text-amber-400' : 'text-amber-500'} drop-shadow-md text-center`}>

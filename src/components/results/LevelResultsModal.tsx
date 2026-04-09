@@ -141,10 +141,10 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(56,189,248,0.18),transparent_55%),radial-gradient(circle_at_50%_100%,rgba(251,191,36,0.18),transparent_60%)]" />
             <button
               onClick={onMap}
-              className="ui-icon-button absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full p-0 text-white md:right-5 md:top-5"
+              className="ui-close-button absolute right-4 top-4 z-20 md:right-5 md:top-5"
               aria-label="Close results"
             >
-              <AssetIcon name="x" className="h-5 w-5 md:h-6 md:w-6" />
+              <span aria-hidden="true">×</span>
             </button>
 
             <div className="relative z-10 flex flex-col gap-4">

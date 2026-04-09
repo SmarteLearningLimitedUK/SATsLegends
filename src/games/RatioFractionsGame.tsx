@@ -326,109 +326,106 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const worldWidth = Math.max(tuning.trackLength + viewport.width, viewport.width * 2);
   const showBoost = raceState === 'correctBoost';
   const showStall = raceState === 'incorrectStall';
+  const trackLineY = 58;
 
   const playerStyle = {
     transform: `translateX(${playerX + worldOffset}px)`,
+    top: `${trackLineY}%`,
   };
 
   const enemyStyle = {
     transform: `translateX(${enemyX + worldOffset}px)`,
+    top: `${trackLineY}%`,
   };
 
   const finishStyle = {
     transform: `translateX(${finishX + worldOffset}px)`,
+    top: `${trackLineY - 6}%`,
   };
 
   return (
     <GameUiShell overlayDisabled>
-      <GameScreenLayout
-        className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-2 text-white"
-        top={(
-          <div className="flex flex-col gap-2">
-            <GameTopBar
-              onBack={onBack}
-              progressLabel={`Fuel Check ${roundIndex + 1}`}
-              lives={lives}
-              className="w-full"
-              audioEnabled
-            />
-            <div className="rounded-[1.4rem] border border-white/20 bg-white px-4 py-3 text-slate-900 shadow-[0_18px_32px_rgba(2,6,23,0.35)]">
-              <div className="mb-2 text-[11px] font-black uppercase tracking-[0.2em] text-slate-800/80">
-                Fuel Mix Question
-              </div>
-              <div className="text-[15px] font-black leading-tight text-slate-900">
-                {question.prompt}
-              </div>
-              <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-slate-700">
-                {question.labels.map((label, index) => (
-                  <span key={`${label}-${index}`}>
-                    {label} {question.ratio[index]}
-                    {index < question.labels.length - 1 ? ' : ' : ''}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-        main={(
-          <div
-            ref={raceViewportRef}
-            className="relative h-full w-full overflow-hidden rounded-[1.6rem] border border-white/12 shadow-[0_18px_32px_rgba(2,6,23,0.4)]"
-          >
-            <div
-              className="pointer-events-none absolute inset-0"
-              style={{
-                backgroundImage: `url(${ratioBackdrop})`,
-                backgroundRepeat: 'repeat-x',
-                backgroundSize: 'auto 100%',
-                backgroundPositionX: `${-cameraXRef.current * 0.35}px`,
-                backgroundPositionY: 'bottom',
-              }}
-            />
-            <div className="absolute left-4 top-4 z-10 flex items-center gap-2 rounded-full border border-white/18 bg-slate-900 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-amber-100">
-              Track {Math.round(trackProgress * 100)}%
-            </div>
+      <div className="relative h-full w-full">
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            backgroundImage: `url(${ratioBackdrop})`,
+            backgroundRepeat: 'repeat-x',
+            backgroundSize: 'auto 100%',
+            backgroundPositionX: `${-cameraXRef.current * 0.35}px`,
+            backgroundPositionY: 'bottom',
+          }}
+        />
 
-            <div className="absolute inset-0">
+        <GameScreenLayout
+          className="relative z-10 px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-2 text-white"
+          top={null}
+          main={(
+            <div className="relative flex h-full w-full flex-col gap-2 overflow-hidden">
+              <div className="relative z-10 flex flex-col gap-2">
+                <div className="game-question-card">
+                  <div className="question-title">Fuel Mix Question</div>
+                  <div className="question-subtitle">{question.prompt}</div>
+                  <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-slate-100/80">
+                    {question.labels.map((label, index) => (
+                      <span key={`${label}-${index}`}>
+                        {label} {question.ratio[index]}
+                        {index < question.labels.length - 1 ? ' : ' : ''}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
               <div
-                className="absolute top-[42%] flex h-12 w-12 items-center justify-center rounded-full border border-amber-200/60 bg-amber-400 text-xs font-black uppercase text-slate-900"
-                style={finishStyle}
+                ref={raceViewportRef}
+                className="relative z-10 flex min-h-0 flex-1 w-full overflow-hidden"
               >
-                Finish
+                <div className="absolute left-4 top-4 z-10 flex items-center gap-2 rounded-full border border-white/18 bg-slate-900/70 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-amber-100">
+                  Track {Math.round(trackProgress * 100)}%
+                </div>
+
+                <div className="absolute inset-0">
+                  <div
+                    className="absolute flex h-12 w-12 items-center justify-center rounded-full border border-amber-200/60 bg-amber-400 text-xs font-black uppercase text-slate-900"
+                    style={finishStyle}
+                  >
+                    Finish
+                  </div>
+
+                  <motion.div
+                    key={`player-${renderTick}`}
+                    className="absolute flex h-32 w-48 items-center justify-center"
+                    style={playerStyle}
+                    animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { x: [0, -4, 4, -3, 3, 0] } : { scale: 1 }}
+                    transition={{ duration: 0.35 }}
+                  >
+                    <img src={playerKart} alt="Player kart" className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]" />
+                    {showBoost ? (
+                      <span className="absolute -left-2 top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-amber-200 shadow-[0_0_12px_rgba(251,191,36,0.8)]" />
+                    ) : null}
+                    {showStall ? (
+                      <span className="absolute -left-2 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-slate-400/80" />
+                    ) : null}
+                  </motion.div>
+
+                  <motion.div
+                    key={`enemy-${renderTick}`}
+                    className="absolute flex h-32 w-48 items-center justify-center"
+                    style={enemyStyle}
+                  >
+                    <img src={enemyKart} alt="Enemy kart" className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(251,113,133,0.6)]" />
+                  </motion.div>
+                </div>
+
+                {raceState === 'introCountdown' ? (
+                  <div className="absolute inset-0 flex items-center justify-center bg-slate-950/70 text-5xl font-black text-amber-100">
+                    {countdown || 'Go!'}
+                  </div>
+                ) : null}
               </div>
-
-              <motion.div
-                key={`player-${renderTick}`}
-                className="absolute top-[36%] flex h-32 w-48 items-center justify-center"
-                style={playerStyle}
-                animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { x: [0, -4, 4, -3, 3, 0] } : { scale: 1 }}
-                transition={{ duration: 0.35 }}
-              >
-                <img src={playerKart} alt="Player kart" className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]" />
-                {showBoost ? (
-                  <span className="absolute -left-2 top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-amber-200 shadow-[0_0_12px_rgba(251,191,36,0.8)]" />
-                ) : null}
-                {showStall ? (
-                  <span className="absolute -left-2 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-slate-400/80" />
-                ) : null}
-              </motion.div>
-
-              <motion.div
-                key={`enemy-${renderTick}`}
-                className="absolute top-[58%] flex h-32 w-48 items-center justify-center"
-                style={enemyStyle}
-              >
-                <img src={enemyKart} alt="Enemy kart" className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(251,113,133,0.6)]" />
-              </motion.div>
             </div>
-
-            {raceState === 'introCountdown' ? (
-              <div className="absolute inset-0 flex items-center justify-center bg-slate-950 text-5xl font-black text-amber-100">
-                {countdown || 'Go!'}
-              </div>
-            ) : null}
-          </div>
-        )}
+          )}
         bottom={(
           <div className="flex flex-col gap-2">
             <div className="grid grid-cols-4 gap-2">
@@ -455,7 +452,8 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             </FeedbackStrip>
           </div>
         )}
-      />
+        />
+      </div>
     </GameUiShell>
   );
 };

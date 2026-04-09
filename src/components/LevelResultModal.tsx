@@ -116,10 +116,10 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
                 triggerHaptic('selection');
                 result.onPrimary();
               }}
-              className="ui-icon-button absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full p-0 text-white md:right-5 md:top-5"
+              className="ui-close-button absolute right-4 top-4 z-20 md:right-5 md:top-5"
               aria-label="Close result"
             >
-              <AssetIcon name="x" className="h-5 w-5 md:h-6 md:w-6" />
+              <span aria-hidden="true">×</span>
             </button>
 
             {isVictory && (

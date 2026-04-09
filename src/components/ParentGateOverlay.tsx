@@ -67,9 +67,10 @@ const ParentGateOverlay: React.FC<ParentGateOverlayProps> = ({ isOpen, onClose, 
                 stopHold();
                 onClose();
               }}
-              className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/5"
+              className="ui-close-button absolute right-3 top-3"
+              aria-label="Close"
             >
-              <AssetIcon name="x" className="h-4 w-4" />
+              <span aria-hidden="true">×</span>
             </button>
 
             <div className="text-center text-[11px] font-black uppercase tracking-[0.22em] text-cyan-100/70">

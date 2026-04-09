@@ -36,10 +36,10 @@ const WellbeingCompleteModal: React.FC<WellbeingCompleteModalProps> = ({
           <button
             type="button"
             onClick={onBackToHub}
-            className="ui-icon-button absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full p-0 text-white"
+            className="ui-close-button absolute right-4 top-4"
             aria-label="Close"
           >
-            <AssetIcon name="x" className="h-4 w-4" />
+            <span aria-hidden="true">×</span>
           </button>
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[radial-gradient(circle,rgba(167,243,208,0.36),rgba(125,211,252,0.15))] text-3xl shadow-[0_0_28px_rgba(167,243,208,0.18)]">
             ?
