@@ -8,7 +8,6 @@ import questionBarTiny from '../assets/ui_frames/hudfortextplace_slices/text_bar
 import questionBarSmall from '../assets/ui_frames/hudfortextplace_slices/text_bar_small.png';
 import questionBarMedium from '../assets/ui_frames/hudfortextplace_slices/text_bar_medium.png';
 import questionBarLarge from '../assets/ui_frames/hudfortextplace_slices/text_bar_large.png';
-import placeValueBackdrop from '../assets/maps/placepanicbkk.png';
 import socketM from '../assets/casual_ui/updaed_sockets_slices/socket_m.png';
 import socketHth from '../assets/casual_ui/updaed_sockets_slices/socket_hth.png';
 import socketTth from '../assets/casual_ui/updaed_sockets_slices/socket_tth.png';
@@ -917,10 +916,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       className="relative z-20 h-full w-full min-h-0 overflow-hidden select-none"
       style={{ touchAction: 'manipulation' }}
     >
-      <div
-        className="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${placeValueBackdrop})` }}
-      />
       {!useSharedTopHud ? (
         <div
           className="pointer-events-none absolute inset-x-0 top-0 z-40"
