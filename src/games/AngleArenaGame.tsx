@@ -12,7 +12,8 @@ import {
   SecondaryButton,
 } from '../components/game-ui/GameUiKit';
 import catapultAsset from '../assets/angle_arena/catapultfinal.png';
-import battleBackground from '../assets/angle_arena/angle arenabkground.png';
+import angleArenaBackgroundA from '../assets/level_backgrounds/angle arena bkground.jpg';
+import angleArenaBackgroundB from '../assets/level_backgrounds/anglearenabkground2.jpg';
 import { BOSS_ASSETS } from '../assets/bosses';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { computeLaunchVector, stepProjectile, ProjectileState } from './angleArena/physics';
@@ -49,6 +50,10 @@ const INITIAL_TIMER = 90;
 const INITIAL_LIVES = 3;
 const POINTS_PER_HIT = 250;
 const ENEMY_DISTANCE_RATIO = 0.34;
+const ANGLE_BACKGROUNDS = [angleArenaBackgroundA, angleArenaBackgroundB];
+
+const pickRandomBackground = () =>
+  ANGLE_BACKGROUNDS[Math.floor(Math.random() * ANGLE_BACKGROUNDS.length)];
 
 const formatTime = (seconds: number) => {
   const clamped = Math.max(0, Math.floor(seconds));
@@ -89,6 +94,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const [localLives, setLocalLives] = useState(INITIAL_LIVES);
   const [localTimer, setLocalTimer] = useState(INITIAL_TIMER);
   const [stars, setStars] = useState(0);
+  const [backgroundAsset] = useState(() => pickRandomBackground());
 
   const rawQuestions = useMemo(
     () => buildAngleQuestions({
@@ -155,9 +161,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
   useEffect(() => {
     const img = new Image();
-    img.src = battleBackground;
+    img.src = backgroundAsset;
     backgroundImageRef.current = img;
-  }, []);
+  }, [backgroundAsset]);
 
   useEffect(() => {
     const bossImage = BOSS_ASSETS.croc_boss?.poses?.neutral || BOSS_ASSETS.croc_boss?.poses?.attack;

@@ -1,10 +1,15 @@
-ï»¿import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { triggerHaptic } from '../haptics';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
-import boatsSprite from '../assets/boats.jpg';
+import boat1 from '../assets/boats/1.png';
+import boat2 from '../assets/boats/2.png';
+import boat3 from '../assets/boats/3.png';
+import boat4 from '../assets/boats/4.png';
+import boat5 from '../assets/boats/5.png';
+import boat6 from '../assets/boats/6.png';
+import boat7 from '../assets/boats/7.png';
 import dockBackground from '../assets/maps/harbour.jpg';
 
 interface DivisionDockGameProps {
@@ -31,9 +36,18 @@ type FeedbackState = null | {
 const HEARTS_MAX = 3;
 const DOCK_COUNT = 3;
 const ROUNDS_TO_WIN = 5;
-const BOAT_SPRITE_GRID = { columns: 2, rows: 2 } as const;
+const BOAT_ASSETS = [boat1, boat2, boat3, boat4, boat5, boat6, boat7];
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+const pickBoatSet = () => {
+  const pool = [...BOAT_ASSETS];
+  for (let i = pool.length - 1; i > 0; i -= 1) {
+    const swapIndex = randomInt(0, i);
+    [pool[i], pool[swapIndex]] = [pool[swapIndex], pool[i]];
+  }
+  return pool.slice(0, DOCK_COUNT);
+};
 
 const createDivisionQuestion = (levelId: number, solved: number): DivisionQuestion => {
   const divisor = DOCK_COUNT;
@@ -60,6 +74,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
   const [Combo, setStreak] = useState(0);
   const [roundSolved, setRoundSolved] = useState(0);
   const [boatLoads, setBoatLoads] = useState<number[]>(() => Array.from({ length: DOCK_COUNT }, () => 0));
+  const [boatSet, setBoatSet] = useState<string[]>(() => pickBoatSet());
   const [solvedCount, setSolvedCount] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
@@ -89,6 +104,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
     setStreak(0);
     setRoundSolved(0);
     setBoatLoads(Array.from({ length: DOCK_COUNT }, () => 0));
+    setBoatSet(pickBoatSet());
     setSolvedCount(0);
     setAttempts(0);
     setCorrectAnswers(0);
@@ -139,7 +155,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
     setFeedback({
       type: 'error',
       title: 'Not Loaded',
-      subtitle: `${question.dividend} Ã· ${question.divisor} = ${question.answer}`,
+      subtitle: `${question.dividend} ÷ ${question.divisor} = ${question.answer}`,
     });
     triggerHaptic('error');
 
@@ -155,22 +171,11 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
     const timerId = window.setTimeout(() => {
       setQuestion(createDivisionQuestion(levelId, solvedCount));
       setBoatLoads(Array.from({ length: DOCK_COUNT }, () => 0));
+      setBoatSet(pickBoatSet());
       setFeedback(null);
     }, 620);
     timersRef.current.push(timerId);
   };
-
-  const boatFramePosition = useMemo(() => (
-    Array.from({ length: DOCK_COUNT }, (_, index) => {
-      const frame = index % (BOAT_SPRITE_GRID.columns * BOAT_SPRITE_GRID.rows);
-      const column = frame % BOAT_SPRITE_GRID.columns;
-      const row = Math.floor(frame / BOAT_SPRITE_GRID.columns);
-      return {
-        x: `${column * 100}%`,
-        y: `${row * 100}%`,
-      };
-    })
-  ), []);
 
   const remainingGoods = Math.max(0, question.dividend - boatLoads.reduce((sum, count) => sum + count, 0));
   const allUsed = remainingGoods === 0;
@@ -240,6 +245,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
     const timerId = window.setTimeout(() => {
       setQuestion(createDivisionQuestion(levelId, nextSolved));
       setBoatLoads(Array.from({ length: DOCK_COUNT }, () => 0));
+      setBoatSet(pickBoatSet());
       setFeedback(null);
     }, 720);
     timersRef.current.push(timerId);
@@ -271,7 +277,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
                 <div className="mt-2 rounded-[0.95rem] border border-sky-200/20 bg-[linear-gradient(180deg,rgba(14,116,144,0.22),rgba(14,116,144,0.08))] p-2.5 text-center md:mt-2.5 md:p-3">
                   <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/70 md:text-xs">Current equation</div>
                   <div className="mt-1 text-[clamp(1.4rem,4vw,2.3rem)] font-black text-white">
-                    {question.dividend} Ã· {question.divisor} = ?
+                    {question.dividend} ÷ {question.divisor} = ?
                   </div>
                 </div>
 
@@ -305,14 +311,11 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
                       className="flex items-center gap-3 rounded-[1rem] border border-white/12 bg-[linear-gradient(180deg,rgba(56,189,248,0.18),rgba(15,23,42,0.7))] px-3 py-1.5 text-left shadow-[0_10px_18px_rgba(2,6,23,0.2)] transition active:scale-[0.98] disabled:opacity-60"
                     >
                       <div className="relative h-14 w-16 overflow-hidden rounded-lg border border-white/18 bg-transparent">
-                        <div
-                          className="absolute inset-0"
-                          style={{
-                            backgroundImage: `url(${boatsSprite})`,
-                            backgroundSize: `${BOAT_SPRITE_GRID.columns * 100}% ${BOAT_SPRITE_GRID.rows * 100}%`,
-                            backgroundPosition: `${boatFramePosition[index].x} ${boatFramePosition[index].y}`,
-                            backgroundRepeat: 'no-repeat',
-                          }}
+                        <img
+                          src={boatSet[index] ?? boat1}
+                          alt={`Dock ${index + 1} boat`}
+                          className="h-full w-full object-contain"
+                          draggable={false}
                         />
                       </div>
                       <div className="flex-1">
@@ -373,6 +376,9 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
 };
 
 export default DivisionDockGame;
+
+
+
 
 
 
