@@ -31,9 +31,10 @@ const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({ isOpen, onClose, qu
           >
             <button
               onClick={onClose}
-              className="ui-icon-button absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full p-0 text-white md:right-6 md:top-6"
+              className="ui-close-button absolute right-4 top-4 z-20 md:right-6 md:top-6"
+              aria-label="Close"
             >
-              <AssetIcon name="x" className="h-5 w-5 md:h-6 md:w-6" />
+              <span aria-hidden="true">×</span>
             </button>
 
             <div className="relative z-10 flex flex-col items-center">
