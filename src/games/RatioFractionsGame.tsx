@@ -150,26 +150,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   );
   const lives = sessionState?.lives ?? 3;
   const buildExplanation = (q: RatioFractionQuestion) => q.explanation;
-  const segmentColors: Record<string, { bg: string; glow: string }> = {
-    Fuel: { bg: '#f97316', glow: 'rgba(249,115,22,0.7)' },
-    Propellant: { bg: '#f59e0b', glow: 'rgba(245,158,11,0.7)' },
-    Additive: { bg: '#facc15', glow: 'rgba(250,204,21,0.7)' },
-    Oxygen: { bg: '#38bdf8', glow: 'rgba(56,189,248,0.7)' },
-    Oxidiser: { bg: '#a855f7', glow: 'rgba(168,85,247,0.7)' },
-  };
-  const fuelSegments = useMemo(() => {
-    const segments: Array<{ label: string; index: number }> = [];
-    question.labels.forEach((label, idx) => {
-      const count = question.ratio[idx] ?? 0;
-      for (let i = 0; i < count; i += 1) {
-        segments.push({ label, index: idx });
-      }
-    });
-    return segments;
-  }, [question.labels, question.ratio]);
-  const totalParts = question.ratio.reduce((sum, value) => sum + value, 0);
-  const targetIndex = question.labels.findIndex((label) => label.toLowerCase() === question.target.toLowerCase());
-  const targetCount = question.ratio[targetIndex] ?? 0;
+  
 
   useEffect(() => {
     if (!raceViewportRef.current || typeof ResizeObserver === 'undefined') return;
@@ -311,7 +292,6 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
         setSelected(null);
         setLocked(false);
-        setRaceState('nextQuestion');
         setRoundIndex((prev) => prev + 1);
         setFeedback('Answer to boost your racer.');
         setFeedbackTone('neutral');
@@ -332,7 +312,6 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
       setSelected(null);
       setLocked(false);
-      setRaceState('nextQuestion');
       setRoundIndex((prev) => prev + 1);
       setFeedback('Answer to boost your racer.');
       setFeedbackTone('neutral');
@@ -361,7 +340,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   };
 
   return (
-    <GameUiShell backgroundImage={ratioBackdrop} backgroundOpacity={0.9}>
+    <GameUiShell backgroundImage={ratioBackdrop} backgroundOpacity={1}>
       <GameScreenLayout
         className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-2 text-white"
         top={(
@@ -378,7 +357,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
         main={(
           <div
             ref={raceViewportRef}
-            className="relative h-full w-full overflow-hidden rounded-[1.6rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.2),rgba(2,6,23,0.7))] shadow-[0_18px_32px_rgba(2,6,23,0.4)]"
+            className="relative h-full w-full overflow-hidden rounded-[1.6rem] border border-white/12 shadow-[0_18px_32px_rgba(2,6,23,0.4)]"
           >
             <div
               className="pointer-events-none absolute inset-0"
@@ -390,23 +369,21 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                 backgroundPositionY: 'bottom',
               }}
             />
-            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0.08)_0%,rgba(2,6,23,0.45)_100%)]" />
-
-            <div className="absolute left-4 top-4 z-10 flex items-center gap-2 rounded-full border border-white/18 bg-slate-900/70 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-amber-100">
+            <div className="absolute left-4 top-4 z-10 flex items-center gap-2 rounded-full border border-white/18 bg-slate-900 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-amber-100">
               Track {Math.round(trackProgress * 100)}%
             </div>
 
             <div className="absolute inset-y-0 left-0 right-0">
               <div
-                className="absolute top-[30%] h-[40%] rounded-[2rem] border border-white/15 bg-[linear-gradient(90deg,rgba(15,23,42,0.75),rgba(30,41,59,0.75))]"
+                className="absolute top-[30%] h-[40%] rounded-[2rem] border border-white/15 bg-slate-900"
                 style={{ width: `${worldWidth}px`, transform: `translateX(${worldOffset}px)` }}
               />
               <div
-                className="absolute top-[47%] h-[6%] border border-white/20 bg-[linear-gradient(90deg,rgba(59,130,246,0.25),rgba(14,116,144,0.4))]"
+                className="absolute top-[47%] h-[6%] border border-white/20 bg-sky-700"
                 style={{ width: `${worldWidth}px`, transform: `translateX(${worldOffset}px)` }}
               />
               <div
-                className="absolute top-[54%] h-[6%] border border-white/20 bg-[linear-gradient(90deg,rgba(250,204,21,0.25),rgba(217,119,6,0.4))]"
+                className="absolute top-[54%] h-[6%] border border-white/20 bg-amber-600"
                 style={{ width: `${worldWidth}px`, transform: `translateX(${worldOffset}px)` }}
               />
             </div>
@@ -421,7 +398,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
               <motion.div
                 key={`player-${renderTick}`}
-                className="absolute top-[40%] flex h-16 w-24 items-center justify-center"
+                className="absolute top-[36%] flex h-32 w-48 items-center justify-center"
                 style={playerStyle}
                 animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { x: [0, -4, 4, -3, 3, 0] } : { scale: 1 }}
                 transition={{ duration: 0.35 }}
@@ -437,7 +414,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
               <motion.div
                 key={`enemy-${renderTick}`}
-                className="absolute top-[58%] flex h-16 w-24 items-center justify-center"
+                className="absolute top-[58%] flex h-32 w-48 items-center justify-center"
                 style={enemyStyle}
               >
                 <img src={enemyKart} alt="Enemy kart" className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(251,113,133,0.6)]" />
@@ -445,13 +422,13 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             </div>
 
             {raceState === 'introCountdown' ? (
-              <div className="absolute inset-0 flex items-center justify-center bg-slate-950/45 text-5xl font-black text-amber-100">
+              <div className="absolute inset-0 flex items-center justify-center bg-slate-950 text-5xl font-black text-amber-100">
                 {countdown || 'Go!'}
               </div>
             ) : null}
 
             <div className="pointer-events-none absolute left-4 top-1/2 w-[40%] -translate-y-1/2">
-              <div className="rounded-[1.4rem] border border-white/15 bg-white/15 px-4 py-3 text-slate-900 shadow-[0_18px_32px_rgba(2,6,23,0.35)]">
+              <div className="rounded-[1.4rem] border border-white/15 bg-white px-4 py-3 text-slate-900 shadow-[0_18px_32px_rgba(2,6,23,0.35)]">
                 <div className="mb-2 text-[11px] font-black uppercase tracking-[0.2em] text-slate-800/70">
                   Fuel Mix Question
                 </div>
@@ -465,43 +442,6 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                       {index < question.labels.length - 1 ? ' : ' : ''}
                     </span>
                   ))}
-                </div>
-              </div>
-              <div className="mt-3 rounded-[1.4rem] border border-white/12 bg-slate-900/75 px-3 py-2">
-                <div className="mb-1 text-center text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/80">
-                  Fuel Chamber
-                </div>
-                <div className="flex flex-wrap items-center justify-center gap-1.5">
-                  {fuelSegments.map((segment, index) => {
-                    const color = segmentColors[segment.label] ?? { bg: '#94a3b8', glow: 'rgba(148,163,184,0.6)' };
-                    const isTarget = segment.label.toLowerCase() === question.target.toLowerCase();
-                    const glow =
-                      showBoost
-                        ? `0 0 12px ${color.glow}`
-                        : showStall
-                          ? '0 0 8px rgba(248,113,113,0.7)'
-                          : isTarget
-                            ? `0 0 10px ${color.glow}`
-                            : '0 0 6px rgba(15,23,42,0.45)';
-                    return (
-                      <motion.div
-                        key={`${segment.label}-${index}`}
-                        className="flex h-7 w-10 items-center justify-center rounded-md border border-white/20 text-[9px] font-black uppercase text-white"
-                        animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { scale: [1, 0.92, 1] } : { scale: 1 }}
-                        transition={{ duration: 0.3 }}
-                        style={{
-                          backgroundColor: color.bg,
-                          boxShadow: glow,
-                          opacity: isTarget ? 1 : 0.82,
-                        }}
-                      >
-                        {segment.label.slice(0, 1)}
-                      </motion.div>
-                    );
-                  })}
-                </div>
-                <div className="mt-1.5 text-center text-[10px] font-bold text-cyan-100/90">
-                  {showBoost || showStall ? `${targetCount} out of ${totalParts} parts -> ${question.correctAnswer}` : `Total parts: ${totalParts}`}
                 </div>
               </div>
             </div>
