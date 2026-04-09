@@ -141,6 +141,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const enemyTargetRef = useRef(START_OFFSET);
   const cameraXRef = useRef(0);
   const enemyAdvanceQueueRef = useRef(0);
+  const reportedResultRef = useRef(false);
 
   const trackProgress = Math.min(1, playerPosRef.current / tuning.trackLength);
   const difficultyTier = getQuestionTier(trackProgress);
@@ -226,16 +227,22 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   };
 
   useEffect(() => {
-    if (raceState === 'playerWin') {
+    if (raceState === 'playerWin' && !reportedResultRef.current) {
+      reportedResultRef.current = true;
       const xp = BASE_XP + correctCount * 45 + levelId * 30;
       onVictory(starsForAccuracy(correctCount, attempts || 1), xp);
     }
 
-    if (raceState === 'enemyWin' || (sessionState && lives <= 0)) {
+    if ((raceState === 'enemyWin' || (sessionState && lives <= 0)) && !reportedResultRef.current) {
+      reportedResultRef.current = true;
       const xp = Math.max(20, BASE_XP * 0.35 + correctCount * 20);
       onGameOver(xp);
     }
   }, [attempts, correctCount, levelId, lives, onGameOver, onVictory, raceState, sessionState]);
+
+  useEffect(() => {
+    reportedResultRef.current = false;
+  }, [levelId]);
 
   useEffect(() => {
     if (raceState !== 'introCountdown') return;
@@ -351,7 +358,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
           style={{
             backgroundImage: `url(${ratioBackdrop})`,
             backgroundRepeat: 'repeat-x',
-            backgroundSize: 'auto 120%',
+            backgroundSize: 'auto 145%',
             backgroundPositionX: `${-cameraXRef.current * 0.35}px`,
             backgroundPositionY: 'center',
           }}
@@ -359,43 +366,43 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
         <GameScreenLayout
           className="relative z-10 px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-2 text-white"
-          top={(
-            <div className="flex flex-col gap-2">
-              <div className="game-question-card">
-                <div className="question-title">Fuel Mix Question</div>
-                <div className="question-subtitle">{question.prompt}</div>
-                <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-slate-100/80">
-                  {question.labels.map((label, index) => (
-                    <span key={`${label}-${index}`}>
-                      {label} {question.ratio[index]}
-                      {index < question.labels.length - 1 ? ' : ' : ''}
-                    </span>
+          top={null}
+          main={(
+            <div className="relative flex h-full w-full flex-col gap-2 overflow-hidden">
+              <div className="relative z-10 flex flex-col gap-2">
+                <div className="game-question-card">
+                  <div className="question-title">Fuel Mix Question</div>
+                  <div className="question-subtitle">{question.prompt}</div>
+                  <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-slate-100/80">
+                    {question.labels.map((label, index) => (
+                      <span key={`${label}-${index}`}>
+                        {label} {question.ratio[index]}
+                        {index < question.labels.length - 1 ? ' : ' : ''}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="grid grid-cols-4 gap-2">
+                  {question.options.map((option) => (
+                    <motion.button
+                      key={option}
+                      whileTap={{ scale: 0.96 }}
+                      onClick={() => handleAnswer(option)}
+                      disabled={locked || raceState !== 'showingQuestion'}
+                      className={`min-h-[3.1rem] rounded-[1rem] border px-2 py-2 text-center text-base font-black shadow-[0_12px_20px_rgba(2,6,23,0.25)] transition ${
+                        selected === option
+                          ? option === question.correctAnswer
+                            ? 'border-emerald-200 bg-emerald-300 text-emerald-950'
+                            : 'border-rose-200 bg-rose-300 text-rose-950'
+                          : 'border-amber-200 bg-amber-400 text-slate-900'
+                      }`}
+                    >
+                      {option}
+                    </motion.button>
                   ))}
                 </div>
               </div>
-              <div className="grid grid-cols-4 gap-2">
-                {question.options.map((option) => (
-                  <motion.button
-                    key={option}
-                    whileTap={{ scale: 0.96 }}
-                    onClick={() => handleAnswer(option)}
-                    disabled={locked || raceState !== 'showingQuestion'}
-                    className={`min-h-[3.1rem] rounded-[1rem] border px-2 py-2 text-center text-base font-black shadow-[0_12px_20px_rgba(2,6,23,0.25)] transition ${
-                      selected === option
-                        ? option === question.correctAnswer
-                          ? 'border-emerald-200 bg-emerald-300 text-emerald-950'
-                          : 'border-rose-200 bg-rose-300 text-rose-950'
-                        : 'border-amber-200 bg-amber-400 text-slate-900'
-                    }`}
-                  >
-                    {option}
-                  </motion.button>
-                ))}
-              </div>
-            </div>
-          )}
-          main={(
-            <div className="relative flex h-full w-full flex-col gap-2 overflow-hidden">
+
               <div
                 ref={raceViewportRef}
                 className="relative z-10 flex min-h-0 flex-1 w-full overflow-hidden"
@@ -441,13 +448,13 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                   </div>
                 ) : null}
               </div>
+
+              <FeedbackStrip tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}>
+                {feedback}
+              </FeedbackStrip>
             </div>
           )}
-          bottom={(
-            <FeedbackStrip tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}>
-              {feedback}
-            </FeedbackStrip>
-          )}
+          bottom={null}
         />
       </div>
     </GameUiShell>
