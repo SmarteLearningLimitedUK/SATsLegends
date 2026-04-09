@@ -340,7 +340,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   };
 
   return (
-    <GameUiShell backgroundImage={ratioBackdrop} backgroundOpacity={1}>
+    <GameUiShell overlayDisabled>
       <GameScreenLayout
         className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-2 text-white"
         top={(
@@ -352,6 +352,22 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
               className="w-full"
               audioEnabled
             />
+            <div className="rounded-[1.4rem] border border-white/20 bg-white px-4 py-3 text-slate-900 shadow-[0_18px_32px_rgba(2,6,23,0.35)]">
+              <div className="mb-2 text-[11px] font-black uppercase tracking-[0.2em] text-slate-800/80">
+                Fuel Mix Question
+              </div>
+              <div className="text-[15px] font-black leading-tight text-slate-900">
+                {question.prompt}
+              </div>
+              <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-slate-700">
+                {question.labels.map((label, index) => (
+                  <span key={`${label}-${index}`}>
+                    {label} {question.ratio[index]}
+                    {index < question.labels.length - 1 ? ' : ' : ''}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         )}
         main={(
@@ -371,21 +387,6 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             />
             <div className="absolute left-4 top-4 z-10 flex items-center gap-2 rounded-full border border-white/18 bg-slate-900 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-amber-100">
               Track {Math.round(trackProgress * 100)}%
-            </div>
-
-            <div className="absolute inset-y-0 left-0 right-0">
-              <div
-                className="absolute top-[30%] h-[40%] rounded-[2rem] border border-white/15 bg-slate-900"
-                style={{ width: `${worldWidth}px`, transform: `translateX(${worldOffset}px)` }}
-              />
-              <div
-                className="absolute top-[47%] h-[6%] border border-white/20 bg-sky-700"
-                style={{ width: `${worldWidth}px`, transform: `translateX(${worldOffset}px)` }}
-              />
-              <div
-                className="absolute top-[54%] h-[6%] border border-white/20 bg-amber-600"
-                style={{ width: `${worldWidth}px`, transform: `translateX(${worldOffset}px)` }}
-              />
             </div>
 
             <div className="absolute inset-0">
@@ -426,51 +427,29 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                 {countdown || 'Go!'}
               </div>
             ) : null}
-
-            <div className="pointer-events-none absolute left-4 top-1/2 w-[40%] -translate-y-1/2">
-              <div className="rounded-[1.4rem] border border-white/15 bg-white px-4 py-3 text-slate-900 shadow-[0_18px_32px_rgba(2,6,23,0.35)]">
-                <div className="mb-2 text-[11px] font-black uppercase tracking-[0.2em] text-slate-800/70">
-                  Fuel Mix Question
-                </div>
-                <div className="text-[15px] font-black leading-tight text-slate-900">
-                  {question.prompt}
-                </div>
-                <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-slate-700">
-                  {question.labels.map((label, index) => (
-                    <span key={`${label}-${index}`}>
-                      {label} {question.ratio[index]}
-                      {index < question.labels.length - 1 ? ' : ' : ''}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="absolute right-4 top-1/2 w-[30%] -translate-y-1/2">
-              <div className="grid gap-3">
-                {question.options.map((option) => (
-                  <motion.button
-                    key={option}
-                    whileTap={{ scale: 0.96 }}
-                    onClick={() => handleAnswer(option)}
-                    disabled={locked || raceState !== 'showingQuestion'}
-                    className={`min-h-[3.2rem] rounded-[1rem] border px-3 py-2 text-center text-xl font-black shadow-[0_12px_20px_rgba(2,6,23,0.25)] transition ${
-                      selected === option
-                        ? option === question.correctAnswer
-                          ? 'border-emerald-200/70 bg-emerald-300/60 text-emerald-950'
-                          : 'border-rose-200/70 bg-rose-300/60 text-amber-950'
-                        : 'border-amber-200/60 bg-amber-400/90 text-slate-900'
-                    }`}
-                  >
-                    {option}
-                  </motion.button>
-                ))}
-              </div>
-            </div>
           </div>
         )}
         bottom={(
           <div className="flex flex-col gap-2">
+            <div className="grid grid-cols-4 gap-2">
+              {question.options.map((option) => (
+                <motion.button
+                  key={option}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => handleAnswer(option)}
+                  disabled={locked || raceState !== 'showingQuestion'}
+                  className={`min-h-[3.2rem] rounded-[1rem] border px-2 py-2 text-center text-lg font-black shadow-[0_12px_20px_rgba(2,6,23,0.25)] transition ${
+                    selected === option
+                      ? option === question.correctAnswer
+                        ? 'border-emerald-200 bg-emerald-300 text-emerald-950'
+                        : 'border-rose-200 bg-rose-300 text-rose-950'
+                      : 'border-amber-200 bg-amber-400 text-slate-900'
+                  }`}
+                >
+                  {option}
+                </motion.button>
+              ))}
+            </div>
             <FeedbackStrip tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}>
               {feedback}
             </FeedbackStrip>
