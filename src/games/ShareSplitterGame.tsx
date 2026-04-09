@@ -10,7 +10,7 @@ import {
   SecondaryButton,
 } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
-import shareSplitterBackground from '../assets/level_backgrounds/share splitter bkground.jpg';
+import shareSplitterBackground from '../assets/level_backgrounds/share splitter bkground.png';
 import birthdayCakeAsset from '../assets/birthdaycake.png';
 import cakeSliceAsset from '../assets/cakeslice.png';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
