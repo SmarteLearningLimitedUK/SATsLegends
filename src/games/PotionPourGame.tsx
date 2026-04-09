@@ -15,6 +15,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from '../components/game-ui/GameUiKit';
+import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import GameRulesModal from '../components/GameRulesModal';
 import cauldrenAndPotionArt from '../assets/coul.png';
 import potionPanicBackdrop from '../assets/potionpanic.png';
@@ -744,8 +745,9 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
 
   return (
     <GameUiShell backgroundImage={potionPanicBackdrop} backgroundOpacity={1}>
-      <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+4rem)] pt-3 text-white">
-        <section className="shrink-0">
+      <GameScreenLayout
+        className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-2 text-white"
+        top={(
           <GameTopBar
             onBack={onBack}
             progressLabel={`Round ${Math.min(correctSolved + 1, roundsToWin)} / ${roundsToWin}`}
@@ -755,10 +757,9 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
             onToggleAudio={() => setAudioEnabled((previous) => !previous)}
             onHelp={() => setShowRules(true)}
           />
-        </section>
-
-        <section className="min-h-0 flex-1">
-          <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto_auto] gap-2">
+        )}
+        main={(
+          <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
             <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] border border-white/12 bg-white/5 shadow-[0_16px_30px_rgba(15,23,42,0.2)]">
               <div className="pointer-events-none absolute left-1/2 top-3 w-[90%] -translate-x-1/2 rounded-[1.05rem] bg-slate-950/65 px-3 py-2 text-center backdrop-blur-sm">
                 <div className="text-[12px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Recipe</div>
@@ -863,58 +864,59 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
               </div>
             </div>
           </div>
-        </section>
+        )}
+        bottom={(
+          <div className="flex flex-col gap-2">
+            {hasBrewed ? (
+              <FeedbackStrip
+                tone={feedbackTone === 'success' ? 'success' : feedbackTone === 'hint' ? 'warning' : 'neutral'}
+                className="mx-auto w-full max-w-[780px]"
+              >
+                {feedbackMessage}
+              </FeedbackStrip>
+            ) : null}
 
-        {hasBrewed ? (
-          <section className="shrink-0">
-            <FeedbackStrip
-              tone={feedbackTone === 'success' ? 'success' : feedbackTone === 'hint' ? 'warning' : 'neutral'}
-              className="mx-auto w-full max-w-[780px]"
-            >
-              {feedbackMessage}
-            </FeedbackStrip>
-          </section>
-        ) : null}
-
-        <section className="shrink-0">
-          <div className="mx-auto flex w-full max-w-[780px] items-center gap-2">
-            <PrimaryButton onClick={onBrew} disabled={locked} className="flex-1">
-              <Wand2 className="h-4.5 w-4.5" />
-              {isRecipeComplete ? 'Brew Potion' : 'Brew Potion'}
-            </PrimaryButton>
-            <SecondaryButton onClick={resetCurrent} disabled={locked}>
-              Reset
-            </SecondaryButton>
+            <div className="mx-auto flex w-full max-w-[780px] items-center gap-2">
+              <PrimaryButton onClick={onBrew} disabled={locked} className="flex-1">
+                <Wand2 className="h-4.5 w-4.5" />
+                {isRecipeComplete ? 'Brew Potion' : 'Brew Potion'}
+              </PrimaryButton>
+              <SecondaryButton onClick={resetCurrent} disabled={locked}>
+                Reset
+              </SecondaryButton>
+            </div>
           </div>
-        </section>
-      </div>
+        )}
+        overlay={(
+          <>
+            <GameRulesModal
+              isOpen={showRules}
+              onClose={() => setShowRules(false)}
+              rules={rules}
+            />
 
-      <GameRulesModal
-        isOpen={showRules}
-        onClose={() => setShowRules(false)}
-        rules={rules}
+            {droplets.map((drop) => {
+              const ingredient = INGREDIENTS[drop.index];
+              const left = `${12 + drop.index * 19}%`;
+              return (
+                <motion.span
+                  key={drop.id}
+                  className="pointer-events-none absolute z-30 h-3.5 w-3.5 rounded-full"
+                  style={{
+                    left,
+                    bottom: '12%',
+                    backgroundColor: ingredient.color,
+                    boxShadow: `0 0 10px ${ingredient.glow}`,
+                  }}
+                  initial={{ y: 0, opacity: 0.9, scale: 0.9 }}
+                  animate={{ y: -220, x: 14 - drop.index * 3, opacity: 0, scale: 0.55 }}
+                  transition={{ duration: 0.5, ease: 'easeOut' }}
+                />
+              );
+            })}
+          </>
+        )}
       />
-
-      {droplets.map((drop) => {
-        const ingredient = INGREDIENTS[drop.index];
-        const left = `${12 + drop.index * 19}%`;
-        return (
-          <motion.span
-            key={drop.id}
-            className="pointer-events-none absolute z-30 h-3.5 w-3.5 rounded-full"
-            style={{
-              left,
-              bottom: '12%',
-              backgroundColor: ingredient.color,
-              boxShadow: `0 0 10px ${ingredient.glow}`,
-            }}
-            initial={{ y: 0, opacity: 0.9, scale: 0.9 }}
-            animate={{ y: -220, x: 14 - drop.index * 3, opacity: 0, scale: 0.55 }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-          />
-        );
-      })}
-
     </GameUiShell>
   );
 };

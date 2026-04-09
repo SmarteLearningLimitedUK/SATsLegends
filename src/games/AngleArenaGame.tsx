@@ -11,6 +11,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from '../components/game-ui/GameUiKit';
+import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import catapultAsset from '../assets/angle_arena/catapultfinal.png';
 import angleArenaBackgroundA from '../assets/level_backgrounds/angle arena bkground.jpg';
 import angleArenaBackgroundB from '../assets/level_backgrounds/anglearenabkground2.jpg';
@@ -550,73 +551,71 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
   return (
     <GameUiShell>
-      <div className="flex h-full min-h-0 flex-col gap-1.5 px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2 text-white">
-        <section className="shrink-0">
-          <GameTopBar
-            onBack={onBack}
-            progressLabel={`Question ${questionIndex + 1} / ${questions.length}`}
-            lives={lives}
-            audioEnabled
-            className="w-full"
-          />
-        </section>
+      <GameScreenLayout
+        className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2 text-white"
+        top={(
+          <div className="flex flex-col gap-1.5">
+            <GameTopBar
+              onBack={onBack}
+              progressLabel={`Question ${questionIndex + 1} / ${questions.length}`}
+              lives={lives}
+              audioEnabled
+              className="w-full"
+            />
 
-        <section className="shrink-0">
-          <div
-            className={`relative z-20 w-full transition-all duration-300 ${gameState === 'firing' || gameState === 'projectileFlight' || gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? 'pointer-events-none max-h-0 opacity-0' : 'max-h-[240px] opacity-100'}`}
-          >
-            <div className="game-question-card">
-              <div className="question-title">{formatFantasyPrompt(activeQuestion?.prompt ?? 'Choose the correct launch angle.')}</div>
-            </div>
-            <div className="mt-1.5 grid grid-cols-2 gap-1.5">
-              {(activeQuestion?.options ?? []).map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  onClick={() => handleAnswer(option)}
-                  disabled={gameState !== 'awaitingAnswer'}
-                  className="licensed-answer-button inline-flex min-h-[2.35rem] items-center justify-center px-3 text-[clamp(12px,1.9vh,16px)] font-black text-slate-100 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
-                >
-                  {option}°
-                </button>
-              ))}
-            </div>
-            {selectedAnswer !== null ? (
-              <div className="mt-1 text-center text-[11px] font-bold uppercase tracking-[0.16em] text-cyan-100/80">
-                Selected angle: {selectedAnswer}°
+            <div
+              className={`relative z-20 w-full transition-all duration-300 ${gameState === 'firing' || gameState === 'projectileFlight' || gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? 'pointer-events-none max-h-0 opacity-0' : 'max-h-[240px] opacity-100'}`}
+            >
+              <div className="game-question-card">
+                <div className="question-title">{formatFantasyPrompt(activeQuestion?.prompt ?? 'Choose the correct launch angle.')}</div>
               </div>
-            ) : null}
+              <div className="mt-1.5 grid grid-cols-2 gap-1.5">
+                {(activeQuestion?.options ?? []).map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => handleAnswer(option)}
+                    disabled={gameState !== 'awaitingAnswer'}
+                    className="licensed-answer-button inline-flex min-h-[2.35rem] items-center justify-center px-3 text-[clamp(12px,1.9vh,16px)] font-black text-slate-100 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
+                  >
+                    {option}°
+                  </button>
+                ))}
+              </div>
+              {selectedAnswer !== null ? (
+                <div className="mt-1 text-center text-[11px] font-bold uppercase tracking-[0.16em] text-cyan-100/80">
+                  Selected angle: {selectedAnswer}°
+                </div>
+              ) : null}
+            </div>
           </div>
-        </section>
-
-        <section className="min-h-0 flex-[1.8]">
-          <div className="relative flex h-full w-full min-h-[34vh] items-center justify-center overflow-hidden rounded-[1.6rem] shadow-[0_18px_32px_rgba(2,6,23,0.4)]">
+        )}
+        main={(
+          <div className="relative flex h-full w-full min-h-0 items-center justify-center overflow-hidden rounded-[1.6rem] shadow-[0_18px_32px_rgba(2,6,23,0.4)]">
             <canvas
               ref={canvasRef}
               className="h-full w-full rounded-[1.6rem]"
             />
           </div>
-        </section>
-
-        <section className="shrink-0">
-          <FeedbackStrip className="w-full" tone={gameState === 'resolvedCorrect' ? 'success' : gameState === 'resolvedIncorrect' ? 'warning' : 'neutral'}>
-            {feedback || (selectedAnswer !== null ? `Angle ${selectedAnswer}° locked in.` : 'Choose an angle to fire the launcher.')}
-          </FeedbackStrip>
-        </section>
-
-        <section className="shrink-0">
-          {gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? (
-            <div className="flex w-full items-center gap-2">
-              <PrimaryButton onClick={handleNext} className="flex-1">
-                Next
-              </PrimaryButton>
-              <SecondaryButton onClick={resetForNext}>
-                Reset View
-              </SecondaryButton>
-            </div>
-          ) : null}
-        </section>
-      </div>
+        )}
+        bottom={(
+          <div className="flex flex-col gap-2">
+            <FeedbackStrip className="w-full" tone={gameState === 'resolvedCorrect' ? 'success' : gameState === 'resolvedIncorrect' ? 'warning' : 'neutral'}>
+              {feedback || (selectedAnswer !== null ? `Angle ${selectedAnswer}° locked in.` : 'Choose an angle to fire the launcher.')}
+            </FeedbackStrip>
+            {gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? (
+              <div className="flex w-full items-center gap-2">
+                <PrimaryButton onClick={handleNext} className="flex-1">
+                  Next
+                </PrimaryButton>
+                <SecondaryButton onClick={resetForNext}>
+                  Reset View
+                </SecondaryButton>
+              </div>
+            ) : null}
+          </div>
+        )}
+      />
     </GameUiShell>
   );
 };

@@ -1,14 +1,19 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { motion } from 'motion/react';
 import {
   FeedbackStrip,
+  GameTopBar,
   GameUiShell,
-  StoryCard,
-  TaskCard,
 } from '../components/game-ui/GameUiKit';
+import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
-import ratioBackdrop from '../assets/level_backgrounds/take_out.png';
+import { DEFAULT_RACE_DIFFICULTY, RACE_TUNING, RaceDifficulty } from './ratioFractionsRace/constants';
+import { getQuestionTier, pickQuestionForTier } from './ratioFractionsRace/questionSelector';
+import { RatioFractionQuestion } from './ratioFractionsRace/types';
+import ratioBackdrop from '../assets/gokarts/racebackground.png';
+import playerKart from '../assets/gokarts/12.png';
+import enemyKart from '../assets/gokarts/15.png';
 
 interface RatioFractionsGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -18,20 +23,23 @@ interface RatioFractionsGameProps extends MiniGameShellContractProps {
   onBack: () => void;
 }
 
-interface RatioFractionQuestion {
-  id: string;
-  kind: 'fluency' | 'reasoning';
-  prompt: string;
-  ratioA: number;
-  ratioB: number;
-  partLabel: string;
-  showDots: boolean;
-  correct: string;
-  options: string[];
-}
+type FeedbackTone = 'neutral' | 'good' | 'bad';
+type RaceState =
+  | 'introCountdown'
+  | 'showingQuestion'
+  | 'evaluatingAnswer'
+  | 'correctBoost'
+  | 'incorrectStall'
+  | 'enemyAdvance'
+  | 'resolvingTurn'
+  | 'nextQuestion'
+  | 'playerWin'
+  | 'enemyWin';
 
-const ROUNDS_TO_WIN = 5;
-const BASE_XP = 140;
+const START_OFFSET = 0;
+const CAMERA_LERP = 0.08;
+const RACER_LERP = 0.16;
+const BASE_XP = 160;
 
 const shuffle = <T,>(items: T[]) => {
   const copy = [...items];
@@ -42,58 +50,55 @@ const shuffle = <T,>(items: T[]) => {
   return copy;
 };
 
-const fractionText = (numerator: number, denominator: number) => `${numerator}/${denominator}`;
-
-const buildRatioQuestion = (
-  ratioA: number,
-  ratioB: number,
-  partLabel: string,
-  showDots = true,
-): RatioFractionQuestion => {
-  const total = ratioA + ratioB;
-  const correct = partLabel === 'first' ? fractionText(ratioA, total) : fractionText(ratioB, total);
-  const distractors = new Set<string>();
-
-  const candidates = [
-    fractionText(ratioB, total),
-    fractionText(ratioA, ratioB),
-    fractionText(ratioA, total + 1),
-    fractionText(Math.max(1, ratioA - 1), total),
-    fractionText(Math.min(total - 1, ratioA + 1), total),
-    fractionText(total, ratioA),
-  ];
-
-  candidates.forEach((value) => {
-    if (value !== correct && distractors.size < 3) distractors.add(value);
-  });
-
-  while (distractors.size < 3) {
-    const guess = fractionText(Math.max(1, ratioA - 1), total + 1);
-    if (guess !== correct) distractors.add(guess);
-  }
-
-  return {
-    id: `${ratioA}-${ratioB}-${partLabel}-${Math.random().toString(36).slice(2, 6)}`,
-    kind: 'fluency',
-    prompt: `A potion mix uses the ratio ${ratioA}:${ratioB}. What fraction of the mix is ${partLabel === 'first' ? 'the first' : 'the second'} ingredient?`,
-    ratioA,
-    ratioB,
-    partLabel,
-    showDots,
-    correct,
-    options: shuffle([correct, ...Array.from(distractors)]),
-  };
-};
-
-const QUESTION_BANK: RatioFractionQuestion[] = [
-  buildRatioQuestion(2, 3, 'first', true),
-  buildRatioQuestion(1, 4, 'second', true),
-  buildRatioQuestion(3, 2, 'first', true),
-  buildRatioQuestion(1, 2, 'second', true),
-  buildRatioQuestion(4, 1, 'first', false),
-  buildRatioQuestion(2, 5, 'second', false),
-  buildRatioQuestion(3, 1, 'second', false),
-  buildRatioQuestion(5, 3, 'first', false),
+export const ratioFractionsQuestions: RatioFractionQuestion[] = [
+  // ---------------- EASY ----------------
+  { id: 'rf-001', prompt: 'Fuel to oxygen is 1:2. What fraction is oxygen?', ratio: [1, 2], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '2/3', options: ['1/3', '2/3', '1/2', '2/1'], explanation: 'Total parts = 3. Oxygen is 2 parts -> 2/3.' },
+  { id: 'rf-002', prompt: 'Fuel to oxygen is 2:1. What fraction is fuel?', ratio: [2, 1], labels: ['Fuel', 'Oxygen'], target: 'Fuel', correctAnswer: '2/3', options: ['1/3', '2/3', '2/1', '3/2'], explanation: 'Total parts = 3. Fuel is 2 parts -> 2/3.' },
+  { id: 'rf-003', prompt: 'Fuel to oxygen is 1:3. What fraction is oxygen?', ratio: [1, 3], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '3/4', options: ['1/4', '3/4', '1/3', '4/3'], explanation: 'Total = 4. Oxygen = 3 -> 3/4.' },
+  { id: 'rf-004', prompt: 'Fuel to oxygen is 3:1. What fraction is oxygen?', ratio: [3, 1], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '1/4', options: ['1/4', '3/4', '1/3', '4/1'], explanation: 'Total = 4. Oxygen = 1 -> 1/4.' },
+  { id: 'rf-005', prompt: 'Fuel to oxygen is 2:2. What fraction is fuel?', ratio: [2, 2], labels: ['Fuel', 'Oxygen'], target: 'Fuel', correctAnswer: '2/4', options: ['1/2', '2/4', '2/2', '4/2'], explanation: 'Total = 4. Fuel = 2 -> 2/4.' },
+  { id: 'rf-006', prompt: 'Fuel to oxygen is 4:1. What fraction is oxygen?', ratio: [4, 1], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '1/5', options: ['1/5', '4/5', '1/4', '5/1'], explanation: 'Total = 5. Oxygen = 1 -> 1/5.' },
+  { id: 'rf-007', prompt: 'Fuel to oxygen is 3:2. What fraction is oxygen?', ratio: [3, 2], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '2/5', options: ['3/5', '2/5', '2/3', '5/2'], explanation: 'Total = 5. Oxygen = 2 -> 2/5.' },
+  { id: 'rf-008', prompt: 'Fuel to oxygen is 5:1. What fraction is fuel?', ratio: [5, 1], labels: ['Fuel', 'Oxygen'], target: 'Fuel', correctAnswer: '5/6', options: ['1/6', '5/6', '5/1', '6/5'], explanation: 'Total = 6. Fuel = 5 -> 5/6.' },
+  { id: 'rf-009', prompt: 'Fuel to oxygen is 1:5. What fraction is oxygen?', ratio: [1, 5], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '5/6', options: ['1/6', '5/6', '1/5', '6/5'], explanation: 'Total = 6. Oxygen = 5 -> 5/6.' },
+  { id: 'rf-010', prompt: 'Fuel to oxygen is 2:3. What fraction is fuel?', ratio: [2, 3], labels: ['Fuel', 'Oxygen'], target: 'Fuel', correctAnswer: '2/5', options: ['3/5', '2/5', '2/3', '5/2'], explanation: 'Total = 5. Fuel = 2 -> 2/5.' },
+  // ---------------- MEDIUM ----------------
+  { id: 'rf-016', prompt: 'Fuel to oxygen is 4:3. What fraction is oxygen?', ratio: [4, 3], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '3/7', options: ['4/7', '3/7', '3/4', '7/3'], explanation: 'Total = 7. Oxygen = 3 -> 3/7.' },
+  { id: 'rf-017', prompt: 'Fuel to oxygen is 5:2. What fraction is fuel?', ratio: [5, 2], labels: ['Fuel', 'Oxygen'], target: 'Fuel', correctAnswer: '5/7', options: ['2/7', '5/7', '5/2', '7/5'], explanation: 'Total = 7. Fuel = 5 -> 5/7.' },
+  { id: 'rf-018', prompt: 'Fuel to oxygen is 6:3. What fraction is oxygen?', ratio: [6, 3], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '3/9', options: ['6/9', '3/9', '1/3', '3/6'], explanation: 'Total = 9. Oxygen = 3 -> 3/9.' },
+  { id: 'rf-019', prompt: 'Fuel to oxygen is 7:3. What fraction is oxygen?', ratio: [7, 3], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '3/10', options: ['7/10', '3/10', '3/7', '10/3'], explanation: 'Total = 10. Oxygen = 3 -> 3/10.' },
+  { id: 'rf-020', prompt: 'Fuel to oxygen is 8:2. What fraction is fuel?', ratio: [8, 2], labels: ['Fuel', 'Oxygen'], target: 'Fuel', correctAnswer: '8/10', options: ['2/10', '8/10', '4/5', '10/8'], explanation: 'Total = 10. Fuel = 8 -> 8/10.' },
+  // ---------------- HARD (3-PART RATIOS) ----------------
+  {
+    id: 'rf-036',
+    prompt: 'Fuel, oxygen, and additive are in the ratio 2:3:1. What fraction is oxygen?',
+    ratio: [2, 3, 1],
+    labels: ['Fuel', 'Oxygen', 'Additive'],
+    target: 'Oxygen',
+    correctAnswer: '3/6',
+    options: ['2/6', '3/6', '1/6', '3/5'],
+    explanation: 'Total parts = 6. Oxygen = 3 -> 3/6.',
+  },
+  {
+    id: 'rf-037',
+    prompt: 'Fuel, oxygen, and additive are in the ratio 4:2:2. What fraction is fuel?',
+    ratio: [4, 2, 2],
+    labels: ['Fuel', 'Oxygen', 'Additive'],
+    target: 'Fuel',
+    correctAnswer: '4/8',
+    options: ['2/8', '4/8', '1/2', '4/6'],
+    explanation: 'Total = 8. Fuel = 4 -> 4/8.',
+  },
+  {
+    id: 'rf-038',
+    prompt: 'Fuel, oxygen, and additive are in the ratio 3:3:3. What fraction is oxygen?',
+    ratio: [3, 3, 3],
+    labels: ['Fuel', 'Oxygen', 'Additive'],
+    target: 'Oxygen',
+    correctAnswer: '3/9',
+    options: ['3/9', '1/3', '3/3', '9/3'],
+    explanation: 'Total = 9. Oxygen = 3 -> 3/9.',
+  },
 ];
 
 const starsForAccuracy = (correct: number, attempts: number) => {
@@ -104,143 +109,433 @@ const starsForAccuracy = (correct: number, attempts: number) => {
   return 1;
 };
 
+const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
+
 const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   levelId,
   onVictory,
-  onGameOver: _onGameOver,
+  onGameOver,
+  onBack,
+  sessionState,
 }) => {
   const [roundIndex, setRoundIndex] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
-  const [feedback, setFeedback] = useState('Choose the fraction that matches the ratio.');
-  const [feedbackTone, setFeedbackTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
+  const [feedback, setFeedback] = useState('Answer to boost your racer.');
+  const [feedbackTone, setFeedbackTone] = useState<FeedbackTone>('neutral');
   const [selected, setSelected] = useState<string | null>(null);
   const [locked, setLocked] = useState(false);
+  const [raceState, setRaceState] = useState<RaceState>('introCountdown');
+  const [countdown, setCountdown] = useState(3);
+  const [renderTick, setRenderTick] = useState(0);
+  const [viewport, setViewport] = useState({ width: 320, height: 480 });
 
-  const question = useMemo(() => QUESTION_BANK[roundIndex % QUESTION_BANK.length], [roundIndex]);
+  const [raceDifficulty] = useState<RaceDifficulty>(DEFAULT_RACE_DIFFICULTY);
+  const tuning = RACE_TUNING[raceDifficulty];
+
+  const raceViewportRef = useRef<HTMLDivElement | null>(null);
+  const playerPosRef = useRef(START_OFFSET);
+  const enemyPosRef = useRef(START_OFFSET);
+  const playerTargetRef = useRef(START_OFFSET);
+  const enemyTargetRef = useRef(START_OFFSET);
+  const cameraXRef = useRef(0);
+  const enemyAdvanceQueueRef = useRef(0);
+
+  const trackProgress = Math.min(1, playerPosRef.current / tuning.trackLength);
+  const difficultyTier = getQuestionTier(trackProgress);
+  const question = useMemo(
+    () => pickQuestionForTier(ratioFractionsQuestions, difficultyTier, roundIndex),
+    [difficultyTier, roundIndex],
+  );
+  const lives = sessionState?.lives ?? 3;
+  const buildExplanation = (q: RatioFractionQuestion) => q.explanation;
+  const segmentColors: Record<string, { bg: string; glow: string }> = {
+    Fuel: { bg: '#f97316', glow: 'rgba(249,115,22,0.7)' },
+    Propellant: { bg: '#f59e0b', glow: 'rgba(245,158,11,0.7)' },
+    Additive: { bg: '#facc15', glow: 'rgba(250,204,21,0.7)' },
+    Oxygen: { bg: '#38bdf8', glow: 'rgba(56,189,248,0.7)' },
+    Oxidiser: { bg: '#a855f7', glow: 'rgba(168,85,247,0.7)' },
+  };
+  const fuelSegments = useMemo(() => {
+    const segments: Array<{ label: string; index: number }> = [];
+    question.labels.forEach((label, idx) => {
+      const count = question.ratio[idx] ?? 0;
+      for (let i = 0; i < count; i += 1) {
+        segments.push({ label, index: idx });
+      }
+    });
+    return segments;
+  }, [question.labels, question.ratio]);
+  const totalParts = question.ratio.reduce((sum, value) => sum + value, 0);
+  const targetIndex = question.labels.findIndex((label) => label.toLowerCase() === question.target.toLowerCase());
+  const targetCount = question.ratio[targetIndex] ?? 0;
+
+  useEffect(() => {
+    if (!raceViewportRef.current || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(() => {
+      const node = raceViewportRef.current;
+      if (!node) return;
+      setViewport({ width: node.clientWidth, height: node.clientHeight });
+    });
+    observer.observe(raceViewportRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    let frameId: number;
+    const tick = () => {
+      const playerX = playerPosRef.current;
+      const enemyX = enemyPosRef.current;
+      const playerTarget = playerTargetRef.current;
+      const enemyTarget = enemyTargetRef.current;
+
+      playerPosRef.current = playerX + (playerTarget - playerX) * RACER_LERP;
+      enemyPosRef.current = enemyX + (enemyTarget - enemyX) * RACER_LERP;
+
+      const focus = playerPosRef.current * 0.6 + enemyPosRef.current * 0.4;
+      const lookAhead = viewport.width * 0.22;
+      const cameraTarget = clamp(focus - viewport.width * 0.4 + lookAhead, 0, tuning.trackLength - viewport.width);
+      cameraXRef.current = cameraXRef.current + (cameraTarget - cameraXRef.current) * CAMERA_LERP;
+
+      setRenderTick((prev) => prev + 1);
+      frameId = requestAnimationFrame(tick);
+    };
+
+    frameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frameId);
+  }, [viewport.width]);
+
+  useEffect(() => {
+    const pace = tuning.enemyMoveIntervalMs;
+    const enemyStep = tuning.enemyAdvanceDistance;
+
+    const interval = window.setInterval(() => {
+      if (raceState === 'enemyWin' || raceState === 'playerWin') return;
+      if (raceState !== 'showingQuestion' || locked) {
+        enemyAdvanceQueueRef.current += 1;
+        return;
+      }
+      enemyTargetRef.current = Math.min(tuning.trackLength, enemyTargetRef.current + enemyStep);
+      if (enemyTargetRef.current >= tuning.trackLength) {
+        setRaceState('enemyWin');
+      }
+    }, pace);
+
+    return () => window.clearInterval(interval);
+  }, [locked, raceState, tuning.enemyAdvanceDistance, tuning.enemyMoveIntervalMs, tuning.trackLength]);
+
+  const applyQueuedEnemyAdvance = () => {
+    const queued = enemyAdvanceQueueRef.current;
+    if (queued <= 0) return false;
+    enemyAdvanceQueueRef.current = 0;
+    enemyTargetRef.current = Math.min(
+      tuning.trackLength,
+      enemyTargetRef.current + tuning.enemyAdvanceDistance * queued,
+    );
+    if (enemyTargetRef.current >= tuning.trackLength) {
+      setRaceState('enemyWin');
+      return true;
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    if (raceState === 'playerWin') {
+      const xp = BASE_XP + correctCount * 45 + levelId * 30;
+      onVictory(starsForAccuracy(correctCount, attempts || 1), xp);
+    }
+
+    if (raceState === 'enemyWin' || (sessionState && lives <= 0)) {
+      const xp = Math.max(20, BASE_XP * 0.35 + correctCount * 20);
+      onGameOver(xp);
+    }
+  }, [attempts, correctCount, levelId, lives, onGameOver, onVictory, raceState, sessionState]);
+
+  useEffect(() => {
+    if (raceState !== 'introCountdown') return;
+    setCountdown(3);
+    const interval = window.setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          window.clearInterval(interval);
+          setRaceState('showingQuestion');
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 650);
+    return () => window.clearInterval(interval);
+  }, [raceState]);
 
   const handleAnswer = (option: string) => {
-    if (locked) return;
+    if (locked || raceState !== 'showingQuestion') return;
+
     setSelected(option);
     setAttempts((prev) => prev + 1);
+    setLocked(true);
+    setRaceState('evaluatingAnswer');
 
-    if (option === question.correct) {
+    const playerStep = tuning.playerAdvanceDistance;
+    const stumble = tuning.playerStumbleDistance;
+    const boostDelay = tuning.playerBoostAnticipationMs;
+    const moveDuration = tuning.playerMoveDurationMs + boostDelay;
+
+    if (option === question.correctAnswer) {
       setCorrectCount((prev) => prev + 1);
-      setFeedback('Great! That fraction matches the ratio.');
+      setFeedback(`Correct mix! ${buildExplanation(question)}`);
       setFeedbackTone('good');
-      setLocked(true);
-      confetti({
-        particleCount: 40,
-        spread: 55,
-        origin: { y: 0.62 },
-        colors: ['#facc15', '#60a5fa', '#34d399'],
-      });
+      setRaceState('correctBoost');
       window.setTimeout(() => {
-        if (roundIndex + 1 >= ROUNDS_TO_WIN) {
-          const xp = BASE_XP * ROUNDS_TO_WIN + levelId * 40;
-          onVictory(starsForAccuracy(correctCount + 1, attempts + 1), xp);
+        playerTargetRef.current = Math.min(tuning.trackLength, playerTargetRef.current + playerStep);
+      }, boostDelay);
+
+      window.setTimeout(() => {
+        if (playerTargetRef.current >= tuning.trackLength) {
+          setRaceState('playerWin');
+          confetti({
+            particleCount: 60,
+            spread: 55,
+            origin: { y: 0.6 },
+            colors: ['#facc15', '#38bdf8', '#4ade80'],
+          });
           return;
         }
-        setRoundIndex((prev) => prev + 1);
+
+        const enemyWon = applyQueuedEnemyAdvance();
+        if (enemyWon) return;
+
         setSelected(null);
         setLocked(false);
-        setFeedback('Choose the fraction that matches the ratio.');
+        setRaceState('nextQuestion');
+        setRoundIndex((prev) => prev + 1);
+        setFeedback('Answer to boost your racer.');
         setFeedbackTone('neutral');
-      }, 700);
+        setRaceState('showingQuestion');
+      }, moveDuration);
       return;
     }
 
-    setFeedback('Not quite. Check the total parts in the ratio.');
+    setFeedback(`Wrong mix! ${buildExplanation(question)}`);
     setFeedbackTone('bad');
-    setLocked(true);
+    setRaceState('incorrectStall');
+    if (stumble > 0) {
+      playerTargetRef.current = Math.min(tuning.trackLength, playerTargetRef.current + stumble);
+    }
     window.setTimeout(() => {
-      setLocked(false);
+      const enemyWon = applyQueuedEnemyAdvance();
+      if (enemyWon) return;
+
       setSelected(null);
-      setFeedback('Choose the fraction that matches the ratio.');
-      setFeedbackTone('neutral');
+      setLocked(false);
+      setRaceState('nextQuestion');
       setRoundIndex((prev) => prev + 1);
-    }, 750);
+      setFeedback('Answer to boost your racer.');
+      setFeedbackTone('neutral');
+      setRaceState('showingQuestion');
+    }, tuning.incorrectFeedbackMs);
+  };
+
+  const worldOffset = -cameraXRef.current;
+  const playerX = playerPosRef.current;
+  const enemyX = enemyPosRef.current;
+  const finishX = tuning.trackLength;
+  const worldWidth = Math.max(tuning.trackLength + viewport.width, viewport.width * 2);
+  const showBoost = raceState === 'correctBoost';
+  const showStall = raceState === 'incorrectStall';
+
+  const playerStyle = {
+    transform: `translateX(${playerX + worldOffset}px)`,
+  };
+
+  const enemyStyle = {
+    transform: `translateX(${enemyX + worldOffset}px)`,
+  };
+
+  const finishStyle = {
+    transform: `translateX(${finishX + worldOffset}px)`,
   };
 
   return (
-    <GameUiShell backgroundImage={ratioBackdrop} backgroundOpacity={0.85}>
-      <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+3.5rem)] pt-3 text-white">
-        <section className="shrink-0">
-          <StoryCard>
-            <p className="text-[clamp(15px,2.2vh,20px)] font-black text-white">
-              Help the apothecary measure ingredients fairly.
-            </p>
-          </StoryCard>
-        </section>
-
-        <section className="shrink-0">
-          <TaskCard className="bg-[linear-gradient(180deg,rgba(255,255,255,0.95),rgba(245,250,255,0.9))]">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-900/90">Ratio Fractions</div>
-                <div className="mt-1 text-[clamp(17px,2.2vh,22px)] font-black text-slate-950">
-                  {question.prompt}
+    <GameUiShell backgroundImage={ratioBackdrop} backgroundOpacity={0.9}>
+      <GameScreenLayout
+        className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-2 text-white"
+        top={(
+          <div className="flex flex-col gap-2">
+            <GameTopBar
+              onBack={onBack}
+              progressLabel={`Fuel Check ${roundIndex + 1}`}
+              lives={lives}
+              className="w-full"
+              audioEnabled
+            />
+            <div className="rounded-[1rem] border border-white/12 bg-slate-950/60 px-3 py-2 text-center text-[13px] font-semibold text-cyan-50">
+              Solve the equation to keep the racecar fuelled.
+            </div>
+            <div className="rounded-[1rem] border border-white/10 bg-slate-900/70 px-3 py-2 text-center text-[13px] font-semibold text-white">
+              {question.prompt}
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-black uppercase tracking-[0.16em] text-amber-100/90">
+              {question.labels.map((label, index) => (
+                <div key={`${label}-${index}`} className="flex items-center gap-2">
+                  <span>{label}: {question.ratio[index]}</span>
+                  {index < question.labels.length - 1 ? <span className="h-2 w-2 rounded-full bg-amber-200" /> : null}
                 </div>
+              ))}
+            </div>
+            <div className="rounded-[1rem] border border-white/12 bg-slate-950/65 px-3 py-2">
+              <div className="mb-1 text-center text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/80">
+                Fuel Chamber
               </div>
-              <div className="rounded-full bg-amber-200/60 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-900">
-                Round {roundIndex + 1} / {ROUNDS_TO_WIN}
+              <div className="flex flex-wrap items-center justify-center gap-1.5">
+                {fuelSegments.map((segment, index) => {
+                  const color = segmentColors[segment.label] ?? { bg: '#94a3b8', glow: 'rgba(148,163,184,0.6)' };
+                  const isTarget = segment.label.toLowerCase() === question.target.toLowerCase();
+                  const glow =
+                    showBoost
+                      ? `0 0 12px ${color.glow}`
+                      : showStall
+                        ? '0 0 8px rgba(248,113,113,0.7)'
+                        : isTarget
+                          ? `0 0 10px ${color.glow}`
+                          : '0 0 6px rgba(15,23,42,0.45)';
+                  return (
+                    <motion.div
+                      key={`${segment.label}-${index}`}
+                      className="flex h-6 w-9 items-center justify-center rounded-md border border-white/20 text-[9px] font-black uppercase text-white"
+                      animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { scale: [1, 0.92, 1] } : { scale: 1 }}
+                      transition={{ duration: 0.3 }}
+                      style={{
+                        backgroundColor: color.bg,
+                        boxShadow: glow,
+                        opacity: isTarget ? 1 : 0.82,
+                      }}
+                    >
+                      {segment.label.slice(0, 1)}
+                    </motion.div>
+                  );
+                })}
+              </div>
+              <div className="mt-1.5 text-center text-[10px] font-bold text-cyan-100/90">
+                {showBoost || showStall ? `${targetCount} out of ${totalParts} parts -> ${question.correctAnswer}` : `Total parts: ${totalParts}`}
               </div>
             </div>
-
-            {question.showDots ? (
-              <div className="mt-3 flex items-center justify-center gap-2">
-                {Array.from({ length: question.ratioA }).map((_, index) => (
-                  <span
-                    key={`a-${index}`}
-                    className="h-5 w-5 rounded-full border border-white/70 bg-rose-400 shadow-[0_0_10px_rgba(248,113,113,0.65)]"
-                  />
-                ))}
-                {Array.from({ length: question.ratioB }).map((_, index) => (
-                  <span
-                    key={`b-${index}`}
-                    className="h-5 w-5 rounded-full border border-white/70 bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.65)]"
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="mt-3 text-center text-[12px] font-semibold text-slate-700">
-                Use the ratio to work out the fraction.
-              </div>
-            )}
-          </TaskCard>
-        </section>
-
-        <section className="min-h-0 flex-1 rounded-[1.4rem] border border-white/14 bg-white/10 p-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)]">
-          <div className="grid h-full min-h-0 grid-cols-2 gap-2">
-            {question.options.map((option) => (
-              <motion.button
-                key={option}
-                whileTap={{ scale: 0.96 }}
-                onClick={() => handleAnswer(option)}
-                disabled={locked}
-                className={`flex h-full min-h-[5.5rem] items-center justify-center rounded-[1rem] border text-xl font-black shadow-[0_12px_20px_rgba(2,6,23,0.2)] transition ${
-                  selected === option
-                    ? option === question.correct
-                      ? 'border-emerald-200/70 bg-emerald-300/50 text-emerald-950'
-                      : 'border-rose-200/70 bg-rose-300/50 text-amber-950'
-                    : 'border-white/30 bg-white/15 text-white'
-                }`}
-              >
-                {option}
-              </motion.button>
-            ))}
           </div>
-        </section>
+        )}
+        main={(
+          <div
+            ref={raceViewportRef}
+            className="relative h-full w-full overflow-hidden rounded-[1.6rem] border border-white/12 bg-[linear-gradient(180deg,rgba(7,20,44,0.45),rgba(6,12,28,0.75))] shadow-[0_18px_32px_rgba(2,6,23,0.4)]"
+          >
+            <div
+              className="pointer-events-none absolute inset-0"
+              style={{
+                backgroundImage: `url(${ratioBackdrop})`,
+                backgroundRepeat: 'repeat-x',
+                backgroundSize: 'auto 100%',
+                backgroundPositionX: `${-cameraXRef.current * 0.35}px`,
+                backgroundPositionY: 'bottom',
+              }}
+            />
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.2),rgba(59,130,246,0)_55%)]" />
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0)_0%,rgba(2,6,23,0.65)_100%)]" />
 
-        <section className="shrink-0">
-          <FeedbackStrip tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}>
-            {feedback}
-          </FeedbackStrip>
-        </section>
+            <div className="absolute left-4 top-4 z-10 flex items-center gap-2 rounded-full border border-white/18 bg-slate-900/70 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-amber-100">
+              Track {Math.round(trackProgress * 100)}%
+            </div>
 
-      </div>
+            <div className="absolute inset-y-0 left-0 right-0">
+              <div
+                className="absolute top-[18%] h-[64%] border-t border-b border-white/10 bg-[linear-gradient(90deg,rgba(15,23,42,0.65),rgba(30,41,59,0.65))]"
+                style={{ width: `${worldWidth}px`, transform: `translateX(${worldOffset}px)` }}
+              />
+              <div
+                className="absolute top-[36%] h-[8%] border border-white/15 bg-[linear-gradient(90deg,rgba(56,189,248,0.16),rgba(14,116,144,0.24))]"
+                style={{ width: `${worldWidth}px`, transform: `translateX(${worldOffset}px)` }}
+              />
+              <div
+                className="absolute top-[56%] h-[8%] border border-white/15 bg-[linear-gradient(90deg,rgba(251,191,36,0.18),rgba(217,119,6,0.26))]"
+                style={{ width: `${worldWidth}px`, transform: `translateX(${worldOffset}px)` }}
+              />
+
+              <div
+                className="absolute top-[22%] h-[56%] border border-white/10 bg-[linear-gradient(90deg,rgba(15,23,42,0.55),rgba(15,23,42,0.8))]"
+                style={{ width: `${worldWidth}px`, transform: `translateX(${worldOffset}px)` }}
+              />
+            </div>
+
+            <div className="absolute inset-0">
+              <div
+                className="absolute top-[38%] flex h-12 w-12 items-center justify-center rounded-full border border-amber-200/60 bg-amber-400 text-xs font-black uppercase text-slate-900"
+                style={finishStyle}
+              >
+                Finish
+              </div>
+
+              <motion.div
+                key={`player-${renderTick}`}
+                className="absolute top-[34%] flex h-14 w-20 items-center justify-center"
+                style={playerStyle}
+                animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { x: [0, -4, 4, -3, 3, 0] } : { scale: 1 }}
+                transition={{ duration: 0.35 }}
+              >
+                <img src={playerKart} alt="Player kart" className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]" />
+                {showBoost ? (
+                  <span className="absolute -left-2 top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-amber-200 shadow-[0_0_12px_rgba(251,191,36,0.8)]" />
+                ) : null}
+                {showStall ? (
+                  <span className="absolute -left-2 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-slate-400/80" />
+                ) : null}
+              </motion.div>
+
+              <motion.div
+                key={`enemy-${renderTick}`}
+                className="absolute top-[58%] flex h-14 w-20 items-center justify-center"
+                style={enemyStyle}
+              >
+                <img src={enemyKart} alt="Enemy kart" className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(251,113,133,0.6)]" />
+              </motion.div>
+            </div>
+
+            {raceState === 'introCountdown' ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-slate-950/45 text-5xl font-black text-amber-100">
+                {countdown || 'Go!'}
+              </div>
+            ) : null}
+          </div>
+        )}
+        bottom={(
+          <div className="flex flex-col gap-2">
+            <div className="grid grid-cols-2 gap-2">
+              {question.options.map((option) => (
+                <motion.button
+                  key={option}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => handleAnswer(option)}
+                  disabled={locked || raceState !== 'showingQuestion'}
+                  className={`min-h-[3.1rem] rounded-[1rem] border px-3 py-2 text-center text-lg font-black shadow-[0_10px_18px_rgba(2,6,23,0.22)] transition ${
+                    selected === option
+                      ? option === question.correctAnswer
+                        ? 'border-emerald-200/70 bg-emerald-300/50 text-emerald-950'
+                        : 'border-rose-200/70 bg-rose-300/50 text-amber-950'
+                      : 'border-white/30 bg-white/15 text-white'
+                  }`}
+                >
+                  {option}
+                </motion.button>
+              ))}
+            </div>
+
+            <FeedbackStrip tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}>
+              {feedback}
+            </FeedbackStrip>
+          </div>
+        )}
+      />
     </GameUiShell>
   );
 };
 
 export default RatioFractionsGame;
+
+
+

@@ -25,6 +25,7 @@ import {
   Cell,
   LabelList,
 } from 'recharts';
+import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 
 interface StolenItem {
   name: string;
@@ -215,9 +216,9 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   };
 
   return (
-    <div className="relative flex h-full w-full min-h-0 flex-col overflow-hidden text-slate-100">
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(6,18,46,0.34),rgba(4,16,38,0.48)_55%,rgba(2,8,24,0.62)_100%)]" />
-      {!useSharedTopHud && (
+    <GameScreenLayout
+      className="relative h-full w-full min-h-0 text-slate-100"
+      top={!useSharedTopHud ? (
         <header className="z-20 flex h-16 items-center justify-between border-b border-cyan-200/16 bg-[linear-gradient(180deg,rgba(8,26,66,0.78),rgba(5,16,42,0.84))] px-6 backdrop-blur-md">
           <div className="flex items-center gap-3">
             <button
@@ -253,9 +254,9 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             </div>
           </div>
         </header>
-      )}
-
-      <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.05rem)]' : ''}`}>
+      ) : null}
+      main={(
+        <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.05rem)]' : ''}`}>
         <section className="z-10 flex min-h-0 w-full flex-[0.52] flex-col gap-2 overflow-hidden border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] px-2 pb-2 pt-3 sm:px-3 sm:pb-3 sm:pt-4 md:w-1/2 md:flex-1 md:gap-3 md:border-b-0 md:border-r md:p-5">
           <div className="game-question-card">
             <div className="question-title">{caseMode === 'whodunnit' ? 'Who took the loot?' : 'Match the evidence totals.'}</div>
@@ -495,40 +496,41 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             )}
           </div>
         </section>
-      </main>
-
-      <AnimatePresence>
-        {gameState === 'complete' && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="absolute inset-0 z-50 flex items-center justify-center bg-stone-950/95 p-12 text-center backdrop-blur-xl"
-          >
-            <div className="max-w-md">
-              <Trophy className="mx-auto mb-8 h-20 w-20 text-yellow-400" />
-              <h2 className="mb-2 text-4xl font-black uppercase tracking-tighter text-white italic">Chief Of Detectives</h2>
-              <p className="mb-8 text-sm leading-relaxed text-stone-400">
-                All cases solved. The city is safe once again thanks to your expert data interpretation.
-              </p>
-              <div className="mb-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
-                <span className="mb-1 block text-[10px] uppercase text-stone-500">Final Reputation</span>
-                <span className="text-4xl font-black text-amber-500">{XP} PTS</span>
-              </div>
-              <button
-                onClick={startGame}
-                className="rounded-full bg-stone-100 px-12 py-4 text-sm font-black uppercase tracking-widest text-stone-900 transition-all hover:bg-white"
+        </main>
+      )}
+      overlay={(
+        <>
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(6,18,46,0.34),rgba(4,16,38,0.48)_55%,rgba(2,8,24,0.62)_100%)]" />
+          <AnimatePresence>
+            {gameState === 'complete' && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="absolute inset-0 z-50 flex items-center justify-center bg-stone-950/95 p-12 text-center backdrop-blur-xl"
               >
-                Reopen Files
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/**
-        feedback banner moved into the right panel to avoid overlap on smaller viewports
-      */}
-    </div>
+                <div className="max-w-md">
+                  <Trophy className="mx-auto mb-8 h-20 w-20 text-yellow-400" />
+                  <h2 className="mb-2 text-4xl font-black uppercase tracking-tighter text-white italic">Chief Of Detectives</h2>
+                  <p className="mb-8 text-sm leading-relaxed text-stone-400">
+                    All cases solved. The city is safe once again thanks to your expert data interpretation.
+                  </p>
+                  <div className="mb-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+                    <span className="mb-1 block text-[10px] uppercase text-stone-500">Final Reputation</span>
+                    <span className="text-4xl font-black text-amber-500">{XP} PTS</span>
+                  </div>
+                  <button
+                    onClick={startGame}
+                    className="rounded-full bg-stone-100 px-12 py-4 text-sm font-black uppercase tracking-widest text-stone-900 transition-all hover:bg-white"
+                  >
+                    Reopen Files
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </>
+      )}
+    />
   );
 };
 

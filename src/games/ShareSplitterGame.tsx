@@ -9,6 +9,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from '../components/game-ui/GameUiKit';
+import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import shareSplitterBackground from '../assets/level_backgrounds/share splitter bkground.jpg';
 import birthdayCakeAsset from '../assets/birthdaycake.png';
 import cakeSliceAsset from '../assets/cakeslice.png';
@@ -448,8 +449,9 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
   return (
     <GameUiShell backgroundImage={shareSplitterBackground} backgroundOpacity={1}>
-      <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+3.5rem)] pt-3 text-white">
-        <section className="shrink-0">
+      <GameScreenLayout
+        className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2 text-white"
+        top={(
           <GameTopBar
             onBack={onBack}
             progressLabel={`Round ${roundSolved + 1} / ${ROUNDS_TO_WIN}`}
@@ -459,9 +461,8 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
             onToggleAudio={() => setAudioEnabled((previous) => !previous)}
             onHelp={() => setShowRules(true)}
           />
-        </section>
-
-        <section className="min-h-0 flex-1">
+        )}
+        main={(
           <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
             <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] border border-white/12 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.12),rgba(15,23,42,0.52)_64%)] px-2 py-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)] md:px-3">
               <div className="pointer-events-none absolute left-1/2 top-4 w-[82%] -translate-x-1/2 text-center">
@@ -556,62 +557,68 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
               </div>
             </section>
           </div>
-        </section>
+        )}
+        bottom={(
+          <div className="flex flex-col gap-2">
+            <section className="min-h-[2.6rem]">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`${feedback}-${feedbackTone}`}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                >
+                  <FeedbackStrip
+                    tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}
+                  >
+                    {feedback}
+                  </FeedbackStrip>
+                </motion.div>
+              </AnimatePresence>
+            </section>
 
-        <AnimatePresence>
-          {dragSlice ? (
-            <motion.div
-              key={dragSlice.id}
-              initial={{ scale: 0.92, opacity: 0.9 }}
-              animate={{ scale: 1, opacity: 1, x: dragSlice.x - 24, y: dragSlice.y - 24 }}
-              exit={{ opacity: 0, scale: 0.86 }}
-              transition={{ duration: 0.08, ease: 'linear' }}
-              className="pointer-events-none fixed z-[60] h-12 w-12 rounded-full border border-amber-200/70 bg-[linear-gradient(180deg,rgba(250,204,21,0.3),rgba(180,83,9,0.2))] p-1 shadow-[0_14px_24px_rgba(217,119,6,0.35)]"
-            >
-              <img
-                src={CAKE_SLICE_ASSET}
-                alt=""
-                className="h-full w-full object-contain"
-                draggable={false}
-              />
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
+            <section className="grid grid-cols-2 gap-2">
+              <SecondaryButton onClick={resetAllocation} disabled={locked || moveHistory.length === 0}>
+                <RefreshCcw className="h-4 w-4" />
+                Reset
+              </SecondaryButton>
+              <PrimaryButton onClick={checkAllocation} disabled={locked || !hasMoves}>
+                <Check className="h-4 w-4" />
+                Check
+              </PrimaryButton>
+            </section>
+          </div>
+        )}
+        overlay={(
+          <>
+            <AnimatePresence>
+              {dragSlice ? (
+                <motion.div
+                  key={dragSlice.id}
+                  initial={{ scale: 0.92, opacity: 0.9 }}
+                  animate={{ scale: 1, opacity: 1, x: dragSlice.x - 24, y: dragSlice.y - 24 }}
+                  exit={{ opacity: 0, scale: 0.86 }}
+                  transition={{ duration: 0.08, ease: 'linear' }}
+                  className="pointer-events-none fixed z-[60] h-12 w-12 rounded-full border border-amber-200/70 bg-[linear-gradient(180deg,rgba(250,204,21,0.3),rgba(180,83,9,0.2))] p-1 shadow-[0_14px_24px_rgba(217,119,6,0.35)]"
+                >
+                  <img
+                    src={CAKE_SLICE_ASSET}
+                    alt=""
+                    className="h-full w-full object-contain"
+                    draggable={false}
+                  />
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
 
-        <section className="min-h-[2.8rem] shrink-0">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`${feedback}-${feedbackTone}`}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-            >
-              <FeedbackStrip
-                tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}
-              >
-                {feedback}
-              </FeedbackStrip>
-            </motion.div>
-          </AnimatePresence>
-        </section>
-
-        <section className="shrink-0 grid grid-cols-2 gap-2">
-          <SecondaryButton onClick={resetAllocation} disabled={locked || moveHistory.length === 0}>
-            <RefreshCcw className="h-4 w-4" />
-            Reset
-          </SecondaryButton>
-          <PrimaryButton onClick={checkAllocation} disabled={locked || !hasMoves}>
-            <Check className="h-4 w-4" />
-            Check
-          </PrimaryButton>
-        </section>
-      </div>
-
-        <GameRulesModal
-          isOpen={showRules}
-          onClose={() => setShowRules(false)}
-          rules={rules}
-        />
+            <GameRulesModal
+              isOpen={showRules}
+              onClose={() => setShowRules(false)}
+              rules={rules}
+            />
+          </>
+        )}
+      />
     </GameUiShell>
   );
 };
