@@ -368,63 +368,12 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
               className="w-full"
               audioEnabled
             />
-            <div className="rounded-[1rem] border border-white/12 bg-slate-950/60 px-3 py-2 text-center text-[13px] font-semibold text-cyan-50">
-              Solve the equation to keep the racecar fuelled.
-            </div>
-            <div className="rounded-[1rem] border border-white/10 bg-slate-900/70 px-3 py-2 text-center text-[13px] font-semibold text-white">
-              {question.prompt}
-            </div>
-            <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-black uppercase tracking-[0.16em] text-amber-100/90">
-              {question.labels.map((label, index) => (
-                <div key={`${label}-${index}`} className="flex items-center gap-2">
-                  <span>{label}: {question.ratio[index]}</span>
-                  {index < question.labels.length - 1 ? <span className="h-2 w-2 rounded-full bg-amber-200" /> : null}
-                </div>
-              ))}
-            </div>
-            <div className="rounded-[1rem] border border-white/12 bg-slate-950/65 px-3 py-2">
-              <div className="mb-1 text-center text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/80">
-                Fuel Chamber
-              </div>
-              <div className="flex flex-wrap items-center justify-center gap-1.5">
-                {fuelSegments.map((segment, index) => {
-                  const color = segmentColors[segment.label] ?? { bg: '#94a3b8', glow: 'rgba(148,163,184,0.6)' };
-                  const isTarget = segment.label.toLowerCase() === question.target.toLowerCase();
-                  const glow =
-                    showBoost
-                      ? `0 0 12px ${color.glow}`
-                      : showStall
-                        ? '0 0 8px rgba(248,113,113,0.7)'
-                        : isTarget
-                          ? `0 0 10px ${color.glow}`
-                          : '0 0 6px rgba(15,23,42,0.45)';
-                  return (
-                    <motion.div
-                      key={`${segment.label}-${index}`}
-                      className="flex h-6 w-9 items-center justify-center rounded-md border border-white/20 text-[9px] font-black uppercase text-white"
-                      animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { scale: [1, 0.92, 1] } : { scale: 1 }}
-                      transition={{ duration: 0.3 }}
-                      style={{
-                        backgroundColor: color.bg,
-                        boxShadow: glow,
-                        opacity: isTarget ? 1 : 0.82,
-                      }}
-                    >
-                      {segment.label.slice(0, 1)}
-                    </motion.div>
-                  );
-                })}
-              </div>
-              <div className="mt-1.5 text-center text-[10px] font-bold text-cyan-100/90">
-                {showBoost || showStall ? `${targetCount} out of ${totalParts} parts -> ${question.correctAnswer}` : `Total parts: ${totalParts}`}
-              </div>
-            </div>
           </div>
         )}
         main={(
           <div
             ref={raceViewportRef}
-            className="relative h-full w-full overflow-hidden rounded-[1.6rem] border border-white/12 bg-[linear-gradient(180deg,rgba(7,20,44,0.45),rgba(6,12,28,0.75))] shadow-[0_18px_32px_rgba(2,6,23,0.4)]"
+            className="relative h-full w-full overflow-hidden rounded-[1.6rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.2),rgba(2,6,23,0.7))] shadow-[0_18px_32px_rgba(2,6,23,0.4)]"
           >
             <div
               className="pointer-events-none absolute inset-0"
@@ -436,8 +385,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                 backgroundPositionY: 'bottom',
               }}
             />
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.2),rgba(59,130,246,0)_55%)]" />
-            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0)_0%,rgba(2,6,23,0.65)_100%)]" />
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0.08)_0%,rgba(2,6,23,0.45)_100%)]" />
 
             <div className="absolute left-4 top-4 z-10 flex items-center gap-2 rounded-full border border-white/18 bg-slate-900/70 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-amber-100">
               Track {Math.round(trackProgress * 100)}%
@@ -445,27 +393,22 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
             <div className="absolute inset-y-0 left-0 right-0">
               <div
-                className="absolute top-[18%] h-[64%] border-t border-b border-white/10 bg-[linear-gradient(90deg,rgba(15,23,42,0.65),rgba(30,41,59,0.65))]"
+                className="absolute top-[30%] h-[40%] rounded-[2rem] border border-white/15 bg-[linear-gradient(90deg,rgba(15,23,42,0.75),rgba(30,41,59,0.75))]"
                 style={{ width: `${worldWidth}px`, transform: `translateX(${worldOffset}px)` }}
               />
               <div
-                className="absolute top-[36%] h-[8%] border border-white/15 bg-[linear-gradient(90deg,rgba(56,189,248,0.16),rgba(14,116,144,0.24))]"
+                className="absolute top-[47%] h-[6%] border border-white/20 bg-[linear-gradient(90deg,rgba(59,130,246,0.25),rgba(14,116,144,0.4))]"
                 style={{ width: `${worldWidth}px`, transform: `translateX(${worldOffset}px)` }}
               />
               <div
-                className="absolute top-[56%] h-[8%] border border-white/15 bg-[linear-gradient(90deg,rgba(251,191,36,0.18),rgba(217,119,6,0.26))]"
-                style={{ width: `${worldWidth}px`, transform: `translateX(${worldOffset}px)` }}
-              />
-
-              <div
-                className="absolute top-[22%] h-[56%] border border-white/10 bg-[linear-gradient(90deg,rgba(15,23,42,0.55),rgba(15,23,42,0.8))]"
+                className="absolute top-[54%] h-[6%] border border-white/20 bg-[linear-gradient(90deg,rgba(250,204,21,0.25),rgba(217,119,6,0.4))]"
                 style={{ width: `${worldWidth}px`, transform: `translateX(${worldOffset}px)` }}
               />
             </div>
 
             <div className="absolute inset-0">
               <div
-                className="absolute top-[38%] flex h-12 w-12 items-center justify-center rounded-full border border-amber-200/60 bg-amber-400 text-xs font-black uppercase text-slate-900"
+                className="absolute top-[42%] flex h-12 w-12 items-center justify-center rounded-full border border-amber-200/60 bg-amber-400 text-xs font-black uppercase text-slate-900"
                 style={finishStyle}
               >
                 Finish
@@ -473,7 +416,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
               <motion.div
                 key={`player-${renderTick}`}
-                className="absolute top-[34%] flex h-14 w-20 items-center justify-center"
+                className="absolute top-[38%] flex h-16 w-24 items-center justify-center"
                 style={playerStyle}
                 animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { x: [0, -4, 4, -3, 3, 0] } : { scale: 1 }}
                 transition={{ duration: 0.35 }}
@@ -489,7 +432,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
               <motion.div
                 key={`enemy-${renderTick}`}
-                className="absolute top-[58%] flex h-14 w-20 items-center justify-center"
+                className="absolute top-[56%] flex h-16 w-24 items-center justify-center"
                 style={enemyStyle}
               >
                 <img src={enemyKart} alt="Enemy kart" className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(251,113,133,0.6)]" />
@@ -501,30 +444,88 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                 {countdown || 'Go!'}
               </div>
             ) : null}
+
+            <div className="pointer-events-none absolute left-4 top-1/2 w-[40%] -translate-y-1/2">
+              <div className="rounded-[1.4rem] border border-white/15 bg-white/15 px-4 py-3 text-slate-900 shadow-[0_18px_32px_rgba(2,6,23,0.35)]">
+                <div className="mb-2 text-[11px] font-black uppercase tracking-[0.2em] text-slate-800/70">
+                  Fuel Mix Question
+                </div>
+                <div className="text-[15px] font-black leading-tight text-slate-900">
+                  {question.prompt}
+                </div>
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-slate-700">
+                  {question.labels.map((label, index) => (
+                    <span key={`${label}-${index}`}>
+                      {label} {question.ratio[index]}
+                      {index < question.labels.length - 1 ? ' : ' : ''}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-3 rounded-[1.4rem] border border-white/12 bg-slate-900/75 px-3 py-2">
+                <div className="mb-1 text-center text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/80">
+                  Fuel Chamber
+                </div>
+                <div className="flex flex-wrap items-center justify-center gap-1.5">
+                  {fuelSegments.map((segment, index) => {
+                    const color = segmentColors[segment.label] ?? { bg: '#94a3b8', glow: 'rgba(148,163,184,0.6)' };
+                    const isTarget = segment.label.toLowerCase() === question.target.toLowerCase();
+                    const glow =
+                      showBoost
+                        ? `0 0 12px ${color.glow}`
+                        : showStall
+                          ? '0 0 8px rgba(248,113,113,0.7)'
+                          : isTarget
+                            ? `0 0 10px ${color.glow}`
+                            : '0 0 6px rgba(15,23,42,0.45)';
+                    return (
+                      <motion.div
+                        key={`${segment.label}-${index}`}
+                        className="flex h-7 w-10 items-center justify-center rounded-md border border-white/20 text-[9px] font-black uppercase text-white"
+                        animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { scale: [1, 0.92, 1] } : { scale: 1 }}
+                        transition={{ duration: 0.3 }}
+                        style={{
+                          backgroundColor: color.bg,
+                          boxShadow: glow,
+                          opacity: isTarget ? 1 : 0.82,
+                        }}
+                      >
+                        {segment.label.slice(0, 1)}
+                      </motion.div>
+                    );
+                  })}
+                </div>
+                <div className="mt-1.5 text-center text-[10px] font-bold text-cyan-100/90">
+                  {showBoost || showStall ? `${targetCount} out of ${totalParts} parts -> ${question.correctAnswer}` : `Total parts: ${totalParts}`}
+                </div>
+              </div>
+            </div>
+
+            <div className="absolute right-4 top-1/2 w-[30%] -translate-y-1/2">
+              <div className="grid gap-3">
+                {question.options.map((option) => (
+                  <motion.button
+                    key={option}
+                    whileTap={{ scale: 0.96 }}
+                    onClick={() => handleAnswer(option)}
+                    disabled={locked || raceState !== 'showingQuestion'}
+                    className={`min-h-[3.2rem] rounded-[1rem] border px-3 py-2 text-center text-xl font-black shadow-[0_12px_20px_rgba(2,6,23,0.25)] transition ${
+                      selected === option
+                        ? option === question.correctAnswer
+                          ? 'border-emerald-200/70 bg-emerald-300/60 text-emerald-950'
+                          : 'border-rose-200/70 bg-rose-300/60 text-amber-950'
+                        : 'border-amber-200/60 bg-amber-400/90 text-slate-900'
+                    }`}
+                  >
+                    {option}
+                  </motion.button>
+                ))}
+              </div>
+            </div>
           </div>
         )}
         bottom={(
           <div className="flex flex-col gap-2">
-            <div className="grid grid-cols-2 gap-2">
-              {question.options.map((option) => (
-                <motion.button
-                  key={option}
-                  whileTap={{ scale: 0.96 }}
-                  onClick={() => handleAnswer(option)}
-                  disabled={locked || raceState !== 'showingQuestion'}
-                  className={`min-h-[3.1rem] rounded-[1rem] border px-3 py-2 text-center text-lg font-black shadow-[0_10px_18px_rgba(2,6,23,0.22)] transition ${
-                    selected === option
-                      ? option === question.correctAnswer
-                        ? 'border-emerald-200/70 bg-emerald-300/50 text-emerald-950'
-                        : 'border-rose-200/70 bg-rose-300/50 text-amber-950'
-                      : 'border-white/30 bg-white/15 text-white'
-                  }`}
-                >
-                  {option}
-                </motion.button>
-              ))}
-            </div>
-
             <FeedbackStrip tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}>
               {feedback}
             </FeedbackStrip>
