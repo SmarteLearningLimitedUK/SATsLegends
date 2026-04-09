@@ -1,0 +1,225 @@
+import React, { useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
+import AnimatedStarDisplay from '../progression/AnimatedStarDisplay';
+import BonusBreakdown from '../progression/BonusBreakdown';
+import LevelBadge from '../progression/LevelBadge';
+import XpBar, { XpSegment } from '../progression/XpBar';
+import { getXpRequiredForLevel } from '../../lib/progression/getXpRequiredForLevel';
+import { BonusBreakdown as BonusBreakdownType, StarCount } from '../../lib/progression/types';
+
+interface LevelResultsModalProps {
+  isOpen: boolean;
+  result: {
+    type: 'victory' | 'gameover';
+    title: string;
+    subtitle: string;
+    stars: StarCount;
+    xpGained: number;
+    bonuses: BonusBreakdownType[];
+    previousLevel: number;
+    newLevel: number;
+    previousXp: number;
+    currentXp: number;
+    xpRequiredForNextLevel: number;
+    leveledUp: boolean;
+  } | null;
+  onRetry: () => void;
+  onNext?: () => void;
+  onMap: () => void;
+  calmBreakLabel?: string;
+  onCalmBreak?: () => void;
+}
+
+const useReducedMotion = () => {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const update = () => setReduced(media.matches);
+    update();
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
+  return reduced;
+};
+
+const buildXpSegments = (
+  previousLevel: number,
+  previousXp: number,
+  xpGained: number,
+): XpSegment[] => {
+  const segments: XpSegment[] = [];
+  let remaining = Math.max(0, xpGained);
+  let level = previousLevel;
+  let current = previousXp;
+
+  if (remaining === 0) {
+    const requiredXp = getXpRequiredForLevel(level);
+    return [{ level, fromXp: current, toXp: current, requiredXp }];
+  }
+
+  while (remaining > 0) {
+    const requiredXp = getXpRequiredForLevel(level);
+    const space = requiredXp - current;
+    const gain = Math.min(space, remaining);
+    segments.push({
+      level,
+      fromXp: current,
+      toXp: current + gain,
+      requiredXp,
+    });
+    remaining -= gain;
+    if (current + gain >= requiredXp) {
+      level += 1;
+      current = 0;
+    } else {
+      current += gain;
+    }
+  }
+
+  return segments;
+};
+
+const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
+  isOpen,
+  result,
+  onRetry,
+  onNext,
+  onMap,
+  calmBreakLabel,
+  onCalmBreak,
+}) => {
+  const reducedMotion = useReducedMotion();
+  const [playStars, setPlayStars] = useState(false);
+  const [playXp, setPlayXp] = useState(false);
+  const [showButtons, setShowButtons] = useState(false);
+  const [levelUpPulse, setLevelUpPulse] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen || !result) return;
+    setPlayStars(false);
+    setPlayXp(false);
+    setShowButtons(false);
+    setLevelUpPulse(false);
+
+    const starDelay = reducedMotion ? 0 : 180;
+    const xpDelay = reducedMotion ? 0 : 540;
+
+    const timers = [
+      window.setTimeout(() => setPlayStars(true), starDelay),
+      window.setTimeout(() => setPlayXp(true), xpDelay),
+    ];
+
+    return () => timers.forEach((timer) => window.clearTimeout(timer));
+  }, [isOpen, reducedMotion, result]);
+
+  const xpSegments = useMemo(() => {
+    if (!result) return [];
+    return buildXpSegments(result.previousLevel, result.previousXp, result.xpGained);
+  }, [result]);
+
+  if (!result) return null;
+
+  const isVictory = result.type === 'victory';
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[140] flex items-center justify-center bg-slate-950/80 backdrop-blur-xl"
+        >
+          <motion.div
+            initial={{ y: 24, scale: 0.96, opacity: 0 }}
+            animate={{ y: 0, scale: 1, opacity: 1 }}
+            exit={{ y: 16, scale: 0.98, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 220, damping: 20 }}
+            className="relative w-full max-w-md overflow-hidden rounded-[1.6rem] border border-white/15 bg-[linear-gradient(180deg,rgba(7,21,52,0.92),rgba(5,17,45,0.96))] p-4 shadow-[0_28px_80px_rgba(0,0,0,0.5)] md:max-w-lg md:rounded-[2rem] md:p-6"
+          >
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(56,189,248,0.18),transparent_55%),radial-gradient(circle_at_50%_100%,rgba(251,191,36,0.18),transparent_60%)]" />
+
+            <div className="relative z-10 flex flex-col gap-4">
+              <div className="flex flex-col items-center text-center">
+                <span className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] ${isVictory ? 'border-emerald-200/50 bg-emerald-400/20 text-emerald-100' : 'border-rose-200/45 bg-rose-400/20 text-amber-100'}`}>
+                  {isVictory ? 'Level Complete' : 'Try Again'}
+                </span>
+                <h2 className="mt-2 text-2xl font-black text-amber-100 md:text-3xl">{result.title}</h2>
+                <p className="mt-1 text-sm font-semibold text-white/80 md:text-base">{result.subtitle}</p>
+              </div>
+
+              <div className="flex flex-col items-center gap-2">
+                <AnimatedStarDisplay stars={result.stars} play={playStars} />
+                {result.stars === 3 ? (
+                  <span className="rounded-full border border-amber-200/60 bg-amber-300/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100">
+                    Perfect Run
+                  </span>
+                ) : null}
+              </div>
+
+              <div className="rounded-[1.2rem] border border-white/12 bg-white/5 p-3 md:p-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-[0.18em] text-white/60">XP Earned</span>
+                  <span className="text-lg font-black text-cyan-200">+{result.xpGained} XP</span>
+                </div>
+                <div className="mt-3 flex items-center justify-between">
+                  <LevelBadge level={result.newLevel} highlight={levelUpPulse} />
+                  {result.leveledUp ? (
+                    <span className="text-xs font-bold uppercase tracking-[0.16em] text-amber-200">Level Up!</span>
+                  ) : null}
+                </div>
+                <div className="mt-3">
+                  <XpBar
+                    segments={xpSegments}
+                    play={playXp}
+                    onLevelUp={() => setLevelUpPulse(true)}
+                    onComplete={() => setShowButtons(true)}
+                  />
+                </div>
+              </div>
+
+              <BonusBreakdown bonuses={result.bonuses} />
+
+              <div className={`mt-2 flex flex-col gap-2 ${showButtons ? 'opacity-100' : 'opacity-0 pointer-events-none'} transition-opacity duration-300`}>
+                <button
+                  type="button"
+                  className="w-full rounded-full bg-[linear-gradient(90deg,#38bdf8,#6366f1)] py-3 text-sm font-black uppercase tracking-[0.18em] text-white shadow-[0_12px_24px_rgba(59,130,246,0.45)]"
+                  onClick={isVictory ? (onNext || onMap) : onRetry}
+                >
+                  {isVictory ? (onNext ? 'Next Level' : 'Return to Map') : 'Retry'}
+                </button>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    className="rounded-full border border-white/25 bg-white/10 py-2 text-xs font-black uppercase tracking-[0.18em] text-white"
+                    onClick={onRetry}
+                  >
+                    Retry
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-full border border-white/25 bg-white/10 py-2 text-xs font-black uppercase tracking-[0.18em] text-white"
+                    onClick={onMap}
+                  >
+                    Map
+                  </button>
+                </div>
+                {calmBreakLabel && onCalmBreak ? (
+                  <button
+                    type="button"
+                    className="rounded-full border border-emerald-200/40 bg-emerald-400/20 py-2 text-xs font-black uppercase tracking-[0.18em] text-emerald-100"
+                    onClick={onCalmBreak}
+                  >
+                    {calmBreakLabel}
+                  </button>
+                ) : null}
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+export default LevelResultsModal;

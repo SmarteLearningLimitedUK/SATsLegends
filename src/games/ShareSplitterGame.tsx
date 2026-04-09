@@ -9,7 +9,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from '../components/game-ui/GameUiKit';
-import shareSplitterBackground from '../assets/maps/partytable.jpg';
+import shareSplitterBackground from '../assets/level_backgrounds/share splitter bkground.jpg';
 import birthdayCakeAsset from '../assets/birthdaycake.png';
 import cakeSliceAsset from '../assets/cakeslice.png';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
@@ -109,7 +109,7 @@ const buildSharePrompt = (mode: ShareChallenge['mode'], totalSlices: number, rat
 
 const createChallenge = (levelId: number, solved: number): ShareChallenge => {
   const mode = shareModeForLevel(levelId);
-  const plateCount = levelId <= 1 ? 2 : levelId <= 3 ? 3 : MAX_PLATE_COUNT;
+  const plateCount = MAX_PLATE_COUNT;
   const patternOptions = RATIO_PATTERNS_BY_COUNT[plateCount] || RATIO_PATTERNS_BY_COUNT[2];
   const pattern = [...randomPick(patternOptions)];
   const totalUnits = pattern.reduce((sum, value) => sum + value, 0);

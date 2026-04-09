@@ -13,7 +13,7 @@ import {
 import DailyRewardsModal from './components/modals/DailyRewardsModal';
 import DailyQuestsModal from './components/modals/DailyQuestsModal';
 import AchievementsModal from './components/modals/AchievementsModal';
-import LevelResultModal from './components/LevelResultModal';
+import LevelResultsModal from './components/results/LevelResultsModal';
 import GameRulesModal from './components/GameRulesModal';
 import GameActionDock from './components/GameActionDock';
 import UnifiedMiniGameHud from './components/UnifiedMiniGameHud';
@@ -28,7 +28,6 @@ import {
 } from './app/useGameplaySession';
 import { GameplaySessionEventHandlers, GameplaySessionEventPayload, GameplaySessionState } from './app/gameplaySessionContract';
 import { useMiniGameLifecycle } from './app/useMiniGameLifecycle';
-import { getBossVisualForLevel } from './bossVisuals';
 import { LevelResultState } from './app/types';
 import {
   IPHONE_STAGE_HEIGHT,
@@ -46,6 +45,8 @@ import WellbeingCompleteModal from './wellbeing/WellbeingCompleteModal';
 import { WELLBEING_BY_ID } from './wellbeing/data';
 import { applyTelemetryEvent } from './systems/progression/telemetry';
 import { reconcileAchievementState } from './systems/progression/achievementCatalog';
+import { useProgressionStore } from './store/useProgressionStore';
+import { LevelProgress } from './lib/progression/types';
 
 const App: React.FC = () => {
   const [stageScale, setStageScale] = useState(1);
@@ -83,6 +84,49 @@ const App: React.FC = () => {
     applyGameVictory,
   } = usePlayerProgression();
 
+  const {
+    player: progressionPlayer,
+    levels: progressionLevels,
+    completeLevel: completeProgressionLevel,
+    hydrateFromLegacy,
+    setAvatarId: setProgressionAvatarId,
+  } = useProgressionStore();
+
+  const [sessionMetrics, setSessionMetrics] = useState({
+    correct: 0,
+    incorrect: 0,
+    hintsUsed: 0,
+  });
+
+  const resetSessionMetrics = useCallback(() => {
+    setSessionMetrics({ correct: 0, incorrect: 0, hintsUsed: 0 });
+  }, []);
+
+  const mapProgressionToPlayer = useCallback((levels: Record<string, LevelProgress>) => {
+    const completedLevels: Record<number, number[]> = {};
+    const levelStars: Record<string, number> = {};
+    let totalStars = 0;
+
+    Object.values(levels).forEach((progress) => {
+      const [islandIdRaw, levelIdRaw] = progress.levelId.split('-');
+      const islandId = Number(islandIdRaw);
+      const levelId = Number(levelIdRaw);
+      if (!Number.isFinite(islandId) || !Number.isFinite(levelId)) return;
+
+      if (progress.completed) {
+        if (!completedLevels[islandId]) completedLevels[islandId] = [];
+        if (!completedLevels[islandId].includes(levelId)) {
+          completedLevels[islandId].push(levelId);
+        }
+      }
+
+      levelStars[`${islandId}-${levelId}`] = progress.bestStars;
+      totalStars += progress.bestStars;
+    });
+
+    return { completedLevels, levelStars, totalStars };
+  }, []);
+
   const handleUpdatePlayer = useCallback((updater: (prev: PlayerData) => PlayerData) => {
     setPlayer((prev) => {
       const next = updater(prev);
@@ -94,6 +138,48 @@ const App: React.FC = () => {
       };
     });
   }, [setPlayer]);
+
+  useEffect(() => {
+    hydrateFromLegacy({
+      levelStars: player.levelStars || {},
+      completedLevels: player.completedLevels || {},
+      playerLevel: player.level,
+      playerXp: player.xp,
+    });
+  }, [hydrateFromLegacy, player.completedLevels, player.level, player.levelStars, player.xp]);
+
+  useEffect(() => {
+    if (player.avatarId && player.avatarId !== progressionPlayer.avatarId) {
+      setProgressionAvatarId(player.avatarId);
+    }
+  }, [player.avatarId, progressionPlayer.avatarId, setProgressionAvatarId]);
+
+  useEffect(() => {
+    const mapped = mapProgressionToPlayer(progressionLevels);
+    setPlayer((prev) => {
+      const next = {
+        ...prev,
+        level: progressionPlayer.level,
+        xp: progressionPlayer.currentXp,
+        completedLevels: mapped.completedLevels,
+        levelStars: mapped.levelStars,
+        stats: {
+          ...prev.stats,
+          totalStars: mapped.totalStars,
+        },
+      };
+
+      const shouldUpdate = (
+        prev.level !== next.level
+        || prev.xp !== next.xp
+        || JSON.stringify(prev.completedLevels) !== JSON.stringify(next.completedLevels)
+        || JSON.stringify(prev.levelStars) !== JSON.stringify(next.levelStars)
+        || (prev.stats?.totalStars || 0) !== (next.stats?.totalStars || 0)
+      );
+
+      return shouldUpdate ? next : prev;
+    });
+  }, [mapProgressionToPlayer, progressionLevels, progressionPlayer.currentXp, progressionPlayer.level, setPlayer]);
 
   const {
     showDailyRewards,
@@ -220,20 +306,48 @@ const App: React.FC = () => {
         ? { ...nextSignals, lastSuggestionTime: now }
         : nextSignals;
     });
+    if (!selectedIsland || !selectedLevel) return;
+
+    const totalAttempts = sessionMetrics.correct + sessionMetrics.incorrect;
+    const accuracy = totalAttempts > 0 ? sessionMetrics.correct / totalAttempts : 0;
+    const timeMs = Math.max(0, (sessionState.totalTime - sessionState.timeLeft) * 1000);
+    const progressionResult = completeProgressionLevel({
+      levelId: levelKey!,
+      completed: false,
+      score: XP,
+      accuracy,
+      hintsUsed: sessionMetrics.hintsUsed,
+      livesRemaining: sessionState.lives,
+      mistakes: sessionMetrics.incorrect,
+      timeMs,
+    });
+
     setLevelResult({
       type: 'gameover',
       title: 'Round over',
       subtitle: wellbeingSuggested
         ? 'Three tough rounds in a row. Want to take a minute in a calm break?'
         : 'No rewards lost forever. Reset, tighten the route, and take another shot.',
-      XP,
-      stars: 0,
+      stars: progressionResult.stars,
+      xpGained: progressionResult.xpGained,
+      bonuses: progressionResult.bonuses,
+      previousLevel: progressionResult.previousLevel,
+      newLevel: progressionResult.newLevel,
+      previousXp: progressionResult.previousXp,
+      currentXp: progressionResult.currentXp,
+      xpRequiredForNextLevel: progressionResult.xpRequiredForNextLevel,
+      leveledUp: progressionResult.leveledUp,
+      accuracy,
+      hintsUsed: sessionMetrics.hintsUsed,
+      mistakes: sessionMetrics.incorrect,
+      timeMs,
+      completed: false,
       coinsEarned: 0,
-      xpEarned: 0,
+      xpEarned: progressionResult.xpGained,
       achievementsUnlocked: [],
       wellbeingSuggested,
     });
-  }, [selectedIsland, selectedLevel, setLevelResult]);
+  }, [completeProgressionLevel, selectedIsland, selectedLevel, sessionMetrics.correct, sessionMetrics.hintsUsed, sessionMetrics.incorrect, sessionState.lives, sessionState.timeLeft, sessionState.totalTime, setLevelResult]);
 
   const handleResetFailCount = useCallback(() => {
     if (!selectedIsland || !selectedLevel) return;
@@ -253,6 +367,12 @@ const App: React.FC = () => {
   });
 
   useMiniGameLifecycle({ screen, selectedLevel });
+
+  useEffect(() => {
+    if (screen === 'gameplay' && selectedLevel) {
+      resetSessionMetrics();
+    }
+  }, [gameplayRestartKey, resetSessionMetrics, screen, selectedLevel?.id]);
 
   const selectedRuleSet = useMemo(
     () => (
@@ -403,6 +523,7 @@ const App: React.FC = () => {
       if (screen === 'gameplay' && hintRuleSet) {
         setGameRulesMode('help');
         setShowGameRules(true);
+        setSessionMetrics((prev) => ({ ...prev, hintsUsed: prev.hintsUsed + 1 }));
       }
     };
 
@@ -410,7 +531,7 @@ const App: React.FC = () => {
     return () => {
       window.removeEventListener(GAME_HUD_HELP_EVENT, handleOpenHelp as EventListener);
     };
-  }, [hintRuleSet, screen, setGameRulesMode, setShowGameRules]);
+  }, [hintRuleSet, screen, setGameRulesMode, setSessionMetrics, setShowGameRules]);
 
   useEffect(() => {
     const handleRestart = () => {
@@ -463,7 +584,39 @@ const App: React.FC = () => {
       gamesPlayedSinceBreak: prev.gamesPlayedSinceBreak + 1,
     }));
     handleResetFailCount();
-    const result = applyGameVictory(selectedIsland, selectedLevel, stars, XP);
+    if (!selectedIsland || !selectedLevel) return;
+
+    const totalAttempts = sessionMetrics.correct + sessionMetrics.incorrect;
+    const fallbackAccuracy = stars >= 3 ? 1 : stars === 2 ? 0.85 : stars === 1 ? 0.65 : 0.5;
+    const accuracy = totalAttempts > 0 ? sessionMetrics.correct / totalAttempts : fallbackAccuracy;
+    const timeMs = Math.max(0, (sessionState.totalTime - sessionState.timeLeft) * 1000);
+    const levelKey = `${selectedIsland.id}-${selectedLevel.id}`;
+    const progressionResult = completeProgressionLevel({
+      levelId: levelKey,
+      completed: true,
+      score: XP,
+      accuracy,
+      hintsUsed: sessionMetrics.hintsUsed,
+      livesRemaining: sessionState.lives,
+      mistakes: sessionMetrics.incorrect,
+      timeMs,
+    });
+
+    const totalStarsEarned = useProgressionStore.getState().totalStars;
+    const result = applyGameVictory(
+      selectedIsland,
+      selectedLevel,
+      progressionResult,
+      {
+        score: XP,
+        accuracy,
+        hintsUsed: sessionMetrics.hintsUsed,
+        mistakes: sessionMetrics.incorrect,
+        timeMs,
+      },
+      totalStarsEarned,
+    );
+
     if (result) setLevelResult(result);
   };
 
@@ -598,10 +751,12 @@ const App: React.FC = () => {
   const sessionEvents: GameplaySessionEventHandlers = useMemo(() => ({
     onCorrectAnswer: (event) => {
       triggerHaptic('selection');
+      setSessionMetrics((prev) => ({ ...prev, correct: prev.correct + 1 }));
       recordTelemetryEvent('correct_answer', event);
     },
     onIncorrectAnswer: (event) => {
       triggerHaptic('error');
+      setSessionMetrics((prev) => ({ ...prev, incorrect: prev.incorrect + 1 }));
       recordTelemetryEvent('incorrect_answer', event);
       if (screen === 'gameplay') {
         const metadataKey = JSON.stringify(event.metadata ?? {});
@@ -628,7 +783,7 @@ const App: React.FC = () => {
       triggerHaptic('error');
       recordTelemetryEvent('game_failed', event);
     },
-  }), [consumeLife, recordTelemetryEvent, screen]);
+  }), [consumeLife, recordTelemetryEvent, screen, setSessionMetrics]);
 
   const screenBehavior = SCREEN_BEHAVIOR[screen];
   const backgroundIntensityClass = screenBehavior.family === 'hub'
@@ -644,11 +799,6 @@ const App: React.FC = () => {
   const isMapLayoutScreen = MAP_LAYOUT_SCREENS.includes(screen);
   const isWorldMapScreen = screen === 'world_map';
   const selectedGameType = selectedLevel?.gameType;
-  const activeBossArt = useMemo(
-    () => getBossVisualForLevel(selectedLevel?.gameType, selectedLevel?.id),
-    [selectedLevel?.gameType, selectedLevel?.id],
-  );
-  const shouldShowResultEnemyArt = false;
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
   const useUnboundedStageShell = isSplashScreen || isAvatarSelectionScreen || isWorldMapScreen;
@@ -789,20 +939,29 @@ const App: React.FC = () => {
               player={player}
             />
 
-            <LevelResultModal
+            <LevelResultsModal
               isOpen={Boolean(levelResult)}
-              enemyArt={shouldShowResultEnemyArt ? (activeBossArt || undefined) : undefined}
               result={levelResult ? {
-                ...levelResult,
-                primaryLabel: levelResult.type === 'victory' ? 'Continue adventure' : 'Try again',
-                onPrimary: levelResult.type === 'victory' ? handleAdvanceAfterVictory : handleRetryLevel,
-                secondaryLabel: levelResult.type === 'victory' ? 'Replay level' : 'Level select',
-                onSecondary: levelResult.type === 'victory' ? handleRetryLevel : handleCloseLevelResult,
-                tertiaryLabel: levelResult.type === 'gameover' && levelResult.wellbeingSuggested ? 'Take A Calm Break' : undefined,
-                onTertiary: levelResult.type === 'gameover' && levelResult.wellbeingSuggested
-                  ? () => openWellbeingHub({ origin: 'post_fail', islandId: selectedIsland?.id ?? null, suggested: true })
-                  : undefined,
+                type: levelResult.type,
+                title: levelResult.title,
+                subtitle: levelResult.subtitle,
+                stars: levelResult.stars as 0 | 1 | 2 | 3,
+                xpGained: levelResult.xpGained,
+                bonuses: levelResult.bonuses,
+                previousLevel: levelResult.previousLevel,
+                newLevel: levelResult.newLevel,
+                previousXp: levelResult.previousXp,
+                currentXp: levelResult.currentXp,
+                xpRequiredForNextLevel: levelResult.xpRequiredForNextLevel,
+                leveledUp: levelResult.leveledUp,
               } : null}
+              onRetry={handleRetryLevel}
+              onNext={levelResult?.type === 'victory' ? handleAdvanceAfterVictory : undefined}
+              onMap={handleCloseLevelResult}
+              calmBreakLabel={levelResult?.type === 'gameover' && levelResult.wellbeingSuggested ? 'Take A Calm Break' : undefined}
+              onCalmBreak={levelResult?.type === 'gameover' && levelResult.wellbeingSuggested
+                ? () => openWellbeingHub({ origin: 'post_fail', islandId: selectedIsland?.id ?? null, suggested: true })
+                : undefined}
             />
 
             <GameRulesModal

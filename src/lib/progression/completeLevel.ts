@@ -1,0 +1,81 @@
+import { applyXpGain } from './applyXpGain';
+import { calculateStars } from './calculateStars';
+import { calculateXp } from './calculateXp';
+import { getXpRequiredForLevel } from './getXpRequiredForLevel';
+import { CompleteLevelArgs, CompleteLevelResult, LevelProgress, PlayerProfile } from './types';
+
+const createEmptyProgress = (levelId: string): LevelProgress => ({
+  levelId,
+  unlocked: true,
+  completed: false,
+  bestStars: 0,
+  bestScore: 0,
+  bestAccuracy: 0,
+  bestTimeMs: null,
+  timesPlayed: 0,
+  firstClearXpAwarded: false,
+});
+
+export const completeLevel = (
+  args: CompleteLevelArgs,
+  player: PlayerProfile,
+  existingProgress?: LevelProgress,
+): {
+  result: CompleteLevelResult;
+  updatedPlayer: PlayerProfile;
+  updatedProgress: LevelProgress;
+} => {
+  const previous = existingProgress ?? createEmptyProgress(args.levelId);
+  const firstClear = !previous.completed && args.completed;
+  const stars = calculateStars({
+    completed: args.completed,
+    accuracy: args.accuracy,
+    hintsUsed: args.hintsUsed,
+    mistakes: args.mistakes,
+    livesRemaining: args.livesRemaining,
+  });
+  const perfectAccuracy = args.completed && args.accuracy === 1 && args.hintsUsed <= 0 && args.mistakes <= 1;
+
+  const { xpGained, bonuses } = calculateXp({
+    completed: args.completed,
+    stars,
+    firstClear: firstClear && !previous.firstClearXpAwarded,
+    perfectAccuracy,
+  });
+
+  const xpOutcome = applyXpGain(player, xpGained);
+
+  const updatedProgress: LevelProgress = {
+    ...previous,
+    completed: previous.completed || args.completed,
+    unlocked: true,
+    timesPlayed: previous.timesPlayed + 1,
+    firstClearXpAwarded: previous.firstClearXpAwarded || firstClear,
+    bestStars: Math.max(previous.bestStars, stars),
+    bestScore: Math.max(previous.bestScore, args.score),
+    bestAccuracy: Math.max(previous.bestAccuracy, args.accuracy),
+    bestTimeMs: args.completed
+      ? previous.bestTimeMs === null
+        ? args.timeMs
+        : Math.min(previous.bestTimeMs, args.timeMs)
+      : previous.bestTimeMs,
+  };
+
+  return {
+    result: {
+      stars,
+      xpGained,
+      leveledUp: xpOutcome.leveledUp,
+      newLevel: xpOutcome.player.level,
+      currentXp: xpOutcome.player.currentXp,
+      xpRequiredForNextLevel: getXpRequiredForLevel(xpOutcome.player.level),
+      previousLevel: xpOutcome.previousLevel,
+      previousXp: xpOutcome.previousXp,
+      bonuses,
+      firstClear,
+      perfectAccuracy,
+    },
+    updatedPlayer: xpOutcome.player,
+    updatedProgress,
+  };
+};

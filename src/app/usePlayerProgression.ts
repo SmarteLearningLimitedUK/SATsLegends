@@ -5,6 +5,7 @@ import { IslandData, LevelData, PlayerData } from '../types';
 import { LevelResultState } from './types';
 import { createTelemetryState } from '../systems/progression/telemetry';
 import { getStarterItemIds } from '../systems/progression/shopCatalog';
+import { useProgressionStore } from '../store/useProgressionStore';
 
 export const PLAYER_STORAGE_KEY = 'maths_quest_player';
 const ALL_ISLAND_IDS = ISLANDS.map(island => island.id);
@@ -76,12 +77,30 @@ export interface PlayerProgressionController {
   applyGameVictory: (
     selectedIsland: IslandData | null,
     selectedLevel: LevelData | null,
-    stars: number,
-    score: number,
+    progressionResult: {
+      stars: number;
+      xpGained: number;
+      leveledUp: boolean;
+      newLevel: number;
+      currentXp: number;
+      xpRequiredForNextLevel: number;
+      previousLevel: number;
+      previousXp: number;
+      bonuses: { label: string; amount: number }[];
+    },
+    metrics: {
+      score: number;
+      accuracy: number;
+      hintsUsed: number;
+      mistakes: number;
+      timeMs: number;
+    },
+    totalStarsEarned: number,
   ) => LevelResultState | null;
 }
 
 export const usePlayerProgression = (): PlayerProgressionController => {
+  const grantProgressionXp = useProgressionStore((state) => state.grantXp);
   const [player, setPlayer] = useState<PlayerData>(() => {
     const saved = localStorage.getItem(PLAYER_STORAGE_KEY);
     const parsed = saved ? JSON.parse(saved) : null;
@@ -141,6 +160,10 @@ export const usePlayerProgression = (): PlayerProgressionController => {
       const quest = prev.dailyQuests.find(q => q.id === questId);
       if (!quest || quest.isClaimed || quest.current < quest.target) return prev;
 
+      if (quest.reward.type === 'xp') {
+        grantProgressionXp(quest.reward.amount);
+      }
+
       return {
         ...prev,
         coins: quest.reward.type === 'coins' ? prev.coins + quest.reward.amount : prev.coins,
@@ -160,13 +183,30 @@ export const usePlayerProgression = (): PlayerProgressionController => {
   const applyGameVictory = (
     selectedIsland: IslandData | null,
     selectedLevel: LevelData | null,
-    stars: number,
-    score: number,
+    progressionResult: {
+      stars: number;
+      xpGained: number;
+      leveledUp: boolean;
+      newLevel: number;
+      currentXp: number;
+      xpRequiredForNextLevel: number;
+      previousLevel: number;
+      previousXp: number;
+      bonuses: { label: string; amount: number }[];
+    },
+    metrics: {
+      score: number;
+      accuracy: number;
+      hintsUsed: number;
+      mistakes: number;
+      timeMs: number;
+    },
+    totalStarsEarned: number,
   ): LevelResultState | null => {
     if (!selectedIsland || !selectedLevel) return null;
 
+    const stars = progressionResult.stars;
     const earnedCoins = stars * 50;
-    const earnedXp = stars * 100;
     const islandId = selectedIsland.id;
     const levelId = selectedLevel.id;
     const nextIslandId = islandId + 1;
@@ -176,17 +216,6 @@ export const usePlayerProgression = (): PlayerProgressionController => {
     const achievementsUnlocked: string[] = [];
 
     setPlayer(prev => {
-      const completedLevels = { ...prev.completedLevels };
-      const levelStars = { ...prev.levelStars };
-
-      if (!completedLevels[islandId]) completedLevels[islandId] = [];
-      if (!completedLevels[islandId].includes(levelId)) {
-        completedLevels[islandId] = [...completedLevels[islandId], levelId];
-      }
-
-      const levelStarKey = `${islandId}-${levelId}`;
-      levelStars[levelStarKey] = Math.max(levelStars[levelStarKey] || 0, stars);
-
       const updatedQuests = prev.dailyQuests.map(quest => {
         if (quest.id === 'q1') {
           return { ...quest, current: Math.min(quest.target, quest.current + 1) };
@@ -197,11 +226,8 @@ export const usePlayerProgression = (): PlayerProgressionController => {
         return quest;
       });
 
-      const totalXp = prev.xp + earnedXp;
-      const level = Math.floor(totalXp / 1000) + 1;
-      const totalTrackedStars = Object.values(levelStars).reduce<number>((sum, value) => sum + Number(value || 0), 0);
       const stats = {
-        totalStars: totalTrackedStars,
+        totalStars: totalStarsEarned,
         totalGamesPlayed: (prev.stats?.totalGamesPlayed || 0) + 1,
         totalCoinsEarned: (prev.stats?.totalCoinsEarned || 0) + earnedCoins,
       };
@@ -214,10 +240,8 @@ export const usePlayerProgression = (): PlayerProgressionController => {
       return {
         ...prev,
         coins: nextCoinTotal,
-        xp: totalXp,
-        level,
-        completedLevels,
-        levelStars,
+        xp: progressionResult.currentXp,
+        level: progressionResult.newLevel,
         unlockedIslands,
         dailyQuests: updatedQuests,
         stats,
@@ -231,11 +255,23 @@ export const usePlayerProgression = (): PlayerProgressionController => {
       subtitle: stars === 3
         ? 'You nailed the target, banked the rewards, and pushed your run forward.'
         : 'Rewards are locked in. Keep the momentum going into the next challenge.',
-      XP: score,
-      score,
+      score: metrics.score,
       stars,
+      xpGained: progressionResult.xpGained,
+      bonuses: progressionResult.bonuses,
+      previousLevel: progressionResult.previousLevel,
+      newLevel: progressionResult.newLevel,
+      previousXp: progressionResult.previousXp,
+      currentXp: progressionResult.currentXp,
+      xpRequiredForNextLevel: progressionResult.xpRequiredForNextLevel,
+      leveledUp: progressionResult.leveledUp,
+      accuracy: metrics.accuracy,
+      hintsUsed: metrics.hintsUsed,
+      mistakes: metrics.mistakes,
+      timeMs: metrics.timeMs,
+      completed: true,
       coinsEarned: earnedCoins,
-      xpEarned: earnedXp,
+      xpEarned: progressionResult.xpGained,
       islandUnlockedName,
       achievementsUnlocked,
     };
