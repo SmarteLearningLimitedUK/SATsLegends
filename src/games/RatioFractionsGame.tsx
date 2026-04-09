@@ -11,7 +11,7 @@ import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import { DEFAULT_RACE_DIFFICULTY, RACE_TUNING, RaceDifficulty } from './ratioFractionsRace/constants';
 import { getQuestionTier, pickQuestionForTier } from './ratioFractionsRace/questionSelector';
 import { RatioFractionQuestion } from './ratioFractionsRace/types';
-import ratioBackdrop from '../assets/level_backgrounds/ratiofractionsmap.jpg';
+import ratioBackdrop from '../assets/gokarts/racebkgrd.png';
 import playerKart from '../assets/gokarts/12.png';
 import enemyKart from '../assets/gokarts/15.png';
 
@@ -131,8 +131,8 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const [renderTick, setRenderTick] = useState(0);
   const [viewport, setViewport] = useState({ width: 320, height: 480 });
 
-  const [raceDifficulty] = useState<RaceDifficulty>(DEFAULT_RACE_DIFFICULTY);
-  const tuning = RACE_TUNING[raceDifficulty];
+  const raceDifficulty: RaceDifficulty = levelId <= 3 ? 'easy' : levelId <= 6 ? 'standard' : 'hard';
+  const tuning = RACE_TUNING[raceDifficulty] || RACE_TUNING[DEFAULT_RACE_DIFFICULTY];
 
   const raceViewportRef = useRef<HTMLDivElement | null>(null);
   const playerPosRef = useRef(START_OFFSET);
