@@ -133,6 +133,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       'remainder_run',
       'maths_vs_zombies',
       'share_splitter',
+      'ratio_fractions',
     ]);
     return !(
       selectedLevel.gameType === 'potion_pour'

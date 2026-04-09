@@ -37,10 +37,10 @@ type RaceState =
   | 'enemyWin';
 
 const START_OFFSET = 0;
-  const CAMERA_LERP = 0.08;
-  const RACER_LERP = 0.16;
-  const BASE_XP = 160;
-  const CAMERA_EDGE_THRESHOLD = 0.6;
+const CAMERA_LERP = 0.08;
+const RACER_LERP = 0.16;
+const BASE_XP = 160;
+const CAMERA_EDGE_THRESHOLD = 0.6;
 
 const shuffle = <T,>(items: T[]) => {
   const copy = [...items];
@@ -344,39 +344,58 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   };
 
   return (
-    <GameUiShell overlayDisabled>
+    <GameUiShell overlayDisabled className="bg-transparent">
       <div className="relative h-full w-full">
         <div
           className="pointer-events-none absolute inset-0"
           style={{
             backgroundImage: `url(${ratioBackdrop})`,
             backgroundRepeat: 'repeat-x',
-            backgroundSize: 'auto 100%',
+            backgroundSize: 'auto 120%',
             backgroundPositionX: `${-cameraXRef.current * 0.35}px`,
-            backgroundPositionY: 'bottom',
+            backgroundPositionY: 'center',
           }}
         />
 
         <GameScreenLayout
           className="relative z-10 px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-2 text-white"
-          top={null}
-          main={(
-            <div className="relative flex h-full w-full flex-col gap-2 overflow-hidden">
-              <div className="relative z-10 flex flex-col gap-2">
-                <div className="game-question-card">
-                  <div className="question-title">Fuel Mix Question</div>
-                  <div className="question-subtitle">{question.prompt}</div>
-                  <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-slate-100/80">
-                    {question.labels.map((label, index) => (
-                      <span key={`${label}-${index}`}>
-                        {label} {question.ratio[index]}
-                        {index < question.labels.length - 1 ? ' : ' : ''}
-                      </span>
-                    ))}
-                  </div>
+          top={(
+            <div className="flex flex-col gap-2">
+              <div className="game-question-card">
+                <div className="question-title">Fuel Mix Question</div>
+                <div className="question-subtitle">{question.prompt}</div>
+                <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-slate-100/80">
+                  {question.labels.map((label, index) => (
+                    <span key={`${label}-${index}`}>
+                      {label} {question.ratio[index]}
+                      {index < question.labels.length - 1 ? ' : ' : ''}
+                    </span>
+                  ))}
                 </div>
               </div>
-
+              <div className="grid grid-cols-4 gap-2">
+                {question.options.map((option) => (
+                  <motion.button
+                    key={option}
+                    whileTap={{ scale: 0.96 }}
+                    onClick={() => handleAnswer(option)}
+                    disabled={locked || raceState !== 'showingQuestion'}
+                    className={`min-h-[3.1rem] rounded-[1rem] border px-2 py-2 text-center text-base font-black shadow-[0_12px_20px_rgba(2,6,23,0.25)] transition ${
+                      selected === option
+                        ? option === question.correctAnswer
+                          ? 'border-emerald-200 bg-emerald-300 text-emerald-950'
+                          : 'border-rose-200 bg-rose-300 text-rose-950'
+                        : 'border-amber-200 bg-amber-400 text-slate-900'
+                    }`}
+                  >
+                    {option}
+                  </motion.button>
+                ))}
+              </div>
+            </div>
+          )}
+          main={(
+            <div className="relative flex h-full w-full flex-col gap-2 overflow-hidden">
               <div
                 ref={raceViewportRef}
                 className="relative z-10 flex min-h-0 flex-1 w-full overflow-hidden"
@@ -422,33 +441,13 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                   </div>
                 ) : null}
               </div>
-              <div className="relative z-10 flex flex-col gap-2">
-                <div className="grid grid-cols-4 gap-2">
-                  {question.options.map((option) => (
-                    <motion.button
-                      key={option}
-                      whileTap={{ scale: 0.96 }}
-                      onClick={() => handleAnswer(option)}
-                      disabled={locked || raceState !== 'showingQuestion'}
-                      className={`min-h-[3.2rem] rounded-[1rem] border px-2 py-2 text-center text-lg font-black shadow-[0_12px_20px_rgba(2,6,23,0.25)] transition ${
-                        selected === option
-                          ? option === question.correctAnswer
-                            ? 'border-emerald-200 bg-emerald-300 text-emerald-950'
-                            : 'border-rose-200 bg-rose-300 text-rose-950'
-                          : 'border-amber-200 bg-amber-400 text-slate-900'
-                      }`}
-                    >
-                      {option}
-                    </motion.button>
-                  ))}
-                </div>
-                <FeedbackStrip tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}>
-                  {feedback}
-                </FeedbackStrip>
-              </div>
             </div>
           )}
-          bottom={null}
+          bottom={(
+            <FeedbackStrip tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}>
+              {feedback}
+            </FeedbackStrip>
+          )}
         />
       </div>
     </GameUiShell>
