@@ -8,7 +8,7 @@ import {
   TaskCard,
 } from '../components/game-ui/GameUiKit';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
-import areaBackdrop from '../assets/level_backgrounds/place_value_panicbkgrd.png';
+import areaBackdrop from '../assets/maps/castle.jpg';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface AreaArchitectGameProps extends MiniGameShellContractProps {

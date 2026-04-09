@@ -15,6 +15,7 @@ import socketTh from '../assets/casual_ui/updaed_sockets_slices/socket_th.png';
 import socketH from '../assets/casual_ui/updaed_sockets_slices/socket_h.png';
 import socketT from '../assets/casual_ui/updaed_sockets_slices/socket_t.png';
 import socketU from '../assets/casual_ui/updaed_sockets_slices/socket_u.png';
+import placeValueBackground from '../assets/level_backgrounds/place_value_panicbkgrd.png';
 import { triggerHaptic } from '../haptics';
 import { AVATARS } from '../constants';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
@@ -916,6 +917,14 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       className="relative z-20 h-full w-full min-h-0 overflow-hidden select-none"
       style={{ touchAction: 'manipulation' }}
     >
+      <img
+        src={placeValueBackground}
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+        className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
+      />
+      <div className="relative z-10 h-full w-full">
       {!useSharedTopHud ? (
         <div
           className="pointer-events-none absolute inset-x-0 top-0 z-40"
@@ -1359,6 +1368,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           </motion.div>
         ) : null}
       </AnimatePresence>
+      </div>
     </div>
   );
 };

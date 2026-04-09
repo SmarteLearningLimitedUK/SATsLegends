@@ -7,7 +7,7 @@ import HUD from '../components/HUD';
 import GameBoard from '../components/GameBoard';
 import Tutorial from '../components/Tutorial';
 import AssetIcon from '../components/AssetIcon';
-import cloudBackdrop from '../assets/fantasy_hero/demo_bg/background_01.png';
+import cloudBackdrop from '../assets/maps/reef2.jpg';
 import sparkle from '../assets/fantasy_hero/cloud_collapse/sparkle.png';
 
 interface CloudCollapseGameProps {

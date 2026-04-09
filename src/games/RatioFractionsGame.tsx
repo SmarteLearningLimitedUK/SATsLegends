@@ -11,7 +11,7 @@ import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import { DEFAULT_RACE_DIFFICULTY, RACE_TUNING, RaceDifficulty } from './ratioFractionsRace/constants';
 import { getQuestionTier, pickQuestionForTier } from './ratioFractionsRace/questionSelector';
 import { RatioFractionQuestion } from './ratioFractionsRace/types';
-import ratioBackdrop from '../assets/gokarts/racebkgrd.png';
+import ratioBackdrop from '../assets/maps/harbour.jpg';
 import playerKart from '../assets/gokarts/12.png';
 import enemyKart from '../assets/gokarts/15.png';
 
