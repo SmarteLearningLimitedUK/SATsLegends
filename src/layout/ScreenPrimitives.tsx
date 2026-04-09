@@ -1,5 +1,5 @@
 import React from 'react';
-import { GUI_SLICES } from '../assets/reskin/guiSlices';
+import { GUI_SLICES } from '../assets/reskin/guiSlices.ts';
 import { GameUiShell } from '../components/game-ui/GameUiKit';
 
 type WrapperProps = {
