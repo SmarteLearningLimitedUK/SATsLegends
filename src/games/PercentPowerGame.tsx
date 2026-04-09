@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { ChevronLeft, CircleDollarSign, Zap } from 'lucide-react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
+import percentPowerBackground from '../assets/level_backgrounds/percent power map.jpg';
 import { triggerHaptic } from '../haptics';
 import {
   emitMiniGameSessionEvent,
@@ -306,7 +307,11 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
 
   return (
     <div className="relative h-full w-full overflow-hidden text-white">
-      <GameplaySceneBackdrop gameType="percent_power" className="opacity-[0.98]" />
+      <GameplaySceneBackdrop
+        gameType="percent_power"
+        backgroundOverride={percentPowerBackground}
+        className="opacity-[0.98]"
+      />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(103,232,249,0.22),transparent_30%),linear-gradient(180deg,rgba(7,31,62,0.72),rgba(4,13,28,0.92))]" />
 
       {!useSharedTopHud ? (

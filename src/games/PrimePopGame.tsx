@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import AssetIcon from '../components/AssetIcon';
 import { AVATARS } from '../constants';
-import primePopBackground from '../assets/maps/primepopbkground.jpg';
+import primePopBackground from '../assets/level_backgrounds/primepopbkground.jpg';
 
 interface PrimePopGameProps {
   levelId: number;

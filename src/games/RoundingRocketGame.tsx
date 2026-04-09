@@ -4,7 +4,7 @@ import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
-import missionBackground from '../assets/maps/volcano2.jpg';
+import missionBackground from '../assets/level_backgrounds/roundingrocketbackground.jpg';
 import roundingRocketArt from '../assets/rocktlogo.png';
 
 interface RoundingRocketGameProps {

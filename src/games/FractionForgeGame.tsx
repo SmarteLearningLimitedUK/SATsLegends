@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react';
 import AssetIcon from '../components/AssetIcon';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
+import fractionForgeBackground from '../assets/level_backgrounds/fraction forge map.jpg';
 import { triggerHaptic } from '../haptics';
 
 interface FractionForgeGameProps {
@@ -503,7 +504,11 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
 
   return (
     <div className="relative h-full w-full select-none overflow-hidden">
-      <GameplaySceneBackdrop gameType="take_out_rush" className="opacity-[0.92]" />
+      <GameplaySceneBackdrop
+        gameType="take_out_rush"
+        backgroundOverride={fractionForgeBackground}
+        className="opacity-[0.92]"
+      />
       <div className="absolute inset-0 bg-gradient-to-b from-[#060f2ccc] via-[#0b1a4694] to-[#050b1acc]" />
 
       <div ref={playfieldRef} className="relative h-full w-full">

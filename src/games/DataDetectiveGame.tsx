@@ -26,6 +26,7 @@ import {
   LabelList,
 } from 'recharts';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
+import dataDetectiveBackground from '../assets/level_backgrounds/datadetectivemap.jpg';
 
 interface StolenItem {
   name: string;
@@ -216,8 +217,16 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   };
 
   return (
-    <GameScreenLayout
-      className="relative h-full w-full min-h-0 text-slate-100"
+    <div className="relative h-full w-full min-h-0 text-slate-100">
+      <img
+        src={dataDetectiveBackground}
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+        className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
+      />
+      <GameScreenLayout
+        className="relative z-10 h-full w-full min-h-0 text-slate-100"
       top={!useSharedTopHud ? (
         <header className="z-20 flex h-16 items-center justify-between border-b border-cyan-200/16 bg-[linear-gradient(180deg,rgba(8,26,66,0.78),rgba(5,16,42,0.84))] px-6 backdrop-blur-md">
           <div className="flex items-center gap-3">
@@ -530,7 +539,8 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           </AnimatePresence>
         </>
       )}
-    />
+      />
+    </div>
   );
 };
 
