@@ -79,7 +79,7 @@ const CharacterShop: React.FC<CharacterShopProps> = ({ player, onBack, onUpdateP
             <AssetIcon name="back" className="h-5 w-5 md:h-6 md:w-6" />
           </button>
           <div>
-            <div className="text-[10px] font-black uppercase tracking-[0.24em] text-white/55">Cosmetics</div>
+            <div className="text-aaa-micro text-white/55">Cosmetics</div>
             <div className="text-lg font-black tracking-tight text-white md:text-3xl">Character Shop</div>
           </div>
         </div>
@@ -93,7 +93,7 @@ const CharacterShop: React.FC<CharacterShopProps> = ({ player, onBack, onUpdateP
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setActiveCategory('all')}
-            className={`rounded-full px-4 py-2 text-xs font-black uppercase tracking-[0.2em] ${activeCategory === 'all' ? 'bg-cyan-300 text-slate-950' : 'bg-slate-950/60 text-white/70'}`}
+            className={`rounded-full px-4 py-2 text-aaa-sm ${activeCategory === 'all' ? 'bg-cyan-300 text-slate-950' : 'bg-slate-950/60 text-white/70'}`}
           >
             All
           </button>
@@ -101,7 +101,7 @@ const CharacterShop: React.FC<CharacterShopProps> = ({ player, onBack, onUpdateP
             <button
               key={category.id}
               onClick={() => setActiveCategory(category.id)}
-              className={`rounded-full px-4 py-2 text-xs font-black uppercase tracking-[0.2em] ${activeCategory === category.id ? 'bg-cyan-300 text-slate-950' : 'bg-slate-950/60 text-white/70'}`}
+              className={`rounded-full px-4 py-2 text-aaa-sm ${activeCategory === category.id ? 'bg-cyan-300 text-slate-950' : 'bg-slate-950/60 text-white/70'}`}
             >
               {category.label}
             </button>
@@ -122,7 +122,7 @@ const CharacterShop: React.FC<CharacterShopProps> = ({ player, onBack, onUpdateP
                     </div>
                     <div>
                       <div className="text-base font-black md:text-lg">{item.name}</div>
-                      <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/50">{item.category}</div>
+                      <div className="text-aaa-micro text-white/50">{item.category}</div>
                     </div>
                   </div>
                   <div className="text-sm font-black text-amber-100">{item.price} coins</div>

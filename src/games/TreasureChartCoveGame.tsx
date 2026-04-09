@@ -126,6 +126,7 @@ const createRound = (levelId: number, roundIndex: number): ChartRound => {
       prompt: `How many crates were logged on ${targetDay.label}?`,
       support: 'Trace the line up from the day label.',
       boardLabel: 'Crates over five days',
+      ships: [],
       lineDays: days,
       options: options.sort(() => Math.random() - 0.5),
       answer: targetDay.value.toString(),
