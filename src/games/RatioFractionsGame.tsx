@@ -349,9 +349,9 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
           style={{
             backgroundImage: `url(${ratioBackdrop})`,
             backgroundRepeat: 'repeat-x',
-            backgroundSize: 'auto 100%',
+            backgroundSize: 'auto 85%',
             backgroundPositionX: `${-cameraXRef.current * 0.35}px`,
-            backgroundPositionY: '72%',
+            backgroundPositionY: '74%',
           }}
         />
 

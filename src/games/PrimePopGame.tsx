@@ -569,8 +569,10 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
             className="pointer-events-none absolute left-0 right-0 z-20 flex items-center justify-center"
             style={{ top: `${DANGER_LINE_Y}%` }}
           >
-            <div className="relative flex h-6 w-[88%] items-center justify-center overflow-hidden rounded-full border border-white/20 bg-[repeating-linear-gradient(135deg,#0b0f1a_0px,#0b0f1a_10px,#f9fafb_10px,#f9fafb_20px)] shadow-[0_0_12px_rgba(15,23,42,0.45)]">
-              <span className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-900">DANGER</span>
+            <div className="relative flex h-4 w-[88%] items-center justify-center overflow-hidden rounded-full border border-white/20 bg-[repeating-linear-gradient(135deg,#0b0f1a_0px,#0b0f1a_10px,#f9fafb_10px,#f9fafb_20px)] shadow-[0_0_12px_rgba(15,23,42,0.45)]">
+              <span className="rounded-full bg-red-600 px-3 py-0.5 text-[9px] font-black uppercase tracking-[0.26em] text-white shadow-[0_0_12px_rgba(220,38,38,0.6)]">
+                DANGER
+              </span>
             </div>
           </div>
           <div className="absolute inset-0 z-10 overflow-hidden">

@@ -758,11 +758,13 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
               onToggleAudio={() => setAudioEnabled((previous) => !previous)}
               onHelp={() => setShowRules(true)}
             />
-            <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/65 px-3 py-2 text-center backdrop-blur-sm">
+            <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-3 py-2 text-center backdrop-blur-sm">
               <div className="text-[12px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Recipe</div>
               <div className="mt-0.5 text-[clamp(1.35rem,5.2vw,1.8rem)] font-black text-white">{challenge.orderTitle}</div>
               <div className="mt-0.5 text-[13px] font-black text-amber-100">Ratio {ratioText}</div>
-              <div className="mt-1 text-[12px] font-semibold text-cyan-100/90">{challenge.orderPrompt}</div>
+              <div className="mt-1 text-[12px] font-semibold text-cyan-100/90">
+                {challenge.orderPrompt || 'Use the ratio to complete the potion.'}
+              </div>
             </div>
           </div>
         )}
@@ -785,7 +787,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 src={cauldrenAndPotionArt}
                 alt=""
                 aria-hidden="true"
-                className="pointer-events-none absolute left-1/2 bottom-[10%] h-[42%] max-w-none -translate-x-1/2 translate-y-[-18px] object-contain"
+                className="pointer-events-none absolute left-1/2 bottom-[10%] h-[42%] max-w-none -translate-x-1/2 translate-y-[-33px] object-contain"
               />
               <div className="absolute left-1/2 bottom-[27%] h-[14%] w-[34%] -translate-x-1/2 translate-y-[5px] overflow-hidden rounded-[46%]">
                 <motion.div

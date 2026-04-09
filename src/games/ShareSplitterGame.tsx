@@ -485,7 +485,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
               <div className="mt-1 text-[clamp(1.2rem,4.8vw,1.8rem)] font-black text-slate-900">Split the Cakes</div>
               <div className="mt-1 text-[13px] font-black text-amber-700">Ratio {challenge.ratios.join(' : ')}</div>
               <div className="mt-2 text-[12px] font-semibold text-slate-700">
-                {formatFantasyPrompt(challenge.prompt)}
+                {formatFantasyPrompt(challenge.prompt) || 'Share the cakes to match the ratio.'}
               </div>
             </div>
           </div>

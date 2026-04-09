@@ -495,7 +495,8 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
                 <motion.div
                   key={zombie.id}
                   initial={{ opacity: 0, x: 40 }}
-                  animate={{ opacity: 1, x: 0 }}
+                  animate={{ opacity: 1, x: 0, y: [-6, 6, -6] }}
+                  transition={{ duration: 2.4 + (zombie.lane % 3) * 0.4, repeat: Infinity, ease: 'easeInOut' }}
                   exit={{ opacity: 0, scale: 0.7 }}
                   className="absolute flex flex-col items-center gap-1"
                   style={{
@@ -527,19 +528,14 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
         </div>
 
         <div className="mx-4 mt-4 rounded-3xl border border-blue-400/40 bg-blue-950/70 p-4 shadow-xl">
-          <div className="mb-3 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Target className="h-5 w-5 text-yellow-400" />
-              <span className="text-lg font-black text-white">Solve the sum</span>
-            </div>
-            <div className="flex items-center gap-2 rounded-xl border border-blue-400/40 bg-blue-800/60 px-3 py-1">
-              <Brain className="h-4 w-4 text-cyan-200" />
-              <span className="text-sm font-bold">{feedback || 'Pick the correct answer.'}</span>
-            </div>
+          <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-center text-[clamp(1.1rem,4.5vw,1.6rem)] font-black text-white">
+            {question.prompt}
           </div>
-          <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-center text-2xl font-black text-white">
-            Solve the sum: {question.prompt}
-          </div>
+          {feedback ? (
+            <div className="mt-2 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-cyan-100/80">
+              {feedback}
+            </div>
+          ) : null}
           <div className="mt-3 grid grid-cols-2 gap-2">
             {question.options.map((option, index) => (
               <button

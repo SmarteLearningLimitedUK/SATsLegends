@@ -188,30 +188,31 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
 
               <BonusBreakdown bonuses={result.bonuses} />
 
-              <div className={`mt-2 flex flex-col gap-2 ${showButtons ? 'opacity-100' : 'opacity-0 pointer-events-none'} transition-opacity duration-300`}>
-                <button
-                  type="button"
-                  className="w-full rounded-full bg-[linear-gradient(90deg,#38bdf8,#6366f1)] py-3 text-sm font-black uppercase tracking-[0.18em] text-white shadow-[0_12px_24px_rgba(59,130,246,0.45)]"
-                  onClick={isVictory ? (onNext || onMap) : onRetry}
-                >
-                  {isVictory ? (onNext ? 'Next Level' : 'Return to Map') : 'Retry'}
-                </button>
-                <div className="grid grid-cols-2 gap-2">
+              <div className={`mt-2 grid gap-2 ${showButtons ? 'opacity-100' : 'opacity-0 pointer-events-none'} transition-opacity duration-300 ${isVictory ? 'grid-cols-2' : 'grid-cols-2'}`}>
+                {isVictory ? (
                   <button
                     type="button"
-                    className="rounded-full border border-white/25 bg-white/10 py-2 text-xs font-black uppercase tracking-[0.18em] text-white"
+                    className="rounded-full bg-[linear-gradient(90deg,#38bdf8,#6366f1)] py-3 text-sm font-black uppercase tracking-[0.18em] text-white shadow-[0_12px_24px_rgba(59,130,246,0.45)]"
+                    onClick={onNext || onMap}
+                  >
+                    {onNext ? 'Next Level' : 'Return to Map'}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="rounded-full bg-[linear-gradient(90deg,#38bdf8,#6366f1)] py-3 text-sm font-black uppercase tracking-[0.18em] text-white shadow-[0_12px_24px_rgba(59,130,246,0.45)]"
                     onClick={onRetry}
                   >
                     Retry
                   </button>
-                  <button
-                    type="button"
-                    className="rounded-full border border-white/25 bg-white/10 py-2 text-xs font-black uppercase tracking-[0.18em] text-white"
-                    onClick={onMap}
-                  >
-                    Map
-                  </button>
-                </div>
+                )}
+                <button
+                  type="button"
+                  className="rounded-full border border-white/25 bg-white/10 py-2 text-xs font-black uppercase tracking-[0.18em] text-white"
+                  onClick={onMap}
+                >
+                  Map
+                </button>
                 {calmBreakLabel && onCalmBreak ? (
                   <button
                     type="button"
