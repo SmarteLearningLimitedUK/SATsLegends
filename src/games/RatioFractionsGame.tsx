@@ -394,7 +394,6 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                   </div>
 
                   <motion.div
-                    key={`player-${renderTick}`}
                     className="absolute flex h-32 w-48 items-center justify-center"
                     style={playerStyle}
                     animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { x: [0, -4, 4, -3, 3, 0] } : { scale: 1 }}
@@ -410,7 +409,6 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                   </motion.div>
 
                   <motion.div
-                    key={`enemy-${renderTick}`}
                     className="absolute flex h-32 w-48 items-center justify-center"
                     style={enemyStyle}
                   >
@@ -424,34 +422,33 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                   </div>
                 ) : null}
               </div>
+              <div className="relative z-10 flex flex-col gap-2">
+                <div className="grid grid-cols-4 gap-2">
+                  {question.options.map((option) => (
+                    <motion.button
+                      key={option}
+                      whileTap={{ scale: 0.96 }}
+                      onClick={() => handleAnswer(option)}
+                      disabled={locked || raceState !== 'showingQuestion'}
+                      className={`min-h-[3.2rem] rounded-[1rem] border px-2 py-2 text-center text-lg font-black shadow-[0_12px_20px_rgba(2,6,23,0.25)] transition ${
+                        selected === option
+                          ? option === question.correctAnswer
+                            ? 'border-emerald-200 bg-emerald-300 text-emerald-950'
+                            : 'border-rose-200 bg-rose-300 text-rose-950'
+                          : 'border-amber-200 bg-amber-400 text-slate-900'
+                      }`}
+                    >
+                      {option}
+                    </motion.button>
+                  ))}
+                </div>
+                <FeedbackStrip tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}>
+                  {feedback}
+                </FeedbackStrip>
+              </div>
             </div>
           )}
-        bottom={(
-          <div className="flex flex-col gap-2">
-            <div className="grid grid-cols-4 gap-2">
-              {question.options.map((option) => (
-                <motion.button
-                  key={option}
-                  whileTap={{ scale: 0.96 }}
-                  onClick={() => handleAnswer(option)}
-                  disabled={locked || raceState !== 'showingQuestion'}
-                  className={`min-h-[3.2rem] rounded-[1rem] border px-2 py-2 text-center text-lg font-black shadow-[0_12px_20px_rgba(2,6,23,0.25)] transition ${
-                    selected === option
-                      ? option === question.correctAnswer
-                        ? 'border-emerald-200 bg-emerald-300 text-emerald-950'
-                        : 'border-rose-200 bg-rose-300 text-rose-950'
-                      : 'border-amber-200 bg-amber-400 text-slate-900'
-                  }`}
-                >
-                  {option}
-                </motion.button>
-              ))}
-            </div>
-            <FeedbackStrip tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}>
-              {feedback}
-            </FeedbackStrip>
-          </div>
-        )}
+          bottom={null}
         />
       </div>
     </GameUiShell>
