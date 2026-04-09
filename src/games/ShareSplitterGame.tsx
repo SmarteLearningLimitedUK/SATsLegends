@@ -53,6 +53,23 @@ const ROUNDS_TO_WIN = 5;
 const BASE_XP_PER_ROUND = 120;
 const CAKE_SLICE_ASSET = cakeSliceAsset;
 const BIRTHDAY_CAKE_ASSET = birthdayCakeAsset;
+const PLATE_POSITIONS: Record<number, Array<{ x: number; y: number }>> = {
+  2: [
+    { x: 30, y: 46 },
+    { x: 70, y: 46 },
+  ],
+  3: [
+    { x: 50, y: 20 },
+    { x: 26, y: 52 },
+    { x: 74, y: 52 },
+  ],
+  4: [
+    { x: 50, y: 18 },
+    { x: 22, y: 50 },
+    { x: 78, y: 50 },
+    { x: 50, y: 82 },
+  ],
+};
 
 const RATIO_PATTERNS_BY_COUNT: Record<number, number[][]> = {
   2: [
@@ -198,6 +215,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const hasMoves = moveHistory.length > 0;
   const allSlicesUsed = remainingSlices === 0;
   const allCorrect = plateViews.every((plate) => plate.isCorrect);
+  const platePositions = PLATE_POSITIONS[challenge.plateCount] || PLATE_POSITIONS[4];
 
   const rules = useMemo(() => ({
     title: 'Share Splitter',
@@ -478,10 +496,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                 className="absolute inset-x-3 bottom-4"
                 style={{ top: 'calc(36% + 30px)' }}
               >
-                <div
-                  className="grid h-full w-full gap-2"
-                  style={{ gridTemplateColumns: `repeat(${challenge.plateCount}, minmax(0, 1fr))` }}
-                >
+                <div className="relative h-full w-full">
                   {plateViews.map((plate, index) => {
                     const plateTone = validationActive
                       ? plate.isCorrect
@@ -492,6 +507,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                         : dragSlice
                           ? 'border-cyan-200/60 bg-[linear-gradient(180deg,rgba(244,250,255,0.86),rgba(216,236,250,0.72))]'
                           : 'border-white/50 bg-[linear-gradient(180deg,rgba(255,255,255,0.88),rgba(224,233,243,0.68))]';
+                    const position = platePositions[index] || { x: 50, y: 50 };
 
                     return (
                       <button
@@ -501,7 +517,8 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                           plateRefs.current[index] = node;
                         }}
                         disabled={locked}
-                        className={`relative flex h-[92px] w-full translate-y-[20px] flex-col items-center justify-center rounded-full border p-2 text-center shadow-[0_12px_20px_rgba(2,6,23,0.24)] transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.03]' : dragSlice && !locked ? 'scale-[1.01]' : ''}`}
+                        className={`absolute flex h-[clamp(78px,18vw,108px)] w-[clamp(78px,18vw,108px)] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border p-2 text-center shadow-[0_12px_20px_rgba(2,6,23,0.24)] transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.03]' : dragSlice && !locked ? 'scale-[1.01]' : ''}`}
+                        style={{ left: `${position.x}%`, top: `${position.y}%` }}
                         aria-label={`Plate ${index + 1}. ${plate.currentCakeCount} of ${plate.targetCakeCount} cakes placed.`}
                       >
                         <div className="grid h-full w-full grid-cols-3 place-items-center gap-0.5">

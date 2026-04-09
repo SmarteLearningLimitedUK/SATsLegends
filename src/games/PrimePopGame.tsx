@@ -562,6 +562,12 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
           transition={{ duration: 0.28 }}
           className="relative min-h-0 flex-1 overflow-hidden bg-transparent"
         >
+          <div
+            className="pointer-events-none absolute left-0 right-0 z-20 flex items-center justify-center"
+            style={{ top: `${DANGER_LINE_Y}%` }}
+          >
+            <div className="h-[2px] w-[92%] rounded-full bg-rose-300/75 shadow-[0_0_12px_rgba(251,113,133,0.65)]" />
+          </div>
           <div className="absolute inset-[40px] z-10 overflow-hidden">
             
 
