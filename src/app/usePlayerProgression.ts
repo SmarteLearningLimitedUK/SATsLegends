@@ -7,7 +7,7 @@ import { createTelemetryState } from '../systems/progression/telemetry';
 import { getStarterItemIds } from '../systems/progression/shopCatalog';
 import { useProgressionStore } from '../store/useProgressionStore';
 
-export const PLAYER_STORAGE_KEY = 'maths_quest_player';
+export const PLAYER_STORAGE_KEY = 'maths_quest_player_v2';
 const ALL_ISLAND_IDS = ISLANDS.map(island => island.id);
 
 const resolveAvatarId = (avatarId?: string) => (
@@ -136,6 +136,15 @@ export const usePlayerProgression = (): PlayerProgressionController => {
   useEffect(() => {
     localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(player));
   }, [player]);
+
+  useEffect(() => {
+    if (!AVATARS.some((avatar) => avatar.id === player.avatarId)) {
+      setPlayer((prev) => ({
+        ...prev,
+        avatarId: resolveAvatarId(prev.avatarId),
+      }));
+    }
+  }, [player.avatarId, setPlayer]);
 
   const saveProfileName = () => {
     const sanitizedName = draftName.trim() || 'Explorer';

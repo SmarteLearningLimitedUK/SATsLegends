@@ -37,9 +37,10 @@ type RaceState =
   | 'enemyWin';
 
 const START_OFFSET = 0;
-const CAMERA_LERP = 0.08;
-const RACER_LERP = 0.16;
-const BASE_XP = 160;
+  const CAMERA_LERP = 0.08;
+  const RACER_LERP = 0.16;
+  const BASE_XP = 160;
+  const CAMERA_EDGE_THRESHOLD = 0.6;
 
 const shuffle = <T,>(items: T[]) => {
   const copy = [...items];
@@ -192,9 +193,13 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
       playerPosRef.current = playerX + (playerTarget - playerX) * RACER_LERP;
       enemyPosRef.current = enemyX + (enemyTarget - enemyX) * RACER_LERP;
 
-      const focus = playerPosRef.current * 0.6 + enemyPosRef.current * 0.4;
-      const lookAhead = viewport.width * 0.22;
-      const cameraTarget = clamp(focus - viewport.width * 0.4 + lookAhead, 0, tuning.trackLength - viewport.width);
+      // Keep the player in view and only scroll once the kart approaches the right edge.
+      const edgeX = cameraXRef.current + viewport.width * CAMERA_EDGE_THRESHOLD;
+      let cameraTarget = cameraXRef.current;
+      if (playerPosRef.current > edgeX) {
+        cameraTarget = playerPosRef.current - viewport.width * CAMERA_EDGE_THRESHOLD;
+      }
+      cameraTarget = clamp(cameraTarget, 0, tuning.trackLength - viewport.width);
       cameraXRef.current = cameraXRef.current + (cameraTarget - cameraXRef.current) * CAMERA_LERP;
 
       setRenderTick((prev) => prev + 1);
@@ -416,7 +421,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
               <motion.div
                 key={`player-${renderTick}`}
-                className="absolute top-[38%] flex h-16 w-24 items-center justify-center"
+                className="absolute top-[40%] flex h-16 w-24 items-center justify-center"
                 style={playerStyle}
                 animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { x: [0, -4, 4, -3, 3, 0] } : { scale: 1 }}
                 transition={{ duration: 0.35 }}
@@ -432,7 +437,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
               <motion.div
                 key={`enemy-${renderTick}`}
-                className="absolute top-[56%] flex h-16 w-24 items-center justify-center"
+                className="absolute top-[58%] flex h-16 w-24 items-center justify-center"
                 style={enemyStyle}
               >
                 <img src={enemyKart} alt="Enemy kart" className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(251,113,133,0.6)]" />

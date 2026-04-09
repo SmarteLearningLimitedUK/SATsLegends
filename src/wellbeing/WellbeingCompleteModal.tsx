@@ -1,5 +1,6 @@
 import React from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import AssetIcon from '../components/AssetIcon';
 
 interface WellbeingCompleteModalProps {
   isOpen: boolean;
@@ -30,8 +31,16 @@ const WellbeingCompleteModal: React.FC<WellbeingCompleteModalProps> = ({
           initial={{ y: 18, scale: 0.96, opacity: 0 }}
           animate={{ y: 0, scale: 1, opacity: 1 }}
           exit={{ y: 18, scale: 0.98, opacity: 0 }}
-          className="w-full max-w-sm rounded-[1.8rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(14,40,79,0.98),rgba(8,23,49,0.98))] p-5 text-center text-white shadow-[0_24px_60px_rgba(2,6,23,0.42)]"
+          className="relative w-full max-w-sm rounded-[1.8rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(14,40,79,0.98),rgba(8,23,49,0.98))] p-5 text-center text-white shadow-[0_24px_60px_rgba(2,6,23,0.42)]"
         >
+          <button
+            type="button"
+            onClick={onBackToHub}
+            className="ui-icon-button absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full p-0 text-white"
+            aria-label="Close"
+          >
+            <AssetIcon name="x" className="h-4 w-4" />
+          </button>
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[radial-gradient(circle,rgba(167,243,208,0.36),rgba(125,211,252,0.15))] text-3xl shadow-[0_0_28px_rgba(167,243,208,0.18)]">
             ?
           </div>

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { DEFAULT_AVATAR_ID } from '../assets/characters';
+import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 import {
   CompleteLevelArgs,
   CompleteLevelResult,
@@ -39,6 +39,12 @@ const createDefaultPlayer = (): PlayerProfile => ({
   currentXp: 0,
   totalXpEarned: 0,
 });
+
+const validAvatarIds = new Set(CHARACTER_AVATARS.map((avatar) => avatar.id));
+
+const sanitizeAvatarId = (avatarId?: string) => (
+  avatarId && validAvatarIds.has(avatarId) ? avatarId : DEFAULT_AVATAR_ID
+);
 
 const sumStars = (levels: Record<string, LevelProgress>) =>
   Object.values(levels).reduce((total, progress) => total + progress.bestStars, 0);
@@ -134,9 +140,23 @@ export const useProgressionStore = create<ProgressionState>()(
     }),
     {
       name: STORAGE_KEY,
-      version: 1,
+      version: 2,
+      migrate: (persistedState: any) => {
+        if (!persistedState || typeof persistedState !== 'object') return persistedState;
+        const nextState = { ...persistedState };
+        if (nextState.player) {
+          nextState.player = {
+            ...nextState.player,
+            avatarId: sanitizeAvatarId(nextState.player.avatarId),
+          };
+        }
+        return nextState;
+      },
       partialize: (state) => ({
-        player: state.player,
+        player: {
+          ...state.player,
+          avatarId: sanitizeAvatarId(state.player.avatarId),
+        },
         levels: state.levels,
         totalStars: state.totalStars,
       }),

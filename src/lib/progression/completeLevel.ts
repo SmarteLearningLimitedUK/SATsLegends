@@ -27,6 +27,14 @@ export const completeLevel = (
 } => {
   const previous = existingProgress ?? createEmptyProgress(args.levelId);
   const firstClear = !previous.completed && args.completed;
+  const parseLevelIndex = () => {
+    const [islandRaw, levelRaw] = args.levelId.split('-');
+    const islandId = Number(islandRaw);
+    const levelId = Number(levelRaw);
+    if (!Number.isFinite(islandId) || !Number.isFinite(levelId)) return 0;
+    return (Math.max(0, islandId - 1) * 10) + Math.max(0, levelId - 1);
+  };
+  const levelIndex = parseLevelIndex();
   const stars = calculateStars({
     completed: args.completed,
     accuracy: args.accuracy,
@@ -41,6 +49,7 @@ export const completeLevel = (
     stars,
     firstClear: firstClear && !previous.firstClearXpAwarded,
     perfectAccuracy,
+    levelIndex,
   });
 
   const xpOutcome = applyXpGain(player, xpGained);
