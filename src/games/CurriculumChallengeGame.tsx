@@ -22,7 +22,7 @@ import answerOrangeBg from '../assets/casual_ui/inputs/btn_1.png';
 import answerGreenBg from '../assets/casual_ui/inputs/btn_6a.png';
 import answerBlueBg from '../assets/casual_ui/inputs/btn_7.png';
 import answerYellowBg from '../assets/casual_ui/inputs/btn_8.png';
-import boatSpriteSheet from '../assets/boats.jpg';
+import boatSpriteSheet from '../assets/boats/1.png';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface CurriculumChallengeGameProps {
@@ -215,16 +215,12 @@ const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 const formatCoordinate = (point: { x: number; y: number }) => `(${point.x}, ${point.y})`;
 const formatChallengeNumber = (value: number) => value.toLocaleString('en-GB', { maximumFractionDigits: 2 });
-const getBoatSpriteStyle = (index: number): React.CSSProperties => {
-  const col = index % 5;
-  const row = Math.floor(index / 5);
-  return {
-    backgroundImage: `url(${boatSpriteSheet})`,
-    backgroundSize: '500% 500%',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: `${col * 25}% ${row * 25}%`,
-  };
-};
+const getBoatSpriteStyle = (): React.CSSProperties => ({
+  backgroundImage: `url(${boatSpriteSheet})`,
+  backgroundSize: 'contain',
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'center',
+});
 
 const makeOptions = (correct: string, wrongOptions: string[]) => {
   const options = shuffle([correct, ...wrongOptions.slice(0, 3)]);

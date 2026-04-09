@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { triggerHaptic } from '../haptics';
-import gameplayBackground from '../assets/maps/inside dojo.jpg';
+import gameplayBackground from '../assets/maps/castle.jpg';
 
 interface RotationReflectionGameProps {
   levelId: number;
@@ -628,6 +628,7 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
 };
 
 export default RotationReflectionGame;
+
 
 
 

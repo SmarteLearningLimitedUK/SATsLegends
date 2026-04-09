@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import medButton from '../assets/bluedialoague/med button cropped.png';
+import medButton from '../assets/casual_ui/inputs/btn_1.png';
 import animatedEnemy1 from '../assets/maps/ezgif-261d69e7ae90ee8c.webp';
 import hudAvatarName from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
 import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';

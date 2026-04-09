@@ -12,7 +12,7 @@ import food7 from '../assets/take_out/food/7.png';
 import food8 from '../assets/take_out/food/8.png';
 import food9 from '../assets/take_out/food/9.png';
 import FoodGameShell from '../components/FoodGameShell';
-import targetOrderBoard from '../assets/Target Order.png';
+import targetOrderBoard from '../assets/casual_ui/dialogs_panels/panel.png';
 import defaultMonster from '../assets/bosses/goblin.png';
 import { triggerHaptic } from '../haptics';
 

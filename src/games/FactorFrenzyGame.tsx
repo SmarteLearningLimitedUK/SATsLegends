@@ -6,7 +6,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
-import factorFrenzyBackground from '../assets/maps/facctor frenzy.jpg';
+import factorFrenzyBackground from '../assets/maps/desert.jpg';
 import questionBarSmall from '../assets/ui_frames/hudfortextplace_slices/text_bar_small.png';
 import questionBarMedium from '../assets/ui_frames/hudfortextplace_slices/text_bar_medium.png';
 

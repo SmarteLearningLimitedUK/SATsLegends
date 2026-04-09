@@ -5,7 +5,7 @@ import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
-import dojoBackground from '../assets/maps/inside dojo.jpg';
+import dojoBackground from '../assets/maps/castle.jpg';
 import monsterHitA from '../assets/bosses/ezgif-6daa70d34d8e7de3.webp';
 import monsterHitB from '../assets/bosses/ezgif-69d0cb3c40700347.webp';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';

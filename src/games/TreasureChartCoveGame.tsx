@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
-import chartCoveBackground from '../assets/maps/graph grabbermap.jpg';
+import chartCoveBackground from '../assets/maps/reef2.jpg';
 
 interface TreasureChartCoveGameProps {
   levelId: number;

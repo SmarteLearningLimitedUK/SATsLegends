@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ChevronRight, RotateCcw, Trophy } from 'lucide-react';
-import calculationClashBackground from '../assets/maps/facctor frenzy.jpg';
+import calculationClashBackground from '../assets/maps/desert.jpg';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 

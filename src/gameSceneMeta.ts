@@ -6,7 +6,7 @@ import world04Map from './assets/maps/harbour.jpg';
 import world05Map from './assets/maps/desert.jpg';
 import world06Map from './assets/maps/volcano2.jpg';
 import scaleBackground from './assets/maps/scale.png';
-import chartChaseBackground from './assets/maps/graph grabbermap.jpg';
+import chartChaseBackground from './assets/maps/reef2.jpg';
 
 export interface GameSceneMeta {
   background: string;

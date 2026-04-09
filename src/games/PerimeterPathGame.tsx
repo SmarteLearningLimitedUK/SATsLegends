@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import perimeterBackground from '../assets/maps/facctor frenzy.jpg';
+import perimeterBackground from '../assets/maps/desert.jpg';
 
 interface PerimeterPathGameProps {
   levelId: number;

@@ -3,7 +3,7 @@ import { Timer as TimerIcon, Heart, Target, Brain } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 import zombieFallback from '../assets/zombies/zombie.png';
-import zombieGardenBackground from '../assets/maps/zombie garden.jpg';
+import zombieGardenBackground from '../assets/maps/forect.jpg';
 
 interface MathsVsZombiesGameProps {
   levelId: number;
