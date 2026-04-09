@@ -6,6 +6,7 @@ import BossPortrait from '../components/BossPortrait';
 import { getBossEncounter } from '../bossMeta';
 import { triggerHaptic } from '../haptics';
 import { Castle, Star } from '../components/GameIcons';
+import AssetIcon from '../components/AssetIcon';
 
 interface TowerOfFactorsGameProps {
   levelId: number;
@@ -411,7 +412,16 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
               animate={{ scale: 1, opacity: 1 }}
               className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md"
             >
-              <div className="app-modal-panel licensed-overlay-card flex w-full max-w-md flex-col items-center gap-5 p-6 md:gap-8 md:p-12">
+              <div className="app-modal-panel licensed-overlay-card relative flex w-full max-w-md flex-col items-center gap-5 p-6 md:gap-8 md:p-12">
+                <button
+                  type="button"
+                  onClick={onBack}
+                  className="ui-icon-button absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full p-0 text-white"
+                  aria-label="Close result"
+                >
+                  <AssetIcon name="x" className="h-5 w-5" />
+                </button>
+
                 <div className={`text-center text-5xl font-black drop-shadow-md ${isVictory ? 'text-lime-400' : 'text-amber-500'}`}>
                   {isVictory ? 'MASTER BUILDER!' : 'RUINS!'}
                 </div>

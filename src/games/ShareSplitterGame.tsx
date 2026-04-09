@@ -470,28 +470,29 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       <GameScreenLayout
         className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2 text-white"
         top={(
-          <GameTopBar
-            onBack={onBack}
-            progressLabel={`Round ${roundSolved + 1} / ${ROUNDS_TO_WIN}`}
-            lives={sessionState?.lives}
-            className="mx-auto w-full"
-            audioEnabled={audioEnabled}
-            onToggleAudio={() => setAudioEnabled((previous) => !previous)}
-            onHelp={() => setShowRules(true)}
-          />
+          <div className="flex flex-col gap-2">
+            <GameTopBar
+              onBack={onBack}
+              progressLabel={`Round ${roundSolved + 1} / ${ROUNDS_TO_WIN}`}
+              lives={sessionState?.lives}
+              className="mx-auto w-full"
+              audioEnabled={audioEnabled}
+              onToggleAudio={() => setAudioEnabled((previous) => !previous)}
+              onHelp={() => setShowRules(true)}
+            />
+            <div className="rounded-[1.4rem] border border-white/14 bg-white px-4 py-3 text-center text-slate-900 shadow-[0_16px_28px_rgba(15,23,42,0.22)]">
+              <div className="text-[12px] font-black uppercase tracking-[0.18em] text-amber-700">Target Share</div>
+              <div className="mt-1 text-[clamp(1.2rem,4.8vw,1.8rem)] font-black text-slate-900">Split the Cakes</div>
+              <div className="mt-1 text-[13px] font-black text-amber-700">Ratio {challenge.ratios.join(' : ')}</div>
+              <div className="mt-2 text-[12px] font-semibold text-slate-700">
+                {formatFantasyPrompt(challenge.prompt)}
+              </div>
+            </div>
+          </div>
         )}
         main={(
           <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
             <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] border border-white/12 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.12),rgba(15,23,42,0.52)_64%)] px-2 py-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)] md:px-3">
-              <div className="pointer-events-none absolute left-1/2 top-4 w-[82%] -translate-x-1/2 text-center">
-                <div className="text-[18px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Share</div>
-                <div className="mt-1 text-[clamp(1.7rem,5.8vw,2.4rem)] font-black text-white">Split the Cakes</div>
-                <div className="mt-1 text-[18px] font-black text-amber-100">Ratio {challenge.ratios.join(' : ')}</div>
-                <div className="mt-2 text-[15px] font-semibold text-cyan-100/90">
-                  {formatFantasyPrompt(challenge.prompt)}
-                </div>
-              </div>
-
               <div
                 className="absolute inset-x-3 bottom-4"
                 style={{ top: 'calc(36% + 30px)' }}

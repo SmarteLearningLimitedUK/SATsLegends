@@ -227,50 +227,54 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
       />
       <GameScreenLayout
         className="relative z-10 h-full w-full min-h-0 text-slate-100"
-      top={!useSharedTopHud ? (
-        <header className="z-20 flex h-16 items-center justify-between border-b border-cyan-200/16 bg-[linear-gradient(180deg,rgba(8,26,66,0.78),rgba(5,16,42,0.84))] px-6 backdrop-blur-md">
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={onBack}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-stone-700 bg-stone-800/80 text-stone-200 transition hover:bg-stone-700/80"
-              aria-label="Back to levels"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <div className="rounded-lg bg-amber-500 p-2 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
-              <Search className="h-5 w-5 text-stone-900" />
-            </div>
-            <div>
-              <h1 className="text-sm font-black uppercase tracking-widest text-white">
-                {caseMode === 'whodunnit' ? 'Whodunnit Files' : 'Data Detective Agency'}
-              </h1>
-              <p className="text-[10px] italic uppercase tracking-tighter text-stone-500">
-                {caseMode === 'whodunnit' ? 'Clues hidden in the charts' : 'Solving crimes with statistics'}
-              </p>
-            </div>
-          </div>
+      top={(
+        <div className="flex flex-col gap-2">
+          {!useSharedTopHud ? (
+            <header className="z-20 flex h-16 items-center justify-between border-b border-cyan-200/16 bg-[linear-gradient(180deg,rgba(8,26,66,0.78),rgba(5,16,42,0.84))] px-6 backdrop-blur-md">
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={onBack}
+                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-stone-700 bg-stone-800/80 text-stone-200 transition hover:bg-stone-700/80"
+                  aria-label="Back to levels"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <div className="rounded-lg bg-amber-500 p-2 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+                  <Search className="h-5 w-5 text-stone-900" />
+                </div>
+                <div>
+                  <h1 className="text-sm font-black uppercase tracking-widest text-white">
+                    {caseMode === 'whodunnit' ? 'Whodunnit Files' : 'Data Detective Agency'}
+                  </h1>
+                  <p className="text-[10px] italic uppercase tracking-tighter text-stone-500">
+                    {caseMode === 'whodunnit' ? 'Clues hidden in the charts' : 'Solving crimes with statistics'}
+                  </p>
+                </div>
+              </div>
 
-          <div className="flex items-center gap-6">
-            <div className="flex flex-col items-end">
-              <span className="text-[10px] uppercase text-stone-500">Reputation</span>
-              <span className="text-xs font-bold text-amber-500">{XP} PTS</span>
-            </div>
-            <div className="h-8 w-[1px] bg-stone-800" />
-            <div className="flex flex-col items-end">
-              <span className="text-[10px] uppercase text-stone-500">Case File</span>
-              <span className="text-xs font-bold text-white">{level} / {MAX_CASES}</span>
-            </div>
-          </div>
-        </header>
-      ) : null}
-      main={(
-        <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.05rem)]' : ''}`}>
-        <section className="z-10 flex min-h-0 w-full flex-[0.52] flex-col gap-2 overflow-hidden border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] px-2 pb-2 pt-3 sm:px-3 sm:pb-3 sm:pt-4 md:w-1/2 md:flex-1 md:gap-3 md:border-b-0 md:border-r md:p-5">
+              <div className="flex items-center gap-6">
+                <div className="flex flex-col items-end">
+                  <span className="text-[10px] uppercase text-stone-500">Reputation</span>
+                  <span className="text-xs font-bold text-amber-500">{XP} PTS</span>
+                </div>
+                <div className="h-8 w-[1px] bg-stone-800" />
+                <div className="flex flex-col items-end">
+                  <span className="text-[10px] uppercase text-stone-500">Case File</span>
+                  <span className="text-xs font-bold text-white">{level} / {MAX_CASES}</span>
+                </div>
+              </div>
+            </header>
+          ) : null}
           <div className="game-question-card">
             <div className="question-title">{caseMode === 'whodunnit' ? 'Who took the loot?' : 'Match the evidence totals.'}</div>
             <div className="question-subtitle">{caseBrief}</div>
           </div>
+        </div>
+      )}
+      main={(
+        <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.05rem)]' : ''}`}>
+        <section className="z-10 flex min-h-0 w-full flex-[0.52] flex-col gap-2 overflow-hidden border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] px-2 pb-2 pt-3 sm:px-3 sm:pb-3 sm:pt-4 md:w-1/2 md:flex-1 md:gap-3 md:border-b-0 md:border-r md:p-5">
           <div className="mb-1 flex items-center justify-between">
             <div className="flex items-center gap-2 text-amber-500">
               <FileText className="h-5 w-5" />

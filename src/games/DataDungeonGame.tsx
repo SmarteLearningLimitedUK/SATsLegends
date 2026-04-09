@@ -6,6 +6,7 @@ import { AVATARS } from '../constants';
 import { getSatsInspiredDataDungeonPuzzle, type DataDungeonPuzzle as Puzzle } from '../systems/content/satsInspiredQuestionBanks';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { Star, Timer, Lock, Unlock } from '../components/GameIcons';
+import AssetIcon from '../components/AssetIcon';
 
 interface DataDungeonGameProps {
   levelId: number;
@@ -382,7 +383,16 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
             animate={{ scale: 1, opacity: 1 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
           >
-            <div className="app-modal-panel w-full max-w-md rounded-[2rem] border-4 border-stone-600 bg-stone-800 p-6 shadow-2xl flex flex-col items-center gap-5 md:rounded-[3rem] md:border-8 md:gap-8 md:p-12">
+            <div className="app-modal-panel relative w-full max-w-md rounded-[2rem] border-4 border-stone-600 bg-stone-800 p-6 shadow-2xl flex flex-col items-center gap-5 md:rounded-[3rem] md:border-8 md:gap-8 md:p-12">
+              <button
+                type="button"
+                onClick={onBack}
+                className="ui-icon-button absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full p-0 text-white"
+                aria-label="Close result"
+              >
+                <AssetIcon name="x" className="h-5 w-5" />
+              </button>
+
               <div className={`text-5xl font-black ${isVictory ? 'text-amber-400' : 'text-amber-500'} drop-shadow-md text-center`}>
                 {isVictory ? 'DUNGEON CLEARED!' : 'TRAPPED!'}
               </div>

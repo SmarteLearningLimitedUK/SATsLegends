@@ -110,6 +110,18 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
                 : 'bg-[radial-gradient(circle_at_50%_0%,rgba(244,63,94,0.18),transparent_54%),radial-gradient(circle_at_50%_100%,rgba(245,158,11,0.16),transparent_60%)]',
             )} />
 
+            <button
+              type="button"
+              onClick={() => {
+                triggerHaptic('selection');
+                result.onPrimary();
+              }}
+              className="ui-icon-button absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full p-0 text-white md:right-5 md:top-5"
+              aria-label="Close result"
+            >
+              <AssetIcon name="x" className="h-5 w-5 md:h-6 md:w-6" />
+            </button>
+
             {isVictory && (
               <div className="pointer-events-none absolute inset-0 overflow-hidden">
                 {[0, 1, 2, 3, 4, 5].map((index) => (

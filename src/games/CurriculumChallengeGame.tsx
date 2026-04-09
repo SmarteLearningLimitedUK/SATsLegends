@@ -15,6 +15,7 @@ import { GAME_META } from '../gameMeta';
 import { triggerHaptic } from '../haptics';
 import BossPortrait from '../components/BossPortrait';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
+import AssetIcon from '../components/AssetIcon';
 import { Star } from '../components/GameIcons';
 import answerActionBg from '../assets/casual_ui/inputs/btn_1.png';
 import answerDecorAsset from '../assets/casual_ui/dialogs_panels/dialog__tag.png';
@@ -1460,7 +1461,16 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
               animate={{ opacity: 1, scale: 1 }}
               className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/62 p-4 backdrop-blur-md"
             >
-              <div className="app-modal-panel flex w-full max-w-md flex-col items-center gap-5 rounded-[2rem] border border-white/20 bg-[linear-gradient(180deg,rgba(255,247,228,0.98),rgba(245,232,202,0.96))] p-6 text-slate-900 shadow-[0_24px_70px_rgba(0,0,0,0.32)] md:gap-6 md:p-8">
+              <div className="app-modal-panel relative flex w-full max-w-md flex-col items-center gap-5 rounded-[2rem] border border-white/20 bg-[linear-gradient(180deg,rgba(255,247,228,0.98),rgba(245,232,202,0.96))] p-6 text-slate-900 shadow-[0_24px_70px_rgba(0,0,0,0.32)] md:gap-6 md:p-8">
+                <button
+                  type="button"
+                  onClick={onBack}
+                  className="ui-icon-button absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full p-0 text-slate-900"
+                  aria-label="Close result"
+                >
+                  <AssetIcon name="x" className="h-5 w-5" />
+                </button>
+
                 <div className={`text-center text-4xl font-black ${isVictory ? 'text-emerald-600' : 'text-amber-600'} md:text-5xl`}>
                   {isVictory ? 'Challenge Cleared' : 'Round Over'}
                 </div>

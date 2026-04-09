@@ -748,26 +748,27 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
       <GameScreenLayout
         className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-2 text-white"
         top={(
-          <GameTopBar
-            onBack={onBack}
-            progressLabel={`Round ${Math.min(correctSolved + 1, roundsToWin)} / ${roundsToWin}`}
-            lives={sessionState?.lives}
-            className="mx-auto w-full max-w-[780px]"
-            audioEnabled={audioEnabled}
-            onToggleAudio={() => setAudioEnabled((previous) => !previous)}
-            onHelp={() => setShowRules(true)}
-          />
+          <div className="flex flex-col gap-2">
+            <GameTopBar
+              onBack={onBack}
+              progressLabel={`Round ${Math.min(correctSolved + 1, roundsToWin)} / ${roundsToWin}`}
+              lives={sessionState?.lives}
+              className="mx-auto w-full max-w-[780px]"
+              audioEnabled={audioEnabled}
+              onToggleAudio={() => setAudioEnabled((previous) => !previous)}
+              onHelp={() => setShowRules(true)}
+            />
+            <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/65 px-3 py-2 text-center backdrop-blur-sm">
+              <div className="text-[12px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Recipe</div>
+              <div className="mt-0.5 text-[clamp(1.35rem,5.2vw,1.8rem)] font-black text-white">{challenge.orderTitle}</div>
+              <div className="mt-0.5 text-[13px] font-black text-amber-100">Ratio {ratioText}</div>
+              <div className="mt-1 text-[12px] font-semibold text-cyan-100/90">{challenge.orderPrompt}</div>
+            </div>
+          </div>
         )}
         main={(
           <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
             <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] border border-white/12 bg-white/5 shadow-[0_16px_30px_rgba(15,23,42,0.2)]">
-              <div className="pointer-events-none absolute left-1/2 top-3 w-[90%] -translate-x-1/2 rounded-[1.05rem] bg-slate-950/65 px-3 py-2 text-center backdrop-blur-sm">
-                <div className="text-[12px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Recipe</div>
-                <div className="mt-0.5 text-[clamp(1.35rem,5.2vw,1.8rem)] font-black text-white">{challenge.orderTitle}</div>
-                <div className="mt-0.5 text-[13px] font-black text-amber-100">Ratio {ratioText}</div>
-                <div className="mt-1 text-[12px] font-semibold text-cyan-100/90">{challenge.orderPrompt}</div>
-              </div>
-
               <div className="pointer-events-none absolute left-1/2 top-[84%] h-12 w-[68%] -translate-x-1/2 rounded-full bg-black/35 blur-md" />
               <div className="pointer-events-none absolute left-1/2 top-[76%] h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
               <div className="absolute left-1/2 top-[72%] flex h-[18%] w-[48%] -translate-x-1/2 items-end justify-between px-5">

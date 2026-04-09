@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { Coins } from '../components/GameIcons';
+import AssetIcon from '../components/AssetIcon';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
@@ -345,7 +346,16 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
               animate={{ opacity: 1, scale: 1 }}
               className="fixed inset-0 z-50 flex items-center justify-center bg-black/78 p-4 backdrop-blur-md"
             >
-              <div className="licensed-overlay-card flex w-full max-w-md flex-col items-center gap-6 p-8 text-center md:p-10">
+              <div className="licensed-overlay-card relative flex w-full max-w-md flex-col items-center gap-6 p-8 text-center md:p-10">
+                <button
+                  type="button"
+                  onClick={onBack}
+                  className="ui-icon-button absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full p-0 text-white"
+                  aria-label="Close result"
+                >
+                  <AssetIcon name="x" className="h-5 w-5" />
+                </button>
+
                 <div className={`text-4xl font-black md:text-5xl ${isVictory ? 'text-emerald-300' : 'text-amber-300'}`}>
                   {isVictory ? 'Path Cleared!' : 'Expedition Lost!'}
                 </div>

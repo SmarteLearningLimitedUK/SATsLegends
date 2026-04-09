@@ -285,52 +285,50 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
     <GameScreenLayout
       className="relative h-full w-full min-h-0 select-none text-slate-100"
       top={(
-        <div className="flex flex-col gap-2">
-          {!useSharedTopHud && (
-            <header className="z-20 flex h-16 items-center justify-between border-b border-emerald-900/30 bg-slate-900/50 px-4 backdrop-blur-md sm:px-6">
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={onBack}
-                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-700 bg-slate-800/80 text-slate-200 transition hover:bg-slate-700/80"
-                  aria-label="Back to levels"
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                </button>
-                <div className="rounded-lg bg-emerald-500 p-2 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-                  <Activity className="h-5 w-5 text-slate-900" />
-                </div>
-                <div>
-                  <h1 className="text-sm font-black uppercase tracking-widest text-white">Line Graph Lab</h1>
-                  <p className="text-[10px] uppercase tracking-tighter text-emerald-400">Read one graph. Answer one question.</p>
-                </div>
+        !useSharedTopHud ? (
+          <header className="z-20 flex h-16 items-center justify-between border-b border-emerald-900/30 bg-slate-900/50 px-4 backdrop-blur-md sm:px-6">
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={onBack}
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-700 bg-slate-800/80 text-slate-200 transition hover:bg-slate-700/80"
+                aria-label="Back to levels"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <div className="rounded-lg bg-emerald-500 p-2 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                <Activity className="h-5 w-5 text-slate-900" />
               </div>
-
-              <div className="flex items-center gap-4">
-                <div className="flex flex-col items-end">
-                  <span className="text-[10px] uppercase text-slate-500">XP</span>
-                  <span className="text-xs font-bold text-emerald-400">{XP}</span>
-                </div>
-                <div className="h-8 w-px bg-slate-800" />
-                <div className="flex flex-col items-end">
-                  <span className="text-[10px] uppercase text-slate-500">Round</span>
-                  <span className="text-xs font-bold text-white">{level} / {MAX_LEVEL}</span>
-                </div>
+              <div>
+                <h1 className="text-sm font-black uppercase tracking-widest text-white">Line Graph Lab</h1>
+                <p className="text-[10px] uppercase tracking-tighter text-emerald-400">Read one graph. Answer one question.</p>
               </div>
-            </header>
-          )}
+            </div>
 
-          <div className={`flex flex-col gap-1.5 ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.05rem)]' : ''}`}>
+            <div className="flex items-center gap-4">
+              <div className="flex flex-col items-end">
+                <span className="text-[10px] uppercase text-slate-500">XP</span>
+                <span className="text-xs font-bold text-emerald-400">{XP}</span>
+              </div>
+              <div className="h-8 w-px bg-slate-800" />
+              <div className="flex flex-col items-end">
+                <span className="text-[10px] uppercase text-slate-500">Round</span>
+                <span className="text-xs font-bold text-white">{level} / {MAX_LEVEL}</span>
+              </div>
+            </div>
+          </header>
+        ) : null
+      )}
+      main={(
+        <section className="flex min-h-0 flex-1 flex-col gap-2 px-2 pb-2 sm:gap-3 sm:px-3 sm:pb-3 md:px-4 md:pb-4">
+          <div className={`flex flex-col gap-1.5 ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+0.25rem)]' : ''}`}>
             <div className="game-question-card">
               <div className="question-title text-center">{round?.question}</div>
               <div className="question-subtitle text-center">{round?.helper}</div>
             </div>
           </div>
-        </div>
-      )}
-      main={(
-        <section className="flex min-h-0 flex-1 flex-col gap-2 px-2 pb-2 sm:gap-3 sm:px-3 sm:pb-3 md:px-4 md:pb-4">
-          <div className="mt-0.5 min-h-0 flex-[1.2] rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,61,0.85),rgba(4,12,30,0.92))] p-2.5 shadow-[0_16px_40px_rgba(3,12,30,0.26)] sm:p-4 md:p-5">
+
+          <div className="mt-0.5 min-h-0 flex-1 rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,61,0.85),rgba(4,12,30,0.92))] p-2.5 shadow-[0_16px_40px_rgba(3,12,30,0.26)] sm:p-4 md:p-5">
 
             <div
               ref={chartWrapRef}
@@ -398,69 +396,69 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
               )}
             </div>
           </div>
+
+          <div className="mt-auto flex flex-col gap-2">
+            <div className="grid grid-cols-2 gap-2">
+              {round?.options.map(option => {
+                const isSelected = selectedAnswer === option;
+                const isCorrect = gameState === 'success' && option === round.correctAnswer;
+                const isWrongSelected = selectedAnswer === option && feedback?.type === 'error';
+
+                return (
+                  <motion.button
+                    key={option}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => handleAnswer(option)}
+                    disabled={gameState === 'success'}
+                    className={`min-h-[3.1rem] rounded-2xl border px-3 py-2.5 text-center transition-all sm:min-h-[3.4rem] sm:px-4 ${
+                      isCorrect
+                        ? 'border-emerald-400 bg-emerald-500/15 text-emerald-100 shadow-[0_0_22px_rgba(16,185,129,0.18)]'
+                        : isWrongSelected
+                          ? 'border-rose-400 bg-rose-500/12 text-amber-100'
+                          : isSelected
+                            ? 'border-cyan-300 bg-cyan-400/10 text-white'
+                            : 'border-slate-700 bg-slate-900/55 text-slate-100 hover:border-emerald-400/60 hover:bg-slate-800/70'
+                    } ${gameState === 'success' ? 'cursor-default' : ''}`}
+                  >
+                    <span className="text-[0.92rem] font-black leading-tight sm:text-base">{option}</span>
+                  </motion.button>
+                );
+              })}
+            </div>
+
+            <div className="min-h-[3.2rem]">
+              <AnimatePresence mode="wait">
+                {gameState === 'success' ? (
+                  <motion.button
+                    key="next"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    onClick={nextLevel}
+                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-500 py-4 text-sm font-black uppercase tracking-widest text-slate-900 shadow-lg shadow-emerald-500/20 transition-all hover:bg-emerald-400"
+                  >
+                    Next Graph <ChevronRight className="h-4 w-4" />
+                  </motion.button>
+                ) : null}
+              </AnimatePresence>
+            </div>
+
+            {feedback && (
+              <div
+                className={`flex w-full items-center justify-center gap-3 rounded-full border px-5 py-3 text-center text-[11px] font-bold uppercase tracking-wide shadow-2xl sm:text-xs ${
+                  feedback.type === 'success'
+                    ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300'
+                    : 'border-rose-500/50 bg-rose-500/10 text-amber-300'
+                }`}
+              >
+                {feedback.type === 'success' ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <AlertCircle className="h-4 w-4 shrink-0" />}
+                <span>{feedback.message}</span>
+              </div>
+            )}
+          </div>
         </section>
       )}
-      bottom={(
-        <div className="flex flex-col gap-2 px-2 pb-2 sm:px-3 sm:pb-3 md:px-4 md:pb-4">
-          <div className="grid grid-cols-2 gap-2">
-            {round?.options.map(option => {
-              const isSelected = selectedAnswer === option;
-              const isCorrect = gameState === 'success' && option === round.correctAnswer;
-              const isWrongSelected = selectedAnswer === option && feedback?.type === 'error';
-
-              return (
-                <motion.button
-                  key={option}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => handleAnswer(option)}
-                  disabled={gameState === 'success'}
-                  className={`min-h-[3.1rem] rounded-2xl border px-3 py-2.5 text-center transition-all sm:min-h-[3.4rem] sm:px-4 ${
-                    isCorrect
-                      ? 'border-emerald-400 bg-emerald-500/15 text-emerald-100 shadow-[0_0_22px_rgba(16,185,129,0.18)]'
-                      : isWrongSelected
-                        ? 'border-rose-400 bg-rose-500/12 text-amber-100'
-                        : isSelected
-                          ? 'border-cyan-300 bg-cyan-400/10 text-white'
-                          : 'border-slate-700 bg-slate-900/55 text-slate-100 hover:border-emerald-400/60 hover:bg-slate-800/70'
-                  } ${gameState === 'success' ? 'cursor-default' : ''}`}
-                >
-                  <span className="text-[0.92rem] font-black leading-tight sm:text-base">{option}</span>
-                </motion.button>
-              );
-            })}
-          </div>
-
-          <div className="min-h-[3.2rem]">
-            <AnimatePresence mode="wait">
-              {gameState === 'success' ? (
-                <motion.button
-                  key="next"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  onClick={nextLevel}
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-500 py-4 text-sm font-black uppercase tracking-widest text-slate-900 shadow-lg shadow-emerald-500/20 transition-all hover:bg-emerald-400"
-                >
-                  Next Graph <ChevronRight className="h-4 w-4" />
-                </motion.button>
-              ) : null}
-            </AnimatePresence>
-          </div>
-
-          {feedback && (
-            <div
-              className={`flex w-full items-center justify-center gap-3 rounded-full border px-5 py-3 text-center text-[11px] font-bold uppercase tracking-wide shadow-2xl sm:text-xs ${
-                feedback.type === 'success'
-                  ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300'
-                  : 'border-rose-500/50 bg-rose-500/10 text-amber-300'
-              }`}
-            >
-              {feedback.type === 'success' ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <AlertCircle className="h-4 w-4 shrink-0" />}
-              <span>{feedback.message}</span>
-            </div>
-          )}
-        </div>
-      )}
+      bottom={null}
       overlay={(
         <>
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(4,18,44,0.34),rgba(4,18,44,0.48)_55%,rgba(2,8,24,0.62)_100%)]" />

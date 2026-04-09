@@ -173,6 +173,15 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
               exit={{ scale: 0.92, y: 12 }}
               className="app-modal-panel casual-modal-panel relative flex w-full max-w-md flex-col items-center gap-4 overflow-hidden rounded-[2rem] p-5 text-center md:max-w-lg md:rounded-[2.6rem] md:p-8"
             >
+              <button
+                type="button"
+                onClick={onBack}
+                className="ui-icon-button absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full p-0 text-white"
+                aria-label="Close result"
+              >
+                <AssetIcon name="x" className="h-5 w-5" />
+              </button>
+
               <div className="casual-ribbon-chip inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] md:text-xs">
                 <AssetIcon name={isVictory ? 'trophy' : 'timer'} className="h-4 w-4" />
                 {isVictory ? 'Crystal Cleared' : 'Out of Time'}
