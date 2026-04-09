@@ -785,7 +785,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 src={cauldrenAndPotionArt}
                 alt=""
                 aria-hidden="true"
-                className="pointer-events-none absolute left-1/2 bottom-[10%] h-[42%] max-w-none -translate-x-1/2 translate-y-[-8px] object-contain"
+                className="pointer-events-none absolute left-1/2 bottom-[10%] h-[42%] max-w-none -translate-x-1/2 translate-y-[-18px] object-contain"
               />
               <div className="absolute left-1/2 bottom-[27%] h-[14%] w-[34%] -translate-x-1/2 translate-y-[5px] overflow-hidden rounded-[46%]">
                 <motion.div

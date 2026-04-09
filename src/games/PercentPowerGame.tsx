@@ -65,7 +65,7 @@ const scoreToStars = (accuracy: number, remainingLives: number) => {
 
 const buildDirectQuestion = (): PercentPowerQuestion => {
   const percent = [10, 20, 25, 40, 50, 75][randomInt(0, 5)];
-  const amount = [24, 40, 60, 80, 120, 160, 200][randomInt(0, 6)];
+  const amount = [40, 60, 80, 100, 120, 160, 200][randomInt(0, 6)];
   const answer = (amount * percent) / 100;
   const { options, answerIndex } = makeOptions(
     `${answer}`,

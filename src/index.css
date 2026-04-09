@@ -693,19 +693,19 @@ button:disabled {
 }
 
 .ui-close-button {
-  height: 2.5rem;
-  width: 2.5rem;
+  height: 2rem;
+  width: 2rem;
   border-radius: 9999px;
-  border: 2px solid rgba(255, 255, 255, 0.65);
-  background: radial-gradient(circle at 30% 30%, #fca5a5 0%, #ef4444 52%, #b91c1c 100%);
-  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(2, 6, 23, 0.28);
+  color: rgba(255, 255, 255, 0.92);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-weight: 900;
-  font-size: 1.2rem;
+  font-size: 1rem;
   line-height: 1;
-  box-shadow: 0 10px 22px rgba(185, 28, 28, 0.4), inset 0 2px 4px rgba(255,255,255,0.2);
+  box-shadow: 0 8px 18px rgba(2, 6, 23, 0.28);
 }
 
 .ui-close-button span {

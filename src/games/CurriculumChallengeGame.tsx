@@ -1309,7 +1309,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
       <GameplaySceneBackdrop gameType={gameType} />
       <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${theme.scene}`} />
       <div
-        className={`pointer-events-none absolute inset-0 ${isChartChase ? 'opacity-10' : 'opacity-20'}`}
+        className={`pointer-events-none absolute inset-0 ${isChartChase ? 'opacity-0' : 'opacity-20'}`}
         style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.22) 1px, transparent 1px)', backgroundSize: '24px 24px' }}
       />
 
@@ -1348,7 +1348,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
               isPlaceValuePeaks
                 ? 'rounded-[1.35rem] border border-amber-200/12 bg-[linear-gradient(180deg,rgba(32,18,11,0.72),rgba(12,12,16,0.82))]'
                 : isChartChase
-                  ? 'rounded-[1.35rem] border border-sky-200/24 bg-[linear-gradient(180deg,rgba(255,255,255,0.16),rgba(255,255,255,0.06))]'
+                  ? 'rounded-[1.35rem] border border-sky-200/30 bg-[linear-gradient(180deg,rgba(8,24,61,0.92),rgba(4,12,30,0.94))]'
                   : 'rounded-[1.25rem]'
               } px-2 py-2 md:rounded-[1.8rem] md:px-4 md:py-4`}>
               <div className="relative z-10 flex min-h-0 w-full flex-col items-center justify-center gap-2">
@@ -1368,7 +1368,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   className="flex min-h-0 w-full items-center justify-center overflow-hidden"
                 >
-                  <div className={`w-full overflow-hidden ${isChartChase ? 'max-h-[7.25rem] md:max-h-[9.5rem]' : 'max-h-[10.5rem] md:max-h-[15rem]'}`}>
+                  <div className={`w-full overflow-hidden ${isChartChase ? 'max-h-[12rem] md:max-h-[15rem]' : 'max-h-[10.5rem] md:max-h-[15rem]'}`}>
                     <div className="flex h-full w-full items-center justify-center">
                       {renderVisual(question.visual)}
                     </div>
@@ -1384,13 +1384,14 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
               </div>
             </div>
 
-            <div className={`flex min-h-0 flex-1 flex-col ${
+            <div className={`flex min-h-0 ${isChartChase ? 'mt-auto' : 'flex-1'} flex-col ${
               isPlaceValuePeaks ? 'gap-2 md:gap-3' : isChartChase ? 'gap-1 md:gap-2' : 'gap-1.5 md:gap-2.5'
             }`}>
               {question.options.map((option, index) => {
                 const isSelected = index === selectedIndex;
                 const isCorrect = feedback === 'correct' && index === question.answerIndex;
                 const isWrongSelected = feedback === 'incorrect' && isSelected;
+                const displayOption = isChartChase ? option.replace(/^Choice\s*/i, '') : option;
 
                 const answerBackground = isCorrect
                   ? answerGreenBg
@@ -1444,7 +1445,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                         />
                       )}
                       <div className={`flex-1 text-center ${isPlaceValuePeaks ? 'text-[1.1rem] md:text-[1.7rem] text-amber-50' : isScaleBuilder || isCalculationClash || isRuleRunner ? 'text-[1rem] md:text-[1.35rem] text-white' : 'text-[1.02rem] md:text-[1.45rem] text-white'} font-black leading-none tracking-[-0.02em] drop-shadow-[0_2px_2px_rgba(0,0,0,0.42)]`}>
-                        {option}
+                        {displayOption}
                       </div>
                     </div>
                   </motion.button>

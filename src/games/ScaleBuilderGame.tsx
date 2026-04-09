@@ -1,14 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ChevronRight, Layers, Ruler, Trophy } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import MiniGameTopBar from '../components/MiniGameTopBar';
 import { AVATARS } from '../constants';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 import labelGreenLongAsset from '../assets/licensed/slices/label_green_long.png';
 import { PrimaryButton } from '../components/game-ui/GameUiKit';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
-import scaleBuilderBackground from '../assets/level_backgrounds/scale builder.jpg';
 
 interface ScaleBuilderGameProps {
   levelId: number;
@@ -314,8 +312,6 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
 
   return (
     <GameScreenShell className="overflow-hidden pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+0.25rem)]">
-      <GameplaySceneBackdrop gameType="scale_safari" backgroundOverride={scaleBuilderBackground} />
-
       {!useSharedTopHud ? (
         <MiniGameTopBar
           onBack={onBack}

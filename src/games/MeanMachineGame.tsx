@@ -364,6 +364,11 @@ const buildRound = (level: number) => {
   return buildModeRound(level);
 };
 
+const roundSignature = (data: RoundData) => {
+  const visibleKey = data.visibleValues.map((value) => (value === null ? 'x' : value)).join('|');
+  return `${data.mode}:${data.correctAnswer}:${visibleKey}`;
+};
+
 const ReelWindow: React.FC<{
   value: number | string;
   spinning: boolean;
@@ -418,6 +423,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   const completionLockedRef = useRef(false);
   const failureLockedRef = useRef(false);
   const answerLockedRef = useRef(false);
+  const lastRoundRef = useRef<string | null>(null);
 
   const lives = sessionState?.lives ?? 3;
   const sessionActive = lives > 0;
@@ -435,7 +441,16 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   const initialiseRound = useCallback((targetLevel: number) => {
     clearTimers();
     answerLockedRef.current = false;
-    setRound(buildRound(targetLevel));
+    let nextRound = buildRound(targetLevel);
+    let nextSignature = roundSignature(nextRound);
+    let guard = 0;
+    while (nextSignature === lastRoundRef.current && guard < 5) {
+      nextRound = buildRound(targetLevel);
+      nextSignature = roundSignature(nextRound);
+      guard += 1;
+    }
+    lastRoundRef.current = nextSignature;
+    setRound(nextRound);
     setGameState('idle');
     setFeedback(null);
     setSelectedAnswer(null);
@@ -664,7 +679,10 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                     className="relative mx-auto flex h-full w-full max-w-[32rem] items-center justify-center md:max-w-[34rem]"
                   >
 
-                    <div className="relative w-full max-w-[30rem] md:max-w-[32rem] isolate" style={{ aspectRatio: '4 / 5' }}>
+                    <div
+                      className="relative w-full max-w-[31.5rem] md:max-w-[33.6rem] isolate"
+                      style={{ aspectRatio: '4 / 5', transform: 'scale(1.05)', transformOrigin: 'center' }}
+                    >
                       <img
                         src={alphaKeyedMachineImage}
                         alt="MEAN Machine slot machine"

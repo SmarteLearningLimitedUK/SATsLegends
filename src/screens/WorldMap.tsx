@@ -65,8 +65,7 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
     width: 93.49,
     height: 5.56,
     ambients: [
-      { id: 'cursed-colosseum-stars', x: 18, y: 18, width: 28, height: 22, effect: 'stars' },
-      { id: 'cursed-colosseum-wisps', x: 58, y: 26, width: 30, height: 24, effect: 'wind-wisps' },
+      { id: 'cursed-colosseum-stars', x: 22, y: 20, width: 30, height: 24, effect: 'stars' },
     ],
   },
   {
@@ -76,8 +75,7 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
     width: 63.02,
     height: 5.52,
     ambients: [
-      { id: 'measurement-lava', x: 62, y: 48, width: 26, height: 20, effect: 'lava-spurts' },
-      { id: 'measurement-stars', x: 18, y: 18, width: 24, height: 20, effect: 'stars' },
+      { id: 'measurement-lava', x: 60, y: 46, width: 28, height: 22, effect: 'lava-spurts' },
     ],
   },
   {
@@ -87,8 +85,7 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
     width: 62.76,
     height: 5.52,
     ambients: [
-      { id: 'operations-outpost-stars', x: 18, y: 20, width: 28, height: 22, effect: 'stars' },
-      { id: 'operations-outpost-beams', x: 60, y: 12, width: 28, height: 24, effect: 'light-beams' },
+      { id: 'operations-outpost-beams', x: 58, y: 14, width: 30, height: 26, effect: 'light-beams' },
     ],
   },
   {
@@ -98,7 +95,7 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
     width: 62.76,
     height: 5.52,
     ambients: [
-      { id: 'geometry-glacier-snow', x: 16, y: 10, width: 34, height: 30, effect: 'falling-snow' },
+      { id: 'geometry-glacier-snow', x: 18, y: 12, width: 32, height: 28, effect: 'falling-snow' },
     ],
   },
   {
@@ -108,7 +105,7 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
     width: 82.55,
     height: 5.72,
     ambients: [
-      { id: 'fraction-forest-butterflies', x: 20, y: 20, width: 32, height: 26, effect: 'butterflies' },
+      { id: 'fraction-forest-butterflies', x: 22, y: 20, width: 32, height: 26, effect: 'butterflies' },
     ],
   },
   {
@@ -129,7 +126,6 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
     height: 5.56,
     ambients: [
       { id: 'ratio-rapids-steam', x: 18, y: 22, width: 32, height: 24, effect: 'steam' },
-      { id: 'ratio-rapids-bubbles', x: 56, y: 54, width: 30, height: 24, effect: 'bubbles' },
     ],
   },
   {
@@ -139,8 +135,7 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
     width: 63.02,
     height: 5.56,
     ambients: [
-      { id: 'acropolis-math', x: 18, y: 24, width: 30, height: 24, effect: 'math-symbols' },
-      { id: 'acropolis-bubbles', x: 56, y: 56, width: 28, height: 22, effect: 'bubbles' },
+      { id: 'acropolis-math', x: 20, y: 24, width: 30, height: 24, effect: 'math-symbols' },
     ],
   },
 ];

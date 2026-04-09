@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+﻿import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { triggerHaptic } from '../haptics';
@@ -34,7 +34,7 @@ type FeedbackState = null | {
 };
 
 const HEARTS_MAX = 3;
-const DOCK_COUNT = 3;
+const DOCK_COUNT = 8;
 const ROUNDS_TO_WIN = 5;
 const BOAT_ASSETS = [boat1, boat2, boat3, boat4, boat5, boat6, boat7];
 
@@ -155,7 +155,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
     setFeedback({
       type: 'error',
       title: 'Not Loaded',
-      subtitle: `${question.dividend} � ${question.divisor} = ${question.answer}`,
+      subtitle: `${question.dividend} ÷ ${question.divisor} = ${question.answer}`,
     });
     triggerHaptic('error');
 
@@ -266,51 +266,45 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
             <div className="flex justify-center">
               <div className="game-question-card max-w-[96%] px-3 py-2 text-center">
                 <div className="question-title">
-                  Share {question.dividend} crates equally between {question.divisor} boats.
+                  Share the crates — {question.dividend} ÷ {question.divisor}
                 </div>
               </div>
             </div>
 
-            <div className="mt-1.5 grid min-h-0 flex-1 grid-cols-1 gap-2 lg:mt-2 lg:grid-cols-[1.05fr_0.95fr] lg:gap-2.5">
-              <div className="licensed-game-card-dark flex min-h-0 flex-col rounded-[1.15rem] border border-white/14 p-2.5 shadow-[0_16px_28px_rgba(2,6,23,0.22)] md:rounded-[1.4rem] md:p-3">
-                <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Cargo brief</div>
-                <div className="mt-2 rounded-[0.95rem] border border-sky-200/20 bg-[linear-gradient(180deg,rgba(14,116,144,0.22),rgba(14,116,144,0.08))] p-2.5 text-center md:mt-2.5 md:p-3">
-                  <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/70 md:text-xs">Current equation</div>
-                  <div className="mt-1 text-[clamp(1.4rem,4vw,2.3rem)] font-black text-white">
-                    {question.dividend} � {question.divisor} = ?
-                  </div>
+            <div className="mt-1.5 flex min-h-0 flex-1 flex-col gap-2">
+              <div className="rounded-[1.1rem] border border-white/12 bg-white/6 p-2 text-center shadow-[0_12px_20px_rgba(2,6,23,0.2)]">
+                <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Cargo status</div>
+                <div className="mt-1 text-[clamp(1.2rem,3.4vw,1.9rem)] font-black text-white">
+                  {question.dividend} ÷ {question.divisor} = ?
                 </div>
-
-                <div className="mt-2 grid grid-cols-2 gap-2 md:mt-2">
-                  <div className="rounded-[1rem] border border-white/12 bg-white/8 p-2 text-center">
-                    <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/65 md:text-[11px]">Cargo</div>
-                    <div className="mt-1 text-xl font-black text-white md:text-2xl">{question.dividend - remainingGoods}/{question.dividend}</div>
+                <div className="mt-2 grid grid-cols-3 gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-white/70">
+                  <div className="rounded-xl bg-white/12 px-2 py-1">
+                    Loaded
+                    <div className="mt-1 text-base font-black text-white">{question.dividend - remainingGoods}/{question.dividend}</div>
                   </div>
-                  <div className="rounded-[1rem] border border-white/12 bg-white/8 p-2 text-center">
-                    <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/65 md:text-[11px]">Boats</div>
-                    <div className="mt-1 text-xl font-black text-white md:text-2xl">{roundSolved}/{ROUNDS_TO_WIN}</div>
+                  <div className="rounded-xl bg-white/12 px-2 py-1">
+                    Boats
+                    <div className="mt-1 text-base font-black text-white">{roundSolved}/{ROUNDS_TO_WIN}</div>
                   </div>
-                </div>
-
-                <div className="mt-2 rounded-[0.95rem] border border-white/12 bg-white/8 p-2 text-center">
-                  <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/65 md:text-[11px]">Crates left</div>
-                  <div className="mt-1 text-2xl font-black text-amber-100 md:text-3xl">{remainingGoods}</div>
+                  <div className="rounded-xl bg-white/12 px-2 py-1">
+                    Left
+                    <div className="mt-1 text-base font-black text-amber-100">{remainingGoods}</div>
+                  </div>
                 </div>
               </div>
 
-              <div className="licensed-game-card-dark flex min-h-0 flex-col rounded-[1.15rem] border border-white/14 p-2.5 shadow-[0_16px_28px_rgba(2,6,23,0.22)] md:rounded-[1.4rem] md:p-3">
-                <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-xs">Dockyard</div>
-
-                <div className="mt-2 grid min-h-0 flex-1 grid-cols-1 gap-1.5 md:mt-2.5 md:gap-2.5">
+              <div className="flex min-h-0 flex-1 flex-col rounded-[1.1rem] border border-white/12 bg-white/6 p-2 shadow-[0_12px_20px_rgba(2,6,23,0.2)]">
+                <div className="mb-2 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Dockyard</div>
+                <div className="grid flex-1 grid-cols-4 gap-2">
                   {boatLoads.map((count, index) => (
                     <button
                       key={`boat-${index}`}
                       type="button"
                       onClick={() => addToBoat(index)}
                       disabled={isFinished || remainingGoods <= 0}
-                      className="flex items-center gap-3 rounded-[1rem] border border-white/12 bg-[linear-gradient(180deg,rgba(56,189,248,0.18),rgba(15,23,42,0.7))] px-3 py-1.5 text-left shadow-[0_10px_18px_rgba(2,6,23,0.2)] transition active:scale-[0.98] disabled:opacity-60"
+                      className="flex flex-col items-center justify-center gap-1 rounded-[0.9rem] border border-white/12 bg-white/10 p-1.5 text-center shadow-[0_8px_14px_rgba(2,6,23,0.18)] transition active:scale-[0.98] disabled:opacity-60"
                     >
-                      <div className="relative h-14 w-16 overflow-hidden rounded-lg border border-white/18 bg-transparent">
+                      <div className="relative h-10 w-14 overflow-hidden rounded-md border border-white/18 bg-transparent">
                         <img
                           src={boatSet[index] ?? boat1}
                           alt={`Dock ${index + 1} boat`}
@@ -318,35 +312,30 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
                           draggable={false}
                         />
                       </div>
-                      <div className="flex-1">
-                        <div className="text-[11px] font-black uppercase tracking-[0.12em] text-cyan-100/80">Dock {index + 1}</div>
-                        <div className="mt-0.5 text-base font-black text-white">{count} crates</div>
-                      </div>
-                      <div className="rounded-full border border-amber-200/35 bg-amber-200/10 px-3 py-1 text-[11px] font-black text-amber-100">
-                        +1
-                      </div>
+                      <div className="text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100/80">Dock {index + 1}</div>
+                      <div className="text-sm font-black text-white">{count}</div>
                     </button>
                   ))}
                 </div>
+              </div>
 
-                <div className="mt-2 grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={resetBoats}
-                    disabled={isFinished}
-                    className="ui-button-secondary rounded-[0.95rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white disabled:opacity-60"
-                  >
-                    Reset
-                  </button>
-                  <button
-                    type="button"
-                    onClick={checkShare}
-                    disabled={isFinished}
-                    className="ui-button-primary rounded-[0.95rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white disabled:opacity-60"
-                  >
-                    Check
-                  </button>
-                </div>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={resetBoats}
+                  disabled={isFinished}
+                  className="ui-button-secondary rounded-[0.95rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white disabled:opacity-60"
+                >
+                  Reset
+                </button>
+                <button
+                  type="button"
+                  onClick={checkShare}
+                  disabled={isFinished}
+                  className="ui-button-primary rounded-[0.95rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white disabled:opacity-60"
+                >
+                  Check
+                </button>
               </div>
             </div>
           </div>
@@ -376,6 +365,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
 };
 
 export default DivisionDockGame;
+
 
 
 

@@ -144,7 +144,7 @@ const takeOutMonsterImages = loadSortedImages(
   import.meta.glob('../assets/take_out/monsters/*.png', { eager: true, import: 'default' }) as Record<string, string>,
 );
 
-const MONSTER_IMAGES = [defaultMonster, ...takeOutMonsterImages];
+const MONSTER_IMAGES = takeOutMonsterImages.length ? takeOutMonsterImages : [defaultMonster];
 
 const ITEM_BY_ID: Record<string, FoodItem> = FOOD_ITEMS.reduce<Record<string, FoodItem>>((map, item) => {
   map[item.id] = item;
@@ -606,12 +606,12 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                 </div>
               </div>
             </div>
-            <div className="pointer-events-none absolute left-1/2 bottom-[6%] w-[min(58vw,15rem)] -translate-x-1/2">
+            <div className="pointer-events-none absolute left-1/2 top-[44%] h-[28%] w-[min(58vw,15rem)] -translate-x-1/2 overflow-hidden">
               <img
                 src={orderMonster}
                 alt=""
                 draggable={false}
-                className="h-auto w-full object-contain drop-shadow-[0_12px_22px_rgba(2,6,23,0.45)]"
+                className="absolute bottom-0 h-full w-full object-contain drop-shadow-[0_12px_22px_rgba(2,6,23,0.45)]"
               />
             </div>
           </section>

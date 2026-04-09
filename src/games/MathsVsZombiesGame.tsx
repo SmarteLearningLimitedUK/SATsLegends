@@ -538,7 +538,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
             </div>
           </div>
           <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-center text-2xl font-black text-white">
-            {question.prompt} = ?
+            Solve the sum: {question.prompt}
           </div>
           <div className="mt-3 grid grid-cols-2 gap-2">
             {question.options.map((option, index) => (

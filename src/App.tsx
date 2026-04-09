@@ -525,9 +525,11 @@ const App: React.FC = () => {
   useEffect(() => {
     if (screen !== 'gameplay' || !selectedLevel || !hintRuleSet) return;
     if (selectedLevel.blueprintKey === 'rounding_rocket') return;
+    const miniLevel = selectedLevel.miniGameLevel ?? selectedLevel.id;
+    if (miniLevel > 3) return;
     setGameRulesMode('start');
     setShowGameRules(true);
-  }, [screen, selectedLevel?.id, hintRuleSet, setGameRulesMode, setShowGameRules]);
+  }, [screen, selectedLevel?.id, selectedLevel?.miniGameLevel, hintRuleSet, setGameRulesMode, setShowGameRules]);
 
   useEffect(() => {
     const handleOpenHelp = () => {

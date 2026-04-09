@@ -348,11 +348,11 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
 
       <div className="relative z-30 flex h-full w-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+5.1rem)] pt-1">
         <section className="mx-auto w-full max-w-[22rem] shrink-0 text-center">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/90 md:text-[11px]">
-            {round.target === 10 ? 'Nearest 10' : 'Nearest 100'}
-          </p>
-          <div className="mt-1 rounded-[0.95rem] border border-cyan-200/35 bg-[linear-gradient(180deg,rgba(15,31,70,0.7),rgba(5,19,54,0.88))] px-4 py-1.5 shadow-[0_10px_24px_rgba(2,6,23,0.4)]">
-            <span className="text-[clamp(1.55rem,6vw,2.25rem)] font-black tabular-nums tracking-[0.08em] text-white [text-shadow:0_4px_14px_rgba(34,211,238,0.3)]">
+          <div className="rounded-[0.95rem] border border-cyan-200/35 bg-[linear-gradient(180deg,rgba(15,31,70,0.7),rgba(5,19,54,0.88))] px-4 py-2 shadow-[0_10px_24px_rgba(2,6,23,0.4)]">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/90 md:text-[11px]">
+              Round to the nearest {round.target}
+            </p>
+            <span className="mt-1 block text-[clamp(1.55rem,6vw,2.25rem)] font-black tabular-nums tracking-[0.08em] text-white [text-shadow:0_4px_14px_rgba(34,211,238,0.3)]">
               {round.value}
             </span>
           </div>

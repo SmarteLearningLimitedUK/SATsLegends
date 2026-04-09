@@ -446,8 +446,8 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
   };
 
   const topPaddingClass = useSharedTopHud
-    ? 'pt-[calc(env(safe-area-inset-top)+5.75rem)]'
-    : 'pt-[max(0.5rem,env(safe-area-inset-top))]';
+    ? 'pt-[calc(env(safe-area-inset-top)+3.6rem)]'
+    : 'pt-[max(0.25rem,env(safe-area-inset-top))]';
 
   const shapePulseClass = shapePulse === 'success'
     ? 'drop-shadow-[0_0_18px_rgba(74,222,128,0.7)]'
@@ -464,12 +464,12 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
         draggable={false}
         className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
       />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.38),rgba(2,6,23,0.42)_32%,rgba(2,6,23,0.6)_100%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.22),rgba(2,6,23,0.28)_40%,rgba(2,6,23,0.38)_100%)]" />
 
       <main
-        className={`relative z-20 flex h-full w-full flex-col items-center ${topPaddingClass} px-[max(0.75rem,env(safe-area-inset-left))] pb-[calc(env(safe-area-inset-bottom)+2.6rem)]`}
+        className={`relative z-20 flex h-full w-full flex-col items-center ${topPaddingClass} px-[max(0.75rem,env(safe-area-inset-left))] pb-[calc(env(safe-area-inset-bottom)+0.8rem)]`}
       >
-        <div className="flex h-full w-full max-w-[30rem] min-h-0 flex-col gap-2.5">
+        <div className="flex h-full w-full max-w-[30rem] min-h-0 flex-col gap-2">
           {!useSharedTopHud ? (
             <header className="rounded-[1.15rem] border border-cyan-100/26 bg-slate-950/55 px-3 py-2 shadow-[0_12px_22px_rgba(2,6,23,0.44)]">
               <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2.5">
@@ -495,12 +495,12 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
             </header>
           )}
 
-          <section className="rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/54 p-3 text-center shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
+          <section className="rounded-[1.35rem] border border-cyan-100/18 bg-slate-950/46 p-2.5 text-center shadow-[0_10px_20px_rgba(2,6,23,0.38)]">
             <h2 className="text-[clamp(1rem,4.4vw,1.3rem)] font-black text-white">{question.instruction}</h2>
             <p className="mt-1 text-[clamp(0.76rem,3.3vw,0.9rem)] font-semibold text-cyan-100/86">{question.subInstruction}</p>
           </section>
 
-          <section className="min-h-0 flex-1 rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/54 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
+          <section className="min-h-0 flex-1 rounded-[1.35rem] border border-cyan-100/18 bg-slate-950/46 p-2.5 shadow-[0_10px_20px_rgba(2,6,23,0.38)]">
             <div className="flex h-full min-h-0 flex-col gap-3">
               {question.mode === 'rotate_match' ? (
                 <div className={`grid min-h-0 flex-1 grid-cols-2 items-center gap-2.5 ${shapePulseClass}`}>
@@ -568,7 +568,7 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
           </section>
 
           {question.mode === 'rotate_match' ? (
-            <section className="shrink-0 rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/56 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
+            <section className="shrink-0 rounded-[1.35rem] border border-cyan-100/18 bg-slate-950/48 p-2.5 shadow-[0_10px_20px_rgba(2,6,23,0.38)]">
               <div className="grid grid-cols-3 gap-2.5">
                 <button
                   type="button"

@@ -6,6 +6,8 @@ import {
   GameUiShell,
 } from '../components/game-ui/GameUiKit';
 import pyramidImage from '../assets/pyramid.png';
+import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
+import problemPyramidBackground from '../assets/level_backgrounds/polygon palace map.jpg';
 
 interface ProblemPyramidGameProps {
   levelId: number;
@@ -148,7 +150,8 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
 
   return (
     <GameUiShell className="bg-transparent" overlayDisabled>
-      <div className="flex h-full min-h-0 flex-col gap-1.5 px-3 pb-[calc(env(safe-area-inset-bottom)+2.8rem)] pt-2 text-white">
+      <GameplaySceneBackdrop gameType="rule_runner" backgroundOverride={problemPyramidBackground} />
+      <div className="relative z-10 flex h-full min-h-0 flex-col gap-1.5 px-3 pb-[calc(env(safe-area-inset-bottom)+2.8rem)] pt-2 text-white">
         <section className="shrink-0">
           <div className="game-question-card px-3 py-2 text-center">
             <div className="question-title">Find the top number in the pyramid.</div>

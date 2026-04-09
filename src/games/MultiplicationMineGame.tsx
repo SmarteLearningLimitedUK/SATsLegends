@@ -6,6 +6,7 @@ import rockStage19 from '../assets/mine/19.png';
 import rockStage20 from '../assets/mine/20.png';
 import rockStage21 from '../assets/mine/21.png';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
+import mineBackground from '../assets/maps/multiplication mine background.jpg';
 import MiniGameTopBar from '../components/MiniGameTopBar';
 import { triggerHaptic } from '../haptics';
 
@@ -140,8 +141,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
 
   return (
     <div className="relative h-full w-full overflow-hidden text-white">
-      <GameplaySceneBackdrop gameType="calculation_clash" className="opacity-[0.97]" />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#06132ad4] via-[#081733cf] to-[#030816ec]" />
+      <GameplaySceneBackdrop gameType="calculation_clash" backgroundOverride={mineBackground} />
 
       {!useSharedTopHud ? (
         <MiniGameTopBar

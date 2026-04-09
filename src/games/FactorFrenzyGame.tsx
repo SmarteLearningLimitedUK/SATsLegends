@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import factorFrenzyBackground from '../assets/maps/desert.jpg';
+import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
 import questionBarSmall from '../assets/ui_frames/hudfortextplace_slices/text_bar_small.png';
 import questionBarMedium from '../assets/ui_frames/hudfortextplace_slices/text_bar_medium.png';
 
@@ -77,6 +78,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 }) => {
   const [state, setState] = useState<LocalState>(INITIAL_STATE);
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
+  const [showChestBurst, setShowChestBurst] = useState(false);
 
   const timerRef = useRef<number | null>(null);
   const advanceRef = useRef<number | null>(null);
@@ -290,6 +292,13 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         XP: newScore,
         status: masteryReached ? 'complete' : 'correct',
       }));
+      setShowChestBurst(true);
+      confetti({
+        particleCount: 120,
+        spread: 80,
+        origin: { y: 0.62 },
+        colors: ['#fbbf24', '#f59e0b', '#38bdf8', '#34d399'],
+      });
       return;
     }
 
@@ -325,6 +334,12 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     return () => clearAdvanceTimer();
   }, [state.status]);
 
+  useEffect(() => {
+    if (!showChestBurst) return;
+    const timeout = window.setTimeout(() => setShowChestBurst(false), 700);
+    return () => window.clearTimeout(timeout);
+  }, [showChestBurst]);
+
   const submitRun = () => {
     if (endedRef.current) return;
     endedRef.current = true;
@@ -343,9 +358,9 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
       className="relative h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat text-white"
       style={{ backgroundImage: `url(${factorFrenzyBackground})` }}
     >
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.35)_0%,rgba(2,6,23,0.56)_60%,rgba(2,6,23,0.76)_100%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.22)_0%,rgba(2,6,23,0.38)_60%,rgba(2,6,23,0.5)_100%)]" />
 
-      <div className="relative z-10 flex h-full flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.8rem)] pt-[calc(env(safe-area-inset-top)+3.45rem)] sm:px-4 sm:pt-[calc(env(safe-area-inset-top)+3.65rem)] md:px-5 md:pt-[calc(env(safe-area-inset-top)+3.9rem)]">
+      <div className="relative z-10 flex h-full flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+2.8rem)] pt-[calc(env(safe-area-inset-top)+3.45rem)] sm:px-4 sm:pt-[calc(env(safe-area-inset-top)+3.65rem)] md:px-5 md:pt-[calc(env(safe-area-inset-top)+3.9rem)]">
         <main className="relative flex min-h-0 flex-1 flex-col">
           <AnimatePresence mode="wait">
             {state.status === 'complete' ? (
@@ -406,29 +421,14 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                   </div>
                 </div>
 
-                <div className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border border-cyan-100/25 bg-[#123062]/76 p-3 shadow-[0_12px_28px_rgba(2,6,23,0.4)] sm:p-4">
+                <div className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border border-cyan-100/25 bg-[#123062]/58 p-3 shadow-[0_10px_22px_rgba(2,6,23,0.32)] sm:p-4">
                   <div className="mb-2 text-center text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/80 sm:mb-3 sm:text-xs">
                     Select the correct answer set
                   </div>
-
-                  <div className="grid grid-cols-4 gap-2.5 sm:gap-3 md:gap-4">
-                    {state.currentProblem?.options.map((option, idx) => (
-                      <motion.button
-                        type="button"
-                        key={`${state.currentProblem?.id}-${option}-${idx}`}
-                        initial={{ opacity: 0, y: 6, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        transition={{ delay: idx * 0.03 }}
-                        onClick={() => toggleOption(option)}
-                        className={`relative flex h-[clamp(62px,9vh,94px)] items-center justify-center rounded-2xl border text-[clamp(1.1rem,3.8vw,2rem)] font-black transition ${
-                          selectedOptions.includes(option)
-                            ? 'border-cyan-100 bg-[linear-gradient(180deg,#39c4f4_0%,#1278bb_100%)] text-white shadow-[0_0_0_3px_rgba(125,211,252,0.45),0_10px_22px_rgba(2,6,23,0.45)]'
-                            : 'border-amber-100/70 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] text-slate-900 shadow-[0_8px_18px_rgba(2,6,23,0.3)]'
-                        }`}
-                      >
-                        {option}
-                      </motion.button>
-                    ))}
+                  <div className="flex min-h-0 flex-1 items-center justify-center">
+                    <div className="text-center text-[clamp(1.2rem,4.4vw,1.7rem)] font-black text-white/90">
+                      Select from the answers below
+                    </div>
                   </div>
 
                   <div className="mt-3 flex items-center justify-center sm:mt-4">
@@ -462,10 +462,48 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                     ) : null}
                   </AnimatePresence>
                 </div>
+
+                {showChestBurst ? (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="pointer-events-none absolute inset-0 flex items-center justify-center"
+                  >
+                    <img
+                      src={MAIN_PNG_SKIN.treasureChest}
+                      alt=""
+                      className="h-28 w-28 object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.45)]"
+                      draggable={false}
+                    />
+                  </motion.div>
+                ) : null}
               </motion.div>
             )}
           </AnimatePresence>
         </main>
+
+        {state.status !== 'complete' && (
+          <div className="mt-2 grid grid-cols-4 gap-2.5 sm:gap-3 md:gap-4">
+            {state.currentProblem?.options.map((option, idx) => (
+              <motion.button
+                type="button"
+                key={`${state.currentProblem?.id}-${option}-${idx}`}
+                initial={{ opacity: 0, y: 6, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: idx * 0.03 }}
+                onClick={() => toggleOption(option)}
+                className={`relative flex h-[clamp(62px,9vh,94px)] items-center justify-center rounded-2xl border text-[clamp(1.1rem,3.8vw,2rem)] font-black transition ${
+                  selectedOptions.includes(option)
+                    ? 'border-cyan-100 bg-[linear-gradient(180deg,#39c4f4_0%,#1278bb_100%)] text-white shadow-[0_0_0_3px_rgba(125,211,252,0.45),0_10px_22px_rgba(2,6,23,0.45)]'
+                    : 'border-amber-100/70 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] text-slate-900 shadow-[0_8px_18px_rgba(2,6,23,0.3)]'
+                }`}
+              >
+                {option}
+              </motion.button>
+            ))}
+          </div>
+        )}
       </div>
 
       {playingState && (

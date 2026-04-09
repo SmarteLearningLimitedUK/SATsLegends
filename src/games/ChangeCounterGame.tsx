@@ -288,17 +288,17 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
   return (
     <GameScreenShell className="overflow-hidden">
       <GameplaySceneBackdrop gameType="change_counter" />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,20,42,0.2),rgba(5,20,42,0.38)_52%,rgba(3,12,30,0.55))]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,20,42,0.12),rgba(5,20,42,0.2)_55%,rgba(3,12,30,0.25))]" />
 
       <div className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.6rem)] md:pt-[calc(env(safe-area-inset-top)+4.9rem)]' : 'pt-[calc(env(safe-area-inset-top)+2.4rem)]'}`}>
         <PuzzleStage className="flex h-full min-h-0 flex-1 flex-col gap-2 md:gap-3">
-          <StoryCard className="bg-white/8 text-white">
-            <p className="text-sm font-semibold text-white/90 md:text-base">
+          <StoryCard className="bg-white/85 text-slate-900 shadow-[0_10px_20px_rgba(2,6,23,0.18)]">
+            <p className="text-sm font-semibold text-slate-900 md:text-base">
               The summit traders need the exact change for every order.
             </p>
           </StoryCard>
 
-          <TaskCard className="bg-[linear-gradient(180deg,rgba(255,255,255,0.95),rgba(245,250,255,0.9))] text-slate-900">
+          <TaskCard className="bg-white text-slate-900 shadow-[0_10px_20px_rgba(2,6,23,0.18)]">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-900/80">Change Counter</div>
@@ -316,16 +316,16 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
           </TaskCard>
 
           <div className="flex min-h-0 flex-1 flex-col gap-2 md:gap-3">
-            <div className="rounded-[1.2rem] border border-white/14 bg-white/10 p-3 text-center text-white shadow-[0_16px_30px_rgba(15,23,42,0.28)] md:p-4">
-              <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Check the values</div>
-              <div className="mt-2 grid grid-cols-2 gap-2 text-sm font-black text-white md:text-lg">
-                <div className="rounded-xl bg-black/30 px-2 py-2">
+            <div className="rounded-[1.2rem] border border-white/12 bg-white/90 p-3 text-center text-slate-900 shadow-[0_16px_30px_rgba(15,23,42,0.18)] md:p-4">
+              <div className="text-[11px] font-black uppercase tracking-[0.16em] text-slate-600">Check the values</div>
+              <div className="mt-2 grid grid-cols-2 gap-2 text-sm font-black text-slate-900 md:text-lg">
+                <div className="rounded-xl bg-slate-900/5 px-2 py-2">
                   Cost
-                  <div className="mt-1 text-lg font-black text-amber-100 md:text-2xl">{formatMoney(question.costPence)}</div>
+                  <div className="mt-1 text-lg font-black text-amber-700 md:text-2xl">{formatMoney(question.costPence)}</div>
                 </div>
-                <div className="rounded-xl bg-black/30 px-2 py-2">
+                <div className="rounded-xl bg-slate-900/5 px-2 py-2">
                   Paid
-                  <div className="mt-1 text-lg font-black text-emerald-100 md:text-2xl">{formatMoney(question.paidPence)}</div>
+                  <div className="mt-1 text-lg font-black text-emerald-700 md:text-2xl">{formatMoney(question.paidPence)}</div>
                 </div>
               </div>
             </div>

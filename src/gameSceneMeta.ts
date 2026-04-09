@@ -6,7 +6,12 @@ import world04Map from './assets/maps/harbour.jpg';
 import world05Map from './assets/maps/desert.jpg';
 import world06Map from './assets/maps/volcano2.jpg';
 import scaleBackground from './assets/maps/scale.png';
-import chartChaseBackground from './assets/maps/reef2.jpg';
+import angleArenaBackground from './assets/level_backgrounds/angle arena bkground.jpg';
+import dataDetectiveBackground from './assets/level_backgrounds/datadetectivemap.jpg';
+import graphGrabberBackground from './assets/level_backgrounds/graph grabbermap.jpg';
+import percentPowerBackground from './assets/level_backgrounds/percent power map.jpg';
+import polygonPalaceBackground from './assets/level_backgrounds/polygon palace map.jpg';
+import primePopBackground from './assets/level_backgrounds/primepopbkground.jpg';
 
 export interface GameSceneMeta {
   background: string;
@@ -64,7 +69,7 @@ const SCALE_SCENE: GameSceneMeta = {
 
 const CHART_CHASE_SCENE: GameSceneMeta = {
   ...DATA_SCENE,
-  background: chartChaseBackground,
+  background: graphGrabberBackground,
 };
 
 export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
@@ -76,10 +81,10 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   take_out_rush: FRACTION_SCENE,
   fraction_match: FRACTION_SCENE,
   crystal_core: FRACTION_SCENE,
-  prime_pop: NUMBER_SCENE,
-  angle_arena: GEOMETRY_SCENE,
-  polygon_palace: GEOMETRY_SCENE,
-  data_dungeon: DATA_SCENE,
+  prime_pop: { ...NUMBER_SCENE, background: primePopBackground },
+  angle_arena: { ...GEOMETRY_SCENE, background: angleArenaBackground },
+  polygon_palace: { ...GEOMETRY_SCENE, background: polygonPalaceBackground },
+  data_dungeon: { ...DATA_SCENE, background: dataDetectiveBackground },
   monster_market: NUMBER_SCENE,
   tower_of_factors: NUMBER_SCENE,
   measurement_forge: RATIO_SCENE,
@@ -95,7 +100,7 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   chart_chase: CHART_CHASE_SCENE,
   observatory_overload: DATA_SCENE,
   mean_machine: DATA_SCENE,
-  percent_power: RATIO_SCENE,
+  percent_power: { ...RATIO_SCENE, background: percentPowerBackground },
   area_architect: GEOMETRY_SCENE,
   ratio_fractions: RATIO_SCENE,
   equation_grove: REASONING_SCENE,

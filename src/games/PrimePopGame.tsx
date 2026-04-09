@@ -235,6 +235,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
 
   const bubbleIdRef = useRef(1);
   const overRef = useRef(false);
+  const reportedResultRef = useRef(false);
   const scoreRef = useRef(0);
   const livesRef = useRef(INITIAL_LIVES);
   const comboRef = useRef(0);
@@ -292,8 +293,9 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
   }, []);
 
   const finalize = useCallback((finalScore: number) => {
-    if (overRef.current) return;
+    if (overRef.current || reportedResultRef.current) return;
     overRef.current = true;
+    reportedResultRef.current = true;
     clearLoops();
 
     const totalPops = Math.max(1, totalPopsRef.current);
@@ -354,7 +356,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     return {
       id: bubbleIdRef.current++,
       x,
-      y: randomBetween(80, 102),
+      y: randomBetween(96, 110),
       drift: (Math.random() < 0.5 ? -1 : 1) * randomBetween(1.1, 2.7),
       vy: randomBetween(bubbleRuntime.minSpeed, bubbleRuntime.maxSpeed) * (prime ? PRIME_SPEED_MULTIPLIER : 1),
       radius,
@@ -366,6 +368,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
 
   useEffect(() => {
     overRef.current = false;
+    reportedResultRef.current = false;
     clearLoops();
     bubbleIdRef.current = 1;
     scoreRef.current = 0;
@@ -566,9 +569,11 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
             className="pointer-events-none absolute left-0 right-0 z-20 flex items-center justify-center"
             style={{ top: `${DANGER_LINE_Y}%` }}
           >
-            <div className="h-[2px] w-[92%] rounded-full bg-rose-300/75 shadow-[0_0_12px_rgba(251,113,133,0.65)]" />
+            <div className="relative flex h-6 w-[88%] items-center justify-center overflow-hidden rounded-full border border-white/20 bg-[repeating-linear-gradient(135deg,#0b0f1a_0px,#0b0f1a_10px,#f9fafb_10px,#f9fafb_20px)] shadow-[0_0_12px_rgba(15,23,42,0.45)]">
+              <span className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-900">DANGER</span>
+            </div>
           </div>
-          <div className="absolute inset-[40px] z-10 overflow-hidden">
+          <div className="absolute inset-0 z-10 overflow-hidden">
             
 
             <AnimatePresence>

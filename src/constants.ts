@@ -72,6 +72,7 @@ const CURSED_COLOSSEUM_LEVELS: LevelData[] = [
   { id: 2, stars: 0, isLocked: false, blueprintKey: 'multi_step_marathon', displayName: 'Multi-Step Marathon', gameType: 'equation_grove' },
   { id: 3, stars: 0, isLocked: false, blueprintKey: 'strategy_survival', displayName: 'Strategy Survival', gameType: 'logic_sort' },
   { id: 4, stars: 0, isLocked: false, blueprintKey: 'mixed_mastery', displayName: 'Mixed Mastery', gameType: 'calculation_clash' },
+  { id: 5, stars: 0, isLocked: false, blueprintKey: 'timed_test_trials', displayName: 'Timed Test Trials', gameType: 'calculation_clash' },
 ];
 
 export const ISLANDS: IslandData[] = [
@@ -198,7 +199,6 @@ export const ISLANDS: IslandData[] = [
       { id: 1, stars: 0, isLocked: false, blueprintKey: 'problem_pyramid', displayName: 'Problem Pyramid', gameType: 'rule_runner' },
       { id: 2, stars: 0, isLocked: false, blueprintKey: 'unit_mixer', displayName: 'Unit Mixer', gameType: 'unit_mixer' },
       { id: 3, stars: 0, isLocked: false, blueprintKey: 'change_counter', displayName: 'Change Counter', gameType: 'change_counter' },
-      { id: 4, stars: 0, isLocked: false, blueprintKey: 'timed_test_trials', displayName: 'Timed Test Trials', gameType: 'calculation_clash' },
     ],
   },
   {

@@ -323,7 +323,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
         <section className="flex min-h-0 flex-1 flex-col gap-2 px-2 pb-2 sm:gap-3 sm:px-3 sm:pb-3 md:px-4 md:pb-4">
           <div className={`flex flex-col gap-1.5 ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+0.25rem)]' : ''}`}>
             <div className="game-question-card">
-              <div className="question-title text-center">{round?.question}</div>
+              <div className="question-title text-center text-[clamp(1.1rem,4vw,1.5rem)]">{round?.question}</div>
               <div className="question-subtitle text-center">{round?.helper}</div>
             </div>
           </div>
@@ -334,7 +334,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
               ref={chartWrapRef}
               onPointerDown={handleProbePointerDown}
               onPointerMove={handleProbePointerMove}
-              className="relative h-full min-h-[9.2rem] w-full rounded-2xl border border-slate-700/60 bg-slate-950/35 p-2 sm:min-h-[10.5rem] md:min-h-[12rem]"
+              className="relative h-full min-h-[13rem] w-full rounded-2xl border border-slate-700/60 bg-slate-950/35 p-2 sm:min-h-[14.5rem] md:min-h-[16rem]"
             >
               {round && (
                 <ResponsiveContainer width="100%" height="100%">
@@ -397,7 +397,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
             </div>
           </div>
 
-          <div className="mt-auto flex flex-col gap-2">
+          <div className="mt-auto flex flex-col gap-2 pt-1">
             <div className="grid grid-cols-2 gap-2">
               {round?.options.map(option => {
                 const isSelected = selectedAnswer === option;
