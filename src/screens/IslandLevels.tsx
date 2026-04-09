@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Crown, Lock, Sparkles } from 'lucide-react';
 import AssetIcon from '../components/AssetIcon';
 import { IslandData, LevelData, PlayerData } from '../types';
@@ -268,7 +268,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
               <AssetIcon name="star" className="h-4 w-4 text-yellow-300 md:h-5 md:w-5" />
               <span>{earnedStars}</span>
             </div>
-            <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/80 md:text-xs">
+            <div className="text-aaa-micro text-cyan-100/80">
               {completionPercent}% complete
             </div>
           </div>
@@ -285,7 +285,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
           <div className="mb-3 rounded-2xl border border-amber-200/70 bg-[linear-gradient(180deg,rgba(251,191,36,0.24),rgba(234,179,8,0.1),rgba(15,23,42,0.4))] p-3 shadow-[0_14px_28px_rgba(234,179,8,0.22)] md:mb-4 md:p-3.5">
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <div className="inline-flex items-center gap-1 rounded-full border border-amber-100/70 bg-amber-300/25 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.12em] text-amber-100">
+                <div className="inline-flex items-center gap-1 rounded-full border border-amber-100/70 bg-amber-300/25 px-2 py-0.5 text-aaa-micro text-amber-100">
                   <Sparkles className="h-3 w-3" />
                   Recommended Next
                 </div>
@@ -296,7 +296,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
               <button
                 type="button"
                 onClick={() => onSelectLevel(nextPlayableRow.level)}
-                className="ui-button-primary shrink-0 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-white md:px-5"
+                className="ui-button-primary shrink-0 rounded-xl px-4 py-2 text-aaa-sm text-white md:px-5"
               >
                 Continue
               </button>
@@ -399,7 +399,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                               key={`${group.id}-${level.id}`}
                               className={`flex items-center gap-2 rounded-xl border px-2.5 py-2 transition ${rowStateClass}`}
                             >
-                              <div className="w-[4.1rem] shrink-0 text-xs font-black uppercase tracking-[0.08em] text-white md:w-[5rem] md:text-sm">
+                              <div className="w-[4.1rem] shrink-0 text-aaa-sm text-white md:w-[5rem]">
                                 {levelLabel}
                               </div>
 
@@ -425,7 +425,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                                 type="button"
                                 onClick={() => isUnlocked && onSelectLevel(level)}
                                 disabled={!isUnlocked}
-                                className={`ui-button-primary ml-2 rounded-lg px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-white md:text-[11px] ${
+                                className={`ui-button-primary ml-2 rounded-lg px-3 py-1.5 text-aaa-micro text-white ${
                                   !isUnlocked
                                     ? 'opacity-60'
                                     : isNextPlayable
@@ -455,7 +455,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
 
             {wellbeingTitle && onOpenWellbeing ? (
               <div className="rounded-2xl border border-emerald-200/35 bg-[linear-gradient(180deg,rgba(16,185,129,0.18),rgba(56,189,248,0.08),rgba(15,23,42,0.4))] px-4 py-4 shadow-[0_16px_30px_rgba(16,185,129,0.12)]">
-                <div className="inline-flex items-center gap-1 rounded-full border border-emerald-100/30 bg-emerald-300/12 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-100">
+                <div className="inline-flex items-center gap-1 rounded-full border border-emerald-100/30 bg-emerald-300/12 px-2.5 py-1 text-aaa-micro text-emerald-100">
                   Calm break
                   {wellbeingType ? <span className="text-emerald-100/70">• {wellbeingType}</span> : null}
                 </div>
@@ -466,7 +466,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                 <button
                   type="button"
                   onClick={onOpenWellbeing}
-                  className="mt-3 w-full rounded-xl bg-[linear-gradient(180deg,#8ff7da_0%,#63d8c8_100%)] px-4 py-3 text-sm font-black uppercase tracking-[0.14em] text-slate-950 shadow-[0_12px_24px_rgba(20,184,166,0.2)]"
+                  className="mt-3 w-full rounded-xl bg-[linear-gradient(180deg,#8ff7da_0%,#63d8c8_100%)] px-4 py-3 text-aaa-sm text-slate-950 shadow-[0_12px_24px_rgba(20,184,166,0.2)]"
                 >
                   Take Calm Break
                 </button>

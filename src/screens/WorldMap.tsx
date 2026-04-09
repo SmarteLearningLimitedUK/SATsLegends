@@ -542,7 +542,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
             transition={{ duration: 0.22, ease: 'easeOut' }}
             className="pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+4.8rem)] z-40 flex justify-center px-4"
           >
-            <div className="pointer-events-auto relative w-full max-w-[20rem] rounded-[1.35rem] border border-cyan-100/28 bg-[linear-gradient(180deg,rgba(22,56,122,0.96),rgba(9,25,63,0.98))] px-4 py-3 text-white shadow-[0_18px_32px_rgba(2,6,23,0.42)] backdrop-blur-sm">
+            <div className="pointer-events-auto relative w-full max-w-[20rem] px-4 py-4 text-white backdrop-blur-sm licensed-overlay-card">
               <button
                 type="button"
                 onClick={() => setSelectedIslandId(null)}
@@ -551,10 +551,10 @@ const WorldMap: React.FC<WorldMapProps> = ({
               >
                 <X className="h-4 w-4" />
               </button>
-              <div className="text-center text-sm font-black uppercase tracking-[0.08em] text-cyan-50">
+              <div className="text-center text-aaa-h2 text-cyan-50">
                 {selectedIslandState.island.name}
               </div>
-              <div className="mt-1 text-center text-[11px] font-bold uppercase tracking-[0.12em] text-cyan-100/82">
+              <div className="mt-1 text-center text-aaa-micro text-cyan-100/82 opacity-90 font-bold">
                 {selectedIslandState.starredCount}/{selectedIslandState.totalLevels} levels cleared
               </div>
               <div className="mt-2 h-2.5 overflow-hidden rounded-full border border-white/20 bg-slate-950/60">
@@ -563,7 +563,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
                   style={{ width: `${selectedIslandState.completion}%` }}
                 />
               </div>
-              <div className="mt-1 text-center text-[11px] font-black uppercase tracking-[0.12em] text-amber-100">
+              <div className="mt-1 text-center text-aaa-sm text-amber-100">
                 {selectedIslandState.completion}% progress
               </div>
               <button
@@ -572,9 +572,9 @@ const WorldMap: React.FC<WorldMapProps> = ({
                   if (selectedIslandState.isUnlocked) onSelectIsland(selectedIslandState.island);
                 }}
                 disabled={!selectedIslandState.isUnlocked}
-                className={`mt-3 w-full rounded-full px-4 py-3 text-sm font-black uppercase tracking-[0.12em] transition-all ${
+                className={`mt-3 w-full rounded-full px-4 py-3 text-aaa-sm transition-all ${
                   selectedIslandState.isUnlocked
-                    ? 'bg-[linear-gradient(180deg,#f8d66b_0%,#f2a82c_100%)] text-slate-950 shadow-[0_6px_0_rgba(146,87,8,0.8),0_14px_22px_rgba(2,6,23,0.28)]'
+                    ? 'ui-button-primary shadow-[0_6px_0_rgba(146,87,8,0.8),0_14px_22px_rgba(2,6,23,0.28)]'
                     : 'cursor-not-allowed bg-slate-700/80 text-slate-200 opacity-75'
                 }`}
               >

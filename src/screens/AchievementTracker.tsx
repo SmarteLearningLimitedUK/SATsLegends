@@ -31,7 +31,7 @@ const AchievementTracker: React.FC<AchievementTrackerProps> = ({ player, onBack 
             <AssetIcon name="back" className="h-5 w-5 md:h-6 md:w-6" />
           </button>
           <div>
-            <div className="text-[10px] font-black uppercase tracking-[0.24em] text-white/55">Badges</div>
+            <div className="text-aaa-micro text-white/55">Badges</div>
             <div className="text-lg font-black tracking-tight text-white md:text-3xl">Achievements</div>
           </div>
         </div>
@@ -51,12 +51,12 @@ const AchievementTracker: React.FC<AchievementTrackerProps> = ({ player, onBack 
                 <div className="flex-1">
                   <div className="text-base font-black md:text-lg">{achievement.name}</div>
                   <div className="text-[11px] font-semibold text-white/60">{achievement.description}</div>
-                  <div className="mt-2 text-[10px] font-black uppercase tracking-[0.18em] text-white/50">
+                  <div className="mt-2 text-aaa-micro text-white/50">
                     {achievement.earned ? 'Earned' : `${achievement.progress} / ${achievement.target}`}
                   </div>
                 </div>
                 {achievement.earned ? (
-                  <div className="rounded-full border border-emerald-200/40 bg-emerald-200/15 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-emerald-100">
+                  <div className="rounded-full border border-emerald-200/40 bg-emerald-200/15 px-3 py-1 text-aaa-micro text-emerald-100">
                     Earned
                   </div>
                 ) : null}

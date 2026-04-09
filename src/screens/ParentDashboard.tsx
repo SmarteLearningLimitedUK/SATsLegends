@@ -37,7 +37,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
             <AssetIcon name="back" className="h-5 w-5 md:h-6 md:w-6" />
           </button>
           <div className="min-w-0">
-            <div className="text-[10px] font-black uppercase tracking-[0.24em] text-white/55">Family view</div>
+            <div className="text-aaa-micro text-white/55">Family view</div>
             <h1 className="truncate text-lg font-black tracking-tight text-white md:text-3xl">Parent Report</h1>
           </div>
         </div>
@@ -56,7 +56,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
             >
               <AssetIcon name={item.icon} className="mx-auto h-3.5 w-3.5 md:h-5 md:w-5" />
               <div className="mt-1 text-base font-black md:mt-2 md:text-3xl">{item.value}</div>
-              <div className="text-[8px] font-black uppercase tracking-[0.18em] text-white/55 md:text-[10px]">
+              <div className="text-aaa-micro text-white/55">
                 {item.label}
               </div>
             </FramedPanel>
@@ -65,7 +65,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
 
         <div className="grid min-h-0 flex-1 gap-2.5 md:grid-cols-2 md:gap-4">
           <FramedPanel className="rounded-[1.2rem] border border-cyan-100/20 bg-slate-950/60 p-3 text-white md:rounded-[2rem] md:p-5">
-            <div className="text-[11px] font-black uppercase tracking-[0.22em] text-white/60 md:text-xs">Needs More Practice</div>
+            <div className="text-aaa-sm text-white/60 text-opacity-80">Needs More Practice</div>
             <div className="mt-2 grid gap-2 text-sm font-semibold text-white md:text-base">
               {report.needsPractice.length ? report.needsPractice.map(item => (
                 <div key={item} className="rounded-[0.9rem] border border-rose-300/40 bg-rose-300/10 px-3 py-2">
@@ -78,7 +78,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
           </FramedPanel>
 
           <FramedPanel className="rounded-[1.2rem] border border-cyan-100/20 bg-slate-950/60 p-3 text-white md:rounded-[2rem] md:p-5">
-            <div className="text-[11px] font-black uppercase tracking-[0.22em] text-white/60 md:text-xs">Most Played Games</div>
+            <div className="text-aaa-sm text-white/60 text-opacity-80">Most Played Games</div>
             <div className="mt-2 grid gap-2 text-sm font-semibold text-white md:text-base">
               {report.mostPlayed.length ? report.mostPlayed.map(item => (
                 <div key={item} className="rounded-[0.9rem] border border-cyan-200/30 bg-white/5 px-3 py-2">
@@ -91,7 +91,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
           </FramedPanel>
 
           <FramedPanel className="rounded-[1.2rem] border border-cyan-100/20 bg-slate-950/60 p-3 text-white md:rounded-[2rem] md:p-5">
-            <div className="text-[11px] font-black uppercase tracking-[0.22em] text-white/60 md:text-xs">Further Learning Areas</div>
+            <div className="text-aaa-sm text-white/60 text-opacity-80">Further Learning Areas</div>
             <div className="mt-2 grid gap-2 text-sm font-semibold text-white md:text-base">
               {report.nextFocus.length ? report.nextFocus.map(item => (
                 <div key={item} className="rounded-[0.9rem] border border-amber-200/35 bg-amber-200/10 px-3 py-2">
@@ -104,7 +104,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
           </FramedPanel>
 
           <FramedPanel className="rounded-[1.2rem] border border-cyan-100/20 bg-slate-950/60 p-3 text-white md:rounded-[2rem] md:p-5">
-            <div className="text-[11px] font-black uppercase tracking-[0.22em] text-white/60 md:text-xs">Excelling In</div>
+            <div className="text-aaa-sm text-white/60 text-opacity-80">Excelling In</div>
             <div className="mt-2 grid gap-2 text-sm font-semibold text-white md:text-base">
               {report.excelling.length ? report.excelling.map(item => (
                 <div key={item} className="rounded-[0.9rem] border border-emerald-300/35 bg-emerald-300/10 px-3 py-2">
