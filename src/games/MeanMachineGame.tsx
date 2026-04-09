@@ -423,7 +423,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   const completionLockedRef = useRef(false);
   const failureLockedRef = useRef(false);
   const answerLockedRef = useRef(false);
-  const lastRoundRef = useRef<string | null>(null);
+  const lastRoundRef = useRef<string[]>([]);
 
   const lives = sessionState?.lives ?? 3;
   const sessionActive = lives > 0;
@@ -444,12 +444,12 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     let nextRound = buildRound(targetLevel);
     let nextSignature = roundSignature(nextRound);
     let guard = 0;
-    while (nextSignature === lastRoundRef.current && guard < 5) {
+    while (lastRoundRef.current.includes(nextSignature) && guard < 10) {
       nextRound = buildRound(targetLevel);
       nextSignature = roundSignature(nextRound);
       guard += 1;
     }
-    lastRoundRef.current = nextSignature;
+    lastRoundRef.current = [...lastRoundRef.current.slice(-2), nextSignature];
     setRound(nextRound);
     setGameState('idle');
     setFeedback(null);
@@ -613,30 +613,26 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   }, [initialiseRound]);
 
   const modeCopy = useMemo(() => {
-    if (!round) return { eyebrow: 'MEAN Machine', title: 'Spin the reels', prompt: 'Press Spin to begin.' };
+    if (!round) return { title: 'Spin the reels', prompt: 'Press Spin to begin.' };
     if (round.mode === 'mean') {
       return {
-        eyebrow: 'MEAN Spin',
         title: `Spin ${round.activeReelIndexes.length} reels. Find the MEAN.`,
         prompt: `Add them, then divide by ${round.activeReelIndexes.length} to get the MEAN.`,
       };
     }
     if (round.mode === 'median') {
       return {
-        eyebrow: 'MEDIAN Lock',
         title: 'Order the values. Find the MEDIAN.',
         prompt: 'Pick the middle number when the reels are ordered.',
       };
     }
     if (round.mode === 'mode') {
       return {
-        eyebrow: 'MODE Match',
         title: 'Find the most frequent number. (MODE)',
         prompt: 'The MODE appears more than any other value.',
       };
     }
     return {
-      eyebrow: 'Fix The Machine',
       title: 'Fix the missing reel.',
       prompt: `Choose the number that repairs the MEAN of ${round.activeReelIndexes.length} reels.`,
     };
@@ -658,7 +654,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
         <div className="flex h-full min-h-0 flex-col gap-2.5">
           <section className="mx-auto w-full max-w-[23rem] shrink-0 rounded-[1.15rem] border border-cyan-100/24 bg-[linear-gradient(180deg,rgba(14,45,103,0.9),rgba(8,26,72,0.96))] px-4 py-2 text-center shadow-[0_16px_28px_rgba(2,6,23,0.32)]">
             <div className="text-[11px] font-black uppercase tracking-[0.18em] text-cyan-100/76">
-              {modeCopy.eyebrow} · Level {level}/{TOTAL_LEVELS}
+              Level {level}/{TOTAL_LEVELS}
             </div>
             <div className="mt-1 text-[clamp(1.2rem,4.4vw,1.5rem)] font-black leading-tight text-white">
               {modeCopy.title}
@@ -680,8 +676,8 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                   >
 
                     <div
-                      className="relative w-full max-w-[31.5rem] md:max-w-[33.6rem] isolate"
-                      style={{ aspectRatio: '4 / 5', transform: 'scale(1.05)', transformOrigin: 'center' }}
+                      className="relative w-full max-w-[34rem] md:max-w-[36.5rem] isolate"
+                      style={{ aspectRatio: '4 / 5', transform: 'scale(1.12)', transformOrigin: 'center' }}
                     >
                       <img
                         src={alphaKeyedMachineImage}
