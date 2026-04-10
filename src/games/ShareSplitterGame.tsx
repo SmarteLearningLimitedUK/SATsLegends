@@ -480,14 +480,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
               onToggleAudio={() => setAudioEnabled((previous) => !previous)}
               onHelp={() => setShowRules(true)}
             />
-            <div className="rounded-[1.4rem] border border-white/14 bg-white px-4 py-3 text-center text-slate-900 shadow-[0_16px_28px_rgba(15,23,42,0.22)]">
-              <div className="text-[12px] font-black uppercase tracking-[0.18em] text-amber-700">Target Share</div>
-              <div className="mt-1 text-[clamp(1.2rem,4.8vw,1.8rem)] font-black text-slate-900">Split the Cakes</div>
-              <div className="mt-1 text-[13px] font-black text-amber-700">Ratio {challenge.ratios.join(' : ')}</div>
-              <div className="mt-2 text-[12px] font-semibold text-slate-700">
-                {formatFantasyPrompt(challenge.prompt) || 'Share the cakes to match the ratio.'}
-              </div>
-            </div>
           </div>
         )}
         main={(
@@ -609,6 +601,19 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         )}
         overlay={(
           <>
+            <div
+              className="pointer-events-none fixed left-0 right-0 z-[60]"
+              style={{ top: 'calc(env(safe-area-inset-top) + 4px)' }}
+            >
+              <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-[17px] py-[13px] text-center backdrop-blur-sm">
+                <div className="text-[12px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Share</div>
+                <div className="mt-1 text-[clamp(1.2rem,4.8vw,1.8rem)] font-black text-white">Split the Cakes</div>
+                <div className="mt-1 text-[13px] font-black text-amber-100">Ratio {challenge.ratios.join(' : ')}</div>
+                <div className="mt-2 text-[12px] font-semibold text-cyan-100/90">
+                  {formatFantasyPrompt(challenge.prompt) || 'Share the cakes to match the ratio.'}
+                </div>
+              </div>
+            </div>
             <AnimatePresence>
               {dragSlice ? (
                 <motion.div
