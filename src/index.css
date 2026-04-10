@@ -4059,6 +4059,36 @@ button.avatar-hero-arrow:not(:disabled):active {
   margin-bottom: clamp(0.2rem, 0.9vh, 0.7rem);
 }
 
+/* Fixed-stage sizing for avatar selection so it fits the 390x844 stage. */
+.iphone-game-stage .avatar-select-screen {
+  height: 100%;
+  min-height: 0;
+}
+
+.iphone-game-stage .avatar-carousel-header {
+  margin-top: 2.2rem;
+}
+
+.iphone-game-stage .avatar-carousel-banner {
+  max-width: calc(var(--game-stage-width, 390px) * 0.9);
+  height: calc(var(--game-stage-height, 844px) * 0.12);
+}
+
+.iphone-game-stage .avatar-carousel-banner-art {
+  width: calc(var(--game-stage-width, 390px) * 1.2);
+  top: 55%;
+}
+
+.iphone-game-stage .avatar-carousel-track {
+  width: calc(var(--game-stage-width, 390px) * 0.85);
+  transform: translateY(calc(var(--game-stage-height, 844px) * -0.03));
+}
+
+.iphone-game-stage .avatar-hero-arrow {
+  width: calc(var(--game-stage-width, 390px) * 0.11);
+  height: calc(var(--game-stage-width, 390px) * 0.11);
+}
+
 .avatar-hero-name-banner-art {
   position: absolute;
   inset: 0;
