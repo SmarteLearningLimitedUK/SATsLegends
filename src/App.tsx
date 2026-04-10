@@ -501,7 +501,7 @@ const App: React.FC = () => {
       const scale = rawScale * (isTabletViewport ? 0.95 : 1);
       setStageScale(Number.isFinite(scale) && scale > 0 ? scale : 1);
       setQuestionCardScale(isTabletViewport ? 0.92 : 1);
-      setPotionCauldronShift(isTabletViewport ? '16px' : '0px');
+        setPotionCauldronShift(isTabletViewport ? '28px' : '0px');
     };
 
     const visualViewport = window.visualViewport;

@@ -330,8 +330,18 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
         draggable={false}
         className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
       />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(7,14,33,0.3),rgba(3,9,24,0.45)_45%,rgba(2,6,23,0.62)_100%)]" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_14%,rgba(34,211,238,0.24),rgba(34,211,238,0)_48%)]" />
+
+      <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
+        <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-[12px] py-[10px] text-center backdrop-blur-sm">
+          <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90">
+            Round to the nearest {round.target}
+          </div>
+          <div className="mt-0.5 text-[clamp(1.1rem,4.2vw,1.5rem)] font-black leading-tight text-white">
+            {round.value}
+          </div>
+        </div>
+      </div>
 
       <AnimatePresence>
         {rocketState === 'launching' ? (
@@ -347,17 +357,6 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
       </AnimatePresence>
 
       <div className="relative z-30 flex h-full w-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+5.1rem)] pt-1">
-        <section className="mx-auto w-full max-w-[22rem] shrink-0 text-center">
-          <div className="rounded-[0.95rem] border border-cyan-200/35 bg-[linear-gradient(180deg,rgba(15,31,70,0.7),rgba(5,19,54,0.88))] px-4 py-2 shadow-[0_10px_24px_rgba(2,6,23,0.4)]">
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/90 md:text-[11px]">
-              Round to the nearest {round.target}
-            </p>
-            <span className="mt-1 block text-[clamp(1.55rem,6vw,2.25rem)] font-black tabular-nums tracking-[0.08em] text-white [text-shadow:0_4px_14px_rgba(34,211,238,0.3)]">
-              {round.value}
-            </span>
-          </div>
-        </section>
-
         <main className="flex min-h-0 flex-1 flex-col items-center justify-center pt-1">
           <motion.div
             animate={rocketState === 'idle'

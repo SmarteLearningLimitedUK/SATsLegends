@@ -919,40 +919,23 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
       ) : null}
 
+      <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
+        <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-[12px] py-[10px] text-center backdrop-blur-sm">
+          <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90">
+            Target Number
+          </div>
+          <div className="mt-0.5 text-[clamp(1.1rem,4.2vw,1.5rem)] font-black leading-tight text-white">
+            {questionPrompt}
+          </div>
+        </div>
+      </div>
+
       <motion.div
         ref={playfieldRef}
         className="absolute inset-0 z-20"
         animate={boardShake ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
         transition={{ duration: 0.34, ease: 'easeInOut' }}
       >
-        <div
-          className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2 overflow-hidden"
-          style={{ top: `${layout.questionTop}%`, width: `${questionFrameConfig.width}%`, height: `${questionFrameConfig.height}%` }}
-        >
-          <img src={questionFrameConfig.src} alt="" aria-hidden="true" draggable={false} className="absolute inset-0 h-full w-full object-fill" />
-          <div
-            ref={questionTextFrameRef}
-            className="absolute inset-x-[8%] top-[20%] bottom-[20%] mx-auto flex items-center justify-center overflow-hidden text-center font-black uppercase tracking-[0.01em] text-white"
-            style={{
-              textShadow: '0 2px 6px rgba(2,6,23,0.62)',
-            }}
-          >
-            <span
-              ref={questionTextContentRef}
-              className="block max-w-full overflow-hidden text-center"
-              style={{
-                width: '100%',
-                maxHeight: '100%',
-                overflowWrap: 'anywhere',
-                wordBreak: 'break-word',
-                whiteSpace: 'normal',
-              }}
-            >
-              {formatFantasyPrompt(question.prompt)}
-            </span>
-          </div>
-        </div>
-
         <div
           className="absolute z-30 rounded-lg border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)]"
           style={{
