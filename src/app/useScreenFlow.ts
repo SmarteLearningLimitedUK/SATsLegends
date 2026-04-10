@@ -1,5 +1,8 @@
-import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ISLANDS } from '../constants';
 import { GameScreen, IslandData, LevelData } from '../types';
+import { buildRouteForScreen, parseRoute } from './routeConfig';
 
 export interface ScreenFlowController {
   screen: GameScreen;
@@ -25,9 +28,88 @@ export interface ScreenFlowController {
 }
 
 export const useScreenFlow = (): ScreenFlowController => {
-  const [screen, setScreen] = useState<GameScreen>('splash');
-  const [selectedIsland, setSelectedIsland] = useState<IslandData | null>(null);
-  const [selectedLevel, setSelectedLevel] = useState<LevelData | null>(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const syncFromRouteRef = useRef(false);
+
+  const resolveIsland = useCallback((islandId?: number) => {
+    if (!islandId) return null;
+    return ISLANDS.find((island) => island.id === islandId) ?? null;
+  }, []);
+
+  const resolveLevel = useCallback((island: IslandData | null, levelId?: number) => {
+    if (!island || !levelId) return null;
+    return island.levels.find((level) => level.id === levelId) ?? null;
+  }, []);
+
+  const initialRoute = parseRoute(location.pathname);
+  const initialIsland = resolveIsland(initialRoute.islandId);
+  const initialLevel = resolveLevel(initialIsland, initialRoute.levelId);
+
+  const [screen, setScreen] = useState<GameScreen>(initialRoute.screen);
+  const [selectedIsland, setSelectedIsland] = useState<IslandData | null>(initialIsland);
+  const [selectedLevel, setSelectedLevel] = useState<LevelData | null>(initialLevel);
+
+  useEffect(() => {
+    const routeState = parseRoute(location.pathname);
+    const routeIsland = routeState.islandId !== undefined ? resolveIsland(routeState.islandId) : undefined;
+    const routeLevel = routeState.levelId !== undefined ? resolveLevel(routeIsland ?? null, routeState.levelId) : undefined;
+
+    let nextScreen = routeState.screen;
+    let nextIsland = routeIsland ?? null;
+    let nextLevel = routeLevel ?? null;
+
+    if (nextScreen === 'island_levels' && !routeIsland) {
+      nextScreen = 'world_map';
+    }
+
+    if (nextScreen === 'gameplay' && (!routeIsland || !routeLevel)) {
+      nextScreen = 'world_map';
+    }
+
+    syncFromRouteRef.current = true;
+    if (screen !== nextScreen) setScreen(nextScreen);
+
+    if (routeState.islandId !== undefined) {
+      setSelectedIsland(routeIsland ?? null);
+    }
+
+    if (routeState.levelId !== undefined) {
+      setSelectedLevel(routeLevel ?? null);
+    }
+
+    if (nextScreen === 'world_map' && (routeState.islandId !== undefined || routeState.levelId !== undefined)) {
+      setSelectedIsland(null);
+      setSelectedLevel(null);
+    }
+
+    if (nextScreen !== 'gameplay') {
+      nextLevel = null;
+    }
+
+    if (nextScreen !== 'gameplay' && nextScreen !== 'island_levels') {
+      nextIsland = null;
+    }
+
+    const expectedPath = buildRouteForScreen(nextScreen, nextIsland?.id, nextLevel?.id);
+    if (location.pathname !== expectedPath) {
+      navigate(expectedPath, { replace: true });
+    }
+
+    const resetId = window.setTimeout(() => {
+      syncFromRouteRef.current = false;
+    }, 0);
+
+    return () => window.clearTimeout(resetId);
+  }, [location.pathname, navigate, resolveIsland, resolveLevel]);
+
+  useEffect(() => {
+    if (syncFromRouteRef.current) return;
+    const nextPath = buildRouteForScreen(screen, selectedIsland?.id, selectedLevel?.id);
+    if (location.pathname !== nextPath) {
+      navigate(nextPath);
+    }
+  }, [location.pathname, navigate, screen, selectedIsland, selectedLevel]);
 
   const goToHome = useCallback(() => {
     setSelectedLevel(null);
