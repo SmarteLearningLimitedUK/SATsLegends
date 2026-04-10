@@ -1,13 +1,9 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import medButton from '../assets/casual_ui/inputs/btn_1.png';
 import animatedEnemy1 from '../assets/maps/ezgif-261d69e7ae90ee8c.webp';
 import hudAvatarName from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
 import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
-import questionBarTiny from '../assets/ui_frames/hudfortextplace_slices/text_bar_tiny.png';
-import questionBarSmall from '../assets/ui_frames/hudfortextplace_slices/text_bar_small.png';
-import questionBarMedium from '../assets/ui_frames/hudfortextplace_slices/text_bar_medium.png';
-import questionBarLarge from '../assets/ui_frames/hudfortextplace_slices/text_bar_large.png';
 import socketM from '../assets/casual_ui/updaed_sockets_slices/socket_m.png';
 import socketHth from '../assets/casual_ui/updaed_sockets_slices/socket_hth.png';
 import socketTth from '../assets/casual_ui/updaed_sockets_slices/socket_tth.png';
@@ -386,9 +382,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const isTallPhone = !isTablet && ratio > 1.95;
 
     return {
-      questionTop: isTablet ? 11.8 : (isTallPhone ? 12.9 : 12.6),
-      questionWidth: isTablet ? 54 : 66,
-      questionHeight: isTablet ? 13.4 : 14.8,
       submitY: isTablet ? 88.2 : (isTallPhone ? 88.8 : 88.5),
       submitWidth: isTablet ? 30 : 46,
       submitHeight: isTablet ? 8.6 : 9.2,
@@ -509,82 +502,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     return `calc(${bottomPct.toFixed(2)}% - 23px)`;
   }, [layout.targetY, targetSocketSizing.heightValue]);
 
-  const questionFrameConfig = useMemo(() => {
-    const promptLength = question.prompt.trim().length;
-    const isTablet = Math.min(viewport.width, viewport.height) >= 760;
-
-    if (promptLength <= 26) {
-      return {
-        src: questionBarTiny,
-        width: isTablet ? 40 : 56,
-        height: isTablet ? 9.2 : 11.1,
-      };
-    }
-    if (promptLength <= 44) {
-      return {
-        src: questionBarSmall,
-        width: isTablet ? 52 : 66,
-        height: isTablet ? 9.4 : 11.4,
-      };
-    }
-    if (promptLength <= 74) {
-      return {
-        src: questionBarMedium,
-        width: isTablet ? 64 : 78,
-        height: isTablet ? 9.7 : 11.7,
-      };
-    }
-    return {
-      src: questionBarLarge,
-      width: isTablet ? 74 : 88,
-      height: isTablet ? 10.0 : 12.0,
-    };
-  }, [question.prompt, viewport.height, viewport.width]);
-
-  const questionTextBaseFontPx = useMemo(() => {
-    const promptLength = question.prompt.trim().length;
-    const isTablet = Math.min(viewport.width, viewport.height) >= 760;
-    if (isTablet) {
-      if (promptLength > 84) return 13;
-      if (promptLength > 66) return 14;
-      if (promptLength > 48) return 15;
-      return 16;
-    }
-    if (promptLength > 84) return 11.5;
-    if (promptLength > 66) return 12.5;
-    if (promptLength > 48) return 13.5;
-    return 14.5;
-  }, [question.prompt, viewport.height, viewport.width]);
-
-  const questionTextFrameRef = useRef<HTMLDivElement | null>(null);
-  const questionTextContentRef = useRef<HTMLSpanElement | null>(null);
-
-  useLayoutEffect(() => {
-    const frame = questionTextFrameRef.current;
-    const content = questionTextContentRef.current;
-    if (!frame || !content) return;
-
-    let size = questionTextBaseFontPx;
-    const minSize = 9.5;
-
-    content.style.fontSize = `${size}px`;
-    content.style.lineHeight = '1.08';
-    content.style.letterSpacing = '0.01em';
-
-    const fits = () =>
-      content.scrollHeight <= frame.clientHeight + 0.5 && content.scrollWidth <= frame.clientWidth + 0.5;
-
-    let guard = 0;
-    while (!fits() && size > minSize && guard < 28) {
-      size -= 0.5;
-      content.style.fontSize = `${size}px`;
-      guard += 1;
-    }
-
-    if (!fits()) {
-      content.style.letterSpacing = '0';
-    }
-  }, [question.prompt, questionTextBaseFontPx, viewport.height, viewport.width]);
+  const questionPrompt = useMemo(
+    () => formatFantasyPrompt(question.prompt),
+    [question.prompt],
+  );
 
   const resetRound = useCallback((nextQuestion: QuestionState) => {
     const nextSources: Array<Token | null> = nextQuestion.tokenValues.map((value, idx) => ({

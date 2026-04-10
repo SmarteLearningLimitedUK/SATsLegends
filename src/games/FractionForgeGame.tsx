@@ -272,9 +272,17 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   }, []);
 
   useEffect(() => {
-    const onResize = () => setViewport({ width: window.innerWidth, height: window.innerHeight });
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
+    const updateViewport = () => {
+      const rect = playfieldRef.current?.getBoundingClientRect();
+      if (rect && rect.width > 0 && rect.height > 0) {
+        setViewport({ width: rect.width, height: rect.height });
+        return;
+      }
+      setViewport({ width: window.innerWidth, height: window.innerHeight });
+    };
+    updateViewport();
+    window.addEventListener('resize', updateViewport);
+    return () => window.removeEventListener('resize', updateViewport);
   }, []);
 
   useEffect(() => {
@@ -512,10 +520,19 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
       <div className="absolute inset-0 bg-gradient-to-b from-[#060f2ccc] via-[#0b1a4694] to-[#050b1acc]" />
 
       <div ref={playfieldRef} className="relative h-full w-full">
-        <div className="pointer-events-none absolute left-1/2 top-[4%] z-20 w-[min(88%,32rem)] -translate-x-1/2 rounded-[1rem] border border-cyan-200/30 bg-slate-950/50 px-4 py-2 text-center shadow-[0_12px_22px_rgba(2,6,23,0.45)]">
-          <span className="text-[clamp(0.9rem,2.3vw,1.35rem)] font-black leading-tight text-cyan-50 drop-shadow-[0_2px_2px_rgba(0,0,0,0.6)]">
-            {round.prompt}
-          </span>
+        <div
+          className="pointer-events-none fixed left-0 right-0 z-[60]"
+          style={{ top: '4px' }}
+        >
+          <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-[17px] py-[13px] text-center backdrop-blur-sm">
+            <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Order</div>
+            <div className="mt-0.5 text-[clamp(1.1rem,4.2vw,1.5rem)] font-black text-white">
+              {round.prompt}
+            </div>
+            <div className="mt-1 text-[11px] font-semibold text-cyan-100/90">
+              Place the fractions in order.
+            </div>
+          </div>
         </div>
 
         {activeSourceAnchors.map((anchor, index) => {

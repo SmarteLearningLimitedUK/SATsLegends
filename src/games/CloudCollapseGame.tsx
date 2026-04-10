@@ -96,9 +96,8 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
       : 'Swap adjacent gems to match 3 equal decimal values.';
 
   return (
-    <div className="relative flex h-full w-full flex-col items-center overflow-hidden p-2 md:p-4">
+      <div className="relative flex h-full w-full flex-col items-center overflow-hidden p-2 md:p-4">
       <div className="absolute inset-0 bg-cover bg-center opacity-95" style={{ backgroundImage: `url(${cloudBackdrop})` }} />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,22,44,0.62),rgba(8,15,31,0.74)_40%,rgba(7,12,23,0.94)_100%)]" />
       <div className="absolute inset-x-[8%] top-[2%] h-[28%] rounded-[50%] bg-[radial-gradient(circle,rgba(96,165,250,0.22),rgba(96,165,250,0)_62%)] blur-3xl" />
       <motion.div
         animate={{ scale: [0.96, 1.06, 0.96], opacity: [0.14, 0.3, 0.14] }}
