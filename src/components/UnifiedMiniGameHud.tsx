@@ -15,6 +15,7 @@ interface UnifiedMiniGameHudProps {
   onBack?: () => void;
   variant?: 'gameplay' | 'hub';
   showActions?: boolean;
+  bottomContent?: React.ReactNode;
 }
 
 const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
@@ -27,6 +28,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
   onBack,
   variant = 'gameplay',
   showActions = true,
+  bottomContent,
 }) => {
   const timerProgress = useMemo(
     () => Math.max(0, Math.min(1, totalTime > 0 ? timeLeft / totalTime : 0)),
@@ -153,7 +155,13 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
         </div>
       </div>
 
-      {showActions && onBack ? (
+      {bottomContent ? (
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center">
+          <div className="pointer-events-auto">
+            {bottomContent}
+          </div>
+        </div>
+      ) : showActions && onBack ? (
         <div
           className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center"
         style={{

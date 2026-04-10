@@ -17,6 +17,7 @@ import LevelResultsModal from './components/results/LevelResultsModal';
 import GameRulesModal from './components/GameRulesModal';
 import GameActionDock from './components/GameActionDock';
 import UnifiedMiniGameHud from './components/UnifiedMiniGameHud';
+import AssetIcon from './components/AssetIcon';
 import { IslandData, LevelData, PlayerData } from './types';
 import { AppRouter } from './app/AppRouter';
 import { useScreenFlow } from './app/useScreenFlow';
@@ -838,6 +839,39 @@ const App: React.FC = () => {
   const hideShellTimer = !isGameplayScreen
     || (selectedLevel?.gameType === 'mean_machine' && selectedLevel.blueprintKey === 'mean_machine')
     || selectedLevel?.gameType === 'potion_pour';
+  const goToProfile = useCallback(() => {
+    setScreen('profile');
+  }, [setScreen]);
+  const mapHudDock = screen === 'world_map'
+    ? (
+      <div className="flex items-center gap-2 rounded-[1.2rem] border border-cyan-100/30 bg-slate-950/70 px-3 py-2 shadow-[0_12px_24px_rgba(2,6,23,0.4)]">
+        <button
+          type="button"
+          onClick={goToParentDashboard}
+          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white"
+          aria-label="Open parent portal"
+        >
+          <AssetIcon name="people" className="h-5 w-5" />
+        </button>
+        <button
+          type="button"
+          onClick={goToProfile}
+          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white"
+          aria-label="Open player stats"
+        >
+          <AssetIcon name="user" className="h-5 w-5" />
+        </button>
+        <button
+          type="button"
+          onClick={goToAchievements}
+          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white"
+          aria-label="Open achievements"
+        >
+          <AssetIcon name="trophy" className="h-5 w-5" />
+        </button>
+      </div>
+    )
+    : null;
   const stageWidth = IPHONE_STAGE_WIDTH;
   const stageHeight = IPHONE_STAGE_HEIGHT;
   const stageStyle = {
@@ -921,6 +955,7 @@ const App: React.FC = () => {
                 hideTimer={hideShellTimer}
                 onBack={isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
                 variant={isGameplayScreen ? 'gameplay' : 'hub'}
+                bottomContent={mapHudDock || undefined}
               />
             ) : null}
 

@@ -598,7 +598,6 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                   draggable={false}
                   className="pointer-events-none h-auto w-full object-contain"
                 />
-                <div className="pointer-events-none absolute inset-x-[12%] top-[9%] h-[26%] rounded-[0.75rem] bg-black/85" />
                 <div className="absolute inset-x-[16%] top-[16%] text-center text-white">
                   <div className="text-[clamp(1.25rem,5.2vw,1.8rem)] font-black text-amber-100 drop-shadow-[0_2px_8px_rgba(2,6,23,0.7)]">
                     {asDisplayFraction(order.target)}
@@ -606,7 +605,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                 </div>
               </div>
             </div>
-            <div className="pointer-events-none absolute left-1/2 top-[44%] h-[28%] w-[min(58vw,15rem)] -translate-x-1/2 overflow-hidden">
+            <div className="pointer-events-none absolute left-1/2 bottom-[12%] h-[30%] w-[min(58vw,15rem)] -translate-x-1/2 overflow-hidden">
               <img
                 src={orderMonster}
                 alt=""
