@@ -10,6 +10,7 @@ import WellbeingHub from '../wellbeing/WellbeingHub';
 import { WELLBEING_ACTIVITIES, WELLBEING_ACTIVITY_BY_ISLAND, WELLBEING_BY_ID } from '../wellbeing/data';
 import { WellbeingActivityId } from '../wellbeing/types';
 import GameplayContentViewport from '../components/GameplayContentViewport';
+import GameLoadBoundary, { GameLoadFallback } from '../components/GameLoadBoundary';
 import {
   FramedPanel,
   GameScreenShell,
@@ -179,21 +180,39 @@ export const AppRouter: React.FC<AppRouterProps> = ({
   }, [screen, selectedLevel?.id]);
 
   const renderGameplay = () => {
-    if (!selectedLevel) return null;
+    if (!selectedLevel) {
+      return (
+        <GameLoadFallback
+          title="This game is missing"
+          subtitle="We could not find the selected level data."
+          onBack={onBackToIslandLevels}
+        />
+      );
+    }
 
     const renderFromRegistry = <P extends Record<string, unknown>>(key: MiniGameRegistryKey, props: P) => (
-      <Suspense
+      <GameLoadBoundary
         key={`${key}-${selectedLevel.id}-${gameplayRestartKey}`}
-        fallback={(
-          <div className="flex h-full w-full items-center justify-center rounded-[2rem] border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(10,31,83,0.72),rgba(6,19,56,0.86))] text-center shadow-[0_18px_36px_rgba(2,6,23,0.35)]">
-            <div className="px-6 py-8 text-sm font-black uppercase tracking-[0.2em] text-cyan-100/80">
-              Loading game…
-            </div>
-          </div>
-        )}
+        onBack={onBackToIslandLevels}
+        context={{
+          title: selectedLevel.displayName,
+          gameType: selectedLevel.gameType,
+          levelId: selectedLevel.id,
+          blueprintKey: selectedLevel.blueprintKey,
+        }}
       >
-        {getMiniGame(key).render(props)}
-      </Suspense>
+        <Suspense
+          fallback={(
+            <div className="flex h-full w-full items-center justify-center rounded-[2rem] border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(10,31,83,0.72),rgba(6,19,56,0.86))] text-center shadow-[0_18px_36px_rgba(2,6,23,0.35)]">
+              <div className="px-6 py-8 text-sm font-black uppercase tracking-[0.2em] text-cyan-100/80">
+                Loading game…
+              </div>
+            </div>
+          )}
+        >
+          {getMiniGame(key).render(props)}
+        </Suspense>
+      </GameLoadBoundary>
     );
 
     const sharedProps = {

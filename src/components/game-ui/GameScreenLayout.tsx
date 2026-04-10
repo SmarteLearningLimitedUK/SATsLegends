@@ -23,7 +23,10 @@ const GameScreenLayout: React.FC<GameScreenLayoutProps> = ({
   mainClassName,
   bottomClassName,
 }) => (
-  <div className={cn('game-screen-layout structured-game-layout', className)}>
+  <div
+    className={cn('game-screen-layout structured-game-layout', className)}
+    data-preserve-shell-zones="true"
+  >
     {top ? (
       <div className={cn('game-screen-region game-screen-top game-shell-zone-hud', topClassName)}>
         {top}

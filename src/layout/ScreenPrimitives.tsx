@@ -419,7 +419,7 @@ export const GameScreenTemplate: React.FC<GameScreenTemplateProps> = ({
   decorations,
   className = '',
 }) => (
-  <GameScreenShell className={cn('game-screen-template', className)}>
+  <GameScreenShell className={cn('game-screen-template', className)} data-preserve-shell-zones="true">
     {background}
     {decorations}
     <div className="game-shell-content relative z-10 mx-auto flex h-full min-h-0 w-full max-w-full flex-1 flex-col gap-1 px-1 pb-[calc(env(safe-area-inset-bottom)+0.08rem)] pt-[calc(env(safe-area-inset-top)+0.04rem)] md:gap-1.5 md:px-1.5 md:pb-[calc(env(safe-area-inset-bottom)+0.1rem)] md:pt-[calc(env(safe-area-inset-top)+0.08rem)]">

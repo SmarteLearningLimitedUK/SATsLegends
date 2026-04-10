@@ -4499,6 +4499,12 @@ button.avatar-hero-arrow:not(:disabled):active {
   display: flex !important;
 }
 
+/* Allow GameScreenLayout to keep its top/bottom regions for questions/answers. */
+.screen-gameplay .unified-minigame-hud-enabled [data-preserve-shell-zones='true'] .game-shell-zone-hud,
+.screen-gameplay .unified-minigame-hud-enabled [data-preserve-shell-zones='true'] .game-shell-zone-actions {
+  display: block !important;
+}
+
 /* Hide legacy per-game top bars so every minigame uses the same unified top HUD. */
 .screen-gameplay .unified-minigame-hud-enabled .fixed.inset-0 > [class*="left-0 right-0 z-30 flex items-center justify-between"],
 .screen-gameplay .unified-minigame-hud-enabled .fixed.inset-0 > [class*="inset-x-0 top-0"],
