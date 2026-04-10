@@ -903,11 +903,11 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
               className="pointer-events-none fixed left-0 right-0 z-[60]"
               style={{ top: '4px' }}
             >
-              <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-[17px] py-[13px] text-center backdrop-blur-sm">
-                <div className="text-[12px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Recipe</div>
-                <div className="mt-0.5 text-[clamp(1.35rem,5.2vw,1.8rem)] font-black text-white">{challenge.orderTitle}</div>
-                <div className="mt-0.5 text-[13px] font-black text-amber-100">Ratio {ratioText}</div>
-                <div className="mt-1 text-[12px] font-semibold text-cyan-100/90">
+              <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-[12px] py-[10px] text-center backdrop-blur-sm">
+                <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Recipe</div>
+                <div className="mt-0.5 text-[clamp(1.1rem,4.2vw,1.5rem)] font-black text-white">{challenge.orderTitle}</div>
+                <div className="mt-0.5 text-[12px] font-black text-amber-100">Ratio {ratioText}</div>
+                <div className="mt-1 text-[11px] font-semibold text-cyan-100/90">
                   {challenge.orderPrompt || 'Use the ratio to complete the potion.'}
                 </div>
               </div>
