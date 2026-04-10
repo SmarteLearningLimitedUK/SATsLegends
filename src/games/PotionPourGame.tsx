@@ -748,7 +748,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
       <GameScreenLayout
         className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-0 text-white"
         top={(
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 -mt-[20px]">
             <GameTopBar
               onBack={onBack}
               progressLabel={`Round ${Math.min(correctSolved + 1, roundsToWin)} / ${roundsToWin}`}
