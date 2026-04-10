@@ -139,6 +139,27 @@ body {
   height: 100% !important;
 }
 
+.iphone-game-stage .h-\[100dvh\],
+.iphone-game-stage .h-\[100vh\],
+.iphone-game-stage .h-\[100svh\],
+.iphone-game-stage .h-\[100lvh\] {
+  height: 100% !important;
+}
+
+.iphone-game-stage .max-h-\[100dvh\],
+.iphone-game-stage .max-h-\[100vh\],
+.iphone-game-stage .max-h-\[100svh\],
+.iphone-game-stage .max-h-\[100lvh\] {
+  max-height: 100% !important;
+}
+
+.iphone-game-stage .min-h-\[100dvh\],
+.iphone-game-stage .min-h-\[100vh\],
+.iphone-game-stage .min-h-\[100svh\],
+.iphone-game-stage .min-h-\[100lvh\] {
+  min-height: 100% !important;
+}
+
 .iphone-game-stage .w-screen {
   width: 100% !important;
 }
