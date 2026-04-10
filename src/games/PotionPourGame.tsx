@@ -870,14 +870,16 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
         )}
         bottom={(
           <div className="flex flex-col gap-2">
-            {hasBrewed ? (
-              <FeedbackStrip
-                tone={feedbackTone === 'success' ? 'success' : feedbackTone === 'hint' ? 'warning' : 'neutral'}
-                className="mx-auto w-full max-w-[780px]"
-              >
-                {feedbackMessage}
-              </FeedbackStrip>
-            ) : null}
+            <div className="min-h-[2.6rem]">
+              {hasBrewed ? (
+                <FeedbackStrip
+                  tone={feedbackTone === 'success' ? 'success' : feedbackTone === 'hint' ? 'warning' : 'neutral'}
+                  className="mx-auto w-full max-w-[780px]"
+                >
+                  {feedbackMessage}
+                </FeedbackStrip>
+              ) : null}
+            </div>
 
             <div className="mx-auto flex w-full max-w-[780px] items-center gap-2">
               <PrimaryButton onClick={onBrew} disabled={locked} className="flex-1 potion-brew-button">

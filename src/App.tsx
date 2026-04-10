@@ -494,7 +494,8 @@ const App: React.FC = () => {
         viewportWidth / baseWidth,
         viewportHeight / baseHeight,
       );
-      const scale = rawScale;
+      const isTabletViewport = Math.min(viewportWidth, viewportHeight) >= 700;
+      const scale = rawScale * (isTabletViewport ? 0.95 : 1);
       setStageScale(Number.isFinite(scale) && scale > 0 ? scale : 1);
     };
 
@@ -905,7 +906,7 @@ const App: React.FC = () => {
               </motion.div>
             </AnimatePresence>
 
-            {!isStartScreen && !isMapLayoutScreen ? (
+            {!isStartScreen ? (
               <UnifiedMiniGameHud
                 avatarId={player.avatarId}
                 timeLeft={globalMiniGameHudTimeLeft}

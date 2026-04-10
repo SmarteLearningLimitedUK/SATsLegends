@@ -248,7 +248,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
           minHeight: 0,
         }}
       >
-        <div className="mb-3 flex items-start justify-between gap-3 md:mb-4">
+        <div className="mb-3 flex flex-wrap items-start justify-between gap-2 md:mb-4">
           <button
             onClick={onBack}
             className="ui-icon-button flex h-11 w-11 items-center justify-center rounded-full p-0 text-white shadow-xl md:h-12 md:w-12"
@@ -263,7 +263,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
             </div>
           </div>
 
-          <div className="licensed-board-frame flex min-w-[124px] flex-col items-end gap-1 rounded-xl px-3 py-2 text-white md:min-w-[156px]">
+          <div className="licensed-board-frame flex min-w-[112px] shrink-0 flex-col items-end gap-1 rounded-xl px-3 py-2 text-white md:min-w-[140px]">
             <div className="flex items-center gap-1.5 text-sm font-black md:text-base">
               <AssetIcon name="star" className="h-4 w-4 text-yellow-300 md:h-5 md:w-5" />
               <span>{earnedStars}</span>
