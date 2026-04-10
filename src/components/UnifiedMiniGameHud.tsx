@@ -68,9 +68,9 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
       <div
         className="absolute inset-x-0 top-0 flex justify-center"
         style={{
-          paddingTop: 'max(0.35rem, env(safe-area-inset-top))',
-          paddingLeft: 'max(0.4rem, env(safe-area-inset-left))',
-          paddingRight: 'max(0.4rem, env(safe-area-inset-right))',
+          paddingTop: '0.35rem',
+          paddingLeft: '0.4rem',
+          paddingRight: '0.4rem',
         }}
       >
         <div
@@ -157,7 +157,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
         <div
           className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center"
         style={{
-          paddingBottom: 'max(0.35rem, env(safe-area-inset-bottom))',
+          paddingBottom: '0.35rem',
         }}
       >
           <div className="pointer-events-auto">

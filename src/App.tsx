@@ -488,11 +488,8 @@ const App: React.FC = () => {
     const updateStageScale = () => {
       const viewportWidth = window.visualViewport?.width ?? window.innerWidth;
       const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
-      const ua = navigator.userAgent || '';
-      const isIPad = /iPad/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-      const isTabletViewport = isIPad || Math.min(viewportWidth, viewportHeight) >= 700;
-      const baseWidth = isTabletViewport ? IPAD_STAGE_WIDTH : IPHONE_STAGE_WIDTH;
-      const baseHeight = isTabletViewport ? IPAD_STAGE_HEIGHT : IPHONE_STAGE_HEIGHT;
+      const baseWidth = IPHONE_STAGE_WIDTH;
+      const baseHeight = IPHONE_STAGE_HEIGHT;
       const rawScale = Math.min(
         viewportWidth / baseWidth,
         viewportHeight / baseHeight,
@@ -808,19 +805,19 @@ const App: React.FC = () => {
   const selectedGameType = selectedLevel?.gameType;
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
-  const useUnboundedStageShell = isSplashScreen || isAvatarSelectionScreen || isWorldMapScreen;
+  const useUnboundedStageShell = false;
   const globalDockOffsetClass = screen !== 'splash' && !isGameplayScreen
-    ? 'pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-[calc(5.2rem+env(safe-area-inset-bottom))]'
+    ? 'pb-[5rem] md:pb-[5.2rem]'
     : '';
   const viewportShellClass = isGameplayScreen
     ? 'sat-shell-standard bg-transparent'
     : isWorldMapScreen
-    ? 'sat-shell-map licensed-playfield-bg bg-transparent pb-[env(safe-area-inset-bottom)]'
+    ? 'sat-shell-map licensed-playfield-bg bg-transparent pt-3 pb-3'
     : useUnboundedStageShell
       ? 'sat-shell-standard licensed-playfield-bg bg-transparent'
       : isMapLayoutScreen
-      ? 'sat-shell-map licensed-playfield-bg bg-transparent pb-[env(safe-area-inset-bottom)]'
-      : 'sat-shell-standard licensed-playfield-bg bg-transparent px-3 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] md:px-8 md:pt-[max(1rem,env(safe-area-inset-top))] md:pb-[max(1rem,env(safe-area-inset-bottom))]';
+      ? 'sat-shell-map licensed-playfield-bg bg-transparent pt-3 pb-3'
+      : 'sat-shell-standard licensed-playfield-bg bg-transparent px-3 pt-3 pb-3 md:px-8 md:pt-4 md:pb-4';
   const contentShellClass = isGameplayScreen
     ? 'sat-screen-full-bleed items-stretch'
     : useUnboundedStageShell
@@ -836,16 +833,11 @@ const App: React.FC = () => {
   const hideShellTimer = !isGameplayScreen
     || (selectedLevel?.gameType === 'mean_machine' && selectedLevel.blueprintKey === 'mean_machine')
     || selectedLevel?.gameType === 'potion_pour';
-  const isTabletStage = typeof window !== 'undefined' && (() => {
-    const viewportWidth = window.visualViewport?.width ?? window.innerWidth;
-    const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
-    const ua = navigator.userAgent || '';
-    const isIPad = /iPad/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    return isIPad || Math.min(viewportWidth, viewportHeight) >= 700;
-  })();
+  const stageWidth = IPHONE_STAGE_WIDTH;
+  const stageHeight = IPHONE_STAGE_HEIGHT;
   const stageStyle = {
-    '--game-stage-width': `${isTabletStage ? IPAD_STAGE_WIDTH : IPHONE_STAGE_WIDTH}px`,
-    '--game-stage-height': `${isTabletStage ? IPAD_STAGE_HEIGHT : IPHONE_STAGE_HEIGHT}px`,
+    '--game-stage-width': `${stageWidth}px`,
+    '--game-stage-height': `${stageHeight}px`,
     '--game-stage-scale': `${stageScale}`,
   } as React.CSSProperties;
 
@@ -855,7 +847,7 @@ const App: React.FC = () => {
         <div className="iphone-game-stage-inner">
           <div
             data-screen-family={screenBehavior.family}
-            className={`app-viewport sat-theme-bluegold app-background-intensity ${backgroundIntensityClass} app-shell-family-${screenBehavior.family} ${isTabletStage ? 'app-viewport-tablet' : ''} screen-${screen.replace(/_/g, '-')} ${isGameplayScreen ? gameplayTypeClass : ''} relative w-full flex flex-col items-center overflow-hidden ${viewportShellClass}`}
+            className={`app-viewport sat-theme-bluegold app-background-intensity ${backgroundIntensityClass} app-shell-family-${screenBehavior.family} screen-${screen.replace(/_/g, '-')} ${isGameplayScreen ? gameplayTypeClass : ''} relative w-full flex flex-col items-center overflow-hidden ${viewportShellClass}`}
           >
             <AnimatePresence mode="wait">
               <motion.div

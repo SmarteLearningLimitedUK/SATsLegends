@@ -587,10 +587,8 @@ export const AppRouter: React.FC<AppRouterProps> = ({
 
     case 'gameplay':
     const shellStyle = {
-        '--game-shell-top-inset': 'calc(env(safe-area-inset-top) + 0.8rem)',
-        '--game-shell-bottom-inset': hideMiniGameTimer
-          ? 'calc(env(safe-area-inset-bottom) + clamp(3.3rem, 8.2vh, 3.95rem))'
-          : 'calc(env(safe-area-inset-bottom) + clamp(3.6rem, 9.2vh, 4.4rem))',
+        '--game-shell-top-inset': '0.8rem',
+        '--game-shell-bottom-inset': hideMiniGameTimer ? '3.6rem' : '4rem',
       } as React.CSSProperties;
 
       return (
@@ -612,7 +610,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
               <div
                 className="pointer-events-none absolute inset-x-3 z-40 flex justify-center md:inset-x-5"
                 style={{
-                  top: 'calc(var(--game-shell-top-inset) - clamp(2.7rem, 5.5vh, 3.1rem))',
+                  top: 'calc(var(--game-shell-top-inset) - 2.9rem)',
                 }}
               >
                 <motion.div
@@ -631,8 +629,8 @@ export const AppRouter: React.FC<AppRouterProps> = ({
               style={{
                 paddingTop: 'var(--game-shell-top-inset)',
                 paddingBottom: 'var(--game-shell-bottom-inset)',
-                paddingLeft: 'max(0.3rem, env(safe-area-inset-left))',
-                paddingRight: 'max(0.3rem, env(safe-area-inset-right))',
+                paddingLeft: '0.3rem',
+                paddingRight: '0.3rem',
               }}
             >
               <GameplayContentViewport>

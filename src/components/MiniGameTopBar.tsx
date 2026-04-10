@@ -26,7 +26,7 @@ const MiniGameTopBar: React.FC<MiniGameTopBarProps> = ({
   if (shouldHideLocalHud) return null;
 
   return (
-    <div className={`mini-game-top-bar pointer-events-none absolute inset-x-0 top-0 z-40 px-3 pt-[max(0.75rem,env(safe-area-inset-top))] ${className}`.trim()}>
+    <div className={`mini-game-top-bar pointer-events-none absolute inset-x-0 top-0 z-40 px-3 pt-[0.75rem] ${className}`.trim()}>
       <div className="flex items-center justify-between gap-2">
         <div className="pointer-events-auto">
           <IconButton icon={<ArrowLeft className="h-5 w-5" />} label="Back" onClick={onBack} />

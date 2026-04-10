@@ -144,10 +144,10 @@ body {
 }
 
 .safe-area-padding {
-  padding-top: max(12px, env(safe-area-inset-top));
-  padding-right: max(12px, env(safe-area-inset-right));
-  padding-bottom: max(12px, env(safe-area-inset-bottom));
-  padding-left: max(12px, env(safe-area-inset-left));
+  padding-top: 12px;
+  padding-right: 12px;
+  padding-bottom: 12px;
+  padding-left: 12px;
 }
 
 button,
@@ -689,7 +689,7 @@ button:disabled {
 }
 
 .app-modal-panel {
-  max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 2rem);
+  max-height: calc(100dvh - 2rem);
 }
 
 .ui-close-button {
@@ -4555,28 +4555,22 @@ button.avatar-hero-arrow:not(:disabled):active {
 /* Global gameplay viewport contract:
    every minigame renders below the shared top HUD. */
 .screen-gameplay .unified-minigame-hud-enabled {
-  --shared-minigame-hud-row-height: clamp(2.75rem, 7.2vh, 3.5rem);
-  --shared-minigame-hud-padding-y: clamp(0.22rem, 0.72vh, 0.48rem);
-  --shared-minigame-dock-height: clamp(3.3rem, 7.4vh, 3.9rem);
-  --shared-minigame-dock-gap: clamp(0.4rem, 0.9vh, 0.7rem);
+  --shared-minigame-hud-row-height: 3.2rem;
+  --shared-minigame-hud-padding-y: 0.4rem;
+  --shared-minigame-dock-height: 3.6rem;
+  --shared-minigame-dock-gap: 0.5rem;
   --shared-minigame-dock-buffer: 0rem;
   --shared-minigame-reserved-bottom: calc(
-    env(safe-area-inset-bottom)
-    + var(--shared-minigame-dock-height)
+    var(--shared-minigame-dock-height)
     + var(--shared-minigame-dock-gap)
     + var(--shared-minigame-dock-buffer)
   );
   --shared-minigame-hud-reserved-top: calc(
-    env(safe-area-inset-top)
-    + 0.5rem
+    0.5rem
     + (var(--shared-minigame-hud-padding-y) * 2)
     + var(--shared-minigame-hud-row-height)
     + 0.45rem
   );
-}
-
-.app-viewport-tablet.screen-gameplay .unified-minigame-hud-enabled {
-  --shared-minigame-dock-buffer: clamp(0.3rem, 0.9vh, 0.7rem);
 }
 
 .screen-gameplay .unified-minigame-hud-enabled .structured-game-layout {

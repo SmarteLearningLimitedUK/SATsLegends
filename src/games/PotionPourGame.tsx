@@ -894,7 +894,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
           <>
             <div
               className="pointer-events-none fixed left-0 right-0 z-[60]"
-              style={{ top: 'calc(env(safe-area-inset-top) + 4px)' }}
+              style={{ top: '4px' }}
             >
               <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-[17px] py-[13px] text-center backdrop-blur-sm">
                 <div className="text-[12px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Recipe</div>
