@@ -748,7 +748,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
       <GameScreenLayout
         className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-0 text-white"
         top={(
-          <div className="flex flex-col gap-[5px]">
+          <div className="flex flex-col gap-0">
             <GameTopBar
               onBack={onBack}
               progressLabel={`Round ${Math.min(correctSolved + 1, roundsToWin)} / ${roundsToWin}`}
@@ -758,7 +758,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
               onToggleAudio={() => setAudioEnabled((previous) => !previous)}
               onHelp={() => setShowRules(true)}
             />
-            <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-[17px] py-[13px] text-center backdrop-blur-sm">
+            <div className="mx-auto mt-[5px] w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-[17px] py-[13px] text-center backdrop-blur-sm">
               <div className="text-[12px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Recipe</div>
               <div className="mt-0.5 text-[clamp(1.35rem,5.2vw,1.8rem)] font-black text-white">{challenge.orderTitle}</div>
               <div className="mt-0.5 text-[13px] font-black text-amber-100">Ratio {ratioText}</div>
