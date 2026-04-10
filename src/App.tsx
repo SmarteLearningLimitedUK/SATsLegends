@@ -50,6 +50,7 @@ import { LevelProgress } from './lib/progression/types';
 
 const App: React.FC = () => {
   const [stageScale, setStageScale] = useState(1);
+  const [questionCardScale, setQuestionCardScale] = useState(1);
 
   const {
     screen,
@@ -497,6 +498,7 @@ const App: React.FC = () => {
       const isTabletViewport = Math.min(viewportWidth, viewportHeight) >= 700;
       const scale = rawScale * (isTabletViewport ? 0.95 : 1);
       setStageScale(Number.isFinite(scale) && scale > 0 ? scale : 1);
+      setQuestionCardScale(isTabletViewport ? 0.92 : 1);
     };
 
     const visualViewport = window.visualViewport;
@@ -840,6 +842,7 @@ const App: React.FC = () => {
     '--game-stage-width': `${stageWidth}px`,
     '--game-stage-height': `${stageHeight}px`,
     '--game-stage-scale': `${stageScale}`,
+    '--question-card-scale': `${questionCardScale}`,
   } as React.CSSProperties;
 
   return (
