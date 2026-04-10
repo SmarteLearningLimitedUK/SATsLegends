@@ -893,7 +893,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
             ) : null}
 
             <div className="mx-auto flex w-full max-w-[780px] items-center gap-2">
-              <PrimaryButton onClick={onBrew} disabled={locked} className="flex-1">
+              <PrimaryButton onClick={onBrew} disabled={locked} className="flex-1 potion-brew-button">
                 <Wand2 className="h-4.5 w-4.5" />
                 {isRecipeComplete ? 'Brew Potion' : 'Brew Potion'}
               </PrimaryButton>
