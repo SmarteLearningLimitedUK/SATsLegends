@@ -1,7 +1,7 @@
 import { chromium } from '@playwright/test';
 import fs from 'fs';
 
-const url = 'https://satslegendsfinal.vercel.app/';
+const url = process.env.QA_URL || 'https://satslegendsfinal.vercel.app/';
 const outputDir = 'D:/BrainZilla/SATsLegends/qa';
 const today = new Date().toISOString().slice(0, 10);
 
