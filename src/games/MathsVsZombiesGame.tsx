@@ -19,7 +19,7 @@ type ZombieState = 'appear' | 'walk' | 'hit' | 'attack' | 'die';
 interface Zombie {
   id: number;
   lane: number;
-  x: number; // 0..100
+  y: number; // 0..100
   health: number;
   maxHealth: number;
   speed: number; // percent per second
@@ -36,8 +36,8 @@ interface Question {
 }
 
 const LANES = 4;
-const SPAWN_X = 96;
-const TARGET_X = 8;
+const SPAWN_Y = 6;
+const TARGET_Y = 78;
 const ZOMBIE_SIZE = 52;
 const ANIM_FPS = 8;
 
@@ -238,10 +238,10 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     const zombie: Zombie = {
       id: idRef.current++,
       lane,
-      x: SPAWN_X,
+      y: SPAWN_Y,
       health: baseZombieHealth,
       maxHealth: baseZombieHealth,
-      speed: 2.2 + (wave * 0.25) + Math.max(0, levelId - 1) * 0.12,
+      speed: 0.65 + (wave * 0.08) + Math.max(0, levelId - 1) * 0.04,
       state: 'appear',
       frameIndex: 0,
       frameTime: 0,
@@ -332,9 +332,9 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
     let breaches = 0;
     const zombiesNext = zombiesRef.current.map((zombie) => {
-      let nextX = zombie.x;
+      let nextY = zombie.y;
       if (zombie.state !== 'attack' && zombie.state !== 'die') {
-        nextX -= zombie.speed * dt;
+        nextY += zombie.speed * dt;
       }
 
       let nextState = zombie.state;
@@ -363,7 +363,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
         return null;
       }
 
-      if (nextX <= TARGET_X && nextState !== 'attack' && nextState !== 'die') {
+      if (nextY >= TARGET_Y && nextState !== 'attack' && nextState !== 'die') {
         nextState = 'attack';
         nextStateTime = 0;
         breaches += 1;
@@ -375,7 +375,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
       return {
         ...zombie,
-        x: nextX,
+        y: nextY,
         state: nextState,
         frameIndex: nextFrameIndex,
         frameTime: nextFrameTime,
@@ -413,7 +413,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     if (index === question.correctIndex) {
       setFeedback('Zombie down!');
       const targetZombie = zombiesRef.current.reduce((closest, zombie) => (
-        zombie.x < (closest?.x ?? Infinity) ? zombie : closest
+        zombie.y > (closest?.y ?? -Infinity) ? zombie : closest
       ), null as Zombie | null);
 
       if (targetZombie) {
@@ -494,14 +494,14 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
               return (
                 <motion.div
                   key={zombie.id}
-                  initial={{ opacity: 0, x: 40 }}
-                  animate={{ opacity: 1, x: 0, y: [-6, 6, -6] }}
-                  transition={{ duration: 2.4 + (zombie.lane % 3) * 0.4, repeat: Infinity, ease: 'easeInOut' }}
-                  exit={{ opacity: 0, scale: 0.7 }}
+                  initial={{ opacity: 1 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.2 }}
+                  exit={{ opacity: 1 }}
                   className="absolute flex flex-col items-center gap-1"
                   style={{
-                    top: `${10 + zombie.lane * 22}%`,
-                    left: `${zombie.x}%`,
+                    top: `${zombie.y}%`,
+                    left: `${18 + zombie.lane * 20}%`,
                     width: `${ZOMBIE_SIZE}px`,
                   }}
                 >
