@@ -842,33 +842,50 @@ const App: React.FC = () => {
   const goToProfile = useCallback(() => {
     setScreen('profile');
   }, [setScreen]);
+  const mapDockButtonClass = [
+    'inline-flex items-center justify-center border text-slate-100',
+    'border-cyan-100/40 bg-[linear-gradient(180deg,rgba(75,137,232,0.9)_0%,rgba(45,102,194,0.9)_54%,rgba(29,75,153,0.92)_100%)]',
+    'shadow-[0_6px_12px_rgba(2,6,23,0.33),inset_0_1px_0_rgba(255,255,255,0.26)]',
+    'transition-[transform,filter,box-shadow,background] duration-150 ease-out',
+    'hover:brightness-105 active:translate-y-[1px] active:brightness-95',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b1e4e]',
+    'h-[42px] w-[42px] rounded-[0.85rem]',
+  ].join(' ');
+  const mapDockIconClass = 'h-[18px] w-[18px] drop-shadow-[0_2px_2px_rgba(0,0,0,0.26)]';
   const mapHudDock = screen === 'world_map'
     ? (
-      <div className="flex items-center gap-2 rounded-[1.2rem] border border-cyan-100/30 bg-slate-950/70 px-3 py-2 shadow-[0_12px_24px_rgba(2,6,23,0.4)]">
-        <button
-          type="button"
-          onClick={goToParentDashboard}
-          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white"
-          aria-label="Open parent portal"
-        >
-          <AssetIcon name="people" className="h-5 w-5" />
-        </button>
-        <button
-          type="button"
-          onClick={goToProfile}
-          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white"
-          aria-label="Open player stats"
-        >
-          <AssetIcon name="user" className="h-5 w-5" />
-        </button>
-        <button
-          type="button"
-          onClick={goToAchievements}
-          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white"
-          aria-label="Open achievements"
-        >
-          <AssetIcon name="trophy" className="h-5 w-5" />
-        </button>
+      <div className="mt-0.5 flex shrink-0 items-center justify-center">
+        <div className="relative shrink-0 rounded-[1.15rem] border border-cyan-100/26 bg-[linear-gradient(180deg,rgba(16,40,96,0.84)_0%,rgba(9,24,64,0.88)_100%)] px-2 py-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.38),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-[2px]">
+          <div className="pointer-events-none absolute inset-[1px] rounded-[1.05rem] border border-cyan-100/14" />
+          <div className="pointer-events-none absolute inset-x-3 top-[3px] h-3 rounded-full bg-cyan-200/10 blur-[2px]" />
+
+          <div className="relative grid grid-cols-3 gap-1.5">
+            <button
+              type="button"
+              onClick={goToParentDashboard}
+              className={mapDockButtonClass}
+              aria-label="Open parent portal"
+            >
+              <AssetIcon name="people" className={mapDockIconClass} />
+            </button>
+            <button
+              type="button"
+              onClick={goToProfile}
+              className={mapDockButtonClass}
+              aria-label="Open player stats"
+            >
+              <AssetIcon name="user" className={mapDockIconClass} />
+            </button>
+            <button
+              type="button"
+              onClick={goToAchievements}
+              className={mapDockButtonClass}
+              aria-label="Open achievements"
+            >
+              <AssetIcon name="trophy" className={mapDockIconClass} />
+            </button>
+          </div>
+        </div>
       </div>
     )
     : null;
