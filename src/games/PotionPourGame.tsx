@@ -750,8 +750,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
   }), []);
 
   return (
-    <GameUiShell backgroundImage={potionPanicBackdrop} backgroundOpacity={0}>
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,#ffcf6b_0%,#ff9a2e_45%,#e85a1f_100%)]" />
+    <GameUiShell backgroundImage={potionPanicBackdrop} backgroundOpacity={1}>
       <GameScreenLayout
         className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-0 text-white"
         top={(
