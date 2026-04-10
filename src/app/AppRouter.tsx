@@ -588,11 +588,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
               className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
             />
           ) : null}
-          {shouldUseShellBackground ? (
-            <div className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(7,20,54,0.12)_0%,rgba(7,20,54,0.2)_55%,rgba(7,20,54,0.28)_100%)]" />
-          ) : null}
-
-          <div className="game-shell-contract relative z-[2] flex h-full max-h-full w-full min-h-0 flex-col overflow-hidden">
+            <div className="game-shell-contract relative z-[2] flex h-full max-h-full w-full min-h-0 flex-col overflow-hidden">
             {showInlineHint ? (
               <div
                 className="pointer-events-none absolute inset-x-3 z-40 flex justify-center md:inset-x-5"

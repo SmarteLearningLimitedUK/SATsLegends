@@ -6,10 +6,10 @@
       "height": 844
     },
     "outOfBounds": [],
-    "scrollable": true,
+    "scrollable": false,
     "fontSummary": {
-      "min": 15.2,
-      "max": 16,
+      "min": 16,
+      "max": 18,
       "outliers": []
     }
   },
@@ -20,9 +20,9 @@
       "height": 844
     },
     "outOfBounds": [],
-    "scrollable": true,
+    "scrollable": false,
     "fontSummary": {
-      "min": 15.2,
+      "min": 12,
       "max": 16,
       "outliers": []
     }
@@ -34,9 +34,9 @@
       "height": 844
     },
     "outOfBounds": [],
-    "scrollable": true,
+    "scrollable": false,
     "fontSummary": {
-      "min": 15.2,
+      "min": 12,
       "max": 16,
       "outliers": []
     }
@@ -48,9 +48,9 @@
       "height": 844
     },
     "outOfBounds": [],
-    "scrollable": true,
+    "scrollable": false,
     "fontSummary": {
-      "min": 15.2,
+      "min": 12,
       "max": 16,
       "outliers": []
     }
@@ -62,9 +62,9 @@
       "height": 844
     },
     "outOfBounds": [],
-    "scrollable": true,
+    "scrollable": false,
     "fontSummary": {
-      "min": 15.2,
+      "min": 12,
       "max": 16,
       "outliers": []
     }
@@ -76,9 +76,9 @@
       "height": 844
     },
     "outOfBounds": [],
-    "scrollable": true,
+    "scrollable": false,
     "fontSummary": {
-      "min": 15.2,
+      "min": 12,
       "max": 16,
       "outliers": []
     }
@@ -90,9 +90,9 @@
       "height": 844
     },
     "outOfBounds": [],
-    "scrollable": true,
+    "scrollable": false,
     "fontSummary": {
-      "min": 15.2,
+      "min": 12,
       "max": 16,
       "outliers": []
     }
@@ -104,9 +104,9 @@
       "height": 844
     },
     "outOfBounds": [],
-    "scrollable": true,
+    "scrollable": false,
     "fontSummary": {
-      "min": 15.2,
+      "min": 12,
       "max": 16,
       "outliers": []
     }
@@ -118,9 +118,9 @@
       "height": 844
     },
     "outOfBounds": [],
-    "scrollable": true,
+    "scrollable": false,
     "fontSummary": {
-      "min": 15.2,
+      "min": 12,
       "max": 16,
       "outliers": []
     }
@@ -132,9 +132,9 @@
       "height": 844
     },
     "outOfBounds": [],
-    "scrollable": true,
+    "scrollable": false,
     "fontSummary": {
-      "min": 15.2,
+      "min": 12,
       "max": 16,
       "outliers": []
     }
@@ -146,9 +146,9 @@
       "height": 844
     },
     "outOfBounds": [],
-    "scrollable": true,
+    "scrollable": false,
     "fontSummary": {
-      "min": 15.2,
+      "min": 12,
       "max": 16,
       "outliers": []
     }
@@ -160,9 +160,9 @@
       "height": 844
     },
     "outOfBounds": [],
-    "scrollable": true,
+    "scrollable": false,
     "fontSummary": {
-      "min": 15.2,
+      "min": 12,
       "max": 16,
       "outliers": []
     }
@@ -174,9 +174,9 @@
       "height": 844
     },
     "outOfBounds": [],
-    "scrollable": true,
+    "scrollable": false,
     "fontSummary": {
-      "min": 15.2,
+      "min": 12,
       "max": 16,
       "outliers": []
     }
@@ -188,9 +188,9 @@
       "height": 844
     },
     "outOfBounds": [],
-    "scrollable": true,
+    "scrollable": false,
     "fontSummary": {
-      "min": 15.2,
+      "min": 12,
       "max": 16,
       "outliers": []
     }
@@ -202,9 +202,9 @@
       "height": 844
     },
     "outOfBounds": [],
-    "scrollable": true,
+    "scrollable": false,
     "fontSummary": {
-      "min": 15.2,
+      "min": 12,
       "max": 16,
       "outliers": []
     }

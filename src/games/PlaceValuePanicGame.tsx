@@ -454,19 +454,22 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const count = question.tokenValues.length;
     const rowSpan = spanForSlots(count, 'source');
     const tokenWidth = Number.parseFloat(sourceTokenWidth) || Number.parseFloat(layout.sourceWidth) || 10;
-    const sidePadding = count >= 6 ? 6 : 8;
-    const computed = rowSpan + tokenWidth + sidePadding;
-    const clamped = Math.max(52, Math.min(96, computed));
+    const computed = rowSpan + tokenWidth;
+    const clamped = Math.max(48, Math.min(88, computed));
     return `${clamped.toFixed(1)}%`;
   }, [layout.sourceWidth, question.tokenValues.length, sourceTokenWidth]);
 
   const sourceTokenBackdropHeight = useMemo(() => {
     const baseTokenHeight = Number.parseFloat(layout.sourceHeight) || 10;
-    const extraPadding = question.tokenValues.length >= 6 ? 0.35 : 0.25;
-    const computed = (baseTokenHeight + extraPadding) * 0.5;
-    const clamped = Math.max(3.0, Math.min(5.3, computed));
+    const computed = baseTokenHeight * 0.6;
+    const clamped = Math.max(5.2, Math.min(7.0, computed));
     return `${clamped.toFixed(1)}%`;
-  }, [layout.sourceHeight, question.tokenValues.length]);
+  }, [layout.sourceHeight]);
+
+  const sourceTokenBackdropPadding = useMemo(
+    () => 'clamp(6px, 1.5vw, 12px)',
+    [],
+  );
 
   const targetSocketSizing = useMemo(() => {
     const count = question.expectedDigits.length;
@@ -1149,11 +1152,11 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         })}
 
         <div
-          className="pointer-events-none absolute left-1/2 z-[16] -translate-x-1/2 -translate-y-1/2 rounded-[1.15rem] border border-cyan-200/30 bg-slate-900/34 shadow-[0_10px_24px_rgba(2,6,23,0.42)]"
+          className="pointer-events-none absolute left-1/2 z-[16] -translate-x-1/2 -translate-y-1/2 rounded-[0.2rem] border border-cyan-200/30 bg-slate-900/34 shadow-[0_10px_24px_rgba(2,6,23,0.42)]"
           style={{
             top: `calc(${layout.sourceY}% - ${SOURCE_ROW_Y_OFFSET_PX}px)`,
-            width: sourceTokenBackdropWidth,
-            height: sourceTokenBackdropHeight,
+            width: `calc(${sourceTokenBackdropWidth} + ${sourceTokenBackdropPadding} + ${sourceTokenBackdropPadding})`,
+            height: `calc(${sourceTokenBackdropHeight} + ${sourceTokenBackdropPadding} + ${sourceTokenBackdropPadding})`,
             backdropFilter: 'blur(2.5px)',
           }}
         />

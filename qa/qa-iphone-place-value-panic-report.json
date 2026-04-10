@@ -1,0 +1,224 @@
+{
+  "status": "ok",
+  "boundsReport": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "roots": [
+      {
+        "label": "gameplay-viewport",
+        "root": {
+          "rect": {
+            "top": 83.34375,
+            "left": 4.796875,
+            "right": 385.203125,
+            "bottom": 774.015625,
+            "width": 380.40625,
+            "height": 690.671875
+          },
+          "scroll": {
+            "width": 380,
+            "height": 691
+          },
+          "client": {
+            "width": 380,
+            "height": 691
+          },
+          "overflow": {
+            "x": "hidden",
+            "y": "hidden"
+          }
+        },
+        "totals": {
+          "elementsChecked": 41,
+          "outOfBounds": 0
+        },
+        "sample": []
+      },
+      {
+        "label": "game-shell-contract",
+        "root": {
+          "rect": {
+            "top": 0,
+            "left": 0,
+            "right": 390,
+            "bottom": 844,
+            "width": 390,
+            "height": 844
+          },
+          "scroll": {
+            "width": 390,
+            "height": 844
+          },
+          "client": {
+            "width": 390,
+            "height": 844
+          },
+          "overflow": {
+            "x": "hidden",
+            "y": "hidden"
+          }
+        },
+        "totals": {
+          "elementsChecked": 45,
+          "outOfBounds": 1
+        },
+        "sample": [
+          {
+            "tag": "DIV",
+            "selector": "div.pointer-events-none.absolute.inset-x-3",
+            "text": "Here is how to play Place Value Panic L1.",
+            "ariaLabel": "",
+            "position": "absolute",
+            "rect": {
+              "top": -33.609375,
+              "left": 12,
+              "right": 378,
+              "bottom": 810.390625,
+              "width": 366,
+              "height": 844
+            }
+          }
+        ]
+      },
+      {
+        "label": "structured-game-layout",
+        "root": {
+          "rect": {
+            "top": 0,
+            "left": 0,
+            "right": 390,
+            "bottom": 844,
+            "width": 390,
+            "height": 844
+          },
+          "scroll": {
+            "width": 390,
+            "height": 844
+          },
+          "client": {
+            "width": 390,
+            "height": 844
+          },
+          "overflow": {
+            "x": "hidden",
+            "y": "hidden"
+          }
+        },
+        "totals": {
+          "elementsChecked": 42,
+          "outOfBounds": 0
+        },
+        "sample": []
+      },
+      {
+        "label": "gameplay-content-surface",
+        "status": "missing-root"
+      }
+    ]
+  },
+  "liveBoundsReport": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "roots": [
+      {
+        "label": "gameplay-viewport",
+        "root": {
+          "rect": {
+            "top": 83.34375,
+            "left": 4.796875,
+            "right": 385.203125,
+            "bottom": 774.015625,
+            "width": 380.40625,
+            "height": 690.671875
+          },
+          "scroll": {
+            "width": 380,
+            "height": 691
+          },
+          "client": {
+            "width": 380,
+            "height": 691
+          },
+          "overflow": {
+            "x": "hidden",
+            "y": "hidden"
+          }
+        },
+        "totals": {
+          "elementsChecked": 41,
+          "outOfBounds": 0
+        },
+        "sample": []
+      },
+      {
+        "label": "game-shell-contract",
+        "root": {
+          "rect": {
+            "top": 0,
+            "left": 0,
+            "right": 390,
+            "bottom": 844,
+            "width": 390,
+            "height": 844
+          },
+          "scroll": {
+            "width": 390,
+            "height": 844
+          },
+          "client": {
+            "width": 390,
+            "height": 844
+          },
+          "overflow": {
+            "x": "hidden",
+            "y": "hidden"
+          }
+        },
+        "totals": {
+          "elementsChecked": 43,
+          "outOfBounds": 0
+        },
+        "sample": []
+      },
+      {
+        "label": "structured-game-layout",
+        "root": {
+          "rect": {
+            "top": 0,
+            "left": 0,
+            "right": 390,
+            "bottom": 844,
+            "width": 390,
+            "height": 844
+          },
+          "scroll": {
+            "width": 390,
+            "height": 844
+          },
+          "client": {
+            "width": 390,
+            "height": 844
+          },
+          "overflow": {
+            "x": "hidden",
+            "y": "hidden"
+          }
+        },
+        "totals": {
+          "elementsChecked": 42,
+          "outOfBounds": 0
+        },
+        "sample": []
+      },
+      {
+        "label": "gameplay-content-surface",
+        "status": "missing-root"
+      }
+    ]
+  },
+  "consoleErrors": []
+}
