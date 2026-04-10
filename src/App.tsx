@@ -855,7 +855,7 @@ const App: React.FC = () => {
         <div className="iphone-game-stage-inner">
           <div
             data-screen-family={screenBehavior.family}
-            className={`app-viewport sat-theme-bluegold app-background-intensity ${backgroundIntensityClass} app-shell-family-${screenBehavior.family} screen-${screen.replace(/_/g, '-')} ${isGameplayScreen ? gameplayTypeClass : ''} relative w-full flex flex-col items-center overflow-hidden ${viewportShellClass}`}
+            className={`app-viewport sat-theme-bluegold app-background-intensity ${backgroundIntensityClass} app-shell-family-${screenBehavior.family} ${isTabletStage ? 'app-viewport-tablet' : ''} screen-${screen.replace(/_/g, '-')} ${isGameplayScreen ? gameplayTypeClass : ''} relative w-full flex flex-col items-center overflow-hidden ${viewportShellClass}`}
           >
             <AnimatePresence mode="wait">
               <motion.div

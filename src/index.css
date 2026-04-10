@@ -4542,10 +4542,12 @@ button.avatar-hero-arrow:not(:disabled):active {
   --shared-minigame-hud-padding-y: clamp(0.22rem, 0.72vh, 0.48rem);
   --shared-minigame-dock-height: clamp(3.3rem, 7.4vh, 3.9rem);
   --shared-minigame-dock-gap: clamp(0.4rem, 0.9vh, 0.7rem);
+  --shared-minigame-dock-buffer: 0rem;
   --shared-minigame-reserved-bottom: calc(
     env(safe-area-inset-bottom)
     + var(--shared-minigame-dock-height)
     + var(--shared-minigame-dock-gap)
+    + var(--shared-minigame-dock-buffer)
   );
   --shared-minigame-hud-reserved-top: calc(
     env(safe-area-inset-top)
@@ -4554,6 +4556,10 @@ button.avatar-hero-arrow:not(:disabled):active {
     + var(--shared-minigame-hud-row-height)
     + 0.45rem
   );
+}
+
+.app-viewport-tablet.screen-gameplay .unified-minigame-hud-enabled {
+  --shared-minigame-dock-buffer: clamp(0.3rem, 0.9vh, 0.7rem);
 }
 
 .screen-gameplay .unified-minigame-hud-enabled .structured-game-layout {

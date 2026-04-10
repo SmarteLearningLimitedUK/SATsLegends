@@ -1152,7 +1152,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         })}
 
         <div
-          className="pointer-events-none absolute left-1/2 z-[16] -translate-x-1/2 -translate-y-1/2 rounded-[0.2rem] border border-cyan-200/30 bg-slate-900/34 shadow-[0_10px_24px_rgba(2,6,23,0.42)]"
+          className="pointer-events-none absolute left-1/2 z-[16] -translate-x-1/2 -translate-y-1/2 rounded-[2px] border border-cyan-200/30 bg-slate-900/34 shadow-[0_10px_24px_rgba(2,6,23,0.42)]"
           style={{
             top: `calc(${layout.sourceY}% - ${SOURCE_ROW_Y_OFFSET_PX}px)`,
             width: `calc(${sourceTokenBackdropWidth} + ${sourceTokenBackdropPadding} + ${sourceTokenBackdropPadding})`,
