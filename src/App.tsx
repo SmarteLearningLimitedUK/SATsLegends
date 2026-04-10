@@ -51,6 +51,7 @@ import { LevelProgress } from './lib/progression/types';
 const App: React.FC = () => {
   const [stageScale, setStageScale] = useState(1);
   const [questionCardScale, setQuestionCardScale] = useState(1);
+  const [potionCauldronShift, setPotionCauldronShift] = useState('0px');
 
   const {
     screen,
@@ -499,6 +500,7 @@ const App: React.FC = () => {
       const scale = rawScale * (isTabletViewport ? 0.95 : 1);
       setStageScale(Number.isFinite(scale) && scale > 0 ? scale : 1);
       setQuestionCardScale(isTabletViewport ? 0.92 : 1);
+      setPotionCauldronShift(isTabletViewport ? '8px' : '0px');
     };
 
     const visualViewport = window.visualViewport;
@@ -843,6 +845,7 @@ const App: React.FC = () => {
     '--game-stage-height': `${stageHeight}px`,
     '--game-stage-scale': `${stageScale}`,
     '--question-card-scale': `${questionCardScale}`,
+    '--potion-cauldron-shift': potionCauldronShift,
   } as React.CSSProperties;
 
   return (

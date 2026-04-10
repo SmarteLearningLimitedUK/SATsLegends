@@ -750,7 +750,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
   }), []);
 
   return (
-    <GameUiShell backgroundImage={potionPanicBackdrop} backgroundOpacity={1}>
+    <GameUiShell backgroundImage={potionPanicBackdrop} backgroundOpacity={1} overlayDisabled>
       <GameScreenLayout
         className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-0 text-white"
         top={(
@@ -770,44 +770,49 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
         )}
         main={(
           <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
-            <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] border border-white/12 bg-white/5 shadow-[0_16px_30px_rgba(15,23,42,0.2)]">
-              <div className="pointer-events-none absolute left-1/2 top-[84%] h-12 w-[68%] -translate-x-1/2 rounded-full bg-black/35 blur-md" />
-              <div className="pointer-events-none absolute left-1/2 top-[76%] h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
-              <div className="absolute left-1/2 top-[72%] flex h-[18%] w-[48%] -translate-x-1/2 items-end justify-between px-5">
-                {[0, 1, 2].map((idx) => (
-                  <motion.span
-                    key={`flame-${idx}`}
-                    className="h-12 w-7 rounded-full bg-[radial-gradient(circle at 50% 20%,rgba(255,241,180,0.95)_0%,rgba(255,170,57,0.92)_42%,rgba(255,94,32,0.9)_76%,rgba(255,94,32,0)_100%)] blur-[1px]"
-                    animate={{ scaleY: [0.85, 1.1, 0.92], y: [0, -4, 0] }}
-                    transition={{ repeat: Infinity, duration: 1 + idx * 0.18, ease: 'easeInOut' }}
-                  />
-                ))}
-              </div>
-              <img
-                src={cauldrenAndPotionArt}
-                alt=""
-                aria-hidden="true"
-                className="pointer-events-none absolute left-1/2 bottom-[6%] h-[42%] max-w-none -translate-x-1/2 translate-y-[-5px] object-contain"
-              />
-              <div className="absolute left-1/2 bottom-[27%] h-[14%] w-[34%] -translate-x-1/2 translate-y-[5px] overflow-hidden rounded-[46%]">
-                <motion.div
-                  className="absolute inset-x-[8%] bottom-[8%] rounded-[42%]"
-                  style={{
-                    background: `linear-gradient(180deg, rgba(255,255,255,0.34) 0%, ${mixColor} 18%, rgba(15,23,42,0.18) 100%)`,
-                    boxShadow: `0 0 30px ${mixColor}`,
-                  }}
-                  animate={{ height: `${Math.min(96, Math.max(18, (currentTotal / Math.max(1, targetTotal * 1.1)) * 100))}%` }}
-                  transition={{ duration: 0.32, ease: 'easeOut' }}
+            <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] border border-white/12 bg-transparent shadow-[0_16px_30px_rgba(15,23,42,0.2)]">
+              <div
+                className="absolute inset-0"
+                style={{ transform: 'translateY(var(--potion-cauldron-shift, 0px))' }}
+              >
+                <div className="pointer-events-none absolute left-1/2 top-[84%] h-12 w-[68%] -translate-x-1/2 rounded-full bg-black/35 blur-md" />
+                <div className="pointer-events-none absolute left-1/2 top-[76%] h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
+                <div className="absolute left-1/2 top-[72%] flex h-[18%] w-[48%] -translate-x-1/2 items-end justify-between px-5">
+                  {[0, 1, 2].map((idx) => (
+                    <motion.span
+                      key={`flame-${idx}`}
+                      className="h-12 w-7 rounded-full bg-[radial-gradient(circle at 50% 20%,rgba(255,241,180,0.95)_0%,rgba(255,170,57,0.92)_42%,rgba(255,94,32,0.9)_76%,rgba(255,94,32,0)_100%)] blur-[1px]"
+                      animate={{ scaleY: [0.85, 1.1, 0.92], y: [0, -4, 0] }}
+                      transition={{ repeat: Infinity, duration: 1 + idx * 0.18, ease: 'easeInOut' }}
+                    />
+                  ))}
+                </div>
+                <img
+                  src={cauldrenAndPotionArt}
+                  alt=""
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-1/2 bottom-[6%] h-[42%] max-w-none -translate-x-1/2 translate-y-[-5px] object-contain"
                 />
-                {Array.from({ length: 10 }).map((_, idx) => (
-                  <motion.span
-                    key={`bubble-${idx}`}
-                    className="absolute bottom-[12%] h-2.5 w-2.5 rounded-full bg-white/60"
-                    style={{ left: `${12 + idx * 7}%` }}
-                    animate={{ y: [0, -18 - (idx % 3) * 8, -2], opacity: [0, 0.9, 0], scale: [0.7, 1.12, 0.82] }}
-                    transition={{ repeat: Infinity, duration: 1.05 + (idx % 4) * 0.18, delay: idx * 0.06, ease: 'easeOut' }}
+                <div className="absolute left-1/2 bottom-[27%] h-[14%] w-[34%] -translate-x-1/2 translate-y-[5px] overflow-hidden rounded-[46%]">
+                  <motion.div
+                    className="absolute inset-x-[8%] bottom-[8%] rounded-[42%]"
+                    style={{
+                      background: `linear-gradient(180deg, rgba(255,255,255,0.34) 0%, ${mixColor} 18%, rgba(15,23,42,0.18) 100%)`,
+                      boxShadow: `0 0 30px ${mixColor}`,
+                    }}
+                    animate={{ height: `${Math.min(96, Math.max(18, (currentTotal / Math.max(1, targetTotal * 1.1)) * 100))}%` }}
+                    transition={{ duration: 0.32, ease: 'easeOut' }}
                   />
-                ))}
+                  {Array.from({ length: 10 }).map((_, idx) => (
+                    <motion.span
+                      key={`bubble-${idx}`}
+                      className="absolute bottom-[12%] h-2.5 w-2.5 rounded-full bg-white/60"
+                      style={{ left: `${12 + idx * 7}%` }}
+                      animate={{ y: [0, -18 - (idx % 3) * 8, -2], opacity: [0, 0.9, 0], scale: [0.7, 1.12, 0.82] }}
+                      transition={{ repeat: Infinity, duration: 1.05 + (idx % 4) * 0.18, delay: idx * 0.06, ease: 'easeOut' }}
+                    />
+                  ))}
+                </div>
               </div>
               <AnimatePresence mode="wait">
                 {feedback === 'success' ? (
