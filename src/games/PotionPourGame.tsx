@@ -760,7 +760,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 onHelp={() => setShowRules(true)}
               />
             </div>
-            <div className="absolute left-0 right-0 top-[calc(100%+5px)]">
+            <div className="absolute left-0 right-0 top-[calc(100%+10px)]">
               <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-[17px] py-[13px] text-center backdrop-blur-sm">
                 <div className="text-[12px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Recipe</div>
                 <div className="mt-0.5 text-[clamp(1.35rem,5.2vw,1.8rem)] font-black text-white">{challenge.orderTitle}</div>
