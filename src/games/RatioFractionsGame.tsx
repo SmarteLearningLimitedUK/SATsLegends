@@ -39,8 +39,9 @@ const BASE_XP = 160;
 const BACKDROP_WIDTH = 4000;
 const BACKDROP_HEIGHT = 500;
 const BACKDROP_Y_OFFSET = 60;
-const TRACK_LINE_FROM_BOTTOM = 82;
-const CART_Y_SHIFT = -20;
+const TRACK_LINE_FROM_BOTTOM = 62;
+const CART_Y_SHIFT = 0;
+const FINISH_Y_SHIFT = -200;
 
 const shuffle = <T,>(items: T[]) => {
   const copy = [...items];
@@ -321,6 +322,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     0,
     100,
   );
+  const finishLineY = clamp(trackLineY + (FINISH_Y_SHIFT / Math.max(1, viewport.height)) * 100, 0, 100);
   const maxBackdropScroll = Math.max(0, BACKDROP_WIDTH - viewport.width);
   const backgroundOffset = Math.round(clamp(trackProgress * maxBackdropScroll, 0, maxBackdropScroll));
 
@@ -338,7 +340,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
   const finishStyle = {
     transform: 'translate(-50%, -50%)',
-    top: `${trackLineY - 8}%`,
+    top: `${finishLineY}%`,
     left: `${finishLeft}%`,
   };
 
