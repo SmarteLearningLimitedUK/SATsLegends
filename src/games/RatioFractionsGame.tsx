@@ -40,7 +40,7 @@ const START_OFFSET = 0;
 const RACER_LERP = 0.16;
 const BASE_XP = 160;
 const KART_SCALE = 2;
-const PLAYER_KART_SCALE = 9.6;
+const PLAYER_KART_SCALE = 11.52;
 const BACKDROP_WIDTH = 8000;
 const BACKDROP_HEIGHT = 1000;
 const BACKDROP_Y_OFFSET = 60;
@@ -364,7 +364,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             </div>
 
             <motion.div
-              className="absolute z-30 flex h-24 w-36 items-center justify-center sm:h-28 sm:w-40 md:h-44 md:w-64"
+              className="absolute z-40 flex h-24 w-36 items-center justify-center sm:h-28 sm:w-40 md:h-44 md:w-64"
               style={playerStyle}
               animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { x: [0, -4, 4, -3, 3, 0] } : { scale: 1 }}
               transition={{ duration: 0.35 }}
