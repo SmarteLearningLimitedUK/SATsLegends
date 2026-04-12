@@ -422,17 +422,11 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       const backgroundImg = backgroundImageRef.current;
       if (backgroundImg && backgroundImg.complete) {
         const scale = Math.min(viewWidth / backgroundImg.width, viewHeight / backgroundImg.height);
-        const tileW = backgroundImg.width * scale;
-        const tileH = backgroundImg.height * scale;
-        const offsetX = -camera.x * 0.18;
-        const offsetY = -camera.y * 0.18;
-        const startX = (offsetX % tileW) - tileW;
-        const startY = (offsetY % tileH) - tileH;
-        for (let x = startX; x < viewWidth + tileW; x += tileW) {
-          for (let y = startY; y < viewHeight + tileH; y += tileH) {
-            ctx.drawImage(backgroundImg, x, y, tileW, tileH);
-          }
-        }
+        const drawW = backgroundImg.width * scale;
+        const drawH = backgroundImg.height * scale;
+        const drawX = (viewWidth - drawW) / 2;
+        const drawY = (viewHeight - drawH) / 2;
+        ctx.drawImage(backgroundImg, drawX, drawY, drawW, drawH);
       } else {
         ctx.fillStyle = '#0b1731';
         ctx.fillRect(0, 0, viewWidth, viewHeight);
@@ -565,7 +559,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   }, [gameState]);
 
   return (
-    <GameUiShell className="bg-transparent" overlayDisabled backgroundImage={backgroundAsset} backgroundOpacity={1}>
+    <GameUiShell className="bg-transparent" overlayDisabled>
       <div className="relative h-full w-full overflow-hidden text-white">
         <canvas
           ref={canvasRef}
