@@ -9,8 +9,7 @@ import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import { DEFAULT_RACE_DIFFICULTY, RACE_TUNING, RaceDifficulty } from './ratioFractionsRace/constants';
 import { getQuestionTier, pickQuestionForTier } from './ratioFractionsRace/questionSelector';
 import { RatioFractionQuestion } from './ratioFractionsRace/types';
-import ratioBackdrop from '../assets/gokarts/racebkgrd-hd.png';
-import ratioBackdrop2x from '../assets/gokarts/racebkgrd-2x.jpg';
+import ratioBackdrop from '../assets/gokarts/bkgroundmapratiofrac.png';
 import playerKart from '../assets/gokarts/12.png';
 import enemyKart from '../assets/gokarts/15.png';
 
@@ -37,8 +36,8 @@ type RaceState =
 const START_OFFSET = 0;
 const RACER_LERP = 0.16;
 const BASE_XP = 160;
-const BACKDROP_WIDTH = 12250;
-const BACKDROP_HEIGHT = 700;
+const BACKDROP_WIDTH = 4000;
+const BACKDROP_HEIGHT = 500;
 const TRACK_LINE_FROM_BOTTOM = 82;
 
 const shuffle = <T,>(items: T[]) => {
@@ -348,7 +347,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
           className="pointer-events-none absolute inset-0"
           style={{
             backgroundColor: '#0b0f1c',
-            backgroundImage: `image-set(url(${ratioBackdrop}) 1x, url(${ratioBackdrop2x}) 2x)`,
+            backgroundImage: `url(${ratioBackdrop})`,
             backgroundRepeat: 'no-repeat',
             backgroundSize: `${BACKDROP_WIDTH}px ${BACKDROP_HEIGHT}px`,
             backgroundPosition: `${-backgroundOffset}px bottom`,
