@@ -40,9 +40,10 @@ const START_OFFSET = 0;
 const RACER_LERP = 0.16;
 const BASE_XP = 160;
 const KART_SCALE = 2;
-const PLAYER_KART_SCALE = 11.52;
+const PLAYER_KART_SCALE = KART_SCALE;
 const BACKDROP_WIDTH = 8000;
 const BACKDROP_HEIGHT = 1000;
+const BACKDROP_SCALE = 0.6;
 const BACKDROP_Y_OFFSET = 60;
 const TRACK_LINE_FROM_BOTTOM = 177;
 const CART_Y_SHIFT = 0;
@@ -318,7 +319,9 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     0,
     100,
   );
-  const maxBackdropScroll = Math.max(0, BACKDROP_WIDTH - viewport.width);
+  const backdropWidthPx = Math.round(BACKDROP_WIDTH * BACKDROP_SCALE);
+  const backdropHeightPx = Math.round(BACKDROP_HEIGHT * BACKDROP_SCALE);
+  const maxBackdropScroll = Math.max(0, backdropWidthPx - viewport.width);
   const backgroundOffset = Math.round(clamp(trackProgress * maxBackdropScroll, 0, maxBackdropScroll));
 
   const playerStyle = {
@@ -348,8 +351,9 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             backgroundColor: '#0b0f1c',
             backgroundImage: `url(${ratioBackdrop})`,
             backgroundRepeat: 'no-repeat',
-            backgroundSize: `${BACKDROP_WIDTH * 0.6}px ${BACKDROP_HEIGHT * 0.6}px`,
+            backgroundSize: `${backdropWidthPx}px ${backdropHeightPx}px`,
             backgroundPosition: `${-backgroundOffset}px calc(100% - ${BACKDROP_Y_OFFSET}px)`,
+            imageRendering: 'auto',
           }}
         />
 
@@ -364,7 +368,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             </div>
 
             <motion.div
-              className="absolute z-40 flex h-24 w-36 items-center justify-center sm:h-28 sm:w-40 md:h-44 md:w-64"
+              className="absolute z-40 flex h-24 w-36 items-center justify-center overflow-hidden sm:h-28 sm:w-40 md:h-44 md:w-64"
               style={playerStyle}
               animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { x: [0, -4, 4, -3, 3, 0] } : { scale: 1 }}
               transition={{ duration: 0.35 }}
@@ -379,17 +383,17 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                   transition={{ duration: 0.25, repeat: Infinity, repeatType: 'mirror' }}
                 />
               ) : null}
-              <img src={playerKart} alt="Player kart" className="relative z-10 h-full w-full object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]" />
+              <img src={playerKart} alt="Player kart" className="relative z-10 h-full w-full object-cover object-center drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]" />
               {showStall ? (
                 <span className="absolute -left-2 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-slate-400/80" />
               ) : null}
             </motion.div>
 
             <motion.div
-              className="absolute z-30 flex h-24 w-36 items-center justify-center sm:h-28 sm:w-40 md:h-44 md:w-64"
+              className="absolute z-30 flex h-24 w-36 items-center justify-center overflow-hidden sm:h-28 sm:w-40 md:h-44 md:w-64"
               style={enemyStyle}
             >
-              <img src={enemyKart} alt="Enemy kart" className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(251,113,133,0.6)]" />
+              <img src={enemyKart} alt="Enemy kart" className="h-full w-full object-cover object-center drop-shadow-[0_0_18px_rgba(251,113,133,0.6)]" />
             </motion.div>
 
             {raceState === 'introCountdown' ? (
@@ -432,7 +436,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
         <GameScreenLayout
           className="relative z-10 px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-0 text-white"
           top={(
-            <div className="mt-[5px] flex flex-col gap-1.5">
+            <div className="mt-[-25px] flex flex-col gap-1.5">
               <div className="rounded-[1rem] border border-slate-700 bg-slate-900 px-3 py-2 text-center shadow-[0_12px_24px_rgba(2,6,23,0.25)]">
                 <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-200">Fuel Mix Question</div>
                 <div className="mt-1 text-[clamp(1rem,3.6vw,1.35rem)] font-black text-white">{question.prompt}</div>
