@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   GameUiShell,
 } from '../components/game-ui/GameUiKit';
@@ -163,7 +163,8 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const lives = sessionState?.lives ?? 3;
   const buildExplanation = (q: RatioFractionQuestion) => q.explanation;
   const playerKart = PLAYER_KARTS[avatarId] || kartBarratt;
-  
+  const enemyIntervalMs = levelId <= 2 ? 5000 : Math.max(500, 5000 - (levelId - 2) * 500);
+
 
   useEffect(() => {
     if (!raceViewportRef.current || typeof ResizeObserver === 'undefined') return;
@@ -196,7 +197,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   }, [viewport.width]);
 
   useEffect(() => {
-    const pace = tuning.enemyMoveIntervalMs;
+    const pace = enemyIntervalMs;
     const enemyStep = tuning.enemyAdvanceDistance;
 
     const interval = window.setInterval(() => {
@@ -344,13 +345,13 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const backgroundOffset = Math.round(clamp(trackProgress * maxBackdropScroll, 0, maxBackdropScroll));
 
   const playerStyle = {
-    transform: 'translate(-50%, -50%) scale(1.375)',
+    transform: 'translate(-50%, -50%) scale(2.0625)',
     top: `${trackLineY}%`,
     left: `${playerLeft}%`,
   };
 
   const enemyStyle = {
-    transform: 'translate(-50%, -50%) scale(1.375)',
+    transform: 'translate(-50%, -50%) scale(2.0625)',
     top: `${trackLineY}%`,
     left: `${enemyLeft}%`,
   };
@@ -419,6 +420,35 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                 {countdown || 'Go!'}
               </div>
             ) : null}
+
+            <AnimatePresence>
+              {raceState === 'playerWin' ? (
+                <motion.div
+                  key="winner"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  className="absolute inset-0 z-40 flex items-center justify-center bg-slate-950/55"
+                >
+                  <div className="rounded-full border border-emerald-200/60 bg-emerald-400/25 px-6 py-3 text-2xl font-black uppercase tracking-[0.2em] text-emerald-100 shadow-[0_12px_24px_rgba(16,185,129,0.35)]">
+                    Winner!
+                  </div>
+                </motion.div>
+              ) : null}
+              {raceState === 'enemyWin' ? (
+                <motion.div
+                  key="loser"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  className="absolute inset-0 z-40 flex items-center justify-center bg-slate-950/55"
+                >
+                  <div className="rounded-full border border-rose-200/60 bg-rose-400/25 px-6 py-3 text-2xl font-black uppercase tracking-[0.2em] text-rose-100 shadow-[0_12px_24px_rgba(244,63,94,0.35)]">
+                    You Lose
+                  </div>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
           </div>
         </div>
 
