@@ -713,6 +713,18 @@ button:disabled {
   max-height: calc(100dvh - 2rem);
 }
 
+/* Popup text should be white across all modal/overlay surfaces. */
+.licensed-overlay-card,
+.app-modal-panel,
+.casual-modal-panel,
+.premium-modal-shell,
+.licensed-overlay-card *,
+.app-modal-panel *,
+.casual-modal-panel *,
+.premium-modal-shell * {
+  color: #ffffff !important;
+}
+
 .ui-close-button {
   height: 2rem;
   width: 2rem;
