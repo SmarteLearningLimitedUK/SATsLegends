@@ -775,9 +775,9 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 className="absolute inset-0"
                 style={{ transform: 'translateY(var(--potion-cauldron-shift, 0px))' }}
               >
-                <div className="pointer-events-none absolute left-1/2 top-[84%] h-12 w-[68%] -translate-x-1/2 rounded-full bg-black/35 blur-md" />
+                <div className="pointer-events-none absolute left-1/2 top-[84%] h-14 w-[72%] -translate-x-1/2 rounded-full bg-black/55 blur-md" />
                 <div className="pointer-events-none absolute left-1/2 top-[76%] h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
-                <div className="absolute left-1/2 top-[72%] flex h-[18%] w-[48%] -translate-x-1/2 items-end justify-between px-5">
+                <div className="absolute left-1/2 top-[72%] flex h-[18%] w-[48%] -translate-x-1/2 translate-y-[15px] items-end justify-between px-5">
                   {[0, 1, 2].map((idx) => (
                     <motion.span
                       key={`flame-${idx}`}
@@ -791,7 +791,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                   src={cauldrenAndPotionArt}
                   alt=""
                   aria-hidden="true"
-                  className="pointer-events-none absolute left-1/2 bottom-[6%] h-[42%] max-w-none -translate-x-1/2 translate-y-[-5px] object-contain"
+                  className="pointer-events-none absolute left-1/2 bottom-[2%] h-[42%] max-w-none -translate-x-1/2 translate-y-[8px] object-contain"
                 />
                 <div className="absolute left-1/2 bottom-[27%] h-[14%] w-[34%] -translate-x-1/2 translate-y-[5px] overflow-hidden rounded-[46%]">
                   <motion.div
