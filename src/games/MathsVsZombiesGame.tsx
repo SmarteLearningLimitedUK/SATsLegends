@@ -83,8 +83,8 @@ const stateDuration = (state: ZombieState) => {
 const maxZombiesForLevel = (levelId: number) => {
   if (levelId <= 2) return 1;
   if (levelId <= 4) return 2;
-  if (levelId <= 6) return 3;
-  return 4;
+  if (levelId <= 6) return 3 + (levelId > 5 ? 1 : 0);
+  return 4 + (levelId > 5 ? 1 : 0);
 };
 
 const buildQuestion = (levelId: number): Question => {
@@ -256,7 +256,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       y: startY,
       health: baseZombieHealth,
       maxHealth: baseZombieHealth,
-      speed: 0.14 + (wave * 0.02) + Math.max(0, levelId - 1) * 0.012,
+      speed: 0.12 + (wave * 0.02) + levelId * 0.015,
       state: 'appear',
       frameIndex: 0,
       frameTime: 0,
