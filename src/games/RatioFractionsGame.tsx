@@ -10,6 +10,7 @@ import { DEFAULT_RACE_DIFFICULTY, RACE_TUNING, RaceDifficulty } from './ratioFra
 import { getQuestionTier, pickQuestionForTier } from './ratioFractionsRace/questionSelector';
 import { RatioFractionQuestion } from './ratioFractionsRace/types';
 import ratioBackdrop from '../assets/gokarts/racebkgrd-hd.png';
+import ratioBackdrop2x from '../assets/gokarts/racebkgrd-2x.jpg';
 import playerKart from '../assets/gokarts/12.png';
 import enemyKart from '../assets/gokarts/15.png';
 
@@ -320,7 +321,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     100,
   );
   const maxBackdropScroll = Math.max(0, BACKDROP_WIDTH - viewport.width);
-  const backgroundOffset = clamp(trackProgress * maxBackdropScroll, 0, maxBackdropScroll);
+  const backgroundOffset = Math.round(clamp(trackProgress * maxBackdropScroll, 0, maxBackdropScroll));
 
   const playerStyle = {
     transform: 'translate(-50%, -50%)',
@@ -347,7 +348,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
           className="pointer-events-none absolute inset-0"
           style={{
             backgroundColor: '#0b0f1c',
-            backgroundImage: `url(${ratioBackdrop})`,
+            backgroundImage: `image-set(url(${ratioBackdrop}) 1x, url(${ratioBackdrop2x}) 2x)`,
             backgroundRepeat: 'no-repeat',
             backgroundSize: `${BACKDROP_WIDTH}px ${BACKDROP_HEIGHT}px`,
             backgroundPosition: `${-backgroundOffset}px bottom`,
