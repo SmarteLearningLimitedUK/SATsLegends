@@ -36,6 +36,8 @@ type RaceState =
 const START_OFFSET = 0;
 const RACER_LERP = 0.16;
 const BASE_XP = 160;
+const BACKDROP_WIDTH = 12250;
+const BACKDROP_HEIGHT = 700;
 
 const shuffle = <T,>(items: T[]) => {
   const copy = [...items];
@@ -312,7 +314,8 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const showBoost = raceState === 'correctBoost';
   const showStall = raceState === 'incorrectStall';
   const trackLineY = 58;
-  const mapShift = -trackProgress * Math.max(320, viewport.width) * 2.1;
+  const maxBackdropScroll = Math.max(0, BACKDROP_WIDTH - viewport.width);
+  const backgroundOffset = clamp(trackProgress * maxBackdropScroll, 0, maxBackdropScroll);
 
   const playerStyle = {
     transform: 'translate(-50%, -50%)',
@@ -339,9 +342,9 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
           className="pointer-events-none absolute inset-0"
           style={{
             backgroundImage: `url(${ratioBackdrop})`,
-            backgroundRepeat: 'repeat-x',
-            backgroundSize: 'auto 100%',
-            backgroundPosition: `${mapShift}px center`,
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: `${BACKDROP_WIDTH}px 100%`,
+            backgroundPosition: `${-backgroundOffset}px center`,
           }}
         />
 
