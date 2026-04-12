@@ -38,6 +38,7 @@ const RACER_LERP = 0.16;
 const BASE_XP = 160;
 const BACKDROP_WIDTH = 12250;
 const BACKDROP_HEIGHT = 700;
+const TRACK_LINE_FROM_BOTTOM = 82;
 
 const shuffle = <T,>(items: T[]) => {
   const copy = [...items];
@@ -313,7 +314,11 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const finishLeft = 96;
   const showBoost = raceState === 'correctBoost';
   const showStall = raceState === 'incorrectStall';
-  const trackLineY = 58;
+  const trackLineY = clamp(
+    ((viewport.height - TRACK_LINE_FROM_BOTTOM) / Math.max(1, viewport.height)) * 100,
+    0,
+    100,
+  );
   const maxBackdropScroll = Math.max(0, BACKDROP_WIDTH - viewport.width);
   const backgroundOffset = clamp(trackProgress * maxBackdropScroll, 0, maxBackdropScroll);
 
@@ -341,10 +346,10 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
         <div
           className="pointer-events-none absolute inset-0"
           style={{
-            backgroundImage: `url(${ratioBackdrop})`,
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: `${BACKDROP_WIDTH}px 100%`,
-            backgroundPosition: `${-backgroundOffset}px center`,
+            backgroundImage: `linear-gradient(180deg,rgba(74,56,122,0.96)_0%,rgba(238,206,160,0.94)_62%,rgba(72,56,106,0.98)_100%), url(${ratioBackdrop})`,
+            backgroundRepeat: 'no-repeat, no-repeat',
+            backgroundSize: `100% 100%, ${BACKDROP_WIDTH}px ${BACKDROP_HEIGHT}px`,
+            backgroundPosition: `center top, ${-backgroundOffset}px bottom`,
           }}
         />
 
