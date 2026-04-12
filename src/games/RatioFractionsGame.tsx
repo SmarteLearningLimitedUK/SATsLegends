@@ -39,7 +39,8 @@ type RaceState =
 const START_OFFSET = 0;
 const RACER_LERP = 0.16;
 const BASE_XP = 160;
-const KART_SCALE = 2.4;
+const KART_SCALE = 2;
+const PLAYER_KART_SCALE = 4.8;
 const BACKDROP_WIDTH = 8000;
 const BACKDROP_HEIGHT = 1000;
 const BACKDROP_Y_OFFSET = 60;
@@ -320,7 +321,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const backgroundOffset = Math.round(clamp(trackProgress * maxBackdropScroll, 0, maxBackdropScroll));
 
   const playerStyle = {
-    transform: `translate3d(-50%, -50%, 0) scale(${KART_SCALE})`,
+    transform: `translate3d(-50%, -50%, 0) scale(${PLAYER_KART_SCALE})`,
     top: `${trackLineY}%`,
     left: `${playerLeft}%`,
   };
