@@ -391,10 +391,17 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
               animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { x: [0, -4, 4, -3, 3, 0] } : { scale: 1 }}
               transition={{ duration: 0.35 }}
             >
-              <img src={playerKart} alt="Player kart" className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]" />
               {showBoost ? (
-                <span className="absolute -left-2 top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-amber-200 shadow-[0_0_12px_rgba(251,191,36,0.8)]" />
+                <motion.span
+                  className="absolute -left-10 top-1/2 z-0 h-10 w-16 -translate-y-1/2 rounded-full blur-[0.5px]"
+                  style={{
+                    background: 'radial-gradient(circle at 75% 50%, rgba(255,255,255,0.6) 0%, rgba(253,224,71,0.9) 35%, rgba(251,146,60,0.95) 62%, rgba(239,68,68,0.2) 100%)',
+                  }}
+                  animate={{ scaleX: [0.9, 1.15, 0.95], opacity: [0.8, 1, 0.7] }}
+                  transition={{ duration: 0.25, repeat: Infinity, repeatType: 'mirror' }}
+                />
               ) : null}
+              <img src={playerKart} alt="Player kart" className="relative z-10 h-full w-full object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]" />
               {showStall ? (
                 <span className="absolute -left-2 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-slate-400/80" />
               ) : null}
