@@ -477,7 +477,6 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
       bottom={null}
       overlay={(
         <>
-          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(4,18,44,0.34),rgba(4,18,44,0.48)_55%,rgba(2,8,24,0.62)_100%)]" />
           <AnimatePresence>
             {gameState === 'complete' && (
               <motion.div

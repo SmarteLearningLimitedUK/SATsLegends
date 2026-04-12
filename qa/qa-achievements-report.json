@@ -1,0 +1,38 @@
+{
+  "url": "https://satslegendsfinal.vercel.app/",
+  "results": [
+    {
+      "device": "phone",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "status": "ok",
+      "error": null,
+      "consoleErrors": [],
+      "screenshot": "qa-achievements-phone.png"
+    },
+    {
+      "device": "ipad",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "status": "ok",
+      "error": null,
+      "consoleErrors": [],
+      "screenshot": "qa-achievements-ipad.png"
+    },
+    {
+      "device": "pc",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "status": "ok",
+      "error": null,
+      "consoleErrors": [],
+      "screenshot": "qa-achievements-pc.png"
+    }
+  ]
+}

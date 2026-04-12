@@ -273,8 +273,8 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
         </div>
       )}
       main={(
-        <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.05rem)]' : ''}`}>
-        <section className="z-10 flex min-h-0 w-full flex-[0.52] flex-col gap-2 overflow-hidden border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] px-2 pb-2 pt-3 sm:px-3 sm:pb-3 sm:pt-4 md:w-1/2 md:flex-1 md:gap-3 md:border-b-0 md:border-r md:p-5">
+        <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.05rem)]' : ''}`}>
+        <section className="z-10 flex min-h-0 w-full flex-1 flex-col gap-2 overflow-hidden border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] px-2 pb-2 pt-3 sm:px-3 sm:pb-3 sm:pt-4 md:gap-3 md:border-b md:border-cyan-200/12 md:p-5">
           <div className="mb-1 flex items-center justify-between">
             <div className="flex items-center gap-2 text-amber-500">
               <FileText className="h-5 w-5" />
@@ -383,14 +383,14 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           </div>
         </section>
 
-        <section className="z-10 flex min-h-0 w-full flex-[0.58] flex-col gap-2 overflow-hidden bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] px-2 pb-2 pt-3 sm:px-3 sm:pb-3 sm:pt-4 md:w-1/2 md:flex-1 md:gap-3 md:p-5">
+        <section className="z-10 flex w-full flex-col gap-2 bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] px-2 pb-2 pt-2 sm:px-3 sm:pb-3 sm:pt-2 md:gap-3 md:p-5">
           <div className="mb-1 flex items-center gap-2 text-amber-500">
             <Users className="h-5 w-5" />
             <h2 className="text-xs font-black uppercase tracking-widest">Suspect Lineup</h2>
           </div>
 
-          <div className="relative flex min-h-0 flex-1 flex-col">
-            <div className={`grid grid-cols-4 gap-1 content-start items-start sm:mt-auto md:gap-2 ${selectedSuspect ? 'opacity-0 pointer-events-none' : ''}`}>
+          <div className="relative">
+            <div className={`grid grid-cols-4 gap-1 items-center ${selectedSuspect ? 'opacity-0 pointer-events-none' : ''}`}>
               {suspects.map((suspect) => (
                 <motion.button
                   key={suspect.id}
@@ -490,7 +490,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             </AnimatePresence>
           </div>
 
-          <div className="mt-auto flex flex-col gap-1.5 pt-0.5">
+          <div className="mt-1 flex flex-col gap-1.5 pt-0.5">
             <AnimatePresence mode="wait">
               {gameState === 'success' ? (
                 <motion.button
