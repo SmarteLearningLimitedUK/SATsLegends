@@ -21,7 +21,6 @@ interface Zombie {
   lane: number;
   x: number; // 0..100
   y: number; // 0..100
-  xSpeed: number; // percent per second
   health: number;
   maxHealth: number;
   speed: number; // percent per second
@@ -43,6 +42,7 @@ const SPAWN_RIGHT_X = 96;
 const RIGHT_SPAWN_MIN_Y = 18;
 const RIGHT_SPAWN_MAX_Y = 62;
 const TARGET_Y = 78;
+const TARGET_X = 22;
 const ZOMBIE_SIZE = 52;
 const ANIM_FPS = 8;
 
@@ -254,7 +254,6 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       lane,
       x: startX,
       y: startY,
-      xSpeed: spawnSide === 'right' ? -(0.16 + Math.max(0, levelId - 1) * 0.01) : 0,
       health: baseZombieHealth,
       maxHealth: baseZombieHealth,
       speed: 0.14 + (wave * 0.02) + Math.max(0, levelId - 1) * 0.012,
@@ -351,8 +350,12 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       let nextY = zombie.y;
       let nextX = zombie.x;
       if (zombie.state !== 'attack' && zombie.state !== 'die') {
-        nextY += zombie.speed * dt;
-        nextX += zombie.xSpeed * dt;
+        const dx = TARGET_X - zombie.x;
+        const dy = TARGET_Y - zombie.y;
+        const distance = Math.max(0.001, Math.hypot(dx, dy));
+        const step = zombie.speed * dt;
+        nextX += (dx / distance) * step;
+        nextY += (dy / distance) * step;
       }
 
       let nextState = zombie.state;
