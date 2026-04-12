@@ -346,10 +346,11 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
         <div
           className="pointer-events-none absolute inset-0"
           style={{
-            backgroundImage: `linear-gradient(180deg,rgba(74,56,122,0.28)_0%,rgba(238,206,160,0.18)_62%,rgba(72,56,106,0.32)_100%), url(${ratioBackdrop})`,
-            backgroundRepeat: 'no-repeat, no-repeat',
-            backgroundSize: `100% 100%, ${BACKDROP_WIDTH}px ${BACKDROP_HEIGHT}px`,
-            backgroundPosition: `center top, ${-backgroundOffset}px bottom`,
+            backgroundColor: '#0b0f1c',
+            backgroundImage: `url(${ratioBackdrop})`,
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: `${BACKDROP_WIDTH}px ${BACKDROP_HEIGHT}px`,
+            backgroundPosition: `${-backgroundOffset}px bottom`,
           }}
         />
 
