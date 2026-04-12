@@ -481,8 +481,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
   return (
     <div
-      className="relative flex h-full w-full flex-col items-center overflow-hidden bg-cover bg-center bg-no-repeat font-sans text-white select-none"
-      style={{ backgroundImage: `url(${zombiePlayfield})` }}
+      className="relative flex h-full w-full flex-col items-center overflow-hidden font-sans text-white select-none"
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(30,58,138,0.18)_0%,rgba(5,10,26,0.22)_100%)]" />
 
@@ -491,7 +490,10 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           <TopBar XP={XP} brainPoints={zombiesDefeated} health={health} timer={timerLabel} onBack={onBack} />
         ) : null}
 
-        <div className={`relative mx-4 flex-1 overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/10 shadow-2xl ${useSharedTopHud ? 'mt-2' : 'mt-4'}`}>
+        <div
+          className={`relative mx-4 flex-1 overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/10 shadow-2xl ${useSharedTopHud ? 'mt-2' : 'mt-4'}`}
+          style={{ backgroundImage: `url(${zombiePlayfield})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}
+        >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_85%,rgba(56,189,248,0.06),transparent_48%)]" />
           <div className="absolute bottom-4 left-6 flex flex-col items-center gap-2">
             <div className="text-[11px] font-black uppercase tracking-[0.18em] text-cyan-100">You</div>
