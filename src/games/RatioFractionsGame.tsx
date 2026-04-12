@@ -370,7 +370,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             backgroundColor: '#0b0f1c',
             backgroundImage: `url(${ratioBackdrop})`,
             backgroundRepeat: 'no-repeat',
-            backgroundSize: `${BACKDROP_WIDTH * 0.85}px ${BACKDROP_HEIGHT * 0.85}px`,
+            backgroundSize: `${BACKDROP_WIDTH * 0.75}px ${BACKDROP_HEIGHT * 0.75}px`,
             backgroundPosition: `${-backgroundOffset}px calc(100% - ${BACKDROP_Y_OFFSET}px)`,
           }}
         />
@@ -423,7 +423,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
         </div>
 
         <GameScreenLayout
-          className="relative z-10 px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-0 text-white"
+          className="relative z-10 px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-0 text-white -mt-[20px]"
           top={(
             <div className="flex flex-col gap-1.5">
               <div className="rounded-[1rem] border border-slate-700 bg-slate-900 px-3 py-2 text-center shadow-[0_12px_24px_rgba(2,6,23,0.25)]">
