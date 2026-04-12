@@ -39,6 +39,7 @@ type RaceState =
 const START_OFFSET = 0;
 const RACER_LERP = 0.16;
 const BASE_XP = 160;
+const KART_SCALE = 2;
 const BACKDROP_WIDTH = 8000;
 const BACKDROP_HEIGHT = 1000;
 const BACKDROP_Y_OFFSET = 60;
@@ -151,7 +152,6 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const enemyPosRef = useRef(START_OFFSET);
   const playerTargetRef = useRef(START_OFFSET);
   const enemyTargetRef = useRef(START_OFFSET);
-  const enemyAdvanceQueueRef = useRef(0);
   const reportedResultRef = useRef(false);
 
   const trackProgress = Math.min(1, playerPosRef.current / tuning.trackLength);
@@ -201,11 +201,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     const enemyStep = tuning.enemyAdvanceDistance;
 
     const interval = window.setInterval(() => {
-      if (raceState === 'enemyWin' || raceState === 'playerWin') return;
-      if (raceState !== 'showingQuestion' || locked) {
-        enemyAdvanceQueueRef.current += 1;
-        return;
-      }
+      if (raceState === 'enemyWin' || raceState === 'playerWin' || raceState === 'introCountdown') return;
       enemyTargetRef.current = Math.min(tuning.trackLength, enemyTargetRef.current + enemyStep);
       if (enemyTargetRef.current >= tuning.trackLength) {
         setRaceState('enemyWin');
@@ -214,21 +210,6 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
     return () => window.clearInterval(interval);
   }, [locked, raceState, tuning.enemyAdvanceDistance, tuning.enemyMoveIntervalMs, tuning.trackLength]);
-
-  const applyQueuedEnemyAdvance = () => {
-    const queued = enemyAdvanceQueueRef.current;
-    if (queued <= 0) return false;
-    enemyAdvanceQueueRef.current = 0;
-    enemyTargetRef.current = Math.min(
-      tuning.trackLength,
-      enemyTargetRef.current + tuning.enemyAdvanceDistance * queued,
-    );
-    if (enemyTargetRef.current >= tuning.trackLength) {
-      setRaceState('enemyWin');
-      return true;
-    }
-    return false;
-  };
 
   useEffect(() => {
     if (raceState === 'playerWin' && !reportedResultRef.current) {
@@ -297,9 +278,6 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
           return;
         }
 
-        const enemyWon = applyQueuedEnemyAdvance();
-        if (enemyWon) return;
-
         setSelected(null);
         setLocked(false);
         setRoundIndex((prev) => prev + 1);
@@ -315,9 +293,6 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
       playerTargetRef.current = Math.min(tuning.trackLength, playerTargetRef.current + stumble);
     }
     window.setTimeout(() => {
-      const enemyWon = applyQueuedEnemyAdvance();
-      if (enemyWon) return;
-
       setSelected(null);
       setLocked(false);
       setRoundIndex((prev) => prev + 1);
@@ -345,13 +320,13 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const backgroundOffset = Math.round(clamp(trackProgress * maxBackdropScroll, 0, maxBackdropScroll));
 
   const playerStyle = {
-    transform: 'translate(-50%, -50%) scale(2.0625)',
+    transform: `translate3d(-50%, -50%, 0) scale(${KART_SCALE})`,
     top: `${trackLineY}%`,
     left: `${playerLeft}%`,
   };
 
   const enemyStyle = {
-    transform: 'translate(-50%, -50%) scale(2.0625)',
+    transform: `translate3d(-50%, -50%, 0) scale(${KART_SCALE})`,
     top: `${trackLineY}%`,
     left: `${enemyLeft}%`,
   };
