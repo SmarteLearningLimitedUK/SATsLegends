@@ -17,7 +17,7 @@ await page.addInitScript((payload) => {
 }, playerPayload);
 
 await page.goto(url, { waitUntil: 'networkidle' });
-await page.waitForTimeout(800);
+await page.waitForTimeout(1200);
 
 const startButton = page.getByRole('button', { name: /start game/i });
 if (await startButton.count()) {
