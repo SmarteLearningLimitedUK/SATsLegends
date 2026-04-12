@@ -129,7 +129,7 @@ const LogicSort: React.FC<LogicSortProps> = ({ onVictory, onGameOver, onBack }) 
   };
 
   return (
-    <div className="relative h-full w-full licensed-playfield-bg rounded-[2rem] md:rounded-[3rem] p-4 md:p-6 flex flex-col items-center gap-4 md:gap-6 shadow-2xl border-8 border-white/10 overflow-hidden">
+    <div className="relative h-full w-full licensed-playfield-bg rounded-[2rem] md:rounded-[3rem] p-4 pb-[calc(env(safe-area-inset-bottom)+5.2rem)] md:p-6 md:pb-16 flex flex-col items-center gap-4 md:gap-6 shadow-2xl border-8 border-white/10 overflow-hidden">
       {/* Header */}
       <div className="w-full flex justify-between items-center">
         <div className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full border border-white/20">
@@ -137,9 +137,18 @@ const LogicSort: React.FC<LogicSortProps> = ({ onVictory, onGameOver, onBack }) 
           <span className="text-white font-black">{XP}</span>
         </div>
         <h2 className="text-2xl font-black text-white tracking-widest uppercase">Logic Sort</h2>
-        <div className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full border border-white/20">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full border border-white/20">
           <Timer className="text-blue-400 w-5 h-5" />
           <span className="text-white font-black">{timeLeft}s</span>
+        </div>
+          <button
+            onClick={() => generateLevel(level)}
+            className="ui-icon-button flex h-10 w-10 items-center justify-center p-0 text-white"
+            aria-label="Reset level"
+          >
+            <RefreshCw size={18} />
+          </button>
         </div>
       </div>
 
@@ -197,14 +206,6 @@ const LogicSort: React.FC<LogicSortProps> = ({ onVictory, onGameOver, onBack }) 
           </div>
         ))}
       </div>
-
-      {/* Reset Button */}
-      <button 
-        onClick={() => generateLevel(level)}
-        className="ui-icon-button absolute bottom-4 right-4 flex h-12 w-12 items-center justify-center p-0 text-white md:bottom-6 md:right-6 md:h-14 md:w-14"
-      >
-        <RefreshCw size={24} />
-      </button>
 
       {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10">

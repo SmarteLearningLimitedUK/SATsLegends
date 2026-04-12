@@ -68,6 +68,9 @@ const FRAMES_BY_STATE: Record<ZombieState, string[]> = {
 };
 
 const stateDuration = (state: ZombieState) => {
+  if (state === 'attack') return 1.8;
+  if (state === 'appear') return 0.6;
+  if (state === 'die') return 0.7;
   const frameCount = FRAMES_BY_STATE[state]?.length || 1;
   return frameCount / ANIM_FPS;
 };
@@ -203,7 +206,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   const roundSeconds = useMemo(() => 70 + (levelId * 6), [levelId]);
   const victoryTargetScore = useMemo(() => 1200 + (levelId * 220), [levelId]);
   const baseZombieHealth = useMemo(() => 1, []);
-  const spawnDelayMs = useMemo(() => Math.max(2300, 4200 - (levelId * 150)), [levelId]);
+  const spawnDelayMs = useMemo(() => Math.max(2600, 5200 - (levelId * 220)), [levelId]);
 
   const [XP, setScore] = useState(0);
   const [zombiesDefeated, setZombiesDefeated] = useState(0);
@@ -241,7 +244,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       y: SPAWN_Y,
       health: baseZombieHealth,
       maxHealth: baseZombieHealth,
-      speed: 0.65 + (wave * 0.08) + Math.max(0, levelId - 1) * 0.04,
+      speed: 0.14 + (wave * 0.02) + Math.max(0, levelId - 1) * 0.012,
       state: 'appear',
       frameIndex: 0,
       frameTime: 0,
@@ -287,9 +290,9 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     setFeedback('');
     setLocked(false);
     idRef.current = 1;
-    spawnTimerRef.current = 0;
+    spawnTimerRef.current = spawnDelayMs;
     lastTimeRef.current = 0;
-  }, [levelId, roundSeconds]);
+  }, [levelId, roundSeconds, spawnDelayMs]);
 
   useEffect(() => {
     if (!gameActive || endedRef.current) return;

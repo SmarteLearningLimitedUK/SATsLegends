@@ -170,7 +170,7 @@ const CoinBarBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships, 
       <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/62 md:text-[10px]">{label}</div>
       <div className="mt-3 grid grid-cols-4 items-end gap-2 md:gap-3">
         {ships.map((ship) => (
-          <div key={ship.id} className="flex flex-col items-center gap-2">
+          <div key={ship.id} className="flex flex-col items-center gap-1.5">
             <div className="flex h-20 w-full items-end justify-center md:h-24">
               <div className="relative flex w-full max-w-[4rem] flex-col justify-end gap-1">
                 {Array.from({ length: ship.value }).map((_, index) => (
@@ -183,8 +183,12 @@ const CoinBarBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships, 
               </div>
             </div>
             <div className="text-center">
-              <div className="text-[11px] font-black text-white md:text-sm">{ship.label}</div>
-              <div className="text-[10px] font-bold text-amber-100/80 md:text-xs">{ship.value} chests</div>
+              <div className="mx-auto text-[8px] font-black leading-tight text-white md:text-[9px]">
+                {ship.label.split(' ')[0].slice(0, 4)}
+              </div>
+              <div className="text-[7px] font-bold leading-tight text-amber-100/80 md:text-[8px]">
+                {ship.value}
+              </div>
             </div>
           </div>
         ))}
@@ -257,9 +261,9 @@ const PieShareBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships,
             <div key={ship.id} className="flex items-center justify-between rounded-lg border border-white/10 bg-white/6 px-2 py-1">
               <div className="flex items-center gap-2">
                 <span className={`h-3 w-3 rounded-full bg-gradient-to-r ${ship.color}`} />
-                <span className="text-[11px] font-bold text-white">{ship.label}</span>
+                <span className="max-w-[5.5rem] truncate text-[10px] font-bold text-white">{ship.label}</span>
               </div>
-              <span className="text-[11px] font-black text-amber-100">{ship.value}</span>
+              <span className="text-[10px] font-black text-amber-100">{ship.value}</span>
             </div>
           ))}
         </div>
@@ -269,13 +273,15 @@ const PieShareBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships,
 };
 
 const TableBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships, label }) => (
-    <div className="rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.24))] p-2.5 shadow-[0_18px_28px_rgba(15,23,42,0.22)]">
-      <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/70 md:text-[10px]">{label}</div>
+  <div className="rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.24))] p-2.5 shadow-[0_18px_28px_rgba(15,23,42,0.22)]">
+    <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/70 md:text-[10px]">{label}</div>
     <div className="mt-3 space-y-1.5">
       {ships.map((ship) => (
-        <div key={ship.id} className="grid grid-cols-[1fr_auto] items-center rounded-[1rem] border border-white/10 bg-black/14 px-2.5 py-1.5">
-          <div className="text-xs font-black text-white md:text-sm">{ship.label}</div>
-          <div className="rounded-full border border-amber-200/20 bg-amber-400/10 px-3 py-1 text-xs font-black text-amber-50">{ship.value} chests</div>
+        <div key={ship.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-center rounded-[1rem] border border-white/10 bg-black/14 px-2.5 py-1.5">
+          <div className="truncate text-[10px] font-black text-white md:text-[11px]">{ship.label}</div>
+          <div className="rounded-full border border-amber-200/20 bg-amber-400/10 px-3 py-1 text-[10px] font-black text-amber-50">
+            {ship.value} chests
+          </div>
         </div>
       ))}
     </div>

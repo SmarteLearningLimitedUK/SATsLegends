@@ -34,10 +34,8 @@ type RaceState =
   | 'enemyWin';
 
 const START_OFFSET = 0;
-const CAMERA_LERP = 0.08;
 const RACER_LERP = 0.16;
 const BASE_XP = 160;
-const CAMERA_EDGE_THRESHOLD = 0.6;
 
 const shuffle = <T,>(items: T[]) => {
   const copy = [...items];
@@ -135,7 +133,6 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const enemyPosRef = useRef(START_OFFSET);
   const playerTargetRef = useRef(START_OFFSET);
   const enemyTargetRef = useRef(START_OFFSET);
-  const cameraXRef = useRef(0);
   const enemyAdvanceQueueRef = useRef(0);
   const reportedResultRef = useRef(false);
 
@@ -170,15 +167,6 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
       playerPosRef.current = playerX + (playerTarget - playerX) * RACER_LERP;
       enemyPosRef.current = enemyX + (enemyTarget - enemyX) * RACER_LERP;
-
-      // Keep the player in view and only scroll once the kart approaches the right edge.
-      const edgeX = cameraXRef.current + viewport.width * CAMERA_EDGE_THRESHOLD;
-      let cameraTarget = cameraXRef.current;
-      if (playerPosRef.current > edgeX) {
-        cameraTarget = playerPosRef.current - viewport.width * CAMERA_EDGE_THRESHOLD;
-      }
-      cameraTarget = clamp(cameraTarget, 0, tuning.trackLength - viewport.width);
-      cameraXRef.current = cameraXRef.current + (cameraTarget - cameraXRef.current) * CAMERA_LERP;
 
       setRenderTick((prev) => prev + 1);
       frameId = requestAnimationFrame(tick);
@@ -318,27 +306,29 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     }, tuning.incorrectFeedbackMs);
   };
 
-  const worldOffset = -cameraXRef.current;
-  const playerX = playerPosRef.current;
-  const enemyX = enemyPosRef.current;
-  const finishX = tuning.trackLength;
+  const playerLeft = clamp((playerPosRef.current / tuning.trackLength) * 100, 4, 96);
+  const enemyLeft = clamp((enemyPosRef.current / tuning.trackLength) * 100, 4, 96);
+  const finishLeft = 96;
   const showBoost = raceState === 'correctBoost';
   const showStall = raceState === 'incorrectStall';
-  const trackLineY = 64;
+  const trackLineY = 62;
 
   const playerStyle = {
-    transform: `translate(${playerX + worldOffset}px, -50%)`,
+    transform: 'translate(-50%, -50%)',
     top: `${trackLineY}%`,
+    left: `${playerLeft}%`,
   };
 
   const enemyStyle = {
-    transform: `translate(${enemyX + worldOffset}px, -50%)`,
+    transform: 'translate(-50%, -50%)',
     top: `${trackLineY}%`,
+    left: `${enemyLeft}%`,
   };
 
   const finishStyle = {
-    transform: `translate(${finishX + worldOffset}px, -50%)`,
+    transform: 'translate(-50%, -50%)',
     top: `${trackLineY - 8}%`,
+    left: `${finishLeft}%`,
   };
 
   return (
@@ -376,46 +366,49 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             </div>
           )}
           main={(
-            <div
-              ref={raceViewportRef}
-              className="relative z-10 flex min-h-0 flex-1 w-full overflow-hidden"
-            >
-              <div className="absolute inset-0">
-                <div
-                  className="absolute flex h-12 w-12 items-center justify-center rounded-full border border-amber-200 bg-amber-400 text-xs font-black uppercase text-slate-900"
-                  style={finishStyle}
-                >
-                  Finish
+            <div className="relative z-10 flex min-h-0 flex-1 items-center justify-center">
+              <div
+                ref={raceViewportRef}
+                className="relative h-[14rem] w-full max-w-[26rem] overflow-hidden sm:h-[15rem] sm:max-w-[30rem] md:h-[16rem] md:max-w-[32rem]"
+              >
+                <div className="absolute inset-0 z-20">
+                  <div className="absolute inset-x-[6%] top-[62%] h-2 rounded-full bg-white/25 shadow-[0_0_12px_rgba(255,255,255,0.35)]" />
+                  <div
+                    className="absolute z-30 flex h-12 w-12 items-center justify-center rounded-full border border-amber-200 bg-amber-400 text-xs font-black uppercase text-slate-900"
+                    style={finishStyle}
+                  >
+                    Finish
+                  </div>
+
+                  <motion.div
+                    className="absolute z-30 flex h-24 w-36 items-center justify-center sm:h-28 sm:w-40 md:h-44 md:w-64"
+                    style={playerStyle}
+                    animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { x: [0, -4, 4, -3, 3, 0] } : { scale: 1 }}
+                    transition={{ duration: 0.35 }}
+                  >
+                    <img src={playerKart} alt="Player kart" className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]" />
+                    {showBoost ? (
+                      <span className="absolute -left-2 top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-amber-200 shadow-[0_0_12px_rgba(251,191,36,0.8)]" />
+                    ) : null}
+                    {showStall ? (
+                      <span className="absolute -left-2 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-slate-400/80" />
+                    ) : null}
+                  </motion.div>
+
+                  <motion.div
+                    className="absolute z-30 flex h-24 w-36 items-center justify-center sm:h-28 sm:w-40 md:h-44 md:w-64"
+                    style={enemyStyle}
+                  >
+                    <img src={enemyKart} alt="Enemy kart" className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(251,113,133,0.6)]" />
+                  </motion.div>
                 </div>
 
-                <motion.div
-                  className="absolute flex h-64 w-96 items-center justify-center"
-                  style={playerStyle}
-                  animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { x: [0, -4, 4, -3, 3, 0] } : { scale: 1 }}
-                  transition={{ duration: 0.35 }}
-                >
-                  <img src={playerKart} alt="Player kart" className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]" />
-                  {showBoost ? (
-                    <span className="absolute -left-2 top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-amber-200 shadow-[0_0_12px_rgba(251,191,36,0.8)]" />
-                  ) : null}
-                  {showStall ? (
-                    <span className="absolute -left-2 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-slate-400/80" />
-                  ) : null}
-                </motion.div>
-
-                <motion.div
-                  className="absolute flex h-64 w-96 items-center justify-center"
-                  style={enemyStyle}
-                >
-                  <img src={enemyKart} alt="Enemy kart" className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(251,113,133,0.6)]" />
-                </motion.div>
+                {raceState === 'introCountdown' ? (
+                  <div className="absolute inset-0 flex items-center justify-center bg-slate-950/70 text-5xl font-black text-amber-100">
+                    {countdown || 'Go!'}
+                  </div>
+                ) : null}
               </div>
-
-              {raceState === 'introCountdown' ? (
-                <div className="absolute inset-0 flex items-center justify-center bg-slate-950/70 text-5xl font-black text-amber-100">
-                  {countdown || 'Go!'}
-                </div>
-              ) : null}
             </div>
           )}
           bottom={(

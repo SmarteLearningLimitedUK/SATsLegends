@@ -292,25 +292,25 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
 
       <div className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.6rem)] md:pt-[calc(env(safe-area-inset-top)+4.9rem)]' : 'pt-[calc(env(safe-area-inset-top)+2.4rem)]'}`}>
         <PuzzleStage className="flex h-full min-h-0 flex-1 flex-col gap-2 md:gap-3">
-          <StoryCard className="bg-white/85 text-slate-900 shadow-[0_10px_20px_rgba(2,6,23,0.18)]">
-            <p className="text-sm font-semibold text-slate-900 md:text-base">
+          <StoryCard className="bg-black/25 text-slate-100 shadow-[0_10px_20px_rgba(2,6,23,0.18)]">
+            <p className="text-sm font-semibold text-white/90 md:text-base">
               The summit traders need the exact change for every order.
             </p>
           </StoryCard>
 
-          <TaskCard className="bg-white text-slate-900 shadow-[0_10px_20px_rgba(2,6,23,0.18)]">
+          <TaskCard className="bg-black/25 text-slate-100 shadow-[0_10px_20px_rgba(2,6,23,0.18)]">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-900/80">Change Counter</div>
-                <div className="mt-1 text-base font-black text-slate-900 md:text-lg">
+                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-200/90">Change Counter</div>
+                <div className="mt-1 text-base font-black text-white md:text-lg">
                   A {question.item} costs {formatMoney(question.costPence)}. You pay with {formatMoney(question.paidPence)}.
                 </div>
               </div>
-              <div className="rounded-full bg-amber-200/60 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-900">
+              <div className="rounded-full bg-amber-200/25 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-100">
                 Round {roundIndex + 1}/{TOTAL_ROUNDS}
               </div>
             </div>
-            <div className="mt-2 text-[11px] font-semibold text-slate-600 md:text-sm">
+            <div className="mt-2 text-[11px] font-semibold text-cyan-100/85 md:text-sm">
               How much change should you get back?
             </div>
           </TaskCard>
@@ -342,7 +342,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
                       ? option === question.correct
                         ? 'border-emerald-200/70 bg-emerald-300/50 text-emerald-950'
                         : 'border-rose-200/70 bg-rose-300/50 text-amber-950'
-                      : 'border-white/30 bg-white/15 text-white'
+                      : 'border-white/40 bg-white/88 text-slate-900 hover:bg-white'
                   }`}
                 >
                   {option}

@@ -1,0 +1,345 @@
+{
+  "url": "http://127.0.0.1:3001/",
+  "viewport": {
+    "width": 768,
+    "height": 1024
+  },
+  "results": [
+    {
+      "island": "Arithmetic Acropolis",
+      "game": "Place Value Panic",
+      "screenshot": "qa-ipad-place-value-panic.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Arithmetic Acropolis",
+      "game": "Number Line Ninja",
+      "screenshot": "qa-ipad-number-line-ninja.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Arithmetic Acropolis",
+      "game": "Prime Pop",
+      "screenshot": "qa-ipad-prime-pop.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Arithmetic Acropolis",
+      "game": "Rounding Rocket",
+      "screenshot": "qa-ipad-rounding-rocket.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Arithmetic Acropolis",
+      "game": "Maths vs Zombies",
+      "screenshot": "qa-ipad-maths-vs-zombies.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Fraction Forest",
+      "game": "Take-Out Rush",
+      "screenshot": "qa-ipad-take-out-rush.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Fraction Forest",
+      "game": "Fraction Forge",
+      "screenshot": "qa-ipad-fraction-forge.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Fraction Forest",
+      "game": "Match-3 Equivalence",
+      "screenshot": "qa-ipad-match-3-equivalence.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Fraction Forest",
+      "game": "Percent Power",
+      "screenshot": "qa-ipad-percent-power.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Fraction Forest",
+      "game": "Simplify Sprint",
+      "screenshot": "qa-ipad-simplify-sprint.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Geometry Glacier",
+      "game": "Angle Arena",
+      "screenshot": "qa-ipad-angle-arena.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Geometry Glacier",
+      "game": "Polygon Palace",
+      "screenshot": "qa-ipad-polygon-palace.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Geometry Glacier",
+      "game": "Area Architect",
+      "screenshot": "qa-ipad-area-architect.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Geometry Glacier",
+      "game": "Rotation Station",
+      "screenshot": "qa-ipad-rotation-station.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Geometry Glacier",
+      "game": "Coordinates Quest",
+      "screenshot": "qa-ipad-coordinates-quest.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Geometry Glacier",
+      "game": "Chrono Dash: Time Trial",
+      "screenshot": "qa-ipad-chrono-dash-time-trial.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Geometry Glacier",
+      "game": "Conversion Canyon",
+      "screenshot": "qa-ipad-conversion-canyon.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Geometry Glacier",
+      "game": "Perimeter Path",
+      "screenshot": "qa-ipad-perimeter-path.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Data Desert",
+      "game": "Mean Machine",
+      "screenshot": "qa-ipad-mean-machine.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Data Desert",
+      "game": "Mode Miner",
+      "screenshot": "qa-ipad-mode-miner.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Data Desert",
+      "game": "Graph Grabber",
+      "screenshot": "qa-ipad-graph-grabber.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Data Desert",
+      "game": "Line Graph Lab",
+      "screenshot": "qa-ipad-line-graph-lab.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Data Desert",
+      "game": "Data Detective",
+      "screenshot": "qa-ipad-data-detective.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Operations Outpost",
+      "game": "Factor Frenzy",
+      "screenshot": "qa-ipad-factor-frenzy.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Operations Outpost",
+      "game": "Multiplication Mine",
+      "screenshot": "qa-ipad-multiplication-mine.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Operations Outpost",
+      "game": "Division Dock",
+      "screenshot": "qa-ipad-division-dock.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Operations Outpost",
+      "game": "Order Ops Arena",
+      "screenshot": "qa-ipad-order-ops-arena.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Operations Outpost",
+      "game": "Formula Forge",
+      "screenshot": "qa-ipad-formula-forge.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Operations Outpost",
+      "game": "Remainder Run",
+      "screenshot": "qa-ipad-remainder-run.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Measurement Mountain",
+      "game": "Problem Pyramid",
+      "screenshot": "qa-ipad-problem-pyramid.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Measurement Mountain",
+      "game": "Unit Mixer",
+      "screenshot": "qa-ipad-unit-mixer.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Measurement Mountain",
+      "game": "Change Counter",
+      "screenshot": "qa-ipad-change-counter.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Ratio Rapids",
+      "game": "Potion Panic",
+      "screenshot": "qa-ipad-potion-panic.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Ratio Rapids",
+      "game": "Share Splitter",
+      "screenshot": "qa-ipad-share-splitter.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Ratio Rapids",
+      "game": "Ratio Fractions",
+      "screenshot": "qa-ipad-ratio-fractions.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Ratio Rapids",
+      "game": "Scale Builder",
+      "screenshot": "qa-ipad-scale-builder.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Cursed Colosseum",
+      "game": "Tower Of Factors",
+      "screenshot": "qa-ipad-tower-of-factors.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Cursed Colosseum",
+      "game": "Crystal Core",
+      "screenshot": "qa-ipad-crystal-core.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Cursed Colosseum",
+      "game": "Mirror Gate",
+      "screenshot": "qa-ipad-mirror-gate.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Cursed Colosseum",
+      "game": "Scales Of The Sun",
+      "screenshot": "qa-ipad-scales-of-the-sun.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Cursed Colosseum",
+      "game": "Observatory Overload",
+      "screenshot": "qa-ipad-observatory-overload.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Cursed Colosseum",
+      "game": "Matrix Match",
+      "screenshot": "qa-ipad-matrix-match.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Cursed Colosseum",
+      "game": "Reasoning Quest",
+      "screenshot": "qa-ipad-reasoning-quest.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Cursed Colosseum",
+      "game": "Multi-Step Marathon",
+      "screenshot": "qa-ipad-multi-step-marathon.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Cursed Colosseum",
+      "game": "Strategy Survival",
+      "screenshot": "qa-ipad-strategy-survival.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Cursed Colosseum",
+      "game": "Mixed Mastery",
+      "screenshot": "qa-ipad-mixed-mastery.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Cursed Colosseum",
+      "game": "Timed Test Trials",
+      "screenshot": "qa-ipad-timed-test-trials.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Cursed Colosseum",
+      "game": "Median Master",
+      "screenshot": "qa-ipad-median-master.png",
+      "status": "captured",
+      "error": null
+    }
+  ]
+}

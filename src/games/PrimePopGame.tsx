@@ -216,6 +216,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
   const config = useMemo(() => getConfig(levelId), [levelId]);
   const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
   const [isPhone, setIsPhone] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 768 : true));
+  const [usesSharedHud, setUsesSharedHud] = useState(false);
   const onVictoryRef = useRef(onVictory);
   const onGameOverRef = useRef(onGameOver);
 
@@ -292,6 +293,11 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    setUsesSharedHud(Boolean(document.querySelector('[data-unified-minigame-hud="true"]')));
+  }, []);
+
   const finalize = useCallback((finalScore: number) => {
     if (overRef.current || reportedResultRef.current) return;
     overRef.current = true;
@@ -318,7 +324,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     const radius = randomBetween(bubbleRuntime.minRadius, bubbleRuntime.maxRadius);
     const margin = radius + 2.8;
     let x = randomBetween(margin, 100 - margin);
-    let y = randomBetween(margin, 67 - margin);
+    let y = randomBetween(72, 94);
 
     for (let i = 0; i < 48; i += 1) {
       const hasOverlap = existing.some((bubble) => {
@@ -328,7 +334,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
       });
       if (!hasOverlap) break;
       x = randomBetween(margin, 100 - margin);
-      y = randomBetween(margin, 67 - margin);
+      y = randomBetween(72, 94);
     }
 
     const pickPrime = Math.random() < config.primeChance;
@@ -356,7 +362,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     return {
       id: bubbleIdRef.current++,
       x,
-      y: randomBetween(96, 110),
+      y,
       drift: (Math.random() < 0.5 ? -1 : 1) * randomBetween(1.1, 2.7),
       vy: randomBetween(bubbleRuntime.minSpeed, bubbleRuntime.maxSpeed) * (prime ? PRIME_SPEED_MULTIPLIER : 1),
       radius,
@@ -559,11 +565,18 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
       style={{ backgroundImage: `url(${primePopBackground})` }}
     >
       <div className="relative z-10 flex h-full min-h-0 w-full flex-col pt-[env(safe-area-inset-top)]">
+        <div className={`pointer-events-none px-3 ${usesSharedHud ? 'pt-[calc(env(safe-area-inset-top)+3.9rem)]' : 'pt-3'}`}>
+          <div className="mx-auto max-w-[22rem] rounded-[1.05rem] border border-cyan-100/40 bg-slate-950/70 px-4 py-2 text-center shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
+            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-200/90">Prime Pop</div>
+            <div className="mt-1 text-[clamp(1rem,3.6vw,1.25rem)] font-black text-white">Pop the prime numbers</div>
+            <div className="mt-0.5 text-[10px] font-semibold text-cyan-100/80">Avoid the non-primes before they reach the line.</div>
+          </div>
+        </div>
 
         <motion.div
           animate={screenShake ? { x: [0, -8, 8, -5, 5, -2, 0], y: [0, 2, -2, 0] } : { x: 0, y: 0 }}
           transition={{ duration: 0.28 }}
-          className="relative min-h-0 flex-1 overflow-hidden bg-transparent"
+          className="relative min-h-0 flex-1 overflow-hidden bg-transparent pt-1"
         >
           <div
             className="pointer-events-none absolute left-0 right-0 z-20 flex items-center justify-center"

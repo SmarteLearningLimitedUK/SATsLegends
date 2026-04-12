@@ -12,7 +12,6 @@ import food7 from '../assets/take_out/food/7.png';
 import food8 from '../assets/take_out/food/8.png';
 import food9 from '../assets/take_out/food/9.png';
 import FoodGameShell from '../components/FoodGameShell';
-import targetOrderBoard from '../assets/casual_ui/dialogs_panels/panel.png';
 import defaultMonster from '../assets/bosses/goblin.png';
 import { triggerHaptic } from '../haptics';
 
@@ -589,23 +588,15 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
 
         <main className="relative mt-1.5 flex min-h-0 flex-1 flex-col gap-2 pb-[calc(env(safe-area-inset-bottom)+3.9rem)]">
           <section className="relative flex min-h-[16rem] flex-1 items-start justify-center">
-            <div className="absolute left-1/2 top-[6%] w-[min(88vw,20rem)] -translate-x-1/2">
-              <div className="relative">
-                <img
-                  src={targetOrderBoard}
-                  alt=""
-                  aria-hidden="true"
-                  draggable={false}
-                  className="pointer-events-none h-auto w-full object-contain"
-                />
-                <div className="absolute inset-x-[16%] top-[16%] text-center text-white">
-                  <div className="text-[clamp(1.25rem,5.2vw,1.8rem)] font-black text-amber-100 drop-shadow-[0_2px_8px_rgba(2,6,23,0.7)]">
-                    {asDisplayFraction(order.target)}
-                  </div>
-                </div>
+            <div className="absolute left-1/2 top-[7%] w-[min(80vw,18rem)] -translate-x-1/2 text-center">
+              <div className="text-[9px] font-black uppercase tracking-[0.18em] text-amber-100/80 drop-shadow-[0_2px_6px_rgba(2,6,23,0.8)]">
+                Order Target
+              </div>
+              <div className="mt-1 text-[clamp(1.3rem,5.6vw,2rem)] font-black text-amber-100 drop-shadow-[0_3px_10px_rgba(2,6,23,0.8)]">
+                {asDisplayFraction(order.target)}
               </div>
             </div>
-            <div className="pointer-events-none absolute left-1/2 bottom-[12%] h-[30%] w-[min(58vw,15rem)] -translate-x-1/2 overflow-hidden">
+            <div className="pointer-events-none absolute left-1/2 bottom-[6%] h-[34%] w-[min(64vw,16rem)] -translate-x-1/2 overflow-hidden">
               <img
                 src={orderMonster}
                 alt=""

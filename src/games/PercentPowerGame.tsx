@@ -50,10 +50,23 @@ const shuffle = <T,>(items: T[]): T[] => {
 };
 
 const makeOptions = (correct: string, wrongValues: string[]) => {
-  const options = shuffle([correct, ...wrongValues.slice(0, 3)]);
+  const unique = Array.from(new Set([correct, ...wrongValues]));
+  const filtered = unique.filter((value) => value !== correct);
+  const options = [correct, ...filtered.slice(0, 3)];
+
+  let pad = 1;
+  while (options.length < 4) {
+    const candidate = `${Number(correct) + pad}`;
+    if (!options.includes(candidate)) {
+      options.push(candidate);
+    }
+    pad += 1;
+  }
+
+  const shuffled = shuffle(options);
   return {
-    options,
-    answerIndex: options.indexOf(correct),
+    options: shuffled,
+    answerIndex: shuffled.indexOf(correct),
   };
 };
 

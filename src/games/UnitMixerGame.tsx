@@ -237,17 +237,17 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
             </p>
           </StoryCard>
 
-          <TaskCard className="bg-[linear-gradient(180deg,rgba(255,255,255,0.95),rgba(245,250,255,0.9))] text-slate-900">
+          <TaskCard className="bg-black/25 text-slate-100">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-900/80">Unit Mixer</div>
-                <div className="mt-1 text-base font-black text-slate-900 md:text-lg">{question.prompt}</div>
+                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-200/90">Unit Mixer</div>
+                <div className="mt-1 text-base font-black text-white md:text-lg">{question.prompt}</div>
               </div>
-              <div className="rounded-full bg-amber-200/60 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-900">
+              <div className="rounded-full bg-amber-200/25 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-100">
                 Round {roundIndex + 1}/{TOTAL_ROUNDS}
               </div>
             </div>
-            <div className="mt-2 text-[11px] font-semibold text-slate-600 md:text-sm">{question.sublabel}</div>
+            <div className="mt-2 text-[11px] font-semibold text-cyan-100/85 md:text-sm">{question.sublabel}</div>
           </TaskCard>
 
           <div className="flex min-h-0 flex-1 flex-col gap-2 md:gap-3">
@@ -272,7 +272,7 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
                       ? index === question.answerIndex
                         ? 'border-emerald-200/70 bg-emerald-300/50 text-emerald-950'
                         : 'border-rose-200/70 bg-rose-300/50 text-amber-950'
-                      : 'border-white/30 bg-white/15 text-white'
+                      : 'border-white/40 bg-white/88 text-slate-900 hover:bg-white'
                   }`}
                 >
                   {option}

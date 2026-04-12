@@ -283,23 +283,23 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
 
       <div className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.6rem)] md:pt-[calc(env(safe-area-inset-top)+4.9rem)]' : 'pt-[calc(env(safe-area-inset-top)+2.4rem)]'}`}>
         <PuzzleStage className="flex h-full min-h-0 flex-1 flex-col gap-2 md:gap-3">
-          <StoryCard className="bg-white/8 text-white">
+          <StoryCard className="bg-black/25 text-slate-100">
             <p className="text-sm font-semibold text-white/90 md:text-base">
               Choose the best plan to clear the next path.
             </p>
           </StoryCard>
 
-          <TaskCard className="bg-[linear-gradient(180deg,rgba(255,255,255,0.95),rgba(245,250,255,0.9))] text-slate-900">
+          <TaskCard className="bg-black/25 text-slate-100">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-900/80">Reasoning Quest</div>
-                <div className="mt-1 text-base font-black text-slate-900 md:text-lg">{activeQuestion.prompt}</div>
+                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-200/90">Reasoning Quest</div>
+                <div className="mt-1 text-base font-black text-white md:text-lg">{activeQuestion.prompt}</div>
               </div>
-              <div className="rounded-full bg-amber-200/60 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-900">
+              <div className="rounded-full bg-amber-200/25 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-100">
                 Round {roundIndex + 1}/{TOTAL_ROUNDS}
               </div>
             </div>
-            <div className="mt-2 text-[11px] font-semibold text-slate-600 md:text-sm">
+            <div className="mt-2 text-[11px] font-semibold text-cyan-100/85 md:text-sm">
               Think it through before you answer.
             </div>
           </TaskCard>
@@ -311,14 +311,14 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
                 whileTap={{ scale: 0.97 }}
                 onClick={() => handleAnswer(index)}
                 disabled={locked}
-                className={`flex min-h-[3.6rem] items-center justify-center rounded-[1.1rem] border text-base font-black shadow-[0_12px_20px_rgba(2,6,23,0.2)] transition md:min-h-[4.1rem] md:text-xl ${
-                  selectedIndex === index
-                    ? index === activeQuestion.correctIndex
-                      ? 'border-emerald-200/70 bg-emerald-300/50 text-emerald-950'
-                      : 'border-rose-200/70 bg-rose-300/50 text-amber-950'
-                    : 'border-white/30 bg-white/15 text-white'
-                }`}
-              >
+              className={`flex min-h-[3.6rem] items-center justify-center rounded-[1.1rem] border text-base font-black shadow-[0_12px_20px_rgba(2,6,23,0.2)] transition md:min-h-[4.1rem] md:text-xl ${
+                selectedIndex === index
+                  ? index === activeQuestion.correctIndex
+                    ? 'border-emerald-200/70 bg-emerald-300/50 text-emerald-950'
+                    : 'border-rose-200/70 bg-rose-300/50 text-amber-950'
+                  : 'border-white/40 bg-white/88 text-slate-900 hover:bg-white'
+              }`}
+            >
                 {option}
               </motion.button>
             ))}

@@ -419,7 +419,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
       const backgroundImg = backgroundImageRef.current;
       if (backgroundImg && backgroundImg.complete) {
-        const scale = Math.max(viewWidth / backgroundImg.width, viewHeight / backgroundImg.height) * 0.8;
+        const scale = Math.max(viewWidth / backgroundImg.width, viewHeight / backgroundImg.height) * 1.02;
         const tileW = backgroundImg.width * scale;
         const tileH = backgroundImg.height * scale;
         const offsetX = -camera.x * 0.18;
@@ -550,7 +550,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   };
 
   return (
-    <GameUiShell className="bg-transparent" overlayDisabled>
+    <GameUiShell className="bg-transparent" overlayDisabled backgroundImage={backgroundAsset} backgroundOpacity={1}>
       <div className="relative h-full w-full overflow-hidden text-white">
         <canvas
           ref={canvasRef}

@@ -153,8 +153,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
   const hideMiniGameTimer = useMemo(() => {
     if (screen !== 'gameplay' || !selectedLevel) return false;
     return (
-      (selectedLevel.gameType === 'mean_machine' && selectedLevel.blueprintKey === 'mean_machine')
-      || selectedLevel.gameType === 'potion_pour'
+      selectedLevel.gameType === 'potion_pour'
     );
   }, [screen, selectedLevel]);
 

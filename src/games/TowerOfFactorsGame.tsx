@@ -253,6 +253,67 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
   const correctOptions = problem ? problem.options.filter(option => problem.factors.includes(option)) : [];
   const towerGoal = Math.max(correctOptions.length, 1);
   const remainingFactors = Math.max(correctOptions.length - tower.length, 0);
+  const renderOptionButton = (
+    option: number,
+    index: number,
+    { absolute }: { absolute: boolean },
+  ) => {
+    const isSelected = tower.includes(option);
+    const isCorrect = problem?.factors.includes(option) ?? false;
+    const position = FORGE_POSITIONS[index % FORGE_POSITIONS.length];
+    const variant = index % 4;
+    const baseClass = variant === 0
+      ? 'rounded-[1.1rem] border-lime-200/28 bg-[radial-gradient(circle_at_30%_22%,rgba(255,255,255,0.34),rgba(132,204,22,0.86)_40%,rgba(77,124,15,0.96)_100%)]'
+      : variant === 1
+        ? 'rounded-[1.4rem] border-orange-200/22 bg-[radial-gradient(circle_at_30%_22%,rgba(255,255,255,0.24),rgba(251,146,60,0.82)_40%,rgba(120,53,15,0.98)_100%)]'
+        : variant === 2
+          ? 'rounded-full border-sky-200/24 bg-[radial-gradient(circle_at_30%_22%,rgba(255,255,255,0.34),rgba(59,130,246,0.82)_40%,rgba(30,64,175,0.96)_100%)]'
+          : 'rounded-[1.3rem] border-stone-300/18 bg-[linear-gradient(180deg,rgba(120,113,108,0.98),rgba(68,64,60,0.98))]';
+
+    return (
+      <motion.button
+        key={`${option}-${index}-${absolute ? 'abs' : 'grid'}`}
+        onClick={() => handleSelect(option)}
+        disabled={isSelected || !!feedback || isGameOver || isVictory}
+        whileTap={{ scale: 0.96 }}
+        animate={feedback === 'incorrect' && !isCorrect ? { x: [0, 2, -2, 0] } : { y: [0, -4, 0] }}
+        transition={{
+          duration: feedback === 'incorrect' && !isCorrect ? 0.3 : 2.8 + (index * 0.08),
+          repeat: feedback === 'incorrect' && !isCorrect ? 0 : Infinity,
+          ease: 'easeInOut',
+        }}
+        className={`${absolute ? 'absolute' : 'relative'} flex h-14 w-14 items-center justify-center border-2 text-center shadow-[0_18px_26px_rgba(0,0,0,0.24)] transition-all sm:h-16 sm:w-16 lg:h-24 lg:w-24 ${baseClass} ${
+          isSelected ? 'scale-[0.92] opacity-25 grayscale' : 'hover:scale-[1.03]'
+        }`}
+        style={absolute ? { top: position.top, left: position.left } : undefined}
+      >
+        <span className="text-3xl font-black text-amber-50 drop-shadow-[0_4px_0_rgba(41,24,14,0.8)] sm:text-4xl lg:text-5xl">{option}</span>
+        {feedback === 'incorrect' && !isCorrect && (
+          <span className="absolute -right-2 -bottom-2 text-xl font-black text-amber-500 sm:text-2xl lg:text-4xl">x</span>
+        )}
+      </motion.button>
+    );
+  };
+
+  const renderCompactOptionButton = (option: number, index: number) => {
+    const isSelected = tower.includes(option);
+    const isCorrect = problem?.factors.includes(option) ?? false;
+    return (
+      <button
+        key={`${option}-${index}-compact`}
+        type="button"
+        onClick={() => handleSelect(option)}
+        disabled={isSelected || !!feedback || isGameOver || isVictory}
+        className={`flex h-12 w-12 items-center justify-center rounded-[0.9rem] border-2 text-base font-black shadow-[0_12px_18px_rgba(0,0,0,0.3)] transition ${
+          isSelected
+            ? 'border-white/20 bg-white/20 text-white/50'
+            : 'border-amber-200/70 bg-amber-300 text-slate-900'
+        }`}
+      >
+        {option}
+      </button>
+    );
+  };
 
   return (
     <div className="relative flex h-full w-full flex-col items-center overflow-hidden bg-[linear-gradient(180deg,#07111f_0%,#112247_44%,#07101a_100%)] p-2 font-sans md:p-4">
@@ -282,12 +343,13 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
 
         <div className="relative w-full flex-1 min-h-0">
           {problem && (
-      <div className="licensed-board-frame structured-playfield-frame relative h-full overflow-hidden rounded-[2rem] border border-orange-200/14 bg-[linear-gradient(180deg,rgba(54,19,10,0.88),rgba(17,10,10,0.96))] shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_28px_60px_rgba(0,0,0,0.4)] md:rounded-[2.6rem]">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(251,146,60,0.26),transparent_24%),linear-gradient(180deg,rgba(255,255,255,0.04),transparent_30%,rgba(0,0,0,0.24)_100%)]" />
-              <div className="absolute inset-x-[26%] top-[14%] h-[26%] rounded-full bg-orange-300/16 blur-3xl" />
-              <div className="absolute inset-x-0 bottom-0 h-[42%] bg-[linear-gradient(180deg,rgba(0,0,0,0),rgba(15,23,42,0.3)_12%,rgba(28,12,6,0.86)_100%)]" />
+            <div className="licensed-board-frame structured-playfield-frame relative h-full overflow-hidden rounded-[2rem] border border-orange-200/14 bg-[linear-gradient(180deg,rgba(54,19,10,0.88),rgba(17,10,10,0.96))] shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_28px_60px_rgba(0,0,0,0.4)] md:rounded-[2.6rem]">
+              <div className="relative h-full w-full">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(251,146,60,0.26),transparent_24%),linear-gradient(180deg,rgba(255,255,255,0.04),transparent_30%,rgba(0,0,0,0.24)_100%)]" />
+                <div className="absolute inset-x-[26%] top-[14%] h-[26%] rounded-full bg-orange-300/16 blur-3xl" />
+                <div className="absolute inset-x-0 bottom-0 h-[42%] bg-[linear-gradient(180deg,rgba(0,0,0,0),rgba(15,23,42,0.3)_12%,rgba(28,12,6,0.86)_100%)]" />
 
-              <div className="relative z-10 flex h-full flex-col p-3 md:p-5">
+                <div className="relative z-10 flex h-full flex-col p-3 md:p-5">
                 <div className="grid grid-cols-[1fr_auto] items-start gap-3">
                   <div className="rounded-[1.25rem] border border-white/10 bg-black/20 px-3 py-2.5 shadow-[0_12px_24px_rgba(0,0,0,0.22)]">
                     <div className="rounded-[1rem] border border-amber-200/20 bg-[linear-gradient(180deg,rgba(251,146,60,0.92),rgba(194,65,12,0.98))] px-3 py-2 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_12px_20px_rgba(120,53,15,0.28)]">
@@ -312,40 +374,16 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
                   {statusMessage}
                 </div>
 
-                <div className="relative mt-3 flex-1">
-                  {problem.options.map((option, index) => {
-                    const isSelected = tower.includes(option);
-                    const isCorrect = problem.factors.includes(option);
-                    const position = FORGE_POSITIONS[index % FORGE_POSITIONS.length];
-                    const variant = index % 4;
-                    const baseClass = variant === 0
-                      ? 'rounded-[1.1rem] border-lime-200/28 bg-[radial-gradient(circle_at_30%_22%,rgba(255,255,255,0.34),rgba(132,204,22,0.86)_40%,rgba(77,124,15,0.96)_100%)]'
-                      : variant === 1
-                        ? 'rounded-[1.4rem] border-orange-200/22 bg-[radial-gradient(circle_at_30%_22%,rgba(255,255,255,0.24),rgba(251,146,60,0.82)_40%,rgba(120,53,15,0.98)_100%)]'
-                        : variant === 2
-                          ? 'rounded-full border-sky-200/24 bg-[radial-gradient(circle_at_30%_22%,rgba(255,255,255,0.34),rgba(59,130,246,0.82)_40%,rgba(30,64,175,0.96)_100%)]'
-                          : 'rounded-[1.3rem] border-stone-300/18 bg-[linear-gradient(180deg,rgba(120,113,108,0.98),rgba(68,64,60,0.98))]';
+                <div className="pointer-events-auto mt-3 flex justify-center lg:hidden">
+                  <div className="grid grid-cols-3 place-items-center gap-2 sm:grid-cols-4 sm:gap-3">
+                    {problem.options.map((option, index) => renderCompactOptionButton(option, index))}
+                  </div>
+                </div>
 
-                    return (
-                      <motion.button
-                        key={index}
-                        onClick={() => handleSelect(option)}
-                        disabled={isSelected || !!feedback || isGameOver || isVictory}
-                        whileTap={{ scale: 0.96 }}
-                        animate={feedback === 'incorrect' && !isCorrect ? { x: [0, 2, -2, 0] } : { y: [0, -4, 0] }}
-                        transition={{ duration: feedback === 'incorrect' && !isCorrect ? 0.3 : 2.8 + (index * 0.08), repeat: feedback === 'incorrect' && !isCorrect ? 0 : Infinity, ease: 'easeInOut' }}
-                        className={`absolute flex h-16 w-16 items-center justify-center border-2 text-center shadow-[0_18px_26px_rgba(0,0,0,0.24)] transition-all md:h-24 md:w-24 ${baseClass} ${
-                          isSelected ? 'scale-[0.92] opacity-25 grayscale' : 'hover:scale-[1.03]'
-                        }`}
-                        style={{ top: position.top, left: position.left }}
-                      >
-                        <span className="text-3xl font-black text-amber-50 drop-shadow-[0_4px_0_rgba(41,24,14,0.8)] md:text-5xl">{option}</span>
-                        {feedback === 'incorrect' && !isCorrect && (
-                          <span className="absolute -right-2 -bottom-2 text-2xl font-black text-amber-500 md:text-4xl">x</span>
-                        )}
-                      </motion.button>
-                    );
-                  })}
+                <div className="relative mt-3 flex-1 min-h-[10rem]">
+                  <div className="hidden lg:block">
+                    {problem.options.map((option, index) => renderOptionButton(option, index, { absolute: true }))}
+                  </div>
 
                   <AnimatePresence>
                     {tower.slice(-2).map((num, index) => (
@@ -385,6 +423,7 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
                 </div>
               </div>
             </div>
+          </div>
           )}
 
           <AnimatePresence>

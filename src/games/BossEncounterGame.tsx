@@ -42,8 +42,24 @@ const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max 
 const pick = <T,>(items: T[]) => items[randomInt(0, items.length - 1)];
 
 const makeOptions = (correct: string, wrongs: string[]) => {
-  const options = shuffle([correct, ...wrongs.slice(0, 3)]);
-  return { options, answerIndex: options.indexOf(correct) };
+  const unique = Array.from(new Set([correct, ...wrongs]));
+  const options: string[] = unique.filter(Boolean);
+  if (!options.includes(correct)) {
+    options.unshift(correct);
+  }
+
+  let pad = 1;
+  while (options.length < 4) {
+    const numeric = Number(correct);
+    const candidate = Number.isFinite(numeric) ? String(numeric + pad) : `${correct} ${pad}`;
+    if (!options.includes(candidate)) {
+      options.push(candidate);
+    }
+    pad += 1;
+  }
+
+  const shuffled = shuffle(options).slice(0, 4);
+  return { options: shuffled, answerIndex: shuffled.indexOf(correct) };
 };
 
 const generateFactorsQuestion = (): BossQuestion => {
@@ -564,11 +580,11 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     <div className="relative flex h-full w-full overflow-hidden font-sans">
       <GameplaySceneBackdrop gameType={gameType} />
 
-      <div className="relative z-10 flex h-full w-full flex-col gap-2.5 px-2.5 pb-2.5 pt-[calc(0.55rem+env(safe-area-inset-top))] md:gap-3 md:px-4 md:pb-4 md:pt-4">
-        <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col gap-2.5 overflow-hidden rounded-[2rem] p-2 md:gap-3 md:rounded-[2.6rem] md:p-3">
-          <div className="grid shrink-0 grid-cols-[1.08fr_0.92fr] gap-2.5 md:gap-3">
-          <div className="min-w-0 rounded-[1.45rem] border border-white/16 bg-slate-950/55 p-2.5 shadow-[0_18px_48px_rgba(2,6,23,0.24)] backdrop-blur-xl md:rounded-[2rem] md:p-3">
-            <BossPortrait encounter={encounter} pose={bossPose} className="h-[8.6rem] md:h-[10.5rem]" />
+      <div className="relative z-10 flex h-full w-full flex-col gap-2 px-2 pb-2.5 pt-[calc(0.45rem+env(safe-area-inset-top))] lg:gap-3 lg:px-4 lg:pb-4 lg:pt-4">
+        <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col gap-2 overflow-hidden rounded-[2rem] p-2 lg:gap-3 lg:rounded-[2.6rem] lg:p-3">
+          <div className="grid shrink-0 grid-cols-[1.08fr_0.92fr] gap-2 lg:gap-3">
+          <div className="min-w-0 rounded-[1.25rem] border border-white/16 bg-slate-950/55 p-2 shadow-[0_18px_48px_rgba(2,6,23,0.24)] backdrop-blur-xl lg:rounded-[2rem] lg:p-3">
+            <BossPortrait encounter={encounter} pose={bossPose} className="h-[7.4rem] lg:h-[10.5rem]" />
           </div>
 
           <div className="grid grid-cols-2 gap-2">
@@ -580,21 +596,21 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
             ].map(item => (
               <div
                 key={item.label}
-                className="rounded-[1.1rem] border border-white/14 bg-slate-950/52 px-2.5 py-2 text-white shadow-[0_12px_26px_rgba(2,6,23,0.18)] backdrop-blur-xl md:rounded-[1.45rem] md:px-3 md:py-2.5"
+                className="rounded-[1.1rem] border border-white/14 bg-slate-950/52 px-2 py-2 text-white shadow-[0_12px_26px_rgba(2,6,23,0.18)] backdrop-blur-xl lg:rounded-[1.25rem] lg:px-3 lg:py-2"
               >
-                <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/50 md:text-[9px]">{item.label}</div>
-                <div className={`mt-1 text-sm font-black md:text-xl ${item.tone}`}>{item.value}</div>
+                <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/50 lg:text-[9px]">{item.label}</div>
+                <div className={`mt-1 text-sm font-black lg:text-xl ${item.tone}`}>{item.value}</div>
               </div>
             ))}
           </div>
         </div>
 
-          <div className="shrink-0 rounded-[1.35rem] border border-white/14 bg-slate-950/55 px-3 py-2.5 text-white shadow-[0_16px_36px_rgba(2,6,23,0.22)] backdrop-blur-xl md:rounded-[1.8rem] md:px-4 md:py-3">
-          <div className="flex items-center justify-between gap-3 text-[9px] font-black uppercase tracking-[0.22em] md:text-[10px]">
+          <div className="shrink-0 rounded-[1.2rem] border border-white/14 bg-slate-950/55 px-3 py-2 text-white shadow-[0_16px_36px_rgba(2,6,23,0.22)] backdrop-blur-xl lg:rounded-[1.8rem] lg:px-4 lg:py-3">
+          <div className="flex items-center justify-between gap-3 text-[9px] font-black uppercase tracking-[0.22em] lg:text-[9px]">
             <span className="text-white/58">Boss health</span>
             <span className="text-white/82">{bossHealth}% remaining</span>
           </div>
-          <div className="mt-2 h-4 overflow-hidden rounded-full border border-white/12 bg-black/32 md:h-5">
+          <div className="mt-2 h-4 overflow-hidden rounded-full border border-white/12 bg-black/32 lg:h-5">
             <motion.div
               initial={{ width: '100%' }}
               animate={{ width: `${bossHealth}%` }}
@@ -602,16 +618,16 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
               className="h-full rounded-full bg-[linear-gradient(90deg,#ef4444_0%,#fb7185_38%,#f59e0b_78%,#fde68a_100%)] shadow-[0_0_18px_rgba(248,113,113,0.34)]"
             />
           </div>
-          <div className="mt-2 flex items-center justify-between gap-3 text-[9px] font-bold text-white/72 md:text-[10px]">
+          <div className="mt-2 flex items-center justify-between gap-3 text-[9px] font-bold text-white/72 lg:text-[9px]">
             <span>{reaction}</span>
             <span>{Math.max(0, 2 - misses)} safe misses left</span>
           </div>
         </div>
 
-          <div className="grid min-h-0 flex-1 gap-2.5 md:gap-3">
-          <div className="rounded-[1.45rem] border border-white/16 bg-slate-950/58 p-3 text-white shadow-[0_18px_48px_rgba(2,6,23,0.24)] backdrop-blur-xl md:rounded-[2rem] md:p-4">
+          <div className="grid min-h-0 flex-1 gap-2 lg:gap-3">
+          <div className="rounded-[1.25rem] border border-white/16 bg-slate-950/58 p-3 text-white shadow-[0_18px_48px_rgba(2,6,23,0.24)] backdrop-blur-xl lg:rounded-[2rem] lg:p-4">
             <div className="flex items-start gap-3">
-              <div className="hidden h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-[1rem] border border-white/15 bg-white/10 md:flex">
+              <div className="hidden h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-[1rem] border border-white/15 bg-white/10 lg:flex">
                 <AnimatedAvatar
                   avatar={avatar}
                   pose={resolveState === 'wrong' ? 'sad' : resolveState === 'victory' ? 'victory' : 'thinking'}
@@ -621,30 +637,30 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
                 />
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/60 md:text-[11px]">
+                <div className="text-[9px] font-black uppercase tracking-[0.24em] text-cyan-100/60 lg:text-[11px]">
                   Boss encounter
                 </div>
-                <h1 className="mt-1 text-base font-black leading-tight text-white md:text-[1.75rem]">
+                <h1 className="mt-1 text-[0.95rem] font-black leading-tight text-white lg:text-[1.75rem]">
                   {formatFantasyPrompt(question.prompt)}
                 </h1>
-                <p className="mt-1.5 text-[10px] leading-snug text-white/74 md:text-sm">
+                <p className="mt-1.5 text-[9px] leading-snug text-white/74 lg:text-sm">
                   {question.clue}
                 </p>
               </div>
             </div>
 
-            <div className="mt-3 flex flex-wrap gap-2 md:mt-4">
-              {question.dataPoints.map(point => (
+            <div className="mt-3 flex flex-wrap gap-2 lg:mt-4">
+              {question.dataPoints.map((point, index) => (
                 <div
-                  key={point}
-                  className="rounded-full border border-white/10 bg-white/8 px-2.5 py-1 text-[9px] font-black text-white/84 md:px-3 md:text-[10px]"
+                  key={`${point}-${index}`}
+                  className="rounded-full border border-white/10 bg-white/8 px-2 py-1 text-[9px] font-black text-white/84 lg:px-3 lg:text-[9px]"
                 >
                   {point}
                 </div>
               ))}
             </div>
 
-            <div className="mt-3 h-2 overflow-hidden rounded-full border border-white/10 bg-black/30 md:mt-4">
+            <div className="mt-2.5 h-1.5 overflow-hidden rounded-full border border-white/10 bg-black/30 lg:mt-4">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
@@ -653,7 +669,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
             </div>
           </div>
 
-          <div className="grid min-h-0 flex-1 grid-cols-2 gap-2 md:gap-3">
+          <div className="grid min-h-0 flex-1 grid-cols-2 gap-2 lg:gap-3">
             {question.options.map((option, index) => {
               const isCorrect = index === question.answerIndex;
               const isSelected = selectedIndex === index;
@@ -669,17 +685,17 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
 
               return (
                 <button
-                  key={option}
+                  key={`${option}-${index}`}
                   onClick={() => handleAnswer(index)}
                   disabled={selectedIndex !== null}
-                  className={`relative flex min-h-[4.8rem] items-center justify-center rounded-[1.35rem] border px-3 py-2 text-center text-sm font-black leading-tight shadow-[0_14px_30px_rgba(2,6,23,0.18)] backdrop-blur-xl transition-all md:min-h-[5.7rem] md:rounded-[1.7rem] md:px-4 md:text-lg ${toneClass}`}
+                  className={`relative flex min-h-[4.1rem] items-center justify-center rounded-[1.2rem] border px-3 py-2 text-center text-sm font-black leading-tight shadow-[0_14px_30px_rgba(2,6,23,0.18)] backdrop-blur-xl transition-all lg:min-h-[5.7rem] lg:rounded-[1.7rem] lg:px-4 lg:text-lg ${toneClass}`}
                 >
-                  <span className="pointer-events-none absolute left-2 top-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/10 text-[10px] font-black text-white/70 md:left-3 md:top-3 md:h-6 md:w-6 md:text-xs">
+                  <span className="pointer-events-none absolute left-2 top-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/10 text-[9px] font-black text-white/70 lg:left-3 lg:top-3 lg:h-6 lg:w-6 lg:text-xs">
                     {String.fromCharCode(65 + index)}
                   </span>
-                  <span className="max-w-[10rem] md:max-w-none">{option}</span>
+                  <span className="max-w-[10rem] lg:max-w-none">{option}</span>
                   {isRevealed && isCorrect && (
-                    <AssetIcon name="check" className="absolute bottom-2 right-2 h-4 w-4 text-emerald-100 md:h-5 md:w-5" />
+                    <AssetIcon name="check" className="absolute bottom-2 right-2 h-4 w-4 text-emerald-100 lg:h-5 lg:w-5" />
                   )}
                 </button>
               );

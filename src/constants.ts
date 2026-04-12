@@ -68,6 +68,12 @@ const RATIO_RAPIDS_LEVELS: LevelData[] = [
 ];
 
 const CURSED_COLOSSEUM_LEVELS: LevelData[] = [
+  { id: 1, stars: 0, isLocked: false, blueprintKey: 'tower_of_factors', displayName: 'Tower Of Factors', gameType: 'tower_of_factors', isBoss: true, bossUnlockCoins: 0 },
+  { id: 2, stars: 0, isLocked: false, blueprintKey: 'crystal_core', displayName: 'Crystal Core', gameType: 'crystal_core', isBoss: true, bossUnlockCoins: 0 },
+  { id: 3, stars: 0, isLocked: false, blueprintKey: 'mirror_gate', displayName: 'Mirror Gate', gameType: 'mirror_gate', isBoss: true, bossUnlockCoins: 0 },
+  { id: 4, stars: 0, isLocked: false, blueprintKey: 'scales_of_the_sun', displayName: 'Scales Of The Sun', gameType: 'scales_of_the_sun', isBoss: true, bossUnlockCoins: 0 },
+  { id: 5, stars: 0, isLocked: false, blueprintKey: 'observatory_overload', displayName: 'Observatory Overload', gameType: 'observatory_overload', isBoss: true, bossUnlockCoins: 0 },
+  { id: 6, stars: 0, isLocked: false, blueprintKey: 'matrix_match', displayName: 'Matrix Match', gameType: 'matrix_match', isBoss: true, bossUnlockCoins: 0 },
   { id: 1, stars: 0, isLocked: false, blueprintKey: 'reasoning_quest', displayName: 'Reasoning Quest', gameType: 'reasoning_quest' },
   { id: 2, stars: 0, isLocked: false, blueprintKey: 'multi_step_marathon', displayName: 'Multi-Step Marathon', gameType: 'equation_grove' },
   { id: 3, stars: 0, isLocked: false, blueprintKey: 'strategy_survival', displayName: 'Strategy Survival', gameType: 'logic_sort' },
@@ -154,6 +160,7 @@ export const ISLANDS: IslandData[] = [
         'mean_machine',
       ]),
       [
+        { id: 1, stars: 0, isLocked: false, blueprintKey: 'mode_miner', displayName: 'Mode Miner', gameType: 'data_dungeon' },
         { id: 2, stars: 0, isLocked: false, blueprintKey: 'graph_grabber', displayName: 'Graph Grabber', gameType: 'chart_chase' },
         { id: 3, stars: 0, isLocked: false, blueprintKey: 'line_graph_lab', displayName: 'Line Graph Lab', gameType: 'chart_chase' },
         { id: 4, stars: 0, isLocked: false, blueprintKey: 'data_detective', displayName: 'Data Detective', gameType: 'data_dungeon' },

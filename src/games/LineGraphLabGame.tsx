@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   Activity,
   AlertCircle,
@@ -14,7 +14,6 @@ import {
   CartesianGrid,
   Line,
   LineChart,
-  ResponsiveContainer,
   XAxis,
   YAxis,
 } from 'recharts';
@@ -205,6 +204,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [probeIndex, setProbeIndex] = useState<number | null>(null);
   const chartWrapRef = useRef<HTMLDivElement | null>(null);
+  const [chartSize, setChartSize] = useState({ width: 0, height: 0 });
 
   const loadLevel = useCallback((targetLevel: number) => {
     setRound(generateRound(targetLevel));
@@ -217,6 +217,21 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   useEffect(() => {
     loadLevel(1);
   }, [loadLevel]);
+
+  useLayoutEffect(() => {
+    if (!chartWrapRef.current || typeof ResizeObserver === 'undefined') return undefined;
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      const nextWidth = Math.floor(entry.contentRect.width);
+      const nextHeight = Math.floor(entry.contentRect.height);
+      if (nextWidth > 0 && nextHeight > 0) {
+        setChartSize({ width: nextWidth, height: nextHeight });
+      }
+    });
+    observer.observe(chartWrapRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   const startGame = () => {
     setXP(0);
@@ -334,56 +349,57 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
               ref={chartWrapRef}
               onPointerDown={handleProbePointerDown}
               onPointerMove={handleProbePointerMove}
-              className="relative h-full min-h-[13rem] w-full rounded-2xl border border-slate-700/60 bg-slate-950/35 p-2 sm:min-h-[14.5rem] md:min-h-[16rem]"
+              className="relative w-full rounded-2xl border border-slate-700/60 bg-slate-950/35 p-2"
+              style={{ height: 'clamp(12rem, 32vh, 18.5rem)' }}
             >
-              {round && (
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart
-                    data={round.graph}
-                    margin={{ top: 18, right: 16, left: 0, bottom: 16 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
-                    <XAxis
-                      dataKey="label"
-                      tick={{ fill: '#dbeafe', fontSize: 12, fontWeight: 700 }}
-                      axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                      tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                      label={{ value: 'Day', position: 'insideBottom', offset: -6, fill: '#93c5fd', fontSize: 12 }}
-                    />
-                    <YAxis
-                      ticks={yTicks}
-                      domain={[0, yTicks[yTicks.length - 1]]}
-                      tick={{ fill: '#dbeafe', fontSize: 12, fontWeight: 700 }}
-                      axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                      tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                      label={{ value: 'Value', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12 }}
-                      width={42}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="value"
-                      stroke="#34d399"
-                      strokeWidth={4}
-                      dot={(props) => {
-                        const { cx, cy, payload, index } = props as { cx?: number; cy?: number; payload?: DataPoint; index?: number };
-                        if (cx == null || cy == null || !payload) return null;
-                        const isProbe = index === probeIndex;
-                        return (
-                          <circle
-                            cx={cx}
-                            cy={cy}
-                            r={isProbe ? 8 : 5}
-                            fill={isProbe ? '#facc15' : '#34d399'}
-                            stroke={isProbe ? '#fef3c7' : '#ecfeff'}
-                            strokeWidth={isProbe ? 3 : 2}
-                          />
-                        );
-                      }}
-                      activeDot={{ r: 7, fill: '#6ee7b7', stroke: '#f0fdfa', strokeWidth: 2 }}
-                      animationDuration={350}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+              {round && chartSize.width > 0 && chartSize.height > 0 && (
+                <LineChart
+                  width={chartSize.width}
+                  height={chartSize.height}
+                  data={round.graph}
+                  margin={{ top: 18, right: 16, left: 0, bottom: 16 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
+                  <XAxis
+                    dataKey="label"
+                    tick={{ fill: '#dbeafe', fontSize: 12, fontWeight: 700 }}
+                    axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
+                    tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
+                    label={{ value: 'Day', position: 'insideBottom', offset: -6, fill: '#93c5fd', fontSize: 12 }}
+                  />
+                  <YAxis
+                    ticks={yTicks}
+                    domain={[0, yTicks[yTicks.length - 1]]}
+                    tick={{ fill: '#dbeafe', fontSize: 12, fontWeight: 700 }}
+                    axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
+                    tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
+                    label={{ value: 'Value', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12 }}
+                    width={42}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="value"
+                    stroke="#34d399"
+                    strokeWidth={4}
+                    dot={(props) => {
+                      const { cx, cy, payload, index } = props as { cx?: number; cy?: number; payload?: DataPoint; index?: number };
+                      if (cx == null || cy == null || !payload) return null;
+                      const isProbe = index === probeIndex;
+                      return (
+                        <circle
+                          cx={cx}
+                          cy={cy}
+                          r={isProbe ? 8 : 5}
+                          fill={isProbe ? '#facc15' : '#34d399'}
+                          stroke={isProbe ? '#fef3c7' : '#ecfeff'}
+                          strokeWidth={isProbe ? 3 : 2}
+                        />
+                      );
+                    }}
+                    activeDot={{ r: 7, fill: '#6ee7b7', stroke: '#f0fdfa', strokeWidth: 2 }}
+                    animationDuration={350}
+                  />
+                </LineChart>
               )}
               {probePoint && (
                 <motion.div

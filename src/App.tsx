@@ -837,7 +837,6 @@ const App: React.FC = () => {
   const screenEnterScale = useFlatScreenScaleTransition ? 1 : 0.98;
   const screenExitScale = useFlatScreenScaleTransition ? 1 : 1.02;
   const hideShellTimer = !isGameplayScreen
-    || (selectedLevel?.gameType === 'mean_machine' && selectedLevel.blueprintKey === 'mean_machine')
     || selectedLevel?.gameType === 'potion_pour';
   const goToProfile = useCallback(() => {
     setScreen('profile');

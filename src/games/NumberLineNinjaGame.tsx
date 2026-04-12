@@ -728,14 +728,14 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
             Select the missing number
           </div>
           <div className="mx-auto flex w-full max-w-[560px] flex-wrap items-center justify-center gap-3 sm:gap-4">
-            {question.options.map((option) => {
+            {question.options.map((option, index) => {
               const isSelected = selectedAnswer === option;
               const isCorrect = feedbackState === 'correct' && isSelected;
               const isWrong = feedbackState === 'incorrect' && isSelected;
 
               return (
                 <motion.button
-                  key={`${question.id}-${option}`}
+                  key={`${question.id}-${option}-${index}`}
                   type="button"
                   ref={(node) => {
                     optionButtonRefs.current[option] = node;

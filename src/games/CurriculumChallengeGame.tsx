@@ -1061,7 +1061,13 @@ const renderVisual = (visual: VisualData) => {
               <div className="flex h-20 md:h-40 w-full items-end rounded-t-[0.8rem] border border-white/10 bg-white/6 p-1 md:rounded-t-[1rem]">
                 <div className={`w-full rounded-[0.8rem] bg-gradient-to-t ${bar.color}`} style={{ height: `${Math.max(18, bar.value * 10)}%` }} />
               </div>
-              <div className="text-[9px] font-black uppercase tracking-[0.12em] text-white/80 md:text-[11px] md:tracking-[0.16em]">{bar.label}</div>
+              <div className="max-w-[2.6rem] whitespace-normal break-words text-center text-[7px] font-black uppercase leading-tight tracking-[0.06em] text-white/80 md:max-w-[4.2rem] md:text-[9px] md:tracking-[0.1em]">
+                {bar.label.split(' ').map((part, index) => (
+                  <span key={`${bar.label}-${index}`} className="block">
+                    {part}
+                  </span>
+                ))}
+              </div>
             </div>
           ))}
         </div>

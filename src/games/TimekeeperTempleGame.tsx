@@ -246,7 +246,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
               </AnimatePresence>
             </div>
 
-            <div className="flex w-full flex-col gap-2">
+            <div className="flex w-full flex-col gap-3">
               {gameState === 'playing' && (
                 <motion.button
                   whileHover={{ scale: 1.02 }}
@@ -260,7 +260,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
 
               <button
                 onClick={resetRun}
-                className="flex items-center justify-center gap-2 text-xs font-bold tracking-widest text-gray-500 transition-colors hover:text-white"
+                className="mt-2.5 flex min-h-[1.8rem] items-center justify-center gap-2 text-[10px] font-bold tracking-widest text-slate-300 transition-colors hover:text-white"
               >
                 <RotateCcw size={14} /> RESET CLOCK
               </button>

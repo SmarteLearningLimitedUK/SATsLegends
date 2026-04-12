@@ -390,7 +390,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           </div>
 
           <div className="relative flex min-h-0 flex-1 flex-col">
-            <div className={`mt-auto grid grid-cols-4 gap-1 md:gap-2 content-start items-start ${selectedSuspect ? 'opacity-0 pointer-events-none' : ''}`}>
+            <div className={`grid grid-cols-4 gap-1 content-start items-start sm:mt-auto md:gap-2 ${selectedSuspect ? 'opacity-0 pointer-events-none' : ''}`}>
               {suspects.map((suspect) => (
                 <motion.button
                   key={suspect.id}
@@ -398,20 +398,26 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleSuspectClick(suspect.id)}
                   transition={{ duration: 0.35 }}
-                  className={`group relative flex w-full aspect-[3/4] items-center justify-center rounded-[1.2rem] border-2 p-1 transition-all duration-300 ${
+                  className={`group relative flex w-full aspect-[4/3] items-center justify-center rounded-[1.2rem] border-2 p-1 transition-all duration-300 sm:aspect-[3/4] ${
                     gameState === 'success' && suspect.id === guiltyId
                       ? 'border-emerald-500 bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.2)]'
                       : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
                   }`}
                 >
-                  <div className="relative h-full w-full overflow-hidden rounded-[1.05rem] border border-white/16 bg-transparent shadow-lg">
-                    {suspect.portrait && (
+                  <div className="relative h-full w-full overflow-hidden rounded-[1.05rem] border border-white/16 bg-slate-950/40 shadow-lg">
+                    {suspect.portrait ? (
                       <img
                         src={suspect.portrait}
                         alt=""
                         draggable={false}
                         className="absolute inset-0 h-full w-full object-cover"
                       />
+                    ) : (
+                      <div className={`flex h-full w-full items-center justify-center ${suspect.color}/20`}>
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-white/10 text-lg font-black text-white">
+                          {suspect.name.split(' ').map((part) => part[0]).join('')}
+                        </div>
+                      </div>
                     )}
                   </div>
 

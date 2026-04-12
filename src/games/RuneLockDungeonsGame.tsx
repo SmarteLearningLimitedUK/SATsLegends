@@ -107,12 +107,12 @@ const RuneStone: React.FC<{
   <button
     type="button"
     onClick={onClick}
-    className="relative overflow-hidden rounded-[1.5rem] border border-white/14 bg-[linear-gradient(180deg,#d4d4d8,#71717a_62%,#27272a)] px-4 py-4 shadow-[0_18px_28px_rgba(15,23,42,0.22)] transition-transform active:scale-[0.97]"
+    className="relative overflow-hidden rounded-[1.05rem] border border-white/14 bg-[linear-gradient(180deg,#d4d4d8,#71717a_62%,#27272a)] px-2 py-1 shadow-[0_12px_20px_rgba(15,23,42,0.2)] transition-transform active:scale-[0.97] sm:py-1.5 lg:px-2.5 lg:py-2"
   >
     <div className="absolute inset-x-[14%] top-[10%] h-[18%] rounded-full bg-white/18 blur-md" />
     <div className="relative text-center">
-      <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-900/52">Rune</div>
-      <div className="mt-2 text-2xl font-black tracking-tight text-white md:text-3xl">{value}</div>
+      <div className="text-[7px] font-black uppercase tracking-[0.14em] text-slate-900/52 lg:text-[8px]">Rune</div>
+      <div className="mt-1 text-base font-black tracking-tight text-white lg:text-lg">{value}</div>
     </div>
   </button>
 );
@@ -253,33 +253,33 @@ const RuneLockDungeonsGame: React.FC<RuneLockDungeonsGameProps> = ({
         <div className="absolute right-[14%] bottom-[20%] h-[7%] w-[18%] rounded-full bg-orange-400/12 blur-2xl" />
       </div>
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center gap-2 p-2 md:gap-4 md:p-4">
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center gap-2 p-2 lg:gap-4 lg:p-4">
         <div className="w-full max-w-6xl">
         </div>
 
-      <div className="licensed-board-frame structured-playfield-frame relative flex w-full max-w-6xl min-h-0 flex-1 overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] shadow-[0_28px_64px_rgba(0,0,0,0.34)] md:rounded-[2.6rem]">
+      <div className="licensed-board-frame structured-playfield-frame relative flex w-full max-w-6xl min-h-0 flex-1 overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] shadow-[0_28px_64px_rgba(0,0,0,0.34)] lg:rounded-[2.6rem]">
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02)_20%,rgba(15,23,42,0.16)_100%)]" />
           <div className="absolute inset-x-0 bottom-0 h-[32%] bg-[linear-gradient(180deg,rgba(17,24,39,0),rgba(17,24,39,0.18),rgba(9,6,15,0.96))]" />
           <div className="absolute inset-x-[22%] top-[30%] h-[18%] rounded-full bg-[radial-gradient(circle_at_center,rgba(167,139,250,0.18),rgba(167,139,250,0.06),transparent_72%)]" />
 
-          <div className="relative z-10 flex h-full w-full flex-col px-3 pb-4 pt-16 md:px-6 md:pb-6 md:pt-20">
+          <div className="relative z-10 flex h-full w-full flex-col px-3 pb-2 pt-4 lg:px-6 lg:pb-4 lg:pt-8">
             <div className="flex justify-center">
-              <div className="max-w-[94%] rounded-[1.5rem] border border-orange-200/22 bg-[linear-gradient(180deg,rgba(146,64,14,0.96),rgba(120,53,15,0.98))] px-5 py-3 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_16px_30px_rgba(120,53,15,0.24)] md:px-7 md:py-4">
-                <div className="text-base font-black tracking-tight text-amber-50 md:text-[1.9rem]">{round.title}</div>
-                <div className="mt-1 text-xs font-bold text-amber-100/84 md:text-base">
+              <div className="max-w-[94%] rounded-[1.35rem] border border-orange-200/22 bg-[linear-gradient(180deg,rgba(146,64,14,0.96),rgba(120,53,15,0.98))] px-3.5 py-2 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_12px_22px_rgba(120,53,15,0.2)] lg:px-5 lg:py-2.5">
+                <div className="text-[0.9rem] font-black tracking-tight text-amber-50 lg:text-lg">{round.title}</div>
+                <div className="mt-1 text-[9px] font-bold text-amber-100/84 lg:text-[11px]">
                   {formatFantasyPrompt(round.prompt)}
                 </div>
               </div>
             </div>
 
-            <div className="mt-3 grid min-h-0 flex-1 grid-cols-1 gap-4 md:mt-4 md:grid-cols-[1.02fr_0.98fr] md:gap-6">
-              <div className="flex min-h-[23rem] flex-col justify-between gap-4 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(24,24,27,0.8),rgba(39,39,42,0.92))] p-4 shadow-[0_24px_40px_rgba(2,6,23,0.22)] md:min-h-[31rem] md:p-5">
-                <div className="rounded-[1.3rem] border border-white/10 bg-black/18 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-                  <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/56 md:text-xs">Rune puzzle</div>
-                  <div className="mt-2 text-center text-3xl font-black tracking-tight text-white md:text-[2.7rem]">
+            <div className="mt-1.5 grid min-h-0 flex-1 grid-cols-1 gap-2 sm:gap-2.5">
+              <div className="flex min-h-[7.5rem] flex-col justify-between gap-2 rounded-[1.6rem] border border-white/12 bg-[linear-gradient(180deg,rgba(24,24,27,0.8),rgba(39,39,42,0.92))] p-2 shadow-[0_24px_40px_rgba(2,6,23,0.22)] sm:min-h-[8.5rem] lg:min-h-[10rem] lg:p-2.5">
+                <div className="rounded-[1.1rem] border border-white/10 bg-black/18 p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] lg:p-2.5">
+                  <div className="text-[8px] font-black uppercase tracking-[0.16em] text-white/56 lg:text-xs">Rune puzzle</div>
+                  <div className="mt-1 text-center text-[1.1rem] font-black tracking-tight text-white sm:text-[1.35rem] lg:text-[2rem]">
                     {formatFantasyPrompt(round.prompt)}
                   </div>
-                  <div className="mt-2 text-center text-sm font-bold text-sky-100/82 md:text-base">{round.support}</div>
+                  <div className="mt-1 text-center text-[9px] font-bold text-sky-100/82 lg:text-[11px]">{round.support}</div>
                 </div>
 
                 <div className="relative flex flex-1 items-center justify-center overflow-hidden rounded-[1.6rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.22),rgba(9,6,15,0.16))]">
@@ -287,33 +287,33 @@ const RuneLockDungeonsGame: React.FC<RuneLockDungeonsGameProps> = ({
                   <div className="absolute bottom-[12%] left-[14%] h-[10%] w-[14%] rounded-full bg-red-500/12 blur-xl" />
                   <div className="absolute bottom-[12%] right-[14%] h-[10%] w-[14%] rounded-full bg-orange-400/12 blur-xl" />
 
-                  <div className="relative h-[18rem] w-[15rem] md:h-[22rem] md:w-[18rem]">
+                  <div className="relative h-[7rem] w-[6.2rem] lg:h-[7.6rem] lg:w-[6.8rem]">
                     <div className="absolute inset-x-[16%] top-[8%] h-[14%] rounded-[1rem] border border-sky-200/20 bg-[linear-gradient(180deg,#4338ca,#312e81)] shadow-[0_18px_26px_rgba(49,46,129,0.24)]" />
                     <div className="absolute inset-x-[10%] top-[18%] bottom-[10%] rounded-[2rem] border-[6px] border-stone-400/55 bg-[linear-gradient(180deg,#4b5563,#1f2937_72%,#111827)] shadow-[0_24px_42px_rgba(0,0,0,0.32)]" />
                     <div className="absolute inset-x-[18%] top-[28%] h-[18%] rounded-full bg-[radial-gradient(circle_at_center,rgba(196,181,253,0.34),rgba(196,181,253,0.06),transparent_72%)]" />
         <div className="absolute left-1/2 top-[34%] h-[20%] w-[20%] -translate-x-1/2 rounded-full border border-sky-200/22 bg-[linear-gradient(180deg,#7dd3fc,#2563eb)] shadow-[0_0_18px_rgba(56,189,248,0.3)]" />
-                    <div className="absolute left-1/2 top-[35.5%] -translate-x-1/2 text-lg font-black text-white md:text-2xl">?</div>
+                    <div className="absolute left-1/2 top-[35.5%] -translate-x-1/2 text-lg font-black text-white">?</div>
                     <div className="absolute inset-x-[22%] bottom-[20%] h-[12%] rounded-[1rem] border border-white/10 bg-black/16" />
                     <div className="absolute inset-x-[28%] bottom-[24%] h-[4%] rounded-full bg-sky-200/24 blur-sm" />
                   </div>
                 </div>
               </div>
 
-              <div className="flex min-h-[23rem] flex-col justify-between gap-4 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.84),rgba(30,41,59,0.92))] p-4 shadow-[0_24px_40px_rgba(2,6,23,0.24)] md:min-h-[31rem] md:p-5">
-                <div className="rounded-[1.4rem] border border-white/12 bg-black/16 px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-                  <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/56 md:text-xs">Door type</div>
-                  <div className="mt-2 text-2xl font-black tracking-tight text-white md:text-3xl">{round.doorLabel}</div>
+              <div className="flex min-h-[7.5rem] flex-col justify-between gap-2 rounded-[1.6rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.84),rgba(30,41,59,0.92))] p-2 shadow-[0_24px_40px_rgba(2,6,23,0.24)] sm:min-h-[8.5rem] lg:min-h-[10rem] lg:p-2.5">
+                <div className="rounded-[1.1rem] border border-white/12 bg-black/16 px-2 py-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] lg:px-2.5 lg:py-1.5">
+                  <div className="text-[8px] font-black uppercase tracking-[0.16em] text-white/56">Door type</div>
+                  <div className="mt-1 text-[0.95rem] font-black tracking-tight text-white lg:text-[1rem]">{round.doorLabel}</div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 md:gap-4">
+                <div className="grid grid-cols-2 gap-1 sm:gap-1.5 lg:gap-2">
                   {round.options.map((choice, index) => (
                     <RuneStone key={`${choice}-${index}`} value={choice} onClick={() => handleAnswer(choice)} />
                   ))}
                 </div>
 
-                <div className="rounded-[1.4rem] border border-white/12 bg-black/16 px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-                  <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/56 md:text-xs">Dungeon goal</div>
-                  <div className="mt-2 text-sm font-bold leading-relaxed text-white/88 md:text-base">
+                <div className="rounded-[1.1rem] border border-white/12 bg-black/16 px-2 py-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] lg:px-2.5 lg:py-1.5">
+                  <div className="text-[8px] font-black uppercase tracking-[0.16em] text-white/56">Dungeon goal</div>
+                  <div className="mt-1 text-[8px] font-bold leading-snug text-white/88 lg:text-[9px]">
                     Open each rune door by placing the missing number correctly before the trap cycle completes.
                   </div>
                 </div>

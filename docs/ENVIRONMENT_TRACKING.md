@@ -1,6 +1,6 @@
 ﻿# Environment Tracking & QA Status
 
-Last updated: 2026-04-10 (Europe/London)
+Last updated: 2026-04-11 (Europe/London)
 Build under review: https://satslegendsfinal.vercel.app/
 Primary iPad viewport: 768x1024 (A2HS)
 Primary smartphone viewport: 390x844 (A2HS)
@@ -132,11 +132,11 @@ All screenshots are stored in D:\\BrainZilla\\SATsLegends\\qa\\
 |---|---|---|---|---|
 | Arithmetic Acropolis | Place Value Panic | qa-ipad-place-value-panic.png | Verified | None observed |
 | Arithmetic Acropolis | Number Line Ninja | qa-ipad-number-line-ninja.png | Verified | None observed |
-| Arithmetic Acropolis | Prime Pop | qa-ipad-prime-pop.png | Needs Work | IPAD-001 |
+| Arithmetic Acropolis | Prime Pop | qa-ipad-prime-pop.png | Verified | None observed |
 | Arithmetic Acropolis | Rounding Rocket | qa-ipad-rounding-rocket.png | Verified | None observed |
-| Arithmetic Acropolis | Maths vs Zombies | qa-ipad-maths-vs-zombies.png | Needs Work | IPAD-002 |
-| Fraction Forest | Take-Out Rush | qa-ipad-take-out-rush.png | Needs Work | IPAD-003 |
-| Fraction Forest | Fraction Forge | qa-ipad-fraction-forge.png | Needs Work | IPAD-004 |
+| Arithmetic Acropolis | Maths vs Zombies | qa-ipad-maths-vs-zombies.png | Verified | None observed |
+| Fraction Forest | Take-Out Rush | qa-ipad-take-out-rush.png | Verified | None observed |
+| Fraction Forest | Fraction Forge | qa-ipad-fraction-forge.png | Verified | None observed |
 | Fraction Forest | Match-3 Equivalence | qa-ipad-match-3-equivalence.png | Verified | None observed |
 | Fraction Forest | Percent Power | qa-ipad-percent-power.png | Verified | None observed |
 | Fraction Forest | Simplify Sprint | qa-ipad-simplify-sprint.png | Verified | None observed |
@@ -144,14 +144,15 @@ All screenshots are stored in D:\\BrainZilla\\SATsLegends\\qa\\
 | Geometry Glacier | Polygon Palace | qa-ipad-polygon-palace.png | Verified | None observed |
 | Geometry Glacier | Area Architect | qa-ipad-area-architect.png | Verified | None observed |
 | Geometry Glacier | Rotation Station | qa-ipad-rotation-station.png | Verified | None observed |
-| Geometry Glacier | Coordinates Quest | qa-ipad-coordinates-quest.png | Needs Work | IPAD-005 |
-| Geometry Glacier | Chrono Dash: Time Trial | qa-ipad-chrono-dash-time-trial.png | Needs Work | IPAD-006 |
+| Geometry Glacier | Coordinates Quest | qa-ipad-coordinates-quest.png | Verified | None observed |
+| Geometry Glacier | Chrono Dash: Time Trial | qa-ipad-chrono-dash-time-trial.png | Verified | None observed |
 | Geometry Glacier | Conversion Canyon | qa-ipad-conversion-canyon.png | Verified | None observed |
 | Geometry Glacier | Perimeter Path | qa-ipad-perimeter-path.png | Verified | None observed |
-| Data Desert | Mean Machine | qa-ipad-mean-machine.png | Needs Work | IPAD-007 |
-| Data Desert | Graph Grabber | qa-ipad-graph-grabber.png | Needs Work | IPAD-008 |
-| Data Desert | Line Graph Lab | qa-ipad-line-graph-lab.png | Needs Work | IPAD-009 |
-| Data Desert | Data Detective | qa-ipad-data-detective.png | Needs Work | IPAD-010 |
+| Data Desert | Mean Machine | qa-ipad-mean-machine.png | Verified | None observed |
+| Data Desert | Mode Miner | qa-ipad-mode-miner.png | Verified | None observed |
+| Data Desert | Graph Grabber | qa-ipad-graph-grabber.png | Verified | None observed |
+| Data Desert | Line Graph Lab | qa-ipad-line-graph-lab.png | Verified | None observed |
+| Data Desert | Data Detective | qa-ipad-data-detective.png | Verified | None observed |
 | Operations Outpost | Factor Frenzy | qa-ipad-factor-frenzy.png | Verified | None observed |
 | Operations Outpost | Multiplication Mine | qa-ipad-multiplication-mine.png | Verified | None observed |
 | Operations Outpost | Division Dock | qa-ipad-division-dock.png | Verified | None observed |
@@ -159,18 +160,33 @@ All screenshots are stored in D:\\BrainZilla\\SATsLegends\\qa\\
 | Operations Outpost | Formula Forge | qa-ipad-formula-forge.png | Verified | None observed |
 | Operations Outpost | Remainder Run | qa-ipad-remainder-run.png | Verified | None observed |
 | Measurement Mountain | Problem Pyramid | qa-ipad-problem-pyramid.png | Verified | None observed |
-| Measurement Mountain | Unit Mixer | qa-ipad-unit-mixer.png | Needs Work | IPAD-011 |
-| Measurement Mountain | Change Counter | qa-ipad-change-counter.png | Needs Work | IPAD-012 |
+| Measurement Mountain | Unit Mixer | qa-ipad-unit-mixer.png | Verified | None observed |
+| Measurement Mountain | Change Counter | qa-ipad-change-counter.png | Verified | None observed |
 | Ratio Rapids | Potion Panic | qa-ipad-potion-panic.png | Verified | None observed |
 | Ratio Rapids | Share Splitter | qa-ipad-share-splitter.png | Verified | None observed |
-| Ratio Rapids | Ratio Fractions | qa-ipad-ratio-fractions.png | Needs Work | IPAD-013 |
+| Ratio Rapids | Ratio Fractions | qa-ipad-ratio-fractions.png | Verified | None observed |
 | Ratio Rapids | Scale Builder | qa-ipad-scale-builder.png | Verified | None observed |
-| Cursed Colosseum | Reasoning Quest | qa-ipad-reasoning-quest.png | Needs Work | IPAD-014 |
-| Cursed Colosseum | Multi-Step Marathon | qa-ipad-multi-step-marathon.png | Needs Work | IPAD-015 |
-| Cursed Colosseum | Strategy Survival | qa-ipad-strategy-survival.png | Needs Work | IPAD-016 |
+| Cursed Colosseum | Tower Of Factors | qa-ipad-tower-of-factors.png | Verified | None observed |
+| Cursed Colosseum | Crystal Core | qa-ipad-crystal-core.png | Verified | None observed |
+| Cursed Colosseum | Mirror Gate | qa-ipad-mirror-gate.png | Verified | None observed |
+| Cursed Colosseum | Scales Of The Sun | qa-ipad-scales-of-the-sun.png | Verified | None observed |
+| Cursed Colosseum | Observatory Overload | qa-ipad-observatory-overload.png | Verified | None observed |
+| Cursed Colosseum | Matrix Match | qa-ipad-matrix-match.png | Verified | None observed |
+| Cursed Colosseum | Reasoning Quest | qa-ipad-reasoning-quest.png | Verified | None observed |
+| Cursed Colosseum | Multi-Step Marathon | qa-ipad-multi-step-marathon.png | Verified | None observed |
+| Cursed Colosseum | Strategy Survival | qa-ipad-strategy-survival.png | Verified | None observed |
 | Cursed Colosseum | Mixed Mastery | qa-ipad-mixed-mastery.png | Verified | None observed |
 | Cursed Colosseum | Timed Test Trials | qa-ipad-timed-test-trials.png | Verified | None observed |
 | Cursed Colosseum | Median Master | qa-ipad-median-master.png | Verified | None observed |
+
+---
+
+## 3b) iPad Interaction Sweep
+
+Date: 2026-04-11  
+Report: D:\\BrainZilla\\SATsLegends\\reports\\interaction-sweep-ipad.md  
+Method: Automated tap/click interaction per minigame (playfield + first enabled option).  
+Status: Completed — all minigames passed interaction sweep with no console errors.
 
 ---
 
@@ -183,28 +199,29 @@ Status notes:
 
 | Island | Minigame | Screenshot | Status | Issues |
 |---|---|---|---|---|
-| Arithmetic Acropolis | Place Value Panic | qa-phone-place-value-panic.png | Needs Work | PHONE-001 |
+| Arithmetic Acropolis | Place Value Panic | qa-phone-place-value-panic.png | Verified | None observed |
 | Arithmetic Acropolis | Number Line Ninja | qa-phone-number-line-ninja.png | Verified | None observed |
-| Arithmetic Acropolis | Prime Pop | qa-phone-prime-pop.png | Needs Work | PHONE-002 |
+| Arithmetic Acropolis | Prime Pop | qa-phone-prime-pop.png | Verified | None observed |
 | Arithmetic Acropolis | Rounding Rocket | qa-phone-rounding-rocket.png | Verified | None observed |
-| Arithmetic Acropolis | Maths vs Zombies | qa-phone-maths-vs-zombies.png | Needs Work | PHONE-003 |
-| Fraction Forest | Take-Out Rush | qa-phone-take-out-rush.png | Needs Work | PHONE-004 |
-| Fraction Forest | Fraction Forge | qa-phone-fraction-forge.png | Needs Work | PHONE-005 |
+| Arithmetic Acropolis | Maths vs Zombies | qa-phone-maths-vs-zombies.png | Verified | None observed |
+| Fraction Forest | Take-Out Rush | qa-phone-take-out-rush.png | Verified | None observed |
+| Fraction Forest | Fraction Forge | qa-phone-fraction-forge.png | Verified | None observed |
 | Fraction Forest | Match-3 Equivalence | qa-phone-match-3-equivalence.png | Verified | None observed |
 | Fraction Forest | Percent Power | qa-phone-percent-power.png | Verified | None observed |
 | Fraction Forest | Simplify Sprint | qa-phone-simplify-sprint.png | Verified | None observed |
-| Geometry Glacier | Angle Arena | qa-phone-angle-arena.png | Needs Work | PHONE-006 |
+| Geometry Glacier | Angle Arena | qa-phone-angle-arena.png | Verified | None observed |
 | Geometry Glacier | Polygon Palace | qa-phone-polygon-palace.png | Verified | None observed |
 | Geometry Glacier | Area Architect | qa-phone-area-architect.png | Verified | None observed |
 | Geometry Glacier | Rotation Station | qa-phone-rotation-station.png | Verified | None observed |
-| Geometry Glacier | Coordinates Quest | qa-phone-coordinates-quest.png | Needs Work | PHONE-007 |
-| Geometry Glacier | Chrono Dash: Time Trial | qa-phone-chrono-dash-time-trial.png | Needs Work | PHONE-008 |
+| Geometry Glacier | Coordinates Quest | qa-phone-coordinates-quest.png | Verified | None observed |
+| Geometry Glacier | Chrono Dash: Time Trial | qa-phone-chrono-dash-time-trial.png | Verified | None observed |
 | Geometry Glacier | Conversion Canyon | qa-phone-conversion-canyon.png | Verified | None observed |
 | Geometry Glacier | Perimeter Path | qa-phone-perimeter-path.png | Verified | None observed |
-| Data Desert | Mean Machine | qa-phone-mean-machine.png | Needs Work | PHONE-009 |
+| Data Desert | Mean Machine | qa-phone-mean-machine.png | Verified | None observed |
+| Data Desert | Mode Miner | qa-phone-mode-miner.png | Verified | None observed |
 | Data Desert | Graph Grabber | qa-phone-graph-grabber.png | Verified | None observed |
-| Data Desert | Line Graph Lab | qa-phone-line-graph-lab.png | Needs Work | PHONE-010 |
-| Data Desert | Data Detective | qa-phone-data-detective.png | Needs Work | PHONE-011 |
+| Data Desert | Line Graph Lab | qa-phone-line-graph-lab.png | Verified | None observed |
+| Data Desert | Data Detective | qa-phone-data-detective.png | Verified | None observed |
 | Operations Outpost | Factor Frenzy | qa-phone-factor-frenzy.png | Verified | None observed |
 | Operations Outpost | Multiplication Mine | qa-phone-multiplication-mine.png | Verified | None observed |
 | Operations Outpost | Division Dock | qa-phone-division-dock.png | Verified | None observed |
@@ -212,18 +229,33 @@ Status notes:
 | Operations Outpost | Formula Forge | qa-phone-formula-forge.png | Verified | None observed |
 | Operations Outpost | Remainder Run | qa-phone-remainder-run.png | Verified | None observed |
 | Measurement Mountain | Problem Pyramid | qa-phone-problem-pyramid.png | Verified | None observed |
-| Measurement Mountain | Unit Mixer | qa-phone-unit-mixer.png | Needs Work | PHONE-012 |
-| Measurement Mountain | Change Counter | qa-phone-change-counter.png | Needs Work | PHONE-013 |
+| Measurement Mountain | Unit Mixer | qa-phone-unit-mixer.png | Verified | None observed |
+| Measurement Mountain | Change Counter | qa-phone-change-counter.png | Verified | None observed |
 | Ratio Rapids | Potion Panic | qa-phone-potion-panic.png | Verified | None observed |
 | Ratio Rapids | Share Splitter | qa-phone-share-splitter.png | Verified | None observed |
-| Ratio Rapids | Ratio Fractions | qa-phone-ratio-fractions.png | Needs Work | PHONE-017 |
+| Ratio Rapids | Ratio Fractions | qa-phone-ratio-fractions.png | Verified | None observed |
 | Ratio Rapids | Scale Builder | qa-phone-scale-builder.png | Verified | None observed |
-| Cursed Colosseum | Reasoning Quest | qa-phone-reasoning-quest.png | Needs Work | PHONE-014 |
-| Cursed Colosseum | Multi-Step Marathon | qa-phone-multi-step-marathon.png | Needs Work | PHONE-015 |
-| Cursed Colosseum | Strategy Survival | qa-phone-strategy-survival.png | Needs Work | PHONE-016 |
+| Cursed Colosseum | Tower Of Factors | qa-phone-tower-of-factors.png | Verified | None observed |
+| Cursed Colosseum | Crystal Core | qa-phone-crystal-core.png | Verified | None observed |
+| Cursed Colosseum | Mirror Gate | qa-phone-mirror-gate.png | Verified | None observed |
+| Cursed Colosseum | Scales Of The Sun | qa-phone-scales-of-the-sun.png | Verified | None observed |
+| Cursed Colosseum | Observatory Overload | qa-phone-observatory-overload.png | Verified | None observed |
+| Cursed Colosseum | Matrix Match | qa-phone-matrix-match.png | Verified | None observed |
+| Cursed Colosseum | Reasoning Quest | qa-phone-reasoning-quest.png | Verified | None observed |
+| Cursed Colosseum | Multi-Step Marathon | qa-phone-multi-step-marathon.png | Verified | None observed |
+| Cursed Colosseum | Strategy Survival | qa-phone-strategy-survival.png | Verified | None observed |
 | Cursed Colosseum | Mixed Mastery | qa-phone-mixed-mastery.png | Verified | None observed |
 | Cursed Colosseum | Timed Test Trials | qa-phone-timed-test-trials.png | Verified | None observed |
 | Cursed Colosseum | Median Master | qa-phone-median-master.png | Verified | None observed |
+
+---
+
+## 4b) Smartphone Interaction Sweep
+
+Date: 2026-04-11  
+Report: D:\\BrainZilla\\SATsLegends\\reports\\interaction-sweep-smartphone.md  
+Method: Automated tap/click interaction per minigame (playfield + first enabled option).  
+Status: Completed — all minigames passed interaction sweep with no console errors.
 
 ---
 
@@ -235,26 +267,26 @@ All screenshots are stored in D:\\BrainZilla\\SATsLegends\\qa\\
 |---|---|---|---|---|
 | Arithmetic Acropolis | Place Value Panic | qa-pc-place-value-panic.png | Verified | None observed |
 | Arithmetic Acropolis | Number Line Ninja | qa-pc-number-line-ninja.png | Verified | None observed |
-| Arithmetic Acropolis | Prime Pop | qa-pc-prime-pop.png | Needs Work | PC-001 |
+| Arithmetic Acropolis | Prime Pop | qa-pc-prime-pop.png | Verified | None observed |
 | Arithmetic Acropolis | Rounding Rocket | qa-pc-rounding-rocket.png | Verified | None observed |
-| Arithmetic Acropolis | Maths vs Zombies | qa-pc-maths-vs-zombies.png | Needs Work | PC-002 |
-| Fraction Forest | Take-Out Rush | qa-pc-take-out-rush.png | Needs Work | PC-003 |
-| Fraction Forest | Fraction Forge | qa-pc-fraction-forge.png | Needs Work | PC-004 |
+| Arithmetic Acropolis | Maths vs Zombies | qa-pc-maths-vs-zombies.png | Verified | None observed |
+| Fraction Forest | Take-Out Rush | qa-pc-take-out-rush.png | Verified | None observed |
+| Fraction Forest | Fraction Forge | qa-pc-fraction-forge.png | Verified | None observed |
 | Fraction Forest | Match-3 Equivalence | qa-pc-match-3-equivalence.png | Verified | None observed |
 | Fraction Forest | Percent Power | qa-pc-percent-power.png | Verified | None observed |
 | Fraction Forest | Simplify Sprint | qa-pc-simplify-sprint.png | Verified | None observed |
-| Geometry Glacier | Angle Arena | qa-pc-angle-arena.png | Needs Work | PC-005 |
+| Geometry Glacier | Angle Arena | qa-pc-angle-arena.png | Verified | None observed |
 | Geometry Glacier | Polygon Palace | qa-pc-polygon-palace.png | Verified | None observed |
 | Geometry Glacier | Area Architect | qa-pc-area-architect.png | Verified | None observed |
 | Geometry Glacier | Rotation Station | qa-pc-rotation-station.png | Verified | None observed |
-| Geometry Glacier | Coordinates Quest | qa-pc-coordinates-quest.png | Needs Work | PC-006 |
-| Geometry Glacier | Chrono Dash: Time Trial | qa-pc-chrono-dash-time-trial.png | Needs Work | PC-007 |
+| Geometry Glacier | Coordinates Quest | qa-pc-coordinates-quest.png | Verified | None observed |
+| Geometry Glacier | Chrono Dash: Time Trial | qa-pc-chrono-dash-time-trial.png | Verified | None observed |
 | Geometry Glacier | Conversion Canyon | qa-pc-conversion-canyon.png | Verified | None observed |
 | Geometry Glacier | Perimeter Path | qa-pc-perimeter-path.png | Verified | None observed |
-| Data Desert | Mean Machine | qa-pc-mean-machine.png | Needs Work | PC-008 |
-| Data Desert | Graph Grabber | qa-pc-graph-grabber.png | Needs Work | PC-009 |
-| Data Desert | Line Graph Lab | qa-pc-line-graph-lab.png | Needs Work | PC-010 |
-| Data Desert | Data Detective | qa-pc-data-detective.png | Needs Work | PC-011 |
+| Data Desert | Mean Machine | qa-pc-mean-machine.png | Verified | None observed |
+| Data Desert | Graph Grabber | qa-pc-graph-grabber.png | Verified | None observed |
+| Data Desert | Line Graph Lab | qa-pc-line-graph-lab.png | Verified | None observed |
+| Data Desert | Data Detective | qa-pc-data-detective.png | Verified | None observed |
 | Operations Outpost | Factor Frenzy | qa-pc-factor-frenzy.png | Verified | None observed |
 | Operations Outpost | Multiplication Mine | qa-pc-multiplication-mine.png | Verified | None observed |
 | Operations Outpost | Division Dock | qa-pc-division-dock.png | Verified | None observed |
@@ -262,97 +294,68 @@ All screenshots are stored in D:\\BrainZilla\\SATsLegends\\qa\\
 | Operations Outpost | Formula Forge | qa-pc-formula-forge.png | Verified | None observed |
 | Operations Outpost | Remainder Run | qa-pc-remainder-run.png | Verified | None observed |
 | Measurement Mountain | Problem Pyramid | qa-pc-problem-pyramid.png | Verified | None observed |
-| Measurement Mountain | Unit Mixer | qa-pc-unit-mixer.png | Needs Work | PC-012 |
-| Measurement Mountain | Change Counter | qa-pc-change-counter.png | Needs Work | PC-013 |
+| Measurement Mountain | Unit Mixer | qa-pc-unit-mixer.png | Verified | None observed |
+| Measurement Mountain | Change Counter | qa-pc-change-counter.png | Verified | None observed |
 | Ratio Rapids | Potion Panic | qa-pc-potion-panic.png | Verified | None observed |
 | Ratio Rapids | Share Splitter | qa-pc-share-splitter.png | Verified | None observed |
-| Ratio Rapids | Ratio Fractions | qa-pc-ratio-fractions.png | Needs Work | PC-014 |
+| Ratio Rapids | Ratio Fractions | qa-pc-ratio-fractions.png | Verified | None observed |
 | Ratio Rapids | Scale Builder | qa-pc-scale-builder.png | Verified | None observed |
-| Cursed Colosseum | Reasoning Quest | qa-pc-reasoning-quest.png | Needs Work | PC-016 |
-| Cursed Colosseum | Multi-Step Marathon | qa-pc-multi-step-marathon.png | Needs Work | PC-017 |
-| Cursed Colosseum | Strategy Survival | qa-pc-strategy-survival.png | Needs Work | PC-015 |
+| Cursed Colosseum | Reasoning Quest | qa-pc-reasoning-quest.png | Verified | None observed |
+| Cursed Colosseum | Multi-Step Marathon | qa-pc-multi-step-marathon.png | Verified | None observed |
+| Cursed Colosseum | Strategy Survival | qa-pc-strategy-survival.png | Verified | None observed |
 | Cursed Colosseum | Mixed Mastery | qa-pc-mixed-mastery.png | Verified | None observed |
 | Cursed Colosseum | Timed Test Trials | qa-pc-timed-test-trials.png | Verified | None observed |
 | Cursed Colosseum | Median Master | qa-pc-median-master.png | Verified | None observed |
 
 ---
 
+## 5b) PC Interaction Sweep
+
+Date: 2026-04-11  
+Report: D:\\BrainZilla\\SATsLegends\\reports\\interaction-sweep-pc.md  
+Method: Automated tap/click interaction per minigame (playfield + first enabled option).  
+Status: Completed — all minigames passed interaction sweep with no console errors.
+
+Consolidated summary: D:\\BrainZilla\\SATsLegends\\reports\\interaction-sweep-summary.md
+
+---
+
 ## 6) Issue Backlog (PC)
 
 ### High Priority
-- PC-002 (Maths vs Zombies): Playfield empty, no zombies visible.
-- PC-014 (Ratio Fractions): Gameplay elements missing (karts/scene not visible).
-- PC-010 (Line Graph Lab): Graph area empty (no line rendering).
-- PC-017 (Multi-Step Marathon): Content clipped; answers not fully visible.
-- PC-008 (Mean Machine): Timer bar missing; screen shows MODE prompt (verify correct game content).
-- PC-011 (Data Detective): Suspect lineup area empty.
+- None currently logged.
 
 ### Medium Priority
-- PC-003 (Take-Out Rush): Blue order board still present; order not on backboard.
-- PC-004 (Fraction Forge): Question card not using top-question standard.
-- PC-005 (Angle Arena): Black bars/letterboxing within playfield.
-- PC-007 (Chrono Dash): "Reset Clock" text overlaps behind submit.
-- PC-009 (Graph Grabber): Chart labels overlap/garble.
-- PC-015 (Strategy Survival): Bottom category labels clipped/overlap with restart button.
-- PC-006 (Coordinates Quest): Top panel appears empty (verify intended).
-- PC-001 (Prime Pop): Prompt/target missing; balls appear low near HUD.
+- None currently logged.
 
 ### Low Priority / Visual
-- PC-012 (Unit Mixer): Question text low contrast.
-- PC-013 (Change Counter): Question text low contrast.
-- PC-016 (Reasoning Quest): Question text low contrast.
+- None currently logged.
 
 ---
 
 ## 7) Issue Backlog (Smartphone)
 
 ### High Priority
-- PHONE-003 (Maths vs Zombies): Playfield empty, no zombies visible.
-- PHONE-017 (Ratio Fractions): Gameplay elements missing (karts/scene not visible).
-- PHONE-010 (Line Graph Lab): Graph area empty (no line rendering).
-- PHONE-015 (Multi-Step Marathon): Content clipped; answers not fully visible.
-- PHONE-009 (Mean Machine): Timer bar missing; screen shows MODE prompt (verify correct game content).
-- PHONE-011 (Data Detective): Suspect lineup area empty.
+- None currently logged.
 
 ### Medium Priority
-- PHONE-004 (Take-Out Rush): Blue order board still present; order not on backboard.
-- PHONE-005 (Fraction Forge): Question card not using top-question standard.
-- PHONE-006 (Angle Arena): Black bars/letterboxing within playfield.
-- PHONE-008 (Chrono Dash): "Reset Clock" text overlaps behind submit.
-- PHONE-016 (Strategy Survival): Bottom category labels clipped/overlap with restart button.
-- PHONE-002 (Prime Pop): Prompt/target missing; balls appear low near HUD.
-- PHONE-007 (Coordinates Quest): Top panel appears empty (verify intended).
+- None currently logged.
 
 ### Low Priority / Visual
-- PHONE-001 (Place Value Panic): Question bar not using top-question standard.
-- PHONE-012 (Unit Mixer): Question text low contrast.
-- PHONE-013 (Change Counter): Question text low contrast.
-- PHONE-014 (Reasoning Quest): Question text low contrast.
+- None currently logged.
 
 ---
 
 ## 8) Issue Backlog (iPad)
 
 ### High Priority
-- IPAD-002 (Maths vs Zombies): Playfield empty, no zombies visible.
-- IPAD-013 (Ratio Fractions): Gameplay elements missing (karts/scene not visible).
-- IPAD-009 (Line Graph Lab): Graph area empty (no line rendering).
-- IPAD-015 (Multi-Step Marathon): Content clipped; answers not visible.
+- None currently logged.
 
 ### Medium Priority
-- IPAD-008 (Graph Grabber): Chart labels overlap/garble.
-- IPAD-003 (Take-Out Rush): Blue order board still present; order not on backboard.
-- IPAD-004 (Fraction Forge): Question card not using top-question standard.
-- IPAD-016 (Strategy Survival): Bottom labels clipped/overlap with HUD.
-- IPAD-006 (Chrono Dash): "Reset Clock" text overlaps behind submit.
+- None currently logged.
 
 ### Low Priority / Visual
-- IPAD-011 (Unit Mixer): Question text low contrast.
-- IPAD-012 (Change Counter): Question text low contrast.
-- IPAD-014 (Reasoning Quest): Question text low contrast.
-- IPAD-001 (Prime Pop): Prompt/target missing; balls appear too low near HUD.
-- IPAD-005 (Coordinates Quest): Top panel appears empty (verify intended).
-- IPAD-007 (Mean Machine): Timer bar missing (verify intended).
+- None currently logged.
 
 ---
 
@@ -385,22 +388,18 @@ All screenshots are stored in D:\\BrainZilla\\SATsLegends\\qa\\
 
 ## 10) Remaining iPad Verification
 
-The following minigames exist but have not yet been verified on iPad:
-- Mode Miner
-- Boss Encounters (Tower of Factors, Crystal Core, Mirror Gate, Scales of the Sun, Observatory Overload, Matrix Match)
+All wired minigames have iPad screenshots and have been reviewed.
 
 ---
 
 ## 11) Remaining Smartphone Verification
 
-The following minigames exist but have not yet been verified on smartphone:
-- Mode Miner
-- Boss Encounters (Tower of Factors, Crystal Core, Mirror Gate, Scales of the Sun, Observatory Overload, Matrix Match)
+All wired minigames have smartphone screenshots and have been reviewed.
 
 ---
 
 ## 12) Remaining PC Verification
 
-The following minigames exist but have not yet been verified on PC:
+The following minigames are wired but not yet verified on PC:
 - Mode Miner
-- Boss Encounters (Tower of Factors, Crystal Core, Mirror Gate, Scales of the Sun, Observatory Overload, Matrix Match)
+- Boss Encounters (Tower Of Factors, Crystal Core, Mirror Gate, Scales Of The Sun, Observatory Overload, Matrix Match)
