@@ -38,8 +38,8 @@ const RACER_LERP = 0.16;
 const BASE_XP = 160;
 const BACKDROP_WIDTH = 4000;
 const BACKDROP_HEIGHT = 500;
-const BACKDROP_Y_OFFSET = 160;
-const TRACK_LINE_FROM_BOTTOM = BACKDROP_Y_OFFSET + 62;
+const BACKDROP_Y_OFFSET = 60;
+const TRACK_LINE_FROM_BOTTOM = 62;
 const CART_Y_SHIFT = 0;
 const FINISH_Y_SHIFT = -200;
 
@@ -324,8 +324,8 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   );
   const finishLineY = clamp(
     trackLineY + (FINISH_Y_SHIFT / Math.max(1, viewport.height)) * 100,
-    6,
-    96,
+    0,
+    100,
   );
   const maxBackdropScroll = Math.max(0, BACKDROP_WIDTH - viewport.width);
   const backgroundOffset = Math.round(clamp(trackProgress * maxBackdropScroll, 0, maxBackdropScroll));
