@@ -10,7 +10,10 @@ import { DEFAULT_RACE_DIFFICULTY, RACE_TUNING, RaceDifficulty } from './ratioFra
 import { getQuestionTier, pickQuestionForTier } from './ratioFractionsRace/questionSelector';
 import { RatioFractionQuestion } from './ratioFractionsRace/types';
 import ratioBackdrop from '../assets/gokarts/bkgroundmapratiofrac.png';
-import playerKart from '../assets/gokarts/12.png';
+import kartBarratt from '../assets/gokarts/8.png';
+import kartBran from '../assets/gokarts/9.png';
+import kartMochi from '../assets/gokarts/10.png';
+import kartVex from '../assets/gokarts/11.png';
 import enemyKart from '../assets/gokarts/15.png';
 
 interface RatioFractionsGameProps extends MiniGameShellContractProps {
@@ -43,6 +46,13 @@ const TRACK_LINE_FROM_BOTTOM = 177;
 const CART_Y_SHIFT = 0;
 const FINISH_Y_SHIFT = -200;
 const FINISH_X_SHIFT = -100;
+
+const PLAYER_KARTS: Record<string, string> = {
+  barratt: kartBarratt,
+  bran: kartBran,
+  mochi: kartMochi,
+  vex: kartVex,
+};
 
 const shuffle = <T,>(items: T[]) => {
   const copy = [...items];
@@ -116,6 +126,7 @@ const clamp = (value: number, min: number, max: number) => Math.max(min, Math.mi
 
 const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   levelId,
+  avatarId,
   onVictory,
   onGameOver,
   onBack,
@@ -151,6 +162,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   );
   const lives = sessionState?.lives ?? 3;
   const buildExplanation = (q: RatioFractionQuestion) => q.explanation;
+  const playerKart = PLAYER_KARTS[avatarId] || kartBarratt;
   
 
   useEffect(() => {
