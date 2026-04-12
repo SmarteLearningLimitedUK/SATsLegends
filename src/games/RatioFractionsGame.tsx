@@ -359,10 +359,11 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
         <div ref={raceViewportRef} className="pointer-events-none absolute inset-0 z-[5]">
           <div className="relative h-full w-full">
             <div
-              className="absolute z-30 flex h-12 w-12 items-center justify-center rounded-full border border-amber-200 bg-amber-400 text-xs font-black uppercase text-slate-900"
+              className="absolute z-30 flex items-center gap-1 rounded-full border border-amber-200 bg-amber-400 px-3 py-1 text-[10px] font-black uppercase text-slate-900"
               style={finishStyle}
             >
-              Finish
+              <span>Finish</span>
+              <span className="text-sm leading-none">→</span>
             </div>
 
             <motion.div
