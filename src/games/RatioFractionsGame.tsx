@@ -344,13 +344,13 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const backgroundOffset = Math.round(clamp(trackProgress * maxBackdropScroll, 0, maxBackdropScroll));
 
   const playerStyle = {
-    transform: 'translate(-50%, -50%) scale(5.5)',
+    transform: 'translate(-50%, -50%) scale(1.375)',
     top: `${trackLineY}%`,
     left: `${playerLeft}%`,
   };
 
   const enemyStyle = {
-    transform: 'translate(-50%, -50%) scale(5.5)',
+    transform: 'translate(-50%, -50%) scale(1.375)',
     top: `${trackLineY}%`,
     left: `${enemyLeft}%`,
   };
