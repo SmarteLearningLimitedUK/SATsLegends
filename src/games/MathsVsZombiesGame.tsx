@@ -3,7 +3,7 @@ import { Timer as TimerIcon, Heart, Target, Brain } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 import zombieFallback from '../assets/zombies/zombie.png';
-import zombieGardenBackground from '../assets/maps/forect.jpg';
+import zombiePlayfield from '../assets/zombies/zombiebkground.png';
 
 interface MathsVsZombiesGameProps {
   levelId: number;
@@ -19,7 +19,9 @@ type ZombieState = 'appear' | 'walk' | 'hit' | 'attack' | 'die';
 interface Zombie {
   id: number;
   lane: number;
+  x: number; // 0..100
   y: number; // 0..100
+  xSpeed: number; // percent per second
   health: number;
   maxHealth: number;
   speed: number; // percent per second
@@ -37,6 +39,9 @@ interface Question {
 
 const LANES = 4;
 const SPAWN_Y = 6;
+const SPAWN_RIGHT_X = 96;
+const RIGHT_SPAWN_MIN_Y = 18;
+const RIGHT_SPAWN_MAX_Y = 62;
 const TARGET_Y = 78;
 const ZOMBIE_SIZE = 52;
 const ANIM_FPS = 8;
@@ -238,10 +243,18 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     const lane = Math.floor(Math.random() * LANES);
     const maxZombies = maxZombiesForLevel(levelId);
     if (zombiesRef.current.length >= maxZombies) return;
+    const spawnSide = Math.random() < 0.5 ? 'top' : 'right';
+    const laneX = 18 + lane * 20;
+    const startX = spawnSide === 'right' ? SPAWN_RIGHT_X : laneX;
+    const startY = spawnSide === 'right'
+      ? RIGHT_SPAWN_MIN_Y + Math.random() * (RIGHT_SPAWN_MAX_Y - RIGHT_SPAWN_MIN_Y)
+      : SPAWN_Y;
     const zombie: Zombie = {
       id: idRef.current++,
       lane,
-      y: SPAWN_Y,
+      x: startX,
+      y: startY,
+      xSpeed: spawnSide === 'right' ? -(0.16 + Math.max(0, levelId - 1) * 0.01) : 0,
       health: baseZombieHealth,
       maxHealth: baseZombieHealth,
       speed: 0.14 + (wave * 0.02) + Math.max(0, levelId - 1) * 0.012,
@@ -336,8 +349,10 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     let breaches = 0;
     const zombiesNext = zombiesRef.current.map((zombie) => {
       let nextY = zombie.y;
+      let nextX = zombie.x;
       if (zombie.state !== 'attack' && zombie.state !== 'die') {
         nextY += zombie.speed * dt;
+        nextX += zombie.xSpeed * dt;
       }
 
       let nextState = zombie.state;
@@ -378,6 +393,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
       return {
         ...zombie,
+        x: nextX,
         y: nextY,
         state: nextState,
         frameIndex: nextFrameIndex,
@@ -466,7 +482,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   return (
     <div
       className="relative flex h-full w-full flex-col items-center overflow-hidden bg-cover bg-center bg-no-repeat font-sans text-white select-none"
-      style={{ backgroundImage: `url(${zombieGardenBackground})` }}
+      style={{ backgroundImage: `url(${zombiePlayfield})` }}
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,#1e3a8a_0%,#050a1a_100%)]" />
 
@@ -504,7 +520,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
                   className="absolute flex flex-col items-center gap-1"
                   style={{
                     top: `${zombie.y}%`,
-                    left: `${18 + zombie.lane * 20}%`,
+                    left: `${zombie.x}%`,
                     width: `${ZOMBIE_SIZE}px`,
                   }}
                 >
