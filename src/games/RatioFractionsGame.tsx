@@ -164,7 +164,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const lives = sessionState?.lives ?? 3;
   const buildExplanation = (q: RatioFractionQuestion) => q.explanation;
   const playerKart = PLAYER_KARTS[avatarId] || kartBarratt;
-  const enemyIntervalMs = levelId <= 2 ? 5000 : Math.max(500, 5000 - (levelId - 2) * 500);
+  const enemyIntervalMs = 4000;
 
 
   useEffect(() => {
@@ -202,7 +202,8 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     const enemyStep = tuning.enemyAdvanceDistance;
 
     const interval = window.setInterval(() => {
-      if (raceState === 'enemyWin' || raceState === 'playerWin' || raceState === 'introCountdown') return;
+      if (raceState === 'enemyWin' || raceState === 'playerWin') return;
+      if (raceState !== 'showingQuestion') return;
       enemyTargetRef.current = Math.min(tuning.trackLength, enemyTargetRef.current + enemyStep);
       if (enemyTargetRef.current >= tuning.trackLength) {
         setRaceState('enemyWin');
@@ -210,7 +211,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     }, pace);
 
     return () => window.clearInterval(interval);
-  }, [locked, raceState, tuning.enemyAdvanceDistance, tuning.enemyMoveIntervalMs, tuning.trackLength]);
+  }, [raceState, tuning.enemyAdvanceDistance, tuning.trackLength]);
 
   useEffect(() => {
     if (raceState === 'playerWin' && !reportedResultRef.current) {
