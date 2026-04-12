@@ -40,6 +40,7 @@ const BACKDROP_WIDTH = 4000;
 const BACKDROP_HEIGHT = 500;
 const BACKDROP_Y_OFFSET = 60;
 const TRACK_LINE_FROM_BOTTOM = 82;
+const CART_Y_SHIFT = -20;
 
 const shuffle = <T,>(items: T[]) => {
   const copy = [...items];
@@ -316,7 +317,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const showBoost = raceState === 'correctBoost';
   const showStall = raceState === 'incorrectStall';
   const trackLineY = clamp(
-    ((viewport.height - TRACK_LINE_FROM_BOTTOM) / Math.max(1, viewport.height)) * 100,
+    ((viewport.height - TRACK_LINE_FROM_BOTTOM + CART_Y_SHIFT) / Math.max(1, viewport.height)) * 100,
     0,
     100,
   );
@@ -324,13 +325,13 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const backgroundOffset = Math.round(clamp(trackProgress * maxBackdropScroll, 0, maxBackdropScroll));
 
   const playerStyle = {
-    transform: 'translate(-50%, -50%)',
+    transform: 'translate(-50%, -50%) scale(1.5)',
     top: `${trackLineY}%`,
     left: `${playerLeft}%`,
   };
 
   const enemyStyle = {
-    transform: 'translate(-50%, -50%)',
+    transform: 'translate(-50%, -50%) scale(1.5)',
     top: `${trackLineY}%`,
     left: `${enemyLeft}%`,
   };
