@@ -969,6 +969,7 @@ const App: React.FC = () => {
                 totalTime={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
                 lives={globalMiniGameLives}
                 hideTimer={hideShellTimer}
+                hideTopBar={screen === 'world_map' || screen === 'island_levels'}
                 onBack={isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
                 variant={isGameplayScreen ? 'gameplay' : 'hub'}
                 bottomContent={mapHudDock || undefined}
