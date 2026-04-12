@@ -55,19 +55,19 @@ const CAKE_SLICE_ASSET = cakeSliceAsset;
 const BIRTHDAY_CAKE_ASSET = birthdayCakeAsset;
 const PLATE_POSITIONS: Record<number, Array<{ x: number; y: number }>> = {
   2: [
-    { x: 30, y: 46 },
-    { x: 70, y: 46 },
+    { x: 26.8, y: 61.0 },
+    { x: 77.7, y: 61.5 },
   ],
   3: [
-    { x: 50, y: 20 },
-    { x: 26, y: 52 },
-    { x: 74, y: 52 },
+    { x: 51.2, y: 46.0 },
+    { x: 26.8, y: 61.0 },
+    { x: 77.7, y: 61.5 },
   ],
   4: [
-    { x: 50, y: 18 },
-    { x: 22, y: 50 },
-    { x: 78, y: 50 },
-    { x: 50, y: 82 },
+    { x: 51.2, y: 46.0 },
+    { x: 26.8, y: 61.0 },
+    { x: 77.7, y: 61.5 },
+    { x: 53.4, y: 71.3 },
   ],
 };
 
@@ -216,6 +216,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const allSlicesUsed = remainingSlices === 0;
   const allCorrect = plateViews.every((plate) => plate.isCorrect);
   const platePositions = PLATE_POSITIONS[challenge.plateCount] || PLATE_POSITIONS[4];
+  const plateSize = 'calc(var(--game-stage-width, 390px) * 0.2)';
 
   const rules = useMemo(() => ({
     title: 'Share Splitter',
@@ -467,70 +468,72 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
   return (
     <GameUiShell backgroundImage={shareSplitterBackground} backgroundOpacity={1} overlayDisabled>
-      <GameScreenLayout
-        className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2 text-white"
-        top={(
-          <div className="flex flex-col gap-2">
-            <GameTopBar
-              onBack={onBack}
-              progressLabel={`Round ${roundSolved + 1} / ${ROUNDS_TO_WIN}`}
-              lives={sessionState?.lives}
-              className="mx-auto w-full"
-              audioEnabled={audioEnabled}
-              onToggleAudio={() => setAudioEnabled((previous) => !previous)}
-              onHelp={() => setShowRules(true)}
-            />
-          </div>
-        )}
-        main={(
-          <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
-            <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] px-2 py-3 md:px-3">
-              <div
-                className="absolute inset-x-3 bottom-4"
-                style={{ top: 'calc(36% + 30px)' }}
-              >
-                <div className="relative h-full w-full">
-                  {plateViews.map((plate, index) => {
-                    const plateTone = validationActive
-                      ? plate.isCorrect
-                        ? 'border-emerald-300/70 bg-[linear-gradient(180deg,rgba(226,252,243,0.9),rgba(186,247,231,0.78))]'
-                        : 'border-amber-200/70 bg-[linear-gradient(180deg,rgba(255,243,205,0.9),rgba(255,232,176,0.78))]'
-                      : hoverPlateIndex === index
-                        ? 'border-cyan-200/80 bg-[linear-gradient(180deg,rgba(240,249,255,0.92),rgba(214,241,255,0.76))]'
-                        : dragSlice
-                          ? 'border-cyan-200/60 bg-[linear-gradient(180deg,rgba(244,250,255,0.86),rgba(216,236,250,0.72))]'
-                          : 'border-white/50 bg-[linear-gradient(180deg,rgba(255,255,255,0.88),rgba(224,233,243,0.68))]';
-                    const position = platePositions[index] || { x: 50, y: 50 };
+      <div className="relative h-full w-full">
+        <div className="pointer-events-none absolute inset-0 z-[20]">
+          <div className="relative h-full w-full">
+            {plateViews.map((plate, index) => {
+              const plateTone = validationActive
+                ? plate.isCorrect
+                  ? 'border-emerald-300/70 bg-[linear-gradient(180deg,rgba(226,252,243,0.9),rgba(186,247,231,0.78))]'
+                  : 'border-amber-200/70 bg-[linear-gradient(180deg,rgba(255,243,205,0.9),rgba(255,232,176,0.78))]'
+                : hoverPlateIndex === index
+                  ? 'border-cyan-200/80 bg-[linear-gradient(180deg,rgba(240,249,255,0.92),rgba(214,241,255,0.76))]'
+                  : dragSlice
+                    ? 'border-cyan-200/60 bg-[linear-gradient(180deg,rgba(244,250,255,0.86),rgba(216,236,250,0.72))]'
+                    : 'border-white/50 bg-[linear-gradient(180deg,rgba(255,255,255,0.88),rgba(224,233,243,0.68))]';
+              const position = platePositions[index] || { x: 50, y: 50 };
 
-                    return (
-                      <button
-                        key={plate.id}
-                        type="button"
-                        ref={(node) => {
-                          plateRefs.current[index] = node;
-                        }}
-                        disabled={locked}
-                        className={`absolute flex h-[clamp(78px,18vw,108px)] w-[clamp(78px,18vw,108px)] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border p-2 text-center shadow-[0_12px_20px_rgba(2,6,23,0.24)] transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.03]' : dragSlice && !locked ? 'scale-[1.01]' : ''}`}
-                        style={{ left: `${position.x}%`, top: `${position.y}%` }}
-                        aria-label={`Plate ${index + 1}. ${plate.currentCakeCount} of ${plate.targetCakeCount} cakes placed.`}
-                      >
-                        <div className="grid h-full w-full grid-cols-3 place-items-center gap-0.5">
-                          {plates[index].slice(0, 6).map((sliceId) => (
-                            <img
-                              key={sliceId}
-                              src={CAKE_SLICE_ASSET}
-                              alt=""
-                              className="h-10 w-10 object-contain"
-                              draggable={false}
-                            />
-                          ))}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+              return (
+                <button
+                  key={plate.id}
+                  type="button"
+                  ref={(node) => {
+                    plateRefs.current[index] = node;
+                  }}
+                  disabled={locked}
+                  className={`pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border p-2 text-center shadow-[0_12px_20px_rgba(2,6,23,0.24)] transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.03]' : dragSlice && !locked ? 'scale-[1.01]' : ''}`}
+                  style={{
+                    left: `${position.x}%`,
+                    top: `${position.y}%`,
+                    width: plateSize,
+                    height: plateSize,
+                  }}
+                  aria-label={`Plate ${index + 1}. ${plate.currentCakeCount} of ${plate.targetCakeCount} cakes placed.`}
+                >
+                  <div className="grid h-full w-full grid-cols-3 place-items-center gap-0.5">
+                    {plates[index].slice(0, 6).map((sliceId) => (
+                      <img
+                        key={sliceId}
+                        src={CAKE_SLICE_ASSET}
+                        alt=""
+                        className="h-10 w-10 object-contain"
+                        draggable={false}
+                      />
+                    ))}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <GameScreenLayout
+          className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2 text-white"
+          top={(
+            <div className="flex flex-col gap-2">
+              <GameTopBar
+                onBack={onBack}
+                progressLabel={`Round ${roundSolved + 1} / ${ROUNDS_TO_WIN}`}
+                lives={sessionState?.lives}
+                className="mx-auto w-full"
+                audioEnabled={audioEnabled}
+                onToggleAudio={() => setAudioEnabled((previous) => !previous)}
+                onHelp={() => setShowRules(true)}
+              />
             </div>
+          )}
+          main={(
+            <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
+              <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] px-2 py-3 md:px-3" />
 
             <section className="shrink-0 rounded-[1.4rem] border border-white/14 bg-black/22 px-3 py-3 shadow-[0_10px_18px_rgba(15,23,42,0.22)]">
               <div className="mb-2 flex items-center justify-between gap-2">
@@ -641,7 +644,8 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
             />
           </>
         )}
-      />
+        />
+      </div>
     </GameUiShell>
   );
 };

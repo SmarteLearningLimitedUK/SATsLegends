@@ -13,8 +13,8 @@ import {
 } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import catapultAsset from '../assets/angle_arena/catapultfinal.png';
-import angleArenaBackgroundA from '../assets/level_backgrounds/angle arena bkground.jpg';
-import angleArenaBackgroundB from '../assets/level_backgrounds/anglearenabkground2.jpg';
+import angleArenaBackgroundA from '../assets/level_backgrounds/angle arena bkground-hd.jpg';
+import angleArenaBackgroundB from '../assets/level_backgrounds/anglearenabkground2-hd.jpg';
 import { BOSS_ASSETS } from '../assets/bosses';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { angleToVector, clamp, degreesToRadians, distance, lerp, worldToScreen } from './angleArena/math';
@@ -120,6 +120,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const cameraRef = useRef({ x: 0, y: 0 });
   const cameraTargetRef = useRef({ x: 0, y: 0 });
   const settleTimeoutRef = useRef<number | null>(null);
+  const autoAdvanceTimeoutRef = useRef<number | null>(null);
   const catapultImageRef = useRef<HTMLImageElement | null>(null);
   const backgroundImageRef = useRef<HTMLImageElement | null>(null);
   const bossImageRef = useRef<HTMLImageElement | null>(null);
@@ -192,6 +193,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
       if (aimTimeoutRef.current) window.clearTimeout(aimTimeoutRef.current);
       if (settleTimeoutRef.current) window.clearTimeout(settleTimeoutRef.current);
+      if (autoAdvanceTimeoutRef.current) window.clearTimeout(autoAdvanceTimeoutRef.current);
     };
   }, []);
 
@@ -548,6 +550,19 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     setQuestionIndex((prev) => prev + 1);
     resetForNext();
   };
+
+  useEffect(() => {
+    if (gameState !== 'resolvedCorrect' && gameState !== 'resolvedIncorrect') {
+      if (autoAdvanceTimeoutRef.current) window.clearTimeout(autoAdvanceTimeoutRef.current);
+      autoAdvanceTimeoutRef.current = null;
+      return;
+    }
+
+    if (autoAdvanceTimeoutRef.current) window.clearTimeout(autoAdvanceTimeoutRef.current);
+    autoAdvanceTimeoutRef.current = window.setTimeout(() => {
+      handleNext();
+    }, 900);
+  }, [gameState]);
 
   return (
     <GameUiShell className="bg-transparent" overlayDisabled backgroundImage={backgroundAsset} backgroundOpacity={1}>

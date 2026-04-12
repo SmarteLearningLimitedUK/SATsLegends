@@ -1,0 +1,31 @@
+{
+  "url": "https://satslegendsfinal.vercel.app/",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "results": [
+    {
+      "island": "Geometry Glacier",
+      "game": "Polygon Palace",
+      "screenshot": "qa-playable-polygon-palace.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Geometry Glacier",
+      "game": "Area Architect",
+      "screenshot": "qa-playable-area-architect.png",
+      "status": "captured",
+      "error": null
+    },
+    {
+      "island": "Ratio Rapids",
+      "game": "Potion Panic",
+      "screenshot": "qa-playable-potion-panic.png",
+      "status": "captured",
+      "error": null
+    }
+  ],
+  "consoleErrors": []
+}

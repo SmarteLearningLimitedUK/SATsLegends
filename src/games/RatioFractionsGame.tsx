@@ -9,7 +9,7 @@ import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import { DEFAULT_RACE_DIFFICULTY, RACE_TUNING, RaceDifficulty } from './ratioFractionsRace/constants';
 import { getQuestionTier, pickQuestionForTier } from './ratioFractionsRace/questionSelector';
 import { RatioFractionQuestion } from './ratioFractionsRace/types';
-import ratioBackdrop from '../assets/gokarts/racebkgrd.png';
+import ratioBackdrop from '../assets/gokarts/racebkgrd-hd.png';
 import playerKart from '../assets/gokarts/12.png';
 import enemyKart from '../assets/gokarts/15.png';
 
@@ -311,7 +311,8 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const finishLeft = 96;
   const showBoost = raceState === 'correctBoost';
   const showStall = raceState === 'incorrectStall';
-  const trackLineY = 62;
+  const trackLineY = 58;
+  const mapShift = -trackProgress * Math.max(320, viewport.width) * 2.1;
 
   const playerStyle = {
     transform: 'translate(-50%, -50%)',
@@ -338,11 +339,50 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
           className="pointer-events-none absolute inset-0"
           style={{
             backgroundImage: `url(${ratioBackdrop})`,
-            backgroundRepeat: 'repeat',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            backgroundRepeat: 'repeat-x',
+            backgroundSize: 'auto 100%',
+            backgroundPosition: `${mapShift}px center`,
           }}
         />
+
+        <div ref={raceViewportRef} className="pointer-events-none absolute inset-0 z-[5]">
+          <div className="relative h-full w-full">
+            <div
+              className="absolute z-30 flex h-12 w-12 items-center justify-center rounded-full border border-amber-200 bg-amber-400 text-xs font-black uppercase text-slate-900"
+              style={finishStyle}
+            >
+              Finish
+            </div>
+
+            <motion.div
+              className="absolute z-30 flex h-24 w-36 items-center justify-center sm:h-28 sm:w-40 md:h-44 md:w-64"
+              style={playerStyle}
+              animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { x: [0, -4, 4, -3, 3, 0] } : { scale: 1 }}
+              transition={{ duration: 0.35 }}
+            >
+              <img src={playerKart} alt="Player kart" className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]" />
+              {showBoost ? (
+                <span className="absolute -left-2 top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-amber-200 shadow-[0_0_12px_rgba(251,191,36,0.8)]" />
+              ) : null}
+              {showStall ? (
+                <span className="absolute -left-2 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-slate-400/80" />
+              ) : null}
+            </motion.div>
+
+            <motion.div
+              className="absolute z-30 flex h-24 w-36 items-center justify-center sm:h-28 sm:w-40 md:h-44 md:w-64"
+              style={enemyStyle}
+            >
+              <img src={enemyKart} alt="Enemy kart" className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(251,113,133,0.6)]" />
+            </motion.div>
+
+            {raceState === 'introCountdown' ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-slate-950/60 text-5xl font-black text-amber-100">
+                {countdown || 'Go!'}
+              </div>
+            ) : null}
+          </div>
+        </div>
 
         <GameScreenLayout
           className="relative z-10 px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-0 text-white"
@@ -365,52 +405,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
               </div>
             </div>
           )}
-          main={(
-            <div className="relative z-10 flex min-h-0 flex-1 items-center justify-center">
-              <div
-                ref={raceViewportRef}
-                className="relative h-[14rem] w-full max-w-[26rem] overflow-hidden sm:h-[15rem] sm:max-w-[30rem] md:h-[16rem] md:max-w-[32rem]"
-              >
-                <div className="absolute inset-0 z-20">
-                  <div className="absolute inset-x-[6%] top-[62%] h-2 rounded-full bg-white/25 shadow-[0_0_12px_rgba(255,255,255,0.35)]" />
-                  <div
-                    className="absolute z-30 flex h-12 w-12 items-center justify-center rounded-full border border-amber-200 bg-amber-400 text-xs font-black uppercase text-slate-900"
-                    style={finishStyle}
-                  >
-                    Finish
-                  </div>
-
-                  <motion.div
-                    className="absolute z-30 flex h-24 w-36 items-center justify-center sm:h-28 sm:w-40 md:h-44 md:w-64"
-                    style={playerStyle}
-                    animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { x: [0, -4, 4, -3, 3, 0] } : { scale: 1 }}
-                    transition={{ duration: 0.35 }}
-                  >
-                    <img src={playerKart} alt="Player kart" className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]" />
-                    {showBoost ? (
-                      <span className="absolute -left-2 top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-amber-200 shadow-[0_0_12px_rgba(251,191,36,0.8)]" />
-                    ) : null}
-                    {showStall ? (
-                      <span className="absolute -left-2 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-slate-400/80" />
-                    ) : null}
-                  </motion.div>
-
-                  <motion.div
-                    className="absolute z-30 flex h-24 w-36 items-center justify-center sm:h-28 sm:w-40 md:h-44 md:w-64"
-                    style={enemyStyle}
-                  >
-                    <img src={enemyKart} alt="Enemy kart" className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(251,113,133,0.6)]" />
-                  </motion.div>
-                </div>
-
-                {raceState === 'introCountdown' ? (
-                  <div className="absolute inset-0 flex items-center justify-center bg-slate-950/70 text-5xl font-black text-amber-100">
-                    {countdown || 'Go!'}
-                  </div>
-                ) : null}
-              </div>
-            </div>
-          )}
+          main={<div className="min-h-0 flex-1" />}
           bottom={(
             <div className="grid grid-cols-4 gap-2">
               {question.options.map((option) => (
