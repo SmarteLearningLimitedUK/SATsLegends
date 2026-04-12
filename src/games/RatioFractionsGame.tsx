@@ -38,6 +38,7 @@ const RACER_LERP = 0.16;
 const BASE_XP = 160;
 const BACKDROP_WIDTH = 4000;
 const BACKDROP_HEIGHT = 500;
+const BACKDROP_Y_OFFSET = 60;
 const TRACK_LINE_FROM_BOTTOM = 82;
 
 const shuffle = <T,>(items: T[]) => {
@@ -350,7 +351,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             backgroundImage: `url(${ratioBackdrop})`,
             backgroundRepeat: 'no-repeat',
             backgroundSize: `${BACKDROP_WIDTH}px ${BACKDROP_HEIGHT}px`,
-            backgroundPosition: `${-backgroundOffset}px bottom`,
+            backgroundPosition: `${-backgroundOffset}px calc(100% - ${BACKDROP_Y_OFFSET}px)`,
           }}
         />
 
