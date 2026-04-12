@@ -777,7 +777,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
               >
                 <div className="pointer-events-none absolute left-1/2 top-[84%] h-14 w-[72%] -translate-x-1/2 rounded-full bg-black/55 blur-md" />
                 <div className="pointer-events-none absolute left-1/2 top-[76%] h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
-                <div className="absolute left-1/2 top-[72%] flex h-[18%] w-[48%] -translate-x-1/2 translate-y-[40px] items-end justify-between px-5">
+                <div className="absolute left-1/2 top-[72%] flex h-[18%] w-[48%] -translate-x-1/2 translate-y-[43px] items-end justify-between px-5">
                   {[0, 1, 2].map((idx) => (
                     <motion.span
                       key={`flame-${idx}`}
