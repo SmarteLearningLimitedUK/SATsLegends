@@ -421,7 +421,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
       const backgroundImg = backgroundImageRef.current;
       if (backgroundImg && backgroundImg.complete) {
-        const scale = Math.max(viewWidth / backgroundImg.width, viewHeight / backgroundImg.height) * 1.02;
+        const scale = Math.min(viewWidth / backgroundImg.width, viewHeight / backgroundImg.height);
         const tileW = backgroundImg.width * scale;
         const tileH = backgroundImg.height * scale;
         const offsetX = -camera.x * 0.18;
