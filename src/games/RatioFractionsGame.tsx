@@ -154,6 +154,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const enemyPosRef = useRef(START_OFFSET);
   const playerTargetRef = useRef(START_OFFSET);
   const enemyTargetRef = useRef(START_OFFSET);
+  const enemyPauseUntilRef = useRef(0);
   const reportedResultRef = useRef(false);
 
   const trackProgress = Math.min(1, playerPosRef.current / tuning.trackLength);
@@ -204,6 +205,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
     const interval = window.setInterval(() => {
       if (raceState === 'enemyWin' || raceState === 'playerWin') return;
+      if (Date.now() < enemyPauseUntilRef.current) return;
       if (raceState !== 'showingQuestion') return;
       enemyTargetRef.current = Math.min(tuning.trackLength, enemyTargetRef.current + enemyStep);
       if (enemyTargetRef.current >= tuning.trackLength) {
@@ -265,6 +267,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
       setCorrectCount((prev) => prev + 1);
       setFeedback(`Correct mix! ${buildExplanation(question)}`);
       setRaceState('correctBoost');
+      enemyPauseUntilRef.current = Date.now() + moveDuration;
       window.setTimeout(() => {
         playerTargetRef.current = Math.min(tuning.trackLength, playerTargetRef.current + playerStep);
       }, boostDelay);
@@ -292,6 +295,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
     setFeedback(`Wrong mix! ${buildExplanation(question)}`);
     setRaceState('incorrectStall');
+    enemyPauseUntilRef.current = Date.now() + tuning.incorrectFeedbackMs;
     if (stumble > 0) {
       playerTargetRef.current = Math.min(tuning.trackLength, playerTargetRef.current + stumble);
     }
