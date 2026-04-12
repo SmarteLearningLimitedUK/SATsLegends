@@ -777,7 +777,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
               >
                 <div className="pointer-events-none absolute left-1/2 top-[84%] h-14 w-[72%] -translate-x-1/2 rounded-full bg-black/55 blur-md" />
                 <div className="pointer-events-none absolute left-1/2 top-[76%] h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
-                <div className="absolute left-1/2 top-[72%] flex h-[18%] w-[48%] -translate-x-1/2 translate-y-[15px] items-end justify-between px-5">
+                <div className="absolute left-1/2 top-[72%] flex h-[18%] w-[48%] -translate-x-1/2 translate-y-[30px] items-end justify-between px-5">
                   {[0, 1, 2].map((idx) => (
                     <motion.span
                       key={`flame-${idx}`}
@@ -846,7 +846,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                       onClick={() => addIngredient(index)}
                       disabled={locked || !isActive || isLockedIngredient}
                       aria-label={isActive ? `Add ${ingredient.name} to the potion` : `${ingredient.name} is not needed for this recipe`}
-                      className={`relative flex h-[clamp(70px,9.5vh,92px)] flex-col items-center justify-between rounded-[1.1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.12),rgba(15,23,42,0.24))] px-1 py-1 shadow-[0_10px_14px_rgba(2,6,23,0.24)] transition ${locked || !isActive || isLockedIngredient ? 'opacity-60 grayscale' : ''}`}
+                      className={`relative flex h-[clamp(70px,9.5vh,92px)] flex-col items-center justify-between rounded-[1.1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.35),rgba(15,23,42,0.6))] px-1 py-1 shadow-[0_10px_14px_rgba(2,6,23,0.24)] transition ${locked || !isActive || isLockedIngredient ? 'opacity-60 grayscale' : ''}`}
                       style={isActive && !isLockedIngredient ? { boxShadow: `0 12px 22px rgba(2,6,23,0.28), 0 0 18px ${ingredient.glow}` } : undefined}
                     >
                       <div className="pointer-events-none flex h-[40px] w-full items-center justify-center">
