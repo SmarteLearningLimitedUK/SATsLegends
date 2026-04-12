@@ -9,7 +9,7 @@ const playerPayload = {
   lastLoginDate: today,
   claimedDailyRewardToday: true,
   dailyStreak: 1,
-  unlockedIslands: [1, 2, 3, 4, 5, 6, 7, 8],
+  unlockedIslands: [1,2,3,4,5,6,7,8],
 };
 await page.addInitScript((payload) => {
   localStorage.setItem('maths_quest_player_v2', JSON.stringify(payload));
@@ -25,11 +25,15 @@ if (await startButton.count()) {
 }
 
 const closeButtons = page.locator('.ui-close-button');
-if (await closeButtons.count()) {
-  await closeButtons.first().click();
-  await page.waitForTimeout(400);
+const closeCount = await closeButtons.count();
+for (let i = 0; i < closeCount; i += 1) {
+  try {
+    await closeButtons.nth(i).click({ timeout: 200 });
+    await page.waitForTimeout(200);
+  } catch {}
 }
 
-await page.waitForTimeout(400);
+await page.waitForTimeout(600);
+await page.waitForSelector('text=Fuel Mix Question', { timeout: 5000 });
 await page.screenshot({ path: 'qa/ratio-fractions-game-iphone.png' });
 await browser.close();
