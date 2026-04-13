@@ -222,7 +222,6 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [feedback, setFeedback] = useState('');
   const [locked, setLocked] = useState(false);
-  const [wave, setWave] = useState(1);
   const [gameActive, setGameActive] = useState(true);
 
   const rafRef = useRef<number | null>(null);
@@ -256,7 +255,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       y: startY,
       health: baseZombieHealth,
       maxHealth: baseZombieHealth,
-      speed: 0.12 + (wave * 0.02) + levelId * 0.015,
+      speed: 0.12 + (levelId * 0.035),
       state: 'appear',
       frameIndex: 0,
       frameTime: 0,
@@ -266,7 +265,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     const next = [...zombiesRef.current, zombie];
     zombiesRef.current = next;
     setZombies(next);
-  }, [baseZombieHealth, levelId, wave]);
+  }, [baseZombieHealth, levelId]);
 
   const finishGame = useCallback((won: boolean) => {
     if (endedRef.current) return;
@@ -294,7 +293,6 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     setZombiesDefeated(0);
     setHealth(3);
     setTimeLeft(roundSeconds);
-    setWave(1);
     setZombies([]);
     zombiesRef.current = [];
     setQuestion(buildQuestion(levelId));
@@ -316,9 +314,6 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           return 0;
         }
         const next = previous - 1;
-        if (next > 0 && next % 15 === 0) {
-          setWave((value) => value + 1);
-        }
         return next;
       });
     }, 1000);
@@ -547,7 +542,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           </AnimatePresence>
 
           <div className="absolute right-3 top-3 rounded-full border border-amber-200/70 bg-[linear-gradient(180deg,rgba(251,191,36,0.98),rgba(245,158,11,0.98))] px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-amber-950 shadow-[0_8px_16px_rgba(2,6,23,0.24)]">
-            Wave {wave}
+            Wave {Math.max(1, levelId)}
           </div>
         </div>
 

@@ -791,7 +791,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                   src={cauldrenAndPotionArt}
                   alt=""
                   aria-hidden="true"
-                  className="pointer-events-none absolute left-1/2 bottom-[2%] h-[42%] max-w-none -translate-x-1/2 translate-y-[21px] object-contain"
+                  className="pointer-events-none absolute left-1/2 bottom-[2%] h-[42%] max-w-none -translate-x-1/2 translate-y-[6px] object-contain md:translate-y-[21px]"
                 />
                 <div className="absolute left-1/2 bottom-[27%] h-[14%] w-[34%] -translate-x-1/2 translate-y-[5px] overflow-hidden rounded-[46%]">
                   <motion.div
@@ -832,7 +832,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
               </AnimatePresence>
             </div>
 
-            <div className="shrink-0 rounded-[1.35rem] border border-white/14 bg-black/28 px-2.5 py-2 shadow-[0_12px_22px_rgba(2,6,23,0.24)]">
+            <div className="shrink-0 translate-y-[40px] rounded-[1.35rem] border border-white/14 bg-black/28 px-2.5 py-2 shadow-[0_12px_22px_rgba(2,6,23,0.24)] md:translate-y-0">
               <div className={`grid ${ingredientGridClass} gap-1.5`}>
                 {activeTargets.map(({ ingredient, index, current, target }) => {
                   const isActive = activeSet.has(index);
