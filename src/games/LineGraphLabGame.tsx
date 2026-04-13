@@ -300,49 +300,50 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
     <GameScreenLayout
       className="relative h-full w-full min-h-0 select-none text-slate-100"
       top={(
-        !useSharedTopHud ? (
-          <header className="z-20 flex h-16 items-center justify-between border-b border-emerald-900/30 bg-slate-900/50 px-4 backdrop-blur-md sm:px-6">
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={onBack}
-                className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-700 bg-slate-800/80 text-slate-200 transition hover:bg-slate-700/80"
-                aria-label="Back to levels"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </button>
-              <div className="rounded-lg bg-emerald-500 p-2 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-                <Activity className="h-5 w-5 text-slate-900" />
+        <div className={`flex flex-col gap-2 ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+0.15rem)]' : ''}`}>
+          {!useSharedTopHud ? (
+            <header className="z-20 flex h-16 items-center justify-between border-b border-emerald-900/30 bg-slate-900/50 px-4 backdrop-blur-md sm:px-6">
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={onBack}
+                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-700 bg-slate-800/80 text-slate-200 transition hover:bg-slate-700/80"
+                  aria-label="Back to levels"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <div className="rounded-lg bg-emerald-500 p-2 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                  <Activity className="h-5 w-5 text-slate-900" />
+                </div>
+                <div>
+                  <h1 className="text-sm font-black uppercase tracking-widest text-white">Line Graph Lab</h1>
+                  <p className="text-[10px] uppercase tracking-tighter text-emerald-400">Read one graph. Answer one question.</p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-sm font-black uppercase tracking-widest text-white">Line Graph Lab</h1>
-                <p className="text-[10px] uppercase tracking-tighter text-emerald-400">Read one graph. Answer one question.</p>
-              </div>
-            </div>
 
-            <div className="flex items-center gap-4">
-              <div className="flex flex-col items-end">
-                <span className="text-[10px] uppercase text-slate-500">XP</span>
-                <span className="text-xs font-bold text-emerald-400">{XP}</span>
+              <div className="flex items-center gap-4">
+                <div className="flex flex-col items-end">
+                  <span className="text-[10px] uppercase text-slate-500">XP</span>
+                  <span className="text-xs font-bold text-emerald-400">{XP}</span>
+                </div>
+                <div className="h-8 w-px bg-slate-800" />
+                <div className="flex flex-col items-end">
+                  <span className="text-[10px] uppercase text-slate-500">Round</span>
+                  <span className="text-xs font-bold text-white">{level} / {MAX_LEVEL}</span>
+                </div>
               </div>
-              <div className="h-8 w-px bg-slate-800" />
-              <div className="flex flex-col items-end">
-                <span className="text-[10px] uppercase text-slate-500">Round</span>
-                <span className="text-xs font-bold text-white">{level} / {MAX_LEVEL}</span>
-              </div>
-            </div>
-          </header>
-        ) : null
-      )}
-      main={(
-        <section className="flex min-h-0 flex-1 flex-col gap-2 px-2 pb-2 sm:gap-3 sm:px-3 sm:pb-3 md:px-4 md:pb-4">
-          <div className={`flex flex-col gap-1.5 ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+0.25rem)]' : ''}`}>
+            </header>
+          ) : null}
+          <div className="px-2 sm:px-3 md:px-4">
             <div className="game-question-card">
               <div className="question-title text-center text-[clamp(1.1rem,4vw,1.5rem)]">{round?.question}</div>
               <div className="question-subtitle text-center">{round?.helper}</div>
             </div>
           </div>
-
+        </div>
+      )}
+      main={(
+        <section className="flex min-h-0 flex-1 flex-col gap-2 px-2 pb-2 sm:gap-3 sm:px-3 sm:pb-3 md:px-4 md:pb-4">
           <div className="mt-0.5 min-h-0 flex-1 rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,61,0.85),rgba(4,12,30,0.92))] p-2.5 shadow-[0_16px_40px_rgba(3,12,30,0.26)] sm:p-4 md:p-5">
 
             <div

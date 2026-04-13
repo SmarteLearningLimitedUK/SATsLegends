@@ -675,10 +675,10 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                     className="relative mx-auto flex h-full w-full max-w-[32rem] items-center justify-center md:max-w-[34rem]"
                   >
 
-                    <div
-                      className="relative w-full max-w-[34rem] md:max-w-[36.5rem] isolate"
-                      style={{ aspectRatio: '4 / 5', transform: 'scale(1.12)', transformOrigin: 'center' }}
-                    >
+                      <div
+                        className="relative w-full max-w-[34rem] md:max-w-[36.5rem] isolate"
+                        style={{ aspectRatio: '4 / 5', transform: 'scale(1)', transformOrigin: 'center' }}
+                      >
                       <img
                         src={alphaKeyedMachineImage}
                         alt="MEAN Machine slot machine"

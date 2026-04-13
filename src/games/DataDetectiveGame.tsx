@@ -272,9 +272,9 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           </div>
         </div>
       )}
-      main={(
-        <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.05rem)]' : ''}`}>
-        <section className="z-10 flex min-h-0 w-full flex-1 flex-col gap-2 overflow-hidden border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] px-2 pb-2 pt-3 sm:px-3 sm:pb-3 sm:pt-4 md:gap-3 md:border-b md:border-cyan-200/12 md:p-5">
+        main={(
+          <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+1.5rem)]' : ''}`}>
+          <section className="z-10 flex min-h-0 w-full flex-1 flex-col gap-2 overflow-hidden border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] px-2 pb-2 pt-2 sm:px-3 sm:pb-3 sm:pt-3 md:gap-3 md:border-b md:border-cyan-200/12 md:px-5 md:pb-5 md:pt-4">
           <div className="mb-1 flex items-center justify-between">
             <div className="flex items-center gap-2 text-amber-500">
               <FileText className="h-5 w-5" />
@@ -383,7 +383,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           </div>
         </section>
 
-        <section className="z-10 flex w-full flex-col gap-2 bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] px-2 pb-2 pt-2 sm:px-3 sm:pb-3 sm:pt-2 md:gap-3 md:p-5">
+          <section className="z-10 flex w-full flex-col gap-2 bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] px-2 pb-2 pt-1 sm:px-3 sm:pb-3 sm:pt-1 md:gap-3 md:px-5 md:pb-5 md:pt-4">
           <div className="mb-1 flex items-center gap-2 text-amber-500">
             <Users className="h-5 w-5" />
             <h2 className="text-xs font-black uppercase tracking-widest">Suspect Lineup</h2>

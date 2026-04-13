@@ -441,17 +441,19 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
             </div>
 
             <div className="mt-2 grid min-h-0 flex-1 grid-cols-1 gap-2 md:mt-2 md:grid-cols-[1.02fr_0.98fr] md:gap-2">
-              <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(8,47,73,0.34),rgba(15,23,42,0.26))] p-2.5 shadow-[0_24px_40px_rgba(2,6,23,0.22)] md:p-3">
-                {round.mode === 'line' && round.lineDays ? (
-                  <LineGraphBoard days={round.lineDays} label={round.boardLabel} />
-                ) : round.mode === 'table' ? (
-                  <TableBoard ships={round.ships} label={round.boardLabel} />
-                ) : round.mode === 'pie' ? (
-                  <PieShareBoard ships={round.ships} label={round.boardLabel} />
-                ) : (
-                  <CoinBarBoard ships={round.ships} label={round.boardLabel} />
-                )}
-              </div>
+                <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(8,47,73,0.34),rgba(15,23,42,0.26))] p-2.5 shadow-[0_24px_40px_rgba(2,6,23,0.22)] md:p-3">
+                  <div className="mt-auto">
+                    {round.mode === 'line' && round.lineDays ? (
+                      <LineGraphBoard days={round.lineDays} label={round.boardLabel} />
+                    ) : round.mode === 'table' ? (
+                      <TableBoard ships={round.ships} label={round.boardLabel} />
+                    ) : round.mode === 'pie' ? (
+                      <PieShareBoard ships={round.ships} label={round.boardLabel} />
+                    ) : (
+                      <CoinBarBoard ships={round.ships} label={round.boardLabel} />
+                    )}
+                  </div>
+                </div>
 
               <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.84),rgba(30,41,59,0.92))] p-2.5 shadow-[0_24px_40px_rgba(2,6,23,0.24)] md:p-3">
                 <div className="grid grid-cols-4 gap-1.5">
