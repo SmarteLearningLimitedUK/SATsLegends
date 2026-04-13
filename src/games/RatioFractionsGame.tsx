@@ -7,7 +7,7 @@ import {
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import { DEFAULT_RACE_DIFFICULTY, RACE_TUNING, RaceDifficulty } from './ratioFractionsRace/constants';
-import { getQuestionTier, pickQuestionForTier } from './ratioFractionsRace/questionSelector';
+import { getQuestionTier, QuestionTier } from './ratioFractionsRace/questionSelector';
 import { RatioFractionQuestion } from './ratioFractionsRace/types';
 import ratioBackdrop from '../assets/gokarts/bkgroundratiofractionkarts.png';
 import kartBarratt from '../assets/gokarts/8.png';
@@ -15,6 +15,10 @@ import kartBran from '../assets/gokarts/9.png';
 import kartMochi from '../assets/gokarts/10.png';
 import kartVex from '../assets/gokarts/11.png';
 import enemyKart from '../assets/gokarts/15.png';
+import {
+  reshuffleAvoidingRepeat,
+  shuffleOptionsWithCorrect,
+} from '../utils/questionShuffle';
 
 interface RatioFractionsGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -55,15 +59,6 @@ const PLAYER_KARTS: Record<string, string> = {
   bran: kartBran,
   mochi: kartMochi,
   vex: kartVex,
-};
-
-const shuffle = <T,>(items: T[]) => {
-  const copy = [...items];
-  for (let i = copy.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
 };
 
 export const ratioFractionsQuestions: RatioFractionQuestion[] = [
@@ -117,6 +112,29 @@ export const ratioFractionsQuestions: RatioFractionQuestion[] = [
   },
 ];
 
+const buildTierPools = (questions: RatioFractionQuestion[]) => {
+  const early = questions.filter((q) => q.ratio.length === 2 && (q.ratio[0] + q.ratio[1]) <= 6);
+  const mid = questions.filter((q) => q.ratio.length === 2 && (q.ratio[0] + q.ratio[1]) > 6 && (q.ratio[0] + q.ratio[1]) <= 15);
+  const final = questions.filter((q) => q.ratio.length >= 3);
+  return { early, mid, final };
+};
+
+const TIER_POOLS = buildTierPools(ratioFractionsQuestions);
+const FALLBACK_POOL = ratioFractionsQuestions;
+
+const buildTierDeck = (pool: RatioFractionQuestion[], previousLast: RatioFractionQuestion | null) => (
+  reshuffleAvoidingRepeat(pool.length ? pool : FALLBACK_POOL, previousLast, (question) => question.id).map((question) => ({
+    ...question,
+    options: shuffleOptionsWithCorrect(question.options, question.correctAnswer).options,
+  }))
+);
+
+const buildTierDecks = (previousLasts: Partial<Record<QuestionTier, RatioFractionQuestion | null>> = {}) => ({
+  early: buildTierDeck(TIER_POOLS.early, previousLasts.early ?? null),
+  mid: buildTierDeck(TIER_POOLS.mid, previousLasts.mid ?? null),
+  final: buildTierDeck(TIER_POOLS.final, previousLasts.final ?? null),
+});
+
 const starsForAccuracy = (correct: number, attempts: number) => {
   if (attempts === 0) return 0;
   const accuracy = correct / attempts;
@@ -145,6 +163,15 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const [countdown, setCountdown] = useState(3);
   const [, setRenderTick] = useState(0);
   const [viewport, setViewport] = useState({ width: 320, height: 480 });
+  const initialDecks = useMemo(() => buildTierDecks(), []);
+  const [tierDecks, setTierDecks] = useState(initialDecks);
+  const tierDecksRef = useRef(initialDecks);
+  const tierIndexRef = useRef<Record<QuestionTier, number>>({ early: 0, mid: 0, final: 0 });
+  const [question, setQuestion] = useState<RatioFractionQuestion>(() => {
+    const deck = initialDecks.early;
+    tierIndexRef.current.early = deck.length ? 1 : 0;
+    return deck[0] ?? ratioFractionsQuestions[0];
+  });
 
   const raceDifficulty: RaceDifficulty = levelId <= 3 ? 'easy' : levelId <= 6 ? 'standard' : 'hard';
   const tuning = RACE_TUNING[raceDifficulty] || RACE_TUNING[DEFAULT_RACE_DIFFICULTY];
@@ -158,11 +185,6 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const reportedResultRef = useRef(false);
 
   const trackProgress = Math.min(1, playerPosRef.current / tuning.trackLength);
-  const difficultyTier = getQuestionTier(trackProgress);
-  const question = useMemo(
-    () => pickQuestionForTier(ratioFractionsQuestions, difficultyTier, roundIndex),
-    [difficultyTier, roundIndex],
-  );
   const lives = sessionState?.lives ?? 3;
   const buildExplanation = (q: RatioFractionQuestion) => q.explanation;
   const playerKart = PLAYER_KARTS[avatarId] || kartBarratt;
@@ -179,6 +201,20 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     observer.observe(raceViewportRef.current);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    tierDecksRef.current = tierDecks;
+  }, [tierDecks]);
+
+  useEffect(() => {
+    const resetDecks = buildTierDecks();
+    setTierDecks(resetDecks);
+    tierDecksRef.current = resetDecks;
+    tierIndexRef.current = { early: 0, mid: 0, final: 0 };
+    const deck = resetDecks.early;
+    tierIndexRef.current.early = deck.length ? 1 : 0;
+    setQuestion(deck[0] ?? ratioFractionsQuestions[0]);
+  }, [levelId]);
 
   useEffect(() => {
     let frameId: number;
@@ -250,6 +286,26 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     return () => window.clearInterval(interval);
   }, [raceState]);
 
+  const advanceQuestionForTier = (tier: QuestionTier) => {
+    const decks = tierDecksRef.current;
+    const deck = decks[tier];
+    if (!deck.length) return ratioFractionsQuestions[0];
+    const index = tierIndexRef.current[tier];
+    const nextQuestion = deck[index % deck.length];
+    const nextIndex = index + 1;
+    if (nextIndex % deck.length === 0) {
+      const previousLast = deck[deck.length - 1] ?? null;
+      const nextDeck = buildTierDeck(TIER_POOLS[tier], previousLast);
+      const nextDecks = { ...decks, [tier]: nextDeck };
+      setTierDecks(nextDecks);
+      tierDecksRef.current = nextDecks;
+      tierIndexRef.current[tier] = 0;
+    } else {
+      tierIndexRef.current[tier] = nextIndex;
+    }
+    return nextQuestion;
+  };
+
   const handleAnswer = (option: string) => {
     if (locked || raceState !== 'showingQuestion') return;
 
@@ -284,6 +340,8 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
           return;
         }
 
+        const nextTier = getQuestionTier(Math.min(1, playerPosRef.current / tuning.trackLength));
+        setQuestion(advanceQuestionForTier(nextTier));
         setSelected(null);
         setLocked(false);
         setRoundIndex((prev) => prev + 1);
@@ -300,6 +358,8 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
       playerTargetRef.current = Math.min(tuning.trackLength, playerTargetRef.current + stumble);
     }
     window.setTimeout(() => {
+      const nextTier = getQuestionTier(Math.min(1, playerPosRef.current / tuning.trackLength));
+      setQuestion(advanceQuestionForTier(nextTier));
       setSelected(null);
       setLocked(false);
       setRoundIndex((prev) => prev + 1);

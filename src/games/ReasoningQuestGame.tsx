@@ -6,6 +6,10 @@ import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 import { FeedbackStrip, StoryCard, TaskCard } from '../components/game-ui/GameUiKit';
 import { triggerHaptic } from '../haptics';
 import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
+import {
+  reshuffleAvoidingRepeat,
+  shuffleOptionsWithAnswerIndex,
+} from '../utils/questionShuffle';
 
 interface ReasoningQuestGameProps {
   levelId: number;
@@ -147,14 +151,16 @@ const QUESTION_BANK: ReasoningQuestion[] = [
   },
 ];
 
-const shuffle = <T,>(items: T[]) => {
-  const copy = [...items];
-  for (let i = copy.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-};
+const buildQuestionDeck = (previousLast: ReasoningQuestion | null) => (
+  reshuffleAvoidingRepeat(QUESTION_BANK, previousLast, (question) => question.id).map((question) => {
+    const shuffled = shuffleOptionsWithAnswerIndex(question.options, question.correctIndex);
+    return {
+      ...question,
+      options: shuffled.options,
+      correctIndex: shuffled.answerIndex,
+    };
+  })
+);
 
 const starsForRun = (correct: number, rounds: number, lives: number) => {
   const accuracy = rounds > 0 ? correct / rounds : 1;
@@ -175,7 +181,7 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
 }) => {
   const resolvedLevel = useMemo(() => Math.max(1, Math.min(10, levelId || 1)), [levelId]);
   const [roundIndex, setRoundIndex] = useState(0);
-  const [questionOrder, setQuestionOrder] = useState<ReasoningQuestion[]>(() => shuffle(QUESTION_BANK));
+  const [questionOrder, setQuestionOrder] = useState<ReasoningQuestion[]>(() => buildQuestionDeck(null));
   const [lives, setLives] = useState(MAX_LIVES);
   const [score, setScore] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
@@ -186,6 +192,7 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
   const timersRef = useRef<number[]>([]);
 
   const activeQuestion = questionOrder[roundIndex % questionOrder.length];
+  const lastQuestion = questionOrder.length ? questionOrder[questionOrder.length - 1] : null;
 
   const clearTimers = () => {
     timersRef.current.forEach((timerId) => window.clearTimeout(timerId));
@@ -196,7 +203,7 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
 
   useEffect(() => {
     clearTimers();
-    setQuestionOrder(shuffle(QUESTION_BANK));
+    setQuestionOrder(buildQuestionDeck(null));
     setRoundIndex(0);
     setLives(MAX_LIVES);
     setScore(0);
@@ -206,6 +213,13 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
     setFeedbackText('Solve the problem before you choose an answer.');
     setLocked(false);
   }, [resolvedLevel]);
+
+  useEffect(() => {
+    if (!questionOrder.length) return;
+    if (roundIndex > 0 && roundIndex % questionOrder.length === 0) {
+      setQuestionOrder(buildQuestionDeck(lastQuestion));
+    }
+  }, [lastQuestion, questionOrder.length, roundIndex]);
 
   const advanceRound = (nextCorrect: number, nextScore: number, nextLives: number) => {
     if (roundIndex + 1 >= TOTAL_ROUNDS) {

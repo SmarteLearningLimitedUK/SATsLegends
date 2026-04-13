@@ -6,6 +6,11 @@ import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 import { FeedbackStrip, StoryCard, TaskCard } from '../components/game-ui/GameUiKit';
 import { triggerHaptic } from '../haptics';
 import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
+import {
+  reshuffleAvoidingRepeat,
+  shuffle,
+  shuffleOptionsWithCorrect,
+} from '../utils/questionShuffle';
 
 interface ChangeCounterGameProps {
   levelId: number;
@@ -114,15 +119,6 @@ const QUESTION_BANK: ChangeQuestion[] = [
   },
 ];
 
-const shuffle = <T,>(items: T[]) => {
-  const copy = [...items];
-  for (let i = copy.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-};
-
 const buildOptions = (correctPence: number, candidates: number[]) => {
   const unique = new Set<number>([correctPence]);
   candidates.forEach((candidate) => {
@@ -134,15 +130,22 @@ const buildOptions = (correctPence: number, candidates: number[]) => {
   return shuffle(Array.from(unique)).map(formatMoney);
 };
 
-const buildQuestion = (levelId: number, roundIndex: number): ChangeQuestion => {
-  const bank = shuffle(QUESTION_BANK);
-  const candidate = bank[roundIndex % bank.length];
+const buildQuestionDeck = (previousLast: ChangeQuestion | null) => (
+  reshuffleAvoidingRepeat(QUESTION_BANK, previousLast, (question) => question.id)
+);
+
+const resolveQuestion = (
+  levelId: number,
+  roundIndex: number,
+  order: ChangeQuestion[],
+): ChangeQuestion => {
+  const candidate = order[roundIndex % order.length];
   const twistEligible = candidate.paidPence + 100 > candidate.costPence * 2;
   const twist = levelId >= 5 && roundIndex % 2 === 1 && twistEligible;
   if (!twist) {
     return {
       ...candidate,
-      options: shuffle(candidate.options),
+      options: shuffleOptionsWithCorrect(candidate.options, candidate.correct).options,
     };
   }
 
@@ -184,7 +187,8 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
 }) => {
   const resolvedLevel = useMemo(() => Math.max(1, Math.min(8, levelId || 1)), [levelId]);
   const [roundIndex, setRoundIndex] = useState(0);
-  const [question, setQuestion] = useState<ChangeQuestion>(() => buildQuestion(resolvedLevel, 0));
+  const [questionOrder, setQuestionOrder] = useState<ChangeQuestion[]>(() => buildQuestionDeck(null));
+  const [question, setQuestion] = useState<ChangeQuestion>(() => resolveQuestion(resolvedLevel, 0, questionOrder));
   const [lives, setLives] = useState(MAX_LIVES);
   const [score, setScore] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
@@ -203,8 +207,10 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
 
   useEffect(() => {
     clearTimers();
+    const nextOrder = buildQuestionDeck(null);
+    setQuestionOrder(nextOrder);
     setRoundIndex(0);
-    setQuestion(buildQuestion(resolvedLevel, 0));
+    setQuestion(resolveQuestion(resolvedLevel, 0, nextOrder));
     setLives(MAX_LIVES);
     setScore(0);
     setCorrectCount(0);
@@ -230,15 +236,20 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
 
     const timeoutId = window.setTimeout(() => {
       const nextRound = roundIndex + 1;
+      const lastQuestion = questionOrder.length ? questionOrder[questionOrder.length - 1] : null;
+      const nextOrder = (questionOrder.length && nextRound % questionOrder.length === 0)
+        ? buildQuestionDeck(lastQuestion)
+        : questionOrder;
+      if (nextOrder !== questionOrder) setQuestionOrder(nextOrder);
       setRoundIndex(nextRound);
-      setQuestion(buildQuestion(resolvedLevel, nextRound));
+      setQuestion(resolveQuestion(resolvedLevel, nextRound, nextOrder));
       setSelected(null);
       setFeedbackTone('neutral');
       setFeedbackText('Work out the change before you answer.');
       setLocked(false);
     }, 520);
     timersRef.current.push(timeoutId);
-  }, [onVictory, roundIndex, resolvedLevel, sessionEvents]);
+  }, [onVictory, questionOrder, roundIndex, resolvedLevel, sessionEvents]);
 
   const handleAnswer = (option: string) => {
     if (locked) return;

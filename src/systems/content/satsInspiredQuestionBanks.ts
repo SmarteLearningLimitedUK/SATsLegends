@@ -1,3 +1,9 @@
+import {
+  reshuffleAvoidingRepeat,
+  shuffleOptionsWithAnswerIndex,
+  shuffleOptionsWithCorrect,
+} from '../../utils/questionShuffle';
+
 export type SupportedChallengeGameType =
   | 'place_value_peaks'
   | 'calculation_clash'
@@ -80,17 +86,55 @@ interface BankEntry<T> {
 
 const cloneBankEntry = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 
-const pick = <T>(items: T[]): T => items[Math.floor(Math.random() * items.length)];
-
 const ensureKind = <T extends { kind?: QuestionKind }>(value: T): T => ({
   ...value,
   kind: value.kind ?? 'fluency',
 });
 
-const selectBankValue = <T extends { kind?: QuestionKind }>(bank: BankEntry<T>[], levelId: number): T | null => {
-  const eligible = bank.filter(entry => entry.minLevel <= levelId);
+type QueueState<T> = {
+  order: T[];
+  index: number;
+  last: T | null;
+};
+
+const bankQueues = new Map<string, QueueState<any>>();
+
+const selectBankValue = <T extends { kind?: QuestionKind }>(
+  bank: BankEntry<T>[],
+  levelId: number,
+  queueKey: string,
+  shuffleValue?: (value: T) => T,
+): T | null => {
+  const eligible = bank.filter(entry => entry.minLevel <= levelId).map(entry => ensureKind(cloneBankEntry(entry.value)));
   if (!eligible.length) return null;
-  return ensureKind(cloneBankEntry(pick(eligible).value));
+  const getKey = (item: T) => (
+    (item as { id?: string; prompt?: string; question?: string }).id
+    ?? (item as { prompt?: string }).prompt
+    ?? (item as { question?: string }).question
+    ?? JSON.stringify(item)
+  );
+  const key = `${queueKey}:${levelId}`;
+  const cached = bankQueues.get(key) as QueueState<T> | undefined;
+  const last = cached?.last ?? null;
+  let order = cached?.order ?? reshuffleAvoidingRepeat(eligible, last, getKey);
+  let index = cached?.index ?? 0;
+  if (index >= order.length) {
+    order = reshuffleAvoidingRepeat(eligible, last, getKey);
+    index = 0;
+  }
+  const next = order[index];
+  const value = shuffleValue ? shuffleValue(next) : next;
+  bankQueues.set(key, { order, index: index + 1, last: next });
+  return value;
+};
+const shuffleChallengeOptions = (question: ChallengeQuestion): ChallengeQuestion => {
+  const shuffled = shuffleOptionsWithAnswerIndex(question.options, question.answerIndex);
+  return { ...question, options: shuffled.options, answerIndex: shuffled.answerIndex };
+};
+
+const shuffleAnswerOptions = <T extends { options: V[]; answer: V }, V>(value: T): T => {
+  const shuffled = shuffleOptionsWithCorrect(value.options, value.answer);
+  return { ...value, options: shuffled.options };
 };
 
 const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQuestion>[]> = {
@@ -867,16 +911,21 @@ const TIMEKEEPER_BANK: BankEntry<TimeProblem>[] = [
 export const getSatsInspiredChallengeQuestion = (
   gameType: SupportedChallengeGameType,
   levelId: number,
-): ChallengeQuestion | null => selectBankValue(CHALLENGE_BANKS[gameType], levelId);
+): ChallengeQuestion | null => selectBankValue(
+  CHALLENGE_BANKS[gameType],
+  levelId,
+  `challenge:${gameType}`,
+  shuffleChallengeOptions,
+);
 
 export const getSatsInspiredDataDungeonPuzzle = (levelId: number): DataDungeonPuzzle | null =>
-  selectBankValue(DATA_DUNGEON_BANK, levelId);
+  selectBankValue(DATA_DUNGEON_BANK, levelId, 'data_dungeon', shuffleAnswerOptions);
 
 export const getSatsInspiredMeasurementProblem = (levelId: number): MeasurementProblem | null =>
-  selectBankValue(MEASUREMENT_FORGE_BANK, levelId);
+  selectBankValue(MEASUREMENT_FORGE_BANK, levelId, 'measurement_forge', shuffleAnswerOptions);
 
 export const getSatsInspiredTimeProblem = (levelId: number): TimeProblem | null =>
-  selectBankValue(TIMEKEEPER_BANK, levelId);
+  selectBankValue(TIMEKEEPER_BANK, levelId, 'timekeeper', shuffleAnswerOptions);
 
 
 

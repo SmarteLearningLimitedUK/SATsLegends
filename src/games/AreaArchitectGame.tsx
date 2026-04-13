@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { motion } from 'motion/react';
 import {
@@ -10,6 +10,11 @@ import {
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import areaBackdrop from '../assets/maps/castle.jpg';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
+import {
+  reshuffleAvoidingRepeat,
+  shuffle,
+  shuffleOptionsWithCorrect,
+} from '../utils/questionShuffle';
 
 interface AreaArchitectGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -33,15 +38,6 @@ interface AreaQuestion {
 
 const ROUNDS_TO_WIN = 5;
 const BASE_XP = 160;
-
-const shuffle = <T,>(items: T[]) => {
-  const copy = [...items];
-  for (let i = copy.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-};
 
 const rectCells = (xStart: number, yStart: number, width: number, height: number): Cell[] => {
   const cells: Cell[] = [];
@@ -108,6 +104,13 @@ const QUESTION_BANK: AreaQuestion[] = [
   ),
 ];
 
+const buildQuestionDeck = (previousLast: AreaQuestion | null) => (
+  reshuffleAvoidingRepeat(QUESTION_BANK, previousLast, (question) => question.id).map((question) => ({
+    ...question,
+    options: shuffleOptionsWithCorrect(question.options, question.correct).options,
+  }))
+);
+
 const starsForAccuracy = (correct: number, attempts: number) => {
   if (attempts === 0) return 0;
   const accuracy = correct / attempts;
@@ -128,9 +131,21 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
   const [locked, setLocked] = useState(false);
   const [feedback, setFeedback] = useState('Count the squares and pick the area.');
   const [feedbackTone, setFeedbackTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
+  const [questionOrder, setQuestionOrder] = useState<AreaQuestion[]>(() => buildQuestionDeck(null));
 
-  const question = useMemo(() => QUESTION_BANK[roundIndex % QUESTION_BANK.length], [roundIndex]);
+  const question = useMemo(
+    () => questionOrder[roundIndex % questionOrder.length],
+    [questionOrder, roundIndex],
+  );
   const cellSet = useMemo(() => new Set(question.cells.map((cell) => `${cell.x}-${cell.y}`)), [question.cells]);
+  const lastQuestion = questionOrder.length ? questionOrder[questionOrder.length - 1] : null;
+
+  useEffect(() => {
+    if (!questionOrder.length) return;
+    if (roundIndex > 0 && roundIndex % questionOrder.length === 0) {
+      setQuestionOrder(buildQuestionDeck(lastQuestion));
+    }
+  }, [lastQuestion, questionOrder.length, roundIndex]);
 
   const handleAnswer = (value: number) => {
     if (locked) return;
