@@ -4832,6 +4832,21 @@ button.avatar-hero-arrow:not(:disabled):active {
   opacity: var(--bg-tier-vignette-opacity);
 }
 
+/* Angle Arena: remove all app-level background layers so only the canvas background shows. */
+.screen-gameplay.game-type-angle-arena.app-viewport {
+  background: none !important;
+  background-color: transparent !important;
+}
+
+.screen-gameplay.game-type-angle-arena.app-viewport::before,
+.screen-gameplay.game-type-angle-arena.app-viewport::after,
+.screen-gameplay.game-type-angle-arena .app-screen::before,
+.screen-gameplay.game-type-angle-arena .app-screen-content::before {
+  content: none !important;
+  background: none !important;
+  opacity: 0 !important;
+}
+
 /* Tier 1: Hub / navigation screens
    Inviting and magical, but not louder than gameplay. */
 .app-viewport.app-background-intensity.bg-intensity-hub {
