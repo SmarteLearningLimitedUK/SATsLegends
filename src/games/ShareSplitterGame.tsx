@@ -70,6 +70,7 @@ const PLATE_POSITIONS: Record<number, Array<{ x: number; y: number }>> = {
     { x: 53.4, y: 71.3 },
   ],
 };
+const DRAG_SLICE_SIZE = 48;
 
 const RATIO_PATTERNS_BY_COUNT: Record<number, number[][]> = {
   2: [
@@ -280,8 +281,8 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     const updatePosition = (clientX: number, clientY: number) => {
       setDragSlice({
         id: sliceId,
-        x: clientX - 20,
-        y: clientY - 20,
+        x: clientX - DRAG_SLICE_SIZE / 2,
+        y: clientY - DRAG_SLICE_SIZE / 2,
       });
     };
 
@@ -469,53 +470,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   return (
     <GameUiShell backgroundImage={shareSplitterBackground} backgroundOpacity={1} overlayDisabled>
       <div className="relative h-full w-full">
-        <div className="pointer-events-none absolute inset-0 z-[20]">
-          <div className="relative h-full w-full">
-            {plateViews.map((plate, index) => {
-              const plateTone = validationActive
-                ? plate.isCorrect
-                  ? 'border-emerald-300/70 bg-[linear-gradient(180deg,rgba(226,252,243,0.9),rgba(186,247,231,0.78))]'
-                  : 'border-amber-200/70 bg-[linear-gradient(180deg,rgba(255,243,205,0.9),rgba(255,232,176,0.78))]'
-                : hoverPlateIndex === index
-                  ? 'border-cyan-200/80 bg-[linear-gradient(180deg,rgba(240,249,255,0.92),rgba(214,241,255,0.76))]'
-                  : dragSlice
-                    ? 'border-cyan-200/60 bg-[linear-gradient(180deg,rgba(244,250,255,0.86),rgba(216,236,250,0.72))]'
-                    : 'border-white/50 bg-[linear-gradient(180deg,rgba(255,255,255,0.88),rgba(224,233,243,0.68))]';
-              const position = platePositions[index] || { x: 50, y: 50 };
-
-              return (
-                <button
-                  key={plate.id}
-                  type="button"
-                  ref={(node) => {
-                    plateRefs.current[index] = node;
-                  }}
-                  disabled={locked}
-                  className={`pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border p-2 text-center shadow-[0_12px_20px_rgba(2,6,23,0.24)] transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.03]' : dragSlice && !locked ? 'scale-[1.01]' : ''}`}
-                  style={{
-                    left: `${position.x}%`,
-                    top: `${position.y}%`,
-                    width: plateSize,
-                    height: plateSize,
-                  }}
-                  aria-label={`Plate ${index + 1}. ${plate.currentCakeCount} of ${plate.targetCakeCount} cakes placed.`}
-                >
-                  <div className="grid h-full w-full grid-cols-3 place-items-center gap-0.5">
-                    {plates[index].slice(0, 6).map((sliceId) => (
-                      <img
-                        key={sliceId}
-                        src={CAKE_SLICE_ASSET}
-                        alt=""
-                        className="h-10 w-10 object-contain"
-                        draggable={false}
-                      />
-                    ))}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
         <GameScreenLayout
           className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2 text-white"
           top={(
@@ -533,7 +487,55 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
           )}
           main={(
             <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
-              <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] px-2 py-3 md:px-3" />
+              <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] px-2 py-3 md:px-3">
+                <div className="pointer-events-none absolute inset-0 z-[20]">
+                  <div className="relative h-full w-full">
+                    {plateViews.map((plate, index) => {
+                      const plateTone = validationActive
+                        ? plate.isCorrect
+                          ? 'border-emerald-300/70 bg-[linear-gradient(180deg,rgba(226,252,243,0.9),rgba(186,247,231,0.78))]'
+                          : 'border-amber-200/70 bg-[linear-gradient(180deg,rgba(255,243,205,0.9),rgba(255,232,176,0.78))]'
+                        : hoverPlateIndex === index
+                          ? 'border-cyan-200/80 bg-[linear-gradient(180deg,rgba(240,249,255,0.92),rgba(214,241,255,0.76))]'
+                          : dragSlice
+                            ? 'border-cyan-200/60 bg-[linear-gradient(180deg,rgba(244,250,255,0.86),rgba(216,236,250,0.72))]'
+                            : 'border-white/50 bg-[linear-gradient(180deg,rgba(255,255,255,0.88),rgba(224,233,243,0.68))]';
+                      const position = platePositions[index] || { x: 50, y: 50 };
+
+                      return (
+                        <button
+                          key={plate.id}
+                          type="button"
+                          ref={(node) => {
+                            plateRefs.current[index] = node;
+                          }}
+                          disabled={locked}
+                          className={`pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border p-2 text-center shadow-[0_12px_20px_rgba(2,6,23,0.24)] transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.03]' : dragSlice && !locked ? 'scale-[1.01]' : ''}`}
+                          style={{
+                            left: `${position.x}%`,
+                            top: `${position.y}%`,
+                            width: plateSize,
+                            height: plateSize,
+                          }}
+                          aria-label={`Plate ${index + 1}. ${plate.currentCakeCount} of ${plate.targetCakeCount} cakes placed.`}
+                        >
+                          <div className="grid h-full w-full grid-cols-3 place-items-center gap-0.5">
+                            {plates[index].slice(0, 6).map((sliceId) => (
+                              <img
+                                key={sliceId}
+                                src={CAKE_SLICE_ASSET}
+                                alt=""
+                                className="h-10 w-10 object-contain"
+                                draggable={false}
+                              />
+                            ))}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
 
             <section className="shrink-0 rounded-[1.4rem] border border-white/14 bg-black/22 px-3 py-3 shadow-[0_10px_18px_rgba(15,23,42,0.22)]">
               <div className="mb-2 flex items-center justify-between gap-2">
@@ -622,7 +624,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                 <motion.div
                   key={dragSlice.id}
                   initial={{ scale: 0.92, opacity: 0.9 }}
-                  animate={{ scale: 1, opacity: 1, x: dragSlice.x - 24, y: dragSlice.y - 24 }}
+                  animate={{ scale: 1, opacity: 1, x: dragSlice.x, y: dragSlice.y }}
                   exit={{ opacity: 0, scale: 0.86 }}
                   transition={{ duration: 0.08, ease: 'linear' }}
                   className="pointer-events-none fixed z-[60] h-12 w-12 rounded-full border border-amber-200/70 bg-[linear-gradient(180deg,rgba(250,204,21,0.3),rgba(180,83,9,0.2))] p-1 shadow-[0_14px_24px_rgba(217,119,6,0.35)]"
