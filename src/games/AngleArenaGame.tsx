@@ -555,7 +555,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   }, [gameState]);
 
   return (
-    <GameUiShell className="bg-transparent" overlayDisabled>
+    <GameUiShell className="bg-transparent !bg-none" overlayDisabled>
       <div className="relative h-full w-full overflow-hidden text-white">
         <canvas
           ref={canvasRef}
