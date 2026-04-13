@@ -17,7 +17,7 @@ export const QUESTION_MATCH_FRAME_GAMES: MiniGameType[] = [
   'measurement_forge',
   'tower_of_factors',
   'place_value_peaks',
-  'chart_chase',
+  'graph_grabber',
   'equation_grove',
   'coordinate_quest',
   'calculation_clash',

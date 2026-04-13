@@ -273,7 +273,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                   </div>
                 ))}
 
-                {[5, 4, 3, 2, 1].map((rowValue) => (
+                {[1, 2, 3, 4, 5].map((rowValue) => (
                   <React.Fragment key={`row-${rowValue}`}>
                     <div className="flex items-center justify-center text-[11px] font-black text-emerald-100/62 md:text-xs">
                       {rowValue}

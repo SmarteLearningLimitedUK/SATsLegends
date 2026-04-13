@@ -68,7 +68,7 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
         return 'RoundingRocketGame';
       }
       return 'DecimalSniperGame';
-    case 'chart_chase':
+    case 'graph_grabber':
       if (level.blueprintKey === 'line_graph_lab') {
         return 'LineGraphLabGame';
       }

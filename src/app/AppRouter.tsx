@@ -23,6 +23,7 @@ import {
 import { getMiniGame, MiniGameRegistryKey } from '../games';
 import { isBossEncounterGameType } from '../games/bossEncounterTypes';
 import { GameScreen, IslandData, LevelData, PlayerData } from '../types';
+import { getLevelGameTitle } from '../utils/gameNames';
 import splashPoster from '../assets/casual_ui/splashrep1.png';
 import splashStartPill from '../assets/casual_ui/inputs/btn_1.png';
 import {
@@ -196,7 +197,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         key={`${key}-${selectedLevel.id}-${gameplayRestartKey}`}
         onBack={onBackToIslandLevels}
         context={{
-          title: selectedLevel.displayName,
+          title: getLevelGameTitle(selectedLevel),
           gameType: selectedLevel.gameType,
           levelId: selectedLevel.id,
           blueprintKey: selectedLevel.blueprintKey,
@@ -271,7 +272,10 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         if (selectedLevel.blueprintKey === 'maths_vs_zombies') {
           return renderFromRegistry('MathsVsZombiesGame', sharedProps);
         }
-        return renderFromRegistry('RatioRapidsGame', { ...sharedProps, gameTitle: selectedLevel.displayName });
+        return renderFromRegistry('RatioRapidsGame', {
+          ...sharedProps,
+          gameTitle: getLevelGameTitle(selectedLevel),
+        });
       case 'timekeeper_temple':
         return renderFromRegistry('TimekeeperTempleGame', sharedProps);
       case 'measurement_forge':
@@ -303,7 +307,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
           return renderFromRegistry('RoundingRocketGame', sharedProps);
         }
         return renderFromRegistry('DecimalSniperGame', { ...sharedProps, isBoss: Boolean(selectedLevel.isBoss) });
-      case 'chart_chase':
+      case 'graph_grabber':
         if (selectedLevel.blueprintKey === 'line_graph_lab') {
           return renderFromRegistry('LineGraphLabGame', sharedProps);
         }

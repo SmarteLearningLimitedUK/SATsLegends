@@ -417,7 +417,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
       const backgroundImg = backgroundImageRef.current;
       if (backgroundImg && backgroundImg.complete) {
-        const scale = Math.max(viewWidth / backgroundImg.width, viewHeight / backgroundImg.height);
+        const scale = Math.min(viewWidth / backgroundImg.width, viewHeight / backgroundImg.height);
         const drawW = backgroundImg.width * scale;
         const drawH = backgroundImg.height * scale;
         const drawX = (viewWidth - drawW) / 2;
@@ -425,8 +425,14 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         ctx.drawImage(backgroundImg, drawX, drawY, drawW, drawH);
       }
 
-      const originScreen = worldToScreen(0, 0, camera.x, camera.y, viewWidth, viewHeight);
-      const enemyScreen = worldToScreen(enemyWorld.x, enemyWorld.y, camera.x, camera.y, viewWidth, viewHeight);
+      const screenOffset = { x: 0, y: viewHeight * 0.18 };
+      const toScreen = (x: number, y: number) => {
+        const base = worldToScreen(x, y, camera.x, camera.y, viewWidth, viewHeight);
+        return { x: base.x + screenOffset.x, y: base.y + screenOffset.y };
+      };
+
+      const originScreen = toScreen(0, 0);
+      const enemyScreen = toScreen(enemyWorld.x, enemyWorld.y);
 
       ctx.strokeStyle = 'rgba(148,163,184,0.4)';
       ctx.lineWidth = 2;
@@ -438,7 +444,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         const aimingAngle = selectedAnswerRef.current ?? desiredAngleRef.current;
         const aimVector = angleToVector(aimingAngle);
         const aimEndWorld = { x: aimVector.x * 160, y: aimVector.y * 160 };
-        const aimEndScreen = worldToScreen(aimEndWorld.x, aimEndWorld.y, camera.x, camera.y, viewWidth, viewHeight);
+        const aimEndScreen = toScreen(aimEndWorld.x, aimEndWorld.y);
         ctx.strokeStyle = 'rgba(125,211,252,0.8)';
         ctx.lineWidth = 3;
         ctx.beginPath();
@@ -490,14 +496,14 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
       if (projectile) {
         projectile.trail.forEach((point) => {
-          const trailScreen = worldToScreen(point.x, point.y, camera.x, camera.y, viewWidth, viewHeight);
+          const trailScreen = toScreen(point.x, point.y);
           ctx.fillStyle = `rgba(125,211,252,${0.35 * point.alpha})`;
           ctx.beginPath();
           ctx.arc(trailScreen.x, trailScreen.y, 6 * point.alpha, 0, Math.PI * 2);
           ctx.fill();
         });
 
-        const projectileScreen = worldToScreen(projectile.x, projectile.y, camera.x, camera.y, viewWidth, viewHeight);
+        const projectileScreen = toScreen(projectile.x, projectile.y);
         ctx.fillStyle = '#f8fafc';
         ctx.beginPath();
         ctx.arc(projectileScreen.x, projectileScreen.y, PROJECTILE_RADIUS, 0, Math.PI * 2);

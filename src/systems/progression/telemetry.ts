@@ -46,7 +46,7 @@ const GAME_TOPIC_MAP: Partial<Record<MiniGameType, string[]>> = {
   calculation_clash: ['arithmetic'],
   place_value_peaks: ['place_value'],
   data_dungeon: ['data'],
-  chart_chase: ['data'],
+  graph_grabber: ['data'],
 };
 
 const normalizeTopicTags = (tags: string[]) => Array.from(new Set(tags.map(tag => tag.trim()).filter(Boolean)));

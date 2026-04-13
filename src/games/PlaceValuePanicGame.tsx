@@ -578,14 +578,27 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     window.setTimeout(() => onGameOver(Math.max(0, XP)), 220);
   }, [matchTimeLeft, onGameOver, XP]);
 
+  const getPlayfieldScale = useCallback(() => {
+    const node = playfieldRef.current;
+    if (!node) return { x: 1, y: 1 };
+    const rect = node.getBoundingClientRect();
+    const scaleX = rect.width / (node.offsetWidth || rect.width || 1);
+    const scaleY = rect.height / (node.offsetHeight || rect.height || 1);
+    return {
+      x: Number.isFinite(scaleX) && scaleX > 0 ? scaleX : 1,
+      y: Number.isFinite(scaleY) && scaleY > 0 ? scaleY : 1,
+    };
+  }, []);
+
   const getRelativePoint = useCallback((clientX: number, clientY: number) => {
     const rect = playfieldRef.current?.getBoundingClientRect();
     if (!rect) return { x: clientX, y: clientY };
+    const scale = getPlayfieldScale();
     return {
-      x: clientX - rect.left,
-      y: clientY - rect.top,
+      x: (clientX - rect.left) / scale.x,
+      y: (clientY - rect.top) / scale.y,
     };
-  }, []);
+  }, [getPlayfieldScale]);
 
   const beginDrag = useCallback((
     location: TokenLocation,
@@ -597,6 +610,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     if (!token) return;
 
     const rect = event.currentTarget.getBoundingClientRect();
+    const scale = getPlayfieldScale();
     event.currentTarget.setPointerCapture(event.pointerId);
 
     if (location === 'target') {
@@ -612,10 +626,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       pointerId: event.pointerId,
       clientX: event.clientX,
       clientY: event.clientY,
-      offsetX: event.clientX - rect.left,
-      offsetY: event.clientY - rect.top,
-      width: rect.width,
-      height: rect.height,
+      offsetX: (event.clientX - rect.left) / scale.x,
+      offsetY: (event.clientY - rect.top) / scale.y,
+      width: rect.width / scale.x,
+      height: rect.height / scale.y,
     });
 
     triggerHaptic('selection');

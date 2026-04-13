@@ -170,7 +170,7 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
             <motion.div
               animate={glow ? { scale: [1.05, 1.1, 1.05] } : { scale: 1.05 }}
               transition={{ duration: 0.6, ease: 'easeInOut' }}
-              className="relative z-10 flex flex-col items-center gap-2"
+              className="relative z-10 flex flex-col items-center gap-2 translate-y-6"
             >
               <div className={blockClass(true)}>?</div>
               <div className="flex items-center gap-2">

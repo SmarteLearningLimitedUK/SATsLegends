@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
@@ -118,6 +118,17 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
   const [questionCount, setQuestionCount] = useState(1);
   const [round, setRound] = useState<OpsRound>(() => createOpsRound(levelId));
   const [feedback, setFeedback] = useState<FeedbackState>(null);
+  const bidmasFlags = useMemo(() => {
+    const expr = round.expression;
+    return [
+      { key: 'B', label: 'Brackets', active: /[()]/.test(expr) },
+      { key: 'I', label: 'Indices', active: /\^|²/.test(expr) },
+      { key: 'D', label: 'Division', active: /÷|\//.test(expr) },
+      { key: 'M', label: 'Multiplication', active: /×|\*/.test(expr) },
+      { key: 'A', label: 'Addition', active: /\+/.test(expr) },
+      { key: 'S', label: 'Subtraction', active: /-/.test(expr) },
+    ];
+  }, [round.expression]);
   const [isFinished, setIsFinished] = useState(false);
 
   const enemyHealthPercent = (enemyHealth / maxEnemyHealth) * 100;
@@ -274,8 +285,24 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
                 <div className="grid grid-cols-1 gap-2 md:grid-cols-[1.1fr_0.9fr] md:gap-3">
                   <div className="rounded-[1.3rem] border border-amber-200/20 bg-[linear-gradient(180deg,rgba(251,191,36,0.18),rgba(15,23,42,0.7))] p-3 shadow-[0_12px_22px_rgba(2,6,23,0.18)] md:p-4">
                     <div className="text-[11px] font-black uppercase tracking-[0.16em] text-amber-100/90 md:text-xs">Order of operations</div>
+                    <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5">
+                      {bidmasFlags.map((flag) => (
+                        <div
+                          key={flag.key}
+                          className={`flex h-7 min-w-[2.1rem] items-center justify-center rounded-full border px-2 text-[11px] font-black uppercase tracking-[0.12em] md:h-8 ${
+                            flag.active
+                              ? 'border-emerald-200/60 bg-emerald-400/20 text-emerald-100'
+                              : 'border-white/15 bg-white/5 text-white/55'
+                          }`}
+                        >
+                          {flag.key}
+                        </div>
+                      ))}
+                    </div>
                     <div className="mt-2 rounded-[1rem] border border-amber-200/30 bg-[linear-gradient(180deg,rgba(245,158,11,0.3),rgba(15,23,42,0.6))] p-3 text-center shadow-[0_10px_18px_rgba(2,6,23,0.18)] md:p-4">
-                      <div className="text-2xl font-black tracking-tight text-white md:text-4xl">{round.expression}</div>
+                      <div className="text-[clamp(1.1rem,2.8vw,2.6rem)] font-black tracking-tight text-white whitespace-nowrap">
+                        {round.expression}
+                      </div>
                     </div>
                   </div>
 

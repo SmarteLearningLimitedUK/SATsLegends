@@ -106,7 +106,14 @@ const run = async () => {
   await page.waitForTimeout(900);
 
   const groupButton = page.locator('button[aria-expanded]', { hasText: new RegExp(gameName, 'i') }).first();
-  const groupVisible = await groupButton.isVisible().catch(() => false);
+  let groupVisible = await groupButton.isVisible().catch(() => false);
+  let attempts = 0;
+  while (!groupVisible && attempts < 8) {
+    await page.mouse.wheel(0, 520);
+    await page.waitForTimeout(350);
+    groupVisible = await groupButton.isVisible().catch(() => false);
+    attempts += 1;
+  }
   if (!groupVisible) {
     await page.screenshot({ path: outputPath, fullPage: false });
     throw new Error(`Game group not found: ${gameName}`);

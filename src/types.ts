@@ -24,7 +24,7 @@ export type MiniGameType =
   | 'mirror_gate'
   | 'scale_safari'
   | 'scales_of_the_sun'
-  | 'chart_chase'
+  | 'graph_grabber'
   | 'observatory_overload'
   | 'mean_machine'
   | 'equation_grove'

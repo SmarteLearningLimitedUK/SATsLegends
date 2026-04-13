@@ -3,6 +3,7 @@ import { DEFAULT_AVATAR_ID } from '../assets/characters';
 import { AVATARS, INITIAL_DAILY_QUESTS, ISLANDS } from '../constants';
 import { IslandData, LevelData, PlayerData } from '../types';
 import { LevelResultState } from './types';
+import { getLevelGameTitle } from '../utils/gameNames';
 import { createTelemetryState } from '../systems/progression/telemetry';
 import { getStarterItemIds } from '../systems/progression/shopCatalog';
 import { useProgressionStore } from '../store/useProgressionStore';
@@ -258,8 +259,7 @@ export const usePlayerProgression = (): PlayerProgressionController => {
       };
     });
 
-    const levelTitle = selectedLevel.displayName?.trim()
-      || (selectedLevel.gameType ? selectedLevel.gameType.replace(/_/g, ' ') : '');
+    const levelTitle = getLevelGameTitle(selectedLevel) || '';
 
     return {
       type: 'victory',

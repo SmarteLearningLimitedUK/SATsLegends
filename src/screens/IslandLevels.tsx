@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Crown, Lock, Sparkles } from 'lucide-react';
 import AssetIcon from '../components/AssetIcon';
 import { IslandData, LevelData, PlayerData } from '../types';
+import { getLevelGameTitle, getLevelGroupKey } from '../utils/gameNames';
 
 interface IslandLevelsProps {
   island: IslandData;
@@ -78,30 +79,10 @@ const GAME_SUMMARY_BY_KEY: Record<string, string> = {
   multi_step_marathon: 'Complete deep multi-step reasoning runs at mastery level.',
 };
 
-const toTitleCaseFromKey = (key: string) => key
-  .split(/[_-]/g)
-  .filter(Boolean)
-  .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-  .join(' ');
-
-const getGroupKey = (level: LevelData) => (
-  level.miniGameKey
-  || level.blueprintKey
-  || level.displayName
-  || `${level.gameType || 'level'}-${level.id}`
-);
-
-const getGroupName = (level: LevelData) => {
-  if (level.displayName) {
-    return level.displayName.replace(/\s+L\d+$/i, '').trim();
-  }
-  if (level.miniGameKey) return toTitleCaseFromKey(level.miniGameKey);
-  if (level.blueprintKey) return toTitleCaseFromKey(level.blueprintKey);
-  return `Level ${level.id}`;
-};
+const getGroupName = (level: LevelData) => getLevelGameTitle(level) || `Level ${level.id}`;
 
 const getGameSummary = (level: LevelData) => {
-  const key = level.miniGameKey || level.blueprintKey || level.gameType || '';
+  const key = level.gameType || level.miniGameKey || level.blueprintKey || '';
   return GAME_SUMMARY_BY_KEY[key] || 'Take on this challenge to improve speed, accuracy, and confidence.';
 };
 
@@ -184,7 +165,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
     const groups = new Map<string, GameGroupState>();
 
     for (const row of levelRows) {
-      const key = getGroupKey(row.level);
+      const key = getLevelGroupKey(row.level);
       if (!groups.has(key)) {
         groups.set(key, {
           id: key,

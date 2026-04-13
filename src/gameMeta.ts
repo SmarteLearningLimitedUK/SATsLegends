@@ -322,16 +322,16 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       'The sun scales punish rushed estimates, so measure with precision.'
     ),
   },
-  chart_chase: {
-    label: 'Treasure Chart Cove',
+  graph_grabber: {
+    label: 'Graph Grabber',
     focus: 'Bar charts, line graphs and table interpretation',
     rules: {
-      title: 'Treasure Chart Cove',
-      summary: 'Read the pirate cove charts and choose the ship, value or day that matches the data.',
+      title: 'Graph Grabber',
+      summary: 'Read the evidence charts and grab the exact value before time runs out.',
       bullets: [
-        'Some rounds ask for the highest treasure haul, while others ask for differences or dock matches.',
-        'Use the bar chart, rope line graph or harbour ledger before you choose your answer.',
-        'Fast accurate reads unlock treasure before the next ship sails past.',
+        'Some rounds ask for the highest value, while others ask for differences or exact matches.',
+        'Use the bar chart, line graph or ledger before you choose your answer.',
+        'Fast accurate reads keep your streak alive.',
       ],
     },
   },

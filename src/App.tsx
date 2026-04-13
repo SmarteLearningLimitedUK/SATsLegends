@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { GAME_META, GameRuleSet } from './gameMeta';
+import { getLevelGameTitle } from './utils/gameNames';
 import {
   GAME_HUD_HELP_EVENT,
   GAME_HUD_RESTART_EVENT,
@@ -74,6 +75,8 @@ const App: React.FC = () => {
     goToAchievements,
     goToParentDashboard,
   } = useScreenFlow();
+
+  const canonicalGameTitle = getLevelGameTitle(selectedLevel);
 
   const {
     player,
@@ -311,13 +314,9 @@ const App: React.FC = () => {
 
   const resolveLevelTitle = useCallback(() => {
     if (!selectedLevel) return 'Round over';
-    const trimmed = selectedLevel.displayName?.trim();
-    if (trimmed) return trimmed;
-    if (selectedLevel.gameType) {
-      return GAME_META[selectedLevel.gameType]?.label || selectedLevel.gameType.replace(/_/g, ' ');
-    }
+    if (canonicalGameTitle) return canonicalGameTitle;
     return 'Round over';
-  }, [selectedLevel]);
+  }, [canonicalGameTitle]);
 
   const handleGameOver = useCallback((XP: number) => {
     triggerHaptic('error');
@@ -453,7 +452,7 @@ const App: React.FC = () => {
     () => {
       const baseRules = selectedLevel?.blueprintKey === 'place_value_panic'
         ? {
-            title: selectedLevel.displayName || 'Place Value Panic',
+            title: canonicalGameTitle || 'Place Value Panic',
             summary: 'Sort the digits into the correct place-value slots to build the target number.',
             bullets: [
               'Read the number at the top and check each place-value column.',
@@ -463,7 +462,7 @@ const App: React.FC = () => {
           }
         : selectedLevel?.gameType === 'potion_pour'
         ? {
-            title: selectedLevel.displayName || 'Potion Panic',
+            title: canonicalGameTitle || 'Potion Panic',
             summary: 'Tap the right bottles to build the exact potion, then press Brew to check it.',
             bullets: [
               'Watch the target mix and the goal bars for each ingredient.',
@@ -473,7 +472,7 @@ const App: React.FC = () => {
           }
           : (selectedRuleSet || (selectedLevel
             ? {
-                title: selectedLevel.displayName || 'How To Play',
+                title: canonicalGameTitle || 'How To Play',
                 summary: 'Follow the on-screen objective and complete the activity step by step.',
                 bullets: [
                 'Read the mission text first, then choose, place, or build your answer.',
@@ -483,7 +482,7 @@ const App: React.FC = () => {
             }
             : null));
       if (!baseRules) return null;
-      const titleOverride = selectedLevel?.displayName?.trim();
+      const titleOverride = canonicalGameTitle?.trim();
       const resolvedRules = titleOverride
         ? { ...baseRules, title: titleOverride }
         : baseRules;

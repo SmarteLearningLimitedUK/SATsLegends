@@ -138,8 +138,8 @@ const CHALLENGE_THEMES: Record<SupportedChallengeGameType, ChallengeTheme> = {
     progress: 'bg-gradient-to-r from-lime-300 via-yellow-300 to-orange-400',
     badge: 'text-lime-100',
   },
-  chart_chase: {
-    title: 'Chart Chase',
+  graph_grabber: {
+    title: 'Graph Grabber',
     surface: 'from-sky-200/28 via-blue-100/18 to-slate-950/78',
     scene: 'from-sky-200/22 via-indigo-200/14 to-transparent',
     ambient: 'bg-[radial-gradient(circle_at_top,rgba(186,230,253,0.45),transparent_30%),linear-gradient(180deg,#15345f_0%,#0a1220_100%)]',
@@ -1160,7 +1160,7 @@ const generateQuestion = (gameType: SupportedChallengeGameType, levelId: number)
       return generateScaleQuestion();
     case 'unit_mixer':
       return generateUnitMixerQuestion();
-    case 'chart_chase':
+    case 'graph_grabber':
       return generateChartQuestion();
     case 'mean_machine':
       return generateMeanQuestion();
@@ -1199,8 +1199,8 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
   const isPlaceValuePeaks = gameType === 'place_value_peaks';
   const isScaleBuilder = gameType === 'scale_safari';
   const isRuleRunner = gameType === 'rule_runner';
-  const isChartChase = gameType === 'chart_chase';
-  const usesBlueAnswers = isScaleBuilder || isCalculationClash || isRuleRunner;
+  const isChartGrabber = gameType === 'graph_grabber';
+  const usesBlueAnswers = isScaleBuilder || isCalculationClash || isRuleRunner || isChartGrabber;
   const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
   const targetScore = 780 + (levelId * 180);
   const progress = Math.min((XP / targetScore) * 100, 100);
@@ -1315,11 +1315,11 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
       <GameplaySceneBackdrop gameType={gameType} />
       <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${theme.scene}`} />
       <div
-        className={`pointer-events-none absolute inset-0 ${isChartChase ? 'opacity-0' : 'opacity-20'}`}
+        className={`pointer-events-none absolute inset-0 ${isChartGrabber ? 'opacity-0' : 'opacity-20'}`}
         style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.22) 1px, transparent 1px)', backgroundSize: '24px 24px' }}
       />
 
-      <div className={`relative z-10 flex h-full min-h-0 flex-col ${isChartChase ? 'gap-1 md:gap-2' : 'gap-1 md:gap-4'}`}>
+      <div className={`relative z-10 flex h-full min-h-0 flex-col ${isChartGrabber ? 'gap-1 md:gap-2' : 'gap-1 md:gap-4'}`}>
 
         <div className={`licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.8rem] border border-white/10 ${isCalculationClash ? 'bg-[linear-gradient(180deg,rgba(9,34,58,0.86),rgba(7,17,31,0.62))]' : isPlaceValuePeaks ? 'bg-[linear-gradient(180deg,rgba(52,28,10,0.76),rgba(16,16,22,0.54))]' : 'bg-[linear-gradient(180deg,rgba(9,16,28,0.68),rgba(9,16,28,0.34))]'} shadow-[0_24px_64px_rgba(0,0,0,0.28)] md:rounded-[2.6rem]`}>
           <div className="flex min-h-0 flex-1 flex-col gap-1.5 p-1.5 md:gap-3 md:p-4">
@@ -1327,23 +1327,23 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
               <BossPortrait encounter={bossEncounter} pose={bossPose} compact className="shrink-0" />
             )}
 
-            {!isChartChase && (
+            {!isChartGrabber && (
             <div className={`casual-panel-strong relative shrink-0 overflow-hidden ${
               isPlaceValuePeaks
                 ? 'rounded-[1.25rem] border border-amber-200/18 bg-[linear-gradient(180deg,rgba(124,45,18,0.88),rgba(83,33,13,0.92))]'
-                : isChartChase
+                : isChartGrabber
                   ? 'rounded-[1.2rem] border border-transparent bg-transparent'
                   : 'rounded-[1.35rem]'
-              } ${isChartChase ? 'px-2.5 py-2 md:px-3 md:py-3' : 'px-3 py-3 md:px-5 md:py-5'} text-center md:rounded-[2rem]`}>
+              } ${isChartGrabber ? 'px-2.5 py-2 md:px-3 md:py-3' : 'px-3 py-3 md:px-5 md:py-5'} text-center md:rounded-[2rem]`}>
               <div className={`absolute inset-x-5 top-0 h-20 rounded-full bg-gradient-to-br ${isPlaceValuePeaks ? 'from-yellow-200/18 via-orange-300/12 to-transparent' : theme.prompt} blur-3xl`} />
               <div className="relative z-10 flex flex-col items-center">
                 <div className={`${isPlaceValuePeaks ? 'mb-2 rounded-[0.9rem] border border-amber-200/24 bg-[linear-gradient(180deg,rgba(251,146,60,0.3),rgba(194,65,12,0.18))] px-3 py-1.5 text-amber-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]' : `casual-ribbon-chip mb-2 inline-flex items-center justify-center rounded-full px-3 py-1 text-[8px] font-black uppercase tracking-[0.18em] md:mb-3 md:px-4 md:py-1.5 md:text-[10px] ${theme.badge}`}`}>
                   {isPlaceValuePeaks ? 'Highest Number Dash' : meta.focus}
                 </div>
-                <div className={`${isCalculationClash ? 'text-[1.15rem]' : isPlaceValuePeaks ? 'text-[1.18rem]' : isChartChase ? 'text-[1.05rem]' : 'text-[1.28rem]'} max-w-[18rem] font-black text-white md:max-w-[30rem] leading-[0.95]`}>
+                <div className={`${isCalculationClash ? 'text-[1.15rem]' : isPlaceValuePeaks ? 'text-[1.18rem]' : isChartGrabber ? 'text-[1.05rem]' : 'text-[1.28rem]'} max-w-[18rem] font-black text-white md:max-w-[30rem] leading-[0.95]`}>
                   {formatFantasyPrompt(question.prompt)}
                 </div>
-                <div className={`mt-1 max-w-[18rem] font-semibold leading-snug text-white/70 md:mt-2 md:max-w-[30rem] ${isChartChase ? 'text-[8px] md:text-[11px]' : 'text-[9px] md:text-sm'}`}>
+                <div className={`mt-1 max-w-[18rem] font-semibold leading-snug text-white/70 md:mt-2 md:max-w-[30rem] ${isChartGrabber ? 'text-[8px] md:text-[11px]' : 'text-[9px] md:text-sm'}`}>
                   {question.sublabel}
                 </div>
               </div>
@@ -1353,12 +1353,12 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
             <div className={`casual-panel-surface relative flex min-h-0 shrink overflow-hidden ${
               isPlaceValuePeaks
                 ? 'rounded-[1.35rem] border border-amber-200/12 bg-[linear-gradient(180deg,rgba(32,18,11,0.72),rgba(12,12,16,0.82))]'
-                : isChartChase
+                : isChartGrabber
                   ? 'rounded-[1.35rem] border border-sky-200/30 bg-[linear-gradient(180deg,rgba(8,24,61,0.92),rgba(4,12,30,0.94))]'
                   : 'rounded-[1.25rem]'
               } px-2 py-2 md:rounded-[1.8rem] md:px-4 md:py-4`}>
               <div className="relative z-10 flex min-h-0 w-full flex-col items-center justify-center gap-2">
-                {isChartChase && (
+                {isChartGrabber && (
                   <div className="w-full px-1 text-center">
                     <div className="text-[0.98rem] font-black leading-tight text-white md:text-[1.08rem]">
                       {formatFantasyPrompt(question.prompt)}
@@ -1374,15 +1374,15 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   className="flex min-h-0 w-full items-center justify-center overflow-hidden"
                 >
-                  <div className={`w-full overflow-hidden ${isChartChase ? 'max-h-[12rem] md:max-h-[15rem]' : 'max-h-[10.5rem] md:max-h-[15rem]'}`}>
+                  <div className={`w-full overflow-hidden ${isChartGrabber ? 'max-h-[12rem] md:max-h-[15rem]' : 'max-h-[10.5rem] md:max-h-[15rem]'}`}>
                     <div className="flex h-full w-full items-center justify-center">
                       {renderVisual(question.visual)}
                     </div>
                   </div>
                 </motion.div>
-                {!isChartChase && (
-                  <div className={`w-full rounded-[1rem] px-3 py-2 text-center font-bold shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:rounded-[1.15rem] md:px-4 md:py-2.5 ${isChartChase ? 'text-[8px] md:text-[11px]' : 'text-[9px] md:text-sm'} ${
-                    isChartChase ? 'bg-white/18 text-slate-900' : 'bg-black/22 text-white/84'
+                {!isChartGrabber && (
+                  <div className={`w-full rounded-[1rem] px-3 py-2 text-center font-bold shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:rounded-[1.15rem] md:px-4 md:py-2.5 ${isChartGrabber ? 'text-[8px] md:text-[11px]' : 'text-[9px] md:text-sm'} ${
+                    isChartGrabber ? 'bg-white/18 text-slate-900' : 'bg-black/22 text-white/84'
                   }`}>
                     {visualCaption || statusMessage}
                   </div>
@@ -1390,14 +1390,14 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
               </div>
             </div>
 
-            <div className={`flex min-h-0 ${isChartChase ? 'mt-auto' : 'flex-1'} flex-col ${
-              isPlaceValuePeaks ? 'gap-2 md:gap-3' : isChartChase ? 'gap-1 md:gap-2' : 'gap-1.5 md:gap-2.5'
+            <div className={`flex min-h-0 ${isChartGrabber ? 'mt-auto' : 'flex-1'} flex-col ${
+              isPlaceValuePeaks ? 'gap-2 md:gap-3' : isChartGrabber ? 'gap-1 md:gap-2' : 'gap-1.5 md:gap-2.5'
             }`}>
               {question.options.map((option, index) => {
                 const isSelected = index === selectedIndex;
                 const isCorrect = feedback === 'correct' && index === question.answerIndex;
                 const isWrongSelected = feedback === 'incorrect' && isSelected;
-                const displayOption = isChartChase ? option.replace(/^Choice\s*/i, '') : option;
+                const displayOption = isChartGrabber ? option.replace(/^Choice\s*/i, '') : option;
 
                 const answerBackground = isCorrect
                   ? answerGreenBg
@@ -1418,7 +1418,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                           ? 'min-h-[3.55rem] rounded-[1.05rem] border border-sky-100/26 shadow-[0_16px_26px_rgba(0,0,0,0.24)] md:min-h-[4.7rem] md:rounded-[1.2rem] md:px-5 md:py-3'
                           : isCalculationClash
                           ? 'min-h-[3.55rem] rounded-[1.05rem] border border-sky-100/24 shadow-[0_16px_26px_rgba(0,0,0,0.24)] md:min-h-[4.7rem] md:rounded-[1.2rem] md:px-5 md:py-3'
-                          : isChartChase
+                          : isChartGrabber
                             ? 'min-h-[2.35rem] rounded-[0.95rem] md:min-h-[3.1rem] md:px-4 md:py-2'
                             : 'min-h-[3.55rem] rounded-[999px] md:min-h-[4.7rem] md:px-5 md:py-3'
                     }`}
@@ -1444,7 +1444,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                       <div className={`flex h-7 w-7 shrink-0 items-center justify-center border text-[9px] font-black uppercase md:h-8 md:w-8 md:text-[11px] ${isPlaceValuePeaks ? 'rounded-[0.7rem] border-amber-100/14 bg-black/14 text-amber-50' : usesBlueAnswers ? `rounded-[0.65rem] ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/45 text-slate-900' : 'border-white/16 bg-white/12 text-white'}` : `rounded-full ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/35 text-slate-900' : 'border-white/14 bg-white/10 text-white'}`}`}>
                         {String.fromCharCode(65 + index)}
                       </div>
-                      {isChartChase && (
+                      {isChartGrabber && (
                         <div
                           className="h-9 w-12 shrink-0 rounded-[0.7rem] border border-white/30 bg-white/10 shadow-[inset_0_1px_2px_rgba(255,255,255,0.2)]"
                           style={getBoatSpriteStyle(index)}

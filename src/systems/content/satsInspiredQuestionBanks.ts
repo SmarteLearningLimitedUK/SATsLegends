@@ -11,7 +11,7 @@ export type SupportedChallengeGameType =
   | 'transform_temple'
   | 'scale_safari'
   | 'unit_mixer'
-  | 'chart_chase'
+  | 'graph_grabber'
   | 'mean_machine'
   | 'equation_grove'
   | 'formula_forge'
@@ -396,7 +396,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
       },
     },
   ],
-  chart_chase: [
+  graph_grabber: [
     {
       minLevel: 1,
       value: {

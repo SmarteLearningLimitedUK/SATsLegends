@@ -97,7 +97,7 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   mirror_gate: GEOMETRY_SCENE,
   scale_safari: SCALE_SCENE,
   scales_of_the_sun: SCALE_SCENE,
-  chart_chase: CHART_CHASE_SCENE,
+  graph_grabber: CHART_CHASE_SCENE,
   observatory_overload: DATA_SCENE,
   mean_machine: DATA_SCENE,
   percent_power: { ...RATIO_SCENE, background: percentPowerBackground },

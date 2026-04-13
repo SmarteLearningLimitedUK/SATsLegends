@@ -88,6 +88,12 @@ body {
   touch-action: none;
 }
 
+.app-viewport [class*="text-amber-"],
+.app-viewport [class*="text-yellow-"],
+.app-viewport [class*="text-orange-"] {
+  color: #ffffff !important;
+}
+
 #root {
   position: relative;
 }

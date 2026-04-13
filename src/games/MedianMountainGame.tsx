@@ -251,7 +251,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
 
   return (
     <div className="relative h-full w-full overflow-hidden text-white">
-      <GameplaySceneBackdrop gameType="chart_chase" minimalDecor />
+      <GameplaySceneBackdrop gameType="graph_grabber" minimalDecor />
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,10,30,0.22)_0%,rgba(2,10,30,0.56)_58%,rgba(2,10,30,0.75)_100%)]" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(56,189,248,0.24)_0%,rgba(56,189,248,0)_44%)]" />
 

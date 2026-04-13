@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import AnimatedStarDisplay from '../progression/AnimatedStarDisplay';
 import BonusBreakdown from '../progression/BonusBreakdown';
@@ -94,6 +94,8 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
   const [playXp, setPlayXp] = useState(false);
   const [showButtons, setShowButtons] = useState(false);
   const [levelUpPulse, setLevelUpPulse] = useState(false);
+  const handleXpComplete = useCallback(() => setShowButtons(true), []);
+  const handleXpLevelUp = useCallback(() => setLevelUpPulse(true), []);
 
   useEffect(() => {
     if (!isOpen || !result) return;
@@ -180,8 +182,8 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
                   <XpBar
                     segments={xpSegments}
                     play={playXp}
-                    onLevelUp={() => setLevelUpPulse(true)}
-                    onComplete={() => setShowButtons(true)}
+                    onLevelUp={handleXpLevelUp}
+                    onComplete={handleXpComplete}
                   />
                 </div>
               </div>

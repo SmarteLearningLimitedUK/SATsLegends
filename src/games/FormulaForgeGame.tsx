@@ -361,7 +361,9 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
                 <div className="rounded-[1.25rem] border border-cyan-200/20 bg-[linear-gradient(180deg,rgba(56,189,248,0.16),rgba(15,23,42,0.78))] p-3 shadow-[0_12px_22px_rgba(2,6,23,0.18)] md:p-4">
                   <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/80 md:text-xs">{round.title}</div>
                   <div className="mt-2 rounded-[1rem] border border-cyan-200/25 bg-[linear-gradient(180deg,rgba(59,130,246,0.2),rgba(15,23,42,0.55))] p-3 text-center shadow-[0_10px_18px_rgba(2,6,23,0.18)] md:p-4">
-                    <div className="text-2xl font-black tracking-tight text-white md:text-3xl">{round.formula}</div>
+                    <div className="text-[clamp(1.1rem,2.8vw,2.4rem)] font-black tracking-tight text-white whitespace-nowrap">
+                      {round.formula}
+                    </div>
                   </div>
                   <div className="mt-3 text-[11px] font-bold text-cyan-100/85 md:text-sm">{round.prompt}</div>
                 </div>

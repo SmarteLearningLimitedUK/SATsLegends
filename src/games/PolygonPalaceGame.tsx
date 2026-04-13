@@ -154,7 +154,7 @@ const SHAPES: ShapeDefinition[] = [
   },
   {
     id: 'triangle-right',
-    name: 'Right Triangle',
+    name: 'Right-angled Triangle',
     family: 'triangle',
     sides: 3,
     rightAngles: 1,
@@ -779,7 +779,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
         <div className="flex h-full w-full max-w-[30rem] min-h-0 flex-col gap-3">
           <section className="shrink-0 rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/54 p-3 text-center shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
             <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/72">
-              {question.speedRound ? 'Challenge Round' : 'Polygon Place'}
+              {question.speedRound ? 'Challenge Round' : 'Polygon Palace'}
             </div>
             <h2 className="mt-1 text-[clamp(1rem,4.4vw,1.3rem)] font-black text-white">{question.prompt}</h2>
             <p className="mt-1 text-[clamp(0.76rem,3.3vw,0.9rem)] font-semibold text-cyan-100/86">{question.subPrompt}</p>

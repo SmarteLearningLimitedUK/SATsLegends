@@ -423,11 +423,11 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
                 <div className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border border-cyan-100/25 bg-[#123062]/58 p-3 shadow-[0_10px_22px_rgba(2,6,23,0.32)] sm:p-4">
                   <div className="mb-2 text-center text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/80 sm:mb-3 sm:text-xs">
-                    Select the correct answer set
+                    Tap all factors that apply
                   </div>
                   <div className="flex min-h-0 flex-1 items-center justify-center">
                     <div className="text-center text-[clamp(1.2rem,4.4vw,1.7rem)] font-black text-white/90">
-                      Select from the answers below
+                      Choose every correct factor, then submit
                     </div>
                   </div>
 
@@ -438,7 +438,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                         disabled={selectedOptions.length === 0}
                         className="inline-flex w-full max-w-sm items-center justify-center rounded-2xl border border-amber-100/70 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] px-4 py-3 text-sm font-black uppercase tracking-[0.14em] text-slate-900 shadow-[0_10px_20px_rgba(2,6,23,0.35)] disabled:opacity-45"
                       >
-                        Submit Data
+                        Submit Factors
                       </button>
                     ) : (
                       <div className="inline-flex w-full max-w-sm items-center justify-center rounded-2xl border border-cyan-100/45 bg-[#0d2a5a]/70 px-4 py-3 text-xs font-black uppercase tracking-[0.14em] text-cyan-100/95">
