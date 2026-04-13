@@ -48,6 +48,8 @@ const islands = [
   'Ratio Rapids',
 ];
 
+const MAX_LEVELS_PER_ISLAND = 1;
+
 const ensureDir = (dir) => {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 };
@@ -88,6 +90,7 @@ const run = async () => {
 
   await context.addInitScript((playerState) => {
     localStorage.setItem('maths_quest_player', JSON.stringify(playerState));
+    localStorage.setItem('maths_quest_player_v2', JSON.stringify(playerState));
   }, player);
 
   const page = await context.newPage();
@@ -105,12 +108,15 @@ const run = async () => {
 
   const openMap = async () => {
     await page.goto(url, { waitUntil: 'networkidle' });
-    await page.waitForTimeout(800);
-    await clickIfVisible(page.getByRole('button', { name: /start/i }), 1500);
+    await page.waitForTimeout(400);
+    await clickIfVisible(page.locator('button[aria-label="Start"]'), 1500);
+    await clickIfVisible(page.getByRole('button', { name: /^start$/i }), 1500);
+    await page.waitForTimeout(300);
+    await clickIfVisible(page.getByRole('button', { name: /begin adventure/i }), 1500);
+    await clickIfVisible(page.getByRole('button', { name: /continue/i }), 1200);
     await page.waitForTimeout(600);
-    const beginButton = page.getByRole('button', { name: /begin adventure/i });
-    await clickIfVisible(beginButton, 1500);
-    await page.waitForTimeout(1000);
+    await clickIfVisible(page.getByRole('button', { name: /close/i }), 1200);
+    await page.waitForTimeout(150);
   };
 
   for (const island of islands) {
@@ -122,18 +128,26 @@ const run = async () => {
       continue;
     }
 
-    await page.waitForTimeout(600);
+    await page.waitForTimeout(400);
     await clickIfVisible(page.getByRole('button', { name: /explore island/i }), 1500);
-    await page.waitForTimeout(900);
+    await page.waitForTimeout(600);
 
     const groupButtons = page.locator('button[aria-expanded]');
+    await groupButtons.first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => null);
     const groupCount = await groupButtons.count();
     const levelTargets = [];
 
+    if (groupCount === 0) {
+      await page.screenshot({ path: `${outputDir}/qa-init-${safeName(island)}-groups.png`, fullPage: false });
+      results.push({ island, status: 'no-groups' });
+      continue;
+    }
+
     for (let g = 0; g < groupCount; g += 1) {
       const groupButton = groupButtons.nth(g);
-      await groupButton.click();
-      await page.waitForTimeout(250);
+      const opened = await clickIfVisible(groupButton, 2000);
+      if (!opened) continue;
+      await page.waitForTimeout(150);
       const container = groupButton.locator('xpath=ancestor::div[contains(@class,"licensed-board-frame")]');
       const levelButtons = container.locator('button', { hasText: /Start|Play|Replay|Boss/i });
       const levelCount = await levelButtons.count();
@@ -149,11 +163,15 @@ const run = async () => {
       continue;
     }
 
-    for (const target of levelTargets) {
+    for (const target of levelTargets.slice(0, MAX_LEVELS_PER_ISLAND)) {
       const groupButtonsRepeat = page.locator('button[aria-expanded]');
       const groupButton = groupButtonsRepeat.nth(target.groupIndex);
-      await groupButton.click();
-      await page.waitForTimeout(200);
+      const reopened = await clickIfVisible(groupButton, 2000);
+      if (!reopened) {
+        results.push({ island, label: target.label, status: 'missing-group' });
+        continue;
+      }
+      await page.waitForTimeout(120);
       const containerRepeat = groupButton.locator('xpath=ancestor::div[contains(@class,"licensed-board-frame")]');
       const playButtonsRepeat = containerRepeat.locator('button', { hasText: /Start|Play|Replay|Boss/i });
       const playCountRepeat = await playButtonsRepeat.count();
@@ -170,7 +188,7 @@ const run = async () => {
 
       const backButton = page.getByRole('button', { name: /back/i }).first();
       await clickIfVisible(backButton, 1200);
-      await page.waitForTimeout(600);
+      await page.waitForTimeout(400);
     }
   }
 

@@ -2,35 +2,43 @@
   "results": [
     {
       "island": "Arithmetic Acropolis",
-      "status": "failed-open"
+      "label": "Replay",
+      "status": "ok"
     },
     {
       "island": "Fraction Forest",
-      "status": "failed-open"
+      "label": "Replay",
+      "status": "ok"
     },
     {
       "island": "Geometry Glacier",
-      "status": "failed-open"
+      "label": "Replay",
+      "status": "ok"
     },
     {
       "island": "Data Desert",
-      "status": "failed-open"
+      "label": "Replay",
+      "status": "ok"
     },
     {
       "island": "Operations Outpost",
-      "status": "failed-open"
+      "label": "Replay",
+      "status": "ok"
     },
     {
       "island": "Measurement Mountain",
-      "status": "failed-open"
+      "label": "Replay",
+      "status": "ok"
     },
     {
       "island": "Cursed Colosseum",
-      "status": "failed-open"
+      "label": "Replay",
+      "status": "ok"
     },
     {
       "island": "Ratio Rapids",
-      "status": "failed-open"
+      "label": "Replay",
+      "status": "ok"
     }
   ],
   "consoleErrors": []
