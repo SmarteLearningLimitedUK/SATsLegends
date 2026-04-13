@@ -298,9 +298,10 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
 
   return (
     <GameScreenLayout
-      className="relative h-full w-full min-h-0 select-none text-slate-100"
+      className="relative h-full w-full min-h-0 select-none gap-0 text-slate-100"
+      topClassName="!min-h-0"
       top={(
-        <div className={`flex flex-col gap-2 ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+0.15rem)]' : ''}`}>
+        <div className={`flex flex-col gap-1 ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+0.05rem)]' : ''}`}>
           {!useSharedTopHud ? (
             <header className="z-20 flex h-16 items-center justify-between border-b border-emerald-900/30 bg-slate-900/50 px-4 backdrop-blur-md sm:px-6">
               <div className="flex items-center gap-3">
@@ -334,8 +335,8 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
               </div>
             </header>
           ) : null}
-          <div className="px-2 sm:px-3 md:px-4">
-            <div className="game-question-card">
+          <div className="px-2 pt-0 sm:px-3 md:px-4">
+            <div className="game-question-card -mt-0.5">
               <div className="question-title text-center text-[clamp(1.1rem,4vw,1.5rem)]">{round?.question}</div>
               <div className="question-subtitle text-center">{round?.helper}</div>
             </div>

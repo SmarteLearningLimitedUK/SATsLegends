@@ -71,6 +71,7 @@ const GameplayContentViewport: React.FC<GameplayContentViewportProps> = ({ child
       <div className="relative z-[2] flex h-full min-h-0 flex-1 flex-col overflow-hidden">
         <div
           ref={contentRef}
+          data-gameplay-content-stage="true"
           style={{
             transform: `scale(${contentScale})`,
             transformOrigin: 'top center',

@@ -219,9 +219,9 @@ Status notes:
 | Geometry Glacier | Perimeter Path | qa-phone-perimeter-path.png | Verified | None observed |
 | Data Desert | Mean Machine | qa-phone-mean-machine.png | Verified | None observed |
 | Data Desert | Mode Miner | qa-phone-mode-miner.png | Verified | None observed |
-| Data Desert | Graph Grabber | qa-phone-graph-grabber.png | Verified | None observed |
-| Data Desert | Line Graph Lab | qa-phone-line-graph-lab.png | Verified | None observed |
-| Data Desert | Data Detective | qa-phone-data-detective.png | Verified | None observed |
+| Data Desert | Graph Grabber | qa-phone-graph-grabber.png | Verified | Chart panel bottom-aligned in container. |
+| Data Desert | Line Graph Lab | qa-phone-line-graph-lab.png | Verified | Question card anchored at top. |
+| Data Desert | Data Detective | qa-phone-data-detective.png | Verified | Layout shifted upward; suspects row visible beneath chart. |
 | Operations Outpost | Factor Frenzy | qa-phone-factor-frenzy.png | Verified | None observed |
 | Operations Outpost | Multiplication Mine | qa-phone-multiplication-mine.png | Verified | None observed |
 | Operations Outpost | Division Dock | qa-phone-division-dock.png | Verified | None observed |
@@ -232,7 +232,7 @@ Status notes:
 | Measurement Mountain | Unit Mixer | qa-phone-unit-mixer.png | Verified | None observed |
 | Measurement Mountain | Change Counter | qa-phone-change-counter.png | Verified | None observed |
 | Ratio Rapids | Potion Panic | qa-phone-potion-panic.png | Verified | None observed |
-| Ratio Rapids | Share Splitter | qa-phone-share-splitter.png | Verified | None observed |
+| Ratio Rapids | Share Splitter | qa-phone-share-splitter.png | Verified | Drag slice aligned with touch (see qa-phone-share-splitter-drag.png). |
 | Ratio Rapids | Ratio Fractions | qa-phone-ratio-fractions.png | Verified | None observed |
 | Ratio Rapids | Scale Builder | qa-phone-scale-builder.png | Verified | None observed |
 | Cursed Colosseum | Tower Of Factors | qa-phone-tower-of-factors.png | Verified | None observed |
@@ -340,6 +340,12 @@ Consolidated summary: D:\\BrainZilla\\SATsLegends\\reports\\interaction-sweep-su
 
 ### Medium Priority
 - None currently logged.
+
+### Recently Resolved (2026-04-13)
+- Graph Grabber chart panel bottom-alignment on smartphone.
+- Line Graph Lab question card anchored to top of screen.
+- Data Detective layout shifted up (chart above suspects, suspects on one row).
+- Share Splitter drag slice aligned to touch.
 
 ### Low Priority / Visual
 - None currently logged.

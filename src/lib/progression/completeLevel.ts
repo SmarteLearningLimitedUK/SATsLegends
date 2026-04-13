@@ -2,7 +2,7 @@ import { applyXpGain } from './applyXpGain';
 import { calculateStars } from './calculateStars';
 import { calculateXp } from './calculateXp';
 import { getXpRequiredForLevel } from './getXpRequiredForLevel';
-import { CompleteLevelArgs, CompleteLevelResult, LevelProgress, PlayerProfile } from './types';
+import { CompleteLevelArgs, CompleteLevelResult, LevelProgress, PlayerProfile, StarCount } from './types';
 
 const createEmptyProgress = (levelId: string): LevelProgress => ({
   levelId,
@@ -54,13 +54,14 @@ export const completeLevel = (
 
   const xpOutcome = applyXpGain(player, xpGained);
 
+  const bestStars = Math.max(previous.bestStars, stars) as StarCount;
   const updatedProgress: LevelProgress = {
     ...previous,
     completed: previous.completed || args.completed,
     unlocked: true,
     timesPlayed: previous.timesPlayed + 1,
     firstClearXpAwarded: previous.firstClearXpAwarded || firstClear,
-    bestStars: Math.max(previous.bestStars, stars),
+    bestStars,
     bestScore: Math.max(previous.bestScore, args.score),
     bestAccuracy: Math.max(previous.bestAccuracy, args.accuracy),
     bestTimeMs: args.completed

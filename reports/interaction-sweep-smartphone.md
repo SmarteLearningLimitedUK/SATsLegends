@@ -1,8 +1,8 @@
 # Smartphone Interaction Sweep
 
-Date: 2026-04-11
+Date: 2026-04-13
 Viewport: 390x844 (A2HS)
-Base URL: http://127.0.0.1:3001/
+Base URL: https://satslegendsfinal.vercel.app/
 
 | Island | Minigame | Status | Issues | Screenshot |
 |---|---|---|---|---|

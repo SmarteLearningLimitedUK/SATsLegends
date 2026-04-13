@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import confetti from 'canvas-confetti';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Trophy,

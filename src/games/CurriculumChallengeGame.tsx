@@ -1372,7 +1372,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                   key={`${question.prompt}-${question.sublabel}`}
                   initial={{ opacity: 0, y: 8, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  className="flex min-h-0 w-full items-center justify-center overflow-hidden"
+                  className={`flex min-h-0 w-full overflow-hidden ${isChartGrabber ? 'items-end justify-center pb-2' : 'items-center justify-center'}`}
                 >
                   <div className={`w-full overflow-hidden ${isChartGrabber ? 'max-h-[12rem] md:max-h-[15rem]' : 'max-h-[10.5rem] md:max-h-[15rem]'}`}>
                     <div className="flex h-full w-full items-center justify-center">
@@ -1447,7 +1447,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                       {isChartGrabber && (
                         <div
                           className="h-9 w-12 shrink-0 rounded-[0.7rem] border border-white/30 bg-white/10 shadow-[inset_0_1px_2px_rgba(255,255,255,0.2)]"
-                          style={getBoatSpriteStyle(index)}
+                          style={getBoatSpriteStyle()}
                         />
                       )}
                       <div className={`flex-1 text-center ${isPlaceValuePeaks ? 'text-[1.1rem] md:text-[1.7rem] text-amber-50' : isScaleBuilder || isCalculationClash || isRuleRunner ? 'text-[1rem] md:text-[1.35rem] text-white' : 'text-[1.02rem] md:text-[1.45rem] text-white'} font-black leading-none tracking-[-0.02em] drop-shadow-[0_2px_2px_rgba(0,0,0,0.42)]`}>

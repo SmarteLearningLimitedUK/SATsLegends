@@ -79,6 +79,8 @@ const GameLoadFallback: React.FC<{
 );
 
 class GameLoadBoundary extends React.Component<GameLoadBoundaryProps, GameLoadBoundaryState> {
+  declare props: Readonly<GameLoadBoundaryProps>;
+  declare setState: React.Component<GameLoadBoundaryProps, GameLoadBoundaryState>['setState'];
   state: GameLoadBoundaryState = { error: null };
 
   static getDerivedStateFromError(error: Error) {

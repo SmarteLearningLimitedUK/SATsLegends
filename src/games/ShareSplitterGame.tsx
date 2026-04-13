@@ -177,6 +177,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const plateRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const sliceSeedRef = useRef(0);
   const dragActiveRef = useRef(false);
+  const dragMetricsRef = useRef<{ scale: number; left: number; top: number } | null>(null);
 
   useEffect(() => () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -279,10 +280,16 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     dragActiveRef.current = true;
 
     const updatePosition = (clientX: number, clientY: number) => {
+      const metrics = dragMetricsRef.current;
+      const scale = metrics?.scale ?? 1;
+      const left = metrics?.left ?? 0;
+      const top = metrics?.top ?? 0;
+      const localX = (clientX - left) / scale;
+      const localY = (clientY - top) / scale;
       setDragSlice({
         id: sliceId,
-        x: clientX - DRAG_SLICE_SIZE / 2,
-        y: clientY - DRAG_SLICE_SIZE / 2,
+        x: localX - DRAG_SLICE_SIZE / 2,
+        y: localY - DRAG_SLICE_SIZE / 2,
       });
     };
 
@@ -323,6 +330,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     const finishDrag = (clientX: number, clientY: number) => {
       if (!dragActiveRef.current) return;
       dragActiveRef.current = false;
+      dragMetricsRef.current = null;
       const { index, distance } = getNearestPlate(clientX, clientY);
       const snapRadius = 95;
       const hitIndex = getHitPlateIndex(clientX, clientY);
@@ -382,6 +390,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
     const handlePointerCancel = () => {
       dragActiveRef.current = false;
+      dragMetricsRef.current = null;
       setDragSlice(null);
       setHoverPlateIndex(null);
       window.removeEventListener('pointermove', handlePointerMove);
@@ -391,6 +400,21 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       window.removeEventListener('touchend', handleTouchEnd);
       window.removeEventListener('touchcancel', handleTouchEnd);
     };
+
+    const stageElement = event.currentTarget
+      .closest('[data-gameplay-content-viewport="true"]')
+      ?.querySelector<HTMLElement>('[data-gameplay-content-stage="true"]');
+    if (stageElement) {
+      const rect = stageElement.getBoundingClientRect();
+      const scale = stageElement.offsetWidth ? rect.width / stageElement.offsetWidth : 1;
+      dragMetricsRef.current = {
+        scale: Number.isFinite(scale) && scale > 0 ? scale : 1,
+        left: rect.left,
+        top: rect.top,
+      };
+    } else {
+      dragMetricsRef.current = { scale: 1, left: 0, top: 0 };
+    }
 
     const startPoint = getClientPoint(event);
     updatePosition(startPoint.x, startPoint.y);
