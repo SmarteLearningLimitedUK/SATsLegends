@@ -103,7 +103,8 @@ export const GameUiShell: React.FC<GameUiShellProps> = ({
   >
     {backgroundImage ? (
       <div
-        className="pointer-events-none absolute inset-0 bg-cover bg-center"
+        data-game-background-layer="true"
+        className="game-background-layer pointer-events-none absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${backgroundImage})`, opacity: backgroundOpacity }}
       />
     ) : null}
@@ -112,8 +113,14 @@ export const GameUiShell: React.FC<GameUiShellProps> = ({
         ? null
         : (
           <>
-            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.18),rgba(2,6,23,0.38))]" />
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.12),rgba(59,130,246,0)_55%)]" />
+            <div
+              data-game-background-layer="true"
+              className="game-background-layer pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.18),rgba(2,6,23,0.38))]"
+            />
+            <div
+              data-game-background-layer="true"
+              className="game-background-layer pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.12),rgba(59,130,246,0)_55%)]"
+            />
           </>
         )
     )}

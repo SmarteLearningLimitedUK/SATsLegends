@@ -20,7 +20,10 @@ const GameplaySceneBackdrop: React.FC<GameplaySceneBackdropProps> = ({
   void minimalDecor;
 
   return (
-    <div className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`.trim()}>
+    <div
+      className={`game-background-layer pointer-events-none absolute inset-0 overflow-hidden ${className}`.trim()}
+      data-game-background-layer="true"
+    >
       <img
         src={backgroundImage}
         alt=""
