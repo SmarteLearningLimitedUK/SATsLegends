@@ -423,9 +423,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         const drawX = (viewWidth - drawW) / 2;
         const drawY = (viewHeight - drawH) / 2;
         ctx.drawImage(backgroundImg, drawX, drawY, drawW, drawH);
-      } else {
-        ctx.fillStyle = '#0b1731';
-        ctx.fillRect(0, 0, viewWidth, viewHeight);
       }
 
       const originScreen = worldToScreen(0, 0, camera.x, camera.y, viewWidth, viewHeight);
@@ -555,7 +552,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   }, [gameState]);
 
   return (
-    <GameUiShell className="bg-transparent !bg-none" overlayDisabled>
+    <GameUiShell className="bg-transparent !bg-none ![background-image:none] ![background-color:transparent]" overlayDisabled>
       <div className="relative h-full w-full overflow-hidden text-white">
         <canvas
           ref={canvasRef}
