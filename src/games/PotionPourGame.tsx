@@ -832,7 +832,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
               </AnimatePresence>
             </div>
 
-            <div className="shrink-0 translate-y-[40px] rounded-[1.35rem] border border-white/14 bg-black/28 px-2.5 py-2 shadow-[0_12px_22px_rgba(2,6,23,0.24)] md:translate-y-0">
+            <div className="shrink-0 mt-[clamp(0.25rem,1.2vh,0.75rem)] rounded-[1.35rem] border border-white/14 bg-black/28 px-2.5 py-2 shadow-[0_12px_22px_rgba(2,6,23,0.24)]">
               <div className={`grid ${ingredientGridClass} gap-1.5`}>
                 {activeTargets.map(({ ingredient, index, current, target }) => {
                   const isActive = activeSet.has(index);
