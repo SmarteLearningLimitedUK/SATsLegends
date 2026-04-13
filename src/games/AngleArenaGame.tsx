@@ -417,7 +417,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
       const backgroundImg = backgroundImageRef.current;
       if (backgroundImg && backgroundImg.complete) {
-        const scale = Math.min(viewWidth / backgroundImg.width, viewHeight / backgroundImg.height);
+        const scale = Math.max(viewWidth / backgroundImg.width, viewHeight / backgroundImg.height);
         const drawW = backgroundImg.width * scale;
         const drawH = backgroundImg.height * scale;
         const drawX = (viewWidth - drawW) / 2;
