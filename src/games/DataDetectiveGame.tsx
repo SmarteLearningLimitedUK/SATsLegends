@@ -137,7 +137,12 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
     setCurrentCase(caseData);
 
     const correctIdx = Math.floor(Math.random() * 4);
-    const shuffledMugshots = shuffle(MUGSHOT_IMAGES).slice(0, 4);
+    const mugshotPool = MUGSHOT_IMAGES.length
+      ? shuffle(MUGSHOT_IMAGES)
+      : [];
+    const shuffledMugshots = mugshotPool.length >= 4
+      ? mugshotPool.slice(0, 4)
+      : Array.from({ length: 4 }, (_, index) => mugshotPool[index % Math.max(1, mugshotPool.length)]);
     const newSuspects = Array.from({ length: 4 }, (_, i) => {
       if (i === correctIdx) {
         return {
