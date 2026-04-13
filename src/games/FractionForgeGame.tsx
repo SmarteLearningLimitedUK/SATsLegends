@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react';
 import AssetIcon from '../components/AssetIcon';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
-import fractionForgeBackground from '../assets/level_backgrounds/fraction forge map.jpg';
+import fractionForgeBackground from '../assets/maps/backgroundsforgames/fraction forge map.jpg';
 import { triggerHaptic } from '../haptics';
 
 interface FractionForgeGameProps {

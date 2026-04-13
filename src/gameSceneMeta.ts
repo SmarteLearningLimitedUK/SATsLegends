@@ -6,12 +6,12 @@ import world04Map from './assets/maps/harbour.jpg';
 import world05Map from './assets/maps/desert.jpg';
 import world06Map from './assets/maps/volcano2.jpg';
 import scaleBackground from './assets/maps/scale.png';
-import angleArenaBackground from './assets/level_backgrounds/angle arena bkground.jpg';
-import dataDetectiveBackground from './assets/level_backgrounds/datadetectivemap.jpg';
-import graphGrabberBackground from './assets/level_backgrounds/graph grabbermap.jpg';
-import percentPowerBackground from './assets/level_backgrounds/percent power map.jpg';
-import polygonPalaceBackground from './assets/level_backgrounds/polygon palace map.jpg';
-import primePopBackground from './assets/level_backgrounds/primepopbkground.jpg';
+import angleArenaBackground from './assets/maps/backgroundsforgames/angle arena bkground.jpg';
+import dataDetectiveBackground from './assets/maps/backgroundsforgames/datadetectivemap.jpg';
+import graphGrabberBackground from './assets/maps/backgroundsforgames/graph grabbermap.jpg';
+import percentPowerBackground from './assets/maps/backgroundsforgames/percent power map.jpg';
+import polygonPalaceBackground from './assets/maps/backgroundsforgames/polygon palace map.jpg';
+import primePopBackground from './assets/maps/backgroundsforgames/primepopbkground.jpg';
 
 export interface GameSceneMeta {
   background: string;

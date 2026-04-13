@@ -4865,20 +4865,7 @@ button.avatar-hero-arrow:not(:disabled):active {
   opacity: 0 !important;
 }
 
-/* Gameplay: remove all in-game background layers except Ratio Fractions. */
-.screen-gameplay:not(.game-type-ratio-fractions) .game-background-layer {
-  display: none !important;
-}
-
-.screen-gameplay:not(.game-type-ratio-fractions) img.absolute.inset-0.object-cover,
-.screen-gameplay:not(.game-type-ratio-fractions) img.absolute.inset-0.object-cover.object-center,
-.screen-gameplay:not(.game-type-ratio-fractions) img.absolute.inset-0.h-full.w-full.object-cover,
-.screen-gameplay:not(.game-type-ratio-fractions) img.absolute.inset-0.h-full.w-full.object-cover.object-center,
-.screen-gameplay:not(.game-type-ratio-fractions) div.absolute.inset-0.bg-cover,
-.screen-gameplay:not(.game-type-ratio-fractions) div.absolute.inset-0.bg-cover.bg-center,
-.screen-gameplay:not(.game-type-ratio-fractions) div.absolute.inset-0.bg-cover.bg-center.bg-no-repeat {
-  display: none !important;
-}
+/* Gameplay backgrounds are now driven by per-game map assets. */
 
 /* Ensure suspect mugshots are never hidden by background cleanup rules. */
 .screen-gameplay .suspect-portrait,
