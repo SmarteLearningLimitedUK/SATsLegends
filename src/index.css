@@ -4841,10 +4841,18 @@ button.avatar-hero-arrow:not(:disabled):active {
 .screen-gameplay.game-type-angle-arena.app-viewport::before,
 .screen-gameplay.game-type-angle-arena.app-viewport::after,
 .screen-gameplay.game-type-angle-arena .app-screen::before,
-.screen-gameplay.game-type-angle-arena .app-screen-content::before {
+.screen-gameplay.game-type-angle-arena .app-screen-content::before,
+.screen-gameplay.game-type-angle-arena .premium-page-root::before {
   content: none !important;
   background: none !important;
   opacity: 0 !important;
+}
+
+.screen-gameplay.game-type-angle-arena .app-screen,
+.screen-gameplay.game-type-angle-arena .app-screen-content,
+.screen-gameplay.game-type-angle-arena .premium-page-root {
+  background: none !important;
+  background-color: transparent !important;
 }
 
 /* Tier 1: Hub / navigation screens

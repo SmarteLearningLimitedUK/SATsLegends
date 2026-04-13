@@ -121,6 +121,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
   const shouldUseShellBackground = useMemo(() => {
     if (screen !== 'gameplay' || !selectedLevel) return true;
     const sceneOwnedBackgrounds = new Set([
+      'angle_arena',
       'rounding_rocket',
       'prime_pop',
       'number_line_ninja',
@@ -137,6 +138,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       'ratio_fractions',
     ]);
     return !(
+      selectedLevel.gameType === 'angle_arena'
       selectedLevel.gameType === 'potion_pour'
       || selectedLevel.gameType === 'potion_panic'
       || selectedLevel.gameType === 'prime_pop'
