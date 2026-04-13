@@ -1358,9 +1358,9 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                   key={`${question.prompt}-${question.sublabel}`}
                   initial={{ opacity: 0, y: 8, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  className={`flex min-h-0 w-full overflow-hidden ${isChartGrabber ? 'items-end justify-center pb-2' : 'items-center justify-center'}`}
+                  className={`flex min-h-0 w-full ${isChartGrabber ? 'items-center justify-center pb-2 overflow-visible' : 'items-center justify-center overflow-hidden'}`}
                 >
-                  <div className={`w-full overflow-hidden ${isChartGrabber ? 'max-h-[12rem] md:max-h-[15rem]' : 'max-h-[10.5rem] md:max-h-[15rem]'}`}>
+                  <div className={`w-full ${isChartGrabber ? 'h-[clamp(10rem,26vh,16rem)] md:h-[clamp(12rem,30vh,18rem)] overflow-visible' : 'max-h-[10.5rem] md:max-h-[15rem] overflow-hidden'}`}>
                     <div className="flex h-full w-full items-center justify-center">
                       {renderVisual(question.visual)}
                     </div>
@@ -1383,7 +1383,9 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                 const isSelected = index === selectedIndex;
                 const isCorrect = feedback === 'correct' && index === question.answerIndex;
                 const isWrongSelected = feedback === 'incorrect' && isSelected;
-                const displayOption = isChartGrabber ? option.replace(/^Choice\s*/i, '') : option;
+                const displayOption = isChartGrabber
+                  ? option.replace(/^choice\s*[:\-]?\s*/i, '').trim()
+                  : option;
 
                 const answerBackground = isCorrect
                   ? answerGreenBg
