@@ -4834,6 +4834,22 @@ button.avatar-hero-arrow:not(:disabled):active {
   opacity: var(--bg-tier-vignette-opacity);
 }
 
+/* Gameplay: remove the deepest app-level background layers so only game art shows. */
+.screen-gameplay.app-viewport {
+  background: none !important;
+  background-color: transparent !important;
+}
+
+.screen-gameplay.app-viewport::before,
+.screen-gameplay.app-viewport::after,
+.screen-gameplay .app-screen::before,
+.screen-gameplay .app-screen-content::before,
+.screen-gameplay .premium-page-root::before {
+  content: none !important;
+  background: none !important;
+  opacity: 0 !important;
+}
+
 /* Angle Arena: remove all app-level background layers so only the canvas background shows. */
 .screen-gameplay.game-type-angle-arena.app-viewport {
   background: none !important;
