@@ -4865,6 +4865,14 @@ button.avatar-hero-arrow:not(:disabled):active {
   display: none !important;
 }
 
+/* Ensure suspect mugshots are never hidden by background cleanup rules. */
+.screen-gameplay .suspect-portrait,
+.screen-gameplay [data-suspect-portrait="true"] {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
 /* Angle Arena: remove all app-level background layers so only the canvas background shows. */
 .screen-gameplay.game-type-angle-arena.app-viewport {
   background: none !important;

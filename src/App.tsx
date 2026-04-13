@@ -49,12 +49,13 @@ import { applyTelemetryEvent } from './systems/progression/telemetry';
 import { reconcileAchievementState } from './systems/progression/achievementCatalog';
 import { useProgressionStore } from './store/useProgressionStore';
 import { LevelProgress } from './lib/progression/types';
+import { CACHE_BUSTER } from './cacheBuster';
 
 const App: React.FC = () => {
   const [stageScale, setStageScale] = useState(1);
   const [questionCardScale, setQuestionCardScale] = useState(1);
   const [potionCauldronShift, setPotionCauldronShift] = useState('0px');
-  const buildId = import.meta.env.VITE_BUILD_ID;
+  const buildId = import.meta.env.VITE_BUILD_ID ?? CACHE_BUSTER;
 
   const {
     screen,

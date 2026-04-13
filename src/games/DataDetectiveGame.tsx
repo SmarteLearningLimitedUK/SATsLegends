@@ -416,7 +416,8 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                         src={suspect.portrait}
                         alt=""
                         draggable={false}
-                        className="absolute inset-0 h-full w-full object-contain"
+                        className="suspect-portrait absolute inset-0 h-full w-full object-contain"
+                        data-suspect-portrait="true"
                       />
                     ) : (
                       <div className={`flex h-full w-full items-center justify-center ${suspect.color}/20`}>
@@ -452,7 +453,8 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                             src={selectedSuspect.portrait}
                             alt=""
                             draggable={false}
-                            className="h-full w-full object-contain"
+                            className="suspect-portrait h-full w-full object-contain"
+                            data-suspect-portrait="true"
                           />
                         )}
                       </div>
