@@ -550,11 +550,12 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-center text-[clamp(1.1rem,4.5vw,1.6rem)] font-black text-white">
             {question.prompt}
           </div>
-          {feedback ? (
-            <div className="mt-2 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-cyan-100/80">
-              {feedback}
-            </div>
-          ) : null}
+          <div
+            className={`mt-2 min-h-[16px] text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
+            aria-hidden={!feedback}
+          >
+            {feedback || '\u00A0'}
+          </div>
           <div className="mt-3 grid grid-cols-2 gap-2">
             {question.options.map((option, index) => (
               <button

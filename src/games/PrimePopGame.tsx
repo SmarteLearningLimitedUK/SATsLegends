@@ -76,7 +76,7 @@ const getConfig = (levelId: number): PrimePopConfig => {
   const level = Math.max(1, levelId);
   if (level <= 3) {
     return {
-      roundSeconds: 75,
+      roundSeconds: 45,
       targetScore: 900 + ((level - 1) * 80),
       maxNumber: 40,
       minBubbles: 4,
@@ -95,7 +95,7 @@ const getConfig = (levelId: number): PrimePopConfig => {
 
   if (level <= 7) {
     return {
-      roundSeconds: 70,
+      roundSeconds: 45,
       targetScore: 1150 + ((level - 4) * 95),
       maxNumber: 70,
       minBubbles: 5,
@@ -113,7 +113,7 @@ const getConfig = (levelId: number): PrimePopConfig => {
   }
 
   return {
-    roundSeconds: 66,
+    roundSeconds: 45,
     targetScore: 1520 + ((level - 8) * 110),
     maxNumber: 99,
     minBubbles: 6,
@@ -479,7 +479,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
       return;
     }
 
-    if (scoreRef.current >= targetScore || livesRef.current <= 0) {
+    if (livesRef.current <= 0) {
       finalize(scoreRef.current);
     }
   }, [config.comboStep, config.primePoints, finalize, targetScore]);
@@ -543,7 +543,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     setScore(scoreRef.current);
     setLives(livesRef.current);
 
-    if (scoreRef.current >= targetScore || livesRef.current <= 0) {
+    if (livesRef.current <= 0) {
       finalize(scoreRef.current);
       return;
     }

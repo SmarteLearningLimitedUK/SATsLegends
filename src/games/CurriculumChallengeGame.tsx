@@ -1327,14 +1327,11 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
               <BossPortrait encounter={bossEncounter} pose={bossPose} compact className="shrink-0" />
             )}
 
-            {!isChartGrabber && (
             <div className={`casual-panel-strong relative shrink-0 overflow-hidden ${
               isPlaceValuePeaks
                 ? 'rounded-[1.25rem] border border-amber-200/18 bg-[linear-gradient(180deg,rgba(124,45,18,0.88),rgba(83,33,13,0.92))]'
-                : isChartGrabber
-                  ? 'rounded-[1.2rem] border border-transparent bg-transparent'
-                  : 'rounded-[1.35rem]'
-              } ${isChartGrabber ? 'px-2.5 py-2 md:px-3 md:py-3' : 'px-3 py-3 md:px-5 md:py-5'} text-center md:rounded-[2rem]`}>
+                : 'rounded-[1.35rem]'
+              } px-3 py-3 text-center md:rounded-[2rem] md:px-5 md:py-5`}>
               <div className={`absolute inset-x-5 top-0 h-20 rounded-full bg-gradient-to-br ${isPlaceValuePeaks ? 'from-yellow-200/18 via-orange-300/12 to-transparent' : theme.prompt} blur-3xl`} />
               <div className="relative z-10 flex flex-col items-center">
                 <div className={`${isPlaceValuePeaks ? 'mb-2 rounded-[0.9rem] border border-amber-200/24 bg-[linear-gradient(180deg,rgba(251,146,60,0.3),rgba(194,65,12,0.18))] px-3 py-1.5 text-amber-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]' : `casual-ribbon-chip mb-2 inline-flex items-center justify-center rounded-full px-3 py-1 text-[8px] font-black uppercase tracking-[0.18em] md:mb-3 md:px-4 md:py-1.5 md:text-[10px] ${theme.badge}`}`}>
@@ -1348,7 +1345,6 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                 </div>
               </div>
             </div>
-            )}
 
             <div className={`casual-panel-surface relative flex min-h-0 shrink overflow-hidden ${
               isPlaceValuePeaks
@@ -1358,16 +1354,6 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                   : 'rounded-[1.25rem]'
               } px-2 py-2 md:rounded-[1.8rem] md:px-4 md:py-4`}>
               <div className="relative z-10 flex min-h-0 w-full flex-col items-center justify-center gap-2">
-                {isChartGrabber && (
-                  <div className="w-full px-1 text-center">
-                    <div className="text-[0.98rem] font-black leading-tight text-white md:text-[1.08rem]">
-                      {formatFantasyPrompt(question.prompt)}
-                    </div>
-                    <div className="mt-1 text-[9px] font-semibold text-white/70 md:text-[11px]">
-                      {question.sublabel}
-                    </div>
-                  </div>
-                )}
                 <motion.div
                   key={`${question.prompt}-${question.sublabel}`}
                   initial={{ opacity: 0, y: 8, scale: 0.98 }}

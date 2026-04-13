@@ -6,8 +6,8 @@ import {
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
 import dojoBackground from '../assets/maps/inside dojo.jpg';
-import monsterHitA from '../assets/bosses/goblin.png';
-import monsterHitB from '../assets/bosses/goblin.png';
+import monsterHitA from '../assets/bosses/a.jpg';
+import monsterHitB from '../assets/bosses/a.jpg';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface NumberLineNinjaGameProps {
@@ -614,7 +614,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
             <div
               className="pointer-events-none absolute inset-x-0 mx-auto w-[58%] max-w-[280px]"
-              style={{ bottom: '-100px' }}
+              style={{ bottom: '-120px' }}
             >
               <div className="relative">
                 <AnimatePresence>

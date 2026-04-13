@@ -135,7 +135,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
   const getAvatarImage = (avatar: { portrait?: string; image: string }) => avatar.portrait || avatar.image;
 
   return (
-    <div className="avatar-select-screen relative h-[100dvh] w-full overflow-hidden">
+    <div className="avatar-select-screen relative h-full w-full min-h-0 overflow-hidden">
       <img
         src={avatarSelectBackground}
         alt=""

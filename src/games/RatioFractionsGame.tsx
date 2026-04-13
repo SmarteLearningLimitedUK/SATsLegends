@@ -53,6 +53,9 @@ const TRACK_LINE_FROM_BOTTOM = 177;
 const CART_Y_SHIFT = 0;
 const FINISH_Y_SHIFT = -200;
 const FINISH_X_SHIFT = -100;
+const ENEMY_FINISH_SECONDS_LEVEL1 = 90;
+const ENEMY_FINISH_SECONDS_STEP = 5;
+const ENEMY_FINISH_SECONDS_MIN = 45;
 
 const PLAYER_KARTS: Record<string, string> = {
   barratt: kartBarratt,
@@ -175,21 +178,28 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
   const raceDifficulty: RaceDifficulty = levelId <= 3 ? 'easy' : levelId <= 6 ? 'standard' : 'hard';
   const tuning = RACE_TUNING[raceDifficulty] || RACE_TUNING[DEFAULT_RACE_DIFFICULTY];
+  const enemyFinishSeconds = Math.max(
+    ENEMY_FINISH_SECONDS_MIN,
+    ENEMY_FINISH_SECONDS_LEVEL1 - Math.max(0, levelId - 1) * ENEMY_FINISH_SECONDS_STEP,
+  );
+  const enemySpeedPerSec = tuning.trackLength / enemyFinishSeconds;
 
   const raceViewportRef = useRef<HTMLDivElement | null>(null);
   const playerPosRef = useRef(START_OFFSET);
   const enemyPosRef = useRef(START_OFFSET);
   const playerTargetRef = useRef(START_OFFSET);
   const enemyTargetRef = useRef(START_OFFSET);
-  const enemyPauseUntilRef = useRef(0);
   const reportedResultRef = useRef(false);
+  const raceStateRef = useRef(raceState);
 
   const trackProgress = Math.min(1, playerPosRef.current / tuning.trackLength);
   const lives = sessionState?.lives ?? 3;
   const buildExplanation = (q: RatioFractionQuestion) => q.explanation;
   const playerKart = PLAYER_KARTS[avatarId] || kartBarratt;
-  const enemyIntervalMs = 4000;
-
+  
+  useEffect(() => {
+    raceStateRef.current = raceState;
+  }, [raceState]);
 
   useEffect(() => {
     if (!raceViewportRef.current || typeof ResizeObserver === 'undefined') return;
@@ -218,7 +228,27 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
   useEffect(() => {
     let frameId: number;
-    const tick = () => {
+    let lastTime: number | null = null;
+    const tick = (timestamp: number) => {
+      const last = lastTime ?? timestamp;
+      const dt = Math.min(0.12, Math.max(0, (timestamp - last) / 1000));
+      lastTime = timestamp;
+
+      const currentRaceState = raceStateRef.current;
+      if (
+        currentRaceState !== 'introCountdown'
+        && currentRaceState !== 'playerWin'
+        && currentRaceState !== 'enemyWin'
+      ) {
+        enemyTargetRef.current = Math.min(
+          tuning.trackLength,
+          enemyTargetRef.current + enemySpeedPerSec * dt,
+        );
+        if (enemyTargetRef.current >= tuning.trackLength && currentRaceState !== 'enemyWin') {
+          setRaceState('enemyWin');
+        }
+      }
+
       const playerX = playerPosRef.current;
       const enemyX = enemyPosRef.current;
       const playerTarget = playerTargetRef.current;
@@ -233,24 +263,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
     frameId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frameId);
-  }, [viewport.width]);
-
-  useEffect(() => {
-    const pace = enemyIntervalMs;
-    const enemyStep = tuning.enemyAdvanceDistance;
-
-    const interval = window.setInterval(() => {
-      if (raceState === 'enemyWin' || raceState === 'playerWin') return;
-      if (Date.now() < enemyPauseUntilRef.current) return;
-      if (raceState !== 'showingQuestion') return;
-      enemyTargetRef.current = Math.min(tuning.trackLength, enemyTargetRef.current + enemyStep);
-      if (enemyTargetRef.current >= tuning.trackLength) {
-        setRaceState('enemyWin');
-      }
-    }, pace);
-
-    return () => window.clearInterval(interval);
-  }, [raceState, tuning.enemyAdvanceDistance, tuning.trackLength]);
+  }, [enemySpeedPerSec, tuning.trackLength, viewport.width]);
 
   useEffect(() => {
     if (raceState === 'playerWin' && !reportedResultRef.current) {
@@ -323,7 +336,6 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
       setCorrectCount((prev) => prev + 1);
       setFeedback(`Correct mix! ${buildExplanation(question)}`);
       setRaceState('correctBoost');
-      enemyPauseUntilRef.current = Date.now() + moveDuration;
       window.setTimeout(() => {
         playerTargetRef.current = Math.min(tuning.trackLength, playerTargetRef.current + playerStep);
       }, boostDelay);
@@ -353,7 +365,6 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
     setFeedback(`Wrong mix! ${buildExplanation(question)}`);
     setRaceState('incorrectStall');
-    enemyPauseUntilRef.current = Date.now() + tuning.incorrectFeedbackMs;
     if (stumble > 0) {
       playerTargetRef.current = Math.min(tuning.trackLength, playerTargetRef.current + stumble);
     }
