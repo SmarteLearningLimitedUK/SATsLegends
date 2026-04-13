@@ -1,0 +1,18 @@
+{
+  "url": "https://satslegendsfinal.vercel.app/",
+  "results": [
+    {
+      "target": "ratio-fractions",
+      "url": "https://satslegendsfinal.vercel.app/game/7/4",
+      "hasViewport": true,
+      "screenshot": "qa-ratio-fractions-load.png"
+    },
+    {
+      "target": "scale-builder",
+      "url": "https://satslegendsfinal.vercel.app/game/7/5",
+      "hasViewport": true,
+      "screenshot": "qa-scale-builder-load.png"
+    }
+  ],
+  "consoleErrors": []
+}

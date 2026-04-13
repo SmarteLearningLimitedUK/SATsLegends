@@ -53,6 +53,7 @@ const App: React.FC = () => {
   const [stageScale, setStageScale] = useState(1);
   const [questionCardScale, setQuestionCardScale] = useState(1);
   const [potionCauldronShift, setPotionCauldronShift] = useState('0px');
+  const buildId = import.meta.env.VITE_BUILD_ID;
 
   const {
     screen,
@@ -308,6 +309,16 @@ const App: React.FC = () => {
     lives: globalMiniGameLives,
   }), [globalMiniGameHudTimeLeft, globalMiniGameLives]);
 
+  const resolveLevelTitle = useCallback(() => {
+    if (!selectedLevel) return 'Round over';
+    const trimmed = selectedLevel.displayName?.trim();
+    if (trimmed) return trimmed;
+    if (selectedLevel.gameType) {
+      return GAME_META[selectedLevel.gameType]?.label || selectedLevel.gameType.replace(/_/g, ' ');
+    }
+    return 'Round over';
+  }, [selectedLevel]);
+
   const handleGameOver = useCallback((XP: number) => {
     triggerHaptic('error');
     let wellbeingSuggested = false;
@@ -345,9 +356,10 @@ const App: React.FC = () => {
       timeMs,
     });
 
+    const levelTitle = resolveLevelTitle();
     setLevelResult({
       type: 'gameover',
-      title: 'Round over',
+      title: levelTitle,
       subtitle: wellbeingSuggested
         ? 'Three tough rounds in a row. Want to take a minute in a calm break?'
         : 'No rewards lost forever. Reset, tighten the route, and take another shot.',
@@ -370,7 +382,7 @@ const App: React.FC = () => {
       achievementsUnlocked: [],
       wellbeingSuggested,
     });
-  }, [completeProgressionLevel, selectedIsland, selectedLevel, sessionMetrics.correct, sessionMetrics.hintsUsed, sessionMetrics.incorrect, sessionState.lives, sessionState.timeLeft, sessionState.totalTime, setLevelResult]);
+  }, [completeProgressionLevel, resolveLevelTitle, selectedIsland, selectedLevel, sessionMetrics.correct, sessionMetrics.hintsUsed, sessionMetrics.incorrect, sessionState.lives, sessionState.timeLeft, sessionState.totalTime, setLevelResult]);
 
   useEffect(() => {
     handleGameOverRef.current = handleGameOver;
@@ -459,18 +471,23 @@ const App: React.FC = () => {
               'Press Brew when your totals and ratio match the potion you need.',
             ],
           }
-        : (selectedRuleSet || (selectedLevel
-          ? {
-              title: selectedLevel.displayName || 'How To Play',
-              summary: 'Follow the on-screen objective and complete the activity step by step.',
-              bullets: [
+          : (selectedRuleSet || (selectedLevel
+            ? {
+                title: selectedLevel.displayName || 'How To Play',
+                summary: 'Follow the on-screen objective and complete the activity step by step.',
+                bullets: [
                 'Read the mission text first, then choose, place, or build your answer.',
                 'Use the hint button any time you want a reminder of the rules.',
                 'If the screen gives you a visual tool or scene object, use that to solve the task.',
               ],
             }
-          : null));
-      return buildKidRules(baseRules);
+            : null));
+      if (!baseRules) return null;
+      const titleOverride = selectedLevel?.displayName?.trim();
+      const resolvedRules = titleOverride
+        ? { ...baseRules, title: titleOverride }
+        : baseRules;
+      return buildKidRules(resolvedRules);
     },
     [buildKidRules, selectedLevel, selectedRuleSet],
   );
@@ -480,6 +497,31 @@ const App: React.FC = () => {
       setShowDailyRewards(true);
     }
   }, [dailyRewardsNudge, setShowDailyRewards]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!buildId) return;
+    try {
+      const storageKey = 'sats_legends_build_id';
+      const previous = window.localStorage.getItem(storageKey);
+      if (previous && previous !== buildId) {
+        window.localStorage.setItem(storageKey, buildId);
+        const reload = () => window.location.reload();
+        if ('caches' in window) {
+          caches
+            .keys()
+            .then((keys) => Promise.all(keys.map((key) => caches.delete(key))))
+            .finally(reload);
+        } else {
+          reload();
+        }
+        return;
+      }
+      window.localStorage.setItem(storageKey, buildId);
+    } catch {
+      // Ignore storage/cache errors to avoid blocking render.
+    }
+  }, [buildId]);
 
   useEffect(() => {
     if (screen === 'profile_setup') {

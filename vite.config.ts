@@ -7,6 +7,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
   const isVercel = process.env.VERCEL === '1';
   const geminiApiKey = env.GEMINI_API_KEY ?? process.env.GEMINI_API_KEY ?? '';
+  const buildId = env.VITE_BUILD_ID ?? process.env.VITE_BUILD_ID ?? new Date().toISOString();
 
   return {
     plugins: [react(), tailwindcss()],
@@ -15,6 +16,7 @@ export default defineConfig(({ mode }) => {
     base: isVercel ? '/' : './',
     define: {
       'process.env.GEMINI_API_KEY': JSON.stringify(geminiApiKey),
+      'import.meta.env.VITE_BUILD_ID': JSON.stringify(buildId),
     },
     resolve: {
       alias: {

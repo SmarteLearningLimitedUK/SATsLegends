@@ -258,9 +258,12 @@ export const usePlayerProgression = (): PlayerProgressionController => {
       };
     });
 
+    const levelTitle = selectedLevel.displayName?.trim()
+      || (selectedLevel.gameType ? selectedLevel.gameType.replace(/_/g, ' ') : '');
+
     return {
       type: 'victory',
-      title: stars === 3 ? 'Flawless clear' : stars === 2 ? 'Strong finish' : 'Level cleared',
+      title: levelTitle || (stars === 3 ? 'Flawless clear' : stars === 2 ? 'Strong finish' : 'Level cleared'),
       subtitle: stars === 3
         ? 'You nailed the target, banked the rewards, and pushed your run forward.'
         : 'Rewards are locked in. Keep the momentum going into the next challenge.',
