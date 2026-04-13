@@ -13,8 +13,7 @@ import {
 } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import catapultAsset from '../assets/angle_arena/catapultfinal.png';
-import angleArenaBackgroundA from '../assets/level_backgrounds/angle arena bkground-hd.jpg';
-import angleArenaBackgroundB from '../assets/level_backgrounds/anglearenabkground2-hd.jpg';
+import angleArenaBackgroundA from '../assets/angle_arena/angle arenabkground.png';
 import { BOSS_ASSETS } from '../assets/bosses';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { angleToVector, clamp, degreesToRadians, distance, lerp, worldToScreen } from './angleArena/math';
@@ -65,10 +64,7 @@ const CAMERA_LERP = 0.08;
 const RETURN_LERP = 0.12;
 const PROJECTILE_SPEED = 520;
 const MAX_FLIGHT_DISTANCE = 980;
-const ANGLE_BACKGROUNDS = [angleArenaBackgroundA, angleArenaBackgroundB];
-
-const pickRandomBackground = () =>
-  ANGLE_BACKGROUNDS[Math.floor(Math.random() * ANGLE_BACKGROUNDS.length)];
+const ANGLE_BACKGROUND = angleArenaBackgroundA;
 
 const formatTime = (seconds: number) => {
   const clamped = Math.max(0, Math.floor(seconds));
@@ -138,7 +134,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const [localLives, setLocalLives] = useState(INITIAL_LIVES);
   const [localTimer, setLocalTimer] = useState(INITIAL_TIMER);
   const [stars, setStars] = useState(0);
-  const [backgroundAsset] = useState(() => pickRandomBackground());
+  const [backgroundAsset] = useState(() => ANGLE_BACKGROUND);
 
   const rawQuestions = useMemo(
     () => buildAngleQuestions({
