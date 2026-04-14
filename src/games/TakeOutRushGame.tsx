@@ -596,7 +596,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                 {asDisplayFraction(order.target)}
               </div>
             </div>
-            <div className="pointer-events-none absolute left-1/2 bottom-[6%] h-[34%] w-[min(64vw,16rem)] -translate-x-1/2 overflow-hidden">
+            <div className="pointer-events-none absolute left-1/2 bottom-[4%] h-[42%] w-[min(72vw,18.5rem)] -translate-x-1/2 overflow-hidden">
               <img
                 src={orderMonster}
                 alt=""
@@ -609,7 +609,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
           <div className="h-2" />
 
           <div className="flex flex-col gap-2">
-            <section className="rounded-[1.25rem] p-2 -mt-6">
+            <section className="rounded-[1.25rem] border border-black/25 bg-slate-950/65 p-2 -mt-6 shadow-[0_14px_26px_rgba(2,6,23,0.42)]">
               <div className="mt-1 grid grid-cols-5 items-center justify-center gap-2">
                 {availableItems.map((item) => {
                   const isBanned = activeConstraints.bannedIds.has(item.id);
@@ -631,12 +631,12 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
               </div>
             </section>
 
-            <section className="rounded-[1.25rem] border border-cyan-100/20 bg-slate-950/55 px-3 py-2 shadow-[0_12px_22px_rgba(2,6,23,0.46)]">
-              <div className="flex items-center justify-between gap-2">
+            <section className="rounded-[1.25rem] border border-cyan-100/20 bg-slate-950/72 px-3 py-2 shadow-[0_12px_22px_rgba(2,6,23,0.5)]">
+              <div className="flex flex-col items-center gap-2 text-center">
                 <div className="min-w-0 text-[11px] font-semibold text-cyan-100/70">
                   {feedback?.text ?? (isExact && constraintsMet ? 'Ready to send!' : '')}
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center gap-2">
                   <button
                     type="button"
                     onClick={clearTray}
