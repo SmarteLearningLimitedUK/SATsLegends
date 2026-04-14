@@ -967,7 +967,7 @@ const renderTransformTemple = (visual: Extract<VisualData, { type: 'transform' }
   );
 };
 
-const renderVisual = (visual: VisualData) => {
+const renderVisual = (visual: VisualData, compactBars = false) => {
   switch (visual.type) {
     case 'tokens':
       if (visual.accent === 'amber' || visual.accent === 'emerald') {
@@ -1053,6 +1053,25 @@ const renderVisual = (visual: VisualData) => {
         </div>
       );
     case 'bars':
+      if (compactBars) {
+        return (
+          <div className="w-full max-w-[17rem] overflow-hidden rounded-[1.25rem] border border-white/10 bg-[linear-gradient(180deg,rgba(8,24,61,0.94),rgba(4,12,30,0.96))] p-2.5 shadow-[0_18px_34px_rgba(0,0,0,0.22)] md:max-w-[21rem] md:rounded-[1.5rem] md:p-3">
+            <div className="grid grid-cols-2 gap-1.5 md:gap-2">
+              {visual.bars.map((bar) => (
+                <div key={bar.label} className="flex flex-col items-center gap-1">
+                  <div className="flex h-18 w-full items-end rounded-t-[0.65rem] border border-white/10 bg-white/6 p-1 md:h-28 md:rounded-t-[0.9rem]">
+                    <div className={`w-full rounded-[0.65rem] bg-gradient-to-t ${bar.color}`} style={{ height: `${Math.max(18, bar.value * 10)}%` }} />
+                  </div>
+                  <div className="text-[8px] font-black uppercase tracking-[0.08em] text-white/72 md:text-[9px] md:tracking-[0.1em]">
+                    {bar.label}
+                  </div>
+                  <div className="text-[8px] font-black text-cyan-100/78 md:text-[9px]">{bar.value}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
       return (
         <div className="flex w-full max-w-[22rem] items-end justify-between gap-1.5 rounded-[1.2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] px-2.5 pb-2.5 pt-4 shadow-[0_18px_44px_rgba(0,0,0,0.22)] md:max-w-[24rem] md:gap-3 md:rounded-[1.5rem] md:px-4 md:pb-4 md:pt-8">
           {visual.bars.map((bar) => (
@@ -1361,7 +1380,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                 >
                   <div className="w-full h-[clamp(8.75rem,18vh,12rem)] overflow-visible md:h-[clamp(10rem,22vh,14rem)]">
                     <div className="flex h-full w-full items-center justify-center">
-                      {renderVisual(question.visual)}
+                      {renderVisual(question.visual, isChartGrabber)}
                     </div>
                   </div>
                 </motion.div>

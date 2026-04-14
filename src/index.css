@@ -4831,7 +4831,7 @@ button.avatar-hero-arrow:not(:disabled):active {
   box-sizing: border-box;
 }
 
-/* Question cards should hug the top of the gameplay area (just under the shared HUD). */
+/* Question cards should sit exactly 5px below the shared HUD in gameplay. */
 .screen-gameplay .game-screen-layout {
   padding-top: 0 !important;
   gap: 0 !important;
@@ -4845,7 +4845,7 @@ button.avatar-hero-arrow:not(:disabled):active {
 }
 
 .screen-gameplay .game-question-card {
-  margin-top: 0 !important;
+  margin-top: 5px !important;
 }
 
 .screen-gameplay .unified-minigame-hud-enabled .structured-game-layout > * {
