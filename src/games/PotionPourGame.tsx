@@ -773,7 +773,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
             <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] border border-white/12 bg-transparent shadow-[0_16px_30px_rgba(15,23,42,0.2)]">
               <div
                 className="absolute inset-0"
-                style={{ transform: 'translateY(var(--potion-cauldron-shift, 0px))' }}
+                style={{ transform: 'translateY(calc(var(--potion-cauldron-shift, 0px) + 28px))' }}
               >
                 <div className="pointer-events-none absolute left-1/2 top-[84%] h-14 w-[72%] -translate-x-1/2 rounded-full bg-black/55 blur-md" />
                 <div className="pointer-events-none absolute left-1/2 top-[76%] h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
