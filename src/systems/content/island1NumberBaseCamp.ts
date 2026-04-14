@@ -7,8 +7,7 @@ export type NumberBaseCampMiniGameKey =
   | 'rounding_rocket'
   | 'factor_frenzy'
   | 'chart_challenge'
-  | 'mean_machine'
-  | 'mode_miner';
+  | 'mean_machine';
 
 export type NumberBaseCampDifficultyTier = 1 | 2 | 3 | 4 | 5;
 
@@ -105,13 +104,6 @@ const basePackDefs: Array<{
     gameType: 'mean_machine',
     skillTags: ['MEAN', 'TOTALS', 'DIVISION'],
     objectiveForLevel: (miniGameLevel) => `Calculate means from increasingly tricky sets (L${miniGameLevel}).`,
-  },
-  {
-    key: 'mode_miner',
-    name: 'Mode Miner',
-    gameType: 'data_dungeon',
-    skillTags: ['MODE', 'FREQUENCY', 'DATA_HANDLING'],
-    objectiveForLevel: (miniGameLevel) => `Find the most frequent value before time runs out (L${miniGameLevel}).`,
   },
 ];
 

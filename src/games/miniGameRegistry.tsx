@@ -22,7 +22,6 @@ const MedianMountainGame = lazy(() => import('./MedianMountainGame'));
 const MeasurementForgeGame = lazy(() => import('./MeasurementForgeGame'));
 const MultiplicationMineGame = lazy(() => import('./MultiplicationMineGame'));
 const MonsterMarketGame = lazy(() => import('./MonsterMarketGame'));
-const ModeMinerGame = lazy(() => import('./ModeMinerGame'));
 const NumberLineNinjaGame = lazy(() => import('./NumberLineNinjaGame'));
 const OrderOpsArenaGame = lazy(() => import('./OrderOpsArenaGame'));
 const PerimeterPathGame = lazy(() => import('./PerimeterPathGame'));
@@ -77,7 +76,6 @@ export type MiniGameRegistryKey =
   | 'MeasurementForgeGame'
   | 'MultiplicationMineGame'
   | 'MonsterMarketGame'
-  | 'ModeMinerGame'
   | 'NumberLineNinjaGame'
   | 'OrderOpsArenaGame'
   | 'PerimeterPathGame'
@@ -140,7 +138,6 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   MeasurementForgeGame: asMiniGame('measurement_forge', MeasurementForgeGame),
   MultiplicationMineGame: asMiniGame('multiplication_mine', MultiplicationMineGame),
   MonsterMarketGame: asMiniGame('monster_market', MonsterMarketGame),
-  ModeMinerGame: asMiniGame('mode_miner', ModeMinerGame),
   NumberLineNinjaGame: asMiniGame('number_line_ninja', NumberLineNinjaGame),
   OrderOpsArenaGame: asMiniGame('order_ops_arena', OrderOpsArenaGame),
   PerimeterPathGame: asMiniGame('perimeter_path', PerimeterPathGame),

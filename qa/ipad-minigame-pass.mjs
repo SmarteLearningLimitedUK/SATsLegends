@@ -41,7 +41,7 @@ const minigamePlan = [
   { island: 'Arithmetic Acropolis', games: ['Place Value Panic', 'Number Line Ninja', 'Prime Pop', 'Rounding Rocket', 'Maths vs Zombies'] },
   { island: 'Fraction Forest', games: ['Take-Out Rush', 'Fraction Forge', 'Match-3 Equivalence', 'Percent Power', 'Simplify Sprint'] },
   { island: 'Geometry Glacier', games: ['Angle Arena', 'Polygon Palace', 'Area Architect', 'Rotation Station', 'Coordinates Quest', 'Chrono Dash: Time Trial', 'Conversion Canyon', 'Perimeter Path'] },
-  { island: 'Data Desert', games: ['Mean Machine', 'Mode Miner', 'Graph Grabber', 'Line Graph Lab', 'Data Detective'] },
+  { island: 'Data Desert', games: ['Mean Machine', 'Graph Grabber', 'Line Graph Lab', 'Data Detective'] },
   { island: 'Operations Outpost', games: ['Factor Frenzy', 'Multiplication Mine', 'Division Dock', 'Order Ops Arena', 'Formula Forge', 'Remainder Run'] },
   { island: 'Measurement Mountain', games: ['Problem Pyramid', 'Unit Mixer', 'Change Counter'] },
   { island: 'Ratio Rapids', games: ['Potion Panic', 'Share Splitter', 'Ratio Fractions', 'Scale Builder'] },

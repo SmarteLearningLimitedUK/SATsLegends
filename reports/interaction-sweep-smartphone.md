@@ -25,7 +25,6 @@ Base URL: https://satslegendsfinal.vercel.app/
 | Geometry Glacier | Conversion Canyon | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-phone-interaction-conversion-canyon.png |
 | Geometry Glacier | Perimeter Path | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-phone-interaction-perimeter-path.png |
 | Data Desert | Mean Machine | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-phone-interaction-mean-machine.png |
-| Data Desert | Mode Miner | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-phone-interaction-mode-miner.png |
 | Data Desert | Graph Grabber | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-phone-interaction-graph-grabber.png |
 | Data Desert | Line Graph Lab | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-phone-interaction-line-graph-lab.png |
 | Data Desert | Data Detective | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-phone-interaction-data-detective.png |

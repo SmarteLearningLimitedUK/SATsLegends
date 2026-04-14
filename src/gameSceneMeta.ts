@@ -12,9 +12,10 @@ import graphGrabberBackground from './assets/maps/backgroundsforgames/graph grab
 import percentPowerBackground from './assets/maps/backgroundsforgames/percent power map.jpg';
 import polygonPalaceBackground from './assets/maps/backgroundsforgames/polygon palace map.jpg';
 import primePopBackground from './assets/maps/backgroundsforgames/primepopbkground.jpg';
+import scaleBuilderBackground from './assets/maps/backgroundsforgames/scalebuilder.png';
 
 export interface GameSceneMeta {
-  background: string;
+  background?: string;
   glow: string;
   tint: string;
   panelTint: string;
@@ -67,6 +68,11 @@ const SCALE_SCENE: GameSceneMeta = {
   background: scaleBackground,
 };
 
+const SCALE_BUILDER_SCENE: GameSceneMeta = {
+  ...RATIO_SCENE,
+  background: scaleBuilderBackground,
+};
+
 const CHART_CHASE_SCENE: GameSceneMeta = {
   ...DATA_SCENE,
   background: graphGrabberBackground,
@@ -95,7 +101,7 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   coordinate_quest: GEOMETRY_SCENE,
   transform_temple: GEOMETRY_SCENE,
   mirror_gate: GEOMETRY_SCENE,
-  scale_safari: SCALE_SCENE,
+  scale_safari: SCALE_BUILDER_SCENE,
   scales_of_the_sun: SCALE_SCENE,
   graph_grabber: CHART_CHASE_SCENE,
   observatory_overload: DATA_SCENE,

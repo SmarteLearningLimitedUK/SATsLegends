@@ -28,9 +28,6 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
     case 'polygon_palace':
       return 'PolygonPalaceGame';
     case 'data_dungeon':
-      if (level.blueprintKey === 'mode_miner') {
-        return 'ModeMinerGame';
-      }
       if (level.blueprintKey === 'table_trouble') {
         return 'LineGraphLabGame';
       }

@@ -140,13 +140,6 @@
     },
     {
       "island": "Data Desert",
-      "game": "Mode Miner",
-      "screenshot": "qa-ipad-mode-miner.png",
-      "status": "captured",
-      "error": null
-    },
-    {
-      "island": "Data Desert",
       "game": "Graph Grabber",
       "screenshot": "qa-ipad-graph-grabber.png",
       "status": "captured",

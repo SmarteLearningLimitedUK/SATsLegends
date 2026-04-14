@@ -43,7 +43,6 @@ Screenshot archive: D:\\BrainZilla\\SATsLegends\\qa\\
 - Factor Frenzy
 - Median Master (Chart Challenge)
 - Mean Machine
-- Mode Miner
 - Maths vs Zombies
 - Take-Out Rush
 - Fraction Forge
@@ -149,7 +148,6 @@ All screenshots are stored in D:\\BrainZilla\\SATsLegends\\qa\\
 | Geometry Glacier | Conversion Canyon | qa-ipad-conversion-canyon.png | Verified | None observed |
 | Geometry Glacier | Perimeter Path | qa-ipad-perimeter-path.png | Verified | None observed |
 | Data Desert | Mean Machine | qa-ipad-mean-machine.png | Verified | None observed |
-| Data Desert | Mode Miner | qa-ipad-mode-miner.png | Verified | None observed |
 | Data Desert | Graph Grabber | qa-ipad-graph-grabber.png | Verified | None observed |
 | Data Desert | Line Graph Lab | qa-ipad-line-graph-lab.png | Verified | None observed |
 | Data Desert | Data Detective | qa-ipad-data-detective.png | Verified | None observed |
@@ -218,7 +216,6 @@ Status notes:
 | Geometry Glacier | Conversion Canyon | qa-phone-conversion-canyon.png | Verified | None observed |
 | Geometry Glacier | Perimeter Path | qa-phone-perimeter-path.png | Verified | None observed |
 | Data Desert | Mean Machine | qa-phone-mean-machine.png | Verified | None observed |
-| Data Desert | Mode Miner | qa-phone-mode-miner.png | Verified | None observed |
 | Data Desert | Graph Grabber | qa-phone-graph-grabber.png | Verified | Chart panel bottom-aligned in container. |
 | Data Desert | Line Graph Lab | qa-phone-line-graph-lab.png | Verified | Question card anchored at top. |
 | Data Desert | Data Detective | qa-phone-data-detective.png | Verified | Layout shifted upward; suspects row visible beneath chart. |
@@ -407,5 +404,4 @@ All wired minigames have smartphone screenshots and have been reviewed.
 ## 12) Remaining PC Verification
 
 The following minigames are wired but not yet verified on PC:
-- Mode Miner
 - Boss Encounters (Tower Of Factors, Crystal Core, Mirror Gate, Scales Of The Sun, Observatory Overload, Matrix Match)

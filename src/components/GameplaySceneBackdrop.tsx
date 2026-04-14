@@ -24,12 +24,14 @@ const GameplaySceneBackdrop: React.FC<GameplaySceneBackdropProps> = ({
       className={`game-background-layer pointer-events-none absolute inset-0 overflow-hidden ${className}`.trim()}
       data-game-background-layer="true"
     >
-      <img
-        src={backgroundImage}
-        alt=""
-        className="absolute inset-0 h-full w-full object-cover object-center"
-        draggable={false}
-      />
+      {backgroundImage ? (
+        <img
+          src={backgroundImage}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover object-center"
+          draggable={false}
+        />
+      ) : null}
     </div>
   );
 };

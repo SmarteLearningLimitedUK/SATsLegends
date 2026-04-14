@@ -137,6 +137,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       'maths_vs_zombies',
       'share_splitter',
       'ratio_fractions',
+      'data_detective',
     ]);
     return !(
       selectedLevel.gameType === 'angle_arena'
@@ -253,9 +254,6 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       case 'polygon_palace':
         return renderFromRegistry('PolygonPalaceGame', sharedProps);
       case 'data_dungeon':
-        if (selectedLevel.blueprintKey === 'mode_miner') {
-          return renderFromRegistry('ModeMinerGame', sharedProps);
-        }
         if (selectedLevel.blueprintKey === 'table_trouble') {
           return renderFromRegistry('LineGraphLabGame', sharedProps);
         }

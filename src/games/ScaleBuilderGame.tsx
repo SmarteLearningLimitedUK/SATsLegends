@@ -75,6 +75,9 @@ const LEVELS: Level[] = [
 ];
 
 const GRID_SIZE = 20;
+const BLUEPRINT_BOARD_TOP = '58%';
+const BLUEPRINT_BOARD_WIDTH = 'min(76vw, 29rem)';
+const BLUEPRINT_BOARD_HEIGHT = 'min(58vh, 29rem)';
 
 const BlueprintGrid: React.FC = () => (
   <div className="pointer-events-none absolute inset-0 opacity-22">
@@ -342,11 +345,19 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
               </div>
             </div>
 
-            <div className="relative min-h-0 flex-1 overflow-hidden rounded-[1.4rem] border border-white/14 bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.22),rgba(15,23,42,0.84)_68%)] p-2">
-              <BlueprintGrid />
-              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(250,204,21,0.12),rgba(15,23,42,0.1)_62%)]" />
-              <div className="relative z-10 flex h-full w-full items-center justify-center">
-                <div className="relative flex h-[min(60vh,26rem)] w-[min(84vw,26rem)] items-center justify-center rounded-full border border-sky-100/18 bg-[radial-gradient(circle,rgba(255,255,255,0.06),rgba(255,255,255,0.01)_54%,transparent_100%)]">
+            <div className="relative min-h-0 flex-1 overflow-hidden rounded-[1.4rem] border border-white/14 bg-transparent p-2">
+              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0.08),rgba(15,23,42,0.16)_100%)]" />
+              <div className="relative z-10 h-full w-full">
+                <div
+                  className="absolute left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-[0.9rem]"
+                  style={{
+                    top: BLUEPRINT_BOARD_TOP,
+                    width: BLUEPRINT_BOARD_WIDTH,
+                    height: BLUEPRINT_BOARD_HEIGHT,
+                  }}
+                >
+                  <BlueprintGrid />
+                  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(125,211,252,0.16),rgba(59,130,246,0.04)_65%,transparent_100%)]" />
                   {showBase ? (
                     <div className="absolute opacity-40">
                       <ShapeRenderer
