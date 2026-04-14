@@ -36,21 +36,9 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: 'first_win', title: 'First Victory', description: 'Complete your first level', icon: '\u{1F3C6}', type: 'levels', target: 1 },
   { id: 'star_collector', title: 'Star Collector', description: 'Earn 10 total stars', icon: '\u2B50', type: 'stars', target: 10 },
   { id: 'rich', title: 'Money Maker', description: 'Accumulate 1000 coins', icon: '\u{1F4B0}', type: 'coins', target: 1000 },
-  { id: 'streak_3', title: 'Dedicated Scholar', description: 'Reach a 3-day login streak', icon: '\u{1F525}', type: 'streak', target: 3 },
   { id: 'math_master', title: 'Math Master', description: 'Complete 10 levels', icon: '\u{1F9E0}', type: 'levels', target: 10 },
   { id: 'star_champion', title: 'Star Champion', description: 'Earn 50 total stars', icon: '\u{1F31F}', type: 'stars', target: 50 },
-  { id: 'streak_7', title: 'Unstoppable', description: 'Reach a 7-day login streak', icon: '\u26A1', type: 'streak', target: 7 },
   { id: 'gem_hoarder', title: 'Gem Hoarder', description: 'Accumulate 100 gems', icon: '\u{1F48E}', type: 'coins', target: 100 },
-];
-
-export const DAILY_REWARDS = [
-  { day: 1, reward: { type: 'coins', amount: 100 }, icon: '\u{1F4B0}' },
-  { day: 2, reward: { type: 'coins', amount: 200 }, icon: '\u{1F4B0}' },
-  { day: 3, reward: { type: 'gems', amount: 5 }, icon: '\u{1F48E}' },
-  { day: 4, reward: { type: 'coins', amount: 500 }, icon: '\u{1F4B0}' },
-  { day: 5, reward: { type: 'gems', amount: 10 }, icon: '\u{1F48E}' },
-  { day: 6, reward: { type: 'coins', amount: 1000 }, icon: '\u{1F4B0}' },
-  { day: 7, reward: { type: 'gems', amount: 25 }, icon: '\u{1F381}' },
 ];
 
 export const INITIAL_DAILY_QUESTS: DailyQuest[] = [

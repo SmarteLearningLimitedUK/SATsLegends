@@ -16,12 +16,13 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
   const totalAttempts = (player.telemetry?.correctAnswers ?? 0) + (player.telemetry?.incorrectAnswers ?? 0);
   const accuracy = totalAttempts > 0 ? Math.round(((player.telemetry?.correctAnswers ?? 0) / totalAttempts) * 100) : 0;
   const playTimeMinutes = player.telemetry ? Math.round(player.telemetry.totalPlayTimeSec / 60) : 0;
+  const totalStars = player.stats?.totalStars ?? 0;
 
   const stats = [
     { label: 'Sessions', value: gamesPlayed, icon: 'gamepad' as const },
     { label: 'Accuracy', value: `${accuracy}%`, icon: 'trophy' as const },
     { label: 'Play time', value: `${playTimeMinutes}m`, icon: 'stopwatch' as const },
-    { label: 'Daily Combo', value: player.dailyStreak, icon: 'heart' as const },
+    { label: 'Stars earned', value: totalStars, icon: 'star' as const },
   ];
 
   return (

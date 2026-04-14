@@ -11,7 +11,6 @@ import { getBlueprintRuleSet } from './systems/content/islandBlueprint';
 import {
   ISLANDS,
 } from './constants';
-import DailyRewardsModal from './components/modals/DailyRewardsModal';
 import DailyQuestsModal from './components/modals/DailyQuestsModal';
 import AchievementsModal from './components/modals/AchievementsModal';
 import LevelResultsModal from './components/results/LevelResultsModal';
@@ -86,9 +85,7 @@ const App: React.FC = () => {
     draftName,
     setDraftName,
     hasCompletedProfile,
-    dailyRewardsNudge,
     saveProfileName,
-    claimDailyReward,
     claimQuest,
     applyGameVictory,
   } = usePlayerProgression();
@@ -195,12 +192,10 @@ const App: React.FC = () => {
   }, [mapProgressionToPlayer, progressionLevels, progressionPlayer.currentXp, progressionPlayer.level, setPlayer]);
 
   const {
-    showDailyRewards,
     showQuests,
     showAchievements,
     showGameRules,
     levelResult,
-    setShowDailyRewards,
     setShowQuests,
     setShowAchievements,
     setShowGameRules,
@@ -515,12 +510,6 @@ const App: React.FC = () => {
   );
 
   useEffect(() => {
-    if (dailyRewardsNudge > 0) {
-      setShowDailyRewards(true);
-    }
-  }, [dailyRewardsNudge, setShowDailyRewards]);
-
-  useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!buildId) return;
     try {
@@ -775,12 +764,6 @@ const App: React.FC = () => {
     goToHome();
   };
 
-  const handleClaimDailyReward = (reward: { type: string; amount: number }) => {
-    triggerHaptic('success');
-    claimDailyReward(reward);
-    setShowDailyRewards(false);
-  };
-
   const handleClaimQuest = (questId: string) => {
     const quest = player.dailyQuests.find(q => q.id === questId);
     if (!quest || quest.isClaimed || quest.current < quest.target) return;
@@ -1032,14 +1015,6 @@ const App: React.FC = () => {
                 bottomContent={mapHudDock || undefined}
               />
             ) : null}
-
-            <DailyRewardsModal
-              isOpen={showDailyRewards}
-              onClose={() => setShowDailyRewards(false)}
-              Combo={player.dailyStreak}
-              claimedToday={player.claimedDailyRewardToday}
-              onClaim={handleClaimDailyReward}
-            />
 
             <DailyQuestsModal
               isOpen={showQuests}

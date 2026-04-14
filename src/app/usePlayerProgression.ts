@@ -25,9 +25,6 @@ const createDefaultPlayer = (parsed?: Partial<PlayerData> | null): PlayerData =>
   unlockedIslands: ALL_ISLAND_IDS,
   completedLevels: parsed?.completedLevels || {},
   levelStars: parsed?.levelStars || {},
-  lastLoginDate: parsed?.lastLoginDate,
-  dailyStreak: parsed?.dailyStreak || 1,
-  claimedDailyRewardToday: parsed?.claimedDailyRewardToday || false,
   dailyQuests: parsed?.dailyQuests || INITIAL_DAILY_QUESTS,
   achievements: parsed?.achievements || [],
   customSpriteUrl: parsed?.customSpriteUrl,
@@ -60,20 +57,13 @@ const createDefaultPlayer = (parsed?: Partial<PlayerData> | null): PlayerData =>
   },
 });
 
-interface ClaimRewardPayload {
-  type: string;
-  amount: number;
-}
-
 export interface PlayerProgressionController {
   player: PlayerData;
   setPlayer: Dispatch<SetStateAction<PlayerData>>;
   draftName: string;
   setDraftName: Dispatch<SetStateAction<string>>;
   hasCompletedProfile: boolean;
-  dailyRewardsNudge: number;
   saveProfileName: () => void;
-  claimDailyReward: (reward: ClaimRewardPayload) => void;
   claimQuest: (questId: string) => void;
   applyGameVictory: (
     selectedIsland: IslandData | null,
@@ -108,31 +98,11 @@ export const usePlayerProgression = (): PlayerProgressionController => {
     return createDefaultPlayer(parsed);
   });
   const [draftName, setDraftName] = useState('');
-  const [dailyRewardsNudge, setDailyRewardsNudge] = useState(0);
 
   const hasCompletedProfile = useMemo(
     () => Boolean(player.playerName.trim() && player.avatarId),
     [player.playerName, player.avatarId],
   );
-
-  useEffect(() => {
-    const today = new Date().toISOString().split('T')[0];
-    if (player.lastLoginDate !== today) {
-      setPlayer(prev => {
-        const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-        const wasYesterday = prev.lastLoginDate === yesterday;
-
-        return {
-          ...prev,
-          lastLoginDate: today,
-          dailyStreak: wasYesterday ? prev.dailyStreak + 1 : 1,
-          claimedDailyRewardToday: false,
-          dailyQuests: INITIAL_DAILY_QUESTS.map(quest => ({ ...quest })),
-        };
-      });
-      setDailyRewardsNudge(prev => prev + 1);
-    }
-  }, [player.lastLoginDate]);
 
   useEffect(() => {
     localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(player));
@@ -150,19 +120,6 @@ export const usePlayerProgression = (): PlayerProgressionController => {
   const saveProfileName = () => {
     const sanitizedName = draftName.trim() || 'Explorer';
     setPlayer(prev => ({ ...prev, playerName: sanitizedName }));
-  };
-
-  const claimDailyReward = (reward: ClaimRewardPayload) => {
-    setPlayer(prev => ({
-      ...prev,
-      coins: reward.type === 'coins' ? prev.coins + reward.amount : prev.coins,
-      gems: reward.type === 'gems' ? prev.gems + reward.amount : prev.gems,
-      stats: {
-        ...prev.stats,
-        totalCoinsEarned: (prev.stats?.totalCoinsEarned || 0) + (reward.type === 'coins' ? reward.amount : 0),
-      },
-      claimedDailyRewardToday: true,
-    }));
   };
 
   const claimQuest = (questId: string) => {
@@ -295,9 +252,7 @@ export const usePlayerProgression = (): PlayerProgressionController => {
     draftName,
     setDraftName,
     hasCompletedProfile,
-    dailyRewardsNudge,
     saveProfileName,
-    claimDailyReward,
     claimQuest,
     applyGameVictory,
   };

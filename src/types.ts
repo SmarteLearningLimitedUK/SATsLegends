@@ -194,9 +194,6 @@ export interface PlayerData {
   unlockedIslands: number[];
   completedLevels: Record<number, number[]>; // islandId -> levelIds
   levelStars: Record<string, number>; // islandId-levelId -> best stars
-  lastLoginDate?: string;
-  dailyStreak: number;
-  claimedDailyRewardToday: boolean;
   dailyQuests: DailyQuest[];
   customSpriteUrl?: string;
   achievements: string[];
