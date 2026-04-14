@@ -48,8 +48,7 @@ const KART_SCALE = 1.4;
 const PLAYER_KART_SCALE = KART_SCALE * 1.5;
 const BACKDROP_WIDTH = 8000;
 const BACKDROP_HEIGHT = 1000;
-const BACKDROP_SCALE = 0.6;
-const BACKDROP_Y_OFFSET = 60;
+const BACKDROP_ASPECT_RATIO = BACKDROP_WIDTH / BACKDROP_HEIGHT;
 const TRACK_LINE_FROM_BOTTOM = 177;
 const CART_Y_SHIFT = 0;
 const FINISH_Y_SHIFT = -200;
@@ -407,8 +406,8 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     0,
     100,
   );
-  const backdropWidthPx = Math.round(BACKDROP_WIDTH * BACKDROP_SCALE);
-  const backdropHeightPx = Math.round(BACKDROP_HEIGHT * BACKDROP_SCALE);
+  const backdropHeightPx = Math.max(1, Math.round(viewport.height));
+  const backdropWidthPx = Math.max(1, Math.round(backdropHeightPx * BACKDROP_ASPECT_RATIO));
   const maxBackdropScroll = Math.max(0, backdropWidthPx - viewport.width);
   const backgroundOffset = Math.round(clamp(trackProgress * maxBackdropScroll, 0, maxBackdropScroll));
 
@@ -437,10 +436,17 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
           className="pointer-events-none absolute inset-0"
           style={{
             backgroundColor: '#0b0f1c',
-            backgroundImage: `url(${ratioBackdrop})`,
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: `${backdropWidthPx}px ${backdropHeightPx}px`,
-            backgroundPosition: `${-backgroundOffset}px calc(100% - ${BACKDROP_Y_OFFSET}px)`,
+          }}
+        />
+        <img
+          src={ratioBackdrop}
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+          className="pointer-events-none absolute left-0 top-0 h-full max-w-none select-none"
+          style={{
+            width: `${backdropWidthPx}px`,
+            transform: `translate3d(${-backgroundOffset}px, 0, 0)`,
             imageRendering: 'auto',
           }}
         />

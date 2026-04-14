@@ -683,7 +683,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                         src={alphaKeyedMachineImage}
                         alt="MEAN Machine slot machine"
                         draggable={false}
-                        className="pointer-events-none absolute inset-0 z-[12] h-full w-full object-contain"
+                        className="pointer-events-none absolute inset-0 z-[12] h-full w-full object-cover object-center"
                       />
 
                       {reelDisplay.map((value, index) => (

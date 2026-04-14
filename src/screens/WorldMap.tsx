@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { X } from 'lucide-react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
-import universalMapPoster from '../assets/maps/finalmap.png';
+import universalMapPoster from '../assets/maps/mapselect.png';
 import AssetIcon from '../components/AssetIcon';
 import ParentGateOverlay from '../components/ParentGateOverlay';
 

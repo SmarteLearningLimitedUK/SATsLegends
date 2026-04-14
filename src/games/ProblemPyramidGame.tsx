@@ -165,7 +165,7 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
               src={pyramidImage}
               alt=""
               draggable={false}
-              className="pointer-events-none absolute inset-0 h-full w-full object-contain opacity-90 scale-[1.2]"
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-90 scale-[1.08]"
             />
             <motion.div
               animate={glow ? { scale: [1.05, 1.1, 1.05] } : { scale: 1.05 }}

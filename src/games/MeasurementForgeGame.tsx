@@ -289,7 +289,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
               alt=""
               aria-hidden="true"
               draggable={false}
-              className="pointer-events-none absolute inset-0 h-full w-full object-contain"
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
               style={{ transform: 'translateY(30px) scale(1.12)' }}
             />
             <div
