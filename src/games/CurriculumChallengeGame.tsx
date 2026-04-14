@@ -1200,6 +1200,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
   const isScaleBuilder = gameType === 'scale_safari';
   const isRuleRunner = gameType === 'rule_runner';
   const isChartGrabber = gameType === 'graph_grabber';
+  const showSceneBackdrop = !isChartGrabber;
   const usesBlueAnswers = isScaleBuilder || isCalculationClash || isRuleRunner || isChartGrabber;
   const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
   const targetScore = 780 + (levelId * 180);
@@ -1312,8 +1313,8 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
 
   return (
     <div className={`relative flex h-full w-full flex-col overflow-hidden ${theme.ambient} px-1.5 pb-1.5 pt-1 md:px-4 md:pb-4`}>
-      <GameplaySceneBackdrop gameType={gameType} />
-      <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${theme.scene}`} />
+      {showSceneBackdrop ? <GameplaySceneBackdrop gameType={gameType} /> : null}
+      {showSceneBackdrop ? <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${theme.scene}`} /> : null}
       <div
         className={`pointer-events-none absolute inset-0 ${isChartGrabber ? 'opacity-0' : 'opacity-20'}`}
         style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.22) 1px, transparent 1px)', backgroundSize: '24px 24px' }}
@@ -1353,14 +1354,14 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                   ? 'rounded-[1.35rem] border border-sky-200/30 bg-[linear-gradient(180deg,rgba(8,24,61,0.92),rgba(4,12,30,0.94))]'
                   : 'rounded-[1.25rem]'
               } px-2 py-2 md:rounded-[1.8rem] md:px-4 md:py-4`}>
-              <div className="relative z-10 flex min-h-0 w-full flex-col items-center justify-center gap-2">
+              <div className={`relative z-10 flex min-h-0 w-full flex-col items-center ${isChartGrabber ? 'justify-start gap-1 pt-1' : 'justify-center gap-2'}`}>
                 <motion.div
                   key={`${question.prompt}-${question.sublabel}`}
                   initial={{ opacity: 0, y: 8, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  className={`flex min-h-0 w-full ${isChartGrabber ? 'items-center justify-center pb-2 overflow-visible' : 'items-center justify-center overflow-hidden'}`}
+                  className={`flex min-h-0 w-full ${isChartGrabber ? 'items-start justify-center pb-1 overflow-visible' : 'items-center justify-center overflow-hidden'}`}
                 >
-                  <div className={`w-full ${isChartGrabber ? 'h-[clamp(10rem,26vh,16rem)] md:h-[clamp(12rem,30vh,18rem)] overflow-visible' : 'max-h-[10.5rem] md:max-h-[15rem] overflow-hidden'}`}>
+                  <div className={`w-full ${isChartGrabber ? 'h-[clamp(8.75rem,18vh,12rem)] md:h-[clamp(10rem,22vh,14rem)] overflow-visible' : 'max-h-[10.5rem] md:max-h-[15rem] overflow-hidden'}`}>
                     <div className="flex h-full w-full items-center justify-center">
                       {renderVisual(question.visual)}
                     </div>
@@ -1376,8 +1377,8 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
               </div>
             </div>
 
-            <div className={`flex min-h-0 ${isChartGrabber ? 'mt-auto' : 'flex-1'} flex-col ${
-              isPlaceValuePeaks ? 'gap-2 md:gap-3' : isChartGrabber ? 'gap-1 md:gap-2' : 'gap-1.5 md:gap-2.5'
+            <div className={`flex min-h-0 ${isChartGrabber ? 'mt-auto flex-1 justify-end' : 'flex-1'} flex-col ${
+              isPlaceValuePeaks ? 'gap-2 md:gap-3' : isChartGrabber ? 'gap-1 md:gap-2 pb-1' : 'gap-1.5 md:gap-2.5'
             }`}>
               {question.options.map((option, index) => {
                 const isSelected = index === selectedIndex;
