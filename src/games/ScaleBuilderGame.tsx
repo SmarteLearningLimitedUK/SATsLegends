@@ -317,7 +317,30 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
 
   return (
     <GameScreenShell className="overflow-hidden pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+0.25rem)]">
-      <GameplaySceneBackdrop gameType="scale_safari" backgroundOverride={scaleBuilderBackground} />
+      <GameplaySceneBackdrop
+        gameType="scale_safari"
+        backgroundOverride={scaleBuilderBackground}
+        className="z-[0] opacity-20 saturate-0 contrast-125 brightness-75"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-[1]"
+      >
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,47,73,0.82)_0%,rgba(7,89,133,0.76)_38%,rgba(8,47,73,0.94)_100%)]" />
+        <div
+          className="absolute inset-0 opacity-80"
+          style={{
+            backgroundImage: [
+              'linear-gradient(to right, rgba(186,230,253,0.22) 1px, transparent 1px)',
+              'linear-gradient(to bottom, rgba(186,230,253,0.22) 1px, transparent 1px)',
+              'linear-gradient(to right, rgba(96,165,250,0.22) 2px, transparent 2px)',
+              'linear-gradient(to bottom, rgba(96,165,250,0.22) 2px, transparent 2px)',
+            ].join(', '),
+            backgroundSize: '22px 22px, 22px 22px, 110px 110px, 110px 110px',
+          }}
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(191,219,254,0.28),transparent_52%),radial-gradient(circle_at_20%_20%,rgba(147,197,253,0.22),transparent_28%),radial-gradient(circle_at_80%_70%,rgba(56,189,248,0.18),transparent_24%)]" />
+      </div>
       {!useSharedTopHud ? (
         <MiniGameTopBar
           onBack={onBack}
