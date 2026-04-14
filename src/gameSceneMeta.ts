@@ -6,7 +6,7 @@ import world04Map from './assets/maps/harbour.jpg';
 import world05Map from './assets/maps/desert.jpg';
 import world06Map from './assets/maps/volcano2.jpg';
 import scaleBackground from './assets/maps/scale.png';
-import angleArenaBackground from './assets/maps/backgroundsforgames/angle arena bkground.jpg';
+import angleArenaBackground from './assets/angle_arena/angle arena.png';
 import dataDetectiveBackground from './assets/maps/backgroundsforgames/datadetectivemap.jpg';
 import graphGrabberBackground from './assets/maps/backgroundsforgames/graph grabbermap.jpg';
 import percentPowerBackground from './assets/maps/backgroundsforgames/percent power map.jpg';

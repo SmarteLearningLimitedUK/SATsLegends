@@ -13,7 +13,7 @@ import {
 } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import catapultAsset from '../assets/angle_arena/catapultfinal.png';
-import angleArenaBackgroundA from '../assets/maps/backgroundsforgames/angle arena bkground.jpg';
+import angleArenaBackgroundA from '../assets/angle_arena/angle arena.png';
 import { BOSS_ASSETS } from '../assets/bosses';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { angleToVector, clamp, degreesToRadians, distance, lerp, worldToScreen } from './angleArena/math';

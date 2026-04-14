@@ -191,6 +191,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const enemyTargetRef = useRef(START_OFFSET);
   const reportedResultRef = useRef(false);
   const raceStateRef = useRef(raceState);
+  const raceStartTimeRef = useRef<number | null>(null);
 
   const trackProgress = Math.min(1, playerPosRef.current / tuning.trackLength);
   const lives = sessionState?.lives ?? 3;
@@ -224,6 +225,11 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     const deck = resetDecks.early;
     tierIndexRef.current.early = deck.length ? 1 : 0;
     setQuestion(deck[0] ?? ratioFractionsQuestions[0]);
+    playerPosRef.current = START_OFFSET;
+    enemyPosRef.current = START_OFFSET;
+    playerTargetRef.current = START_OFFSET;
+    enemyTargetRef.current = START_OFFSET;
+    raceStartTimeRef.current = null;
   }, [levelId]);
 
   useEffect(() => {
@@ -240,13 +246,19 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
         && currentRaceState !== 'playerWin'
         && currentRaceState !== 'enemyWin'
       ) {
+        if (raceStartTimeRef.current === null) {
+          raceStartTimeRef.current = timestamp;
+        }
+        const elapsedSeconds = Math.max(0, (timestamp - raceStartTimeRef.current) / 1000);
         enemyTargetRef.current = Math.min(
           tuning.trackLength,
-          enemyTargetRef.current + enemySpeedPerSec * dt,
+          elapsedSeconds * enemySpeedPerSec,
         );
         if (enemyTargetRef.current >= tuning.trackLength && currentRaceState !== 'enemyWin') {
           setRaceState('enemyWin');
         }
+      } else if (currentRaceState === 'introCountdown') {
+        raceStartTimeRef.current = null;
       }
 
       const playerX = playerPosRef.current;
@@ -443,7 +455,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             </div>
 
             <motion.div
-              className="absolute z-40 flex h-24 w-36 items-center justify-center overflow-hidden sm:h-28 sm:w-40 md:h-44 md:w-64"
+              className="absolute z-40 flex h-24 w-36 items-center justify-center overflow-visible sm:h-28 sm:w-40 md:h-44 md:w-64"
               style={playerStyle}
               animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { x: [0, -4, 4, -3, 3, 0] } : { scale: 1 }}
               transition={{ duration: 0.35 }}
@@ -458,17 +470,27 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                   transition={{ duration: 0.25, repeat: Infinity, repeatType: 'mirror' }}
                 />
               ) : null}
-              <img src={playerKart} alt="Player kart" className="relative z-10 h-full w-full object-cover object-center drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]" />
+              <img
+                src={playerKart}
+                alt="Player kart"
+                className="relative z-10 h-full w-full object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]"
+                style={{ imageRendering: 'auto' }}
+              />
               {showStall ? (
                 <span className="absolute -left-2 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-slate-400/80" />
               ) : null}
             </motion.div>
 
             <motion.div
-              className="absolute z-30 flex h-24 w-36 items-center justify-center overflow-hidden sm:h-28 sm:w-40 md:h-44 md:w-64"
+              className="absolute z-30 flex h-24 w-36 items-center justify-center overflow-visible sm:h-28 sm:w-40 md:h-44 md:w-64"
               style={enemyStyle}
             >
-              <img src={enemyKart} alt="Enemy kart" className="h-full w-full object-cover object-center drop-shadow-[0_0_18px_rgba(251,113,133,0.6)]" />
+              <img
+                src={enemyKart}
+                alt="Enemy kart"
+                className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(251,113,133,0.6)]"
+                style={{ imageRendering: 'auto' }}
+              />
             </motion.div>
 
             {raceState === 'introCountdown' ? (
