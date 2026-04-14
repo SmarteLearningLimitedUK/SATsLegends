@@ -869,7 +869,7 @@ const App: React.FC = () => {
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
   const useUnboundedStageShell = false;
-  const globalDockOffsetClass = screen !== 'splash' && !isGameplayScreen
+  const globalDockOffsetClass = screen !== 'splash' && !isGameplayScreen && screen !== 'avatar_selection'
     ? 'pb-[5rem] md:pb-[5.2rem]'
     : '';
   const viewportShellClass = isGameplayScreen

@@ -1,13 +1,13 @@
 # Smartphone Interaction Sweep
 
-Date: 2026-04-13
+Date: 2026-04-14
 Viewport: 390x844 (A2HS)
-Base URL: https://satslegendsfinal.vercel.app/
+Base URL: http://127.0.0.1:5173/
 
 | Island | Minigame | Status | Issues | Screenshot |
 |---|---|---|---|---|
 | Arithmetic Acropolis | Place Value Panic | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-phone-interaction-place-value-panic.png |
-| Arithmetic Acropolis | Number Line Ninja | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-phone-interaction-number-line-ninja.png |
+| Arithmetic Acropolis | Number Line Ninja | Needs Review | Console errors: Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.  Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. |  | Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.  Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. |  | Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.  Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. |  | Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.  Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. |  | D:\BrainZilla\SATsLegends\qa\qa-phone-interaction-number-line-ninja.png |
 | Arithmetic Acropolis | Prime Pop | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-phone-interaction-prime-pop.png |
 | Arithmetic Acropolis | Rounding Rocket | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-phone-interaction-rounding-rocket.png |
 | Arithmetic Acropolis | Maths vs Zombies | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-phone-interaction-maths-vs-zombies.png |
