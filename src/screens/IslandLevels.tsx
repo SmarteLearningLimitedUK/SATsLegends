@@ -79,6 +79,10 @@ const GAME_SUMMARY_BY_KEY: Record<string, string> = {
   multi_step_marathon: 'Complete deep multi-step reasoning runs at mastery level.',
 };
 
+const TOKENS_PER_LEVEL = 3;
+const MAX_LEVELS_PER_GAME = 15;
+const MAX_BRAINTOKEN_TOTAL = TOKENS_PER_LEVEL * MAX_LEVELS_PER_GAME;
+
 const getGroupName = (level: LevelData) => getLevelGameTitle(level) || `Level ${level.id}`;
 
 const getGameSummary = (level: LevelData) => {
@@ -210,7 +214,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
   );
 
   const earnedBrainpowerTokens = levelRows.reduce((sum, row) => sum + row.stars, 0);
-  const totalBrainpowerTokens = Math.max(1, island.levels.length * 3);
+  const totalBrainpowerTokens = MAX_BRAINTOKEN_TOTAL;
 
   return (
     <div
@@ -282,7 +286,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
           <div className="flex flex-col gap-2.5 pb-[calc(env(safe-area-inset-bottom)+1rem)] md:gap-3 md:pb-[calc(env(safe-area-inset-bottom)+1.2rem)]">
             {gameGroups.map((group) => {
               const isExpanded = expandedGameId === group.id;
-              const totalPossibleBrainpowerTokens = group.levels.length * 3;
+              const totalPossibleBrainpowerTokens = MAX_BRAINTOKEN_TOTAL;
 
               return (
                 <div

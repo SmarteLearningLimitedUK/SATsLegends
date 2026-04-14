@@ -147,7 +147,6 @@ export const ISLANDS: IslandData[] = [
         { id: 4, stars: 0, isLocked: false, blueprintKey: 'coordinates_quest', displayName: 'Coordinates Quest', gameType: 'coordinate_quest' },
       ],
       [
-        { id: 1, stars: 0, isLocked: false, blueprintKey: 'time_keeper_cove', displayName: 'Chrono Dash: Time Trial', gameType: 'timekeeper_temple' },
         { id: 2, stars: 0, isLocked: false, blueprintKey: 'conversion_canyon', displayName: 'Conversion Canyon', gameType: 'measurement_forge' },
         { id: 3, stars: 0, isLocked: false, blueprintKey: 'perimeter_path', displayName: 'Perimeter Path', gameType: 'measurement_forge' },
       ],
@@ -211,9 +210,10 @@ export const ISLANDS: IslandData[] = [
     mapImage: world06Map,
     decorations: [],
     levels: [
-      { id: 1, stars: 0, isLocked: false, blueprintKey: 'problem_pyramid', displayName: 'Problem Pyramid', gameType: 'rule_runner' },
-      { id: 2, stars: 0, isLocked: false, blueprintKey: 'unit_mixer', displayName: 'Unit Mixer', gameType: 'unit_mixer' },
-      { id: 3, stars: 0, isLocked: false, blueprintKey: 'change_counter', displayName: 'Change Counter', gameType: 'change_counter' },
+      { id: 1, stars: 0, isLocked: false, blueprintKey: 'time_keeper_cove', displayName: 'Chrono Dash: Time Trial', gameType: 'timekeeper_temple' },
+      { id: 2, stars: 0, isLocked: false, blueprintKey: 'problem_pyramid', displayName: 'Problem Pyramid', gameType: 'rule_runner' },
+      { id: 3, stars: 0, isLocked: false, blueprintKey: 'unit_mixer', displayName: 'Unit Mixer', gameType: 'unit_mixer' },
+      { id: 4, stars: 0, isLocked: false, blueprintKey: 'change_counter', displayName: 'Change Counter', gameType: 'change_counter' },
     ],
   },
   {

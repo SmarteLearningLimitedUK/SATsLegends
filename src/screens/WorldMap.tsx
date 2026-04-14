@@ -395,7 +395,9 @@ const WorldMap: React.FC<WorldMapProps> = ({
                   transform: 'translate(-50%, -50%)',
                 }}
               >
-                {renderIslandAccent(hotspot.islandId)}
+                <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                  {renderIslandAccent(hotspot.islandId)}
+                </div>
                 <button
                   type="button"
                   onClick={() => setSelectedIslandId(island.id)}

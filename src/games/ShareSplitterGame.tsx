@@ -10,8 +10,7 @@ import {
   SecondaryButton,
 } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
-import shareSplitterBackground from '../assets/maps/backgroundsforgames/share splitter bkground.jpg';
-import birthdayCakeAsset from '../assets/birthdaycake.png';
+import shareSplitterBackground from '../assets/maps/sharesplitterfinal.png';
 import cakeSliceAsset from '../assets/cakeslice.png';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import GameRulesModal from '../components/GameRulesModal';
@@ -48,11 +47,10 @@ type DragSlice = {
   y: number;
 };
 
-const MAX_PLATE_COUNT = 4;
+const MAX_PLATE_COUNT = 5;
 const ROUNDS_TO_WIN = 5;
 const BASE_XP_PER_ROUND = 120;
 const CAKE_SLICE_ASSET = cakeSliceAsset;
-const BIRTHDAY_CAKE_ASSET = birthdayCakeAsset;
 const PLATE_POSITIONS: Record<number, Array<{ x: number; y: number }>> = {
   2: [
     { x: 26.8, y: 61.0 },
@@ -68,6 +66,13 @@ const PLATE_POSITIONS: Record<number, Array<{ x: number; y: number }>> = {
     { x: 26.8, y: 61.0 },
     { x: 77.7, y: 61.5 },
     { x: 53.4, y: 71.3 },
+  ],
+  5: [
+    { x: 50.0, y: 40.8 },
+    { x: 26.2, y: 61.4 },
+    { x: 73.8, y: 61.6 },
+    { x: 35.0, y: 83.8 },
+    { x: 65.0, y: 84.0 },
   ],
 };
 const DRAG_SLICE_SIZE = 48;
@@ -90,6 +95,13 @@ const RATIO_PATTERNS_BY_COUNT: Record<number, number[][]> = {
     [1, 2, 2, 3],
     [2, 1, 2, 3],
     [1, 1, 2, 3],
+  ],
+  5: [
+    [1, 1, 1, 1, 2],
+    [1, 1, 1, 2, 2],
+    [1, 1, 2, 2, 3],
+    [1, 2, 2, 3, 3],
+    [2, 1, 2, 3, 4],
   ],
 };
 
@@ -177,7 +189,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const plateRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const sliceSeedRef = useRef(0);
   const dragActiveRef = useRef(false);
-  const dragMetricsRef = useRef<{ scale: number; left: number; top: number } | null>(null);
 
   useEffect(() => () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -218,7 +229,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const allSlicesUsed = remainingSlices === 0;
   const allCorrect = plateViews.every((plate) => plate.isCorrect);
   const platePositions = PLATE_POSITIONS[challenge.plateCount] || PLATE_POSITIONS[4];
-  const plateSize = 'calc(var(--game-stage-width, 390px) * 0.2)';
+  const plateSize = 'calc(var(--game-stage-width, 390px) * 0.175)';
 
   const rules = useMemo(() => ({
     title: 'Share Splitter',
@@ -280,16 +291,10 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     dragActiveRef.current = true;
 
     const updatePosition = (clientX: number, clientY: number) => {
-      const metrics = dragMetricsRef.current;
-      const scale = metrics?.scale ?? 1;
-      const left = metrics?.left ?? 0;
-      const top = metrics?.top ?? 0;
-      const localX = (clientX - left) / scale;
-      const localY = (clientY - top) / scale;
       setDragSlice({
         id: sliceId,
-        x: localX - DRAG_SLICE_SIZE / 2,
-        y: localY - DRAG_SLICE_SIZE / 2,
+        x: clientX - DRAG_SLICE_SIZE / 2,
+        y: clientY - DRAG_SLICE_SIZE / 2,
       });
     };
 
@@ -330,7 +335,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     const finishDrag = (clientX: number, clientY: number) => {
       if (!dragActiveRef.current) return;
       dragActiveRef.current = false;
-      dragMetricsRef.current = null;
       const { index, distance } = getNearestPlate(clientX, clientY);
       const snapRadius = 95;
       const hitIndex = getHitPlateIndex(clientX, clientY);
@@ -390,7 +394,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
     const handlePointerCancel = () => {
       dragActiveRef.current = false;
-      dragMetricsRef.current = null;
       setDragSlice(null);
       setHoverPlateIndex(null);
       window.removeEventListener('pointermove', handlePointerMove);
@@ -400,21 +403,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       window.removeEventListener('touchend', handleTouchEnd);
       window.removeEventListener('touchcancel', handleTouchEnd);
     };
-
-    const stageElement = event.currentTarget
-      .closest('[data-gameplay-content-viewport="true"]')
-      ?.querySelector<HTMLElement>('[data-gameplay-content-stage="true"]');
-    if (stageElement) {
-      const rect = stageElement.getBoundingClientRect();
-      const scale = stageElement.offsetWidth ? rect.width / stageElement.offsetWidth : 1;
-      dragMetricsRef.current = {
-        scale: Number.isFinite(scale) && scale > 0 ? scale : 1,
-        left: rect.left,
-        top: rect.top,
-      };
-    } else {
-      dragMetricsRef.current = { scale: 1, left: 0, top: 0 };
-    }
 
     const startPoint = getClientPoint(event);
     updatePosition(startPoint.x, startPoint.y);
@@ -575,20 +563,10 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                   className={`relative flex h-[76px] w-full max-w-[12rem] items-center justify-center rounded-full border border-white/18 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(30,41,59,0.7))] shadow-[0_12px_18px_rgba(15,23,42,0.28)] ${locked || remainingSlices <= 0 ? 'opacity-55' : ''}`}
                   aria-label={remainingSlices > 0 ? 'Drag one cake onto a plate' : 'No cakes left'}
                 >
-                  <img
-                    src={BIRTHDAY_CAKE_ASSET}
-                    alt=""
-                    className="h-14 w-14 object-contain"
-                    draggable={false}
-                  />
-                  {dragSlice ? (
-                    <img
-                      src={CAKE_SLICE_ASSET}
-                      alt=""
-                      className="absolute left-3 top-1/2 h-8 w-8 -translate-y-1/2 object-contain"
-                      draggable={false}
-                    />
-                  ) : null}
+                  <div className="absolute inset-0 rounded-full border border-white/10 bg-[radial-gradient(circle_at_50%_48%,rgba(255,255,255,0.14),rgba(255,255,255,0.04)_38%,rgba(15,23,42,0)_68%)]" />
+                  <div className="relative z-10 text-[10px] font-black uppercase tracking-[0.18em] text-white/75">
+                    Drag
+                  </div>
                   <div className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/34 px-2 py-1 text-[11px] font-black text-white">
                     {remainingSlices}
                   </div>
@@ -648,10 +626,11 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                 <motion.div
                   key={dragSlice.id}
                   initial={{ scale: 0.92, opacity: 0.9 }}
-                  animate={{ scale: 1, opacity: 1, x: dragSlice.x, y: dragSlice.y }}
+                  animate={{ scale: 1, opacity: 1 }}
                   exit={{ opacity: 0, scale: 0.86 }}
                   transition={{ duration: 0.08, ease: 'linear' }}
                   className="pointer-events-none fixed z-[60] h-12 w-12 rounded-full border border-amber-200/70 bg-[linear-gradient(180deg,rgba(250,204,21,0.3),rgba(180,83,9,0.2))] p-1 shadow-[0_14px_24px_rgba(217,119,6,0.35)]"
+                  style={{ left: dragSlice.x, top: dragSlice.y }}
                 >
                   <img
                     src={CAKE_SLICE_ASSET}
