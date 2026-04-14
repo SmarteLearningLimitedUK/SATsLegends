@@ -184,21 +184,35 @@ const WorldMap: React.FC<WorldMapProps> = ({
                   transform: 'translate(-50%, -50%)',
                 }}
               >
-                <div
-                  className="world-map-island-breathe pointer-events-none absolute inset-0 z-10"
-                  style={{
-                    animationDuration: `${6.2 + (hotspot.islandId % 4) * 0.6}s`,
-                    animationDelay: `${(hotspot.islandId % 5) * 0.18}s`,
-                  }}
-                >
+                {hotspot.islandId === 8 ? (
+                  <div className="world-map-core-smoke pointer-events-none absolute inset-0 z-10">
+                    <div className="world-map-core-smoke-puff world-map-core-smoke-puff-a" />
+                    <div className="world-map-core-smoke-puff world-map-core-smoke-puff-b" />
+                    <div className="world-map-core-smoke-puff world-map-core-smoke-puff-c" />
+                  </div>
+                ) : hotspot.islandId === 6 ? (
+                  <div className="world-map-volcano-accent pointer-events-none absolute inset-0 z-10">
+                    <div className="world-map-volcano-flame world-map-volcano-flame-primary" />
+                    <div className="world-map-volcano-flame world-map-volcano-flame-secondary" />
+                    <div className="world-map-volcano-smoke" />
+                  </div>
+                ) : (
                   <div
-                    className="world-map-island-halo"
+                    className="world-map-island-breathe pointer-events-none absolute inset-0 z-10"
                     style={{
-                      animationDuration: `${7.4 + (hotspot.islandId % 3) * 0.45}s`,
-                      animationDelay: `${(hotspot.islandId % 7) * 0.12}s`,
+                      animationDuration: `${6.2 + (hotspot.islandId % 4) * 0.6}s`,
+                      animationDelay: `${(hotspot.islandId % 5) * 0.18}s`,
                     }}
-                  />
-                </div>
+                  >
+                    <div
+                      className="world-map-island-halo"
+                      style={{
+                        animationDuration: `${7.4 + (hotspot.islandId % 3) * 0.45}s`,
+                        animationDelay: `${(hotspot.islandId % 7) * 0.12}s`,
+                      }}
+                    />
+                  </div>
+                )}
                 <button
                   type="button"
                   onClick={() => setSelectedIslandId(island.id)}
