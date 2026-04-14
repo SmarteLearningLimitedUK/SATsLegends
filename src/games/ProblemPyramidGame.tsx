@@ -153,7 +153,7 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
       <GameplaySceneBackdrop gameType="rule_runner" backgroundOverride={problemPyramidBackground} />
       <div className="relative z-10 flex h-full min-h-0 flex-col gap-1.5 px-3 pb-[calc(env(safe-area-inset-bottom)+2.8rem)] pt-2 text-white">
         <section className="shrink-0">
-          <div className="game-question-card px-3 py-2 text-center">
+          <div className="game-question-card w-full max-w-[780px] px-3 py-2 text-center">
             <div className="question-title">Find the top number in the pyramid.</div>
             <div className="question-subtitle">Round {roundIndex + 1} / {ROUNDS_TO_WIN}</div>
           </div>

@@ -9,6 +9,7 @@ import {
   Trophy,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import {
   CartesianGrid,
@@ -108,7 +109,7 @@ const buildValueQuestion = (graph: DataPoint[]): RoundData => {
   const options = shuffle([`${target.value}`, ...wrongs.slice(0, 3)]);
   return {
     graph,
-    question: `What is the value on ${target.label}?`,
+    question: `Value at ${target.label}?`,
     options,
     correctAnswer: `${target.value}`,
     helper: 'Read the plotted point and match it to the y-axis.',
@@ -121,7 +122,7 @@ const buildHighestDayQuestion = (graph: DataPoint[]): RoundData | null => {
 
   return {
     graph,
-    question: 'Which day has the highest value?',
+    question: 'Highest day?',
     options: shuffle(graph.map(point => point.label)).slice(0, 4).includes(graph[highestIndex].label)
       ? shuffle(graph.map(point => point.label).slice(0, 4))
       : shuffle([graph[highestIndex].label, ...shuffle(graph.filter((_, i) => i !== highestIndex).map(point => point.label)).slice(0, 3)]),
@@ -136,7 +137,7 @@ const buildLowestDayQuestion = (graph: DataPoint[]): RoundData | null => {
 
   return {
     graph,
-    question: 'Which day has the lowest value?',
+    question: 'Lowest day?',
     options: shuffle([graph[lowestIndex].label, ...shuffle(graph.filter((_, i) => i !== lowestIndex).map(point => point.label)).slice(0, 3)]),
     correctAnswer: graph[lowestIndex].label,
     helper: 'Find the point closest to the bottom of the graph.',
@@ -156,7 +157,7 @@ const buildDifferenceQuestion = (graph: DataPoint[]): RoundData => {
 
   return {
     graph,
-    question: `What is the difference between ${graph[startIndex].label} and ${graph[endIndex].label}?`,
+    question: `Difference between ${graph[startIndex].label} and ${graph[endIndex].label}?`,
     options: shuffle([`${difference}`, ...wrongs.slice(0, 3)]),
     correctAnswer: `${difference}`,
     helper: 'Compare the two y-axis values, then subtract.',
@@ -336,8 +337,8 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
             </header>
           ) : null}
           <div className="px-2 pt-0 sm:px-3 md:px-4">
-            <div className="game-question-card -mt-0.5">
-              <div className="question-title text-center text-[clamp(1.1rem,4vw,1.5rem)]">{round?.question}</div>
+            <div className="game-question-card w-full max-w-[780px]">
+              <div className="question-title text-center text-[clamp(1.1rem,4vw,1.5rem)]">{formatFantasyPrompt(round?.question ?? "")}</div>
               <div className="question-subtitle text-center">{round?.helper}</div>
             </div>
           </div>

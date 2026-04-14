@@ -65,7 +65,7 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
     width: 93.49,
     height: 5.56,
     ambients: [
-      { id: 'cursed-colosseum-stars', x: 22, y: 20, width: 30, height: 24, effect: 'stars' },
+      { id: 'core-of-calculation-stars', x: 22, y: 20, width: 30, height: 24, effect: 'stars' },
     ],
   },
   {

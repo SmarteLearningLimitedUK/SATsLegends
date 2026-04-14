@@ -5085,6 +5085,9 @@ button.avatar-hero-arrow:not(:disabled):active {
   border-radius: 1.1rem;
   background: rgba(6, 16, 36, 0.68);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 14px 26px rgba(2,6,23,0.28);
+  width: min(100%, 780px);
+  margin-left: auto;
+  margin-right: auto;
   padding: 0.6rem 0.9rem;
   text-align: center;
   transform: scale(var(--question-card-scale, 1));

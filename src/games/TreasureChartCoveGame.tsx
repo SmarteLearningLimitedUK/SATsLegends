@@ -425,12 +425,12 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_28%,rgba(15,23,42,0.16)_100%)]" />
           <div className="absolute inset-x-[6%] bottom-[14%] h-[22%] rounded-[50%] bg-[radial-gradient(circle_at_center,rgba(251,191,36,0.22),rgba(59,130,246,0.12),transparent_72%)]" />
 
-          <div className="relative z-10 flex h-full w-full flex-col px-3 pb-3 pt-4 md:px-5 md:pb-4 md:pt-5">
-            <div className="flex justify-center">
-              <div className="game-question-card w-full max-w-[96%]">
-                <div className="question-title">{round.title}</div>
-                <div className="question-subtitle">{formatFantasyPrompt(round.prompt)}</div>
-              </div>
+            <div className="relative z-10 flex h-full w-full flex-col px-3 pb-3 pt-2 md:px-5 md:pb-4 md:pt-3">
+              <div className="flex justify-center">
+                <div className="game-question-card w-full max-w-[780px]">
+                  <div className="question-title">{round.title}</div>
+                  <div className="question-subtitle">{formatFantasyPrompt(round.prompt)}</div>
+                </div>
             </div>
 
             <div className="mt-2 grid min-h-0 flex-1 grid-cols-1 gap-2 md:mt-2 md:grid-cols-[1.02fr_0.98fr] md:gap-2">

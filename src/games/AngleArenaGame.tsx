@@ -579,7 +579,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
               <div
                 className={`relative z-20 w-full transition-all duration-300 ${gameState === 'firing' || gameState === 'projectileFlight' || gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? 'pointer-events-none max-h-0 opacity-0' : 'max-h-[320px] opacity-100'}`}
               >
-                <div className="game-question-card">
+                <div className="game-question-card w-full max-w-[780px]">
                   <div className="question-title">{formatFantasyPrompt(activeQuestion?.prompt ?? 'Choose the correct launch angle.')}</div>
                 </div>
                 <div className="mt-1.5 grid grid-cols-2 gap-1.5">

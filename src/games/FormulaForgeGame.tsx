@@ -5,6 +5,7 @@ import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 import { triggerHaptic } from '../haptics';
 import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface FormulaForgeGameProps {
   levelId: number;
@@ -82,7 +83,7 @@ const buildAreaRound = (mode: SolveMode, level: number): FormulaRound => {
       kind: 'reasoning',
       title: 'Rectangle Area',
       formula: 'A = l × w',
-      prompt: `Find ${missing === 'l' ? 'l' : 'w'} when A = ${area}.`,
+      prompt: `Missing ${missing === 'l' ? 'l' : 'w'} for A = ${area}.`,
       targetLabel: missing === 'l' ? 'l' : 'w',
       given: missing === 'l'
         ? [{ label: 'A', value: area }, { label: 'w', value: width }]
@@ -98,7 +99,7 @@ const buildAreaRound = (mode: SolveMode, level: number): FormulaRound => {
     kind: 'fluency',
     title: 'Rectangle Area',
     formula: 'A = l × w',
-    prompt: 'Find the area.',
+    prompt: 'Find area.',
     targetLabel: 'A',
     given: [{ label: 'l', value: length }, { label: 'w', value: width }],
     answer: area,
@@ -120,7 +121,7 @@ const buildPerimeterRound = (mode: SolveMode, level: number): FormulaRound => {
       kind: 'reasoning',
       title: 'Rectangle Perimeter',
       formula: 'P = 2(l + w)',
-      prompt: `Find ${missing === 'l' ? 'l' : 'w'} when P = ${perimeter}.`,
+      prompt: `Missing ${missing === 'l' ? 'l' : 'w'} for P = ${perimeter}.`,
       targetLabel: missing === 'l' ? 'l' : 'w',
       given: missing === 'l'
         ? [{ label: 'P', value: perimeter }, { label: 'w', value: width }]
@@ -136,7 +137,7 @@ const buildPerimeterRound = (mode: SolveMode, level: number): FormulaRound => {
     kind: 'fluency',
     title: 'Rectangle Perimeter',
     formula: 'P = 2(l + w)',
-    prompt: 'Find the perimeter.',
+    prompt: 'Find perimeter.',
     targetLabel: 'P',
     given: [{ label: 'l', value: length }, { label: 'w', value: width }],
     answer: perimeter,
@@ -154,7 +155,7 @@ const buildTriangleRound = (level: number): FormulaRound => {
     kind: 'fluency',
     title: 'Triangle Area',
     formula: 'A = (b × h) ÷ 2',
-    prompt: 'Find the area.',
+    prompt: 'Find area.',
     targetLabel: 'A',
     given: [{ label: 'b', value: base }, { label: 'h', value: height }],
     answer: area,
@@ -177,7 +178,7 @@ const buildVolumeRound = (mode: SolveMode, level: number): FormulaRound => {
       kind: 'reasoning',
       title: 'Cuboid Volume',
       formula: 'V = l × w × h',
-      prompt: `Find ${missing === 'l' ? 'l' : 'h'} when V = ${volume}.`,
+      prompt: `Missing ${missing === 'l' ? 'l' : 'h'} for V = ${volume}.`,
       targetLabel: missing === 'l' ? 'l' : 'h',
       given: missing === 'l'
         ? [{ label: 'V', value: volume }, { label: 'w', value: width }, { label: 'h', value: height }]
@@ -193,7 +194,7 @@ const buildVolumeRound = (mode: SolveMode, level: number): FormulaRound => {
     kind: 'fluency',
     title: 'Cuboid Volume',
     formula: 'V = l × w × h',
-    prompt: 'Find the volume.',
+    prompt: 'Find volume.',
     targetLabel: 'V',
     given: [{ label: 'l', value: length }, { label: 'w', value: width }, { label: 'h', value: height }],
     answer: volume,
@@ -347,7 +348,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
 
           <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-2 md:px-4 md:pb-4">
             <div className="flex justify-center">
-              <div className="max-w-[96%] rounded-[1.4rem] border border-amber-200/45 bg-[linear-gradient(180deg,rgba(251,191,36,0.3),rgba(245,158,11,0.14))] px-4 py-2 text-center shadow-[0_12px_26px_rgba(15,23,42,0.18)] md:px-6 md:py-2.5">
+              <div className="game-question-card w-full max-w-[780px] rounded-[1.4rem] border border-amber-200/45 bg-[linear-gradient(180deg,rgba(251,191,36,0.3),rgba(245,158,11,0.14))] px-4 py-2 text-center shadow-[0_12px_26px_rgba(15,23,42,0.18)] md:px-6 md:py-2.5">
                 <div className="text-sm font-black tracking-tight text-amber-50 md:text-[1.15rem]">Formula Forge</div>
                 <div className="mt-0.5 text-[11px] font-bold text-amber-100/90 md:text-sm">
                   Round {roundNumber} of {totalRounds}
@@ -364,7 +365,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
                       {round.formula}
                     </div>
                   </div>
-                  <div className="mt-3 text-[11px] font-bold text-cyan-100/85 md:text-sm">{round.prompt}</div>
+                  <div className="mt-3 text-[11px] font-bold text-cyan-100/85 md:text-sm">{formatFantasyPrompt(round.prompt)}</div>
                 </div>
 
                 <div className="rounded-[1.25rem] border border-emerald-200/18 bg-[linear-gradient(180deg,rgba(16,185,129,0.16),rgba(15,23,42,0.8))] p-3 shadow-[0_12px_22px_rgba(2,6,23,0.18)] md:p-4">

@@ -142,7 +142,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'Which number is the greatest?',
+        prompt: 'Which number is biggest?',
         sublabel: 'Compare the highest-value digits first, then scan across.',
         options: ['4,305,019', '4,350,190', '4,305,901', '4,305,109'],
         answerIndex: 1,
@@ -152,7 +152,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'What is the value of the digit 6 in 3,674,215?',
+        prompt: 'What is the value of 6 in 3,674,215?',
         sublabel: 'This SATs-style question is about place value, not the digit itself.',
         options: ['6', '60,000', '600,000', '6,000'],
         answerIndex: 2,
@@ -162,7 +162,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'Which number rounds to 340,000 to the nearest 10,000?',
+        prompt: 'Which number rounds to 340,000?',
         sublabel: 'Check the thousands digit before you round.',
         options: ['345,120', '334,888', '344,921', '349,999'],
         answerIndex: 2,
@@ -172,7 +172,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'What number is 10,000 more than 589,432?',
+        prompt: 'What is 10,000 more than 589,432?',
         sublabel: 'Only the ten-thousands place changes.',
         options: ['590,432', '599,432', '589,532', '579,432'],
         answerIndex: 1,
@@ -184,7 +184,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'Calculate 84 + 67',
+        prompt: 'Work out 84 + 67',
         sublabel: 'Add the two numbers.',
         options: ['141', '151', '161', '171'],
         answerIndex: 0,
@@ -226,7 +226,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'Guide the scout to beacon C. Which coordinates lock in the route?',
+        prompt: 'Find beacon C. Which coordinates are correct?',
         sublabel: 'Read across the x-axis first, then up the y-axis.',
         options: ['(6, 2)', '(2, 6)', '(0, 3)', '(8, 8)'],
         answerIndex: 2,
@@ -248,7 +248,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'Point P starts at (5, 8). Move 4 right, 6 down and 2 left. Where does P finish?',
+        prompt: 'Point P starts at (5, 8). Where does it finish?',
         sublabel: 'Combine the translations carefully.',
         options: ['(7, 2)', '(7, 4)', '(9, 2)', '(3, 2)'],
         answerIndex: 0,
@@ -262,7 +262,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'Which point is located at (4, 7)?',
+        prompt: 'Which point is at (4, 7)?',
         sublabel: 'Match the coordinates to the labelled point.',
         options: ['A', 'B', 'C', 'D'],
         answerIndex: 3,
@@ -320,7 +320,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'A shape moves 8 units right. Which description matches the transformation?',
+        prompt: 'A shape moves 8 right. Which rule matches?',
         sublabel: 'This mirrors the one-step translation prompts in the papers.',
         options: ['translation 8 units right', 'reflection in a vertical line', 'translation 8 units left', 'rotation 90° clockwise'],
         answerIndex: 0,
@@ -336,7 +336,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'A recipe uses 150 g of flour for 3 portions. How much flour is needed for 9 portions?',
+        prompt: '150 g makes 3 portions. How much for 9?',
         sublabel: 'Scale every ingredient by the same factor.',
         options: ['300 g', '450 g', '600 g', '750 g'],
         answerIndex: 1,
@@ -353,7 +353,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'Convert 5.4 km to metres.',
+        prompt: 'Convert 5.4 km to m.',
         sublabel: 'Use the correct place-value shift for kilometres to metres.',
         options: ['54 m', '540 m', '5,400 m', '54,000 m'],
         answerIndex: 2,
@@ -367,7 +367,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'Convert 35.5 cm to metres.',
+        prompt: 'Convert 35.5 cm to m.',
         sublabel: 'A decimal conversion needs careful place value.',
         options: ['0.355 m', '3.55 m', '35.5 m', '0.0355 m'],
         answerIndex: 0,
@@ -381,7 +381,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'A shorter tower is half the height of a 22 cm tower. How tall is the shorter tower?',
+        prompt: 'Half of a 22 cm tower is how tall?',
         sublabel: 'Use the multiplicative relationship, not subtraction.',
         options: ['10 cm', '11 cm', '12 cm', '44 cm'],
         answerIndex: 1,
@@ -400,7 +400,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'How many were recorded in the green bar?',
+        prompt: 'What is the green bar total?',
         sublabel: 'Read the exact bar height.',
         options: ['4', '5', '6', '7'],
         answerIndex: 2,
@@ -419,7 +419,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'Which bar shows the greatest value?',
+        prompt: 'Which bar is biggest?',
         sublabel: 'Compare all bar heights before you answer.',
         options: ['Red', 'Blue', 'Green', 'Gold'],
         answerIndex: 1,
@@ -438,7 +438,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'How many more does the blue bar show than the orange bar?',
+        prompt: 'How many more is blue than orange?',
         sublabel: 'Find the difference between the two bar heights.',
         options: ['2', '3', '4', '5'],
         answerIndex: 1,
@@ -459,7 +459,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'What is the mean of 8, 10, 12 and 14?',
+        prompt: 'Find the mean of 8, 10, 12 and 14.',
         sublabel: 'Add the values, then divide by how many there are.',
         options: ['11', '12', '44', '10'],
         answerIndex: 0,
@@ -479,7 +479,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'Five scores have a mean of 18. What is their total?',
+        prompt: 'Five scores have a mean of 18. What is the total?',
         sublabel: 'Mean multiplied by number of scores gives the total.',
         options: ['23', '72', '90', '108'],
         answerIndex: 2,
@@ -511,7 +511,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'A rule says black = (white × 3) + 4. If white = 9, how many black beads are needed?',
+        prompt: 'Rule: black = (white ? 3) + 4. White = 9. Find black beads.',
         sublabel: 'Substitute the value and then calculate.',
         options: ['27', '31', '36', '13'],
         answerIndex: 1,
@@ -521,7 +521,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'A rule says black = (white × 3) + 4. If black = 25, what is white?',
+        prompt: 'Rule: black = (white ? 3) + 4. Black = 25. What is white?',
         sublabel: 'Work backwards through the rule.',
         options: ['5', '6', '7', '8'],
         answerIndex: 2,
@@ -533,7 +533,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'Convert 3.5 km to metres.',
+        prompt: 'Convert 3.5 km to m.',
         sublabel: 'Remember that 1 km = 1000 m.',
         options: ['3,500 m', '350 m', '35,000 m', '3.5 m'],
         answerIndex: 0,
@@ -543,7 +543,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'Convert 420 cm to metres.',
+        prompt: 'Convert 420 cm to m.',
         sublabel: 'Divide by 100 to move from cm to m.',
         options: ['4.2 m', '42 m', '0.42 m', '420 m'],
         answerIndex: 0,
@@ -553,7 +553,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'A bottle holds 1.2 litres. How many millilitres is that?',
+        prompt: '1.2 litres = how many millilitres?',
         sublabel: 'Litres to millilitres is ×1000.',
         options: ['1,200 ml', '120 ml', '12,000 ml', '0.12 ml'],
         answerIndex: 0,
@@ -563,7 +563,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'Convert 2.75 kg to grams.',
+        prompt: 'Convert 2.75 kg to g.',
         sublabel: 'Kilograms to grams is ×1000.',
         options: ['2,750 g', '275 g', '27,500 g', '2.75 g'],
         answerIndex: 0,
@@ -573,7 +573,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'A rope is 1.8 m long. How many centimetres is this?',
+        prompt: '1.8 m = how many cm?',
         sublabel: 'Multiply by 100.',
         options: ['180 cm', '18 cm', '1,800 cm', '1.8 cm'],
         answerIndex: 0,
@@ -583,7 +583,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'A recipe needs 450 ml of juice. How many litres is that?',
+        prompt: '450 ml = how many litres?',
         sublabel: 'Millilitres to litres is ÷1000.',
         options: ['0.45 l', '4.5 l', '45 l', '0.045 l'],
         answerIndex: 0,
@@ -605,7 +605,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'Use P = 2(l + w). Find the perimeter when l = 6 cm and w = 4 cm.',
+        prompt: 'Find perimeter when l = 6 cm and w = 4 cm.',
         sublabel: 'Add first, then double.',
         options: ['20 cm', '10 cm', '24 cm', '18 cm'],
         answerIndex: 0,
@@ -615,7 +615,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'Use A = (b × h) ÷ 2. Find the area when b = 12 cm and h = 5 cm.',
+        prompt: 'Use A = (b ? h) ? 2. Find the area for b = 12 cm, h = 5 cm.',
         sublabel: 'Multiply then halve.',
         options: ['30 cm²', '60 cm²', '17 cm²', '24 cm²'],
         answerIndex: 0,
@@ -635,7 +635,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'A rule says y = 2x + 5. If y = 19, what is x?',
+        prompt: 'Rule: y = 2x + 5. If y = 19, what is x?',
         sublabel: 'Work backwards through the rule.',
         options: ['7', '9', '12', '14'],
         answerIndex: 0,
@@ -645,7 +645,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'Use V = l × w × h. Find the volume when l = 4 cm, w = 3 cm, h = 5 cm.',
+        prompt: 'Use V = l ? w ? h. Find volume for 4, 3, 5.',
         sublabel: 'Multiply all three values.',
         options: ['60 cm³', '12 cm³', '20 cm³', '75 cm³'],
         answerIndex: 0,
@@ -657,7 +657,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'What number completes the sequence?',
+        prompt: 'What comes next?',
         sublabel: 'Look for the constant step between terms.',
         options: ['24', '26', '28', '30'],
         answerIndex: 1,
@@ -667,7 +667,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'A function machine does ×3, then +2. What is the output for 7?',
+        prompt: 'Function machine: ?3, then +2. What is the output for 7?',
         sublabel: 'Apply the operations in the given order.',
         options: ['21', '23', '27', '16'],
         answerIndex: 1,
@@ -677,7 +677,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'A two-digit number is a multiple of 7 and one of its digits is 8. Which number could it be?',
+        prompt: 'A multiple of 7 has a digit 8. Which could it be?',
         sublabel: 'Test the clue against each option like a SATs reasoning item.',
         options: ['28', '38', '68', '86'],
         answerIndex: 0,
@@ -687,7 +687,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'What is the next term in the pattern 120, 108, 96, 84, ... ?',
+        prompt: 'What comes next in 120, 108, 96, 84, ...?',
         sublabel: 'Keep the subtraction rule going.',
         options: ['74', '72', '70', '68'],
         answerIndex: 1,
@@ -703,7 +703,7 @@ const DATA_DUNGEON_BANK: BankEntry<DataDungeonPuzzle>[] = [
     value: {
       id: 'sat-mean-1',
       type: 'mean',
-      question: 'What is the mean of these numbers?',
+      question: 'Find the mean.',
       options: [12, 10, 11, 44],
       answer: 11,
       data: [8, 10, 12, 14],
@@ -714,7 +714,7 @@ const DATA_DUNGEON_BANK: BankEntry<DataDungeonPuzzle>[] = [
     value: {
       id: 'sat-median-1',
       type: 'median',
-      question: 'What is the MEDIAN of these numbers?',
+      question: 'Find the median.',
       options: [9, 11, 13, 20],
       answer: 11,
       data: [20, 11, 4, 15, 9],
@@ -725,7 +725,7 @@ const DATA_DUNGEON_BANK: BankEntry<DataDungeonPuzzle>[] = [
     value: {
       id: 'sat-mode-1',
       type: 'mode',
-      question: 'What is the MODE of these numbers?',
+      question: 'Find the mode.',
       options: [5, 7, 9, 12],
       answer: 7,
       data: [7, 5, 7, 9, 12],
@@ -736,7 +736,7 @@ const DATA_DUNGEON_BANK: BankEntry<DataDungeonPuzzle>[] = [
     value: {
       id: 'sat-range-1',
       type: 'range',
-      question: 'What is the RANGE of these numbers?',
+      question: 'Find the range.',
       options: [11, 12, 13, 31],
       answer: 13,
       data: [13, 9, 22, 17, 11],
@@ -747,7 +747,7 @@ const DATA_DUNGEON_BANK: BankEntry<DataDungeonPuzzle>[] = [
     value: {
       id: 'sat-barchart-1',
       type: 'barchart',
-      question: 'How many blue gems were found?',
+      question: 'How many blue gems?',
       options: [5, 6, 7, 8],
       answer: 7,
       data: [],
@@ -764,7 +764,7 @@ const DATA_DUNGEON_BANK: BankEntry<DataDungeonPuzzle>[] = [
     value: {
       id: 'sat-barchart-2',
       type: 'barchart',
-      question: 'How many more green gems were found than red gems?',
+      question: 'How many more green than red?',
       options: [1, 2, 3, 4],
       answer: 2,
       data: [],
@@ -781,7 +781,7 @@ const DATA_DUNGEON_BANK: BankEntry<DataDungeonPuzzle>[] = [
     value: {
       id: 'sat-mean-2',
       type: 'mean',
-      question: 'What is the MEAN of these scores?',
+      question: 'Find the mean.',
       options: [14, 15, 16, 75],
       answer: 15,
       data: [9, 12, 15, 18, 21],
@@ -792,7 +792,7 @@ const DATA_DUNGEON_BANK: BankEntry<DataDungeonPuzzle>[] = [
     value: {
       id: 'sat-range-2',
       type: 'range',
-      question: 'What is the RANGE of these numbers?',
+      question: 'Find the range.',
       options: [18, 19, 20, 21],
       answer: 19,
       data: [6, 10, 17, 25],
@@ -804,7 +804,7 @@ const MEASUREMENT_FORGE_BANK: BankEntry<MeasurementProblem>[] = [
   {
     minLevel: 1,
     value: {
-      question: 'Forge a sword that is 3.6 m long. What is this in cm?',
+      question: '3.6 m = how many cm?',
       options: ['36 cm', '360 cm', '3,600 cm', '0.36 cm'],
       answer: '360 cm',
       itemType: 'sword',
@@ -813,7 +813,7 @@ const MEASUREMENT_FORGE_BANK: BankEntry<MeasurementProblem>[] = [
   {
     minLevel: 1,
     value: {
-      question: 'Forge an armor plate weighing 2.35 kg. What is this in g?',
+      question: '2.35 kg = how many g?',
       options: ['235 g', '2350 g', '23500 g', '0.235 g'],
       answer: '2350 g',
       itemType: 'armor',
@@ -822,7 +822,7 @@ const MEASUREMENT_FORGE_BANK: BankEntry<MeasurementProblem>[] = [
   {
     minLevel: 2,
     value: {
-      question: 'Brew a potion with 750 ml of liquid. What is this in l?',
+      question: '750 ml = how many l?',
       options: ['7.5 l', '0.75 l', '75 l', '0.075 l'],
       answer: '0.75 l',
       itemType: 'potion',
@@ -831,7 +831,7 @@ const MEASUREMENT_FORGE_BANK: BankEntry<MeasurementProblem>[] = [
   {
     minLevel: 2,
     value: {
-      question: 'Brew a potion with 1.8 l of liquid. What is this in ml?',
+      question: '1.8 l = how many ml?',
       options: ['180 ml', '1,080 ml', '1800 ml', '18,000 ml'],
       answer: '1800 ml',
       itemType: 'potion',
@@ -840,7 +840,7 @@ const MEASUREMENT_FORGE_BANK: BankEntry<MeasurementProblem>[] = [
   {
     minLevel: 3,
     value: {
-      question: 'Forge a shield weighing 4.08 kg. What is this in g?',
+      question: '4.08 kg = how many g?',
       options: ['408 g', '4080 g', '40800 g', '0.408 g'],
       answer: '4080 g',
       itemType: 'shield',
@@ -849,7 +849,7 @@ const MEASUREMENT_FORGE_BANK: BankEntry<MeasurementProblem>[] = [
   {
     minLevel: 3,
     value: {
-      question: 'Forge a sword that is 0.85 m long. What is this in mm?',
+      question: '0.85 m = how many mm?',
       options: ['85 mm', '850 mm', '8,500 mm', '0.85 mm'],
       answer: '850 mm',
       itemType: 'sword',
@@ -861,7 +861,7 @@ const TIMEKEEPER_BANK: BankEntry<TimeProblem>[] = [
   {
     minLevel: 1,
     value: {
-      question: 'What time is 7:20 PM in 24-hour format?',
+      question: '7:20 PM in 24-hour time?',
       options: ['07:20', '17:20', '19:20', '21:20'],
       answer: '19:20',
     },
@@ -869,7 +869,7 @@ const TIMEKEEPER_BANK: BankEntry<TimeProblem>[] = [
   {
     minLevel: 1,
     value: {
-      question: 'What time is 12:35 AM in 24-hour format?',
+      question: '12:35 AM in 24-hour time?',
       options: ['00:35', '12:35', '01:35', '23:35'],
       answer: '00:35',
     },
@@ -877,7 +877,7 @@ const TIMEKEEPER_BANK: BankEntry<TimeProblem>[] = [
   {
     minLevel: 2,
     value: {
-      question: 'What time is 1 hour and 25 minutes after 4:15 PM?',
+      question: '1 hour 25 minutes after 4:15 PM?',
       options: ['5:30 PM', '5:40 PM', '6:40 PM', '5:50 PM'],
       answer: '5:40 PM',
     },
@@ -885,7 +885,7 @@ const TIMEKEEPER_BANK: BankEntry<TimeProblem>[] = [
   {
     minLevel: 2,
     value: {
-      question: 'What time is 2 hours and 10 minutes before 9:05 AM?',
+      question: '2 hours 10 minutes before 9:05 AM?',
       options: ['6:55 AM', '7:15 AM', '7:55 AM', '6:45 AM'],
       answer: '6:55 AM',
     },
@@ -893,7 +893,7 @@ const TIMEKEEPER_BANK: BankEntry<TimeProblem>[] = [
   {
     minLevel: 3,
     value: {
-      question: 'How long is it from 08:35 to 11:20?',
+      question: 'How long from 08:35 to 11:20?',
       options: ['2h 35m', '2h 45m', '3h 45m', '2h 55m'],
       answer: '2h 45m',
     },
@@ -901,7 +901,7 @@ const TIMEKEEPER_BANK: BankEntry<TimeProblem>[] = [
   {
     minLevel: 3,
     value: {
-      question: 'What time is 150 minutes after 10:40 AM?',
+      question: '150 minutes after 10:40 AM?',
       options: ['12:50 PM', '1:10 PM', '1:20 PM', '12:10 PM'],
       answer: '1:10 PM',
     },

@@ -45,7 +45,7 @@ const minigamePlan = [
   { island: 'Operations Outpost', games: ['Factor Frenzy', 'Multiplication Mine', 'Division Dock', 'Order Ops Arena', 'Formula Forge', 'Remainder Run'] },
   { island: 'Measurement Mountain', games: ['Problem Pyramid', 'Unit Mixer', 'Change Counter'] },
   { island: 'Ratio Rapids', games: ['Potion Panic', 'Share Splitter', 'Ratio Fractions', 'Scale Builder'] },
-  { island: 'Cursed Colosseum', games: ['Tower Of Factors', 'Crystal Core', 'Mirror Gate', 'Scales Of The Sun', 'Observatory Overload', 'Matrix Match', 'Reasoning Quest', 'Multi-Step Marathon', 'Strategy Survival', 'Mixed Mastery', 'Timed Test Trials', 'Median Master'] },
+  { island: 'Calculation Core', games: ['Tower Of Factors', 'Crystal Core', 'Mirror Gate', 'Scales Of The Sun', 'Observatory Overload', 'Matrix Match', 'Reasoning Quest', 'Multi-Step Marathon', 'Strategy Survival', 'Mixed Mastery', 'Timed Test Trials', 'Median Master'] },
 ];
 
 const ensureDir = (dir) => {

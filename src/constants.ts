@@ -67,7 +67,7 @@ const RATIO_RAPIDS_LEVELS: LevelData[] = [
   { id: 5, stars: 0, isLocked: false, blueprintKey: 'scale_builder', displayName: 'Scale Builder', gameType: 'scale_safari' },
 ];
 
-const CURSED_COLOSSEUM_LEVELS: LevelData[] = [
+const CALCULATION_CORE_LEVELS: LevelData[] = [
   { id: 1, stars: 0, isLocked: false, blueprintKey: 'tower_of_factors', displayName: 'Tower Of Factors', gameType: 'tower_of_factors', isBoss: true, bossUnlockCoins: 0 },
   { id: 2, stars: 0, isLocked: false, blueprintKey: 'crystal_core', displayName: 'Crystal Core', gameType: 'crystal_core', isBoss: true, bossUnlockCoins: 0 },
   { id: 3, stars: 0, isLocked: false, blueprintKey: 'mirror_gate', displayName: 'Mirror Gate', gameType: 'mirror_gate', isBoss: true, bossUnlockCoins: 0 },
@@ -209,17 +209,17 @@ export const ISLANDS: IslandData[] = [
   },
   {
     id: 8,
-    name: 'Cursed Colosseum',
+    name: 'Core of Calculation',
     category: 'Boss Island',
     isLocked: false,
     color: 'bg-[#2C2A4A]',
-    themeName: 'Cursed Colosseum',
+    themeName: 'Core of Calculation',
     bgGradient: 'from-slate-900 to-indigo-950',
     groundColor: 'bg-slate-900',
     mapImage: world06Map,
     decorations: [],
     levels: mergeIslandLevels(
-      CURSED_COLOSSEUM_LEVELS,
+      CALCULATION_CORE_LEVELS,
       pickLevelsByBlueprint(NUMBER_BASE_CAMP_LEVELS, ['chart_challenge']),
     ),
   },

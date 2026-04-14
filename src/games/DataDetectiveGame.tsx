@@ -272,10 +272,10 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               </div>
             </header>
           ) : null}
-          <div className="game-question-card">
-            <div className="question-title">{caseMode === 'whodunnit' ? 'Who took the loot?' : 'Match the evidence totals.'}</div>
-            <div className="question-subtitle">{caseBrief}</div>
-          </div>
+            <div className="game-question-card w-full max-w-[780px]">
+              <div className="question-title">{caseMode === 'whodunnit' ? 'Who took the loot?' : 'Match the evidence totals.'}</div>
+              <div className="question-subtitle">{caseBrief}</div>
+            </div>
         </div>
       )}
         main={(

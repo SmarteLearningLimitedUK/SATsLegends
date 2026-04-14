@@ -7,6 +7,7 @@ import { FeedbackStrip, StoryCard, TaskCard } from '../components/game-ui/GameUi
 import { getSatsInspiredChallengeQuestion } from '../systems/content/satsInspiredQuestionBanks';
 import { triggerHaptic } from '../haptics';
 import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface UnitMixerGameProps {
   levelId: number;
@@ -240,7 +241,7 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
             <div className="flex items-center justify-between gap-3">
               <div>
                 <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-200/90">Unit Mixer</div>
-                <div className="mt-1 text-base font-black text-white md:text-lg">{question.prompt}</div>
+                <div className="mt-1 text-base font-black text-white md:text-lg">{formatFantasyPrompt(question.prompt)}</div>
               </div>
               <div className="rounded-full bg-amber-200/25 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-100">
                 Round {roundIndex + 1}/{TOTAL_ROUNDS}

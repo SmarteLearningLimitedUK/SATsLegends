@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 import zombieFallback from '../assets/zombies/zombie.png';
 import zombiePlayfield from '../assets/zombies/zombiebkground.png';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface MathsVsZombiesGameProps {
   levelId: number;
@@ -547,7 +548,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
         <div className="mx-4 mt-4 rounded-3xl border border-blue-400/40 bg-blue-950/70 p-4 shadow-xl">
           <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-center text-[clamp(1.1rem,4.5vw,1.6rem)] font-black text-white">
-            {question.prompt}
+            {formatFantasyPrompt(question.prompt)}
           </div>
           <div
             className={`mt-2 min-h-[16px] text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}

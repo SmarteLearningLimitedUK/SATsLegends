@@ -66,7 +66,7 @@ const createOpsRound = (levelId: number): OpsRound => {
       expression: `(${a} + ${b}) * ${c}`,
       answer,
       options: makeOptions(answer),
-      hint: 'Brackets first, then multiply.',
+      hint: 'Brackets first.',
     };
   }
 
@@ -80,7 +80,7 @@ const createOpsRound = (levelId: number): OpsRound => {
       expression: `${a} * ${b} + ${c} * ${d}`,
       answer,
       options: makeOptions(answer),
-      hint: 'Do each multiplication before adding.',
+      hint: 'Multiply before add.',
     };
   }
 
@@ -93,7 +93,7 @@ const createOpsRound = (levelId: number): OpsRound => {
     expression: `${a} + ${b} * ${c} - ${d}`,
     answer,
     options: makeOptions(answer),
-    hint: 'Multiply first, then finish + and -.',
+    hint: 'Multiply before add or subtract.',
   };
 };
 
@@ -268,14 +268,14 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
         <PuzzleStage className="w-full max-w-6xl min-h-0 flex-1 rounded-[1.7rem] p-2 md:rounded-[2rem] md:p-3">
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_24%,rgba(15,23,42,0.2)_100%)]" />
 
-          <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-6 md:px-4 md:pb-4 md:pt-10">
+          <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-2 md:px-4 md:pb-4 md:pt-4">
             <div className="flex justify-center">
-              <div className="max-w-[96%] rounded-[1.35rem] border border-amber-200/50 bg-[linear-gradient(180deg,rgba(251,191,36,0.35),rgba(245,158,11,0.18))] px-4 py-2 text-center shadow-[0_12px_26px_rgba(15,23,42,0.18)] md:px-6 md:py-2.5">
+              <div className="game-question-card w-full max-w-[780px] rounded-[1.35rem] border border-amber-200/50 bg-[linear-gradient(180deg,rgba(251,191,36,0.35),rgba(245,158,11,0.18))] px-4 py-2 text-center shadow-[0_12px_26px_rgba(15,23,42,0.18)] md:px-6 md:py-2.5">
                 <div className="text-sm font-black tracking-tight text-amber-50 md:text-[1.15rem]">
-                  Solve the order using the correct operation order
+                  Solve it in BIDMAS order.
                 </div>
                 <div className="mt-0.5 text-[11px] font-bold text-amber-100/90 md:text-sm">
-                  Each correct answer powers the progress bar.
+                  Each correct answer pushes the bar.
                 </div>
               </div>
             </div>

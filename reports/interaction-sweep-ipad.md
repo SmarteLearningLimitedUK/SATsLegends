@@ -41,15 +41,15 @@ Base URL: http://127.0.0.1:3001/
 | Ratio Rapids | Share Splitter | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-share-splitter.png |
 | Ratio Rapids | Ratio Fractions | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-ratio-fractions.png |
 | Ratio Rapids | Scale Builder | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-scale-builder.png |
-| Cursed Colosseum | Tower Of Factors | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-tower-of-factors.png |
-| Cursed Colosseum | Crystal Core | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-crystal-core.png |
-| Cursed Colosseum | Mirror Gate | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-mirror-gate.png |
-| Cursed Colosseum | Scales Of The Sun | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-scales-of-the-sun.png |
-| Cursed Colosseum | Observatory Overload | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-observatory-overload.png |
-| Cursed Colosseum | Matrix Match | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-matrix-match.png |
-| Cursed Colosseum | Reasoning Quest | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-reasoning-quest.png |
-| Cursed Colosseum | Multi-Step Marathon | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-multi-step-marathon.png |
-| Cursed Colosseum | Strategy Survival | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-strategy-survival.png |
-| Cursed Colosseum | Mixed Mastery | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-mixed-mastery.png |
-| Cursed Colosseum | Timed Test Trials | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-timed-test-trials.png |
-| Cursed Colosseum | Median Master | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-median-master.png |
+| Core of Calculation | Tower Of Factors | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-tower-of-factors.png |
+| Core of Calculation | Crystal Core | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-crystal-core.png |
+| Core of Calculation | Mirror Gate | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-mirror-gate.png |
+| Core of Calculation | Scales Of The Sun | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-scales-of-the-sun.png |
+| Core of Calculation | Observatory Overload | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-observatory-overload.png |
+| Core of Calculation | Matrix Match | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-matrix-match.png |
+| Core of Calculation | Reasoning Quest | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-reasoning-quest.png |
+| Core of Calculation | Multi-Step Marathon | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-multi-step-marathon.png |
+| Core of Calculation | Strategy Survival | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-strategy-survival.png |
+| Core of Calculation | Mixed Mastery | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-mixed-mastery.png |
+| Core of Calculation | Timed Test Trials | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-timed-test-trials.png |
+| Core of Calculation | Median Master | Pass | None observed | D:\BrainZilla\SATsLegends\qa\qa-ipad-interaction-median-master.png |

@@ -11,6 +11,7 @@ import boat5 from '../assets/boats/5.png';
 import boat6 from '../assets/boats/6.png';
 import boat7 from '../assets/boats/7.png';
 import dockBackground from '../assets/maps/harbour.jpg';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface DivisionDockGameProps {
   levelId: number;
@@ -187,7 +188,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
     setFeedback({
       type: 'success',
       title: 'Loaded',
-      subtitle: `Boat ${index + 1} +1 crate`,
+      subtitle: `Boat ${index + 1} takes 1 crate`,
     });
     triggerHaptic('success');
   };
@@ -197,7 +198,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
     setFeedback({
       type: 'error',
       title: 'Reset',
-      subtitle: 'All crates returned to the dock.',
+      subtitle: 'All crates go back to the dock.',
     });
   };
 
@@ -210,7 +211,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
       setFeedback({
         type: 'error',
         title: 'Keep Sharing',
-        subtitle: `Use all ${question.dividend} crates before checking.`,
+        subtitle: 'Use every crate before checking.',
       });
       return;
     }
@@ -264,9 +265,9 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
 
           <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-2 md:px-2.5 md:pb-2 md:pt-2.5">
             <div className="flex justify-center">
-              <div className="game-question-card max-w-[96%] px-3 py-2 text-center">
+              <div className="game-question-card w-full max-w-[780px] px-3 py-2 text-center">
                 <div className="question-title">
-                  Share the crates — {question.dividend} ÷ {question.divisor}
+                  {formatFantasyPrompt(`Share ${question.dividend} crates across ${question.divisor} boats.`)}
                 </div>
               </div>
             </div>

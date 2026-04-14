@@ -5,6 +5,7 @@ import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import AssetIcon from '../components/AssetIcon';
 import { AVATARS } from '../constants';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface RatioRapidsGameProps {
   levelId: number;
@@ -389,7 +390,7 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
           <div className="relative z-10 flex h-full w-full flex-col px-3 pb-4 pt-16 md:px-6 md:pb-6 md:pt-20">
             <div className="flex justify-center">
             <div className="licensed-slice-paper-panel max-w-[94%] px-5 py-3 text-center shadow-[0_16px_30px_rgba(15,23,42,0.16)] md:px-7 md:py-4">
-                <div className="text-base font-black tracking-tight text-amber-900 md:text-[1.85rem]">{round.prompt}</div>
+                <div className="text-base font-black tracking-tight text-amber-900 md:text-[1.85rem]">{formatFantasyPrompt(round.prompt)}</div>
                 <div className="mt-1 text-xs font-bold text-amber-950/76 md:text-base">{round.support}</div>
               </div>
             </div>

@@ -44,7 +44,7 @@ const islands = [
   'Data Desert',
   'Operations Outpost',
   'Measurement Mountain',
-  'Cursed Colosseum',
+  'Calculation Core',
   'Ratio Rapids',
 ];
 

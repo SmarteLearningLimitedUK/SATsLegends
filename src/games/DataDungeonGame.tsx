@@ -7,6 +7,7 @@ import { getSatsInspiredDataDungeonPuzzle, type DataDungeonPuzzle as Puzzle } fr
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { Star, Timer, Lock, Unlock } from '../components/GameIcons';
 import AssetIcon from '../components/AssetIcon';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface DataDungeonGameProps {
   levelId: number;
@@ -309,7 +310,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
                     className="absolute top-3 md:top-8 z-20 flex w-[86%] flex-col items-center gap-3 p-3 md:w-[80%] md:gap-4 md:p-6 licensed-game-card"
                   >
                     <h3 className="text-sm md:text-xl font-black text-stone-800 text-center">
-                      {puzzle.question}
+                      {formatFantasyPrompt(puzzle.question)}
                     </h3>
 
                     {/* Data Visualization */}

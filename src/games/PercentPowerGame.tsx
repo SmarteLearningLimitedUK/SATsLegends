@@ -10,6 +10,7 @@ import {
   type GameplaySessionEventHandlers,
   type GameplaySessionState,
 } from '../app/gameplaySessionContract';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface PercentPowerGameProps {
   levelId: number;
@@ -360,7 +361,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
             </div>
           </div>
           <div className="mt-2 text-center text-[1.02rem] font-black leading-tight text-white md:text-[1.32rem]">
-            {question.prompt}
+            {formatFantasyPrompt(question.prompt)}
           </div>
           <div className="mt-1 text-center text-[11px] font-semibold text-cyan-100/70 md:text-[12px]">
             {question.helper}

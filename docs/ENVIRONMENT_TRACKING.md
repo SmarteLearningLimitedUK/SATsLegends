@@ -164,18 +164,18 @@ All screenshots are stored in D:\\BrainZilla\\SATsLegends\\qa\\
 | Ratio Rapids | Share Splitter | qa-ipad-share-splitter.png | Verified | None observed |
 | Ratio Rapids | Ratio Fractions | qa-ipad-ratio-fractions.png | Verified | None observed |
 | Ratio Rapids | Scale Builder | qa-ipad-scale-builder.png | Verified | None observed |
-| Cursed Colosseum | Tower Of Factors | qa-ipad-tower-of-factors.png | Verified | None observed |
-| Cursed Colosseum | Crystal Core | qa-ipad-crystal-core.png | Verified | None observed |
-| Cursed Colosseum | Mirror Gate | qa-ipad-mirror-gate.png | Verified | None observed |
-| Cursed Colosseum | Scales Of The Sun | qa-ipad-scales-of-the-sun.png | Verified | None observed |
-| Cursed Colosseum | Observatory Overload | qa-ipad-observatory-overload.png | Verified | None observed |
-| Cursed Colosseum | Matrix Match | qa-ipad-matrix-match.png | Verified | None observed |
-| Cursed Colosseum | Reasoning Quest | qa-ipad-reasoning-quest.png | Verified | None observed |
-| Cursed Colosseum | Multi-Step Marathon | qa-ipad-multi-step-marathon.png | Verified | None observed |
-| Cursed Colosseum | Strategy Survival | qa-ipad-strategy-survival.png | Verified | None observed |
-| Cursed Colosseum | Mixed Mastery | qa-ipad-mixed-mastery.png | Verified | None observed |
-| Cursed Colosseum | Timed Test Trials | qa-ipad-timed-test-trials.png | Verified | None observed |
-| Cursed Colosseum | Median Master | qa-ipad-median-master.png | Verified | None observed |
+| Core of Calculation | Tower Of Factors | qa-ipad-tower-of-factors.png | Verified | None observed |
+| Core of Calculation | Crystal Core | qa-ipad-crystal-core.png | Verified | None observed |
+| Core of Calculation | Mirror Gate | qa-ipad-mirror-gate.png | Verified | None observed |
+| Core of Calculation | Scales Of The Sun | qa-ipad-scales-of-the-sun.png | Verified | None observed |
+| Core of Calculation | Observatory Overload | qa-ipad-observatory-overload.png | Verified | None observed |
+| Core of Calculation | Matrix Match | qa-ipad-matrix-match.png | Verified | None observed |
+| Core of Calculation | Reasoning Quest | qa-ipad-reasoning-quest.png | Verified | None observed |
+| Core of Calculation | Multi-Step Marathon | qa-ipad-multi-step-marathon.png | Verified | None observed |
+| Core of Calculation | Strategy Survival | qa-ipad-strategy-survival.png | Verified | None observed |
+| Core of Calculation | Mixed Mastery | qa-ipad-mixed-mastery.png | Verified | None observed |
+| Core of Calculation | Timed Test Trials | qa-ipad-timed-test-trials.png | Verified | None observed |
+| Core of Calculation | Median Master | qa-ipad-median-master.png | Verified | None observed |
 
 ---
 
@@ -232,18 +232,18 @@ Status notes:
 | Ratio Rapids | Share Splitter | qa-phone-share-splitter.png | Verified | Drag slice aligned with touch (see qa-phone-share-splitter-drag.png). |
 | Ratio Rapids | Ratio Fractions | qa-phone-ratio-fractions.png | Verified | None observed |
 | Ratio Rapids | Scale Builder | qa-phone-scale-builder.png | Verified | None observed |
-| Cursed Colosseum | Tower Of Factors | qa-phone-tower-of-factors.png | Verified | None observed |
-| Cursed Colosseum | Crystal Core | qa-phone-crystal-core.png | Verified | None observed |
-| Cursed Colosseum | Mirror Gate | qa-phone-mirror-gate.png | Verified | None observed |
-| Cursed Colosseum | Scales Of The Sun | qa-phone-scales-of-the-sun.png | Verified | None observed |
-| Cursed Colosseum | Observatory Overload | qa-phone-observatory-overload.png | Verified | None observed |
-| Cursed Colosseum | Matrix Match | qa-phone-matrix-match.png | Verified | None observed |
-| Cursed Colosseum | Reasoning Quest | qa-phone-reasoning-quest.png | Verified | None observed |
-| Cursed Colosseum | Multi-Step Marathon | qa-phone-multi-step-marathon.png | Verified | None observed |
-| Cursed Colosseum | Strategy Survival | qa-phone-strategy-survival.png | Verified | None observed |
-| Cursed Colosseum | Mixed Mastery | qa-phone-mixed-mastery.png | Verified | None observed |
-| Cursed Colosseum | Timed Test Trials | qa-phone-timed-test-trials.png | Verified | None observed |
-| Cursed Colosseum | Median Master | qa-phone-median-master.png | Verified | None observed |
+| Core of Calculation | Tower Of Factors | qa-phone-tower-of-factors.png | Verified | None observed |
+| Core of Calculation | Crystal Core | qa-phone-crystal-core.png | Verified | None observed |
+| Core of Calculation | Mirror Gate | qa-phone-mirror-gate.png | Verified | None observed |
+| Core of Calculation | Scales Of The Sun | qa-phone-scales-of-the-sun.png | Verified | None observed |
+| Core of Calculation | Observatory Overload | qa-phone-observatory-overload.png | Verified | None observed |
+| Core of Calculation | Matrix Match | qa-phone-matrix-match.png | Verified | None observed |
+| Core of Calculation | Reasoning Quest | qa-phone-reasoning-quest.png | Verified | None observed |
+| Core of Calculation | Multi-Step Marathon | qa-phone-multi-step-marathon.png | Verified | None observed |
+| Core of Calculation | Strategy Survival | qa-phone-strategy-survival.png | Verified | None observed |
+| Core of Calculation | Mixed Mastery | qa-phone-mixed-mastery.png | Verified | None observed |
+| Core of Calculation | Timed Test Trials | qa-phone-timed-test-trials.png | Verified | None observed |
+| Core of Calculation | Median Master | qa-phone-median-master.png | Verified | None observed |
 
 ---
 
@@ -297,12 +297,12 @@ All screenshots are stored in D:\\BrainZilla\\SATsLegends\\qa\\
 | Ratio Rapids | Share Splitter | qa-pc-share-splitter.png | Verified | None observed |
 | Ratio Rapids | Ratio Fractions | qa-pc-ratio-fractions.png | Verified | None observed |
 | Ratio Rapids | Scale Builder | qa-pc-scale-builder.png | Verified | None observed |
-| Cursed Colosseum | Reasoning Quest | qa-pc-reasoning-quest.png | Verified | None observed |
-| Cursed Colosseum | Multi-Step Marathon | qa-pc-multi-step-marathon.png | Verified | None observed |
-| Cursed Colosseum | Strategy Survival | qa-pc-strategy-survival.png | Verified | None observed |
-| Cursed Colosseum | Mixed Mastery | qa-pc-mixed-mastery.png | Verified | None observed |
-| Cursed Colosseum | Timed Test Trials | qa-pc-timed-test-trials.png | Verified | None observed |
-| Cursed Colosseum | Median Master | qa-pc-median-master.png | Verified | None observed |
+| Core of Calculation | Reasoning Quest | qa-pc-reasoning-quest.png | Verified | None observed |
+| Core of Calculation | Multi-Step Marathon | qa-pc-multi-step-marathon.png | Verified | None observed |
+| Core of Calculation | Strategy Survival | qa-pc-strategy-survival.png | Verified | None observed |
+| Core of Calculation | Mixed Mastery | qa-pc-mixed-mastery.png | Verified | None observed |
+| Core of Calculation | Timed Test Trials | qa-pc-timed-test-trials.png | Verified | None observed |
+| Core of Calculation | Median Master | qa-pc-median-master.png | Verified | None observed |
 
 ---
 

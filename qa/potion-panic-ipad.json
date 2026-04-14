@@ -1,0 +1,33 @@
+{
+  "hud": {
+    "x": 159.1387939453125,
+    "y": 25.74407958984375,
+    "width": 449.722412109375,
+    "height": 972.5118408203125,
+    "top": 25.74407958984375,
+    "right": 608.8612060546875,
+    "bottom": 998.2559204101562,
+    "left": 159.1387939453125
+  },
+  "shell": {
+    "x": 159.1387939453125,
+    "y": 25.74407958984375,
+    "width": 449.722412109375,
+    "height": 972.5118408203125,
+    "top": 25.74407958984375,
+    "right": 608.8612060546875,
+    "bottom": 998.2559204101562,
+    "left": 159.1387939453125
+  },
+  "top": {
+    "x": 176.4246826171875,
+    "y": 180.4969482421875,
+    "width": 415.150634765625,
+    "height": 0,
+    "top": 180.4969482421875,
+    "right": 591.5753173828125,
+    "bottom": 180.4969482421875,
+    "left": 176.4246826171875
+  },
+  "bodyText": "AZURE\n2/2\nCLARITY\n0/5\nBrew Potion\nRESET\nTARGET RECIPE\nAzure Cleanse\nRatio 2:5\nWe need to brew an Azure Cleanse at a 2:5 ratio. Clarity is the largest share and Azure is the smaller share. Azure is already in the cauldron. Add the rest. Use all shown potions.\n3"
+}

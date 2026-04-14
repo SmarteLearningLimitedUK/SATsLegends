@@ -4,6 +4,7 @@ import AssetIcon from '../components/AssetIcon';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import fractionForgeBackground from '../assets/maps/backgroundsforgames/fraction forge map.jpg';
 import { triggerHaptic } from '../haptics';
+import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface FractionForgeGameProps {
   levelId: number;
@@ -527,7 +528,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
           <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-[17px] py-[13px] text-center backdrop-blur-sm">
             <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Order</div>
             <div className="mt-0.5 text-[clamp(1.1rem,4.2vw,1.5rem)] font-black text-white">
-              {round.prompt}
+              {formatFantasyPrompt(round.prompt)}
             </div>
             <div className="mt-1 text-[11px] font-semibold text-cyan-100/90">
               Place the fractions in order.
