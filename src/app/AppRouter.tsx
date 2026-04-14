@@ -119,35 +119,6 @@ export const AppRouter: React.FC<AppRouterProps> = ({
 }) => {
   const [showInlineHint, setShowInlineHint] = useState(false);
 
-  const shouldUseShellBackground = useMemo(() => {
-    if (screen !== 'gameplay' || !selectedLevel) return true;
-    const sceneOwnedBackgrounds = new Set([
-      'angle_arena',
-      'rounding_rocket',
-      'prime_pop',
-      'number_line_ninja',
-      'potion_pour',
-      'potion_panic',
-      'cloud_collapse',
-      'factor_frenzy',
-      'calculation_clash',
-      'polygon_palace',
-      'rotation_relay',
-      'remainder_run',
-      'maths_vs_zombies',
-      'share_splitter',
-      'ratio_fractions',
-      'data_detective',
-    ]);
-    return !(
-      selectedLevel.gameType === 'angle_arena'
-      || selectedLevel.gameType === 'potion_pour'
-      || selectedLevel.gameType === 'potion_panic'
-      || selectedLevel.gameType === 'prime_pop'
-      || (selectedLevel.blueprintKey && sceneOwnedBackgrounds.has(selectedLevel.blueprintKey))
-    );
-  }, [screen, selectedLevel]);
-
   const inlineHintText = useMemo(() => {
     if (selectedLevel?.isPractice) {
       return `Practice round: read the mission, use the tools, and tap help if you need a reminder.`;
@@ -611,15 +582,6 @@ export const AppRouter: React.FC<AppRouterProps> = ({
           className={`game-shell-host unified-minigame-hud-enabled ${gameplayTypeClass} ${usesQuestionMatchFrame ? 'question-match-shell' : ''} relative flex h-[100dvh] max-h-[100dvh] w-full min-h-0 flex-col overflow-hidden md:h-full md:max-h-full`.trim()}
           style={shellStyle}
         >
-          {shouldUseShellBackground && selectedIsland?.mapImage ? (
-            <img
-              src={selectedIsland.mapImage}
-              alt=""
-              aria-hidden="true"
-              draggable={false}
-              className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
-            />
-          ) : null}
             <div className="game-shell-contract relative z-[2] flex h-full max-h-full w-full min-h-0 flex-col overflow-hidden">
             {showInlineHint ? (
               <div

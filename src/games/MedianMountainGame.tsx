@@ -11,7 +11,6 @@ import {
   Trophy,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
@@ -251,8 +250,6 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
 
   return (
     <div className="relative h-full w-full overflow-hidden text-white">
-      <GameplaySceneBackdrop gameType="graph_grabber" minimalDecor />
-
       <div
         className={`relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.9rem)] ${
           useSharedTopHud

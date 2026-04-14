@@ -2,11 +2,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { ChevronRight, Layers, Ruler, Trophy } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import MiniGameTopBar from '../components/MiniGameTopBar';
-import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { AVATARS } from '../constants';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 import labelGreenLongAsset from '../assets/licensed/slices/label_green_long.png';
-import scaleBuilderBackground from '../assets/maps/backgroundsforgames/scalebuilder.png';
+import scaleBuilderBackground from '../assets/maps/backgroundsforgames/scalebuilder-construction.png';
 import { PrimaryButton } from '../components/game-ui/GameUiKit';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 
@@ -78,8 +77,7 @@ const LEVELS: Level[] = [
 
 const GRID_SIZE = 20;
 const BLUEPRINT_BOARD_TOP = '58%';
-const BLUEPRINT_BOARD_WIDTH = 'min(76vw, 29rem)';
-const BLUEPRINT_BOARD_HEIGHT = 'min(58vh, 29rem)';
+const BLUEPRINT_BOARD_SIZE = 'min(76vw, 29rem, 58vh)';
 
 const BlueprintGrid: React.FC = () => (
   <div className="pointer-events-none absolute inset-0 opacity-22">
@@ -316,12 +314,11 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
   };
 
   return (
-    <GameScreenShell className="overflow-hidden pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+0.25rem)]">
-      <GameplaySceneBackdrop
-        gameType="scale_safari"
-        backgroundOverride={scaleBuilderBackground}
-        className="z-[0] brightness-110 contrast-125 saturate-0"
-      />
+    <GameScreenShell
+      className="overflow-hidden pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+0.25rem)]"
+      backgroundImage={scaleBuilderBackground}
+      backgroundOpacity={1}
+    >
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-[1]"
@@ -373,11 +370,11 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
               <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0.08),rgba(15,23,42,0.16)_100%)]" />
               <div className="relative z-10 h-full w-full">
                 <div
-                  className="absolute left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-[0.9rem]"
+                  className="absolute left-1/2 flex aspect-square -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-[0.9rem]"
                   style={{
                     top: BLUEPRINT_BOARD_TOP,
-                    width: BLUEPRINT_BOARD_WIDTH,
-                    height: BLUEPRINT_BOARD_HEIGHT,
+                    width: BLUEPRINT_BOARD_SIZE,
+                    height: BLUEPRINT_BOARD_SIZE,
                   }}
                 >
                   <BlueprintGrid />

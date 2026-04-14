@@ -7,6 +7,12 @@ type WrapperProps = {
   className?: string;
 };
 
+type GameScreenShellProps = WrapperProps & {
+  backgroundImage?: string;
+  overlayDisabled?: boolean;
+  backgroundOpacity?: number;
+};
+
 const cn = (...parts: Array<string | false | null | undefined>) => parts.filter(Boolean).join(' ');
 
 const ROLE_CARD_BASE =
@@ -25,8 +31,18 @@ const fillSlice = (asset: string): React.CSSProperties => ({
 /**
  * Screen-level shells
  */
-export const GameScreenShell: React.FC<WrapperProps> = ({ children, className = '' }) => (
-  <GameUiShell>
+export const GameScreenShell: React.FC<GameScreenShellProps> = ({
+  children,
+  className = '',
+  backgroundImage,
+  overlayDisabled,
+  backgroundOpacity,
+}) => (
+  <GameUiShell
+    backgroundImage={backgroundImage}
+    overlayDisabled={overlayDisabled}
+    backgroundOpacity={backgroundOpacity}
+  >
     <section
       className={cn(
         'app-screen app-screen-fixed premium-page-root game-shell-root relative flex h-[100dvh] max-h-[100dvh] w-full min-h-0 flex-col overflow-hidden md:h-full md:max-h-full',
