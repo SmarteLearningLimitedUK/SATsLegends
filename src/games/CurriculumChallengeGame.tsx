@@ -23,7 +23,6 @@ import answerOrangeBg from '../assets/casual_ui/inputs/btn_1.png';
 import answerGreenBg from '../assets/casual_ui/inputs/btn_6a.png';
 import answerBlueBg from '../assets/casual_ui/inputs/btn_7.png';
 import answerYellowBg from '../assets/casual_ui/inputs/btn_8.png';
-import boatSpriteSheet from '../assets/boats/1.png';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface CurriculumChallengeGameProps {
@@ -216,13 +215,6 @@ const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 const formatCoordinate = (point: { x: number; y: number }) => `(${point.x}, ${point.y})`;
 const formatChallengeNumber = (value: number) => value.toLocaleString('en-GB', { maximumFractionDigits: 2 });
-const getBoatSpriteStyle = (): React.CSSProperties => ({
-  backgroundImage: `url(${boatSpriteSheet})`,
-  backgroundSize: 'contain',
-  backgroundRepeat: 'no-repeat',
-  backgroundPosition: 'center',
-});
-
 const makeOptions = (correct: string, wrongOptions: string[]) => {
   const options = shuffle([correct, ...wrongOptions.slice(0, 3)]);
   return {
@@ -1335,13 +1327,15 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
     : `rounded-[1.8rem] border border-white/10 ${isCalculationClash ? 'bg-[linear-gradient(180deg,rgba(9,34,58,0.86),rgba(7,17,31,0.62))]' : isPlaceValuePeaks ? 'bg-[linear-gradient(180deg,rgba(52,28,10,0.76),rgba(16,16,22,0.54))]' : 'bg-[linear-gradient(180deg,rgba(9,16,28,0.68),rgba(9,16,28,0.34))]'} shadow-[0_24px_64px_rgba(0,0,0,0.28)] md:rounded-[2.6rem]`;
 
   return (
-    <div className={`relative flex h-full w-full flex-col overflow-hidden ${theme.ambient} px-1.5 pb-1.5 pt-1 md:px-4 md:pb-4`}>
+    <div className={`relative flex h-full w-full flex-col overflow-hidden ${isChartGrabber ? 'bg-transparent' : theme.ambient} px-1.5 pb-1.5 pt-1 md:px-4 md:pb-4`}>
       {showSceneBackdrop ? <GameplaySceneBackdrop gameType={gameType} /> : null}
       {showSceneBackdrop ? <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${theme.scene}`} /> : null}
-      <div
-        className={`pointer-events-none absolute inset-0 ${isChartGrabber ? 'opacity-0' : 'opacity-20'}`}
-        style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.22) 1px, transparent 1px)', backgroundSize: '24px 24px' }}
-      />
+      {!isChartGrabber && (
+        <div
+          className="pointer-events-none absolute inset-0 opacity-20"
+          style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.22) 1px, transparent 1px)', backgroundSize: '24px 24px' }}
+        />
+      )}
 
       <div className={`relative z-10 flex h-full min-h-0 flex-col ${isChartGrabber ? 'gap-1 md:gap-2' : 'gap-1 md:gap-4'}`}>
 
@@ -1441,13 +1435,13 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                           ? 'min-h-[3.55rem] rounded-[1.05rem] border border-sky-100/26 shadow-[0_16px_26px_rgba(0,0,0,0.24)] md:min-h-[4.7rem] md:rounded-[1.2rem] md:px-5 md:py-3'
                           : isCalculationClash
                           ? 'min-h-[3.55rem] rounded-[1.05rem] border border-sky-100/24 shadow-[0_16px_26px_rgba(0,0,0,0.24)] md:min-h-[4.7rem] md:rounded-[1.2rem] md:px-5 md:py-3'
-                          : isChartGrabber
-                            ? 'min-h-[2.35rem] rounded-[0.95rem] md:min-h-[3.1rem] md:px-4 md:py-2'
+                  : isChartGrabber
+                            ? 'min-h-[2.35rem] rounded-[0.95rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.42),rgba(2,6,23,0.74))] md:min-h-[3.1rem] md:px-4 md:py-2'
                             : 'min-h-[3.55rem] rounded-[999px] md:min-h-[4.7rem] md:px-5 md:py-3'
                     }`}
                   >
-                    {!isPlaceValuePeaks && <img src={answerBackground} alt="" className="absolute inset-0 h-full w-full object-fill" draggable={false} />}
-                    {!isPlaceValuePeaks && !usesBlueAnswers && !isCorrect && !isWrongSelected && (
+                    {!isPlaceValuePeaks && !isChartGrabber && <img src={answerBackground} alt="" className="absolute inset-0 h-full w-full object-fill" draggable={false} />}
+                    {!isPlaceValuePeaks && !isChartGrabber && !usesBlueAnswers && !isCorrect && !isWrongSelected && (
                       <img src={answerDecorAsset} alt="" className="absolute inset-0 h-full w-full object-fill opacity-95" draggable={false} />
                     )}
                     {isPlaceValuePeaks && (
@@ -1467,12 +1461,6 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                       <div className={`flex h-7 w-7 shrink-0 items-center justify-center border text-[9px] font-black uppercase md:h-8 md:w-8 md:text-[11px] ${isPlaceValuePeaks ? 'rounded-[0.7rem] border-amber-100/14 bg-black/14 text-amber-50' : usesBlueAnswers ? `rounded-[0.65rem] ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/45 text-slate-900' : 'border-white/16 bg-white/12 text-white'}` : `rounded-full ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/35 text-slate-900' : 'border-white/14 bg-white/10 text-white'}`}`}>
                         {String.fromCharCode(65 + index)}
                       </div>
-                      {isChartGrabber && (
-                        <div
-                          className="h-9 w-12 shrink-0 rounded-[0.7rem] border border-white/30 bg-white/10 shadow-[inset_0_1px_2px_rgba(255,255,255,0.2)]"
-                          style={getBoatSpriteStyle()}
-                        />
-                      )}
                       <div className={`flex-1 text-center ${isPlaceValuePeaks ? 'text-[1.1rem] md:text-[1.7rem] text-amber-50' : isScaleBuilder || isCalculationClash || isRuleRunner ? 'text-[1rem] md:text-[1.35rem] text-white' : 'text-[1.02rem] md:text-[1.45rem] text-white'} font-black leading-none tracking-[-0.02em] drop-shadow-[0_2px_2px_rgba(0,0,0,0.42)]`}>
                         {displayOption}
                       </div>

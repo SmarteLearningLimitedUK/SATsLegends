@@ -234,7 +234,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
         className="relative z-10 h-full w-full min-h-0 gap-0 text-slate-100"
         topClassName="!min-h-0"
       top={(
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-0">
           {!useSharedTopHud ? (
             <header className="z-20 flex h-16 items-center justify-between border-b border-cyan-200/16 bg-[linear-gradient(180deg,rgba(8,26,66,0.78),rgba(5,16,42,0.84))] px-6 backdrop-blur-md">
               <div className="flex items-center gap-3">
@@ -272,7 +272,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               </div>
             </header>
           ) : null}
-            <div className="game-question-card w-full max-w-[780px]">
+            <div className="game-question-card mt-0 w-full max-w-[780px]">
               <div className="question-title">{caseMode === 'whodunnit' ? 'Who took the loot?' : 'Match the evidence totals.'}</div>
               <div className="question-subtitle">{caseBrief}</div>
             </div>
@@ -296,7 +296,8 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             </div>
           </div>
 
-          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(255,255,255,0.14),rgba(9,24,58,0.6))] p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-3 md:p-4">
+          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(255,255,255,0.11),rgba(7,18,44,0.72))] p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-3 md:p-4">
+            <div className="pointer-events-none absolute inset-0 bg-slate-950/20" />
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.3)_1px,transparent_1px)] opacity-7 [background-size:20px_20px]" />
 
             <div className="relative w-full" style={{ height: 'clamp(9.5rem, 26vh, 14rem)' }}>
@@ -416,7 +417,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                         src={suspect.portrait}
                         alt=""
                         draggable={false}
-                        className="suspect-portrait absolute inset-0 h-full w-full object-contain"
+                        className="suspect-portrait absolute inset-0 h-full w-full object-contain object-[center_18%]"
                         data-suspect-portrait="true"
                       />
                     ) : (
@@ -453,7 +454,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                             src={selectedSuspect.portrait}
                             alt=""
                             draggable={false}
-                            className="suspect-portrait h-full w-full object-contain"
+                            className="suspect-portrait h-full w-full object-contain object-[center_18%]"
                             data-suspect-portrait="true"
                           />
                         )}

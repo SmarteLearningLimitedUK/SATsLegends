@@ -214,7 +214,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
   );
 
   const earnedBrainpowerTokens = levelRows.reduce((sum, row) => sum + row.stars, 0);
-  const totalBrainpowerTokens = MAX_BRAINTOKEN_TOTAL;
+  const totalBrainpowerTokens = gameGroups.length * MAX_BRAINTOKEN_TOTAL;
 
   return (
     <div

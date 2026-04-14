@@ -4845,7 +4845,7 @@ button.avatar-hero-arrow:not(:disabled):active {
 }
 
 .screen-gameplay .game-question-card {
-  margin-top: 5px !important;
+  margin-top: 0 !important;
 }
 
 .screen-gameplay .unified-minigame-hud-enabled .structured-game-layout > * {

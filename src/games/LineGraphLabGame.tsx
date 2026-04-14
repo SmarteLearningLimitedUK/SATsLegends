@@ -304,7 +304,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
       top={(
         <div className={`flex flex-col gap-1 ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+0.05rem)]' : ''}`}>
           {!useSharedTopHud ? (
-            <header className="z-20 flex h-16 items-center justify-between border-b border-emerald-900/30 bg-slate-900/50 px-4 backdrop-blur-md sm:px-6">
+            <header className="z-20 flex h-16 items-center justify-between border-b border-emerald-900/30 bg-transparent px-4 backdrop-blur-md sm:px-6">
               <div className="flex items-center gap-3">
                 <button
                   type="button"
@@ -346,13 +346,13 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
       )}
       main={(
         <section className="flex min-h-0 flex-1 flex-col gap-2 px-2 pb-2 sm:gap-3 sm:px-3 sm:pb-3 md:px-4 md:pb-4">
-          <div className="mt-0.5 min-h-0 flex-1 rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,61,0.85),rgba(4,12,30,0.92))] p-2.5 shadow-[0_16px_40px_rgba(3,12,30,0.26)] sm:p-4 md:p-5">
+          <div className="mt-0.5 min-h-0 flex-1 rounded-[1.75rem] border border-cyan-100/16 bg-transparent p-2.5 shadow-none sm:p-4 md:p-5">
 
             <div
               ref={chartWrapRef}
               onPointerDown={handleProbePointerDown}
               onPointerMove={handleProbePointerMove}
-              className="relative w-full rounded-2xl border border-slate-700/60 bg-slate-950/35 p-2"
+              className="relative w-full rounded-2xl border border-slate-700/60 bg-transparent p-2"
               style={{ height: 'clamp(12rem, 32vh, 18.5rem)' }}
             >
               {round && chartSize.width > 0 && chartSize.height > 0 && (
