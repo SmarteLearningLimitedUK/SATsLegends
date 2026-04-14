@@ -464,7 +464,6 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
         draggable={false}
         className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
       />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.22),rgba(2,6,23,0.28)_40%,rgba(2,6,23,0.38)_100%)]" />
 
       <main
         className={`relative z-20 flex h-full w-full flex-col items-center ${topPaddingClass} px-[max(0.75rem,env(safe-area-inset-left))] pb-[calc(env(safe-area-inset-bottom)+0.8rem)]`}

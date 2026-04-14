@@ -569,8 +569,6 @@ const VolumeVaultGame: React.FC<VolumeVaultGameShellProps> = ({
   return (
     <div className="relative h-full w-full overflow-hidden text-white">
       <img src={vaultBackdrop} alt="" aria-hidden="true" draggable={false} className="absolute inset-0 h-full w-full object-cover" />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(5,13,38,0.28)_0%,rgba(2,8,26,0.55)_62%,rgba(2,8,26,0.7)_100%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(56,189,248,0.2),transparent_45%)]" />
 
       <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.9rem)] pt-1">
         <header className="shrink-0 pt-1">

@@ -359,7 +359,6 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
       className="relative h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat text-white"
       style={{ backgroundImage: `url(${factorFrenzyBackground})` }}
     >
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.22)_0%,rgba(2,6,23,0.38)_60%,rgba(2,6,23,0.5)_100%)]" />
 
       <div className="relative z-10 flex h-full flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+2.8rem)] pt-[calc(env(safe-area-inset-top)+3.45rem)] sm:px-4 sm:pt-[calc(env(safe-area-inset-top)+3.65rem)] md:px-5 md:pt-[calc(env(safe-area-inset-top)+3.9rem)]">
         <main className="relative flex min-h-0 flex-1 flex-col">

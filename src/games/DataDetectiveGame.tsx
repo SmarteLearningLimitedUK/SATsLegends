@@ -527,7 +527,6 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
       )}
       overlay={(
         <>
-          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(6,18,46,0.34),rgba(4,16,38,0.48)_55%,rgba(2,8,24,0.62)_100%)]" />
           <AnimatePresence>
             {gameState === 'complete' && (
               <motion.div

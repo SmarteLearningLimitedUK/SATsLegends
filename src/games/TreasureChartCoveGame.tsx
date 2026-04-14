@@ -420,13 +420,6 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
       className="relative flex h-full w-full flex-col overflow-hidden bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: `url(${chartCoveBackground})` }}
     >
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute inset-x-[-10%] top-[-12%] h-[42%] rounded-full bg-cyan-200/14 blur-3xl" />
-        <div className="absolute inset-x-0 top-0 h-[58%] bg-[linear-gradient(180deg,rgba(125,211,252,0.26),rgba(96,165,250,0.08),transparent)]" />
-        <div className="absolute inset-x-0 bottom-0 h-[38%] bg-[linear-gradient(180deg,rgba(8,47,73,0),rgba(8,47,73,0.18),rgba(15,23,42,0.94))]" />
-        <div className="absolute inset-x-0 bottom-[14%] h-[20%] bg-[radial-gradient(circle_at_center,rgba(125,211,252,0.18),rgba(59,130,246,0.08),transparent_72%)]" />
-      </div>
-
       <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2 md:gap-3 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.8rem)] md:pt-3">
       <div className="licensed-board-frame structured-playfield-frame relative flex w-full max-w-6xl min-h-0 flex-1 overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] shadow-[0_28px_64px_rgba(0,0,0,0.34)] md:rounded-[2.6rem]">
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_28%,rgba(15,23,42,0.16)_100%)]" />

@@ -221,9 +221,6 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
       className="relative h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat text-white"
       style={{ backgroundImage: `url(${calculationClashBackground})` }}
     >
-
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(251,191,36,0.18),rgba(10,14,31,0.08)_36%,rgba(3,7,20,0.26)_100%)]" />
-
       <main className={`relative z-10 flex h-full w-full flex-col ${topPadding} px-[max(1rem,env(safe-area-inset-left))] pb-[calc(env(safe-area-inset-bottom)+5rem)]`}>
         <div className="mx-auto flex h-full w-full max-w-[34rem] flex-col">
           <motion.div

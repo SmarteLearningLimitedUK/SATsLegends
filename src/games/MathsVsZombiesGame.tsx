@@ -481,7 +481,6 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     <div
       className="relative flex h-full w-full flex-col items-center overflow-hidden font-sans text-white select-none"
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(30,58,138,0.18)_0%,rgba(5,10,26,0.22)_100%)]" />
 
       <div className={`relative z-10 flex h-full w-full max-w-[1000px] flex-col ${useSharedTopHud ? 'pt-[max(3.7rem,calc(env(safe-area-inset-top)+3.1rem))]' : ''}`}>
         {!useSharedTopHud ? (

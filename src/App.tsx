@@ -53,6 +53,7 @@ import { CACHE_BUSTER } from './cacheBuster';
 
 const App: React.FC = () => {
   const [stageScale, setStageScale] = useState(1);
+  const [stageRenderMultiplier, setStageRenderMultiplier] = useState(1);
   const [questionCardScale, setQuestionCardScale] = useState(1);
   const [potionCauldronShift, setPotionCauldronShift] = useState('0px');
   const buildId = import.meta.env.VITE_BUILD_ID ?? CACHE_BUSTER;
@@ -535,15 +536,18 @@ const App: React.FC = () => {
       const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
       const baseWidth = IPHONE_STAGE_WIDTH;
       const baseHeight = IPHONE_STAGE_HEIGHT;
-      const rawScale = Math.min(
-        viewportWidth / baseWidth,
-        viewportHeight / baseHeight,
-      );
       const isTabletViewport = Math.min(viewportWidth, viewportHeight) >= 700;
+      const isDesktopViewport = Math.min(viewportWidth, viewportHeight) >= 1100;
+      const renderMultiplier = isDesktopViewport ? 1.25 : isTabletViewport ? 1.12 : 1;
+      const rawScale = Math.min(
+        viewportWidth / (baseWidth * renderMultiplier),
+        viewportHeight / (baseHeight * renderMultiplier),
+      );
       const scale = rawScale * (isTabletViewport ? 0.95 : 1);
       setStageScale(Number.isFinite(scale) && scale > 0 ? scale : 1);
+      setStageRenderMultiplier(renderMultiplier);
       setQuestionCardScale(isTabletViewport ? 0.92 : 1);
-        setPotionCauldronShift(isTabletViewport ? '28px' : '0px');
+      setPotionCauldronShift(isTabletViewport ? '28px' : '0px');
     };
 
     const visualViewport = window.visualViewport;
@@ -933,8 +937,8 @@ const App: React.FC = () => {
   const stageWidth = IPHONE_STAGE_WIDTH;
   const stageHeight = IPHONE_STAGE_HEIGHT;
   const stageStyle = {
-    '--game-stage-width': `${stageWidth}px`,
-    '--game-stage-height': `${stageHeight}px`,
+    '--game-stage-width': `${Math.round(stageWidth * stageRenderMultiplier)}px`,
+    '--game-stage-height': `${Math.round(stageHeight * stageRenderMultiplier)}px`,
     '--game-stage-scale': `${stageScale}`,
     '--question-card-scale': `${questionCardScale}`,
     '--potion-cauldron-shift': potionCauldronShift,

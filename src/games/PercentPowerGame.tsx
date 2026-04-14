@@ -325,7 +325,6 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
         backgroundOverride={percentPowerBackground}
         className="opacity-[0.98]"
       />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(103,232,249,0.22),transparent_30%),linear-gradient(180deg,rgba(7,31,62,0.72),rgba(4,13,28,0.92))]" />
 
       {!useSharedTopHud ? (
         <div className="absolute left-0 right-0 top-[calc(env(safe-area-inset-top)+2px)] z-30 flex items-center justify-between px-3">

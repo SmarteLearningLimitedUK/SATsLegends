@@ -306,7 +306,6 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
   return (
     <div className="relative h-full w-full overflow-hidden select-none text-white">
       <GameplaySceneBackdrop gameType="fraction_match" className="opacity-[0.98]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(56,189,248,0.32),transparent_42%),radial-gradient(circle_at_85%_12%,rgba(250,204,21,0.24),transparent_46%),radial-gradient(circle_at_40%_88%,rgba(244,114,182,0.2),transparent_50%),linear-gradient(180deg,rgba(3,12,34,0.86),rgba(7,24,52,0.86)_45%,rgba(2,10,24,0.92))]" />
 
       {!useSharedTopHud && (
         <div className="absolute left-0 right-0 z-30 flex items-center justify-between px-3 py-2 md:px-5" style={{ top: 'calc(env(safe-area-inset-top) + 2px)' }}>

@@ -154,7 +154,6 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
         draggable={false}
         className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
       />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(15,23,42,0.35)_45%,rgba(15,23,42,0.72))]" />
 
       <div className={`relative z-10 flex h-full min-h-0 w-full flex-col items-center ${topPadding} px-4 pb-[calc(env(safe-area-inset-bottom)+4.8rem)]`}>
         <div className="w-full max-w-md min-h-0">

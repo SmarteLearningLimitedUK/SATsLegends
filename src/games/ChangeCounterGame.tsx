@@ -299,7 +299,6 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
   return (
     <GameScreenShell className="overflow-hidden">
       <GameplaySceneBackdrop gameType="change_counter" />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,20,42,0.12),rgba(5,20,42,0.2)_55%,rgba(3,12,30,0.25))]" />
 
       <div className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.6rem)] md:pt-[calc(env(safe-area-inset-top)+4.9rem)]' : 'pt-[calc(env(safe-area-inset-top)+2.4rem)]'}`}>
         <PuzzleStage className="flex h-full min-h-0 flex-1 flex-col gap-2 md:gap-3">

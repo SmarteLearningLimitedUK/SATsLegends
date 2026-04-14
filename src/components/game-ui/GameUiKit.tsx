@@ -90,7 +90,7 @@ export const GameUiShell: React.FC<GameUiShellProps> = ({
   className,
   backgroundImage,
   overlayDisabled = false,
-  backgroundOpacity = 0.5,
+  backgroundOpacity = 1,
 }) => (
   <div
     className={cn(
@@ -108,22 +108,7 @@ export const GameUiShell: React.FC<GameUiShellProps> = ({
         style={{ backgroundImage: `url(${backgroundImage})`, opacity: backgroundOpacity }}
       />
     ) : null}
-    {overlayDisabled ? null : (
-      (!backgroundImage && typeof document !== 'undefined' && document.querySelector('[data-gameplay-content-viewport="true"]'))
-        ? null
-        : (
-          <>
-            <div
-              data-game-background-layer="true"
-              className="game-background-layer pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.18),rgba(2,6,23,0.38))]"
-            />
-            <div
-              data-game-background-layer="true"
-              className="game-background-layer pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.12),rgba(59,130,246,0)_55%)]"
-            />
-          </>
-        )
-    )}
+    {overlayDisabled ? null : null}
     <div className="relative z-10 flex h-full min-h-0 flex-col">
       {children}
     </div>

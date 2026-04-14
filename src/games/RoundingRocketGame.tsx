@@ -330,7 +330,6 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
         draggable={false}
         className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
       />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_14%,rgba(34,211,238,0.24),rgba(34,211,238,0)_48%)]" />
 
       <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
         <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-[12px] py-[10px] text-center backdrop-blur-sm">

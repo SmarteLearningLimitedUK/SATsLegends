@@ -248,8 +248,6 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
 
       <div className="relative z-10 mx-auto flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col px-2 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] pt-[calc(env(safe-area-inset-top)+3.6rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+2.35rem)] md:pt-[calc(env(safe-area-inset-top)+3.9rem)]">
         <PuzzleStage className="w-full min-h-0 flex-1 rounded-[1.7rem] p-2 md:rounded-[2rem] md:p-3">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(74,222,128,0.18),transparent_24%),radial-gradient(circle_at_82%_30%,rgba(56,189,248,0.14),transparent_20%),linear-gradient(180deg,rgba(8,15,30,0.12),rgba(8,15,30,0.34))]" />
-
           <div className="relative z-10 mb-2">
             <div className="licensed-game-card w-full px-4 py-3 md:px-5 md:py-4">
               <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/72">Coordinate Quest</div>

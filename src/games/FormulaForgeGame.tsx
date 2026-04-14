@@ -340,7 +340,6 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
   return (
     <GameScreenShell className="overflow-hidden">
       <GameplaySceneBackdrop gameType="formula_forge" />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,20,42,0.22),rgba(5,20,42,0.36)_52%,rgba(3,12,30,0.52))]" />
 
       <div className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.75rem)] md:pt-[calc(env(safe-area-inset-top)+5rem)]' : 'pt-[calc(env(safe-area-inset-top)+2.5rem)]'}`}>
         <PuzzleStage className="w-full max-w-6xl min-h-0 flex-1 rounded-[1.7rem] p-2 md:rounded-[2rem] md:p-3">

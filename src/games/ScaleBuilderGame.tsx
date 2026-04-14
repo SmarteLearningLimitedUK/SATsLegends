@@ -327,8 +327,6 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
 
       <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-2 px-2 pb-1 pt-[max(3.4rem,calc(env(safe-area-inset-top)+2.6rem))] md:gap-3 md:px-3">
         <PuzzleStage className="mx-auto flex h-full w-full max-w-[780px] min-h-0 flex-1 flex-col rounded-[2rem] md:rounded-[2.4rem]">
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_24%,rgba(15,23,42,0.24)_100%)]" />
-
           <div className="relative z-10 grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-2 p-2 md:p-3">
             <div className="rounded-[1rem] border border-white/14 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(15,23,42,0.84))] p-2">
               <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/78">Scale Builder</div>

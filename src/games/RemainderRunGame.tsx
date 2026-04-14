@@ -417,7 +417,6 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
         draggable={false}
         className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
       />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.45),rgba(2,6,23,0.38)_28%,rgba(2,6,23,0.56)_100%)]" />
 
       <main
         className={`relative z-20 flex h-full w-full flex-col ${topPaddingClass} px-[max(0.75rem,env(safe-area-inset-left))] pb-[max(7.25rem,calc(env(safe-area-inset-bottom)+6.2rem))]`}

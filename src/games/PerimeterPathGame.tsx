@@ -480,7 +480,6 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
         draggable={false}
         className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
       />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,8,23,0.45),rgba(3,8,23,0.45))]" />
 
       <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-[calc(env(safe-area-inset-top)+0.2rem)]">
         <main className="mt-0 flex min-h-0 flex-1 flex-col gap-1.5 sm:gap-2">

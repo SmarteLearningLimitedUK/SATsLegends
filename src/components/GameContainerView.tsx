@@ -86,9 +86,6 @@ const GameContainerView: React.FC<GameContainerViewProps> = (props) => {
             }`}
             style={flattenObjectiveShell ? undefined : objectiveShellStyle}
           >
-            {!flattenObjectiveShell ? (
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,15,33,0.03),rgba(7,15,33,0.14))]" />
-            ) : null}
             <div className="relative z-10">{objectiveArea}</div>
           </div>
         </div>
@@ -102,9 +99,6 @@ const GameContainerView: React.FC<GameContainerViewProps> = (props) => {
             }`}
             style={flattenPlayfieldShell ? undefined : playfieldShellStyle}
           >
-            {!flattenPlayfieldShell ? (
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,28,0.08),rgba(3,10,28,0.18))]" />
-            ) : null}
             <div className="relative z-10 h-full w-full min-h-0">
               {playFieldArea}
             </div>

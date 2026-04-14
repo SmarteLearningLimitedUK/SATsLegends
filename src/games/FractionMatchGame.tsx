@@ -237,7 +237,6 @@ const MatchGameShell: React.FC<{
   return (
     <div className="relative h-full w-full select-none overflow-hidden font-sans text-white">
       <GameplaySceneBackdrop gameType={variantGameType} className="opacity-[0.96]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_32%,rgba(59,130,246,0.22),rgba(3,7,18,0.78)_56%)]" />
 
       <div className="pointer-events-none absolute inset-0">
         {[...Array(20)].map((_, idx) => (

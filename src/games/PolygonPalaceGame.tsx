@@ -771,7 +771,6 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
         draggable={false}
         className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
       />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.36),rgba(2,6,23,0.42)_35%,rgba(2,6,23,0.62)_100%)]" />
 
       <main
         className={`relative z-20 flex h-full w-full flex-col items-center ${topPaddingClass} px-[max(0.75rem,env(safe-area-inset-left))] pb-[max(7.2rem,calc(env(safe-area-inset-bottom)+6.2rem))]`}

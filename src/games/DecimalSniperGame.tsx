@@ -574,7 +574,6 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
   const playFieldArea = (
     <div ref={arenaRef} className="relative h-full w-full overflow-hidden">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.16),transparent_34%),linear-gradient(180deg,rgba(4,20,42,0.82),rgba(3,10,24,0.95))]" />
         <div
           className="absolute left-0 right-0 border-b border-white/10 bg-slate-900/36"
           style={{ height: `${arenaLayout.topZoneHeight}px` }}
