@@ -92,6 +92,217 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
   },
 ];
 
+const renderIslandAccent = (islandId: number) => {
+  switch (islandId) {
+    case 8:
+      return (
+        <div className="world-map-core-smoke pointer-events-none absolute inset-0 z-10">
+          <div className="world-map-core-smoke-puff world-map-core-smoke-puff-a" />
+          <div className="world-map-core-smoke-puff world-map-core-smoke-puff-b" />
+          <div className="world-map-core-smoke-puff world-map-core-smoke-puff-c" />
+        </div>
+      );
+    case 6:
+      return (
+        <div className="world-map-volcano-accent pointer-events-none absolute inset-0 z-10">
+          <div className="world-map-volcano-flame world-map-volcano-flame-primary" />
+          <div className="world-map-volcano-flame world-map-volcano-flame-secondary" />
+          <div className="world-map-volcano-smoke" />
+        </div>
+      );
+    case 5:
+      return (
+        <>
+          {[0, 1, 2].map(index => (
+            <span
+              key={`operations-beam-${index}`}
+              className="world-map-light-beam"
+              style={{
+                left: `${24 + index * 16}%`,
+                top: `${14 + index * 3}%`,
+                transform: `rotate(${index * 7 - 8}deg)`,
+                animationDelay: `${index * 0.8}s`,
+                animationDuration: `${4.6 + index * 0.4}s`,
+              }}
+            />
+          ))}
+          {[0, 1].map(index => (
+            <span
+              key={`operations-bird-${index}`}
+              className="world-map-orbit world-map-orbit-birds"
+              style={{ animationDelay: `${index * 1.15}s`, animationDuration: `${7.1 + index * 0.5}s` }}
+            >
+              <span className="world-map-bird" />
+            </span>
+          ))}
+        </>
+      );
+    case 3:
+      return (
+        <>
+          {[0, 1, 2, 3].map(index => (
+            <span
+              key={`geometry-snow-${index}`}
+              className="world-map-snowflake"
+              style={{
+                left: `${16 + index * 12}%`,
+                top: `${8 + (index % 2) * 12}%`,
+                animationDelay: `${index * 0.42}s`,
+                animationDuration: `${3.6 + (index % 3) * 0.4}s`,
+              }}
+            />
+          ))}
+          {[0, 1].map(index => (
+            <span
+              key={`geometry-wisp-${index}`}
+              className="world-map-wind-wisp"
+              style={{
+                left: `${22 + index * 24}%`,
+                top: `${28 + index * 7}%`,
+                animationDelay: `${index * 0.95}s`,
+                animationDuration: `${5.6 + index * 0.5}s`,
+              }}
+            />
+          ))}
+        </>
+      );
+    case 2:
+      return (
+        <>
+          {[0, 1, 2].map(index => (
+            <span
+              key={`fraction-butterfly-${index}`}
+              className="world-map-butterfly"
+              style={{
+                left: `${18 + index * 19}%`,
+                top: `${22 - index * 2}%`,
+                animationDelay: `${index * 0.85}s`,
+                animationDuration: `${5.2 + index * 0.4}s`,
+              }}
+            />
+          ))}
+          {[0, 1, 2].map(index => (
+            <span
+              key={`fraction-bubble-${index}`}
+              className="world-map-bubble"
+              style={{
+                left: `${24 + index * 18}%`,
+                bottom: `${8 + index * 2}%`,
+                animationDelay: `${index * 0.7}s`,
+                animationDuration: `${4.4 + index * 0.4}s`,
+              }}
+            />
+          ))}
+        </>
+      );
+    case 4:
+      return (
+        <>
+          {[0, 1, 2].map(index => (
+            <span
+              key={`data-dust-${index}`}
+              className="world-map-dust-devil"
+              style={{
+                left: `${22 + index * 18}%`,
+                bottom: `${12 + (index % 2) * 8}%`,
+                animationDelay: `${index * 1.1}s`,
+                animationDuration: `${4.5 + index * 0.4}s`,
+              }}
+            />
+          ))}
+          {[0, 1].map(index => (
+            <span
+              key={`data-wisp-${index}`}
+              className="world-map-wind-wisp"
+              style={{
+                left: `${26 + index * 26}%`,
+                top: `${18 + index * 10}%`,
+                animationDelay: `${index * 1.2}s`,
+                animationDuration: `${5.8 + index * 0.4}s`,
+              }}
+            />
+          ))}
+        </>
+      );
+    case 7:
+      return (
+        <>
+          {[0, 1, 2].map(index => (
+            <span
+              key={`ratio-steam-puff-${index}`}
+              className="world-map-volcano-smoke"
+              style={{
+                left: `${20 + index * 18}%`,
+                top: `${2 + index * 2}%`,
+                width: `${12 + index * 2}%`,
+                height: `${12 + index * 2}%`,
+                animationDuration: `${3.6 + index * 0.35}s`,
+              }}
+            />
+          ))}
+          {[0, 1, 2].map(index => (
+            <span
+              key={`ratio-bubble-${index}`}
+              className="world-map-bubble"
+              style={{
+                left: `${18 + index * 22}%`,
+                bottom: `${6 + index * 2}%`,
+                animationDelay: `${index * 0.6}s`,
+                animationDuration: `${4.5 + index * 0.35}s`,
+              }}
+            />
+          ))}
+        </>
+      );
+    case 1:
+      return (
+        <>
+          {[0, 1, 2].map(index => (
+            <span
+              key={`acro-symbol-${index}`}
+              className="absolute text-[0.95rem] font-black text-amber-100 drop-shadow-[0_2px_8px_rgba(15,23,42,0.45)]"
+              style={{
+                left: `${22 + index * 18}%`,
+                top: `${12 + (index % 2) * 9}%`,
+                animationDelay: `${index * 0.7}s`,
+                animationDuration: `${4.4 + index * 0.45}s`,
+              }}
+            >
+              {['+', '÷', '%'][index]}
+            </span>
+          ))}
+          {[0, 1, 2].map(index => (
+            <span
+              key={`acro-star-${index}`}
+              className="world-map-orbit world-map-orbit-stars"
+              style={{ animationDelay: `${index * 0.68}s`, animationDuration: `${6.2 + index * 0.4}s` }}
+            >
+              <span className="world-map-star" />
+            </span>
+          ))}
+        </>
+      );
+    default:
+      return (
+        <div
+          className="world-map-island-breathe pointer-events-none absolute inset-0 z-10"
+          style={{
+            animationDuration: `${6.2 + (islandId % 4) * 0.6}s`,
+            animationDelay: `${(islandId % 5) * 0.18}s`,
+          }}
+        >
+          <div
+            className="world-map-island-halo"
+            style={{
+              animationDuration: `${7.4 + (islandId % 3) * 0.45}s`,
+              animationDelay: `${(islandId % 7) * 0.12}s`,
+            }}
+          />
+        </div>
+      );
+  }
+};
+
 const WorldMap: React.FC<WorldMapProps> = ({
   player,
   onSelectIsland,
@@ -184,35 +395,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
                   transform: 'translate(-50%, -50%)',
                 }}
               >
-                {hotspot.islandId === 8 ? (
-                  <div className="world-map-core-smoke pointer-events-none absolute inset-0 z-10">
-                    <div className="world-map-core-smoke-puff world-map-core-smoke-puff-a" />
-                    <div className="world-map-core-smoke-puff world-map-core-smoke-puff-b" />
-                    <div className="world-map-core-smoke-puff world-map-core-smoke-puff-c" />
-                  </div>
-                ) : hotspot.islandId === 6 ? (
-                  <div className="world-map-volcano-accent pointer-events-none absolute inset-0 z-10">
-                    <div className="world-map-volcano-flame world-map-volcano-flame-primary" />
-                    <div className="world-map-volcano-flame world-map-volcano-flame-secondary" />
-                    <div className="world-map-volcano-smoke" />
-                  </div>
-                ) : (
-                  <div
-                    className="world-map-island-breathe pointer-events-none absolute inset-0 z-10"
-                    style={{
-                      animationDuration: `${6.2 + (hotspot.islandId % 4) * 0.6}s`,
-                      animationDelay: `${(hotspot.islandId % 5) * 0.18}s`,
-                    }}
-                  >
-                    <div
-                      className="world-map-island-halo"
-                      style={{
-                        animationDuration: `${7.4 + (hotspot.islandId % 3) * 0.45}s`,
-                        animationDelay: `${(hotspot.islandId % 7) * 0.12}s`,
-                      }}
-                    />
-                  </div>
-                )}
+                {renderIslandAccent(hotspot.islandId)}
                 <button
                   type="button"
                   onClick={() => setSelectedIslandId(island.id)}

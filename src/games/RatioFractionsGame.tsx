@@ -53,9 +53,6 @@ const TRACK_LINE_FROM_BOTTOM = 177;
 const CART_Y_SHIFT = 0;
 const FINISH_Y_SHIFT = -200;
 const FINISH_X_SHIFT = -100;
-const ENEMY_FINISH_SECONDS_LEVEL1 = 90;
-const ENEMY_FINISH_SECONDS_STEP = 5;
-const ENEMY_FINISH_SECONDS_MIN = 45;
 
 const PLAYER_KARTS: Record<string, string> = {
   barratt: kartBarratt,
@@ -178,20 +175,15 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
   const raceDifficulty: RaceDifficulty = levelId <= 3 ? 'easy' : levelId <= 6 ? 'standard' : 'hard';
   const tuning = RACE_TUNING[raceDifficulty] || RACE_TUNING[DEFAULT_RACE_DIFFICULTY];
-  const enemyFinishSeconds = Math.max(
-    ENEMY_FINISH_SECONDS_MIN,
-    ENEMY_FINISH_SECONDS_LEVEL1 - Math.max(0, levelId - 1) * ENEMY_FINISH_SECONDS_STEP,
-  );
-  const enemySpeedPerSec = tuning.trackLength / enemyFinishSeconds;
 
   const raceViewportRef = useRef<HTMLDivElement | null>(null);
   const playerPosRef = useRef(START_OFFSET);
   const enemyPosRef = useRef(START_OFFSET);
   const playerTargetRef = useRef(START_OFFSET);
   const enemyTargetRef = useRef(START_OFFSET);
+  const enemyMoveTimerRef = useRef<number | null>(null);
   const reportedResultRef = useRef(false);
   const raceStateRef = useRef(raceState);
-  const raceStartTimeRef = useRef<number | null>(null);
 
   const trackProgress = Math.min(1, playerPosRef.current / tuning.trackLength);
   const lives = sessionState?.lives ?? 3;
@@ -229,7 +221,6 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     enemyPosRef.current = START_OFFSET;
     playerTargetRef.current = START_OFFSET;
     enemyTargetRef.current = START_OFFSET;
-    raceStartTimeRef.current = null;
   }, [levelId]);
 
   useEffect(() => {
@@ -241,26 +232,6 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
       lastTime = timestamp;
 
       const currentRaceState = raceStateRef.current;
-      if (
-        currentRaceState !== 'introCountdown'
-        && currentRaceState !== 'playerWin'
-        && currentRaceState !== 'enemyWin'
-      ) {
-        if (raceStartTimeRef.current === null) {
-          raceStartTimeRef.current = timestamp;
-        }
-        const elapsedSeconds = Math.max(0, (timestamp - raceStartTimeRef.current) / 1000);
-        enemyTargetRef.current = Math.min(
-          tuning.trackLength,
-          elapsedSeconds * enemySpeedPerSec,
-        );
-        if (enemyTargetRef.current >= tuning.trackLength && currentRaceState !== 'enemyWin') {
-          setRaceState('enemyWin');
-        }
-      } else if (currentRaceState === 'introCountdown') {
-        raceStartTimeRef.current = null;
-      }
-
       const playerX = playerPosRef.current;
       const enemyX = enemyPosRef.current;
       const playerTarget = playerTargetRef.current;
@@ -275,7 +246,36 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
     frameId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frameId);
-  }, [enemySpeedPerSec, tuning.trackLength, viewport.width]);
+  }, [tuning.trackLength, viewport.width]);
+
+  useEffect(() => {
+    if (enemyMoveTimerRef.current !== null) {
+      window.clearInterval(enemyMoveTimerRef.current);
+      enemyMoveTimerRef.current = null;
+    }
+
+    if (raceState !== 'showingQuestion') {
+      return undefined;
+    }
+
+    const tickEnemy = () => {
+      enemyTargetRef.current = Math.min(
+        tuning.trackLength,
+        enemyTargetRef.current + tuning.enemyAdvanceDistance,
+      );
+      if (enemyTargetRef.current >= tuning.trackLength && raceStateRef.current !== 'enemyWin') {
+        setRaceState('enemyWin');
+      }
+    };
+
+    enemyMoveTimerRef.current = window.setInterval(tickEnemy, tuning.enemyMoveIntervalMs);
+    return () => {
+      if (enemyMoveTimerRef.current !== null) {
+        window.clearInterval(enemyMoveTimerRef.current);
+        enemyMoveTimerRef.current = null;
+      }
+    };
+  }, [raceState, tuning.enemyAdvanceDistance, tuning.enemyMoveIntervalMs, tuning.trackLength]);
 
   useEffect(() => {
     if (raceState === 'playerWin' && !reportedResultRef.current) {
@@ -454,7 +454,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
         <div ref={raceViewportRef} className="pointer-events-none absolute inset-0 z-[5]">
           <div className="relative h-full w-full">
             <div
-              className="absolute z-30 flex items-center gap-1 rounded-full border border-amber-200 bg-amber-400 px-3 py-1 text-[10px] font-black uppercase text-slate-900"
+              className="absolute z-30 flex items-center gap-2 overflow-visible rounded-full border border-amber-100 bg-[linear-gradient(180deg,rgba(255,243,179,0.98),rgba(251,191,36,0.98))] px-5 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-slate-900 shadow-[0_0_0_1px_rgba(255,255,255,0.2),0_0_22px_rgba(253,224,71,0.85),0_0_42px_rgba(245,158,11,0.45)]"
               style={finishStyle}
             >
               <span>Finish</span>

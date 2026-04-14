@@ -321,6 +321,8 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
     };
   }, [rocketState]);
 
+  const rocketVerticalOffset = 100;
+
   return (
     <div className="relative h-full w-full overflow-hidden">
       <img
@@ -350,81 +352,84 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
             animate={{ opacity: [0, 0.9, 0.55, 0], scaleY: [0.3, 1.1, 0.9, 0.55] }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.64, ease: 'easeOut' }}
-            className="pointer-events-none absolute left-1/2 top-[44%] z-20 h-[42%] w-[8.75rem] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_top,rgba(250,204,21,0.85),rgba(249,115,22,0.48)_38%,rgba(14,116,144,0.08)_82%,transparent_100%)] blur-md"
+            className="pointer-events-none absolute left-1/2 z-20 h-[42%] w-[8.75rem] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_top,rgba(250,204,21,0.85),rgba(249,115,22,0.48)_38%,rgba(14,116,144,0.08)_82%,transparent_100%)] blur-md"
+            style={{ top: `calc(44% + ${rocketVerticalOffset}px)` }}
           />
         ) : null}
       </AnimatePresence>
 
       <div className="relative z-30 flex h-full w-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+5.1rem)] pt-1">
         <main className="flex min-h-0 flex-1 flex-col items-center justify-center pt-1">
-          <motion.div
-            animate={rocketState === 'idle'
-              ? { y: [0, -8, 0] }
-              : rocketAnimation}
-            transition={rocketState === 'idle'
-              ? { duration: 2.2, repeat: Infinity, ease: 'easeInOut' }
-              : { duration: rocketState === 'launching' ? 0.58 : 0.35, ease: 'easeOut' }}
-            className="relative h-[clamp(16rem,36vh,21rem)] w-[clamp(12rem,50vw,18rem)] overflow-visible"
-          >
-            <div className="absolute inset-x-[18%] bottom-[10%] h-10 rounded-full bg-cyan-300/22 blur-xl" />
-            <div className="absolute inset-x-[2%] top-0 bottom-[9%] overflow-hidden">
-              <img
-                src={roundingRocketArt}
-                alt=""
-                aria-hidden="true"
-                draggable={false}
-                className="absolute left-1/2 top-[-6%] h-[118%] w-[118%] -translate-x-1/2 object-contain object-center drop-shadow-[0_18px_24px_rgba(2,6,23,0.45)]"
-              />
-            </div>
+          <div className="relative flex justify-center" style={{ transform: `translateY(${rocketVerticalOffset}px)` }}>
+            <motion.div
+              animate={rocketState === 'idle'
+                ? { y: [0, -8, 0] }
+                : rocketAnimation}
+              transition={rocketState === 'idle'
+                ? { duration: 2.2, repeat: Infinity, ease: 'easeInOut' }
+                : { duration: rocketState === 'launching' ? 0.58 : 0.35, ease: 'easeOut' }}
+              className="relative h-[clamp(16rem,36vh,21rem)] w-[clamp(12rem,50vw,18rem)] overflow-visible"
+            >
+              <div className="absolute inset-x-[18%] bottom-[10%] h-10 rounded-full bg-cyan-300/22 blur-xl" />
+              <div className="absolute inset-x-[2%] top-0 bottom-[9%] overflow-hidden">
+                <img
+                  src={roundingRocketArt}
+                  alt=""
+                  aria-hidden="true"
+                  draggable={false}
+                  className="absolute left-1/2 top-[-6%] h-[118%] w-[118%] -translate-x-1/2 object-contain object-center drop-shadow-[0_18px_24px_rgba(2,6,23,0.45)]"
+                />
+              </div>
 
-            <AnimatePresence>
-              {rocketState === 'arming' || rocketState === 'launching' ? (
-                <>
-                  <motion.div
-                    key={`rocket-flame-${round.id}`}
-                    initial={{ opacity: 0, scaleY: 0.5 }}
-                    animate={{
-                      opacity: [0.38, 0.86, 0.62],
-                      scaleY: [0.48, 0.92, 0.72],
-                      scaleX: [0.84, 1.02, 0.9],
-                    }}
-                    exit={{ opacity: 0, scaleY: 0.2 }}
-                    transition={{ duration: 0.24, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
-                    className="absolute left-1/2 top-[82.6%] z-10 h-[3.6rem] w-[2.45rem] -translate-x-1/2 rounded-b-[1.7rem] rounded-t-[0.35rem] bg-[radial-gradient(ellipse_at_top,#fde68a_0%,#fb923c_42%,rgba(239,68,68,0.08)_100%)] shadow-[0_0_24px_rgba(249,115,22,0.58)]"
-                  />
-                  {[0, 1, 2, 3].map((index) => (
-                    <motion.span
-                      key={`rocket-smoke-${round.id}-${index}`}
-                      className="absolute left-1/2 top-[87.2%] z-0 rounded-full bg-white/38 blur-md"
-                      initial={{ opacity: 0, x: '-50%', y: 0, scale: 0.36 }}
+              <AnimatePresence>
+                {rocketState === 'arming' || rocketState === 'launching' ? (
+                  <>
+                    <motion.div
+                      key={`rocket-flame-${round.id}`}
+                      initial={{ opacity: 0, scaleY: 0.5 }}
                       animate={{
-                        opacity: [0, 0.36, 0],
-                        x: ['-50%', `${-50 + (index - 1.5) * 8}%`, `${-50 + (index - 1.5) * 15}%`],
-                        y: [0, 10 + index * 3, 24 + index * 6],
-                        scale: [0.36, 0.82, 1.18],
+                        opacity: [0.38, 0.86, 0.62],
+                        scaleY: [0.48, 0.92, 0.72],
+                        scaleX: [0.84, 1.02, 0.9],
                       }}
-                      transition={{
-                        duration: 0.98 + index * 0.1,
-                        repeat: Infinity,
-                        ease: 'easeOut',
-                        delay: index * 0.12,
-                      }}
-                      style={{
-                        width: `${1.2 + index * 0.28}rem`,
-                        height: `${0.72 + index * 0.18}rem`,
-                      }}
+                      exit={{ opacity: 0, scaleY: 0.2 }}
+                      transition={{ duration: 0.24, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
+                      className="absolute left-1/2 top-[82.6%] z-10 h-[3.6rem] w-[2.45rem] -translate-x-1/2 rounded-b-[1.7rem] rounded-t-[0.35rem] bg-[radial-gradient(ellipse_at_top,#fde68a_0%,#fb923c_42%,rgba(239,68,68,0.08)_100%)] shadow-[0_0_24px_rgba(249,115,22,0.58)]"
                     />
-                  ))}
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: [0.18, 0.3, 0.18], scale: [0.96, 1.04, 0.98] }}
-                    transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}
-                    className="absolute left-1/2 top-[86.8%] z-0 h-[2.6rem] w-[5.3rem] -translate-x-1/2 rounded-full bg-white/18 blur-xl"
-                  />
-                </>
-              ) : null}
-            </AnimatePresence>
-          </motion.div>
+                    {[0, 1, 2, 3].map((index) => (
+                      <motion.span
+                        key={`rocket-smoke-${round.id}-${index}`}
+                        className="absolute left-1/2 top-[87.2%] z-0 rounded-full bg-white/38 blur-md"
+                        initial={{ opacity: 0, x: '-50%', y: 0, scale: 0.36 }}
+                        animate={{
+                          opacity: [0, 0.36, 0],
+                          x: ['-50%', `${-50 + (index - 1.5) * 8}%`, `${-50 + (index - 1.5) * 15}%`],
+                          y: [0, 10 + index * 3, 24 + index * 6],
+                          scale: [0.36, 0.82, 1.18],
+                        }}
+                        transition={{
+                          duration: 0.98 + index * 0.1,
+                          repeat: Infinity,
+                          ease: 'easeOut',
+                          delay: index * 0.12,
+                        }}
+                        style={{
+                          width: `${1.2 + index * 0.28}rem`,
+                          height: `${0.72 + index * 0.18}rem`,
+                        }}
+                      />
+                    ))}
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: [0.18, 0.3, 0.18], scale: [0.96, 1.04, 0.98] }}
+                      transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}
+                      className="absolute left-1/2 top-[86.8%] z-0 h-[2.6rem] w-[5.3rem] -translate-x-1/2 rounded-full bg-white/18 blur-xl"
+                    />
+                  </>
+                ) : null}
+              </AnimatePresence>
+            </motion.div>
+          </div>
 
           <AnimatePresence mode="wait">
             {feedbackText ? (
