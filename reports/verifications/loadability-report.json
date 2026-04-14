@@ -1,0 +1,1489 @@
+{
+  "url": "http://127.0.0.1:3000",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "total": 111,
+  "loaded": 111,
+  "failed": 0,
+  "results": [
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 1,
+      "levelName": "Level 1",
+      "gameType": "place_value_peaks",
+      "route": "http://127.0.0.1:3000/game/1/1",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY PLACE VALUE PANIC. TARGET NUMBER THIRTY FIVE ENEMY 6 9 5 3 SUBMIT 89S 3 × HOW TO PLAY Place Value Panic Here is how to play Place Value Panic. QUICK STEPS 1 Read the question at the top. 2 Drag items ",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 2,
+      "levelName": "Level 2",
+      "gameType": "coordinate_quest",
+      "route": "http://127.0.0.1:3000/game/1/2",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY NUMBER LINE NINJA. Quest: Count along the number line to find the missing number. 4 5 6 ? 8 ENEMY SELECT THE MISSING NUMBER 6 8 9 7 89S 3 × HOW TO PLAY Number Line Ninja Here is how to play Number Lin",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 3,
+      "levelName": "Level 3",
+      "gameType": "prime_pop",
+      "route": "http://127.0.0.1:3000/game/1/3",
+      "screenCount": 1,
+      "bodyPreview": "PRIME POP Pop the prime numbers Avoid the non-primes before they reach the line. DANGER 7 19 2 23 5 29 89S 3 × HOW TO PLAY Prime Pop Here is how to play Prime Pop. QUICK STEPS 1 Read the question at the top. 2 Tap the ri",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 4,
+      "levelName": "Level 4",
+      "gameType": "place_value_peaks",
+      "route": "http://127.0.0.1:3000/game/1/4",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY ROUNDING ROCKET. ROUND TO THE NEAREST 100 780 800 1100 600 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 5,
+      "levelName": "Level 5",
+      "gameType": "place_value_peaks",
+      "route": "http://127.0.0.1:3000/game/1/5",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY PLACE VALUE PANIC. TARGET NUMBER NINETY FIVE ENEMY 4 8 9 5 SUBMIT 89S 3 × HOW TO PLAY Place Value Panic Here is how to play Place Value Panic. QUICK STEPS 1 Read the question at the top. 2 Drag items ",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 6,
+      "levelName": "Level 6",
+      "gameType": "coordinate_quest",
+      "route": "http://127.0.0.1:3000/game/1/6",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY NUMBER LINE NINJA. Quest: Count in tens to find the missing number. 50 60 70 ? 90 ENEMY SELECT THE MISSING NUMBER 100 70 90 80 89S 3 × HOW TO PLAY Number Line Ninja Here is how to play Number Line Nin",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 7,
+      "levelName": "Level 7",
+      "gameType": "prime_pop",
+      "route": "http://127.0.0.1:3000/game/1/7",
+      "screenCount": 1,
+      "bodyPreview": "PRIME POP Pop the prime numbers Avoid the non-primes before they reach the line. DANGER 29 24 3 11 7 22 31 61 89S 3 × HOW TO PLAY Prime Pop Here is how to play Prime Pop. QUICK STEPS 1 Read the question at the top. 2 Tap",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 8,
+      "levelName": "Level 8",
+      "gameType": "place_value_peaks",
+      "route": "http://127.0.0.1:3000/game/1/8",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY ROUNDING ROCKET. ROUND TO THE NEAREST 100 1092 1400 1200 1100 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 9,
+      "levelName": "Level 9",
+      "gameType": "place_value_peaks",
+      "route": "http://127.0.0.1:3000/game/1/9",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY PLACE VALUE PANIC. TARGET NUMBER SIX HUNDRED AND FIFTY THREE ENEMY 7 5 3 6 1 SUBMIT 89S 3 × HOW TO PLAY Place Value Panic Here is how to play Place Value Panic. QUICK STEPS 1 Read the question at the ",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 10,
+      "levelName": "Level 10",
+      "gameType": "coordinate_quest",
+      "route": "http://127.0.0.1:3000/game/1/10",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY NUMBER LINE NINJA. Quest: Read the decimal number line and choose the missing value. 0.4 ? 0.9 1.15 1.4 ENEMY SELECT THE MISSING NUMBER 0.4 1.15 0.9 0.65 89S 3 × HOW TO PLAY Number Line Ninja Here is ",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 11,
+      "levelName": "Level 11",
+      "gameType": "prime_pop",
+      "route": "http://127.0.0.1:3000/game/1/11",
+      "screenCount": 1,
+      "bodyPreview": "PRIME POP Pop the prime numbers Avoid the non-primes before they reach the line. DANGER 13 50 55 29 11 17 48 37 56 89S 3 × HOW TO PLAY Prime Pop Here is how to play Prime Pop. QUICK STEPS 1 Read the question at the top. ",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 12,
+      "levelName": "Level 12",
+      "gameType": "place_value_peaks",
+      "route": "http://127.0.0.1:3000/game/1/12",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY ROUNDING ROCKET. ROUND TO THE NEAREST 100 8827 8700 8800 8900 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 13,
+      "levelName": "Level 13",
+      "gameType": "place_value_peaks",
+      "route": "http://127.0.0.1:3000/game/1/13",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY PLACE VALUE PANIC. TARGET NUMBER FOUR HUNDRED AND EIGHTY ONE ENEMY 8 5 1 4 2 SUBMIT 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 14,
+      "levelName": "Level 14",
+      "gameType": "coordinate_quest",
+      "route": "http://127.0.0.1:3000/game/1/14",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY NUMBER LINE NINJA. Quest: Read the decimal number line and choose the missing value. 0.3 ? 0.8 1.05 1.3 ENEMY SELECT THE MISSING NUMBER 1.05 0.55 0.3 0.8 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 15,
+      "levelName": "Level 15",
+      "gameType": "prime_pop",
+      "route": "http://127.0.0.1:3000/game/1/15",
+      "screenCount": 1,
+      "bodyPreview": "PRIME POP Pop the prime numbers Avoid the non-primes before they reach the line. DANGER 57 33 43 97 78 17 59 23 93 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 16,
+      "levelName": "Level 16",
+      "gameType": "place_value_peaks",
+      "route": "http://127.0.0.1:3000/game/1/16",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY ROUNDING ROCKET. ROUND TO THE NEAREST 100 8831 9100 9000 8800 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 17,
+      "levelName": "Level 17",
+      "gameType": "place_value_peaks",
+      "route": "http://127.0.0.1:3000/game/1/17",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY PLACE VALUE PANIC. TARGET NUMBER TWO THOUSAND, EIGHT HUNDRED AND TWO ENEMY 0 2 2 4 1 8 SUBMIT 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 18,
+      "levelName": "Level 18",
+      "gameType": "coordinate_quest",
+      "route": "http://127.0.0.1:3000/game/1/18",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY NUMBER LINE NINJA. Quest: Read the decimal number line and choose the missing value. 0.2 ? 0.7 0.95 1.2 ENEMY SELECT THE MISSING NUMBER 0.45 0.95 0.2 0.7 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 19,
+      "levelName": "Level 19",
+      "gameType": "prime_pop",
+      "route": "http://127.0.0.1:3000/game/1/19",
+      "screenCount": 1,
+      "bodyPreview": "PRIME POP Pop the prime numbers Avoid the non-primes before they reach the line. DANGER 59 59 79 89 86 29 29 53 17 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 20,
+      "levelName": "Level 20",
+      "gameType": "place_value_peaks",
+      "route": "http://127.0.0.1:3000/game/1/20",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY ROUNDING ROCKET. ROUND TO THE NEAREST 100 4334 4500 4100 4300 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 21,
+      "levelName": "Level 21",
+      "gameType": "place_value_peaks",
+      "route": "http://127.0.0.1:3000/game/1/21",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY PLACE VALUE PANIC. TARGET NUMBER TWO THOUSAND AND NINETY SEVEN ENEMY 9 5 8 7 2 0 SUBMIT 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 22,
+      "levelName": "Level 22",
+      "gameType": "coordinate_quest",
+      "route": "http://127.0.0.1:3000/game/1/22",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY NUMBER LINE NINJA. Quest: Read the decimal number line and choose the missing value. 0.1 0.2 0.3 ? 0.5 ENEMY SELECT THE MISSING NUMBER 0.4 0.5 0.3 0.6 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 23,
+      "levelName": "Level 23",
+      "gameType": "prime_pop",
+      "route": "http://127.0.0.1:3000/game/1/23",
+      "screenCount": 1,
+      "bodyPreview": "PRIME POP Pop the prime numbers Avoid the non-primes before they reach the line. DANGER 67 71 47 62 53 43 3 11 3 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 24,
+      "levelName": "Level 24",
+      "gameType": "place_value_peaks",
+      "route": "http://127.0.0.1:3000/game/1/24",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY ROUNDING ROCKET. ROUND TO THE NEAREST 100 5154 5000 5200 5300 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 25,
+      "levelName": "Level 25",
+      "gameType": "place_value_peaks",
+      "route": "http://127.0.0.1:3000/game/1/25",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY PLACE VALUE PANIC. TARGET NUMBER NINETY NINE THOUSAND, ONE HUNDRED AND TWENTY FIVE ENEMY 9 2 3 1 5 9 8 SUBMIT 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 26,
+      "levelName": "Level 26",
+      "gameType": "coordinate_quest",
+      "route": "http://127.0.0.1:3000/game/1/26",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY NUMBER LINE NINJA. Quest: Read the decimal number line and choose the missing value. 0.2 0.45 0.7 ? 1.2 ENEMY SELECT THE MISSING NUMBER 1.2 0.7 1.45 0.95 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 27,
+      "levelName": "Level 27",
+      "gameType": "prime_pop",
+      "route": "http://127.0.0.1:3000/game/1/27",
+      "screenCount": 1,
+      "bodyPreview": "PRIME POP Pop the prime numbers Avoid the non-primes before they reach the line. DANGER 35 19 13 30 79 30 97 61 61 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 28,
+      "levelName": "Level 28",
+      "gameType": "place_value_peaks",
+      "route": "http://127.0.0.1:3000/game/1/28",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY ROUNDING ROCKET. ROUND TO THE NEAREST 100 6883 6800 6700 6900 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 29,
+      "levelName": "Level 29",
+      "gameType": "place_value_peaks",
+      "route": "http://127.0.0.1:3000/game/1/29",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY PLACE VALUE PANIC. TARGET NUMBER FORTY THREE THOUSAND, EIGHT HUNDRED AND SIXTY FOUR ENEMY 6 4 1 3 2 8 4 SUBMIT 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 30,
+      "levelName": "Level 30",
+      "gameType": "coordinate_quest",
+      "route": "http://127.0.0.1:3000/game/1/30",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY NUMBER LINE NINJA. Quest: Read the decimal number line and choose the missing value. 0.2 ? 0.7 0.95 1.2 ENEMY SELECT THE MISSING NUMBER 0.7 0.95 0.45 0.2 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 31,
+      "levelName": "Level 31",
+      "gameType": "prime_pop",
+      "route": "http://127.0.0.1:3000/game/1/31",
+      "screenCount": 1,
+      "bodyPreview": "PRIME POP Pop the prime numbers Avoid the non-primes before they reach the line. DANGER 40 12 19 83 53 66 71 25 66 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 32,
+      "levelName": "Level 32",
+      "gameType": "place_value_peaks",
+      "route": "http://127.0.0.1:3000/game/1/32",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY ROUNDING ROCKET. ROUND TO THE NEAREST 100 4267 4300 4400 4600 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 33,
+      "levelName": "Level 33",
+      "gameType": "place_value_peaks",
+      "route": "http://127.0.0.1:3000/game/1/33",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY PLACE VALUE PANIC. TARGET NUMBER EIGHT HUNDRED AND SIXTY THREE THOUSAND AND FORTY EIGHT ENEMY 6 3 0 9 8 1 4 8 SUBMIT 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 34,
+      "levelName": "Level 34",
+      "gameType": "coordinate_quest",
+      "route": "http://127.0.0.1:3000/game/1/34",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY NUMBER LINE NINJA. Quest: Read the decimal number line and choose the missing value. 0.6 0.8 1 ? 1.4 ENEMY SELECT THE MISSING NUMBER 1.2 1.4 1 1.6 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 35,
+      "levelName": "Level 35",
+      "gameType": "prime_pop",
+      "route": "http://127.0.0.1:3000/game/1/35",
+      "screenCount": 1,
+      "bodyPreview": "PRIME POP Pop the prime numbers Avoid the non-primes before they reach the line. DANGER 9 25 83 43 38 11 29 33 6 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 36,
+      "levelName": "Level 36",
+      "gameType": "place_value_peaks",
+      "route": "http://127.0.0.1:3000/game/1/36",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY ROUNDING ROCKET. ROUND TO THE NEAREST 100 6396 6700 6400 6600 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 37,
+      "levelName": "Level 37",
+      "gameType": "place_value_peaks",
+      "route": "http://127.0.0.1:3000/game/1/37",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY PLACE VALUE PANIC. TARGET NUMBER EIGHT HUNDRED AND SEVENTY SEVEN THOUSAND AND TWENTY ONE ENEMY 7 1 5 3 8 7 0 2 0 SUBMIT 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 38,
+      "levelName": "Level 38",
+      "gameType": "coordinate_quest",
+      "route": "http://127.0.0.1:3000/game/1/38",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY NUMBER LINE NINJA. Quest: Read the decimal number line and choose the missing value. 0.2 0.4 0.6 ? 1 ENEMY SELECT THE MISSING NUMBER 0.8 1 1.2 0.6 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 39,
+      "levelName": "Level 39",
+      "gameType": "prime_pop",
+      "route": "http://127.0.0.1:3000/game/1/39",
+      "screenCount": 1,
+      "bodyPreview": "PRIME POP Pop the prime numbers Avoid the non-primes before they reach the line. DANGER 80 3 83 37 72 31 8 35 40 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 40,
+      "levelName": "Level 40",
+      "gameType": "place_value_peaks",
+      "route": "http://127.0.0.1:3000/game/1/40",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY ROUNDING ROCKET. ROUND TO THE NEAREST 100 8801 8800 9100 9000 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 1,
+      "islandName": "Arithmetic Acropolis",
+      "levelId": 41,
+      "levelName": "Level 41",
+      "gameType": "ratio_rapids",
+      "route": "http://127.0.0.1:3000/game/1/41",
+      "screenCount": 1,
+      "bodyPreview": "YOU WAVE 41 1323 + 1590 2916 2913 2919 2909 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 2,
+      "islandName": "Fraction Forest",
+      "levelId": 1,
+      "levelName": "Level 1",
+      "gameType": "take_out_rush",
+      "route": "http://127.0.0.1:3000/game/2/1",
+      "screenCount": 1,
+      "bodyPreview": "ORDER TARGET 7/8 1/2 1/4 1/8 1/4 RESET Send Order 89S 3 × HOW TO PLAY Take-Out Rush Here is how to play Take-Out Rush. QUICK STEPS 1 Read the question at the top. 2 Swap tiles to make a match. 3 Tap the main button when ",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 2,
+      "islandName": "Fraction Forest",
+      "levelId": 2,
+      "levelName": "Level 2",
+      "gameType": "take_out_rush",
+      "route": "http://127.0.0.1:3000/game/2/2",
+      "screenCount": 1,
+      "bodyPreview": "TARGET ORDER Sort the fractions from smallest to largest! Place the fractions in order. 1 4 1 2 3 5 > > ROUND 1 / 6 89S 3 × HOW TO PLAY Fraction Forge Here is how to play Fraction Forge. QUICK STEPS 1 Read the question a",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 2,
+      "islandName": "Fraction Forest",
+      "levelId": 3,
+      "levelName": "Level 3",
+      "gameType": "fraction_match",
+      "route": "http://127.0.0.1:3000/game/2/3",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY MATCH-3 EQUIVALENCE. MATCH 3 0 1/4 20% 0.2 75% 1/2 4/10 4/10 1/4 1/2 0.25 1/2 2/8 3/4 1/2 0.4 1/2 40% 0.4 2/8 2/4 0.75 1/2 2/4 0.75 50% 2/8 20% 2/10 3/4 0.75 1/2 0.4 1/2 2/8 50% 25% 89S 3 × HOW TO PLA",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 2,
+      "islandName": "Fraction Forest",
+      "levelId": 4,
+      "levelName": "Level 4",
+      "gameType": "percent_power",
+      "route": "http://127.0.0.1:3000/game/2/4",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY PERCENT POWER. PERCENT OF AMOUNT ROUND 1/7 What is 25% of 120? Use 10%, 25%, 50% or known fraction facts to build the answer. CHOOSE THE ANSWER THAT POWERS THE CORE CORRECTLY. A 24 B 42 C 90 D 30 89S ",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 2,
+      "islandName": "Fraction Forest",
+      "levelId": 5,
+      "levelName": "Level 5",
+      "gameType": "fraction_match",
+      "route": "http://127.0.0.1:3000/game/2/5",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY SIMPLIFY SPRINT. SIMPLIFY SPRINT ROUND 1 / 8 TAP A FACTOR RUNE TO REDUCE SIMPLIFY METER GCD 4 16 28 REDUCE UNTIL IT CANNOT SIMPLIFY FURTHER ÷ 5 ÷ 9 ÷ 2 ÷ 4 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 3,
+      "islandName": "Geometry Glacier",
+      "levelId": 1,
+      "levelName": "Level 1",
+      "gameType": "angle_arena",
+      "route": "http://127.0.0.1:3000/game/3/1",
+      "screenCount": 1,
+      "bodyPreview": "Quest: A quadrilateral has three equal angles of 95°. What is the fourth angle? 55° 65° 75° 85° Choose an angle to fire the launcher. 89S 3 × HOW TO PLAY Angle Arena Here is how to play Angle Arena. QUICK STEPS 1 Read th",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 3,
+      "islandName": "Geometry Glacier",
+      "levelId": 2,
+      "levelName": "Level 2",
+      "gameType": "polygon_palace",
+      "route": "http://127.0.0.1:3000/game/3/2",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY POLYGON PALACE. POLYGON PALACE What shape is this? Tap one answer Circle Rectangle Pentagon Right-angled Triangle 89S 3 × HOW TO PLAY Polygon Palace Here is how to play Polygon Palace. QUICK STEPS 1 R",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 3,
+      "islandName": "Geometry Glacier",
+      "levelId": 3,
+      "levelName": "Level 3",
+      "gameType": "area_architect",
+      "route": "http://127.0.0.1:3000/game/3/3",
+      "screenCount": 1,
+      "bodyPreview": "Help the builders plan the floor space. AREA ARCHITECT Quest: Find the area of the shaded shape. ROUND 1 / 5 14 sq units 12 sq units 11 sq units 10 sq units Count the squares and pick the area. 89S 3 × HOW TO PLAY Area A",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 3,
+      "islandName": "Geometry Glacier",
+      "levelId": 4,
+      "levelName": "Level 4",
+      "gameType": "transform_temple",
+      "route": "http://127.0.0.1:3000/game/3/4",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY ROTATION STATION. Rotate to match the target outline. Hint: target is 270 deg clockwise from start. TARGET Up YOUR SHAPE Right Rotate left 90 Rotate right 90 Submit 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 3,
+      "islandName": "Geometry Glacier",
+      "levelId": 5,
+      "levelName": "Level 5",
+      "gameType": "coordinate_quest",
+      "route": "http://127.0.0.1:3000/game/3/5",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY COORDINATES QUEST. COORDINATE QUEST Follow The Route Quest: Start at (5, 4). Move 1 down. Move 1 left. GRID MAP 1 2 3 4 5 1 2 3 4 You 5 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 3,
+      "islandName": "Geometry Glacier",
+      "levelId": 6,
+      "levelName": "Level 6",
+      "gameType": "timekeeper_temple",
+      "route": "http://127.0.0.1:3000/game/3/6",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY CHRONO DASH: TIME TRIAL. 02 : 55 HOURS MINUTES SUBMIT TIME RESET CLOCK 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 3,
+      "islandName": "Geometry Glacier",
+      "levelId": 7,
+      "levelName": "Level 7",
+      "gameType": "measurement_forge",
+      "route": "http://127.0.0.1:3000/game/3/7",
+      "screenCount": 1,
+      "bodyPreview": "CONVERSION CANYON The armoury is requesting weights for the catapults. We need to make 11.5 kg. Use the weights available to meet the target amount. TARGET 11.5 kg CURRENT 0 g 500 g 0.5 kg 1 kg 1,000 g 500 g 0.5 kg 4 kg ",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 3,
+      "islandName": "Geometry Glacier",
+      "levelId": 8,
+      "levelName": "Level 8",
+      "gameType": "measurement_forge",
+      "route": "http://127.0.0.1:3000/game/3/8",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY PERIMETER PATH. Calculate the perimeter of this compound shape. 32 m 5 m 9 m 10 m 9 m 7 m 32 m 22 m 126 95 131 146 Choose the matching perimeter. 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 4,
+      "islandName": "Data Desert",
+      "levelId": 1,
+      "levelName": "Level 1",
+      "gameType": "mean_machine",
+      "route": "http://127.0.0.1:3000/game/4/1",
+      "screenCount": 1,
+      "bodyPreview": "LEVEL 1/10 Spin 2 reels. Find the MEAN. Quest: Add them, then divide by 2 to get the MEAN. ? ? SPIN PICK THE MEAN 8 9 11 90S 3 × HOW TO PLAY Mean Machine Here is how to play Mean Machine. QUICK STEPS 1 Read the question ",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 4,
+      "islandName": "Data Desert",
+      "levelId": 2,
+      "levelName": "Level 2",
+      "gameType": "mean_machine",
+      "route": "http://127.0.0.1:3000/game/4/2",
+      "screenCount": 1,
+      "bodyPreview": "LEVEL 1/10 Find the most frequent number. (MODE) Quest: The MODE appears more than any other value. ? ? ? SPIN PICK THE MODE 15 14 11 12 90S 3 × HOW TO PLAY Mean Machine Here is how to play Mean Machine. QUICK STEPS 1 Re",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 4,
+      "islandName": "Data Desert",
+      "levelId": 3,
+      "levelName": "Level 3",
+      "gameType": "mean_machine",
+      "route": "http://127.0.0.1:3000/game/4/3",
+      "screenCount": 1,
+      "bodyPreview": "LEVEL 1/10 Spin 2 reels. Find the MEAN. Quest: Add them, then divide by 2 to get the MEAN. ? ? SPIN PICK THE MEAN 12 9 10 90S 3 × HOW TO PLAY Mean Machine Here is how to play Mean Machine. QUICK STEPS 1 Read the question",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 4,
+      "islandName": "Data Desert",
+      "levelId": 4,
+      "levelName": "Level 4",
+      "gameType": "mean_machine",
+      "route": "http://127.0.0.1:3000/game/4/4",
+      "screenCount": 1,
+      "bodyPreview": "LEVEL 1/10 Order the values. Find the MEDIAN. Quest: Pick the middle number when the reels are ordered. ? ? ? SPIN PICK THE MEDIAN 5 6 2 3 90S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 4,
+      "islandName": "Data Desert",
+      "levelId": 5,
+      "levelName": "Level 5",
+      "gameType": "mean_machine",
+      "route": "http://127.0.0.1:3000/game/4/5",
+      "screenCount": 1,
+      "bodyPreview": "LEVEL 1/10 Spin 2 reels. Find the MEAN. Quest: Add them, then divide by 2 to get the MEAN. ? ? SPIN PICK THE MEAN 6 8 5 90S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 4,
+      "islandName": "Data Desert",
+      "levelId": 6,
+      "levelName": "Level 6",
+      "gameType": "mean_machine",
+      "route": "http://127.0.0.1:3000/game/4/6",
+      "screenCount": 1,
+      "bodyPreview": "LEVEL 1/10 Spin 2 reels. Find the MEAN. Quest: Add them, then divide by 2 to get the MEAN. ? ? SPIN PICK THE MEAN 9 7 8 90S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 4,
+      "islandName": "Data Desert",
+      "levelId": 7,
+      "levelName": "Level 7",
+      "gameType": "mean_machine",
+      "route": "http://127.0.0.1:3000/game/4/7",
+      "screenCount": 1,
+      "bodyPreview": "LEVEL 1/10 Spin 2 reels. Find the MEAN. Quest: Add them, then divide by 2 to get the MEAN. ? ? SPIN PICK THE MEAN 4 7 5 90S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 4,
+      "islandName": "Data Desert",
+      "levelId": 8,
+      "levelName": "Level 8",
+      "gameType": "mean_machine",
+      "route": "http://127.0.0.1:3000/game/4/8",
+      "screenCount": 1,
+      "bodyPreview": "LEVEL 1/10 Order the values. Find the MEDIAN. Quest: Pick the middle number when the reels are ordered. ? ? ? SPIN PICK THE MEDIAN 6 7 8 12 90S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 4,
+      "islandName": "Data Desert",
+      "levelId": 9,
+      "levelName": "Level 9",
+      "gameType": "mean_machine",
+      "route": "http://127.0.0.1:3000/game/4/9",
+      "screenCount": 1,
+      "bodyPreview": "LEVEL 1/10 Spin 2 reels. Find the MEAN. Quest: Add them, then divide by 2 to get the MEAN. ? ? SPIN PICK THE MEAN 9 10 13 90S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 4,
+      "islandName": "Data Desert",
+      "levelId": 10,
+      "levelName": "Level 10",
+      "gameType": "mean_machine",
+      "route": "http://127.0.0.1:3000/game/4/10",
+      "screenCount": 1,
+      "bodyPreview": "LEVEL 1/10 Find the most frequent number. (MODE) Quest: The MODE appears more than any other value. ? ? ? SPIN PICK THE MODE 1 7 4 2 90S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 4,
+      "islandName": "Data Desert",
+      "levelId": 11,
+      "levelName": "Level 11",
+      "gameType": "graph_grabber",
+      "route": "http://127.0.0.1:3000/game/4/11",
+      "screenCount": 1,
+      "bodyPreview": "Find The Difference Quest: How many more crates did Mistwake have than Jadehook? CRATES BY SHIP Mist 3 Jade 7 Ruby 6 Sunf 6 5 3 4 6 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 4,
+      "islandName": "Data Desert",
+      "levelId": 12,
+      "levelName": "Level 12",
+      "gameType": "graph_grabber",
+      "route": "http://127.0.0.1:3000/game/4/12",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY LINE GRAPH LAB. Which day has the highest value? Look for the highest point on the line. Mon Tue Wed Thu Fri Day 0 10 20 30 40 50 Value Tue Mon Wed Thu 89S 3 0",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 4,
+      "islandName": "Data Desert",
+      "levelId": 13,
+      "levelName": "Level 13",
+      "gameType": "data_dungeon",
+      "route": "http://127.0.0.1:3000/game/4/13",
+      "screenCount": 1,
+      "bodyPreview": "Who took the loot? Who took the items? Use the clues to decide. CLUE BOARD PIE CHART 2 5 4 4 SHINY GEMS MAGIC COOKIES STINKY SOCKS GOLD COINS SUSPECT LINEUP 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 5,
+      "islandName": "Operations Outpost",
+      "levelId": 1,
+      "levelName": "Level 1",
+      "gameType": "tower_of_factors",
+      "route": "http://127.0.0.1:3000/game/5/1",
+      "screenCount": 1,
+      "bodyPreview": "FIND THE MISSING FACTOR: 4 X ? = 52 TAP ALL FACTORS THAT APPLY Choose every correct factor, then submit SUBMIT FACTORS 15 18 10 13 89S 3 × HOW TO PLAY Factor Frenzy Here is how to play Factor Frenzy. QUICK STEPS 1 Read t",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 5,
+      "islandName": "Operations Outpost",
+      "levelId": 2,
+      "levelName": "Level 2",
+      "gameType": "tower_of_factors",
+      "route": "http://127.0.0.1:3000/game/5/2",
+      "screenCount": 1,
+      "bodyPreview": "FIND THE MISSING FACTOR: 16 X ? = 48 TAP ALL FACTORS THAT APPLY Choose every correct factor, then submit SUBMIT FACTORS 3 8 5 2 89S 3 × HOW TO PLAY Factor Frenzy Here is how to play Factor Frenzy. QUICK STEPS 1 Read the ",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 5,
+      "islandName": "Operations Outpost",
+      "levelId": 3,
+      "levelName": "Level 3",
+      "gameType": "tower_of_factors",
+      "route": "http://127.0.0.1:3000/game/5/3",
+      "screenCount": 1,
+      "bodyPreview": "FIND THE MISSING FACTOR: 16 X ? = 16 TAP ALL FACTORS THAT APPLY Choose every correct factor, then submit SUBMIT FACTORS 6 3 1 89S 3 × HOW TO PLAY Factor Frenzy Here is how to play Factor Frenzy. QUICK STEPS 1 Read the qu",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 5,
+      "islandName": "Operations Outpost",
+      "levelId": 4,
+      "levelName": "Level 4",
+      "gameType": "tower_of_factors",
+      "route": "http://127.0.0.1:3000/game/5/4",
+      "screenCount": 1,
+      "bodyPreview": "FIND THE MISSING FACTOR: 2 X ? = 26 TAP ALL FACTORS THAT APPLY Choose every correct factor, then submit SUBMIT FACTORS 13 18 15 10 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 5,
+      "islandName": "Operations Outpost",
+      "levelId": 5,
+      "levelName": "Level 5",
+      "gameType": "tower_of_factors",
+      "route": "http://127.0.0.1:3000/game/5/5",
+      "screenCount": 1,
+      "bodyPreview": "FIND THE MISSING FACTOR: 31 X ? = 31 TAP ALL FACTORS THAT APPLY Choose every correct factor, then submit SUBMIT FACTORS 6 3 1 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 5,
+      "islandName": "Operations Outpost",
+      "levelId": 6,
+      "levelName": "Level 6",
+      "gameType": "tower_of_factors",
+      "route": "http://127.0.0.1:3000/game/5/6",
+      "screenCount": 1,
+      "bodyPreview": "FIND THE MISSING FACTOR: 17 X ? = 34 TAP ALL FACTORS THAT APPLY Choose every correct factor, then submit SUBMIT FACTORS 1 2 4 7 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 5,
+      "islandName": "Operations Outpost",
+      "levelId": 7,
+      "levelName": "Level 7",
+      "gameType": "tower_of_factors",
+      "route": "http://127.0.0.1:3000/game/5/7",
+      "screenCount": 1,
+      "bodyPreview": "FIND THE MISSING FACTOR: 1 X ? = 59 TAP ALL FACTORS THAT APPLY Choose every correct factor, then submit SUBMIT FACTORS 58 59 64 61 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 5,
+      "islandName": "Operations Outpost",
+      "levelId": 8,
+      "levelName": "Level 8",
+      "gameType": "tower_of_factors",
+      "route": "http://127.0.0.1:3000/game/5/8",
+      "screenCount": 1,
+      "bodyPreview": "FIND THE MISSING FACTOR: 1 X ? = 57 TAP ALL FACTORS THAT APPLY Choose every correct factor, then submit SUBMIT FACTORS 56 59 57 62 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 5,
+      "islandName": "Operations Outpost",
+      "levelId": 9,
+      "levelName": "Level 9",
+      "gameType": "tower_of_factors",
+      "route": "http://127.0.0.1:3000/game/5/9",
+      "screenCount": 1,
+      "bodyPreview": "FIND THE MISSING FACTOR: 1 X ? = 16 TAP ALL FACTORS THAT APPLY Choose every correct factor, then submit SUBMIT FACTORS 16 18 13 15 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 5,
+      "islandName": "Operations Outpost",
+      "levelId": 10,
+      "levelName": "Level 10",
+      "gameType": "tower_of_factors",
+      "route": "http://127.0.0.1:3000/game/5/10",
+      "screenCount": 1,
+      "bodyPreview": "FIND THE MISSING FACTOR: 3 X ? = 54 TAP ALL FACTORS THAT APPLY Choose every correct factor, then submit SUBMIT FACTORS 20 23 15 17 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 5,
+      "islandName": "Operations Outpost",
+      "levelId": 11,
+      "levelName": "Level 11",
+      "gameType": "calculation_clash",
+      "route": "http://127.0.0.1:3000/game/5/11",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY MULTIPLICATION MINE. COMPLETE MULTIPLICATION ANSWERS TO BREAK THE ROCK 7 x 5 = ? 41 40 33 35 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 5,
+      "islandName": "Operations Outpost",
+      "levelId": 12,
+      "levelName": "Level 12",
+      "gameType": "calculation_clash",
+      "route": "http://127.0.0.1:3000/game/5/12",
+      "screenCount": 1,
+      "bodyPreview": "Share the crates — 24 ÷ 8 CARGO STATUS 24 ÷ 8 = ? LOADED 0/24 BOATS 0/5 LEFT 24 DOCKYARD DOCK 1 0 DOCK 2 0 DOCK 3 0 DOCK 4 0 DOCK 5 0 DOCK 6 0 DOCK 7 0 DOCK 8 0 RESET CHECK 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 5,
+      "islandName": "Operations Outpost",
+      "levelId": 13,
+      "levelName": "Level 13",
+      "gameType": "equation_grove",
+      "route": "http://127.0.0.1:3000/game/5/13",
+      "screenCount": 1,
+      "bodyPreview": "Solve the order using the correct operation order Each correct answer powers the progress bar. ORDER OF OPERATIONS B I D M A S (6 + 5) * 4 PROGRESS ARENA PROGRESS 7/7 Question 1 · Brackets first, then multiply. PICK THE ",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 5,
+      "islandName": "Operations Outpost",
+      "levelId": 14,
+      "levelName": "Level 14",
+      "gameType": "formula_forge",
+      "route": "http://127.0.0.1:3000/game/5/14",
+      "screenCount": 1,
+      "bodyPreview": "Formula Forge Round 1 of 10 RECTANGLE AREA A = l × w Find w when A = 30. GIVEN VALUES A 30 L 10 CHOOSE THE CORRECT VALUE FOR W 3 6 11 14 Hint: Area equals length multiplied by width. 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 5,
+      "islandName": "Operations Outpost",
+      "levelId": 15,
+      "levelName": "Level 15",
+      "gameType": "calculation_clash",
+      "route": "http://127.0.0.1:3000/game/5/15",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY REMAINDER RUN. REMAINDER RUSH Solve the division 165 / 11 = ? r ? QUOTIENT -- REMAINDER -- CHOOSE QUOTIENT CHOOSE REMAINDER 12 15 16 17 0 1 2 4 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 6,
+      "islandName": "Measurement Mountain",
+      "levelId": 1,
+      "levelName": "Level 1",
+      "gameType": "rule_runner",
+      "route": "http://127.0.0.1:3000/game/6/1",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY PROBLEM PYRAMID. Find the top number in the pyramid. Round 1 / 6 ? 12 14 6 6 8 26 25 31 32 89S 3 × HOW TO PLAY Problem Pyramid Here is how to play Problem Pyramid. QUICK STEPS 1 Read the question at t",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 6,
+      "islandName": "Measurement Mountain",
+      "levelId": 2,
+      "levelName": "Level 2",
+      "gameType": "unit_mixer",
+      "route": "http://127.0.0.1:3000/game/6/2",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY UNIT MIXER. Keep the expedition supplies safe by converting each unit accurately. UNIT MIXER Convert 3.5 km to metres. ROUND 1/6 Remember that 1 km = 1000 m. CONVERSION STEPS 3.5 km × 1000 = ? m 350 m",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 6,
+      "islandName": "Measurement Mountain",
+      "levelId": 3,
+      "levelName": "Level 3",
+      "gameType": "change_counter",
+      "route": "http://127.0.0.1:3000/game/6/3",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY CHANGE COUNTER. The summit traders need the exact change for every order. CHANGE COUNTER A crystal shard costs £9.95. You pay with £10.00. ROUND 1/6 How much change should you get back? CHECK THE VALU",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 8,
+      "islandName": "Cursed Colosseum",
+      "levelId": 1,
+      "levelName": "Level 1",
+      "gameType": "tower_of_factors",
+      "route": "http://127.0.0.1:3000/game/8/1",
+      "screenCount": 1,
+      "bodyPreview": "TARGET 20 69s TOWER OF FACTORS Bogjaw Brute BOSS WAITING TAP EVERY TRUE FACTOR BEFORE THE FORGE LINE BREAKS. 20 6 27 4 30 29 13 14 35 25 10 5 FORGED FACTORS 0/4 20 REMAINING 4 89S 3 × HOW TO PLAY Tower Of Factors Here is",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 8,
+      "islandName": "Cursed Colosseum",
+      "levelId": 2,
+      "levelName": "Level 2",
+      "gameType": "crystal_core",
+      "route": "http://127.0.0.1:3000/game/8/2",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY CRYSTAL CORE. CRYSTAL CORE Prism Jelly BOSS WAITING QUESTION 1/10 CORRECT 0/10 NEED 8/10 ACCURACY 100% BOSS HEALTH 100% REMAINING Answer carefully. Eight correct answers are needed to win the duel. 2 ",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 8,
+      "islandName": "Cursed Colosseum",
+      "levelId": 3,
+      "levelName": "Level 3",
+      "gameType": "mirror_gate",
+      "route": "http://127.0.0.1:3000/game/8/3",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY MIRROR GATE. MIRROR GATE Mirror Warden BOSS WAITING QUESTION 1/10 CORRECT 0/10 NEED 8/10 ACCURACY 100% BOSS HEALTH 100% REMAINING Answer carefully. Eight correct answers are needed to win the duel. 2 ",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 8,
+      "islandName": "Cursed Colosseum",
+      "levelId": 4,
+      "levelName": "Level 4",
+      "gameType": "scales_of_the_sun",
+      "route": "http://127.0.0.1:3000/game/8/4",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY SCALES OF THE SUN. SCALES OF THE SUN Sunscale Hydra BOSS WAITING QUESTION 1/10 CORRECT 0/10 NEED 8/10 ACCURACY 100% BOSS HEALTH 100% REMAINING Answer carefully. Eight correct answers are needed to win",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 8,
+      "islandName": "Cursed Colosseum",
+      "levelId": 5,
+      "levelName": "Level 5",
+      "gameType": "observatory_overload",
+      "route": "http://127.0.0.1:3000/game/8/5",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY OBSERVATORY OVERLOAD. OBSERVATORY OVERLOAD Constelligator BOSS WAITING QUESTION 1/10 CORRECT 0/10 NEED 8/10 ACCURACY 100% BOSS HEALTH 100% REMAINING Answer carefully. Eight correct answers are needed ",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 8,
+      "islandName": "Cursed Colosseum",
+      "levelId": 6,
+      "levelName": "Level 6",
+      "gameType": "matrix_match",
+      "route": "http://127.0.0.1:3000/game/8/6",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY MATRIX MATCH. 0 MATRIX MATCH LEVEL 1 / 5 59s MATRIX MATCH Oracle Slime BOSS WAITING 💎 💎 💎 ⭐ ⭐ ⭐ 🌙 🌙 🌀 🌙 💎 🌙 HINT (-100) 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 8,
+      "islandName": "Cursed Colosseum",
+      "levelId": 7,
+      "levelName": "Level 7",
+      "gameType": "reasoning_quest",
+      "route": "http://127.0.0.1:3000/game/8/7",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY REASONING QUEST. Choose the best plan to clear the next path. REASONING QUEST A vault needs 3 keys. Each key costs 45 gems. The team already has 60 gems. How many more? ROUND 1/5 Think it through befo",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 8,
+      "islandName": "Cursed Colosseum",
+      "levelId": 8,
+      "levelName": "Level 8",
+      "gameType": "equation_grove",
+      "route": "http://127.0.0.1:3000/game/8/8",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY MULTI-STEP MARATHON. Missing Addend Quest: ? + 6 = 9 RUNE PUZZLE Quest: ? + 6 = 9 Drag the rune that balances the door equation. ? DOOR TYPE Rune Door RUNE 4 RUNE 3 RUNE 2 RUNE 6 DUNGEON GOAL Open eac",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 8,
+      "islandName": "Cursed Colosseum",
+      "levelId": 9,
+      "levelName": "Level 9",
+      "gameType": "logic_sort",
+      "route": "http://127.0.0.1:3000/game/8/9",
+      "screenCount": 1,
+      "bodyPreview": "HERE IS HOW TO PLAY STRATEGY SURVIVAL. 0 LOGIC SORT 89s SOURCE 1 25 36 16 37 41 13 49 29 ODD SQUARE NUMBERS PRIME 89S 3",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 8,
+      "islandName": "Cursed Colosseum",
+      "levelId": 10,
+      "levelName": "Level 10",
+      "gameType": "calculation_clash",
+      "route": "http://127.0.0.1:3000/game/8/10",
+      "screenCount": 1,
+      "bodyPreview": "CALCULATION CLASH Quest: 155 + 193 = ? 348 371 278 397 Solved: 0 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 8,
+      "islandName": "Cursed Colosseum",
+      "levelId": 11,
+      "levelName": "Level 11",
+      "gameType": "calculation_clash",
+      "route": "http://127.0.0.1:3000/game/8/11",
+      "screenCount": 1,
+      "bodyPreview": "CALCULATION CLASH Quest: 32 / 2 = ? 16 20 13 11 Solved: 0 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 8,
+      "islandName": "Cursed Colosseum",
+      "levelId": 12,
+      "levelName": "Level 12",
+      "gameType": "graph_grabber",
+      "route": "http://127.0.0.1:3000/game/8/12",
+      "screenCount": 1,
+      "bodyPreview": "SORT THE STONES, FIND THE MEDIAN ODD SET: CHOOSE THE MIDDLE VALUE SORT 37 27 20 VERIFY MEDIAN 89S 3 × HOW TO PLAY Median Master Here is how to play Median Master. QUICK STEPS 1 Read the question at the top. 2 Set the tim",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 8,
+      "islandName": "Cursed Colosseum",
+      "levelId": 13,
+      "levelName": "Level 13",
+      "gameType": "graph_grabber",
+      "route": "http://127.0.0.1:3000/game/8/13",
+      "screenCount": 1,
+      "bodyPreview": "SORT THE STONES, FIND THE MEDIAN ODD SET: CHOOSE THE MIDDLE VALUE SORT 14 3 5 VERIFY MEDIAN 89S 3 × HOW TO PLAY Median Master Here is how to play Median Master. QUICK STEPS 1 Read the question at the top. 2 Set the time ",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 8,
+      "islandName": "Cursed Colosseum",
+      "levelId": 14,
+      "levelName": "Level 14",
+      "gameType": "graph_grabber",
+      "route": "http://127.0.0.1:3000/game/8/14",
+      "screenCount": 1,
+      "bodyPreview": "SORT THE STONES, FIND THE MEDIAN ODD SET: CHOOSE THE MIDDLE VALUE SORT 15 7 31 VERIFY MEDIAN 89S 3 × HOW TO PLAY Median Master Here is how to play Median Master. QUICK STEPS 1 Read the question at the top. 2 Set the time",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 8,
+      "islandName": "Cursed Colosseum",
+      "levelId": 15,
+      "levelName": "Level 15",
+      "gameType": "graph_grabber",
+      "route": "http://127.0.0.1:3000/game/8/15",
+      "screenCount": 1,
+      "bodyPreview": "SORT THE STONES, FIND THE MEDIAN ODD SET: CHOOSE THE MIDDLE VALUE SORT 19 38 38 VERIFY MEDIAN 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 8,
+      "islandName": "Cursed Colosseum",
+      "levelId": 16,
+      "levelName": "Level 16",
+      "gameType": "graph_grabber",
+      "route": "http://127.0.0.1:3000/game/8/16",
+      "screenCount": 1,
+      "bodyPreview": "SORT THE STONES, FIND THE MEDIAN ODD SET: CHOOSE THE MIDDLE VALUE SORT 35 2 28 VERIFY MEDIAN 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 8,
+      "islandName": "Cursed Colosseum",
+      "levelId": 17,
+      "levelName": "Level 17",
+      "gameType": "graph_grabber",
+      "route": "http://127.0.0.1:3000/game/8/17",
+      "screenCount": 1,
+      "bodyPreview": "SORT THE STONES, FIND THE MEDIAN ODD SET: CHOOSE THE MIDDLE VALUE SORT 2 2 35 VERIFY MEDIAN 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 8,
+      "islandName": "Cursed Colosseum",
+      "levelId": 18,
+      "levelName": "Level 18",
+      "gameType": "graph_grabber",
+      "route": "http://127.0.0.1:3000/game/8/18",
+      "screenCount": 1,
+      "bodyPreview": "SORT THE STONES, FIND THE MEDIAN ODD SET: CHOOSE THE MIDDLE VALUE SORT 35 13 3 VERIFY MEDIAN 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 8,
+      "islandName": "Cursed Colosseum",
+      "levelId": 19,
+      "levelName": "Level 19",
+      "gameType": "graph_grabber",
+      "route": "http://127.0.0.1:3000/game/8/19",
+      "screenCount": 1,
+      "bodyPreview": "SORT THE STONES, FIND THE MEDIAN ODD SET: CHOOSE THE MIDDLE VALUE SORT 19 33 13 VERIFY MEDIAN 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 8,
+      "islandName": "Cursed Colosseum",
+      "levelId": 20,
+      "levelName": "Level 20",
+      "gameType": "graph_grabber",
+      "route": "http://127.0.0.1:3000/game/8/20",
+      "screenCount": 1,
+      "bodyPreview": "SORT THE STONES, FIND THE MEDIAN ODD SET: CHOOSE THE MIDDLE VALUE SORT 26 32 28 VERIFY MEDIAN 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 8,
+      "islandName": "Cursed Colosseum",
+      "levelId": 21,
+      "levelName": "Level 21",
+      "gameType": "graph_grabber",
+      "route": "http://127.0.0.1:3000/game/8/21",
+      "screenCount": 1,
+      "bodyPreview": "SORT THE STONES, FIND THE MEDIAN ODD SET: CHOOSE THE MIDDLE VALUE SORT 22 4 5 VERIFY MEDIAN 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 7,
+      "islandName": "Ratio Rapids",
+      "levelId": 1,
+      "levelName": "Level 1",
+      "gameType": "potion_pour",
+      "route": "http://127.0.0.1:3000/game/7/1",
+      "screenCount": 1,
+      "bodyPreview": "AZURE 2/2 CLARITY 0/5 Brew Potion RESET TARGET RECIPE Azure Cleanse Ratio 2:5 We need to brew an Azure Cleanse at a 2:5 ratio. Clarity is the largest share and Azure is the smaller share. Azure is already in the cauldron",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 7,
+      "islandName": "Ratio Rapids",
+      "levelId": 2,
+      "levelName": "Level 2",
+      "gameType": "potion_pour",
+      "route": "http://127.0.0.1:3000/game/7/2",
+      "screenCount": 1,
+      "bodyPreview": "AZURE 0/15 OAK 0/5 Brew Potion RESET TARGET RECIPE Azure Cleanse Ratio 3:1 Brew Azure Cleanse at a 3:1 ratio. Azure is the largest share and Oak is the smaller share. Use all shown potions. 3 × HOW TO PLAY Potion Panic H",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 7,
+      "islandName": "Ratio Rapids",
+      "levelId": 3,
+      "levelName": "Level 3",
+      "gameType": "ratio_rapids",
+      "route": "http://127.0.0.1:3000/game/7/3",
+      "screenCount": 1,
+      "bodyPreview": "SERVING PLATE 16 cakes left 16 Drag cakes from the serving plate onto the 4 plates. RESET Check TARGET SHARE Split the Cakes Ratio 2 : 1 : 2 : 3 Quest: Use all 16 cakes to match the ratio 2:1:2:3. 89S 3 × HOW TO PLAY Sha",
+      "status": "loaded",
+      "notes": [
+        "lands on a pre-game instruction overlay, but the gameplay route is present"
+      ]
+    },
+    {
+      "islandId": 7,
+      "islandName": "Ratio Rapids",
+      "levelId": 4,
+      "levelName": "Level 4",
+      "gameType": "ratio_fractions",
+      "route": "http://127.0.0.1:3000/game/7/4",
+      "screenCount": 1,
+      "bodyPreview": "FINISH → 1 FUEL MIX QUESTION Fuel to oxygen is 3:2. What fraction is oxygen? FUEL 3 : OXYGEN 2 2/3 2/5 5/2 3/5 89S 3",
+      "status": "loaded",
+      "notes": []
+    },
+    {
+      "islandId": 7,
+      "islandName": "Ratio Rapids",
+      "levelId": 5,
+      "levelName": "Level 5",
+      "gameType": "scale_safari",
+      "route": "http://127.0.0.1:3000/game/7/5",
+      "screenCount": 1,
+      "bodyPreview": "SCALE BUILDER Scale the foundation to exactly 2.0x its original size. Target 2.00x Current 1.00x 60.0 units 40.0 units ADJUST THE SCALE HIDE GUIDE -0.25 RESET +0.25 Check Scale 89S 3",
+      "status": "loaded",
+      "notes": []
+    }
+  ],
+  "consoleErrors": []
+}

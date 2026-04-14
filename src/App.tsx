@@ -148,14 +148,18 @@ const App: React.FC = () => {
     });
   }, [setPlayer]);
 
+  const initialLegacyHydration = useMemo(() => ({
+    levelStars: player.levelStars || {},
+    completedLevels: player.completedLevels || {},
+    playerLevel: player.level,
+    playerXp: player.xp,
+  }), [player.completedLevels, player.level, player.levelStars, player.xp]);
+
   useEffect(() => {
-    hydrateFromLegacy({
-      levelStars: player.levelStars || {},
-      completedLevels: player.completedLevels || {},
-      playerLevel: player.level,
-      playerXp: player.xp,
-    });
-  }, [hydrateFromLegacy, player.completedLevels, player.level, player.levelStars, player.xp]);
+    if (legacyHydrationAppliedRef.current) return;
+    legacyHydrationAppliedRef.current = true;
+    hydrateFromLegacy(initialLegacyHydration);
+  }, [hydrateFromLegacy, initialLegacyHydration]);
 
   useEffect(() => {
     if (player.avatarId && player.avatarId !== progressionPlayer.avatarId) {
@@ -211,6 +215,8 @@ const App: React.FC = () => {
   const [wellbeingCompletion, setWellbeingCompletion] = useState<WellbeingCompletionState | null>(null);
   const [storedLevelResult, setStoredLevelResult] = useState<LevelResultState | null>(null);
   const [gameplayRestartKey, setGameplayRestartKey] = useState(0);
+  const legacyHydrationAppliedRef = useRef(false);
+  const autoGameRulesKeyRef = useRef<string | null>(null);
   const lastIncorrectLifeLossRef = useRef<{ signature: string; at: number }>({ signature: '', at: 0 });
   const levelFailCountsRef = useRef<Record<string, number>>({});
   const handleGameOverRef = useRef<(XP: number) => void>(() => {});
@@ -572,13 +578,34 @@ const App: React.FC = () => {
   }, [screen]);
 
   useEffect(() => {
-    if (screen !== 'gameplay' || !selectedLevel || !hintRuleSet) return;
+    if (screen !== 'gameplay' || !selectedLevel || !hintRuleSet) {
+      autoGameRulesKeyRef.current = null;
+      return;
+    }
+
     if (selectedLevel.blueprintKey === 'rounding_rocket') return;
     const miniLevel = selectedLevel.miniGameLevel ?? selectedLevel.id;
     if (miniLevel > 3) return;
-    setGameRulesMode('start');
-    setShowGameRules(true);
-  }, [screen, selectedLevel?.id, selectedLevel?.miniGameLevel, hintRuleSet, setGameRulesMode, setShowGameRules]);
+
+    const autoRulesKey = `${selectedLevel.blueprintKey ?? selectedLevel.gameType ?? 'game'}:${selectedLevel.id}:${miniLevel}`;
+    if (autoGameRulesKeyRef.current === autoRulesKey) return;
+    autoGameRulesKeyRef.current = autoRulesKey;
+
+    if (!showGameRules) {
+      setGameRulesMode('start');
+      setShowGameRules(true);
+    }
+  }, [
+    hintRuleSet,
+    screen,
+    selectedLevel?.blueprintKey,
+    selectedLevel?.gameType,
+    selectedLevel?.id,
+    selectedLevel?.miniGameLevel,
+    showGameRules,
+    setGameRulesMode,
+    setShowGameRules,
+  ]);
 
   useEffect(() => {
     const handleOpenHelp = () => {
