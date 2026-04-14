@@ -15,6 +15,7 @@ import cakeSliceAsset from '../assets/cakeslice.png';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import GameRulesModal from '../components/GameRulesModal';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
+import CelebrationSplash from '../components/CelebrationSplash';
 
 interface ShareSplitterGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -183,6 +184,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const [locked, setLocked] = useState(false);
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [showRules, setShowRules] = useState(false);
+  const [showCelebrationSplash, setShowCelebrationSplash] = useState(false);
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const endedRef = useRef(false);
@@ -211,6 +213,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setValidationActive(false);
     setMoveHistory([]);
     setLocked(false);
+    setShowCelebrationSplash(false);
   }, [levelId]);
 
   const plateViews = useMemo(() => challenge.ratios.map((ratio, index) => {
@@ -459,6 +462,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setXpEarned(nextXp);
     setFeedback('Well done! The cakes were shared correctly.');
     setFeedbackTone('good');
+    setShowCelebrationSplash(true);
 
     confetti({
       particleCount: 40,
@@ -469,6 +473,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
+      setShowCelebrationSplash(false);
       if (endedRef.current) return;
       if (nextSolved >= ROUNDS_TO_WIN) {
         endedRef.current = true;
@@ -501,10 +506,11 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
             <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
               <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] px-2 py-3 md:px-3">
                 <div className="pointer-events-none absolute inset-0 z-[20]">
-                  <div className="relative h-full w-full">
-                    {plateViews.map((plate, index) => {
-                      const plateTone = validationActive
-                        ? plate.isCorrect
+          <div className="relative h-full w-full">
+            <CelebrationSplash active={showCelebrationSplash} message="Party Time!" theme="party" />
+            {plateViews.map((plate, index) => {
+              const plateTone = validationActive
+                ? plate.isCorrect
                           ? 'border-emerald-300/70 bg-[linear-gradient(180deg,rgba(226,252,243,0.9),rgba(186,247,231,0.78))]'
                           : 'border-amber-200/70 bg-[linear-gradient(180deg,rgba(255,243,205,0.9),rgba(255,232,176,0.78))]'
                         : hoverPlateIndex === index

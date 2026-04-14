@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import takeOutLevelBg from '../assets/level_backgrounds/take_out.png';
 import food1 from '../assets/take_out/food/1.png';
@@ -14,6 +14,7 @@ import food9 from '../assets/take_out/food/9.png';
 import FoodGameShell from '../components/FoodGameShell';
 import defaultMonster from '../assets/bosses/goblin.png';
 import { triggerHaptic } from '../haptics';
+import CelebrationSplash from '../components/CelebrationSplash';
 
 interface TakeOutRushGameProps {
   levelId: number;
@@ -328,7 +329,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isResolvingOrder, setIsResolvingOrder] = useState(false);
-  const [showSuccessBurst, setShowSuccessBurst] = useState(false);
+  const [showCelebrationSplash, setShowCelebrationSplash] = useState(false);
   const [orderStartMs, setOrderStartMs] = useState<number>(() => Date.now());
   const [roundFinished, setRoundFinished] = useState(false);
 
@@ -428,7 +429,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     const points = 120 + stageBonus + itemBonus + speedBonus + streakBonus;
 
     triggerHaptic('success');
-    setShowSuccessBurst(true);
+    setShowCelebrationSplash(true);
     setScore((prev) => prev + points);
     setOrdersServed((prev) => prev + 1);
     setStreak((prev) => prev + 1);
@@ -447,10 +448,10 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
 
     feedbackTimeoutRef.current = window.setTimeout(() => {
       setFeedback(null);
-      setShowSuccessBurst(false);
+      setShowCelebrationSplash(false);
       nextOrder(ordersServed + 1, timeLeft);
       setIsResolvingOrder(false);
-    }, 320);
+    }, 680);
   }, [nextOrder, order.stage, orderStartMs, ordersServed, selectedIds.length, Combo, timeLeft]);
 
   const resolveIncorrectOrder = useCallback(() => {
@@ -658,16 +659,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
             </section>
           </div>
 
-          <AnimatePresence>
-            {showSuccessBurst ? (
-              <motion.div
-                className="pointer-events-none absolute inset-0 rounded-[2rem] border border-amber-200/40 bg-amber-100/5"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              />
-            ) : null}
-          </AnimatePresence>
+          <CelebrationSplash active={showCelebrationSplash} message="Order Up!" theme="takeout" />
         </main>
       </div>
     </FoodGameShell>

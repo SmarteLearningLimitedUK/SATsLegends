@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
+import CelebrationSplash from '../components/CelebrationSplash';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 import { triggerHaptic } from '../haptics';
 import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
@@ -246,6 +247,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
   const [correctCount, setCorrectCount] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [isFinished, setIsFinished] = useState(false);
+  const [showCelebrationSplash, setShowCelebrationSplash] = useState(false);
 
   const timersRef = useRef<number[]>([]);
   const scoreRef = useRef(0);
@@ -267,6 +269,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
     setCorrectCount(0);
     setFeedback(null);
     setIsFinished(false);
+    setShowCelebrationSplash(false);
   }, [resolvedLevel]);
 
   const advanceRound = useCallback(() => {
@@ -285,6 +288,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
     }
 
     const timeoutId = window.setTimeout(() => {
+      setShowCelebrationSplash(false);
       setRoundNumber((prev) => prev + 1);
       setRound(createRound(resolvedLevel));
       setFeedback(null);
@@ -300,6 +304,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
       const updatedScore = XP + gained;
       setScore(updatedScore);
       setCorrectCount((prev) => prev + 1);
+      setShowCelebrationSplash(true);
       setFeedback({
         tone: 'success',
         title: 'Formula Locked',
@@ -407,20 +412,22 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
             </div>
           </div>
 
+          <CelebrationSplash active={showCelebrationSplash} message="Now We're Cookin'!" theme="forge" />
+
           <AnimatePresence>
-            {feedback && (
+            {feedback && feedback.tone === 'error' ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.82 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.08 }}
-                className={`pointer-events-none absolute inset-0 z-40 flex items-center justify-center backdrop-blur-md ${feedback.tone === 'success' ? 'bg-emerald-500/16' : 'bg-red-500/16'}`}
+                className="pointer-events-none absolute inset-0 z-40 flex items-center justify-center backdrop-blur-md bg-red-500/16"
               >
                 <div className="rounded-[1.6rem] border border-white/14 bg-slate-950/62 px-6 py-5 text-center shadow-[0_18px_28px_rgba(0,0,0,0.24)] md:rounded-[2rem] md:px-8 md:py-6">
-                  <div className={`text-3xl font-black uppercase tracking-[0.12em] md:text-5xl ${feedback.tone === 'success' ? 'text-emerald-100' : 'text-amber-100'}`}>{feedback.title}</div>
+                  <div className="text-3xl font-black uppercase tracking-[0.12em] text-amber-100 md:text-5xl">{feedback.title}</div>
                   <div className="mt-1 text-sm font-bold text-white/92 md:mt-2 md:text-xl">{feedback.subtitle}</div>
                 </div>
               </motion.div>
-            )}
+            ) : null}
           </AnimatePresence>
         </PuzzleStage>
       </div>
