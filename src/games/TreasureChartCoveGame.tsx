@@ -166,7 +166,7 @@ const createRound = (levelId: number, roundIndex: number): ChartRound => {
 const CoinBarBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships, label }) => {
   const maxValue = Math.max(...ships.map((ship) => ship.value));
   return (
-    <div className="rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.24))] p-2.5 shadow-[0_18px_28px_rgba(15,23,42,0.22)]">
+    <div className="w-full">
       <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/62 md:text-[10px]">{label}</div>
       <div className="mt-3 grid grid-cols-4 items-end gap-2 md:gap-3">
         {ships.map((ship) => (
@@ -207,7 +207,7 @@ const LineGraphBoard: React.FC<{ days: Array<{ label: string; value: number }>; 
   const path = points.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`).join(' ');
 
   return (
-    <div className="rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.24))] p-2.5 shadow-[0_18px_28px_rgba(15,23,42,0.22)]">
+    <div className="w-full">
       <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/62 md:text-[10px]">{label}</div>
       <svg viewBox="0 0 100 100" className="mt-3 h-24 w-full md:h-28">
         <rect x="6" y="8" width="88" height="80" rx="8" fill="rgba(15,23,42,0.18)" stroke="rgba(255,255,255,0.12)" />
@@ -247,9 +247,9 @@ const PieShareBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships,
   });
 
   return (
-    <div className="rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.24))] p-2.5 shadow-[0_18px_28px_rgba(15,23,42,0.22)]">
+    <div className="w-full">
       <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/70 md:text-[10px]">{label}</div>
-            <div className="mt-3 flex items-center justify-between gap-3">
+      <div className="mt-3 flex items-center justify-between gap-3">
         <div
           className="h-24 w-24 rounded-full border border-white/12 shadow-[inset_0_0_0_8px_rgba(15,23,42,0.22)] md:h-28 md:w-28"
           style={{
@@ -273,7 +273,7 @@ const PieShareBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships,
 };
 
 const TableBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships, label }) => (
-  <div className="rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.24))] p-2.5 shadow-[0_18px_28px_rgba(15,23,42,0.22)]">
+  <div className="w-full">
     <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/70 md:text-[10px]">{label}</div>
     <div className="mt-3 space-y-1.5">
       {ships.map((ship) => (
@@ -467,7 +467,6 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
                     >
                       <div className="absolute inset-x-[10%] top-[10%] h-[18%] rounded-full bg-white/10 blur-md" />
                       <div className="relative">
-                        <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/58">Choice</div>
                         <div className="mt-1.5 text-[0.85rem] font-black tracking-tight text-amber-50 md:text-base">{choice}</div>
                       </div>
                     </motion.button>
