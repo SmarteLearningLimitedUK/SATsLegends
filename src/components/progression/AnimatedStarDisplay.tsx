@@ -69,7 +69,7 @@ const AnimatedStarDisplay: React.FC<AnimatedStarDisplayProps> = ({
             className={`rounded-full p-2 ${isEarned ? 'bg-amber-200/20 ring-1 ring-amber-300/60' : 'bg-white/10 ring-1 ring-white/15'}`}
           >
             <AssetIcon
-              name={isEarned ? 'star' : 'starOutline'}
+              name="brainpowerToken"
               className={`${sizeClassName} ${isEarned ? 'text-amber-200' : 'text-white/45'}`}
             />
           </motion.div>

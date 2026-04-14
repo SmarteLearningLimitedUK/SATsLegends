@@ -25,7 +25,7 @@ const ThemedSvg: React.FC<IconProps & { children: React.ReactNode; viewBox?: str
   </span>
 );
 
-const starName = (className='') => /fill-|text-(yellow|amber|orange)/.test(className) ? 'star' : 'starOutline';
+const starName = (className='') => /fill-|text-(yellow|amber|orange)/.test(className) ? 'brainpowerToken' : 'brainpowerToken';
 const heartName = (className='') => /(fill-|text-red|text-pink)/.test(className) ? 'heart' : 'heartOutline';
 
 const brown = '#5c3a1e';
@@ -43,7 +43,16 @@ const green = '#63c66d';
 
 export const Home: React.FC<IconProps> = ({ className, size }) => <ImageIcon name="home" className={className} size={size} />;
 export const HelpCircle: React.FC<IconProps> = ({ className, size }) => <ImageIcon name="question" className={className} size={size} />;
-export const Star: React.FC<IconProps> = ({ className, size }) => <ImageIcon name={starName(className)} className={className} size={size} />;
+export const Star: React.FC<IconProps> = ({ className, size }) => {
+  const filled = /fill-|text-(yellow|amber|orange)/.test(className || '');
+  return (
+    <ImageIcon
+      name={starName(className)}
+      className={`${className || ''} ${filled ? '' : 'opacity-45 grayscale saturate-0 brightness-110'}`}
+      size={size}
+    />
+  );
+};
 export const Timer: React.FC<IconProps> = ({ className, size }) => <ImageIcon name="timer" className={className} size={size} />;
 export const Target: React.FC<IconProps> = ({ className, size }) => <ImageIcon name="medal" className={className} size={size} />;
 export const Check: React.FC<IconProps> = ({ className, size }) => <ImageIcon name="check" className={className} size={size} />;

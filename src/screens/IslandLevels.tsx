@@ -209,8 +209,8 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
     [levelRows],
   );
 
-  const earnedStars = levelRows.reduce((sum, row) => sum + row.stars, 0);
-  const completionPercent = Math.round((completedLevels.length / Math.max(1, island.levels.length)) * 100);
+  const earnedBrainpowerTokens = levelRows.reduce((sum, row) => sum + row.stars, 0);
+  const totalBrainpowerTokens = Math.max(1, island.levels.length * 3);
 
   return (
     <div
@@ -244,22 +244,15 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
             </div>
           </div>
 
-          <div className="licensed-board-frame flex min-w-[112px] shrink-0 flex-col items-end gap-1 rounded-xl px-3 py-2 text-white md:min-w-[140px]">
-            <div className="flex items-center gap-1.5 text-sm font-black md:text-base">
-              <AssetIcon name="star" className="h-4 w-4 text-yellow-300 md:h-5 md:w-5" />
-              <span>{earnedStars}</span>
+          <div className="licensed-board-frame flex min-w-[132px] shrink-0 flex-col items-end gap-1 rounded-xl px-3 py-2 text-white md:min-w-[164px]">
+            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-[10px]">
+              Brainpower Tokens
             </div>
-            <div className="text-aaa-micro text-cyan-100/80">
-              {completionPercent}% complete
+            <div className="flex items-center gap-1.5 text-sm font-black md:text-base">
+              <AssetIcon name="brainpowerToken" className="h-4 w-4 md:h-5 md:w-5" />
+              <span>{earnedBrainpowerTokens}/{totalBrainpowerTokens}</span>
             </div>
           </div>
-        </div>
-
-        <div className="mb-3 h-2.5 overflow-hidden rounded-full border border-white/22 bg-slate-950/65 md:mb-4">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-300 to-emerald-300 transition-all duration-300"
-            style={{ width: `${completionPercent}%` }}
-          />
         </div>
 
         {nextPlayableRow ? (
@@ -289,7 +282,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
           <div className="flex flex-col gap-2.5 pb-[calc(env(safe-area-inset-bottom)+1rem)] md:gap-3 md:pb-[calc(env(safe-area-inset-bottom)+1.2rem)]">
             {gameGroups.map((group) => {
               const isExpanded = expandedGameId === group.id;
-              const totalPossibleStars = group.levels.length * 3;
+              const totalPossibleBrainpowerTokens = group.levels.length * 3;
 
               return (
                 <div
@@ -326,21 +319,16 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
 
                     <div className="min-w-0 flex-1">
                       <div className="truncate text-sm font-black text-white md:text-base">{group.name}</div>
-                      <div className="mt-0.5 text-[11px] font-semibold text-cyan-100/80 md:text-xs">
-                        {group.completedCount}/{group.levels.length} complete
-                        {group.hasNextPlayable ? ' • Continue available' : ''}
+                      <div className="mt-0.5 inline-flex items-center gap-1 rounded-full border border-white/12 bg-white/5 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/80 md:text-[11px]">
+                        <AssetIcon name="brainpowerToken" className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                        <span>{group.totalStars}/{totalPossibleBrainpowerTokens}</span>
+                        {group.hasNextPlayable ? <span className="text-amber-100">Next</span> : null}
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1 text-xs font-black text-yellow-200 md:text-sm">
-                        <AssetIcon name="star" className="h-4 w-4 text-yellow-300 md:h-5 md:w-5" />
-                        <span>{group.totalStars}/{totalPossibleStars}</span>
-                      </div>
-                      <span className="ml-1 text-xs font-black text-cyan-100/85 md:text-sm">
+                    <span className="ml-1 text-xs font-black text-cyan-100/85 md:text-sm">
                         {isExpanded ? '-' : '+'}
                       </span>
-                    </div>
                   </button>
 
                   {isExpanded ? (
@@ -396,8 +384,8 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                                 {[1, 2, 3].map((value) => (
                                   <AssetIcon
                                     key={`${level.id}-${value}`}
-                                    name={value <= stars ? 'star' : 'starOutline'}
-                                    className={`h-4 w-4 md:h-5 md:w-5 ${value <= stars ? 'text-yellow-300' : 'text-white/35'}`}
+                                    name="brainpowerToken"
+                                    className={`h-4 w-4 md:h-5 md:w-5 ${value <= stars ? 'opacity-100' : 'opacity-35 grayscale saturate-0'}`}
                                   />
                                 ))}
                               </div>

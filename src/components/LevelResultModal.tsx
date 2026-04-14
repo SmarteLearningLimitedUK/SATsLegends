@@ -225,7 +225,10 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
                     transition={{ delay: 0.12 + index * 0.11, type: 'spring', stiffness: 250, damping: 16 }}
                     className={`rounded-full p-1.5 md:p-2 ${star <= result.stars ? 'bg-yellow-300/18 ring-1 ring-amber-200/45' : 'bg-white/5 ring-1 ring-white/10'}`}
                   >
-                    <AssetIcon name={star <= result.stars ? 'star' : 'starOutline'} className="h-7 w-7 md:h-10 md:w-10" />
+                    <AssetIcon
+                      name="brainpowerToken"
+                      className={`h-7 w-7 md:h-10 md:w-10 ${star <= result.stars ? 'opacity-100' : 'opacity-40 grayscale saturate-0'}`}
+                    />
                   </motion.div>
                 ))}
               </div>
@@ -239,7 +242,7 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
                 />
                 <StatTile
                   label="XP"
-                  value={<span className="inline-flex items-center gap-1"><AssetIcon name="star" className="h-4 w-4" /> +{result.xpEarned}</span>}
+                  value={<span className="inline-flex items-center gap-1"><AssetIcon name="brainpowerToken" className="h-4 w-4" /> +{result.xpEarned}</span>}
                   tone="xp"
                 />
               </div>
@@ -291,7 +294,7 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
                     }}
                     className="w-full gap-2 py-3 md:py-4"
                   >
-                    <AssetIcon name="star" className="h-4 w-4" />
+                    <AssetIcon name="brainpowerToken" className="h-4 w-4" />
                     {result.tertiaryLabel}
                   </SecondaryActionButton>
                 ) : null}
