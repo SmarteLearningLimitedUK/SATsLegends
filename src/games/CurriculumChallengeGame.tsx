@@ -1311,6 +1311,10 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
     XP >= targetScore * 1.9 ? 3 : XP >= targetScore * 1.35 ? 2 : 1
   ), [XP, targetScore]);
 
+  const playfieldFrameClass = isChartGrabber
+    ? 'bg-transparent shadow-none'
+    : `rounded-[1.8rem] border border-white/10 ${isCalculationClash ? 'bg-[linear-gradient(180deg,rgba(9,34,58,0.86),rgba(7,17,31,0.62))]' : isPlaceValuePeaks ? 'bg-[linear-gradient(180deg,rgba(52,28,10,0.76),rgba(16,16,22,0.54))]' : 'bg-[linear-gradient(180deg,rgba(9,16,28,0.68),rgba(9,16,28,0.34))]'} shadow-[0_24px_64px_rgba(0,0,0,0.28)] md:rounded-[2.6rem]`;
+
   return (
     <div className={`relative flex h-full w-full flex-col overflow-hidden ${theme.ambient} px-1.5 pb-1.5 pt-1 md:px-4 md:pb-4`}>
       {showSceneBackdrop ? <GameplaySceneBackdrop gameType={gameType} /> : null}
@@ -1322,7 +1326,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
 
       <div className={`relative z-10 flex h-full min-h-0 flex-col ${isChartGrabber ? 'gap-1 md:gap-2' : 'gap-1 md:gap-4'}`}>
 
-        <div className={`licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.8rem] border border-white/10 ${isCalculationClash ? 'bg-[linear-gradient(180deg,rgba(9,34,58,0.86),rgba(7,17,31,0.62))]' : isPlaceValuePeaks ? 'bg-[linear-gradient(180deg,rgba(52,28,10,0.76),rgba(16,16,22,0.54))]' : 'bg-[linear-gradient(180deg,rgba(9,16,28,0.68),rgba(9,16,28,0.34))]'} shadow-[0_24px_64px_rgba(0,0,0,0.28)] md:rounded-[2.6rem]`}>
+        <div className={`licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col overflow-hidden ${playfieldFrameClass}`}>
           <div className="flex min-h-0 flex-1 flex-col gap-1.5 p-1.5 md:gap-3 md:p-4">
             {bossEncounter && (
               <BossPortrait encounter={bossEncounter} pose={bossPose} compact className="shrink-0" />
@@ -1347,35 +1351,46 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
               </div>
             </div>
 
-            <div className={`casual-panel-surface relative flex min-h-0 shrink overflow-hidden ${
-              isPlaceValuePeaks
-                ? 'rounded-[1.35rem] border border-amber-200/12 bg-[linear-gradient(180deg,rgba(32,18,11,0.72),rgba(12,12,16,0.82))]'
-                : isChartGrabber
-                  ? 'rounded-[1.35rem] border border-sky-200/30 bg-[linear-gradient(180deg,rgba(8,24,61,0.92),rgba(4,12,30,0.94))]'
-                  : 'rounded-[1.25rem]'
-              } px-2 py-2 md:rounded-[1.8rem] md:px-4 md:py-4`}>
-              <div className={`relative z-10 flex min-h-0 w-full flex-col items-center ${isChartGrabber ? 'justify-start gap-1 pt-1' : 'justify-center gap-2'}`}>
+            {isChartGrabber ? (
+              <div className="relative flex min-h-0 shrink flex-col items-center justify-start gap-1 pt-1">
                 <motion.div
                   key={`${question.prompt}-${question.sublabel}`}
                   initial={{ opacity: 0, y: 8, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  className={`flex min-h-0 w-full ${isChartGrabber ? 'items-start justify-center pb-1 overflow-visible' : 'items-center justify-center overflow-hidden'}`}
+                  className="flex min-h-0 w-full items-start justify-center overflow-visible pb-1"
                 >
-                  <div className={`w-full ${isChartGrabber ? 'h-[clamp(8.75rem,18vh,12rem)] md:h-[clamp(10rem,22vh,14rem)] overflow-visible' : 'max-h-[10.5rem] md:max-h-[15rem] overflow-hidden'}`}>
+                  <div className="w-full h-[clamp(8.75rem,18vh,12rem)] overflow-visible md:h-[clamp(10rem,22vh,14rem)]">
                     <div className="flex h-full w-full items-center justify-center">
                       {renderVisual(question.visual)}
                     </div>
                   </div>
                 </motion.div>
-                {!isChartGrabber && (
-                  <div className={`w-full rounded-[1rem] px-3 py-2 text-center font-bold shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:rounded-[1.15rem] md:px-4 md:py-2.5 ${isChartGrabber ? 'text-[8px] md:text-[11px]' : 'text-[9px] md:text-sm'} ${
-                    isChartGrabber ? 'bg-white/18 text-slate-900' : 'bg-black/22 text-white/84'
-                  }`}>
+              </div>
+            ) : (
+              <div className={`casual-panel-surface relative flex min-h-0 shrink overflow-hidden ${
+                isPlaceValuePeaks
+                  ? 'rounded-[1.35rem] border border-amber-200/12 bg-[linear-gradient(180deg,rgba(32,18,11,0.72),rgba(12,12,16,0.82))]'
+                  : 'rounded-[1.25rem]'
+                } px-2 py-2 md:rounded-[1.8rem] md:px-4 md:py-4`}>
+                <div className="relative z-10 flex min-h-0 w-full flex-col items-center justify-center gap-2">
+                  <motion.div
+                    key={`${question.prompt}-${question.sublabel}`}
+                    initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    className="flex min-h-0 w-full items-center justify-center overflow-hidden"
+                  >
+                    <div className="w-full max-h-[10.5rem] overflow-hidden md:max-h-[15rem]">
+                      <div className="flex h-full w-full items-center justify-center">
+                        {renderVisual(question.visual)}
+                      </div>
+                    </div>
+                  </motion.div>
+                  <div className={`w-full rounded-[1rem] px-3 py-2 text-center font-bold shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:rounded-[1.15rem] md:px-4 md:py-2.5 text-[9px] md:text-sm bg-black/22 text-white/84`}>
                     {visualCaption || statusMessage}
                   </div>
-                )}
+                </div>
               </div>
-            </div>
+            )}
 
             <div className={`flex min-h-0 ${isChartGrabber ? 'mt-auto flex-1 justify-end' : 'flex-1'} flex-col ${
               isPlaceValuePeaks ? 'gap-2 md:gap-3' : isChartGrabber ? 'gap-1 md:gap-2 pb-1' : 'gap-1.5 md:gap-2.5'
