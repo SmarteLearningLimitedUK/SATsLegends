@@ -15,3 +15,5 @@ deploy.config.bat
 .env*.local
 .verify_deployroot/
 src/assets/importedassets/screen comparison/SATsLegendsendofcodex.zip
+
+.vercel

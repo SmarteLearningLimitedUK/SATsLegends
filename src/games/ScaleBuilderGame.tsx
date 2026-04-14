@@ -320,15 +320,15 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
       <GameplaySceneBackdrop
         gameType="scale_safari"
         backgroundOverride={scaleBuilderBackground}
-        className="z-[0] opacity-20 saturate-0 contrast-125 brightness-75"
+        className="z-[0] brightness-110 contrast-125 saturate-0"
       />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-[1]"
       >
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,47,73,0.82)_0%,rgba(7,89,133,0.76)_38%,rgba(8,47,73,0.94)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,47,73,0.18)_0%,rgba(7,89,133,0.14)_38%,rgba(8,47,73,0.28)_100%)]" />
         <div
-          className="absolute inset-0 opacity-80"
+          className="absolute inset-0 opacity-72"
           style={{
             backgroundImage: [
               'linear-gradient(to right, rgba(186,230,253,0.22) 1px, transparent 1px)',
@@ -352,7 +352,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
       ) : null}
 
       <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-2 px-2 pb-1 pt-[max(3.4rem,calc(env(safe-area-inset-top)+2.6rem))] md:gap-3 md:px-3">
-        <PuzzleStage className="mx-auto flex h-full w-full max-w-[780px] min-h-0 flex-1 flex-col rounded-[2rem] md:rounded-[2.4rem]">
+        <PuzzleStage className="mx-auto flex h-full w-full max-w-[780px] min-h-0 flex-1 flex-col rounded-[2rem] bg-transparent shadow-none !bg-transparent !shadow-none md:rounded-[2.4rem]">
           <div className="relative z-10 grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-2 p-2 md:p-3">
             <div className="rounded-[1rem] border border-white/14 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(15,23,42,0.84))] p-2">
               <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/78">Scale Builder</div>
