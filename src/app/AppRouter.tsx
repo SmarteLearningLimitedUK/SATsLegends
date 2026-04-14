@@ -625,18 +625,18 @@ export const AppRouter: React.FC<AppRouterProps> = ({
               <div
                 className="pointer-events-none absolute inset-x-3 z-40 flex justify-center md:inset-x-5"
                 style={{
-                  top: 'calc(var(--game-shell-top-inset) - 2.9rem)',
+                  top: 'calc(var(--game-shell-top-inset) - 2.5rem)',
                 }}
               >
                 <motion.div
                   initial={{ opacity: 0, y: -8, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -8, scale: 0.98 }}
-                  className="max-w-[30rem] rounded-2xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(19,53,120,0.92),rgba(12,36,92,0.94))] px-4 py-2.5 text-center text-[11px] font-black uppercase tracking-[0.12em] text-cyan-50 shadow-[0_12px_24px_rgba(2,6,23,0.45)] md:px-5 md:py-3 md:text-xs"
+                  className="max-w-[28rem] rounded-2xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(19,53,120,0.92),rgba(12,36,92,0.94))] px-3 py-2 text-center text-[10px] font-black uppercase tracking-[0.1em] text-cyan-50 shadow-[0_10px_20px_rgba(2,6,23,0.4)] md:max-w-[30rem] md:px-4 md:py-2.5 md:text-[11px]"
                 >
-                  <div className="flex flex-col items-center gap-1.5">
+                  <div className="flex flex-col items-center gap-1">
                     {selectedLevel?.isPractice ? (
-                      <span className="rounded-full border border-amber-200/50 bg-amber-300/15 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100">
+                      <span className="rounded-full border border-amber-200/50 bg-amber-300/15 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.18em] text-amber-100">
                         Practice
                       </span>
                     ) : null}
