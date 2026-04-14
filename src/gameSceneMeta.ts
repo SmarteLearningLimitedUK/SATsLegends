@@ -5,6 +5,7 @@ import world03Map from './assets/maps/castle.jpg';
 import world04Map from './assets/maps/harbour.jpg';
 import world05Map from './assets/maps/desert.jpg';
 import world06Map from './assets/maps/volcano2.jpg';
+import marketBackground from './assets/maps/market.jpg';
 import scaleBackground from './assets/maps/scale.png';
 import angleArenaBackground from './assets/angle_arena/angle arena.png';
 import dataDetectiveBackground from './assets/maps/backgroundsforgames/datadetectivemap.jpg';
@@ -63,6 +64,11 @@ const REASONING_SCENE: GameSceneMeta = {
   panelTint: 'from-emerald-200/16 via-sky-300/10 to-transparent',
 };
 
+const CHANGE_COUNTER_SCENE: GameSceneMeta = {
+  ...REASONING_SCENE,
+  background: marketBackground,
+};
+
 const SCALE_SCENE: GameSceneMeta = {
   ...RATIO_SCENE,
   background: scaleBackground,
@@ -113,6 +119,6 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   rule_runner: REASONING_SCENE,
   formula_forge: NUMBER_SCENE,
   unit_mixer: REASONING_SCENE,
-  change_counter: REASONING_SCENE,
+  change_counter: CHANGE_COUNTER_SCENE,
   reasoning_quest: REASONING_SCENE,
 };
