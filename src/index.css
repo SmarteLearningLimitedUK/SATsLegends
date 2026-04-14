@@ -1556,6 +1556,48 @@ button:disabled {
   overflow: visible;
 }
 
+.world-map-island-breathe {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+  animation-name: world-map-island-breathe;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.world-map-island-breathe::before,
+.world-map-island-breathe::after,
+.world-map-island-halo {
+  content: '';
+  position: absolute;
+  inset: 12% 10%;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,0.26), rgba(255,255,255,0.05) 30%, rgba(255,255,255,0) 72%);
+  mix-blend-mode: screen;
+  filter: blur(10px);
+  opacity: 0.34;
+}
+
+.world-map-island-breathe::before {
+  animation: world-map-island-glow 4.6s ease-in-out infinite;
+}
+
+.world-map-island-breathe::after {
+  inset: 20% 18%;
+  opacity: 0.16;
+  filter: blur(16px);
+  animation: world-map-island-glow 5.8s ease-in-out infinite reverse;
+}
+
+.world-map-island-halo {
+  inset: 28% 20%;
+  opacity: 0.18;
+  filter: blur(14px);
+  animation: world-map-island-glow 6.4s ease-in-out infinite;
+}
+
 .world-map-orbit {
   position: absolute;
   inset: 0;
@@ -1823,6 +1865,26 @@ button:disabled {
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes world-map-island-breathe {
+  0%, 100% {
+    transform: scale(0.995);
+  }
+  50% {
+    transform: scale(1.008);
+  }
+}
+
+@keyframes world-map-island-glow {
+  0%, 100% {
+    transform: scale(0.94);
+    opacity: 0.16;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 0.34;
   }
 }
 
