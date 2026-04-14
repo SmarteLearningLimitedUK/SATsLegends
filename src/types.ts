@@ -64,6 +64,7 @@ export interface IslandData {
   levels: LevelData[];
   color: string;
   themeName?: string;
+  backgroundLabel?: string;
   bgGradient?: string;
   groundColor?: string;
   mapImage?: string;

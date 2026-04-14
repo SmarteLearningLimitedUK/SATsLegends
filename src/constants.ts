@@ -223,6 +223,7 @@ export const ISLANDS: IslandData[] = [
     isLocked: false,
     color: 'bg-[#2C2A4A]',
     themeName: 'Core of Calculation',
+    backgroundLabel: 'Colosseum',
     bgGradient: 'from-slate-900 to-indigo-950',
     groundColor: 'bg-slate-900',
     mapImage: world06Map,
