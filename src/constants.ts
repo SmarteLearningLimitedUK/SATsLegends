@@ -8,14 +8,23 @@ import world05Map from './assets/maps/desert.jpg';
 import world06Map from './assets/maps/volcano2.jpg';
 import { NUMBER_BASE_CAMP_LEVELS } from './systems/content/island1NumberBaseCamp';
 
-const mergeIslandLevels = (...groups: LevelData[][]): LevelData[] => (
-  groups
-    .flat()
-    .map((level, index) => ({
+const mergeIslandLevels = (...groups: LevelData[][]): LevelData[] => {
+  const flattened = groups.flat().map((level, index) => ({
+    ...level,
+    id: index + 1,
+  }));
+
+  const seen = new Set<string>();
+  return flattened.map((level) => {
+    const practiceKey = level.blueprintKey || `${level.gameType || 'level'}-${level.id}`;
+    const isPractice = !seen.has(practiceKey);
+    seen.add(practiceKey);
+    return {
       ...level,
-      id: index + 1,
-    }))
-);
+      isPractice: level.isPractice ?? isPractice,
+    };
+  });
+};
 
 const pickLevelsByBlueprint = (levels: LevelData[], blueprintKeys: string[]): LevelData[] => (
   levels

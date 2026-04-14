@@ -199,13 +199,11 @@ const App: React.FC = () => {
     showQuests,
     showAchievements,
     showGameRules,
-    gameRulesMode,
     levelResult,
     setShowDailyRewards,
     setShowQuests,
     setShowAchievements,
     setShowGameRules,
-    setGameRulesMode,
     setLevelResult,
     closeGameRules,
   } = useOverlayState();
@@ -216,7 +214,6 @@ const App: React.FC = () => {
   const [storedLevelResult, setStoredLevelResult] = useState<LevelResultState | null>(null);
   const [gameplayRestartKey, setGameplayRestartKey] = useState(0);
   const legacyHydrationAppliedRef = useRef(false);
-  const autoGameRulesKeyRef = useRef<string | null>(null);
   const lastIncorrectLifeLossRef = useRef<{ signature: string; at: number }>({ signature: '', at: 0 });
   const levelFailCountsRef = useRef<Record<string, number>>({});
   const handleGameOverRef = useRef<(XP: number) => void>(() => {});
@@ -458,7 +455,17 @@ const App: React.FC = () => {
 
   const hintRuleSet = useMemo(
     () => {
-      const baseRules = selectedLevel?.blueprintKey === 'place_value_panic'
+      const baseRules = selectedLevel?.isPractice
+        ? {
+            title: canonicalGameTitle || 'Practice',
+            summary: `This is the practice round for ${canonicalGameTitle || 'this game'}. Use it to learn the controls before the real level.`,
+            bullets: [
+              'Read the mission at the top before you begin.',
+              'Use the on-screen tools to learn how the game works.',
+              'Tap help any time you want a reminder.',
+            ],
+          }
+        : selectedLevel?.blueprintKey === 'place_value_panic'
         ? {
             title: canonicalGameTitle || 'Place Value Panic',
             summary: 'Sort the digits into the correct place-value slots to build the target number.',
@@ -494,7 +501,15 @@ const App: React.FC = () => {
       const resolvedRules = titleOverride
         ? { ...baseRules, title: titleOverride }
         : baseRules;
-      return buildKidRules(resolvedRules);
+      const kidRules = buildKidRules(resolvedRules);
+      if (!kidRules) return null;
+      if (selectedLevel?.isPractice) {
+        return {
+          ...kidRules,
+          summary: `Practice round for ${kidRules.title}. Learn the controls here, then skip or start level one.`,
+        };
+      }
+      return kidRules;
     },
     [buildKidRules, selectedLevel, selectedRuleSet],
   );
@@ -578,39 +593,8 @@ const App: React.FC = () => {
   }, [screen]);
 
   useEffect(() => {
-    if (screen !== 'gameplay' || !selectedLevel || !hintRuleSet) {
-      autoGameRulesKeyRef.current = null;
-      return;
-    }
-
-    if (selectedLevel.blueprintKey === 'rounding_rocket') return;
-    const miniLevel = selectedLevel.miniGameLevel ?? selectedLevel.id;
-    if (miniLevel > 3) return;
-
-    const autoRulesKey = `${selectedLevel.blueprintKey ?? selectedLevel.gameType ?? 'game'}:${selectedLevel.id}:${miniLevel}`;
-    if (autoGameRulesKeyRef.current === autoRulesKey) return;
-    autoGameRulesKeyRef.current = autoRulesKey;
-
-    if (!showGameRules) {
-      setGameRulesMode('start');
-      setShowGameRules(true);
-    }
-  }, [
-    hintRuleSet,
-    screen,
-    selectedLevel?.blueprintKey,
-    selectedLevel?.gameType,
-    selectedLevel?.id,
-    selectedLevel?.miniGameLevel,
-    showGameRules,
-    setGameRulesMode,
-    setShowGameRules,
-  ]);
-
-  useEffect(() => {
     const handleOpenHelp = () => {
       if (screen === 'gameplay' && hintRuleSet) {
-        setGameRulesMode('help');
         setShowGameRules(true);
         setSessionMetrics((prev) => ({ ...prev, hintsUsed: prev.hintsUsed + 1 }));
       }
@@ -620,7 +604,7 @@ const App: React.FC = () => {
     return () => {
       window.removeEventListener(GAME_HUD_HELP_EVENT, handleOpenHelp as EventListener);
     };
-  }, [hintRuleSet, screen, setGameRulesMode, setSessionMetrics, setShowGameRules]);
+  }, [hintRuleSet, screen, setSessionMetrics, setShowGameRules]);
 
   useEffect(() => {
     const handleRestart = () => {
@@ -1099,7 +1083,7 @@ const App: React.FC = () => {
               isOpen={showGameRules}
               onClose={closeGameRules}
               rules={hintRuleSet}
-              actionLabel={gameRulesMode === 'start' ? 'Start Game' : 'Back To Game'}
+              actionLabel="Back To Game"
               secondaryActionLabel={screen === 'gameplay' ? 'Leave For Calm Break' : undefined}
               onSecondaryAction={screen === 'gameplay'
                 ? () => {

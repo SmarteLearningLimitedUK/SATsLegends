@@ -41,6 +41,7 @@ export interface LevelData {
   id: number;
   stars: number;
   isLocked: boolean;
+  isPractice?: boolean;
   // Stable content-planning key for curriculum and design mapping.
   blueprintKey?: string;
   // Optional display override for island-specific mini-game naming.

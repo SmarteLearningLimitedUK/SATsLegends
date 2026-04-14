@@ -340,7 +340,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                       <div className="mt-3 flex flex-col gap-2">
                         {group.levels.map((row) => {
                           const { level, stars, isCompleted, isUnlocked, isNextPlayable, lockReason } = row;
-                          const levelLabel = level.miniGameLevel ? `Level ${level.miniGameLevel}` : `Level ${level.id}`;
+                          const levelLabel = level.isPractice ? 'Practice' : (level.miniGameLevel ? `Level ${level.miniGameLevel}` : `Level ${level.id}`);
                           const isBoss = Boolean(level.isBoss);
 
                           const rowStateClass = !isUnlocked

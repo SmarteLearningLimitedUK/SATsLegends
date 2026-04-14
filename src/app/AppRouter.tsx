@@ -149,10 +149,17 @@ export const AppRouter: React.FC<AppRouterProps> = ({
   }, [screen, selectedLevel]);
 
   const inlineHintText = useMemo(() => {
+    if (selectedLevel?.isPractice) {
+      return `Practice round: read the mission, use the tools, and tap help if you need a reminder.`;
+    }
     if (hintRuleSet?.summary?.trim()) return hintRuleSet.summary.trim();
     if (selectedRuleSet?.summary?.trim()) return selectedRuleSet.summary.trim();
     return 'Solve the mission quickly and accurately before time runs out.';
-  }, [hintRuleSet?.summary, selectedRuleSet?.summary]);
+  }, [hintRuleSet?.summary, selectedLevel?.isPractice, selectedRuleSet?.summary]);
+
+  const inlineHintDurationMs = useMemo(() => (
+    selectedLevel?.isPractice ? 3200 : 1400
+  ), [selectedLevel?.isPractice]);
 
   const hideMiniGameTimer = useMemo(() => {
     if (screen !== 'gameplay' || !selectedLevel) return false;
@@ -175,12 +182,12 @@ export const AppRouter: React.FC<AppRouterProps> = ({
     setShowInlineHint(true);
     const timeoutId = window.setTimeout(() => {
       setShowInlineHint(false);
-    }, 1400);
+    }, inlineHintDurationMs);
 
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [screen, selectedLevel?.id]);
+  }, [inlineHintDurationMs, screen, selectedLevel?.id]);
 
   const renderGameplay = () => {
     if (!selectedLevel) {
@@ -627,7 +634,14 @@ export const AppRouter: React.FC<AppRouterProps> = ({
                   exit={{ opacity: 0, y: -8, scale: 0.98 }}
                   className="max-w-[30rem] rounded-2xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(19,53,120,0.92),rgba(12,36,92,0.94))] px-4 py-2.5 text-center text-[11px] font-black uppercase tracking-[0.12em] text-cyan-50 shadow-[0_12px_24px_rgba(2,6,23,0.45)] md:px-5 md:py-3 md:text-xs"
                 >
-                  {inlineHintText}
+                  <div className="flex flex-col items-center gap-1.5">
+                    {selectedLevel?.isPractice ? (
+                      <span className="rounded-full border border-amber-200/50 bg-amber-300/15 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100">
+                        Practice
+                      </span>
+                    ) : null}
+                    <span>{inlineHintText}</span>
+                  </div>
                 </motion.div>
               </div>
             ) : null}
