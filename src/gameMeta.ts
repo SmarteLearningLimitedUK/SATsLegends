@@ -327,11 +327,11 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     focus: 'Bar charts, line graphs and table interpretation',
     rules: {
       title: 'Graph Grabber',
-      summary: 'Read the evidence charts and grab the exact value before time runs out.',
+      summary: 'Four cargo ships are carrying stolen brainpower. Read the graph to track where it went.',
       bullets: [
-        'Some rounds ask for the highest value, while others ask for differences or exact matches.',
-        'Use the bar chart, line graph or ledger before you choose your answer.',
-        'Fast accurate reads keep your streak alive.',
+        'Read the bar chart carefully before you choose an answer.',
+        'Some questions ask for a single ship, some ask for a comparison, and some ask for a total.',
+        'The practice briefing shows the full story before the round starts.',
       ],
     },
   },

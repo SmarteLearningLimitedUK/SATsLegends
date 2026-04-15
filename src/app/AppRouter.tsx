@@ -250,7 +250,10 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         if (selectedLevel.blueprintKey === 'chart_challenge' || selectedLevel.blueprintKey === 'median_mountain') {
           return renderFromRegistry('MedianMountainGame', sharedProps);
         }
-        return renderFromRegistry('TreasureChartCoveGame', sharedProps);
+        return renderFromRegistry('TreasureChartCoveGame', {
+          ...sharedProps,
+          isPractice: Boolean(selectedLevel.isPractice),
+        });
       case 'equation_grove':
         if (selectedLevel.blueprintKey === 'order_ops_arena') {
           return renderFromRegistry('OrderOpsArenaGame', sharedProps);
@@ -610,5 +613,4 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       );
   }
 };
-
 

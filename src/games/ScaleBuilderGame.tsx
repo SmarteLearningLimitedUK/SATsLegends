@@ -43,37 +43,37 @@ const LEVELS: Level[] = [
   {
     id: 1,
     name: 'The Foundation',
-    shape: { type: 'rect', baseWidth: 60, baseHeight: 40 },
+    shape: { type: 'rect', baseWidth: 56, baseHeight: 36 },
     targetScale: 2.0,
-    instructions: 'Original size: 60 units by 40 units\n\nScale factor: x2\n\nWhat is the new size?',
+    instructions: 'Original size: 56 units by 36 units\n\nScale factor: x2\n\nWhat is the new size?',
   },
   {
     id: 2,
     name: 'Compact Living',
-    shape: { type: 'rect', baseWidth: 100, baseHeight: 80 },
+    shape: { type: 'rect', baseWidth: 72, baseHeight: 48 },
     targetScale: 0.5,
-    instructions: 'Original size: 100 units by 80 units\n\nScale factor: ÷2\n\nWhat is the new size?',
+    instructions: 'Original size: 72 units by 48 units\n\nScale factor: x0.5\n\nWhat is the new size?',
   },
   {
     id: 3,
     name: 'The Gable',
-    shape: { type: 'triangle', baseWidth: 80, baseHeight: 60 },
-    targetScale: 1.5,
-    instructions: 'Original size: 80 units by 60 units\n\nScale factor: x1.5\n\nWhat is the new size?',
+    shape: { type: 'rect', baseWidth: 48, baseHeight: 32 },
+    targetScale: 3.0,
+    instructions: 'Original size: 48 units by 32 units\n\nScale factor: x3\n\nWhat is the new size?',
   },
   {
     id: 4,
     name: 'The Corner Office',
-    shape: { type: 'l-shape', baseWidth: 80, baseHeight: 80 },
-    targetScale: 1.25,
-    instructions: 'Original size: 80 units by 80 units\n\nScale factor: x1.25\n\nWhat is the new size?',
+    shape: { type: 'triangle', baseWidth: 72, baseHeight: 54 },
+    targetScale: 1.5,
+    instructions: 'Original size: 72 units by 54 units\n\nScale factor: x1.5\n\nWhat is the new size?',
   },
   {
     id: 5,
     name: 'The Grand Hall',
-    shape: { type: 'rect', baseWidth: 40, baseHeight: 120 },
-    targetScale: 2.25,
-    instructions: 'Original size: 40 units by 120 units\n\nScale factor: x2.25\n\nWhat is the new size?',
+    shape: { type: 'l-shape', baseWidth: 72, baseHeight: 72 },
+    targetScale: 1.25,
+    instructions: 'Original size: 72 units by 72 units\n\nScale factor: x1.25\n\nWhat is the new size?',
   },
 ];
 
@@ -280,7 +280,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
 
   const progressPct = useMemo(() => ((currentLevelIdx + (gameState === 'complete' ? 1 : 0)) / LEVELS.length) * 100, [currentLevelIdx, gameState]);
 
-  const isDimensionMode = currentLevel.id >= 2;
+  const isDimensionMode = currentLevel.id >= 4;
 
   const verifyScale = () => {
     const widthDiff = Math.abs(widthScale - currentLevel.targetScale);
@@ -408,10 +408,10 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
 
       <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-2 px-2 pb-1 pt-[max(3.4rem,calc(env(safe-area-inset-top)+2.6rem))] md:gap-3 md:px-3">
         <PuzzleStage className="mx-auto flex h-full w-full max-w-[780px] min-h-0 flex-1 flex-col rounded-[2rem] bg-transparent shadow-none !bg-transparent !shadow-none md:rounded-[2.4rem]">
-          <div className="relative z-10 grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-2 p-2 md:p-3">
-            <div className="rounded-[1rem] border border-white/14 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(15,23,42,0.84))] p-2">
+          <div className="relative z-10 grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-3 p-2 md:gap-4 md:p-3">
+            <div className="rounded-[1rem] border border-white/14 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(15,23,42,0.84))] p-2 pb-2.5">
               <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/78">Scale Builder</div>
-              <div className="mt-1 max-h-[19vh] overflow-y-auto whitespace-pre-line text-[11px] font-black leading-tight text-white">
+              <div className="mt-1 max-h-[15vh] overflow-y-auto whitespace-pre-line text-[10px] font-black leading-snug text-white md:max-h-[19vh] md:text-[11px]">
                 {instructionsText}
               </div>
               <div className="mt-2 flex flex-wrap items-center gap-2 text-[clamp(11px,1.7vh,13px)] font-black text-white/90">
@@ -501,7 +501,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                     : '+0.25'}
                 </button>
               </div>
-              <div className="mt-2 grid grid-cols-2 gap-2">
+              <div className="mt-3 grid grid-cols-2 gap-2">
                 {gameState === 'success' ? (
                   <button
                     onClick={proceed}

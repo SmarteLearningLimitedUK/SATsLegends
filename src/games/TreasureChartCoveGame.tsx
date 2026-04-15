@@ -1,17 +1,19 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface TreasureChartCoveGameProps {
   levelId: number;
   avatarId: string;
+  isPractice?: boolean;
   onVictory: (stars: number, XP: number) => void;
   onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
-type ChartRoundMode = 'highest' | 'difference' | 'line' | 'table' | 'pie';
+type ChartRoundMode = 'basic' | 'comparison' | 'difference' | 'total';
 
 interface ShipDatum {
   id: string;
@@ -36,43 +38,53 @@ interface ChartRound {
 const MAX_HEARTS = 4;
 const ROUND_GOAL_BY_LEVEL = [0, 4, 5, 5, 6];
 const SHIP_POOL = [
-  { id: 'sun', label: 'Sunfin', color: 'from-amber-300 to-yellow-500', solidColor: '#fbbf24' },
-  { id: 'mist', label: 'Mistwake', color: 'from-sky-300 to-cyan-500', solidColor: '#38bdf8' },
-  { id: 'jade', label: 'Jadehook', color: 'from-emerald-300 to-green-500', solidColor: '#34d399' },
-  { id: 'ruby', label: 'Ruby Tide', color: 'from-rose-300 to-red-500', solidColor: '#fb7185' },
+  { id: 'number-wave', label: 'Number Wave', color: 'from-sky-400 to-cyan-300', solidColor: '#38bdf8' },
+  { id: 'logic-tide', label: 'Logic Tide', color: 'from-indigo-400 to-blue-300', solidColor: '#818cf8' },
+  { id: 'brain-voyager', label: 'Brain Voyager', color: 'from-emerald-400 to-lime-300', solidColor: '#34d399' },
+  { id: 'data-current', label: 'Data Current', color: 'from-amber-300 to-yellow-300', solidColor: '#fbbf24' },
 ];
 
-const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
-
-const pickShips = (count: number) => {
-  const pool = [...SHIP_POOL].sort(() => Math.random() - 0.5);
-  return pool.slice(0, count).map((ship, index) => ({
-    ...ship,
-    value: randomInt(3, 9) + index,
-  }));
+const CARGO_ROUNDS: Record<ChartRoundMode, number[]> = {
+  basic: [6, 9, 7, 4],
+  comparison: [5, 11, 8, 6],
+  difference: [6, 12, 9, 4],
+  total: [7, 8, 5, 6],
 };
 
-const modeForLevel = (levelId: number, roundIndex: number): ChartRoundMode => {
-  if (levelId <= 1) return 'highest';
-  if (levelId === 2) return 'difference';
-  if (levelId === 3) return 'line';
-  if (levelId === 4) return 'pie';
-  if (levelId === 5) return 'table';
-  const cycle: ChartRoundMode[] = ['difference', 'line', 'pie', 'table', 'highest'];
+const modeForLevel = (_levelId: number, roundIndex: number): ChartRoundMode => {
+  const cycle: ChartRoundMode[] = ['basic', 'comparison', 'difference', 'total'];
   return cycle[roundIndex % cycle.length];
 };
 
 const createRound = (levelId: number, roundIndex: number): ChartRound => {
   const mode = modeForLevel(levelId, roundIndex);
+  const values = CARGO_ROUNDS[mode];
+  const ships = SHIP_POOL.map((ship, index) => ({
+    ...ship,
+    value: values[index],
+  }));
 
-  if (mode === 'highest') {
-    const ships = pickShips(4);
-    const winner = ships.reduce((best, ship) => (ship.value > best.value ? ship : best), ships[0]);
+  if (mode === 'basic') {
+    const target = ships[0];
+    return {
+      mode,
+      title: 'Basic Reading',
+      prompt: 'The records show the number of crates delivered by each ship. How many crates did The Number Wave deliver?',
+      support: 'Read the bar for Number Wave carefully.',
+      boardLabel: 'Crates by ship',
+      ships,
+      options: [String(target.value - 2), String(target.value), String(target.value + 1), String(target.value + 3)],
+      answer: String(target.value),
+    };
+  }
+
+  if (mode === 'comparison') {
+    const winner = ships[1];
     return {
       mode,
       title: 'Most Crates',
-      prompt: 'Which ship has the most crates?',
-      support: 'Use the bar chart to compare each ship.',
+      prompt: 'The records show the number of crates delivered by each ship. Which ship delivered the most crates?',
+      support: 'Compare every ship before you answer.',
       boardLabel: 'Crates by ship',
       ships,
       options: ships.map((ship) => ship.label),
@@ -81,84 +93,31 @@ const createRound = (levelId: number, roundIndex: number): ChartRound => {
   }
 
   if (mode === 'difference') {
-    const ships = pickShips(4);
-    const first = ships[0];
-    const second = ships[1];
-    const difference = Math.abs(first.value - second.value);
-    const options = Array.from(new Set([
-      difference.toString(),
-      Math.max(1, difference + 1).toString(),
-      Math.max(1, difference + 2).toString(),
-      Math.max(1, difference - 1).toString(),
-    ])).slice(0, 4);
-    while (options.length < 4) options.push((difference + options.length + 1).toString());
-
+    const first = ships[1];
+    const second = ships[2];
+    const difference = first.value - second.value;
     return {
       mode,
       title: 'Find The Difference',
-      prompt: `How many more crates did ${first.label} have than ${second.label}?`,
-      support: 'Compare just those two bars on the chart.',
+      prompt: 'The records show the number of crates delivered by each ship. How many more crates did The Logic Tide deliver than The Brain Voyager?',
+      support: 'Subtract the Brain Voyager bar from the Logic Tide bar.',
       boardLabel: 'Crates by ship',
       ships,
-      options: options.sort(() => Math.random() - 0.5),
-      answer: difference.toString(),
+      options: [String(difference - 1), String(difference), String(difference + 1), String(difference + 2)],
+      answer: String(difference),
     };
   }
 
-  if (mode === 'line') {
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((label, index) => ({
-      label,
-      value: randomInt(2, 8) + (index % 2 === 0 ? 1 : 0),
-    }));
-    const targetDay = days[randomInt(0, days.length - 1)];
-    const options = Array.from(new Set([
-      targetDay.value.toString(),
-      Math.max(1, targetDay.value + 1).toString(),
-      Math.max(1, targetDay.value + 2).toString(),
-      Math.max(1, targetDay.value - 1).toString(),
-    ])).slice(0, 4);
-    while (options.length < 4) options.push((targetDay.value + options.length + 1).toString());
-
-    return {
-      mode,
-      title: 'Line Read',
-      prompt: `How many crates were logged on ${targetDay.label}?`,
-      support: 'Trace the line up from the day label.',
-      boardLabel: 'Crates over five days',
-      ships: [],
-      lineDays: days,
-      options: options.sort(() => Math.random() - 0.5),
-      answer: targetDay.value.toString(),
-    };
-  }
-
-  if (mode === 'pie') {
-    const ships = pickShips(4);
-    const winner = ships.reduce((best, ship) => (ship.value > best.value ? ship : best), ships[0]);
-
-    return {
-      mode,
-      title: 'Largest Share',
-      prompt: 'Which ship owns the largest slice?',
-      support: 'Compare the pie slices to find the biggest share.',
-      boardLabel: 'Share of crates',
-      ships,
-      options: ships.map((ship) => ship.label),
-      answer: winner.label,
-    };
-  }
-
-  const ships = pickShips(4);
-  const target = ships[randomInt(0, ships.length - 1)];
+  const total = ships.reduce((sum, ship) => sum + ship.value, 0);
   return {
-    mode: 'table',
-    title: 'Dock Match',
-    prompt: `Which ship matches ${target.value} crates?`,
-    support: 'Use the ledger to match the exact value.',
-    boardLabel: 'Harbour ledger',
+    mode: 'total',
+    title: 'Total Crates',
+    prompt: 'The records show the number of crates delivered by each ship. What is the total number of crates delivered by all four ships?',
+    support: 'Add every bar together to get the final total.',
+    boardLabel: 'Crates by ship',
     ships,
-    options: ships.map((ship) => ship.label),
-    answer: target.label,
+    options: [String(total - 4), String(total - 2), String(total), String(total + 2)],
+    answer: String(total),
   };
 };
 
@@ -196,100 +155,10 @@ const CoinBarBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships, 
   );
 };
 
-const LineGraphBoard: React.FC<{ days: Array<{ label: string; value: number }>; label: string }> = ({ days, label }) => {
-  const maxValue = Math.max(...days.map((day) => day.value));
-  const points = days.map((day, index) => {
-    const x = 14 + (index * (72 / Math.max(days.length - 1, 1)));
-    const y = 78 - ((day.value / maxValue) * 54);
-    return { ...day, x, y };
-  });
-  const path = points.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`).join(' ');
-
-  return (
-    <div className="w-full">
-      <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/62 md:text-[10px]">{label}</div>
-      <svg viewBox="0 0 100 100" className="mt-3 h-24 w-full md:h-28">
-        <rect x="6" y="8" width="88" height="80" rx="8" fill="rgba(15,23,42,0.18)" stroke="rgba(255,255,255,0.12)" />
-        {Array.from({ length: 4 }).map((_, index) => (
-          <line
-            key={`grid-${index}`}
-            x1="10"
-            x2="90"
-            y1={24 + (index * 16)}
-            y2={24 + (index * 16)}
-            stroke="rgba(255,255,255,0.1)"
-            strokeDasharray="3 3"
-          />
-        ))}
-        <path d={path} fill="none" stroke="rgba(250,204,21,0.95)" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round" />
-        {points.map((point) => (
-          <g key={point.label}>
-            <circle cx={point.x} cy={point.y} r="4.6" fill="#38bdf8" stroke="#ecfeff" strokeWidth="2" />
-            <text x={point.x} y="94" textAnchor="middle" fontSize="6.4" fontWeight="800" fill="#e0f2fe">
-              {point.label}
-            </text>
-          </g>
-        ))}
-      </svg>
-    </div>
-  );
-};
-
-const PieShareBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships, label }) => {
-  const total = ships.reduce((sum, ship) => sum + ship.value, 0);
-  let current = 0;
-  const gradientStops = ships.map((ship) => {
-    const start = current;
-    const share = (ship.value / total) * 100;
-    current += share;
-    return `${ship.solidColor} ${start.toFixed(2)}% ${current.toFixed(2)}%`;
-  });
-
-  return (
-    <div className="w-full">
-      <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/70 md:text-[10px]">{label}</div>
-      <div className="mt-3 flex items-center justify-between gap-3">
-        <div
-          className="h-24 w-24 rounded-full border border-white/12 shadow-[inset_0_0_0_8px_rgba(15,23,42,0.22)] md:h-28 md:w-28"
-          style={{
-            background: `conic-gradient(${gradientStops.join(', ')})`,
-          }}
-        />
-        <div className="flex flex-1 flex-col gap-1.5">
-          {ships.map((ship) => (
-            <div key={ship.id} className="flex items-center justify-between rounded-lg border border-white/10 bg-white/6 px-2 py-1">
-              <div className="flex items-center gap-2">
-                <span className={`h-3 w-3 rounded-full bg-gradient-to-r ${ship.color}`} />
-                <span className="max-w-[5.5rem] truncate text-[10px] font-bold text-white">{ship.label}</span>
-              </div>
-              <span className="text-[10px] font-black text-amber-100">{ship.value}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const TableBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships, label }) => (
-  <div className="w-full">
-    <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/70 md:text-[10px]">{label}</div>
-    <div className="mt-3 space-y-1.5">
-      {ships.map((ship) => (
-        <div key={ship.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-center rounded-[1rem] border border-white/10 bg-black/14 px-2.5 py-1.5">
-          <div className="truncate text-[10px] font-black text-white md:text-[11px]">{ship.label}</div>
-          <div className="rounded-full border border-amber-200/20 bg-amber-400/10 px-3 py-1 text-[10px] font-black text-amber-50">
-            {ship.value} chests
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-);
-
 const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
   levelId,
   avatarId: _avatarId,
+  isPractice,
   onVictory,
   onGameOver,
   onBack: _onBack,
@@ -306,6 +175,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
   const [round, setRound] = useState<ChartRound>(() => createRound(levelId, 0));
   const [feedback, setFeedback] = useState<null | { type: 'success' | 'error'; title: string; subtitle: string }>(null);
   const [isFinished, setIsFinished] = useState(false);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
   const progress = Math.min((XP / targetScore) * 100, 100);
 
@@ -326,7 +196,12 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
     setRound(createRound(levelId, 0));
     setFeedback(null);
     setIsFinished(false);
-  }, [levelId]);
+    setShowPracticeIntro(Boolean(isPractice));
+  }, [isPractice, levelId]);
+
+  useEffect(() => {
+    setShowPracticeIntro(Boolean(isPractice));
+  }, [isPractice]);
 
   useEffect(() => {
     if (isFinished) return undefined;
@@ -400,7 +275,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
       return;
     }
 
-    const points = 155 + (Combo * 24) + (round.mode === 'line' ? 28 : 0);
+    const points = 155 + (Combo * 24);
     const updatedScore = XP + points;
     setScore(updatedScore);
     setStreak((previous) => previous + 1);
@@ -416,6 +291,42 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden bg-transparent">
+      <PracticeIntroPopup
+        open={showPracticeIntro}
+        title="Graph Grabber"
+        body={(
+          <div className="space-y-3">
+            <p>Four cargo ships have just arrived, each carrying crates filled with stolen brainpower.</p>
+            <p>But the Monster Minds have scrambled the records, hiding the truth inside a graph!</p>
+            <p>Only by reading the graph correctly can you track where the brainpower has gone.</p>
+            <div className="space-y-2 rounded-[1rem] border border-cyan-100/15 bg-white/5 p-3">
+              <div className="font-black text-cyan-100">Example Question 1 (basic reading)</div>
+              <div>How many crates did The Number Wave deliver?</div>
+              <div className="font-black text-cyan-100">Example Question 2 (comparison)</div>
+              <div>Which ship delivered the most crates?</div>
+              <div className="font-black text-cyan-100">Example Question 3 (difference)</div>
+              <div>How many more crates did The Logic Tide deliver than The Brain Voyager?</div>
+              <div className="font-black text-cyan-100">Example Question 4 (total)</div>
+              <div>What is the total number of crates delivered by all four ships?</div>
+            </div>
+            <div className="space-y-2 rounded-[1rem] border border-emerald-100/15 bg-emerald-500/8 p-3">
+              <div className="font-black text-emerald-100">Level Progression Ideas</div>
+              <div className="space-y-1 text-cyan-50/92">
+                <div><span className="font-black text-emerald-200">Easy:</span> Read single values. "How many crates...?"</div>
+                <div><span className="font-black text-emerald-200">Medium:</span> Compare ships and find differences.</div>
+                <div><span className="font-black text-emerald-200">Hard:</span> Totals, multi-step questions, and hidden trick questions.</div>
+              </div>
+            </div>
+            <div className="space-y-1 rounded-[1rem] border border-white/10 bg-black/15 p-3">
+              <div className="font-black text-emerald-100">Success Feedback</div>
+              <div>📦 “Crates tracked!”</div>
+              <div className="pt-2 font-black text-rose-100">Failure Feedback</div>
+              <div>📦 “Manifest Mismatch”</div>
+            </div>
+          </div>
+        )}
+        onAction={() => setShowPracticeIntro(false)}
+      />
       <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2 md:gap-3 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.8rem)] md:pt-3">
         <div className="licensed-board-frame structured-playfield-frame relative flex w-full max-w-6xl min-h-0 flex-1 overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] shadow-[0_28px_64px_rgba(0,0,0,0.34)] md:rounded-[2.6rem]">
 
@@ -430,15 +341,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
             <div className="mt-2 grid min-h-0 flex-1 grid-cols-1 gap-2 md:mt-2 md:grid-cols-[1.02fr_0.98fr] md:gap-2">
                 <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(8,47,73,0.34),rgba(15,23,42,0.26))] p-2.5 shadow-[0_24px_40px_rgba(2,6,23,0.22)] md:p-3">
                   <div className="mt-auto">
-                    {round.mode === 'line' && round.lineDays ? (
-                      <LineGraphBoard days={round.lineDays} label={round.boardLabel} />
-                    ) : round.mode === 'table' ? (
-                      <TableBoard ships={round.ships} label={round.boardLabel} />
-                    ) : round.mode === 'pie' ? (
-                      <PieShareBoard ships={round.ships} label={round.boardLabel} />
-                    ) : (
-                      <CoinBarBoard ships={round.ships} label={round.boardLabel} />
-                    )}
+                    <CoinBarBoard ships={round.ships} label={round.boardLabel} />
                   </div>
                 </div>
 

@@ -400,37 +400,18 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'What is the green bar total?',
-        sublabel: 'Read the exact bar height.',
-        options: ['4', '5', '6', '7'],
-        answerIndex: 2,
-        visual: {
-          type: 'bars',
-          caption: 'Gem survey',
-          bars: [
-            { label: 'Red', value: 5, color: 'from-rose-400 to-orange-300' },
-            { label: 'Blue', value: 4, color: 'from-sky-400 to-cyan-300' },
-            { label: 'Green', value: 6, color: 'from-emerald-400 to-lime-300' },
-            { label: 'Gold', value: 3, color: 'from-amber-300 to-yellow-300' },
-          ],
-        },
-      },
-    },
-    {
-      minLevel: 2,
-      value: {
-        prompt: 'Which bar is biggest?',
-        sublabel: 'Compare all bar heights before you answer.',
-        options: ['Red', 'Blue', 'Green', 'Gold'],
+        prompt: 'The records show the number of crates delivered by each ship. How many crates did The Number Wave deliver?',
+        sublabel: 'Read the Number Wave bar carefully.',
+        options: ['4', '6', '7', '9'],
         answerIndex: 1,
         visual: {
           type: 'bars',
-          caption: 'Treasure tally',
+          caption: 'Cargo ships',
           bars: [
-            { label: 'Red', value: 7, color: 'from-rose-400 to-orange-300' },
-            { label: 'Blue', value: 9, color: 'from-sky-400 to-cyan-300' },
-            { label: 'Green', value: 6, color: 'from-emerald-400 to-lime-300' },
-            { label: 'Gold', value: 8, color: 'from-amber-300 to-yellow-300' },
+            { label: 'Number Wave', value: 6, color: 'from-sky-400 to-cyan-300' },
+            { label: 'Logic Tide', value: 9, color: 'from-indigo-400 to-blue-300' },
+            { label: 'Brain Voyager', value: 7, color: 'from-emerald-400 to-lime-300' },
+            { label: 'Data Current', value: 4, color: 'from-amber-300 to-yellow-300' },
           ],
         },
       },
@@ -438,18 +419,56 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'How many more is blue than orange?',
-        sublabel: 'Find the difference between the two bar heights.',
+        prompt: 'The records show the number of crates delivered by each ship. Which ship delivered the most crates?',
+        sublabel: 'Compare every bar before you answer.',
+        options: ['Number Wave', 'Logic Tide', 'Brain Voyager', 'Data Current'],
+        answerIndex: 1,
+        visual: {
+          type: 'bars',
+          caption: 'Cargo ships',
+          bars: [
+            { label: 'Number Wave', value: 6, color: 'from-sky-400 to-cyan-300' },
+            { label: 'Logic Tide', value: 9, color: 'from-indigo-400 to-blue-300' },
+            { label: 'Brain Voyager', value: 7, color: 'from-emerald-400 to-lime-300' },
+            { label: 'Data Current', value: 4, color: 'from-amber-300 to-yellow-300' },
+          ],
+        },
+      },
+    },
+    {
+      minLevel: 2,
+      value: {
+        prompt: 'The records show the number of crates delivered by each ship. How many more crates did The Logic Tide deliver than The Brain Voyager?',
+        sublabel: 'Subtract the Brain Voyager bar from the Logic Tide bar.',
         options: ['2', '3', '4', '5'],
         answerIndex: 1,
         visual: {
           type: 'bars',
-          caption: 'Potion orders',
+          caption: 'Cargo ships',
           bars: [
-            { label: 'Orange', value: 5, color: 'from-amber-300 to-orange-400' },
-            { label: 'Blue', value: 8, color: 'from-sky-300 to-cyan-400' },
-            { label: 'Teal', value: 6, color: 'from-cyan-300 to-sky-400' },
-            { label: 'Green', value: 4, color: 'from-emerald-300 to-lime-400' },
+            { label: 'Number Wave', value: 5, color: 'from-sky-400 to-cyan-300' },
+            { label: 'Logic Tide', value: 12, color: 'from-indigo-400 to-blue-300' },
+            { label: 'Brain Voyager', value: 9, color: 'from-emerald-400 to-lime-300' },
+            { label: 'Data Current', value: 4, color: 'from-amber-300 to-yellow-300' },
+          ],
+        },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'The records show the number of crates delivered by each ship. What is the total number of crates delivered by all four ships?',
+        sublabel: 'Add all four bars together.',
+        options: ['22', '24', '26', '28'],
+        answerIndex: 2,
+        visual: {
+          type: 'bars',
+          caption: 'Cargo ships',
+          bars: [
+            { label: 'Number Wave', value: 7, color: 'from-sky-400 to-cyan-300' },
+            { label: 'Logic Tide', value: 8, color: 'from-indigo-400 to-blue-300' },
+            { label: 'Brain Voyager', value: 5, color: 'from-emerald-400 to-lime-300' },
+            { label: 'Data Current', value: 6, color: 'from-amber-300 to-yellow-300' },
           ],
         },
       },

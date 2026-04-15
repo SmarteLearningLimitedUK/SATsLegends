@@ -9,7 +9,7 @@ import {
   Trophy,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { formatFantasyPrompt } from '../utils/fantasyPrompt';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import {
   CartesianGrid,
@@ -30,20 +30,22 @@ interface RoundData {
   options: string[];
   correctAnswer: string;
   helper: string;
+  highlightIndex?: number;
 }
 
 interface LineGraphLabGameProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
+  isPractice?: boolean;
   onVictory: (stars: number, XP: number) => void;
   onGameOver: (XP: number) => void;
   onBack: () => void;
 }
 
 const MAX_LEVEL = 10;
-const X_AXIS_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-const QUESTION_TYPES = ['value_at_point', 'highest_day', 'lowest_day', 'difference'] as const;
+const X_AXIS_LABELS = ['1', '2', '3', '4', '5'];
+const QUESTION_TYPES = ['basic_reading', 'reading_point', 'interpretation', 'comparison'] as const;
 
 const scoreToStars = (XP: number) => {
   if (XP >= 1400) return 3;
@@ -63,25 +65,13 @@ const shuffle = <T,>(items: T[]) => {
 };
 
 const generateGraph = (level: number): DataPoint[] => {
-  const points: DataPoint[] = [];
-  let current = 20 + Math.floor(Math.random() * 18);
+  const base = 10 + (level * 2);
+  const values = [base, base + 4, base + 8, base + 12, base + 9];
 
-  for (let i = 0; i < X_AXIS_LABELS.length; i += 1) {
-    const stepSize = level <= 3 ? 8 : level <= 6 ? 12 : 16;
-    current = clamp(current + Math.floor((Math.random() - 0.5) * stepSize), 8, 92);
-    points.push({
-      label: X_AXIS_LABELS[i],
-      value: Math.round(current / 2) * 2,
-    });
-  }
-
-  return points.map((point, index, arr) => {
-    let adjusted = point.value;
-    if (index > 0 && adjusted === arr[index - 1].value) {
-      adjusted = clamp(adjusted + 4, 8, 96);
-    }
-    return { ...point, value: adjusted };
-  });
+  return values.map((value, index) => ({
+    label: X_AXIS_LABELS[index],
+    value: clamp(Math.round(value / 2) * 2, 8, 40),
+  }));
 };
 
 const uniqueHighestIndex = (graph: DataPoint[]) => {
@@ -97,7 +87,7 @@ const uniqueLowestIndex = (graph: DataPoint[]) => {
 };
 
 const buildValueQuestion = (graph: DataPoint[]): RoundData => {
-  const targetIndex = Math.floor(Math.random() * graph.length);
+  const targetIndex = 3;
   const target = graph[targetIndex];
   const wrongs = shuffle([
     `${clamp(target.value - 10, 0, 100)}`,
@@ -109,58 +99,84 @@ const buildValueQuestion = (graph: DataPoint[]): RoundData => {
   const options = shuffle([`${target.value}`, ...wrongs.slice(0, 3)]);
   return {
     graph,
-    question: `Value at ${target.label}?`,
+    question: 'The graph shows brainpower levels over time. What is the brainpower at time = 4?',
     options,
     correctAnswer: `${target.value}`,
-    helper: 'Read the plotted point and match it to the y-axis.',
+    helper: 'Read the point at time 4 and match it to the y-axis.',
   };
 };
 
-const buildHighestDayQuestion = (graph: DataPoint[]): RoundData | null => {
-  const highestIndex = uniqueHighestIndex(graph);
-  if (highestIndex === -1) return null;
-
-  return {
-    graph,
-    question: 'Highest day?',
-    options: shuffle(graph.map(point => point.label)).slice(0, 4).includes(graph[highestIndex].label)
-      ? shuffle(graph.map(point => point.label).slice(0, 4))
-      : shuffle([graph[highestIndex].label, ...shuffle(graph.filter((_, i) => i !== highestIndex).map(point => point.label)).slice(0, 3)]),
-    correctAnswer: graph[highestIndex].label,
-    helper: 'Look for the highest point on the line.',
-  };
-};
-
-const buildLowestDayQuestion = (graph: DataPoint[]): RoundData | null => {
-  const lowestIndex = uniqueLowestIndex(graph);
-  if (lowestIndex === -1) return null;
-
-  return {
-    graph,
-    question: 'Lowest day?',
-    options: shuffle([graph[lowestIndex].label, ...shuffle(graph.filter((_, i) => i !== lowestIndex).map(point => point.label)).slice(0, 3)]),
-    correctAnswer: graph[lowestIndex].label,
-    helper: 'Find the point closest to the bottom of the graph.',
-  };
-};
-
-const buildDifferenceQuestion = (graph: DataPoint[]): RoundData => {
-  const startIndex = Math.floor(Math.random() * (graph.length - 1));
-  const endIndex = startIndex + 1 + Math.floor(Math.random() * (graph.length - startIndex - 1));
-  const difference = Math.abs(graph[endIndex].value - graph[startIndex].value);
+const buildReadingPointQuestion = (graph: DataPoint[]): RoundData => {
+  const targetIndex = 2;
+  const target = graph[targetIndex];
+  const coordinate = `(${target.label}, ${target.value})`;
   const wrongs = shuffle([
-    `${difference + 4}`,
-    `${Math.max(0, difference - 4)}`,
-    `${difference + 8}`,
-    `${Math.max(0, difference - 8)}`,
-  ]).filter(value => Number(value) !== difference);
+    `(${graph[1].label}, ${target.value})`,
+    `(${target.label}, ${clamp(target.value + 4, 8, 40)})`,
+    `(${graph[3].label}, ${target.value})`,
+    `(${target.label}, ${clamp(target.value - 4, 8, 40)})`,
+  ]).filter((value) => value !== coordinate);
 
   return {
     graph,
-    question: `Difference between ${graph[startIndex].label} and ${graph[endIndex].label}?`,
-    options: shuffle([`${difference}`, ...wrongs.slice(0, 3)]),
-    correctAnswer: `${difference}`,
-    helper: 'Compare the two y-axis values, then subtract.',
+    question: 'What are the coordinates of the marked point A?',
+    options: shuffle([coordinate, ...wrongs.slice(0, 3)]),
+    correctAnswer: coordinate,
+    helper: 'Answer in the form (x, y).',
+    highlightIndex: targetIndex,
+  };
+};
+
+const buildInterpretationQuestion = (graph: DataPoint[]): RoundData => {
+  const targetIndex = 1;
+  const targetTime = graph[targetIndex].label;
+  const adjustedGraph = graph.map((point, index) => (
+    index === targetIndex
+      ? { ...point, value: 20 }
+      : point.value === 20
+        ? { ...point, value: point.value + 2 }
+        : point
+  ));
+  const wrongs = shuffle([
+    `${adjustedGraph[0].label}`,
+    `${adjustedGraph[2].label}`,
+    `${adjustedGraph[4].label}`,
+    `${adjustedGraph[3].label}`,
+  ]).filter((value) => value !== targetTime);
+
+  return {
+    graph: adjustedGraph,
+    question: 'At what time does the brainpower reach 20 units?',
+    options: shuffle([targetTime, ...wrongs.slice(0, 3)]),
+    correctAnswer: targetTime,
+    helper: 'Find the point where the line crosses 20 units.',
+  };
+};
+
+const buildComparisonQuestion = (graph: DataPoint[]): RoundData | null => {
+  const increases = graph
+    .slice(0, -1)
+    .map((point, index) => ({
+      fromIndex: index,
+      toIndex: index + 1,
+      increase: graph[index + 1].value - point.value,
+    }))
+    .filter((entry) => entry.increase > 0);
+
+  if (!increases.length) return null;
+
+  const best = increases.reduce((currentBest, entry) => (entry.increase > currentBest.increase ? entry : currentBest), increases[0]);
+  const correct = `${best.fromIndex + 1} to ${best.toIndex + 1}`;
+  const wrongs = shuffle(
+    graph.slice(0, -1).map((_, index) => `${index + 1} to ${index + 2}`)
+  ).filter((value) => value !== correct);
+
+  return {
+    graph,
+    question: 'Between which two time points does brainpower increase the most?',
+    options: shuffle([correct, ...wrongs.slice(0, 3)]),
+    correctAnswer: correct,
+    helper: 'Look for the biggest upward jump between neighbouring points.',
   };
 };
 
@@ -173,17 +189,21 @@ const generateRound = (level: number): RoundData => {
     attempts += 1;
     graph = generateGraph(level);
     const allowedTypes =
-      level <= 3
-        ? ['value_at_point', 'highest_day'] as const
-        : level <= 6
-          ? ['value_at_point', 'highest_day', 'lowest_day'] as const
+      level <= 2
+        ? ['basic_reading'] as const
+        : level === 3
+          ? ['reading_point'] as const
+          : level === 4
+            ? ['interpretation'] as const
+            : level <= 6
+              ? ['basic_reading', 'reading_point', 'interpretation'] as const
           : QUESTION_TYPES;
     const type = allowedTypes[Math.floor(Math.random() * allowedTypes.length)];
 
-    if (type === 'value_at_point') built = buildValueQuestion(graph);
-    if (type === 'highest_day') built = buildHighestDayQuestion(graph);
-    if (type === 'lowest_day') built = buildLowestDayQuestion(graph);
-    if (type === 'difference') built = buildDifferenceQuestion(graph);
+    if (type === 'basic_reading') built = buildValueQuestion(graph);
+    if (type === 'reading_point') built = buildReadingPointQuestion(graph);
+    if (type === 'interpretation') built = buildInterpretationQuestion(graph);
+    if (type === 'comparison') built = buildComparisonQuestion(graph);
   }
 
   return built ?? buildValueQuestion(graph);
@@ -193,6 +213,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   levelId: _levelId,
   avatarId: _avatarId,
   useSharedTopHud = false,
+  isPractice,
   onVictory,
   onGameOver: _onGameOver,
   onBack,
@@ -206,6 +227,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   const [probeIndex, setProbeIndex] = useState<number | null>(null);
   const chartWrapRef = useRef<HTMLDivElement | null>(null);
   const [chartSize, setChartSize] = useState({ width: 0, height: 0 });
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
   const loadLevel = useCallback((targetLevel: number) => {
     setRound(generateRound(targetLevel));
@@ -218,6 +240,10 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   useEffect(() => {
     loadLevel(1);
   }, [loadLevel]);
+
+  useEffect(() => {
+    setShowPracticeIntro(Boolean(isPractice));
+  }, [isPractice]);
 
   useLayoutEffect(() => {
     if (!chartWrapRef.current || typeof ResizeObserver === 'undefined') return undefined;
@@ -246,7 +272,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
     setSelectedAnswer(answer);
 
     if (answer === round.correctAnswer) {
-      setFeedback({ type: 'success', message: 'Correct. The graph matches your reading.' });
+      setFeedback({ type: 'success', message: 'Data recovered!' });
       setXP(prev => prev + 100 + level * 10);
       setGameState('success');
       return;
@@ -317,10 +343,10 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                 <div className="rounded-lg bg-emerald-500 p-2 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
                   <Activity className="h-5 w-5 text-slate-900" />
                 </div>
-                <div>
-                  <h1 className="text-sm font-black uppercase tracking-widest text-white">Line Graph Lab</h1>
-                  <p className="text-[10px] uppercase tracking-tighter text-emerald-400">Read one graph. Answer one question.</p>
-                </div>
+              <div>
+                <h1 className="text-sm font-black uppercase tracking-widest text-white">Line Graph Lab</h1>
+                <p className="text-[10px] uppercase tracking-tighter text-emerald-400">Read one graph. Answer one question.</p>
+              </div>
               </div>
 
               <div className="flex items-center gap-4">
@@ -338,12 +364,41 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
           ) : null}
           <div className="px-2 pt-0 sm:px-3 md:px-4">
             <div className="game-question-card w-full max-w-[780px]">
-              <div className="question-title text-center text-[clamp(1.1rem,4vw,1.5rem)]">{formatFantasyPrompt(round?.question ?? "")}</div>
+              <div className="question-title text-center text-[clamp(1.1rem,4vw,1.5rem)]">{round?.question ?? ''}</div>
               <div className="question-subtitle text-center">{round?.helper}</div>
             </div>
           </div>
         </div>
       )}
+      <PracticeIntroPopup
+        open={showPracticeIntro}
+        title="Line Graph Lab"
+        body={(
+          <div className="space-y-3">
+            <p>You’ve entered the Line Graph Lab.</p>
+            <p>Here, the SATs Legends track how brainpower changes over time.</p>
+            <p>But the Monster Minds have tampered with the data, hiding key information within the graph!</p>
+            <p>Only by reading the exact coordinates can you uncover the truth.</p>
+            <div className="space-y-2 rounded-[1rem] border border-cyan-100/15 bg-white/5 p-3">
+              <div className="font-black text-cyan-100">Example Question 1 (basic coordinate reading)</div>
+              <div>The graph shows brainpower levels over time.</div>
+              <div>What is the brainpower at time = 4?</div>
+              <div className="font-black text-cyan-100">Example Question 2 (reading a point)</div>
+              <div>What are the coordinates of the marked point A?</div>
+              <div>(Learner answers in form: (x, y))</div>
+              <div className="font-black text-cyan-100">Example Question 3 (interpretation)</div>
+              <div>At what time does the brainpower reach 20 units?</div>
+              <div className="font-black text-cyan-100">Example Question 4 (comparison over time)</div>
+              <div>Between which two time points does brainpower increase the most?</div>
+            </div>
+            <div className="space-y-1 rounded-[1rem] border border-emerald-100/15 bg-emerald-500/8 p-3">
+              <div className="font-black text-emerald-100">Success Feedback</div>
+              <div>📊 “Data recovered!”</div>
+            </div>
+          </div>
+        )}
+        onAction={() => setShowPracticeIntro(false)}
+      />
       main={(
         <section className="flex min-h-0 flex-1 flex-col gap-2 px-2 pb-2 sm:gap-3 sm:px-3 sm:pb-3 md:px-4 md:pb-4">
           <div className="mt-0.5 min-h-0 flex-1 rounded-[1.75rem] border border-cyan-100/16 bg-transparent p-2.5 shadow-none sm:p-4 md:p-5">
