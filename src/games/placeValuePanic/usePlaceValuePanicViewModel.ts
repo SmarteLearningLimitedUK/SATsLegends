@@ -423,7 +423,7 @@ export const usePlaceValuePanicViewModel = ({
       setCombo(comboNext);
       setComboPeak((prev) => Math.max(prev, comboNext));
       setCorrectPlacements((prev) => prev + 1);
-      setFeedbackState('Correct Placement', `+${points}`, 'success');
+      setFeedbackState('Code restored!', 'You rebuilt brainpower', 'success');
       triggerHaptic('selection');
       return { result: 'correct', correctSlotKey: slotKey };
     }
@@ -432,7 +432,7 @@ export const usePlaceValuePanicViewModel = ({
     setMistakes((prev) => prev + 1);
     setScore((prev) => Math.max(0, prev - 25));
     setLastRejectedTileId(tileId);
-    setFeedbackState('Incorrect Slot', 'Tile returned to tray.', 'error');
+    setFeedbackState('The code was unstable!', 'The Monster Mind absorbed the mistake and gained strength', 'error');
     triggerHaptic('error');
     window.setTimeout(() => {
       setLastRejectedTileId((current) => (current === tileId ? null : current));

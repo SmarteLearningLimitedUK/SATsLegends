@@ -749,7 +749,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       setGoblinHealth(nextHealth);
       setCorrectAnswers((prev) => prev + 1);
       setScore((prev) => prev + (140 + resolvedLevel * 22));
-      setFeedback(null);
+      setFeedback({
+        tone: 'success',
+        message: 'Code restored! - You rebuilt brainpower',
+      });
       setGoblinEffect('hit');
       setSlotPulseKey((prev) => prev + 1);
       setEnemySpeech(GOBLIN_DAMAGE_LINES[Math.floor(Math.random() * GOBLIN_DAMAGE_LINES.length)]);
@@ -762,7 +765,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       return;
     }
 
-      setFeedback(null);
+      setFeedback({
+        tone: 'error',
+        message: 'The code was unstable!\n\nThe Monster Mind absorbed the mistake and gained strength',
+      });
       setGoblinEffect('heal');
       setBoardShake(true);
       setWrongFlash(true);
@@ -1211,13 +1217,17 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       ) : null}
 
       <AnimatePresence>
-        {feedback && feedback.tone === 'error' ? (
+        {feedback ? (
           <motion.div
             key={feedback.message}
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
-            className="absolute bottom-[calc(env(safe-area-inset-bottom)+4.6rem)] left-1/2 z-40 -translate-x-1/2 rounded-full border border-rose-200/70 bg-rose-500/35 px-5 py-2 text-xs font-black uppercase tracking-[0.14em] text-amber-50 shadow-[0_12px_28px_rgba(2,6,23,0.55)]"
+            className={`absolute bottom-[calc(env(safe-area-inset-bottom)+4.6rem)] left-1/2 z-40 -translate-x-1/2 rounded-[1.1rem] border px-5 py-3 text-center text-sm font-black leading-snug shadow-[0_12px_28px_rgba(2,6,23,0.55)] whitespace-pre-line ${
+              feedback.tone === 'success'
+                ? 'border-emerald-200/70 bg-emerald-500/35 text-emerald-50'
+                : 'border-rose-200/70 bg-rose-500/35 text-amber-50'
+            }`}
           >
             {feedback.message}
           </motion.div>
