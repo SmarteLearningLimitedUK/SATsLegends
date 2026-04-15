@@ -43,41 +43,71 @@ const LEVELS: Level[] = [
     name: 'The Foundation',
     shape: { type: 'rect', baseWidth: 60, baseHeight: 40 },
     targetScale: 2.0,
-    instructions: 'Scale the foundation to exactly 2.0x its original size.',
+    instructions: '🏗️ Original size: 60 units by 40 units\n\n📐 Scale factor: ×2\n\n👉 What is the new size?',
   },
   {
     id: 2,
     name: 'Compact Living',
     shape: { type: 'rect', baseWidth: 100, baseHeight: 80 },
     targetScale: 0.5,
-    instructions: 'Shrink the living area to exactly 0.5x for a compact design.',
+    instructions: '🏗️ Original size: 100 units by 80 units\n\n📐 Scale factor: ÷2\n\n👉 What is the new size?',
   },
   {
     id: 3,
     name: 'The Gable',
     shape: { type: 'triangle', baseWidth: 80, baseHeight: 60 },
     targetScale: 1.5,
-    instructions: 'Expand the roof gable to a 1.5x scale factor.',
+    instructions: '🏗️ Original size: 80 units by 60 units\n\n📐 Scale factor: ×1.5\n\n👉 What is the new size?',
   },
   {
     id: 4,
     name: 'The Corner Office',
     shape: { type: 'l-shape', baseWidth: 80, baseHeight: 80 },
     targetScale: 1.25,
-    instructions: 'Scale the corner office by 1.25x for more desk space.',
+    instructions: '🏗️ Original size: 80 units by 80 units\n\n📐 Scale factor: ×1.25\n\n👉 What is the new size?',
   },
   {
     id: 5,
     name: 'The Grand Hall',
     shape: { type: 'rect', baseWidth: 40, baseHeight: 120 },
     targetScale: 2.25,
-    instructions: 'Final challenge: scale the grand hall to exactly 2.25x.',
+    instructions: '🏗️ Original size: 40 units by 120 units\n\n📐 Scale factor: ×2.25\n\n👉 What is the new size?',
   },
 ];
 
 const GRID_SIZE = 20;
 const BLUEPRINT_BOARD_TOP = '58%';
 const BLUEPRINT_BOARD_SIZE = 'min(76vw, 29rem, 58vh)';
+const SCALE_BUILDER_INTRO = `The Monster Minds have distorted the structures of Matharia, shrinking and enlarging buildings to break their function.
+
+Bridges no longer reach. Towers are unstable. Defences are useless.
+
+Only by using scale correctly can you rebuild them.
+You must adjust the blueprint using the correct scale factor to rebuild the structure.
+
+👉 Follow the ratio carefully to restore it to the correct size.
+
+Example Question
+
+A defence tower blueprint has been corrupted.
+
+Original height: 5 metres
+
+Scale factor: ×3
+
+👉 What should the new height be?`;
+const SCALE_BUILDER_REUSABLE = `🏗️ Original size: [value]
+
+📐 Scale factor: × or ÷ [number] (or ratio form)
+
+👉 What is the new size?`;
+const SCALE_BUILDER_RATIO_NOTE = `💡 Ratio-Based Version (more advanced)
+
+A bridge is built using a scale ratio of 1 : 4
+
+The model is 3 metres long
+
+👉 How long is the real bridge?`;
 
 const BlueprintGrid: React.FC = () => (
   <div className="pointer-events-none absolute inset-0 opacity-22">
@@ -240,14 +270,14 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
     const heightDiff = Math.abs(heightScale - currentLevel.targetScale);
     const difference = Math.max(widthDiff, heightDiff);
     if (difference < 0.01) {
-      setFeedback({ type: 'success', message: 'Perfect scale. Structure integrity verified.' });
+      setFeedback({ type: 'success', message: '🏗️ “Structure restored!”' });
       setGameState('success');
       return;
     }
 
     const averageScale = (widthScale + heightScale) / 2;
     const direction = averageScale < currentLevel.targetScale ? 'larger' : 'smaller';
-    setFeedback({ type: 'error', message: `Inaccurate scale. Try making it slightly ${direction}.` });
+    setFeedback({ type: 'error', message: '⚠️ “Structure unstable!”' });
     setMistakeCount((previous) => previous + 1);
   };
 
@@ -255,10 +285,10 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
     if (currentLevelIdx < LEVELS.length - 1) {
       setCurrentLevelIdx((previous) => previous + 1);
       setCurrentScale(1.0);
-      setFeedback(null);
-      setGameState('playing');
-      return;
-    }
+    setFeedback({ type: 'success', message: 'The tower is rebuilt to 15 metres.' });
+    setGameState('playing');
+    return;
+  }
 
     setGameState('complete');
   };
