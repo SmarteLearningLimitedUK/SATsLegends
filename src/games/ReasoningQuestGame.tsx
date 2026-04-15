@@ -318,7 +318,7 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
             <div className="flex items-center justify-between gap-3">
               <div>
                 <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-200/90">Reasoning Quest</div>
-                <div className="mt-1 text-base font-black text-white md:text-lg">{activeQuestion.prompt}</div>
+                <div className="game-question-copy mt-1 text-white md:text-lg">{activeQuestion.prompt}</div>
               </div>
               <div className="rounded-full bg-amber-200/25 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-100">
                 Round {roundIndex + 1}/{TOTAL_ROUNDS}

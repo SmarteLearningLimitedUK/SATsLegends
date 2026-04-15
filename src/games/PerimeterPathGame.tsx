@@ -485,7 +485,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
       <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-[calc(env(safe-area-inset-top)+0.2rem)]">
         <main className="mt-0 flex min-h-0 flex-1 flex-col gap-1.5 sm:gap-2">
           <div className="shrink-0 rounded-2xl border border-sky-100/22 bg-slate-950/56 px-3 py-2 text-center shadow-[0_8px_20px_rgba(2,6,23,0.35)]">
-            <div className="text-[13px] font-black leading-tight text-white sm:text-sm">{formatFantasyPrompt(question.prompt)}</div>
+          <div className="game-question-copy text-white sm:text-sm">{formatFantasyPrompt(question.prompt)}</div>
           </div>
 
           <motion.div

@@ -520,7 +520,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       <div className="relative z-10 flex h-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+4.2rem)] pt-1">
         <div className="mt-[10px] shrink-0 text-center">
           <div className="mx-auto w-full max-w-[760px] rounded-[1.35rem] border border-cyan-100/14 bg-[linear-gradient(180deg,rgba(2,6,23,0.94),rgba(8,15,32,0.88))] px-4 py-3 shadow-[0_18px_36px_rgba(2,6,23,0.56),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md md:px-5 md:py-4">
-            <p className="whitespace-pre-line text-[clamp(0.98rem,3.55vw,1.28rem)] leading-[1.12] text-white">
+            <p className="game-question-copy whitespace-pre-line text-white">
               {question.prompt}
             </p>
           </div>

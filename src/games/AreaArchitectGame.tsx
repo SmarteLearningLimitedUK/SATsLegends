@@ -210,7 +210,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
             <div className="flex items-center justify-between gap-3">
               <div>
                 <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-200/90">Area Architect</div>
-                <div className="mt-1 text-[clamp(15px,2vh,20px)] font-black text-slate-50">
+                <div className="game-question-copy mt-1 text-slate-50">
                   {formatFantasyPrompt(question.prompt)}
                 </div>
               </div>

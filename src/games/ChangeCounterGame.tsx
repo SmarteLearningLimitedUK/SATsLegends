@@ -324,7 +324,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
             <div className="flex items-center justify-between gap-3">
               <div>
                 <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-200/90">Change Counter</div>
-                <div className="mt-1 text-base font-black text-white md:text-lg">
+                <div className="game-question-copy mt-1 text-white md:text-lg">
                   A {question.item} costs {formatMoney(question.costPence)}. You pay with {formatMoney(question.paidPence)}.
                 </div>
               </div>

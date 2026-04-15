@@ -565,7 +565,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/75">Objective</div>
-          <div className="text-sm font-black text-white md:text-lg">{formatFantasyPrompt(round.prompt)}</div>
+          <div className="game-question-copy text-white md:text-lg">{formatFantasyPrompt(round.prompt)}</div>
           <p className="mt-1 text-[11px] font-semibold text-white/75 md:text-xs">{round.sublabel}</p>
         </div>
         <button

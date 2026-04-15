@@ -394,7 +394,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
             ) : null}
             <div className="px-2 pt-0 sm:px-3 md:px-4">
               <div className="game-question-card w-full max-w-[780px]">
-                <div className="question-title text-center text-[clamp(1.1rem,4vw,1.5rem)]">{round?.question ?? ''}</div>
+                <div className="question-title game-question-copy text-center">{round?.question ?? ''}</div>
                 <div className="question-subtitle text-center">{round?.helper}</div>
               </div>
             </div>

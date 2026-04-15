@@ -370,7 +370,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
                       {round.formula}
                     </div>
                   </div>
-                  <div className="mt-3 text-[11px] font-bold text-cyan-100/85 md:text-sm">{formatFantasyPrompt(round.prompt)}</div>
+                  <div className="game-question-copy mt-3 text-cyan-100/85 md:text-sm">{formatFantasyPrompt(round.prompt)}</div>
                 </div>
 
                 <div className="rounded-[1.25rem] border border-emerald-200/18 bg-[linear-gradient(180deg,rgba(16,185,129,0.16),rgba(15,23,42,0.8))] p-3 shadow-[0_12px_22px_rgba(2,6,23,0.18)] md:p-4">

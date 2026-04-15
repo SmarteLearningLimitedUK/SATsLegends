@@ -5285,10 +5285,17 @@ button.avatar-hero-arrow:not(:disabled):active {
 }
 
 .game-question-card .question-title {
-  font-size: clamp(0.95rem, 2.6vw, 1.25rem);
-  font-weight: 900;
+  font-size: clamp(0.98rem, 3.55vw, 1.28rem);
+  font-weight: 400;
+  line-height: 1.12;
   color: #f8fafc;
   letter-spacing: 0.01em;
+}
+
+.game-question-copy {
+  font-size: clamp(0.98rem, 3.55vw, 1.28rem);
+  font-weight: 400;
+  line-height: 1.12;
 }
 
 .game-question-card .question-subtitle {

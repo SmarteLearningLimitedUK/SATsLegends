@@ -360,7 +360,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
               Round {roundNumber}/{totalRounds}
             </div>
           </div>
-          <div className="mt-2 text-center text-[1.02rem] font-black leading-tight text-white md:text-[1.32rem]">
+          <div className="game-question-copy mt-2 text-center text-white md:text-[1.32rem]">
             {formatFantasyPrompt(question.prompt)}
           </div>
           <div className="mt-1 text-center text-[11px] font-semibold text-cyan-100/70 md:text-[12px]">

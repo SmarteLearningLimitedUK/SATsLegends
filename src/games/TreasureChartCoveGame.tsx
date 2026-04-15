@@ -334,7 +334,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
               <div className="flex justify-center">
                 <div className="game-question-card w-full max-w-[780px]">
                   <div className="question-title">{round.title}</div>
-                  <div className="question-subtitle">{formatFantasyPrompt(round.prompt)}</div>
+                  <div className="question-subtitle game-question-copy">{formatFantasyPrompt(round.prompt)}</div>
                 </div>
             </div>
 

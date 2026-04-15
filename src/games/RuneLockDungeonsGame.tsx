@@ -276,7 +276,7 @@ const RuneLockDungeonsGame: React.FC<RuneLockDungeonsGameProps> = ({
               <div className="flex min-h-[7.5rem] flex-col justify-between gap-2 rounded-[1.6rem] border border-white/12 bg-[linear-gradient(180deg,rgba(24,24,27,0.8),rgba(39,39,42,0.92))] p-2 shadow-[0_24px_40px_rgba(2,6,23,0.22)] sm:min-h-[8.5rem] lg:min-h-[10rem] lg:p-2.5">
                 <div className="rounded-[1.1rem] border border-white/10 bg-black/18 p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] lg:p-2.5">
                   <div className="text-[8px] font-black uppercase tracking-[0.16em] text-white/56 lg:text-xs">Rune puzzle</div>
-                  <div className="mt-1 text-center text-[1.1rem] font-black tracking-tight text-white sm:text-[1.35rem] lg:text-[2rem]">
+                  <div className="game-question-copy mt-1 text-center tracking-tight text-white sm:text-[1.35rem] lg:text-[2rem]">
                     {formatFantasyPrompt(round.prompt)}
                   </div>
                   <div className="mt-1 text-center text-[9px] font-bold text-sky-100/82 lg:text-[11px]">{round.support}</div>

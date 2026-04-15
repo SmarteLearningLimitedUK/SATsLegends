@@ -568,7 +568,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
         <div className={`pointer-events-none px-3 ${usesSharedHud ? 'pt-[calc(env(safe-area-inset-top)+3.9rem)]' : 'pt-3'}`}>
           <div className="mx-auto max-w-[22rem] rounded-[1.05rem] border border-cyan-100/40 bg-slate-950/70 px-4 py-2 text-center shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
             <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-200/90">Prime Pop</div>
-            <div className="mt-1 whitespace-pre-line text-[clamp(0.95rem,3.4vw,1.16rem)] font-black leading-tight text-white">
+            <div className="game-question-copy mt-1 whitespace-pre-line text-white">
               the monster minds have released number orbs to hide the prime numbers.
               {'\n'}
               pick out the prime numbers before they cross the line and are lost forever

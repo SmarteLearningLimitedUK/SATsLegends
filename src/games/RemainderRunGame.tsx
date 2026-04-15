@@ -452,7 +452,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
               <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/75">
                 {problem.speedRound ? 'Speed Round' : 'Remainder Rush'}
               </div>
-              <div className="mt-1 text-[clamp(1rem,4.4vw,1.3rem)] font-black text-white">{problemPromptTitle(problem)}</div>
+              <div className="game-question-copy mt-1 text-white">{problemPromptTitle(problem)}</div>
               <div className="mt-1 text-[clamp(0.95rem,4.1vw,1.16rem)] font-semibold text-cyan-50/92">{problemPromptBody(problem)}</div>
             </div>
 

@@ -1356,7 +1356,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                 <div className={`${isPlaceValuePeaks ? 'mb-2 rounded-[0.9rem] border border-amber-200/24 bg-[linear-gradient(180deg,rgba(251,146,60,0.3),rgba(194,65,12,0.18))] px-3 py-1.5 text-amber-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]' : `casual-ribbon-chip mb-2 inline-flex items-center justify-center rounded-full px-3 py-1 text-[8px] font-black uppercase tracking-[0.18em] md:mb-3 md:px-4 md:py-1.5 md:text-[10px] ${theme.badge}`}`}>
                   {isPlaceValuePeaks ? 'Highest Number Dash' : meta.focus}
                 </div>
-                <div className={`${isCalculationClash ? 'text-[1.15rem]' : isPlaceValuePeaks ? 'text-[1.18rem]' : isChartGrabber ? 'text-[1.05rem]' : 'text-[1.28rem]'} max-w-[18rem] font-black text-white md:max-w-[30rem] leading-[0.95]`}>
+                <div className={`${isCalculationClash ? 'text-[1.15rem]' : isPlaceValuePeaks ? 'text-[1.18rem]' : isChartGrabber ? 'text-[1.05rem]' : 'text-[1.28rem]'} game-question-copy max-w-[18rem] text-white md:max-w-[30rem] leading-[0.95]`}>
                   {formatFantasyPrompt(question.prompt)}
                 </div>
                 <div className={`mt-1 max-w-[18rem] font-semibold leading-snug text-white/70 md:mt-2 md:max-w-[30rem] ${isChartGrabber ? 'text-[8px] md:text-[11px]' : 'text-[9px] md:text-sm'}`}>

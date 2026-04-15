@@ -640,7 +640,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
                 <div className="text-[9px] font-black uppercase tracking-[0.24em] text-cyan-100/60 lg:text-[11px]">
                   Boss encounter
                 </div>
-                <h1 className="mt-1 text-[0.95rem] font-black leading-tight text-white lg:text-[1.75rem]">
+                <h1 className="game-question-copy mt-1 leading-tight text-white lg:text-[1.75rem]">
                   {formatFantasyPrompt(question.prompt)}
                 </h1>
                 <p className="mt-1.5 text-[9px] leading-snug text-white/74 lg:text-sm">

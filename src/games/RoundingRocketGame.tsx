@@ -338,7 +338,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
           <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90">
             Round to the nearest {round.target}
           </div>
-          <div className="mt-0.5 whitespace-pre-line text-[clamp(0.95rem,3.4vw,1.16rem)] font-black leading-tight text-white">
+          <div className="game-question-copy mt-0.5 whitespace-pre-line text-white">
             Quick! we've managed to locate a cache of brainpower, but we need to keep it safe from the Monster Minds.
             {'\n'}
             Help fuel the rocket to blast it into space for safe keeping.

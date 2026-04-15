@@ -656,7 +656,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
             <div className="text-[11px] font-black uppercase tracking-[0.18em] text-cyan-100/76">
               Level {level}/{TOTAL_LEVELS}
             </div>
-            <div className="mt-1 text-[clamp(1.2rem,4.4vw,1.5rem)] font-black leading-tight text-white">
+            <div className="game-question-copy mt-1 leading-tight text-white">
               {modeCopy.title}
             </div>
             <div className="mt-0.5 text-[11px] font-semibold text-cyan-100/80">

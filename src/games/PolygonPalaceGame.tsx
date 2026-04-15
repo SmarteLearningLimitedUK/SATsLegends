@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { triggerHaptic } from '../haptics';
 import gameplayBackground from '../assets/maps/backgroundsforgames/polygon palace map.jpg';
@@ -714,7 +714,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
 
     const correctLabel = question.correctChoiceIds
       .map((choiceId) => question.choices.find((choice) => choice.id === choiceId)?.label || choiceId)
-      .join(' � ');
+      .join(' • ');
 
     triggerHaptic('error');
     setPulseTone('error');
@@ -780,7 +780,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
             <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/72">
               {question.speedRound ? 'Challenge Round' : 'Polygon Palace'}
             </div>
-            <h2 className="mt-1 text-[clamp(1rem,4.4vw,1.3rem)] font-black text-white">{question.prompt}</h2>
+            <h2 className="game-question-copy mt-1 text-white">{question.prompt}</h2>
             <p className="mt-1 text-[clamp(0.76rem,3.3vw,0.9rem)] font-semibold text-cyan-100/86">{question.subPrompt}</p>
           </section>
 

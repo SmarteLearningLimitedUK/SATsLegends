@@ -495,7 +495,7 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
           )}
 
           <section className="rounded-[1.35rem] border border-cyan-100/18 bg-slate-950/46 p-2.5 text-center shadow-[0_10px_20px_rgba(2,6,23,0.38)]">
-            <h2 className="text-[clamp(1rem,4.4vw,1.3rem)] font-black text-white">{question.instruction}</h2>
+            <h2 className="game-question-copy text-white">{question.instruction}</h2>
             <p className="mt-1 text-[clamp(0.76rem,3.3vw,0.9rem)] font-semibold text-cyan-100/86">{question.subInstruction}</p>
           </section>
 

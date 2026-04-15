@@ -562,7 +562,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
         <div className="mx-4 mt-4 rounded-3xl border border-blue-400/40 bg-blue-950/70 p-4 shadow-xl">
           <div className="my-3 h-px w-full bg-white/10" />
-          <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-center text-[clamp(1.1rem,4.5vw,1.6rem)] font-black text-white">
+          <div className="game-question-copy rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-center text-white">
             {formatFantasyPrompt(question.prompt)}
           </div>
           <div
