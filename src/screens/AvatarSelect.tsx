@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { AVATARS } from '../constants';
 import { triggerHaptic } from '../haptics';
@@ -16,78 +16,6 @@ const AVATAR_FOOT_ANCHOR_MAIN_Y_PX: Record<string, number> = {
 const AVATAR_MAIN_GLOBAL_LIFT_PX = -62;
 const AVATAR_MAIN_VISUAL_SCALE = 2.16;
 
-const removeBannerMatte = (src: string): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => {
-      try {
-        const canvas = document.createElement('canvas');
-        canvas.width = image.naturalWidth;
-        canvas.height = image.naturalHeight;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          resolve(src);
-          return;
-        }
-
-        ctx.drawImage(image, 0, 0);
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const data = imageData.data;
-        const width = canvas.width;
-        const height = canvas.height;
-        const visited = new Uint8Array(width * height);
-        const stack: number[] = [];
-
-        const isMatte = (pixelIndex: number) => {
-          const r = data[pixelIndex];
-          const g = data[pixelIndex + 1];
-          const b = data[pixelIndex + 2];
-          const max = Math.max(r, g, b);
-          const min = Math.min(r, g, b);
-          return max <= 126 && max - min <= 36;
-        };
-
-        const pushIfMatte = (x: number, y: number) => {
-          if (x < 0 || y < 0 || x >= width || y >= height) return;
-          const p = y * width + x;
-          if (visited[p]) return;
-          const i = p * 4;
-          if (!isMatte(i)) return;
-          visited[p] = 1;
-          stack.push(p);
-        };
-
-        for (let x = 0; x < width; x += 1) {
-          pushIfMatte(x, 0);
-          pushIfMatte(x, height - 1);
-        }
-        for (let y = 0; y < height; y += 1) {
-          pushIfMatte(0, y);
-          pushIfMatte(width - 1, y);
-        }
-
-        while (stack.length > 0) {
-          const p = stack.pop() as number;
-          const i = p * 4;
-          data[i + 3] = 0;
-          const x = p % width;
-          const y = (p / width) | 0;
-          pushIfMatte(x + 1, y);
-          pushIfMatte(x - 1, y);
-          pushIfMatte(x, y + 1);
-          pushIfMatte(x, y - 1);
-        }
-
-        ctx.putImageData(imageData, 0, 0);
-        resolve(canvas.toDataURL('image/png'));
-      } catch (error) {
-        reject(error);
-      }
-    };
-    image.onerror = () => reject(new Error('Failed to load hero banner'));
-    image.src = src;
-  });
-
 interface AvatarSelectProps {
   selectedId: string;
   onSelect: (id: string) => void;
@@ -97,27 +25,13 @@ interface AvatarSelectProps {
 const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onConfirm }) => {
   const selectedIndex = Math.max(0, AVATARS.findIndex((avatar) => avatar.id === selectedId));
   const selectedAvatar = AVATARS[selectedIndex] || AVATARS[0];
-  const [bannerSrc, setBannerSrc] = useState(chooseBanner);
+  const bannerSrc = chooseBanner;
 
   useEffect(() => {
     if (!AVATARS.some((avatar) => avatar.id === selectedId)) {
       onSelect(AVATARS[0].id);
     }
   }, [onSelect, selectedId]);
-
-  useEffect(() => {
-    let active = true;
-    removeBannerMatte(chooseBanner)
-      .then((cleaned) => {
-        if (active) setBannerSrc(cleaned);
-      })
-      .catch(() => {
-        if (active) setBannerSrc(chooseBanner);
-      });
-    return () => {
-      active = false;
-    };
-  }, []);
 
   const selectIndex = (index: number) => {
     const safeIndex = (index + AVATARS.length) % AVATARS.length;

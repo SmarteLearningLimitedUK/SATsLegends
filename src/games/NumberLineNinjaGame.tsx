@@ -149,10 +149,6 @@ const buildPrompt = (missingCount: number) => {
   return [
     `Fill in the missing ${isSingle ? 'number' : 'numbers'} on the number line to track the stolen brainpower.`,
     '',
-    isSingle
-      ? '30 → [ ? ] → 40 → 50'
-      : '30 → [ ? ] → 40 → [ ? ] → 50',
-    '',
     `🥷 ${isSingle ? 'Which number is missing?' : 'What numbers are missing?'}`,
   ].join('\n');
 };
@@ -522,10 +518,12 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_52%,rgba(56,189,248,0.14),transparent_64%)]" />
 
       <div className="relative z-10 flex h-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+4.2rem)] pt-1">
-        <div className="mt-[14px] shrink-0 text-center">
-          <p className="mx-auto max-w-[700px] whitespace-pre-line text-[clamp(15px,1.9vw,23px)] font-black leading-tight text-white drop-shadow-[0_2px_6px_rgba(2,6,23,0.92)]">
-            {question.prompt}
-          </p>
+        <div className="mt-[10px] shrink-0 text-center">
+          <div className="mx-auto w-full max-w-[760px] rounded-[1.35rem] border border-cyan-100/14 bg-[linear-gradient(180deg,rgba(2,6,23,0.94),rgba(8,15,32,0.88))] px-4 py-3 shadow-[0_18px_36px_rgba(2,6,23,0.56),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md md:px-5 md:py-4">
+            <p className="whitespace-pre-line text-[clamp(14px,1.85vw,22px)] font-black leading-[1.14] text-white drop-shadow-[0_2px_6px_rgba(2,6,23,0.92)]">
+              {question.prompt}
+            </p>
+          </div>
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col items-center justify-start pt-1">

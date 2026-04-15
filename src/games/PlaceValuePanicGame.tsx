@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react';
 import medButton from '../assets/casual_ui/inputs/btn_1.png';
 import animatedEnemy1 from '../assets/maps/ezgif-261d69e7ae90ee8c.webp';
+import forestBackground from '../assets/maps/forestbackground.png';
 import hudAvatarName from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
 import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
 import socketM from '../assets/casual_ui/updaed_sockets_slices/socket_m.png';
@@ -884,6 +885,16 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       style={{ touchAction: 'manipulation' }}
     >
       <div className="relative z-10 h-full w-full">
+      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+        <img
+          src={forestBackground}
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,14,24,0.18)_0%,rgba(7,14,24,0.24)_44%,rgba(7,14,24,0.56)_100%)]" />
+      </div>
       {!useSharedTopHud ? (
         <div
           className="pointer-events-none absolute inset-x-0 top-0 z-40"
