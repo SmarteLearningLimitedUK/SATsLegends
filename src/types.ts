@@ -137,6 +137,7 @@ export interface GameStat {
   accuracy: number;
   avgScore: number;
   totalTimeSec: number;
+  avgTimeSec: number;
   lastPlayed: number | null;
 }
 
@@ -159,11 +160,26 @@ export interface PlayerAchievementState {
 }
 
 export interface ParentReportSummary {
+  favoriteGame: ParentGameSummary | null;
+  leastPlayedGame: ParentGameSummary | null;
+  fastestGame: ParentGameSummary | null;
+  slowestGame: ParentGameSummary | null;
+  overallAccuracy: number;
+  averageSessionTimeSec: number;
   needsPractice: string[];
   mostPlayed: string[];
   nextFocus: string[];
   excelling: string[];
   updatedAt: number;
+}
+
+export interface ParentGameSummary {
+  gameId: string;
+  label: string;
+  sessions: number;
+  accuracy: number;
+  avgTimeSec: number;
+  totalTimeSec: number;
 }
 
 export interface Achievement {

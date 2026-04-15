@@ -24,6 +24,7 @@ import answerGreenBg from '../assets/casual_ui/inputs/btn_6a.png';
 import answerBlueBg from '../assets/casual_ui/inputs/btn_7.png';
 import answerYellowBg from '../assets/casual_ui/inputs/btn_8.png';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
+import { formatMultiplicationDisplay } from '../utils/mathDisplay';
 
 interface CurriculumChallengeGameProps {
   gameType: SupportedChallengeGameType;
@@ -1020,7 +1021,7 @@ const renderVisual = (visual: VisualData, compactBars = false) => {
                     transition={index === 0 ? { duration: 2.2, repeat: Infinity, ease: 'easeInOut' } : undefined}
                     className={`${index === 0 ? 'rounded-[1.1rem] border border-sky-200/24 bg-[linear-gradient(180deg,rgba(255,255,255,0.16),rgba(255,255,255,0.05))] px-3 py-3 text-[1.3rem] md:text-[2.15rem]' : 'text-[0.95rem] md:text-[1.2rem]'} font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]`}
                   >
-                    {line}
+                    {formatMultiplicationDisplay(line)}
                   </motion.div>
                 ))}
               </div>
@@ -1038,7 +1039,7 @@ const renderVisual = (visual: VisualData, compactBars = false) => {
           <div className="space-y-1.5 md:space-y-2">
             {visual.lines.map((line) => (
               <div key={line} className="text-[1.1rem] font-black text-white md:text-3xl">
-                {line}
+                {formatMultiplicationDisplay(line)}
               </div>
             ))}
           </div>

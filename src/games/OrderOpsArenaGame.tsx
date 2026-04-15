@@ -4,6 +4,7 @@ import confetti from 'canvas-confetti';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { triggerHaptic } from '../haptics';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
+import { formatMultiplicationDisplay } from '../utils/mathDisplay';
 
 interface OrderOpsArenaGameProps {
   levelId: number;
@@ -132,6 +133,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
   const [isFinished, setIsFinished] = useState(false);
 
   const enemyHealthPercent = (enemyHealth / maxEnemyHealth) * 100;
+  const displayExpression = formatMultiplicationDisplay(round.expression);
 
   const clearTimers = () => {
     timersRef.current.forEach((timerId) => window.clearTimeout(timerId));
@@ -301,7 +303,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
                     </div>
                     <div className="mt-2 rounded-[1rem] border border-amber-200/30 bg-[linear-gradient(180deg,rgba(245,158,11,0.3),rgba(15,23,42,0.6))] p-3 text-center shadow-[0_10px_18px_rgba(2,6,23,0.18)] md:p-4">
                       <div className="text-[clamp(1.1rem,2.8vw,2.6rem)] font-black tracking-tight text-white whitespace-nowrap">
-                        {round.expression}
+                        {displayExpression}
                       </div>
                     </div>
                   </div>
@@ -332,7 +334,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
                   <div className="mt-3 grid grid-cols-2 gap-2 md:gap-3">
                     {round.options.map((option) => (
                       <button
-                        key={`${round.expression}-${option}`}
+                        key={`${displayExpression}-${option}`}
                         type="button"
                         onClick={() => handleAnswer(option)}
                         disabled={Boolean(feedback) || isFinished}

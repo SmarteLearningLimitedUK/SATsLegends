@@ -88,6 +88,7 @@ const ensureGameStat = (telemetry: PlayerTelemetry, gameId: string): GameStat =>
       accuracy: 0,
       avgScore: 0,
       totalTimeSec: 0,
+      avgTimeSec: 0,
       lastPlayed: null,
     };
   }
@@ -153,6 +154,7 @@ export const applyTelemetryEvent = (
     if (typeof context.durationSec === 'number') {
       telemetry.totalPlayTimeSec += context.durationSec;
       gameStat.totalTimeSec += context.durationSec;
+      gameStat.avgTimeSec = Math.round(gameStat.totalTimeSec / Math.max(1, gameStat.sessions));
     }
     gameStat.lastPlayed = now;
   }

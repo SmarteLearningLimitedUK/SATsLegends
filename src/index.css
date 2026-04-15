@@ -5199,12 +5199,13 @@ button.avatar-hero-arrow:not(:disabled):active {
   color: var(--sat-ink) !important;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45) !important;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,0)),
+    linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0) 34%),
     linear-gradient(180deg, var(--sat-primary-top) 0%, var(--sat-primary-mid) 55%, var(--sat-primary-bottom) 100%) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.56),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
     0 6px 0 rgba(124, 72, 7, 0.75),
     0 14px 24px rgba(8, 22, 49, 0.3) !important;
+  border-radius: 999px !important;
 }
 
 .app-viewport.sat-theme-bluegold .ui-button-secondary,
@@ -5213,11 +5214,13 @@ button.avatar-hero-arrow:not(:disabled):active {
   border-color: rgba(177, 222, 255, 0.56) !important;
   color: #f5fbff !important;
   background:
+    linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0) 34%),
     linear-gradient(180deg, var(--sat-secondary-top) 0%, var(--sat-secondary-mid) 56%, var(--sat-secondary-bottom) 100%) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
     0 6px 0 rgba(18, 53, 128, 0.78),
-    0 12px 22px rgba(8, 22, 49, 0.28) !important;
+    0 14px 24px rgba(8, 22, 49, 0.28) !important;
+  border-radius: 999px !important;
 }
 
 .app-viewport.sat-theme-bluegold .game-chip,

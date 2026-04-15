@@ -1,3 +1,5 @@
+import { formatMultiplicationDisplay } from './mathDisplay';
+
 const START_PREFIXES = ['The Monster Minds have scrambled the numbers.', 'Matharia mix -', 'Matharia records -', 'Matharia barrier -', 'Matharia forge -', 'Matharia map -', 'Matharia clock -', 'Quest:', 'Mission:', 'Spell:', 'Challenge:'];
 
 const REPLACEMENTS: Array<[RegExp, string]> = [
@@ -61,7 +63,7 @@ export const formatFantasyPrompt = (prompt: string) => {
   });
 
   if (isMathExpression(trimmed)) {
-    return `The Monster Minds have scrambled the numbers. Solve ${trimmed}.`;
+    return `The Monster Minds have scrambled the numbers. Solve ${formatMultiplicationDisplay(trimmed)}.`;
   }
 
   const prefix = pickMathariaPrefix(next);
