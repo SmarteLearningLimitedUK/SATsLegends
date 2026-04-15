@@ -557,6 +557,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     }, 900);
   }, [gameState]);
 
+  const showPromptAndAnswers = gameState === 'awaitingAnswer';
+
   return (
     <GameUiShell className="bg-transparent !bg-none ![background-image:none] ![background-color:transparent]" overlayDisabled>
       <div className="relative h-full w-full overflow-hidden text-white">
@@ -577,12 +579,19 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
               />
 
               <div
-                className={`relative z-20 w-full transition-all duration-300 ${gameState === 'firing' || gameState === 'projectileFlight' || gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? 'pointer-events-none max-h-0 opacity-0' : 'max-h-[320px] opacity-100'}`}
+                className={`relative z-20 w-full transition-all duration-300 ${showPromptAndAnswers ? 'max-h-[320px] opacity-100' : 'pointer-events-none max-h-0 opacity-0'}`}
               >
                 <div className="game-question-card w-full max-w-[780px]">
                   <div className="question-title">{formatFantasyPrompt(activeQuestion?.prompt ?? 'Choose the correct launch angle.')}</div>
                 </div>
-                <div className="mt-1.5 grid grid-cols-2 gap-1.5">
+              </div>
+            </div>
+          )}
+          main={<div className="min-h-0 flex-1" />}
+          bottom={(
+            <div className="flex flex-col gap-2">
+              <div className={`w-full transition-all duration-300 ${showPromptAndAnswers ? 'max-h-[320px] opacity-100' : 'pointer-events-none max-h-0 opacity-0'}`}>
+                <div className="grid grid-cols-2 gap-1.5">
                   {(activeQuestion?.options ?? []).map((option) => (
                     <button
                       key={option}
@@ -601,11 +610,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
                   </div>
                 ) : null}
               </div>
-            </div>
-          )}
-          main={<div className="min-h-0 flex-1" />}
-          bottom={(
-            <div className="flex flex-col gap-2">
               <FeedbackStrip className="w-full" tone={gameState === 'resolvedCorrect' ? 'success' : gameState === 'resolvedIncorrect' ? 'warning' : 'neutral'}>
                 {feedback || (selectedAnswer !== null ? `Angle ${selectedAnswer}° locked in.` : 'Choose an angle to fire the launcher.')}
               </FeedbackStrip>
