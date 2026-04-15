@@ -91,29 +91,38 @@ export const GameUiShell: React.FC<GameUiShellProps> = ({
   backgroundImage,
   overlayDisabled = false,
   backgroundOpacity = 1,
-}) => (
-  <div
-    className={cn(
-      'relative flex h-full w-full flex-col overflow-hidden',
-      typeof document !== 'undefined' && document.querySelector('[data-gameplay-content-viewport="true"]') && !backgroundImage
-        ? 'bg-transparent'
-        : 'bg-[radial-gradient(circle_at_top,#0f172a_0%,#0b1224_45%,#050914_100%)]',
-      className,
-    )}
-  >
-    {backgroundImage ? (
-      <div
-        data-game-background-layer="true"
-        className="game-background-layer pointer-events-none absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${backgroundImage})`, opacity: backgroundOpacity }}
-      />
-    ) : null}
-    {overlayDisabled ? null : null}
-    <div className="relative z-10 flex h-full min-h-0 flex-col">
-      {children}
+}) => {
+  // Gameplay screens already provide their own backdrop layer or image.
+  // Keep the shared shell transparent there so we don't stack a second fallback background underneath.
+  // Non-gameplay screens keep the default radial treatment.
+  const inGameplayViewport =
+    typeof document !== 'undefined'
+    && Boolean(document.querySelector('[data-gameplay-content-viewport="true"]'));
+
+  return (
+    <div
+      className={cn(
+        'relative flex h-full w-full flex-col overflow-hidden',
+        inGameplayViewport
+          ? 'bg-transparent'
+          : 'bg-[radial-gradient(circle_at_top,#0f172a_0%,#0b1224_45%,#050914_100%)]',
+        className,
+      )}
+    >
+      {backgroundImage ? (
+        <div
+          data-game-background-layer="true"
+          className="game-background-layer pointer-events-none absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${backgroundImage})`, opacity: backgroundOpacity }}
+        />
+      ) : null}
+      {overlayDisabled ? null : null}
+      <div className="relative z-10 flex h-full min-h-0 flex-col">
+        {children}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export const PrimaryButton: React.FC<ButtonProps> = ({ children, className, onClick, disabled, type = 'button' }) => (
   <button
@@ -227,12 +236,13 @@ export const GameTopBar: React.FC<GameTopBarProps> = ({
           onClick={onToggleAudio}
           disabled={!onToggleAudio}
         />
-        <IconButton
-          icon={<HelpCircle className="h-5 w-5" />}
-          label="Help"
-          onClick={onHelp}
-          disabled={!onHelp}
-        />
+        {onHelp ? (
+          <IconButton
+            icon={<HelpCircle className="h-5 w-5" />}
+            label="Help"
+            onClick={onHelp}
+          />
+        ) : null}
       </div>
     </div>
   );

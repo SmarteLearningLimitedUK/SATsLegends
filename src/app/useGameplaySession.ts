@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'reac
 import { GAME_HUD_MUTE_EVENT, GAME_HUD_MUTE_SYNC_EVENT } from '../gameHudEvents';
 import { GAME_AUDIO_STORAGE_KEY } from '../gameHudEvents';
 import { GameScreen, LevelData } from '../types';
+import { LEVEL_TIMERS_DISABLED } from './testingFlags';
 
 export const GLOBAL_MINIGAME_HUD_DURATION_SECONDS = 90;
 export const GLOBAL_MINIGAME_LIVES = 3;
@@ -49,7 +50,7 @@ export const useGameplaySession = ({
     setGlobalMiniGameLives(GLOBAL_MINIGAME_LIVES);
     setGlobalMiniGameLifeLock(false);
     setGlobalMiniGameTimeLock(false);
-    if (isUntimedGameplay) return undefined;
+    if (isUntimedGameplay || LEVEL_TIMERS_DISABLED) return undefined;
     const timerId = window.setInterval(() => {
       setGlobalMiniGameHudTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
@@ -67,7 +68,7 @@ export const useGameplaySession = ({
   }, [globalMiniGameLifeLock, globalMiniGameLives, onLifeDepleted, screen]);
 
   useEffect(() => {
-    if (screen !== 'gameplay' || isUntimedGameplay || globalMiniGameHudTimeLeft > 0 || globalMiniGameTimeLock) return;
+    if (screen !== 'gameplay' || isUntimedGameplay || LEVEL_TIMERS_DISABLED || globalMiniGameHudTimeLeft > 0 || globalMiniGameTimeLock) return;
     setGlobalMiniGameTimeLock(true);
     window.setTimeout(() => {
       onTimeDepleted();

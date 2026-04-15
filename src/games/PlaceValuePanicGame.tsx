@@ -71,31 +71,6 @@ const FULL_PLACE_VALUE_HINTS = ['M', 'Hth', 'Tth', 'Th', 'H', 'T', 'U'] as const
 const TARGET_ROW_Y_OFFSET_PX = 0;
 const SOURCE_ROW_Y_OFFSET_PX = 30;
 
-const ONES_WORDS = [
-  'zero',
-  'one',
-  'two',
-  'three',
-  'four',
-  'five',
-  'six',
-  'seven',
-  'eight',
-  'nine',
-  'ten',
-  'eleven',
-  'twelve',
-  'thirteen',
-  'fourteen',
-  'fifteen',
-  'sixteen',
-  'seventeen',
-  'eighteen',
-  'nineteen',
-];
-
-const TENS_WORDS = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
-
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
 const shuffle = <T,>(items: T[]): T[] => {
@@ -180,39 +155,6 @@ const createStaticEnemyFrame = (src: string): Promise<string> =>
     image.onerror = () => reject(new Error('Failed to load enemy frame'));
     image.src = src;
   });
-
-const toWordsUnderHundred = (n: number): string => {
-  if (n < 20) return ONES_WORDS[n];
-  const tens = Math.floor(n / 10);
-  const ones = n % 10;
-  if (ones === 0) return TENS_WORDS[tens];
-  return `${TENS_WORDS[tens]} ${ONES_WORDS[ones]}`;
-};
-
-const toWordsUnderThousand = (n: number): string => {
-  if (n < 100) return toWordsUnderHundred(n);
-  const hundreds = Math.floor(n / 100);
-  const rest = n % 100;
-  return rest === 0
-    ? `${ONES_WORDS[hundreds]} hundred`
-    : `${ONES_WORDS[hundreds]} hundred and ${toWordsUnderHundred(rest)}`;
-};
-
-const toWords = (n: number): string => {
-  if (n < 1000) return toWordsUnderThousand(n);
-  if (n < 1000000) {
-    const thousands = Math.floor(n / 1000);
-    const rest = n % 1000;
-    const thousandWords = toWordsUnderThousand(thousands);
-    if (rest === 0) return `${thousandWords} thousand`;
-    if (rest < 100) return `${thousandWords} thousand and ${toWordsUnderThousand(rest)}`;
-    return `${thousandWords} thousand, ${toWordsUnderThousand(rest)}`;
-  }
-  if (n === 1000000) {
-    return 'one million';
-  }
-  return n.toLocaleString('en-GB');
-};
 
 const scoreToStars = (accuracy: number): number => {
   if (accuracy >= 0.9) return 3;
@@ -310,7 +252,7 @@ const makeQuestion = (level: number): QuestionState => {
   const distractorDigits = getDistractorDigits(expectedDigits, 2);
   const tokenValues = shuffle([...expectedDigits, ...distractorDigits]);
   const placeHints = FULL_PLACE_VALUE_HINTS.slice(FULL_PLACE_VALUE_HINTS.length - slotCount);
-  const prompt = toWords(promptNumber).toUpperCase();
+  const prompt = `A Monster Mind has scrambled the number ${new Intl.NumberFormat('en-GB').format(promptNumber)}.\n\nRebuild it using place value to restore the brainpower!`;
 
   return {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -938,7 +880,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90">
             Target Number
           </div>
-          <div className="mt-0.5 text-[clamp(1.1rem,4.2vw,1.5rem)] font-black leading-tight text-white">
+          <div className="mt-0.5 whitespace-pre-line text-[clamp(1.1rem,4.2vw,1.5rem)] font-black leading-tight text-white">
             {questionPrompt}
           </div>
         </div>

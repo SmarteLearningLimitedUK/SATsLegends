@@ -16,7 +16,6 @@ import {
   SecondaryButton,
 } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
-import GameRulesModal from '../components/GameRulesModal';
 import cauldrenAndPotionArt from '../assets/coul.png';
 import potionPanicBackdrop from '../assets/maps/potionpanic.jpg';
 import azureBottle from '../assets/potion_bottles/azure.png';
@@ -534,7 +533,6 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
   const [hasBrewed, setHasBrewed] = useState(false);
   const [locked, setLocked] = useState(false);
   const [audioEnabled, setAudioEnabled] = useState(true);
-  const [showRules, setShowRules] = useState(false);
   const [droplets, setDroplets] = useState<Array<{ id: string; index: number }>>([]);
   const [usesSharedHud, setUsesSharedHud] = useState(false);
 
@@ -739,16 +737,6 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
 
   const roundsToWin = roundsToWinForLevel(levelId);
 
-  const rules = useMemo(() => ({
-    title: 'Potion Panic',
-    summary: 'Match the recipe card to brew the potion.',
-    bullets: [
-      'Tap ingredient bottles to add drops to the cauldron.',
-      'Use the recipe card to see how many drops to add.',
-      'Press Brew only when the mix is complete.',
-    ],
-  }), []);
-
   return (
     <GameUiShell backgroundImage={potionPanicBackdrop} backgroundOpacity={1} overlayDisabled>
       <GameScreenLayout
@@ -763,7 +751,6 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 className="mx-auto w-full max-w-[780px]"
                 audioEnabled={audioEnabled}
                 onToggleAudio={() => setAudioEnabled((previous) => !previous)}
-                onHelp={() => setShowRules(true)}
               />
             </div>
           </div>
@@ -912,12 +899,6 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 </div>
               </div>
             </div>
-            <GameRulesModal
-              isOpen={showRules}
-              onClose={() => setShowRules(false)}
-              rules={rules}
-            />
-
             {droplets.map((drop) => {
               const ingredient = INGREDIENTS[drop.index];
               const left = `${12 + drop.index * 19}%`;

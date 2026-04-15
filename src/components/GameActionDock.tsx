@@ -3,7 +3,6 @@ import AssetIcon from './AssetIcon';
 import { triggerHaptic } from '../haptics';
 import {
   GAME_AUDIO_STORAGE_KEY,
-  GAME_HUD_HELP_EVENT,
   GAME_HUD_MUTE_EVENT,
   GAME_HUD_MUTE_SYNC_EVENT,
 } from '../gameHudEvents';
@@ -52,11 +51,6 @@ const GameActionDock: React.FC<GameActionDockProps> = ({
     );
   };
 
-  const handleOpenHelp = () => {
-    triggerHaptic('tap');
-    window.dispatchEvent(new Event(GAME_HUD_HELP_EVENT));
-  };
-
   const buttonSizeClass = compact
     ? 'h-[42px] w-[42px] rounded-[0.85rem]'
     : 'h-[46px] w-[46px] rounded-[0.95rem]';
@@ -81,7 +75,7 @@ const GameActionDock: React.FC<GameActionDockProps> = ({
         <div className="pointer-events-none absolute inset-[1px] rounded-[1.05rem] border border-cyan-100/14" />
         <div className="pointer-events-none absolute inset-x-3 top-[3px] h-3 rounded-full bg-cyan-200/10 blur-[2px]" />
 
-        <div className={`relative grid grid-cols-3 ${compact ? 'gap-1.5' : 'gap-2'}`}>
+        <div className={`relative grid grid-cols-2 ${compact ? 'gap-1.5' : 'gap-2'}`}>
         <button
           type="button"
           onClick={() => {
@@ -101,20 +95,11 @@ const GameActionDock: React.FC<GameActionDockProps> = ({
           aria-label={isMuted ? 'Unmute audio' : 'Mute audio'}
           aria-pressed={isMuted}
           title={isMuted ? 'Sound off' : 'Sound on'}
-        >
+          >
           <AssetIcon
             name={isMuted ? 'soundMute' : 'sound'}
             className={`${iconSizeClass} drop-shadow-[0_2px_2px_rgba(0,0,0,0.26)]`}
           />
-        </button>
-        <button
-          type="button"
-          onClick={handleOpenHelp}
-          className={actionButtonClass}
-          aria-label="Hint"
-          title="How to play"
-        >
-          <AssetIcon name="question" className={`${iconSizeClass} drop-shadow-[0_2px_2px_rgba(0,0,0,0.26)]`} />
         </button>
         </div>
       </div>

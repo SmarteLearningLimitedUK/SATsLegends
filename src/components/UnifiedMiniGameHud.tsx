@@ -4,6 +4,7 @@ import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
 import heartIcon from '../assets/casual_ui/icons/icon__heart.png';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 import GameActionDock from './GameActionDock';
+import { LEVEL_TIMERS_DISABLED } from '../app/testingFlags';
 
 interface UnifiedMiniGameHudProps {
   avatarId?: string;
@@ -32,6 +33,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
   showActions = true,
   bottomContent,
 }) => {
+  const shouldHideTimer = hideTimer || LEVEL_TIMERS_DISABLED;
   const timerProgress = useMemo(
     () => Math.max(0, Math.min(1, totalTime > 0 ? timeLeft / totalTime : 0)),
     [timeLeft, totalTime],
@@ -80,7 +82,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
         >
           <div
             className={`relative ${topBarWidthClass} grid items-center gap-2 ${rootPaddingClass} ${
-              hideTimer ? 'grid-cols-[auto_auto] justify-between' : 'grid-cols-[auto_1fr_auto]'
+              shouldHideTimer ? 'grid-cols-[auto_auto] justify-between' : 'grid-cols-[auto_1fr_auto]'
             }`}
           >
             <div className={`pointer-events-none absolute inset-0 ${shellRadiusClass} ${variant === 'hub' ? 'bg-[linear-gradient(180deg,rgba(20,46,96,0.55)_0%,rgba(7,21,58,0.5)_100%)]' : 'bg-[linear-gradient(180deg,rgba(20,46,96,0.75)_0%,rgba(7,21,58,0.68)_100%)]'} shadow-[0_12px_24px_rgba(2,6,23,0.45)]`} />
@@ -103,7 +105,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
               </div>
             </div>
 
-            <div className={`relative min-w-0 items-center justify-center px-1 ${hideTimer ? 'hidden' : 'flex'}`}>
+            <div className={`relative min-w-0 items-center justify-center px-1 ${shouldHideTimer ? 'hidden' : 'flex'}`}>
               <div
                 className={`relative flex ${sharedHudHeightClass} ${timerWidthClass} items-center rounded-full border-2 border-cyan-100/60 bg-[linear-gradient(180deg,#2f67ba_0%,#1f458f_100%)] px-1.5 shadow-[0_9px_18px_rgba(2,6,23,0.42)]`}
               >

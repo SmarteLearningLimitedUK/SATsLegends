@@ -26,6 +26,7 @@ import { GameScreen, IslandData, LevelData, PlayerData } from '../types';
 import { getLevelGameTitle } from '../utils/gameNames';
 import splashPoster from '../assets/casual_ui/splashrep1.png';
 import splashStartPill from '../assets/casual_ui/inputs/btn_1.png';
+import { LEVEL_TIMERS_DISABLED } from './testingFlags';
 import {
   bindMiniGameSessionHandlers,
   GameplaySessionEventHandlers,
@@ -134,6 +135,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
 
   const hideMiniGameTimer = useMemo(() => {
     if (screen !== 'gameplay' || !selectedLevel) return false;
+    if (LEVEL_TIMERS_DISABLED) return true;
     return (
       selectedLevel.gameType === 'potion_pour'
     );
@@ -574,7 +576,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
     case 'gameplay':
     const shellStyle = {
         '--game-shell-top-inset': '0.8rem',
-        '--game-shell-bottom-inset': hideMiniGameTimer ? '3.6rem' : '4rem',
+        '--game-shell-bottom-inset': hideMiniGameTimer || LEVEL_TIMERS_DISABLED ? '3.6rem' : '4rem',
       } as React.CSSProperties;
 
       return (

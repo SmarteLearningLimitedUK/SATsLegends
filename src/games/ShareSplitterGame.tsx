@@ -13,7 +13,6 @@ import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import shareSplitterBackground from '../assets/maps/sharesplitterfinal.png';
 import cakeSliceAsset from '../assets/cakeslice.png';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
-import GameRulesModal from '../components/GameRulesModal';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import CelebrationSplash from '../components/CelebrationSplash';
 
@@ -183,7 +182,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const [moveHistory, setMoveHistory] = useState<MoveRecord[]>([]);
   const [locked, setLocked] = useState(false);
   const [audioEnabled, setAudioEnabled] = useState(true);
-  const [showRules, setShowRules] = useState(false);
   const [showCelebrationSplash, setShowCelebrationSplash] = useState(false);
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -233,16 +231,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const allCorrect = plateViews.every((plate) => plate.isCorrect);
   const platePositions = PLATE_POSITIONS[challenge.plateCount] || PLATE_POSITIONS[4];
   const plateSize = 'calc(var(--game-stage-width, 390px) * 0.175)';
-
-  const rules = useMemo(() => ({
-    title: 'Share Splitter',
-    summary: 'Use the ratio to share the cakes across all plates.',
-    bullets: [
-      'Drag cakes from the serving plate onto a plate.',
-      'Match each plate to the ratio shown on the board.',
-      'Press Check when every plate looks correct.',
-    ],
-  }), []);
 
   const loadNextChallenge = useCallback((solvedCount: number) => {
     const next = createChallenge(levelId, solvedCount);
@@ -498,7 +486,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                 className="mx-auto w-full"
                 audioEnabled={audioEnabled}
                 onToggleAudio={() => setAudioEnabled((previous) => !previous)}
-                onHelp={() => setShowRules(true)}
               />
             </div>
           )}
@@ -648,11 +635,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
               ) : null}
             </AnimatePresence>
 
-            <GameRulesModal
-              isOpen={showRules}
-              onClose={() => setShowRules(false)}
-              rules={rules}
-            />
           </>
         )}
         />

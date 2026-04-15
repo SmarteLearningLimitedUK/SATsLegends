@@ -2,10 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react';
 import { GAME_META, GameRuleSet } from './gameMeta';
 import { getLevelGameTitle } from './utils/gameNames';
-import {
-  GAME_HUD_HELP_EVENT,
-  GAME_HUD_RESTART_EVENT,
-} from './gameHudEvents';
+import { GAME_HUD_RESTART_EVENT } from './gameHudEvents';
 import { triggerHaptic } from './haptics';
 import { getBlueprintRuleSet } from './systems/content/islandBlueprint';
 import {
@@ -14,8 +11,6 @@ import {
 import DailyQuestsModal from './components/modals/DailyQuestsModal';
 import AchievementsModal from './components/modals/AchievementsModal';
 import LevelResultsModal from './components/results/LevelResultsModal';
-import GameRulesModal from './components/GameRulesModal';
-import GameActionDock from './components/GameActionDock';
 import UnifiedMiniGameHud from './components/UnifiedMiniGameHud';
 import AssetIcon from './components/AssetIcon';
 import { IslandData, LevelData, PlayerData } from './types';
@@ -39,6 +34,7 @@ import {
   QUESTION_MATCH_FRAME_GAMES,
   SCREEN_BEHAVIOR,
 } from './app/screenConfig';
+import { LEVEL_TIMERS_DISABLED } from './app/testingFlags';
 import { WellbeingActivityId, WellbeingCompletionState, WellbeingLaunchContext } from './wellbeing/types';
 import { createWellbeingRewardLabel } from './wellbeing/integration/wellbeingRewards';
 import { shouldSuggestWellbeing, WellbeingSignals } from './wellbeing/integration/wellbeingSuggestion';
@@ -194,13 +190,10 @@ const App: React.FC = () => {
   const {
     showQuests,
     showAchievements,
-    showGameRules,
     levelResult,
     setShowQuests,
     setShowAchievements,
-    setShowGameRules,
     setLevelResult,
-    closeGameRules,
   } = useOverlayState();
 
   const [wellbeingActivityId, setWellbeingActivityId] = useState<WellbeingActivityId | null>(null);
@@ -582,20 +575,6 @@ const App: React.FC = () => {
   }, [screen]);
 
   useEffect(() => {
-    const handleOpenHelp = () => {
-      if (screen === 'gameplay' && hintRuleSet) {
-        setShowGameRules(true);
-        setSessionMetrics((prev) => ({ ...prev, hintsUsed: prev.hintsUsed + 1 }));
-      }
-    };
-
-    window.addEventListener(GAME_HUD_HELP_EVENT, handleOpenHelp as EventListener);
-    return () => {
-      window.removeEventListener(GAME_HUD_HELP_EVENT, handleOpenHelp as EventListener);
-    };
-  }, [hintRuleSet, screen, setSessionMetrics, setShowGameRules]);
-
-  useEffect(() => {
     const handleRestart = () => {
       setGameplayRestartKey((prev) => prev + 1);
     };
@@ -876,7 +855,8 @@ const App: React.FC = () => {
   const useFlatScreenScaleTransition = isAvatarSelectionScreen;
   const screenEnterScale = useFlatScreenScaleTransition ? 1 : 0.98;
   const screenExitScale = useFlatScreenScaleTransition ? 1 : 1.02;
-  const hideShellTimer = !isGameplayScreen
+  const hideShellTimer = LEVEL_TIMERS_DISABLED
+    || !isGameplayScreen
     || selectedLevel?.gameType === 'potion_pour';
   const goToProfile = useCallback(() => {
     setScreen('profile');
@@ -1051,20 +1031,6 @@ const App: React.FC = () => {
               calmBreakLabel={levelResult?.type === 'gameover' && levelResult.wellbeingSuggested ? 'Take A Calm Break' : undefined}
               onCalmBreak={levelResult?.type === 'gameover' && levelResult.wellbeingSuggested
                 ? () => openWellbeingHub({ origin: 'post_fail', islandId: selectedIsland?.id ?? null, suggested: true })
-                : undefined}
-            />
-
-            <GameRulesModal
-              isOpen={showGameRules}
-              onClose={closeGameRules}
-              rules={hintRuleSet}
-              actionLabel="Back To Game"
-              secondaryActionLabel={screen === 'gameplay' ? 'Leave For Calm Break' : undefined}
-              onSecondaryAction={screen === 'gameplay'
-                ? () => {
-                    closeGameRules();
-                    openWellbeingHub({ origin: 'gameplay_break', islandId: selectedIsland?.id ?? null });
-                  }
                 : undefined}
             />
 

@@ -5,8 +5,8 @@ import { CloudCollapseLevelConfig } from '../types';
 import { CLOUD_COLLAPSE_LEVELS, AVATARS } from '../constants';
 import HUD from '../components/HUD';
 import GameBoard from '../components/GameBoard';
-import Tutorial from '../components/Tutorial';
 import AssetIcon from '../components/AssetIcon';
+import { LEVEL_TIMERS_DISABLED } from '../app/testingFlags';
 import cloudBackdrop from '../assets/maps/reef2.jpg';
 import sparkle from '../assets/fantasy_hero/cloud_collapse/sparkle.png';
 
@@ -27,7 +27,6 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
 }) => {
   const [XP, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(0);
-  const [showTutorial, setShowTutorial] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isVictory, setIsVictory] = useState(false);
 
@@ -43,7 +42,7 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
-    if (timeLeft > 0 && !isGameOver && !isVictory) {
+    if (!LEVEL_TIMERS_DISABLED && timeLeft > 0 && !isGameOver && !isVictory) {
       timer = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
@@ -230,8 +229,6 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
-
-      {showTutorial && <Tutorial onClose={() => setShowTutorial(false)} />}
     </div>
   );
 };

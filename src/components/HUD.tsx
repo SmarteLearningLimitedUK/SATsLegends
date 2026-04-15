@@ -6,6 +6,7 @@ import sliderBgAsset from '../assets/casual_ui/hud/progress_bar_1__bg.png';
 import sliderBorderAsset from '../assets/licensed/slices/progress_bar.png';
 import sliderFillAsset from '../assets/casual_ui/hud/progress_bar_1__fg.png';
 import titleFlagAsset from '../assets/licensed/slices/label_blue.png';
+import { LEVEL_TIMERS_DISABLED } from '../app/testingFlags';
 
 interface HUDProps {
   title?: string;
@@ -39,14 +40,16 @@ const HUD: React.FC<HUDProps> = ({ title, XP, targetScore, timeLeft, level, avat
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-1 md:gap-1.5">
-            <div className="relative overflow-hidden rounded-[0.8rem] px-2 py-1 text-center md:rounded-[1rem] md:px-2.5 md:py-1.5">
-              <div className="absolute inset-0 rounded-[inherit] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(226,232,240,0.92))]" />
-              <div className="relative text-[7px] font-black uppercase tracking-[0.16em] text-slate-600 md:text-[9px]">Time</div>
-              <div className={`relative mt-0.5 text-[11px] font-black md:text-sm ${timeLeft < 10 ? 'text-amber-500' : 'text-slate-900'}`}>
-                {timeLeft}s
+          <div className={`grid ${LEVEL_TIMERS_DISABLED ? 'grid-cols-1' : 'grid-cols-2'} gap-1 md:gap-1.5`}>
+            {!LEVEL_TIMERS_DISABLED ? (
+              <div className="relative overflow-hidden rounded-[0.8rem] px-2 py-1 text-center md:rounded-[1rem] md:px-2.5 md:py-1.5">
+                <div className="absolute inset-0 rounded-[inherit] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(226,232,240,0.92))]" />
+                <div className="relative text-[7px] font-black uppercase tracking-[0.16em] text-slate-600 md:text-[9px]">Time</div>
+                <div className={`relative mt-0.5 text-[11px] font-black md:text-sm ${timeLeft < 10 ? 'text-amber-500' : 'text-slate-900'}`}>
+                  {timeLeft}s
+                </div>
               </div>
-            </div>
+            ) : null}
 
             <div className="relative overflow-hidden rounded-[0.8rem] px-2 py-1 text-center md:rounded-[1rem] md:px-2.5 md:py-1.5">
               <div className="absolute inset-0 rounded-[inherit] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(226,232,240,0.92))]" />

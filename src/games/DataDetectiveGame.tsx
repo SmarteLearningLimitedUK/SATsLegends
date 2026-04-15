@@ -236,7 +236,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
       top={(
         <div className="flex flex-col gap-0">
           {!useSharedTopHud ? (
-            <header className="z-20 flex h-16 items-center justify-between border-b border-cyan-200/16 bg-[linear-gradient(180deg,rgba(8,26,66,0.78),rgba(5,16,42,0.84))] px-6 backdrop-blur-md">
+            <header className="z-20 flex h-16 items-center justify-between border-b border-cyan-200/16 bg-[linear-gradient(180deg,rgba(8,26,66,0.78),rgba(5,16,42,0.84))] px-6 backdrop-blur-md max-[480px]:h-14 max-[480px]:px-4">
               <div className="flex items-center gap-3">
                 <button
                   type="button"
@@ -272,7 +272,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               </div>
             </header>
           ) : null}
-            <div className="game-question-card mt-0 w-full max-w-[780px]">
+            <div className="game-question-card mt-0 w-full max-w-[780px] max-[480px]:px-2 max-[480px]:py-1.5">
               <div className="question-title">{caseMode === 'whodunnit' ? 'Who took the loot?' : 'Match the evidence totals.'}</div>
               <div className="question-subtitle">{caseBrief}</div>
             </div>
@@ -280,7 +280,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
       )}
         main={(
           <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+1.1rem)]' : ''}`}>
-          <section className="z-10 flex min-h-0 w-full flex-1 flex-col gap-2 overflow-hidden border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] px-2 pb-1 pt-1 sm:px-3 sm:pb-2 sm:pt-2 md:gap-3 md:border-b md:border-cyan-200/12 md:px-5 md:pb-3 md:pt-3">
+          <section className="z-10 flex min-h-0 w-full flex-1 flex-col gap-2 overflow-hidden border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] px-2 pb-1 pt-1 sm:px-3 sm:pb-2 sm:pt-2 md:gap-3 md:border-b md:border-cyan-200/12 md:px-5 md:pb-3 md:pt-3 max-[480px]:gap-1 max-[480px]:px-1.5 max-[480px]:pb-0.5 max-[480px]:pt-0.5">
           <div className="mb-1 flex items-center justify-between">
             <div className="flex items-center gap-2 text-amber-500">
               <FileText className="h-5 w-5" />
@@ -300,7 +300,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             <div className="pointer-events-none absolute inset-0 bg-slate-950/20" />
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.3)_1px,transparent_1px)] opacity-7 [background-size:20px_20px]" />
 
-            <div className="relative w-full" style={{ height: 'clamp(9.5rem, 26vh, 14rem)' }}>
+            <div className="relative w-full" style={{ height: 'clamp(8rem, 22vh, 13rem)' }}>
               <ResponsiveContainer width="100%" height="100%">
                 {chartType === 'bar' ? (
                     <BarChart data={currentCase} margin={{ top: 12, right: 10, left: -6, bottom: 6 }}>
@@ -377,7 +377,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               </ResponsiveContainer>
             </div>
 
-            <div className="mt-1.5 grid grid-cols-2 gap-1 sm:gap-1.5">
+            <div className="mt-1.5 grid grid-cols-2 gap-1 sm:gap-1.5 max-[480px]:mt-1 max-[480px]:gap-0.5">
               {currentCase.map(item => (
                 <div key={item.name} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/8 px-2 py-1">
                   <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
@@ -390,14 +390,14 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           </div>
         </section>
 
-          <section className="z-10 flex w-full flex-col gap-2 bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] px-2 pb-1 pt-1 sm:px-3 sm:pb-2 sm:pt-1 md:gap-3 md:px-5 md:pb-3 md:pt-2">
+          <section className="z-10 flex w-full flex-col gap-2 bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] px-2 pb-1 pt-1 sm:px-3 sm:pb-2 sm:pt-1 md:gap-3 md:px-5 md:pb-3 md:pt-2 max-[480px]:gap-1 max-[480px]:px-1.5 max-[480px]:pb-0.5 max-[480px]:pt-0.5">
           <div className="mb-1 flex items-center gap-2 text-amber-500">
             <Users className="h-5 w-5" />
             <h2 className="text-xs font-black uppercase tracking-widest">Suspect Lineup</h2>
           </div>
 
           <div className="relative">
-            <div className={`grid grid-cols-4 gap-1 items-center ${selectedSuspect ? 'opacity-0 pointer-events-none' : ''}`}>
+            <div className={`grid grid-cols-4 gap-1 items-center max-[480px]:gap-0.5 ${selectedSuspect ? 'opacity-0 pointer-events-none' : ''}`}>
               {suspects.map((suspect) => (
                 <motion.button
                   key={suspect.id}
@@ -405,7 +405,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleSuspectClick(suspect.id)}
                   transition={{ duration: 0.35 }}
-                  className={`group relative flex w-full aspect-[4/3] items-center justify-center rounded-[1.2rem] border-2 p-1 transition-all duration-300 sm:aspect-[3/4] ${
+                  className={`group relative flex w-full aspect-[4/3] items-center justify-center rounded-[1.2rem] border-2 p-1 transition-all duration-300 sm:aspect-[3/4] max-[480px]:rounded-lg max-[480px]:p-0.5 ${
                     gameState === 'success' && suspect.id === guiltyId
                       ? 'border-emerald-500 bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.2)]'
                       : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
@@ -438,65 +438,6 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               ))}
             </div>
 
-            <AnimatePresence>
-              {selectedSuspect && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  className="absolute inset-0 flex items-center justify-center"
-                >
-                  <div className="w-full max-w-[20rem] max-h-[70vh] overflow-hidden rounded-2xl border border-white/18 bg-[linear-gradient(180deg,rgba(9,24,58,0.96),rgba(4,12,28,0.98))] p-4 shadow-[0_24px_48px_rgba(0,0,0,0.45)]">
-                    <div className="flex items-center gap-3">
-                      <div className="h-16 w-16 overflow-hidden rounded-2xl border border-white/20">
-                        {selectedSuspect.portrait && (
-                          <img
-                            src={selectedSuspect.portrait}
-                            alt=""
-                            draggable={false}
-                            className="suspect-portrait h-full w-full object-contain object-[center_18%]"
-                            data-suspect-portrait="true"
-                          />
-                        )}
-                      </div>
-                      <div>
-                        <div className="text-xs font-black uppercase tracking-[0.14em] text-amber-300">Suspect</div>
-                        <div className="text-lg font-black text-white">{selectedSuspect.name}</div>
-                      </div>
-                    </div>
-
-                    <div className="mt-4 max-h-[38vh] space-y-2 overflow-y-auto pr-1">
-                      {selectedSuspect.items.map((amount, index) => (
-                        <div key={`${selectedSuspect.id}-item-${index}`} className="flex items-center justify-between rounded-xl border border-white/12 bg-white/6 px-3 py-2">
-                          <div className="flex items-center gap-2">
-                            <span className="h-3 w-3 rounded-full" style={{ backgroundColor: ITEMS[index].color }} />
-                            <span className="text-xs font-bold text-white">{ITEMS[index].name}</span>
-                          </div>
-                          <span className="text-sm font-black text-amber-200">{amount}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="mt-4 flex gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedSuspectId(null)}
-                        className="flex-1 rounded-xl border border-white/16 bg-white/8 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-white"
-                      >
-                        Close
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleAccuse(selectedSuspect.id)}
-                        className="flex-1 rounded-xl bg-amber-400 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-slate-900"
-                      >
-                        Accuse
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
 
           <div className="mt-1 flex flex-col gap-1.5 pt-0.5">
@@ -507,14 +448,14 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   onClick={nextCase}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-4 text-sm font-black uppercase tracking-widest text-stone-900 shadow-lg shadow-emerald-500/20 transition-all hover:bg-emerald-400"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-4 text-sm font-black uppercase tracking-widest text-stone-900 shadow-lg shadow-emerald-500/20 transition-all hover:bg-emerald-400 max-[480px]:py-3"
                 >
                   Next Case File <ChevronRight className="h-4 w-4" />
                 </motion.button>
               ) : null}
             </AnimatePresence>
             {feedback && (
-              <div className={`rounded-full border px-3 py-1.5 text-center text-[10px] font-bold uppercase tracking-wide ${
+              <div className={`rounded-full border px-3 py-1.5 text-center text-[10px] font-bold uppercase tracking-wide max-[480px]:px-2 max-[480px]:py-1 ${
                 feedback.type === 'success'
                   ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-200'
                   : 'border-rose-500/50 bg-rose-500/10 text-amber-200'
@@ -525,29 +466,88 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           </div>
         </section>
         </main>
-      )}
+      )} 
       overlay={(
         <>
+          <AnimatePresence>
+            {selectedSuspect && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="absolute inset-0 z-40 flex items-center justify-center bg-slate-950/55 p-2 backdrop-blur-md max-[480px]:p-1"
+              >
+                <div className="w-full max-w-[20rem] max-h-[calc(100%-0.75rem)] overflow-y-auto overflow-x-hidden rounded-2xl border border-white/18 bg-[linear-gradient(180deg,rgba(9,24,58,0.96),rgba(4,12,28,0.98))] p-4 shadow-[0_24px_48px_rgba(0,0,0,0.45)] max-[480px]:max-w-[calc(100%-0.5rem)] max-[480px]:max-h-[calc(100%-0.5rem)] max-[480px]:p-3">
+                  <div className="flex items-center gap-3">
+                    <div className="h-16 w-16 overflow-hidden rounded-2xl border border-white/20 max-[480px]:h-14 max-[480px]:w-14">
+                      {selectedSuspect.portrait && (
+                        <img
+                          src={selectedSuspect.portrait}
+                          alt=""
+                          draggable={false}
+                          className="suspect-portrait h-full w-full object-contain object-[center_18%]"
+                          data-suspect-portrait="true"
+                        />
+                      )}
+                    </div>
+                    <div>
+                      <div className="text-xs font-black uppercase tracking-[0.14em] text-amber-300">Suspect</div>
+                      <div className="text-lg font-black text-white">{selectedSuspect.name}</div>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 max-h-[38vh] space-y-2 overflow-y-auto pr-1 max-[480px]:mt-3 max-[480px]:max-h-[28vh]">
+                    {selectedSuspect.items.map((amount, index) => (
+                      <div key={`${selectedSuspect.id}-item-${index}`} className="flex items-center justify-between rounded-xl border border-white/12 bg-white/6 px-3 py-2 max-[480px]:px-2 max-[480px]:py-1.5">
+                        <div className="flex items-center gap-2">
+                          <span className="h-3 w-3 rounded-full" style={{ backgroundColor: ITEMS[index].color }} />
+                          <span className="text-xs font-bold text-white">{ITEMS[index].name}</span>
+                        </div>
+                        <span className="text-sm font-black text-amber-200">{amount}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-4 flex gap-2 max-[480px]:mt-3">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSuspectId(null)}
+                      className="flex-1 rounded-xl border border-white/16 bg-white/8 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-white max-[480px]:px-3 max-[480px]:py-1.5"
+                    >
+                      Close
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleAccuse(selectedSuspect.id)}
+                      className="flex-1 rounded-xl bg-amber-400 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-slate-900 max-[480px]:px-3 max-[480px]:py-1.5"
+                    >
+                      Accuse
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
           <AnimatePresence>
             {gameState === 'complete' && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="absolute inset-0 z-50 flex items-center justify-center bg-stone-950/95 p-12 text-center backdrop-blur-xl"
+                className="absolute inset-0 z-50 flex items-center justify-center bg-stone-950/95 p-12 text-center backdrop-blur-xl max-[480px]:p-4"
               >
-                <div className="max-w-md">
-                  <Trophy className="mx-auto mb-8 h-20 w-20 text-yellow-400" />
-                  <h2 className="mb-2 text-4xl font-black uppercase tracking-tighter text-white italic">Chief Of Detectives</h2>
-                  <p className="mb-8 text-sm leading-relaxed text-stone-400">
+                <div className="max-w-md max-[480px]:max-w-[min(100%,18rem)]">
+                  <Trophy className="mx-auto mb-8 h-20 w-20 text-yellow-400 max-[480px]:mb-5 max-[480px]:h-14 max-[480px]:w-14" />
+                  <h2 className="mb-2 text-4xl font-black uppercase tracking-tighter text-white italic max-[480px]:text-2xl">Chief Of Detectives</h2>
+                  <p className="mb-8 text-sm leading-relaxed text-stone-400 max-[480px]:mb-5 max-[480px]:text-xs">
                     All cases solved. The city is safe once again thanks to your expert data interpretation.
                   </p>
-                  <div className="mb-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+                  <div className="mb-8 rounded-2xl border border-stone-800 bg-stone-900 p-6 max-[480px]:mb-5 max-[480px]:p-4">
                     <span className="mb-1 block text-[10px] uppercase text-stone-500">Final Reputation</span>
-                    <span className="text-4xl font-black text-amber-500">{XP} PTS</span>
+                    <span className="text-4xl font-black text-amber-500 max-[480px]:text-3xl">{XP} PTS</span>
                   </div>
                   <button
                     onClick={startGame}
-                    className="rounded-full bg-stone-100 px-12 py-4 text-sm font-black uppercase tracking-widest text-stone-900 transition-all hover:bg-white"
+                    className="rounded-full bg-stone-100 px-12 py-4 text-sm font-black uppercase tracking-widest text-stone-900 transition-all hover:bg-white max-[480px]:px-8 max-[480px]:py-3 max-[480px]:text-xs"
                   >
                     Reopen Files
                   </button>

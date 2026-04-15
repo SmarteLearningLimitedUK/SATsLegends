@@ -1,4 +1,3 @@
-export const GAME_HUD_HELP_EVENT = 'sats-mastery:open-help';
 export const GAME_HUD_MUTE_EVENT = 'sats-mastery:mute-change';
 export const GAME_HUD_MUTE_SYNC_EVENT = 'sats-mastery:mute-sync';
 export const GAME_HUD_RESTART_EVENT = 'sats-mastery:restart-game';
