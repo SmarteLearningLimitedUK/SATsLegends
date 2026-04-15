@@ -1,4 +1,4 @@
-const START_PREFIXES = ['Matharia alert -', 'Matharia mix -', 'Matharia records -', 'Matharia barrier -', 'Matharia forge -', 'Matharia map -', 'Matharia clock -', 'Quest:', 'Mission:', 'Spell:', 'Challenge:'];
+const START_PREFIXES = ['The Monster Minds have scrambled the numbers.', 'Matharia mix -', 'Matharia records -', 'Matharia barrier -', 'Matharia forge -', 'Matharia map -', 'Matharia clock -', 'Quest:', 'Mission:', 'Spell:', 'Challenge:'];
 
 const REPLACEMENTS: Array<[RegExp, string]> = [
   [/\bpupil(s)?\b/gi, 'apprentice$1'],
@@ -31,8 +31,8 @@ const pickMathariaPrefix = (prompt: string) => {
   if (/(area|perimeter|volume|formula|cuboid|rectangle|length|width|height)/.test(lower)) return 'Matharia forge -';
   if (/(coordinate|translate|beacon|scout|route|map)/.test(lower)) return 'Matharia map -';
   if (/(time|clock|hour|minute|duration)/.test(lower)) return 'Matharia clock -';
-  if (/(place value|round|digit|number)/.test(lower)) return 'Matharia alert -';
-  return 'Matharia alert -';
+  if (/(place value|round|digit|number)/.test(lower)) return 'The Monster Minds have scrambled the numbers.';
+  return 'The Monster Minds have scrambled the numbers.';
 };
 
 const rewriteFuelMixPrompt = (prompt: string) => {
@@ -47,7 +47,7 @@ export const formatFantasyPrompt = (prompt: string) => {
   const trimmed = prompt.trim();
   if (!trimmed) return prompt;
   if (START_PREFIXES.some((prefix) => trimmed.startsWith(prefix))) return prompt;
-  if (trimmed.startsWith('A Monster Mind') || trimmed.startsWith('The bridge') || trimmed.startsWith('The village') || trimmed.startsWith('The forge') || trimmed.startsWith('The path') || trimmed.startsWith('The map') || trimmed.startsWith('The records')) {
+  if (trimmed.startsWith('A Monster Mind') || trimmed.startsWith('The Monster Minds') || trimmed.startsWith('The bridge') || trimmed.startsWith('The village') || trimmed.startsWith('The forge') || trimmed.startsWith('The path') || trimmed.startsWith('The map') || trimmed.startsWith('The records')) {
     return prompt;
   }
   if (isAllCapsWords(trimmed)) return prompt;
@@ -61,9 +61,9 @@ export const formatFantasyPrompt = (prompt: string) => {
   });
 
   if (isMathExpression(trimmed)) {
-    return `Matharia alert - Solve ${trimmed}`;
+    return `The Monster Minds have scrambled the numbers. Solve ${trimmed}.`;
   }
 
   const prefix = pickMathariaPrefix(next);
-  return `${prefix} ${next}`;
+  return prefix.endsWith('.') ? `${prefix} ${next}` : `${prefix} ${next}`;
 };

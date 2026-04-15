@@ -84,8 +84,8 @@ const buildMovementRound = () => {
   }
 
   return {
-    promptTitle: 'Follow The Route',
-    promptText: `Start at (${start.x}, ${start.y}). ${instructions.join('. ')}.`,
+    promptTitle: 'Lost Route',
+    promptText: `The Monster Minds have broken the map into fragments. Start at (${start.x}, ${start.y}). ${instructions.join('. ')}.`,
     promptType: 'movement' as const,
     start,
     target,
@@ -100,8 +100,8 @@ const generateRound = (): TreasureRound => {
     const start = { x: randomInt(GRID_SIZE), y: randomInt(GRID_SIZE) };
 
     return {
-      promptTitle: 'Find The Treasure',
-      promptText: `Move the explorer to (${target.x}, ${target.y}).`,
+      promptTitle: 'Beacon Recovery',
+      promptText: `The Monster Minds have hidden the last beacon in the ruins. Move the explorer to (${target.x}, ${target.y}) before the trail fades.`,
       promptType: 'coordinate',
       start,
       target,

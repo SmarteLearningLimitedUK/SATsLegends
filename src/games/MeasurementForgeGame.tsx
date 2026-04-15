@@ -262,7 +262,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
         <motion.div
           animate={successPulse ? { scale: [1, 1.02, 1] } : { scale: 1 }}
           transition={{ duration: 0.36, ease: 'easeOut' }}
-          className="relative mt-2 w-full max-w-[32rem] shrink-0 p-1 md:max-w-[36rem]"
+          className="relative mt-2 w-full max-w-[26rem] shrink-0 p-1 md:max-w-[30rem]"
         >
           <div
             className={`flex w-full items-center justify-between rounded-[1.35rem] px-3 py-2 text-center ${
@@ -283,18 +283,18 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
             </div>
           </div>
 
-          <div className="relative mt-4 flex min-h-[12.8rem] w-full items-center justify-center">
+          <div className="relative mt-4 flex min-h-[10.5rem] w-full items-center justify-center">
             <img
               src={alphaKeyedScale}
               alt=""
               aria-hidden="true"
               draggable={false}
-              className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
-              style={{ transform: 'translateY(30px) scale(1.12)' }}
+              className="pointer-events-none absolute inset-x-0 top-0 h-full w-full object-contain object-center"
+              style={{ transform: 'translateY(6px) scale(0.84)' }}
             />
             <div
               ref={dropRef}
-              className="absolute left-1/2 top-[18%] flex w-[72%] -translate-x-1/2 items-center justify-center gap-2 rounded-[1.1rem] px-2 py-1.5"
+              className="absolute left-1/2 top-[8%] flex w-[68%] -translate-x-1/2 items-center justify-center gap-2 rounded-[1.1rem] px-2 py-1.5"
             >
               {placedTokens.map((token) => (
                 <button
@@ -306,6 +306,14 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                   <span className="text-[10px] font-black leading-none">{getMeasurementDisplay(token.grams).primary}</span>
                 </button>
               ))}
+            </div>
+            <div className="pointer-events-none absolute bottom-[11%] left-1/2 z-20 -translate-x-1/2">
+              <div className="flex min-w-[7.5rem] flex-col items-center rounded-[0.8rem] border border-cyan-200/50 bg-[#07162b]/90 px-3 py-1.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.55)]">
+                <div className="text-[8px] font-black uppercase tracking-[0.28em] text-cyan-100/75">Digital Readout</div>
+                <div className="mt-0.5 font-mono text-[1.05rem] font-black tracking-[0.12em] text-emerald-200">
+                  {toGramLabel(currentGrams)}
+                </div>
+              </div>
             </div>
           </div>
         </motion.div>

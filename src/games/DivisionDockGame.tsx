@@ -185,11 +185,6 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
   const addToBoat = (index: number) => {
     if (isFinished || remainingGoods <= 0) return;
     setBoatLoads((previous) => previous.map((count, i) => (i === index ? count + 1 : count)));
-    setFeedback({
-      type: 'success',
-      title: 'Loaded',
-      subtitle: `Boat ${index + 1} takes 1 crate`,
-    });
     triggerHaptic('success');
   };
 
@@ -278,11 +273,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
                 <div className="mt-1 text-[clamp(1.2rem,3.4vw,1.9rem)] font-black text-white">
                   {question.dividend} ÷ {question.divisor} = ?
                 </div>
-                <div className="mt-2 grid grid-cols-3 gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-white/70">
-                  <div className="rounded-xl bg-white/12 px-2 py-1">
-                    Loaded
-                    <div className="mt-1 text-base font-black text-white">{question.dividend - remainingGoods}/{question.dividend}</div>
-                  </div>
+                <div className="mt-2 grid grid-cols-2 gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-white/70">
                   <div className="rounded-xl bg-white/12 px-2 py-1">
                     Boats
                     <div className="mt-1 text-base font-black text-white">{roundSolved}/{ROUNDS_TO_WIN}</div>

@@ -226,8 +226,8 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'Find beacon C. Which coordinates are correct?',
-        sublabel: 'Read across the x-axis first, then up the y-axis.',
+        prompt: 'The Monster Minds have hidden beacon C in the ruined grid. Which coordinates are correct?',
+        sublabel: 'Read across the x-axis first, then climb the y-axis to recover the beacon.',
         options: ['(6, 2)', '(2, 6)', '(0, 3)', '(8, 8)'],
         answerIndex: 2,
         visual: {
@@ -235,7 +235,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
           min: 0,
           max: 8,
           targetLabel: 'C',
-          caption: 'Inspired by the SATs coordinate matching layout.',
+          caption: 'Plot the beacon before the trail disappears.',
           points: [
             { label: 'A', x: 6, y: 2, tone: 'bg-cyan-300' },
             { label: 'B', x: 2, y: 6, tone: 'bg-emerald-300' },
@@ -248,13 +248,13 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'Point P starts at (5, 8). Where does it finish?',
-        sublabel: 'Combine the translations carefully.',
+        prompt: 'Point P begins at (5, 8) on the Monster Minds\' damaged map. Where does the route finish?',
+        sublabel: 'Combine the translations carefully to follow the trail.',
         options: ['(7, 2)', '(7, 4)', '(9, 2)', '(3, 2)'],
         answerIndex: 0,
         visual: {
           type: 'equation',
-          lines: ['Start at (5, 8)', '+4 on x, -6 on y, -2 on x', 'Final position = ?'],
+          lines: ['Start at (5, 8)', '+4 on x, -6 on y, -2 on x', 'Final beacon position = ?'],
           badge: 'Route',
         },
       },
@@ -262,8 +262,8 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'Which point is at (4, 7)?',
-        sublabel: 'Match the coordinates to the labelled point.',
+        prompt: 'The Monster Minds marked one beacon at (4, 7). Which point is it?',
+        sublabel: 'Match the coordinates to the labelled beacon before it is lost.',
         options: ['A', 'B', 'C', 'D'],
         answerIndex: 3,
         visual: {
@@ -271,7 +271,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
           min: 0,
           max: 8,
           targetLabel: 'D',
-          caption: 'Find the labelled point at the given coordinates.',
+          caption: 'Find the labelled beacon at the given coordinates.',
           points: [
             { label: 'A', x: 1, y: 4, tone: 'bg-cyan-300' },
             { label: 'B', x: 6, y: 1, tone: 'bg-emerald-300' },

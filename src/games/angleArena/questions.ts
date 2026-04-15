@@ -38,6 +38,37 @@ type BankEntry = {
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 
+const buildStoryLead = (entry: BankEntry) => {
+  switch (entry.topic) {
+    case 'right_angles':
+      return 'The Monster Minds have locked the catapult arm into a perfect corner brace.';
+    case 'straight_line':
+      return 'A shattered bridge beam stretches straight across the arena floor.';
+    case 'around_point':
+      return 'The arena\'s central beacon is surrounded by a ring of incoming sparks.';
+    case 'triangle_angles':
+      return 'A rune triangle is cracking as the Monster Minds close in.';
+    case 'isosceles':
+      return 'Two mirrored towers are holding the arena gate together.';
+    case 'quadrilateral':
+      return 'The arena wall is built from a four-sided shield panel.';
+    case 'turns':
+      return 'The launch wheel is spinning toward the target.';
+    case 'vertically_opposite':
+      return 'Two crossing beams have pinned the aim marker in place.';
+    case 'parallel_lines':
+      return 'Two parallel rails are guiding the next strike across the battleground.';
+    case 'multi_step':
+      return 'The catapult crew has to piece together several angle clues before the shot can be taken.';
+    case 'word_problem':
+      return 'A scout report from the arena hides the angle inside a battlefield story.';
+    default:
+      return 'The Monster Minds have turned the Angle Arena into a battle course.';
+  }
+};
+
+const buildStoryPrompt = (entry: BankEntry) => `${buildStoryLead(entry)} ${entry.question_text}`;
+
 const parseAngle = (value: string) => Number(value.replace('°', '').trim());
 const resolveKind = (entry: BankEntry): 'fluency' | 'reasoning' => {
   if (entry.kind) return entry.kind;
@@ -72,7 +103,7 @@ const toAngleQuestion = (
   return {
     id: index + 1,
     kind: resolveKind(entry),
-    prompt: entry.question_text,
+    prompt: buildStoryPrompt(entry),
     options,
     correctAnswer: correct,
     targetX,

@@ -45,6 +45,7 @@ interface TakeOutOrder {
   constraints: OrderConstraint[];
   stage: number;
   text: string;
+  trayItemIds: string[];
   rushTag?: string;
 }
 
@@ -236,20 +237,23 @@ const generateOrder = (stage: number): TakeOutOrder => {
   const maxAttempts = 220;
   for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
     const pool = allowedIdsByStage(stage);
+    const shuffledPool = shuffle(pool);
 
     let bannedItemId: string | undefined;
     if (stage >= 5 && Math.random() < 0.44 && pool.length >= 5) {
       bannedItemId = pick(pool);
     }
 
-    const allowedIds = pool.filter((id) => id !== bannedItemId);
-    if (allowedIds.length < 2) continue;
+    const trayIds = shuffledPool.filter((id) => id !== bannedItemId);
+    const traySize = Math.min(stage <= 3 ? 4 : 5, trayIds.length);
+    const trayItemIds = trayIds.slice(0, traySize);
+    if (trayItemIds.length < 2) continue;
 
     const minItems = stage >= 8 ? 3 : stage >= 5 ? 2 : 1;
     const maxItems = stage >= 9 ? 6 : stage >= 5 ? 5 : 4;
     const itemCount = Math.floor(Math.random() * (maxItems - minItems + 1)) + minItems;
 
-    const selectionIds = Array.from({ length: itemCount }, () => pick(allowedIds));
+    const selectionIds = Array.from({ length: itemCount }, () => pick(trayItemIds));
 
     let target = normalize({ n: 0, d: 1 });
     selectionIds.forEach((id) => {
@@ -276,6 +280,7 @@ const generateOrder = (stage: number): TakeOutOrder => {
       constraints,
       stage,
       text: buildOrderText(target),
+      trayItemIds,
       rushTag: stage >= 8 ? 'Rush Order' : undefined,
     };
   }
@@ -286,6 +291,7 @@ const generateOrder = (stage: number): TakeOutOrder => {
     constraints: [{ kind: 'min_items', minItems: 2 }],
     stage,
     text: 'Target fraction: 3/4.',
+    trayItemIds: ['rice_bowl', 'pizza_slice', 'fries', 'burger_meal'],
   };
 };
 
@@ -451,7 +457,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
       setShowCelebrationSplash(false);
       nextOrder(ordersServed + 1, timeLeft);
       setIsResolvingOrder(false);
-    }, 680);
+    }, 1280);
   }, [nextOrder, order.stage, orderStartMs, ordersServed, selectedIds.length, Combo, timeLeft]);
 
   const resolveIncorrectOrder = useCallback(() => {
@@ -549,8 +555,8 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     : 'pt-[max(0.2rem,env(safe-area-inset-top))]';
 
   const availableItems = useMemo(
-    () => allowedIdsByStage(order.stage).map((id) => ITEM_BY_ID[id]).filter(Boolean),
-    [order.stage],
+    () => order.trayItemIds.map((id) => ITEM_BY_ID[id]).filter(Boolean),
+    [order.trayItemIds],
   );
   const orderMonster = useMemo(() => pick(MONSTER_IMAGES), [order.id]);
 
@@ -589,7 +595,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
 
         <main className="relative mt-1.5 flex min-h-0 flex-1 flex-col gap-2 pb-[calc(env(safe-area-inset-bottom)+3.9rem)]">
           <section className="relative flex min-h-[16rem] flex-1 items-start justify-center">
-            <div className="absolute left-1/2 top-[11%] w-[min(70vw,16.5rem)] -translate-x-1/2 text-center">
+            <div className="absolute left-1/2 top-[calc(11%+20px)] w-[min(70vw,16.5rem)] -translate-x-1/2 text-center">
               <div className="text-[9px] font-black uppercase tracking-[0.18em] text-amber-100/80 drop-shadow-[0_2px_6px_rgba(2,6,23,0.8)]">
                 Order Target
               </div>
@@ -659,7 +665,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
             </section>
           </div>
 
-          <CelebrationSplash active={showCelebrationSplash} message="Order Up!" theme="takeout" />
+      <CelebrationSplash active={showCelebrationSplash} message="Order Up!" theme="takeout" sweepDuration={1.35} />
         </main>
       </div>
     </FoodGameShell>

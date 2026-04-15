@@ -384,11 +384,11 @@ const generateCoordinateQuestion = (): ChallengeQuestion => {
   }
   const { options, answerIndex } = makeOptions(correct, wrong);
   return {
-    prompt: `Guide the scout to beacon ${target.label}. Which coordinates lock in the route?`,
-    sublabel: 'Start from the centre, move along x first, then y.',
+    prompt: `The Monster Minds have hidden beacon ${target.label} inside the ruined grid. Which coordinates lock in the route?`,
+    sublabel: 'Read the x-axis first, then climb the y-axis to claim the beacon.',
     options,
     answerIndex,
-    visual: { type: 'coordinates', points, min: -4, max: 4, caption: 'Plot the beacon and claim the route.', targetLabel: target.label },
+    visual: { type: 'coordinates', points, min: -4, max: 4, caption: 'Plot the beacon before the trail disappears.', targetLabel: target.label },
   };
 };
 

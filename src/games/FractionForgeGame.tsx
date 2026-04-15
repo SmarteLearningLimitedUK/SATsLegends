@@ -187,8 +187,10 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [isResolving, setIsResolving] = useState(false);
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
+  const [forgeGlow, setForgeGlow] = useState(false);
 
   const playfieldRef = useRef<HTMLDivElement | null>(null);
+  const forgeGlowTimeoutRef = useRef<number | null>(null);
   const endedRef = useRef(false);
   const scoreRef = useRef(0);
   scoreRef.current = XP;
@@ -226,8 +228,9 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     const usableBottom = Math.max(usableTop + 340, viewport.height - hudBottomReserve);
     const usableHeight = Math.max(340, usableBottom - usableTop);
 
-    const sourceTop = usableTop + (usableHeight * (isTablet ? 0.32 : 0.3));
-    const targetTop = usableTop + (usableHeight * (isTablet ? 0.62 : 0.6));
+    const bottomEdge = viewport.height - hudBottomReserve - (isTablet ? 10 : 8);
+    const targetTop = Math.max(usableTop + (usableHeight * (isTablet ? 0.52 : 0.5)), bottomEdge - (cardHeight * 0.5));
+    const sourceTop = Math.max(usableTop + (isTablet ? 162 : 138), targetTop - cardHeight - (isTablet ? 18 : 12));
     const pedestalTop = targetTop + (slotHeight * 0.58);
 
     const goblinWidth = Math.round(
@@ -296,6 +299,12 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     setCorrectAnswers(0);
     resetRound(makeRound(resolvedLevel, 1));
   }, [resolvedLevel, resetRound]);
+
+  useEffect(() => () => {
+    if (forgeGlowTimeoutRef.current !== null) {
+      window.clearTimeout(forgeGlowTimeoutRef.current);
+    }
+  }, []);
 
   const beginDrag = useCallback((
     location: TokenLocation,
@@ -443,7 +452,15 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
       setScore(nextScore);
       setCorrectAnswers(nextCorrect);
       setFeedback({ tone: 'success', message: 'Perfect order forged!' });
+      setForgeGlow(true);
       triggerHaptic('success');
+
+      if (forgeGlowTimeoutRef.current !== null) {
+        window.clearTimeout(forgeGlowTimeoutRef.current);
+      }
+      forgeGlowTimeoutRef.current = window.setTimeout(() => {
+        setForgeGlow(false);
+      }, 900);
 
       if (roundIndex >= totalRounds) {
         endedRef.current = true;
@@ -516,11 +533,28 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
       <GameplaySceneBackdrop
         gameType="take_out_rush"
         backgroundOverride={fractionForgeBackground}
-        className="opacity-[0.92]"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#060f2ccc] via-[#0b1a4694] to-[#050b1acc]" />
 
       <div ref={playfieldRef} className="relative h-full w-full">
+        <AnimatePresence>
+          {forgeGlow && (
+            <motion.div
+              key="forge-glow"
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.02 }}
+              transition={{ duration: 0.28, ease: 'easeOut' }}
+              className="pointer-events-none absolute inset-x-0 bottom-0 top-[34%] z-[1]"
+              style={{
+                background:
+                  'radial-gradient(circle at 50% 72%, rgba(252,211,77,0.62) 0%, rgba(249,115,22,0.38) 16%, rgba(234,88,12,0.18) 33%, transparent 62%)',
+                filter: 'blur(18px)',
+                mixBlendMode: 'screen',
+              }}
+            />
+          )}
+        </AnimatePresence>
+
         <div
           className="pointer-events-none fixed left-0 right-0 z-[60]"
           style={{ top: '4px' }}

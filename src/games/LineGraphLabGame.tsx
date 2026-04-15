@@ -323,59 +323,14 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
     round && probeIndex !== null ? round.graph[probeIndex] : null
   ), [probeIndex, round]);
 
-  return (
-    <GameScreenLayout
-      className="relative h-full w-full min-h-0 select-none gap-0 text-slate-100"
-      topClassName="!min-h-0"
-      top={(
-        <div className={`flex flex-col gap-1 ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+0.05rem)]' : ''}`}>
-          {!useSharedTopHud ? (
-            <header className="z-20 flex h-16 items-center justify-between border-b border-emerald-900/30 bg-transparent px-4 backdrop-blur-md sm:px-6">
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={onBack}
-                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-700 bg-slate-800/80 text-slate-200 transition hover:bg-slate-700/80"
-                  aria-label="Back to levels"
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                </button>
-                <div className="rounded-lg bg-emerald-500 p-2 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-                  <Activity className="h-5 w-5 text-slate-900" />
-                </div>
-              <div>
-                <h1 className="text-sm font-black uppercase tracking-widest text-white">Line Graph Lab</h1>
-                <p className="text-[10px] uppercase tracking-tighter text-emerald-400">Read one graph. Answer one question.</p>
-              </div>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <div className="flex flex-col items-end">
-                  <span className="text-[10px] uppercase text-slate-500">XP</span>
-                  <span className="text-xs font-bold text-emerald-400">{XP}</span>
-                </div>
-                <div className="h-8 w-px bg-slate-800" />
-                <div className="flex flex-col items-end">
-                  <span className="text-[10px] uppercase text-slate-500">Round</span>
-                  <span className="text-xs font-bold text-white">{level} / {MAX_LEVEL}</span>
-                </div>
-              </div>
-            </header>
-          ) : null}
-          <div className="px-2 pt-0 sm:px-3 md:px-4">
-            <div className="game-question-card w-full max-w-[780px]">
-              <div className="question-title text-center text-[clamp(1.1rem,4vw,1.5rem)]">{round?.question ?? ''}</div>
-              <div className="question-subtitle text-center">{round?.helper}</div>
-            </div>
-          </div>
-        </div>
-      )}
+    return (
+    <>
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Line Graph Lab"
         body={(
           <div className="space-y-3">
-            <p>You’ve entered the Line Graph Lab.</p>
+            <p>You&apos;ve entered the Line Graph Lab.</p>
             <p>Here, the SATs Legends track how brainpower changes over time.</p>
             <p>But the Monster Minds have tampered with the data, hiding key information within the graph!</p>
             <p>Only by reading the exact coordinates can you uncover the truth.</p>
@@ -399,172 +354,218 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
         )}
         onAction={() => setShowPracticeIntro(false)}
       />
-      main={(
-        <section className="flex min-h-0 flex-1 flex-col gap-2 px-2 pb-2 sm:gap-3 sm:px-3 sm:pb-3 md:px-4 md:pb-4">
-          <div className="mt-0.5 min-h-0 flex-1 rounded-[1.75rem] border border-cyan-100/16 bg-transparent p-2.5 shadow-none sm:p-4 md:p-5">
+      <GameScreenLayout
+        className="relative h-full w-full min-h-0 select-none gap-0 text-slate-100"
+        topClassName="!min-h-0"
+        top={(
+          <div className={`flex flex-col gap-1 ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+0.05rem)]' : ''}`}>
+            {!useSharedTopHud ? (
+              <header className="z-20 flex h-16 items-center justify-between border-b border-emerald-900/30 bg-transparent px-4 backdrop-blur-md sm:px-6">
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={onBack}
+                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-700 bg-slate-800/80 text-slate-200 transition hover:bg-slate-700/80"
+                    aria-label="Back to levels"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <div className="rounded-lg bg-emerald-500 p-2 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                    <Activity className="h-5 w-5 text-slate-900" />
+                  </div>
+                  <div>
+                    <h1 className="text-sm font-black uppercase tracking-widest text-white">Line Graph Lab</h1>
+                    <p className="text-[10px] uppercase tracking-tighter text-emerald-400">Read one graph. Answer one question.</p>
+                  </div>
+                </div>
 
-            <div
-              ref={chartWrapRef}
-              onPointerDown={handleProbePointerDown}
-              onPointerMove={handleProbePointerMove}
-              className="relative w-full rounded-2xl border border-slate-700/60 bg-transparent p-2"
-              style={{ height: 'clamp(12rem, 32vh, 18.5rem)' }}
-            >
-              {round && chartSize.width > 0 && chartSize.height > 0 && (
-                <LineChart
-                  width={chartSize.width}
-                  height={chartSize.height}
-                  data={round.graph}
-                  margin={{ top: 18, right: 16, left: 0, bottom: 16 }}
+                <div className="flex items-center gap-4">
+                  <div className="flex flex-col items-end">
+                    <span className="text-[10px] uppercase text-slate-500">XP</span>
+                    <span className="text-xs font-bold text-emerald-400">{XP}</span>
+                  </div>
+                  <div className="h-8 w-px bg-slate-800" />
+                  <div className="flex flex-col items-end">
+                    <span className="text-[10px] uppercase text-slate-500">Round</span>
+                    <span className="text-xs font-bold text-white">{level} / {MAX_LEVEL}</span>
+                  </div>
+                </div>
+              </header>
+            ) : null}
+            <div className="px-2 pt-0 sm:px-3 md:px-4">
+              <div className="game-question-card w-full max-w-[780px]">
+                <div className="question-title text-center text-[clamp(1.1rem,4vw,1.5rem)]">{round?.question ?? ''}</div>
+                <div className="question-subtitle text-center">{round?.helper}</div>
+              </div>
+            </div>
+          </div>
+        )}
+        main={(
+          <section className="flex min-h-0 flex-1 flex-col gap-2 px-2 pb-2 sm:gap-3 sm:px-3 sm:pb-3 md:px-4 md:pb-4">
+            <div className="mt-0.5 min-h-0 flex-1 rounded-[1.75rem] border border-cyan-100/16 bg-transparent p-2.5 shadow-none sm:p-4 md:p-5">
+              <div
+                ref={chartWrapRef}
+                onPointerDown={handleProbePointerDown}
+                onPointerMove={handleProbePointerMove}
+                className="relative w-full rounded-2xl border border-slate-700/60 bg-transparent p-2"
+                style={{ height: 'clamp(12rem, 32vh, 18.5rem)' }}
+              >
+                {round && chartSize.width > 0 && chartSize.height > 0 && (
+                  <LineChart
+                    width={chartSize.width}
+                    height={chartSize.height}
+                    data={round.graph}
+                    margin={{ top: 18, right: 16, left: 0, bottom: 16 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
+                    <XAxis
+                      dataKey="label"
+                      tick={{ fill: '#dbeafe', fontSize: 12, fontWeight: 700 }}
+                      axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
+                      tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
+                      label={{ value: 'Day', position: 'insideBottom', offset: -6, fill: '#93c5fd', fontSize: 12 }}
+                    />
+                    <YAxis
+                      ticks={yTicks}
+                      domain={[0, yTicks[yTicks.length - 1]]}
+                      tick={{ fill: '#dbeafe', fontSize: 12, fontWeight: 700 }}
+                      axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
+                      tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
+                      label={{ value: 'Value', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12 }}
+                      width={42}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#34d399"
+                      strokeWidth={4}
+                      dot={(props) => {
+                        const { cx, cy, payload, index } = props as { cx?: number; cy?: number; payload?: DataPoint; index?: number };
+                        if (cx == null || cy == null || !payload) return null;
+                        const isProbe = index === probeIndex;
+                        return (
+                          <circle
+                            cx={cx}
+                            cy={cy}
+                            r={isProbe ? 8 : 5}
+                            fill={isProbe ? '#facc15' : '#34d399'}
+                            stroke={isProbe ? '#fef3c7' : '#ecfeff'}
+                            strokeWidth={isProbe ? 3 : 2}
+                          />
+                        );
+                      }}
+                      activeDot={{ r: 7, fill: '#6ee7b7', stroke: '#f0fdfa', strokeWidth: 2 }}
+                      animationDuration={350}
+                    />
+                  </LineChart>
+                )}
+                {probePoint && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full border border-amber-200/50 bg-amber-200/20 px-3 py-1 text-[11px] font-black text-amber-100 shadow-[0_0_20px_rgba(251,191,36,0.25)]"
+                  >
+                    {probePoint.label}: {probePoint.value}
+                  </motion.div>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-auto flex flex-col gap-2 pt-1">
+              <div className="grid grid-cols-2 gap-2">
+                {round?.options.map(option => {
+                  const isSelected = selectedAnswer === option;
+                  const isCorrect = gameState === 'success' && option === round.correctAnswer;
+                  const isWrongSelected = selectedAnswer === option && feedback?.type === 'error';
+
+                  return (
+                    <motion.button
+                      key={option}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => handleAnswer(option)}
+                      disabled={gameState === 'success'}
+                      className={`min-h-[3.1rem] rounded-2xl border px-3 py-2.5 text-center transition-all sm:min-h-[3.4rem] sm:px-4 ${
+                        isCorrect
+                          ? 'border-emerald-400 bg-emerald-500/15 text-emerald-100 shadow-[0_0_22px_rgba(16,185,129,0.18)]'
+                          : isWrongSelected
+                            ? 'border-rose-400 bg-rose-500/12 text-amber-100'
+                            : isSelected
+                              ? 'border-cyan-300 bg-cyan-400/10 text-white'
+                              : 'border-slate-700 bg-slate-900/55 text-slate-100 hover:border-emerald-400/60 hover:bg-slate-800/70'
+                      } ${gameState === 'success' ? 'cursor-default' : ''}`}
+                    >
+                      <span className="text-[0.92rem] font-black leading-tight sm:text-base">{option}</span>
+                    </motion.button>
+                  );
+                })}
+              </div>
+
+              <div className="min-h-[3.2rem]">
+                <AnimatePresence mode="wait">
+                  {gameState === 'success' ? (
+                    <motion.button
+                      key="next"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      onClick={nextLevel}
+                      className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-500 py-4 text-sm font-black uppercase tracking-widest text-slate-900 shadow-lg shadow-emerald-500/20 transition-all hover:bg-emerald-400"
+                    >
+                      Next Graph <ChevronRight className="h-4 w-4" />
+                    </motion.button>
+                  ) : null}
+                </AnimatePresence>
+              </div>
+
+              {feedback && (
+                <div
+                  className={`flex w-full items-center justify-center gap-3 rounded-full border px-5 py-3 text-center text-[11px] font-bold uppercase tracking-wide shadow-2xl sm:text-xs ${
+                    feedback.type === 'success'
+                      ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300'
+                      : 'border-rose-500/50 bg-rose-500/10 text-amber-300'
+                  }`}
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
-                  <XAxis
-                    dataKey="label"
-                    tick={{ fill: '#dbeafe', fontSize: 12, fontWeight: 700 }}
-                    axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                    tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                    label={{ value: 'Day', position: 'insideBottom', offset: -6, fill: '#93c5fd', fontSize: 12 }}
-                  />
-                  <YAxis
-                    ticks={yTicks}
-                    domain={[0, yTicks[yTicks.length - 1]]}
-                    tick={{ fill: '#dbeafe', fontSize: 12, fontWeight: 700 }}
-                    axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                    tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                    label={{ value: 'Value', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12 }}
-                    width={42}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="value"
-                    stroke="#34d399"
-                    strokeWidth={4}
-                    dot={(props) => {
-                      const { cx, cy, payload, index } = props as { cx?: number; cy?: number; payload?: DataPoint; index?: number };
-                      if (cx == null || cy == null || !payload) return null;
-                      const isProbe = index === probeIndex;
-                      return (
-                        <circle
-                          cx={cx}
-                          cy={cy}
-                          r={isProbe ? 8 : 5}
-                          fill={isProbe ? '#facc15' : '#34d399'}
-                          stroke={isProbe ? '#fef3c7' : '#ecfeff'}
-                          strokeWidth={isProbe ? 3 : 2}
-                        />
-                      );
-                    }}
-                    activeDot={{ r: 7, fill: '#6ee7b7', stroke: '#f0fdfa', strokeWidth: 2 }}
-                    animationDuration={350}
-                  />
-                </LineChart>
+                  {feedback.type === 'success' ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <AlertCircle className="h-4 w-4 shrink-0" />}
+                  <span>{feedback.message}</span>
+                </div>
               )}
-              {probePoint && (
+            </div>
+          </section>
+        )}
+        bottom={null}
+        overlay={(
+          <>
+            <AnimatePresence>
+              {gameState === 'complete' && (
                 <motion.div
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full border border-amber-200/50 bg-amber-200/20 px-3 py-1 text-[11px] font-black text-amber-100 shadow-[0_0_20px_rgba(251,191,36,0.25)]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="absolute inset-0 z-50 flex items-center justify-center bg-slate-950/95 p-8 text-center backdrop-blur-xl"
                 >
-                  {probePoint.label}: {probePoint.value}
+                  <div className="max-w-md">
+                    <Trophy className="mx-auto mb-8 h-20 w-20 text-yellow-400" />
+                    <h2 className="mb-2 text-4xl font-black uppercase tracking-tighter text-white">Graph Mastery</h2>
+                    <p className="mb-8 text-sm leading-relaxed text-slate-400">
+                      You read every line graph carefully and answered with precision.
+                    </p>
+                    <div className="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
+                      <span className="mb-1 block text-[10px] uppercase text-slate-500">Final XP</span>
+                      <span className="text-4xl font-black text-emerald-500">{XP}</span>
+                    </div>
+                    <button
+                      onClick={startGame}
+                      className="rounded-full bg-stone-100 px-12 py-4 text-sm font-black uppercase tracking-widest text-stone-900 transition-all hover:bg-white"
+                    >
+                      Play Again
+                    </button>
+                  </div>
                 </motion.div>
               )}
-            </div>
-          </div>
-
-          <div className="mt-auto flex flex-col gap-2 pt-1">
-            <div className="grid grid-cols-2 gap-2">
-              {round?.options.map(option => {
-                const isSelected = selectedAnswer === option;
-                const isCorrect = gameState === 'success' && option === round.correctAnswer;
-                const isWrongSelected = selectedAnswer === option && feedback?.type === 'error';
-
-                return (
-                  <motion.button
-                    key={option}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => handleAnswer(option)}
-                    disabled={gameState === 'success'}
-                    className={`min-h-[3.1rem] rounded-2xl border px-3 py-2.5 text-center transition-all sm:min-h-[3.4rem] sm:px-4 ${
-                      isCorrect
-                        ? 'border-emerald-400 bg-emerald-500/15 text-emerald-100 shadow-[0_0_22px_rgba(16,185,129,0.18)]'
-                        : isWrongSelected
-                          ? 'border-rose-400 bg-rose-500/12 text-amber-100'
-                          : isSelected
-                            ? 'border-cyan-300 bg-cyan-400/10 text-white'
-                            : 'border-slate-700 bg-slate-900/55 text-slate-100 hover:border-emerald-400/60 hover:bg-slate-800/70'
-                    } ${gameState === 'success' ? 'cursor-default' : ''}`}
-                  >
-                    <span className="text-[0.92rem] font-black leading-tight sm:text-base">{option}</span>
-                  </motion.button>
-                );
-              })}
-            </div>
-
-            <div className="min-h-[3.2rem]">
-              <AnimatePresence mode="wait">
-                {gameState === 'success' ? (
-                  <motion.button
-                    key="next"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    onClick={nextLevel}
-                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-500 py-4 text-sm font-black uppercase tracking-widest text-slate-900 shadow-lg shadow-emerald-500/20 transition-all hover:bg-emerald-400"
-                  >
-                    Next Graph <ChevronRight className="h-4 w-4" />
-                  </motion.button>
-                ) : null}
-              </AnimatePresence>
-            </div>
-
-            {feedback && (
-              <div
-                className={`flex w-full items-center justify-center gap-3 rounded-full border px-5 py-3 text-center text-[11px] font-bold uppercase tracking-wide shadow-2xl sm:text-xs ${
-                  feedback.type === 'success'
-                    ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300'
-                    : 'border-rose-500/50 bg-rose-500/10 text-amber-300'
-                }`}
-              >
-                {feedback.type === 'success' ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <AlertCircle className="h-4 w-4 shrink-0" />}
-                <span>{feedback.message}</span>
-              </div>
-            )}
-          </div>
-        </section>
-      )}
-      bottom={null}
-      overlay={(
-        <>
-          <AnimatePresence>
-            {gameState === 'complete' && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="absolute inset-0 z-50 flex items-center justify-center bg-slate-950/95 p-8 text-center backdrop-blur-xl"
-              >
-                <div className="max-w-md">
-                  <Trophy className="mx-auto mb-8 h-20 w-20 text-yellow-400" />
-                  <h2 className="mb-2 text-4xl font-black uppercase tracking-tighter text-white">Graph Mastery</h2>
-                  <p className="mb-8 text-sm leading-relaxed text-slate-400">
-                    You read every line graph carefully and answered with precision.
-                  </p>
-                  <div className="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
-                    <span className="mb-1 block text-[10px] uppercase text-slate-500">Final XP</span>
-                    <span className="text-4xl font-black text-emerald-500">{XP}</span>
-                  </div>
-                  <button
-                    onClick={startGame}
-                    className="rounded-full bg-stone-100 px-12 py-4 text-sm font-black uppercase tracking-widest text-stone-900 transition-all hover:bg-white"
-                  >
-                    Play Again
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </>
-      )}
-    />
+            </AnimatePresence>
+          </>
+        )}
+      />
+    </>
   );
 };
 

@@ -233,8 +233,8 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
       <GameScreenLayout
         className="relative z-10 h-full w-full min-h-0 gap-0 text-slate-100"
         topClassName="!min-h-0"
-      top={(
-        <div className="flex flex-col gap-0">
+        top={(
+        <div className="flex w-full flex-col gap-0">
           {!useSharedTopHud ? (
             <header className="z-20 flex h-16 items-center justify-between border-b border-cyan-200/16 bg-[linear-gradient(180deg,rgba(8,26,66,0.78),rgba(5,16,42,0.84))] px-6 backdrop-blur-md max-[480px]:h-14 max-[480px]:px-4">
               <div className="flex items-center gap-3">
@@ -272,7 +272,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               </div>
             </header>
           ) : null}
-            <div className="game-question-card mt-0 w-full max-w-[780px] max-[480px]:px-2 max-[480px]:py-1.5">
+            <div className="game-question-card sticky top-0 z-30 mt-0 w-full max-w-[780px] max-[480px]:px-2 max-[480px]:py-1.5">
               <div className="question-title">{caseMode === 'whodunnit' ? 'Who took the loot?' : 'Match the evidence totals.'}</div>
               <div className="question-subtitle">{caseBrief}</div>
             </div>
@@ -300,7 +300,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             <div className="pointer-events-none absolute inset-0 bg-slate-950/20" />
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.3)_1px,transparent_1px)] opacity-7 [background-size:20px_20px]" />
 
-            <div className="relative w-full" style={{ height: 'clamp(8rem, 22vh, 13rem)' }}>
+            <div className="relative w-full" style={{ height: 'clamp(10.5rem, 28vh, 17rem)' }}>
               <ResponsiveContainer width="100%" height="100%">
                 {chartType === 'bar' ? (
                     <BarChart data={currentCase} margin={{ top: 12, right: 10, left: -6, bottom: 6 }}>
@@ -308,7 +308,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                       <XAxis
                         dataKey="name"
                         stroke="#a8a29e"
-                        fontSize={9}
+                        fontSize={18}
                         tickLine={false}
                         axisLine={false}
                         interval={0}
@@ -317,21 +317,21 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                       ticks={barTicks}
                       domain={[0, barAxisMax]}
                       stroke="#a8a29e"
-                      fontSize={9}
+                      fontSize={18}
                       tickLine={false}
                       axisLine={false}
                       allowDecimals={false}
-                      width={28}
+                      width={38}
                     />
                     <Tooltip
-                      contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #444', borderRadius: '8px', fontSize: '10px' }}
+                      contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #444', borderRadius: '8px', fontSize: '18px' }}
                       itemStyle={{ color: '#fff' }}
                     />
                     <Bar dataKey="amount" radius={[4, 4, 0, 0]} isAnimationActive={false}>
                       {currentCase.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
-                      <LabelList dataKey="amount" position="top" fill="#f1f5f9" fontSize={10} fontWeight={700} />
+                      <LabelList dataKey="amount" position="top" fill="#f1f5f9" fontSize={18} fontWeight={700} />
                     </Bar>
                   </BarChart>
                 ) : (
@@ -355,7 +355,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                             x={x}
                             y={y}
                             fill="#f8fafc"
-                            fontSize={10}
+                            fontSize={18}
                             fontWeight={700}
                             textAnchor="middle"
                             dominantBaseline="central"
@@ -381,7 +381,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               {currentCase.map(item => (
                 <div key={item.name} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/8 px-2 py-1">
                   <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
-                  <span className="min-w-0 truncate text-[8px] font-bold uppercase tracking-wide text-stone-300">
+                  <span className="min-w-0 truncate text-[16px] font-bold uppercase tracking-wide text-stone-300">
                     {item.name}
                   </span>
                 </div>
@@ -390,14 +390,14 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           </div>
         </section>
 
-          <section className="z-10 flex w-full flex-col gap-2 bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] px-2 pb-1 pt-1 sm:px-3 sm:pb-2 sm:pt-1 md:gap-3 md:px-5 md:pb-3 md:pt-2 max-[480px]:gap-1 max-[480px]:px-1.5 max-[480px]:pb-0.5 max-[480px]:pt-0.5">
+          <section className="mt-auto z-10 flex w-full flex-col gap-2 bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] px-2 pb-0 pt-1 sm:px-3 sm:pb-1 sm:pt-1 md:gap-3 md:px-5 md:pb-2 md:pt-2 max-[480px]:gap-1 max-[480px]:px-1.5 max-[480px]:pb-0 max-[480px]:pt-0.5">
           <div className="mb-1 flex items-center gap-2 text-amber-500">
             <Users className="h-5 w-5" />
             <h2 className="text-xs font-black uppercase tracking-widest">Suspect Lineup</h2>
           </div>
 
-          <div className="relative">
-            <div className={`grid grid-cols-4 gap-1 items-center max-[480px]:gap-0.5 ${selectedSuspect ? 'opacity-0 pointer-events-none' : ''}`}>
+          <div className="relative mt-auto">
+            <div className={`grid grid-cols-4 items-end gap-1 max-[480px]:gap-0.5 ${selectedSuspect ? 'pointer-events-none opacity-0' : ''}`}>
               {suspects.map((suspect) => (
                 <motion.button
                   key={suspect.id}
@@ -440,7 +440,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
 
           </div>
 
-          <div className="mt-1 flex flex-col gap-1.5 pt-0.5">
+          <div className="mt-0.5 flex flex-col gap-1.5 pt-0">
             <AnimatePresence mode="wait">
               {gameState === 'success' ? (
                 <motion.button

@@ -7,13 +7,14 @@ interface CelebrationSplashProps {
   active: boolean;
   message: string;
   theme: CelebrationTheme;
+  sweepDuration?: number;
 }
 
 const THEME_STYLES: Record<CelebrationTheme, { backdrop: string; ribbon: string; glow: string }> = {
   takeout: {
-    backdrop: 'bg-[radial-gradient(circle_at_50%_36%,rgba(251,191,36,0.24),rgba(15,23,42,0.14)_34%,rgba(2,6,23,0.55)_76%)]',
-    ribbon: 'border-amber-200/70 bg-[linear-gradient(90deg,rgba(249,115,22,0.98),rgba(251,146,60,0.98),rgba(244,63,94,0.98))]',
-    glow: 'bg-amber-300/30',
+    backdrop: 'bg-[radial-gradient(circle_at_50%_36%,rgba(74,222,128,0.22),rgba(15,23,42,0.14)_34%,rgba(2,6,23,0.58)_76%)]',
+    ribbon: 'border-emerald-200/70 bg-[linear-gradient(90deg,rgba(34,197,94,0.98),rgba(74,222,128,0.98),rgba(16,185,129,0.98))]',
+    glow: 'bg-emerald-300/30',
   },
   party: {
     backdrop: 'bg-[radial-gradient(circle_at_50%_36%,rgba(168,85,247,0.22),rgba(15,23,42,0.14)_34%,rgba(2,6,23,0.55)_76%)]',
@@ -63,8 +64,9 @@ const FlameField: React.FC = () => (
   </div>
 );
 
-const CelebrationSplash: React.FC<CelebrationSplashProps> = ({ active, message, theme }) => {
+const CelebrationSplash: React.FC<CelebrationSplashProps> = ({ active, message, theme, sweepDuration }) => {
   const styles = THEME_STYLES[theme];
+  const duration = sweepDuration ?? (theme === 'takeout' ? 1.25 : theme === 'party' ? 0.72 : 0.82);
 
   return (
     <AnimatePresence>
@@ -90,7 +92,7 @@ const CelebrationSplash: React.FC<CelebrationSplashProps> = ({ active, message, 
             initial={{ x: '-138%', rotate: -8, scale: 0.96 }}
             animate={{ x: '138%', rotate: -8, scale: 1 }}
             exit={{ x: '168%', opacity: 0 }}
-            transition={{ duration: 0.56, ease: 'easeInOut' }}
+            transition={{ duration, ease: 'easeInOut' }}
           >
             <span className="text-[clamp(1.85rem,7.1vw,4.5rem)] font-black uppercase tracking-[0.16em] text-white drop-shadow-[0_4px_10px_rgba(7,15,35,0.56)]">
               {message}
