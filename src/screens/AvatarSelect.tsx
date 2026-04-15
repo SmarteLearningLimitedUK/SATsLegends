@@ -142,7 +142,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
                 className="absolute inset-0 h-full w-full rounded-full object-fill"
                 draggable={false}
               />
-              <span className="relative z-10 text-base font-black uppercase tracking-[0.12em] text-amber-900 drop-shadow-[0_1px_0_rgba(255,255,255,0.45)] md:text-lg">
+              <span className="relative z-10 text-base font-normal uppercase tracking-[0.12em] text-black drop-shadow-[0_1px_0_rgba(255,255,255,0.45)] md:text-lg">
                 Begin Adventure
               </span>
             </motion.button>

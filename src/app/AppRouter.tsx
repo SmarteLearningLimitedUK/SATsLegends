@@ -237,6 +237,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
           return renderFromRegistry('PlaceValuePanicGame', {
             ...sharedProps,
             miniGameLevel: inferredMiniGameLevel,
+            isPractice: Boolean(selectedLevel.isPractice),
           });
         }
         if (selectedLevel.blueprintKey === 'rounding_rocket') {
@@ -422,7 +423,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
                 draggable={false}
                 className="absolute inset-0 h-full w-full rounded-full object-fill"
               />
-              <span className="relative z-10 text-lg font-black uppercase tracking-[0.12em] text-amber-900 drop-shadow-[0_1px_0_rgba(255,255,255,0.45)] sm:text-xl">
+              <span className="relative z-10 text-lg font-normal uppercase tracking-[0.12em] text-black drop-shadow-[0_1px_0_rgba(255,255,255,0.45)] sm:text-xl">
                 Start
               </span>
             </motion.button>
@@ -613,4 +614,3 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       );
   }
 };
-

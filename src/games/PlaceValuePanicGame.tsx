@@ -21,6 +21,7 @@ interface PlaceValuePanicGameProps {
   miniGameLevel?: number;
   avatarId: string;
   useSharedTopHud?: boolean;
+  isPractice?: boolean;
   onVictory: (stars: number, XP: number) => void;
   onGameOver: (XP: number) => void;
   onBack: () => void;
@@ -334,11 +335,9 @@ const makeQuestion = (level: number): QuestionState => {
   const distractorDigits = getDistractorDigits(expectedDigits, 2);
   const tokenValues = shuffle([...expectedDigits, ...distractorDigits]);
   const placeHints = FULL_PLACE_VALUE_HINTS.slice(FULL_PLACE_VALUE_HINTS.length - slotCount);
-  const prompt = `A Monster Mind has scrambled the number ${numberToWords(promptNumber)}.\n\nRebuild it using place value to restore the brainpower!`;
-
   return {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    prompt,
+    prompt: `A Monster Mind has scrambled the number ${numberToWords(promptNumber)}.`,
     expectedDigits,
     tokenValues,
     placeHints,
@@ -351,6 +350,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   miniGameLevel,
   avatarId,
   useSharedTopHud = false,
+  isPractice = false,
   onVictory,
   onGameOver,
   onBack,
@@ -523,13 +523,15 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const targetHeightPct = targetSocketSizing.heightValue || 0;
     const socketTopY = layout.targetY - targetHeightPct / 2;
     const bottomPct = 100 - socketTopY;
-    return `calc(${bottomPct.toFixed(2)}% - 23px)`;
+    return `calc(${bottomPct.toFixed(2)}% - 34px)`;
   }, [layout.targetY, targetSocketSizing.heightValue]);
 
-  const questionPrompt = useMemo(
-    () => formatFantasyPrompt(question.prompt),
-    [question.prompt],
-  );
+  const questionPrompt = useMemo(() => {
+    if (isPractice) {
+      return formatFantasyPrompt(`${question.prompt}\n\nRebuild it using place value to restore the brainpower!`);
+    }
+    return formatFantasyPrompt(question.prompt);
+  }, [isPractice, question.prompt]);
 
   const resetRound = useCallback((nextQuestion: QuestionState) => {
     const nextSources: Array<Token | null> = nextQuestion.tokenValues.map((value, idx) => ({
@@ -978,7 +980,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90">
             Target Number
           </div>
-          <div className="mt-0.5 whitespace-pre-line text-[clamp(1.1rem,4.2vw,1.5rem)] leading-tight text-white">
+          <div className="mt-0.5 whitespace-pre-line text-[clamp(0.98rem,3.55vw,1.28rem)] leading-[1.12] text-white">
             {questionPrompt}
           </div>
         </div>
