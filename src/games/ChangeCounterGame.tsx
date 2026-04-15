@@ -3,16 +3,21 @@ import confetti from 'canvas-confetti';
 import { motion } from 'motion/react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
-import { FeedbackStrip, StoryCard, TaskCard } from '../components/game-ui/GameUiKit';
+import { FeedbackStrip, TaskCard } from '../components/game-ui/GameUiKit';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { triggerHaptic } from '../haptics';
-import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
+import {
+  GameplaySessionEventHandlers,
+  GameplaySessionState,
+  MiniGameShellContractProps,
+} from '../app/gameplaySessionContract';
 import {
   reshuffleAvoidingRepeat,
   shuffle,
   shuffleOptionsWithCorrect,
 } from '../utils/questionShuffle';
 
-interface ChangeCounterGameProps {
+interface ChangeCounterGameProps extends MiniGameShellContractProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
@@ -179,6 +184,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
   levelId,
   avatarId: _avatarId,
   useSharedTopHud = true,
+  isPractice,
   onVictory,
   onGameOver,
   onBack: _onBack,
@@ -194,8 +200,9 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
   const [correctCount, setCorrectCount] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [feedbackTone, setFeedbackTone] = useState<FeedbackTone>('neutral');
-  const [feedbackText, setFeedbackText] = useState('Work out the change before you answer.');
+  const [feedbackText, setFeedbackText] = useState('');
   const [locked, setLocked] = useState(false);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
   const timersRef = useRef<number[]>([]);
 
   const clearTimers = () => {
@@ -216,9 +223,13 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
     setCorrectCount(0);
     setSelected(null);
     setFeedbackTone('neutral');
-    setFeedbackText('Work out the change before you answer.');
+    setFeedbackText('');
     setLocked(false);
   }, [resolvedLevel]);
+
+  useEffect(() => {
+    setShowPracticeIntro(Boolean(isPractice));
+  }, [isPractice]);
 
   const advanceRound = useCallback((nextCorrect: number, nextScore: number, nextLives: number) => {
     if (roundIndex + 1 >= TOTAL_ROUNDS) {
@@ -245,7 +256,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
       setQuestion(resolveQuestion(resolvedLevel, nextRound, nextOrder));
       setSelected(null);
       setFeedbackTone('neutral');
-      setFeedbackText('Work out the change before you answer.');
+      setFeedbackText('');
       setLocked(false);
     }, 520);
     timersRef.current.push(timeoutId);
@@ -290,7 +301,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
     const timeoutId = window.setTimeout(() => {
       setSelected(null);
       setFeedbackTone('neutral');
-      setFeedbackText('Work out the change before you answer.');
+      setFeedbackText('');
       setLocked(false);
     }, 520);
     timersRef.current.push(timeoutId);
@@ -300,14 +311,15 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
     <GameScreenShell className="overflow-hidden">
       <GameplaySceneBackdrop gameType="change_counter" />
 
+      <PracticeIntroPopup
+        open={showPracticeIntro}
+        title="Change Counter"
+        body="The summit traders need the exact change for every order."
+        onAction={() => setShowPracticeIntro(false)}
+      />
+
       <div className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.6rem)] md:pt-[calc(env(safe-area-inset-top)+4.9rem)]' : 'pt-[calc(env(safe-area-inset-top)+2.4rem)]'}`}>
         <PuzzleStage className="flex h-full min-h-0 flex-1 flex-col gap-2 md:gap-3">
-          <StoryCard className="bg-black/25 text-slate-100 shadow-[0_10px_20px_rgba(2,6,23,0.18)]">
-            <p className="text-sm font-semibold text-white/90 md:text-base">
-              The summit traders need the exact change for every order.
-            </p>
-          </StoryCard>
-
           <TaskCard className="bg-black/25 text-slate-100 shadow-[0_10px_20px_rgba(2,6,23,0.18)]">
             <div className="flex items-center justify-between gap-3">
               <div>

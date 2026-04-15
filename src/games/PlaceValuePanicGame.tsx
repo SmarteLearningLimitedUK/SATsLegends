@@ -227,6 +227,87 @@ const getSocketAsset = (placeHint: string, _slotIndex: number, _placeHints: stri
   return socketU;
 };
 
+const ONES_WORDS = [
+  'zero',
+  'one',
+  'two',
+  'three',
+  'four',
+  'five',
+  'six',
+  'seven',
+  'eight',
+  'nine',
+] as const;
+
+const TEENS_WORDS = [
+  'ten',
+  'eleven',
+  'twelve',
+  'thirteen',
+  'fourteen',
+  'fifteen',
+  'sixteen',
+  'seventeen',
+  'eighteen',
+  'nineteen',
+] as const;
+
+const TENS_WORDS = [
+  '',
+  '',
+  'twenty',
+  'thirty',
+  'forty',
+  'fifty',
+  'sixty',
+  'seventy',
+  'eighty',
+  'ninety',
+] as const;
+
+const spellUnderThousand = (value: number) => {
+  const hundreds = Math.floor(value / 100);
+  const remainder = value % 100;
+  const tens = Math.floor(remainder / 10);
+  const ones = remainder % 10;
+
+  const parts: string[] = [];
+  if (hundreds > 0) {
+    parts.push(`${ONES_WORDS[hundreds]} hundred`);
+    if (remainder > 0) parts.push('and');
+  }
+
+  if (remainder >= 20) {
+    parts.push(ones > 0 ? `${TENS_WORDS[tens]}-${ONES_WORDS[ones]}` : TENS_WORDS[tens]);
+  } else if (remainder >= 10) {
+    parts.push(TEENS_WORDS[remainder - 10]);
+  } else if (remainder > 0 || parts.length === 0) {
+    parts.push(ONES_WORDS[remainder]);
+  }
+
+  return parts.join(' ');
+};
+
+const numberToWords = (value: number) => {
+  if (value === 0) return 'zero';
+  if (value === 1_000_000) return 'one million';
+
+  const thousands = Math.floor(value / 1000);
+  const remainder = value % 1000;
+
+  if (thousands > 0) {
+    const thousandWords = spellUnderThousand(thousands);
+    if (remainder === 0) return `${thousandWords} thousand`;
+    const remainderWords = spellUnderThousand(remainder);
+    return remainder < 100
+      ? `${thousandWords} thousand and ${remainderWords}`
+      : `${thousandWords} thousand ${remainderWords}`;
+  }
+
+  return spellUnderThousand(remainder);
+};
+
 const makeQuestion = (level: number): QuestionState => {
   const slotCount = slotCountForLevel(level);
   let promptNumber: number;
@@ -252,7 +333,7 @@ const makeQuestion = (level: number): QuestionState => {
   const distractorDigits = getDistractorDigits(expectedDigits, 2);
   const tokenValues = shuffle([...expectedDigits, ...distractorDigits]);
   const placeHints = FULL_PLACE_VALUE_HINTS.slice(FULL_PLACE_VALUE_HINTS.length - slotCount);
-  const prompt = `A Monster Mind has scrambled the number ${new Intl.NumberFormat('en-GB').format(promptNumber)}.\n\nRebuild it using place value to restore the brainpower!`;
+  const prompt = `A Monster Mind has scrambled the number ${numberToWords(promptNumber)}.\n\nRebuild it using place value to restore the brainpower!`;
 
   return {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,

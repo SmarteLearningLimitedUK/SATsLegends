@@ -3,15 +3,20 @@ import confetti from 'canvas-confetti';
 import { motion } from 'motion/react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
-import { FeedbackStrip, StoryCard, TaskCard } from '../components/game-ui/GameUiKit';
+import { FeedbackStrip, TaskCard } from '../components/game-ui/GameUiKit';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { triggerHaptic } from '../haptics';
-import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
+import {
+  GameplaySessionEventHandlers,
+  GameplaySessionState,
+  MiniGameShellContractProps,
+} from '../app/gameplaySessionContract';
 import {
   reshuffleAvoidingRepeat,
   shuffleOptionsWithAnswerIndex,
 } from '../utils/questionShuffle';
 
-interface ReasoningQuestGameProps {
+interface ReasoningQuestGameProps extends MiniGameShellContractProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
@@ -173,6 +178,7 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
   levelId,
   avatarId: _avatarId,
   useSharedTopHud = true,
+  isPractice,
   onVictory,
   onGameOver,
   onBack: _onBack,
@@ -187,8 +193,9 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
   const [correctCount, setCorrectCount] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [feedbackTone, setFeedbackTone] = useState<FeedbackTone>('neutral');
-  const [feedbackText, setFeedbackText] = useState('Solve the problem before you choose an answer.');
+  const [feedbackText, setFeedbackText] = useState('');
   const [locked, setLocked] = useState(false);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
   const timersRef = useRef<number[]>([]);
 
   const activeQuestion = questionOrder[roundIndex % questionOrder.length];
@@ -202,6 +209,10 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
   useEffect(() => () => clearTimers(), []);
 
   useEffect(() => {
+    setShowPracticeIntro(Boolean(isPractice));
+  }, [isPractice]);
+
+  useEffect(() => {
     clearTimers();
     setQuestionOrder(buildQuestionDeck(null));
     setRoundIndex(0);
@@ -210,7 +221,7 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
     setCorrectCount(0);
     setSelectedIndex(null);
     setFeedbackTone('neutral');
-    setFeedbackText('Solve the problem before you choose an answer.');
+    setFeedbackText('');
     setLocked(false);
   }, [resolvedLevel]);
 
@@ -239,7 +250,7 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
       setRoundIndex((prev) => prev + 1);
       setSelectedIndex(null);
       setFeedbackTone('neutral');
-      setFeedbackText('Solve the problem before you choose an answer.');
+      setFeedbackText('');
       setLocked(false);
     }, 640);
     timersRef.current.push(timeoutId);
@@ -284,7 +295,7 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
     const timeoutId = window.setTimeout(() => {
       setSelectedIndex(null);
       setFeedbackTone('neutral');
-      setFeedbackText('Solve the problem before you choose an answer.');
+      setFeedbackText('');
       setLocked(false);
     }, 520);
     timersRef.current.push(timeoutId);
@@ -294,14 +305,15 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
     <GameScreenShell className="overflow-hidden">
       <GameplaySceneBackdrop gameType="reasoning_quest" />
 
+      <PracticeIntroPopup
+        open={showPracticeIntro}
+        title="Reasoning Quest"
+        body="Choose the best plan to clear the next path."
+        onAction={() => setShowPracticeIntro(false)}
+      />
+
       <div className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.6rem)] md:pt-[calc(env(safe-area-inset-top)+4.9rem)]' : 'pt-[calc(env(safe-area-inset-top)+2.4rem)]'}`}>
         <PuzzleStage className="flex h-full min-h-0 flex-1 flex-col gap-2 md:gap-3">
-          <StoryCard className="bg-black/25 text-slate-100">
-            <p className="text-sm font-semibold text-white/90 md:text-base">
-              Choose the best plan to clear the next path.
-            </p>
-          </StoryCard>
-
           <TaskCard className="bg-black/25 text-slate-100">
             <div className="flex items-center justify-between gap-3">
               <div>

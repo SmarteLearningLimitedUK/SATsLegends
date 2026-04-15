@@ -271,9 +271,9 @@ const buildPotionName = (active: Ingredient[]) => {
 };
 
 const buildDifficultyLine = (stage: number) => {
-  if (stage <= 2) return '🟢 Easy:\nSimple doubling/halving';
-  if (stage <= 4) return '🟡 Medium:\nScaling up';
-  return '🔴 Hard:\nMissing both parts / word problems';
+  if (stage <= 2) return 'Easy: Simple doubling/halving';
+  if (stage <= 4) return 'Medium: Scaling up';
+  return 'Hard: Missing both parts / word problems';
 };
 
 const buildOrderPrompt = (
@@ -284,16 +284,15 @@ const buildOrderPrompt = (
   const ratioLine = ratioText.split(':').join(' : ');
   const givenAmount = cardHint || 'A measured amount is already in the cauldron.';
   return [
-    '⚗️ A potion must follow this ratio:',
-    ratioLine,
+    'A potion must follow this ratio:',
+    `Ratio: ${ratioLine}`,
     '',
     'The potion currently has:',
-    '',
     givenAmount,
     '',
-    '👉 Find the missing amount to keep the ratio balanced.',
+    'Find the missing amount to keep the ratio balanced.',
     '',
-    buildDifficultyLine(stage),
+    `Difficulty: ${buildDifficultyLine(stage)}`,
   ].join('\n');
 };
 
@@ -346,9 +345,9 @@ const cardLabelsForMode = (mode: ChallengeMode) => {
 };
 
 const buildOrderFlavor = (stage: number) => {
-  if (stage <= 2) return '🟢 Easy: Simple doubling/halving';
-  if (stage <= 4) return '🟡 Medium: Scaling up';
-  return '🔴 Hard: Missing both parts / word problems';
+  if (stage <= 2) return 'Easy: Simple doubling/halving';
+  if (stage <= 4) return 'Medium: Scaling up';
+  return 'Hard: Missing both parts / word problems';
 };
 
 const generateChallenge = (levelId: number, solved: number): Challenge => {

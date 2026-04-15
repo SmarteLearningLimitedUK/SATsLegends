@@ -159,6 +159,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       levelId: selectedLevel.id,
       avatarId: player.avatarId,
       useSharedTopHud: true,
+      isPractice: Boolean(selectedLevel.isPractice),
       onVictory: onGameplayVictory,
       onGameOver: onGameplayOver,
       onBack: onBackToIslandLevels,
@@ -331,6 +332,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         return renderFromRegistry('ReasoningGame', {
           gameType: selectedLevel.gameType,
           isBoss: Boolean(selectedLevel.isBoss),
+          isPractice: Boolean(selectedLevel.isPractice),
           onVictory: onGameplayVictory,
           onGameOver: onGameplayOver,
           onBack: onBackToIslandLevels,
@@ -339,6 +341,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         return renderFromRegistry('ReasoningGame', {
           gameType: selectedLevel.gameType,
           isBoss: Boolean(selectedLevel.isBoss),
+          isPractice: Boolean(selectedLevel.isPractice),
           onVictory: onGameplayVictory,
           onGameOver: onGameplayOver,
           onBack: onBackToIslandLevels,
@@ -349,6 +352,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
             gameType: selectedLevel.gameType,
             levelId: selectedLevel.id,
             avatarId: player.avatarId,
+            isPractice: Boolean(selectedLevel.isPractice),
             onVictory: onGameplayVictory,
             onGameOver: onGameplayOver,
             onBack: onBackToIslandLevels,
@@ -606,7 +610,5 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       );
   }
 };
-
-
 
 

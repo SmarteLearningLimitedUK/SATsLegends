@@ -144,12 +144,18 @@ const formatNumber = (value: number) => {
   return value.toFixed(2).replace(/\.?0+$/, '');
 };
 
-const buildPrompt = () => (
-  'Fill in the missing numbers on the number line to track the stolen brainpower.\n\n'
-  + 'The path shows:\n'
-  + '30 â†’ [ ? ] â†’ 40 â†’ [ ? ] â†’ 50\n\n'
-  + 'ðŸ¥· What numbers are hidden?'
-);
+const buildPrompt = (missingCount: number) => {
+  const isSingle = missingCount === 1;
+  return [
+    `Fill in the missing ${isSingle ? 'number' : 'numbers'} on the number line to track the stolen brainpower.`,
+    '',
+    isSingle
+      ? '30 → [ ? ] → 40 → 50'
+      : '30 → [ ? ] → 40 → [ ? ] → 50',
+    '',
+    `🥷 ${isSingle ? 'Which number is missing?' : 'What numbers are missing?'}`,
+  ].join('\n');
+};
 
 const createQuestion = (
   prompt: string,
@@ -199,7 +205,7 @@ const buildQuestion = (levelId: number): NumberLineQuestion => {
     const start = randomInt(0, 6);
     const step = 1;
     const values = Array.from({ length: 5 }, (_, index) => start + (step * index));
-    return createQuestion(buildPrompt(), values, focusIndex, [
+    return createQuestion(buildPrompt(1), values, focusIndex, [
       values[focusIndex] + 1,
       Math.max(0, values[focusIndex] - 1),
       values[focusIndex] + 2,
@@ -210,7 +216,7 @@ const buildQuestion = (levelId: number): NumberLineQuestion => {
     const start = randomInt(0, 5) * 2;
     const step = [2, 5][randomInt(0, 1)];
     const values = Array.from({ length: 5 }, (_, index) => start + (step * index));
-    return createQuestion(buildPrompt(), values, focusIndex, [
+    return createQuestion(buildPrompt(1), values, focusIndex, [
       values[focusIndex] + step,
       Math.max(0, values[focusIndex] - step),
       values[focusIndex] + (step * 2),
@@ -221,7 +227,7 @@ const buildQuestion = (levelId: number): NumberLineQuestion => {
     const start = randomInt(1, 6) * 10;
     const step = 10;
     const values = Array.from({ length: 5 }, (_, index) => start + (step * index));
-    return createQuestion(buildPrompt(), values, focusIndex, [
+    return createQuestion(buildPrompt(1), values, focusIndex, [
       values[focusIndex] + 10,
       values[focusIndex] - 10,
       values[focusIndex] + 20,
@@ -232,7 +238,7 @@ const buildQuestion = (levelId: number): NumberLineQuestion => {
     const start = randomInt(-6, -2) * 5;
     const step = 5;
     const values = Array.from({ length: 5 }, (_, index) => start + (step * index));
-    return createQuestion(buildPrompt(), values, focusIndex, [
+    return createQuestion(buildPrompt(1), values, focusIndex, [
       values[focusIndex] + 5,
       values[focusIndex] - 5,
       values[focusIndex] + 10,
@@ -242,7 +248,7 @@ const buildQuestion = (levelId: number): NumberLineQuestion => {
   const base = randomInt(1, 6) / 10;
   const step = [0.1, 0.2, 0.25][randomInt(0, 2)];
   const values = Array.from({ length: 5 }, (_, index) => Number((base + (step * index)).toFixed(2)));
-  return createQuestion(buildPrompt(), values, focusIndex, [
+  return createQuestion(buildPrompt(1), values, focusIndex, [
     Number((values[focusIndex] + step).toFixed(2)),
     Number((values[focusIndex] - step).toFixed(2)),
     Number((values[focusIndex] + (step * 2)).toFixed(2)),
@@ -626,7 +632,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
             <div
               className="pointer-events-none absolute inset-x-0 mx-auto w-[58%] max-w-[280px]"
-              style={{ bottom: '-120px' }}
+              style={{ bottom: '-105px' }}
             >
               <div className="relative">
                 <AnimatePresence>

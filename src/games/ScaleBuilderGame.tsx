@@ -7,9 +7,11 @@ import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 import labelGreenLongAsset from '../assets/licensed/slices/label_green_long.png';
 import scaleBuilderBackground from '../assets/maps/backgroundsforgames/scalebuilder-construction.png';
 import { PrimaryButton } from '../components/game-ui/GameUiKit';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
+import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 
-interface ScaleBuilderGameProps {
+interface ScaleBuilderGameProps extends MiniGameShellContractProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
@@ -43,35 +45,35 @@ const LEVELS: Level[] = [
     name: 'The Foundation',
     shape: { type: 'rect', baseWidth: 60, baseHeight: 40 },
     targetScale: 2.0,
-    instructions: '🏗️ Original size: 60 units by 40 units\n\n📐 Scale factor: ×2\n\n👉 What is the new size?',
+    instructions: 'Original size: 60 units by 40 units\n\nScale factor: x2\n\nWhat is the new size?',
   },
   {
     id: 2,
     name: 'Compact Living',
     shape: { type: 'rect', baseWidth: 100, baseHeight: 80 },
     targetScale: 0.5,
-    instructions: '🏗️ Original size: 100 units by 80 units\n\n📐 Scale factor: ÷2\n\n👉 What is the new size?',
+    instructions: 'Original size: 100 units by 80 units\n\nScale factor: ÷2\n\nWhat is the new size?',
   },
   {
     id: 3,
     name: 'The Gable',
     shape: { type: 'triangle', baseWidth: 80, baseHeight: 60 },
     targetScale: 1.5,
-    instructions: '🏗️ Original size: 80 units by 60 units\n\n📐 Scale factor: ×1.5\n\n👉 What is the new size?',
+    instructions: 'Original size: 80 units by 60 units\n\nScale factor: x1.5\n\nWhat is the new size?',
   },
   {
     id: 4,
     name: 'The Corner Office',
     shape: { type: 'l-shape', baseWidth: 80, baseHeight: 80 },
     targetScale: 1.25,
-    instructions: '🏗️ Original size: 80 units by 80 units\n\n📐 Scale factor: ×1.25\n\n👉 What is the new size?',
+    instructions: 'Original size: 80 units by 80 units\n\nScale factor: x1.25\n\nWhat is the new size?',
   },
   {
     id: 5,
     name: 'The Grand Hall',
     shape: { type: 'rect', baseWidth: 40, baseHeight: 120 },
     targetScale: 2.25,
-    instructions: '🏗️ Original size: 40 units by 120 units\n\n📐 Scale factor: ×2.25\n\n👉 What is the new size?',
+    instructions: 'Original size: 40 units by 120 units\n\nScale factor: x2.25\n\nWhat is the new size?',
   },
 ];
 
@@ -95,13 +97,26 @@ Original height: 5 metres
 
 Scale factor: ×3
 
-👉 What should the new height be?`;
-const SCALE_BUILDER_REUSABLE = `🏗️ Original size: [value]
+👉 What should the new height be?
+
+Success Feedback
+
+🏗️ “Structure restored!”
+
+The tower is rebuilt to 15 metres.
+Failure Feedback
+
+⚠️ “Structure unstable!”
+
+Reusable Template
+
+🏗️ Original size: [value]
 
 📐 Scale factor: × or ÷ [number] (or ratio form)
 
-👉 What is the new size?`;
-const SCALE_BUILDER_RATIO_NOTE = `💡 Ratio-Based Version (more advanced)
+👉 What is the new size?
+
+💡 Ratio-Based Version (more advanced)
 
 A bridge is built using a scale ratio of 1 : 4
 
@@ -230,6 +245,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
   levelId,
   avatarId,
   useSharedTopHud = false,
+  isPractice,
   onVictory,
   onGameOver: _onGameOver,
   onBack,
@@ -244,6 +260,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
   const [showBase, setShowBase] = useState(true);
   const [mistakeCount, setMistakeCount] = useState(0);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
   const currentLevel = LEVELS[currentLevelIdx];
   const completedLevels = currentLevelIdx + (gameState === 'complete' ? 1 : 0);
@@ -270,13 +287,11 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
     const heightDiff = Math.abs(heightScale - currentLevel.targetScale);
     const difference = Math.max(widthDiff, heightDiff);
     if (difference < 0.01) {
-      setFeedback({ type: 'success', message: '🏗️ “Structure restored!”' });
+      setFeedback({ type: 'success', message: '🏗️ “Structure restored!”\n\nThe tower is rebuilt to 15 metres.' });
       setGameState('success');
       return;
     }
 
-    const averageScale = (widthScale + heightScale) / 2;
-    const direction = averageScale < currentLevel.targetScale ? 'larger' : 'smaller';
     setFeedback({ type: 'error', message: '⚠️ “Structure unstable!”' });
     setMistakeCount((previous) => previous + 1);
   };
@@ -285,10 +300,10 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
     if (currentLevelIdx < LEVELS.length - 1) {
       setCurrentLevelIdx((previous) => previous + 1);
       setCurrentScale(1.0);
-    setFeedback({ type: 'success', message: 'The tower is rebuilt to 15 metres.' });
-    setGameState('playing');
-    return;
-  }
+      setFeedback(null);
+      setGameState('playing');
+      return;
+    }
 
     setGameState('complete');
   };
@@ -339,9 +354,15 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
     setGameState('playing');
   }, []);
 
+  useEffect(() => {
+    setShowPracticeIntro(Boolean(isPractice));
+  }, [isPractice]);
+
   const finishAndContinue = () => {
     onVictory(starRating, finalScore);
   };
+
+  const instructionsText = currentLevel.instructions;
 
   return (
     <GameScreenShell
@@ -349,6 +370,13 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
       backgroundImage={scaleBuilderBackground}
       backgroundOpacity={1}
     >
+      <PracticeIntroPopup
+        open={showPracticeIntro}
+        title="Scale Builder"
+        body={SCALE_BUILDER_INTRO}
+        onAction={() => setShowPracticeIntro(false)}
+      />
+
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-[1]"
@@ -383,7 +411,9 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
           <div className="relative z-10 grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-2 p-2 md:p-3">
             <div className="rounded-[1rem] border border-white/14 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(15,23,42,0.84))] p-2">
               <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/78">Scale Builder</div>
-              <div className="mt-1 line-clamp-2 text-[clamp(12px,1.8vh,15px)] font-black text-white">{currentLevel.instructions}</div>
+              <div className="mt-1 max-h-[19vh] overflow-y-auto whitespace-pre-line text-[11px] font-black leading-tight text-white">
+                {instructionsText}
+              </div>
               <div className="mt-2 flex flex-wrap items-center gap-2 text-[clamp(11px,1.7vh,13px)] font-black text-white/90">
                 <span className="rounded-full border border-yellow-200/40 bg-yellow-500/15 px-3 py-1">
                   Target {currentLevel.targetScale.toFixed(2)}x

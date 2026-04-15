@@ -4,9 +4,9 @@ import { motion } from 'motion/react';
 import {
   FeedbackStrip,
   GameUiShell,
-  StoryCard,
   TaskCard,
 } from '../components/game-ui/GameUiKit';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import areaBackdrop from '../assets/maps/castle.jpg';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
@@ -121,6 +121,7 @@ const starsForAccuracy = (correct: number, attempts: number) => {
 
 const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
   levelId,
+  isPractice,
   onVictory,
   onGameOver: _onGameOver,
 }) => {
@@ -129,9 +130,10 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
   const [correctCount, setCorrectCount] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [locked, setLocked] = useState(false);
-  const [feedback, setFeedback] = useState('Count the squares and pick the area.');
+  const [feedback, setFeedback] = useState('');
   const [feedbackTone, setFeedbackTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [questionOrder, setQuestionOrder] = useState<AreaQuestion[]>(() => buildQuestionDeck(null));
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
   const question = useMemo(
     () => questionOrder[roundIndex % questionOrder.length],
@@ -146,6 +148,10 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
       setQuestionOrder(buildQuestionDeck(lastQuestion));
     }
   }, [lastQuestion, questionOrder.length, roundIndex]);
+
+  useEffect(() => {
+    setShowPracticeIntro(Boolean(isPractice));
+  }, [isPractice]);
 
   const handleAnswer = (value: number) => {
     if (locked) return;
@@ -172,7 +178,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
         setRoundIndex((prev) => prev + 1);
         setSelected(null);
         setLocked(false);
-        setFeedback('Count the squares and pick the area.');
+        setFeedback('');
         setFeedbackTone('neutral');
       }, 700);
       return;
@@ -184,7 +190,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
     window.setTimeout(() => {
       setLocked(false);
       setSelected(null);
-      setFeedback('Count the squares and pick the area.');
+      setFeedback('');
       setFeedbackTone('neutral');
       setRoundIndex((prev) => prev + 1);
     }, 750);
@@ -192,15 +198,13 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
 
   return (
     <GameUiShell backgroundImage={areaBackdrop} overlayDisabled>
+      <PracticeIntroPopup
+        open={showPracticeIntro}
+        title="Area Architect"
+        body="Help the builders plan the floor space."
+        onAction={() => setShowPracticeIntro(false)}
+      />
       <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+3.5rem)] pt-3 text-white">
-        <section className="shrink-0">
-          <StoryCard>
-            <p className="text-[clamp(13px,2vh,18px)] font-semibold text-white/90">
-              Help the builders plan the floor space.
-            </p>
-          </StoryCard>
-        </section>
-
         <section className="shrink-0">
           <TaskCard>
             <div className="flex items-center justify-between gap-3">

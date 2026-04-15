@@ -4,9 +4,11 @@ import { AnimatePresence, motion } from 'motion/react';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 import zombieFallback from '../assets/zombies/zombie.png';
 import zombiePlayfield from '../assets/zombies/zombiebkground.png';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
+import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
-interface MathsVsZombiesGameProps {
+interface MathsVsZombiesGameProps extends MiniGameShellContractProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
@@ -87,9 +89,6 @@ const maxZombiesForLevel = (levelId: number) => {
   if (levelId <= 6) return 3 + (levelId > 5 ? 1 : 0);
   return 4 + (levelId > 5 ? 1 : 0);
 };
-
-const openingStory = `Help! Help! the monster minds have sent their minions to steal brain power.
-Defeat them using your maths superpower.`;
 
 const buildQuestion = (levelId: number): Question => {
   const roll = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -208,6 +207,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   levelId,
   avatarId,
   useSharedTopHud = false,
+  isPractice,
   onVictory,
   onGameOver,
   onBack,
@@ -227,6 +227,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   const [feedback, setFeedback] = useState('');
   const [locked, setLocked] = useState(false);
   const [gameActive, setGameActive] = useState(true);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
   const rafRef = useRef<number | null>(null);
   const lastTimeRef = useRef(0);
@@ -236,6 +237,10 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
   const zombiesRef = useRef<Zombie[]>([]);
   useEffect(() => { zombiesRef.current = zombies; }, [zombies]);
+
+  useEffect(() => {
+    setShowPracticeIntro(Boolean(isPractice));
+  }, [isPractice]);
 
   const avatarImage = useMemo(() => (
     CHARACTER_AVATARS.find((avatar) => avatar.id === avatarId)?.image
@@ -485,6 +490,12 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     <div
       className="relative flex h-full w-full flex-col items-center overflow-hidden font-sans text-white select-none"
     >
+      <PracticeIntroPopup
+        open={showPracticeIntro}
+        title="Maths Vs Zombies"
+        body="Help! Help! the monster minds have sent their minions to steal brain power.\nDefeat them using your maths superpower."
+        onAction={() => setShowPracticeIntro(false)}
+      />
 
       <div className={`relative z-10 flex h-full w-full max-w-[1000px] flex-col ${useSharedTopHud ? 'pt-[max(3.7rem,calc(env(safe-area-inset-top)+3.1rem))]' : ''}`}>
         {!useSharedTopHud ? (
@@ -550,9 +561,6 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
         </div>
 
         <div className="mx-4 mt-4 rounded-3xl border border-blue-400/40 bg-blue-950/70 p-4 shadow-xl">
-          <div className="rounded-2xl border border-cyan-100/10 bg-white/5 px-4 py-3 text-center text-[clamp(0.92rem,3.7vw,1.1rem)] font-bold leading-tight text-amber-50 whitespace-pre-line">
-            {openingStory}
-          </div>
           <div className="my-3 h-px w-full bg-white/10" />
           <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-center text-[clamp(1.1rem,4.5vw,1.6rem)] font-black text-white">
             {formatFantasyPrompt(question.prompt)}

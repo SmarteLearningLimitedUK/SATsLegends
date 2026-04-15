@@ -14,6 +14,7 @@ import shareSplitterBackground from '../assets/maps/sharesplitterfinal.png';
 import cakeSliceAsset from '../assets/cakeslice.png';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import CelebrationSplash from '../components/CelebrationSplash';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 
 interface ShareSplitterGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -50,9 +51,9 @@ const MAX_PLATE_COUNT = 5;
 const ROUNDS_TO_WIN = 5;
 const BASE_XP_PER_ROUND = 120;
 const CAKE_SLICE_ASSET = cakeSliceAsset;
-const SHARE_SPLITTER_INTRO = `🎯 To stop the chaos, you must divide the cake correctly between the monsters based on their demanded ratio.
+const SHARE_SPLITTER_INTRO = `To stop the chaos, you must divide the brainpower cake correctly between the monsters based on their demanded ratio.
 
-👉 If you get it wrong… they’ll grab extra and grow stronger!`;
+If you get it wrong, they will grab extra and grow stronger.`;
 const PLATE_POSITIONS: Record<number, Array<{ x: number; y: number }>> = {
   2: [
     { x: 26.8, y: 61.0 },
@@ -137,9 +138,9 @@ const buildSharePrompt = () => {
   return [
     'The Monster Minds are fighting over a brainpower cake.',
     '',
-    '👉 Only the correct ratio will stop them from turning on each other… and you.',
+    'Only the correct ratio will stop them from turning on each other and you.',
     '',
-    'Divide it carefully.',
+    'Share the cake carefully.',
     '',
     'Example Question',
     '',
@@ -175,6 +176,7 @@ const createChallenge = (levelId: number, solved: number): ShareChallenge => {
 const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   levelId,
   avatarId: _avatarId,
+  isPractice,
   onVictory,
   onGameOver: _onGameOver,
   onBack,
@@ -188,13 +190,14 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const [remainingSlices, setRemainingSlices] = useState(challenge.totalSlices);
   const [dragSlice, setDragSlice] = useState<DragSlice | null>(null);
   const [hoverPlateIndex, setHoverPlateIndex] = useState<number | null>(null);
-  const [feedback, setFeedback] = useState(SHARE_SPLITTER_INTRO);
+  const [feedback, setFeedback] = useState('');
   const [feedbackTone, setFeedbackTone] = useState<FeedbackTone>('neutral');
   const [validationActive, setValidationActive] = useState(false);
   const [moveHistory, setMoveHistory] = useState<MoveRecord[]>([]);
   const [locked, setLocked] = useState(false);
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [showCelebrationSplash, setShowCelebrationSplash] = useState(false);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const endedRef = useRef(false);
@@ -218,13 +221,17 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setRemainingSlices(firstChallenge.totalSlices);
     setDragSlice(null);
     setHoverPlateIndex(null);
-    setFeedback(SHARE_SPLITTER_INTRO);
+    setFeedback('');
     setFeedbackTone('neutral');
     setValidationActive(false);
     setMoveHistory([]);
     setLocked(false);
     setShowCelebrationSplash(false);
   }, [levelId]);
+
+  useEffect(() => {
+    setShowPracticeIntro(Boolean(isPractice));
+  }, [isPractice]);
 
   const plateViews = useMemo(() => challenge.ratios.map((ratio, index) => {
     const currentCakeCount = plates[index]?.length ?? 0;
@@ -243,6 +250,9 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const allCorrect = plateViews.every((plate) => plate.isCorrect);
   const platePositions = PLATE_POSITIONS[challenge.plateCount] || PLATE_POSITIONS[4];
   const plateSize = 'calc(var(--game-stage-width, 390px) * 0.175)';
+  const promptText = isPractice
+    ? challenge.prompt
+    : 'Use the ratio to share the cake correctly.';
 
   const loadNextChallenge = useCallback((solvedCount: number) => {
     const next = createChallenge(levelId, solvedCount);
@@ -254,7 +264,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setValidationActive(false);
     setMoveHistory([]);
     setLocked(false);
-    setFeedback(SHARE_SPLITTER_INTRO);
+    setFeedback('');
     setFeedbackTone('neutral');
   }, [levelId]);
 
@@ -430,7 +440,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setMoveHistory([]);
     setDragSlice(null);
     setHoverPlateIndex(null);
-    setFeedback(SHARE_SPLITTER_INTRO);
+    setFeedback('');
     setFeedbackTone('neutral');
     setValidationActive(false);
   };
@@ -486,6 +496,13 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
   return (
     <GameUiShell backgroundImage={shareSplitterBackground} backgroundOpacity={1} overlayDisabled>
+      <PracticeIntroPopup
+        open={showPracticeIntro}
+        title="Share Splitter"
+        body={SHARE_SPLITTER_INTRO}
+        onAction={() => setShowPracticeIntro(false)}
+      />
+
       <div className="relative h-full w-full">
         <GameScreenLayout
           className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2 text-white"
@@ -583,21 +600,23 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         bottom={(
           <div className="flex flex-col gap-2">
             <section className="min-h-[2.6rem]">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`${feedback}-${feedbackTone}`}
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                >
-                  <FeedbackStrip
-                    tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}
-                    className="whitespace-pre-line"
+              {feedback.trim().length > 0 ? (
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={`${feedback}-${feedbackTone}`}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
                   >
-                    {feedback}
-                  </FeedbackStrip>
-                </motion.div>
-              </AnimatePresence>
+                    <FeedbackStrip
+                      tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}
+                      className="whitespace-pre-line"
+                    >
+                      {feedback}
+                    </FeedbackStrip>
+                  </motion.div>
+                </AnimatePresence>
+              ) : null}
             </section>
 
             <section className="grid grid-cols-2 gap-2">
@@ -620,10 +639,10 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
             >
               <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-[17px] py-[13px] text-center backdrop-blur-sm">
                 <div className="text-[12px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Share</div>
-                <div className="mt-1 text-[clamp(1.2rem,4.8vw,1.8rem)] font-black text-white">Split the Cakes</div>
+                <div className="mt-1 text-[clamp(1.2rem,4.8vw,1.8rem)] font-black text-white">Share the Cake</div>
                 <div className="mt-1 text-[13px] font-black text-amber-100">Ratio {challenge.ratios.join(' : ')}</div>
                 <div className="mt-2 whitespace-pre-line text-[12px] font-semibold leading-tight text-cyan-100/90">
-                  {challenge.prompt || 'Share the cakes to match the ratio.'}
+                  {promptText}
                 </div>
               </div>
             </div>

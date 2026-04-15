@@ -3,13 +3,18 @@ import confetti from 'canvas-confetti';
 import { motion } from 'motion/react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
-import { FeedbackStrip, StoryCard, TaskCard } from '../components/game-ui/GameUiKit';
+import { FeedbackStrip, TaskCard } from '../components/game-ui/GameUiKit';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { getSatsInspiredChallengeQuestion } from '../systems/content/satsInspiredQuestionBanks';
 import { triggerHaptic } from '../haptics';
-import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
+import {
+  GameplaySessionEventHandlers,
+  GameplaySessionState,
+  MiniGameShellContractProps,
+} from '../app/gameplaySessionContract';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
-interface UnitMixerGameProps {
+interface UnitMixerGameProps extends MiniGameShellContractProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
@@ -114,6 +119,7 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
   levelId,
   avatarId: _avatarId,
   useSharedTopHud = true,
+  isPractice,
   onVictory,
   onGameOver,
   onBack: _onBack,
@@ -128,8 +134,9 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
   const [correctCount, setCorrectCount] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [feedbackTone, setFeedbackTone] = useState<FeedbackTone>('neutral');
-  const [feedbackText, setFeedbackText] = useState('Convert the unit carefully before you answer.');
+  const [feedbackText, setFeedbackText] = useState('');
   const [locked, setLocked] = useState(false);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
   const timersRef = useRef<number[]>([]);
 
   const clearTimers = () => {
@@ -140,6 +147,10 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
   useEffect(() => () => clearTimers(), []);
 
   useEffect(() => {
+    setShowPracticeIntro(Boolean(isPractice));
+  }, [isPractice]);
+
+  useEffect(() => {
     clearTimers();
     setRoundIndex(0);
     setQuestion(resolveQuestion(resolvedLevel));
@@ -148,7 +159,7 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
     setCorrectCount(0);
     setSelectedIndex(null);
     setFeedbackTone('neutral');
-    setFeedbackText('Convert the unit carefully before you answer.');
+    setFeedbackText('');
     setLocked(false);
   }, [resolvedLevel]);
 
@@ -171,7 +182,7 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
       setQuestion(resolveQuestion(resolvedLevel));
       setSelectedIndex(null);
       setFeedbackTone('neutral');
-      setFeedbackText('Convert the unit carefully before you answer.');
+      setFeedbackText('');
       setLocked(false);
     }, 520);
     timersRef.current.push(timeoutId);
@@ -219,7 +230,7 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
     const timeoutId = window.setTimeout(() => {
       setSelectedIndex(null);
       setFeedbackTone('neutral');
-      setFeedbackText('Convert the unit carefully before you answer.');
+      setFeedbackText('');
       setLocked(false);
     }, 520);
     timersRef.current.push(timeoutId);
@@ -229,14 +240,15 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
     <GameScreenShell className="overflow-hidden">
       <GameplaySceneBackdrop gameType="unit_mixer" />
 
+      <PracticeIntroPopup
+        open={showPracticeIntro}
+        title="Unit Mixer"
+        body="Keep the expedition supplies safe by converting each unit accurately."
+        onAction={() => setShowPracticeIntro(false)}
+      />
+
       <div className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.6rem)] md:pt-[calc(env(safe-area-inset-top)+4.9rem)]' : 'pt-[calc(env(safe-area-inset-top)+2.4rem)]'}`}>
         <PuzzleStage className="flex h-full min-h-0 flex-1 flex-col gap-2 md:gap-3">
-          <StoryCard className="bg-white/8 text-white">
-            <p className="text-sm font-semibold text-white/90 md:text-base">
-              Keep the expedition supplies safe by converting each unit accurately.
-            </p>
-          </StoryCard>
-
           <TaskCard className="bg-black/25 text-slate-100">
             <div className="flex items-center justify-between gap-3">
               <div>

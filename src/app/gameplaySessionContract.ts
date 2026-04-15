@@ -53,6 +53,7 @@ export interface MiniGameSessionEventHandlers {
 export interface MiniGameShellContractProps {
   sessionState?: MiniGameSessionState;
   sessionEvents?: MiniGameSessionEventHandlers;
+  isPractice?: boolean;
 }
 
 const callbackByEventType: Record<MiniGameSessionEventType, keyof MiniGameSessionEventHandlers> = {

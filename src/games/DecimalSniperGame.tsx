@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { AVATARS } from '../constants';
 import { triggerHaptic } from '../haptics';
 import GameContainerView from '../components/GameContainerView';
+import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import {
   buildAimVector,
@@ -21,7 +22,7 @@ import {
   DroneTargetSeed,
 } from './decimalSniper/decimalSniperEngine';
 
-interface DecimalSniperGameProps {
+interface DecimalSniperGameProps extends MiniGameShellContractProps {
   levelId: number;
   avatarId: string;
   isBoss?: boolean;
@@ -135,6 +136,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
   levelId,
   avatarId,
   isBoss = false,
+  isPractice,
   onVictory,
   onGameOver,
   onBack,
@@ -155,7 +157,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
   const [shotsFired, setShotsFired] = useState(0);
   const [correctHits, setCorrectHits] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
-  const [showInstruction, setShowInstruction] = useState(true);
+  const [showInstruction, setShowInstruction] = useState(Boolean(isPractice));
   const [showHint, setShowHint] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [resultState, setResultState] = useState<'running' | 'victory' | 'gameover'>('running');
@@ -373,6 +375,11 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
   }, []);
 
   useEffect(() => {
+    setShowInstruction(Boolean(isPractice));
+    setShowHint(false);
+  }, [isPractice, round.id]);
+
+  useEffect(() => {
     setScore(0);
     setTimeLeft(initialTime);
     setRoundIndex(1);
@@ -390,7 +397,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
     correctHitsRef.current = 0;
     timeLeftRef.current = initialTime;
     setFeedback(null);
-    setShowInstruction(true);
+    setShowInstruction(Boolean(isPractice));
     setShowHint(false);
     setIsPaused(false);
     setResultState('running');
@@ -398,7 +405,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
     setAimPointer(null);
     activeAimPointerIdRef.current = null;
     roundStartedAtRef.current = Date.now();
-  }, [initialTime, isBoss, levelId]);
+  }, [initialTime, isBoss, isPractice, levelId]);
 
   useEffect(() => {
     const arenaNode = arenaRef.current;
@@ -419,6 +426,11 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
 
   useEffect(() => {
     if (round.id.length === 0) return undefined;
+    if (!isPractice) {
+      setShowInstruction(false);
+      setShowHint(true);
+      return undefined;
+    }
     setShowInstruction(true);
     setShowHint(false);
 
