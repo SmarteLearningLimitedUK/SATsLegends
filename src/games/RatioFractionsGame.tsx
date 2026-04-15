@@ -53,6 +53,12 @@ const TRACK_LINE_FROM_BOTTOM = 177;
 const CART_Y_SHIFT = 0;
 const FINISH_Y_SHIFT = -200;
 const FINISH_X_SHIFT = -100;
+const PLAYER_BOB_BASE_SPEED = 5.1;
+const ENEMY_BOB_BASE_SPEED = 6.4;
+const PLAYER_BOB_AMPLITUDE = 4.5;
+const ENEMY_BOB_AMPLITUDE = 3.2;
+const PLAYER_ROLL_MAX = 5;
+const ENEMY_ROLL_MAX = 4;
 
 const PLAYER_KARTS: Record<string, string> = {
   barratt: kartBarratt,
@@ -184,6 +190,8 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const enemyMoveTimerRef = useRef<number | null>(null);
   const reportedResultRef = useRef(false);
   const raceStateRef = useRef(raceState);
+  const playerBobPhaseRef = useRef(0);
+  const enemyBobPhaseRef = useRef(0);
 
   const trackProgress = Math.min(1, playerPosRef.current / tuning.trackLength);
   const lives = sessionState?.lives ?? 3;
@@ -221,6 +229,8 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     enemyPosRef.current = START_OFFSET;
     playerTargetRef.current = START_OFFSET;
     enemyTargetRef.current = START_OFFSET;
+    playerBobPhaseRef.current = 0;
+    enemyBobPhaseRef.current = 0;
   }, [levelId]);
 
   useEffect(() => {
@@ -239,6 +249,8 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
       playerPosRef.current = playerX + (playerTarget - playerX) * RACER_LERP;
       enemyPosRef.current = enemyX + (enemyTarget - enemyX) * RACER_LERP;
+      playerBobPhaseRef.current += dt * (PLAYER_BOB_BASE_SPEED + Math.abs(playerTarget - playerX) * 0.14);
+      enemyBobPhaseRef.current += dt * (ENEMY_BOB_BASE_SPEED + Math.abs(enemyTarget - enemyX) * 0.18);
 
       setRenderTick((prev) => prev + 1);
       frameId = requestAnimationFrame(tick);
@@ -410,15 +422,19 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const backdropWidthPx = Math.max(1, Math.round(backdropHeightPx * BACKDROP_ASPECT_RATIO));
   const maxBackdropScroll = Math.max(0, backdropWidthPx - viewport.width);
   const backgroundOffset = Math.round(clamp(trackProgress * maxBackdropScroll, 0, maxBackdropScroll));
+  const playerBobOffset = Math.sin(playerBobPhaseRef.current) * PLAYER_BOB_AMPLITUDE;
+  const enemyBobOffset = Math.sin(enemyBobPhaseRef.current + 1.35) * ENEMY_BOB_AMPLITUDE;
+  const playerLean = clamp((playerTargetRef.current - playerPosRef.current) * 0.9, -PLAYER_ROLL_MAX, PLAYER_ROLL_MAX);
+  const enemyLean = clamp((enemyTargetRef.current - enemyPosRef.current) * 0.85, -ENEMY_ROLL_MAX, ENEMY_ROLL_MAX);
 
   const playerStyle = {
-    transform: `translate3d(-50%, -50%, 0) scale(${PLAYER_KART_SCALE})`,
+    transform: `translate3d(-50%, calc(-50% + ${playerBobOffset}px), 0) rotate(${playerLean}deg) scale(${PLAYER_KART_SCALE})`,
     top: `${trackLineY}%`,
     left: `${playerLeft}%`,
   };
 
   const enemyStyle = {
-    transform: `translate3d(-50%, -50%, 0) scale(${KART_SCALE})`,
+    transform: `translate3d(-50%, calc(-50% + ${enemyBobOffset}px), 0) rotate(${enemyLean}deg) scale(${KART_SCALE})`,
     top: `${trackLineY}%`,
     left: `${enemyLeft}%`,
   };
