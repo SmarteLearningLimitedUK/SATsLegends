@@ -33,7 +33,7 @@ interface PotionPourGameProps {
 }
 
 type PotionPanicProps = PotionPourGameProps & MiniGameShellContractProps;
-type FeedbackKind = 'success' | null;
+type FeedbackKind = 'success' | 'error' | null;
 
 interface Ingredient {
   id: string;
@@ -270,38 +270,31 @@ const buildPotionName = (active: Ingredient[]) => {
   return `${lead} Elixir`;
 };
 
-const batchLabelText = (label?: Challenge['batchLabel']) => {
-  if (label === 'double') return 'double batch';
-  if (label === 'triple') return 'triple batch';
-  if (label === 'half') return 'half batch';
-  return '';
+const buildDifficultyLine = (stage: number) => {
+  if (stage <= 2) return '🟢 Easy:\nSimple doubling/halving';
+  if (stage <= 4) return '🟡 Medium:\nScaling up';
+  return '🔴 Hard:\nMissing both parts / word problems';
 };
 
 const buildOrderPrompt = (
-  potionName: string,
   stage: number,
   ratioText: string,
-  batchLabel?: Challenge['batchLabel'],
   cardHint?: string,
-  shareNote?: string,
 ) => {
-  const usageNote = 'Use all shown potions.';
-  if (stage === 1) {
-    return `We need to brew an ${potionName} at a ${ratioText} ratio. ${shareNote || ''} ${cardHint || 'Some drops are already in the cauldron.'} ${usageNote}`.trim();
-  }
-  if (stage === 2) {
-    return `Brew ${potionName} at a ${ratioText} ratio${batchLabelText(batchLabel) ? ` for a ${batchLabelText(batchLabel)}` : ''}. ${shareNote || ''} ${usageNote}`.trim();
-  }
-  if (stage === 3) {
-    return `${cardHint || 'Some drops are already in the cauldron.'} Finish the mix at ${ratioText}. ${shareNote || ''} ${usageNote}`.trim();
-  }
-  if (stage === 4) {
-    return `Fix the ${potionName} so the ratio is ${ratioText}${batchLabelText(batchLabel) ? ` for a ${batchLabelText(batchLabel)}` : ''}. ${shareNote || ''} ${usageNote}`.trim();
-  }
-  if (stage === 5) {
-    return `${potionName} is a courage potion made at ${ratioText}. ${shareNote || ''} ${batchLabelText(batchLabel) ? `Brew a ${batchLabelText(batchLabel)}.` : ''} ${usageNote}`.trim();
-  }
-  return `Master mix: ${potionName} at ${ratioText}${batchLabelText(batchLabel) ? ` for a ${batchLabelText(batchLabel)}` : ''}. ${shareNote || ''} ${usageNote}`.trim();
+  const ratioLine = ratioText.split(':').join(' : ');
+  const givenAmount = cardHint || 'A measured amount is already in the cauldron.';
+  return [
+    '⚗️ A potion must follow this ratio:',
+    ratioLine,
+    '',
+    'The potion currently has:',
+    '',
+    givenAmount,
+    '',
+    '👉 Find the missing amount to keep the ratio balanced.',
+    '',
+    buildDifficultyLine(stage),
+  ].join('\n');
 };
 
 const cardLabelsForMode = (mode: ChallengeMode) => {
@@ -353,12 +346,9 @@ const cardLabelsForMode = (mode: ChallengeMode) => {
 };
 
 const buildOrderFlavor = (stage: number) => {
-  if (stage === 1) return 'Follow the recipe carefully.';
-  if (stage === 2) return 'Use the total and the ratio to work out each ingredient.';
-  if (stage === 3) return 'Some of the potion is already made. Work out what is missing.';
-  if (stage === 4) return 'Something is wrong. Add the missing drops to repair the potion.';
-  if (stage === 5) return 'Turn the story into the right ratio before you brew.';
-  return 'This one takes more than one step. Think carefully about the ratio.';
+  if (stage <= 2) return '🟢 Easy: Simple doubling/halving';
+  if (stage <= 4) return '🟡 Medium: Scaling up';
+  return '🔴 Hard: Missing both parts / word problems';
 };
 
 const generateChallenge = (levelId: number, solved: number): Challenge => {
@@ -445,38 +435,29 @@ const generateChallenge = (levelId: number, solved: number): Challenge => {
   const targetCounts = baseRatio.map((value) => Math.round(value * scale));
   const totalDrops = targetCounts.reduce((sum, value) => sum + value, 0);
   const activeIngredients = activeIndices.map((index) => INGREDIENTS[index]);
-  const shareMax = Math.max(...targetCounts);
-  const shareMin = Math.min(...targetCounts);
-  const shareMaxIndex = targetCounts.findIndex((value) => value === shareMax);
-  const shareMinIndex = targetCounts.findIndex((value) => value === shareMin);
-  const shareLargest = activeIngredients[shareMaxIndex]?.name;
-  const shareSmallest = activeIngredients[shareMinIndex]?.name;
-  const shareNote = shareLargest && shareSmallest && shareMax !== shareMin
-    ? `${shareLargest} is the largest share and ${shareSmallest} is the smaller share.`
-    : 'The shares are equal.';
 
   if (levelId <= 1) {
     startCounts[1] = targetCounts[0] || 0;
-    cardHint = `${INGREDIENTS[1].name} is already in the cauldron. Add the rest.`;
+    cardHint = `${INGREDIENTS[1].name} currently has ${targetCounts[0] || 0} drops in the cauldron.`;
   } else if (mode === 'missing_value') {
     const givenRatioIndex = 1;
     startCounts[activeIndices[givenRatioIndex]] = targetCounts[givenRatioIndex];
     const givenIngredient = activeIngredients[givenRatioIndex];
-    cardHint = `${givenIngredient.name} already has ${targetCounts[givenRatioIndex]} drops in the cauldron.`;
+    cardHint = `${givenIngredient.name} currently has ${targetCounts[givenRatioIndex]} drops in the cauldron.`;
   } else if (mode === 'fix_mistake') {
     const shortIndex = targetCounts[1] > targetCounts[0] ? 1 : 0;
     startCounts[activeIndices[0]] = targetCounts[0];
     startCounts[activeIndices[1]] = Math.max(0, targetCounts[1] - baseRatio[shortIndex === 1 ? 1 : 0]);
     const shortIngredient = activeIngredients[shortIndex];
-    cardHint = `${shortIngredient.name} is too low. Add the missing drops.`;
+    cardHint = `${shortIngredient.name} is the part that needs fixing.`;
   } else if (mode === 'word_problem') {
     const givenRatioIndex = 1;
     const givenIngredient = activeIngredients[givenRatioIndex];
     startCounts[activeIndices[givenRatioIndex]] = targetCounts[givenRatioIndex];
     const leadIngredient = activeIngredients[0];
-    cardHint = `The healer has already poured ${targetCounts[givenRatioIndex]} ${givenIngredient.name} drops. How many ${leadIngredient.name} drops are needed?`;
+    cardHint = `The potion already has ${targetCounts[givenRatioIndex]} ${givenIngredient.name} drops. How many ${leadIngredient.name} drops are needed?`;
   } else if (mode === 'multi_step') {
-    cardHint = `Use ${totalDrops} drops altogether and Keep the mix balanced.`;
+    cardHint = `The potion already holds ${totalDrops} drops altogether.`;
   }
 
   const orderTitle = buildPotionName(activeIngredients);
@@ -485,7 +466,7 @@ const generateChallenge = (levelId: number, solved: number): Challenge => {
   return {
     id: nextChallengeId(),
     orderTitle,
-    orderPrompt: buildOrderPrompt(orderTitle, stage, ratioText, batchLabel, cardHint, shareNote),
+    orderPrompt: buildOrderPrompt(stage, ratioText, cardHint),
     orderFlavor: buildOrderFlavor(stage),
     stage,
     mode,
@@ -667,7 +648,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
     setHasBrewed(true);
 
     if (!isRecipeComplete) {
-      setFeedback(null);
+      setFeedback('error');
       setAttempts((prev) => prev + 1);
       emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
         score: correctSolved * 100,
@@ -675,8 +656,10 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
       });
       setLocked(true);
       feedbackTimerRef.current = setTimeout(() => {
+        if (endedRef.current) return;
+        setFeedback(null);
         setLocked(false);
-      }, 420);
+      }, SUCCESS_DELAY_MS);
       return;
     }
 
@@ -719,7 +702,9 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
   };
 
   const feedbackMessage = feedback === 'success'
-    ? 'Perfect brew. Ready to deliver.'
+    ? 'Perfect brew!'
+    : feedback === 'error'
+      ? 'Potion unstable!'
     : overfilledTargets.length > 0
       ? `Too much ${joinWithAnd(overfilledTargets.map(({ ingredient }) => ingredient.name))}.`
       : isRecipeComplete
@@ -727,13 +712,6 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
         : currentTotal > 0
           ? 'Not quite. Check the recipe.'
           : 'Choose ingredients to begin.';
-
-  const feedbackTone: FeedbackKind | 'hint' | 'neutral' =
-    feedback === 'success'
-      ? 'success'
-      : overfilledTargets.length > 0
-        ? 'hint'
-        : 'neutral';
 
   const roundsToWin = roundsToWinForLevel(levelId);
 
@@ -813,7 +791,48 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                     <div className="flex h-14 w-14 items-center justify-center rounded-full border border-emerald-200/80 bg-emerald-400/92 shadow-[0_0_28px_rgba(52,211,153,0.7)]">
                       <CheckCircle2 className="h-7 w-7 text-slate-950" />
                     </div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.14em] text-emerald-100">Perfect Brew</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.14em] text-emerald-100">Perfect brew!</p>
+                  </motion.div>
+                ) : feedback === 'error' ? (
+                  <motion.div
+                    key="error"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.92 }}
+                    className="pointer-events-none absolute inset-x-0 bottom-[18%] top-[12%] flex items-end justify-center"
+                  >
+                    <div className="relative h-full w-full max-w-[420px]">
+                      {Array.from({ length: 7 }).map((_, idx) => {
+                        const offset = idx - 3;
+                        return (
+                          <motion.span
+                            key={`smoke-${idx}`}
+                            className="absolute left-1/2 bottom-[12%] h-14 w-14 rounded-full bg-[radial-gradient(circle,rgba(21,2,36,0.96)_0%,rgba(109,40,217,0.84)_38%,rgba(15,23,42,0)_72%)] blur-[4px]"
+                            style={{ marginLeft: `${offset * 14}px` }}
+                            initial={{ opacity: 0, scale: 0.25, y: 0 }}
+                            animate={{
+                              opacity: [0, 0.95, 0],
+                              scale: [0.25, 1, 1.4],
+                              y: [0, -24 - idx * 4, -72 - idx * 8],
+                              x: [0, offset * 9, offset * 18],
+                              rotate: [0, offset * 10, offset * 22],
+                            }}
+                            transition={{
+                              duration: 1.15,
+                              delay: idx * 0.06,
+                              ease: 'easeOut',
+                              repeat: Infinity,
+                              repeatDelay: 0.25,
+                            }}
+                          />
+                        );
+                      })}
+                      <motion.div
+                        className="absolute left-1/2 bottom-[18%] h-24 w-24 -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(24,2,44,0.9)_0%,rgba(88,28,135,0.48)_38%,rgba(15,23,42,0)_76%)] blur-[6px]"
+                        animate={{ scale: [0.85, 1.05, 0.9], opacity: [0.35, 0.82, 0.42] }}
+                        transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}
+                      />
+                    </div>
                   </motion.div>
                 ) : null}
               </AnimatePresence>
@@ -865,7 +884,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
             <div className="min-h-[2.6rem]">
               {hasBrewed ? (
                 <FeedbackStrip
-                  tone={feedbackTone === 'success' ? 'success' : feedbackTone === 'hint' ? 'warning' : 'neutral'}
+                  tone={feedback === 'success' ? 'success' : feedback === 'error' || overfilledTargets.length > 0 ? 'warning' : 'neutral'}
                   className="mx-auto w-full max-w-[780px]"
                 >
                   {feedbackMessage}
@@ -894,7 +913,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                 <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Recipe</div>
                 <div className="mt-0.5 text-[clamp(1.1rem,4.2vw,1.5rem)] font-black text-white">{challenge.orderTitle}</div>
                 <div className="mt-0.5 text-[12px] font-black text-amber-100">Ratio {ratioText}</div>
-                <div className="mt-1 text-[11px] font-semibold text-cyan-100/90">
+                <div className="mt-1 whitespace-pre-line text-[11px] font-semibold text-cyan-100/90">
                   {challenge.orderPrompt || 'Use the ratio to complete the potion.'}
                 </div>
               </div>

@@ -13,7 +13,6 @@ import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import shareSplitterBackground from '../assets/maps/sharesplitterfinal.png';
 import cakeSliceAsset from '../assets/cakeslice.png';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
-import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import CelebrationSplash from '../components/CelebrationSplash';
 
 interface ShareSplitterGameProps extends MiniGameShellContractProps {
@@ -51,6 +50,9 @@ const MAX_PLATE_COUNT = 5;
 const ROUNDS_TO_WIN = 5;
 const BASE_XP_PER_ROUND = 120;
 const CAKE_SLICE_ASSET = cakeSliceAsset;
+const SHARE_SPLITTER_INTRO = `🎯 To stop the chaos, you must divide the cake correctly between the monsters based on their demanded ratio.
+
+👉 If you get it wrong… they’ll grab extra and grow stronger!`;
 const PLATE_POSITIONS: Record<number, Array<{ x: number; y: number }>> = {
   2: [
     { x: 26.8, y: 61.0 },
@@ -131,11 +133,21 @@ const shareModeForLevel = (levelId: number): ShareChallenge['mode'] => {
   return 'exam_share';
 };
 
-const buildSharePrompt = (mode: ShareChallenge['mode'], totalSlices: number, ratioText: string) => {
-  if (mode === 'direct_share') return `Share ${totalSlices} cakes from the serving plate in the ratio ${ratioText}.`;
-  if (mode === 'scaled_share') return `Use all ${totalSlices} cakes to match the ratio ${ratioText}.`;
-  if (mode === 'bigger_share') return `Work out the shares for the ratio ${ratioText} using ${totalSlices} cakes.`;
-  return `Check each plate carefully. Share ${totalSlices} cakes in the ratio ${ratioText}.`;
+const buildSharePrompt = () => {
+  return [
+    'The Monster Minds are fighting over a brainpower cake.',
+    '',
+    '👉 Only the correct ratio will stop them from turning on each other… and you.',
+    '',
+    'Divide it carefully.',
+    '',
+    'Example Question',
+    '',
+    'There are 12 slices of brainpower cake.',
+    '',
+    'The monsters demand it is shared in this ratio:',
+    '2 : 1',
+  ].join('\n');
 };
 
 const createChallenge = (levelId: number, solved: number): ShareChallenge => {
@@ -154,7 +166,7 @@ const createChallenge = (levelId: number, solved: number): ShareChallenge => {
     totalSlices,
     ratios: pattern,
     targetCounts,
-    prompt: buildSharePrompt(mode, totalSlices, ratioText),
+    prompt: buildSharePrompt(),
     mode,
     plateCount,
   };
@@ -176,7 +188,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const [remainingSlices, setRemainingSlices] = useState(challenge.totalSlices);
   const [dragSlice, setDragSlice] = useState<DragSlice | null>(null);
   const [hoverPlateIndex, setHoverPlateIndex] = useState<number | null>(null);
-  const [feedback, setFeedback] = useState('Drag cakes from the serving plate onto the plates.');
+  const [feedback, setFeedback] = useState(SHARE_SPLITTER_INTRO);
   const [feedbackTone, setFeedbackTone] = useState<FeedbackTone>('neutral');
   const [validationActive, setValidationActive] = useState(false);
   const [moveHistory, setMoveHistory] = useState<MoveRecord[]>([]);
@@ -206,7 +218,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setRemainingSlices(firstChallenge.totalSlices);
     setDragSlice(null);
     setHoverPlateIndex(null);
-    setFeedback(`Drag cakes from the serving plate onto the ${firstChallenge.plateCount} plates.`);
+    setFeedback(SHARE_SPLITTER_INTRO);
     setFeedbackTone('neutral');
     setValidationActive(false);
     setMoveHistory([]);
@@ -242,7 +254,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setValidationActive(false);
     setMoveHistory([]);
     setLocked(false);
-    setFeedback(`Drag cakes from the serving plate onto the ${next.plateCount} plates.`);
+    setFeedback(SHARE_SPLITTER_INTRO);
     setFeedbackTone('neutral');
   }, [levelId]);
 
@@ -418,7 +430,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setMoveHistory([]);
     setDragSlice(null);
     setHoverPlateIndex(null);
-    setFeedback('The plates are clear. Try the ratio again.');
+    setFeedback(SHARE_SPLITTER_INTRO);
     setFeedbackTone('neutral');
     setValidationActive(false);
   };
@@ -430,13 +442,13 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setValidationActive(true);
 
     if (!allSlicesUsed) {
-      setFeedback('Not quite. Use all the cakes before you check.');
+      setFeedback('😈 “Greed takes over!”');
       setFeedbackTone('bad');
       return;
     }
 
     if (!allCorrect) {
-      setFeedback('Not quite. Compare each plate to the ratio card.');
+      setFeedback('😈 “Greed takes over!”');
       setFeedbackTone('bad');
       return;
     }
@@ -448,7 +460,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setLocked(true);
     setRoundSolved(nextSolved);
     setXpEarned(nextXp);
-    setFeedback('Well done! The cakes were shared correctly.');
+    setFeedback('🍰 “Perfect split!”');
     setFeedbackTone('good');
     setShowCelebrationSplash(true);
 
@@ -580,6 +592,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                 >
                   <FeedbackStrip
                     tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}
+                    className="whitespace-pre-line"
                   >
                     {feedback}
                   </FeedbackStrip>
@@ -609,8 +622,8 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                 <div className="text-[12px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Share</div>
                 <div className="mt-1 text-[clamp(1.2rem,4.8vw,1.8rem)] font-black text-white">Split the Cakes</div>
                 <div className="mt-1 text-[13px] font-black text-amber-100">Ratio {challenge.ratios.join(' : ')}</div>
-                <div className="mt-2 text-[12px] font-semibold text-cyan-100/90">
-                  {formatFantasyPrompt(challenge.prompt) || 'Share the cakes to match the ratio.'}
+                <div className="mt-2 whitespace-pre-line text-[12px] font-semibold leading-tight text-cyan-100/90">
+                  {challenge.prompt || 'Share the cakes to match the ratio.'}
                 </div>
               </div>
             </div>
