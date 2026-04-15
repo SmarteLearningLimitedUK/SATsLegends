@@ -1,4 +1,4 @@
-﻿import React, { Suspense, useEffect, useMemo, useState } from 'react';
+import React, { Suspense, useMemo } from 'react';
 import { motion } from 'motion/react';
 import AvatarSelect from '../screens/AvatarSelect';
 import WorldMap from '../screens/WorldMap';
@@ -118,49 +118,6 @@ export const AppRouter: React.FC<AppRouterProps> = ({
   onOpenParentReport,
   onUpdatePlayer,
 }) => {
-  const [showInlineHint, setShowInlineHint] = useState(false);
-
-  const inlineHintText = useMemo(() => {
-    if (selectedLevel?.isPractice) {
-      return `Practice round: read the mission, use the tools, and tap help if you need a reminder.`;
-    }
-    if (hintRuleSet?.summary?.trim()) return hintRuleSet.summary.trim();
-    if (selectedRuleSet?.summary?.trim()) return selectedRuleSet.summary.trim();
-    return 'Solve the mission quickly and accurately before time runs out.';
-  }, [hintRuleSet?.summary, selectedLevel?.isPractice, selectedRuleSet?.summary]);
-
-  const inlineHintDurationMs = useMemo(() => (
-    selectedLevel?.isPractice ? 3200 : 1400
-  ), [selectedLevel?.isPractice]);
-
-  const hideMiniGameTimer = useMemo(() => {
-    if (screen !== 'gameplay' || !selectedLevel) return false;
-    if (LEVEL_TIMERS_DISABLED) return true;
-    return (
-      selectedLevel.gameType === 'potion_pour'
-    );
-  }, [screen, selectedLevel]);
-
-  useEffect(() => {
-    if (screen !== 'gameplay' || !selectedLevel) {
-      setShowInlineHint(false);
-      return undefined;
-    }
-
-    if (selectedLevel.gameType === 'take_out_rush') {
-      setShowInlineHint(false);
-      return undefined;
-    }
-
-    setShowInlineHint(true);
-    const timeoutId = window.setTimeout(() => {
-      setShowInlineHint(false);
-    }, inlineHintDurationMs);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [inlineHintDurationMs, screen, selectedLevel?.id]);
 
   const renderGameplay = () => {
     if (!selectedLevel) {
@@ -574,6 +531,12 @@ export const AppRouter: React.FC<AppRouterProps> = ({
     }
 
     case 'gameplay':
+      const hideMiniGameTimer = useMemo(() => {
+        if (screen !== 'gameplay' || !selectedLevel) return false;
+        if (LEVEL_TIMERS_DISABLED) return true;
+        return selectedLevel.gameType === 'basketball_rebounder';
+      }, [screen, selectedLevel]);
+
     const shellStyle = {
         '--game-shell-top-inset': '0.8rem',
         '--game-shell-bottom-inset': hideMiniGameTimer || LEVEL_TIMERS_DISABLED ? '3.6rem' : '4rem',
@@ -585,30 +548,6 @@ export const AppRouter: React.FC<AppRouterProps> = ({
           style={shellStyle}
         >
             <div className="game-shell-contract relative z-[2] flex h-full max-h-full w-full min-h-0 flex-col overflow-hidden">
-            {showInlineHint ? (
-              <div
-                className="pointer-events-none absolute inset-x-3 z-40 flex justify-center md:inset-x-5"
-                style={{
-                  top: 'calc(var(--game-shell-top-inset) - 2.5rem)',
-                }}
-              >
-                <motion.div
-                  initial={{ opacity: 0, y: -8, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -8, scale: 0.98 }}
-                  className="max-w-[28rem] rounded-2xl border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(19,53,120,0.92),rgba(12,36,92,0.94))] px-3 py-2 text-center text-[10px] font-black uppercase tracking-[0.1em] text-cyan-50 shadow-[0_10px_20px_rgba(2,6,23,0.4)] md:max-w-[30rem] md:px-4 md:py-2.5 md:text-[11px]"
-                >
-                  <div className="flex flex-col items-center gap-1">
-                    {selectedLevel?.isPractice ? (
-                      <span className="rounded-full border border-amber-200/50 bg-amber-300/15 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.18em] text-amber-100">
-                        Practice
-                      </span>
-                    ) : null}
-                    <span>{inlineHintText}</span>
-                  </div>
-                </motion.div>
-              </div>
-            ) : null}
 
             <div
               className="structured-game-layout relative flex h-full max-h-full w-full min-h-0 flex-1 flex-col overflow-hidden"
@@ -667,7 +606,6 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       );
   }
 };
-
 
 
 

@@ -886,7 +886,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90">
             Target Number
           </div>
-          <div className="mt-0.5 whitespace-pre-line text-[clamp(1.1rem,4.2vw,1.5rem)] font-black leading-tight text-white">
+          <div className="mt-0.5 whitespace-pre-line text-[clamp(1.1rem,4.2vw,1.5rem)] leading-tight text-white">
             {questionPrompt}
           </div>
         </div>

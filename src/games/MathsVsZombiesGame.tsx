@@ -88,6 +88,9 @@ const maxZombiesForLevel = (levelId: number) => {
   return 4 + (levelId > 5 ? 1 : 0);
 };
 
+const openingStory = `Help! Help! the monster minds have sent their minions to steal brain power.
+Defeat them using your maths superpower.`;
+
 const buildQuestion = (levelId: number): Question => {
   const roll = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
@@ -547,6 +550,10 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
         </div>
 
         <div className="mx-4 mt-4 rounded-3xl border border-blue-400/40 bg-blue-950/70 p-4 shadow-xl">
+          <div className="rounded-2xl border border-cyan-100/10 bg-white/5 px-4 py-3 text-center text-[clamp(0.92rem,3.7vw,1.1rem)] font-bold leading-tight text-amber-50 whitespace-pre-line">
+            {openingStory}
+          </div>
+          <div className="my-3 h-px w-full bg-white/10" />
           <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-center text-[clamp(1.1rem,4.5vw,1.6rem)] font-black text-white">
             {formatFantasyPrompt(question.prompt)}
           </div>

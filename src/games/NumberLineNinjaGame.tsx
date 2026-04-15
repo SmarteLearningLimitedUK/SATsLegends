@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ChevronDown } from 'lucide-react';
 import {
@@ -8,8 +8,6 @@ import {
 import dojoBackground from '../assets/maps/inside dojo.jpg';
 import monsterHitA from '../assets/bosses/a.jpg';
 import monsterHitB from '../assets/bosses/a.jpg';
-import { formatFantasyPrompt } from '../utils/fantasyPrompt';
-
 interface NumberLineNinjaGameProps {
   levelId: number;
   avatarId: string;
@@ -44,6 +42,7 @@ interface NumberLineQuestion {
 const QUESTION_ADVANCE_MS = 620;
 const QUESTION_FEEDBACK_MS = 520;
 const MONSTER_HIT_REACTION_MS = 900;
+const MONSTER_ESCAPE_LINE = 'The Monster Mind escapes deeper into the shadows, taking more brainpower with it!';
 const MONSTER_DAMAGE_LINES = ['Ouch!', 'Nice hit!', 'Direct hit!', 'Pow!', 'Bullseye!'] as const;
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -145,6 +144,13 @@ const formatNumber = (value: number) => {
   return value.toFixed(2).replace(/\.?0+$/, '');
 };
 
+const buildPrompt = () => (
+  'Fill in the missing numbers on the number line to track the stolen brainpower.\n\n'
+  + 'The path shows:\n'
+  + '30 â†’ [ ? ] â†’ 40 â†’ [ ? ] â†’ 50\n\n'
+  + 'ðŸ¥· What numbers are hidden?'
+);
+
 const createQuestion = (
   prompt: string,
   values: number[],
@@ -193,7 +199,7 @@ const buildQuestion = (levelId: number): NumberLineQuestion => {
     const start = randomInt(0, 6);
     const step = 1;
     const values = Array.from({ length: 5 }, (_, index) => start + (step * index));
-    return createQuestion('Count along the number line to find the missing number.', values, focusIndex, [
+    return createQuestion(buildPrompt(), values, focusIndex, [
       values[focusIndex] + 1,
       Math.max(0, values[focusIndex] - 1),
       values[focusIndex] + 2,
@@ -204,7 +210,7 @@ const buildQuestion = (levelId: number): NumberLineQuestion => {
     const start = randomInt(0, 5) * 2;
     const step = [2, 5][randomInt(0, 1)];
     const values = Array.from({ length: 5 }, (_, index) => start + (step * index));
-    return createQuestion('Use the equal jumps to work out the missing number.', values, focusIndex, [
+    return createQuestion(buildPrompt(), values, focusIndex, [
       values[focusIndex] + step,
       Math.max(0, values[focusIndex] - step),
       values[focusIndex] + (step * 2),
@@ -215,7 +221,7 @@ const buildQuestion = (levelId: number): NumberLineQuestion => {
     const start = randomInt(1, 6) * 10;
     const step = 10;
     const values = Array.from({ length: 5 }, (_, index) => start + (step * index));
-    return createQuestion('Count in tens to find the missing number.', values, focusIndex, [
+    return createQuestion(buildPrompt(), values, focusIndex, [
       values[focusIndex] + 10,
       values[focusIndex] - 10,
       values[focusIndex] + 20,
@@ -226,7 +232,7 @@ const buildQuestion = (levelId: number): NumberLineQuestion => {
     const start = randomInt(-6, -2) * 5;
     const step = 5;
     const values = Array.from({ length: 5 }, (_, index) => start + (step * index));
-    return createQuestion('Follow the number line through negative numbers.', values, focusIndex, [
+    return createQuestion(buildPrompt(), values, focusIndex, [
       values[focusIndex] + 5,
       values[focusIndex] - 5,
       values[focusIndex] + 10,
@@ -236,7 +242,7 @@ const buildQuestion = (levelId: number): NumberLineQuestion => {
   const base = randomInt(1, 6) / 10;
   const step = [0.1, 0.2, 0.25][randomInt(0, 2)];
   const values = Array.from({ length: 5 }, (_, index) => Number((base + (step * index)).toFixed(2)));
-  return createQuestion('Read the decimal number line and choose the missing value.', values, focusIndex, [
+  return createQuestion(buildPrompt(), values, focusIndex, [
     Number((values[focusIndex] + step).toFixed(2)),
     Number((values[focusIndex] - step).toFixed(2)),
     Number((values[focusIndex] + (step * 2)).toFixed(2)),
@@ -267,6 +273,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const [confettiBurstKey, setConfettiBurstKey] = useState(0);
   const [monsterEffect, setMonsterEffect] = useState<'idle' | 'hit'>('idle');
   const [monsterHitFx, setMonsterHitFx] = useState(false);
+  const [monsterSmokeFx, setMonsterSmokeFx] = useState(false);
   const [monsterSpeech, setMonsterSpeech] = useState<string | null>(null);
   const [monsterHitAnimationIndex, setMonsterHitAnimationIndex] = useState(0);
   const [idleMonsterSrc, setIdleMonsterSrc] = useState<string>(monsterHitA);
@@ -318,6 +325,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     setConfettiBurstKey(0);
     setMonsterEffect('idle');
     setMonsterHitFx(false);
+    setMonsterSmokeFx(false);
     setMonsterSpeech(null);
   }, [levelId, sessionState, sessionState?.timeLeft, sessionState?.totalTime]);
 
@@ -383,6 +391,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     setFlyingAnswer(null);
     setMonsterEffect('idle');
     setMonsterHitFx(false);
+    setMonsterSmokeFx(false);
     setMonsterSpeech(null);
   };
 
@@ -439,6 +448,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       setCorrectCount(nextCorrect);
       setScore(nextScore);
       setFeedbackState('correct');
+      setMonsterSmokeFx(false);
       setFlyingAnswer(getTravelAnimation(option));
       setConfettiBurstKey((current) => current + 1);
       triggerMonsterHit();
@@ -472,6 +482,8 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
     setFeedbackState('incorrect');
     setLineShake(true);
+    setMonsterSmokeFx(true);
+    setMonsterSpeech(MONSTER_ESCAPE_LINE);
 
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
       score: XP,
@@ -505,8 +517,8 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
       <div className="relative z-10 flex h-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+4.2rem)] pt-1">
         <div className="mt-[14px] shrink-0 text-center">
-          <p className="mx-auto max-w-[700px] text-[clamp(15px,1.9vw,23px)] font-black leading-tight text-white drop-shadow-[0_2px_6px_rgba(2,6,23,0.92)]">
-            {formatFantasyPrompt(question.prompt)}
+          <p className="mx-auto max-w-[700px] whitespace-pre-line text-[clamp(15px,1.9vw,23px)] font-black leading-tight text-white drop-shadow-[0_2px_6px_rgba(2,6,23,0.92)]">
+            {question.prompt}
           </p>
         </div>
 
@@ -633,7 +645,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                           animate={{ opacity: [0.5, 0.9, 0.5], scale: [0.96, 1.04, 0.96] }}
                           transition={{ duration: 0.7, repeat: Infinity, ease: 'easeInOut' }}
                         />
-                        <div className="relative rounded-full border border-amber-200/70 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.96),rgba(254,243,199,0.94)_42%,rgba(254,215,170,0.92)_100%)] px-3.5 py-1.5 text-[clamp(0.62rem,1.8vw,0.9rem)] font-black uppercase tracking-[0.05em] text-slate-800 shadow-[0_10px_18px_rgba(2,6,23,0.45)]">
+                        <div className="relative max-w-[220px] rounded-full border border-amber-200/70 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.96),rgba(254,243,199,0.94)_42%,rgba(254,215,170,0.92)_100%)] px-3.5 py-1.5 text-center text-[clamp(0.62rem,1.8vw,0.9rem)] font-black leading-tight tracking-normal text-slate-800 shadow-[0_10px_18px_rgba(2,6,23,0.45)] sm:max-w-[240px]">
                           {monsterSpeech}
                         </div>
                         <div className="absolute left-1/2 top-[100%] h-2.5 w-2.5 -translate-x-1/2 rotate-45 border-b border-r border-amber-200/70 bg-amber-100/95" />
@@ -645,22 +657,66 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                 <motion.div
                   className="absolute left-1/2 top-[62%] h-[38%] w-[56%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
                   animate={{
-                    opacity: monsterEffect === 'idle' ? 0.22 : 0.52,
-                    scale: monsterEffect === 'idle' ? 1 : [1, 1.12, 1],
+                    opacity: monsterSmokeFx ? 0.6 : monsterEffect === 'idle' ? 0.22 : 0.52,
+                    scale: monsterSmokeFx ? [1, 1.08, 0.98, 1.04, 1] : monsterEffect === 'idle' ? 1 : [1, 1.12, 1],
                     backgroundColor:
-                      monsterEffect === 'hit'
+                      monsterSmokeFx
+                        ? 'rgba(88,28,135,0.78)'
+                        : monsterEffect === 'hit'
                         ? 'rgba(248,113,113,0.92)'
                         : 'rgba(56,189,248,0.55)',
                   }}
                   transition={{
-                    duration: monsterEffect === 'hit' ? 0.32 : 0.45,
+                    duration: monsterSmokeFx ? 0.82 : monsterEffect === 'hit' ? 0.32 : 0.45,
                     ease: 'easeInOut',
-                    repeat: monsterEffect === 'idle' ? Infinity : 0,
+                    repeat: monsterSmokeFx || monsterEffect !== 'idle' ? 0 : Infinity,
                     repeatDelay: 1.1,
                   }}
                 />
 
                 <AnimatePresence>
+                  {monsterSmokeFx ? (
+                    <motion.div
+                      key={`monster-smoke-${question.id}-${feedbackState}`}
+                      className="pointer-events-none absolute inset-[-24%] z-10"
+                      initial={{ opacity: 0, scale: 0.82 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 1.04 }}
+                      transition={{ duration: 0.2, ease: 'easeOut' }}
+                    >
+                      <motion.div
+                        className="absolute inset-[10%] rounded-full bg-[radial-gradient(circle_at_50%_50%,rgba(17,24,39,0.28),rgba(88,28,135,0.6)_40%,rgba(15,23,42,0.08)_64%,transparent_78%)] blur-2xl"
+                        animate={{ rotate: [0, 120, 240, 360] }}
+                        transition={{ duration: 1.05, repeat: Infinity, ease: 'linear' }}
+                      />
+                      <motion.div
+                        className="absolute left-[14%] top-[28%] h-[34%] w-[34%] rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(139,92,246,0.74),rgba(17,24,39,0.1)_62%,transparent_80%)] blur-xl"
+                        animate={{
+                          x: [0, 16, 0, -12, 0],
+                          y: [0, -10, 6, -4, 0],
+                          rotate: [0, 90, 180, 270, 360],
+                          scale: [0.86, 1.08, 0.94, 1.02, 0.9],
+                        }}
+                        transition={{ duration: 1.35, repeat: Infinity, ease: 'easeInOut' }}
+                      />
+                      <motion.div
+                        className="absolute right-[16%] top-[18%] h-[30%] w-[30%] rounded-full bg-[radial-gradient(circle_at_65%_35%,rgba(31,41,55,0.9),rgba(168,85,247,0.58)_45%,rgba(17,24,39,0.06)_74%,transparent_84%)] blur-xl"
+                        animate={{
+                          x: [0, -12, 0, 10, 0],
+                          y: [0, 8, -6, 4, 0],
+                          rotate: [0, -90, -180, -270, -360],
+                          scale: [0.9, 1.12, 0.96, 1.04, 0.9],
+                        }}
+                        transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}
+                      />
+                      <motion.div
+                        className="absolute inset-[26%] rounded-full border border-fuchsia-400/20 bg-[radial-gradient(circle_at_center,rgba(15,23,42,0.2),rgba(88,28,135,0.25)_56%,transparent_82%)] blur-lg"
+                        animate={{ rotate: [0, 360] }}
+                        transition={{ duration: 0.9, repeat: Infinity, ease: 'linear' }}
+                      />
+                    </motion.div>
+                  ) : null}
+
                   {monsterHitFx ? (
                     <motion.div
                       key={`monster-hit-fx-${question.id}-${confettiBurstKey}`}
@@ -856,7 +912,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
           </div>
         )}
 
-        {feedbackState !== 'idle' && (
+                {feedbackState !== 'idle' && (
           <motion.div
             initial={{ opacity: 0, y: -12, scale: 0.92 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -864,13 +920,13 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
             className="pointer-events-none absolute left-1/2 top-3 z-20 -translate-x-1/2"
           >
             <div
-              className={`rounded-full px-5 py-2 text-sm font-black uppercase tracking-[0.24em] ${
+              className={`rounded-full px-5 py-2 text-sm font-black tracking-[0.08em] ${
                 feedbackState === 'correct'
                   ? 'bg-emerald-400/95 text-slate-950 shadow-[0_0_22px_rgba(52,211,153,0.85)]'
                   : 'bg-rose-500/95 text-white shadow-[0_0_20px_rgba(244,63,94,0.7)]'
               }`}
             >
-              {feedbackState === 'correct' ? 'Great Hit!' : 'Try Another!'}
+              {feedbackState === 'correct' ? 'Path revealed!' : 'The path remains hidden…'}
             </div>
           </motion.div>
         )}
@@ -897,3 +953,4 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 };
 
 export default NumberLineNinjaGame;
+
