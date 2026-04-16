@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ChevronDown } from 'lucide-react';
 import {
@@ -514,6 +514,29 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const monsterHealthPct = (monsterRemainingHealth / goalCorrect) * 100;
   const activeMonsterHitSrc = monsterHitAnimationIndex === 0 ? monsterHitA : monsterHitB;
 
+  const questionCardRef = useRef<HTMLDivElement | null>(null);
+  const [questionDockBottom, setQuestionDockBottom] = useState<number>(0);
+
+  useLayoutEffect(() => {
+    const node = questionCardRef.current;
+    if (!node) return undefined;
+
+    const update = () => {
+      const rect = node.getBoundingClientRect();
+      setQuestionDockBottom(rect.bottom);
+    };
+
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(node);
+    window.addEventListener('resize', update);
+
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', update);
+    };
+  }, [question.id]);
+
   return (
     <div ref={playfieldRef} className="relative h-full w-full overflow-hidden">
       <PracticeIntroPopup
@@ -533,18 +556,26 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_52%,rgba(56,189,248,0.14),transparent_64%)]" />
 
       {/* Standard shared question banner. */}
-      <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
-        <GameQuestionCard title="Mission">
-          {question.prompt}
-        </GameQuestionCard>
+      <div
+        ref={questionCardRef}
+        className="qa-question-card pointer-events-none fixed left-0 right-0 z-[60]"
+        style={{ top: 'calc(env(safe-area-inset-top) + 4px)' }}
+      >
+        <GameQuestionCard title="Mission">{question.prompt}</GameQuestionCard>
       </div>
 
-      <div className="relative z-10 flex h-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+5.2rem)] pt-[calc(env(safe-area-inset-top)+4.8rem)]">
+      <div
+        className="relative z-10 flex h-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+5.2rem)]"
+        style={{
+          // Keep the number line docked below the fixed question card (even when the text wraps).
+          paddingTop: `${Math.max(0, questionDockBottom + 10)}px`,
+        }}
+      >
         <div className="flex min-h-0 flex-1 flex-col items-center justify-start pt-1">
           <motion.div
             animate={lineShake ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
             transition={{ duration: 0.34, ease: 'easeInOut' }}
-            className="relative mt-2.5 flex h-[26%] min-h-[154px] w-full max-w-[680px] items-center justify-center"
+            className="qa-number-line relative mt-2.5 flex h-[26%] min-h-[154px] w-full max-w-[680px] items-center justify-center"
           >
             <motion.div
               animate={{ opacity: [0.26, 0.54, 0.26], scale: [0.985, 1.025, 0.985] }}
@@ -627,10 +658,9 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
             </div>
           </motion.div>
 
-          <div className="relative mt-1 flex h-[24%] min-h-[150px] w-full max-w-[520px] shrink-0 items-end justify-center">
+          <div className="relative mt-1 flex h-[24%] min-h-[150px] w-full max-w-[520px] shrink-0 items-end justify-center pb-10">
             <div
-              className="pointer-events-none absolute inset-x-0 mx-auto flex w-[92%] max-w-[520px] items-center justify-center gap-2"
-              style={{ bottom: '-120px' }}
+              className="qa-enemy-cluster pointer-events-none relative mx-auto flex w-[92%] max-w-[520px] items-center justify-center gap-2"
             >
               <div className="relative flex-1 min-w-[170px] max-w-[280px]">
                 <div className="relative">
@@ -799,7 +829,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
           </div>
         </div>
 
-        <div className="shrink-0 pb-1 pt-2">
+        <div className="mt-8 shrink-0 pb-1 pt-2">
           <div className="mb-2 text-center text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/88">
             Select the missing number
           </div>
