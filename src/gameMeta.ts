@@ -190,13 +190,16 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
   },
   tower_of_factors: {
     label: 'Factor Forge',
-    focus: 'Factors, multiples and factor fluency',
-    mode: 'boss',
-    rules: makeBossRules(
-      'Factor Forge',
-      'Smash the correct factor enemies in the forge before they overrun your line.',
-      'Wrong hits cost hearts, so speed matters only when your factor fluency is solid.'
-    ),
+    focus: 'Factors and multiples',
+    rules: {
+      title: 'Factor Forge',
+      summary: 'Solve factor and multiple questions with clear arithmetic reasoning.',
+      bullets: [
+        'Check divisibility carefully before choosing an answer.',
+        'Look for shared factors, multiples and exact fits.',
+        'Accuracy matters more than rushing.',
+      ],
+    },
   },
   measurement_forge: {
     label: 'Scale Master',
@@ -313,14 +316,17 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   scales_of_the_sun: {
-    label: 'Scales Of The Sun',
-    focus: 'Measure and proportion boss duel',
-    mode: 'boss',
-    rules: makeBossRules(
-      'Scales Of The Sun',
-      'Balance the desert trial by scaling recipes, converting measures and holding every ratio steady.',
-      'The sun scales punish rushed estimates, so measure with precision.'
-    ),
+    label: 'Scale Master',
+    focus: 'Measure and proportion',
+    rules: {
+      title: 'Scale Master',
+      summary: 'Convert measures and scale quantities accurately.',
+      bullets: [
+        'Use the correct unit before you answer.',
+        'Scale both sides by the same factor.',
+        'Keep conversions exact and tidy.',
+      ],
+    },
   },
   graph_grabber: {
     label: 'Graph Grabber',
@@ -336,14 +342,17 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   observatory_overload: {
-    label: 'Observatory Overload',
-    focus: 'Statistics and data boss duel',
-    mode: 'boss',
-    rules: makeBossRules(
-      'Observatory Overload',
-      'Calm the Starlight City observatory by mastering graphs, averages and high-pressure data reads.',
-      'Bad reads scramble the signals, so slow down and interpret the evidence carefully.'
-    ),
+    label: 'Data Observatory',
+    focus: 'Statistics and data reasoning',
+    rules: {
+      title: 'Data Observatory',
+      summary: 'Interpret graphs, averages and data clues accurately.',
+      bullets: [
+        'Read the chart values carefully before choosing.',
+        'Check totals, differences and averages step by step.',
+        'Slow down when several clues are combined.',
+      ],
+    },
   },
   mean_machine: {
     label: 'Mean Machine',

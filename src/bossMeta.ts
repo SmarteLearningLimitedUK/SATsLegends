@@ -10,13 +10,6 @@ export interface BossEncounter {
 }
 
 export const BOSS_ENCOUNTERS: Partial<Record<MiniGameType, BossEncounter>> = {
-  tower_of_factors: {
-    assetId: 'croc_boss',
-    name: 'Bogjaw Brute',
-    title: 'Tower Of Factors',
-    glowClass: 'from-lime-300/22 via-emerald-300/10 to-transparent',
-    chipClass: 'border-lime-200/35 bg-lime-100/14 text-lime-100',
-  },
   crystal_core: {
     assetId: 'jelly',
     name: 'SATs Paper 1: Arithmetic',
@@ -30,20 +23,6 @@ export const BOSS_ENCOUNTERS: Partial<Record<MiniGameType, BossEncounter>> = {
     title: 'SATs Paper 2: Reasoning',
     glowClass: 'from-amber-300/24 via-orange-300/12 to-transparent',
     chipClass: 'border-amber-200/35 bg-amber-100/14 text-amber-100',
-  },
-  scales_of_the_sun: {
-    assetId: 'hydra',
-    name: 'Sunscale Hydra',
-    title: 'Scales Of The Sun',
-    glowClass: 'from-cyan-300/24 via-lime-300/12 to-transparent',
-    chipClass: 'border-cyan-200/35 bg-cyan-100/14 text-cyan-100',
-  },
-  observatory_overload: {
-    assetId: 'croc_boss',
-    name: 'Constelligator',
-    title: 'Observatory Overload',
-    glowClass: 'from-sky-300/22 via-indigo-300/12 to-transparent',
-    chipClass: 'border-sky-200/35 bg-sky-100/14 text-sky-100',
   },
   matrix_match: {
     assetId: 'cyclops_slime',

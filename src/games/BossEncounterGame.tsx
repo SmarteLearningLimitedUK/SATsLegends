@@ -482,11 +482,8 @@ const generateReasoningBossQuestion = (): BossQuestion => {
 };
 
 const QUESTION_GENERATORS: Record<SupportedBossGameType, () => BossQuestion> = {
-  tower_of_factors: generateFactorsQuestion,
   crystal_core: generateFractionBossQuestion,
   mirror_gate: generateGeometryBossQuestion,
-  scales_of_the_sun: generateMeasureBossQuestion,
-  observatory_overload: generateStatisticsBossQuestion,
   matrix_match: generateReasoningBossQuestion,
 };
 
