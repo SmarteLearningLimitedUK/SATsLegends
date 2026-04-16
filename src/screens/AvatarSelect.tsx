@@ -61,13 +61,13 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
 
       <div className="relative z-10 flex h-full w-full items-center justify-center">
         <div className="avatar-select-layout relative flex h-full w-full flex-col">
-          <div className="avatar-carousel-header">
+          <div className="avatar-carousel-header translate-y-[20px]">
             <div className="avatar-carousel-banner">
               <img
                 src={bannerSrc}
                 alt=""
                 aria-hidden
-                className="avatar-carousel-banner-art"
+                className="avatar-carousel-banner-art mx-auto"
                 draggable={false}
               />
             </div>
