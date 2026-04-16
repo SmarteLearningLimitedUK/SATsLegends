@@ -544,7 +544,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
           <motion.div
             animate={lineShake ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
             transition={{ duration: 0.34, ease: 'easeInOut' }}
-            className="relative flex h-[26%] min-h-[154px] w-full max-w-[680px] items-center justify-center"
+            className="relative mt-2.5 flex h-[26%] min-h-[154px] w-full max-w-[680px] items-center justify-center"
           >
             <motion.div
               animate={{ opacity: [0.26, 0.54, 0.26], scale: [0.985, 1.025, 0.985] }}
@@ -628,25 +628,12 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
           </motion.div>
 
           <div className="relative mt-1 flex h-[24%] min-h-[150px] w-full max-w-[520px] shrink-0 items-end justify-center">
-            <div className="absolute right-4 top-0 z-20 w-[34%] min-w-[120px] rounded-lg border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)]">
-              <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
-                Enemy
-              </div>
-              <div className="relative h-2 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/80">
-                <motion.div
-                  className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-rose-500 via-rose-400 to-orange-300 shadow-[0_0_12px_rgba(251,113,133,0.75)]"
-                  animate={{ width: `${monsterHealthPct}%` }}
-                  transition={{ type: 'spring', stiffness: 210, damping: 26 }}
-                />
-                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.14)_1px,transparent_1px)] bg-[length:10%_100%]" />
-              </div>
-            </div>
-
             <div
-              className="pointer-events-none absolute inset-x-0 mx-auto w-[58%] max-w-[280px]"
-              style={{ bottom: '-105px' }}
+              className="pointer-events-none absolute inset-x-0 mx-auto flex w-[92%] max-w-[520px] flex-wrap items-center justify-center gap-2"
+              style={{ bottom: '-120px' }}
             >
-              <div className="relative">
+              <div className="relative w-[58%] max-w-[280px]">
+                <div className="relative">
                 <AnimatePresence>
                   {monsterSpeech ? (
                     <motion.div
@@ -792,6 +779,21 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                     ) : null}
                   </AnimatePresence>
                 </motion.div>
+                </div>
+              </div>
+
+              <div className="w-[34%] min-w-[104px] max-w-[168px] rounded-lg border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)]">
+                <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
+                  Enemy
+                </div>
+                <div className="relative h-2 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/80">
+                  <motion.div
+                    className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-rose-500 via-rose-400 to-orange-300 shadow-[0_0_12px_rgba(251,113,133,0.75)]"
+                    animate={{ width: `${monsterHealthPct}%` }}
+                    transition={{ type: 'spring', stiffness: 210, damping: 26 }}
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.14)_1px,transparent_1px)] bg-[length:10%_100%]" />
+                </div>
               </div>
             </div>
           </div>
