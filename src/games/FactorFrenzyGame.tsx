@@ -436,7 +436,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                       <button
                         onClick={checkAnswer}
                         disabled={selectedOptions.length === 0}
-                        className="inline-flex w-full max-w-sm items-center justify-center rounded-2xl border border-amber-100/70 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] px-4 py-3 text-sm font-black uppercase tracking-[0.14em] text-slate-900 shadow-[0_10px_20px_rgba(2,6,23,0.35)] disabled:opacity-45"
+                        className="ui-button-primary inline-flex w-full max-w-sm items-center justify-center rounded-2xl px-4 py-3 text-sm font-black uppercase tracking-[0.14em] disabled:opacity-45"
                       >
                         Submit Factors
                       </button>

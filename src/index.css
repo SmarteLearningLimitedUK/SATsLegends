@@ -5608,6 +5608,37 @@ button.avatar-hero-arrow:not(:disabled):active {
   display: none !important;
 }
 
+.app-viewport button:not([data-button-skin='none']):not(.ui-button-primary):not(.ui-button-secondary):not(.ui-button-success):not(.ui-icon-button):not(.ui-close-button):not(.game-dock-button):not(.hero-nav-button):not(.fantasy-cta-button):not(.licensed-submit-button):not(.licensed-answer-button):not([class*='bg-transparent']) {
+  border: 0 !important;
+  background:
+    var(--sat-button-secondary-skin) center/100% 100% no-repeat !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+  transition: none !important;
+  color: #eff7ff !important;
+  overflow: hidden !important;
+}
+
+.app-viewport button:not([data-button-skin='none']):not(.ui-button-primary):not(.ui-button-secondary):not(.ui-button-success):not(.ui-icon-button):not(.ui-close-button):not(.game-dock-button):not(.hero-nav-button):not(.fantasy-cta-button):not(.licensed-submit-button):not(.licensed-answer-button):not([class*='bg-transparent'])[class*='emerald'],
+.app-viewport button:not([data-button-skin='none']):not(.ui-button-primary):not(.ui-button-secondary):not(.ui-button-success):not(.ui-icon-button):not(.ui-close-button):not(.game-dock-button):not(.hero-nav-button):not(.fantasy-cta-button):not(.licensed-submit-button):not(.licensed-answer-button):not([class*='bg-transparent'])[class*='success'] {
+  background:
+    var(--sat-button-success-skin) center/100% 100% no-repeat !important;
+  color: #16341a !important;
+}
+
+.app-viewport button:not([data-button-skin='none']):not(.ui-button-primary):not(.ui-button-secondary):not(.ui-button-success):not(.ui-icon-button):not(.ui-close-button):not(.game-dock-button):not(.hero-nav-button):not(.fantasy-cta-button):not(.licensed-submit-button):not(.licensed-answer-button):not([class*='bg-transparent'])[class*='amber'],
+.app-viewport button:not([data-button-skin='none']):not(.ui-button-primary):not(.ui-button-secondary):not(.ui-button-success):not(.ui-icon-button):not(.ui-close-button):not(.game-dock-button):not(.hero-nav-button):not(.fantasy-cta-button):not(.licensed-submit-button):not(.licensed-answer-button):not([class*='bg-transparent'])[class*='yellow'],
+.app-viewport button:not([data-button-skin='none']):not(.ui-button-primary):not(.ui-button-secondary):not(.ui-button-success):not(.ui-icon-button):not(.ui-close-button):not(.game-dock-button):not(.hero-nav-button):not(.fantasy-cta-button):not(.licensed-submit-button):not(.licensed-answer-button):not([class*='bg-transparent'])[class*='stone-100'],
+.app-viewport button:not([data-button-skin='none']):not(.ui-button-primary):not(.ui-button-secondary):not(.ui-button-success):not(.ui-icon-button):not(.ui-close-button):not(.game-dock-button):not(.hero-nav-button):not(.fantasy-cta-button):not(.licensed-submit-button):not(.licensed-answer-button):not([class*='bg-transparent'])[class*='bg-white'],
+.app-viewport button:not([data-button-skin='none']):not(.ui-button-primary):not(.ui-button-secondary):not(.ui-button-success):not(.ui-icon-button):not(.ui-close-button):not(.game-dock-button):not(.hero-nav-button):not(.fantasy-cta-button):not(.licensed-submit-button):not(.licensed-answer-button):not([class*='bg-transparent'])[class*='bg-amber'],
+.app-viewport button:not([data-button-skin='none']):not(.ui-button-primary):not(.ui-button-secondary):not(.ui-button-success):not(.ui-icon-button):not(.ui-close-button):not(.game-dock-button):not(.hero-nav-button):not(.fantasy-cta-button):not(.licensed-submit-button):not(.licensed-answer-button):not([class*='bg-transparent'])[class*='bg-rose'] {
+  background:
+    var(--sat-button-primary-skin) center/100% 100% no-repeat !important;
+  color: #16233d !important;
+}
+
 
 
 

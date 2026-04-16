@@ -449,7 +449,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   onClick={nextCase}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-4 text-sm font-black uppercase tracking-widest text-stone-900 shadow-lg shadow-emerald-500/20 transition-all hover:bg-emerald-400 max-[480px]:py-3"
+                  className="ui-button-success flex w-full items-center justify-center gap-2 rounded-xl py-4 text-sm font-black uppercase tracking-widest max-[480px]:py-3"
                 >
                   Next Case File <ChevronRight className="h-4 w-4" />
                 </motion.button>
@@ -513,14 +513,14 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                     <button
                       type="button"
                       onClick={() => setSelectedSuspectId(null)}
-                      className="flex-1 rounded-xl border border-white/16 bg-white/8 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-white max-[480px]:px-3 max-[480px]:py-1.5"
+                      className="ui-button-secondary flex-1 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-[0.14em] max-[480px]:px-3 max-[480px]:py-1.5"
                     >
                       Close
                     </button>
                     <button
                       type="button"
                       onClick={() => handleAccuse(selectedSuspect.id)}
-                      className="flex-1 rounded-xl bg-amber-400 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-slate-900 max-[480px]:px-3 max-[480px]:py-1.5"
+                      className="ui-button-primary flex-1 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-[0.14em] max-[480px]:px-3 max-[480px]:py-1.5"
                     >
                       Accuse
                     </button>
@@ -548,7 +548,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                   </div>
                   <button
                     onClick={startGame}
-                    className="rounded-full bg-stone-100 px-12 py-4 text-sm font-black uppercase tracking-widest text-stone-900 transition-all hover:bg-white max-[480px]:px-8 max-[480px]:py-3 max-[480px]:text-xs"
+                    className="ui-button-primary rounded-full px-12 py-4 text-sm font-black uppercase tracking-widest max-[480px]:px-8 max-[480px]:py-3 max-[480px]:text-xs"
                   >
                     Reopen Files
                   </button>

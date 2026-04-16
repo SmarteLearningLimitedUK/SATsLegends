@@ -361,13 +361,13 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
           <div className="mt-3 flex w-full gap-3">
             <button
               onClick={handleClear}
-              className="flex h-12 flex-1 items-center justify-center gap-2 rounded-xl border-b-4 border-red-800 bg-red-600 text-base font-black transition-all active:translate-y-1 active:border-b-0 md:h-14 md:text-lg"
+              className="ui-button-secondary flex h-12 flex-1 items-center justify-center gap-2 rounded-xl text-base font-black md:h-14 md:text-lg"
             >
               <X className="h-6 w-6" /> CLEAR
             </button>
             <button
               onClick={handleServe}
-              className="flex h-12 flex-[2] items-center justify-center gap-2 rounded-xl border-b-4 border-orange-800 bg-gradient-to-b from-yellow-400 to-orange-600 text-lg font-black text-white shadow-lg transition-all active:translate-y-1 active:border-b-0 md:h-14 md:text-xl"
+              className="ui-button-primary flex h-12 flex-[2] items-center justify-center gap-2 rounded-xl text-lg font-black md:h-14 md:text-xl"
             >
               <Check className="h-8 w-8" /> SERVE ORDER
             </button>
@@ -388,7 +388,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
           </div>
           <button
             onClick={onBack}
-            className="mt-8 rounded-full bg-white px-8 py-3 text-xl font-black text-blue-900 transition-transform hover:scale-105"
+            className="ui-button-primary mt-8 rounded-full px-8 py-3 text-xl font-black"
           >
             CONTINUE
           </button>

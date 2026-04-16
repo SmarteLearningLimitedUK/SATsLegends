@@ -829,7 +829,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
                   onClick={() => handleOptionClick(index)}
                   disabled={submittedIndices !== null}
                   aria-pressed={isSelected}
-                  className={`relative flex min-h-[4.1rem] items-center justify-center rounded-[1.2rem] border px-3 py-2 text-center text-sm font-black leading-tight shadow-[0_14px_30px_rgba(2,6,23,0.18)] backdrop-blur-xl transition-all lg:min-h-[5.7rem] lg:rounded-[1.7rem] lg:px-4 lg:text-lg ${toneClass}`}
+                  className={`relative flex min-h-[4.1rem] items-center justify-center rounded-[1.2rem] px-3 py-2 text-center text-sm font-black leading-tight lg:min-h-[5.7rem] lg:rounded-[1.7rem] lg:px-4 lg:text-lg ${toneClass} ${isCorrect ? 'ui-button-success' : isSelected ? 'ui-button-primary' : 'ui-button-secondary'}`}
                 >
                   <span className="pointer-events-none absolute left-2 top-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/10 text-[9px] font-black text-white/70 lg:left-3 lg:top-3 lg:h-6 lg:w-6 lg:text-xs">
                     {String.fromCharCode(65 + index)}
@@ -849,7 +849,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
                 type="button"
                 onClick={clearSelection}
                 disabled={submittedIndices !== null || selectedIndices.length === 0}
-                className="rounded-full border border-white/14 bg-white/8 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white/75 transition disabled:cursor-not-allowed disabled:opacity-35"
+                className="ui-button-secondary rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] disabled:cursor-not-allowed disabled:opacity-35"
               >
                 Clear
               </button>
@@ -857,7 +857,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
                 type="button"
                 onClick={() => submitSelection(selectedIndices)}
                 disabled={submittedIndices !== null || selectedIndices.length === 0}
-                className="rounded-full border border-emerald-200/35 bg-emerald-400/18 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-50 transition disabled:cursor-not-allowed disabled:opacity-35"
+                className="ui-button-success rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] disabled:cursor-not-allowed disabled:opacity-35"
               >
                 Check answers
               </button>

@@ -304,10 +304,10 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
         type="button"
         onClick={() => handleSelect(option)}
         disabled={isSelected || !!feedback || isGameOver || isVictory}
-        className={`flex h-12 w-12 items-center justify-center rounded-[0.9rem] border-2 text-base font-black shadow-[0_12px_18px_rgba(0,0,0,0.3)] transition ${
+        className={`flex h-12 w-12 items-center justify-center rounded-[0.9rem] text-base font-black ${
           isSelected
-            ? 'border-white/20 bg-white/20 text-white/50'
-            : 'border-amber-200/70 bg-amber-300 text-slate-900'
+            ? 'ui-button-secondary'
+            : 'ui-button-primary'
         }`}
       >
         {option}
