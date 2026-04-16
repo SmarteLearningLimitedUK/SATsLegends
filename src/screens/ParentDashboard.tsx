@@ -94,26 +94,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
     <div className="premium-page-root relative flex h-full w-full flex-col overflow-hidden licensed-shell-bg">
       <div className="absolute inset-0 bg-slate-950/48" />
 
-      <header className="premium-page-header relative z-10 shrink-0 items-center justify-between px-4 pb-2.5 pt-[calc(0.75rem+env(safe-area-inset-top))] md:px-8 md:pb-4 md:pt-6">
-        <div className="flex min-w-0 items-center gap-3">
-          <button
-            onClick={onBack}
-            className="licensed-slice-orange-pill flex h-11 w-11 items-center justify-center rounded-full p-0 text-white md:h-12 md:w-12"
-            type="button"
-          >
-            <AssetIcon name="back" className="h-5 w-5 md:h-6 md:w-6" />
-          </button>
-          <div className="min-w-0">
-            <div className="text-aaa-micro text-white/55">Family view</div>
-            <h1 className="truncate text-lg font-black tracking-tight text-white md:text-3xl">Parent Report</h1>
-          </div>
-        </div>
-        <div className="hidden licensed-slice-paper-panel rounded-full px-4 py-2 text-sm font-black text-amber-950 md:block">
-          {player.playerName || 'Explorer'}
-        </div>
-      </header>
-
-      <div className="premium-page-content premium-page-scroll relative z-10 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 pb-24 md:px-8 md:pb-8">
+      <div className="premium-page-content premium-page-scroll relative z-10 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 pb-24 pt-[calc(0.75rem+env(safe-area-inset-top))] md:px-8 md:pb-8 md:pt-6">
         <FramedPanel className="rounded-[1.4rem] border border-white/12 bg-slate-950/62 p-4 text-white md:rounded-[2rem] md:p-6">
           <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/70">Parent snapshot</div>
           <div className="mt-2 text-2xl font-black tracking-tight md:text-4xl">One page, four answers.</div>
@@ -187,6 +168,16 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
             items={report.needsPractice}
             emptyText="No weak areas detected yet."
           />
+        </div>
+
+        <div className="flex justify-center pb-2 pt-1">
+          <button
+            type="button"
+            onClick={onBack}
+            className="ui-button-primary rounded-[1.25rem] px-8 py-3 text-base md:rounded-2xl md:px-10 md:py-4 md:text-lg"
+          >
+            Back to map
+          </button>
         </div>
       </div>
     </div>

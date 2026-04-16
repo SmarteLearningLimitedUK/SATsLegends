@@ -4,6 +4,7 @@ import AvatarSelect from '../screens/AvatarSelect';
 import WorldMap from '../screens/WorldMap';
 import IslandLevels from '../screens/IslandLevels';
 import ParentDashboard from '../screens/ParentDashboard';
+import PlayerProfile from '../screens/PlayerProfile';
 import CharacterShop from '../screens/CharacterShop';
 import AchievementTracker from '../screens/AchievementTracker';
 import WellbeingHub from '../wellbeing/WellbeingHub';
@@ -562,6 +563,8 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       return <ParentDashboard player={player} onBack={onGoHome} />;
 
     case 'profile':
+      return <PlayerProfile player={player} onBack={onGoHome} />;
+
     case 'settings':
       return (
         <GameScreenShell className="my-auto flex items-center justify-center">

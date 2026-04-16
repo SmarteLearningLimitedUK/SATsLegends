@@ -22,22 +22,7 @@ const AchievementTracker: React.FC<AchievementTrackerProps> = ({ player, onBack 
     <div className="premium-page-root relative flex h-full w-full flex-col overflow-hidden licensed-shell-bg">
       <div className="absolute inset-0 bg-slate-950/45" />
 
-      <header className="relative z-10 flex items-center justify-between px-4 pb-2.5 pt-[calc(0.75rem+env(safe-area-inset-top))] md:px-8 md:pb-4 md:pt-6">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={onBack}
-            className="licensed-slice-orange-pill flex h-11 w-11 items-center justify-center rounded-full p-0 text-white md:h-12 md:w-12"
-          >
-            <AssetIcon name="back" className="h-5 w-5 md:h-6 md:w-6" />
-          </button>
-          <div>
-            <div className="text-aaa-micro text-white/55">Badges</div>
-            <div className="text-lg font-black tracking-tight text-white md:text-3xl">Achievements</div>
-          </div>
-        </div>
-      </header>
-
-      <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4 pb-24 md:gap-4 md:px-8 md:pb-8">
+      <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4 pb-24 pt-[calc(0.75rem+env(safe-area-inset-top))] md:gap-4 md:px-8 md:pb-8 md:pt-6">
         <div className="flex flex-col gap-3">
           {achievements.map((achievement) => (
             <FramedPanel
@@ -75,6 +60,16 @@ const AchievementTracker: React.FC<AchievementTrackerProps> = ({ player, onBack 
               </div>
             </FramedPanel>
           ))}
+        </div>
+
+        <div className="flex justify-center pb-2 pt-1">
+          <button
+            type="button"
+            onClick={onBack}
+            className="ui-button-primary rounded-[1.25rem] px-8 py-3 text-base md:rounded-2xl md:px-10 md:py-4 md:text-lg"
+          >
+            Back to map
+          </button>
         </div>
       </div>
     </div>

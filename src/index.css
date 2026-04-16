@@ -50,7 +50,7 @@
   background:
     linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,0)),
     linear-gradient(180deg, rgba(255,205,86,0.98), rgba(245,154,24,0.98));
-  background-color: #f3b22b !important;
+  background-color: #2b7df3 !important;
   overflow: hidden !important;
   border-radius: var(--sat-pill-radius);
   text-shadow: 0 2px 0 rgba(0,0,0,0.3);
@@ -2709,7 +2709,7 @@ button:disabled {
   color: #15213d !important;
   background:
     var(--sat-button-primary-skin) center/100% 100% no-repeat !important;
-  background-color: #f3b22b !important;
+  background-color: #2b7df3 !important;
   overflow: hidden !important;
   text-shadow: 0 1px 0 rgba(255,255,255,0.38) !important;
   box-shadow:
@@ -2814,7 +2814,7 @@ button:disabled {
 
 .gold-pill-shell {
   overflow: hidden !important;
-  background-color: #f3b22b !important;
+  background-color: #ea4dc7 !important;
   isolation: isolate;
   border-radius: var(--sat-pill-radius);
   transition: transform 0.14s ease, filter 0.14s ease, box-shadow 0.14s ease;

@@ -340,9 +340,9 @@ const WorldMap: React.FC<WorldMapProps> = ({
           type="button"
           onClick={onOpenShop}
           className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white"
-          aria-label="Open shop"
+          aria-label="Open player profile"
         >
-          <AssetIcon name="coin" className="h-5 w-5" />
+          <AssetIcon name="user" className="h-5 w-5" />
         </button>
         <button
           type="button"
@@ -356,9 +356,9 @@ const WorldMap: React.FC<WorldMapProps> = ({
           type="button"
           onClick={() => setShowParentGate(true)}
           className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white"
-          aria-label="Open parent report"
+          aria-label="Open parent portal"
         >
-          <AssetIcon name="people" className="h-5 w-5" />
+          <AssetIcon name="doc" className="h-5 w-5" />
         </button>
       </div>
     </div>
@@ -426,7 +426,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
               {selectedIslandState.island.name}
             </div>
             <div className="mt-1 text-center text-aaa-micro text-cyan-100/82 opacity-90 font-bold">
-              {selectedIslandState.starredCount}/{selectedIslandState.totalLevels} levels cleared
+              {selectedIslandState.starredCount}/{selectedIslandState.totalLevels} brain power collected
             </div>
             <div className="mt-2 h-2.5 overflow-hidden rounded-full border border-white/20 bg-slate-950/60">
               <div

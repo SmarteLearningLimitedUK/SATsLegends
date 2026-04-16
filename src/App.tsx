@@ -68,7 +68,6 @@ const App: React.FC = () => {
     handleIslandSelect: selectIslandInFlow,
     handleLevelSelect: selectLevelInFlow,
     handleGlobalDockBack,
-    goToShop,
     goToAchievements,
     goToParentDashboard,
   } = useScreenFlow();
@@ -914,17 +913,9 @@ const App: React.FC = () => {
           <div className="relative grid grid-cols-3 gap-1.5">
             <button
               type="button"
-              onClick={goToParentDashboard}
-              className={mapDockButtonClass}
-              aria-label="Open parent portal"
-            >
-              <AssetIcon name="people" className={mapDockIconClass} />
-            </button>
-            <button
-              type="button"
               onClick={goToProfile}
               className={mapDockButtonClass}
-              aria-label="Open player stats"
+              aria-label="Open player profile"
             >
               <AssetIcon name="user" className={mapDockIconClass} />
             </button>
@@ -935,6 +926,14 @@ const App: React.FC = () => {
               aria-label="Open achievements"
             >
               <AssetIcon name="trophy" className={mapDockIconClass} />
+            </button>
+            <button
+              type="button"
+              onClick={goToParentDashboard}
+              className={mapDockButtonClass}
+              aria-label="Open parent portal"
+            >
+              <AssetIcon name="doc" className={mapDockIconClass} />
             </button>
           </div>
         </div>
@@ -1004,7 +1003,7 @@ const App: React.FC = () => {
                   calmTokens={player.calmTokens || 0}
                   onGameplayVictory={handleGameVictory}
                   onGameplayOver={handleGameOver}
-                  onOpenShop={goToShop}
+                  onOpenShop={goToProfile}
                   onOpenAchievements={goToAchievements}
                   onOpenParentReport={goToParentDashboard}
                   onUpdatePlayer={handleUpdatePlayer}
@@ -1021,7 +1020,7 @@ const App: React.FC = () => {
                 totalTime={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
                 lives={globalMiniGameLives}
                 hideTimer={hideShellTimer}
-                hideTopBar={screen === 'world_map' || screen === 'island_levels'}
+                hideTopBar={screen === 'world_map' || screen === 'island_levels' || screen === 'profile' || screen === 'achievements_tracker' || screen === 'parent_dashboard'}
                 onBack={isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
                 variant={isGameplayScreen ? 'gameplay' : 'hub'}
                 bottomContent={mapHudDock || undefined}

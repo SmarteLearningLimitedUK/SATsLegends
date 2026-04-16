@@ -4,6 +4,8 @@ import { ChevronLeft, CircleDollarSign } from 'lucide-react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import AssetIcon from '../components/AssetIcon';
 import { triggerHaptic } from '../haptics';
+import successRoundBackground from '../assets/end of round screen/success screen.jpg';
+import failureRoundBackground from '../assets/end of round screen/failure screen.jpg';
 
 interface SimplifySprintGameProps {
   levelId: number;
@@ -30,6 +32,14 @@ interface RoundQuestion {
   options: FractionPair[];
   kind: QuestionKind;
 }
+
+type RoundResultState = {
+  kind: 'success' | 'failure';
+  title: string;
+  subtitle: string;
+  statLabel: string;
+  statValue: string;
+};
 
 const gcd = (a: number, b: number): number => {
   let x = Math.abs(a);
@@ -173,12 +183,22 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
   const [startPair, setStartPair] = useState<FractionPair>(() => makeQuestion(resolvedLevel, 1).prompt);
   const [fractionShake, setFractionShake] = useState(false);
   const [fractionPulseKey, setFractionPulseKey] = useState(0);
+  const [roundResult, setRoundResult] = useState<RoundResultState | null>(null);
 
   const scoreRef = useRef(0);
   const endedRef = useRef(false);
+  const roundResultTimerRef = useRef<number | null>(null);
   scoreRef.current = XP;
 
+  const clearRoundResultTimer = useCallback(() => {
+    if (roundResultTimerRef.current !== null) {
+      window.clearTimeout(roundResultTimerRef.current);
+      roundResultTimerRef.current = null;
+    }
+  }, []);
+
   useEffect(() => {
+    clearRoundResultTimer();
     const initialQuestion = makeQuestion(resolvedLevel, 1);
     endedRef.current = false;
     setRoundNumber(1);
@@ -194,12 +214,17 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
     setStartPair(initialQuestion.prompt);
     setFractionShake(false);
     setFractionPulseKey(0);
-  }, [initialTime, resolvedLevel]);
+    setRoundResult(null);
+  }, [clearRoundResultTimer, initialTime, resolvedLevel]);
 
   useEffect(() => {
     setCurrentPair(question.prompt);
     setStartPair(question.prompt);
   }, [question]);
+
+  useEffect(() => () => {
+    clearRoundResultTimer();
+  }, [clearRoundResultTimer]);
 
   useEffect(() => {
     if (endedRef.current) return undefined;
@@ -208,7 +233,16 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
         if (prev <= 1) {
           if (!endedRef.current) {
             endedRef.current = true;
-            window.setTimeout(() => onGameOver(scoreRef.current), 120);
+            clearRoundResultTimer();
+            setFeedback(null);
+            setRoundResult({
+              kind: 'failure',
+              title: 'Time Up',
+              subtitle: 'The sprint ran out before the fraction was simplified.',
+              statLabel: 'Final XP',
+              statValue: `${scoreRef.current}`,
+            });
+            roundResultTimerRef.current = window.setTimeout(() => onGameOver(scoreRef.current), 1400);
           }
           return 0;
         }
@@ -216,15 +250,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
       });
     }, 1000);
     return () => window.clearInterval(timer);
-  }, [onGameOver]);
-
-  const finishVictory = useCallback((finalScore: number, nextAttempts: number, nextCorrect: number, nextLives: number, nextTime: number) => {
-    if (endedRef.current) return;
-    endedRef.current = true;
-    const accuracy = nextAttempts > 0 ? nextCorrect / nextAttempts : 1;
-    const stars = scoreToStars(accuracy, nextLives, nextTime);
-    window.setTimeout(() => onVictory(stars, finalScore), 380);
-  }, [onVictory]);
+  }, [clearRoundResultTimer, onGameOver]);
 
   const factorChoices = useMemo(() => getFactorChoices(currentPair), [currentPair]);
   const startGcd = useMemo(() => gcd(startPair.numerator, startPair.denominator), [startPair]);
@@ -247,7 +273,16 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
 
       if (nextLives <= 0) {
         endedRef.current = true;
-        window.setTimeout(() => onGameOver(XP), 420);
+        clearRoundResultTimer();
+        setFeedback(null);
+        setRoundResult({
+          kind: 'failure',
+          title: 'Round Failed',
+          subtitle: 'You ran out of lives on this fraction.',
+          statLabel: 'Final XP',
+          statValue: `${XP}`,
+        });
+        roundResultTimerRef.current = window.setTimeout(() => onGameOver(XP), 1400);
         return;
       }
 
@@ -281,26 +316,41 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
     const awarded = 100 + Math.max(0, Math.floor(timeLeft * 0.8)) + (resolvedLevel * 12);
     const nextScore = XP + awarded;
     const nextCorrect = correctAnswers + 1;
+    const isFinalRound = roundNumber >= totalRounds;
+    const accuracy = nextAttempts > 0 ? nextCorrect / nextAttempts : 1;
+    const stars = scoreToStars(accuracy, lives, timeLeft);
 
     setAttempts(nextAttempts);
     setScore(nextScore);
     setCorrectAnswers(nextCorrect);
-    setFeedback({ tone: 'success', text: 'Fraction fully simplified!' });
+    setFeedback(null);
 
-    if (roundNumber >= totalRounds) {
-      finishVictory(nextScore, nextAttempts, nextCorrect, lives, timeLeft);
+    clearRoundResultTimer();
+    setRoundResult({
+      kind: 'success',
+      title: isFinalRound ? 'Sprint Cleared' : 'Round Cleared',
+      subtitle: isFinalRound
+        ? 'You simplified the final fraction.'
+        : 'Brain power collected. Next fraction is loading.',
+      statLabel: isFinalRound ? 'Final XP' : 'XP Earned',
+      statValue: isFinalRound ? `${nextScore}` : `+${awarded}`,
+    });
+
+    if (isFinalRound) {
+      endedRef.current = true;
+      roundResultTimerRef.current = window.setTimeout(() => onVictory(stars, nextScore), 1400);
       return;
     }
 
-    window.setTimeout(() => {
+    roundResultTimerRef.current = window.setTimeout(() => {
       const nextRound = roundNumber + 1;
       const nextQuestion = makeQuestion(resolvedLevel, nextRound);
+      setRoundResult(null);
       setRoundNumber(nextRound);
       setQuestion(nextQuestion);
-      setCurrentPair(nextQuestion.prompt);
       setFeedback(null);
       setLocked(false);
-    }, 520);
+    }, 1400);
   };
 
   return (
@@ -415,6 +465,89 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
               }`}
             >
               {feedback.text}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {roundResult && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 overflow-hidden"
+            >
+              <div className="absolute inset-0">
+                <img
+                  src={roundResult.kind === 'success' ? successRoundBackground : failureRoundBackground}
+                  alt=""
+                  className="h-full w-full object-cover"
+                  draggable={false}
+                />
+                <div
+                  className={`absolute inset-0 ${
+                    roundResult.kind === 'success'
+                      ? 'bg-[linear-gradient(180deg,rgba(4,18,45,0.28),rgba(2,6,23,0.68))]'
+                      : 'bg-[linear-gradient(180deg,rgba(35,8,16,0.22),rgba(2,6,23,0.76))]'
+                  }`}
+                />
+                <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/35 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/55 to-transparent" />
+              </div>
+
+              <div className="relative flex h-full w-full items-center justify-center px-4 py-6">
+                <motion.div
+                  initial={{ scale: 0.92, y: 16 }}
+                  animate={{ scale: 1, y: 0 }}
+                  transition={{ type: 'spring', stiffness: 180, damping: 18 }}
+                  className={`w-full max-w-[24rem] overflow-hidden rounded-[2rem] border px-5 py-6 text-center shadow-[0_24px_60px_rgba(0,0,0,0.45)] backdrop-blur-md ${
+                    roundResult.kind === 'success'
+                      ? 'border-emerald-200/38 bg-[linear-gradient(180deg,rgba(6,39,35,0.78),rgba(5,15,32,0.9))]'
+                      : 'border-rose-200/34 bg-[linear-gradient(180deg,rgba(54,13,24,0.78),rgba(15,11,18,0.92))]'
+                  }`}
+                >
+                  <div className={`inline-flex rounded-full border px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] ${
+                    roundResult.kind === 'success'
+                      ? 'border-emerald-200/45 bg-emerald-200/16 text-emerald-50'
+                      : 'border-rose-200/45 bg-rose-200/16 text-rose-50'
+                  }`}>
+                    {roundResult.kind === 'success' ? 'Success' : 'Failure'}
+                  </div>
+
+                  <h2 className="mt-4 text-[clamp(2.25rem,9vw,3.6rem)] font-black leading-none text-white drop-shadow-[0_6px_16px_rgba(2,6,23,0.52)]">
+                    {roundResult.title}
+                  </h2>
+
+                  <p className="mt-3 text-[0.95rem] font-semibold leading-snug text-white/88">
+                    {roundResult.subtitle}
+                  </p>
+
+                  <div className="mt-5 grid grid-cols-2 gap-3">
+                    <div className="rounded-[1.2rem] border border-white/12 bg-white/8 px-4 py-3 text-left">
+                      <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/56">
+                        Round
+                      </div>
+                      <div className="mt-1 text-2xl font-black text-white">
+                        {Math.min(roundNumber, totalRounds)} / {totalRounds}
+                      </div>
+                    </div>
+                    <div className="rounded-[1.2rem] border border-white/12 bg-white/8 px-4 py-3 text-left">
+                      <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/56">
+                        {roundResult.statLabel}
+                      </div>
+                      <div className="mt-1 text-2xl font-black text-white">
+                        {roundResult.statValue}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 rounded-[1.2rem] border border-white/10 bg-black/18 px-4 py-3 text-[11px] font-black uppercase tracking-[0.16em] text-cyan-50/85">
+                    {roundResult.kind === 'success'
+                      ? 'Next challenge is loading.'
+                      : 'Returning you to the map.'}
+                  </div>
+                </motion.div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
