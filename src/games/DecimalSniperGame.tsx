@@ -138,6 +138,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
   avatarId,
   isBoss = false,
   isPractice,
+  practiceBriefing,
   onVictory,
   onGameOver,
   onBack,
@@ -376,9 +377,14 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
   }, []);
 
   useEffect(() => {
+    if (!isPractice) {
+      setShowPracticeIntro(false);
+      setShowHint(true);
+      return;
+    }
     setShowPracticeIntro(Boolean(isPractice));
     setShowHint(false);
-  }, [isPractice, round.id]);
+  }, [isPractice]);
 
   useEffect(() => {
     setScore(0);
@@ -424,18 +430,6 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
 
     return () => observer.disconnect();
   }, []);
-
-  useEffect(() => {
-    if (round.id.length === 0) return undefined;
-    if (!isPractice) {
-      setShowPracticeIntro(false);
-      setShowHint(true);
-      return undefined;
-    }
-    setShowPracticeIntro(true);
-    setShowHint(false);
-    return undefined;
-  }, [isPractice, round.id]);
 
   useEffect(() => {
     if (isPractice || resultState !== 'running' || isPaused) return undefined;
