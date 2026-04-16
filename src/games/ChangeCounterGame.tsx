@@ -361,12 +361,12 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
                   whileTap={{ scale: 0.97 }}
                   onClick={() => handleAnswer(option)}
                   disabled={locked}
-                  className={`flex min-h-[3.5rem] items-center justify-center rounded-[1.1rem] border text-base font-black shadow-[0_12px_20px_rgba(2,6,23,0.2)] transition md:min-h-[3.9rem] md:text-xl ${
+                  className={`flex min-h-[3.5rem] items-center justify-center rounded-[1.1rem] text-base font-black md:min-h-[3.9rem] md:text-xl ${
                     selected === option
                       ? option === question.correct
-                        ? 'border-emerald-200/70 bg-emerald-300/50 text-emerald-950'
-                        : 'border-rose-200/70 bg-rose-300/50 text-amber-950'
-                      : 'border-white/40 bg-white/88 text-slate-900 hover:bg-white'
+                        ? 'ui-button-success'
+                        : 'ui-button-primary'
+                      : 'ui-button-secondary'
                   }`}
                 >
                   {option}

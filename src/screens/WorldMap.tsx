@@ -339,7 +339,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
         <button
           type="button"
           onClick={onOpenShop}
-          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white"
+          className="ui-icon-button flex h-12 w-12 items-center justify-center text-white"
           aria-label="Open player profile"
         >
           <AssetIcon name="user" className="h-5 w-5" />
@@ -347,7 +347,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
         <button
           type="button"
           onClick={onOpenAchievements}
-          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white"
+          className="ui-icon-button flex h-12 w-12 items-center justify-center text-white"
           aria-label="Open achievements"
         >
           <AssetIcon name="trophy" className="h-5 w-5" />
@@ -355,7 +355,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
         <button
           type="button"
           onClick={() => setShowParentGate(true)}
-          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white"
+          className="ui-icon-button flex h-12 w-12 items-center justify-center text-white"
           aria-label="Open parent portal"
         >
           <AssetIcon name="doc" className="h-5 w-5" />
@@ -403,6 +403,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
                   onClick={() => setSelectedIslandId(island.id)}
                   aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
                   className="absolute inset-0 z-20 border border-transparent bg-transparent transition-all focus:outline-none"
+                  data-button-skin="none"
                   style={{ opacity: 1 }}
                 />
               </div>
@@ -418,7 +419,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
               type="button"
               onClick={() => setSelectedIslandId(null)}
               aria-label="Close island details"
-              className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full border border-white/18 bg-slate-950/28 text-white/90 transition hover:bg-slate-900/44"
+              className="ui-close-button absolute right-2 top-2 flex h-8 w-8 items-center justify-center text-white/90"
             >
               <X className="h-4 w-4" />
             </button>
@@ -445,7 +446,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
               disabled={!selectedIslandState.isUnlocked}
               className={`mt-3 w-full rounded-full px-4 py-3 text-aaa-sm transition-all ${
                 selectedIslandState.isUnlocked
-                  ? 'ui-button-primary shadow-[0_6px_0_rgba(146,87,8,0.8),0_14px_22px_rgba(2,6,23,0.28)]'
+                  ? 'ui-button-primary'
                   : 'cursor-not-allowed bg-slate-700/80 text-slate-200 opacity-75'
               }`}
             >

@@ -344,7 +344,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                   <button
                     type="button"
                     onClick={onBack}
-                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-700 bg-slate-800/80 text-slate-200 transition hover:bg-slate-700/80"
+                    className="ui-icon-button flex h-9 w-9 items-center justify-center text-slate-200"
                     aria-label="Back to levels"
                   >
                     <ChevronLeft className="h-5 w-5" />
@@ -462,14 +462,14 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleAnswer(option)}
                       disabled={gameState === 'success'}
-                      className={`min-h-[3.1rem] rounded-2xl border px-3 py-2.5 text-center transition-all sm:min-h-[3.4rem] sm:px-4 ${
+                      className={`min-h-[3.1rem] rounded-2xl px-3 py-2.5 text-center sm:min-h-[3.4rem] sm:px-4 ${
                         isCorrect
-                          ? 'border-emerald-400 bg-emerald-500/15 text-emerald-100 shadow-[0_0_22px_rgba(16,185,129,0.18)]'
+                          ? 'ui-button-success'
                           : isWrongSelected
-                            ? 'border-rose-400 bg-rose-500/12 text-amber-100'
+                            ? 'ui-button-primary'
                             : isSelected
-                              ? 'border-cyan-300 bg-cyan-400/10 text-white'
-                              : 'border-slate-700 bg-slate-900/55 text-slate-100 hover:border-emerald-400/60 hover:bg-slate-800/70'
+                              ? 'ui-button-primary'
+                              : 'ui-button-secondary'
                       } ${gameState === 'success' ? 'cursor-default' : ''}`}
                     >
                       <span className="text-[0.92rem] font-black leading-tight sm:text-base">{option}</span>
@@ -487,7 +487,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       onClick={nextLevel}
-                      className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-500 py-4 text-sm font-black uppercase tracking-widest text-slate-900 shadow-lg shadow-emerald-500/20 transition-all hover:bg-emerald-400"
+                      className="ui-button-success flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-sm font-black uppercase tracking-widest"
                     >
                       Next Graph <ChevronRight className="h-4 w-4" />
                     </motion.button>
@@ -532,7 +532,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                     </div>
                     <button
                       onClick={startGame}
-                      className="rounded-full bg-stone-100 px-12 py-4 text-sm font-black uppercase tracking-widest text-stone-900 transition-all hover:bg-white"
+                      className="ui-button-primary rounded-full px-12 py-4 text-sm font-black uppercase tracking-widest"
                     >
                       Play Again
                     </button>

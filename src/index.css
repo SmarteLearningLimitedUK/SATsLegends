@@ -75,6 +75,7 @@
   --sat-question-pad-x: 1rem;
   --sat-question-pad-y: 0.75rem;
   --sat-button-primary-skin: url('./assets/casual_ui/inputs/btn_1.png');
+  --sat-button-success-skin: url('./assets/casual_ui/inputs/btn_2.png');
   --sat-button-secondary-skin: url('./assets/casual_ui/inputs/btn_4.png');
   --sat-button-accent-skin: url('./assets/casual_ui/inputs/btn_5.png');
   --sat-button-cta-skin: url('./assets/casual_ui/inputs/btn_1.png');
@@ -5500,6 +5501,20 @@ button.avatar-hero-arrow:not(:disabled):active {
   overflow: hidden !important;
 }
 
+.ui-button-success,
+.mission-action-btn-success {
+  border: 0 !important;
+  background:
+    var(--sat-button-success-skin) center/100% 100% no-repeat !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+  transition: none !important;
+  color: #16341a !important;
+  overflow: hidden !important;
+}
+
 .ui-icon-button,
 .game-dock-button,
 .hero-nav-button,
@@ -5538,6 +5553,8 @@ button.avatar-hero-arrow:not(:disabled):active {
 .casual-action-button:hover,
 .licensed-slice-green-pill:hover,
 .mission-action-btn-secondary:hover,
+.ui-button-success:hover,
+.mission-action-btn-success:hover,
 .ui-icon-button:hover,
 .game-dock-button:hover,
 .hero-nav-button:hover,
@@ -5564,6 +5581,8 @@ button.avatar-hero-arrow:not(:disabled):active {
 .casual-action-button:active,
 .licensed-slice-green-pill:active,
 .mission-action-btn-secondary:active,
+.ui-button-success:active,
+.mission-action-btn-success:active,
 .ui-icon-button:active,
 .game-dock-button:active,
 .hero-nav-button:active,

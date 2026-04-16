@@ -318,14 +318,14 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
                     window.dispatchEvent(new Event(GAME_HUD_RESTART_EVENT));
                     startRound();
                   }}
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-black uppercase tracking-[0.14em] text-slate-900"
+                  className="ui-button-secondary inline-flex items-center gap-2 px-6 py-3 text-sm font-black uppercase tracking-[0.14em]"
                 >
                   <RotateCcw className="h-4 w-4" /> Replay
                 </button>
                 <button
                   type="button"
                   onClick={submitRound}
-                  className="inline-flex items-center gap-2 rounded-full bg-amber-300 px-6 py-3 text-sm font-black uppercase tracking-[0.14em] text-slate-900"
+                  className="ui-button-primary inline-flex items-center gap-2 px-6 py-3 text-sm font-black uppercase tracking-[0.14em]"
                 >
                   Continue <ChevronRight className="h-4 w-4" />
                 </button>

@@ -374,7 +374,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
               type="button"
               onClick={handleSubmit}
               disabled={successPulse}
-              className="w-full rounded-[1.35rem] border border-amber-200/60 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] py-3 text-sm font-black uppercase tracking-[0.18em] text-slate-900 shadow-[0_10px_20px_rgba(2,6,23,0.32)] disabled:opacity-60"
+              className="ui-button-primary w-full rounded-[1.35rem] py-3 text-sm font-black uppercase tracking-[0.18em] disabled:opacity-60"
             >
               Submit Weights
             </button>

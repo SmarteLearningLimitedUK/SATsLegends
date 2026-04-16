@@ -164,7 +164,7 @@ const UnitCard: React.FC<{
   <button
     type="button"
     onClick={onSelect}
-    className={`relative flex min-h-[5.2rem] flex-1 items-center gap-3 overflow-hidden rounded-[1.5rem] border px-3 py-3 text-left shadow-[0_18px_30px_rgba(15,23,42,0.2)] transition-all active:scale-[0.98] md:min-h-[6rem] md:px-4 ${selected ? 'border-amber-200/80 bg-[linear-gradient(180deg,rgba(251,191,36,0.38),rgba(147,51,234,0.24))] ring-2 ring-amber-200/40' : 'border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.8),rgba(30,41,59,0.9))]'}`}
+    className={`relative flex min-h-[5.2rem] flex-1 items-center gap-3 overflow-hidden rounded-[1.5rem] px-3 py-3 text-left md:min-h-[6rem] md:px-4 ${selected ? 'ui-button-primary' : 'ui-button-secondary'}`}
   >
     <div className="absolute inset-x-[8%] top-[10%] h-[20%] rounded-full bg-white/12 blur-md" />
     <DefenderToken type={type} />
@@ -424,7 +424,7 @@ const RatioRapidsGame: React.FC<RatioRapidsGameProps> = ({
                         key={`slot-${index}`}
                         type="button"
                         onClick={() => handleSlotClick(index)}
-                        className="absolute flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[1.2rem] border border-white/18 bg-[linear-gradient(180deg,rgba(15,23,42,0.42),rgba(15,23,42,0.68))] shadow-[0_16px_24px_rgba(15,23,42,0.25)] transition-transform active:scale-[0.98] md:h-16 md:w-16"
+                        className="ui-icon-button absolute flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[1.2rem] md:h-16 md:w-16"
                         style={{ left: `${slot.x}%`, top: `${slot.y}%` }}
                       >
                         <div className="absolute inset-[6%] rounded-[1rem] border border-white/12 bg-black/10" />

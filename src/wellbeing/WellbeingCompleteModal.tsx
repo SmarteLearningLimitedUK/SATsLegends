@@ -50,13 +50,13 @@ const WellbeingCompleteModal: React.FC<WellbeingCompleteModalProps> = ({
             {rewardLabel}
           </div>
           <div className="mt-5 flex flex-col gap-2">
-            <button type="button" onClick={onContinue} className="rounded-full bg-[linear-gradient(180deg,#8ff7da_0%,#63d8c8_100%)] px-4 py-3 text-sm font-black uppercase tracking-[0.14em] text-slate-950 shadow-[0_12px_22px_rgba(14,165,164,0.26)]">
+            <button type="button" onClick={onContinue} className="ui-button-success px-4 py-3 text-sm font-black uppercase tracking-[0.14em]">
               Continue
             </button>
-            <button type="button" onClick={onPlayAnother} className="rounded-full border border-cyan-100/22 bg-white/6 px-4 py-3 text-sm font-black uppercase tracking-[0.14em] text-cyan-50">
+            <button type="button" onClick={onPlayAnother} className="ui-button-secondary px-4 py-3 text-sm font-black uppercase tracking-[0.14em]">
               Play Another Calm Activity
             </button>
-            <button type="button" onClick={onBackToHub} className="rounded-full border border-white/12 bg-slate-950/28 px-4 py-3 text-sm font-black uppercase tracking-[0.14em] text-white/82">
+            <button type="button" onClick={onBackToHub} className="ui-button-secondary px-4 py-3 text-sm font-black uppercase tracking-[0.14em]">
               Back To Grove
             </button>
           </div>

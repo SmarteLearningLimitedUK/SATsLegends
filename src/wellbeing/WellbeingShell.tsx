@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { motion } from 'motion/react';
 import { Sparkles } from 'lucide-react';
 
@@ -39,10 +39,10 @@ const WellbeingShell: React.FC<WellbeingShellProps> = ({ title, subtitle, type, 
       <button
         type="button"
         onClick={onExit}
-        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-cyan-100/28 bg-slate-900/55 text-white shadow-[0_10px_18px_rgba(2,6,23,0.34)]"
+        className="ui-icon-button inline-flex h-11 w-11 items-center justify-center text-white"
         aria-label="Exit calm activity"
       >
-        <span className="text-lg font-black">�</span>
+        <span className="text-lg font-black">×</span>
       </button>
 
       <div className="flex-1 text-center">
@@ -80,3 +80,4 @@ const WellbeingShell: React.FC<WellbeingShellProps> = ({ title, subtitle, type, 
 );
 
 export default WellbeingShell;
+

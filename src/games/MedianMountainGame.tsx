@@ -262,7 +262,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
             <button
               type="button"
               onClick={onBack}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-100/45 bg-[#123062]/72 text-cyan-100 shadow-[0_8px_18px_rgba(2,6,23,0.38)]"
+              className="ui-icon-button inline-flex h-9 w-9 items-center justify-center text-cyan-100"
               aria-label="Back to levels"
             >
               <ChevronLeft className="h-5 w-5" />
@@ -302,10 +302,10 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
                     <button
                       type="button"
                       onClick={toggleSort}
-                      className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] transition ${
+                      className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] ${
                         isSorted
-                          ? 'border-amber-100/70 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] text-slate-900'
-                          : 'border-cyan-100/45 bg-[#0d2a5a]/82 text-cyan-100'
+                          ? 'ui-button-primary'
+                          : 'ui-button-secondary'
                       }`}
                     >
                       <ArrowUpDown className="h-3.5 w-3.5" />
@@ -363,7 +363,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
                     <button
                       type="button"
                       onClick={nextLevel}
-                      className="inline-flex h-12 min-w-[148px] items-center justify-center gap-2 rounded-2xl border border-amber-100/70 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] px-5 text-sm font-black uppercase tracking-[0.12em] text-slate-900 shadow-[0_10px_22px_rgba(2,6,23,0.35)]"
+                      className="ui-button-primary inline-flex h-12 min-w-[148px] items-center justify-center gap-2 rounded-2xl px-5 text-sm font-black uppercase tracking-[0.12em]"
                     >
                       Next
                       <ChevronRight className="h-4 w-4" />
@@ -372,7 +372,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
                     <button
                       type="submit"
                       disabled={!userAnswer.trim() || !isSessionActive}
-                      className="inline-flex h-12 min-w-[148px] items-center justify-center rounded-2xl border border-amber-100/70 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] px-5 text-sm font-black uppercase tracking-[0.12em] text-slate-900 shadow-[0_10px_22px_rgba(2,6,23,0.35)] disabled:opacity-55"
+                      className="ui-button-primary inline-flex h-12 min-w-[148px] items-center justify-center rounded-2xl px-5 text-sm font-black uppercase tracking-[0.12em] disabled:opacity-55"
                     >
                       Verify Median
                     </button>
@@ -413,7 +413,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
                   window.dispatchEvent(new Event(GAME_HUD_RESTART_EVENT));
                   startGame();
                 }}
-                className="mt-5 inline-flex items-center gap-2 rounded-2xl border border-amber-100/70 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] px-6 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-900 shadow-[0_10px_22px_rgba(2,6,23,0.35)]"
+                className="ui-button-primary mt-5 inline-flex items-center gap-2 rounded-2xl px-6 py-3 text-sm font-black uppercase tracking-[0.12em]"
               >
                 <RotateCcw className="h-4 w-4" />
                 Replay

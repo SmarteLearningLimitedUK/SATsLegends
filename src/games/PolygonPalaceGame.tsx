@@ -799,7 +799,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
                     type="button"
                     disabled={isLocked || roundOver}
                     onClick={() => onChoiceTap(choice.id)}
-                    className="rounded-[1rem] border border-amber-100/72 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] px-2 py-2.5 text-center text-sm font-black text-slate-900 shadow-[0_10px_18px_rgba(2,6,23,0.34)] transition active:scale-[0.98] disabled:opacity-55"
+                    className="ui-button-primary rounded-[1rem] px-2 py-2.5 text-center text-sm font-black disabled:opacity-55"
                   >
                     {choice.label}
                   </button>
@@ -815,7 +815,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
                     type="button"
                     disabled={isLocked || roundOver}
                     onClick={() => onChoiceTap(choice.id)}
-                    className="rounded-[1rem] border border-cyan-100/30 bg-blue-950/48 px-2 py-3 text-center text-sm font-black text-cyan-50 shadow-[0_10px_18px_rgba(2,6,23,0.34)] transition hover:border-cyan-100/48 active:scale-[0.98] disabled:opacity-55"
+                    className="ui-button-secondary rounded-[1rem] px-2 py-3 text-center text-sm font-black disabled:opacity-55"
                   >
                     {choice.label}
                   </button>
@@ -834,11 +834,11 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
                         type="button"
                         disabled={isLocked || roundOver}
                         onClick={() => onChoiceTap(choice.id)}
-                        className={`rounded-[0.92rem] border px-2 py-2 text-left text-[0.77rem] font-bold transition active:scale-[0.98] ${
+                        className={`rounded-[0.92rem] px-2 py-2 text-left text-[0.77rem] font-bold disabled:opacity-55 ${
                           selected
-                            ? 'border-cyan-100/85 bg-cyan-400/28 text-white'
-                            : 'border-white/16 bg-slate-900/46 text-cyan-50/95 hover:border-cyan-100/35'
-                        } disabled:opacity-55`}
+                            ? 'ui-button-primary'
+                            : 'ui-button-secondary'
+                        }`}
                       >
                         {choice.label}
                       </button>
@@ -850,7 +850,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
                   type="button"
                   disabled={isLocked || roundOver}
                   onClick={submitProperties}
-                  className="rounded-[1rem] border border-amber-100/72 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] py-2.5 text-sm font-black uppercase tracking-[0.14em] text-slate-900 shadow-[0_10px_18px_rgba(2,6,23,0.34)] transition active:scale-[0.98] disabled:opacity-55"
+                  className="ui-button-primary rounded-[1rem] py-2.5 text-sm font-black uppercase tracking-[0.14em] disabled:opacity-55"
                 >
                   Submit Properties
                 </button>

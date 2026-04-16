@@ -428,7 +428,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                 <span>Adjust the scale</span>
                 <button
                   onClick={() => setShowBase((previous) => !previous)}
-                  className="rounded-full border border-white/20 bg-slate-900/40 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-white/80"
+                  className="ui-button-secondary rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em]"
                 >
                   {showBase ? 'Hide guide' : 'Show guide'}
                 </button>
@@ -437,7 +437,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                 <button
                   onClick={() => adjustDimension('width', -0.25)}
                   disabled={gameState !== 'playing'}
-                  className="rounded-lg border border-white/20 bg-[linear-gradient(180deg,#1e3a8a,#1e293b)] px-2 py-2 text-xs font-black uppercase tracking-[0.12em] text-white disabled:opacity-45"
+                  className="ui-button-secondary rounded-lg px-2 py-2 text-xs font-black uppercase tracking-[0.12em] disabled:opacity-45"
                 >
                   {isDimensionMode
                     ? 'L-0.25'
@@ -446,14 +446,14 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                 <button
                   onClick={resetLevel}
                   disabled={gameState !== 'playing'}
-                  className="rounded-lg border border-white/20 bg-[linear-gradient(180deg,#1e3a8a,#1e293b)] px-2 py-2 text-xs font-black uppercase tracking-[0.12em] text-white disabled:opacity-45"
+                  className="ui-button-secondary rounded-lg px-2 py-2 text-xs font-black uppercase tracking-[0.12em] disabled:opacity-45"
                 >
                   Reset
                 </button>
                 <button
                   onClick={() => adjustDimension('height', 0.25)}
                   disabled={gameState !== 'playing'}
-                  className="rounded-lg border border-white/20 bg-[linear-gradient(180deg,#1e3a8a,#1e293b)] px-2 py-2 text-xs font-black uppercase tracking-[0.12em] text-white disabled:opacity-45"
+                  className="ui-button-secondary rounded-lg px-2 py-2 text-xs font-black uppercase tracking-[0.12em] disabled:opacity-45"
                 >
                   {isDimensionMode
                     ? 'W+0.25'
@@ -464,7 +464,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                 {gameState === 'success' ? (
                   <button
                     onClick={proceed}
-                    className="col-span-2 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-emerald-100/40 bg-[linear-gradient(180deg,#34d399,#10b981)] px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-emerald-950 shadow-[0_10px_18px_rgba(5,150,105,0.36)]"
+                    className="ui-button-success col-span-2 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em]"
                   >
                     Next project <ChevronRight className="h-4 w-4" />
                   </button>
@@ -523,7 +523,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                   <div className="mt-6 flex flex-col gap-2">
                     <button
                       onClick={finishAndContinue}
-                      className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-emerald-100/40 bg-[linear-gradient(180deg,#34d399,#10b981)] px-5 py-2 text-sm font-black uppercase tracking-[0.14em] text-emerald-950"
+                      className="ui-button-success inline-flex min-h-[44px] items-center justify-center rounded-xl px-5 py-2 text-sm font-black uppercase tracking-[0.14em]"
                     >
                       Continue
                     </button>
@@ -532,7 +532,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                         window.dispatchEvent(new Event(GAME_HUD_RESTART_EVENT));
                         restartProject();
                       }}
-                      className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-white/22 bg-[linear-gradient(180deg,#1e3a8a,#1e293b)] px-5 py-2 text-sm font-black uppercase tracking-[0.14em] text-white"
+                      className="ui-button-secondary inline-flex min-h-[44px] items-center justify-center rounded-xl px-5 py-2 text-sm font-black uppercase tracking-[0.14em]"
                     >
                       New Project
                     </button>

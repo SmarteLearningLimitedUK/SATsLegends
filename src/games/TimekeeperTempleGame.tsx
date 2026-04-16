@@ -251,7 +251,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={checkTime}
-                  className="w-full rounded-2xl border border-blue-400/20 bg-gradient-to-r from-blue-600 to-blue-500 py-2.5 text-base font-black shadow-[0_8px_0_rgb(30,58,138)] transition-all active:translate-y-1 active:shadow-none md:py-3 md:text-lg"
+                  className="ui-button-primary w-full rounded-2xl py-2.5 text-base font-black md:py-3 md:text-lg"
                 >
                   SUBMIT TIME
                 </motion.button>
@@ -259,7 +259,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
 
               <button
                 onClick={resetRun}
-                className="mt-2.5 flex min-h-[1.8rem] items-center justify-center gap-2 text-[10px] font-bold tracking-widest text-slate-300 transition-colors hover:text-white"
+                className="ui-button-secondary mt-2.5 flex min-h-[1.8rem] items-center justify-center gap-2 px-4 py-2 text-[10px] font-bold tracking-widest"
               >
                 <RotateCcw size={14} /> RESET CLOCK
               </button>
@@ -279,21 +279,17 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
 function ControlButton({
   onClick,
   icon,
-  color,
 }: {
   onClick: () => void;
   icon: React.ReactNode;
   color: 'blue' | 'purple';
 }) {
-  const baseColor = color === 'blue' ? 'from-blue-500 to-blue-700' : 'from-purple-500 to-purple-700';
-  const borderColor = color === 'blue' ? 'border-blue-400/30' : 'border-purple-400/30';
-
   return (
     <motion.button
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       onClick={onClick}
-      className={`flex h-12 w-12 items-center justify-center rounded-xl border ${borderColor} bg-gradient-to-b ${baseColor} shadow-[0_4px_0_rgba(0,0,0,0.5)] transition-all active:translate-y-1 active:shadow-none`}
+      className="ui-icon-button flex h-12 w-12 items-center justify-center rounded-xl"
     >
       <div className="text-white drop-shadow-md">{icon}</div>
     </motion.button>

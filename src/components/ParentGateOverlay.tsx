@@ -86,7 +86,7 @@ const ParentGateOverlay: React.FC<ParentGateOverlayProps> = ({ isOpen, onClose, 
               onPointerDown={handleHoldStart}
               onPointerUp={stopHold}
               onPointerLeave={stopHold}
-              className="mt-4 w-full rounded-full border border-cyan-200/30 bg-cyan-200/10 py-3 text-sm font-black uppercase tracking-[0.2em] text-cyan-50"
+              className="ui-button-primary mt-4 w-full py-3 text-sm font-black uppercase tracking-[0.2em]"
             >
               Hold here
             </button>

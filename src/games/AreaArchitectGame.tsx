@@ -250,12 +250,12 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
               whileTap={{ scale: 0.96 }}
               onClick={() => handleAnswer(option)}
               disabled={locked}
-              className={`h-12 rounded-[1rem] border text-lg font-black shadow-[0_12px_20px_rgba(2,6,23,0.28)] ${
+              className={`h-12 rounded-[1rem] text-lg font-black ${
                 selected === option
                   ? option === question.correct
-                    ? 'border-emerald-200/70 bg-emerald-400/35 text-emerald-50'
-                    : 'border-rose-200/70 bg-rose-400/35 text-amber-50'
-                  : 'border-white/18 bg-slate-900/70 text-white'
+                    ? 'ui-button-success'
+                    : 'ui-button-primary'
+                  : 'ui-button-secondary'
               }`}
             >
               {option} sq units

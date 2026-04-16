@@ -486,7 +486,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
                       type="button"
                       disabled={isLocked || roundOver}
                       onClick={() => evaluateAnswer(option.q, option.r)}
-                      className="rounded-[1rem] border border-amber-100/72 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] p-3 text-center text-slate-900 shadow-[0_10px_18px_rgba(2,6,23,0.34)] transition active:scale-[0.98] disabled:opacity-55"
+                      className="ui-button-primary rounded-[1rem] p-3 text-center disabled:opacity-55"
                     >
                       <div className="text-[11px] font-black uppercase tracking-[0.12em]">Option {idx + 1}</div>
                       <div className="mt-1 text-[clamp(1.1rem,5vw,1.65rem)] font-black">{option.q} r {option.r}</div>
@@ -526,11 +526,11 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
                         type="button"
                         disabled={isLocked || roundOver}
                         onClick={() => setSelectedSplitQ(value)}
-                        className={`rounded-[0.95rem] border p-2 text-[clamp(1rem,4.5vw,1.4rem)] font-black transition active:scale-[0.98] ${
+                        className={`rounded-[0.95rem] p-2 text-[clamp(1rem,4.5vw,1.4rem)] font-black disabled:opacity-55 ${
                           selectedSplitQ === value
-                            ? 'border-cyan-100 bg-cyan-400/34 text-white'
-                            : 'border-cyan-100/24 bg-blue-950/44 text-cyan-50'
-                        } disabled:opacity-55`}
+                            ? 'ui-button-primary'
+                            : 'ui-button-secondary'
+                        }`}
                       >
                         {value}
                       </button>
@@ -543,11 +543,11 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
                         type="button"
                         disabled={isLocked || roundOver}
                         onClick={() => setSelectedSplitR(value)}
-                        className={`rounded-[0.95rem] border p-2 text-[clamp(1rem,4.5vw,1.4rem)] font-black transition active:scale-[0.98] ${
+                        className={`rounded-[0.95rem] p-2 text-[clamp(1rem,4.5vw,1.4rem)] font-black disabled:opacity-55 ${
                           selectedSplitR === value
-                            ? 'border-amber-100 bg-amber-400/34 text-white'
-                            : 'border-amber-100/24 bg-blue-950/44 text-amber-50'
-                        } disabled:opacity-55`}
+                            ? 'ui-button-primary'
+                            : 'ui-button-secondary'
+                        }`}
                       >
                         {value}
                       </button>
@@ -563,8 +563,8 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
                   <button
                     type="button"
                     onClick={() => setManualField('q')}
-                    className={`rounded-[0.95rem] border p-2.5 text-center ${
-                      manualField === 'q' ? 'border-cyan-100 bg-cyan-400/26' : 'border-cyan-100/22 bg-blue-950/42'
+                    className={`rounded-[0.95rem] p-2.5 text-center ${
+                      manualField === 'q' ? 'ui-button-primary' : 'ui-button-secondary'
                     }`}
                   >
                     <div className="text-[9px] font-black uppercase tracking-[0.14em] text-cyan-100/78">Quotient</div>
@@ -573,8 +573,8 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
                   <button
                     type="button"
                     onClick={() => setManualField('r')}
-                    className={`rounded-[0.95rem] border p-2.5 text-center ${
-                      manualField === 'r' ? 'border-amber-100 bg-amber-400/26' : 'border-amber-100/22 bg-blue-950/42'
+                    className={`rounded-[0.95rem] p-2.5 text-center ${
+                      manualField === 'r' ? 'ui-button-primary' : 'ui-button-secondary'
                     }`}
                   >
                     <div className="text-[9px] font-black uppercase tracking-[0.14em] text-amber-100/78">Remainder</div>
@@ -593,9 +593,9 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
                       type="button"
                       disabled={isLocked || roundOver}
                       onClick={() => handleManualKeypad(String(key))}
-                      className={`rounded-[0.92rem] border border-cyan-100/24 bg-blue-950/44 p-2.5 text-[clamp(0.95rem,4.4vw,1.35rem)] font-black text-white ${
+                      className={`ui-button-secondary rounded-[0.92rem] p-2.5 text-[clamp(0.95rem,4.4vw,1.35rem)] font-black ${
                         key === 'DEL' ? 'col-span-2' : ''
-                      } transition active:scale-[0.98] disabled:opacity-55`}
+                      } disabled:opacity-55`}
                     >
                       {key}
                     </button>
@@ -606,7 +606,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
                   type="button"
                   onClick={submitManual}
                   disabled={isLocked || roundOver}
-                  className="rounded-[1rem] border border-amber-100/72 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] py-2.5 text-sm font-black uppercase tracking-[0.14em] text-slate-900 shadow-[0_10px_18px_rgba(2,6,23,0.34)] transition active:scale-[0.98] disabled:opacity-55"
+                  className="ui-button-primary rounded-[1rem] py-2.5 text-sm font-black uppercase tracking-[0.14em] disabled:opacity-55"
                 >
                   Submit Answer
                 </button>

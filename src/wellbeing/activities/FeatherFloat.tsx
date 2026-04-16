@@ -52,7 +52,7 @@ const FeatherFloat: React.FC<WellbeingActivityComponentProps> = ({ onComplete, o
             onPointerUp={() => setHolding(false)}
             onPointerCancel={() => setHolding(false)}
             onPointerLeave={() => setHolding(false)}
-            className="absolute bottom-5 left-1/2 w-[72%] -translate-x-1/2 rounded-full border border-cyan-100/20 bg-[linear-gradient(180deg,rgba(143,247,218,0.95),rgba(99,216,200,0.92))] px-4 py-3 text-sm font-black uppercase tracking-[0.14em] text-slate-950 shadow-[0_14px_26px_rgba(45,212,191,0.25)]"
+            className="ui-button-primary absolute bottom-5 left-1/2 w-[72%] -translate-x-1/2 px-4 py-3 text-sm font-black uppercase tracking-[0.14em]"
           >
             Hold gently
           </button>

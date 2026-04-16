@@ -448,7 +448,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
               whileTap={{ scale: 0.97 }}
               disabled={locked}
               onClick={() => handleFactor(factor)}
-              className="rounded-[1.1rem] border border-cyan-200/45 bg-[linear-gradient(180deg,rgba(56,189,248,0.26),rgba(15,23,42,0.86))] px-2 py-4 shadow-[0_14px_26px_rgba(0,0,0,0.45)] transition hover:bg-[linear-gradient(180deg,rgba(59,130,246,0.3),rgba(15,23,42,0.86))] disabled:opacity-70"
+              className="ui-button-secondary rounded-[1.1rem] px-2 py-4 disabled:opacity-70"
             >
               <span className="text-[clamp(1.1rem,2.7vw,1.7rem)] font-black uppercase tracking-[0.1em] text-cyan-50">
                 ÷ {factor}

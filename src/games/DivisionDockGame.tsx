@@ -294,7 +294,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
                       type="button"
                       onClick={() => addToBoat(index)}
                       disabled={isFinished || remainingGoods <= 0}
-                      className="flex flex-col items-center justify-center gap-1 rounded-[0.9rem] border border-white/12 bg-white/10 p-1.5 text-center shadow-[0_8px_14px_rgba(2,6,23,0.18)] transition active:scale-[0.98] disabled:opacity-60"
+                      className="ui-button-secondary flex flex-col items-center justify-center gap-1 rounded-[0.9rem] p-1.5 text-center disabled:opacity-60"
                     >
                       <div className="relative h-10 w-14 overflow-hidden rounded-md border border-white/18 bg-transparent">
                         <img

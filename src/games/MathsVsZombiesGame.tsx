@@ -578,12 +578,12 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
                 type="button"
                 onClick={() => handleAnswer(index)}
                 disabled={locked}
-                className={`rounded-2xl border-2 px-3 py-3 text-lg font-black transition ${
+                className={`rounded-2xl px-3 py-3 text-lg font-black ${
                   locked && selectedAnswer === index
                     ? index === question.correctIndex
-                      ? 'border-emerald-300 bg-emerald-400/40 text-emerald-100'
-                      : 'border-rose-300 bg-rose-400/35 text-amber-100'
-                    : 'border-blue-300/50 bg-blue-800/60 text-white hover:bg-blue-700/70'
+                      ? 'ui-button-success'
+                      : 'ui-button-primary'
+                    : 'ui-button-secondary'
                 }`}
               >
                 {option}

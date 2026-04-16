@@ -194,12 +194,12 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
                 whileTap={{ scale: 0.96 }}
                 onClick={() => handleAnswer(option)}
                 disabled={locked}
-                className={`flex min-h-[2.6rem] items-center justify-center rounded-[0.95rem] border text-[0.98rem] font-black shadow-[0_10px_18px_rgba(2,6,23,0.22)] transition ${
+                className={`flex min-h-[2.6rem] items-center justify-center rounded-[0.95rem] text-[0.98rem] font-black ${
                   selected === option
                     ? option === round.top
-                      ? 'border-emerald-200/70 bg-emerald-300/50 text-emerald-950'
-                      : 'border-rose-200/70 bg-rose-300/50 text-amber-950'
-                    : 'border-cyan-100/30 bg-[linear-gradient(180deg,#2563eb_0%,#1d4ed8_100%)] text-white'
+                      ? 'ui-button-success'
+                      : 'ui-button-primary'
+                    : 'ui-button-secondary'
                 }`}
               >
                 {option}

@@ -43,7 +43,7 @@ const CandleCalm: React.FC<WellbeingActivityComponentProps> = ({ onComplete, onE
             onPointerUp={() => setHolding(false)}
             onPointerCancel={() => setHolding(false)}
             onPointerLeave={() => setHolding(false)}
-            className="rounded-full border border-amber-100/25 bg-[linear-gradient(180deg,rgba(251,191,36,0.95),rgba(245,158,11,0.92))] px-5 py-3 text-sm font-black uppercase tracking-[0.14em] text-slate-950 shadow-[0_14px_26px_rgba(245,158,11,0.22)]"
+            className="ui-button-primary px-5 py-3 text-sm font-black uppercase tracking-[0.14em]"
           >
             Steady the flame
           </button>

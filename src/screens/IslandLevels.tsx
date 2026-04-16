@@ -439,7 +439,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                 <button
                   type="button"
                   onClick={onOpenWellbeing}
-                  className="mt-3 w-full rounded-xl bg-[linear-gradient(180deg,#8ff7da_0%,#63d8c8_100%)] px-4 py-3 text-aaa-sm text-slate-950 shadow-[0_12px_24px_rgba(20,184,166,0.2)]"
+                  className="ui-button-success mt-3 w-full rounded-xl px-4 py-3 text-aaa-sm"
                 >
                   Take Calm Break
                 </button>

@@ -232,14 +232,14 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
                   <>
                     <button
                       type="button"
-                      className="rounded-full bg-[linear-gradient(90deg,#38bdf8,#6366f1)] py-3 text-sm font-black uppercase tracking-[0.18em] text-white shadow-[0_12px_24px_rgba(59,130,246,0.45)]"
+                      className="ui-button-primary py-3 text-sm font-black uppercase tracking-[0.18em]"
                       onClick={onRetry}
                     >
                       Retry Practice
                     </button>
                     <button
                       type="button"
-                      className="rounded-full border border-white/25 bg-white/10 py-2 text-xs font-black uppercase tracking-[0.18em] text-white"
+                      className="ui-button-secondary py-2 text-xs font-black uppercase tracking-[0.18em]"
                       onClick={onMap}
                     >
                       Map
@@ -248,7 +248,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
                 ) : isVictory ? (
                   <button
                     type="button"
-                    className="rounded-full bg-[linear-gradient(90deg,#38bdf8,#6366f1)] py-3 text-sm font-black uppercase tracking-[0.18em] text-white shadow-[0_12px_24px_rgba(59,130,246,0.45)]"
+                    className="ui-button-primary py-3 text-sm font-black uppercase tracking-[0.18em]"
                     onClick={onNext || onMap}
                   >
                     {onNext ? 'Next Level' : 'Return to Map'}
@@ -256,7 +256,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
                 ) : (
                   <button
                     type="button"
-                    className="rounded-full bg-[linear-gradient(90deg,#38bdf8,#6366f1)] py-3 text-sm font-black uppercase tracking-[0.18em] text-white shadow-[0_12px_24px_rgba(59,130,246,0.45)]"
+                    className="ui-button-primary py-3 text-sm font-black uppercase tracking-[0.18em]"
                     onClick={onRetry}
                   >
                     Retry
@@ -264,7 +264,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
                 )}
                 <button
                   type="button"
-                  className="rounded-full border border-white/25 bg-white/10 py-2 text-xs font-black uppercase tracking-[0.18em] text-white"
+                  className="ui-button-secondary py-2 text-xs font-black uppercase tracking-[0.18em]"
                   onClick={onMap}
                 >
                   Map
@@ -272,7 +272,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
                 {calmBreakLabel && onCalmBreak ? (
                   <button
                     type="button"
-                    className="rounded-full border border-emerald-200/40 bg-emerald-400/20 py-2 text-xs font-black uppercase tracking-[0.18em] text-emerald-100"
+                    className="ui-button-success py-2 text-xs font-black uppercase tracking-[0.18em]"
                     onClick={onCalmBreak}
                   >
                     {calmBreakLabel}

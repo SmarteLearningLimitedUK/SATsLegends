@@ -46,10 +46,10 @@ const ThoughtSort: React.FC<WellbeingActivityComponentProps> = ({ onComplete, on
         ) : null}
 
         <div className="grid w-full grid-cols-2 gap-3">
-          <button type="button" onClick={() => handleDrop('let_go')} className="rounded-[1.5rem] border border-cyan-100/14 bg-[linear-gradient(180deg,rgba(103,232,249,0.12),rgba(14,116,144,0.18))] px-4 py-5 text-center text-sm font-black uppercase tracking-[0.14em] text-cyan-50">
+          <button type="button" onClick={() => handleDrop('let_go')} className="ui-button-secondary rounded-[1.5rem] px-4 py-5 text-center text-sm font-black uppercase tracking-[0.14em]">
             Let Go Cloud
           </button>
-          <button type="button" onClick={() => handleDrop('keep')} className="rounded-[1.5rem] border border-emerald-100/14 bg-[linear-gradient(180deg,rgba(110,231,183,0.16),rgba(6,95,70,0.18))] px-4 py-5 text-center text-sm font-black uppercase tracking-[0.14em] text-emerald-50">
+          <button type="button" onClick={() => handleDrop('keep')} className="ui-button-success rounded-[1.5rem] px-4 py-5 text-center text-sm font-black uppercase tracking-[0.14em]">
             Keep Box
           </button>
         </div>

@@ -643,7 +643,7 @@ const VolumeVaultGame: React.FC<VolumeVaultGameShellProps> = ({
               {question.countOptions.map((option) => {
                 const selected = selectedCountAnswer === option;
                 return (
-                  <motion.button key={`count-${question.id}-${option}`} whileTap={{ scale: 0.97 }} type="button" onClick={() => setSelectedCountAnswer(option)} className={`h-11 rounded-full border px-4 text-lg font-black transition ${selected ? 'border-amber-100/80 bg-[linear-gradient(180deg,#fde68a_0%,#f59e0b_100%)] text-slate-900 shadow-[0_8px_14px_rgba(180,83,9,0.5)]' : 'border-cyan-100/45 bg-slate-900/65 text-cyan-100 shadow-[0_8px_14px_rgba(2,6,23,0.35)]'}`}>
+                  <motion.button key={`count-${question.id}-${option}`} whileTap={{ scale: 0.97 }} type="button" onClick={() => setSelectedCountAnswer(option)} className={`h-11 rounded-full px-4 text-lg font-black ${selected ? 'ui-button-primary' : 'ui-button-secondary'}`}>
                     {option}
                   </motion.button>
                 );
@@ -656,7 +656,7 @@ const VolumeVaultGame: React.FC<VolumeVaultGameShellProps> = ({
               {question.shapeChoices.map((choice) => {
                 const selected = selectedShapeId === choice.id;
                 return (
-                  <motion.button key={choice.id} whileTap={{ scale: 0.97 }} type="button" onClick={() => setSelectedShapeId(choice.id)} className={`rounded-2xl border p-2 transition ${selected ? 'border-amber-100/80 bg-slate-900/78 shadow-[0_0_22px_rgba(251,191,36,0.42)]' : 'border-cyan-100/35 bg-slate-900/52'}`}>
+                  <motion.button key={choice.id} whileTap={{ scale: 0.97 }} type="button" onClick={() => setSelectedShapeId(choice.id)} className={`rounded-2xl p-2 ${selected ? 'ui-button-primary' : 'ui-button-secondary'}`}>
                     <MiniShapePreview board={choice.board} selected={selected} />
                     <p className="mt-1 text-center text-xs font-black uppercase tracking-[0.12em] text-cyan-50">{choice.label}</p>
                   </motion.button>
@@ -668,10 +668,10 @@ const VolumeVaultGame: React.FC<VolumeVaultGameShellProps> = ({
 
         <section className="shrink-0">
           <div className="mx-auto flex w-full max-w-[760px] items-center gap-2">
-            <motion.button type="button" whileTap={{ scale: 0.96 }} onClick={onUndo} disabled={!interactive || history.length === 0 || locked} className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-full border border-cyan-100/45 bg-slate-900/68 text-xs font-black uppercase tracking-[0.11em] text-cyan-50 disabled:opacity-45"><Undo2 className="h-4 w-4" />Undo</motion.button>
-            <motion.button type="button" whileTap={{ scale: 0.96 }} onClick={() => setRemoveMode((v) => !v)} disabled={!interactive || locked} className={`inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-full border text-xs font-black uppercase tracking-[0.11em] disabled:opacity-45 ${removeMode ? 'border-rose-200/70 bg-rose-500/70 text-white' : 'border-cyan-100/45 bg-slate-900/68 text-cyan-50'}`}><Wrench className="h-4 w-4" />{removeMode ? 'Remove' : 'Add'}</motion.button>
-            <motion.button type="button" whileTap={{ scale: 0.96 }} onClick={() => resetQuestion(question)} disabled={locked} className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-full border border-cyan-100/45 bg-slate-900/68 text-xs font-black uppercase tracking-[0.11em] text-cyan-50 disabled:opacity-45"><RotateCcw className="h-4 w-4" />Reset</motion.button>
-            <motion.button type="button" whileTap={{ scale: 0.96 }} onClick={onCheck} disabled={!isSessionActive || locked || didComplete || didFail} className="inline-flex h-10 flex-[1.3] items-center justify-center gap-2 rounded-full border border-amber-100/80 bg-[linear-gradient(180deg,#fde68a_0%,#f59e0b_100%)] px-4 text-xs font-black uppercase tracking-[0.13em] text-amber-950 shadow-[0_10px_18px_rgba(180,83,9,0.45)] disabled:opacity-45"><Check className="h-4 w-4" />Check Answer</motion.button>
+            <motion.button type="button" whileTap={{ scale: 0.96 }} onClick={onUndo} disabled={!interactive || history.length === 0 || locked} className="ui-button-secondary inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-full text-xs font-black uppercase tracking-[0.11em] disabled:opacity-45"><Undo2 className="h-4 w-4" />Undo</motion.button>
+            <motion.button type="button" whileTap={{ scale: 0.96 }} onClick={() => setRemoveMode((v) => !v)} disabled={!interactive || locked} className={`inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-full text-xs font-black uppercase tracking-[0.11em] disabled:opacity-45 ${removeMode ? 'ui-button-primary' : 'ui-button-secondary'}`}><Wrench className="h-4 w-4" />{removeMode ? 'Remove' : 'Add'}</motion.button>
+            <motion.button type="button" whileTap={{ scale: 0.96 }} onClick={() => resetQuestion(question)} disabled={locked} className="ui-button-secondary inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-full text-xs font-black uppercase tracking-[0.11em] disabled:opacity-45"><RotateCcw className="h-4 w-4" />Reset</motion.button>
+            <motion.button type="button" whileTap={{ scale: 0.96 }} onClick={onCheck} disabled={!isSessionActive || locked || didComplete || didFail} className="ui-button-primary inline-flex h-10 flex-[1.3] items-center justify-center gap-2 rounded-full px-4 text-xs font-black uppercase tracking-[0.13em] disabled:opacity-45"><Check className="h-4 w-4" />Check Answer</motion.button>
           </div>
         </section>
 

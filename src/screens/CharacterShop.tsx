@@ -74,7 +74,7 @@ const CharacterShop: React.FC<CharacterShopProps> = ({ player, onBack, onUpdateP
         <div className="flex items-center gap-3">
           <button
             onClick={onBack}
-            className="licensed-slice-orange-pill flex h-11 w-11 items-center justify-center rounded-full p-0 text-white md:h-12 md:w-12"
+            className="ui-icon-button flex h-11 w-11 items-center justify-center p-0 text-white md:h-12 md:w-12"
           >
             <AssetIcon name="back" className="h-5 w-5 md:h-6 md:w-6" />
           </button>
@@ -93,7 +93,7 @@ const CharacterShop: React.FC<CharacterShopProps> = ({ player, onBack, onUpdateP
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setActiveCategory('all')}
-            className={`rounded-full px-4 py-2 text-aaa-sm ${activeCategory === 'all' ? 'bg-cyan-300 text-slate-950' : 'bg-slate-950/60 text-white/70'}`}
+            className={`${activeCategory === 'all' ? 'ui-button-primary text-[#16233d]' : 'ui-button-secondary'} px-4 py-2 text-aaa-sm`}
           >
             All
           </button>
@@ -101,7 +101,7 @@ const CharacterShop: React.FC<CharacterShopProps> = ({ player, onBack, onUpdateP
             <button
               key={category.id}
               onClick={() => setActiveCategory(category.id)}
-              className={`rounded-full px-4 py-2 text-aaa-sm ${activeCategory === category.id ? 'bg-cyan-300 text-slate-950' : 'bg-slate-950/60 text-white/70'}`}
+              className={`${activeCategory === category.id ? 'ui-button-primary text-[#16233d]' : 'ui-button-secondary'} px-4 py-2 text-aaa-sm`}
             >
               {category.label}
             </button>

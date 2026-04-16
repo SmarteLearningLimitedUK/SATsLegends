@@ -575,12 +575,12 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                   whileTap={{ scale: 0.96 }}
                   onClick={() => handleAnswer(option)}
                   disabled={locked || raceState !== 'showingQuestion'}
-                  className={`min-h-[3.1rem] rounded-[1rem] border px-2 py-2 text-center text-base font-black shadow-[0_12px_20px_rgba(2,6,23,0.25)] transition ${
+                  className={`min-h-[3.1rem] rounded-[1rem] px-2 py-2 text-center text-base font-black ${
                     selected === option
                       ? option === question.correctAnswer
-                        ? 'border-emerald-200 bg-emerald-300 text-emerald-950'
-                        : 'border-rose-200 bg-rose-300 text-rose-950'
-                      : 'border-amber-200 bg-amber-400 text-slate-900'
+                        ? 'ui-button-success'
+                        : 'ui-button-primary'
+                      : 'ui-button-secondary'
                   }`}
                 >
                   {option}

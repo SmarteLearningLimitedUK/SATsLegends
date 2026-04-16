@@ -516,10 +516,10 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
                 whileTap={{ scale: 0.96 }}
                 onClick={() => handleOptionTap(option)}
                 disabled={locked || (tracingRequired && !traceComplete)}
-                className={`h-10 rounded-2xl border text-base font-black shadow-[0_8px_16px_rgba(2,6,23,0.35)] sm:h-11 sm:text-lg md:h-13 md:text-xl ${
+                className={`h-10 rounded-2xl text-base font-black sm:h-11 sm:text-lg md:h-13 md:text-xl ${
                   selectedOption === option
-                    ? 'border-yellow-200/80 bg-[linear-gradient(180deg,#fcd34d,#f59e0b)] text-amber-950'
-                    : 'border-sky-100/30 bg-slate-900/72 text-white disabled:opacity-45'
+                    ? 'ui-button-primary'
+                    : 'ui-button-secondary disabled:opacity-45'
                 }`}
               >
                 <span className="leading-none">{option}</span>

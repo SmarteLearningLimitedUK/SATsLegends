@@ -529,7 +529,7 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
                         type="button"
                         disabled={isLocked || roundOver}
                         onClick={() => handleChoiceTap(option.id)}
-                        className="rounded-[0.95rem] border border-cyan-100/24 bg-blue-950/44 px-2 py-2 text-center text-sm font-black text-cyan-50 transition active:scale-[0.98] disabled:opacity-55"
+                        className="ui-button-secondary rounded-[0.95rem] px-2 py-2 text-center text-sm font-black disabled:opacity-55"
                       >
                         <div className="flex items-center justify-center pb-1.5">
                           <ShapeCard shape={question.shape} orientation={option.orientation || 0} showPivot={false} />
@@ -555,7 +555,7 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
                         type="button"
                         disabled={isLocked || roundOver}
                         onClick={() => handleChoiceTap(option.id)}
-                        className="rounded-[0.95rem] border border-amber-100/72 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] px-2 py-2.5 text-center text-sm font-black text-slate-900 shadow-[0_10px_18px_rgba(2,6,23,0.34)] transition active:scale-[0.98] disabled:opacity-55"
+                        className="ui-button-primary rounded-[0.95rem] px-2 py-2.5 text-center text-sm font-black disabled:opacity-55"
                       >
                         {option.label}
                       </button>
@@ -573,7 +573,7 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
                   type="button"
                   disabled={isLocked || roundOver}
                   onClick={() => handleRotate('acw')}
-                  className="rounded-[0.95rem] border border-cyan-100/24 bg-blue-950/44 px-2 py-2.5 text-center text-sm font-black text-cyan-50 transition active:scale-[0.98] disabled:opacity-55"
+                  className="ui-button-secondary rounded-[0.95rem] px-2 py-2.5 text-center text-sm font-black disabled:opacity-55"
                 >
                   Rotate left 90
                 </button>
@@ -581,7 +581,7 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
                   type="button"
                   disabled={isLocked || roundOver}
                   onClick={() => handleRotate('cw')}
-                  className="rounded-[0.95rem] border border-cyan-100/24 bg-blue-950/44 px-2 py-2.5 text-center text-sm font-black text-cyan-50 transition active:scale-[0.98] disabled:opacity-55"
+                  className="ui-button-secondary rounded-[0.95rem] px-2 py-2.5 text-center text-sm font-black disabled:opacity-55"
                 >
                   Rotate right 90
                 </button>
@@ -589,7 +589,7 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
                   type="button"
                   disabled={isLocked || roundOver}
                   onClick={submitRotationMatch}
-                  className="rounded-[0.95rem] border border-amber-100/72 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] px-2 py-2.5 text-center text-sm font-black text-slate-900 shadow-[0_10px_18px_rgba(2,6,23,0.34)] transition active:scale-[0.98] disabled:opacity-55"
+                  className="ui-button-primary rounded-[0.95rem] px-2 py-2.5 text-center text-sm font-black disabled:opacity-55"
                 >
                   Submit
                 </button>

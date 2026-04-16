@@ -36,7 +36,7 @@ const WellbeingHub: React.FC<WellbeingHubProps> = ({ activities, calmTokens, onS
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.04, duration: 0.2 }}
-                className="rounded-[1.45rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(18,44,84,0.96),rgba(10,26,55,0.98))] px-4 py-4 text-left shadow-[0_14px_28px_rgba(2,6,23,0.22)] transition hover:border-cyan-100/26 hover:bg-[linear-gradient(180deg,rgba(26,56,102,0.98),rgba(12,31,62,0.98))]"
+                className="ui-button-secondary rounded-[1.45rem] px-4 py-4 text-left"
               >
                 <div className="flex items-start gap-3">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(180deg,rgba(125,211,252,0.3),rgba(129,140,248,0.22))] text-2xl shadow-[0_0_18px_rgba(125,211,252,0.16)]">

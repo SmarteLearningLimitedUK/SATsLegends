@@ -380,7 +380,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                 <div className="mt-5 flex flex-col gap-2.5">
                   <button
                     onClick={submitRun}
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-emerald-100/60 bg-emerald-500/28 px-5 py-3 text-sm font-black uppercase tracking-[0.12em] text-emerald-50"
+                    className="ui-button-success inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-black uppercase tracking-[0.12em]"
                   >
                     <CheckCircle2 className="h-4 w-4" /> Submit Run
                   </button>
@@ -389,7 +389,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                       window.dispatchEvent(new Event(GAME_HUD_RESTART_EVENT));
                       startGame();
                     }}
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-amber-100/70 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] px-5 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-900"
+                    className="ui-button-primary inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-black uppercase tracking-[0.12em]"
                   >
                     <RotateCcw className="h-4 w-4" /> Restart
                   </button>

@@ -448,14 +448,14 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
                 whileTap={{ scale: 0.985 }}
                 onClick={() => handleAnswer(index)}
                 disabled={isLocked || didEndRef.current}
-                className={`relative min-h-[3.2rem] overflow-hidden rounded-[1.2rem] border px-3 py-2 text-center shadow-[0_14px_24px_rgba(0,0,0,0.26)] transition ${
+                className={`relative min-h-[3.2rem] overflow-hidden rounded-[1.2rem] px-3 py-2 text-center ${
                   isCorrect
-                    ? 'border-emerald-200/70 bg-[linear-gradient(180deg,rgba(52,211,153,0.9),rgba(5,150,105,0.86))]'
+                    ? 'ui-button-success'
                     : isIncorrect
-                      ? 'border-rose-200/70 bg-[linear-gradient(180deg,rgba(251,146,60,0.92),rgba(225,29,72,0.88))]'
+                      ? 'ui-button-primary'
                       : isSelected
-                        ? 'border-cyan-100/55 bg-[linear-gradient(180deg,rgba(56,189,248,0.45),rgba(14,116,144,0.62))]'
-                        : 'border-cyan-100/24 bg-[linear-gradient(180deg,rgba(13,39,84,0.94),rgba(8,24,51,0.96))]'
+                        ? 'ui-button-primary'
+                        : 'ui-button-secondary'
                 }`}
               >
                 <div className="absolute inset-x-[8%] top-[12%] h-[34%] rounded-full bg-white/12 blur-md" />
