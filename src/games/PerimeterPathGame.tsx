@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import perimeterBackground from '../assets/maps/desert.jpg';
+import perimeterBackground from '../assets/maps/finalmap.png';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface PerimeterPathGameProps {

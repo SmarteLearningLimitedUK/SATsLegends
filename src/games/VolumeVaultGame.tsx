@@ -6,7 +6,7 @@ import {
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
 import vaultSprite from '../assets/vault.png';
-import vaultBackdrop from '../assets/maps/dungeon.jpg';
+import vaultBackdrop from '../assets/maps/finalmap.png';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface VolumeVaultGameProps {

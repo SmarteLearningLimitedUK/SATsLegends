@@ -10,7 +10,7 @@ import {
   SecondaryButton,
 } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
-import shareSplitterBackground from '../assets/maps/sharesplitterfinal.png';
+import shareSplitterBackground from '../assets/maps/backgroundsforgames/sharesplitterfinal.png';
 import cakeSliceAsset from '../assets/cakeslice.png';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import CelebrationSplash from '../components/CelebrationSplash';
@@ -134,13 +134,8 @@ const shareModeForLevel = (levelId: number): ShareChallenge['mode'] => {
 const buildSharePrompt = () => {
   return [
     'The Monster Minds are fighting over a brainpower cake.',
-    '',
-    'Only the correct ratio will stop them from turning on each other and you.',
-    '',
-    'Example Question',
-    '',
-    'There are 12 slices of brainpower cake.',
-    'The Monster Minds demand it is shared in a ratio of 2:1.',
+    'Drag slices from the cake to the plates.',
+    'Keep the ratio balanced before they grow stronger.',
   ].join('\n');
 };
 
@@ -632,7 +627,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
               <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-[17px] py-[13px] text-center backdrop-blur-sm">
                 <div className="text-[12px] font-black uppercase tracking-[0.18em] text-amber-100/90">Share Splitter</div>
                 <div className="mt-1 text-[clamp(1.2rem,4.8vw,1.8rem)] font-black text-white">Match the Ratio</div>
-                <div className="mt-2 whitespace-pre-line text-[12px] font-semibold leading-tight text-cyan-100/90">
+                <div className="game-question-copy mt-2 whitespace-pre-line text-[12px] font-semibold leading-tight text-cyan-100/90">
                   {promptText}
                 </div>
               </div>

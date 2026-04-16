@@ -2,6 +2,7 @@ import React from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { X } from 'lucide-react';
 import { MiniGamePracticeBriefing } from '../../app/gameplaySessionContract';
+import splashStartPill from '../../assets/casual_ui/inputs/btn_1.png';
 
 type PracticeIntroPopupProps = {
   open: boolean;
@@ -63,7 +64,7 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
                 <ul className="mt-3 space-y-2">
                   {briefing.bullets.map((bullet, index) => (
                     <li key={`${briefing.title}-bullet-${index}`} className="flex gap-2">
-                      <span className="mt-[0.18rem] shrink-0 text-amber-100">•</span>
+                      <span className="mt-[0.18rem] shrink-0 text-amber-100">-</span>
                       <span>{bullet}</span>
                     </li>
                   ))}
@@ -76,13 +77,24 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
             )}
           </div>
           <div className="mt-4 flex shrink-0 justify-center">
-            <button
+            <motion.button
               type="button"
               onClick={onAction}
-              className="game-button-primary inline-flex min-h-[2.8rem] items-center justify-center px-5 py-2 text-[11px] uppercase tracking-[0.14em]"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="relative h-12 w-[min(14rem,72vw)] rounded-full border-0 bg-transparent p-0 shadow-[0_8px_22px_rgba(0,0,0,0.35)]"
             >
-              {actionLabel}
-            </button>
+              <img
+                src={splashStartPill}
+                alt=""
+                aria-hidden
+                draggable={false}
+                className="absolute inset-0 h-full w-full rounded-full object-fill"
+              />
+              <span className="relative z-10 text-[11px] font-normal uppercase tracking-[0.12em] text-black drop-shadow-[0_1px_0_rgba(255,255,255,0.45)] md:text-sm">
+                {actionLabel}
+              </span>
+            </motion.button>
           </div>
         </motion.div>
       </motion.div>

@@ -6,7 +6,7 @@ import rockStage19 from '../assets/mine/19.png';
 import rockStage20 from '../assets/mine/20.png';
 import rockStage21 from '../assets/mine/21.png';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
-import mineBackground from '../assets/maps/multiplication mine background.jpg';
+import mineBackground from '../assets/maps/backgroundsforgames/multiplication mine background.jpg';
 import MiniGameTopBar from '../components/MiniGameTopBar';
 import { triggerHaptic } from '../haptics';
 

@@ -557,9 +557,6 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
             })}
           </AnimatePresence>
 
-          <div className="absolute right-3 top-3 rounded-full border border-amber-200/70 bg-[linear-gradient(180deg,rgba(251,191,36,0.98),rgba(245,158,11,0.98))] px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-amber-950 shadow-[0_8px_16px_rgba(2,6,23,0.24)]">
-            Wave {Math.max(1, levelId)}
-          </div>
         </div>
 
         <div className="mx-4 mt-4 rounded-3xl border border-blue-400/40 bg-blue-950/70 p-4 shadow-xl">

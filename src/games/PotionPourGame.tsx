@@ -275,16 +275,10 @@ const buildOrderPrompt = (
   ratioText: string,
   cardHint?: string,
 ) => {
-  const ratioLine = ratioText.split(':').join(' : ');
-  const givenAmount = cardHint || 'A measured amount is already in the cauldron.';
   return [
     `Target recipe [${title}]`,
-    `Ratio ${ratioLine}`,
-    '',
-    'The potion currently has:',
-    givenAmount,
-    '',
-    'Add the missing elements to keep the ratio balanced.',
+    `Ratio ${ratioText}`,
+    `${cardHint || 'Current mix is shown below.'} Keep the ratio balanced.`,
   ].join('\n');
 };
 
@@ -429,26 +423,26 @@ const generateChallenge = (levelId: number, solved: number): Challenge => {
 
   if (levelId <= 1) {
     startCounts[1] = targetCounts[0] || 0;
-    cardHint = `${INGREDIENTS[1].name} currently has ${targetCounts[0] || 0} drops in the cauldron.`;
+    cardHint = `${INGREDIENTS[1].name} has ${targetCounts[0] || 0} drops.`;
   } else if (mode === 'missing_value') {
     const givenRatioIndex = 1;
     startCounts[activeIndices[givenRatioIndex]] = targetCounts[givenRatioIndex];
     const givenIngredient = activeIngredients[givenRatioIndex];
-    cardHint = `${givenIngredient.name} currently has ${targetCounts[givenRatioIndex]} drops in the cauldron.`;
+    cardHint = `${givenIngredient.name} has ${targetCounts[givenRatioIndex]} drops.`;
   } else if (mode === 'fix_mistake') {
     const shortIndex = targetCounts[1] > targetCounts[0] ? 1 : 0;
     startCounts[activeIndices[0]] = targetCounts[0];
     startCounts[activeIndices[1]] = Math.max(0, targetCounts[1] - baseRatio[shortIndex === 1 ? 1 : 0]);
     const shortIngredient = activeIngredients[shortIndex];
-    cardHint = `${shortIngredient.name} is the part that needs fixing.`;
+    cardHint = `${shortIngredient.name} needs fixing.`;
   } else if (mode === 'word_problem') {
     const givenRatioIndex = 1;
     const givenIngredient = activeIngredients[givenRatioIndex];
     startCounts[activeIndices[givenRatioIndex]] = targetCounts[givenRatioIndex];
     const leadIngredient = activeIngredients[0];
-    cardHint = `The potion already has ${targetCounts[givenRatioIndex]} ${givenIngredient.name} drops. How many ${leadIngredient.name} drops are needed?`;
+    cardHint = `Already have ${targetCounts[givenRatioIndex]} ${givenIngredient.name} drops. Need ${leadIngredient.name}?`;
   } else if (mode === 'multi_step') {
-    cardHint = `The potion already holds ${totalDrops} drops altogether.`;
+    cardHint = `The potion holds ${totalDrops} drops.`;
   }
 
   const orderTitle = buildPotionName(activeIngredients);
@@ -726,52 +720,52 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
         )}
         main={(
           <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
-            <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] border border-white/12 bg-transparent shadow-[0_16px_30px_rgba(15,23,42,0.2)]">
-              <div
-                className="absolute inset-0"
-                style={{ transform: 'translateY(calc(var(--potion-cauldron-shift, 0px) + 50px))' }}
-              >
-                <div className="pointer-events-none absolute left-1/2 top-[84%] z-0 h-14 w-[72%] -translate-x-1/2 rounded-full bg-black/55 blur-md" />
-                <div className="pointer-events-none absolute left-1/2 top-[76%] z-10 h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
-                <div className="absolute left-1/2 top-[72%] z-10 flex h-[18%] w-[48%] -translate-x-1/2 translate-y-[48px] items-end justify-between px-5">
-                  {[0, 1, 2].map((idx) => (
-                    <motion.span
-                      key={`flame-${idx}`}
-                      className="h-12 w-7 rounded-full bg-[radial-gradient(circle at 50% 20%,rgba(255,241,180,0.95)_0%,rgba(255,170,57,0.92)_42%,rgba(255,94,32,0.9)_76%,rgba(255,94,32,0)_100%)] blur-[1px]"
-                      animate={{ scaleY: [0.85, 1.1, 0.92], y: [0, -4, 0] }}
-                      transition={{ repeat: Infinity, duration: 1 + idx * 0.18, ease: 'easeInOut' }}
-                    />
-                  ))}
-                </div>
-                <img
-                  src={cauldrenAndPotionArt}
-                  alt=""
-                  aria-hidden="true"
-                  className="pointer-events-none absolute left-1/2 bottom-[5%] z-30 h-[42%] max-w-none -translate-x-1/2 object-contain md:bottom-[4%]"
+        <div className="relative min-h-0 overflow-visible bg-transparent">
+          <div
+            className="absolute inset-0"
+            style={{ transform: 'translateY(calc(var(--potion-cauldron-shift, 0px) + 50px))' }}
+          >
+            <div className="pointer-events-none absolute left-1/2 top-[84%] z-0 h-14 w-[72%] -translate-x-1/2 rounded-full bg-black/55 blur-md" />
+            <div className="pointer-events-none absolute left-1/2 top-[76%] z-10 h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
+            <div className="absolute left-1/2 top-[72%] z-10 flex h-[18%] w-[48%] -translate-x-1/2 translate-y-[48px] items-end justify-between px-5">
+              {[0, 1, 2].map((idx) => (
+                <motion.span
+                  key={`flame-${idx}`}
+                  className="h-12 w-7 rounded-full bg-[radial-gradient(circle at 50% 20%,rgba(255,241,180,0.95)_0%,rgba(255,170,57,0.92)_42%,rgba(255,94,32,0.9)_76%,rgba(255,94,32,0)_100%)] blur-[1px]"
+                  animate={{ scaleY: [0.85, 1.1, 0.92], y: [0, -4, 0] }}
+                  transition={{ repeat: Infinity, duration: 1 + idx * 0.18, ease: 'easeInOut' }}
                 />
-                <div className="absolute left-1/2 bottom-[27%] z-20 h-[14%] w-[34%] -translate-x-1/2 translate-y-[5px] overflow-hidden rounded-[46%]">
-                  <motion.div
-                    className="absolute inset-x-[8%] bottom-[8%] rounded-[42%]"
-                    style={{
-                      background: `linear-gradient(180deg, rgba(255,255,255,0.34) 0%, ${mixColor} 18%, rgba(15,23,42,0.18) 100%)`,
-                      boxShadow: `0 0 30px ${mixColor}`,
-                    }}
-                    animate={{ height: `${Math.min(96, Math.max(18, (currentTotal / Math.max(1, targetTotal * 1.1)) * 100))}%` }}
-                    transition={{ duration: 0.32, ease: 'easeOut' }}
-                  />
-                  {Array.from({ length: 10 }).map((_, idx) => (
-                    <motion.span
-                      key={`bubble-${idx}`}
-                      className="absolute bottom-[12%] h-2.5 w-2.5 rounded-full bg-white/60"
-                      style={{ left: `${12 + idx * 7}%` }}
-                      animate={{ y: [0, -18 - (idx % 3) * 8, -2], opacity: [0, 0.9, 0], scale: [0.7, 1.12, 0.82] }}
-                      transition={{ repeat: Infinity, duration: 1.05 + (idx % 4) * 0.18, delay: idx * 0.06, ease: 'easeOut' }}
-                    />
-                  ))}
-                </div>
-              </div>
-              <AnimatePresence mode="wait">
-                {feedback === 'success' ? (
+              ))}
+            </div>
+            <img
+              src={cauldrenAndPotionArt}
+              alt=""
+              aria-hidden="true"
+              className="pointer-events-none absolute left-1/2 bottom-[1%] z-30 h-[46%] max-w-none -translate-x-1/2 object-contain md:bottom-[0%]"
+            />
+            <div className="absolute left-1/2 bottom-[24%] z-20 h-[16%] w-[34%] -translate-x-1/2 translate-y-[5px] overflow-hidden rounded-[46%]">
+              <motion.div
+                className="absolute inset-x-[8%] bottom-[8%] rounded-[42%]"
+                style={{
+                  background: `linear-gradient(180deg, rgba(255,255,255,0.34) 0%, ${mixColor} 18%, rgba(15,23,42,0.18) 100%)`,
+                  boxShadow: `0 0 30px ${mixColor}`,
+                }}
+                animate={{ height: `${Math.min(96, Math.max(18, (currentTotal / Math.max(1, targetTotal * 1.1)) * 100))}%` }}
+                transition={{ duration: 0.32, ease: 'easeOut' }}
+              />
+              {Array.from({ length: 10 }).map((_, idx) => (
+                <motion.span
+                  key={`bubble-${idx}`}
+                  className="absolute bottom-[12%] h-2.5 w-2.5 rounded-full bg-white/60"
+                  style={{ left: `${12 + idx * 7}%` }}
+                  animate={{ y: [0, -18 - (idx % 3) * 8, -2], opacity: [0, 0.9, 0], scale: [0.7, 1.12, 0.82] }}
+                  transition={{ repeat: Infinity, duration: 1.05 + (idx % 4) * 0.18, delay: idx * 0.06, ease: 'easeOut' }}
+                />
+              ))}
+            </div>
+          </div>
+          <AnimatePresence mode="wait">
+            {feedback === 'success' ? (
                   <motion.div
                     key="success"
                     initial={{ opacity: 0, scale: 0.82 }}
@@ -784,7 +778,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                     </div>
                     <p className="text-[10px] font-black uppercase tracking-[0.14em] text-emerald-100">Perfect brew!</p>
                   </motion.div>
-                ) : feedback === 'error' ? (
+            ) : feedback === 'error' ? (
                   <motion.div
                     key="error"
                     initial={{ opacity: 0, scale: 0.9 }}
@@ -825,11 +819,11 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                       />
                     </div>
                   </motion.div>
-                ) : null}
-              </AnimatePresence>
-            </div>
+            ) : null}
+          </AnimatePresence>
+        </div>
 
-            <div className="shrink-0 mt-[40px] rounded-[1.35rem] border border-white/16 bg-black/50 px-2.5 py-2 shadow-[0_12px_22px_rgba(2,6,23,0.24)]">
+            <div className="shrink-0 mt-[24px] rounded-[1.1rem] border border-white/12 bg-black/38 px-2 py-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.2)]">
               <div className={`grid ${ingredientGridClass} gap-1.5`}>
                 {activeTargets.map(({ ingredient, index, current, target }) => {
                   const isActive = activeSet.has(index);
@@ -898,13 +892,13 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
           <>
             <div
               className="pointer-events-none fixed left-0 right-0 z-[60]"
-              style={{ top: '4px' }}
+              style={{ top: '6px' }}
             >
-              <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-[12px] py-[10px] text-center backdrop-blur-sm">
-                <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Recipe</div>
-                <div className="mt-0.5 text-[clamp(1.1rem,4.2vw,1.5rem)] font-black text-white">{challenge.orderTitle}</div>
-                <div className="mt-0.5 text-[12px] font-black text-amber-100">Ratio {ratioText}</div>
-                <div className="mt-1 whitespace-pre-line text-[11px] font-semibold text-cyan-100/90">
+              <div className="mx-auto w-full max-w-[680px] rounded-[0.95rem] bg-slate-950/72 px-3 py-2 text-center backdrop-blur-sm">
+                <div className="text-[10px] font-black uppercase tracking-[0.16em] text-amber-100/90">Target Recipe</div>
+                <div className="mt-0.5 text-[clamp(0.95rem,3.4vw,1.18rem)] font-bold text-white">{challenge.orderTitle}</div>
+                <div className="mt-0.5 text-[11px] font-black text-amber-100">Ratio {ratioText}</div>
+                <div className="game-question-copy mt-1 whitespace-pre-line text-[10px] font-semibold leading-[1.1] text-cyan-100/90">
                   {challenge.orderPrompt || 'Use the ratio to complete the potion.'}
                 </div>
               </div>

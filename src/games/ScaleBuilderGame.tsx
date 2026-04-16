@@ -3,7 +3,7 @@ import { ChevronRight, Layers, Ruler, Trophy } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import MiniGameTopBar from '../components/MiniGameTopBar';
 import { AVATARS } from '../constants';
-import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
+import { GameScreenShell } from '../layout/ScreenPrimitives';
 import labelGreenLongAsset from '../assets/licensed/slices/label_green_long.png';
 import scaleBuilderBackground from '../assets/maps/backgroundsforgames/scalebuilder-construction.png';
 import { PrimaryButton } from '../components/game-ui/GameUiKit';
@@ -367,11 +367,11 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
       ) : null}
 
       <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-2 px-2 pb-1 pt-[max(3.4rem,calc(env(safe-area-inset-top)+2.6rem))] md:gap-3 md:px-3">
-        <PuzzleStage className="mx-auto flex h-full w-full max-w-[780px] min-h-0 flex-1 flex-col rounded-[2rem] bg-transparent shadow-none !bg-transparent !shadow-none md:rounded-[2.4rem]">
-          <div className="relative z-10 grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-3 p-2 md:gap-4 md:p-3">
+        <div className="relative mx-auto flex h-full w-full max-w-[780px] min-h-0 flex-1 flex-col overflow-visible">
+          <div className="relative z-10 grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-3 p-0 md:gap-4 md:p-0">
             <div className="rounded-[1rem] border border-white/14 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(15,23,42,0.84))] p-2 pb-2.5">
               <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/78">Scale Builder</div>
-              <div className="mt-1 max-h-[15vh] overflow-y-auto whitespace-pre-line text-[10px] font-black leading-snug text-white md:max-h-[19vh] md:text-[11px]">
+              <div className="game-question-copy mt-1 whitespace-pre-line text-[10px] font-black leading-snug text-white md:text-[11px]">
                 {instructionsText}
               </div>
               <div className="mt-2 flex flex-wrap items-center gap-2 text-[clamp(11px,1.7vh,13px)] font-black text-white/90">
@@ -386,8 +386,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
               </div>
             </div>
 
-            <div className="relative min-h-0 flex-1 overflow-hidden rounded-[1.4rem] border border-white/14 bg-transparent p-2">
-              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0.08),rgba(15,23,42,0.16)_100%)]" />
+            <div className="relative min-h-0 flex-1 overflow-visible">
               <div className="relative z-10 h-full w-full">
                 <div
                   className="absolute left-1/2 flex aspect-square -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-[0.9rem]"
@@ -542,7 +541,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
               </motion.div>
             ) : null}
           </AnimatePresence>
-        </PuzzleStage>
+        </div>
 
       </div>
     </GameScreenShell>

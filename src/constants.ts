@@ -4,8 +4,8 @@ import world01Map from './assets/maps/forect.jpg';
 import world02Map from './assets/maps/reef2.jpg';
 import world03Map from './assets/maps/castle.jpg';
 import world04Map from './assets/maps/harbour.jpg';
-import world05Map from './assets/maps/desert.jpg';
-import world06Map from './assets/maps/volcano2.jpg';
+import world05Map from './assets/maps/finalamendedworldmap.png';
+import world06Map from './assets/maps/finalmap.png';
 import { NUMBER_BASE_CAMP_LEVELS } from './systems/content/island1NumberBaseCamp';
 
 const mergeIslandLevels = (...groups: LevelData[][]): LevelData[] => {

@@ -5,7 +5,7 @@ import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
-import dojoBackground from '../assets/maps/inside dojo.jpg';
+import dojoBackground from '../assets/maps/backgroundsforgames/numberlineninja.jpg';
 import monsterHitA from '../assets/bosses/a.jpg';
 import monsterHitB from '../assets/bosses/a.jpg';
 interface NumberLineNinjaGameProps {
@@ -147,8 +147,7 @@ const formatNumber = (value: number) => {
 const buildPrompt = (missingCount: number) => {
   const isSingle = missingCount === 1;
   return [
-    `Fill in the missing ${isSingle ? 'number' : 'numbers'} on the number line to track the stolen brainpower.`,
-    '',
+    `Complete the number line to track the stolen brainpower.`,
     `${isSingle ? 'Which number is missing?' : 'What numbers are missing?'}`,
   ].join('\n');
 };

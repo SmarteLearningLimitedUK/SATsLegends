@@ -75,8 +75,8 @@ const createRound = (levelId: number, roundIndex: number): ChartRound => {
     return {
       mode,
       title: 'Basic Reading',
-      prompt: 'The records show the number of crates delivered by each ship. How many crates did The Number Wave deliver?',
-      support: 'Read the bar for Number Wave carefully.',
+      prompt: 'How many crates did The Number Wave deliver?',
+      support: 'Read the Number Wave bar carefully.',
       boardLabel: 'Crates by ship',
       ships,
       options: [String(target.value - 2), String(target.value), String(target.value + 1), String(target.value + 3)],
@@ -89,8 +89,8 @@ const createRound = (levelId: number, roundIndex: number): ChartRound => {
     return {
       mode,
       title: 'Most Crates',
-      prompt: 'The records show the number of crates delivered by each ship. Which ship delivered the most crates?',
-      support: 'Compare every ship before you answer.',
+      prompt: 'Which ship delivered the most crates?',
+      support: 'Compare all four ships.',
       boardLabel: 'Crates by ship',
       ships,
       options: ships.map((ship) => ship.label),
@@ -105,8 +105,8 @@ const createRound = (levelId: number, roundIndex: number): ChartRound => {
     return {
       mode,
       title: 'Find The Difference',
-      prompt: 'The records show the number of crates delivered by each ship. How many more crates did The Logic Tide deliver than The Brain Voyager?',
-      support: 'Subtract the Brain Voyager bar from the Logic Tide bar.',
+      prompt: 'How many more crates did The Logic Tide deliver than The Brain Voyager?',
+      support: 'Subtract Brain Voyager from Logic Tide.',
       boardLabel: 'Crates by ship',
       ships,
       options: [String(difference - 1), String(difference), String(difference + 1), String(difference + 2)],
@@ -118,8 +118,8 @@ const createRound = (levelId: number, roundIndex: number): ChartRound => {
   return {
     mode: 'total',
     title: 'Total Crates',
-    prompt: 'The records show the number of crates delivered by each ship. What is the total number of crates delivered by all four ships?',
-    support: 'Add every bar together to get the final total.',
+    prompt: 'What is the total crates delivered by all four ships?',
+    support: 'Add all four bars.',
     boardLabel: 'Crates by ship',
     ships,
     options: [String(total - 4), String(total - 2), String(total), String(total + 2)],

@@ -540,16 +540,24 @@ button:disabled {
 }
 
 .licensed-submit-button {
-  border: 2px solid rgba(255,255,255,0.16);
-  color: #fff8ec;
+  border: 1px solid rgba(255, 234, 168, 0.72);
+  border-radius: 999px;
+  color: #15213d;
   background:
-    linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,0)),
-    linear-gradient(180deg, rgba(34,197,94,0.98), rgba(22,163,74,0.98));
-  box-shadow: 0 8px 0 rgba(14, 116, 144, 0.82), 0 18px 30px rgba(0,0,0,0.18);
-  text-shadow: 0 2px 0 rgba(0,0,0,0.28);
+    url('./assets/casual_ui/inputs/btn_1.png') center/100% 100% no-repeat;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.58),
+    0 10px 20px rgba(15, 23, 42, 0.24);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.38);
 }
 .licensed-submit-button:hover { filter: brightness(1.03); }
-.licensed-submit-button:active { transform: translateY(2px); box-shadow: 0 4px 0 rgba(14,116,144,0.82); }
+.licensed-submit-button:active {
+  transform: translateY(2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.28),
+    0 3px 0 rgba(18, 40, 86, 0.68),
+    0 8px 14px rgba(15,23,42,0.2);
+}
 
 .licensed-answer-button {
   border: 2px solid rgba(255,255,255,0.14);
@@ -2684,13 +2692,14 @@ button:disabled {
 
 .potion-brew-button {
   border-radius: 999px !important;
-  border: 1px solid rgba(255, 216, 92, 0.92) !important;
-  color: #3b2a00 !important;
-  background-image: none !important;
-  background: linear-gradient(180deg, #ffe585 0%, #ffd24a 55%, #f1b525 100%) !important;
+  border: 1px solid rgba(255, 234, 168, 0.72) !important;
+  color: #15213d !important;
+  background:
+    url('./assets/casual_ui/inputs/btn_1.png') center/100% 100% no-repeat !important;
   box-shadow:
-    inset 0 2px 0 rgba(255, 255, 255, 0.75),
-    0 10px 20px rgba(15, 23, 42, 0.25) !important;
+    inset 0 1px 0 rgba(255,255,255,0.58),
+    0 10px 20px rgba(15, 23, 42, 0.24) !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.38) !important;
 }
 
 .licensed-submit-button,
@@ -3559,16 +3568,14 @@ button:disabled {
 }
 
 .screen-gameplay .game-shell-host .licensed-submit-button {
-  border: 1px solid rgba(134, 239, 172, 0.86) !important;
+  border: 1px solid rgba(255, 234, 168, 0.72) !important;
   background:
-    radial-gradient(circle at 50% 0%, rgba(255,255,255,0.28), rgba(255,255,255,0) 56%),
-    linear-gradient(180deg, rgba(74, 222, 128, 0.98), rgba(34, 197, 94, 0.98)) !important;
-  color: #f0fdf4 !important;
-  text-shadow: 0 1px 0 rgba(21, 128, 61, 0.48) !important;
+    url('./assets/casual_ui/inputs/btn_1.png') center/100% 100% no-repeat !important;
+  color: #15213d !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.38) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.36),
-    0 8px 0 rgba(22, 101, 52, 0.82),
-    0 16px 24px rgba(2, 6, 23, 0.24) !important;
+    inset 0 1px 0 rgba(255,255,255,0.58),
+    0 10px 20px rgba(15, 23, 42, 0.24) !important;
 }
 
 .screen-gameplay .game-shell-host .fantasy-dock-shell {
@@ -5201,12 +5208,10 @@ button.avatar-hero-arrow:not(:disabled):active {
   color: var(--sat-ink) !important;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45) !important;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0) 34%),
-    linear-gradient(180deg, var(--sat-primary-top) 0%, var(--sat-primary-mid) 55%, var(--sat-primary-bottom) 100%) !important;
+    url('./assets/casual_ui/inputs/btn_1.png') center/100% 100% no-repeat !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    0 6px 0 rgba(124, 72, 7, 0.75),
-    0 14px 24px rgba(8, 22, 49, 0.3) !important;
+    inset 0 1px 0 rgba(255,255,255,0.58),
+    0 10px 20px rgba(15, 23, 42, 0.24) !important;
   border-radius: 999px !important;
 }
 
@@ -5239,12 +5244,10 @@ button.avatar-hero-arrow:not(:disabled):active {
   border-color: rgba(255, 233, 166, 0.7) !important;
   color: var(--sat-ink) !important;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,0)),
-    linear-gradient(180deg, var(--sat-primary-top) 0%, var(--sat-primary-mid) 55%, var(--sat-primary-bottom) 100%) !important;
+    url('./assets/casual_ui/inputs/btn_1.png') center/100% 100% no-repeat !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    0 6px 0 rgba(124, 72, 7, 0.7),
-    0 14px 24px rgba(8, 22, 49, 0.28) !important;
+    inset 0 1px 0 rgba(255,255,255,0.58),
+    0 10px 20px rgba(15, 23, 42, 0.24) !important;
 }
 
 .app-viewport.sat-theme-bluegold .licensed-wood-button-secondary,
@@ -5303,6 +5306,18 @@ button.avatar-hero-arrow:not(:disabled):active {
   font-size: clamp(0.72rem, 2.2vw, 0.92rem);
   font-weight: 700;
   color: rgba(226, 232, 240, 0.85);
+}
+
+.game-question-card .question-title,
+.game-question-card .game-question-copy,
+.game-question-card .question-subtitle,
+.screen-gameplay .game-shell-host .question-title,
+.screen-gameplay .game-shell-host .game-question-copy,
+.screen-gameplay .game-shell-host .question-subtitle {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
 }
 .screen-gameplay .game-shell-host .mission-panel-shell,
 .screen-gameplay .game-shell-host .licensed-slice-paper-panel,
