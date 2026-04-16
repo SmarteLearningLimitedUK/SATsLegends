@@ -1,4 +1,7 @@
 import { MiniGameType } from './types';
+import crystalCoreBackground from './assets/maps/backgroundsforgames/crystal core.jpg';
+import mirrorGateBackground from './assets/maps/backgroundsforgames/Multi Step Marathon.jpg';
+import matrixMatchBackground from './assets/maps/backgroundsforgames/End Trial.jpg';
 
 export interface GameSceneMeta {
   background?: string;
@@ -56,10 +59,16 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   potion_pour: RATIO_SCENE,
   cloud_collapse: FRACTION_SCENE,
   logic_sort: REASONING_SCENE,
-  matrix_match: REASONING_SCENE,
+  matrix_match: {
+    ...REASONING_SCENE,
+    background: matrixMatchBackground,
+  },
   take_out_rush: FRACTION_SCENE,
   fraction_match: FRACTION_SCENE,
-  crystal_core: FRACTION_SCENE,
+  crystal_core: {
+    ...FRACTION_SCENE,
+    background: crystalCoreBackground,
+  },
   prime_pop: NUMBER_SCENE,
   angle_arena: GEOMETRY_SCENE,
   polygon_palace: GEOMETRY_SCENE,
@@ -73,7 +82,10 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   calculation_clash: NUMBER_SCENE,
   coordinate_quest: GEOMETRY_SCENE,
   transform_temple: GEOMETRY_SCENE,
-  mirror_gate: GEOMETRY_SCENE,
+  mirror_gate: {
+    ...REASONING_SCENE,
+    background: mirrorGateBackground,
+  },
   scale_safari: SCALE_BUILDER_SCENE,
   scales_of_the_sun: SCALE_SCENE,
   graph_grabber: CHART_CHASE_SCENE,

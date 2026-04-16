@@ -16,12 +16,12 @@ import BossPortrait from '../components/BossPortrait';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import AssetIcon from '../components/AssetIcon';
 import { Star } from '../components/GameIcons';
-import answerActionBg from '../assets/casual_ui/inputs/btn_1.png';
+import answerActionBg from '../assets/uibuttonstest/4.png';
 import answerDecorAsset from '../assets/casual_ui/dialogs_panels/dialog__tag.png';
-import answerOrangeBg from '../assets/casual_ui/inputs/btn_1.png';
-import answerGreenBg from '../assets/casual_ui/inputs/btn_6a.png';
-import answerBlueBg from '../assets/casual_ui/inputs/btn_7.png';
-import answerYellowBg from '../assets/casual_ui/inputs/btn_8.png';
+import answerOrangeBg from '../assets/uibuttonstest/4.png';
+import answerGreenBg from '../assets/uibuttonstest/2.png';
+import answerBlueBg from '../assets/uibuttonstest/1.png';
+import answerYellowBg from '../assets/uibuttonstest/3.png';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import { formatMultiplicationDisplay } from '../utils/mathDisplay';
 

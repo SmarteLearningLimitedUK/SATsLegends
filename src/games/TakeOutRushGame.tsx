@@ -13,7 +13,7 @@ import food8 from '../assets/take_out/food/8.png';
 import food9 from '../assets/take_out/food/9.png';
 import FoodGameShell from '../components/FoodGameShell';
 import defaultMonster from '../assets/bosses/goblin.png';
-import goldButtonAsset from '../assets/casual_ui/inputs/btn_1.png';
+import goldButtonAsset from '../assets/uibuttonstest/4.png';
 import { triggerHaptic } from '../haptics';
 import CelebrationSplash from '../components/CelebrationSplash';
 import { useTrimmedImageSource } from '../utils/trimTransparentImage';

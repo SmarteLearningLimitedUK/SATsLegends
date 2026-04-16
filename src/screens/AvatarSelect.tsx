@@ -4,7 +4,7 @@ import { AVATARS } from '../constants';
 import { triggerHaptic } from '../haptics';
 import { SecondaryActionButton } from '../layout/ScreenPrimitives';
 import avatarSelectBackground from '../assets/maps/backgroundsforgames/charselect.jpg';
-import splashStyleButton from '../assets/casual_ui/inputs/btn_1.png';
+import splashStyleButton from '../assets/uibuttonstest/4.png';
 import chooseBanner from '../assets/characters/chooseheroes.png';
 import { useTrimmedImageSource } from '../utils/trimTransparentImage';
 

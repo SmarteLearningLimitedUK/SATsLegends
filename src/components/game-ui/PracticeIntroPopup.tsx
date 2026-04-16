@@ -2,7 +2,7 @@ import React from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { X } from 'lucide-react';
 import { MiniGamePracticeBriefing } from '../../app/gameplaySessionContract';
-import splashStartPill from '../../assets/casual_ui/inputs/btn_1.png';
+import splashStartPill from '../../assets/uibuttonstest/4.png';
 import { useTrimmedImageSource } from '../../utils/trimTransparentImage';
 
 type PracticeIntroPopupProps = {

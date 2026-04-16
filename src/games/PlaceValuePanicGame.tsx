@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import medButton from '../assets/casual_ui/inputs/btn_1.png';
+import medButton from '../assets/uibuttonstest/4.png';
 import animatedEnemy1 from '../assets/maps/ezgif-261d69e7ae90ee8c.webp';
 import forestBackground from '../assets/maps/backgroundsforgames/Place Value Panic.png';
 import hudAvatarName from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
