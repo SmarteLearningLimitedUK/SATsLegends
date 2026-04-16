@@ -160,6 +160,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       avatarId: player.avatarId,
       useSharedTopHud: true,
       isPractice: Boolean(selectedLevel.isPractice),
+      practiceBriefing: hintRuleSet,
       onVictory: onGameplayVictory,
       onGameOver: onGameplayOver,
       onBack: onBackToIslandLevels,

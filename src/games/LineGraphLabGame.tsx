@@ -214,6 +214,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   avatarId: _avatarId,
   useSharedTopHud = false,
   isPractice,
+  practiceBriefing,
   onVictory,
   onGameOver: _onGameOver,
   onBack,
@@ -329,7 +330,8 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
         open={showPracticeIntro}
         title="Line Graph Lab"
         body="Read the line graph carefully.\nFind coordinates, values and changes over time to recover the data."
-          onAction={() => setShowPracticeIntro(false)}
+        briefing={practiceBriefing}
+        onAction={() => setShowPracticeIntro(false)}
       />
       <GameScreenLayout
         className="relative h-full w-full min-h-0 select-none gap-0 text-slate-100"

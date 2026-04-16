@@ -179,6 +179,7 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
   avatarId: _avatarId,
   useSharedTopHud = true,
   isPractice,
+  practiceBriefing,
   onVictory,
   onGameOver,
   onBack: _onBack,
@@ -309,6 +310,7 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
         open={showPracticeIntro}
         title="Reasoning Quest"
         body="Read the clue and choose the best plan.\nPick the answer that clears the path."
+        briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
 

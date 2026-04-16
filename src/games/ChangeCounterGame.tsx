@@ -185,6 +185,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
   avatarId: _avatarId,
   useSharedTopHud = true,
   isPractice,
+  practiceBriefing,
   onVictory,
   onGameOver,
   onBack: _onBack,
@@ -315,6 +316,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
         open={showPracticeIntro}
         title="Change Counter"
         body="Find the exact change.\nUse the coins on screen to make the total match the order."
+        briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
 

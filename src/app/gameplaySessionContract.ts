@@ -47,6 +47,12 @@ export interface MiniGameSessionEventHandlers {
   onGameFailed?: (event: MiniGameSessionEvent) => void;
 }
 
+export interface MiniGamePracticeBriefing {
+  title: string;
+  summary: string;
+  bullets: string[];
+}
+
 /**
  * Reusable mini-game shell contract (shared props boundary).
  */
@@ -54,6 +60,7 @@ export interface MiniGameShellContractProps {
   sessionState?: MiniGameSessionState;
   sessionEvents?: MiniGameSessionEventHandlers;
   isPractice?: boolean;
+  practiceBriefing?: MiniGamePracticeBriefing | null;
 }
 
 const callbackByEventType: Record<MiniGameSessionEventType, keyof MiniGameSessionEventHandlers> = {

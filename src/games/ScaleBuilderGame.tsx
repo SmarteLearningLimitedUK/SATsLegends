@@ -204,6 +204,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
   avatarId,
   useSharedTopHud = false,
   isPractice,
+  practiceBriefing,
   onVictory,
   onGameOver: _onGameOver,
   onBack,
@@ -332,6 +333,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
         open={showPracticeIntro}
         title="Scale Builder"
         body={SCALE_BUILDER_INTRO}
+        briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
 

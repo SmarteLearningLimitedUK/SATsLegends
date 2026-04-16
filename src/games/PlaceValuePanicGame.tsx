@@ -14,6 +14,7 @@ import socketT from '../assets/casual_ui/updaed_sockets_slices/socket_t.png';
 import socketU from '../assets/casual_ui/updaed_sockets_slices/socket_u.png';
 import { triggerHaptic } from '../haptics';
 import { AVATARS } from '../constants';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface PlaceValuePanicGameProps {
@@ -351,6 +352,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   avatarId,
   useSharedTopHud = false,
   isPractice = false,
+  practiceBriefing,
   onVictory,
   onGameOver,
   onBack,
@@ -439,6 +441,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const [goblinEffect, setGoblinEffect] = useState<GoblinEffect>('idle');
   const [idleEnemySrc, setIdleEnemySrc] = useState<string>(animatedEnemy1);
   const [showHitFx, setShowHitFx] = useState(false);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
   const [enemySpeech, setEnemySpeech] = useState<string | null>(null);
   const [slotPulseKey, setSlotPulseKey] = useState(0);
   const [boardShake, setBoardShake] = useState(false);
@@ -586,6 +589,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const timeoutId = window.setTimeout(() => setShowHitFx(false), HIT_REACTION_MS);
     return () => window.clearTimeout(timeoutId);
   }, [goblinEffect]);
+
+  useEffect(() => {
+    setShowPracticeIntro(Boolean(isPractice));
+  }, [isPractice]);
 
   useEffect(() => () => {
     if (speechTimeoutRef.current !== null) {
@@ -887,6 +894,13 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       style={{ touchAction: 'manipulation' }}
     >
       <div className="relative z-10 h-full w-full">
+      <PracticeIntroPopup
+        open={showPracticeIntro}
+        title="Place Value Panic"
+        body="A Monster Mind has scrambled the number.\nRebuild it using place value to restore the brainpower!"
+        briefing={practiceBriefing}
+        onAction={() => setShowPracticeIntro(false)}
+      />
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
         <img
           src={forestBackground}

@@ -1,11 +1,13 @@
 import React from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { X } from 'lucide-react';
+import { MiniGamePracticeBriefing } from '../../app/gameplaySessionContract';
 
 type PracticeIntroPopupProps = {
   open: boolean;
   title: string;
   body: React.ReactNode;
+  briefing?: MiniGamePracticeBriefing | null;
   actionLabel?: string;
   onAction: () => void;
 };
@@ -14,6 +16,7 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
   open,
   title,
   body,
+  briefing,
   actionLabel = 'Start Practice',
   onAction,
 }) => (
@@ -54,9 +57,23 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
             <div className="mt-2 text-[clamp(1.15rem,4.8vw,1.8rem)] font-black text-amber-100">
               {title}
             </div>
-            <div className="mt-3 whitespace-pre-line text-left text-[clamp(0.92rem,3.4vw,1.02rem)] font-semibold leading-relaxed text-cyan-50/92">
-              {body}
-            </div>
+            {briefing ? (
+              <div className="mt-3 text-left text-[clamp(0.92rem,3.4vw,1.02rem)] font-semibold leading-relaxed text-cyan-50/92">
+                <p className="font-bold text-white">{briefing.summary}</p>
+                <ul className="mt-3 space-y-2">
+                  {briefing.bullets.map((bullet, index) => (
+                    <li key={`${briefing.title}-bullet-${index}`} className="flex gap-2">
+                      <span className="mt-[0.18rem] shrink-0 text-amber-100">•</span>
+                      <span>{bullet}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <div className="mt-3 whitespace-pre-line text-left text-[clamp(0.92rem,3.4vw,1.02rem)] font-semibold leading-relaxed text-cyan-50/92">
+                {body}
+              </div>
+            )}
           </div>
           <div className="mt-4 flex shrink-0 justify-center">
             <button

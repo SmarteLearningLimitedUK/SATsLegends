@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { AVATARS } from '../constants';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { triggerHaptic } from '../haptics';
 import GameContainerView from '../components/GameContainerView';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
@@ -157,7 +158,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
   const [shotsFired, setShotsFired] = useState(0);
   const [correctHits, setCorrectHits] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
-  const [showInstruction, setShowInstruction] = useState(Boolean(isPractice));
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
   const [showHint, setShowHint] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [resultState, setResultState] = useState<'running' | 'victory' | 'gameover'>('running');
@@ -369,13 +370,13 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
     setIsAiming(true);
   }, [getLocalPoint, isPaused, resultState]);
 
-  const dismissInstruction = useCallback(() => {
-    setShowInstruction(false);
+  const dismissPracticeIntro = useCallback(() => {
+    setShowPracticeIntro(false);
     setShowHint(true);
   }, []);
 
   useEffect(() => {
-    setShowInstruction(Boolean(isPractice));
+    setShowPracticeIntro(Boolean(isPractice));
     setShowHint(false);
   }, [isPractice, round.id]);
 
@@ -397,7 +398,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
     correctHitsRef.current = 0;
     timeLeftRef.current = initialTime;
     setFeedback(null);
-    setShowInstruction(Boolean(isPractice));
+    setShowPracticeIntro(Boolean(isPractice));
     setShowHint(false);
     setIsPaused(false);
     setResultState('running');
@@ -427,20 +428,14 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
   useEffect(() => {
     if (round.id.length === 0) return undefined;
     if (!isPractice) {
-      setShowInstruction(false);
+      setShowPracticeIntro(false);
       setShowHint(true);
       return undefined;
     }
-    setShowInstruction(true);
+    setShowPracticeIntro(true);
     setShowHint(false);
-
-    const timerId = window.setTimeout(() => {
-      setShowInstruction(false);
-      setShowHint(true);
-    }, 2000);
-
-    return () => window.clearTimeout(timerId);
-  }, [round.id]);
+    return undefined;
+  }, [isPractice, round.id]);
 
   useEffect(() => {
     if (isPractice || resultState !== 'running' || isPaused) return undefined;
@@ -608,27 +603,16 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
         />
       </div>
 
-      <AnimatePresence>
-        {showInstruction && (
-          <motion.button
-            key="instruction-card"
-            type="button"
-            onClick={dismissInstruction}
-            initial={{ opacity: 0, y: -8, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -6, scale: 0.96 }}
-            className="absolute left-1/2 z-20 w-[min(92%,30rem)] -translate-x-1/2 rounded-2xl border border-cyan-100/30 bg-slate-900/85 px-4 py-3 text-center shadow-[0_12px_30px_rgba(2,6,23,0.45)]"
-            style={{ top: `${Math.max(8, arenaLayout.sidePadding * 0.8)}px` }}
-          >
-            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/80">Mission Briefing</div>
-            <div className="mt-1 text-sm font-black text-white">Drag to aim, release to fire.</div>
-            <p className="mt-1 text-[11px] font-semibold text-white/75">Hit the decimal that matches the objective.</p>
-          </motion.button>
-        )}
-      </AnimatePresence>
+      <PracticeIntroPopup
+        open={showPracticeIntro}
+        title="Decimal Sniper"
+        body="Drag to aim, release to fire.\nHit the decimal that matches the objective."
+        briefing={practiceBriefing}
+        onAction={dismissPracticeIntro}
+      />
 
       <AnimatePresence>
-        {showHint && !showInstruction && (
+        {showHint && !showPracticeIntro && (
           <motion.div
             key="floating-hint"
             initial={{ opacity: 0, y: 6 }}

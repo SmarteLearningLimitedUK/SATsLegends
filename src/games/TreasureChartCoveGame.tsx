@@ -167,6 +167,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
   levelId,
   avatarId: _avatarId,
   isPractice,
+  practiceBriefing,
   onVictory,
   onGameOver,
   onBack: _onBack,
@@ -319,6 +320,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
         open={showPracticeIntro}
         title="Graph Grabber"
         body="Read the graph to track the stolen brainpower.\nAnswer with single values, comparisons and totals."
+        briefing={practiceBriefing}
           onAction={() => setShowPracticeIntro(false)}
       />
         <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2 md:gap-3 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.8rem)] md:pt-3">

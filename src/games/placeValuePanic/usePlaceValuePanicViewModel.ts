@@ -58,6 +58,7 @@ interface FeedbackState {
 interface UsePlaceValuePanicViewModelArgs {
   levelId: number;
   miniGameLevel?: number;
+  isPractice?: boolean;
   onVictory: (stars: number, score: number) => void;
   onGameOver: (score: number) => void;
 }
@@ -185,6 +186,7 @@ const buildRound = (levelConfig: PlaceValuePanicLevelConfig, roundIndex: number)
 export const usePlaceValuePanicViewModel = ({
   levelId,
   miniGameLevel,
+  isPractice = false,
   onVictory,
   onGameOver: _onGameOver,
 }: UsePlaceValuePanicViewModelArgs) => {
@@ -265,7 +267,7 @@ export const usePlaceValuePanicViewModel = ({
   }, [feedback]);
 
   useEffect(() => {
-    if (isResolved || isPaused) return undefined;
+    if (isPractice || isResolved || isPaused) return undefined;
     const interval = window.setInterval(() => {
       setTimeLeft((prev) => {
         const next = prev - 1;
@@ -293,6 +295,7 @@ export const usePlaceValuePanicViewModel = ({
     correctPlacements,
     isPaused,
     isResolved,
+    isPractice,
     levelConfig.targetScore,
     score,
     setFeedbackState,

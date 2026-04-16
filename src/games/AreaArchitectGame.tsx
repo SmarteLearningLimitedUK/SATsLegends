@@ -122,6 +122,7 @@ const starsForAccuracy = (correct: number, attempts: number) => {
 const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
   levelId,
   isPractice,
+  practiceBriefing,
   onVictory,
   onGameOver: _onGameOver,
 }) => {
@@ -202,6 +203,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
         open={showPracticeIntro}
         title="Area Architect"
         body="Plan the floor layout.\nDrag the shapes into the right spaces to fit the area."
+        briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
       <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+3.5rem)] pt-3 text-white">

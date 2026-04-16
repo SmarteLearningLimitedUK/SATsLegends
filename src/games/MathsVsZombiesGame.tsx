@@ -208,6 +208,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   avatarId,
   useSharedTopHud = false,
   isPractice,
+  practiceBriefing,
   onVictory,
   onGameOver,
   onBack,
@@ -494,6 +495,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
         open={showPracticeIntro}
         title="Maths Vs Zombies"
         body="Solve the sums to stop the monster minions.\nEach correct answer pushes them back."
+        briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
 

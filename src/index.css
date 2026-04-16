@@ -4075,7 +4075,7 @@ button:disabled {
   left: 50%;
   top: 50%;
   width: clamp(18rem, 78vw, 42rem);
-  transform: translate(-50%, -50%);
+  transform: translate(calc(-50% - 12px), -50%);
   height: auto;
   max-width: none;
   max-height: none;

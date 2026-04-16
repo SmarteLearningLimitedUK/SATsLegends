@@ -170,6 +170,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   levelId,
   avatarId: _avatarId,
   isPractice,
+  practiceBriefing,
   onVictory,
   onGameOver: _onGameOver,
   onBack,
@@ -493,6 +494,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         open={showPracticeIntro}
         title="Share Splitter"
         body="Share the cake to match the ratio.\nDrag slices to the plates until the split is correct."
+        briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
 

@@ -120,6 +120,7 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
   avatarId: _avatarId,
   useSharedTopHud = true,
   isPractice,
+  practiceBriefing,
   onVictory,
   onGameOver,
   onBack: _onBack,
@@ -244,6 +245,7 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
         open={showPracticeIntro}
         title="Unit Mixer"
         body="Convert the units carefully.\nMatch the target before the round clears."
+        briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
 
