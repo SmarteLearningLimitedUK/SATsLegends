@@ -3,6 +3,8 @@ import { AnimatePresence, motion } from 'motion/react';
 import AssetIcon from './AssetIcon';
 import { triggerHaptic } from '../haptics';
 import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
+import successRoundBackground from '../assets/end of round screen/success screen.jpg';
+import failureRoundBackground from '../assets/end of round screen/failure screen.jpg';
 import {
   FramedPanel,
   OverlaySurface,
@@ -61,6 +63,7 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
   const rewardChest = MAIN_PNG_SKIN.treasureChest;
   const rewardStash = MAIN_PNG_SKIN.skull;
   const statusPill = isVictory ? 'Victory' : 'Round Ended';
+  const resultBackground = isVictory ? successRoundBackground : failureRoundBackground;
   const statusPillTone = isVictory
     ? 'bg-emerald-400/20 text-emerald-100 border-emerald-200/45'
     : 'bg-rose-400/18 text-amber-100 border-rose-200/45';
@@ -74,8 +77,27 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[120] result-overlay-tier flex items-center justify-center bg-slate-950/78 backdrop-blur-xl"
+          className="fixed inset-0 z-[120] result-overlay-tier flex items-center justify-center overflow-hidden bg-slate-950/88"
         >
+          <div className="pointer-events-none absolute inset-0">
+            <img
+              src={resultBackground}
+              alt=""
+              className="h-full w-full object-cover object-center"
+              draggable={false}
+            />
+            <div
+              className={cn(
+                'absolute inset-0',
+                isVictory
+                  ? 'bg-[linear-gradient(180deg,rgba(7,26,39,0.2),rgba(2,6,23,0.72))]'
+                  : 'bg-[linear-gradient(180deg,rgba(45,12,24,0.2),rgba(2,6,23,0.76))]',
+              )}
+            />
+            <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/40 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/55 to-transparent" />
+          </div>
+
           {!isVictory && (
             <motion.span
               initial={{ y: -12, opacity: 0 }}
@@ -98,7 +120,7 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
               animate={{ y: 0, scale: 1, opacity: 1 }}
               exit={{ y: 18, scale: 0.97, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 220, damping: 22 }}
-              className="app-modal-panel premium-modal-shell licensed-game-card-dark relative flex w-full max-w-md flex-col overflow-hidden rounded-[1.45rem] border border-white/15 shadow-[0_32px_95px_rgba(0,0,0,0.48)] md:max-w-lg md:rounded-[1.9rem]"
+              className="app-modal-panel premium-modal-shell licensed-game-card-dark relative z-10 flex w-full max-w-md flex-col overflow-hidden rounded-[1.45rem] border border-white/15 shadow-[0_32px_95px_rgba(0,0,0,0.48)] backdrop-blur-md md:max-w-lg md:rounded-[1.9rem]"
               role="dialog"
               aria-modal="true"
               aria-label={isVictory ? 'Victory result' : 'Round result'}

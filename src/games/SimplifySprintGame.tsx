@@ -4,6 +4,7 @@ import { ChevronLeft, CircleDollarSign } from 'lucide-react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import AssetIcon from '../components/AssetIcon';
 import { triggerHaptic } from '../haptics';
+import simplifySprintBackground from '../assets/maps/backgroundsforgames/simplifysprint.jpg';
 import successRoundBackground from '../assets/end of round screen/success screen.jpg';
 import failureRoundBackground from '../assets/end of round screen/failure screen.jpg';
 
@@ -355,7 +356,11 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
 
   return (
     <div className="relative h-full w-full overflow-hidden select-none text-white">
-      <GameplaySceneBackdrop gameType="fraction_match" className="opacity-[0.98]" />
+      <GameplaySceneBackdrop
+        gameType="fraction_match"
+        backgroundOverride={simplifySprintBackground}
+        className="opacity-[0.98]"
+      />
 
       {!useSharedTopHud && (
         <div className="absolute left-0 right-0 z-30 flex items-center justify-between px-3 py-2 md:px-5" style={{ top: 'calc(env(safe-area-inset-top) + 2px)' }}>

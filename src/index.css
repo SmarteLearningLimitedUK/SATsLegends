@@ -74,10 +74,10 @@
   --sat-pill-radius: 999px;
   --sat-question-pad-x: 1rem;
   --sat-question-pad-y: 0.75rem;
-  --sat-button-primary-skin: url('./assets/uibuttonstest/1.png');
-  --sat-button-secondary-skin: url('./assets/uibuttonstest/2.png');
-  --sat-button-accent-skin: url('./assets/uibuttonstest/3.png');
-  --sat-button-cta-skin: url('./assets/uibuttonstest/4.png');
+  --sat-button-primary-skin: url('./assets/casual_ui/inputs/btn_1.png');
+  --sat-button-secondary-skin: url('./assets/casual_ui/inputs/btn_4.png');
+  --sat-button-accent-skin: url('./assets/casual_ui/inputs/btn_5.png');
+  --sat-button-cta-skin: url('./assets/casual_ui/inputs/btn_1.png');
 }
 
 html,
@@ -5454,6 +5454,139 @@ button.avatar-hero-arrow:not(:disabled):active {
     0 14px 28px rgba(2, 6, 23, 0.32) !important;
   color: #fff8ec !important;
   padding: var(--sat-question-pad-y) var(--sat-question-pad-x) !important;
+}
+
+/* Casual input button reset: use the casual_ui input assets without layered button effects. */
+.ui-button-primary,
+.ui-action-button,
+.game-button-primary,
+.licensed-wood-button,
+.fantasy-cta-button,
+.hero-cta-button,
+.splash-continue-button,
+.licensed-slice-yellow-plank,
+.licensed-submit-button,
+.potion-brew-button,
+.mission-action-btn-primary,
+.gold-pill-shell {
+  border: 0 !important;
+  background:
+    var(--sat-button-primary-skin) center/100% 100% no-repeat !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+  transition: none !important;
+  color: #16233d !important;
+  overflow: hidden !important;
+}
+
+.ui-button-secondary,
+.game-button-secondary,
+.licensed-wood-button-secondary,
+.licensed-answer-button,
+.casual-action-button,
+.licensed-slice-green-pill,
+.mission-action-btn-secondary {
+  border: 0 !important;
+  background:
+    var(--sat-button-secondary-skin) center/100% 100% no-repeat !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+  transition: none !important;
+  color: #eff7ff !important;
+  overflow: hidden !important;
+}
+
+.ui-icon-button,
+.game-dock-button,
+.hero-nav-button,
+.hero-arrow-button,
+.hero-arrow-button-clean,
+.ui-close-button,
+.avatar-hero-arrow {
+  border: 0 !important;
+  background:
+    var(--sat-button-accent-skin) center/100% 100% no-repeat !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+  transition: none !important;
+  color: #eff7ff !important;
+  overflow: hidden !important;
+}
+
+.ui-button-primary:hover,
+.ui-action-button:hover,
+.game-button-primary:hover,
+.licensed-wood-button:hover,
+.fantasy-cta-button:hover,
+.hero-cta-button:hover,
+.splash-continue-button:hover,
+.licensed-slice-yellow-plank:hover,
+.licensed-submit-button:hover,
+.potion-brew-button:hover,
+.mission-action-btn-primary:hover,
+.gold-pill-shell:hover,
+.ui-button-secondary:hover,
+.game-button-secondary:hover,
+.licensed-wood-button-secondary:hover,
+.licensed-answer-button:hover,
+.casual-action-button:hover,
+.licensed-slice-green-pill:hover,
+.mission-action-btn-secondary:hover,
+.ui-icon-button:hover,
+.game-dock-button:hover,
+.hero-nav-button:hover,
+.hero-arrow-button:hover,
+.hero-arrow-button-clean:hover,
+.ui-close-button:hover,
+.avatar-hero-arrow:hover,
+.ui-button-primary:active,
+.ui-action-button:active,
+.game-button-primary:active,
+.licensed-wood-button:active,
+.fantasy-cta-button:active,
+.hero-cta-button:active,
+.splash-continue-button:active,
+.licensed-slice-yellow-plank:active,
+.licensed-submit-button:active,
+.potion-brew-button:active,
+.mission-action-btn-primary:active,
+.gold-pill-shell:active,
+.ui-button-secondary:active,
+.game-button-secondary:active,
+.licensed-wood-button-secondary:active,
+.licensed-answer-button:active,
+.casual-action-button:active,
+.licensed-slice-green-pill:active,
+.mission-action-btn-secondary:active,
+.ui-icon-button:active,
+.game-dock-button:active,
+.hero-nav-button:active,
+.hero-arrow-button:active,
+.hero-arrow-button-clean:active,
+.ui-close-button:active,
+.avatar-hero-arrow:active {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+.gold-pill-shell {
+  background:
+    var(--sat-button-cta-skin) center/100% 100% no-repeat !important;
+}
+
+.gold-pill-shell:not(:disabled):active {
+  filter: none !important;
+}
+
+.gold-pill-art {
+  display: none !important;
 }
 
 

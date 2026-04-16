@@ -6,7 +6,8 @@ import LevelBadge from '../progression/LevelBadge';
 import XpBar, { XpSegment } from '../progression/XpBar';
 import { getXpRequiredForLevel } from '../../lib/progression/getXpRequiredForLevel';
 import { BonusBreakdown as BonusBreakdownType, StarCount } from '../../lib/progression/types';
-import AssetIcon from '../AssetIcon';
+import successRoundBackground from '../../assets/end of round screen/success screen.jpg';
+import failureRoundBackground from '../../assets/end of round screen/failure screen.jpg';
 
 interface LevelResultsModalProps {
   isOpen: boolean;
@@ -130,6 +131,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
   if (!result) return null;
 
   const isVictory = result.type === 'victory';
+  const resultBackground = isVictory ? successRoundBackground : failureRoundBackground;
 
   return (
     <AnimatePresence>
@@ -138,14 +140,32 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[140] flex items-center justify-center bg-slate-950/80 backdrop-blur-xl"
+          className="fixed inset-0 z-[140] flex items-center justify-center overflow-hidden bg-slate-950/88"
         >
+          <div className="pointer-events-none absolute inset-0">
+            <img
+              src={resultBackground}
+              alt=""
+              className="h-full w-full object-cover object-center"
+              draggable={false}
+            />
+            <div
+              className={`absolute inset-0 ${
+                isVictory
+                  ? 'bg-[linear-gradient(180deg,rgba(7,26,39,0.22),rgba(2,6,23,0.72))]'
+                  : 'bg-[linear-gradient(180deg,rgba(45,12,24,0.2),rgba(2,6,23,0.76))]'
+              }`}
+            />
+            <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/40 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/55 to-transparent" />
+          </div>
+
           <motion.div
             initial={{ y: 24, scale: 0.96, opacity: 0 }}
             animate={{ y: 0, scale: 1, opacity: 1 }}
             exit={{ y: 16, scale: 0.98, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 220, damping: 20 }}
-            className="relative w-full max-w-md overflow-hidden rounded-[1.6rem] border border-white/15 bg-[linear-gradient(180deg,rgba(7,21,52,0.92),rgba(5,17,45,0.96))] p-4 shadow-[0_28px_80px_rgba(0,0,0,0.5)] md:max-w-lg md:rounded-[2rem] md:p-6"
+            className="relative z-10 w-full max-w-md overflow-hidden rounded-[1.6rem] border border-white/15 bg-[linear-gradient(180deg,rgba(7,21,52,0.78),rgba(5,17,45,0.9))] p-4 shadow-[0_28px_80px_rgba(0,0,0,0.5)] backdrop-blur-md md:max-w-lg md:rounded-[2rem] md:p-6"
           >
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(56,189,248,0.18),transparent_55%),radial-gradient(circle_at_50%_100%,rgba(251,191,36,0.18),transparent_60%)]" />
             <button

@@ -25,8 +25,6 @@ import { isBossEncounterGameType } from '../games/bossEncounterTypes';
 import { GameScreen, IslandData, LevelData, PlayerData } from '../types';
 import { getLevelGameTitle } from '../utils/gameNames';
 import splashPoster from '../assets/casual_ui/splashrep1.png';
-import splashStartPill from '../assets/uibuttonstest/4.png';
-import { useTrimmedImageSource } from '../utils/trimTransparentImage';
 import { LEVEL_TIMERS_DISABLED } from './testingFlags';
 import {
   bindMiniGameSessionHandlers,
@@ -117,8 +115,6 @@ export const AppRouter: React.FC<AppRouterProps> = ({
   onOpenParentReport,
   onUpdatePlayer,
 }) => {
-  const trimmedSplashStartPill = useTrimmedImageSource(splashStartPill);
-
   const renderGameplay = () => {
     if (!selectedLevel) {
       return (
@@ -419,38 +415,14 @@ export const AppRouter: React.FC<AppRouterProps> = ({
           />
 
           <div className="absolute bottom-[7.5%] left-1/2 h-14 w-56 -translate-x-1/2 sm:h-16 sm:w-64">
-            <motion.div
-              aria-hidden
-              className="pointer-events-none absolute inset-0 rounded-full bg-teal-300/80 blur-[2px]"
-              animate={{
-                opacity: [0.42, 0.92, 0.42],
-                scale: [0.995, 1.015, 0.995]
-              }}
-              transition={{ duration: 0.75, repeat: Infinity, ease: 'easeInOut' }}
-            />
-
-            <motion.button
+            <button
               type="button"
               onClick={onStartAdventure}
               aria-label="Start"
-              initial={{ opacity: 0, y: 12, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: 0.15, duration: 0.35, ease: 'easeOut' }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="gold-pill-shell relative h-full w-full rounded-full border-0 bg-transparent p-0 shadow-[0_8px_22px_rgba(0,0,0,0.35)]"
+              className="ui-button-primary flex h-full w-full items-center justify-center border-0 bg-transparent px-4 py-0 text-lg font-black uppercase tracking-[0.12em] text-[#16233d] sm:text-xl"
             >
-              <img
-                src={trimmedSplashStartPill}
-                alt=""
-                aria-hidden
-                draggable={false}
-                className="gold-pill-art rounded-full"
-              />
-              <span className="relative z-10 text-lg font-normal uppercase tracking-[0.12em] text-black drop-shadow-[0_1px_0_rgba(255,255,255,0.45)] sm:text-xl">
-                Start
-              </span>
-            </motion.button>
+              Start
+            </button>
           </div>
         </div>
       );

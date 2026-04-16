@@ -10,7 +10,7 @@ import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import { DEFAULT_RACE_DIFFICULTY, RACE_TUNING, RaceDifficulty } from './ratioFractionsRace/constants';
 import { getQuestionTier, QuestionTier } from './ratioFractionsRace/questionSelector';
 import { RatioFractionQuestion } from './ratioFractionsRace/types';
-import ratioBackdrop from '../assets/gokarts/bkgroundratiofractionkarts.png';
+import ratioBackdrop from '../assets/maps/backgroundsforgames/sharesplitterfinal.png';
 import kartBarratt from '../assets/gokarts/8.png';
 import kartBran from '../assets/gokarts/9.png';
 import kartMochi from '../assets/gokarts/10.png';
@@ -46,9 +46,6 @@ const RACER_LERP = 0.16;
 const BASE_XP = 160;
 const KART_SCALE = 1.4;
 const PLAYER_KART_SCALE = KART_SCALE * 1.5;
-const BACKDROP_WIDTH = 8000;
-const BACKDROP_HEIGHT = 1000;
-const BACKDROP_ASPECT_RATIO = BACKDROP_WIDTH / BACKDROP_HEIGHT;
 const TRACK_LINE_FROM_BOTTOM = 177;
 const CART_Y_SHIFT = 0;
 const FINISH_Y_SHIFT = -200;
@@ -420,10 +417,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     0,
     100,
   );
-  const backdropHeightPx = Math.max(1, Math.round(viewport.height));
-  const backdropWidthPx = Math.max(1, Math.round(backdropHeightPx * BACKDROP_ASPECT_RATIO));
-  const maxBackdropScroll = Math.max(0, backdropWidthPx - viewport.width);
-  const backgroundOffset = Math.round(clamp(trackProgress * maxBackdropScroll, 0, maxBackdropScroll));
+  const backgroundPositionX = Math.round(clamp(18 + (trackProgress * 64), 18, 82));
   const playerBobOffset = Math.sin(playerBobPhaseRef.current) * PLAYER_BOB_AMPLITUDE;
   const enemyBobOffset = Math.sin(enemyBobPhaseRef.current + 1.35) * ENEMY_BOB_AMPLITUDE;
   const playerLean = clamp((playerTargetRef.current - playerPosRef.current) * 0.9, -PLAYER_ROLL_MAX, PLAYER_ROLL_MAX);
@@ -456,16 +450,12 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             backgroundColor: '#0b0f1c',
           }}
         />
-        <img
-          src={ratioBackdrop}
-          alt=""
+        <div
           aria-hidden="true"
-          draggable={false}
-          className="pointer-events-none absolute left-0 top-0 h-full max-w-none select-none"
+          className="pointer-events-none absolute inset-0 select-none bg-cover bg-center bg-no-repeat"
           style={{
-            width: `${backdropWidthPx}px`,
-            transform: `translate3d(${-backgroundOffset}px, 0, 0)`,
-            imageRendering: 'auto',
+            backgroundImage: `url(${ratioBackdrop})`,
+            backgroundPosition: `${backgroundPositionX}% center`,
           }}
         />
 

@@ -16,12 +16,11 @@ import BossPortrait from '../components/BossPortrait';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import AssetIcon from '../components/AssetIcon';
 import { Star } from '../components/GameIcons';
-import answerActionBg from '../assets/uibuttonstest/4.png';
-import answerDecorAsset from '../assets/casual_ui/dialogs_panels/dialog__tag.png';
-import answerOrangeBg from '../assets/uibuttonstest/4.png';
-import answerGreenBg from '../assets/uibuttonstest/2.png';
-import answerBlueBg from '../assets/uibuttonstest/1.png';
-import answerYellowBg from '../assets/uibuttonstest/3.png';
+import answerActionBg from '../assets/casual_ui/inputs/btn_1.png';
+import answerOrangeBg from '../assets/casual_ui/inputs/btn_7.png';
+import answerGreenBg from '../assets/casual_ui/inputs/btn_2.png';
+import answerBlueBg from '../assets/casual_ui/inputs/btn_4.png';
+import answerYellowBg from '../assets/casual_ui/inputs/btn_1.png';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import { formatMultiplicationDisplay } from '../utils/mathDisplay';
 
@@ -1426,7 +1425,6 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                 return (
                   <motion.button
                     key={`${question.prompt}-${option}`}
-                    whileTap={{ scale: 0.985 }}
                     onClick={() => handleAnswer(index)}
                     disabled={Boolean(feedback) || isVictory || isGameOver}
                     className={`relative flex w-full shrink-0 items-center justify-center overflow-hidden px-3 py-2 text-center shadow-[0_16px_26px_rgba(0,0,0,0.24)] transition-transform ${
@@ -1442,9 +1440,6 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                     }`}
                   >
                     {!isPlaceValuePeaks && !isChartGrabber && <img src={answerBackground} alt="" className="gold-pill-art rounded-[inherit] object-fill" draggable={false} />}
-                    {!isPlaceValuePeaks && !isChartGrabber && !usesBlueAnswers && !isCorrect && !isWrongSelected && (
-                      <img src={answerDecorAsset} alt="" className="absolute inset-0 h-full w-full object-fill opacity-95" draggable={false} />
-                    )}
                     {isPlaceValuePeaks && (
                       <div className={`absolute inset-0 ${
                         isCorrect

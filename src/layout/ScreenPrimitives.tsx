@@ -220,8 +220,8 @@ export const PrimaryActionCTA: React.FC<ActionButtonProps> = ({
     disabled={disabled}
     className={cn(
       'ui-button-primary gameplay-cta-primary mission-action-btn mission-action-btn-primary',
-      'inline-flex min-h-[48px] items-center justify-center rounded-full border border-white/24',
-      'px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white',
+      'inline-flex min-h-[48px] items-center justify-center border-0 bg-transparent',
+      'px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em]',
       'disabled:cursor-not-allowed disabled:opacity-60',
       'md:min-h-[48px] md:px-5 md:py-2.5 md:text-xs',
       className,
@@ -253,8 +253,8 @@ export const SecondaryUtilityButton: React.FC<ActionButtonProps> = ({
     disabled={disabled}
     className={cn(
       'ui-button-secondary gameplay-cta-secondary mission-action-btn mission-action-btn-secondary',
-      'inline-flex min-h-[48px] items-center justify-center rounded-full border border-white/20',
-      'px-3 py-1.5 text-[9.5px] font-black uppercase tracking-[0.14em] text-white',
+      'inline-flex min-h-[48px] items-center justify-center border-0 bg-transparent',
+      'px-3 py-1.5 text-[9.5px] font-black uppercase tracking-[0.14em]',
       'disabled:cursor-not-allowed disabled:opacity-60',
       'md:min-h-[48px] md:px-4 md:py-2 md:text-[10px]',
       className,

@@ -13,10 +13,8 @@ import food8 from '../assets/take_out/food/8.png';
 import food9 from '../assets/take_out/food/9.png';
 import FoodGameShell from '../components/FoodGameShell';
 import defaultMonster from '../assets/bosses/goblin.png';
-import goldButtonAsset from '../assets/uibuttonstest/4.png';
 import { triggerHaptic } from '../haptics';
 import CelebrationSplash from '../components/CelebrationSplash';
-import { useTrimmedImageSource } from '../utils/trimTransparentImage';
 
 interface TakeOutRushGameProps {
   levelId: number;
@@ -327,7 +325,6 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
   onGameOver: _onGameOver,
   onBack,
 }) => {
-  const trimmedGoldButtonAsset = useTrimmedImageSource(goldButtonAsset);
   const baseLevel = Math.max(1, Math.min(12, miniGameLevel || levelId || 1));
 
   const [timeLeft, setTimeLeft] = useState(ROUND_DURATION_SECONDS);
@@ -652,7 +649,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                     type="button"
                     onClick={clearTray}
                     disabled={selectedIds.length === 0 || isResolvingOrder}
-                    className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-2 text-[10px] font-black uppercase text-cyan-100/80 transition disabled:opacity-50"
+                    className="ui-button-secondary px-3 py-2 text-[10px] font-black uppercase disabled:opacity-50"
                   >
                     Reset
                   </button>
@@ -660,18 +657,9 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                     type="button"
                     onClick={() => submitOrder(false)}
                     disabled={!canSubmit}
-                    className="gold-pill-shell relative inline-flex h-11 w-[min(11rem,46vw)] items-center justify-center rounded-full border-0 bg-transparent p-0 shadow-[0_8px_22px_rgba(0,0,0,0.35)] transition disabled:opacity-50"
+                    className="ui-button-primary relative inline-flex h-11 w-[min(11rem,46vw)] items-center justify-center border-0 bg-transparent px-4 py-0 text-[11px] font-black uppercase tracking-[0.12em] text-[#16233d] disabled:opacity-50"
                   >
-                    <img
-                      src={trimmedGoldButtonAsset}
-                      alt=""
-                      aria-hidden="true"
-                      draggable={false}
-                      className="gold-pill-art rounded-full"
-                    />
-                    <span className="relative z-10 text-[11px] font-normal uppercase tracking-[0.12em] text-black drop-shadow-[0_1px_0_rgba(255,255,255,0.45)]">
-                      Send Order
-                    </span>
+                    Send Order
                   </button>
                 </div>
               </div>

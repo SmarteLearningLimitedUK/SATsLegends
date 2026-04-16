@@ -1,0 +1,25 @@
+{
+  "artifactsDir": "D:\\BrainZilla\\SATsLegends\\qa-artifacts\\playwright-gameplay-qa-1776363436037",
+  "screenshots": [
+    "D:\\BrainZilla\\SATsLegends\\qa-artifacts\\playwright-gameplay-qa-1776363436037\\01-problem-pyramid-gameplay.png",
+    "D:\\BrainZilla\\SATsLegends\\qa-artifacts\\playwright-gameplay-qa-1776363436037\\02-problem-pyramid-victory.png",
+    "D:\\BrainZilla\\SATsLegends\\qa-artifacts\\playwright-gameplay-qa-1776363436037\\03-change-counter-gameplay.png",
+    "D:\\BrainZilla\\SATsLegends\\qa-artifacts\\playwright-gameplay-qa-1776363436037\\04-change-counter-failure.png"
+  ],
+  "steps": [
+    {
+      "name": "Boot to world map",
+      "status": "passed"
+    },
+    {
+      "name": "Problem Pyramid victory flow",
+      "status": "passed"
+    },
+    {
+      "name": "Change Counter failure flow",
+      "status": "passed"
+    }
+  ],
+  "consoleErrors": [],
+  "requestFailures": []
+}

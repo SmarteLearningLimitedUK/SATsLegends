@@ -1,7 +1,35 @@
 import { MiniGameType } from './types';
+import areaArchitectBackground from './assets/maps/backgroundsforgames/area architect.jpg';
+import calculationCupBackground from './assets/maps/backgroundsforgames/Calculation Cup.png';
+import changeCounterBackground from './assets/maps/backgroundsforgames/changecounter.jpg';
+import chronoDashTimeTrialBackground from './assets/maps/backgroundsforgames/Chrono Dash Time Trial.jpg';
+import cloudCollapseBackground from './assets/maps/backgroundsforgames/Cloud Collapse.jpg';
+import coordinateQuestBackground from './assets/maps/backgroundsforgames/coordinate quest.jpg';
 import crystalCoreBackground from './assets/maps/backgroundsforgames/crystal core.jpg';
-import mirrorGateBackground from './assets/maps/backgroundsforgames/Multi Step Marathon.jpg';
+import dataDetectiveBackground from './assets/maps/backgroundsforgames/data detective.jpg';
 import matrixMatchBackground from './assets/maps/backgroundsforgames/End Trial.jpg';
+import fractionForgeBackground from './assets/maps/backgroundsforgames/fraction forge map.jpg';
+import graphGrabberBackground from './assets/maps/backgroundsforgames/graph grabber.jpg';
+import lavaPathBackground from './assets/maps/backgroundsforgames/Lava Path.jpg';
+import lineGraphLabBackground from './assets/maps/backgroundsforgames/linegraphlab.jpg';
+import meanMachineBackground from './assets/maps/backgroundsforgames/meanmachine.jpg';
+import mixedMasteryBackground from './assets/maps/backgroundsforgames/Mixed Mastery.jpg';
+import monsterMarketBackground from './assets/maps/backgroundsforgames/Monster Market.png';
+import multiStepMarathonBackground from './assets/maps/backgroundsforgames/Multi Step Marathon.jpg';
+import orderOpsArenaBackground from './assets/maps/backgroundsforgames/orderopsarena.jpg';
+import percentPowerBackground from './assets/maps/backgroundsforgames/percent power.jpg';
+import placeValuePanicBackground from './assets/maps/backgroundsforgames/Place Value Panic.png';
+import polygonPalaceBackground from './assets/maps/backgroundsforgames/polygon palace.jpg';
+import potionPanicBackground from './assets/maps/backgroundsforgames/potionpanic.jpg';
+import primePopBackground from './assets/maps/backgroundsforgames/primepopbkground.jpg';
+import problemPyramidBackground from './assets/maps/backgroundsforgames/problem pyramid.jpg';
+import rotationReflectionBackground from './assets/maps/backgroundsforgames/Rotation Reflection.jpg';
+import rotationStationBackground from './assets/maps/backgroundsforgames/rotationstation.jpg';
+import scaleBuilderBackground from './assets/maps/backgroundsforgames/scalebuilder-construction.png';
+import scaleMasterBackground from './assets/maps/backgroundsforgames/Scale Master.png';
+import shareSplitterBackground from './assets/maps/backgroundsforgames/sharesplitterfinal.png';
+import takeOutRushBackground from './assets/maps/backgroundsforgames/Take-Out Rush.png';
+import towerOfFactorsBackground from './assets/maps/backgroundsforgames/tower of factors.jpg';
 
 export interface GameSceneMeta {
   background?: string;
@@ -54,50 +82,46 @@ const SCALE_BUILDER_SCENE: GameSceneMeta = RATIO_SCENE;
 
 const CHART_CHASE_SCENE: GameSceneMeta = DATA_SCENE;
 
+const withBackground = (scene: GameSceneMeta, background: string): GameSceneMeta => ({
+  ...scene,
+  background,
+});
+
 export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
-  quiz: NUMBER_SCENE,
-  potion_pour: RATIO_SCENE,
-  cloud_collapse: FRACTION_SCENE,
-  logic_sort: REASONING_SCENE,
-  matrix_match: {
-    ...REASONING_SCENE,
-    background: matrixMatchBackground,
-  },
-  take_out_rush: FRACTION_SCENE,
-  fraction_match: FRACTION_SCENE,
-  crystal_core: {
-    ...FRACTION_SCENE,
-    background: crystalCoreBackground,
-  },
-  prime_pop: NUMBER_SCENE,
-  angle_arena: GEOMETRY_SCENE,
-  polygon_palace: GEOMETRY_SCENE,
-  data_dungeon: DATA_SCENE,
-  monster_market: NUMBER_SCENE,
-  tower_of_factors: NUMBER_SCENE,
-  measurement_forge: RATIO_SCENE,
-  timekeeper_temple: DATA_SCENE,
-  ratio_rapids: RATIO_SCENE,
-  place_value_peaks: NUMBER_SCENE,
-  calculation_clash: NUMBER_SCENE,
-  coordinate_quest: GEOMETRY_SCENE,
-  transform_temple: GEOMETRY_SCENE,
-  mirror_gate: {
-    ...REASONING_SCENE,
-    background: mirrorGateBackground,
-  },
-  scale_safari: SCALE_BUILDER_SCENE,
-  scales_of_the_sun: SCALE_SCENE,
-  graph_grabber: CHART_CHASE_SCENE,
-  observatory_overload: DATA_SCENE,
-  mean_machine: DATA_SCENE,
-  percent_power: RATIO_SCENE,
-  area_architect: GEOMETRY_SCENE,
-  ratio_fractions: RATIO_SCENE,
-  equation_grove: REASONING_SCENE,
-  rule_runner: REASONING_SCENE,
-  formula_forge: NUMBER_SCENE,
-  unit_mixer: REASONING_SCENE,
-  change_counter: CHANGE_COUNTER_SCENE,
-  reasoning_quest: REASONING_SCENE,
+  quiz: withBackground(NUMBER_SCENE, mixedMasteryBackground),
+  potion_pour: withBackground(RATIO_SCENE, potionPanicBackground),
+  cloud_collapse: withBackground(FRACTION_SCENE, cloudCollapseBackground),
+  logic_sort: withBackground(REASONING_SCENE, mixedMasteryBackground),
+  matrix_match: withBackground(REASONING_SCENE, matrixMatchBackground),
+  take_out_rush: withBackground(FRACTION_SCENE, takeOutRushBackground),
+  fraction_match: withBackground(FRACTION_SCENE, fractionForgeBackground),
+  crystal_core: withBackground(FRACTION_SCENE, crystalCoreBackground),
+  prime_pop: withBackground(NUMBER_SCENE, primePopBackground),
+  angle_arena: withBackground(GEOMETRY_SCENE, polygonPalaceBackground),
+  polygon_palace: withBackground(GEOMETRY_SCENE, polygonPalaceBackground),
+  data_dungeon: withBackground(DATA_SCENE, dataDetectiveBackground),
+  monster_market: withBackground(NUMBER_SCENE, monsterMarketBackground),
+  tower_of_factors: withBackground(NUMBER_SCENE, towerOfFactorsBackground),
+  measurement_forge: withBackground(RATIO_SCENE, scaleMasterBackground),
+  timekeeper_temple: withBackground(DATA_SCENE, chronoDashTimeTrialBackground),
+  ratio_rapids: withBackground(RATIO_SCENE, scaleMasterBackground),
+  place_value_peaks: withBackground(NUMBER_SCENE, placeValuePanicBackground),
+  calculation_clash: withBackground(NUMBER_SCENE, calculationCupBackground),
+  coordinate_quest: withBackground(GEOMETRY_SCENE, coordinateQuestBackground),
+  transform_temple: withBackground(GEOMETRY_SCENE, rotationStationBackground),
+  mirror_gate: withBackground(REASONING_SCENE, rotationReflectionBackground),
+  scale_safari: withBackground(SCALE_BUILDER_SCENE, scaleBuilderBackground),
+  scales_of_the_sun: withBackground(SCALE_SCENE, scaleMasterBackground),
+  graph_grabber: withBackground(CHART_CHASE_SCENE, graphGrabberBackground),
+  observatory_overload: withBackground(DATA_SCENE, lineGraphLabBackground),
+  mean_machine: withBackground(DATA_SCENE, meanMachineBackground),
+  percent_power: withBackground(RATIO_SCENE, percentPowerBackground),
+  area_architect: withBackground(GEOMETRY_SCENE, areaArchitectBackground),
+  ratio_fractions: withBackground(RATIO_SCENE, shareSplitterBackground),
+  equation_grove: withBackground(REASONING_SCENE, orderOpsArenaBackground),
+  rule_runner: withBackground(REASONING_SCENE, problemPyramidBackground),
+  formula_forge: withBackground(NUMBER_SCENE, calculationCupBackground),
+  unit_mixer: withBackground(REASONING_SCENE, lavaPathBackground),
+  change_counter: withBackground(CHANGE_COUNTER_SCENE, changeCounterBackground),
+  reasoning_quest: withBackground(REASONING_SCENE, multiStepMarathonBackground),
 };

@@ -1,5 +1,5 @@
 {
-  "url": "https://satslegendsfinal.vercel.app/",
+  "url": "http://127.0.0.1:3001/",
   "viewport": {
     "width": 1440,
     "height": 900
@@ -114,8 +114,8 @@
       "island": "Geometry Glacier",
       "game": "Chrono Dash: Time Trial",
       "screenshot": "qa-pc-chrono-dash-time-trial.png",
-      "status": "captured",
-      "error": null
+      "status": "failed",
+      "error": "Game group not found: Chrono Dash: Time Trial"
     },
     {
       "island": "Geometry Glacier",
@@ -212,8 +212,8 @@
       "island": "Measurement Mountain",
       "game": "Unit Mixer",
       "screenshot": "qa-pc-unit-mixer.png",
-      "status": "captured",
-      "error": null
+      "status": "failed",
+      "error": "Game group not found: Unit Mixer"
     },
     {
       "island": "Measurement Mountain",
@@ -251,46 +251,46 @@
       "error": null
     },
     {
-      "island": "Core of Calculation",
+      "island": "Calculation Core",
       "game": "Reasoning Quest",
       "screenshot": "qa-pc-reasoning-quest.png",
-      "status": "captured",
-      "error": null
+      "status": "failed",
+      "error": "Island button not found: Calculation Core"
     },
     {
-      "island": "Core of Calculation",
+      "island": "Calculation Core",
       "game": "Multi-Step Marathon",
       "screenshot": "qa-pc-multi-step-marathon.png",
-      "status": "captured",
-      "error": null
+      "status": "failed",
+      "error": "Island button not found: Calculation Core"
     },
     {
-      "island": "Core of Calculation",
+      "island": "Calculation Core",
       "game": "Strategy Survival",
       "screenshot": "qa-pc-strategy-survival.png",
-      "status": "captured",
-      "error": null
+      "status": "failed",
+      "error": "Island button not found: Calculation Core"
     },
     {
-      "island": "Core of Calculation",
+      "island": "Calculation Core",
       "game": "Mixed Mastery",
       "screenshot": "qa-pc-mixed-mastery.png",
-      "status": "captured",
-      "error": null
+      "status": "failed",
+      "error": "Island button not found: Calculation Core"
     },
     {
-      "island": "Core of Calculation",
+      "island": "Calculation Core",
       "game": "Timed Test Trials",
       "screenshot": "qa-pc-timed-test-trials.png",
-      "status": "captured",
-      "error": null
+      "status": "failed",
+      "error": "Island button not found: Calculation Core"
     },
     {
-      "island": "Core of Calculation",
+      "island": "Calculation Core",
       "game": "Median Master",
       "screenshot": "qa-pc-median-master.png",
-      "status": "captured",
-      "error": null
+      "status": "failed",
+      "error": "Island button not found: Calculation Core"
     }
   ]
 }

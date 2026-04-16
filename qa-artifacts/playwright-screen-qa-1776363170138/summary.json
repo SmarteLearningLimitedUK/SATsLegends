@@ -1,0 +1,190 @@
+{
+  "baseUrl": "http://127.0.0.1:4173",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "artifactsDir": "D:\\BrainZilla\\SATsLegends\\qa-artifacts\\playwright-screen-qa-1776363170138",
+  "visited": [
+    "splash",
+    "avatar_selection",
+    "world_map",
+    "profile",
+    "world_map",
+    "achievements_tracker",
+    "world_map",
+    "parent_dashboard",
+    "world_map",
+    "island_levels",
+    "wellbeing_hub",
+    "wellbeing_activity",
+    "world_map",
+    "shop",
+    "settings"
+  ],
+  "screenshots": [
+    "D:\\BrainZilla\\SATsLegends\\qa-artifacts\\playwright-screen-qa-1776363170138\\01-splash.png",
+    "D:\\BrainZilla\\SATsLegends\\qa-artifacts\\playwright-screen-qa-1776363170138\\02-avatar-selection.png",
+    "D:\\BrainZilla\\SATsLegends\\qa-artifacts\\playwright-screen-qa-1776363170138\\03-world-map.png",
+    "D:\\BrainZilla\\SATsLegends\\qa-artifacts\\playwright-screen-qa-1776363170138\\04-profile.png",
+    "D:\\BrainZilla\\SATsLegends\\qa-artifacts\\playwright-screen-qa-1776363170138\\05-achievements.png",
+    "D:\\BrainZilla\\SATsLegends\\qa-artifacts\\playwright-screen-qa-1776363170138\\06-parent-gate-button-failure.png",
+    "D:\\BrainZilla\\SATsLegends\\qa-artifacts\\playwright-screen-qa-1776363170138\\07-parent-dashboard.png",
+    "D:\\BrainZilla\\SATsLegends\\qa-artifacts\\playwright-screen-qa-1776363170138\\08-world-map-island-overlay.png",
+    "D:\\BrainZilla\\SATsLegends\\qa-artifacts\\playwright-screen-qa-1776363170138\\09-island-levels.png",
+    "D:\\BrainZilla\\SATsLegends\\qa-artifacts\\playwright-screen-qa-1776363170138\\10-wellbeing-hub.png",
+    "D:\\BrainZilla\\SATsLegends\\qa-artifacts\\playwright-screen-qa-1776363170138\\11-wellbeing-activity.png",
+    "D:\\BrainZilla\\SATsLegends\\qa-artifacts\\playwright-screen-qa-1776363170138\\12-shop.png",
+    "D:\\BrainZilla\\SATsLegends\\qa-artifacts\\playwright-screen-qa-1776363170138\\13-settings.png"
+  ],
+  "steps": [
+    {
+      "name": "Splash",
+      "status": "passed"
+    },
+    {
+      "name": "Avatar Selection",
+      "status": "passed"
+    },
+    {
+      "name": "World Map",
+      "status": "passed"
+    },
+    {
+      "name": "Profile Screen Via Map Button",
+      "status": "passed"
+    },
+    {
+      "name": "Achievements Screen Via Map Button",
+      "status": "passed"
+    },
+    {
+      "name": "Parent Gate Via Map Button",
+      "status": "failed",
+      "error": "Parent Gate overlay did not open after tapping the world map parent portal button"
+    },
+    {
+      "name": "Parent Dashboard Direct Route",
+      "status": "passed"
+    },
+    {
+      "name": "Island Levels",
+      "status": "passed"
+    },
+    {
+      "name": "Wellbeing Hub",
+      "status": "passed"
+    },
+    {
+      "name": "Wellbeing Activity",
+      "status": "passed"
+    },
+    {
+      "name": "Shop Route",
+      "status": "passed"
+    },
+    {
+      "name": "Settings Route",
+      "status": "passed"
+    },
+    {
+      "name": "Gameplay Victory Flow - Problem Pyramid",
+      "status": "failed",
+      "error": "page.waitForSelector: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-qa-screen=\"gameplay\"]') to be visible\u001b[22m\n"
+    },
+    {
+      "name": "Gameplay Failure Flow - Change Counter",
+      "status": "failed",
+      "error": "page.waitForSelector: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-qa-screen=\"gameplay\"]') to be visible\u001b[22m\n"
+    }
+  ],
+  "consoleErrors": [
+    {
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:4173/game/6/2"
+    },
+    {
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:4173/game/6/2"
+    },
+    {
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:4173/game/6/2"
+    },
+    {
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:4173/game/6/2"
+    },
+    {
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:4173/game/6/4"
+    },
+    {
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:4173/game/6/4"
+    },
+    {
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:4173/game/6/4"
+    },
+    {
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:4173/game/6/4"
+    }
+  ],
+  "pageErrors": [],
+  "requestFailures": [
+    {
+      "url": "http://127.0.0.1:4173/game/6/assets/index-Dbyx7LlF.js",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "url": "http://127.0.0.1:4173/game/6/assets/motion-DjFBzPkW.js",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "url": "http://127.0.0.1:4173/game/6/assets/charts-B9LfZN6a.js",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "url": "http://127.0.0.1:4173/game/6/assets/lucide-Cuxa1F7H.js",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "url": "http://127.0.0.1:4173/game/6/assets/index-Dbyx7LlF.js",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "url": "http://127.0.0.1:4173/game/6/assets/motion-DjFBzPkW.js",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "url": "http://127.0.0.1:4173/game/6/assets/charts-B9LfZN6a.js",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "url": "http://127.0.0.1:4173/game/6/assets/lucide-Cuxa1F7H.js",
+      "method": "GET",
+      "failure": "net::ERR_ABORTED"
+    }
+  ],
+  "findings": [
+    {
+      "severity": "medium",
+      "title": "Parent portal button on the world map does not open the parent gate overlay",
+      "reproduction": [
+        "Complete onboarding to reach the world map.",
+        "Tap the parent portal button in the world map HUD.",
+        "Wait at least 1 second."
+      ],
+      "impact": "Parents cannot reach the protected parent flow from the live world-map UI."
+    }
+  ]
+}

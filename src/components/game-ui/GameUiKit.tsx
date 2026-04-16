@@ -76,9 +76,8 @@ export const IconButton: React.FC<IconButtonProps> = ({ icon, label, onClick, di
     disabled={disabled}
     aria-label={label}
     className={cn(
-      'ui-icon-button inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20',
-      'bg-white/10 text-white shadow-[0_10px_20px_rgba(15,23,42,0.28)]',
-      'transition active:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-60',
+      'ui-icon-button inline-flex h-11 w-11 items-center justify-center p-0',
+      'text-white disabled:cursor-not-allowed disabled:opacity-60',
     )}
   >
     {icon}
@@ -130,9 +129,9 @@ export const PrimaryButton: React.FC<ButtonProps> = ({ children, className, onCl
     onClick={onClick}
     disabled={disabled}
     className={cn(
-      'ui-button-primary inline-flex h-[48px] w-full items-center justify-center gap-2 rounded-full border',
+      'ui-button-primary inline-flex h-[48px] w-full items-center justify-center gap-2 border-0 bg-transparent',
       'px-4 text-[clamp(14px,2vh,18px)] font-black tracking-[0.01em]',
-      'transition disabled:cursor-not-allowed disabled:opacity-60',
+      'disabled:cursor-not-allowed disabled:opacity-60',
       className,
     )}
   >
@@ -146,9 +145,9 @@ export const SecondaryButton: React.FC<ButtonProps> = ({ children, className, on
     onClick={onClick}
     disabled={disabled}
     className={cn(
-      'ui-button-secondary inline-flex h-[48px] items-center justify-center rounded-full border',
+      'ui-button-secondary inline-flex h-[48px] items-center justify-center border-0 bg-transparent',
       'px-3 text-[10px] font-black uppercase tracking-[0.1em]',
-      'transition disabled:cursor-not-allowed disabled:opacity-50',
+      'disabled:cursor-not-allowed disabled:opacity-50',
       className,
     )}
   >

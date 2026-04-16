@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import medButton from '../assets/uibuttonstest/4.png';
 import animatedEnemy1 from '../assets/maps/ezgif-261d69e7ae90ee8c.webp';
 import forestBackground from '../assets/maps/backgroundsforgames/Place Value Panic.png';
 import hudAvatarName from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
@@ -16,7 +15,6 @@ import { triggerHaptic } from '../haptics';
 import { AVATARS } from '../constants';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
-import { useTrimmedImageSource } from '../utils/trimTransparentImage';
 
 interface PlaceValuePanicGameProps {
   levelId: number;
@@ -358,7 +356,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   onGameOver,
   onBack,
 }) => {
-  const trimmedMedButton = useTrimmedImageSource(medButton);
   const [viewport, setViewport] = useState(() => {
     if (typeof window === 'undefined') {
       return { width: 390, height: 844 };
@@ -1286,13 +1283,11 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           type="button"
           onClick={handleSubmit}
           disabled={!canSubmit}
-          className="gold-pill-shell absolute left-1/2 z-40 -translate-x-1/2 transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+          className="ui-button-primary absolute left-1/2 z-40 -translate-x-1/2 border-0 bg-transparent px-0 py-0 disabled:cursor-not-allowed disabled:opacity-60"
           style={{ top: `${layout.submitY}%`, width: `${layout.submitWidth}%`, height: `${layout.submitHeight}%` }}
         >
-          <img src={trimmedMedButton} alt="" aria-hidden="true" draggable={false} className="gold-pill-art object-contain" />
           <span
-            className="pointer-events-none absolute inset-x-[16%] top-1/2 -translate-y-1/2 text-center text-[clamp(0.82rem,2.2vw,1.06rem)] font-black uppercase tracking-[0.08em] text-white"
-            style={{ textShadow: '0 2px 4px rgba(2,6,23,0.7)' }}
+            className="pointer-events-none absolute inset-x-[16%] top-1/2 -translate-y-1/2 text-center text-[clamp(0.82rem,2.2vw,1.06rem)] font-black uppercase tracking-[0.08em] text-[#16233d]"
           >
             Submit
           </span>

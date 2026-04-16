@@ -2,8 +2,6 @@ import React from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { X } from 'lucide-react';
 import { MiniGamePracticeBriefing } from '../../app/gameplaySessionContract';
-import splashStartPill from '../../assets/uibuttonstest/4.png';
-import { useTrimmedImageSource } from '../../utils/trimTransparentImage';
 
 type PracticeIntroPopupProps = {
   open: boolean;
@@ -22,8 +20,6 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
   actionLabel = 'Start Practice',
   onAction,
 }) => {
-  const trimmedSplashStartPill = useTrimmedImageSource(splashStartPill);
-
   return (
     <AnimatePresence>
       {open ? (
@@ -52,7 +48,7 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
               type="button"
               aria-label="Close practice briefing"
               onClick={onAction}
-              className="absolute right-3 top-3 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full border border-blue-200/20 bg-blue-950/70 text-cyan-50 transition hover:bg-blue-900/80 hover:text-white"
+              className="ui-icon-button ui-close-button absolute right-3 top-3 z-20 inline-flex h-9 w-9 items-center justify-center p-0 text-white"
             >
               <X className="h-4 w-4" />
             </button>
@@ -82,24 +78,13 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
               )}
             </div>
             <div className="mt-4 flex shrink-0 justify-center">
-              <motion.button
+              <button
                 type="button"
                 onClick={onAction}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="gold-pill-shell relative h-12 w-[min(14rem,72vw)] rounded-full border-0 bg-transparent p-0 shadow-[0_8px_22px_rgba(0,0,0,0.35)]"
+                className="ui-button-primary flex h-12 w-[min(14rem,72vw)] items-center justify-center border-0 bg-transparent px-4 py-0 text-[11px] font-black uppercase tracking-[0.12em] text-[#16233d] md:text-sm"
               >
-                <img
-                  src={trimmedSplashStartPill}
-                  alt=""
-                  aria-hidden
-                  draggable={false}
-                  className="gold-pill-art rounded-full"
-                />
-                <span className="relative z-10 text-[11px] font-normal uppercase tracking-[0.12em] text-black drop-shadow-[0_1px_0_rgba(255,255,255,0.45)] md:text-sm">
-                  {actionLabel}
-                </span>
-              </motion.button>
+                {actionLabel}
+              </button>
             </div>
           </motion.div>
         </motion.div>
