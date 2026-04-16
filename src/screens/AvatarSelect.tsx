@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { AVATARS } from '../constants';
 import { triggerHaptic } from '../haptics';
-import avatarSelectBackground from '../assets/maps/charselect.jpg';
+import avatarSelectBackground from '../assets/maps/backgroundsforgames/charselect.jpg';
 import splashStyleButton from '../assets/casual_ui/inputs/btn_1.png';
 import chooseBanner from '../assets/characters/chooseheroes.png';
 

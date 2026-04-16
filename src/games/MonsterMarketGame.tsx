@@ -11,7 +11,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import FoodGameShell from '../components/FoodGameShell';
 import AssetIcon from '../components/AssetIcon';
 import coinAsset from '../assets/fantasy_hero/ui/coin.png';
-import takeOutLevelBg from '../assets/level_backgrounds/take_out.png';
+import takeOutLevelBg from '../assets/maps/backgroundsforgames/Monster Market.png';
 import food1 from '../assets/take_out/food/1.png';
 import food2 from '../assets/take_out/food/2.png';
 import food3 from '../assets/take_out/food/3.png';

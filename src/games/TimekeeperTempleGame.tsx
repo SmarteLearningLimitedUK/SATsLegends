@@ -7,7 +7,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { RotateCcw, Plus, Minus } from 'lucide-react';
 import clockFaceImage from '../assets/maps/clockfaceblank.png';
-import missionBackground from '../assets/maps/harbour.jpg';
+import missionBackground from '../assets/maps/backgroundsforgames/Chrono Dash Time Trial.jpg';
 
 interface TimekeeperTempleGameProps {
   levelId: number;

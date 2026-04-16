@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import takeOutLevelBg from '../assets/level_backgrounds/take_out.png';
+import takeOutLevelBg from '../assets/maps/backgroundsforgames/Take-Out Rush.png';
 import food1 from '../assets/take_out/food/1.png';
 import food2 from '../assets/take_out/food/2.png';
 import food3 from '../assets/take_out/food/3.png';

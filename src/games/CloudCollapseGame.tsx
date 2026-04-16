@@ -7,7 +7,7 @@ import HUD from '../components/HUD';
 import GameBoard from '../components/GameBoard';
 import AssetIcon from '../components/AssetIcon';
 import { LEVEL_TIMERS_DISABLED } from '../app/testingFlags';
-import cloudBackdrop from '../assets/maps/reef2.jpg';
+import cloudBackdrop from '../assets/maps/backgroundsforgames/Cloud Collapse.jpg';
 import sparkle from '../assets/fantasy_hero/cloud_collapse/sparkle.png';
 
 interface CloudCollapseGameProps {

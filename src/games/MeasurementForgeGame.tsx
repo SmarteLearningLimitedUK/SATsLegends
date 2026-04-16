@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
-import weighScale from '../assets/maps/scale.png';
+import weighScale from '../assets/maps/backgroundsforgames/Scale Master.png';
 import gemBlue from '../assets/place_value/jewels/diamond_blue.png';
 import gemGreen from '../assets/place_value/jewels/diamond_green.png';
 import gemPurple from '../assets/place_value/jewels/diamond_purple.png';

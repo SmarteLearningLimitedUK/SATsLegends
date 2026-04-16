@@ -10,7 +10,7 @@ import boat4 from '../assets/boats/4.png';
 import boat5 from '../assets/boats/5.png';
 import boat6 from '../assets/boats/6.png';
 import boat7 from '../assets/boats/7.png';
-import dockBackground from '../assets/maps/harbour.jpg';
+import dockBackground from '../assets/maps/backgroundsforgames/division dock.jpg';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface DivisionDockGameProps {

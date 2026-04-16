@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react';
 import medButton from '../assets/casual_ui/inputs/btn_1.png';
 import animatedEnemy1 from '../assets/maps/ezgif-261d69e7ae90ee8c.webp';
-import forestBackground from '../assets/maps/forestbackground.png';
+import forestBackground from '../assets/maps/backgroundsforgames/Place Value Panic.png';
 import hudAvatarName from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
 import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
 import socketM from '../assets/casual_ui/updaed_sockets_slices/socket_m.png';

@@ -17,7 +17,7 @@ import {
 } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import cauldrenAndPotionArt from '../assets/coul.png';
-import potionPanicBackdrop from '../assets/maps/potionpanic.jpg';
+import potionPanicBackdrop from '../assets/maps/backgroundsforgames/potionpanic.jpg';
 import azureBottle from '../assets/potion_bottles/azure.png';
 import mossBottle from '../assets/potion_bottles/moss.png';
 import nightBottle from '../assets/potion_bottles/night.png';

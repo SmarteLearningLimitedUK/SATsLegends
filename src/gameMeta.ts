@@ -78,12 +78,12 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   matrix_match: {
-    label: 'Matrix Match',
-    focus: 'Reasoning matrices',
+    label: 'SATs Paper 3',
+    focus: 'Reasoning paper boss duel',
     mode: 'boss',
     rules: makeBossRules(
-      'Matrix Match',
-      'Enter the final logic matrix and complete each pattern before the Oracle Slime overwhelms the forest.',
+      'SATs Paper 3: Reasoning',
+      'Enter the final reasoning paper and complete each pattern before the Oracle Slime overwhelms the forest.',
       'Look for colour, size, number and rotation rules before you commit.'
     ),
   },
@@ -114,12 +114,12 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   crystal_core: {
-    label: 'Crystal Core',
-    focus: 'Fractions, decimals and percentages boss duel',
+    label: 'SATs Paper 1',
+    focus: 'Arithmetic paper boss duel',
     mode: 'boss',
     rules: makeBossRules(
-      'Crystal Core',
-      'Stabilise the heart of Crystal Cave by proving equivalence across fractions, decimals and percentages.',
+      'SATs Paper 1: Arithmetic',
+      'Stabilise the arithmetic paper by proving calculation fluency under pressure.',
       'Wrong answers feed the unstable core, so accuracy matters more than rushing.'
     ),
   },
@@ -290,13 +290,13 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   mirror_gate: {
-    label: 'Mirror Gate',
-    focus: 'Geometry boss duel',
+    label: 'SATs Paper 2',
+    focus: 'Reasoning paper boss duel',
     mode: 'boss',
     rules: makeBossRules(
-      'Mirror Gate',
-      'Survive the ruins guardian by mastering transformations, shape properties and coordinate thinking.',
-      'Mirror errors give the warden control of the gate, so read each move carefully.'
+      'SATs Paper 2: Reasoning',
+      'Survive the reasoning paper by mastering transformations, shape properties and coordinate thinking.',
+      'Paper errors give the warden control of the gate, so read each move carefully.'
     ),
   },
   scale_safari: {

@@ -2,7 +2,7 @@ import { AvatarData, IslandData, LevelData, ShopItem, DailyQuest, MathFamily, Cl
 import { CHARACTER_AVATARS } from './assets/characters';
 import world01Map from './assets/maps/forect.jpg';
 import world02Map from './assets/maps/reef2.jpg';
-import world03Map from './assets/maps/castle.jpg';
+import world03Map from './assets/maps/backgroundsforgames/castle.jpg';
 import world04Map from './assets/maps/harbour.jpg';
 import world05Map from './assets/maps/finalamendedworldmap.png';
 import world06Map from './assets/maps/finalmap.png';
@@ -65,17 +65,9 @@ const RATIO_RAPIDS_LEVELS: LevelData[] = [
 ];
 
 const CALCULATION_CORE_LEVELS: LevelData[] = [
-  { id: 1, stars: 0, isLocked: false, blueprintKey: 'tower_of_factors', displayName: 'Tower Of Factors', gameType: 'tower_of_factors', isBoss: true, bossUnlockCoins: 0 },
-  { id: 2, stars: 0, isLocked: false, blueprintKey: 'crystal_core', displayName: 'Crystal Core', gameType: 'crystal_core', isBoss: true, bossUnlockCoins: 0 },
-  { id: 3, stars: 0, isLocked: false, blueprintKey: 'mirror_gate', displayName: 'Mirror Gate', gameType: 'mirror_gate', isBoss: true, bossUnlockCoins: 0 },
-  { id: 4, stars: 0, isLocked: false, blueprintKey: 'scales_of_the_sun', displayName: 'Scales Of The Sun', gameType: 'scales_of_the_sun', isBoss: true, bossUnlockCoins: 0 },
-  { id: 5, stars: 0, isLocked: false, blueprintKey: 'observatory_overload', displayName: 'Observatory Overload', gameType: 'observatory_overload', isBoss: true, bossUnlockCoins: 0 },
-  { id: 6, stars: 0, isLocked: false, blueprintKey: 'matrix_match', displayName: 'Matrix Match', gameType: 'matrix_match', isBoss: true, bossUnlockCoins: 0 },
-  { id: 1, stars: 0, isLocked: false, blueprintKey: 'reasoning_quest', displayName: 'Reasoning Quest', gameType: 'reasoning_quest' },
-  { id: 2, stars: 0, isLocked: false, blueprintKey: 'multi_step_marathon', displayName: 'Multi-Step Marathon', gameType: 'equation_grove' },
-  { id: 3, stars: 0, isLocked: false, blueprintKey: 'strategy_survival', displayName: 'Strategy Survival', gameType: 'logic_sort' },
-  { id: 4, stars: 0, isLocked: false, blueprintKey: 'mixed_mastery', displayName: 'Mixed Mastery', gameType: 'calculation_clash' },
-  { id: 5, stars: 0, isLocked: false, blueprintKey: 'timed_test_trials', displayName: 'Timed Test Trials', gameType: 'calculation_clash' },
+  { id: 1, stars: 0, isLocked: false, blueprintKey: 'crystal_core', displayName: 'SATs Paper 1: Arithmetic', gameType: 'crystal_core', isBoss: true, bossUnlockCoins: 0, isPractice: false },
+  { id: 2, stars: 0, isLocked: false, blueprintKey: 'mirror_gate', displayName: 'SATs Paper 2: Reasoning', gameType: 'mirror_gate', isBoss: true, bossUnlockCoins: 0, isPractice: false },
+  { id: 3, stars: 0, isLocked: false, blueprintKey: 'matrix_match', displayName: 'SATs Paper 3: Reasoning', gameType: 'matrix_match', isBoss: true, bossUnlockCoins: 0, isPractice: false },
 ];
 
 export const ISLANDS: IslandData[] = [
@@ -216,10 +208,7 @@ export const ISLANDS: IslandData[] = [
     groundColor: 'bg-slate-900',
     mapImage: world06Map,
     decorations: [],
-    levels: mergeIslandLevels(
-      CALCULATION_CORE_LEVELS,
-      pickLevelsByBlueprint(NUMBER_BASE_CAMP_LEVELS, ['chart_challenge']),
-    ),
+    levels: mergeIslandLevels(CALCULATION_CORE_LEVELS),
   },
   {
     id: 7,
