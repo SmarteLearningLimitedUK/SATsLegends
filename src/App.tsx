@@ -534,16 +534,24 @@ const App: React.FC = () => {
       const storageKey = 'sats_legends_build_id';
       const previous = window.localStorage.getItem(storageKey);
       if (previous && previous !== buildId) {
-        window.localStorage.setItem(storageKey, buildId);
-        const reload = () => window.location.reload();
-        if ('caches' in window) {
-          caches
-            .keys()
-            .then((keys) => Promise.all(keys.map((key) => caches.delete(key))))
-            .finally(reload);
-        } else {
-          reload();
-        }
+        const clearBrowserState = async () => {
+          try {
+            window.localStorage.clear();
+            window.sessionStorage.clear();
+            if ('caches' in window) {
+              const keys = await caches.keys();
+              await Promise.all(keys.map((key) => caches.delete(key)));
+            }
+          } catch {
+            // Ignore cache/storage errors so we can still recover on reload.
+          }
+        };
+
+        void (async () => {
+          await clearBrowserState();
+          window.localStorage.setItem(storageKey, buildId);
+          window.location.reload();
+        })();
         return;
       }
       window.localStorage.setItem(storageKey, buildId);
