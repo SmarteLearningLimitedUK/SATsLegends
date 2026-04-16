@@ -279,7 +279,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
         </div>
       )}
         main={(
-          <main className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+1.1rem)]' : ''}`}>
+          <main className="relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden">
           <section className="z-10 flex min-h-0 w-full flex-1 flex-col gap-2 overflow-hidden border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] px-2 pb-1 pt-1 sm:px-3 sm:pb-2 sm:pt-2 md:gap-3 md:border-b md:border-cyan-200/12 md:px-5 md:pb-3 md:pt-3 max-[480px]:gap-1 max-[480px]:px-1.5 max-[480px]:pb-0.5 max-[480px]:pt-0.5">
           <div className="mb-1 flex items-center justify-between">
             <div className="flex items-center gap-2 text-amber-500">
@@ -300,7 +300,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             <div className="pointer-events-none absolute inset-0 bg-slate-950/20" />
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.3)_1px,transparent_1px)] opacity-7 [background-size:20px_20px]" />
 
-            <div className="relative w-full" style={{ height: 'clamp(9rem, 23vh, 15rem)' }}>
+            <div className="relative w-full" style={{ height: 'clamp(10.5rem, 26vh, 18rem)' }}>
               <ResponsiveContainer width="100%" height="100%">
                 {chartType === 'bar' ? (
                     <BarChart data={currentCase} margin={{ top: 12, right: 10, left: -6, bottom: 6 }}>
@@ -340,9 +340,10 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                     data={currentCase}
                     cx="50%"
                     cy="50%"
-                    innerRadius="32%"
-                    outerRadius="62%"
+                    innerRadius="34%"
+                    outerRadius="68%"
                     paddingAngle={3}
+                    labelLine={false}
                     dataKey="amount"
                     isAnimationActive={false}
                     label={({ cx, cy, midAngle, innerRadius, outerRadius, value }) => {
@@ -413,13 +414,13 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                 >
                   <div className="relative h-full w-full overflow-hidden rounded-[1.05rem] border border-white/16 bg-slate-950/40 shadow-lg max-[480px]:rounded-[0.9rem]">
                     {suspect.portrait ? (
-                      <img
-                        src={suspect.portrait}
-                        alt=""
-                        draggable={false}
-                        className="suspect-portrait absolute inset-0 h-full w-full object-contain object-[center_18%] max-[480px]:object-[center_16%]"
-                        data-suspect-portrait="true"
-                      />
+                        <img
+                          src={suspect.portrait}
+                          alt=""
+                          draggable={false}
+                          className="suspect-portrait absolute inset-0 h-full w-full object-contain object-center"
+                          data-suspect-portrait="true"
+                        />
                     ) : (
                       <div className={`flex h-full w-full items-center justify-center ${suspect.color}/20`}>
                         <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-white/10 text-lg font-black text-white">
@@ -485,7 +486,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                           src={selectedSuspect.portrait}
                           alt=""
                           draggable={false}
-                          className="suspect-portrait h-full w-full object-contain object-[center_18%]"
+                          className="suspect-portrait h-full w-full object-contain object-center"
                           data-suspect-portrait="true"
                         />
                       )}

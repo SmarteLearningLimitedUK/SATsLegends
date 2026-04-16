@@ -2790,11 +2790,12 @@ button:disabled {
 
 .gold-pill-art {
   position: absolute;
-  inset: -1px;
-  width: calc(100% + 2px);
-  height: calc(100% + 2px);
+  inset: -3px;
+  width: calc(100% + 6px);
+  height: calc(100% + 6px);
   display: block;
   object-fit: fill;
+  object-position: center;
   pointer-events: none;
 }
 
@@ -4840,6 +4841,7 @@ button.avatar-hero-arrow:not(:disabled):active {
   --shared-minigame-dock-height: 3.6rem;
   --shared-minigame-dock-gap: 0.5rem;
   --shared-minigame-dock-buffer: 0rem;
+  --shared-question-card-top-gap: 5px;
   --shared-minigame-reserved-bottom: calc(
     var(--shared-minigame-dock-height)
     + var(--shared-minigame-dock-gap)
@@ -4874,6 +4876,16 @@ button.avatar-hero-arrow:not(:disabled):active {
 }
 
 .screen-gameplay .game-screen-top .game-question-card {
+  margin-top: 0 !important;
+}
+
+/* Hard rule: question cards sit 5px below their immediate gameplay wrapper so every card lines up
+   just below the shared top HUD without drifting per game. */
+.screen-gameplay .unified-minigame-hud-enabled :has(> .game-question-card) {
+  padding-top: var(--shared-question-card-top-gap) !important;
+}
+
+.screen-gameplay .unified-minigame-hud-enabled .game-question-card {
   margin-top: 0 !important;
 }
 
@@ -5303,28 +5315,28 @@ button.avatar-hero-arrow:not(:disabled):active {
   margin-right: auto;
   padding: 0.6rem 0.9rem;
   text-align: center;
+  font-size: clamp(0.98rem, 3.55vw, 1.18rem);
+  font-weight: 400;
+  line-height: 1.12;
   transform: scale(var(--question-card-scale, 1));
   transform-origin: top center;
 }
 
 .game-question-card .question-title {
-  font-size: clamp(0.98rem, 3.55vw, 1.28rem);
-  font-weight: 400;
-  line-height: 1.12;
   color: #f8fafc;
   letter-spacing: 0.01em;
 }
 
 .game-question-copy {
-  font-size: clamp(0.98rem, 3.55vw, 1.28rem);
-  font-weight: 400;
-  line-height: 1.12;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
 }
 
 .game-question-card .question-subtitle {
   margin-top: 0.15rem;
-  font-size: clamp(0.72rem, 2.2vw, 0.92rem);
-  font-weight: 700;
+  font-size: inherit;
+  font-weight: inherit;
   color: rgba(226, 232, 240, 0.85);
 }
 
@@ -5334,10 +5346,19 @@ button.avatar-hero-arrow:not(:disabled):active {
 .screen-gameplay .game-shell-host .question-title,
 .screen-gameplay .game-shell-host .game-question-copy,
 .screen-gameplay .game-shell-host .question-subtitle {
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  line-height: inherit !important;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
   overflow: hidden;
+}
+
+.game-question-card * {
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  line-height: inherit !important;
 }
 .screen-gameplay .game-shell-host .mission-panel-shell,
 .screen-gameplay .game-shell-host .licensed-slice-paper-panel,

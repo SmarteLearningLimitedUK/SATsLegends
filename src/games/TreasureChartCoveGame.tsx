@@ -304,7 +304,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
     setScore(updatedScore);
     setStreak((previous) => previous + 1);
     triggerBoatAnimation('success');
-    setFeedback({ type: 'success', title: 'Treasure Found!', subtitle: `+${points} XP` });
+    setFeedback({ type: 'success', title: 'Set sail', subtitle: `+${points} XP` });
     confetti({
       particleCount: 42,
       spread: 48,
@@ -321,102 +321,108 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
         title="Graph Grabber"
         body="Read the graph to track the stolen brainpower.\nAnswer with single values, comparisons and totals."
         briefing={practiceBriefing}
-          onAction={() => setShowPracticeIntro(false)}
+        onAction={() => setShowPracticeIntro(false)}
       />
-        <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2 md:gap-3 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.8rem)] md:pt-3">
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2 md:gap-3 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.8rem)] md:pt-3">
         <div className="licensed-board-frame structured-playfield-frame relative flex w-full max-w-6xl min-h-0 flex-1 overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] shadow-[0_28px_64px_rgba(0,0,0,0.34)] md:rounded-[2.6rem]">
-          {boatAnimation && (
-            <motion.img
-              key={boatAnimation.id}
-              src={cargoShipImage}
-              alt=""
-              aria-hidden="true"
-              initial={{
-                x: '-28vw',
-                y: 0,
-                opacity: 0,
-                rotate: -2,
-                scale: 0.96,
-              }}
-              animate={
-                boatAnimation.outcome === 'success'
-                  ? {
-                      x: '120vw',
-                      y: 0,
-                      opacity: 1,
-                      rotate: 0.5,
-                      scale: 1,
-                    }
-                  : {
-                      x: ['-28vw', '54vw', '58vw'],
-                      y: [0, 0, 22],
-                      opacity: [0, 1, 0],
-                      rotate: [-2, 0, 8],
-                      scale: [0.96, 1, 0.9],
-                    }
-              }
-              transition={
-                boatAnimation.outcome === 'success'
-                  ? { duration: 3.1, ease: 'linear' }
-                  : { duration: 2.25, times: [0, 0.72, 1], ease: 'easeInOut' }
-              }
-              className="pointer-events-none absolute bottom-2 left-0 z-20 h-14 w-auto drop-shadow-[0_10px_16px_rgba(0,0,0,0.22)] md:h-20"
-            />
-          )}
-
-            <div className="relative z-10 flex h-full w-full flex-col px-3 pb-3 pt-2 md:px-5 md:pb-4 md:pt-3">
+          <div className="relative z-10 flex h-full w-full flex-col px-3 pb-3 pt-2 md:px-5 md:pb-4 md:pt-3">
+            <div className="flex min-h-0 flex-1 flex-col gap-2">
               <div className="flex justify-center">
                 <div className="game-question-card w-full max-w-[780px]">
                   <div className="question-title">{round.title}</div>
                   <div className="question-subtitle game-question-copy">{formatFantasyPrompt(round.prompt)}</div>
                 </div>
-            </div>
+              </div>
 
-            <div className="mt-2 grid min-h-0 flex-1 grid-cols-1 gap-2 md:mt-2 md:grid-cols-[1.02fr_0.98fr] md:gap-2">
+              <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 md:grid-cols-[1.02fr_0.98fr] md:gap-2">
                 <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(8,47,73,0.34),rgba(15,23,42,0.26))] p-2.5 shadow-[0_24px_40px_rgba(2,6,23,0.22)] md:p-3">
                   <div className="mt-auto">
                     <CoinBarBoard ships={round.ships} label={round.boardLabel} />
                   </div>
                 </div>
 
-              <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.84),rgba(30,41,59,0.92))] p-2.5 shadow-[0_24px_40px_rgba(2,6,23,0.24)] md:p-3">
-                <div className="grid grid-cols-4 gap-1.5">
-                  {round.options.map((choice, index) => (
-                    <motion.button
-                      key={`${choice}-${index}`}
-                      whileTap={{ scale: 0.97 }}
-                      onClick={() => handleChoice(choice)}
-                      disabled={feedback !== null || isFinished}
-                      className="relative overflow-hidden rounded-[1rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(15,23,42,0.48))] px-2 py-2 text-left shadow-[0_14px_22px_rgba(15,23,42,0.22)] disabled:opacity-45"
-                    >
-                      <div className="absolute inset-x-[10%] top-[10%] h-[18%] rounded-full bg-white/10 blur-md" />
-                      <div className="relative">
-                        <div className="mt-1.5 text-[0.85rem] font-black tracking-tight text-amber-50 md:text-base">{choice}</div>
-                      </div>
-                    </motion.button>
-                  ))}
+                <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.84),rgba(30,41,59,0.92))] p-2.5 shadow-[0_24px_40px_rgba(2,6,23,0.24)] md:p-3">
+                  <div className="grid grid-cols-4 gap-1.5">
+                    {round.options.map((choice, index) => (
+                      <motion.button
+                        key={`${choice}-${index}`}
+                        whileTap={{ scale: 0.97 }}
+                        onClick={() => handleChoice(choice)}
+                        disabled={feedback !== null || isFinished}
+                        className="relative overflow-hidden rounded-[1rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(15,23,42,0.48))] px-2 py-2 text-left shadow-[0_14px_22px_rgba(15,23,42,0.22)] disabled:opacity-45"
+                      >
+                        <div className="absolute inset-x-[10%] top-[10%] h-[18%] rounded-full bg-white/10 blur-md" />
+                        <div className="relative">
+                          <div className="mt-1.5 text-[0.85rem] font-black tracking-tight text-amber-50 md:text-base">{choice}</div>
+                        </div>
+                      </motion.button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <AnimatePresence>
-            {feedback && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.82 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.08 }}
-                className={`pointer-events-none fixed inset-0 z-40 flex items-center justify-center backdrop-blur-md ${feedback.type === 'success' ? 'bg-emerald-500/16' : 'bg-red-500/16'}`}
-              >
-                <div className="rounded-[2rem] border border-white/14 bg-slate-950/60 px-8 py-6 text-center shadow-[0_24px_36px_rgba(0,0,0,0.24)]">
-                  <div className={`text-4xl font-black uppercase tracking-[0.12em] md:text-6xl ${feedback.type === 'success' ? 'text-emerald-100' : 'text-amber-100'}`}>
-                    {feedback.title}
-                  </div>
-                  <div className="mt-2 text-lg font-bold text-white/92 md:text-2xl">{feedback.subtitle}</div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+            <div className="relative mt-2 h-[4.5rem] overflow-hidden rounded-[1.35rem] border border-white/12 bg-[linear-gradient(180deg,rgba(6,20,48,0.7),rgba(8,18,40,0.88))] px-3 py-2 shadow-[0_18px_32px_rgba(2,6,23,0.22)]">
+              {boatAnimation ? (
+                <motion.img
+                  key={boatAnimation.id}
+                  src={cargoShipImage}
+                  alt=""
+                  aria-hidden="true"
+                  initial={{
+                    x: '-24vw',
+                    y: 0,
+                    opacity: 0,
+                    rotate: -2,
+                    scale: 0.96,
+                  }}
+                  animate={
+                    boatAnimation.outcome === 'success'
+                      ? {
+                          x: '118vw',
+                          y: 0,
+                          opacity: 1,
+                          rotate: 0.5,
+                          scale: 1,
+                        }
+                      : {
+                          x: ['-24vw', '46vw', '50vw'],
+                          y: [0, 0, 18],
+                          opacity: [0, 1, 0],
+                          rotate: [-2, 0, 8],
+                          scale: [0.96, 1, 0.9],
+                        }
+                  }
+                  transition={
+                    boatAnimation.outcome === 'success'
+                      ? { duration: 3.1, ease: 'linear' }
+                      : { duration: 2.25, times: [0, 0.72, 1], ease: 'easeInOut' }
+                  }
+                  className="pointer-events-none absolute bottom-0 left-0 z-10 h-12 w-auto drop-shadow-[0_10px_16px_rgba(0,0,0,0.22)] md:h-16"
+                />
+              ) : null}
+
+              <AnimatePresence mode="wait">
+                {feedback ? (
+                  <motion.div
+                    key={feedback.title}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{ duration: 0.18, ease: 'easeOut' }}
+                    className={`relative z-20 flex h-full items-center justify-center text-center ${feedback.type === 'success' ? 'text-emerald-100' : 'text-amber-100'}`}
+                  >
+                    <div className="rounded-full border border-white/12 bg-slate-950/40 px-4 py-1.5 text-sm font-black uppercase tracking-[0.14em] shadow-[0_10px_18px_rgba(0,0,0,0.2)]">
+                      <div>{feedback.title}</div>
+                      <div className="mt-0.5 text-[11px] font-semibold normal-case tracking-normal text-white/92">
+                        {feedback.subtitle}
+                      </div>
+                    </div>
+                  </motion.div>
+                ) : null}
+              </AnimatePresence>
+            </div>
+          </div>
         </div>
 
       </div>

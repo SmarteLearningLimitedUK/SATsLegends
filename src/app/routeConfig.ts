@@ -27,7 +27,7 @@ export const parseRoute = (pathname: string): RouteState => {
 
   switch (root) {
     case 'profile-setup':
-      return { screen: 'profile_setup' };
+      return { screen: 'avatar_selection' };
     case 'avatar':
       return { screen: 'avatar_selection' };
     case 'map':
@@ -71,7 +71,7 @@ export const buildRouteForScreen = (
     case 'splash':
       return '/';
     case 'profile_setup':
-      return '/profile-setup';
+      return '/avatar';
     case 'avatar_selection':
       return '/avatar';
     case 'world_map':

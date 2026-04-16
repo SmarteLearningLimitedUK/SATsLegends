@@ -238,7 +238,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const allSlicesUsed = remainingSlices === 0;
   const allCorrect = plateViews.every((plate) => plate.isCorrect);
   const platePositions = PLATE_POSITIONS[challenge.plateCount] || PLATE_POSITIONS[4];
-  const plateSize = 'calc(var(--game-stage-width, 390px) * 0.19)';
+  const plateSize = 'clamp(6rem, 28vw, 7.8rem)';
   const promptText = isPractice
     ? challenge.prompt
     : `There are ${challenge.totalSlices} slices of brainpower cake.\nThe Monster Minds demand it is shared in a ratio of ${challenge.ratios.join(':')}.`;
@@ -320,7 +320,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     };
 
     const getHitPlateIndex = (clientX: number, clientY: number) => {
-      const padding = 16;
+      const padding = 26;
       let hitIndex = -1;
       plateRefs.current.forEach((plate, index) => {
         if (!plate) return;
@@ -338,7 +338,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       if (!dragActiveRef.current) return;
       dragActiveRef.current = false;
       const { index, distance } = getNearestPlate(clientX, clientY);
-      const snapRadius = 64;
+      const snapRadius = 88;
       const hitIndex = getHitPlateIndex(clientX, clientY);
       const targetPlateIndex = hitIndex >= 0 ? hitIndex : distance <= snapRadius ? index : -1;
 
@@ -368,7 +368,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         return;
       }
       const { index, distance } = getNearestPlate(point.x, point.y);
-      setHoverPlateIndex(distance <= 84 ? index : null);
+      setHoverPlateIndex(distance <= 106 ? index : null);
     };
 
     const handlePointerUp = (upEvent: PointerEvent) => {
@@ -385,7 +385,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         return;
       }
       const { index, distance } = getNearestPlate(point.x, point.y);
-      setHoverPlateIndex(distance <= 84 ? index : null);
+      setHoverPlateIndex(distance <= 106 ? index : null);
       touchEvent.preventDefault();
     };
 
@@ -517,13 +517,13 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
             {plateViews.map((plate, index) => {
               const plateTone = validationActive
                 ? plate.isCorrect
-                          ? 'border-emerald-300/35 bg-[linear-gradient(180deg,rgba(226,252,243,0.16),rgba(186,247,231,0.08))]'
-                          : 'border-amber-200/35 bg-[linear-gradient(180deg,rgba(255,243,205,0.16),rgba(255,232,176,0.08))]'
+                          ? 'border-emerald-300/35 bg-[linear-gradient(180deg,rgba(226,252,243,0.1),rgba(186,247,231,0.03))]'
+                          : 'border-amber-200/35 bg-[linear-gradient(180deg,rgba(255,243,205,0.1),rgba(255,232,176,0.03))]'
                         : hoverPlateIndex === index
-                          ? 'border-cyan-200/55 bg-[linear-gradient(180deg,rgba(240,249,255,0.12),rgba(214,241,255,0.06))]'
+                          ? 'border-cyan-200/55 bg-[linear-gradient(180deg,rgba(240,249,255,0.07),rgba(214,241,255,0.02))]'
                           : dragSlice
-                            ? 'border-cyan-200/35 bg-[linear-gradient(180deg,rgba(244,250,255,0.08),rgba(216,236,250,0.04))]'
-                            : 'border-white/20 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(224,233,243,0.03))]';
+                            ? 'border-cyan-200/35 bg-[linear-gradient(180deg,rgba(244,250,255,0.04),rgba(216,236,250,0.015))]'
+                            : 'border-white/16 bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(224,233,243,0.01))]';
                       const position = platePositions[index] || { x: 50, y: 50 };
 
                       return (
@@ -534,7 +534,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                             plateRefs.current[index] = node;
                           }}
                           disabled={locked}
-                          className={`pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border p-2 text-center shadow-[0_8px_14px_rgba(2,6,23,0.14)] transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.03]' : dragSlice && !locked ? 'scale-[1.01]' : ''}`}
+                          className={`pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border p-2 text-center shadow-[0_8px_14px_rgba(2,6,23,0.1)] transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.03]' : dragSlice && !locked ? 'scale-[1.01]' : ''}`}
                           style={{
                             left: `${position.x}%`,
                             top: `${position.y}%`,
@@ -549,7 +549,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                                 key={sliceId}
                                 src={CAKE_SLICE_ASSET}
                                 alt=""
-                                className="h-10 w-10 object-contain"
+                                className="h-12 w-12 object-contain"
                                 draggable={false}
                               />
                             ))}
@@ -561,23 +561,43 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                 </div>
               </div>
 
-            <section className="shrink-0 rounded-[1.4rem] border border-white/14 bg-black/22 px-3 py-3 shadow-[0_10px_18px_rgba(15,23,42,0.22)]">
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <p className="text-[11px] font-black uppercase tracking-[0.12em] text-cyan-100">Serving plate</p>
-                <p className="text-[11px] font-black text-white">{remainingSlices} cakes left</p>
-              </div>
+            <section className="shrink-0 rounded-[1.4rem] border border-transparent bg-transparent px-3 py-2 shadow-none">
               <div className="flex items-center justify-center">
                 <motion.button
                   type="button"
                   whileTap={remainingSlices > 0 && !locked ? { scale: 0.96 } : undefined}
                   onPointerDown={handleSourcePointerDown}
                   disabled={locked || remainingSlices <= 0}
-                  className={`relative flex h-[104px] w-full max-w-[17rem] items-center justify-center rounded-[1.8rem] border border-transparent bg-transparent shadow-none ${locked || remainingSlices <= 0 ? 'opacity-55' : ''}`}
+                  className={`group relative flex items-center justify-center gap-4 rounded-[1.8rem] border border-transparent bg-transparent px-3 py-2 shadow-none ${locked || remainingSlices <= 0 ? 'opacity-55' : ''}`}
                   aria-label={remainingSlices > 0 ? 'Drag one cake onto a plate' : 'No cakes left'}
                 >
-                  <div className="pointer-events-none absolute inset-0 rounded-[1.8rem] bg-transparent" />
-                  <div className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full bg-black/34 px-2 py-1 text-[11px] font-black text-white">
-                    {remainingSlices}
+                  <motion.div
+                    aria-hidden
+                    className={`pointer-events-none absolute left-1/2 top-1/2 h-[5.4rem] w-[5.4rem] -translate-x-1/2 -translate-y-1/2 rounded-full ${remainingSlices > 0 ? 'bg-amber-300/30 blur-2xl' : 'bg-transparent'}`}
+                    animate={remainingSlices > 0 ? {
+                      opacity: [0.42, 0.92, 0.42],
+                      scale: [0.96, 1.06, 0.96],
+                    } : undefined}
+                    transition={remainingSlices > 0 ? { duration: 0.95, repeat: Infinity, ease: 'easeInOut' } : undefined}
+                  />
+                  <motion.img
+                    src={CAKE_SLICE_ASSET}
+                    alt=""
+                    draggable={false}
+                    className="relative z-10 h-[4.8rem] w-[4.8rem] object-contain drop-shadow-[0_10px_16px_rgba(0,0,0,0.28)] sm:h-[5.2rem] sm:w-[5.2rem]"
+                    animate={remainingSlices > 0 ? {
+                      scale: [0.98, 1.03, 0.98],
+                      filter: ['drop-shadow(0 0 0 rgba(250,204,21,0))', 'drop-shadow(0 0 14px rgba(250,204,21,0.55))', 'drop-shadow(0 0 0 rgba(250,204,21,0))'],
+                    } : {
+                      scale: 1,
+                      filter: 'drop-shadow(0 10px 16px rgba(0,0,0,0.28))',
+                    }}
+                    transition={remainingSlices > 0 ? { duration: 1.1, repeat: Infinity, ease: 'easeInOut' } : undefined}
+                  />
+                  <div className="relative z-10 flex items-baseline gap-2">
+                    <div className="text-[clamp(2.1rem,5.6vw,3.8rem)] font-black leading-none text-white drop-shadow-[0_2px_0_rgba(0,0,0,0.35)]">
+                      {remainingSlices}
+                    </div>
                   </div>
                 </motion.button>
               </div>
@@ -640,7 +660,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ opacity: 0, scale: 0.86 }}
                   transition={{ duration: 0.08, ease: 'linear' }}
-                  className="pointer-events-none fixed z-[60] h-12 w-12 rounded-full border border-amber-200/70 bg-[linear-gradient(180deg,rgba(250,204,21,0.3),rgba(180,83,9,0.2))] p-1 shadow-[0_14px_24px_rgba(217,119,6,0.35)]"
+                  className="pointer-events-none fixed z-[60] h-16 w-16 rounded-full border border-amber-200/70 bg-[linear-gradient(180deg,rgba(250,204,21,0.3),rgba(180,83,9,0.2))] p-1 shadow-[0_14px_24px_rgba(217,119,6,0.35)]"
                   style={{ left: dragSlice.x, top: dragSlice.y }}
                 >
                   <img
