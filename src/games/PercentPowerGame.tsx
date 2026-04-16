@@ -351,7 +351,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
           useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.4rem)]' : 'pt-[calc(env(safe-area-inset-top)+3.8rem)]'
         }`}
       >
-        <div className="w-full max-w-[44rem] rounded-[1.6rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(9,23,50,0.8),rgba(5,15,34,0.74))] p-3 shadow-[0_20px_44px_rgba(0,0,0,0.3)]">
+        <div className="w-full max-w-[44rem] px-1">
           <div className="flex items-center justify-between gap-3">
             <div className="rounded-full border border-cyan-200/30 bg-cyan-300/12 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100">
               {question.badge}
@@ -368,7 +368,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
           </div>
         </div>
 
-        <div className="relative mt-4 flex w-full max-w-[44rem] flex-1 min-h-0 flex-col items-center justify-center rounded-[2rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(10,30,64,0.72),rgba(4,12,26,0.9))] px-4 py-5 shadow-[0_22px_60px_rgba(0,0,0,0.34)]">
+        <div className="relative mt-4 flex w-full max-w-[44rem] flex-1 min-h-0 flex-col items-center justify-center px-2 py-2">
           <motion.div
             className="absolute inset-x-[12%] top-[12%] h-24 rounded-full bg-cyan-300/12 blur-3xl"
             animate={{ opacity: [0.42, 0.88, 0.42], scale: [0.98, 1.04, 0.98] }}

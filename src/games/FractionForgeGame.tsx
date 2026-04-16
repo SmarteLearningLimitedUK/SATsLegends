@@ -141,21 +141,22 @@ const FractionCardTile: React.FC<{
   onPointerDown?: (event: React.PointerEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
   size: { width: number; height: number };
+  compact?: boolean;
 }> = ({ card, onPointerDown, disabled = false, size }) => (
   <motion.button
     type="button"
     onPointerDown={onPointerDown}
     disabled={disabled}
     whileTap={disabled ? undefined : { scale: 0.97 }}
-    className="relative flex cursor-grab flex-col items-center justify-center rounded-[1rem] border-2 border-cyan-200/80 bg-gradient-to-b from-sky-500 to-blue-700 text-white shadow-[0_12px_26px_rgba(8,47,111,0.6)] active:cursor-grabbing disabled:cursor-default"
+    className="relative flex cursor-grab flex-col items-center justify-center rounded-[0.85rem] border border-cyan-200/70 bg-gradient-to-b from-sky-500 to-blue-700 text-white shadow-[0_10px_20px_rgba(8,47,111,0.5)] active:cursor-grabbing disabled:cursor-default"
     style={{ width: size.width, height: size.height }}
   >
-    <div className="pointer-events-none absolute inset-0 rounded-[1rem] bg-gradient-to-br from-white/28 via-transparent to-transparent" />
-    <span className="relative text-[clamp(1.55rem,4.7vw,2.65rem)] font-black leading-none drop-shadow-[0_2px_2px_rgba(0,0,0,0.55)]">
+    <div className="pointer-events-none absolute inset-0 rounded-[0.85rem] bg-gradient-to-br from-white/24 via-transparent to-transparent" />
+    <span className="relative text-[clamp(1.15rem,3.8vw,2rem)] font-black leading-none drop-shadow-[0_2px_2px_rgba(0,0,0,0.55)]">
       {card.numerator}
     </span>
-    <span className="relative my-1 h-[2px] w-[56%] rounded-full bg-white/90 shadow-[0_0_6px_rgba(255,255,255,0.65)]" />
-    <span className="relative text-[clamp(1.55rem,4.7vw,2.65rem)] font-black leading-none drop-shadow-[0_2px_2px_rgba(0,0,0,0.55)]">
+    <span className="relative my-[0.2rem] h-[1.5px] w-[54%] rounded-full bg-white/88 shadow-[0_0_5px_rgba(255,255,255,0.58)]" />
+    <span className="relative text-[clamp(1.15rem,3.8vw,2rem)] font-black leading-none drop-shadow-[0_2px_2px_rgba(0,0,0,0.55)]">
       {card.denominator}
     </span>
   </motion.button>
@@ -204,23 +205,23 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   const layout = useMemo(() => {
     const cardCount = round.cards.length;
     const isTablet = Math.min(viewport.width, viewport.height) >= 760;
-    const sidePadding = isTablet ? 56 : 16;
-    const cardGap = isTablet ? 16 : 8;
+    const sidePadding = isTablet ? 48 : 12;
+    const cardGap = isTablet ? 12 : 6;
 
-    const baseCardWidth = isTablet ? 118 : 92;
-    const minCardWidth = isTablet ? 80 : 58;
+    const baseCardWidth = isTablet ? 98 : 76;
+    const minCardWidth = isTablet ? 68 : 50;
     const maxCardWidthByViewport = Math.floor(
       (viewport.width - (sidePadding * 2) - (cardGap * Math.max(0, cardCount - 1))) / Math.max(1, cardCount),
     );
     const cardWidth = clamp(Math.min(baseCardWidth, maxCardWidthByViewport), minCardWidth, baseCardWidth);
     const cardHeight = Math.round(cardWidth * 1.24);
 
-    const slotWidth = Math.round(cardWidth * 0.94);
-    const slotHeight = Math.round(cardHeight * 0.86);
+    const slotWidth = Math.round(cardWidth * 0.88);
+    const slotHeight = Math.round(cardHeight * 0.78);
 
     const hudTopReserve = useSharedTopHud
-      ? (isTablet ? 138 : 122)
-      : (isTablet ? 98 : 84);
+      ? (isTablet ? 132 : 116)
+      : (isTablet ? 92 : 78);
     const hudBottomReserve = useSharedTopHud
       ? (isTablet ? 126 : 112)
       : (isTablet ? 92 : 84);
@@ -228,18 +229,17 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     const usableBottom = Math.max(usableTop + 340, viewport.height - hudBottomReserve);
     const usableHeight = Math.max(340, usableBottom - usableTop);
 
-    const bottomEdge = viewport.height - hudBottomReserve - (isTablet ? 10 : 8);
-    const targetTop = Math.max(usableTop + (usableHeight * (isTablet ? 0.52 : 0.5)), bottomEdge - (cardHeight * 0.5));
-    const sourceTop = Math.max(usableTop + (isTablet ? 162 : 138), targetTop - cardHeight - (isTablet ? 18 : 12));
-    const pedestalTop = targetTop + (slotHeight * 0.58);
+    const targetTop = usableTop + (usableHeight * (isTablet ? 0.41 : 0.39));
+    const sourceTop = targetTop - cardHeight - (isTablet ? 10 : 8);
+    const pedestalTop = targetTop + (slotHeight * 0.5);
 
     const goblinWidth = Math.round(
       clamp(isTablet ? viewport.width * 0.26 : viewport.width * 0.3, isTablet ? 224 : 188, isTablet ? 346 : 244),
     );
     const goblinHeightEstimate = goblinWidth * 1.28;
     const suggestedGoblinTop = sourceTop + (cardHeight * 0.52);
-    const maxGoblinTop = targetTop - (slotHeight * 1.02) - (goblinHeightEstimate * 0.86);
-    const goblinTop = Math.max(usableTop + 138, Math.min(suggestedGoblinTop, maxGoblinTop));
+    const maxGoblinTop = targetTop - (slotHeight * 1.04) - (goblinHeightEstimate * 0.76);
+    const goblinTop = Math.max(usableTop + 118, Math.min(suggestedGoblinTop, maxGoblinTop));
 
     const sourceAnchors = createRowAnchors(cardCount, viewport.width, cardWidth, cardGap, sidePadding);
     const targetAnchors = createRowAnchors(cardCount, viewport.width, slotWidth, cardGap, sidePadding);
@@ -343,7 +343,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     const rect = playfieldRef.current?.getBoundingClientRect();
     if (!rect) return null;
 
-    const threshold = Math.max(42, rect.width * 0.075);
+    const threshold = Math.max(64, rect.width * 0.11);
     let best: { location: TokenLocation; index: number; distance: number } | null = null;
 
     activeTargetAnchors.forEach((anchor, index) => {
@@ -510,6 +510,8 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     totalRounds,
   ]);
 
+  const showSmoke = feedback?.tone === 'error';
+
   useEffect(() => {
     if (endedRef.current) return undefined;
     const timer = window.setInterval(() => {
@@ -544,27 +546,50 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.02 }}
               transition={{ duration: 0.28, ease: 'easeOut' }}
-              className="pointer-events-none absolute inset-x-0 bottom-0 top-[34%] z-[1]"
+              className="pointer-events-none absolute inset-x-0 bottom-0 top-[30%] z-[1]"
               style={{
                 background:
-                  'radial-gradient(circle at 50% 72%, rgba(252,211,77,0.62) 0%, rgba(249,115,22,0.38) 16%, rgba(234,88,12,0.18) 33%, transparent 62%)',
-                filter: 'blur(18px)',
+                  'radial-gradient(circle at 50% 70%, rgba(74,222,128,0.72) 0%, rgba(34,197,94,0.44) 14%, rgba(16,185,129,0.18) 28%, transparent 58%)',
+                filter: 'blur(16px)',
                 mixBlendMode: 'screen',
               }}
             />
           )}
         </AnimatePresence>
 
+        <AnimatePresence>
+          {showSmoke && (
+            <motion.div
+              key="forge-smoke"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.02 }}
+              transition={{ duration: 0.28, ease: 'easeOut' }}
+              className="pointer-events-none absolute inset-0 z-[2]"
+              style={{
+                background:
+                  'radial-gradient(circle at 50% 70%, rgba(15,23,42,0.18) 0%, rgba(15,23,42,0.48) 22%, rgba(2,6,23,0.68) 50%, rgba(2,6,23,0.86) 82%)',
+              }}
+            >
+              <motion.div
+                animate={{ y: [12, -10, 8], x: [0, 14, -10, 0], opacity: [0.24, 0.6, 0.36, 0.5] }}
+                transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
+                className="absolute inset-x-0 bottom-[18%] h-[28%] bg-[radial-gradient(circle_at_25%_80%,rgba(148,163,184,0.4),transparent_45%),radial-gradient(circle_at_55%_65%,rgba(15,23,42,0.62),transparent_46%),radial-gradient(circle_at_78%_82%,rgba(100,116,139,0.34),transparent_42%)] blur-2xl"
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <div
           className="pointer-events-none fixed left-0 right-0 z-[60]"
-          style={{ top: '4px' }}
+          style={{ top: useSharedTopHud ? '4px' : '8px' }}
         >
-          <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-[17px] py-[13px] text-center backdrop-blur-sm">
+          <div className="mx-auto w-full max-w-[760px] rounded-[1rem] bg-slate-950/72 px-[15px] py-[11px] text-center backdrop-blur-sm">
             <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Order</div>
-            <div className="mt-0.5 text-[clamp(1.1rem,4.2vw,1.5rem)] font-black text-white">
+            <div className="mt-0.5 text-[clamp(1rem,3.8vw,1.35rem)] font-black text-white">
               {formatFantasyPrompt(round.prompt)}
             </div>
-            <div className="mt-1 text-[11px] font-semibold text-cyan-100/90">
+            <div className="mt-1 text-[10px] font-semibold text-cyan-100/90">
               Place the fractions in order.
             </div>
           </div>
@@ -596,7 +621,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
           return (
             <React.Fragment key={`target-${round.id}-${index}`}>
               <div
-                className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-[1rem] border-2 border-dashed border-cyan-200/60 bg-cyan-200/20"
+                className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-[0.85rem] border border-dashed border-cyan-200/45 bg-cyan-200/12"
                 style={{
                   left: `${anchor.x}%`,
                   top: layout.targetTop,
