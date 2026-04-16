@@ -22,15 +22,17 @@ interface BossEncounterGameProps {
 }
 
 type QuestionKind = 'fluency' | 'reasoning';
+type SelectionMode = 'single' | 'multi';
 
 interface BossQuestion {
   prompt: string;
   clue: string;
   options: string[];
-  answerIndex: number;
+  correctOptionIndices: number[];
   dataPoints: string[];
   kind?: QuestionKind;
   marks?: number;
+  selectionMode?: SelectionMode;
 }
 
 const TOTAL_QUESTIONS = 10;
@@ -74,6 +76,16 @@ const makeOptions = (correct: string, wrongs: string[]) => {
   return { options: shuffled, answerIndex: shuffled.indexOf(correct) };
 };
 
+const makeMultiOptions = (correctAnswers: string[], wrongs: string[]) => {
+  const answers = Array.from(new Set(correctAnswers.filter(Boolean)));
+  const options = shuffle(Array.from(new Set([...answers, ...wrongs.filter(Boolean)]))).slice(0, 4);
+  const correctOptionIndices = options
+    .map((option, index) => (answers.includes(option) ? index : -1))
+    .filter((index): index is number => index >= 0);
+
+  return { options, correctOptionIndices };
+};
+
 const generateFactorsQuestion = (): BossQuestion => {
   const mode = randomInt(0, 2);
 
@@ -92,8 +104,9 @@ const generateFactorsQuestion = (): BossQuestion => {
       prompt: `Which number is a factor of ${target}?`,
       clue: 'A factor divides exactly with no remainder.',
       options,
-      answerIndex,
+      correctOptionIndices: [answerIndex],
       dataPoints: [`Target number ${target}`, 'Find a number that fits exactly'],
+      selectionMode: 'single',
     };
   }
 
@@ -111,8 +124,9 @@ const generateFactorsQuestion = (): BossQuestion => {
       prompt: `Which number is a multiple of ${base}?`,
       clue: `Multiples land exactly in the ${base} times table.`,
       options,
-      answerIndex,
+      correctOptionIndices: [answerIndex],
       dataPoints: [`${base}, ${base * 2}, ${base * 3}, ...`, 'Choose the next exact fit'],
+      selectionMode: 'single',
     };
   }
 
@@ -126,8 +140,9 @@ const generateFactorsQuestion = (): BossQuestion => {
     prompt: `Which number is a common factor of ${a} and ${b}?`,
     clue: 'It must divide both numbers exactly.',
     options,
-    answerIndex,
+    correctOptionIndices: [answerIndex],
     dataPoints: [`First number ${a}`, `Second number ${b}`],
+    selectionMode: 'single',
   };
 };
 
@@ -146,20 +161,20 @@ const generateFractionBossQuestion = (): BossQuestion => {
   if (mode === 0) {
     const sample = pick(fractionSets);
     const source = pick([sample.fraction, sample.decimal, sample.percent]);
-    const correct = [sample.fraction, sample.decimal, sample.percent].find(value => value !== source) || sample.percent;
+    const correctAnswers = [sample.fraction, sample.decimal, sample.percent].filter(value => value !== source);
     const wrongs = shuffle(
       fractionSets
         .filter(item => item.fraction !== sample.fraction)
-        .slice(0, 4)
-        .map(item => pick([item.fraction, item.decimal, item.percent])),
-    );
-    const { options, answerIndex } = makeOptions(correct, wrongs);
+        .flatMap(item => [item.fraction, item.decimal, item.percent]),
+    ).filter(value => !correctAnswers.includes(value) && value !== source).slice(0, 2);
+    const { options, correctOptionIndices } = makeMultiOptions(correctAnswers, wrongs);
     return {
-      prompt: `Which answer is equivalent to ${source}?`,
-      clue: 'Link fractions, decimals and percentages.',
+      prompt: `Select all answers equivalent to ${source}.`,
+      clue: 'More than one answer can be correct.',
       options,
-      answerIndex,
+      correctOptionIndices,
       dataPoints: [sample.fraction, sample.decimal, sample.percent],
+      selectionMode: 'multi',
     };
   }
 
@@ -178,8 +193,9 @@ const generateFractionBossQuestion = (): BossQuestion => {
       prompt: `What is ${percent}% of ${amount}?`,
       clue: 'Use a known fraction or decimal equivalent.',
       options,
-      answerIndex,
+      correctOptionIndices: [answerIndex],
       dataPoints: [`${percent}%`, `of ${amount}`],
+      selectionMode: 'single',
     };
   }
 
@@ -199,8 +215,9 @@ const generateFractionBossQuestion = (): BossQuestion => {
     prompt: `Which mixed number is equal to ${improper}?`,
     clue: 'Split the improper fraction into wholes and the remainder.',
     options,
-    answerIndex,
+    correctOptionIndices: [answerIndex],
     dataPoints: [improper, `${denominator}/${denominator} = 1 whole`],
+    selectionMode: 'single',
   };
 };
 
@@ -222,8 +239,9 @@ const generateGeometryBossQuestion = (): BossQuestion => {
       prompt: `Two angles in a triangle are ${a} deg and ${b} deg. What is the third angle?`,
       clue: 'Angles in a triangle add up to 180 deg.',
       options,
-      answerIndex,
+      correctOptionIndices: [answerIndex],
       dataPoints: [`${a} deg`, `${b} deg`, 'Triangle total 180 deg'],
+      selectionMode: 'single',
     };
   }
 
@@ -244,8 +262,9 @@ const generateGeometryBossQuestion = (): BossQuestion => {
       prompt: `Point A is at (${x}, ${y}). It is translated ${Math.abs(dx)} ${dx > 0 ? 'right' : 'left'} and ${Math.abs(dy)} ${dy > 0 ? 'up' : 'down'}. Where is A'?`,
       clue: 'Apply the horizontal move first, then the vertical move.',
       options,
-      answerIndex,
+      correctOptionIndices: [answerIndex],
       dataPoints: [`Start (${x}, ${y})`, `${Math.abs(dx)} ${dx > 0 ? 'right' : 'left'}`, `${Math.abs(dy)} ${dy > 0 ? 'up' : 'down'}`],
+      selectionMode: 'single',
     };
   }
 
@@ -255,8 +274,9 @@ const generateGeometryBossQuestion = (): BossQuestion => {
     prompt: 'Which shape has exactly one pair of parallel sides?',
     clue: 'Think about polygon properties, not just the number of sides.',
     options,
-    answerIndex,
+    correctOptionIndices: [answerIndex],
     dataPoints: ['One pair of parallel sides', 'Quadrilateral family'],
+    selectionMode: 'single',
   };
 };
 
@@ -277,8 +297,9 @@ const generateMeasureBossQuestion = (): BossQuestion => {
       prompt: `Convert ${litres} litres to millilitres.`,
       clue: 'There are 1000 millilitres in 1 litre.',
       options,
-      answerIndex,
+      correctOptionIndices: [answerIndex],
       dataPoints: [`${litres} L`, '1 L = 1000 ml'],
+      selectionMode: 'single',
     };
   }
 
@@ -298,8 +319,9 @@ const generateMeasureBossQuestion = (): BossQuestion => {
       prompt: `A mix uses a ratio of ${red}:${blue}. What is the ratio if the recipe is made ${scale} times larger?`,
       clue: 'Scale both sides by the same amount.',
       options,
-      answerIndex,
+      correctOptionIndices: [answerIndex],
       dataPoints: [`Original ${red}:${blue}`, `Scale by ${scale}`],
+      selectionMode: 'single',
     };
   }
 
@@ -317,8 +339,9 @@ const generateMeasureBossQuestion = (): BossQuestion => {
     prompt: `${packs} packs each contain ${each} ml of juice. How many millilitres are there altogether?`,
     clue: 'Use multiplication to scale the measure.',
     options,
-    answerIndex,
+    correctOptionIndices: [answerIndex],
     dataPoints: [`${packs} packs`, `${each} ml each`],
+    selectionMode: 'single',
   };
 };
 
@@ -341,8 +364,9 @@ const generateStatisticsBossQuestion = (): BossQuestion => {
       prompt: 'Which day has the highest result on the chart?',
       clue: 'Compare the values carefully.',
       options,
-      answerIndex,
+      correctOptionIndices: [answerIndex],
       dataPoints: bars.map(item => `${item.label} ${item.value}`),
+      selectionMode: 'single',
     };
   }
 
@@ -361,8 +385,9 @@ const generateStatisticsBossQuestion = (): BossQuestion => {
       prompt: `What is the mean of ${numbers.join(', ')}?`,
       clue: 'Add the values, then divide by how many there are.',
       options,
-      answerIndex,
+      correctOptionIndices: [answerIndex],
       dataPoints: numbers.map(String),
+      selectionMode: 'single',
     };
   }
 
@@ -382,8 +407,9 @@ const generateStatisticsBossQuestion = (): BossQuestion => {
     prompt: `A train leaves at ${String(startHour).padStart(2, '0')}:${String(startMinute).padStart(2, '0')} and takes ${duration} minutes. What time does it arrive?`,
     clue: 'Use 24-hour time carefully.',
     options,
-    answerIndex,
+    correctOptionIndices: [answerIndex],
     dataPoints: [`Leaves ${String(startHour).padStart(2, '0')}:${String(startMinute).padStart(2, '0')}`, `Journey ${duration} min`],
+    selectionMode: 'single',
   };
 };
 
@@ -406,8 +432,9 @@ const generateReasoningBossQuestion = (): BossQuestion => {
       prompt: `What is the next number in the sequence ${sequence.join(', ')}?`,
       clue: 'Look for the rule linking one term to the next.',
       options,
-      answerIndex,
+      correctOptionIndices: [answerIndex],
       dataPoints: [`Rule repeats each time`, `Difference ${step}`],
+      selectionMode: 'single',
     };
   }
 
@@ -426,8 +453,9 @@ const generateReasoningBossQuestion = (): BossQuestion => {
       prompt: `Solve x + ${add} = ${x + add}`,
       clue: 'Undo the addition to find x.',
       options,
-      answerIndex,
+      correctOptionIndices: [answerIndex],
       dataPoints: ['Find the missing value', 'Use inverse operations'],
+      selectionMode: 'single',
     };
   }
 
@@ -447,8 +475,9 @@ const generateReasoningBossQuestion = (): BossQuestion => {
     prompt: `A rule machine does x${multiplier} then +${offset}. What is the output for ${input}?`,
     clue: 'Apply the operations in the correct order.',
     options,
-    answerIndex,
+    correctOptionIndices: [answerIndex],
     dataPoints: [`Input ${input}`, `x${multiplier}`, `+${offset}`],
+    selectionMode: 'single',
   };
 };
 
@@ -507,6 +536,15 @@ const getPaperConfig = (gameType: SupportedBossGameType) => {
   return null;
 };
 
+const normalizeSelection = (values: number[]) => Array.from(new Set(values)).sort((a, b) => a - b);
+
+const areSelectionsEqual = (left: number[], right: number[]) => {
+  const normalizedLeft = normalizeSelection(left);
+  const normalizedRight = normalizeSelection(right);
+  return normalizedLeft.length === normalizedRight.length
+    && normalizedLeft.every((value, index) => value === normalizedRight[index]);
+};
+
 const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   gameType,
   levelId,
@@ -531,7 +569,8 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [XP, setScore] = useState(0);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
+  const [submittedIndices, setSubmittedIndices] = useState<number[] | null>(null);
   const [bossPose, setBossPose] = useState<BossPose>('neutral');
   const [reaction, setReaction] = useState(reactionCopy.idle);
   const [resolveState, setResolveState] = useState<'idle' | 'correct' | 'wrong' | 'warning' | 'victory' | 'defeat'>('idle');
@@ -548,7 +587,9 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   }
 
   const question = questions[currentIndex];
-  const answeredCount = currentIndex + (selectedIndex !== null ? 1 : 0);
+  const isMultiSelect = question.selectionMode === 'multi';
+  const answeredCount = currentIndex + (submittedIndices !== null ? 1 : 0);
+  const activeSelection = submittedIndices ?? selectedIndices;
   const misses = answeredCount - correctAnswers;
   const marksEarned = XP;
   const currentQuestionMarks = paperConfig?.questionMarks[currentIndex] ?? 180;
@@ -585,18 +626,10 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     }, 980);
   };
 
-  const handleAnswer = (index: number) => {
-    if (selectedIndex !== null) return;
-
-    const isCorrect = index === question.answerIndex;
-    const nextCorrect = isCorrect ? correctAnswers + 1 : correctAnswers;
-    const nextScore = isCorrect
-      ? XP + (isPaperBoss ? currentQuestionMarks : 180)
-      : XP;
+  const advanceQuestion = (isCorrect: boolean, nextCorrect: number, nextScore: number) => {
     const nextMarksRemaining = isPaperBoss ? Math.max(0, passMarks - nextScore) : Math.max(0, 100 - (nextCorrect * 10));
     const finalQuestion = currentIndex === TOTAL_QUESTIONS - 1;
 
-    setSelectedIndex(index);
     setCorrectAnswers(nextCorrect);
     setScore(nextScore);
 
@@ -628,12 +661,47 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
         return;
       }
 
-      setCurrentIndex(prev => prev + 1);
-      setSelectedIndex(null);
+      setCurrentIndex((prev) => prev + 1);
+      setSelectedIndices([]);
+      setSubmittedIndices(null);
       setResolveState('idle');
       setReaction(reactionCopy.idle);
       setBossPose(isPaperBoss ? (passMarks - nextScore <= 4 ? 'dazed' : 'neutral') : nextMarksRemaining <= 20 ? 'dazed' : 'neutral');
     }, 1180);
+  };
+
+  const submitSelection = (selection: number[]) => {
+    if (submittedIndices !== null) return;
+
+    const normalizedSelection = normalizeSelection(selection);
+    const normalizedCorrect = normalizeSelection(question.correctOptionIndices);
+    const isCorrect = areSelectionsEqual(normalizedSelection, normalizedCorrect);
+    const nextCorrect = isCorrect ? correctAnswers + 1 : correctAnswers;
+    const nextScore = isCorrect
+      ? XP + (isPaperBoss ? currentQuestionMarks : 180)
+      : XP;
+
+    setSubmittedIndices(normalizedSelection);
+    advanceQuestion(isCorrect, nextCorrect, nextScore);
+  };
+
+  const handleOptionClick = (index: number) => {
+    if (submittedIndices !== null) return;
+    if (isMultiSelect) {
+      setSelectedIndices((previous) => (
+        previous.includes(index)
+          ? previous.filter((item) => item !== index)
+          : [...previous, index]
+      ));
+      return;
+    }
+
+    submitSelection([index]);
+  };
+
+  const clearSelection = () => {
+    if (submittedIndices !== null) return;
+    setSelectedIndices([]);
   };
 
   return (
@@ -710,6 +778,8 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
               <div className="min-w-0 flex-1">
                 <div className="text-[9px] font-black uppercase tracking-[0.24em] text-cyan-100/60 lg:text-[11px]">
                   {isPaperBoss ? 'SATs paper' : 'Boss encounter'}
+                  <span className="text-white/32"> | </span>
+                  <span>{isMultiSelect ? 'Select all that apply' : 'Choose one answer'}</span>
                 </div>
                 <h1 className="game-question-copy mt-1 leading-tight text-white lg:text-[1.75rem]">
                   {formatFantasyPrompt(question.prompt)}
@@ -742,12 +812,14 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
 
           <div className="grid min-h-0 flex-1 grid-cols-2 gap-2 lg:gap-3">
             {question.options.map((option, index) => {
-              const isCorrect = index === question.answerIndex;
-              const isSelected = selectedIndex === index;
-              const isRevealed = selectedIndex !== null;
+              const isCorrect = question.correctOptionIndices.includes(index);
+              const isSelected = activeSelection.includes(index);
+              const isRevealed = submittedIndices !== null;
 
               const toneClass = !isRevealed
-                ? 'border-white/14 bg-slate-950/52 text-white hover:border-cyan-200/35 hover:bg-cyan-300/10'
+                ? isSelected
+                  ? 'border-cyan-200/55 bg-cyan-300/18 text-cyan-50 shadow-[0_0_0_1px_rgba(165,243,252,0.28)]'
+                  : 'border-white/14 bg-slate-950/52 text-white hover:border-cyan-200/35 hover:bg-cyan-300/10'
                 : isCorrect
                   ? 'border-emerald-300/45 bg-emerald-300/16 text-emerald-50'
                   : isSelected
@@ -757,8 +829,9 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
               return (
                 <button
                   key={`${option}-${index}`}
-                  onClick={() => handleAnswer(index)}
-                  disabled={selectedIndex !== null}
+                  onClick={() => handleOptionClick(index)}
+                  disabled={submittedIndices !== null}
+                  aria-pressed={isSelected}
                   className={`relative flex min-h-[4.1rem] items-center justify-center rounded-[1.2rem] border px-3 py-2 text-center text-sm font-black leading-tight shadow-[0_14px_30px_rgba(2,6,23,0.18)] backdrop-blur-xl transition-all lg:min-h-[5.7rem] lg:rounded-[1.7rem] lg:px-4 lg:text-lg ${toneClass}`}
                 >
                   <span className="pointer-events-none absolute left-2 top-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/10 text-[9px] font-black text-white/70 lg:left-3 lg:top-3 lg:h-6 lg:w-6 lg:text-xs">
@@ -772,6 +845,27 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
               );
             })}
           </div>
+
+          {isMultiSelect ? (
+            <div className="mt-1 flex flex-wrap justify-end gap-2">
+              <button
+                type="button"
+                onClick={clearSelection}
+                disabled={submittedIndices !== null || selectedIndices.length === 0}
+                className="rounded-full border border-white/14 bg-white/8 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white/75 transition disabled:cursor-not-allowed disabled:opacity-35"
+              >
+                Clear
+              </button>
+              <button
+                type="button"
+                onClick={() => submitSelection(selectedIndices)}
+                disabled={submittedIndices !== null || selectedIndices.length === 0}
+                className="rounded-full border border-emerald-200/35 bg-emerald-400/18 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-50 transition disabled:cursor-not-allowed disabled:opacity-35"
+              >
+                Check answers
+              </button>
+            </div>
+          ) : null}
           </div>
         </div>
       </div>

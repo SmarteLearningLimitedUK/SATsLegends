@@ -224,6 +224,17 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         if (selectedLevel.blueprintKey === 'factor_frenzy') {
           return renderFromRegistry('FactorFrenzyGame', sharedProps);
         }
+        if (selectedLevel.isBoss && isBossEncounterGameType(selectedLevel.gameType)) {
+          return renderFromRegistry('BossEncounterGame', {
+            gameType: selectedLevel.gameType,
+            levelId: selectedLevel.id,
+            avatarId: player.avatarId,
+            isPractice: Boolean(selectedLevel.isPractice),
+            onVictory: onGameplayVictory,
+            onGameOver: onGameplayOver,
+            onBack: onBackToIslandLevels,
+          });
+        }
         return renderFromRegistry('TowerOfFactorsGame', { ...sharedProps, isBoss: Boolean(selectedLevel.isBoss) });
       case 'place_value_peaks':
         if (selectedLevel.blueprintKey === 'place_value_panic') {
@@ -343,6 +354,17 @@ export const AppRouter: React.FC<AppRouterProps> = ({
           onBack: onBackToIslandLevels,
         });
       case 'matrix_match':
+        if (selectedLevel.isBoss && isBossEncounterGameType(selectedLevel.gameType)) {
+          return renderFromRegistry('BossEncounterGame', {
+            gameType: selectedLevel.gameType,
+            levelId: selectedLevel.id,
+            avatarId: player.avatarId,
+            isPractice: Boolean(selectedLevel.isPractice),
+            onVictory: onGameplayVictory,
+            onGameOver: onGameplayOver,
+            onBack: onBackToIslandLevels,
+          });
+        }
         return renderFromRegistry('ReasoningGame', {
           gameType: selectedLevel.gameType,
           isBoss: Boolean(selectedLevel.isBoss),
