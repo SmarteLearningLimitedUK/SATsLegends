@@ -5,6 +5,7 @@ import { ChevronLeft, CircleDollarSign, Zap } from 'lucide-react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import percentPowerBackground from '../assets/maps/backgroundsforgames/percent power.jpg';
 import { triggerHaptic } from '../haptics';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import {
   emitMiniGameSessionEvent,
   type GameplaySessionEventHandlers,
@@ -353,11 +354,10 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
               Round {roundNumber}/{totalRounds}
             </div>
           </div>
-          <div className="game-question-copy mt-2 text-center text-white md:text-[1.32rem]">
-            {formatFantasyPrompt(question.prompt)}
-          </div>
-          <div className="mt-1 text-center text-[11px] font-semibold text-cyan-100/70 md:text-[12px]">
-            {question.helper}
+          <div className="mt-2">
+            <GameQuestionCard title="Percent Power" subtitle={question.helper} className="max-w-[44rem]">
+              {formatFantasyPrompt(question.prompt)}
+            </GameQuestionCard>
           </div>
         </div>
 

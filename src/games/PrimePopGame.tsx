@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import AssetIcon from '../components/AssetIcon';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { AVATARS } from '../constants';
 import primePopBackground from '../assets/maps/backgroundsforgames/primepopbkground.jpg';
 
@@ -566,14 +567,11 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     >
       <div className="relative z-10 flex h-full min-h-0 w-full flex-col pt-[env(safe-area-inset-top)]">
         <div className={`pointer-events-none px-3 ${usesSharedHud ? 'pt-[calc(env(safe-area-inset-top)+3.9rem)]' : 'pt-3'}`}>
-          <div className="mx-auto max-w-[22rem] rounded-[1.05rem] border border-cyan-100/40 bg-slate-950/70 px-4 py-2 text-center shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
-            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-200/90">Prime Pop</div>
-            <div className="game-question-copy mt-1 whitespace-pre-line text-white">
-              the monster minds have released number orbs to hide the prime numbers.
-              {'\n'}
-              pick out the prime numbers before they cross the line and are lost forever
-            </div>
-          </div>
+          <GameQuestionCard title="Prime Pop" className="max-w-[22rem]">
+            the monster minds have released number orbs to hide the prime numbers.
+            {'\n'}
+            pick out the prime numbers before they cross the line and are lost forever
+          </GameQuestionCard>
         </div>
 
         <motion.div

@@ -11,6 +11,7 @@ import {
 import { AnimatePresence, motion } from 'motion/react';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import {
   CartesianGrid,
   Line,
@@ -371,10 +372,9 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
               </header>
             ) : null}
             <div className="px-2 pt-0 sm:px-3 md:px-4">
-              <div className="game-question-card w-full max-w-[780px]">
-                <div className="question-title game-question-copy text-center">{round?.question ?? ''}</div>
-                <div className="question-subtitle text-center">{round?.helper}</div>
-              </div>
+              <GameQuestionCard title="Line Graph Lab" subtitle={round?.helper || ''}>
+                {round?.question ?? ''}
+              </GameQuestionCard>
             </div>
           </div>
         )}

@@ -5352,19 +5352,16 @@ button.avatar-hero-arrow:not(:disabled):active {
 }
 
 .game-question-card {
-  border: 1px solid rgba(198, 230, 255, 0.35);
-  border-radius: 1.1rem;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 52%),
-    linear-gradient(180deg, rgba(29, 64, 145, 0.97), rgba(10, 18, 44, 0.99));
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.12),
-    inset 0 -2px 0 rgba(10, 17, 40, 0.6),
-    0 14px 28px rgba(2,6,23,0.32);
-  width: min(100%, 780px);
+  /* Match the blue translucent question banner used in Number Line Ninja + Place Value Panic. */
+  border: 1px solid rgba(96, 165, 250, 0.4);
+  border-radius: 1.05rem;
+  background: rgba(23, 37, 84, 0.7);
+  box-shadow: 0 10px 22px rgba(2, 6, 23, 0.35);
+  backdrop-filter: blur(6px);
+  width: var(--question-card-width, min(100%, 780px));
   margin-left: auto;
   margin-right: auto;
-  padding: var(--sat-question-pad-y) var(--sat-question-pad-x);
+  padding: var(--question-card-padding, 10px 12px);
   text-align: center;
   font-size: clamp(0.98rem, 3.55vw, 1.18rem);
   font-weight: 400;
@@ -5374,8 +5371,12 @@ button.avatar-hero-arrow:not(:disabled):active {
 }
 
 .game-question-card .question-title {
-  color: #f8fafc;
-  letter-spacing: 0.01em;
+  margin: 0;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: rgba(255, 236, 179, 0.9);
 }
 
 .game-question-copy {
@@ -5384,35 +5385,17 @@ button.avatar-hero-arrow:not(:disabled):active {
   line-height: inherit;
 }
 
+.game-question-card .game-question-copy {
+  margin-top: 0.125rem;
+  white-space: pre-line;
+  color: #ffffff;
+}
+
 .game-question-card .question-subtitle {
-  margin-top: 0.15rem;
-  font-size: inherit;
-  font-weight: inherit;
-  color: rgba(226, 232, 240, 0.85);
-}
-
-.game-question-card .question-title,
-.game-question-card .game-question-copy,
-.game-question-card .question-subtitle,
-.screen-gameplay .game-shell-host .question-title,
-.screen-gameplay .game-shell-host .game-question-copy,
-.screen-gameplay .game-shell-host .question-subtitle {
-  font-size: inherit !important;
-  font-weight: inherit !important;
-  line-height: inherit !important;
-  display: block;
-  -webkit-box-orient: initial;
-  -webkit-line-clamp: unset;
-  overflow: visible;
-  white-space: normal;
-  text-overflow: clip;
-  overflow-wrap: anywhere;
-}
-
-.game-question-card * {
-  font-size: inherit !important;
-  font-weight: inherit !important;
-  line-height: inherit !important;
+  margin-top: 0.35rem;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(224, 242, 254, 0.78);
 }
 .screen-gameplay .game-shell-host .mission-panel-shell,
 .screen-gameplay .game-shell-host .licensed-slice-paper-panel,

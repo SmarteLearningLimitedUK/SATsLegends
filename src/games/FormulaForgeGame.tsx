@@ -6,6 +6,7 @@ import CelebrationSplash from '../components/CelebrationSplash';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 import { triggerHaptic } from '../haptics';
 import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface FormulaForgeGameProps {
@@ -353,11 +354,9 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
 
           <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-2 md:px-4 md:pb-4">
             <div className="flex justify-center">
-              <div className="game-question-card w-full max-w-[780px] rounded-[1.4rem] border border-amber-200/45 bg-[linear-gradient(180deg,rgba(251,191,36,0.3),rgba(245,158,11,0.14))] px-4 py-2 text-center shadow-[0_12px_26px_rgba(15,23,42,0.18)] md:px-6 md:py-2.5">
-                <div className="mt-0.5 text-[11px] font-bold text-amber-100/90 md:text-sm">
-                  Round {roundNumber} of {totalRounds}
-                </div>
-              </div>
+              <GameQuestionCard title="Formula Forge" subtitle={`Round ${roundNumber} of ${totalRounds}`}>
+                {formatFantasyPrompt(round.prompt)}
+              </GameQuestionCard>
             </div>
 
             <div className="mt-3 grid min-h-0 flex-1 grid-rows-[auto_1fr_auto] gap-2 md:gap-3">
@@ -369,7 +368,6 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
                       {round.formula}
                     </div>
                   </div>
-                  <div className="game-question-copy mt-3 text-cyan-100/85 md:text-sm">{formatFantasyPrompt(round.prompt)}</div>
                 </div>
 
                 <div className="rounded-[1.25rem] border border-emerald-200/18 bg-[linear-gradient(180deg,rgba(16,185,129,0.16),rgba(15,23,42,0.8))] p-3 shadow-[0_12px_22px_rgba(2,6,23,0.18)] md:p-4">

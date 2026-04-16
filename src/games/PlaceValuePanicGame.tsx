@@ -13,6 +13,7 @@ import socketT from '../assets/casual_ui/updaed_sockets_slices/socket_t.png';
 import socketU from '../assets/casual_ui/updaed_sockets_slices/socket_u.png';
 import { triggerHaptic } from '../haptics';
 import { AVATARS } from '../constants';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
@@ -989,14 +990,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       ) : null}
 
       <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
-        <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] border border-blue-400/40 bg-blue-950/70 px-[12px] py-[10px] text-center backdrop-blur-sm">
-          <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90">
-            Target Number
-          </div>
-          <div className="game-question-copy mt-0.5 whitespace-pre-line text-white">
-            {questionPrompt}
-          </div>
-        </div>
+        <GameQuestionCard title="Target Number">
+          {questionPrompt}
+        </GameQuestionCard>
       </div>
 
       <motion.div

@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react';
 import { AVATARS } from '../constants';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { triggerHaptic } from '../haptics';
 import GameContainerView from '../components/GameContainerView';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
@@ -553,11 +554,14 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
   const objectiveArea = (
     <div className="licensed-board-frame structured-playfield-frame flex flex-col gap-2 p-3 md:gap-3 md:p-4">
       <div className="flex items-start justify-between gap-3">
-        <div>
-          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/75">Objective</div>
-          <div className="game-question-copy text-white md:text-lg">{formatFantasyPrompt(round.prompt)}</div>
-          <p className="mt-1 text-[11px] font-semibold text-white/75 md:text-xs">{round.sublabel}</p>
-        </div>
+        <GameQuestionCard
+          title="Objective"
+          subtitle={round.sublabel}
+          bodyClassName="md:text-lg"
+          style={{ ['--question-card-width' as any]: 'auto', textAlign: 'left' }}
+        >
+          {formatFantasyPrompt(round.prompt)}
+        </GameQuestionCard>
         <button
           type="button"
           onClick={() => setIsPaused((previous) => !previous)}

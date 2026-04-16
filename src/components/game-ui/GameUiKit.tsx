@@ -69,6 +69,46 @@ export const GAME_UI_TOKENS = {
 
 const cn = (...parts: Array<string | false | null | undefined>) => parts.filter(Boolean).join(' ');
 
+type GameQuestionCardProps = {
+  title?: string;
+  subtitle?: React.ReactNode;
+  children: React.ReactNode;
+  className?: string;
+  titleClassName?: string;
+  bodyClassName?: string;
+  style?: React.CSSProperties;
+};
+
+/**
+ * Standard question/prompt surface used across mini-games.
+ * Visual source of truth lives in `.game-question-card` (src/index.css).
+ */
+export const GameQuestionCard: React.FC<GameQuestionCardProps> = ({
+  title = 'Mission',
+  subtitle,
+  children,
+  className,
+  titleClassName,
+  bodyClassName,
+  style,
+}) => (
+  <div className={cn('game-question-card', className)} style={style}>
+    {title ? (
+      <div className={cn('question-title text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90', titleClassName)}>
+        {title}
+      </div>
+    ) : null}
+    <div className={cn('game-question-copy mt-0.5 whitespace-pre-line text-white', bodyClassName)}>
+      {children}
+    </div>
+    {subtitle ? (
+      <div className="question-subtitle mt-1 text-xs font-semibold text-white/75 md:text-sm">
+        {subtitle}
+      </div>
+    ) : null}
+  </div>
+);
+
 export const IconButton: React.FC<IconButtonProps> = ({ icon, label, onClick, disabled }) => (
   <button
     type="button"
@@ -158,7 +198,7 @@ export const SecondaryButton: React.FC<ButtonProps> = ({ children, className, on
 export const StoryCard: React.FC<WrapperProps> = ({ children, className }) => (
   <div
     className={cn(
-      'game-question-card licensed-game-card mission-panel-shell rounded-[1.1rem] px-3 py-2 text-center text-slate-100',
+      'game-question-card text-center text-slate-100',
       className,
     )}
   >
@@ -169,7 +209,7 @@ export const StoryCard: React.FC<WrapperProps> = ({ children, className }) => (
 export const TaskCard: React.FC<WrapperProps> = ({ children, className }) => (
   <div
     className={cn(
-      'game-question-card licensed-game-card mission-panel-shell rounded-[1.1rem] px-3 py-2.5 text-slate-100',
+      'game-question-card text-slate-100',
       className,
     )}
   >

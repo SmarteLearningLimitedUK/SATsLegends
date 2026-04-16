@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react';
 import { triggerHaptic } from '../haptics';
 import gameplayBackground from '../assets/maps/backgroundsforgames/Rotation Reflection.jpg';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 
 interface RotationReflectionGameProps {
   levelId: number;
@@ -494,9 +495,10 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
             </header>
           )}
 
-          <section className="rounded-[1.35rem] border border-cyan-100/18 bg-slate-950/46 p-2.5 text-center shadow-[0_10px_20px_rgba(2,6,23,0.38)]">
-            <h2 className="game-question-copy text-white">{question.instruction}</h2>
-            <p className="mt-1 text-[clamp(0.76rem,3.3vw,0.9rem)] font-semibold text-cyan-100/86">{question.subInstruction}</p>
+          <section>
+            <GameQuestionCard title="Rotation Reflection" subtitle={question.subInstruction}>
+              {question.instruction}
+            </GameQuestionCard>
           </section>
 
           <section className="min-h-0 flex-1 rounded-[1.35rem] border border-cyan-100/18 bg-slate-950/46 p-2.5 shadow-[0_10px_20px_rgba(2,6,23,0.38)]">

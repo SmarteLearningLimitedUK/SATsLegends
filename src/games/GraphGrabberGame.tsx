@@ -7,6 +7,7 @@ import crate2 from '../assets/crates/2.png';
 import crate3 from '../assets/crates/3.png';
 import crate4 from '../assets/crates/4.png';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface GraphGrabberGameProps {
@@ -348,10 +349,9 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
           <div className="relative z-10 flex h-full w-full flex-col px-3 pb-3 pt-2 md:px-5 md:pb-4 md:pt-3">
             <div className="flex min-h-0 flex-1 flex-col gap-2">
               <div className="flex justify-center">
-                <div className="game-question-card w-full max-w-[780px]">
-                  <div className="question-title">{round.title}</div>
-                  <div className="question-subtitle game-question-copy">{formatFantasyPrompt(round.prompt)}</div>
-                </div>
+                <GameQuestionCard title={round.title} bodyClassName="tracking-tight">
+                  {formatFantasyPrompt(round.prompt)}
+                </GameQuestionCard>
               </div>
 
               <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 md:grid-cols-[1.02fr_0.98fr] md:gap-2">

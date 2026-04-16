@@ -4,6 +4,7 @@ import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import missionBackground from '../assets/maps/backgroundsforgames/roundingrocketbackground.jpg';
 import roundingRocketArt from '../assets/rocktlogo.png';
 
@@ -334,16 +335,11 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
       />
 
       <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
-        <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-[12px] py-[10px] text-center backdrop-blur-sm">
-          <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90">
-            Round to the nearest {round.target}
-          </div>
-          <div className="game-question-copy mt-0.5 whitespace-pre-line text-white">
-            Quick! we've managed to locate a cache of brainpower, but we need to keep it safe from the Monster Minds.
-            {'\n'}
-            Help fuel the rocket to blast it into space for safe keeping.
-          </div>
-        </div>
+        <GameQuestionCard title={`Round to the nearest ${round.target}`}>
+          Quick! we've managed to locate a cache of brainpower, but we need to keep it safe from the Monster Minds.
+          {'\n'}
+          Help fuel the rocket to blast it into space for safe keeping.
+        </GameQuestionCard>
       </div>
 
       <AnimatePresence>

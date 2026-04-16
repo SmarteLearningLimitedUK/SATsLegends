@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { triggerHaptic } from '../haptics';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import gameplayBackground from '../assets/maps/backgroundsforgames/Remainder Run.png';
 
 interface RemainderRunGameProps {
@@ -448,13 +449,13 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
           ) : null}
 
           <section className="min-h-0 rounded-[1.5rem] border border-cyan-100/18 bg-slate-950/54 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
-            <div className="text-center">
-              <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/75">
-                {problem.speedRound ? 'Speed Round' : 'Remainder Rush'}
-              </div>
-              <div className="game-question-copy mt-1 text-white">{problemPromptTitle(problem)}</div>
-              <div className="mt-1 text-[clamp(0.95rem,4.1vw,1.16rem)] font-semibold text-cyan-50/92">{problemPromptBody(problem)}</div>
-            </div>
+            <GameQuestionCard
+              title={problem.speedRound ? 'Speed Round' : 'Remainder Rush'}
+              subtitle={problemPromptBody(problem)}
+              className="mx-auto max-w-[30rem]"
+            >
+              {problemPromptTitle(problem)}
+            </GameQuestionCard>
 
             {showVisualAid ? (
               <div className="mt-2.5 rounded-[1rem] border border-cyan-100/16 bg-blue-950/40 p-2">

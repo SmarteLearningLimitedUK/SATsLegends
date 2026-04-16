@@ -36,7 +36,6 @@ const RatioFractionsGame = lazy(() => import('./RatioFractionsGame'));
 const RemainderRunGame = lazy(() => import('./RemainderRunGame'));
 const RoundingRocketGame = lazy(() => import('./RoundingRocketGame'));
 const RotationReflectionGame = lazy(() => import('./RotationReflectionGame'));
-const RuneLockDungeonsGame = lazy(() => import('./RuneLockDungeonsGame'));
 const ReasoningQuestGame = lazy(() => import('./ReasoningQuestGame'));
 const ScaleBuilderGame = lazy(() => import('./ScaleBuilderGame'));
 const ShareSplitterGame = lazy(() => import('./ShareSplitterGame'));
@@ -90,7 +89,6 @@ export type MiniGameRegistryKey =
   | 'RemainderRunGame'
   | 'RoundingRocketGame'
   | 'RotationReflectionGame'
-  | 'RuneLockDungeonsGame'
   | 'ReasoningQuestGame'
   | 'ScaleBuilderGame'
   | 'ShareSplitterGame'
@@ -152,7 +150,6 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   RemainderRunGame: asMiniGame('remainder_run', RemainderRunGame),
   RoundingRocketGame: asMiniGame('rounding_rocket', RoundingRocketGame),
   RotationReflectionGame: asMiniGame('rotation_reflection', RotationReflectionGame),
-  RuneLockDungeonsGame: asMiniGame('rune_lock_dungeons', RuneLockDungeonsGame),
   ReasoningQuestGame: asMiniGame('reasoning_quest', ReasoningQuestGame),
   ScaleBuilderGame: asMiniGame('scale_builder', ScaleBuilderGame),
   ShareSplitterGame: asMiniGame('share_splitter', ShareSplitterGame),

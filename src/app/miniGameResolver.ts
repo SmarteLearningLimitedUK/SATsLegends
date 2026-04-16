@@ -74,7 +74,9 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       }
       return 'GraphGrabberGame';
     case 'equation_grove':
-      return level.blueprintKey === 'order_ops_arena' ? 'OrderOpsArenaGame' : 'RuneLockDungeonsGame';
+      // Player-facing campaign only ships Order Ops Arena for equation_grove.
+      // Treat missing/unknown blueprint keys as Order Ops instead of routing to a stray registry entry.
+      return 'OrderOpsArenaGame';
     case 'coordinate_quest':
       if (level.blueprintKey === 'number_line_ninja') {
         return 'NumberLineNinjaGame';

@@ -5,6 +5,7 @@ import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import dojoBackground from '../assets/maps/backgroundsforgames/numberlineninja.jpg';
 import monsterHitA from '../assets/bosses/a.jpg';
@@ -531,16 +532,11 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       <div className="absolute inset-0 bg-slate-950/25" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_52%,rgba(56,189,248,0.14),transparent_64%)]" />
 
-      {/* Match Place Value Panic: fixed question banner at the top. */}
+      {/* Standard shared question banner. */}
       <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
-        <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] border border-blue-400/40 bg-blue-950/70 px-[12px] py-[10px] text-center backdrop-blur-sm">
-          <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90">
-            Mission
-          </div>
-          <div className="game-question-copy mt-0.5 whitespace-pre-line text-white">
-            {question.prompt}
-          </div>
-        </div>
+        <GameQuestionCard title="Mission">
+          {question.prompt}
+        </GameQuestionCard>
       </div>
 
       <div className="relative z-10 flex h-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+5.2rem)] pt-[calc(env(safe-area-inset-top)+4.8rem)]">

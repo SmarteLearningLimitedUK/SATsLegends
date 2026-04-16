@@ -316,10 +316,10 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
 
       <div className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.6rem)] md:pt-[calc(env(safe-area-inset-top)+4.9rem)]' : 'pt-[calc(env(safe-area-inset-top)+2.4rem)]'}`}>
         <PuzzleStage className="flex h-full min-h-0 flex-1 flex-col gap-2 md:gap-3">
-          <TaskCard className="bg-black/25 text-slate-100">
+          <TaskCard>
             <div className="flex items-center justify-between gap-3">
               <div>
-                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-200/90">Reasoning Quest</div>
+                <div className="question-title">Reasoning Quest</div>
                 <div className="game-question-copy mt-1 text-white md:text-lg">{activeQuestion.prompt}</div>
               </div>
               <div className="rounded-full bg-amber-200/25 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-100">

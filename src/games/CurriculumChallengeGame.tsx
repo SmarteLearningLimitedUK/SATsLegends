@@ -16,6 +16,7 @@ import BossPortrait from '../components/BossPortrait';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import AssetIcon from '../components/AssetIcon';
 import { Star } from '../components/GameIcons';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import answerActionBg from '../assets/casual_ui/inputs/btn_1.png';
 import answerOrangeBg from '../assets/casual_ui/inputs/btn_7.png';
 import answerGreenBg from '../assets/casual_ui/inputs/btn_2.png';
@@ -1345,23 +1346,14 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
               <BossPortrait encounter={bossEncounter} pose={bossPose} compact className="shrink-0" />
             )}
 
-            <div className={`casual-panel-strong relative shrink-0 overflow-hidden ${
-              isPlaceValuePeaks
-                ? 'rounded-[1.25rem] border border-amber-200/18 bg-[linear-gradient(180deg,rgba(124,45,18,0.88),rgba(83,33,13,0.92))]'
-                : 'rounded-[1.35rem]'
-              } px-3 py-3 text-center md:rounded-[2rem] md:px-5 md:py-5`}>
-              <div className={`absolute inset-x-5 top-0 h-20 rounded-full bg-gradient-to-br ${isPlaceValuePeaks ? 'from-yellow-200/18 via-orange-300/12 to-transparent' : theme.prompt} blur-3xl`} />
-              <div className="relative z-10 flex flex-col items-center">
-                <div className={`${isPlaceValuePeaks ? 'mb-2 rounded-[0.9rem] border border-amber-200/24 bg-[linear-gradient(180deg,rgba(251,146,60,0.3),rgba(194,65,12,0.18))] px-3 py-1.5 text-amber-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]' : `casual-ribbon-chip mb-2 inline-flex items-center justify-center rounded-full px-3 py-1 text-[8px] font-black uppercase tracking-[0.18em] md:mb-3 md:px-4 md:py-1.5 md:text-[10px] ${theme.badge}`}`}>
-                  {gameTitle || theme.title}
-                </div>
-                <div className={`${isCalculationClash ? 'text-[1.15rem]' : isPlaceValuePeaks ? 'text-[1.18rem]' : isChartGrabber ? 'text-[1.05rem]' : 'text-[1.28rem]'} game-question-copy max-w-[18rem] text-white md:max-w-[30rem] leading-[0.95]`}>
-                  {formatFantasyPrompt(question.prompt)}
-                </div>
-                <div className={`mt-1 max-w-[18rem] font-semibold leading-snug text-white/70 md:mt-2 md:max-w-[30rem] ${isChartGrabber ? 'text-[8px] md:text-[11px]' : 'text-[9px] md:text-sm'}`}>
-                  {question.sublabel}
-                </div>
-              </div>
+            <div className="relative shrink-0 px-3 py-3 text-center md:px-5 md:py-5">
+              <GameQuestionCard
+                title={gameTitle || theme.title}
+                subtitle={question.sublabel}
+                bodyClassName={`${isCalculationClash ? 'text-[1.15rem]' : isPlaceValuePeaks ? 'text-[1.18rem]' : isChartGrabber ? 'text-[1.05rem]' : 'text-[1.28rem]'} max-w-[18rem] md:max-w-[30rem] leading-[0.95]`}
+              >
+                {formatFantasyPrompt(question.prompt)}
+              </GameQuestionCard>
             </div>
 
             {isChartGrabber ? (

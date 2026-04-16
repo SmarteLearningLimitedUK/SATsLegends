@@ -4,6 +4,7 @@ import confetti from 'canvas-confetti';
 import { Check, RefreshCcw } from 'lucide-react';
 import {
   FeedbackStrip,
+  GameQuestionCard,
   GameUiShell,
   GameTopBar,
   PrimaryButton,
@@ -646,12 +647,12 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
               className="pointer-events-none fixed left-0 right-0 z-[60]"
               style={{ top: '4px' }}
             >
-              <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-[17px] py-[13px] text-center backdrop-blur-sm">
-                <div className="mt-1 text-[clamp(1.2rem,4.8vw,1.8rem)] font-black text-white">Match the Ratio</div>
-                <div className="game-question-copy mt-2 whitespace-pre-line text-[12px] font-semibold leading-tight text-cyan-100/90">
-                  {promptText}
-                </div>
-              </div>
+              <GameQuestionCard
+                title="Match the Ratio"
+                bodyClassName="mt-2 whitespace-pre-line text-[12px] font-semibold leading-tight text-cyan-100/90"
+              >
+                {promptText}
+              </GameQuestionCard>
             </div>
             <AnimatePresence>
               {dragSlice ? (

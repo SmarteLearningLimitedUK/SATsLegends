@@ -12,6 +12,7 @@ import meanMachineImage from '../assets/mean.png';
 import medianMachineImage from '../assets/median.png';
 import modeMachineImage from '../assets/mode.png';
 import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 type RoundMode = 'mean' | 'median' | 'mode' | 'missing';
@@ -659,13 +660,10 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
 
       <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.45rem)] pt-2 md:px-4">
         <div className="flex h-full min-h-0 flex-col gap-2.5">
-          <section className="mx-auto w-full max-w-[23rem] shrink-0 rounded-[1.15rem] border border-cyan-100/24 bg-[linear-gradient(180deg,rgba(14,45,103,0.9),rgba(8,26,72,0.96))] px-4 py-2 text-center shadow-[0_16px_28px_rgba(2,6,23,0.32)]">
-            <div className="game-question-copy mt-1 leading-tight text-white">
+          <section className="shrink-0">
+            <GameQuestionCard title="Mean Machine" subtitle={formatFantasyPrompt(modeCopy.prompt)} className="max-w-[23rem]">
               {modeCopy.title}
-            </div>
-            <div className="mt-0.5 text-[11px] font-semibold text-cyan-100/80">
-              {formatFantasyPrompt(modeCopy.prompt)}
-            </div>
+            </GameQuestionCard>
           </section>
 
           <main className="flex min-h-0 flex-1 flex-col gap-2.5">

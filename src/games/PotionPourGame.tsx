@@ -10,6 +10,7 @@ import {
 } from '../app/gameplaySessionContract';
 import {
   FeedbackStrip,
+  GameQuestionCard,
   GameUiShell,
   GameTopBar,
   PrimaryButton,
@@ -894,14 +895,17 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
               className="pointer-events-none fixed left-0 right-0 z-[60]"
               style={{ top: '6px' }}
             >
-              <div className="mx-auto w-full max-w-[680px] rounded-[0.95rem] bg-slate-950/72 px-3 py-2 text-center backdrop-blur-sm">
-                <div className="text-[10px] font-black uppercase tracking-[0.16em] text-amber-100/90">Target Recipe</div>
-                <div className="mt-0.5 text-[clamp(0.95rem,3.4vw,1.18rem)] font-bold text-white">{challenge.orderTitle}</div>
-                <div className="mt-0.5 text-[11px] font-black text-amber-100">Ratio {ratioText}</div>
-                <div className="game-question-copy mt-1 whitespace-pre-line text-[10px] font-semibold leading-[1.1] text-cyan-100/90">
+              <GameQuestionCard title="Target Recipe" className="max-w-[680px]" bodyClassName="mt-0.5">
+                <div className="text-[clamp(0.95rem,3.4vw,1.18rem)] font-bold text-white">
+                  {challenge.orderTitle}
+                </div>
+                <div className="mt-0.5 text-[11px] font-black text-amber-100">
+                  Ratio {ratioText}
+                </div>
+                <div className="mt-1 whitespace-pre-line text-[10px] font-semibold leading-[1.1] text-cyan-100/90">
                   {challenge.orderPrompt || 'Use the ratio to complete the potion.'}
                 </div>
-              </div>
+              </GameQuestionCard>
             </div>
             {droplets.map((drop) => {
               const ingredient = INGREDIENTS[drop.index];

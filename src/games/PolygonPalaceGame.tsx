@@ -2,6 +2,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { triggerHaptic } from '../haptics';
 import gameplayBackground from '../assets/maps/backgroundsforgames/polygon palace.jpg';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 
 interface PolygonPalaceGameProps {
   levelId: number;
@@ -776,12 +777,13 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
         className={`relative z-20 flex h-full w-full flex-col items-center ${topPaddingClass} px-[max(0.75rem,env(safe-area-inset-left))] pb-[max(7.2rem,calc(env(safe-area-inset-bottom)+6.2rem))]`}
       >
         <div className="flex h-full w-full max-w-[30rem] min-h-0 flex-col gap-3">
-          <section className="shrink-0 rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/54 p-3 text-center shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
-            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/72">
-              {question.speedRound ? 'Challenge Round' : 'Polygon Palace'}
-            </div>
-            <h2 className="game-question-copy mt-1 text-white">{question.prompt}</h2>
-            <p className="mt-1 text-[clamp(0.76rem,3.3vw,0.9rem)] font-semibold text-cyan-100/86">{question.subPrompt}</p>
+          <section className="shrink-0">
+            <GameQuestionCard
+              title={question.speedRound ? 'Challenge Round' : 'Polygon Palace'}
+              subtitle={question.subPrompt}
+            >
+              {question.prompt}
+            </GameQuestionCard>
           </section>
 
           <section className="min-h-0 flex-1 rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/54 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.45)]">

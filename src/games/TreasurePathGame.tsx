@@ -5,6 +5,7 @@ import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { Coins } from '../components/GameIcons';
 import AssetIcon from '../components/AssetIcon';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface TreasurePathGameProps {
@@ -251,13 +252,13 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
       <div className="relative z-10 mx-auto flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col px-2 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] pt-[calc(env(safe-area-inset-top)+3.6rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+2.35rem)] md:pt-[calc(env(safe-area-inset-top)+3.9rem)]">
         <PuzzleStage className="w-full min-h-0 flex-1 rounded-[1.7rem] p-2 md:rounded-[2rem] md:p-3">
           <div className="relative z-10 mb-2">
-            <div className="licensed-game-card w-full px-4 py-3 md:px-5 md:py-4">
-              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/72">{gameTitle || 'Coordinates Quest'}</div>
-              <div className="mt-1 text-[1.35rem] font-black leading-none text-white md:text-[1.8rem]">{round.promptTitle}</div>
-              <div className="game-question-copy mt-2 text-white/78 md:text-sm">
-                {formatFantasyPrompt(round.promptText)}
-              </div>
-            </div>
+            <GameQuestionCard
+              title={gameTitle || 'Coordinates Quest'}
+              subtitle={formatFantasyPrompt(round.promptText)}
+              bodyClassName="mt-1 text-[1.35rem] font-black leading-none text-white md:text-[1.8rem]"
+            >
+              {round.promptTitle}
+            </GameQuestionCard>
           </div>
 
           <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-2 overflow-hidden pr-0.5 md:gap-3 md:pr-0">

@@ -265,10 +265,8 @@ export const AppRouter: React.FC<AppRouterProps> = ({
           isPractice: Boolean(selectedLevel.isPractice),
         });
       case 'equation_grove':
-        if (selectedLevel.blueprintKey === 'order_ops_arena') {
-          return renderFromRegistry('OrderOpsArenaGame', sharedProps);
-        }
-        return renderFromRegistry('RuneLockDungeonsGame', sharedProps);
+        // Default all equation_grove gameplay to Order Ops Arena (single shipped experience for this lane).
+        return renderFromRegistry('OrderOpsArenaGame', sharedProps);
       case 'formula_forge':
         return renderFromRegistry('FormulaForgeGame', sharedProps);
       case 'unit_mixer':

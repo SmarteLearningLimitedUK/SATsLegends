@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import perimeterBackground from '../assets/maps/backgroundsforgames/Perimeter Path.jpg';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface PerimeterPathGameProps {
@@ -484,8 +485,10 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
 
       <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-[calc(env(safe-area-inset-top)+0.2rem)]">
         <main className="mt-0 flex min-h-0 flex-1 flex-col gap-1.5 sm:gap-2">
-          <div className="shrink-0 rounded-2xl border border-sky-100/22 bg-slate-950/56 px-3 py-2 text-center shadow-[0_8px_20px_rgba(2,6,23,0.35)]">
-          <div className="game-question-copy text-white sm:text-sm">{formatFantasyPrompt(question.prompt)}</div>
+          <div className="shrink-0">
+            <GameQuestionCard title="Perimeter Path" bodyClassName="sm:text-sm">
+              {formatFantasyPrompt(question.prompt)}
+            </GameQuestionCard>
           </div>
 
           <motion.div

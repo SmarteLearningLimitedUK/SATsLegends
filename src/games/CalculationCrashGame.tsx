@@ -229,9 +229,9 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
             className="my-auto w-full"
           >
             <section className="text-center">
-              <div className="mx-auto w-full max-w-[31rem] rounded-[1.25rem] border border-amber-100/35 bg-[linear-gradient(180deg,rgba(2,6,23,0.82),rgba(2,6,23,0.68))] px-4 py-3 shadow-[0_14px_34px_rgba(2,6,23,0.52)] backdrop-blur-[2px]">
-                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-200/95">Calculation Clash</p>
-                <p className="game-question-copy mt-2 leading-none tracking-[-0.02em] text-white [text-shadow:0_6px_14px_rgba(0,0,0,0.72)]">
+              <div className="game-question-card max-w-[31rem] px-4 py-3">
+                <p className="question-title">Calculation Clash</p>
+                <p className="game-question-copy mt-2 leading-none tracking-[-0.02em] [text-shadow:0_6px_14px_rgba(0,0,0,0.72)]">
                   {formatFantasyPrompt(question.prompt)}
                 </p>
               </div>

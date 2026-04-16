@@ -10,6 +10,7 @@ import BossPortrait from '../components/BossPortrait';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import AssetIcon from '../components/AssetIcon';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { isBossEncounterGameType, SupportedBossGameType } from './bossEncounterTypes';
 
 interface BossEncounterGameProps {
@@ -778,12 +779,16 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
                   <span className="text-white/32"> | </span>
                   <span>{isMultiSelect ? 'Select all that apply' : 'Choose one answer'}</span>
                 </div>
-                <h1 className="game-question-copy mt-1 leading-tight text-white lg:text-[1.75rem]">
-                  {formatFantasyPrompt(question.prompt)}
-                </h1>
-                <p className="mt-1.5 text-[9px] leading-snug text-white/74 lg:text-sm">
-                  {question.clue}
-                </p>
+                <div className="mt-2">
+                  <GameQuestionCard
+                    title="Mission"
+                    subtitle={question.clue}
+                    bodyClassName="leading-tight lg:text-[1.75rem]"
+                    style={{ ['--question-card-width' as any]: '100%' }}
+                  >
+                    {formatFantasyPrompt(question.prompt)}
+                  </GameQuestionCard>
+                </div>
               </div>
             </div>
 
