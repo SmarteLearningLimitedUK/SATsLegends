@@ -337,7 +337,7 @@ const makeQuestion = (level: number): QuestionState => {
   const placeHints = FULL_PLACE_VALUE_HINTS.slice(FULL_PLACE_VALUE_HINTS.length - slotCount);
   return {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    prompt: `A Monster Mind has scrambled the number ${numberToWords(promptNumber)}.`,
+    prompt: `A Monster Mind has scrambled the number\n${numberToWords(promptNumber)}.`,
     expectedDigits,
     tokenValues,
     placeHints,
@@ -1286,12 +1286,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           onClick={handleSubmit}
           disabled={!canSubmit}
           className="ui-button-primary absolute left-1/2 z-40 -translate-x-1/2 border-0 bg-transparent px-0 py-0 disabled:cursor-not-allowed disabled:opacity-60"
-          style={{
-            // Keep the button clear of the global bottom dock (back/sound) on all gameplay screens.
-            bottom: 'calc(var(--game-shell-bottom-inset, 4rem) + env(safe-area-inset-bottom) + 0.25rem)',
-            width: `${layout.submitWidth}%`,
-            height: `${layout.submitHeight}%`,
-          }}
+          style={{ top: `${layout.submitY}%`, width: `${layout.submitWidth}%`, height: `${layout.submitHeight}%` }}
         >
           <span
             className="pointer-events-none absolute inset-x-[16%] top-1/2 -translate-y-1/2 text-center text-[clamp(0.82rem,2.2vw,1.06rem)] font-black uppercase tracking-[0.08em] text-[#16233d]"
