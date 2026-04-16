@@ -30,10 +30,22 @@ interface BossQuestion {
   answerIndex: number;
   dataPoints: string[];
   kind?: QuestionKind;
+  marks?: number;
 }
 
 const TOTAL_QUESTIONS = 10;
 const PASS_MARK = 8;
+const PAPER_TOTAL_QUESTIONS = 10;
+const PAPER_MARK_WEIGHTS = {
+  crystal_core: Array.from({ length: PAPER_TOTAL_QUESTIONS }, () => 4),
+  mirror_gate: [4, 4, 4, 4, 4, 3, 3, 3, 3, 3],
+  matrix_match: [4, 4, 4, 4, 4, 3, 3, 3, 3, 3],
+} as const;
+const PAPER_PASS_MARKS = {
+  crystal_core: 28,
+  mirror_gate: 24,
+  matrix_match: 24,
+} as const;
 
 export { isBossEncounterGameType };
 
@@ -449,6 +461,15 @@ const QUESTION_GENERATORS: Record<SupportedBossGameType, () => BossQuestion> = {
   matrix_match: generateReasoningBossQuestion,
 };
 
+const PAPER_REACTION_COPY: Record<'idle' | 'correct' | 'wrong' | 'warning' | 'victory' | 'defeat', string> = {
+  idle: 'Answer carefully. This paper is scored in marks, just like a SATs practice paper.',
+  correct: 'Mark secured. Keep the paper moving.',
+  wrong: 'That mark was missed. Stay focused on the next question.',
+  warning: 'You are close to the target mark.',
+  victory: 'Paper complete. Great work.',
+  defeat: 'Paper finished. Review the paper and try again.',
+};
+
 const REACTION_COPY: Record<'idle' | 'correct' | 'wrong' | 'warning' | 'victory' | 'defeat', string> = {
   idle: 'Answer carefully. Eight correct answers are needed to win the duel.',
   correct: 'Direct hit. The boss is furious and its health is dropping.',
@@ -456,6 +477,34 @@ const REACTION_COPY: Record<'idle' | 'correct' | 'wrong' | 'warning' | 'victory'
   warning: 'The boss is dazed. One more strong push could finish it.',
   victory: 'Boss defeated. The island challenge is cleared.',
   defeat: 'The boss stands strong. Revision is needed before the next challenge.',
+};
+
+const getPaperConfig = (gameType: SupportedBossGameType) => {
+  if (gameType === 'crystal_core') {
+    return {
+      totalMarks: 40,
+      passMark: PAPER_PASS_MARKS.crystal_core,
+      questionMarks: PAPER_MARK_WEIGHTS.crystal_core,
+    };
+  }
+
+  if (gameType === 'mirror_gate') {
+    return {
+      totalMarks: 35,
+      passMark: PAPER_PASS_MARKS.mirror_gate,
+      questionMarks: PAPER_MARK_WEIGHTS.mirror_gate,
+    };
+  }
+
+  if (gameType === 'matrix_match') {
+    return {
+      totalMarks: 35,
+      passMark: PAPER_PASS_MARKS.matrix_match,
+      questionMarks: PAPER_MARK_WEIGHTS.matrix_match,
+    };
+  }
+
+  return null;
 };
 
 const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
@@ -468,6 +517,9 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
 }) => {
   const avatar = AVATARS.find(item => item.id === avatarId) || AVATARS[0];
   const encounter = getBossEncounter(gameType);
+  const paperConfig = getPaperConfig(gameType);
+  const isPaperBoss = Boolean(paperConfig);
+  const reactionCopy = isPaperBoss ? PAPER_REACTION_COPY : REACTION_COPY;
   const questions = useMemo(
     () => Array.from({ length: TOTAL_QUESTIONS }, () => {
       const base = QUESTION_GENERATORS[gameType]();
@@ -481,7 +533,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   const [XP, setScore] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [bossPose, setBossPose] = useState<BossPose>('neutral');
-  const [reaction, setReaction] = useState(REACTION_COPY.idle);
+  const [reaction, setReaction] = useState(reactionCopy.idle);
   const [resolveState, setResolveState] = useState<'idle' | 'correct' | 'wrong' | 'warning' | 'victory' | 'defeat'>('idle');
   const timeoutRef = useRef<number | null>(null);
 
@@ -498,17 +550,23 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   const question = questions[currentIndex];
   const answeredCount = currentIndex + (selectedIndex !== null ? 1 : 0);
   const misses = answeredCount - correctAnswers;
-  const bossHealth = Math.max(0, 100 - (correctAnswers * 10));
+  const marksEarned = XP;
+  const currentQuestionMarks = paperConfig?.questionMarks[currentIndex] ?? 180;
+  const totalMarks = paperConfig?.totalMarks ?? 100;
+  const passMarks = paperConfig?.passMark ?? PASS_MARK;
   const progress = Math.round((answeredCount / TOTAL_QUESTIONS) * 100);
+  const paperProgress = isPaperBoss ? Math.round((marksEarned / totalMarks) * 100) : progress;
   const accuracy = answeredCount > 0 ? Math.round((correctAnswers / answeredCount) * 100) : 100;
 
   const finishEncounter = (finalCorrect: number, finalScore: number) => {
-    const won = finalCorrect >= PASS_MARK;
+    const won = isPaperBoss ? finalScore >= passMarks : finalCorrect >= PASS_MARK;
 
     if (won) {
-      const stars = finalCorrect === 10 ? 3 : finalCorrect === 9 ? 2 : 1;
+      const stars = isPaperBoss
+        ? (finalScore >= totalMarks * 0.9 ? 3 : finalScore >= totalMarks * 0.75 ? 2 : 1)
+        : finalCorrect === 10 ? 3 : finalCorrect === 9 ? 2 : 1;
       setResolveState('victory');
-      setReaction(REACTION_COPY.victory);
+      setReaction(reactionCopy.victory);
       setBossPose('defeat');
       triggerHaptic('success');
       confetti({ particleCount: 90, spread: 70, origin: { y: 0.45 } });
@@ -519,7 +577,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     }
 
     setResolveState('defeat');
-    setReaction(REACTION_COPY.defeat);
+    setReaction(reactionCopy.defeat);
     setBossPose('victory');
     triggerHaptic('error');
     timeoutRef.current = window.setTimeout(() => {
@@ -532,8 +590,10 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
 
     const isCorrect = index === question.answerIndex;
     const nextCorrect = isCorrect ? correctAnswers + 1 : correctAnswers;
-    const nextScore = isCorrect ? XP + 180 : XP;
-    const nextHealth = Math.max(0, 100 - (nextCorrect * 10));
+    const nextScore = isCorrect
+      ? XP + (isPaperBoss ? currentQuestionMarks : 180)
+      : XP;
+    const nextMarksRemaining = isPaperBoss ? Math.max(0, passMarks - nextScore) : Math.max(0, 100 - (nextCorrect * 10));
     const finalQuestion = currentIndex === TOTAL_QUESTIONS - 1;
 
     setSelectedIndex(index);
@@ -544,21 +604,21 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       triggerHaptic('success');
       if (finalQuestion) {
         setResolveState('victory');
-        setReaction(REACTION_COPY.victory);
+        setReaction(reactionCopy.victory);
         setBossPose('defeat');
-      } else if (nextHealth <= 20) {
+      } else if (isPaperBoss ? nextMarksRemaining <= 4 : nextMarksRemaining <= 20) {
         setResolveState('warning');
-        setReaction(REACTION_COPY.warning);
+        setReaction(reactionCopy.warning);
         setBossPose('dazed');
       } else {
         setResolveState('correct');
-        setReaction(REACTION_COPY.correct);
+        setReaction(reactionCopy.correct);
         setBossPose('attack');
       }
     } else {
       triggerHaptic('warning');
       setResolveState('wrong');
-      setReaction(REACTION_COPY.wrong);
+      setReaction(reactionCopy.wrong);
       setBossPose(encounter.assetId === 'jelly' ? 'victory' : 'happy');
     }
 
@@ -571,8 +631,8 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       setCurrentIndex(prev => prev + 1);
       setSelectedIndex(null);
       setResolveState('idle');
-      setReaction(REACTION_COPY.idle);
-      setBossPose(nextHealth <= 20 ? 'dazed' : 'neutral');
+      setReaction(reactionCopy.idle);
+      setBossPose(isPaperBoss ? (passMarks - nextScore <= 4 ? 'dazed' : 'neutral') : nextMarksRemaining <= 20 ? 'dazed' : 'neutral');
     }, 1180);
   };
 
@@ -582,18 +642,27 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
 
       <div className="relative z-10 flex h-full w-full flex-col gap-2 px-2 pb-2.5 pt-[calc(0.45rem+env(safe-area-inset-top))] lg:gap-3 lg:px-4 lg:pb-4 lg:pt-4">
         <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col gap-2 overflow-hidden rounded-[2rem] p-2 lg:gap-3 lg:rounded-[2.6rem] lg:p-3">
-          <div className="grid shrink-0 grid-cols-[1.08fr_0.92fr] gap-2 lg:gap-3">
+        <div className="grid shrink-0 grid-cols-[1.08fr_0.92fr] gap-2 lg:gap-3">
           <div className="min-w-0 rounded-[1.25rem] border border-white/16 bg-slate-950/55 p-2 shadow-[0_18px_48px_rgba(2,6,23,0.24)] backdrop-blur-xl lg:rounded-[2rem] lg:p-3">
             <BossPortrait encounter={encounter} pose={bossPose} className="h-[7.4rem] lg:h-[10.5rem]" />
           </div>
 
           <div className="grid grid-cols-2 gap-2">
-            {[
-              { label: 'Question', value: `${Math.min(currentIndex + 1, TOTAL_QUESTIONS)}/${TOTAL_QUESTIONS}`, tone: 'text-cyan-100' },
-              { label: 'Correct', value: `${correctAnswers}/${TOTAL_QUESTIONS}`, tone: 'text-emerald-100' },
-              { label: 'Need', value: `${PASS_MARK}/10`, tone: 'text-amber-100' },
-              { label: 'Accuracy', value: `${accuracy}%`, tone: accuracy >= 80 ? 'text-emerald-100' : 'text-amber-100' },
-            ].map(item => (
+            {(
+              isPaperBoss
+                ? [
+                  { label: 'Question', value: `${Math.min(currentIndex + 1, TOTAL_QUESTIONS)}/${TOTAL_QUESTIONS}`, tone: 'text-cyan-100' },
+                  { label: 'Marks', value: `${marksEarned}/${totalMarks}`, tone: 'text-emerald-100' },
+                  { label: 'Pass', value: `${passMarks}/${totalMarks}`, tone: 'text-amber-100' },
+                  { label: 'Accuracy', value: `${accuracy}%`, tone: accuracy >= 80 ? 'text-emerald-100' : 'text-amber-100' },
+                ]
+                : [
+                  { label: 'Question', value: `${Math.min(currentIndex + 1, TOTAL_QUESTIONS)}/${TOTAL_QUESTIONS}`, tone: 'text-cyan-100' },
+                  { label: 'Correct', value: `${correctAnswers}/${TOTAL_QUESTIONS}`, tone: 'text-emerald-100' },
+                  { label: 'Need', value: `${PASS_MARK}/10`, tone: 'text-amber-100' },
+                  { label: 'Accuracy', value: `${accuracy}%`, tone: accuracy >= 80 ? 'text-emerald-100' : 'text-amber-100' },
+                ]
+            ).map(item => (
               <div
                 key={item.label}
                 className="rounded-[1.1rem] border border-white/14 bg-slate-950/52 px-2 py-2 text-white shadow-[0_12px_26px_rgba(2,6,23,0.18)] backdrop-blur-xl lg:rounded-[1.25rem] lg:px-3 lg:py-2"
@@ -607,20 +676,22 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
 
           <div className="shrink-0 rounded-[1.2rem] border border-white/14 bg-slate-950/55 px-3 py-2 text-white shadow-[0_16px_36px_rgba(2,6,23,0.22)] backdrop-blur-xl lg:rounded-[1.8rem] lg:px-4 lg:py-3">
           <div className="flex items-center justify-between gap-3 text-[9px] font-black uppercase tracking-[0.22em] lg:text-[9px]">
-            <span className="text-white/58">Boss health</span>
-            <span className="text-white/82">{bossHealth}% remaining</span>
+            <span className="text-white/58">{isPaperBoss ? 'Paper progress' : 'Boss health'}</span>
+            <span className="text-white/82">
+              {isPaperBoss ? `${marksEarned}/${totalMarks} marks` : `${Math.max(0, 100 - (correctAnswers * 10))}% remaining`}
+            </span>
           </div>
           <div className="mt-2 h-4 overflow-hidden rounded-full border border-white/12 bg-black/32 lg:h-5">
             <motion.div
               initial={{ width: '100%' }}
-              animate={{ width: `${bossHealth}%` }}
+              animate={{ width: `${paperProgress}%` }}
               transition={{ type: 'spring', stiffness: 85, damping: 18 }}
               className="h-full rounded-full bg-[linear-gradient(90deg,#ef4444_0%,#fb7185_38%,#f59e0b_78%,#fde68a_100%)] shadow-[0_0_18px_rgba(248,113,113,0.34)]"
             />
           </div>
           <div className="mt-2 flex items-center justify-between gap-3 text-[9px] font-bold text-white/72 lg:text-[9px]">
             <span>{reaction}</span>
-            <span>{Math.max(0, 2 - misses)} safe misses left</span>
+            <span>{isPaperBoss ? `${Math.max(0, passMarks - marksEarned)} marks to pass` : `${Math.max(0, 2 - misses)} safe misses left`}</span>
           </div>
         </div>
 
@@ -638,7 +709,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
               </div>
               <div className="min-w-0 flex-1">
                 <div className="text-[9px] font-black uppercase tracking-[0.24em] text-cyan-100/60 lg:text-[11px]">
-                  Boss encounter
+                  {isPaperBoss ? 'SATs paper' : 'Boss encounter'}
                 </div>
                 <h1 className="game-question-copy mt-1 leading-tight text-white lg:text-[1.75rem]">
                   {formatFantasyPrompt(question.prompt)}
@@ -663,7 +734,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
             <div className="mt-2.5 h-1.5 overflow-hidden rounded-full border border-white/10 bg-black/30 lg:mt-4">
               <motion.div
                 initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
+                animate={{ width: `${paperProgress}%` }}
                 className="h-full rounded-full bg-[linear-gradient(90deg,#38bdf8_0%,#818cf8_55%,#f472b6_100%)]"
               />
             </div>
