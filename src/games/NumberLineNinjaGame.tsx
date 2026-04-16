@@ -629,10 +629,10 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
           <div className="relative mt-1 flex h-[24%] min-h-[150px] w-full max-w-[520px] shrink-0 items-end justify-center">
             <div
-              className="pointer-events-none absolute inset-x-0 mx-auto flex w-[92%] max-w-[520px] flex-wrap items-center justify-center gap-2"
+              className="pointer-events-none absolute inset-x-0 mx-auto flex w-[92%] max-w-[520px] items-center justify-center gap-2"
               style={{ bottom: '-120px' }}
             >
-              <div className="relative w-[58%] max-w-[280px]">
+              <div className="relative flex-1 min-w-[170px] max-w-[280px]">
                 <div className="relative">
                 <AnimatePresence>
                   {monsterSpeech ? (
@@ -782,7 +782,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                 </div>
               </div>
 
-              <div className="w-[34%] min-w-[104px] max-w-[168px] rounded-lg border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)]">
+              <div className="w-[132px] self-center rounded-lg border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)] sm:w-[150px]">
                 <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
                   Enemy
                 </div>
