@@ -13,7 +13,7 @@ const AVATAR_FOOT_ANCHOR_MAIN_Y_PX: Record<string, number> = {
   mochi: 55,
 };
 
-const AVATAR_MAIN_GLOBAL_LIFT_PX = -62;
+const AVATAR_MAIN_GLOBAL_LIFT_PX = -57;
 const AVATAR_MAIN_VISUAL_SCALE = 2.16;
 
 interface AvatarSelectProps {
@@ -83,14 +83,14 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
             </div>
           </div>
 
-          <div className="mx-auto mt-2 flex w-full max-w-3xl flex-col gap-3 rounded-[1.35rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(8,21,58,0.82),rgba(4,15,44,0.88))] px-4 py-4 text-center shadow-[0_18px_32px_rgba(2,6,23,0.32)] backdrop-blur-md sm:px-5 sm:py-5">
-            <div className="text-[0.68rem] font-black uppercase tracking-[0.22em] text-cyan-100/80 sm:text-xs">
-              Name your hero and choose your avatar
-            </div>
-            <input
-              value={draftName}
-              onChange={(event) => onDraftNameChange(event.target.value.slice(0, 18))}
-              onKeyDown={(event) => {
+            <div className="mx-auto mt-2 flex w-full max-w-3xl flex-col gap-3 rounded-[1.35rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(8,21,58,0.82),rgba(4,15,44,0.88))] px-4 py-4 text-center shadow-[0_18px_32px_rgba(2,6,23,0.32)] backdrop-blur-md sm:px-5 sm:py-5">
+              <div className="text-[0.68rem] font-black uppercase tracking-[0.22em] text-cyan-100/80 sm:text-xs">
+                Enter your name and select your Hero.
+              </div>
+              <input
+                value={draftName}
+                onChange={(event) => onDraftNameChange(event.target.value.slice(0, 18))}
+                onKeyDown={(event) => {
                 if (event.key === 'Enter') onConfirm();
               }}
               placeholder="Explorer"
@@ -109,10 +109,8 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
             </div>
           </div>
 
-          <div className="avatar-hero-stage relative mt-2 flex min-h-0 flex-1 items-center justify-center overflow-visible md:mt-3">
-            <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.97 }}
+           <div className="avatar-hero-stage relative mt-2 flex min-h-0 flex-1 items-center justify-center overflow-visible md:mt-3">
+             <motion.button
               onClick={() => selectIndex(previousIndex)}
               className="avatar-hero-arrow avatar-hero-arrow-left"
               aria-label="Previous hero"
@@ -146,8 +144,6 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
             </div>
 
             <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.97 }}
               onClick={() => selectIndex(nextIndex)}
               className="avatar-hero-arrow avatar-hero-arrow-right"
               aria-label="Next hero"

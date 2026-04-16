@@ -448,8 +448,9 @@ const App: React.FC = () => {
 
   const selectedRuleSet = useMemo(
     () => (
-      (selectedLevel?.gameType ? GAME_META[selectedLevel.gameType]?.rules || null : null)
-      || getBlueprintRuleSet(selectedLevel?.blueprintKey)
+      // Prefer blueprint rules because island mini-game packs often share engine "gameType" keys.
+      getBlueprintRuleSet(selectedLevel?.blueprintKey)
+      || (selectedLevel?.gameType ? GAME_META[selectedLevel.gameType]?.rules || null : null)
     ),
     [selectedLevel?.blueprintKey, selectedLevel?.gameType],
   );
@@ -498,6 +499,13 @@ const App: React.FC = () => {
   const hintRuleSet = useMemo(
     () => {
       if (!selectedLevel?.isPractice) return null;
+      if (selectedLevel.blueprintKey === 'place_value_panic') {
+        return {
+          title: 'Place Value Panic',
+          summary: 'Place value is the value of a digit based on its position within a number.\nRead the question and then drag each number to its corresponding place.',
+          bullets: [],
+        };
+      }
       const baseRules = selectedRuleSet || {
         title: canonicalGameTitle || 'Practice',
         summary: `This is the practice round for ${canonicalGameTitle || 'this game'}. Use it to learn the controls before the real level.`,
@@ -863,7 +871,7 @@ const App: React.FC = () => {
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
   const useUnboundedStageShell = false;
   const globalDockOffsetClass = screen !== 'splash' && !isGameplayScreen && screen !== 'avatar_selection' && screen !== 'profile_setup'
-    ? 'pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-[calc(5.2rem+env(safe-area-inset-bottom))]'
+    ? 'pb-[calc((5rem+env(safe-area-inset-bottom))/var(--game-stage-scale))] md:pb-[calc((5.2rem+env(safe-area-inset-bottom))/var(--game-stage-scale))]'
     : '';
   const viewportShellClass = isGameplayScreen
     ? 'sat-shell-standard bg-transparent'

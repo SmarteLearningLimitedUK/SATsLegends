@@ -61,15 +61,17 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
               </div>
               {briefing ? (
                 <div className="mt-3 text-left text-[clamp(0.92rem,3.4vw,1.02rem)] font-semibold leading-relaxed text-cyan-50/92">
-                  <p className="font-bold text-white">{briefing.summary}</p>
-                  <ul className="mt-3 space-y-2">
-                    {briefing.bullets.map((bullet, index) => (
-                      <li key={`${briefing.title}-bullet-${index}`} className="flex gap-2">
-                        <span className="mt-[0.18rem] shrink-0 text-amber-100">-</span>
-                        <span>{bullet}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="whitespace-pre-line font-bold text-white">{briefing.summary}</p>
+                  {briefing.bullets.length ? (
+                    <ul className="mt-3 space-y-2">
+                      {briefing.bullets.map((bullet, index) => (
+                        <li key={`${briefing.title}-bullet-${index}`} className="flex gap-2">
+                          <span className="mt-[0.18rem] shrink-0 text-amber-100">-</span>
+                          <span>{bullet}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
                 </div>
               ) : (
                 <div className="mt-3 whitespace-pre-line text-left text-[clamp(0.92rem,3.4vw,1.02rem)] font-semibold leading-relaxed text-cyan-50/92">

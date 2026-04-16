@@ -89,11 +89,11 @@ export const ISLANDS: IslandData[] = [
         'prime_pop',
         'rounding_rocket',
       ]),
-      [
-        { id: 1, stars: 0, isLocked: false, blueprintKey: 'maths_vs_zombies', displayName: 'Maths vs Zombies', gameType: 'ratio_rapids' },
-      ],
-    ),
-  },
+       [
+        { id: 1, stars: 0, isLocked: false, blueprintKey: 'maths_vs_zombies', displayName: 'Maths vs Zombies', gameType: 'ratio_rapids', isPractice: false },
+       ],
+     ),
+   },
   {
     id: 2,
     name: 'Fraction Forest',

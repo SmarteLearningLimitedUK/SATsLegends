@@ -989,7 +989,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       ) : null}
 
       <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
-        <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-[12px] py-[10px] text-center backdrop-blur-sm">
+        <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] border border-blue-400/40 bg-blue-950/70 px-[12px] py-[10px] text-center backdrop-blur-sm">
           <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90">
             Target Number
           </div>
@@ -1026,15 +1026,16 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           </div>
         </div>
 
-        {activeTargetAnchors.map((anchor, idx) => {
-          const token = targetSlots[idx];
-          const isDraggingThis = dragState?.fromLocation === 'target' && dragState.fromIndex === idx;
-          return (
+            {activeTargetAnchors.map((anchor, idx) => {
+              const token = targetSlots[idx];
+              const isDraggingThis = dragState?.fromLocation === 'target' && dragState.fromIndex === idx;
+              return (
             <motion.button
               key={`target-${idx}`}
               type="button"
               onPointerDown={(event) => beginDrag('target', idx, event)}
-              className="absolute -translate-x-1/2 -translate-y-1/2 rounded-xl touch-none"
+              className="absolute -translate-x-1/2 -translate-y-1/2 rounded-xl touch-none border-0 bg-transparent"
+              data-button-skin="none"
               animate={
                 token
                   ? {
@@ -1087,15 +1088,16 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           );
         })}
 
-        {activeSourceAnchors.map((anchor, idx) => {
-          const token = sourceSlots[idx];
-          const isDraggingThis = dragState?.fromLocation === 'source' && dragState.fromIndex === idx;
-          return (
+            {activeSourceAnchors.map((anchor, idx) => {
+              const token = sourceSlots[idx];
+              const isDraggingThis = dragState?.fromLocation === 'source' && dragState.fromIndex === idx;
+              return (
             <motion.button
               key={`source-${idx}`}
               type="button"
               onPointerDown={(event) => beginDrag('source', idx, event)}
-              className="absolute z-[22] -translate-x-1/2 -translate-y-1/2 rounded-xl touch-none"
+              className="absolute z-[22] -translate-x-1/2 -translate-y-1/2 rounded-xl touch-none border-0 bg-transparent"
+              data-button-skin="none"
               initial={{ opacity: 0, y: 14, scale: 0.94 }}
               animate={{ opacity: token ? 1 : 0, y: 0, scale: token ? 1 : 0.94 }}
               transition={{ duration: 0.26, ease: 'easeOut', delay: idx * 0.04 }}
@@ -1284,7 +1286,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           onClick={handleSubmit}
           disabled={!canSubmit}
           className="ui-button-primary absolute left-1/2 z-40 -translate-x-1/2 border-0 bg-transparent px-0 py-0 disabled:cursor-not-allowed disabled:opacity-60"
-          style={{ top: `${layout.submitY}%`, width: `${layout.submitWidth}%`, height: `${layout.submitHeight}%` }}
+          style={{
+            // Keep the button clear of the global bottom dock (back/sound) on all gameplay screens.
+            bottom: 'calc(var(--game-shell-bottom-inset, 4rem) + env(safe-area-inset-bottom) + 0.25rem)',
+            width: `${layout.submitWidth}%`,
+            height: `${layout.submitHeight}%`,
+          }}
         >
           <span
             className="pointer-events-none absolute inset-x-[16%] top-1/2 -translate-y-1/2 text-center text-[clamp(0.82rem,2.2vw,1.06rem)] font-black uppercase tracking-[0.08em] text-[#16233d]"

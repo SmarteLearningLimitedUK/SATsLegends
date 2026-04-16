@@ -115,6 +115,37 @@ const getScreenMeta = async (page) => {
   });
 };
 
+const getScrollMetrics = async (page) => {
+  return await page.evaluate(() => {
+    const el = document.querySelector('.app-screen-content');
+    if (!el) return null;
+    const style = getComputedStyle(el);
+    return {
+      clientHeight: el.clientHeight,
+      scrollHeight: el.scrollHeight,
+      scrollTop: el.scrollTop,
+      overflowY: style.overflowY,
+    };
+  });
+};
+
+const tryScrollAppContent = async (page) => {
+  const before = await getScrollMetrics(page);
+  if (!before) return { before: null, after: null, scrolled: false };
+
+  // Force a scroll on the actual scroll container (not window).
+  await page.evaluate(() => {
+    const el = document.querySelector('.app-screen-content');
+    if (!el) return;
+    el.scrollTo({ top: Math.min(el.scrollHeight, el.scrollTop + 400), behavior: 'instant' });
+  });
+  await page.waitForTimeout(150);
+
+  const after = await getScrollMetrics(page);
+  const scrolled = Boolean(after && before && after.scrollTop > before.scrollTop);
+  return { before, after, scrolled };
+};
+
 const assertNoDockOverlap = async ({ page, screenName, screenshotName }) => {
   const backButton = page.getByRole('button', { name: /back to map/i });
   await backButton.scrollIntoViewIfNeeded();
@@ -152,7 +183,9 @@ const devServer = await startDevServerIfNeeded();
 
 const browser = await chromium.launch();
 const page = await browser.newPage({
-  viewport: { width: 390, height: 844 },
+  // Use a shorter viewport to force stage scaling (< 1) which is where safe-area padding
+  // can get effectively reduced and cause bottom HUD clipping.
+  viewport: { width: 390, height: 720 },
   deviceScaleFactor: 2,
   isMobile: true,
 });
@@ -225,6 +258,7 @@ for (const check of checks) {
 
   const meta = await getScreenMeta(page);
   assertScrollable(meta, check.name);
+  const scrollAttempt = await tryScrollAppContent(page);
   const overlap = await assertNoDockOverlap({
     page,
     screenName: check.name,
@@ -237,6 +271,7 @@ for (const check of checks) {
   summary.checks.push({
     name: check.name,
     meta,
+    scrollAttempt,
     overlap,
   });
 

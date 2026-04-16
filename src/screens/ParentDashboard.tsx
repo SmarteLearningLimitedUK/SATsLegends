@@ -91,10 +91,10 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
   const totalStars = player.stats?.totalStars ?? 0;
 
   return (
-    <div className="premium-page-root relative flex min-h-[100dvh] w-full flex-col overflow-visible licensed-shell-bg">
+    <div className="relative flex min-h-[100dvh] w-full flex-col overflow-visible licensed-shell-bg">
       <div className="absolute inset-0 bg-slate-950/48" />
 
-      <div className="premium-page-content relative z-10 flex flex-col gap-4 px-4 pb-24 pt-[calc(0.75rem+env(safe-area-inset-top))] md:px-8 md:pb-8 md:pt-6">
+      <div className="relative z-10 flex flex-col gap-4 px-4 pb-24 pt-[calc(0.75rem+env(safe-area-inset-top))] md:px-8 md:pb-8 md:pt-6">
         <FramedPanel className="rounded-[1.4rem] border border-white/12 bg-slate-950/62 p-4 text-white md:rounded-[2rem] md:p-6">
           <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/70">Parent snapshot</div>
           <div className="mt-2 text-2xl font-black tracking-tight md:text-4xl">One page, four answers.</div>

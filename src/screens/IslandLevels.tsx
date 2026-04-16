@@ -3,6 +3,7 @@ import { Crown, Lock, Sparkles } from 'lucide-react';
 import AssetIcon from '../components/AssetIcon';
 import { IslandData, LevelData, PlayerData } from '../types';
 import { getLevelGameTitle, getLevelGroupKey } from '../utils/gameNames';
+import { UNLOCK_ALL_LEVELS } from '../app/testingFlags';
 
 interface IslandLevelsProps {
   island: IslandData;
@@ -80,8 +81,6 @@ const GAME_SUMMARY_BY_KEY: Record<string, string> = {
 };
 
 const TOKENS_PER_LEVEL = 3;
-const MAX_LEVELS_PER_GAME = 15;
-const MAX_BRAINTOKEN_TOTAL = TOKENS_PER_LEVEL * MAX_LEVELS_PER_GAME;
 
 const getGroupName = (level: LevelData) => getLevelGameTitle(level) || `Level ${level.id}`;
 
@@ -137,6 +136,10 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
         isUnlocked = true;
       }
 
+      if (UNLOCK_ALL_LEVELS) {
+        isUnlocked = true;
+      }
+
       const stars = player.levelStars?.[`${island.id}-${level.id}`] || 0;
       const isCompleted = completedLevels.includes(level.id);
 
@@ -145,6 +148,10 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
         lockReason = `Need ${bossCoinsNeeded} total coins`;
       } else if (!isUnlocked) {
         lockReason = 'Complete earlier levels first';
+      }
+
+      if (UNLOCK_ALL_LEVELS) {
+        lockReason = undefined;
       }
 
       return {
@@ -184,7 +191,8 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
 
       const group = groups.get(key)!;
       group.levels.push(row);
-      group.totalStars += row.stars;
+      // Practice levels don't contribute Brainpower.
+      group.totalStars += row.level.isPractice ? 0 : row.stars;
       if (row.isCompleted) group.completedCount += 1;
       if (row.isNextPlayable) group.hasNextPlayable = true;
     }
@@ -213,8 +221,13 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
     [levelRows],
   );
 
-  const earnedBrainpowerTokens = levelRows.reduce((sum, row) => sum + row.stars, 0);
-  const totalBrainpowerTokens = gameGroups.length * MAX_BRAINTOKEN_TOTAL;
+  const eligibleLevelRows = useMemo(
+    () => levelRows.filter((row) => row.level.isPractice !== true),
+    [levelRows],
+  );
+
+  const earnedBrainpowerTokens = eligibleLevelRows.reduce((sum, row) => sum + row.stars, 0);
+  const totalBrainpowerTokens = eligibleLevelRows.length * TOKENS_PER_LEVEL;
 
   return (
     <div
@@ -267,8 +280,8 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                   <Sparkles className="h-3 w-3" />
                   Recommended Next
                 </div>
-                <div className="mt-1 truncate text-sm font-black text-white md:text-base">
-                  {getGroupName(nextPlayableRow.level)} • {nextPlayableRow.level.miniGameLevel ? `Level ${nextPlayableRow.level.miniGameLevel}` : `Level ${nextPlayableRow.level.id}`}
+                <div className="mt-1 truncate text-sm font-black text-cyan-100 md:text-base">
+                  {getGroupName(nextPlayableRow.level)} - {nextPlayableRow.level.miniGameLevel ? `Level ${nextPlayableRow.level.miniGameLevel}` : `Level ${nextPlayableRow.level.id}`}
                 </div>
               </div>
               <button
@@ -286,7 +299,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
           <div className="flex flex-col gap-2.5 pb-[calc(env(safe-area-inset-bottom)+1rem)] md:gap-3 md:pb-[calc(env(safe-area-inset-bottom)+1.2rem)]">
             {gameGroups.map((group) => {
               const isExpanded = expandedGameId === group.id;
-              const totalPossibleBrainpowerTokens = MAX_BRAINTOKEN_TOTAL;
+              const totalPossibleBrainpowerTokens = group.levels.filter((row) => row.level.isPractice !== true).length * TOKENS_PER_LEVEL;
 
               return (
                 <div
@@ -302,6 +315,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                     onClick={() => setExpandedGameId((current) => (current === group.id ? null : group.id))}
                     className="flex w-full items-center gap-3 text-left md:gap-4"
                     aria-expanded={isExpanded}
+                    data-button-skin="none"
                   >
                     <div className={`relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 md:h-12 md:w-12 ${
                       group.completedCount === group.levels.length
@@ -322,7 +336,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      <div className="truncate text-sm font-black text-white md:text-base">{group.name}</div>
+                      <div className="truncate text-sm font-black text-cyan-100 md:text-base">{group.name}</div>
                       <div className="mt-0.5 inline-flex items-center gap-1 rounded-full border border-white/12 bg-white/5 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/80 md:text-[11px]">
                         <AssetIcon name="brainpowerToken" className="h-3.5 w-3.5 md:h-4 md:w-4" />
                         <span>{group.totalStars}/{totalPossibleBrainpowerTokens}</span>
@@ -372,7 +386,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                               key={`${group.id}-${level.id}`}
                               className={`flex items-center gap-2 rounded-xl border px-2.5 py-2 transition ${rowStateClass}`}
                             >
-                              <div className="w-[4.1rem] shrink-0 text-aaa-sm text-white md:w-[5rem]">
+                              <div className="w-[4.1rem] shrink-0 text-aaa-sm font-black text-cyan-100 md:w-[5rem]">
                                 {levelLabel}
                               </div>
 
@@ -430,7 +444,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
               <div className="rounded-2xl border border-emerald-200/35 bg-[linear-gradient(180deg,rgba(16,185,129,0.18),rgba(56,189,248,0.08),rgba(15,23,42,0.4))] px-4 py-4 shadow-[0_16px_30px_rgba(16,185,129,0.12)]">
                 <div className="inline-flex items-center gap-1 rounded-full border border-emerald-100/30 bg-emerald-300/12 px-2.5 py-1 text-aaa-micro text-emerald-100">
                   Calm break
-                  {wellbeingType ? <span className="text-emerald-100/70">• {wellbeingType}</span> : null}
+                  {wellbeingType ? <span className="text-emerald-100/70">- {wellbeingType}</span> : null}
                 </div>
                 <div className="mt-2 text-lg font-black text-cyan-50">{wellbeingTitle}</div>
                 <div className="mt-1 text-sm font-semibold leading-relaxed text-cyan-100/82">

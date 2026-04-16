@@ -24,7 +24,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ player, onBack }) => {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.18),transparent_34%),linear-gradient(180deg,rgba(7,12,26,0.12),rgba(7,12,26,0.38))]" />
 
       <div className="relative z-10 flex w-full flex-col px-4 pb-4 pt-[calc(0.8rem+env(safe-area-inset-top))] md:px-8 md:pb-6 md:pt-6">
-        <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-4 pt-3 md:gap-6 md:pt-4">
+        <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 pt-3 md:gap-6 md:pt-4">
           <RewardPanel className="mx-auto w-full max-w-3xl">
             <div className="flex items-start gap-3">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-cyan-100/30 bg-slate-950/35 md:h-12 md:w-12">
@@ -44,8 +44,8 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ player, onBack }) => {
             </div>
           </RewardPanel>
 
-          <div className="grid min-h-0 flex-1 gap-4 md:grid-cols-[1.05fr_0.95fr] md:gap-6">
-            <FramedPanel variant="surface" className="flex min-h-0 flex-col gap-4 rounded-[1.5rem] p-4 md:rounded-[2rem] md:p-6">
+          <div className="grid gap-4 md:grid-cols-[1.05fr_0.95fr] md:gap-6">
+            <FramedPanel variant="surface" className="flex flex-col gap-4 rounded-[1.5rem] p-4 md:rounded-[2rem] md:p-6">
               <div>
                 <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/55 md:text-xs">
                   Key stats
@@ -99,7 +99,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ player, onBack }) => {
               </div>
             </FramedPanel>
 
-            <FramedPanel variant="surface" className="flex min-h-0 flex-col rounded-[1.5rem] p-4 md:rounded-[2rem] md:p-6">
+            <FramedPanel variant="surface" className="flex flex-col rounded-[1.5rem] p-4 md:rounded-[2rem] md:p-6">
               <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/55 md:text-xs">
                 Avatar preview
               </div>
@@ -110,7 +110,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ player, onBack }) => {
                 This is the hero currently equipped on the map.
               </div>
 
-              <div className="mt-4 flex min-h-0 flex-1 items-center justify-center rounded-[1.4rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-4">
+              <div className="mt-4 flex items-center justify-center rounded-[1.4rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-4">
                 <img
                   src={avatarSrc}
                   alt={selectedAvatar.name}

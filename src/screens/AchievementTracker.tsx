@@ -18,11 +18,36 @@ const AchievementTracker: React.FC<AchievementTrackerProps> = ({ player, onBack 
     })
   ), [player]);
 
+  const earnedCount = player.achievementState?.earned?.length ?? 0;
+  const totalCount = ACHIEVEMENT_CATALOG.length;
+
   return (
-    <div className="premium-page-root relative flex min-h-[100dvh] w-full flex-col overflow-visible licensed-shell-bg">
+    <div className="premium-page-root relative flex h-full w-full flex-col overflow-hidden licensed-shell-bg">
       <div className="absolute inset-0 bg-slate-950/45" />
 
-      <div className="relative z-10 flex flex-col gap-3 px-4 pb-24 pt-[calc(0.75rem+env(safe-area-inset-top))] md:gap-4 md:px-8 md:pb-8 md:pt-6">
+      <header className="relative z-10 flex items-center justify-between px-4 pb-2.5 pt-[calc(0.75rem+env(safe-area-inset-top))] md:px-8 md:pb-4 md:pt-6">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={onBack}
+            className="ui-icon-button flex h-11 w-11 items-center justify-center p-0 text-white md:h-12 md:w-12"
+          >
+            <AssetIcon name="back" className="h-5 w-5 md:h-6 md:w-6" />
+          </button>
+          <div className="min-w-0">
+            <div className="text-aaa-micro text-white/55">Progress</div>
+            <div className="truncate text-lg font-black tracking-tight text-white md:text-3xl">Achievements</div>
+          </div>
+        </div>
+        <div className="shrink-0 rounded-full border border-cyan-100/18 bg-cyan-100/10 px-3 py-2 text-sm font-black text-cyan-100">
+          {earnedCount}/{totalCount}
+        </div>
+      </header>
+
+      <div
+        className="relative z-10 flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4 pb-24 md:gap-4 md:px-8 md:pb-8"
+        style={{ WebkitOverflowScrolling: 'touch' }}
+      >
         <div className="flex flex-col gap-3">
           {achievements.map((achievement) => (
             <FramedPanel
@@ -60,16 +85,6 @@ const AchievementTracker: React.FC<AchievementTrackerProps> = ({ player, onBack 
               </div>
             </FramedPanel>
           ))}
-        </div>
-
-        <div className="flex justify-center pb-2 pt-1">
-          <button
-            type="button"
-            onClick={onBack}
-            className="ui-button-primary rounded-[1.25rem] px-8 py-3 text-base md:rounded-2xl md:px-10 md:py-4 md:text-lg"
-          >
-            Back to map
-          </button>
         </div>
       </div>
     </div>

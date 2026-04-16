@@ -5,6 +5,7 @@ import { ISLANDS } from '../constants';
 import universalMapPoster from '../assets/maps/mapselect.png';
 import AssetIcon from '../components/AssetIcon';
 import ParentGateOverlay from '../components/ParentGateOverlay';
+import { UNLOCK_ALL_LEVELS } from '../app/testingFlags';
 
 interface WorldMapProps {
   player: PlayerData;
@@ -18,8 +19,8 @@ type IslandState = {
   island: IslandData;
   isUnlocked: boolean;
   completion: number;
-  starredCount: number;
-  totalLevels: number;
+  earnedBrainpower: number;
+  totalPossibleBrainpower: number;
 };
 
 type IslandHotspot = {
@@ -314,18 +315,28 @@ const WorldMap: React.FC<WorldMapProps> = ({
   const [showParentGate, setShowParentGate] = useState(false);
   const islandStates = useMemo<IslandState[]>(() => (
     ISLANDS.map(island => {
-      const starredLevels = island.levels.filter(level => {
+      // Brainpower is the sum of earned stars (0-3) across all eligible levels.
+      // Practice levels do not contribute to the total possible Brainpower.
+      const nonPracticeLevels = island.levels.filter(level => level.isPractice !== true);
+      const brainpowerLevels = nonPracticeLevels.length > 0 ? nonPracticeLevels : island.levels;
+
+      const earnedBrainpower = brainpowerLevels.reduce((sum, level) => {
         const starKey = `${island.id}-${level.id}`;
-        return (player.levelStars[starKey] || 0) >= 1;
-      });
-      const completion = Math.round((starredLevels.length / Math.max(1, island.levels.length)) * 100);
+        const stars = player.levelStars[starKey] || 0;
+        return sum + Math.max(0, Math.min(3, stars));
+      }, 0);
+
+      const totalPossibleBrainpower = brainpowerLevels.length * 3;
+      const completion = totalPossibleBrainpower > 0
+        ? Math.round((Math.min(earnedBrainpower, totalPossibleBrainpower) / totalPossibleBrainpower) * 100)
+        : 0;
 
       return {
         island,
-        isUnlocked: player.unlockedIslands.includes(island.id),
+        isUnlocked: UNLOCK_ALL_LEVELS || player.unlockedIslands.includes(island.id),
         completion,
-        starredCount: starredLevels.length,
-        totalLevels: island.levels.length,
+        earnedBrainpower,
+        totalPossibleBrainpower,
       };
     })
   ), [player]);
@@ -427,7 +438,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
               {selectedIslandState.island.name}
             </div>
             <div className="mt-1 text-center text-aaa-micro text-cyan-100/82 opacity-90 font-bold">
-              {selectedIslandState.starredCount}/{selectedIslandState.totalLevels} brain power collected
+              {selectedIslandState.earnedBrainpower}/{selectedIslandState.totalPossibleBrainpower} brainpower collected
             </div>
             <div className="mt-2 h-2.5 overflow-hidden rounded-full border border-white/20 bg-slate-950/60">
               <div
