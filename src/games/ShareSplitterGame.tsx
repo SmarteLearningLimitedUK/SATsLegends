@@ -15,6 +15,7 @@ import cakeSliceAsset from '../assets/cakeslice.png';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import CelebrationSplash from '../components/CelebrationSplash';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
+import { useTrimmedImageSource } from '../utils/trimTransparentImage';
 
 interface ShareSplitterGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -187,6 +188,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [showCelebrationSplash, setShowCelebrationSplash] = useState(false);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
+  const trimmedCakeSliceAsset = useTrimmedImageSource(CAKE_SLICE_ASSET);
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const endedRef = useRef(false);
@@ -320,7 +322,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     };
 
     const getHitPlateIndex = (clientX: number, clientY: number) => {
-      const padding = 26;
+      const padding = 16;
       let hitIndex = -1;
       plateRefs.current.forEach((plate, index) => {
         if (!plate) return;
@@ -338,7 +340,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       if (!dragActiveRef.current) return;
       dragActiveRef.current = false;
       const { index, distance } = getNearestPlate(clientX, clientY);
-      const snapRadius = 88;
+      const snapRadius = 66;
       const hitIndex = getHitPlateIndex(clientX, clientY);
       const targetPlateIndex = hitIndex >= 0 ? hitIndex : distance <= snapRadius ? index : -1;
 
@@ -368,7 +370,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         return;
       }
       const { index, distance } = getNearestPlate(point.x, point.y);
-      setHoverPlateIndex(distance <= 106 ? index : null);
+      setHoverPlateIndex(distance <= 92 ? index : null);
     };
 
     const handlePointerUp = (upEvent: PointerEvent) => {
@@ -385,7 +387,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         return;
       }
       const { index, distance } = getNearestPlate(point.x, point.y);
-      setHoverPlateIndex(distance <= 106 ? index : null);
+      setHoverPlateIndex(distance <= 92 ? index : null);
       touchEvent.preventDefault();
     };
 
@@ -547,7 +549,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                             {plates[index].slice(0, 6).map((sliceId) => (
                               <img
                                 key={sliceId}
-                                src={CAKE_SLICE_ASSET}
+                                src={trimmedCakeSliceAsset}
                                 alt=""
                                 className="h-12 w-12 object-contain"
                                 draggable={false}
@@ -568,7 +570,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                   whileTap={remainingSlices > 0 && !locked ? { scale: 0.96 } : undefined}
                   onPointerDown={handleSourcePointerDown}
                   disabled={locked || remainingSlices <= 0}
-                  className={`group relative flex items-center justify-center gap-4 rounded-[1.8rem] border border-transparent bg-transparent px-3 py-2 shadow-none ${locked || remainingSlices <= 0 ? 'opacity-55' : ''}`}
+                  className={`group relative flex items-center justify-center gap-4 rounded-[1.8rem] border border-transparent bg-transparent px-3 py-2 shadow-none touch-none ${locked || remainingSlices <= 0 ? 'opacity-55' : ''}`}
                   aria-label={remainingSlices > 0 ? 'Drag one cake onto a plate' : 'No cakes left'}
                 >
                   <motion.div
@@ -581,7 +583,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                     transition={remainingSlices > 0 ? { duration: 0.95, repeat: Infinity, ease: 'easeInOut' } : undefined}
                   />
                   <motion.img
-                    src={CAKE_SLICE_ASSET}
+                    src={trimmedCakeSliceAsset}
                     alt=""
                     draggable={false}
                     className="relative z-10 h-[4.8rem] w-[4.8rem] object-contain drop-shadow-[0_10px_16px_rgba(0,0,0,0.28)] sm:h-[5.2rem] sm:w-[5.2rem]"
@@ -645,7 +647,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
               style={{ top: '4px' }}
             >
               <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-[17px] py-[13px] text-center backdrop-blur-sm">
-                <div className="text-[12px] font-black uppercase tracking-[0.18em] text-amber-100/90">Share Splitter</div>
                 <div className="mt-1 text-[clamp(1.2rem,4.8vw,1.8rem)] font-black text-white">Match the Ratio</div>
                 <div className="game-question-copy mt-2 whitespace-pre-line text-[12px] font-semibold leading-tight text-cyan-100/90">
                   {promptText}
@@ -664,7 +665,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                   style={{ left: dragSlice.x, top: dragSlice.y }}
                 >
                   <img
-                    src={CAKE_SLICE_ASSET}
+                    src={trimmedCakeSliceAsset}
                     alt=""
                     className="h-full w-full object-contain"
                     draggable={false}

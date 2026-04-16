@@ -148,7 +148,7 @@ const FractionCardTile: React.FC<{
     onPointerDown={onPointerDown}
     disabled={disabled}
     whileTap={disabled ? undefined : { scale: 0.97 }}
-    className="relative flex cursor-grab flex-col items-center justify-center rounded-[0.85rem] border border-cyan-200/70 bg-gradient-to-b from-sky-500 to-blue-700 text-white shadow-[0_10px_20px_rgba(8,47,111,0.5)] active:cursor-grabbing disabled:cursor-default"
+    className="relative flex cursor-grab flex-col items-center justify-center rounded-[0.85rem] border border-cyan-200/70 bg-gradient-to-b from-sky-500 to-blue-700 text-white shadow-[0_10px_20px_rgba(8,47,111,0.5)] active:cursor-grabbing disabled:cursor-default touch-none"
     style={{ width: size.width, height: size.height }}
   >
     <div className="pointer-events-none absolute inset-0 rounded-[0.85rem] bg-gradient-to-br from-white/24 via-transparent to-transparent" />
@@ -343,7 +343,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     const rect = playfieldRef.current?.getBoundingClientRect();
     if (!rect) return null;
 
-    const threshold = Math.max(64, rect.width * 0.11);
+    const threshold = Math.max(50, rect.width * 0.09);
     let best: { location: TokenLocation; index: number; distance: number } | null = null;
 
     activeTargetAnchors.forEach((anchor, index) => {
@@ -677,13 +677,13 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
 
         {dragState && (
           <div
-            className="pointer-events-none absolute z-50"
-            style={{
-              left: dragState.clientX - dragState.offsetX,
-              top: dragState.clientY - dragState.offsetY,
-              width: dragState.width,
-              height: dragState.height,
-            }}
+              className="pointer-events-none absolute z-50"
+              style={{
+              left: dragState.clientX - (dragState.width / 2),
+              top: dragState.clientY - (dragState.height / 2),
+                width: dragState.width,
+                height: dragState.height,
+              }}
           >
             <FractionCardTile card={dragState.token} size={{ width: dragState.width, height: dragState.height }} disabled />
           </div>

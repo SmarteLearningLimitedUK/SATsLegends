@@ -354,7 +354,6 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
           <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-2 md:px-4 md:pb-4">
             <div className="flex justify-center">
               <div className="game-question-card w-full max-w-[780px] rounded-[1.4rem] border border-amber-200/45 bg-[linear-gradient(180deg,rgba(251,191,36,0.3),rgba(245,158,11,0.14))] px-4 py-2 text-center shadow-[0_12px_26px_rgba(15,23,42,0.18)] md:px-6 md:py-2.5">
-                <div className="text-sm font-black tracking-tight text-amber-50 md:text-[1.15rem]">Formula Forge</div>
                 <div className="mt-0.5 text-[11px] font-bold text-amber-100/90 md:text-sm">
                   Round {roundNumber} of {totalRounds}
                 </div>

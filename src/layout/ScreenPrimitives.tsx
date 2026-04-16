@@ -220,10 +220,10 @@ export const PrimaryActionCTA: React.FC<ActionButtonProps> = ({
     disabled={disabled}
     className={cn(
       'ui-button-primary gameplay-cta-primary mission-action-btn mission-action-btn-primary',
-      'inline-flex min-h-[44px] items-center justify-center rounded-[0.95rem] border border-white/24',
+      'inline-flex min-h-[48px] items-center justify-center rounded-full border border-white/24',
       'px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white',
       'disabled:cursor-not-allowed disabled:opacity-60',
-      'md:min-h-[48px] md:rounded-[1.1rem] md:px-5 md:py-2.5 md:text-xs',
+      'md:min-h-[48px] md:px-5 md:py-2.5 md:text-xs',
       className,
     )}
     style={fillSlice(GUI_SLICES.buttonPrimary)}
@@ -253,10 +253,10 @@ export const SecondaryUtilityButton: React.FC<ActionButtonProps> = ({
     disabled={disabled}
     className={cn(
       'ui-button-secondary gameplay-cta-secondary mission-action-btn mission-action-btn-secondary',
-      'inline-flex min-h-[40px] items-center justify-center rounded-[0.9rem] border border-white/20',
+      'inline-flex min-h-[48px] items-center justify-center rounded-full border border-white/20',
       'px-3 py-1.5 text-[9.5px] font-black uppercase tracking-[0.14em] text-white',
       'disabled:cursor-not-allowed disabled:opacity-60',
-      'md:min-h-[44px] md:rounded-[1.05rem] md:px-4 md:py-2 md:text-[10px]',
+      'md:min-h-[48px] md:px-4 md:py-2 md:text-[10px]',
       className,
     )}
     style={fillSlice(GUI_SLICES.buttonSecondary)}

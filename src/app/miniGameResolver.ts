@@ -72,7 +72,7 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       if (level.blueprintKey === 'chart_challenge' || level.blueprintKey === 'median_mountain') {
         return 'MedianMountainGame';
       }
-      return 'TreasureChartCoveGame';
+      return 'GraphGrabberGame';
     case 'equation_grove':
       return level.blueprintKey === 'order_ops_arena' ? 'OrderOpsArenaGame' : 'RuneLockDungeonsGame';
     case 'coordinate_quest':

@@ -6,6 +6,7 @@ import { SecondaryActionButton } from '../layout/ScreenPrimitives';
 import avatarSelectBackground from '../assets/maps/backgroundsforgames/charselect.jpg';
 import splashStyleButton from '../assets/casual_ui/inputs/btn_1.png';
 import chooseBanner from '../assets/characters/chooseheroes.png';
+import { useTrimmedImageSource } from '../utils/trimTransparentImage';
 
 const AVATAR_FOOT_ANCHOR_MAIN_Y_PX: Record<string, number> = {
   barratt: 0,
@@ -34,6 +35,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
   onBackToSplash,
   onConfirm,
 }) => {
+  const trimmedSplashStyleButton = useTrimmedImageSource(splashStyleButton);
   const selectedIndex = Math.max(0, AVATARS.findIndex((avatar) => avatar.id === selectedId));
   const selectedAvatar = AVATARS[selectedIndex] || AVATARS[0];
   const bannerSrc = chooseBanner;
@@ -187,7 +189,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
               className="gold-pill-shell relative h-full w-full rounded-full border-0 bg-transparent p-0 shadow-[0_8px_22px_rgba(0,0,0,0.35)]"
             >
               <img
-                src={splashStyleButton}
+                src={trimmedSplashStyleButton}
                 alt=""
                 aria-hidden
                 draggable={false}

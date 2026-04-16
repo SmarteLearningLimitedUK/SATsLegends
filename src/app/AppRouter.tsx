@@ -25,6 +25,7 @@ import { GameScreen, IslandData, LevelData, PlayerData } from '../types';
 import { getLevelGameTitle } from '../utils/gameNames';
 import splashPoster from '../assets/casual_ui/splashrep1.png';
 import splashStartPill from '../assets/casual_ui/inputs/btn_1.png';
+import { useTrimmedImageSource } from '../utils/trimTransparentImage';
 import { LEVEL_TIMERS_DISABLED } from './testingFlags';
 import {
   bindMiniGameSessionHandlers,
@@ -115,6 +116,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
   onOpenParentReport,
   onUpdatePlayer,
 }) => {
+  const trimmedSplashStartPill = useTrimmedImageSource(splashStartPill);
 
   const renderGameplay = () => {
     if (!selectedLevel) {
@@ -250,7 +252,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         if (selectedLevel.blueprintKey === 'chart_challenge' || selectedLevel.blueprintKey === 'median_mountain') {
           return renderFromRegistry('MedianMountainGame', sharedProps);
         }
-        return renderFromRegistry('TreasureChartCoveGame', {
+        return renderFromRegistry('GraphGrabberGame', {
           ...sharedProps,
           isPractice: Boolean(selectedLevel.isPractice),
         });
@@ -416,7 +418,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
               className="gold-pill-shell relative h-full w-full rounded-full border-0 bg-transparent p-0 shadow-[0_8px_22px_rgba(0,0,0,0.35)]"
             >
               <img
-                src={splashStartPill}
+                src={trimmedSplashStartPill}
                 alt=""
                 aria-hidden
                 draggable={false}

@@ -13,8 +13,10 @@ import food8 from '../assets/take_out/food/8.png';
 import food9 from '../assets/take_out/food/9.png';
 import FoodGameShell from '../components/FoodGameShell';
 import defaultMonster from '../assets/bosses/goblin.png';
+import goldButtonAsset from '../assets/casual_ui/inputs/btn_1.png';
 import { triggerHaptic } from '../haptics';
 import CelebrationSplash from '../components/CelebrationSplash';
+import { useTrimmedImageSource } from '../utils/trimTransparentImage';
 
 interface TakeOutRushGameProps {
   levelId: number;
@@ -325,6 +327,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
   onGameOver: _onGameOver,
   onBack,
 }) => {
+  const trimmedGoldButtonAsset = useTrimmedImageSource(goldButtonAsset);
   const baseLevel = Math.max(1, Math.min(12, miniGameLevel || levelId || 1));
 
   const [timeLeft, setTimeLeft] = useState(ROUND_DURATION_SECONDS);
@@ -608,7 +611,8 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                 src={orderMonster}
                 alt=""
                 draggable={false}
-                className="absolute bottom-0 h-full w-full object-contain drop-shadow-[0_12px_22px_rgba(2,6,23,0.45)]"
+                className="absolute bottom-0 h-full w-full scale-[1.16] object-contain drop-shadow-[0_12px_22px_rgba(2,6,23,0.45)] md:scale-[1.22]"
+                style={{ transformOrigin: 'bottom center' }}
               />
             </div>
           </section>
@@ -656,9 +660,18 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                     type="button"
                     onClick={() => submitOrder(false)}
                     disabled={!canSubmit}
-                    className="rounded-full bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 px-4 py-2 text-sm font-black text-slate-900 shadow-[0_10px_18px_rgba(251,146,60,0.4)] transition disabled:opacity-50"
+                    className="gold-pill-shell relative inline-flex h-11 w-[min(11rem,46vw)] items-center justify-center rounded-full border-0 bg-transparent p-0 shadow-[0_8px_22px_rgba(0,0,0,0.35)] transition disabled:opacity-50"
                   >
-                    Send Order
+                    <img
+                      src={trimmedGoldButtonAsset}
+                      alt=""
+                      aria-hidden="true"
+                      draggable={false}
+                      className="gold-pill-art rounded-full"
+                    />
+                    <span className="relative z-10 text-[11px] font-normal uppercase tracking-[0.12em] text-black drop-shadow-[0_1px_0_rgba(255,255,255,0.45)]">
+                      Send Order
+                    </span>
                   </button>
                 </div>
               </div>

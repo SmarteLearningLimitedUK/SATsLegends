@@ -44,7 +44,7 @@ const SimplifySprintGame = lazy(() => import('./SimplifySprintGame'));
 const TakeOutRushGame = lazy(() => import('./TakeOutRushGame'));
 const TimekeeperTempleGame = lazy(() => import('./TimekeeperTempleGame'));
 const TowerOfFactorsGame = lazy(() => import('./TowerOfFactorsGame'));
-const TreasureChartCoveGame = lazy(() => import('./TreasureChartCoveGame'));
+const GraphGrabberGame = lazy(() => import('./GraphGrabberGame'));
 const TreasurePathGame = lazy(() => import('./TreasurePathGame'));
 const UnitMixerGame = lazy(() => import('./UnitMixerGame'));
 const LogicSort = lazy(() => import('./reasoning/LogicSort'));
@@ -98,7 +98,7 @@ export type MiniGameRegistryKey =
   | 'TakeOutRushGame'
   | 'TimekeeperTempleGame'
   | 'TowerOfFactorsGame'
-  | 'TreasureChartCoveGame'
+  | 'GraphGrabberGame'
   | 'TreasurePathGame'
   | 'UnitMixerGame'
   | 'ReasoningGame'
@@ -160,7 +160,7 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   TakeOutRushGame: asMiniGame('take_out_rush', TakeOutRushGame),
   TimekeeperTempleGame: asMiniGame('timekeeper_temple', TimekeeperTempleGame),
   TowerOfFactorsGame: asMiniGame('tower_of_factors', TowerOfFactorsGame),
-  TreasureChartCoveGame: asMiniGame('treasure_chart_cove', TreasureChartCoveGame),
+  GraphGrabberGame: asMiniGame('graph_grabber', GraphGrabberGame),
   TreasurePathGame: asMiniGame('treasure_path', TreasurePathGame),
   UnitMixerGame: asMiniGame('unit_mixer', UnitMixerGame),
   ReasoningGame: asMiniGame('reasoning', ReasoningGame),

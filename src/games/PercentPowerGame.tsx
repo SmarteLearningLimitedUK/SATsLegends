@@ -31,7 +31,6 @@ interface PercentPowerQuestion {
   helper: string;
   options: string[];
   answerIndex: number;
-  badge: string;
   coreLabel: string;
   sideLabel: string;
 }
@@ -93,7 +92,6 @@ const buildDirectQuestion = (): PercentPowerQuestion => {
     helper: 'Use 10%, 25%, 50% or known fraction facts to build the answer.',
     options,
     answerIndex,
-    badge: 'Percent of amount',
     coreLabel: `${percent}%`,
     sideLabel: `Whole ${amount}`,
   };
@@ -115,7 +113,6 @@ const buildReverseQuestion = (): PercentPowerQuestion => {
     helper: 'Find 1% or 10%, then scale up to the full amount.',
     options,
     answerIndex,
-    badge: 'Reverse percentage',
     coreLabel: `${part}`,
     sideLabel: `${percent}% chunk`,
   };
@@ -137,7 +134,6 @@ const buildIncreaseQuestion = (): PercentPowerQuestion => {
     helper: 'Work out the percentage gain first, then add it to the original amount.',
     options,
     answerIndex,
-    badge: 'Increase',
     coreLabel: `+${percent}%`,
     sideLabel: `Start ${base}`,
   };
@@ -170,7 +166,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
   const [XP, setScore] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
-  const [statusText, setStatusText] = useState('Choose the answer that powers the core correctly.');
+  const [statusText, setStatusText] = useState('');
   const [attempts, setAttempts] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [localLives, setLocalLives] = useState(FALLBACK_LIVES);
@@ -195,7 +191,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
     setScore(0);
     setSelectedIndex(null);
     setFeedback(null);
-    setStatusText('Choose the answer that powers the core correctly.');
+    setStatusText('');
     setAttempts(0);
     setCorrectAnswers(0);
     setLocalLives(FALLBACK_LIVES);
@@ -347,15 +343,12 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
       ) : null}
 
       <div
-        className={`relative z-20 flex h-full w-full flex-col items-center px-4 pb-[calc(env(safe-area-inset-bottom)+4.8rem)] ${
-          useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.4rem)]' : 'pt-[calc(env(safe-area-inset-top)+3.8rem)]'
+        className={`relative z-20 flex h-full w-full flex-col items-center px-4 pb-[calc(env(safe-area-inset-bottom)+4.4rem)] ${
+          useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.75rem)]' : 'pt-[calc(env(safe-area-inset-top)+3.15rem)]'
         }`}
       >
         <div className="w-full max-w-[44rem] px-1">
-          <div className="flex items-center justify-between gap-3">
-            <div className="rounded-full border border-cyan-200/30 bg-cyan-300/12 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100">
-              {question.badge}
-            </div>
+          <div className="flex items-center justify-end gap-3">
             <div className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/80">
               Round {roundNumber}/{totalRounds}
             </div>
@@ -368,18 +361,19 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
           </div>
         </div>
 
-        <div className="relative mt-4 flex w-full max-w-[44rem] flex-1 min-h-0 flex-col items-center justify-center px-2 py-2">
+        <div className="relative mt-2 flex w-full max-w-[44rem] flex-1 min-h-0 flex-col items-center justify-center px-2 py-2">
           <motion.div
-            className="absolute inset-x-[12%] top-[12%] h-24 rounded-full bg-cyan-300/12 blur-3xl"
+            className="absolute inset-x-[12%] top-[18%] h-28 rounded-full bg-cyan-300/16 blur-3xl"
             animate={{ opacity: [0.42, 0.88, 0.42], scale: [0.98, 1.04, 0.98] }}
             transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
           />
 
           <motion.div
             className="relative flex h-[11.5rem] w-[11.5rem] items-center justify-center rounded-full border border-cyan-100/30 bg-[radial-gradient(circle,rgba(125,211,252,0.34),rgba(14,116,144,0.22)_38%,rgba(8,20,40,0.12)_68%,rgba(8,20,40,0)_100%)] shadow-[0_0_45px_rgba(34,211,238,0.2)] md:h-[13rem] md:w-[13rem]"
+            style={{ transform: 'translateY(0.35rem)' }}
             animate={
               feedback === 'correct'
-                ? { scale: [1, 1.08, 1], rotate: [0, 4, -4, 0] }
+                ? { scale: [1, 1.06, 1], x: [0, -4, 4, -3, 3, 0], rotate: [0, 3, -3, 2, -2, 0] }
                 : feedback === 'incorrect'
                   ? { x: [0, -8, 8, -6, 6, 0] }
                   : { scale: [1, 1.02, 1] }
@@ -421,21 +415,23 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
           </motion.div>
 
           <AnimatePresence>
-            <motion.div
-              key={statusText}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              className={`mt-4 rounded-full border px-4 py-2 text-center text-[11px] font-black uppercase tracking-[0.12em] ${
-                feedback === 'correct'
-                  ? 'border-emerald-300/60 bg-emerald-300/18 text-emerald-50'
-                  : feedback === 'incorrect'
-                    ? 'border-rose-300/60 bg-rose-300/18 text-amber-50'
-                    : 'border-cyan-200/26 bg-[#071a38]/72 text-cyan-100/82'
-              }`}
-            >
-              {statusText}
-            </motion.div>
+            {statusText ? (
+              <motion.div
+                key={statusText}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                className={`mt-4 rounded-full border px-4 py-2 text-center text-[11px] font-black uppercase tracking-[0.12em] ${
+                  feedback === 'correct'
+                    ? 'border-emerald-300/60 bg-emerald-300/18 text-emerald-50'
+                    : feedback === 'incorrect'
+                      ? 'border-rose-300/60 bg-rose-300/18 text-amber-50'
+                      : 'border-cyan-200/26 bg-[#071a38]/72 text-cyan-100/82'
+                }`}
+              >
+                {statusText}
+              </motion.div>
+            ) : null}
           </AnimatePresence>
         </div>
 

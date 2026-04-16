@@ -8,6 +8,7 @@ import gemRed from '../assets/place_value/jewels/diamond_red.png';
 import gemYellow from '../assets/place_value/jewels/diamond_yellow.png';
 import gemEmerald from '../assets/place_value/jewels/emerald.png';
 import gemSapphire from '../assets/place_value/jewels/sapphire.png';
+import { useTrimmedImageSources } from '../utils/trimTransparentImage';
 
 interface MeasurementForgeGameProps {
   levelId: number;
@@ -183,6 +184,11 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
   const rootRef = useRef<HTMLDivElement>(null);
   const dropRef = useRef<HTMLDivElement>(null);
   const alphaKeyedScale = useAlphaKeyImage(weighScale);
+  const trimmedGemImages = useTrimmedImageSources(GEM_IMAGES);
+  const gemImageMap = useMemo(
+    () => new Map(GEM_IMAGES.map((src, index) => [src, trimmedGemImages[index] ?? src])),
+    [trimmedGemImages],
+  );
 
   useEffect(() => {
     setRoundIndex(0);
@@ -302,7 +308,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                   onClick={() => removePlacedToken(token.id)}
                   className="relative z-10 flex min-w-[2.7rem] flex-col items-center rounded-xl bg-[#0b2d68]/80 px-1.5 py-1 text-white ring-1 ring-white/30"
                 >
-                  <img src={token.gem} alt="" className="h-6 w-6 object-contain" draggable={false} />
+                  <img src={gemImageMap.get(token.gem) ?? token.gem} alt="" className="h-6 w-6 object-contain" draggable={false} />
                   <span className="text-[10px] font-black leading-none">{getMeasurementDisplay(token.grams).primary}</span>
                 </button>
               ))}
@@ -337,13 +343,13 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                     }
                   }}
                   disabled={isPlaced}
-                  className={`flex h-12 min-w-[5rem] flex-col items-center justify-center rounded-2xl px-2 text-white shadow-[0_10px_16px_rgba(0,0,0,0.28)] ring-2 ring-white/10 md:h-[4.05rem] md:min-w-[6rem] md:px-3 ${
+                  className={`flex h-12 min-w-[5rem] flex-col items-center justify-center rounded-2xl px-2 text-white shadow-[0_10px_16px_rgba(0,0,0,0.28)] ring-2 ring-white/10 md:h-[4.05rem] md:min-w-[6rem] md:px-3 touch-none ${
                     isPlaced
                       ? 'bg-slate-900/30 opacity-40'
                       : 'bg-[linear-gradient(180deg,rgba(15,23,42,0.7),rgba(15,23,42,0.35))]'
                   }`}
                 >
-                  <img src={token.gem} alt="" className="h-6 w-6 object-contain md:h-8 md:w-8" draggable={false} />
+                  <img src={gemImageMap.get(token.gem) ?? token.gem} alt="" className="h-6 w-6 object-contain md:h-8 md:w-8" draggable={false} />
                   <span className="text-sm font-black leading-none md:text-base">{getMeasurementDisplay(token.grams).primary}</span>
                   <span className="mt-1 text-[10px] font-bold leading-none text-white/70 md:text-[11px]">
                     {getMeasurementDisplay(token.grams).secondary}

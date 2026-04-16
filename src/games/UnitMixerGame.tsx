@@ -254,7 +254,6 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
           <TaskCard className="bg-black/25 text-slate-100">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-200/90">Lava Path</div>
                 <div className="game-question-copy mt-1 text-white md:text-lg">{formatFantasyPrompt(question.prompt)}</div>
               </div>
               <div className="rounded-full bg-amber-200/25 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-100">

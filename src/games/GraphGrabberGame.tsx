@@ -1,11 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import cargoShipImage from '../assets/boats/7.png';
+import graphGrabberBackground from '../assets/maps/backgroundsforgames/graph grabber.jpg';
+import crate1 from '../assets/crates/1.png';
+import crate2 from '../assets/crates/2.png';
+import crate3 from '../assets/crates/3.png';
+import crate4 from '../assets/crates/4.png';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
-interface TreasureChartCoveGameProps {
+interface GraphGrabberGameProps {
   levelId: number;
   avatarId: string;
   isPractice?: boolean;
@@ -16,7 +20,7 @@ interface TreasureChartCoveGameProps {
 
 type ChartRoundMode = 'basic' | 'comparison' | 'difference' | 'total';
 
-interface ShipDatum {
+interface CaravanDatum {
   id: string;
   label: string;
   value: number;
@@ -30,7 +34,7 @@ interface ChartRound {
   prompt: string;
   support: string;
   boardLabel: string;
-  ships: ShipDatum[];
+  caravans: CaravanDatum[];
   lineDays?: Array<{ label: string; value: number }>;
   options: string[];
   answer: string;
@@ -38,12 +42,13 @@ interface ChartRound {
 
 const MAX_HEARTS = 4;
 const ROUND_GOAL_BY_LEVEL = [0, 4, 5, 5, 6];
-const SHIP_POOL = [
-  { id: 'number-wave', label: 'Number Wave', color: 'from-sky-400 to-cyan-300', solidColor: '#38bdf8' },
-  { id: 'logic-tide', label: 'Logic Tide', color: 'from-indigo-400 to-blue-300', solidColor: '#818cf8' },
-  { id: 'brain-voyager', label: 'Brain Voyager', color: 'from-emerald-400 to-lime-300', solidColor: '#34d399' },
-  { id: 'data-current', label: 'Data Current', color: 'from-amber-300 to-yellow-300', solidColor: '#fbbf24' },
+const CARAVAN_POOL = [
+  { id: 'number-caravan', label: 'Number Caravan', color: 'from-sky-400 to-cyan-300', solidColor: '#38bdf8' },
+  { id: 'logic-caravan', label: 'Logic Caravan', color: 'from-indigo-400 to-blue-300', solidColor: '#818cf8' },
+  { id: 'brain-caravan', label: 'Brain Caravan', color: 'from-emerald-400 to-lime-300', solidColor: '#34d399' },
+  { id: 'data-caravan', label: 'Data Caravan', color: 'from-amber-300 to-yellow-300', solidColor: '#fbbf24' },
 ];
+const CARAVAN_CARGO_IMAGES = [crate1, crate2, crate3, crate4];
 
 const CARGO_ROUNDS: Record<ChartRoundMode, number[]> = {
   basic: [6, 9, 7, 4],
@@ -57,7 +62,7 @@ const modeForLevel = (_levelId: number, roundIndex: number): ChartRoundMode => {
   return cycle[roundIndex % cycle.length];
 };
 
-type BoatAnimation = {
+type CaravanAnimation = {
   id: number;
   outcome: 'success' | 'failure';
 };
@@ -65,92 +70,101 @@ type BoatAnimation = {
 const createRound = (levelId: number, roundIndex: number): ChartRound => {
   const mode = modeForLevel(levelId, roundIndex);
   const values = CARGO_ROUNDS[mode];
-  const ships = SHIP_POOL.map((ship, index) => ({
-    ...ship,
+  const caravans = CARAVAN_POOL.map((caravan, index) => ({
+    ...caravan,
     value: values[index],
   }));
 
   if (mode === 'basic') {
-    const target = ships[0];
+    const target = caravans[0];
     return {
       mode,
       title: 'Basic Reading',
-      prompt: 'How many crates did The Number Wave deliver?',
-      support: 'Read the Number Wave bar carefully.',
-      boardLabel: 'Crates by ship',
-      ships,
+      prompt: 'How many crates did the Number Caravan deliver?',
+      support: 'Read the Number Caravan stack carefully.',
+      boardLabel: 'Crates by caravan',
+      caravans,
       options: [String(target.value - 2), String(target.value), String(target.value + 1), String(target.value + 3)],
       answer: String(target.value),
     };
   }
 
   if (mode === 'comparison') {
-    const winner = ships[1];
+    const winner = caravans[1];
     return {
       mode,
       title: 'Most Crates',
-      prompt: 'Which ship delivered the most crates?',
-      support: 'Compare all four ships.',
-      boardLabel: 'Crates by ship',
-      ships,
-      options: ships.map((ship) => ship.label),
+      prompt: 'Which caravan delivered the most crates?',
+      support: 'Compare all four caravans.',
+      boardLabel: 'Crates by caravan',
+      caravans,
+      options: caravans.map((caravan) => caravan.label),
       answer: winner.label,
     };
   }
 
   if (mode === 'difference') {
-    const first = ships[1];
-    const second = ships[2];
+    const first = caravans[1];
+    const second = caravans[2];
     const difference = first.value - second.value;
     return {
       mode,
       title: 'Find The Difference',
-      prompt: 'How many more crates did The Logic Tide deliver than The Brain Voyager?',
-      support: 'Subtract Brain Voyager from Logic Tide.',
-      boardLabel: 'Crates by ship',
-      ships,
+      prompt: 'How many more crates did the Logic Caravan deliver than the Brain Caravan?',
+      support: 'Subtract Brain Caravan from Logic Caravan.',
+      boardLabel: 'Crates by caravan',
+      caravans,
       options: [String(difference - 1), String(difference), String(difference + 1), String(difference + 2)],
       answer: String(difference),
     };
   }
 
-  const total = ships.reduce((sum, ship) => sum + ship.value, 0);
+  const total = caravans.reduce((sum, caravan) => sum + caravan.value, 0);
   return {
     mode: 'total',
     title: 'Total Crates',
-    prompt: 'What is the total crates delivered by all four ships?',
-    support: 'Add all four bars.',
-    boardLabel: 'Crates by ship',
-    ships,
+    prompt: 'What is the total number of crates delivered by all four caravans?',
+    support: 'Add all four caravan stacks.',
+    boardLabel: 'Crates by caravan',
+    caravans,
     options: [String(total - 4), String(total - 2), String(total), String(total + 2)],
     answer: String(total),
   };
 };
 
-const CoinBarBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships, label }) => {
-  const maxValue = Math.max(...ships.map((ship) => ship.value));
+const CaravanBoard: React.FC<{ caravans: CaravanDatum[]; label: string }> = ({ caravans, label }) => {
+  const maxValue = Math.max(...caravans.map((caravan) => caravan.value));
   return (
     <div className="w-full">
       <div className="mt-3 grid grid-cols-4 items-end gap-2 md:gap-3">
-        {ships.map((ship) => (
-          <div key={ship.id} className="flex flex-col items-center gap-1.5">
-            <div className="flex h-20 w-full items-end justify-center md:h-24">
-              <div className="relative flex w-full max-w-[4rem] flex-col justify-end gap-1">
-                {Array.from({ length: ship.value }).map((_, index) => (
-                  <div
-                    key={`${ship.id}-coin-${index}`}
-                    className={`h-2.5 rounded-full bg-gradient-to-r ${ship.color} shadow-[0_3px_8px_rgba(15,23,42,0.16)]`}
-                    style={{ opacity: 0.4 + ((index + 1) / (maxValue + 2)) }}
-                  />
-                ))}
+        {caravans.map((caravan, caravanIndex) => (
+          <div key={caravan.id} className="flex flex-col items-center gap-1.5">
+            <div className="flex h-24 w-full items-end justify-center md:h-28">
+              <div className="relative flex w-full max-w-[5rem] flex-col items-center justify-end">
+                {Array.from({ length: caravan.value }).map((_, index) => {
+                  const crateAsset = CARAVAN_CARGO_IMAGES[(caravanIndex + index) % CARAVAN_CARGO_IMAGES.length];
+                  return (
+                    <img
+                      key={`${caravan.id}-crate-${index}`}
+                      src={crateAsset}
+                      alt=""
+                      aria-hidden="true"
+                      className="h-5 w-5 drop-shadow-[0_2px_5px_rgba(15,23,42,0.18)] md:h-6 md:w-6"
+                      style={{
+                        marginTop: index === 0 ? 0 : '-0.55rem',
+                        opacity: 0.42 + ((index + 1) / (maxValue + 2)),
+                      }}
+                    />
+                  );
+                })}
               </div>
             </div>
             <div className="text-center">
               <div className="mx-auto text-[8px] font-black leading-tight text-white md:text-[9px]">
-                {ship.label.split(' ')[0].slice(0, 4)}
+                {caravan.label.split(' ')[0].slice(0, 4)}
               </div>
               <div className="text-[7px] font-bold leading-tight text-amber-100/80 md:text-[8px]">
-                {ship.value}
+                {caravan.value}
               </div>
             </div>
           </div>
@@ -163,7 +177,7 @@ const CoinBarBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships, 
   );
 };
 
-const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
+const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
   levelId,
   avatarId: _avatarId,
   isPractice,
@@ -185,8 +199,8 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
   const [feedback, setFeedback] = useState<null | { type: 'success' | 'error'; title: string; subtitle: string }>(null);
   const [isFinished, setIsFinished] = useState(false);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
-  const [boatAnimation, setBoatAnimation] = useState<BoatAnimation | null>(null);
-  const boatAnimationIdRef = useRef(0);
+  const [caravanAnimation, setCaravanAnimation] = useState<CaravanAnimation | null>(null);
+  const caravanAnimationIdRef = useRef(0);
 
   const progress = Math.min((XP / targetScore) * 100, 100);
 
@@ -208,7 +222,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
     setFeedback(null);
     setIsFinished(false);
     setShowPracticeIntro(Boolean(isPractice));
-    setBoatAnimation(null);
+    setCaravanAnimation(null);
   }, [isPractice, levelId]);
 
   useEffect(() => {
@@ -262,13 +276,13 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
     timeoutsRef.current.push(timeoutId);
   };
 
-  const triggerBoatAnimation = (outcome: BoatAnimation['outcome']) => {
-    boatAnimationIdRef.current += 1;
-    const id = boatAnimationIdRef.current;
-    setBoatAnimation({ id, outcome });
+  const triggerCaravanAnimation = (outcome: CaravanAnimation['outcome']) => {
+    caravanAnimationIdRef.current += 1;
+    const id = caravanAnimationIdRef.current;
+    setCaravanAnimation({ id, outcome });
     const clearDelay = outcome === 'success' ? 3000 : 2200;
     const timeoutId = window.setTimeout(() => {
-      setBoatAnimation((current) => (current?.id === id ? null : current));
+      setCaravanAnimation((current) => (current?.id === id ? null : current));
     }, clearDelay);
     timeoutsRef.current.push(timeoutId);
   };
@@ -294,7 +308,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
   const handleChoice = (choice: string) => {
     if (feedback || isFinished) return;
     if (choice !== round.answer) {
-      triggerBoatAnimation('failure');
+      triggerCaravanAnimation('failure');
       loseHeart(`The correct answer was ${round.answer}.`);
       return;
     }
@@ -303,8 +317,8 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
     const updatedScore = XP + points;
     setScore(updatedScore);
     setStreak((previous) => previous + 1);
-    triggerBoatAnimation('success');
-    setFeedback({ type: 'success', title: 'Set sail', subtitle: `+${points} XP` });
+    triggerCaravanAnimation('success');
+    setFeedback({ type: 'success', title: 'Supply secured', subtitle: `+${points} XP` });
     confetti({
       particleCount: 42,
       spread: 48,
@@ -316,10 +330,16 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden bg-transparent">
+      <div
+        className="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat opacity-100"
+        style={{ backgroundImage: `url(${graphGrabberBackground})` }}
+        aria-hidden="true"
+      />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(8,15,32,0.42),rgba(8,15,32,0.58))]" aria-hidden="true" />
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Graph Grabber"
-        body="Read the graph to track the stolen brainpower.\nAnswer with single values, comparisons and totals."
+        body="Read the graph to track the stolen brainpower supply caravans.\nAnswer with single values, comparisons and totals."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
@@ -337,7 +357,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
               <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 md:grid-cols-[1.02fr_0.98fr] md:gap-2">
                 <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(8,47,73,0.34),rgba(15,23,42,0.26))] p-2.5 shadow-[0_24px_40px_rgba(2,6,23,0.22)] md:p-3">
                   <div className="mt-auto">
-                    <CoinBarBoard ships={round.ships} label={round.boardLabel} />
+                    <CaravanBoard caravans={round.caravans} label={round.boardLabel} />
                   </div>
                 </div>
 
@@ -363,43 +383,58 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
             </div>
 
             <div className="relative mt-2 h-[4.5rem] overflow-hidden rounded-[1.35rem] border border-white/12 bg-[linear-gradient(180deg,rgba(6,20,48,0.7),rgba(8,18,40,0.88))] px-3 py-2 shadow-[0_18px_32px_rgba(2,6,23,0.22)]">
-              {boatAnimation ? (
-                <motion.img
-                  key={boatAnimation.id}
-                  src={cargoShipImage}
-                  alt=""
+              <div className="pointer-events-none absolute inset-x-2 bottom-1 h-1 rounded-full bg-amber-200/10" aria-hidden="true" />
+              {caravanAnimation ? (
+                <motion.div
+                  key={caravanAnimation.id}
                   aria-hidden="true"
+                  className="pointer-events-none absolute bottom-0 left-0 z-10"
                   initial={{
                     x: '-24vw',
                     y: 0,
                     opacity: 0,
-                    rotate: -2,
-                    scale: 0.96,
+                    rotate: -1,
+                    scale: 0.98,
                   }}
                   animate={
-                    boatAnimation.outcome === 'success'
+                    caravanAnimation.outcome === 'success'
                       ? {
                           x: '118vw',
                           y: 0,
                           opacity: 1,
-                          rotate: 0.5,
+                          rotate: 0,
                           scale: 1,
                         }
                       : {
                           x: ['-24vw', '46vw', '50vw'],
                           y: [0, 0, 18],
                           opacity: [0, 1, 0],
-                          rotate: [-2, 0, 8],
-                          scale: [0.96, 1, 0.9],
+                          rotate: [-1, 0, 6],
+                          scale: [0.98, 1, 0.92],
                         }
                   }
                   transition={
-                    boatAnimation.outcome === 'success'
-                      ? { duration: 3.1, ease: 'linear' }
+                    caravanAnimation.outcome === 'success'
+                      ? { duration: 3.15, ease: 'linear' }
                       : { duration: 2.25, times: [0, 0.72, 1], ease: 'easeInOut' }
                   }
-                  className="pointer-events-none absolute bottom-0 left-0 z-10 h-12 w-auto drop-shadow-[0_10px_16px_rgba(0,0,0,0.22)] md:h-16"
-                />
+                >
+                  <div className="relative flex items-end gap-1 rounded-[1.1rem] border border-amber-200/16 bg-[linear-gradient(180deg,rgba(120,53,15,0.34),rgba(15,23,42,0.56))] px-3 py-2 shadow-[0_10px_18px_rgba(0,0,0,0.18)]">
+                    <div className="absolute -bottom-1 left-3 right-3 h-3 rounded-full bg-slate-950/60 blur-[1px]" />
+                    <div className="absolute -bottom-2 left-4 h-3 w-3 rounded-full border border-white/10 bg-slate-900/90" />
+                    <div className="absolute -bottom-2 right-4 h-3 w-3 rounded-full border border-white/10 bg-slate-900/90" />
+                    <div className="flex items-end gap-1">
+                      {[0, 1, 2].map((crateIndex) => (
+                        <img
+                          key={`${caravanAnimation.id}-crate-${crateIndex}`}
+                          src={CARAVAN_CARGO_IMAGES[(crateIndex + caravanAnimation.id) % CARAVAN_CARGO_IMAGES.length]}
+                          alt=""
+                          className="h-8 w-8 drop-shadow-[0_2px_6px_rgba(0,0,0,0.24)] md:h-9 md:w-9"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
               ) : null}
 
               <AnimatePresence mode="wait">
@@ -430,6 +465,6 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
   );
 };
 
-export default TreasureChartCoveGame;
+export default GraphGrabberGame;
 
 

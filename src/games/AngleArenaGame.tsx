@@ -12,8 +12,6 @@ import {
   SecondaryButton,
 } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
-import catapultAsset from '../assets/angle_arena/catapultfinal.png';
-import angleArenaBackgroundA from '../assets/angle_arena/angle arena.png';
 import { BOSS_ASSETS } from '../assets/bosses';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { angleToVector, clamp, degreesToRadians, distance, lerp, worldToScreen } from './angleArena/math';
@@ -64,7 +62,118 @@ const CAMERA_LERP = 0.08;
 const RETURN_LERP = 0.12;
 const PROJECTILE_SPEED = 520;
 const MAX_FLIGHT_DISTANCE = 980;
-const ANGLE_BACKGROUND = angleArenaBackgroundA;
+
+type CloudLayer = {
+  x: number;
+  y: number;
+  scale: number;
+  speed: number;
+  alpha: number;
+};
+
+const ANGLE_CLOUDS: CloudLayer[] = [
+  { x: 40, y: 0.16, scale: 1.12, speed: 0.45, alpha: 0.68 },
+  { x: 220, y: 0.12, scale: 0.92, speed: 0.28, alpha: 0.52 },
+  { x: 420, y: 0.18, scale: 1.28, speed: 0.36, alpha: 0.62 },
+  { x: 680, y: 0.24, scale: 0.82, speed: 0.22, alpha: 0.48 },
+  { x: 940, y: 0.14, scale: 1.05, speed: 0.31, alpha: 0.58 },
+  { x: 1180, y: 0.21, scale: 1.34, speed: 0.18, alpha: 0.66 },
+];
+
+const drawCloud = (
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  scale: number,
+  alpha: number,
+) => {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = 'rgba(255,255,255,0.98)';
+  ctx.shadowColor = 'rgba(255,255,255,0.3)';
+  ctx.shadowBlur = 18 * scale;
+  ctx.beginPath();
+  ctx.ellipse(x, y, 54 * scale, 26 * scale, 0, 0, Math.PI * 2);
+  ctx.ellipse(x + (28 * scale), y - (16 * scale), 42 * scale, 24 * scale, 0, 0, Math.PI * 2);
+  ctx.ellipse(x + (62 * scale), y, 58 * scale, 28 * scale, 0, 0, Math.PI * 2);
+  ctx.ellipse(x + (22 * scale), y + (10 * scale), 38 * scale, 20 * scale, 0, 0, Math.PI * 2);
+  ctx.ellipse(x + (72 * scale), y + (10 * scale), 42 * scale, 20 * scale, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+};
+
+const drawSkyBackground = (ctx: CanvasRenderingContext2D, width: number, height: number, timestamp: number) => {
+  const sky = ctx.createLinearGradient(0, 0, 0, height);
+  sky.addColorStop(0, '#cfefff');
+  sky.addColorStop(0.42, '#8fd7ff');
+  sky.addColorStop(0.72, '#5db2ee');
+  sky.addColorStop(1, '#2d6cb8');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.fillStyle = 'rgba(255, 242, 175, 0.24)';
+  ctx.beginPath();
+  ctx.arc(width * 0.8, height * 0.14, Math.min(width, height) * 0.11, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.fillRect(0, height * 0.75, width, height * 0.25);
+
+  const wrapWidth = width + 280;
+  ANGLE_CLOUDS.forEach((cloud, index) => {
+    const drift = ((timestamp * 0.012 * cloud.speed) % wrapWidth) - 140;
+    const baseX = cloud.x + drift;
+    const y = height * cloud.y + Math.sin((timestamp * 0.00045) + index) * 5;
+    drawCloud(ctx, baseX, y, cloud.scale, cloud.alpha);
+  });
+};
+
+const drawCannon = (ctx: CanvasRenderingContext2D, angleDeg: number) => {
+  ctx.save();
+  ctx.rotate(-degreesToRadians(angleDeg));
+
+  ctx.fillStyle = 'rgba(2,6,23,0.26)';
+  ctx.beginPath();
+  ctx.ellipse(-28, 34, 74, 16, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#1f2937';
+  ctx.fillRect(-92, -10, 92, 20);
+  ctx.fillRect(-82, -18, 22, 36);
+
+  ctx.fillStyle = '#4b5563';
+  ctx.fillRect(-86, -6, 80, 12);
+
+  ctx.fillStyle = '#374151';
+  ctx.fillRect(-52, 12, 102, 18);
+  ctx.fillRect(-34, 0, 52, 12);
+
+  ctx.fillStyle = '#0f172a';
+  ctx.beginPath();
+  ctx.arc(-36, 34, 16, 0, Math.PI * 2);
+  ctx.arc(8, 34, 16, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#94a3b8';
+  ctx.beginPath();
+  ctx.arc(-36, 34, 8, 0, Math.PI * 2);
+  ctx.arc(8, 34, 8, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#0f172a';
+  ctx.beginPath();
+  ctx.arc(0, 0, 13, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#cbd5e1';
+  ctx.beginPath();
+  ctx.arc(0, 0, 7, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#111827';
+  ctx.fillRect(0, -2, 6, 4);
+
+  ctx.restore();
+};
 
 const formatTime = (seconds: number) => {
   const clamped = Math.max(0, Math.floor(seconds));
@@ -117,8 +226,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const cameraTargetRef = useRef({ x: 0, y: 0 });
   const settleTimeoutRef = useRef<number | null>(null);
   const autoAdvanceTimeoutRef = useRef<number | null>(null);
-  const catapultImageRef = useRef<HTMLImageElement | null>(null);
-  const backgroundImageRef = useRef<HTMLImageElement | null>(null);
   const bossImageRef = useRef<HTMLImageElement | null>(null);
   const bossProcessedRef = useRef<HTMLCanvasElement | null>(null);
   const projectileRef = useRef<ProjectileState | null>(null);
@@ -134,7 +241,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const [localLives, setLocalLives] = useState(INITIAL_LIVES);
   const [localTimer, setLocalTimer] = useState(INITIAL_TIMER);
   const [stars, setStars] = useState(0);
-  const [backgroundAsset] = useState(() => ANGLE_BACKGROUND);
 
   const rawQuestions = useMemo(
     () => buildAngleQuestions({
@@ -192,18 +298,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       if (autoAdvanceTimeoutRef.current) window.clearTimeout(autoAdvanceTimeoutRef.current);
     };
   }, []);
-
-  useEffect(() => {
-    const img = new Image();
-    img.src = catapultAsset;
-    catapultImageRef.current = img;
-  }, []);
-
-  useEffect(() => {
-    const img = new Image();
-    img.src = backgroundAsset;
-    backgroundImageRef.current = img;
-  }, [backgroundAsset]);
 
   useEffect(() => {
     const bossImage = BOSS_ASSETS.croc_boss?.poses?.neutral || BOSS_ASSETS.croc_boss?.poses?.attack;
@@ -415,15 +509,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.translate(shakeX, shakeY);
       ctx.clearRect(0, 0, viewWidth, viewHeight);
 
-      const backgroundImg = backgroundImageRef.current;
-      if (backgroundImg && backgroundImg.complete) {
-        const scale = Math.min(viewWidth / backgroundImg.width, viewHeight / backgroundImg.height);
-        const drawW = backgroundImg.width * scale;
-        const drawH = backgroundImg.height * scale;
-        const drawX = (viewWidth - drawW) / 2;
-        const drawY = (viewHeight - drawH) / 2;
-        ctx.drawImage(backgroundImg, drawX, drawY, drawW, drawH);
-      }
+      drawSkyBackground(ctx, viewWidth, viewHeight, timestamp);
 
       const screenOffset = { x: 0, y: viewHeight * 0.18 };
       const toScreen = (x: number, y: number) => {
@@ -457,20 +543,10 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         ctx.fill();
       }
 
-      const catapult = catapultImageRef.current;
-      if (catapult && catapult.complete) {
-        const angleRad = degreesToRadians(desiredAngleRef.current);
-        const rocketWidth = 120;
-        const rocketHeight = 84;
-        ctx.save();
-        ctx.translate(originScreen.x, originScreen.y);
-        ctx.rotate(-angleRad);
-        ctx.drawImage(catapult, -rocketWidth / 2, -rocketHeight / 2, rocketWidth, rocketHeight);
-        ctx.restore();
-      } else {
-        ctx.fillStyle = '#f59e0b';
-        ctx.fillRect(originScreen.x - 48, originScreen.y - 10, 72, 18);
-      }
+      ctx.save();
+      ctx.translate(originScreen.x, originScreen.y + 6);
+      drawCannon(ctx, desiredAngleRef.current);
+      ctx.restore();
 
       ctx.save();
       ctx.translate(enemyScreen.x, enemyScreen.y);

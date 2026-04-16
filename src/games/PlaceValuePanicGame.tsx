@@ -16,6 +16,7 @@ import { triggerHaptic } from '../haptics';
 import { AVATARS } from '../constants';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
+import { useTrimmedImageSource } from '../utils/trimTransparentImage';
 
 interface PlaceValuePanicGameProps {
   levelId: number;
@@ -357,6 +358,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   onGameOver,
   onBack,
 }) => {
+  const trimmedMedButton = useTrimmedImageSource(medButton);
   const [viewport, setViewport] = useState(() => {
     if (typeof window === 'undefined') {
       return { width: 390, height: 844 };
@@ -678,8 +680,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
     const targetPct = targetSocketSizing.widthValue / 100;
     const sourcePct = Number.parseFloat(layout.sourceWidth) / 100;
-    const targetRadius = Math.max(56, rect.width * Math.max(0.09, targetPct * 0.95));
-    const sourceRadius = Math.max(42, rect.width * Math.max(0.07, sourcePct * 0.72));
+    const targetRadius = Math.max(50, rect.width * Math.max(0.085, targetPct * 0.88));
+    const sourceRadius = Math.max(38, rect.width * Math.max(0.065, sourcePct * 0.66));
 
     let bestTarget: { index: number; distance: number } | null = null;
     let bestSource: { index: number; distance: number } | null = null;
@@ -700,22 +702,22 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
     // Prefer target sockets when dragging answer tokens downward from the source row.
     if (fromLocation === 'source') {
-      if (bestTarget && bestTarget.distance <= targetRadius * 1.45) {
+      if (bestTarget && bestTarget.distance <= targetRadius * 1.12) {
         return { location: 'target', index: bestTarget.index };
       }
       if (bestSource && bestSource.distance <= sourceRadius) {
         return { location: 'source', index: bestSource.index };
       }
-      if (bestTarget && clientY >= rect.top + rect.height * 0.54) {
+      if (bestTarget && clientY >= rect.top + rect.height * 0.58) {
         return { location: 'target', index: bestTarget.index };
       }
       return null;
     }
 
-    if (bestTarget && bestTarget.distance <= targetRadius) {
+    if (bestTarget && bestTarget.distance <= targetRadius * 0.92) {
       return { location: 'target', index: bestTarget.index };
     }
-    if (bestSource && bestSource.distance <= sourceRadius * 1.2) {
+    if (bestSource && bestSource.distance <= sourceRadius * 0.9) {
       return { location: 'source', index: bestSource.index };
     }
     return null;
@@ -1035,7 +1037,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               key={`target-${idx}`}
               type="button"
               onPointerDown={(event) => beginDrag('target', idx, event)}
-              className="absolute -translate-x-1/2 -translate-y-1/2 rounded-xl"
+              className="absolute -translate-x-1/2 -translate-y-1/2 rounded-xl touch-none"
               animate={
                 token
                   ? {
@@ -1096,7 +1098,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               key={`source-${idx}`}
               type="button"
               onPointerDown={(event) => beginDrag('source', idx, event)}
-              className="absolute z-[22] -translate-x-1/2 -translate-y-1/2 rounded-xl"
+              className="absolute z-[22] -translate-x-1/2 -translate-y-1/2 rounded-xl touch-none"
               initial={{ opacity: 0, y: 14, scale: 0.94 }}
               animate={{ opacity: token ? 1 : 0, y: 0, scale: token ? 1 : 0.94 }}
               transition={{ duration: 0.26, ease: 'easeOut', delay: idx * 0.04 }}
@@ -1287,7 +1289,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           className="gold-pill-shell absolute left-1/2 z-40 -translate-x-1/2 transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
           style={{ top: `${layout.submitY}%`, width: `${layout.submitWidth}%`, height: `${layout.submitHeight}%` }}
         >
-          <img src={medButton} alt="" aria-hidden="true" draggable={false} className="gold-pill-art object-contain" />
+          <img src={trimmedMedButton} alt="" aria-hidden="true" draggable={false} className="gold-pill-art object-contain" />
           <span
             className="pointer-events-none absolute inset-x-[16%] top-1/2 -translate-y-1/2 text-center text-[clamp(0.82rem,2.2vw,1.06rem)] font-black uppercase tracking-[0.08em] text-white"
             style={{ textShadow: '0 2px 4px rgba(2,6,23,0.7)' }}
@@ -1304,8 +1306,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
             <motion.div
               className="pointer-events-none absolute z-[80] flex items-center justify-center rounded-xl"
               style={{
-                left: relative.x - dragState.offsetX,
-                top: relative.y - dragState.offsetY,
+                left: relative.x - (dragState.width / 2),
+                top: relative.y - (dragState.height / 2),
                 width: dragState.width,
                 height: dragState.height,
               }}

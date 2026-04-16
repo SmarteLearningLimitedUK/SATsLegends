@@ -353,7 +353,6 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                     <Activity className="h-5 w-5 text-slate-900" />
                   </div>
                   <div>
-                    <h1 className="text-sm font-black uppercase tracking-widest text-white">Line Graph Lab</h1>
                     <p className="text-[10px] uppercase tracking-tighter text-emerald-400">Read one graph. Answer one question.</p>
                   </div>
                 </div>

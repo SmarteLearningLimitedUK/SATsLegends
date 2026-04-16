@@ -334,11 +334,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
             : 'pt-[calc(env(safe-area-inset-top)+3.9rem)]'
         }`}
       >
-        <div className="w-full max-w-[760px] rounded-[1.3rem] border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(56,189,248,0.22),rgba(15,23,42,0.88))] px-4 py-3 text-center text-[12px] font-black uppercase tracking-[0.16em] text-cyan-50 shadow-[0_10px_24px_rgba(0,0,0,0.35)]">
-          Simplify Sprint
-        </div>
-
-        <div className="mt-2 flex w-full max-w-[760px] items-center justify-between gap-3">
+        <div className="mt-0.5 flex w-full max-w-[760px] items-center justify-between gap-3">
           <div className="rounded-full border border-emerald-200/35 bg-[linear-gradient(180deg,rgba(34,197,94,0.2),rgba(15,23,42,0.78))] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-50">
             Round {Math.min(roundNumber, totalRounds)} / {totalRounds}
           </div>

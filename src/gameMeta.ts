@@ -327,10 +327,10 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     focus: 'Bar charts, line graphs and table interpretation',
     rules: {
       title: 'Graph Grabber',
-      summary: 'Four cargo ships are carrying stolen brainpower. Read the graph to track where it went.',
+      summary: 'Four supply caravans are carrying stolen brainpower. Read the graph to track where it went.',
       bullets: [
         'Read the bar chart carefully before you choose an answer.',
-        'Some questions ask for a single ship, some ask for a comparison, and some ask for a total.',
+        'Some questions ask for a single caravan, some ask for a comparison, and some ask for a total.',
         'The practice briefing shows the full story before the round starts.',
       ],
     },

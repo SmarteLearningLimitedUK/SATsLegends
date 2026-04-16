@@ -130,7 +130,7 @@ export const PrimaryButton: React.FC<ButtonProps> = ({ children, className, onCl
     onClick={onClick}
     disabled={disabled}
     className={cn(
-      'ui-button-primary inline-flex h-[56px] w-full items-center justify-center gap-2 rounded-[1.8rem] border',
+      'ui-button-primary inline-flex h-[48px] w-full items-center justify-center gap-2 rounded-full border',
       'px-4 text-[clamp(14px,2vh,18px)] font-black tracking-[0.01em]',
       'transition disabled:cursor-not-allowed disabled:opacity-60',
       className,
@@ -146,7 +146,7 @@ export const SecondaryButton: React.FC<ButtonProps> = ({ children, className, on
     onClick={onClick}
     disabled={disabled}
     className={cn(
-      'ui-button-secondary inline-flex h-[48px] items-center justify-center rounded-[1.4rem] border',
+      'ui-button-secondary inline-flex h-[48px] items-center justify-center rounded-full border',
       'px-3 text-[10px] font-black uppercase tracking-[0.1em]',
       'transition disabled:cursor-not-allowed disabled:opacity-50',
       className,

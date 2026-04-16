@@ -43,7 +43,7 @@ const GAME_SUMMARY_BY_KEY: Record<string, string> = {
   take_out_rush: 'Build exact order totals by combining fraction portions in the tray.',
   fraction_forge: 'Combine and refine fractions to hit exact forged targets.',
   match3_equivalence: 'Chain equivalent fractions, decimals, and percentages to XP combos.',
-  percent_power: 'Solve percentage of amount and reverse percentage challenges.',
+  percent_power: 'Solve percentage and reverse percentage challenges.',
   simplify_sprint: 'Reduce fractions to simplest form in rapid Combo rounds.',
   multiplication_mine: 'Answer multiplication questions to shatter the mine rock and reveal hidden treasure.',
   division_dock: 'Split cargo accurately with quotient and remainder logic.',
