@@ -506,6 +506,13 @@ const App: React.FC = () => {
           bullets: [],
         };
       }
+      if (selectedLevel.blueprintKey === 'number_line_ninja') {
+        return {
+          title: 'Number Line Ninja',
+          summary: 'Use the Number Line to identify and choose the correct answer.',
+          bullets: [],
+        };
+      }
       const baseRules = selectedRuleSet || {
         title: canonicalGameTitle || 'Practice',
         summary: `This is the practice round for ${canonicalGameTitle || 'this game'}. Use it to learn the controls before the real level.`,

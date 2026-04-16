@@ -5,6 +5,7 @@ import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import dojoBackground from '../assets/maps/backgroundsforgames/numberlineninja.jpg';
 import monsterHitA from '../assets/bosses/a.jpg';
 import monsterHitB from '../assets/bosses/a.jpg';
@@ -254,6 +255,8 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   levelId,
   avatarId: _avatarId,
   useSharedTopHud: _useSharedTopHud = false,
+  isPractice,
+  practiceBriefing,
   onVictory,
   onGameOver,
   onBack: _onBack,
@@ -278,6 +281,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const [monsterSpeech, setMonsterSpeech] = useState<string | null>(null);
   const [monsterHitAnimationIndex, setMonsterHitAnimationIndex] = useState(0);
   const [idleMonsterSrc, setIdleMonsterSrc] = useState<string>(monsterHitA);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
   const timeoutIdsRef = useRef<number[]>([]);
   const answerLockRef = useRef(false);
@@ -305,6 +309,10 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   };
 
   useEffect(() => () => clearQueuedTimeouts(), []);
+
+  useEffect(() => {
+    setShowPracticeIntro(Boolean(isPractice));
+  }, [isPractice]);
 
   useEffect(() => {
     if (!sessionState) return;
@@ -507,6 +515,13 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
   return (
     <div ref={playfieldRef} className="relative h-full w-full overflow-hidden">
+      <PracticeIntroPopup
+        open={showPracticeIntro}
+        title="Number Line Ninja"
+        body="Use the Number Line to identify and choose the correct answer."
+        briefing={practiceBriefing}
+        onAction={() => setShowPracticeIntro(false)}
+      />
       <img
         src={dojoBackground}
         alt="Number line dojo backdrop"
@@ -516,15 +531,19 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       <div className="absolute inset-0 bg-slate-950/25" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_52%,rgba(56,189,248,0.14),transparent_64%)]" />
 
-      <div className="relative z-10 flex h-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+4.2rem)] pt-1">
-        <div className="mt-[10px] shrink-0 text-center">
-          <div className="mx-auto w-full max-w-[760px] rounded-[1.35rem] border border-cyan-100/14 bg-[linear-gradient(180deg,rgba(2,6,23,0.94),rgba(8,15,32,0.88))] px-4 py-3 shadow-[0_18px_36px_rgba(2,6,23,0.56),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md md:px-5 md:py-4">
-            <p className="game-question-copy whitespace-pre-line text-white">
-              {question.prompt}
-            </p>
+      {/* Match Place Value Panic: fixed question banner at the top. */}
+      <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
+        <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] border border-blue-400/40 bg-blue-950/70 px-[12px] py-[10px] text-center backdrop-blur-sm">
+          <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90">
+            Mission
+          </div>
+          <div className="game-question-copy mt-0.5 whitespace-pre-line text-white">
+            {question.prompt}
           </div>
         </div>
+      </div>
 
+      <div className="relative z-10 flex h-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+5.2rem)] pt-[calc(env(safe-area-inset-top)+4.8rem)]">
         <div className="flex min-h-0 flex-1 flex-col items-center justify-start pt-1">
           <motion.div
             animate={lineShake ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
@@ -796,6 +815,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                 <motion.button
                   key={`${question.id}-${option}-${index}`}
                   type="button"
+                  data-button-skin="none"
                   ref={(node) => {
                     optionButtonRefs.current[option] = node;
                   }}
