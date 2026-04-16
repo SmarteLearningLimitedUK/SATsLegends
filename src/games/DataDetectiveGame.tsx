@@ -26,7 +26,7 @@ import {
   LabelList,
 } from 'recharts';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
-import dataDetectiveBackground from '../assets/maps/backgroundsforgames/datadetectivemap.jpg';
+import dataDetectiveBackground from '../assets/maps/backgroundsforgames/data detective.jpg';
 
 interface StolenItem {
   name: string;

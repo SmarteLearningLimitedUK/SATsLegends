@@ -411,10 +411,10 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   unit_mixer: {
-    label: 'Unit Mixer',
+    label: 'Lava Path',
     focus: 'Mixed unit conversions',
     rules: {
-      title: 'Unit Mixer',
+      title: 'Lava Path',
       summary: 'Convert between length, mass, and capacity units accurately.',
       bullets: [
         'Remember key conversions like 1 km = 1000 m.',

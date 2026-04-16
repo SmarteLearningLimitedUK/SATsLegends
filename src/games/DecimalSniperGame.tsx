@@ -137,6 +137,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
   levelId,
   avatarId,
   isBoss = false,
+  gameTitle,
   isPractice,
   practiceBriefing,
   onVictory,
@@ -599,7 +600,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
 
       <PracticeIntroPopup
         open={showPracticeIntro}
-        title="Decimal Sniper"
+        title={gameTitle || 'Place Value Panic'}
         body="Drag to aim, release to fire.\nHit the decimal that matches the objective."
         briefing={practiceBriefing}
         onAction={dismissPracticeIntro}
@@ -731,7 +732,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
   return (
     <GameContainerView
       gameType="place_value_peaks"
-      title="Decimal Sniper"
+      title={gameTitle || 'Place Value Panic'}
       avatar={avatar}
       XP={XP}
       targetScore={targetScore}

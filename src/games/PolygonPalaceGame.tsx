@@ -1,7 +1,7 @@
 ﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { triggerHaptic } from '../haptics';
-import gameplayBackground from '../assets/maps/backgroundsforgames/polygon palace map.jpg';
+import gameplayBackground from '../assets/maps/backgroundsforgames/polygon palace.jpg';
 
 interface PolygonPalaceGameProps {
   levelId: number;

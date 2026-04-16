@@ -161,6 +161,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       useSharedTopHud: true,
       isPractice: Boolean(selectedLevel.isPractice),
       practiceBriefing: hintRuleSet,
+      gameTitle: getLevelGameTitle(selectedLevel),
       onVictory: onGameplayVictory,
       onGameOver: onGameplayOver,
       onBack: onBackToIslandLevels,

@@ -13,6 +13,7 @@ import sparkle from '../assets/fantasy_hero/cloud_collapse/sparkle.png';
 interface CloudCollapseGameProps {
   levelId: number;
   avatarId: string;
+  gameTitle?: string;
   onVictory: (stars: number, XP: number) => void;
   onGameOver: (XP: number) => void;
   onBack: () => void;
@@ -21,6 +22,7 @@ interface CloudCollapseGameProps {
 const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
   levelId,
   avatarId,
+  gameTitle,
   onVictory,
   onGameOver,
   onBack,
@@ -122,7 +124,7 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
 
       <div className="relative z-10 flex h-full min-h-0 w-full max-w-5xl flex-1 flex-col items-center gap-2 md:gap-3">
         <HUD
-          title="Cloud Collapse"
+          title={gameTitle || 'Crystal Match'}
           XP={XP}
           targetScore={level.targetScore}
           timeLeft={timeLeft}

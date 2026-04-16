@@ -10,6 +10,7 @@ import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 interface TreasurePathGameProps {
   levelId: number;
   avatarId: string;
+  gameTitle?: string;
   onVictory: (stars: number, XP: number) => void;
   onGameOver: (XP: number) => void;
   onBack: () => void;
@@ -119,6 +120,7 @@ const generateRound = (): TreasureRound => {
 const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
   levelId,
   avatarId: _avatarId,
+  gameTitle,
   onVictory,
   onGameOver,
   onBack,
@@ -250,7 +252,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
         <PuzzleStage className="w-full min-h-0 flex-1 rounded-[1.7rem] p-2 md:rounded-[2rem] md:p-3">
           <div className="relative z-10 mb-2">
             <div className="licensed-game-card w-full px-4 py-3 md:px-5 md:py-4">
-              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/72">Coordinate Quest</div>
+              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/72">{gameTitle || 'Coordinates Quest'}</div>
               <div className="mt-1 text-[1.35rem] font-black leading-none text-white md:text-[1.8rem]">{round.promptTitle}</div>
               <div className="game-question-copy mt-2 text-white/78 md:text-sm">
                 {formatFantasyPrompt(round.promptText)}

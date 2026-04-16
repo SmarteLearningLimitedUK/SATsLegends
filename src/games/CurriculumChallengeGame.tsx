@@ -11,7 +11,6 @@ import {
   type VisualData,
 } from '../systems/content/satsInspiredQuestionBanks';
 import { getBossEncounter } from '../bossMeta';
-import { GAME_META } from '../gameMeta';
 import { triggerHaptic } from '../haptics';
 import BossPortrait from '../components/BossPortrait';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
@@ -31,6 +30,7 @@ interface CurriculumChallengeGameProps {
   levelId: number;
   avatarId: string;
   isBoss?: boolean;
+  gameTitle?: string;
   onVictory: (stars: number, XP: number) => void;
   onGameOver: (XP: number) => void;
   onBack: () => void;
@@ -83,7 +83,7 @@ const CHALLENGE_THEMES: Record<SupportedChallengeGameType, ChallengeTheme> = {
     badge: 'text-cyan-100',
   },
   coordinate_quest: {
-    title: 'Coordinate Quest',
+    title: 'Coordinates Quest',
     surface: 'from-sky-300/18 via-cyan-200/12 to-slate-950/86',
     scene: 'from-sky-300/18 via-cyan-200/12 to-transparent',
     ambient: 'bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.22),transparent_28%),linear-gradient(180deg,#10283a_0%,#071018_100%)]',
@@ -125,7 +125,7 @@ const CHALLENGE_THEMES: Record<SupportedChallengeGameType, ChallengeTheme> = {
     badge: 'text-lime-100',
   },
   unit_mixer: {
-    title: 'Unit Mixer',
+    title: 'Lava Path',
     surface: 'from-lime-300/18 via-yellow-200/12 to-slate-950/86',
     scene: 'from-lime-300/20 via-yellow-200/10 to-transparent',
     ambient: 'bg-[radial-gradient(circle_at_top,rgba(163,230,53,0.2),transparent_28%),linear-gradient(180deg,#1f2d14_0%,#091018_100%)]',
@@ -1191,6 +1191,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
   levelId,
   avatarId,
   isBoss = false,
+  gameTitle,
   onVictory,
   onGameOver,
   onBack,
@@ -1217,7 +1218,6 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
   const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
   const targetScore = 780 + (levelId * 180);
   const progress = Math.min((XP / targetScore) * 100, 100);
-  const meta = GAME_META[gameType];
   const visualCaption = 'caption' in question.visual ? question.visual.caption : undefined;
   const bossEncounter = isBoss ? getBossEncounter(gameType) : undefined;
   const bossPose = !bossEncounter
@@ -1354,7 +1354,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
               <div className={`absolute inset-x-5 top-0 h-20 rounded-full bg-gradient-to-br ${isPlaceValuePeaks ? 'from-yellow-200/18 via-orange-300/12 to-transparent' : theme.prompt} blur-3xl`} />
               <div className="relative z-10 flex flex-col items-center">
                 <div className={`${isPlaceValuePeaks ? 'mb-2 rounded-[0.9rem] border border-amber-200/24 bg-[linear-gradient(180deg,rgba(251,146,60,0.3),rgba(194,65,12,0.18))] px-3 py-1.5 text-amber-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]' : `casual-ribbon-chip mb-2 inline-flex items-center justify-center rounded-full px-3 py-1 text-[8px] font-black uppercase tracking-[0.18em] md:mb-3 md:px-4 md:py-1.5 md:text-[10px] ${theme.badge}`}`}>
-                  {isPlaceValuePeaks ? 'Highest Number Dash' : meta.focus}
+                  {gameTitle || theme.title}
                 </div>
                 <div className={`${isCalculationClash ? 'text-[1.15rem]' : isPlaceValuePeaks ? 'text-[1.18rem]' : isChartGrabber ? 'text-[1.05rem]' : 'text-[1.28rem]'} game-question-copy max-w-[18rem] text-white md:max-w-[30rem] leading-[0.95]`}>
                   {formatFantasyPrompt(question.prompt)}

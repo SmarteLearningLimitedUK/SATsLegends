@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { ChevronLeft, CircleDollarSign, Zap } from 'lucide-react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
-import percentPowerBackground from '../assets/maps/backgroundsforgames/percent power map.jpg';
+import percentPowerBackground from '../assets/maps/backgroundsforgames/percent power.jpg';
 import { triggerHaptic } from '../haptics';
 import {
   emitMiniGameSessionEvent,

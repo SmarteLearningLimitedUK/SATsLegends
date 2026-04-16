@@ -7,7 +7,7 @@ import {
 } from '../components/game-ui/GameUiKit';
 import pyramidImage from '../assets/pyramid.png';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
-import problemPyramidBackground from '../assets/maps/backgroundsforgames/polygon palace map.jpg';
+import problemPyramidBackground from '../assets/maps/backgroundsforgames/polygon palace.jpg';
 
 interface ProblemPyramidGameProps {
   levelId: number;
