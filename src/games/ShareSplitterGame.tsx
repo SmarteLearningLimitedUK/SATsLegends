@@ -51,9 +51,6 @@ const MAX_PLATE_COUNT = 5;
 const ROUNDS_TO_WIN = 5;
 const BASE_XP_PER_ROUND = 120;
 const CAKE_SLICE_ASSET = cakeSliceAsset;
-const SHARE_SPLITTER_INTRO = `To stop the chaos, you must divide the brainpower cake correctly between the monsters based on their demanded ratio.
-
-If you get it wrong, they will grab extra and grow stronger.`;
 const PLATE_POSITIONS: Record<number, Array<{ x: number; y: number }>> = {
   2: [
     { x: 26.8, y: 61.0 },
@@ -143,9 +140,7 @@ const buildSharePrompt = () => {
     'Example Question',
     '',
     'There are 12 slices of brainpower cake.',
-    '',
-    'The monsters demand it is shared in this ratio:',
-    '2 : 1',
+    'The Monster Minds demand it is shared in a ratio of 2:1.',
   ].join('\n');
 };
 
@@ -247,10 +242,10 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const allSlicesUsed = remainingSlices === 0;
   const allCorrect = plateViews.every((plate) => plate.isCorrect);
   const platePositions = PLATE_POSITIONS[challenge.plateCount] || PLATE_POSITIONS[4];
-  const plateSize = 'calc(var(--game-stage-width, 390px) * 0.175)';
+  const plateSize = 'calc(var(--game-stage-width, 390px) * 0.19)';
   const promptText = isPractice
     ? challenge.prompt
-    : 'Place the cake slices to match the ratio.';
+    : `There are ${challenge.totalSlices} slices of brainpower cake.\nThe Monster Minds demand it is shared in a ratio of ${challenge.ratios.join(':')}.`;
 
   const loadNextChallenge = useCallback((solvedCount: number) => {
     const next = createChallenge(levelId, solvedCount);
@@ -329,7 +324,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     };
 
     const getHitPlateIndex = (clientX: number, clientY: number) => {
-      const padding = 8;
+      const padding = 16;
       let hitIndex = -1;
       plateRefs.current.forEach((plate, index) => {
         if (!plate) return;
@@ -377,7 +372,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         return;
       }
       const { index, distance } = getNearestPlate(point.x, point.y);
-      setHoverPlateIndex(distance <= 72 ? index : null);
+      setHoverPlateIndex(distance <= 84 ? index : null);
     };
 
     const handlePointerUp = (upEvent: PointerEvent) => {
@@ -394,7 +389,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         return;
       }
       const { index, distance } = getNearestPlate(point.x, point.y);
-      setHoverPlateIndex(distance <= 72 ? index : null);
+      setHoverPlateIndex(distance <= 84 ? index : null);
       touchEvent.preventDefault();
     };
 
@@ -497,7 +492,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Share Splitter"
-        body={SHARE_SPLITTER_INTRO}
+        body="Share the cake to match the ratio.\nDrag slices to the plates until the split is correct."
         onAction={() => setShowPracticeIntro(false)}
       />
 
@@ -525,13 +520,13 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
             {plateViews.map((plate, index) => {
               const plateTone = validationActive
                 ? plate.isCorrect
-                          ? 'border-emerald-300/70 bg-[linear-gradient(180deg,rgba(226,252,243,0.9),rgba(186,247,231,0.78))]'
-                          : 'border-amber-200/70 bg-[linear-gradient(180deg,rgba(255,243,205,0.9),rgba(255,232,176,0.78))]'
+                          ? 'border-emerald-300/35 bg-[linear-gradient(180deg,rgba(226,252,243,0.16),rgba(186,247,231,0.08))]'
+                          : 'border-amber-200/35 bg-[linear-gradient(180deg,rgba(255,243,205,0.16),rgba(255,232,176,0.08))]'
                         : hoverPlateIndex === index
-                          ? 'border-cyan-200/80 bg-[linear-gradient(180deg,rgba(240,249,255,0.92),rgba(214,241,255,0.76))]'
+                          ? 'border-cyan-200/55 bg-[linear-gradient(180deg,rgba(240,249,255,0.12),rgba(214,241,255,0.06))]'
                           : dragSlice
-                            ? 'border-cyan-200/60 bg-[linear-gradient(180deg,rgba(244,250,255,0.86),rgba(216,236,250,0.72))]'
-                            : 'border-white/50 bg-[linear-gradient(180deg,rgba(255,255,255,0.88),rgba(224,233,243,0.68))]';
+                            ? 'border-cyan-200/35 bg-[linear-gradient(180deg,rgba(244,250,255,0.08),rgba(216,236,250,0.04))]'
+                            : 'border-white/20 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(224,233,243,0.03))]';
                       const position = platePositions[index] || { x: 50, y: 50 };
 
                       return (
@@ -542,7 +537,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                             plateRefs.current[index] = node;
                           }}
                           disabled={locked}
-                          className={`pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border p-2 text-center shadow-[0_12px_20px_rgba(2,6,23,0.24)] transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.03]' : dragSlice && !locked ? 'scale-[1.01]' : ''}`}
+                          className={`pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border p-2 text-center shadow-[0_8px_14px_rgba(2,6,23,0.14)] transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.03]' : dragSlice && !locked ? 'scale-[1.01]' : ''}`}
                           style={{
                             left: `${position.x}%`,
                             top: `${position.y}%`,
@@ -580,14 +575,11 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                   whileTap={remainingSlices > 0 && !locked ? { scale: 0.96 } : undefined}
                   onPointerDown={handleSourcePointerDown}
                   disabled={locked || remainingSlices <= 0}
-                  className={`relative flex h-[76px] w-full max-w-[12rem] items-center justify-center rounded-full border border-white/18 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(30,41,59,0.7))] shadow-[0_12px_18px_rgba(15,23,42,0.28)] ${locked || remainingSlices <= 0 ? 'opacity-55' : ''}`}
+                  className={`relative flex h-[104px] w-full max-w-[17rem] items-center justify-center rounded-[1.8rem] border border-transparent bg-transparent shadow-none ${locked || remainingSlices <= 0 ? 'opacity-55' : ''}`}
                   aria-label={remainingSlices > 0 ? 'Drag one cake onto a plate' : 'No cakes left'}
                 >
-                  <div className="absolute inset-0 rounded-full border border-white/10 bg-[radial-gradient(circle_at_50%_48%,rgba(255,255,255,0.14),rgba(255,255,255,0.04)_38%,rgba(15,23,42,0)_68%)]" />
-                  <div className="relative z-10 text-[10px] font-black uppercase tracking-[0.18em] text-white/75">
-                    Drag
-                  </div>
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/34 px-2 py-1 text-[11px] font-black text-white">
+                  <div className="pointer-events-none absolute inset-0 rounded-[1.8rem] bg-transparent" />
+                  <div className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full bg-black/34 px-2 py-1 text-[11px] font-black text-white">
                     {remainingSlices}
                   </div>
                 </motion.button>
@@ -638,7 +630,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
               <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-[17px] py-[13px] text-center backdrop-blur-sm">
                 <div className="text-[12px] font-black uppercase tracking-[0.18em] text-amber-100/90">Share Splitter</div>
                 <div className="mt-1 text-[clamp(1.2rem,4.8vw,1.8rem)] font-black text-white">Match the Ratio</div>
-                <div className="mt-1 text-[13px] font-black text-amber-100">Ratio: {challenge.ratios.join(' : ')}</div>
                 <div className="mt-2 whitespace-pre-line text-[12px] font-semibold leading-tight text-cyan-100/90">
                   {promptText}
                 </div>

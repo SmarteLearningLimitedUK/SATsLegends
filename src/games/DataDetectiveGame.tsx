@@ -272,7 +272,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               </div>
             </header>
           ) : null}
-            <div className="game-question-card sticky top-0 z-30 mt-0 w-full max-w-[780px] max-[480px]:px-2 max-[480px]:py-1.5">
+            <div className="game-question-card z-30 mt-0 w-full max-w-[780px] max-[480px]:px-2 max-[480px]:py-1.5">
               <div className="question-title">{caseMode === 'whodunnit' ? 'Who took the loot?' : 'Match the evidence totals.'}</div>
               <div className="question-subtitle">{caseBrief}</div>
             </div>
@@ -300,7 +300,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             <div className="pointer-events-none absolute inset-0 bg-slate-950/20" />
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.3)_1px,transparent_1px)] opacity-7 [background-size:20px_20px]" />
 
-            <div className="relative w-full" style={{ height: 'clamp(10.5rem, 28vh, 17rem)' }}>
+            <div className="relative w-full" style={{ height: 'clamp(9rem, 23vh, 15rem)' }}>
               <ResponsiveContainer width="100%" height="100%">
                 {chartType === 'bar' ? (
                     <BarChart data={currentCase} margin={{ top: 12, right: 10, left: -6, bottom: 6 }}>
@@ -390,13 +390,13 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           </div>
         </section>
 
-          <section className="mt-auto z-10 flex w-full flex-col gap-2 bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] px-2 pb-0 pt-1 sm:px-3 sm:pb-1 sm:pt-1 md:gap-3 md:px-5 md:pb-2 md:pt-2 max-[480px]:gap-1 max-[480px]:px-1.5 max-[480px]:pb-0 max-[480px]:pt-0.5">
+          <section className="z-10 flex w-full flex-col gap-2 bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] px-2 pb-0 pt-1 sm:px-3 sm:pb-1 sm:pt-1 md:gap-3 md:px-5 md:pb-2 md:pt-2 max-[480px]:gap-1 max-[480px]:px-1.5 max-[480px]:pb-0 max-[480px]:pt-0.5">
           <div className="mb-1 flex items-center gap-2 text-amber-500">
             <Users className="h-5 w-5" />
             <h2 className="text-xs font-black uppercase tracking-widest">Suspect Lineup</h2>
           </div>
 
-          <div className="relative mt-auto">
+          <div className="relative">
             <div className={`grid grid-cols-4 items-end gap-1 max-[480px]:gap-0.5 ${selectedSuspect ? 'pointer-events-none opacity-0' : ''}`}>
               {suspects.map((suspect) => (
                 <motion.button
@@ -405,19 +405,19 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleSuspectClick(suspect.id)}
                   transition={{ duration: 0.35 }}
-                  className={`group relative flex w-full aspect-[4/3] items-center justify-center rounded-[1.2rem] border-2 p-1 transition-all duration-300 sm:aspect-[3/4] max-[480px]:rounded-lg max-[480px]:p-0.5 ${
+                  className={`group relative flex w-full aspect-[4/3] items-center justify-center rounded-[1.2rem] border-2 p-1 transition-all duration-300 sm:aspect-[3/4] max-[480px]:aspect-[1/1.12] max-[480px]:rounded-lg max-[480px]:p-0.5 ${
                     gameState === 'success' && suspect.id === guiltyId
                       ? 'border-emerald-500 bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.2)]'
                       : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
                   }`}
                 >
-                  <div className="relative h-full w-full overflow-hidden rounded-[1.05rem] border border-white/16 bg-slate-950/40 shadow-lg">
+                  <div className="relative h-full w-full overflow-hidden rounded-[1.05rem] border border-white/16 bg-slate-950/40 shadow-lg max-[480px]:rounded-[0.9rem]">
                     {suspect.portrait ? (
                       <img
                         src={suspect.portrait}
                         alt=""
                         draggable={false}
-                        className="suspect-portrait absolute inset-0 h-full w-full object-contain object-[center_18%]"
+                        className="suspect-portrait absolute inset-0 h-full w-full object-contain object-[center_18%] max-[480px]:object-[center_16%]"
                         data-suspect-portrait="true"
                       />
                     ) : (

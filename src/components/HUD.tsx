@@ -19,6 +19,7 @@ interface HUDProps {
 
 const HUD: React.FC<HUDProps> = ({ title, XP, targetScore, timeLeft, level, avatar: _avatar }) => {
   const progress = Math.min((XP / targetScore) * 100, 100);
+  const shouldHideTimer = LEVEL_TIMERS_DISABLED || Boolean(level.isPractice);
 
   return (
     <div className="flex w-full shrink-0 flex-col gap-1 px-1 py-0.5 md:gap-2 md:px-2">
@@ -40,8 +41,8 @@ const HUD: React.FC<HUDProps> = ({ title, XP, targetScore, timeLeft, level, avat
             </div>
           </div>
 
-          <div className={`grid ${LEVEL_TIMERS_DISABLED ? 'grid-cols-1' : 'grid-cols-2'} gap-1 md:gap-1.5`}>
-            {!LEVEL_TIMERS_DISABLED ? (
+          <div className={`grid ${shouldHideTimer ? 'grid-cols-1' : 'grid-cols-2'} gap-1 md:gap-1.5`}>
+            {!shouldHideTimer ? (
               <div className="relative overflow-hidden rounded-[0.8rem] px-2 py-1 text-center md:rounded-[1rem] md:px-2.5 md:py-1.5">
                 <div className="absolute inset-0 rounded-[inherit] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(226,232,240,0.92))]" />
                 <div className="relative text-[7px] font-black uppercase tracking-[0.16em] text-slate-600 md:text-[9px]">Time</div>

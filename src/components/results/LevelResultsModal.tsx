@@ -16,6 +16,7 @@ interface LevelResultsModalProps {
     subtitle: string;
     stars: StarCount;
     xpGained: number;
+    practice?: boolean;
     bonuses: BonusBreakdownType[];
     previousLevel: number;
     newLevel: number;
@@ -94,6 +95,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
   const [playXp, setPlayXp] = useState(false);
   const [showButtons, setShowButtons] = useState(false);
   const [levelUpPulse, setLevelUpPulse] = useState(false);
+  const isPractice = Boolean(result?.practice);
   const handleXpComplete = useCallback(() => setShowButtons(true), []);
   const handleXpLevelUp = useCallback(() => setLevelUpPulse(true), []);
 
@@ -107,13 +109,18 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
     const starDelay = reducedMotion ? 0 : 180;
     const xpDelay = reducedMotion ? 0 : 540;
 
+    if (isPractice) {
+      const buttonsTimer = window.setTimeout(() => setShowButtons(true), reducedMotion ? 0 : 220);
+      return () => window.clearTimeout(buttonsTimer);
+    }
+
     const timers = [
       window.setTimeout(() => setPlayStars(true), starDelay),
       window.setTimeout(() => setPlayXp(true), xpDelay),
     ];
 
     return () => timers.forEach((timer) => window.clearTimeout(timer));
-  }, [isOpen, reducedMotion, result]);
+  }, [isOpen, isPractice, reducedMotion, result]);
 
   const xpSegments = useMemo(() => {
     if (!result) return [];
@@ -151,47 +158,74 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
 
             <div className="relative z-10 flex flex-col gap-4">
               <div className="flex flex-col items-center text-center">
-                <span className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] ${isVictory ? 'border-emerald-200/50 bg-emerald-400/20 text-emerald-100' : 'border-rose-200/45 bg-rose-400/20 text-amber-100'}`}>
-                  {isVictory ? 'Level Complete' : 'Try Again'}
+                <span className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] ${isPractice ? 'border-cyan-200/50 bg-cyan-400/20 text-cyan-100' : isVictory ? 'border-emerald-200/50 bg-emerald-400/20 text-emerald-100' : 'border-rose-200/45 bg-rose-400/20 text-amber-100'}`}>
+                  {isPractice ? (isVictory ? 'Practice Complete' : 'Practice Round Over') : isVictory ? 'Level Complete' : 'Try Again'}
                 </span>
                 <h2 className="mt-2 text-2xl font-black text-amber-100 md:text-3xl">{result.title}</h2>
                 <p className="mt-1 text-sm font-semibold text-white/80 md:text-base">{result.subtitle}</p>
               </div>
 
-              <div className="flex flex-col items-center gap-2">
-                <AnimatedStarDisplay stars={result.stars} play={playStars} />
-                {result.stars === 3 ? (
-                  <span className="rounded-full border border-amber-200/60 bg-amber-300/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100">
-                    Perfect Run
-                  </span>
-                ) : null}
-              </div>
+              {isPractice ? (
+                <div className="rounded-[1.2rem] border border-cyan-200/18 bg-cyan-400/10 px-4 py-3 text-center">
+                  <div className="text-xs font-black uppercase tracking-[0.18em] text-cyan-100/85">
+                    No XP or brainpower awarded
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="flex flex-col items-center gap-2">
+                    <AnimatedStarDisplay stars={result.stars} play={playStars} />
+                    {result.stars === 3 ? (
+                      <span className="rounded-full border border-amber-200/60 bg-amber-300/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100">
+                        Perfect Run
+                      </span>
+                    ) : null}
+                  </div>
 
-              <div className="rounded-[1.2rem] border border-white/12 bg-white/5 p-3 md:p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-[0.18em] text-white/60">XP Earned</span>
-                  <span className="text-lg font-black text-cyan-200">+{result.xpGained} XP</span>
-                </div>
-                <div className="mt-3 flex items-center justify-between">
-                  <LevelBadge level={result.newLevel} highlight={levelUpPulse} />
-                  {result.leveledUp ? (
-                    <span className="text-xs font-bold uppercase tracking-[0.16em] text-amber-200">Level Up!</span>
-                  ) : null}
-                </div>
-                <div className="mt-3">
-                  <XpBar
-                    segments={xpSegments}
-                    play={playXp}
-                    onLevelUp={handleXpLevelUp}
-                    onComplete={handleXpComplete}
-                  />
-                </div>
-              </div>
+                  <div className="rounded-[1.2rem] border border-white/12 bg-white/5 p-3 md:p-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold uppercase tracking-[0.18em] text-white/60">XP Earned</span>
+                      <span className="text-lg font-black text-cyan-200">+{result.xpGained} XP</span>
+                    </div>
+                    <div className="mt-3 flex items-center justify-between">
+                      <LevelBadge level={result.newLevel} highlight={levelUpPulse} />
+                      {result.leveledUp ? (
+                        <span className="text-xs font-bold uppercase tracking-[0.16em] text-amber-200">Level Up!</span>
+                      ) : null}
+                    </div>
+                    <div className="mt-3">
+                      <XpBar
+                        segments={xpSegments}
+                        play={playXp}
+                        onLevelUp={handleXpLevelUp}
+                        onComplete={handleXpComplete}
+                      />
+                    </div>
+                  </div>
 
-              <BonusBreakdown bonuses={result.bonuses} />
+                  <BonusBreakdown bonuses={result.bonuses} />
+                </>
+              )}
 
               <div className={`mt-2 grid gap-2 ${showButtons ? 'opacity-100' : 'opacity-0 pointer-events-none'} transition-opacity duration-300 ${isVictory ? 'grid-cols-2' : 'grid-cols-2'}`}>
-                {isVictory ? (
+                {isPractice ? (
+                  <>
+                    <button
+                      type="button"
+                      className="rounded-full bg-[linear-gradient(90deg,#38bdf8,#6366f1)] py-3 text-sm font-black uppercase tracking-[0.18em] text-white shadow-[0_12px_24px_rgba(59,130,246,0.45)]"
+                      onClick={onRetry}
+                    >
+                      Retry Practice
+                    </button>
+                    <button
+                      type="button"
+                      className="rounded-full border border-white/25 bg-white/10 py-2 text-xs font-black uppercase tracking-[0.18em] text-white"
+                      onClick={onMap}
+                    >
+                      Map
+                    </button>
+                  </>
+                ) : isVictory ? (
                   <button
                     type="button"
                     className="rounded-full bg-[linear-gradient(90deg,#38bdf8,#6366f1)] py-3 text-sm font-black uppercase tracking-[0.18em] text-white shadow-[0_12px_24px_rgba(59,130,246,0.45)]"

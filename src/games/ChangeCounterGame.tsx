@@ -314,7 +314,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Change Counter"
-        body="The summit traders need the exact change for every order."
+        body="Find the exact change.\nUse the coins on screen to make the total match the order."
         onAction={() => setShowPracticeIntro(false)}
       />
 

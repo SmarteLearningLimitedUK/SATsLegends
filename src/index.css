@@ -4833,7 +4833,7 @@ button.avatar-hero-arrow:not(:disabled):active {
   box-sizing: border-box;
 }
 
-/* Question cards should sit exactly 5px below the shared HUD in gameplay. */
+/* Question cards should sit just below the shared HUD in gameplay. */
 .screen-gameplay .game-screen-layout {
   padding-top: 0 !important;
   gap: 0 !important;
@@ -4846,7 +4846,7 @@ button.avatar-hero-arrow:not(:disabled):active {
   padding-bottom: 0 !important;
 }
 
-.screen-gameplay .game-question-card {
+.screen-gameplay .game-screen-top .game-question-card {
   margin-top: 0 !important;
 }
 
@@ -5315,6 +5315,30 @@ button.avatar-hero-arrow:not(:disabled):active {
   background: rgba(6, 16, 36, 0.68) !important;
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 14px 26px rgba(2,6,23,0.28) !important;
   text-align: center;
+}
+
+/* Shared question surface:
+   keeps all learner-facing question cards on one consistent blue/gold panel style. */
+.app-viewport.sat-theme-bluegold .game-question-card,
+.screen-gameplay .game-shell-host .mission-panel-shell,
+.screen-gameplay .game-shell-host .licensed-game-card,
+.screen-gameplay .game-shell-host .licensed-game-card-dark,
+.screen-gameplay .game-shell-host .licensed-overlay-card,
+.screen-gameplay .game-shell-host .shared-game-interaction-panel,
+.screen-gameplay .game-shell-host .reward-panel,
+.screen-gameplay .game-shell-host .casual-panel-surface,
+.screen-gameplay .game-shell-host .casual-panel-strong,
+.screen-gameplay .game-shell-host .aaa-objective-shell,
+.screen-gameplay .game-shell-host .aaa-playfield-shell {
+  border: 1px solid rgba(176, 220, 255, 0.32) !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0) 52%),
+    linear-gradient(180deg, rgba(26, 54, 124, 0.96), rgba(10, 17, 40, 0.98)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -2px 0 rgba(10, 17, 40, 0.6),
+    0 14px 28px rgba(2, 6, 23, 0.32) !important;
+  color: #fff8ec !important;
 }
 
 

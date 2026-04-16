@@ -243,7 +243,7 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Unit Mixer"
-        body="Keep the expedition supplies safe by converting each unit accurately."
+        body="Convert the units carefully.\nMatch the target before the round clears."
         onAction={() => setShowPracticeIntro(false)}
       />
 

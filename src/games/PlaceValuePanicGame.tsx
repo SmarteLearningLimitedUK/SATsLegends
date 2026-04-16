@@ -558,12 +558,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   }, [resetRound, resolvedLevel]);
 
   useEffect(() => {
-    if (victoryDispatchedRef.current || gameOverDispatchedRef.current) return undefined;
+    if (isPractice || victoryDispatchedRef.current || gameOverDispatchedRef.current) return undefined;
     const intervalId = window.setInterval(() => {
       setMatchTimeLeft((prev) => Math.max(0, prev - 1));
     }, 1000);
     return () => window.clearInterval(intervalId);
-  }, [question.id]);
+  }, [isPractice, question.id]);
 
   useEffect(() => {
     let mounted = true;

@@ -403,9 +403,11 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     }, tuning.incorrectFeedbackMs);
   };
 
-  const playerLeft = clamp((playerPosRef.current / tuning.trackLength) * 100, 4, 96);
-  const enemyLeft = clamp((enemyPosRef.current / tuning.trackLength) * 100, 4, 96);
-  const finishLeft = 96;
+  const trackSpan = Math.max(1, tuning.trackLength);
+  const cameraWorldPosition = playerPosRef.current;
+  const playerLeft = 50;
+  const enemyLeft = 50 + ((enemyPosRef.current - cameraWorldPosition) / trackSpan) * 100;
+  const finishLeft = 50 + ((tuning.trackLength - cameraWorldPosition) / trackSpan) * 100;
   const showBoost = raceState === 'correctBoost';
   const showStall = raceState === 'incorrectStall';
   const trackLineY = clamp(

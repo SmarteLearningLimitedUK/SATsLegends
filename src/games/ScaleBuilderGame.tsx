@@ -80,49 +80,7 @@ const LEVELS: Level[] = [
 const GRID_SIZE = 20;
 const BLUEPRINT_BOARD_TOP = '58%';
 const BLUEPRINT_BOARD_SIZE = 'min(76vw, 29rem, 58vh)';
-const SCALE_BUILDER_INTRO = `The Monster Minds have distorted the structures of Matharia, shrinking and enlarging buildings to break their function.
-
-Bridges no longer reach. Towers are unstable. Defences are useless.
-
-Only by using scale correctly can you rebuild them.
-You must adjust the blueprint using the correct scale factor to rebuild the structure.
-
-👉 Follow the ratio carefully to restore it to the correct size.
-
-Example Question
-
-A defence tower blueprint has been corrupted.
-
-Original height: 5 metres
-
-Scale factor: ×3
-
-👉 What should the new height be?
-
-Success Feedback
-
-🏗️ “Structure restored!”
-
-The tower is rebuilt to 15 metres.
-Failure Feedback
-
-⚠️ “Structure unstable!”
-
-Reusable Template
-
-🏗️ Original size: [value]
-
-📐 Scale factor: × or ÷ [number] (or ratio form)
-
-👉 What is the new size?
-
-💡 Ratio-Based Version (more advanced)
-
-A bridge is built using a scale ratio of 1 : 4
-
-The model is 3 metres long
-
-👉 How long is the real bridge?`;
+const SCALE_BUILDER_INTRO = `Use the scale factor to resize the blueprint.\nMatch the new size exactly to rebuild the structure.`;
 
 const BlueprintGrid: React.FC = () => (
   <div className="pointer-events-none absolute inset-0 opacity-22">
@@ -590,4 +548,5 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
 };
 
 export default ScaleBuilderGame;
+
 

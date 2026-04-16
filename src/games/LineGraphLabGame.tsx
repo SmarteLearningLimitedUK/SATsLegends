@@ -328,31 +328,8 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Line Graph Lab"
-        body={(
-          <div className="space-y-3">
-            <p>You&apos;ve entered the Line Graph Lab.</p>
-            <p>Here, the SATs Legends track how brainpower changes over time.</p>
-            <p>But the Monster Minds have tampered with the data, hiding key information within the graph!</p>
-            <p>Only by reading the exact coordinates can you uncover the truth.</p>
-            <div className="space-y-2 rounded-[1rem] border border-cyan-100/15 bg-white/5 p-3">
-              <div className="font-black text-cyan-100">Example Question 1 (basic coordinate reading)</div>
-              <div>The graph shows brainpower levels over time.</div>
-              <div>What is the brainpower at time = 4?</div>
-              <div className="font-black text-cyan-100">Example Question 2 (reading a point)</div>
-              <div>What are the coordinates of the marked point A?</div>
-              <div>(Learner answers in form: (x, y))</div>
-              <div className="font-black text-cyan-100">Example Question 3 (interpretation)</div>
-              <div>At what time does the brainpower reach 20 units?</div>
-              <div className="font-black text-cyan-100">Example Question 4 (comparison over time)</div>
-              <div>Between which two time points does brainpower increase the most?</div>
-            </div>
-            <div className="space-y-1 rounded-[1rem] border border-emerald-100/15 bg-emerald-500/8 p-3">
-              <div className="font-black text-emerald-100">Success Feedback</div>
-              <div>📊 “Data recovered!”</div>
-            </div>
-          </div>
-        )}
-        onAction={() => setShowPracticeIntro(false)}
+        body="Read the line graph carefully.\nFind coordinates, values and changes over time to recover the data."
+          onAction={() => setShowPracticeIntro(false)}
       />
       <GameScreenLayout
         className="relative h-full w-full min-h-0 select-none gap-0 text-slate-100"
@@ -570,3 +547,4 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
 };
 
 export default LineGraphLabGame;
+

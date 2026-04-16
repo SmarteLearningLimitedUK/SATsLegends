@@ -37,18 +37,18 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 10, scale: 0.98 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-          className="relative z-10 flex max-h-[calc(100vh-1.5rem)] w-[min(92vw,34rem)] flex-col overflow-hidden rounded-[1.5rem] border border-cyan-100/28 bg-[linear-gradient(180deg,rgba(12,18,38,0.98),rgba(10,16,32,0.96))] px-4 py-4 text-center text-white shadow-[0_22px_48px_rgba(2,6,23,0.5)] md:px-6 md:py-5"
+          className="relative z-10 flex max-h-[calc(100vh-1.5rem)] w-[min(92vw,34rem)] flex-col overflow-hidden rounded-3xl border border-blue-400/40 bg-blue-950/70 px-4 py-4 text-center text-white shadow-2xl md:px-6 md:py-5"
         >
           <button
             type="button"
             aria-label="Close practice briefing"
             onClick={onAction}
-            className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full border border-cyan-100/20 bg-slate-950/60 text-cyan-50 transition hover:bg-slate-900/80 hover:text-white"
+            className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full border border-blue-200/20 bg-blue-950/70 text-cyan-50 transition hover:bg-blue-900/80 hover:text-white"
           >
             <X className="h-4 w-4" />
           </button>
           <div className="flex-1 overflow-y-auto pr-1">
-            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/80 md:text-xs">
+            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100 md:text-xs">
               Practice Briefing
             </div>
             <div className="mt-2 text-[clamp(1.15rem,4.8vw,1.8rem)] font-black text-amber-100">
@@ -62,7 +62,7 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
             <button
               type="button"
               onClick={onAction}
-              className="inline-flex min-h-[2.8rem] items-center justify-center rounded-full border border-cyan-100/35 bg-cyan-300/15 px-4 py-2 text-[11px] font-normal uppercase tracking-[0.14em] text-black transition hover:bg-cyan-300/22 active:translate-y-[1px]"
+              className="game-button-primary inline-flex min-h-[2.8rem] items-center justify-center px-5 py-2 text-[11px] uppercase tracking-[0.14em]"
             >
               {actionLabel}
             </button>

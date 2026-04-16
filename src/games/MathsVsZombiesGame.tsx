@@ -314,7 +314,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   }, [levelId, roundSeconds, spawnDelayMs]);
 
   useEffect(() => {
-    if (!gameActive || endedRef.current) return;
+    if (isPractice || !gameActive || endedRef.current) return;
     const timerInterval = window.setInterval(() => {
       setTimeLeft((previous) => {
         if (previous <= 1) {
@@ -328,7 +328,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     }, 1000);
 
     return () => window.clearInterval(timerInterval);
-  }, [finishGame, gameActive, health]);
+  }, [finishGame, gameActive, health, isPractice]);
 
   const updateFrame = useCallback((timestamp: number) => {
     if (!gameActive || endedRef.current) return;
@@ -493,7 +493,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Maths Vs Zombies"
-        body="the monster minds have sent their minions to steal brain power.\nsolve the sum to defeat them."
+        body="Solve the sums to stop the monster minions.\nEach correct answer pushes them back."
         onAction={() => setShowPracticeIntro(false)}
       />
 

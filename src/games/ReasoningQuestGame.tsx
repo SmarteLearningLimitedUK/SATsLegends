@@ -308,7 +308,7 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Reasoning Quest"
-        body="Choose the best plan to clear the next path."
+        body="Read the clue and choose the best plan.\nPick the answer that clears the path."
         onAction={() => setShowPracticeIntro(false)}
       />
 

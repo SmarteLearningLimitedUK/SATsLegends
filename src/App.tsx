@@ -44,6 +44,7 @@ import { applyTelemetryEvent } from './systems/progression/telemetry';
 import { reconcileAchievementState } from './systems/progression/achievementCatalog';
 import { useProgressionStore } from './store/useProgressionStore';
 import { LevelProgress } from './lib/progression/types';
+import { getXpRequiredForLevel } from './lib/progression/getXpRequiredForLevel';
 import { CACHE_BUSTER } from './cacheBuster';
 
 const App: React.FC = () => {
@@ -311,8 +312,63 @@ const App: React.FC = () => {
     return 'Round over';
   }, [canonicalGameTitle]);
 
+  const buildPracticeLevelResult = useCallback((
+    type: 'victory' | 'gameover',
+    score: number,
+    accuracy: number,
+    timeMs: number,
+  ): LevelResultState | null => {
+    if (!selectedIsland || !selectedLevel) return null;
+
+    return {
+      type,
+      title: resolveLevelTitle(),
+      subtitle: type === 'victory'
+        ? 'Practice complete. No XP or brainpower earned.'
+        : 'Practice round over. No XP or brainpower earned.',
+      score,
+      practice: true,
+      stars: 0,
+      xpGained: 0,
+      bonuses: [],
+      previousLevel: progressionPlayer.level,
+      newLevel: progressionPlayer.level,
+      previousXp: progressionPlayer.currentXp,
+      currentXp: progressionPlayer.currentXp,
+      xpRequiredForNextLevel: getXpRequiredForLevel(progressionPlayer.level),
+      leveledUp: false,
+      accuracy,
+      hintsUsed: sessionMetrics.hintsUsed,
+      mistakes: sessionMetrics.incorrect,
+      timeMs,
+      completed: type === 'victory',
+      coinsEarned: 0,
+      xpEarned: 0,
+      achievementsUnlocked: [],
+      wellbeingSuggested: false,
+    };
+  }, [
+    progressionPlayer.currentXp,
+    progressionPlayer.level,
+    resolveLevelTitle,
+    selectedIsland,
+    selectedLevel,
+    sessionMetrics.hintsUsed,
+    sessionMetrics.incorrect,
+  ]);
+
   const handleGameOver = useCallback((XP: number) => {
     triggerHaptic('error');
+    if (selectedLevel?.isPractice) {
+      if (!selectedIsland || !selectedLevel) return;
+      const totalAttempts = sessionMetrics.correct + sessionMetrics.incorrect;
+      const accuracy = totalAttempts > 0 ? sessionMetrics.correct / totalAttempts : 0;
+      const timeMs = Math.max(0, (sessionState.totalTime - sessionState.timeLeft) * 1000);
+      const practiceResult = buildPracticeLevelResult('gameover', XP, accuracy, timeMs);
+      if (practiceResult) setLevelResult(practiceResult);
+      return;
+    }
+
     let wellbeingSuggested = false;
     const now = Date.now();
     const levelKey = selectedIsland && selectedLevel ? `${selectedIsland.id}-${selectedLevel.id}` : null;
@@ -374,7 +430,7 @@ const App: React.FC = () => {
       achievementsUnlocked: [],
       wellbeingSuggested,
     });
-  }, [completeProgressionLevel, resolveLevelTitle, selectedIsland, selectedLevel, sessionMetrics.correct, sessionMetrics.hintsUsed, sessionMetrics.incorrect, sessionState.lives, sessionState.timeLeft, sessionState.totalTime, setLevelResult]);
+  }, [buildPracticeLevelResult, completeProgressionLevel, resolveLevelTitle, selectedIsland, selectedLevel, sessionMetrics.correct, sessionMetrics.hintsUsed, sessionMetrics.incorrect, sessionState.lives, sessionState.timeLeft, sessionState.totalTime, setLevelResult]);
 
   useEffect(() => {
     handleGameOverRef.current = handleGameOver;
@@ -443,47 +499,16 @@ const App: React.FC = () => {
 
   const hintRuleSet = useMemo(
     () => {
-      const baseRules = selectedLevel?.isPractice
-        ? {
-            title: canonicalGameTitle || 'Practice',
-            summary: `This is the practice round for ${canonicalGameTitle || 'this game'}. Use it to learn the controls before the real level.`,
-            bullets: [
-              'Read the mission at the top before you begin.',
-              'Use the on-screen tools to learn how the game works.',
-              'Tap help any time you want a reminder.',
-            ],
-          }
-        : selectedLevel?.blueprintKey === 'place_value_panic'
-        ? {
-            title: canonicalGameTitle || 'Place Value Panic',
-            summary: 'Sort the digits into the correct place-value slots to build the target number.',
-            bullets: [
-              'Read the number at the top and check each place-value column.',
-              'Drag the digits into the correct column slots.',
-              'When every digit is in the right place, the round clears.',
-            ],
-          }
-        : selectedLevel?.gameType === 'potion_pour'
-        ? {
-            title: canonicalGameTitle || 'Potion Panic',
-            summary: 'Tap the right bottles to build the exact potion, then press Brew to check it.',
-            bullets: [
-              'Watch the target mix and the goal bars for each ingredient.',
-              'Add only the ingredients in the recipe and stop when each one reaches its target.',
-              'Press Brew when your totals and ratio match the potion you need.',
-            ],
-          }
-          : (selectedRuleSet || (selectedLevel
-            ? {
-                title: canonicalGameTitle || 'How To Play',
-                summary: 'Follow the on-screen objective and complete the activity step by step.',
-                bullets: [
-                'Read the mission text first, then choose, place, or build your answer.',
-                'Use the hint button any time you want a reminder of the rules.',
-                'If the screen gives you a visual tool or scene object, use that to solve the task.',
-              ],
-            }
-            : null));
+      if (!selectedLevel?.isPractice) return null;
+      const baseRules = selectedRuleSet || {
+        title: canonicalGameTitle || 'Practice',
+        summary: `This is the practice round for ${canonicalGameTitle || 'this game'}. Use it to learn the controls before the real level.`,
+        bullets: [
+          'Read the mission at the top before you begin.',
+          'Use the on-screen tools to learn how the game works.',
+          'Tap help any time you want a reminder.',
+        ],
+      };
       if (!baseRules) return null;
       const titleOverride = canonicalGameTitle?.trim();
       const resolvedRules = titleOverride
@@ -619,6 +644,16 @@ const App: React.FC = () => {
 
   const handleGameVictory = (stars: number, XP: number) => {
     triggerHaptic('success');
+    if (selectedLevel?.isPractice) {
+      const totalAttempts = sessionMetrics.correct + sessionMetrics.incorrect;
+      const fallbackAccuracy = stars >= 3 ? 1 : stars === 2 ? 0.85 : stars === 1 ? 0.65 : 0.5;
+      const accuracy = totalAttempts > 0 ? sessionMetrics.correct / totalAttempts : fallbackAccuracy;
+      const timeMs = Math.max(0, (sessionState.totalTime - sessionState.timeLeft) * 1000);
+      const practiceResult = buildPracticeLevelResult('victory', XP, accuracy, timeMs);
+      if (practiceResult) setLevelResult(practiceResult);
+      return;
+    }
+
     setWellbeingSignals((prev) => ({
       ...prev,
       consecutiveFails: 0,
@@ -857,6 +892,7 @@ const App: React.FC = () => {
   const screenExitScale = useFlatScreenScaleTransition ? 1 : 1.02;
   const hideShellTimer = LEVEL_TIMERS_DISABLED
     || !isGameplayScreen
+    || selectedLevel?.isPractice
     || selectedLevel?.gameType === 'potion_pour';
   const goToProfile = useCallback(() => {
     setScreen('profile');

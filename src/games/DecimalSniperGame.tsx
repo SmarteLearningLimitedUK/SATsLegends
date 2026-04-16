@@ -443,7 +443,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
   }, [round.id]);
 
   useEffect(() => {
-    if (resultState !== 'running' || isPaused) return undefined;
+    if (isPractice || resultState !== 'running' || isPaused) return undefined;
 
     const timerId = window.setInterval(() => {
       setTimeLeft((previous) => {
@@ -457,7 +457,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
     }, 1000);
 
     return () => window.clearInterval(timerId);
-  }, [isPaused, resolveGameOver, resultState]);
+  }, [isPaused, isPractice, resolveGameOver, resultState]);
 
   useEffect(() => {
     if (!feedback) return undefined;

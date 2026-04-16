@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
+import cargoShipImage from '../assets/boats/7.png';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
@@ -54,6 +55,11 @@ const CARGO_ROUNDS: Record<ChartRoundMode, number[]> = {
 const modeForLevel = (_levelId: number, roundIndex: number): ChartRoundMode => {
   const cycle: ChartRoundMode[] = ['basic', 'comparison', 'difference', 'total'];
   return cycle[roundIndex % cycle.length];
+};
+
+type BoatAnimation = {
+  id: number;
+  outcome: 'success' | 'failure';
 };
 
 const createRound = (levelId: number, roundIndex: number): ChartRound => {
@@ -125,7 +131,6 @@ const CoinBarBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships, 
   const maxValue = Math.max(...ships.map((ship) => ship.value));
   return (
     <div className="w-full">
-      <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/62 md:text-[10px]">{label}</div>
       <div className="mt-3 grid grid-cols-4 items-end gap-2 md:gap-3">
         {ships.map((ship) => (
           <div key={ship.id} className="flex flex-col items-center gap-1.5">
@@ -150,6 +155,9 @@ const CoinBarBoard: React.FC<{ ships: ShipDatum[]; label: string }> = ({ ships, 
             </div>
           </div>
         ))}
+      </div>
+      <div className="mt-3 text-center text-[9px] font-black uppercase tracking-[0.2em] text-white/62 md:text-[10px]">
+        {label}
       </div>
     </div>
   );
@@ -176,6 +184,8 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
   const [feedback, setFeedback] = useState<null | { type: 'success' | 'error'; title: string; subtitle: string }>(null);
   const [isFinished, setIsFinished] = useState(false);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
+  const [boatAnimation, setBoatAnimation] = useState<BoatAnimation | null>(null);
+  const boatAnimationIdRef = useRef(0);
 
   const progress = Math.min((XP / targetScore) * 100, 100);
 
@@ -197,6 +207,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
     setFeedback(null);
     setIsFinished(false);
     setShowPracticeIntro(Boolean(isPractice));
+    setBoatAnimation(null);
   }, [isPractice, levelId]);
 
   useEffect(() => {
@@ -204,7 +215,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
   }, [isPractice]);
 
   useEffect(() => {
-    if (isFinished) return undefined;
+    if (isPractice || isFinished) return undefined;
     const timerId = window.setInterval(() => {
       setTimeLeft((previous) => {
         if (previous <= 1) {
@@ -217,7 +228,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
       });
     }, 1000);
     return () => window.clearInterval(timerId);
-  }, [isFinished, onGameOver, XP]);
+  }, [isFinished, isPractice, onGameOver, XP]);
 
   const finishVictory = (finalScore: number) => {
     if (isFinished) return;
@@ -250,6 +261,17 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
     timeoutsRef.current.push(timeoutId);
   };
 
+  const triggerBoatAnimation = (outcome: BoatAnimation['outcome']) => {
+    boatAnimationIdRef.current += 1;
+    const id = boatAnimationIdRef.current;
+    setBoatAnimation({ id, outcome });
+    const clearDelay = outcome === 'success' ? 3000 : 2200;
+    const timeoutId = window.setTimeout(() => {
+      setBoatAnimation((current) => (current?.id === id ? null : current));
+    }, clearDelay);
+    timeoutsRef.current.push(timeoutId);
+  };
+
   const loseHeart = (subtitle: string) => {
     if (feedback || isFinished) return;
     const nextHearts = hearts - 1;
@@ -271,6 +293,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
   const handleChoice = (choice: string) => {
     if (feedback || isFinished) return;
     if (choice !== round.answer) {
+      triggerBoatAnimation('failure');
       loseHeart(`The correct answer was ${round.answer}.`);
       return;
     }
@@ -279,6 +302,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
     const updatedScore = XP + points;
     setScore(updatedScore);
     setStreak((previous) => previous + 1);
+    triggerBoatAnimation('success');
     setFeedback({ type: 'success', title: 'Treasure Found!', subtitle: `+${points} XP` });
     confetti({
       particleCount: 42,
@@ -294,41 +318,49 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Graph Grabber"
-        body={(
-          <div className="space-y-3">
-            <p>Four cargo ships have just arrived, each carrying crates filled with stolen brainpower.</p>
-            <p>But the Monster Minds have scrambled the records, hiding the truth inside a graph!</p>
-            <p>Only by reading the graph correctly can you track where the brainpower has gone.</p>
-            <div className="space-y-2 rounded-[1rem] border border-cyan-100/15 bg-white/5 p-3">
-              <div className="font-black text-cyan-100">Example Question 1 (basic reading)</div>
-              <div>How many crates did The Number Wave deliver?</div>
-              <div className="font-black text-cyan-100">Example Question 2 (comparison)</div>
-              <div>Which ship delivered the most crates?</div>
-              <div className="font-black text-cyan-100">Example Question 3 (difference)</div>
-              <div>How many more crates did The Logic Tide deliver than The Brain Voyager?</div>
-              <div className="font-black text-cyan-100">Example Question 4 (total)</div>
-              <div>What is the total number of crates delivered by all four ships?</div>
-            </div>
-            <div className="space-y-2 rounded-[1rem] border border-emerald-100/15 bg-emerald-500/8 p-3">
-              <div className="font-black text-emerald-100">Level Progression Ideas</div>
-              <div className="space-y-1 text-cyan-50/92">
-                <div><span className="font-black text-emerald-200">Easy:</span> Read single values. "How many crates...?"</div>
-                <div><span className="font-black text-emerald-200">Medium:</span> Compare ships and find differences.</div>
-                <div><span className="font-black text-emerald-200">Hard:</span> Totals, multi-step questions, and hidden trick questions.</div>
-              </div>
-            </div>
-            <div className="space-y-1 rounded-[1rem] border border-white/10 bg-black/15 p-3">
-              <div className="font-black text-emerald-100">Success Feedback</div>
-              <div>📦 “Crates tracked!”</div>
-              <div className="pt-2 font-black text-rose-100">Failure Feedback</div>
-              <div>📦 “Manifest Mismatch”</div>
-            </div>
-          </div>
-        )}
-        onAction={() => setShowPracticeIntro(false)}
+        body="Read the graph to track the stolen brainpower.\nAnswer with single values, comparisons and totals."
+          onAction={() => setShowPracticeIntro(false)}
       />
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2 md:gap-3 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.8rem)] md:pt-3">
+        <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2 md:gap-3 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.8rem)] md:pt-3">
         <div className="licensed-board-frame structured-playfield-frame relative flex w-full max-w-6xl min-h-0 flex-1 overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] shadow-[0_28px_64px_rgba(0,0,0,0.34)] md:rounded-[2.6rem]">
+          {boatAnimation && (
+            <motion.img
+              key={boatAnimation.id}
+              src={cargoShipImage}
+              alt=""
+              aria-hidden="true"
+              initial={{
+                x: '-28vw',
+                y: 0,
+                opacity: 0,
+                rotate: -2,
+                scale: 0.96,
+              }}
+              animate={
+                boatAnimation.outcome === 'success'
+                  ? {
+                      x: '120vw',
+                      y: 0,
+                      opacity: 1,
+                      rotate: 0.5,
+                      scale: 1,
+                    }
+                  : {
+                      x: ['-28vw', '54vw', '58vw'],
+                      y: [0, 0, 22],
+                      opacity: [0, 1, 0],
+                      rotate: [-2, 0, 8],
+                      scale: [0.96, 1, 0.9],
+                    }
+              }
+              transition={
+                boatAnimation.outcome === 'success'
+                  ? { duration: 3.1, ease: 'linear' }
+                  : { duration: 2.25, times: [0, 0.72, 1], ease: 'easeInOut' }
+              }
+              className="pointer-events-none absolute bottom-2 left-0 z-20 h-14 w-auto drop-shadow-[0_10px_16px_rgba(0,0,0,0.22)] md:h-20"
+            />
+          )}
 
             <div className="relative z-10 flex h-full w-full flex-col px-3 pb-3 pt-2 md:px-5 md:pb-4 md:pt-3">
               <div className="flex justify-center">
@@ -372,7 +404,7 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
                 initial={{ opacity: 0, scale: 0.82 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.08 }}
-                className={`pointer-events-none absolute inset-0 z-40 flex items-center justify-center backdrop-blur-md ${feedback.type === 'success' ? 'bg-emerald-500/16' : 'bg-red-500/16'}`}
+                className={`pointer-events-none fixed inset-0 z-40 flex items-center justify-center backdrop-blur-md ${feedback.type === 'success' ? 'bg-emerald-500/16' : 'bg-red-500/16'}`}
               >
                 <div className="rounded-[2rem] border border-white/14 bg-slate-950/60 px-8 py-6 text-center shadow-[0_24px_36px_rgba(0,0,0,0.24)]">
                   <div className={`text-4xl font-black uppercase tracking-[0.12em] md:text-6xl ${feedback.type === 'success' ? 'text-emerald-100' : 'text-amber-100'}`}>
@@ -391,4 +423,5 @@ const TreasureChartCoveGame: React.FC<TreasureChartCoveGameProps> = ({
 };
 
 export default TreasureChartCoveGame;
+
 

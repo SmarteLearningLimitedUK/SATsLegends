@@ -271,19 +271,20 @@ const buildPotionName = (active: Ingredient[]) => {
 };
 
 const buildOrderPrompt = (
+  title: string,
   ratioText: string,
   cardHint?: string,
 ) => {
   const ratioLine = ratioText.split(':').join(' : ');
   const givenAmount = cardHint || 'A measured amount is already in the cauldron.';
   return [
-    'A potion must follow this ratio:',
-    `Ratio: ${ratioLine}`,
+    `Target recipe [${title}]`,
+    `Ratio ${ratioLine}`,
     '',
     'The potion currently has:',
     givenAmount,
     '',
-    'Find the missing amount to keep the ratio balanced.',
+    'Add the missing elements to keep the ratio balanced.',
   ].join('\n');
 };
 
@@ -456,7 +457,7 @@ const generateChallenge = (levelId: number, solved: number): Challenge => {
   return {
     id: nextChallengeId(),
     orderTitle,
-      orderPrompt: buildOrderPrompt(ratioText, cardHint),
+    orderPrompt: buildOrderPrompt(orderTitle, ratioText, cardHint),
     orderFlavor: buildOrderFlavor(stage),
     stage,
     mode,
@@ -728,11 +729,11 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
             <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] border border-white/12 bg-transparent shadow-[0_16px_30px_rgba(15,23,42,0.2)]">
               <div
                 className="absolute inset-0"
-                style={{ transform: 'translateY(calc(var(--potion-cauldron-shift, 0px) + 68px))' }}
+                style={{ transform: 'translateY(calc(var(--potion-cauldron-shift, 0px) + 50px))' }}
               >
-                <div className="pointer-events-none absolute left-1/2 top-[84%] h-14 w-[72%] -translate-x-1/2 rounded-full bg-black/55 blur-md" />
-                <div className="pointer-events-none absolute left-1/2 top-[76%] h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
-                <div className="absolute left-1/2 top-[72%] flex h-[18%] w-[48%] -translate-x-1/2 translate-y-[48px] items-end justify-between px-5">
+                <div className="pointer-events-none absolute left-1/2 top-[84%] z-0 h-14 w-[72%] -translate-x-1/2 rounded-full bg-black/55 blur-md" />
+                <div className="pointer-events-none absolute left-1/2 top-[76%] z-10 h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
+                <div className="absolute left-1/2 top-[72%] z-10 flex h-[18%] w-[48%] -translate-x-1/2 translate-y-[48px] items-end justify-between px-5">
                   {[0, 1, 2].map((idx) => (
                     <motion.span
                       key={`flame-${idx}`}
@@ -746,9 +747,9 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
                   src={cauldrenAndPotionArt}
                   alt=""
                   aria-hidden="true"
-                  className="pointer-events-none absolute left-1/2 bottom-[2%] h-[42%] max-w-none -translate-x-1/2 translate-y-[6px] object-contain md:translate-y-[21px]"
+                  className="pointer-events-none absolute left-1/2 bottom-[5%] z-30 h-[42%] max-w-none -translate-x-1/2 object-contain md:bottom-[4%]"
                 />
-                <div className="absolute left-1/2 bottom-[27%] h-[14%] w-[34%] -translate-x-1/2 translate-y-[5px] overflow-hidden rounded-[46%]">
+                <div className="absolute left-1/2 bottom-[27%] z-20 h-[14%] w-[34%] -translate-x-1/2 translate-y-[5px] overflow-hidden rounded-[46%]">
                   <motion.div
                     className="absolute inset-x-[8%] bottom-[8%] rounded-[42%]"
                     style={{

@@ -36,7 +36,8 @@ export const useGameplaySession = ({
   const isUntimedGameplay =
     screen === 'gameplay'
     && (
-      selectedLevel?.gameType === 'mean_machine'
+      Boolean(selectedLevel?.isPractice)
+      || selectedLevel?.gameType === 'mean_machine'
       || selectedLevel?.gameType === 'potion_pour'
     );
   const consumeLife = useCallback((amount = 1) => {
@@ -57,7 +58,7 @@ export const useGameplaySession = ({
     return () => {
       window.clearInterval(timerId);
     };
-  }, [isUntimedGameplay, screen, selectedLevel?.id]);
+  }, [isUntimedGameplay, screen, selectedLevel?.id, selectedLevel?.isPractice]);
 
   useEffect(() => {
     if (screen !== 'gameplay' || globalMiniGameLives > 0 || globalMiniGameLifeLock) return;

@@ -153,6 +153,8 @@ const clampOddCount = (count: number) => {
   return count % 2 === 0 ? count - 1 : count;
 };
 
+const ROUND_MODES: RoundMode[] = ['mean', 'median', 'mode', 'missing'];
+
 const buildMeanRound = (level: number): RoundData => {
   const useDoubleDigits = level >= 3;
   const minValue = useDoubleDigits ? 8 : 1;
@@ -357,11 +359,16 @@ const buildMissingRound = (level: number): RoundData => {
   };
 };
 
-const buildRound = (level: number) => {
-  const picker = randomInt(0, 2);
-  if (picker === 0) return buildMeanRound(level);
-  if (picker === 1) return buildMedianRound(level);
-  return buildModeRound(level);
+const buildRound = (level: number, previousMode: RoundMode | null = null) => {
+  const preferredMode = ROUND_MODES[(level - 1) % ROUND_MODES.length];
+  const mode = preferredMode === previousMode
+    ? ROUND_MODES[(ROUND_MODES.indexOf(preferredMode) + 1) % ROUND_MODES.length]
+    : preferredMode;
+
+  if (mode === 'mean') return buildMeanRound(level);
+  if (mode === 'median') return buildMedianRound(level);
+  if (mode === 'mode') return buildModeRound(level);
+  return buildMissingRound(level);
 };
 
 const roundSignature = (data: RoundData) => {
@@ -438,18 +445,18 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     timersRef.current.push(id);
   }, []);
 
-  const initialiseRound = useCallback((targetLevel: number) => {
+  const initialiseRound = useCallback((targetLevel: number, previousMode: RoundMode | null = null) => {
     clearTimers();
     answerLockedRef.current = false;
-    let nextRound = buildRound(targetLevel);
+    let nextRound = buildRound(targetLevel, previousMode);
     let nextSignature = roundSignature(nextRound);
     let guard = 0;
     while (lastRoundRef.current.includes(nextSignature) && guard < 10) {
-      nextRound = buildRound(targetLevel);
+      nextRound = buildRound(targetLevel, previousMode);
       nextSignature = roundSignature(nextRound);
       guard += 1;
     }
-    lastRoundRef.current = [...lastRoundRef.current.slice(-2), nextSignature];
+    lastRoundRef.current = [...lastRoundRef.current.slice(-4), nextSignature];
     setRound(nextRound);
     setGameState('idle');
     setFeedback(null);
@@ -500,8 +507,8 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     }
     const nextLevel = level + 1;
     setLevel(nextLevel);
-    initialiseRound(nextLevel);
-  }, [finishAdventure, initialiseRound, level]);
+    initialiseRound(nextLevel, round?.mode ?? null);
+  }, [finishAdventure, initialiseRound, level, round?.mode]);
 
   const handleSpin = useCallback(() => {
     if (!round || gameState === 'spinning' || !sessionActive) return;
@@ -653,9 +660,6 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
       <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.45rem)] pt-2 md:px-4">
         <div className="flex h-full min-h-0 flex-col gap-2.5">
           <section className="mx-auto w-full max-w-[23rem] shrink-0 rounded-[1.15rem] border border-cyan-100/24 bg-[linear-gradient(180deg,rgba(14,45,103,0.9),rgba(8,26,72,0.96))] px-4 py-2 text-center shadow-[0_16px_28px_rgba(2,6,23,0.32)]">
-            <div className="text-[11px] font-black uppercase tracking-[0.18em] text-cyan-100/76">
-              Level {level}/{TOTAL_LEVELS}
-            </div>
             <div className="game-question-copy mt-1 leading-tight text-white">
               {modeCopy.title}
             </div>

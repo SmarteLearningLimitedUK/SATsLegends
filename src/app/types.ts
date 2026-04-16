@@ -5,6 +5,7 @@ export interface LevelResultState {
   title: string;
   subtitle: string;
   score?: number;
+  practice?: boolean;
   stars: number;
   xpGained: number;
   bonuses: { label: string; amount: number }[];
