@@ -270,14 +270,7 @@ const buildPotionName = (active: Ingredient[]) => {
   return `${lead} Elixir`;
 };
 
-const buildDifficultyLine = (stage: number) => {
-  if (stage <= 2) return 'Easy: Simple doubling/halving';
-  if (stage <= 4) return 'Medium: Scaling up';
-  return 'Hard: Missing both parts / word problems';
-};
-
 const buildOrderPrompt = (
-  stage: number,
   ratioText: string,
   cardHint?: string,
 ) => {
@@ -291,8 +284,6 @@ const buildOrderPrompt = (
     givenAmount,
     '',
     'Find the missing amount to keep the ratio balanced.',
-    '',
-    `Difficulty: ${buildDifficultyLine(stage)}`,
   ].join('\n');
 };
 
@@ -465,7 +456,7 @@ const generateChallenge = (levelId: number, solved: number): Challenge => {
   return {
     id: nextChallengeId(),
     orderTitle,
-    orderPrompt: buildOrderPrompt(stage, ratioText, cardHint),
+      orderPrompt: buildOrderPrompt(ratioText, cardHint),
     orderFlavor: buildOrderFlavor(stage),
     stage,
     mode,

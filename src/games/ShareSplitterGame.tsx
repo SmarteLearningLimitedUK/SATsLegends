@@ -140,8 +140,6 @@ const buildSharePrompt = () => {
     '',
     'Only the correct ratio will stop them from turning on each other and you.',
     '',
-    'Share the cake carefully.',
-    '',
     'Example Question',
     '',
     'There are 12 slices of brainpower cake.',
@@ -252,7 +250,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const plateSize = 'calc(var(--game-stage-width, 390px) * 0.175)';
   const promptText = isPractice
     ? challenge.prompt
-    : 'Use the ratio to share the cake correctly.';
+    : 'Place the cake slices to match the ratio.';
 
   const loadNextChallenge = useCallback((solvedCount: number) => {
     const next = createChallenge(levelId, solvedCount);
@@ -331,7 +329,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     };
 
     const getHitPlateIndex = (clientX: number, clientY: number) => {
-      const padding = 14;
+      const padding = 8;
       let hitIndex = -1;
       plateRefs.current.forEach((plate, index) => {
         if (!plate) return;
@@ -349,7 +347,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       if (!dragActiveRef.current) return;
       dragActiveRef.current = false;
       const { index, distance } = getNearestPlate(clientX, clientY);
-      const snapRadius = 95;
+      const snapRadius = 64;
       const hitIndex = getHitPlateIndex(clientX, clientY);
       const targetPlateIndex = hitIndex >= 0 ? hitIndex : distance <= snapRadius ? index : -1;
 
@@ -379,7 +377,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         return;
       }
       const { index, distance } = getNearestPlate(point.x, point.y);
-      setHoverPlateIndex(distance <= 100 ? index : null);
+      setHoverPlateIndex(distance <= 72 ? index : null);
     };
 
     const handlePointerUp = (upEvent: PointerEvent) => {
@@ -396,7 +394,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         return;
       }
       const { index, distance } = getNearestPlate(point.x, point.y);
-      setHoverPlateIndex(distance <= 100 ? index : null);
+      setHoverPlateIndex(distance <= 72 ? index : null);
       touchEvent.preventDefault();
     };
 
@@ -638,9 +636,9 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
               style={{ top: '4px' }}
             >
               <div className="mx-auto w-full max-w-[780px] rounded-[1.05rem] bg-slate-950/70 px-[17px] py-[13px] text-center backdrop-blur-sm">
-                <div className="text-[12px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Share</div>
-                <div className="mt-1 text-[clamp(1.2rem,4.8vw,1.8rem)] font-black text-white">Share the Cake</div>
-                <div className="mt-1 text-[13px] font-black text-amber-100">Ratio {challenge.ratios.join(' : ')}</div>
+                <div className="text-[12px] font-black uppercase tracking-[0.18em] text-amber-100/90">Share Splitter</div>
+                <div className="mt-1 text-[clamp(1.2rem,4.8vw,1.8rem)] font-black text-white">Match the Ratio</div>
+                <div className="mt-1 text-[13px] font-black text-amber-100">Ratio: {challenge.ratios.join(' : ')}</div>
                 <div className="mt-2 whitespace-pre-line text-[12px] font-semibold leading-tight text-cyan-100/90">
                   {promptText}
                 </div>

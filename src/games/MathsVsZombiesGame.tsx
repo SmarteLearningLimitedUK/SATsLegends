@@ -6,7 +6,7 @@ import zombieFallback from '../assets/zombies/zombie.png';
 import zombiePlayfield from '../assets/zombies/zombiebkground.png';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
-import { formatFantasyPrompt } from '../utils/fantasyPrompt';
+import { formatMultiplicationDisplay } from '../utils/mathDisplay';
 
 interface MathsVsZombiesGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -98,7 +98,7 @@ const buildQuestion = (levelId: number): Question => {
   let b = 0;
   let c = 0;
   let answer = 0;
-  let prompt = '';
+  let equation = '';
 
   if (levelId <= 2) {
     // Two-number add/sub within small range.
@@ -131,21 +131,21 @@ const buildQuestion = (levelId: number): Question => {
 
   if (op === '+') {
     answer = a + b;
-    prompt = `${a} + ${b}`;
+    equation = `${a} + ${b}`;
   } else if (op === '-') {
     if (levelId <= 2 || levelId === 3 || levelId >= 8) {
       if (a < b) [a, b] = [b, a];
     }
     answer = a - b;
-    prompt = `${a} - ${b}`;
+    equation = `${a} - ${b}`;
   } else if (op === '×') {
     answer = a * b;
-    prompt = `${a} × ${b}`;
+    equation = `${a} × ${b}`;
   } else {
     // Build a clean division question.
     const product = a * b;
     answer = a;
-    prompt = `${product} ÷ ${b}`;
+    equation = `${product} ÷ ${b}`;
   }
 
   const options = new Set<number>([answer]);
@@ -156,7 +156,7 @@ const buildQuestion = (levelId: number): Question => {
   }
   const shuffled = Array.from(options).sort(() => Math.random() - 0.5);
   return {
-    prompt,
+    prompt: `the monster minds have sent their minions - solve the sum to defeat them\n\n${formatMultiplicationDisplay(equation)}`,
     options: shuffled,
     correctIndex: shuffled.indexOf(answer),
   };
@@ -493,7 +493,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Maths Vs Zombies"
-        body="Help! Help! the monster minds have sent their minions to steal brain power.\nDefeat them using your maths superpower."
+        body="the monster minds have sent their minions to steal brain power.\nsolve the sum to defeat them."
         onAction={() => setShowPracticeIntro(false)}
       />
 
@@ -563,7 +563,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
         <div className="mx-4 mt-4 rounded-3xl border border-blue-400/40 bg-blue-950/70 p-4 shadow-xl">
           <div className="my-3 h-px w-full bg-white/10" />
           <div className="game-question-copy rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-center text-white">
-            {formatFantasyPrompt(question.prompt)}
+            {question.prompt}
           </div>
           <div
             className={`mt-2 min-h-[16px] text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
