@@ -4,6 +4,9 @@ dist/
 coverage/
 .DS_Store
 *.log
+.npm-cache/
+.tmp/
+.vs/
 .env*
 !.env.example
 external-assets/
@@ -14,6 +17,6 @@ deploy.config.bat
 .vercel
 .env*.local
 .verify_deployroot/
+qa-artifacts/
+playtest/
 src/assets/importedassets/screen comparison/SATsLegendsendofcodex.zip
-
-.vercel

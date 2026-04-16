@@ -38,6 +38,15 @@ type BankEntry = {
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 
+const sanitizeAngleArenaText = (text: string) =>
+  text
+    // Some bank entries have degrees as "?" due to encoding issues.
+    .replace(/(\d)\?/g, '$1°')
+    // Common mojibake sequences for math symbols.
+    .replace(/Ã—/g, '×')
+    .replace(/Ã·/g, '÷')
+    .replace(/Â°/g, '°');
+
 const buildStoryLead = (entry: BankEntry) => {
   switch (entry.topic) {
     case 'right_angles':
@@ -67,7 +76,8 @@ const buildStoryLead = (entry: BankEntry) => {
   }
 };
 
-const buildStoryPrompt = (entry: BankEntry) => `${buildStoryLead(entry)} ${entry.question_text}`;
+const buildStoryPrompt = (entry: BankEntry) =>
+  `${buildStoryLead(entry)} ${sanitizeAngleArenaText(entry.question_text)}`;
 
 const parseAngle = (value: string) => Number(value.replace('°', '').trim());
 const resolveKind = (entry: BankEntry): 'fluency' | 'reasoning' => {
@@ -100,6 +110,12 @@ const toAngleQuestion = (
   const options = entry.options.map(parseAngle);
   const targetX = buildTarget(launcherX, correct, speed, gravity);
   const targetY = groundY - targetHeight;
+  const wrongAnswerRationale = Object.fromEntries(
+    Object.entries(entry.wrong_answer_rationale).map(([key, value]) => [
+      sanitizeAngleArenaText(key),
+      sanitizeAngleArenaText(value),
+    ]),
+  );
   return {
     id: index + 1,
     kind: resolveKind(entry),
@@ -109,12 +125,12 @@ const toAngleQuestion = (
     targetX,
     targetY,
     launchSpeed: speed,
-    explanation: entry.explanation,
+    explanation: sanitizeAngleArenaText(entry.explanation),
     difficulty: entry.difficulty,
     topic: entry.topic,
-    diagramDescription: entry.diagram_description,
-    wrongAnswerRationale: entry.wrong_answer_rationale,
-    accessibilityText: entry.accessibility_text,
+    diagramDescription: sanitizeAngleArenaText(entry.diagram_description),
+    wrongAnswerRationale,
+    accessibilityText: sanitizeAngleArenaText(entry.accessibility_text),
   };
 };
 

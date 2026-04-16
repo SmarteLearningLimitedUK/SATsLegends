@@ -19,10 +19,10 @@ const AchievementTracker: React.FC<AchievementTrackerProps> = ({ player, onBack 
   ), [player]);
 
   return (
-    <div className="premium-page-root relative flex h-full w-full flex-col overflow-hidden licensed-shell-bg">
+    <div className="premium-page-root relative flex min-h-[100dvh] w-full flex-col overflow-visible licensed-shell-bg">
       <div className="absolute inset-0 bg-slate-950/45" />
 
-      <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4 pb-24 pt-[calc(0.75rem+env(safe-area-inset-top))] md:gap-4 md:px-8 md:pb-8 md:pt-6">
+      <div className="relative z-10 flex flex-col gap-3 px-4 pb-24 pt-[calc(0.75rem+env(safe-area-inset-top))] md:gap-4 md:px-8 md:pb-8 md:pt-6">
         <div className="flex flex-col gap-3">
           {achievements.map((achievement) => (
             <FramedPanel

@@ -51,8 +51,8 @@ export const SCREEN_BEHAVIOR: Record<GameScreen, {
   wellbeing_activity: { scrollable: false, shell: 'playfield', family: 'hub' },
   level_result: { scrollable: false, shell: 'playfield', family: 'overlay' },
   shop: { scrollable: false, shell: 'compact', family: 'hub' },
-  achievements_tracker: { scrollable: false, shell: 'compact', family: 'hub' },
-  profile: { scrollable: false, shell: 'compact', family: 'hub' },
+  achievements_tracker: { scrollable: true, shell: 'compact', family: 'hub' },
+  profile: { scrollable: true, shell: 'compact', family: 'hub' },
   settings: { scrollable: false, shell: 'compact', family: 'hub' },
   parent_dashboard: { scrollable: true, shell: 'playfield', family: 'hub' },
 };

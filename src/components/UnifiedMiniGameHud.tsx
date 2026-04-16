@@ -75,7 +75,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
         <div
           className="absolute inset-x-0 top-0 flex justify-center"
           style={{
-            paddingTop: '0.35rem',
+            paddingTop: 'calc(env(safe-area-inset-top) + 0.35rem)',
             paddingLeft: '0.4rem',
             paddingRight: '0.4rem',
           }}
@@ -162,7 +162,14 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
       )}
 
       {bottomContent ? (
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center">
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center"
+          style={{
+            paddingBottom: 'calc(env(safe-area-inset-bottom) + 0.35rem)',
+            paddingLeft: '0.4rem',
+            paddingRight: '0.4rem',
+          }}
+        >
           <div className="pointer-events-auto">
             {bottomContent}
           </div>
@@ -170,10 +177,12 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
       ) : showActions && onBack ? (
         <div
           className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center"
-        style={{
-          paddingBottom: '0.35rem',
-        }}
-      >
+          style={{
+            paddingBottom: 'calc(env(safe-area-inset-bottom) + 0.35rem)',
+            paddingLeft: '0.4rem',
+            paddingRight: '0.4rem',
+          }}
+        >
           <div className="pointer-events-auto">
             <GameActionDock onBack={onBack} compact variant="global" />
           </div>

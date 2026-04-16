@@ -863,7 +863,7 @@ const App: React.FC = () => {
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
   const useUnboundedStageShell = false;
   const globalDockOffsetClass = screen !== 'splash' && !isGameplayScreen && screen !== 'avatar_selection' && screen !== 'profile_setup'
-    ? 'pb-[5rem] md:pb-[5.2rem]'
+    ? 'pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-[calc(5.2rem+env(safe-area-inset-bottom))]'
     : '';
   const viewportShellClass = isGameplayScreen
     ? 'sat-shell-standard bg-transparent'

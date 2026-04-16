@@ -20,10 +20,10 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ player, onBack }) => {
   const playerName = player.playerName.trim() || 'Explorer';
 
   return (
-    <GameScreenShell className="relative">
+    <GameScreenShell className="relative h-auto min-h-[100dvh] max-h-none overflow-visible md:h-auto md:max-h-none">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.18),transparent_34%),linear-gradient(180deg,rgba(7,12,26,0.12),rgba(7,12,26,0.38))]" />
 
-      <div className="relative z-10 flex h-full w-full flex-col px-4 pb-4 pt-[calc(0.8rem+env(safe-area-inset-top))] md:px-8 md:pb-6 md:pt-6">
+      <div className="relative z-10 flex w-full flex-col px-4 pb-4 pt-[calc(0.8rem+env(safe-area-inset-top))] md:px-8 md:pb-6 md:pt-6">
         <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-4 pt-3 md:gap-6 md:pt-4">
           <RewardPanel className="mx-auto w-full max-w-3xl">
             <div className="flex items-start gap-3">
