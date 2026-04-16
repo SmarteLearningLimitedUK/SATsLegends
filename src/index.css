@@ -43,13 +43,15 @@
     @apply rounded-full border border-white/15 bg-black/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-white/75 backdrop-blur-xl;
   }
 
-  .game-button-primary {
-    @apply rounded-[1.75rem] text-white font-black shadow-[0_8px_0_rgba(123,63,19,0.95)] transition-all active:shadow-none;
-    background:
-      linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,0)),
-      linear-gradient(180deg, rgba(255,205,86,0.98), rgba(245,154,24,0.98));
-    text-shadow: 0 2px 0 rgba(0,0,0,0.3);
-  }
+.game-button-primary {
+  @apply rounded-[1.75rem] text-white font-black shadow-[0_8px_0_rgba(123,63,19,0.95)] transition-all active:shadow-none;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,0)),
+    linear-gradient(180deg, rgba(255,205,86,0.98), rgba(245,154,24,0.98));
+  background-color: #f3b22b !important;
+  overflow: hidden !important;
+  text-shadow: 0 2px 0 rgba(0,0,0,0.3);
+}
 
   .game-button-secondary {
     @apply rounded-[1.4rem] border border-white/15 text-white font-black shadow-[0_8px_24px_rgba(0,0,0,0.12)] transition-all;
@@ -2684,6 +2686,8 @@ button:disabled {
   color: #15213d !important;
   background:
     url('./assets/casual_ui/inputs/btn_1.png') center/100% 100% no-repeat !important;
+  background-color: #f3b22b !important;
+  overflow: hidden !important;
   text-shadow: 0 1px 0 rgba(255,255,255,0.38) !important;
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.58),
@@ -2776,6 +2780,22 @@ button:disabled {
     inset 0 1px 0 rgba(255,255,255,0.28),
     0 3px 0 rgba(18, 40, 86, 0.68),
     0 8px 14px rgba(15,23,42,0.2) !important;
+}
+
+.gold-pill-shell {
+  overflow: hidden !important;
+  background-color: #f3b22b !important;
+  isolation: isolate;
+}
+
+.gold-pill-art {
+  position: absolute;
+  inset: -1px;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  display: block;
+  object-fit: fill;
+  pointer-events: none;
 }
 
 .ui-icon-button,

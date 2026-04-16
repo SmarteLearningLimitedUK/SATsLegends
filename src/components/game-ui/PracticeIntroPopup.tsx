@@ -82,14 +82,14 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
               onClick={onAction}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="relative h-12 w-[min(14rem,72vw)] rounded-full border-0 bg-transparent p-0 shadow-[0_8px_22px_rgba(0,0,0,0.35)]"
+              className="gold-pill-shell relative h-12 w-[min(14rem,72vw)] rounded-full border-0 bg-transparent p-0 shadow-[0_8px_22px_rgba(0,0,0,0.35)]"
             >
               <img
                 src={splashStartPill}
                 alt=""
                 aria-hidden
                 draggable={false}
-                className="absolute inset-0 h-full w-full rounded-full object-fill"
+                className="gold-pill-art rounded-full"
               />
               <span className="relative z-10 text-[11px] font-normal uppercase tracking-[0.12em] text-black drop-shadow-[0_1px_0_rgba(255,255,255,0.45)] md:text-sm">
                 {actionLabel}

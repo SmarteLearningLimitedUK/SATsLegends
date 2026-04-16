@@ -1284,10 +1284,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           type="button"
           onClick={handleSubmit}
           disabled={!canSubmit}
-          className="absolute left-1/2 z-40 -translate-x-1/2 overflow-hidden transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+          className="gold-pill-shell absolute left-1/2 z-40 -translate-x-1/2 transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
           style={{ top: `${layout.submitY}%`, width: `${layout.submitWidth}%`, height: `${layout.submitHeight}%` }}
         >
-          <img src={medButton} alt="" aria-hidden="true" draggable={false} className="absolute inset-0 h-full w-full object-contain" />
+          <img src={medButton} alt="" aria-hidden="true" draggable={false} className="gold-pill-art object-contain" />
           <span
             className="pointer-events-none absolute inset-x-[16%] top-1/2 -translate-y-1/2 text-center text-[clamp(0.82rem,2.2vw,1.06rem)] font-black uppercase tracking-[0.08em] text-white"
             style={{ textShadow: '0 2px 4px rgba(2,6,23,0.7)' }}

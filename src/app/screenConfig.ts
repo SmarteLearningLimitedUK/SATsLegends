@@ -42,7 +42,7 @@ export const SCREEN_BEHAVIOR: Record<GameScreen, {
   family: 'hub' | 'game' | 'overlay';
 }> = {
   splash: { scrollable: false, shell: 'splash', family: 'hub' },
-  profile_setup: { scrollable: false, shell: 'compact', family: 'hub' },
+  profile_setup: { scrollable: false, shell: 'playfield', family: 'hub' },
   avatar_selection: { scrollable: false, shell: 'playfield', family: 'hub' },
   world_map: { scrollable: true, shell: 'playfield', family: 'hub' },
   island_levels: { scrollable: true, shell: 'playfield', family: 'hub' },

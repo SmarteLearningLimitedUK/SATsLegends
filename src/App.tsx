@@ -61,7 +61,6 @@ const App: React.FC = () => {
     setScreen,
     setSelectedLevel,
     goToHome,
-    goToProfileSetup,
     goToAvatarSelection,
     goToWorldMap,
     goToIslandLevels,
@@ -620,23 +619,13 @@ const App: React.FC = () => {
 
   const handleStartAdventure = () => {
     triggerHaptic('tap');
-    if (!player.playerName.trim()) {
-      setDraftName('Explorer');
-      goToProfileSetup();
-      return;
-    }
-
-    goToAvatarSelection();
-  };
-
-  const handleSaveProfileName = () => {
-    triggerHaptic('selection');
-    saveProfileName();
+    setDraftName(player.playerName.trim() || 'Explorer');
     goToAvatarSelection();
   };
 
   const handleAvatarConfirm = () => {
     triggerHaptic('success');
+    saveProfileName();
     goToWorldMap();
   };
 
@@ -874,7 +863,7 @@ const App: React.FC = () => {
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
   const useUnboundedStageShell = false;
-  const globalDockOffsetClass = screen !== 'splash' && !isGameplayScreen && screen !== 'avatar_selection'
+  const globalDockOffsetClass = screen !== 'splash' && !isGameplayScreen && screen !== 'avatar_selection' && screen !== 'profile_setup'
     ? 'pb-[5rem] md:pb-[5.2rem]'
     : '';
   const viewportShellClass = isGameplayScreen
@@ -895,7 +884,7 @@ const App: React.FC = () => {
       : isMapLayoutScreen
       ? 'sat-screen-map-content'
       : 'sat-screen-standard-content items-stretch';
-  const useFlatScreenScaleTransition = isAvatarSelectionScreen;
+  const useFlatScreenScaleTransition = isAvatarSelectionScreen || screen === 'profile_setup';
   const screenEnterScale = useFlatScreenScaleTransition ? 1 : 0.98;
   const screenExitScale = useFlatScreenScaleTransition ? 1 : 1.02;
   const hideShellTimer = LEVEL_TIMERS_DISABLED
@@ -1000,7 +989,6 @@ const App: React.FC = () => {
                   sessionState={sessionState}
                   sessionEvents={sessionEvents}
                   onStartAdventure={handleStartAdventure}
-                  onSaveProfileName={handleSaveProfileName}
                   onAvatarSelect={(id) => setPlayer(prev => ({ ...prev, avatarId: id }))}
                   onAvatarConfirm={handleAvatarConfirm}
                   onGoHome={goToHome}

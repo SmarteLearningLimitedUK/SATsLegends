@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { AVATARS } from '../constants';
 import { triggerHaptic } from '../haptics';
+import { SecondaryActionButton } from '../layout/ScreenPrimitives';
 import avatarSelectBackground from '../assets/maps/backgroundsforgames/charselect.jpg';
 import splashStyleButton from '../assets/casual_ui/inputs/btn_1.png';
 import chooseBanner from '../assets/characters/chooseheroes.png';
@@ -19,10 +20,20 @@ const AVATAR_MAIN_VISUAL_SCALE = 2.16;
 interface AvatarSelectProps {
   selectedId: string;
   onSelect: (id: string) => void;
+  draftName: string;
+  onDraftNameChange: (value: string) => void;
+  onBackToSplash: () => void;
   onConfirm: () => void;
 }
 
-const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onConfirm }) => {
+const AvatarSelect: React.FC<AvatarSelectProps> = ({
+  selectedId,
+  onSelect,
+  draftName,
+  onDraftNameChange,
+  onBackToSplash,
+  onConfirm,
+}) => {
   const selectedIndex = Math.max(0, AVATARS.findIndex((avatar) => avatar.id === selectedId));
   const selectedAvatar = AVATARS[selectedIndex] || AVATARS[0];
   const bannerSrc = chooseBanner;
@@ -72,6 +83,33 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               />
             </div>
           </div>
+
+          <div className="mx-auto mt-2 flex w-full max-w-3xl flex-col gap-3 rounded-[1.35rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(8,21,58,0.82),rgba(4,15,44,0.88))] px-4 py-4 text-center shadow-[0_18px_32px_rgba(2,6,23,0.32)] backdrop-blur-md sm:px-5 sm:py-5">
+            <div className="text-[0.68rem] font-black uppercase tracking-[0.22em] text-cyan-100/80 sm:text-xs">
+              Name your hero and choose your avatar
+            </div>
+            <input
+              value={draftName}
+              onChange={(event) => onDraftNameChange(event.target.value.slice(0, 18))}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') onConfirm();
+              }}
+              placeholder="Explorer"
+              className="aaa-name-input w-full rounded-[1.15rem] border border-white/20 bg-slate-950/65 px-5 py-3 text-center text-base font-black text-white shadow-[0_14px_28px_rgba(0,0,0,0.2)] outline-none placeholder:text-white/45 focus:ring-2 focus:ring-amber-300/45 md:rounded-[1.5rem] md:px-6 md:py-4 md:text-2xl"
+            />
+            <div className="flex items-center justify-center">
+              <SecondaryActionButton
+                onClick={() => {
+                  triggerHaptic('tap');
+                  onBackToSplash();
+                }}
+                className="rounded-[1.2rem] px-5 py-2.5 text-sm md:rounded-2xl md:px-7 md:py-3 md:text-base"
+              >
+                Back
+              </SecondaryActionButton>
+            </div>
+          </div>
+
           <div className="avatar-hero-stage relative mt-2 flex min-h-0 flex-1 items-center justify-center overflow-visible md:mt-3">
             <motion.button
               whileHover={{ scale: 1.04 }}
@@ -146,14 +184,14 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({ selectedId, onSelect, onCon
               transition={{ delay: 0.15, duration: 0.35, ease: 'easeOut' }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="relative h-full w-full rounded-full border-0 bg-transparent p-0 shadow-[0_8px_22px_rgba(0,0,0,0.35)]"
+              className="gold-pill-shell relative h-full w-full rounded-full border-0 bg-transparent p-0 shadow-[0_8px_22px_rgba(0,0,0,0.35)]"
             >
               <img
                 src={splashStyleButton}
                 alt=""
                 aria-hidden
                 draggable={false}
-                className="absolute inset-0 h-full w-full rounded-full object-fill"
+                className="gold-pill-art rounded-full"
               />
               <span className="relative z-10 text-lg font-normal uppercase tracking-[0.12em] text-black drop-shadow-[0_1px_0_rgba(255,255,255,0.45)] sm:text-xl">
                 Begin Adventure

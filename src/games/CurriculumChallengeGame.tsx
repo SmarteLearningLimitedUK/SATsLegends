@@ -1441,7 +1441,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                             : 'min-h-[3.55rem] rounded-[999px] md:min-h-[4.7rem] md:px-5 md:py-3'
                     }`}
                   >
-                    {!isPlaceValuePeaks && !isChartGrabber && <img src={answerBackground} alt="" className="absolute inset-0 h-full w-full object-fill" draggable={false} />}
+                    {!isPlaceValuePeaks && !isChartGrabber && <img src={answerBackground} alt="" className="gold-pill-art rounded-[inherit] object-fill" draggable={false} />}
                     {!isPlaceValuePeaks && !isChartGrabber && !usesBlueAnswers && !isCorrect && !isWrongSelected && (
                       <img src={answerDecorAsset} alt="" className="absolute inset-0 h-full w-full object-fill opacity-95" draggable={false} />
                     )}

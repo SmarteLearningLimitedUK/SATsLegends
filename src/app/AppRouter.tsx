@@ -18,7 +18,6 @@ import {
   PrimaryActionButton,
   PremiumHeaderBar,
   RewardPanel,
-  SecondaryActionButton,
 } from '../layout/ScreenPrimitives';
 import { getMiniGame, MiniGameRegistryKey } from '../games';
 import { isBossEncounterGameType } from '../games/bossEncounterTypes';
@@ -57,7 +56,6 @@ interface AppRouterProps {
   sessionState: GameplaySessionState;
   sessionEvents: GameplaySessionEventHandlers;
   onStartAdventure: () => void;
-  onSaveProfileName: () => void;
   onAvatarSelect: (avatarId: string) => void;
   onAvatarConfirm: () => void;
   onGoHome: () => void;
@@ -97,7 +95,6 @@ export const AppRouter: React.FC<AppRouterProps> = ({
   sessionState,
   sessionEvents,
   onStartAdventure,
-  onSaveProfileName,
   onAvatarSelect,
   onAvatarConfirm,
   onGoHome,
@@ -416,14 +413,14 @@ export const AppRouter: React.FC<AppRouterProps> = ({
               transition={{ delay: 0.15, duration: 0.35, ease: 'easeOut' }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="relative h-full w-full rounded-full border-0 bg-transparent p-0 shadow-[0_8px_22px_rgba(0,0,0,0.35)]"
+              className="gold-pill-shell relative h-full w-full rounded-full border-0 bg-transparent p-0 shadow-[0_8px_22px_rgba(0,0,0,0.35)]"
             >
               <img
                 src={splashStartPill}
                 alt=""
                 aria-hidden
                 draggable={false}
-                className="absolute inset-0 h-full w-full rounded-full object-fill"
+                className="gold-pill-art rounded-full"
               />
               <span className="relative z-10 text-lg font-normal uppercase tracking-[0.12em] text-black drop-shadow-[0_1px_0_rgba(255,255,255,0.45)] sm:text-xl">
                 Start
@@ -433,54 +430,14 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         </div>
       );
     case 'profile_setup':
-      return (
-        <GameScreenShell className="aaa-name-screen my-auto flex items-center justify-center">
-          <div className="absolute inset-0 bg-slate-950/78 backdrop-blur-xl" />
-          <div className="app-modal-panel premium-modal-shell licensed-game-card-dark aaa-name-panel relative z-10 flex w-full max-w-sm flex-col gap-4 overflow-hidden rounded-[1.45rem] border border-white/15 p-4 text-center shadow-[0_32px_95px_rgba(0,0,0,0.48)] sm:max-w-md md:max-w-3xl md:gap-8 md:p-10 md:rounded-[1.9rem]">
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(59,130,246,0.18),transparent_52%),radial-gradient(circle_at_50%_100%,rgba(244,63,94,0.18),transparent_60%)]" />
-
-            <div className="relative z-10 flex flex-col gap-4 md:gap-8">
-              <PremiumHeaderBar
-                eyebrow="Step 1 of 2"
-                title="Name your hero"
-                className="justify-center text-center"
-              />
-
-              <RewardPanel className="mx-auto w-full max-w-xl bg-transparent">
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-white/80 md:text-sm">
-                  Pick the name that appears across your adventure, rewards, and report screens.
-                </p>
-              </RewardPanel>
-
-              <div className="relative z-10 flex flex-col items-center gap-3.5 md:gap-5">
-                <input
-                  value={draftName}
-                  onChange={event => setDraftName(event.target.value.slice(0, 18))}
-                  onKeyDown={event => {
-                    if (event.key === 'Enter') onSaveProfileName();
-                  }}
-                  placeholder="Explorer"
-                  className="aaa-name-input w-full max-w-xl rounded-[1.15rem] border border-white/20 bg-slate-950/65 px-5 py-3 text-center text-base font-black text-white shadow-[0_14px_28px_rgba(0,0,0,0.2)] outline-none placeholder:text-white/45 focus:ring-2 focus:ring-amber-300/45 md:rounded-[1.6rem] md:px-6 md:py-5 md:text-3xl"
-                />
-                <div className="flex flex-wrap justify-center gap-3 md:gap-4">
-                  <SecondaryActionButton onClick={onBackToSplash} className="rounded-[1.25rem] px-6 py-3 text-sm md:rounded-2xl md:px-8 md:py-4 md:text-base">
-                    Back
-                  </SecondaryActionButton>
-                  <PrimaryActionButton onClick={onSaveProfileName} className="rounded-[1.25rem] px-8 py-3 text-base md:rounded-2xl md:px-10 md:py-4 md:text-lg">
-                    Choose avatar
-                  </PrimaryActionButton>
-                </div>
-              </div>
-            </div>
-          </div>
-        </GameScreenShell>
-      );
-
     case 'avatar_selection':
       return (
         <AvatarSelect
           selectedId={player.avatarId}
           onSelect={onAvatarSelect}
+          draftName={draftName}
+          onDraftNameChange={setDraftName}
+          onBackToSplash={onBackToSplash}
           onConfirm={onAvatarConfirm}
         />
       );

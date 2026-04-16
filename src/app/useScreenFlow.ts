@@ -116,7 +116,7 @@ export const useScreenFlow = (): ScreenFlowController => {
     setScreen('world_map');
   }, []);
 
-  const goToProfileSetup = useCallback(() => setScreen('profile_setup'), []);
+  const goToProfileSetup = useCallback(() => setScreen('avatar_selection'), []);
   const goToAvatarSelection = useCallback(() => setScreen('avatar_selection'), []);
   const goToWorldMap = useCallback(() => setScreen('world_map'), []);
   const goToIslandLevels = useCallback(() => setScreen('island_levels'), []);
@@ -144,12 +144,7 @@ export const useScreenFlow = (): ScreenFlowController => {
       return;
     }
 
-    if (screen === 'avatar_selection') {
-      setScreen('profile_setup');
-      return;
-    }
-
-    if (screen === 'profile_setup') {
+    if (screen === 'avatar_selection' || screen === 'profile_setup') {
       setScreen('splash');
       return;
     }
