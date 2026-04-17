@@ -247,6 +247,30 @@
       "status": "captured",
       "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
       "screenshot": "qa-pc-measurement-mountain-change-counter.png"
+    },
+    {
+      "viewport": "pc",
+      "island": "Ratio Rapids",
+      "group": "Potion Panic",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-pc-ratio-rapids-potion-panic.png"
+    },
+    {
+      "viewport": "pc",
+      "island": "Ratio Rapids",
+      "group": "Share Splitter",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-pc-ratio-rapids-share-splitter.png"
+    },
+    {
+      "viewport": "pc",
+      "island": "Ratio Rapids",
+      "group": "Ratio Racer",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-pc-ratio-rapids-ratio-racer.png"
     }
   ],
   "consoleErrors": []
