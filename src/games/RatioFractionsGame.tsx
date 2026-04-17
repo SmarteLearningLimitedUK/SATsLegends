@@ -62,9 +62,9 @@ const ENEMY_VIBRATE_Y_AMPLITUDE = 0.9;
 const ENEMY_BASE_GAP_PT = 1.6;
 
 const PLAYER_KARTS: Record<string, string> = {
-  barratt: kartBarratt,
-  bran: kartBran,
-  mochi: kartMochi,
+  barratt: kartBran,
+  bran: kartMochi,
+  mochi: kartBarratt,
   vex: kartVex,
 };
 
@@ -641,7 +641,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
         <GameScreenLayout
           className="relative z-10 px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-0 text-white"
-          topClassName="!min-h-0 flex flex-col items-center gap-0 px-2 pt-0 -mt-4 sm:-mt-5 sm:px-3 md:-mt-6 md:px-4"
+          topClassName="!min-h-0 flex flex-col items-center gap-0 px-2 pt-0 -mt-10 sm:-mt-12 sm:px-3 md:-mt-14 md:px-4"
           top={(
             <div className="mx-auto flex w-full max-w-[780px] flex-col gap-0.5">
               <GameQuestionCard
