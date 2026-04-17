@@ -45,11 +45,10 @@ type RaceState =
 const START_OFFSET = 0;
 const RACER_LERP = 0.16;
 const BASE_XP = 160;
-const KART_SCALE = 0.68;
-const PLAYER_KART_SCALE = 0.88;
-const PLAYER_TRACK_LINE_FROM_BOTTOM = 218;
-const ENEMY_TRACK_LINE_FROM_BOTTOM = 190;
-const CART_Y_SHIFT = 0;
+const KART_SCALE = 0.84;
+const PLAYER_KART_SCALE = 1.08;
+const PLAYER_TRACK_LINE_Y = 80.8;
+const ENEMY_TRACK_LINE_Y = 88.6;
 const FINISH_Y_SHIFT = -200;
 const FINISH_X_SHIFT = -100;
 const PLAYER_BOB_BASE_SPEED = 5.1;
@@ -486,16 +485,8 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const finishLeft = 50 + ((tuning.trackLength - cameraWorldPosition) / trackSpan) * 100;
   const showBoost = raceState === 'correctBoost';
   const showStall = raceState === 'incorrectStall';
-  const playerLineY = clamp(
-    ((viewport.height - PLAYER_TRACK_LINE_FROM_BOTTOM + CART_Y_SHIFT) / Math.max(1, viewport.height)) * 100,
-    0,
-    100,
-  );
-  const enemyLineY = clamp(
-    ((viewport.height - ENEMY_TRACK_LINE_FROM_BOTTOM + CART_Y_SHIFT) / Math.max(1, viewport.height)) * 100,
-    0,
-    100,
-  );
+  const playerLineY = PLAYER_TRACK_LINE_Y;
+  const enemyLineY = ENEMY_TRACK_LINE_Y;
   const finishLineY = clamp(
     playerLineY + (FINISH_Y_SHIFT / Math.max(1, viewport.height)) * 100,
     0,
@@ -561,7 +552,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             </div>
 
             <motion.div
-              className="absolute z-40 flex h-24 w-40 items-end justify-center overflow-visible sm:h-28 sm:w-44 md:h-36 md:w-56"
+              className="absolute z-40 flex h-28 w-48 items-end justify-center overflow-visible sm:h-32 sm:w-56 md:h-40 md:w-64"
               style={playerStyle}
               animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { x: [0, -4, 4, -3, 3, 0] } : { scale: 1 }}
               transition={{ duration: 0.35 }}
@@ -582,7 +573,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
               <img
                 src={playerKart}
                 alt="Player kart"
-                className="relative z-10 h-[92%] w-[92%] object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]"
+                className="relative z-10 h-[95%] w-[95%] object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]"
                 style={{ imageRendering: 'auto' }}
               />
               {showStall ? (
@@ -591,7 +582,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             </motion.div>
 
             <motion.div
-              className="absolute z-30 flex h-18 w-28 items-center justify-center overflow-visible sm:h-22 sm:w-32 md:h-28 md:w-44"
+              className="absolute z-30 flex h-22 w-34 items-center justify-center overflow-visible sm:h-26 sm:w-40 md:h-32 md:w-48"
               style={enemyStyle}
             >
               <img
@@ -641,7 +632,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
         <GameScreenLayout
           className="relative z-10 px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-0 text-white"
-          topClassName="!min-h-0 flex flex-col items-center gap-0 px-2 pt-0 -mt-24 sm:-mt-28 sm:px-3 md:-mt-32 md:px-4"
+          topClassName="!min-h-0 absolute inset-x-0 top-[calc(env(safe-area-inset-top)+9rem)] z-20 flex -translate-y-11 flex-col items-center gap-0 px-2 pt-0 sm:-translate-y-12 sm:px-3 md:-translate-y-14 md:px-4"
           top={(
             <div className="mx-auto flex w-full max-w-[780px] flex-col gap-0.5">
               <GameQuestionCard
