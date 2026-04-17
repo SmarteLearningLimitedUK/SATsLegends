@@ -304,8 +304,8 @@ const MatchGameShell: React.FC<{
 
            {useSharedTopHud ? (
              <div className="absolute inset-x-2 top-2 z-20 sm:inset-x-4">
-               <div className="mx-auto w-full max-w-[44rem]">
-                 <GameQuestionCard title="Match 3" className="bg-[#0a1f56]/70 backdrop-blur-sm">
+                 <div className="mx-auto w-full max-w-[44rem]">
+                 <GameQuestionCard title="Match Mastery" className="bg-[#0a1f56]/70 backdrop-blur-sm">
                    {questionText}
                  </GameQuestionCard>
                  <div className="mt-2 flex items-center gap-2">
@@ -625,33 +625,32 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
     >
       <PracticeIntroPopup
         open={showPracticeIntro}
-        title={gameTitle || 'Match 3'}
+        title={gameTitle || 'Match Mastery'}
         body="The Monster Minds have built a wall blocking our path, break the wall by matching frations to their equivilants."
         briefing={null}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div
-        ref={boardGridRef}
-        className="grid w-[min(94vw,94vh)] grid-cols-6 gap-2 sm:gap-2.5"
-      >
-        {board.map((cell, idx) => (
-          <div key={idx} className="relative" style={{ width: gemSize, height: gemSize }}>
-            <AnimatePresence mode="popLayout">
-              {cell && (
-                <BevelledGem
-                  key={`${idx}-${cell.type}-${cell.label}`}
-                  type={cell.type}
-                  label={cell.label}
-                  size={gemSize}
-                  isSelected={selectedIdx === idx}
-                  onClick={() => {
-                    void handleGemClick(idx);
-                  }}
-                />
-              )}
-            </AnimatePresence>
-          </div>
-        ))}
+      <div className="box-border w-[min(94vw,94vh)] rounded-[2rem] border border-cyan-100/20 bg-[#04102c]/82 p-3 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-4">
+        <div ref={boardGridRef} className="grid w-full grid-cols-6 gap-2 sm:gap-2.5">
+          {board.map((cell, idx) => (
+            <div key={idx} className="relative" style={{ width: gemSize, height: gemSize }}>
+              <AnimatePresence mode="popLayout">
+                {cell && (
+                  <BevelledGem
+                    key={`${idx}-${cell.type}-${cell.label}`}
+                    type={cell.type}
+                    label={cell.label}
+                    size={gemSize}
+                    isSelected={selectedIdx === idx}
+                    onClick={() => {
+                      void handleGemClick(idx);
+                    }}
+                  />
+                )}
+              </AnimatePresence>
+            </div>
+          ))}
+        </div>
       </div>
     </MatchGameShell>
   );

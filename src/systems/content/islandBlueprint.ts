@@ -176,7 +176,7 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
       { area: 'simplification', percentage: 10 },
     ],
     crossGameReinforcement: [
-      'equivalence appears in Take-Out Rush and Match-3 Equivalence',
+      'equivalence appears in Take-Out Rush and Match Mastery',
       'composition appears in Take-Out Rush and Fraction Forge',
       'application appears in transfer rounds and composition challenges',
     ],
@@ -239,7 +239,7 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
       },
       {
         key: 'match3_equivalence',
-        name: 'Match-3 Equivalence',
+        name: 'Match Mastery',
         role: 'fluency',
         gameplayRoles: ['fluency', 'pressure_timing'],
         mechanicSummary: 'Match equivalent fraction, decimal, and percentage values on a dynamic board.',

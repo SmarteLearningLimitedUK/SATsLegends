@@ -51,7 +51,7 @@ export const AVATARS: AvatarData[] = CHARACTER_AVATARS;
 const FRACTION_FOREST_LEVELS: LevelData[] = [
   { id: 1, stars: 0, isLocked: false, blueprintKey: 'take_out_rush', displayName: 'Take-Out Rush', gameType: 'take_out_rush' },
   { id: 2, stars: 0, isLocked: false, blueprintKey: 'fraction_forge', displayName: 'Fraction Forge', gameType: 'take_out_rush' },
-  { id: 3, stars: 0, isLocked: false, blueprintKey: 'match3_equivalence', displayName: 'Match-3 Equivalence', gameType: 'fraction_match' },
+  { id: 3, stars: 0, isLocked: false, blueprintKey: 'match3_equivalence', displayName: 'Match Mastery', gameType: 'fraction_match' },
   { id: 4, stars: 0, isLocked: false, blueprintKey: 'percent_power', displayName: 'Percent Power', gameType: 'percent_power' },
   { id: 5, stars: 0, isLocked: false, blueprintKey: 'simplify_sprint', displayName: 'Simplify Sprint', gameType: 'fraction_match' },
 ];
