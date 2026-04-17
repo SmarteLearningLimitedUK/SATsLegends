@@ -622,18 +622,19 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                 {availableItems.map((item) => {
                   const isBanned = activeConstraints.bannedIds.has(item.id);
                   return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => addItem(item.id)}
-                      disabled={isResolvingOrder || roundFinished || isBanned}
-                      className={`group flex flex-col items-center justify-center rounded-[0.9rem] border border-white/12 px-2.5 py-2 text-[10px] font-semibold text-white shadow-[0_10px_18px_rgba(0,0,0,0.28)] transition hover:border-white/30 disabled:opacity-50 ${isBanned ? 'bg-slate-900/40 grayscale' : 'bg-slate-950/70'}`}
-                    >
-                      <FoodSprite item={item} className="h-10 w-10 object-contain" />
-                      <div className="mt-1 text-[10px] font-black text-amber-100 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
-                        {asDisplayFraction(item.value)}
-                      </div>
-                    </button>
+                     <button
+                       key={item.id}
+                       type="button"
+                       data-button-skin="none"
+                       onClick={() => addItem(item.id)}
+                       disabled={isResolvingOrder || roundFinished || isBanned}
+                       className={`group flex flex-col items-center justify-center rounded-[0.9rem] border px-2.5 py-2 text-[10px] font-semibold text-white shadow-[0_10px_18px_rgba(0,0,0,0.28)] transition hover:border-white/28 active:scale-[0.98] disabled:opacity-50 ${isBanned ? 'border-white/10 bg-slate-950/30 grayscale' : 'border-white/18 bg-slate-950/65'}`}
+                     >
+                       <FoodSprite item={item} className="h-10 w-10 object-contain" />
+                       <div className="mt-1 whitespace-nowrap text-[10px] font-black text-amber-100 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
+                         {asDisplayFraction(item.value)}
+                       </div>
+                     </button>
                   );
                 })}
               </div>
