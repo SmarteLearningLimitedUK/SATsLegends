@@ -231,6 +231,22 @@
       "status": "captured",
       "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
       "screenshot": "qa-pc-measurement-mountain-problem-pyramid.png"
+    },
+    {
+      "viewport": "pc",
+      "island": "Measurement Mountain",
+      "group": "Lava Path",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-pc-measurement-mountain-lava-path.png"
+    },
+    {
+      "viewport": "pc",
+      "island": "Measurement Mountain",
+      "group": "Change Counter",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-pc-measurement-mountain-change-counter.png"
     }
   ],
   "consoleErrors": []
