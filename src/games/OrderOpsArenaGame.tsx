@@ -1,12 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
-import AnimatedAvatar from '../components/AnimatedAvatar';
-import { GameQuestionCard } from '../components/game-ui/GameUiKit';
-import { AVATARS } from '../constants';
+import { GameQuestionCard, GameUiShell } from '../components/game-ui/GameUiKit';
 import { triggerHaptic } from '../haptics';
-import { GameScreenShell } from '../layout/ScreenPrimitives';
 import { formatMultiplicationDisplay } from '../utils/mathDisplay';
 import orderOpsEnemy from '../assets/bosses/goblinwiz.jpg';
 
@@ -125,11 +121,6 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [isFinished, setIsFinished] = useState(false);
 
-
-  const playerAvatar = useMemo(
-    () => AVATARS.find((avatar) => avatar.id === avatarId) ?? AVATARS[0],
-    [avatarId],
-  );
 
   const displayExpression = formatMultiplicationDisplay(round.expression);
 
@@ -261,15 +252,13 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
   };
 
   return (
-    <GameScreenShell className="overflow-hidden">
-      <GameplaySceneBackdrop gameType="equation_grove" />
-
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] pt-[calc(env(safe-area-inset-top)+4.6rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+2.4rem)] md:pt-[calc(env(safe-area-inset-top)+4.95rem)]">
-        <div className="flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col gap-2 md:gap-3">
+    <GameUiShell overlayDisabled className="bg-transparent">
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] pt-[calc(env(safe-area-inset-top)+1rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+1.5rem)] md:pt-[calc(env(safe-area-inset-top)+1.25rem)]">
+        <div className="flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col gap-3 md:gap-4">
           <div className="flex justify-center">
             <GameQuestionCard
               title="Order Ops Arena"
-              subtitle="Solve it in BIDMAS order. Each correct answer pushes the bar."
+              subtitle="Solve it in BIDMAS order."
               className="w-full max-w-[860px] border border-amber-200/35 bg-[linear-gradient(180deg,rgba(251,191,36,0.28),rgba(15,23,42,0.18))] px-4 py-2 text-center shadow-[0_12px_26px_rgba(15,23,42,0.14)] md:px-6 md:py-2.5"
               bodyClassName="text-[clamp(1.15rem,2.9vw,2.7rem)] font-black tracking-tight text-white"
             >
@@ -277,53 +266,30 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
             </GameQuestionCard>
           </div>
 
-          <div className="relative min-h-0 flex-1 overflow-hidden rounded-[1.5rem] border border-white/10 bg-[linear-gradient(180deg,rgba(9,16,31,0.82),rgba(6,10,20,0.92))] shadow-[0_16px_34px_rgba(2,6,23,0.18)]">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.12),rgba(15,23,42,0.04)_38%,rgba(2,6,23,0.32)_100%)]" />
-            <div className="relative z-10 flex h-full min-h-0 flex-col justify-between gap-3 p-3 md:p-4">
-              <div className="flex flex-1 items-end justify-between gap-3">
-                <div className="flex min-h-0 w-[48%] flex-1 justify-center">
-                  <div className="relative flex h-full min-h-[14rem] w-full max-w-[18rem] items-end justify-center rounded-[1.35rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(147,197,253,0.16),rgba(15,23,42,0.02)_52%,rgba(15,23,42,0.18)_100%)] p-3 md:min-h-[20rem]">
-                    <div className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-cyan-200/18 bg-slate-950/35 px-2 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/80">
-                      {hearts} shields
-                    </div>
-                    <AnimatedAvatar
-                      avatar={playerAvatar}
-                      pose={feedback?.type === 'error' ? 'sad' : 'attack'}
-                      floating={false}
-                      cycleFrames
-                      showBackdropGlow={false}
-                      className="h-full w-[90%]"
-                      imageClassName="object-contain object-bottom drop-shadow-[0_18px_28px_rgba(0,0,0,0.32)]"
-                    />
-                    <div className="pointer-events-none absolute bottom-3 left-3 right-3 rounded-[0.9rem] border border-white/10 bg-black/20 px-2 py-1.5 text-center text-[10px] font-bold text-white/78">
-                      {Combo > 0 ? `${Combo} strike streak` : 'Hold your defence'}
-                    </div>
+          <div className="relative min-h-0 flex-1 overflow-hidden rounded-[1.5rem] border border-white/10 bg-transparent">
+            <div className="relative z-10 flex h-full min-h-0 flex-col gap-3 p-3 md:p-4">
+              <div className="flex min-h-[13rem] flex-1 items-center justify-center">
+                <div className="relative flex h-full w-full max-w-[24rem] items-center justify-center rounded-[1.35rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.14),rgba(15,23,42,0.02)_52%,rgba(15,23,42,0.12)_100%)] p-3 md:min-h-[18rem]">
+                  <div className="absolute left-3 top-3 rounded-full border border-rose-200/14 bg-slate-950/35 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-rose-100/82">
+                    {Math.max(0, maxEnemyHealth - enemyHealth)} hits landed
                   </div>
-                </div>
-
-                <div className="flex min-h-0 w-[48%] flex-1 justify-center">
-                  <div className="relative flex h-full min-h-[14rem] w-full max-w-[18rem] items-end justify-center rounded-[1.35rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.18),rgba(15,23,42,0.02)_52%,rgba(15,23,42,0.18)_100%)] p-3 md:min-h-[20rem]">
-                    <div className="absolute left-3 top-3 rounded-full border border-rose-200/14 bg-slate-950/35 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-rose-100/82">
-                      {Math.max(0, maxEnemyHealth - enemyHealth)} hits landed
-                    </div>
-                    <motion.img
-                      src={orderOpsEnemy}
-                      alt="Order Ops enemy"
-                      animate={feedback?.type === 'success'
-                        ? { x: [0, -5, 5, -3, 0] }
-                        : feedback?.type === 'error'
-                          ? { x: [0, 4, -4, 0] }
-                          : { x: 0 }}
-                      transition={{ duration: 0.38 }}
-                      className="h-full w-[92%] object-contain object-bottom drop-shadow-[0_18px_28px_rgba(0,0,0,0.3)]"
-                      draggable={false}
-                    />
-                  </div>
+                  <motion.img
+                    src={orderOpsEnemy}
+                    alt="Order Ops enemy"
+                    animate={feedback?.type === 'success'
+                      ? { x: [0, -5, 5, -3, 0] }
+                      : feedback?.type === 'error'
+                        ? { x: [0, 4, -4, 0] }
+                        : { x: 0 }}
+                    transition={{ duration: 0.38 }}
+                    className="h-full w-full max-w-[18rem] object-contain object-center drop-shadow-[0_18px_28px_rgba(0,0,0,0.24)]"
+                    draggable={false}
+                  />
                 </div>
               </div>
 
-              <div className="rounded-[1.45rem] border border-white/10 bg-slate-950/34 p-3 shadow-[0_14px_28px_rgba(2,6,23,0.14)] backdrop-blur-sm md:p-4">
-                <div className="grid grid-cols-2 gap-2 md:gap-3">
+              <div className="rounded-[1.45rem] border border-white/10 bg-[linear-gradient(180deg,rgba(9,16,31,0.66),rgba(6,10,20,0.82))] p-3 shadow-[0_14px_28px_rgba(2,6,23,0.14)] backdrop-blur-sm md:p-4">
+                <div className="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
                   {round.options.map((option) => (
                     <button
                       key={`${displayExpression}-${option}`}
@@ -359,7 +325,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
           )}
         </AnimatePresence>
       </div>
-    </GameScreenShell>
+    </GameUiShell>
   );
 };
 

@@ -274,7 +274,7 @@ const buildPotionName = (active: Ingredient[]) => {
 const buildStoryLead = (title: string, stage: number, batchLabel?: Challenge['batchLabel']) => {
   const titleLower = title.toLowerCase();
   if (titleLower.includes('crimson courage')) return 'Crimson Courage has been requested by the villagers.';
-  if (titleLower.includes('azure cleanse')) return 'The healers are waiting for Azure Cleanse.';
+  if (titleLower.includes('azure cleanse')) return 'The healers are waiting for a fresh blue tonic.';
   if (titleLower.includes('heart of oak')) return 'The village gate needs Heart of Oak.';
   if (titleLower.includes('solar clarity')) return 'The lantern keepers are calling for Solar Clarity.';
   if (titleLower.includes('midnight syrup')) return 'The night watch has ordered Midnight Syrup.';
@@ -303,7 +303,6 @@ const buildOrderPrompt = (
 ) => {
   return [
     storyLead,
-    `Target recipe [${title}]`,
     `Ratio ${ratioText}`,
     `${cardHint || 'Current mix is shown below.'} Keep the ratio balanced.`,
   ].join('\n');
@@ -745,7 +744,6 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
             <div className="relative z-10">
                 <GameTopBar
                   onBack={onBack}
-                progressLabel={`Mix ${Math.min(correctSolved + 1, roundsToWin)} / ${roundsToWin}`}
                   lives={sessionState?.lives}
                   className="mx-auto w-full max-w-[780px]"
                   audioEnabled={audioEnabled}
@@ -930,7 +928,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
               className="pointer-events-none fixed left-0 right-0 z-[60]"
               style={{ top: '6px' }}
             >
-              <GameQuestionCard title="Target Recipe" className="max-w-[680px]" bodyClassName="mt-0.5">
+              <GameQuestionCard title="Potion Panic" className="max-w-[680px]" bodyClassName="mt-0.5">
                 <div className="text-[clamp(0.95rem,3.4vw,1.18rem)] font-bold text-white">
                   {challenge.orderTitle}
                 </div>

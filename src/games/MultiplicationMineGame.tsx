@@ -7,7 +7,7 @@ import rockStage20 from '../assets/mine/20.png';
 import rockStage21 from '../assets/mine/21.png';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import mineBackground from '../assets/maps/backgroundsforgames/multiplication mine background.jpg';
-import MiniGameTopBar from '../components/MiniGameTopBar';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { triggerHaptic } from '../haptics';
 
 interface MultiplicationMineGameProps {
@@ -143,34 +143,23 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
     <div className="relative h-full w-full overflow-hidden text-white">
       <GameplaySceneBackdrop gameType="calculation_clash" backgroundOverride={mineBackground} />
 
-      {!useSharedTopHud ? (
-        <MiniGameTopBar
-          onBack={onBack}
-          XP={XP}
-          scoreLabel="XP"
-          metaLabel="Rock"
-          metaValue={`${rockHealth}/${ROCK_MAX_HEALTH}`}
-        />
-      ) : null}
-
       <div className={`relative z-20 flex h-full w-full flex-col items-center px-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+3.2rem)]' : 'pt-[calc(env(safe-area-inset-top)+4.2rem)]'}`}>
-        <div className="w-full max-w-[760px] rounded-[1.2rem] border border-[#89c8ff66] bg-[#0c2a5dd6] px-4 py-3 text-center shadow-[0_12px_30px_rgba(0,0,0,0.5)]">
-          <p className="text-[clamp(0.95rem,2.8vw,1.45rem)] font-black uppercase tracking-[0.07em] text-[#ffefb1]">
-            Complete multiplication answers to break the rock
-          </p>
-        </div>
-
-        <div className="mt-4 rounded-2xl border border-white/20 bg-[#102f62d1] px-6 py-4 shadow-[0_10px_24px_rgba(0,0,0,0.45)]">
-          <p className="text-[clamp(1.7rem,6vw,3rem)] font-black tracking-wide text-white">
+        <div className="w-full max-w-[760px]">
+          <GameQuestionCard
+            title="Multiplication Mine"
+            subtitle="Break the rock by solving the multiplication."
+            className="mx-auto w-full"
+            bodyClassName="text-[clamp(1.7rem,6vw,3rem)] font-black tracking-wide text-white"
+          >
             {question.a} x {question.b} = ?
-          </p>
+          </GameQuestionCard>
         </div>
 
         <div className="mt-4 w-full max-w-[520px]">
           <div className="answer-choice-surface grid grid-cols-2 gap-2.5">
             {question.options.map((option) => (
               <motion.button
-                key={`${question.prompt}-${option}`}
+                key={`${question.a}x${question.b}-${option}`}
                 type="button"
                 onClick={() => solveQuestion(option)}
                 disabled={phase !== 'playing'}

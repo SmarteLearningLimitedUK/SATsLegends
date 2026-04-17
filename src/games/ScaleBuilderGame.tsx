@@ -1,12 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ChevronRight, Layers, Ruler, Trophy } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import MiniGameTopBar from '../components/MiniGameTopBar';
 import { AVATARS } from '../constants';
 import { GameScreenShell } from '../layout/ScreenPrimitives';
 import labelGreenLongAsset from '../assets/licensed/slices/label_green_long.png';
 import scaleBuilderBackground from '../assets/maps/backgroundsforgames/scalebuilder-construction.png';
-import { PrimaryButton } from '../components/game-ui/GameUiKit';
+import { IconButton, PrimaryButton } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
@@ -125,16 +124,6 @@ const ShapeRenderer: React.FC<{
           transform: 'translate(-50%, -50%)',
         }}
       >
-        {!isBase ? (
-          <>
-            <div className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-black tracking-wide text-yellow-100 drop-shadow-[0_2px_5px_rgba(0,0,0,0.4)]">
-              {width.toFixed(1)} units
-            </div>
-            <div className="absolute -left-16 top-1/2 -translate-y-1/2 -rotate-90 whitespace-nowrap text-[10px] font-black tracking-wide text-yellow-100 drop-shadow-[0_2px_5px_rgba(0,0,0,0.4)]">
-              {height.toFixed(1)} units
-            </div>
-          </>
-        ) : null}
       </div>
     );
   }
@@ -151,20 +140,18 @@ const ShapeRenderer: React.FC<{
           transform: 'translate(-50%, -50%)',
         }}
       >
-        <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none">
-          <path
-            d={`M ${width / 2} 0 L ${width} ${height} L 0 ${height} Z`}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            className={strokeClass.replace('border-', 'text-')}
-          />
-        </svg>
-        {!isBase ? (
-          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-black tracking-wide text-yellow-100 drop-shadow-[0_2px_5px_rgba(0,0,0,0.4)]">
-            {width.toFixed(1)} units
-          </div>
-        ) : null}
+      <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none">
+        <path
+          d={`M ${width / 2} 0 L ${width} ${height} L 0 ${height} Z`}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
+          className={strokeClass.replace('border-', 'text-')}
+        />
+      </svg>
       </div>
     );
   }
@@ -187,14 +174,12 @@ const ShapeRenderer: React.FC<{
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
           className={strokeClass.replace('border-', 'text-')}
         />
       </svg>
-      {!isBase ? (
-        <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-black tracking-wide text-yellow-100 drop-shadow-[0_2px_5px_rgba(0,0,0,0.4)]">
-          {width.toFixed(1)} units
-        </div>
-      ) : null}
     </div>
   );
 };
@@ -236,8 +221,6 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
     if (mistakeCount <= 4) return 2;
     return 1;
   }, [mistakeCount]);
-
-  const progressPct = useMemo(() => ((currentLevelIdx + (gameState === 'complete' ? 1 : 0)) / LEVELS.length) * 100, [currentLevelIdx, gameState]);
 
   const isDimensionMode = currentLevel.id >= 4;
 
@@ -357,17 +340,17 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
         />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(191,219,254,0.28),transparent_52%),radial-gradient(circle_at_20%_20%,rgba(147,197,253,0.22),transparent_28%),radial-gradient(circle_at_80%_70%,rgba(56,189,248,0.18),transparent_24%)]" />
       </div>
-      {!useSharedTopHud ? (
-        <MiniGameTopBar
-          onBack={onBack}
-          XP={Math.round(finalScore)}
-          scoreLabel="Build"
-          metaLabel="Level"
-          metaValue={`${currentLevelIdx + 1}/${LEVELS.length}`}
-        />
-      ) : null}
+      <div className="pointer-events-none absolute left-2 top-[calc(env(safe-area-inset-top)+0.5rem)] z-20">
+        <div className="pointer-events-auto">
+          <IconButton
+            icon={<ChevronRight className="h-5 w-5 rotate-180" />}
+            label="Back"
+            onClick={onBack}
+          />
+        </div>
+      </div>
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-2 px-2 pb-1 pt-[max(3.4rem,calc(env(safe-area-inset-top)+2.6rem))] md:gap-3 md:px-3">
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-2 px-2 pb-1 pt-[calc(env(safe-area-inset-top)+0.95rem)] md:gap-3 md:px-3">
         <div className="relative mx-auto flex h-full w-full max-w-[780px] min-h-0 flex-1 flex-col overflow-visible">
           <div className="relative z-10 grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-3 p-0 md:gap-4 md:p-0">
             <div className="game-question-card">
@@ -414,7 +397,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
               </div>
             </div>
 
-            <div className="rounded-[1.1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(2,6,23,0.96),rgba(15,23,42,0.98))] p-2 shadow-[0_0_0_1px_rgba(15,23,42,0.6),0_18px_30px_rgba(2,6,23,0.38)]">
+            <div className="rounded-[1.1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(2,6,23,0.99),rgba(7,15,29,0.99))] p-2 shadow-[0_0_0_1px_rgba(15,23,42,0.6),0_18px_30px_rgba(2,6,23,0.46)]">
               <div className="mb-2 flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/82">
                 <span>Adjust the scale</span>
                 <button

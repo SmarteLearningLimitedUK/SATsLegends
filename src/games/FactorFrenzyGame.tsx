@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import factorFrenzyBackground from '../assets/maps/backgroundsforgames/Factor Frenzy.jpg';
-import factorFrenzyEnemy from '../assets/bosses/goblinwiz.jpg';
+import factorFrenzyEnemy from '../assets/bosses/goblin.png';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 
 type FactorProblemType = 'missing_factor' | 'all_factors' | 'common_factors' | 'prime_factors';
@@ -422,7 +422,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                 exit={{ opacity: 0, x: -16 }}
                 className="flex min-h-0 flex-1 flex-col"
               >
-                <div className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border border-cyan-100/25 bg-[#123062]/58 p-3 shadow-[0_10px_22px_rgba(2,6,23,0.32)] sm:p-4">
+                <div className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border border-cyan-100/16 bg-transparent p-3 sm:p-4">
                   <div className="flex h-full min-h-0 flex-col">
                     <div className="flex items-start justify-between gap-3">
                       <div className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/80 sm:text-xs">
@@ -434,11 +434,11 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                     </div>
 
                     <div className="relative mt-3 flex min-h-0 flex-1 flex-col items-center justify-center">
-                      <div className="absolute left-1/2 top-[-8px] z-20 w-[min(74vw,15rem)] -translate-x-1/2 rounded-2xl border border-amber-200/35 bg-slate-900/70 px-3 py-2 shadow-[0_12px_24px_rgba(2,6,23,0.38)]">
+                      <div className="w-full max-w-[17rem] rounded-2xl border border-amber-200/24 bg-[linear-gradient(180deg,rgba(15,23,42,0.22),rgba(15,23,42,0.1))] px-3 py-2 shadow-[0_12px_24px_rgba(2,6,23,0.18)]">
                         <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.18em] text-amber-200">
                           Enemy
                         </div>
-                        <div className="h-2 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/80">
+                        <div className="h-2 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/70">
                           <motion.div
                             className="h-full rounded-full bg-gradient-to-r from-rose-500 via-rose-400 to-orange-300 shadow-[0_0_12px_rgba(251,113,133,0.75)]"
                             animate={{ width: `${enemyHealthPercent}%` }}
@@ -447,9 +447,9 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                         </div>
                       </div>
 
-                      <div className="absolute left-1/2 top-1/2 flex w-full -translate-x-1/2 -translate-y-1/2 justify-center">
+                      <div className="mt-3 flex w-full justify-center">
                         <motion.div
-                          className="relative w-[min(48vw,14.5rem)] max-w-full"
+                          className="relative w-[min(46vw,13.5rem)] max-w-full"
                           animate={
                             showHitFx
                               ? { x: [0, -8, 8, -6, 6, 0], rotate: [0, -2, 2, -1, 1, 0] }
@@ -457,17 +457,12 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                           }
                           transition={{ duration: 0.42, ease: 'easeInOut' }}
                         >
-                          <motion.div
-                            className="absolute left-1/2 top-[68%] h-[36%] w-[56%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-300/35 blur-2xl"
-                            animate={{ opacity: showHitFx ? 0.54 : 0.24, scale: showHitFx ? 1.12 : 1 }}
-                            transition={{ duration: 0.4, ease: 'easeInOut' }}
-                          />
                           <motion.img
                             src={factorFrenzyEnemy}
                             alt=""
                             aria-hidden="true"
                             draggable={false}
-                            className="relative h-auto w-full object-contain drop-shadow-[0_18px_26px_rgba(2,6,23,0.55)]"
+                            className="relative h-auto w-full object-contain drop-shadow-[0_18px_26px_rgba(2,6,23,0.38)]"
                             animate={{ opacity: showHitFx ? 0.92 : 1, scale: showHitFx ? [1, 1.03, 1] : 1 }}
                             transition={{ duration: 0.42, ease: 'easeInOut' }}
                           />

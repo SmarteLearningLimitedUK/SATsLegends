@@ -8,6 +8,7 @@ import { triggerHaptic } from '../haptics';
 import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
+import fractionForgeBackground from '../assets/maps/backgroundsforgames/fraction forge map.jpg';
 
 interface FormulaForgeGameProps {
   levelId: number;
@@ -238,13 +239,6 @@ const scoreToStars = (correct: number, rounds: number, lives: number) => {
 
 const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
   const valueFor = (label: string) => round.given.find((item) => item.label === label)?.value ?? 0;
-  const formulaSummary = round.diagram === 'triangle'
-    ? 'A = (b × h) ÷ 2'
-    : round.diagram === 'cuboid'
-      ? 'V = l × w × h'
-      : round.title === 'Rectangle Perimeter'
-        ? 'P = 2(l + w)'
-        : 'A = l × w';
 
   if (round.diagram === 'triangle') {
     const base = valueFor('b');
@@ -260,21 +254,10 @@ const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
           {round.prompt}
         </div>
         <div className="relative mt-3 aspect-[1.3/1] overflow-hidden rounded-[1.4rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.16),rgba(15,23,42,0.06)_42%,rgba(8,15,30,0.28)_100%)] p-3">
-          <div className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full border border-cyan-200/20 bg-slate-950/40 px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100">
-            base = {base}
-          </div>
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 -rotate-90 rounded-full border border-cyan-200/20 bg-slate-950/40 px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100">
-            height = {height}
-          </div>
           <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full">
-            <polygon points="50,16 18,78 82,78" fill="rgba(56,189,248,0.16)" stroke="rgba(191,219,254,0.9)" strokeWidth="2.2" />
-            <line x1="50" y1="16" x2="50" y2="78" stroke="rgba(191,219,254,0.45)" strokeDasharray="3 3" strokeWidth="1.2" />
+            <polygon points="50,16 18,78 82,78" fill="rgba(56,189,248,0.16)" stroke="rgba(191,219,254,0.9)" strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" />
+            <line x1="50" y1="16" x2="50" y2="78" stroke="rgba(191,219,254,0.45)" strokeDasharray="3 3" strokeWidth="1.2" strokeLinecap="round" />
           </svg>
-          <div className="absolute inset-x-0 bottom-4 flex justify-center">
-            <div className="rounded-full border border-white/10 bg-black/38 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.15em] text-amber-100">
-              {formulaSummary}
-            </div>
-          </div>
         </div>
       </div>
     );
@@ -295,28 +278,14 @@ const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
           {round.prompt}
         </div>
         <div className="relative mt-3 aspect-[1.25/1] overflow-hidden rounded-[1.4rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.16),rgba(15,23,42,0.06)_42%,rgba(8,15,30,0.28)_100%)] p-3">
-          <div className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full border border-cyan-200/20 bg-slate-950/40 px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100">
-            height = {height}
-          </div>
-          <div className="absolute left-4 bottom-4 rounded-full border border-cyan-200/20 bg-slate-950/40 px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100">
-            l = {length}
-          </div>
-          <div className="absolute right-4 bottom-10 rounded-full border border-cyan-200/20 bg-slate-950/40 px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100">
-            w = {width}
-          </div>
           <svg viewBox="0 0 120 100" className="absolute inset-0 h-full w-full">
-            <polygon points="28,24 70,24 92,40 50,40" fill="rgba(56,189,248,0.18)" stroke="rgba(191,219,254,0.9)" strokeWidth="2" />
-            <polygon points="28,24 28,66 50,82 50,40" fill="rgba(14,165,233,0.12)" stroke="rgba(191,219,254,0.85)" strokeWidth="2" />
-            <polygon points="50,40 92,40 92,82 50,82" fill="rgba(15,118,110,0.12)" stroke="rgba(191,219,254,0.85)" strokeWidth="2" />
-            <line x1="28" y1="24" x2="50" y2="40" stroke="rgba(191,219,254,0.45)" strokeWidth="1.2" />
-            <line x1="70" y1="24" x2="92" y2="40" stroke="rgba(191,219,254,0.45)" strokeWidth="1.2" />
-            <line x1="50" y1="40" x2="50" y2="82" stroke="rgba(191,219,254,0.45)" strokeWidth="1.2" />
+            <polygon points="28,24 70,24 92,40 50,40" fill="rgba(56,189,248,0.18)" stroke="rgba(191,219,254,0.9)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+            <polygon points="28,24 28,66 50,82 50,40" fill="rgba(14,165,233,0.12)" stroke="rgba(191,219,254,0.85)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+            <polygon points="50,40 92,40 92,82 50,82" fill="rgba(15,118,110,0.12)" stroke="rgba(191,219,254,0.85)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+            <line x1="28" y1="24" x2="50" y2="40" stroke="rgba(191,219,254,0.45)" strokeWidth="1.2" strokeLinecap="round" />
+            <line x1="70" y1="24" x2="92" y2="40" stroke="rgba(191,219,254,0.45)" strokeWidth="1.2" strokeLinecap="round" />
+            <line x1="50" y1="40" x2="50" y2="82" stroke="rgba(191,219,254,0.45)" strokeWidth="1.2" strokeLinecap="round" />
           </svg>
-          <div className="absolute inset-x-0 bottom-4 flex justify-center">
-            <div className="rounded-full border border-white/10 bg-black/38 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.15em] text-amber-100">
-              {formulaSummary}
-            </div>
-          </div>
         </div>
       </div>
     );
@@ -335,14 +304,8 @@ const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
         {round.prompt}
       </div>
       <div className="relative mt-3 aspect-[1.25/1] overflow-hidden rounded-[1.4rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.16),rgba(15,23,42,0.06)_42%,rgba(8,15,30,0.28)_100%)] p-3">
-        <div className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full border border-cyan-200/20 bg-slate-950/40 px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100">
-          w = {width}
-        </div>
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 -rotate-90 rounded-full border border-cyan-200/20 bg-slate-950/40 px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100">
-          l = {length}
-        </div>
         <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full">
-          <rect x="18" y="18" width="64" height="64" rx="10" fill="rgba(56,189,248,0.16)" stroke="rgba(191,219,254,0.9)" strokeWidth="2.5" />
+          <rect x="18" y="18" width="64" height="64" rx="10" fill="rgba(56,189,248,0.16)" stroke="rgba(191,219,254,0.9)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
           <g opacity="0.24" stroke="rgba(255,255,255,0.85)" strokeWidth="0.8">
             {Array.from({ length: 4 }).map((_, index) => (
               <React.Fragment key={`grid-${index}`}>
@@ -352,16 +315,6 @@ const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
             ))}
           </g>
         </svg>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="rounded-full border border-white/10 bg-black/38 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.15em] text-amber-100">
-            {formulaSummary}
-          </div>
-        </div>
-        <div className="absolute inset-x-0 bottom-4 flex justify-center">
-          <div className="rounded-full border border-white/10 bg-black/38 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.15em] text-amber-100">
-            {round.title === 'Rectangle Perimeter' ? `P = ?` : `A = ?`}
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -490,7 +443,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
 
   return (
     <GameScreenShell className="overflow-hidden">
-      <GameplaySceneBackdrop gameType="formula_forge" />
+      <GameplaySceneBackdrop gameType="formula_forge" backgroundOverride={fractionForgeBackground} />
 
       <div className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.75rem)] md:pt-[calc(env(safe-area-inset-top)+5rem)]' : 'pt-[calc(env(safe-area-inset-top)+2.5rem)]'}`}>
         <PuzzleStage className="w-full max-w-6xl min-h-0 flex-1 rounded-[1.7rem] p-2 md:rounded-[2rem] md:p-3">

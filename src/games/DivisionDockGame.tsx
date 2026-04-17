@@ -1,15 +1,8 @@
-﻿import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { triggerHaptic } from '../haptics';
-import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
-import boat1 from '../assets/boats/1.png';
-import boat2 from '../assets/boats/2.png';
-import boat3 from '../assets/boats/3.png';
-import boat4 from '../assets/boats/4.png';
-import boat5 from '../assets/boats/5.png';
-import boat6 from '../assets/boats/6.png';
-import boat7 from '../assets/boats/7.png';
+import { GameScreenShell } from '../layout/ScreenPrimitives';
 import dockBackground from '../assets/maps/backgroundsforgames/division dock.jpg';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
@@ -23,10 +16,10 @@ interface DivisionDockGameProps {
 }
 
 interface DivisionQuestion {
-  kind: 'fluency' | 'reasoning';
   dividend: number;
   divisor: number;
   answer: number;
+  options: number[];
 }
 
 type FeedbackState = null | {
@@ -36,29 +29,56 @@ type FeedbackState = null | {
 };
 
 const HEARTS_MAX = 3;
-const DOCK_COUNT = 8;
 const ROUNDS_TO_WIN = 5;
-const BOAT_ASSETS = [boat1, boat2, boat3, boat4, boat5, boat6, boat7];
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-const pickBoatSet = () => {
-  const pool = [...BOAT_ASSETS];
-  for (let i = pool.length - 1; i > 0; i -= 1) {
-    const swapIndex = randomInt(0, i);
-    [pool[i], pool[swapIndex]] = [pool[swapIndex], pool[i]];
+const buildDivisionOptions = (answer: number) => {
+  const pool = new Set<number>([answer]);
+  const deltas = [-4, -3, -2, 2, 3, 4, 5, -5];
+
+  for (const delta of deltas.sort(() => Math.random() - 0.5)) {
+    if (pool.size >= 4) break;
+    const candidate = Math.max(1, answer + delta);
+    if (candidate !== answer) {
+      pool.add(candidate);
+    }
   }
-  return pool.slice(0, DOCK_COUNT);
+
+  while (pool.size < 4) {
+    const candidate = Math.max(1, answer + randomInt(-6, 6));
+    if (candidate !== answer) {
+      pool.add(candidate);
+    }
+  }
+
+  return [...pool].sort(() => Math.random() - 0.5);
 };
 
 const createDivisionQuestion = (levelId: number, solved: number): DivisionQuestion => {
-  const divisor = DOCK_COUNT;
   const stage = Math.max(1, levelId + Math.floor(solved / 2));
-  const answerMin = stage <= 3 ? 2 : stage <= 6 ? 4 : stage <= 9 ? 6 : 8;
-  const answerMax = stage <= 3 ? 8 : stage <= 6 ? 14 : stage <= 9 ? 18 : 24;
+  const divisorMin = stage <= 3 ? 2 : stage <= 6 ? 3 : 4;
+  const divisorMax = stage <= 3 ? 8 : stage <= 6 ? 10 : 12;
+  const answerMin = stage <= 3 ? 2 : stage <= 6 ? 4 : 6;
+  const answerMax = stage <= 3 ? 9 : stage <= 6 ? 14 : 18;
+  const divisor = randomInt(divisorMin, divisorMax);
   const answer = randomInt(answerMin, answerMax);
   const dividend = divisor * answer;
-  return { kind: 'fluency', dividend, divisor, answer };
+
+  return {
+    dividend,
+    divisor,
+    answer,
+    options: buildDivisionOptions(answer),
+  };
+};
+
+const starsForAccuracy = (correct: number, attempts: number) => {
+  if (attempts === 0) return 0;
+  const accuracy = correct / attempts;
+  if (accuracy >= 0.9) return 3;
+  if (accuracy >= 0.65) return 2;
+  return 1;
 };
 
 const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
@@ -69,29 +89,26 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
   onBack: _onBack,
 }) => {
   const initialTime = 78 + (levelId * 6);
-
   const timersRef = useRef<number[]>([]);
   const scoreRef = useRef(0);
 
   const [XP, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(initialTime);
   const [hearts, setHearts] = useState(HEARTS_MAX);
-  const [Combo, setStreak] = useState(0);
+  const [combo, setCombo] = useState(0);
   const [roundSolved, setRoundSolved] = useState(0);
-  const [boatLoads, setBoatLoads] = useState<number[]>(() => Array.from({ length: DOCK_COUNT }, () => 0));
-  const [boatSet, setBoatSet] = useState<string[]>(() => pickBoatSet());
   const [solvedCount, setSolvedCount] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [question, setQuestion] = useState<DivisionQuestion>(() => createDivisionQuestion(levelId, 0));
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [isFinished, setIsFinished] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
 
   const clearTimers = () => {
     timersRef.current.forEach((timerId) => window.clearTimeout(timerId));
     timersRef.current = [];
   };
-
 
   useEffect(() => {
     scoreRef.current = XP;
@@ -106,15 +123,14 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
     scoreRef.current = 0;
     setTimeLeft(initialTime);
     setHearts(HEARTS_MAX);
-    setStreak(0);
+    setCombo(0);
     setRoundSolved(0);
-    setBoatLoads(Array.from({ length: DOCK_COUNT }, () => 0));
-    setBoatSet(pickBoatSet());
     setSolvedCount(0);
     setAttempts(0);
     setCorrectAnswers(0);
     setQuestion(openingQuestion);
     setFeedback(null);
+    setSelectedAnswer(null);
     setIsFinished(false);
   }, [initialTime, levelId]);
 
@@ -153,13 +169,22 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
     onVictory(stars, finalScore);
   };
 
+  const moveToNextQuestion = (nextSolvedCount: number) => {
+    const timerId = window.setTimeout(() => {
+      setQuestion(createDivisionQuestion(levelId, nextSolvedCount));
+      setSelectedAnswer(null);
+      setFeedback(null);
+    }, 620);
+    timersRef.current.push(timerId);
+  };
+
   const handleWrongAnswer = () => {
     const nextHearts = hearts - 1;
     setHearts(nextHearts);
-    setStreak(0);
+    setCombo(0);
     setFeedback({
       type: 'error',
-      title: 'Not Loaded',
+      title: 'Not Quite',
       subtitle: `${question.dividend} ÷ ${question.divisor} = ${question.answer}`,
     });
     triggerHaptic('error');
@@ -173,79 +198,45 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
       return;
     }
 
-    const timerId = window.setTimeout(() => {
-      setQuestion(createDivisionQuestion(levelId, solvedCount));
-      setBoatLoads(Array.from({ length: DOCK_COUNT }, () => 0));
-      setBoatSet(pickBoatSet());
-      setFeedback(null);
-    }, 620);
-    timersRef.current.push(timerId);
+    moveToNextQuestion(solvedCount);
   };
 
-  const remainingGoods = Math.max(0, question.dividend - boatLoads.reduce((sum, count) => sum + count, 0));
-  const allUsed = remainingGoods === 0;
-  const allEqual = boatLoads.every((count) => count === question.answer);
+  const handleAnswer = (choice: number) => {
+    if (isFinished || feedback) return;
+    setSelectedAnswer(choice);
+    setAttempts((previous) => previous + 1);
 
-  const addToBoat = (index: number) => {
-    if (isFinished || remainingGoods <= 0) return;
-    setBoatLoads((previous) => previous.map((count, i) => (i === index ? count + 1 : count)));
-    triggerHaptic('success');
-  };
-
-  const resetBoats = () => {
-    setBoatLoads(Array.from({ length: DOCK_COUNT }, () => 0));
-    setFeedback({
-      type: 'error',
-      title: 'Reset',
-      subtitle: 'All crates go back to the dock.',
-    });
-  };
-
-  const checkShare = () => {
-    if (isFinished) return;
-    const nextAttempts = attempts + 1;
-    setAttempts(nextAttempts);
-
-    if (!allUsed) {
-      setFeedback({
-        type: 'error',
-        title: 'Keep Sharing',
-        subtitle: 'Use every crate before checking.',
-      });
-      return;
-    }
-
-    if (!allEqual) {
+    if (choice !== question.answer) {
       handleWrongAnswer();
       return;
     }
 
     const nextSolved = solvedCount + 1;
     const nextCorrect = correctAnswers + 1;
-    const points = 120 + (Combo * 16) + (levelId * 10);
+    const points = 120 + (combo * 16) + (levelId * 10);
     const updatedScore = XP + points;
 
     setScore(updatedScore);
     scoreRef.current = updatedScore;
     setSolvedCount(nextSolved);
     setCorrectAnswers(nextCorrect);
-    setStreak((previous) => previous + 1);
-    setRoundSolved((prev) => prev + 1);
+    setCombo((previous) => previous + 1);
+    setRoundSolved((previous) => previous + 1);
     setFeedback({
       type: 'success',
       title: 'Perfect Share',
-      subtitle: `Each boat has ${question.answer} crates.`,
+      subtitle: `${question.dividend} ÷ ${question.divisor} = ${question.answer}`,
     });
+    triggerHaptic('success');
 
     if (nextSolved >= ROUNDS_TO_WIN) {
-      finishVictory(updatedScore, nextAttempts, nextCorrect, hearts);
+      finishVictory(updatedScore, attempts + 1, nextCorrect, hearts);
       return;
     }
 
     const timerId = window.setTimeout(() => {
       setQuestion(createDivisionQuestion(levelId, nextSolved));
-      setBoatLoads(Array.from({ length: DOCK_COUNT }, () => 0));
-      setBoatSet(pickBoatSet());
+      setSelectedAnswer(null);
       setFeedback(null);
     }, 720);
     timersRef.current.push(timerId);
@@ -259,95 +250,53 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
       />
 
       <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col px-2 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-[calc(env(safe-area-inset-top)+1rem)] md:px-3 md:pb-[calc(env(safe-area-inset-bottom)+1.25rem)] md:pt-[calc(env(safe-area-inset-top)+1.25rem)]">
-        <PuzzleStage className="w-full max-w-7xl min-h-0 flex-1 rounded-[1.6rem] p-2 md:rounded-[2rem] md:p-2.5">
-          <div className="absolute inset-0 bg-transparent" />
+        <div className="mx-auto flex h-full w-full max-w-[920px] min-h-0 flex-1 flex-col gap-3 px-1 py-1.5 md:gap-4 md:px-2 md:py-2">
+          <div className="w-full max-w-[920px]">
+            <GameQuestionCard
+              title="Division Dock"
+              bodyClassName="text-[clamp(1rem,2.7vw,1.42rem)] font-black leading-snug tracking-[0.01em] text-white md:text-[1.5rem]"
+            >
+              {formatFantasyPrompt(`The Monsterminds have mixed the cargo.\nWhat is ${question.dividend} ÷ ${question.divisor}?`)}
+            </GameQuestionCard>
+          </div>
 
-          <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-3 px-1 py-1.5 md:gap-4 md:px-2 md:py-2">
-            <div className="mx-auto w-full max-w-[920px]">
-              <GameQuestionCard
-                title="Division Dock"
-                bodyClassName="text-[clamp(0.95rem,2.4vw,1.28rem)] font-black leading-snug tracking-[0.01em] text-white md:text-[1.32rem]"
-              >
-                {formatFantasyPrompt(`The Monsterminds have messed up the cargo manifests.\nShare ${question.dividend} crates equally between ${question.divisor} boats.`)}
-              </GameQuestionCard>
-            </div>
-
-            <div className="flex min-h-0 flex-1 flex-col gap-3">
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-                <div className="rounded-[1rem] border border-white/12 bg-white/7 px-3 py-2 text-center shadow-[0_10px_18px_rgba(2,6,23,0.16)]">
-                  <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Stages</div>
-                  <div className="mt-1 text-xl font-black text-white">{roundSolved}/{ROUNDS_TO_WIN}</div>
+          <div className="flex min-h-0 flex-1 items-center justify-center">
+            <div className="w-full max-w-[720px] rounded-[1.25rem] border border-white/12 bg-[linear-gradient(180deg,rgba(9,16,31,0.66),rgba(6,10,20,0.82))] p-3 shadow-[0_16px_30px_rgba(2,6,23,0.18)] md:p-4">
+              <div className="rounded-[1rem] border border-white/10 bg-slate-950/25 px-4 py-5 text-center shadow-[0_10px_20px_rgba(2,6,23,0.18)]">
+                <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/82">Solve the division</div>
+                <div className="mt-2 text-[clamp(2rem,9vw,4.6rem)] font-black tracking-tight text-white">
+                  {question.dividend} ÷ {question.divisor}
                 </div>
-                <div className="rounded-[1rem] border border-white/12 bg-white/7 px-3 py-2 text-center shadow-[0_10px_18px_rgba(2,6,23,0.16)]">
-                  <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Crates left</div>
-                  <div className="mt-1 text-xl font-black text-amber-100">{remainingGoods}</div>
+                <div className="mt-2 text-[clamp(1rem,3vw,1.25rem)] font-black text-amber-100">
+                  Choose the quotient
                 </div>
-                <div className="rounded-[1rem] border border-white/12 bg-white/7 px-3 py-2 text-center shadow-[0_10px_18px_rgba(2,6,23,0.16)]">
-                  <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Boats</div>
-                  <div className="mt-1 text-xl font-black text-white">{question.divisor}</div>
-                </div>
-              </div>
-
-              <div className="flex min-h-0 flex-1 flex-col rounded-[1.15rem] border border-white/12 bg-white/6 p-3 shadow-[0_12px_20px_rgba(2,6,23,0.2)] md:p-4">
-                <div className="mb-3 flex items-center justify-between gap-3">
-                  <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Dockyard</div>
-                  <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/65">
-                    Tap a boat to place one crate
-                  </div>
-                </div>
-                <div className="answer-choice-surface grid flex-1 auto-rows-fr grid-cols-2 gap-2 sm:grid-cols-4">
-                  {boatLoads.map((count, index) => (
-                    <button
-                      key={`boat-${index}`}
-                      type="button"
-                      onClick={() => addToBoat(index)}
-                      disabled={isFinished || remainingGoods <= 0}
-                      className="ui-button-secondary grid h-full min-h-[122px] grid-rows-[minmax(64px,1fr)_auto_auto] items-center gap-1.5 rounded-[1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.10)_0%,rgba(255,255,255,0.04)_100%)] px-2 py-2 text-center shadow-[0_10px_20px_rgba(2,6,23,0.18)] transition hover:bg-white/8 disabled:opacity-60 md:min-h-[146px] md:gap-2 md:px-2.5 md:py-2.5"
-                    >
-                      <div className="relative flex h-[clamp(60px,18vw,76px)] w-full items-center justify-center overflow-hidden rounded-md border border-white/18 bg-transparent">
-                        <img
-                          src={boatSet[index] ?? boat1}
-                          alt={`Dock ${index + 1} boat`}
-                          className="h-full w-auto object-contain object-center"
-                          draggable={false}
-                        />
-                      </div>
-                      <div className="flex w-full flex-col items-center gap-0.5 leading-none">
-                        <div className="whitespace-nowrap text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100/80">
-                          Dock {index + 1}
-                        </div>
-                        <div className="whitespace-nowrap text-[clamp(1rem,4vw,1.15rem)] font-black tabular-nums text-white">
-                          {count}
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={resetBoats}
-                  disabled={isFinished}
-                  className="ui-button-secondary rounded-[0.95rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white disabled:opacity-60"
-                >
-                  Reset
-                </button>
-                <button
-                  type="button"
-                  onClick={checkShare}
-                  disabled={isFinished}
-                  className="ui-button-primary rounded-[0.95rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white disabled:opacity-60"
-                >
-                  Check
-                </button>
               </div>
             </div>
           </div>
 
-          <AnimatePresence>
-            {feedback && (
+          <div className="answer-choice-surface grid grid-cols-4 gap-2">
+            {question.options.map((option) => (
+              <motion.button
+                key={`${question.dividend}-${question.divisor}-${option}`}
+                type="button"
+                onClick={() => handleAnswer(option)}
+                disabled={isFinished || Boolean(feedback)}
+                whileTap={{ scale: 0.96 }}
+                className={`min-h-[3.4rem] rounded-[1rem] px-2 py-2 text-center text-base font-black disabled:opacity-60 ${
+                  selectedAnswer === option
+                    ? option === question.answer
+                      ? 'ui-button-success'
+                      : 'ui-button-primary'
+                    : 'ui-button-secondary'
+                }`}
+              >
+                {option}
+              </motion.button>
+            ))}
+          </div>
+
+          {feedback ? (
+            <AnimatePresence>
               <motion.div
                 initial={{ opacity: 0, scale: 0.82 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -361,23 +310,12 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
                   <div className="mt-2 text-lg font-bold text-white/92 md:text-2xl">{feedback.subtitle}</div>
                 </div>
               </motion.div>
-            )}
-          </AnimatePresence>
-        </PuzzleStage>
-
+            </AnimatePresence>
+          ) : null}
+        </div>
       </div>
     </GameScreenShell>
   );
 };
 
 export default DivisionDockGame;
-
-
-
-
-
-
-
-
-
-

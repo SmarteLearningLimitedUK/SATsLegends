@@ -206,10 +206,6 @@ const LongDivisionVisual: React.FC<{ problem: RemainderProblem }> = ({ problem }
 
   return (
     <div className="relative overflow-hidden rounded-[1.6rem] border border-violet-200/26 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),rgba(255,255,255,0)_44%),linear-gradient(180deg,rgba(26,54,124,0.96),rgba(10,17,40,0.98))] px-4 py-4 shadow-[0_18px_34px_rgba(2,6,23,0.22)] md:rounded-[2rem] md:px-6 md:py-6">
-      <div className="text-left text-[clamp(1.2rem,4.6vw,2rem)] font-black tracking-tight text-amber-100">
-        Divide the numbers
-      </div>
-
       <div className="relative mt-8 flex items-center justify-center">
         <div className="relative mr-5 text-[clamp(2.9rem,14vw,5.6rem)] font-black leading-none text-sky-100 md:mr-7">
           {problem.divisor}
@@ -241,13 +237,6 @@ const LongDivisionVisual: React.FC<{ problem: RemainderProblem }> = ({ problem }
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="mt-4 text-left text-[clamp(1.3rem,4.8vw,2rem)] font-semibold text-white">
-        Solve the division.
-      </div>
-      <div className="mt-1 text-left text-[clamp(1rem,3.8vw,1.25rem)] text-white/72">
-        You may need a pen and paper.
       </div>
     </div>
   );
@@ -460,14 +449,14 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
             <div className="text-center text-[10px] font-black uppercase tracking-[0.16em] text-amber-100/80">
               Tap the correct quotient and remainder
             </div>
-            <div className="answer-choice-surface mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <div className="answer-choice-surface mt-2 grid grid-cols-4 gap-2">
               {problem.options.map((option, index) => (
                 <button
                   key={`${problem.id}-${option}-${index}`}
                   type="button"
                   disabled={isLocked || roundOver}
                   onClick={() => evaluateAnswer(option)}
-                  className={`relative min-h-[3.4rem] rounded-[0.95rem] border px-3 py-2 text-left shadow-[0_8px_18px_rgba(2,6,23,0.16)] transition-transform duration-150 hover:scale-[1.01] disabled:opacity-55 ${
+                  className={`relative min-h-[3.4rem] rounded-[0.95rem] border px-2 py-2 text-center shadow-[0_8px_18px_rgba(2,6,23,0.16)] transition-transform duration-150 hover:scale-[1.01] disabled:opacity-55 ${
                     selectedAnswer === option
                       ? feedback?.tone === 'success'
                         ? 'ui-button-success'
@@ -476,7 +465,6 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
                   }`}
                 >
                   <span className="text-[clamp(1rem,4.2vw,1.45rem)] font-black text-white">{option}</span>
-                  <span className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full border border-violet-100/28 bg-violet-200/10" />
                 </button>
               ))}
             </div>
