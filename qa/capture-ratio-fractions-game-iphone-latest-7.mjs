@@ -35,6 +35,6 @@ for (let i = 0; i < closeCount; i += 1) {
 }
 
 await page.waitForTimeout(600);
-await page.waitForSelector('text=Fuel Mix Question', { timeout: 5000 });
+await page.waitForSelector('text=Ratio Racer', { timeout: 5000 });
 await page.screenshot({ path: 'qa/ratio-fractions-game-iphone-latest-7.png' });
 await browser.close();

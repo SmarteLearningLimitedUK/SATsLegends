@@ -45,8 +45,9 @@ type RaceState =
 const START_OFFSET = 0;
 const RACER_LERP = 0.16;
 const BASE_XP = 160;
-const KART_SCALE = 0.84;
-const PLAYER_KART_SCALE = 1.08;
+const KART_SCALE = 1.3125;
+const PLAYER_KART_SCALE = 1.6875;
+const PLAYER_KART_RAISE = '5pt';
 const PLAYER_TRACK_LINE_Y = 80.8;
 const ENEMY_TRACK_LINE_Y = 88.6;
 const FINISH_Y_SHIFT = -200;
@@ -504,7 +505,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     (Math.sin(enemyVibratePhaseRef.current * 3.1) * 0.35);
 
   const playerStyle = {
-    transform: `translate3d(-50%, calc(-100% + ${playerBobOffset}px), 0) rotate(${playerLean}deg) scale(${PLAYER_KART_SCALE})`,
+    transform: `translate3d(-50%, calc(-100% + ${playerBobOffset}px - ${PLAYER_KART_RAISE}), 0) rotate(${playerLean}deg) scale(${PLAYER_KART_SCALE})`,
     transformOrigin: '50% 100%',
     top: `${playerLineY}%`,
     left: `${playerLeft}%`,
@@ -582,7 +583,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             </motion.div>
 
             <motion.div
-              className="absolute z-30 flex h-22 w-34 items-center justify-center overflow-visible sm:h-26 sm:w-40 md:h-32 md:w-48"
+              className="absolute z-30 flex h-22 w-34 items-center justify-center overflow-visible sm:h-26 sm:w-40 md:h-28 md:w-44"
               style={enemyStyle}
             >
               <img
@@ -632,7 +633,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
         <GameScreenLayout
           className="relative z-10 px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-0 text-white"
-          topClassName="!min-h-0 absolute inset-x-0 top-[calc(env(safe-area-inset-top)+9rem)] z-20 flex -translate-y-11 flex-col items-center gap-0 px-2 pt-0 sm:-translate-y-12 sm:px-3 md:-translate-y-14 md:px-4"
+          topClassName="!min-h-0 absolute inset-x-0 top-[calc(env(safe-area-inset-top)+0.35rem)] z-20 flex flex-col items-center gap-0 px-2 pt-0 sm:px-3 md:px-4"
           top={(
             <div className="mx-auto flex w-full max-w-[780px] flex-col gap-0.5">
               <GameQuestionCard
