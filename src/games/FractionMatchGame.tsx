@@ -300,11 +300,9 @@ const MatchGameShell: React.FC<{
         ) : null}
 
         <div className={`relative min-h-0 flex-1 ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.15rem)]' : ''}`}>
-          <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-
            {useSharedTopHud ? (
              <div className="absolute inset-x-2 top-2 z-20 sm:inset-x-4">
-                 <div className="mx-auto w-full max-w-[44rem]">
+               <div className="mx-auto w-full max-w-[44rem]">
                  <GameQuestionCard title="Match Mastery" className="bg-[#0a1f56]/70 backdrop-blur-sm">
                    {questionText}
                  </GameQuestionCard>
@@ -630,17 +628,35 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
         briefing={null}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div className="box-border w-[min(94vw,94vh)] rounded-[2rem] border border-cyan-100/20 bg-[#04102c]/82 p-3 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-4">
-        <div ref={boardGridRef} className="grid w-full grid-cols-6 gap-2 sm:gap-2.5">
+      <div className="relative box-border w-[min(94vw,94vh)] rounded-[2rem] border border-cyan-100/20 bg-[#04102c]/86 p-3 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-4">
+        <div
+          className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-[0.24]"
+          style={{
+            backgroundImage:
+              'linear-gradient(rgba(255,255,255,0.22) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.22) 1px, transparent 1px)',
+            backgroundSize: '38px 38px',
+          }}
+        />
+        <div
+          className="pointer-events-none absolute inset-0 rounded-[2rem]"
+          style={{
+            boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.06), inset 0 0 30px rgba(0,0,0,0.45)',
+          }}
+        />
+        <div ref={boardGridRef} className="relative z-10 grid w-full grid-cols-6 gap-2 sm:gap-2.5">
           {board.map((cell, idx) => (
-            <div key={idx} className="relative" style={{ width: gemSize, height: gemSize }}>
+            <div
+              key={idx}
+              className="relative flex items-center justify-center rounded-2xl border border-cyan-100/16 bg-[#020816]/50 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.35)]"
+              style={{ width: gemSize, height: gemSize }}
+            >
               <AnimatePresence mode="popLayout">
                 {cell && (
                   <BevelledGem
                     key={`${idx}-${cell.type}-${cell.label}`}
                     type={cell.type}
                     label={cell.label}
-                    size={gemSize}
+                    size={Math.max(34, gemSize - 8)}
                     isSelected={selectedIdx === idx}
                     onClick={() => {
                       void handleGemClick(idx);
