@@ -287,7 +287,39 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     tierDecksRef.current = tierDecks;
   }, [tierDecks]);
 
+  const stopEnemyMovement = () => {
+    if (enemyMoveTimerRef.current !== null) {
+      window.clearInterval(enemyMoveTimerRef.current);
+      enemyMoveTimerRef.current = null;
+    }
+  };
+
+  const startEnemyMovement = () => {
+    if (enemyMoveTimerRef.current !== null) return;
+
+    const tickEnemy = () => {
+      const currentRaceState = raceStateRef.current;
+      if (currentRaceState === 'playerWin' || currentRaceState === 'enemyWin') {
+        stopEnemyMovement();
+        return;
+      }
+
+      enemyTargetRef.current = Math.min(
+        tuning.trackLength,
+        enemyTargetRef.current + tuning.enemyAdvanceDistance,
+      );
+
+      if (enemyTargetRef.current >= tuning.trackLength && raceStateRef.current !== 'enemyWin') {
+        stopEnemyMovement();
+        setRaceState('enemyWin');
+      }
+    };
+
+    enemyMoveTimerRef.current = window.setInterval(tickEnemy, tuning.enemyMoveIntervalMs);
+  };
+
   useEffect(() => {
+    stopEnemyMovement();
     const resetDecks = buildTierDecks();
     setTierDecks(resetDecks);
     tierDecksRef.current = resetDecks;
@@ -331,44 +363,21 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     return () => cancelAnimationFrame(frameId);
   }, [tuning.trackLength, viewport.width]);
 
-  useEffect(() => {
-    if (enemyMoveTimerRef.current !== null) {
-      window.clearInterval(enemyMoveTimerRef.current);
-      enemyMoveTimerRef.current = null;
-    }
-
-    if (raceState !== 'showingQuestion') {
-      return undefined;
-    }
-
-    const tickEnemy = () => {
-      enemyTargetRef.current = Math.min(
-        tuning.trackLength,
-        enemyTargetRef.current + tuning.enemyAdvanceDistance,
-      );
-      if (enemyTargetRef.current >= tuning.trackLength && raceStateRef.current !== 'enemyWin') {
-        setRaceState('enemyWin');
-      }
-    };
-
-    enemyMoveTimerRef.current = window.setInterval(tickEnemy, tuning.enemyMoveIntervalMs);
-    return () => {
-      if (enemyMoveTimerRef.current !== null) {
-        window.clearInterval(enemyMoveTimerRef.current);
-        enemyMoveTimerRef.current = null;
-      }
-    };
-  }, [raceState, tuning.enemyAdvanceDistance, tuning.enemyMoveIntervalMs, tuning.trackLength]);
+  useEffect(() => () => {
+    stopEnemyMovement();
+  }, []);
 
   useEffect(() => {
     if (raceState === 'playerWin' && !reportedResultRef.current) {
       reportedResultRef.current = true;
+      stopEnemyMovement();
       const xp = BASE_XP + correctCount * 45 + levelId * 30;
       onVictory(starsForAccuracy(correctCount, attempts || 1), xp);
     }
 
     if ((raceState === 'enemyWin' || (sessionState && lives <= 0)) && !reportedResultRef.current) {
       reportedResultRef.current = true;
+      stopEnemyMovement();
       const xp = Math.max(20, BASE_XP * 0.35 + correctCount * 20);
       onGameOver(xp);
     }
@@ -385,6 +394,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
       setCountdown((prev) => {
         if (prev <= 1) {
           window.clearInterval(interval);
+          startEnemyMovement();
           setRaceState('showingQuestion');
           return 0;
         }
