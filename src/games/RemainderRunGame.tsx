@@ -34,9 +34,14 @@ type FeedbackState = null | {
   subtitle: string;
 };
 
+interface DecimalTemplate {
+  numerator: number;
+  denominator: number;
+}
+
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
-const formatDecimalAnswer = (value: number) => value.toFixed(1);
+const formatDecimalAnswer = (value: number, decimalPlaces: number) => value.toFixed(decimalPlaces).replace(/\.?0+$/, '');
 
 const roundSecondsForLevel = (level: number) => {
   if (level <= 3) return 90;
@@ -52,12 +57,37 @@ const stageFromProgress = (baseLevel: number, solvedCount: number, timeLeft: num
 
 const makeAnswerLabel = (quotient: number, remainder: number) => `${quotient} r${remainder}`;
 
+const ONE_DP_TEMPLATES: DecimalTemplate[] = [
+  { numerator: 1, denominator: 2 },
+  { numerator: 1, denominator: 5 },
+  { numerator: 2, denominator: 5 },
+  { numerator: 3, denominator: 5 },
+  { numerator: 4, denominator: 5 },
+  { numerator: 1, denominator: 10 },
+  { numerator: 3, denominator: 10 },
+  { numerator: 7, denominator: 10 },
+  { numerator: 9, denominator: 10 },
+];
+
+const TWO_DP_TEMPLATES: DecimalTemplate[] = [
+  { numerator: 1, denominator: 4 },
+  { numerator: 3, denominator: 4 },
+  { numerator: 1, denominator: 20 },
+  { numerator: 3, denominator: 20 },
+  { numerator: 7, denominator: 20 },
+  { numerator: 9, denominator: 20 },
+  { numerator: 11, denominator: 20 },
+  { numerator: 13, denominator: 20 },
+  { numerator: 17, denominator: 20 },
+  { numerator: 19, denominator: 20 },
+];
+
 const buildRemainderOptions = (quotient: number, remainder: number, stage: number) => {
   const correct = makeAnswerLabel(quotient, remainder);
   const pool = new Set<string>([correct]);
   const offsets = stage <= 3
     ? [1, -1, 2, -2, 3, -3]
-    : stage <= 7
+    : stage <= 6
       ? [1, -1, 2, -2, 4, -4, 5, -5]
       : [1, -1, 2, -2, 3, -3, 6, -6];
 
@@ -77,19 +107,19 @@ const buildRemainderOptions = (quotient: number, remainder: number, stage: numbe
   return shuffle(Array.from(pool).slice(0, 4));
 };
 
-const buildDecimalOptions = (answerValue: number, stage: number) => {
-  const correct = formatDecimalAnswer(answerValue);
+const buildDecimalOptions = (answerValue: number, stage: number, decimalPlaces: number) => {
+  const correct = formatDecimalAnswer(answerValue, decimalPlaces);
   const pool = new Set<string>([correct]);
-  const offsets = stage <= 8
-    ? [0.1, -0.1, 0.2, -0.2, 1, -1]
-    : [0.1, -0.1, 0.2, -0.2, 0.5, -0.5, 1, -1];
+  const offsets = stage < 10
+    ? [0.1, -0.1, 0.2, -0.2, 0.3, -0.3, 0.4, -0.4]
+    : [0.01, -0.01, 0.02, -0.02, 0.05, -0.05, 0.1, -0.1];
 
   let guard = 0;
   while (pool.size < 4 && guard < 60) {
     guard += 1;
     const delta = offsets[randomInt(0, offsets.length - 1)];
     const candidate = Math.max(0, answerValue + delta);
-    const formatted = formatDecimalAnswer(candidate);
+    const formatted = formatDecimalAnswer(candidate, decimalPlaces);
     if (formatted !== correct) {
       pool.add(formatted);
     }
@@ -99,17 +129,15 @@ const buildDecimalOptions = (answerValue: number, stage: number) => {
 };
 
 const createDecimalProblem = (stage: number): RemainderProblem => {
-  const divisorPool = stage <= 9 ? [2, 4, 8, 10] : [2, 4, 5, 8, 10];
-  const divisor = divisorPool[randomInt(0, divisorPool.length - 1)];
-  const compatibleRemainders = divisor === 5
-    ? [1, 2, 3, 4]
-    : divisor === 10
-      ? [1, 2, 3, 4, 5, 6, 7, 8, 9]
-      : [divisor / 2];
-  const remainder = compatibleRemainders[randomInt(0, compatibleRemainders.length - 1)];
-  const quotient = randomInt(stage <= 9 ? 10 : 18, stage <= 9 ? 49 : 84);
+  const decimalPlaces = stage < 10 ? 1 : 2;
+  const templatePool = stage < 10 ? ONE_DP_TEMPLATES : TWO_DP_TEMPLATES;
+  const template = templatePool[randomInt(0, templatePool.length - 1)];
+  const multiplier = randomInt(stage < 10 ? 2 : 3, stage < 10 ? 9 : 12);
+  const divisor = template.denominator * multiplier;
+  const remainder = template.numerator * multiplier;
+  const quotient = randomInt(stage < 10 ? 10 : 18, stage < 10 ? 49 : 84);
   const dividend = (divisor * quotient) + remainder;
-  const answerValue = quotient + (remainder / divisor);
+  const answerValue = quotient + (template.numerator / template.denominator);
 
   return {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -119,8 +147,8 @@ const createDecimalProblem = (stage: number): RemainderProblem => {
     quotient,
     remainder,
     answerMode: 'decimal',
-    answerLabel: formatDecimalAnswer(answerValue),
-    options: buildDecimalOptions(answerValue, stage),
+    answerLabel: formatDecimalAnswer(answerValue, decimalPlaces),
+    options: buildDecimalOptions(answerValue, stage, decimalPlaces),
     stage,
   };
 };
@@ -135,16 +163,11 @@ const createProblem = (stage: number): RemainderProblem => {
   let quotientMin = 2;
   let quotientMax = 9;
 
-  if (stage >= 4 && stage <= 7) {
+  if (stage >= 4) {
     divisorMin = 3;
     divisorMax = 9;
     quotientMin = 3;
     quotientMax = 16;
-  } else if (stage >= 8) {
-    divisorMin = 4;
-    divisorMax = 12;
-    quotientMin = 4;
-    quotientMax = 24;
   }
 
   const divisor = randomInt(divisorMin, divisorMax);
@@ -179,46 +202,52 @@ const starsFromPerformance = (XP: number, correct: number, attempts: number, sta
 const digitColors = ['text-violet-500', 'text-emerald-500', 'text-blue-500', 'text-pink-500', 'text-amber-500', 'text-cyan-500'];
 
 const LongDivisionVisual: React.FC<{ problem: RemainderProblem }> = ({ problem }) => {
-  const digits = String(problem.dividend).split('');
-  const quotientText = makeAnswerLabel(problem.quotient, problem.remainder);
+  const digits = problem.displayDividend.split('');
 
   return (
-    <div className="relative overflow-hidden rounded-[1.6rem] border border-violet-200/24 bg-white px-4 py-4 shadow-[0_18px_34px_rgba(2,6,23,0.12)] md:rounded-[2rem] md:px-6 md:py-6">
-      <div className="text-left text-[clamp(1.2rem,4.6vw,2rem)] font-black tracking-tight text-violet-500">
-        {problem.dividend} ÷ {problem.divisor} =
+    <div className="relative overflow-hidden rounded-[1.6rem] border border-violet-200/26 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),rgba(255,255,255,0)_44%),linear-gradient(180deg,rgba(26,54,124,0.96),rgba(10,17,40,0.98))] px-4 py-4 shadow-[0_18px_34px_rgba(2,6,23,0.22)] md:rounded-[2rem] md:px-6 md:py-6">
+      <div className="text-left text-[clamp(1.2rem,4.6vw,2rem)] font-black tracking-tight text-amber-100">
+        Divide the numbers
       </div>
 
       <div className="relative mt-8 flex items-center justify-center">
-        <div className="relative mr-5 text-[clamp(2.9rem,14vw,5.6rem)] font-black leading-none text-violet-500 md:mr-7">
+        <div className="relative mr-5 text-[clamp(2.9rem,14vw,5.6rem)] font-black leading-none text-sky-100 md:mr-7">
           {problem.divisor}
         </div>
 
         <div className="relative flex items-start">
-          <div className="absolute left-[0.3rem] top-[-0.55rem] h-[3.8rem] w-[0.45rem] rounded-full bg-violet-500 md:h-[4.8rem]" />
-          <div className="absolute left-[0.55rem] top-[-0.55rem] h-[0.45rem] w-[clamp(10rem,46vw,18rem)] rounded-full bg-violet-500 md:w-[clamp(14rem,48vw,22rem)]" />
+          <div className="absolute left-[0.3rem] top-[-0.55rem] h-[3.8rem] w-[0.45rem] rounded-full bg-violet-200/90 md:h-[4.8rem]" />
+          <div className="absolute left-[0.55rem] top-[-0.55rem] h-[0.45rem] w-[clamp(10rem,46vw,18rem)] rounded-full bg-violet-200/90 md:w-[clamp(14rem,48vw,22rem)]" />
           <div className="pl-[clamp(1.55rem,6vw,2.2rem)] pt-[clamp(0.05rem,1vw,0.3rem)]">
             <div className="flex items-end gap-[0.06em] text-[clamp(3.4rem,15vw,6.6rem)] font-black leading-none md:gap-[0.08em]">
-              {digits.map((digit, index) => (
-                <span
-                  key={`${problem.id}-${index}`}
-                  className={`${digitColors[index % digitColors.length]} drop-shadow-[0_1px_0_rgba(255,255,255,0.42)]`}
-                >
-                  {digit}
-                </span>
-              ))}
+              {digits.map((digit, index) => {
+                if (digit === '.') {
+                  return (
+                    <span key={`${problem.id}-${index}`} className="relative mx-[0.06em] inline-flex items-center">
+                      <span className="mt-[0.42em] inline-block h-[0.28em] w-[0.28em] rounded-full bg-violet-200 shadow-[0_1px_0_rgba(255,255,255,0.42)]" />
+                    </span>
+                  );
+                }
+
+                return (
+                  <span
+                    key={`${problem.id}-${index}`}
+                    className={`${digitColors[index % digitColors.length]} drop-shadow-[0_1px_0_rgba(255,255,255,0.36)]`}
+                  >
+                    {digit}
+                  </span>
+                );
+              })}
             </div>
           </div>
         </div>
       </div>
 
-      <div className="mt-4 text-left text-[clamp(1.3rem,4.8vw,2rem)] font-semibold text-slate-900">
-        What is {problem.dividend} ÷ {problem.divisor}?
+      <div className="mt-4 text-left text-[clamp(1.3rem,4.8vw,2rem)] font-semibold text-white">
+        Solve the division.
       </div>
-      <div className="mt-1 text-left text-[clamp(1rem,3.8vw,1.25rem)] text-slate-600">
+      <div className="mt-1 text-left text-[clamp(1rem,3.8vw,1.25rem)] text-white/72">
         You may need a pen and paper.
-      </div>
-      <div className="mt-4 inline-flex rounded-full border border-violet-200/30 bg-violet-50 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.14em] text-violet-600">
-        Answer: {quotientText}
       </div>
     </div>
   );
@@ -229,7 +258,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
   miniGameLevel,
   useSharedTopHud = false,
   onVictory,
-  onGameOver,
+  onGameOver: _onGameOver,
   onBack: _onBack,
 }) => {
   const baseLevel = Math.max(1, Math.min(12, miniGameLevel || levelId || 1));
@@ -327,8 +356,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
 
     const nextAttempts = attemptCount + 1;
     const nextSolved = solvedCount + 1;
-    const correctAnswer = makeAnswerLabel(problem.quotient, problem.remainder);
-    const isCorrect = selectedAnswer === correctAnswer;
+    const isCorrect = selectedAnswer === problem.answerLabel;
 
     setAttemptCount(nextAttempts);
     setSolvedCount(nextSolved);
@@ -368,7 +396,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
     setFeedback({
       tone: 'error',
       title: 'Not quite',
-      subtitle: `Answer: ${correctAnswer}`,
+      subtitle: 'Check your working and try the next one.',
     });
     moveToNextProblem(nextSolved, 620);
   }, [attemptCount, combo, isLocked, moveToNextProblem, problem, roundOver, solvedCount]);
@@ -388,7 +416,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
       >
         <div className="mx-auto flex h-full w-full max-w-[30rem] min-h-0 flex-col gap-2">
           {showTopHud ? (
-            <header className="rounded-[1.1rem] border border-violet-200/24 bg-white/92 px-3 py-2 shadow-[0_10px_18px_rgba(2,6,23,0.18)] backdrop-blur-sm">
+            <header className="rounded-[1.1rem] border border-violet-200/24 bg-[linear-gradient(180deg,rgba(50,14,94,0.94),rgba(19,8,44,0.92))] px-3 py-2 shadow-[0_10px_18px_rgba(2,6,23,0.18)] backdrop-blur-sm">
               <div className="flex items-center justify-between gap-2">
                 <div className="min-w-0 flex-1">
                   <div className="text-[9px] font-black uppercase tracking-[0.18em] text-violet-500/70">Time</div>
@@ -401,22 +429,22 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
                     />
                   </div>
                 </div>
-                <div className="shrink-0 rounded-full border border-violet-200/30 bg-violet-50 px-3 py-1 text-center">
+                <div className="shrink-0 rounded-full border border-violet-100/20 bg-[linear-gradient(180deg,rgba(104,39,255,0.22),rgba(31,12,68,0.82))] px-3 py-1 text-center">
                   <div className="text-[8px] font-black uppercase tracking-[0.16em] text-violet-500/70">XP</div>
-                  <div className="text-sm font-black text-slate-900">{XP}</div>
+                  <div className="text-sm font-black text-white">{XP}</div>
                 </div>
               </div>
             </header>
           ) : null}
 
-          <section className="min-h-0 rounded-[1.3rem] border border-white/16 bg-white/12 p-2.5 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
+          <section className="min-h-0 rounded-[1.3rem] border border-white/16 bg-[linear-gradient(180deg,rgba(16,25,49,0.74),rgba(8,12,25,0.86))] p-2.5 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
             <GameQuestionCard
               title={title}
               subtitle="You may need a pen and paper."
               className="mx-auto max-w-[30rem] border border-violet-200/26 bg-[linear-gradient(180deg,rgba(60,16,144,0.92),rgba(27,11,74,0.88))] shadow-[0_12px_24px_rgba(2,6,23,0.16)]"
               titleClassName="text-violet-100"
             >
-              What is {problem.dividend} ÷ {problem.divisor}?
+              Solve the division.
             </GameQuestionCard>
 
             <div className="mt-2">
@@ -424,8 +452,8 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
             </div>
           </section>
 
-          <section className="min-h-0 flex-1 rounded-[1.3rem] border border-white/16 bg-white/10 p-2.5 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
-            <div className="text-center text-[10px] font-black uppercase tracking-[0.16em] text-white/80">
+          <section className="min-h-0 flex-1 rounded-[1.3rem] border border-white/16 bg-[linear-gradient(180deg,rgba(16,25,49,0.72),rgba(8,12,25,0.84))] p-2.5 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
+            <div className="text-center text-[10px] font-black uppercase tracking-[0.16em] text-amber-100/80">
               Tap the correct quotient and remainder
             </div>
             <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -435,10 +463,10 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
                   type="button"
                   disabled={isLocked || roundOver}
                   onClick={() => evaluateAnswer(option)}
-                  className="relative min-h-[3.4rem] rounded-[0.95rem] border border-white/16 bg-white/92 px-3 py-2 text-left shadow-[0_8px_18px_rgba(2,6,23,0.08)] transition-transform duration-150 hover:scale-[1.01] disabled:opacity-55"
+                  className="relative min-h-[3.4rem] rounded-[0.95rem] border border-violet-200/18 bg-[linear-gradient(180deg,rgba(52,18,98,0.92),rgba(17,10,38,0.95))] px-3 py-2 text-left shadow-[0_8px_18px_rgba(2,6,23,0.16)] transition-transform duration-150 hover:scale-[1.01] disabled:opacity-55"
                 >
-                  <span className="text-[clamp(1rem,4.2vw,1.45rem)] font-black text-slate-800">{option}</span>
-                  <span className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full border border-slate-400/70" />
+                  <span className="text-[clamp(1rem,4.2vw,1.45rem)] font-black text-white">{option}</span>
+                  <span className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full border border-violet-100/28 bg-violet-200/10" />
                 </button>
               ))}
             </div>

@@ -53,7 +53,10 @@ const pickBoatSet = () => {
 
 const createDivisionQuestion = (levelId: number, solved: number): DivisionQuestion => {
   const divisor = DOCK_COUNT;
-  const answer = randomInt(2, Math.min(12, 4 + levelId + Math.floor(solved / 3)));
+  const stage = Math.max(1, levelId + Math.floor(solved / 2));
+  const answerMin = stage <= 3 ? 2 : stage <= 6 ? 4 : stage <= 9 ? 6 : 8;
+  const answerMax = stage <= 3 ? 8 : stage <= 6 ? 14 : stage <= 9 ? 18 : 24;
+  const answer = randomInt(answerMin, answerMax);
   const dividend = divisor * answer;
   return { kind: 'fluency', dividend, divisor, answer };
 };
@@ -263,58 +266,29 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
             <div className="mx-auto w-full max-w-[920px]">
               <GameQuestionCard
                 title="Division Dock"
-                bodyClassName="text-[clamp(0.95rem,2.4vw,1.28rem)] font-black uppercase leading-tight tracking-[0.04em] text-white md:text-[1.32rem]"
+                bodyClassName="text-[clamp(0.95rem,2.4vw,1.28rem)] font-black leading-snug tracking-[0.01em] text-white md:text-[1.32rem]"
               >
                 {formatFantasyPrompt(`The Monsterminds have messed up the cargo manifests.\nShare ${question.dividend} crates equally between ${question.divisor} boats.`)}
               </GameQuestionCard>
             </div>
 
-            <div className="grid min-h-0 flex-1 gap-3 lg:grid-cols-[minmax(270px,320px)_minmax(0,1fr)] lg:gap-4">
-              <div className="flex min-h-0 flex-col gap-3">
-                <div className="rounded-[1.15rem] border border-white/12 bg-white/7 p-3 text-center shadow-[0_12px_20px_rgba(2,6,23,0.2)] md:p-4">
-                  <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Cargo status</div>
-                  <div className="mt-1 text-[clamp(1.15rem,3vw,1.7rem)] font-black text-white">
-                    {question.dividend} ÷ {question.divisor} = ?
-                  </div>
-                  <div className="mt-2 grid grid-cols-2 gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-white/70">
-                    <div className="rounded-xl bg-white/12 px-2 py-2">
-                      Rounds
-                      <div className="mt-1 text-base font-black text-white">{roundSolved}/{ROUNDS_TO_WIN}</div>
-                    </div>
-                    <div className="rounded-xl bg-white/12 px-2 py-2">
-                      Left
-                      <div className="mt-1 text-base font-black text-amber-100">{remainingGoods}</div>
-                    </div>
-                  </div>
-                  <div className="mt-2 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/75">
-                    {question.divisor} boats in this round
-                  </div>
+            <div className="flex min-h-0 flex-1 flex-col gap-3">
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                <div className="rounded-[1rem] border border-white/12 bg-white/7 px-3 py-2 text-center shadow-[0_10px_18px_rgba(2,6,23,0.16)]">
+                  <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Rounds</div>
+                  <div className="mt-1 text-xl font-black text-white">{roundSolved}/{ROUNDS_TO_WIN}</div>
                 </div>
-
-                <div className="rounded-[1.15rem] border border-white/12 bg-white/7 p-3 shadow-[0_12px_20px_rgba(2,6,23,0.2)] md:p-4">
-                  <div className="mb-3 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Controls</div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={resetBoats}
-                      disabled={isFinished}
-                      className="ui-button-secondary rounded-[0.95rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white disabled:opacity-60"
-                    >
-                      Reset
-                    </button>
-                    <button
-                      type="button"
-                      onClick={checkShare}
-                      disabled={isFinished}
-                      className="ui-button-primary rounded-[0.95rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white disabled:opacity-60"
-                    >
-                      Check
-                    </button>
-                  </div>
+                <div className="rounded-[1rem] border border-white/12 bg-white/7 px-3 py-2 text-center shadow-[0_10px_18px_rgba(2,6,23,0.16)]">
+                  <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Crates left</div>
+                  <div className="mt-1 text-xl font-black text-amber-100">{remainingGoods}</div>
+                </div>
+                <div className="rounded-[1rem] border border-white/12 bg-white/7 px-3 py-2 text-center shadow-[0_10px_18px_rgba(2,6,23,0.16)]">
+                  <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Boats</div>
+                  <div className="mt-1 text-xl font-black text-white">{question.divisor}</div>
                 </div>
               </div>
 
-              <div className="flex min-h-0 flex-col rounded-[1.15rem] border border-white/12 bg-white/6 p-3 shadow-[0_12px_20px_rgba(2,6,23,0.2)] md:p-4">
+              <div className="flex min-h-0 flex-1 flex-col rounded-[1.15rem] border border-white/12 bg-white/6 p-3 shadow-[0_12px_20px_rgba(2,6,23,0.2)] md:p-4">
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Dockyard</div>
                   <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/65">
@@ -349,6 +323,25 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
                     </button>
                   ))}
                 </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={resetBoats}
+                  disabled={isFinished}
+                  className="ui-button-secondary rounded-[0.95rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white disabled:opacity-60"
+                >
+                  Reset
+                </button>
+                <button
+                  type="button"
+                  onClick={checkShare}
+                  disabled={isFinished}
+                  className="ui-button-primary rounded-[0.95rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white disabled:opacity-60"
+                >
+                  Check
+                </button>
               </div>
             </div>
           </div>

@@ -72,71 +72,6 @@ const shuffle = <T,>(arr: T[]) => {
   return copy;
 };
 
-const useAlphaKeyImage = (src: string, threshold = 210) => {
-  const [processed, setProcessed] = useState(src);
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || typeof Image === 'undefined') {
-      setProcessed(src);
-      return;
-    }
-    let isActive = true;
-    const image = new Image();
-    image.crossOrigin = 'anonymous';
-    image.src = src;
-
-    image.onload = () => {
-      if (!isActive) return;
-      const canvas = document.createElement('canvas');
-      const width = image.naturalWidth || image.width;
-      const height = image.naturalHeight || image.height;
-      if (!width || !height) {
-        setProcessed(src);
-        return;
-      }
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        setProcessed(src);
-        return;
-      }
-      try {
-        ctx.drawImage(image, 0, 0);
-        const imageData = ctx.getImageData(0, 0, width, height);
-        const data = imageData.data;
-        for (let i = 0; i < data.length; i += 4) {
-          const red = data[i];
-          const green = data[i + 1];
-          const blue = data[i + 2];
-          const max = Math.max(red, green, blue);
-          const min = Math.min(red, green, blue);
-          const brightness = (red + green + blue) / 3;
-          const lowSaturation = max - min <= 20;
-
-          if (brightness >= threshold && lowSaturation) {
-            data[i + 3] = 0;
-          }
-        }
-        ctx.putImageData(imageData, 0, 0);
-        setProcessed(canvas.toDataURL('image/png'));
-      } catch {
-        setProcessed(src);
-      }
-    };
-
-    image.onerror = () => {
-      if (isActive) setProcessed(src);
-    };
-
-    return () => {
-      isActive = false;
-    };
-  }, [src, threshold]);
-
-  return processed;
-};
-
 const buildRound = (levelId: number, roundIndex: number): RoundData => {
   const stage = clampStage(levelId, roundIndex);
   const denoms = STAGE_DENOMS[stage];
@@ -184,7 +119,6 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
 
   const rootRef = useRef<HTMLDivElement>(null);
   const dropRef = useRef<HTMLDivElement>(null);
-  const alphaKeyedScale = useAlphaKeyImage(weighScale, 245);
   const trimmedGemImages = useTrimmedImageSources(GEM_IMAGES);
   const gemImageMap = useMemo(
     () => new Map(GEM_IMAGES.map((src, index) => [src, trimmedGemImages[index] ?? src])),
@@ -223,6 +157,12 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
 
   const removePlacedToken = (id: string) => {
     setPlacedIds((previous) => previous.filter((tokenId) => tokenId !== id));
+    setFeedback(null);
+  };
+
+  const handleResetScale = () => {
+    setPlacedIds([]);
+    setSuccessPulse(false);
     setFeedback(null);
   };
 
@@ -281,7 +221,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
           <motion.div
             animate={successPulse ? { scale: [1, 1.02, 1] } : { scale: 1 }}
             transition={{ duration: 0.36, ease: 'easeOut' }}
-            className="relative w-full max-w-[35rem] flex-1 min-h-[17rem] p-1 md:max-w-[40rem]"
+            className="relative w-full max-w-[35rem] flex-1 min-h-[19rem] p-1 md:max-w-[40rem]"
           >
             <div
               className={`flex w-full items-center justify-between rounded-[1.35rem] px-3 py-2 text-center ${
@@ -302,18 +242,18 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
               </div>
             </div>
 
-            <div className="relative mt-3 flex min-h-[17rem] flex-1 items-center justify-center">
+            <div className="relative mt-3 flex min-h-[19rem] flex-1 items-center justify-center">
               <img
-                src={alphaKeyedScale}
+                src={weighScale}
                 alt=""
                 aria-hidden="true"
                 draggable={false}
-                className="pointer-events-none absolute inset-0 z-0 h-full w-full object-contain object-center"
-                style={{ transform: 'translateY(-2px) scale(1.06)' }}
+                className="pointer-events-none absolute left-1/2 top-[49%] z-0 h-auto w-[min(92%,26rem)] -translate-x-1/2 -translate-y-1/2 object-contain object-center drop-shadow-[0_18px_24px_rgba(2,6,23,0.38)]"
+                style={{ transform: 'translate(-50%, -50%) scale(1.14)' }}
               />
               <div
                 ref={dropRef}
-                className="absolute left-1/2 top-[15%] z-10 flex min-h-[4.5rem] w-[74%] -translate-x-1/2 items-center justify-center gap-2 rounded-[1.1rem] px-2 py-1.5"
+                className="absolute left-1/2 top-[12%] z-10 flex min-h-[4.5rem] w-[70%] -translate-x-1/2 items-center justify-center gap-2 rounded-[1.1rem] px-2 py-1.5"
               >
                 {placedTokens.map((token) => (
                   <button
@@ -386,14 +326,23 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                   {feedback.text}
                 </div>
               ) : null}
-              <button
-                type="button"
-                onClick={handleSubmit}
-                disabled={successPulse}
-                className="ui-button-primary w-full rounded-[1.35rem] py-3 text-sm font-black uppercase tracking-[0.18em] disabled:opacity-60"
-              >
-                Submit Weights
-              </button>
+              <div className="grid w-full grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={handleResetScale}
+                  className="ui-button-secondary w-full rounded-[1.35rem] py-3 text-sm font-black uppercase tracking-[0.16em]"
+                >
+                  Reset Scale
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSubmit}
+                  disabled={successPulse}
+                  className="ui-button-primary w-full rounded-[1.35rem] py-3 text-sm font-black uppercase tracking-[0.18em] disabled:opacity-60"
+                >
+                  Submit Weights
+                </button>
+              </div>
             </div>
           </div>
         </div>

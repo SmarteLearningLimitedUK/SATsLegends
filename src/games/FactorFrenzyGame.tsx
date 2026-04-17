@@ -169,7 +169,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         id,
         type,
         number,
-        question: `Select ALL factors of ${number}`,
+        question: `Select all factors of ${number}`,
         options,
         correctAnswers,
       };
@@ -195,7 +195,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         type,
         number,
         number2,
-        question: `Select ALL common factors of ${number} and ${number2}`,
+        question: `Select all common factors of ${number} and ${number2}`,
         options,
         correctAnswers: commonAnswers,
       };
@@ -209,7 +209,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
       id,
       type,
       number,
-      question: `Select ALL prime factors of ${number}`,
+      question: `Select all prime factors of ${number}`,
       options,
       correctAnswers,
     };
@@ -372,7 +372,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
             title="Factor Frenzy"
             subtitle={`Level ${state.level}`}
             className="mx-auto w-full"
-            bodyClassName="text-[clamp(0.95rem,2.9vw,1.32rem)] font-black uppercase leading-tight tracking-[0.02em] text-white md:text-[1.45rem]"
+            bodyClassName="text-[clamp(0.95rem,2.9vw,1.3rem)] font-black leading-snug tracking-[0.01em] text-white md:text-[1.4rem]"
           >
             {state.currentProblem?.question}
           </GameQuestionCard>
@@ -434,7 +434,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                     </div>
 
                     <div className="relative mt-3 flex min-h-0 flex-1 flex-col items-center justify-center">
-                      <div className="absolute left-1/2 top-[-8px] z-20 w-[min(88vw,24rem)] -translate-x-1/2 rounded-2xl border border-amber-200/35 bg-slate-900/70 px-3 py-2 shadow-[0_12px_24px_rgba(2,6,23,0.38)]">
+                      <div className="absolute left-1/2 top-[-8px] z-20 w-[min(74vw,15rem)] -translate-x-1/2 rounded-2xl border border-amber-200/35 bg-slate-900/70 px-3 py-2 shadow-[0_12px_24px_rgba(2,6,23,0.38)]">
                         <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.18em] text-amber-200">
                           Enemy
                         </div>
@@ -449,7 +449,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
                       <div className="absolute left-1/2 top-1/2 flex w-full -translate-x-1/2 -translate-y-1/2 justify-center">
                         <motion.div
-                          className="relative w-[min(72vw,26rem)] max-w-full"
+                          className="relative w-[min(48vw,14.5rem)] max-w-full"
                           animate={
                             showHitFx
                               ? { x: [0, -8, 8, -6, 6, 0], rotate: [0, -2, 2, -1, 1, 0] }
@@ -513,7 +513,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         </main>
 
         {state.status !== 'complete' && (
-          <div className="fixed inset-x-0 bottom-[max(0.5rem,env(safe-area-inset-bottom))] z-40 px-3">
+      <div className="fixed inset-x-0 bottom-[max(0.5rem,env(safe-area-inset-bottom))] z-40 px-3">
             <div className="mx-auto grid w-full max-w-[780px] grid-cols-4 gap-2.5 sm:gap-3 md:gap-4">
               {state.currentProblem?.options.map((option, idx) => (
                 <motion.button

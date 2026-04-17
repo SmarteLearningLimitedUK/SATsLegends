@@ -4,7 +4,7 @@ import confetti from 'canvas-confetti';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { Coins } from '../components/GameIcons';
 import AssetIcon from '../components/AssetIcon';
-import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
+import { GameScreenShell } from '../layout/ScreenPrimitives';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 
@@ -33,8 +33,6 @@ interface TreasureRound {
 }
 
 const GRID_SIZE = 7;
-const GRID_LABELS = Array.from({ length: GRID_SIZE }, (_, index) => index + 1);
-
 const randomInt = (max: number) => Math.floor(Math.random() * max) + 1;
 
 const coordinateKey = (x: number, y: number) => `${x}-${y}`;
@@ -257,106 +255,82 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
       <GameplaySceneBackdrop gameType="coordinate_quest" />
 
       <div className="relative z-10 mx-auto flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col px-2 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] pt-[calc(env(safe-area-inset-top)+3.6rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+2.35rem)] md:pt-[calc(env(safe-area-inset-top)+3.9rem)]">
-        <PuzzleStage className="w-full min-h-0 flex-1 rounded-[1.7rem] p-2 md:rounded-[2rem] md:p-3">
-          <div className="relative z-10 mb-2">
-            <GameQuestionCard
-              title={gameTitle || 'Coordinates Quest'}
-              subtitle={round.promptText}
-              bodyClassName="mt-1 text-[1.35rem] font-black leading-none text-white md:text-[1.8rem]"
-            >
-              {round.promptTitle}
-            </GameQuestionCard>
-          </div>
+        <div className="relative z-10 mb-2">
+          <GameQuestionCard
+            title={gameTitle || 'Coordinates Quest'}
+            subtitle={round.promptText}
+            bodyClassName="mt-1 text-[1.35rem] font-black leading-none text-white md:text-[1.8rem]"
+          >
+            {round.promptTitle}
+          </GameQuestionCard>
+        </div>
 
-          <div className="relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden pr-0.5 md:pr-0">
-            <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.35rem] bg-transparent p-2.5 md:rounded-[1.75rem] md:p-4">
-              <div className="mb-2 text-[10px] font-black uppercase tracking-[0.18em] text-emerald-100/62">Grid map</div>
+        <div className="relative flex min-h-0 flex-1 items-center justify-center">
+          <div className="relative aspect-square w-[min(82vw,31rem)]">
+            <div className="absolute inset-0 grid grid-cols-7 grid-rows-7 overflow-hidden">
+              {cells.map((cell) => {
+                const key = coordinateKey(cell.x, cell.y);
+                const isStart = cell.x === round.start.x && cell.y === round.start.y;
+                const isSelected = selectedTile === key;
 
-              <div className="mx-auto grid w-full max-w-[26rem] grid-cols-[1.8rem_repeat(7,minmax(0,1fr))] gap-1.5 md:max-w-[31rem] md:grid-cols-[2.2rem_repeat(7,minmax(0,1fr))] md:gap-2">
-                <div className="flex flex-col items-center justify-center rounded-[0.8rem] border border-emerald-200/35 bg-emerald-950/70 px-1 py-2 text-center text-[10px] font-black uppercase leading-none tracking-[0.18em] text-emerald-50 shadow-[0_8px_18px_rgba(0,0,0,0.22)] md:rounded-[0.95rem] md:px-2 md:text-xs">
-                  <span className="text-emerald-50">Y</span>
-                  <span className="my-0.5 text-[12px] leading-none text-yellow-200 md:text-sm">↑</span>
-                  <span className="text-emerald-50">X→</span>
-                </div>
-                {GRID_LABELS.map((value) => (
-                  <div key={`top-${value}`} className="flex items-center justify-center rounded-full border border-emerald-100/28 bg-emerald-950/55 px-0.5 py-1 text-center text-[11px] font-black text-emerald-50 shadow-[0_4px_12px_rgba(0,0,0,0.18)] md:text-xs">
-                    {value}
-                  </div>
-                ))}
-
-                {[...GRID_LABELS].reverse().map((rowValue) => (
-                  <React.Fragment key={`row-${rowValue}`}>
-                    <div className="flex items-center justify-center rounded-full border border-emerald-100/28 bg-emerald-950/55 px-0.5 py-1 text-[11px] font-black text-emerald-50 shadow-[0_4px_12px_rgba(0,0,0,0.18)] md:text-xs">
-                      {rowValue}
-                    </div>
-                    {Array.from({ length: GRID_SIZE }, (_, index) => {
-                      const x = index + 1;
-                      const y = rowValue;
-                      const key = coordinateKey(x, y);
-                      const isStart = x === round.start.x && y === round.start.y;
-                      const isSelected = selectedTile === key;
-
-                      return (
-                        <button
-                          key={key}
-                          onClick={() => handleTileTap(x, y)}
-                          disabled={!!feedback}
-                          className={`relative aspect-square rounded-[0.82rem] border text-left transition-all md:rounded-[1rem] ${
-                            isSelected
-                              ? feedback === 'correct'
-                                ? 'border-emerald-300 bg-emerald-400/30'
-                                : 'border-rose-300 bg-rose-500/26'
-                              : 'border-white/10 bg-transparent hover:-translate-y-0.5 hover:border-emerald-200/30 hover:bg-white/10'
-                          }`}
-                        >
-                          {isStart && (
-                            <motion.div
-                              layout
-                              className="absolute left-1/2 top-1/2 flex h-[66%] w-[66%] -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full border border-white/22 bg-[linear-gradient(180deg,rgba(245,158,11,0.95),rgba(194,65,12,0.95))] shadow-[0_10px_20px_rgba(0,0,0,0.24)]"
-                            >
-                              {playerAvatar?.image ? (
-                                <img
-                                  src={playerAvatar.image}
-                                  alt=""
-                                  draggable={false}
-                                  className="h-full w-full object-cover"
-                                />
-                              ) : (
-                                <span className="text-[10px] font-black text-white">You</span>
-                              )}
-                            </motion.div>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </React.Fragment>
-                ))}
-              </div>
+                return (
+                  <button
+                    key={key}
+                    onClick={() => handleTileTap(cell.x, cell.y)}
+                    disabled={!!feedback}
+                    className={`relative border text-left transition-all ${
+                      isSelected
+                        ? feedback === 'correct'
+                          ? 'border-emerald-300 bg-emerald-400/30'
+                          : 'border-rose-300 bg-rose-500/26'
+                        : 'border-transparent bg-transparent hover:bg-white/10'
+                    }`}
+                  >
+                    {isStart && (
+                      <motion.div
+                        layout
+                        className="absolute left-1/2 top-1/2 flex h-[66%] w-[66%] -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full border border-white/22 bg-[linear-gradient(180deg,rgba(245,158,11,0.95),rgba(194,65,12,0.95))] shadow-[0_10px_20px_rgba(0,0,0,0.24)]"
+                      >
+                        {playerAvatar?.image ? (
+                          <img
+                            src={playerAvatar.image}
+                            alt=""
+                            draggable={false}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-[10px] font-black text-white">You</span>
+                        )}
+                      </motion.div>
+                    )}
+                  </button>
+                );
+              })}
             </div>
-          </div>
 
-          <AnimatePresence>
-            {feedback && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center bg-black/18 backdrop-blur-[2px]"
-              >
-                <div className={`rounded-[2rem] border px-8 py-6 text-center shadow-[0_20px_40px_rgba(0,0,0,0.34)] ${
-                  feedback === 'correct'
-                    ? 'border-emerald-300/60 bg-emerald-500/16 text-emerald-300'
-                    : 'border-rose-300/60 bg-rose-500/16 text-amber-300'
-                }`}>
-                  <div className="text-4xl font-black">{feedback === 'correct' ? 'Treasure Found!' : 'Trap Triggered!'}</div>
-                  <div className="mt-2 text-sm font-bold text-white/82">
-                    {feedback === 'correct' ? 'Your route was perfect.' : 'That tile was not the final destination.'}
+            <AnimatePresence>
+              {feedback && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center bg-black/18 backdrop-blur-[2px]"
+                >
+                  <div className={`rounded-[2rem] border px-8 py-6 text-center shadow-[0_20px_40px_rgba(0,0,0,0.34)] ${
+                    feedback === 'correct'
+                      ? 'border-emerald-300/60 bg-emerald-500/16 text-emerald-300'
+                      : 'border-rose-300/60 bg-rose-500/16 text-amber-300'
+                  }`}>
+                    <div className="text-4xl font-black">{feedback === 'correct' ? 'Treasure Found!' : 'Trap Triggered!'}</div>
+                    <div className="mt-2 text-sm font-bold text-white/82">
+                      {feedback === 'correct' ? 'Your route was perfect.' : 'That tile was not the final destination.'}
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </PuzzleStage>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
 
         <AnimatePresence>
           {(isGameOver || isVictory) && (

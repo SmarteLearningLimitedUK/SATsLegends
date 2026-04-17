@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import { Shield, Swords } from 'lucide-react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import AnimatedAvatar from '../components/AnimatedAvatar';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
@@ -126,24 +125,12 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [isFinished, setIsFinished] = useState(false);
 
-  const bidmasFlags = useMemo(() => {
-    const expr = round.expression;
-    return [
-      { key: 'B', label: 'Brackets', active: /[()]/.test(expr) },
-      { key: 'I', label: 'Indices', active: /\^|²/.test(expr) },
-      { key: 'D', label: 'Division', active: /÷|\//.test(expr) },
-      { key: 'M', label: 'Multiplication', active: /×|\*/.test(expr) },
-      { key: 'A', label: 'Addition', active: /\+/.test(expr) },
-      { key: 'S', label: 'Subtraction', active: /-/.test(expr) },
-    ];
-  }, [round.expression]);
 
   const playerAvatar = useMemo(
     () => AVATARS.find((avatar) => avatar.id === avatarId) ?? AVATARS[0],
     [avatarId],
   );
 
-  const enemyHealthPercent = (enemyHealth / maxEnemyHealth) * 100;
   const displayExpression = formatMultiplicationDisplay(round.expression);
 
   const clearTimers = () => {
@@ -290,157 +277,66 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
             </GameQuestionCard>
           </div>
 
-          <div className="grid min-h-0 flex-1 gap-2 md:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)_minmax(0,1fr)] md:gap-3">
-            <div className="flex min-h-0 flex-col rounded-[1.35rem] border border-white/12 bg-slate-950/28 p-3 shadow-[0_14px_28px_rgba(2,6,23,0.12)] backdrop-blur-[2px] md:p-4">
-              <div className="flex items-center justify-between gap-2">
-                <div>
-                  <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/62 md:text-[11px]">Player</div>
-                  <div className="text-lg font-black tracking-tight text-white md:text-2xl">You</div>
-                </div>
-                <div className="rounded-full border border-white/12 bg-white/8 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100 md:text-[11px]">
-                  Defence
-                </div>
-              </div>
-
-              <div className="mt-3 flex flex-1 items-end justify-center">
-                <div className="relative flex h-full min-h-[11rem] w-full max-w-[16rem] items-end justify-center rounded-[1.25rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(147,197,253,0.16),rgba(15,23,42,0.02)_52%,rgba(15,23,42,0.18)_100%)] p-3 md:min-h-[15rem]">
-                  <div className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-cyan-200/18 bg-slate-950/35 px-2 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/80">
-                    <Shield className="h-3.5 w-3.5" />
-                    {hearts} shields
-                  </div>
-                  <div className="absolute bottom-3 left-3 right-3 rounded-[0.9rem] border border-white/10 bg-black/20 px-2 py-1.5 text-center text-[10px] font-bold text-white/78">
-                    {Combo > 0 ? `${Combo} strike streak` : 'Hold your defence'}
-                  </div>
-                  <AnimatedAvatar
-                    avatar={playerAvatar}
-                    pose={feedback?.type === 'error' ? 'sad' : 'attack'}
-                    floating={false}
-                    cycleFrames
-                    showBackdropGlow={false}
-                    className="h-full w-[86%]"
-                    imageClassName="object-contain object-bottom drop-shadow-[0_18px_28px_rgba(0,0,0,0.32)]"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex min-h-0 flex-col justify-between rounded-[1.35rem] border border-white/12 bg-slate-950/24 p-3 shadow-[0_14px_28px_rgba(2,6,23,0.12)] backdrop-blur-[2px] md:p-4">
-              <div>
-                <div className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.22em] text-white/66 md:text-[11px]">
-                  <Swords className="h-4 w-4 text-cyan-100" />
-                  Duel lane
-                </div>
-                <div className="mt-3 rounded-[1.1rem] border border-white/10 bg-black/16 p-3 text-center">
-                  <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/78">Battle status</div>
-                  <div className="mt-2 text-sm font-semibold leading-snug text-white/86 md:text-[15px]">
-                    Correct answers strike the enemy. Wrong answers let the enemy counter and chip away at your defence.
-                  </div>
-                </div>
-                <div className="mt-3 grid grid-cols-3 gap-2">
-                  <div className="rounded-[1rem] border border-white/10 bg-white/6 px-2 py-2 text-center">
-                    <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/58">Time</div>
-                    <div className="mt-1 text-xl font-black text-white md:text-2xl">{timeLeft}</div>
-                  </div>
-                  <div className="rounded-[1rem] border border-white/10 bg-white/6 px-2 py-2 text-center">
-                    <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/58">Round</div>
-                    <div className="mt-1 text-xl font-black text-white md:text-2xl">{questionCount}</div>
-                  </div>
-                  <div className="rounded-[1rem] border border-white/10 bg-white/6 px-2 py-2 text-center">
-                    <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/58">Combo</div>
-                    <div className="mt-1 text-xl font-black text-white md:text-2xl">{Combo}</div>
-                  </div>
-                </div>
-                <div className="mt-3 flex flex-wrap justify-center gap-1.5">
-                  {bidmasFlags.map((flag) => (
-                    <div
-                      key={flag.key}
-                      className={`flex h-8 min-w-[2.2rem] items-center justify-center rounded-full border px-2 text-[11px] font-black uppercase tracking-[0.12em] md:h-9 ${
-                        flag.active
-                          ? 'border-emerald-200/60 bg-emerald-400/20 text-emerald-100'
-                          : 'border-white/12 bg-white/6 text-white/55'
-                      }`}
-                    >
-                      {flag.key}
+          <div className="relative min-h-0 flex-1 overflow-hidden rounded-[1.5rem] border border-white/10 bg-[linear-gradient(180deg,rgba(9,16,31,0.82),rgba(6,10,20,0.92))] shadow-[0_16px_34px_rgba(2,6,23,0.18)]">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.12),rgba(15,23,42,0.04)_38%,rgba(2,6,23,0.32)_100%)]" />
+            <div className="relative z-10 flex h-full min-h-0 flex-col justify-between gap-3 p-3 md:p-4">
+              <div className="flex flex-1 items-end justify-between gap-3">
+                <div className="flex min-h-0 w-[48%] flex-1 justify-center">
+                  <div className="relative flex h-full min-h-[14rem] w-full max-w-[18rem] items-end justify-center rounded-[1.35rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(147,197,253,0.16),rgba(15,23,42,0.02)_52%,rgba(15,23,42,0.18)_100%)] p-3 md:min-h-[20rem]">
+                    <div className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-cyan-200/18 bg-slate-950/35 px-2 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/80">
+                      {hearts} shields
                     </div>
+                    <AnimatedAvatar
+                      avatar={playerAvatar}
+                      pose={feedback?.type === 'error' ? 'sad' : 'attack'}
+                      floating={false}
+                      cycleFrames
+                      showBackdropGlow={false}
+                      className="h-full w-[90%]"
+                      imageClassName="object-contain object-bottom drop-shadow-[0_18px_28px_rgba(0,0,0,0.32)]"
+                    />
+                    <div className="pointer-events-none absolute bottom-3 left-3 right-3 rounded-[0.9rem] border border-white/10 bg-black/20 px-2 py-1.5 text-center text-[10px] font-bold text-white/78">
+                      {Combo > 0 ? `${Combo} strike streak` : 'Hold your defence'}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex min-h-0 w-[48%] flex-1 justify-center">
+                  <div className="relative flex h-full min-h-[14rem] w-full max-w-[18rem] items-end justify-center rounded-[1.35rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.18),rgba(15,23,42,0.02)_52%,rgba(15,23,42,0.18)_100%)] p-3 md:min-h-[20rem]">
+                    <div className="absolute left-3 top-3 rounded-full border border-rose-200/14 bg-slate-950/35 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-rose-100/82">
+                      {Math.max(0, maxEnemyHealth - enemyHealth)} hits landed
+                    </div>
+                    <motion.img
+                      src={orderOpsEnemy}
+                      alt="Order Ops enemy"
+                      animate={feedback?.type === 'success'
+                        ? { x: [0, -5, 5, -3, 0] }
+                        : feedback?.type === 'error'
+                          ? { x: [0, 4, -4, 0] }
+                          : { x: 0 }}
+                      transition={{ duration: 0.38 }}
+                      className="h-full w-[92%] object-contain object-bottom drop-shadow-[0_18px_28px_rgba(0,0,0,0.3)]"
+                      draggable={false}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-[1.45rem] border border-white/10 bg-slate-950/34 p-3 shadow-[0_14px_28px_rgba(2,6,23,0.14)] backdrop-blur-sm md:p-4">
+                <div className="grid grid-cols-2 gap-2 md:gap-3">
+                  {round.options.map((option) => (
+                    <button
+                      key={`${displayExpression}-${option}`}
+                      type="button"
+                      onClick={() => handleAnswer(option)}
+                      disabled={Boolean(feedback) || isFinished}
+                      className="ui-button-primary min-h-[3.2rem] rounded-[1.1rem] px-2 py-2 text-base font-black text-white shadow-[0_12px_20px_rgba(2,6,23,0.2)] disabled:opacity-60 md:min-h-[3.8rem] md:text-2xl"
+                    >
+                      {option}
+                    </button>
                   ))}
                 </div>
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  <div className="rounded-[1rem] border border-emerald-200/14 bg-emerald-400/10 px-2 py-2 text-center">
-                    <div className="text-[9px] font-black uppercase tracking-[0.18em] text-emerald-100/78">Player XP</div>
-                    <div className="mt-1 text-xl font-black text-emerald-50 md:text-2xl">{XP}</div>
-                  </div>
-                  <div className="rounded-[1rem] border border-cyan-200/14 bg-cyan-400/10 px-2 py-2 text-center">
-                    <div className="text-[9px] font-black uppercase tracking-[0.18em] text-cyan-100/78">Enemy guard</div>
-                    <div className="mt-1 text-xl font-black text-cyan-50 md:text-2xl">{enemyHealth}</div>
-                  </div>
-                </div>
               </div>
-
-              <div className="mt-3 rounded-[1rem] border border-white/10 bg-black/18 p-3">
-                <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-[11px]">
-                  <span>Enemy defence</span>
-                  <span>{enemyHealth}/{maxEnemyHealth}</span>
-                </div>
-                <div className="mt-2 h-3 overflow-hidden rounded-full border border-white/18 bg-black/30 md:h-4">
-                  <motion.div
-                    animate={{ width: `${enemyHealthPercent}%` }}
-                    transition={{ duration: 0.25 }}
-                    className="h-full bg-gradient-to-r from-emerald-400 via-cyan-300 to-sky-300"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex min-h-0 flex-col rounded-[1.35rem] border border-white/12 bg-slate-950/28 p-3 shadow-[0_14px_28px_rgba(2,6,23,0.12)] backdrop-blur-[2px] md:p-4">
-              <div className="flex items-center justify-between gap-2">
-                <div>
-                  <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/62 md:text-[11px]">Enemy</div>
-                  <div className="text-lg font-black tracking-tight text-white md:text-2xl">Order Warden</div>
-                </div>
-                <div className="rounded-full border border-white/12 bg-white/8 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-rose-100 md:text-[11px]">
-                  Attack
-                </div>
-              </div>
-
-              <div className="mt-3 flex flex-1 items-end justify-center">
-                <div className="relative flex h-full min-h-[11rem] w-full max-w-[16rem] items-end justify-center rounded-[1.25rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.18),rgba(15,23,42,0.02)_52%,rgba(15,23,42,0.18)_100%)] p-3 md:min-h-[15rem]">
-                  <div className="absolute left-3 top-3 rounded-full border border-rose-200/14 bg-slate-950/35 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-rose-100/82">
-                    {Math.max(0, maxEnemyHealth - enemyHealth)} hits landed
-                  </div>
-                  <motion.img
-                    src={orderOpsEnemy}
-                    alt="Order Ops enemy"
-                    animate={feedback?.type === 'success'
-                      ? { x: [0, -5, 5, -3, 0] }
-                      : feedback?.type === 'error'
-                        ? { x: [0, 4, -4, 0] }
-                        : { x: 0 }}
-                    transition={{ duration: 0.38 }}
-                    className="h-full w-[88%] object-contain object-bottom drop-shadow-[0_18px_28px_rgba(0,0,0,0.3)]"
-                    draggable={false}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-[1.45rem] border border-white/10 bg-slate-950/34 p-3 shadow-[0_14px_28px_rgba(2,6,23,0.14)] backdrop-blur-sm md:p-4">
-            <div className="flex items-center justify-between gap-3">
-              <div className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-100/80 md:text-[11px]">Pick the result</div>
-              <div className="text-[10px] font-bold text-white/68 md:text-[11px]">Question {questionCount} · {round.hint}</div>
-            </div>
-            <div className="mt-3 grid grid-cols-2 gap-2 md:gap-3">
-              {round.options.map((option) => (
-                <button
-                  key={`${displayExpression}-${option}`}
-                  type="button"
-                  onClick={() => handleAnswer(option)}
-                  disabled={Boolean(feedback) || isFinished}
-                  className="ui-button-primary min-h-[3.2rem] rounded-[1.1rem] px-2 py-2 text-base font-black text-white shadow-[0_12px_20px_rgba(2,6,23,0.2)] disabled:opacity-60 md:min-h-[3.8rem] md:text-2xl"
-                >
-                  {option}
-                </button>
-              ))}
             </div>
           </div>
         </div>
@@ -468,3 +364,4 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
 };
 
 export default OrderOpsArenaGame;
+

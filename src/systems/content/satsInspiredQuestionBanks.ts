@@ -179,6 +179,36 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
         visual: { type: 'equation', lines: ['589,432', '+ 10,000'], badge: 'Place Value' },
       },
     },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'What is the value of 4 in 6,405,218?',
+        sublabel: 'Read the digit in the millions number carefully.',
+        options: ['4', '40,000', '400,000', '4,000,000'],
+        answerIndex: 2,
+        visual: { type: 'tokens', items: ['6', '4', '0', '5', '2', '1', '8'], accent: 'amber' },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'What is 10 times 46,208?',
+        sublabel: 'Move the digits one place to the left.',
+        options: ['462,080', '462,008', '4,620,800', '46,280'],
+        answerIndex: 0,
+        visual: { type: 'equation', lines: ['46,208', 'x 10 = ?'], badge: 'Multiply' },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'Which number is 7,000,000 + 80,000 + 4,000 + 60 + 9?',
+        sublabel: 'Build the number from each place value chunk.',
+        options: ['7,084,069', '7,840,069', '7,804,609', '7,084,609'],
+        answerIndex: 0,
+        visual: { type: 'equation', lines: ['7,000,000 + 80,000 + 4,000 + 60 + 9', '= ?'], badge: 'Compose' },
+      },
+    },
   ],
   calculation_clash: [
     {
@@ -219,6 +249,46 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
         options: ['448', '458', '468', '478'],
         answerIndex: 0,
         visual: { type: 'equation', lines: ['734 – 286', '= ?'], badge: 'Subtract', variant: 'clash' },
+      },
+    },
+    {
+      minLevel: 2,
+      value: {
+        prompt: 'Work out 29 + 34 - 3 x 4',
+        sublabel: 'Do the multiplication before the addition and subtraction.',
+        options: ['51', '39', '63', '75'],
+        answerIndex: 0,
+        visual: { type: 'equation', lines: ['29 + 34 - 3 x 4', '= ?'], badge: 'Order', variant: 'clash' },
+      },
+    },
+    {
+      minLevel: 2,
+      value: {
+        prompt: 'Work out 5 + 18 ÷ 2',
+        sublabel: 'Divide before you add.',
+        options: ['14', '11', '19', '23'],
+        answerIndex: 0,
+        visual: { type: 'equation', lines: ['5 + 18 ÷ 2', '= ?'], badge: 'Order', variant: 'clash' },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'Work out 4 x (6 + 3)',
+        sublabel: 'Calculate the bracket first.',
+        options: ['24', '28', '36', '48'],
+        answerIndex: 2,
+        visual: { type: 'equation', lines: ['4 x (6 + 3)', '= ?'], badge: 'Brackets', variant: 'clash' },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'Work out 3^2 + 4 x 5',
+        sublabel: 'Powers come before multiplication and addition.',
+        options: ['22', '29', '31', '25'],
+        answerIndex: 1,
+        visual: { type: 'equation', lines: ['3^2 + 4 x 5', '= ?'], badge: 'Power', variant: 'clash' },
       },
     },
   ],
@@ -281,6 +351,42 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
         },
       },
     },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'The beacon at (-2, 5) is which point?',
+        sublabel: 'Scan across the x-axis first, then up the y-axis.',
+        options: ['A', 'B', 'C', 'D'],
+        answerIndex: 1,
+        visual: {
+          type: 'coordinates',
+          min: -8,
+          max: 8,
+          targetLabel: 'B',
+          caption: 'Use the full grid this time.',
+          points: [
+            { label: 'A', x: 4, y: -3, tone: 'bg-cyan-300' },
+            { label: 'B', x: -2, y: 5, tone: 'bg-emerald-300' },
+            { label: 'C', x: -6, y: -1, tone: 'bg-sky-300' },
+            { label: 'D', x: 3, y: 7, tone: 'bg-amber-300' },
+          ],
+        },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'Point P starts at (-3, 4). It moves 5 left and 2 down. Where does it finish?',
+        sublabel: 'Translate left first, then down.',
+        options: ['(-8, 2)', '(-2, 6)', '(2, -2)', '(8, -2)'],
+        answerIndex: 0,
+        visual: {
+          type: 'equation',
+          lines: ['Start at (-3, 4)', '5 left, 2 down', 'Final position = ?'],
+          badge: 'Route',
+        },
+      },
+    },
   ],
   transform_temple: [
     {
@@ -328,6 +434,40 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
           type: 'equation',
           lines: ['Original shape → image', 'Every point moves +8 on the x-axis'],
           badge: 'Transform',
+        },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'Which translation moves A to Aâ€²?',
+        sublabel: 'Read the horizontal move first, then the vertical move.',
+        options: ['6 right, 4 up', '6 left, 4 up', '4 right, 6 up', '6 right, 4 down'],
+        answerIndex: 0,
+        visual: {
+          type: 'transform',
+          start: { label: 'A', x: -4, y: -2, tone: 'bg-amber-300' },
+          image: { label: "A'", x: 2, y: 2, tone: 'bg-sky-300' },
+          min: -8,
+          max: 8,
+          caption: 'Use the full grid to describe the move.',
+        },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'Which translation moves B to Bâ€²?',
+        sublabel: 'Keep the direction words accurate on the full grid.',
+        options: ['2 left, 5 down', '2 left, 5 up', '5 left, 2 down', '2 right, 5 down'],
+        answerIndex: 1,
+        visual: {
+          type: 'transform',
+          start: { label: 'B', x: 5, y: -1, tone: 'bg-amber-300' },
+          image: { label: "B'", x: 3, y: 4, tone: 'bg-sky-300' },
+          min: -8,
+          max: 8,
+          caption: 'Trace the movement from the original point to the image.',
         },
       },
     },
@@ -392,6 +532,57 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
           rightLabel: 'Short tower',
           rightValue: '?',
           caption: 'The shorter tower is one-half as tall.',
+        },
+      },
+    },
+    {
+      minLevel: 2,
+      value: {
+        prompt: 'A map scale says 1 cm = 5 km. How far is 7 cm?',
+        sublabel: 'Multiply by the scale factor.',
+        options: ['12 km', '25 km', '35 km', '45 km'],
+        answerIndex: 2,
+        visual: {
+          type: 'ratio',
+          leftLabel: '1 cm',
+          leftValue: '5 km',
+          rightLabel: '7 cm',
+          rightValue: '?',
+          caption: 'Scale the map distance.',
+        },
+      },
+    },
+    {
+      minLevel: 2,
+      value: {
+        prompt: 'The ratio of flour to sugar is 2:3. If there are 10 g of flour, how much sugar is needed?',
+        sublabel: 'Keep the ratio equivalent.',
+        options: ['10 g', '12 g', '15 g', '18 g'],
+        answerIndex: 2,
+        visual: {
+          type: 'ratio',
+          leftLabel: 'Flour',
+          leftValue: '2 parts',
+          rightLabel: 'Sugar',
+          rightValue: '3 parts',
+          caption: 'Match the parts before scaling.',
+        },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'A model is made at scale 1:4. A real tower is 28 cm tall. How tall is the model?',
+        sublabel: 'Divide the real height by the scale factor.',
+        options: ['4 cm', '6 cm', '7 cm', '8 cm'],
+        answerIndex: 2,
+        visual: {
+          type: 'ratio',
+          leftLabel: 'Real tower',
+          leftValue: '28 cm',
+          rightLabel: 'Model',
+          rightValue: '?',
+          caption: 'Scale down by 4.',
         },
       },
     },
@@ -473,6 +664,45 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
         },
       },
     },
+    {
+      minLevel: 2,
+      value: {
+        prompt: 'The records show the number of crates carried by each supply caravan. How many crates did Windward and Jerry deliver altogether?',
+        sublabel: 'Add the two matching caravans only.',
+        options: ['11', '12', '13', '14'],
+        answerIndex: 2,
+        visual: {
+          type: 'bars',
+          caption: 'Supply caravans',
+          bars: [
+            { label: 'Windward', value: 6, color: 'from-sky-400 to-cyan-300' },
+            { label: 'Eden', value: 9, color: 'from-indigo-400 to-blue-300' },
+            { label: 'Jerry', value: 7, color: 'from-emerald-400 to-lime-300' },
+            { label: 'Ivy', value: 4, color: 'from-amber-300 to-yellow-300' },
+          ],
+        },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'The records show the number of crates carried by each supply caravan. Which two caravans deliver 15 crates altogether?',
+        sublabel: 'Test each pair and look for the exact total.',
+        options: ['Windward and Eden', 'Windward and Jerry', 'Eden and Ivy', 'Jerry and Ivy'],
+        answerIndex: 1,
+        visual: {
+          type: 'bars',
+          caption: 'Supply caravans',
+          bars: [
+            { label: 'Windward', value: 6, color: 'from-sky-400 to-cyan-300' },
+            { label: 'Eden', value: 9, color: 'from-indigo-400 to-blue-300' },
+            { label: 'Jerry', value: 7, color: 'from-emerald-400 to-lime-300' },
+            { label: 'Ivy', value: 4, color: 'from-amber-300 to-yellow-300' },
+            { label: 'Oak', value: 8, color: 'from-fuchsia-400 to-pink-300' },
+          ],
+        },
+      },
+    },
   ],
   mean_machine: [
     {
@@ -503,6 +733,26 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
         options: ['23', '72', '90', '108'],
         answerIndex: 2,
         visual: { type: 'equation', lines: ['Mean = 18', '5 values in total'], badge: 'Total' },
+      },
+    },
+    {
+      minLevel: 2,
+      value: {
+        prompt: 'Find the mean of 6, 0, 12 and 18.',
+        sublabel: 'Include the zero in the total before dividing.',
+        options: ['8', '9', '10', '12'],
+        answerIndex: 1,
+        visual: { type: 'tokens', items: ['6', '0', '12', '18'], accent: 'blue' },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'Which set would make the mean less useful because of an outlier?',
+        sublabel: 'Look for the value that sits far away from the others.',
+        options: ['7, 7, 8, 8', '12, 13, 12, 13', '5, 5, 5, 30', '9, 10, 9, 10'],
+        answerIndex: 2,
+        visual: { type: 'sequence', values: ['Check the cluster', 'Find the odd one out'], caption: 'Think about outliers.' },
       },
     },
   ],
@@ -545,6 +795,26 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
         options: ['5', '6', '7', '8'],
         answerIndex: 2,
         visual: { type: 'equation', lines: ['black = (white × 3) + 4', 'black = 25'], badge: 'Inverse' },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'Solve 3(x + 4) = 27',
+        sublabel: 'Undo the multiplication before undoing the addition.',
+        options: ['4', '5', '6', '7'],
+        answerIndex: 1,
+        visual: { type: 'equation', lines: ['3(x + 4) = 27', 'x = ?'], badge: 'Brackets' },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'Solve (x + 6) ÷ 3 = 5',
+        sublabel: 'Multiply first, then subtract.',
+        options: ['7', '8', '9', '10'],
+        answerIndex: 2,
+        visual: { type: 'equation', lines: ['(x + 6) ÷ 3 = 5', 'x = ?'], badge: 'Equation' },
       },
     },
   ],
@@ -609,6 +879,36 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
         visual: { type: 'equation', lines: ['450 ml', '÷ 1000 = ? l'], badge: 'Capacity' },
       },
     },
+    {
+      minLevel: 2,
+      value: {
+        prompt: '0.75 km = how many metres?',
+        sublabel: 'Multiply by 1,000.',
+        options: ['75 m', '750 m', '7,500 m', '0.075 m'],
+        answerIndex: 1,
+        visual: { type: 'equation', lines: ['0.75 km', 'x 1000 = ? m'], badge: 'Length' },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: '2.04 l = how many millilitres?',
+        sublabel: 'Watch the decimal places as you convert.',
+        options: ['204 ml', '2,040 ml', '20,400 ml', '24 ml'],
+        answerIndex: 1,
+        visual: { type: 'equation', lines: ['2.04 l', 'x 1000 = ? ml'], badge: 'Capacity' },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: '5,600 g = how many kilograms?',
+        sublabel: 'Divide by 1,000 to move to kilograms.',
+        options: ['0.56 kg', '5.06 kg', '5.6 kg', '56 kg'],
+        answerIndex: 2,
+        visual: { type: 'equation', lines: ['5,600 g', '÷ 1000 = ? kg'], badge: 'Mass' },
+      },
+    },
   ],
   formula_forge: [
     {
@@ -671,6 +971,26 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
         visual: { type: 'equation', lines: ['V = l × w × h', '4 × 3 × 5 = ?'], badge: 'Volume' },
       },
     },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'A triangle has area 36 cm² and base 9 cm. What is the perpendicular height?',
+        sublabel: 'Use the triangle area formula and work backwards.',
+        options: ['4 cm', '6 cm', '8 cm', '9 cm'],
+        answerIndex: 2,
+        visual: { type: 'equation', lines: ['A = (b × h) ÷ 2', '36 = (9 × h) ÷ 2'], badge: 'Reverse' },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'A rectangle has perimeter 34 cm and length 10 cm. What is the width?',
+        sublabel: 'Subtract the two lengths first, then halve the result.',
+        options: ['5 cm', '6 cm', '7 cm', '8 cm'],
+        answerIndex: 2,
+        visual: { type: 'equation', lines: ['P = 2(l + w)', '34 = 2(10 + w)'], badge: 'Perimeter' },
+      },
+    },
   ],
   rule_runner: [
     {
@@ -711,6 +1031,26 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
         options: ['74', '72', '70', '68'],
         answerIndex: 1,
         visual: { type: 'sequence', values: ['120', '108', '96', '84', '?'], caption: 'Rule: −12' },
+      },
+    },
+    {
+      minLevel: 2,
+      value: {
+        prompt: 'Function machine: x2, then +5. What is the output for 9?',
+        sublabel: 'Multiply first, then add.',
+        options: ['21', '22', '23', '24'],
+        answerIndex: 2,
+        visual: { type: 'ratio', leftLabel: 'Input', leftValue: '9', rightLabel: 'Output', rightValue: '?', caption: 'x2 then +5' },
+      },
+    },
+    {
+      minLevel: 3,
+      value: {
+        prompt: 'What comes next in 3, 7, 15, 31, ...?',
+        sublabel: 'Spot the rule before the next jump.',
+        options: ['47', '55', '61', '63'],
+        answerIndex: 3,
+        visual: { type: 'sequence', values: ['3', '7', '15', '31', '?'], caption: 'Rule: x2 + 1' },
       },
     },
   ],
@@ -817,6 +1157,56 @@ const DATA_DUNGEON_BANK: BankEntry<DataDungeonPuzzle>[] = [
       data: [6, 10, 17, 25],
     },
   },
+  {
+    minLevel: 2,
+    value: {
+      id: 'sat-mean-3',
+      type: 'mean',
+      question: 'Find the mean.',
+      options: [8, 9, 10, 12],
+      answer: 9,
+      data: [6, 0, 12, 18],
+    },
+  },
+  {
+    minLevel: 2,
+    value: {
+      id: 'sat-median-2',
+      type: 'median',
+      question: 'Find the median.',
+      options: [9, 10, 11, 12],
+      answer: 11,
+      data: [4, 10, 12, 18],
+    },
+  },
+  {
+    minLevel: 3,
+    value: {
+      id: 'sat-range-3',
+      type: 'range',
+      question: 'Find the range.',
+      options: [14, 15, 16, 17],
+      answer: 15,
+      data: [3, 18, 14, 11, 6],
+    },
+  },
+  {
+    minLevel: 3,
+    value: {
+      id: 'sat-barchart-3',
+      type: 'barchart',
+      question: 'How many more blue than gold?',
+      options: [0, 1, 2, 3],
+      answer: 1,
+      data: [],
+      chartData: [
+        { label: 'Red', value: 4, color: '#ef4444' },
+        { label: 'Blue', value: 8, color: '#3b82f6' },
+        { label: 'Green', value: 6, color: '#10b981' },
+        { label: 'Gold', value: 7, color: '#f59e0b' },
+      ],
+    },
+  },
 ];
 
 const MEASUREMENT_FORGE_BANK: BankEntry<MeasurementProblem>[] = [
@@ -874,6 +1264,33 @@ const MEASUREMENT_FORGE_BANK: BankEntry<MeasurementProblem>[] = [
       itemType: 'sword',
     },
   },
+  {
+    minLevel: 2,
+    value: {
+      question: '0.75 kg = how many g?',
+      options: ['75 g', '750 g', '7,500 g', '0.075 g'],
+      answer: '750 g',
+      itemType: 'armor',
+    },
+  },
+  {
+    minLevel: 3,
+    value: {
+      question: '2.04 l = how many ml?',
+      options: ['204 ml', '2,040 ml', '20,400 ml', '24 ml'],
+      answer: '2,040 ml',
+      itemType: 'potion',
+    },
+  },
+  {
+    minLevel: 3,
+    value: {
+      question: '5,600 g = how many kg?',
+      options: ['0.56 kg', '5.06 kg', '5.6 kg', '56 kg'],
+      answer: '5.6 kg',
+      itemType: 'shield',
+    },
+  },
 ];
 
 const TIMEKEEPER_BANK: BankEntry<TimeProblem>[] = [
@@ -923,6 +1340,30 @@ const TIMEKEEPER_BANK: BankEntry<TimeProblem>[] = [
       question: '150 minutes after 10:40 AM?',
       options: ['12:50 PM', '1:10 PM', '1:20 PM', '12:10 PM'],
       answer: '1:10 PM',
+    },
+  },
+  {
+    minLevel: 2,
+    value: {
+      question: '11:45 PM in 24-hour time?',
+      options: ['11:45', '23:45', '00:45', '12:45'],
+      answer: '23:45',
+    },
+  },
+  {
+    minLevel: 3,
+    value: {
+      question: '45 minutes before 1:20 PM?',
+      options: ['12:35 PM', '12:45 PM', '1:05 PM', '12:25 PM'],
+      answer: '12:35 PM',
+    },
+  },
+  {
+    minLevel: 3,
+    value: {
+      question: 'How long from 09:50 to 12:15?',
+      options: ['2h 15m', '2h 25m', '2h 35m', '2h 45m'],
+      answer: '2h 25m',
     },
   },
 ];

@@ -586,7 +586,7 @@ const App: React.FC = () => {
       if (selectedLevel.blueprintKey === 'remainder_run') {
         return {
           title: 'Remainder Run',
-          summary: 'Use long division to work out the quotient and the remainder. Look at the visual, then pick the correct answer.',
+          summary: 'Use long division to work out the quotient, remainder, or decimal answer. Look at the visual, then pick the correct answer.',
           bullets: [],
         };
       }

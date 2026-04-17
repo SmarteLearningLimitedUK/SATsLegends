@@ -5,7 +5,6 @@ import {
   FeedbackStrip,
   GameUiShell,
 } from '../components/game-ui/GameUiKit';
-import pyramidImage from '../assets/pyramid.png';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import problemPyramidBackground from '../assets/maps/backgroundsforgames/problem pyramid.jpg';
 
@@ -143,8 +142,8 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
       glow
         ? 'border-emerald-200/80 bg-emerald-300/35 text-emerald-950 shadow-[0_0_18px_rgba(16,185,129,0.55)]'
         : isTop
-          ? 'border-cyan-100/30 bg-white/12 text-white'
-          : 'border-white/20 bg-white/10 text-white'
+          ? 'border-cyan-100/28 bg-[linear-gradient(180deg,rgba(15,23,42,0.95),rgba(30,41,59,0.88))] text-white shadow-[0_12px_24px_rgba(2,6,23,0.35)]'
+          : 'border-white/18 bg-[linear-gradient(180deg,rgba(9,17,32,0.94),rgba(20,28,45,0.88))] text-white shadow-[0_12px_24px_rgba(2,6,23,0.35)]'
     }`
   );
 
@@ -159,30 +158,34 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
           </div>
         </section>
 
-        <section className="min-h-0 flex-1 rounded-[1.4rem] border border-white/14 bg-white/10 p-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)]">
-          <div className="relative flex h-full min-h-0 flex-col items-center justify-center gap-3">
-            <img
-              src={pyramidImage}
-              alt=""
-              draggable={false}
-              className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-90 scale-[1.08]"
-            />
-            <motion.div
-              animate={glow ? { scale: [1.05, 1.1, 1.05] } : { scale: 1.05 }}
-              transition={{ duration: 0.6, ease: 'easeInOut' }}
-              className="relative z-10 flex flex-col items-center gap-2 translate-y-6"
-            >
-              <div className={blockClass(true)}>?</div>
-              <div className="flex items-center gap-2">
-                <div className={blockClass()}>{round.middle[0]}</div>
-                <div className={blockClass()}>{round.middle[1]}</div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className={blockClass()}>{round.base[0]}</div>
-                <div className={blockClass()}>{round.base[1]}</div>
-                <div className={blockClass()}>{round.base[2]}</div>
-              </div>
-            </motion.div>
+        <section className="min-h-0 flex-1">
+          <div className="relative flex h-full min-h-0 items-center justify-center">
+            <div className="relative h-full w-full max-w-[760px]">
+              <motion.div
+                animate={glow ? { scale: [1, 1.03, 1] } : { scale: 1 }}
+                transition={{ duration: 0.6, ease: 'easeInOut' }}
+                className="absolute inset-0"
+              >
+                <div className={`absolute left-1/2 top-[17.5%] -translate-x-1/2 ${blockClass(true)}`}>
+                  ?
+                </div>
+                <div className={`absolute left-[38.5%] top-[44%] -translate-x-1/2 ${blockClass()}`}>
+                  {round.middle[0]}
+                </div>
+                <div className={`absolute left-[61.5%] top-[44%] -translate-x-1/2 ${blockClass()}`}>
+                  {round.middle[1]}
+                </div>
+                <div className={`absolute left-[27%] top-[70%] -translate-x-1/2 ${blockClass()}`}>
+                  {round.base[0]}
+                </div>
+                <div className={`absolute left-1/2 top-[70%] -translate-x-1/2 ${blockClass()}`}>
+                  {round.base[1]}
+                </div>
+                <div className={`absolute left-[73%] top-[70%] -translate-x-1/2 ${blockClass()}`}>
+                  {round.base[2]}
+                </div>
+              </motion.div>
+            </div>
           </div>
         </section>
 
