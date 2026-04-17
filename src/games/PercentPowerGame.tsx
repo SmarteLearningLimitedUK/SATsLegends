@@ -446,7 +446,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
           </AnimatePresence>
         </div>
 
-        <div className="mt-4 grid w-full max-w-[44rem] grid-cols-2 gap-3">
+        <div className="answer-choice-surface mt-4 grid w-full max-w-[44rem] grid-cols-2 gap-3">
           {question.options.map((option, index) => {
             const isSelected = index === selectedIndex;
             const isCorrect = feedback === 'correct' && index === question.answerIndex;

@@ -23,7 +23,6 @@ import {
   PieChart,
   Pie,
   Cell,
-  LabelList,
 } from 'recharts';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
@@ -313,6 +312,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                         dataKey="name"
                         stroke="#a8a29e"
                         fontSize={18}
+                        tick={false}
                         tickLine={false}
                         axisLine={false}
                         interval={0}
@@ -335,7 +335,6 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                       {currentCase.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
-                      <LabelList dataKey="amount" position="top" fill="#f1f5f9" fontSize={18} fontWeight={700} />
                     </Bar>
                   </BarChart>
                 ) : (
@@ -416,13 +415,13 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                       : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
                   }`}
                 >
-                  <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-[1.05rem] border border-white/16 bg-slate-950/40 p-2 shadow-lg max-[480px]:rounded-[0.9rem] max-[480px]:p-1.5">
+                  <div className="relative flex h-full w-full items-center justify-center overflow-visible rounded-[1.05rem] border border-white/16 bg-slate-950/40 p-2 shadow-lg max-[480px]:rounded-[0.9rem] max-[480px]:p-1.5">
                     {suspect.portrait ? (
                       <img
                         src={suspect.portrait}
                         alt=""
                         draggable={false}
-                        className="suspect-portrait h-full w-full object-contain object-center"
+                        className="suspect-portrait block h-full w-full max-h-full max-w-full object-contain object-center"
                         data-suspect-portrait="true"
                       />
                     ) : (
@@ -484,13 +483,13 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               >
                 <div className="w-full max-w-[20rem] max-h-[calc(100%-0.75rem)] overflow-y-auto overflow-x-hidden rounded-2xl border border-white/18 bg-[linear-gradient(180deg,rgba(9,24,58,0.96),rgba(4,12,28,0.98))] p-4 shadow-[0_24px_48px_rgba(0,0,0,0.45)] max-[480px]:max-w-[calc(100%-0.5rem)] max-[480px]:max-h-[calc(100%-0.5rem)] max-[480px]:p-3">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-slate-950/40 p-1.5 max-[480px]:h-14 max-[480px]:w-14 max-[480px]:p-1">
+                    <div className="flex h-16 w-16 items-center justify-center overflow-visible rounded-2xl border border-white/20 bg-slate-950/40 p-1.5 max-[480px]:h-14 max-[480px]:w-14 max-[480px]:p-1">
                       {selectedSuspect.portrait && (
                         <img
                           src={selectedSuspect.portrait}
                           alt=""
                           draggable={false}
-                          className="suspect-portrait h-full w-full object-contain object-center"
+                          className="suspect-portrait block h-full w-full max-h-full max-w-full object-contain object-center"
                           data-suspect-portrait="true"
                         />
                       )}

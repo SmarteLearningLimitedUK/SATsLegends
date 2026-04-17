@@ -82,7 +82,7 @@ const basePackDefs: Array<{
     name: 'Rounding Rocket',
     gameType: 'place_value_peaks',
     skillTags: ['ROUNDING', 'PLACE_VALUE', 'ESTIMATION'],
-    objectiveForLevel: (miniGameLevel) => `Round mission values accurately to fuel deeper space jumps (L${miniGameLevel}).`,
+    objectiveForLevel: (miniGameLevel) => `Adjust mission values accurately to fuel deeper space jumps (L${miniGameLevel}).`,
   },
   {
     key: 'factor_frenzy',

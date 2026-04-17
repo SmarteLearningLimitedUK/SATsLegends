@@ -386,6 +386,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
   const [lives, setLives] = useState(MAX_LIVES);
   const [correctCount, setCorrectCount] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackState>(null);
+  const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
   const [isFinished, setIsFinished] = useState(false);
   const [showCelebrationSplash, setShowCelebrationSplash] = useState(false);
 
@@ -408,6 +409,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
     setLives(MAX_LIVES);
     setCorrectCount(0);
     setFeedback(null);
+    setSelectedChoice(null);
     setIsFinished(false);
     setShowCelebrationSplash(false);
   }, [resolvedLevel]);
@@ -432,12 +434,14 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
       setRoundNumber((prev) => prev + 1);
       setRound(createRound(resolvedLevel));
       setFeedback(null);
+      setSelectedChoice(null);
     }, 520);
     timersRef.current.push(timeoutId);
   }, [XP, correctCount, lives, onVictory, roundNumber, resolvedLevel, sessionEvents, totalRounds]);
 
   const handleAnswer = (choice: number) => {
     if (feedback || isFinished) return;
+    setSelectedChoice(choice);
 
     if (choice === round.answer) {
       const gained = 140 + (resolvedLevel * 12);
@@ -479,6 +483,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
 
     const timeoutId = window.setTimeout(() => {
       setFeedback(null);
+      setSelectedChoice(null);
     }, 520);
     timersRef.current.push(timeoutId);
   };
@@ -495,7 +500,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
             <div className="flex justify-center">
               <GameQuestionCard
                 title="Formula Forge"
-                subtitle={`Round ${roundNumber} of ${totalRounds}`}
+                subtitle={`Question ${roundNumber} of ${totalRounds}`}
                 className="max-w-[860px] border border-cyan-200/22 bg-[linear-gradient(180deg,rgba(8,18,36,0.42),rgba(8,18,36,0.18))] shadow-[0_12px_26px_rgba(2,6,23,0.12)]"
               >
                 {formatFantasyPrompt('Use the shape blueprint below.')}
@@ -505,19 +510,27 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
             <div className="mt-3 grid min-h-0 flex-1 grid-rows-[auto_1fr_auto] gap-2 md:gap-3">
               <FormulaShapePanel round={round} />
 
-              <div className="rounded-[1.25rem] border border-white/12 bg-[linear-gradient(180deg,rgba(30,64,175,0.08),rgba(15,23,42,0.46))] p-3 shadow-[0_14px_26px_rgba(2,6,23,0.12)] md:p-4">
+              <div className="answer-choice-surface rounded-[1.25rem] border border-white/12 bg-[linear-gradient(180deg,rgba(30,64,175,0.08),rgba(15,23,42,0.46))] p-3 shadow-[0_14px_26px_rgba(2,6,23,0.12)] md:p-4">
                 <div className="text-[11px] font-black uppercase tracking-[0.16em] text-amber-100/85 md:text-xs">Choose the correct value for {round.targetLabel}</div>
                 <div className="mt-3 grid grid-cols-2 gap-2 md:gap-3">
                   {round.options.map((option) => (
-                    <button
+                    <motion.button
                       key={`${round.id}-${option}`}
                       type="button"
                       onClick={() => handleAnswer(option)}
                       disabled={Boolean(feedback) || isFinished}
-                      className="ui-button-primary min-h-[3.1rem] rounded-[1.05rem] px-2 py-2 text-base font-black text-white shadow-[0_12px_20px_rgba(2,6,23,0.2)] disabled:opacity-60 md:min-h-[3.7rem] md:text-2xl"
+                      whileTap={{ scale: 0.96 }}
+                      animate={selectedChoice === option ? (feedback?.tone === 'success' ? { scale: [1, 1.1, 0.98, 1.05, 1], rotate: [0, -2, 2, 0] } : { scale: [1, 1.04, 1] }) : { scale: 1 }}
+                      className={`min-h-[3.1rem] rounded-[1.05rem] px-2 py-2 text-base font-black shadow-[0_12px_20px_rgba(2,6,23,0.2)] disabled:opacity-60 md:min-h-[3.7rem] md:text-2xl ${
+                        selectedChoice === option
+                          ? feedback?.tone === 'success'
+                            ? 'ui-button-success'
+                            : 'ui-button-primary'
+                          : 'ui-button-secondary'
+                      }`}
                     >
                       {option}
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
               </div>

@@ -345,7 +345,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Rounding Rocket"
-        body="Quick! We've managed to locate a cache of brainpower, but we need to keep it safe from those pesky Monster Minds. Help fuel the rocket by rounding numbers to blast the cache into space for safe keeping."
+        body="Quick! We've managed to locate a cache of brainpower, but we need to keep it safe from that pesky Monster Mind. Help fuel the rocket by rounding numbers to blast the cache into space for safe keeping."
         briefing={null}
         onAction={() => setShowPracticeIntro(false)}
       />
@@ -482,15 +482,14 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
                   whileTap={(!inputLocked && isSessionActive) ? { scale: 0.96 } : undefined}
                   disabled={inputLocked || !isSessionActive || didComplete}
                   className={[
-                    'relative h-[clamp(2.55rem,7vh,3rem)] rounded-[0.9rem] border px-1.5 text-center text-[clamp(0.86rem,3.8vw,1.12rem)] font-black tabular-nums text-white transition',
-                    'shadow-[0_14px_24px_rgba(2,6,23,0.35)]',
+                    'relative h-[clamp(2.55rem,7vh,3rem)] rounded-[0.9rem] px-1.5 text-center text-[clamp(0.86rem,3.8vw,1.12rem)] font-black tabular-nums transition',
                     successFlash
-                      ? 'border-emerald-200/90 bg-[linear-gradient(180deg,#34d399_0%,#10b981_100%)] text-emerald-50'
+                      ? 'ui-button-success'
                       : errorFlash
-                        ? 'border-rose-100/90 bg-[linear-gradient(180deg,#fb7185_0%,#e11d48_100%)] text-amber-50'
+                        ? 'ui-button-primary ring-2 ring-rose-300/70 ring-offset-2 ring-offset-slate-950'
                         : isSelected
-                          ? 'border-amber-100/90 bg-[linear-gradient(180deg,#fbbf24_0%,#f59e0b_100%)] text-amber-950'
-                          : 'border-cyan-100/45 bg-[linear-gradient(180deg,#0ea5e9_0%,#2563eb_58%,#1d4ed8_100%)]',
+                          ? 'ui-button-primary'
+                          : 'ui-button-secondary',
                     inputLocked ? 'cursor-not-allowed' : 'hover:brightness-110',
                   ].join(' ')}
                   aria-label={`Landing pad ${padValue}`}

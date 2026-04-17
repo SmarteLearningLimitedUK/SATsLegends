@@ -52,30 +52,6 @@ const MAX_PLATE_COUNT = 5;
 const ROUNDS_TO_WIN = 5;
 const BASE_XP_PER_ROUND = 120;
 const CAKE_SLICE_ASSET = cakeSliceAsset;
-const PLATE_POSITIONS: Record<number, Array<{ x: number; y: number }>> = {
-  2: [
-    { x: 26.8, y: 61.0 },
-    { x: 77.7, y: 61.5 },
-  ],
-  3: [
-    { x: 51.2, y: 46.0 },
-    { x: 26.8, y: 61.0 },
-    { x: 77.7, y: 61.5 },
-  ],
-  4: [
-    { x: 51.2, y: 46.0 },
-    { x: 26.8, y: 61.0 },
-    { x: 77.7, y: 61.5 },
-    { x: 53.4, y: 71.3 },
-  ],
-  5: [
-    { x: 50.0, y: 40.8 },
-    { x: 26.2, y: 61.4 },
-    { x: 73.8, y: 61.6 },
-    { x: 35.0, y: 83.8 },
-    { x: 65.0, y: 84.0 },
-  ],
-};
 const DRAG_SLICE_SIZE = 48;
 const CAKE_SOURCE_POSITION = { x: 50, y: 86 };
 const CAKE_SOURCE_SIZE = 'clamp(7.5rem, 32vw, 10.5rem)';
@@ -105,6 +81,31 @@ const RATIO_PATTERNS_BY_COUNT: Record<number, number[][]> = {
     [1, 1, 2, 2, 3],
     [1, 2, 2, 3, 3],
     [2, 1, 2, 3, 4],
+  ],
+};
+
+const PLATE_POSITIONS_BY_COUNT: Record<number, Array<{ x: number; y: number }>> = {
+  2: [
+    { x: 37.7, y: 55.4 },
+    { x: 68.3, y: 54.9 },
+  ],
+  3: [
+    { x: 47.8, y: 35.9 },
+    { x: 37.7, y: 55.4 },
+    { x: 68.3, y: 54.9 },
+  ],
+  4: [
+    { x: 47.8, y: 35.9 },
+    { x: 37.7, y: 55.4 },
+    { x: 68.3, y: 54.9 },
+    { x: 26.9, y: 85.8 },
+  ],
+  5: [
+    { x: 47.8, y: 35.9 },
+    { x: 37.7, y: 55.4 },
+    { x: 68.3, y: 54.9 },
+    { x: 26.9, y: 85.8 },
+    { x: 59.9, y: 81.4 },
   ],
 };
 
@@ -240,11 +241,11 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const hasMoves = moveHistory.length > 0;
   const allSlicesUsed = remainingSlices === 0;
   const allCorrect = plateViews.every((plate) => plate.isCorrect);
-  const platePositions = PLATE_POSITIONS[challenge.plateCount] || PLATE_POSITIONS[4];
+  const platePositions = PLATE_POSITIONS_BY_COUNT[challenge.plateCount] || PLATE_POSITIONS_BY_COUNT[5];
   const plateSize = 'clamp(6rem, 28vw, 7.8rem)';
   const promptText = isPractice
     ? `Target ratio: ${challenge.ratios.join(':')}`
-    : `There are ${challenge.totalSlices} slices of brainpower cake.\nThe Monster Minds demand it is shared in a ratio of ${challenge.ratios.join(':')}.`;
+    : `There are ${challenge.totalSlices} slices of brainpower cake.\nThe Monster Mind demands it is shared in a ratio of ${challenge.ratios.join(':')}.`;
 
   const loadNextChallenge = useCallback((solvedCount: number) => {
     const next = createChallenge(levelId, solvedCount);

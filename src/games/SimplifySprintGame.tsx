@@ -279,7 +279,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
         setFeedback(null);
         setRoundResult({
           kind: 'failure',
-          title: 'Round Failed',
+          title: 'Sprint Failed',
           subtitle: 'You ran out of lives on this fraction.',
           statLabel: 'Final XP',
           statValue: `${XP}`,
@@ -330,7 +330,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
     clearRoundResultTimer();
     setRoundResult({
       kind: 'success',
-      title: isFinalRound ? 'Sprint Cleared' : 'Round Cleared',
+      title: isFinalRound ? 'Sprint Cleared' : 'Sprint Cleared',
       subtitle: isFinalRound
         ? 'You simplified the final fraction.'
         : 'Brain power collected. Next fraction is loading.',
@@ -527,7 +527,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
                   <div className="mt-5 grid grid-cols-2 gap-3">
                     <div className="rounded-[1.2rem] border border-white/12 bg-white/8 px-4 py-3 text-left">
                       <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/56">
-                        Round
+                        Stage
                       </div>
                       <div className="mt-1 text-2xl font-black text-white">
                         {Math.min(roundNumber, totalRounds)} / {totalRounds}

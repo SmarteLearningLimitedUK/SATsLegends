@@ -14,9 +14,9 @@ interface PolygonPalaceGameProps {
   onBack: () => void;
 }
 
-type ShapeFamily = 'triangle' | 'quadrilateral' | 'polygon' | 'circle';
+type ShapeFamily = 'triangle' | 'quadrilateral' | 'polygon' | 'circle' | 'solid';
 type EqualSideMode = 'none' | 'twoPairs' | 'all';
-type QuestionMode = 'name' | 'properties' | 'sort';
+type QuestionMode = 'name' | 'properties' | 'sort' | 'count';
 type QuestionKind = 'fluency' | 'reasoning';
 
 interface ShapeDefinition {
@@ -24,12 +24,16 @@ interface ShapeDefinition {
   name: string;
   family: ShapeFamily;
   sides: number;
+  faces?: number;
+  edges?: number;
+  vertices?: number;
   rightAngles: number;
   parallelPairs: number;
   equalSideMode: EqualSideMode;
   regular: boolean;
   symmetryLines: number;
-  kind: 'polygon' | 'circle';
+  kind: 'polygon' | 'circle' | 'solid';
+  solidType?: 'cube' | 'cuboid' | 'triangularPrism' | 'squarePyramid';
   points?: string;
   defaultRotation: number;
   fill: string;
@@ -328,6 +332,82 @@ const SHAPES: ShapeDefinition[] = [
     fill: '#38bdf8',
     stroke: '#dbeafe',
   },
+  {
+    id: 'cube',
+    name: 'Cube',
+    family: 'solid',
+    sides: 0,
+    faces: 6,
+    edges: 12,
+    vertices: 8,
+    rightAngles: 0,
+    parallelPairs: 0,
+    equalSideMode: 'all',
+    regular: false,
+    symmetryLines: 0,
+    kind: 'solid',
+    solidType: 'cube',
+    defaultRotation: 0,
+    fill: '#0ea5e9',
+    stroke: '#e0f2fe',
+  },
+  {
+    id: 'cuboid',
+    name: 'Cuboid',
+    family: 'solid',
+    sides: 0,
+    faces: 6,
+    edges: 12,
+    vertices: 8,
+    rightAngles: 0,
+    parallelPairs: 0,
+    equalSideMode: 'none',
+    regular: false,
+    symmetryLines: 0,
+    kind: 'solid',
+    solidType: 'cuboid',
+    defaultRotation: 0,
+    fill: '#22c55e',
+    stroke: '#dcfce7',
+  },
+  {
+    id: 'triangular-prism',
+    name: 'Triangular Prism',
+    family: 'solid',
+    sides: 0,
+    faces: 5,
+    edges: 9,
+    vertices: 6,
+    rightAngles: 0,
+    parallelPairs: 0,
+    equalSideMode: 'none',
+    regular: false,
+    symmetryLines: 0,
+    kind: 'solid',
+    solidType: 'triangularPrism',
+    defaultRotation: 0,
+    fill: '#f59e0b',
+    stroke: '#ffedd5',
+  },
+  {
+    id: 'square-pyramid',
+    name: 'Square-based Pyramid',
+    family: 'solid',
+    sides: 0,
+    faces: 5,
+    edges: 8,
+    vertices: 5,
+    rightAngles: 0,
+    parallelPairs: 0,
+    equalSideMode: 'none',
+    regular: false,
+    symmetryLines: 0,
+    kind: 'solid',
+    solidType: 'squarePyramid',
+    defaultRotation: 0,
+    fill: '#ec4899',
+    stroke: '#fce7f3',
+  },
 ];
 const EARLY_SHAPE_IDS = ['square', 'rectangle', 'triangle-equilateral', 'triangle-right', 'circle', 'pentagon'];
 const MID_SHAPE_IDS = [
@@ -339,6 +419,7 @@ const MID_SHAPE_IDS = [
   'hexagon',
   'triangle-isosceles',
 ];
+const SOLID_SHAPE_IDS = ['cube', 'cuboid', 'triangular-prism', 'square-pyramid'];
 
 const PROPERTY_POOL: PropertyDefinition[] = [
   { id: 'triangle', label: 'Has 3 sides', minStage: 1, check: (shape) => shape.sides === 3 },
@@ -357,6 +438,13 @@ const PROPERTY_POOL: PropertyDefinition[] = [
   { id: 'regular', label: 'Is a regular polygon', minStage: 6, check: (shape) => shape.regular && shape.family !== 'circle' },
   { id: 'symmetry', label: 'Has at least 2 lines of symmetry', minStage: 6, check: (shape) => shape.symmetryLines >= 2 },
   { id: 'not-polygon', label: 'Is not a polygon', minStage: 8, check: (shape) => shape.family === 'circle' },
+  { id: 'faces-5', label: 'Has 5 faces', minStage: 8, check: (shape) => shape.faces === 5 },
+  { id: 'faces-6', label: 'Has 6 faces', minStage: 8, check: (shape) => shape.faces === 6 },
+  { id: 'edges-8', label: 'Has 8 edges', minStage: 8, check: (shape) => shape.edges === 8 },
+  { id: 'edges-9', label: 'Has 9 edges', minStage: 8, check: (shape) => shape.edges === 9 },
+  { id: 'vertices-5', label: 'Has 5 vertices', minStage: 8, check: (shape) => shape.vertices === 5 },
+  { id: 'vertices-6', label: 'Has 6 vertices', minStage: 8, check: (shape) => shape.vertices === 6 },
+  { id: 'vertices-8', label: 'Has 8 vertices', minStage: 8, check: (shape) => shape.vertices === 8 },
 ];
 
 const SORT_CRITERIA: SortCriterion[] = [
@@ -392,6 +480,22 @@ const SORT_CRITERIA: SortCriterion[] = [
     minStage: 8,
     check: (shape) => shape.sides === 4 && shape.equalSideMode === 'all',
   },
+  {
+    id: 'sort-solid-faces',
+    prompt: 'Sort this shape by the number of faces',
+    trueLabel: '6 faces',
+    falseLabel: 'Not 6 faces',
+    minStage: 8,
+    check: (shape) => shape.faces === 6,
+  },
+  {
+    id: 'sort-solid-vertices',
+    prompt: 'Sort this shape by the number of vertices',
+    trueLabel: '8 vertices',
+    falseLabel: 'Not 8 vertices',
+    minStage: 8,
+    check: (shape) => shape.vertices === 8,
+  },
 ];
 
 const roundSecondsForLevel = (level: number) => {
@@ -408,14 +512,16 @@ const stageFromProgress = (baseLevel: number, answeredCount: number, timeLeft: n
 
 const modeForStage = (stage: number): QuestionMode => {
   const roll = Math.random();
+  if (stage >= 8 && roll < 0.28) return 'count';
   if (stage <= 3) return roll < 0.8 ? 'name' : 'properties';
   if (stage <= 7) {
     if (roll < 0.45) return 'name';
     if (roll < 0.84) return 'properties';
     return 'sort';
   }
-  if (roll < 0.2) return 'name';
-  if (roll < 0.62) return 'properties';
+  if (roll < 0.18) return 'name';
+  if (roll < 0.48) return 'properties';
+  if (roll < 0.72) return 'sort';
   return 'sort';
 };
 
@@ -424,6 +530,7 @@ const speedRoundForState = (answeredCount: number, stage: number) => answeredCou
 const getShapePool = (stage: number) => {
   if (stage <= 3) return SHAPES.filter((shape) => EARLY_SHAPE_IDS.includes(shape.id));
   if (stage <= 7) return SHAPES.filter((shape) => MID_SHAPE_IDS.includes(shape.id));
+  if (stage >= 8) return SHAPES.filter((shape) => [...MID_SHAPE_IDS, ...SOLID_SHAPE_IDS].includes(shape.id));
   return SHAPES;
 };
 
@@ -446,7 +553,7 @@ const buildNameQuestion = (shape: ShapeDefinition, stage: number, speedRound: bo
     stage,
     mode: 'name',
     prompt: prompts[randomInt(0, prompts.length - 1)],
-    subPrompt: speedRound ? 'Speed round: answer fast for bonus points' : 'Tap one answer',
+    subPrompt: speedRound ? 'Speed mode: answer fast for bonus points' : 'Tap one answer',
     shape,
     shapeRotation: randomInt(-20, 20),
     choices,
@@ -488,7 +595,7 @@ const buildPropertyQuestion = (shape: ShapeDefinition, stage: number, speedRound
     stage,
     mode: 'properties',
     prompt: 'Select all properties that match this shape.',
-    subPrompt: speedRound ? 'Speed round: keep your Combo alive' : 'Some questions can have multiple answers',
+    subPrompt: speedRound ? 'Speed mode: keep your Combo alive' : 'Some questions can have multiple answers',
     shape,
     shapeRotation: randomInt(-24, 24),
     choices,
@@ -497,6 +604,48 @@ const buildPropertyQuestion = (shape: ShapeDefinition, stage: number, speedRound
     difficultyWeight: 48 + (stage * 10) + (correctChoiceIds.length * 14),
     speedRound,
     kind: 'fluency',
+  };
+};
+
+const buildCountQuestion = (shape: ShapeDefinition, stage: number, speedRound: boolean): PolygonQuestion | null => {
+  if (shape.kind !== 'solid') return null;
+
+  const focusPool = [
+    { id: 'faces', label: 'How many faces does this shape have?', answer: shape.faces },
+    { id: 'edges', label: 'How many edges does this shape have?', answer: shape.edges },
+    { id: 'vertices', label: 'How many vertices does this shape have?', answer: shape.vertices },
+  ].filter((item) => typeof item.answer === 'number') as Array<{ id: string; label: string; answer: number }>;
+
+  if (!focusPool.length) return null;
+
+  const focus = focusPool[randomInt(0, focusPool.length - 1)];
+  const distractors = shuffle([
+    focus.answer - 2,
+    focus.answer - 1,
+    focus.answer + 1,
+    focus.answer + 2,
+    focus.answer + 3,
+  ]).filter((value) => value > 0 && value !== focus.answer);
+
+  const choices = shuffle([
+    { id: `count-${focus.answer}`, label: String(focus.answer) },
+    ...distractors.slice(0, 3).map((value) => ({ id: `count-${value}`, label: String(value) })),
+  ]);
+
+  return {
+    id: createId(),
+    stage,
+    mode: 'count',
+    prompt: focus.label,
+    subPrompt: speedRound ? 'Speed mode: count the parts fast' : 'Read the shape and count carefully',
+    shape,
+    shapeRotation: randomInt(-12, 12),
+    choices,
+    correctChoiceIds: [`count-${focus.answer}`],
+    multiSelect: false,
+    difficultyWeight: 62 + (stage * 12),
+    speedRound,
+    kind: 'reasoning',
   };
 };
 
@@ -510,7 +659,7 @@ const buildSortQuestion = (shape: ShapeDefinition, stage: number, speedRound: bo
     stage,
     mode: 'sort',
     prompt: criterion.prompt,
-    subPrompt: speedRound ? 'Speed round: sort instantly' : 'Pick the correct category',
+    subPrompt: speedRound ? 'Speed mode: sort instantly' : 'Pick the correct category',
     shape,
     shapeRotation: randomInt(-18, 18),
     choices: [
@@ -533,6 +682,7 @@ const createQuestion = (baseLevel: number, answeredCount: number, timeLeft: numb
   const shape = shapePool[randomInt(0, shapePool.length - 1)];
 
   if (mode === 'name') return buildNameQuestion(shape, stage, speedRound);
+  if (mode === 'count') return buildCountQuestion(shape, stage, speedRound) || buildNameQuestion(shape, stage, speedRound);
   if (mode === 'sort') return buildSortQuestion(shape, stage, speedRound);
   const propertyQuestion = buildPropertyQuestion(shape, stage, speedRound);
   return propertyQuestion || buildNameQuestion(shape, stage, speedRound);
@@ -550,6 +700,58 @@ const ShapePreview: React.FC<{
   pulseTone: 'success' | 'error' | null;
 }> = ({ question, pulseTone }) => {
   const { shape, shapeRotation } = question;
+
+  const renderSolid = () => {
+    if (shape.solidType === 'cube') {
+      return (
+        <>
+          <polygon points="-18,-6 10,-24 38,-6 10,12" fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="3.8" />
+          <polygon points="-18,-6 10,12 10,42 -18,24" fill="rgba(255,255,255,0.14)" stroke={shape.stroke} strokeWidth="3.8" />
+          <polygon points="10,12 38,-6 38,24 10,42" fill="rgba(255,255,255,0.2)" stroke={shape.stroke} strokeWidth="3.8" />
+          <line x1="-18" y1="-6" x2="-18" y2="24" stroke={shape.stroke} strokeWidth="2.5" />
+          <line x1="38" y1="-6" x2="38" y2="24" stroke={shape.stroke} strokeWidth="2.5" />
+          <line x1="10" y1="-24" x2="10" y2="12" stroke={shape.stroke} strokeWidth="2.5" />
+        </>
+      );
+    }
+
+    if (shape.solidType === 'cuboid') {
+      return (
+        <>
+          <polygon points="-26,-8 12,-24 42,-10 4,8" fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="3.8" />
+          <polygon points="-26,-8 4,8 4,38 -26,20" fill="rgba(255,255,255,0.14)" stroke={shape.stroke} strokeWidth="3.8" />
+          <polygon points="4,8 42,-10 42,20 4,38" fill="rgba(255,255,255,0.18)" stroke={shape.stroke} strokeWidth="3.8" />
+          <line x1="-26" y1="-8" x2="-26" y2="20" stroke={shape.stroke} strokeWidth="2.5" />
+          <line x1="42" y1="-10" x2="42" y2="20" stroke={shape.stroke} strokeWidth="2.5" />
+          <line x1="12" y1="-24" x2="12" y2="8" stroke={shape.stroke} strokeWidth="2.5" />
+        </>
+      );
+    }
+
+    if (shape.solidType === 'triangularPrism') {
+      return (
+        <>
+          <polygon points="-28,10 -8,-24 16,8" fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="3.8" />
+          <polygon points="-12,6 12,-10 36,12 12,28" fill="rgba(255,255,255,0.18)" stroke={shape.stroke} strokeWidth="3.8" />
+          <line x1="-28" y1="10" x2="-12" y2="6" stroke={shape.stroke} strokeWidth="2.5" />
+          <line x1="-8" y1="-24" x2="12" y2="-10" stroke={shape.stroke} strokeWidth="2.5" />
+          <line x1="16" y1="8" x2="36" y2="12" stroke={shape.stroke} strokeWidth="2.5" />
+          <line x1="-28" y1="10" x2="12" y2="28" stroke={shape.stroke} strokeWidth="2.5" />
+          <line x1="-8" y1="-24" x2="36" y2="12" stroke={shape.stroke} strokeWidth="2.5" />
+        </>
+      );
+    }
+
+    return (
+      <>
+        <polygon points="-24,20 0,-30 24,20" fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="3.8" />
+        <polygon points="-24,20 24,20 24,40 -24,40" fill="rgba(255,255,255,0.14)" stroke={shape.stroke} strokeWidth="3.8" />
+        <line x1="0" y1="-30" x2="-24" y2="20" stroke={shape.stroke} strokeWidth="2.5" />
+        <line x1="0" y1="-30" x2="24" y2="20" stroke={shape.stroke} strokeWidth="2.5" />
+        <line x1="0" y1="-30" x2="0" y2="40" stroke={shape.stroke} strokeWidth="2.5" />
+      </>
+    );
+  };
 
   return (
     <motion.svg
@@ -577,7 +779,7 @@ const ShapePreview: React.FC<{
         </linearGradient>
       </defs>
 
-      {shape.kind === 'circle' ? (
+      {shape.kind === 'solid' ? renderSolid() : shape.kind === 'circle' ? (
         <circle cx="0" cy="0" r="38" fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="4.2" />
       ) : (
         <polygon points={shape.points} fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="4.2" />
@@ -779,7 +981,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
         <div className="flex h-full w-full max-w-[30rem] min-h-0 flex-col gap-3">
           <section className="shrink-0">
             <GameQuestionCard
-              title={question.speedRound ? 'Challenge Round' : 'Polygon Palace'}
+              title={question.speedRound ? 'Challenge Mode' : 'Polygon Palace'}
               subtitle={question.subPrompt}
             >
               {question.prompt}
@@ -794,6 +996,22 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
 
           <section className="shrink-0 rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/56 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
             {question.mode === 'name' ? (
+              <div className="grid grid-cols-2 gap-2.5">
+                {question.choices.map((choice) => (
+                  <button
+                    key={choice.id}
+                    type="button"
+                    disabled={isLocked || roundOver}
+                    onClick={() => onChoiceTap(choice.id)}
+                    className="ui-button-primary rounded-[1rem] px-2 py-2.5 text-center text-sm font-black disabled:opacity-55"
+                  >
+                    {choice.label}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+
+            {question.mode === 'count' ? (
               <div className="grid grid-cols-2 gap-2.5">
                 {question.choices.map((choice) => (
                   <button
@@ -827,9 +1045,10 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
 
             {question.mode === 'properties' ? (
               <div className="grid gap-2.5">
-                <div className="grid grid-cols-2 gap-2">
+                <div className="answer-choice-surface grid grid-cols-2 gap-2">
                   {question.choices.map((choice) => {
                     const selected = selectedChoiceIds.includes(choice.id);
+                    const isCorrect = feedback?.tone === 'success' && selected;
                     return (
                       <button
                         key={choice.id}
@@ -837,8 +1056,10 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
                         disabled={isLocked || roundOver}
                         onClick={() => onChoiceTap(choice.id)}
                         className={`rounded-[0.92rem] px-2 py-2 text-left text-[0.77rem] font-bold disabled:opacity-55 ${
-                          selected
-                            ? 'ui-button-primary'
+                          isCorrect
+                            ? 'ui-button-success'
+                            : selected
+                              ? 'ui-button-primary'
                             : 'ui-button-secondary'
                         }`}
                       >

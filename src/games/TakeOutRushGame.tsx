@@ -603,12 +603,12 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                 {asDisplayFraction(order.target)}
               </div>
             </div>
-            <div className="pointer-events-none absolute left-1/2 bottom-[4%] h-[42%] w-[min(72vw,18.5rem)] -translate-x-1/2 overflow-hidden">
+            <div className="pointer-events-none absolute left-1/2 bottom-[calc(4%_-_10pt)] h-[46%] w-[min(76vw,20rem)] -translate-x-1/2 overflow-hidden">
               <img
                 src={orderMonster}
                 alt=""
                 draggable={false}
-                className="absolute bottom-0 h-full w-full scale-[1.16] object-contain drop-shadow-[0_12px_22px_rgba(2,6,23,0.45)] md:scale-[1.22]"
+                className="absolute bottom-0 h-full w-full scale-[1.24] object-contain drop-shadow-[0_12px_22px_rgba(2,6,23,0.45)] md:scale-[1.3]"
                 style={{ transformOrigin: 'bottom center' }}
               />
             </div>

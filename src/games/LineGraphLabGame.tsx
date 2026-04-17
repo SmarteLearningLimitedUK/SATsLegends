@@ -343,16 +343,19 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
           </GameQuestionCard>
         )}
         main={(
-          <section className="flex min-h-0 flex-1 flex-col gap-2 px-2 pb-2 sm:gap-3 sm:px-3 sm:pb-3 md:px-4 md:pb-4">
-            <div className="mt-0.5 min-h-0 flex-1 rounded-[1.75rem] border border-cyan-100/16 bg-transparent p-2.5 shadow-none sm:p-4 md:p-5">
+          <section className="flex min-h-0 flex-1 flex-col gap-2 px-2 pb-3 sm:gap-3 sm:px-3 sm:pb-4 md:px-4 md:pb-5">
+            <div className="mt-0.5 min-h-0 flex-1 rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,54,0.55),rgba(4,12,28,0.38))] p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_18px_40px_rgba(2,6,23,0.18)] backdrop-blur-[2px] sm:p-4 md:p-5">
               <div
                 ref={chartWrapRef}
                 onPointerDown={handleProbePointerDown}
                 onPointerMove={handleProbePointerMove}
-                className="relative w-full rounded-2xl border border-slate-700/60 bg-transparent p-2"
-                style={{ height: 'clamp(12rem, 32vh, 18.5rem)' }}
+                className="relative w-full overflow-hidden rounded-2xl border border-slate-200/12 bg-[linear-gradient(180deg,rgba(7,18,38,0.68),rgba(4,10,24,0.42))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
+                style={{ height: 'clamp(10.5rem, 28vh, 17rem)' }}
               >
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.12),transparent_58%)]" />
+                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),transparent_30%,rgba(255,255,255,0.02))]" />
                 {round && chartSize.width > 0 && chartSize.height > 0 && (
+                  <div className="relative z-10 h-full w-full">
                   <LineChart
                     width={chartSize.width}
                     height={chartSize.height}
@@ -400,6 +403,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                       animationDuration={350}
                     />
                   </LineChart>
+                  </div>
                 )}
                 {probePoint && (
                   <motion.div
@@ -413,8 +417,8 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
               </div>
             </div>
 
-            <div className="mt-auto flex flex-col gap-2 pt-1">
-              <div className="grid grid-cols-2 gap-2">
+            <div className="mt-auto flex flex-col gap-2 pt-2 pb-1 sm:pb-2">
+              <div className="answer-choice-surface grid grid-cols-2 gap-2">
                 {round?.options.map(option => {
                   const isSelected = selectedAnswer === option;
                   const isCorrect = gameState === 'success' && option === round.correctAnswer;
@@ -426,7 +430,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleAnswer(option)}
                       disabled={gameState === 'success'}
-                      className={`min-h-[3.1rem] rounded-2xl px-3 py-2.5 text-center sm:min-h-[3.4rem] sm:px-4 ${
+                      className={`min-h-[3rem] rounded-2xl px-3 py-2.25 text-center sm:min-h-[3.2rem] sm:px-4 ${
                         isCorrect
                           ? 'ui-button-success'
                           : isWrongSelected
@@ -436,13 +440,13 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                               : 'ui-button-secondary'
                       } ${gameState === 'success' ? 'cursor-default' : ''}`}
                     >
-                      <span className="text-[0.92rem] font-black leading-tight sm:text-base">{option}</span>
+                      <span className="text-[0.88rem] font-black leading-tight sm:text-base">{option}</span>
                     </motion.button>
                   );
                 })}
               </div>
 
-              <div className="min-h-[3.2rem]">
+              <div className="min-h-[3rem]">
                 <AnimatePresence mode="wait">
                   {gameState === 'success' ? (
                     <motion.button
@@ -451,7 +455,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       onClick={nextLevel}
-                      className="ui-button-success flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-sm font-black uppercase tracking-widest"
+                      className="ui-button-success flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-black uppercase tracking-widest"
                     >
                       Next Graph <ChevronRight className="h-4 w-4" />
                     </motion.button>

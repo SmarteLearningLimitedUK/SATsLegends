@@ -275,7 +275,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
             <div className="flex min-h-0 flex-1 flex-col gap-3">
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                 <div className="rounded-[1rem] border border-white/12 bg-white/7 px-3 py-2 text-center shadow-[0_10px_18px_rgba(2,6,23,0.16)]">
-                  <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Rounds</div>
+                  <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Stages</div>
                   <div className="mt-1 text-xl font-black text-white">{roundSolved}/{ROUNDS_TO_WIN}</div>
                 </div>
                 <div className="rounded-[1rem] border border-white/12 bg-white/7 px-3 py-2 text-center shadow-[0_10px_18px_rgba(2,6,23,0.16)]">
@@ -295,7 +295,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
                     Tap a boat to place one crate
                   </div>
                 </div>
-                <div className="grid flex-1 auto-rows-fr grid-cols-2 gap-2 sm:grid-cols-4">
+                <div className="answer-choice-surface grid flex-1 auto-rows-fr grid-cols-2 gap-2 sm:grid-cols-4">
                   {boatLoads.map((count, index) => (
                     <button
                       key={`boat-${index}`}

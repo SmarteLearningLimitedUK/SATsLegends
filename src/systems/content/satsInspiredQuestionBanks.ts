@@ -296,7 +296,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'The Monster Minds have hidden beacon C in the ruined grid. Which coordinates are correct?',
+        prompt: 'The Monster Mind has hidden beacon C in the ruined grid. Which coordinates are correct?',
         sublabel: 'Read across the x-axis first, then climb the y-axis to recover the beacon.',
         options: ['(6, 2)', '(2, 6)', '(0, 3)', '(8, 8)'],
         answerIndex: 2,
@@ -318,7 +318,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'Point P begins at (5, 8) on the Monster Minds\' damaged map. Where does the route finish?',
+        prompt: 'Point P begins at (5, 8) on the Monster Mind\'s damaged map. Where does the route finish?',
         sublabel: 'Combine the translations carefully to follow the trail.',
         options: ['(7, 2)', '(7, 4)', '(9, 2)', '(3, 2)'],
         answerIndex: 0,
@@ -332,7 +332,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'The Monster Minds marked one beacon at (4, 7). Which point is it?',
+        prompt: 'The Monster Mind marked one beacon at (4, 7). Which point is it?',
         sublabel: 'Match the coordinates to the labelled beacon before it is lost.',
         options: ['A', 'B', 'C', 'D'],
         answerIndex: 3,

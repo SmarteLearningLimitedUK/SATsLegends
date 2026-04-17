@@ -327,6 +327,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
     <GameScreenShell
       className="overflow-hidden pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+0.25rem)]"
       backgroundImage={scaleBuilderBackground}
+      backgroundPosition="center calc(50% + 10pt)"
       backgroundOpacity={1}
     >
       <PracticeIntroPopup
@@ -374,16 +375,6 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
               <div className="game-question-copy mt-1 whitespace-pre-line text-[10px] font-black leading-snug text-white md:text-[11px]">
                 {instructionsText}
               </div>
-              <div className="mt-2 flex flex-wrap items-center gap-2 text-[clamp(11px,1.7vh,13px)] font-black text-white/90">
-                <span className="rounded-full border border-yellow-200/40 bg-yellow-500/15 px-3 py-1">
-                  Target {currentLevel.targetScale.toFixed(2)}x
-                </span>
-                <span className={`rounded-full border px-3 py-1 ${gameState === 'success' ? 'border-emerald-200/50 bg-emerald-500/16 text-emerald-100' : 'border-sky-200/40 bg-sky-500/14 text-sky-100'}`}>
-                  {isDimensionMode
-                    ? `L ${widthScale.toFixed(2)}x · W ${heightScale.toFixed(2)}x`
-                    : `Current ${currentScale.toFixed(2)}x`}
-                </span>
-              </div>
             </div>
 
             <div className="relative min-h-0 flex-1 overflow-visible">
@@ -423,7 +414,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
               </div>
             </div>
 
-            <div className="rounded-[1.1rem] border border-white/16 bg-[linear-gradient(180deg,rgba(2,132,199,0.2),rgba(15,23,42,0.86))] p-2">
+            <div className="rounded-[1.1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(2,6,23,0.96),rgba(15,23,42,0.98))] p-2 shadow-[0_0_0_1px_rgba(15,23,42,0.6),0_18px_30px_rgba(2,6,23,0.38)]">
               <div className="mb-2 flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/82">
                 <span>Adjust the scale</span>
                 <button

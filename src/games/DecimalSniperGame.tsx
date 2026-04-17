@@ -440,7 +440,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
       setTimeLeft((previous) => {
         if (previous <= 1) {
           window.clearInterval(timerId);
-          resolveGameOver('Time expired', 'You ran out of time before clearing all rounds.');
+          resolveGameOver('Time expired', 'You ran out of time before clearing all targets.');
           return 0;
         }
         return previous - 1;

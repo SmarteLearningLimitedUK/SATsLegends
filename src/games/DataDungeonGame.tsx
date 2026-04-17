@@ -180,6 +180,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
   const [Combo, setStreak] = useState(0);
   const [doorState, setDoorState] = useState<'locked' | 'opening' | 'open'>('locked');
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
 
   const avatar = AVATARS.find(a => a.id === avatarId) || AVATARS[0];
   const targetScore = 1000 + (levelId * 300);
@@ -191,6 +192,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
     setIsVictory(false);
     setStreak(0);
     setPuzzle(generatePuzzle(levelId));
+    setSelectedAnswer(null);
   }, [levelId]);
 
   useEffect(() => {
@@ -230,10 +232,11 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
     onVictory(stars, XP);
   };
 
-  const handleAnswer = (selectedAnswer: number) => {
+  const handleAnswer = (choice: number) => {
     if (doorState !== 'locked' || !puzzle) return;
+    setSelectedAnswer(choice);
 
-    if (selectedAnswer === puzzle.answer) {
+    if (choice === puzzle.answer) {
       setFeedback('correct');
       setDoorState('opening');
       
@@ -247,6 +250,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
           setPuzzle(generatePuzzle(levelId));
           setDoorState('locked');
           setFeedback(null);
+          setSelectedAnswer(null);
         }, 800);
       }, 1000);
 
@@ -257,6 +261,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
       
       setTimeout(() => {
         setFeedback(null);
+        setSelectedAnswer(null);
       }, 1000);
     }
   };
@@ -358,16 +363,22 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
             </div>
 
             {/* Answer Runes */}
-            <div className="z-20 mt-3 md:mt-4 grid w-full max-w-2xl grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
+            <div className="answer-choice-surface z-20 mt-3 grid w-full max-w-2xl grid-cols-2 gap-2 md:mt-4 md:grid-cols-4 md:gap-3">
               {puzzle?.options.map((opt, i) => (
                 <button
                   key={i}
                   onClick={() => handleAnswer(opt)}
                   disabled={doorState !== 'locked'}
-                  className="relative group p-3 md:p-4 rounded-[1rem] md:rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed licensed-answer-button"
+                  className={`relative group rounded-[1rem] p-3 transition-all disabled:cursor-not-allowed disabled:opacity-50 md:rounded-2xl md:p-4 ${
+                    selectedAnswer === opt
+                      ? feedback === 'correct'
+                        ? 'ui-button-success'
+                        : 'ui-button-primary'
+                      : 'ui-button-secondary'
+                  }`}
                 >
                   <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent rounded-xl pointer-events-none" />
-                  <span className="text-xl md:text-3xl font-black text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)] group-hover:text-amber-400">
+                  <span className="text-xl font-black leading-none text-current md:text-3xl">
                     {opt}
                   </span>
                 </button>

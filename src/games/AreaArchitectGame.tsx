@@ -236,7 +236,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
           </div>
         </section>
 
-        <section className="shrink-0 grid grid-cols-2 gap-2">
+        <section className="answer-choice-surface shrink-0 grid grid-cols-2 gap-2">
           {question.options.map((option) => (
             <motion.button
               key={option}

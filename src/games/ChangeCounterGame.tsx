@@ -338,7 +338,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
           </TaskCard>
 
           <div className="flex min-h-0 flex-1 flex-col gap-2 md:gap-3">
-            <div className="grid flex-1 grid-cols-2 gap-2 md:gap-3">
+            <div className="answer-choice-surface grid flex-1 grid-cols-2 gap-2 md:gap-3">
               {question.options.map((option) => (
                 <motion.button
                   key={`${question.id}-${option}`}

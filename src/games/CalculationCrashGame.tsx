@@ -237,7 +237,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
               </div>
             </section>
 
-            <section className="mx-auto mt-5 w-full max-w-[30rem] rounded-[1.3rem] border border-white/20 bg-black/28 px-3 py-3 backdrop-blur-[2px] shadow-[0_14px_30px_rgba(2,6,23,0.4)]">
+            <section className="answer-choice-surface mx-auto mt-5 w-full max-w-[30rem] rounded-[1.3rem] border border-white/20 bg-black/28 px-3 py-3 backdrop-blur-[2px] shadow-[0_14px_30px_rgba(2,6,23,0.4)]">
               <div className="grid grid-cols-2 gap-2.5">
                 {question.options.map((option, idx) => (
                   <motion.button
@@ -247,7 +247,13 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
                     disabled={status !== 'playing'}
                     whileTap={{ scale: 0.96, y: 2 }}
                     animate={selectedChoice === option ? { scale: [1, 1.06, 1], rotate: [0, -2, 2, 0] } : { scale: 1, rotate: 0 }}
-                    className="rounded-[1.05rem] border border-amber-100/70 bg-[linear-gradient(180deg,#fde68a_0%,#f59e0b_100%)] px-3 py-3 text-center text-[clamp(1.35rem,6vw,2.2rem)] font-black text-amber-950 shadow-[0_10px_18px_rgba(146,64,14,0.35)] transition disabled:opacity-45"
+                    className={`rounded-[1.05rem] px-3 py-3 text-center text-[clamp(1.35rem,6vw,2.2rem)] font-black transition disabled:opacity-45 ${
+                      selectedChoice === option
+                        ? feedback?.tone === 'success'
+                          ? 'ui-button-success'
+                          : 'ui-button-primary'
+                        : 'ui-button-secondary'
+                    }`}
                   >
                     {option}
                   </motion.button>
@@ -295,7 +301,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
           >
             <div className="w-full max-w-xl rounded-3xl border border-amber-300/40 bg-slate-900/96 p-8 text-center">
               <Trophy className="mx-auto h-14 w-14 text-amber-300" />
-              <h2 className="mt-3 text-4xl font-black uppercase text-amber-100">Round Complete</h2>
+              <h2 className="mt-3 text-4xl font-black uppercase text-amber-100">Challenge Complete</h2>
               <p className="mt-2 text-sm text-cyan-50/80">Time is up. Here is your quick-fire result.</p>
               <div className="mt-4 grid grid-cols-3 gap-2">
                 <div className="rounded-xl border border-cyan-100/30 bg-slate-900/70 px-2 py-2">

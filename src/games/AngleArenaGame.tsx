@@ -883,14 +883,20 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           bottom={(
             <div className="flex flex-col gap-2">
               <div className={`w-full transition-all duration-300 ${showPromptAndAnswers ? 'max-h-[320px] opacity-100' : 'pointer-events-none max-h-0 opacity-0'}`}>
-                <div className="mx-auto grid w-full max-w-[44rem] grid-cols-4 gap-1.5">
+                <div className="answer-choice-surface mx-auto grid w-full max-w-[44rem] grid-cols-4 gap-1.5">
                   {(activeQuestion?.options ?? []).map((option) => (
                     <button
                       key={option}
                       type="button"
                       onClick={() => handleAnswer(option)}
                       disabled={gameState !== 'awaitingAnswer'}
-                      className="ui-button-primary inline-flex min-h-[2.8rem] items-center justify-center rounded-[1rem] px-2 py-2 text-[clamp(11px,1.6vh,15px)] font-black whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-55"
+                      className={`inline-flex min-h-[2.8rem] items-center justify-center rounded-[1rem] px-2 py-2 text-[clamp(11px,1.6vh,15px)] font-black whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-55 ${
+                        gameState === 'resolvedCorrect' && selectedAnswer === option
+                          ? 'ui-button-success'
+                          : selectedAnswer === option
+                            ? 'ui-button-primary'
+                            : 'ui-button-secondary'
+                      }`}
                     >
                       {option}°
                     </button>

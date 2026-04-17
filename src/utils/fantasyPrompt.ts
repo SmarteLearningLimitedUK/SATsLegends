@@ -1,13 +1,13 @@
 import { formatMultiplicationDisplay } from './mathDisplay';
 
 const START_PREFIXES = [
-  'The Monster Minds have scrambled the numbers.',
-  'The Monster Minds have mixed the fuel.',
-  'The Monster Minds have corrupted the records.',
-  'The Monster Minds have built a barrier.',
-  'The Monster Minds have warped the forge.',
-  'The Monster Minds have torn the map.',
-  'The Monster Minds have jammed the clock.',
+  'The Monster Mind has scrambled the numbers.',
+  'The Monster Mind has mixed the fuel.',
+  'The Monster Mind has corrupted the records.',
+  'The Monster Mind has built a barrier.',
+  'The Monster Mind has warped the forge.',
+  'The Monster Mind has torn the map.',
+  'The Monster Mind has jammed the clock.',
   'Quest:',
   'Mission:',
   'Spell:',
@@ -50,14 +50,14 @@ const isAllCapsWords = (prompt: string) => {
 
 const pickScenarioPrefix = (prompt: string) => {
   const lower = prompt.toLowerCase();
-  if (/(fuel|ratio|fraction|percent|share|split|mix)/.test(lower)) return 'The Monster Minds have mixed the fuel.';
-  if (/(graph|chart|bar|mean|data|record|ledger)/.test(lower)) return 'The Monster Minds have corrupted the records.';
-  if (/(angle|triangle|polygon|turn|rotate|reflection)/.test(lower)) return 'The Monster Minds have built a barrier.';
-  if (/(area|perimeter|volume|formula|cuboid|rectangle|length|width|height)/.test(lower)) return 'The Monster Minds have warped the forge.';
-  if (/(coordinate|translate|beacon|scout|route|map)/.test(lower)) return 'The Monster Minds have torn the map.';
-  if (/(time|clock|hour|minute|duration)/.test(lower)) return 'The Monster Minds have jammed the clock.';
-  if (/(place value|round|digit|number)/.test(lower)) return 'The Monster Minds have scrambled the numbers.';
-  return 'The Monster Minds have scrambled the numbers.';
+  if (/(fuel|ratio|fraction|percent|share|split|mix)/.test(lower)) return 'The Monster Mind has mixed the fuel.';
+  if (/(graph|chart|bar|mean|data|record|ledger)/.test(lower)) return 'The Monster Mind has corrupted the records.';
+  if (/(angle|triangle|polygon|turn|rotate|reflection)/.test(lower)) return 'The Monster Mind has built a barrier.';
+  if (/(area|perimeter|volume|formula|cuboid|rectangle|length|width|height)/.test(lower)) return 'The Monster Mind has warped the forge.';
+  if (/(coordinate|translate|beacon|scout|route|map)/.test(lower)) return 'The Monster Mind has torn the map.';
+  if (/(time|clock|hour|minute|duration)/.test(lower)) return 'The Monster Mind has jammed the clock.';
+  if (/(place value|round|digit|number)/.test(lower)) return 'The Monster Mind has scrambled the numbers.';
+  return 'The Monster Mind has scrambled the numbers.';
 };
 
 const rewriteFuelMixPrompt = (prompt: string) => {
@@ -76,7 +76,7 @@ export const formatFantasyPrompt = (prompt: string) => {
   if (strippedLegacy !== trimmed) return formatFantasyPrompt(strippedLegacy);
 
   if (START_PREFIXES.some((prefix) => trimmed.startsWith(prefix))) return prompt;
-  if (trimmed.startsWith('A Monster Mind') || trimmed.startsWith('The Monster Minds') || trimmed.startsWith('The bridge') || trimmed.startsWith('The village') || trimmed.startsWith('The forge') || trimmed.startsWith('The path') || trimmed.startsWith('The map') || trimmed.startsWith('The records')) {
+  if (trimmed.startsWith('A Monster Mind') || trimmed.startsWith('The Monster Mind') || trimmed.startsWith('The bridge') || trimmed.startsWith('The village') || trimmed.startsWith('The forge') || trimmed.startsWith('The path') || trimmed.startsWith('The map') || trimmed.startsWith('The records')) {
     return prompt;
   }
   if (isAllCapsWords(trimmed)) return prompt;
@@ -90,7 +90,7 @@ export const formatFantasyPrompt = (prompt: string) => {
   });
 
   if (isMathExpression(trimmed)) {
-    return `The Monster Minds have scrambled the numbers. Solve ${formatMultiplicationDisplay(trimmed)}.`;
+    return `The Monster Mind has scrambled the numbers. Solve ${formatMultiplicationDisplay(trimmed)}.`;
   }
 
   const prefix = pickScenarioPrefix(next);

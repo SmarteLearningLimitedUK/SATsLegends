@@ -743,12 +743,12 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
         top={(
           <div className="relative">
             <div className="relative z-10">
-              <GameTopBar
-                onBack={onBack}
-                progressLabel={`Round ${Math.min(correctSolved + 1, roundsToWin)} / ${roundsToWin}`}
-                lives={sessionState?.lives}
-                className="mx-auto w-full max-w-[780px]"
-                audioEnabled={audioEnabled}
+                <GameTopBar
+                  onBack={onBack}
+                progressLabel={`Mix ${Math.min(correctSolved + 1, roundsToWin)} / ${roundsToWin}`}
+                  lives={sessionState?.lives}
+                  className="mx-auto w-full max-w-[780px]"
+                  audioEnabled={audioEnabled}
                 onToggleAudio={() => setAudioEnabled((previous) => !previous)}
               />
             </div>

@@ -328,7 +328,7 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
             </div>
           </TaskCard>
 
-          <div className="grid flex-1 grid-cols-2 gap-2 md:gap-3">
+          <div className="answer-choice-surface grid flex-1 grid-cols-2 gap-2 md:gap-3">
             {activeQuestion.options.map((option, index) => (
               <motion.button
                 key={`${activeQuestion.id}-${option}`}

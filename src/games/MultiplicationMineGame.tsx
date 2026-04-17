@@ -167,7 +167,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
         </div>
 
         <div className="mt-4 w-full max-w-[520px]">
-          <div className="grid grid-cols-2 gap-2.5">
+          <div className="answer-choice-surface grid grid-cols-2 gap-2.5">
             {question.options.map((option) => (
               <motion.button
                 key={`${question.prompt}-${option}`}
@@ -175,11 +175,13 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
                 onClick={() => solveQuestion(option)}
                 disabled={phase !== 'playing'}
                 whileTap={{ scale: 0.96, y: 2 }}
-                animate={selectedChoice === option ? { scale: [1, 1.05, 1] } : { scale: 1 }}
+                animate={selectedChoice === option ? (feedback?.tone === 'ok' ? { scale: [1, 1.12, 0.98, 1.05, 1], rotate: [0, -2, 2, 0] } : { scale: [1, 1.05, 1] }) : { scale: 1 }}
                 className={`h-16 rounded-2xl border px-3 text-center text-[clamp(1.35rem,5vw,2.1rem)] font-black shadow-[0_8px_16px_rgba(0,0,0,0.35)] transition ${
                   selectedChoice === option
-                    ? 'border-[#ffe08a] bg-gradient-to-b from-[#ffe082] to-[#f5a524] text-[#3e2700]'
-                    : 'border-[#95d3ff88] bg-[#0b254ecc] text-white hover:bg-[#103468]'
+                    ? feedback?.tone === 'ok'
+                      ? 'ui-button-success'
+                      : 'ui-button-primary'
+                    : 'ui-button-secondary'
                 } disabled:opacity-60`}
               >
                 {option}

@@ -62,7 +62,7 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
   const isVictory = result.type === 'victory';
   const rewardChest = MAIN_PNG_SKIN.treasureChest;
   const rewardStash = MAIN_PNG_SKIN.skull;
-  const statusPill = isVictory ? 'Victory' : 'Round Ended';
+  const statusPill = isVictory ? 'Victory' : 'Run Ended';
   const resultBackground = isVictory ? successRoundBackground : failureRoundBackground;
   const statusPillTone = isVictory
     ? 'bg-emerald-400/20 text-emerald-100 border-emerald-200/45'
@@ -123,7 +123,7 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
               className="app-modal-panel premium-modal-shell licensed-game-card-dark relative z-10 flex w-full max-w-md flex-col overflow-hidden rounded-[1.45rem] border border-white/15 shadow-[0_32px_95px_rgba(0,0,0,0.48)] backdrop-blur-md md:max-w-lg md:rounded-[1.9rem]"
               role="dialog"
               aria-modal="true"
-              aria-label={isVictory ? 'Victory result' : 'Round result'}
+              aria-label={isVictory ? 'Victory result' : 'Level result'}
             >
             <div className={cn(
               'pointer-events-none absolute inset-0',

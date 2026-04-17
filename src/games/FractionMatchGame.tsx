@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { CircleDollarSign, ChevronLeft } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import factorFrenzyBackground from '../assets/maps/backgroundsforgames/Factor Frenzy.jpg';
@@ -284,7 +284,7 @@ const MatchGameShell: React.FC<{
                   {levelName}
                 </span>
                 <div className="flex items-center gap-1 rounded-lg border border-yellow-200/55 bg-[#0a1f56]/92 px-2 py-1 text-xs font-black text-yellow-100">
-                  <CircleDollarSign className="h-3.5 w-3.5 text-yellow-300" />
+                  <span>XP</span>
                   <span>{XP}</span>
                 </div>
               </div>
@@ -330,7 +330,7 @@ const MatchGameShell: React.FC<{
                        {timeLeft}s
                      </div>
                      <div className="flex items-center gap-1 rounded-lg border border-yellow-200/55 bg-[#0a1f56]/70 px-2 py-1 text-[11px] font-black text-yellow-100">
-                       <CircleDollarSign className="h-3.5 w-3.5 text-yellow-300" />
+                       <span>XP</span>
                        <span>{XP}</span>
                      </div>
                    </div>
@@ -624,7 +624,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title={gameTitle || 'Match Mastery'}
-        body="The Monster Minds have built a wall blocking our path, break the wall by matching frations to their equivilants."
+        body="The Monster Mind has built a wall blocking our path, break the wall by matching frations to their equivilants."
         briefing={null}
         onAction={() => setShowPracticeIntro(false)}
       />

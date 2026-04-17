@@ -14,8 +14,8 @@ export const pickQuestionForTier = (
   roundIndex: number,
 ) => {
   const early = questions.filter((q) => q.ratio.length === 2 && (q.ratio[0] + q.ratio[1]) <= 6);
-  const mid = questions.filter((q) => q.ratio.length === 2 && (q.ratio[0] + q.ratio[1]) > 6 && (q.ratio[0] + q.ratio[1]) <= 15);
-  const final = questions.filter((q) => q.ratio.length >= 3);
+  const mid = questions.filter((q) => q.ratio.length === 3);
+  const final = questions.filter((q) => q.ratio.length >= 4);
   const pool = tier === 'early' ? early : tier === 'mid' ? mid : final;
   const fallback = questions;
   const source = pool.length ? pool : fallback;

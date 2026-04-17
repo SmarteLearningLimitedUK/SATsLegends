@@ -271,7 +271,7 @@ const generatePlaceValueQuestion = (): ChallengeQuestion => {
   const { options, answerIndex } = makeOptions(correct.toLocaleString(), wrongs);
 
   return {
-    prompt: `Which number rounds to ${base.toLocaleString()} to the nearest 10,000?`,
+    prompt: `Which number is the correct rounded value of ${base.toLocaleString()} to the nearest 10,000?`,
     sublabel: 'Check the thousands digit before you round.',
     options,
     answerIndex,
@@ -385,7 +385,7 @@ const generateCoordinateQuestion = (): ChallengeQuestion => {
   }
   const { options, answerIndex } = makeOptions(correct, wrong);
   return {
-    prompt: `The Monster Minds have hidden beacon ${target.label} inside the ruined grid. Which coordinates lock in the route?`,
+    prompt: `The Monster Mind has hidden beacon ${target.label} inside the ruined grid. Which coordinates lock in the route?`,
     sublabel: 'Read the x-axis first, then climb the y-axis to claim the beacon.',
     options,
     answerIndex,
@@ -1478,7 +1478,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                 </button>
 
                 <div className={`text-center text-4xl font-black ${isVictory ? 'text-emerald-600' : 'text-amber-600'} md:text-5xl`}>
-                  {isVictory ? 'Challenge Cleared' : 'Round Over'}
+                  {isVictory ? 'Challenge Cleared' : 'Challenge Over'}
                 </div>
                 <div className="text-center text-sm font-semibold text-slate-600 md:text-base">
                   {isVictory ? 'You hit the SATs target with a premium run.' : 'You ran out of time before reaching the target XP.'}

@@ -513,7 +513,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
             </div>
           </motion.div>
 
-          <div className="shrink-0 grid grid-cols-2 gap-1.5 sm:gap-2">
+          <div className="answer-choice-surface shrink-0 grid grid-cols-2 gap-1.5 sm:gap-2">
             {question.options.map((option) => (
               <motion.button
                 key={option}

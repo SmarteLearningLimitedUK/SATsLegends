@@ -165,7 +165,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
             animate={{ y: 0, scale: 1, opacity: 1 }}
             exit={{ y: 16, scale: 0.98, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 220, damping: 20 }}
-            className="relative z-10 w-full max-w-md overflow-hidden rounded-[1.6rem] border border-white/15 bg-[linear-gradient(180deg,rgba(7,21,52,0.78),rgba(5,17,45,0.9))] p-4 shadow-[0_28px_80px_rgba(0,0,0,0.5)] backdrop-blur-md md:max-w-lg md:rounded-[2rem] md:p-6"
+            className="relative z-10 w-full max-w-md overflow-visible rounded-[1.6rem] border border-white/15 bg-[linear-gradient(180deg,rgba(7,21,52,0.78),rgba(5,17,45,0.9))] p-4 shadow-[0_28px_80px_rgba(0,0,0,0.5)] backdrop-blur-md md:max-w-lg md:rounded-[2rem] md:p-6"
           >
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(56,189,248,0.18),transparent_55%),radial-gradient(circle_at_50%_100%,rgba(251,191,36,0.18),transparent_60%)]" />
             <button
@@ -179,7 +179,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
             <div className="relative z-10 flex flex-col gap-4">
               <div className="flex flex-col items-center text-center">
                 <span className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] ${isPractice ? 'border-cyan-200/50 bg-cyan-400/20 text-cyan-100' : isVictory ? 'border-emerald-200/50 bg-emerald-400/20 text-emerald-100' : 'border-rose-200/45 bg-rose-400/20 text-amber-100'}`}>
-                  {isPractice ? (isVictory ? 'Practice Complete' : 'Practice Round Over') : isVictory ? 'Level Complete' : 'Try Again'}
+                  {isPractice ? (isVictory ? 'Practice Complete' : 'Practice Run Over') : isVictory ? 'Level Complete' : 'Try Again'}
                 </span>
                 <h2 className="mt-2 text-2xl font-black text-amber-100 md:text-3xl">{result.title}</h2>
                 <p className="mt-1 text-sm font-semibold text-white/80 md:text-base">{result.subtitle}</p>

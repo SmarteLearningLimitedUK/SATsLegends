@@ -64,30 +64,36 @@ const PLAYER_KARTS: Record<string, string> = {
   vex: kartVex,
 };
 
+const INGREDIENT_LABELS_BY_PART_COUNT: Record<number, string[]> = {
+  2: ['Fuel', 'Oxygen'],
+  3: ['Fuel', 'Oxygen', 'Magic Dust'],
+  4: ['Fuel', 'Oxygen', 'Magic Dust', 'Gunpowder'],
+};
+
 export const ratioFractionsQuestions: RatioFractionQuestion[] = [
   // ---------------- EASY ----------------
-  { id: 'rf-001', prompt: 'Fuel mix 1:2. Which fraction is oxygen?', ratio: [1, 2], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '2/3', options: ['1/3', '2/3', '1/2', '2/1'], explanation: 'Total parts = 3. Oxygen is 2 parts -> 2/3.' },
-  { id: 'rf-002', prompt: 'Fuel mix 2:1. Which fraction is fuel?', ratio: [2, 1], labels: ['Fuel', 'Oxygen'], target: 'Fuel', correctAnswer: '2/3', options: ['1/3', '2/3', '2/1', '3/2'], explanation: 'Total parts = 3. Fuel is 2 parts -> 2/3.' },
-  { id: 'rf-003', prompt: 'Fuel mix 1:3. Which fraction is oxygen?', ratio: [1, 3], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '3/4', options: ['1/4', '3/4', '1/3', '4/3'], explanation: 'Total = 4. Oxygen = 3 -> 3/4.' },
-  { id: 'rf-004', prompt: 'Fuel mix 3:1. Which fraction is oxygen?', ratio: [3, 1], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '1/4', options: ['1/4', '3/4', '1/3', '4/1'], explanation: 'Total = 4. Oxygen = 1 -> 1/4.' },
-  { id: 'rf-005', prompt: 'Fuel mix 2:2. Which fraction is fuel?', ratio: [2, 2], labels: ['Fuel', 'Oxygen'], target: 'Fuel', correctAnswer: '2/4', options: ['1/2', '2/4', '2/2', '4/2'], explanation: 'Total = 4. Fuel = 2 -> 2/4.' },
-  { id: 'rf-006', prompt: 'Fuel mix 4:1. Which fraction is oxygen?', ratio: [4, 1], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '1/5', options: ['1/5', '4/5', '1/4', '5/1'], explanation: 'Total = 5. Oxygen = 1 -> 1/5.' },
-  { id: 'rf-007', prompt: 'Fuel mix 3:2. Which fraction is oxygen?', ratio: [3, 2], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '2/5', options: ['3/5', '2/5', '2/3', '5/2'], explanation: 'Total = 5. Oxygen = 2 -> 2/5.' },
-  { id: 'rf-008', prompt: 'Fuel mix 5:1. Which fraction is fuel?', ratio: [5, 1], labels: ['Fuel', 'Oxygen'], target: 'Fuel', correctAnswer: '5/6', options: ['1/6', '5/6', '5/1', '6/5'], explanation: 'Total = 6. Fuel = 5 -> 5/6.' },
-  { id: 'rf-009', prompt: 'Fuel mix 1:5. Which fraction is oxygen?', ratio: [1, 5], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '5/6', options: ['1/6', '5/6', '1/5', '6/5'], explanation: 'Total = 6. Oxygen = 5 -> 5/6.' },
-  { id: 'rf-010', prompt: 'Fuel mix 2:3. Which fraction is fuel?', ratio: [2, 3], labels: ['Fuel', 'Oxygen'], target: 'Fuel', correctAnswer: '2/5', options: ['3/5', '2/5', '2/3', '5/2'], explanation: 'Total = 5. Fuel = 2 -> 2/5.' },
+  { id: 'rf-001', prompt: 'Fuel equation 1:2. Which fraction is oxygen?', ratio: [1, 2], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '2/3', options: ['1/3', '2/3', '1/2', '2/1'], explanation: 'Total parts = 3. Oxygen is 2 parts -> 2/3.' },
+  { id: 'rf-002', prompt: 'Fuel equation 2:1. Which fraction is fuel?', ratio: [2, 1], labels: ['Fuel', 'Oxygen'], target: 'Fuel', correctAnswer: '2/3', options: ['1/3', '2/3', '2/1', '3/2'], explanation: 'Total parts = 3. Fuel is 2 parts -> 2/3.' },
+  { id: 'rf-003', prompt: 'Fuel equation 1:3. Which fraction is oxygen?', ratio: [1, 3], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '3/4', options: ['1/4', '3/4', '1/3', '4/3'], explanation: 'Total = 4. Oxygen = 3 -> 3/4.' },
+  { id: 'rf-004', prompt: 'Fuel equation 3:1. Which fraction is oxygen?', ratio: [3, 1], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '1/4', options: ['1/4', '3/4', '1/3', '4/1'], explanation: 'Total = 4. Oxygen = 1 -> 1/4.' },
+  { id: 'rf-005', prompt: 'Fuel equation 2:2. Which fraction is fuel?', ratio: [2, 2], labels: ['Fuel', 'Oxygen'], target: 'Fuel', correctAnswer: '2/4', options: ['1/2', '2/4', '2/2', '4/2'], explanation: 'Total = 4. Fuel = 2 -> 2/4.' },
+  { id: 'rf-006', prompt: 'Fuel equation 4:1. Which fraction is oxygen?', ratio: [4, 1], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '1/5', options: ['1/5', '4/5', '1/4', '5/1'], explanation: 'Total = 5. Oxygen = 1 -> 1/5.' },
+  { id: 'rf-007', prompt: 'Fuel equation 3:2. Which fraction is oxygen?', ratio: [3, 2], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '2/5', options: ['3/5', '2/5', '2/3', '5/2'], explanation: 'Total = 5. Oxygen = 2 -> 2/5.' },
+  { id: 'rf-008', prompt: 'Fuel equation 5:1. Which fraction is fuel?', ratio: [5, 1], labels: ['Fuel', 'Oxygen'], target: 'Fuel', correctAnswer: '5/6', options: ['1/6', '5/6', '5/1', '6/5'], explanation: 'Total = 6. Fuel = 5 -> 5/6.' },
+  { id: 'rf-009', prompt: 'Fuel equation 1:5. Which fraction is oxygen?', ratio: [1, 5], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '5/6', options: ['1/6', '5/6', '1/5', '6/5'], explanation: 'Total = 6. Oxygen = 5 -> 5/6.' },
+  { id: 'rf-010', prompt: 'Fuel equation 2:3. Which fraction is fuel?', ratio: [2, 3], labels: ['Fuel', 'Oxygen'], target: 'Fuel', correctAnswer: '2/5', options: ['3/5', '2/5', '2/3', '5/2'], explanation: 'Total = 5. Fuel = 2 -> 2/5.' },
   // ---------------- MEDIUM ----------------
-  { id: 'rf-016', prompt: 'Fuel mix 4:3. Which fraction is oxygen?', ratio: [4, 3], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '3/7', options: ['4/7', '3/7', '3/4', '7/3'], explanation: 'Total = 7. Oxygen = 3 -> 3/7.' },
-  { id: 'rf-017', prompt: 'Fuel mix 5:2. Which fraction is fuel?', ratio: [5, 2], labels: ['Fuel', 'Oxygen'], target: 'Fuel', correctAnswer: '5/7', options: ['2/7', '5/7', '5/2', '7/5'], explanation: 'Total = 7. Fuel = 5 -> 5/7.' },
-  { id: 'rf-018', prompt: 'Fuel mix 6:3. Which fraction is oxygen?', ratio: [6, 3], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '3/9', options: ['6/9', '3/9', '1/3', '3/6'], explanation: 'Total = 9. Oxygen = 3 -> 3/9.' },
-  { id: 'rf-019', prompt: 'Fuel mix 7:3. Which fraction is oxygen?', ratio: [7, 3], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '3/10', options: ['7/10', '3/10', '3/7', '10/3'], explanation: 'Total = 10. Oxygen = 3 -> 3/10.' },
-  { id: 'rf-020', prompt: 'Fuel mix 8:2. Which fraction is fuel?', ratio: [8, 2], labels: ['Fuel', 'Oxygen'], target: 'Fuel', correctAnswer: '8/10', options: ['2/10', '8/10', '4/5', '10/8'], explanation: 'Total = 10. Fuel = 8 -> 8/10.' },
-  // ---------------- HARD (3-PART RATIOS) ----------------
+  { id: 'rf-016', prompt: 'Fuel equation 4:3. Which fraction is oxygen?', ratio: [4, 3], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '3/7', options: ['4/7', '3/7', '3/4', '7/3'], explanation: 'Total = 7. Oxygen = 3 -> 3/7.' },
+  { id: 'rf-017', prompt: 'Fuel equation 5:2. Which fraction is fuel?', ratio: [5, 2], labels: ['Fuel', 'Oxygen'], target: 'Fuel', correctAnswer: '5/7', options: ['2/7', '5/7', '5/2', '7/5'], explanation: 'Total = 7. Fuel = 5 -> 5/7.' },
+  { id: 'rf-018', prompt: 'Fuel equation 6:3. Which fraction is oxygen?', ratio: [6, 3], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '3/9', options: ['6/9', '3/9', '1/3', '3/6'], explanation: 'Total = 9. Oxygen = 3 -> 3/9.' },
+  { id: 'rf-019', prompt: 'Fuel equation 7:3. Which fraction is oxygen?', ratio: [7, 3], labels: ['Fuel', 'Oxygen'], target: 'Oxygen', correctAnswer: '3/10', options: ['7/10', '3/10', '3/7', '10/3'], explanation: 'Total = 10. Oxygen = 3 -> 3/10.' },
+  { id: 'rf-020', prompt: 'Fuel equation 8:2. Which fraction is fuel?', ratio: [8, 2], labels: ['Fuel', 'Oxygen'], target: 'Fuel', correctAnswer: '8/10', options: ['2/10', '8/10', '4/5', '10/8'], explanation: 'Total = 10. Fuel = 8 -> 8/10.' },
+  // ---------------- MID (3-PART RATIOS) ----------------
   {
     id: 'rf-036',
-    prompt: 'Fuel mix 2:3:1. Which fraction is oxygen?',
+    prompt: 'Fuel equation 2:3:1. Which fraction is oxygen?',
     ratio: [2, 3, 1],
-    labels: ['Fuel', 'Oxygen', 'Additive'],
+    labels: ['Fuel', 'Oxygen', 'Magic Dust'],
     target: 'Oxygen',
     correctAnswer: '3/6',
     options: ['2/6', '3/6', '1/6', '3/5'],
@@ -95,9 +101,9 @@ export const ratioFractionsQuestions: RatioFractionQuestion[] = [
   },
   {
     id: 'rf-037',
-    prompt: 'Fuel mix 4:2:2. Which fraction is fuel?',
+    prompt: 'Fuel equation 4:2:2. Which fraction is fuel?',
     ratio: [4, 2, 2],
-    labels: ['Fuel', 'Oxygen', 'Additive'],
+    labels: ['Fuel', 'Oxygen', 'Magic Dust'],
     target: 'Fuel',
     correctAnswer: '4/8',
     options: ['2/8', '4/8', '1/2', '4/6'],
@@ -105,20 +111,61 @@ export const ratioFractionsQuestions: RatioFractionQuestion[] = [
   },
   {
     id: 'rf-038',
-    prompt: 'Fuel mix 3:3:3. Which fraction is oxygen?',
+    prompt: 'Fuel equation 3:3:3. Which fraction is oxygen?',
     ratio: [3, 3, 3],
-    labels: ['Fuel', 'Oxygen', 'Additive'],
+    labels: ['Fuel', 'Oxygen', 'Magic Dust'],
     target: 'Oxygen',
     correctAnswer: '3/9',
     options: ['3/9', '1/3', '3/3', '9/3'],
     explanation: 'Total = 9. Oxygen = 3 -> 3/9.',
   },
+  // ---------------- HARD (4-PART RATIOS) ----------------
+  {
+    id: 'rf-039',
+    prompt: 'Fuel equation 2:1:3:4. Which fraction is gunpowder?',
+    ratio: [2, 1, 3, 4],
+    labels: ['Fuel', 'Oxygen', 'Magic Dust', 'Gunpowder'],
+    target: 'Gunpowder',
+    correctAnswer: '4/10',
+    options: ['1/10', '4/10', '2/5', '5/4'],
+    explanation: 'Total = 10. Gunpowder = 4 -> 4/10.',
+  },
+  {
+    id: 'rf-040',
+    prompt: 'Fuel equation 3:2:1:4. Which fraction is magic dust?',
+    ratio: [3, 2, 1, 4],
+    labels: ['Fuel', 'Oxygen', 'Magic Dust', 'Gunpowder'],
+    target: 'Magic Dust',
+    correctAnswer: '1/10',
+    options: ['1/10', '1/4', '3/10', '4/10'],
+    explanation: 'Total = 10. Magic Dust = 1 -> 1/10.',
+  },
+  {
+    id: 'rf-041',
+    prompt: 'Fuel equation 5:1:2:2. Which fraction is fuel?',
+    ratio: [5, 1, 2, 2],
+    labels: ['Fuel', 'Oxygen', 'Magic Dust', 'Gunpowder'],
+    target: 'Fuel',
+    correctAnswer: '5/10',
+    options: ['1/10', '5/10', '1/2', '10/5'],
+    explanation: 'Total = 10. Fuel = 5 -> 5/10.',
+  },
+  {
+    id: 'rf-042',
+    prompt: 'Fuel equation 1:4:2:3. Which fraction is oxygen?',
+    ratio: [1, 4, 2, 3],
+    labels: ['Fuel', 'Oxygen', 'Magic Dust', 'Gunpowder'],
+    target: 'Oxygen',
+    correctAnswer: '4/10',
+    options: ['1/10', '4/10', '2/10', '3/10'],
+    explanation: 'Total = 10. Oxygen = 4 -> 4/10.',
+  },
 ];
 
 const buildTierPools = (questions: RatioFractionQuestion[]) => {
   const early = questions.filter((q) => q.ratio.length === 2 && (q.ratio[0] + q.ratio[1]) <= 6);
-  const mid = questions.filter((q) => q.ratio.length === 2 && (q.ratio[0] + q.ratio[1]) > 6 && (q.ratio[0] + q.ratio[1]) <= 15);
-  const final = questions.filter((q) => q.ratio.length >= 3);
+  const mid = questions.filter((q) => q.ratio.length === 3);
+  const final = questions.filter((q) => q.ratio.length >= 4);
   return { early, mid, final };
 };
 
@@ -195,15 +242,13 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const playerKart = PLAYER_KARTS[avatarId] || kartBarratt;
 
   const displayParts = useMemo(() => {
-    const fallbackLabels = ['Kart A', 'Kart B', 'Kart C', 'Kart D', 'Kart E'];
-    const resolvedLabels = question.ratio.map((_, index) => fallbackLabels[index] || `Part ${index + 1}`);
-    const targetIndex = Math.max(0, question.labels.findIndex((label) => label === question.target));
-    const targetLabel = resolvedLabels[targetIndex] || resolvedLabels[0] || 'Kart A';
+    const canonicalLabels = INGREDIENT_LABELS_BY_PART_COUNT[question.ratio.length] || question.labels;
+    const resolvedLabels = question.ratio.map((_, index) => canonicalLabels[index] || question.labels[index] || `Part ${index + 1}`);
     const ratioLine = resolvedLabels
       .map((label, index) => `${label} ${question.ratio[index]}`)
       .join(' : ');
-    return { resolvedLabels, targetLabel, ratioLine };
-  }, [question.labels, question.ratio, question.target]);
+    return { ratioLine };
+  }, [question.labels, question.ratio]);
   
   useEffect(() => {
     raceStateRef.current = raceState;
@@ -573,13 +618,13 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                 )}
                 bodyClassName="tracking-tight"
               >
-                {`In the fuel mix above, what fraction of the whole is ${question.target.toLowerCase()}?`}
+                {`In the fuel equation above, what fraction of the whole is ${question.target.toLowerCase()}?`}
               </GameQuestionCard>
             </div>
           )}
           main={<div className="min-h-0 flex-1" />}
           bottom={(
-            <div className="grid grid-cols-4 gap-2">
+            <div className="answer-choice-surface grid grid-cols-4 gap-2">
               {question.options.map((option) => (
                 <motion.button
                   key={option}

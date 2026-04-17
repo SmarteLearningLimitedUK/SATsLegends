@@ -1,11 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 import graphGrabberBackground from '../assets/maps/backgroundsforgames/graph grabber.jpg';
-import crate1 from '../assets/crates/1.png';
-import crate2 from '../assets/crates/2.png';
-import crate3 from '../assets/crates/3.png';
-import crate4 from '../assets/crates/4.png';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
@@ -19,160 +29,487 @@ interface GraphGrabberGameProps {
   onBack: () => void;
 }
 
-type ChartRoundMode = 'basic' | 'comparison' | 'difference' | 'total';
+type GraphKind = 'bar' | 'line' | 'pie';
+type AnswerMode = 'single' | 'multi' | 'trueFalse';
 
-interface CaravanDatum {
-  id: string;
+interface BarDatum {
   label: string;
   value: number;
   color: string;
-  solidColor: string;
+}
+
+interface LineDatum {
+  label: string;
+  value: number;
+}
+
+interface PieDatum {
+  label: string;
+  value: number;
+  color: string;
+}
+
+interface RoundOption {
+  id: string;
+  label: string;
 }
 
 interface ChartRound {
-  mode: ChartRoundMode;
+  id: string;
+  kind: GraphKind;
+  answerMode: AnswerMode;
   title: string;
   prompt: string;
   support: string;
-  boardLabel: string;
-  caravans: CaravanDatum[];
-  lineDays?: Array<{ label: string; value: number }>;
-  options: string[];
-  answer: string;
+  chartCaption: string;
+  xLabel: string;
+  yLabel: string;
+  bars?: BarDatum[];
+  line?: LineDatum[];
+  pie?: PieDatum[];
+  options: RoundOption[];
+  correctAnswers: string[];
 }
 
 const MAX_HEARTS = 4;
 const ROUND_GOAL_BY_LEVEL = [0, 4, 5, 5, 6];
 const CARAVAN_POOL = [
-  { id: 'windward', label: 'Windward', color: 'from-sky-400 to-cyan-300', solidColor: '#38bdf8' },
-  { id: 'eden', label: 'Eden', color: 'from-indigo-400 to-blue-300', solidColor: '#818cf8' },
-  { id: 'jerry', label: 'Jerry', color: 'from-emerald-400 to-lime-300', solidColor: '#34d399' },
-  { id: 'ivy', label: 'Ivy', color: 'from-amber-300 to-yellow-300', solidColor: '#fbbf24' },
-];
-const CARAVAN_CARGO_IMAGES = [crate1, crate2, crate3, crate4];
+  { id: 'windward', label: 'Windward', color: '#38bdf8' },
+  { id: 'eden', label: 'Eden', color: '#818cf8' },
+  { id: 'jerry', label: 'Jerry', color: '#34d399' },
+  { id: 'ivy', label: 'Ivy', color: '#fbbf24' },
+] as const;
 
-const CARGO_ROUNDS: Record<ChartRoundMode, number[]> = {
-  basic: [6, 9, 7, 4],
-  comparison: [5, 11, 8, 6],
-  difference: [6, 12, 9, 4],
-  total: [7, 8, 5, 6],
+const PIE_PALETTE = ['#38bdf8', '#818cf8', '#34d399', '#fbbf24'];
+
+const shuffle = <T,>(items: T[]): T[] => {
+  const next = [...items];
+  for (let i = next.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [next[i], next[j]] = [next[j], next[i]];
+  }
+  return next;
 };
 
-const modeForLevel = (_levelId: number, roundIndex: number): ChartRoundMode => {
-  const cycle: ChartRoundMode[] = ['basic', 'comparison', 'difference', 'total'];
-  return cycle[roundIndex % cycle.length];
+const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
+
+const scoreToStars = (XP: number) => {
+  if (XP >= 860) return 3;
+  if (XP >= 640) return 2;
+  return 1;
 };
 
-type CaravanAnimation = {
-  id: number;
-  outcome: 'success' | 'failure';
-};
-
-const createRound = (levelId: number, roundIndex: number): ChartRound => {
-  const mode = modeForLevel(levelId, roundIndex);
-  const values = CARGO_ROUNDS[mode];
-  const caravans = CARAVAN_POOL.map((caravan, index) => ({
-    ...caravan,
-    value: values[index],
-  }));
-
-  if (mode === 'basic') {
-    const target = caravans[0];
+const createBarRound = (levelId: number, variant: number): ChartRound => {
+  const base = 4 + levelId + variant;
+  const bars: BarDatum[] = [
+    { ...CARAVAN_POOL[0], value: clamp(base, 3, 14) },
+    { ...CARAVAN_POOL[1], value: clamp(base + 3, 4, 16) },
+    { ...CARAVAN_POOL[2], value: clamp(base + 1, 3, 15) },
+    { ...CARAVAN_POOL[3], value: clamp(base - 2, 2, 12) },
+  ];
+  const maxBar = bars.reduce((best, current) => (current.value > best.value ? current : best), bars[0]);
+  if (variant % 4 === 0) {
     return {
-      mode,
-      title: '',
+      id: `bar-single-${levelId}-${variant}`,
+      kind: 'bar',
+      answerMode: 'single',
+      title: 'Bar Graph',
       prompt: 'How many crates did Windward deliver?',
-      support: 'Read the Windward stack carefully.',
-      boardLabel: 'Crates by caravan',
-      caravans,
-      options: [String(target.value - 2), String(target.value), String(target.value + 1), String(target.value + 3)],
-      answer: String(target.value),
+      support: 'Read the bar graph carefully from the y-axis.',
+      chartCaption: 'Supply crates by caravan',
+      xLabel: 'Caravans',
+      yLabel: 'Crates',
+      bars,
+      options: [
+        { id: `${bars[0].value - 1}`, label: String(Math.max(0, bars[0].value - 1)) },
+        { id: `${bars[0].value}`, label: String(bars[0].value) },
+        { id: `${bars[0].value + 2}`, label: String(bars[0].value + 2) },
+        { id: `${bars[0].value + 4}`, label: String(bars[0].value + 4) },
+      ],
+      correctAnswers: [String(bars[0].value)],
     };
   }
 
-  if (mode === 'comparison') {
-    const winner = caravans[1];
+  if (variant % 4 === 1) {
     return {
-      mode,
+      id: `bar-compare-${levelId}-${variant}`,
+      kind: 'bar',
+      answerMode: 'single',
       title: 'Most Crates',
       prompt: 'Which caravan delivered the most crates?',
-      support: 'Compare all four caravans.',
-      boardLabel: 'Crates by caravan',
-      caravans,
-      options: caravans.map((caravan) => caravan.label),
-      answer: winner.label,
+      support: 'Compare the heights before you answer.',
+      chartCaption: 'Supply crates by caravan',
+      xLabel: 'Caravans',
+      yLabel: 'Crates',
+      bars,
+      options: shuffle(CARAVAN_POOL.map((caravan) => ({ id: caravan.label, label: caravan.label }))),
+      correctAnswers: [maxBar.label],
     };
   }
 
-  if (mode === 'difference') {
-    const first = caravans[1];
-    const second = caravans[2];
-    const difference = first.value - second.value;
+  if (variant % 4 === 2) {
     return {
-      mode,
-      title: 'Find The Difference',
-      prompt: 'How many more crates did Eden deliver than Jerry?',
-      support: 'Subtract Jerry from Eden.',
-      boardLabel: 'Crates by caravan',
-      caravans,
-      options: [String(difference - 1), String(difference), String(difference + 1), String(difference + 2)],
-      answer: String(difference),
+      id: `bar-truefalse-${levelId}-${variant}`,
+      kind: 'bar',
+      answerMode: 'trueFalse',
+      title: 'Bar Graph Check',
+      prompt: `True or false: ${CARAVAN_POOL[1].label} delivered more crates than ${CARAVAN_POOL[0].label}.`,
+      support: 'Read the graph, then decide whether the statement is true.',
+      chartCaption: 'Supply crates by caravan',
+      xLabel: 'Caravans',
+      yLabel: 'Crates',
+      bars,
+      options: [
+        { id: 'True', label: 'True' },
+        { id: 'False', label: 'False' },
+      ],
+      correctAnswers: [bars[1].value > bars[0].value ? 'True' : 'False'],
     };
   }
 
-  const total = caravans.reduce((sum, caravan) => sum + caravan.value, 0);
+  const truePairs = [
+    {
+      id: 'most',
+      label: `${maxBar.label} has the largest bar.`,
+      correct: true,
+    },
+    {
+      id: 'least',
+      label: `${bars[3].label} has the smallest bar.`,
+      correct: bars[3].value === Math.min(...bars.map((bar) => bar.value)),
+    },
+    {
+      id: 'pair',
+      label: `${CARAVAN_POOL[1].label} and ${CARAVAN_POOL[2].label} together make ${bars[1].value + bars[2].value}.`,
+      correct: true,
+    },
+    {
+      id: 'pair-false',
+      label: `${CARAVAN_POOL[0].label} and ${CARAVAN_POOL[3].label} together make 20.`,
+      correct: bars[0].value + bars[3].value === 20,
+    },
+  ];
+
   return {
-    mode: 'total',
-    title: 'Total Crates',
-    prompt: 'What is the total number of crates delivered by all four caravans?',
-    support: 'Add all four caravan stacks.',
-    boardLabel: 'Crates by caravan',
-    caravans,
-    options: [String(total - 4), String(total - 2), String(total), String(total + 2)],
-    answer: String(total),
+    id: `bar-multi-${levelId}-${variant}`,
+    kind: 'bar',
+    answerMode: 'multi',
+    title: 'Graph Check',
+    prompt: 'Select all statements that are true.',
+    support: 'This matches the multi-answer style in the data-handling papers.',
+    chartCaption: 'Supply crates by caravan',
+    xLabel: 'Caravans',
+    yLabel: 'Crates',
+    bars,
+    options: shuffle(truePairs.map((item) => ({ id: item.id, label: item.label }))),
+    correctAnswers: truePairs.filter((item) => item.correct).map((item) => item.id),
   };
 };
 
-const CaravanBoard: React.FC<{ caravans: CaravanDatum[]; label: string }> = ({ caravans, label }) => {
-  const maxValue = Math.max(...caravans.map((caravan) => caravan.value));
-  return (
-    <div className="w-full">
-      <div className="mt-2 grid grid-cols-4 items-end gap-3 md:gap-4">
-        {caravans.map((caravan, caravanIndex) => (
-          <div key={caravan.id} className="flex flex-col items-center gap-2">
-            <div className="flex h-[clamp(12rem,37vh,21rem)] w-full items-end justify-center">
-              <div className="relative flex w-full max-w-[7.5rem] flex-col items-center justify-end">
-                {Array.from({ length: caravan.value }).map((_, index) => {
-                  const crateAsset = CARAVAN_CARGO_IMAGES[(caravanIndex + index) % CARAVAN_CARGO_IMAGES.length];
-                  return (
-                    <img
-                      key={`${caravan.id}-crate-${index}`}
-                      src={crateAsset}
-                      alt=""
-                      aria-hidden="true"
-                      className="h-9 w-9 drop-shadow-[0_2px_5px_rgba(15,23,42,0.18)] md:h-11 md:w-11"
-                      style={{
-                        marginTop: index === 0 ? 0 : '-0.84rem',
-                        opacity: 0.42 + ((index + 1) / (maxValue + 2)),
-                      }}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="mx-auto rounded-full border border-white/12 bg-white/10 px-3 py-1 text-[10px] font-black leading-tight text-white shadow-[0_8px_14px_rgba(2,6,23,0.16)] md:text-sm">
-                {caravan.label}
-              </div>
-              <div className="mt-0.5 text-[8px] font-bold leading-tight text-amber-100/80 md:text-[9px]">
-                {caravan.value}
-              </div>
-            </div>
-          </div>
-        ))}
+const createLineRound = (levelId: number, variant: number): ChartRound => {
+  const base = 8 + (levelId * 2);
+  const line: LineDatum[] = [
+    { label: '1', value: clamp(base, 6, 18) },
+    { label: '2', value: clamp(base + 3, 7, 20) },
+    { label: '3', value: clamp(base + 5, 8, 22) },
+    { label: '4', value: clamp(base + 2, 7, 20) },
+    { label: '5', value: clamp(base + 7, 9, 24) },
+  ];
+  const riseAtThree = line[2].value > line[1].value;
+  const highest = line.reduce((best, current) => (current.value > best.value ? current : best), line[0]);
+
+  if (variant % 4 === 0) {
+    return {
+      id: `line-single-${levelId}-${variant}`,
+      kind: 'line',
+      answerMode: 'single',
+      title: 'Line Graph',
+      prompt: 'What is the brainpower at time = 4?',
+      support: 'Read the point at x = 4 and match it to the y-axis.',
+      chartCaption: 'Brainpower over time',
+      xLabel: 'Time',
+      yLabel: 'Brainpower',
+      line,
+      options: [
+        { id: `${line[3].value - 2}`, label: String(Math.max(0, line[3].value - 2)) },
+        { id: `${line[3].value}`, label: String(line[3].value) },
+        { id: `${line[3].value + 2}`, label: String(line[3].value + 2) },
+        { id: `${line[3].value + 4}`, label: String(line[3].value + 4) },
+      ],
+      correctAnswers: [String(line[3].value)],
+    };
+  }
+
+  if (variant % 4 === 1) {
+    return {
+      id: `line-truefalse-${levelId}-${variant}`,
+      kind: 'line',
+      answerMode: 'trueFalse',
+      title: 'Line Graph Check',
+      prompt: `True or false: the graph rises between time 2 and time 3?`,
+      support: 'Look at the direction of the line between the two points.',
+      chartCaption: 'Brainpower over time',
+      xLabel: 'Time',
+      yLabel: 'Brainpower',
+      line,
+      options: [
+        { id: 'True', label: 'True' },
+        { id: 'False', label: 'False' },
+      ],
+      correctAnswers: [riseAtThree ? 'True' : 'False'],
+    };
+  }
+
+  if (variant % 4 === 2) {
+    const statements = [
+      { id: 'top', label: `${highest.label} has the highest value.`, correct: true },
+      { id: 'start', label: `The value at time 1 is ${line[0].value}.`, correct: true },
+      { id: 'fall', label: `The line falls between time 3 and time 4.`, correct: line[3].value < line[2].value },
+      { id: 'mid', label: `The value at time 2 is ${line[2].value}.`, correct: false },
+    ];
+
+    return {
+      id: `line-multi-${levelId}-${variant}`,
+      kind: 'line',
+      answerMode: 'multi',
+      title: 'Line Graph Check',
+      prompt: 'Select all statements that are true.',
+      support: 'Use the plotted points to judge each statement.',
+      chartCaption: 'Brainpower over time',
+      xLabel: 'Time',
+      yLabel: 'Brainpower',
+      line,
+      options: shuffle(statements.map((statement) => ({ id: statement.id, label: statement.label }))),
+      correctAnswers: statements.filter((statement) => statement.correct).map((statement) => statement.id),
+    };
+  }
+
+  return {
+    id: `line-compare-${levelId}-${variant}`,
+    kind: 'line',
+    answerMode: 'single',
+    title: 'Line Graph',
+    prompt: 'At what time does the graph reach its highest value?',
+    support: 'Find the highest point and read its x-coordinate.',
+    chartCaption: 'Brainpower over time',
+    xLabel: 'Time',
+    yLabel: 'Brainpower',
+    line,
+    options: line.map((point) => ({ id: point.label, label: point.label })),
+    correctAnswers: [highest.label],
+  };
+};
+
+const createPieRound = (levelId: number, variant: number): ChartRound => {
+  const windward = 25 + (levelId % 5);
+  const eden = 35 + (variant % 3);
+  const jerry = 20;
+  const ivy = 100 - windward - eden - jerry;
+  const pie: PieDatum[] = [
+    { label: 'Windward', value: windward, color: PIE_PALETTE[0] },
+    { label: 'Eden', value: eden, color: PIE_PALETTE[1] },
+    { label: 'Jerry', value: jerry, color: PIE_PALETTE[2] },
+    { label: 'Ivy', value: ivy, color: PIE_PALETTE[3] },
+  ];
+  const largest = pie.reduce((best, current) => (current.value > best.value ? current : best), pie[0]);
+  const windwardAndIvy = pie[0].value + pie[3].value;
+
+  if (variant % 4 === 0) {
+    return {
+      id: `pie-single-${levelId}-${variant}`,
+      kind: 'pie',
+      answerMode: 'single',
+      title: 'Pie Chart',
+      prompt: 'Which slice is largest?',
+      support: 'Look at the biggest sector in the pie chart.',
+      chartCaption: 'Share of the cache',
+      xLabel: 'Share',
+      yLabel: 'Value',
+      pie,
+      options: shuffle(pie.map((slice) => ({ id: slice.label, label: slice.label }))),
+      correctAnswers: [largest.label],
+    };
+  }
+
+  if (variant % 4 === 1) {
+    return {
+      id: `pie-truefalse-${levelId}-${variant}`,
+      kind: 'pie',
+      answerMode: 'trueFalse',
+      title: 'Pie Chart Check',
+      prompt: `True or false: Windward and Ivy together make half of the chart?`,
+      support: 'Add the two slices before you decide.',
+      chartCaption: 'Share of the cache',
+      xLabel: 'Share',
+      yLabel: 'Value',
+      pie,
+      options: [
+        { id: 'True', label: 'True' },
+        { id: 'False', label: 'False' },
+      ],
+      correctAnswers: [windwardAndIvy === 50 ? 'True' : 'False'],
+    };
+  }
+
+  const statements = [
+    { id: 'largest', label: `${largest.label} is the largest slice.`, correct: true },
+    { id: 'equal', label: `${JerryLabel(pie)} and ${IvyLabel(pie)} are equal slices.`, correct: pie[2].value === pie[3].value },
+    { id: 'bigger', label: `${largest.label} is bigger than Windward.`, correct: largest.label !== 'Windward' },
+    { id: 'half', label: `Windward and Ivy together make half of the chart.`, correct: windwardAndIvy === 50 },
+  ];
+
+  return {
+    id: `pie-multi-${levelId}-${variant}`,
+    kind: 'pie',
+    answerMode: 'multi',
+    title: 'Pie Chart Check',
+    prompt: 'Select all statements that are true.',
+    support: 'This mirrors the select-all style in the data-handling worksheet.',
+    chartCaption: 'Share of the cache',
+    xLabel: 'Share',
+    yLabel: 'Value',
+    pie,
+    options: shuffle(statements.map((statement) => ({ id: statement.id, label: statement.label }))),
+    correctAnswers: statements.filter((statement) => statement.correct).map((statement) => statement.id),
+  };
+};
+
+const JerryLabel = (pie: PieDatum[]) => pie.find((slice) => slice.label === 'Jerry')?.label ?? 'Jerry';
+const IvyLabel = (pie: PieDatum[]) => pie.find((slice) => slice.label === 'Ivy')?.label ?? 'Ivy';
+
+const buildRound = (levelId: number, roundIndex: number): ChartRound => {
+  const variant = roundIndex % 6;
+  if (variant <= 2) {
+    return createBarRound(levelId, roundIndex);
+  }
+  if (variant === 3 || variant === 4) {
+    return createLineRound(levelId, roundIndex);
+  }
+  return createPieRound(levelId, roundIndex);
+};
+
+const normalize = (values: string[]) => [...new Set(values)].sort((a, b) => a.localeCompare(b));
+
+const matchesAnswer = (selected: string[], expected: string[]) => {
+  const left = normalize(selected);
+  const right = normalize(expected);
+  return left.length === right.length && left.every((value, index) => value === right[index]);
+};
+
+const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
+  if (round.kind === 'bar' && round.bars) {
+    return (
+      <div className="flex h-full min-h-0 flex-col rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(9,19,42,0.7),rgba(7,14,32,0.88))] p-3 shadow-[0_22px_40px_rgba(2,6,23,0.24)]">
+        <div className="text-center text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
+          {round.chartCaption}
+        </div>
+        <div className="mt-2 h-[clamp(15rem,36vh,22rem)] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={round.bars!} margin={{ top: 18, right: 16, left: 10, bottom: 12 }}>
+              <CartesianGrid stroke="rgba(255,255,255,0.12)" strokeDasharray="3 3" vertical={false} />
+              <XAxis
+                dataKey="label"
+                tick={{ fill: '#fff8ec', fontSize: 11, fontWeight: 800 }}
+                axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
+                tickLine={false}
+                label={{ value: round.xLabel, position: 'insideBottom', offset: -2, fill: '#fff8ec', fontSize: 11, fontWeight: 800 } as never}
+              />
+              <YAxis
+                tick={{ fill: '#fff8ec', fontSize: 11, fontWeight: 800 }}
+                axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
+                tickLine={false}
+                label={{ value: round.yLabel, angle: -90, position: 'insideLeft', fill: '#fff8ec', fontSize: 11, fontWeight: 800 } as never}
+              />
+              <Tooltip
+                cursor={{ fill: 'rgba(255,255,255,0.08)' }}
+                contentStyle={{ background: 'rgba(8,15,32,0.95)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '14px', color: '#fff8ec' }}
+              />
+              <Bar dataKey="value" radius={[12, 12, 0, 0]}>
+                {round.bars!.map((bar) => (
+                  <Cell key={bar.label} fill={bar.color} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
-      <div className="mt-3 text-center text-[9px] font-black uppercase tracking-[0.2em] text-white/62 md:text-[10px]">
-        {label}
+    );
+  }
+
+  if (round.kind === 'line' && round.line) {
+    return (
+      <div className="flex h-full min-h-0 flex-col rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(9,19,42,0.7),rgba(7,14,32,0.88))] p-3 shadow-[0_22px_40px_rgba(2,6,23,0.24)]">
+        <div className="text-center text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
+          {round.chartCaption}
+        </div>
+        <div className="mt-2 h-[clamp(15rem,36vh,22rem)] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={round.line!} margin={{ top: 18, right: 16, left: 10, bottom: 12 }}>
+              <CartesianGrid stroke="rgba(255,255,255,0.12)" strokeDasharray="3 3" />
+              <XAxis
+                dataKey="label"
+                tick={{ fill: '#fff8ec', fontSize: 11, fontWeight: 800 }}
+                axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
+                tickLine={false}
+                label={{ value: round.xLabel, position: 'insideBottom', offset: -2, fill: '#fff8ec', fontSize: 11, fontWeight: 800 } as never}
+              />
+              <YAxis
+                tick={{ fill: '#fff8ec', fontSize: 11, fontWeight: 800 }}
+                axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
+                tickLine={false}
+                label={{ value: round.yLabel, angle: -90, position: 'insideLeft', fill: '#fff8ec', fontSize: 11, fontWeight: 800 } as never}
+              />
+              <Tooltip
+                contentStyle={{ background: 'rgba(8,15,32,0.95)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '14px', color: '#fff8ec' }}
+              />
+              <Line type="monotone" dataKey="value" stroke="#60a5fa" strokeWidth={4} dot={{ r: 5, strokeWidth: 2, stroke: '#fff8ec', fill: '#60a5fa' }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    );
+  }
+
+  const total = round.pie?.reduce((sum, slice) => sum + slice.value, 0) || 1;
+
+  return (
+    <div className="flex h-full min-h-0 flex-col rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(9,19,42,0.7),rgba(7,14,32,0.88))] p-3 shadow-[0_22px_40px_rgba(2,6,23,0.24)]">
+      <div className="text-center text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
+        {round.chartCaption}
+      </div>
+      <div className="mt-2 grid min-h-0 flex-1 gap-3 md:grid-cols-[1.08fr_0.92fr]">
+        <div className="h-[clamp(15rem,36vh,22rem)]">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Tooltip
+                contentStyle={{ background: 'rgba(8,15,32,0.95)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '14px', color: '#fff8ec' }}
+              />
+              <Pie data={round.pie!} dataKey="value" nameKey="label" cx="50%" cy="50%" innerRadius={52} outerRadius={90} paddingAngle={3}>
+                {round.pie!.map((slice) => (
+                  <Cell key={slice.label} fill={slice.color} />
+                ))}
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="flex flex-col justify-center gap-2 rounded-[1.15rem] border border-white/10 bg-white/5 p-3">
+          <div className="text-[9px] font-black uppercase tracking-[0.18em] text-amber-100/70">Slice labels</div>
+          <div className="grid gap-2">
+            {round.pie!.map((slice) => (
+              <div key={slice.label} className="flex items-center gap-2 rounded-[0.9rem] border border-white/10 bg-slate-950/35 px-3 py-2">
+                <span className="h-3.5 w-3.5 rounded-full border border-white/30" style={{ backgroundColor: slice.color }} />
+                <div className="flex-1 text-left text-sm font-black text-white">{slice.label}</div>
+                <div className="text-xs font-black text-cyan-200">{slice.value}%</div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-1 text-[10px] font-bold leading-relaxed text-white/72">
+            Pie charts are labelled clearly here so the learner can match the slice to the statement.
+          </div>
+        </div>
+      </div>
+      <div className="mt-2 text-center text-[11px] font-bold text-white/68">
+        Total: {total}%
       </div>
     </div>
   );
@@ -196,12 +533,12 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
   const [hearts, setHearts] = useState(MAX_HEARTS);
   const [roundNumber, setRoundNumber] = useState(1);
   const [Combo, setStreak] = useState(0);
-  const [round, setRound] = useState<ChartRound>(() => createRound(levelId, 0));
+  const [round, setRound] = useState<ChartRound>(() => buildRound(levelId, 0));
   const [feedback, setFeedback] = useState<null | { type: 'success' | 'error'; title: string; subtitle: string }>(null);
   const [isFinished, setIsFinished] = useState(false);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
-  const [caravanAnimation, setCaravanAnimation] = useState<CaravanAnimation | null>(null);
-  const caravanAnimationIdRef = useRef(0);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isLocked, setIsLocked] = useState(false);
 
   const progress = Math.min((XP / targetScore) * 100, 100);
 
@@ -219,11 +556,12 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
     setHearts(MAX_HEARTS);
     setRoundNumber(1);
     setStreak(0);
-    setRound(createRound(levelId, 0));
+    setRound(buildRound(levelId, 0));
     setFeedback(null);
     setIsFinished(false);
     setShowPracticeIntro(Boolean(isPractice));
-    setCaravanAnimation(null);
+    setSelectedIds([]);
+    setIsLocked(false);
   }, [isPractice, levelId]);
 
   useEffect(() => {
@@ -244,7 +582,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
       });
     }, 1000);
     return () => window.clearInterval(timerId);
-  }, [isFinished, isPractice, onGameOver, XP]);
+  }, [XP, isFinished, isPractice, onGameOver]);
 
   const finishVictory = (finalScore: number) => {
     if (isFinished) return;
@@ -271,20 +609,11 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
     const timeoutId = window.setTimeout(() => {
       const nextRoundNumber = roundNumber + 1;
       setRoundNumber(nextRoundNumber);
-      setRound(createRound(levelId, nextRoundNumber - 1));
+      setRound(buildRound(levelId, nextRoundNumber - 1));
       setFeedback(null);
+      setSelectedIds([]);
+      setIsLocked(false);
     }, 1150);
-    timeoutsRef.current.push(timeoutId);
-  };
-
-  const triggerCaravanAnimation = (outcome: CaravanAnimation['outcome']) => {
-    caravanAnimationIdRef.current += 1;
-    const id = caravanAnimationIdRef.current;
-    setCaravanAnimation({ id, outcome });
-    const clearDelay = outcome === 'success' ? 3000 : 2200;
-    const timeoutId = window.setTimeout(() => {
-      setCaravanAnimation((current) => (current?.id === id ? null : current));
-    }, clearDelay);
     timeoutsRef.current.push(timeoutId);
   };
 
@@ -293,7 +622,8 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
     const nextHearts = hearts - 1;
     setHearts(nextHearts);
     setStreak(0);
-    setFeedback({ type: 'error', title: 'Wrong Read', subtitle });
+    setFeedback({ type: 'error', title: 'Not quite', subtitle });
+    setIsLocked(true);
     if (nextHearts <= 0) {
       const timeoutId = window.setTimeout(() => {
         setIsFinished(true);
@@ -302,15 +632,24 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
       timeoutsRef.current.push(timeoutId);
       return;
     }
-    const timeoutId = window.setTimeout(() => setFeedback(null), 950);
+    const timeoutId = window.setTimeout(() => {
+      setFeedback(null);
+      setSelectedIds([]);
+      setIsLocked(false);
+    }, 950);
     timeoutsRef.current.push(timeoutId);
   };
 
-  const handleChoice = (choice: string) => {
-    if (feedback || isFinished) return;
-    if (choice !== round.answer) {
-      triggerCaravanAnimation('failure');
-      loseHeart(`The correct answer was ${round.answer}.`);
+  const submitAnswer = (selection: string[]) => {
+    if (feedback || isFinished || isLocked) return;
+    setIsLocked(true);
+
+    const normalizedSelected = normalize(selection);
+    const normalizedExpected = normalize(round.correctAnswers);
+    const isCorrect = matchesAnswer(normalizedSelected, normalizedExpected);
+
+    if (!isCorrect) {
+      loseHeart('Read the graph again and match the data carefully.');
       return;
     }
 
@@ -318,8 +657,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
     const updatedScore = XP + points;
     setScore(updatedScore);
     setStreak((previous) => previous + 1);
-    triggerCaravanAnimation('success');
-    setFeedback({ type: 'success', title: 'Supply secured', subtitle: `+${points} XP` });
+    setFeedback({ type: 'success', title: 'Graph secured', subtitle: `+${points} XP` });
     confetti({
       particleCount: 42,
       spread: 48,
@@ -329,14 +667,42 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
     nextRound(updatedScore);
   };
 
+  const handleOptionClick = (choice: RoundOption) => {
+    if (isLocked || feedback || isFinished) return;
+    if (round.answerMode === 'multi') {
+      setSelectedIds((previous) => (
+        previous.includes(choice.id)
+          ? previous.filter((id) => id !== choice.id)
+          : [...previous, choice.id]
+      ));
+      return;
+    }
+    submitAnswer([choice.id]);
+  };
+
+  const handleMultiSubmit = () => {
+    if (isLocked || feedback || isFinished || round.answerMode !== 'multi') return;
+    if (!selectedIds.length) {
+      loseHeart('Select one or more statements before you submit.');
+      return;
+    }
+    submitAnswer(selectedIds);
+  };
+
+  const optionGridClass = round.answerMode === 'trueFalse'
+    ? 'grid-cols-2'
+    : round.answerMode === 'multi'
+      ? 'grid-cols-1 sm:grid-cols-2'
+      : 'grid-cols-2';
+
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden bg-transparent">
+    <div className="relative flex h-full w-full flex-col overflow-hidden bg-transparent select-none text-slate-100">
       <div
         className="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat opacity-100"
         style={{ backgroundImage: `url(${graphGrabberBackground})` }}
         aria-hidden="true"
       />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(8,15,32,0.12),rgba(8,15,32,0.22))]" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(8,15,32,0.14),rgba(8,15,32,0.24))]" aria-hidden="true" />
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Graph Grabber"
@@ -344,128 +710,92 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2 md:gap-3 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.8rem)] md:pt-3">
-        <div className="licensed-board-frame structured-playfield-frame relative flex w-full max-w-6xl min-h-0 flex-1 overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] shadow-[0_28px_64px_rgba(0,0,0,0.34)] md:rounded-[2.6rem]">
-          <div className="relative z-10 flex h-full w-full flex-col px-3 pb-3 pt-2 md:px-5 md:pb-4 md:pt-3">
-            <div className="flex min-h-0 flex-1 flex-col gap-2">
-              <div className="flex justify-center">
-                <GameQuestionCard title={round.title} bodyClassName="tracking-tight">
-                  {formatFantasyPrompt(round.prompt)}
-                </GameQuestionCard>
-              </div>
 
-              <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 md:grid-cols-[1.18fr_0.82fr] md:gap-2">
-                <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 rounded-[2rem] border border-white/12 bg-transparent p-2.5 shadow-[0_24px_40px_rgba(2,6,23,0.12)] md:p-3">
-                  <div className="flex min-h-0 flex-1 items-center justify-center">
-                    <CaravanBoard caravans={round.caravans} label={round.boardLabel} />
-                  </div>
-                </div>
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.65rem)] pt-2 md:gap-3 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.8rem)] md:pt-3">
+        <div className="flex min-h-0 flex-1 flex-col gap-2 md:gap-3">
+          <div className="flex justify-center">
+            <GameQuestionCard title={round.title}>
+              {formatFantasyPrompt(round.prompt)}
+            </GameQuestionCard>
+          </div>
 
-                <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.84),rgba(30,41,59,0.92))] p-2.5 shadow-[0_24px_40px_rgba(2,6,23,0.24)] md:p-3">
-                  <div className="grid grid-cols-4 gap-1.5">
-                    {round.options.map((choice, index) => (
-                      <motion.button
-                        key={`${choice}-${index}`}
-                        whileTap={{ scale: 0.97 }}
-                        onClick={() => handleChoice(choice)}
-                        disabled={feedback !== null || isFinished}
-                        className="rounded-[1.05rem] border border-amber-100/70 bg-[linear-gradient(180deg,#fde68a_0%,#f59e0b_100%)] px-3 py-3 text-center text-[clamp(1.1rem,4vw,1.7rem)] font-black text-amber-950 shadow-[0_10px_18px_rgba(146,64,14,0.35)] transition disabled:opacity-45"
-                      >
-                        {choice}
-                      </motion.button>
-                    ))}
-                  </div>
-                </div>
-              </div>
+          <div className="grid min-h-0 flex-1 gap-2 md:grid-rows-[minmax(0,1fr)_auto] md:gap-3">
+            <div className="min-h-0">
+              <GraphBoard round={round} />
             </div>
 
-            <AnimatePresence mode="wait">
-              {feedback ? (
-                <motion.div
-                  key={feedback.title}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  transition={{ duration: 0.18, ease: 'easeOut' }}
-                  className={`pointer-events-none absolute inset-x-0 bottom-3 z-20 flex justify-center text-center ${feedback.type === 'success' ? 'text-emerald-100' : 'text-amber-100'}`}
-                >
-                  <div className="rounded-full border border-white/12 bg-slate-950/40 px-4 py-1.5 text-sm font-black uppercase tracking-[0.14em] shadow-[0_10px_18px_rgba(0,0,0,0.2)]">
-                    <div>{feedback.title}</div>
-                    <div className="mt-0.5 text-[11px] font-semibold normal-case tracking-normal text-white/92">
-                      {feedback.subtitle}
-                    </div>
-                  </div>
-                </motion.div>
+            <section className="rounded-[1.3rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.8),rgba(10,17,37,0.92))] p-3 shadow-[0_24px_40px_rgba(2,6,23,0.24)] md:p-4">
+              <div className="mb-2 flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/70">
+                <span>{round.support}</span>
+                <span>{round.xLabel} vs {round.yLabel}</span>
+              </div>
+              <div className={`grid gap-2 ${optionGridClass}`}>
+                {round.options.map((choice) => {
+                  const selected = selectedIds.includes(choice.id);
+                  const isCorrect = feedback?.type === 'success' && round.correctAnswers.includes(choice.id);
+                  return (
+                    <motion.button
+                      key={choice.id}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => handleOptionClick(choice)}
+                      disabled={feedback !== null || isFinished}
+                      className={[
+                        'rounded-[1rem] px-3 py-3 text-center text-[clamp(0.92rem,3vw,1.25rem)] font-black transition disabled:opacity-45',
+                        isCorrect
+                          ? 'ui-button-success'
+                          : selected
+                            ? 'ui-button-primary'
+                            : 'ui-button-secondary',
+                      ].join(' ')}
+                    >
+                      {choice.label}
+                    </motion.button>
+                  );
+                })}
+              </div>
+              {round.answerMode === 'multi' ? (
+                <div className="mt-3 flex justify-center">
+                  <button
+                    type="button"
+                    onClick={handleMultiSubmit}
+                    disabled={feedback !== null || isFinished}
+                    className="ui-button-primary min-w-[11rem] rounded-[1rem] px-4 py-3 text-sm font-black uppercase tracking-[0.16em] disabled:opacity-45"
+                  >
+                    Submit Answers
+                  </button>
+                </div>
               ) : null}
-            </AnimatePresence>
-
-            {caravanAnimation ? (
-              <motion.div
-                key={caravanAnimation.id}
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[4.5rem] overflow-hidden"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <motion.div
-                  className="absolute bottom-0 left-0"
-                  initial={{
-                    x: '-24vw',
-                    y: 0,
-                    opacity: 0,
-                    rotate: -1,
-                    scale: 0.98,
-                  }}
-                  animate={
-                    caravanAnimation.outcome === 'success'
-                      ? {
-                          x: '118vw',
-                          y: 0,
-                          opacity: 1,
-                          rotate: 0,
-                          scale: 1,
-                        }
-                      : {
-                          x: ['-24vw', '46vw', '50vw'],
-                          y: [0, 0, 18],
-                          opacity: [0, 1, 0],
-                          rotate: [-1, 0, 6],
-                          scale: [0.98, 1, 0.92],
-                        }
-                  }
-                  transition={
-                    caravanAnimation.outcome === 'success'
-                      ? { duration: 3.15, ease: 'linear' }
-                      : { duration: 2.25, times: [0, 0.72, 1], ease: 'easeInOut' }
-                  }
-                >
-                  <div className="relative flex items-end gap-1 rounded-[1.1rem] border border-amber-200/16 bg-[linear-gradient(180deg,rgba(120,53,15,0.34),rgba(15,23,42,0.56))] px-3 py-2 shadow-[0_10px_18px_rgba(0,0,0,0.18)]">
-                    <div className="absolute -bottom-1 left-3 right-3 h-3 rounded-full bg-slate-950/60 blur-[1px]" />
-                    <div className="absolute -bottom-2 left-4 h-3 w-3 rounded-full border border-white/10 bg-slate-900/90" />
-                    <div className="absolute -bottom-2 right-4 h-3 w-3 rounded-full border border-white/10 bg-slate-900/90" />
-                    <div className="flex items-end gap-1">
-                      {[0, 1, 2].map((crateIndex) => (
-                        <img
-                          key={`${caravanAnimation.id}-crate-${crateIndex}`}
-                          src={CARAVAN_CARGO_IMAGES[(crateIndex + caravanAnimation.id) % CARAVAN_CARGO_IMAGES.length]}
-                          alt=""
-                          className="h-8 w-8 drop-shadow-[0_2px_6px_rgba(0,0,0,0.24)] md:h-9 md:w-9"
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              </motion.div>
-            ) : null}
+            </section>
           </div>
         </div>
 
+        <AnimatePresence mode="wait">
+          {feedback ? (
+            <motion.div
+              key={`${feedback.type}-${feedback.title}-${feedback.subtitle}`}
+              initial={{ opacity: 0, y: 10, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 8, scale: 0.98 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
+              className={`pointer-events-none flex justify-center text-center ${feedback.type === 'success' ? 'text-emerald-100' : 'text-amber-100'}`}
+            >
+              <div className="rounded-full border border-white/12 bg-slate-950/40 px-4 py-1.5 text-sm font-black uppercase tracking-[0.14em] shadow-[0_10px_18px_rgba(0,0,0,0.2)]">
+                <div>{feedback.title}</div>
+                <div className="mt-0.5 text-[11px] font-semibold normal-case tracking-normal text-white/92">
+                  {feedback.subtitle}
+                </div>
+              </div>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+
+        <div className="flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-white/55">
+          <span>{progress.toFixed(0)}% brainpower secured</span>
+          <span>{hearts} hearts remaining</span>
+        </div>
       </div>
     </div>
   );
 };
 
 export default GraphGrabberGame;
-
-

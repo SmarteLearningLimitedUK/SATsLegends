@@ -812,7 +812,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
             </div>
           </div>
 
-          <div className="grid min-h-0 flex-1 grid-cols-2 gap-2 lg:gap-3">
+          <div className="answer-choice-surface grid min-h-0 flex-1 grid-cols-2 gap-2 lg:gap-3">
             {question.options.map((option, index) => {
               const isCorrect = question.correctOptionIndices.includes(index);
               const isSelected = activeSelection.includes(index);

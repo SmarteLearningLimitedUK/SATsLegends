@@ -272,6 +272,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
   const [correctCount, setCorrectCount] = useState(0);
   const [roundOver, setRoundOver] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackState>(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isLocked, setIsLocked] = useState(false);
 
   const [problem, setProblem] = useState<RemainderProblem>(() => {
@@ -301,6 +302,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
     setCorrectCount(0);
     setRoundOver(false);
     setFeedback(null);
+    setSelectedAnswer(null);
     setIsLocked(false);
     const nextStage = stageFromProgress(baseLevel, 0, initialRoundTime);
     setProblem(createProblem(nextStage));
@@ -344,19 +346,21 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
       const nextStage = stageFromProgress(baseLevel, nextSolvedCount, timeLeft);
       setProblem(createProblem(nextStage));
       setFeedback(null);
+      setSelectedAnswer(null);
       setIsLocked(false);
       questionStartRef.current = Date.now();
     }, delayMs);
     timeoutRefs.current.push(timer);
   }, [baseLevel, timeLeft]);
 
-  const evaluateAnswer = useCallback((selectedAnswer: string) => {
+  const evaluateAnswer = useCallback((choice: string) => {
     if (roundOver || isLocked) return;
     setIsLocked(true);
+    setSelectedAnswer(choice);
 
     const nextAttempts = attemptCount + 1;
     const nextSolved = solvedCount + 1;
-    const isCorrect = selectedAnswer === problem.answerLabel;
+    const isCorrect = choice === problem.answerLabel;
 
     setAttemptCount(nextAttempts);
     setSolvedCount(nextSolved);
@@ -456,14 +460,20 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
             <div className="text-center text-[10px] font-black uppercase tracking-[0.16em] text-amber-100/80">
               Tap the correct quotient and remainder
             </div>
-            <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <div className="answer-choice-surface mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
               {problem.options.map((option, index) => (
                 <button
                   key={`${problem.id}-${option}-${index}`}
                   type="button"
                   disabled={isLocked || roundOver}
                   onClick={() => evaluateAnswer(option)}
-                  className="relative min-h-[3.4rem] rounded-[0.95rem] border border-violet-200/18 bg-[linear-gradient(180deg,rgba(52,18,98,0.92),rgba(17,10,38,0.95))] px-3 py-2 text-left shadow-[0_8px_18px_rgba(2,6,23,0.16)] transition-transform duration-150 hover:scale-[1.01] disabled:opacity-55"
+                  className={`relative min-h-[3.4rem] rounded-[0.95rem] border px-3 py-2 text-left shadow-[0_8px_18px_rgba(2,6,23,0.16)] transition-transform duration-150 hover:scale-[1.01] disabled:opacity-55 ${
+                    selectedAnswer === option
+                      ? feedback?.tone === 'success'
+                        ? 'ui-button-success'
+                        : 'ui-button-primary'
+                      : 'ui-button-secondary'
+                  }`}
                 >
                   <span className="text-[clamp(1rem,4.2vw,1.45rem)] font-black text-white">{option}</span>
                   <span className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full border border-violet-100/28 bg-violet-200/10" />

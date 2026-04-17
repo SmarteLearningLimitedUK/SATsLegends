@@ -577,7 +577,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
         title="Prime Pop"
         body={(
           <>
-            The Monster Minds have released number orbs to hide the prime numbers.
+            The Monster Mind has released number orbs to hide the prime numbers.
             {' '}
             Pick out the <b>PRIME</b> numbers before they cross the line and are lost forever!
           </>

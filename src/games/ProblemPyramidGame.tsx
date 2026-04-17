@@ -189,7 +189,7 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
         </section>
 
         <section className="shrink-0">
-          <div className="grid grid-cols-4 gap-2">
+          <div className="answer-choice-surface grid grid-cols-4 gap-2">
             {round.options.map((option) => (
               <motion.button
                 key={option}

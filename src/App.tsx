@@ -305,9 +305,9 @@ const App: React.FC = () => {
   }), [globalMiniGameHudTimeLeft, globalMiniGameLives]);
 
   const resolveLevelTitle = useCallback(() => {
-    if (!selectedLevel) return 'Round over';
+    if (!selectedLevel) return 'Level over';
     if (canonicalGameTitle) return canonicalGameTitle;
-    return 'Round over';
+    return 'Level over';
   }, [canonicalGameTitle]);
 
   const buildPracticeLevelResult = useCallback((
@@ -323,7 +323,7 @@ const App: React.FC = () => {
       title: resolveLevelTitle(),
       subtitle: type === 'victory'
         ? 'Practice complete. No XP or brainpower earned.'
-        : 'Practice round over. No XP or brainpower earned.',
+        : 'Practice session over. No XP or brainpower earned.',
       score,
       practice: true,
       stars: 0,
@@ -407,7 +407,7 @@ const App: React.FC = () => {
       type: 'gameover',
       title: levelTitle,
       subtitle: wellbeingSuggested
-        ? 'Three tough rounds in a row. Want to take a minute in a calm break?'
+        ? 'Three tough failures in a row. Want to take a minute in a calm break?'
         : 'No rewards lost forever. Reset, tighten the route, and take another shot.',
       stars: progressionResult.stars,
       xpGained: progressionResult.xpGained,
@@ -516,7 +516,7 @@ const App: React.FC = () => {
       if (selectedLevel.blueprintKey === 'mean_machine') {
         return {
           title: 'Mean Machine',
-          summary: "The Mean Machine must be tamed. It's the source of all fun for those Monster Minds. Spin the reels and follow the instructions to identify MEAN, MODE, and MEDIAN.",
+          summary: "The Mean Machine must be tamed. It's the source of all fun for the Monster Mind. Spin the reels and follow the instructions to identify MEAN, MODE, and MEDIAN.",
           bullets: [],
         };
       }
@@ -544,14 +544,14 @@ const App: React.FC = () => {
       if (selectedLevel.blueprintKey === 'polygon_palace') {
         return {
           title: 'Polygon Palace',
-          summary: 'Welcome traveller! I need a hand to categorise these shapes. read the question and select the correct answer , or answers as there may be more than one!',
+          summary: 'Welcome traveller! I need a hand to categorise these shapes. Read the question and select the correct answer, or answers, as there may be more than one. Some of the later shapes are 3D, so be ready to count faces, edges, and vertices too!',
           bullets: [],
         };
       }
       if (selectedLevel.blueprintKey === 'area_architect') {
         return {
           title: 'Area Architect',
-          summary: 'We need to figure out the area of the underground tunnels beneath Monster Mind headquarters. using the blueprints - can you help us work out the dimensions?',
+          summary: 'We need to figure out the area of the underground tunnels beneath Monster Mind headquarters. Using the blueprints, can you help us work out the dimensions?',
           bullets: [],
         };
       }
@@ -593,21 +593,21 @@ const App: React.FC = () => {
       if (selectedLevel.blueprintKey === 'coordinate_quest') {
         return {
           title: 'Coordinate Quest',
-          summary: "We can't get through! Those Monster Minds have hidden traps. Navigate the map from the co-ordinates given, and make it through the pass safely. Remember: the X axis runs left to right â†’, and the Y axis runs bottom to top â†‘.",
+          summary: "We can't get through! That Monster Mind has hidden traps. Navigate the map from the co-ordinates given, and make it through the pass safely. Remember: the X axis runs left to right â†’, and the Y axis runs bottom to top â†‘.",
           bullets: [],
         };
       }
       if (selectedLevel.blueprintKey === 'angle_arena') {
         return {
           title: 'Angle Arena',
-          summary: "Greetings! We've managed to build our cannon here to destroy the Monster Mind's look-out towers. we need your maths skills to work out the angle of launch. select the correct angle and let's blast them.",
+          summary: "Greetings! We've managed to build our cannon here to destroy the Monster Mind's look-out towers. We need your maths skills to work out the angle of launch. Select the correct angle and let's blast them.",
           bullets: [],
         };
       }
       if (selectedLevel.blueprintKey === 'simplify_sprint') {
         return {
           title: 'Simplify Sprint',
-          summary: "The Monster Minds have encrypted the calues to make it as large as possible - this means its harder for our reserchers to solve. hel the researchers by simplifying the frction to it's smallest form.",
+          summary: "The Monster Mind has encrypted the values to make them as large as possible. That makes it harder for our researchers to solve. Help the researchers by simplifying the fraction to its smallest form.",
           bullets: [],
         };
       }
@@ -620,7 +620,7 @@ const App: React.FC = () => {
       }
       const baseRules = selectedRuleSet || {
         title: canonicalGameTitle || 'Practice',
-        summary: `This is the practice round for ${canonicalGameTitle || 'this game'}. Use it to learn the controls before the real level.`,
+        summary: `This is the practice run for ${canonicalGameTitle || 'this game'}. Use it to learn the controls before the real level.`,
         bullets: [
           'Read the mission at the top before you begin.',
           'Use the on-screen tools to learn how the game works.',
@@ -637,7 +637,7 @@ const App: React.FC = () => {
       if (selectedLevel?.isPractice) {
         return {
           ...kidRules,
-          summary: `Practice round for ${kidRules.title}. Learn the controls here, then skip or start level one.`,
+          summary: `Practice run for ${kidRules.title}. Learn the controls here, then skip or start level one.`,
         };
       }
       return kidRules;

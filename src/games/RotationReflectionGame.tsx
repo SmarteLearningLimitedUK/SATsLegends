@@ -193,7 +193,7 @@ const createQuestion = (baseLevel: number, solvedCount: number, timeLeft: number
       direction,
       quarterTurns,
       instruction: 'Rotate to match the target outline.',
-      subInstruction: speedRound ? 'Speed round: use 90 deg taps quickly.' : `Hint: target is ${turnText} from start.`,
+      subInstruction: speedRound ? 'Speed mode: use 90 deg taps quickly.' : `Hint: target is ${turnText} from start.`,
       options: [],
       correctOptionIds: ['match'],
       speedRound,
@@ -234,7 +234,7 @@ const createQuestion = (baseLevel: number, solvedCount: number, timeLeft: number
     direction,
     quarterTurns,
     instruction: 'What turn maps the left shape to the right shape?',
-    subInstruction: speedRound ? 'Speed round: identify the turn.' : 'Think clockwise or anticlockwise.',
+    subInstruction: speedRound ? 'Speed mode: identify the turn.' : 'Think clockwise or anticlockwise.',
     options: identify.options.map((label, idx) => ({ id: `turn-${idx}`, label })),
     correctOptionIds: identify.options
       .map((label, idx) => ({ label, id: `turn-${idx}` }))
@@ -526,7 +526,7 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
                     <ShapeCard shape={question.shape} orientation={question.startOrientation} tone="neutral" />
                     <span className="text-2xl font-black text-cyan-100/75">?</span>
                   </div>
-                  <div className="grid grid-cols-2 gap-1.5">
+                  <div className="answer-choice-surface grid grid-cols-2 gap-1.5">
                     {question.options.map((option) => (
                       <button
                         key={option.id}
@@ -554,7 +554,7 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
                     <span className="text-2xl font-black text-cyan-100/75">to</span>
                     <ShapeCard shape={question.shape} orientation={question.targetOrientation} tone="target" />
                   </div>
-                  <div className="grid grid-cols-2 gap-1.5">
+                  <div className="answer-choice-surface grid grid-cols-2 gap-1.5">
                     {question.options.map((option) => (
                       <button
                         key={option.id}

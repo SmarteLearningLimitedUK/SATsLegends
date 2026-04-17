@@ -514,7 +514,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
         {state.status !== 'complete' && (
       <div className="fixed inset-x-0 bottom-[max(0.5rem,env(safe-area-inset-bottom))] z-40 px-3">
-            <div className="mx-auto grid w-full max-w-[780px] grid-cols-4 gap-2.5 sm:gap-3 md:gap-4">
+            <div className="answer-choice-surface mx-auto grid w-full max-w-[780px] grid-cols-4 gap-2.5 sm:gap-3 md:gap-4">
               {state.currentProblem?.options.map((option, idx) => (
                 <motion.button
                   type="button"
@@ -524,9 +524,11 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                   transition={{ delay: idx * 0.03 }}
                   onClick={() => toggleOption(option)}
                   className={`relative flex h-[clamp(62px,8.8vh,88px)] items-center justify-center rounded-2xl border text-[clamp(1.1rem,3.8vw,2rem)] font-black transition ${
-                    selectedOptions.includes(option)
-                      ? 'border-cyan-100 bg-[linear-gradient(180deg,#39c4f4_0%,#1278bb_100%)] text-white shadow-[0_0_0_3px_rgba(125,211,252,0.45),0_10px_22px_rgba(2,6,23,0.45)]'
-                      : 'border-amber-100/70 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] text-slate-900 shadow-[0_8px_18px_rgba(2,6,23,0.3)]'
+                    state.status === 'correct' && selectedOptions.includes(option)
+                      ? 'ui-button-success'
+                      : selectedOptions.includes(option)
+                        ? 'ui-button-primary'
+                        : 'ui-button-secondary'
                   }`}
                 >
                   {option}

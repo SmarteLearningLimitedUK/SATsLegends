@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import meanMachineImage from '../assets/mean.png';
-import meanMachineBackground from '../assets/maps/backgroundsforgames/meanmachine2.jpg';
+import meanMachineBackground from '../assets/maps/backgroundsforgames/mean.jpg';
 import medianMachineImage from '../assets/median.png';
 import modeMachineImage from '../assets/mode.png';
 import { GameplaySessionEventHandlers, GameplaySessionState, MiniGamePracticeBriefing } from '../app/gameplaySessionContract';
@@ -668,7 +668,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Mean Machine"
-        body="The Mean Machine must be tamed. It's the source of all fun for those Monster Minds. Spin the reels and follow the instructions to identify MEAN, MODE, and MEDIAN."
+        body="The Mean Machine must be tamed. It's the source of all fun for the Monster Mind. Spin the reels and follow the instructions to identify MEAN, MODE, and MEDIAN."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
@@ -834,9 +834,10 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                   )}
                 </div>
               </div>
-              <div className={`grid gap-2 ${round && round.options.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
+              <div className={`answer-choice-surface grid gap-2 ${round && round.options.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
                 {round?.options.map((option, index) => {
                   const isSelected = selectedAnswer === option;
+                  const isCorrect = feedback?.type === 'success' && isSelected;
                   return (
                     <motion.button
                       key={`${option}-${index}`}
@@ -844,12 +845,14 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                       type="button"
                       onClick={() => handleAnswer(option)}
                       disabled={gameState !== 'answering' || !sessionActive}
-                      animate={selectedAnswer === option && wrongPulse ? { x: [0, -6, 6, -4, 4, 0] } : { x: 0 }}
+                      animate={isCorrect ? { scale: [1, 1.1, 0.98, 1.05, 1], rotate: [0, -2, 2, 0] } : selectedAnswer === option && wrongPulse ? { x: [0, -6, 6, -4, 4, 0] } : { x: 0 }}
                       transition={{ duration: 0.28 }}
-                      className={`rounded-[0.9rem] border px-3 py-2 text-sm font-black transition-all ${
-                        isSelected
-                          ? 'border-amber-100/85 bg-[linear-gradient(180deg,#fbbf24_0%,#f59e0b_100%)] text-slate-950 shadow-[0_12px_20px_rgba(146,64,14,0.34)]'
-                          : 'border-cyan-100/24 bg-[linear-gradient(180deg,#2563eb_0%,#1d4ed8_100%)] text-white shadow-[0_12px_18px_rgba(2,6,23,0.22)]'
+                      className={`rounded-[0.9rem] px-3 py-2 text-sm font-black transition-all ${
+                        isCorrect
+                          ? 'ui-button-success'
+                          : isSelected
+                            ? 'ui-button-primary'
+                            : 'ui-button-secondary'
                       } disabled:cursor-not-allowed disabled:opacity-45`}
                     >
                       {option}

@@ -309,7 +309,7 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
         </div>
 
         <div className="shrink-0">
-          <div className="grid grid-cols-2 gap-2 md:gap-3">
+          <div className="answer-choice-surface grid grid-cols-2 gap-2 md:gap-3">
             {question.options.map((option, index) => (
               <motion.button
                 key={`${question.prompt}-${option}`}

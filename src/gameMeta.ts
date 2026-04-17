@@ -143,9 +143,9 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       title: 'Angle Siege',
       summary: 'Solve the angle prompt, select the correct angle, and watch the sling fire at the target.',
       bullets: [
-        'Some rounds ask for a direct angle, while others hide the answer inside a geometry clue.',
+        'Some challenges ask for a direct angle, while others hide the answer inside a geometry clue.',
         'Select the angle choice that matches the prompt to launch the sling.',
-        'Later rounds include missing-angle reasoning and larger numbers.',
+        'Later stages include missing-angle reasoning and larger numbers.',
       ],
     },
   },
@@ -182,7 +182,7 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       title: 'Monster Market',
       summary: 'Run the fantasy stall, total each order, and hand back the exact change before the next shopper reaches the counter.',
       bullets: [
-        'Some customers buy one item while later rounds bundle several items together.',
+        'Some customers buy one item while later orders bundle several items together.',
         'Use the till to build the exact tray total that matches the change due.',
         'Fast accurate service builds streaks and keeps the market queue moving.',
       ],
@@ -208,7 +208,7 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       title: 'Scale Master',
       summary: "We're ready to advance - we're working out the weights needed for the catapaults. Select the weights to meet the target to help us balance the catapault.",
       bullets: [
-        'Rounds can swap between mass and liquid capacity, so watch the unit before you load anything.',
+        'Prompts can swap between mass and liquid capacity, so watch the unit before you load anything.',
         'Some targets are shown in kilograms or litres even when the cargo is labelled in grams or millilitres.',
         'Perfect balances score the best rewards, but overshooting the target will cost time.',
       ],
@@ -236,7 +236,7 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       bullets: [
         'Fill every defender slot using the ratio and total defenders shown at the top.',
         'Sword pirates hold the line while cannon pirates power the island bombardment.',
-        'The final boss round asks for a perfect 4 : 1 dragon-cannon deployment.',
+        'The final boss challenge asks for a perfect 4 : 1 dragon-cannon deployment.',
       ],
     },
   },
@@ -248,8 +248,8 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       summary: 'Track the moving decimal targets and fire at the one that matches the rule.',
       bullets: [
         'Prompts can ask for the largest, smallest, closest or correctly rounded decimal.',
-        'Read each decimal place carefully before you fire, especially in the later rounds.',
-        'Final rounds may require you to hit decimals in order from smallest to largest.',
+        'Read each decimal place carefully before you fire, especially in the later stages.',
+        'Final stages may require you to hit decimals in order from smallest to largest.',
       ],
     },
   },
@@ -274,7 +274,7 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       summary: 'Guide the explorer across the jungle grid by plotting the right coordinate or following the route instructions exactly.',
       bullets: [
         'Read x first, then y whenever the treasure is given as a coordinate pair.',
-        'Later rounds start from a marked square and ask you to follow movement clues to the final tile.',
+        'Later stages start from a marked square and ask you to follow movement clues to the final tile.',
         'Trap tiles punish rushed guesses, so think through the path before you tap.',
       ],
     },
@@ -337,7 +337,7 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       bullets: [
         'Read the bar chart carefully before you choose an answer.',
         'Some questions ask for a single caravan, some ask for a comparison, and some ask for a total.',
-        'The practice briefing shows the full story before the round starts.',
+        'The practice briefing shows the full story before the level starts.',
       ],
     },
   },
@@ -362,7 +362,7 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       summary: 'Balance the machine by finding the correct mean or missing value.',
       bullets: [
         'Add the full data set before dividing carefully.',
-        'Some rounds ask for the missing number needed to make a target mean.',
+        'Some questions ask for the missing number needed to make a target mean.',
         'Steady accuracy powers the machine faster.',
       ],
     },
@@ -375,7 +375,7 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       summary: 'Resolve each expression using the correct operation order to unlock the arena gate.',
       bullets: [
         'Use brackets first, then multiplication/division, then addition/subtraction.',
-        'Rounds mix single and multi-step expressions with close distractor answers.',
+        'Challenges mix single and multi-step expressions with close distractor answers.',
         'Fast accurate decisions build streaks and keep the arena under control.',
       ],
     },
@@ -478,7 +478,7 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       title: 'Rule Runner',
       summary: 'Decode the rule machine or sequence gate and choose the correct result.',
       bullets: [
-        'Some rounds use input-output rules instead of raw next-term sequences.',
+        'Some challenges use input-output rules instead of raw next-term sequences.',
         'Work out the rule before you race for the answer.',
         'Fast accurate rule reading keeps the run alive.',
       ],
