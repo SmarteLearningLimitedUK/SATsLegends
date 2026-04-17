@@ -1,8 +1,10 @@
 import React from 'react';
+import { motion } from 'motion/react';
 import {
   ArrowLeft,
   HelpCircle,
   Heart,
+  Sparkles,
   Volume2,
   VolumeX,
 } from 'lucide-react';
@@ -35,7 +37,7 @@ type IconButtonProps = {
   disabled?: boolean;
 };
 
-type FeedbackTone = 'neutral' | 'success' | 'warning';
+type FeedbackTone = 'neutral' | 'success' | 'warning' | 'praise';
 
 type GameTopBarProps = {
   onBack: () => void;
@@ -243,21 +245,39 @@ export const FeedbackStrip: React.FC<{ tone?: FeedbackTone; children: React.Reac
   tone = 'neutral',
   children,
   className,
-}) => (
-  <div
-    className={cn(
-      'licensed-game-card mission-panel-shell rounded-[1.1rem] border px-3 py-2 text-center text-[13px] font-black shadow-[0_10px_18px_rgba(15,23,42,0.22)]',
-      tone === 'success'
-        ? 'border-emerald-200/50 text-emerald-50'
-        : tone === 'warning'
-          ? 'border-amber-200/50 text-amber-100'
+}) => {
+  const baseClassName = cn(
+    'licensed-game-card mission-panel-shell rounded-[1.1rem] border px-3 py-2 text-center text-[13px] font-black shadow-[0_10px_18px_rgba(15,23,42,0.22)]',
+    tone === 'success'
+      ? 'border-emerald-200/50 text-emerald-50'
+      : tone === 'warning'
+        ? 'border-amber-200/50 text-amber-100'
+        : tone === 'praise'
+          ? 'border-amber-100/65 bg-[linear-gradient(135deg,rgba(255,229,153,0.98),rgba(125,211,252,0.95))] text-slate-950 shadow-[0_0_0_1px_rgba(255,255,255,0.45),0_0_24px_rgba(251,191,36,0.58)]'
           : 'border-cyan-100/20 text-cyan-100',
-      className,
-    )}
-  >
-    {children}
-  </div>
-);
+    className,
+  );
+
+  if (tone !== 'praise') {
+    return <div className={baseClassName}>{children}</div>;
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10, scale: 0.94, rotate: -1 }}
+      animate={{ opacity: 1, y: 0, scale: [1, 1.04, 1], rotate: 0 }}
+      transition={{ duration: 0.38, ease: 'easeOut' }}
+      className={cn('relative overflow-hidden', baseClassName)}
+    >
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,255,255,0.82),transparent_38%),radial-gradient(circle_at_18%_22%,rgba(255,255,255,0.4),transparent_16%),radial-gradient(circle_at_82%_28%,rgba(255,255,255,0.35),transparent_16%)] opacity-90" />
+      <div className="relative inline-flex items-center justify-center gap-1.5">
+        <Sparkles className="h-4 w-4 text-amber-500" />
+        <span>{children}</span>
+        <Sparkles className="h-4 w-4 text-cyan-600" />
+      </div>
+    </motion.div>
+  );
+};
 
 export const GameTopBar: React.FC<GameTopBarProps> = ({
   onBack,

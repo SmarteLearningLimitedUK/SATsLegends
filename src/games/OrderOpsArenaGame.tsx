@@ -5,7 +5,8 @@ import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { GameQuestionCard, GameUiShell } from '../components/game-ui/GameUiKit';
 import { triggerHaptic } from '../haptics';
 import { formatMultiplicationDisplay } from '../utils/mathDisplay';
-import orderOpsEnemy from '../assets/bosses/goblinwiz.jpg';
+import { pickBossArt } from '../assets/bosses/library';
+import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 
 interface OrderOpsArenaGameProps {
   levelId: number;
@@ -23,7 +24,7 @@ interface OpsRound {
 }
 
 type FeedbackState = null | {
-  type: 'success' | 'error';
+  type: 'success' | 'error' | 'praise';
   title: string;
   subtitle: string;
 };
@@ -121,6 +122,8 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
   const [round, setRound] = useState<OpsRound>(() => createOpsRound(levelId));
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [isFinished, setIsFinished] = useState(false);
+  const orderOpsEnemy = useMemo(() => pickBossArt(`order-ops-${levelId}`), [levelId]);
+  const roundStartRef = useRef<number>(Date.now());
 
 
   const displayExpression = formatMultiplicationDisplay(round.expression);
@@ -146,6 +149,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
     setEnemyHealth(maxEnemyHealth);
     setQuestionCount(1);
     setRound(createOpsRound(levelId));
+    roundStartRef.current = Date.now();
     setFeedback(null);
     setIsFinished(false);
   }, [initialTime, levelId, maxEnemyHealth]);
@@ -189,6 +193,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
     const timeoutId = window.setTimeout(() => {
       setQuestionCount((previous) => previous + 1);
       setRound(createOpsRound(levelId));
+      roundStartRef.current = Date.now();
       setFeedback(null);
     }, 620);
     timersRef.current.push(timeoutId);
@@ -229,15 +234,17 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
     const points = 140 + (Combo * 24);
     const updatedScore = XP + points;
     const nextEnemyHealth = Math.max(0, enemyHealth - 1);
+    const elapsedMs = Date.now() - roundStartRef.current;
+    const isPraise = shouldShowPraise(1, elapsedMs);
 
     setScore(updatedScore);
     scoreRef.current = updatedScore;
     setStreak((previous) => previous + 1);
     setEnemyHealth(nextEnemyHealth);
     setFeedback({
-      type: 'success',
-      title: 'Direct Hit',
-      subtitle: `Player strike landed - +${points} XP`,
+      type: isPraise ? 'praise' : 'success',
+      title: isPraise ? buildPraiseMessage() : 'Direct Hit',
+      subtitle: isPraise ? 'Fast first try bonus!' : `Player strike landed - +${points} XP`,
     });
     triggerHaptic('success');
 
@@ -317,14 +324,32 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
               initial={{ opacity: 0, scale: 0.82 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.08 }}
-              className={`pointer-events-none absolute inset-0 z-40 flex items-center justify-center backdrop-blur-md ${feedback.type === 'success' ? 'bg-emerald-500/16' : 'bg-red-500/16'}`}
-            >
-              <div className="rounded-[2rem] border border-white/14 bg-slate-950/60 px-8 py-6 text-center shadow-[0_24px_36px_rgba(0,0,0,0.24)]">
-                <div className={`text-4xl font-black uppercase tracking-[0.12em] md:text-6xl ${feedback.type === 'success' ? 'text-emerald-100' : 'text-amber-100'}`}>
-                  {feedback.title}
+                className={`pointer-events-none absolute inset-0 z-40 flex items-center justify-center backdrop-blur-md ${
+                  feedback.type === 'praise'
+                    ? 'bg-[radial-gradient(circle_at_center,rgba(255,230,138,0.34),rgba(56,189,248,0.14))]'
+                    : feedback.type === 'success'
+                      ? 'bg-emerald-500/16'
+                      : 'bg-red-500/16'
+                }`}
+              >
+                <div className={`rounded-[2rem] border px-8 py-6 text-center shadow-[0_24px_36px_rgba(0,0,0,0.24)] ${
+                  feedback.type === 'praise'
+                    ? 'border-amber-100/70 bg-[linear-gradient(180deg,rgba(255,248,214,0.98),rgba(125,211,252,0.92))]'
+                    : 'border-white/14 bg-slate-950/60'
+                }`}>
+                  <div className={`text-4xl font-black uppercase tracking-[0.12em] md:text-6xl ${
+                    feedback.type === 'success'
+                      ? 'text-emerald-100'
+                      : feedback.type === 'praise'
+                        ? 'text-slate-950'
+                        : 'text-amber-100'
+                  }`}>
+                    {feedback.title}
+                  </div>
+                  <div className={`mt-2 text-lg font-bold md:text-2xl ${feedback.type === 'praise' ? 'text-slate-950/90' : 'text-white/92'}`}>
+                    {feedback.subtitle}
+                  </div>
                 </div>
-                <div className="mt-2 text-lg font-bold text-white/92 md:text-2xl">{feedback.subtitle}</div>
-              </div>
             </motion.div>
           )}
         </AnimatePresence>

@@ -8,8 +8,7 @@ import {
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import dojoBackground from '../assets/maps/backgroundsforgames/numberlineninja.jpg';
-import monsterHitA from '../assets/bosses/a.jpg';
-import monsterHitB from '../assets/bosses/a.jpg';
+import { pickBossArt } from '../assets/bosses/library';
 interface NumberLineNinjaGameProps {
   levelId: number;
   avatarId: string;
@@ -281,6 +280,8 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const [monsterSmokeFx, setMonsterSmokeFx] = useState(false);
   const [monsterSpeech, setMonsterSpeech] = useState<string | null>(null);
   const [monsterHitAnimationIndex, setMonsterHitAnimationIndex] = useState(0);
+  const monsterHitA = useMemo(() => pickBossArt(`number-line-ninja-${levelId}-a`), [levelId]);
+  const monsterHitB = useMemo(() => pickBossArt(`number-line-ninja-${levelId}-b`), [levelId]);
   const [idleMonsterSrc, setIdleMonsterSrc] = useState<string>(monsterHitA);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 

@@ -16,6 +16,7 @@ import kartBran from '../assets/gokarts/9.png';
 import kartMochi from '../assets/gokarts/10.png';
 import kartVex from '../assets/gokarts/11.png';
 import enemyKart from '../assets/gokarts/15.png';
+import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 import {
   reshuffleAvoidingRepeat,
   shuffleOptionsWithCorrect,
@@ -222,6 +223,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     tierIndexRef.current.early = deck.length ? 1 : 0;
     return deck[0] ?? ratioFractionsQuestions[0];
   });
+  const questionStartRef = useRef<number>(Date.now());
 
   const raceDifficulty: RaceDifficulty = levelId <= 3 ? 'easy' : levelId <= 6 ? 'standard' : 'hard';
   const tuning = RACE_TUNING[raceDifficulty] || RACE_TUNING[DEFAULT_RACE_DIFFICULTY];
@@ -276,6 +278,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     const deck = resetDecks.early;
     tierIndexRef.current.early = deck.length ? 1 : 0;
     setQuestion(deck[0] ?? ratioFractionsQuestions[0]);
+    questionStartRef.current = Date.now();
     playerPosRef.current = START_OFFSET;
     enemyPosRef.current = START_OFFSET;
     playerTargetRef.current = START_OFFSET;
@@ -409,7 +412,9 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
     if (option === question.correctAnswer) {
       setCorrectCount((prev) => prev + 1);
-      setFeedback('Correct!');
+      const elapsedMs = Date.now() - questionStartRef.current;
+      const isPraise = shouldShowPraise(1, elapsedMs);
+      setFeedback(isPraise ? buildPraiseMessage() : 'Correct!');
       setRaceState('correctBoost');
       window.setTimeout(() => {
         playerTargetRef.current = Math.min(tuning.trackLength, playerTargetRef.current + playerStep);
@@ -429,6 +434,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
         const nextTier = getQuestionTier(Math.min(1, playerPosRef.current / tuning.trackLength));
         setQuestion(advanceQuestionForTier(nextTier));
+        questionStartRef.current = Date.now();
         setSelected(null);
         setLocked(false);
         setRoundIndex((prev) => prev + 1);
@@ -446,6 +452,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     window.setTimeout(() => {
       const nextTier = getQuestionTier(Math.min(1, playerPosRef.current / tuning.trackLength));
       setQuestion(advanceQuestionForTier(nextTier));
+      questionStartRef.current = Date.now();
       setSelected(null);
       setLocked(false);
       setRoundIndex((prev) => prev + 1);
@@ -611,7 +618,11 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                       {displayParts.ratioLine}
                     </div>
                     {feedback ? (
-                      <div className="text-[11px] font-semibold text-amber-100">{feedback}</div>
+                      <div className={`text-[11px] font-semibold ${
+                        ['Great!', 'Amazing!', 'Awesome!', 'Fantastic!'].includes(feedback)
+                          ? 'rounded-full border border-amber-100/70 bg-[linear-gradient(135deg,rgba(255,241,166,0.96),rgba(125,211,252,0.9))] px-3 py-1 text-slate-950 shadow-[0_0_22px_rgba(251,191,36,0.55)]'
+                          : 'text-amber-100'
+                      }`}>{feedback}</div>
                     ) : null}
                   </div>
                 )}

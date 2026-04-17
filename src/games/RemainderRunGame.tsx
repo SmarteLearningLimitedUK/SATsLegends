@@ -4,6 +4,7 @@ import confetti from 'canvas-confetti';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { triggerHaptic } from '../haptics';
+import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 
 interface RemainderRunGameProps {
   levelId: number;
@@ -29,7 +30,7 @@ interface RemainderProblem {
 }
 
 type FeedbackState = null | {
-  tone: 'success' | 'error';
+  tone: 'success' | 'error' | 'praise';
   title: string;
   subtitle: string;
 };
@@ -360,15 +361,16 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
       const difficultyBonus = 80 + (problem.stage * 14);
       const streakMultiplier = 1 + Math.min(0.9, combo * 0.08);
       const points = Math.round((difficultyBonus + speedBonus) * streakMultiplier);
+      const isPraise = shouldShowPraise(nextAttempts, elapsedMs);
 
       triggerHaptic('success');
       setScore((prev) => prev + points);
       setCorrectCount((prev) => prev + 1);
       setCombo((prev) => prev + 1);
       setFeedback({
-        tone: 'success',
-        title: 'Correct',
-        subtitle: `+${points} points`,
+        tone: isPraise ? 'praise' : 'success',
+        title: isPraise ? buildPraiseMessage() : 'Correct',
+        subtitle: isPraise ? 'Fast first try bonus!' : `+${points} points`,
       });
 
       confetti({
@@ -456,9 +458,9 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
                   type="button"
                   disabled={isLocked || roundOver}
                   onClick={() => evaluateAnswer(option)}
-                  className={`relative min-h-[3.4rem] rounded-[0.95rem] border px-2 py-2 text-center shadow-[0_8px_18px_rgba(2,6,23,0.16)] transition-transform duration-150 hover:scale-[1.01] disabled:opacity-55 ${
+              className={`relative min-h-[3.4rem] rounded-[0.95rem] border px-2 py-2 text-center shadow-[0_8px_18px_rgba(2,6,23,0.16)] transition-transform duration-150 hover:scale-[1.01] disabled:opacity-55 ${
                     selectedAnswer === option
-                      ? feedback?.tone === 'success'
+                      ? feedback?.tone === 'success' || feedback?.tone === 'praise'
                         ? 'ui-button-success'
                         : 'ui-button-primary'
                       : 'ui-button-secondary'
@@ -480,7 +482,9 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.08 }}
             className={`pointer-events-none absolute left-1/2 top-[calc(env(safe-area-inset-top)+5.1rem)] z-50 -translate-x-1/2 rounded-[1rem] border px-4 py-2 text-center shadow-[0_14px_24px_rgba(2,6,23,0.35)] ${
-              feedback.tone === 'success'
+              feedback.tone === 'praise'
+                ? 'border-amber-100/64 bg-[linear-gradient(135deg,rgba(255,241,166,0.96),rgba(125,211,252,0.9))] text-slate-950 shadow-[0_0_22px_rgba(251,191,36,0.55)]'
+                : feedback.tone === 'success'
                 ? 'border-emerald-100/62 bg-emerald-500/28 text-emerald-50'
                 : 'border-rose-100/62 bg-rose-500/30 text-amber-50'
             }`}

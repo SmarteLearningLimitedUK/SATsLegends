@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { AnimatePresence, motion } from 'motion/react';
 import {
@@ -8,8 +8,9 @@ import {
 } from 'lucide-react';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import factorFrenzyBackground from '../assets/maps/backgroundsforgames/Factor Frenzy.jpg';
-import factorFrenzyEnemy from '../assets/bosses/goblin.png';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
+import { pickBossArt } from '../assets/bosses/library';
+import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 
 type FactorProblemType = 'missing_factor' | 'all_factors' | 'common_factors' | 'prime_factors';
 
@@ -92,6 +93,10 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   const [state, setState] = useState<LocalState>(INITIAL_STATE);
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
   const [showHitFx, setShowHitFx] = useState(false);
+  const [successTone, setSuccessTone] = useState<'success' | 'praise'>('success');
+  const [successMessage, setSuccessMessage] = useState('Good hit!');
+  const problemStartRef = useRef<number>(Date.now());
+  const factorFrenzyEnemy = useMemo(() => pickBossArt('factor-frenzy'), []);
 
   const timerRef = useRef<number | null>(null);
   const advanceRef = useRef<number | null>(null);
@@ -226,6 +231,9 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   const startGame = () => {
     endedRef.current = false;
     const firstProblem = generateProblem(1);
+    problemStartRef.current = Date.now();
+    setSuccessTone('success');
+    setSuccessMessage('Good hit!');
     setState({
       ...INITIAL_STATE,
       currentProblem: firstProblem,
@@ -239,6 +247,9 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   useEffect(() => {
     if (state.currentProblem) return;
     const firstProblem = generateProblem(1);
+    problemStartRef.current = Date.now();
+    setSuccessTone('success');
+    setSuccessMessage('Good hit!');
     setState((previous) => ({
       ...previous,
       currentProblem: firstProblem,
@@ -296,6 +307,8 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
       const newScore = state.XP + points;
       const remainingHealth = Math.max(0, state.enemyHealth - 1);
       const finished = remainingHealth <= 0;
+      const elapsedMs = Date.now() - problemStartRef.current;
+      const isPraise = shouldShowPraise(1, elapsedMs);
 
       setState((previous) => ({
         ...previous,
@@ -303,6 +316,8 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         enemyHealth: remainingHealth,
         status: finished ? 'complete' : 'correct',
       }));
+      setSuccessTone(isPraise ? 'praise' : 'success');
+      setSuccessMessage(isPraise ? buildPraiseMessage() : 'Good hit!');
 
       setShowHitFx(true);
       confetti({
@@ -323,6 +338,9 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   const nextProblem = () => {
     const { levelConfig, levelIndex } = getLevelFromScore(state.XP);
     const problem = generateProblem(levelIndex);
+    problemStartRef.current = Date.now();
+    setSuccessTone('success');
+    setSuccessMessage('Good hit!');
 
     setState((previous) => ({
       ...previous,
@@ -476,10 +494,14 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 1.06 }}
                             className={`pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-6xl font-black uppercase tracking-tight sm:text-7xl ${
-                              state.status === 'correct' ? 'text-emerald-200/35' : 'text-amber-200/35'
+                              state.status === 'correct'
+                                ? successTone === 'praise'
+                                  ? 'text-amber-100 drop-shadow-[0_0_24px_rgba(251,191,36,0.75)]'
+                                  : 'text-emerald-200/35'
+                                : 'text-amber-200/35'
                             }`}
                           >
-                            {state.status === 'correct' ? 'Hit' : 'Miss'}
+                            {state.status === 'correct' ? successMessage : 'Miss'}
                           </motion.div>
                         ) : null}
                       </AnimatePresence>

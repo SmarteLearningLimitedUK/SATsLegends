@@ -1,29 +1,7 @@
 import { MiniGameType } from './types';
-import rhinoA from './assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_but_different_colours_create_me_an_armored_white_rhino-1.jpg';
-import rhinoB from './assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_but_different_colours_create_me_an_armored_white_rhino-2.jpg';
-import evilPink from './assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_but_different_colours_create_me_an_evil_pink_and_light_pur-2.jpg';
-import snakeA from './assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_but_different_colours_create_me_a_snake-2.jpg';
-import snakeB from './assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_but_different_colours_create_me_a_snake-3.jpg';
-import kraken from './assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_create_me_a_kracken-1.jpg';
-import zombieA from './assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_create_me_a_zombie-0.jpg';
-import zombieB from './assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_create_me_a_zombie-1.jpg';
-import zombieC from './assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_create_me_a_zombie-2.jpg';
-import goblin from './assets/bosses/goblin.png';
-import goblinWiz from './assets/bosses/goblinwiz.jpg';
+import { BOSS_ART_LIBRARY } from './assets/bosses/library';
 
-export const BOSS_VIEWPORT_VISUALS: string[] = [
-  rhinoA,
-  rhinoB,
-  evilPink,
-  snakeA,
-  snakeB,
-  kraken,
-  zombieA,
-  zombieB,
-  zombieC,
-  goblin,
-  goblinWiz,
-];
+export const BOSS_VIEWPORT_VISUALS: string[] = BOSS_ART_LIBRARY;
 
 const hashSeed = (value: string): number => {
   let hash = 0;

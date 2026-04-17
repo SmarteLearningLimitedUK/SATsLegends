@@ -1,11 +1,12 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
-import mineEnemy from '../assets/bosses/goblin.png';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import mineBackground from '../assets/maps/backgroundsforgames/multiplication mine background.jpg';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { triggerHaptic } from '../haptics';
+import { pickBossArt } from '../assets/bosses/library';
+import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 
 interface MultiplicationMineGameProps {
   levelId: number;
@@ -67,34 +68,44 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
   onBack,
 }) => {
   const resolvedLevel = useMemo(() => Math.max(1, Math.min(10, levelId || 1)), [levelId]);
+  const mineEnemy = useMemo(() => pickBossArt(`multiplication-mine-${resolvedLevel}`), [resolvedLevel]);
   const [question, setQuestion] = useState<MultiplicationQuestion>(() => makeQuestion(resolvedLevel, 0));
   const [rockHealth, setRockHealth] = useState(ROCK_MAX_HEALTH);
   const [correctCount, setCorrectCount] = useState(0);
   const [mistakes, setMistakes] = useState(0);
   const [XP, setScore] = useState(0);
   const [phase, setPhase] = useState<Phase>('playing');
-  const [feedback, setFeedback] = useState<{ tone: 'ok' | 'error'; text: string } | null>(null);
+  const [feedback, setFeedback] = useState<{ tone: 'ok' | 'error' | 'praise'; text: string } | null>(null);
   const [impactTick, setImpactTick] = useState(0);
   const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
   const completedRef = useRef(false);
+  const questionStartRef = useRef<number>(Date.now());
+  const questionAttemptRef = useRef(0);
 
   const solveQuestion = (selectedAnswer: number) => {
     if (phase !== 'playing') return;
     setSelectedChoice(selectedAnswer);
+    questionAttemptRef.current += 1;
 
     if (selectedAnswer === question.answer) {
       const nextCorrect = correctCount + 1;
       const nextHealth = Math.max(0, rockHealth - 1);
       const gained = 120 + (resolvedLevel * 18);
       const nextScore = XP + gained;
+      const elapsedMs = Date.now() - questionStartRef.current;
+      const isPraise = shouldShowPraise(questionAttemptRef.current, elapsedMs);
 
       setCorrectCount(nextCorrect);
       setRockHealth(nextHealth);
       setScore(nextScore);
       setImpactTick((prev) => prev + 1);
       setFeedback({
-        tone: 'ok',
-        text: nextHealth <= 0 ? 'Rock shattered!' : 'Direct hit!',
+        tone: isPraise ? 'praise' : 'ok',
+        text: isPraise
+          ? buildPraiseMessage()
+          : nextHealth <= 0
+            ? 'Rock shattered!'
+            : 'Direct hit!',
       });
       triggerHaptic('success');
 
@@ -114,6 +125,8 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
         setQuestion(makeQuestion(resolvedLevel, nextCorrect));
         setFeedback(null);
         setSelectedChoice(null);
+        questionAttemptRef.current = 0;
+        questionStartRef.current = Date.now();
       }, 320);
       return;
     }
@@ -154,10 +167,10 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
                 onClick={() => solveQuestion(option)}
                 disabled={phase !== 'playing'}
                 whileTap={{ scale: 0.96, y: 2 }}
-                animate={selectedChoice === option ? (feedback?.tone === 'ok' ? { scale: [1, 1.12, 0.98, 1.05, 1], rotate: [0, -2, 2, 0] } : { scale: [1, 1.05, 1] }) : { scale: 1 }}
+                animate={selectedChoice === option ? (feedback?.tone === 'ok' || feedback?.tone === 'praise' ? { scale: [1, 1.12, 0.98, 1.05, 1], rotate: [0, -2, 2, 0] } : { scale: [1, 1.05, 1] }) : { scale: 1 }}
                 className={`h-16 rounded-2xl border px-3 text-center text-[clamp(1.35rem,5vw,2.1rem)] font-black shadow-[0_8px_16px_rgba(0,0,0,0.35)] transition ${
                   selectedChoice === option
-                    ? feedback?.tone === 'ok'
+                    ? feedback?.tone === 'ok' || feedback?.tone === 'praise'
                       ? 'ui-button-success'
                       : 'ui-button-primary'
                     : 'ui-button-secondary'
@@ -177,7 +190,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
                 animate={{
                   scale: phase === 'exploding' ? [1, 1.1, 0.9, 0] : [1, 1.02, 1],
                   rotate: phase === 'exploding' ? [0, -7, 7, 0] : 0,
-                  x: phase === 'playing' && feedback?.tone === 'ok' ? [0, -6, 6, -3, 3, 0] : 0,
+                  x: phase === 'playing' && (feedback?.tone === 'ok' || feedback?.tone === 'praise') ? [0, -6, 6, -3, 3, 0] : 0,
                 }}
                 transition={{
                   duration: phase === 'exploding' ? 0.58 : 0.7,
@@ -190,7 +203,9 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
                   src={mineEnemy}
                   alt="Multiplication Mine enemy"
                   draggable={false}
-                  className="absolute inset-0 h-full w-full object-contain object-center drop-shadow-[0_18px_28px_rgba(0,0,0,0.28)]"
+                  className={`absolute inset-0 h-full w-full object-contain object-center drop-shadow-[0_18px_28px_rgba(0,0,0,0.28)] ${
+                    feedback?.tone === 'praise' ? 'animate-pulse saturate-125' : ''
+                  }`}
                 />
 
                 <div className="absolute -bottom-10 left-1/2 flex -translate-x-1/2 gap-2">
@@ -268,7 +283,9 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
               className={`mb-1 rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.11em] ${
                 feedback.tone === 'ok'
                   ? 'border-emerald-300/60 bg-emerald-300/15 text-emerald-100'
-                  : 'border-rose-300/60 bg-rose-300/15 text-amber-100'
+                  : feedback.tone === 'praise'
+                    ? 'border-amber-100/65 bg-[linear-gradient(135deg,rgba(255,241,166,0.96),rgba(125,211,252,0.9))] text-slate-950 shadow-[0_0_22px_rgba(251,191,36,0.55)]'
+                    : 'border-rose-300/60 bg-rose-300/15 text-amber-100'
               }`}
             >
               {feedback.text}

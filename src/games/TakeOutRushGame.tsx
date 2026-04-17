@@ -12,7 +12,6 @@ import food7 from '../assets/take_out/food/7.png';
 import food8 from '../assets/take_out/food/8.png';
 import food9 from '../assets/take_out/food/9.png';
 import FoodGameShell from '../components/FoodGameShell';
-import defaultMonster from '../assets/bosses/goblin.png';
 import { triggerHaptic } from '../haptics';
 import CelebrationSplash from '../components/CelebrationSplash';
 
@@ -145,7 +144,7 @@ const takeOutMonsterImages = loadSortedImages(
   import.meta.glob('../assets/take_out/monsters/*.png', { eager: true, import: 'default' }) as Record<string, string>,
 );
 
-const MONSTER_IMAGES = takeOutMonsterImages.length ? takeOutMonsterImages : [defaultMonster];
+const MONSTER_IMAGES = takeOutMonsterImages;
 
 const ITEM_BY_ID: Record<string, FoodItem> = FOOD_ITEMS.reduce<Record<string, FoodItem>>((map, item) => {
   map[item.id] = item;

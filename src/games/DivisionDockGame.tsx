@@ -5,6 +5,7 @@ import { triggerHaptic } from '../haptics';
 import { GameScreenShell } from '../layout/ScreenPrimitives';
 import dockBackground from '../assets/maps/backgroundsforgames/division dock.jpg';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
+import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 
 interface DivisionDockGameProps {
   levelId: number;
@@ -103,6 +104,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [isFinished, setIsFinished] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const questionStartRef = useRef<number>(Date.now());
 
   const clearTimers = () => {
     timersRef.current.forEach((timerId) => window.clearTimeout(timerId));
@@ -128,6 +130,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
     setAttempts(0);
     setCorrectAnswers(0);
     setQuestion(openingQuestion);
+    questionStartRef.current = Date.now();
     setFeedback(null);
     setSelectedAnswer(null);
     setIsFinished(false);
@@ -173,6 +176,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
       setQuestion(createDivisionQuestion(levelId, nextSolvedCount));
       setSelectedAnswer(null);
       setFeedback(null);
+      questionStartRef.current = Date.now();
     }, 620);
     timersRef.current.push(timerId);
   };
@@ -203,7 +207,8 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
   const handleAnswer = (choice: number) => {
     if (isFinished || feedback) return;
     setSelectedAnswer(choice);
-    setAttempts((previous) => previous + 1);
+    const attemptNumber = attempts + 1;
+    setAttempts(attemptNumber);
 
     if (choice !== question.answer) {
       handleWrongAnswer();
@@ -221,10 +226,14 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
     setCorrectAnswers(nextCorrect);
     setCombo((previous) => previous + 1);
     setRoundSolved((previous) => previous + 1);
+    const elapsedMs = Date.now() - questionStartRef.current;
+    const isPraise = shouldShowPraise(attemptNumber, elapsedMs);
     setFeedback({
-      type: 'success',
-      title: 'Perfect Share',
-      subtitle: `${question.dividend} ÷ ${question.divisor} = ${question.answer}`,
+      type: isPraise ? 'praise' : 'success',
+      title: isPraise ? buildPraiseMessage() : 'Perfect Share',
+      subtitle: isPraise
+        ? 'First try, quick share!'
+        : `${question.dividend} ÷ ${question.divisor} = ${question.answer}`,
     });
     triggerHaptic('success');
 
@@ -237,6 +246,7 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
       setQuestion(createDivisionQuestion(levelId, nextSolved));
       setSelectedAnswer(null);
       setFeedback(null);
+      questionStartRef.current = Date.now();
     }, 720);
     timersRef.current.push(timerId);
   };
@@ -301,13 +311,31 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
                 initial={{ opacity: 0, scale: 0.82 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.08 }}
-                className={`pointer-events-none absolute inset-0 z-40 flex items-center justify-center backdrop-blur-md ${feedback.type === 'success' ? 'bg-emerald-500/16' : 'bg-red-500/16'}`}
+                className={`pointer-events-none absolute inset-0 z-40 flex items-center justify-center backdrop-blur-md ${
+                  feedback.type === 'praise'
+                    ? 'bg-[radial-gradient(circle_at_center,rgba(255,230,138,0.34),rgba(56,189,248,0.14))]'
+                    : feedback.type === 'success'
+                      ? 'bg-emerald-500/16'
+                      : 'bg-red-500/16'
+                }`}
               >
-                <div className="rounded-[2rem] border border-white/14 bg-slate-950/60 px-8 py-6 text-center shadow-[0_24px_36px_rgba(0,0,0,0.24)]">
-                  <div className={`text-4xl font-black uppercase tracking-[0.12em] md:text-6xl ${feedback.type === 'success' ? 'text-emerald-100' : 'text-amber-100'}`}>
+                <div className={`rounded-[2rem] border px-8 py-6 text-center shadow-[0_24px_36px_rgba(0,0,0,0.24)] ${
+                  feedback.type === 'praise'
+                    ? 'border-amber-100/70 bg-[linear-gradient(180deg,rgba(255,248,214,0.98),rgba(125,211,252,0.92))]'
+                    : 'border-white/14 bg-slate-950/60'
+                }`}>
+                  <div className={`text-4xl font-black uppercase tracking-[0.12em] md:text-6xl ${
+                    feedback.type === 'success'
+                      ? 'text-emerald-100'
+                      : feedback.type === 'praise'
+                        ? 'text-slate-950'
+                        : 'text-amber-100'
+                  }`}>
                     {feedback.title}
                   </div>
-                  <div className="mt-2 text-lg font-bold text-white/92 md:text-2xl">{feedback.subtitle}</div>
+                  <div className={`mt-2 text-lg font-bold md:text-2xl ${
+                    feedback.type === 'praise' ? 'text-slate-950/90' : 'text-white/92'
+                  }`}>{feedback.subtitle}</div>
                 </div>
               </motion.div>
             </AnimatePresence>

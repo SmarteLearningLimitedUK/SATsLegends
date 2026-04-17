@@ -16,12 +16,7 @@ import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import cannonFacingLeftSrc from '../assets/angle_arena/cannonanglearena/1.png';
 import cannonFacingRightSrc from '../assets/angle_arena/cannonanglearena/2.png';
 import cannonFacingUpSrc from '../assets/angle_arena/cannonanglearena/3.png';
-import enemyGoblinSrc from '../assets/bosses/goblin.png';
-import enemyGoblinWizardSrc from '../assets/bosses/goblinwiz.jpg';
-import enemyKrakenSrc from '../assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_create_me_a_kracken-1.jpg';
-import enemyZombie0Src from '../assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_create_me_a_zombie-0.jpg';
-import enemyZombie1Src from '../assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_create_me_a_zombie-1.jpg';
-import enemySnakeSrc from '../assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_but_different_colours_create_me_a_snake-2.jpg';
+import { BOSS_ART_LIBRARY } from '../assets/bosses/library';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { angleToVector, clamp, degreesToRadians, distance, lerp, worldToScreen } from './angleArena/math';
 
@@ -503,14 +498,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   }, []);
 
   useEffect(() => {
-    const sources = [
-      enemyGoblinSrc,
-      enemyGoblinWizardSrc,
-      enemyKrakenSrc,
-      enemyZombie0Src,
-      enemyZombie1Src,
-      enemySnakeSrc,
-    ];
+    const sources = BOSS_ART_LIBRARY;
     sources.forEach((src, index) => {
       const img = new Image();
       img.src = src;
