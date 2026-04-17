@@ -631,32 +631,30 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
           </div>
         </div>
 
+        <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
+          <GameQuestionCard
+            title="Ratio Racer"
+            className="mx-auto w-full max-w-[56rem] px-2 sm:px-3 md:px-4"
+            style={{
+              ['--question-card-width' as any]: 'min(100%, 56rem)',
+              ['--question-card-padding' as any]: '16px 18px',
+            }}
+            subtitle={feedback ? (
+              <div className={`text-[11px] font-semibold md:text-[13px] ${
+                ['Great!', 'Amazing!', 'Awesome!', 'Fantastic!'].includes(feedback)
+                  ? 'rounded-full border border-amber-100/70 bg-[linear-gradient(135deg,rgba(255,241,166,0.96),rgba(125,211,252,0.9))] px-3 py-1 text-slate-950 shadow-[0_0_22px_rgba(251,191,36,0.55)]'
+                  : 'text-amber-100'
+              }`}>{feedback}</div>
+            ) : null}
+            titleClassName="text-[12px] md:text-[14px] tracking-[0.28em]"
+            bodyClassName="text-[clamp(1.15rem,4vw,1.7rem)] font-black leading-[1.08] tracking-tight md:text-[clamp(1.3rem,2.4vw,2rem)]"
+          >
+            {question.prompt}
+          </GameQuestionCard>
+        </div>
+
         <GameScreenLayout
           className="relative z-10 px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-0 text-white"
-          topClassName="!min-h-0"
-          top={(
-            <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
-              <GameQuestionCard
-                title="Ratio Racer"
-                className="mx-auto w-full max-w-[56rem] px-2 sm:px-3 md:px-4"
-                style={{
-                  ['--question-card-width' as any]: 'min(100%, 56rem)',
-                  ['--question-card-padding' as any]: '16px 18px',
-                }}
-                subtitle={feedback ? (
-                  <div className={`text-[11px] font-semibold md:text-[13px] ${
-                    ['Great!', 'Amazing!', 'Awesome!', 'Fantastic!'].includes(feedback)
-                      ? 'rounded-full border border-amber-100/70 bg-[linear-gradient(135deg,rgba(255,241,166,0.96),rgba(125,211,252,0.9))] px-3 py-1 text-slate-950 shadow-[0_0_22px_rgba(251,191,36,0.55)]'
-                      : 'text-amber-100'
-                  }`}>{feedback}</div>
-                ) : null}
-                titleClassName="text-[12px] md:text-[14px] tracking-[0.28em]"
-                bodyClassName="text-[clamp(1.15rem,4vw,1.7rem)] font-black leading-[1.08] tracking-tight md:text-[clamp(1.3rem,2.4vw,2rem)]"
-              >
-                {question.prompt}
-              </GameQuestionCard>
-            </div>
-          )}
           main={<div className="min-h-0 flex-1" />}
           bottom={(
             <div className="answer-choice-surface grid grid-cols-4 gap-2">
