@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { CircleDollarSign, ChevronLeft } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
+import factorFrenzyBackground from '../assets/maps/backgroundsforgames/Factor Frenzy.jpg';
 
 interface FractionMatchGameProps {
   levelId: number;
@@ -183,6 +184,7 @@ const BevelledGem: React.FC<{
   return (
     <motion.button
       type="button"
+      data-button-skin="none"
       initial={{ scale: 0, opacity: 0 }}
       animate={{
         scale: isSelected ? 1.12 : 1,
@@ -236,7 +238,11 @@ const MatchGameShell: React.FC<{
 }) => {
   return (
     <div className="relative h-full w-full select-none overflow-hidden font-sans text-white">
-      <GameplaySceneBackdrop gameType={variantGameType} className="opacity-[0.96]" />
+      <GameplaySceneBackdrop
+        gameType={variantGameType}
+        backgroundOverride={factorFrenzyBackground}
+        className="opacity-[0.96]"
+      />
 
       <div className="pointer-events-none absolute inset-0">
         {[...Array(20)].map((_, idx) => (
