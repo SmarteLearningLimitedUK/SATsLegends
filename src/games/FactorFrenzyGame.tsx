@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
-import { motion, AnimatePresence } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import {
   Trophy,
   RotateCcw,
@@ -8,9 +8,8 @@ import {
 } from 'lucide-react';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import factorFrenzyBackground from '../assets/maps/backgroundsforgames/Factor Frenzy.jpg';
-import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
-import questionBarSmall from '../assets/ui_frames/hudfortextplace_slices/text_bar_small.png';
-import questionBarMedium from '../assets/ui_frames/hudfortextplace_slices/text_bar_medium.png';
+import factorFrenzyEnemy from '../assets/bosses/goblinwiz.jpg';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 
 type FactorProblemType = 'missing_factor' | 'all_factors' | 'common_factors' | 'prime_factors';
 
@@ -45,6 +44,7 @@ interface LocalState {
   currentProblem: FactorProblem | null;
   status: 'playing' | 'correct' | 'incorrect' | 'complete';
   timeLeft: number;
+  enemyHealth: number;
 }
 
 const FRENZY_LEVELS: FrenzyLevel[] = [
@@ -55,12 +55,15 @@ const FRENZY_LEVELS: FrenzyLevel[] = [
   { name: 'Legend', threshold: 10000, timeLimit: 10 },
 ];
 
+const ENEMY_MAX_HEALTH = 10;
+
 const INITIAL_STATE: LocalState = {
   XP: 0,
   level: 1,
   currentProblem: null,
   status: 'playing',
   timeLeft: 30,
+  enemyHealth: ENEMY_MAX_HEALTH,
 };
 
 const scoreToStars = (XP: number) => {
@@ -69,125 +72,30 @@ const scoreToStars = (XP: number) => {
   return 1;
 };
 
+const shuffle = <T,>(items: T[]): T[] => {
+  const clone = [...items];
+  for (let index = clone.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [clone[index], clone[swapIndex]] = [clone[swapIndex], clone[index]];
+  }
+  return clone;
+};
+
 const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   levelId: _levelId,
   avatarId: _avatarId,
   useSharedTopHud: _useSharedTopHud,
   onVictory,
   onGameOver: _onGameOver,
-  onBack,
+  onBack: _onBack,
 }) => {
   const [state, setState] = useState<LocalState>(INITIAL_STATE);
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
-  const [showChestBurst, setShowChestBurst] = useState(false);
+  const [showHitFx, setShowHitFx] = useState(false);
 
   const timerRef = useRef<number | null>(null);
   const advanceRef = useRef<number | null>(null);
   const endedRef = useRef(false);
-
-  const getFactors = (n: number): number[] => {
-    const factors: number[] = [];
-    for (let i = 1; i <= n; i += 1) {
-      if (n % i === 0) factors.push(i);
-    }
-    return factors;
-  };
-
-  const getPrimeFactors = (n: number): number[] => {
-    const factors: number[] = [];
-    let divisor = 2;
-    let temp = n;
-
-    while (temp > 1) {
-      while (temp % divisor === 0) {
-        factors.push(divisor);
-        temp /= divisor;
-      }
-      divisor += 1;
-    }
-
-    return [...new Set(factors)];
-  };
-
-  const generateProblem = useCallback((level: number): FactorProblem => {
-    const types: FactorProblemType[] = ['missing_factor', 'all_factors', 'common_factors', 'prime_factors'];
-    const type = types[Math.min(level - 1, types.length - 1)];
-    const id = Date.now() + Math.floor(Math.random() * 1000);
-
-    if (type === 'missing_factor') {
-      const n = Math.floor(Math.random() * 50) + 10;
-      const factors = getFactors(n);
-      const f1 = factors[Math.floor(Math.random() * factors.length)];
-      const answer = n / f1;
-      const distractors = [answer + 2, answer - 1, answer + 5, answer - 3].filter((x) => x > 0);
-      const options = [...new Set([answer, ...distractors])].sort(() => Math.random() - 0.5).slice(0, 4);
-
-      return {
-        id,
-        type,
-        number: n,
-        question: `Find the missing factor: ${f1} x ? = ${n}`,
-        options,
-        correctAnswers: [answer],
-      };
-    }
-
-    if (type === 'all_factors') {
-      const n = [12, 16, 20, 24, 30, 36, 48][Math.floor(Math.random() * 7)];
-      const correct = getFactors(n);
-      const extras = [n + 1, n - 2, 7, 9, 11, 13, 14, 15].filter((x) => x > 0 && !correct.includes(x));
-      const optionPool = [...correct, ...extras].sort(() => Math.random() - 0.5);
-      const options = [...new Set(optionPool)].slice(0, Math.max(8, correct.length)).sort((a, b) => a - b);
-
-      return {
-        id,
-        type,
-        number: n,
-        question: `Select ALL factors of ${n}`,
-        options,
-        correctAnswers: correct,
-      };
-    }
-
-    if (type === 'common_factors') {
-      const pairs: Array<[number, number]> = [
-        [12, 18],
-        [18, 24],
-        [24, 36],
-        [20, 30],
-        [30, 45],
-      ];
-      const [n1, n2] = pairs[Math.floor(Math.random() * pairs.length)];
-      const f1 = getFactors(n1);
-      const f2 = getFactors(n2);
-      const common = f1.filter((x) => f2.includes(x));
-      const extras = [5, 7, 9, 11, 13, 14, 15].filter((x) => !common.includes(x));
-      const options = [...new Set([...common, ...extras])].sort((a, b) => a - b).slice(0, Math.max(8, common.length));
-
-      return {
-        id,
-        type,
-        number: n1,
-        number2: n2,
-        question: `Select ALL common factors of ${n1} and ${n2}`,
-        options,
-        correctAnswers: common,
-      };
-    }
-
-    const n = [12, 20, 30, 42, 60, 72, 84][Math.floor(Math.random() * 7)];
-    const correct = getPrimeFactors(n);
-    const options = [2, 3, 5, 7, 11, 13, 4, 6, 8, 9].sort(() => Math.random() - 0.5).slice(0, 8).sort((a, b) => a - b);
-
-    return {
-      id,
-      type,
-      number: n,
-      question: `Select ALL prime factors of ${n}`,
-      options,
-      correctAnswers: correct,
-    };
-  }, []);
 
   const clearTimer = () => {
     if (timerRef.current !== null) {
@@ -203,9 +111,108 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     }
   };
 
-  useEffect(() => () => {
-    clearTimer();
-    clearAdvanceTimer();
+  const getFactors = (number: number): number[] => {
+    const factors: number[] = [];
+    for (let factor = 1; factor <= number; factor += 1) {
+      if (number % factor === 0) factors.push(factor);
+    }
+    return factors;
+  };
+
+  const getPrimeFactors = (number: number): number[] => {
+    const factors: number[] = [];
+    let divisor = 2;
+    let remaining = number;
+
+    while (remaining > 1) {
+      while (remaining % divisor === 0) {
+        factors.push(divisor);
+        remaining /= divisor;
+      }
+      divisor += 1;
+    }
+
+    return [...new Set(factors)];
+  };
+
+  const generateProblem = useCallback((level: number): FactorProblem => {
+    const problemTypes: FactorProblemType[] = ['missing_factor', 'all_factors', 'common_factors', 'prime_factors'];
+    const type = problemTypes[Math.min(level - 1, problemTypes.length - 1)];
+    const id = Date.now() + Math.floor(Math.random() * 1000);
+
+    if (type === 'missing_factor') {
+      const number = Math.floor(Math.random() * 50) + 10;
+      const factors = getFactors(number);
+      const factor = factors[Math.floor(Math.random() * factors.length)];
+      const answer = number / factor;
+      const distractors = [answer + 2, answer - 1, answer + 5, answer - 3].filter((value) => value > 0);
+      const options = [...new Set([answer, ...distractors])].sort(() => Math.random() - 0.5).slice(0, 4);
+
+      return {
+        id,
+        type,
+        number,
+        question: `Find the missing factor: ${factor} x ? = ${number}`,
+        options,
+        correctAnswers: [answer],
+      };
+    }
+
+    if (type === 'all_factors') {
+      const number = [12, 16, 20, 24, 30, 36, 48][Math.floor(Math.random() * 7)];
+      const correctAnswers = getFactors(number);
+      const extras = [number + 1, number - 2, 7, 9, 11, 13, 14, 15].filter((value) => value > 0 && !correctAnswers.includes(value));
+      const optionPool = [...correctAnswers, ...extras].sort(() => Math.random() - 0.5);
+      const options = [...new Set(optionPool)].slice(0, Math.max(8, correctAnswers.length)).sort((a, b) => a - b);
+
+      return {
+        id,
+        type,
+        number,
+        question: `Select ALL factors of ${number}`,
+        options,
+        correctAnswers,
+      };
+    }
+
+    if (type === 'common_factors') {
+      const pairs: Array<[number, number]> = [
+        [12, 18],
+        [18, 24],
+        [24, 36],
+        [20, 30],
+        [30, 45],
+      ];
+      const [number, number2] = pairs[Math.floor(Math.random() * pairs.length)];
+      const factorsOne = getFactors(number);
+      const factorsTwo = getFactors(number2);
+      const commonAnswers = factorsOne.filter((value) => factorsTwo.includes(value));
+      const extras = [5, 7, 9, 11, 13, 14, 15].filter((value) => !commonAnswers.includes(value));
+      const options = [...new Set([...commonAnswers, ...extras])].sort((a, b) => a - b).slice(0, Math.max(8, commonAnswers.length));
+
+      return {
+        id,
+        type,
+        number,
+        number2,
+        question: `Select ALL common factors of ${number} and ${number2}`,
+        options,
+        correctAnswers: commonAnswers,
+      };
+    }
+
+    const number = [12, 20, 30, 42, 60, 72, 84][Math.floor(Math.random() * 7)];
+    const correctAnswers = getPrimeFactors(number);
+    const options = shuffle([2, 3, 5, 7, 11, 13, 4, 6, 8, 9]).slice(0, 8).sort((a, b) => a - b);
+
+    return {
+      id,
+      type,
+      number,
+      question: `Select ALL prime factors of ${number}`,
+      options,
+      correctAnswers,
+    };
   }, []);
 
   const getLevelFromScore = useCallback((XP: number) => {
@@ -218,24 +225,26 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
   const startGame = () => {
     endedRef.current = false;
-    const first = generateProblem(1);
+    const firstProblem = generateProblem(1);
     setState({
       ...INITIAL_STATE,
-      currentProblem: first,
+      currentProblem: firstProblem,
       status: 'playing',
       timeLeft: FRENZY_LEVELS[0].timeLimit,
+      enemyHealth: ENEMY_MAX_HEALTH,
     });
     setSelectedOptions([]);
   };
 
   useEffect(() => {
     if (state.currentProblem) return;
-    const first = generateProblem(1);
+    const firstProblem = generateProblem(1);
     setState((previous) => ({
       ...previous,
-      currentProblem: first,
+      currentProblem: firstProblem,
       status: 'playing',
       timeLeft: FRENZY_LEVELS[0].timeLimit,
+      enemyHealth: ENEMY_MAX_HEALTH,
     }));
   }, [state.currentProblem, generateProblem]);
 
@@ -269,7 +278,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
     setSelectedOptions((previous) => (
       previous.includes(value)
-        ? previous.filter((x) => x !== value)
+        ? previous.filter((item) => item !== value)
         : [...previous, value]
     ));
   };
@@ -284,18 +293,20 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     if (isCorrect) {
       const timeBonus = state.timeLeft * 10;
       const points = 500 + timeBonus;
-
       const newScore = state.XP + points;
-      const masteryReached = newScore >= 14000;
+      const remainingHealth = Math.max(0, state.enemyHealth - 1);
+      const finished = remainingHealth <= 0;
 
       setState((previous) => ({
         ...previous,
         XP: newScore,
-        status: masteryReached ? 'complete' : 'correct',
+        enemyHealth: remainingHealth,
+        status: finished ? 'complete' : 'correct',
       }));
-      setShowChestBurst(true);
+
+      setShowHitFx(true);
       confetti({
-        particleCount: 120,
+        particleCount: finished ? 160 : 120,
         spread: 80,
         origin: { y: 0.62 },
         colors: ['#fbbf24', '#f59e0b', '#38bdf8', '#34d399'],
@@ -336,10 +347,10 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   }, [state.status]);
 
   useEffect(() => {
-    if (!showChestBurst) return;
-    const timeout = window.setTimeout(() => setShowChestBurst(false), 700);
+    if (!showHitFx) return;
+    const timeout = window.setTimeout(() => setShowHitFx(false), 520);
     return () => window.clearTimeout(timeout);
-  }, [showChestBurst]);
+  }, [showHitFx]);
 
   const submitRun = () => {
     if (endedRef.current) return;
@@ -347,11 +358,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     onVictory(scoreToStars(state.XP), state.XP);
   };
 
-  const questionFrame = useMemo(() => {
-    const length = state.currentProblem?.question.length || 0;
-    return length > 34 ? questionBarMedium : questionBarSmall;
-  }, [state.currentProblem?.question]);
-
+  const enemyHealthPercent = (state.enemyHealth / ENEMY_MAX_HEALTH) * 100;
   const playingState = state.status === 'playing' || state.status === 'correct' || state.status === 'incorrect';
 
   return (
@@ -359,8 +366,20 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
       className="relative h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat text-white"
       style={{ backgroundImage: `url(${factorFrenzyBackground})` }}
     >
+      <div className="pointer-events-none fixed left-0 right-0 top-[max(0.5rem,env(safe-area-inset-top))] z-50 flex justify-center px-3">
+        <div className="w-full max-w-[780px]">
+          <GameQuestionCard
+            title="Factor Frenzy"
+            subtitle={`Level ${state.level}`}
+            className="mx-auto w-full"
+            bodyClassName="text-[clamp(0.95rem,2.9vw,1.32rem)] font-black uppercase leading-tight tracking-[0.02em] text-white md:text-[1.45rem]"
+          >
+            {state.currentProblem?.question}
+          </GameQuestionCard>
+        </div>
+      </div>
 
-      <div className="relative z-10 flex h-full flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+2.8rem)] pt-[calc(env(safe-area-inset-top)+3.45rem)] sm:px-4 sm:pt-[calc(env(safe-area-inset-top)+3.65rem)] md:px-5 md:pt-[calc(env(safe-area-inset-top)+3.9rem)]">
+      <div className="relative z-10 flex h-full flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+6.4rem)] pt-[calc(env(safe-area-inset-top)+7.4rem)] sm:px-4 sm:pt-[calc(env(safe-area-inset-top)+7.8rem)] md:px-5 md:pt-[calc(env(safe-area-inset-top)+8.1rem)]">
         <main className="relative flex min-h-0 flex-1 flex-col">
           <AnimatePresence mode="wait">
             {state.status === 'complete' ? (
@@ -371,8 +390,8 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                 className="my-auto mx-auto w-full max-w-xl rounded-3xl border border-amber-200/40 bg-[#16356f]/88 p-6 text-center shadow-[0_20px_40px_rgba(2,6,23,0.5)]"
               >
                 <Trophy className="mx-auto h-14 w-14 text-amber-200" />
-                <h2 className="mt-3 text-3xl font-black uppercase text-amber-50 sm:text-4xl">Legend Achieved</h2>
-                <p className="mt-2 text-sm font-semibold text-cyan-50/85">You cleared the full factor run.</p>
+                <h2 className="mt-3 text-3xl font-black uppercase text-amber-50 sm:text-4xl">Enemy Defeated</h2>
+                <p className="mt-2 text-sm font-semibold text-cyan-50/85">The goblin wizard has been pushed back.</p>
                 <div className="mt-4 rounded-2xl border border-cyan-100/30 bg-[#0d2a5a]/80 px-4 py-3">
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/80">Final XP</p>
                   <p className="mt-1 text-4xl font-black text-amber-100">{state.XP.toLocaleString()}</p>
@@ -382,7 +401,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                     onClick={submitRun}
                     className="ui-button-success inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-black uppercase tracking-[0.12em]"
                   >
-                    <CheckCircle2 className="h-4 w-4" /> Submit Run
+                    <CheckCircle2 className="h-4 w-4" /> Claim Victory
                   </button>
                   <button
                     onClick={() => {
@@ -403,118 +422,122 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                 exit={{ opacity: 0, x: -16 }}
                 className="flex min-h-0 flex-1 flex-col"
               >
-                <div className="relative mx-auto mb-3 h-[clamp(86px,13vh,118px)] w-[min(92%,760px)] overflow-hidden">
-                  <img
-                    src={questionFrame}
-                    alt=""
-                    aria-hidden="true"
-                    draggable={false}
-                    className="absolute inset-0 h-full w-full object-fill"
-                  />
-                  <div className="absolute inset-x-[9%] inset-y-[22%] flex items-center justify-center overflow-hidden text-center">
-                    <span
-                      className="block max-w-full overflow-hidden text-[clamp(0.88rem,2.55vw,1.22rem)] font-black uppercase tracking-[0.02em] text-white"
-                      style={{ textShadow: '0 2px 6px rgba(2,6,23,0.75)' }}
-                    >
-                      {state.currentProblem?.question}
-                    </span>
-                  </div>
-                </div>
-
                 <div className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border border-cyan-100/25 bg-[#123062]/58 p-3 shadow-[0_10px_22px_rgba(2,6,23,0.32)] sm:p-4">
-                  <div className="mb-2 text-center text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/80 sm:mb-3 sm:text-xs">
-                    Tap all factors that apply
-                  </div>
-                  <div className="flex min-h-0 flex-1 items-center justify-center">
-                    <div className="text-center text-[clamp(1.2rem,4.4vw,1.7rem)] font-black text-white/90">
-                      Choose every correct factor, then submit
+                  <div className="flex h-full min-h-0 flex-col">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/80 sm:text-xs">
+                        Tap all factors that apply
+                      </div>
+                      <div className="rounded-full border border-cyan-100/25 bg-slate-950/50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/90">
+                        {state.timeLeft}s left
+                      </div>
+                    </div>
+
+                    <div className="relative mt-3 flex min-h-0 flex-1 flex-col items-center justify-center">
+                      <div className="absolute left-1/2 top-[-8px] z-20 w-[min(88vw,24rem)] -translate-x-1/2 rounded-2xl border border-amber-200/35 bg-slate-900/70 px-3 py-2 shadow-[0_12px_24px_rgba(2,6,23,0.38)]">
+                        <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.18em] text-amber-200">
+                          Enemy
+                        </div>
+                        <div className="h-2 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/80">
+                          <motion.div
+                            className="h-full rounded-full bg-gradient-to-r from-rose-500 via-rose-400 to-orange-300 shadow-[0_0_12px_rgba(251,113,133,0.75)]"
+                            animate={{ width: `${enemyHealthPercent}%` }}
+                            transition={{ type: 'spring', stiffness: 210, damping: 26 }}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="absolute left-1/2 top-1/2 flex w-full -translate-x-1/2 -translate-y-1/2 justify-center">
+                        <motion.div
+                          className="relative w-[min(72vw,26rem)] max-w-full"
+                          animate={
+                            showHitFx
+                              ? { x: [0, -8, 8, -6, 6, 0], rotate: [0, -2, 2, -1, 1, 0] }
+                              : { x: 0, rotate: 0 }
+                          }
+                          transition={{ duration: 0.42, ease: 'easeInOut' }}
+                        >
+                          <motion.div
+                            className="absolute left-1/2 top-[68%] h-[36%] w-[56%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-300/35 blur-2xl"
+                            animate={{ opacity: showHitFx ? 0.54 : 0.24, scale: showHitFx ? 1.12 : 1 }}
+                            transition={{ duration: 0.4, ease: 'easeInOut' }}
+                          />
+                          <motion.img
+                            src={factorFrenzyEnemy}
+                            alt=""
+                            aria-hidden="true"
+                            draggable={false}
+                            className="relative h-auto w-full object-contain drop-shadow-[0_18px_26px_rgba(2,6,23,0.55)]"
+                            animate={{ opacity: showHitFx ? 0.92 : 1, scale: showHitFx ? [1, 1.03, 1] : 1 }}
+                            transition={{ duration: 0.42, ease: 'easeInOut' }}
+                          />
+                        </motion.div>
+                      </div>
+
+                      <AnimatePresence>
+                        {state.status === 'correct' || state.status === 'incorrect' ? (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.92 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 1.06 }}
+                            className={`pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-6xl font-black uppercase tracking-tight sm:text-7xl ${
+                              state.status === 'correct' ? 'text-emerald-200/35' : 'text-amber-200/35'
+                            }`}
+                          >
+                            {state.status === 'correct' ? 'Hit' : 'Miss'}
+                          </motion.div>
+                        ) : null}
+                      </AnimatePresence>
+                    </div>
+
+                    <div className="mt-auto flex items-center justify-center">
+                      {state.status === 'playing' ? (
+                        <button
+                          onClick={checkAnswer}
+                          disabled={selectedOptions.length === 0}
+                          className="ui-button-primary inline-flex w-full max-w-sm items-center justify-center rounded-2xl px-4 py-3 text-sm font-black uppercase tracking-[0.14em] disabled:opacity-45"
+                        >
+                          Strike
+                        </button>
+                      ) : (
+                        <div className="inline-flex w-full max-w-sm items-center justify-center rounded-2xl border border-cyan-100/45 bg-[#0d2a5a]/70 px-4 py-3 text-xs font-black uppercase tracking-[0.14em] text-cyan-100/95">
+                          {state.status === 'correct' ? 'Good hit • loading next challenge' : 'Not quite • loading next challenge'}
+                        </div>
+                      )}
                     </div>
                   </div>
-
-                  <div className="mt-3 flex items-center justify-center sm:mt-4">
-                    {state.status === 'playing' ? (
-                      <button
-                        onClick={checkAnswer}
-                        disabled={selectedOptions.length === 0}
-                        className="ui-button-primary inline-flex w-full max-w-sm items-center justify-center rounded-2xl px-4 py-3 text-sm font-black uppercase tracking-[0.14em] disabled:opacity-45"
-                      >
-                        Submit Factors
-                      </button>
-                    ) : (
-                      <div className="inline-flex w-full max-w-sm items-center justify-center rounded-2xl border border-cyan-100/45 bg-[#0d2a5a]/70 px-4 py-3 text-xs font-black uppercase tracking-[0.14em] text-cyan-100/95">
-                        {state.status === 'correct' ? 'Great answer • loading next challenge' : 'Not quite • loading next challenge'}
-                      </div>
-                    )}
-                  </div>
-
-                  <AnimatePresence>
-                    {state.status === 'correct' || state.status === 'incorrect' ? (
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 1.06 }}
-                        className={`pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-6xl font-black uppercase tracking-tight sm:text-7xl ${
-                          state.status === 'correct' ? 'text-emerald-200/35' : 'text-amber-200/35'
-                        }`}
-                      >
-                        {state.status === 'correct' ? 'Perfect' : 'Miss'}
-                      </motion.div>
-                    ) : null}
-                  </AnimatePresence>
                 </div>
-
-                {showChestBurst ? (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="pointer-events-none absolute inset-0 flex items-center justify-center"
-                  >
-                    <img
-                      src={MAIN_PNG_SKIN.treasureChest}
-                      alt=""
-                      className="h-28 w-28 object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.45)]"
-                      draggable={false}
-                    />
-                  </motion.div>
-                ) : null}
               </motion.div>
             )}
           </AnimatePresence>
         </main>
 
         {state.status !== 'complete' && (
-          <div className="mt-2 grid grid-cols-4 gap-2.5 sm:gap-3 md:gap-4">
-            {state.currentProblem?.options.map((option, idx) => (
-              <motion.button
-                type="button"
-                key={`${state.currentProblem?.id}-${option}-${idx}`}
-                initial={{ opacity: 0, y: 6, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ delay: idx * 0.03 }}
-                onClick={() => toggleOption(option)}
-                className={`relative flex h-[clamp(62px,9vh,94px)] items-center justify-center rounded-2xl border text-[clamp(1.1rem,3.8vw,2rem)] font-black transition ${
-                  selectedOptions.includes(option)
-                    ? 'border-cyan-100 bg-[linear-gradient(180deg,#39c4f4_0%,#1278bb_100%)] text-white shadow-[0_0_0_3px_rgba(125,211,252,0.45),0_10px_22px_rgba(2,6,23,0.45)]'
-                    : 'border-amber-100/70 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] text-slate-900 shadow-[0_8px_18px_rgba(2,6,23,0.3)]'
-                }`}
-              >
-                {option}
-              </motion.button>
-            ))}
+          <div className="fixed inset-x-0 bottom-[max(0.5rem,env(safe-area-inset-bottom))] z-40 px-3">
+            <div className="mx-auto grid w-full max-w-[780px] grid-cols-4 gap-2.5 sm:gap-3 md:gap-4">
+              {state.currentProblem?.options.map((option, idx) => (
+                <motion.button
+                  type="button"
+                  key={`${state.currentProblem?.id}-${option}-${idx}`}
+                  initial={{ opacity: 0, y: 6, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ delay: idx * 0.03 }}
+                  onClick={() => toggleOption(option)}
+                  className={`relative flex h-[clamp(62px,8.8vh,88px)] items-center justify-center rounded-2xl border text-[clamp(1.1rem,3.8vw,2rem)] font-black transition ${
+                    selectedOptions.includes(option)
+                      ? 'border-cyan-100 bg-[linear-gradient(180deg,#39c4f4_0%,#1278bb_100%)] text-white shadow-[0_0_0_3px_rgba(125,211,252,0.45),0_10px_22px_rgba(2,6,23,0.45)]'
+                      : 'border-amber-100/70 bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] text-slate-900 shadow-[0_8px_18px_rgba(2,6,23,0.3)]'
+                  }`}
+                >
+                  {option}
+                </motion.button>
+              ))}
+            </div>
           </div>
         )}
       </div>
-
-      {playingState && (
-        <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.4rem,env(safe-area-inset-bottom))] z-40 flex justify-center px-3">
-          <div className="pointer-events-auto">
-          </div>
-        </div>
-      )}
     </div>
   );
 };
 
 export default FactorFrenzyGame;
-

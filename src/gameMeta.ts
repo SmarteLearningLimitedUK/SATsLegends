@@ -206,7 +206,7 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     focus: 'Mass, volume and unit conversion',
     rules: {
       title: 'Scale Master',
-      summary: 'Load the mine scale with the right cargo so the left pan balances exactly with the target weight or volume.',
+      summary: "We're ready to advance - we're working out the weights needed for the catapaults. Select the weights to meet the target to help us balance the catapault.",
       bullets: [
         'Rounds can swap between mass and liquid capacity, so watch the unit before you load anything.',
         'Some targets are shown in kilograms or litres even when the cargo is labelled in grams or millilitres.',

@@ -295,10 +295,10 @@ const PerimeterShapeRenderer: React.FC<{
           const isTraced = tracedEdgeIds.includes(edge.id);
           const isActive = highlightedEdgeId === edge.id || isTraced;
           const labelPos = getEdgeLabelPosition(edge);
-          const labelWidth = Math.max(10, Math.min(18, edge.label.length * 1.6 + 2));
-          const labelHeight = 5.5;
-          const safeX = clamp(labelPos.x, (labelWidth / 2) + 0.8, 100 - (labelWidth / 2) - 0.8);
-          const safeY = clamp(labelPos.y, 6, 94);
+          const labelWidth = Math.max(12, Math.min(24, edge.label.length * 2 + 3));
+          const labelHeight = 7;
+          const safeX = clamp(labelPos.x, (labelWidth / 2) + 1, 100 - (labelWidth / 2) - 1);
+          const safeY = clamp(labelPos.y, 7.5, 92.5);
           return (
             <g
               key={edge.id}
@@ -331,10 +331,10 @@ const PerimeterShapeRenderer: React.FC<{
                 y={safeY - (labelHeight / 2)}
                 width={labelWidth}
                 height={labelHeight}
-                rx={3}
+                rx={3.5}
                 fill={isTraced ? 'rgba(250, 204, 21, 0.52)' : isActive ? 'rgba(250, 204, 21, 0.36)' : 'rgba(15, 23, 42, 0.66)'}
                 stroke={isTraced ? 'rgba(253, 224, 71, 0.95)' : isActive ? 'rgba(250, 204, 21, 0.75)' : 'rgba(255, 255, 255, 0.22)'}
-                strokeWidth={0.45}
+                strokeWidth={0.55}
               />
               <text
                 x={safeX}
@@ -344,6 +344,7 @@ const PerimeterShapeRenderer: React.FC<{
                 fill="#ffffff"
                 fontSize={labelFontSize}
                 fontWeight={800}
+                style={{ letterSpacing: '0.01em' }}
               >
                 {edge.label}
               </text>
@@ -471,7 +472,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
     submitAnswer(option);
   };
   const shapeZoom = currentLevel >= 11 ? 0.92 : currentLevel >= 7 ? 0.88 : 0.84;
-  const labelFontSize = currentLevel >= 11 ? 4.6 : 4.2;
+  const labelFontSize = currentLevel >= 11 ? 6.2 : 5.5;
 
   return (
     <div className="relative h-full w-full overflow-hidden bg-[#030817]">

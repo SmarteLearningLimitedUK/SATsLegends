@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { GAME_META, GameRuleSet } from './gameMeta';
 import { getLevelGameTitle } from './utils/gameNames';
@@ -520,6 +520,13 @@ const App: React.FC = () => {
           bullets: [],
         };
       }
+      if (selectedLevel.blueprintKey === 'multiplication_mine') {
+        return {
+          title: 'Multiplication Mine',
+          summary: "You've made it to the Mines but there are boulders in the way. Solve the multiplication problems and smash your way through!",
+          bullets: [],
+        };
+      }
       if (selectedLevel.blueprintKey === 'data_detective' || selectedLevel.blueprintKey === 'whodunnit_data') {
         return {
           title: 'Data Detective',
@@ -548,10 +555,31 @@ const App: React.FC = () => {
           bullets: [],
         };
       }
+      if (selectedLevel.blueprintKey === 'perimeter_path') {
+        return {
+          title: 'Perimeter Path',
+          summary: 'We are mapping out the castle tunnels. We need to make sure we have enough fuse to run the dynamite. Can you help us calculate the perimeter? Remember... Perimeter is defined as the total distance around a two-dimensional shape.',
+          bullets: [],
+        };
+      }
+      if (selectedLevel.blueprintKey === 'order_ops_arena') {
+        return {
+          title: 'Order Ops Arena',
+          summary: 'HALT! Who goes there. I require order... order of operatons that is! The BIDMAS rule is an acronym to help us remember the order of operations in calculations. Let\'s duel!',
+          bullets: [],
+        };
+      }
+      if (selectedLevel.blueprintKey === 'factor_frenzy') {
+        return {
+          title: 'Factor Frenzy',
+          summary: 'A factor is a number that divides another number exactly, without leaving any remainder. Factors can also be seen as pairs of numbers that, when multiplied together, result in the original number. Help find the hidden factors.',
+          bullets: [],
+        };
+      }
       if (selectedLevel.blueprintKey === 'coordinate_quest') {
         return {
           title: 'Coordinate Quest',
-          summary: "We can't get through! Those Monster Minds have hidden traps. Navigate the map from the co-ordinates given, and make it through the pass safely.",
+          summary: "We can't get through! Those Monster Minds have hidden traps. Navigate the map from the co-ordinates given, and make it through the pass safely. Remember: the X axis runs left to right â†’, and the Y axis runs bottom to top â†‘.",
           bullets: [],
         };
       }
@@ -1170,6 +1198,7 @@ const App: React.FC = () => {
 };
 
 export default App;
+
 
 
 

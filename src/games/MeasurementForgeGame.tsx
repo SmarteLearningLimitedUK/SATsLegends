@@ -148,7 +148,7 @@ const buildRound = (levelId: number, roundIndex: number): RoundData => {
   const targetGrams = required.reduce((sum, grams) => sum + grams, 0);
 
   const distractorPool = distinctChoices.filter((value) => !required.includes(value));
-  const extraCopiesCount = Math.min(3, 1 + Math.floor(stage / 2));
+  const extraCopiesCount = stage >= 4 ? 0 : stage >= 2 ? 1 : 2;
   const extraCopies = Array.from({ length: extraCopiesCount }, () => randomFrom(required));
 
   const all = shuffle([...required, ...distractorPool, ...extraCopies]);
@@ -281,7 +281,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
           <motion.div
             animate={successPulse ? { scale: [1, 1.02, 1] } : { scale: 1 }}
             transition={{ duration: 0.36, ease: 'easeOut' }}
-            className="relative w-full max-w-[26rem] flex-1 min-h-[11.5rem] p-1 md:max-w-[30rem]"
+            className="relative w-full max-w-[35rem] flex-1 min-h-[17rem] p-1 md:max-w-[40rem]"
           >
             <div
               className={`flex w-full items-center justify-between rounded-[1.35rem] px-3 py-2 text-center ${
@@ -302,34 +302,34 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
               </div>
             </div>
 
-            <div className="relative mt-4 flex min-h-0 flex-1 items-center justify-center">
+            <div className="relative mt-3 flex min-h-[17rem] flex-1 items-center justify-center">
               <img
                 src={alphaKeyedScale}
                 alt=""
                 aria-hidden="true"
                 draggable={false}
                 className="pointer-events-none absolute inset-0 z-0 h-full w-full object-contain object-center"
-                style={{ transform: 'translateY(6px) scale(0.9)' }}
+                style={{ transform: 'translateY(-2px) scale(1.06)' }}
               />
               <div
                 ref={dropRef}
-                className="absolute left-1/2 top-[8%] z-10 flex w-[68%] -translate-x-1/2 items-center justify-center gap-2 rounded-[1.1rem] px-2 py-1.5"
+                className="absolute left-1/2 top-[15%] z-10 flex min-h-[4.5rem] w-[74%] -translate-x-1/2 items-center justify-center gap-2 rounded-[1.1rem] px-2 py-1.5"
               >
                 {placedTokens.map((token) => (
                   <button
                     key={token.id}
                     onClick={() => removePlacedToken(token.id)}
-                    className="relative z-10 flex min-w-[2.7rem] flex-col items-center rounded-xl bg-[#0b2d68]/80 px-1.5 py-1 text-white ring-1 ring-white/30"
+                    className="relative z-10 flex min-w-[2.4rem] flex-col items-center rounded-xl bg-[#0b2d68]/82 px-1 py-0.5 text-white ring-1 ring-white/28"
                   >
-                    <img src={gemImageMap.get(token.gem) ?? token.gem} alt="" className="h-6 w-6 object-contain" draggable={false} />
-                    <span className="text-[10px] font-black leading-none">{getMeasurementDisplay(token.grams).primary}</span>
+                    <img src={gemImageMap.get(token.gem) ?? token.gem} alt="" className="h-5 w-5 object-contain" draggable={false} />
+                    <span className="text-[9px] font-black leading-none">{getMeasurementDisplay(token.grams).primary}</span>
                   </button>
                 ))}
               </div>
-              <div className="pointer-events-none absolute bottom-[11%] left-1/2 z-20 -translate-x-1/2">
-                <div className="flex min-w-[7.5rem] flex-col items-center rounded-[0.8rem] border border-cyan-200/50 bg-[#07162b]/90 px-3 py-1.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.55)]">
-                  <div className="text-[8px] font-black uppercase tracking-[0.28em] text-cyan-100/75">Digital Readout</div>
-                  <div className="mt-0.5 font-mono text-[1.05rem] font-black tracking-[0.12em] text-emerald-200">
+              <div className="pointer-events-none absolute left-1/2 top-[58%] z-20 -translate-x-1/2 -translate-y-1/2">
+                <div className="flex min-w-[8.4rem] flex-col items-center rounded-[0.95rem] border border-cyan-200/58 bg-[#07162b]/92 px-3 py-1.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.55)]">
+                  <div className="text-[8px] font-black uppercase tracking-[0.28em] text-cyan-100/80">Digital Readout</div>
+                  <div className="mt-0.5 font-mono text-[1.1rem] font-black tracking-[0.12em] text-emerald-200">
                     {toGramLabel(currentGrams)}
                   </div>
                 </div>
@@ -340,7 +340,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
 
         <div className="w-full shrink-0 px-4 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] pt-2">
           <div className="mx-auto w-full max-w-[32rem] rounded-[1.6rem] border border-white/14 bg-slate-950/45 p-2 shadow-[0_18px_44px_rgba(2,6,23,0.55)] backdrop-blur-sm">
-            <div className="flex items-stretch gap-2 overflow-x-auto px-1 pb-1 pt-1">
+            <div className="grid grid-cols-4 gap-2 px-1 pb-1 pt-1">
               {allTokens.map((token) => {
                 const isPlaced = placedIds.includes(token.id);
                 return (
@@ -358,15 +358,15 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                       }
                     }}
                     disabled={isPlaced}
-                    className={`flex h-[4.35rem] w-[5.8rem] shrink-0 flex-col items-center justify-center rounded-2xl px-2 text-white shadow-[0_10px_16px_rgba(0,0,0,0.28)] ring-2 ring-white/10 touch-none ${
+                    className={`flex h-[3.55rem] w-full flex-col items-center justify-center rounded-xl px-1 text-white shadow-[0_10px_16px_rgba(0,0,0,0.28)] ring-2 ring-white/10 touch-none ${
                       isPlaced
                         ? 'bg-slate-900/30 opacity-40'
                         : 'bg-[linear-gradient(180deg,rgba(15,23,42,0.7),rgba(15,23,42,0.35))]'
                     }`}
                   >
-                    <img src={gemImageMap.get(token.gem) ?? token.gem} alt="" className="h-7 w-7 object-contain" draggable={false} />
-                    <span className="text-sm font-black leading-none">{getMeasurementDisplay(token.grams).primary}</span>
-                    <span className="mt-1 text-[10px] font-bold leading-none text-white/70">
+                    <img src={gemImageMap.get(token.gem) ?? token.gem} alt="" className="h-5 w-5 object-contain" draggable={false} />
+                    <span className="text-[10px] font-black leading-none">{getMeasurementDisplay(token.grams).primary}</span>
+                    <span className="mt-0.5 text-[8px] font-bold leading-none text-white/70">
                       {getMeasurementDisplay(token.grams).secondary}
                     </span>
                   </motion.button>

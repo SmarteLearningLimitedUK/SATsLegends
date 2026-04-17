@@ -11,6 +11,7 @@ import boat5 from '../assets/boats/5.png';
 import boat6 from '../assets/boats/6.png';
 import boat7 from '../assets/boats/7.png';
 import dockBackground from '../assets/maps/backgroundsforgames/division dock.jpg';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface DivisionDockGameProps {
@@ -254,80 +255,100 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
         style={{ backgroundImage: `url(${dockBackground})` }}
       />
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+2.6rem)] pt-[calc(env(safe-area-inset-top)+3.6rem)] md:px-3 md:pb-[calc(env(safe-area-inset-bottom)+3rem)] md:pt-[calc(env(safe-area-inset-top)+4rem)]">
-        <PuzzleStage className="w-full max-w-5xl min-h-0 flex-1 rounded-[1.6rem] p-2 md:rounded-[2rem] md:p-2.5">
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col px-2 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-[calc(env(safe-area-inset-top)+1rem)] md:px-3 md:pb-[calc(env(safe-area-inset-bottom)+1.25rem)] md:pt-[calc(env(safe-area-inset-top)+1.25rem)]">
+        <PuzzleStage className="w-full max-w-7xl min-h-0 flex-1 rounded-[1.6rem] p-2 md:rounded-[2rem] md:p-2.5">
           <div className="absolute inset-0 bg-transparent" />
 
-          <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-2 md:px-2.5 md:pb-2 md:pt-2.5">
-            <div className="flex justify-center">
-              <div className="game-question-card w-full max-w-[780px] px-3 py-2 text-center">
-                <div className="question-title">
-                  {formatFantasyPrompt(`Share ${question.dividend} crates across ${question.divisor} boats.`)}
-                </div>
-              </div>
+          <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-3 px-1 py-1.5 md:gap-4 md:px-2 md:py-2">
+            <div className="mx-auto w-full max-w-[920px]">
+              <GameQuestionCard
+                title="Division Dock"
+                bodyClassName="text-[clamp(0.95rem,2.4vw,1.28rem)] font-black uppercase leading-tight tracking-[0.04em] text-white md:text-[1.32rem]"
+              >
+                {formatFantasyPrompt(`The Monsterminds have messed up the cargo manifests.\nShare ${question.dividend} crates equally between ${question.divisor} boats.`)}
+              </GameQuestionCard>
             </div>
 
-            <div className="mt-1.5 flex min-h-0 flex-1 flex-col gap-2">
-              <div className="rounded-[1.1rem] border border-white/12 bg-white/6 p-2 text-center shadow-[0_12px_20px_rgba(2,6,23,0.2)]">
-                <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Cargo status</div>
-                <div className="mt-1 text-[clamp(1.2rem,3.4vw,1.9rem)] font-black text-white">
-                  {question.dividend} ÷ {question.divisor} = ?
-                </div>
-                <div className="mt-2 grid grid-cols-2 gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-white/70">
-                  <div className="rounded-xl bg-white/12 px-2 py-1">
-                    Boats
-                    <div className="mt-1 text-base font-black text-white">{roundSolved}/{ROUNDS_TO_WIN}</div>
+            <div className="grid min-h-0 flex-1 gap-3 lg:grid-cols-[minmax(270px,320px)_minmax(0,1fr)] lg:gap-4">
+              <div className="flex min-h-0 flex-col gap-3">
+                <div className="rounded-[1.15rem] border border-white/12 bg-white/7 p-3 text-center shadow-[0_12px_20px_rgba(2,6,23,0.2)] md:p-4">
+                  <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Cargo status</div>
+                  <div className="mt-1 text-[clamp(1.15rem,3vw,1.7rem)] font-black text-white">
+                    {question.dividend} ÷ {question.divisor} = ?
                   </div>
-                  <div className="rounded-xl bg-white/12 px-2 py-1">
-                    Left
-                    <div className="mt-1 text-base font-black text-amber-100">{remainingGoods}</div>
+                  <div className="mt-2 grid grid-cols-2 gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-white/70">
+                    <div className="rounded-xl bg-white/12 px-2 py-2">
+                      Rounds
+                      <div className="mt-1 text-base font-black text-white">{roundSolved}/{ROUNDS_TO_WIN}</div>
+                    </div>
+                    <div className="rounded-xl bg-white/12 px-2 py-2">
+                      Left
+                      <div className="mt-1 text-base font-black text-amber-100">{remainingGoods}</div>
+                    </div>
+                  </div>
+                  <div className="mt-2 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/75">
+                    {question.divisor} boats in this round
+                  </div>
+                </div>
+
+                <div className="rounded-[1.15rem] border border-white/12 bg-white/7 p-3 shadow-[0_12px_20px_rgba(2,6,23,0.2)] md:p-4">
+                  <div className="mb-3 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Controls</div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={resetBoats}
+                      disabled={isFinished}
+                      className="ui-button-secondary rounded-[0.95rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white disabled:opacity-60"
+                    >
+                      Reset
+                    </button>
+                    <button
+                      type="button"
+                      onClick={checkShare}
+                      disabled={isFinished}
+                      className="ui-button-primary rounded-[0.95rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white disabled:opacity-60"
+                    >
+                      Check
+                    </button>
                   </div>
                 </div>
               </div>
 
-              <div className="flex min-h-0 flex-1 flex-col rounded-[1.1rem] border border-white/12 bg-white/6 p-2 shadow-[0_12px_20px_rgba(2,6,23,0.2)]">
-                <div className="mb-2 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Dockyard</div>
-                <div className="grid flex-1 grid-cols-4 gap-2">
+              <div className="flex min-h-0 flex-col rounded-[1.15rem] border border-white/12 bg-white/6 p-3 shadow-[0_12px_20px_rgba(2,6,23,0.2)] md:p-4">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Dockyard</div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/65">
+                    Tap a boat to place one crate
+                  </div>
+                </div>
+                <div className="grid flex-1 auto-rows-fr grid-cols-2 gap-2 sm:grid-cols-4">
                   {boatLoads.map((count, index) => (
                     <button
                       key={`boat-${index}`}
                       type="button"
                       onClick={() => addToBoat(index)}
                       disabled={isFinished || remainingGoods <= 0}
-                      className="ui-button-secondary flex flex-col items-center justify-center gap-1 rounded-[0.9rem] p-1.5 text-center disabled:opacity-60"
+                      className="ui-button-secondary grid h-full min-h-[122px] grid-rows-[minmax(64px,1fr)_auto_auto] items-center gap-1.5 rounded-[1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.10)_0%,rgba(255,255,255,0.04)_100%)] px-2 py-2 text-center shadow-[0_10px_20px_rgba(2,6,23,0.18)] transition hover:bg-white/8 disabled:opacity-60 md:min-h-[146px] md:gap-2 md:px-2.5 md:py-2.5"
                     >
-                      <div className="relative h-10 w-14 overflow-hidden rounded-md border border-white/18 bg-transparent">
+                      <div className="relative flex h-[clamp(60px,18vw,76px)] w-full items-center justify-center overflow-hidden rounded-md border border-white/18 bg-transparent">
                         <img
                           src={boatSet[index] ?? boat1}
                           alt={`Dock ${index + 1} boat`}
-                          className="h-full w-full object-contain"
+                          className="h-full w-auto object-contain object-center"
                           draggable={false}
                         />
                       </div>
-                      <div className="text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100/80">Dock {index + 1}</div>
-                      <div className="text-sm font-black text-white">{count}</div>
+                      <div className="flex w-full flex-col items-center gap-0.5 leading-none">
+                        <div className="whitespace-nowrap text-[9px] font-black uppercase tracking-[0.12em] text-cyan-100/80">
+                          Dock {index + 1}
+                        </div>
+                        <div className="whitespace-nowrap text-[clamp(1rem,4vw,1.15rem)] font-black tabular-nums text-white">
+                          {count}
+                        </div>
+                      </div>
                     </button>
                   ))}
                 </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={resetBoats}
-                  disabled={isFinished}
-                  className="ui-button-secondary rounded-[0.95rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white disabled:opacity-60"
-                >
-                  Reset
-                </button>
-                <button
-                  type="button"
-                  onClick={checkShare}
-                  disabled={isFinished}
-                  className="ui-button-primary rounded-[0.95rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white disabled:opacity-60"
-                >
-                  Check
-                </button>
               </div>
             </div>
           </div>
