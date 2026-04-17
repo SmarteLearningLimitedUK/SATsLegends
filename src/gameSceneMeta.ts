@@ -10,7 +10,6 @@ import dataDetectiveBackground from './assets/maps/backgroundsforgames/data dete
 import matrixMatchBackground from './assets/maps/backgroundsforgames/End Trial.jpg';
 import fractionForgeBackground from './assets/maps/backgroundsforgames/fraction forge map.jpg';
 import graphGrabberBackground from './assets/maps/backgroundsforgames/graph grabber.jpg';
-import lavaPathBackground from './assets/maps/backgroundsforgames/lava path.jpg';
 import lineGraphLabBackground from './assets/maps/backgroundsforgames/linegraphlab.jpg';
 import meanMachineBackground from './assets/maps/backgroundsforgames/meanmachine.jpg';
 import mixedMasteryBackground from './assets/maps/backgroundsforgames/Mixed Mastery.jpg';
@@ -122,7 +121,7 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   equation_grove: withBackground(REASONING_SCENE, orderOpsArenaBackground),
   rule_runner: withBackground(REASONING_SCENE, problemPyramidBackground),
   formula_forge: withBackground(NUMBER_SCENE, calculationCupBackground),
-  unit_mixer: withBackground(REASONING_SCENE, lavaPathBackground),
+  unit_mixer: withBackground(REASONING_SCENE, problemPyramidBackground),
   change_counter: withBackground(CHANGE_COUNTER_SCENE, changeCounterBackground),
   reasoning_quest: withBackground(REASONING_SCENE, multiStepMarathonBackground),
 };
