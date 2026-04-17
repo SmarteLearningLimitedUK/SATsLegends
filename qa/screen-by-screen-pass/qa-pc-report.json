@@ -191,6 +191,30 @@
       "status": "captured",
       "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
       "screenshot": "qa-pc-operations-outpost-multiplication-mine.png"
+    },
+    {
+      "viewport": "pc",
+      "island": "Operations Outpost",
+      "group": "Order Ops Arena",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-pc-operations-outpost-order-ops-arena.png"
+    },
+    {
+      "viewport": "pc",
+      "island": "Operations Outpost",
+      "group": "Formula Forge",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-pc-operations-outpost-formula-forge.png"
+    },
+    {
+      "viewport": "pc",
+      "island": "Operations Outpost",
+      "group": "Remainder Run",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-pc-operations-outpost-remainder-run.png"
     }
   ],
   "consoleErrors": []
