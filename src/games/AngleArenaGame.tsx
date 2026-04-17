@@ -13,7 +13,15 @@ import {
   GameQuestionCard,
 } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
-import { BOSS_ASSETS } from '../assets/bosses';
+import cannonFacingLeftSrc from '../assets/angle_arena/cannonanglearena/1.png';
+import cannonFacingRightSrc from '../assets/angle_arena/cannonanglearena/2.png';
+import cannonFacingUpSrc from '../assets/angle_arena/cannonanglearena/3.png';
+import enemyGoblinSrc from '../assets/bosses/goblin.png';
+import enemyGoblinWizardSrc from '../assets/bosses/goblinwiz.jpg';
+import enemyKrakenSrc from '../assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_create_me_a_kracken-1.jpg';
+import enemyZombie0Src from '../assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_create_me_a_zombie-0.jpg';
+import enemyZombie1Src from '../assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_create_me_a_zombie-1.jpg';
+import enemySnakeSrc from '../assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_but_different_colours_create_me_a_snake-2.jpg';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { angleToVector, clamp, degreesToRadians, distance, lerp, worldToScreen } from './angleArena/math';
 
@@ -146,7 +154,53 @@ const drawRoundedRectPath = (
   ctx.closePath();
 };
 
-const drawCannon = (ctx: CanvasRenderingContext2D, angleDeg: number) => {
+type CannonSpriteKey = 'left' | 'right' | 'up';
+
+type CannonSprites = Partial<Record<CannonSpriteKey, CanvasImageSource>>;
+
+const CANNON_BASELINE_DEG: Record<CannonSpriteKey, number> = {
+  left: 155,
+  right: 25,
+  up: 90,
+};
+
+const toPositiveAngle = (angleDeg: number) => ((angleDeg % 360) + 360) % 360;
+
+const pickCannonSpriteKey = (angleDeg: number): CannonSpriteKey => {
+  const angle = toPositiveAngle(angleDeg);
+  const dir = angleToVector(angle);
+  if (Math.abs(dir.y) >= Math.abs(dir.x) * 0.92) return 'up';
+  return dir.x >= 0 ? 'right' : 'left';
+};
+
+const alphaKeyNearWhite = (img: HTMLImageElement, threshold = 240, saturationBand = 35) => {
+  const canvas = document.createElement('canvas');
+  canvas.width = img.naturalWidth || img.width;
+  canvas.height = img.naturalHeight || img.height;
+  const ctx = canvas.getContext('2d');
+  if (!ctx || !canvas.width || !canvas.height) return img;
+
+  ctx.drawImage(img, 0, 0);
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = imageData.data;
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const brightness = (r + g + b) / 3;
+    const lowSaturation = max - min <= saturationBand;
+
+    if (brightness >= threshold && lowSaturation) {
+      data[i + 3] = 0;
+    }
+  }
+  ctx.putImageData(imageData, 0, 0);
+  return canvas;
+};
+
+const drawCannonVector = (ctx: CanvasRenderingContext2D, angleDeg: number) => {
   ctx.save();
   ctx.rotate(-degreesToRadians(angleDeg));
 
@@ -196,6 +250,113 @@ const drawCannon = (ctx: CanvasRenderingContext2D, angleDeg: number) => {
   ctx.arc(-6, 0, 4.5, 0, Math.PI * 2);
   ctx.fill();
 
+  ctx.restore();
+};
+
+const drawCannonSprite = (
+  ctx: CanvasRenderingContext2D,
+  angleDeg: number,
+  sprites: CannonSprites,
+  sizePx: number,
+) => {
+  const spriteKey = pickCannonSpriteKey(angleDeg);
+  const image = sprites[spriteKey];
+  if (!image) {
+    drawCannonVector(ctx, angleDeg);
+    return;
+  }
+
+  const normalizedAngle = toPositiveAngle(angleDeg);
+  const baselineAngle = CANNON_BASELINE_DEG[spriteKey];
+
+  ctx.save();
+  ctx.rotate(degreesToRadians(baselineAngle - normalizedAngle));
+
+  ctx.globalAlpha = 0.22;
+  ctx.fillStyle = 'rgba(2,6,23,0.9)';
+  ctx.beginPath();
+  ctx.ellipse(-8, sizePx * 0.26, sizePx * 0.34, sizePx * 0.08, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.globalAlpha = 1;
+  const anchorX = sizePx * 0.5;
+  const anchorY = sizePx * 0.66;
+  ctx.drawImage(image, -anchorX, -anchorY, sizePx, sizePx);
+  ctx.restore();
+};
+
+type EnemyPlatform = 'podium' | 'cloud';
+
+const drawEnemyPlatform = (ctx: CanvasRenderingContext2D, platform: EnemyPlatform, sizePx: number) => {
+  if (platform === 'cloud') {
+    const scale = Math.max(0.65, Math.min(1.25, sizePx / 220));
+    drawCloud(ctx, 0, sizePx * 0.38, scale, 0.86);
+    return;
+  }
+
+  ctx.save();
+  ctx.translate(0, sizePx * 0.36);
+  ctx.fillStyle = 'rgba(2,6,23,0.3)';
+  ctx.beginPath();
+  ctx.ellipse(0, sizePx * 0.22, sizePx * 0.42, sizePx * 0.12, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  const pedestalGradient = ctx.createLinearGradient(0, -sizePx * 0.35, 0, sizePx * 0.45);
+  pedestalGradient.addColorStop(0, 'rgba(148,163,184,0.55)');
+  pedestalGradient.addColorStop(0.55, 'rgba(71,85,105,0.72)');
+  pedestalGradient.addColorStop(1, 'rgba(15,23,42,0.9)');
+  ctx.fillStyle = pedestalGradient;
+  drawRoundedRectPath(ctx, -sizePx * 0.42, -sizePx * 0.18, sizePx * 0.84, sizePx * 0.34, sizePx * 0.14);
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(255,255,255,0.16)';
+  drawRoundedRectPath(ctx, -sizePx * 0.38, -sizePx * 0.14, sizePx * 0.76, sizePx * 0.08, sizePx * 0.08);
+  ctx.fill();
+  ctx.restore();
+};
+
+const drawEnemyPortrait = (ctx: CanvasRenderingContext2D, image: HTMLImageElement, sizePx: number) => {
+  if (!image.complete) return;
+  const diameter = sizePx * 0.62;
+  const radius = diameter / 2;
+
+  ctx.save();
+  ctx.shadowColor = 'rgba(2,6,23,0.65)';
+  ctx.shadowBlur = 18;
+  ctx.shadowOffsetY = 10;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(15,23,42,0.35)';
+  ctx.fill();
+  ctx.restore();
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(0, 0, radius, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.clip();
+
+  const iw = image.naturalWidth || image.width;
+  const ih = image.naturalHeight || image.height;
+  const scale = Math.max(diameter / iw, diameter / ih);
+  const dw = iw * scale;
+  const dh = ih * scale;
+  ctx.drawImage(image, -dw / 2, -dh / 2, dw, dh);
+  ctx.restore();
+
+  ctx.save();
+  ctx.strokeStyle = 'rgba(226,232,240,0.9)';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.strokeStyle = 'rgba(56,189,248,0.5)';
+  ctx.lineWidth = 8;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius + 6, 0, Math.PI * 2);
+  ctx.stroke();
   ctx.restore();
 };
 
@@ -250,12 +411,12 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const cameraTargetRef = useRef({ x: 0, y: 0 });
   const settleTimeoutRef = useRef<number | null>(null);
   const autoAdvanceTimeoutRef = useRef<number | null>(null);
-  const bossImageRef = useRef<HTMLImageElement | null>(null);
-  const bossProcessedRef = useRef<HTMLCanvasElement | null>(null);
   const projectileRef = useRef<ProjectileState | null>(null);
   const impactResultRef = useRef<ImpactResult | null>(null);
   const impactPositionRef = useRef({ x: 0, y: 0 });
   const aimTimeoutRef = useRef<number | null>(null);
+  const cannonSpritesRef = useRef<CannonSprites>({});
+  const enemySpritesRef = useRef<HTMLImageElement[]>([]);
 
   const [gameState, setGameState] = useState<GameState>('intro');
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -324,31 +485,37 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   }, []);
 
   useEffect(() => {
-    const bossImage = BOSS_ASSETS.croc_boss?.poses?.neutral || BOSS_ASSETS.croc_boss?.poses?.attack;
-    if (!bossImage) return;
-    const img = new Image();
-    img.src = bossImage;
-    bossImageRef.current = img;
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-      ctx.drawImage(img, 0, 0);
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = imageData.data;
-      for (let i = 0; i < data.length; i += 4) {
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        if (r > 245 && g > 245 && b > 245) {
-          data[i + 3] = 0;
-        }
-      }
-      ctx.putImageData(imageData, 0, 0);
-      bossProcessedRef.current = canvas;
+    const load = (key: CannonSpriteKey, src: string) => {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => {
+        const processed = alphaKeyNearWhite(img);
+        cannonSpritesRef.current = { ...cannonSpritesRef.current, [key]: processed };
+      };
     };
+    load('left', cannonFacingLeftSrc);
+    load('right', cannonFacingRightSrc);
+    load('up', cannonFacingUpSrc);
+  }, []);
+
+  useEffect(() => {
+    const sources = [
+      enemyGoblinSrc,
+      enemyGoblinWizardSrc,
+      enemyKrakenSrc,
+      enemyZombie0Src,
+      enemyZombie1Src,
+      enemySnakeSrc,
+    ];
+    sources.forEach((src, index) => {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => {
+        const next = [...enemySpritesRef.current];
+        next[index] = img;
+        enemySpritesRef.current = next;
+      };
+    });
   }, []);
 
   const resetForNext = () => {
@@ -533,15 +700,15 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.translate(shakeX, shakeY);
       ctx.clearRect(0, 0, viewWidth, viewHeight);
 
-      drawSkyBackground(ctx, viewWidth, viewHeight, timestamp);
-
-      const screenOffset = { x: 0, y: viewHeight * 0.18 };
+      const cannonAnchor = { x: viewWidth * 0.22, y: viewHeight * 0.78 };
+      const originBase = worldToScreen(0, 0, camera.x, camera.y, viewWidth, viewHeight);
+      const screenOffset = { x: cannonAnchor.x - originBase.x, y: cannonAnchor.y - originBase.y };
       const toScreen = (x: number, y: number) => {
         const base = worldToScreen(x, y, camera.x, camera.y, viewWidth, viewHeight);
         return { x: base.x + screenOffset.x, y: base.y + screenOffset.y };
       };
 
-      const originScreen = toScreen(0, 0);
+      const originScreen = cannonAnchor;
       const enemyScreen = toScreen(enemyWorld.x, enemyWorld.y);
 
       ctx.strokeStyle = 'rgba(148,163,184,0.4)';
@@ -569,27 +736,27 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
       ctx.save();
       ctx.translate(originScreen.x, originScreen.y + 6);
-      drawCannon(ctx, desiredAngleRef.current);
+      drawCannonSprite(ctx, desiredAngleRef.current, cannonSpritesRef.current, Math.min(viewWidth, viewHeight) * 0.22);
       ctx.restore();
 
       ctx.save();
       ctx.translate(enemyScreen.x, enemyScreen.y);
-      ctx.fillStyle = 'rgba(15,23,42,0.5)';
-      ctx.beginPath();
-      ctx.ellipse(0, 42, 54, 16, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#734b22';
-      ctx.fillRect(-44, 18, 88, 22);
-      ctx.fillStyle = '#5b3717';
-      ctx.fillRect(-48, 34, 96, 12);
-      const boss = bossProcessedRef.current;
-      if (boss) {
-        const bossSize = Math.min(viewWidth, viewHeight) * 0.24;
-        ctx.drawImage(boss, -bossSize / 2, -bossSize / 2 - 12, bossSize, bossSize);
+      const enemySize = Math.min(viewWidth, viewHeight) * 0.26;
+      const platform: EnemyPlatform = (questionIndex + (activeQuestion?.id ?? 0)) % 2 === 0 ? 'podium' : 'cloud';
+      drawEnemyPlatform(ctx, platform, enemySize);
+
+      const enemies = enemySpritesRef.current;
+      const enemyIndex = enemies.length ? (questionIndex % enemies.length) : 0;
+      const enemy = enemies[enemyIndex];
+      if (enemy) {
+        ctx.save();
+        ctx.translate(0, -enemySize * 0.12);
+        drawEnemyPortrait(ctx, enemy, enemySize);
+        ctx.restore();
       } else {
-        ctx.fillStyle = '#f43f5e';
+        ctx.fillStyle = 'rgba(250,204,21,0.85)';
         ctx.beginPath();
-        ctx.arc(0, 0, 24, 0, Math.PI * 2);
+        ctx.arc(0, -enemySize * 0.1, enemySize * 0.12, 0, Math.PI * 2);
         ctx.fill();
       }
       ctx.restore();
@@ -662,12 +829,29 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   return (
     <GameUiShell className="bg-transparent !bg-none ![background-image:none] ![background-color:transparent]" overlayDisabled>
       <div className="relative h-full w-full overflow-hidden text-white">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(180deg,#bfeaff_0%,#7dd3fc_36%,#60a5fa_66%,#1e3a8a_100%)]"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_14%_16%,rgba(255,255,255,0.75),transparent_22%),radial-gradient(circle_at_36%_10%,rgba(255,255,255,0.55),transparent_18%),radial-gradient(circle_at_72%_18%,rgba(255,255,255,0.62),transparent_24%),radial-gradient(circle_at_86%_14%,rgba(255,255,255,0.45),transparent_18%)] opacity-70"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-[22%] top-[78%] z-0 -translate-x-1/2 -translate-y-1/2"
+        >
+          <div className="relative h-[8.25rem] w-[18rem] rounded-[999px] bg-[radial-gradient(ellipse_at_center,rgba(34,197,94,0.9),rgba(21,128,61,0.95)_55%,rgba(15,23,42,0.0)_72%)]">
+            <div className="absolute inset-0 rounded-[999px] bg-[radial-gradient(circle_at_30%_35%,rgba(253,230,138,0.22),transparent_30%),radial-gradient(circle_at_70%_45%,rgba(167,243,208,0.18),transparent_36%)]" />
+            <div className="absolute inset-x-6 bottom-6 h-8 rounded-[999px] bg-[linear-gradient(180deg,rgba(74,222,128,0.55),rgba(21,128,61,0.0))] blur-[0.5px]" />
+          </div>
+        </div>
         <canvas
           ref={canvasRef}
-          className="absolute inset-0 h-full w-full"
-        />
+          className="absolute inset-0 z-10 h-full w-full"
+         />
         <GameScreenLayout
-          className="relative z-10 px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2"
+          className="relative z-20 px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2"
           top={(
             <div className="flex flex-col gap-1.5">
               <GameTopBar
