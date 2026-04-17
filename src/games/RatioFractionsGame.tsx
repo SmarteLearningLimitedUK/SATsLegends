@@ -45,9 +45,9 @@ type RaceState =
 const START_OFFSET = 0;
 const RACER_LERP = 0.16;
 const BASE_XP = 160;
-const KART_SCALE = 1.3125;
-const PLAYER_KART_SCALE = 1.6875;
-const PLAYER_KART_RAISE = '30pt';
+const KART_SCALE = 1.45;
+const PLAYER_KART_SCALE = 1.9;
+const PLAYER_KART_RAISE = '105pt';
 const PLAYER_TRACK_LINE_Y = 80.8;
 const ENEMY_TRACK_LINE_Y = 88.6;
 const FINISH_Y_SHIFT = -200;
@@ -61,9 +61,9 @@ const ENEMY_VIBRATE_X_AMPLITUDE = 1.8;
 const ENEMY_VIBRATE_Y_AMPLITUDE = 0.9;
 const PLAYER_KARTS: Record<string, string> = {
   barratt: kartBran,
-  bran: kartBarratt,
-  mochi: kartVex,
-  vex: kartMochi,
+  bran: kartMochi,
+  mochi: kartBarratt,
+  vex: kartVex,
 };
 
 const MIXTURE_LABELS_BY_PART_COUNT: Record<number, string[]> = {
@@ -267,7 +267,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const enemyVibratePhaseRef = useRef(0);
 
   const lives = sessionState?.lives ?? 3;
-  const playerKart = PLAYER_KARTS[avatarId] || kartBarratt;
+  const playerKart = PLAYER_KARTS[avatarId] || PLAYER_KARTS.barratt;
 
   useEffect(() => {
     raceStateRef.current = raceState;
@@ -542,7 +542,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
           }}
         />
 
-        <div ref={raceViewportRef} className="pointer-events-none absolute inset-0 z-[5]">
+        <div ref={raceViewportRef} className="pointer-events-none absolute inset-0 z-20">
           <div className="relative h-full w-full">
             <div
               className="absolute z-30 flex items-center gap-2 overflow-visible rounded-full border border-amber-100 bg-[linear-gradient(180deg,rgba(255,243,179,0.98),rgba(251,191,36,0.98))] px-5 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-slate-900 shadow-[0_0_0_1px_rgba(255,255,255,0.2),0_0_22px_rgba(253,224,71,0.85),0_0_42px_rgba(245,158,11,0.45)]"
@@ -553,7 +553,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             </div>
 
             <motion.div
-              className="absolute z-40 flex h-28 w-48 items-end justify-center overflow-visible sm:h-32 sm:w-56 md:h-40 md:w-64"
+              className="absolute z-40 flex h-32 w-52 items-end justify-center overflow-visible sm:h-36 sm:w-60 md:h-44 md:w-72"
               style={playerStyle}
               animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { x: [0, -4, 4, -3, 3, 0] } : { scale: 1 }}
               transition={{ duration: 0.35 }}
@@ -574,7 +574,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
               <img
                 src={playerKart}
                 alt="Player kart"
-                className="relative z-10 h-[95%] w-[95%] object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]"
+                className="relative z-10 h-[98%] w-[98%] object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]"
                 style={{ imageRendering: 'auto' }}
               />
               {showStall ? (
@@ -583,7 +583,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             </motion.div>
 
             <motion.div
-              className="absolute z-30 flex h-22 w-34 items-center justify-center overflow-visible sm:h-26 sm:w-40 md:h-28 md:w-44"
+              className="absolute z-30 flex h-24 w-36 items-center justify-center overflow-visible sm:h-28 sm:w-44 md:h-32 md:w-48"
               style={enemyStyle}
             >
               <img
