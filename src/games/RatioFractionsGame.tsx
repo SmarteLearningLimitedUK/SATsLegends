@@ -59,8 +59,6 @@ const ENEMY_ROLL_MAX = 4;
 const ENEMY_VIBRATE_SPEED = 18;
 const ENEMY_VIBRATE_X_AMPLITUDE = 1.8;
 const ENEMY_VIBRATE_Y_AMPLITUDE = 0.9;
-const ENEMY_BASE_GAP_PT = 1.6;
-
 const PLAYER_KARTS: Record<string, string> = {
   barratt: kartBran,
   bran: kartBarratt,
@@ -515,14 +513,16 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     (Math.sin(enemyVibratePhaseRef.current * 3.1) * 0.35);
 
   const playerStyle = {
-    transform: `translate3d(-50%, calc(-50% + ${playerBobOffset}px), 0) rotate(${playerLean}deg) scale(${PLAYER_KART_SCALE})`,
+    transform: `translate3d(-50%, calc(-100% + ${playerBobOffset}px), 0) rotate(${playerLean}deg) scale(${PLAYER_KART_SCALE})`,
+    transformOrigin: '50% 100%',
     top: `${playerLineY}%`,
     left: `${playerLeft}%`,
   };
 
   const enemyStyle = {
-    transform: `translate3d(calc(-50% + ${enemyVibrateOffsetX}px), calc(-50% + ${enemyVibrateOffsetY}px), 0) rotate(${enemyLean}deg) scale(${KART_SCALE})`,
-    top: `calc(${enemyLineY}% + ${ENEMY_BASE_GAP_PT}pt)`,
+    transform: `translate3d(calc(-50% + ${enemyVibrateOffsetX}px), calc(-100% + ${enemyVibrateOffsetY}px), 0) rotate(${enemyLean}deg) scale(${KART_SCALE})`,
+    transformOrigin: '50% 100%',
+    top: `${enemyLineY}%`,
     left: `${enemyLeft}%`,
   };
 
@@ -641,7 +641,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
         <GameScreenLayout
           className="relative z-10 px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-0 text-white"
-          topClassName="!min-h-0 flex flex-col items-center gap-0 px-2 pt-0 -mt-16 sm:-mt-18 sm:px-3 md:-mt-20 md:px-4"
+          topClassName="!min-h-0 flex flex-col items-center gap-0 px-2 pt-0 -mt-24 sm:-mt-28 sm:px-3 md:-mt-32 md:px-4"
           top={(
             <div className="mx-auto flex w-full max-w-[780px] flex-col gap-0.5">
               <GameQuestionCard
