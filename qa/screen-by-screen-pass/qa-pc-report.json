@@ -175,6 +175,22 @@
       "status": "captured",
       "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
       "screenshot": "qa-pc-data-desert-data-detective.png"
+    },
+    {
+      "viewport": "pc",
+      "island": "Operations Outpost",
+      "group": "Factor Frenzy",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-pc-operations-outpost-factor-frenzy.png"
+    },
+    {
+      "viewport": "pc",
+      "island": "Operations Outpost",
+      "group": "Multiplication Mine",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-pc-operations-outpost-multiplication-mine.png"
     }
   ],
   "consoleErrors": []
