@@ -517,7 +517,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
               <img
                 src={avatarImage}
                 alt=""
-                className="h-[84px] w-auto object-contain drop-shadow-[0_10px_20px_rgba(2,6,23,0.45)]"
+                className="h-[168px] w-auto object-contain drop-shadow-[0_10px_20px_rgba(2,6,23,0.45)]"
                 draggable={false}
               />
             ) : null}

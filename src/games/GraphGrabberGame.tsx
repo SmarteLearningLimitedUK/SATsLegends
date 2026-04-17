@@ -137,11 +137,11 @@ const CaravanBoard: React.FC<{ caravans: CaravanDatum[]; label: string }> = ({ c
   const maxValue = Math.max(...caravans.map((caravan) => caravan.value));
   return (
     <div className="w-full">
-      <div className="mt-3 grid grid-cols-4 items-end gap-2 md:gap-3">
+      <div className="mt-2 grid grid-cols-4 items-end gap-2 md:gap-3">
         {caravans.map((caravan, caravanIndex) => (
           <div key={caravan.id} className="flex flex-col items-center gap-1.5">
-            <div className="flex h-24 w-full items-end justify-center md:h-28">
-              <div className="relative flex w-full max-w-[5rem] flex-col items-center justify-end">
+            <div className="flex h-[clamp(11rem,34vh,19rem)] w-full items-end justify-center">
+              <div className="relative flex w-full max-w-[6.5rem] flex-col items-center justify-end">
                 {Array.from({ length: caravan.value }).map((_, index) => {
                   const crateAsset = CARAVAN_CARGO_IMAGES[(caravanIndex + index) % CARAVAN_CARGO_IMAGES.length];
                   return (
@@ -150,9 +150,9 @@ const CaravanBoard: React.FC<{ caravans: CaravanDatum[]; label: string }> = ({ c
                       src={crateAsset}
                       alt=""
                       aria-hidden="true"
-                      className="h-5 w-5 drop-shadow-[0_2px_5px_rgba(15,23,42,0.18)] md:h-6 md:w-6"
+                      className="h-7 w-7 drop-shadow-[0_2px_5px_rgba(15,23,42,0.18)] md:h-8 md:w-8"
                       style={{
-                        marginTop: index === 0 ? 0 : '-0.55rem',
+                        marginTop: index === 0 ? 0 : '-0.72rem',
                         opacity: 0.42 + ((index + 1) / (maxValue + 2)),
                       }}
                     />
@@ -336,7 +336,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
         style={{ backgroundImage: `url(${graphGrabberBackground})` }}
         aria-hidden="true"
       />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(8,15,32,0.42),rgba(8,15,32,0.58))]" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(8,15,32,0.12),rgba(8,15,32,0.22))]" aria-hidden="true" />
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Graph Grabber"
@@ -354,9 +354,9 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
                 </GameQuestionCard>
               </div>
 
-              <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 md:grid-cols-[1.02fr_0.98fr] md:gap-2">
+              <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 md:grid-cols-[1.18fr_0.82fr] md:gap-2">
                 <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(8,47,73,0.34),rgba(15,23,42,0.26))] p-2.5 shadow-[0_24px_40px_rgba(2,6,23,0.22)] md:p-3">
-                  <div className="mt-auto">
+                  <div className="flex min-h-0 flex-1 items-center justify-center">
                     <CaravanBoard caravans={round.caravans} label={round.boardLabel} />
                   </div>
                 </div>

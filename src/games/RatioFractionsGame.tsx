@@ -1,16 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { motion, AnimatePresence } from 'motion/react';
-import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import {
   GameUiShell,
+  GameQuestionCard,
 } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import { DEFAULT_RACE_DIFFICULTY, RACE_TUNING, RaceDifficulty } from './ratioFractionsRace/constants';
 import { getQuestionTier, QuestionTier } from './ratioFractionsRace/questionSelector';
 import { RatioFractionQuestion } from './ratioFractionsRace/types';
-import ratioBackdrop from '../assets/maps/backgroundsforgames/sharesplitterfinal.png';
+import ratioBackdrop from '../assets/gokarts/bkgroundratiofractionkarts.png';
 import kartBarratt from '../assets/gokarts/8.png';
 import kartBran from '../assets/gokarts/9.png';
 import kartMochi from '../assets/gokarts/10.png';
@@ -192,8 +192,18 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
   const trackProgress = Math.min(1, playerPosRef.current / tuning.trackLength);
   const lives = sessionState?.lives ?? 3;
-  const buildExplanation = (q: RatioFractionQuestion) => q.explanation;
   const playerKart = PLAYER_KARTS[avatarId] || kartBarratt;
+
+  const displayParts = useMemo(() => {
+    const fallbackLabels = ['Kart A', 'Kart B', 'Kart C', 'Kart D', 'Kart E'];
+    const resolvedLabels = question.ratio.map((_, index) => fallbackLabels[index] || `Part ${index + 1}`);
+    const targetIndex = Math.max(0, question.labels.findIndex((label) => label === question.target));
+    const targetLabel = resolvedLabels[targetIndex] || resolvedLabels[0] || 'Kart A';
+    const ratioLine = resolvedLabels
+      .map((label, index) => `${label} ${question.ratio[index]}`)
+      .join(' : ');
+    return { resolvedLabels, targetLabel, ratioLine };
+  }, [question.labels, question.ratio, question.target]);
   
   useEffect(() => {
     raceStateRef.current = raceState;
@@ -355,7 +365,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
     if (option === question.correctAnswer) {
       setCorrectCount((prev) => prev + 1);
-      setFeedback(`Correct mix! ${buildExplanation(question)}`);
+      setFeedback('Correct!');
       setRaceState('correctBoost');
       window.setTimeout(() => {
         playerTargetRef.current = Math.min(tuning.trackLength, playerTargetRef.current + playerStep);
@@ -384,7 +394,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
       return;
     }
 
-    setFeedback(`Wrong mix! ${buildExplanation(question)}`);
+    setFeedback('Wrong.');
     setRaceState('incorrectStall');
     if (stumble > 0) {
       playerTargetRef.current = Math.min(tuning.trackLength, playerTargetRef.current + stumble);
@@ -549,21 +559,22 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
           className="relative z-10 px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-0 text-white"
           top={(
             <div className="mx-auto flex w-full max-w-[780px] flex-col gap-1.5">
-              <div className="game-question-card w-full px-3 py-2 text-center">
-                <div className="question-title">Fuel Mix Question</div>
-                <div className="game-question-copy mt-1 text-white">{formatFantasyPrompt(question.prompt)}</div>
-                <div className="mt-1 flex flex-wrap items-center justify-center gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-slate-100/90">
-                  {question.labels.map((label, index) => (
-                    <span key={`${label}-${index}`}>
-                      {label} {question.ratio[index]}
-                      {index < question.labels.length - 1 ? ' : ' : ''}
-                    </span>
-                  ))}
-                </div>
-                {feedback ? (
-                  <div className="mt-1 text-[11px] font-semibold text-amber-100">{feedback}</div>
-                ) : null}
-              </div>
+              <GameQuestionCard
+                title="Ratio Fractions"
+                subtitle={(
+                  <div className="flex flex-col items-center justify-center gap-1">
+                    <div className="text-[11px] font-black uppercase tracking-[0.12em] text-slate-100/90">
+                      {displayParts.ratioLine}
+                    </div>
+                    {feedback ? (
+                      <div className="text-[11px] font-semibold text-amber-100">{feedback}</div>
+                    ) : null}
+                  </div>
+                )}
+                bodyClassName="tracking-tight"
+              >
+                {`In the ratio above, what fraction of the whole is ${displayParts.targetLabel}?`}
+              </GameQuestionCard>
             </div>
           )}
           main={<div className="min-h-0 flex-1" />}

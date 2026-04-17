@@ -16,6 +16,7 @@ type GameUiShellProps = WrapperProps & {
   backgroundImage?: string;
   overlayDisabled?: boolean;
   backgroundOpacity?: number;
+  backgroundPosition?: string;
 };
 
 type ButtonProps = {
@@ -130,6 +131,7 @@ export const GameUiShell: React.FC<GameUiShellProps> = ({
   backgroundImage,
   overlayDisabled = false,
   backgroundOpacity = 1,
+  backgroundPosition,
 }) => {
   // Gameplay screens already provide their own backdrop layer or image.
   // Keep the shared shell transparent there so we don't stack a second fallback background underneath.
@@ -152,7 +154,11 @@ export const GameUiShell: React.FC<GameUiShellProps> = ({
         <div
           data-game-background-layer="true"
           className="game-background-layer pointer-events-none absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${backgroundImage})`, opacity: backgroundOpacity }}
+          style={{
+            backgroundImage: `url(${backgroundImage})`,
+            opacity: backgroundOpacity,
+            backgroundPosition: backgroundPosition || undefined,
+          }}
         />
       ) : null}
       {overlayDisabled ? null : null}

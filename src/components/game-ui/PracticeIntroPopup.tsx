@@ -25,7 +25,7 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
       {open ? (
         <motion.div
           key="practice-intro-popup"
-          className="fixed inset-0 z-[90] flex items-center justify-center px-3 py-4"
+          className="fixed inset-0 z-[260] flex items-center justify-center px-3 py-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

@@ -13,7 +13,6 @@ import medianMachineImage from '../assets/median.png';
 import modeMachineImage from '../assets/mode.png';
 import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
-import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 type RoundMode = 'mean' | 'median' | 'mode' | 'missing';
 type GameState = 'idle' | 'spinning' | 'answering' | 'resolved';
@@ -661,7 +660,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
       <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.45rem)] pt-2 md:px-4">
         <div className="flex h-full min-h-0 flex-col gap-2.5">
           <section className="shrink-0">
-            <GameQuestionCard title="Mean Machine" subtitle={formatFantasyPrompt(modeCopy.prompt)} className="max-w-[23rem]">
+            <GameQuestionCard title="Mean Machine" subtitle={modeCopy.prompt}>
               {modeCopy.title}
             </GameQuestionCard>
           </section>

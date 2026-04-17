@@ -1,9 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
-  Activity,
   AlertCircle,
   CheckCircle2,
-  ChevronLeft,
   ChevronRight,
   Info,
   Trophy,
@@ -213,7 +211,7 @@ const generateRound = (level: number): RoundData => {
 const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   levelId: _levelId,
   avatarId: _avatarId,
-  useSharedTopHud = false,
+  useSharedTopHud: _useSharedTopHud = false,
   isPractice,
   practiceBriefing,
   onVictory,
@@ -336,46 +334,11 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
       />
       <GameScreenLayout
         className="relative h-full w-full min-h-0 select-none gap-0 text-slate-100"
-        topClassName="!min-h-0"
         top={(
-          <div className={`flex flex-col gap-1 ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+0.05rem)]' : ''}`}>
-            {!useSharedTopHud ? (
-              <header className="z-20 flex h-16 items-center justify-between border-b border-emerald-900/30 bg-transparent px-4 backdrop-blur-md sm:px-6">
-                <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={onBack}
-                    className="ui-icon-button flex h-9 w-9 items-center justify-center text-slate-200"
-                    aria-label="Back to levels"
-                  >
-                    <ChevronLeft className="h-5 w-5" />
-                  </button>
-                  <div className="rounded-lg bg-emerald-500 p-2 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-                    <Activity className="h-5 w-5 text-slate-900" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] uppercase tracking-tighter text-emerald-400">Read one graph. Answer one question.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="flex flex-col items-end">
-                    <span className="text-[10px] uppercase text-slate-500">XP</span>
-                    <span className="text-xs font-bold text-emerald-400">{XP}</span>
-                  </div>
-                  <div className="h-8 w-px bg-slate-800" />
-                  <div className="flex flex-col items-end">
-                    <span className="text-[10px] uppercase text-slate-500">Round</span>
-                    <span className="text-xs font-bold text-white">{level} / {MAX_LEVEL}</span>
-                  </div>
-                </div>
-              </header>
-            ) : null}
-            <div className="px-2 pt-0 sm:px-3 md:px-4">
-              <GameQuestionCard title="Line Graph Lab" subtitle={round?.helper || ''}>
-                {round?.question ?? ''}
-              </GameQuestionCard>
-            </div>
+          <div className="flex justify-center px-2 pt-0 sm:px-3 md:px-4">
+            <GameQuestionCard title="Line Graph Lab" subtitle={round?.helper || ''}>
+              {round?.question ?? ''}
+            </GameQuestionCard>
           </div>
         )}
         main={(

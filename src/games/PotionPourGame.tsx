@@ -724,7 +724,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
         <div className="relative min-h-0 overflow-visible bg-transparent">
           <div
             className="absolute inset-0"
-            style={{ transform: 'translateY(calc(var(--potion-cauldron-shift, 0px) + 50px))' }}
+            style={{ transform: 'translateY(calc(var(--potion-cauldron-shift, 0px) + 40px))' }}
           >
             <div className="pointer-events-none absolute left-1/2 top-[84%] z-0 h-14 w-[72%] -translate-x-1/2 rounded-full bg-black/55 blur-md" />
             <div className="pointer-events-none absolute left-1/2 top-[76%] z-10 h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
@@ -824,7 +824,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
           </AnimatePresence>
         </div>
 
-            <div className="shrink-0 mt-[24px] rounded-[1.1rem] border border-white/12 bg-black/38 px-2 py-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.2)]">
+            <div className="shrink-0 mt-[34px] rounded-[1.1rem] border border-white/12 bg-black/38 px-2 py-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.2)]">
               <div className={`grid ${ingredientGridClass} gap-1.5`}>
                 {activeTargets.map(({ ingredient, index, current, target }) => {
                   const isActive = activeSet.has(index);

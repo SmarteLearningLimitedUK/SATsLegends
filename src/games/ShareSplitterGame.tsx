@@ -6,7 +6,6 @@ import {
   FeedbackStrip,
   GameQuestionCard,
   GameUiShell,
-  GameTopBar,
   PrimaryButton,
   SecondaryButton,
 } from '../components/game-ui/GameUiKit';
@@ -78,6 +77,8 @@ const PLATE_POSITIONS: Record<number, Array<{ x: number; y: number }>> = {
   ],
 };
 const DRAG_SLICE_SIZE = 48;
+const CAKE_SOURCE_POSITION = { x: 50, y: 86 };
+const CAKE_SOURCE_SIZE = 'clamp(7.5rem, 32vw, 10.5rem)';
 
 const RATIO_PATTERNS_BY_COUNT: Record<number, number[][]> = {
   2: [
@@ -170,8 +171,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   practiceBriefing,
   onVictory,
   onGameOver: _onGameOver,
-  onBack,
-  sessionState,
+  onBack: _onBack,
 }) => {
   const [roundSolved, setRoundSolved] = useState(0);
   const [attempts, setAttempts] = useState(0);
@@ -186,7 +186,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const [validationActive, setValidationActive] = useState(false);
   const [moveHistory, setMoveHistory] = useState<MoveRecord[]>([]);
   const [locked, setLocked] = useState(false);
-  const [audioEnabled, setAudioEnabled] = useState(true);
   const [showCelebrationSplash, setShowCelebrationSplash] = useState(false);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
   const trimmedCakeSliceAsset = useTrimmedImageSource(CAKE_SLICE_ASSET);
@@ -287,7 +286,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     return { x: pointerEvt.clientX || 0, y: pointerEvt.clientY || 0 };
   };
 
-  const handleSourcePointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
+  const handleSourcePointerDown = (event: React.PointerEvent) => {
     if (locked || remainingSlices <= 0) return;
     if (dragActiveRef.current || dragSlice) return;
     const sliceId = `${challenge.id}-slice-${sliceSeedRef.current}`;
@@ -323,14 +322,15 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     };
 
     const getHitPlateIndex = (clientX: number, clientY: number) => {
-      const padding = 16;
       let hitIndex = -1;
       plateRefs.current.forEach((plate, index) => {
         if (!plate) return;
         const rect = plate.getBoundingClientRect();
-        const withinX = clientX >= rect.left - padding && clientX <= rect.right + padding;
-        const withinY = clientY >= rect.top - padding && clientY <= rect.bottom + padding;
-        if (withinX && withinY) {
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const radius = Math.min(rect.width, rect.height) * 0.44;
+        const distance = Math.hypot(clientX - centerX, clientY - centerY);
+        if (distance <= radius) {
           hitIndex = index;
         }
       });
@@ -341,7 +341,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       if (!dragActiveRef.current) return;
       dragActiveRef.current = false;
       const { index, distance } = getNearestPlate(clientX, clientY);
-      const snapRadius = 66;
+      const snapRadius = 72;
       const hitIndex = getHitPlateIndex(clientX, clientY);
       const targetPlateIndex = hitIndex >= 0 ? hitIndex : distance <= snapRadius ? index : -1;
 
@@ -487,7 +487,12 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   };
 
   return (
-    <GameUiShell backgroundImage={shareSplitterBackground} backgroundOpacity={1} overlayDisabled>
+    <GameUiShell
+      backgroundImage={shareSplitterBackground}
+      backgroundOpacity={1}
+      backgroundPosition="center bottom"
+      overlayDisabled
+    >
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Share Splitter"
@@ -500,15 +505,23 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         <GameScreenLayout
           className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2 text-white"
           top={(
-            <div className="flex flex-col gap-2">
-              <GameTopBar
-                onBack={onBack}
-                progressLabel={`Round ${roundSolved + 1} / ${ROUNDS_TO_WIN}`}
-                lives={sessionState?.lives}
-                className="mx-auto w-full"
-                audioEnabled={audioEnabled}
-                onToggleAudio={() => setAudioEnabled((previous) => !previous)}
-              />
+            <div className="flex justify-center px-2">
+              <GameQuestionCard
+                title="Share Splitter"
+                subtitle={(
+                  <div className="flex flex-wrap items-center justify-center gap-2">
+                    <span className="rounded-full border border-cyan-100/25 bg-white/5 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/80">
+                      Round {roundSolved + 1} / {ROUNDS_TO_WIN}
+                    </span>
+                    <span className="rounded-full border border-amber-200/25 bg-white/5 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-amber-100/85">
+                      Slices left {remainingSlices}
+                    </span>
+                  </div>
+                )}
+                bodyClassName="whitespace-pre-line text-[12px] font-semibold leading-tight text-white"
+              >
+                {promptText}
+              </GameQuestionCard>
             </div>
           )}
           main={(
@@ -520,13 +533,13 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
             {plateViews.map((plate, index) => {
               const plateTone = validationActive
                 ? plate.isCorrect
-                          ? 'border-emerald-300/35 bg-[linear-gradient(180deg,rgba(226,252,243,0.1),rgba(186,247,231,0.03))]'
-                          : 'border-amber-200/35 bg-[linear-gradient(180deg,rgba(255,243,205,0.1),rgba(255,232,176,0.03))]'
-                        : hoverPlateIndex === index
-                          ? 'border-cyan-200/55 bg-[linear-gradient(180deg,rgba(240,249,255,0.07),rgba(214,241,255,0.02))]'
-                          : dragSlice
-                            ? 'border-cyan-200/35 bg-[linear-gradient(180deg,rgba(244,250,255,0.04),rgba(216,236,250,0.015))]'
-                            : 'border-white/16 bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(224,233,243,0.01))]';
+                  ? 'ring-2 ring-emerald-300/70'
+                  : 'ring-2 ring-amber-200/75'
+                : hoverPlateIndex === index
+                  ? 'ring-2 ring-cyan-200/85'
+                  : dragSlice
+                    ? 'ring-1 ring-white/20'
+                    : '';
                       const position = platePositions[index] || { x: 50, y: 50 };
 
                       return (
@@ -537,7 +550,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                             plateRefs.current[index] = node;
                           }}
                           disabled={locked}
-                          className={`pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border p-2 text-center shadow-[0_8px_14px_rgba(2,6,23,0.1)] transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.03]' : dragSlice && !locked ? 'scale-[1.01]' : ''}`}
+                          className={`pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-transparent bg-transparent p-2 text-center transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.02]' : ''}`}
                           style={{
                             left: `${position.x}%`,
                             top: `${position.y}%`,
@@ -552,7 +565,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                                 key={sliceId}
                                 src={trimmedCakeSliceAsset}
                                 alt=""
-                                className="h-12 w-12 object-contain"
+                                className="h-10 w-10 object-contain drop-shadow-[0_10px_16px_rgba(0,0,0,0.22)] sm:h-12 sm:w-12"
                                 draggable={false}
                               />
                             ))}
@@ -560,51 +573,25 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                         </button>
                       );
                     })}
+
+            <button
+              type="button"
+              onPointerDown={handleSourcePointerDown}
+              disabled={locked || remainingSlices <= 0}
+              className="pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-0 bg-transparent touch-none"
+              style={{
+                left: `${CAKE_SOURCE_POSITION.x}%`,
+                top: `${CAKE_SOURCE_POSITION.y}%`,
+                width: CAKE_SOURCE_SIZE,
+                height: CAKE_SOURCE_SIZE,
+              }}
+              aria-label={remainingSlices > 0 ? 'Drag a slice from the cake' : 'No cake slices left'}
+            />
                   </div>
                 </div>
               </div>
 
-            <section className="shrink-0 rounded-[1.4rem] border border-transparent bg-transparent px-3 py-2 shadow-none">
-              <div className="flex items-center justify-center">
-                <motion.button
-                  type="button"
-                  whileTap={remainingSlices > 0 && !locked ? { scale: 0.96 } : undefined}
-                  onPointerDown={handleSourcePointerDown}
-                  disabled={locked || remainingSlices <= 0}
-                  className={`group relative flex items-center justify-center gap-4 rounded-[1.8rem] border border-transparent bg-transparent px-3 py-2 shadow-none touch-none ${locked || remainingSlices <= 0 ? 'opacity-55' : ''}`}
-                  aria-label={remainingSlices > 0 ? 'Drag one cake onto a plate' : 'No cakes left'}
-                >
-                  <motion.div
-                    aria-hidden
-                    className={`pointer-events-none absolute left-1/2 top-1/2 h-[5.4rem] w-[5.4rem] -translate-x-1/2 -translate-y-1/2 rounded-full ${remainingSlices > 0 ? 'bg-amber-300/30 blur-2xl' : 'bg-transparent'}`}
-                    animate={remainingSlices > 0 ? {
-                      opacity: [0.42, 0.92, 0.42],
-                      scale: [0.96, 1.06, 0.96],
-                    } : undefined}
-                    transition={remainingSlices > 0 ? { duration: 0.95, repeat: Infinity, ease: 'easeInOut' } : undefined}
-                  />
-                  <motion.img
-                    src={trimmedCakeSliceAsset}
-                    alt=""
-                    draggable={false}
-                    className="relative z-10 h-[4.8rem] w-[4.8rem] object-contain drop-shadow-[0_10px_16px_rgba(0,0,0,0.28)] sm:h-[5.2rem] sm:w-[5.2rem]"
-                    animate={remainingSlices > 0 ? {
-                      scale: [0.98, 1.03, 0.98],
-                      filter: ['drop-shadow(0 0 0 rgba(250,204,21,0))', 'drop-shadow(0 0 14px rgba(250,204,21,0.55))', 'drop-shadow(0 0 0 rgba(250,204,21,0))'],
-                    } : {
-                      scale: 1,
-                      filter: 'drop-shadow(0 10px 16px rgba(0,0,0,0.28))',
-                    }}
-                    transition={remainingSlices > 0 ? { duration: 1.1, repeat: Infinity, ease: 'easeInOut' } : undefined}
-                  />
-                  <div className="relative z-10 flex items-baseline gap-2">
-                    <div className="text-[clamp(2.1rem,5.6vw,3.8rem)] font-black leading-none text-white drop-shadow-[0_2px_0_rgba(0,0,0,0.35)]">
-                      {remainingSlices}
-                    </div>
-                  </div>
-                </motion.button>
-              </div>
-            </section>
+            <section className="shrink-0 min-h-[1px]" aria-hidden />
           </div>
         )}
         bottom={(
@@ -643,17 +630,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         )}
         overlay={(
           <>
-            <div
-              className="pointer-events-none fixed left-0 right-0 z-[60]"
-              style={{ top: '4px' }}
-            >
-              <GameQuestionCard
-                title="Match the Ratio"
-                bodyClassName="mt-2 whitespace-pre-line text-[12px] font-semibold leading-tight text-cyan-100/90"
-              >
-                {promptText}
-              </GameQuestionCard>
-            </div>
             <AnimatePresence>
               {dragSlice ? (
                 <motion.div

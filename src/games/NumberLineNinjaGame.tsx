@@ -523,7 +523,8 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
     const update = () => {
       const rect = node.getBoundingClientRect();
-      setQuestionDockBottom(rect.bottom);
+      const playfieldTop = playfieldRef.current?.getBoundingClientRect().top ?? 0;
+      setQuestionDockBottom(rect.bottom - playfieldTop);
     };
 
     update();
@@ -568,14 +569,15 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
         className="relative z-10 flex h-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+5.2rem)]"
         style={{
           // Keep the number line docked below the fixed question card (even when the text wraps).
-          paddingTop: `${Math.max(0, questionDockBottom + 10)}px`,
+          // Requirement: number line should be 20px below the question card.
+          paddingTop: `${Math.max(0, questionDockBottom + 20)}px`,
         }}
       >
-        <div className="flex min-h-0 flex-1 flex-col items-center justify-start pt-1">
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-start pt-0">
           <motion.div
             animate={lineShake ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
             transition={{ duration: 0.34, ease: 'easeInOut' }}
-            className="qa-number-line relative mt-2.5 flex h-[26%] min-h-[154px] w-full max-w-[680px] items-center justify-center"
+            className="qa-number-line relative mt-0 flex h-[22%] min-h-[140px] w-full max-w-[680px] items-center justify-center"
           >
             <motion.div
               animate={{ opacity: [0.26, 0.54, 0.26], scale: [0.985, 1.025, 0.985] }}
@@ -658,7 +660,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
             </div>
           </motion.div>
 
-          <div className="relative mt-1 flex h-[24%] min-h-[150px] w-full max-w-[520px] shrink-0 items-end justify-center pb-10">
+          <div className="relative mt-1 flex h-[30%] min-h-[200px] w-full max-w-[520px] shrink-0 items-center justify-center">
             <div
               className="qa-enemy-cluster pointer-events-none relative mx-auto flex w-[92%] max-w-[520px] items-center justify-center gap-2"
             >
@@ -829,7 +831,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
           </div>
         </div>
 
-        <div className="mt-8 shrink-0 pb-1 pt-2">
+        <div className="shrink-0 pb-1 pt-2">
           <div className="mb-2 text-center text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/88">
             Select the missing number
           </div>
