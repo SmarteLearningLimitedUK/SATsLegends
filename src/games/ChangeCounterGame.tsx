@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { motion } from 'motion/react';
+import changeCounterBackground from '../assets/maps/backgroundsforgames/changecounter.jpg';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 import { FeedbackStrip, TaskCard } from '../components/game-ui/GameUiKit';
@@ -310,7 +311,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
 
   return (
     <GameScreenShell className="overflow-hidden">
-      <GameplaySceneBackdrop gameType="change_counter" />
+      <GameplaySceneBackdrop gameType="change_counter" backgroundOverride={changeCounterBackground} />
 
       <PracticeIntroPopup
         open={showPracticeIntro}

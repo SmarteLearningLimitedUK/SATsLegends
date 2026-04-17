@@ -70,6 +70,8 @@ const CAMERA_LERP = 0.08;
 const RETURN_LERP = 0.12;
 const PROJECTILE_SPEED = 520;
 const MAX_FLIGHT_DISTANCE = 980;
+const CANNON_ANCHOR_X_RATIO = 0.5;
+const CANNON_ANCHOR_Y_RATIO = 0.58;
 
 type CloudLayer = {
   x: number;
@@ -702,7 +704,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.translate(shakeX, shakeY);
       ctx.clearRect(0, 0, viewWidth, viewHeight);
 
-      const cannonAnchor = { x: viewWidth * 0.22, y: viewHeight * 0.78 };
+      const cannonAnchor = { x: viewWidth * CANNON_ANCHOR_X_RATIO, y: viewHeight * CANNON_ANCHOR_Y_RATIO };
       const originBase = worldToScreen(0, 0, camera.x, camera.y, viewWidth, viewHeight);
       const screenOffset = { x: cannonAnchor.x - originBase.x, y: cannonAnchor.y - originBase.y };
       const toScreen = (x: number, y: number) => {
@@ -841,9 +843,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute left-[22%] top-[78%] z-0 -translate-x-1/2 -translate-y-1/2"
+          className="pointer-events-none absolute left-1/2 top-[58%] z-0 -translate-x-1/2 -translate-y-1/2"
         >
-          <div className="relative h-[8.25rem] w-[18rem] rounded-[999px] bg-[radial-gradient(ellipse_at_center,rgba(34,197,94,0.9),rgba(21,128,61,0.95)_55%,rgba(15,23,42,0.0)_72%)]">
+          <div className="relative h-[8.25rem] w-[19rem] rounded-[999px] bg-[radial-gradient(ellipse_at_center,rgba(34,197,94,0.9),rgba(21,128,61,0.95)_55%,rgba(15,23,42,0.0)_72%)]">
             <div className="absolute inset-0 rounded-[999px] bg-[radial-gradient(circle_at_30%_35%,rgba(253,230,138,0.22),transparent_30%),radial-gradient(circle_at_70%_45%,rgba(167,243,208,0.18),transparent_36%)]" />
             <div className="absolute inset-x-6 bottom-6 h-8 rounded-[999px] bg-[linear-gradient(180deg,rgba(74,222,128,0.55),rgba(21,128,61,0.0))] blur-[0.5px]" />
           </div>
