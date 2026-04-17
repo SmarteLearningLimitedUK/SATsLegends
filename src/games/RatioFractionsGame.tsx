@@ -48,7 +48,7 @@ const BASE_XP = 160;
 const KART_SCALE = 0.68;
 const PLAYER_KART_SCALE = 0.88;
 const PLAYER_TRACK_LINE_FROM_BOTTOM = 218;
-const ENEMY_TRACK_LINE_FROM_BOTTOM = 306;
+const ENEMY_TRACK_LINE_FROM_BOTTOM = 190;
 const CART_Y_SHIFT = 0;
 const FINISH_Y_SHIFT = -200;
 const FINISH_X_SHIFT = -100;
@@ -63,9 +63,9 @@ const ENEMY_BASE_GAP_PT = 1.6;
 
 const PLAYER_KARTS: Record<string, string> = {
   barratt: kartBran,
-  bran: kartMochi,
-  mochi: kartBarratt,
-  vex: kartVex,
+  bran: kartBarratt,
+  mochi: kartVex,
+  vex: kartMochi,
 };
 
 const MIXTURE_LABELS_BY_PART_COUNT: Record<number, string[]> = {
@@ -641,7 +641,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
         <GameScreenLayout
           className="relative z-10 px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-0 text-white"
-          topClassName="!min-h-0 flex flex-col items-center gap-0 px-2 pt-0 -mt-10 sm:-mt-12 sm:px-3 md:-mt-14 md:px-4"
+          topClassName="!min-h-0 flex flex-col items-center gap-0 px-2 pt-0 -mt-16 sm:-mt-18 sm:px-3 md:-mt-20 md:px-4"
           top={(
             <div className="mx-auto flex w-full max-w-[780px] flex-col gap-0.5">
               <GameQuestionCard
