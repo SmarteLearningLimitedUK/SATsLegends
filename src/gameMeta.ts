@@ -472,11 +472,11 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   ratio_fractions: {
-    label: 'Ratio Fractions',
+    label: 'Ratio Racer',
     focus: 'Ratio to fraction and part-to-whole reasoning',
     rules: {
-      title: 'Ratio Fractions',
-      summary: 'Turn ratios into fractions of the whole.',
+      title: 'Ratio Racer',
+      summary: 'Race through ratios and turn them into fractions of the whole.',
       bullets: [
         'Add the ratio parts to find the total.',
         'Write the fraction as part over total.',

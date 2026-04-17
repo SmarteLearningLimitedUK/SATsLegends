@@ -264,7 +264,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const allSlicesUsed = remainingSlices === 0;
   const allCorrect = plateViews.every((plate) => plate.isCorrect);
   const platePositions = PLATE_POSITIONS_BY_COUNT[challenge.plateCount] || PLATE_POSITIONS_BY_COUNT[5];
-  const plateSize = 'clamp(6rem, 28vw, 7.8rem)';
+  const plateSize = 'clamp(4.25rem, 17vw, 5.25rem)';
   const promptText = isPractice
     ? `Target ratio: ${challenge.ratios.join(':')}`
     : `There are ${challenge.totalSlices} slices of brainpower cake.\nThe Monster Mind demands it is shared in a ratio of ${challenge.ratios.join(':')}.`;
@@ -352,7 +352,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         const rect = plate.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
-        const radius = Math.max(rect.width, rect.height) * 0.46;
+          const radius = Math.max(rect.width, rect.height) * 0.34;
         const distance = Math.hypot(clientX - centerX, clientY - centerY);
         if (distance <= radius) {
           hitIndex = index;
@@ -365,7 +365,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       if (!dragActiveRef.current) return;
       dragActiveRef.current = false;
       const { index, distance } = getNearestPlate(clientX, clientY);
-      const snapRadius = 88;
+        const snapRadius = 58;
       const hitIndex = getHitPlateIndex(clientX, clientY);
       const targetPlateIndex = hitIndex >= 0 ? hitIndex : distance <= snapRadius ? index : -1;
 
@@ -393,7 +393,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         return;
       }
       const { index, distance } = getNearestPlate(point.x, point.y);
-      setHoverPlateIndex(distance <= 92 ? index : null);
+      setHoverPlateIndex(distance <= 62 ? index : null);
     };
 
     const handlePointerUp = (upEvent: PointerEvent) => {
@@ -410,7 +410,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         return;
       }
       const { index, distance } = getNearestPlate(point.x, point.y);
-      setHoverPlateIndex(distance <= 92 ? index : null);
+      setHoverPlateIndex(distance <= 62 ? index : null);
       touchEvent.preventDefault();
     };
 
@@ -518,7 +518,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Share Splitter"
-        body="Welcome to the Monster Mind's party.\nThey are fighting over a Brainpower cake.\nDrag the slices from the cake to each plate to match the target ratio.\nKeep the ratio balanced to stop their greed."
+        body="Greedy Monster Minds are having a party.\nDrag the birthday cake to each plate in the ratios shown."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
@@ -572,7 +572,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                               plateRefs.current[index] = node;
                             }}
                             disabled={locked}
-                            className={`pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-transparent bg-transparent p-2 text-center transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.02]' : ''}`}
+                            className={`pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-[0.45rem] border border-transparent bg-transparent p-1.5 text-center transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.01]' : ''}`}
                             style={{
                               left: `${position.x}%`,
                               top: `${position.y}%`,

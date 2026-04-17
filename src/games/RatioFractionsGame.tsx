@@ -92,11 +92,7 @@ const themeRatioQuestion = (question: RatioFractionQuestion): RatioFractionQuest
     ...question,
     labels,
     target: targetLabel,
-    prompt: [
-      `The Monsterminds have mixed ${joinLabelList(labels)} in a ${ratioText} ratio.`,
-      `${targetLabel} is ${question.ratio[targetIndex]} parts out of ${totalParts}.`,
-      `What fraction of the whole is ${targetLabel.toLowerCase()}?`,
-    ].join('\n'),
+    prompt: `Greedy Monster Minds mixed ${joinLabelList(labels)} in a ${ratioText} ratio. What fraction of the whole is ${targetLabel.toLowerCase()}?`,
     explanation: `Total parts = ${totalParts}. ${targetLabel} is ${question.ratio[targetIndex]} parts -> ${question.correctAnswer}.`,
   };
 };
@@ -274,14 +270,6 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const lives = sessionState?.lives ?? 3;
   const playerKart = PLAYER_KARTS[avatarId] || kartBarratt;
 
-  const displayParts = useMemo(() => {
-    const ratioLine = question.labels
-      .map((label, index) => `${label} ${question.ratio[index]}`)
-      .join(' : ');
-    const totalParts = question.ratio.reduce((sum, value) => sum + value, 0);
-    return { ratioLine, totalParts };
-  }, [question.labels, question.ratio]);
-  
   useEffect(() => {
     raceStateRef.current = raceState;
   }, [raceState]);
@@ -647,31 +635,21 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
           top={(
             <div className="mx-auto flex w-full max-w-[780px] flex-col gap-1.5">
               <GameQuestionCard
-                title="Monster Mind Mix"
+                title="Ratio Racer"
                 className="w-full max-w-[56rem]"
                 style={{
                   ['--question-card-width' as any]: 'min(100%, 56rem)',
                   ['--question-card-padding' as any]: '16px 18px',
                 }}
-                subtitle={(
-                  <div className="flex flex-col items-center justify-center gap-1.5">
-                    <div className="text-[12px] font-black uppercase tracking-[0.18em] text-slate-100/90 md:text-[15px]">
-                      {displayParts.ratioLine}
-                    </div>
-                    <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-100/80 md:text-[13px]">
-                      {displayParts.totalParts} parts total
-                    </div>
-                    {feedback ? (
-                      <div className={`text-[11px] font-semibold md:text-[13px] ${
-                        ['Great!', 'Amazing!', 'Awesome!', 'Fantastic!'].includes(feedback)
-                          ? 'rounded-full border border-amber-100/70 bg-[linear-gradient(135deg,rgba(255,241,166,0.96),rgba(125,211,252,0.9))] px-3 py-1 text-slate-950 shadow-[0_0_22px_rgba(251,191,36,0.55)]'
-                          : 'text-amber-100'
-                      }`}>{feedback}</div>
-                    ) : null}
-                  </div>
-                )}
+                subtitle={feedback ? (
+                  <div className={`text-[11px] font-semibold md:text-[13px] ${
+                    ['Great!', 'Amazing!', 'Awesome!', 'Fantastic!'].includes(feedback)
+                      ? 'rounded-full border border-amber-100/70 bg-[linear-gradient(135deg,rgba(255,241,166,0.96),rgba(125,211,252,0.9))] px-3 py-1 text-slate-950 shadow-[0_0_22px_rgba(251,191,36,0.55)]'
+                      : 'text-amber-100'
+                  }`}>{feedback}</div>
+                ) : null}
                 titleClassName="text-[12px] md:text-[14px] tracking-[0.28em]"
-                bodyClassName="whitespace-pre-line text-[clamp(1.15rem,4.2vw,1.8rem)] font-black leading-[1.06] tracking-tight md:text-[clamp(1.35rem,2.6vw,2.3rem)]"
+                bodyClassName="text-[clamp(1.15rem,4vw,1.7rem)] font-black leading-[1.08] tracking-tight md:text-[clamp(1.3rem,2.4vw,2rem)]"
               >
                 {question.prompt}
               </GameQuestionCard>

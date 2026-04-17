@@ -1,5 +1,5 @@
 {
-  "url": "https://satslegendsfinal.vercel.app/",
+  "url": "http://127.0.0.1:3000/",
   "viewport": {
     "name": "ipad",
     "width": 768,
@@ -191,14 +191,6 @@
       "status": "captured",
       "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
       "screenshot": "qa-ipad-operations-outpost-multiplication-mine.png"
-    },
-    {
-      "viewport": "ipad",
-      "island": "Operations Outpost",
-      "group": "Division Dock",
-      "status": "captured",
-      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
-      "screenshot": "qa-ipad-operations-outpost-division-dock.png"
     },
     {
       "viewport": "ipad",
