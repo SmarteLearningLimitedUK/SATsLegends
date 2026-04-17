@@ -346,13 +346,18 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
         open={showPracticeIntro}
         title="Rounding Rocket"
         body="Quick! We've managed to locate a cache of brainpower, but we need to keep it safe from those pesky Monster Minds. Help fuel the rocket by rounding numbers to blast the cache into space for safe keeping."
-        briefing={practiceBriefing ?? null}
+        briefing={null}
         onAction={() => setShowPracticeIntro(false)}
       />
 
       <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
         <GameQuestionCard title={`Round to the nearest ${round.target}`}>
-          Round the numbers to fuel the rocket.
+          <span className="block text-[clamp(1.3rem,5.2vw,1.85rem)] font-black leading-none text-white drop-shadow-[0_2px_6px_rgba(2,6,23,0.6)]">
+            {round.value}
+          </span>
+          <span className="mt-1 block text-sm font-semibold leading-snug text-cyan-100/90">
+            Round the numbers to fuel the rocket.
+          </span>
         </GameQuestionCard>
       </div>
 
