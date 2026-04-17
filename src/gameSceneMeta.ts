@@ -10,7 +10,7 @@ import dataDetectiveBackground from './assets/maps/backgroundsforgames/data dete
 import matrixMatchBackground from './assets/maps/backgroundsforgames/End Trial.jpg';
 import fractionForgeBackground from './assets/maps/backgroundsforgames/fraction forge map.jpg';
 import graphGrabberBackground from './assets/maps/backgroundsforgames/graph grabber.jpg';
-import lavaPathBackground from './assets/maps/backgroundsforgames/Lava Path.jpg';
+import lavaPathBackground from './assets/maps/backgroundsforgames/lava path.jpg';
 import lineGraphLabBackground from './assets/maps/backgroundsforgames/linegraphlab.jpg';
 import meanMachineBackground from './assets/maps/backgroundsforgames/meanmachine.jpg';
 import mixedMasteryBackground from './assets/maps/backgroundsforgames/Mixed Mastery.jpg';
