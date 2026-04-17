@@ -8,7 +8,7 @@ import {
 } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
-import areaBackdrop from '../assets/maps/backgroundsforgames/area architect.jpg';
+import areaBackdrop from '../assets/maps/backgroundsforgames/coordinate quest.jpg';
 import {
   reshuffleAvoidingRepeat,
   shuffle,
@@ -221,9 +221,9 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
           </div>
         </section>
 
-        <section className="min-h-0 flex-1 rounded-[1.4rem] border border-white/14 bg-black/25 p-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)]">
+        <section className="shrink-0 rounded-[1.4rem] border border-white/14 bg-black/25 p-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)]">
           <div
-            className="mx-auto grid h-full max-h-[22rem] w-full max-w-[22rem] flex-1 place-content-center gap-1 rounded-[1rem] border border-white/12 bg-slate-900/50 p-2"
+            className="mx-auto grid aspect-square w-full max-w-[22rem] place-content-center gap-1 rounded-[1rem] border border-white/12 bg-slate-900/50 p-2"
             style={{ gridTemplateColumns: `repeat(${question.gridSize}, minmax(0, 1fr))` }}
           >
             {Array.from({ length: question.gridSize * question.gridSize }).map((_, index) => {

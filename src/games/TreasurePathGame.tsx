@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+﻿import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
@@ -32,7 +32,8 @@ interface TreasureRound {
   traps: string[];
 }
 
-const GRID_SIZE = 5;
+const GRID_SIZE = 7;
+const GRID_LABELS = Array.from({ length: GRID_SIZE }, (_, index) => index + 1);
 
 const randomInt = (max: number) => Math.floor(Math.random() * max) + 1;
 
@@ -267,29 +268,28 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
             </GameQuestionCard>
           </div>
 
-          <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-2 overflow-hidden pr-0.5 md:gap-3 md:pr-0">
-            <div className="licensed-game-card-dark relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.35rem] p-2.5 md:rounded-[1.75rem] md:p-4">
-              <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent,rgba(8,15,11,0.55))]" />
+          <div className="relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden pr-0.5 md:pr-0">
+            <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.35rem] bg-transparent p-2.5 md:rounded-[1.75rem] md:p-4">
               <div className="mb-2 text-[10px] font-black uppercase tracking-[0.18em] text-emerald-100/62">Grid map</div>
 
-              <div className="mx-auto grid w-full max-w-[23rem] grid-cols-[1.2rem_repeat(5,minmax(0,1fr))] gap-1.5 md:max-w-[26rem] md:grid-cols-[1.5rem_repeat(5,minmax(0,1fr))] md:gap-2">
-                <div className="flex flex-col items-center justify-center text-[9px] font-black uppercase leading-none tracking-[0.18em] text-emerald-100/60 md:text-[10px]">
-                  <span>Y</span>
-                  <span className="text-[11px] leading-none md:text-xs">↑</span>
-                  <span className="mt-1">X→</span>
+              <div className="mx-auto grid w-full max-w-[26rem] grid-cols-[1.8rem_repeat(7,minmax(0,1fr))] gap-1.5 md:max-w-[31rem] md:grid-cols-[2.2rem_repeat(7,minmax(0,1fr))] md:gap-2">
+                <div className="flex flex-col items-center justify-center rounded-[0.8rem] border border-emerald-200/35 bg-emerald-950/70 px-1 py-2 text-center text-[10px] font-black uppercase leading-none tracking-[0.18em] text-emerald-50 shadow-[0_8px_18px_rgba(0,0,0,0.22)] md:rounded-[0.95rem] md:px-2 md:text-xs">
+                  <span className="text-emerald-50">Y</span>
+                  <span className="my-0.5 text-[12px] leading-none text-yellow-200 md:text-sm">↑</span>
+                  <span className="text-emerald-50">X→</span>
                 </div>
-                {[1, 2, 3, 4, 5].map((value) => (
-                  <div key={`top-${value}`} className="text-center text-[11px] font-black text-emerald-100/62 md:text-xs">
+                {GRID_LABELS.map((value) => (
+                  <div key={`top-${value}`} className="flex items-center justify-center rounded-full border border-emerald-100/28 bg-emerald-950/55 px-0.5 py-1 text-center text-[11px] font-black text-emerald-50 shadow-[0_4px_12px_rgba(0,0,0,0.18)] md:text-xs">
                     {value}
                   </div>
                 ))}
 
-                {[5, 4, 3, 2, 1].map((rowValue) => (
+                {[...GRID_LABELS].reverse().map((rowValue) => (
                   <React.Fragment key={`row-${rowValue}`}>
-                    <div className="flex items-center justify-center text-[11px] font-black text-emerald-100/62 md:text-xs">
+                    <div className="flex items-center justify-center rounded-full border border-emerald-100/28 bg-emerald-950/55 px-0.5 py-1 text-[11px] font-black text-emerald-50 shadow-[0_4px_12px_rgba(0,0,0,0.18)] md:text-xs">
                       {rowValue}
                     </div>
-                    {Array.from({ length: 5 }, (_, index) => {
+                    {Array.from({ length: GRID_SIZE }, (_, index) => {
                       const x = index + 1;
                       const y = rowValue;
                       const key = coordinateKey(x, y);
@@ -306,10 +306,9 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                               ? feedback === 'correct'
                                 ? 'border-emerald-300 bg-emerald-400/30'
                                 : 'border-rose-300 bg-rose-500/26'
-                              : 'border-white/10 bg-[linear-gradient(180deg,rgba(103,162,90,0.34),rgba(50,91,53,0.6))] hover:-translate-y-0.5 hover:border-emerald-200/30'
+                              : 'border-white/10 bg-transparent hover:-translate-y-0.5 hover:border-emerald-200/30 hover:bg-white/10'
                           }`}
                         >
-                          <div className="absolute inset-[10%] rounded-[0.8rem] border border-black/8 bg-[radial-gradient(circle_at_40%_30%,rgba(255,255,255,0.18),transparent_28%),linear-gradient(180deg,rgba(255,255,255,0.06),rgba(0,0,0,0.08))]" />
                           {isStart && (
                             <motion.div
                               layout
@@ -373,7 +372,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                   className="ui-close-button absolute right-4 top-4 z-20"
                   aria-label="Close result"
                 >
-                  <span aria-hidden="true">×</span>
+                  <span aria-hidden="true">Ã—</span>
                 </button>
 
                 <div className={`text-4xl font-black md:text-5xl ${isVictory ? 'text-emerald-300' : 'text-amber-300'}`}>
@@ -400,4 +399,5 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
 };
 
 export default TreasurePathGame;
+
 

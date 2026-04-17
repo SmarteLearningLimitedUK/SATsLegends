@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { triggerHaptic } from '../haptics';
-import gameplayBackground from '../assets/maps/backgroundsforgames/Rotation Reflection.jpg';
+import gameplayBackground from '../assets/maps/backgroundsforgames/rotationstation.jpg';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 
 interface RotationReflectionGameProps {
@@ -259,6 +259,8 @@ const ShapeCard: React.FC<{
   orientation: number;
   tone?: 'target' | 'player' | 'neutral';
   showPivot?: boolean;
+  className?: string;
+  svgClassName?: string;
 }> = ({ shape, orientation, tone = 'neutral', showPivot = true }) => {
   const borderClass = tone === 'target'
     ? 'border-cyan-100/34 bg-blue-950/48'
@@ -524,17 +526,19 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
                     <ShapeCard shape={question.shape} orientation={question.startOrientation} tone="neutral" />
                     <span className="text-2xl font-black text-cyan-100/75">?</span>
                   </div>
-                  <div className="grid grid-cols-2 gap-2.5">
+                  <div className="grid grid-cols-2 gap-1.5">
                     {question.options.map((option) => (
                       <button
                         key={option.id}
                         type="button"
                         disabled={isLocked || roundOver}
                         onClick={() => handleChoiceTap(option.id)}
-                        className="ui-button-secondary rounded-[0.95rem] px-2 py-2 text-center text-sm font-black disabled:opacity-55"
+                        className="inline-flex min-h-[7.25rem] flex-col items-center justify-center gap-1.5 rounded-[0.85rem] border border-white/16 bg-slate-950/58 px-1.5 py-1.5 text-center text-[11px] font-black text-white shadow-[0_10px_18px_rgba(2,6,23,0.18)] disabled:opacity-55"
                       >
                         <div className="flex items-center justify-center pb-1.5">
-                          <ShapeCard shape={question.shape} orientation={option.orientation || 0} showPivot={false} />
+                          <div className="scale-[0.72]">
+                            <ShapeCard shape={question.shape} orientation={option.orientation || 0} showPivot={false} />
+                          </div>
                         </div>
                         {option.label}
                       </button>
@@ -550,14 +554,14 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
                     <span className="text-2xl font-black text-cyan-100/75">to</span>
                     <ShapeCard shape={question.shape} orientation={question.targetOrientation} tone="target" />
                   </div>
-                  <div className="grid grid-cols-2 gap-2.5">
+                  <div className="grid grid-cols-2 gap-1.5">
                     {question.options.map((option) => (
                       <button
                         key={option.id}
                         type="button"
                         disabled={isLocked || roundOver}
                         onClick={() => handleChoiceTap(option.id)}
-                        className="ui-button-primary rounded-[0.95rem] px-2 py-2.5 text-center text-sm font-black disabled:opacity-55"
+                        className="inline-flex min-h-[3.6rem] items-center justify-center rounded-[0.85rem] border border-white/16 bg-slate-950/58 px-2 py-1.5 text-center text-[11px] font-black text-white shadow-[0_10px_18px_rgba(2,6,23,0.18)] disabled:opacity-55"
                       >
                         {option.label}
                       </button>

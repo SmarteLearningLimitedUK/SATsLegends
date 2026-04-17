@@ -4,7 +4,7 @@ import calculationCupBackground from './assets/maps/backgroundsforgames/Calculat
 import changeCounterBackground from './assets/maps/backgroundsforgames/changecounter.jpg';
 import chronoDashTimeTrialBackground from './assets/maps/backgroundsforgames/Chrono Dash Time Trial.jpg';
 import cloudCollapseBackground from './assets/maps/backgroundsforgames/Cloud Collapse.jpg';
-import coordinateQuestBackground from './assets/maps/backgroundsforgames/coordinate quest.jpg';
+import coordinateQuestBackground from './assets/maps/backgroundsforgames/coodinatequestt.jpg';
 import crystalCoreBackground from './assets/maps/backgroundsforgames/crystal core.jpg';
 import dataDetectiveBackground from './assets/maps/backgroundsforgames/data detective.jpg';
 import matrixMatchBackground from './assets/maps/backgroundsforgames/End Trial.jpg';

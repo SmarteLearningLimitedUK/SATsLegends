@@ -534,10 +534,45 @@ const App: React.FC = () => {
           bullets: [],
         };
       }
+      if (selectedLevel.blueprintKey === 'polygon_palace') {
+        return {
+          title: 'Polygon Palace',
+          summary: 'Welcome traveller! I need a hand to categorise these shapes. read the question and select the correct answer , or answers as there may be more than one!',
+          bullets: [],
+        };
+      }
+      if (selectedLevel.blueprintKey === 'area_architect') {
+        return {
+          title: 'Area Architect',
+          summary: 'We need to figure out the area of the underground tunnels beneath Monster Mind headquarters. using the blueprints - can you help us work out the dimensions?',
+          bullets: [],
+        };
+      }
+      if (selectedLevel.blueprintKey === 'coordinate_quest') {
+        return {
+          title: 'Coordinate Quest',
+          summary: "We can't get through! Those Monster Minds have hidden traps. Navigate the map from the co-ordinates given, and make it through the pass safely.",
+          bullets: [],
+        };
+      }
+      if (selectedLevel.blueprintKey === 'angle_arena') {
+        return {
+          title: 'Angle Arena',
+          summary: "Greetings! We've managed to build our cannon here to destroy the Monster Mind's look-out towers. we need your maths skills to work out the angle of launch. select the correct angle and let's blast them.",
+          bullets: [],
+        };
+      }
       if (selectedLevel.blueprintKey === 'simplify_sprint') {
         return {
           title: 'Simplify Sprint',
           summary: "The Monster Minds have encrypted the calues to make it as large as possible - this means its harder for our reserchers to solve. hel the researchers by simplifying the frction to it's smallest form.",
+          bullets: [],
+        };
+      }
+      if (selectedLevel.blueprintKey === 'rotation_reflection') {
+        return {
+          title: 'Rotation Station',
+          summary: 'We need to pack our caravan, but some of the items wont fit unless we are smart with the packing. can you take a look at our shapes and help us out? we may need to flip, mirror or rotate.',
           bullets: [],
         };
       }
