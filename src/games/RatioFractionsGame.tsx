@@ -7,14 +7,11 @@ import {
 } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 import { DEFAULT_RACE_DIFFICULTY, RACE_TUNING, RaceDifficulty } from './ratioFractionsRace/constants';
 import { getQuestionTier, QuestionTier } from './ratioFractionsRace/questionSelector';
 import { RatioFractionQuestion } from './ratioFractionsRace/types';
 import ratioBackdrop from '../assets/gokarts/bkgroundratiofractionkarts.png';
-import kartBarratt from '../assets/gokarts/8.png';
-import kartBran from '../assets/gokarts/9.png';
-import kartMochi from '../assets/gokarts/10.png';
-import kartVex from '../assets/gokarts/11.png';
 import enemyKart from '../assets/gokarts/15.png';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 import {
@@ -45,9 +42,9 @@ type RaceState =
 const START_OFFSET = 0;
 const RACER_LERP = 0.16;
 const BASE_XP = 160;
-const KART_SCALE = 1.4;
-const PLAYER_KART_SCALE = KART_SCALE * 1.82;
-const TRACK_LINE_FROM_BOTTOM = 177;
+const KART_SCALE = 0.95;
+const PLAYER_KART_SCALE = 1.22;
+const TRACK_LINE_FROM_BOTTOM = 198;
 const CART_Y_SHIFT = 0;
 const FINISH_Y_SHIFT = -200;
 const FINISH_X_SHIFT = -100;
@@ -59,13 +56,6 @@ const ENEMY_VIBRATE_SPEED = 18;
 const ENEMY_VIBRATE_X_AMPLITUDE = 1.8;
 const ENEMY_VIBRATE_Y_AMPLITUDE = 0.9;
 const ENEMY_BASE_GAP_PT = 1.6;
-
-const PLAYER_KARTS: Record<string, string> = {
-  barratt: kartBarratt,
-  bran: kartBran,
-  mochi: kartMochi,
-  vex: kartVex,
-};
 
 const MIXTURE_LABELS_BY_PART_COUNT: Record<number, string[]> = {
   2: ['Fuel', 'Oxygen'],
@@ -268,7 +258,13 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const enemyVibratePhaseRef = useRef(0);
 
   const lives = sessionState?.lives ?? 3;
-  const playerKart = PLAYER_KARTS[avatarId] || kartBarratt;
+  const selectedAvatar = useMemo(
+    () => CHARACTER_AVATARS.find((entry) => entry.id === avatarId)
+      || CHARACTER_AVATARS.find((entry) => entry.id === DEFAULT_AVATAR_ID)
+      || CHARACTER_AVATARS[0],
+    [avatarId],
+  );
+  const playerAvatarArt = selectedAvatar.portrait || selectedAvatar.image;
 
   useEffect(() => {
     raceStateRef.current = raceState;
@@ -555,11 +551,14 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             </div>
 
             <motion.div
-              className="absolute z-40 flex h-28 w-44 items-center justify-center overflow-visible sm:h-32 sm:w-48 md:h-52 md:w-72"
+              className="absolute z-40 flex h-24 w-40 items-end justify-center overflow-visible sm:h-28 sm:w-44 md:h-36 md:w-56"
               style={playerStyle}
               animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { x: [0, -4, 4, -3, 3, 0] } : { scale: 1 }}
               transition={{ duration: 0.35 }}
             >
+              <div className="absolute bottom-0 left-1/2 h-[36%] w-[74%] -translate-x-1/2 rounded-[1.15rem] border border-sky-100/40 bg-[linear-gradient(180deg,rgba(248,250,252,0.1),rgba(15,23,42,0.7))] shadow-[0_10px_20px_rgba(2,6,23,0.42)]" />
+              <span className="absolute bottom-[4%] left-[18%] h-4 w-4 rounded-full border border-slate-200/65 bg-slate-950 shadow-[0_0_0_2px_rgba(14,165,233,0.22)]" />
+              <span className="absolute bottom-[4%] right-[18%] h-4 w-4 rounded-full border border-slate-200/65 bg-slate-950 shadow-[0_0_0_2px_rgba(14,165,233,0.22)]" />
               {showBoost ? (
                 <motion.span
                   className="absolute -left-10 top-1/2 z-0 h-10 w-16 -translate-y-1/2 rounded-full blur-[0.5px]"
@@ -571,9 +570,9 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                 />
               ) : null}
               <img
-                src={playerKart}
-                alt="Player kart"
-                className="relative z-10 h-full w-full object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]"
+                src={playerAvatarArt}
+                alt={`${selectedAvatar.name} kart`}
+                className="relative z-10 h-[92%] w-[92%] object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]"
                 style={{ imageRendering: 'auto' }}
               />
               {showStall ? (
@@ -582,13 +581,13 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             </motion.div>
 
             <motion.div
-              className="absolute z-30 flex h-24 w-36 items-center justify-center overflow-visible sm:h-28 sm:w-40 md:h-44 md:w-64"
+              className="absolute z-30 flex h-20 w-32 items-center justify-center overflow-visible sm:h-24 sm:w-36 md:h-32 md:w-48"
               style={enemyStyle}
             >
               <img
                 src={enemyKart}
                 alt="Enemy kart"
-                className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(251,113,133,0.6)]"
+                className="h-full w-full object-contain drop-shadow-[0_0_14px_rgba(251,113,133,0.55)]"
                 style={{ imageRendering: 'auto' }}
               />
             </motion.div>
@@ -631,9 +630,10 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
         </div>
 
         <GameScreenLayout
-          className="relative z-10 px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-0 text-white"
+          className="relative z-10 px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-2 text-white"
+          topClassName="!min-h-0 flex flex-col items-center gap-0 px-2 pt-0 sm:px-3 md:px-4"
           top={(
-            <div className="mx-auto flex w-full max-w-[780px] flex-col gap-1.5">
+            <div className="mx-auto flex w-full max-w-[780px] flex-col gap-1">
               <GameQuestionCard
                 title="Ratio Racer"
                 className="w-full max-w-[56rem]"
