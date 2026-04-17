@@ -111,6 +111,206 @@
       "status": "captured",
       "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
       "screenshot": "qa-phone-geometry-glacier-area-architect.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Geometry Glacier",
+      "group": "Rotation Station",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-geometry-glacier-rotation-station.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Geometry Glacier",
+      "group": "Coordinates Quest",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-geometry-glacier-coordinates-quest.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Geometry Glacier",
+      "group": "Conversion Canyon",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-geometry-glacier-conversion-canyon.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Geometry Glacier",
+      "group": "Perimeter Path",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-geometry-glacier-perimeter-path.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Data Desert",
+      "group": "Mean Machine",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-data-desert-mean-machine.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Data Desert",
+      "group": "Graph Grabber",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-data-desert-graph-grabber.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Data Desert",
+      "group": "Line Graph Lab",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-data-desert-line-graph-lab.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Data Desert",
+      "group": "Data Detective",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-data-desert-data-detective.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Operations Outpost",
+      "group": "Factor Frenzy",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-operations-outpost-factor-frenzy.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Operations Outpost",
+      "group": "Multiplication Mine",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-operations-outpost-multiplication-mine.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Operations Outpost",
+      "group": "Division Dock",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-operations-outpost-division-dock.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Operations Outpost",
+      "group": "Order Ops Arena",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-operations-outpost-order-ops-arena.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Operations Outpost",
+      "group": "Formula Forge",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-operations-outpost-formula-forge.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Operations Outpost",
+      "group": "Remainder Run",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-operations-outpost-remainder-run.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Measurement Mountain",
+      "group": "Chrono Dash: Time Trial",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-measurement-mountain-chrono-dash-time-trial.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Measurement Mountain",
+      "group": "Problem Pyramid",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-measurement-mountain-problem-pyramid.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Measurement Mountain",
+      "group": "Lava Path",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-measurement-mountain-lava-path.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Measurement Mountain",
+      "group": "Change Counter",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-measurement-mountain-change-counter.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Ratio Rapids",
+      "group": "Potion Panic",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-ratio-rapids-potion-panic.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Ratio Rapids",
+      "group": "Share Splitter",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-ratio-rapids-share-splitter.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Ratio Rapids",
+      "group": "Ratio Fractions",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-ratio-rapids-ratio-fractions.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Ratio Rapids",
+      "group": "Scale Builder",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-ratio-rapids-scale-builder.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Core of Calculation",
+      "group": "SATs Paper 1: Arithmetic",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-core-of-calculation-sats-paper-1-arithmetic.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Core of Calculation",
+      "group": "SATs Paper 2: Reasoning",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-core-of-calculation-sats-paper-2-reasoning.png"
+    },
+    {
+      "viewport": "phone",
+      "island": "Core of Calculation",
+      "group": "SATs Paper 3: Reasoning",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-phone-core-of-calculation-sats-paper-3-reasoning.png"
     }
   ],
   "consoleErrors": []

@@ -8,7 +8,7 @@ import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameScreenShell } from '../layout/ScreenPrimitives';
 import { getSatsInspiredChallengeQuestion } from '../systems/content/satsInspiredQuestionBanks';
 import { triggerHaptic } from '../haptics';
-import lavaPathBackground from '../assets/maps/backgroundsforgames/lava path.jpg';
+import lavaPathBackground from '../assets/maps/backgroundsforgames/lava-path.jpg';
 import {
   GameplaySessionEventHandlers,
   GameplaySessionState,

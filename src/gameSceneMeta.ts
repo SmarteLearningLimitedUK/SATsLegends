@@ -28,7 +28,7 @@ import scaleBuilderBackground from './assets/maps/backgroundsforgames/scalebuild
 import scaleMasterBackground from './assets/maps/backgroundsforgames/Scale Master.png';
 import shareSplitterBackground from './assets/maps/backgroundsforgames/sharesplitterfinal.png';
 import takeOutRushBackground from './assets/maps/backgroundsforgames/Take-Out Rush.png';
-import lavaPathBackground from './assets/maps/backgroundsforgames/lava path.jpg';
+import lavaPathBackground from './assets/maps/backgroundsforgames/lava-path.jpg';
 import towerOfFactorsBackground from './assets/maps/backgroundsforgames/tower of factors.jpg';
 
 export interface GameSceneMeta {

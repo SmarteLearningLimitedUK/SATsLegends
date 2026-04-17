@@ -1,0 +1,317 @@
+{
+  "url": "https://satslegendsfinal.vercel.app/",
+  "viewport": {
+    "name": "ipad",
+    "width": 768,
+    "height": 1024,
+    "isMobile": false,
+    "deviceScaleFactor": 2
+  },
+  "results": [
+    {
+      "viewport": "ipad",
+      "island": "Arithmetic Acropolis",
+      "group": "Place Value Panic",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-arithmetic-acropolis-place-value-panic.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Arithmetic Acropolis",
+      "group": "Number Line Ninja",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-arithmetic-acropolis-number-line-ninja.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Arithmetic Acropolis",
+      "group": "Prime Pop",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-arithmetic-acropolis-prime-pop.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Arithmetic Acropolis",
+      "group": "Rounding Rocket",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-arithmetic-acropolis-rounding-rocket.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Arithmetic Acropolis",
+      "group": "Maths vs Zombies",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-arithmetic-acropolis-maths-vs-zombies.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Fraction Forest",
+      "group": "Take-Out Rush",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-fraction-forest-take-out-rush.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Fraction Forest",
+      "group": "Fraction Forge",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-fraction-forest-fraction-forge.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Fraction Forest",
+      "group": "Match Mastery",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-fraction-forest-match-mastery.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Fraction Forest",
+      "group": "Percent Power",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-fraction-forest-percent-power.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Fraction Forest",
+      "group": "Simplify Sprint",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-fraction-forest-simplify-sprint.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Geometry Glacier",
+      "group": "Angle Arena",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-geometry-glacier-angle-arena.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Geometry Glacier",
+      "group": "Polygon Palace",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-geometry-glacier-polygon-palace.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Geometry Glacier",
+      "group": "Area Architect",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-geometry-glacier-area-architect.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Geometry Glacier",
+      "group": "Rotation Station",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-geometry-glacier-rotation-station.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Geometry Glacier",
+      "group": "Coordinates Quest",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-geometry-glacier-coordinates-quest.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Geometry Glacier",
+      "group": "Conversion Canyon",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-geometry-glacier-conversion-canyon.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Geometry Glacier",
+      "group": "Perimeter Path",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-geometry-glacier-perimeter-path.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Data Desert",
+      "group": "Mean Machine",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-data-desert-mean-machine.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Data Desert",
+      "group": "Graph Grabber",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-data-desert-graph-grabber.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Data Desert",
+      "group": "Line Graph Lab",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-data-desert-line-graph-lab.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Data Desert",
+      "group": "Data Detective",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-data-desert-data-detective.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Operations Outpost",
+      "group": "Factor Frenzy",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-operations-outpost-factor-frenzy.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Operations Outpost",
+      "group": "Multiplication Mine",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-operations-outpost-multiplication-mine.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Operations Outpost",
+      "group": "Division Dock",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-operations-outpost-division-dock.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Operations Outpost",
+      "group": "Order Ops Arena",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-operations-outpost-order-ops-arena.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Operations Outpost",
+      "group": "Formula Forge",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-operations-outpost-formula-forge.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Operations Outpost",
+      "group": "Remainder Run",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-operations-outpost-remainder-run.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Measurement Mountain",
+      "group": "Chrono Dash: Time Trial",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-measurement-mountain-chrono-dash-time-trial.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Measurement Mountain",
+      "group": "Problem Pyramid",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-measurement-mountain-problem-pyramid.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Measurement Mountain",
+      "group": "Lava Path",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-measurement-mountain-lava-path.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Measurement Mountain",
+      "group": "Change Counter",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-measurement-mountain-change-counter.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Ratio Rapids",
+      "group": "Potion Panic",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-ratio-rapids-potion-panic.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Ratio Rapids",
+      "group": "Share Splitter",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-ratio-rapids-share-splitter.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Ratio Rapids",
+      "group": "Ratio Fractions",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-ratio-rapids-ratio-fractions.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Ratio Rapids",
+      "group": "Scale Builder",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-ratio-rapids-scale-builder.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Core of Calculation",
+      "group": "SATs Paper 1: Arithmetic",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-core-of-calculation-sats-paper-1-arithmetic.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Core of Calculation",
+      "group": "SATs Paper 2: Reasoning",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-core-of-calculation-sats-paper-2-reasoning.png"
+    },
+    {
+      "viewport": "ipad",
+      "island": "Core of Calculation",
+      "group": "SATs Paper 3: Reasoning",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-ipad-core-of-calculation-sats-paper-3-reasoning.png"
+    }
+  ],
+  "consoleErrors": []
+}
