@@ -14,7 +14,16 @@ const START_PREFIXES = [
   'Challenge:',
 ];
 
-const LEGACY_MATHARIA_PREFIX = /^Matharia\s+(mix|records|barrier|forge|map|clock)\s*-\s*/i;
+const LEGACY_WORLD_PREFIX = /^[a-z]+\s+(mix|records|barrier|forge|map|clock)\s*-\s*/i;
+
+export const stripLegacyWorldPrefix = (prompt: string) => {
+  const trimmed = prompt.trim();
+  if (!trimmed) return prompt;
+
+  const stripped = trimmed.replace(LEGACY_WORLD_PREFIX, '');
+  if (stripped === trimmed) return prompt;
+  return stripLegacyWorldPrefix(stripped);
+};
 
 const REPLACEMENTS: Array<[RegExp, string]> = [
   [/\bpupil(s)?\b/gi, 'apprentice$1'],
@@ -39,7 +48,7 @@ const isAllCapsWords = (prompt: string) => {
   return trimmed === trimmed.toUpperCase() && /^[A-Z0-9 ,.'-]+$/.test(trimmed);
 };
 
-const pickMathariaPrefix = (prompt: string) => {
+const pickScenarioPrefix = (prompt: string) => {
   const lower = prompt.toLowerCase();
   if (/(fuel|ratio|fraction|percent|share|split|mix)/.test(lower)) return 'The Monster Minds have mixed the fuel.';
   if (/(graph|chart|bar|mean|data|record|ledger)/.test(lower)) return 'The Monster Minds have corrupted the records.';
@@ -63,8 +72,8 @@ export const formatFantasyPrompt = (prompt: string) => {
   const trimmed = prompt.trim();
   if (!trimmed) return prompt;
 
-  const deMatharia = trimmed.replace(LEGACY_MATHARIA_PREFIX, '');
-  if (deMatharia !== trimmed) return formatFantasyPrompt(deMatharia);
+  const strippedLegacy = trimmed.replace(LEGACY_WORLD_PREFIX, '');
+  if (strippedLegacy !== trimmed) return formatFantasyPrompt(strippedLegacy);
 
   if (START_PREFIXES.some((prefix) => trimmed.startsWith(prefix))) return prompt;
   if (trimmed.startsWith('A Monster Mind') || trimmed.startsWith('The Monster Minds') || trimmed.startsWith('The bridge') || trimmed.startsWith('The village') || trimmed.startsWith('The forge') || trimmed.startsWith('The path') || trimmed.startsWith('The map') || trimmed.startsWith('The records')) {
@@ -84,6 +93,6 @@ export const formatFantasyPrompt = (prompt: string) => {
     return `The Monster Minds have scrambled the numbers. Solve ${formatMultiplicationDisplay(trimmed)}.`;
   }
 
-  const prefix = pickMathariaPrefix(next);
+  const prefix = pickScenarioPrefix(next);
   return prefix.endsWith('.') ? `${prefix} ${next}` : `${prefix} ${next}`;
 };

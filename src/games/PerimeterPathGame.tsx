@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import perimeterBackground from '../assets/maps/backgroundsforgames/Perimeter Path.jpg';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
+import { stripLegacyWorldPrefix } from '../utils/fantasyPrompt';
 
 interface PerimeterPathGameProps {
   levelId: number;
@@ -484,11 +485,11 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
 
       <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-[calc(env(safe-area-inset-top)+0.2rem)]">
         <main className="mt-0 flex min-h-0 flex-1 flex-col gap-1.5 sm:gap-2">
-          <div className="shrink-0">
-            <GameQuestionCard title="Perimeter Path" bodyClassName="sm:text-sm">
-              {question.prompt}
-            </GameQuestionCard>
-          </div>
+              <div className="shrink-0">
+                <GameQuestionCard title="Perimeter Path" bodyClassName="sm:text-sm">
+                  {stripLegacyWorldPrefix(question.prompt)}
+                </GameQuestionCard>
+              </div>
 
           <motion.div
             animate={shakeShape ? { x: [0, -9, 8, -7, 6, -4, 0] } : { x: 0 }}
