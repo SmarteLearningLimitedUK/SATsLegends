@@ -11,8 +11,9 @@ import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import meanMachineImage from '../assets/mean.png';
 import medianMachineImage from '../assets/median.png';
 import modeMachineImage from '../assets/mode.png';
-import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
+import { GameplaySessionEventHandlers, GameplaySessionState, MiniGamePracticeBriefing } from '../app/gameplaySessionContract';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 
 type RoundMode = 'mean' | 'median' | 'mode' | 'missing';
 type GameState = 'idle' | 'spinning' | 'answering' | 'resolved';
@@ -32,6 +33,8 @@ interface MeanMachineGameProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
+  isPractice?: boolean;
+  practiceBriefing?: MiniGamePracticeBriefing | null;
   onVictory: (stars: number, XP: number) => void;
   onGameOver: (XP: number) => void;
   onBack: () => void;
@@ -407,6 +410,8 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   levelId: _levelId,
   avatarId: _avatarId,
   useSharedTopHud: _useSharedTopHud = true,
+  isPractice,
+  practiceBriefing,
   onVictory,
   onGameOver,
   onBack: _onBack,
@@ -416,6 +421,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   const [level, setLevel] = useState(1);
   const [XP, setXP] = useState(0);
   const [gameState, setGameState] = useState<GameState>('idle');
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
   const [round, setRound] = useState<RoundData | null>(null);
   const [reelDisplay, setReelDisplay] = useState<Array<number | string>>(Array.from({ length: REEL_COUNT }, () => '?'));
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -434,6 +440,10 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
 
   const lives = sessionState?.lives ?? 3;
   const sessionActive = lives > 0;
+
+  useEffect(() => {
+    setShowPracticeIntro(Boolean(isPractice));
+  }, [isPractice]);
 
   const clearTimers = useCallback(() => {
     timersRef.current.forEach((id) => window.clearTimeout(id));
@@ -654,6 +664,13 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
 
   return (
     <div className="relative h-full w-full overflow-hidden select-none text-white">
+      <PracticeIntroPopup
+        open={showPracticeIntro}
+        title="Mean Machine"
+        body="The Mean Machine must be tamed. It's the source of all fun for those Monster Minds. Spin the reels and follow the instructions to identify MEAN, MODE, and MEDIAN."
+        briefing={practiceBriefing}
+        onAction={() => setShowPracticeIntro(false)}
+      />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(56,189,248,0.26),transparent_34%),radial-gradient(circle_at_12%_82%,rgba(59,130,246,0.18),transparent_28%),radial-gradient(circle_at_88%_78%,rgba(251,191,36,0.18),transparent_30%)]" />
       <div className="pointer-events-none absolute inset-x-[16%] top-[10%] h-24 rounded-full bg-cyan-300/12 blur-3xl" />
 

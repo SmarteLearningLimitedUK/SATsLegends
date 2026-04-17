@@ -513,6 +513,13 @@ const App: React.FC = () => {
           bullets: [],
         };
       }
+      if (selectedLevel.blueprintKey === 'mean_machine') {
+        return {
+          title: 'Mean Machine',
+          summary: "The Mean Machine must be tamed. It's the source of all fun for those Monster Minds. Spin the reels and follow the instructions to identify MEAN, MODE, and MEDIAN.",
+          bullets: [],
+        };
+      }
       const baseRules = selectedRuleSet || {
         title: canonicalGameTitle || 'Practice',
         summary: `This is the practice round for ${canonicalGameTitle || 'this game'}. Use it to learn the controls before the real level.`,

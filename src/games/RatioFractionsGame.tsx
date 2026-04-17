@@ -573,7 +573,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                 )}
                 bodyClassName="tracking-tight"
               >
-                {`In the ratio above, what fraction of the whole is ${displayParts.targetLabel}?`}
+                {`In the fuel mix above, what fraction of the whole is ${question.target.toLowerCase()}?`}
               </GameQuestionCard>
             </div>
           )}

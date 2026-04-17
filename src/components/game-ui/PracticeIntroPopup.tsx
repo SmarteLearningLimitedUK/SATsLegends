@@ -1,4 +1,5 @@
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import { X } from 'lucide-react';
 import { MiniGamePracticeBriefing } from '../../app/gameplaySessionContract';
@@ -95,12 +96,12 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
     }
   }, [density]);
 
-  return (
+  const popup = (
     <AnimatePresence>
       {open ? (
         <motion.div
           key="practice-intro-popup"
-          className="fixed inset-0 z-[260] flex items-center justify-center px-3 py-3"
+          className="fixed inset-0 z-[9999] flex items-center justify-center px-3 py-3"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -108,10 +109,13 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
           <div
             role="presentation"
             aria-hidden="true"
-            className="absolute inset-0 z-0 cursor-default bg-slate-950/72 backdrop-blur-[6px]"
+            className="absolute inset-0 z-0 cursor-default bg-slate-950/78 backdrop-blur-[8px] grayscale"
             onClick={onAction}
           />
           <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${title} practice briefing`}
             initial={{ opacity: 0, y: 18, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.98 }}
@@ -168,6 +172,9 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
       ) : null}
     </AnimatePresence>
   );
+
+  if (typeof document === 'undefined') return popup;
+  return createPortal(popup, document.body);
 };
 
 export default PracticeIntroPopup;

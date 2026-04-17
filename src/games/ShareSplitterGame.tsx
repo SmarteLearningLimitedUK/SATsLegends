@@ -136,9 +136,10 @@ const shareModeForLevel = (levelId: number): ShareChallenge['mode'] => {
 
 const buildSharePrompt = () => {
   return [
-    'The Monster Minds are fighting over a brainpower cake.',
-    'Drag slices from the cake to the plates.',
-    'Keep the ratio balanced before they grow stronger.',
+    "Welcome to the Monster Mind's party.",
+    'They are fighting over a Brainpower cake.',
+    'Drag the slices from the cake to each plate to match the target ratio.',
+    'Keep the ratio balanced to stop their greed.',
   ].join('\n');
 };
 
@@ -242,7 +243,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const platePositions = PLATE_POSITIONS[challenge.plateCount] || PLATE_POSITIONS[4];
   const plateSize = 'clamp(6rem, 28vw, 7.8rem)';
   const promptText = isPractice
-    ? challenge.prompt
+    ? `Target ratio: ${challenge.ratios.join(':')}`
     : `There are ${challenge.totalSlices} slices of brainpower cake.\nThe Monster Minds demand it is shared in a ratio of ${challenge.ratios.join(':')}.`;
 
   const loadNextChallenge = useCallback((solvedCount: number) => {
@@ -328,7 +329,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         const rect = plate.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
-        const radius = Math.min(rect.width, rect.height) * 0.44;
+        const radius = Math.max(rect.width, rect.height) * 0.46;
         const distance = Math.hypot(clientX - centerX, clientY - centerY);
         if (distance <= radius) {
           hitIndex = index;
@@ -341,7 +342,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       if (!dragActiveRef.current) return;
       dragActiveRef.current = false;
       const { index, distance } = getNearestPlate(clientX, clientY);
-      const snapRadius = 72;
+      const snapRadius = 88;
       const hitIndex = getHitPlateIndex(clientX, clientY);
       const targetPlateIndex = hitIndex >= 0 ? hitIndex : distance <= snapRadius ? index : -1;
 
@@ -350,8 +351,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       } else {
         setDragSlice(null);
         setHoverPlateIndex(null);
-        setFeedback('Drag the cake onto one of the plates.');
-        setFeedbackTone('neutral');
       }
 
       window.removeEventListener('pointermove', handlePointerMove);
@@ -496,7 +495,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Share Splitter"
-        body="Share the cake to match the ratio.\nDrag slices to the plates until the split is correct."
+        body="Welcome to the Monster Mind's party.\nThey are fighting over a Brainpower cake.\nDrag the slices from the cake to each plate to match the target ratio.\nKeep the ratio balanced to stop their greed."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
@@ -507,17 +506,8 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
           top={(
             <div className="flex justify-center px-2">
               <GameQuestionCard
-                title="Share Splitter"
-                subtitle={(
-                  <div className="flex flex-wrap items-center justify-center gap-2">
-                    <span className="rounded-full border border-cyan-100/25 bg-white/5 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/80">
-                      Round {roundSolved + 1} / {ROUNDS_TO_WIN}
-                    </span>
-                    <span className="rounded-full border border-amber-200/25 bg-white/5 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-amber-100/85">
-                      Slices left {remainingSlices}
-                    </span>
-                  </div>
-                )}
+                title="Target Ratio"
+                className="mx-auto w-full max-w-[28rem]"
                 bodyClassName="whitespace-pre-line text-[12px] font-semibold leading-tight text-white"
               >
                 {promptText}

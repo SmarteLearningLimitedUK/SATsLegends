@@ -271,12 +271,38 @@ const buildPotionName = (active: Ingredient[]) => {
   return `${lead} Elixir`;
 };
 
+const buildStoryLead = (title: string, stage: number, batchLabel?: Challenge['batchLabel']) => {
+  const titleLower = title.toLowerCase();
+  if (titleLower.includes('crimson courage')) return 'Crimson Courage has been requested by the villagers.';
+  if (titleLower.includes('azure cleanse')) return 'The healers are waiting for Azure Cleanse.';
+  if (titleLower.includes('heart of oak')) return 'The village gate needs Heart of Oak.';
+  if (titleLower.includes('solar clarity')) return 'The lantern keepers are calling for Solar Clarity.';
+  if (titleLower.includes('midnight syrup')) return 'The night watch has ordered Midnight Syrup.';
+
+  const storyLines = [
+    `${title} has been requested by the villagers.`,
+    `The apothecary needs ${title} before the market bell rings.`,
+    `A messenger has brought a fresh order for ${title}.`,
+    `The woodland clinic is waiting on ${title}.`,
+  ];
+  const batchSuffix = batchLabel === 'double'
+    ? ' It is needed in a double batch.'
+    : batchLabel === 'triple'
+      ? ' It is needed in a triple batch.'
+      : batchLabel === 'half'
+        ? ' The request has been halved for a smaller delivery.'
+        : '';
+  return `${storyLines[(stage + title.length) % storyLines.length]}${batchSuffix}`;
+};
+
 const buildOrderPrompt = (
   title: string,
   ratioText: string,
+  storyLead: string,
   cardHint?: string,
 ) => {
   return [
+    storyLead,
     `Target recipe [${title}]`,
     `Ratio ${ratioText}`,
     `${cardHint || 'Current mix is shown below.'} Keep the ratio balanced.`,
@@ -337,135 +363,144 @@ const buildOrderFlavor = (stage: number) => {
   return 'Hard: Missing both parts / word problems';
 };
 
-const generateChallenge = (levelId: number, solved: number): Challenge => {
-  const mode = modeForLevel(levelId);
-  const stage = stageForMode(mode);
-  const maxIngredients = INGREDIENTS.length;
-  const activeCount = levelId >= 10
-    ? Math.min(5, maxIngredients)
-    : levelId >= 7
-      ? Math.min(4, maxIngredients)
-      : levelId >= 4
-        ? Math.min(3, maxIngredients)
-        : 2;
-  let activeIndices =
-    shuffled([0, 1, 2, 3, 4]).slice(0, activeCount).sort((a, b) => a - b);
-  let baseRatio: number[] = [...randomPick(SIMPLE_PAIR_RATIOS)];
-  let scale = 1;
-  let revealTargets = false;
-  let startCounts = Array.from({ length: INGREDIENTS.length }, () => 0);
-  let cardHint: string | undefined;
-  let batchLabel: Challenge['batchLabel'] = 'single';
+const generateChallenge = (levelId: number, solved: number, previousTitle?: string): Challenge => {
+  let challenge: Challenge;
+  let attempts = 0;
 
-  if (stage >= 4 && Math.random() < 0.45) {
-    batchLabel = randomPick(['double', 'triple', 'half']);
-  }
+  do {
+    const mode = modeForLevel(levelId);
+    const stage = stageForMode(mode);
+    const maxIngredients = INGREDIENTS.length;
+    const activeCount = levelId >= 10
+      ? Math.min(5, maxIngredients)
+      : levelId >= 7
+        ? Math.min(4, maxIngredients)
+        : levelId >= 4
+          ? Math.min(3, maxIngredients)
+          : 2;
+    let activeIndices =
+      shuffled([0, 1, 2, 3, 4]).slice(0, activeCount).sort((a, b) => a - b);
+    let baseRatio: number[] = [...randomPick(SIMPLE_PAIR_RATIOS)];
+    let scale = 1;
+    let revealTargets = false;
+    let startCounts = Array.from({ length: INGREDIENTS.length }, () => 0);
+    let cardHint: string | undefined;
+    let batchLabel: Challenge['batchLabel'] = 'single';
 
-  const pickPairRatio = () => [...randomPick(stage >= 4 ? ADVANCED_PAIR_RATIOS : SIMPLE_PAIR_RATIOS)];
-  const pickTripleRatio = () => [...randomPick(stage >= 6 ? ADVANCED_TRIPLE_RATIOS : SIMPLE_TRIPLE_RATIOS)];
-  const pickQuadRatio = () => [...randomPick(stage >= 7 ? ADVANCED_QUAD_RATIOS : SIMPLE_QUAD_RATIOS)];
-
-  const selectBaseRatio = () => {
-    if (activeCount === 4) return pickQuadRatio();
-    if (activeCount === 3) return pickTripleRatio();
-    return pickPairRatio();
-  };
-
-  if (mode === 'direct_recipe') {
-    baseRatio = selectBaseRatio();
-    scale = 1;
-    revealTargets = true;
-  } else if (mode === 'scale_recipe') {
-    baseRatio = selectBaseRatio();
-    scale = randomPick(stage >= 4 ? [3, 4, 5, 6, 7, 8] : [2, 3, 4, 5, 6]);
-  } else if (mode === 'missing_value') {
-    baseRatio = activeCount === 2
-      ? [...randomPick(stage >= 4 ? WORD_PAIR_RATIOS.concat(ADVANCED_PAIR_RATIOS) : WORD_PAIR_RATIOS)]
-      : selectBaseRatio();
-    scale = randomPick(stage >= 5 ? [3, 4, 5, 6, 7, 8] : [2, 3, 4, 5]);
-  } else if (mode === 'fix_mistake') {
-    baseRatio = selectBaseRatio();
-    scale = randomPick(stage >= 5 ? [3, 4, 5, 6, 7] : [2, 3, 4]);
-  } else if (mode === 'word_problem') {
-    baseRatio = activeCount === 2
-      ? [...randomPick(stage >= 5 ? WORD_PAIR_RATIOS.concat(ADVANCED_PAIR_RATIOS) : WORD_PAIR_RATIOS)]
-      : selectBaseRatio();
-    scale = randomPick(stage >= 5 ? [3, 4, 5, 6, 7, 8] : [2, 3, 4, 5]);
-  } else {
-    baseRatio = selectBaseRatio();
-    scale = randomPick(stage >= 6 ? [4, 5, 6, 7, 8] : [2, 3, 4, 5]);
-  }
-
-  if (batchLabel === 'half') {
-    if (activeCount === 4) {
-      baseRatio = [...randomPick(HALF_BATCH_QUAD_RATIOS)];
-    } else if (activeCount === 3) {
-      baseRatio = [...randomPick(HALF_BATCH_TRIPLE_RATIOS)];
-    } else {
-      baseRatio = [...randomPick(HALF_BATCH_PAIR_RATIOS)];
+    if (stage >= 4 && Math.random() < 0.45) {
+      batchLabel = randomPick(['double', 'triple', 'half']);
     }
-    scale = 0.5;
-  } else if (batchLabel === 'double') {
-    scale = Math.max(scale, 2);
-  } else if (batchLabel === 'triple') {
-    scale = Math.max(scale, 3);
-  }
 
-  if (levelId <= 1) {
-    activeIndices = [1, 3];
-    baseRatio = [2, 5];
-    scale = 1;
-    batchLabel = 'single';
-  }
+    const pickPairRatio = () => [...randomPick(stage >= 4 ? ADVANCED_PAIR_RATIOS : SIMPLE_PAIR_RATIOS)];
+    const pickTripleRatio = () => [...randomPick(stage >= 6 ? ADVANCED_TRIPLE_RATIOS : SIMPLE_TRIPLE_RATIOS)];
+    const pickQuadRatio = () => [...randomPick(stage >= 7 ? ADVANCED_QUAD_RATIOS : SIMPLE_QUAD_RATIOS)];
 
-  const targetCounts = baseRatio.map((value) => Math.round(value * scale));
-  const totalDrops = targetCounts.reduce((sum, value) => sum + value, 0);
-  const activeIngredients = activeIndices.map((index) => INGREDIENTS[index]);
+    const selectBaseRatio = () => {
+      if (activeCount === 4) return pickQuadRatio();
+      if (activeCount === 3) return pickTripleRatio();
+      return pickPairRatio();
+    };
 
-  if (levelId <= 1) {
-    startCounts[1] = targetCounts[0] || 0;
-    cardHint = `${INGREDIENTS[1].name} has ${targetCounts[0] || 0} drops.`;
-  } else if (mode === 'missing_value') {
-    const givenRatioIndex = 1;
-    startCounts[activeIndices[givenRatioIndex]] = targetCounts[givenRatioIndex];
-    const givenIngredient = activeIngredients[givenRatioIndex];
-    cardHint = `${givenIngredient.name} has ${targetCounts[givenRatioIndex]} drops.`;
-  } else if (mode === 'fix_mistake') {
-    const shortIndex = targetCounts[1] > targetCounts[0] ? 1 : 0;
-    startCounts[activeIndices[0]] = targetCounts[0];
-    startCounts[activeIndices[1]] = Math.max(0, targetCounts[1] - baseRatio[shortIndex === 1 ? 1 : 0]);
-    const shortIngredient = activeIngredients[shortIndex];
-    cardHint = `${shortIngredient.name} needs fixing.`;
-  } else if (mode === 'word_problem') {
-    const givenRatioIndex = 1;
-    const givenIngredient = activeIngredients[givenRatioIndex];
-    startCounts[activeIndices[givenRatioIndex]] = targetCounts[givenRatioIndex];
-    const leadIngredient = activeIngredients[0];
-    cardHint = `Already have ${targetCounts[givenRatioIndex]} ${givenIngredient.name} drops. Need ${leadIngredient.name}?`;
-  } else if (mode === 'multi_step') {
-    cardHint = `The potion holds ${totalDrops} drops.`;
-  }
+    if (mode === 'direct_recipe') {
+      baseRatio = selectBaseRatio();
+      scale = 1;
+      revealTargets = true;
+    } else if (mode === 'scale_recipe') {
+      baseRatio = selectBaseRatio();
+      scale = randomPick(stage >= 4 ? [3, 4, 5, 6, 7, 8] : [2, 3, 4, 5, 6]);
+    } else if (mode === 'missing_value') {
+      baseRatio = activeCount === 2
+        ? [...randomPick(stage >= 4 ? WORD_PAIR_RATIOS.concat(ADVANCED_PAIR_RATIOS) : WORD_PAIR_RATIOS)]
+        : selectBaseRatio();
+      scale = randomPick(stage >= 5 ? [3, 4, 5, 6, 7, 8] : [2, 3, 4, 5]);
+    } else if (mode === 'fix_mistake') {
+      baseRatio = selectBaseRatio();
+      scale = randomPick(stage >= 5 ? [3, 4, 5, 6, 7] : [2, 3, 4]);
+    } else if (mode === 'word_problem') {
+      baseRatio = activeCount === 2
+        ? [...randomPick(stage >= 5 ? WORD_PAIR_RATIOS.concat(ADVANCED_PAIR_RATIOS) : WORD_PAIR_RATIOS)]
+        : selectBaseRatio();
+      scale = randomPick(stage >= 5 ? [3, 4, 5, 6, 7, 8] : [2, 3, 4, 5]);
+    } else {
+      baseRatio = selectBaseRatio();
+      scale = randomPick(stage >= 6 ? [4, 5, 6, 7, 8] : [2, 3, 4, 5]);
+    }
 
-  const orderTitle = buildPotionName(activeIngredients);
-  const ratioText = simplifyRatio(targetCounts).join(':');
+    if (batchLabel === 'half') {
+      if (activeCount === 4) {
+        baseRatio = [...randomPick(HALF_BATCH_QUAD_RATIOS)];
+      } else if (activeCount === 3) {
+        baseRatio = [...randomPick(HALF_BATCH_TRIPLE_RATIOS)];
+      } else {
+        baseRatio = [...randomPick(HALF_BATCH_PAIR_RATIOS)];
+      }
+      scale = 0.5;
+    } else if (batchLabel === 'double') {
+      scale = Math.max(scale, 2);
+    } else if (batchLabel === 'triple') {
+      scale = Math.max(scale, 3);
+    }
 
-  return {
-    id: nextChallengeId(),
-    orderTitle,
-    orderPrompt: buildOrderPrompt(orderTitle, ratioText, cardHint),
-    orderFlavor: buildOrderFlavor(stage),
-    stage,
-    mode,
-    activeIndices,
-    baseRatio,
-    scale,
-    targetCounts,
-    startCounts,
-    totalDrops,
-    revealTargets,
-    cardHint,
-    batchLabel,
-  };
+    if (levelId <= 1) {
+      activeIndices = [1, 3];
+      baseRatio = [2, 5];
+      scale = 1;
+      batchLabel = 'single';
+    }
+
+    const targetCounts = baseRatio.map((value) => Math.round(value * scale));
+    const totalDrops = targetCounts.reduce((sum, value) => sum + value, 0);
+    const activeIngredients = activeIndices.map((index) => INGREDIENTS[index]);
+
+    if (levelId <= 1) {
+      startCounts[1] = targetCounts[0] || 0;
+      cardHint = `${INGREDIENTS[1].name} has ${targetCounts[0] || 0} drops.`;
+    } else if (mode === 'missing_value') {
+      const givenRatioIndex = 1;
+      startCounts[activeIndices[givenRatioIndex]] = targetCounts[givenRatioIndex];
+      const givenIngredient = activeIngredients[givenRatioIndex];
+      cardHint = `${givenIngredient.name} has ${targetCounts[givenRatioIndex]} drops.`;
+    } else if (mode === 'fix_mistake') {
+      const shortIndex = targetCounts[1] > targetCounts[0] ? 1 : 0;
+      startCounts[activeIndices[0]] = targetCounts[0];
+      startCounts[activeIndices[1]] = Math.max(0, targetCounts[1] - baseRatio[shortIndex === 1 ? 1 : 0]);
+      const shortIngredient = activeIngredients[shortIndex];
+      cardHint = `${shortIngredient.name} needs fixing.`;
+    } else if (mode === 'word_problem') {
+      const givenRatioIndex = 1;
+      const givenIngredient = activeIngredients[givenRatioIndex];
+      startCounts[activeIndices[givenRatioIndex]] = targetCounts[givenRatioIndex];
+      const leadIngredient = activeIngredients[0];
+      cardHint = `Already have ${targetCounts[givenRatioIndex]} ${givenIngredient.name} drops. Need ${leadIngredient.name}?`;
+    } else if (mode === 'multi_step') {
+      cardHint = `The potion holds ${totalDrops} drops.`;
+    }
+
+    const orderTitle = buildPotionName(activeIngredients);
+    const ratioText = simplifyRatio(targetCounts).join(':');
+    const storyLead = buildStoryLead(orderTitle, stage, batchLabel);
+
+    challenge = {
+      id: nextChallengeId(),
+      orderTitle,
+      orderPrompt: buildOrderPrompt(orderTitle, ratioText, storyLead, cardHint),
+      orderFlavor: buildOrderFlavor(stage),
+      stage,
+      mode,
+      activeIndices,
+      baseRatio,
+      scale,
+      targetCounts,
+      startCounts,
+      totalDrops,
+      revealTargets,
+      cardHint,
+      batchLabel,
+    };
+    attempts += 1;
+  } while (previousTitle && challenge.orderTitle === previousTitle && attempts < 5);
+
+  return challenge;
 };
 
 const starsForAccuracy = (correct: number, attempts: number) => {
@@ -679,7 +714,7 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
         onVictory(stars, scoreNow);
         return;
       }
-      const nextChallenge = generateChallenge(levelId, nextCorrect);
+      const nextChallenge = generateChallenge(levelId, nextCorrect, challenge.orderTitle);
       setChallenge(nextChallenge);
       setCounts([...nextChallenge.startCounts]);
       setFeedback(null);
