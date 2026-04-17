@@ -25,6 +25,7 @@ import {
   Cell,
   LabelList,
 } from 'recharts';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import dataDetectiveBackground from '../assets/maps/backgroundsforgames/data detective.jpg';
 
@@ -232,7 +233,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
       />
       <GameScreenLayout
         className="relative z-10 h-full w-full min-h-0 gap-0 text-slate-100"
-        topClassName="!min-h-0"
+        topClassName="!min-h-0 flex flex-col items-center gap-0 px-2 pt-0 sm:px-3 md:px-4"
         top={(
         <div className="flex w-full flex-col gap-0">
           {!useSharedTopHud ? (
@@ -272,10 +273,13 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               </div>
             </header>
           ) : null}
-            <div className="game-question-card z-30 mt-0 w-full max-w-[780px] max-[480px]:px-2 max-[480px]:py-1.5">
-              <div className="question-title">{caseMode === 'whodunnit' ? 'Who took the loot?' : 'Match the evidence totals.'}</div>
-              <div className="question-subtitle">{caseBrief}</div>
-            </div>
+          <GameQuestionCard
+            className="z-30 mt-0 w-full max-w-[780px] max-[480px]:px-2 max-[480px]:py-1.5"
+            title={caseMode === 'whodunnit' ? 'Who took the loot?' : 'Match the evidence totals.'}
+            subtitle={caseBrief}
+          >
+            {''}
+          </GameQuestionCard>
         </div>
       )}
         main={(
@@ -412,15 +416,15 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                       : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
                   }`}
                 >
-                  <div className="relative h-full w-full overflow-hidden rounded-[1.05rem] border border-white/16 bg-slate-950/40 shadow-lg max-[480px]:rounded-[0.9rem]">
+                  <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-[1.05rem] border border-white/16 bg-slate-950/40 p-2 shadow-lg max-[480px]:rounded-[0.9rem] max-[480px]:p-1.5">
                     {suspect.portrait ? (
-                        <img
-                          src={suspect.portrait}
-                          alt=""
-                          draggable={false}
-                          className="suspect-portrait absolute inset-0 h-full w-full object-contain object-center"
-                          data-suspect-portrait="true"
-                        />
+                      <img
+                        src={suspect.portrait}
+                        alt=""
+                        draggable={false}
+                        className="suspect-portrait h-full w-full object-contain object-center"
+                        data-suspect-portrait="true"
+                      />
                     ) : (
                       <div className={`flex h-full w-full items-center justify-center ${suspect.color}/20`}>
                         <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-white/10 text-lg font-black text-white">
@@ -480,7 +484,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               >
                 <div className="w-full max-w-[20rem] max-h-[calc(100%-0.75rem)] overflow-y-auto overflow-x-hidden rounded-2xl border border-white/18 bg-[linear-gradient(180deg,rgba(9,24,58,0.96),rgba(4,12,28,0.98))] p-4 shadow-[0_24px_48px_rgba(0,0,0,0.45)] max-[480px]:max-w-[calc(100%-0.5rem)] max-[480px]:max-h-[calc(100%-0.5rem)] max-[480px]:p-3">
                   <div className="flex items-center gap-3">
-                    <div className="h-16 w-16 overflow-hidden rounded-2xl border border-white/20 max-[480px]:h-14 max-[480px]:w-14">
+                    <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-slate-950/40 p-1.5 max-[480px]:h-14 max-[480px]:w-14 max-[480px]:p-1">
                       {selectedSuspect.portrait && (
                         <img
                           src={selectedSuspect.portrait}

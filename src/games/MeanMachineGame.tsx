@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import meanMachineImage from '../assets/mean.png';
+import meanMachineBackground from '../assets/maps/backgroundsforgames/meanmachine2.jpg';
 import medianMachineImage from '../assets/median.png';
 import modeMachineImage from '../assets/mode.png';
 import { GameplaySessionEventHandlers, GameplaySessionState, MiniGamePracticeBriefing } from '../app/gameplaySessionContract';
@@ -671,7 +672,12 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(56,189,248,0.26),transparent_34%),radial-gradient(circle_at_12%_82%,rgba(59,130,246,0.18),transparent_28%),radial-gradient(circle_at_88%_78%,rgba(251,191,36,0.18),transparent_30%)]" />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${meanMachineBackground})` }}
+      />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(56,189,248,0.18),transparent_34%),radial-gradient(circle_at_12%_82%,rgba(59,130,246,0.14),transparent_28%),radial-gradient(circle_at_88%_78%,rgba(251,191,36,0.12),transparent_30%),linear-gradient(180deg,rgba(3,7,18,0.2),rgba(3,7,18,0.5))]" />
       <div className="pointer-events-none absolute inset-x-[16%] top-[10%] h-24 rounded-full bg-cyan-300/12 blur-3xl" />
 
       <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.45rem)] pt-2 md:px-4">

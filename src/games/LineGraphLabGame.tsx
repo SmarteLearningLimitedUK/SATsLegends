@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
+import { GameUiShell } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import {
@@ -17,6 +18,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+import lineGraphLabBackground from '../assets/maps/backgroundsforgames/linegraphlab.jpg';
 
 interface DataPoint {
   label: string;
@@ -324,22 +326,21 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   ), [probeIndex, round]);
 
     return (
-    <>
+    <GameUiShell backgroundImage={lineGraphLabBackground} overlayDisabled className="bg-transparent">
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Line Graph Lab"
-        body="Read the line graph carefully.\nFind coordinates, values and changes over time to recover the data."
+        body="Welcome to the Line Graph Lab. Here we look at data that has been collected from around Matharia. Carefully read the question and consult the graph to enter the data correctly."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
       <GameScreenLayout
         className="relative h-full w-full min-h-0 select-none gap-0 text-slate-100"
+        topClassName="flex items-start justify-center px-2 pt-0 sm:px-3 md:px-4"
         top={(
-          <div className="flex justify-center px-2 pt-0 sm:px-3 md:px-4">
-            <GameQuestionCard title="Line Graph Lab" subtitle={round?.helper || ''}>
-              {round?.question ?? ''}
-            </GameQuestionCard>
-          </div>
+          <GameQuestionCard className="w-full max-w-[780px]" title="Line Graph Lab" subtitle={round?.helper || ''}>
+            {round?.question ?? ''}
+          </GameQuestionCard>
         )}
         main={(
           <section className="flex min-h-0 flex-1 flex-col gap-2 px-2 pb-2 sm:gap-3 sm:px-3 sm:pb-3 md:px-4 md:pb-4">
@@ -364,7 +365,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                       tick={{ fill: '#dbeafe', fontSize: 12, fontWeight: 700 }}
                       axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
                       tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                      label={{ value: 'Day', position: 'insideBottom', offset: -6, fill: '#93c5fd', fontSize: 12 }}
+                      label={{ value: 'X Axis', position: 'insideBottom', offset: -6, fill: '#93c5fd', fontSize: 12, fontWeight: 800 }}
                     />
                     <YAxis
                       ticks={yTicks}
@@ -372,7 +373,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                       tick={{ fill: '#dbeafe', fontSize: 12, fontWeight: 700 }}
                       axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
                       tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                      label={{ value: 'Value', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12 }}
+                      label={{ value: 'Y Axis', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12, fontWeight: 800 }}
                       width={42}
                     />
                     <Line
@@ -506,7 +507,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
           </>
         )}
       />
-    </>
+    </GameUiShell>
   );
 };
 

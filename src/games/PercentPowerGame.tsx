@@ -369,62 +369,66 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
           </div>
           <div className="mt-2">
             <GameQuestionCard title="Percent Power" className="max-w-[44rem]">
-              Power the core by solving the percent puzzles.
+              {question.prompt}
+              <span className="block text-xs font-semibold text-cyan-50/80 md:text-sm">{question.helper}</span>
             </GameQuestionCard>
           </div>
         </div>
 
         <div className="relative mt-2 flex w-full max-w-[44rem] flex-1 min-h-0 flex-col items-center justify-center px-2 py-2">
-          <motion.div
-            className="absolute inset-x-[12%] top-[18%] h-28 rounded-full bg-cyan-300/16 blur-3xl"
-            animate={{ opacity: [0.42, 0.88, 0.42], scale: [0.98, 1.04, 0.98] }}
-            transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
-          />
-
-          <motion.div
-            className="absolute left-1/2 top-[60%] flex h-[11.5rem] w-[11.5rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-cyan-100/30 bg-[radial-gradient(circle,rgba(125,211,252,0.34),rgba(14,116,144,0.22)_38%,rgba(8,20,40,0.12)_68%,rgba(8,20,40,0)_100%)] shadow-[0_0_45px_rgba(34,211,238,0.2)] md:h-[13rem] md:w-[13rem]"
-            animate={
-              feedback === 'correct'
-                ? { scale: [1, 1.06, 1], x: [0, -4, 4, -3, 3, 0], rotate: [0, 3, -3, 2, -2, 0] }
-                : feedback === 'incorrect'
-                  ? { x: [0, -8, 8, -6, 6, 0] }
-                  : { scale: [1, 1.02, 1] }
-            }
-            transition={{ duration: 0.45, ease: 'easeInOut' }}
-          >
-            <div className="absolute inset-[7%] overflow-hidden rounded-full">
-              <motion.div
-                className="absolute bottom-0 left-0 w-full bg-[linear-gradient(180deg,rgba(34,197,94,0.65),rgba(16,185,129,0.25))]"
-                animate={{ height: `${coreFill * 100}%` }}
-                transition={{ duration: 0.45, ease: 'easeOut' }}
-              />
-            </div>
-            <div className="absolute inset-[11%] rounded-full border border-cyan-100/25 bg-[radial-gradient(circle,rgba(255,255,255,0.24),rgba(34,211,238,0.1)_46%,rgba(8,20,40,0.16)_70%)]" />
-            <div className="absolute inset-[24%] rounded-full border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(255,255,255,0.16),rgba(12,74,110,0.12))] shadow-[inset_0_1px_14px_rgba(255,255,255,0.08)]" />
+          <div className="absolute left-1/2 top-[58%] h-[15rem] w-[15rem] -translate-x-1/2 -translate-y-1/2 md:h-[16rem] md:w-[16rem]">
             <motion.div
-              className="relative z-10 flex flex-col items-center justify-center gap-2"
-              animate={feedback === 'correct'
-                ? { scale: [1, 1.18, 1] }
-                : feedback === 'incorrect'
-                  ? { scale: [1, 1.14, 1] }
-                  : { scale: [1, 1.06, 1] }}
-              transition={feedback === 'correct'
-                ? { duration: 0.5, ease: 'easeOut' }
-                : feedback === 'incorrect'
-                  ? { duration: 0.45, ease: 'easeOut' }
-                  : { duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+              className="absolute inset-0 rounded-full bg-[radial-gradient(circle,rgba(96,165,250,0.52),rgba(59,130,246,0.26)_38%,rgba(8,20,40,0)_74%)] blur-3xl"
+              animate={{ opacity: [0.48, 0.9, 0.48], scale: [0.98, 1.04, 0.98] }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            <div className="absolute left-1/2 top-1/2 h-[10.5rem] w-[10.5rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-100/30 bg-[radial-gradient(circle,rgba(125,211,252,0.22),rgba(14,116,144,0.18)_42%,rgba(8,20,40,0.08)_72%,rgba(8,20,40,0)_100%)] shadow-[0_0_40px_rgba(34,211,238,0.2)] md:h-[11.75rem] md:w-[11.75rem]" />
+            <div className="absolute left-1/2 top-[63%] h-8 w-[8.8rem] -translate-x-1/2 rounded-full bg-cyan-300/20 blur-xl" />
+            <motion.div
+              className="absolute left-1/2 top-[54%] flex h-[11.5rem] w-[11.5rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-cyan-100/30 bg-[radial-gradient(circle,rgba(125,211,252,0.34),rgba(14,116,144,0.22)_38%,rgba(8,20,40,0.12)_68%,rgba(8,20,40,0)_100%)] shadow-[0_0_45px_rgba(34,211,238,0.2)] md:h-[13rem] md:w-[13rem]"
+              animate={
+                feedback === 'correct'
+                  ? { scale: [1, 1.06, 1], x: [0, -4, 4, -3, 3, 0], rotate: [0, 3, -3, 2, -2, 0] }
+                  : feedback === 'incorrect'
+                    ? { x: [0, -8, 8, -6, 6, 0] }
+                    : { scale: [1, 1.02, 1] }
+              }
+              transition={{ duration: 0.45, ease: 'easeInOut' }}
             >
-              <Zap
-                className={`h-10 w-10 md:h-12 md:w-12 ${
-                  feedback === 'correct'
-                    ? 'text-emerald-300 drop-shadow-[0_0_16px_rgba(16,185,129,0.65)]'
-                    : feedback === 'incorrect'
-                      ? 'text-amber-300 drop-shadow-[0_0_16px_rgba(248,113,113,0.65)]'
-                      : 'text-cyan-100/90'
-                }`}
-              />
+              <div className="absolute inset-[7%] overflow-hidden rounded-full">
+                <motion.div
+                  className="absolute bottom-0 left-0 w-full bg-[linear-gradient(180deg,rgba(34,197,94,0.65),rgba(16,185,129,0.25))]"
+                  animate={{ height: `${coreFill * 100}%` }}
+                  transition={{ duration: 0.45, ease: 'easeOut' }}
+                />
+              </div>
+              <div className="absolute inset-[11%] rounded-full border border-cyan-100/25 bg-[radial-gradient(circle,rgba(255,255,255,0.24),rgba(34,211,238,0.1)_46%,rgba(8,20,40,0.16)_70%)]" />
+              <div className="absolute inset-[24%] rounded-full border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(255,255,255,0.16),rgba(12,74,110,0.12))] shadow-[inset_0_1px_14px_rgba(255,255,255,0.08)]" />
+              <motion.div
+                className="relative z-10 flex flex-col items-center justify-center gap-2"
+                animate={feedback === 'correct'
+                  ? { scale: [1, 1.18, 1] }
+                  : feedback === 'incorrect'
+                    ? { scale: [1, 1.14, 1] }
+                    : { scale: [1, 1.06, 1] }}
+                transition={feedback === 'correct'
+                  ? { duration: 0.5, ease: 'easeOut' }
+                  : feedback === 'incorrect'
+                    ? { duration: 0.45, ease: 'easeOut' }
+                    : { duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                <Zap
+                  className={`h-10 w-10 md:h-12 md:w-12 ${
+                    feedback === 'correct'
+                      ? 'text-emerald-300 drop-shadow-[0_0_16px_rgba(16,185,129,0.65)]'
+                      : feedback === 'incorrect'
+                        ? 'text-amber-300 drop-shadow-[0_0_16px_rgba(248,113,113,0.65)]'
+                        : 'text-cyan-100/90'
+                  }`}
+                />
+              </motion.div>
             </motion.div>
-          </motion.div>
+          </div>
 
           <AnimatePresence>
             {statusText ? (
@@ -460,7 +464,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
                 whileTap={{ scale: 0.985 }}
                 onClick={() => handleAnswer(index)}
                 disabled={isLocked || didEndRef.current}
-                className={`relative min-h-[3.2rem] overflow-hidden rounded-[1.2rem] px-3 py-2 text-center ${
+                className={`relative min-h-[2.8rem] overflow-hidden rounded-[1rem] px-2.5 py-1.5 text-center ${
                   isCorrect
                     ? 'ui-button-success'
                     : isIncorrect
@@ -470,16 +474,16 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
                         : 'ui-button-secondary'
                 }`}
               >
-                <div className="absolute inset-x-[8%] top-[12%] h-[34%] rounded-full bg-white/12 blur-md" />
-                <div className="relative z-10 flex items-center gap-2.5">
-                  <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-[0.7rem] border text-[10px] font-black uppercase ${
+                <div className="absolute inset-x-[8%] top-[12%] h-[30%] rounded-full bg-white/12 blur-md" />
+                <div className="relative z-10 flex items-center gap-2">
+                  <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-[0.65rem] border ${
                     isCorrect || isIncorrect || isSelected
                       ? 'border-black/10 bg-white/36 text-slate-900'
                       : 'border-white/16 bg-white/10 text-white'
                   }`}>
-                    {String.fromCharCode(65 + index)}
+                    <Zap className={`h-3.5 w-3.5 ${index === 0 ? 'rotate-12' : index === 1 ? '-rotate-12' : index === 2 ? 'rotate-6' : '-rotate-6'}`} />
                   </div>
-                  <div className="flex-1 text-center text-[0.96rem] font-black leading-none text-white md:text-[1.16rem]">
+                  <div className="flex-1 text-center text-[0.9rem] font-black leading-none text-white md:text-[1.08rem]">
                     {option}
                   </div>
                 </div>

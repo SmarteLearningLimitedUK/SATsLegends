@@ -398,7 +398,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
           </div>
           <div className="mt-2">
             <GameQuestionCard title="Simplify Sprint" className="max-w-[44rem]">
-              The Monster Minds have encrypted the value to take up as much space as possible. Reduce the fraction to its smallest form by tapping the correct factor.
+              Reduce the fraction to its smallest form by tapping the correct factor
             </GameQuestionCard>
           </div>
         </div>

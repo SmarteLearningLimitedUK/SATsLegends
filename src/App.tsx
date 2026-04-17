@@ -520,6 +520,27 @@ const App: React.FC = () => {
           bullets: [],
         };
       }
+      if (selectedLevel.blueprintKey === 'data_detective' || selectedLevel.blueprintKey === 'whodunnit_data') {
+        return {
+          title: 'Data Detective',
+          summary: "Stop! Show me some ID.. oh, sorry, I'm a seargent down today and we could use your help. There have been thefts, and I need some help looking through the evidence to find our suspect. Can you help?",
+          bullets: [],
+        };
+      }
+      if (selectedLevel.blueprintKey === 'take_out_rush') {
+        return {
+          title: 'Take-Out Rush',
+          summary: 'Welcome to Monster Munch Diner. These monster Mnds are sure impatient. Complete their order in time to keep them happy.',
+          bullets: [],
+        };
+      }
+      if (selectedLevel.blueprintKey === 'simplify_sprint') {
+        return {
+          title: 'Simplify Sprint',
+          summary: "The Monster Minds have encrypted the calues to make it as large as possible - this means its harder for our reserchers to solve. hel the researchers by simplifying the frction to it's smallest form.",
+          bullets: [],
+        };
+      }
       const baseRules = selectedRuleSet || {
         title: canonicalGameTitle || 'Practice',
         summary: `This is the practice round for ${canonicalGameTitle || 'this game'}. Use it to learn the controls before the real level.`,

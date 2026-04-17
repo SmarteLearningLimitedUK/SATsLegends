@@ -44,10 +44,10 @@ interface ChartRound {
 const MAX_HEARTS = 4;
 const ROUND_GOAL_BY_LEVEL = [0, 4, 5, 5, 6];
 const CARAVAN_POOL = [
-  { id: 'number-caravan', label: 'Number Caravan', color: 'from-sky-400 to-cyan-300', solidColor: '#38bdf8' },
-  { id: 'logic-caravan', label: 'Logic Caravan', color: 'from-indigo-400 to-blue-300', solidColor: '#818cf8' },
-  { id: 'brain-caravan', label: 'Brain Caravan', color: 'from-emerald-400 to-lime-300', solidColor: '#34d399' },
-  { id: 'data-caravan', label: 'Data Caravan', color: 'from-amber-300 to-yellow-300', solidColor: '#fbbf24' },
+  { id: 'windward', label: 'Windward', color: 'from-sky-400 to-cyan-300', solidColor: '#38bdf8' },
+  { id: 'eden', label: 'Eden', color: 'from-indigo-400 to-blue-300', solidColor: '#818cf8' },
+  { id: 'jerry', label: 'Jerry', color: 'from-emerald-400 to-lime-300', solidColor: '#34d399' },
+  { id: 'ivy', label: 'Ivy', color: 'from-amber-300 to-yellow-300', solidColor: '#fbbf24' },
 ];
 const CARAVAN_CARGO_IMAGES = [crate1, crate2, crate3, crate4];
 
@@ -80,9 +80,9 @@ const createRound = (levelId: number, roundIndex: number): ChartRound => {
     const target = caravans[0];
     return {
       mode,
-      title: 'Basic Reading',
-      prompt: 'How many crates did the Number Caravan deliver?',
-      support: 'Read the Number Caravan stack carefully.',
+      title: '',
+      prompt: 'How many crates did Windward deliver?',
+      support: 'Read the Windward stack carefully.',
       boardLabel: 'Crates by caravan',
       caravans,
       options: [String(target.value - 2), String(target.value), String(target.value + 1), String(target.value + 3)],
@@ -111,8 +111,8 @@ const createRound = (levelId: number, roundIndex: number): ChartRound => {
     return {
       mode,
       title: 'Find The Difference',
-      prompt: 'How many more crates did the Logic Caravan deliver than the Brain Caravan?',
-      support: 'Subtract Brain Caravan from Logic Caravan.',
+      prompt: 'How many more crates did Eden deliver than Jerry?',
+      support: 'Subtract Jerry from Eden.',
       boardLabel: 'Crates by caravan',
       caravans,
       options: [String(difference - 1), String(difference), String(difference + 1), String(difference + 2)],
@@ -137,11 +137,11 @@ const CaravanBoard: React.FC<{ caravans: CaravanDatum[]; label: string }> = ({ c
   const maxValue = Math.max(...caravans.map((caravan) => caravan.value));
   return (
     <div className="w-full">
-      <div className="mt-2 grid grid-cols-4 items-end gap-2 md:gap-3">
+      <div className="mt-2 grid grid-cols-4 items-end gap-3 md:gap-4">
         {caravans.map((caravan, caravanIndex) => (
-          <div key={caravan.id} className="flex flex-col items-center gap-1.5">
-            <div className="flex h-[clamp(11rem,34vh,19rem)] w-full items-end justify-center">
-              <div className="relative flex w-full max-w-[6.5rem] flex-col items-center justify-end">
+          <div key={caravan.id} className="flex flex-col items-center gap-2">
+            <div className="flex h-[clamp(12rem,37vh,21rem)] w-full items-end justify-center">
+              <div className="relative flex w-full max-w-[7.5rem] flex-col items-center justify-end">
                 {Array.from({ length: caravan.value }).map((_, index) => {
                   const crateAsset = CARAVAN_CARGO_IMAGES[(caravanIndex + index) % CARAVAN_CARGO_IMAGES.length];
                   return (
@@ -150,9 +150,9 @@ const CaravanBoard: React.FC<{ caravans: CaravanDatum[]; label: string }> = ({ c
                       src={crateAsset}
                       alt=""
                       aria-hidden="true"
-                      className="h-7 w-7 drop-shadow-[0_2px_5px_rgba(15,23,42,0.18)] md:h-8 md:w-8"
+                      className="h-9 w-9 drop-shadow-[0_2px_5px_rgba(15,23,42,0.18)] md:h-11 md:w-11"
                       style={{
-                        marginTop: index === 0 ? 0 : '-0.72rem',
+                        marginTop: index === 0 ? 0 : '-0.84rem',
                         opacity: 0.42 + ((index + 1) / (maxValue + 2)),
                       }}
                     />
@@ -161,10 +161,10 @@ const CaravanBoard: React.FC<{ caravans: CaravanDatum[]; label: string }> = ({ c
               </div>
             </div>
             <div className="text-center">
-              <div className="mx-auto text-[8px] font-black leading-tight text-white md:text-[9px]">
-                {caravan.label.split(' ')[0].slice(0, 4)}
+              <div className="mx-auto rounded-full border border-white/12 bg-white/10 px-3 py-1 text-[10px] font-black leading-tight text-white shadow-[0_8px_14px_rgba(2,6,23,0.16)] md:text-sm">
+                {caravan.label}
               </div>
-              <div className="text-[7px] font-bold leading-tight text-amber-100/80 md:text-[8px]">
+              <div className="mt-0.5 text-[8px] font-bold leading-tight text-amber-100/80 md:text-[9px]">
                 {caravan.value}
               </div>
             </div>
@@ -340,7 +340,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Graph Grabber"
-        body="Read the graph to track the stolen brainpower supply caravans.\nAnswer with single values, comparisons and totals."
+        body="Hooray! Supplies are arriving to our desert oasis. Make sure that all crates are accounted for. Read the graph and select the correct answer."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
@@ -355,7 +355,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
               </div>
 
               <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 md:grid-cols-[1.18fr_0.82fr] md:gap-2">
-                <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(8,47,73,0.34),rgba(15,23,42,0.26))] p-2.5 shadow-[0_24px_40px_rgba(2,6,23,0.22)] md:p-3">
+                <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 rounded-[2rem] border border-white/12 bg-transparent p-2.5 shadow-[0_24px_40px_rgba(2,6,23,0.12)] md:p-3">
                   <div className="flex min-h-0 flex-1 items-center justify-center">
                     <CaravanBoard caravans={round.caravans} label={round.boardLabel} />
                   </div>
@@ -369,12 +369,9 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
                         whileTap={{ scale: 0.97 }}
                         onClick={() => handleChoice(choice)}
                         disabled={feedback !== null || isFinished}
-                        className="relative overflow-hidden rounded-[1rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(15,23,42,0.48))] px-2 py-2 text-left shadow-[0_14px_22px_rgba(15,23,42,0.22)] disabled:opacity-45"
+                        className="rounded-[1.05rem] border border-amber-100/70 bg-[linear-gradient(180deg,#fde68a_0%,#f59e0b_100%)] px-3 py-3 text-center text-[clamp(1.1rem,4vw,1.7rem)] font-black text-amber-950 shadow-[0_10px_18px_rgba(146,64,14,0.35)] transition disabled:opacity-45"
                       >
-                        <div className="absolute inset-x-[10%] top-[10%] h-[18%] rounded-full bg-white/10 blur-md" />
-                        <div className="relative">
-                          <div className="mt-1.5 text-[0.85rem] font-black tracking-tight text-amber-50 md:text-base">{choice}</div>
-                        </div>
+                        {choice}
                       </motion.button>
                     ))}
                   </div>
@@ -382,13 +379,37 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
               </div>
             </div>
 
-            <div className="relative mt-2 h-[4.5rem] overflow-hidden rounded-[1.35rem] border border-white/12 bg-[linear-gradient(180deg,rgba(6,20,48,0.7),rgba(8,18,40,0.88))] px-3 py-2 shadow-[0_18px_32px_rgba(2,6,23,0.22)]">
-              <div className="pointer-events-none absolute inset-x-2 bottom-1 h-1 rounded-full bg-amber-200/10" aria-hidden="true" />
-              {caravanAnimation ? (
+            <AnimatePresence mode="wait">
+              {feedback ? (
                 <motion.div
-                  key={caravanAnimation.id}
-                  aria-hidden="true"
-                  className="pointer-events-none absolute bottom-0 left-0 z-10"
+                  key={feedback.title}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.18, ease: 'easeOut' }}
+                  className={`pointer-events-none absolute inset-x-0 bottom-3 z-20 flex justify-center text-center ${feedback.type === 'success' ? 'text-emerald-100' : 'text-amber-100'}`}
+                >
+                  <div className="rounded-full border border-white/12 bg-slate-950/40 px-4 py-1.5 text-sm font-black uppercase tracking-[0.14em] shadow-[0_10px_18px_rgba(0,0,0,0.2)]">
+                    <div>{feedback.title}</div>
+                    <div className="mt-0.5 text-[11px] font-semibold normal-case tracking-normal text-white/92">
+                      {feedback.subtitle}
+                    </div>
+                  </div>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
+
+            {caravanAnimation ? (
+              <motion.div
+                key={caravanAnimation.id}
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[4.5rem] overflow-hidden"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <motion.div
+                  className="absolute bottom-0 left-0"
                   initial={{
                     x: '-24vw',
                     y: 0,
@@ -435,28 +456,8 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
                     </div>
                   </div>
                 </motion.div>
-              ) : null}
-
-              <AnimatePresence mode="wait">
-                {feedback ? (
-                  <motion.div
-                    key={feedback.title}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    transition={{ duration: 0.18, ease: 'easeOut' }}
-                    className={`relative z-20 flex h-full items-center justify-center text-center ${feedback.type === 'success' ? 'text-emerald-100' : 'text-amber-100'}`}
-                  >
-                    <div className="rounded-full border border-white/12 bg-slate-950/40 px-4 py-1.5 text-sm font-black uppercase tracking-[0.14em] shadow-[0_10px_18px_rgba(0,0,0,0.2)]">
-                      <div>{feedback.title}</div>
-                      <div className="mt-0.5 text-[11px] font-semibold normal-case tracking-normal text-white/92">
-                        {feedback.subtitle}
-                      </div>
-                    </div>
-                  </motion.div>
-                ) : null}
-              </AnimatePresence>
-            </div>
+              </motion.div>
+            ) : null}
           </div>
         </div>
 
