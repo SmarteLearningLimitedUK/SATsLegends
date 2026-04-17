@@ -86,26 +86,26 @@ const RATIO_PATTERNS_BY_COUNT: Record<number, number[][]> = {
 
 const PLATE_POSITIONS_BY_COUNT: Record<number, Array<{ x: number; y: number }>> = {
   2: [
-    { x: 37.7, y: 55.4 },
-    { x: 68.3, y: 54.9 },
+    { x: 28.3, y: 38.9 },
+    { x: 72.3, y: 39.4 },
   ],
   3: [
-    { x: 47.8, y: 35.9 },
-    { x: 37.7, y: 55.4 },
-    { x: 68.3, y: 54.9 },
+    { x: 50.3, y: 31.4 },
+    { x: 28.3, y: 38.9 },
+    { x: 72.3, y: 39.4 },
   ],
   4: [
-    { x: 47.8, y: 35.9 },
-    { x: 37.7, y: 55.4 },
-    { x: 68.3, y: 54.9 },
-    { x: 26.9, y: 85.8 },
+    { x: 50.3, y: 31.4 },
+    { x: 28.3, y: 38.9 },
+    { x: 72.3, y: 39.4 },
+    { x: 33.5, y: 51.5 },
   ],
   5: [
-    { x: 47.8, y: 35.9 },
-    { x: 37.7, y: 55.4 },
-    { x: 68.3, y: 54.9 },
-    { x: 26.9, y: 85.8 },
-    { x: 59.9, y: 81.4 },
+    { x: 50.3, y: 31.4 },
+    { x: 28.3, y: 38.9 },
+    { x: 72.3, y: 39.4 },
+    { x: 33.5, y: 51.5 },
+    { x: 66.9, y: 50.9 },
   ],
 };
 
@@ -549,7 +549,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
             main={(
               <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
                 <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] px-2 py-3 md:px-3">
-                  <div className="pointer-events-none absolute inset-0 z-[20]">
+                  <div className="pointer-events-none fixed inset-0 z-[20]">
                     <div className="relative h-full w-full">
                       <CelebrationSplash active={showCelebrationSplash} message="Party Time!" theme="party" />
                       {plateViews.map((plate, index) => {
@@ -572,7 +572,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                               plateRefs.current[index] = node;
                             }}
                             disabled={locked}
-                            className={`pointer-events-auto absolute relative flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-[0.45rem] border border-transparent bg-transparent p-1.5 text-center transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.01]' : ''}`}
+                            className={`pointer-events-auto absolute relative flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-transparent bg-transparent p-1.5 text-center transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.01]' : ''}`}
                             style={{
                               left: `${position.x}%`,
                               top: `${position.y}%`,
@@ -581,7 +581,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                             }}
                             aria-label={`Plate ${index + 1}. ${plate.currentCakeCount} of ${plate.targetCakeCount} cakes placed.`}
                           >
-                            <div className="pointer-events-none absolute inset-0 rounded-[0.45rem] border-2 border-red-500/90 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.15),0_0_0_1px_rgba(239,68,68,0.3)]" />
+                            <div className="pointer-events-none absolute inset-[-2px] rounded-full border-[4px] border-red-500/95 shadow-[0_0_0_1px_rgba(255,255,255,0.18),0_0_0_2px_rgba(239,68,68,0.18)]" />
                             <div className="grid h-full w-full grid-cols-3 place-items-center gap-0.5">
                               {plates[index].slice(0, 6).map((sliceId) => (
                                 <img
