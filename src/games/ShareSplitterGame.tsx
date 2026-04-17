@@ -572,7 +572,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                               plateRefs.current[index] = node;
                             }}
                             disabled={locked}
-                            className={`pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-[0.45rem] border border-transparent bg-transparent p-1.5 text-center transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.01]' : ''}`}
+                            className={`pointer-events-auto absolute relative flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-[0.45rem] border border-transparent bg-transparent p-1.5 text-center transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.01]' : ''}`}
                             style={{
                               left: `${position.x}%`,
                               top: `${position.y}%`,
@@ -581,6 +581,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                             }}
                             aria-label={`Plate ${index + 1}. ${plate.currentCakeCount} of ${plate.targetCakeCount} cakes placed.`}
                           >
+                            <div className="pointer-events-none absolute inset-0 rounded-[0.45rem] border-2 border-red-500/90 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.15),0_0_0_1px_rgba(239,68,68,0.3)]" />
                             <div className="grid h-full w-full grid-cols-3 place-items-center gap-0.5">
                               {plates[index].slice(0, 6).map((sliceId) => (
                                 <img
