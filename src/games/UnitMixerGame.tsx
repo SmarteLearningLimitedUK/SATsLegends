@@ -278,7 +278,7 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
       <div className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.6rem)] md:pt-[calc(env(safe-area-inset-top)+4.9rem)]' : 'pt-[calc(env(safe-area-inset-top)+2.4rem)]'}`}>
         <div className="flex justify-center">
           <GameQuestionCard
-            title="Lava Path"
+            title=""
             className="w-full max-w-[860px] border border-amber-200/35 bg-[linear-gradient(180deg,rgba(251,191,36,0.24),rgba(15,23,42,0.16))] px-4 py-2 text-center shadow-[0_12px_26px_rgba(15,23,42,0.14)] md:px-6 md:py-2.5"
             bodyClassName="text-[clamp(1.1rem,3vw,2.35rem)] font-black leading-tight tracking-tight text-white"
           >
@@ -329,11 +329,13 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
             ))}
           </div>
 
-          <div className="mt-2">
+          {feedbackText ? (
+            <div className="mt-2">
             <FeedbackStrip tone={feedbackTone}>
-              {feedbackText || 'Choose the right answer to keep climbing.'}
+              {feedbackText}
             </FeedbackStrip>
           </div>
+          ) : null}
         </div>
       </div>
     </GameScreenShell>

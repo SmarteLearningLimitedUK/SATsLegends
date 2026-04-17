@@ -391,11 +391,6 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
         }`}
       >
         <div className="w-full max-w-[44rem] px-1">
-          <div className="flex items-center justify-end gap-3">
-            <div className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/80">
-              Round {Math.min(roundNumber, totalRounds)} / {totalRounds}
-            </div>
-          </div>
           <div className="mt-2">
             <GameQuestionCard title="Simplify Sprint" className="max-w-[44rem]">
               Reduce the fraction to its smallest form by tapping the correct factor

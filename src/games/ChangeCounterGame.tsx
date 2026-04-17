@@ -330,9 +330,6 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
                   A {question.item} costs {formatMoney(question.costPence)}. You pay with {formatMoney(question.paidPence)}.
                 </div>
               </div>
-              <div className="rounded-full bg-amber-200/25 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-100">
-                Round {roundIndex + 1}/{TOTAL_ROUNDS}
-              </div>
             </div>
             <div className="mt-2 text-[11px] font-semibold text-cyan-100/85 md:text-sm">
               How much change should you get back?
@@ -340,20 +337,6 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
           </TaskCard>
 
           <div className="flex min-h-0 flex-1 flex-col gap-2 md:gap-3">
-            <div className="rounded-[1.2rem] border border-white/12 bg-white/90 p-3 text-center text-slate-900 shadow-[0_16px_30px_rgba(15,23,42,0.18)] md:p-4">
-              <div className="text-[11px] font-black uppercase tracking-[0.16em] text-slate-600">Check the values</div>
-              <div className="mt-2 grid grid-cols-2 gap-2 text-sm font-black text-slate-900 md:text-lg">
-                <div className="rounded-xl bg-slate-900/5 px-2 py-2">
-                  Cost
-                  <div className="mt-1 text-lg font-black text-amber-700 md:text-2xl">{formatMoney(question.costPence)}</div>
-                </div>
-                <div className="rounded-xl bg-slate-900/5 px-2 py-2">
-                  Paid
-                  <div className="mt-1 text-lg font-black text-emerald-700 md:text-2xl">{formatMoney(question.paidPence)}</div>
-                </div>
-              </div>
-            </div>
-
             <div className="grid flex-1 grid-cols-2 gap-2 md:gap-3">
               {question.options.map((option) => (
                 <motion.button
@@ -361,7 +344,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
                   whileTap={{ scale: 0.97 }}
                   onClick={() => handleAnswer(option)}
                   disabled={locked}
-                  className={`flex min-h-[3.5rem] items-center justify-center rounded-[1.1rem] text-base font-black md:min-h-[3.9rem] md:text-xl ${
+                  className={`flex min-h-[3.4rem] items-center justify-center rounded-[1.05rem] px-2 py-2 text-base font-black md:min-h-[3.85rem] md:text-xl ${
                     selected === option
                       ? option === question.correct
                         ? 'ui-button-success'

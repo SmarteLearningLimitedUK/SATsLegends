@@ -866,7 +866,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
               />
 
               <div className="relative z-20 w-full">
-                <div className="mx-auto w-full max-w-[44rem]">
+                <div className="mx-auto w-full">
                   <GameQuestionCard
                     title="Angle Arena"
                     subtitle="Choose the angle, then fire."

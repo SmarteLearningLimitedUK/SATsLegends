@@ -362,11 +362,6 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
         }`}
       >
         <div className="w-full max-w-[44rem] px-1">
-          <div className="flex items-center justify-end gap-3">
-            <div className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/80">
-              Round {roundNumber}/{totalRounds}
-            </div>
-          </div>
           <div className="mt-2">
             <GameQuestionCard title="Percent Power" className="max-w-[44rem]">
               {question.prompt}

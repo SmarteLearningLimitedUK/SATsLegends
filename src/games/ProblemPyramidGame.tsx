@@ -154,7 +154,6 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
         <section className="shrink-0">
           <div className="game-question-card w-full max-w-[780px] px-3 py-2 text-center">
             <div className="question-title">Find the top number in the pyramid.</div>
-            <div className="question-subtitle">Round {roundIndex + 1} / {ROUNDS_TO_WIN}</div>
           </div>
         </section>
 

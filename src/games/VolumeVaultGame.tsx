@@ -576,7 +576,6 @@ const VolumeVaultGame: React.FC<VolumeVaultGameShellProps> = ({
           <div className="mx-auto flex w-full max-w-[760px] flex-col items-center gap-1.5">
             <div className="flex w-full items-center justify-between rounded-2xl border border-cyan-100/30 bg-slate-900/55 px-3 py-2">
               <p className="text-[11px] font-black uppercase tracking-[0.14em] text-cyan-100">{activeLevel.title}</p>
-              <p className="text-[11px] font-black uppercase tracking-[0.14em] text-amber-100">Question {questionIndex + 1}/{totalQuestions}</p>
             </div>
             <div className="relative flex w-full items-center justify-center">
               <div className="pointer-events-none absolute top-1/2 h-20 w-56 -translate-y-1/2 rounded-full bg-amber-300/25 blur-2xl" />

@@ -88,18 +88,18 @@ export const GameQuestionCard: React.FC<GameQuestionCardProps> = ({
   title = 'Mission',
   subtitle,
   children,
-  className,
-  titleClassName,
-  bodyClassName,
-  style,
+  className: _className,
+  titleClassName: _titleClassName,
+  bodyClassName: _bodyClassName,
+  style: _style,
 }) => (
-  <div className={cn('game-question-card', className)} style={style}>
+  <div className="game-question-card">
     {title ? (
-      <div className={cn('question-title text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90', titleClassName)}>
+      <div className="question-title text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90">
         {title}
       </div>
     ) : null}
-    <div className={cn('game-question-copy mt-0.5 whitespace-pre-line text-white', bodyClassName)}>
+    <div className="game-question-copy mt-0.5 whitespace-pre-line text-white">
       {children}
     </div>
     {subtitle ? (

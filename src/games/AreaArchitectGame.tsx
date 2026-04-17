@@ -208,11 +208,6 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
       <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+3.5rem)] pt-3 text-white">
         <section className="shrink-0">
           <div className="mx-auto w-full max-w-[44rem]">
-            <div className="flex items-center justify-end">
-              <div className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/80">
-                Round {roundIndex + 1} / {ROUNDS_TO_WIN}
-              </div>
-            </div>
             <div className="mt-2">
               <GameQuestionCard title="Area Architect">
                 {question.prompt}
