@@ -5391,6 +5391,12 @@ button.avatar-hero-arrow:not(:disabled):active {
   color: #ffffff;
 }
 
+.practice-briefing-copy {
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
 .game-question-card .question-subtitle {
   margin-top: 0.35rem;
   font-size: 12px;

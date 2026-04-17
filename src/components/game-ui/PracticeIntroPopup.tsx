@@ -55,30 +55,30 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
       case 'compact':
         return {
           shell: 'px-4 py-4 md:px-6 md:py-5',
-          title: 'mt-2 text-[clamp(1.05rem,4.4vw,1.6rem)]',
-          body: 'mt-2 text-[clamp(0.88rem,3.2vw,0.98rem)] leading-relaxed',
-          briefing: 'mt-2 text-[clamp(0.88rem,3.2vw,0.98rem)] leading-relaxed',
-          bullets: 'mt-2 space-y-1.5',
+          title: 'mt-2 text-[11px] font-black uppercase tracking-[0.18em] text-amber-100',
+          body: 'mt-2 mx-auto max-w-[28rem] text-center text-[clamp(0.98rem,3.55vw,1.1rem)] font-normal leading-[1.12]',
+          briefing: 'mt-2 mx-auto max-w-[28rem] text-center text-[clamp(0.98rem,3.55vw,1.1rem)] font-normal leading-[1.12]',
+          bullets: 'mt-2 mx-auto max-w-[28rem] space-y-1.5',
           buttonWrap: 'mt-3',
           button: 'h-11 text-[11px] md:text-sm',
         };
       case 'tight':
         return {
           shell: 'px-4 py-3 md:px-6 md:py-4',
-          title: 'mt-1.5 text-[clamp(0.98rem,4.1vw,1.45rem)]',
-          body: 'mt-2 text-[clamp(0.82rem,3vw,0.92rem)] leading-snug',
-          briefing: 'mt-2 text-[clamp(0.82rem,3vw,0.92rem)] leading-snug',
-          bullets: 'mt-2 space-y-1',
+          title: 'mt-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-amber-100',
+          body: 'mt-2 mx-auto max-w-[28rem] text-center text-[clamp(0.96rem,3.2vw,1.02rem)] font-normal leading-[1.12]',
+          briefing: 'mt-2 mx-auto max-w-[28rem] text-center text-[clamp(0.96rem,3.2vw,1.02rem)] font-normal leading-[1.12]',
+          bullets: 'mt-2 mx-auto max-w-[28rem] space-y-1',
           buttonWrap: 'mt-3',
           button: 'h-10 text-[10px] md:text-sm',
         };
       case 'micro':
         return {
           shell: 'px-3 py-3 md:px-5 md:py-4',
-          title: 'mt-1 text-[clamp(0.92rem,3.8vw,1.32rem)]',
-          body: 'mt-1.5 text-[clamp(0.76rem,2.7vw,0.86rem)] leading-snug',
-          briefing: 'mt-1.5 text-[clamp(0.76rem,2.7vw,0.86rem)] leading-snug',
-          bullets: 'mt-1.5 space-y-1',
+          title: 'mt-1 text-[11px] font-black uppercase tracking-[0.18em] text-amber-100',
+          body: 'mt-1.5 mx-auto max-w-[28rem] text-center text-[clamp(0.92rem,3vw,0.98rem)] font-normal leading-[1.12]',
+          briefing: 'mt-1.5 mx-auto max-w-[28rem] text-center text-[clamp(0.92rem,3vw,0.98rem)] font-normal leading-[1.12]',
+          bullets: 'mt-1.5 mx-auto max-w-[28rem] space-y-1',
           buttonWrap: 'mt-2.5',
           button: 'h-10 text-[10px] md:text-sm',
         };
@@ -86,10 +86,10 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
       default:
         return {
           shell: 'px-4 py-4 md:px-6 md:py-5',
-          title: 'mt-2 text-[clamp(1.15rem,4.8vw,1.8rem)]',
-          body: 'mt-3 text-[clamp(0.92rem,3.4vw,1.02rem)] leading-relaxed',
-          briefing: 'mt-3 text-[clamp(0.92rem,3.4vw,1.02rem)] leading-relaxed',
-          bullets: 'mt-3 space-y-2',
+          title: 'mt-2 text-[11px] font-black uppercase tracking-[0.18em] text-amber-100',
+          body: 'mt-3 mx-auto max-w-[28rem] text-center text-[clamp(0.98rem,3.55vw,1.18rem)] font-normal leading-[1.12]',
+          briefing: 'mt-3 mx-auto max-w-[28rem] text-center text-[clamp(0.98rem,3.55vw,1.18rem)] font-normal leading-[1.12]',
+          bullets: 'mt-3 mx-auto max-w-[28rem] space-y-2',
           buttonWrap: 'mt-4',
           button: 'h-12 text-[11px] md:text-sm',
         };
@@ -135,25 +135,25 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
               <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100 md:text-xs">
                 Practice Briefing
               </div>
-              <div className={`${densityClasses.title} font-black text-amber-100`}>
+              <div className={`${densityClasses.title}`}>
                 {title}
               </div>
               {briefing ? (
-                <div className={`text-left font-semibold text-cyan-50/92 ${densityClasses.briefing}`}>
-                  <p className="whitespace-pre-line font-bold text-white">{briefing.summary}</p>
+                <div className={`font-semibold text-cyan-50/92 ${densityClasses.briefing}`}>
+                  <p className="practice-briefing-copy whitespace-pre-line font-normal text-white">{briefing.summary}</p>
                   {briefing.bullets.length ? (
                     <ul className={densityClasses.bullets}>
                       {briefing.bullets.map((bullet, index) => (
-                        <li key={`${briefing.title}-bullet-${index}`} className="flex gap-2">
+                        <li key={`${briefing.title}-bullet-${index}`} className="flex justify-center gap-2 text-center">
                           <span className="mt-[0.18rem] shrink-0 text-amber-100">-</span>
-                          <span>{bullet}</span>
+                          <span className="practice-briefing-copy max-w-full text-center">{bullet}</span>
                         </li>
                       ))}
                     </ul>
                   ) : null}
                 </div>
               ) : (
-                <div className={`whitespace-pre-line text-left font-semibold text-cyan-50/92 ${densityClasses.body}`}>
+                <div className={`practice-briefing-copy whitespace-pre-line font-semibold text-cyan-50/92 ${densityClasses.body}`}>
                   {body}
                 </div>
               )}
