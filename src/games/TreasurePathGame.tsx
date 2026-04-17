@@ -6,7 +6,7 @@ import { Coins } from '../components/GameIcons';
 import AssetIcon from '../components/AssetIcon';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
-import { formatFantasyPrompt } from '../utils/fantasyPrompt';
+import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 
 interface TreasurePathGameProps {
   levelId: number;
@@ -87,7 +87,7 @@ const buildMovementRound = () => {
 
   return {
     promptTitle: 'Lost Route',
-    promptText: `The Monster Minds have broken the map into fragments. Start at (${start.x}, ${start.y}). ${instructions.join('. ')}.`,
+    promptText: `X axis runs left to right. Y axis runs bottom to top. Start at (x=${start.x}, y=${start.y}). ${instructions.join('. ')}.`,
     promptType: 'movement' as const,
     start,
     target,
@@ -103,7 +103,7 @@ const generateRound = (): TreasureRound => {
 
     return {
       promptTitle: 'Beacon Recovery',
-      promptText: `The Monster Minds have hidden the last beacon in the ruins. Move the explorer to (${target.x}, ${target.y}) before the trail fades.`,
+      promptText: `X axis runs left to right. Y axis runs bottom to top. Move the explorer to (x=${target.x}, y=${target.y}) before the trail fades.`,
       promptType: 'coordinate',
       start,
       target,
@@ -120,7 +120,7 @@ const generateRound = (): TreasureRound => {
 
 const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
   levelId,
-  avatarId: _avatarId,
+  avatarId,
   gameTitle,
   onVictory,
   onGameOver,
@@ -135,6 +135,12 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
   const [isGameOver, setIsGameOver] = useState(false);
   const [isVictory, setIsVictory] = useState(false);
   const [selectedTile, setSelectedTile] = useState<string | null>(null);
+
+  const playerAvatar = useMemo(() => (
+    CHARACTER_AVATARS.find((avatar) => avatar.id === avatarId)
+    || CHARACTER_AVATARS.find((avatar) => avatar.id === DEFAULT_AVATAR_ID)
+    || CHARACTER_AVATARS[0]
+  ), [avatarId]);
 
   const targetScore = 950 + levelId * 100;
 
@@ -254,7 +260,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
           <div className="relative z-10 mb-2">
             <GameQuestionCard
               title={gameTitle || 'Coordinates Quest'}
-              subtitle={formatFantasyPrompt(round.promptText)}
+              subtitle={round.promptText}
               bodyClassName="mt-1 text-[1.35rem] font-black leading-none text-white md:text-[1.8rem]"
             >
               {round.promptTitle}
@@ -267,14 +273,18 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
               <div className="mb-2 text-[10px] font-black uppercase tracking-[0.18em] text-emerald-100/62">Grid map</div>
 
               <div className="mx-auto grid w-full max-w-[23rem] grid-cols-[1.2rem_repeat(5,minmax(0,1fr))] gap-1.5 md:max-w-[26rem] md:grid-cols-[1.5rem_repeat(5,minmax(0,1fr))] md:gap-2">
-                <div />
+                <div className="flex flex-col items-center justify-center text-[9px] font-black uppercase leading-none tracking-[0.18em] text-emerald-100/60 md:text-[10px]">
+                  <span>Y</span>
+                  <span className="text-[11px] leading-none md:text-xs">↑</span>
+                  <span className="mt-1">X→</span>
+                </div>
                 {[1, 2, 3, 4, 5].map((value) => (
                   <div key={`top-${value}`} className="text-center text-[11px] font-black text-emerald-100/62 md:text-xs">
                     {value}
                   </div>
                 ))}
 
-                {[1, 2, 3, 4, 5].map((rowValue) => (
+                {[5, 4, 3, 2, 1].map((rowValue) => (
                   <React.Fragment key={`row-${rowValue}`}>
                     <div className="flex items-center justify-center text-[11px] font-black text-emerald-100/62 md:text-xs">
                       {rowValue}
@@ -303,9 +313,18 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                           {isStart && (
                             <motion.div
                               layout
-                              className="absolute inset-x-[24%] bottom-[18%] flex h-[42%] items-center justify-center rounded-[0.8rem] border border-white/12 bg-[linear-gradient(180deg,#f59e0b,#c2410c)] text-[11px] font-black text-white shadow-[0_10px_20px_rgba(0,0,0,0.24)]"
+                              className="absolute left-1/2 top-1/2 flex h-[66%] w-[66%] -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full border border-white/22 bg-[linear-gradient(180deg,rgba(245,158,11,0.95),rgba(194,65,12,0.95))] shadow-[0_10px_20px_rgba(0,0,0,0.24)]"
                             >
-                              You
+                              {playerAvatar?.image ? (
+                                <img
+                                  src={playerAvatar.image}
+                                  alt=""
+                                  draggable={false}
+                                  className="h-full w-full object-cover"
+                                />
+                              ) : (
+                                <span className="text-[10px] font-black text-white">You</span>
+                              )}
                             </motion.div>
                           )}
                         </button>

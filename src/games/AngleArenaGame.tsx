@@ -10,12 +10,12 @@ import {
   GameUiShell,
   PrimaryButton,
   SecondaryButton,
+  GameQuestionCard,
 } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import { BOSS_ASSETS } from '../assets/bosses';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { angleToVector, clamp, degreesToRadians, distance, lerp, worldToScreen } from './angleArena/math';
-import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface AngleArenaGameProps {
   levelId: number;
@@ -128,49 +128,73 @@ const drawSkyBackground = (ctx: CanvasRenderingContext2D, width: number, height:
   });
 };
 
+const drawRoundedRectPath = (
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+) => {
+  const radius = Math.max(0, Math.min(r, w / 2, h / 2));
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.arcTo(x + w, y, x + w, y + h, radius);
+  ctx.arcTo(x + w, y + h, x, y + h, radius);
+  ctx.arcTo(x, y + h, x, y, radius);
+  ctx.arcTo(x, y, x + w, y, radius);
+  ctx.closePath();
+};
+
 const drawCannon = (ctx: CanvasRenderingContext2D, angleDeg: number) => {
   ctx.save();
   ctx.rotate(-degreesToRadians(angleDeg));
 
-  ctx.fillStyle = 'rgba(2,6,23,0.26)';
+  ctx.fillStyle = 'rgba(2,6,23,0.22)';
   ctx.beginPath();
-  ctx.ellipse(-28, 34, 74, 16, 0, 0, Math.PI * 2);
+  ctx.ellipse(-12, 34, 66, 14, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  ctx.fillStyle = '#1f2937';
-  ctx.fillRect(-92, -10, 92, 20);
-  ctx.fillRect(-82, -18, 22, 36);
-
-  ctx.fillStyle = '#4b5563';
-  ctx.fillRect(-86, -6, 80, 12);
-
-  ctx.fillStyle = '#374151';
-  ctx.fillRect(-52, 12, 102, 18);
-  ctx.fillRect(-34, 0, 52, 12);
-
+  // Base (simple cannon carriage)
   ctx.fillStyle = '#0f172a';
-  ctx.beginPath();
-  ctx.arc(-36, 34, 16, 0, Math.PI * 2);
-  ctx.arc(8, 34, 16, 0, Math.PI * 2);
+  drawRoundedRectPath(ctx, -44, 18, 72, 28, 14);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.12)';
+  drawRoundedRectPath(ctx, -40, 22, 64, 8, 8);
   ctx.fill();
 
-  ctx.fillStyle = '#94a3b8';
-  ctx.beginPath();
-  ctx.arc(-36, 34, 8, 0, Math.PI * 2);
-  ctx.arc(8, 34, 8, 0, Math.PI * 2);
+  // Barrel
+  const barrelGradient = ctx.createLinearGradient(-6, -10, 88, -10);
+  barrelGradient.addColorStop(0, '#1f2937');
+  barrelGradient.addColorStop(0.5, '#374151');
+  barrelGradient.addColorStop(1, '#111827');
+  ctx.fillStyle = barrelGradient;
+  drawRoundedRectPath(ctx, -6, -12, 96, 24, 12);
   ctx.fill();
 
-  ctx.fillStyle = '#0f172a';
+  ctx.fillStyle = 'rgba(255,255,255,0.18)';
+  drawRoundedRectPath(ctx, 0, -8, 78, 6, 6);
+  ctx.fill();
+
+  // Muzzle rim
+  ctx.fillStyle = '#0b1224';
   ctx.beginPath();
-  ctx.arc(0, 0, 13, 0, Math.PI * 2);
+  ctx.ellipse(90, 0, 13, 12, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(148,163,184,0.5)';
+  ctx.beginPath();
+  ctx.ellipse(90, 0, 7, 6.5, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Pivot bolt
+  ctx.fillStyle = '#0b1224';
+  ctx.beginPath();
+  ctx.arc(-6, 0, 10, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = '#cbd5e1';
   ctx.beginPath();
-  ctx.arc(0, 0, 7, 0, Math.PI * 2);
+  ctx.arc(-6, 0, 4.5, 0, Math.PI * 2);
   ctx.fill();
-
-  ctx.fillStyle = '#111827';
-  ctx.fillRect(0, -2, 6, 4);
 
   ctx.restore();
 };
@@ -654,11 +678,14 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
                 className="w-full"
               />
 
-              <div
-                className={`relative z-20 w-full transition-all duration-300 ${showPromptAndAnswers ? 'max-h-[320px] opacity-100' : 'pointer-events-none max-h-0 opacity-0'}`}
-              >
-                <div className="game-question-card w-full max-w-[780px]">
-                  <div className="question-title">{formatFantasyPrompt(activeQuestion?.prompt ?? 'Choose the correct launch angle.')}</div>
+              <div className="relative z-20 w-full">
+                <div className="mx-auto w-full max-w-[44rem]">
+                  <GameQuestionCard
+                    title="Angle Arena"
+                    subtitle="Choose the angle, then fire."
+                  >
+                    {activeQuestion?.prompt ?? 'Choose the correct launch angle.'}
+                  </GameQuestionCard>
                 </div>
               </div>
             </div>
@@ -667,14 +694,14 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           bottom={(
             <div className="flex flex-col gap-2">
               <div className={`w-full transition-all duration-300 ${showPromptAndAnswers ? 'max-h-[320px] opacity-100' : 'pointer-events-none max-h-0 opacity-0'}`}>
-                <div className="grid grid-cols-2 gap-1.5">
+                <div className="mx-auto grid w-full max-w-[44rem] grid-cols-2 gap-2">
                   {(activeQuestion?.options ?? []).map((option) => (
                     <button
                       key={option}
                       type="button"
                       onClick={() => handleAnswer(option)}
                       disabled={gameState !== 'awaitingAnswer'}
-                      className="licensed-answer-button inline-flex min-h-[2.35rem] items-center justify-center px-3 text-[clamp(12px,1.9vh,16px)] font-black text-slate-100 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
+                      className="ui-button-primary inline-flex min-h-[2.6rem] items-center justify-center rounded-[1rem] px-3 py-2.5 text-[clamp(12px,1.9vh,16px)] font-black disabled:cursor-not-allowed disabled:opacity-55"
                     >
                       {option}°
                     </button>

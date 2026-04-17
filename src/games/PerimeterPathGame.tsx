@@ -3,7 +3,6 @@ import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import perimeterBackground from '../assets/maps/backgroundsforgames/Perimeter Path.jpg';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
-import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface PerimeterPathGameProps {
   levelId: number;
@@ -487,7 +486,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
         <main className="mt-0 flex min-h-0 flex-1 flex-col gap-1.5 sm:gap-2">
           <div className="shrink-0">
             <GameQuestionCard title="Perimeter Path" bodyClassName="sm:text-sm">
-              {formatFantasyPrompt(question.prompt)}
+              {question.prompt}
             </GameQuestionCard>
           </div>
 

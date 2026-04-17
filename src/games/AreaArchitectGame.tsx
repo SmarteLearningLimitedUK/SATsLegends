@@ -3,13 +3,12 @@ import confetti from 'canvas-confetti';
 import { motion } from 'motion/react';
 import {
   FeedbackStrip,
+  GameQuestionCard,
   GameUiShell,
-  TaskCard,
 } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import areaBackdrop from '../assets/maps/backgroundsforgames/area architect.jpg';
-import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import {
   reshuffleAvoidingRepeat,
   shuffle,
@@ -208,19 +207,18 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
       />
       <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+3.5rem)] pt-3 text-white">
         <section className="shrink-0">
-          <TaskCard>
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <div className="question-title">Area Architect</div>
-                <div className="game-question-copy mt-1 text-slate-50">
-                  {formatFantasyPrompt(question.prompt)}
-                </div>
-              </div>
-              <div className="rounded-full bg-amber-200/60 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-900">
+          <div className="mx-auto w-full max-w-[44rem]">
+            <div className="flex items-center justify-end">
+              <div className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/80">
                 Round {roundIndex + 1} / {ROUNDS_TO_WIN}
               </div>
             </div>
-          </TaskCard>
+            <div className="mt-2">
+              <GameQuestionCard title="Area Architect">
+                {question.prompt}
+              </GameQuestionCard>
+            </div>
+          </div>
         </section>
 
         <section className="min-h-0 flex-1 rounded-[1.4rem] border border-white/14 bg-black/25 p-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)]">
