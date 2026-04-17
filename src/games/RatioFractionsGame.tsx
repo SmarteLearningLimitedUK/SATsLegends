@@ -7,11 +7,14 @@ import {
 } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
-import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 import { DEFAULT_RACE_DIFFICULTY, RACE_TUNING, RaceDifficulty } from './ratioFractionsRace/constants';
 import { getQuestionTier, QuestionTier } from './ratioFractionsRace/questionSelector';
 import { RatioFractionQuestion } from './ratioFractionsRace/types';
 import ratioBackdrop from '../assets/gokarts/bkgroundratiofractionkarts.png';
+import kartBarratt from '../assets/gokarts/8.png';
+import kartBran from '../assets/gokarts/9.png';
+import kartMochi from '../assets/gokarts/10.png';
+import kartVex from '../assets/gokarts/11.png';
 import enemyKart from '../assets/gokarts/15.png';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 import {
@@ -42,9 +45,10 @@ type RaceState =
 const START_OFFSET = 0;
 const RACER_LERP = 0.16;
 const BASE_XP = 160;
-const KART_SCALE = 0.95;
-const PLAYER_KART_SCALE = 1.22;
-const TRACK_LINE_FROM_BOTTOM = 198;
+const KART_SCALE = 0.68;
+const PLAYER_KART_SCALE = 0.88;
+const PLAYER_TRACK_LINE_FROM_BOTTOM = 218;
+const ENEMY_TRACK_LINE_FROM_BOTTOM = 306;
 const CART_Y_SHIFT = 0;
 const FINISH_Y_SHIFT = -200;
 const FINISH_X_SHIFT = -100;
@@ -56,6 +60,13 @@ const ENEMY_VIBRATE_SPEED = 18;
 const ENEMY_VIBRATE_X_AMPLITUDE = 1.8;
 const ENEMY_VIBRATE_Y_AMPLITUDE = 0.9;
 const ENEMY_BASE_GAP_PT = 1.6;
+
+const PLAYER_KARTS: Record<string, string> = {
+  barratt: kartBarratt,
+  bran: kartBran,
+  mochi: kartMochi,
+  vex: kartVex,
+};
 
 const MIXTURE_LABELS_BY_PART_COUNT: Record<number, string[]> = {
   2: ['Fuel', 'Oxygen'],
@@ -258,13 +269,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const enemyVibratePhaseRef = useRef(0);
 
   const lives = sessionState?.lives ?? 3;
-  const selectedAvatar = useMemo(
-    () => CHARACTER_AVATARS.find((entry) => entry.id === avatarId)
-      || CHARACTER_AVATARS.find((entry) => entry.id === DEFAULT_AVATAR_ID)
-      || CHARACTER_AVATARS[0],
-    [avatarId],
-  );
-  const playerAvatarArt = selectedAvatar.portrait || selectedAvatar.image;
+  const playerKart = PLAYER_KARTS[avatarId] || kartBarratt;
 
   useEffect(() => {
     raceStateRef.current = raceState;
@@ -483,13 +488,18 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const finishLeft = 50 + ((tuning.trackLength - cameraWorldPosition) / trackSpan) * 100;
   const showBoost = raceState === 'correctBoost';
   const showStall = raceState === 'incorrectStall';
-  const trackLineY = clamp(
-    ((viewport.height - TRACK_LINE_FROM_BOTTOM + CART_Y_SHIFT) / Math.max(1, viewport.height)) * 100,
+  const playerLineY = clamp(
+    ((viewport.height - PLAYER_TRACK_LINE_FROM_BOTTOM + CART_Y_SHIFT) / Math.max(1, viewport.height)) * 100,
+    0,
+    100,
+  );
+  const enemyLineY = clamp(
+    ((viewport.height - ENEMY_TRACK_LINE_FROM_BOTTOM + CART_Y_SHIFT) / Math.max(1, viewport.height)) * 100,
     0,
     100,
   );
   const finishLineY = clamp(
-    trackLineY + (FINISH_Y_SHIFT / Math.max(1, viewport.height)) * 100,
+    playerLineY + (FINISH_Y_SHIFT / Math.max(1, viewport.height)) * 100,
     0,
     100,
   );
@@ -506,13 +516,13 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
   const playerStyle = {
     transform: `translate3d(-50%, calc(-50% + ${playerBobOffset}px), 0) rotate(${playerLean}deg) scale(${PLAYER_KART_SCALE})`,
-    top: `${trackLineY}%`,
+    top: `${playerLineY}%`,
     left: `${playerLeft}%`,
   };
 
   const enemyStyle = {
     transform: `translate3d(calc(-50% + ${enemyVibrateOffsetX}px), calc(-50% + ${enemyVibrateOffsetY}px), 0) rotate(${enemyLean}deg) scale(${KART_SCALE})`,
-    top: `calc(${trackLineY}% + ${ENEMY_BASE_GAP_PT}pt)`,
+    top: `calc(${enemyLineY}% + ${ENEMY_BASE_GAP_PT}pt)`,
     left: `${enemyLeft}%`,
   };
 
@@ -570,8 +580,8 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                 />
               ) : null}
               <img
-                src={playerAvatarArt}
-                alt={`${selectedAvatar.name} kart`}
+                src={playerKart}
+                alt="Player kart"
                 className="relative z-10 h-[92%] w-[92%] object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]"
                 style={{ imageRendering: 'auto' }}
               />
@@ -581,13 +591,13 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             </motion.div>
 
             <motion.div
-              className="absolute z-30 flex h-20 w-32 items-center justify-center overflow-visible sm:h-24 sm:w-36 md:h-32 md:w-48"
+              className="absolute z-30 flex h-18 w-28 items-center justify-center overflow-visible sm:h-22 sm:w-32 md:h-28 md:w-44"
               style={enemyStyle}
             >
               <img
                 src={enemyKart}
                 alt="Enemy kart"
-                className="h-full w-full object-contain drop-shadow-[0_0_14px_rgba(251,113,133,0.55)]"
+                className="h-full w-full object-contain drop-shadow-[0_0_12px_rgba(251,113,133,0.45)]"
                 style={{ imageRendering: 'auto' }}
               />
             </motion.div>
@@ -630,10 +640,10 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
         </div>
 
         <GameScreenLayout
-          className="relative z-10 px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-2 text-white"
-          topClassName="!min-h-0 flex flex-col items-center gap-0 px-2 pt-0 sm:px-3 md:px-4"
+          className="relative z-10 px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-0 text-white"
+          topClassName="!min-h-0 flex flex-col items-center gap-0 px-2 pt-0 -mt-4 sm:-mt-5 sm:px-3 md:-mt-6 md:px-4"
           top={(
-            <div className="mx-auto flex w-full max-w-[780px] flex-col gap-1">
+            <div className="mx-auto flex w-full max-w-[780px] flex-col gap-0.5">
               <GameQuestionCard
                 title="Ratio Racer"
                 className="w-full max-w-[56rem]"
