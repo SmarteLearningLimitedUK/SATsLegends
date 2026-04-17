@@ -511,7 +511,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           style={{ backgroundImage: `url(${zombiePlayfield})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_85%,rgba(56,189,248,0.06),transparent_48%)]" />
-          <div className="absolute bottom-4 left-6 flex flex-col items-center gap-2">
+          <div className="absolute bottom-4 left-6 flex -translate-x-2.5 flex-col items-center gap-2">
             <div className="text-[11px] font-black uppercase tracking-[0.18em] text-cyan-100">You</div>
             {avatarImage ? (
               <img

@@ -83,7 +83,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
             </div>
           </div>
 
-            <div className="mx-auto mt-2 flex w-full max-w-3xl flex-col gap-3 rounded-[1.35rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(8,21,58,0.82),rgba(4,15,44,0.88))] px-4 py-4 text-center shadow-[0_18px_32px_rgba(2,6,23,0.32)] backdrop-blur-md sm:px-5 sm:py-5">
+            <div className="relative z-30 mx-auto mt-2 flex w-full max-w-3xl flex-col gap-3 rounded-[1.35rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(8,21,58,0.82),rgba(4,15,44,0.88))] px-4 py-4 text-center shadow-[0_18px_32px_rgba(2,6,23,0.32)] backdrop-blur-md sm:px-5 sm:py-5">
               <div className="text-[0.68rem] font-black uppercase tracking-[0.22em] text-cyan-100/80 sm:text-xs">
                 Enter your name and select your Hero.
               </div>
@@ -130,12 +130,12 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.88, y: -18 }}
                   transition={{ duration: 0.24, ease: 'easeOut' }}
-                  className="avatar-carousel-main avatar-carousel-main-only"
+                  className="avatar-carousel-main avatar-carousel-main-only pointer-events-none"
                 >
                   <img
                     src={getAvatarImage(selectedAvatar)}
                     alt={selectedAvatar.name}
-                    className="h-[2240%] w-auto object-contain object-bottom"
+                    className="pointer-events-none h-[2240%] w-auto object-contain object-bottom"
                     style={getMainFootOffsetStyle(selectedAvatar.id)}
                     draggable={false}
                   />

@@ -5,6 +5,7 @@ import {
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import missionBackground from '../assets/maps/backgroundsforgames/roundingrocketbackground.jpg';
 import roundingRocketArt from '../assets/rocktlogo.png';
 
@@ -125,6 +126,8 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
   onBack: _onBack,
   sessionState,
   sessionEvents,
+  isPractice,
+  practiceBriefing,
 }) => {
   const [round, setRound] = useState<RocketRound>(() => generateRound(Math.max(1, levelId), Math.max(1, levelId)));
   const [rocketState, setRocketState] = useState<RocketState>('idle');
@@ -137,6 +140,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
   const [inputLocked, setInputLocked] = useState(false);
   const [hasSignalledFailure, setHasSignalledFailure] = useState(false);
   const [didComplete, setDidComplete] = useState(false);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
   const timeoutIdsRef = useRef<number[]>([]);
   const inputLockedRef = useRef(false);
@@ -166,6 +170,10 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
   };
 
   useEffect(() => () => clearQueuedTimeouts(), []);
+
+  useEffect(() => {
+    setShowPracticeIntro(Boolean(isPractice));
+  }, [isPractice]);
 
   useEffect(() => {
     if (!sessionState) return;
@@ -334,11 +342,17 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
         className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
       />
 
+      <PracticeIntroPopup
+        open={showPracticeIntro}
+        title="Rounding Rocket"
+        body="Quick! We've managed to locate a cache of brainpower, but we need to keep it safe from those pesky Monster Minds. Help fuel the rocket by rounding numbers to blast the cache into space for safe keeping."
+        briefing={practiceBriefing ?? null}
+        onAction={() => setShowPracticeIntro(false)}
+      />
+
       <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
         <GameQuestionCard title={`Round to the nearest ${round.target}`}>
-          Quick! we've managed to locate a cache of brainpower, but we need to keep it safe from the Monster Minds.
-          {'\n'}
-          Help fuel the rocket to blast it into space for safe keeping.
+          Round the numbers to fuel the rocket.
         </GameQuestionCard>
       </div>
 

@@ -5,8 +5,10 @@ import AssetIcon from '../components/AssetIcon';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { AVATARS } from '../constants';
 import primePopBackground from '../assets/maps/backgroundsforgames/primepopbkground.jpg';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
+import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 
-interface PrimePopGameProps {
+interface PrimePopGameProps extends MiniGameShellContractProps {
   levelId: number;
   avatarId: string;
   onVictory: (stars: number, XP: number) => void;
@@ -213,7 +215,7 @@ const PrimeBubble: React.FC<{ bubble: Bubble; isPhone: boolean }> = ({ bubble, i
   );
 };
 
-const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictory, onGameOver, onBack }) => {
+const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictory, onGameOver, onBack, isPractice }) => {
   const config = useMemo(() => getConfig(levelId), [levelId]);
   const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
   const [isPhone, setIsPhone] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 768 : true));
@@ -229,6 +231,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
   const [mistakeBubbleId, setMistakeBubbleId] = useState<number | null>(null);
   const [pressedBubbleId, setPressedBubbleId] = useState<number | null>(null);
   const [screenShake, setScreenShake] = useState(false);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
   const rafRef = useRef<number | null>(null);
   const timerRef = useRef<number | null>(null);
@@ -560,17 +563,32 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
     };
   }, [loop]);
 
+  useEffect(() => {
+    setShowPracticeIntro(Boolean(isPractice));
+  }, [isPractice]);
+
   return (
     <div
       className="relative z-20 flex h-full min-h-0 w-full flex-col overflow-hidden bg-cover bg-center bg-no-repeat select-none"
       style={{ backgroundImage: `url(${primePopBackground})` }}
     >
+      <PracticeIntroPopup
+        open={showPracticeIntro}
+        title="Prime Pop"
+        body={(
+          <>
+            The Monster Minds have released number orbs to hide the prime numbers.
+            {' '}
+            Pick out the <b>PRIME</b> numbers before they cross the line and are lost forever!
+          </>
+        )}
+        briefing={null}
+        onAction={() => setShowPracticeIntro(false)}
+      />
       <div className="relative z-10 flex h-full min-h-0 w-full flex-col pt-[env(safe-area-inset-top)]">
         <div className={`pointer-events-none px-3 ${usesSharedHud ? 'pt-[calc(env(safe-area-inset-top)+3.9rem)]' : 'pt-3'}`}>
           <GameQuestionCard title="Prime Pop" className="max-w-[22rem]">
-            the monster minds have released number orbs to hide the prime numbers.
-            {'\n'}
-            pick out the prime numbers before they cross the line and are lost forever
+            Pick out the <b>PRIME</b> numbers before they cross the line.
           </GameQuestionCard>
         </div>
 
