@@ -1,12 +1,12 @@
 ﻿import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { Coins } from '../components/GameIcons';
 import AssetIcon from '../components/AssetIcon';
 import { GameScreenShell } from '../layout/ScreenPrimitives';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
+import coordinateQuestBackground from '../assets/maps/backgroundsforgames/coordinate quest.jpg';
 
 interface TreasurePathGameProps {
   levelId: number;
@@ -251,8 +251,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
   };
 
   return (
-    <GameScreenShell className="overflow-hidden">
-      <GameplaySceneBackdrop gameType="coordinate_quest" />
+    <GameScreenShell backgroundImage={coordinateQuestBackground} className="overflow-hidden">
 
       <div className="relative z-10 mx-auto flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col px-2 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] pt-[calc(env(safe-area-inset-top)+3.6rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+2.35rem)] md:pt-[calc(env(safe-area-inset-top)+3.9rem)]">
         <div className="relative z-10 mb-2">

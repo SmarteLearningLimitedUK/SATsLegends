@@ -90,10 +90,11 @@ const run = async () => {
   const groupContainer = groupButton.locator('xpath=ancestor::div[contains(@class,"licensed-board-frame")]');
   await clickIfVisible(groupContainer.locator('button', { hasText: /Start|Play|Replay/i }).first(), 1500);
   await page.waitForTimeout(1200);
+  await clickIfVisible(page.getByRole('button', { name: /start practice/i }), 1500);
   await clickIfVisible(page.getByRole('button', { name: /start game/i }), 1500);
   await page.waitForTimeout(900);
 
-  const servingPlate = page.getByRole('button', { name: /drag one cake/i });
+  const servingPlate = page.getByRole('button', { name: /drag a slice from the cake/i });
   await servingPlate.waitFor({ state: 'visible', timeout: 5000 });
   const box = await servingPlate.boundingBox();
   if (!box) throw new Error('Serving plate bounding box not found');

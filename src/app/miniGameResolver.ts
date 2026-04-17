@@ -90,7 +90,7 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       if (level.blueprintKey === 'remainder_run') {
         return 'RemainderRunGame';
       }
-      return level.blueprintKey === 'division_dock' ? 'DivisionDockGame' : 'CalculationCrashGame';
+      return 'CalculationCrashGame';
     case 'formula_forge':
       return 'FormulaForgeGame';
     case 'unit_mixer':

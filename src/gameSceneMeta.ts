@@ -4,7 +4,7 @@ import calculationCupBackground from './assets/maps/backgroundsforgames/Calculat
 import changeCounterBackground from './assets/maps/backgroundsforgames/changecounter.jpg';
 import chronoDashTimeTrialBackground from './assets/maps/backgroundsforgames/Chrono Dash Time Trial.jpg';
 import cloudCollapseBackground from './assets/maps/backgroundsforgames/Cloud Collapse.jpg';
-import coordinateQuestBackground from './assets/maps/backgroundsforgames/coodinatequestt.jpg';
+import coordinateQuestBackground from './assets/maps/backgroundsforgames/coordinate quest.jpg';
 import crystalCoreBackground from './assets/maps/backgroundsforgames/crystal core.jpg';
 import dataDetectiveBackground from './assets/maps/backgroundsforgames/data detective.jpg';
 import matrixMatchBackground from './assets/maps/backgroundsforgames/End Trial.jpg';
@@ -28,6 +28,7 @@ import scaleBuilderBackground from './assets/maps/backgroundsforgames/scalebuild
 import scaleMasterBackground from './assets/maps/backgroundsforgames/Scale Master.png';
 import shareSplitterBackground from './assets/maps/backgroundsforgames/sharesplitterfinal.png';
 import takeOutRushBackground from './assets/maps/backgroundsforgames/Take-Out Rush.png';
+import lavaPathBackground from './assets/maps/backgroundsforgames/lava path.jpg';
 import towerOfFactorsBackground from './assets/maps/backgroundsforgames/tower of factors.jpg';
 
 export interface GameSceneMeta {
@@ -121,7 +122,7 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   equation_grove: withBackground(REASONING_SCENE, orderOpsArenaBackground),
   rule_runner: withBackground(REASONING_SCENE, problemPyramidBackground),
   formula_forge: withBackground(NUMBER_SCENE, calculationCupBackground),
-  unit_mixer: withBackground(REASONING_SCENE, problemPyramidBackground),
+  unit_mixer: withBackground(REASONING_SCENE, lavaPathBackground),
   change_counter: withBackground(CHANGE_COUNTER_SCENE, changeCounterBackground),
   reasoning_quest: withBackground(REASONING_SCENE, multiStepMarathonBackground),
 };

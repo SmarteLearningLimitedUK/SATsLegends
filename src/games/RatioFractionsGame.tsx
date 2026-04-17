@@ -46,17 +46,19 @@ const START_OFFSET = 0;
 const RACER_LERP = 0.16;
 const BASE_XP = 160;
 const KART_SCALE = 1.4;
-const PLAYER_KART_SCALE = KART_SCALE * 1.5;
+const PLAYER_KART_SCALE = KART_SCALE * 1.82;
 const TRACK_LINE_FROM_BOTTOM = 177;
 const CART_Y_SHIFT = 0;
 const FINISH_Y_SHIFT = -200;
 const FINISH_X_SHIFT = -100;
 const PLAYER_BOB_BASE_SPEED = 5.1;
-const ENEMY_BOB_BASE_SPEED = 6.4;
 const PLAYER_BOB_AMPLITUDE = 4.5;
-const ENEMY_BOB_AMPLITUDE = 3.2;
 const PLAYER_ROLL_MAX = 5;
 const ENEMY_ROLL_MAX = 4;
+const ENEMY_VIBRATE_SPEED = 18;
+const ENEMY_VIBRATE_X_AMPLITUDE = 1.8;
+const ENEMY_VIBRATE_Y_AMPLITUDE = 0.9;
+const ENEMY_BASE_GAP_PT = 1.6;
 
 const PLAYER_KARTS: Record<string, string> = {
   barratt: kartBarratt,
@@ -65,13 +67,41 @@ const PLAYER_KARTS: Record<string, string> = {
   vex: kartVex,
 };
 
-const INGREDIENT_LABELS_BY_PART_COUNT: Record<number, string[]> = {
-  2: ['Element A', 'Element B'],
-  3: ['Element A', 'Element B', 'Element C'],
-  4: ['Element A', 'Element B', 'Element C', 'Element D'],
+const MIXTURE_LABELS_BY_PART_COUNT: Record<number, string[]> = {
+  2: ['Fuel', 'Oxygen'],
+  3: ['Fuel', 'Oxygen', 'Magic Dust'],
+  4: ['Fuel', 'Oxygen', 'Magic Dust', 'Spark Dust'],
 };
 
-export const ratioFractionsQuestions: RatioFractionQuestion[] = [
+const joinLabelList = (labels: string[]) => {
+  const lowered = labels.map((label) => label.toLowerCase());
+  if (lowered.length <= 1) return lowered[0] || '';
+  if (lowered.length === 2) return `${lowered[0]} and ${lowered[1]}`;
+  return `${lowered.slice(0, -1).join(', ')}, and ${lowered[lowered.length - 1]}`;
+};
+
+const themeRatioQuestion = (question: RatioFractionQuestion): RatioFractionQuestion => {
+  const labels = MIXTURE_LABELS_BY_PART_COUNT[question.ratio.length]
+    || question.labels.map((_, index) => `Resource ${index + 1}`);
+  const targetIndex = Math.max(0, question.labels.indexOf(question.target));
+  const targetLabel = labels[targetIndex] || labels[0] || question.target;
+  const totalParts = question.ratio.reduce((sum, value) => sum + value, 0);
+  const ratioText = question.ratio.join(':');
+
+  return {
+    ...question,
+    labels,
+    target: targetLabel,
+    prompt: [
+      `The Monsterminds have mixed ${joinLabelList(labels)} in a ${ratioText} ratio.`,
+      `${targetLabel} is ${question.ratio[targetIndex]} parts out of ${totalParts}.`,
+      `What fraction of the whole is ${targetLabel.toLowerCase()}?`,
+    ].join('\n'),
+    explanation: `Total parts = ${totalParts}. ${targetLabel} is ${question.ratio[targetIndex]} parts -> ${question.correctAnswer}.`,
+  };
+};
+
+const RAW_RATIO_FRACTIONS_QUESTIONS: RatioFractionQuestion[] = [
   // ---------------- EASY ----------------
   { id: 'rf-001', prompt: 'Element ratio 1:2. Which fraction is Element B?', ratio: [1, 2], labels: ['Element A', 'Element B'], target: 'Element B', correctAnswer: '2/3', options: ['1/3', '2/3', '1/2', '2/1'], explanation: 'Total parts = 3. Element B is 2 parts -> 2/3.' },
   { id: 'rf-002', prompt: 'Element ratio 2:1. Which fraction is Element A?', ratio: [2, 1], labels: ['Element A', 'Element B'], target: 'Element A', correctAnswer: '2/3', options: ['1/3', '2/3', '2/1', '3/2'], explanation: 'Total parts = 3. Element A is 2 parts -> 2/3.' },
@@ -163,6 +193,8 @@ export const ratioFractionsQuestions: RatioFractionQuestion[] = [
   },
 ];
 
+export const ratioFractionsQuestions = RAW_RATIO_FRACTIONS_QUESTIONS.map(themeRatioQuestion);
+
 const buildTierPools = (questions: RatioFractionQuestion[]) => {
   const early = questions.filter((q) => q.ratio.length === 2 && (q.ratio[0] + q.ratio[1]) <= 6);
   const mid = questions.filter((q) => q.ratio.length === 3);
@@ -237,18 +269,17 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const reportedResultRef = useRef(false);
   const raceStateRef = useRef(raceState);
   const playerBobPhaseRef = useRef(0);
-  const enemyBobPhaseRef = useRef(0);
+  const enemyVibratePhaseRef = useRef(0);
 
   const lives = sessionState?.lives ?? 3;
   const playerKart = PLAYER_KARTS[avatarId] || kartBarratt;
 
   const displayParts = useMemo(() => {
-    const canonicalLabels = INGREDIENT_LABELS_BY_PART_COUNT[question.ratio.length] || question.labels;
-    const resolvedLabels = question.ratio.map((_, index) => canonicalLabels[index] || question.labels[index] || `Part ${index + 1}`);
-    const ratioLine = resolvedLabels
+    const ratioLine = question.labels
       .map((label, index) => `${label} ${question.ratio[index]}`)
       .join(' : ');
-    return { ratioLine };
+    const totalParts = question.ratio.reduce((sum, value) => sum + value, 0);
+    return { ratioLine, totalParts };
   }, [question.labels, question.ratio]);
   
   useEffect(() => {
@@ -284,7 +315,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     playerTargetRef.current = START_OFFSET;
     enemyTargetRef.current = START_OFFSET;
     playerBobPhaseRef.current = 0;
-    enemyBobPhaseRef.current = 0;
+    enemyVibratePhaseRef.current = 0;
   }, [levelId]);
 
   useEffect(() => {
@@ -304,7 +335,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
       playerPosRef.current = playerX + (playerTarget - playerX) * RACER_LERP;
       enemyPosRef.current = enemyX + (enemyTarget - enemyX) * RACER_LERP;
       playerBobPhaseRef.current += dt * (PLAYER_BOB_BASE_SPEED + Math.abs(playerTarget - playerX) * 0.14);
-      enemyBobPhaseRef.current += dt * (ENEMY_BOB_BASE_SPEED + Math.abs(enemyTarget - enemyX) * 0.18);
+      enemyVibratePhaseRef.current += dt * ENEMY_VIBRATE_SPEED;
 
       setRenderTick((prev) => prev + 1);
       frameId = requestAnimationFrame(tick);
@@ -480,9 +511,14 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   );
   const backgroundPositionX = Math.round(clamp(18 + ((playerPosRef.current / trackSpan) * 64), 18, 82));
   const playerBobOffset = Math.sin(playerBobPhaseRef.current) * PLAYER_BOB_AMPLITUDE;
-  const enemyBobOffset = Math.sin(enemyBobPhaseRef.current + 1.35) * ENEMY_BOB_AMPLITUDE;
   const playerLean = clamp((playerTargetRef.current - playerPosRef.current) * 0.9, -PLAYER_ROLL_MAX, PLAYER_ROLL_MAX);
   const enemyLean = clamp((enemyTargetRef.current - enemyPosRef.current) * 0.85, -ENEMY_ROLL_MAX, ENEMY_ROLL_MAX);
+  const enemyVibrateOffsetX =
+    (Math.sin(enemyVibratePhaseRef.current * 1.2) * ENEMY_VIBRATE_X_AMPLITUDE) +
+    (Math.sin(enemyVibratePhaseRef.current * 2.3 + 0.7) * 0.7);
+  const enemyVibrateOffsetY =
+    (Math.cos(enemyVibratePhaseRef.current * 1.6 + 0.4) * ENEMY_VIBRATE_Y_AMPLITUDE) +
+    (Math.sin(enemyVibratePhaseRef.current * 3.1) * 0.35);
 
   const playerStyle = {
     transform: `translate3d(-50%, calc(-50% + ${playerBobOffset}px), 0) rotate(${playerLean}deg) scale(${PLAYER_KART_SCALE})`,
@@ -491,8 +527,8 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   };
 
   const enemyStyle = {
-    transform: `translate3d(-50%, calc(-50% + ${enemyBobOffset}px), 0) rotate(${enemyLean}deg) scale(${KART_SCALE})`,
-    top: `calc(${trackLineY}% - 2pt)`,
+    transform: `translate3d(calc(-50% + ${enemyVibrateOffsetX}px), calc(-50% + ${enemyVibrateOffsetY}px), 0) rotate(${enemyLean}deg) scale(${KART_SCALE})`,
+    top: `calc(${trackLineY}% + ${ENEMY_BASE_GAP_PT}pt)`,
     left: `${enemyLeft}%`,
   };
 
@@ -531,7 +567,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             </div>
 
             <motion.div
-              className="absolute z-40 flex h-24 w-36 items-center justify-center overflow-visible sm:h-28 sm:w-40 md:h-44 md:w-64"
+              className="absolute z-40 flex h-28 w-44 items-center justify-center overflow-visible sm:h-32 sm:w-48 md:h-52 md:w-72"
               style={playerStyle}
               animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { x: [0, -4, 4, -3, 3, 0] } : { scale: 1 }}
               transition={{ duration: 0.35 }}
@@ -611,14 +647,22 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
           top={(
             <div className="mx-auto flex w-full max-w-[780px] flex-col gap-1.5">
               <GameQuestionCard
-                title="Ratio Fractions"
+                title="Monster Mind Mix"
+                className="w-full max-w-[56rem]"
+                style={{
+                  ['--question-card-width' as any]: 'min(100%, 56rem)',
+                  ['--question-card-padding' as any]: '16px 18px',
+                }}
                 subtitle={(
-                  <div className="flex flex-col items-center justify-center gap-1">
-                    <div className="text-[11px] font-black uppercase tracking-[0.12em] text-slate-100/90">
+                  <div className="flex flex-col items-center justify-center gap-1.5">
+                    <div className="text-[12px] font-black uppercase tracking-[0.18em] text-slate-100/90 md:text-[15px]">
                       {displayParts.ratioLine}
                     </div>
+                    <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-100/80 md:text-[13px]">
+                      {displayParts.totalParts} parts total
+                    </div>
                     {feedback ? (
-                      <div className={`text-[11px] font-semibold ${
+                      <div className={`text-[11px] font-semibold md:text-[13px] ${
                         ['Great!', 'Amazing!', 'Awesome!', 'Fantastic!'].includes(feedback)
                           ? 'rounded-full border border-amber-100/70 bg-[linear-gradient(135deg,rgba(255,241,166,0.96),rgba(125,211,252,0.9))] px-3 py-1 text-slate-950 shadow-[0_0_22px_rgba(251,191,36,0.55)]'
                           : 'text-amber-100'
@@ -626,9 +670,10 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                     ) : null}
                   </div>
                 )}
-                bodyClassName="tracking-tight"
+                titleClassName="text-[12px] md:text-[14px] tracking-[0.28em]"
+                bodyClassName="whitespace-pre-line text-[clamp(1.15rem,4.2vw,1.8rem)] font-black leading-[1.06] tracking-tight md:text-[clamp(1.35rem,2.6vw,2.3rem)]"
               >
-                {`In the ratio above, what fraction of the whole is ${question.target}?`}
+                {question.prompt}
               </GameQuestionCard>
             </div>
           )}

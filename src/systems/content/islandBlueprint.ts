@@ -314,7 +314,9 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
       { area: 'order_of_operations', percentage: 15 },
       { area: 'remainder_interpretation', percentage: 10 },
     ],
-    crossGameReinforcement: [      'division and remainder logic appears in Division Dock and Remainder Run',    ],
+    crossGameReinforcement: [
+      'division and remainder logic appears in Remainder Run',
+    ],
     designRules: [
       'Avoid worksheet-like vertical method UI and long explanation text.',
       'Prioritise interaction, movement, and chained actions.',
@@ -354,20 +356,6 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
         difficultyCurve: 'facts -> larger factors -> structured long-multiplication forms',
         failureState: 'mine route collapse',
         replayValue: 'procedural routes',
-      },
-      {
-        key: 'division_dock',
-        name: 'Division Dock',
-        role: 'application',
-        gameplayRoles: ['application', 'strategy'],
-        mechanicSummary: 'Load and split cargo correctly so ships can dispatch on time.',
-        curriculumObjectives: ['division', 'long_division', 'remainders'],
-        skillTags: ['DIVISION', 'LONG_DIVISION', 'REMAINDERS'],
-        keySystems: ['cargo split validation', 'departure delays on incorrect distribution'],
-        questionTypes: ['quotient grouping', 'remainder handling'],
-        difficultyCurve: 'exact division -> remainder cases -> long-division style dispatches',
-        failureState: 'dispatch delay buildup',
-        replayValue: 'rotating cargo sets',
       },
       {
         key: 'order_ops_arena',

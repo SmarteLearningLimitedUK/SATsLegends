@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import CelebrationSplash from '../components/CelebrationSplash';
-import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
+import { GameScreenShell } from '../layout/ScreenPrimitives';
 import { triggerHaptic } from '../haptics';
 import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
@@ -75,6 +74,28 @@ const makeOptions = (answer: number) => {
   return shuffle(Array.from(pool).slice(0, 4));
 };
 
+const FORGE_TARGET_LABELS: Record<string, string> = {
+  A: 'area',
+  P: 'perimeter',
+  V: 'volume',
+  b: 'base',
+  h: 'height',
+  l: 'length',
+  w: 'width',
+};
+
+const formatGivenValues = (given: GivenValue[]) => given.map(({ label, value }) => `${label} = ${value}`).join(', ');
+
+const describeTargetLabel = (label: string) => FORGE_TARGET_LABELS[label] || label;
+
+const buildQuestionStem = (round: FormulaRound) => {
+  const givenText = formatGivenValues(round.given);
+  const targetText = describeTargetLabel(round.targetLabel);
+  const leadIn = round.kind === 'reasoning' ? 'Find the missing' : 'Work out the';
+
+  return `The forge runes reveal ${givenText}.\n${leadIn} ${targetText}, ${round.targetLabel}.`;
+};
+
 const buildAreaRound = (mode: SolveMode, level: number): FormulaRound => {
   const length = randomInt(3, 10 + level);
   const width = randomInt(2, 8 + level);
@@ -88,7 +109,7 @@ const buildAreaRound = (mode: SolveMode, level: number): FormulaRound => {
       diagram: 'rectangle',
       title: 'Rectangle Area',
       formula: 'A = l × w',
-      prompt: `Missing ${missing === 'l' ? 'l' : 'w'} for A = ${area}.`,
+      prompt: `The forge rune hides the ${missing === 'l' ? 'length' : 'width'} mark.`,
       targetLabel: missing === 'l' ? 'l' : 'w',
       given: missing === 'l'
         ? [{ label: 'A', value: area }, { label: 'w', value: width }]
@@ -105,7 +126,7 @@ const buildAreaRound = (mode: SolveMode, level: number): FormulaRound => {
     diagram: 'rectangle',
     title: 'Rectangle Area',
     formula: 'A = l × w',
-    prompt: 'Find area.',
+    prompt: 'The forge runes glow with a fresh shape spell.',
     targetLabel: 'A',
     given: [{ label: 'l', value: length }, { label: 'w', value: width }],
     answer: area,
@@ -128,7 +149,7 @@ const buildPerimeterRound = (mode: SolveMode, level: number): FormulaRound => {
       diagram: 'rectangle',
       title: 'Rectangle Perimeter',
       formula: 'P = 2(l + w)',
-      prompt: `Missing ${missing === 'l' ? 'l' : 'w'} for P = ${perimeter}.`,
+      prompt: `The forge rune hides the ${missing === 'l' ? 'length' : 'width'} mark.`,
       targetLabel: missing === 'l' ? 'l' : 'w',
       given: missing === 'l'
         ? [{ label: 'P', value: perimeter }, { label: 'w', value: width }]
@@ -145,7 +166,7 @@ const buildPerimeterRound = (mode: SolveMode, level: number): FormulaRound => {
     diagram: 'rectangle',
     title: 'Rectangle Perimeter',
     formula: 'P = 2(l + w)',
-    prompt: 'Find perimeter.',
+    prompt: 'The forge runes glow with a boundary spell.',
     targetLabel: 'P',
     given: [{ label: 'l', value: length }, { label: 'w', value: width }],
     answer: perimeter,
@@ -164,7 +185,7 @@ const buildTriangleRound = (level: number): FormulaRound => {
     diagram: 'triangle',
     title: 'Triangle Area',
     formula: 'A = (b × h) ÷ 2',
-    prompt: 'Find area.',
+    prompt: 'The triangle rune waits for your calculation.',
     targetLabel: 'A',
     given: [{ label: 'b', value: base }, { label: 'h', value: height }],
     answer: area,
@@ -188,7 +209,7 @@ const buildVolumeRound = (mode: SolveMode, level: number): FormulaRound => {
       diagram: 'cuboid',
       title: 'Cuboid Volume',
       formula: 'V = l × w × h',
-      prompt: `Missing ${missing === 'l' ? 'l' : 'h'} for V = ${volume}.`,
+      prompt: `The forge rune hides the ${missing === 'l' ? 'length' : 'height'} mark.`,
       targetLabel: missing === 'l' ? 'l' : 'h',
       given: missing === 'l'
         ? [{ label: 'V', value: volume }, { label: 'w', value: width }, { label: 'h', value: height }]
@@ -205,7 +226,7 @@ const buildVolumeRound = (mode: SolveMode, level: number): FormulaRound => {
     diagram: 'cuboid',
     title: 'Cuboid Volume',
     formula: 'V = l × w × h',
-    prompt: 'Find volume.',
+    prompt: 'The cuboid rune hums with all three dimensions.',
     targetLabel: 'V',
     given: [{ label: 'l', value: length }, { label: 'w', value: width }, { label: 'h', value: height }],
     answer: volume,
@@ -442,11 +463,15 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
   };
 
   return (
-    <GameScreenShell className="overflow-hidden">
-      <GameplaySceneBackdrop gameType="formula_forge" backgroundOverride={fractionForgeBackground} />
+    <GameScreenShell
+      className="overflow-hidden"
+      backgroundImage={fractionForgeBackground}
+      backgroundOpacity={1}
+      overlayDisabled
+    >
 
       <div className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.75rem)] md:pt-[calc(env(safe-area-inset-top)+5rem)]' : 'pt-[calc(env(safe-area-inset-top)+2.5rem)]'}`}>
-        <PuzzleStage className="w-full max-w-6xl min-h-0 flex-1 rounded-[1.7rem] p-2 md:rounded-[2rem] md:p-3">
+        <div className="relative flex w-full max-w-6xl min-h-0 flex-1 flex-col overflow-hidden rounded-[1.7rem] p-2 md:rounded-[2rem] md:p-3">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.12),rgba(15,23,42,0.02)_36%,rgba(15,23,42,0.08)_100%)]" />
 
           <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-2 md:px-4 md:pb-4">
@@ -456,7 +481,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
                 subtitle={`Question ${roundNumber} of ${totalRounds}`}
                 className="max-w-[860px] border border-cyan-200/22 bg-[linear-gradient(180deg,rgba(8,18,36,0.42),rgba(8,18,36,0.18))] shadow-[0_12px_26px_rgba(2,6,23,0.12)]"
               >
-                {formatFantasyPrompt('Use the shape blueprint below.')}
+                {formatFantasyPrompt(buildQuestionStem(round))}
               </GameQuestionCard>
             </div>
 
@@ -511,7 +536,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
               </motion.div>
             ) : null}
           </AnimatePresence>
-        </PuzzleStage>
+        </div>
       </div>
     </GameScreenShell>
   );

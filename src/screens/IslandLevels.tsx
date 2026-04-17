@@ -47,7 +47,6 @@ const GAME_SUMMARY_BY_KEY: Record<string, string> = {
   percent_power: 'Solve percentage and reverse percentage challenges.',
   simplify_sprint: 'Reduce fractions to simplest form in rapid Combo runs.',
   multiplication_mine: 'Answer multiplication questions to shatter the mine rock and reveal hidden treasure.',
-  division_dock: 'Split cargo accurately with quotient and remainder logic.',
   order_ops_arena: 'Resolve expressions in the correct order to avoid trap paths.',
   formula_forge: 'Substitute into formulae and solve for missing values.',
   remainder_run: 'Route values by quotient and remainder outcomes at speed.',

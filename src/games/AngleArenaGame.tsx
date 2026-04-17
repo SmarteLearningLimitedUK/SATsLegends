@@ -405,6 +405,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const hitShakeRef = useRef<number | null>(null);
   const desiredAngleRef = useRef(40);
   const selectedAnswerRef = useRef<number | null>(null);
+  const scoreRef = useRef(0);
   const cameraRef = useRef({ x: 0, y: 0 });
   const cameraTargetRef = useRef({ x: 0, y: 0 });
   const settleTimeoutRef = useRef<number | null>(null);
@@ -459,20 +460,20 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     if (sessionState.timeLeft <= 0 || sessionState.lives <= 0) {
       setGameState('gameOver');
       emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
-        score,
+        score: scoreRef.current,
         reason: sessionState.timeLeft <= 0 ? 'time' : 'lives',
       });
-      onGameOver(score);
+      onGameOver(scoreRef.current);
     }
-  }, [onGameOver, score, sessionEvents, sessionState]);
+  }, [onGameOver, sessionEvents, sessionState]);
 
   useEffect(() => {
     if (sessionState) return;
     if (timeLeft <= 0 || lives <= 0) {
       setGameState('gameOver');
-      onGameOver(score);
+      onGameOver(scoreRef.current);
     }
-  }, [lives, onGameOver, score, sessionState, timeLeft]);
+  }, [lives, onGameOver, sessionState, timeLeft]);
 
   useEffect(() => {
     return () => {
@@ -512,6 +513,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
   const resetForNext = () => {
     setSelectedAnswer(null);
+    selectedAnswerRef.current = null;
     setFeedback('');
     impactResultRef.current = null;
     projectileRef.current = null;
@@ -544,9 +546,10 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     }, 680);
 
     if (result === 'hit') {
-      const nextScore = score + POINTS_PER_HIT;
+      const nextScore = scoreRef.current + POINTS_PER_HIT;
+      scoreRef.current = nextScore;
       setScore(nextScore);
-      setStars(Math.min(3, Math.max(stars, Math.floor(nextScore / 450))));
+      setStars((prev) => Math.min(3, Math.max(prev, Math.floor(nextScore / 450))));
       setFeedback('Direct hit!');
       triggerHaptic('success');
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
@@ -562,7 +565,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       setFeedback(`Missed! Correct angle: ${correctAngle ?? '--'}°`);
       triggerHaptic('error');
       emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
-        score,
+        score: scoreRef.current,
         metadata: {
           questionId: activeQuestion?.id,
           selected: selectedAnswerRef.current,
@@ -603,9 +606,11 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   };
 
   useEffect(() => {
-    if (selectedAnswer) {
+    if (selectedAnswer !== null) {
       desiredAngleRef.current = selectedAnswer;
       selectedAnswerRef.current = selectedAnswer;
+    } else {
+      selectedAnswerRef.current = null;
     }
   }, [selectedAnswer]);
 
@@ -647,7 +652,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       const correctAnswer = activeQuestion?.correctAnswer ?? 0;
       const enemyAngle = ((correctAnswer % 360) + 360) % 360;
       const allowHit = selectedAnswerRef.current === correctAnswer;
-      const enemyRadius = ENEMY_DISTANCE + (activeQuestion?.id ? (activeQuestion.id % 3) * 40 : 0);
+      const enemyRadius = ENEMY_DISTANCE + ((questionIndex % 3) * 40);
       const enemyVector = angleToVector(enemyAngle);
       const enemyWorld = { x: enemyVector.x * enemyRadius, y: enemyVector.y * enemyRadius };
 
@@ -693,8 +698,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.clearRect(0, 0, viewWidth, viewHeight);
 
       const cannonAnchor = { x: viewWidth * CANNON_ANCHOR_X_RATIO, y: viewHeight * CANNON_ANCHOR_Y_RATIO };
-      const originBase = worldToScreen(0, 0, camera.x, camera.y, viewWidth, viewHeight);
-      const screenOffset = { x: cannonAnchor.x - originBase.x, y: cannonAnchor.y - originBase.y };
+      const screenOffset = { x: cannonAnchor.x - viewWidth / 2, y: cannonAnchor.y - viewHeight / 2 };
       const toScreen = (x: number, y: number) => {
         const base = worldToScreen(x, y, camera.x, camera.y, viewWidth, viewHeight);
         return { x: base.x + screenOffset.x, y: base.y + screenOffset.y };
@@ -734,7 +738,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.save();
       ctx.translate(enemyScreen.x, enemyScreen.y);
       const enemySize = Math.min(viewWidth, viewHeight) * 0.26;
-      const platform: EnemyPlatform = (questionIndex + (activeQuestion?.id ?? 0)) % 2 === 0 ? 'podium' : 'cloud';
+      const platform: EnemyPlatform = questionIndex % 2 === 0 ? 'podium' : 'cloud';
       drawEnemyPlatform(ctx, platform, enemySize);
 
       const enemies = enemySpritesRef.current;
@@ -792,11 +796,11 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     if (gameState !== 'resolvedCorrect' && gameState !== 'resolvedIncorrect') return;
     if (gameState === 'resolvedIncorrect' && !sessionState && lives <= 0) {
       setGameState('gameOver');
-      onGameOver(score);
+      onGameOver(scoreRef.current);
       return;
     }
     if (questionIndex >= questions.length - 1) {
-      finishLevel(score + (gameState === 'resolvedCorrect' ? 0 : 0));
+      finishLevel(scoreRef.current);
       return;
     }
     setQuestionIndex((prev) => prev + 1);
@@ -844,9 +848,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
          />
         <GameScreenLayout
           className="relative z-20 px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2"
-          topClassName="flex flex-col items-center gap-2 px-0 pt-[calc(env(safe-area-inset-top)+0.15rem)]"
+          topClassName="!min-h-0 flex flex-col items-center gap-0 px-2 pt-0 sm:px-3 md:px-4"
           top={(
-            <div className="flex flex-col gap-1.5">
+            <div className="flex w-full flex-col gap-1">
               <GameTopBar
                 onBack={onBack}
                 progressLabel={`Question ${questionIndex + 1} / ${questions.length}`}
@@ -855,16 +859,13 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
                 className="w-full"
               />
 
-              <div className="relative z-20 w-full">
-                <div className="mx-auto w-full">
-                  <GameQuestionCard
-                    title="Angle Arena"
-                    subtitle="Choose the angle, then fire."
-                  >
-                    {activeQuestion?.prompt ?? 'Choose the correct launch angle.'}
-                  </GameQuestionCard>
-                </div>
-              </div>
+              <GameQuestionCard
+                title="Angle Arena"
+                subtitle="Choose the angle, then fire."
+                className="w-full"
+              >
+                {activeQuestion?.prompt ?? 'Choose the correct launch angle.'}
+              </GameQuestionCard>
             </div>
           )}
           main={<div className="min-h-0 flex-1" />}

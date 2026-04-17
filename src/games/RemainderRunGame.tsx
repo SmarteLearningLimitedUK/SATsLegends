@@ -206,22 +206,22 @@ const LongDivisionVisual: React.FC<{ problem: RemainderProblem }> = ({ problem }
   const digits = problem.displayDividend.split('');
 
   return (
-    <div className="relative overflow-hidden rounded-[1.6rem] border border-violet-200/26 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),rgba(255,255,255,0)_44%),linear-gradient(180deg,rgba(26,54,124,0.96),rgba(10,17,40,0.98))] px-4 py-4 shadow-[0_18px_34px_rgba(2,6,23,0.22)] md:rounded-[2rem] md:px-6 md:py-6">
-      <div className="relative mt-8 flex items-center justify-center">
-        <div className="relative mr-5 text-[clamp(2.9rem,14vw,5.6rem)] font-black leading-none text-sky-100 md:mr-7">
+    <div className="relative overflow-hidden rounded-[1.3rem] border border-violet-200/24 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),rgba(255,255,255,0)_44%),linear-gradient(180deg,rgba(26,54,124,0.96),rgba(10,17,40,0.98))] px-3 py-3 shadow-[0_18px_34px_rgba(2,6,23,0.22)] md:rounded-[1.7rem] md:px-4 md:py-4">
+      <div className="relative mt-4 flex items-center justify-center">
+        <div className="relative mr-3 text-[clamp(2.2rem,10vw,4.3rem)] font-black leading-none text-sky-100 md:mr-4">
           {problem.divisor}
         </div>
 
         <div className="relative flex items-start">
-          <div className="absolute left-[0.3rem] top-[-0.55rem] h-[3.8rem] w-[0.45rem] rounded-full bg-violet-200/90 md:h-[4.8rem]" />
-          <div className="absolute left-[0.55rem] top-[-0.55rem] h-[0.45rem] w-[clamp(10rem,46vw,18rem)] rounded-full bg-violet-200/90 md:w-[clamp(14rem,48vw,22rem)]" />
-          <div className="pl-[clamp(1.55rem,6vw,2.2rem)] pt-[clamp(0.05rem,1vw,0.3rem)]">
-            <div className="flex items-end gap-[0.06em] text-[clamp(3.4rem,15vw,6.6rem)] font-black leading-none md:gap-[0.08em]">
+          <div className="absolute left-[0.18rem] top-[-0.3rem] h-[2.9rem] w-[0.34rem] rounded-full bg-violet-200/90 md:h-[3.8rem]" />
+          <div className="absolute left-[0.42rem] top-[-0.3rem] h-[0.34rem] w-[clamp(7.5rem,38vw,13.5rem)] rounded-full bg-violet-200/90 md:w-[clamp(9rem,40vw,15rem)]" />
+          <div className="pl-[clamp(1.1rem,4.6vw,1.6rem)] pt-[clamp(0.05rem,0.7vw,0.22rem)]">
+            <div className="flex items-end gap-[0.05em] text-[clamp(2.4rem,10.8vw,4.8rem)] font-black leading-none md:gap-[0.06em]">
               {digits.map((digit, index) => {
                 if (digit === '.') {
                   return (
                     <span key={`${problem.id}-${index}`} className="relative mx-[0.06em] inline-flex items-center">
-                      <span className="mt-[0.42em] inline-block h-[0.28em] w-[0.28em] rounded-full bg-violet-200 shadow-[0_1px_0_rgba(255,255,255,0.42)]" />
+                      <span className="mt-[0.36em] inline-block h-[0.22em] w-[0.22em] rounded-full bg-violet-200 shadow-[0_1px_0_rgba(255,255,255,0.42)]" />
                     </span>
                   );
                 }
@@ -407,11 +407,11 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),rgba(15,23,42,0.06)_32%,rgba(2,6,23,0.36)_100%)]" />
 
       <main
-        className={`relative z-20 flex h-full w-full flex-col ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.8rem)]' : 'pt-[max(0.25rem,env(safe-area-inset-top))]'} px-[max(0.75rem,env(safe-area-inset-left))] pb-[max(1rem,env(safe-area-inset-bottom))]`}
+        className={`relative z-20 flex h-full w-full flex-col ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.3rem)]' : 'pt-[max(0.25rem,env(safe-area-inset-top))]'} px-[max(0.75rem,env(safe-area-inset-left))] pb-[max(0.85rem,env(safe-area-inset-bottom))]`}
       >
-        <div className="mx-auto flex h-full w-full max-w-[30rem] min-h-0 flex-col gap-2">
+        <div className="mx-auto flex h-full w-full max-w-[27rem] min-h-0 flex-col gap-2">
           {showTopHud ? (
-            <header className="rounded-[1.1rem] border border-violet-200/24 bg-[linear-gradient(180deg,rgba(50,14,94,0.94),rgba(19,8,44,0.92))] px-3 py-2 shadow-[0_10px_18px_rgba(2,6,23,0.18)] backdrop-blur-sm">
+            <header className="rounded-[0.95rem] border border-violet-200/24 bg-[linear-gradient(180deg,rgba(50,14,94,0.94),rgba(19,8,44,0.92))] px-3 py-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.18)] backdrop-blur-sm">
               <div className="flex items-center justify-between gap-2">
                 <div className="min-w-0 flex-1">
                   <div className="text-[9px] font-black uppercase tracking-[0.18em] text-violet-500/70">Time</div>
@@ -432,14 +432,14 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
             </header>
           ) : null}
 
-          <section className="min-h-0 rounded-[1.3rem] border border-white/16 bg-[linear-gradient(180deg,rgba(16,25,49,0.74),rgba(8,12,25,0.86))] p-2.5 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
+          <section className="shrink-0 rounded-[1.1rem] border border-white/16 bg-[linear-gradient(180deg,rgba(16,25,49,0.74),rgba(8,12,25,0.86))] p-2 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
             <GameQuestionCard
               title={title}
-              subtitle="You may need a pen and paper."
-              className="mx-auto max-w-[30rem] border border-violet-200/26 bg-[linear-gradient(180deg,rgba(60,16,144,0.92),rgba(27,11,74,0.88))] shadow-[0_12px_24px_rgba(2,6,23,0.16)]"
+              subtitle="Use the division setup shown below."
+              className="mx-auto max-w-[27rem] border border-violet-200/26 bg-[linear-gradient(180deg,rgba(60,16,144,0.92),rgba(27,11,74,0.88))] shadow-[0_12px_24px_rgba(2,6,23,0.16)]"
               titleClassName="text-violet-100"
             >
-              Solve the division.
+              Work out the quotient or decimal shown by the division spell.
             </GameQuestionCard>
 
             <div className="mt-2">
@@ -447,18 +447,18 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
             </div>
           </section>
 
-          <section className="min-h-0 flex-1 rounded-[1.3rem] border border-white/16 bg-[linear-gradient(180deg,rgba(16,25,49,0.72),rgba(8,12,25,0.84))] p-2.5 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
-            <div className="text-center text-[10px] font-black uppercase tracking-[0.16em] text-amber-100/80">
+          <section className="shrink-0 rounded-[1.1rem] border border-white/16 bg-[linear-gradient(180deg,rgba(16,25,49,0.72),rgba(8,12,25,0.84))] p-2 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
+            <div className="text-center text-[9px] font-black uppercase tracking-[0.16em] text-amber-100/80">
               Tap the correct quotient and remainder
             </div>
-            <div className="answer-choice-surface mt-2 grid grid-cols-4 gap-2">
+            <div className="answer-choice-surface mt-2 grid grid-cols-4 gap-1.5">
               {problem.options.map((option, index) => (
                 <button
                   key={`${problem.id}-${option}-${index}`}
                   type="button"
                   disabled={isLocked || roundOver}
                   onClick={() => evaluateAnswer(option)}
-              className={`relative min-h-[3.4rem] rounded-[0.95rem] border px-2 py-2 text-center shadow-[0_8px_18px_rgba(2,6,23,0.16)] transition-transform duration-150 hover:scale-[1.01] disabled:opacity-55 ${
+                  className={`relative min-h-[3rem] rounded-[0.85rem] border px-2 py-2 text-center shadow-[0_8px_18px_rgba(2,6,23,0.16)] transition-transform duration-150 hover:scale-[1.01] disabled:opacity-55 ${
                     selectedAnswer === option
                       ? feedback?.tone === 'success' || feedback?.tone === 'praise'
                         ? 'ui-button-success'
@@ -466,7 +466,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
                       : 'ui-button-secondary'
                   }`}
                 >
-                  <span className="text-[clamp(1rem,4.2vw,1.45rem)] font-black text-white">{option}</span>
+                  <span className="text-[clamp(0.92rem,3.6vw,1.28rem)] font-black text-white">{option}</span>
                 </button>
               ))}
             </div>
@@ -481,7 +481,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
             initial={{ opacity: 0, scale: 0.88 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.08 }}
-            className={`pointer-events-none absolute left-1/2 top-[calc(env(safe-area-inset-top)+5.1rem)] z-50 -translate-x-1/2 rounded-[1rem] border px-4 py-2 text-center shadow-[0_14px_24px_rgba(2,6,23,0.35)] ${
+            className={`pointer-events-none absolute left-1/2 top-[calc(env(safe-area-inset-top)+4.8rem)] z-50 -translate-x-1/2 rounded-[0.95rem] border px-3 py-1.5 text-center shadow-[0_14px_24px_rgba(2,6,23,0.35)] ${
               feedback.tone === 'praise'
                 ? 'border-amber-100/64 bg-[linear-gradient(135deg,rgba(255,241,166,0.96),rgba(125,211,252,0.9))] text-slate-950 shadow-[0_0_22px_rgba(251,191,36,0.55)]'
                 : feedback.tone === 'success'
@@ -489,8 +489,8 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
                 : 'border-rose-100/62 bg-rose-500/30 text-amber-50'
             }`}
           >
-            <div className="text-xs font-black uppercase tracking-[0.12em]">{feedback.title}</div>
-            <div className="mt-0.5 text-[11px] font-bold">{feedback.subtitle}</div>
+            <div className="text-[11px] font-black uppercase tracking-[0.12em]">{feedback.title}</div>
+            <div className="mt-0.5 text-[10px] font-bold">{feedback.subtitle}</div>
           </motion.div>
         ) : null}
       </AnimatePresence>

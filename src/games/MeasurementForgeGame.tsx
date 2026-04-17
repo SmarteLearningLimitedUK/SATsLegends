@@ -221,7 +221,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
           <motion.div
             animate={successPulse ? { scale: [1, 1.02, 1] } : { scale: 1 }}
             transition={{ duration: 0.36, ease: 'easeOut' }}
-            className="relative w-full max-w-[35rem] flex-1 min-h-[19rem] p-1 md:max-w-[40rem]"
+            className="relative flex w-full max-w-[35rem] flex-1 min-h-[19rem] items-center justify-center p-1 md:max-w-[40rem]"
           >
             <div
               className={`flex w-full items-center justify-between rounded-[1.35rem] px-3 py-2 text-center ${
@@ -243,17 +243,18 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
             </div>
 
             <div className="relative mt-3 flex min-h-[19rem] flex-1 items-center justify-center">
-              <img
-                src={weighScale}
-                alt=""
-                aria-hidden="true"
-                draggable={false}
-                className="pointer-events-none absolute left-1/2 top-[49%] z-0 h-auto w-[min(92%,26rem)] -translate-x-1/2 -translate-y-1/2 object-contain object-center drop-shadow-[0_18px_24px_rgba(2,6,23,0.38)]"
-                style={{ transform: 'translate(-50%, -50%) scale(1.14)' }}
-              />
+              <div className="pointer-events-none absolute left-1/2 top-[48%] z-10 flex w-full max-w-[26rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+                <img
+                  src={weighScale}
+                  alt=""
+                  aria-hidden="true"
+                  draggable={false}
+                  className="pointer-events-none relative z-10 h-auto w-full object-contain object-center drop-shadow-[0_18px_24px_rgba(2,6,23,0.38)]"
+                />
+              </div>
               <div
                 ref={dropRef}
-                className="absolute left-1/2 top-[12%] z-10 flex min-h-[4.5rem] w-[70%] -translate-x-1/2 items-center justify-center gap-2 rounded-[1.1rem] px-2 py-1.5"
+                className="absolute left-1/2 top-[42%] z-20 flex min-h-[4.5rem] w-[70%] -translate-x-1/2 items-center justify-center gap-2 rounded-[1.1rem] px-2 py-1.5"
               >
                 {placedTokens.map((token) => (
                   <button
@@ -266,7 +267,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                   </button>
                 ))}
               </div>
-              <div className="pointer-events-none absolute left-1/2 top-[58%] z-20 -translate-x-1/2 -translate-y-1/2">
+              <div className="pointer-events-none absolute left-1/2 top-[67%] z-30 -translate-x-1/2 -translate-y-1/2">
                 <div className="flex min-w-[8.4rem] flex-col items-center rounded-[0.95rem] border border-cyan-200/58 bg-[#07162b]/92 px-3 py-1.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.55)]">
                   <div className="text-[8px] font-black uppercase tracking-[0.28em] text-cyan-100/80">Digital Readout</div>
                   <div className="mt-0.5 font-mono text-[1.1rem] font-black tracking-[0.12em] text-emerald-200">

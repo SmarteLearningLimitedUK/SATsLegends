@@ -287,9 +287,6 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         if (selectedLevel.blueprintKey === 'remainder_run') {
           return renderFromRegistry('RemainderRunGame', sharedProps);
         }
-        if (selectedLevel.blueprintKey === 'division_dock') {
-          return renderFromRegistry('DivisionDockGame', sharedProps);
-        }
         return renderFromRegistry('CalculationCrashGame', sharedProps);
       case 'percent_power':
         return renderFromRegistry('PercentPowerGame', sharedProps);

@@ -789,10 +789,6 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
           ) : null}
         </AnimatePresence>
 
-        <div className="flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-white/55">
-          <span>{progress.toFixed(0)}% brainpower secured</span>
-          <span>{hearts} hearts remaining</span>
-        </div>
       </div>
     </div>
   );

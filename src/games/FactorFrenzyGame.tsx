@@ -8,8 +8,8 @@ import {
 } from 'lucide-react';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import factorFrenzyBackground from '../assets/maps/backgroundsforgames/Factor Frenzy.jpg';
+import zombieBoss from '../assets/zombies/zombie.png';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
-import { pickBossArt } from '../assets/bosses/library';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 
 type FactorProblemType = 'missing_factor' | 'all_factors' | 'common_factors' | 'prime_factors';
@@ -96,7 +96,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   const [successTone, setSuccessTone] = useState<'success' | 'praise'>('success');
   const [successMessage, setSuccessMessage] = useState('Good hit!');
   const problemStartRef = useRef<number>(Date.now());
-  const factorFrenzyEnemy = useMemo(() => pickBossArt('factor-frenzy'), []);
+  const factorFrenzyEnemy = useMemo(() => zombieBoss, []);
 
   const timerRef = useRef<number | null>(null);
   const advanceRef = useRef<number | null>(null);
@@ -397,7 +397,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         </div>
       </div>
 
-      <div className="relative z-10 flex h-full flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+6.4rem)] pt-[calc(env(safe-area-inset-top)+7.4rem)] sm:px-4 sm:pt-[calc(env(safe-area-inset-top)+7.8rem)] md:px-5 md:pt-[calc(env(safe-area-inset-top)+8.1rem)]">
+      <div className="relative z-10 flex h-full flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+11rem)] pt-[calc(env(safe-area-inset-top)+7.4rem)] sm:px-4 sm:pb-[calc(env(safe-area-inset-bottom)+11.5rem)] sm:pt-[calc(env(safe-area-inset-top)+7.8rem)] md:px-5 md:pb-[calc(env(safe-area-inset-bottom)+12rem)] md:pt-[calc(env(safe-area-inset-top)+8.1rem)]">
         <main className="relative flex min-h-0 flex-1 flex-col">
           <AnimatePresence mode="wait">
             {state.status === 'complete' ? (
@@ -409,7 +409,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
               >
                 <Trophy className="mx-auto h-14 w-14 text-amber-200" />
                 <h2 className="mt-3 text-3xl font-black uppercase text-amber-50 sm:text-4xl">Enemy Defeated</h2>
-                <p className="mt-2 text-sm font-semibold text-cyan-50/85">The goblin wizard has been pushed back.</p>
+                <p className="mt-2 text-sm font-semibold text-cyan-50/85">The undead boss has been pushed back.</p>
                 <div className="mt-4 rounded-2xl border border-cyan-100/30 bg-[#0d2a5a]/80 px-4 py-3">
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/80">Final XP</p>
                   <p className="mt-1 text-4xl font-black text-amber-100">{state.XP.toLocaleString()}</p>
@@ -530,7 +530,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         </main>
 
         {state.status !== 'complete' && (
-      <div className="fixed inset-x-0 bottom-[max(0.5rem,env(safe-area-inset-bottom))] z-40 px-3">
+      <div className="fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+4.5rem)] z-40 px-3">
             <div className="answer-choice-surface mx-auto grid w-full max-w-[780px] grid-cols-4 gap-2.5 sm:gap-3 md:gap-4">
               {state.currentProblem?.options.map((option, idx) => (
                 <motion.button

@@ -8,7 +8,7 @@ import {
 } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
-import areaBackdrop from '../assets/maps/backgroundsforgames/coordinate quest.jpg';
+import areaBackdrop from '../assets/maps/backgroundsforgames/area architect.jpg';
 import {
   reshuffleAvoidingRepeat,
   shuffle,

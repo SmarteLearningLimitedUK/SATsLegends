@@ -397,11 +397,11 @@ const ReelWindow: React.FC<{
           ? { x: [0, -5, 5, -4, 4, 0], scale: [1, 0.98, 1] }
           : { y: 0, scale: 1 }}
     transition={spinning ? { duration: 0.16, repeat: Infinity, ease: 'linear' } : { duration: 0.35 }}
-    className={`relative flex h-full w-full items-center justify-center overflow-hidden rounded-[0.9rem] border border-transparent bg-transparent shadow-none ${
+    className={`relative flex h-full w-full items-center justify-center overflow-hidden rounded-[0.9rem] border border-slate-200/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(241,245,249,0.98))] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_2px_8px_rgba(15,23,42,0.18)] ${
       isInactive ? 'opacity-50 saturate-0' : ''
     }`}
   >
-    <div className={`relative z-10 text-[clamp(1.7rem,4.1vw,2.5rem)] font-semibold tracking-[-0.02em] ${isInactive ? 'text-slate-400/70' : 'text-white'}`}>
+    <div className={`relative z-10 text-[clamp(1.7rem,4.1vw,2.5rem)] font-bold tracking-[-0.02em] ${isInactive ? 'text-[#163a7a]/55' : 'text-[#163a7a]'}`}>
       {isInactive ? '' : value}
     </div>
   </motion.div>

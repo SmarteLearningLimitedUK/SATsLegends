@@ -1,5 +1,5 @@
 {
-  "url": "http://127.0.0.1:3000/",
+  "url": "http://127.0.0.1:3000",
   "viewport": {
     "width": 390,
     "height": 844
@@ -170,13 +170,6 @@
       "island": "Operations Outpost",
       "game": "Multiplication Mine",
       "screenshot": "qa-phone-multiplication-mine.png",
-      "status": "captured",
-      "error": null
-    },
-    {
-      "island": "Operations Outpost",
-      "game": "Division Dock",
-      "screenshot": "qa-phone-division-dock.png",
       "status": "captured",
       "error": null
     },

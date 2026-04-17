@@ -8,17 +8,17 @@
     {
       "island": "Data Desert",
       "group": "Graph Grabber",
-      "status": "ok"
+      "status": "missing-group"
     },
     {
       "island": "Data Desert",
       "group": "Line Graph Lab",
-      "status": "ok"
+      "status": "missing-group"
     },
     {
       "island": "Data Desert",
       "group": "Data Detective",
-      "status": "ok"
+      "status": "missing-group"
     }
   ],
   "consoleErrors": []

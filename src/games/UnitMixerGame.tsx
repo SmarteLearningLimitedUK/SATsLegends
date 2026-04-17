@@ -2,13 +2,13 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { motion } from 'motion/react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
-import AnimatedAvatar from '../components/AnimatedAvatar';
 import { AVATARS } from '../constants';
 import { GameQuestionCard, FeedbackStrip } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameScreenShell } from '../layout/ScreenPrimitives';
 import { getSatsInspiredChallengeQuestion } from '../systems/content/satsInspiredQuestionBanks';
 import { triggerHaptic } from '../haptics';
+import lavaPathBackground from '../assets/maps/backgroundsforgames/lava path.jpg';
 import {
   GameplaySessionEventHandlers,
   GameplaySessionState,
@@ -147,6 +147,7 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
     () => AVATARS.find((entry) => entry.id === avatarId) ?? AVATARS[0],
     [avatarId],
   );
+  const playerAvatarImage = playerAvatar.portrait || playerAvatar.image;
 
   const clearTimers = () => {
     timersRef.current.forEach((timerId) => window.clearTimeout(timerId));
@@ -264,7 +265,7 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
   const currentPosition = LAVA_PATH_STOPS[currentStep];
 
   return (
-    <GameScreenShell className="overflow-hidden">
+    <GameScreenShell className="overflow-hidden" backgroundImage={lavaPathBackground} backgroundOpacity={1}>
       <GameplaySceneBackdrop gameType="unit_mixer" />
 
       <PracticeIntroPopup
@@ -295,14 +296,11 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
           >
             <div className="relative h-[clamp(3rem,6vw,4.8rem)] w-[clamp(3rem,6vw,4.8rem)]">
               <div className="absolute inset-0 rounded-full bg-amber-300/16 blur-xl" />
-              <AnimatedAvatar
-                avatar={playerAvatar}
-                pose={feedbackTone === 'warning' ? 'sad' : 'idle'}
-                floating={false}
-                cycleFrames
-                showBackdropGlow={false}
-                className="relative z-10 h-full w-full"
-                imageClassName="object-contain drop-shadow-[0_16px_22px_rgba(0,0,0,0.32)]"
+              <img
+                src={playerAvatarImage}
+                alt={playerAvatar.name}
+                className="relative z-10 h-full w-full object-contain drop-shadow-[0_16px_22px_rgba(0,0,0,0.32)]"
+                draggable={false}
               />
             </div>
           </motion.div>

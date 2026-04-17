@@ -81,6 +81,13 @@ const BLUEPRINT_BOARD_TOP = '58%';
 const BLUEPRINT_BOARD_SIZE = 'min(76vw, 29rem, 58vh)';
 const SCALE_BUILDER_INTRO = `Use the scale factor to resize the blueprint.\nMatch the new size exactly to rebuild the structure.`;
 
+const formatBlueprintValue = (value: number) => {
+  const normalized = Math.round(value * 100) / 100;
+  return Number.isInteger(normalized)
+    ? String(normalized)
+    : normalized.toFixed(2).replace(/\.?0+$/, '');
+};
+
 const BlueprintGrid: React.FC = () => (
   <div className="pointer-events-none absolute inset-0 opacity-22">
     <div
@@ -223,6 +230,10 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
   }, [mistakeCount]);
 
   const isDimensionMode = currentLevel.id >= 4;
+  const activeScaleX = isDimensionMode ? widthScale : currentScale;
+  const activeScaleY = isDimensionMode ? heightScale : currentScale;
+  const blueprintLength = currentLevel.shape.baseWidth * activeScaleX;
+  const blueprintWidth = currentLevel.shape.baseHeight * activeScaleY;
 
   const verifyScale = () => {
     const widthDiff = Math.abs(widthScale - currentLevel.targetScale);
@@ -372,6 +383,12 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                 >
                   <BlueprintGrid />
                   <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(125,211,252,0.16),rgba(59,130,246,0.04)_65%,transparent_100%)]" />
+                  <div className="pointer-events-none absolute left-3 top-3 z-20 rounded-full border border-cyan-100/35 bg-slate-950/65 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-50 shadow-[0_0_18px_rgba(2,6,23,0.25)] backdrop-blur-sm md:text-[11px]">
+                    L {formatBlueprintValue(blueprintLength)}
+                  </div>
+                  <div className="pointer-events-none absolute right-3 bottom-3 z-20 rounded-full border border-cyan-100/35 bg-slate-950/65 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-50 shadow-[0_0_18px_rgba(2,6,23,0.25)] backdrop-blur-sm md:text-[11px]">
+                    W {formatBlueprintValue(blueprintWidth)}
+                  </div>
                   {showBase ? (
                     <div className="absolute opacity-40">
                       <ShapeRenderer

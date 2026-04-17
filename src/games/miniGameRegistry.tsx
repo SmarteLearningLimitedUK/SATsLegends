@@ -10,7 +10,6 @@ const CurriculumChallengeGame = lazy(() => import('./CurriculumChallengeGame'));
 const DataDungeonGame = lazy(() => import('./DataDungeonGame'));
 const DataDetectiveGame = lazy(() => import('./DataDetectiveGame'));
 const DecimalSniperGame = lazy(() => import('./DecimalSniperGame'));
-const DivisionDockGame = lazy(() => import('./DivisionDockGame'));
 const FactorFrenzyGame = lazy(() => import('./FactorFrenzyGame'));
 const FormulaForgeGame = lazy(() => import('./FormulaForgeGame'));
 const FractionForgeGame = lazy(() => import('./FractionForgeGame'));
@@ -63,7 +62,6 @@ export type MiniGameRegistryKey =
   | 'DataDungeonGame'
   | 'DataDetectiveGame'
   | 'DecimalSniperGame'
-  | 'DivisionDockGame'
   | 'FactorFrenzyGame'
   | 'FormulaForgeGame'
   | 'FractionForgeGame'
@@ -124,7 +122,6 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   DataDungeonGame: asMiniGame('data_dungeon', DataDungeonGame),
   DataDetectiveGame: asMiniGame('data_detective', DataDetectiveGame),
   DecimalSniperGame: asMiniGame('decimal_sniper', DecimalSniperGame),
-  DivisionDockGame: asMiniGame('division_dock', DivisionDockGame),
   FactorFrenzyGame: asMiniGame('factor_frenzy', FactorFrenzyGame),
   FormulaForgeGame: asMiniGame('formula_forge', FormulaForgeGame),
   FractionForgeGame: asMiniGame('fraction_forge', FractionForgeGame),

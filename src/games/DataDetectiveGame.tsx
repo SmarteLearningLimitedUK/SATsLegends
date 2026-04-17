@@ -299,11 +299,11 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             </div>
           </div>
 
-          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(255,255,255,0.11),rgba(7,18,44,0.72))] p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-3 md:p-4">
+          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(255,255,255,0.11),rgba(7,18,44,0.72))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-3 md:p-4 max-[480px]:p-1.5">
             <div className="pointer-events-none absolute inset-0 bg-slate-950/20" />
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.3)_1px,transparent_1px)] opacity-7 [background-size:20px_20px]" />
 
-            <div className="relative w-full" style={{ height: 'clamp(10.5rem, 26vh, 18rem)' }}>
+            <div className="relative w-full" style={{ height: 'clamp(8.5rem, 19vh, 14rem)' }}>
               <ResponsiveContainer width="100%" height="100%">
                 {chartType === 'bar' ? (
                     <BarChart data={currentCase} margin={{ top: 12, right: 10, left: -6, bottom: 6 }}>
@@ -385,7 +385,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               {currentCase.map(item => (
                 <div key={item.name} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/8 px-2 py-1">
                   <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
-                  <span className="min-w-0 truncate text-[16px] font-bold uppercase tracking-wide text-stone-300">
+                  <span className="min-w-0 truncate text-[16px] font-bold uppercase tracking-wide text-stone-300 max-[480px]:text-[13px]">
                     {item.name}
                   </span>
                 </div>
@@ -394,14 +394,14 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           </div>
         </section>
 
-          <section className="z-10 flex w-full flex-col gap-2 bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] px-2 pb-0 pt-1 sm:px-3 sm:pb-1 sm:pt-1 md:gap-3 md:px-5 md:pb-2 md:pt-2 max-[480px]:gap-1 max-[480px]:px-1.5 max-[480px]:pb-0 max-[480px]:pt-0.5">
+          <section className="z-10 flex w-full flex-col gap-2 bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] px-2 pb-0 pt-1 sm:px-3 sm:pb-1 sm:pt-1 md:gap-3 md:px-5 md:pb-2 md:pt-2 max-[480px]:-mt-2 max-[480px]:gap-1 max-[480px]:px-1.5 max-[480px]:pb-0 max-[480px]:pt-0.5">
           <div className="mb-1 flex items-center gap-2 text-amber-500">
             <Users className="h-5 w-5" />
             <h2 className="text-xs font-black uppercase tracking-widest">Suspect Lineup</h2>
           </div>
 
           <div className="relative">
-            <div className={`grid grid-cols-4 items-end gap-1 max-[480px]:gap-0.5 ${selectedSuspect ? 'pointer-events-none opacity-0' : ''}`}>
+            <div className={`grid grid-cols-4 items-start gap-1 max-[480px]:gap-0.5 ${selectedSuspect ? 'pointer-events-none opacity-0' : ''}`}>
               {suspects.map((suspect) => (
                 <motion.button
                   key={suspect.id}
@@ -409,13 +409,13 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleSuspectClick(suspect.id)}
                   transition={{ duration: 0.35 }}
-                  className={`group relative flex w-full aspect-[4/3] items-center justify-center rounded-[1.2rem] border-2 p-1 transition-all duration-300 sm:aspect-[3/4] max-[480px]:aspect-[1/1.12] max-[480px]:rounded-lg max-[480px]:p-0.5 ${
+                  className={`group relative flex w-full aspect-[4/3] items-center justify-center rounded-[1.2rem] border-2 p-1 transition-all duration-300 sm:aspect-[3/4] max-[480px]:aspect-[1/1.7] max-[480px]:rounded-lg max-[480px]:p-0.25 ${
                     gameState === 'success' && suspect.id === guiltyId
                       ? 'border-emerald-500 bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.2)]'
                       : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
                   }`}
                 >
-                  <div className="relative flex h-full w-full items-center justify-center overflow-visible rounded-[1.05rem] border border-white/16 bg-slate-950/40 p-2 shadow-lg max-[480px]:rounded-[0.9rem] max-[480px]:p-1.5">
+                  <div className="relative flex h-full w-full items-center justify-center overflow-visible rounded-[1.05rem] border border-white/16 bg-slate-950/40 p-1 shadow-lg max-[480px]:rounded-[0.9rem] max-[480px]:p-0.25">
                     {suspect.portrait ? (
                       <img
                         src={suspect.portrait}
@@ -483,7 +483,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               >
                 <div className="w-full max-w-[20rem] max-h-[calc(100%-0.75rem)] overflow-y-auto overflow-x-hidden rounded-2xl border border-white/18 bg-[linear-gradient(180deg,rgba(9,24,58,0.96),rgba(4,12,28,0.98))] p-4 shadow-[0_24px_48px_rgba(0,0,0,0.45)] max-[480px]:max-w-[calc(100%-0.5rem)] max-[480px]:max-h-[calc(100%-0.5rem)] max-[480px]:p-3">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-16 w-16 items-center justify-center overflow-visible rounded-2xl border border-white/20 bg-slate-950/40 p-1.5 max-[480px]:h-14 max-[480px]:w-14 max-[480px]:p-1">
+                    <div className="flex h-20 w-20 items-center justify-center overflow-visible rounded-2xl border border-white/20 bg-slate-950/40 p-1.5 max-[480px]:h-20 max-[480px]:w-20 max-[480px]:p-1">
                       {selectedSuspect.portrait && (
                         <img
                           src={selectedSuspect.portrait}

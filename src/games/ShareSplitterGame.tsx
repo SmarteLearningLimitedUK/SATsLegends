@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { Check, RefreshCcw } from 'lucide-react';
@@ -195,6 +195,8 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const endedRef = useRef(false);
   const plateRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const questionCardRef = useRef<HTMLDivElement | null>(null);
+  const [questionDockBottom, setQuestionDockBottom] = useState(0);
   const sliceSeedRef = useRef(0);
   const dragActiveRef = useRef(false);
 
@@ -225,6 +227,26 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   useEffect(() => {
     setShowPracticeIntro(Boolean(isPractice));
   }, [isPractice]);
+
+  useLayoutEffect(() => {
+    const node = questionCardRef.current;
+    if (!node) return undefined;
+
+    const update = () => {
+      const rect = node.getBoundingClientRect();
+      setQuestionDockBottom(rect.bottom);
+    };
+
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(node);
+    window.addEventListener('resize', update);
+
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', update);
+    };
+  }, [challenge.id]);
 
   const plateViews = useMemo(() => challenge.ratios.map((ratio, index) => {
     const currentCakeCount = plates[index]?.length ?? 0;
@@ -502,149 +524,156 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       />
 
       <div className="relative h-full w-full">
-        <GameScreenLayout
-          className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2 text-white"
-          top={(
-            <div className="flex justify-center px-2">
-              <GameQuestionCard
-                title="Target Ratio"
-                className="mx-auto w-full max-w-[28rem]"
-                bodyClassName="whitespace-pre-line text-[12px] font-semibold leading-tight text-white"
-              >
-                {promptText}
-              </GameQuestionCard>
-            </div>
-          )}
-          main={(
-            <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
-              <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] px-2 py-3 md:px-3">
-                <div className="pointer-events-none absolute inset-0 z-[20]">
-          <div className="relative h-full w-full">
-            <CelebrationSplash active={showCelebrationSplash} message="Party Time!" theme="party" />
-            {plateViews.map((plate, index) => {
-              const plateTone = validationActive
-                ? plate.isCorrect
-                  ? 'ring-2 ring-emerald-300/70'
-                  : 'ring-2 ring-amber-200/75'
-                : hoverPlateIndex === index
-                  ? 'ring-2 ring-cyan-200/85'
-                  : dragSlice
-                    ? 'ring-1 ring-white/20'
-                    : '';
-                      const position = platePositions[index] || { x: 50, y: 50 };
+        <div
+          ref={questionCardRef}
+          className="pointer-events-none fixed left-0 right-0 z-[60]"
+          style={{ top: 'calc(env(safe-area-inset-top) + 4px)' }}
+        >
+          <div className="flex justify-center px-2">
+            <GameQuestionCard
+              title="Target Ratio"
+              className="mx-auto w-full max-w-[28rem]"
+              bodyClassName="whitespace-pre-line text-[12px] font-semibold leading-tight text-white"
+            >
+              {promptText}
+            </GameQuestionCard>
+          </div>
+        </div>
 
-                      return (
-                        <button
-                          key={plate.id}
-                          type="button"
-                          ref={(node) => {
-                            plateRefs.current[index] = node;
-                          }}
-                          disabled={locked}
-                          className={`pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-transparent bg-transparent p-2 text-center transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.02]' : ''}`}
-                          style={{
-                            left: `${position.x}%`,
-                            top: `${position.y}%`,
-                            width: plateSize,
-                            height: plateSize,
-                          }}
-                          aria-label={`Plate ${index + 1}. ${plate.currentCakeCount} of ${plate.targetCakeCount} cakes placed.`}
-                        >
-                          <div className="grid h-full w-full grid-cols-3 place-items-center gap-0.5">
-                            {plates[index].slice(0, 6).map((sliceId) => (
-                              <img
-                                key={sliceId}
-                                src={trimmedCakeSliceAsset}
-                                alt=""
-                                className="h-10 w-10 object-contain drop-shadow-[0_10px_16px_rgba(0,0,0,0.22)] sm:h-12 sm:w-12"
-                                draggable={false}
-                              />
-                            ))}
-                          </div>
-                        </button>
-                      );
-                    })}
+        <div
+          className="h-full w-full"
+          style={{ paddingTop: `${Math.max(0, questionDockBottom + 20)}px` }}
+        >
+          <GameScreenLayout
+            className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-0 text-white"
+            main={(
+              <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
+                <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] px-2 py-3 md:px-3">
+                  <div className="pointer-events-none absolute inset-0 z-[20]">
+                    <div className="relative h-full w-full">
+                      <CelebrationSplash active={showCelebrationSplash} message="Party Time!" theme="party" />
+                      {plateViews.map((plate, index) => {
+                        const plateTone = validationActive
+                          ? plate.isCorrect
+                            ? 'ring-2 ring-emerald-300/70'
+                            : 'ring-2 ring-amber-200/75'
+                          : hoverPlateIndex === index
+                            ? 'ring-2 ring-cyan-200/85'
+                            : dragSlice
+                              ? 'ring-1 ring-white/20'
+                              : '';
+                        const position = platePositions[index] || { x: 50, y: 50 };
 
-            <button
-              type="button"
-              onPointerDown={handleSourcePointerDown}
-              disabled={locked || remainingSlices <= 0}
-              className="pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-0 bg-transparent touch-none"
-              style={{
-                left: `${CAKE_SOURCE_POSITION.x}%`,
-                top: `${CAKE_SOURCE_POSITION.y}%`,
-                width: CAKE_SOURCE_SIZE,
-                height: CAKE_SOURCE_SIZE,
-              }}
-              aria-label={remainingSlices > 0 ? 'Drag a slice from the cake' : 'No cake slices left'}
-            />
+                        return (
+                          <button
+                            key={plate.id}
+                            type="button"
+                            ref={(node) => {
+                              plateRefs.current[index] = node;
+                            }}
+                            disabled={locked}
+                            className={`pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-transparent bg-transparent p-2 text-center transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.02]' : ''}`}
+                            style={{
+                              left: `${position.x}%`,
+                              top: `${position.y}%`,
+                              width: plateSize,
+                              height: plateSize,
+                            }}
+                            aria-label={`Plate ${index + 1}. ${plate.currentCakeCount} of ${plate.targetCakeCount} cakes placed.`}
+                          >
+                            <div className="grid h-full w-full grid-cols-3 place-items-center gap-0.5">
+                              {plates[index].slice(0, 6).map((sliceId) => (
+                                <img
+                                  key={sliceId}
+                                  src={trimmedCakeSliceAsset}
+                                  alt=""
+                                  className="h-10 w-10 object-contain drop-shadow-[0_10px_16px_rgba(0,0,0,0.22)] sm:h-12 sm:w-12"
+                                  draggable={false}
+                                />
+                              ))}
+                            </div>
+                          </button>
+                        );
+                      })}
+
+                      <button
+                        type="button"
+                        onPointerDown={handleSourcePointerDown}
+                        disabled={locked || remainingSlices <= 0}
+                        className="pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-0 bg-transparent touch-none"
+                        style={{
+                          left: `${CAKE_SOURCE_POSITION.x}%`,
+                          top: `${CAKE_SOURCE_POSITION.y}%`,
+                          width: CAKE_SOURCE_SIZE,
+                          height: CAKE_SOURCE_SIZE,
+                        }}
+                        aria-label={remainingSlices > 0 ? 'Drag a slice from the cake' : 'No cake slices left'}
+                      />
+                    </div>
                   </div>
                 </div>
+
+                <section className="shrink-0 min-h-[1px]" aria-hidden />
               </div>
+            )}
+            bottom={(
+              <div className="flex flex-col gap-2">
+                <section className="min-h-[2.6rem]">
+                  {feedback.trim().length > 0 ? (
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={`${feedback}-${feedbackTone}`}
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                      >
+                        <FeedbackStrip
+                          tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}
+                          className="whitespace-pre-line"
+                        >
+                          {feedback}
+                        </FeedbackStrip>
+                      </motion.div>
+                    </AnimatePresence>
+                  ) : null}
+                </section>
 
-            <section className="shrink-0 min-h-[1px]" aria-hidden />
-          </div>
-        )}
-        bottom={(
-          <div className="flex flex-col gap-2">
-            <section className="min-h-[2.6rem]">
-              {feedback.trim().length > 0 ? (
-                <AnimatePresence mode="wait">
+                <section className="grid grid-cols-2 gap-2">
+                  <SecondaryButton onClick={resetAllocation} disabled={locked || moveHistory.length === 0}>
+                    <RefreshCcw className="h-4 w-4" />
+                    Reset
+                  </SecondaryButton>
+                  <PrimaryButton onClick={checkAllocation} disabled={locked || !hasMoves}>
+                    <Check className="h-4 w-4" />
+                    Check
+                  </PrimaryButton>
+                </section>
+              </div>
+            )}
+            overlay={(
+              <AnimatePresence>
+                {dragSlice ? (
                   <motion.div
-                    key={`${feedback}-${feedbackTone}`}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
+                    key={dragSlice.id}
+                    initial={{ scale: 0.92, opacity: 0.9 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ opacity: 0, scale: 0.86 }}
+                    transition={{ duration: 0.08, ease: 'linear' }}
+                    className="pointer-events-none fixed z-[60] h-16 w-16 rounded-full border border-amber-200/70 bg-[linear-gradient(180deg,rgba(250,204,21,0.3),rgba(180,83,9,0.2))] p-1 shadow-[0_14px_24px_rgba(217,119,6,0.35)]"
+                    style={{ left: dragSlice.x, top: dragSlice.y }}
                   >
-                    <FeedbackStrip
-                      tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}
-                      className="whitespace-pre-line"
-                    >
-                      {feedback}
-                    </FeedbackStrip>
+                    <img
+                      src={trimmedCakeSliceAsset}
+                      alt=""
+                      className="h-full w-full object-contain"
+                      draggable={false}
+                    />
                   </motion.div>
-                </AnimatePresence>
-              ) : null}
-            </section>
-
-            <section className="grid grid-cols-2 gap-2">
-              <SecondaryButton onClick={resetAllocation} disabled={locked || moveHistory.length === 0}>
-                <RefreshCcw className="h-4 w-4" />
-                Reset
-              </SecondaryButton>
-              <PrimaryButton onClick={checkAllocation} disabled={locked || !hasMoves}>
-                <Check className="h-4 w-4" />
-                Check
-              </PrimaryButton>
-            </section>
-          </div>
-        )}
-        overlay={(
-          <>
-            <AnimatePresence>
-              {dragSlice ? (
-                <motion.div
-                  key={dragSlice.id}
-                  initial={{ scale: 0.92, opacity: 0.9 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ opacity: 0, scale: 0.86 }}
-                  transition={{ duration: 0.08, ease: 'linear' }}
-                  className="pointer-events-none fixed z-[60] h-16 w-16 rounded-full border border-amber-200/70 bg-[linear-gradient(180deg,rgba(250,204,21,0.3),rgba(180,83,9,0.2))] p-1 shadow-[0_14px_24px_rgba(217,119,6,0.35)]"
-                  style={{ left: dragSlice.x, top: dragSlice.y }}
-                >
-                  <img
-                    src={trimmedCakeSliceAsset}
-                    alt=""
-                    className="h-full w-full object-contain"
-                    draggable={false}
-                  />
-                </motion.div>
-              ) : null}
-            </AnimatePresence>
-
-          </>
-        )}
-        />
+                ) : null}
+              </AnimatePresence>
+            )}
+          />
+        </div>
       </div>
     </GameUiShell>
   );
