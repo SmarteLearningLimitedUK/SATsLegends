@@ -633,12 +633,12 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
         <GameScreenLayout
           className="relative z-10 px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-0 text-white"
-          topClassName="!min-h-0 absolute inset-x-0 top-[calc(env(safe-area-inset-top)+0.35rem)] z-20 flex flex-col items-center gap-0 px-2 pt-0 sm:px-3 md:px-4"
+          topClassName="!min-h-0"
           top={(
-            <div className="mx-auto flex w-full max-w-[780px] flex-col gap-0.5">
+            <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
               <GameQuestionCard
                 title="Ratio Racer"
-                className="w-full max-w-[56rem]"
+                className="mx-auto w-full max-w-[56rem] px-2 sm:px-3 md:px-4"
                 style={{
                   ['--question-card-width' as any]: 'min(100%, 56rem)',
                   ['--question-card-padding' as any]: '16px 18px',
