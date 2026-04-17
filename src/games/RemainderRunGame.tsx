@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import { triggerHaptic } from '../haptics';
+import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
-import gameplayBackground from '../assets/maps/backgroundsforgames/Remainder Run.png';
+import { triggerHaptic } from '../haptics';
 
 interface RemainderRunGameProps {
   levelId: number;
@@ -15,44 +15,28 @@ interface RemainderRunGameProps {
   onBack: () => void;
 }
 
-type InputMode = 'mcq' | 'split' | 'manual';
-type PromptStyle = 'equation' | 'leftover';
-
 interface RemainderProblem {
   id: string;
   dividend: number;
+  displayDividend: string;
   divisor: number;
   quotient: number;
   remainder: number;
-  mode: InputMode;
-  style: PromptStyle;
+  answerMode: 'remainder' | 'decimal';
+  answerLabel: string;
+  options: string[];
   stage: number;
-  speedRound: boolean;
-  mcqOptions: Array<{ q: number; r: number }>;
-  quotientOptions: number[];
-  remainderOptions: number[];
 }
 
-interface FeedbackState {
+type FeedbackState = null | {
   tone: 'success' | 'error';
   title: string;
   subtitle: string;
-}
-
-const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
-
-const shuffle = <T,>(items: T[]): T[] => {
-  const next = [...items];
-  for (let i = next.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [next[i], next[j]] = [next[j], next[i]];
-  }
-  return next;
 };
 
-const uniqueSortedNumbers = (numbers: number[]) => [...new Set(numbers)].sort((a, b) => a - b);
-
-const createId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
+const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
+const formatDecimalAnswer = (value: number) => value.toFixed(1);
 
 const roundSecondsForLevel = (level: number) => {
   if (level <= 3) return 90;
@@ -61,60 +45,95 @@ const roundSecondsForLevel = (level: number) => {
 };
 
 const stageFromProgress = (baseLevel: number, solvedCount: number, timeLeft: number) => {
-  const rampFromSolved = Math.floor(solvedCount / 4);
+  const solvedBoost = Math.floor(solvedCount / 4);
   const urgencyBoost = timeLeft <= 15 ? 1 : 0;
-  return Math.max(1, Math.min(12, baseLevel + rampFromSolved + urgencyBoost));
+  return Math.max(1, Math.min(12, baseLevel + solvedBoost + urgencyBoost));
 };
 
-const modeForStage = (stage: number): InputMode => {
-  if (stage <= 3) return 'mcq';
-  if (stage <= 7) return 'split';
-  return Math.random() < 0.68 ? 'manual' : 'split';
-};
+const makeAnswerLabel = (quotient: number, remainder: number) => `${quotient} r${remainder}`;
 
-const speedRoundForState = (solvedCount: number, stage: number) => {
-  return solvedCount > 0 && solvedCount % 6 === 0 && stage >= 4;
-};
+const buildRemainderOptions = (quotient: number, remainder: number, stage: number) => {
+  const correct = makeAnswerLabel(quotient, remainder);
+  const pool = new Set<string>([correct]);
+  const offsets = stage <= 3
+    ? [1, -1, 2, -2, 3, -3]
+    : stage <= 7
+      ? [1, -1, 2, -2, 4, -4, 5, -5]
+      : [1, -1, 2, -2, 3, -3, 6, -6];
 
-const createChoiceOptions = (q: number, r: number, divisor: number): Array<{ q: number; r: number }> => {
-  const options: Array<{ q: number; r: number }> = [{ q, r }];
   let guard = 0;
-  while (options.length < 4 && guard < 120) {
+  while (pool.size < 4 && guard < 60) {
     guard += 1;
-    const deltaQ = randomInt(-3, 3);
-    const deltaR = randomInt(-2, 2);
-    const nextQ = Math.max(0, q + deltaQ);
-    let nextR = r + deltaR;
-    nextR = Math.max(0, Math.min(divisor - 1, nextR));
-    if (nextQ === q && nextR === r) continue;
-    if (options.some((item) => item.q === nextQ && item.r === nextR)) continue;
-    options.push({ q: nextQ, r: nextR });
+    const quotientDelta = offsets[randomInt(0, offsets.length - 1)];
+    const remainderDelta = randomInt(-2, 2);
+    const nextQuotient = Math.max(0, quotient + quotientDelta);
+    const nextRemainder = Math.max(0, remainder + remainderDelta);
+    const candidate = makeAnswerLabel(nextQuotient, nextRemainder);
+    if (candidate !== correct) {
+      pool.add(candidate);
+    }
   }
-  return shuffle(options);
+
+  return shuffle(Array.from(pool).slice(0, 4));
 };
 
-const createSplitOptions = (target: number, min: number, max: number): number[] => {
-  const options = [target];
+const buildDecimalOptions = (answerValue: number, stage: number) => {
+  const correct = formatDecimalAnswer(answerValue);
+  const pool = new Set<string>([correct]);
+  const offsets = stage <= 8
+    ? [0.1, -0.1, 0.2, -0.2, 1, -1]
+    : [0.1, -0.1, 0.2, -0.2, 0.5, -0.5, 1, -1];
+
   let guard = 0;
-  while (options.length < 4 && guard < 100) {
+  while (pool.size < 4 && guard < 60) {
     guard += 1;
-    const delta = randomInt(-4, 4);
-    const candidate = Math.max(min, Math.min(max, target + delta));
-    if (candidate === target) continue;
-    if (options.includes(candidate)) continue;
-    options.push(candidate);
+    const delta = offsets[randomInt(0, offsets.length - 1)];
+    const candidate = Math.max(0, answerValue + delta);
+    const formatted = formatDecimalAnswer(candidate);
+    if (formatted !== correct) {
+      pool.add(formatted);
+    }
   }
-  return uniqueSortedNumbers(shuffle(options).slice(0, 4));
+
+  return shuffle(Array.from(pool).slice(0, 4));
 };
 
-const createProblem = (stage: number, solvedCount: number): RemainderProblem => {
-  const mode = modeForStage(stage);
-  const speedRound = speedRoundForState(solvedCount, stage);
+const createDecimalProblem = (stage: number): RemainderProblem => {
+  const divisorPool = stage <= 9 ? [2, 4, 8, 10] : [2, 4, 5, 8, 10];
+  const divisor = divisorPool[randomInt(0, divisorPool.length - 1)];
+  const compatibleRemainders = divisor === 5
+    ? [1, 2, 3, 4]
+    : divisor === 10
+      ? [1, 2, 3, 4, 5, 6, 7, 8, 9]
+      : [divisor / 2];
+  const remainder = compatibleRemainders[randomInt(0, compatibleRemainders.length - 1)];
+  const quotient = randomInt(stage <= 9 ? 10 : 18, stage <= 9 ? 49 : 84);
+  const dividend = (divisor * quotient) + remainder;
+  const answerValue = quotient + (remainder / divisor);
+
+  return {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    dividend,
+    displayDividend: `${dividend}.0`,
+    divisor,
+    quotient,
+    remainder,
+    answerMode: 'decimal',
+    answerLabel: formatDecimalAnswer(answerValue),
+    options: buildDecimalOptions(answerValue, stage),
+    stage,
+  };
+};
+
+const createProblem = (stage: number): RemainderProblem => {
+  if (stage >= 7) {
+    return createDecimalProblem(stage);
+  }
 
   let divisorMin = 2;
-  let divisorMax = 5;
+  let divisorMax = 6;
   let quotientMin = 2;
-  let quotientMax = 10;
+  let quotientMax = 9;
 
   if (stage >= 4 && stage <= 7) {
     divisorMin = 3;
@@ -128,41 +147,23 @@ const createProblem = (stage: number, solvedCount: number): RemainderProblem => 
     quotientMax = 24;
   }
 
-  if (speedRound) {
-    divisorMin = 2;
-    divisorMax = 6;
-    quotientMin = 2;
-    quotientMax = 9;
-  }
-
   const divisor = randomInt(divisorMin, divisorMax);
   const quotient = randomInt(quotientMin, quotientMax);
   const useZeroRemainder = randomInt(0, 9) < (stage <= 2 ? 3 : 2);
-  const remainder = useZeroRemainder ? 0 : randomInt(1, divisor - 1);
+  const remainder = useZeroRemainder ? 0 : randomInt(1, Math.max(1, divisor - 1));
   const dividend = (divisor * quotient) + remainder;
-  const style: PromptStyle = stage >= 9 && randomInt(0, 1) === 1 ? 'leftover' : 'equation';
-
-  const mcqOptions = mode === 'mcq' ? createChoiceOptions(quotient, remainder, divisor) : [];
-  const quotientOptions = mode === 'split'
-    ? createSplitOptions(quotient, 0, Math.max(quotient + 4, 18))
-    : [];
-  const remainderOptions = mode === 'split'
-    ? createSplitOptions(remainder, 0, Math.max(divisor - 1, 6))
-    : [];
 
   return {
-    id: createId(),
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     dividend,
+    displayDividend: String(dividend),
     divisor,
     quotient,
     remainder,
-    mode,
-    style,
+    answerMode: 'remainder',
+    answerLabel: makeAnswerLabel(quotient, remainder),
+    options: buildRemainderOptions(quotient, remainder, stage),
     stage,
-    speedRound,
-    mcqOptions,
-    quotientOptions,
-    remainderOptions,
   };
 };
 
@@ -175,16 +176,52 @@ const starsFromPerformance = (XP: number, correct: number, attempts: number, sta
   return 1;
 };
 
-const problemPromptTitle = (problem: RemainderProblem) => {
-  if (problem.style === 'leftover') return 'How many left over?';
-  return 'Solve the division';
-};
+const digitColors = ['text-violet-500', 'text-emerald-500', 'text-blue-500', 'text-pink-500', 'text-amber-500', 'text-cyan-500'];
 
-const problemPromptBody = (problem: RemainderProblem) => {
-  if (problem.style === 'leftover') {
-    return `${problem.dividend} sweets shared between ${problem.divisor} boxes.`;
-  }
-  return `${problem.dividend} / ${problem.divisor} = ? r ?`;
+const LongDivisionVisual: React.FC<{ problem: RemainderProblem }> = ({ problem }) => {
+  const digits = String(problem.dividend).split('');
+  const quotientText = makeAnswerLabel(problem.quotient, problem.remainder);
+
+  return (
+    <div className="relative overflow-hidden rounded-[1.6rem] border border-violet-200/24 bg-white px-4 py-4 shadow-[0_18px_34px_rgba(2,6,23,0.12)] md:rounded-[2rem] md:px-6 md:py-6">
+      <div className="text-left text-[clamp(1.2rem,4.6vw,2rem)] font-black tracking-tight text-violet-500">
+        {problem.dividend} ÷ {problem.divisor} =
+      </div>
+
+      <div className="relative mt-8 flex items-center justify-center">
+        <div className="relative mr-5 text-[clamp(2.9rem,14vw,5.6rem)] font-black leading-none text-violet-500 md:mr-7">
+          {problem.divisor}
+        </div>
+
+        <div className="relative flex items-start">
+          <div className="absolute left-[0.3rem] top-[-0.55rem] h-[3.8rem] w-[0.45rem] rounded-full bg-violet-500 md:h-[4.8rem]" />
+          <div className="absolute left-[0.55rem] top-[-0.55rem] h-[0.45rem] w-[clamp(10rem,46vw,18rem)] rounded-full bg-violet-500 md:w-[clamp(14rem,48vw,22rem)]" />
+          <div className="pl-[clamp(1.55rem,6vw,2.2rem)] pt-[clamp(0.05rem,1vw,0.3rem)]">
+            <div className="flex items-end gap-[0.06em] text-[clamp(3.4rem,15vw,6.6rem)] font-black leading-none md:gap-[0.08em]">
+              {digits.map((digit, index) => (
+                <span
+                  key={`${problem.id}-${index}`}
+                  className={`${digitColors[index % digitColors.length]} drop-shadow-[0_1px_0_rgba(255,255,255,0.42)]`}
+                >
+                  {digit}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-4 text-left text-[clamp(1.3rem,4.8vw,2rem)] font-semibold text-slate-900">
+        What is {problem.dividend} ÷ {problem.divisor}?
+      </div>
+      <div className="mt-1 text-left text-[clamp(1rem,3.8vw,1.25rem)] text-slate-600">
+        You may need a pen and paper.
+      </div>
+      <div className="mt-4 inline-flex rounded-full border border-violet-200/30 bg-violet-50 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.14em] text-violet-600">
+        Answer: {quotientText}
+      </div>
+    </div>
+  );
 };
 
 const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
@@ -192,30 +229,25 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
   miniGameLevel,
   useSharedTopHud = false,
   onVictory,
-  onGameOver: _onGameOver,
-  onBack,
+  onGameOver,
+  onBack: _onBack,
 }) => {
   const baseLevel = Math.max(1, Math.min(12, miniGameLevel || levelId || 1));
   const initialRoundTime = useMemo(() => roundSecondsForLevel(baseLevel), [baseLevel]);
 
   const [timeLeft, setTimeLeft] = useState(initialRoundTime);
   const [XP, setScore] = useState(0);
-  const [Combo, setStreak] = useState(0);
+  const [combo, setCombo] = useState(0);
   const [solvedCount, setSolvedCount] = useState(0);
   const [attemptCount, setAttemptCount] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [roundOver, setRoundOver] = useState(false);
-  const [feedback, setFeedback] = useState<FeedbackState | null>(null);
+  const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [isLocked, setIsLocked] = useState(false);
-  const [selectedSplitQ, setSelectedSplitQ] = useState<number | null>(null);
-  const [selectedSplitR, setSelectedSplitR] = useState<number | null>(null);
-  const [manualQ, setManualQ] = useState('');
-  const [manualR, setManualR] = useState('');
-  const [manualField, setManualField] = useState<'q' | 'r'>('q');
 
   const [problem, setProblem] = useState<RemainderProblem>(() => {
     const startStage = stageFromProgress(baseLevel, 0, initialRoundTime);
-    return createProblem(startStage, 0);
+    return createProblem(startStage);
   });
 
   const questionStartRef = useRef<number>(Date.now());
@@ -227,27 +259,22 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
     timeoutRefs.current = [];
   };
 
-  useEffect(() => clearTimeouts, []);
+  useEffect(() => () => clearTimeouts(), []);
 
   useEffect(() => {
     clearTimeouts();
     finishGuardRef.current = false;
     setTimeLeft(initialRoundTime);
     setScore(0);
-    setStreak(0);
+    setCombo(0);
     setSolvedCount(0);
     setAttemptCount(0);
     setCorrectCount(0);
     setRoundOver(false);
     setFeedback(null);
     setIsLocked(false);
-    setSelectedSplitQ(null);
-    setSelectedSplitR(null);
-    setManualQ('');
-    setManualR('');
-    setManualField('q');
     const nextStage = stageFromProgress(baseLevel, 0, initialRoundTime);
-    setProblem(createProblem(nextStage, 0));
+    setProblem(createProblem(nextStage));
     questionStartRef.current = Date.now();
   }, [baseLevel, initialRoundTime]);
 
@@ -286,12 +313,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
     const timer = window.setTimeout(() => {
       if (finishGuardRef.current) return;
       const nextStage = stageFromProgress(baseLevel, nextSolvedCount, timeLeft);
-      setProblem(createProblem(nextStage, nextSolvedCount));
-      setSelectedSplitQ(null);
-      setSelectedSplitR(null);
-      setManualQ('');
-      setManualR('');
-      setManualField('q');
+      setProblem(createProblem(nextStage));
       setFeedback(null);
       setIsLocked(false);
       questionStartRef.current = Date.now();
@@ -299,13 +321,14 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
     timeoutRefs.current.push(timer);
   }, [baseLevel, timeLeft]);
 
-  const evaluateAnswer = useCallback((answerQ: number, answerR: number) => {
+  const evaluateAnswer = useCallback((selectedAnswer: string) => {
     if (roundOver || isLocked) return;
     setIsLocked(true);
 
     const nextAttempts = attemptCount + 1;
     const nextSolved = solvedCount + 1;
-    const isCorrect = answerQ === problem.quotient && answerR === problem.remainder;
+    const correctAnswer = makeAnswerLabel(problem.quotient, problem.remainder);
+    const isCorrect = selectedAnswer === correctAnswer;
 
     setAttemptCount(nextAttempts);
     setSolvedCount(nextSolved);
@@ -314,14 +337,13 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
       const elapsedMs = Math.max(250, Date.now() - questionStartRef.current);
       const speedBonus = Math.max(20, Math.round(160 - (elapsedMs / 18)));
       const difficultyBonus = 80 + (problem.stage * 14);
-      const streakMultiplier = 1 + Math.min(0.9, Combo * 0.08);
-      const speedRoundBonus = problem.speedRound ? 70 : 0;
-      const points = Math.round((difficultyBonus + speedBonus + speedRoundBonus) * streakMultiplier);
+      const streakMultiplier = 1 + Math.min(0.9, combo * 0.08);
+      const points = Math.round((difficultyBonus + speedBonus) * streakMultiplier);
 
       triggerHaptic('success');
       setScore((prev) => prev + points);
       setCorrectCount((prev) => prev + 1);
-      setStreak((prev) => prev + 1);
+      setCombo((prev) => prev + 1);
       setFeedback({
         tone: 'success',
         title: 'Correct',
@@ -335,284 +357,91 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
         colors: ['#4ade80', '#facc15', '#ffffff'],
       });
 
-      moveToNextProblem(nextSolved, 280);
+      moveToNextProblem(nextSolved, 320);
       return;
     }
 
     triggerHaptic('error');
-    setStreak(0);
+    setCombo(0);
     setScore((prev) => Math.max(0, prev - 25));
     setTimeLeft((prev) => Math.max(0, prev - 2));
     setFeedback({
       tone: 'error',
       title: 'Not quite',
-      subtitle: `Answer: ${problem.quotient} r ${problem.remainder}`,
+      subtitle: `Answer: ${correctAnswer}`,
     });
-    moveToNextProblem(nextSolved, 520);
-  }, [attemptCount, isLocked, moveToNextProblem, problem, roundOver, solvedCount, Combo]);
+    moveToNextProblem(nextSolved, 620);
+  }, [attemptCount, combo, isLocked, moveToNextProblem, problem, roundOver, solvedCount]);
 
-  const submitManual = () => {
-    if (roundOver || isLocked) return;
-    const q = Number.parseInt(manualQ || '', 10);
-    const r = Number.parseInt(manualR || '', 10);
-    if (Number.isNaN(q) || Number.isNaN(r)) {
-      triggerHaptic('warning');
-      setFeedback({ tone: 'error', title: 'Need both values', subtitle: 'Enter quotient and remainder.' });
-      const t = window.setTimeout(() => setFeedback(null), 420);
-      timeoutRefs.current.push(t);
-      return;
-    }
-    evaluateAnswer(q, r);
-  };
+  const showTopHud = !useSharedTopHud;
 
-  const handleManualKeypad = (value: string) => {
-    if (roundOver || isLocked) return;
-    if (value === 'DEL') {
-      if (manualField === 'q') {
-        setManualQ((prev) => prev.slice(0, -1));
-      } else {
-        setManualR((prev) => prev.slice(0, -1));
-      }
-      return;
-    }
-
-    if (manualField === 'q') {
-      setManualQ((prev) => (prev.length >= 2 ? prev : `${prev}${value}`));
-    } else {
-      setManualR((prev) => (prev.length >= 2 ? prev : `${prev}${value}`));
-    }
-  };
-
-  useEffect(() => {
-    if (problem.mode !== 'split' || roundOver || isLocked) return;
-    if (selectedSplitQ === null || selectedSplitR === null) return;
-    const timer = window.setTimeout(() => evaluateAnswer(selectedSplitQ, selectedSplitR), 90);
-    timeoutRefs.current.push(timer);
-  }, [evaluateAnswer, isLocked, problem.mode, roundOver, selectedSplitQ, selectedSplitR]);
-
-  const topPaddingClass = useSharedTopHud
-    ? 'pt-[calc(env(safe-area-inset-top)+5.8rem)]'
-    : 'pt-[max(0.25rem,env(safe-area-inset-top))]';
-
-  const showVisualAid = problem.stage <= 2;
-  const visualAidGroups = useMemo(() => {
-    if (!showVisualAid) return [];
-    const groups: Array<{ id: string; count: number }> = [];
-    let remaining = problem.dividend;
-    let idx = 0;
-    while (remaining > 0 && idx < 24) {
-      const count = Math.min(problem.divisor, remaining);
-      groups.push({ id: `g-${idx}`, count });
-      remaining -= count;
-      idx += 1;
-    }
-    return groups;
-  }, [problem.dividend, problem.divisor, showVisualAid]);
+  const title = 'Remainder Run';
 
   return (
-    <div className="relative z-20 h-full w-full overflow-hidden bg-[#08162c] select-none">
-      <img
-        src={gameplayBackground}
-        alt=""
-        aria-hidden="true"
-        draggable={false}
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
-      />
+    <div className="relative z-20 h-full w-full overflow-hidden select-none bg-slate-950">
+      <GameplaySceneBackdrop gameType="remainder_run" />
+
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),rgba(15,23,42,0.06)_32%,rgba(2,6,23,0.36)_100%)]" />
 
       <main
-        className={`relative z-20 flex h-full w-full flex-col ${topPaddingClass} px-[max(0.75rem,env(safe-area-inset-left))] pb-[max(7.25rem,calc(env(safe-area-inset-bottom)+6.2rem))]`}
+        className={`relative z-20 flex h-full w-full flex-col ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.8rem)]' : 'pt-[max(0.25rem,env(safe-area-inset-top))]'} px-[max(0.75rem,env(safe-area-inset-left))] pb-[max(1rem,env(safe-area-inset-bottom))]`}
       >
-        <div className="mx-auto flex h-full w-full max-w-[30rem] min-h-0 flex-col gap-2.5">
-          {!useSharedTopHud ? (
-            <header className="rounded-[1.25rem] border border-cyan-100/20 bg-slate-950/58 px-3 py-2.5 shadow-[0_12px_22px_rgba(2,6,23,0.46)]">
-              <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2.5">
-                <div>
-                  <div className="text-[9px] font-black uppercase tracking-[0.18em] text-cyan-100/75">Time Attack</div>
-                  <div className="relative mt-1 h-3.5 overflow-hidden rounded-full border border-cyan-100/26 bg-blue-950/58">
+        <div className="mx-auto flex h-full w-full max-w-[30rem] min-h-0 flex-col gap-2">
+          {showTopHud ? (
+            <header className="rounded-[1.1rem] border border-violet-200/24 bg-white/92 px-3 py-2 shadow-[0_10px_18px_rgba(2,6,23,0.18)] backdrop-blur-sm">
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0 flex-1">
+                  <div className="text-[9px] font-black uppercase tracking-[0.18em] text-violet-500/70">Time</div>
+                  <div className="relative mt-1 h-3 overflow-hidden rounded-full border border-violet-200/30 bg-violet-50">
                     <motion.div
                       className="absolute inset-y-0 left-0 rounded-full"
                       animate={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }}
                       transition={{ duration: 0.24, ease: 'easeOut' }}
-                      style={{ boxShadow: '0 0 12px rgba(34,197,94,0.45)' }}
+                      style={{ boxShadow: '0 0 12px rgba(168,85,247,0.22)' }}
                     />
-                    <div className="absolute inset-[1px] rounded-full bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:12%_100%]" />
                   </div>
                 </div>
-
-                <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.16em] text-cyan-100/65">XP</div>
-                  <div className="text-sm font-black text-white">{XP}</div>
+                <div className="shrink-0 rounded-full border border-violet-200/30 bg-violet-50 px-3 py-1 text-center">
+                  <div className="text-[8px] font-black uppercase tracking-[0.16em] text-violet-500/70">XP</div>
+                  <div className="text-sm font-black text-slate-900">{XP}</div>
                 </div>
-
               </div>
             </header>
           ) : null}
 
-          <section className="min-h-0 rounded-[1.5rem] border border-cyan-100/18 bg-slate-950/54 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
+          <section className="min-h-0 rounded-[1.3rem] border border-white/16 bg-white/12 p-2.5 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
             <GameQuestionCard
-              title={problem.speedRound ? 'Speed Round' : 'Remainder Rush'}
-              subtitle={problemPromptBody(problem)}
-              className="mx-auto max-w-[30rem]"
+              title={title}
+              subtitle="You may need a pen and paper."
+              className="mx-auto max-w-[30rem] border border-violet-200/26 bg-[linear-gradient(180deg,rgba(60,16,144,0.92),rgba(27,11,74,0.88))] shadow-[0_12px_24px_rgba(2,6,23,0.16)]"
+              titleClassName="text-violet-100"
             >
-              {problemPromptTitle(problem)}
+              What is {problem.dividend} ÷ {problem.divisor}?
             </GameQuestionCard>
 
-            {showVisualAid ? (
-              <div className="mt-2.5 rounded-[1rem] border border-cyan-100/16 bg-blue-950/40 p-2">
-                <div className="text-[9px] font-black uppercase tracking-[0.15em] text-cyan-100/70">Grouping aid</div>
-                <div className="mt-1.5 flex flex-wrap gap-1.5">
-                  {visualAidGroups.map((group, groupIndex) => (
-                    <div key={group.id} className="flex items-center gap-1 rounded-full border border-white/12 bg-white/8 px-2 py-1">
-                      <span className="text-[9px] font-black text-cyan-100/78">{groupIndex + 1}</span>
-                      <div className="flex gap-0.5">
-                        {Array.from({ length: group.count }).map((_, idx) => (
-                          <span key={`${group.id}-${idx}`} className="h-1.5 w-1.5 rounded-full bg-cyan-200/90" />
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : null}
+            <div className="mt-2">
+              <LongDivisionVisual problem={problem} />
+            </div>
           </section>
 
-          <section className="min-h-0 flex-1 rounded-[1.5rem] border border-cyan-100/18 bg-slate-950/54 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
-            {problem.mode === 'mcq' ? (
-              <div className="grid h-full grid-rows-[auto_1fr] gap-2.5">
-                <div className="text-center text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/74">Tap the correct quotient and remainder</div>
-                <div className="grid grid-cols-2 gap-2.5">
-                  {problem.mcqOptions.map((option, idx) => (
-                    <button
-                      key={`mcq-${idx}-${option.q}-${option.r}`}
-                      type="button"
-                      disabled={isLocked || roundOver}
-                      onClick={() => evaluateAnswer(option.q, option.r)}
-                      className="ui-button-primary rounded-[1rem] p-3 text-center disabled:opacity-55"
-                    >
-                      <div className="text-[11px] font-black uppercase tracking-[0.12em]">Option {idx + 1}</div>
-                      <div className="mt-1 text-[clamp(1.1rem,5vw,1.65rem)] font-black">{option.q} r {option.r}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-
-            {problem.mode === 'split' ? (
-              <div className="grid h-full grid-rows-[auto_auto_1fr] gap-2.5">
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="rounded-[0.95rem] border border-cyan-200/32 bg-cyan-950/24 p-2.5 text-center">
-                    <div className="text-[9px] font-black uppercase tracking-[0.14em] text-cyan-100/76">Quotient</div>
-                    <div className="mt-1 text-[clamp(1.35rem,5.5vw,2rem)] font-black text-white">
-                      {selectedSplitQ === null ? '--' : selectedSplitQ}
-                    </div>
-                  </div>
-                  <div className="rounded-[0.95rem] border border-amber-200/32 bg-amber-950/24 p-2.5 text-center">
-                    <div className="text-[9px] font-black uppercase tracking-[0.14em] text-amber-100/76">Remainder</div>
-                    <div className="mt-1 text-[clamp(1.35rem,5.5vw,2rem)] font-black text-white">
-                      {selectedSplitR === null ? '--' : selectedSplitR}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="text-center text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/74">Choose quotient</div>
-                  <div className="text-center text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/74">Choose remainder</div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2.5">
-                  <div className="grid grid-cols-2 gap-2">
-                    {problem.quotientOptions.map((value) => (
-                      <button
-                        key={`split-q-${value}`}
-                        type="button"
-                        disabled={isLocked || roundOver}
-                        onClick={() => setSelectedSplitQ(value)}
-                        className={`rounded-[0.95rem] p-2 text-[clamp(1rem,4.5vw,1.4rem)] font-black disabled:opacity-55 ${
-                          selectedSplitQ === value
-                            ? 'ui-button-primary'
-                            : 'ui-button-secondary'
-                        }`}
-                      >
-                        {value}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    {problem.remainderOptions.map((value) => (
-                      <button
-                        key={`split-r-${value}`}
-                        type="button"
-                        disabled={isLocked || roundOver}
-                        onClick={() => setSelectedSplitR(value)}
-                        className={`rounded-[0.95rem] p-2 text-[clamp(1rem,4.5vw,1.4rem)] font-black disabled:opacity-55 ${
-                          selectedSplitR === value
-                            ? 'ui-button-primary'
-                            : 'ui-button-secondary'
-                        }`}
-                      >
-                        {value}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ) : null}
-
-            {problem.mode === 'manual' ? (
-              <div className="grid h-full grid-rows-[auto_auto_1fr_auto] gap-2.5">
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setManualField('q')}
-                    className={`rounded-[0.95rem] p-2.5 text-center ${
-                      manualField === 'q' ? 'ui-button-primary' : 'ui-button-secondary'
-                    }`}
-                  >
-                    <div className="text-[9px] font-black uppercase tracking-[0.14em] text-cyan-100/78">Quotient</div>
-                    <div className="mt-1 text-[clamp(1.25rem,5.5vw,1.85rem)] font-black text-white">{manualQ || '--'}</div>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setManualField('r')}
-                    className={`rounded-[0.95rem] p-2.5 text-center ${
-                      manualField === 'r' ? 'ui-button-primary' : 'ui-button-secondary'
-                    }`}
-                  >
-                    <div className="text-[9px] font-black uppercase tracking-[0.14em] text-amber-100/78">Remainder</div>
-                    <div className="mt-1 text-[clamp(1.25rem,5.5vw,1.85rem)] font-black text-white">{manualR || '--'}</div>
-                  </button>
-                </div>
-
-                <div className="text-center text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/74">
-                  Tap digits, then submit
-                </div>
-
-                <div className="grid grid-cols-3 gap-2">
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 'DEL'].map((key) => (
-                    <button
-                      key={`key-${key}`}
-                      type="button"
-                      disabled={isLocked || roundOver}
-                      onClick={() => handleManualKeypad(String(key))}
-                      className={`ui-button-secondary rounded-[0.92rem] p-2.5 text-[clamp(0.95rem,4.4vw,1.35rem)] font-black ${
-                        key === 'DEL' ? 'col-span-2' : ''
-                      } disabled:opacity-55`}
-                    >
-                      {key}
-                    </button>
-                  ))}
-                </div>
-
+          <section className="min-h-0 flex-1 rounded-[1.3rem] border border-white/16 bg-white/10 p-2.5 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
+            <div className="text-center text-[10px] font-black uppercase tracking-[0.16em] text-white/80">
+              Tap the correct quotient and remainder
+            </div>
+            <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              {problem.options.map((option, index) => (
                 <button
+                  key={`${problem.id}-${option}-${index}`}
                   type="button"
-                  onClick={submitManual}
                   disabled={isLocked || roundOver}
-                  className="ui-button-primary rounded-[1rem] py-2.5 text-sm font-black uppercase tracking-[0.14em] disabled:opacity-55"
+                  onClick={() => evaluateAnswer(option)}
+                  className="relative min-h-[3.4rem] rounded-[0.95rem] border border-white/16 bg-white/92 px-3 py-2 text-left shadow-[0_8px_18px_rgba(2,6,23,0.08)] transition-transform duration-150 hover:scale-[1.01] disabled:opacity-55"
                 >
-                  Submit Answer
+                  <span className="text-[clamp(1rem,4.2vw,1.45rem)] font-black text-slate-800">{option}</span>
+                  <span className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full border border-slate-400/70" />
                 </button>
-              </div>
-            ) : null}
+              ))}
+            </div>
           </section>
         </div>
       </main>
@@ -624,7 +453,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
             initial={{ opacity: 0, scale: 0.88 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.08 }}
-            className={`pointer-events-none absolute left-1/2 top-[calc(env(safe-area-inset-top)+5.1rem)] z-50 -translate-x-1/2 rounded-[1rem] border px-4 py-2 text-center shadow-[0_14px_24px_rgba(2,6,23,0.45)] ${
+            className={`pointer-events-none absolute left-1/2 top-[calc(env(safe-area-inset-top)+5.1rem)] z-50 -translate-x-1/2 rounded-[1rem] border px-4 py-2 text-center shadow-[0_14px_24px_rgba(2,6,23,0.35)] ${
               feedback.tone === 'success'
                 ? 'border-emerald-100/62 bg-emerald-500/28 text-emerald-50'
                 : 'border-rose-100/62 bg-rose-500/30 text-amber-50'
@@ -635,16 +464,8 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
           </motion.div>
         ) : null}
       </AnimatePresence>
-
-      <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.45rem,env(safe-area-inset-bottom))] z-40 flex justify-center px-3">
-        <div className="pointer-events-auto">
-        </div>
-      </div>
     </div>
   );
 };
 
 export default RemainderRunGame;
-
-
-

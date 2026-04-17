@@ -105,6 +105,7 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   measurement_forge: withBackground(RATIO_SCENE, scaleMasterBackground),
   timekeeper_temple: withBackground(DATA_SCENE, chronoDashTimeTrialBackground),
   ratio_rapids: withBackground(RATIO_SCENE, scaleMasterBackground),
+  remainder_run: withBackground(RATIO_SCENE, primePopBackground),
   place_value_peaks: withBackground(NUMBER_SCENE, placeValuePanicBackground),
   calculation_clash: withBackground(NUMBER_SCENE, calculationCupBackground),
   coordinate_quest: withBackground(GEOMETRY_SCENE, coordinateQuestBackground),

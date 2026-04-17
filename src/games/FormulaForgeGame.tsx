@@ -31,6 +31,7 @@ interface GivenValue {
 interface FormulaRound {
   id: string;
   kind: 'fluency' | 'reasoning';
+  diagram: 'rectangle' | 'triangle' | 'cuboid';
   title: string;
   formula: string;
   prompt: string;
@@ -83,6 +84,7 @@ const buildAreaRound = (mode: SolveMode, level: number): FormulaRound => {
     return {
       id: `area-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
       kind: 'reasoning',
+      diagram: 'rectangle',
       title: 'Rectangle Area',
       formula: 'A = l × w',
       prompt: `Missing ${missing === 'l' ? 'l' : 'w'} for A = ${area}.`,
@@ -99,6 +101,7 @@ const buildAreaRound = (mode: SolveMode, level: number): FormulaRound => {
   return {
     id: `area-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
     kind: 'fluency',
+    diagram: 'rectangle',
     title: 'Rectangle Area',
     formula: 'A = l × w',
     prompt: 'Find area.',
@@ -121,6 +124,7 @@ const buildPerimeterRound = (mode: SolveMode, level: number): FormulaRound => {
     return {
       id: `perimeter-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
       kind: 'reasoning',
+      diagram: 'rectangle',
       title: 'Rectangle Perimeter',
       formula: 'P = 2(l + w)',
       prompt: `Missing ${missing === 'l' ? 'l' : 'w'} for P = ${perimeter}.`,
@@ -137,6 +141,7 @@ const buildPerimeterRound = (mode: SolveMode, level: number): FormulaRound => {
   return {
     id: `perimeter-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
     kind: 'fluency',
+    diagram: 'rectangle',
     title: 'Rectangle Perimeter',
     formula: 'P = 2(l + w)',
     prompt: 'Find perimeter.',
@@ -155,6 +160,7 @@ const buildTriangleRound = (level: number): FormulaRound => {
   return {
     id: `triangle-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
     kind: 'fluency',
+    diagram: 'triangle',
     title: 'Triangle Area',
     formula: 'A = (b × h) ÷ 2',
     prompt: 'Find area.',
@@ -178,6 +184,7 @@ const buildVolumeRound = (mode: SolveMode, level: number): FormulaRound => {
     return {
       id: `volume-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
       kind: 'reasoning',
+      diagram: 'cuboid',
       title: 'Cuboid Volume',
       formula: 'V = l × w × h',
       prompt: `Missing ${missing === 'l' ? 'l' : 'h'} for V = ${volume}.`,
@@ -194,6 +201,7 @@ const buildVolumeRound = (mode: SolveMode, level: number): FormulaRound => {
   return {
     id: `volume-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
     kind: 'fluency',
+    diagram: 'cuboid',
     title: 'Cuboid Volume',
     formula: 'V = l × w × h',
     prompt: 'Find volume.',
@@ -226,6 +234,137 @@ const scoreToStars = (correct: number, rounds: number, lives: number) => {
   if (accuracy >= 0.9 && lives >= 2) return 3;
   if (accuracy >= 0.7) return 2;
   return 1;
+};
+
+const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
+  const valueFor = (label: string) => round.given.find((item) => item.label === label)?.value ?? 0;
+  const formulaSummary = round.diagram === 'triangle'
+    ? 'A = (b × h) ÷ 2'
+    : round.diagram === 'cuboid'
+      ? 'V = l × w × h'
+      : round.title === 'Rectangle Perimeter'
+        ? 'P = 2(l + w)'
+        : 'A = l × w';
+
+  if (round.diagram === 'triangle') {
+    const base = valueFor('b');
+    const height = valueFor('h');
+
+    return (
+      <div className="rounded-[1.35rem] border border-cyan-200/14 bg-[linear-gradient(180deg,rgba(8,18,36,0.45),rgba(15,23,42,0.2))] p-3 shadow-[0_12px_22px_rgba(2,6,23,0.12)] md:p-4">
+        <div className="flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/72 md:text-[11px]">
+          <span>Shape blueprint</span>
+          <span>{round.title}</span>
+        </div>
+        <div className="mt-2 rounded-[0.95rem] border border-white/10 bg-black/14 px-3 py-2 text-sm font-semibold text-cyan-50/88">
+          {round.prompt}
+        </div>
+        <div className="relative mt-3 aspect-[1.3/1] overflow-hidden rounded-[1.4rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.16),rgba(15,23,42,0.06)_42%,rgba(8,15,30,0.28)_100%)] p-3">
+          <div className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full border border-cyan-200/20 bg-slate-950/40 px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100">
+            base = {base}
+          </div>
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 -rotate-90 rounded-full border border-cyan-200/20 bg-slate-950/40 px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100">
+            height = {height}
+          </div>
+          <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full">
+            <polygon points="50,16 18,78 82,78" fill="rgba(56,189,248,0.16)" stroke="rgba(191,219,254,0.9)" strokeWidth="2.2" />
+            <line x1="50" y1="16" x2="50" y2="78" stroke="rgba(191,219,254,0.45)" strokeDasharray="3 3" strokeWidth="1.2" />
+          </svg>
+          <div className="absolute inset-x-0 bottom-4 flex justify-center">
+            <div className="rounded-full border border-white/10 bg-black/38 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.15em] text-amber-100">
+              {formulaSummary}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (round.diagram === 'cuboid') {
+    const length = valueFor('l');
+    const width = valueFor('w');
+    const height = valueFor('h');
+
+    return (
+      <div className="rounded-[1.35rem] border border-cyan-200/14 bg-[linear-gradient(180deg,rgba(8,18,36,0.45),rgba(15,23,42,0.2))] p-3 shadow-[0_12px_22px_rgba(2,6,23,0.12)] md:p-4">
+        <div className="flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/72 md:text-[11px]">
+          <span>Shape blueprint</span>
+          <span>{round.title}</span>
+        </div>
+        <div className="mt-2 rounded-[0.95rem] border border-white/10 bg-black/14 px-3 py-2 text-sm font-semibold text-cyan-50/88">
+          {round.prompt}
+        </div>
+        <div className="relative mt-3 aspect-[1.25/1] overflow-hidden rounded-[1.4rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.16),rgba(15,23,42,0.06)_42%,rgba(8,15,30,0.28)_100%)] p-3">
+          <div className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full border border-cyan-200/20 bg-slate-950/40 px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100">
+            height = {height}
+          </div>
+          <div className="absolute left-4 bottom-4 rounded-full border border-cyan-200/20 bg-slate-950/40 px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100">
+            l = {length}
+          </div>
+          <div className="absolute right-4 bottom-10 rounded-full border border-cyan-200/20 bg-slate-950/40 px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100">
+            w = {width}
+          </div>
+          <svg viewBox="0 0 120 100" className="absolute inset-0 h-full w-full">
+            <polygon points="28,24 70,24 92,40 50,40" fill="rgba(56,189,248,0.18)" stroke="rgba(191,219,254,0.9)" strokeWidth="2" />
+            <polygon points="28,24 28,66 50,82 50,40" fill="rgba(14,165,233,0.12)" stroke="rgba(191,219,254,0.85)" strokeWidth="2" />
+            <polygon points="50,40 92,40 92,82 50,82" fill="rgba(15,118,110,0.12)" stroke="rgba(191,219,254,0.85)" strokeWidth="2" />
+            <line x1="28" y1="24" x2="50" y2="40" stroke="rgba(191,219,254,0.45)" strokeWidth="1.2" />
+            <line x1="70" y1="24" x2="92" y2="40" stroke="rgba(191,219,254,0.45)" strokeWidth="1.2" />
+            <line x1="50" y1="40" x2="50" y2="82" stroke="rgba(191,219,254,0.45)" strokeWidth="1.2" />
+          </svg>
+          <div className="absolute inset-x-0 bottom-4 flex justify-center">
+            <div className="rounded-full border border-white/10 bg-black/38 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.15em] text-amber-100">
+              {formulaSummary}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const length = valueFor('l');
+  const width = valueFor('w');
+
+  return (
+    <div className="rounded-[1.35rem] border border-cyan-200/14 bg-[linear-gradient(180deg,rgba(8,18,36,0.45),rgba(15,23,42,0.2))] p-3 shadow-[0_12px_22px_rgba(2,6,23,0.12)] md:p-4">
+      <div className="flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/72 md:text-[11px]">
+        <span>Shape blueprint</span>
+        <span>{round.title}</span>
+      </div>
+      <div className="mt-2 rounded-[0.95rem] border border-white/10 bg-black/14 px-3 py-2 text-sm font-semibold text-cyan-50/88">
+        {round.prompt}
+      </div>
+      <div className="relative mt-3 aspect-[1.25/1] overflow-hidden rounded-[1.4rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.16),rgba(15,23,42,0.06)_42%,rgba(8,15,30,0.28)_100%)] p-3">
+        <div className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full border border-cyan-200/20 bg-slate-950/40 px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100">
+          w = {width}
+        </div>
+        <div className="absolute left-3 top-1/2 -translate-y-1/2 -rotate-90 rounded-full border border-cyan-200/20 bg-slate-950/40 px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100">
+          l = {length}
+        </div>
+        <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full">
+          <rect x="18" y="18" width="64" height="64" rx="10" fill="rgba(56,189,248,0.16)" stroke="rgba(191,219,254,0.9)" strokeWidth="2.5" />
+          <g opacity="0.24" stroke="rgba(255,255,255,0.85)" strokeWidth="0.8">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <React.Fragment key={`grid-${index}`}>
+                <line x1={18 + ((index + 1) * 12)} y1="18" x2={18 + ((index + 1) * 12)} y2="82" />
+                <line x1="18" y1={18 + ((index + 1) * 12)} x2="82" y2={18 + ((index + 1) * 12)} />
+              </React.Fragment>
+            ))}
+          </g>
+        </svg>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="rounded-full border border-white/10 bg-black/38 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.15em] text-amber-100">
+            {formulaSummary}
+          </div>
+        </div>
+        <div className="absolute inset-x-0 bottom-4 flex justify-center">
+          <div className="rounded-full border border-white/10 bg-black/38 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.15em] text-amber-100">
+            {round.title === 'Rectangle Perimeter' ? `P = ?` : `A = ?`}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
@@ -350,43 +489,23 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
 
       <div className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.75rem)] md:pt-[calc(env(safe-area-inset-top)+5rem)]' : 'pt-[calc(env(safe-area-inset-top)+2.5rem)]'}`}>
         <PuzzleStage className="w-full max-w-6xl min-h-0 flex-1 rounded-[1.7rem] p-2 md:rounded-[2rem] md:p-3">
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)_24%,rgba(15,23,42,0.2)_100%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.12),rgba(15,23,42,0.02)_36%,rgba(15,23,42,0.08)_100%)]" />
 
           <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-2 md:px-4 md:pb-4">
             <div className="flex justify-center">
-              <GameQuestionCard title="Formula Forge" subtitle={`Round ${roundNumber} of ${totalRounds}`}>
-                {formatFantasyPrompt(round.prompt)}
+              <GameQuestionCard
+                title="Formula Forge"
+                subtitle={`Round ${roundNumber} of ${totalRounds}`}
+                className="max-w-[860px] border border-cyan-200/22 bg-[linear-gradient(180deg,rgba(8,18,36,0.42),rgba(8,18,36,0.18))] shadow-[0_12px_26px_rgba(2,6,23,0.12)]"
+              >
+                {formatFantasyPrompt('Use the shape blueprint below.')}
               </GameQuestionCard>
             </div>
 
             <div className="mt-3 grid min-h-0 flex-1 grid-rows-[auto_1fr_auto] gap-2 md:gap-3">
-              <div className="grid grid-cols-1 gap-2 md:grid-cols-[1.05fr_0.95fr] md:gap-3">
-                <div className="rounded-[1.25rem] border border-cyan-200/20 bg-[linear-gradient(180deg,rgba(56,189,248,0.16),rgba(15,23,42,0.78))] p-3 shadow-[0_12px_22px_rgba(2,6,23,0.18)] md:p-4">
-                  <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/80 md:text-xs">{round.title}</div>
-                  <div className="mt-2 rounded-[1rem] border border-cyan-200/25 bg-[linear-gradient(180deg,rgba(59,130,246,0.2),rgba(15,23,42,0.55))] p-3 text-center shadow-[0_10px_18px_rgba(2,6,23,0.18)] md:p-4">
-                    <div className="text-[clamp(1.1rem,2.8vw,2.4rem)] font-black tracking-tight text-white whitespace-nowrap">
-                      {round.formula}
-                    </div>
-                  </div>
-                </div>
+              <FormulaShapePanel round={round} />
 
-                <div className="rounded-[1.25rem] border border-emerald-200/18 bg-[linear-gradient(180deg,rgba(16,185,129,0.16),rgba(15,23,42,0.8))] p-3 shadow-[0_12px_22px_rgba(2,6,23,0.18)] md:p-4">
-                  <div className="text-[11px] font-black uppercase tracking-[0.16em] text-emerald-100/85 md:text-xs">Given values</div>
-                  <div className="mt-3 grid gap-2">
-                    {round.given.map((item) => (
-                      <div
-                        key={`${round.id}-${item.label}`}
-                        className="flex items-center justify-between rounded-[0.9rem] border border-white/12 bg-black/20 px-3 py-2 text-sm font-black text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)]"
-                      >
-                        <span className="uppercase tracking-[0.16em] text-cyan-100/70">{item.label}</span>
-                        <span className="text-lg font-black text-amber-100">{item.value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-[1.25rem] border border-white/16 bg-[linear-gradient(180deg,rgba(30,64,175,0.18),rgba(15,23,42,0.82))] p-3 shadow-[0_14px_26px_rgba(2,6,23,0.2)] md:p-4">
+              <div className="rounded-[1.25rem] border border-white/12 bg-[linear-gradient(180deg,rgba(30,64,175,0.08),rgba(15,23,42,0.46))] p-3 shadow-[0_14px_26px_rgba(2,6,23,0.12)] md:p-4">
                 <div className="text-[11px] font-black uppercase tracking-[0.16em] text-amber-100/85 md:text-xs">Choose the correct value for {round.targetLabel}</div>
                 <div className="mt-3 grid grid-cols-2 gap-2 md:gap-3">
                   {round.options.map((option) => (
@@ -403,7 +522,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
                 </div>
               </div>
 
-              <div className="rounded-[1rem] border border-white/10 bg-black/20 px-3 py-2 text-[11px] font-semibold text-cyan-100/80">
+              <div className="rounded-[1rem] border border-white/10 bg-black/10 px-3 py-2 text-[11px] font-semibold text-cyan-100/80">
                 Hint: {round.hint}
               </div>
             </div>

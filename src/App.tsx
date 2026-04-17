@@ -569,10 +569,24 @@ const App: React.FC = () => {
           bullets: [],
         };
       }
+      if (selectedLevel.blueprintKey === 'formula_forge') {
+        return {
+          title: 'Formula Forge',
+          summary: 'Algebra is like a puzzle where letters stand for numbers we don’t know yet, helping us solve problems step by step. Can you complete the formula?',
+          bullets: [],
+        };
+      }
       if (selectedLevel.blueprintKey === 'factor_frenzy') {
         return {
           title: 'Factor Frenzy',
           summary: 'A factor is a number that divides another number exactly, without leaving any remainder. Factors can also be seen as pairs of numbers that, when multiplied together, result in the original number. Help find the hidden factors.',
+          bullets: [],
+        };
+      }
+      if (selectedLevel.blueprintKey === 'remainder_run') {
+        return {
+          title: 'Remainder Run',
+          summary: 'Use long division to work out the quotient and the remainder. Look at the visual, then pick the correct answer.',
           bullets: [],
         };
       }
