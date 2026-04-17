@@ -6,6 +6,7 @@ import {
   Volume2,
   VolumeX,
 } from 'lucide-react';
+import { playGameSound } from '../../audio/gameAudio';
 
 type WrapperProps = {
   children: React.ReactNode;
@@ -113,8 +114,13 @@ export const GameQuestionCard: React.FC<GameQuestionCardProps> = ({
 export const IconButton: React.FC<IconButtonProps> = ({ icon, label, onClick, disabled }) => (
   <button
     type="button"
-    onClick={onClick}
+    onClick={() => {
+      if (disabled) return;
+      playGameSound('tap');
+      onClick?.();
+    }}
     disabled={disabled}
+    data-ui-sound="handled"
     aria-label={label}
     className={cn(
       'ui-icon-button inline-flex h-11 w-11 items-center justify-center p-0',
@@ -172,8 +178,13 @@ export const GameUiShell: React.FC<GameUiShellProps> = ({
 export const PrimaryButton: React.FC<ButtonProps> = ({ children, className, onClick, disabled, type = 'button' }) => (
   <button
     type={type}
-    onClick={onClick}
+    onClick={() => {
+      if (disabled) return;
+      playGameSound('tap');
+      onClick?.();
+    }}
     disabled={disabled}
+    data-ui-sound="handled"
     className={cn(
       'ui-button-primary inline-flex h-[48px] w-full items-center justify-center gap-2 border-0 bg-transparent',
       'px-4 text-[clamp(14px,2vh,18px)] font-black tracking-[0.01em]',
@@ -188,8 +199,13 @@ export const PrimaryButton: React.FC<ButtonProps> = ({ children, className, onCl
 export const SecondaryButton: React.FC<ButtonProps> = ({ children, className, onClick, disabled, type = 'button' }) => (
   <button
     type={type}
-    onClick={onClick}
+    onClick={() => {
+      if (disabled) return;
+      playGameSound('tap');
+      onClick?.();
+    }}
     disabled={disabled}
+    data-ui-sound="handled"
     className={cn(
       'ui-button-secondary inline-flex h-[48px] items-center justify-center border-0 bg-transparent',
       'px-3 text-[10px] font-black uppercase tracking-[0.1em]',

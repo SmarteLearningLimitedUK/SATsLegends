@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ChevronRight, RotateCcw, Trophy } from 'lucide-react';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import calculationClashBackground from '../assets/maps/backgroundsforgames/Calculation Cup.png';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
@@ -116,6 +118,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; text: string } | null>(null);
   const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
   const [screenShake, setScreenShake] = useState(false);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(true);
 
   const feedbackTimerRef = useRef<number | null>(null);
   const submittedResultRef = useRef(false);
@@ -221,23 +224,27 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
       className="relative h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat text-white"
       style={{ backgroundImage: `url(${calculationClashBackground})` }}
     >
+      <PracticeIntroPopup
+        open={showPracticeIntro}
+        title="Calculation Clash"
+        body="Solve each expression quickly.\nChoose the answer that matches the calculation."
+        onAction={() => setShowPracticeIntro(false)}
+      />
+
       <main className={`relative z-10 flex h-full w-full flex-col ${topPadding} px-[max(1rem,env(safe-area-inset-left))] pb-[calc(env(safe-area-inset-bottom)+5rem)]`}>
-        <div className="mx-auto flex h-full w-full max-w-[34rem] flex-col">
+        <div className="mx-auto flex h-full w-full max-w-[34rem] flex-col gap-4">
+          <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
+            <GameQuestionCard title="Question">
+              {formatFantasyPrompt(question.prompt)}
+            </GameQuestionCard>
+          </div>
+
           <motion.div
             animate={screenShake ? { x: [0, -8, 8, -5, 5, -2, 0] } : { x: 0 }}
             transition={{ duration: 0.28 }}
-            className="my-auto w-full"
+            className="mt-[clamp(5.25rem,13vh,7rem)] flex h-full w-full flex-col gap-4"
           >
-            <section className="text-center">
-              <div className="game-question-card max-w-[31rem] px-4 py-3">
-                <p className="question-title">Calculation Clash</p>
-                <p className="game-question-copy mt-2 leading-none tracking-[-0.02em] [text-shadow:0_6px_14px_rgba(0,0,0,0.72)]">
-                  {formatFantasyPrompt(question.prompt)}
-                </p>
-              </div>
-            </section>
-
-            <section className="answer-choice-surface mx-auto mt-5 w-full max-w-[30rem] rounded-[1.3rem] border border-white/20 bg-black/28 px-3 py-3 backdrop-blur-[2px] shadow-[0_14px_30px_rgba(2,6,23,0.4)]">
+            <section className="answer-choice-surface mx-auto w-full max-w-[30rem] rounded-[1.3rem] border border-white/20 bg-black/28 px-3 py-3 backdrop-blur-[2px] shadow-[0_14px_30px_rgba(2,6,23,0.4)]">
               <div className="grid grid-cols-2 gap-2.5">
                 {question.options.map((option, idx) => (
                   <motion.button
@@ -285,11 +292,6 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
           </motion.div>
         ) : null}
       </AnimatePresence>
-
-      <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.4rem,env(safe-area-inset-bottom))] z-50 flex justify-center px-3">
-        <div className="pointer-events-auto">
-        </div>
-      </div>
 
       <AnimatePresence>
         {status === 'complete' && (

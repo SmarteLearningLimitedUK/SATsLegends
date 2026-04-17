@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import AssetIcon from './AssetIcon';
 import { triggerHaptic } from '../haptics';
 import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
+import CelebrationSplash from './CelebrationSplash';
 import successRoundBackground from '../assets/end of round screen/success screen.jpg';
 import failureRoundBackground from '../assets/end of round screen/failure screen.jpg';
 import {
@@ -69,6 +70,8 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
     : 'bg-rose-400/18 text-amber-100 border-rose-200/45';
   const fallbackFailureSupport =
     'Great effort. Shake it off, retry quickly, and push your Combo on the next run.';
+  const celebrationMessage = isVictory ? 'Great Work!' : 'Nice Try!';
+  const celebrationDuration = result.stars >= 3 ? 0.82 : 0.96;
 
   return (
     <AnimatePresence>
@@ -97,6 +100,10 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
             <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/40 to-transparent" />
             <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/55 to-transparent" />
           </div>
+
+          {isVictory ? (
+            <CelebrationSplash active message={celebrationMessage} theme="victory" sweepDuration={celebrationDuration} />
+          ) : null}
 
           {!isVictory && (
             <motion.span

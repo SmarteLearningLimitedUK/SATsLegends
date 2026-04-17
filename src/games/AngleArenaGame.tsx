@@ -71,7 +71,7 @@ const RETURN_LERP = 0.12;
 const PROJECTILE_SPEED = 520;
 const MAX_FLIGHT_DISTANCE = 980;
 const CANNON_ANCHOR_X_RATIO = 0.5;
-const CANNON_ANCHOR_Y_RATIO = 0.58;
+const CANNON_ANCHOR_Y_RATIO = 0.5;
 
 type CloudLayer = {
   x: number;

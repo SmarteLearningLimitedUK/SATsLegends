@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
 import AssetIcon from '../components/AssetIcon';
-import { FramedPanel } from '../layout/ScreenPrimitives';
+import { FramedPanel, ScrollScreenShell } from '../layout/ScreenPrimitives';
+import { ACHIEVEMENT_CATALOG } from '../systems/progression/achievementCatalog';
 import { buildParentReport } from '../systems/progression/reporting';
-import { PlayerData } from '../types';
+import { PlayerData, TopicStat } from '../types';
 
 interface ParentDashboardProps {
   player: PlayerData;
@@ -89,12 +90,25 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
 
   const gamesPlayed = player.telemetry?.sessionsPlayed ?? player.stats?.totalGamesPlayed ?? 0;
   const totalStars = player.stats?.totalStars ?? 0;
+  const telemetry = player.telemetry;
+  const earnedAchievementIds = new Set(player.achievementState?.earned ?? player.achievements ?? []);
+  const earnedAchievementNames = ACHIEVEMENT_CATALOG
+    .filter((achievement) => earnedAchievementIds.has(achievement.id))
+    .slice(0, 8)
+    .map((achievement) => achievement.name);
+  const recentTopics = telemetry
+    ? (Object.values(telemetry.topicStats) as TopicStat[])
+      .sort((a, b) => (b.lastPlayed ?? 0) - (a.lastPlayed ?? 0))
+      .slice(0, 6)
+    : [];
+  const bestSubject = report.excelling[0] ?? 'No strong topic data yet';
+  const focusSubject = report.needsPractice[0] ?? 'No weak topic data yet';
 
   return (
-    <div className="relative flex min-h-[100dvh] w-full flex-col overflow-visible licensed-shell-bg">
+    <ScrollScreenShell className="relative min-h-[100dvh] w-full licensed-shell-bg">
       <div className="absolute inset-0 bg-slate-950/48" />
 
-      <div className="relative z-10 flex flex-col gap-4 px-4 pb-24 pt-[calc(0.75rem+env(safe-area-inset-top))] md:px-8 md:pb-8 md:pt-6">
+      <div className="relative z-10 flex flex-col gap-4 px-4 pb-24 pt-[calc(0.75rem+env(safe-area-inset-top))] md:px-8 md:pb-12 md:pt-6">
         <FramedPanel className="rounded-[1.4rem] border border-white/12 bg-slate-950/62 p-4 text-white md:rounded-[2rem] md:p-6">
           <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/70">Parent snapshot</div>
           <div className="mt-2 text-2xl font-black tracking-tight md:text-4xl">One page, four answers.</div>
@@ -106,9 +120,35 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
             <SummaryTile label="Sessions" value={gamesPlayed} icon="gamepad" />
             <SummaryTile label="Accuracy" value={`${report.overallAccuracy}%`} icon="trophy" />
             <SummaryTile label="Speed" value={formatDuration(report.averageSessionTimeSec)} icon="stopwatch" />
-            <SummaryTile label="Stars earned" value={totalStars} icon="star" />
+            <SummaryTile label="Brainpower" value={totalStars} icon="star" />
           </div>
         </FramedPanel>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <FramedPanel className="rounded-[1.35rem] border border-white/12 bg-slate-950/62 p-4 text-white md:rounded-[2rem] md:p-5">
+            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/70">Performance ledger</div>
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              <SummaryTile label="Correct" value={telemetry?.correctAnswers ?? 0} icon="star" />
+              <SummaryTile label="Incorrect" value={telemetry?.incorrectAnswers ?? 0} icon="gamepad" />
+              <SummaryTile label="Best streak" value={telemetry?.bestCorrectStreak ?? 0} icon="trophy" />
+              <SummaryTile label="Play time" value={formatDuration(telemetry?.totalPlayTimeSec ?? 0)} icon="stopwatch" />
+            </div>
+          </FramedPanel>
+
+          <FramedPanel className="rounded-[1.35rem] border border-white/12 bg-slate-950/62 p-4 text-white md:rounded-[2rem] md:p-5">
+            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/70">Current focus</div>
+            <div className="mt-3 grid gap-3">
+              <div className="rounded-[1rem] border border-emerald-200/24 bg-emerald-200/10 px-4 py-3">
+                <div className="text-[10px] font-black uppercase tracking-[0.14em] text-emerald-100/78">Strongest topic</div>
+                <div className="mt-1 text-lg font-black text-white md:text-2xl">{bestSubject}</div>
+              </div>
+              <div className="rounded-[1rem] border border-rose-200/24 bg-rose-200/10 px-4 py-3">
+                <div className="text-[10px] font-black uppercase tracking-[0.14em] text-rose-100/78">Needs attention</div>
+                <div className="mt-1 text-lg font-black text-white md:text-2xl">{focusSubject}</div>
+              </div>
+            </div>
+          </FramedPanel>
+        </div>
 
         <div className="grid gap-4 md:grid-cols-2">
           <GameCard
@@ -124,6 +164,69 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
             fallback="No play data yet."
           />
         </div>
+
+        <FramedPanel className="rounded-[1.35rem] border border-white/12 bg-slate-950/62 p-4 text-white md:rounded-[2rem] md:p-5">
+          <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/55">Detailed stats</div>
+          <div className="mt-3 grid gap-3 md:grid-cols-3">
+            <div className="rounded-[1rem] border border-white/10 bg-white/5 px-4 py-3">
+              <div className="text-xs font-black uppercase tracking-[0.14em] text-cyan-100/75">Total games</div>
+              <div className="mt-1 text-2xl font-black text-white">{player.stats?.totalGamesPlayed ?? 0}</div>
+            </div>
+            <div className="rounded-[1rem] border border-white/10 bg-white/5 px-4 py-3">
+              <div className="text-xs font-black uppercase tracking-[0.14em] text-cyan-100/75">Stars earned</div>
+              <div className="mt-1 text-2xl font-black text-white">{totalStars}</div>
+            </div>
+            <div className="rounded-[1rem] border border-white/10 bg-white/5 px-4 py-3">
+              <div className="text-xs font-black uppercase tracking-[0.14em] text-cyan-100/75">Achievements</div>
+              <div className="mt-1 text-2xl font-black text-white">{earnedAchievementNames.length}</div>
+            </div>
+          </div>
+          <div className="mt-3 grid gap-2 md:grid-cols-2">
+            <div className="rounded-[1rem] border border-white/10 bg-white/5 px-4 py-3">
+              <div className="text-xs font-black uppercase tracking-[0.14em] text-cyan-100/75">Top games</div>
+              <div className="mt-2 space-y-2">
+                {report.mostPlayed.length ? report.mostPlayed.map((game) => (
+                  <div key={game} className="rounded-[0.8rem] border border-white/10 bg-slate-900/50 px-3 py-2 text-sm font-semibold text-white">
+                    {game}
+                  </div>
+                )) : (
+                  <div className="rounded-[0.8rem] border border-white/10 bg-slate-900/50 px-3 py-2 text-sm text-white/60">
+                    No game data yet.
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="rounded-[1rem] border border-white/10 bg-white/5 px-4 py-3">
+              <div className="text-xs font-black uppercase tracking-[0.14em] text-cyan-100/75">Recent topics</div>
+              <div className="mt-2 space-y-2">
+                {recentTopics.length ? recentTopics.map((topic) => (
+                  <div key={topic.topicId} className="rounded-[0.8rem] border border-white/10 bg-slate-900/50 px-3 py-2 text-sm font-semibold text-white">
+                    {topic.topicId.replace(/_/g, ' ')} - {topic.accuracy}% accuracy
+                  </div>
+                )) : (
+                  <div className="rounded-[0.8rem] border border-white/10 bg-slate-900/50 px-3 py-2 text-sm text-white/60">
+                    No topic history yet.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </FramedPanel>
+
+        <FramedPanel className="rounded-[1.35rem] border border-white/12 bg-slate-950/62 p-4 text-white md:rounded-[2rem] md:p-5">
+          <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/55">Achievements</div>
+          <div className="mt-3 grid gap-2 md:grid-cols-2">
+            {earnedAchievementNames.length ? earnedAchievementNames.map((name) => (
+              <div key={name} className="rounded-[0.9rem] border border-amber-200/20 bg-amber-200/8 px-4 py-3 text-sm font-black text-white">
+                {name}
+              </div>
+            )) : (
+              <div className="rounded-[0.9rem] border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/60">
+                No achievements earned yet.
+              </div>
+            )}
+          </div>
+        </FramedPanel>
 
         <FramedPanel className="rounded-[1.35rem] border border-white/12 bg-slate-950/62 p-4 text-white md:rounded-[2rem] md:p-5">
           <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/55">Speed</div>
@@ -180,7 +283,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
           </button>
         </div>
       </div>
-    </div>
+    </ScrollScreenShell>
   );
 };
 

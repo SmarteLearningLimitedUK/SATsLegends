@@ -1,7 +1,7 @@
 import React from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 
-type CelebrationTheme = 'takeout' | 'party' | 'forge';
+type CelebrationTheme = 'takeout' | 'party' | 'forge' | 'victory';
 
 interface CelebrationSplashProps {
   active: boolean;
@@ -26,7 +26,32 @@ const THEME_STYLES: Record<CelebrationTheme, { backdrop: string; ribbon: string;
     ribbon: 'border-orange-100/70 bg-[linear-gradient(90deg,rgba(245,158,11,0.98),rgba(251,146,60,0.98),rgba(239,68,68,0.98))]',
     glow: 'bg-orange-300/32',
   },
+  victory: {
+    backdrop: 'bg-[radial-gradient(circle_at_50%_34%,rgba(125,211,252,0.26),rgba(15,23,42,0.12)_34%,rgba(2,6,23,0.58)_78%)]',
+    ribbon: 'border-cyan-100/75 bg-[linear-gradient(90deg,rgba(34,211,238,0.98),rgba(96,165,250,0.98),rgba(251,191,36,0.98))]',
+    glow: 'bg-cyan-300/28',
+  },
 };
+
+const VictorySwooshField: React.FC = () => (
+  <div className="absolute inset-0 overflow-hidden">
+    <motion.div
+      className="absolute left-1/2 top-[24%] h-4 w-[180%] -translate-x-1/2 rounded-full bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.86)_12%,rgba(56,189,248,0.92)_34%,rgba(251,191,36,0.94)_58%,rgba(255,255,255,0.86)_80%,transparent)] blur-[2px]"
+      animate={{ x: ['-34%', '34%'], rotate: [-10, 8, -10], opacity: [0.16, 0.95, 0.18] }}
+      transition={{ duration: 1.15, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror' }}
+    />
+    <motion.div
+      className="absolute left-1/2 top-[58%] h-5 w-[170%] -translate-x-1/2 rounded-full bg-[linear-gradient(90deg,transparent,rgba(186,230,253,0.76)_14%,rgba(147,197,253,0.92)_42%,rgba(253,224,71,0.92)_66%,rgba(186,230,253,0.76)_86%,transparent)] blur-[3px]"
+      animate={{ x: ['32%', '-32%'], rotate: [8, -7, 8], opacity: [0.18, 0.9, 0.2] }}
+      transition={{ duration: 1.22, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror', delay: 0.18 }}
+    />
+    <motion.div
+      className="absolute left-1/2 top-1/2 h-[42%] w-[42%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.96)_0%,rgba(255,255,255,0.38)_22%,rgba(56,189,248,0.2)_44%,rgba(56,189,248,0)_74%)] blur-2xl"
+      animate={{ scale: [0.88, 1.08, 0.92], opacity: [0.26, 0.85, 0.28] }}
+      transition={{ duration: 1.05, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror' }}
+    />
+  </div>
+);
 
 const FlameField: React.FC = () => (
   <div className="absolute inset-x-0 bottom-0 h-[42%] overflow-hidden">
@@ -66,7 +91,7 @@ const FlameField: React.FC = () => (
 
 const CelebrationSplash: React.FC<CelebrationSplashProps> = ({ active, message, theme, sweepDuration }) => {
   const styles = THEME_STYLES[theme];
-  const duration = sweepDuration ?? (theme === 'takeout' ? 1.25 : theme === 'party' ? 0.72 : 0.82);
+  const duration = sweepDuration ?? (theme === 'takeout' ? 1.25 : theme === 'party' ? 0.72 : theme === 'victory' ? 0.98 : 0.82);
 
   return (
     <AnimatePresence>
@@ -85,13 +110,14 @@ const CelebrationSplash: React.FC<CelebrationSplashProps> = ({ active, message, 
             transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}
           />
 
+          {theme === 'victory' ? <VictorySwooshField /> : null}
           {theme === 'forge' ? <FlameField /> : null}
 
           <motion.div
-            className={`absolute left-1/2 top-1/2 flex w-[min(190vw,82rem)] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border px-5 py-4 text-center shadow-[0_26px_52px_rgba(2,6,23,0.45)] ${styles.ribbon}`}
-            initial={{ x: '-138%', rotate: -8, scale: 0.96 }}
-            animate={{ x: '138%', rotate: -8, scale: 1 }}
-            exit={{ x: '168%', opacity: 0 }}
+            className={`absolute left-1/2 top-1/2 flex w-[min(196vw,86rem)] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border px-5 py-4 text-center shadow-[0_26px_52px_rgba(2,6,23,0.45)] ${styles.ribbon}`}
+            initial={theme === 'victory' ? { x: '-152%', rotate: -9, scale: 0.95 } : { x: '-138%', rotate: -8, scale: 0.96 }}
+            animate={theme === 'victory' ? { x: '152%', rotate: 9, scale: 1.02 } : { x: '138%', rotate: -8, scale: 1 }}
+            exit={theme === 'victory' ? { x: '180%', opacity: 0 } : { x: '168%', opacity: 0 }}
             transition={{ duration, ease: 'easeInOut' }}
           >
             <span className="text-[clamp(1.85rem,7.1vw,4.5rem)] font-black uppercase tracking-[0.16em] text-white drop-shadow-[0_4px_10px_rgba(7,15,35,0.56)]">

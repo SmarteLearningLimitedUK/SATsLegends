@@ -17,6 +17,7 @@ export type MiniGameType =
   | 'measurement_forge'
   | 'timekeeper_temple'
   | 'ratio_rapids'
+  | 'remainder_run'
   | 'place_value_peaks'
   | 'calculation_clash'
   | 'coordinate_quest'

@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import { X } from 'lucide-react';
 import { MiniGamePracticeBriefing } from '../../app/gameplaySessionContract';
+import { playGameSound } from '../../audio/gameAudio';
 
 type PracticeIntroPopupProps = {
   open: boolean;
@@ -110,7 +111,10 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
             role="presentation"
             aria-hidden="true"
             className="absolute inset-0 z-0 cursor-default bg-slate-950/78 backdrop-blur-[8px] grayscale"
-            onClick={onAction}
+            onClick={() => {
+              playGameSound('tap');
+              onAction();
+            }}
           />
           <motion.div
             role="dialog"
@@ -126,7 +130,11 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
             <button
               type="button"
               aria-label="Close practice briefing"
-              onClick={onAction}
+              onClick={() => {
+                playGameSound('tap');
+                onAction();
+              }}
+              data-ui-sound="handled"
               className="ui-icon-button ui-close-button absolute right-3 top-3 z-20 inline-flex h-9 w-9 items-center justify-center p-0 text-white"
             >
               <X className="h-4 w-4" />
@@ -161,7 +169,11 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
             <div className={`${densityClasses.buttonWrap} flex shrink-0 justify-center`}>
               <button
                 type="button"
-                onClick={onAction}
+                onClick={() => {
+                  playGameSound('tap');
+                  onAction();
+                }}
+                data-ui-sound="handled"
                 className={`ui-button-primary flex w-[min(14rem,72vw)] items-center justify-center border-0 bg-transparent px-4 py-0 font-black uppercase tracking-[0.12em] text-[#16233d] ${densityClasses.button}`}
               >
                 {actionLabel}

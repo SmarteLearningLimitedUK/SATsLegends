@@ -46,6 +46,7 @@ import { useProgressionStore } from './store/useProgressionStore';
 import { LevelProgress } from './lib/progression/types';
 import { getXpRequiredForLevel } from './lib/progression/getXpRequiredForLevel';
 import { CACHE_BUSTER } from './cacheBuster';
+import { playGameSound } from './audio/gameAudio';
 
 const App: React.FC = () => {
   const [stageScale, setStageScale] = useState(1);
@@ -298,6 +299,27 @@ const App: React.FC = () => {
 
   useMiniGameLifecycle({ screen, selectedLevel });
 
+  useEffect(() => {
+    if (screen !== 'gameplay') return undefined;
+
+    const handleGameplayClick = (event: MouseEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+
+      const button = target.closest('button');
+      if (!button) return;
+      if (button.hasAttribute('data-ui-sound')) return;
+      if (button.hasAttribute('disabled')) return;
+
+      playGameSound('tap');
+    };
+
+    document.addEventListener('click', handleGameplayClick, true);
+    return () => {
+      document.removeEventListener('click', handleGameplayClick, true);
+    };
+  }, [screen]);
+
   const sessionState: GameplaySessionState = useMemo(() => ({
     timeLeft: globalMiniGameHudTimeLeft,
     totalTime: GLOBAL_MINIGAME_HUD_DURATION_SECONDS,
@@ -356,6 +378,7 @@ const App: React.FC = () => {
   ]);
 
   const handleGameOver = useCallback((XP: number) => {
+    playGameSound('fail');
     triggerHaptic('error');
     if (selectedLevel?.isPractice) {
       if (!selectedIsland || !selectedLevel) return;
@@ -759,6 +782,7 @@ const App: React.FC = () => {
   };
 
   const handleGameVictory = (stars: number, XP: number) => {
+    playGameSound('complete');
     triggerHaptic('success');
     if (selectedLevel?.isPractice) {
       const totalAttempts = sessionMetrics.correct + sessionMetrics.incorrect;
@@ -930,11 +954,13 @@ const App: React.FC = () => {
 
   const sessionEvents: GameplaySessionEventHandlers = useMemo(() => ({
     onCorrectAnswer: (event) => {
+      playGameSound('correct');
       triggerHaptic('selection');
       setSessionMetrics((prev) => ({ ...prev, correct: prev.correct + 1 }));
       recordTelemetryEvent('correct_answer', event);
     },
     onIncorrectAnswer: (event) => {
+      playGameSound('incorrect');
       triggerHaptic('error');
       setSessionMetrics((prev) => ({ ...prev, incorrect: prev.incorrect + 1 }));
       recordTelemetryEvent('incorrect_answer', event);
@@ -956,11 +982,9 @@ const App: React.FC = () => {
       triggerHaptic('selection');
     },
     onGameComplete: (event) => {
-      triggerHaptic('success');
       recordTelemetryEvent('game_complete', event);
     },
     onGameFailed: (event) => {
-      triggerHaptic('error');
       recordTelemetryEvent('game_failed', event);
     },
   }), [consumeLife, recordTelemetryEvent, screen, setSessionMetrics]);

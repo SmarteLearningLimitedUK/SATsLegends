@@ -256,11 +256,13 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
           ))}
         </section>
 
-        <section className="shrink-0">
-          <FeedbackStrip tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}>
-            {feedback}
-          </FeedbackStrip>
-        </section>
+        {feedback ? (
+          <section className="shrink-0">
+            <FeedbackStrip tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}>
+              {feedback}
+            </FeedbackStrip>
+          </section>
+        ) : null}
       </div>
     </GameUiShell>
   );

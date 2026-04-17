@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { motion } from 'motion/react';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import {
   FeedbackStrip,
   GameUiShell,
@@ -88,6 +90,7 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
   const [glow, setGlow] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [feedbackTone, setFeedbackTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
+  const [showPracticeIntro, setShowPracticeIntro] = useState(true);
 
   const round = useMemo(() => buildRound(levelId, roundIndex + 1), [levelId, roundIndex]);
 
@@ -150,14 +153,22 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
   return (
     <GameUiShell className="bg-transparent" overlayDisabled>
       <GameplaySceneBackdrop gameType="rule_runner" backgroundOverride={problemPyramidBackground} />
+      <PracticeIntroPopup
+        open={showPracticeIntro}
+        title="Problem Pyramid"
+        body="Build the pyramid from the numbers shown.\nChoose the value that completes the top."
+        onAction={() => setShowPracticeIntro(false)}
+      />
       <div className="relative z-10 flex h-full min-h-0 flex-col gap-1.5 px-3 pb-[calc(env(safe-area-inset-bottom)+2.8rem)] pt-2 text-white">
         <section className="shrink-0">
-          <div className="game-question-card w-full max-w-[780px] px-3 py-2 text-center">
-            <div className="question-title">Find the top number in the pyramid.</div>
+          <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
+            <GameQuestionCard title="Question">
+              Find the top number in the pyramid.
+            </GameQuestionCard>
           </div>
         </section>
 
-        <section className="min-h-0 flex-1">
+        <section className="mt-[clamp(5.25rem,13vh,7rem)] min-h-0 flex-1">
           <div className="relative flex h-full min-h-0 items-center justify-center">
             <div className="relative h-full w-full max-w-[760px]">
               <motion.div

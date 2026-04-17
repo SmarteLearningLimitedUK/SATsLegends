@@ -90,6 +90,19 @@ const getGameSummary = (level: LevelData) => {
   return GAME_SUMMARY_BY_KEY[key] || 'Take on this challenge to improve speed, accuracy, and confidence.';
 };
 
+const getLevelDisplayLabel = (level: LevelData, groupLevels: LevelRowState[]) => {
+  if (level.isPractice) return 'Practice';
+
+  const numberedLevels = groupLevels.filter((row) => row.level.isPractice !== true);
+  const displayIndex = numberedLevels.findIndex((row) => row.level.id === level.id);
+
+  if (displayIndex >= 0) {
+    return `Level ${displayIndex + 1}`;
+  }
+
+  return level.miniGameLevel ? `Level ${level.miniGameLevel}` : `Level ${level.id}`;
+};
+
 const IslandLevels: React.FC<IslandLevelsProps> = ({
   island,
   player,
@@ -222,6 +235,12 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
     [levelRows],
   );
 
+  const nextPlayableLabel = useMemo(() => {
+    if (!nextPlayableRow) return '';
+    const group = gameGroups.find((candidate) => candidate.levels.some((row) => row.level.id === nextPlayableRow.level.id));
+    return group ? getLevelDisplayLabel(nextPlayableRow.level, group.levels) : (nextPlayableRow.level.miniGameLevel ? `Level ${nextPlayableRow.level.miniGameLevel}` : `Level ${nextPlayableRow.level.id}`);
+  }, [gameGroups, nextPlayableRow]);
+
   const eligibleLevelRows = useMemo(
     () => levelRows.filter((row) => row.level.isPractice !== true),
     [levelRows],
@@ -282,7 +301,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                   Recommended Next
                 </div>
                 <div className="mt-1 truncate text-sm font-black text-cyan-100 md:text-base">
-                  {getGroupName(nextPlayableRow.level)} - {nextPlayableRow.level.miniGameLevel ? `Level ${nextPlayableRow.level.miniGameLevel}` : `Level ${nextPlayableRow.level.id}`}
+                  {getGroupName(nextPlayableRow.level)} - {nextPlayableLabel}
                 </div>
               </div>
               <button
@@ -359,7 +378,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                       <div className="mt-3 flex flex-col gap-2">
                         {group.levels.map((row) => {
                           const { level, stars, isCompleted, isUnlocked, isNextPlayable, lockReason } = row;
-                          const levelLabel = level.isPractice ? 'Practice' : (level.miniGameLevel ? `Level ${level.miniGameLevel}` : `Level ${level.id}`);
+                          const levelLabel = getLevelDisplayLabel(level, group.levels);
                           const isBoss = Boolean(level.isBoss);
 
                           const rowStateClass = !isUnlocked

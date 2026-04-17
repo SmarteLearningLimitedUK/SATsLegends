@@ -31,6 +31,13 @@ type IslandHotspot = {
   height: number;
 };
 
+type IslandAccentFrame = {
+  width: string;
+  height: string;
+  top: string;
+  left: string;
+};
+
 const MAP_WIDTH_PX = 768;
 const MAP_HEIGHT_PX = 2500;
 
@@ -92,6 +99,26 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
     height: 5.56,
   },
 ];
+
+const ISLAND_ACCENT_FRAMES: Partial<Record<number, IslandAccentFrame>> = {
+  1: { left: '50%', top: '50%', width: '70%', height: '72%' },
+  2: { left: '50%', top: '54%', width: '68%', height: '68%' },
+  3: { left: '50%', top: '48%', width: '66%', height: '70%' },
+  4: { left: '50%', top: '52%', width: '66%', height: '68%' },
+  5: { left: '50%', top: '45%', width: '74%', height: '64%' },
+  6: { left: '50%', top: '40%', width: '60%', height: '74%' },
+  7: { left: '50%', top: '48%', width: '70%', height: '66%' },
+  8: { left: '50%', top: '42%', width: '62%', height: '78%' },
+};
+
+const getIslandAccentFrame = (islandId: number): IslandAccentFrame => (
+  ISLAND_ACCENT_FRAMES[islandId] ?? {
+    left: '50%',
+    top: '50%',
+    width: '68%',
+    height: '68%',
+  }
+);
 
 const renderIslandAccent = (islandId: number) => {
   switch (islandId) {
@@ -407,7 +434,20 @@ const WorldMap: React.FC<WorldMapProps> = ({
                 }}
               >
                 <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                  {renderIslandAccent(hotspot.islandId)}
+                  {(() => {
+                    const accentFrame = getIslandAccentFrame(hotspot.islandId);
+                    return (
+                  <div
+                    className="absolute overflow-hidden"
+                    style={{
+                      ...accentFrame,
+                      transform: 'translate(-50%, -50%)',
+                    }}
+                  >
+                    {renderIslandAccent(hotspot.islandId)}
+                  </div>
+                    );
+                  })()}
                 </div>
                 <button
                   type="button"

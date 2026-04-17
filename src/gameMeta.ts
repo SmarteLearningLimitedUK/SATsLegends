@@ -240,6 +240,19 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       ],
     },
   },
+  remainder_run: {
+    label: 'Remainder Run',
+    focus: 'Division and decimal remainders',
+    rules: {
+      title: 'Remainder Run',
+      summary: 'Work through division questions and move toward decimal remainders as the lane progresses.',
+      bullets: [
+        'Start with whole-number division before stepping into decimal answers.',
+        'Read each quotient carefully and keep your working clean.',
+        'Later stages ask you to handle decimal remainders with confidence.',
+      ],
+    },
+  },
   place_value_peaks: {
     label: 'Decimal Sniper',
     focus: 'Decimals, place value and rounding',

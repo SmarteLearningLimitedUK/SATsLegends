@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { AVATARS } from '../constants';
 import { triggerHaptic } from '../haptics';
-import { SecondaryActionButton } from '../layout/ScreenPrimitives';
 import avatarSelectBackground from '../assets/maps/backgroundsforgames/charselect.jpg';
 import chooseBanner from '../assets/characters/chooseheroes.png';
 
@@ -92,21 +91,10 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
                 onChange={(event) => onDraftNameChange(event.target.value.slice(0, 18))}
                 onKeyDown={(event) => {
                 if (event.key === 'Enter') onConfirm();
-              }}
+                }}
               placeholder="Explorer"
               className="aaa-name-input w-full rounded-[1.15rem] border border-white/20 bg-slate-950/65 px-5 py-3 text-center text-base font-black text-white shadow-[0_14px_28px_rgba(0,0,0,0.2)] outline-none placeholder:text-white/45 focus:ring-2 focus:ring-amber-300/45 md:rounded-[1.5rem] md:px-6 md:py-4 md:text-2xl"
             />
-            <div className="flex items-center justify-center">
-              <SecondaryActionButton
-                onClick={() => {
-                  triggerHaptic('tap');
-                  onBackToSplash();
-                }}
-                className="rounded-[1.2rem] px-5 py-2.5 text-sm md:rounded-2xl md:px-7 md:py-3 md:text-base"
-              >
-                Back
-              </SecondaryActionButton>
-            </div>
           </div>
 
            <div className="avatar-hero-stage relative mt-2 flex min-h-0 flex-1 items-center justify-center overflow-visible md:mt-3">

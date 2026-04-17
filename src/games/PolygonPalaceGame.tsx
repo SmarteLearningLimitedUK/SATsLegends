@@ -174,6 +174,22 @@ const SHAPES: ShapeDefinition[] = [
     stroke: '#ccfbf1',
   },
   {
+    id: 'triangle-scalene',
+    name: 'Scalene Triangle',
+    family: 'triangle',
+    sides: 3,
+    rightAngles: 0,
+    parallelPairs: 0,
+    equalSideMode: 'none',
+    regular: false,
+    symmetryLines: 0,
+    kind: 'polygon',
+    points: '-40,20 -6,-36 38,16',
+    defaultRotation: 0,
+    fill: '#0f766e',
+    stroke: '#ccfbf1',
+  },
+  {
     id: 'triangle-isosceles',
     name: 'Isosceles Triangle',
     family: 'triangle',
@@ -254,6 +270,22 @@ const SHAPES: ShapeDefinition[] = [
     stroke: '#ffe4e6',
   },
   {
+    id: 'dart',
+    name: 'Dart',
+    family: 'quadrilateral',
+    sides: 4,
+    rightAngles: 0,
+    parallelPairs: 0,
+    equalSideMode: 'none',
+    regular: false,
+    symmetryLines: 1,
+    kind: 'polygon',
+    points: '0,-38 34,0 0,14 -28,0',
+    defaultRotation: 0,
+    fill: '#e879f9',
+    stroke: '#fae8ff',
+  },
+  {
     id: 'pentagon',
     name: 'Pentagon',
     family: 'polygon',
@@ -286,6 +318,22 @@ const SHAPES: ShapeDefinition[] = [
     stroke: '#fef9c3',
   },
   {
+    id: 'heptagon',
+    name: 'Heptagon',
+    family: 'polygon',
+    sides: 7,
+    rightAngles: 0,
+    parallelPairs: 0,
+    equalSideMode: 'all',
+    regular: true,
+    symmetryLines: 7,
+    kind: 'polygon',
+    points: regularPolygonPoints(7, 38),
+    defaultRotation: 0,
+    fill: '#c084fc',
+    stroke: '#f3e8ff',
+  },
+  {
     id: 'octagon',
     name: 'Octagon',
     family: 'polygon',
@@ -300,6 +348,22 @@ const SHAPES: ShapeDefinition[] = [
     defaultRotation: 0,
     fill: '#eab308',
     stroke: '#fef08a',
+  },
+  {
+    id: 'nonagon',
+    name: 'Nonagon',
+    family: 'polygon',
+    sides: 9,
+    rightAngles: 0,
+    parallelPairs: 0,
+    equalSideMode: 'all',
+    regular: true,
+    symmetryLines: 9,
+    kind: 'polygon',
+    points: regularPolygonPoints(9, 35),
+    defaultRotation: 0,
+    fill: '#fb923c',
+    stroke: '#ffedd5',
   },
   {
     id: 'irregular-pentagon',
@@ -409,22 +473,39 @@ const SHAPES: ShapeDefinition[] = [
     stroke: '#fce7f3',
   },
 ];
-const EARLY_SHAPE_IDS = ['square', 'rectangle', 'triangle-equilateral', 'triangle-right', 'circle', 'pentagon'];
+const EARLY_SHAPE_IDS = ['square', 'rectangle', 'triangle-equilateral', 'triangle-right', 'circle', 'cube', 'cuboid'];
 const MID_SHAPE_IDS = [
   ...EARLY_SHAPE_IDS,
+  'triangle-isosceles',
+  'triangle-scalene',
   'parallelogram',
   'rhombus',
   'trapezium',
   'kite',
+  'dart',
+  'pentagon',
   'hexagon',
-  'triangle-isosceles',
+  'heptagon',
+  'irregular-pentagon',
+  'triangular-prism',
+  'square-pyramid',
 ];
-const SOLID_SHAPE_IDS = ['cube', 'cuboid', 'triangular-prism', 'square-pyramid'];
+const LATE_SHAPE_IDS = [
+  ...MID_SHAPE_IDS,
+  'octagon',
+  'nonagon',
+];
 
 const PROPERTY_POOL: PropertyDefinition[] = [
   { id: 'triangle', label: 'Has 3 sides', minStage: 1, check: (shape) => shape.sides === 3 },
   { id: 'quadrilateral', label: 'Is a quadrilateral', minStage: 1, check: (shape) => shape.sides === 4 },
+  { id: 'solid', label: 'Is a 3D shape', minStage: 1, check: (shape) => shape.kind === 'solid' },
   { id: 'more-than-4', label: 'Has more than 4 sides', minStage: 2, check: (shape) => shape.sides > 4 },
+  { id: 'sides-5', label: 'Has 5 sides', minStage: 4, check: (shape) => shape.sides === 5 },
+  { id: 'sides-6', label: 'Has 6 sides', minStage: 5, check: (shape) => shape.sides === 6 },
+  { id: 'sides-7', label: 'Has 7 sides', minStage: 6, check: (shape) => shape.sides === 7 },
+  { id: 'sides-8', label: 'Has 8 sides', minStage: 7, check: (shape) => shape.sides === 8 },
+  { id: 'sides-9', label: 'Has 9 sides', minStage: 8, check: (shape) => shape.sides === 9 },
   { id: 'right-angle', label: 'Has at least one right angle', minStage: 2, check: (shape) => shape.rightAngles > 0 },
   { id: 'two-parallel', label: 'Has 2 pairs of parallel sides', minStage: 4, check: (shape) => shape.parallelPairs === 2 },
   { id: 'one-parallel', label: 'Has exactly 1 pair of parallel sides', minStage: 5, check: (shape) => shape.parallelPairs === 1 },
@@ -438,13 +519,13 @@ const PROPERTY_POOL: PropertyDefinition[] = [
   { id: 'regular', label: 'Is a regular polygon', minStage: 6, check: (shape) => shape.regular && shape.family !== 'circle' },
   { id: 'symmetry', label: 'Has at least 2 lines of symmetry', minStage: 6, check: (shape) => shape.symmetryLines >= 2 },
   { id: 'not-polygon', label: 'Is not a polygon', minStage: 8, check: (shape) => shape.family === 'circle' },
-  { id: 'faces-5', label: 'Has 5 faces', minStage: 8, check: (shape) => shape.faces === 5 },
-  { id: 'faces-6', label: 'Has 6 faces', minStage: 8, check: (shape) => shape.faces === 6 },
-  { id: 'edges-8', label: 'Has 8 edges', minStage: 8, check: (shape) => shape.edges === 8 },
-  { id: 'edges-9', label: 'Has 9 edges', minStage: 8, check: (shape) => shape.edges === 9 },
-  { id: 'vertices-5', label: 'Has 5 vertices', minStage: 8, check: (shape) => shape.vertices === 5 },
-  { id: 'vertices-6', label: 'Has 6 vertices', minStage: 8, check: (shape) => shape.vertices === 6 },
-  { id: 'vertices-8', label: 'Has 8 vertices', minStage: 8, check: (shape) => shape.vertices === 8 },
+  { id: 'faces-5', label: 'Has 5 faces', minStage: 4, check: (shape) => shape.faces === 5 },
+  { id: 'faces-6', label: 'Has 6 faces', minStage: 4, check: (shape) => shape.faces === 6 },
+  { id: 'edges-8', label: 'Has 8 edges', minStage: 6, check: (shape) => shape.edges === 8 },
+  { id: 'edges-9', label: 'Has 9 edges', minStage: 6, check: (shape) => shape.edges === 9 },
+  { id: 'vertices-5', label: 'Has 5 vertices', minStage: 7, check: (shape) => shape.vertices === 5 },
+  { id: 'vertices-6', label: 'Has 6 vertices', minStage: 7, check: (shape) => shape.vertices === 6 },
+  { id: 'vertices-8', label: 'Has 8 vertices', minStage: 7, check: (shape) => shape.vertices === 8 },
 ];
 
 const SORT_CRITERIA: SortCriterion[] = [
@@ -512,17 +593,22 @@ const stageFromProgress = (baseLevel: number, answeredCount: number, timeLeft: n
 
 const modeForStage = (stage: number): QuestionMode => {
   const roll = Math.random();
-  if (stage >= 8 && roll < 0.28) return 'count';
-  if (stage <= 3) return roll < 0.8 ? 'name' : 'properties';
-  if (stage <= 7) {
-    if (roll < 0.45) return 'name';
-    if (roll < 0.84) return 'properties';
-    return 'sort';
+  if (stage >= 8 && roll < 0.32) return 'count';
+  if (stage <= 3) {
+    if (roll < 0.65) return 'name';
+    if (roll < 0.8) return 'properties';
+    return 'count';
   }
-  if (roll < 0.18) return 'name';
-  if (roll < 0.48) return 'properties';
-  if (roll < 0.72) return 'sort';
-  return 'sort';
+  if (stage <= 7) {
+    if (roll < 0.4) return 'name';
+    if (roll < 0.74) return 'properties';
+    if (roll < 0.88) return 'sort';
+    return 'count';
+  }
+  if (roll < 0.16) return 'name';
+  if (roll < 0.42) return 'properties';
+  if (roll < 0.7) return 'sort';
+  return 'count';
 };
 
 const speedRoundForState = (answeredCount: number, stage: number) => answeredCount > 0 && answeredCount % 7 === 0 && stage >= 5;
@@ -530,7 +616,7 @@ const speedRoundForState = (answeredCount: number, stage: number) => answeredCou
 const getShapePool = (stage: number) => {
   if (stage <= 3) return SHAPES.filter((shape) => EARLY_SHAPE_IDS.includes(shape.id));
   if (stage <= 7) return SHAPES.filter((shape) => MID_SHAPE_IDS.includes(shape.id));
-  if (stage >= 8) return SHAPES.filter((shape) => [...MID_SHAPE_IDS, ...SOLID_SHAPE_IDS].includes(shape.id));
+  if (stage >= 8) return SHAPES.filter((shape) => LATE_SHAPE_IDS.includes(shape.id));
   return SHAPES;
 };
 
@@ -545,7 +631,7 @@ const buildNameQuestion = (shape: ShapeDefinition, stage: number, speedRound: bo
   const prompts = [
     'What shape is this?',
     'Choose the best name for this shape.',
-    'Name this 2D shape.',
+    'Name this shape.',
   ];
 
   return {
@@ -612,8 +698,8 @@ const buildCountQuestion = (shape: ShapeDefinition, stage: number, speedRound: b
 
   const focusPool = [
     { id: 'faces', label: 'How many faces does this shape have?', answer: shape.faces },
-    { id: 'edges', label: 'How many edges does this shape have?', answer: shape.edges },
-    { id: 'vertices', label: 'How many vertices does this shape have?', answer: shape.vertices },
+    ...(stage >= 4 ? [{ id: 'edges', label: 'How many edges does this shape have?', answer: shape.edges }] : []),
+    ...(stage >= 7 ? [{ id: 'vertices', label: 'How many vertices does this shape have?', answer: shape.vertices }] : []),
   ].filter((item) => typeof item.answer === 'number') as Array<{ id: string; label: string; answer: number }>;
 
   if (!focusPool.length) return null;
@@ -679,7 +765,10 @@ const createQuestion = (baseLevel: number, answeredCount: number, timeLeft: numb
   const speedRound = speedRoundForState(answeredCount, stage);
   const mode = modeForStage(stage);
   const shapePool = getShapePool(stage);
-  const shape = shapePool[randomInt(0, shapePool.length - 1)];
+  const solidPool = shapePool.filter((shape) => shape.kind === 'solid');
+  const shape = mode === 'count' && solidPool.length
+    ? solidPool[randomInt(0, solidPool.length - 1)]
+    : shapePool[randomInt(0, shapePool.length - 1)];
 
   if (mode === 'name') return buildNameQuestion(shape, stage, speedRound);
   if (mode === 'count') return buildCountQuestion(shape, stage, speedRound) || buildNameQuestion(shape, stage, speedRound);

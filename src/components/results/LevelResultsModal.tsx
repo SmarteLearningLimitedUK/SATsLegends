@@ -6,6 +6,7 @@ import LevelBadge from '../progression/LevelBadge';
 import XpBar, { XpSegment } from '../progression/XpBar';
 import { getXpRequiredForLevel } from '../../lib/progression/getXpRequiredForLevel';
 import { BonusBreakdown as BonusBreakdownType, StarCount } from '../../lib/progression/types';
+import CelebrationSplash from '../CelebrationSplash';
 import successRoundBackground from '../../assets/end of round screen/success screen.jpg';
 import failureRoundBackground from '../../assets/end of round screen/failure screen.jpg';
 
@@ -132,6 +133,14 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
 
   const isVictory = result.type === 'victory';
   const resultBackground = isVictory ? successRoundBackground : failureRoundBackground;
+  const celebrationMessage = isPractice
+    ? 'Practice Complete!'
+    : result.stars === 3
+      ? 'Brilliant!'
+      : result.stars === 2
+        ? 'Great Work!'
+        : 'Nice Job!';
+  const celebrationDuration = result.stars === 3 ? 0.82 : result.stars === 2 ? 0.96 : 1.08;
 
   return (
     <AnimatePresence>
@@ -159,6 +168,10 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
             <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/40 to-transparent" />
             <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/55 to-transparent" />
           </div>
+
+          {isVictory ? (
+            <CelebrationSplash active message={celebrationMessage} theme="victory" sweepDuration={celebrationDuration} />
+          ) : null}
 
           <motion.div
             initial={{ y: 24, scale: 0.96, opacity: 0 }}
