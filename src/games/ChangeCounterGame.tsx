@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import confetti from 'canvas-confetti';
 import { motion } from 'motion/react';
 import changeCounterBackground from '../assets/maps/backgroundsforgames/changecounter.jpg';
-import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 import { FeedbackStrip, TaskCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
@@ -310,8 +309,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
   };
 
   return (
-    <GameScreenShell className="overflow-hidden">
-      <GameplaySceneBackdrop gameType="change_counter" backgroundOverride={changeCounterBackground} />
+    <GameScreenShell className="overflow-hidden" backgroundImage={changeCounterBackground} backgroundOpacity={1}>
 
       <PracticeIntroPopup
         open={showPracticeIntro}
@@ -323,7 +321,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
 
       <div className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.6rem)] md:pt-[calc(env(safe-area-inset-top)+4.9rem)]' : 'pt-[calc(env(safe-area-inset-top)+2.4rem)]'}`}>
         <PuzzleStage className="flex h-full min-h-0 flex-1 flex-col gap-2 md:gap-3">
-          <TaskCard>
+          <TaskCard className="mx-auto w-full max-w-[44rem]">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <div className="question-title">Change Counter</div>
@@ -337,15 +335,15 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
             </div>
           </TaskCard>
 
-          <div className="flex min-h-0 flex-1 flex-col gap-2 md:gap-3">
-            <div className="answer-choice-surface grid flex-1 grid-cols-2 gap-2 md:gap-3">
+          <div className="flex min-h-0 flex-col gap-2 md:gap-3">
+            <div className="answer-choice-surface mx-auto grid w-full max-w-[32rem] grid-cols-2 gap-1.5 md:gap-2">
               {question.options.map((option) => (
                 <motion.button
                   key={`${question.id}-${option}`}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => handleAnswer(option)}
                   disabled={locked}
-                  className={`flex min-h-[3.4rem] items-center justify-center rounded-[1.05rem] px-2 py-2 text-base font-black md:min-h-[3.85rem] md:text-xl ${
+                  className={`flex min-h-[2.8rem] items-center justify-center rounded-[0.95rem] px-2 py-1.5 text-sm font-black md:min-h-[3.15rem] md:text-lg ${
                     selected === option
                       ? option === question.correct
                         ? 'ui-button-success'
