@@ -215,6 +215,22 @@
       "status": "captured",
       "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
       "screenshot": "qa-pc-operations-outpost-remainder-run.png"
+    },
+    {
+      "viewport": "pc",
+      "island": "Measurement Mountain",
+      "group": "Chrono Dash: Time Trial",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-pc-measurement-mountain-chrono-dash-time-trial.png"
+    },
+    {
+      "viewport": "pc",
+      "island": "Measurement Mountain",
+      "group": "Problem Pyramid",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-pc-measurement-mountain-problem-pyramid.png"
     }
   ],
   "consoleErrors": []
