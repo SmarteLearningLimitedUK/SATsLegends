@@ -6,14 +6,13 @@ import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import percentPowerBackground from '../assets/maps/backgroundsforgames/percent power.jpg';
 import { triggerHaptic } from '../haptics';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import {
   emitMiniGameSessionEvent,
-  type GameplaySessionEventHandlers,
-  type GameplaySessionState,
+  MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
-import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
-interface PercentPowerGameProps {
+interface PercentPowerGameProps extends MiniGameShellContractProps {
   levelId: number;
   miniGameLevel?: number;
   avatarId: string;
@@ -21,8 +20,6 @@ interface PercentPowerGameProps {
   onVictory: (stars: number, XP: number) => void;
   onGameOver: (XP: number) => void;
   onBack: () => void;
-  sessionState?: GameplaySessionState;
-  sessionEvents?: GameplaySessionEventHandlers;
 }
 
 interface PercentPowerQuestion {
@@ -159,6 +156,9 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
   onBack,
   sessionState,
   sessionEvents,
+  isPractice,
+  practiceBriefing,
+  gameTitle,
 }) => {
   const resolvedLevel = useMemo(() => Math.max(1, Math.min(10, miniGameLevel || levelId || 1)), [levelId, miniGameLevel]);
   const totalRounds = useMemo(() => Math.min(10, 5 + Math.floor(resolvedLevel / 2)), [resolvedLevel]);
@@ -173,6 +173,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
   const [localLives, setLocalLives] = useState(FALLBACK_LIVES);
   const [localTimer, setLocalTimer] = useState(FALLBACK_TIMER);
   const [isLocked, setLocked] = useState(false);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
   const scoreRef = useRef(0);
   const didEndRef = useRef(false);
 
@@ -199,6 +200,10 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
     setLocalTimer(FALLBACK_TIMER);
     setLocked(false);
   }, [resolvedLevel]);
+
+  useEffect(() => {
+    setShowPracticeIntro(Boolean(isPractice));
+  }, [isPractice]);
 
   useEffect(() => {
     if (sessionState || didEndRef.current) return undefined;
@@ -324,6 +329,14 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
         className="opacity-[0.98]"
       />
 
+      <PracticeIntroPopup
+        open={showPracticeIntro}
+        title={gameTitle || 'Percent Power'}
+        body="The portal is out of power - we cant advance. Power the core by solving the percent puzzles."
+        briefing={null}
+        onAction={() => setShowPracticeIntro(false)}
+      />
+
       {!useSharedTopHud ? (
         <div className="absolute left-0 right-0 top-[calc(env(safe-area-inset-top)+2px)] z-30 flex items-center justify-between px-3">
           <button
@@ -355,8 +368,8 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
             </div>
           </div>
           <div className="mt-2">
-            <GameQuestionCard title="Percent Power" subtitle={question.helper} className="max-w-[44rem]">
-              {formatFantasyPrompt(question.prompt)}
+            <GameQuestionCard title="Percent Power" className="max-w-[44rem]">
+              Power the core by solving the percent puzzles.
             </GameQuestionCard>
           </div>
         </div>
@@ -369,8 +382,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
           />
 
           <motion.div
-            className="relative flex h-[11.5rem] w-[11.5rem] items-center justify-center rounded-full border border-cyan-100/30 bg-[radial-gradient(circle,rgba(125,211,252,0.34),rgba(14,116,144,0.22)_38%,rgba(8,20,40,0.12)_68%,rgba(8,20,40,0)_100%)] shadow-[0_0_45px_rgba(34,211,238,0.2)] md:h-[13rem] md:w-[13rem]"
-            style={{ transform: 'translateY(0.35rem)' }}
+            className="absolute left-1/2 top-[56%] flex h-[11.5rem] w-[11.5rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-cyan-100/30 bg-[radial-gradient(circle,rgba(125,211,252,0.34),rgba(14,116,144,0.22)_38%,rgba(8,20,40,0.12)_68%,rgba(8,20,40,0)_100%)] shadow-[0_0_45px_rgba(34,211,238,0.2)] md:h-[13rem] md:w-[13rem]"
             animate={
               feedback === 'correct'
                 ? { scale: [1, 1.06, 1], x: [0, -4, 4, -3, 3, 0], rotate: [0, 3, -3, 2, -2, 0] }

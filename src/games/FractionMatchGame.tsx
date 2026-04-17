@@ -3,8 +3,11 @@ import { CircleDollarSign, ChevronLeft } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import factorFrenzyBackground from '../assets/maps/backgroundsforgames/Factor Frenzy.jpg';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
+import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 
-interface FractionMatchGameProps {
+interface FractionMatchGameProps extends MiniGameShellContractProps {
   levelId: number;
   miniGameLevel?: number;
   avatarId: string;
@@ -222,16 +225,24 @@ const BevelledGem: React.FC<{
 const MatchGameShell: React.FC<{
   children: React.ReactNode;
   XP: number;
-  timerProgress: number;
+  completionProgress: number;
+  timeLeft: number;
   levelName: string;
+  questionText: React.ReactNode;
+  fireActive?: boolean;
+  firePulse?: number;
   variantGameType: 'fraction_match' | 'cloud_collapse';
   useSharedTopHud?: boolean;
   onBack: () => void;
 }> = ({
   children,
   XP,
-  timerProgress,
+  completionProgress,
+  timeLeft,
   levelName,
+  questionText,
+  fireActive = false,
+  firePulse = 0,
   variantGameType,
   useSharedTopHud = false,
   onBack,
@@ -277,10 +288,11 @@ const MatchGameShell: React.FC<{
                   <span>{XP}</span>
                 </div>
               </div>
-              <div className="relative h-3 overflow-hidden rounded-full border border-cyan-200/45 bg-[#04102c]/90">
+              <div className={`relative h-3 overflow-hidden rounded-full border border-cyan-200/45 bg-[#04102c]/90 ${fireActive ? 'shadow-[0_0_18px_rgba(251,146,60,0.85)]' : ''}`}>
                 <motion.div
-                  className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-sky-400 via-cyan-300 to-emerald-300"
-                  animate={{ width: `${timerProgress}%` }}
+                  className={`absolute inset-y-0 left-0 rounded-full ${fireActive ? 'bg-[linear-gradient(90deg,#fbbf24,#fb923c,#ef4444,#facc15)]' : 'bg-gradient-to-r from-sky-400 via-cyan-300 to-emerald-300'}`}
+                  animate={{ width: `${completionProgress}%` }}
+                  transition={{ duration: fireActive ? 0.14 : 0.22, ease: 'easeOut' }}
                 />
               </div>
             </div>
@@ -290,32 +302,75 @@ const MatchGameShell: React.FC<{
         <div className={`relative min-h-0 flex-1 ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.15rem)]' : ''}`}>
           <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
 
-          {useSharedTopHud ? (
-            <div className="absolute inset-x-2 top-2 z-20 rounded-xl border border-cyan-100/30 bg-[#0a1f56]/70 px-3 py-2 shadow-[0_8px_16px_rgba(2,6,23,0.35)] sm:inset-x-4">
-              <div className="flex items-center justify-between gap-2">
-                <span className="truncate text-[11px] font-black uppercase tracking-[0.12em] text-cyan-50">
-                  {levelName}
-                </span>
-                <div className="flex items-center gap-1 rounded-lg border border-yellow-200/55 bg-[#0a1f56]/90 px-2 py-1 text-[11px] font-black text-yellow-100">
-                  <CircleDollarSign className="h-3.5 w-3.5 text-yellow-300" />
-                  <span>{XP}</span>
-                </div>
-              </div>
-              <div className="relative mt-1.5 h-2.5 overflow-hidden rounded-full border border-cyan-200/40 bg-[#04102c]/90">
-                <motion.div
-                  className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-sky-400 via-cyan-300 to-emerald-300"
-                  animate={{ width: `${timerProgress}%` }}
-                />
-              </div>
-            </div>
-          ) : null}
+           {useSharedTopHud ? (
+             <div className="absolute inset-x-2 top-2 z-20 sm:inset-x-4">
+               <div className="mx-auto w-full max-w-[44rem]">
+                 <GameQuestionCard title="Match 3" className="bg-[#0a1f56]/70 backdrop-blur-sm">
+                   {questionText}
+                 </GameQuestionCard>
+                 <div className="mt-2 flex items-center gap-2">
+                   <div className={`relative h-2.5 flex-1 overflow-hidden rounded-full border border-cyan-200/40 bg-[#04102c]/90 ${fireActive ? 'shadow-[0_0_18px_rgba(251,146,60,0.85)]' : ''}`}>
+                     <motion.div
+                       className={`absolute inset-y-0 left-0 rounded-full ${fireActive ? 'bg-[linear-gradient(90deg,#fbbf24,#fb923c,#ef4444,#facc15)]' : 'bg-gradient-to-r from-sky-400 via-cyan-300 to-emerald-300'}`}
+                       animate={{ width: `${completionProgress}%` }}
+                       transition={{ duration: fireActive ? 0.14 : 0.22, ease: 'easeOut' }}
+                       style={fireActive ? { filter: 'saturate(1.1)' } : undefined}
+                     />
+                     {fireActive ? (
+                       <motion.div
+                         key={`fire-bar-${firePulse}`}
+                         className="pointer-events-none absolute inset-0"
+                         initial={{ opacity: 0 }}
+                         animate={{ opacity: [0, 0.9, 0.5, 0] }}
+                         transition={{ duration: 0.7, ease: 'easeOut' }}
+                         style={{ background: 'radial-gradient(circle at 30% 50%, rgba(251,146,60,0.55), transparent 55%), radial-gradient(circle at 70% 50%, rgba(250,204,21,0.38), transparent 55%)' }}
+                       />
+                     ) : null}
+                   </div>
+                   <div className="flex items-center gap-2">
+                     <div className="rounded-lg border border-cyan-100/26 bg-[#0a1f56]/70 px-2 py-1 text-[11px] font-black tabular-nums text-cyan-50">
+                       {timeLeft}s
+                     </div>
+                     <div className="flex items-center gap-1 rounded-lg border border-yellow-200/55 bg-[#0a1f56]/70 px-2 py-1 text-[11px] font-black text-yellow-100">
+                       <CircleDollarSign className="h-3.5 w-3.5 text-yellow-300" />
+                       <span>{XP}</span>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+             </div>
+           ) : null}
 
-          <div className={`relative z-10 flex h-full w-full items-center justify-center px-2 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] ${useSharedTopHud ? 'pt-16' : 'pt-2'} sm:px-4`}>
-            {children}
-          </div>
-        </div>
-      </div>
-    </div>
+           <div className={`relative z-10 flex h-full w-full items-center justify-center px-2 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] ${useSharedTopHud ? 'pt-28' : 'pt-2'} sm:px-4`}>
+             <AnimatePresence>
+               {fireActive ? (
+                 <motion.div
+                   key={`fire-overlay-${firePulse}`}
+                   className="pointer-events-none absolute inset-0 z-[1]"
+                   initial={{ opacity: 0 }}
+                   animate={{ opacity: 1 }}
+                   exit={{ opacity: 0 }}
+                   transition={{ duration: 0.18, ease: 'easeOut' }}
+                   style={{ mixBlendMode: 'screen' }}
+                 >
+                   <motion.div
+                     className="absolute inset-0"
+                     animate={{ opacity: [0.18, 0.42, 0.22], scale: [0.98, 1.02, 1] }}
+                     transition={{ duration: 0.75, ease: 'easeInOut' }}
+                     style={{
+                       background:
+                         'radial-gradient(circle at 50% 80%, rgba(251,146,60,0.48) 0%, rgba(245,158,11,0.28) 22%, transparent 60%), radial-gradient(circle at 40% 55%, rgba(239,68,68,0.22) 0%, transparent 62%), radial-gradient(circle at 70% 60%, rgba(250,204,21,0.18) 0%, transparent 58%)',
+                       filter: 'blur(6px)',
+                     }}
+                   />
+                 </motion.div>
+               ) : null}
+             </AnimatePresence>
+             <div className="relative z-[2]">{children}</div>
+           </div>
+         </div>
+       </div>
+     </div>
   );
 };
 
@@ -325,10 +380,12 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   avatarId: _avatarId,
   useSharedTopHud = false,
   isBoss: _isBoss = false,
+  isPractice,
   variantGameType = 'fraction_match',
   onVictory,
   onGameOver,
   onBack,
+  gameTitle,
 }) => {
   const [board, setBoard] = useState<BoardCell[]>([]);
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
@@ -336,9 +393,14 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [timeLeft, setTimeLeft] = useState(ROUND_SECONDS);
   const [gemSize, setGemSize] = useState(52);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
+  const [fireActive, setFireActive] = useState(false);
+  const [firePulse, setFirePulse] = useState(0);
 
   const endedRef = useRef(false);
   const boardGridRef = useRef<HTMLDivElement | null>(null);
+  const fireTimeoutRef = useRef<number | null>(null);
+  const lastMatchAtRef = useRef<number | null>(null);
 
   const resolvedLevel = useMemo(() => Math.max(1, miniGameLevel || levelId || 1), [levelId, miniGameLevel]);
   const targetScore = useMemo(() => BASE_TARGET_SCORE + (resolvedLevel * TARGET_SCORE_STEP), [resolvedLevel]);
@@ -357,11 +419,23 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
     setScore(0);
     setIsProcessing(false);
     setTimeLeft(ROUND_SECONDS);
+    setFireActive(false);
+    lastMatchAtRef.current = null;
+    if (fireTimeoutRef.current !== null) window.clearTimeout(fireTimeoutRef.current);
+    fireTimeoutRef.current = null;
   }, [includeDecimals]);
 
   useEffect(() => {
     resetBoard();
   }, [resolvedLevel, resetBoard]);
+
+  useEffect(() => () => {
+    if (fireTimeoutRef.current !== null) window.clearTimeout(fireTimeoutRef.current);
+  }, []);
+
+  useEffect(() => {
+    setShowPracticeIntro(Boolean(isPractice));
+  }, [isPractice]);
 
   useEffect(() => {
     const updateGemSize = () => {
@@ -436,6 +510,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
 
   const processBoard = useCallback(async (inputBoard: BoardCell[]) => {
     let workingBoard = [...inputBoard];
+    let chainCount = 0;
 
     while (!endedRef.current) {
       const matches = findMatches(workingBoard);
@@ -446,6 +521,19 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       }
 
       setIsProcessing(true);
+
+      chainCount += 1;
+      const now = Date.now();
+      const elapsedSinceLast = lastMatchAtRef.current === null ? Infinity : now - lastMatchAtRef.current;
+      lastMatchAtRef.current = now;
+
+      const shouldFire = matches.length > 3 || chainCount > 1 || elapsedSinceLast < 850;
+      if (shouldFire) {
+        setFireActive(true);
+        setFirePulse((prev) => prev + 1);
+        if (fireTimeoutRef.current !== null) window.clearTimeout(fireTimeoutRef.current);
+        fireTimeoutRef.current = window.setTimeout(() => setFireActive(false), 900);
+      }
 
       matches.forEach((idx) => {
         workingBoard[idx] = null;
@@ -520,17 +608,28 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
     await processBoard(swapped);
   }, [board, isProcessing, processBoard, selectedIdx]);
 
-  const timerProgress = Math.max(0, Math.min(100, (timeLeft / ROUND_SECONDS) * 100));
+  const completionProgress = Math.max(0, Math.min(100, (XP / Math.max(1, targetScore)) * 100));
 
   return (
     <MatchGameShell
       XP={XP}
-      timerProgress={timerProgress}
+      completionProgress={completionProgress}
+      timeLeft={timeLeft}
       levelName={levelName}
+      questionText="Match equivilent values."
+      fireActive={fireActive}
+      firePulse={firePulse}
       variantGameType={variantGameType}
       useSharedTopHud={useSharedTopHud}
       onBack={onBack}
     >
+      <PracticeIntroPopup
+        open={showPracticeIntro}
+        title={gameTitle || 'Match 3'}
+        body="The Monster Minds have built a wall blocking our path, break the wall by matching frations to their equivilants."
+        briefing={null}
+        onAction={() => setShowPracticeIntro(false)}
+      />
       <div
         ref={boardGridRef}
         className="grid w-[min(94vw,94vh)] grid-cols-6 gap-2 sm:gap-2.5"
