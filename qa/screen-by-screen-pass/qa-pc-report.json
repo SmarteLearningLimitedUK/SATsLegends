@@ -287,6 +287,22 @@
       "status": "captured",
       "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
       "screenshot": "qa-pc-core-of-calculation-sats-paper-1-arithmetic.png"
+    },
+    {
+      "viewport": "pc",
+      "island": "Core of Calculation",
+      "group": "SATs Paper 2: Reasoning",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-pc-core-of-calculation-sats-paper-2-reasoning.png"
+    },
+    {
+      "viewport": "pc",
+      "island": "Core of Calculation",
+      "group": "SATs Paper 3: Reasoning",
+      "status": "captured",
+      "gameplayMarker": "[data-qa-screen=\"gameplay\"]",
+      "screenshot": "qa-pc-core-of-calculation-sats-paper-3-reasoning.png"
     }
   ],
   "consoleErrors": []
