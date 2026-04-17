@@ -91,7 +91,7 @@ const themeRatioQuestion = (question: RatioFractionQuestion): RatioFractionQuest
     ...question,
     labels,
     target: targetLabel,
-    prompt: `Greedy Monster Minds mixed ${joinLabelList(labels)} in a ${ratioText} ratio. What fraction of the whole is ${targetLabel.toLowerCase()}?`,
+    prompt: `Sneaky Monster Minds mixed ${joinLabelList(labels)} in a ${ratioText} ratio. What fraction of the whole is ${targetLabel.toLowerCase()}?`,
     explanation: `Total parts = ${totalParts}. ${targetLabel} is ${question.ratio[targetIndex]} parts -> ${question.correctAnswer}.`,
   };
 };
