@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
+import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { GameQuestionCard, GameUiShell } from '../components/game-ui/GameUiKit';
 import { triggerHaptic } from '../haptics';
 import { formatMultiplicationDisplay } from '../utils/mathDisplay';
@@ -253,6 +254,9 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
 
   return (
     <GameUiShell overlayDisabled className="bg-transparent">
+      <GameplaySceneBackdrop gameType="equation_grove" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(10,16,31,0.22),rgba(3,7,18,0.4))]" />
+
       <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] pt-[calc(env(safe-area-inset-top)+1rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+1.5rem)] md:pt-[calc(env(safe-area-inset-top)+1.25rem)]">
         <div className="flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col gap-3 md:gap-4">
           <div className="flex justify-center">

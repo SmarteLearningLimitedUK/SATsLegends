@@ -5,7 +5,6 @@ import { triggerHaptic } from '../haptics';
 import { GameScreenShell } from '../layout/ScreenPrimitives';
 import dockBackground from '../assets/maps/backgroundsforgames/division dock.jpg';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
-import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface DivisionDockGameProps {
   levelId: number;
@@ -256,7 +255,8 @@ const DivisionDockGame: React.FC<DivisionDockGameProps> = ({
               title="Division Dock"
               bodyClassName="text-[clamp(1rem,2.7vw,1.42rem)] font-black leading-snug tracking-[0.01em] text-white md:text-[1.5rem]"
             >
-              {formatFantasyPrompt(`The Monsterminds have mixed the cargo.\nWhat is ${question.dividend} ÷ ${question.divisor}?`)}
+              {'The cargo has been scrambled.\n'}
+              {`What is ${question.dividend} ÷ ${question.divisor}?`}
             </GameQuestionCard>
           </div>
 

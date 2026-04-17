@@ -58,8 +58,8 @@
       "island": "Fraction Forest",
       "game": "Match-3 Equivalence",
       "screenshot": "qa-phone-match-3-equivalence.png",
-      "status": "captured",
-      "error": null
+      "status": "failed",
+      "error": "Game group not found: Match-3 Equivalence"
     },
     {
       "island": "Fraction Forest",

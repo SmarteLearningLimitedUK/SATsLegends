@@ -1,10 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
-import rockStage18 from '../assets/mine/18.png';
-import rockStage19 from '../assets/mine/19.png';
-import rockStage20 from '../assets/mine/20.png';
-import rockStage21 from '../assets/mine/21.png';
+import mineEnemy from '../assets/bosses/goblin.png';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import mineBackground from '../assets/maps/backgroundsforgames/multiplication mine background.jpg';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
@@ -31,7 +28,6 @@ interface MultiplicationQuestion {
 type Phase = 'playing' | 'exploding' | 'treasure';
 
 const ROCK_MAX_HEALTH = 4;
-const ROCK_FRAMES = [rockStage18, rockStage19, rockStage20, rockStage21];
 
 const makeOptions = (correct: number) => {
   const spread = Math.max(3, Math.round(correct * 0.18));
@@ -81,13 +77,6 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
   const [impactTick, setImpactTick] = useState(0);
   const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
   const completedRef = useRef(false);
-
-  const rockFrameIndex = useMemo(() => {
-    const damage = ROCK_MAX_HEALTH - rockHealth;
-    const clampedDamage = Math.max(0, Math.min(ROCK_MAX_HEALTH, damage));
-    const frame = Math.min(ROCK_FRAMES.length - 1, clampedDamage);
-    return phase === 'exploding' ? ROCK_FRAMES.length - 1 : frame;
-  }, [phase, rockHealth]);
 
   const solveQuestion = (selectedAnswer: number) => {
     if (phase !== 'playing') return;
@@ -142,6 +131,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
   return (
     <div className="relative h-full w-full overflow-hidden text-white">
       <GameplaySceneBackdrop gameType="calculation_clash" backgroundOverride={mineBackground} />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(8,15,32,0.14),rgba(3,7,18,0.34))]" />
 
       <div className={`relative z-20 flex h-full w-full flex-col items-center px-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+3.2rem)]' : 'pt-[calc(env(safe-area-inset-top)+4.2rem)]'}`}>
         <div className="w-full max-w-[760px]">
@@ -197,10 +187,10 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
                 className="relative h-[240px] w-[240px] overflow-hidden bg-transparent"
               >
                 <img
-                  src={ROCK_FRAMES[rockFrameIndex]}
-                  alt=""
+                  src={mineEnemy}
+                  alt="Multiplication Mine enemy"
                   draggable={false}
-                  className="absolute inset-0 h-full w-full object-contain"
+                  className="absolute inset-0 h-full w-full object-contain object-center drop-shadow-[0_18px_28px_rgba(0,0,0,0.28)]"
                 />
 
                 <div className="absolute -bottom-10 left-1/2 flex -translate-x-1/2 gap-2">
