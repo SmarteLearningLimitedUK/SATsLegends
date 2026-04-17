@@ -2,7 +2,7 @@ import { chromium } from 'playwright';
 import fs from 'fs';
 
 const url = process.env.QA_URL || 'http://127.0.0.1:3000/';
-const outputPath = 'qa/match-3-equivalence-iphone-latest.png';
+const outputPath = 'qa/match-mastery-iphone-latest.png';
 
 fs.mkdirSync('qa', { recursive: true });
 
@@ -83,7 +83,10 @@ await page.waitForTimeout(700);
 await clickIfVisible(page.getByRole('button', { name: /explore island/i }), 1800);
 await page.waitForTimeout(900);
 
-const groupButton = page.locator('button[aria-expanded]', { hasText: /match-3 equivalence/i }).first();
+const groupButton = page
+  .locator('button[aria-expanded]')
+  .filter({ hasText: /match mastery|match-3 equivalence/i })
+  .first();
 await groupButton.click({ timeout: 6000 });
 await page.waitForTimeout(350);
 
@@ -97,4 +100,3 @@ await page.waitForTimeout(900);
 
 await page.screenshot({ path: outputPath, fullPage: false });
 await browser.close();
-
