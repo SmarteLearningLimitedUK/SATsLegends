@@ -47,7 +47,7 @@ const RACER_LERP = 0.16;
 const BASE_XP = 160;
 const KART_SCALE = 1.45;
 const PLAYER_KART_SCALE = 1.9;
-const PLAYER_KART_RAISE = '105pt';
+const PLAYER_KART_RAISE = '80pt';
 const PLAYER_TRACK_LINE_Y = 80.8;
 const ENEMY_TRACK_LINE_Y = 88.6;
 const FINISH_Y_SHIFT = -200;
@@ -558,28 +558,12 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
               animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { x: [0, -4, 4, -3, 3, 0] } : { scale: 1 }}
               transition={{ duration: 0.35 }}
             >
-              <div className="absolute bottom-0 left-1/2 h-[36%] w-[74%] -translate-x-1/2 rounded-[1.15rem] border border-sky-100/40 bg-[linear-gradient(180deg,rgba(248,250,252,0.1),rgba(15,23,42,0.7))] shadow-[0_10px_20px_rgba(2,6,23,0.42)]" />
-              <span className="absolute bottom-[4%] left-[18%] h-4 w-4 rounded-full border border-slate-200/65 bg-slate-950 shadow-[0_0_0_2px_rgba(14,165,233,0.22)]" />
-              <span className="absolute bottom-[4%] right-[18%] h-4 w-4 rounded-full border border-slate-200/65 bg-slate-950 shadow-[0_0_0_2px_rgba(14,165,233,0.22)]" />
-              {showBoost ? (
-                <motion.span
-                  className="absolute -left-10 top-1/2 z-0 h-10 w-16 -translate-y-1/2 rounded-full blur-[0.5px]"
-                  style={{
-                    background: 'radial-gradient(circle at 75% 50%, rgba(255,255,255,0.6) 0%, rgba(253,224,71,0.9) 35%, rgba(251,146,60,0.95) 62%, rgba(239,68,68,0.2) 100%)',
-                  }}
-                  animate={{ scaleX: [0.9, 1.15, 0.95], opacity: [0.8, 1, 0.7] }}
-                  transition={{ duration: 0.25, repeat: Infinity, repeatType: 'mirror' }}
-                />
-              ) : null}
               <img
                 src={playerKart}
                 alt="Player kart"
-                className="relative z-10 h-[98%] w-[98%] object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]"
+                className="relative z-10 h-full w-full object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]"
                 style={{ imageRendering: 'auto' }}
               />
-              {showStall ? (
-                <span className="absolute -left-2 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-slate-400/80" />
-              ) : null}
             </motion.div>
 
             <motion.div
