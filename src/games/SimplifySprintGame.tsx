@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { ChevronLeft, CircleDollarSign } from 'lucide-react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import AssetIcon from '../components/AssetIcon';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { triggerHaptic } from '../haptics';
 import simplifySprintBackground from '../assets/maps/backgroundsforgames/simplifysprint.jpg';
 import successRoundBackground from '../assets/end of round screen/success screen.jpg';
@@ -389,16 +390,20 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
             : 'pt-[calc(env(safe-area-inset-top)+3.9rem)]'
         }`}
       >
-        <div className="mt-0.5 flex w-full max-w-[760px] items-center justify-between gap-3">
-          <div className="rounded-full border border-emerald-200/35 bg-[linear-gradient(180deg,rgba(34,197,94,0.2),rgba(15,23,42,0.78))] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-50">
-            Round {Math.min(roundNumber, totalRounds)} / {totalRounds}
+        <div className="w-full max-w-[44rem] px-1">
+          <div className="flex items-center justify-end gap-3">
+            <div className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/80">
+              Round {Math.min(roundNumber, totalRounds)} / {totalRounds}
+            </div>
           </div>
-          <div className="rounded-full border border-amber-200/35 bg-[linear-gradient(180deg,rgba(251,191,36,0.22),rgba(15,23,42,0.78))] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-amber-50">
-            Tap a factor rune to reduce
+          <div className="mt-2">
+            <GameQuestionCard title="Simplify Sprint" className="max-w-[44rem]">
+              The Monster Minds have encrypted the value to take up as much space as possible. Reduce the fraction to its smallest form by tapping the correct factor.
+            </GameQuestionCard>
           </div>
         </div>
 
-        <div className="mt-4 flex w-full max-w-[760px] flex-1 min-h-0 flex-col items-center justify-center gap-3 rounded-[2rem] border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(15,118,110,0.32),rgba(30,64,175,0.34),rgba(15,23,42,0.86))] px-4 py-5 shadow-[0_22px_50px_rgba(0,0,0,0.45)]">
+        <div className="mt-3 flex w-full max-w-[44rem] flex-1 min-h-0 flex-col items-center justify-center gap-3 rounded-[2rem] border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(15,118,110,0.32),rgba(30,64,175,0.34),rgba(15,23,42,0.86))] px-4 py-5 shadow-[0_22px_50px_rgba(0,0,0,0.45)]">
           <div className="flex w-full items-center gap-3">
             <div className="flex-1">
               <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Simplify meter</div>
@@ -408,9 +413,6 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
                   animate={{ width: `${simplifyProgress * 100}%` }}
                 />
               </div>
-            </div>
-            <div className="rounded-full border border-violet-200/30 bg-[linear-gradient(180deg,rgba(139,92,246,0.22),rgba(15,23,42,0.8))] px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-violet-50">
-              gcd {currentGcd}
             </div>
           </div>
 

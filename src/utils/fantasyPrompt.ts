@@ -1,6 +1,20 @@
 import { formatMultiplicationDisplay } from './mathDisplay';
 
-const START_PREFIXES = ['The Monster Minds have scrambled the numbers.', 'Matharia mix -', 'Matharia records -', 'Matharia barrier -', 'Matharia forge -', 'Matharia map -', 'Matharia clock -', 'Quest:', 'Mission:', 'Spell:', 'Challenge:'];
+const START_PREFIXES = [
+  'The Monster Minds have scrambled the numbers.',
+  'The Monster Minds have mixed the fuel.',
+  'The Monster Minds have corrupted the records.',
+  'The Monster Minds have built a barrier.',
+  'The Monster Minds have warped the forge.',
+  'The Monster Minds have torn the map.',
+  'The Monster Minds have jammed the clock.',
+  'Quest:',
+  'Mission:',
+  'Spell:',
+  'Challenge:',
+];
+
+const LEGACY_MATHARIA_PREFIX = /^Matharia\s+(mix|records|barrier|forge|map|clock)\s*-\s*/i;
 
 const REPLACEMENTS: Array<[RegExp, string]> = [
   [/\bpupil(s)?\b/gi, 'apprentice$1'],
@@ -27,12 +41,12 @@ const isAllCapsWords = (prompt: string) => {
 
 const pickMathariaPrefix = (prompt: string) => {
   const lower = prompt.toLowerCase();
-  if (/(fuel|ratio|fraction|percent|share|split|mix)/.test(lower)) return 'Matharia mix -';
-  if (/(graph|chart|bar|mean|data|record|ledger)/.test(lower)) return 'Matharia records -';
-  if (/(angle|triangle|polygon|turn|rotate|reflection)/.test(lower)) return 'Matharia barrier -';
-  if (/(area|perimeter|volume|formula|cuboid|rectangle|length|width|height)/.test(lower)) return 'Matharia forge -';
-  if (/(coordinate|translate|beacon|scout|route|map)/.test(lower)) return 'Matharia map -';
-  if (/(time|clock|hour|minute|duration)/.test(lower)) return 'Matharia clock -';
+  if (/(fuel|ratio|fraction|percent|share|split|mix)/.test(lower)) return 'The Monster Minds have mixed the fuel.';
+  if (/(graph|chart|bar|mean|data|record|ledger)/.test(lower)) return 'The Monster Minds have corrupted the records.';
+  if (/(angle|triangle|polygon|turn|rotate|reflection)/.test(lower)) return 'The Monster Minds have built a barrier.';
+  if (/(area|perimeter|volume|formula|cuboid|rectangle|length|width|height)/.test(lower)) return 'The Monster Minds have warped the forge.';
+  if (/(coordinate|translate|beacon|scout|route|map)/.test(lower)) return 'The Monster Minds have torn the map.';
+  if (/(time|clock|hour|minute|duration)/.test(lower)) return 'The Monster Minds have jammed the clock.';
   if (/(place value|round|digit|number)/.test(lower)) return 'The Monster Minds have scrambled the numbers.';
   return 'The Monster Minds have scrambled the numbers.';
 };
@@ -48,6 +62,10 @@ const rewriteFuelMixPrompt = (prompt: string) => {
 export const formatFantasyPrompt = (prompt: string) => {
   const trimmed = prompt.trim();
   if (!trimmed) return prompt;
+
+  const deMatharia = trimmed.replace(LEGACY_MATHARIA_PREFIX, '');
+  if (deMatharia !== trimmed) return formatFantasyPrompt(deMatharia);
+
   if (START_PREFIXES.some((prefix) => trimmed.startsWith(prefix))) return prompt;
   if (trimmed.startsWith('A Monster Mind') || trimmed.startsWith('The Monster Minds') || trimmed.startsWith('The bridge') || trimmed.startsWith('The village') || trimmed.startsWith('The forge') || trimmed.startsWith('The path') || trimmed.startsWith('The map') || trimmed.startsWith('The records')) {
     return prompt;

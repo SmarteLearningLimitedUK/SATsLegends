@@ -209,8 +209,8 @@ const BevelledGem: React.FC<{
       }}
       aria-label={`Gem ${label}`}
     >
-      <div className="absolute left-0 top-0 h-full w-full bg-gradient-to-br from-white/40 via-transparent to-black/20" />
-      <div className="absolute left-1.5 top-1.5 h-2 w-2 rounded-full bg-white/60 blur-[1px]" />
+      <div className="absolute left-0 top-0 h-full w-full bg-gradient-to-br from-white/36 via-transparent to-black/18" />
+      <div className="absolute left-1.5 top-1.5 h-2 w-2 rounded-full bg-white/54 blur-[1px]" />
       <span className="absolute inset-0 flex items-center justify-center px-0.5 text-center text-[11px] font-black leading-none text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] sm:text-xs">
         {label}
       </span>
