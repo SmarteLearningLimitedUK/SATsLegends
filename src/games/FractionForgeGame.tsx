@@ -2,11 +2,12 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react';
 import AssetIcon from '../components/AssetIcon';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import fractionForgeBackground from '../assets/maps/backgroundsforgames/fraction forge map.jpg';
 import { triggerHaptic } from '../haptics';
-import { formatFantasyPrompt } from '../utils/fantasyPrompt';
+import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 
-interface FractionForgeGameProps {
+interface FractionForgeGameProps extends MiniGameShellContractProps {
   levelId: number;
   miniGameLevel?: number;
   avatarId: string;
@@ -168,9 +169,12 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   avatarId: _avatarId,
   useSharedTopHud = false,
   isBoss: _isBoss = false,
+  isPractice,
   onVictory,
   onGameOver,
   onBack: _onBack,
+  practiceBriefing: _practiceBriefing,
+  gameTitle,
 }) => {
   const [viewport, setViewport] = useState(() => ({
     width: typeof window === 'undefined' ? 390 : window.innerWidth,
@@ -189,6 +193,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   const [isResolving, setIsResolving] = useState(false);
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
   const [forgeGlow, setForgeGlow] = useState(false);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
   const playfieldRef = useRef<HTMLDivElement | null>(null);
   const forgeGlowTimeoutRef = useRef<number | null>(null);
@@ -513,6 +518,10 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   const showSmoke = feedback?.tone === 'error';
 
   useEffect(() => {
+    setShowPracticeIntro(Boolean(isPractice));
+  }, [isPractice]);
+
+  useEffect(() => {
     if (endedRef.current) return undefined;
     const timer = window.setInterval(() => {
       setTimeLeft((prev) => {
@@ -535,6 +544,14 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
       <GameplaySceneBackdrop
         gameType="take_out_rush"
         backgroundOverride={fractionForgeBackground}
+      />
+
+      <PracticeIntroPopup
+        open={showPracticeIntro}
+        title={gameTitle || 'Fraction Forge'}
+        body="We need to construct a cage strong enough to protect the brainpower from the Monster Minds. Solve the order of fractions to forge the Elitium needed to construct the cage."
+        briefing={null}
+        onAction={() => setShowPracticeIntro(false)}
       />
 
       <div ref={playfieldRef} className="relative h-full w-full">
@@ -585,9 +602,9 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
           style={{ top: useSharedTopHud ? '4px' : '8px' }}
         >
           <div className="mx-auto w-full max-w-[760px] rounded-[1rem] bg-slate-950/72 px-[15px] py-[11px] text-center backdrop-blur-sm">
-            <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90">Target Order</div>
+            <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90">Fraction Forge</div>
             <div className="mt-0.5 text-[clamp(1rem,3.8vw,1.35rem)] font-black text-white">
-              {formatFantasyPrompt(round.prompt)}
+              {round.prompt}
             </div>
             <div className="mt-1 text-[10px] font-semibold text-cyan-100/90">
               Place the fractions in order.
@@ -653,10 +670,6 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
             </React.Fragment>
           );
         })}
-
-        <div className="pointer-events-none absolute bottom-[calc(0.8rem+env(safe-area-inset-bottom))] left-1/2 z-20 -translate-x-1/2 rounded-full border border-cyan-100/40 bg-[#0a1f56]/82 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.14em] text-cyan-100 md:text-xs">
-          Round {Math.min(roundIndex, totalRounds)} / {totalRounds}
-        </div>
 
         <AnimatePresence>
           {feedback && (
