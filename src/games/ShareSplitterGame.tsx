@@ -204,6 +204,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const endedRef = useRef(false);
   const questionCardRef = useRef<HTMLDivElement | null>(null);
+  const cakeSourceButtonRef = useRef<HTMLButtonElement | null>(null);
   const [questionDockBottom, setQuestionDockBottom] = useState(0);
   const sliceSeedRef = useRef(0);
   const dragActiveRef = useRef(false);
@@ -320,6 +321,44 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     x: backgroundOffsetX + (point.x * backgroundScale),
     y: backgroundOffsetY + (point.y * backgroundScale),
   }), [backgroundOffsetX, backgroundOffsetY, backgroundScale]);
+
+  const isPointInsideCakeSource = useCallback((clientX: number, clientY: number) => {
+    const center = mapBackgroundPointToViewport(CAKE_SOURCE_POSITION);
+    const radius = (CAKE_SOURCE_SIZE_PX * backgroundScale) / 2;
+    return Math.hypot(clientX - center.x, clientY - center.y) <= radius;
+  }, [backgroundScale, mapBackgroundPointToViewport]);
+
+  useEffect(() => {
+    const handleGlobalPointerDown = (event: PointerEvent) => {
+      if (locked || remainingSlices <= 0) return;
+      if ((event as PointerEvent & { __shareSplitterForwarded?: boolean }).__shareSplitterForwarded) return;
+
+      const point = { x: event.clientX, y: event.clientY };
+      if (!isPointInsideCakeSource(point.x, point.y)) return;
+
+      const cakeButton = cakeSourceButtonRef.current;
+      if (!cakeButton || typeof PointerEvent === 'undefined') return;
+
+      const forwarded = new PointerEvent('pointerdown', {
+        bubbles: true,
+        cancelable: true,
+        clientX: point.x,
+        clientY: point.y,
+        pointerId: event.pointerId,
+        pointerType: event.pointerType,
+        isPrimary: event.isPrimary,
+        button: event.button,
+        buttons: event.buttons,
+      }) as PointerEvent & { __shareSplitterForwarded?: boolean };
+
+      forwarded.__shareSplitterForwarded = true;
+      cakeButton.dispatchEvent(forwarded);
+      event.preventDefault();
+    };
+
+    window.addEventListener('pointerdown', handleGlobalPointerDown, true);
+    return () => window.removeEventListener('pointerdown', handleGlobalPointerDown, true);
+  }, [isPointInsideCakeSource, locked, remainingSlices]);
 
   const getPlateSlicePlacement = useCallback((index: number) => {
     // Stack slices in a compact spiral so they read as sitting on the plate.
@@ -538,6 +577,14 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     window.addEventListener('blur', handleMouseCancel);
   };
 
+  const handleSourceAreaPointerDown = (event: React.PointerEvent | React.MouseEvent | React.TouchEvent) => {
+    if (locked || remainingSlices <= 0) return;
+    if (dragActiveRef.current || dragSlice) return;
+    const point = getClientPoint(event);
+    if (!isPointInsideCakeSource(point.x, point.y)) return;
+    handleSourcePointerDown(event);
+  };
+
   const resetAllocation = () => {
     if (locked || moveHistory.length === 0) return;
     setPlates(createEmptyPlates(challenge.plateCount));
@@ -639,7 +686,12 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
             className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-0 text-white"
             main={(
               <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
-                <div className="relative min-h-0 overflow-hidden rounded-[1.6rem] px-2 py-3 md:px-3">
+                <div
+                  className="relative min-h-0 overflow-hidden rounded-[1.6rem] px-2 py-3 md:px-3"
+                  onPointerDown={handleSourceAreaPointerDown}
+                  onMouseDown={handleSourceAreaPointerDown}
+                  onTouchStart={handleSourceAreaPointerDown}
+                >
                   <div className="pointer-events-none fixed inset-0 z-[20]">
                     <div className="relative h-full w-full">
                       <CelebrationSplash active={showCelebrationSplash} message="Party Time!" theme="party" />
@@ -691,31 +743,32 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                           </div>
                         );
                       })}
-
-                      <button
-                        type="button"
-                        onPointerDown={handleSourcePointerDown}
-                        onMouseDown={handleSourcePointerDown}
-                        onTouchStart={handleSourcePointerDown}
-                        disabled={locked || remainingSlices <= 0}
-                        className="pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2 rounded-full border border-amber-200/65 bg-[linear-gradient(180deg,rgba(255,244,191,0.24),rgba(180,83,9,0.14))] p-3 shadow-[0_12px_24px_rgba(180,83,9,0.2)] touch-none"
-                        style={{
-                          left: `${mapBackgroundPointToViewport(CAKE_SOURCE_POSITION).x}px`,
-                          top: `${mapBackgroundPointToViewport(CAKE_SOURCE_POSITION).y}px`,
-                          width: `${CAKE_SOURCE_SIZE_PX * backgroundScale}px`,
-                          height: `${CAKE_SOURCE_SIZE_PX * backgroundScale}px`,
-                        }}
-                        aria-label={remainingSlices > 0 ? 'Drag a slice from the cake' : 'No cake slices left'}
-                      >
-                        <img
-                          src={trimmedCakeSliceAsset}
-                          alt=""
-                          className="pointer-events-none h-full w-full object-contain drop-shadow-[0_8px_14px_rgba(0,0,0,0.24)]"
-                          draggable={false}
-                        />
-                      </button>
                     </div>
                   </div>
+
+                  <button
+                    ref={cakeSourceButtonRef}
+                    type="button"
+                    onPointerDown={handleSourcePointerDown}
+                    onMouseDown={handleSourcePointerDown}
+                    onTouchStart={handleSourcePointerDown}
+                    disabled={locked || remainingSlices <= 0}
+                    className="pointer-events-auto fixed z-[30] -translate-x-1/2 -translate-y-1/2 rounded-full border border-amber-200/65 bg-[linear-gradient(180deg,rgba(255,244,191,0.24),rgba(180,83,9,0.14))] p-3 shadow-[0_12px_24px_rgba(180,83,9,0.2)] touch-none"
+                    style={{
+                      left: `${mapBackgroundPointToViewport(CAKE_SOURCE_POSITION).x}px`,
+                      top: `${mapBackgroundPointToViewport(CAKE_SOURCE_POSITION).y}px`,
+                      width: `${CAKE_SOURCE_SIZE_PX * backgroundScale}px`,
+                      height: `${CAKE_SOURCE_SIZE_PX * backgroundScale}px`,
+                    }}
+                    aria-label={remainingSlices > 0 ? 'Drag a slice from the cake' : 'No cake slices left'}
+                  >
+                    <img
+                      src={trimmedCakeSliceAsset}
+                      alt=""
+                      className="pointer-events-none h-full w-full object-contain drop-shadow-[0_8px_14px_rgba(0,0,0,0.24)]"
+                      draggable={false}
+                    />
+                  </button>
                 </div>
 
                 <section className="shrink-0 min-h-[1px]" aria-hidden />
