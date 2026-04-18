@@ -48,13 +48,20 @@ type DragSlice = {
   y: number;
 };
 
+type SlicePlacement = {
+  x: number;
+  y: number;
+};
+
 const MAX_PLATE_COUNT = 5;
 const ROUNDS_TO_WIN = 5;
 const BASE_XP_PER_ROUND = 120;
 const CAKE_SLICE_ASSET = cakeSliceAsset;
 const DRAG_SLICE_SIZE = 48;
-const CAKE_SOURCE_POSITION = { x: 50, y: 86 };
-const CAKE_SOURCE_SIZE = 'clamp(7.5rem, 32vw, 10.5rem)';
+const SHARE_SPLITTER_BACKGROUND_SIZE = { width: 800, height: 1600 };
+const SHARE_SPLITTER_PLATE_DIAMETER_PX = 174;
+const CAKE_SOURCE_POSITION = { x: 400, y: 1376 };
+const CAKE_SOURCE_SIZE_PX = 212;
 
 const RATIO_PATTERNS_BY_COUNT: Record<number, number[][]> = {
   2: [
@@ -86,28 +93,27 @@ const RATIO_PATTERNS_BY_COUNT: Record<number, number[][]> = {
 
 const PLATE_POSITIONS_BY_COUNT: Record<number, Array<{ x: number; y: number }>> = {
   2: [
-    { x: 28.3, y: 38.9 },
-    { x: 72.3, y: 39.4 },
+    { x: 222.5, y: 653.8 },
+    { x: 584.2, y: 662.0 },
   ],
   3: [
-    { x: 50.3, y: 31.4 },
-    { x: 28.3, y: 38.9 },
-    { x: 72.3, y: 39.4 },
+    { x: 403.3, y: 520.9 },
+    { x: 222.5, y: 653.8 },
+    { x: 584.2, y: 662.0 },
   ],
   4: [
-    { x: 50.3, y: 31.4 },
-    { x: 28.3, y: 38.9 },
-    { x: 72.3, y: 39.4 },
-    { x: 33.5, y: 51.5 },
+    { x: 403.3, y: 520.9 },
+    { x: 222.5, y: 653.8 },
+    { x: 584.2, y: 662.0 },
+    { x: 287.9, y: 877.7 },
   ],
   5: [
-    // Measured from the actual rendered game screenshot in viewport space.
-    // These are the visible plate centers on the live Share Splitter screen.
-    { x: 50.7, y: 31.6 },
-    { x: 28.7, y: 39.0 },
-    { x: 72.7, y: 39.5 },
-    { x: 42.6, y: 52.3 },
-    { x: 70.2, y: 50.4 },
+    // Live screenshot centers measured from the rendered Share Splitter screen.
+    { x: 403.3, y: 520.9 },
+    { x: 222.5, y: 653.8 },
+    { x: 584.2, y: 662.0 },
+    { x: 287.9, y: 877.7 },
+    { x: 533.0, y: 867.7 },
   ],
 };
 
@@ -193,10 +199,10 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const [showCelebrationSplash, setShowCelebrationSplash] = useState(false);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
   const trimmedCakeSliceAsset = useTrimmedImageSource(CAKE_SLICE_ASSET);
+  const [viewportRect, setViewportRect] = useState({ width: 0, height: 0 });
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const endedRef = useRef(false);
-  const plateRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const questionCardRef = useRef<HTMLDivElement | null>(null);
   const [questionDockBottom, setQuestionDockBottom] = useState(0);
   const sliceSeedRef = useRef(0);
@@ -229,6 +235,25 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   useEffect(() => {
     setShowPracticeIntro(Boolean(isPractice));
   }, [isPractice]);
+
+  useLayoutEffect(() => {
+    const update = () => {
+      setViewportRect({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(document.documentElement);
+    window.addEventListener('resize', update);
+
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', update);
+    };
+  }, [challenge.id]);
 
   useLayoutEffect(() => {
     const node = questionCardRef.current;
@@ -266,7 +291,13 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const allSlicesUsed = remainingSlices === 0;
   const allCorrect = plateViews.every((plate) => plate.isCorrect);
   const platePositions = PLATE_POSITIONS_BY_COUNT[challenge.plateCount] || PLATE_POSITIONS_BY_COUNT[5];
-  const plateSize = 'clamp(6.9rem, 28vw, 7.2rem)';
+  const backgroundScale = Math.max(
+    viewportRect.width / SHARE_SPLITTER_BACKGROUND_SIZE.width,
+    viewportRect.height / SHARE_SPLITTER_BACKGROUND_SIZE.height,
+  );
+  const backgroundOffsetX = (viewportRect.width - (SHARE_SPLITTER_BACKGROUND_SIZE.width * backgroundScale)) / 2;
+  const backgroundOffsetY = viewportRect.height - (SHARE_SPLITTER_BACKGROUND_SIZE.height * backgroundScale);
+  const plateSizePx = SHARE_SPLITTER_PLATE_DIAMETER_PX * backgroundScale;
   const promptText = isPractice
     ? `Target ratio: ${challenge.ratios.join(':')}`
     : `There are ${challenge.totalSlices} slices of brainpower cake.\nThe Monster Mind demands it is shared in a ratio of ${challenge.ratios.join(':')}.`;
@@ -285,6 +316,25 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setFeedbackTone('neutral');
   }, [levelId]);
 
+  const mapBackgroundPointToViewport = useCallback((point: { x: number; y: number }) => ({
+    x: backgroundOffsetX + (point.x * backgroundScale),
+    y: backgroundOffsetY + (point.y * backgroundScale),
+  }), [backgroundOffsetX, backgroundOffsetY, backgroundScale]);
+
+  const getPlateSlicePlacement = useCallback((index: number) => {
+    // Stack slices in a compact spiral so they read as sitting on the plate.
+    const angleDegrees = index * 137.50776405;
+    const angle = (angleDegrees * Math.PI) / 180;
+    const radius = Math.min(0.18, 0.04 + (index * 0.022));
+    const stretchX = index % 2 === 0 ? 1 : 0.9;
+    const stretchY = index % 3 === 0 ? 0.82 : 0.72;
+
+    return {
+      x: Math.cos(angle) * radius * stretchX,
+      y: Math.sin(angle) * radius * stretchY,
+    };
+  }, []);
+
   const placeOnPlate = (plateIndex: number, sliceId: string) => {
     if (locked || remainingSlices <= 0) return;
 
@@ -300,7 +350,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setValidationActive(false);
   };
 
-  const getClientPoint = (evt: PointerEvent | TouchEvent | React.PointerEvent) => {
+  const getClientPoint = (evt: PointerEvent | TouchEvent | MouseEvent | React.PointerEvent | React.MouseEvent | React.TouchEvent) => {
     const anyEvt = evt as TouchEvent;
     if ('touches' in anyEvt && anyEvt.touches.length > 0) {
       return { x: anyEvt.touches[0].clientX, y: anyEvt.touches[0].clientY };
@@ -312,12 +362,12 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     return { x: pointerEvt.clientX || 0, y: pointerEvt.clientY || 0 };
   };
 
-  const handleSourcePointerDown = (event: React.PointerEvent) => {
+  const handleSourcePointerDown = (event: React.PointerEvent | React.MouseEvent | React.TouchEvent) => {
     if (locked || remainingSlices <= 0) return;
     if (dragActiveRef.current || dragSlice) return;
     const sliceId = `${challenge.id}-slice-${sliceSeedRef.current}`;
     sliceSeedRef.current += 1;
-    const pointerId = event.pointerId;
+    const pointerId = 'pointerId' in event ? event.pointerId : 1;
     dragActiveRef.current = true;
 
     const updatePosition = (clientX: number, clientY: number) => {
@@ -328,14 +378,20 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       });
     };
 
+    const getPlateCenter = (index: number) => {
+      const position = platePositions[index];
+      if (!position) return null;
+      return mapBackgroundPointToViewport(position);
+    };
+
     const getNearestPlate = (clientX: number, clientY: number) => {
       let nearestIndex = -1;
       let nearestDistance = Number.POSITIVE_INFINITY;
-      plateRefs.current.forEach((plate, index) => {
-        if (!plate) return;
-        const rect = plate.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
+      platePositions.forEach((_, index) => {
+        const center = getPlateCenter(index);
+        if (!center) return;
+        const centerX = center.x;
+        const centerY = center.y;
         const dx = clientX - centerX;
         const dy = clientY - centerY;
         const distance = Math.hypot(dx, dy);
@@ -349,12 +405,12 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
     const getHitPlateIndex = (clientX: number, clientY: number) => {
       let hitIndex = -1;
-      plateRefs.current.forEach((plate, index) => {
-        if (!plate) return;
-        const rect = plate.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-          const radius = Math.max(rect.width, rect.height) * 0.34;
+      platePositions.forEach((_, index) => {
+        const center = getPlateCenter(index);
+        if (!center) return;
+        const centerX = center.x;
+        const centerY = center.y;
+        const radius = plateSizePx * 0.5;
         const distance = Math.hypot(clientX - centerX, clientY - centerY);
         if (distance <= radius) {
           hitIndex = index;
@@ -367,7 +423,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       if (!dragActiveRef.current) return;
       dragActiveRef.current = false;
       const { index, distance } = getNearestPlate(clientX, clientY);
-        const snapRadius = 58;
+      const snapRadius = plateSizePx * 0.56;
       const hitIndex = getHitPlateIndex(clientX, clientY);
       const targetPlateIndex = hitIndex >= 0 ? hitIndex : distance <= snapRadius ? index : -1;
 
@@ -384,15 +440,18 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleTouchEnd);
       window.removeEventListener('touchcancel', handleTouchEnd);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('blur', handleMouseCancel);
     };
 
     const handlePointerMove = (moveEvent: PointerEvent) => {
       const point = getClientPoint(moveEvent);
       updatePosition(point.x, point.y);
-      const hitIndex = getHitPlateIndex(point.x, point.y);
-      if (hitIndex >= 0) {
-        setHoverPlateIndex(hitIndex);
-        return;
+        const hitIndex = getHitPlateIndex(point.x, point.y);
+        if (hitIndex >= 0) {
+          setHoverPlateIndex(hitIndex);
+          return;
       }
       const { index, distance } = getNearestPlate(point.x, point.y);
       setHoverPlateIndex(distance <= 62 ? index : null);
@@ -421,7 +480,24 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       finishDrag(point.x, point.y);
     };
 
-    const handlePointerCancel = () => {
+    const handleMouseMove = (mouseEvent: MouseEvent) => {
+      const point = getClientPoint(mouseEvent);
+      updatePosition(point.x, point.y);
+      const hitIndex = getHitPlateIndex(point.x, point.y);
+      if (hitIndex >= 0) {
+        setHoverPlateIndex(hitIndex);
+        return;
+      }
+      const { index, distance } = getNearestPlate(point.x, point.y);
+      setHoverPlateIndex(distance <= 62 ? index : null);
+    };
+
+    const handleMouseUp = (mouseEvent: MouseEvent) => {
+      const point = getClientPoint(mouseEvent);
+      finishDrag(point.x, point.y);
+    };
+
+    const handleMouseCancel = () => {
       dragActiveRef.current = false;
       setDragSlice(null);
       setHoverPlateIndex(null);
@@ -431,11 +507,21 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleTouchEnd);
       window.removeEventListener('touchcancel', handleTouchEnd);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('blur', handleMouseCancel);
+    };
+
+    const handlePointerCancel = () => {
+      handleMouseCancel();
     };
 
     const startPoint = getClientPoint(event);
     updatePosition(startPoint.x, startPoint.y);
-    event.currentTarget.setPointerCapture(pointerId);
+    const currentTarget = event.currentTarget as HTMLElement & { setPointerCapture?: (pointerId: number) => void };
+    if ('setPointerCapture' in currentTarget && 'pointerId' in event) {
+      currentTarget.setPointerCapture?.(pointerId);
+    }
     setFeedback('Drop the cake onto the correct plate.');
     setFeedbackTone('neutral');
     setValidationActive(false);
@@ -447,6 +533,9 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     window.addEventListener('touchmove', handleTouchMove, { passive: false });
     window.addEventListener('touchend', handleTouchEnd);
     window.addEventListener('touchcancel', handleTouchEnd);
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('blur', handleMouseCancel);
   };
 
   const resetAllocation = () => {
@@ -555,63 +644,76 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                     <div className="relative h-full w-full">
                       <CelebrationSplash active={showCelebrationSplash} message="Party Time!" theme="party" />
                       {plateViews.map((plate, index) => {
-                        const plateTone = validationActive
-                          ? plate.isCorrect
-                            ? 'ring-2 ring-emerald-300/70'
-                            : 'ring-2 ring-amber-200/75'
-                          : hoverPlateIndex === index
-                            ? 'ring-2 ring-cyan-200/85'
-                            : dragSlice
-                              ? 'ring-1 ring-white/20'
-                              : '';
-                        const position = platePositions[index] || { x: 50, y: 50 };
+                        const position = platePositions[index] || { x: 0, y: 0 };
+                        const center = mapBackgroundPointToViewport(position);
+                        const sliceCount = plates[index].length;
+                        const sliceBaseSizePx = Math.max(
+                          22,
+                          plateSizePx * (sliceCount <= 3 ? 0.24 : sliceCount <= 6 ? 0.2 : 0.16),
+                        );
 
                         return (
-                          <button
+                          <div
                             key={plate.id}
-                            type="button"
-                            ref={(node) => {
-                              plateRefs.current[index] = node;
-                            }}
-                            disabled={locked}
-                            className={`pointer-events-auto absolute relative flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-transparent bg-transparent p-1.5 text-center transition ${plateTone} ${hoverPlateIndex === index ? 'scale-[1.01]' : ''}`}
+                            data-testid={`share-splitter-plate-${index + 1}`}
+                            className="pointer-events-none absolute relative flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-transparent bg-transparent p-1.5 text-center transition"
                             style={{
-                              left: `${position.x}%`,
-                              top: `${position.y}%`,
-                              width: plateSize,
-                              height: plateSize,
+                              left: `${center.x}px`,
+                              top: `${center.y}px`,
+                              width: `${plateSizePx}px`,
+                              height: `${plateSizePx}px`,
                             }}
-                            aria-label={`Plate ${index + 1}. ${plate.currentCakeCount} of ${plate.targetCakeCount} cakes placed.`}
                           >
-                            <div className="pointer-events-none absolute inset-[-4px] rounded-full border-[5px] border-red-500/95 shadow-[0_0_0_1px_rgba(255,255,255,0.18),0_0_0_3px_rgba(239,68,68,0.22)]" />
-                            <div className="grid h-full w-full grid-cols-3 place-items-center gap-0.5">
-                              {plates[index].slice(0, 6).map((sliceId) => (
-                                <img
-                                  key={sliceId}
-                                  src={trimmedCakeSliceAsset}
-                                  alt=""
-                                  className="h-10 w-10 object-contain drop-shadow-[0_10px_16px_rgba(0,0,0,0.22)] sm:h-12 sm:w-12"
-                                  draggable={false}
-                                />
-                              ))}
+                            <div className="pointer-events-none absolute inset-0 rounded-full bg-cyan-200/18 ring-4 ring-cyan-50/45 shadow-[0_0_0_1px_rgba(255,255,255,0.14),0_0_28px_rgba(34,211,238,0.24)]" />
+                            <div className="pointer-events-none absolute inset-0">
+                              {plates[index].map((sliceId, sliceIndex) => {
+                                const placement = getPlateSlicePlacement(sliceIndex);
+                                return (
+                                  <motion.img
+                                    key={sliceId}
+                                    data-testid={`share-splitter-plate-${index + 1}-slice-${sliceIndex + 1}`}
+                                    src={trimmedCakeSliceAsset}
+                                    alt=""
+                                    draggable={false}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 0.16, ease: 'easeOut' }}
+                                    className="absolute left-1/2 top-1/2 object-contain drop-shadow-[0_10px_16px_rgba(0,0,0,0.22)]"
+                                    style={{
+                                      width: `${sliceBaseSizePx}px`,
+                                      height: `${sliceBaseSizePx}px`,
+                                      transform: `translate(-50%, -50%) translate(${placement.x * plateSizePx}px, ${placement.y * plateSizePx}px)`,
+                                    }}
+                                  />
+                                );
+                              })}
                             </div>
-                          </button>
+                          </div>
                         );
                       })}
 
                       <button
                         type="button"
                         onPointerDown={handleSourcePointerDown}
+                        onMouseDown={handleSourcePointerDown}
+                        onTouchStart={handleSourcePointerDown}
                         disabled={locked || remainingSlices <= 0}
-                        className="pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-0 bg-transparent touch-none"
+                        className="pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2 rounded-full border border-amber-200/65 bg-[linear-gradient(180deg,rgba(255,244,191,0.24),rgba(180,83,9,0.14))] p-3 shadow-[0_12px_24px_rgba(180,83,9,0.2)] touch-none"
                         style={{
-                          left: `${CAKE_SOURCE_POSITION.x}%`,
-                          top: `${CAKE_SOURCE_POSITION.y}%`,
-                          width: CAKE_SOURCE_SIZE,
-                          height: CAKE_SOURCE_SIZE,
+                          left: `${mapBackgroundPointToViewport(CAKE_SOURCE_POSITION).x}px`,
+                          top: `${mapBackgroundPointToViewport(CAKE_SOURCE_POSITION).y}px`,
+                          width: `${CAKE_SOURCE_SIZE_PX * backgroundScale}px`,
+                          height: `${CAKE_SOURCE_SIZE_PX * backgroundScale}px`,
                         }}
                         aria-label={remainingSlices > 0 ? 'Drag a slice from the cake' : 'No cake slices left'}
-                      />
+                      >
+                        <img
+                          src={trimmedCakeSliceAsset}
+                          alt=""
+                          className="pointer-events-none h-full w-full object-contain drop-shadow-[0_8px_14px_rgba(0,0,0,0.24)]"
+                          draggable={false}
+                        />
+                      </button>
                     </div>
                   </div>
                 </div>
