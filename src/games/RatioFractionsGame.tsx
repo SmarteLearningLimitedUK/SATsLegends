@@ -491,7 +491,8 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const trackSpan = Math.max(1, tuning.trackLength);
   const cameraWorldPosition = playerPosRef.current;
   const playerLeft = 50;
-  const enemyLeft = 50 + ((enemyPosRef.current - cameraWorldPosition) / trackSpan) * 100;
+  // Keep the enemy in its own world space so player boosts do not drag it along the camera.
+  const enemyLeft = clamp(12 + (enemyPosRef.current / trackSpan) * 92, -10, 110);
   const finishLeft = 50 + ((tuning.trackLength - cameraWorldPosition) / trackSpan) * 100;
   const showBoost = raceState === 'correctBoost';
   const showStall = raceState === 'incorrectStall';

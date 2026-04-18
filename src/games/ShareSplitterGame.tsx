@@ -101,11 +101,13 @@ const PLATE_POSITIONS_BY_COUNT: Record<number, Array<{ x: number; y: number }>> 
     { x: 33.5, y: 51.5 },
   ],
   5: [
-    { x: 50.3, y: 31.4 },
-    { x: 28.3, y: 38.9 },
-    { x: 72.3, y: 39.4 },
-    { x: 33.5, y: 51.5 },
-    { x: 66.9, y: 50.9 },
+    // Measured from the actual rendered game screenshot in viewport space.
+    // These are the visible plate centers on the live Share Splitter screen.
+    { x: 50.7, y: 31.6 },
+    { x: 28.7, y: 39.0 },
+    { x: 72.7, y: 39.5 },
+    { x: 42.6, y: 52.3 },
+    { x: 70.2, y: 50.4 },
   ],
 };
 
@@ -264,7 +266,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const allSlicesUsed = remainingSlices === 0;
   const allCorrect = plateViews.every((plate) => plate.isCorrect);
   const platePositions = PLATE_POSITIONS_BY_COUNT[challenge.plateCount] || PLATE_POSITIONS_BY_COUNT[5];
-  const plateSize = 'clamp(4.25rem, 17vw, 5.25rem)';
+  const plateSize = 'clamp(6.9rem, 28vw, 7.2rem)';
   const promptText = isPractice
     ? `Target ratio: ${challenge.ratios.join(':')}`
     : `There are ${challenge.totalSlices} slices of brainpower cake.\nThe Monster Mind demands it is shared in a ratio of ${challenge.ratios.join(':')}.`;
@@ -581,7 +583,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                             }}
                             aria-label={`Plate ${index + 1}. ${plate.currentCakeCount} of ${plate.targetCakeCount} cakes placed.`}
                           >
-                            <div className="pointer-events-none absolute inset-[-2px] rounded-full border-[4px] border-red-500/95 shadow-[0_0_0_1px_rgba(255,255,255,0.18),0_0_0_2px_rgba(239,68,68,0.18)]" />
+                            <div className="pointer-events-none absolute inset-[-4px] rounded-full border-[5px] border-red-500/95 shadow-[0_0_0_1px_rgba(255,255,255,0.18),0_0_0_3px_rgba(239,68,68,0.22)]" />
                             <div className="grid h-full w-full grid-cols-3 place-items-center gap-0.5">
                               {plates[index].slice(0, 6).map((sliceId) => (
                                 <img
