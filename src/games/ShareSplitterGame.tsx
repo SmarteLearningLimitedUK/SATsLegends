@@ -408,6 +408,10 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     sliceSeedRef.current += 1;
     const pointerId = 'pointerId' in event ? event.pointerId : 1;
     dragActiveRef.current = true;
+    const dragRevealThresholdPx = 6;
+    let dragOriginX = 0;
+    let dragOriginY = 0;
+    let dragHasBeenRevealed = false;
 
     const updatePosition = (clientX: number, clientY: number) => {
       setDragSlice({
@@ -415,6 +419,16 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         x: clientX - DRAG_SLICE_SIZE / 2,
         y: clientY - DRAG_SLICE_SIZE / 2,
       });
+    };
+
+    const revealDragSlice = (clientX: number, clientY: number) => {
+      if (dragHasBeenRevealed) return;
+      dragHasBeenRevealed = true;
+      updatePosition(clientX, clientY);
+      setFeedback('Drop the cake onto the correct plate.');
+      setFeedbackTone('neutral');
+      setValidationActive(false);
+      setHoverPlateIndex(null);
     };
 
     const getPlateCenter = (index: number) => {
@@ -461,6 +475,20 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     const finishDrag = (clientX: number, clientY: number) => {
       if (!dragActiveRef.current) return;
       dragActiveRef.current = false;
+      if (!dragHasBeenRevealed) {
+        setDragSlice(null);
+        setHoverPlateIndex(null);
+        window.removeEventListener('pointermove', handlePointerMove);
+        window.removeEventListener('pointerup', handlePointerUp);
+        window.removeEventListener('pointercancel', handlePointerCancel);
+        window.removeEventListener('touchmove', handleTouchMove);
+        window.removeEventListener('touchend', handleTouchEnd);
+        window.removeEventListener('touchcancel', handleTouchEnd);
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseup', handleMouseUp);
+        window.removeEventListener('blur', handleMouseCancel);
+        return;
+      }
       const { index, distance } = getNearestPlate(clientX, clientY);
       const snapRadius = plateSizePx * 0.56;
       const hitIndex = getHitPlateIndex(clientX, clientY);
@@ -486,11 +514,19 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
     const handlePointerMove = (moveEvent: PointerEvent) => {
       const point = getClientPoint(moveEvent);
-      updatePosition(point.x, point.y);
-        const hitIndex = getHitPlateIndex(point.x, point.y);
-        if (hitIndex >= 0) {
-          setHoverPlateIndex(hitIndex);
+      if (!dragHasBeenRevealed) {
+        const distanceFromOrigin = Math.hypot(point.x - dragOriginX, point.y - dragOriginY);
+        if (distanceFromOrigin >= dragRevealThresholdPx) {
+          revealDragSlice(point.x, point.y);
+        } else {
           return;
+        }
+      }
+      updatePosition(point.x, point.y);
+      const hitIndex = getHitPlateIndex(point.x, point.y);
+      if (hitIndex >= 0) {
+        setHoverPlateIndex(hitIndex);
+        return;
       }
       const { index, distance } = getNearestPlate(point.x, point.y);
       setHoverPlateIndex(distance <= 62 ? index : null);
@@ -503,6 +539,14 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
     const handleTouchMove = (touchEvent: TouchEvent) => {
       const point = getClientPoint(touchEvent);
+      if (!dragHasBeenRevealed) {
+        const distanceFromOrigin = Math.hypot(point.x - dragOriginX, point.y - dragOriginY);
+        if (distanceFromOrigin >= dragRevealThresholdPx) {
+          revealDragSlice(point.x, point.y);
+        } else {
+          return;
+        }
+      }
       updatePosition(point.x, point.y);
       const hitIndex = getHitPlateIndex(point.x, point.y);
       if (hitIndex >= 0) {
@@ -521,6 +565,14 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
     const handleMouseMove = (mouseEvent: MouseEvent) => {
       const point = getClientPoint(mouseEvent);
+      if (!dragHasBeenRevealed) {
+        const distanceFromOrigin = Math.hypot(point.x - dragOriginX, point.y - dragOriginY);
+        if (distanceFromOrigin >= dragRevealThresholdPx) {
+          revealDragSlice(point.x, point.y);
+        } else {
+          return;
+        }
+      }
       updatePosition(point.x, point.y);
       const hitIndex = getHitPlateIndex(point.x, point.y);
       if (hitIndex >= 0) {
@@ -556,15 +608,12 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     };
 
     const startPoint = getClientPoint(event);
-    updatePosition(startPoint.x, startPoint.y);
+    dragOriginX = startPoint.x;
+    dragOriginY = startPoint.y;
     const currentTarget = event.currentTarget as HTMLElement & { setPointerCapture?: (pointerId: number) => void };
     if ('setPointerCapture' in currentTarget && 'pointerId' in event) {
       currentTarget.setPointerCapture?.(pointerId);
     }
-    setFeedback('Drop the cake onto the correct plate.');
-    setFeedbackTone('neutral');
-    setValidationActive(false);
-    setHoverPlateIndex(null);
 
     window.addEventListener('pointermove', handlePointerMove);
     window.addEventListener('pointerup', handlePointerUp);
