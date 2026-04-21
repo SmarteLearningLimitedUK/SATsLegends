@@ -43,7 +43,7 @@ interface NumberLineQuestion {
 const QUESTION_ADVANCE_MS = 620;
 const QUESTION_FEEDBACK_MS = 520;
 const MONSTER_HIT_REACTION_MS = 900;
-const MONSTER_ESCAPE_LINE = 'The Monster Mind escapes deeper into the shadows, taking more brainpower with it!';
+const MONSTER_ESCAPE_LINE = 'The Monster Mind slips deeper into the shadows, hiding more of the path!';
 const MONSTER_DAMAGE_LINES = ['Ouch!', 'Nice hit!', 'Direct hit!', 'Pow!', 'Bullseye!'] as const;
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -148,7 +148,7 @@ const formatNumber = (value: number) => {
 const buildPrompt = (missingCount: number) => {
   const isSingle = missingCount === 1;
   return [
-    `Complete the number line to track the stolen brainpower.`,
+    'The Monster Minds have hidden part of the island path.',
     `${isSingle ? 'Which number is missing?' : 'What numbers are missing?'}`,
   ].join('\n');
 };
@@ -544,7 +544,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Number Line Ninja"
-        body="Use the Number Line to identify and choose the correct answer."
+        body="The Monster Minds have hidden part of the island path.\nUse the number line to reveal the missing marker."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
@@ -563,7 +563,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
         className="qa-question-card pointer-events-none fixed left-0 right-0 z-[60]"
         style={{ top: 'calc(env(safe-area-inset-top) + 4px)' }}
       >
-        <GameQuestionCard title="Mission">{question.prompt}</GameQuestionCard>
+        <GameQuestionCard title="Number Line Ninja">{question.prompt}</GameQuestionCard>
       </div>
 
       <div
@@ -817,7 +817,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
               <div className="w-[132px] self-center rounded-lg border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)] sm:w-[150px]">
                 <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
-                  Enemy
+                  Monster Mind
                 </div>
                 <div className="relative h-2 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/80">
                   <motion.div
@@ -834,7 +834,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
         <div className="shrink-0 pb-1 pt-2">
           <div className="mb-2 text-center text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/88">
-            Select the missing number
+            Reveal the missing marker
           </div>
           <div className="mx-auto flex w-full max-w-[560px] flex-wrap items-center justify-center gap-3 sm:gap-4">
             {question.options.map((option, index) => {
@@ -980,7 +980,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                   : 'bg-rose-500/95 text-white shadow-[0_0_20px_rgba(244,63,94,0.7)]'
               }`}
             >
-              {feedbackState === 'correct' ? 'Path revealed!' : 'The path remains hidden…'}
+              {feedbackState === 'correct' ? 'Path restored!' : 'The path is still hidden…'}
             </div>
           </motion.div>
         )}

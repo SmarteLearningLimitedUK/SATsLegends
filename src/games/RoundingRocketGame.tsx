@@ -248,7 +248,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
       setCorrectAnswers(nextCorrect);
       setRocketState('arming');
       setPadFeedback({ value: padValue, type: 'success' });
-      setFeedbackText(Math.random() < 0.65 ? 'Nice!' : null);
+      setFeedbackText(Math.random() < 0.65 ? 'Rocket fuelled!' : null);
 
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
         score: XP,
@@ -285,7 +285,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
 
     setRocketState('failed');
     setPadFeedback({ value: padValue, type: 'error' });
-    setFeedbackText('Try Again');
+    setFeedbackText('Launch failed');
 
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
       score: XP,
@@ -345,18 +345,18 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Rounding Rocket"
-        body="Quick! We've managed to locate a cache of brainpower, but we need to keep it safe from that pesky Monster Mind. Help fuel the rocket by rounding numbers to blast the cache into space for safe keeping."
+        body="The Monster Minds have tampered with the island launch supplies. Round correctly to fuel the rocket and send the cargo to safety."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
 
       <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
-        <GameQuestionCard title={`Round to the nearest ${round.target}`}>
+        <GameQuestionCard title={`Rounding Rocket: nearest ${round.target}`}>
           <span className="block text-[clamp(1.3rem,5.2vw,1.85rem)] font-black leading-none text-white drop-shadow-[0_2px_6px_rgba(2,6,23,0.6)]">
             {round.value}
           </span>
           <span className="mt-1 block text-sm font-semibold leading-snug text-cyan-100/90">
-            Round the numbers to fuel the rocket.
+            Round correctly to fuel the rocket.
           </span>
         </GameQuestionCard>
       </div>

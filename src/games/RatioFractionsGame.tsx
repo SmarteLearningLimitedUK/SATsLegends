@@ -82,8 +82,8 @@ const themeRatioQuestion = (question: RatioFractionQuestion): RatioFractionQuest
     ...question,
     labels,
     target: targetLabel,
-    prompt: `Sneaky Monster Minds mixed ${joinLabelList(labels)} in a ${ratioText} ratio. What fraction of the whole is ${targetLabel.toLowerCase()}?`,
-    explanation: `Total parts = ${totalParts}. ${targetLabel} is ${question.ratio[targetIndex]} parts -> ${question.correctAnswer}.`,
+    prompt: `The Monster Minds have tampered with the kart fuel mix. It now has ${joinLabelList(labels)} in a ${ratioText} ratio. What fraction of the whole is ${targetLabel.toLowerCase()}?`,
+    explanation: `Total parts = ${totalParts}. ${targetLabel} is ${question.ratio[targetIndex]} parts, so the fraction is ${question.correctAnswer}.`,
   };
 };
 
@@ -377,7 +377,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
       setCorrectCount((prev) => prev + 1);
       const elapsedMs = Date.now() - questionStartRef.current;
       const isPraise = shouldShowPraise(1, elapsedMs);
-      setFeedback(isPraise ? buildPraiseMessage() : 'Correct!');
+      setFeedback(isPraise ? buildPraiseMessage() : 'Fuel mix fixed!');
       setRaceState('correctBoost');
       window.setTimeout(() => {
         playerTargetRef.current = Math.min(tuning.trackLength, playerTargetRef.current + playerStep);
@@ -407,7 +407,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
       return;
     }
 
-    setFeedback('Wrong.');
+    setFeedback('Fuel mix still off.');
     setRaceState('incorrectStall');
     if (stumble > 0) {
       playerTargetRef.current = Math.min(tuning.trackLength, playerTargetRef.current + stumble);
@@ -545,7 +545,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                   className="absolute inset-0 z-40 flex items-center justify-center bg-slate-950/55"
                 >
                   <div className="rounded-full border border-emerald-200/60 bg-emerald-400/25 px-6 py-3 text-2xl font-black uppercase tracking-[0.2em] text-emerald-100 shadow-[0_12px_24px_rgba(16,185,129,0.35)]">
-                    Winner!
+                    Race Restored!
                   </div>
                 </motion.div>
               ) : null}
@@ -559,7 +559,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
         >
           <div className="mx-auto flex w-full max-w-[56rem] flex-col gap-2 px-2 sm:px-3 md:px-4">
             <GameQuestionCard
-              title="Ratio Racer"
+              title="Ratio Rapids"
               className="w-full !mb-0"
               style={{
                 ['--question-card-width' as any]: 'min(100%, 56rem)',
@@ -571,7 +571,11 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                     ? 'rounded-full border border-amber-100/70 bg-[linear-gradient(135deg,rgba(255,241,166,0.96),rgba(125,211,252,0.9))] px-3 py-1 text-slate-950 shadow-[0_0_22px_rgba(251,191,36,0.55)]'
                     : 'text-amber-100'
                 }`}>{feedback}</div>
-              ) : null}
+              ) : (
+                <div className="text-[11px] font-semibold text-amber-100 md:text-[13px]">
+                  The Monster Minds have thrown the fuel ratios off. Fix the mix to keep your kart moving.
+                </div>
+              )}
               titleClassName="text-[12px] md:text-[14px] tracking-[0.28em]"
               bodyClassName="text-[clamp(1.15rem,4vw,1.7rem)] font-black leading-[1.08] tracking-tight md:text-[clamp(1.3rem,2.4vw,2rem)]"
             >

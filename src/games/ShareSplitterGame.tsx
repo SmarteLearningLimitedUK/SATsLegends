@@ -825,6 +825,23 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                     </div>
                   </div>
 
+                  <motion.div
+                    aria-hidden="true"
+                    className="pointer-events-none fixed z-[24] -translate-x-1/2 -translate-y-1/2 rounded-full"
+                    initial={{ opacity: 0.4, scale: 0.94 }}
+                    animate={{ opacity: [0.35, 0.72, 0.35], scale: [0.96, 1.05, 0.96] }}
+                    transition={{ duration: 2.4, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
+                    style={{
+                      left: `${mapBackgroundPointToViewport(CAKE_SOURCE_POSITION).x}px`,
+                      top: `${mapBackgroundPointToViewport(CAKE_SOURCE_POSITION).y}px`,
+                      width: `${CAKE_SOURCE_SIZE_PX * backgroundScale * cakeSourceLayoutScale * 1.08}px`,
+                      height: `${CAKE_SOURCE_SIZE_PX * backgroundScale * cakeSourceLayoutScale * 1.08}px`,
+                      background: 'radial-gradient(circle, rgba(255,244,191,0.28) 0%, rgba(250,204,21,0.16) 36%, rgba(251,146,60,0.06) 58%, rgba(0,0,0,0) 76%)',
+                      boxShadow: '0 0 28px rgba(250,204,21,0.28), 0 0 58px rgba(251,146,60,0.18)',
+                      filter: 'blur(1px)',
+                    }}
+                  />
+
                   <button
                     ref={cakeSourceButtonRef}
                     type="button"

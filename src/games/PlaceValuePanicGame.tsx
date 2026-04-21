@@ -338,7 +338,7 @@ const makeQuestion = (level: number): QuestionState => {
   const placeHints = FULL_PLACE_VALUE_HINTS.slice(FULL_PLACE_VALUE_HINTS.length - slotCount);
   return {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    prompt: `A Monster Mind has scrambled the number\n${numberToWords(promptNumber)}.`,
+    prompt: `The Monster Minds have scrambled the number stones.\nRebuild ${numberToWords(promptNumber)}.`,
     expectedDigits,
     tokenValues,
     placeHints,
@@ -531,7 +531,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
   const questionPrompt = useMemo(() => {
     if (isPractice) {
-      return formatFantasyPrompt(`${question.prompt}\n\nRebuild it using place value to restore the brainpower!`);
+      return formatFantasyPrompt(`${question.prompt}\n\nUse place value to put the number back in order.`);
     }
     return formatFantasyPrompt(question.prompt);
   }, [isPractice, question.prompt]);
@@ -842,7 +842,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       setScore((prev) => prev + (140 + resolvedLevel * 22));
       setFeedback({
         tone: 'success',
-        message: 'Code restored! - You rebuilt brainpower',
+        message: 'Number restored!\nThe island markers are back in order.',
       });
       setGoblinEffect('hit');
       setSlotPulseKey((prev) => prev + 1);
@@ -858,7 +858,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
       setFeedback({
         tone: 'error',
-        message: 'The code was unstable!\n\nThe Monster Mind absorbed the mistake and gained strength',
+        message: 'Still scrambled!\n\nThe Monster Mind is causing more chaos on the island.',
       });
       setGoblinEffect('heal');
       setBoardShake(true);
@@ -897,7 +897,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Place Value Panic"
-        body="A Monster Mind has scrambled the number.\nRebuild it using place value to restore the brainpower!"
+        body="The Monster Minds have scrambled the number stones.\nRebuild the number using place value to repair the island."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
@@ -990,7 +990,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       ) : null}
 
       <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
-        <GameQuestionCard title="Target Number">
+        <GameQuestionCard title="Place Value Panic">
           {questionPrompt}
         </GameQuestionCard>
       </div>
@@ -1010,7 +1010,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           }}
         >
           <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
-            Enemy
+            Monster Mind
           </div>
           <div className="relative h-2 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/80">
             <motion.div

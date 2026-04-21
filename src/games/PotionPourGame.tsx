@@ -271,41 +271,78 @@ const buildPotionName = (active: Ingredient[]) => {
   return `${lead} Elixir`;
 };
 
-const buildStoryLead = (title: string, stage: number, batchLabel?: Challenge['batchLabel']) => {
-  const titleLower = title.toLowerCase();
-  if (titleLower.includes('crimson courage')) return 'Crimson Courage has been requested by the villagers.';
-  if (titleLower.includes('azure cleanse')) return 'The healers are waiting for a fresh blue tonic.';
-  if (titleLower.includes('heart of oak')) return 'The village gate needs Heart of Oak.';
-  if (titleLower.includes('solar clarity')) return 'The lantern keepers are calling for Solar Clarity.';
-  if (titleLower.includes('midnight syrup')) return 'The night watch has ordered Midnight Syrup.';
-
-  const storyLines = [
-    `${title} has been requested by the villagers.`,
-    `The apothecary needs ${title} before the market bell rings.`,
-    `A messenger has brought a fresh order for ${title}.`,
-    `The woodland clinic is waiting on ${title}.`,
-  ];
-  const batchSuffix = batchLabel === 'double'
-    ? ' It is needed in a double batch.'
-    : batchLabel === 'triple'
-      ? ' It is needed in a triple batch.'
-      : batchLabel === 'half'
-        ? ' The request has been halved for a smaller delivery.'
-        : '';
-  return `${storyLines[(stage + title.length) % storyLines.length]}${batchSuffix}`;
+const buildStoryLead = (
+  title: string,
+  stage: number,
+  batchLabel?: Challenge['batchLabel'],
+  mode?: ChallengeMode
+) => {
+  switch (mode) {
+    case 'missing_value':
+      return 'The Monster Minds have stolen part of the recipe.';
+    case 'fix_mistake':
+      return 'The Monster Minds have messed up the mixture.';
+    case 'scale_recipe':
+      return 'The Monster Minds have tampered with a larger batch.';
+    case 'multi_step':
+      return 'The apothecary records have been scrambled by the Monster Minds.';
+    case 'word_problem':
+      return 'The Monster Minds caused chaos in the apothecary orders.';
+    case 'direct_recipe':
+    default:
+      return 'The Monster Minds have pillaged the apothecary supplies.';
+  }
 };
 
 const buildOrderPrompt = (
-  title: string,
   ratioText: string,
   storyLead: string,
-  cardHint?: string,
+  mode?: ChallengeMode
 ) => {
-  return [
-    storyLead,
-    `Ratio ${ratioText}`,
-    `${cardHint || 'Current mix is shown below.'} Keep the ratio balanced.`,
-  ].join('\n');
+  switch (mode) {
+    case 'missing_value':
+      return [
+        storyLead,
+        `Restore the missing drops using the ratio: ${ratioText}`,
+        'One ingredient is already set.',
+      ].join('\n');
+
+    case 'fix_mistake':
+      return [
+        storyLead,
+        `Fix the potion so the ratio is correct: ${ratioText}`,
+        'One ingredient is wrong.',
+      ].join('\n');
+
+    case 'scale_recipe':
+      return [
+        storyLead,
+        `Scale the potion to keep the ratio correct: ${ratioText}`,
+        'Check the total before you brew.',
+      ].join('\n');
+
+    case 'multi_step':
+      return [
+        storyLead,
+        'Use the total and ratio to rebuild the potion.',
+        'Solve it step by step.',
+      ].join('\n');
+
+    case 'word_problem':
+      return [
+        storyLead,
+        'Use the clue to restore the potion mix.',
+        'Then complete the brew.',
+      ].join('\n');
+
+    case 'direct_recipe':
+    default:
+      return [
+        storyLead,
+        `Restore the correct potion ratio: ${ratioText}`,
+        'Add the drops, then brew.',
+      ].join('\n');
+  }
 };
 
 const cardLabelsForMode = (mode: ChallengeMode) => {
@@ -477,12 +514,12 @@ const generateChallenge = (levelId: number, solved: number, previousTitle?: stri
 
     const orderTitle = buildPotionName(activeIngredients);
     const ratioText = simplifyRatio(targetCounts).join(':');
-    const storyLead = buildStoryLead(orderTitle, stage, batchLabel);
+    const storyLead = buildStoryLead(orderTitle, stage, batchLabel, mode);
 
     challenge = {
       id: nextChallengeId(),
       orderTitle,
-      orderPrompt: buildOrderPrompt(orderTitle, ratioText, storyLead, cardHint),
+      orderPrompt: buildOrderPrompt(ratioText, storyLead, mode),
       orderFlavor: buildOrderFlavor(stage),
       stage,
       mode,
@@ -722,16 +759,16 @@ const PotionPourGame: React.FC<PotionPanicProps> = ({
   };
 
   const feedbackMessage = feedback === 'success'
-    ? 'Perfect brew!'
+    ? 'Apothecary restored!'
     : feedback === 'error'
-      ? 'Potion unstable!'
-    : overfilledTargets.length > 0
-      ? `Too much ${joinWithAnd(overfilledTargets.map(({ ingredient }) => ingredient.name))}.`
-      : isRecipeComplete
-        ? 'Ready to brew.'
-        : currentTotal > 0
-          ? 'Not quite. Check the recipe.'
-          : 'Choose ingredients to begin.';
+      ? 'Still scrambled — try again.'
+      : overfilledTargets.length > 0
+        ? 'Too much — the mix is off.'
+        : isRecipeComplete
+          ? 'That looks right. Brew it.'
+          : currentTotal > 0
+            ? 'The ratio is still off.'
+            : 'Rebuild the potion.';
 
   const roundsToWin = roundsToWinForLevel(levelId);
 
