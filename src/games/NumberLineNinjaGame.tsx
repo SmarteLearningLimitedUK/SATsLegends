@@ -662,10 +662,22 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
             </div>
           </motion.div>
 
-          <div className="relative mt-1 flex h-[30%] min-h-[200px] w-full max-w-[520px] shrink-0 items-center justify-center">
-            <div
-              className="qa-enemy-cluster pointer-events-none relative mx-auto flex w-full max-w-[520px] flex-col items-center justify-center gap-3"
-            >
+          <div className="relative mt-1 flex h-[30%] min-h-[200px] w-full max-w-[520px] shrink-0 items-end justify-center">
+            <div className="qa-enemy-cluster pointer-events-none relative mx-auto flex w-full max-w-[520px] flex-col items-center justify-end gap-3">
+              <div className="w-[132px] self-center rounded-lg border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)] sm:w-[150px]">
+                <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
+                  Monster Mind
+                </div>
+                <div className="relative h-2 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/80">
+                  <motion.div
+                    className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-rose-500 via-rose-400 to-orange-300 shadow-[0_0_12px_rgba(251,113,133,0.75)]"
+                    animate={{ width: `${monsterHealthPct}%` }}
+                    transition={{ type: 'spring', stiffness: 210, damping: 26 }}
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.14)_1px,transparent_1px)] bg-[length:10%_100%]" />
+                </div>
+              </div>
+
               <div className="relative flex w-full min-w-0 max-w-[280px] justify-center">
                 <AnimatePresence>
                   {monsterSpeech ? (
@@ -770,8 +782,9 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                     </motion.div>
                   ) : null}
                 </AnimatePresence>
+
                 <motion.div
-                  className="relative w-[78%] max-w-[250px] translate-y-[30px] scale-[0.88] sm:w-full sm:max-w-[280px] sm:scale-100"
+                  className="relative w-[78%] max-w-[250px] translate-y-[42px] scale-[0.88] sm:w-full sm:max-w-[280px] sm:scale-100"
                   animate={{
                     y: [0, -5, 0],
                     x: monsterEffect === 'hit' ? [0, -9, 9, -8, 8, -5, 5, 0] : 0,
@@ -812,21 +825,6 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                   </AnimatePresence>
                 </motion.div>
               </div>
-
-              <div className="w-[132px] self-center rounded-lg border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)] sm:w-[150px]">
-                <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
-                  Monster Mind
-                </div>
-                <div className="relative h-2 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/80">
-                  <motion.div
-                    className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-rose-500 via-rose-400 to-orange-300 shadow-[0_0_12px_rgba(251,113,133,0.75)]"
-                    animate={{ width: `${monsterHealthPct}%` }}
-                    transition={{ type: 'spring', stiffness: 210, damping: 26 }}
-                  />
-                  <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.14)_1px,transparent_1px)] bg-[length:10%_100%]" />
-                </div>
-              </div>
-            </div>
             </div>
           </div>
         </div>
@@ -999,6 +997,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
+      </div>
       </div>
   );
 };
