@@ -149,7 +149,7 @@ const FractionCardTile: React.FC<{
     onPointerDown={onPointerDown}
     disabled={disabled}
     whileTap={disabled ? undefined : { scale: 0.97 }}
-    className="relative flex cursor-grab flex-col items-center justify-center rounded-[0.85rem] border border-cyan-200/70 bg-gradient-to-b from-sky-500 to-blue-700 text-white shadow-[0_10px_20px_rgba(8,47,111,0.5)] active:cursor-grabbing disabled:cursor-default touch-none"
+    className="relative flex cursor-grab flex-col items-center justify-center rounded-[0.95rem] border border-cyan-200/70 bg-[radial-gradient(circle_at_50%_12%,rgba(255,255,255,0.24),rgba(255,255,255,0)_32%),linear-gradient(180deg,#5ba7ff_0%,#2056c3_58%,#163b8e_100%)] text-white shadow-[0_14px_28px_rgba(8,47,111,0.54),inset_0_1px_0_rgba(255,255,255,0.12)] active:cursor-grabbing disabled:cursor-default touch-none"
     style={{ width: size.width, height: size.height }}
   >
     <div className="pointer-events-none absolute inset-0 rounded-[0.85rem] bg-gradient-to-br from-white/24 via-transparent to-transparent" />

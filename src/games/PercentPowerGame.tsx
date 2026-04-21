@@ -363,7 +363,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
       >
         <div className="w-full max-w-[44rem] px-1">
           <div className="mt-2">
-            <GameQuestionCard title="Percent Power" className="max-w-[44rem]">
+            <GameQuestionCard title="Percent Power" className="max-w-[44rem] backdrop-blur-sm">
               {question.prompt}
               <span className="block text-xs font-semibold text-cyan-50/80 md:text-sm">{question.helper}</span>
             </GameQuestionCard>
@@ -392,7 +392,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
-                className={`mt-4 rounded-full border px-4 py-2 text-center text-[11px] font-black uppercase tracking-[0.12em] ${
+                className={`mt-4 rounded-full border px-4 py-2 text-center text-[11px] font-black uppercase tracking-[0.12em] shadow-[0_10px_20px_rgba(2,6,23,0.16)] ${
                   feedback === 'correct'
                     ? 'border-emerald-300/60 bg-emerald-300/18 text-emerald-50'
                     : feedback === 'incorrect'

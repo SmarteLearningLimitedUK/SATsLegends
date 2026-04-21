@@ -305,7 +305,7 @@ const MatchGameShell: React.FC<{
            {useSharedTopHud ? (
              <div className="absolute inset-x-2 top-2 z-20 sm:inset-x-4">
                <div className="mx-auto w-full max-w-[44rem]">
-                 <GameQuestionCard title="Match Mastery" className="bg-[#0a1f56]/70 backdrop-blur-sm">
+                 <GameQuestionCard title="Match Mastery" className="bg-[#0a1f56]/76 backdrop-blur-sm">
                    {questionText}
                  </GameQuestionCard>
                  <div className="mt-2 flex items-center gap-2">
@@ -631,7 +631,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div className="relative box-border w-[min(94vw,94vh)] rounded-[2rem] border border-cyan-100/20 bg-[#04102c]/86 p-3 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-4">
+      <div className="relative box-border w-[min(94vw,94vh)] rounded-[2rem] border border-cyan-100/20 bg-[linear-gradient(180deg,rgba(4,16,44,0.9),rgba(3,10,28,0.96))] p-3 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-4">
         <div
           className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-[0.24]"
           style={{

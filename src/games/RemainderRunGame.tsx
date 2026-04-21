@@ -446,11 +446,11 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
             </header>
           ) : null}
 
-          <section className="shrink-0 rounded-[1.1rem] border border-white/16 bg-[linear-gradient(180deg,rgba(16,25,49,0.74),rgba(8,12,25,0.86))] p-2 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
+          <section className="shrink-0 rounded-[1.1rem] border border-white/16 bg-[linear-gradient(180deg,rgba(16,25,49,0.8),rgba(8,12,25,0.9))] p-2 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
             <GameQuestionCard
               title={title}
               subtitle="Use the division setup shown below."
-              className="mx-auto max-w-[27rem] border border-violet-200/26 bg-[linear-gradient(180deg,rgba(60,16,144,0.92),rgba(27,11,74,0.88))] shadow-[0_12px_24px_rgba(2,6,23,0.16)]"
+              className="mx-auto max-w-[27rem] border border-violet-200/26 bg-[linear-gradient(180deg,rgba(60,16,144,0.96),rgba(27,11,74,0.92))] shadow-[0_12px_24px_rgba(2,6,23,0.16)] backdrop-blur-sm"
               titleClassName="text-violet-100"
             >
               Work out the quotient or decimal shown by the division spell.
@@ -461,7 +461,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
             </div>
           </section>
 
-          <section className="shrink-0 rounded-[1.1rem] border border-white/16 bg-[linear-gradient(180deg,rgba(16,25,49,0.72),rgba(8,12,25,0.84))] p-2 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
+          <section className="shrink-0 rounded-[1.1rem] border border-white/16 bg-[linear-gradient(180deg,rgba(16,25,49,0.8),rgba(8,12,25,0.9))] p-2 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
             <div className="text-center text-[9px] font-black uppercase tracking-[0.16em] text-amber-100/80">
               Tap the correct quotient and remainder
             </div>

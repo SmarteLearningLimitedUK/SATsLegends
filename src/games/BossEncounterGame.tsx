@@ -665,6 +665,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
 
       <div className="relative z-10 flex h-full w-full flex-col gap-2 px-2 pb-2.5 pt-[calc(0.45rem+env(safe-area-inset-top))] lg:gap-3 lg:px-4 lg:pb-4 lg:pt-4">
         <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col gap-2 overflow-hidden rounded-[2rem] p-2 lg:gap-3 lg:rounded-[2.6rem] lg:p-3">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(125,211,252,0.12),rgba(125,211,252,0)_34%),radial-gradient(circle_at_50%_92%,rgba(251,191,36,0.1),rgba(251,191,36,0)_28%)]" />
           <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
             <GameQuestionCard title="Question">
               {formatFantasyPrompt(question.prompt)}
@@ -672,21 +673,21 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
           </div>
 
           <div className="mt-[clamp(5.25rem,13vh,7rem)] grid shrink-0 grid-cols-3 gap-2 lg:gap-3">
-            <div className="rounded-[1.1rem] border border-white/14 bg-slate-950/55 px-3 py-2 text-center text-white shadow-[0_12px_26px_rgba(2,6,23,0.18)] backdrop-blur-xl lg:rounded-[1.5rem] lg:px-4 lg:py-3">
-              <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/50 lg:text-[9px]">Question</div>
+            <div className="rounded-[1.1rem] border border-white/14 bg-[linear-gradient(180deg,rgba(15,23,42,0.7),rgba(2,6,23,0.86))] px-3 py-2 text-center text-white shadow-[0_14px_28px_rgba(2,6,23,0.24)] backdrop-blur-xl lg:rounded-[1.5rem] lg:px-4 lg:py-3">
+              <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/56 lg:text-[9px]">Question</div>
               <div className="mt-1 text-sm font-black text-cyan-100 lg:text-xl">{Math.min(currentIndex + 1, TOTAL_QUESTIONS)}/{TOTAL_QUESTIONS}</div>
             </div>
-            <div className="rounded-[1.1rem] border border-white/14 bg-slate-950/55 px-3 py-2 text-center text-white shadow-[0_12px_26px_rgba(2,6,23,0.18)] backdrop-blur-xl lg:rounded-[1.5rem] lg:px-4 lg:py-3">
-              <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/50 lg:text-[9px]">Timer</div>
+            <div className="rounded-[1.1rem] border border-white/14 bg-[linear-gradient(180deg,rgba(15,23,42,0.7),rgba(2,6,23,0.86))] px-3 py-2 text-center text-white shadow-[0_14px_28px_rgba(2,6,23,0.24)] backdrop-blur-xl lg:rounded-[1.5rem] lg:px-4 lg:py-3">
+              <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/56 lg:text-[9px]">Timer</div>
               <div className="mt-1 text-sm font-black text-amber-100 lg:text-xl">{Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}</div>
             </div>
-            <div className="rounded-[1.1rem] border border-white/14 bg-slate-950/55 px-3 py-2 text-center text-white shadow-[0_12px_26px_rgba(2,6,23,0.18)] backdrop-blur-xl lg:rounded-[1.5rem] lg:px-4 lg:py-3">
-              <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/50 lg:text-[9px]">Score</div>
+            <div className="rounded-[1.1rem] border border-white/14 bg-[linear-gradient(180deg,rgba(15,23,42,0.7),rgba(2,6,23,0.86))] px-3 py-2 text-center text-white shadow-[0_14px_28px_rgba(2,6,23,0.24)] backdrop-blur-xl lg:rounded-[1.5rem] lg:px-4 lg:py-3">
+              <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/56 lg:text-[9px]">Score</div>
               <div className="mt-1 text-sm font-black text-emerald-100 lg:text-xl">{score}</div>
             </div>
           </div>
 
-          <div className="shrink-0 rounded-[1.2rem] border border-white/14 bg-slate-950/55 px-3 py-2 text-white shadow-[0_16px_36px_rgba(2,6,23,0.22)] backdrop-blur-xl lg:rounded-[1.8rem] lg:px-4 lg:py-3">
+          <div className="shrink-0 rounded-[1.2rem] border border-white/14 bg-[linear-gradient(180deg,rgba(15,23,42,0.7),rgba(2,6,23,0.86))] px-3 py-2 text-white shadow-[0_16px_36px_rgba(2,6,23,0.26)] backdrop-blur-xl lg:rounded-[1.8rem] lg:px-4 lg:py-3">
             <div className="flex items-center justify-between gap-3 text-[9px] font-black uppercase tracking-[0.22em] lg:text-[9px]">
               <span className="text-white/58">Boss health</span>
               <span className="text-white/82">{bossHealthRemaining}/30</span>
@@ -699,18 +700,19 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
                 className="h-full rounded-full bg-[linear-gradient(90deg,#ef4444_0%,#fb7185_38%,#f59e0b_78%,#fde68a_100%)] shadow-[0_0_18px_rgba(248,113,113,0.34)]"
               />
             </div>
-            <div className="mt-2 flex items-center justify-between gap-3 text-[9px] font-bold text-white/72 lg:text-[9px]">
+            <div className="mt-2 flex items-center justify-between gap-3 text-[9px] font-bold text-white/76 lg:text-[9px]">
               <span>{reaction}</span>
               <span>{Math.max(0, 2 - misses)} safe misses left</span>
             </div>
           </div>
 
           <div className="grid min-h-0 flex-1 gap-2 lg:gap-3">
-            <div className="relative flex min-h-[15rem] items-center justify-center overflow-hidden rounded-[1.25rem] border border-white/16 bg-slate-950/58 p-3 text-white shadow-[0_18px_48px_rgba(2,6,23,0.24)] backdrop-blur-xl lg:min-h-[18rem] lg:rounded-[2rem] lg:p-4">
+            <div className="relative flex min-h-[15rem] items-center justify-center overflow-hidden rounded-[1.25rem] border border-white/16 bg-[linear-gradient(180deg,rgba(15,23,42,0.62),rgba(2,6,23,0.84))] p-3 text-white shadow-[0_18px_48px_rgba(2,6,23,0.28)] backdrop-blur-xl lg:min-h-[18rem] lg:rounded-[2rem] lg:p-4">
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(251,191,36,0.12),rgba(251,191,36,0)_34%),radial-gradient(circle_at_50%_78%,rgba(125,211,252,0.12),rgba(125,211,252,0)_30%)]" />
               <div className="absolute inset-x-6 bottom-4 h-4 rounded-full bg-black/35 blur-[10px]" />
               <div className="relative flex flex-col items-center gap-2">
                 <BossPortrait encounter={encounter} pose={bossPose} className="h-[8.2rem] lg:h-[11.5rem]" />
-                <div className="w-full max-w-[26rem] rounded-full border border-amber-200/28 bg-black/25 px-3 py-2 text-center text-[9px] font-black uppercase tracking-[0.16em] text-white/78">
+                <div className="w-full max-w-[26rem] rounded-full border border-amber-200/28 bg-[linear-gradient(180deg,rgba(2,6,23,0.7),rgba(15,23,42,0.82))] px-3 py-2 text-center text-[9px] font-black uppercase tracking-[0.16em] text-white/84 shadow-[0_10px_20px_rgba(2,6,23,0.18)]">
                   {isMultiSelect ? 'Select all that apply' : isTrueFalse ? 'Choose true or false' : 'Choose one answer'}
                 </div>
               </div>
