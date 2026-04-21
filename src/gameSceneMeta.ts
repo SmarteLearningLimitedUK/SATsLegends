@@ -22,7 +22,7 @@ import polygonPalaceBackground from './assets/maps/backgroundsforgames/polygon p
 import potionPanicBackground from './assets/maps/backgroundsforgames/potionpanic.jpg';
 import primePopBackground from './assets/maps/backgroundsforgames/primepopbkground.jpg';
 import problemPyramidBackground from './assets/maps/backgroundsforgames/problem pyramid.jpg';
-import rotationReflectionBackground from './assets/maps/backgroundsforgames/Rotation Reflection.jpg';
+import rotationStationBackground from './assets/maps/backgroundsforgames/Rotation Reflection.jpg';
 import rotationStationBackground from './assets/maps/backgroundsforgames/rotationstation.jpg';
 import scaleBuilderBackground from './assets/maps/backgroundsforgames/scalebuilder-construction.png';
 import scaleMasterBackground from './assets/maps/backgroundsforgames/Scale Master.png';
@@ -110,7 +110,7 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   calculation_clash: withBackground(NUMBER_SCENE, calculationCupBackground),
   coordinate_quest: withBackground(GEOMETRY_SCENE, coordinateQuestBackground),
   transform_temple: withBackground(GEOMETRY_SCENE, rotationStationBackground),
-  mirror_gate: withBackground(REASONING_SCENE, rotationReflectionBackground),
+  mirror_gate: withBackground(REASONING_SCENE, rotationStationBackground),
   scale_safari: withBackground(SCALE_BUILDER_SCENE, scaleBuilderBackground),
   scales_of_the_sun: withBackground(SCALE_SCENE, scaleMasterBackground),
   graph_grabber: withBackground(CHART_CHASE_SCENE, graphGrabberBackground),

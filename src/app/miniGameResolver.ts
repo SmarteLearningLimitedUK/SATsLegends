@@ -15,7 +15,7 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       }
       return 'FractionMatchGame';
     case 'potion_pour':
-      return 'PotionPourGame';
+      return 'PotionPanicGame';
     case 'take_out_rush':
       if (level.blueprintKey === 'fraction_forge') {
         return 'FractionForgeGame';
@@ -44,14 +44,14 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       if (level.blueprintKey === 'maths_vs_zombies') {
         return 'MathsVsZombiesGame';
       }
-      return 'RatioRapidsGame';
+      return 'RatioRacerGame';
     case 'timekeeper_temple':
-      return 'TimekeeperTempleGame';
+      return 'ChronoDashGame';
     case 'measurement_forge':
       if (level.blueprintKey === 'perimeter_path') {
         return 'PerimeterPathGame';
       }
-      return 'MeasurementForgeGame';
+      return 'ConversionCanyonGame';
     case 'tower_of_factors':
       if (level.blueprintKey === 'factor_frenzy') {
         return 'FactorFrenzyGame';
@@ -81,7 +81,7 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       if (level.blueprintKey === 'number_line_ninja') {
         return 'NumberLineNinjaGame';
       }
-      return 'CoordinateTranslationGame';
+      return 'CoordinatesQuestGame';
     case 'calculation_clash':
 
       if (level.blueprintKey === 'multiplication_mine') {
@@ -94,7 +94,7 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
     case 'formula_forge':
       return 'FormulaForgeGame';
     case 'unit_mixer':
-      return 'UnitMixerGame';
+      return 'LavaPathGame';
     case 'change_counter':
       return 'ChangeCounterGame';
     case 'reasoning_quest':
@@ -104,10 +104,10 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
     case 'area_architect':
       return 'AreaArchitectGame';
     case 'ratio_fractions':
-      return 'RatioFractionsGame';
+      return 'RatioRacerGame';
     case 'transform_temple':
       if (level.blueprintKey === 'rotation_relay') {
-        return 'RotationReflectionGame';
+        return 'RotationStationGame';
       }
       return 'CurriculumChallengeGame';
     case 'scale_safari':

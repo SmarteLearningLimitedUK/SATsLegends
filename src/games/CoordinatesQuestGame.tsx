@@ -1,1 +1,1 @@
-export { default } from './CoordinateTranslationGame';
+export { default } from './TreasurePathGame';

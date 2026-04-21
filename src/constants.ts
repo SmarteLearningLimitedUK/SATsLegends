@@ -1,4 +1,4 @@
-import { AvatarData, IslandData, LevelData, ShopItem, DailyQuest, MathFamily, CloudCollapseLevelConfig, PotionPourLevelConfig, Achievement } from "./types";
+import { AvatarData, IslandData, LevelData, ShopItem, DailyQuest, MathFamily, CloudCollapseLevelConfig, PotionPanicLevelConfig, Achievement } from "./types";
 import { CHARACTER_AVATARS } from './assets/characters';
 import world01Map from './assets/maps/forect.jpg';
 import world02Map from './assets/maps/reef2.jpg';
@@ -56,7 +56,7 @@ const FRACTION_FOREST_LEVELS: LevelData[] = [
   { id: 5, stars: 0, isLocked: false, blueprintKey: 'simplify_sprint', displayName: 'Simplify Sprint', gameType: 'fraction_match' },
 ];
 
-const RATIO_RAPIDS_LEVELS: LevelData[] = [
+const RATIO_RACER_LEVELS: LevelData[] = [
   { id: 1, stars: 0, isLocked: false, blueprintKey: 'potion_panic', displayName: 'Potion Panic', gameType: 'potion_pour' },
   { id: 2, stars: 0, isLocked: false, blueprintKey: 'potion_panic', displayName: 'Potion Panic', gameType: 'potion_pour' },
   { id: 3, stars: 0, isLocked: false, blueprintKey: 'share_splitter', displayName: 'Share Splitter', gameType: 'ratio_rapids' },
@@ -212,16 +212,16 @@ export const ISLANDS: IslandData[] = [
   },
   {
     id: 7,
-    name: 'Ratio Rapids',
+    name: 'Ratio Racer',
     category: 'Ratio',
     isLocked: false,
     color: 'bg-[#2CC7D9]',
-    themeName: 'Ratio Rapids',
+    themeName: 'Ratio Racer',
     bgGradient: 'from-cyan-300 to-sky-200',
     groundColor: 'bg-cyan-700',
     mapImage: world04Map,
     decorations: [],
-    levels: mergeIslandLevels(RATIO_RAPIDS_LEVELS),
+      levels: mergeIslandLevels(RATIO_RACER_LEVELS),
   },
 ];
 
@@ -246,7 +246,7 @@ export const CLOUD_COLLAPSE_LEVELS: CloudCollapseLevelConfig[] = [
   { id: 10, targetScore: 5000, duration: 200, gridSize: 9, mathTypes: ['ADDITION', 'SUBTRACTION', 'MULTIPLICATION', 'DIVISION', 'FRACTIONS', 'DECIMALS'] },
 ];
 
-export const POTION_POUR_LEVELS: PotionPourLevelConfig[] = [
+export const POTION_PANIC_LEVELS: PotionPanicLevelConfig[] = [
   { id: 1, targetScore: 500, duration: 60, mathTypes: ['FRACTIONS'] },
   { id: 2, targetScore: 800, duration: 75, mathTypes: ['DECIMALS'] },
   { id: 3, targetScore: 1200, duration: 90, mathTypes: ['FRACTIONS', 'DECIMALS'] },

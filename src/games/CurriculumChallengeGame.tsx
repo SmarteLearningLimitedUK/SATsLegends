@@ -451,7 +451,7 @@ const generateScaleQuestion = (): ChallengeQuestion => {
   };
 };
 
-const generateUnitMixerQuestion = (): ChallengeQuestion => {
+const generateLavaPathQuestion = (): ChallengeQuestion => {
   const conversions = pick([
     { from: 'km', to: 'm', multiplier: 1000, value: randomInt(2, 9) / 2 },
     { from: 'm', to: 'cm', multiplier: 100, value: randomInt(3, 12) / 2 },
@@ -1171,7 +1171,7 @@ const generateQuestion = (gameType: SupportedChallengeGameType, levelId: number)
     case 'scale_safari':
       return generateScaleQuestion();
     case 'unit_mixer':
-      return generateUnitMixerQuestion();
+  return generateLavaPathQuestion();
     case 'graph_grabber':
       return generateChartQuestion();
     case 'mean_machine':

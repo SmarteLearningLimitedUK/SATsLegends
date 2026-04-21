@@ -5,7 +5,7 @@ const BossEncounterGame = lazy(() => import('./BossEncounterGame'));
 const CalculationCrashGame = lazy(() => import('./CalculationCrashGame'));
 const CloudCollapseGame = lazy(() => import('./CloudCollapseGame'));
 const ChangeCounterGame = lazy(() => import('./ChangeCounterGame'));
-const CoordinateTranslationGame = lazy(() => import('./CoordinatesQuestGame'));
+const CoordinatesQuestGame = lazy(() => import('./CoordinatesQuestGame'));
 const CurriculumChallengeGame = lazy(() => import('./CurriculumChallengeGame'));
 const DataDungeonGame = lazy(() => import('./DataDungeonGame'));
 const DataDetectiveGame = lazy(() => import('./DataDetectiveGame'));
@@ -18,7 +18,7 @@ const LineGraphLabGame = lazy(() => import('./LineGraphLabGame'));
 const MathsVsZombiesGame = lazy(() => import('./MathsVsZombiesGame'));
 const MeanMachineGame = lazy(() => import('./MeanMachineGame'));
 const MedianMountainGame = lazy(() => import('./MedianMountainGame'));
-const MeasurementForgeGame = lazy(() => import('./ConversionCanyonGame'));
+const ConversionCanyonGame = lazy(() => import('./ConversionCanyonGame'));
 const MultiplicationMineGame = lazy(() => import('./MultiplicationMineGame'));
 const MonsterMarketGame = lazy(() => import('./MonsterMarketGame'));
 const NumberLineNinjaGame = lazy(() => import('./NumberLineNinjaGame'));
@@ -28,23 +28,22 @@ const PercentPowerGame = lazy(() => import('./PercentPowerGame'));
 const PlaceValuePanicGame = lazy(() => import('./PlaceValuePanicGame'));
 const PolygonPalaceGame = lazy(() => import('./PolygonPalaceGame'));
 const ProblemPyramidGame = lazy(() => import('./ProblemPyramidGame'));
-const PotionPourGame = lazy(() => import('./PotionPanicGame'));
+const PotionPanicGame = lazy(() => import('./PotionPanicGame'));
 const PrimePopGame = lazy(() => import('./PrimePopGame'));
-const RatioRapidsGame = lazy(() => import('./RatioRecipesGame'));
-const RatioFractionsGame = lazy(() => import('./RatioFractionsGame'));
+const RatioRacerGame = lazy(() => import('./RatioRacerGame'));
 const RemainderRunGame = lazy(() => import('./RemainderRunGame'));
 const RoundingRocketGame = lazy(() => import('./RoundingRocketGame'));
-const RotationReflectionGame = lazy(() => import('./RotationStationGame'));
+const RotationStationGame = lazy(() => import('./RotationStationGame'));
 const ReasoningQuestGame = lazy(() => import('./ReasoningQuestGame'));
 const ScaleBuilderGame = lazy(() => import('./ScaleBuilderGame'));
 const ShareSplitterGame = lazy(() => import('./ShareSplitterGame'));
 const SimplifySprintGame = lazy(() => import('./SimplifySprintGame'));
 const TakeOutRushGame = lazy(() => import('./TakeOutRushGame'));
-const TimekeeperTempleGame = lazy(() => import('./ChronoDashGame'));
+const ChronoDashGame = lazy(() => import('./ChronoDashGame'));
 const TowerOfFactorsGame = lazy(() => import('./TowerOfFactorsGame'));
 const GraphGrabberGame = lazy(() => import('./GraphGrabberGame'));
 const TreasurePathGame = lazy(() => import('./TreasurePathGame'));
-const UnitMixerGame = lazy(() => import('./LavaPathGame'));
+const LavaPathGame = lazy(() => import('./LavaPathGame'));
 const LogicSort = lazy(() => import('./reasoning/LogicSort'));
 const MatrixMatch = lazy(() => import('./reasoning/MatrixMatch'));
 const ReasoningGame = lazy(() => import('./reasoning/ReasoningGame'));
@@ -57,7 +56,7 @@ export type MiniGameRegistryKey =
   | 'CalculationCrashGame'
   | 'CloudCollapseGame'
   | 'ChangeCounterGame'
-  | 'CoordinateTranslationGame'
+  | 'CoordinatesQuestGame'
   | 'CurriculumChallengeGame'
   | 'DataDungeonGame'
   | 'DataDetectiveGame'
@@ -70,7 +69,7 @@ export type MiniGameRegistryKey =
   | 'MathsVsZombiesGame'
   | 'MeanMachineGame'
   | 'MedianMountainGame'
-  | 'MeasurementForgeGame'
+  | 'ConversionCanyonGame'
   | 'MultiplicationMineGame'
   | 'MonsterMarketGame'
   | 'NumberLineNinjaGame'
@@ -80,23 +79,22 @@ export type MiniGameRegistryKey =
   | 'PlaceValuePanicGame'
   | 'PolygonPalaceGame'
   | 'ProblemPyramidGame'
-  | 'PotionPourGame'
+  | 'PotionPanicGame'
   | 'PrimePopGame'
-  | 'RatioRapidsGame'
-  | 'RatioFractionsGame'
+  | 'RatioRacerGame'
   | 'RemainderRunGame'
   | 'RoundingRocketGame'
-  | 'RotationReflectionGame'
+  | 'RotationStationGame'
   | 'ReasoningQuestGame'
   | 'ScaleBuilderGame'
   | 'ShareSplitterGame'
   | 'SimplifySprintGame'
   | 'TakeOutRushGame'
-  | 'TimekeeperTempleGame'
+  | 'ChronoDashGame'
   | 'TowerOfFactorsGame'
   | 'GraphGrabberGame'
   | 'TreasurePathGame'
-  | 'UnitMixerGame'
+  | 'LavaPathGame'
   | 'ReasoningGame'
   | 'LogicSort'
   | 'MatrixMatch';
@@ -117,7 +115,7 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   CalculationCrashGame: asMiniGame('calculation_crash', CalculationCrashGame),
   ChangeCounterGame: asMiniGame('change_counter', ChangeCounterGame),
   CloudCollapseGame: asMiniGame('cloud_collapse', CloudCollapseGame),
-  CoordinateTranslationGame: asMiniGame('coordinate_translation', CoordinateTranslationGame),
+  CoordinatesQuestGame: asMiniGame('coordinates_quest', CoordinatesQuestGame),
   CurriculumChallengeGame: asMiniGame('curriculum_challenge', CurriculumChallengeGame),
   DataDungeonGame: asMiniGame('data_dungeon', DataDungeonGame),
   DataDetectiveGame: asMiniGame('data_detective', DataDetectiveGame),
@@ -130,7 +128,7 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   MathsVsZombiesGame: asMiniGame('maths_vs_zombies', MathsVsZombiesGame),
   MeanMachineGame: asMiniGame('mean_machine', MeanMachineGame),
   MedianMountainGame: asMiniGame('median_mountain', MedianMountainGame),
-  MeasurementForgeGame: asMiniGame('measurement_forge', MeasurementForgeGame),
+  ConversionCanyonGame: asMiniGame('conversion_canyon', ConversionCanyonGame),
   MultiplicationMineGame: asMiniGame('multiplication_mine', MultiplicationMineGame),
   MonsterMarketGame: asMiniGame('monster_market', MonsterMarketGame),
   NumberLineNinjaGame: asMiniGame('number_line_ninja', NumberLineNinjaGame),
@@ -140,23 +138,22 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   PlaceValuePanicGame: asMiniGame('place_value_panic', PlaceValuePanicGame),
   PolygonPalaceGame: asMiniGame('polygon_palace', PolygonPalaceGame),
   ProblemPyramidGame: asMiniGame('problem_pyramid', ProblemPyramidGame),
-  PotionPourGame: asMiniGame('potion_pour', PotionPourGame),
+  PotionPanicGame: asMiniGame('potion_pour', PotionPanicGame),
   PrimePopGame: asMiniGame('prime_pop', PrimePopGame),
-  RatioRapidsGame: asMiniGame('ratio_rapids', RatioRapidsGame),
-  RatioFractionsGame: asMiniGame('ratio_fractions', RatioFractionsGame),
+  RatioRacerGame: asMiniGame('ratio_fractions', RatioRacerGame),
   RemainderRunGame: asMiniGame('remainder_run', RemainderRunGame),
   RoundingRocketGame: asMiniGame('rounding_rocket', RoundingRocketGame),
-  RotationReflectionGame: asMiniGame('rotation_reflection', RotationReflectionGame),
+  RotationStationGame: asMiniGame('rotation_station', RotationStationGame),
   ReasoningQuestGame: asMiniGame('reasoning_quest', ReasoningQuestGame),
   ScaleBuilderGame: asMiniGame('scale_builder', ScaleBuilderGame),
   ShareSplitterGame: asMiniGame('share_splitter', ShareSplitterGame),
   SimplifySprintGame: asMiniGame('simplify_sprint', SimplifySprintGame),
   TakeOutRushGame: asMiniGame('take_out_rush', TakeOutRushGame),
-  TimekeeperTempleGame: asMiniGame('timekeeper_temple', TimekeeperTempleGame),
+  ChronoDashGame: asMiniGame('timekeeper_temple', ChronoDashGame),
   TowerOfFactorsGame: asMiniGame('tower_of_factors', TowerOfFactorsGame),
   GraphGrabberGame: asMiniGame('graph_grabber', GraphGrabberGame),
   TreasurePathGame: asMiniGame('treasure_path', TreasurePathGame),
-  UnitMixerGame: asMiniGame('unit_mixer', UnitMixerGame),
+  LavaPathGame: asMiniGame('unit_mixer', LavaPathGame),
   ReasoningGame: asMiniGame('reasoning', ReasoningGame),
   LogicSort: asMiniGame('logic_sort', LogicSort),
   MatrixMatch: asMiniGame('matrix_match', MatrixMatch),

@@ -283,7 +283,7 @@ export interface CloudCollapseLevelConfig {
   mathTypes: MathType[];
 }
 
-export interface PotionPourLevelConfig {
+export interface PotionPanicLevelConfig {
   id: number;
   targetScore: number;
   duration: number;

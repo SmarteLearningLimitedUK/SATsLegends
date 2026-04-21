@@ -174,7 +174,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       case 'cloud_collapse':
         return renderFromRegistry('FractionMatchGame', { ...sharedProps, variantGameType: 'cloud_collapse', isBoss: Boolean(selectedLevel.isBoss) });
       case 'potion_pour':
-        return renderFromRegistry('PotionPourGame', sharedProps);
+        return renderFromRegistry('PotionPanicGame', sharedProps);
       case 'take_out_rush':
         if (selectedLevel.blueprintKey === 'fraction_forge') {
           return renderFromRegistry('FractionForgeGame', sharedProps);
@@ -226,17 +226,17 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         if (selectedLevel.blueprintKey === 'maths_vs_zombies') {
           return renderFromRegistry('MathsVsZombiesGame', sharedProps);
         }
-        return renderFromRegistry('RatioRapidsGame', {
+        return renderFromRegistry('RatioRacerGame', {
           ...sharedProps,
           gameTitle: getLevelGameTitle(selectedLevel),
         });
       case 'timekeeper_temple':
-        return renderFromRegistry('TimekeeperTempleGame', sharedProps);
+        return renderFromRegistry('ChronoDashGame', sharedProps);
       case 'measurement_forge':
         if (selectedLevel.blueprintKey === 'perimeter_path') {
           return renderFromRegistry('PerimeterPathGame', sharedProps);
         }
-        return renderFromRegistry('MeasurementForgeGame', sharedProps);
+        return renderFromRegistry('ConversionCanyonGame', sharedProps);
       case 'tower_of_factors':
         if (selectedLevel.blueprintKey === 'factor_frenzy') {
           return renderFromRegistry('FactorFrenzyGame', sharedProps);
@@ -290,7 +290,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       case 'formula_forge':
         return renderFromRegistry('FormulaForgeGame', sharedProps);
       case 'unit_mixer':
-        return renderFromRegistry('UnitMixerGame', sharedProps);
+        return renderFromRegistry('LavaPathGame', sharedProps);
       case 'change_counter':
         return renderFromRegistry('ChangeCounterGame', sharedProps);
       case 'reasoning_quest':
@@ -299,7 +299,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         if (selectedLevel.blueprintKey === 'number_line_ninja') {
           return renderFromRegistry('NumberLineNinjaGame', sharedProps);
         }
-        return renderFromRegistry('CoordinateTranslationGame', sharedProps);
+        return renderFromRegistry('CoordinatesQuestGame', sharedProps);
       case 'calculation_clash':
         if (selectedLevel.blueprintKey === 'multiplication_mine') {
           return renderFromRegistry('MultiplicationMineGame', sharedProps);
@@ -312,7 +312,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         return renderFromRegistry('PercentPowerGame', sharedProps);
       case 'transform_temple':
         if (selectedLevel.blueprintKey === 'rotation_relay') {
-          return renderFromRegistry('RotationReflectionGame', sharedProps);
+          return renderFromRegistry('RotationStationGame', sharedProps);
         }
         return renderFromRegistry('CurriculumChallengeGame', {
           ...sharedProps,
@@ -322,7 +322,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       case 'area_architect':
         return renderFromRegistry('AreaArchitectGame', sharedProps);
       case 'ratio_fractions':
-        return renderFromRegistry('RatioFractionsGame', sharedProps);
+        return renderFromRegistry('RatioRacerGame', sharedProps);
       case 'scale_safari':
         if (selectedLevel.blueprintKey === 'scale_builder') {
           return renderFromRegistry('ScaleBuilderGame', sharedProps);

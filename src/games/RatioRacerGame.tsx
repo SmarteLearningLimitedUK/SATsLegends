@@ -20,7 +20,7 @@ import {
   shuffleOptionsWithCorrect,
 } from '../utils/questionShuffle';
 
-interface RatioFractionsGameProps extends MiniGameShellContractProps {
+interface RatioRacerGameProps extends MiniGameShellContractProps {
   levelId: number;
   avatarId: string;
   onVictory: (stars: number, XP: number) => void;
@@ -214,7 +214,7 @@ const starsForAccuracy = (correct: number, attempts: number) => {
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 
-const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
+const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
   levelId,
   avatarId,
   onVictory,
@@ -608,7 +608,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   );
 };
 
-export default RatioFractionsGame;
+export default RatioRacerGame;
 
 
 
