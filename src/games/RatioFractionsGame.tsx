@@ -14,7 +14,6 @@ import kartBarratt from '../assets/gokarts/8.png';
 import kartBran from '../assets/gokarts/9.png';
 import kartMochi from '../assets/gokarts/10.png';
 import kartVex from '../assets/gokarts/11.png';
-import enemyKart from '../assets/gokarts/15.png';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 import {
   reshuffleAvoidingRepeat,
@@ -35,29 +34,21 @@ type RaceState =
   | 'evaluatingAnswer'
   | 'correctBoost'
   | 'incorrectStall'
-  | 'enemyAdvance'
   | 'resolvingTurn'
   | 'nextQuestion'
-  | 'playerWin'
-  | 'enemyWin';
+  | 'playerWin';
 
 const START_OFFSET = 0;
 const RACER_LERP = 0.16;
 const BASE_XP = 160;
-const KART_SCALE = 1.45;
 const PLAYER_KART_SCALE = 1.9;
 const PLAYER_KART_RAISE = '58pt';
 const PLAYER_TRACK_LINE_Y = 80.8;
-const ENEMY_TRACK_LINE_Y = 88.6;
 const FINISH_Y_SHIFT = -200;
 const FINISH_X_SHIFT = -100;
 const PLAYER_BOB_BASE_SPEED = 5.1;
 const PLAYER_BOB_AMPLITUDE = 4.5;
 const PLAYER_ROLL_MAX = 5;
-const ENEMY_ROLL_MAX = 4;
-const ENEMY_VIBRATE_SPEED = 18;
-const ENEMY_VIBRATE_X_AMPLITUDE = 1.8;
-const ENEMY_VIBRATE_Y_AMPLITUDE = 0.9;
 const PLAYER_KARTS: Record<string, string> = {
   barratt: kartBran,
   bran: kartMochi,
@@ -256,21 +247,12 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
 
   const raceViewportRef = useRef<HTMLDivElement | null>(null);
   const playerPosRef = useRef(START_OFFSET);
-  const enemyPosRef = useRef(START_OFFSET);
   const playerTargetRef = useRef(START_OFFSET);
-  const enemyTargetRef = useRef(START_OFFSET);
-  const enemyMoveTimerRef = useRef<number | null>(null);
   const reportedResultRef = useRef(false);
-  const raceStateRef = useRef(raceState);
   const playerBobPhaseRef = useRef(0);
-  const enemyVibratePhaseRef = useRef(0);
 
   const lives = sessionState?.lives ?? 3;
   const playerKart = PLAYER_KARTS[avatarId] || PLAYER_KARTS.barratt;
-
-  useEffect(() => {
-    raceStateRef.current = raceState;
-  }, [raceState]);
 
   useEffect(() => {
     if (!raceViewportRef.current || typeof ResizeObserver === 'undefined') return;
@@ -287,39 +269,7 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     tierDecksRef.current = tierDecks;
   }, [tierDecks]);
 
-  const stopEnemyMovement = () => {
-    if (enemyMoveTimerRef.current !== null) {
-      window.clearInterval(enemyMoveTimerRef.current);
-      enemyMoveTimerRef.current = null;
-    }
-  };
-
-  const startEnemyMovement = () => {
-    if (enemyMoveTimerRef.current !== null) return;
-
-    const tickEnemy = () => {
-      const currentRaceState = raceStateRef.current;
-      if (currentRaceState === 'playerWin' || currentRaceState === 'enemyWin') {
-        stopEnemyMovement();
-        return;
-      }
-
-      enemyTargetRef.current = Math.min(
-        tuning.trackLength,
-        enemyTargetRef.current + tuning.enemyAdvanceDistance,
-      );
-
-      if (enemyTargetRef.current >= tuning.trackLength && raceStateRef.current !== 'enemyWin') {
-        stopEnemyMovement();
-        setRaceState('enemyWin');
-      }
-    };
-
-    enemyMoveTimerRef.current = window.setInterval(tickEnemy, tuning.enemyMoveIntervalMs);
-  };
-
   useEffect(() => {
-    stopEnemyMovement();
     const resetDecks = buildTierDecks();
     setTierDecks(resetDecks);
     tierDecksRef.current = resetDecks;
@@ -329,11 +279,8 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     setQuestion(deck[0] ?? ratioFractionsQuestions[0]);
     questionStartRef.current = Date.now();
     playerPosRef.current = START_OFFSET;
-    enemyPosRef.current = START_OFFSET;
     playerTargetRef.current = START_OFFSET;
-    enemyTargetRef.current = START_OFFSET;
     playerBobPhaseRef.current = 0;
-    enemyVibratePhaseRef.current = 0;
   }, [levelId]);
 
   useEffect(() => {
@@ -344,16 +291,11 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
       const dt = Math.min(0.12, Math.max(0, (timestamp - last) / 1000));
       lastTime = timestamp;
 
-      const currentRaceState = raceStateRef.current;
       const playerX = playerPosRef.current;
-      const enemyX = enemyPosRef.current;
       const playerTarget = playerTargetRef.current;
-      const enemyTarget = enemyTargetRef.current;
 
       playerPosRef.current = playerX + (playerTarget - playerX) * RACER_LERP;
-      enemyPosRef.current = enemyX + (enemyTarget - enemyX) * RACER_LERP;
       playerBobPhaseRef.current += dt * (PLAYER_BOB_BASE_SPEED + Math.abs(playerTarget - playerX) * 0.14);
-      enemyVibratePhaseRef.current += dt * ENEMY_VIBRATE_SPEED;
 
       setRenderTick((prev) => prev + 1);
       frameId = requestAnimationFrame(tick);
@@ -363,21 +305,15 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     return () => cancelAnimationFrame(frameId);
   }, [tuning.trackLength, viewport.width]);
 
-  useEffect(() => () => {
-    stopEnemyMovement();
-  }, []);
-
   useEffect(() => {
     if (raceState === 'playerWin' && !reportedResultRef.current) {
       reportedResultRef.current = true;
-      stopEnemyMovement();
       const xp = BASE_XP + correctCount * 45 + levelId * 30;
       onVictory(starsForAccuracy(correctCount, attempts || 1), xp);
     }
 
-    if ((raceState === 'enemyWin' || (sessionState && lives <= 0)) && !reportedResultRef.current) {
+    if ((sessionState && lives <= 0) && !reportedResultRef.current) {
       reportedResultRef.current = true;
-      stopEnemyMovement();
       const xp = Math.max(20, BASE_XP * 0.35 + correctCount * 20);
       onGameOver(xp);
     }
@@ -394,7 +330,6 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
       setCountdown((prev) => {
         if (prev <= 1) {
           window.clearInterval(interval);
-          startEnemyMovement();
           setRaceState('showingQuestion');
           return 0;
         }
@@ -491,13 +426,10 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const trackSpan = Math.max(1, tuning.trackLength);
   const cameraWorldPosition = playerPosRef.current;
   const playerLeft = 50;
-  // Keep the enemy in its own world space so player boosts do not drag it along the camera.
-  const enemyLeft = clamp(12 + (enemyPosRef.current / trackSpan) * 92, -10, 110);
   const finishLeft = 50 + ((tuning.trackLength - cameraWorldPosition) / trackSpan) * 100;
   const showBoost = raceState === 'correctBoost';
   const showStall = raceState === 'incorrectStall';
   const playerLineY = PLAYER_TRACK_LINE_Y;
-  const enemyLineY = ENEMY_TRACK_LINE_Y;
   const finishLineY = clamp(
     playerLineY + (FINISH_Y_SHIFT / Math.max(1, viewport.height)) * 100,
     0,
@@ -506,26 +438,12 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
   const backgroundPositionX = Math.round(clamp(18 + ((playerPosRef.current / trackSpan) * 64), 18, 82));
   const playerBobOffset = Math.sin(playerBobPhaseRef.current) * PLAYER_BOB_AMPLITUDE;
   const playerLean = clamp((playerTargetRef.current - playerPosRef.current) * 0.9, -PLAYER_ROLL_MAX, PLAYER_ROLL_MAX);
-  const enemyLean = clamp((enemyTargetRef.current - enemyPosRef.current) * 0.85, -ENEMY_ROLL_MAX, ENEMY_ROLL_MAX);
-  const enemyVibrateOffsetX =
-    (Math.sin(enemyVibratePhaseRef.current * 1.2) * ENEMY_VIBRATE_X_AMPLITUDE) +
-    (Math.sin(enemyVibratePhaseRef.current * 2.3 + 0.7) * 0.7);
-  const enemyVibrateOffsetY =
-    (Math.cos(enemyVibratePhaseRef.current * 1.6 + 0.4) * ENEMY_VIBRATE_Y_AMPLITUDE) +
-    (Math.sin(enemyVibratePhaseRef.current * 3.1) * 0.35);
 
   const playerStyle = {
     transform: `translate3d(-50%, calc(-100% + ${playerBobOffset}px - ${PLAYER_KART_RAISE}), 0) rotate(${playerLean}deg) scale(${PLAYER_KART_SCALE})`,
     transformOrigin: '50% 100%',
     top: `${playerLineY}%`,
     left: `${playerLeft}%`,
-  };
-
-  const enemyStyle = {
-    transform: `translate3d(calc(-50% + ${enemyVibrateOffsetX}px), calc(-100% + ${enemyVibrateOffsetY}px), 0) rotate(${enemyLean}deg) scale(${KART_SCALE})`,
-    transformOrigin: '50% 100%',
-    top: `${enemyLineY}%`,
-    left: `${enemyLeft}%`,
   };
 
   const finishStyle = {
@@ -576,18 +494,6 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
               />
             </motion.div>
 
-            <motion.div
-              className="absolute z-30 flex h-24 w-36 items-center justify-center overflow-visible sm:h-28 sm:w-44 md:h-32 md:w-48"
-              style={enemyStyle}
-            >
-              <img
-                src={enemyKart}
-                alt="Enemy kart"
-                className="h-full w-full object-contain drop-shadow-[0_0_12px_rgba(251,113,133,0.45)]"
-                style={{ imageRendering: 'auto' }}
-              />
-            </motion.div>
-
             {raceState === 'introCountdown' ? (
               <div className="absolute inset-0 flex items-center justify-center bg-slate-950/60 text-5xl font-black text-amber-100">
                 {countdown || 'Go!'}
@@ -605,19 +511,6 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
                 >
                   <div className="rounded-full border border-emerald-200/60 bg-emerald-400/25 px-6 py-3 text-2xl font-black uppercase tracking-[0.2em] text-emerald-100 shadow-[0_12px_24px_rgba(16,185,129,0.35)]">
                     Winner!
-                  </div>
-                </motion.div>
-              ) : null}
-              {raceState === 'enemyWin' ? (
-                <motion.div
-                  key="loser"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  className="absolute inset-0 z-40 flex items-center justify-center bg-slate-950/55"
-                >
-                  <div className="rounded-full border border-rose-200/60 bg-rose-400/25 px-6 py-3 text-2xl font-black uppercase tracking-[0.2em] text-rose-100 shadow-[0_12px_24px_rgba(244,63,94,0.35)]">
-                    You Lose
                   </div>
                 </motion.div>
               ) : null}

@@ -14,6 +14,4 @@ export type RaceStatus =
   | 'showingQuestion'
   | 'answering'
   | 'playerMove'
-  | 'enemyMove'
-  | 'playerWin'
-  | 'enemyWin';
+  | 'playerWin';
