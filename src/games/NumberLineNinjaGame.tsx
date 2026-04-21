@@ -667,7 +667,6 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
               className="qa-enemy-cluster pointer-events-none relative mx-auto flex w-full max-w-[520px] flex-col items-center justify-center gap-3"
             >
               <div className="relative flex w-full min-w-0 max-w-[280px] justify-center">
-                <div className="relative mx-auto flex w-full justify-center">
                 <AnimatePresence>
                   {monsterSpeech ? (
                     <motion.div
@@ -771,7 +770,6 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                     </motion.div>
                   ) : null}
                 </AnimatePresence>
-
                 <motion.div
                   className="relative w-[78%] max-w-[250px] translate-y-[30px] scale-[0.88] sm:w-full sm:max-w-[280px] sm:scale-100"
                   animate={{
@@ -813,7 +811,6 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                     ) : null}
                   </AnimatePresence>
                 </motion.div>
-                </div>
               </div>
 
               <div className="w-[132px] self-center rounded-lg border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)] sm:w-[150px]">
@@ -829,6 +826,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                   <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.14)_1px,transparent_1px)] bg-[length:10%_100%]" />
                 </div>
               </div>
+            </div>
             </div>
           </div>
         </div>
@@ -862,29 +860,29 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                   className="group relative h-[72px] w-[72px] sm:h-[78px] sm:w-[78px]"
                   style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
                 >
-                    <div
-                      className={`absolute inset-0 rounded-full border-[2px] transition-colors ${
-                        isSelected
-                          ? isCorrect
-                            ? 'border-emerald-100/95 bg-gradient-to-b from-emerald-300 to-green-600 shadow-[0_10px_0_rgba(20,83,45,0.82),0_0_30px_rgba(74,222,128,0.72)]'
-                            : 'border-amber-200/90 bg-gradient-to-b from-amber-300 to-amber-500 shadow-[0_10px_0_rgba(180,83,9,0.8),0_0_26px_rgba(251,191,36,0.45)]'
-                          : 'border-cyan-100/75 bg-gradient-to-b from-cyan-400 to-blue-600 shadow-[0_10px_0_rgba(30,64,175,0.78),0_0_18px_rgba(34,211,238,0.32)]'
-                      }`}
-                    />
+                  <div
+                    className={`absolute inset-0 rounded-full border-[2px] transition-colors ${
+                      isSelected
+                        ? isCorrect
+                          ? 'border-emerald-100/95 bg-gradient-to-b from-emerald-300 to-green-600 shadow-[0_10px_0_rgba(20,83,45,0.82),0_0_30px_rgba(74,222,128,0.72)]'
+                          : 'border-amber-200/90 bg-gradient-to-b from-amber-300 to-amber-500 shadow-[0_10px_0_rgba(180,83,9,0.8),0_0_26px_rgba(251,191,36,0.45)]'
+                        : 'border-cyan-100/75 bg-gradient-to-b from-cyan-400 to-blue-600 shadow-[0_10px_0_rgba(30,64,175,0.78),0_0_18px_rgba(34,211,238,0.32)]'
+                    }`}
+                  />
                   <div className="pointer-events-none absolute inset-[9%] rounded-full bg-gradient-to-b from-white/30 via-transparent to-transparent" />
                   <div className="pointer-events-none absolute inset-[16%] rounded-full border border-white/12" />
 
-                      <motion.div
-                        initial={false}
-                        animate={{
-                          scale: isCorrect ? 1 : isSelected ? 1.03 : 1,
-                          y: isWrong ? [0, -3, 3, -2, 0] : 0,
-                        }}
-                      transition={{ duration: isWrong ? 0.35 : 0.4 }}
-                      className={`relative flex h-full items-center justify-center px-1 text-center text-[clamp(16px,1.95vw,24px)] font-black leading-none tracking-tight drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)] ${
-                        isCorrect ? 'text-emerald-50' : isWrong ? 'text-amber-100' : isSelected ? 'text-slate-900' : 'text-white'
-                      }`}
-                    >
+                  <motion.div
+                    initial={false}
+                    animate={{
+                      scale: isCorrect ? 1 : isSelected ? 1.03 : 1,
+                      y: isWrong ? [0, -3, 3, -2, 0] : 0,
+                    }}
+                    transition={{ duration: isWrong ? 0.35 : 0.4 }}
+                    className={`relative flex h-full items-center justify-center px-1 text-center text-[clamp(16px,1.95vw,24px)] font-black leading-none tracking-tight drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)] ${
+                      isCorrect ? 'text-emerald-50' : isWrong ? 'text-amber-100' : isSelected ? 'text-slate-900' : 'text-white'
+                    }`}
+                  >
                     {option}
                   </motion.div>
 
@@ -901,8 +899,6 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
             })}
           </div>
         </div>
-      </div>
-
       <AnimatePresence>
         {flyingAnswer && feedbackState === 'correct' && (
           <motion.div
@@ -1003,7 +999,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+      </div>
   );
 };
 
