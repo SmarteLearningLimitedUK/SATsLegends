@@ -773,7 +773,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                 </AnimatePresence>
 
                 <motion.div
-                  className="relative"
+                  className="relative w-[78%] max-w-[250px] translate-y-[30px] scale-[0.88] sm:w-full sm:max-w-[280px] sm:scale-100"
                   animate={{
                     y: [0, -5, 0],
                     x: monsterEffect === 'hit' ? [0, -9, 9, -8, 8, -5, 5, 0] : 0,
