@@ -60,7 +60,7 @@ const CAKE_SLICE_ASSET = cakeSliceAsset;
 const DRAG_SLICE_SIZE = 48;
 const SHARE_SPLITTER_BACKGROUND_SIZE = { width: 800, height: 1600 };
 const SHARE_SPLITTER_PLATE_DIAMETER_PX = 174;
-const CAKE_SOURCE_POSITION = { x: 400, y: 1376 };
+const CAKE_SOURCE_POSITION = { x: 400, y: 1200 };
 const CAKE_SOURCE_SIZE_PX = 212;
 
 const RATIO_PATTERNS_BY_COUNT: Record<number, number[][]> = {
@@ -93,27 +93,27 @@ const RATIO_PATTERNS_BY_COUNT: Record<number, number[][]> = {
 
 const PLATE_POSITIONS_BY_COUNT: Record<number, Array<{ x: number; y: number }>> = {
   2: [
-    { x: 222.5, y: 653.8 },
-    { x: 584.2, y: 662.0 },
+    { x: 225.4, y: 655.6 },
+    { x: 587.2, y: 663.9 },
   ],
   3: [
-    { x: 403.3, y: 520.9 },
-    { x: 222.5, y: 653.8 },
-    { x: 584.2, y: 662.0 },
+    { x: 406.3, y: 522.8 },
+    { x: 225.4, y: 655.6 },
+    { x: 587.2, y: 663.9 },
   ],
   4: [
-    { x: 403.3, y: 520.9 },
-    { x: 222.5, y: 653.8 },
-    { x: 584.2, y: 662.0 },
-    { x: 287.9, y: 877.7 },
+    { x: 406.3, y: 522.8 },
+    { x: 225.4, y: 655.6 },
+    { x: 587.2, y: 663.9 },
+    { x: 291.0, y: 879.9 },
   ],
   5: [
     // Live screenshot centers measured from the rendered Share Splitter screen.
-    { x: 403.3, y: 520.9 },
-    { x: 222.5, y: 653.8 },
-    { x: 584.2, y: 662.0 },
-    { x: 287.9, y: 877.7 },
-    { x: 533.0, y: 867.7 },
+    { x: 406.3, y: 522.8 },
+    { x: 225.4, y: 655.6 },
+    { x: 587.2, y: 663.9 },
+    { x: 291.0, y: 879.9 },
+    { x: 536.0, y: 869.7 },
   ],
 };
 
