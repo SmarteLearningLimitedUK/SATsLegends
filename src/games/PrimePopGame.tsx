@@ -215,7 +215,15 @@ const PrimeBubble: React.FC<{ bubble: Bubble; isPhone: boolean }> = ({ bubble, i
   );
 };
 
-const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictory, onGameOver, onBack, isPractice }) => {
+const PrimePopGame: React.FC<PrimePopGameProps> = ({
+  levelId,
+  avatarId,
+  onVictory,
+  onGameOver,
+  onBack,
+  isPractice,
+  practiceBriefing,
+}) => {
   const config = useMemo(() => getConfig(levelId), [levelId]);
   const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
   const [isPhone, setIsPhone] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 768 : true));
@@ -582,7 +590,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({ levelId, avatarId, onVictor
             Pick out the <b>PRIME</b> numbers before they cross the line and are lost forever!
           </>
         )}
-        briefing={null}
+        briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
       <div className="relative z-10 flex h-full min-h-0 w-full flex-col pt-[env(safe-area-inset-top)]">

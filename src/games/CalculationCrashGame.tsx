@@ -6,8 +6,9 @@ import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import calculationClashBackground from '../assets/maps/backgroundsforgames/Calculation Cup.png';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
+import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 
-interface CalculationCrashGameProps {
+interface CalculationCrashGameProps extends MiniGameShellContractProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
@@ -104,6 +105,8 @@ const computeStars = (solved: number, attempted: number) => {
 const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
   levelId,
   useSharedTopHud = false,
+  isPractice,
+  practiceBriefing,
   onVictory,
   onGameOver: _onGameOver,
   onBack,
@@ -118,7 +121,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; text: string } | null>(null);
   const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
   const [screenShake, setScreenShake] = useState(false);
-  const [showPracticeIntro, setShowPracticeIntro] = useState(true);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
   const feedbackTimerRef = useRef<number | null>(null);
   const submittedResultRef = useRef(false);
@@ -176,6 +179,10 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
     if (timeLeft <= 0) setStatus('complete');
   }, [status, timeLeft]);
 
+  useEffect(() => {
+    setShowPracticeIntro(Boolean(isPractice));
+  }, [isPractice]);
+
   useEffect(() => () => clearFeedbackTimer(), []);
 
   const handleAnswer = (choice: number) => {
@@ -228,6 +235,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
         open={showPracticeIntro}
         title="Calculation Clash"
         body="Solve each expression quickly.\nChoose the answer that matches the calculation."
+        briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
 

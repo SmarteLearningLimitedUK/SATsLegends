@@ -625,7 +625,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
         open={showPracticeIntro}
         title={gameTitle || 'Match Mastery'}
         body="The Monster Mind has built a wall blocking our path, break the wall by matching frations to their equivilants."
-        briefing={null}
+        briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
       <div className="relative box-border w-[min(94vw,94vh)] rounded-[2rem] border border-cyan-100/20 bg-[#04102c]/86 p-3 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-4">

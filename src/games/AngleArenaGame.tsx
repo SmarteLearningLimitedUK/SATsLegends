@@ -69,6 +69,7 @@ const PROJECTILE_SPEED = 520;
 const MAX_FLIGHT_DISTANCE = 980;
 const CANNON_ANCHOR_X_RATIO = 0.5;
 const CANNON_ANCHOR_Y_RATIO = 0.5;
+const CAMERA_LEAD_DISTANCE = 240;
 
 type CloudLayer = {
   x: number;
@@ -392,6 +393,12 @@ const stepProjectile = (projectile: ProjectileState, dt: number) => {
   return { ...projectile, x: nextX, y: nextY, trail: faded };
 };
 
+const normalizeVector = (x: number, y: number) => {
+  const magnitude = Math.hypot(x, y);
+  if (magnitude <= 0) return { x: 0, y: 0 };
+  return { x: x / magnitude, y: y / magnitude };
+};
+
 const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   levelId,
   useSharedTopHud: _useSharedTopHud = true,
@@ -665,7 +672,11 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       }
 
       if (projectile?.active) {
-        cameraTargetRef.current = { x: projectile.x, y: projectile.y };
+        const travel = normalizeVector(projectile.vx, projectile.vy);
+        cameraTargetRef.current = {
+          x: projectile.x - (travel.x * CAMERA_LEAD_DISTANCE),
+          y: projectile.y - (travel.y * CAMERA_LEAD_DISTANCE),
+        };
       }
 
       const camera = cameraRef.current;

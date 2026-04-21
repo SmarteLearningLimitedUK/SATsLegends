@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { motion } from 'motion/react';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
@@ -8,9 +8,10 @@ import {
   GameUiShell,
 } from '../components/game-ui/GameUiKit';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
+import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import problemPyramidBackground from '../assets/maps/backgroundsforgames/problem pyramid.jpg';
 
-interface ProblemPyramidGameProps {
+interface ProblemPyramidGameProps extends MiniGameShellContractProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
@@ -79,6 +80,8 @@ const starsForAccuracy = (correct: number, attempts: number) => {
 
 const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
   levelId,
+  isPractice,
+  practiceBriefing,
   onVictory,
   onGameOver: _onGameOver,
 }) => {
@@ -90,7 +93,11 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
   const [glow, setGlow] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [feedbackTone, setFeedbackTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
-  const [showPracticeIntro, setShowPracticeIntro] = useState(true);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
+
+  useEffect(() => {
+    setShowPracticeIntro(Boolean(isPractice));
+  }, [isPractice]);
 
   const round = useMemo(() => buildRound(levelId, roundIndex + 1), [levelId, roundIndex]);
 
@@ -157,6 +164,7 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
         open={showPracticeIntro}
         title="Problem Pyramid"
         body="Build the pyramid from the numbers shown.\nChoose the value that completes the top."
+        briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
       <div className="relative z-10 flex h-full min-h-0 flex-col gap-1.5 px-3 pb-[calc(env(safe-area-inset-bottom)+2.8rem)] pt-2 text-white">

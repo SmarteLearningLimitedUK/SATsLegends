@@ -333,7 +333,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
         open={showPracticeIntro}
         title={gameTitle || 'Percent Power'}
         body="The portal is out of power - we cant advance. Power the core by solving the percent puzzles."
-        briefing={null}
+        briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
 

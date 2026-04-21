@@ -550,7 +550,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
         open={showPracticeIntro}
         title={gameTitle || 'Fraction Forge'}
         body="We need to construct a cage strong enough to protect the brainpower from the Monster Mind. Solve the order of fractions to forge the Elitium needed to construct the cage."
-        briefing={null}
+        briefing={_practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
 

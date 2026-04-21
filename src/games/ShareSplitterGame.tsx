@@ -63,9 +63,9 @@ const SHARE_SPLITTER_BACKGROUND_SIZE = { width: 2500, height: 5000 };
 const SHARE_SPLITTER_PLATE_DIAMETER_PX = 540;
 const CAKE_SOURCE_POSITION = { x: 1250, y: 3750 };
 const CAKE_SOURCE_SIZE_PX = 660;
-const SHARE_SPLITTER_TABLE_CENTER = { x: 1250, y: 2240 };
-const SHARE_SPLITTER_TABLE_PLATE_RADIUS = 540;
-const SHARE_SPLITTER_PLATE_ICON_SCALE = 1.02;
+const SHARE_SPLITTER_TABLE_CENTER = { x: 1250, y: 2940 };
+const SHARE_SPLITTER_TABLE_PLATE_RADIUS = 760;
+const SHARE_SPLITTER_PLATE_ICON_SCALE = 1.06;
 
 const makeRingPoint = (center: { x: number; y: number }, radius: number, angleDegrees: number) => {
   const angle = (angleDegrees * Math.PI) / 180;
