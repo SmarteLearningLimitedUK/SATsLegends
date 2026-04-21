@@ -779,7 +779,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                     onMouseDown={handleSourcePointerDown}
                     onTouchStart={handleSourcePointerDown}
                     disabled={locked || remainingSlices <= 0}
-                    className="pointer-events-auto fixed z-[30] -translate-x-1/2 -translate-y-1/2 rounded-full border border-amber-200/65 bg-[linear-gradient(180deg,rgba(255,244,191,0.24),rgba(180,83,9,0.14))] p-3 shadow-[0_12px_24px_rgba(180,83,9,0.2)] touch-none"
+                    className="pointer-events-auto fixed z-[30] -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent p-0 touch-none"
                     style={{
                       left: `${mapBackgroundPointToViewport(CAKE_SOURCE_POSITION).x}px`,
                       top: `${mapBackgroundPointToViewport(CAKE_SOURCE_POSITION).y}px`,
@@ -787,14 +787,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                       height: `${CAKE_SOURCE_SIZE_PX * backgroundScale * cakeSourceLayoutScale}px`,
                     }}
                     aria-label={remainingSlices > 0 ? 'Drag a slice from the cake' : 'No cake slices left'}
-                  >
-                    <img
-                      src={trimmedCakeSliceAsset}
-                      alt=""
-                      className="pointer-events-none h-full w-full object-contain drop-shadow-[0_8px_14px_rgba(0,0,0,0.24)]"
-                      draggable={false}
-                    />
-                  </button>
+                  />
                 </div>
 
                 <section className="shrink-0 min-h-[1px]" aria-hidden />

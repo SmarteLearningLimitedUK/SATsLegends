@@ -26,6 +26,8 @@ interface AngleArenaGameProps {
   onVictory: (stars: number, XP: number) => void;
   onGameOver: (XP: number) => void;
   onBack: () => void;
+  questions?: AngleQuestion[];
+  onRoundComplete?: (correct: boolean) => void;
 }
 
 type AngleArenaGameShellProps = AngleArenaGameProps & MiniGameShellContractProps;
@@ -398,6 +400,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   onBack,
   sessionState,
   sessionEvents,
+  questions: questionsProp,
+  onRoundComplete,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationRef = useRef<number | null>(null);
@@ -427,13 +431,13 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const [stars, setStars] = useState(0);
 
   const rawQuestions = useMemo(
-    () => buildAngleQuestions({
+    () => questionsProp || buildAngleQuestions({
       level: levelId,
       launcherX: 0,
       groundY: 0,
       gravity: 0,
     }),
-    [levelId],
+    [levelId, questionsProp],
   );
   const questions = useMemo(() => rawQuestions, [rawQuestions]);
   const activeQuestion = questions[questionIndex];
@@ -552,25 +556,13 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       setStars((prev) => Math.min(3, Math.max(prev, Math.floor(nextScore / 450))));
       setFeedback('Direct hit!');
       triggerHaptic('success');
-      emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
-        score: nextScore,
-        metadata: {
-          questionId: activeQuestion?.id,
-          selected: selectedAnswerRef.current,
-        },
-      });
+      onRoundComplete?.(true);
       setGameState('resolvedCorrect');
     } else {
       const correctAngle = activeQuestion?.correctAnswer;
       setFeedback(`Missed! Correct angle: ${correctAngle ?? '--'}°`);
       triggerHaptic('error');
-      emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
-        score: scoreRef.current,
-        metadata: {
-          questionId: activeQuestion?.id,
-          selected: selectedAnswerRef.current,
-        },
-      });
+      onRoundComplete?.(false);
       if (!sessionState) {
         setLocalLives((prev) => Math.max(0, prev - 1));
       }

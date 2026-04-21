@@ -21,6 +21,7 @@ import {
   RewardPanel,
 } from '../layout/ScreenPrimitives';
 import { getMiniGame, MiniGameRegistryKey } from '../games';
+import { buildAngleQuestions } from '../games/angleArena/questions';
 import { isBossEncounterGameType } from '../games/bossEncounterTypes';
 import { GameScreen, IslandData, LevelData, PlayerData } from '../types';
 import { getLevelGameTitle } from '../utils/gameNames';
@@ -28,6 +29,7 @@ import splashPoster from '../assets/casual_ui/splashrep1.png';
 import { LEVEL_TIMERS_DISABLED } from './testingFlags';
 import {
   bindMiniGameSessionHandlers,
+  emitMiniGameSessionEvent,
   GameplaySessionEventHandlers,
   GameplaySessionState,
 } from './gameplaySessionContract';
@@ -186,7 +188,25 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       case 'prime_pop':
         return renderFromRegistry('PrimePopGame', sharedProps);
       case 'angle_arena':
-        return renderFromRegistry('AngleArenaGame', sharedProps);
+        return renderFromRegistry('AngleArenaGame', {
+          ...sharedProps,
+          questions: buildAngleQuestions({
+            level: selectedLevel.miniGameLevel || selectedLevel.id,
+            launcherX: 0,
+            groundY: 0,
+            gravity: 0,
+          }),
+          onRoundComplete: (correct: boolean) => {
+            emitMiniGameSessionEvent(
+              sessionEvents,
+              correct ? 'correct_answer' : 'incorrect_answer',
+              {
+                gameType: selectedLevel.gameType,
+                levelId: selectedLevel.id,
+              },
+            );
+          },
+        });
       case 'polygon_palace':
         return renderFromRegistry('PolygonPalaceGame', sharedProps);
       case 'data_dungeon':
