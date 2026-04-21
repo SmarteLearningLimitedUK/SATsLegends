@@ -44,8 +44,8 @@ const WellbeingCompleteModal: React.FC<WellbeingCompleteModalProps> = ({
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[radial-gradient(circle,rgba(167,243,208,0.36),rgba(125,211,252,0.15))] text-3xl shadow-[0_0_28px_rgba(167,243,208,0.18)]">
             ?
           </div>
-          <div className="mt-3 text-2xl font-black text-cyan-50">Nice and calm</div>
-          <div className="mt-1 text-sm font-semibold text-cyan-100/80">{title} complete. Feeling steadier?</div>
+          <div className="mt-3 text-2xl font-black text-cyan-50">Well done</div>
+          <div className="mt-1 text-sm font-semibold text-cyan-100/80">{title} complete. Feeling a little steadier?</div>
           <div className="mt-3 rounded-full border border-emerald-200/28 bg-emerald-400/10 px-3 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-emerald-100">
             {rewardLabel}
           </div>
@@ -53,12 +53,12 @@ const WellbeingCompleteModal: React.FC<WellbeingCompleteModalProps> = ({
             <button type="button" onClick={onContinue} className="ui-button-success px-4 py-3 text-sm font-black uppercase tracking-[0.14em]">
               Continue
             </button>
-            <button type="button" onClick={onPlayAnother} className="ui-button-secondary px-4 py-3 text-sm font-black uppercase tracking-[0.14em]">
-              Play Another Calm Activity
-            </button>
-            <button type="button" onClick={onBackToHub} className="ui-button-secondary px-4 py-3 text-sm font-black uppercase tracking-[0.14em]">
-              Back To Grove
-            </button>
+              <button type="button" onClick={onPlayAnother} className="ui-button-secondary px-4 py-3 text-sm font-black uppercase tracking-[0.14em]">
+              Play Another Wellbeing Activity
+              </button>
+              <button type="button" onClick={onBackToHub} className="ui-button-secondary px-4 py-3 text-sm font-black uppercase tracking-[0.14em]">
+              Back To Mind Garden
+              </button>
           </div>
         </motion.div>
       </motion.div>

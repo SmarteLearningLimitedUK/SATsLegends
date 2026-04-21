@@ -10,10 +10,10 @@ import { DEFAULT_RACE_DIFFICULTY, RACE_TUNING, RaceDifficulty } from './ratioFra
 import { getQuestionTier, QuestionTier } from './ratioFractionsRace/questionSelector';
 import { RatioFractionQuestion } from './ratioFractionsRace/types';
 import ratioBackdrop from '../assets/gokarts/bkgroundratiofractionkarts.png';
-import kartBarratt from '../assets/gokarts/8.png';
-import kartBran from '../assets/gokarts/9.png';
-import kartMochi from '../assets/gokarts/10.png';
-import kartVex from '../assets/gokarts/11.png';
+import kartBarratt from '../assets/gokarts/karts/1.png';
+import kartBran from '../assets/gokarts/karts/2.png';
+import kartMochi from '../assets/gokarts/karts/3.png';
+import kartVex from '../assets/gokarts/karts/4.png';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 import {
   reshuffleAvoidingRepeat,

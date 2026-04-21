@@ -40,7 +40,7 @@ const WellbeingShell: React.FC<WellbeingShellProps> = ({ title, subtitle, type, 
         type="button"
         onClick={onExit}
         className="ui-icon-button inline-flex h-11 w-11 items-center justify-center text-white"
-        aria-label="Exit calm activity"
+        aria-label="Exit wellbeing activity"
       >
         <span className="text-lg font-black">×</span>
       </button>
