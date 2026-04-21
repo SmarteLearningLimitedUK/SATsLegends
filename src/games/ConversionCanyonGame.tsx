@@ -225,17 +225,17 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
             className="relative flex w-full max-w-[35rem] flex-1 min-h-[19rem] items-center justify-center p-1 md:max-w-[40rem]"
           >
             <div
-              className={`flex w-full items-center justify-between rounded-[1.35rem] px-3 py-2 text-center ${
+              className={`flex w-full flex-col gap-2 rounded-[1.35rem] px-3 py-2 text-center sm:flex-row sm:items-center sm:justify-between ${
                 successPulse ? 'bg-emerald-400/18' : 'bg-slate-950/24'
               }`}
             >
-              <div className="text-left">
+              <div className="w-full text-center sm:w-auto sm:text-left">
                 <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/80">Target Load</div>
                 <div className="text-[clamp(0.9rem,2.2vw,1.1rem)] font-black leading-tight text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]">
                   {toKgLabel(round.targetGrams)}
                 </div>
               </div>
-              <div className="text-right">
+              <div className="w-full text-center sm:w-auto sm:text-right">
                 <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/80">Current Load</div>
                 <div className="text-[clamp(0.9rem,2.2vw,1.1rem)] font-black leading-tight text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]">
                   {toGramLabel(currentGrams)}

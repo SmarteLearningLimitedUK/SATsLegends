@@ -579,6 +579,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
             animate={lineShake ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
             transition={{ duration: 0.34, ease: 'easeInOut' }}
             className="qa-number-line relative mt-0 flex h-[22%] min-h-[140px] w-full max-w-[680px] items-center justify-center"
+            style={{ marginTop: 10 }}
           >
             <motion.div
               animate={{ opacity: [0.26, 0.54, 0.26], scale: [0.985, 1.025, 0.985] }}
@@ -663,10 +664,10 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
           <div className="relative mt-1 flex h-[30%] min-h-[200px] w-full max-w-[520px] shrink-0 items-center justify-center">
             <div
-              className="qa-enemy-cluster pointer-events-none relative mx-auto flex w-[92%] max-w-[520px] items-center justify-center gap-2"
+              className="qa-enemy-cluster pointer-events-none relative mx-auto flex w-full max-w-[520px] flex-col items-center justify-center gap-3"
             >
-              <div className="relative flex-1 min-w-[170px] max-w-[280px]">
-                <div className="relative">
+              <div className="relative flex w-full min-w-0 max-w-[280px] justify-center">
+                <div className="relative mx-auto flex w-full justify-center">
                 <AnimatePresence>
                   {monsterSpeech ? (
                     <motion.div

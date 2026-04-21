@@ -379,6 +379,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   useSharedTopHud = false,
   isBoss: _isBoss = false,
   isPractice,
+  practiceBriefing,
   variantGameType = 'fraction_match',
   onVictory,
   onGameOver,

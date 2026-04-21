@@ -1049,28 +1049,28 @@ const App: React.FC = () => {
   const mapDockIconClass = 'h-[18px] w-[18px] drop-shadow-[0_2px_2px_rgba(0,0,0,0.26)]';
     const mapHudDock = screen === 'world_map'
       ? (
-        <div className="mt-0.5 flex shrink-0 items-center justify-center">
-          <div className="relative shrink-0 rounded-[1.15rem] border border-cyan-100/26 bg-[linear-gradient(180deg,rgba(16,40,96,0.84)_0%,rgba(9,24,64,0.88)_100%)] px-2 py-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.38),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-[2px]">
+        <div className="mt-0.5 flex w-full max-w-[calc(100vw-0.7rem)] shrink-0 items-center justify-center overflow-hidden">
+          <div className="relative w-full max-w-full shrink-0 rounded-[1.15rem] border border-cyan-100/26 bg-[linear-gradient(180deg,rgba(16,40,96,0.84)_0%,rgba(9,24,64,0.88)_100%)] px-2 py-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.38),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-[2px]">
             <div className="pointer-events-none absolute inset-[1px] rounded-[1.05rem] border border-cyan-100/14" />
             <div className="pointer-events-none absolute inset-x-3 top-[3px] h-3 rounded-full bg-cyan-200/10 blur-[2px]" />
 
-            <div className="relative grid grid-cols-4 gap-1.5">
+            <div className="relative grid grid-cols-2 gap-1.5 sm:grid-cols-4">
               <button
                 type="button"
                 onClick={goToProfile}
                 className={mapDockButtonClass}
                 aria-label="Open player profile"
-            >
-              <AssetIcon name="user" className={mapDockIconClass} />
-            </button>
-            <button
-              type="button"
-              onClick={goToAchievements}
-              className={mapDockButtonClass}
-              aria-label="Open achievements"
-            >
-              <AssetIcon name="trophy" className={mapDockIconClass} />
-            </button>
+              >
+                <AssetIcon name="user" className={mapDockIconClass} />
+              </button>
+              <button
+                type="button"
+                onClick={goToAchievements}
+                className={mapDockButtonClass}
+                aria-label="Open achievements"
+              >
+                <AssetIcon name="trophy" className={mapDockIconClass} />
+              </button>
               <button
                 type="button"
                 onClick={goToParentDashboard}
@@ -1082,7 +1082,7 @@ const App: React.FC = () => {
               <button
                 type="button"
                 onClick={() => openWellbeingHub({ origin: 'world_map', islandId: selectedIsland?.id ?? null })}
-                className="flex h-[42px] min-w-[7.25rem] items-center justify-center gap-2 rounded-[0.85rem] border border-emerald-100/35 bg-[linear-gradient(180deg,rgba(18,78,58,0.92)_0%,rgba(9,44,32,0.95)_100%)] px-3 text-[9px] font-black uppercase tracking-[0.14em] text-emerald-50 shadow-[0_4px_0_rgba(6,95,70,0.65)]"
+                className="flex h-[42px] w-full min-w-0 items-center justify-center gap-2 rounded-[0.85rem] border border-emerald-100/35 bg-[linear-gradient(180deg,rgba(18,78,58,0.92)_0%,rgba(9,44,32,0.95)_100%)] px-2 text-[9px] font-black uppercase tracking-[0.14em] text-emerald-50 shadow-[0_4px_0_rgba(6,95,70,0.65)] sm:px-3"
                 aria-label="Open Calm Grove"
               >
                 <AssetIcon name="heart" className={mapDockIconClass} />

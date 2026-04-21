@@ -585,11 +585,9 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
         title="Prime Pop"
         body={(
           <>
-            The Monster Minds have released number orbs to hide the prime numbers.
+            In an attempt to hide the prime numbers, the Monster Minds have hidden them among regular numbers.
             {'\n'}
-            Pick out the <b>PRIME</b> numbers before they cross the line.
-            {'\n'}
-            Check which numbers only divide by 1 and themselves.
+            Find and pop the <b>PRIME</b> numbers before they cross the line and you lose a life.
           </>
         )}
         briefing={practiceBriefing}

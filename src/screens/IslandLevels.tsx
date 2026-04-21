@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Crown, Lock, Sparkles } from 'lucide-react';
+import { Crown, Lock } from 'lucide-react';
 import AssetIcon from '../components/AssetIcon';
 import { IslandData, LevelData, PlayerData } from '../types';
 import { getLevelGameTitle, getLevelGroupKey } from '../utils/gameNames';
@@ -294,11 +294,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
         {nextPlayableRow ? (
           <div className="mb-3 rounded-2xl border border-amber-200/70 bg-[linear-gradient(180deg,rgba(251,191,36,0.24),rgba(234,179,8,0.1),rgba(15,23,42,0.4))] p-3 shadow-[0_14px_28px_rgba(234,179,8,0.22)] md:mb-4 md:p-3.5">
             <div className="flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <div className="inline-flex items-center gap-1 rounded-full border border-amber-100/70 bg-amber-300/25 px-2 py-0.5 text-aaa-micro text-amber-100">
-                  <Sparkles className="h-3 w-3" />
-                  Recommended Next
-                </div>
+                <div className="min-w-0">
                 <div className="mt-1 truncate text-sm font-black text-cyan-100 md:text-base">
                   {getGroupName(nextPlayableRow.level)} - {nextPlayableLabel}
                 </div>
@@ -390,15 +386,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                                   ? 'border-violet-200/60 bg-[linear-gradient(180deg,rgba(139,92,246,0.3),rgba(30,41,59,0.45))]'
                                   : 'border-cyan-200/55 bg-[linear-gradient(180deg,rgba(34,211,238,0.2),rgba(15,23,42,0.45))]';
 
-                          const statusText = !isUnlocked
-                            ? (lockReason || 'Locked')
-                            : isNextPlayable
-                              ? 'Recommended next'
-                              : isCompleted
-                                ? ''
-                                : isBoss
-                                  ? 'Boss available'
-                                  : 'Available';
+                          const statusText = isUnlocked ? 'Available' : 'Unavailable';
 
                           return (
                             <div
@@ -440,7 +428,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                                 }`}
                               >
                                 {!isUnlocked
-                                  ? 'Locked'
+                                  ? 'Unavailable'
                                   : isNextPlayable
                                     ? 'Start'
                                     : isCompleted
