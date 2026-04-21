@@ -372,57 +372,17 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
 
         <div className="relative mt-2 flex w-full max-w-[44rem] flex-1 min-h-0 flex-col items-center justify-center px-2 py-2">
           <div className="absolute left-1/2 top-[63%] h-[15rem] w-[15rem] -translate-x-1/2 -translate-y-1/2 md:h-[16rem] md:w-[16rem]">
-            <motion.div
-              className="absolute inset-0 rounded-full bg-[radial-gradient(circle,rgba(96,165,250,0.52),rgba(59,130,246,0.26)_38%,rgba(8,20,40,0)_74%)] blur-3xl"
-              animate={{ opacity: [0.48, 0.9, 0.48], scale: [0.98, 1.04, 0.98] }}
-              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-            />
-            <div className="absolute left-1/2 top-1/2 h-[10.5rem] w-[10.5rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-100/30 bg-[radial-gradient(circle,rgba(125,211,252,0.22),rgba(14,116,144,0.18)_42%,rgba(8,20,40,0.08)_72%,rgba(8,20,40,0)_100%)] shadow-[0_0_40px_rgba(34,211,238,0.2)] md:h-[11.75rem] md:w-[11.75rem]" />
-            <div className="absolute left-1/2 top-[64%] h-8 w-[8.8rem] -translate-x-1/2 rounded-full bg-cyan-300/20 blur-xl" />
-            <motion.div
-              className="absolute left-1/2 top-[63%] flex h-[10.5rem] w-[10.5rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-cyan-100/30 bg-[radial-gradient(circle,rgba(125,211,252,0.34),rgba(14,116,144,0.22)_38%,rgba(8,20,40,0.12)_68%,rgba(8,20,40,0)_100%)] shadow-[0_0_45px_rgba(34,211,238,0.2)] md:h-[11.75rem] md:w-[11.75rem]"
-                animate={
-                  feedback === 'correct'
-                    ? { scale: [1, 1.06, 1], x: [0, -4, 4, -3, 3, 0], rotate: [0, 3, -3, 2, -2, 0] }
-                  : feedback === 'incorrect'
-                    ? { x: [0, -8, 8, -6, 6, 0] }
-                    : { scale: [1, 1.02, 1] }
-              }
-              transition={{ duration: 0.45, ease: 'easeInOut' }}
-              >
-                <div className="absolute inset-[7%] overflow-hidden rounded-full">
-                  <motion.div
-                    className="absolute bottom-0 left-0 w-full bg-[linear-gradient(180deg,rgba(34,197,94,0.65),rgba(16,185,129,0.25))]"
-                    animate={{ height: `${coreFill * 100}%` }}
-                  transition={{ duration: 0.45, ease: 'easeOut' }}
-                />
-              </div>
-                <div className="absolute inset-[11%] rounded-full border border-cyan-100/25 bg-[radial-gradient(circle,rgba(255,255,255,0.24),rgba(34,211,238,0.1)_46%,rgba(8,20,40,0.16)_70%)]" />
-                <div className="absolute inset-[24%] rounded-full border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(255,255,255,0.16),rgba(12,74,110,0.12))] shadow-[inset_0_1px_14px_rgba(255,255,255,0.08)]" />
               <motion.div
-                className="absolute left-1/2 top-[0.95rem] z-20 flex -translate-x-1/2 items-center justify-center rounded-full border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(7,89,133,0.96),rgba(8,47,73,0.98))] px-3 py-1.5 shadow-[0_8px_18px_rgba(2,6,23,0.35)]"
-                animate={feedback === 'correct'
-                  ? { scale: [1, 1.18, 1] }
-                  : feedback === 'incorrect'
-                    ? { scale: [1, 1.14, 1] }
-                    : { scale: [1, 1.06, 1] }}
-                transition={feedback === 'correct'
-                  ? { duration: 0.5, ease: 'easeOut' }
-                  : feedback === 'incorrect'
-                    ? { duration: 0.45, ease: 'easeOut' }
-                    : { duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-              >
-                <Zap
-                  className={`h-8 w-8 md:h-10 md:w-10 ${
-                    feedback === 'correct'
-                      ? 'text-emerald-300 drop-shadow-[0_0_16px_rgba(16,185,129,0.65)]'
-                      : feedback === 'incorrect'
-                        ? 'text-amber-300 drop-shadow-[0_0_16px_rgba(248,113,113,0.65)]'
-                        : 'text-cyan-100/90'
-                  }`}
-                />
-              </motion.div>
-            </motion.div>
+                className="absolute left-1/2 top-1/2 rounded-full bg-[radial-gradient(circle,rgba(134,239,172,0.96),rgba(34,197,94,0.72)_60%,rgba(16,185,129,0.22)_100%)] shadow-[0_0_20px_rgba(34,197,94,0.55)]"
+                animate={{
+                  x: '-50%',
+                  y: 'calc(-50% + 40px)',
+                  width: `${Math.max(30, coreFill * 58)}%`,
+                  height: `${Math.max(30, coreFill * 58)}%`,
+                  scale: [1, 1.03, 1],
+                }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+            />
           </div>
 
           <AnimatePresence>
