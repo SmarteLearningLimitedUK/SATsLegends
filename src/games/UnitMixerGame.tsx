@@ -53,6 +53,11 @@ const LAVA_PATH_STOPS = [
   { x: 51.5, y: 4.5 },
 ] as const;
 
+const getLavaPathPosition = (stepIndex: number) => {
+  const clampedIndex = Math.max(0, Math.min(stepIndex, LAVA_PATH_STOPS.length - 1));
+  return LAVA_PATH_STOPS[clampedIndex];
+};
+
 const fallbackQuestions: UnitMixerQuestion[] = [
   {
     prompt: 'Convert 3.5 km to metres.',
@@ -262,7 +267,7 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
   };
 
   const currentStep = Math.min(correctCount, LAVA_PATH_STOPS.length - 1);
-  const currentPosition = LAVA_PATH_STOPS[currentStep];
+  const currentPosition = getLavaPathPosition(currentStep);
 
   return (
     <GameScreenShell className="overflow-hidden" backgroundImage={lavaPathBackground} backgroundOpacity={1}>
@@ -291,7 +296,7 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
           <motion.div
             key={currentStep}
             animate={{ left: `${currentPosition.x}%`, top: `${currentPosition.y}%` }}
-            transition={{ type: 'spring', stiffness: 220, damping: 24 }}
+            transition={{ type: 'tween', duration: 0.42, ease: 'easeOut' }}
             className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
           >
             <div className="relative h-[clamp(3rem,6vw,4.8rem)] w-[clamp(3rem,6vw,4.8rem)]">

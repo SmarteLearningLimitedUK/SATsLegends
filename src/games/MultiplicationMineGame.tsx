@@ -3,9 +3,9 @@ import { AnimatePresence, motion } from 'motion/react';
 import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import mineBackground from '../assets/maps/backgroundsforgames/multiplication mine background.jpg';
+import rockAsset from '../assets/rocktlogo.png';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { triggerHaptic } from '../haptics';
-import { pickBossArt } from '../assets/bosses/library';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 
 interface MultiplicationMineGameProps {
@@ -68,7 +68,6 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
   onBack,
 }) => {
   const resolvedLevel = useMemo(() => Math.max(1, Math.min(10, levelId || 1)), [levelId]);
-  const mineEnemy = useMemo(() => pickBossArt(`multiplication-mine-${resolvedLevel}`), [resolvedLevel]);
   const [question, setQuestion] = useState<MultiplicationQuestion>(() => makeQuestion(resolvedLevel, 0));
   const [rockHealth, setRockHealth] = useState(ROCK_MAX_HEALTH);
   const [correctCount, setCorrectCount] = useState(0);
@@ -200,8 +199,8 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
                 className="relative h-[240px] w-[240px] overflow-hidden bg-transparent"
               >
                 <img
-                  src={mineEnemy}
-                  alt="Multiplication Mine enemy"
+                  src={rockAsset}
+                  alt="Multiplication Mine rock"
                   draggable={false}
                   className={`absolute inset-0 h-full w-full object-contain object-center drop-shadow-[0_18px_28px_rgba(0,0,0,0.28)] ${
                     feedback?.tone === 'praise' ? 'animate-pulse saturate-125' : ''

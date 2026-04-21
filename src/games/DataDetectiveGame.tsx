@@ -104,6 +104,7 @@ const scoreToStars = (XP: number) => {
 const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   useSharedTopHud = false,
   onVictory,
+  onGameOver,
   onBack,
 }) => {
   const [XP, setScore] = useState(0);
@@ -117,6 +118,8 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   const [caseBrief, setCaseBrief] = useState(DETECTIVE_BRIEFS[0]);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [selectedSuspectId, setSelectedSuspectId] = useState<number | null>(null);
+  const [lives, setLives] = useState(3);
+  const [incorrectSuspectIds, setIncorrectSuspectIds] = useState<number[]>([]);
 
   const maxCaseValue = Math.max(...currentCase.map((item) => item.amount), 0);
   const barAxisMax = Math.max(1, maxCaseValue);
@@ -172,12 +175,15 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
     setGuiltyId(correctIdx);
     setFeedback(null);
     setSelectedSuspectId(null);
+    setIncorrectSuspectIds([]);
   }, []);
 
   const startGame = () => {
     setScore(0);
     setLevel(1);
     setGameState('playing');
+    setLives(3);
+    setIncorrectSuspectIds([]);
     generateCase();
   };
 
@@ -187,6 +193,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
 
   const handleSuspectClick = (id: number) => {
     if (gameState !== 'playing') return;
+    if (incorrectSuspectIds.includes(id)) return;
     setSelectedSuspectId(id);
     setFeedback(null);
   };
@@ -196,13 +203,21 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
     if (id === guiltyId) {
       setFeedback({ type: 'success', message: 'CASE CLOSED! You found the guilty monster.' });
       setGameState('success');
-      setScore(prev => prev + 100);
+      setScore(prev => prev + 140);
       return;
     }
 
-    setFeedback({ type: 'error', message: "WRONG SUSPECT! The evidence doesn't match." });
-    setSelectedSuspectId(null);
+    setFeedback({ type: 'error', message: 'WRONG SUSPECT! You lose a life.' });
+    setIncorrectSuspectIds((previous) => (previous.includes(id) ? previous : [...previous, id]));
+    setSelectedSuspectId(id);
     setScore(prev => Math.max(0, prev - 20));
+    setLives((previous) => {
+      const nextLives = Math.max(0, previous - 1);
+      if (nextLives === 0) {
+        window.setTimeout(() => onGameOver(XP), 450);
+      }
+      return nextLives;
+    });
   };
 
   const selectedSuspect = selectedSuspectId !== null
@@ -260,6 +275,10 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               </div>
 
               <div className="flex items-center gap-6">
+                <div className="flex flex-col items-end">
+                  <span className="text-[10px] uppercase text-stone-500">Lives</span>
+                  <span className="text-xs font-black text-rose-300">{lives}</span>
+                </div>
                 <div className="flex flex-col items-end">
                   <span className="text-[10px] uppercase text-stone-500">Reputation</span>
                   <span className="text-xs font-bold text-amber-500">{XP} PTS</span>
@@ -411,8 +430,12 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                   transition={{ duration: 0.35 }}
                   className={`group relative flex w-full aspect-[4/3] items-center justify-center rounded-[1.2rem] border-2 p-1 transition-all duration-300 sm:aspect-[3/4] max-[480px]:aspect-[1/1.7] max-[480px]:rounded-lg max-[480px]:p-0.25 ${
                     gameState === 'success' && suspect.id === guiltyId
-                      ? 'border-emerald-500 bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.2)]'
-                      : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
+                      ? 'border-emerald-400 bg-emerald-400/14 shadow-[0_0_24px_rgba(16,185,129,0.3)]'
+                      : incorrectSuspectIds.includes(suspect.id)
+                        ? 'pointer-events-none border-stone-700 bg-stone-950/80 opacity-35 grayscale'
+                        : selectedSuspectId === suspect.id
+                          ? 'border-amber-400 bg-amber-400/14 shadow-[0_0_20px_rgba(251,191,36,0.22)]'
+                          : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
                   }`}
                 >
                   <div className="relative flex h-full w-full items-center justify-center overflow-visible rounded-[1.05rem] border border-white/16 bg-slate-950/40 p-1 shadow-lg max-[480px]:rounded-[0.9rem] max-[480px]:p-0.25">
@@ -438,6 +461,9 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                       <CheckCircle2 className="h-5 w-5 text-emerald-500" />
                     </div>
                   )}
+                  {incorrectSuspectIds.includes(suspect.id) && (
+                    <div className="absolute inset-0 rounded-[1.1rem] border border-stone-200/10 bg-stone-950/35" />
+                  )}
                 </motion.button>
               ))}
             </div>
@@ -459,10 +485,10 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               ) : null}
             </AnimatePresence>
             {feedback && (
-              <div className={`rounded-full border px-3 py-1.5 text-center text-[10px] font-bold uppercase tracking-wide max-[480px]:px-2 max-[480px]:py-1 ${
+              <div className={`rounded-full border px-3 py-1.5 text-center text-[10px] font-black uppercase tracking-wide max-[480px]:px-2 max-[480px]:py-1 ${
                 feedback.type === 'success'
-                  ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-200'
-                  : 'border-rose-500/50 bg-rose-500/10 text-amber-200'
+                  ? 'border-emerald-400/60 bg-emerald-500/14 text-emerald-100 shadow-[0_0_18px_rgba(16,185,129,0.18)]'
+                  : 'border-rose-400/60 bg-rose-500/14 text-rose-100 shadow-[0_0_18px_rgba(244,63,94,0.18)]'
               }`}>
                 {feedback.message}
               </div>

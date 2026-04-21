@@ -87,7 +87,7 @@ const buildRemainderOptions = (quotient: number, remainder: number, stage: numbe
   const correct = makeAnswerLabel(quotient, remainder);
   const pool = new Set<string>([correct]);
   const offsets = stage <= 3
-    ? [1, -1, 2, -2, 3, -3]
+    ? [1, -1, 2, -2]
     : stage <= 6
       ? [1, -1, 2, -2, 4, -4, 5, -5]
       : [1, -1, 2, -2, 3, -3, 6, -6];
@@ -163,18 +163,32 @@ const createProblem = (stage: number): RemainderProblem => {
   let divisorMax = 6;
   let quotientMin = 2;
   let quotientMax = 9;
+  let remainderMaxOffset = 1;
 
-  if (stage >= 4) {
+  if (stage <= 2) {
+    divisorMin = 2;
+    divisorMax = 4;
+    quotientMin = 1;
+    quotientMax = 4;
+    remainderMaxOffset = 1;
+  } else if (stage <= 3) {
+    divisorMin = 2;
+    divisorMax = 6;
+    quotientMin = 2;
+    quotientMax = 6;
+    remainderMaxOffset = 1;
+  } else if (stage >= 4) {
     divisorMin = 3;
     divisorMax = 9;
     quotientMin = 3;
     quotientMax = 16;
+    remainderMaxOffset = 2;
   }
 
   const divisor = randomInt(divisorMin, divisorMax);
   const quotient = randomInt(quotientMin, quotientMax);
   const useZeroRemainder = randomInt(0, 9) < (stage <= 2 ? 3 : 2);
-  const remainder = useZeroRemainder ? 0 : randomInt(1, Math.max(1, divisor - 1));
+  const remainder = useZeroRemainder ? 0 : randomInt(1, Math.max(1, Math.min(divisor - 1, remainderMaxOffset)));
   const dividend = (divisor * quotient) + remainder;
 
   return {

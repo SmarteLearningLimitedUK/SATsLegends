@@ -6,7 +6,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { RotateCcw, Plus, Minus } from 'lucide-react';
-import clockFaceImage from '../assets/maps/clockfaceblank.png';
 import missionBackground from '../assets/maps/backgroundsforgames/Chrono Dash Time Trial.jpg';
 
 interface TimekeeperTempleGameProps {
@@ -30,8 +29,44 @@ const scoreToStars = (XP: number) => {
   return 1;
 };
 
+const ROMAN_NUMERALS = ['XII', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'];
+
+const RomanNumeralFace: React.FC = () => (
+  <div className="pointer-events-none absolute inset-0">
+    {ROMAN_NUMERALS.map((label, index) => {
+      const angle = ((index * 30) - 90) * (Math.PI / 180);
+      const radius = 43;
+      const x = 50 + (Math.cos(angle) * radius);
+      const y = 50 + (Math.sin(angle) * radius);
+
+      return (
+        <div
+          key={label}
+          className="absolute -translate-x-1/2 -translate-y-1/2 text-[0.95rem] font-black tracking-[0.18em] text-orange-50 drop-shadow-[0_0_10px_rgba(255,180,64,0.45)] md:text-[1.08rem]"
+          style={{
+            left: `${x}%`,
+            top: `${y}%`,
+          }}
+        >
+          {label}
+        </div>
+      );
+    })}
+  </div>
+);
+
+const LavaClockFace: React.FC = () => (
+  <div className="absolute inset-0 overflow-hidden rounded-full border border-orange-200/20 bg-[radial-gradient(circle_at_50%_28%,rgba(255,248,200,0.7),rgba(255,173,38,0.54)_16%,rgba(255,103,0,0.66)_36%,rgba(107,16,0,0.92)_72%,rgba(28,8,5,1)_100%)] shadow-[inset_0_0_24px_rgba(255,180,64,0.28),0_0_30px_rgba(255,98,0,0.22)]">
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_38%,rgba(255,120,20,0.22)_39%,rgba(255,120,20,0.12)_53%,transparent_54%)]" />
+    <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.22)_0%,transparent_22%,transparent_48%,rgba(255,255,255,0.12)_49%,transparent_72%,rgba(255,255,255,0.12)_73%,transparent_100%)] opacity-60" />
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,255,255,0.18),transparent_18%),radial-gradient(circle_at_80%_28%,rgba(255,255,255,0.14),transparent_16%),radial-gradient(circle_at_26%_76%,rgba(255,180,0,0.22),transparent_15%),radial-gradient(circle_at_74%_78%,rgba(255,145,0,0.18),transparent_14%)] opacity-80" />
+    <div className="absolute inset-2 rounded-full border border-orange-100/14" />
+    <div className="absolute inset-[18%] rounded-full border border-orange-200/14 bg-[radial-gradient(circle_at_50%_50%,rgba(255,220,120,0.12),rgba(255,120,0,0.06)_52%,transparent_100%)] blur-[0.5px]" />
+  </div>
+);
+
 const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
-  levelId: _levelId,
+  levelId,
   avatarId: _avatarId,
   onVictory,
   onGameOver: _onGameOver,
@@ -144,6 +179,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
   };
 
   const topPadding = 'pt-[calc(env(safe-area-inset-top)+0.35rem)]';
+  const showRomanNumerals = levelId >= 4;
 
   return (
     <div className="relative h-full w-full overflow-hidden bg-[#0f172a] font-sans text-white select-none">
@@ -187,28 +223,26 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
 
             <div className="relative">
               <div className="relative flex h-[12rem] w-[12rem] items-center justify-center rounded-full md:h-[14.4rem] md:w-[14.4rem]">
-                <div className="absolute inset-0 rounded-full bg-blue-900/20 blur-[2px]" />
-                <div className="absolute inset-0 overflow-hidden rounded-full">
-                  <img
-                    src={clockFaceImage}
-                    alt="Clock Face"
-                    className="h-full w-full object-cover"
-                  />
+                <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,166,0,0.18),transparent_64%)] blur-[4px]" />
+                <LavaClockFace />
+                {showRomanNumerals && <RomanNumeralFace />}
+                <div className="pointer-events-none absolute inset-[8%] rounded-full border border-orange-100/10 shadow-[inset_0_0_18px_rgba(255,255,255,0.05)]">
+                  <div className="absolute inset-[6%] rounded-full border border-yellow-100/8" />
                 </div>
 
                 <motion.div
                   animate={{ rotate: rotationHours }}
                   transition={{ type: 'spring', stiffness: 100, damping: 15 }}
-                  className="absolute left-1/2 top-1/2 z-20 h-[23%] w-[2.4%] origin-bottom -translate-x-1/2 -translate-y-full rounded-full bg-gradient-to-t from-white to-gray-300 shadow-lg"
+                  className="absolute left-1/2 top-1/2 z-20 h-[23%] w-[2.4%] origin-bottom -translate-x-1/2 -translate-y-full rounded-full bg-[linear-gradient(180deg,rgba(255,248,200,0.95),rgba(255,180,64,0.9)_42%,rgba(255,106,0,0.95)_82%,rgba(110,20,0,0.98))] shadow-[0_0_16px_rgba(255,162,55,0.4)]"
                 />
 
                 <motion.div
                   animate={{ rotate: rotationMinutes }}
                   transition={{ type: 'spring', stiffness: 120, damping: 12 }}
-                  className="absolute left-1/2 top-1/2 z-30 h-[33%] w-[1.2%] origin-bottom -translate-x-1/2 -translate-y-full rounded-full bg-gradient-to-t from-blue-400 to-blue-200 shadow-lg"
+                  className="absolute left-1/2 top-1/2 z-30 h-[33%] w-[1.2%] origin-bottom -translate-x-1/2 -translate-y-full rounded-full bg-[linear-gradient(180deg,rgba(255,250,210,0.98),rgba(255,198,86,0.96)_34%,rgba(255,122,24,0.98)_72%,rgba(135,24,0,0.98))] shadow-[0_0_18px_rgba(255,138,0,0.46)]"
                 />
 
-                <div className="absolute left-1/2 top-1/2 z-40 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-black/20 bg-gradient-to-br from-slate-100 to-slate-400 shadow-lg" />
+                <div className="absolute left-1/2 top-1/2 z-40 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-yellow-100/20 bg-[radial-gradient(circle_at_35%_35%,rgba(255,255,255,0.9),rgba(255,223,154,0.9)_34%,rgba(255,140,0,0.96)_74%,rgba(112,24,0,1)_100%)] shadow-[0_0_14px_rgba(255,166,0,0.55)]" />
               </div>
             </div>
 

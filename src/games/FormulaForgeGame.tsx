@@ -485,12 +485,12 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
               </GameQuestionCard>
             </div>
 
-            <div className="mt-3 grid min-h-0 flex-1 grid-rows-[auto_1fr_auto] gap-2 md:gap-3">
+            <div className="mt-3 grid min-h-0 flex-1 grid-rows-[auto_minmax(0,1fr)_auto] gap-2 md:gap-3">
               <FormulaShapePanel round={round} />
 
-              <div className="answer-choice-surface rounded-[1.25rem] border border-white/12 bg-[linear-gradient(180deg,rgba(30,64,175,0.08),rgba(15,23,42,0.46))] p-3 shadow-[0_14px_26px_rgba(2,6,23,0.12)] md:p-4">
+              <div className="answer-choice-surface min-h-0 rounded-[1.25rem] border border-white/12 bg-[linear-gradient(180deg,rgba(30,64,175,0.08),rgba(15,23,42,0.46))] p-3 shadow-[0_14px_26px_rgba(2,6,23,0.12)] md:p-4">
                 <div className="text-[11px] font-black uppercase tracking-[0.16em] text-amber-100/85 md:text-xs">Choose the correct value for {round.targetLabel}</div>
-                <div className="mt-3 grid grid-cols-2 gap-2 md:gap-3">
+                <div className="mt-2.5 grid grid-cols-2 gap-1.5 md:gap-2.5">
                   {round.options.map((option) => (
                     <motion.button
                       key={`${round.id}-${option}`}
@@ -499,7 +499,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
                       disabled={Boolean(feedback) || isFinished}
                       whileTap={{ scale: 0.96 }}
                       animate={selectedChoice === option ? (feedback?.tone === 'success' ? { scale: [1, 1.1, 0.98, 1.05, 1], rotate: [0, -2, 2, 0] } : { scale: [1, 1.04, 1] }) : { scale: 1 }}
-                      className={`min-h-[3.1rem] rounded-[1.05rem] px-2 py-2 text-base font-black shadow-[0_12px_20px_rgba(2,6,23,0.2)] disabled:opacity-60 md:min-h-[3.7rem] md:text-2xl ${
+                      className={`min-h-[2.8rem] rounded-[1.05rem] px-2 py-1.5 text-base font-black shadow-[0_12px_20px_rgba(2,6,23,0.2)] disabled:opacity-60 md:min-h-[3.3rem] md:text-2xl ${
                         selectedChoice === option
                           ? feedback?.tone === 'success'
                             ? 'ui-button-success'
@@ -513,7 +513,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
                 </div>
               </div>
 
-              <div className="rounded-[1rem] border border-white/10 bg-black/10 px-3 py-2 text-[11px] font-semibold text-cyan-100/80">
+              <div className="rounded-[1rem] border border-white/10 bg-black/10 px-3 py-1.5 text-[11px] font-semibold text-cyan-100/80">
                 Hint: {round.hint}
               </div>
             </div>
