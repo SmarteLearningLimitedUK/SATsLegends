@@ -683,13 +683,13 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       scoreRef.current = nextScore;
       setScore(nextScore);
       setStars((prev) => Math.min(3, Math.max(prev, Math.floor(nextScore / 450))));
-      setFeedback('Direct hit!');
+      setFeedback('Lookout cleared!');
       triggerHaptic('success');
       onRoundComplete?.(true);
       setGameState('resolvedCorrect');
     } else {
       const correctAngle = activeQuestion?.correctAnswer;
-      setFeedback(`Missed! Correct angle: ${correctAngle ?? '--'}°`);
+      setFeedback(`Missed! The correct angle was ${correctAngle ?? '--'}°.`);
       triggerHaptic('error');
       onRoundComplete?.(false);
       if (!sessionState) {
@@ -1022,10 +1022,10 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
               <GameQuestionCard
                 title="Angle Arena"
-                subtitle="Choose the angle, then fire."
+                subtitle="Choose the correct angle to clear the lookout."
                 className="w-full"
               >
-                {activeQuestion?.prompt ?? 'Choose the correct launch angle.'}
+                {activeQuestion?.prompt ?? 'Choose the correct angle to hit the Monster Mind.'}
               </GameQuestionCard>
             </div>
           )}
@@ -1054,12 +1054,12 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
                 </div>
                 {selectedAnswer !== null ? (
                   <div className="mt-1 text-center text-[11px] font-bold uppercase tracking-[0.16em] text-cyan-100/80">
-                    Selected angle: {selectedAnswer}°
+                    Launch angle locked: {selectedAnswer}°
                   </div>
                 ) : null}
               </div>
               <FeedbackStrip className="w-full" tone={gameState === 'resolvedCorrect' ? 'success' : gameState === 'resolvedIncorrect' ? 'warning' : 'neutral'}>
-                {feedback || (selectedAnswer !== null ? `Angle ${selectedAnswer}° locked in.` : 'Choose an angle to fire the launcher.')}
+                {feedback || (selectedAnswer !== null ? `Angle ${selectedAnswer}° locked in.` : 'Choose an angle to strike the Monster Mind.')}
               </FeedbackStrip>
               {gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? (
                 <div className="flex w-full items-center gap-2">

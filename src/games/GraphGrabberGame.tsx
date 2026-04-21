@@ -706,7 +706,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Graph Grabber"
-        body="Hooray! Supplies are arriving to our desert oasis. Make sure that all crates are accounted for. Read the graph and select the correct answer."
+        body="The Monster Minds have hijacked the supply graph.\nRead the graph and grab the correct answer.\nCheck the axes and labels carefully."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />

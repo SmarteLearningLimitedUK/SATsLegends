@@ -624,7 +624,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title={gameTitle || 'Match Mastery'}
-        body="The Monster Mind has built a wall blocking our path, break the wall by matching frations to their equivilants."
+        body="The Monster Minds have built a wall of fraction matches.\nMatch each fraction to its equivalent.\nLook for the same value in different forms."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />

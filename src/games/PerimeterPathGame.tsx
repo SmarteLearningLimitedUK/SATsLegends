@@ -169,8 +169,8 @@ const generateQuestion = (level: number): PerimeterQuestion => {
     return {
       id,
       level,
-      prompt: isSquare ? 'Find the perimeter of this square.' : 'Find the perimeter of this rectangle.',
-      hint: 'Add all outer sides once.',
+      prompt: isSquare ? 'The Monster Minds damaged this square boundary. Find the perimeter to restore it.' : 'The Monster Minds damaged this rectangle boundary. Find the perimeter to restore it.',
+      hint: 'Trace the full outside boundary once.',
       answerUnit: 'm',
       correctPerimeter: model.perimeter,
       shape: model.shape,
@@ -187,8 +187,8 @@ const generateQuestion = (level: number): PerimeterQuestion => {
     return {
       id,
       level,
-      prompt: 'One side is hidden. Infer it, then calculate perimeter.',
-      hint: 'Opposite sides of a rectangle are equal.',
+      prompt: 'One side of the damaged boundary is hidden. Work it out, then calculate the perimeter.',
+      hint: 'Use matching sides to rebuild the missing boundary edge.',
       answerUnit: 'm',
       correctPerimeter: model.perimeter,
       shape: model.shape,
@@ -218,8 +218,8 @@ const generateQuestion = (level: number): PerimeterQuestion => {
     return {
       id,
       level,
-      prompt: 'Calculate the perimeter of this compound shape.',
-      hint: 'Trace the entire outer boundary.',
+      prompt: 'Trace the damaged outer boundary, then calculate the perimeter of this compound shape.',
+      hint: 'Follow the whole outside edge of the damaged path.',
       answerUnit: 'm',
       correctPerimeter: model.perimeter,
       shape: model.shape,
@@ -240,8 +240,8 @@ const generateQuestion = (level: number): PerimeterQuestion => {
   return {
     id,
     level,
-    prompt: 'Mixed units challenge: find perimeter in cm.',
-    hint: 'Convert every edge to cm first.',
+    prompt: 'Mixed units challenge: restore the full boundary and find the perimeter in cm.',
+    hint: 'Convert each edge to cm before restoring the full boundary total.',
     answerUnit: 'cm',
     correctPerimeter: model.perimeter,
     shape: model.shape,
@@ -423,7 +423,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
     setScore(nextScore);
     setStreak(nextStreak);
     setCorrectCount(nextCorrect);
-    setFeedback({ type: 'correct', message: 'Correct perimeter! Great work.' });
+    setFeedback({ type: 'correct', message: 'Boundary restored! Great work.' });
     setLocked(true);
 
     confetti({
@@ -448,7 +448,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
     setStreak(0);
     setFeedback({
       type: 'incorrect',
-      message: `Not quite. Correct perimeter: ${question.correctPerimeter} ${question.answerUnit}`,
+      message: `Still damaged. Correct perimeter: ${question.correctPerimeter} ${question.answerUnit}`,
     });
     setShakeShape(true);
     setLocked(true);
@@ -539,8 +539,8 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
               : 'border-white/18 bg-slate-950/44 text-white/72'
           }`}>
             {feedback ? feedback.message : tracingRequired
-              ? (traceComplete ? 'Path traced. Choose the matching perimeter.' : `Trace the full outer path first (${tracedEdgeIds.length}/${question.shape.edges.length}).`)
-              : 'Choose the matching perimeter.'}
+              ? (traceComplete ? 'Boundary traced. Choose the correct perimeter.' : `Trace the full outer boundary first (${tracedEdgeIds.length}/${question.shape.edges.length}).`)
+              : 'Choose the correct perimeter to restore the path.'}
           </div>
         </main>
       </div>

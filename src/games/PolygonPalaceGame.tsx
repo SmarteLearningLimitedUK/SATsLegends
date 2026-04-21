@@ -629,9 +629,9 @@ const buildNameQuestion = (shape: ShapeDefinition, stage: number, speedRound: bo
   ]);
 
   const prompts = [
-    'What shape is this?',
-    'Choose the best name for this shape.',
-    'Name this shape.',
+    'The Monster Minds have scrambled the palace records. What shape is this?',
+    'Restore the palace record by naming this shape.',
+    'Which shape belongs in this palace hall?',
   ];
 
   return {
@@ -639,7 +639,7 @@ const buildNameQuestion = (shape: ShapeDefinition, stage: number, speedRound: bo
     stage,
     mode: 'name',
     prompt: prompts[randomInt(0, prompts.length - 1)],
-    subPrompt: speedRound ? 'Speed mode: answer fast for bonus points' : 'Tap one answer',
+    subPrompt: speedRound ? 'Speed mode: restore it fast for bonus points' : 'Choose one answer',
     shape,
     shapeRotation: randomInt(-20, 20),
     choices,
@@ -680,8 +680,8 @@ const buildPropertyQuestion = (shape: ShapeDefinition, stage: number, speedRound
     id: createId(),
     stage,
     mode: 'properties',
-    prompt: 'Select all properties that match this shape.',
-    subPrompt: speedRound ? 'Speed mode: keep your Combo alive' : 'Some questions can have multiple answers',
+    prompt: 'Select all the properties that restore this palace record.',
+    subPrompt: speedRound ? 'Speed mode: keep the palace combo alive' : 'Some palace records need more than one answer',
     shape,
     shapeRotation: randomInt(-24, 24),
     choices,
@@ -723,7 +723,7 @@ const buildCountQuestion = (shape: ShapeDefinition, stage: number, speedRound: b
     stage,
     mode: 'count',
     prompt: focus.label,
-    subPrompt: speedRound ? 'Speed mode: count the parts fast' : 'Read the shape and count carefully',
+    subPrompt: speedRound ? 'Speed mode: repair the count fast' : 'Count carefully to restore the palace record',
     shape,
     shapeRotation: randomInt(-12, 12),
     choices,
@@ -745,7 +745,7 @@ const buildSortQuestion = (shape: ShapeDefinition, stage: number, speedRound: bo
     stage,
     mode: 'sort',
     prompt: criterion.prompt,
-    subPrompt: speedRound ? 'Speed mode: sort instantly' : 'Pick the correct category',
+    subPrompt: speedRound ? 'Speed mode: restore order fast' : 'Sort it into the correct palace hall',
     shape,
     shapeRotation: randomInt(-18, 18),
     choices: [
@@ -997,7 +997,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
       setStreak((prev) => prev + 1);
       setFeedback({
         tone: 'success',
-        title: 'Great classify',
+        title: 'Palace restored',
         subtitle: `+${points} points`,
       });
       loadNextQuestion(nextAnsweredCount, 330);
@@ -1014,8 +1014,8 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
     setScore((prev) => Math.max(0, prev - 40));
     setFeedback({
       tone: 'error',
-      title: 'Not this one',
-      subtitle: `Correct: ${correctLabel}`,
+      title: 'Still scrambled',
+      subtitle: `Correct answer: ${correctLabel}`,
     });
     loadNextQuestion(nextAnsweredCount, 560);
   }, [answeredCount, attemptCount, isLocked, loadNextQuestion, question, roundOver, Combo]);
@@ -1025,8 +1025,8 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
       triggerHaptic('warning');
       setFeedback({
         tone: 'error',
-        title: 'Select properties',
-        subtitle: 'Pick at least one property before submit.',
+        title: 'Choose properties',
+        subtitle: 'Pick at least one property to restore the record.',
       });
       const timeout = window.setTimeout(() => setFeedback(null), 420);
       timeoutsRef.current.push(timeout);
@@ -1070,7 +1070,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
         <div className="flex h-full w-full max-w-[30rem] min-h-0 flex-col gap-3">
           <section className="shrink-0">
             <GameQuestionCard
-              title={question.speedRound ? 'Challenge Mode' : 'Polygon Palace'}
+              title={question.speedRound ? 'Polygon Palace: Challenge Mode' : 'Polygon Palace'}
               subtitle={question.subPrompt}
             >
               {question.prompt}

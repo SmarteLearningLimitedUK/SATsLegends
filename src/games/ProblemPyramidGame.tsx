@@ -135,7 +135,7 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
       return;
     }
 
-    setFeedback('Close! Re-check the numbers below.');
+    setFeedback('Still scrambled. Re-check the numbers below.');
     setFeedbackTone('bad');
     setLocked(true);
     window.setTimeout(() => {
@@ -163,15 +163,15 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Problem Pyramid"
-        body="Build the pyramid from the numbers shown.\nChoose the value that completes the top."
+        body="The Monster Minds have scrambled the pyramid stones.\nChoose the value that restores the missing top block.\nWork up layer by layer from the bottom."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
       <div className="relative z-10 flex h-full min-h-0 flex-col gap-1.5 px-3 pb-[calc(env(safe-area-inset-bottom)+2.8rem)] pt-2 text-white">
         <section className="shrink-0">
           <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
-            <GameQuestionCard title="Question">
-              Find the top number in the pyramid.
+            <GameQuestionCard title="Problem Pyramid">
+              Find the missing top number to restore the pyramid.
             </GameQuestionCard>
           </div>
         </section>

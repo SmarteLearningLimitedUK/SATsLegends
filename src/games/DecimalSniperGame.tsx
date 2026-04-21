@@ -605,7 +605,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title={gameTitle || 'Place Value Panic'}
-        body="Drag to aim, release to fire.\nHit the decimal that matches the objective."
+        body="The Monster Minds have hidden the target in decimal fog.\nDrag to aim, release to fire, and hit the matching decimal.\nWatch the place value carefully."
         briefing={practiceBriefing}
         onAction={dismissPracticeIntro}
       />

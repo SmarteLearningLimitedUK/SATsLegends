@@ -332,7 +332,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title={gameTitle || 'Percent Power'}
-        body="The portal is out of power - we cant advance. Power the core by solving the percent puzzles."
+        body="The Monster Minds have drained the portal power.\nSolve the percent puzzles to recharge the core.\nWork carefully with each percentage."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />

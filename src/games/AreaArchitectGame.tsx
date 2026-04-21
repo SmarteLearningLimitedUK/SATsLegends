@@ -201,7 +201,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Area Architect"
-        body="Plan the floor layout.\nDrag the shapes into the right spaces to fit the area."
+        body="The Monster Minds have scrambled the floor plan.\nDrag the shapes into the right spaces to rebuild the area.\nCheck the footprint carefully."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />

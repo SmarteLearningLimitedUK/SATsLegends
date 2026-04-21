@@ -98,14 +98,14 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
       setRockHealth(nextHealth);
       setScore(nextScore);
       setImpactTick((prev) => prev + 1);
-      setFeedback({
-        tone: isPraise ? 'praise' : 'ok',
-        text: isPraise
-          ? buildPraiseMessage()
-          : nextHealth <= 0
-            ? 'Rock shattered!'
-            : 'Direct hit!',
-      });
+        setFeedback({
+          tone: isPraise ? 'praise' : 'ok',
+          text: isPraise
+            ? buildPraiseMessage()
+            : nextHealth <= 0
+              ? 'Rock shattered! Numbers recovered!'
+              : 'Rock cracked!',
+        });
       triggerHaptic('success');
 
       if (nextHealth <= 0 && !completedRef.current) {
@@ -131,7 +131,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
     }
 
     setMistakes((prev) => prev + 1);
-    setFeedback({ tone: 'error', text: 'Not quite. Try again.' });
+    setFeedback({ tone: 'error', text: 'The rock is still sealed. Try again.' });
     setImpactTick((prev) => prev + 1);
     triggerHaptic('error');
     window.setTimeout(() => {
@@ -147,12 +147,12 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
 
       <div className={`relative z-20 flex h-full w-full flex-col items-center px-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+3.2rem)]' : 'pt-[calc(env(safe-area-inset-top)+4.2rem)]'}`}>
         <div className="w-full max-w-[760px]">
-          <GameQuestionCard
-            title="Multiplication Mine"
-            subtitle="Break the rock by solving the multiplication."
-            className="mx-auto w-full"
-            bodyClassName="text-[clamp(1.7rem,6vw,3rem)] font-black tracking-wide text-white"
-          >
+            <GameQuestionCard
+              title="Multiplication Mine"
+              subtitle="The Monster Minds locked the numbers in rock. Solve the multiplication to break it open."
+              className="mx-auto w-full"
+              bodyClassName="text-[clamp(1.7rem,6vw,3rem)] font-black tracking-wide text-white"
+            >
             {question.a} x {question.b} = ?
           </GameQuestionCard>
         </div>
@@ -238,9 +238,9 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
                   className="relative z-10 w-[230px] max-w-[65vw] object-contain drop-shadow-[0_18px_24px_rgba(0,0,0,0.65)]"
                   draggable={false}
                 />
-                <p className="relative z-10 mt-3 text-xl font-black uppercase tracking-[0.1em] text-[#ffe590]">
-                  Treasure Unlocked
-                </p>
+                  <p className="relative z-10 mt-3 text-xl font-black uppercase tracking-[0.1em] text-[#ffe590]">
+                    Mine Cleared
+                  </p>
               </motion.div>
             )}
           </AnimatePresence>

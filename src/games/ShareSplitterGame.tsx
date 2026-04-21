@@ -727,7 +727,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Share Splitter"
-        body="Greedy Monster Minds are having a party.\nDrag the birthday cake to each plate in the ratios shown."
+        body="The Monster Minds have started a greedy cake party.\nDrag the cake to each plate in the ratios shown.\nKeep the parts in the correct proportion."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />

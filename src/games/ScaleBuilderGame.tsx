@@ -79,7 +79,7 @@ const LEVELS: Level[] = [
 const GRID_SIZE = 20;
 const BLUEPRINT_BOARD_TOP = '58%';
 const BLUEPRINT_BOARD_SIZE = 'min(76vw, 29rem, 58vh)';
-const SCALE_BUILDER_INTRO = `Use the scale factor to resize the blueprint.\nMatch the new size exactly to rebuild the structure.`;
+const SCALE_BUILDER_INTRO = `The Monster Minds have damaged the island structures.\nUse the scale factor to rebuild each blueprint to the correct size.\nMultiply each length correctly.`;
 
 const formatBlueprintValue = (value: number) => {
   const normalized = Math.round(value * 100) / 100;
@@ -416,7 +416,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
 
             <div className="rounded-[1.1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(2,6,23,0.99),rgba(7,15,29,0.99))] p-2 shadow-[0_0_0_1px_rgba(15,23,42,0.6),0_18px_30px_rgba(2,6,23,0.46)]">
               <div className="mb-2 flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/82">
-                <span>Adjust the scale</span>
+                <span>Rebuild the blueprint</span>
                 <button
                   onClick={() => setShowBase((previous) => !previous)}
                   className="ui-button-secondary rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em]"
@@ -499,8 +499,8 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
               >
                 <div className="w-full max-w-md rounded-[1.6rem] border border-white/20 bg-[linear-gradient(180deg,rgba(30,64,175,0.92),rgba(15,23,42,0.94))] p-6 shadow-[0_20px_40px_rgba(2,6,23,0.5)]">
                   <Trophy className="mx-auto mb-5 h-14 w-14 text-yellow-300" />
-                  <h2 className="text-3xl font-black uppercase tracking-tight text-white">Architect Certified</h2>
-                  <p className="mt-3 text-sm font-bold text-cyan-100/88">All structures scaled with precision.</p>
+                  <h2 className="text-3xl font-black uppercase tracking-tight text-white">Island Restored</h2>
+                  <p className="mt-3 text-sm font-bold text-cyan-100/88">All damaged structures have been rebuilt.</p>
 
                   <div className="relative mx-auto mt-5 h-14 w-full max-w-[15rem] overflow-hidden rounded-[0.95rem]">
                     <img src={labelGreenLongAsset} alt="" className="absolute inset-0 h-full w-full object-fill" draggable={false} />
@@ -540,5 +540,6 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
 };
 
 export default ScaleBuilderGame;
+
 
 

@@ -300,7 +300,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
       setScore(updatedScore);
       setCorrectCount(nextCorrect);
       setFeedbackTone('success');
-      setFeedbackText(`Correct. +${gained} XP`);
+      setFeedbackText(`Trade restored. +${gained} XP`);
       triggerHaptic('success');
       sessionEvents?.onCorrectAnswer?.({ score: updatedScore, metadata: { item: question.item } });
       sessionEvents?.onPuzzleComplete?.({ score: updatedScore });
@@ -311,7 +311,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
     const nextLives = lives - 1;
     setLives(nextLives);
     setFeedbackTone('warning');
-    setFeedbackText(`Not quite. Correct answer: ${question.correct}`);
+    setFeedbackText(`Trade still scrambled. Correct answer: ${question.correct}`);
     triggerHaptic('error');
     sessionEvents?.onIncorrectAnswer?.({ score, metadata: { correctAnswer: question.correct } });
 
@@ -339,7 +339,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Change Counter"
-        body="Find the exact change.\nUse the coins on screen to make the total match the order."
+        body="The Monster Minds have caused chaos in the market.\nWork out the exact change to restore the trade.\nSubtract the cost from the amount paid."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
@@ -348,16 +348,16 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
         <PuzzleStage className="flex h-full min-h-0 flex-1 flex-col gap-2 md:gap-3">
           <TaskCard className="mx-auto w-full max-w-[44rem]">
             <div className="flex items-center justify-between gap-3">
-              <div>
-                <div className="question-title">Change Counter</div>
-                <div className="game-question-copy mt-1 text-white md:text-lg">
-                  A {question.item} costs {formatMoney(question.costPence)}. You pay with {formatMoney(question.paidPence)}.
+                <div>
+                  <div className="question-title">Change Counter</div>
+                  <div className="game-question-copy mt-1 text-white md:text-lg">
+                    The Monster Minds have disrupted this market order. A {question.item} costs {formatMoney(question.costPence)} and you pay with {formatMoney(question.paidPence)}.
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="mt-2 text-[11px] font-semibold text-cyan-100/85 md:text-sm">
-              How much change should you get back?
-            </div>
+              <div className="mt-2 text-[11px] font-semibold text-cyan-100/85 md:text-sm">
+                How much change restores the trade?
+              </div>
           </TaskCard>
 
           <div className="mx-auto grid w-full max-w-[44rem] grid-cols-2 gap-2 md:grid-cols-5 md:gap-3">

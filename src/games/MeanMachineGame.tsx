@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   AlertTriangle,
@@ -569,12 +569,12 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
       setFeedback({
         type: 'success',
         message: round.mode === 'mean'
-          ? 'Jackpot! MEAN solved.'
+          ? 'Machine recalibrated! Mean restored.'
           : round.mode === 'median'
-            ? 'MEDIAN locked in! Perfect.'
+            ? 'Machine recalibrated! Median restored.'
             : round.mode === 'mode'
-              ? 'MODE found! Reels aligned.'
-              : 'Machine fixed! Missing reel locked in.',
+              ? 'Machine recalibrated! Mode restored.'
+              : 'Machine repaired! Missing reel restored.',
       });
       setGameState('resolved');
       sessionEvents?.onCorrectAnswer?.({
@@ -598,12 +598,12 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     setFeedback({
       type: 'error',
       message: round.mode === 'mean'
-        ? `Machine glitch. Add them, then divide by ${round.activeReelIndexes.length} to get the MEAN.`
+        ? `The machine is still unstable. Add them, then divide by ${round.activeReelIndexes.length} to find the mean.`
         : round.mode === 'median'
-          ? 'MEDIAN missed. Order the numbers, then pick the middle.'
+          ? 'The machine is still unstable. Order the numbers, then pick the middle value.'
           : round.mode === 'mode'
-            ? 'MODE missed. Pick the most frequent number.'
-            : 'Wrong repair. That missing reel misses the target MEAN.',
+            ? 'The machine is still unstable. Pick the value that appears most often.'
+            : 'The repair is still off. Choose the missing value that fixes the target mean.',
     });
     setGameState('resolved');
     sessionEvents?.onIncorrectAnswer?.({
@@ -631,7 +631,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   }, [initialiseRound]);
 
   const modeCopy = useMemo(() => {
-    if (!round) return { title: 'Spin the reels', prompt: 'Press Spin to begin.' };
+    if (!round) return { title: 'Spin the reels', prompt: 'Recalibrate the machine to begin.' };
     if (round.mode === 'mean') {
       return {
         title: `Spin ${round.activeReelIndexes.length} reels. Find the MEAN.`,
@@ -668,7 +668,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Mean Machine"
-        body="The Mean Machine must be tamed. It's the source of all fun for the Monster Mind. Spin the reels and follow the instructions to identify MEAN, MODE, and MEDIAN."
+        body="The Monster Minds have sabotaged the island machine.\nSpin the reels and solve the clues to recalibrate it.\nUse the right method for each round."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
@@ -880,10 +880,10 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                     className="absolute inset-[-10px] rounded-full border-2 border-dashed border-amber-200/30"
                   />
                 </div>
-                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/75">MEAN Machine</div>
-                <h2 className="mt-1 text-2xl font-black uppercase tracking-[0.04em] text-amber-100">Jackpot Calibrated</h2>
+                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/75">Island Machine</div>
+                <h2 className="mt-1 text-2xl font-black uppercase tracking-[0.04em] text-amber-100">Machine Restored</h2>
                 <p className="mt-2 text-sm font-semibold leading-relaxed text-cyan-100/82">
-                  Every reel landed perfectly. Launching rewards now.
+                  The sabotaged machine has been fully recalibrated.
                 </p>
                 <div className="mt-4 rounded-[1.25rem] border border-cyan-100/18 bg-slate-950/24 px-4 py-4">
                   <div className="text-[9px] font-black uppercase tracking-[0.18em] text-cyan-100/72">Final XP</div>

@@ -94,7 +94,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
   const [showHitFx, setShowHitFx] = useState(false);
   const [successTone, setSuccessTone] = useState<'success' | 'praise'>('success');
-  const [successMessage, setSuccessMessage] = useState('Good hit!');
+  const [successMessage, setSuccessMessage] = useState('Direct hit!');
   const problemStartRef = useRef<number>(Date.now());
   const factorFrenzyEnemy = useMemo(() => zombieBoss, []);
 
@@ -157,7 +157,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         id,
         type,
         number,
-        question: `Find the missing factor: ${factor} x ? = ${number}`,
+        question: `The Monster Minds broke the factor chain. Find the missing factor: ${factor} x ? = ${number}`,
         options,
         correctAnswers: [answer],
       };
@@ -174,7 +174,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         id,
         type,
         number,
-        question: `Select all factors of ${number}`,
+        question: `Strike all factors of ${number} to clear the swarm.`,
         options,
         correctAnswers,
       };
@@ -200,7 +200,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         type,
         number,
         number2,
-        question: `Select all common factors of ${number} and ${number2}`,
+        question: `Find all common factors of ${number} and ${number2} to break the Monster Minds' defence.`,
         options,
         correctAnswers: commonAnswers,
       };
@@ -214,7 +214,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
       id,
       type,
       number,
-      question: `Select all prime factors of ${number}`,
+      question: `Find all prime factors of ${number} to disrupt the Monster Minds.`,
       options,
       correctAnswers,
     };
@@ -233,7 +233,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     const firstProblem = generateProblem(1);
     problemStartRef.current = Date.now();
     setSuccessTone('success');
-    setSuccessMessage('Good hit!');
+    setSuccessMessage('Direct hit!');
     setState({
       ...INITIAL_STATE,
       currentProblem: firstProblem,
@@ -249,7 +249,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     const firstProblem = generateProblem(1);
     problemStartRef.current = Date.now();
     setSuccessTone('success');
-    setSuccessMessage('Good hit!');
+    setSuccessMessage('Direct hit!');
     setState((previous) => ({
       ...previous,
       currentProblem: firstProblem,
@@ -317,7 +317,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         status: finished ? 'complete' : 'correct',
       }));
       setSuccessTone(isPraise ? 'praise' : 'success');
-      setSuccessMessage(isPraise ? buildPraiseMessage() : 'Good hit!');
+      setSuccessMessage(isPraise ? buildPraiseMessage() : 'Direct hit!');
 
       setShowHitFx(true);
       confetti({
@@ -340,7 +340,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     const problem = generateProblem(levelIndex);
     problemStartRef.current = Date.now();
     setSuccessTone('success');
-    setSuccessMessage('Good hit!');
+    setSuccessMessage('Direct hit!');
 
     setState((previous) => ({
       ...previous,
@@ -408,8 +408,8 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                 className="my-auto mx-auto w-full max-w-xl rounded-3xl border border-amber-200/40 bg-[#16356f]/88 p-6 text-center shadow-[0_20px_40px_rgba(2,6,23,0.5)]"
               >
                 <Trophy className="mx-auto h-14 w-14 text-amber-200" />
-                <h2 className="mt-3 text-3xl font-black uppercase text-amber-50 sm:text-4xl">Enemy Defeated</h2>
-                <p className="mt-2 text-sm font-semibold text-cyan-50/85">The undead boss has been pushed back.</p>
+                <h2 className="mt-3 text-3xl font-black uppercase text-amber-50 sm:text-4xl">Monster Mind Defeated</h2>
+                <p className="mt-2 text-sm font-semibold text-cyan-50/85">The Monster Minds have been pushed back.</p>
                 <div className="mt-4 rounded-2xl border border-cyan-100/30 bg-[#0d2a5a]/80 px-4 py-3">
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/80">Final XP</p>
                   <p className="mt-1 text-4xl font-black text-amber-100">{state.XP.toLocaleString()}</p>
@@ -444,7 +444,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                   <div className="flex h-full min-h-0 flex-col">
                     <div className="flex items-start justify-between gap-3">
                       <div className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/80 sm:text-xs">
-                        Tap all factors that apply
+                        Strike every correct factor
                       </div>
                       <div className="rounded-full border border-cyan-100/25 bg-slate-950/50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/90">
                         {state.timeLeft}s left
@@ -454,7 +454,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                     <div className="relative mt-3 flex min-h-0 flex-1 flex-col items-center justify-center">
                       <div className="w-full max-w-[17rem] rounded-2xl border border-amber-200/24 bg-[linear-gradient(180deg,rgba(15,23,42,0.22),rgba(15,23,42,0.1))] px-3 py-2 shadow-[0_12px_24px_rgba(2,6,23,0.18)]">
                         <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.18em] text-amber-200">
-                          Enemy
+                          Monster Mind
                         </div>
                         <div className="h-2 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/70">
                           <motion.div
@@ -518,7 +518,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                         </button>
                       ) : (
                         <div className="inline-flex w-full max-w-sm items-center justify-center rounded-2xl border border-cyan-100/45 bg-[#0d2a5a]/70 px-4 py-3 text-xs font-black uppercase tracking-[0.14em] text-cyan-100/95">
-                          {state.status === 'correct' ? 'Good hit • loading next challenge' : 'Not quite • loading next challenge'}
+                          {state.status === 'correct' ? 'Direct hit • loading next challenge' : 'The swarm is still active • loading next challenge'}
                         </div>
                       )}
                     </div>
@@ -560,3 +560,4 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 };
 
 export default FactorFrenzyGame;
+

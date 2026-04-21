@@ -93,7 +93,7 @@ const buildQuestionStem = (round: FormulaRound) => {
   const targetText = describeTargetLabel(round.targetLabel);
   const leadIn = round.kind === 'reasoning' ? 'Find the missing' : 'Work out the';
 
-  return `The forge runes reveal ${givenText}.\n${leadIn} ${targetText}, ${round.targetLabel}.`;
+  return `The Monster Minds have scrambled the forge runes. The runes now show ${givenText}.\n${leadIn} ${targetText}, ${round.targetLabel}.`;
 };
 
 const buildAreaRound = (mode: SolveMode, level: number): FormulaRound => {
@@ -109,7 +109,7 @@ const buildAreaRound = (mode: SolveMode, level: number): FormulaRound => {
       diagram: 'rectangle',
       title: 'Rectangle Area',
       formula: 'A = l × w',
-      prompt: `The forge rune hides the ${missing === 'l' ? 'length' : 'width'} mark.`,
+      prompt: `A Monster Mind has hidden the ${missing === 'l' ? 'length' : 'width'} rune.`,
       targetLabel: missing === 'l' ? 'l' : 'w',
       given: missing === 'l'
         ? [{ label: 'A', value: area }, { label: 'w', value: width }]
@@ -126,7 +126,7 @@ const buildAreaRound = (mode: SolveMode, level: number): FormulaRound => {
     diagram: 'rectangle',
     title: 'Rectangle Area',
     formula: 'A = l × w',
-    prompt: 'The forge runes glow with a fresh shape spell.',
+    prompt: 'The forge runes need restoring before the spell can hold.',
     targetLabel: 'A',
     given: [{ label: 'l', value: length }, { label: 'w', value: width }],
     answer: area,
@@ -149,7 +149,7 @@ const buildPerimeterRound = (mode: SolveMode, level: number): FormulaRound => {
       diagram: 'rectangle',
       title: 'Rectangle Perimeter',
       formula: 'P = 2(l + w)',
-      prompt: `The forge rune hides the ${missing === 'l' ? 'length' : 'width'} mark.`,
+      prompt: `A Monster Mind has hidden the ${missing === 'l' ? 'length' : 'width'} rune.`,
       targetLabel: missing === 'l' ? 'l' : 'w',
       given: missing === 'l'
         ? [{ label: 'P', value: perimeter }, { label: 'w', value: width }]
@@ -166,7 +166,7 @@ const buildPerimeterRound = (mode: SolveMode, level: number): FormulaRound => {
     diagram: 'rectangle',
     title: 'Rectangle Perimeter',
     formula: 'P = 2(l + w)',
-    prompt: 'The forge runes glow with a boundary spell.',
+    prompt: 'The forge boundary rune has been scrambled.',
     targetLabel: 'P',
     given: [{ label: 'l', value: length }, { label: 'w', value: width }],
     answer: perimeter,
@@ -185,7 +185,7 @@ const buildTriangleRound = (level: number): FormulaRound => {
     diagram: 'triangle',
     title: 'Triangle Area',
     formula: 'A = (b × h) ÷ 2',
-    prompt: 'The triangle rune waits for your calculation.',
+    prompt: 'The triangle rune is unstable. Restore it with the correct formula.',
     targetLabel: 'A',
     given: [{ label: 'b', value: base }, { label: 'h', value: height }],
     answer: area,
@@ -209,7 +209,7 @@ const buildVolumeRound = (mode: SolveMode, level: number): FormulaRound => {
       diagram: 'cuboid',
       title: 'Cuboid Volume',
       formula: 'V = l × w × h',
-      prompt: `The forge rune hides the ${missing === 'l' ? 'length' : 'height'} mark.`,
+      prompt: `A Monster Mind has hidden the ${missing === 'l' ? 'length' : 'height'} rune.`,
       targetLabel: missing === 'l' ? 'l' : 'h',
       given: missing === 'l'
         ? [{ label: 'V', value: volume }, { label: 'w', value: width }, { label: 'h', value: height }]
@@ -226,7 +226,7 @@ const buildVolumeRound = (mode: SolveMode, level: number): FormulaRound => {
     diagram: 'cuboid',
     title: 'Cuboid Volume',
     formula: 'V = l × w × h',
-    prompt: 'The cuboid rune hums with all three dimensions.',
+    prompt: 'The cuboid rune has been disturbed. Restore the full formula.',
     targetLabel: 'V',
     given: [{ label: 'l', value: length }, { label: 'w', value: width }, { label: 'h', value: height }],
     answer: volume,
@@ -425,7 +425,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
       setShowCelebrationSplash(true);
       setFeedback({
         tone: 'success',
-        title: 'Formula Locked',
+        title: 'Runes Restored',
         subtitle: `+${gained} XP`,
       });
       triggerHaptic('success');
@@ -439,7 +439,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
     setLives(nextLives);
     setFeedback({
       tone: 'error',
-      title: 'Forge Miss',
+      title: 'Runes Unstable',
       subtitle: `Correct answer: ${round.answer}`,
     });
     triggerHaptic('error');
@@ -489,7 +489,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
               <FormulaShapePanel round={round} />
 
               <div className="answer-choice-surface min-h-0 rounded-[1.25rem] border border-white/12 bg-[linear-gradient(180deg,rgba(30,64,175,0.08),rgba(15,23,42,0.46))] p-3 shadow-[0_14px_26px_rgba(2,6,23,0.12)] md:p-4">
-                <div className="text-[11px] font-black uppercase tracking-[0.16em] text-amber-100/85 md:text-xs">Choose the correct value for {round.targetLabel}</div>
+                <div className="text-[11px] font-black uppercase tracking-[0.16em] text-amber-100/85 md:text-xs">Restore the correct value for {round.targetLabel}</div>
                 <div className="mt-2.5 grid grid-cols-2 gap-1.5 md:gap-2.5">
                   {round.options.map((option) => (
                     <motion.button
@@ -513,13 +513,13 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
                 </div>
               </div>
 
-              <div className="rounded-[1rem] border border-white/10 bg-black/10 px-3 py-1.5 text-[11px] font-semibold text-cyan-100/80">
-                Hint: {round.hint}
-              </div>
+                <div className="rounded-[1rem] border border-white/10 bg-black/10 px-3 py-1.5 text-[11px] font-semibold text-cyan-100/80">
+                  Rune hint: {round.hint}
+                </div>
             </div>
           </div>
 
-          <CelebrationSplash active={showCelebrationSplash} message="Now We're Cookin'!" theme="forge" />
+          <CelebrationSplash active={showCelebrationSplash} message="Forge Restored!" theme="forge" />
 
           <AnimatePresence>
             {feedback && feedback.tone === 'error' ? (

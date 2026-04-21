@@ -234,7 +234,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Calculation Clash"
-        body="Solve each expression quickly.\nChoose the answer that matches the calculation."
+        body="The Monster Minds have scrambled the crash pad.\nSolve each expression to keep the machine moving.\nUse the correct order of operations."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />

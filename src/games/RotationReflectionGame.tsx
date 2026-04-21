@@ -183,22 +183,22 @@ const createQuestion = (baseLevel: number, solvedCount: number, timeLeft: number
   const turnText = buildTurnLabel(quarterTurns, direction);
 
   if (mode === 'rotate_match') {
-    return {
-      id: createId(),
-      stage,
-      mode,
-      shape,
+      return {
+        id: createId(),
+        stage,
+        mode,
+        shape,
       startOrientation,
-      targetOrientation,
-      direction,
-      quarterTurns,
-      instruction: 'Rotate to match the target outline.',
-      subInstruction: speedRound ? 'Speed mode: use 90 deg taps quickly.' : `Hint: target is ${turnText} from start.`,
-      options: [],
-      correctOptionIds: ['match'],
-      speedRound,
-      difficultyWeight: 38 + (stage * 10) + (quarterTurns * 10),
-      kind: 'fluency',
+        targetOrientation,
+        direction,
+        quarterTurns,
+        instruction: 'Rotate the shape to match the correct position and restore alignment.',
+        subInstruction: speedRound ? 'Speed mode: choose the correct rotation to realign the system' : `Choose the correct rotation to realign the system. Hint: target is ${turnText} from start.`,
+        options: [],
+        correctOptionIds: ['match'],
+        speedRound,
+        difficultyWeight: 38 + (stage * 10) + (quarterTurns * 10),
+        kind: 'fluency',
     };
   }
 
@@ -214,7 +214,7 @@ const createQuestion = (baseLevel: number, solvedCount: number, timeLeft: number
       direction,
       quarterTurns,
       instruction: `After a ${turnText}, which orientation is correct?`,
-      subInstruction: speedRound ? 'Tap the correct result fast.' : 'Predict before tapping.',
+      subInstruction: speedRound ? 'Choose the correct rotation to realign the system' : 'Choose the correct rotation to realign the system before tapping.',
       options,
       correctOptionIds: [`o-${targetOrientation}`],
       speedRound,
@@ -233,8 +233,8 @@ const createQuestion = (baseLevel: number, solvedCount: number, timeLeft: number
     targetOrientation,
     direction,
     quarterTurns,
-    instruction: 'What turn maps the left shape to the right shape?',
-    subInstruction: speedRound ? 'Speed mode: identify the turn.' : 'Think clockwise or anticlockwise.',
+    instruction: 'What turn restores the shape to the correct position?',
+    subInstruction: speedRound ? 'Choose the correct rotation to realign the system' : 'Choose the correct rotation to realign the system.',
     options: identify.options.map((label, idx) => ({ id: `turn-${idx}`, label })),
     correctOptionIds: identify.options
       .map((label, idx) => ({ label, id: `turn-${idx}` }))
@@ -400,7 +400,7 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
       setCorrectCount((prev) => prev + 1);
       setStreak((prev) => prev + 1);
       setShapePulse('success');
-      setFeedback({ tone: 'success', title: 'Perfect turn', subtitle: `+${points} points` });
+      setFeedback({ tone: 'success', title: 'Rotation system restored', subtitle: `+${points} points` });
       triggerHaptic('success');
       moveToNextQuestion(nextSolvedCount, 320);
       return;
@@ -409,7 +409,7 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
     setScore((prev) => Math.max(0, prev - 35));
     setStreak(0);
     setShapePulse('error');
-    setFeedback({ tone: 'error', title: 'Wrong orientation', subtitle: detailText });
+    setFeedback({ tone: 'error', title: 'Still misaligned', subtitle: detailText });
     triggerHaptic('error');
     moveToNextQuestion(nextSolvedCount, 560);
   }, [attemptCount, isLocked, moveToNextQuestion, question.difficultyWeight, question.speedRound, roundOver, solvedCount, Combo]);
@@ -498,7 +498,7 @@ const RotationReflectionGame: React.FC<RotationReflectionGameProps> = ({
           )}
 
           <section>
-            <GameQuestionCard title="Rotation Reflection" subtitle={question.subInstruction}>
+            <GameQuestionCard title="Rotation Station" subtitle={question.subInstruction}>
               {question.instruction}
             </GameQuestionCard>
           </section>

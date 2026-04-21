@@ -13,8 +13,8 @@ interface WellbeingHubProps {
 const WellbeingHub: React.FC<WellbeingHubProps> = ({ activities, calmTokens, onSelect, onExit }) => {
   return (
     <WellbeingShell
-      title="Mind Garden"
-      subtitle="Wellbeing Games"
+      title="Calm Grove"
+      subtitle="Gentle reset games"
       onExit={onExit}
     >
       <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden px-4 pb-4 pt-4">
@@ -22,8 +22,8 @@ const WellbeingHub: React.FC<WellbeingHubProps> = ({ activities, calmTokens, onS
         <div className="absolute inset-0 opacity-50 [background-image:radial-gradient(rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:24px_24px]" />
         <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center overflow-hidden">
           <div className="mb-4 max-w-3xl text-center">
-            <h1 className="bg-[linear-gradient(135deg,#a29bfe,#fd79a8,#fdcb6e)] bg-clip-text font-[Quicksand,ui-sans-serif,sans-serif] text-[clamp(2rem,5vw,3.5rem)] font-bold tracking-tight text-transparent">
-              Mind Garden
+            <h1 className="bg-[linear-gradient(135deg,#9ae6b4,#63b3ed,#f6e05e)] bg-clip-text font-[Quicksand,ui-sans-serif,sans-serif] text-[clamp(2rem,5vw,3.5rem)] font-bold tracking-tight text-transparent">
+              Calm Grove
             </h1>
             <p className="mt-1 text-sm text-white/45 md:text-base">
               Choose a gentle reset activity. No timer, no lives, no pressure.

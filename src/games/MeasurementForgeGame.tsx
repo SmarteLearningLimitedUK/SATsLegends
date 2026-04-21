@@ -170,11 +170,11 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
   const handleSubmit = () => {
     if (successPulse) return;
     if (currentGrams !== round.targetGrams) {
-      setFeedback({ tone: 'error', text: 'Not quite. Adjust the weights and try again.' });
+      setFeedback({ tone: 'error', text: 'Still unbalanced. Adjust the weights and try again.' });
       return;
     }
 
-    setFeedback({ tone: 'success', text: 'Perfect weight! Sending the order.' });
+    setFeedback({ tone: 'success', text: 'Perfect balance! Shipment restored.' });
     setSuccessPulse(true);
     const nextScore = XP + 350 + (roundIndex * 70);
     setScore(nextScore);
@@ -212,10 +212,10 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
           <div className="w-full max-w-[34rem] rounded-[1.35rem] border border-white/12 bg-[linear-gradient(180deg,rgba(12,24,45,0.72),rgba(8,14,28,0.78))] px-4 py-2 text-center shadow-[0_16px_30px_rgba(2,6,23,0.35)]">
             <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-200/90">Conversion Canyon</div>
             <div className="mt-1 text-[clamp(1rem,3.8vw,1.35rem)] font-black text-white">
-              The armoury is requesting weights for the catapults. We need to make {toKgLabel(round.targetGrams)}.
+              The Monster Minds have disrupted the canyon supplies. Rebuild the shipment so it totals {toKgLabel(round.targetGrams)}.
             </div>
             <div className="mt-1 text-[11px] font-semibold text-cyan-100/90">
-              Use the weights available to meet the target amount.
+              Use the available weights to match the target exactly.
             </div>
           </div>
 
@@ -230,13 +230,13 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
               }`}
             >
               <div className="text-left">
-                <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/80">Target</div>
+                <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/80">Target Load</div>
                 <div className="text-[clamp(0.9rem,2.2vw,1.1rem)] font-black leading-tight text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]">
                   {toKgLabel(round.targetGrams)}
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/80">Current</div>
+                <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/80">Current Load</div>
                 <div className="text-[clamp(0.9rem,2.2vw,1.1rem)] font-black leading-tight text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]">
                   {toGramLabel(currentGrams)}
                 </div>
@@ -254,7 +254,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                 />
                 <div className="pointer-events-none absolute left-1/2 top-[56%] z-20 -translate-x-1/2 -translate-y-1/2">
                   <div className="flex min-w-[8.4rem] flex-col items-center rounded-[0.95rem] border border-cyan-200/58 bg-[#07162b]/92 px-3 py-1.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.55)]">
-                    <div className="text-[8px] font-black uppercase tracking-[0.28em] text-cyan-100/80">Digital Readout</div>
+                    <div className="text-[8px] font-black uppercase tracking-[0.28em] text-cyan-100/80">Load Meter</div>
                     <div className="mt-0.5 font-mono text-[1.1rem] font-black tracking-[0.12em] text-emerald-200">
                       {toGramLabel(currentGrams)}
                     </div>
@@ -334,7 +334,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                   onClick={handleResetScale}
                   className="ui-button-secondary w-full rounded-[1.35rem] py-3 text-sm font-black uppercase tracking-[0.16em]"
                 >
-                  Reset Scale
+                  Reset Weights
                 </button>
                 <button
                   type="button"
@@ -342,7 +342,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                   disabled={successPulse}
                   className="ui-button-primary w-full rounded-[1.35rem] py-3 text-sm font-black uppercase tracking-[0.18em] disabled:opacity-60"
                 >
-                  Submit Weights
+                  Submit Shipment
                 </button>
               </div>
             </div>

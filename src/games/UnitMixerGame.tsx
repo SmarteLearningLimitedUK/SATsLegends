@@ -194,7 +194,7 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
     finishedRef.current = true;
     setLocked(true);
     setFeedbackTone('success');
-    setFeedbackText('Lava Path cleared!');
+    setFeedbackText('Path stabilised!');
 
     const stars = starsForRun(mistakes);
     confetti({
@@ -232,7 +232,7 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
       setScore(updatedScore);
       setCorrectCount(nextCorrect);
       setFeedbackTone('success');
-      setFeedbackText(`Correct. +${gained} XP`);
+      setFeedbackText('Path stabilised!');
       triggerHaptic('success');
       sessionEvents?.onCorrectAnswer?.({ score: updatedScore, metadata: { prompt: question.prompt } });
       sessionEvents?.onPuzzleComplete?.({ score: updatedScore });
@@ -250,7 +250,7 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
     const nextWrong = wrongCount + 1;
     setWrongCount(nextWrong);
     setFeedbackTone('warning');
-    setFeedbackText(`Not quite. ${MAX_WRONGS - nextWrong} mistakes left.`);
+    setFeedbackText('Still unstable — try again');
     triggerHaptic('error');
     sessionEvents?.onIncorrectAnswer?.({
       score,
@@ -276,7 +276,7 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Lava Path"
-        body="Answer correctly to move the hero up the path.\nThree mistakes ends the run."
+        body="The Monster Minds have disrupted the lava path.\nConvert the units correctly to cross safely.\nUse the correct conversion to stabilise the path."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
@@ -288,7 +288,8 @@ const UnitMixerGame: React.FC<UnitMixerGameProps> = ({
             className="w-full max-w-[860px] border border-amber-200/35 bg-[linear-gradient(180deg,rgba(251,191,36,0.24),rgba(15,23,42,0.16))] px-4 py-2 text-center shadow-[0_12px_26px_rgba(15,23,42,0.14)] md:px-6 md:py-2.5"
             bodyClassName="text-[clamp(1.1rem,3vw,2.35rem)] font-black leading-tight tracking-tight text-white"
           >
-            {question.prompt}
+            <div>The lava path is unstable. {question.prompt}</div>
+            <div className="mt-1 text-[11px] font-bold text-orange-100/90 md:text-[12px]">Use the correct conversion to stabilise the path.</div>
           </GameQuestionCard>
         </div>
 

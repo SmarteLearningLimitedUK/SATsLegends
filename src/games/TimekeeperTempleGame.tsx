@@ -142,7 +142,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
     if (targetH === currentH && targetTime.minutes === currentTime.minutes) {
       const nextScore = XP + 100 + Math.floor(timeLeft / 6);
       setScore(nextScore);
-      setFeedback('Perfect Match!');
+      setFeedback('Time restored!');
       window.setTimeout(() => {
         if (!finishedRef.current) {
           loadNextQuestion();
@@ -151,7 +151,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
       return;
     }
 
-    setFeedback('Not quite right. Try again!');
+    setFeedback('Still out of sync. Try again!');
     window.setTimeout(() => setFeedback(null), 2000);
   };
 
@@ -219,6 +219,10 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
                   {targetTime.minutes.toString().padStart(2, '0')}
                 </span>
               </div>
+
+              <p className="mx-auto mt-2 max-w-[16rem] text-center text-[11px] font-bold leading-tight text-orange-100/90 md:max-w-[18rem] md:text-[12px]">
+                The Monster Minds have disrupted the island timekeeper. Match the clock to restore the correct time.
+              </p>
             </motion.div>
 
             <div className="relative">
@@ -248,7 +252,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
 
             <div className="grid w-full grid-cols-2 gap-3 md:gap-4">
               <div className="flex flex-col items-center gap-2">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-300">Hours</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-300">Hour Hand</p>
                 <div className="flex items-center gap-3">
                   <ControlButton onClick={() => adjustTime('hours', -1)} icon={<Minus size={20} />} color="blue" />
                   <ControlButton onClick={() => adjustTime('hours', 1)} icon={<Plus size={20} />} color="blue" />
@@ -256,7 +260,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
               </div>
 
               <div className="flex flex-col items-center gap-2">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-purple-300">Minutes</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-purple-300">Minute Hand</p>
                 <div className="flex items-center gap-3">
                   <ControlButton onClick={() => adjustTime('minutes', -5)} icon={<Minus size={20} />} color="purple" />
                   <ControlButton onClick={() => adjustTime('minutes', 5)} icon={<Plus size={20} />} color="purple" />
@@ -287,7 +291,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
                   onClick={checkTime}
                   className="ui-button-primary w-full rounded-2xl py-2.5 text-base font-black md:py-3 md:text-lg"
                 >
-                  SUBMIT TIME
+                  RESTORE TIME
                 </motion.button>
               )}
 
@@ -295,7 +299,7 @@ const TimekeeperTempleGame: React.FC<TimekeeperTempleGameProps> = ({
                 onClick={resetRun}
                 className="ui-button-secondary mt-2.5 flex min-h-[1.8rem] items-center justify-center gap-2 px-4 py-2 text-[10px] font-bold tracking-widest"
               >
-                <RotateCcw size={14} /> RESET CLOCK
+                <RotateCcw size={14} /> RESET TIMEKEEPER
               </button>
             </div>
           </main>

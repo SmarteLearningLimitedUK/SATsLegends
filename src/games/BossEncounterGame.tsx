@@ -659,7 +659,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Core of Calculation"
-        body="Answer 30 questions before the timer runs out.\nCorrect answers damage the boss health bar."
+        body="The Monster Minds have fortified the final boss.\nAnswer 30 questions before the timer runs out.\nKeep going until the boss health drops to zero."
         onAction={() => setShowPracticeIntro(false)}
       />
 

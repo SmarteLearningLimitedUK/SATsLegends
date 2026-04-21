@@ -12,22 +12,22 @@ interface WellbeingShellProps {
 }
 
 const WellbeingShell: React.FC<WellbeingShellProps> = ({ title, subtitle, type, progress, onExit, children }) => (
-  <div className="relative flex h-full min-h-0 w-full flex-col overflow-hidden bg-[radial-gradient(circle_at_top,rgba(123,211,255,0.2),transparent_34%),linear-gradient(180deg,#061326_0%,#0a2043_48%,#0c1f39_100%)] text-white">
+  <div className="relative flex h-full min-h-0 w-full flex-col overflow-hidden bg-[radial-gradient(circle_at_top,rgba(167,243,208,0.22),transparent_34%),linear-gradient(180deg,#071c16_0%,#0b2d23_48%,#12382b_100%)] text-white">
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
       <motion.div
-        className="absolute left-[12%] top-[10%] h-24 w-24 rounded-full bg-cyan-300/12 blur-3xl"
+        className="absolute left-[12%] top-[10%] h-24 w-24 rounded-full bg-emerald-300/12 blur-3xl"
         animate={{ y: [0, -10, 0], opacity: [0.35, 0.7, 0.35] }}
         transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute right-[8%] top-[22%] h-20 w-20 rounded-full bg-emerald-300/10 blur-3xl"
+        className="absolute right-[8%] top-[22%] h-20 w-20 rounded-full bg-lime-300/10 blur-3xl"
         animate={{ y: [0, 12, 0], opacity: [0.25, 0.55, 0.25] }}
         transition={{ duration: 7.5, repeat: Infinity, ease: 'easeInOut' }}
       />
       {Array.from({ length: 9 }).map((_, index) => (
         <motion.span
           key={`wellbeing-particle-${index}`}
-          className="absolute h-1.5 w-1.5 rounded-full bg-white/40"
+          className="absolute h-1.5 w-1.5 rounded-full bg-emerald-100/45"
           style={{ left: `${12 + index * 9}%`, top: `${18 + (index % 4) * 16}%` }}
           animate={{ y: [0, -10, 0], opacity: [0.15, 0.6, 0.15], scale: [0.8, 1.2, 0.8] }}
           transition={{ duration: 4.8 + index * 0.24, delay: index * 0.18, repeat: Infinity, ease: 'easeInOut' }}
@@ -47,13 +47,13 @@ const WellbeingShell: React.FC<WellbeingShellProps> = ({ title, subtitle, type, 
 
       <div className="flex-1 text-center">
         {type ? (
-          <div className="inline-flex items-center gap-1 rounded-full border border-cyan-100/25 bg-cyan-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/85">
+          <div className="inline-flex items-center gap-1 rounded-full border border-emerald-100/25 bg-emerald-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-emerald-100/85">
             <Sparkles className="h-3 w-3" />
             {type}
           </div>
         ) : null}
-        <div className="mt-1 text-2xl font-black tracking-tight text-cyan-50">{title}</div>
-        {subtitle ? <div className="mt-1 text-sm font-semibold text-cyan-100/78">{subtitle}</div> : null}
+        <div className="mt-1 text-2xl font-black tracking-tight text-emerald-50">{title}</div>
+        {subtitle ? <div className="mt-1 text-sm font-semibold text-emerald-100/78">{subtitle}</div> : null}
       </div>
 
       <div className="h-11 w-11" aria-hidden />
@@ -63,7 +63,7 @@ const WellbeingShell: React.FC<WellbeingShellProps> = ({ title, subtitle, type, 
       <div className="relative z-10 px-4 pb-2">
         <div className="h-2 overflow-hidden rounded-full border border-white/15 bg-slate-950/45">
           <motion.div
-            className="h-full rounded-full bg-[linear-gradient(90deg,#8ff7da_0%,#7dd3fc_55%,#c4b5fd_100%)]"
+            className="h-full rounded-full bg-[linear-gradient(90deg,#86efac_0%,#34d399_55%,#7dd3fc_100%)]"
             animate={{ width: `${Math.max(0, Math.min(100, progress))}%` }}
             transition={{ duration: 0.35, ease: 'easeOut' }}
           />

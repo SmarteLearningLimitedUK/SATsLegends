@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Timer as TimerIcon, Heart, Target, Brain } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
@@ -501,7 +501,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title={gameTitle || 'Maths vs Zombies'}
-        body="Solve the sums to stop the monster minions.\nEach correct answer pushes them back."
+        body="The Monster Minds have sent the zombies forward.\nSolve the sums to push them back.\nKeep your answers quick and accurate."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />

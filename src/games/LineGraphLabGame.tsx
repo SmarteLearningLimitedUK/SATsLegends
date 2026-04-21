@@ -306,7 +306,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Line Graph Lab"
-        body="Welcome to the Line Graph Lab. Here we look at data that has been collected from around Matharia. Carefully read the question and consult the graph to enter the data correctly."
+        body="The Monster Minds have scrambled the data points.\nRead the line graph and answer the question.\nFollow the trend across the graph."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />

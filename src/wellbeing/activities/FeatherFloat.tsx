@@ -3,10 +3,16 @@ import { motion } from 'motion/react';
 import WellbeingShell from '../WellbeingShell';
 import { WellbeingActivityComponentProps } from '../types';
 
+const breathingFact = {
+  title: 'Breathing fact',
+  text: 'Long, steady breaths give your brain a little more time to slow down and reset.',
+};
+
 const FeatherFloat: React.FC<WellbeingActivityComponentProps> = ({ onComplete, onExit }) => {
   const [holding, setHolding] = useState(false);
   const [position, setPosition] = useState(54);
   const [targetTime, setTargetTime] = useState(0);
+  const [finished, setFinished] = useState(false);
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
@@ -17,7 +23,8 @@ const FeatherFloat: React.FC<WellbeingActivityComponentProps> = ({ onComplete, o
           setTargetTime((current) => {
             const updated = current + 0.12;
             if (updated >= 3) {
-              window.setTimeout(() => onComplete(), 320);
+              setFinished(true);
+              window.setTimeout(() => onComplete(), 1800);
             }
             return Math.min(updated, 3);
           });
@@ -57,6 +64,22 @@ const FeatherFloat: React.FC<WellbeingActivityComponentProps> = ({ onComplete, o
             Hold gently
           </button>
         </div>
+
+        {finished ? (
+          <motion.div
+            initial={{ opacity: 0, y: 12, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            className="absolute bottom-5 left-1/2 z-20 w-[min(92%,30rem)] -translate-x-1/2 rounded-[1.6rem] border border-emerald-100/18 bg-[linear-gradient(180deg,rgba(6,78,59,0.82),rgba(8,47,73,0.86))] px-4 py-4 text-center shadow-[0_18px_40px_rgba(2,6,23,0.35)]"
+          >
+            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-100/65">
+              {breathingFact.title}
+            </div>
+            <div className="mt-1 text-lg font-black text-emerald-50">Balloon released</div>
+            <div className="mt-2 text-sm font-semibold leading-relaxed text-cyan-50/84">
+              {breathingFact.text}
+            </div>
+          </motion.div>
+        ) : null}
       </div>
     </WellbeingShell>
   );

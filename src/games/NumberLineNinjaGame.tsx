@@ -544,7 +544,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Number Line Ninja"
-        body="The Monster Minds have hidden part of the island path.\nUse the number line to reveal the missing marker."
+        body="The Monster Minds have hidden the path markers.\nUse the number line to find the missing value.\nFollow the steps carefully along the line."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />

@@ -9,16 +9,22 @@ const phases = [
   { label: 'Breathe out', beats: 4 },
 ];
 const totalCycles = 4;
+const breathingFact = {
+  title: 'Breathing fact',
+  text: 'Slow breathing can help your heart rate settle and make your body feel calmer.',
+};
 
 const BreathingBloom: React.FC<WellbeingActivityComponentProps> = ({ onComplete, onExit }) => {
   const [stepIndex, setStepIndex] = useState(0);
   const [cycle, setCycle] = useState(0);
+  const [finished, setFinished] = useState(false);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       if (stepIndex === phases.length - 1) {
         if (cycle === totalCycles - 1) {
-          onComplete();
+          setFinished(true);
+          window.setTimeout(() => onComplete(), 1800);
           return;
         }
         setCycle((value) => value + 1);
@@ -74,6 +80,22 @@ const BreathingBloom: React.FC<WellbeingActivityComponentProps> = ({ onComplete,
           <div className="absolute h-28 w-28 rounded-full bg-[radial-gradient(circle,rgba(253,224,71,0.95),rgba(250,204,21,0.65)_40%,rgba(125,211,252,0.28)_100%)] shadow-[0_0_44px_rgba(250,204,21,0.28)]" />
         </motion.div>
       </div>
+
+      {finished ? (
+        <motion.div
+          initial={{ opacity: 0, y: 12, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          className="absolute bottom-5 left-1/2 z-20 w-[min(92%,30rem)] -translate-x-1/2 rounded-[1.6rem] border border-emerald-100/18 bg-[linear-gradient(180deg,rgba(6,78,59,0.82),rgba(8,47,73,0.86))] px-4 py-4 text-center shadow-[0_18px_40px_rgba(2,6,23,0.35)]"
+        >
+          <div className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-100/65">
+            {breathingFact.title}
+          </div>
+          <div className="mt-1 text-lg font-black text-emerald-50">Well done</div>
+          <div className="mt-2 text-sm font-semibold leading-relaxed text-cyan-50/84">
+            {breathingFact.text}
+          </div>
+        </motion.div>
+      ) : null}
     </WellbeingShell>
   );
 };

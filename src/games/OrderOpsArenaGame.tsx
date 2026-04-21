@@ -206,8 +206,8 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
     setStreak(0);
     setFeedback({
       type: 'error',
-      title: 'Enemy Counter',
-      subtitle: `The enemy blocked the strike. ${subtitle}`,
+      title: 'Order Broken',
+      subtitle: `The Monster Mind disrupted the order. ${subtitle}`,
     });
     triggerHaptic('error');
 
@@ -243,8 +243,8 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
     setEnemyHealth(nextEnemyHealth);
     setFeedback({
       type: isPraise ? 'praise' : 'success',
-      title: isPraise ? buildPraiseMessage() : 'Direct Hit',
-      subtitle: isPraise ? 'Fast first try bonus!' : `Player strike landed - +${points} XP`,
+      title: isPraise ? buildPraiseMessage() : 'Order Restored',
+      subtitle: isPraise ? 'Fast first try bonus!' : `Correct order restored - +${points} XP`,
     });
     triggerHaptic('success');
 
@@ -269,7 +269,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
           <div className="flex justify-center">
             <GameQuestionCard
               title="Order Ops Arena"
-              subtitle="Solve it in BIDMAS order."
+              subtitle="The Monster Minds scrambled the order. Solve it in BIDMAS order."
               className="w-full max-w-[860px] border border-amber-200/35 bg-[linear-gradient(180deg,rgba(251,191,36,0.28),rgba(15,23,42,0.18))] px-4 py-2 text-center shadow-[0_12px_26px_rgba(15,23,42,0.14)] md:px-6 md:py-2.5"
               bodyClassName="text-[clamp(1.15rem,2.9vw,2.7rem)] font-black tracking-tight text-white"
             >
@@ -281,9 +281,9 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
             <div className="relative z-10 flex h-full min-h-0 flex-col gap-3 p-3 md:p-4">
               <div className="flex min-h-[13rem] flex-1 items-center justify-center">
                 <div className="relative flex h-full w-full max-w-[24rem] items-center justify-center rounded-[1.35rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.14),rgba(15,23,42,0.02)_52%,rgba(15,23,42,0.12)_100%)] p-3 md:min-h-[18rem]">
-                  <div className="absolute left-3 top-3 rounded-full border border-rose-200/14 bg-slate-950/35 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-rose-100/82">
-                    {Math.max(0, maxEnemyHealth - enemyHealth)} hits landed
-                  </div>
+                    <div className="absolute left-3 top-3 rounded-full border border-rose-200/14 bg-slate-950/35 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-rose-100/82">
+                      {Math.max(0, maxEnemyHealth - enemyHealth)} orders restored
+                    </div>
                   <motion.img
                     src={orderOpsEnemy}
                     alt="Order Ops enemy"

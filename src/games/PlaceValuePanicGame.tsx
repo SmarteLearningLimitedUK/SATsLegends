@@ -897,7 +897,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Place Value Panic"
-        body="The Monster Minds have scrambled the number stones.\nRebuild the number using place value to repair the island."
+        body="The Monster Minds have scrambled the number stones.\nPlace each digit in the correct position.\nCheck the value of each place carefully."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />

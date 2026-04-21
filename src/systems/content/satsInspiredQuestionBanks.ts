@@ -822,7 +822,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'Convert 3.5 km to m.',
+        prompt: 'The lava path is unstable. Convert 3.5 km into m to find a safe crossing.',
         sublabel: 'Remember that 1 km = 1000 m.',
         options: ['3,500 m', '350 m', '35,000 m', '3.5 m'],
         answerIndex: 0,
@@ -832,7 +832,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'Convert 420 cm to m.',
+        prompt: 'The lava path is unstable. Convert 420 cm into m to find a safe crossing.',
         sublabel: 'Divide by 100 to move from cm to m.',
         options: ['4.2 m', '42 m', '0.42 m', '420 m'],
         answerIndex: 0,
@@ -842,7 +842,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: '1.2 litres = how many millilitres?',
+        prompt: 'The lava path is unstable. Convert 1.2 litres into millilitres to find a safe crossing.',
         sublabel: 'Litres to millilitres is ×1000.',
         options: ['1,200 ml', '120 ml', '12,000 ml', '0.12 ml'],
         answerIndex: 0,
@@ -852,7 +852,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'Convert 2.75 kg to g.',
+        prompt: 'The lava path is unstable. Convert 2.75 kg into g to find a safe crossing.',
         sublabel: 'Kilograms to grams is ×1000.',
         options: ['2,750 g', '275 g', '27,500 g', '2.75 g'],
         answerIndex: 0,
@@ -862,7 +862,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: '1.8 m = how many cm?',
+        prompt: 'The lava path is unstable. Convert 1.8 m into cm to find a safe crossing.',
         sublabel: 'Multiply by 100.',
         options: ['180 cm', '18 cm', '1,800 cm', '1.8 cm'],
         answerIndex: 0,
@@ -872,7 +872,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: '450 ml = how many litres?',
+        prompt: 'The lava path is unstable. Convert 450 ml into litres to find a safe crossing.',
         sublabel: 'Millilitres to litres is ÷1000.',
         options: ['0.45 l', '4.5 l', '45 l', '0.045 l'],
         answerIndex: 0,
@@ -882,7 +882,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: '0.75 km = how many metres?',
+        prompt: 'The lava path is unstable. Convert 0.75 km into metres to find a safe crossing.',
         sublabel: 'Multiply by 1,000.',
         options: ['75 m', '750 m', '7,500 m', '0.075 m'],
         answerIndex: 1,
@@ -892,7 +892,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: '2.04 l = how many millilitres?',
+        prompt: 'The lava path is unstable. Convert 2.04 l into millilitres to find a safe crossing.',
         sublabel: 'Watch the decimal places as you convert.',
         options: ['204 ml', '2,040 ml', '20,400 ml', '24 ml'],
         answerIndex: 1,

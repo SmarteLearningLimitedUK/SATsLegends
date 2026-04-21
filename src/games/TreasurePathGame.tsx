@@ -85,8 +85,8 @@ const buildMovementRound = () => {
   }
 
   return {
-    promptTitle: 'Lost Route',
-    promptText: `X axis runs left to right. Y axis runs bottom to top. Start at (x=${start.x}, y=${start.y}). ${instructions.join('. ')}.`,
+    promptTitle: 'Marker Recovery',
+    promptText: `The Monster Minds have hidden the correct route. X axis runs left to right. Y axis runs bottom to top. Start at (x=${start.x}, y=${start.y}). ${instructions.join('. ')}.`,
     promptType: 'movement' as const,
     start,
     target,
@@ -101,8 +101,8 @@ const generateRound = (): TreasureRound => {
     const start = { x: randomInt(GRID_SIZE), y: randomInt(GRID_SIZE) };
 
     return {
-      promptTitle: 'Beacon Recovery',
-      promptText: `X axis runs left to right. Y axis runs bottom to top. Move the explorer to (x=${target.x}, y=${target.y}) before the trail fades.`,
+      promptTitle: 'Route Recovery',
+      promptText: `The Monster Minds have scrambled the route markers. X axis runs left to right. Y axis runs bottom to top. Move the explorer to (x=${target.x}, y=${target.y}) to restore the path.`,
       promptType: 'coordinate',
       start,
       target,
@@ -343,9 +343,9 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                       ? 'border-emerald-300/60 bg-emerald-500/16 text-emerald-300'
                       : 'border-rose-300/60 bg-rose-500/16 text-amber-300'
                   }`}>
-                    <div className="text-4xl font-black">{feedback === 'correct' ? 'Treasure Found!' : 'Trap Triggered!'}</div>
+                    <div className="text-4xl font-black">{feedback === 'correct' ? 'Route Restored!' : 'Wrong Marker!'}</div>
                     <div className="mt-2 text-sm font-bold text-white/82">
-                      {feedback === 'correct' ? 'Your route was perfect.' : 'That tile was not the final destination.'}
+                      {feedback === 'correct' ? 'You found the correct marker.' : 'That was not the correct route tile.'}
                     </div>
                   </div>
                 </motion.div>
@@ -372,7 +372,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                 </button>
 
                 <div className={`text-4xl font-black md:text-5xl ${isVictory ? 'text-emerald-300' : 'text-amber-300'}`}>
-                  {isVictory ? 'Path Cleared!' : 'Expedition Lost!'}
+                  {isVictory ? 'Route Restored!' : 'Route Lost!'}
                 </div>
                 <div>
                   <div className="text-[10px] font-black uppercase tracking-[0.24em] text-white/54">Final XP</div>
