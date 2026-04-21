@@ -1082,10 +1082,11 @@ const App: React.FC = () => {
               <button
                 type="button"
                 onClick={() => openWellbeingHub({ origin: 'world_map', islandId: selectedIsland?.id ?? null })}
-                className={mapDockButtonClass}
+                className="flex h-[42px] min-w-[7.25rem] items-center justify-center gap-2 rounded-[0.85rem] border border-emerald-100/35 bg-[linear-gradient(180deg,rgba(18,78,58,0.92)_0%,rgba(9,44,32,0.95)_100%)] px-3 text-[9px] font-black uppercase tracking-[0.14em] text-emerald-50 shadow-[0_4px_0_rgba(6,95,70,0.65)]"
                 aria-label="Open Calm Grove"
               >
                 <AssetIcon name="heart" className={mapDockIconClass} />
+                <span>Calm Grove</span>
               </button>
             </div>
           </div>

@@ -389,18 +389,18 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
                     : { scale: [1, 1.02, 1] }
               }
               transition={{ duration: 0.45, ease: 'easeInOut' }}
-            >
-              <div className="absolute inset-[7%] overflow-hidden rounded-full">
-                <motion.div
-                  className="absolute bottom-0 left-0 w-full bg-[linear-gradient(180deg,rgba(34,197,94,0.65),rgba(16,185,129,0.25))]"
-                  animate={{ height: `${coreFill * 100}%` }}
+              >
+                <div className="absolute inset-[7%] overflow-hidden rounded-full">
+                  <motion.div
+                    className="absolute bottom-0 left-0 w-full bg-[linear-gradient(180deg,rgba(34,197,94,0.65),rgba(16,185,129,0.25))]"
+                    animate={{ height: `${coreFill * 100}%` }}
                   transition={{ duration: 0.45, ease: 'easeOut' }}
                 />
               </div>
-              <div className="absolute inset-[11%] rounded-full border border-cyan-100/25 bg-[radial-gradient(circle,rgba(255,255,255,0.24),rgba(34,211,238,0.1)_46%,rgba(8,20,40,0.16)_70%)]" />
-              <div className="absolute inset-[24%] rounded-full border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(255,255,255,0.16),rgba(12,74,110,0.12))] shadow-[inset_0_1px_14px_rgba(255,255,255,0.08)]" />
+                <div className="absolute inset-[11%] rounded-full border border-cyan-100/25 bg-[radial-gradient(circle,rgba(255,255,255,0.24),rgba(34,211,238,0.1)_46%,rgba(8,20,40,0.16)_70%)]" />
+                <div className="absolute inset-[24%] rounded-full border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(255,255,255,0.16),rgba(12,74,110,0.12))] shadow-[inset_0_1px_14px_rgba(255,255,255,0.08)]" />
               <motion.div
-                className="relative z-10 flex flex-col items-center justify-center gap-2"
+                className="absolute left-1/2 top-[-0.7rem] z-20 flex -translate-x-1/2 items-center justify-center rounded-full border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(7,89,133,0.96),rgba(8,47,73,0.98))] px-3 py-1.5 shadow-[0_8px_18px_rgba(2,6,23,0.35)]"
                 animate={feedback === 'correct'
                   ? { scale: [1, 1.18, 1] }
                   : feedback === 'incorrect'
@@ -413,7 +413,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
                     : { duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
               >
                 <Zap
-                  className={`h-10 w-10 md:h-12 md:w-12 ${
+                  className={`h-8 w-8 md:h-10 md:w-10 ${
                     feedback === 'correct'
                       ? 'text-emerald-300 drop-shadow-[0_0_16px_rgba(16,185,129,0.65)]'
                       : feedback === 'incorrect'
