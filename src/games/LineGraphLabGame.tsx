@@ -226,7 +226,6 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   const [round, setRound] = useState<RoundData | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-  const [probeIndex, setProbeIndex] = useState<number | null>(null);
   const chartWrapRef = useRef<HTMLDivElement | null>(null);
   const [chartSize, setChartSize] = useState({ width: 0, height: 0 });
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
@@ -236,7 +235,6 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
     setSelectedAnswer(null);
     setFeedback(null);
     setGameState('playing');
-    setProbeIndex(null);
   }, []);
 
   useEffect(() => {
@@ -303,28 +301,6 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
     return Array.from({ length: 6 }, (_, index) => Math.round((top / 5) * index));
   }, [round]);
 
-  const updateProbe = useCallback((clientX: number) => {
-    if (!round || !chartWrapRef.current) return;
-    const rect = chartWrapRef.current.getBoundingClientRect();
-    const clamped = Math.max(0, Math.min(rect.width, clientX - rect.left));
-    const ratio = rect.width <= 0 ? 0 : clamped / rect.width;
-    const index = Math.round(ratio * (round.graph.length - 1));
-    setProbeIndex(clamp(index, 0, round.graph.length - 1));
-  }, [round]);
-
-  const handleProbePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    updateProbe(event.clientX);
-  };
-
-  const handleProbePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (event.buttons !== 1) return;
-    updateProbe(event.clientX);
-  };
-
-  const probePoint = useMemo(() => (
-    round && probeIndex !== null ? round.graph[probeIndex] : null
-  ), [probeIndex, round]);
-
     return (
     <GameUiShell backgroundImage={lineGraphLabBackground} overlayDisabled className="bg-transparent">
       <PracticeIntroPopup
@@ -347,8 +323,6 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
             <div className="mt-0.5 min-h-0 flex-1 rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,54,0.55),rgba(4,12,28,0.38))] p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_18px_40px_rgba(2,6,23,0.18)] backdrop-blur-[2px] sm:p-4 md:p-5">
               <div
                 ref={chartWrapRef}
-                onPointerDown={handleProbePointerDown}
-                onPointerMove={handleProbePointerMove}
                 className="relative w-full overflow-hidden rounded-2xl border border-slate-200/12 bg-[linear-gradient(180deg,rgba(7,18,38,0.68),rgba(4,10,24,0.42))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
                 style={{ height: 'clamp(10.5rem, 28vh, 17rem)' }}
               >
@@ -385,17 +359,16 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                       stroke="#34d399"
                       strokeWidth={4}
                       dot={(props) => {
-                        const { cx, cy, payload, index } = props as { cx?: number; cy?: number; payload?: DataPoint; index?: number };
+                        const { cx, cy, payload } = props as { cx?: number; cy?: number; payload?: DataPoint; index?: number };
                         if (cx == null || cy == null || !payload) return null;
-                        const isProbe = index === probeIndex;
                         return (
                           <circle
                             cx={cx}
                             cy={cy}
-                            r={isProbe ? 8 : 5}
-                            fill={isProbe ? '#facc15' : '#34d399'}
-                            stroke={isProbe ? '#fef3c7' : '#ecfeff'}
-                            strokeWidth={isProbe ? 3 : 2}
+                            r={5}
+                            fill="#34d399"
+                            stroke="#ecfeff"
+                            strokeWidth={2}
                           />
                         );
                       }}
@@ -404,15 +377,6 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                     />
                   </LineChart>
                   </div>
-                )}
-                {probePoint && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full border border-amber-200/50 bg-amber-200/20 px-3 py-1 text-[11px] font-black text-amber-100 shadow-[0_0_20px_rgba(251,191,36,0.25)]"
-                  >
-                    {probePoint.label}: {probePoint.value}
-                  </motion.div>
                 )}
               </div>
             </div>

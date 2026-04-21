@@ -265,8 +265,31 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
         </div>
 
         <div className="relative flex min-h-0 flex-1 items-center justify-center">
-          <div className="relative aspect-square w-[min(82vw,31rem)]">
-            <div className="absolute inset-0 grid grid-cols-7 grid-rows-7 overflow-hidden">
+          <div className="relative aspect-square w-[min(82vw,31rem)] rounded-[1.5rem] border border-cyan-100/26 bg-[linear-gradient(180deg,rgba(8,22,52,0.84),rgba(7,18,43,0.92))] p-3 shadow-[0_18px_36px_rgba(2,6,23,0.4)]">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-3 rounded-[1.2rem]"
+              style={{
+                backgroundImage: [
+                  'linear-gradient(to right, rgba(191,219,254,0.38) 1px, transparent 1px)',
+                  'linear-gradient(to bottom, rgba(191,219,254,0.38) 1px, transparent 1px)',
+                ].join(', '),
+                backgroundSize: 'calc(100% / 7) calc(100% / 7)',
+                backgroundPosition: '0 0',
+              }}
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute left-3 top-3 h-[calc(100%-1.5rem)] w-[calc(100%-1.5rem)] rounded-[1.2rem] border border-cyan-100/14"
+            />
+            <div className="absolute left-3 top-3 z-0 flex h-[calc(100%-1.5rem)] w-[calc(100%-1.5rem)] items-center justify-between px-1 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/72">
+              <span>x-axis</span>
+              <span>left to right</span>
+            </div>
+            <div className="absolute bottom-4 left-1 z-0 -rotate-90 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/72">
+              y-axis
+            </div>
+            <div className="absolute inset-3 z-10 grid grid-cols-7 grid-rows-7 overflow-hidden rounded-[1.2rem]">
               {cells.map((cell) => {
                 const key = coordinateKey(cell.x, cell.y);
                 const isStart = cell.x === round.start.x && cell.y === round.start.y;
@@ -282,7 +305,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                         ? feedback === 'correct'
                           ? 'border-emerald-300 bg-emerald-400/30'
                           : 'border-rose-300 bg-rose-500/26'
-                        : 'border-transparent bg-transparent hover:bg-white/10'
+                        : 'border-cyan-100/12 bg-transparent hover:bg-white/10'
                     }`}
                   >
                     {isStart && (

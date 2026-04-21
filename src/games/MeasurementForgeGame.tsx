@@ -9,7 +9,7 @@ import gemRed from '../assets/place_value/jewels/diamond_red.png';
 import gemYellow from '../assets/place_value/jewels/diamond_yellow.png';
 import gemEmerald from '../assets/place_value/jewels/emerald.png';
 import gemSapphire from '../assets/place_value/jewels/sapphire.png';
-import { useTrimmedImageSources } from '../utils/trimTransparentImage';
+import { useTrimmedImageSource, useTrimmedImageSources } from '../utils/trimTransparentImage';
 
 interface MeasurementForgeGameProps {
   levelId: number;
@@ -119,6 +119,7 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
 
   const rootRef = useRef<HTMLDivElement>(null);
   const dropRef = useRef<HTMLDivElement>(null);
+  const trimmedScaleImage = useTrimmedImageSource(weighScale);
   const trimmedGemImages = useTrimmedImageSources(GEM_IMAGES);
   const gemImageMap = useMemo(
     () => new Map(GEM_IMAGES.map((src, index) => [src, trimmedGemImages[index] ?? src])),
@@ -245,16 +246,24 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
             <div className="relative mt-3 flex min-h-[19rem] flex-1 items-center justify-center">
               <div className="pointer-events-none absolute left-1/2 top-[48%] z-10 flex w-full max-w-[26rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center">
                 <img
-                  src={weighScale}
+                  src={trimmedScaleImage}
                   alt=""
                   aria-hidden="true"
                   draggable={false}
                   className="pointer-events-none relative z-10 h-auto w-full object-contain object-center drop-shadow-[0_18px_24px_rgba(2,6,23,0.38)]"
                 />
+                <div className="pointer-events-none absolute left-1/2 top-[56%] z-20 -translate-x-1/2 -translate-y-1/2">
+                  <div className="flex min-w-[8.4rem] flex-col items-center rounded-[0.95rem] border border-cyan-200/58 bg-[#07162b]/92 px-3 py-1.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.55)]">
+                    <div className="text-[8px] font-black uppercase tracking-[0.28em] text-cyan-100/80">Digital Readout</div>
+                    <div className="mt-0.5 font-mono text-[1.1rem] font-black tracking-[0.12em] text-emerald-200">
+                      {toGramLabel(currentGrams)}
+                    </div>
+                  </div>
+                </div>
               </div>
               <div
                 ref={dropRef}
-                className="absolute left-1/2 top-[42%] z-20 flex min-h-[4.5rem] w-[70%] -translate-x-1/2 items-center justify-center gap-2 rounded-[1.1rem] px-2 py-1.5"
+                className="absolute left-1/2 top-[43%] z-20 flex min-h-[4.5rem] w-[70%] -translate-x-1/2 items-center justify-center gap-2 rounded-[1.1rem] px-2 py-1.5"
               >
                 {placedTokens.map((token) => (
                   <button
@@ -266,14 +275,6 @@ const MeasurementForgeGame: React.FC<MeasurementForgeGameProps> = ({
                     <span className="text-[9px] font-black leading-none">{getMeasurementDisplay(token.grams).primary}</span>
                   </button>
                 ))}
-              </div>
-              <div className="pointer-events-none absolute left-1/2 top-[67%] z-30 -translate-x-1/2 -translate-y-1/2">
-                <div className="flex min-w-[8.4rem] flex-col items-center rounded-[0.95rem] border border-cyan-200/58 bg-[#07162b]/92 px-3 py-1.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.55)]">
-                  <div className="text-[8px] font-black uppercase tracking-[0.28em] text-cyan-100/80">Digital Readout</div>
-                  <div className="mt-0.5 font-mono text-[1.1rem] font-black tracking-[0.12em] text-emerald-200">
-                    {toGramLabel(currentGrams)}
-                  </div>
-                </div>
               </div>
             </div>
           </motion.div>

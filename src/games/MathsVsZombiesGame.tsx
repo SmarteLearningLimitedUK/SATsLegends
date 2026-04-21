@@ -101,11 +101,16 @@ const buildQuestion = (levelId: number): Question => {
   let answer = 0;
   let equation = '';
 
-  if (levelId <= 2) {
-    // Two-number add/sub within small range.
+  if (levelId <= 1) {
+    // Level 1: very gentle one-digit addition.
+    opPool = ['+'];
+    a = roll(0, 5);
+    b = roll(0, 5);
+  } else if (levelId === 2) {
+    // Level 2: small addition, with an occasional subtraction.
     opPool = ['+', '-'];
-    a = roll(3, 18);
-    b = roll(2, 15);
+    a = roll(0, 10);
+    b = roll(0, 8);
   } else if (levelId === 3) {
     // Two-number add/sub with three-digit values.
     opPool = ['+', '-'];

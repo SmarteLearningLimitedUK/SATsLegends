@@ -69,7 +69,10 @@ const PROJECTILE_SPEED = 520;
 const MAX_FLIGHT_DISTANCE = 980;
 const CANNON_ANCHOR_X_RATIO = 0.5;
 const CANNON_ANCHOR_Y_RATIO = 0.5;
-const CAMERA_LEAD_DISTANCE = 240;
+const CAMERA_LEAD_DISTANCE = 340;
+const ENEMY_FOREGROUND_LEAD = 110;
+const SKY_DRIFT_FACTOR = 0.14;
+const GROUND_DRIFT_FACTOR = 0.28;
 
 type CloudLayer = {
   x: number;
@@ -110,30 +113,149 @@ const drawCloud = (
   ctx.restore();
 };
 
-const drawSkyBackground = (ctx: CanvasRenderingContext2D, width: number, height: number, timestamp: number) => {
+const drawSkyBackground = (
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  timestamp: number,
+  cameraX: number,
+  cameraY: number,
+  projectileActive: boolean,
+) => {
   const sky = ctx.createLinearGradient(0, 0, 0, height);
-  sky.addColorStop(0, '#cfefff');
-  sky.addColorStop(0.42, '#8fd7ff');
-  sky.addColorStop(0.72, '#5db2ee');
-  sky.addColorStop(1, '#2d6cb8');
+  sky.addColorStop(0, '#d9f4ff');
+  sky.addColorStop(0.28, '#8bd9ff');
+  sky.addColorStop(0.56, '#4da7f0');
+  sky.addColorStop(1, '#173d86');
   ctx.fillStyle = sky;
   ctx.fillRect(0, 0, width, height);
 
-  ctx.fillStyle = 'rgba(255, 242, 175, 0.24)';
-  ctx.beginPath();
-  ctx.arc(width * 0.8, height * 0.14, Math.min(width, height) * 0.11, 0, Math.PI * 2);
-  ctx.fill();
+  const skyGlow = ctx.createRadialGradient(width * 0.74, height * 0.16, 20, width * 0.74, height * 0.16, height * 0.42);
+  skyGlow.addColorStop(0, 'rgba(255,255,255,0.8)');
+  skyGlow.addColorStop(0.2, 'rgba(255,241,153,0.5)');
+  skyGlow.addColorStop(0.45, 'rgba(255,196,61,0.18)');
+  skyGlow.addColorStop(1, 'rgba(255,196,61,0)');
+  ctx.fillStyle = skyGlow;
+  ctx.fillRect(0, 0, width, height);
 
-  ctx.fillStyle = 'rgba(255,255,255,0.08)';
-  ctx.fillRect(0, height * 0.75, width, height * 0.25);
+  const haze = ctx.createLinearGradient(0, height * 0.58, 0, height);
+  haze.addColorStop(0, 'rgba(255,255,255,0)');
+  haze.addColorStop(1, 'rgba(232,245,255,0.22)');
+  ctx.fillStyle = haze;
+  ctx.fillRect(0, height * 0.5, width, height * 0.5);
 
-  const wrapWidth = width + 280;
+  const starDrift = cameraX * 0.04;
+  ctx.save();
+  ctx.globalAlpha = 0.55;
+  for (let i = 0; i < 10; i += 1) {
+    const starX = ((i * 137) + starDrift * 0.7) % (width + 140) - 70;
+    const starY = (height * 0.08) + ((i % 4) * 28) + Math.sin((timestamp * 0.0004) + i) * 3;
+    ctx.fillStyle = i % 3 === 0 ? 'rgba(255,255,255,0.95)' : 'rgba(253,224,71,0.72)';
+    ctx.beginPath();
+    ctx.arc(starX, starY, 1.4 + (i % 3) * 0.4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+
+  const wrapWidth = width + 320;
   ANGLE_CLOUDS.forEach((cloud, index) => {
-    const drift = ((timestamp * 0.012 * cloud.speed) % wrapWidth) - 140;
+    const drift = ((timestamp * 0.012 * cloud.speed) % wrapWidth) - 160 - (cameraX * 0.12 * cloud.speed);
     const baseX = cloud.x + drift;
-    const y = height * cloud.y + Math.sin((timestamp * 0.00045) + index) * 5;
+    const y = height * cloud.y + Math.sin((timestamp * 0.00045) + index) * 5 - (cameraY * 0.03 * cloud.speed);
     drawCloud(ctx, baseX, y, cloud.scale, cloud.alpha);
   });
+
+  const mountainShift = cameraX * 0.08;
+  const farRidgeY = height * 0.56 + (cameraY * 0.02);
+  ctx.save();
+  ctx.fillStyle = '#15315f';
+  ctx.globalAlpha = 0.9;
+  ctx.beginPath();
+  ctx.moveTo(-80 - mountainShift, farRidgeY);
+  ctx.lineTo(width * 0.12 - mountainShift, height * 0.42);
+  ctx.lineTo(width * 0.26 - mountainShift, height * 0.54);
+  ctx.lineTo(width * 0.38 - mountainShift, height * 0.35);
+  ctx.lineTo(width * 0.52 - mountainShift, height * 0.57);
+  ctx.lineTo(width * 0.68 - mountainShift, height * 0.4);
+  ctx.lineTo(width * 0.82 - mountainShift, height * 0.53);
+  ctx.lineTo(width + 80 - mountainShift, farRidgeY);
+  ctx.lineTo(width + 80 - mountainShift, height);
+  ctx.lineTo(-80 - mountainShift, height);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+
+  ctx.save();
+  ctx.fillStyle = 'rgba(59,130,246,0.18)';
+  ctx.beginPath();
+  ctx.moveTo(-60 - mountainShift * 0.6, height * 0.64);
+  ctx.lineTo(width * 0.16 - mountainShift * 0.6, height * 0.5);
+  ctx.lineTo(width * 0.34 - mountainShift * 0.6, height * 0.66);
+  ctx.lineTo(width * 0.55 - mountainShift * 0.6, height * 0.48);
+  ctx.lineTo(width * 0.73 - mountainShift * 0.6, height * 0.63);
+  ctx.lineTo(width + 60 - mountainShift * 0.6, height * 0.58);
+  ctx.lineTo(width + 60 - mountainShift * 0.6, height * 0.88);
+  ctx.lineTo(-60 - mountainShift * 0.6, height * 0.88);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+
+  const groundTop = height * 0.7 + (cameraY * 0.04);
+  const groundShift = cameraX * 0.22;
+  const groundGrad = ctx.createLinearGradient(0, groundTop, 0, height);
+  groundGrad.addColorStop(0, 'rgba(32,101,71,0.0)');
+  groundGrad.addColorStop(0.1, 'rgba(27,110,79,0.7)');
+  groundGrad.addColorStop(0.5, 'rgba(19,78,61,0.95)');
+  groundGrad.addColorStop(1, 'rgba(9,35,31,1)');
+  ctx.fillStyle = groundGrad;
+  ctx.fillRect(0, groundTop, width, height - groundTop);
+
+  ctx.save();
+  ctx.globalAlpha = projectileActive ? 0.45 : 0.2;
+  ctx.fillStyle = 'rgba(255,255,255,0.14)';
+  for (let i = -1; i < 7; i += 1) {
+    const ridgeX = (i * (width / 3.4)) - (groundShift % (width / 1.6));
+    ctx.beginPath();
+    ctx.moveTo(ridgeX - 80, height);
+    ctx.quadraticCurveTo(ridgeX + 60, groundTop + 34, ridgeX + 180, height);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.restore();
+
+  ctx.save();
+  ctx.globalAlpha = 0.35;
+  ctx.fillStyle = 'rgba(14, 94, 70, 0.95)';
+  for (let i = -1; i < 6; i += 1) {
+    const hillX = (i * (width / 2.4)) - (groundShift * 0.75 % (width / 1.2));
+    ctx.beginPath();
+    ctx.moveTo(hillX - 120, height);
+    ctx.quadraticCurveTo(hillX + 20, height * 0.83, hillX + 180, height * 0.93);
+    ctx.quadraticCurveTo(hillX + 330, height * 1.0, hillX + 480, height);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.restore();
+
+  ctx.save();
+  ctx.globalAlpha = 0.22;
+  ctx.fillStyle = 'rgba(163,230,53,0.45)';
+  for (let i = 0; i < 18; i += 1) {
+    const tuftX = ((i * 91) + groundShift * 0.9) % (width + 120) - 60;
+    const tuftY = height * 0.86 + ((i % 4) * 12);
+    ctx.beginPath();
+    ctx.ellipse(tuftX, tuftY, 12, 5, (i % 5) * 0.12, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+
+  ctx.save();
+  ctx.globalAlpha = 0.24;
+  ctx.fillStyle = 'rgba(255,255,255,0.12)';
+  ctx.fillRect(0, height * 0.72, width, 2);
+  ctx.fillStyle = 'rgba(251,191,36,0.28)';
+  ctx.fillRect(0, height * 0.78, width, 2);
+  ctx.restore();
 };
 
 const drawRoundedRectPath = (
@@ -699,6 +821,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
       ctx.translate(shakeX, shakeY);
       ctx.clearRect(0, 0, viewWidth, viewHeight);
+      drawSkyBackground(ctx, viewWidth, viewHeight, timestamp, camera.x, camera.y, Boolean(projectile?.active));
 
       const cannonAnchor = { x: viewWidth * CANNON_ANCHOR_X_RATIO, y: viewHeight * CANNON_ANCHOR_Y_RATIO };
       const screenOffset = { x: cannonAnchor.x - viewWidth / 2, y: cannonAnchor.y - viewHeight / 2 };
@@ -708,13 +831,45 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       };
 
       const originScreen = cannonAnchor;
-      const enemyScreen = toScreen(enemyWorld.x, enemyWorld.y);
+      const travel = projectile?.active ? normalizeVector(projectile.vx, projectile.vy) : { x: 0, y: 0 };
+      const enemyVisualWorld = projectile?.active
+        ? {
+            x: enemyWorld.x + (travel.x * ENEMY_FOREGROUND_LEAD),
+            y: enemyWorld.y + (travel.y * ENEMY_FOREGROUND_LEAD),
+          }
+        : enemyWorld;
+      const enemyScreen = toScreen(enemyVisualWorld.x, enemyVisualWorld.y);
+      const skyOffsetX = camera.x * SKY_DRIFT_FACTOR;
+      const skyOffsetY = camera.y * SKY_DRIFT_FACTOR * 0.45;
+      const groundOffsetX = camera.x * GROUND_DRIFT_FACTOR;
+      const groundOffsetY = camera.y * GROUND_DRIFT_FACTOR * 0.2;
 
       ctx.strokeStyle = 'rgba(148,163,184,0.4)';
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.arc(originScreen.x, originScreen.y, WORLD_RADIUS * 0.35, 0, Math.PI * 2);
       ctx.stroke();
+
+      ctx.save();
+      ctx.globalAlpha = projectile?.active ? 0.32 : 0.14;
+      ctx.fillStyle = 'rgba(255,255,255,0.45)';
+      ctx.fillRect((viewWidth * 0.1) - skyOffsetX, (viewHeight * 0.11) - skyOffsetY, viewWidth * 0.11, 4);
+      ctx.fillRect((viewWidth * 0.44) - (skyOffsetX * 0.7), (viewHeight * 0.17) - (skyOffsetY * 0.6), viewWidth * 0.08, 3);
+      ctx.fillRect((viewWidth * 0.75) - (skyOffsetX * 0.55), (viewHeight * 0.22) - (skyOffsetY * 0.45), viewWidth * 0.09, 4);
+      ctx.restore();
+
+      ctx.save();
+      ctx.globalAlpha = projectile?.active ? 0.28 : 0.12;
+      ctx.strokeStyle = 'rgba(255,255,255,0.28)';
+      ctx.lineWidth = 1.5;
+      for (let i = -1; i <= 4; i += 1) {
+        const y = (viewHeight * 0.76) + (i * 18) + groundOffsetY;
+        ctx.beginPath();
+        ctx.moveTo(((-60 + groundOffsetX) % 120) - 120, y);
+        ctx.lineTo(viewWidth + 120, y);
+        ctx.stroke();
+      }
+      ctx.restore();
 
       if ((gameState === 'aiming' || gameState === 'awaitingAnswer') && selectedAnswerRef.current !== null) {
         const aimingAngle = selectedAnswerRef.current ?? desiredAngleRef.current;
@@ -739,6 +894,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.restore();
 
       ctx.save();
+      if (projectile?.active) {
+        ctx.translate(Math.sin(timestamp * 0.02) * 2, Math.cos(timestamp * 0.018) * 1.5);
+      }
       ctx.translate(enemyScreen.x, enemyScreen.y);
       const enemySize = Math.min(viewWidth, viewHeight) * 0.26;
       const platform: EnemyPlatform = questionIndex % 2 === 0 ? 'podium' : 'cloud';

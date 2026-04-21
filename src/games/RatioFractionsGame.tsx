@@ -41,14 +41,15 @@ type RaceState =
 const START_OFFSET = 0;
 const RACER_LERP = 0.16;
 const BASE_XP = 160;
-const PLAYER_KART_SCALE = 1.9;
-const PLAYER_KART_RAISE = '58pt';
+const PLAYER_KART_SCALE = 2.08;
+const PLAYER_KART_RAISE = '54pt';
 const PLAYER_TRACK_LINE_Y = 80.8;
 const FINISH_Y_SHIFT = -200;
 const FINISH_X_SHIFT = -100;
 const PLAYER_BOB_BASE_SPEED = 5.1;
 const PLAYER_BOB_AMPLITUDE = 4.5;
 const PLAYER_ROLL_MAX = 5;
+const FINISH_SCREEN_THRESHOLD = 91;
 const PLAYER_KARTS: Record<string, string> = {
   barratt: kartBran,
   bran: kartMochi,
@@ -435,7 +436,10 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     0,
     100,
   );
-  const backgroundPositionX = Math.round(clamp(18 + ((playerPosRef.current / trackSpan) * 64), 18, 82));
+  const raceProgress = clamp(playerPosRef.current / trackSpan, 0, 1);
+  const backgroundPositionX = Math.round(clamp(18 + (raceProgress * 64), 18, 82));
+  const skyDriftX = Math.round(raceProgress * 180);
+  const roadDriftX = Math.round(raceProgress * 520);
   const playerBobOffset = Math.sin(playerBobPhaseRef.current) * PLAYER_BOB_AMPLITUDE;
   const playerLean = clamp((playerTargetRef.current - playerPosRef.current) * 0.9, -PLAYER_ROLL_MAX, PLAYER_ROLL_MAX);
 
@@ -443,14 +447,21 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
     transform: `translate3d(-50%, calc(-100% + ${playerBobOffset}px - ${PLAYER_KART_RAISE}), 0) rotate(${playerLean}deg) scale(${PLAYER_KART_SCALE})`,
     transformOrigin: '50% 100%',
     top: `${playerLineY}%`,
-    left: `${playerLeft}%`,
+    left: `${playerLeft - 2.5}%`,
   };
 
-  const finishStyle = {
-    transform: 'translate(-50%, -50%)',
-    top: `${finishLineY}%`,
-    left: `calc(${finishLeft}% + ${FINISH_X_SHIFT}px)`,
-  };
+  const finishLineInView = finishLeft <= FINISH_SCREEN_THRESHOLD;
+  const finishStyle = finishLineInView
+    ? {
+        transform: 'translate(-50%, -50%)',
+        top: `${finishLineY}%`,
+        left: `calc(${finishLeft}% + ${FINISH_X_SHIFT}px)`,
+      }
+    : {
+        transform: 'translateY(-50%)',
+        top: `${finishLineY}%`,
+        right: '1rem',
+      };
 
   return (
     <GameUiShell overlayDisabled className="bg-transparent">
@@ -469,6 +480,19 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             backgroundPosition: `${backgroundPositionX}% center`,
           }}
         />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-[1] opacity-70"
+          style={{
+            backgroundImage: `
+              linear-gradient(90deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.04) 50%, rgba(255,255,255,0.0) 100%),
+              repeating-linear-gradient(90deg, rgba(255,255,255,0.0) 0 42px, rgba(255,255,255,0.09) 42px 47px)
+            `,
+            backgroundSize: '180px 100%, 220px 100%',
+            backgroundPosition: `${-skyDriftX}px 0, ${-roadDriftX}px 0`,
+            mixBlendMode: 'screen',
+          }}
+        />
 
         <div ref={raceViewportRef} className="pointer-events-none absolute inset-0 z-20">
           <div className="relative h-full w-full">
@@ -481,17 +505,28 @@ const RatioFractionsGame: React.FC<RatioFractionsGameProps> = ({
             </div>
 
             <motion.div
-              className="absolute z-40 flex h-32 w-52 items-end justify-center overflow-visible sm:h-36 sm:w-60 md:h-44 md:w-72"
+              className="absolute z-40 flex h-36 w-60 items-end justify-center overflow-visible sm:h-40 sm:w-68 md:h-48 md:w-80"
               style={playerStyle}
-              animate={showBoost ? { scale: [1, 1.08, 1] } : showStall ? { x: [0, -4, 4, -3, 3, 0] } : { scale: 1 }}
+              animate={
+                showBoost
+                  ? { scale: [1, 1.1, 1], y: [0, -4, 0] }
+                  : showStall
+                    ? { x: [0, -4, 4, -3, 3, 0] }
+                    : { scale: 1 }
+              }
               transition={{ duration: 0.35 }}
             >
               <img
                 src={playerKart}
                 alt="Player kart"
-                className="relative z-10 h-full w-full object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.65)]"
-                style={{ imageRendering: 'auto' }}
+                className="relative z-10 h-full w-full object-contain drop-shadow-[0_0_20px_rgba(56,189,248,0.72)]"
+                style={{
+                  imageRendering: 'auto',
+                  filter: 'saturate(1.08) contrast(1.03)',
+                  transform: 'translateZ(0)',
+                }}
               />
+              <div className="pointer-events-none absolute inset-x-[10%] bottom-[8%] h-4 rounded-full bg-cyan-300/25 blur-[10px]" />
             </motion.div>
 
             {raceState === 'introCountdown' ? (
