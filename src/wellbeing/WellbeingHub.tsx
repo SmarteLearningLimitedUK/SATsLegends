@@ -13,21 +13,27 @@ interface WellbeingHubProps {
 const WellbeingHub: React.FC<WellbeingHubProps> = ({ activities, calmTokens, onSelect, onExit }) => {
   return (
     <WellbeingShell
-      title="Wellbeing Grove"
-      subtitle="Short calm breaks to reset, breathe, and feel steadier"
+      title="Mind Garden"
+      subtitle="Wellbeing Games"
       onExit={onExit}
     >
-      <div className="flex min-h-0 flex-1 flex-col px-4 pb-4 pt-3">
-        <div className="mb-3 rounded-[1.4rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(129,230,217,0.14),rgba(56,189,248,0.08))] px-4 py-3 text-center">
-          <div className="text-xs font-black uppercase tracking-[0.18em] text-cyan-100/76">Calm break</div>
-          <div className="mt-1 text-sm font-semibold text-cyan-50/88">Choose a gentle reset activity. No timer, no lives, no pressure.</div>
-          <div className="mt-2 inline-flex rounded-full border border-emerald-200/30 bg-emerald-400/12 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-emerald-100">
-            Leaf tokens {calmTokens}
+      <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden px-4 pb-4 pt-4">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_30%,rgba(30,27,75,1)_0%,rgba(15,12,46,1)_60%,rgba(6,4,15,1)_100%)]" />
+        <div className="absolute inset-0 opacity-50 [background-image:radial-gradient(rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:24px_24px]" />
+        <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center overflow-hidden">
+          <div className="mb-4 max-w-3xl text-center">
+            <h1 className="bg-[linear-gradient(135deg,#a29bfe,#fd79a8,#fdcb6e)] bg-clip-text font-[Quicksand,ui-sans-serif,sans-serif] text-[clamp(2rem,5vw,3.5rem)] font-bold tracking-tight text-transparent">
+              Mind Garden
+            </h1>
+            <p className="mt-1 text-sm text-white/45 md:text-base">
+              Choose a gentle reset activity. No timer, no lives, no pressure.
+            </p>
+            <div className="mt-3 inline-flex rounded-full border border-emerald-200/30 bg-emerald-400/12 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.14em] text-emerald-100">
+              Leaf tokens {calmTokens}
+            </div>
           </div>
-        </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto pr-1" style={{ WebkitOverflowScrolling: 'touch' }}>
-          <div className="grid grid-cols-1 gap-3 pb-2">
+          <div className="grid w-full max-w-[860px] grid-cols-1 gap-4 overflow-y-auto pb-2 pr-1 md:grid-cols-2" style={{ WebkitOverflowScrolling: 'touch' }}>
             {activities.map((activity, index) => (
               <motion.button
                 key={activity.id}
@@ -36,21 +42,38 @@ const WellbeingHub: React.FC<WellbeingHubProps> = ({ activities, calmTokens, onS
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.04, duration: 0.2 }}
-                className="ui-button-secondary rounded-[1.45rem] px-4 py-4 text-left"
+                className="relative overflow-hidden rounded-[20px] border border-white/10 bg-[rgba(255,255,255,0.05)] p-4 text-left transition hover:-translate-y-1 hover:bg-[rgba(255,255,255,0.09)]"
               >
-                <div className="flex items-start gap-3">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(180deg,rgba(125,211,252,0.3),rgba(129,140,248,0.22))] text-2xl shadow-[0_0_18px_rgba(125,211,252,0.16)]">
+                <div
+                  className={`absolute inset-0 opacity-0 transition-opacity duration-300 hover:opacity-100 ${
+                    index % 5 === 0
+                      ? 'bg-[linear-gradient(135deg,rgba(162,155,254,0.3),transparent)]'
+                      : index % 5 === 1
+                        ? 'bg-[linear-gradient(135deg,rgba(0,210,211,0.3),transparent)]'
+                        : index % 5 === 2
+                          ? 'bg-[linear-gradient(135deg,rgba(253,121,168,0.3),transparent)]'
+                          : index % 5 === 3
+                            ? 'bg-[linear-gradient(135deg,rgba(85,239,196,0.3),transparent)]'
+                            : 'bg-[linear-gradient(135deg,rgba(253,203,110,0.3),transparent)]'
+                  }`}
+                />
+                <div className="relative z-10 flex items-start gap-3">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(180deg,rgba(162,155,254,0.28),rgba(253,121,168,0.18))] text-2xl shadow-[0_0_18px_rgba(125,211,252,0.16)]">
                     {activity.icon}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
-                      <div className="truncate text-base font-black text-cyan-50">{activity.title}</div>
-                      <div className="rounded-full border border-cyan-100/14 bg-white/5 px-2 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/72">
+                      <div className="truncate text-[0.95rem] font-bold text-white">{activity.title}</div>
+                      <div className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-white/70">
                         {activity.durationEstimate}
                       </div>
                     </div>
-                    <div className="mt-1 text-xs font-black uppercase tracking-[0.14em] text-emerald-100/76">{activity.type}</div>
-                    <div className="mt-2 text-sm font-semibold leading-relaxed text-cyan-100/82">{activity.description}</div>
+                    <div className="mt-1 text-[0.72rem] font-black uppercase tracking-[0.14em] text-white/45">
+                      {activity.type}
+                    </div>
+                    <div className="mt-2 text-sm leading-relaxed text-white/70">
+                      {activity.description}
+                    </div>
                   </div>
                 </div>
               </motion.button>

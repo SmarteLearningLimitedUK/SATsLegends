@@ -16,6 +16,16 @@ import {
   shuffle,
   shuffleOptionsWithCorrect,
 } from '../utils/questionShuffle';
+import item1 from '../assets/change counter/itemsforsale/1.png';
+import item2 from '../assets/change counter/itemsforsale/2.png';
+import item3 from '../assets/change counter/itemsforsale/3.png';
+import item4 from '../assets/change counter/itemsforsale/4.png';
+import item5 from '../assets/change counter/itemsforsale/5.png';
+import item6 from '../assets/change counter/itemsforsale/6.png';
+import item7 from '../assets/change counter/itemsforsale/7.png';
+import item8 from '../assets/change counter/itemsforsale/8.png';
+import item9 from '../assets/change counter/itemsforsale/9.png';
+import item10 from '../assets/change counter/itemsforsale/10.png';
 
 interface ChangeCounterGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -42,6 +52,7 @@ type FeedbackTone = 'neutral' | 'success' | 'warning';
 
 const MAX_LIVES = 3;
 const TOTAL_ROUNDS = 6;
+const ITEM_IMAGES = [item1, item2, item3, item4, item5, item6, item7, item8, item9, item10];
 
 const formatMoney = (pence: number) => (
   pence >= 100
@@ -211,6 +222,20 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
     timersRef.current = [];
   };
 
+  const questionGallery = useMemo(() => {
+    const currentIndex = QUESTION_BANK.findIndex((entry) => entry.id === question.id);
+    const startIndex = currentIndex >= 0 ? currentIndex : 0;
+    return Array.from({ length: 5 }, (_, index) => {
+      const itemIndex = (startIndex + index) % ITEM_IMAGES.length;
+      const bankItem = QUESTION_BANK[(startIndex + index) % QUESTION_BANK.length];
+      return {
+        id: `${bankItem.id}-${index}`,
+        label: bankItem.item,
+        src: ITEM_IMAGES[itemIndex],
+      };
+    });
+  }, [question.id]);
+
   useEffect(() => () => clearTimers(), []);
 
   useEffect(() => {
@@ -334,6 +359,27 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
               How much change should you get back?
             </div>
           </TaskCard>
+
+          <div className="mx-auto grid w-full max-w-[44rem] grid-cols-2 gap-2 md:grid-cols-5 md:gap-3">
+            {questionGallery.map((entry) => (
+              <div
+                key={entry.id}
+                className="casual-panel-surface flex min-h-0 flex-col items-center gap-2 overflow-hidden rounded-[1.15rem] border border-white/10 px-2 py-2 text-center shadow-[0_12px_24px_rgba(0,0,0,0.16)] md:rounded-[1.35rem] md:px-3 md:py-3"
+              >
+                <div className="flex h-18 w-full items-center justify-center overflow-hidden rounded-[0.9rem] bg-black/18 md:h-24">
+                  <img
+                    src={entry.src}
+                    alt={entry.label}
+                    className="h-full w-full object-contain drop-shadow-[0_10px_16px_rgba(0,0,0,0.22)]"
+                    draggable={false}
+                  />
+                </div>
+                <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/76 md:text-[10px]">
+                  {entry.label}
+                </div>
+              </div>
+            ))}
+          </div>
 
           <div className="flex min-h-0 flex-col gap-2 md:gap-3">
             <div className="answer-choice-surface mx-auto grid w-full max-w-[32rem] grid-cols-2 gap-1.5 md:gap-2">
