@@ -304,13 +304,16 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const allSlicesUsed = remainingSlices === 0;
   const allCorrect = plateViews.every((plate) => plate.isCorrect);
   const platePositions = PLATE_POSITIONS_BY_COUNT[challenge.plateCount] || PLATE_POSITIONS_BY_COUNT[5];
+  const isCompactViewport = viewportRect.width < 520;
+  const plateLayoutScale = isCompactViewport ? 0.68 : 1;
+  const cakeSourceLayoutScale = isCompactViewport ? 0.76 : 1;
   const backgroundScale = Math.max(
     viewportRect.width / SHARE_SPLITTER_BACKGROUND_SIZE.width,
     viewportRect.height / SHARE_SPLITTER_BACKGROUND_SIZE.height,
   );
   const backgroundOffsetX = (viewportRect.width - (SHARE_SPLITTER_BACKGROUND_SIZE.width * backgroundScale)) / 2;
   const backgroundOffsetY = viewportRect.height - (SHARE_SPLITTER_BACKGROUND_SIZE.height * backgroundScale);
-  const plateSizePx = SHARE_SPLITTER_PLATE_DIAMETER_PX * backgroundScale;
+  const plateSizePx = SHARE_SPLITTER_PLATE_DIAMETER_PX * backgroundScale * plateLayoutScale;
   const promptText = isPractice
     ? `Target ratio: ${challenge.ratios.join(':')}`
     : `There are ${challenge.totalSlices} slices of brainpower cake.\nThe Monster Mind demands it is shared in a ratio of ${challenge.ratios.join(':')}.`;
@@ -334,11 +337,17 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     y: backgroundOffsetY + (point.y * backgroundScale),
   }), [backgroundOffsetX, backgroundOffsetY, backgroundScale]);
 
+  const getCakeSourceHitRect = useCallback(() => {
+    const cakeButton = cakeSourceButtonRef.current;
+    if (!cakeButton) return null;
+    return cakeButton.getBoundingClientRect();
+  }, []);
+
   const isPointInsideCakeSource = useCallback((clientX: number, clientY: number) => {
-    const center = mapBackgroundPointToViewport(CAKE_SOURCE_POSITION);
-    const radius = (CAKE_SOURCE_SIZE_PX * backgroundScale) / 2;
-    return Math.hypot(clientX - center.x, clientY - center.y) <= radius;
-  }, [backgroundScale, mapBackgroundPointToViewport]);
+    const rect = getCakeSourceHitRect();
+    if (!rect || rect.width <= 0 || rect.height <= 0) return false;
+    return clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom;
+  }, [getCakeSourceHitRect]);
 
   useEffect(() => {
     const handleGlobalPointerDown = (event: PointerEvent) => {
@@ -420,10 +429,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     sliceSeedRef.current += 1;
     const pointerId = 'pointerId' in event ? event.pointerId : 1;
     dragActiveRef.current = true;
-    const dragRevealThresholdPx = 6;
-    let dragOriginX = 0;
-    let dragOriginY = 0;
-    let dragHasBeenRevealed = false;
 
     const updatePosition = (clientX: number, clientY: number) => {
       setDragSlice({
@@ -431,16 +436,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         x: clientX - DRAG_SLICE_SIZE / 2,
         y: clientY - DRAG_SLICE_SIZE / 2,
       });
-    };
-
-    const revealDragSlice = (clientX: number, clientY: number) => {
-      if (dragHasBeenRevealed) return;
-      dragHasBeenRevealed = true;
-      updatePosition(clientX, clientY);
-      setFeedback('Drop the cake onto the correct plate.');
-      setFeedbackTone('neutral');
-      setValidationActive(false);
-      setHoverPlateIndex(null);
     };
 
     const getPlateCenter = (index: number) => {
@@ -487,20 +482,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     const finishDrag = (clientX: number, clientY: number) => {
       if (!dragActiveRef.current) return;
       dragActiveRef.current = false;
-      if (!dragHasBeenRevealed) {
-        setDragSlice(null);
-        setHoverPlateIndex(null);
-        window.removeEventListener('pointermove', handlePointerMove);
-        window.removeEventListener('pointerup', handlePointerUp);
-        window.removeEventListener('pointercancel', handlePointerCancel);
-        window.removeEventListener('touchmove', handleTouchMove);
-        window.removeEventListener('touchend', handleTouchEnd);
-        window.removeEventListener('touchcancel', handleTouchEnd);
-        window.removeEventListener('mousemove', handleMouseMove);
-        window.removeEventListener('mouseup', handleMouseUp);
-        window.removeEventListener('blur', handleMouseCancel);
-        return;
-      }
       const { index, distance } = getNearestPlate(clientX, clientY);
       const snapRadius = plateSizePx * 0.56;
       const hitIndex = getHitPlateIndex(clientX, clientY);
@@ -526,14 +507,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
     const handlePointerMove = (moveEvent: PointerEvent) => {
       const point = getClientPoint(moveEvent);
-      if (!dragHasBeenRevealed) {
-        const distanceFromOrigin = Math.hypot(point.x - dragOriginX, point.y - dragOriginY);
-        if (distanceFromOrigin >= dragRevealThresholdPx) {
-          revealDragSlice(point.x, point.y);
-        } else {
-          return;
-        }
-      }
       updatePosition(point.x, point.y);
       const hitIndex = getHitPlateIndex(point.x, point.y);
       if (hitIndex >= 0) {
@@ -551,14 +524,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
     const handleTouchMove = (touchEvent: TouchEvent) => {
       const point = getClientPoint(touchEvent);
-      if (!dragHasBeenRevealed) {
-        const distanceFromOrigin = Math.hypot(point.x - dragOriginX, point.y - dragOriginY);
-        if (distanceFromOrigin >= dragRevealThresholdPx) {
-          revealDragSlice(point.x, point.y);
-        } else {
-          return;
-        }
-      }
       updatePosition(point.x, point.y);
       const hitIndex = getHitPlateIndex(point.x, point.y);
       if (hitIndex >= 0) {
@@ -577,14 +542,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
     const handleMouseMove = (mouseEvent: MouseEvent) => {
       const point = getClientPoint(mouseEvent);
-      if (!dragHasBeenRevealed) {
-        const distanceFromOrigin = Math.hypot(point.x - dragOriginX, point.y - dragOriginY);
-        if (distanceFromOrigin >= dragRevealThresholdPx) {
-          revealDragSlice(point.x, point.y);
-        } else {
-          return;
-        }
-      }
       updatePosition(point.x, point.y);
       const hitIndex = getHitPlateIndex(point.x, point.y);
       if (hitIndex >= 0) {
@@ -620,8 +577,11 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     };
 
     const startPoint = getClientPoint(event);
-    dragOriginX = startPoint.x;
-    dragOriginY = startPoint.y;
+    updatePosition(startPoint.x, startPoint.y);
+    setFeedback('Drop the cake onto the correct plate.');
+    setFeedbackTone('neutral');
+    setValidationActive(false);
+    setHoverPlateIndex(null);
     const currentTarget = event.currentTarget as HTMLElement & { setPointerCapture?: (pointerId: number) => void };
     if ('setPointerCapture' in currentTarget && 'pointerId' in event) {
       currentTarget.setPointerCapture?.(pointerId);
@@ -741,14 +701,14 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
         <div
           className="h-full w-full"
-          style={{ paddingTop: `${Math.max(0, questionDockBottom + 20)}px` }}
+          style={{ paddingTop: `${Math.max(0, questionDockBottom + (isCompactViewport ? 14 : 20))}px` }}
         >
           <GameScreenLayout
-            className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-0 text-white"
+            className={`px-3 pb-[calc(env(safe-area-inset-bottom)+${isCompactViewport ? '0.35rem' : '0.6rem'})] pt-0 text-white`}
             main={(
-              <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
+              <div className={`mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] ${isCompactViewport ? 'gap-1' : 'gap-2'}`}>
                 <div
-                  className="relative min-h-0 overflow-hidden rounded-[1.6rem] px-2 py-3 md:px-3"
+                  className={`relative min-h-0 overflow-hidden rounded-[1.6rem] ${isCompactViewport ? 'px-2 py-2' : 'px-2 py-3 md:px-3'}`}
                   onPointerDown={handleSourceAreaPointerDown}
                   onMouseDown={handleSourceAreaPointerDown}
                   onTouchStart={handleSourceAreaPointerDown}
@@ -823,8 +783,8 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                     style={{
                       left: `${mapBackgroundPointToViewport(CAKE_SOURCE_POSITION).x}px`,
                       top: `${mapBackgroundPointToViewport(CAKE_SOURCE_POSITION).y}px`,
-                      width: `${CAKE_SOURCE_SIZE_PX * backgroundScale}px`,
-                      height: `${CAKE_SOURCE_SIZE_PX * backgroundScale}px`,
+                      width: `${CAKE_SOURCE_SIZE_PX * backgroundScale * cakeSourceLayoutScale}px`,
+                      height: `${CAKE_SOURCE_SIZE_PX * backgroundScale * cakeSourceLayoutScale}px`,
                     }}
                     aria-label={remainingSlices > 0 ? 'Drag a slice from the cake' : 'No cake slices left'}
                   >
@@ -841,7 +801,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
               </div>
             )}
             bottom={(
-              <div className="flex flex-col gap-2">
+              <div className={`flex flex-col ${isCompactViewport ? 'gap-1.5' : 'gap-2'}`}>
                 <section className="min-h-[2.6rem]">
                   {feedback.trim().length > 0 ? (
                     <AnimatePresence mode="wait">
@@ -862,7 +822,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                   ) : null}
                 </section>
 
-                <section className="grid grid-cols-2 gap-2">
+                <section className={`grid grid-cols-2 ${isCompactViewport ? 'gap-1.5' : 'gap-2'}`}>
                   <SecondaryButton onClick={resetAllocation} disabled={locked || moveHistory.length === 0}>
                     <RefreshCcw className="h-4 w-4" />
                     Reset
