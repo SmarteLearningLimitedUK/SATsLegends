@@ -163,17 +163,17 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
         </div>
       )}
 
-       {bottomContent ? (
-         <div
-           className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center"
-           style={{
+      {bottomContent ? (
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center"
+          style={{
             // Match map dock placement: sit on the safe-area inset (no extra float gap).
             paddingBottom: 'calc(env(safe-area-inset-bottom) / var(--game-stage-scale, 1))',
-            paddingLeft: '0.4rem',
-            paddingRight: '0.4rem',
+            paddingLeft: '0.35rem',
+            paddingRight: '0.35rem',
           }}
         >
-          <div className="pointer-events-auto">
+          <div className="pointer-events-auto max-w-[calc(100vw-0.7rem)] overflow-hidden">
             {bottomContent}
           </div>
         </div>
@@ -182,11 +182,11 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
           className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center"
           style={{
             paddingBottom: 'calc(env(safe-area-inset-bottom) / var(--game-stage-scale, 1))',
-            paddingLeft: '0.4rem',
-            paddingRight: '0.4rem',
+            paddingLeft: '0.35rem',
+            paddingRight: '0.35rem',
           }}
         >
-          <div className="pointer-events-auto">
+          <div className="pointer-events-auto max-w-[calc(100vw-0.7rem)] overflow-hidden">
             <GameActionDock onBack={onBack} compact variant="global" />
           </div>
         </div>

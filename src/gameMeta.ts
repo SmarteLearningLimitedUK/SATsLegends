@@ -1,4 +1,5 @@
 import { MiniGameType } from './types';
+import { getCanonicalGameLabel } from './gameNames';
 
 export interface GameRuleSet {
   title: string;
@@ -500,5 +501,5 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
 };
 
 export const getGameLabel = (gameType?: MiniGameType | null) => (
-  gameType ? GAME_META[gameType]?.label || gameType.replace(/_/g, ' ') : ''
+  getCanonicalGameLabel(gameType) || (gameType ? GAME_META[gameType]?.label || gameType.replace(/_/g, ' ') : '')
 );

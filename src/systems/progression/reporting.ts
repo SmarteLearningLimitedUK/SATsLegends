@@ -1,4 +1,5 @@
 import { GAME_META } from '../../gameMeta';
+import { getCanonicalGameLabel } from '../../gameNames';
 import {
   GameStat,
   MiniGameType,
@@ -27,9 +28,10 @@ const TOPIC_LABELS: Record<string, string> = {
 
 const toLabel = (topicId: string) => TOPIC_LABELS[topicId] ?? topicId.replace(/_/g, ' ');
 
-const toGameLabel = (gameId: string) => (
-  GAME_META[gameId as MiniGameType]?.label ?? gameId.replace(/_/g, ' ')
-);
+const toGameLabel = (gameId: string) => {
+  const canonicalLabel = getCanonicalGameLabel(gameId as MiniGameType);
+  return canonicalLabel || GAME_META[gameId as MiniGameType]?.label || gameId.replace(/_/g, ' ');
+};
 
 const toGameSummary = (game: GameStat): ParentGameSummary => ({
   gameId: game.gameId,

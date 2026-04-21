@@ -5454,6 +5454,10 @@ button.avatar-hero-arrow:not(:disabled):active {
 .game-question-card .game-question-copy {
   margin-top: 0.125rem;
   white-space: pre-line;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  hyphens: auto;
   color: #ffffff;
 }
 
@@ -5461,6 +5465,7 @@ button.avatar-hero-arrow:not(:disabled):active {
   text-wrap: balance;
   overflow-wrap: anywhere;
   word-break: normal;
+  hyphens: auto;
 }
 
 .game-question-card .question-subtitle {

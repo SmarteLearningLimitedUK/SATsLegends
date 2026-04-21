@@ -20,8 +20,7 @@ interface GameLoadBoundaryState {
 const formatContext = (context?: GameLoadContext) => {
   if (!context) return '';
   const parts = [
-    context.gameType ? `type=${context.gameType}` : null,
-    context.blueprintKey ? `blueprint=${context.blueprintKey}` : null,
+    context.title ? context.title : null,
     Number.isFinite(context.levelId) ? `level=${context.levelId}` : null,
   ].filter(Boolean);
   return parts.join(' • ');
@@ -105,7 +104,7 @@ class GameLoadBoundary extends React.Component<GameLoadBoundaryProps, GameLoadBo
     return (
       <GameLoadFallback
         title={title}
-        subtitle="We hit an issue while starting this mini-game."
+        subtitle={`We hit an issue while starting ${title}.`}
         details={contextInfo || undefined}
         onRetry={this.handleRetry}
         onBack={this.props.onBack}

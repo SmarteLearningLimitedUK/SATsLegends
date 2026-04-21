@@ -1,5 +1,5 @@
 import { LevelData } from '../types';
-import { getGameLabel } from '../gameMeta';
+import { getCanonicalGameLabel } from '../gameNames';
 
 const stripLevelSuffix = (name: string) => name.replace(/\s+L\d+$/i, '').trim();
 
@@ -14,7 +14,7 @@ export const getLevelGameTitle = (level?: LevelData | null) => {
   if (level.displayName) return stripLevelSuffix(level.displayName);
   if (level.miniGameKey) return toTitleCaseFromKey(level.miniGameKey);
   if (level.blueprintKey) return toTitleCaseFromKey(level.blueprintKey);
-  if (level.gameType) return getGameLabel(level.gameType);
+  if (level.gameType) return getCanonicalGameLabel(level.gameType);
   return '';
 };
 
