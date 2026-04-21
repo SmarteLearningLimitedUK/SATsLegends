@@ -339,7 +339,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
         alt=""
         aria-hidden="true"
         draggable={false}
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-85 grayscale-[0.15] saturate-75"
       />
 
       <PracticeIntroPopup
@@ -387,7 +387,6 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
                 : { duration: rocketState === 'launching' ? 0.58 : 0.35, ease: 'easeOut' }}
               className="relative h-[clamp(16rem,36vh,21rem)] w-[clamp(12rem,50vw,18rem)] overflow-visible"
             >
-              <div className="absolute inset-x-[18%] bottom-[10%] h-10 rounded-full bg-cyan-300/22 blur-xl" />
               <div className="absolute inset-x-[2%] top-0 bottom-[9%] overflow-hidden">
                 <img
                   src={roundingRocketArt}

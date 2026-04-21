@@ -252,7 +252,7 @@ const MatchGameShell: React.FC<{
       <GameplaySceneBackdrop
         gameType={variantGameType}
         backgroundOverride={factorFrenzyBackground}
-        className="opacity-[0.96]"
+        className="opacity-[0.76] grayscale-[0.12] saturate-75"
       />
 
       <div className="pointer-events-none absolute inset-0">

@@ -1,6 +1,5 @@
 import React from 'react';
 import { AvatarData, MiniGameType } from '../types';
-import GameplaySceneBackdrop from './GameplaySceneBackdrop';
 import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
 
 interface GameContainerViewProps {
@@ -70,12 +69,6 @@ const GameContainerView: React.FC<GameContainerViewProps> = (props) => {
 
   return (
     <div className="aaa-game-root mission-game-root gameplay-content-surface relative flex h-full w-full min-h-0 flex-col overflow-hidden">
-      <GameplaySceneBackdrop
-        gameType={gameType}
-        backgroundOverride={sceneBackgroundOverride}
-        minimalDecor={sceneMinimalDecor}
-        className="aaa-game-backdrop"
-      />
       <div className={`aaa-game-stage shared-game-container mission-game-stage relative z-10 mx-auto grid h-full min-h-0 w-full max-w-full flex-1 grid-rows-[auto_minmax(0,1fr)_auto] gap-1 px-0 pb-[0.08rem] pt-[0.06rem] md:gap-1.5 md:px-0 md:pb-[0.12rem] ${stageClassName}`}>
         <div className="aaa-zone aaa-zone-objective w-full">
           <div
