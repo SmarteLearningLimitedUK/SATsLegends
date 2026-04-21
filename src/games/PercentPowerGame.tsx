@@ -332,7 +332,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title={gameTitle || 'Percent Power'}
-        body="The Monster Minds have drained the portal power.\nSolve the percent puzzles to recharge the core.\nWork carefully with each percentage."
+        body="Those pesky Moster Minds have disabled the power cells. Solve the percentage problem to restore the power"
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
@@ -371,19 +371,19 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
         </div>
 
         <div className="relative mt-2 flex w-full max-w-[44rem] flex-1 min-h-0 flex-col items-center justify-center px-2 py-2">
-          <div className="absolute left-1/2 top-[58%] h-[15rem] w-[15rem] -translate-x-1/2 -translate-y-1/2 md:h-[16rem] md:w-[16rem]">
+          <div className="absolute left-1/2 top-[63%] h-[15rem] w-[15rem] -translate-x-1/2 -translate-y-1/2 md:h-[16rem] md:w-[16rem]">
             <motion.div
               className="absolute inset-0 rounded-full bg-[radial-gradient(circle,rgba(96,165,250,0.52),rgba(59,130,246,0.26)_38%,rgba(8,20,40,0)_74%)] blur-3xl"
               animate={{ opacity: [0.48, 0.9, 0.48], scale: [0.98, 1.04, 0.98] }}
               transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
             />
             <div className="absolute left-1/2 top-1/2 h-[10.5rem] w-[10.5rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-100/30 bg-[radial-gradient(circle,rgba(125,211,252,0.22),rgba(14,116,144,0.18)_42%,rgba(8,20,40,0.08)_72%,rgba(8,20,40,0)_100%)] shadow-[0_0_40px_rgba(34,211,238,0.2)] md:h-[11.75rem] md:w-[11.75rem]" />
-            <div className="absolute left-1/2 top-[63%] h-8 w-[8.8rem] -translate-x-1/2 rounded-full bg-cyan-300/20 blur-xl" />
+            <div className="absolute left-1/2 top-[64%] h-8 w-[8.8rem] -translate-x-1/2 rounded-full bg-cyan-300/20 blur-xl" />
             <motion.div
-              className="absolute left-1/2 top-[54%] flex h-[11.5rem] w-[11.5rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-cyan-100/30 bg-[radial-gradient(circle,rgba(125,211,252,0.34),rgba(14,116,144,0.22)_38%,rgba(8,20,40,0.12)_68%,rgba(8,20,40,0)_100%)] shadow-[0_0_45px_rgba(34,211,238,0.2)] md:h-[13rem] md:w-[13rem]"
-              animate={
-                feedback === 'correct'
-                  ? { scale: [1, 1.06, 1], x: [0, -4, 4, -3, 3, 0], rotate: [0, 3, -3, 2, -2, 0] }
+              className="absolute left-1/2 top-[63%] flex h-[10.5rem] w-[10.5rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-cyan-100/30 bg-[radial-gradient(circle,rgba(125,211,252,0.34),rgba(14,116,144,0.22)_38%,rgba(8,20,40,0.12)_68%,rgba(8,20,40,0)_100%)] shadow-[0_0_45px_rgba(34,211,238,0.2)] md:h-[11.75rem] md:w-[11.75rem]"
+                animate={
+                  feedback === 'correct'
+                    ? { scale: [1, 1.06, 1], x: [0, -4, 4, -3, 3, 0], rotate: [0, 3, -3, 2, -2, 0] }
                   : feedback === 'incorrect'
                     ? { x: [0, -8, 8, -6, 6, 0] }
                     : { scale: [1, 1.02, 1] }
@@ -400,7 +400,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
                 <div className="absolute inset-[11%] rounded-full border border-cyan-100/25 bg-[radial-gradient(circle,rgba(255,255,255,0.24),rgba(34,211,238,0.1)_46%,rgba(8,20,40,0.16)_70%)]" />
                 <div className="absolute inset-[24%] rounded-full border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(255,255,255,0.16),rgba(12,74,110,0.12))] shadow-[inset_0_1px_14px_rgba(255,255,255,0.08)]" />
               <motion.div
-                className="absolute left-1/2 top-[-0.7rem] z-20 flex -translate-x-1/2 items-center justify-center rounded-full border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(7,89,133,0.96),rgba(8,47,73,0.98))] px-3 py-1.5 shadow-[0_8px_18px_rgba(2,6,23,0.35)]"
+                className="absolute left-1/2 top-[0.95rem] z-20 flex -translate-x-1/2 items-center justify-center rounded-full border border-cyan-100/45 bg-[linear-gradient(180deg,rgba(7,89,133,0.96),rgba(8,47,73,0.98))] px-3 py-1.5 shadow-[0_8px_18px_rgba(2,6,23,0.35)]"
                 animate={feedback === 'correct'
                   ? { scale: [1, 1.18, 1] }
                   : feedback === 'incorrect'

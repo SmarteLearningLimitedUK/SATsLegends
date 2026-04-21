@@ -7,6 +7,8 @@ import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 
+const TRANSPARENT_BACKDROP_PIXEL = 'data:image/gif;base64,R0lGODlhAQABAAAAACw=';
+
 interface FractionMatchGameProps extends MiniGameShellContractProps {
   levelId: number;
   miniGameLevel?: number;
@@ -251,8 +253,8 @@ const MatchGameShell: React.FC<{
     <div className="relative h-full w-full select-none overflow-hidden font-sans text-white">
       <GameplaySceneBackdrop
         gameType={variantGameType}
-        backgroundOverride={factorFrenzyBackground}
-        className="opacity-[0.76] grayscale-[0.12] saturate-75"
+        backgroundOverride={TRANSPARENT_BACKDROP_PIXEL}
+        className="opacity-0"
       />
 
       <div className="pointer-events-none absolute inset-0">
@@ -625,7 +627,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title={gameTitle || 'Match Mastery'}
-        body="The Monster Minds have built a wall of fraction matches.\nMatch each fraction to its equivalent.\nLook for the same value in different forms."
+        body="The Monster Minds have scrambled the values and have hidden them in plain sight.\nMatch the equivalent values and foil their plan!"
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
