@@ -399,11 +399,13 @@ const matchesAnswer = (selected: string[], expected: string[]) => {
 const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
   if (round.kind === 'bar' && round.bars) {
     return (
-      <div className="flex h-full min-h-0 flex-col rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(9,19,42,0.7),rgba(7,14,32,0.88))] p-3 shadow-[0_22px_40px_rgba(2,6,23,0.24)]">
-        <div className="text-center text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
+      <div className="flex h-full min-h-0 flex-col rounded-[1.2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(9,19,42,0.58),rgba(7,14,32,0.74))] p-2 shadow-[0_18px_30px_rgba(2,6,23,0.18)]">
+        <div className="flex items-center justify-between px-1 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
+          <span>X</span>
           {round.chartCaption}
+          <span>Y</span>
         </div>
-        <div className="mt-2 h-[clamp(15rem,36vh,22rem)] w-full">
+        <div className="mt-1.5 h-[clamp(13.5rem,32vh,19.5rem)] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={round.bars!} margin={{ top: 18, right: 16, left: 10, bottom: 12 }}>
               <CartesianGrid stroke="rgba(255,255,255,0.12)" strokeDasharray="3 3" vertical={false} />
@@ -438,11 +440,13 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
 
   if (round.kind === 'line' && round.line) {
     return (
-      <div className="flex h-full min-h-0 flex-col rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(9,19,42,0.7),rgba(7,14,32,0.88))] p-3 shadow-[0_22px_40px_rgba(2,6,23,0.24)]">
-        <div className="text-center text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
+      <div className="flex h-full min-h-0 flex-col rounded-[1.2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(9,19,42,0.58),rgba(7,14,32,0.74))] p-2 shadow-[0_18px_30px_rgba(2,6,23,0.18)]">
+        <div className="flex items-center justify-between px-1 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
+          <span>X</span>
           {round.chartCaption}
+          <span>Y</span>
         </div>
-        <div className="mt-2 h-[clamp(15rem,36vh,22rem)] w-full">
+        <div className="mt-1.5 h-[clamp(13.5rem,32vh,19.5rem)] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={round.line!} margin={{ top: 18, right: 16, left: 10, bottom: 12 }}>
               <CartesianGrid stroke="rgba(255,255,255,0.12)" strokeDasharray="3 3" />
@@ -473,12 +477,14 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
   const total = round.pie?.reduce((sum, slice) => sum + slice.value, 0) || 1;
 
   return (
-    <div className="flex h-full min-h-0 flex-col rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(9,19,42,0.7),rgba(7,14,32,0.88))] p-3 shadow-[0_22px_40px_rgba(2,6,23,0.24)]">
-      <div className="text-center text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
+    <div className="flex h-full min-h-0 flex-col rounded-[1.2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(9,19,42,0.58),rgba(7,14,32,0.74))] p-2 shadow-[0_18px_30px_rgba(2,6,23,0.18)]">
+      <div className="flex items-center justify-between px-1 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
+        <span>X</span>
         {round.chartCaption}
+        <span>Y</span>
       </div>
-      <div className="mt-2 grid min-h-0 flex-1 gap-3 md:grid-cols-[1.08fr_0.92fr]">
-        <div className="h-[clamp(15rem,36vh,22rem)]">
+      <div className="mt-1.5 grid min-h-0 flex-1 gap-2.5 md:grid-cols-[1.08fr_0.92fr]">
+        <div className="h-[clamp(13.5rem,32vh,19.5rem)]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Tooltip
@@ -492,7 +498,7 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
             </PieChart>
           </ResponsiveContainer>
         </div>
-        <div className="flex flex-col justify-center gap-2 rounded-[1.15rem] border border-white/10 bg-white/5 p-3">
+        <div className="flex flex-col justify-center gap-2 rounded-[1rem] border border-white/8 bg-white/4 p-2.5">
           <div className="text-[9px] font-black uppercase tracking-[0.18em] text-amber-100/70">Slice labels</div>
           <div className="grid gap-2">
             {round.pie!.map((slice) => (
@@ -508,7 +514,7 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
           </div>
         </div>
       </div>
-      <div className="mt-2 text-center text-[11px] font-bold text-white/68">
+      <div className="mt-1.5 text-center text-[11px] font-bold text-white/68">
         Total: {total}%
       </div>
     </div>
@@ -720,11 +726,11 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
           </div>
 
           <div className="grid min-h-0 flex-1 gap-2 md:grid-rows-[minmax(0,1fr)_auto] md:gap-3">
-            <div className="min-h-0">
+            <div className="min-h-0 translate-y-[15px]">
               <GraphBoard round={round} />
             </div>
 
-            <section className="rounded-[1.3rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.8),rgba(10,17,37,0.92))] p-3 shadow-[0_24px_40px_rgba(2,6,23,0.24)] md:p-4">
+            <section className="translate-y-[20px] rounded-[1.15rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(10,17,37,0.84))] p-2.5 shadow-[0_18px_30px_rgba(2,6,23,0.18)] md:p-3">
               <div className="mb-2 flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/70">
                 <span>{round.support}</span>
                 <span>{round.xLabel} vs {round.yLabel}</span>

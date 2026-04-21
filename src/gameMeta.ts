@@ -39,10 +39,10 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   potion_pour: {
-    label: 'Potion Pour Panic',
+    label: 'Potion Panic',
     focus: 'Magical ratio brewing under time pressure',
     rules: {
-      title: 'Potion Pour Panic',
+      title: 'Potion Panic',
       summary: 'Brew spells by pouring potion ingredients into the cauldron in the exact ratio before the 90-second clock runs out.',
       bullets: [
         'Each recipe shows a ratio and total units for the current brew.',
@@ -137,10 +137,10 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   angle_arena: {
-    label: 'Angle Siege',
+    label: 'Angle Arena',
     focus: 'Angles, missing angles and angle reasoning',
     rules: {
-      title: 'Angle Siege',
+      title: 'Angle Arena',
       summary: 'Solve the angle prompt, select the correct angle, and watch the sling fire at the target.',
       bullets: [
         'Some challenges ask for a direct angle, while others hide the answer inside a geometry clue.',
@@ -202,10 +202,10 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   measurement_forge: {
-    label: 'Scale Master',
+    label: 'Conversion Canyon',
     focus: 'Mass, volume and unit conversion',
     rules: {
-      title: 'Scale Master',
+      title: 'Conversion Canyon',
       summary: "We're ready to advance - we're working out the weights needed for the catapaults. Select the weights to meet the target to help us balance the catapault.",
       bullets: [
         'Prompts can swap between mass and liquid capacity, so watch the unit before you load anything.',
@@ -228,10 +228,10 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   ratio_rapids: {
-    label: 'Ratio Raiders',
+    label: 'Ratio Racer',
     focus: 'Ratios, scaling and proportional defence',
     rules: {
-      title: 'Ratio Raiders',
+      title: 'Ratio Racer',
       summary: 'Deploy sword and cannon pirates in the correct ratio to stop each attack wave before it hits the island.',
       bullets: [
         'Fill every defender slot using the ratio and total defenders shown at the top.',
@@ -280,10 +280,10 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   coordinate_quest: {
-    label: 'Treasure Path',
+    label: 'Coordinates Quest',
     focus: 'Coordinates, direction and movement reasoning',
     rules: {
-      title: 'Treasure Path',
+      title: 'Coordinates Quest',
       summary: 'Guide the explorer across the jungle grid by plotting the right coordinate or following the route instructions exactly.',
       bullets: [
         'Read x first, then y whenever the treasure is given as a coordinate pair.',
@@ -293,10 +293,10 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   transform_temple: {
-    label: 'Transform Temple',
+    label: 'Rotation Station',
     focus: 'Transformations and movement rules',
     rules: {
-      title: 'Transform Temple',
+      title: 'Rotation Station',
       summary: 'Track how a shape moves across the temple grid using translation and reflection clues.',
       bullets: [
         'Follow translation and reflection clues closely.',

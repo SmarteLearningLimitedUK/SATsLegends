@@ -2,8 +2,7 @@ import React from 'react';
 
 export type WellbeingActivityId =
   | 'breathing_bloom'
-  | 'ripple_water'
-  | 'feather_float'
+  | 'peaceful_pond'
   | 'candle_calm'
   | 'constellation_connect'
   | 'leaf_drift'

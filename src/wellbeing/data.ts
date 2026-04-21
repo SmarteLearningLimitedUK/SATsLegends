@@ -1,9 +1,8 @@
 import BreathingBloom from './activities/BreathingBloom';
-import RippleWater from './activities/RippleWater';
-import FeatherFloat from './activities/FeatherFloat';
 import CandleCalm from './activities/CandleCalm';
 import ConstellationConnect from './activities/ConstellationConnect';
 import LeafDrift from './activities/LeafDrift';
+import PeacefulPond from './activities/PeacefulPond';
 import ThoughtSort from './activities/ThoughtSort';
 import { WellbeingActivityId, WellbeingActivityMeta } from './types';
 
@@ -19,24 +18,14 @@ export const WELLBEING_ACTIVITIES: WellbeingActivityMeta[] = [
     component: BreathingBloom,
   },
   {
-    id: 'ripple_water',
-    title: 'Cloud Catcher',
-    subtitle: 'Catch clouds before they drift away',
+    id: 'peaceful_pond',
+    title: 'Peaceful Pond',
+    subtitle: 'Guide the lilypads and fish',
     type: 'Grounding',
-    durationEstimate: '30 sec',
-    description: 'Tap each drifting cloud and keep the grove sky bright and calm.',
-    icon: '☁️',
-    component: RippleWater,
-  },
-  {
-    id: 'feather_float',
-    title: 'Let It Go',
-    subtitle: 'Choose a feeling and send it free',
-    type: 'Breathing',
-    durationEstimate: '40 sec',
-    description: 'Pick words for how you feel, fill the balloon, then blow it free.',
-    icon: '🫙',
-    component: FeatherFloat,
+    durationEstimate: '50 sec',
+    description: 'Push lilypads across the pond and guide the fish into calmer waters.',
+    icon: '🪷',
+    component: PeacefulPond,
   },
   {
     id: 'candle_calm',
@@ -89,8 +78,8 @@ export const WELLBEING_ACTIVITY_BY_ISLAND: Record<number, WellbeingActivityId> =
   1: 'breathing_bloom',
   2: 'leaf_drift',
   3: 'constellation_connect',
-  4: 'ripple_water',
+  4: 'peaceful_pond',
   5: 'thought_sort',
   6: 'candle_calm',
-  7: 'feather_float',
+  7: 'peaceful_pond',
 };

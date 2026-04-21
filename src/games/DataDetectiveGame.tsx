@@ -12,6 +12,7 @@ import {
   BarChart3,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import {
   BarChart,
   Bar,
@@ -120,6 +121,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   const [selectedSuspectId, setSelectedSuspectId] = useState<number | null>(null);
   const [lives, setLives] = useState(3);
   const [incorrectSuspectIds, setIncorrectSuspectIds] = useState<number[]>([]);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(useSharedTopHud));
 
   const maxCaseValue = Math.max(...currentCase.map((item) => item.amount), 0);
   const barAxisMax = Math.max(1, maxCaseValue);
@@ -191,6 +193,10 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
     generateCase();
   }, [generateCase]);
 
+  useEffect(() => {
+    setShowPracticeIntro(Boolean(useSharedTopHud));
+  }, [useSharedTopHud]);
+
   const handleSuspectClick = (id: number) => {
     if (gameState !== 'playing') return;
     if (incorrectSuspectIds.includes(id)) return;
@@ -244,6 +250,12 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
         aria-hidden="true"
         draggable={false}
         className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
+      />
+      <PracticeIntroPopup
+        open={showPracticeIntro}
+        title="Data Detective"
+        body="The Monster Minds have scrambled the evidence board.\nCompare the chart with each suspect and find who matches.\nRead the totals carefully before you accuse."
+        onAction={() => setShowPracticeIntro(false)}
       />
       <GameScreenLayout
         className="relative z-10 h-full w-full min-h-0 gap-0 text-slate-100"
@@ -444,11 +456,11 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                         src={suspect.portrait}
                         alt=""
                         draggable={false}
-                        className="suspect-portrait block h-full w-full max-h-full max-w-full object-contain object-center"
+                        className="suspect-portrait block h-full w-full max-h-full max-w-full translate-y-[20px] object-contain object-center"
                         data-suspect-portrait="true"
                       />
                     ) : (
-                      <div className={`flex h-full w-full items-center justify-center ${suspect.color}/20`}>
+                      <div className={`flex h-full w-full translate-y-[20px] items-center justify-center ${suspect.color}/20`}>
                         <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-white/10 text-lg font-black text-white">
                           {suspect.name.split(' ').map((part) => part[0]).join('')}
                         </div>
@@ -484,15 +496,6 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                 </motion.button>
               ) : null}
             </AnimatePresence>
-            {feedback && (
-              <div className={`rounded-full border px-3 py-1.5 text-center text-[10px] font-black uppercase tracking-wide max-[480px]:px-2 max-[480px]:py-1 ${
-                feedback.type === 'success'
-                  ? 'border-emerald-400/60 bg-emerald-500/14 text-emerald-100 shadow-[0_0_18px_rgba(16,185,129,0.18)]'
-                  : 'border-rose-400/60 bg-rose-500/14 text-rose-100 shadow-[0_0_18px_rgba(244,63,94,0.18)]'
-              }`}>
-                {feedback.message}
-              </div>
-            )}
           </div>
         </section>
         </main>
@@ -551,7 +554,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                       onClick={() => handleAccuse(selectedSuspect.id)}
                       className="ui-button-primary flex-1 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-[0.14em] max-[480px]:px-3 max-[480px]:py-1.5"
                     >
-                      Accuse
+                      Lock Up
                     </button>
                   </div>
                 </div>
@@ -563,7 +566,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="absolute inset-0 z-50 flex items-center justify-center bg-stone-950/95 p-12 text-center backdrop-blur-xl max-[480px]:p-4"
+                className="absolute inset-0 z-[120] flex items-center justify-center bg-stone-950/95 p-12 text-center backdrop-blur-xl max-[480px]:p-4"
               >
                 <div className="max-w-md max-[480px]:max-w-[min(100%,18rem)]">
                   <Trophy className="mx-auto mb-8 h-20 w-20 text-yellow-400 max-[480px]:mb-5 max-[480px]:h-14 max-[480px]:w-14" />
@@ -584,6 +587,29 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                 </div>
               </motion.div>
             )}
+          </AnimatePresence>
+          <AnimatePresence>
+            {feedback ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.96, y: 8 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.96, y: 8 }}
+                className="pointer-events-none absolute inset-0 z-[200] flex items-start justify-center pt-4 text-center"
+              >
+                <div
+                  className={`w-[min(92%,24rem)] rounded-[1.4rem] border px-4 py-3 shadow-[0_28px_56px_rgba(0,0,0,0.42)] ${
+                    feedback.type === 'success'
+                      ? 'border-emerald-300/75 bg-[linear-gradient(180deg,rgba(5,95,70,0.96),rgba(4,47,46,0.96))] text-emerald-50'
+                      : 'border-rose-300/75 bg-[linear-gradient(180deg,rgba(127,29,29,0.96),rgba(69,10,10,0.96))] text-rose-50'
+                  }`}
+                >
+                  <div className="text-[11px] font-black uppercase tracking-[0.2em] opacity-75">
+                    {feedback.type === 'success' ? 'Success' : 'Failure'}
+                  </div>
+                  <div className="mt-1 text-lg font-black">{feedback.message}</div>
+                </div>
+              </motion.div>
+            ) : null}
           </AnimatePresence>
         </>
       )}

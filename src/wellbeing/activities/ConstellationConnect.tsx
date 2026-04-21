@@ -47,8 +47,10 @@ const ConstellationConnect: React.FC<WellbeingActivityComponentProps> = ({ onCom
   return (
     <WellbeingShell title="Constellation Connect" subtitle="Trace the stars and uncover the sky fact" type="Focus" progress={(currentIndex / stars.length) * 100} onExit={onExit}>
       <div className="relative flex flex-1 items-center justify-center overflow-hidden p-5">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(255,230,140,0.08),transparent_18%),radial-gradient(circle_at_15%_82%,rgba(255,255,255,0.12),transparent_6%),radial-gradient(circle_at_34%_68%,rgba(255,214,102,0.14),transparent_6%),radial-gradient(circle_at_66%_34%,rgba(229,231,235,0.12),transparent_5%),radial-gradient(circle_at_82%_76%,rgba(250,204,21,0.12),transparent_7%),linear-gradient(180deg,#020202 0%,#06060a 38%,#000000 100%)]" />
+        <div className="pointer-events-none absolute inset-0 opacity-90 [background-image:radial-gradient(rgba(255,215,110,0.9)_0.7px,transparent_0.9px),radial-gradient(rgba(255,255,255,0.75)_0.6px,transparent_0.8px)] [background-position:0 0,8px 8px] [background-size:32px_32px,42px_42px]" />
         <div className="pointer-events-none absolute left-4 right-4 top-4 z-10 flex justify-center">
-          <div className="rounded-full border border-cyan-100/14 bg-slate-950/35 px-4 py-2 text-center text-xs font-bold tracking-[0.14em] text-cyan-50/84 backdrop-blur-sm">
+          <div className="rounded-full border border-gold-100/14 bg-black/45 px-4 py-2 text-center text-xs font-bold tracking-[0.14em] text-amber-50/90 backdrop-blur-sm">
             Trace the stars in order
           </div>
         </div>

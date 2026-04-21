@@ -23,7 +23,7 @@ const WellbeingShell: React.FC<WellbeingShellProps> = ({ children }) => (
       ))}
     </div>
 
-    <div className="relative z-10 min-h-0 flex-1 px-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-[calc(env(safe-area-inset-top)+0.8rem)]">
+    <div className="relative z-10 min-h-0 flex-1 px-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-[calc(env(safe-area-inset-top)+1.15rem)]">
       <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-[1.9rem] border border-cyan-100/14 bg-[linear-gradient(180deg,rgba(13,33,65,0.68),rgba(8,20,42,0.76))] shadow-[0_20px_40px_rgba(2,6,23,0.32)] backdrop-blur-sm">
         {children}
       </div>
