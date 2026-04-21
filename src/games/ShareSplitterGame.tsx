@@ -10,7 +10,8 @@ import {
   SecondaryButton,
 } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
-import shareSplitterBackground from '../assets/maps/backgroundsforgames/sharesplitterfinal.png';
+import shareSplitterBackground from '../assets/maps/backgroundsforgames/tableshresplit.png';
+import shareSplitterPlate from '../assets/maps/backgroundsforgames/platesharesplit.png';
 import cakeSliceAsset from '../assets/cakeslice.png';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import CelebrationSplash from '../components/CelebrationSplash';
@@ -58,10 +59,28 @@ const ROUNDS_TO_WIN = 5;
 const BASE_XP_PER_ROUND = 120;
 const CAKE_SLICE_ASSET = cakeSliceAsset;
 const DRAG_SLICE_SIZE = 48;
-const SHARE_SPLITTER_BACKGROUND_SIZE = { width: 800, height: 1600 };
-const SHARE_SPLITTER_PLATE_DIAMETER_PX = 174;
-const CAKE_SOURCE_POSITION = { x: 400, y: 1200 };
-const CAKE_SOURCE_SIZE_PX = 212;
+const SHARE_SPLITTER_BACKGROUND_SIZE = { width: 2500, height: 5000 };
+const SHARE_SPLITTER_PLATE_DIAMETER_PX = 540;
+const CAKE_SOURCE_POSITION = { x: 1250, y: 3750 };
+const CAKE_SOURCE_SIZE_PX = 660;
+const SHARE_SPLITTER_TABLE_CENTER = { x: 1250, y: 2240 };
+const SHARE_SPLITTER_TABLE_PLATE_RADIUS = 540;
+
+const makeRingPoint = (center: { x: number; y: number }, radius: number, angleDegrees: number) => {
+  const angle = (angleDegrees * Math.PI) / 180;
+  return {
+    x: center.x + (Math.cos(angle) * radius),
+    y: center.y + (Math.sin(angle) * radius),
+  };
+};
+
+const SHARE_SPLITTER_TABLE_PLATE_POSITIONS = [
+  makeRingPoint(SHARE_SPLITTER_TABLE_CENTER, SHARE_SPLITTER_TABLE_PLATE_RADIUS, -90),
+  makeRingPoint(SHARE_SPLITTER_TABLE_CENTER, SHARE_SPLITTER_TABLE_PLATE_RADIUS, -18),
+  makeRingPoint(SHARE_SPLITTER_TABLE_CENTER, SHARE_SPLITTER_TABLE_PLATE_RADIUS, 54),
+  makeRingPoint(SHARE_SPLITTER_TABLE_CENTER, SHARE_SPLITTER_TABLE_PLATE_RADIUS, 126),
+  makeRingPoint(SHARE_SPLITTER_TABLE_CENTER, SHARE_SPLITTER_TABLE_PLATE_RADIUS, 198),
+];
 
 const RATIO_PATTERNS_BY_COUNT: Record<number, number[][]> = {
   2: [
@@ -93,28 +112,21 @@ const RATIO_PATTERNS_BY_COUNT: Record<number, number[][]> = {
 
 const PLATE_POSITIONS_BY_COUNT: Record<number, Array<{ x: number; y: number }>> = {
   2: [
-    { x: 225.4, y: 655.6 },
-    { x: 587.2, y: 663.9 },
+    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[1],
+    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[3],
   ],
   3: [
-    { x: 406.3, y: 522.8 },
-    { x: 225.4, y: 655.6 },
-    { x: 587.2, y: 663.9 },
+    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[0],
+    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[1],
+    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[3],
   ],
   4: [
-    { x: 406.3, y: 522.8 },
-    { x: 225.4, y: 655.6 },
-    { x: 587.2, y: 663.9 },
-    { x: 291.0, y: 879.9 },
+    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[0],
+    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[1],
+    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[2],
+    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[4],
   ],
-  5: [
-    // Live screenshot centers measured from the rendered Share Splitter screen.
-    { x: 406.3, y: 522.8 },
-    { x: 225.4, y: 655.6 },
-    { x: 587.2, y: 663.9 },
-    { x: 291.0, y: 879.9 },
-    { x: 536.0, y: 869.7 },
-  ],
+  5: SHARE_SPLITTER_TABLE_PLATE_POSITIONS,
 };
 
 const createEmptyPlates = (plateCount: number) => Array.from({ length: plateCount }, () => [] as string[]);
@@ -757,7 +769,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                           <div
                             key={plate.id}
                             data-testid={`share-splitter-plate-${index + 1}`}
-                            className="pointer-events-none absolute relative flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-transparent bg-transparent p-1.5 text-center transition"
+                            className="pointer-events-none absolute relative flex -translate-x-1/2 -translate-y-1/2 items-center justify-center p-1.5 text-center transition"
                             style={{
                               left: `${center.x}px`,
                               top: `${center.y}px`,
@@ -765,7 +777,12 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                               height: `${plateSizePx}px`,
                             }}
                           >
-                            <div className="pointer-events-none absolute inset-0 rounded-full bg-cyan-200/18 ring-4 ring-cyan-50/45 shadow-[0_0_0_1px_rgba(255,255,255,0.14),0_0_28px_rgba(34,211,238,0.24)]" />
+                            <img
+                              src={shareSplitterPlate}
+                              alt=""
+                              draggable={false}
+                              className="pointer-events-none absolute inset-0 h-full w-full object-contain drop-shadow-[0_12px_18px_rgba(0,0,0,0.22)]"
+                            />
                             <div className="pointer-events-none absolute inset-0">
                               {plates[index].map((sliceId, sliceIndex) => {
                                 const placement = getPlateSlicePlacement(sliceIndex);
