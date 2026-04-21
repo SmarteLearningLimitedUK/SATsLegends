@@ -696,6 +696,38 @@ button:disabled {
   overflow: hidden;
 }
 
+.app-viewport.screen-gameplay {
+  position: relative;
+  isolation: isolate;
+}
+
+.app-viewport.screen-gameplay::before,
+.app-viewport.screen-gameplay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app-viewport.screen-gameplay::before {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(125, 211, 252, 0.18), transparent 18%),
+    radial-gradient(circle at 82% 22%, rgba(251, 191, 36, 0.14), transparent 16%),
+    radial-gradient(circle at 52% 78%, rgba(167, 139, 250, 0.12), transparent 20%);
+  opacity: 0.55;
+  animation: game-ambient-drift 16s ease-in-out infinite alternate;
+  mix-blend-mode: screen;
+}
+
+.app-viewport.screen-gameplay::after {
+  background:
+    linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.045) 48%, rgba(255,255,255,0) 100%);
+  opacity: 0.45;
+  transform: translateX(-16%);
+  animation: game-ambient-sheen 12s linear infinite;
+}
+
 /* Global minigame HUD/dock is rendered by App.tsx.
    Suppress per-game local HUD and dock clones inside gameplay hosts to avoid overlap. */
 .unified-minigame-hud-enabled .game-shell-zone-hud,
@@ -5210,6 +5242,27 @@ button.avatar-hero-arrow:not(:disabled):active {
   }
 }
 
+@keyframes game-ambient-drift {
+  0% {
+    transform: translate3d(-1.5%, 0.5%, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(1.5%, -0.8%, 0) scale(1.025);
+  }
+  100% {
+    transform: translate3d(-0.6%, 1.1%, 0) scale(1.01);
+  }
+}
+
+@keyframes game-ambient-sheen {
+  0% {
+    transform: translateX(-18%);
+  }
+  100% {
+    transform: translateX(18%);
+  }
+}
+
 /* ============================================================
    Unified Blue/Gold Theme Lock
    Ensures all screens/minigames inherit one consistent palette.
@@ -5352,6 +5405,10 @@ button.avatar-hero-arrow:not(:disabled):active {
 }
 
 .game-question-card {
+  position: fixed;
+  top: calc(env(safe-area-inset-top) + 4px);
+  left: 0;
+  right: 0;
   /* Match the blue translucent question banner used in Number Line Ninja + Place Value Panic. */
   border: 1px solid rgba(96, 165, 250, 0.4);
   border-radius: 1.05rem;
@@ -5361,7 +5418,6 @@ button.avatar-hero-arrow:not(:disabled):active {
   width: var(--question-card-width, min(100%, 780px));
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: auto;
   padding: var(--question-card-padding, 10px 12px);
   text-align: center;
   font-size: clamp(0.98rem, 3.55vw, 1.18rem);
@@ -5369,6 +5425,15 @@ button.avatar-hero-arrow:not(:disabled):active {
   line-height: 1.12;
   transform: scale(var(--question-card-scale, 1));
   transform-origin: top center;
+  z-index: 60;
+}
+
+.game-question-card.game-question-card--dock-bottom {
+  position: static;
+  top: auto;
+  left: auto;
+  right: auto;
+  margin-bottom: 0;
 }
 
 .game-question-card .question-title {

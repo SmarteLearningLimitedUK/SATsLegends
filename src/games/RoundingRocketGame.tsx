@@ -345,7 +345,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Rounding Rocket"
-        body="The Monster Minds have disrupted the launch system.\nRound each number to the correct place value.\nCheck the digit before you decide."
+        body="The Monster Minds have disrupted the launch system.\nChoose the rounded answer that matches the target.\nCheck the digit after the place value before you launch."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />

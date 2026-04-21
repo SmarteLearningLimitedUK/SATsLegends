@@ -568,7 +568,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
         <div className="mx-4 mt-4 rounded-3xl border border-blue-400/40 bg-blue-950/70 p-4 shadow-xl">
           <div className="my-3 h-px w-full bg-white/10" />
-          <GameQuestionCard title="Mission" style={{ ['--question-card-width' as any]: '100%' }}>
+          <GameQuestionCard title="Mission" className="game-question-card--dock-bottom" style={{ ['--question-card-width' as any]: '100%' }}>
             {question.prompt}
           </GameQuestionCard>
           <div
