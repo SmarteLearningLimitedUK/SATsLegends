@@ -373,6 +373,20 @@ const drawImageSlice = (
   ctx.restore();
 };
 
+const drawSpriteSlice = (
+  ctx: CanvasRenderingContext2D,
+  image: HTMLImageElement,
+  source: { x: number; y: number; w: number; h: number },
+  target: { x: number; y: number; w: number; h: number },
+  opacity = 1,
+) => {
+  if (!image.complete) return;
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  ctx.drawImage(image, source.x, source.y, source.w, source.h, target.x, target.y, target.w, target.h);
+  ctx.restore();
+};
+
 const drawRoundedRectPath = (
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -671,6 +685,9 @@ const drawLevelDressing = (
   ctx: CanvasRenderingContext2D,
   parallax: HTMLImageElement | null,
   grounds: HTMLImageElement | null,
+  blocks: HTMLImageElement | null,
+  props1: HTMLImageElement | null,
+  props2: HTMLImageElement | null,
   width: number,
   height: number,
   cameraX: number,
@@ -701,8 +718,8 @@ const drawLevelDressing = (
   if (grounds?.complete) {
     const gw = grounds.naturalWidth || grounds.width;
     const gh = grounds.naturalHeight || grounds.height;
-    const dirtSliceY = gh * 0.17;
-    const dirtSliceH = gh * 0.2;
+    const dirtSliceY = gh * 0.22;
+    const dirtSliceH = gh * 0.18;
     const grassSliceY = 0;
     const grassSliceH = gh * 0.12;
     const baseY = height * 0.77;
@@ -711,9 +728,79 @@ const drawLevelDressing = (
     ctx.save();
     for (let i = -1; i <= 2; i += 1) {
       const dx = (i * width * 0.52) - groundDrift;
-      drawImageSlice(ctx, grounds, 0, grassSliceY, gw, grassSliceH, dx, baseY - height * 0.03, width * 0.56, height * 0.08, 0.92);
-      drawImageSlice(ctx, grounds, 0, dirtSliceY, gw, dirtSliceH, dx, baseY + height * 0.01, width * 0.56, height * 0.14, 0.92);
+      drawImageSlice(ctx, grounds, 0, grassSliceY, gw, grassSliceH, dx, baseY - height * 0.03, width * 0.56, height * 0.08, 0.96);
+      drawImageSlice(ctx, grounds, 0, dirtSliceY, gw, dirtSliceH, dx, baseY + height * 0.01, width * 0.56, height * 0.14, 0.96);
     }
+    ctx.restore();
+  }
+
+  if (blocks?.complete || props1?.complete || props2?.complete) {
+    const blockW = blocks?.naturalWidth || blocks?.width || 0;
+    const blockH = blocks?.naturalHeight || blocks?.height || 0;
+    const props1W = props1?.naturalWidth || props1?.width || 0;
+    const props1H = props1?.naturalHeight || props1?.height || 0;
+    const props2W = props2?.naturalWidth || props2?.width || 0;
+    const props2H = props2?.naturalHeight || props2?.height || 0;
+    const stageY = height * 0.78;
+    const dr = (cameraX * 0.16) % width;
+
+    ctx.save();
+    ctx.globalAlpha = 0.95;
+
+    if (blocks?.complete && blockW && blockH) {
+      for (let i = -1; i <= 2; i += 1) {
+        const x = (i * width * 0.62) - dr;
+        drawSpriteSlice(
+          ctx,
+          blocks,
+          { x: 3140, y: 3090, w: 620, h: 240 },
+          { x, y: stageY - height * 0.02, w: width * 0.6, h: height * 0.1 },
+          0.85,
+        );
+        drawSpriteSlice(
+          ctx,
+          blocks,
+          { x: 3010, y: 3810, w: 760, h: 190 },
+          { x: x + width * 0.01, y: stageY + height * 0.04, w: width * 0.56, h: height * 0.06 },
+          0.9,
+        );
+      }
+    }
+
+    if (props1?.complete && props1W && props1H) {
+      drawSpriteSlice(
+        ctx,
+        props1,
+        { x: 510, y: 520, w: 250, h: 150 },
+        { x: width * 0.12 - dr * 0.4, y: height * 0.56, w: width * 0.24, h: height * 0.1 },
+        0.95,
+      );
+      drawSpriteSlice(
+        ctx,
+        props1,
+        { x: 0, y: 0, w: 260, h: 190 },
+        { x: width * 0.62 - dr * 0.2, y: height * 0.48, w: width * 0.16, h: height * 0.18 },
+        0.82,
+      );
+    }
+
+    if (props2?.complete && props2W && props2H) {
+      drawSpriteSlice(
+        ctx,
+        props2,
+        { x: 320, y: 470, w: 390, h: 210 },
+        { x: width * 0.74 - dr * 0.18, y: height * 0.57, w: width * 0.2, h: height * 0.08 },
+        0.92,
+      );
+      drawSpriteSlice(
+        ctx,
+        props2,
+        { x: 440, y: 690, w: 220, h: 140 },
+        { x: width * 0.39 - dr * 0.14, y: height * 0.52, w: width * 0.13, h: height * 0.08 },
+        0.9,
+      );
+    }
+
     ctx.restore();
   }
 
@@ -1136,6 +1223,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         ctx,
         angryParallaxRef.current,
         angryGroundsRef.current,
+        angryBlocksRef.current,
+        angryProps1Ref.current,
+        angryProps2Ref.current,
         viewWidth,
         viewHeight,
         camera.x,

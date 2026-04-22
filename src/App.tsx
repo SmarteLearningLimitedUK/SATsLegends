@@ -379,7 +379,6 @@ const App: React.FC = () => {
   ]);
 
   const handleGameOver = useCallback((XP: number) => {
-    playGameSound('fail');
     triggerHaptic('error');
     if (selectedLevel?.isPractice) {
       if (!selectedIsland || !selectedLevel) return;
