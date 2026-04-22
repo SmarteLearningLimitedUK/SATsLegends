@@ -4,6 +4,7 @@ import {
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
 import { triggerHaptic } from '../haptics';
+import { GAME_AUDIO_STORAGE_KEY } from '../gameHudEvents';
 import {
   FeedbackStrip,
   GameTopBar,
@@ -23,6 +24,12 @@ import angryBlocksSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-
 import angryProps1Src from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Buildings/props1.png';
 import angryProps2Src from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Buildings/props2.png';
 import angryLogoSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Menu/Angry_Birds_logos.png';
+import angleArenaLaunchSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/bird shot-a1.wav';
+import angleArenaHitSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/pig/piglette destroyed.wav';
+import angleArenaWoodSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/8d82b5_Angry_Birds_Wood_Damage_Sound_Effect.mp3';
+import angleArenaStartSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/Level/level start military a1.mp3';
+import angleArenaFailSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/Level/level failed piglets a1.mp3';
+import angleArenaCompleteSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/Level/level clear military 1.mp3';
 import { BOSS_ART_LIBRARY } from '../assets/bosses/library';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { angleToVector, clamp, degreesToRadians, distance, lerp, worldToScreen } from './angleArena/math';
@@ -51,6 +58,8 @@ type GameState =
   | 'gameOver';
 
 type ImpactResult = 'hit' | 'miss';
+
+type AngleArenaSfxKey = 'launch' | 'hit' | 'wood' | 'start' | 'fail' | 'complete';
 
 type ProjectileState = {
   x: number;
@@ -679,19 +688,20 @@ const drawLevelDressing = (
   if (parallax?.complete) {
     const pw = parallax.naturalWidth || parallax.width;
     const ph = parallax.naturalHeight || parallax.height;
-    const horizonH = ph * 0.54;
-    const grassBandY = ph * 0.58;
-    const grassBandH = ph * 0.25;
-    const drift = (cameraX * 0.04) % width;
+    const drift = (cameraX * 0.03) % width;
 
     ctx.save();
     for (let i = -1; i <= 1; i += 1) {
       const dx = (i * width) - drift;
-      drawImageSlice(ctx, parallax, 0, 0, pw, horizonH, dx, height * 0.18, width, height * 0.32, 0.82);
+      drawImageSlice(ctx, parallax, 0, 0, pw, ph * 0.46, dx, height * 0.14, width, height * 0.2, 0.72);
     }
     for (let i = -1; i <= 2; i += 1) {
-      const dx = (i * width * 0.62) - ((cameraX * 0.08) % (width * 0.62));
-      drawImageSlice(ctx, parallax, 0, grassBandY, pw, grassBandH, dx, height * 0.66, width * 0.58, height * 0.12, 0.9);
+      const dx = (i * width * 0.58) - ((cameraX * 0.06) % (width * 0.58));
+      drawImageSlice(ctx, parallax, 0, ph * 0.54, pw, ph * 0.18, dx, height * 0.62, width * 0.5, height * 0.08, 0.8);
+    }
+    for (let i = -1; i <= 2; i += 1) {
+      const dx = (i * width * 0.72) - ((cameraX * 0.09) % (width * 0.72));
+      drawImageSlice(ctx, parallax, 0, ph * 0.76, pw, ph * 0.12, dx, height * 0.72, width * 0.68, height * 0.06, 0.72);
     }
     ctx.restore();
   }
@@ -699,17 +709,18 @@ const drawLevelDressing = (
   if (grounds?.complete) {
     const gw = grounds.naturalWidth || grounds.width;
     const gh = grounds.naturalHeight || grounds.height;
-    const dirtSliceY = gh * 0.18;
-    const dirtSliceH = gh * 0.34;
-    const grassSliceH = gh * 0.18;
-    const baseY = height * 0.76;
-    const groundDrift = (cameraX * 0.18) % width;
+    const dirtSliceY = gh * 0.17;
+    const dirtSliceH = gh * 0.2;
+    const grassSliceY = 0;
+    const grassSliceH = gh * 0.12;
+    const baseY = height * 0.77;
+    const groundDrift = (cameraX * 0.12) % width;
 
     ctx.save();
     for (let i = -1; i <= 2; i += 1) {
-      const dx = (i * width * 0.5) - groundDrift;
-      drawImageSlice(ctx, grounds, 0, 0, gw, grassSliceH, dx, baseY - height * 0.06, width * 0.56, height * 0.12, 0.95);
-      drawImageSlice(ctx, grounds, gw * 0.5, dirtSliceY, gw * 0.5, dirtSliceH, dx, baseY, width * 0.56, height * 0.2, 0.98);
+      const dx = (i * width * 0.52) - groundDrift;
+      drawImageSlice(ctx, grounds, 0, grassSliceY, gw, grassSliceH, dx, baseY - height * 0.03, width * 0.56, height * 0.08, 0.92);
+      drawImageSlice(ctx, grounds, 0, dirtSliceY, gw, dirtSliceH, dx, baseY + height * 0.01, width * 0.56, height * 0.14, 0.92);
     }
     ctx.restore();
   }
@@ -763,6 +774,18 @@ const normalizeVector = (x: number, y: number) => {
   return { x: x / magnitude, y: y / magnitude };
 };
 
+const playAngleArenaSfx = (audioRefs: Partial<Record<AngleArenaSfxKey, HTMLAudioElement>>, key: AngleArenaSfxKey) => {
+  const audio = audioRefs[key];
+  if (!audio) return;
+  try {
+    if (localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return;
+    audio.currentTime = 0;
+    void audio.play();
+  } catch {
+    // Ignore autoplay failures; the level still works without SFX.
+  }
+};
+
 const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   levelId,
   useSharedTopHud: _useSharedTopHud = true,
@@ -798,6 +821,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const angryProps1Ref = useRef<HTMLImageElement | null>(null);
   const angryProps2Ref = useRef<HTMLImageElement | null>(null);
   const angryLogoRef = useRef<HTMLImageElement | null>(null);
+  const angleArenaSfxRef = useRef<Partial<Record<AngleArenaSfxKey, HTMLAudioElement>>>({});
 
   const [gameState, setGameState] = useState<GameState>('intro');
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -910,6 +934,25 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     loadTexture(angryLogoSrc, (img) => { angryLogoRef.current = img; });
   }, []);
 
+  useEffect(() => {
+    const isMuted = localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true';
+    const loadAudio = (key: AngleArenaSfxKey, src: string, volume = 0.8) => {
+      const audio = new Audio(src);
+      audio.preload = 'auto';
+      audio.volume = volume;
+      audio.muted = isMuted;
+      angleArenaSfxRef.current[key] = audio;
+    };
+
+    loadAudio('start', angleArenaStartSfxSrc, 0.7);
+    loadAudio('launch', angleArenaLaunchSfxSrc, 0.85);
+    loadAudio('wood', angleArenaWoodSfxSrc, 0.65);
+    loadAudio('hit', angleArenaHitSfxSrc, 0.8);
+    loadAudio('fail', angleArenaFailSfxSrc, 0.75);
+    loadAudio('complete', angleArenaCompleteSfxSrc, 0.75);
+    playAngleArenaSfx(angleArenaSfxRef.current, 'start');
+  }, []);
+
   const resetForNext = () => {
     setSelectedAnswer(null);
     selectedAnswerRef.current = null;
@@ -925,6 +968,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     const earnedStars = Math.min(3, Math.max(1, Math.floor(finalScore / 450)));
     setStars(earnedStars);
     setGameState('levelComplete');
+    playAngleArenaSfx(angleArenaSfxRef.current, 'complete');
     emitMiniGameSessionEvent(sessionEvents, 'game_complete', {
       score: finalScore,
       stars: earnedStars,
@@ -945,6 +989,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     }, 680);
 
     if (result === 'hit') {
+      playAngleArenaSfx(angleArenaSfxRef.current, 'hit');
+      playAngleArenaSfx(angleArenaSfxRef.current, 'wood');
       const nextScore = scoreRef.current + POINTS_PER_HIT;
       scoreRef.current = nextScore;
       setScore(nextScore);
@@ -961,6 +1007,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       if (!sessionState) {
         setLocalLives((prev) => Math.max(0, prev - 1));
       }
+      playAngleArenaSfx(angleArenaSfxRef.current, 'fail');
       setGameState('resolvedIncorrect');
     }
 
@@ -974,6 +1021,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     const resolvedAngle = Number.isFinite(angleDeg) ? (angleDeg as number) : desiredAngleRef.current;
     const speed = activeQuestion.launchSpeed || PROJECTILE_SPEED;
     projectileRef.current = buildProjectile(resolvedAngle, speed);
+    playAngleArenaSfx(angleArenaSfxRef.current, 'launch');
     cameraTargetRef.current = { x: 0, y: 0 };
     setGameState('projectileFlight');
   };
@@ -1150,8 +1198,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       const cannonTowerWidth = viewWidth * 0.17;
       const cannonTowerHeight = viewHeight * 0.24;
       const cannonTowerPos = {
-        x: originScreen.x - viewWidth * 0.02,
-        y: originScreen.y + viewHeight * 0.17,
+        x: originScreen.x,
+        y: originScreen.y + (cannonTowerHeight * 0.96),
       };
       if (blocks || props1 || props2) {
         ctx.save();
@@ -1178,7 +1226,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       }
 
       ctx.save();
-      ctx.translate(originScreen.x, originScreen.y + 6);
+      ctx.translate(originScreen.x, originScreen.y - (cannonTowerHeight * 0.08));
       drawCannonSprite(ctx, desiredAngleRef.current, cannonSpritesRef.current, Math.min(viewWidth, viewHeight) * 0.22);
       ctx.restore();
 
@@ -1186,30 +1234,38 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       if (projectile?.active) {
         ctx.translate(Math.sin(timestamp * 0.02) * 2, Math.cos(timestamp * 0.018) * 1.5);
       }
-      ctx.translate(enemyScreen.x, enemyScreen.y);
       const enemySize = Math.min(viewWidth, viewHeight) * 0.26;
-      const platform: EnemyPlatform = questionIndex % 2 === 0 ? 'podium' : 'cloud';
+      const enemyTowerWidth = enemySize * 0.7;
+      const enemyTowerHeight = enemySize * 0.8;
       if (blocks || props1 || props2) {
         ctx.save();
-        ctx.translate(0, enemySize * 0.16);
-        drawWoodenTower(ctx, blocks, props1, props2, enemySize * 0.7, enemySize * 0.8, 0.95);
+        ctx.translate(enemyScreen.x, enemyScreen.y + (enemyTowerHeight * 0.96));
+        drawWoodenTower(ctx, blocks, props1, props2, enemyTowerWidth, enemyTowerHeight, 0.95);
         ctx.restore();
       }
-      drawEnemyPlatform(ctx, platform, enemySize);
+      if (questionIndex % 2 === 1) {
+        ctx.save();
+        ctx.translate(enemyScreen.x, enemyScreen.y + enemySize * 0.08);
+        drawEnemyPlatform(ctx, 'cloud', enemySize);
+        ctx.restore();
+      }
 
       const enemies = enemySpritesRef.current;
       const enemyIndex = enemies.length ? (questionIndex % enemies.length) : 0;
       const enemy = enemies[enemyIndex];
       if (enemy) {
         ctx.save();
-        ctx.translate(0, -enemySize * 0.12);
+        ctx.translate(enemyScreen.x, enemyScreen.y - (enemyTowerHeight * 0.18));
         drawEnemyPortrait(ctx, enemy, enemySize);
         ctx.restore();
       } else {
+        ctx.save();
+        ctx.translate(enemyScreen.x, enemyScreen.y - (enemyTowerHeight * 0.18));
         ctx.fillStyle = 'rgba(250,204,21,0.85)';
         ctx.beginPath();
         ctx.arc(0, -enemySize * 0.1, enemySize * 0.12, 0, Math.PI * 2);
         ctx.fill();
+        ctx.restore();
       }
       ctx.restore();
 
