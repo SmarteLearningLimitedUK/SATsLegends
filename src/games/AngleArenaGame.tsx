@@ -666,6 +666,64 @@ const drawWoodenTower = (
   ctx.restore();
 };
 
+const drawLevelDressing = (
+  ctx: CanvasRenderingContext2D,
+  parallax: HTMLImageElement | null,
+  grounds: HTMLImageElement | null,
+  width: number,
+  height: number,
+  cameraX: number,
+  cameraY: number,
+  timestamp: number,
+) => {
+  if (parallax?.complete) {
+    const pw = parallax.naturalWidth || parallax.width;
+    const ph = parallax.naturalHeight || parallax.height;
+    const horizonH = ph * 0.54;
+    const grassBandY = ph * 0.58;
+    const grassBandH = ph * 0.25;
+    const drift = (cameraX * 0.04) % width;
+
+    ctx.save();
+    for (let i = -1; i <= 1; i += 1) {
+      const dx = (i * width) - drift;
+      drawImageSlice(ctx, parallax, 0, 0, pw, horizonH, dx, height * 0.18, width, height * 0.32, 0.82);
+    }
+    for (let i = -1; i <= 2; i += 1) {
+      const dx = (i * width * 0.62) - ((cameraX * 0.08) % (width * 0.62));
+      drawImageSlice(ctx, parallax, 0, grassBandY, pw, grassBandH, dx, height * 0.66, width * 0.58, height * 0.12, 0.9);
+    }
+    ctx.restore();
+  }
+
+  if (grounds?.complete) {
+    const gw = grounds.naturalWidth || grounds.width;
+    const gh = grounds.naturalHeight || grounds.height;
+    const dirtSliceY = gh * 0.18;
+    const dirtSliceH = gh * 0.34;
+    const grassSliceH = gh * 0.18;
+    const baseY = height * 0.76;
+    const groundDrift = (cameraX * 0.18) % width;
+
+    ctx.save();
+    for (let i = -1; i <= 2; i += 1) {
+      const dx = (i * width * 0.5) - groundDrift;
+      drawImageSlice(ctx, grounds, 0, 0, gw, grassSliceH, dx, baseY - height * 0.06, width * 0.56, height * 0.12, 0.95);
+      drawImageSlice(ctx, grounds, gw * 0.5, dirtSliceY, gw * 0.5, dirtSliceH, dx, baseY, width * 0.56, height * 0.2, 0.98);
+    }
+    ctx.restore();
+  }
+
+  ctx.save();
+  ctx.globalAlpha = 0.16;
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.beginPath();
+  ctx.ellipse(width * 0.18, height * 0.21 + Math.sin(timestamp * 0.00045) * 4, 84, 22, -0.2, 0, Math.PI * 2);
+  ctx.ellipse(width * 0.82, height * 0.18 + Math.cos(timestamp * 0.00038) * 3, 104, 26, 0.12, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+};
+
 const formatTime = (seconds: number) => {
   const clamped = Math.max(0, Math.floor(seconds));
   const mins = Math.floor(clamped / 60);
@@ -734,6 +792,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const cannonSpritesRef = useRef<CannonSprites>({});
   const enemySpritesRef = useRef<HTMLImageElement[]>([]);
   const angryBackgroundRef = useRef<HTMLImageElement | null>(null);
+  const angryParallaxRef = useRef<HTMLImageElement | null>(null);
+  const angryGroundsRef = useRef<HTMLImageElement | null>(null);
   const angryBlocksRef = useRef<HTMLImageElement | null>(null);
   const angryProps1Ref = useRef<HTMLImageElement | null>(null);
   const angryProps2Ref = useRef<HTMLImageElement | null>(null);
@@ -842,6 +902,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       return img;
     };
     loadTexture(angryBackgroundSrc, (img) => { angryBackgroundRef.current = img; });
+    loadTexture(angryParallaxSrc, (img) => { angryParallaxRef.current = img; });
+    loadTexture(angryGroundsSrc, (img) => { angryGroundsRef.current = img; });
     loadTexture(angryBlocksSrc, (img) => { angryBlocksRef.current = img; });
     loadTexture(angryProps1Src, (img) => { angryProps1Ref.current = img; });
     loadTexture(angryProps2Src, (img) => { angryProps2Ref.current = img; });
@@ -1030,10 +1092,20 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       } else {
         drawSkyBackground(ctx, viewWidth, viewHeight, timestamp, camera.x, camera.y, Boolean(projectile?.active));
       }
+      drawLevelDressing(
+        ctx,
+        angryParallaxRef.current,
+        angryGroundsRef.current,
+        viewWidth,
+        viewHeight,
+        camera.x,
+        camera.y,
+        timestamp,
+      );
 
       const logo = angryLogoRef.current;
       if (logo) {
-        drawContainImage(ctx, logo, viewWidth * 0.06, viewHeight * 0.05, viewWidth * 0.36, viewHeight * 0.11, 0.9);
+        drawContainImage(ctx, logo, viewWidth * 0.05, viewHeight * 0.04, viewWidth * 0.32, viewHeight * 0.1, 0.88);
       }
 
       const cannonAnchor = { x: viewWidth * CANNON_ANCHOR_X_RATIO, y: viewHeight * CANNON_ANCHOR_Y_RATIO };
@@ -1065,14 +1137,14 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       const props1 = angryProps1Ref.current;
       const props2 = angryProps2Ref.current;
       if (blocks) {
-        drawContainImage(ctx, blocks, viewWidth * 0.02, viewHeight * 0.62, viewWidth * 0.26, viewHeight * 0.22, 0.95);
-        drawContainImage(ctx, blocks, viewWidth * 0.70, viewHeight * 0.60, viewWidth * 0.24, viewHeight * 0.24, 0.9);
+        drawContainImage(ctx, blocks, viewWidth * 0.03, viewHeight * 0.61, viewWidth * 0.22, viewHeight * 0.22, 0.92);
+        drawContainImage(ctx, blocks, viewWidth * 0.68, viewHeight * 0.58, viewWidth * 0.26, viewHeight * 0.26, 0.88);
       }
       if (props1) {
-        drawContainImage(ctx, props1, viewWidth * 0.12, viewHeight * 0.68, viewWidth * 0.16, viewHeight * 0.12, 0.88);
+        drawContainImage(ctx, props1, viewWidth * 0.11, viewHeight * 0.67, viewWidth * 0.17, viewHeight * 0.12, 0.82);
       }
       if (props2) {
-        drawContainImage(ctx, props2, viewWidth * 0.80, viewHeight * 0.66, viewWidth * 0.14, viewHeight * 0.12, 0.88);
+        drawContainImage(ctx, props2, viewWidth * 0.79, viewHeight * 0.65, viewWidth * 0.15, viewHeight * 0.13, 0.82);
       }
 
       const cannonTowerWidth = viewWidth * 0.17;
