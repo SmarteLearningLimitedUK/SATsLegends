@@ -1,5 +1,6 @@
 ﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { TreePine } from 'lucide-react';
 import { GAME_META, GameRuleSet } from './gameMeta';
 import { getLevelGameTitle } from './utils/gameNames';
 import { GAME_HUD_RESTART_EVENT } from './gameHudEvents';
@@ -564,6 +565,13 @@ const App: React.FC = () => {
           bullets: [],
         };
       }
+      if (selectedLevel.blueprintKey === 'percent_power') {
+        return {
+          title: 'Percent Power',
+          summary: 'Practice finding parts of a whole and working backwards from a percentage clue. Use the hints to spot simple percentage facts before you answer.',
+          bullets: [],
+        };
+      }
       if (selectedLevel.blueprintKey === 'polygon_palace') {
         return {
           title: 'Polygon Palace',
@@ -630,7 +638,7 @@ const App: React.FC = () => {
       if (selectedLevel.blueprintKey === 'simplify_sprint') {
         return {
           title: 'Simplify Sprint',
-          summary: "The Monster Mind has encrypted the values to make them as large as possible. That makes it harder for our researchers to solve. Help the researchers by simplifying the fraction to its smallest form.",
+          summary: 'The Monster Mind has scrambled the fractions to make them look bigger than they are. Spot a common factor, reduce each fraction to its simplest form, and keep the sprint moving.',
           bullets: [],
         };
       }
@@ -1082,11 +1090,11 @@ const App: React.FC = () => {
               <button
                 type="button"
                 onClick={() => openWellbeingHub({ origin: 'world_map', islandId: selectedIsland?.id ?? null })}
-                className="flex h-[42px] w-full min-w-0 items-center justify-center gap-2 rounded-[0.85rem] border border-emerald-100/35 bg-[linear-gradient(180deg,rgba(18,78,58,0.92)_0%,rgba(9,44,32,0.95)_100%)] px-2 text-[9px] font-black uppercase tracking-[0.14em] text-emerald-50 shadow-[0_4px_0_rgba(6,95,70,0.65)] sm:px-3"
+                className={mapDockButtonClass}
                 aria-label="Open Calm Grove"
+                title="Open Calm Grove"
               >
-                <AssetIcon name="heart" className={mapDockIconClass} />
-                <span>Calm Grove</span>
+                <TreePine className={mapDockIconClass} />
               </button>
             </div>
           </div>

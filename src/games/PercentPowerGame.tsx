@@ -320,6 +320,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
 
   const timerProgress = Math.max(0, Math.min(1, timeLeft / Math.max(1, totalTime)));
   const coreFill = Math.max(0, Math.min(1, correctAnswers / Math.max(1, totalRounds)));
+  const corePulse = 1 + (coreFill * 0.12);
 
   return (
     <div className="relative h-full w-full overflow-hidden text-white">
@@ -332,7 +333,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title={gameTitle || 'Percent Power'}
-        body="Those pesky Moster Minds have disabled the power cells. Solve the percentage problem to restore the power"
+        body="The Monster Minds have disabled the power cells. Use percentage clues to find parts of a whole, or work backwards to rebuild the full amount."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
@@ -365,7 +366,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
           <div className="mt-2">
             <GameQuestionCard title="Percent Power" className="max-w-[44rem] backdrop-blur-sm">
               {question.prompt}
-              <span className="block text-xs font-semibold text-cyan-50/80 md:text-sm">{question.helper}</span>
+              <span className="block text-sm font-semibold text-cyan-50/80 md:text-base">{question.helper}</span>
             </GameQuestionCard>
           </div>
         </div>
@@ -373,15 +374,20 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
         <div className="relative mt-2 flex w-full max-w-[44rem] flex-1 min-h-0 flex-col items-center justify-center px-2 py-2">
           <div className="absolute left-1/2 top-[63%] h-[15rem] w-[15rem] -translate-x-1/2 -translate-y-1/2 md:h-[16rem] md:w-[16rem]">
               <motion.div
-                className="absolute left-1/2 top-1/2 rounded-full bg-[radial-gradient(circle,rgba(134,239,172,0.96),rgba(34,197,94,0.72)_60%,rgba(16,185,129,0.22)_100%)] shadow-[0_0_20px_rgba(34,197,94,0.55)]"
+                className="absolute left-1/2 top-1/2 rounded-full bg-[radial-gradient(circle,rgba(220,252,231,0.98),rgba(74,222,128,0.9)_56%,rgba(22,163,74,0.3)_100%)] shadow-[0_0_24px_rgba(34,197,94,0.58)]"
                 animate={{
                   x: '-50%',
                   y: 'calc(-50% + 40px)',
                   width: `${Math.max(30, coreFill * 58)}%`,
                   height: `${Math.max(30, coreFill * 58)}%`,
-                  scale: [1, 1.03, 1],
+                  scale: [1, corePulse, 1],
+                  boxShadow: [
+                    '0 0 18px rgba(34,197,94,0.42), 0 0 44px rgba(34,197,94,0.14)',
+                    '0 0 28px rgba(74,222,128,0.68), 0 0 68px rgba(34,197,94,0.34)',
+                    '0 0 18px rgba(34,197,94,0.42), 0 0 44px rgba(34,197,94,0.14)',
+                  ],
                 }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
+              transition={{ duration: 0.9, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror' }}
             />
           </div>
 
@@ -438,7 +444,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
                   }`}>
                     <Zap className={`h-3.5 w-3.5 ${index === 0 ? 'rotate-12' : index === 1 ? '-rotate-12' : index === 2 ? 'rotate-6' : '-rotate-6'}`} />
                   </div>
-                  <div className="flex-1 text-center text-[0.9rem] font-black leading-none text-white md:text-[1.08rem]">
+                  <div className="flex-1 text-center text-[1.05rem] font-black leading-none text-white md:text-[1.22rem]">
                     {option}
                   </div>
                 </div>

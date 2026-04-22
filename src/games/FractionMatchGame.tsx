@@ -38,7 +38,8 @@ interface GemCell {
 type BoardCell = GemCell | null;
 
 const GEM_TYPES: GemType[] = ['red', 'blue', 'green', 'yellow', 'purple'];
-const GRID_SIZE = 6;
+const GRID_COLS = 5;
+const GRID_ROWS = 10;
 const ROUND_SECONDS = 60;
 const BASE_TARGET_SCORE = 900;
 const TARGET_SCORE_STEP = 140;
@@ -88,14 +89,14 @@ const sleep = (ms: number) => new Promise<void>((resolve) => {
   window.setTimeout(resolve, ms);
 });
 
-const indexFor = (row: number, col: number) => (row * GRID_SIZE) + col;
+const indexFor = (row: number, col: number) => (row * GRID_COLS) + col;
 
 const findMatches = (board: BoardCell[]): number[] => {
   const matches = new Set<number>();
 
   // Horizontal scan.
-  for (let row = 0; row < GRID_SIZE; row += 1) {
-    for (let col = 0; col < GRID_SIZE - 2; col += 1) {
+  for (let row = 0; row < GRID_ROWS; row += 1) {
+    for (let col = 0; col < GRID_COLS - 2; col += 1) {
       const idx = indexFor(row, col);
       const cell = board[idx];
       if (!cell) continue;
@@ -108,8 +109,8 @@ const findMatches = (board: BoardCell[]): number[] => {
   }
 
   // Vertical scan.
-  for (let col = 0; col < GRID_SIZE; col += 1) {
-    for (let row = 0; row < GRID_SIZE - 2; row += 1) {
+  for (let col = 0; col < GRID_COLS; col += 1) {
+    for (let row = 0; row < GRID_ROWS - 2; row += 1) {
       const idx = indexFor(row, col);
       const cell = board[idx];
       if (!cell) continue;
@@ -155,10 +156,10 @@ const buildCell = (type: GemType, includeDecimals: boolean): GemCell => ({
 });
 
 const createInitialBoard = (includeDecimals: boolean): BoardCell[] => {
-  const board: BoardCell[] = Array.from({ length: GRID_SIZE * GRID_SIZE }, () => null);
+  const board: BoardCell[] = Array.from({ length: GRID_ROWS * GRID_COLS }, () => null);
 
-  for (let row = 0; row < GRID_SIZE; row += 1) {
-    for (let col = 0; col < GRID_SIZE; col += 1) {
+  for (let row = 0; row < GRID_ROWS; row += 1) {
+    for (let col = 0; col < GRID_COLS; col += 1) {
       const candidates = GEM_TYPES.filter((gemType) => !wouldCreateImmediateMatch(board, row, col, gemType));
       const chosenPool = candidates.length > 0 ? candidates : GEM_TYPES;
       const chosenType = chosenPool[Math.floor(Math.random() * chosenPool.length)];
@@ -170,10 +171,10 @@ const createInitialBoard = (includeDecimals: boolean): BoardCell[] => {
 };
 
 const isAdjacent = (first: number, second: number) => {
-  const rowA = Math.floor(first / GRID_SIZE);
-  const colA = first % GRID_SIZE;
-  const rowB = Math.floor(second / GRID_SIZE);
-  const colB = second % GRID_SIZE;
+  const rowA = Math.floor(first / GRID_COLS);
+  const colA = first % GRID_COLS;
+  const rowB = Math.floor(second / GRID_COLS);
+  const colB = second % GRID_COLS;
   return Math.abs(rowA - rowB) + Math.abs(colA - colB) === 1;
 };
 
@@ -213,7 +214,7 @@ const BevelledGem: React.FC<{
     >
       <div className="absolute left-0 top-0 h-full w-full bg-gradient-to-br from-white/36 via-transparent to-black/18" />
       <div className="absolute left-1.5 top-1.5 h-2 w-2 rounded-full bg-white/54 blur-[1px]" />
-      <span className="absolute inset-0 flex items-center justify-center px-0.5 text-center text-[11px] font-black leading-none text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] sm:text-xs">
+      <span className="absolute inset-0 flex items-center justify-center px-0.5 text-center text-[15px] font-black leading-none text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] sm:text-[16px]">
         {label}
       </span>
 
@@ -446,9 +447,9 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       const boardWidth = node.clientWidth;
       if (boardWidth <= 0) return;
 
-      const gapPx = 10; // sync with responsive gap-2 / gap-2.5
-      const rawSize = Math.floor((boardWidth - (gapPx * (GRID_SIZE - 1))) / GRID_SIZE);
-      const clampedSize = Math.max(42, Math.min(122, rawSize));
+      const gapPx = 12; // sync with responsive gap-2 / gap-3
+      const rawSize = Math.floor((boardWidth - (gapPx * (GRID_COLS - 1))) / GRID_COLS);
+      const clampedSize = Math.max(18, Math.min(58, rawSize));
 
       setGemSize((prev) => (prev === clampedSize ? prev : clampedSize));
     };
@@ -547,10 +548,10 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       if (endedRef.current) return;
 
       // Gravity.
-      for (let col = 0; col < GRID_SIZE; col += 1) {
-        let writeRow = GRID_SIZE - 1;
+      for (let col = 0; col < GRID_COLS; col += 1) {
+        let writeRow = GRID_ROWS - 1;
 
-        for (let row = GRID_SIZE - 1; row >= 0; row -= 1) {
+        for (let row = GRID_ROWS - 1; row >= 0; row -= 1) {
           const readIdx = indexFor(row, col);
           if (workingBoard[readIdx] === null) continue;
 
@@ -631,7 +632,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div className="relative box-border w-[min(94vw,94vh)] rounded-[2rem] border border-cyan-100/20 bg-[linear-gradient(180deg,rgba(4,16,44,0.9),rgba(3,10,28,0.96))] p-3 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-4">
+      <div className="relative box-border w-[min(88vw,27rem)] rounded-[2rem] border border-cyan-100/20 bg-[linear-gradient(180deg,rgba(4,16,44,0.9),rgba(3,10,28,0.96))] p-3 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-4">
         <div
           className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-[0.24]"
           style={{
@@ -646,12 +647,15 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
             boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.06), inset 0 0 30px rgba(0,0,0,0.45)',
           }}
         />
-        <div ref={boardGridRef} className="relative z-10 grid w-full grid-cols-6 gap-2 sm:gap-2.5">
+        <div
+          ref={boardGridRef}
+          className="relative z-10 grid w-full grid-cols-5"
+          style={{ gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: '3px' }}
+        >
           {board.map((cell, idx) => (
             <div
               key={idx}
-              className="relative flex items-center justify-center rounded-2xl border border-cyan-100/16 bg-[#020816]/50 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.35)]"
-              style={{ width: gemSize, height: gemSize }}
+              className="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-2xl border border-cyan-100/16 bg-[#020816]/50 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.35)]"
             >
               <AnimatePresence mode="popLayout">
                 {cell && (
@@ -659,7 +663,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
                     key={`${idx}-${cell.type}-${cell.label}`}
                     type={cell.type}
                     label={cell.label}
-                    size={Math.max(34, gemSize - 8)}
+                    size={Math.max(16, Math.min(gemSize - 2, 69))}
                     isSelected={selectedIdx === idx}
                     onClick={() => {
                       void handleGemClick(idx);

@@ -16,6 +16,8 @@ import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import cannonFacingLeftSrc from '../assets/angle_arena/cannonanglearena/1.png';
 import cannonFacingRightSrc from '../assets/angle_arena/cannonanglearena/2.png';
 import cannonFacingUpSrc from '../assets/angle_arena/cannonanglearena/3.png';
+import angryGroundSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Background/INGAME_GROUNDS_1.png';
+import angryParallaxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Background/INGAME_PARALLAX_1.png';
 import { BOSS_ART_LIBRARY } from '../assets/bosses/library';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { angleToVector, clamp, degreesToRadians, distance, lerp, worldToScreen } from './angleArena/math';
@@ -90,6 +92,86 @@ const ANGLE_CLOUDS: CloudLayer[] = [
   { x: 940, y: 0.14, scale: 1.05, speed: 0.31, alpha: 0.58 },
   { x: 1180, y: 0.21, scale: 1.34, speed: 0.18, alpha: 0.66 },
 ];
+
+type LoadedTexture = HTMLImageElement;
+
+const makeImage = (src: string) => {
+  const img = new Image();
+  img.decoding = 'async';
+  img.src = src;
+  return img;
+};
+
+const drawTiledImage = (
+  ctx: CanvasRenderingContext2D,
+  image: LoadedTexture,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  opacity = 1,
+) => {
+  const iw = image.naturalWidth || image.width;
+  const ih = image.naturalHeight || image.height;
+  if (!iw || !ih) return;
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  for (let px = x; px < x + width; px += iw) {
+    for (let py = y; py < y + height; py += ih) {
+      ctx.drawImage(image, px, py, iw, ih);
+    }
+  }
+  ctx.restore();
+};
+
+const drawAngryBirdProjectile = (ctx: CanvasRenderingContext2D, radius: number, pulse = 0) => {
+  ctx.save();
+  const glow = ctx.createRadialGradient(0, -radius * 0.15, radius * 0.08, 0, 0, radius * 1.9);
+  glow.addColorStop(0, 'rgba(255,255,255,0.95)');
+  glow.addColorStop(0.45, 'rgba(248,113,113,0.96)');
+  glow.addColorStop(1, 'rgba(127,29,29,0)');
+  ctx.fillStyle = glow;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius * 1.9, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#d91f26';
+  ctx.beginPath();
+  ctx.arc(0, 0, radius, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(255,255,255,0.12)';
+  ctx.beginPath();
+  ctx.arc(-radius * 0.3, -radius * 0.28, radius * 0.42, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#ffd12e';
+  ctx.beginPath();
+  ctx.moveTo(radius * 0.9, -radius * 0.08);
+  ctx.lineTo(radius * 1.5, 0);
+  ctx.lineTo(radius * 0.92, radius * 0.18);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = '#111827';
+  ctx.beginPath();
+  ctx.arc(radius * 0.08, -radius * 0.22, radius * 0.11, 0, Math.PI * 2);
+  ctx.arc(radius * 0.36, -radius * 0.22, radius * 0.11, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.strokeStyle = '#1f2937';
+  ctx.lineWidth = Math.max(1.5, radius * 0.08);
+  ctx.beginPath();
+  ctx.arc(-radius * 0.1, radius * 0.22, radius * 0.42, Math.PI * 0.06, Math.PI * 0.94);
+  ctx.stroke();
+
+  ctx.globalAlpha = 0.45 + pulse * 0.2;
+  ctx.fillStyle = '#86efac';
+  ctx.beginPath();
+  ctx.arc(0, 0, radius * 1.12, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+};
 
 const drawCloud = (
   ctx: CanvasRenderingContext2D,
@@ -549,6 +631,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const aimTimeoutRef = useRef<number | null>(null);
   const cannonSpritesRef = useRef<CannonSprites>({});
   const enemySpritesRef = useRef<HTMLImageElement[]>([]);
+  const parallaxTextureRef = useRef<HTMLImageElement | null>(null);
+  const groundTextureRef = useRef<HTMLImageElement | null>(null);
 
   const [gameState, setGameState] = useState<GameState>('intro');
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -642,6 +726,17 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         enemySpritesRef.current = next;
       };
     });
+  }, []);
+
+  useEffect(() => {
+    const parallax = makeImage(angryParallaxSrc);
+    const ground = makeImage(angryGroundSrc);
+    parallax.onload = () => {
+      parallaxTextureRef.current = parallax;
+    };
+    ground.onload = () => {
+      groundTextureRef.current = ground;
+    };
   }, []);
 
   const resetForNext = () => {
@@ -823,6 +918,13 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.clearRect(0, 0, viewWidth, viewHeight);
       drawSkyBackground(ctx, viewWidth, viewHeight, timestamp, camera.x, camera.y, Boolean(projectile?.active));
 
+      const parallaxTexture = parallaxTextureRef.current;
+      if (parallaxTexture) {
+        const px = -((camera.x * 0.18) % Math.max(1, parallaxTexture.naturalWidth * 1.4));
+        const py = viewHeight * 0.05 - (camera.y * 0.05);
+        drawTiledImage(ctx, parallaxTexture, px, py, viewWidth + parallaxTexture.naturalWidth * 2, viewHeight * 0.64, 0.34);
+      }
+
       const cannonAnchor = { x: viewWidth * CANNON_ANCHOR_X_RATIO, y: viewHeight * CANNON_ANCHOR_Y_RATIO };
       const screenOffset = { x: cannonAnchor.x - viewWidth / 2, y: cannonAnchor.y - viewHeight / 2 };
       const toScreen = (x: number, y: number) => {
@@ -870,6 +972,20 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         ctx.stroke();
       }
       ctx.restore();
+
+      const groundTexture = groundTextureRef.current;
+      if (groundTexture) {
+        const tileW = groundTexture.naturalWidth || 1;
+        const tileH = groundTexture.naturalHeight || 1;
+        const groundBaseY = viewHeight * 0.82;
+        const groundOffset = -((camera.x * 0.4) % tileW);
+        ctx.save();
+        ctx.globalAlpha = 0.75;
+        for (let x = groundOffset - tileW; x < viewWidth + tileW; x += tileW) {
+          ctx.drawImage(groundTexture, x, groundBaseY, tileW, Math.max(tileH * 0.55, viewHeight * 0.18));
+        }
+        ctx.restore();
+      }
 
       if ((gameState === 'aiming' || gameState === 'awaitingAnswer') && selectedAnswerRef.current !== null) {
         const aimingAngle = selectedAnswerRef.current ?? desiredAngleRef.current;
@@ -921,17 +1037,18 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       if (projectile) {
         projectile.trail.forEach((point) => {
           const trailScreen = toScreen(point.x, point.y);
-          ctx.fillStyle = `rgba(125,211,252,${0.35 * point.alpha})`;
+          ctx.fillStyle = `rgba(248,113,113,${0.34 * point.alpha})`;
           ctx.beginPath();
-          ctx.arc(trailScreen.x, trailScreen.y, 6 * point.alpha, 0, Math.PI * 2);
+          ctx.arc(trailScreen.x, trailScreen.y, 5.5 * point.alpha, 0, Math.PI * 2);
           ctx.fill();
         });
 
         const projectileScreen = toScreen(projectile.x, projectile.y);
-        ctx.fillStyle = '#f8fafc';
-        ctx.beginPath();
-        ctx.arc(projectileScreen.x, projectileScreen.y, PROJECTILE_RADIUS, 0, Math.PI * 2);
-        ctx.fill();
+        const pulse = Math.sin(timestamp * 0.012) * 0.5 + 0.5;
+        ctx.save();
+        ctx.translate(projectileScreen.x, projectileScreen.y);
+        drawAngryBirdProjectile(ctx, PROJECTILE_RADIUS + 2, pulse);
+        ctx.restore();
       }
 
       if (impactResultRef.current === 'hit') {
@@ -1022,10 +1139,10 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
               <GameQuestionCard
                 title="Angle Arena"
-                subtitle="Choose the correct angle to clear the lookout."
+                subtitle="Pull back and launch the bird at the correct angle."
                 className="w-full"
               >
-                {activeQuestion?.prompt ?? 'Choose the correct angle to hit the Monster Mind.'}
+                {activeQuestion?.prompt ?? 'Choose the correct angle to launch the bird.'}
               </GameQuestionCard>
             </div>
           )}
@@ -1059,7 +1176,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
                 ) : null}
               </div>
               <FeedbackStrip className="w-full" tone={gameState === 'resolvedCorrect' ? 'success' : gameState === 'resolvedIncorrect' ? 'warning' : 'neutral'}>
-                {feedback || (selectedAnswer !== null ? `Angle ${selectedAnswer}° locked in.` : 'Choose an angle to strike the Monster Mind.')}
+                {feedback || (selectedAnswer !== null ? `Angle ${selectedAnswer}° locked in.` : 'Choose an angle to launch the bird.')}
               </FeedbackStrip>
               {gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? (
                 <div className="flex w-full items-center gap-2">
