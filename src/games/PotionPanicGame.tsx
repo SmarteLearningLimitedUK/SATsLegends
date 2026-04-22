@@ -18,7 +18,7 @@ import {
 } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import cauldrenAndPotionArt from '../assets/coul.png';
-import potionPanicBackdrop from '../assets/maps/backgroundsforgames/potionpanic.jpg';
+import potionPanicBackdrop from '../assets/maps/backgroundsforgames/tableshresplit.png';
 import azureBottle from '../assets/potion_bottles/azure.png';
 import mossBottle from '../assets/potion_bottles/moss.png';
 import nightBottle from '../assets/potion_bottles/night.png';
@@ -773,7 +773,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
   const roundsToWin = roundsToWinForLevel(levelId);
 
   return (
-    <GameUiShell backgroundImage={potionPanicBackdrop} backgroundOpacity={1} overlayDisabled>
+    <GameUiShell backgroundImage={potionPanicBackdrop} backgroundOpacity={1} backgroundPosition="center bottom" overlayDisabled>
       <GameScreenLayout
         className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-0 text-white"
         top={(

@@ -19,7 +19,7 @@ import orderOpsArenaBackground from './assets/maps/backgroundsforgames/orderopsa
 import percentPowerBackground from './assets/maps/backgroundsforgames/percent power.jpg';
 import placeValuePanicBackground from './assets/maps/backgroundsforgames/Place Value Panic.png';
 import polygonPalaceBackground from './assets/maps/backgroundsforgames/polygon palace.jpg';
-import potionPanicBackground from './assets/maps/backgroundsforgames/potionpanic.jpg';
+import potionPanicBackground from './assets/maps/backgroundsforgames/tableshresplit.png';
 import primePopBackground from './assets/maps/backgroundsforgames/primepopbkground.jpg';
 import problemPyramidBackground from './assets/maps/backgroundsforgames/problem pyramid.jpg';
 import rotationStationBackground from './assets/maps/backgroundsforgames/Rotation Reflection.jpg';

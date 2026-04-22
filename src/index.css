@@ -4485,7 +4485,7 @@ button.avatar-hero-arrow:not(:disabled):active {
 .pvp-bg-layer {
   background-repeat: no-repeat;
   background-position: center;
-  background-size: cover;
+  background-size: contain;
   transition: transform 0.28s ease-out;
 }
 

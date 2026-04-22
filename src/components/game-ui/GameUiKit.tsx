@@ -161,7 +161,7 @@ export const GameUiShell: React.FC<GameUiShellProps> = ({
       {backgroundImage ? (
         <div
           data-game-background-layer="true"
-          className="game-background-layer pointer-events-none absolute inset-0 bg-cover bg-center"
+          className="game-background-layer pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: `url(${backgroundImage})`,
             opacity: backgroundOpacity,

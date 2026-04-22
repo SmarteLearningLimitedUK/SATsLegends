@@ -662,7 +662,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
             </div>
           </motion.div>
 
-          <div className="relative mt-1 flex h-[30%] min-h-[200px] w-full max-w-[520px] shrink-0 translate-y-[40px] items-end justify-center">
+          <div className="relative mt-1 flex h-[30%] min-h-[200px] w-full max-w-[520px] shrink-0 translate-y-[10px] items-end justify-center">
             <div className="qa-enemy-cluster pointer-events-none relative mx-auto flex w-full max-w-[520px] flex-col items-center justify-end gap-3">
                 <div className="w-[132px] self-center translate-y-[150px] rounded-lg border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)] sm:w-[150px]">
                 <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
