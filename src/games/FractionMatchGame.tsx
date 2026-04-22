@@ -341,7 +341,7 @@ const MatchGameShell: React.FC<{
              </div>
            ) : null}
 
-           <div className={`relative z-10 flex h-full w-full items-center justify-center px-2 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] ${useSharedTopHud ? 'pt-28' : 'pt-2'} sm:px-4`}>
+           <div className={`relative z-10 flex h-full w-full items-start justify-center px-2 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+9.5rem)]' : 'pt-2'} sm:px-4`}>
              <AnimatePresence>
                {fireActive ? (
                  <motion.div
@@ -617,7 +617,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       completionProgress={completionProgress}
       timeLeft={timeLeft}
       levelName={levelName}
-      questionText="Match equivilent values."
+      questionText="Match equivalent values."
       fireActive={fireActive}
       firePulse={firePulse}
       variantGameType={variantGameType}
