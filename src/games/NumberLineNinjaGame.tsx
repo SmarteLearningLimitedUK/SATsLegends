@@ -579,7 +579,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
             animate={lineShake ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
             transition={{ duration: 0.34, ease: 'easeInOut' }}
             className="qa-number-line relative mt-0 flex h-[22%] min-h-[140px] w-full max-w-[680px] items-center justify-center"
-            style={{ marginTop: 35 }}
+            style={{ marginTop: 65 }}
           >
             <motion.div
               animate={{ opacity: [0.26, 0.54, 0.26], scale: [0.985, 1.025, 0.985] }}
@@ -662,7 +662,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
             </div>
           </motion.div>
 
-          <div className="relative mt-1 flex h-[30%] min-h-[200px] w-full max-w-[520px] shrink-0 translate-y-[40px] items-end justify-center">
+          <div className="relative mt-1 flex h-[30%] min-h-[200px] w-full max-w-[520px] shrink-0 translate-y-0 items-end justify-center">
             <div className="qa-enemy-cluster pointer-events-none relative mx-auto flex w-full max-w-[520px] flex-col items-center justify-end gap-3">
                 <div className="w-[132px] self-center translate-y-[150px] rounded-lg border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)] sm:w-[150px]">
                 <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
@@ -784,7 +784,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                 </AnimatePresence>
 
                 <motion.div
-                  className="relative w-[78%] max-w-[250px] translate-y-[152px] scale-[0.88] sm:w-full sm:max-w-[280px] sm:scale-100"
+                  className="relative w-[78%] max-w-[250px] translate-y-[112px] scale-[0.88] sm:w-full sm:max-w-[280px] sm:scale-100"
                   animate={{
                     y: [0, -5, 0],
                     x: monsterEffect === 'hit' ? [0, -9, 9, -8, 8, -5, 5, 0] : 0,
