@@ -1277,19 +1277,29 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={handleSubmit}
-          disabled={!canSubmit}
-          className="ui-button-primary absolute left-1/2 z-40 -translate-x-1/2 border-0 bg-transparent px-0 py-0 disabled:cursor-not-allowed disabled:opacity-60"
-          style={{ top: `${layout.submitY}%`, width: `${layout.submitWidth}%`, height: `${layout.submitHeight}%` }}
+        <div
+          className="game-submit-dock-fixed"
+          style={{
+            bottom: 'calc(env(safe-area-inset-bottom) + 1rem)',
+          }}
         >
-          <span
-            className="pointer-events-none absolute inset-x-[16%] top-1/2 -translate-y-1/2 text-center text-[clamp(0.82rem,2.2vw,1.06rem)] font-black uppercase tracking-[0.08em] text-[#16233d]"
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={!canSubmit}
+            className="ui-button-primary relative z-40 border-0 bg-transparent px-0 py-0 disabled:cursor-not-allowed disabled:opacity-60"
+            style={{
+              width: `${layout.submitWidth}%`,
+              height: `${layout.submitHeight}%`,
+            }}
           >
-            Submit
-          </span>
-        </button>
+            <span
+              className="pointer-events-none absolute inset-x-[16%] top-1/2 -translate-y-1/2 text-center text-[clamp(0.82rem,2.2vw,1.06rem)] font-black uppercase tracking-[0.08em] text-[#16233d]"
+            >
+              Submit
+            </span>
+          </button>
+        </div>
       </motion.div>
 
       {dragState ? (

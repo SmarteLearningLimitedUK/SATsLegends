@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Crown, Lock } from 'lucide-react';
 import AssetIcon from '../components/AssetIcon';
 import { IslandData, LevelData, PlayerData } from '../types';
 import { getLevelGameTitle, getLevelGroupKey } from '../utils/gameNames';
@@ -28,66 +27,15 @@ interface LevelRowState {
 interface GameGroupState {
   id: string;
   name: string;
-  summary: string;
   levels: LevelRowState[];
   totalStars: number;
   completedCount: number;
   hasNextPlayable: boolean;
 }
 
-const GAME_SUMMARY_BY_KEY: Record<string, string> = {
-  place_value_panic: 'Sort unstable number fragments into the correct place-value channels at speed.',
-  number_line_ninja: 'Move fast on the number line and land on exact targets with clean control.',
-  prime_pop: 'Pop prime-number targets and avoid composite traps as the pace increases.',
-  rounding_rocket: 'Route values into the right rounding gates under pressure.',
-  factor_frenzy: 'Identify factors and multiples in fast decision stages.',
-  take_out_rush: 'Build exact order totals by combining fraction portions in the tray.',
-  fraction_forge: 'Combine and refine fractions to hit exact forged targets.',
-  match3_equivalence: 'Chain equivalent fractions, decimals, and percentages to XP combos.',
-  percent_power: 'Solve percentage and reverse percentage challenges.',
-  simplify_sprint: 'Reduce fractions to simplest form in rapid Combo runs.',
-  multiplication_mine: 'Answer multiplication questions to shatter the mine rock and reveal hidden treasure.',
-  order_ops_arena: 'Resolve expressions in the correct order to avoid trap paths.',
-  formula_forge: 'Substitute into formulae and solve for missing values.',
-  remainder_run: 'Route values by quotient and remainder outcomes at speed.',
-  potion_panic: 'Brew spell potions by pouring exact ratios before the 90-second clock expires.',
-  ratio_recipes: 'Scale ingredient sets to match new serving targets precisely.',
-  share_splitter: 'Share cake slices between plates to match exact ratio targets before time runs out.',
-  maths_vs_zombies: 'Survive zombie waves by deploying defenders in the correct maths ratio.',
-  ratio_fractions: 'Turn ratios into fractions of the whole.',
-  scale_builder: 'Resize blueprint structures to exact scale factors in a precision architectural challenge.',
-  angle_arena: 'Calibrate launch angles precisely to hit targets.',
-  polygon_palace: 'Classify shapes quickly by key geometric properties.',
-  rotation_relay: 'Rotate, predict, and match orientation using 90, 180, and 270 degree turns.',
-  coordinates_quest: 'Plot and identify coordinates with speed and accuracy.',
-  coordinate_quest: 'Plot and identify coordinates with speed and accuracy.',
-  time_keeper_cove: 'Set clocks and solve elapsed-time dispatch challenges.',
-  conversion_canyon: 'Convert measurement units to unlock routes and systems.',
-  area_architect: 'Build and measure areas using unit squares.',
-  unit_mixer: 'Convert between mixed units across length, mass, and capacity.',
-  change_counter: 'Calculate the exact change needed after each purchase.',
-  reasoning_quest: 'Solve multi-step scenarios that combine key SATs skills.',
-  perimeter_path: 'Trace exact boundary lengths on irregular paths.',
-  graph_grabber: 'Extract exact values from graphs before they disappear.',
-  table_trouble: 'Read tables quickly and answer under time pressure.',
-  line_graph_lab: 'Interpret trends, intervals, and key points on line graphs.',
-  chart_challenge: 'Lock the median quickly from charted data sets.',
-  data_detective: 'Solve short data reasoning cases from displayed information.',
-  problem_pyramid: 'Climb linked reasoning steps where each answer affects the next.',
-  mixed_mastery: 'Rapidly switch across mixed SATs skills without losing flow.',
-  strategy_survival: 'Endure increasing mixed-problem waves with efficient decisions.',
-  timed_test_trials: 'Run timed SATs-style sets with game pacing.',
-  multi_step_marathon: 'Complete deep multi-step reasoning runs at mastery level.',
-};
-
 const TOKENS_PER_LEVEL = 3;
 
 const getGroupName = (level: LevelData) => getLevelGameTitle(level) || `Level ${level.id}`;
-
-const getGameSummary = (level: LevelData) => {
-  const key = level.gameType || level.miniGameKey || level.blueprintKey || '';
-  return GAME_SUMMARY_BY_KEY[key] || 'Take on this challenge to improve speed, accuracy, and confidence.';
-};
 
 const getLevelDisplayLabel = (level: LevelData, groupLevels: LevelRowState[]) => {
   if (level.isPractice) return 'Practice';
@@ -194,7 +142,6 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
         groups.set(key, {
           id: key,
           name: getGroupName(row.level),
-          summary: getGameSummary(row.level),
           levels: [],
           totalStars: 0,
           completedCount: 0,
@@ -366,11 +313,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
 
                   {isExpanded ? (
                     <div className="mt-3 rounded-xl border border-white/14 bg-slate-900/45 p-3">
-                      <p className="text-xs font-semibold leading-relaxed text-cyan-50/92 md:text-sm">
-                        {group.summary}
-                      </p>
-
-                      <div className="mt-3 flex flex-col gap-2">
+                      <div className="flex flex-col gap-2">
                         {group.levels.map((row) => {
                           const { level, stars, isCompleted, isUnlocked, isNextPlayable, lockReason } = row;
                           const levelLabel = getLevelDisplayLabel(level, group.levels);
@@ -386,29 +329,20 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                                   ? 'border-violet-200/60 bg-[linear-gradient(180deg,rgba(139,92,246,0.3),rgba(30,41,59,0.45))]'
                                   : 'border-cyan-200/55 bg-[linear-gradient(180deg,rgba(34,211,238,0.2),rgba(15,23,42,0.45))]';
 
-                          const statusText = isUnlocked ? 'Available' : 'Unavailable';
+                            return (
+                              <div
+                                key={`${group.id}-${level.id}`}
+                                className={`flex items-center gap-2 rounded-xl border px-2.5 py-2 transition ${rowStateClass}`}
+                              >
+                                <div className="w-[4.1rem] shrink-0 text-aaa-sm font-black text-cyan-100 md:w-[5rem]">
+                                  {levelLabel}
+                                </div>
+                                <div className="min-w-0 flex-1" />
 
-                          return (
-                            <div
-                              key={`${group.id}-${level.id}`}
-                              className={`flex items-center gap-2 rounded-xl border px-2.5 py-2 transition ${rowStateClass}`}
-                            >
-                              <div className="w-[4.1rem] shrink-0 text-aaa-sm font-black text-cyan-100 md:w-[5rem]">
-                                {levelLabel}
-                              </div>
-
-                              <div className="min-w-0 flex-1 text-[11px] font-semibold text-cyan-50/88 md:text-xs">
-                                <span className="inline-flex items-center gap-1">
-                                  {isBoss ? <Crown className="h-3.5 w-3.5 text-amber-200" /> : null}
-                                  {!isUnlocked ? <Lock className="h-3.5 w-3.5 text-slate-200/90" /> : null}
-                                  {statusText}
-                                </span>
-                              </div>
-
-                              <div className="flex items-center gap-0.5 md:gap-1">
-                                {[1, 2, 3].map((value) => (
-                                  <AssetIcon
-                                    key={`${level.id}-${value}`}
+                                <div className="flex items-center gap-0.5 md:gap-1">
+                                  {[1, 2, 3].map((value) => (
+                                    <AssetIcon
+                                      key={`${level.id}-${value}`}
                                     name="brainpowerToken"
                                     className={`h-4 w-4 md:h-5 md:w-5 ${value <= stars ? 'opacity-100' : 'opacity-35 grayscale saturate-0'}`}
                                   />
@@ -436,10 +370,10 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                                       : isBoss
                                         ? 'Boss'
                                         : 'Play'}
-                              </button>
-                            </div>
-                          );
-                        })}
+                                </button>
+                              </div>
+                            );
+                          })}
                       </div>
                     </div>
                   ) : null}

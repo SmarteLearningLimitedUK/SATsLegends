@@ -178,7 +178,7 @@ export const PuzzleStage = HeroPlayfieldCard;
  * Role: Answer cluster card (answer buttons / keypad / quick input)
  */
 export const AnswerClusterCard: React.FC<WrapperProps> = ({ children, className = '' }) => (
-  <div className={cn('game-shell-zone game-shell-zone-actions shrink-0', className)}>
+  <div className={cn('game-shell-zone game-shell-zone-actions mt-auto shrink-0 w-full', className)}>
     <div
       className={cn(
         'licensed-game-card-dark mission-panel-shell p-1.5 md:p-2',

@@ -58,6 +58,17 @@ const getLavaPathPosition = (stepIndex: number) => {
   return LAVA_PATH_STOPS[clampedIndex];
 };
 
+const buildLavaPathD = () => {
+  if (LAVA_PATH_STOPS.length === 0) return '';
+  const [first, ...rest] = LAVA_PATH_STOPS;
+  const segments = rest.map((point, index) => {
+    const previous = LAVA_PATH_STOPS[index];
+    const midX = (previous.x + point.x) / 2;
+    return `C ${midX} ${previous.y}, ${midX} ${point.y}, ${point.x} ${point.y}`;
+  });
+  return `M ${first.x} ${first.y} ${segments.join(' ')}`;
+};
+
 const fallbackQuestions: LavaPathQuestion[] = [
   {
     prompt: 'Convert 3.5 km to metres.',
@@ -268,6 +279,7 @@ const LavaPathGame: React.FC<LavaPathGameProps> = ({
 
   const currentStep = Math.min(correctCount, LAVA_PATH_STOPS.length - 1);
   const currentPosition = getLavaPathPosition(currentStep);
+  const safePathD = useMemo(() => buildLavaPathD(), []);
 
   return (
     <GameScreenShell className="overflow-hidden" backgroundImage={lavaPathBackground} backgroundOpacity={1}>
@@ -294,18 +306,55 @@ const LavaPathGame: React.FC<LavaPathGameProps> = ({
         </div>
 
         <div className="relative min-h-0 flex-1">
+          <svg
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-10 h-full w-full overflow-visible"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+          >
+            <defs>
+              <linearGradient id="lava-safe-path-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="rgba(255,255,255,0.55)" />
+                <stop offset="45%" stopColor="rgba(253,224,71,0.9)" />
+                <stop offset="100%" stopColor="rgba(34,197,94,0.95)" />
+              </linearGradient>
+            </defs>
+            <path
+              d={safePathD}
+              fill="none"
+              stroke="rgba(15,23,42,0.28)"
+              strokeWidth="3.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d={safePathD}
+              fill="none"
+              stroke="url(#lava-safe-path-gradient)"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeDasharray="0.8 1.2"
+              opacity="0.88"
+            />
+            {LAVA_PATH_STOPS.map((point, index) => (
+              <g key={`${point.x}-${point.y}-${index}`}>
+                <circle cx={point.x} cy={point.y} r="1.8" fill="rgba(253,230,138,0.92)" />
+                <circle cx={point.x} cy={point.y} r="3.3" fill="rgba(255,255,255,0.1)" />
+              </g>
+            ))}
+          </svg>
           <motion.div
-            key={currentStep}
             animate={{ left: `${currentPosition.x}%`, top: `${currentPosition.y}%` }}
-            transition={{ type: 'tween', duration: 0.42, ease: 'easeOut' }}
+            transition={{ type: 'spring', stiffness: 160, damping: 22, mass: 0.8 }}
             className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
           >
-            <div className="relative h-[clamp(3rem,6vw,4.8rem)] w-[clamp(3rem,6vw,4.8rem)]">
-              <div className="absolute inset-0 rounded-full bg-amber-300/16 blur-xl" />
+            <div className="relative h-[clamp(4.6rem,8.8vw,7.2rem)] w-[clamp(4.6rem,8.8vw,7.2rem)]">
+              <div className="absolute inset-[10%] rounded-full bg-amber-300/20 blur-2xl" />
               <img
                 src={playerAvatarImage}
                 alt={playerAvatar.name}
-                className="relative z-10 h-full w-full object-contain drop-shadow-[0_16px_22px_rgba(0,0,0,0.32)]"
+                className="relative z-10 h-full w-full scale-[1.16] object-contain drop-shadow-[0_18px_26px_rgba(0,0,0,0.36)]"
                 draggable={false}
               />
             </div>

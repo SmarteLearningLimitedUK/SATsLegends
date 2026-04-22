@@ -447,10 +447,10 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   change_counter: {
-    label: 'Change Counter',
+    label: 'Monster Market',
     focus: 'Money, totals, and giving change',
     rules: {
-      title: 'Change Counter',
+      title: 'Monster Market',
       summary: 'Work out the exact change after each purchase.',
       bullets: [
         'Subtract the cost from the amount paid.',

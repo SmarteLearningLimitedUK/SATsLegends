@@ -3071,6 +3071,30 @@ button:disabled {
   min-height: 0;
 }
 
+.answer-choice-surface {
+  margin-top: auto;
+}
+
+.game-submit-dock {
+  margin-top: auto;
+}
+
+.game-submit-dock-fixed {
+  position: fixed;
+  inset-inline: 0;
+  bottom: calc(env(safe-area-inset-bottom) + 0.9rem);
+  z-index: 40;
+  display: flex;
+  justify-content: center;
+  padding-inline: 0.75rem;
+  pointer-events: none;
+}
+
+.game-submit-dock-fixed > * {
+  pointer-events: auto;
+  width: 100%;
+}
+
 .game-screen-top {
   flex: 0 0 auto;
   min-height: clamp(3rem, 11vh, 6rem);

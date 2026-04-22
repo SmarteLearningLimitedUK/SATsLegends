@@ -7,6 +7,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { RotateCcw, Plus, Minus } from 'lucide-react';
 import missionBackground from '../assets/maps/backgroundsforgames/Chrono Dash Time Trial.jpg';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 
 interface ChronoDashGameProps {
   levelId: number;
@@ -29,11 +30,11 @@ const scoreToStars = (XP: number) => {
   return 1;
 };
 
-const ROMAN_NUMERALS = ['XII', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'];
+const CLOCK_NUMBERS = ['12', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
 
-const RomanNumeralFace: React.FC = () => (
+const ClockNumberFace: React.FC = () => (
   <div className="pointer-events-none absolute inset-0">
-    {ROMAN_NUMERALS.map((label, index) => {
+    {CLOCK_NUMBERS.map((label, index) => {
       const angle = ((index * 30) - 90) * (Math.PI / 180);
       const radius = 43;
       const x = 50 + (Math.cos(angle) * radius);
@@ -42,7 +43,7 @@ const RomanNumeralFace: React.FC = () => (
       return (
         <div
           key={label}
-          className="absolute -translate-x-1/2 -translate-y-1/2 text-[0.95rem] font-black tracking-[0.18em] text-orange-50 drop-shadow-[0_0_10px_rgba(255,180,64,0.45)] md:text-[1.08rem]"
+          className="absolute -translate-x-1/2 -translate-y-1/2 text-[0.92rem] font-black tracking-[0.16em] text-orange-50 drop-shadow-[0_0_10px_rgba(255,180,64,0.55)] md:text-[1.12rem]"
           style={{
             left: `${x}%`,
             top: `${y}%`,
@@ -178,8 +179,8 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({
     });
   };
 
-  const topPadding = 'pt-[calc(env(safe-area-inset-top)+0.35rem)]';
-  const showRomanNumerals = levelId >= 4;
+  const topPadding = 'pt-[calc(env(safe-area-inset-top)+0.9rem)]';
+  const showClockNumbers = true;
 
   return (
     <div className="relative h-full w-full overflow-hidden bg-[#0f172a] font-sans text-white select-none">
@@ -193,43 +194,51 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({
 
       <div className={`relative z-10 flex h-full min-h-0 w-full flex-col items-center ${topPadding} px-4 pb-[calc(env(safe-area-inset-bottom)+4.8rem)]`}>
         <div className="w-full max-w-md min-h-0">
-          <main className="flex w-full flex-col items-center gap-3">
+          <main className="flex w-full min-h-0 flex-1 flex-col items-center gap-3">
+            <GameQuestionCard
+              title="Chrono Dash"
+              subtitle="Match the target time and restore the lava clock."
+              className="relative z-20 mx-auto w-full max-w-[28rem]"
+              bodyClassName="text-[clamp(0.95rem,2.9vw,1.25rem)] font-black leading-snug tracking-[0.01em] text-white md:text-[1.35rem]"
+            >
+              The Monster Minds have disrupted the island timekeeper.
+            </GameQuestionCard>
+
             <motion.div
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              className="relative flex h-[4.2rem] w-full max-w-[16rem] items-center justify-center md:h-[4.8rem] md:max-w-[18rem]"
+              className="w-full max-w-[18rem]"
             >
-              <div className="absolute inset-0 overflow-hidden rounded-2xl border-4 border-[#334155] bg-[#1e293b] shadow-[0_0_30px_rgba(59,130,246,0.2)]">
-                <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent" />
-                <div className="absolute inset-0 m-1 rounded-xl border border-white/10" />
+              <div className="overflow-hidden rounded-2xl border-4 border-[#334155] bg-[#1e293b] px-4 py-3 shadow-[0_0_30px_rgba(59,130,246,0.2)]">
+                <div className="mb-1 text-center text-[10px] font-black uppercase tracking-[0.22em] text-blue-200/80">
+                  Target Time
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-4xl font-black tracking-tighter text-blue-400 drop-shadow-[0_0_10px_rgba(96,165,250,0.5)]">
+                    {targetTime.hours.toString().padStart(2, '0')}
+                  </span>
+                  <motion.span
+                    animate={{ opacity: [1, 0.3, 1] }}
+                    transition={{ repeat: Infinity, duration: 1 }}
+                    className="text-3xl font-black text-blue-400/50"
+                  >
+                    :
+                  </motion.span>
+                  <span className="text-4xl font-black tracking-tighter text-blue-400 drop-shadow-[0_0_10px_rgba(96,165,250,0.5)]">
+                    {targetTime.minutes.toString().padStart(2, '0')}
+                  </span>
+                </div>
               </div>
-
-              <div className="relative flex items-center gap-2">
-                <span className="text-4xl font-black tracking-tighter text-blue-400 drop-shadow-[0_0_10px_rgba(96,165,250,0.5)]">
-                  {targetTime.hours.toString().padStart(2, '0')}
-                </span>
-                <motion.span
-                  animate={{ opacity: [1, 0.3, 1] }}
-                  transition={{ repeat: Infinity, duration: 1 }}
-                  className="text-3xl font-black text-blue-400/50"
-                >
-                  :
-                </motion.span>
-                <span className="text-4xl font-black tracking-tighter text-blue-400 drop-shadow-[0_0_10px_rgba(96,165,250,0.5)]">
-                  {targetTime.minutes.toString().padStart(2, '0')}
-                </span>
-              </div>
-
               <p className="mx-auto mt-2 max-w-[16rem] text-center text-[11px] font-bold leading-tight text-orange-100/90 md:max-w-[18rem] md:text-[12px]">
-                The Monster Minds have disrupted the island timekeeper. Match the clock to restore the correct time.
+                Match the clock to restore the correct time.
               </p>
             </motion.div>
 
-            <div className="relative">
+            <div className="relative mt-1">
               <div className="relative flex h-[12rem] w-[12rem] items-center justify-center rounded-full md:h-[14.4rem] md:w-[14.4rem]">
                 <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,166,0,0.18),transparent_64%)] blur-[4px]" />
                 <LavaClockFace />
-                {showRomanNumerals && <RomanNumeralFace />}
+                {showClockNumbers && <ClockNumberFace />}
                 <div className="pointer-events-none absolute inset-[8%] rounded-full border border-orange-100/10 shadow-[inset_0_0_18px_rgba(255,255,255,0.05)]">
                   <div className="absolute inset-[6%] rounded-full border border-yellow-100/8" />
                 </div>
@@ -282,32 +291,35 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({
                 )}
               </AnimatePresence>
             </div>
-
-            <div className="flex w-full flex-col gap-3">
-              {gameState === 'playing' && (
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={checkTime}
-                  className="ui-button-primary w-full rounded-2xl py-2.5 text-base font-black md:py-3 md:text-lg"
-                >
-                  RESTORE TIME
-                </motion.button>
-              )}
-
-              <button
-                onClick={resetRun}
-                className="ui-button-secondary mt-2.5 flex min-h-[1.8rem] items-center justify-center gap-2 px-4 py-2 text-[10px] font-bold tracking-widest"
-              >
-                <RotateCcw size={14} /> RESET TIMEKEEPER
-              </button>
-            </div>
           </main>
         </div>
       </div>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.45rem,env(safe-area-inset-bottom))] z-40 flex justify-center">
-        <div className="pointer-events-auto">
+      <div className="pointer-events-none absolute inset-x-0 bottom-[max(0.45rem,env(safe-area-inset-bottom))] z-40 flex justify-center px-4">
+        <div className="pointer-events-auto w-full max-w-md rounded-[1.15rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(8,15,28,0.78),rgba(15,23,42,0.9))] p-2 shadow-[0_12px_24px_rgba(2,6,23,0.28)] backdrop-blur-sm">
+          <div className="grid grid-cols-2 gap-2">
+            {gameState === 'playing' ? (
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={checkTime}
+                className="ui-button-primary w-full rounded-2xl py-2.5 text-base font-black md:py-3 md:text-lg"
+              >
+                RESTORE TIME
+              </motion.button>
+            ) : (
+              <div className="ui-button-primary flex items-center justify-center rounded-2xl py-2.5 text-base font-black md:py-3 md:text-lg">
+                TIME RESTORED
+              </div>
+            )}
+
+            <button
+              onClick={resetRun}
+              className="ui-button-secondary flex min-h-[2.9rem] items-center justify-center gap-2 rounded-2xl px-4 py-2 text-[10px] font-bold tracking-widest"
+            >
+              <RotateCcw size={14} /> RESET TIMEKEEPER
+            </button>
+          </div>
         </div>
       </div>
     </div>
