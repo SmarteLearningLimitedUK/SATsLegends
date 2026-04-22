@@ -443,10 +443,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
   const playerLean = clamp((playerTargetRef.current - playerPosRef.current) * 0.9, -PLAYER_ROLL_MAX, PLAYER_ROLL_MAX);
 
   const playerStyle = {
-    transform: `translate3d(-50%, calc(-100% + ${playerBobOffset}px), 0) rotate(${playerLean}deg) scale(${PLAYER_KART_SCALE})`,
     transformOrigin: '50% 100%',
-    left: '50%',
-    bottom: PLAYER_KART_BOTTOM_PADDING,
   };
 
   const finishLineInView = finishLeft <= FINISH_SCREEN_THRESHOLD;
@@ -503,30 +500,39 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
               <span className="text-sm leading-none">→</span>
             </div>
 
-            <motion.div
+            <div
               className="absolute z-40 flex h-36 w-60 items-end justify-center overflow-visible sm:h-40 sm:w-68 md:h-48 md:w-80"
-              style={playerStyle}
-              animate={
-                showBoost
-                  ? { scale: [1, 1.1, 1], y: [0, -4, 0] }
-                  : showStall
-                    ? { x: [0, -4, 4, -3, 3, 0] }
-                    : { scale: 1 }
-              }
-              transition={{ duration: 0.35 }}
+              style={{
+                left: '50%',
+                bottom: PLAYER_KART_BOTTOM_PADDING,
+                transform: 'translateX(-50%)',
+              }}
             >
-              <img
-                src={playerKart}
-                alt="Player kart"
-                className="relative z-10 h-full w-full object-contain drop-shadow-[0_0_20px_rgba(56,189,248,0.72)]"
-                style={{
-                  imageRendering: 'auto',
-                  filter: 'saturate(1.08) contrast(1.03)',
-                  transform: 'translateZ(0)',
-                }}
-              />
-              <div className="pointer-events-none absolute inset-x-[10%] bottom-[8%] h-4 rounded-full bg-cyan-300/25 blur-[10px]" />
-            </motion.div>
+              <motion.div
+                className="relative flex h-full w-full items-end justify-center overflow-visible"
+                animate={
+                  showBoost
+                    ? { scale: [1, 1.1, 1], y: [playerBobOffset, playerBobOffset - 4, playerBobOffset], rotate: playerLean }
+                    : showStall
+                      ? { x: [0, -4, 4, -3, 3, 0], y: playerBobOffset, rotate: playerLean }
+                      : { scale: 1, y: playerBobOffset, rotate: playerLean }
+                }
+                transition={{ duration: 0.35 }}
+                style={playerStyle}
+              >
+                <img
+                  src={playerKart}
+                  alt="Player kart"
+                  className="relative z-10 h-full w-full object-contain drop-shadow-[0_0_20px_rgba(56,189,248,0.72)]"
+                  style={{
+                    imageRendering: 'auto',
+                    filter: 'saturate(1.08) contrast(1.03)',
+                    transform: 'translateZ(0)',
+                  }}
+                />
+                <div className="pointer-events-none absolute inset-x-[10%] bottom-[8%] h-4 rounded-full bg-cyan-300/25 blur-[10px]" />
+              </motion.div>
+            </div>
 
             {raceState === 'introCountdown' ? (
               <div className="absolute inset-0 flex items-center justify-center bg-slate-950/60 text-5xl font-black text-amber-100">

@@ -977,7 +977,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
               className="pointer-events-none fixed left-0 right-0 z-[60]"
               style={{ top: '6px' }}
             >
-              <GameQuestionCard title="Potion Panic" className="max-w-[680px]" bodyClassName="mt-0.5">
+              <GameQuestionCard className="mx-auto w-[min(100%-1rem,720px)]" bodyClassName="mt-0.5">
                 <div className="text-[clamp(0.95rem,3.4vw,1.18rem)] font-bold text-white">
                   {challenge.orderTitle}
                 </div>

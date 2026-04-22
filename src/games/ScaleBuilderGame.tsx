@@ -5,7 +5,7 @@ import { AVATARS } from '../constants';
 import { GameScreenShell } from '../layout/ScreenPrimitives';
 import labelGreenLongAsset from '../assets/licensed/slices/label_green_long.png';
 import scaleBuilderBackground from '../assets/maps/backgroundsforgames/scalebuilder-construction.png';
-import { IconButton, PrimaryButton } from '../components/game-ui/GameUiKit';
+import { GameQuestionCard, IconButton, PrimaryButton } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
@@ -361,16 +361,16 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
         </div>
       </div>
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-2 px-2 pb-1 pt-[calc(env(safe-area-inset-top)+0.95rem)] md:gap-3 md:px-3">
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-[10px] px-2 pb-1 pt-[calc(env(safe-area-inset-top)+0.95rem)] md:px-3">
         <div className="relative mx-auto flex h-full w-full max-w-[780px] min-h-0 flex-1 flex-col overflow-visible">
-          <div className="relative z-10 grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-3 p-0 md:gap-4 md:p-0">
-            <div className="game-question-card">
+          <div className="relative z-10 grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-[10px] p-0 md:p-0">
+            <GameQuestionCard className="w-full">
               <div className="game-question-copy mt-1 whitespace-pre-line text-[10px] font-black leading-snug text-white md:text-[11px]">
                 {instructionsText}
               </div>
-            </div>
+            </GameQuestionCard>
 
-            <div className="relative min-h-0 flex-1 overflow-visible">
+            <div className="relative min-h-0 flex-1 overflow-visible pt-[10px]">
               <div className="relative z-10 h-full w-full">
                 <div
                   className="absolute left-1/2 flex aspect-square -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-[0.9rem]"
@@ -413,7 +413,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
               </div>
             </div>
 
-            <div className="rounded-[1.1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(2,6,23,0.99),rgba(7,15,29,0.99))] p-2 shadow-[0_0_0_1px_rgba(15,23,42,0.6),0_18px_30px_rgba(2,6,23,0.46)]">
+            <div className="px-1 pb-0 pt-0">
               <div className="mb-2 flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/82">
                 <span>Rebuild the blueprint</span>
                 <button
