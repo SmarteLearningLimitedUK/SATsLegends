@@ -7,6 +7,7 @@ import { GameScreenShell } from '../layout/ScreenPrimitives';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 import coordinateQuestBackground from '../assets/maps/backgroundsforgames/coordinate quest.jpg';
+import coordinateQuestBoard from '../assets/coodinatequestt.jpg';
 
 interface TreasurePathGameProps {
   levelId: number;
@@ -265,7 +266,14 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
         </div>
 
         <div className="relative flex min-h-0 flex-1 items-center justify-center">
-          <div className="relative aspect-square w-[min(82vw,31rem)] rounded-[1.5rem] border border-cyan-100/26 bg-[linear-gradient(180deg,rgba(8,22,52,0.84),rgba(7,18,43,0.92))] p-3 shadow-[0_18px_36px_rgba(2,6,23,0.4)]">
+          <div className="relative aspect-square w-[min(82vw,31rem)] overflow-hidden rounded-[1.5rem] border border-cyan-100/26 shadow-[0_18px_36px_rgba(2,6,23,0.4)]">
+            <img
+              src={coordinateQuestBoard}
+              alt=""
+              aria-hidden="true"
+              draggable={false}
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+            />
             <div
               aria-hidden="true"
               className="pointer-events-none absolute inset-3 rounded-[1.2rem]"

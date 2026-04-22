@@ -615,7 +615,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
 
           <div className="h-2" />
 
-          <div className="flex flex-col gap-2">
+          <div className="answer-choice-surface mx-auto flex w-full max-w-[44rem] flex-col gap-2">
             <section className="rounded-[1.25rem] border border-black/25 bg-slate-950/65 p-2 -mt-6 shadow-[0_14px_26px_rgba(2,6,23,0.42)]">
               <div className="mt-1 grid grid-cols-5 items-center justify-center gap-2">
                 {availableItems.map((item) => {

@@ -473,20 +473,8 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
           className="pointer-events-none absolute inset-0 select-none bg-contain bg-bottom bg-no-repeat"
           style={{
             backgroundImage: `url(${ratioBackdrop})`,
+            backgroundSize: 'auto 108%',
             backgroundPosition: `${backgroundPositionX}% bottom`,
-          }}
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[1] opacity-70"
-          style={{
-            backgroundImage: `
-              linear-gradient(90deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.04) 50%, rgba(255,255,255,0.0) 100%),
-              repeating-linear-gradient(90deg, rgba(255,255,255,0.0) 0 42px, rgba(255,255,255,0.09) 42px 47px)
-            `,
-            backgroundSize: '180px 100%, 220px 100%',
-            backgroundPosition: `${-skyDriftX}px 0, ${-roadDriftX}px 0`,
-            mixBlendMode: 'screen',
           }}
         />
 

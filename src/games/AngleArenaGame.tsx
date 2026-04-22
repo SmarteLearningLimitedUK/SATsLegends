@@ -67,9 +67,9 @@ const CAMERA_LERP = 0.08;
 const RETURN_LERP = 0.12;
 const PROJECTILE_SPEED = 520;
 const MAX_FLIGHT_DISTANCE = 980;
-const CANNON_ANCHOR_X_RATIO = 0.5;
-const CANNON_ANCHOR_Y_RATIO = 0.5;
 const CAMERA_LEAD_DISTANCE = 340;
+const LAUNCHER_SCREEN_X_RATIO = 0.2;
+const LAUNCHER_SCREEN_Y_RATIO = 0.76;
 const ENEMY_FOREGROUND_LEAD = 110;
 const SKY_DRIFT_FACTOR = 0.14;
 const GROUND_DRIFT_FACTOR = 0.28;
@@ -416,23 +416,66 @@ const drawEnemyPlatform = (ctx: CanvasRenderingContext2D, platform: EnemyPlatfor
     return;
   }
 
+  drawWoodTower(ctx, sizePx);
+};
+
+const drawWoodTower = (ctx: CanvasRenderingContext2D, sizePx: number) => {
   ctx.save();
-  ctx.translate(0, sizePx * 0.36);
-  ctx.fillStyle = 'rgba(2,6,23,0.3)';
+  ctx.translate(0, sizePx * 0.24);
+
+  ctx.fillStyle = 'rgba(2,6,23,0.28)';
   ctx.beginPath();
-  ctx.ellipse(0, sizePx * 0.22, sizePx * 0.42, sizePx * 0.12, 0, 0, Math.PI * 2);
+  ctx.ellipse(0, sizePx * 0.23, sizePx * 0.43, sizePx * 0.11, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  const pedestalGradient = ctx.createLinearGradient(0, -sizePx * 0.35, 0, sizePx * 0.45);
-  pedestalGradient.addColorStop(0, 'rgba(148,163,184,0.55)');
-  pedestalGradient.addColorStop(0.55, 'rgba(71,85,105,0.72)');
-  pedestalGradient.addColorStop(1, 'rgba(15,23,42,0.9)');
-  ctx.fillStyle = pedestalGradient;
-  drawRoundedRectPath(ctx, -sizePx * 0.42, -sizePx * 0.18, sizePx * 0.84, sizePx * 0.34, sizePx * 0.14);
+  const woodTop = ctx.createLinearGradient(0, -sizePx * 0.28, 0, sizePx * 0.48);
+  woodTop.addColorStop(0, '#b66b24');
+  woodTop.addColorStop(0.28, '#8f4e19');
+  woodTop.addColorStop(0.58, '#6d3811');
+  woodTop.addColorStop(1, '#40210b');
+  ctx.fillStyle = woodTop;
+  drawRoundedRectPath(ctx, -sizePx * 0.44, -sizePx * 0.18, sizePx * 0.88, sizePx * 0.18, sizePx * 0.08);
   ctx.fill();
 
-  ctx.fillStyle = 'rgba(255,255,255,0.16)';
-  drawRoundedRectPath(ctx, -sizePx * 0.38, -sizePx * 0.14, sizePx * 0.76, sizePx * 0.08, sizePx * 0.08);
+  const towerGradient = ctx.createLinearGradient(0, -sizePx * 0.08, 0, sizePx * 0.58);
+  towerGradient.addColorStop(0, '#c47a2c');
+  towerGradient.addColorStop(0.4, '#9c5b1b');
+  towerGradient.addColorStop(1, '#5b3010');
+  ctx.fillStyle = towerGradient;
+  drawRoundedRectPath(ctx, -sizePx * 0.26, -sizePx * 0.06, sizePx * 0.52, sizePx * 0.52, sizePx * 0.12);
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  drawRoundedRectPath(ctx, -sizePx * 0.21, -sizePx * 0.02, sizePx * 0.08, sizePx * 0.42, sizePx * 0.05);
+  drawRoundedRectPath(ctx, sizePx * 0.13, -sizePx * 0.02, sizePx * 0.08, sizePx * 0.42, sizePx * 0.05);
+  ctx.fill();
+
+  ctx.strokeStyle = 'rgba(255,226,170,0.26)';
+  ctx.lineWidth = Math.max(2, sizePx * 0.028);
+  for (let i = -1; i <= 2; i += 1) {
+    const y = -sizePx * 0.02 + (i * sizePx * 0.14);
+    ctx.beginPath();
+    ctx.moveTo(-sizePx * 0.22, y);
+    ctx.lineTo(sizePx * 0.22, y);
+    ctx.stroke();
+  }
+
+  ctx.strokeStyle = 'rgba(45,18,7,0.35)';
+  ctx.lineWidth = Math.max(2, sizePx * 0.024);
+  ctx.beginPath();
+  ctx.moveTo(-sizePx * 0.22, sizePx * 0.28);
+  ctx.lineTo(-sizePx * 0.08, sizePx * 0.05);
+  ctx.lineTo(sizePx * 0.08, sizePx * 0.05);
+  ctx.lineTo(sizePx * 0.22, sizePx * 0.28);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(-sizePx * 0.22, sizePx * 0.16);
+  ctx.lineTo(sizePx * 0.22, sizePx * 0.16);
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(255,255,255,0.12)';
+  drawRoundedRectPath(ctx, -sizePx * 0.44, sizePx * 0.28, sizePx * 0.88, sizePx * 0.16, sizePx * 0.08);
   ctx.fill();
   ctx.restore();
 };
@@ -559,6 +602,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const [localLives, setLocalLives] = useState(INITIAL_LIVES);
   const [localTimer, setLocalTimer] = useState(INITIAL_TIMER);
   const [stars, setStars] = useState(0);
+  const cameraHomeRef = useRef({ x: 0, y: 0 });
 
   const rawQuestions = useMemo(
     () => questionsProp || buildAngleQuestions({
@@ -651,8 +695,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     setFeedback('');
     impactResultRef.current = null;
     projectileRef.current = null;
-    cameraRef.current = { x: 0, y: 0 };
-    cameraTargetRef.current = { x: 0, y: 0 };
+    cameraRef.current = { ...cameraHomeRef.current };
+    cameraTargetRef.current = { ...cameraHomeRef.current };
     isFollowingProjectileRef.current = false;
     setGameState('awaitingAnswer');
   };
@@ -674,10 +718,13 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const handleResolve = (result: ImpactResult) => {
     if (impactResultRef.current) return;
     impactResultRef.current = result;
-    cameraTargetRef.current = impactPositionRef.current;
+    cameraTargetRef.current = {
+      x: impactPositionRef.current.x + cameraHomeRef.current.x,
+      y: impactPositionRef.current.y + cameraHomeRef.current.y,
+    };
     if (settleTimeoutRef.current) window.clearTimeout(settleTimeoutRef.current);
     settleTimeoutRef.current = window.setTimeout(() => {
-      cameraTargetRef.current = { x: 0, y: 0 };
+      cameraTargetRef.current = { ...cameraHomeRef.current };
       isFollowingProjectileRef.current = false;
     }, 680);
 
@@ -711,7 +758,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     const resolvedAngle = Number.isFinite(angleDeg) ? (angleDeg as number) : desiredAngleRef.current;
     const speed = activeQuestion.launchSpeed || PROJECTILE_SPEED;
     projectileRef.current = buildProjectile(resolvedAngle, speed);
-    cameraTargetRef.current = { x: 0, y: 0 };
+    cameraTargetRef.current = { ...cameraHomeRef.current };
     isFollowingProjectileRef.current = true;
     setGameState('projectileFlight');
   };
@@ -768,6 +815,14 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
       const viewWidth = canvas.width / window.devicePixelRatio;
       const viewHeight = canvas.height / window.devicePixelRatio;
+      const launcherAnchorScreen = {
+        x: viewWidth * LAUNCHER_SCREEN_X_RATIO,
+        y: viewHeight * LAUNCHER_SCREEN_Y_RATIO,
+      };
+      cameraHomeRef.current = {
+        x: (viewWidth / 2) - launcherAnchorScreen.x,
+        y: (viewHeight / 2) - launcherAnchorScreen.y,
+      };
 
       if (projectileRef.current?.active) {
         projectileRef.current = stepProjectile(projectileRef.current, delta);
@@ -800,12 +855,12 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       if (projectile?.active && isFollowingProjectileRef.current) {
         const travel = normalizeVector(projectile.vx, projectile.vy);
         cameraTargetRef.current = {
-          x: projectile.x - (travel.x * CAMERA_LEAD_DISTANCE),
-          y: projectile.y - (travel.y * CAMERA_LEAD_DISTANCE),
+          x: projectile.x - (travel.x * CAMERA_LEAD_DISTANCE) + cameraHomeRef.current.x,
+          y: projectile.y - (travel.y * CAMERA_LEAD_DISTANCE) + cameraHomeRef.current.y,
         };
       } else if (!projectile?.active && isFollowingProjectileRef.current) {
         isFollowingProjectileRef.current = false;
-        cameraTargetRef.current = { x: 0, y: 0 };
+        cameraTargetRef.current = { ...cameraHomeRef.current };
       }
 
       const camera = cameraRef.current;
@@ -830,14 +885,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.clearRect(0, 0, viewWidth, viewHeight);
       drawSkyBackground(ctx, viewWidth, viewHeight, timestamp, camera.x, camera.y, Boolean(projectile?.active));
 
-      const cannonAnchor = { x: viewWidth * CANNON_ANCHOR_X_RATIO, y: viewHeight * CANNON_ANCHOR_Y_RATIO };
-      const screenOffset = { x: cannonAnchor.x - viewWidth / 2, y: cannonAnchor.y - viewHeight / 2 };
-      const toScreen = (x: number, y: number) => {
-        const base = worldToScreen(x, y, camera.x, camera.y, viewWidth, viewHeight);
-        return { x: base.x + screenOffset.x, y: base.y + screenOffset.y };
-      };
+      const toScreen = (x: number, y: number) => worldToScreen(x, y, camera.x, camera.y, viewWidth, viewHeight);
 
-      const originScreen = cannonAnchor;
+      const originScreen = toScreen(0, 0);
       const travel = projectile?.active ? normalizeVector(projectile.vx, projectile.vy) : { x: 0, y: 0 };
       const enemyVisualWorld = projectile?.active
         ? {
@@ -896,7 +946,12 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       }
 
       ctx.save();
-      ctx.translate(originScreen.x, originScreen.y + 6);
+      ctx.translate(originScreen.x, originScreen.y + 10);
+      drawWoodTower(ctx, Math.min(viewWidth, viewHeight) * 0.28);
+      ctx.restore();
+
+      ctx.save();
+      ctx.translate(originScreen.x, originScreen.y + 4);
       drawCannonSprite(ctx, desiredAngleRef.current, cannonSpritesRef.current, Math.min(viewWidth, viewHeight) * 0.22);
       ctx.restore();
 

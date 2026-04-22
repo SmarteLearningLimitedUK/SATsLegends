@@ -86,7 +86,7 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
             <img
               src={resultBackground}
               alt=""
-              className="h-full w-full object-cover object-center"
+              className="h-full w-full object-contain object-center"
               draggable={false}
             />
             <div

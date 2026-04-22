@@ -577,8 +577,12 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
   return (
     <div
-      className="relative z-20 flex h-full min-h-0 w-full flex-col overflow-hidden bg-cover bg-center bg-no-repeat select-none"
-      style={{ backgroundImage: `url(${primePopBackground})` }}
+      className="relative z-20 flex h-full min-h-0 w-full flex-col overflow-hidden bg-no-repeat select-none"
+      style={{
+        backgroundImage: `url(${primePopBackground})`,
+        backgroundSize: '100% 100%',
+        backgroundPosition: 'center top',
+      }}
     >
       <PracticeIntroPopup
         open={showPracticeIntro}

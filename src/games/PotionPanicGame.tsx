@@ -806,7 +806,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
         <div className="relative min-h-0 overflow-visible bg-transparent">
           <div
             className="absolute inset-0"
-            style={{ transform: 'translateY(calc(var(--potion-cauldron-shift, 0px) + 40px))' }}
+            style={{ transform: 'translateY(calc(var(--potion-cauldron-shift, 0px) + 30px))' }}
           >
             <div className="pointer-events-none absolute left-1/2 top-[84%] z-0 h-14 w-[72%] -translate-x-1/2 rounded-full bg-black/55 blur-md" />
             <div className="pointer-events-none absolute left-1/2 top-[76%] z-10 h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
@@ -824,7 +824,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
               src={cauldrenAndPotionArt}
               alt=""
               aria-hidden="true"
-              className="pointer-events-none absolute left-1/2 bottom-[1%] z-30 h-[46%] max-w-none -translate-x-1/2 object-contain md:bottom-[0%]"
+              className="pointer-events-none absolute left-1/2 bottom-[4%] z-30 h-[41.5%] max-w-none -translate-x-1/2 object-contain md:bottom-[3%]"
             />
             <div className="absolute left-1/2 bottom-[24%] z-20 h-[16%] w-[34%] -translate-x-1/2 translate-y-[5px] overflow-hidden rounded-[46%]">
               <motion.div
@@ -906,7 +906,22 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
           </AnimatePresence>
         </div>
 
-            <div className="shrink-0 mt-[34px] rounded-[1.1rem] border border-white/12 bg-black/38 px-2 py-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.2)]">
+          </div>
+        )}
+        bottom={(
+          <div className="flex flex-col gap-2">
+            <div className="min-h-[2.6rem]">
+              {hasBrewed ? (
+                <FeedbackStrip
+                  tone={feedback === 'success' ? 'success' : feedback === 'error' || overfilledTargets.length > 0 ? 'warning' : 'neutral'}
+                  className="mx-auto w-full max-w-[780px]"
+                >
+                  {feedbackMessage}
+                </FeedbackStrip>
+              ) : null}
+            </div>
+
+            <div className="mx-auto w-full max-w-[780px] rounded-[1.1rem] border border-white/12 bg-black/38 px-2 py-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.2)]">
               <div className={`grid ${ingredientGridClass} gap-1.5`}>
                 {activeTargets.map(({ ingredient, index, current, target }) => {
                   const isActive = activeSet.has(index);
@@ -920,10 +935,10 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                       onClick={() => addIngredient(index)}
                       disabled={locked || !isActive || isLockedIngredient}
                       aria-label={isActive ? `Add ${ingredient.name} to the potion` : `${ingredient.name} is not needed for this recipe`}
-                      className={`relative flex h-[clamp(70px,9.5vh,92px)] flex-col items-center justify-between rounded-[1.1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.35),rgba(15,23,42,0.6))] px-1 py-1 shadow-[0_10px_14px_rgba(2,6,23,0.24)] transition ${locked || !isActive || isLockedIngredient ? 'opacity-60 grayscale' : ''}`}
+                      className={`relative flex h-[clamp(68px,9.2vh,88px)] flex-col items-center justify-between rounded-[1.1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.35),rgba(15,23,42,0.6))] px-1 py-1 shadow-[0_10px_14px_rgba(2,6,23,0.24)] transition ${locked || !isActive || isLockedIngredient ? 'opacity-60 grayscale' : ''}`}
                       style={isActive && !isLockedIngredient ? { boxShadow: `0 12px 22px rgba(2,6,23,0.28), 0 0 18px ${ingredient.glow}` } : undefined}
                     >
-                      <div className="pointer-events-none flex h-[40px] w-full items-center justify-center">
+                      <div className="pointer-events-none flex h-[38px] w-full items-center justify-center">
                         {bottleArt ? (
                           <img
                             src={bottleArt}
@@ -945,22 +960,8 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                 })}
               </div>
             </div>
-          </div>
-        )}
-        bottom={(
-          <div className="flex flex-col gap-2">
-            <div className="min-h-[2.6rem]">
-              {hasBrewed ? (
-                <FeedbackStrip
-                  tone={feedback === 'success' ? 'success' : feedback === 'error' || overfilledTargets.length > 0 ? 'warning' : 'neutral'}
-                  className="mx-auto w-full max-w-[780px]"
-                >
-                  {feedbackMessage}
-                </FeedbackStrip>
-              ) : null}
-            </div>
 
-            <div className="mx-auto flex w-full max-w-[780px] items-center gap-2">
+            <div className="mx-auto flex w-full max-w-[780px] items-center gap-2 pb-[calc(env(safe-area-inset-bottom)+0.2rem)]">
               <PrimaryButton onClick={onBrew} disabled={locked} className="flex-1 potion-brew-button">
                 <Wand2 className="h-4.5 w-4.5" />
                 {isRecipeComplete ? 'Brew Potion' : 'Brew Potion'}

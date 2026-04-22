@@ -249,7 +249,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
         alt=""
         aria-hidden="true"
         draggable={false}
-        className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
+        className="pointer-events-none absolute inset-0 z-0 h-full w-full object-contain object-center"
       />
       <PracticeIntroPopup
         open={showPracticeIntro}

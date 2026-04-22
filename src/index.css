@@ -4912,7 +4912,7 @@ button.avatar-hero-arrow:not(:disabled):active {
   --shared-minigame-dock-height: 3.6rem;
   --shared-minigame-dock-gap: 0.5rem;
   --shared-minigame-dock-buffer: 0rem;
-  --shared-question-card-top-gap: 5px;
+  --shared-question-card-top-gap: 10px;
   --shared-minigame-reserved-bottom: calc(
     var(--shared-minigame-dock-height)
     + var(--shared-minigame-dock-gap)
@@ -4958,6 +4958,34 @@ button.avatar-hero-arrow:not(:disabled):active {
 
 .screen-gameplay .unified-minigame-hud-enabled .game-question-card {
   margin-top: 0 !important;
+}
+
+.screen-gameplay .unified-minigame-hud-enabled .answer-choice-surface,
+.screen-gameplay .unified-minigame-hud-enabled .game-screen-bottom,
+.screen-gameplay .unified-minigame-hud-enabled .game-shell-zone-actions,
+.screen-gameplay .unified-minigame-hud-enabled .shared-game-actions {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: calc(var(--shared-minigame-reserved-bottom) + max(0.5rem, env(safe-area-inset-bottom))) !important;
+  transform: translateX(-50%) !important;
+  width: min(calc(100vw - 1rem), 56rem) !important;
+  margin: 0 !important;
+  z-index: 55 !important;
+}
+
+.screen-gameplay .unified-minigame-hud-enabled .game-screen-bottom,
+.screen-gameplay .unified-minigame-hud-enabled .game-shell-zone-actions {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+
+.screen-gameplay .unified-minigame-hud-enabled .answer-choice-surface > *,
+.screen-gameplay .unified-minigame-hud-enabled .game-screen-bottom > *,
+.screen-gameplay .unified-minigame-hud-enabled .game-shell-zone-actions > *,
+.screen-gameplay .unified-minigame-hud-enabled .shared-game-actions > * {
+  width: 100%;
 }
 
 .screen-gameplay .unified-minigame-hud-enabled .structured-game-layout > * {

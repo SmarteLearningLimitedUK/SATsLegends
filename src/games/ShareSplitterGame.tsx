@@ -280,7 +280,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const isCompactViewport = viewportRect.width < 520;
   const plateLayoutScale = isCompactViewport ? 0.68 : 1;
   const cakeSourceLayoutScale = isCompactViewport ? 0.76 : 1;
-  const backgroundScale = Math.max(
+  const backgroundScale = Math.min(
     viewportRect.width / SHARE_SPLITTER_BACKGROUND_SIZE.width,
     viewportRect.height / SHARE_SPLITTER_BACKGROUND_SIZE.height,
   );

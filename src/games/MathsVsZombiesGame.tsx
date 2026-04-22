@@ -32,6 +32,7 @@ interface Zombie {
   frameIndex: number;
   frameTime: number;
   stateTime: number;
+  riseProgress: number;
 }
 
 interface Question {
@@ -47,8 +48,9 @@ const RIGHT_SPAWN_MIN_Y = 18;
 const RIGHT_SPAWN_MAX_Y = 62;
 const TARGET_Y = 78;
 const TARGET_X = 22;
-const ZOMBIE_SIZE = 52;
+const ZOMBIE_SIZE = 38;
 const ANIM_FPS = 8;
+const ZOMBIE_MOVE_MULTIPLIER = 0.1;
 
 const loadFrames = (record: Record<string, string>) => (
   Object.entries(record)
@@ -272,11 +274,12 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       y: startY,
       health: baseZombieHealth,
       maxHealth: baseZombieHealth,
-      speed: 0.12 + (levelId * 0.035),
+      speed: (0.12 + (levelId * 0.035)) * ZOMBIE_MOVE_MULTIPLIER,
       state: 'appear',
       frameIndex: 0,
       frameTime: 0,
       stateTime: 0,
+      riseProgress: 0,
     };
 
     const next = [...zombiesRef.current, zombie];
@@ -374,6 +377,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       let nextStateTime = zombie.stateTime + dt;
       let nextFrameTime = zombie.frameTime + dt;
       let nextFrameIndex = zombie.frameIndex;
+      let nextRiseProgress = zombie.riseProgress;
 
       const frames = FRAMES_BY_STATE[nextState] ?? zombieWalkFrames;
       const frameCount = frames.length || 1;
@@ -385,6 +389,9 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       if (nextState === 'appear' && nextStateTime >= stateDuration('appear')) {
         nextState = 'walk';
         nextStateTime = 0;
+        nextRiseProgress = 1;
+      } else if (nextState === 'appear') {
+        nextRiseProgress = Math.min(1, nextStateTime / stateDuration('appear'));
       }
 
       if (nextState === 'hit' && nextStateTime >= stateDuration('hit')) {
@@ -414,6 +421,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
         frameIndex: nextFrameIndex,
         frameTime: nextFrameTime,
         stateTime: nextStateTime,
+        riseProgress: nextRiseProgress,
       } as Zombie;
     }).filter(Boolean) as Zombie[];
 
@@ -511,24 +519,24 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           <TopBar XP={XP} brainPoints={zombiesDefeated} health={health} timer={timerLabel} onBack={onBack} />
         ) : null}
 
-        <div className={`mx-4 mt-3 flex-shrink-0 ${useSharedTopHud ? 'mt-1.5' : 'mt-3'}`}>
+        <div className={`mx-4 mt-2 flex-shrink-0 ${useSharedTopHud ? 'mt-1' : 'mt-2'}`}>
           <GameQuestionCard className="mx-auto w-full max-w-[54rem]">
             {question.prompt}
           </GameQuestionCard>
         </div>
 
         <div
-          className={`relative mx-4 mt-6 flex-[1.3] overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/10 shadow-2xl ${useSharedTopHud ? 'mt-4' : 'mt-6'}`}
-          style={{ backgroundImage: `url(${zombiePlayfield})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}
+          className={`relative mx-4 mt-2 min-h-0 flex-[1.9] overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/10 shadow-2xl ${useSharedTopHud ? 'mt-1.5' : 'mt-2'}`}
+           style={{ backgroundImage: `url(${zombiePlayfield})`, backgroundSize: 'cover', backgroundPosition: 'center bottom', backgroundRepeat: 'no-repeat' }}
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_85%,rgba(56,189,248,0.06),transparent_48%)]" />
-          <div className="absolute bottom-4 left-6 flex -translate-x-2.5 flex-col items-center gap-2">
+          <div className="absolute bottom-4 left-5 flex -translate-x-1.5 flex-col items-center gap-2">
             <div className="text-[11px] font-black uppercase tracking-[0.18em] text-cyan-100">You</div>
             {avatarImage ? (
               <img
                 src={avatarImage}
                 alt=""
-                className="h-[168px] w-auto object-contain drop-shadow-[0_10px_20px_rgba(2,6,23,0.45)]"
+                className="h-[182px] w-auto object-contain drop-shadow-[0_10px_20px_rgba(2,6,23,0.45)]"
                 draggable={false}
               />
             ) : null}
@@ -551,12 +559,15 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
                     top: `${zombie.y}%`,
                     left: `${zombie.x}%`,
                     width: `${ZOMBIE_SIZE}px`,
+                    transform: zombie.state === 'appear'
+                      ? `translate(-50%, ${Math.max(8, (1 - zombie.riseProgress) * 30)}px) scale(${0.68 + (zombie.riseProgress * 0.32)})`
+                      : 'translate(-50%, -50%)',
                   }}
                 >
                   <img
                     src={frame}
                     alt=""
-                    className="h-[52px] w-auto object-contain drop-shadow-[0_8px_14px_rgba(2,6,23,0.45)]"
+                    className="h-[40px] w-auto object-contain drop-shadow-[0_8px_14px_rgba(2,6,23,0.45)]"
                     draggable={false}
                   />
                   <div className="h-2 w-full overflow-hidden rounded-full bg-black/40">
@@ -572,7 +583,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
         </div>
 
-        <div className="mx-4 mt-2 rounded-3xl border border-blue-400/40 bg-blue-950/70 p-2 shadow-xl">
+        <div className="answer-choice-surface mx-4 mt-2 rounded-3xl border border-blue-400/40 bg-blue-950/70 p-2 shadow-xl">
           <div
             className={`mt-0.5 min-h-[8px] text-center text-[9px] font-semibold uppercase tracking-[0.12em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
             aria-hidden={!feedback}

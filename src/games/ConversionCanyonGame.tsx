@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import conversionCanyonBackground from '../assets/maps/backgroundsforgames/conversion canyon.jpg';
-import weighScale from '../assets/maps/backgroundsforgames/Scale Master.png';
+import weighScale from '../assets/maps/scale.png';
 import gemBlue from '../assets/place_value/jewels/diamond_blue.png';
 import gemGreen from '../assets/place_value/jewels/diamond_green.png';
 import gemPurple from '../assets/place_value/jewels/diamond_purple.png';
@@ -201,7 +201,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
         alt=""
         aria-hidden="true"
         draggable={false}
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+        className="pointer-events-none absolute inset-0 h-full w-full object-contain object-center"
       />
       <div
         aria-hidden="true"

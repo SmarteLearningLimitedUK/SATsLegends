@@ -411,7 +411,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
         <img
           src={universalMapPoster}
           alt="Island select map"
-          className="absolute inset-0 h-full w-full object-cover"
+           className="absolute inset-0 h-full w-full object-contain object-center"
           draggable={false}
         />
 

@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import factorFrenzyBackground from '../assets/maps/backgroundsforgames/Factor Frenzy.jpg';
-import snakeBoss from '../assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_but_different_colours_create_me_a_snake-2.jpg';
+import goblinWizard from '../assets/bosses/goblinwiz.jpg';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 
@@ -82,6 +82,44 @@ const shuffle = <T,>(items: T[]): T[] => {
   return clone;
 };
 
+const buildOptions = (correctAnswers: number[], candidatePool: number[]) => {
+  const correctSet = new Set(correctAnswers);
+  const uniqueCandidates = Array.from(new Set(candidatePool.filter((value) => value > 0)));
+  const chosen: number[] = [];
+
+  for (const value of shuffle(uniqueCandidates)) {
+    if (correctSet.has(value) && !chosen.includes(value)) {
+      chosen.push(value);
+    }
+  }
+
+  for (const value of shuffle(uniqueCandidates)) {
+    if (!correctSet.has(value) && !chosen.includes(value)) {
+      chosen.push(value);
+    }
+    if (chosen.length >= 4) break;
+  }
+
+  if (chosen.length < 4) {
+    const seeds = correctAnswers.length > 0 ? correctAnswers : [10, 12, 15, 18];
+    const fallback = shuffle([
+      ...seeds.map((value) => value + 1),
+      ...seeds.map((value) => Math.max(1, value - 1)),
+      ...seeds.map((value) => value + 2),
+      ...seeds.map((value) => value + 3),
+    ]);
+
+    for (const value of fallback) {
+      if (!chosen.includes(value)) {
+        chosen.push(value);
+      }
+      if (chosen.length >= 4) break;
+    }
+  }
+
+  return shuffle(chosen.slice(0, 4));
+};
+
 const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   levelId: _levelId,
   avatarId: _avatarId,
@@ -96,7 +134,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   const [successTone, setSuccessTone] = useState<'success' | 'praise'>('success');
   const [successMessage, setSuccessMessage] = useState('Direct hit!');
   const problemStartRef = useRef<number>(Date.now());
-const factorFrenzyEnemy = useMemo(() => snakeBoss, []);
+const factorFrenzyEnemy = useMemo(() => goblinWizard, []);
 
   const timerRef = useRef<number | null>(null);
   const advanceRef = useRef<number | null>(null);
@@ -150,8 +188,8 @@ const factorFrenzyEnemy = useMemo(() => snakeBoss, []);
       const factors = getFactors(number);
       const factor = factors[Math.floor(Math.random() * factors.length)];
       const answer = number / factor;
-      const distractors = [answer + 2, answer - 1, answer + 5, answer - 3].filter((value) => value > 0);
-      const options = [...new Set([answer, ...distractors])].sort(() => Math.random() - 0.5).slice(0, 4);
+      const distractors = [answer + 2, answer - 1, answer + 5, answer - 3, answer + 7, answer - 4].filter((value) => value > 0);
+      const options = buildOptions([answer], distractors);
 
       return {
         id,
@@ -164,11 +202,10 @@ const factorFrenzyEnemy = useMemo(() => snakeBoss, []);
     }
 
     if (type === 'all_factors') {
-      const number = [12, 16, 20, 24, 30, 36, 48][Math.floor(Math.random() * 7)];
+      const number = [14, 15, 21, 22, 26, 33, 34, 35, 39, 46, 51, 55][Math.floor(Math.random() * 12)];
       const correctAnswers = getFactors(number);
-      const extras = [number + 1, number - 2, 7, 9, 11, 13, 14, 15].filter((value) => value > 0 && !correctAnswers.includes(value));
-      const optionPool = [...correctAnswers, ...extras].sort(() => Math.random() - 0.5);
-      const options = [...new Set(optionPool)].slice(0, Math.max(8, correctAnswers.length)).sort((a, b) => a - b);
+      const extras = [number + 1, number - 2, 7, 9, 11, 13, 17, 19].filter((value) => value > 0 && !correctAnswers.includes(value));
+      const options = buildOptions(correctAnswers, [...correctAnswers, ...extras]);
 
       return {
         id,
@@ -192,8 +229,8 @@ const factorFrenzyEnemy = useMemo(() => snakeBoss, []);
       const factorsOne = getFactors(number);
       const factorsTwo = getFactors(number2);
       const commonAnswers = factorsOne.filter((value) => factorsTwo.includes(value));
-      const extras = [5, 7, 9, 11, 13, 14, 15].filter((value) => !commonAnswers.includes(value));
-      const options = [...new Set([...commonAnswers, ...extras])].sort((a, b) => a - b).slice(0, Math.max(8, commonAnswers.length));
+      const extras = [5, 7, 9, 11, 13, 14, 15, 16].filter((value) => !commonAnswers.includes(value));
+      const options = buildOptions(commonAnswers, [...commonAnswers, ...extras]);
 
       return {
         id,
@@ -208,7 +245,7 @@ const factorFrenzyEnemy = useMemo(() => snakeBoss, []);
 
     const number = [12, 20, 30, 42, 60, 72, 84][Math.floor(Math.random() * 7)];
     const correctAnswers = getPrimeFactors(number);
-    const options = shuffle([2, 3, 5, 7, 11, 13, 4, 6, 8, 9]).slice(0, 8).sort((a, b) => a - b);
+    const options = buildOptions(correctAnswers, shuffle([2, 3, 4, 5, 6, 7, 8, 9, 11, 13]));
 
     return {
       id,
@@ -381,7 +418,7 @@ const factorFrenzyEnemy = useMemo(() => snakeBoss, []);
 
   return (
     <div
-      className="relative h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat text-white"
+      className="relative h-full w-full overflow-hidden bg-contain bg-center bg-no-repeat text-white"
       style={{ backgroundImage: `url(${factorFrenzyBackground})` }}
     >
       <div className="pointer-events-none fixed left-0 right-0 top-[max(0.5rem,env(safe-area-inset-top))] z-50 flex justify-center px-3">
@@ -540,7 +577,7 @@ const factorFrenzyEnemy = useMemo(() => snakeBoss, []);
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ delay: idx * 0.03 }}
                   onClick={() => toggleOption(option)}
-                  className={`relative flex h-[clamp(62px,8.8vh,88px)] items-center justify-center rounded-2xl border text-[clamp(1.1rem,3.8vw,2rem)] font-black transition ${
+                  className={`relative flex h-[clamp(54px,7.4vh,72px)] items-center justify-center rounded-xl border text-[clamp(0.95rem,3.1vw,1.55rem)] font-black transition ${
                     state.status === 'correct' && selectedOptions.includes(option)
                       ? 'ui-button-success'
                       : selectedOptions.includes(option)

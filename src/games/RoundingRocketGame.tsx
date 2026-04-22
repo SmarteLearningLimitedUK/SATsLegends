@@ -20,7 +20,7 @@ interface RoundingRocketGameProps {
 
 type RoundingRocketGameShellProps = RoundingRocketGameProps & MiniGameShellContractProps;
 
-type RoundTarget = 10 | 100;
+type RoundTarget = 10 | 100 | 1000 | 10000;
 
 type RocketState =
   | 'idle'
@@ -60,7 +60,9 @@ const scoreToStars = (XP: number, correct: number, attempts: number) => {
 
 const targetForLevel = (levelId: number): RoundTarget => {
   if (levelId <= 3) return 10;
-  return 100;
+  if (levelId <= 6) return 100;
+  if (levelId <= 9) return 1000;
+  return 10000;
 };
 
 const createFuelNumber = (target: RoundTarget, difficultyLevel: number) => {
@@ -71,10 +73,39 @@ const createFuelNumber = (target: RoundTarget, difficultyLevel: number) => {
     return value;
   }
 
-  const upper = difficultyLevel <= 6 ? 1200 : 9800;
-  let value = randomInt(120, upper);
-  while (value % 100 === 0) value = randomInt(120, upper);
+  if (target === 100) {
+    const upper = difficultyLevel <= 6 ? 1200 : 9800;
+    let value = randomInt(120, upper);
+    while (value % 100 === 0) value = randomInt(120, upper);
+    return value;
+  }
+
+  if (target === 1000) {
+    const upper = difficultyLevel <= 9 ? 12000 : 98000;
+    let value = randomInt(1200, upper);
+    while (value % 1000 === 0) value = randomInt(1200, upper);
+    return value;
+  }
+
+  const upper = difficultyLevel <= 9 ? 12000 : 98000;
+  let value = randomInt(12000, upper);
+  while (value % 10000 === 0) value = randomInt(12000, upper);
   return value;
+};
+
+const formatRoundTarget = (target: RoundTarget) => {
+  switch (target) {
+    case 10:
+      return 'ten';
+    case 100:
+      return 'hundred';
+    case 1000:
+      return 'thousand';
+    case 10000:
+      return 'ten thousand';
+    default:
+      return `${target}`;
+  }
 };
 
 const buildPadOptions = (value: number, target: RoundTarget, correctAnswer: number): [number, number, number] => {
@@ -339,7 +370,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
         alt=""
         aria-hidden="true"
         draggable={false}
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-85 grayscale-[0.15] saturate-75"
+        className="pointer-events-none absolute inset-0 h-full w-full object-contain object-center opacity-85 grayscale-[0.15] saturate-75"
       />
 
       <PracticeIntroPopup
@@ -351,7 +382,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
       />
 
       <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
-        <GameQuestionCard title={`Rounding Rocket: nearest ${round.target}`} subtitle="Round the number correctly.">
+        <GameQuestionCard title="Rounding Rocket" subtitle={`Round to the nearest ${formatRoundTarget(round.target)}.`}>
           <span className="block text-[clamp(0.92rem,3.6vw,1.08rem)] font-black leading-snug text-amber-100/95">
             The rocket needs fuel.
           </span>
