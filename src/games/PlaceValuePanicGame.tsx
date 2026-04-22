@@ -15,7 +15,6 @@ import { triggerHaptic } from '../haptics';
 import { AVATARS } from '../constants';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
-import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface PlaceValuePanicGameProps {
   levelId: number;
@@ -338,7 +337,7 @@ const makeQuestion = (level: number): QuestionState => {
   const placeHints = FULL_PLACE_VALUE_HINTS.slice(FULL_PLACE_VALUE_HINTS.length - slotCount);
   return {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    prompt: `The Monster Minds have scrambled the number stones.\nRebuild ${numberToWords(promptNumber)}.`,
+    prompt: 'The Monster Minds scrambled the stones.',
     expectedDigits,
     tokenValues,
     placeHints,
@@ -531,10 +530,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
   const questionPrompt = useMemo(() => {
     if (isPractice) {
-      return formatFantasyPrompt(`${question.prompt}\n\nUse place value to put the number back in order.`);
+      return question.prompt;
     }
-    return formatFantasyPrompt(question.prompt);
-  }, [isPractice, question.prompt]);
+    return question.prompt;
+  }, [question.prompt]);
 
   const resetRound = useCallback((nextQuestion: QuestionState) => {
     const nextSources: Array<Token | null> = nextQuestion.tokenValues.map((value, idx) => ({
@@ -990,7 +989,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       ) : null}
 
       <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
-        <GameQuestionCard title="Place Value Panic">
+        <GameQuestionCard title="Place Value Panic" subtitle="Rebuild the number.">
           {questionPrompt}
         </GameQuestionCard>
       </div>

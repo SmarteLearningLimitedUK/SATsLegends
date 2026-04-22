@@ -302,6 +302,8 @@ const buildOrderPrompt = (
   switch (mode) {
     case 'missing_value':
       return [
+        'The potion is unstable.',
+        'Balance the ingredients.',
         storyLead,
         `Restore the missing drops using the ratio: ${ratioText}`,
         'One ingredient is already set.',
@@ -309,6 +311,8 @@ const buildOrderPrompt = (
 
     case 'fix_mistake':
       return [
+        'The potion is unstable.',
+        'Balance the ingredients.',
         storyLead,
         `Fix the potion so the ratio is correct: ${ratioText}`,
         'One ingredient is wrong.',
@@ -316,6 +320,8 @@ const buildOrderPrompt = (
 
     case 'scale_recipe':
       return [
+        'The potion is unstable.',
+        'Balance the ingredients.',
         storyLead,
         `Scale the potion to keep the ratio correct: ${ratioText}`,
         'Check the total before you brew.',
@@ -323,6 +329,8 @@ const buildOrderPrompt = (
 
     case 'multi_step':
       return [
+        'The potion is unstable.',
+        'Balance the ingredients.',
         storyLead,
         'Use the total and ratio to rebuild the potion.',
         'Solve it step by step.',
@@ -330,6 +338,8 @@ const buildOrderPrompt = (
 
     case 'word_problem':
       return [
+        'The potion is unstable.',
+        'Balance the ingredients.',
         storyLead,
         'Use the clue to restore the potion mix.',
         'Then complete the brew.',
@@ -338,6 +348,8 @@ const buildOrderPrompt = (
     case 'direct_recipe':
     default:
       return [
+        'The potion is unstable.',
+        'Balance the ingredients.',
         storyLead,
         `Restore the correct potion ratio: ${ratioText}`,
         'Add the drops, then brew.',

@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import mineBackground from '../assets/maps/backgroundsforgames/multiplication mine background.jpg';
-import rockAsset from '../assets/rocktlogo.png';
+import rockAsset from '../assets/mine/18.png';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { triggerHaptic } from '../haptics';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';

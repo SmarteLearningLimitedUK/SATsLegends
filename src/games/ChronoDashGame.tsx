@@ -29,11 +29,12 @@ const scoreToStars = (XP: number) => {
   return 1;
 };
 
+const HOUR_NUMERALS = ['12', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
 const ROMAN_NUMERALS = ['XII', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'];
 
-const RomanNumeralFace: React.FC = () => (
+const ClockFaceLabels: React.FC<{ labels: string[]; className?: string }> = ({ labels, className }) => (
   <div className="pointer-events-none absolute inset-0">
-    {ROMAN_NUMERALS.map((label, index) => {
+    {labels.map((label, index) => {
       const angle = ((index * 30) - 90) * (Math.PI / 180);
       const radius = 43;
       const x = 50 + (Math.cos(angle) * radius);
@@ -42,7 +43,7 @@ const RomanNumeralFace: React.FC = () => (
       return (
         <div
           key={label}
-          className="absolute -translate-x-1/2 -translate-y-1/2 text-[0.95rem] font-black tracking-[0.18em] text-orange-50 drop-shadow-[0_0_10px_rgba(255,180,64,0.45)] md:text-[1.08rem]"
+          className={`absolute -translate-x-1/2 -translate-y-1/2 text-[0.95rem] font-black tracking-[0.18em] drop-shadow-[0_0_10px_rgba(255,180,64,0.45)] md:text-[1.08rem] ${className ?? 'text-orange-50'}`}
           style={{
             left: `${x}%`,
             top: `${y}%`,
@@ -180,6 +181,7 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({
 
   const topPadding = 'pt-[calc(env(safe-area-inset-top)+0.35rem)]';
   const showRomanNumerals = levelId >= 4;
+  const faceLabels = showRomanNumerals ? ROMAN_NUMERALS : HOUR_NUMERALS;
 
   return (
     <div className="relative h-full w-full overflow-hidden bg-[#0f172a] font-sans text-white select-none">
@@ -197,25 +199,25 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({
             <motion.div
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              className="relative flex h-[4.2rem] w-full max-w-[16rem] items-center justify-center md:h-[4.8rem] md:max-w-[18rem]"
+              className="relative mx-auto flex h-[4rem] w-full max-w-[15rem] items-center justify-center md:h-[4.5rem] md:max-w-[16rem]"
             >
-              <div className="absolute inset-0 overflow-hidden rounded-2xl border-4 border-[#334155] bg-[#1e293b] shadow-[0_0_30px_rgba(59,130,246,0.2)]">
+              <div className="absolute inset-0 overflow-hidden rounded-2xl border-4 border-[#334155] bg-[#1e293b] p-[5px] shadow-[0_0_30px_rgba(59,130,246,0.2)]">
                 <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent" />
                 <div className="absolute inset-0 m-1 rounded-xl border border-white/10" />
               </div>
 
-              <div className="relative flex items-center gap-2">
-                <span className="text-4xl font-black tracking-tighter text-blue-400 drop-shadow-[0_0_10px_rgba(96,165,250,0.5)]">
+              <div className="relative mx-auto flex items-center gap-2">
+                <span className="text-3xl font-black tracking-tighter text-blue-400 drop-shadow-[0_0_10px_rgba(96,165,250,0.5)] md:text-[2.7rem]">
                   {targetTime.hours.toString().padStart(2, '0')}
                 </span>
                 <motion.span
                   animate={{ opacity: [1, 0.3, 1] }}
                   transition={{ repeat: Infinity, duration: 1 }}
-                  className="text-3xl font-black text-blue-400/50"
+                  className="text-2xl font-black text-blue-400/50 md:text-3xl"
                 >
                   :
                 </motion.span>
-                <span className="text-4xl font-black tracking-tighter text-blue-400 drop-shadow-[0_0_10px_rgba(96,165,250,0.5)]">
+                <span className="text-3xl font-black tracking-tighter text-blue-400 drop-shadow-[0_0_10px_rgba(96,165,250,0.5)] md:text-[2.7rem]">
                   {targetTime.minutes.toString().padStart(2, '0')}
                 </span>
               </div>
@@ -229,7 +231,7 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({
               <div className="relative flex h-[12rem] w-[12rem] items-center justify-center rounded-full md:h-[14.4rem] md:w-[14.4rem]">
                 <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,166,0,0.18),transparent_64%)] blur-[4px]" />
                 <LavaClockFace />
-                {showRomanNumerals && <RomanNumeralFace />}
+                <ClockFaceLabels labels={faceLabels} className={showRomanNumerals ? 'text-orange-50' : 'text-amber-50'} />
                 <div className="pointer-events-none absolute inset-[8%] rounded-full border border-orange-100/10 shadow-[inset_0_0_18px_rgba(255,255,255,0.05)]">
                   <div className="absolute inset-[6%] rounded-full border border-yellow-100/8" />
                 </div>

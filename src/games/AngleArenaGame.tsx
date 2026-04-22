@@ -541,6 +541,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const scoreRef = useRef(0);
   const cameraRef = useRef({ x: 0, y: 0 });
   const cameraTargetRef = useRef({ x: 0, y: 0 });
+  const isFollowingProjectileRef = useRef(false);
   const settleTimeoutRef = useRef<number | null>(null);
   const autoAdvanceTimeoutRef = useRef<number | null>(null);
   const projectileRef = useRef<ProjectileState | null>(null);
@@ -652,6 +653,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     projectileRef.current = null;
     cameraRef.current = { x: 0, y: 0 };
     cameraTargetRef.current = { x: 0, y: 0 };
+    isFollowingProjectileRef.current = false;
     setGameState('awaitingAnswer');
   };
 
@@ -676,6 +678,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     if (settleTimeoutRef.current) window.clearTimeout(settleTimeoutRef.current);
     settleTimeoutRef.current = window.setTimeout(() => {
       cameraTargetRef.current = { x: 0, y: 0 };
+      isFollowingProjectileRef.current = false;
     }, 680);
 
     if (result === 'hit') {
@@ -709,6 +712,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     const speed = activeQuestion.launchSpeed || PROJECTILE_SPEED;
     projectileRef.current = buildProjectile(resolvedAngle, speed);
     cameraTargetRef.current = { x: 0, y: 0 };
+    isFollowingProjectileRef.current = true;
     setGameState('projectileFlight');
   };
 
@@ -793,16 +797,19 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         }
       }
 
-      if (projectile?.active) {
+      if (projectile?.active && isFollowingProjectileRef.current) {
         const travel = normalizeVector(projectile.vx, projectile.vy);
         cameraTargetRef.current = {
           x: projectile.x - (travel.x * CAMERA_LEAD_DISTANCE),
           y: projectile.y - (travel.y * CAMERA_LEAD_DISTANCE),
         };
+      } else if (!projectile?.active && isFollowingProjectileRef.current) {
+        isFollowingProjectileRef.current = false;
+        cameraTargetRef.current = { x: 0, y: 0 };
       }
 
       const camera = cameraRef.current;
-      const followStrength = projectile?.active ? CAMERA_LERP : RETURN_LERP;
+      const followStrength = isFollowingProjectileRef.current && projectile?.active ? CAMERA_LERP : RETURN_LERP;
       camera.x = lerp(camera.x, cameraTargetRef.current.x, followStrength);
       camera.y = lerp(camera.y, cameraTargetRef.current.y, followStrength);
       camera.x = clamp(camera.x, -WORLD_RADIUS, WORLD_RADIUS);

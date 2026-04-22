@@ -13,6 +13,7 @@ import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { isBossEncounterGameType, SupportedBossGameType } from './bossEncounterTypes';
+import type { AnimationState } from '../types';
 
 interface BossEncounterGameProps {
   gameType: SupportedBossGameType;
@@ -38,8 +39,8 @@ interface BossQuestion {
 }
 
 const TOTAL_QUESTIONS = 30;
-const RUN_TIME_SECONDS = 15 * 60;
-const BOSS_HEALTH_MAX = 30;
+const BOSS_HEALTH_MAX = 20;
+const HERO_HEALTH_MAX = 5;
 const HIGH_SCORE_STARS = {
   bronze: 1800,
   silver: 3000,
@@ -455,12 +456,12 @@ const QUESTION_GENERATORS: Record<SupportedBossGameType, () => BossQuestion> = {
 };
 
 const REACTION_COPY: Record<'idle' | 'correct' | 'wrong' | 'warning' | 'victory' | 'defeat', string> = {
-  idle: 'Answer carefully. Thirty questions stand between you and the boss.',
+  idle: 'Answer carefully. The battle is underway.',
   correct: 'Direct hit. The boss is taking damage.',
   wrong: 'The boss holds firm. Keep your focus on the next question.',
   warning: 'The boss is close to breaking.',
   victory: 'Boss defeated. The island challenge is cleared.',
-  defeat: 'Time ran out. The boss survives this attempt.',
+  defeat: 'The hero has fallen. The boss wins this round.',
 };
 
 const normalizeSelection = (values: number[]) => Array.from(new Set(values)).sort((a, b) => a - b);
@@ -470,6 +471,36 @@ const areSelectionsEqual = (left: number[], right: number[]) => {
   const normalizedRight = normalizeSelection(right);
   return normalizedLeft.length === normalizedRight.length
     && normalizedLeft.every((value, index) => value === normalizedRight[index]);
+};
+
+type BattleHealthBarProps = {
+  label: string;
+  current: number;
+  max: number;
+  toneClass?: string;
+};
+
+const BattleHealthBar: React.FC<BattleHealthBarProps> = ({ label, current, max, toneClass }) => {
+  const segments = Array.from({ length: max }, (_, index) => index < current);
+
+  return (
+    <div className="rounded-[1rem] border border-white/14 bg-slate-950/60 px-3 py-2 text-white shadow-[0_12px_26px_rgba(2,6,23,0.18)] backdrop-blur-xl">
+      <div className="flex items-center justify-between gap-3 text-[9px] font-black uppercase tracking-[0.22em] text-white/65">
+        <span>{label}</span>
+        <span>{current}/{max}</span>
+      </div>
+      <div className="mt-2 grid gap-1" style={{ gridTemplateColumns: `repeat(${max}, minmax(0, 1fr))` }}>
+        {segments.map((filled, index) => (
+          <span
+            key={`${label}-${index}`}
+            className={`h-2 rounded-full border ${filled
+              ? toneClass || 'border-emerald-200/45 bg-[linear-gradient(90deg,#22c55e_0%,#86efac_100%)]'
+              : 'border-white/10 bg-black/30'}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
 };
 
 const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
@@ -492,9 +523,9 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     [gameType, levelId],
   );
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [correctAnswers, setCorrectAnswers] = useState(0);
   const [XP, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(RUN_TIME_SECONDS);
+  const [bossHealth, setBossHealth] = useState(BOSS_HEALTH_MAX);
+  const [heroHealth, setHeroHealth] = useState(HERO_HEALTH_MAX);
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const [submittedIndices, setSubmittedIndices] = useState<number[] | null>(null);
   const [bossPose, setBossPose] = useState<BossPose>('neutral');
@@ -502,14 +533,10 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   const [resolveState, setResolveState] = useState<'idle' | 'correct' | 'wrong' | 'warning' | 'victory' | 'defeat'>('idle');
   const [showPracticeIntro, setShowPracticeIntro] = useState(true);
   const timeoutRef = useRef<number | null>(null);
-  const timeLimitRef = useRef<number | null>(null);
 
   useEffect(() => () => {
     if (timeoutRef.current) {
       window.clearTimeout(timeoutRef.current);
-    }
-    if (timeLimitRef.current) {
-      window.clearInterval(timeLimitRef.current);
     }
   }, []);
 
@@ -517,20 +544,23 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     return null;
   }
 
-  const question = questions[currentIndex];
+  const question = questions[currentIndex % questions.length];
   const isMultiSelect = question.selectionMode === 'multi';
   const isTrueFalse = question.selectionMode === 'true_false';
-  const answeredCount = currentIndex + (submittedIndices !== null ? 1 : 0);
   const activeSelection = submittedIndices ?? selectedIndices;
-  const misses = answeredCount - correctAnswers;
-  const bossHealthRemaining = Math.max(0, BOSS_HEALTH_MAX - correctAnswers);
-  const progress = Math.round((answeredCount / TOTAL_QUESTIONS) * 100);
-  const healthProgress = Math.round((bossHealthRemaining / BOSS_HEALTH_MAX) * 100);
-  const accuracy = answeredCount > 0 ? Math.round((correctAnswers / answeredCount) * 100) : 100;
-  const elapsedSeconds = RUN_TIME_SECONDS - timeLeft;
-  const score = XP;
+  const bossHealthRemaining = bossHealth;
+  const heroHealthRemaining = heroHealth;
+  const heroPose: AnimationState = resolveState === 'defeat'
+    ? 'sad'
+    : resolveState === 'victory'
+      ? 'victory'
+      : resolveState === 'wrong'
+        ? 'hit'
+        : resolveState === 'correct'
+          ? 'special'
+          : 'idle';
 
-  const finishEncounter = (finalCorrect: number, finalScore: number) => {
+  const finishEncounter = (finalScore: number) => {
     const stars = finalScore >= HIGH_SCORE_STARS.gold
       ? 3
       : finalScore >= HIGH_SCORE_STARS.silver
@@ -546,44 +576,17 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     }, 980);
   };
 
-  useEffect(() => {
-    if (resolveState === 'victory' || resolveState === 'defeat') return undefined;
+  const advanceQuestion = (isCorrect: boolean, nextScore: number, nextBossHealth: number, nextHeroHealth: number) => {
+    const bossDefeated = nextBossHealth <= 0;
+    const heroDefeated = nextHeroHealth <= 0;
 
-    const timerId = window.setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          window.clearInterval(timerId);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    timeLimitRef.current = timerId;
-    return () => window.clearInterval(timerId);
-  }, [resolveState]);
-
-  useEffect(() => {
-    if (timeLeft > 0 || resolveState !== 'idle') return;
-    setResolveState('defeat');
-    setReaction(reactionCopy.defeat);
-    setBossPose('victory');
-    triggerHaptic('error');
-    timeoutRef.current = window.setTimeout(() => {
-      onGameOver(XP);
-    }, 980);
-  }, [XP, reactionCopy.defeat, resolveState, timeLeft, onGameOver]);
-
-  const advanceQuestion = (isCorrect: boolean, nextCorrect: number, nextScore: number) => {
-    const nextBossHealth = Math.max(0, BOSS_HEALTH_MAX - nextCorrect);
-    const finalQuestion = currentIndex === TOTAL_QUESTIONS - 1;
-
-    setCorrectAnswers(nextCorrect);
     setScore(nextScore);
+    setBossHealth(nextBossHealth);
+    setHeroHealth(nextHeroHealth);
 
     if (isCorrect) {
       triggerHaptic('success');
-      if (finalQuestion) {
+      if (bossDefeated) {
         setResolveState('victory');
         setReaction(reactionCopy.victory);
         setBossPose('defeat');
@@ -601,11 +604,21 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       setResolveState('wrong');
       setReaction(reactionCopy.wrong);
       setBossPose(encounter.assetId === 'jelly' ? 'victory' : 'happy');
+      if (heroDefeated) {
+        setResolveState('defeat');
+      }
     }
 
     timeoutRef.current = window.setTimeout(() => {
-      if (finalQuestion) {
-        finishEncounter(nextCorrect, nextScore);
+      if (bossDefeated) {
+        finishEncounter(nextScore);
+        return;
+      }
+
+      if (heroDefeated) {
+        setReaction(reactionCopy.defeat);
+        setBossPose('victory');
+        onGameOver(nextScore);
         return;
       }
 
@@ -624,13 +637,14 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     const normalizedSelection = normalizeSelection(selection);
     const normalizedCorrect = normalizeSelection(question.correctOptionIndices);
     const isCorrect = areSelectionsEqual(normalizedSelection, normalizedCorrect);
-    const nextCorrect = isCorrect ? correctAnswers + 1 : correctAnswers;
     const nextScore = isCorrect
-      ? XP + 120 + Math.max(0, Math.floor(timeLeft / 12))
+      ? XP + 120
       : XP;
+    const nextBossHealth = isCorrect ? Math.max(0, bossHealth - 1) : bossHealth;
+    const nextHeroHealth = isCorrect ? heroHealth : Math.max(0, heroHealth - 1);
 
     setSubmittedIndices(normalizedSelection);
-    advanceQuestion(isCorrect, nextCorrect, nextScore);
+    advanceQuestion(isCorrect, nextScore, nextBossHealth, nextHeroHealth);
   };
 
   const handleOptionClick = (index: number) => {
@@ -659,64 +673,69 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Core of Calculation"
-        body="The Monster Minds have fortified the final boss.\nAnswer 30 questions before the timer runs out.\nKeep going until the boss health drops to zero."
+        body="The Monster Minds have fortified the final boss.\nAnswer correctly to damage the enemy.\nKeep the hero standing until the boss falls."
         onAction={() => setShowPracticeIntro(false)}
       />
 
       <div className="relative z-10 flex h-full w-full flex-col gap-2 px-2 pb-2.5 pt-[calc(0.45rem+env(safe-area-inset-top))] lg:gap-3 lg:px-4 lg:pb-4 lg:pt-4">
         <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col gap-2 overflow-hidden rounded-[2rem] p-2 lg:gap-3 lg:rounded-[2.6rem] lg:p-3">
           <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
-            <GameQuestionCard title="Question">
+            <GameQuestionCard>
               {formatFantasyPrompt(question.prompt)}
             </GameQuestionCard>
           </div>
 
-          <div className="mt-[clamp(5.25rem,13vh,7rem)] grid shrink-0 grid-cols-3 gap-2 lg:gap-3">
-            <div className="rounded-[1.1rem] border border-white/14 bg-slate-950/55 px-3 py-2 text-center text-white shadow-[0_12px_26px_rgba(2,6,23,0.18)] backdrop-blur-xl lg:rounded-[1.5rem] lg:px-4 lg:py-3">
-              <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/50 lg:text-[9px]">Question</div>
-              <div className="mt-1 text-sm font-black text-cyan-100 lg:text-xl">{Math.min(currentIndex + 1, TOTAL_QUESTIONS)}/{TOTAL_QUESTIONS}</div>
-            </div>
-            <div className="rounded-[1.1rem] border border-white/14 bg-slate-950/55 px-3 py-2 text-center text-white shadow-[0_12px_26px_rgba(2,6,23,0.18)] backdrop-blur-xl lg:rounded-[1.5rem] lg:px-4 lg:py-3">
-              <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/50 lg:text-[9px]">Timer</div>
-              <div className="mt-1 text-sm font-black text-amber-100 lg:text-xl">{Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}</div>
-            </div>
-            <div className="rounded-[1.1rem] border border-white/14 bg-slate-950/55 px-3 py-2 text-center text-white shadow-[0_12px_26px_rgba(2,6,23,0.18)] backdrop-blur-xl lg:rounded-[1.5rem] lg:px-4 lg:py-3">
-              <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/50 lg:text-[9px]">Score</div>
-              <div className="mt-1 text-sm font-black text-emerald-100 lg:text-xl">{score}</div>
-            </div>
-          </div>
+          <div className="mt-[clamp(5.25rem,13vh,7rem)] flex min-h-0 flex-1 flex-col gap-2 lg:gap-3">
+            <div className="battle-arena-panel relative flex min-h-0 flex-1 overflow-hidden rounded-[1.4rem] border border-white/14 bg-slate-950/58 px-3 py-3 text-white shadow-[0_18px_48px_rgba(2,6,23,0.24)] backdrop-blur-xl lg:rounded-[2rem] lg:px-4 lg:py-4">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(34,197,94,0.12),transparent_40%),radial-gradient(circle_at_bottom,rgba(59,130,246,0.12),transparent_44%)]" />
+              <div className="relative grid min-h-0 flex-1 gap-3 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.1fr)] lg:gap-4">
+                <div className="flex min-h-0 flex-col justify-end gap-2 rounded-[1.25rem] border border-cyan-200/12 bg-[linear-gradient(180deg,rgba(8,15,30,0.28),rgba(8,15,30,0.05))] p-3 lg:rounded-[1.8rem] lg:p-4">
+                  <div className="inline-flex w-fit rounded-full border border-cyan-200/20 bg-cyan-300/10 px-3 py-1 text-[9px] font-black uppercase tracking-[0.22em] text-cyan-50">
+                    Hero
+                  </div>
+                  <div className="flex min-h-0 flex-1 items-end justify-center">
+                    <AnimatedAvatar
+                      avatar={avatar}
+                      pose={heroPose}
+                      className="h-[9.5rem] w-[9.5rem] lg:h-[12.5rem] lg:w-[12.5rem]"
+                      floating={false}
+                      showBackdropGlow={true}
+                    />
+                  </div>
+                  <BattleHealthBar
+                    label="Hero HP"
+                    current={heroHealthRemaining}
+                    max={HERO_HEALTH_MAX}
+                    toneClass="border-cyan-200/30 bg-cyan-300/16 text-cyan-50"
+                  />
+                </div>
 
-          <div className="shrink-0 rounded-[1.2rem] border border-white/14 bg-slate-950/55 px-3 py-2 text-white shadow-[0_16px_36px_rgba(2,6,23,0.22)] backdrop-blur-xl lg:rounded-[1.8rem] lg:px-4 lg:py-3">
-            <div className="flex items-center justify-between gap-3 text-[9px] font-black uppercase tracking-[0.22em] lg:text-[9px]">
-              <span className="text-white/58">Boss health</span>
-              <span className="text-white/82">{bossHealthRemaining}/30</span>
-            </div>
-            <div className="mt-2 h-4 overflow-hidden rounded-full border border-white/12 bg-black/32 lg:h-5">
-              <motion.div
-                initial={{ width: '100%' }}
-                animate={{ width: `${healthProgress}%` }}
-                transition={{ type: 'spring', stiffness: 85, damping: 18 }}
-                className="h-full rounded-full bg-[linear-gradient(90deg,#ef4444_0%,#fb7185_38%,#f59e0b_78%,#fde68a_100%)] shadow-[0_0_18px_rgba(248,113,113,0.34)]"
-              />
-            </div>
-            <div className="mt-2 flex items-center justify-between gap-3 text-[9px] font-bold text-white/72 lg:text-[9px]">
-              <span>{reaction}</span>
-              <span>{Math.max(0, 2 - misses)} safe misses left</span>
-            </div>
-          </div>
-
-          <div className="grid min-h-0 flex-1 gap-2 lg:gap-3">
-            <div className="relative flex min-h-[15rem] items-center justify-center overflow-hidden rounded-[1.25rem] border border-white/16 bg-slate-950/58 p-3 text-white shadow-[0_18px_48px_rgba(2,6,23,0.24)] backdrop-blur-xl lg:min-h-[18rem] lg:rounded-[2rem] lg:p-4">
-              <div className="absolute inset-x-6 bottom-4 h-4 rounded-full bg-black/35 blur-[10px]" />
-              <div className="relative flex flex-col items-center gap-2">
-                <BossPortrait encounter={encounter} pose={bossPose} className="h-[8.2rem] lg:h-[11.5rem]" />
-                <div className="w-full max-w-[26rem] rounded-full border border-amber-200/28 bg-black/25 px-3 py-2 text-center text-[9px] font-black uppercase tracking-[0.16em] text-white/78">
-                  {isMultiSelect ? 'Select all that apply' : isTrueFalse ? 'Choose true or false' : 'Choose one answer'}
+                <div className="flex min-h-0 flex-col justify-between gap-3 rounded-[1.25rem] border border-rose-200/12 bg-[linear-gradient(180deg,rgba(8,15,30,0.38),rgba(8,15,30,0.08))] p-3 lg:rounded-[1.8rem] lg:p-4">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="inline-flex rounded-full border border-rose-200/20 bg-rose-300/10 px-3 py-1 text-[9px] font-black uppercase tracking-[0.22em] text-rose-50">
+                      Enemy
+                    </div>
+                    <div className="inline-flex rounded-full border border-amber-100/20 bg-amber-300/10 px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em] text-amber-50">
+                      {reaction}
+                    </div>
+                  </div>
+                  <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-3">
+                    <BossPortrait encounter={encounter} pose={bossPose} className="h-[10.25rem] w-full max-w-[18rem] lg:h-[13.5rem] lg:max-w-[21rem]" />
+                    <div className="w-full max-w-[19rem] rounded-[1rem] border border-white/12 bg-black/22 px-3 py-2 text-center text-[9px] font-black uppercase tracking-[0.16em] text-white/72 lg:max-w-[22rem]">
+                      {isMultiSelect ? 'Select all that apply' : isTrueFalse ? 'Choose true or false' : 'Choose one answer'}
+                    </div>
+                  </div>
+                  <BattleHealthBar
+                    label={`${encounter.name} HP`}
+                    current={bossHealthRemaining}
+                    max={BOSS_HEALTH_MAX}
+                    toneClass="border-rose-200/30 bg-rose-300/16 text-rose-50"
+                  />
                 </div>
               </div>
             </div>
 
-            <div className="answer-choice-surface grid min-h-0 flex-1 grid-cols-2 gap-2 lg:gap-3">
+            <div className="answer-choice-surface grid min-h-0 shrink-0 grid-cols-2 gap-2 lg:gap-3">
               {question.options.map((option, index) => {
                 const isCorrect = question.correctOptionIndices.includes(index);
                 const isSelected = activeSelection.includes(index);

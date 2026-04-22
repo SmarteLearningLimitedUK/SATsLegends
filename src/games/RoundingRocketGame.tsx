@@ -351,12 +351,12 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
       />
 
       <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
-        <GameQuestionCard title={`Rounding Rocket: nearest ${round.target}`}>
+        <GameQuestionCard title={`Rounding Rocket: nearest ${round.target}`} subtitle="Round the number correctly.">
+          <span className="block text-[clamp(0.92rem,3.6vw,1.08rem)] font-black leading-snug text-amber-100/95">
+            The rocket needs fuel.
+          </span>
           <span className="block text-[clamp(1.3rem,5.2vw,1.85rem)] font-black leading-none text-white drop-shadow-[0_2px_6px_rgba(2,6,23,0.6)]">
             {round.value}
-          </span>
-          <span className="mt-1 block text-sm font-semibold leading-snug text-cyan-100/90">
-            Round correctly to fuel the rocket.
           </span>
         </GameQuestionCard>
       </div>

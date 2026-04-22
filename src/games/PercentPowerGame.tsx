@@ -364,7 +364,12 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
         <div className="w-full max-w-[44rem] px-1">
           <div className="mt-2">
             <GameQuestionCard title="Percent Power" className="max-w-[44rem]">
-              {question.prompt}
+              <div className="text-[clamp(0.92rem,3.6vw,1.08rem)] font-black leading-snug text-amber-100/95">
+                Solve the sum to restore power to the core.
+              </div>
+              <div className="mt-0.5 text-[clamp(1.02rem,3.8vw,1.28rem)] font-black text-white">
+                {question.prompt}
+              </div>
               <span className="block text-xs font-semibold text-cyan-50/80 md:text-sm">{question.helper}</span>
             </GameQuestionCard>
           </div>

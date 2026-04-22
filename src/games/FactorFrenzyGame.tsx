@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import factorFrenzyBackground from '../assets/maps/backgroundsforgames/Factor Frenzy.jpg';
-import zombieBoss from '../assets/zombies/zombie.png';
+import snakeBoss from '../assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_but_different_colours_create_me_a_snake-2.jpg';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 
@@ -96,7 +96,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   const [successTone, setSuccessTone] = useState<'success' | 'praise'>('success');
   const [successMessage, setSuccessMessage] = useState('Direct hit!');
   const problemStartRef = useRef<number>(Date.now());
-  const factorFrenzyEnemy = useMemo(() => zombieBoss, []);
+const factorFrenzyEnemy = useMemo(() => snakeBoss, []);
 
   const timerRef = useRef<number | null>(null);
   const advanceRef = useRef<number | null>(null);

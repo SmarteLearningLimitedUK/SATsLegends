@@ -9,7 +9,6 @@ import {
   VolumeX,
 } from 'lucide-react';
 import { playGameSound } from '../../audio/gameAudio';
-import { formatQuestionCardPrompt } from '../../utils/fantasyPrompt';
 
 type WrapperProps = {
   children: React.ReactNode;
@@ -95,12 +94,10 @@ export const GameQuestionCard: React.FC<GameQuestionCardProps> = ({
   bodyClassName,
   style,
 }) => {
-  const normalizedChildren = typeof children === 'string' ? formatQuestionCardPrompt(children) : children;
-
   return (
     <div className={cn('game-question-card', className)} style={style}>
       <div className={cn('game-question-copy mt-0.5 whitespace-pre-line text-white', bodyClassName)}>
-        {normalizedChildren}
+        {children}
       </div>
       {subtitle ? (
         <div className="question-subtitle mt-1 text-xs font-semibold text-white/75 md:text-sm">

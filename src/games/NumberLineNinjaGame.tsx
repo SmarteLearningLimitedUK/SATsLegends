@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ChevronDown } from 'lucide-react';
 import {
@@ -148,8 +148,8 @@ const formatNumber = (value: number) => {
 const buildPrompt = (missingCount: number) => {
   const isSingle = missingCount === 1;
   return [
-    'The Monster Minds have hidden part of the island path.',
-    `${isSingle ? 'Which number is missing?' : 'What numbers are missing?'}`,
+    'The Monster Minds have corrupted the number line.',
+    `${isSingle ? 'Find the missing number.' : 'Find the missing numbers.'}`,
   ].join('\n');
 };
 
@@ -515,30 +515,6 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const monsterHealthPct = (monsterRemainingHealth / goalCorrect) * 100;
   const activeMonsterHitSrc = monsterHitAnimationIndex === 0 ? monsterHitA : monsterHitB;
 
-  const questionCardRef = useRef<HTMLDivElement | null>(null);
-  const [questionDockBottom, setQuestionDockBottom] = useState<number>(0);
-
-  useLayoutEffect(() => {
-    const node = questionCardRef.current;
-    if (!node) return undefined;
-
-    const update = () => {
-      const rect = node.getBoundingClientRect();
-      const playfieldTop = playfieldRef.current?.getBoundingClientRect().top ?? 0;
-      setQuestionDockBottom(rect.bottom - playfieldTop);
-    };
-
-    update();
-    const ro = new ResizeObserver(update);
-    ro.observe(node);
-    window.addEventListener('resize', update);
-
-    return () => {
-      ro.disconnect();
-      window.removeEventListener('resize', update);
-    };
-  }, [question.id]);
-
   return (
     <div ref={playfieldRef} className="relative h-full w-full overflow-hidden">
       <PracticeIntroPopup
@@ -559,7 +535,6 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
       {/* Standard shared question banner. */}
       <div
-        ref={questionCardRef}
         className="qa-question-card pointer-events-none fixed left-0 right-0 z-[60]"
         style={{ top: 'calc(env(safe-area-inset-top) + 4px)' }}
       >
@@ -568,18 +543,13 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
       <div
         className="relative z-10 flex h-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+5.2rem)]"
-        style={{
-          // Keep the number line docked below the fixed question card (even when the text wraps).
-          // Requirement: number line should be 20px below the question card.
-          paddingTop: `${Math.max(0, questionDockBottom + 20)}px`,
-        }}
+        style={{ paddingTop: 'clamp(6.8rem, 15vh, 9.2rem)' }}
       >
         <div className="flex min-h-0 flex-1 flex-col items-center justify-start pt-0">
           <motion.div
             animate={lineShake ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
             transition={{ duration: 0.34, ease: 'easeInOut' }}
             className="qa-number-line relative mt-0 flex h-[22%] min-h-[140px] w-full max-w-[680px] items-center justify-center"
-            style={{ marginTop: 128 }}
           >
             <motion.div
               animate={{ opacity: [0.26, 0.54, 0.26], scale: [0.985, 1.025, 0.985] }}
@@ -663,7 +633,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
           </motion.div>
 
           <div className="relative mt-1 flex h-[30%] min-h-[200px] w-full max-w-[520px] shrink-0 translate-y-0 items-end justify-center">
-            <div className="qa-enemy-cluster pointer-events-none relative mx-auto flex w-full max-w-[520px] flex-col items-center justify-end gap-3">
+            <div className="qa-enemy-cluster pointer-events-none relative mx-auto flex w-full max-w-[520px] translate-y-[5px] flex-col items-center justify-end gap-3">
                 <div className="w-[132px] self-center translate-y-[70px] rounded-lg border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)] sm:w-[150px]">
                 <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
                   Monster Mind
@@ -784,7 +754,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                 </AnimatePresence>
 
                 <motion.div
-                  className="relative w-[78%] max-w-[250px] translate-y-[32px] scale-[0.88] sm:w-full sm:max-w-[280px] sm:scale-100"
+                  className="relative w-[78%] max-w-[250px] translate-y-[37px] scale-[0.88] sm:w-full sm:max-w-[280px] sm:scale-100"
                   animate={{
                     y: [0, -5, 0],
                     x: monsterEffect === 'hit' ? [0, -9, 9, -8, 8, -5, 5, 0] : 0,

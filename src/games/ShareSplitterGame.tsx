@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { Check, RefreshCcw } from 'lucide-react';
@@ -216,9 +216,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const endedRef = useRef(false);
-  const questionCardRef = useRef<HTMLDivElement | null>(null);
   const cakeSourceButtonRef = useRef<HTMLButtonElement | null>(null);
-  const [questionDockBottom, setQuestionDockBottom] = useState(0);
   const sliceSeedRef = useRef(0);
   const dragActiveRef = useRef(false);
 
@@ -269,26 +267,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     };
   }, [challenge.id]);
 
-  useLayoutEffect(() => {
-    const node = questionCardRef.current;
-    if (!node) return undefined;
-
-    const update = () => {
-      const rect = node.getBoundingClientRect();
-      setQuestionDockBottom(rect.bottom);
-    };
-
-    update();
-    const ro = new ResizeObserver(update);
-    ro.observe(node);
-    window.addEventListener('resize', update);
-
-    return () => {
-      ro.disconnect();
-      window.removeEventListener('resize', update);
-    };
-  }, [challenge.id]);
-
   const plateViews = useMemo(() => challenge.ratios.map((ratio, index) => {
     const currentCakeCount = plates[index]?.length ?? 0;
     const targetCakeCount = challenge.targetCounts[index] ?? 0;
@@ -316,8 +294,8 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const backgroundOffsetY = viewportRect.height - (SHARE_SPLITTER_BACKGROUND_SIZE.height * backgroundScale);
   const plateSizePx = SHARE_SPLITTER_PLATE_DIAMETER_PX * backgroundScale * plateLayoutScale;
   const promptText = isPractice
-    ? `Target ratio: ${challenge.ratios.join(':')}`
-    : `There are ${challenge.totalSlices} slices of brainpower cake.\nThe Monster Mind demands it is shared in a ratio of ${challenge.ratios.join(':')}.`;
+    ? `Quick! share the cake to avoid a riot!\nTarget ratio: ${challenge.ratios.join(':')}`
+    : `Quick! share the cake to avoid a riot!\nThere are ${challenge.totalSlices} slices of brainpower cake.\nThe Monster Mind demands it is shared in a ratio of ${challenge.ratios.join(':')}.`;
 
   const loadNextChallenge = useCallback((solvedCount: number) => {
     const next = createChallenge(levelId, solvedCount);
@@ -734,7 +712,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
       <div className="relative h-full w-full">
         <div
-          ref={questionCardRef}
           className="pointer-events-none fixed left-0 right-0 z-[60]"
           style={{ top: 'calc(env(safe-area-inset-top) + 4px)' }}
         >
@@ -751,7 +728,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
         <div
           className="h-full w-full"
-          style={{ paddingTop: `${Math.max(0, questionDockBottom + (isCompactViewport ? 14 : 20))}px` }}
+          style={{ paddingTop: isCompactViewport ? '8.8rem' : '9.8rem' }}
         >
           <GameScreenLayout
             className={`px-3 pb-[calc(env(safe-area-inset-bottom)+${isCompactViewport ? '0.35rem' : '0.6rem'})] pt-0 text-white`}

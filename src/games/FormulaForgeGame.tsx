@@ -260,6 +260,15 @@ const scoreToStars = (correct: number, rounds: number, lives: number) => {
 
 const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
   const valueFor = (label: string) => round.given.find((item) => item.label === label)?.value ?? 0;
+  const valuePills = round.given.map(({ label, value }) => (
+    <div
+      key={`${round.id}-${label}`}
+      className="rounded-[0.9rem] border border-white/12 bg-black/18 px-3 py-2 text-center shadow-[0_8px_16px_rgba(2,6,23,0.12)]"
+    >
+      <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/72">{label}</div>
+      <div className="mt-0.5 text-2xl font-black text-white md:text-3xl">{value}</div>
+    </div>
+  ));
 
   if (round.diagram === 'triangle') {
     const base = valueFor('b');
@@ -279,6 +288,10 @@ const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
             <polygon points="50,16 18,78 82,78" fill="rgba(56,189,248,0.16)" stroke="rgba(191,219,254,0.9)" strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" />
             <line x1="50" y1="16" x2="50" y2="78" stroke="rgba(191,219,254,0.45)" strokeDasharray="3 3" strokeWidth="1.2" strokeLinecap="round" />
           </svg>
+          <div className="absolute inset-x-4 bottom-4 rounded-[1rem] border border-cyan-100/18 bg-slate-950/35 px-3 py-2 text-center shadow-[0_10px_18px_rgba(2,6,23,0.14)]">
+            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/70">{round.formula}</div>
+            <div className="mt-1 grid grid-cols-2 gap-2 text-white">{valuePills}</div>
+          </div>
         </div>
       </div>
     );
@@ -307,6 +320,10 @@ const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
             <line x1="70" y1="24" x2="92" y2="40" stroke="rgba(191,219,254,0.45)" strokeWidth="1.2" strokeLinecap="round" />
             <line x1="50" y1="40" x2="50" y2="82" stroke="rgba(191,219,254,0.45)" strokeWidth="1.2" strokeLinecap="round" />
           </svg>
+          <div className="absolute inset-x-4 bottom-4 rounded-[1rem] border border-cyan-100/18 bg-slate-950/35 px-3 py-2 text-center shadow-[0_10px_18px_rgba(2,6,23,0.14)]">
+            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/70">{round.formula}</div>
+            <div className="mt-1 grid grid-cols-3 gap-2 text-white">{valuePills}</div>
+          </div>
         </div>
       </div>
     );
@@ -324,18 +341,19 @@ const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
       <div className="mt-2 rounded-[0.95rem] border border-white/10 bg-black/14 px-3 py-2 text-sm font-semibold text-cyan-50/88">
         {round.prompt}
       </div>
+      <div className="mt-3 rounded-[1rem] border border-cyan-100/18 bg-slate-950/32 px-3 py-3 text-center shadow-[0_10px_18px_rgba(2,6,23,0.14)]">
+        <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/70">{round.formula}</div>
+        <div className="mt-2 grid grid-cols-2 gap-2 text-white">
+          {valuePills}
+        </div>
+      </div>
       <div className="relative mt-3 aspect-[1.25/1] overflow-hidden rounded-[1.4rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.16),rgba(15,23,42,0.06)_42%,rgba(8,15,30,0.28)_100%)] p-3">
-        <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full">
-          <rect x="18" y="18" width="64" height="64" rx="10" fill="rgba(56,189,248,0.16)" stroke="rgba(191,219,254,0.9)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
-          <g opacity="0.24" stroke="rgba(255,255,255,0.85)" strokeWidth="0.8">
-            {Array.from({ length: 4 }).map((_, index) => (
-              <React.Fragment key={`grid-${index}`}>
-                <line x1={18 + ((index + 1) * 12)} y1="18" x2={18 + ((index + 1) * 12)} y2="82" />
-                <line x1="18" y1={18 + ((index + 1) * 12)} x2="82" y2={18 + ((index + 1) * 12)} />
-              </React.Fragment>
-            ))}
-          </g>
-        </svg>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="rounded-[1.25rem] border border-cyan-100/18 bg-slate-950/28 px-4 py-3 text-center shadow-[0_12px_20px_rgba(2,6,23,0.14)]">
+            <div className="text-[11px] font-black uppercase tracking-[0.18em] text-cyan-100/70">Algebraic form</div>
+            <div className="mt-2 text-2xl font-black text-white md:text-4xl">{round.formula}</div>
+          </div>
+        </div>
       </div>
     </div>
   );

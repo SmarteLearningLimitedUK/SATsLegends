@@ -154,16 +154,7 @@ const stripQuestionLeadIn = (prompt: string) => {
 
 export const formatQuestionCardPrompt = (prompt: string) => {
   const normalized = normalizePromptText(prompt);
-  if (!normalized) return prompt;
-
-  if (normalized.includes('\n')) {
-    const [firstLine] = normalized.split('\n');
-    const actionLine = inferQuestionAction(firstLine);
-    return `${actionLine}\n${normalized}`;
-  }
-
-  const action = inferQuestionAction(normalized);
-  return `${action}\n${normalized}`;
+  return normalized || prompt;
 };
 
 export const formatFantasyPrompt = (prompt: string) => {

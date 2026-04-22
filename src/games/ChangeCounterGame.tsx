@@ -3,7 +3,7 @@ import confetti from 'canvas-confetti';
 import { motion } from 'motion/react';
 import changeCounterBackground from '../assets/maps/backgroundsforgames/changecounter.jpg';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
-import { FeedbackStrip, TaskCard } from '../components/game-ui/GameUiKit';
+import { FeedbackStrip } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { triggerHaptic } from '../haptics';
 import {
@@ -24,8 +24,6 @@ import item5 from '../assets/change counter/itemsforsale/5.png';
 import item6 from '../assets/change counter/itemsforsale/6.png';
 import item7 from '../assets/change counter/itemsforsale/7.png';
 import item8 from '../assets/change counter/itemsforsale/8.png';
-import item9 from '../assets/change counter/itemsforsale/9.png';
-import item10 from '../assets/change counter/itemsforsale/10.png';
 
 interface ChangeCounterGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -46,13 +44,25 @@ interface ChangeQuestion {
   paidPence: number;
   options: string[];
   correct: string;
+  quantity?: number;
+  customer?: string;
 }
 
 type FeedbackTone = 'neutral' | 'success' | 'warning';
 
 const MAX_LIVES = 3;
 const TOTAL_ROUNDS = 6;
-const ITEM_IMAGES = [item1, item2, item3, item4, item5, item6, item7, item8, item9, item10];
+const SALE_ITEMS = [
+  { label: 'sword', src: item1 },
+  { label: 'shield', src: item2 },
+  { label: 'potion', src: item3 },
+  { label: 'boots', src: item4 },
+  { label: 'snack pack', src: item5 },
+  { label: 'helmet', src: item6 },
+  { label: 'wizard hat', src: item7 },
+  { label: 'mirror', src: item8 },
+] as const;
+const MARKET_CUSTOMERS = ['Grok', 'Vex', 'Bran', 'Mochi', 'Rook', 'Zuri'];
 
 const formatMoney = (pence: number) => (
   pence >= 100
@@ -64,7 +74,7 @@ const QUESTION_BANK: ChangeQuestion[] = [
   {
     id: 'c1',
     kind: 'reasoning',
-    item: 'herb bundle',
+    item: 'sword',
     costPence: 275,
     paidPence: 500,
     options: ['£2.25', '£2.75', '£1.75', '£2.05'],
@@ -73,7 +83,7 @@ const QUESTION_BANK: ChangeQuestion[] = [
   {
     id: 'c2',
     kind: 'reasoning',
-    item: 'healing tonic',
+    item: 'shield',
     costPence: 420,
     paidPence: 1000,
     options: ['£5.80', '£4.80', '£6.20', '£5.20'],
@@ -82,7 +92,7 @@ const QUESTION_BANK: ChangeQuestion[] = [
   {
     id: 'c3',
     kind: 'reasoning',
-    item: 'glow lamp',
+    item: 'potion',
     costPence: 185,
     paidPence: 200,
     options: ['15p', '25p', '10p', '35p'],
@@ -91,7 +101,7 @@ const QUESTION_BANK: ChangeQuestion[] = [
   {
     id: 'c4',
     kind: 'reasoning',
-    item: 'rope coil',
+    item: 'boots',
     costPence: 360,
     paidPence: 500,
     options: ['£1.40', '£1.60', '£2.40', '£0.40'],
@@ -100,7 +110,7 @@ const QUESTION_BANK: ChangeQuestion[] = [
   {
     id: 'c5',
     kind: 'reasoning',
-    item: 'crystal shard',
+    item: 'snack pack',
     costPence: 995,
     paidPence: 1000,
     options: ['5p', '50p', '£0.50', '95p'],
@@ -109,7 +119,7 @@ const QUESTION_BANK: ChangeQuestion[] = [
   {
     id: 'c6',
     kind: 'reasoning',
-    item: 'travel cloak',
+    item: 'helmet',
     costPence: 1230,
     paidPence: 2000,
     options: ['£7.70', '£6.70', '£8.70', '£7.30'],
@@ -118,7 +128,7 @@ const QUESTION_BANK: ChangeQuestion[] = [
   {
     id: 'c7',
     kind: 'reasoning',
-    item: 'quest map',
+    item: 'wizard hat',
     costPence: 78,
     paidPence: 100,
     options: ['22p', '28p', '32p', '12p'],
@@ -127,7 +137,7 @@ const QUESTION_BANK: ChangeQuestion[] = [
   {
     id: 'c8',
     kind: 'reasoning',
-    item: 'lantern oil',
+    item: 'mirror',
     costPence: 648,
     paidPence: 1000,
     options: ['£3.52', '£2.52', '£4.52', '£3.42'],
@@ -156,30 +166,33 @@ const resolveQuestion = (
   order: ChangeQuestion[],
 ): ChangeQuestion => {
   const candidate = order[roundIndex % order.length];
-  const twistEligible = candidate.paidPence + 100 > candidate.costPence * 2;
-  const twist = levelId >= 5 && roundIndex % 2 === 1 && twistEligible;
-  if (!twist) {
+  const showOrderPrompt = levelId >= 5;
+
+  if (!showOrderPrompt) {
     return {
       ...candidate,
       options: shuffleOptionsWithCorrect(candidate.options, candidate.correct).options,
     };
   }
 
-  const newCost = candidate.costPence * 2;
-  const newPaid = candidate.paidPence + 100;
-  const correct = newPaid - newCost;
+  const quantity = 2 + ((roundIndex + levelId) % 3);
+  const customer = MARKET_CUSTOMERS[roundIndex % MARKET_CUSTOMERS.length];
+  const totalCost = candidate.costPence * quantity;
+  const paidPence = Math.ceil((totalCost + 300) / 100) * 100;
+  const correct = paidPence - totalCost;
 
   return {
     ...candidate,
-    item: `two ${candidate.item}s`,
-    costPence: newCost,
-    paidPence: newPaid,
+    quantity,
+    customer,
+    costPence: totalCost,
+    paidPence,
     correct: formatMoney(correct),
     options: buildOptions(correct, [
-      newPaid - candidate.costPence,
-      newPaid + 100 - newCost,
-      newPaid - newCost - 100,
-      newPaid - newCost + 200,
+      paidPence - (totalCost - candidate.costPence),
+      paidPence - totalCost - 100,
+      paidPence - totalCost + 200,
+      paidPence - totalCost + candidate.costPence,
     ]),
   };
 };
@@ -226,12 +239,13 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
     const currentIndex = QUESTION_BANK.findIndex((entry) => entry.id === question.id);
     const startIndex = currentIndex >= 0 ? currentIndex : 0;
     return Array.from({ length: 5 }, (_, index) => {
-      const itemIndex = (startIndex + index) % ITEM_IMAGES.length;
       const bankItem = QUESTION_BANK[(startIndex + index) % QUESTION_BANK.length];
+      const saleItem = SALE_ITEMS[(startIndex + index) % SALE_ITEMS.length];
       return {
-        id: `${bankItem.id}-${index}`,
+        id: `${question.id}-${index}`,
         label: bankItem.item,
-        src: ITEM_IMAGES[itemIndex],
+        src: saleItem.src,
+        price: formatMoney(bankItem.costPence),
       };
     });
   }, [question.id]);
@@ -346,24 +360,37 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
 
       <div className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.6rem)] md:pt-[calc(env(safe-area-inset-top)+4.9rem)]' : 'pt-[calc(env(safe-area-inset-top)+2.4rem)]'}`}>
         <PuzzleStage className="flex h-full min-h-0 flex-1 flex-col gap-2 md:gap-3">
-          <TaskCard className="mx-auto w-full max-w-[44rem]">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                  <div className="game-question-copy mt-1 text-white md:text-lg">
-                    The Monster Minds have disrupted this market order. A {question.item} costs {formatMoney(question.costPence)} and you pay with {formatMoney(question.paidPence)}.
-                  </div>
-                </div>
-              </div>
-              <div className="mt-2 text-[11px] font-semibold text-cyan-100/85 md:text-sm">
-                How much change restores the trade?
-              </div>
-          </TaskCard>
+          <div className="mx-auto w-full max-w-[44rem] px-1 text-center">
+            <div className="text-[11px] font-black uppercase tracking-[0.22em] text-amber-100/90 md:text-[12px]">
+              {resolvedLevel >= 5 ? 'Market Order' : 'Change Counter'}
+            </div>
+            <div className="mt-1 text-[clamp(1rem,2.9vw,1.5rem)] font-black leading-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)] md:text-[clamp(1.1rem,2.2vw,1.85rem)]">
+              {resolvedLevel >= 5 ? (
+                <>
+                  {question.customer} wants {question.quantity}x {question.item}.
+                  {' '}
+                  {question.customer} has {formatMoney(question.paidPence)}.
+                </>
+              ) : (
+                <>
+                  The Monster Minds have disrupted this market order.
+                  {' '}
+                  A {question.item} costs {formatMoney(question.costPence)} and you pay with {formatMoney(question.paidPence)}.
+                </>
+              )}
+            </div>
+            <div className="mt-1 text-[11px] font-semibold text-cyan-100/88 md:text-sm">
+              {resolvedLevel >= 5
+                ? `How much change should ${question.customer} receive?`
+                : 'How much change restores the trade?'}
+            </div>
+          </div>
 
           <div className="mx-auto grid w-full max-w-[44rem] grid-cols-2 gap-2 md:grid-cols-5 md:gap-3">
             {questionGallery.map((entry) => (
               <div
                 key={entry.id}
-                className="casual-panel-surface flex min-h-0 flex-col items-center gap-2 overflow-hidden rounded-[1.15rem] border border-white/10 px-2 py-2 text-center shadow-[0_12px_24px_rgba(0,0,0,0.16)] md:rounded-[1.35rem] md:px-3 md:py-3"
+                className="casual-panel-surface flex min-h-0 flex-col items-center gap-1.5 overflow-hidden rounded-[1.15rem] border border-white/10 px-2 py-2 text-center shadow-[0_12px_24px_rgba(0,0,0,0.16)] md:rounded-[1.35rem] md:px-3 md:py-3"
               >
                 <div className="flex h-18 w-full items-center justify-center overflow-hidden rounded-[0.9rem] bg-black/18 md:h-24">
                   <img
@@ -376,6 +403,11 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
                 <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/76 md:text-[10px]">
                   {entry.label}
                 </div>
+                {resolvedLevel >= 5 ? (
+                  <div className="rounded-full border border-amber-100/25 bg-amber-200/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.16em] text-amber-50 md:text-[10px]">
+                    {entry.price} each
+                  </div>
+                ) : null}
               </div>
             ))}
           </div>

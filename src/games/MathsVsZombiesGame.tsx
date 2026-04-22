@@ -162,7 +162,7 @@ const buildQuestion = (levelId: number): Question => {
   }
   const shuffled = Array.from(options).sort(() => Math.random() - 0.5);
   return {
-    prompt: `the monster minds have sent their minions - solve the sum to defeat them\n\n${formatMultiplicationDisplay(equation)}`,
+    prompt: `Help! Minions are attacking.\nSolve the sum to defeat them.\n${formatMultiplicationDisplay(equation)}`,
     options: shuffled,
     correctIndex: shuffled.indexOf(answer),
   };
@@ -511,8 +511,14 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           <TopBar XP={XP} brainPoints={zombiesDefeated} health={health} timer={timerLabel} onBack={onBack} />
         ) : null}
 
+        <div className={`mx-4 mt-4 flex-shrink-0 ${useSharedTopHud ? 'mt-2' : 'mt-4'}`}>
+          <GameQuestionCard className="mx-auto w-full max-w-[54rem]">
+            {question.prompt}
+          </GameQuestionCard>
+        </div>
+
         <div
-          className={`relative mx-4 flex-1 overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/10 shadow-2xl ${useSharedTopHud ? 'mt-2' : 'mt-4'}`}
+          className={`relative mx-4 mt-4 flex-1 overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/10 shadow-2xl ${useSharedTopHud ? 'mt-2' : 'mt-4'}`}
           style={{ backgroundImage: `url(${zombiePlayfield})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_85%,rgba(56,189,248,0.06),transparent_48%)]" />
@@ -567,10 +573,6 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
         </div>
 
         <div className="mx-4 mt-4 rounded-3xl border border-blue-400/40 bg-blue-950/70 p-4 shadow-xl">
-          <div className="my-3 h-px w-full bg-white/10" />
-          <GameQuestionCard title="Mission" className="game-question-card--dock-bottom" style={{ ['--question-card-width' as any]: '100%' }}>
-            {question.prompt}
-          </GameQuestionCard>
           <div
             className={`mt-2 min-h-[16px] text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
             aria-hidden={!feedback}
