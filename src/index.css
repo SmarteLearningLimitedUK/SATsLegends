@@ -4911,6 +4911,72 @@ button.avatar-hero-arrow:not(:disabled):active {
   max-width: 100% !important;
 }
 
+/* Final override so the new asset skin wins over older card rules further up the file. */
+.game-question-card {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  overflow: hidden !important;
+  isolation: isolate;
+}
+
+.game-question-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0) 18%),
+    url('/reference-assets/new-sheet-2026-04-22/slice_01_x21_y39_w301_h188.png') center/100% 100% no-repeat;
+  pointer-events: none;
+}
+
+.game-question-card::after {
+  content: '';
+  position: absolute;
+  inset: 6px 8px 8px;
+  z-index: 0;
+  border-radius: calc(1.05rem - 6px);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.1), transparent 42%),
+    linear-gradient(180deg, rgba(2, 6, 23, 0.08), rgba(2, 6, 23, 0.28));
+  pointer-events: none;
+}
+
+.game-question-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.game-question-card .question-title {
+  margin: 0 auto 0.4rem;
+  width: min(100%, 38rem);
+  min-height: 2.15rem;
+  padding: 0.42rem 1rem 0.52rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background:
+    url('/reference-assets/new-sheet-2026-04-22/slice_15_x709_y396_w338_h68.png') center/100% 100% no-repeat;
+  color: #fff6de;
+  text-align: center;
+  text-wrap: balance;
+  text-shadow:
+    0 1px 0 rgba(2, 6, 23, 0.55),
+    0 0 12px rgba(255, 236, 179, 0.15);
+}
+
+.game-question-card .game-question-copy {
+  padding-inline: 0.1rem;
+}
+
+.game-question-card .question-subtitle {
+  margin-top: 0.4rem;
+}
+
 .screen-gameplay .unified-minigame-hud-enabled .game-shell-zone-actions,
 .screen-gameplay .unified-minigame-hud-enabled .unified-global-dock {
   margin-top: 0.2rem !important;
