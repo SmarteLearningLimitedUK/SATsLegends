@@ -1138,8 +1138,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
 
         <div
-          className="pointer-events-none absolute left-[68.5%] top-[56.8%] z-30 -translate-x-1/2"
-          style={{ width: `${layout.enemyWidth}%` }}
+          className="pointer-events-none absolute left-1/2 top-[55.2%] z-30 -translate-x-1/2"
+          style={{ width: `${layout.enemyWidth + 6}%` }}
         >
           <div className="relative">
             <AnimatePresence>
@@ -1171,6 +1171,22 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 </motion.div>
               ) : null}
             </AnimatePresence>
+            <div className="absolute left-1/2 top-[-6%] z-40 -translate-x-1/2">
+              <div className="w-[160px] rounded-2xl border border-amber-200/35 bg-slate-900/80 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)] sm:w-[178px]">
+                <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
+                  Monster Mind
+                </div>
+                <div className="relative h-2 overflow-visible rounded-full border border-slate-700/80 bg-slate-950/80">
+                  <div className="pointer-events-none absolute inset-[-8px] rounded-full bg-rose-300/14 blur-sm" />
+                  <motion.div
+                    className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-rose-500 via-rose-400 to-orange-300 shadow-[0_0_12px_rgba(251,113,133,0.75)]"
+                    animate={{ width: `${(goblinHealth / GOBLIN_MAX_HEALTH) * 100}%` }}
+                    transition={{ type: 'spring', stiffness: 210, damping: 26 }}
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.14)_1px,transparent_1px)] bg-[length:10%_100%]" />
+                </div>
+              </div>
+            </div>
             <motion.div
               className="absolute left-1/2 top-[66%] h-[38%] w-[56%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
               animate={{
@@ -1227,7 +1243,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               ) : null}
             </AnimatePresence>
             <motion.div
-              className="relative"
+              className="relative translate-y-[8px]"
               animate={{
                 y: [0, -5, 0],
                 x: goblinEffect === 'hit' ? [0, -9, 9, -8, 8, -5, 5, 0] : 0,
