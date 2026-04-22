@@ -527,7 +527,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
         <div
           className={`relative mx-4 mt-2 min-h-0 flex-[1.9] overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/10 shadow-2xl ${useSharedTopHud ? 'mt-1.5' : 'mt-2'}`}
-           style={{ backgroundImage: `url(${zombiePlayfield})`, backgroundSize: 'cover', backgroundPosition: 'center bottom', backgroundRepeat: 'no-repeat' }}
+           style={{ backgroundImage: `url(${zombiePlayfield})`, backgroundSize: 'contain', backgroundPosition: 'center bottom', backgroundRepeat: 'no-repeat' }}
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_85%,rgba(56,189,248,0.06),transparent_48%)]" />
           <div className="absolute bottom-4 left-5 flex -translate-x-1.5 flex-col items-center gap-2">

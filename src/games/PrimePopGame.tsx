@@ -49,7 +49,7 @@ interface PrimePopConfig {
 
 const INITIAL_LIVES = 10;
 const BUBBLE_PIXEL_SCALE = 7.2;
-const DANGER_LINE_Y = 12;
+const DANGER_LINE_Y = 18;
 const PRIME_SPEED_MULTIPLIER = 1.22;
 
 const BUBBLE_TINTS: BubbleTint[] = ['blue', 'green', 'purple', 'gold', 'red'];
@@ -581,7 +581,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
       style={{
         backgroundImage: `url(${primePopBackground})`,
         backgroundSize: '100% 100%',
-        backgroundPosition: 'center top',
+        backgroundPosition: 'center 16%',
       }}
     >
       <PracticeIntroPopup

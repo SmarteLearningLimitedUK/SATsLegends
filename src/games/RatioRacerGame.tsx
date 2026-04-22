@@ -64,10 +64,9 @@ const MIXTURE_LABELS_BY_PART_COUNT: Record<number, string[]> = {
 };
 
 const joinLabelList = (labels: string[]) => {
-  const lowered = labels.map((label) => label.toLowerCase());
-  if (lowered.length <= 1) return lowered[0] || '';
-  if (lowered.length === 2) return `${lowered[0]} and ${lowered[1]}`;
-  return `${lowered.slice(0, -1).join(', ')}, and ${lowered[lowered.length - 1]}`;
+  if (labels.length <= 1) return labels[0] || '';
+  if (labels.length === 2) return `${labels[0]} and ${labels[1]}`;
+  return `${labels.slice(0, -1).join(', ')}, and ${labels[labels.length - 1]}`;
 };
 
 const themeRatioQuestion = (question: RatioFractionQuestion): RatioFractionQuestion => {
@@ -82,7 +81,7 @@ const themeRatioQuestion = (question: RatioFractionQuestion): RatioFractionQuest
     ...question,
     labels,
     target: targetLabel,
-    prompt: `The Monster Minds have tampered with the kart fuel mix. It now has ${joinLabelList(labels)} in a ${ratioText} ratio. What fraction of the whole is ${targetLabel.toLowerCase()}?`,
+    prompt: `The fuel mix has been tampered with - it has ${joinLabelList(labels).toLowerCase()} in a ${ratioText} ratio. What fraction of the whole is ${targetLabel.toLowerCase()}?`,
     explanation: `Total parts = ${totalParts}. ${targetLabel} is ${question.ratio[targetIndex]} parts, so the fraction is ${question.correctAnswer}.`,
   };
 };
@@ -574,15 +573,22 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
             >
               {question.prompt}
             </GameQuestionCard>
+          </div>
+        </div>
 
-            <div className="answer-choice-surface grid grid-cols-4 gap-2 rounded-[1.25rem] border border-white/12 bg-slate-950/24 px-2 py-2 shadow-[0_14px_28px_rgba(2,6,23,0.22)] backdrop-blur-[4px]">
+        <div
+          className="fixed left-0 right-0 z-[60]"
+          style={{ bottom: 'calc(env(safe-area-inset-bottom) + 0.45rem)' }}
+        >
+          <div className="mx-auto w-full max-w-[52rem] px-2 sm:px-3 md:px-4">
+            <div className="answer-choice-surface grid grid-cols-4 gap-2 rounded-[1.15rem] border border-white/12 bg-slate-950/24 px-2 py-2 shadow-[0_14px_28px_rgba(2,6,23,0.22)] backdrop-blur-[4px]">
               {question.options.map((option) => (
                 <motion.button
                   key={option}
                   whileTap={{ scale: 0.96 }}
                   onClick={() => handleAnswer(option)}
                   disabled={locked || raceState !== 'showingQuestion'}
-                  className={`min-h-[3.1rem] rounded-[1rem] px-2 py-2 text-center text-base font-black ${
+                  className={`min-h-[3rem] rounded-[0.95rem] px-2 py-2 text-center text-[clamp(0.95rem,2.4vw,1.1rem)] font-black ${
                     selected === option
                       ? option === question.correctAnswer
                         ? 'ui-button-success'

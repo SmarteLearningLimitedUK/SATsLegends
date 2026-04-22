@@ -77,8 +77,8 @@ const LEVELS: Level[] = [
 ];
 
 const GRID_SIZE = 20;
-const BLUEPRINT_BOARD_TOP = '58%';
-const BLUEPRINT_BOARD_SIZE = 'min(76vw, 29rem, 58vh)';
+const BLUEPRINT_BOARD_TOP = '49%';
+const BLUEPRINT_BOARD_SIZE = 'min(82vw, 31rem, 52vh)';
 const SCALE_BUILDER_INTRO = `The Monster Minds have damaged the island structures.\nUse the scale factor to rebuild each blueprint to the correct size.\nMultiply each length correctly.`;
 
 const formatBlueprintValue = (value: number) => {
@@ -319,10 +319,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
 
   return (
     <GameScreenShell
-      className="overflow-hidden pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+0.25rem)]"
-      backgroundImage={scaleBuilderBackground}
-      backgroundPosition="center calc(50% + 10pt)"
-      backgroundOpacity={1}
+      className="overflow-hidden pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+0.25rem)] scale-builder-full-wrap"
     >
       <PracticeIntroPopup
         open={showPracticeIntro}
@@ -336,6 +333,14 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-[1]"
       >
+        <div
+          className="absolute inset-0 bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url(${scaleBuilderBackground})`,
+            backgroundSize: 'contain',
+            backgroundPosition: 'center center',
+          }}
+        />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,47,73,0.18)_0%,rgba(7,89,133,0.14)_38%,rgba(8,47,73,0.28)_100%)]" />
         <div
           className="absolute inset-0 opacity-72"
@@ -361,9 +366,9 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
         </div>
       </div>
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-[10px] px-2 pb-1 pt-[calc(env(safe-area-inset-top)+0.95rem)] md:px-3">
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-[10px] px-2 pb-[calc(env(safe-area-inset-bottom)+4.4rem)] pt-[calc(env(safe-area-inset-top)+0.95rem)] md:px-3">
         <div className="relative mx-auto flex h-full w-full max-w-[780px] min-h-0 flex-1 flex-col overflow-visible">
-          <div className="relative z-10 grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-[10px] p-0 md:p-0">
+          <div className="relative z-10 grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)] gap-[10px] p-0 md:p-0">
             <GameQuestionCard className="w-full">
               <div className="game-question-copy mt-1 whitespace-pre-line text-[10px] font-black leading-snug text-white md:text-[11px]">
                 {instructionsText}
@@ -423,7 +428,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                   {showBase ? 'Hide guide' : 'Show guide'}
                 </button>
               </div>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={() => adjustDimension('width', -0.25)}
                   disabled={gameState !== 'playing'}
@@ -432,13 +437,6 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                   {isDimensionMode
                     ? 'L-0.25'
                     : '-0.25'}
-                </button>
-                <button
-                  onClick={resetLevel}
-                  disabled={gameState !== 'playing'}
-                  className="ui-button-secondary rounded-lg px-2 py-2 text-xs font-black uppercase tracking-[0.12em] disabled:opacity-45"
-                >
-                  Reset
                 </button>
                 <button
                   onClick={() => adjustDimension('height', 0.25)}
@@ -450,25 +448,38 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                     : '+0.25'}
                 </button>
               </div>
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                {gameState === 'success' ? (
-                  <button
-                    onClick={proceed}
-                    className="ui-button-success col-span-2 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em]"
-                  >
-                    Next project <ChevronRight className="h-4 w-4" />
-                  </button>
-                ) : (
-                  <PrimaryButton
-                    onClick={verifyScale}
-                    disabled={gameState !== 'playing'}
-                    className="col-span-2"
-                  >
-                    <Ruler className="h-4 w-4" />
-                    Check Scale
-                  </PrimaryButton>
-                )}
-              </div>
+            </div>
+          </div>
+
+          <div
+            className="fixed left-0 right-0 z-30"
+            style={{ bottom: 'calc(env(safe-area-inset-bottom) + 4.1rem)' }}
+          >
+            <div className="mx-auto flex w-full max-w-[780px] items-center gap-2 px-2 md:px-3">
+              <button
+                onClick={resetLevel}
+                disabled={gameState !== 'playing'}
+                className="ui-button-secondary inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] disabled:opacity-45"
+              >
+                Rest
+              </button>
+              {gameState === 'success' ? (
+                <button
+                  onClick={proceed}
+                  className="ui-button-success inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em]"
+                >
+                  Next project <ChevronRight className="h-4 w-4" />
+                </button>
+              ) : (
+                <PrimaryButton
+                  onClick={verifyScale}
+                  disabled={gameState !== 'playing'}
+                  className="flex-1"
+                >
+                  <Ruler className="h-4 w-4" />
+                  Check Scale
+                </PrimaryButton>
+              )}
             </div>
           </div>
 
