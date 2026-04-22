@@ -1054,7 +1054,7 @@ const App: React.FC = () => {
             <div className="pointer-events-none absolute inset-[1px] rounded-[1.05rem] border border-cyan-100/14" />
             <div className="pointer-events-none absolute inset-x-3 top-[3px] h-3 rounded-full bg-cyan-200/10 blur-[2px]" />
 
-            <div className="relative grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+            <div className="relative grid grid-cols-4 gap-1">
               <button
                 type="button"
                 onClick={goToProfile}
@@ -1082,11 +1082,10 @@ const App: React.FC = () => {
               <button
                 type="button"
                 onClick={() => openWellbeingHub({ origin: 'world_map', islandId: selectedIsland?.id ?? null })}
-                className="flex h-[42px] w-full min-w-0 items-center justify-center gap-2 rounded-[0.85rem] border border-emerald-100/35 bg-[linear-gradient(180deg,rgba(18,78,58,0.92)_0%,rgba(9,44,32,0.95)_100%)] px-2 text-[9px] font-black uppercase tracking-[0.14em] text-emerald-50 shadow-[0_4px_0_rgba(6,95,70,0.65)] sm:px-3"
+                className={mapDockButtonClass}
                 aria-label="Open Calm Grove"
               >
                 <AssetIcon name="heart" className={mapDockIconClass} />
-                <span>Calm Grove</span>
               </button>
             </div>
           </div>

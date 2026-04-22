@@ -348,8 +348,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
         <PuzzleStage className="flex h-full min-h-0 flex-1 flex-col gap-2 md:gap-3">
           <TaskCard className="mx-auto w-full max-w-[44rem]">
             <div className="flex items-center justify-between gap-3">
-                <div>
-                  <div className="question-title">Change Counter</div>
+              <div>
                   <div className="game-question-copy mt-1 text-white md:text-lg">
                     The Monster Minds have disrupted this market order. A {question.item} costs {formatMoney(question.costPence)} and you pay with {formatMoney(question.paidPence)}.
                   </div>

@@ -319,7 +319,6 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
           <TaskCard>
             <div className="flex items-center justify-between gap-3">
               <div>
-                <div className="question-title">Reasoning Quest</div>
                 <div className="game-question-copy mt-1 text-white md:text-lg">{activeQuestion.prompt}</div>
               </div>
             </div>

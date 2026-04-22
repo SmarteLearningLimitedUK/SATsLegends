@@ -365,7 +365,6 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
         <div className="relative mx-auto flex h-full w-full max-w-[780px] min-h-0 flex-1 flex-col overflow-visible">
           <div className="relative z-10 grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-3 p-0 md:gap-4 md:p-0">
             <div className="game-question-card">
-              <div className="question-title">Scale Builder</div>
               <div className="game-question-copy mt-1 whitespace-pre-line text-[10px] font-black leading-snug text-white md:text-[11px]">
                 {instructionsText}
               </div>
