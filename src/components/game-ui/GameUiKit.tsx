@@ -89,11 +89,9 @@ type GameQuestionCardProps = {
  * Visual source of truth lives in `.game-question-card` (src/index.css).
  */
 export const GameQuestionCard: React.FC<GameQuestionCardProps> = ({
-  title = 'Mission',
   subtitle,
   children,
   className,
-  titleClassName,
   bodyClassName,
   style,
 }) => {
@@ -101,11 +99,6 @@ export const GameQuestionCard: React.FC<GameQuestionCardProps> = ({
 
   return (
     <div className={cn('game-question-card', className)} style={style}>
-      {title ? (
-        <div className={cn('question-title text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90', titleClassName)}>
-          {title}
-        </div>
-      ) : null}
       <div className={cn('game-question-copy mt-0.5 whitespace-pre-line text-white', bodyClassName)}>
         {normalizedChildren}
       </div>

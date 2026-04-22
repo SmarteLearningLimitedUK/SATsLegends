@@ -1171,6 +1171,7 @@ const App: React.FC = () => {
                 avatarId={player.avatarId}
                 timeLeft={globalMiniGameHudTimeLeft}
                 totalTime={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
+                gameTitle={canonicalGameTitle}
                 lives={globalMiniGameLives}
                 hideTimer={hideShellTimer}
                 hideTopBar={screen === 'world_map' || screen === 'island_levels' || screen === 'profile' || screen === 'achievements_tracker' || screen === 'parent_dashboard'}

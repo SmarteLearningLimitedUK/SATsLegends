@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { motion } from 'motion/react';
 import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
 import heartIcon from '../assets/casual_ui/icons/icon__heart.png';
+import titleFlagAsset from '../assets/licensed/slices/deposited_blue_banner.png';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 import GameActionDock from './GameActionDock';
 import { LEVEL_TIMERS_DISABLED } from '../app/testingFlags';
@@ -10,6 +11,7 @@ interface UnifiedMiniGameHudProps {
   avatarId?: string;
   timeLeft: number;
   totalTime: number;
+  gameTitle?: string;
   hidden?: boolean;
   hideTimer?: boolean;
   hideTopBar?: boolean;
@@ -24,6 +26,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
   avatarId,
   timeLeft,
   totalTime,
+  gameTitle,
   hidden = false,
   hideTimer = false,
   hideTopBar = false,
@@ -89,6 +92,23 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
           >
             <div className={`pointer-events-none absolute inset-0 ${shellRadiusClass} ${variant === 'hub' ? 'bg-[linear-gradient(180deg,rgba(20,46,96,0.55)_0%,rgba(7,21,58,0.5)_100%)]' : 'bg-[linear-gradient(180deg,rgba(20,46,96,0.75)_0%,rgba(7,21,58,0.68)_100%)]'} shadow-[0_12px_24px_rgba(2,6,23,0.45)]`} />
             <div className={`pointer-events-none absolute inset-[1px] ${variant === 'hub' ? 'rounded-[0.92rem]' : 'rounded-[1.08rem]'} border border-cyan-200/25`} />
+            {gameTitle ? (
+              <div className="pointer-events-none absolute inset-x-0 top-1/2 flex -translate-y-1/2 justify-center px-3">
+                <div
+                  className="relative flex h-[clamp(1.8rem,4.4vw,2.35rem)] w-[clamp(11rem,34vw,15.5rem)] items-center justify-center overflow-hidden px-[clamp(0.9rem,2.2vw,1.3rem)] py-[0.1rem] text-center shadow-[0_4px_10px_rgba(2,6,23,0.2)]"
+                  style={{
+                    backgroundImage: `url(${titleFlagAsset})`,
+                    backgroundSize: '100% 100%',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                  }}
+                >
+                  <span className="truncate text-[clamp(0.58rem,1.4vw,0.78rem)] font-black uppercase tracking-[0.18em] text-white drop-shadow-[0_1px_0_rgba(0,0,0,0.4)]">
+                    {gameTitle}
+                  </span>
+                </div>
+              </div>
+            ) : null}
 
             <div className="relative flex min-w-0 items-center gap-2.5 pl-1">
               <div
@@ -111,32 +131,34 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
               <div
                 className={`relative flex ${sharedHudHeightClass} ${timerWidthClass} items-center rounded-full border-2 border-cyan-100/60 bg-[linear-gradient(180deg,#2f67ba_0%,#1f458f_100%)] px-1.5 shadow-[0_9px_18px_rgba(2,6,23,0.42)]`}
               >
-                <div className="inline-flex h-[76%] w-[clamp(24px,6.2vw,32px)] shrink-0 items-center justify-center rounded-full border border-amber-100/70 bg-[linear-gradient(180deg,#f8d86d_0%,#f59e0b_100%)] text-slate-900 shadow-[0_3px_8px_rgba(2,6,23,0.38)]">
-                  <img
-                    src={hourglassIcon}
-                    alt=""
-                    aria-hidden="true"
-                    draggable={false}
-                    className="h-[70%] w-[70%] object-contain"
-                  />
-                </div>
-                <div className="relative ml-1.5 h-[44%] min-w-0 flex-1 overflow-hidden rounded-full border border-cyan-100/35 bg-slate-950/60">
-                  <div className="pointer-events-none absolute inset-[1px] rounded-full bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0))]" />
-                  <motion.div
-                    className={`absolute inset-y-[2px] left-[2px] rounded-full shadow-[0_0_10px_rgba(74,222,128,0.58)] ${
-                      isLowTime
-                        ? 'bg-[linear-gradient(90deg,#f59e0b_0%,#ef4444_100%)]'
-                        : 'bg-[linear-gradient(90deg,#5cf44a_0%,#22d34e_58%,#11bfa8_100%)]'
-                    }`}
-                    animate={{ width: `max(0px, calc(${timerProgress * 100}% - 4px))` }}
-                    transition={{ duration: 0.25, ease: 'easeOut' }}
-                  />
-                  <motion.div
-                    className="pointer-events-none absolute inset-y-[2px] w-10 rounded-full bg-[linear-gradient(90deg,rgba(255,255,255,0)_0%,rgba(255,255,255,0.42)_50%,rgba(255,255,255,0)_100%)]"
-                    animate={{ x: ['-35%', '115%'] }}
-                    transition={{ duration: 1.4, repeat: Infinity, ease: 'linear' }}
-                  />
-                  <div className="pointer-events-none absolute inset-[1px] rounded-full bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:12%_100%]" />
+                <div className="flex min-w-0 flex-1 items-center">
+                  <div className="inline-flex h-[76%] w-[clamp(24px,6.2vw,32px)] shrink-0 items-center justify-center rounded-full border border-amber-100/70 bg-[linear-gradient(180deg,#f8d86d_0%,#f59e0b_100%)] text-slate-900 shadow-[0_3px_8px_rgba(2,6,23,0.38)]">
+                    <img
+                      src={hourglassIcon}
+                      alt=""
+                      aria-hidden="true"
+                      draggable={false}
+                      className="h-[70%] w-[70%] object-contain"
+                    />
+                  </div>
+                  <div className="relative ml-1.5 h-[44%] min-w-0 flex-1 overflow-hidden rounded-full border border-cyan-100/35 bg-slate-950/60">
+                    <div className="pointer-events-none absolute inset-[1px] rounded-full bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0))]" />
+                    <motion.div
+                      className={`absolute inset-y-[2px] left-[2px] rounded-full shadow-[0_0_10px_rgba(74,222,128,0.58)] ${
+                        isLowTime
+                          ? 'bg-[linear-gradient(90deg,#f59e0b_0%,#ef4444_100%)]'
+                          : 'bg-[linear-gradient(90deg,#5cf44a_0%,#22d34e_58%,#11bfa8_100%)]'
+                      }`}
+                      animate={{ width: `max(0px, calc(${timerProgress * 100}% - 4px))` }}
+                      transition={{ duration: 0.25, ease: 'easeOut' }}
+                    />
+                    <motion.div
+                      className="pointer-events-none absolute inset-y-[2px] w-10 rounded-full bg-[linear-gradient(90deg,rgba(255,255,255,0)_0%,rgba(255,255,255,0.42)_50%,rgba(255,255,255,0)_100%)]"
+                      animate={{ x: ['-35%', '115%'] }}
+                      transition={{ duration: 1.4, repeat: Infinity, ease: 'linear' }}
+                    />
+                    <div className="pointer-events-none absolute inset-[1px] rounded-full bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:12%_100%]" />
+                  </div>
                 </div>
                 <span className={`ml-1.5 shrink-0 font-black uppercase text-slate-100 [text-shadow:0_1px_0_rgba(0,0,0,0.35)] ${variant === 'hub' ? 'text-[clamp(0.6rem,1.6vw,0.8rem)]' : 'text-[clamp(0.68rem,1.8vw,0.9rem)]'}`}>
                   {timeValue}s
