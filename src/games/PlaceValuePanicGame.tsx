@@ -526,7 +526,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const targetHeightPct = targetSocketSizing.heightValue || 0;
     const socketTopY = layout.targetY - targetHeightPct / 2;
     const bottomPct = 100 - socketTopY;
-    return `calc(${bottomPct.toFixed(2)}% - 34px)`;
+    return `calc(${bottomPct.toFixed(2)}% - 10px)`;
   }, [layout.targetY, targetSocketSizing.heightValue]);
 
   const questionPrompt = useMemo(() => {
@@ -1007,17 +1007,17 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         transition={{ duration: 0.34, ease: 'easeInOut' }}
       >
         <div
-          className="pointer-events-none absolute left-1/2 top-[15.8%] z-10 -translate-x-1/2"
-          style={{ width: 'min(84vw, 42rem)' }}
+          className="pointer-events-none absolute left-1/2 top-[16.8%] z-10 -translate-x-1/2"
+          style={{ width: 'min(80vw, 38rem)' }}
         >
-          <div className="mx-auto rounded-[1.4rem] border border-cyan-100/20 bg-slate-950/30 p-2.5 shadow-[0_18px_40px_rgba(2,6,23,0.34)] backdrop-blur-[8px] md:p-3.5">
+          <div className="mx-auto rounded-[1.2rem] border border-cyan-100/20 bg-slate-950/26 p-2 shadow-[0_18px_40px_rgba(2,6,23,0.34)] backdrop-blur-[8px] md:p-3">
             <div className="mb-2 flex items-center justify-center gap-3 px-2 text-[clamp(0.62rem,1.35vw,0.76rem)] font-black uppercase tracking-[0.28em] text-amber-200/92">
               <span className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent via-amber-200/65 to-transparent" />
               <span>Number Stones</span>
               <span className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent via-amber-200/65 to-transparent" />
             </div>
-            <div className="relative mx-auto flex min-h-[7.8rem] items-center justify-center rounded-[1.2rem] border border-white/12 bg-[radial-gradient(circle_at_50%_18%,rgba(103,232,249,0.16),rgba(15,23,42,0.16)_42%,rgba(2,6,23,0.52)_100%)] px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:min-h-[8.6rem] md:px-4 md:py-4">
-              <div className="relative flex w-full items-center justify-center gap-[0.48rem] md:gap-2.5">
+            <div className="relative mx-auto flex min-h-[7rem] items-center justify-center rounded-[1.1rem] border border-white/12 bg-[radial-gradient(circle_at_50%_18%,rgba(103,232,249,0.16),rgba(15,23,42,0.16)_42%,rgba(2,6,23,0.52)_100%)] px-2.5 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:min-h-[7.9rem] md:px-3.5 md:py-3.5">
+              <div className="relative flex w-full items-center justify-center gap-[0.4rem] md:gap-2">
                 {activeTargetAnchors.map((anchor, idx) => {
               const token = targetSlots[idx];
               const isDraggingThis = dragState?.fromLocation === 'target' && dragState.fromIndex === idx;
@@ -1045,12 +1045,13 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 height: targetSocketSizing.height,
               }}
             >
+              <span className="pointer-events-none absolute inset-[-12%] rounded-full border border-amber-200/35 bg-amber-100/10 shadow-[0_0_18px_rgba(251,191,36,0.18)]" />
               <img
                 src={getSocketAsset(question.placeHints[idx], idx, question.placeHints)}
                 alt=""
                 aria-hidden="true"
                 draggable={false}
-                className="pointer-events-none absolute inset-0 h-full w-full object-contain"
+                className="pointer-events-none absolute inset-0 h-full w-full object-contain drop-shadow-[0_0_8px_rgba(251,191,36,0.22)]"
               />
               {token ? (
                 <>
@@ -1069,7 +1070,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                     layout
                     transition={{ type: 'spring', stiffness: 560, damping: 27, mass: 0.62 }}
                     className="absolute left-1/2 top-1/2 z-10 block -translate-x-1/2 -translate-y-1/2 font-black text-white"
-                    style={{ ...numberStyle, fontSize: layout.targetFont }}
+                    style={{ ...numberStyle, fontSize: `clamp(2.25rem, 5.1vw, 3.75rem)` }}
                   >
                     {token.value}
                   </motion.span>
@@ -1085,16 +1086,16 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
 
         <div
-          className="pointer-events-none absolute left-1/2 top-[39.6%] z-10 -translate-x-1/2"
-          style={{ width: 'min(86vw, 46rem)' }}
+          className="pointer-events-none absolute left-1/2 top-[39.2%] z-10 -translate-x-1/2"
+          style={{ width: 'min(84vw, 44rem)' }}
         >
-          <div className="rounded-[1.35rem] border border-cyan-100/16 bg-slate-950/26 p-2.5 shadow-[0_16px_36px_rgba(2,6,23,0.28)] backdrop-blur-[8px] md:p-3.5">
+          <div className="rounded-[1.25rem] border border-cyan-100/16 bg-slate-950/24 p-2 shadow-[0_16px_36px_rgba(2,6,23,0.28)] backdrop-blur-[8px] md:p-3">
             <div className="mb-2 flex items-center justify-center gap-3 px-2 text-[clamp(0.62rem,1.35vw,0.76rem)] font-black uppercase tracking-[0.28em] text-cyan-100/90">
               <span className="h-px flex-1 max-w-14 bg-gradient-to-r from-transparent via-cyan-100/55 to-transparent" />
               <span>Choose the Missing Digits</span>
               <span className="h-px flex-1 max-w-14 bg-gradient-to-r from-transparent via-cyan-100/55 to-transparent" />
             </div>
-            <div className="relative flex flex-wrap items-center justify-center gap-[0.48rem] md:gap-2.5">
+            <div className="relative flex flex-wrap items-center justify-center gap-[0.42rem] md:gap-2">
               {activeSourceAnchors.map((anchor, idx) => {
               const token = sourceSlots[idx];
               const isDraggingThis = dragState?.fromLocation === 'source' && dragState.fromIndex === idx;
@@ -1137,7 +1138,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
 
         <div
-          className="pointer-events-none absolute left-[68.5%] top-[57.4%] z-30 -translate-x-1/2"
+          className="pointer-events-none absolute left-[68.5%] top-[56.8%] z-30 -translate-x-1/2"
           style={{ width: `${layout.enemyWidth}%` }}
         >
           <div className="relative">
@@ -1284,7 +1285,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         <div
           className="game-submit-dock-fixed"
           style={{
-            bottom: 'calc(env(safe-area-inset-bottom) + 0.85rem)',
+            bottom: 'calc(env(safe-area-inset-bottom) + 0.7rem)',
           }}
         >
           <button
