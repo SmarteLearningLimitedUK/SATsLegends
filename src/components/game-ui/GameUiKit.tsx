@@ -9,6 +9,7 @@ import {
   VolumeX,
 } from 'lucide-react';
 import { playGameSound } from '../../audio/gameAudio';
+import { formatQuestionCardPrompt } from '../../utils/fantasyPrompt';
 
 type WrapperProps = {
   children: React.ReactNode;
@@ -95,23 +96,27 @@ export const GameQuestionCard: React.FC<GameQuestionCardProps> = ({
   titleClassName,
   bodyClassName,
   style,
-}) => (
-  <div className={cn('game-question-card', className)} style={style}>
-    {title ? (
-      <div className={cn('question-title text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90', titleClassName)}>
-        {title}
+}) => {
+  const normalizedChildren = typeof children === 'string' ? formatQuestionCardPrompt(children) : children;
+
+  return (
+    <div className={cn('game-question-card', className)} style={style}>
+      {title ? (
+        <div className={cn('question-title text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90', titleClassName)}>
+          {title}
+        </div>
+      ) : null}
+      <div className={cn('game-question-copy mt-0.5 whitespace-pre-line text-white', bodyClassName)}>
+        {normalizedChildren}
       </div>
-    ) : null}
-    <div className={cn('game-question-copy mt-0.5 whitespace-pre-line text-white', bodyClassName)}>
-      {children}
+      {subtitle ? (
+        <div className="question-subtitle mt-1 text-xs font-semibold text-white/75 md:text-sm">
+          {subtitle}
+        </div>
+      ) : null}
     </div>
-    {subtitle ? (
-      <div className="question-subtitle mt-1 text-xs font-semibold text-white/75 md:text-sm">
-        {subtitle}
-      </div>
-    ) : null}
-  </div>
-);
+  );
+};
 
 export const IconButton: React.FC<IconButtonProps> = ({ icon, label, onClick, disabled }) => (
   <button

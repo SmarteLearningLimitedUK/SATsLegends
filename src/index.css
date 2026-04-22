@@ -5420,9 +5420,9 @@ button.avatar-hero-arrow:not(:disabled):active {
   margin-right: auto;
   padding: var(--question-card-padding, 10px 12px);
   text-align: center;
-  font-size: clamp(0.98rem, 3.55vw, 1.18rem);
+  font-size: clamp(0.92rem, 3.15vw, 1.08rem);
   font-weight: 400;
-  line-height: 1.12;
+  line-height: 1.08;
   transform: scale(var(--question-card-scale, 1));
   transform-origin: top center;
   z-index: 60;
@@ -5459,6 +5459,10 @@ button.avatar-hero-arrow:not(:disabled):active {
   word-break: normal;
   hyphens: auto;
   color: #ffffff;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
 }
 
 .practice-briefing-copy {
