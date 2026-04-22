@@ -630,7 +630,7 @@ const App: React.FC = () => {
       if (selectedLevel.blueprintKey === 'angle_arena') {
         return {
           title: 'Angle Arena',
-          summary: "Greetings! We've managed to build our cannon here to destroy the Monster Mind's look-out towers. We need your maths skills to work out the angle of launch. Select the correct angle and let's blast them.",
+          summary: "Greetings! We've built our cannon here to destroy the Monster Mind's look-out towers. Use your maths skills to work out the angle and blast them.",
           bullets: [],
         };
       }

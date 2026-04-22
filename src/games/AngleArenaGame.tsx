@@ -27,7 +27,6 @@ import angryLogoSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-ma
 import angleArenaLaunchSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/bird shot-a1.wav';
 import angleArenaHitSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/pig/piglette destroyed.wav';
 import angleArenaWoodSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/8d82b5_Angry_Birds_Wood_Damage_Sound_Effect.mp3';
-import angleArenaStartSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/Level/level start military a1.mp3';
 import angleArenaFailSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/Level/level failed piglets a1.mp3';
 import angleArenaCompleteSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/Level/level clear military 1.mp3';
 import { BOSS_ART_LIBRARY } from '../assets/bosses/library';
@@ -59,7 +58,7 @@ type GameState =
 
 type ImpactResult = 'hit' | 'miss';
 
-type AngleArenaSfxKey = 'launch' | 'hit' | 'wood' | 'start' | 'fail' | 'complete';
+type AngleArenaSfxKey = 'launch' | 'hit' | 'wood' | 'fail' | 'complete';
 
 type ProjectileState = {
   x: number;
@@ -1023,13 +1022,11 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       angleArenaSfxRef.current[key] = audio;
     };
 
-    loadAudio('start', angleArenaStartSfxSrc, 0.7);
     loadAudio('launch', angleArenaLaunchSfxSrc, 0.85);
     loadAudio('wood', angleArenaWoodSfxSrc, 0.65);
     loadAudio('hit', angleArenaHitSfxSrc, 0.8);
     loadAudio('fail', angleArenaFailSfxSrc, 0.75);
     loadAudio('complete', angleArenaCompleteSfxSrc, 0.75);
-    playAngleArenaSfx(angleArenaSfxRef.current, 'start');
   }, []);
 
   const resetForNext = () => {
@@ -1447,10 +1444,10 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
               <GameQuestionCard
                 title="Angle Arena"
-                subtitle="Pull back and launch the glowing ball at the correct angle."
+                subtitle="Choose the correct angle and fire the glowing ball."
                 className="w-full"
               >
-                {activeQuestion?.prompt ?? 'Choose the correct angle to launch the glowing ball.'}
+                {activeQuestion?.prompt ?? 'Choose the correct angle for the glowing ball.'}
               </GameQuestionCard>
             </div>
           )}
@@ -1484,7 +1481,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
                 ) : null}
               </div>
               <FeedbackStrip className="w-full" tone={gameState === 'resolvedCorrect' ? 'success' : gameState === 'resolvedIncorrect' ? 'warning' : 'neutral'}>
-                {feedback || (selectedAnswer !== null ? `Angle ${selectedAnswer}° locked in.` : 'Choose an angle to launch the glowing ball.')}
+                {feedback || (selectedAnswer !== null ? `Angle ${selectedAnswer}° locked in.` : 'Choose an angle to fire the cannon.')}
               </FeedbackStrip>
               {gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? (
                 <div className="flex w-full items-center gap-2">
