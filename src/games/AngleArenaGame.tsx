@@ -17,6 +17,8 @@ import cannonFacingLeftSrc from '../assets/angle_arena/cannonanglearena/1.png';
 import cannonFacingRightSrc from '../assets/angle_arena/cannonanglearena/2.png';
 import cannonFacingUpSrc from '../assets/angle_arena/cannonanglearena/3.png';
 import angryBackgroundSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Background/1.png';
+import angryParallaxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Background/INGAME_PARALLAX_1.png';
+import angryGroundsSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Background/INGAME_GROUNDS_1.png';
 import angryBlocksSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Buildings/blocks.png';
 import angryProps1Src from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Buildings/props1.png';
 import angryProps2Src from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Buildings/props2.png';
@@ -342,6 +344,26 @@ const drawContainImage = (
   ctx.restore();
 };
 
+const drawImageSlice = (
+  ctx: CanvasRenderingContext2D,
+  image: HTMLImageElement,
+  sx: number,
+  sy: number,
+  sw: number,
+  sh: number,
+  dx: number,
+  dy: number,
+  dw: number,
+  dh: number,
+  opacity = 1,
+) => {
+  if (!image.complete) return;
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  ctx.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
+  ctx.restore();
+};
+
 const drawRoundedRectPath = (
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -578,34 +600,68 @@ const drawWoodenTower = (
   ctx.save();
   ctx.translate(-width / 2, -height);
 
-  ctx.fillStyle = `rgba(34, 20, 12, ${0.22 * accent})`;
-  ctx.fillRect(width * 0.16, height * 0.88, width * 0.68, height * 0.12);
+  const woodGrad = ctx.createLinearGradient(0, 0, 0, height);
+  woodGrad.addColorStop(0, '#d79a52');
+  woodGrad.addColorStop(0.35, '#b57032');
+  woodGrad.addColorStop(0.75, '#7a461c');
+  woodGrad.addColorStop(1, '#4a2a11');
+
+  // Main timber stack.
+  ctx.fillStyle = woodGrad;
+  drawRoundedRectPath(ctx, width * 0.18, height * 0.08, width * 0.64, height * 0.74, width * 0.06);
+  ctx.fill();
+
+  // Cross braces.
+  ctx.strokeStyle = 'rgba(77, 39, 14, 0.88)';
+  ctx.lineWidth = Math.max(2, width * 0.04);
+  ctx.beginPath();
+  ctx.moveTo(width * 0.22, height * 0.2);
+  ctx.lineTo(width * 0.78, height * 0.68);
+  ctx.moveTo(width * 0.78, height * 0.2);
+  ctx.lineTo(width * 0.22, height * 0.68);
+  ctx.stroke();
+
+  // Side posts.
+  ctx.fillStyle = 'rgba(97, 56, 22, 0.95)';
+  ctx.fillRect(width * 0.12, height * 0.1, width * 0.08, height * 0.7);
+  ctx.fillRect(width * 0.8, height * 0.1, width * 0.08, height * 0.7);
+
+  // Planks.
+  ctx.fillStyle = 'rgba(158, 92, 38, 0.96)';
+  for (let i = 0; i < 4; i += 1) {
+    const plankY = height * (0.16 + i * 0.16);
+    ctx.fillRect(width * 0.16, plankY, width * 0.68, height * 0.06);
+  }
+
+  // Top platform.
+  ctx.fillStyle = 'rgba(191, 124, 63, 0.98)';
+  ctx.fillRect(width * 0.1, height * 0.04, width * 0.8, height * 0.08);
+  ctx.fillStyle = 'rgba(85, 48, 19, 0.8)';
+  ctx.fillRect(width * 0.14, height * 0.01, width * 0.72, height * 0.04);
+
+  // Decorative rope / lashings to sell the timber look.
+  ctx.strokeStyle = 'rgba(245, 220, 173, 0.42)';
+  ctx.lineWidth = Math.max(1.5, width * 0.018);
+  for (let i = 0; i < 3; i += 1) {
+    const wrapY = height * (0.2 + i * 0.2);
+    ctx.beginPath();
+    ctx.moveTo(width * 0.2, wrapY);
+    ctx.lineTo(width * 0.8, wrapY);
+    ctx.stroke();
+  }
 
   if (blocks) {
-    drawContainImage(ctx, blocks, width * 0.06, height * 0.1, width * 0.88, height * 0.7, 0.95);
-  } else {
-    const woodGrad = ctx.createLinearGradient(0, 0, 0, height * 0.78);
-    woodGrad.addColorStop(0, '#c0843d');
-    woodGrad.addColorStop(0.5, '#8b5a2b');
-    woodGrad.addColorStop(1, '#5b3414');
-    ctx.fillStyle = woodGrad;
-    ctx.fillRect(width * 0.1, height * 0.12, width * 0.8, height * 0.68);
+    drawContainImage(ctx, blocks, width * 0.26, height * 0.1, width * 0.48, height * 0.64, 0.22 * accent);
   }
-
   if (props1) {
-    drawContainImage(ctx, props1, width * 0.12, height * 0.02, width * 0.76, height * 0.38, 0.9);
+    drawContainImage(ctx, props1, width * 0.16, height * 0.06, width * 0.68, height * 0.2, 0.18 * accent);
   }
   if (props2) {
-    drawContainImage(ctx, props2, width * 0.22, height * 0.4, width * 0.56, height * 0.42, 0.88);
+    drawContainImage(ctx, props2, width * 0.18, height * 0.5, width * 0.64, height * 0.18, 0.16 * accent);
   }
 
-  ctx.fillStyle = 'rgba(251, 191, 36, 0.14)';
-  ctx.fillRect(width * 0.14, height * 0.18, width * 0.18, height * 0.58);
-  ctx.fillRect(width * 0.68, height * 0.18, width * 0.12, height * 0.58);
-
-  ctx.fillStyle = 'rgba(69, 43, 20, 0.42)';
-  ctx.fillRect(width * 0.02, height * 0.02, width * 0.96, height * 0.08);
-  ctx.fillRect(width * 0.06, height * 0.78, width * 0.88, height * 0.06);
+  ctx.fillStyle = `rgba(34, 20, 12, ${0.18 * accent})`;
+  ctx.fillRect(width * 0.1, height * 0.86, width * 0.8, height * 0.1);
 
   ctx.restore();
 };
