@@ -4915,25 +4915,14 @@ button.avatar-hero-arrow:not(:disabled):active {
   z-index: 0;
   width: 100%;
   height: 100%;
-  object-fit: fill;
+  object-fit: contain;
   pointer-events: none;
   user-select: none;
 }
 
-.game-question-card-chrome {
-  position: absolute;
-  inset: 6px 8px 8px;
-  z-index: 1;
-  border-radius: calc(1.05rem - 6px);
-  background:
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.1), transparent 42%),
-    linear-gradient(180deg, rgba(2, 6, 23, 0.08), rgba(2, 6, 23, 0.28));
-  pointer-events: none;
-}
-
 .game-question-card-inner {
   position: relative;
-  z-index: 2;
+  z-index: 1;
   display: flex;
   min-height: 100%;
   flex-direction: column;
@@ -5538,12 +5527,11 @@ button.avatar-hero-arrow:not(:disabled):active {
   top: calc(env(safe-area-inset-top) + 4px);
   left: 0;
   right: 0;
-  /* Match the blue translucent question banner used in Number Line Ninja + Place Value Panic. */
-  border: 1px solid rgba(96, 165, 250, 0.4);
-  border-radius: 1.05rem;
-  background: rgba(23, 37, 84, 0.7);
-  box-shadow: 0 10px 22px rgba(2, 6, 23, 0.35);
-  backdrop-filter: blur(6px);
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
   width: var(--question-card-width, min(100%, 780px));
   margin-left: auto;
   margin-right: auto;
@@ -5558,10 +5546,10 @@ button.avatar-hero-arrow:not(:disabled):active {
 }
 
 .game-question-card.game-question-card--dock-bottom {
-  position: static;
-  top: auto;
-  left: auto;
-  right: auto;
+  position: fixed;
+  top: calc(env(safe-area-inset-top) + 4px);
+  left: 0;
+  right: 0;
   margin-bottom: 0;
 }
 
@@ -5624,7 +5612,6 @@ button.avatar-hero-arrow:not(:disabled):active {
 
 /* Shared question surface:
    keeps all learner-facing question cards on one consistent blue/gold panel style. */
-.app-viewport.sat-theme-bluegold .game-question-card,
 .screen-gameplay .game-shell-host .mission-panel-shell,
 .screen-gameplay .game-shell-host .licensed-game-card,
 .screen-gameplay .game-shell-host .licensed-game-card-dark,

@@ -111,7 +111,6 @@ const QuestionCardFrame: React.FC<QuestionCardFrameProps> = ({
       aria-hidden="true"
       draggable={false}
     />
-    <div className="game-question-card-chrome" aria-hidden="true" />
     <div className="game-question-card-inner">
       {title ? (
         <div

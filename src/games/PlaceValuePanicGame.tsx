@@ -992,9 +992,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       <div className="pointer-events-none fixed left-1/2 z-[60] w-[min(88vw,36rem)] -translate-x-1/2" style={{ top: '4px' }}>
         <GameQuestionCard
           title="Place Value Panic"
-          className="mx-auto rounded-[0.95rem] px-3.5 py-2.5 text-center"
+          className="mx-auto rounded-[0.95rem] px-3.25 py-2.25 text-center"
           titleClassName="text-[9px] tracking-[0.28em] md:text-[10px]"
-          bodyClassName="mt-1 text-[clamp(0.84rem,1.7vw,1rem)] leading-snug md:text-[clamp(0.92rem,1.8vw,1.06rem)]"
+          bodyClassName="mt-1 text-[clamp(0.82rem,1.65vw,0.98rem)] leading-snug md:text-[clamp(0.9rem,1.7vw,1.04rem)]"
+          style={{ top: 'calc(env(safe-area-inset-top) + 3.2rem)' }}
         >
           {questionPrompt}
         </GameQuestionCard>
@@ -1007,8 +1008,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         transition={{ duration: 0.34, ease: 'easeInOut' }}
       >
         <div
-          className="pointer-events-none absolute left-1/2 top-[16.8%] z-10 -translate-x-1/2"
-          style={{ width: 'min(80vw, 38rem)' }}
+          className="pointer-events-none absolute left-1/2 top-[20.8%] z-10 -translate-x-1/2"
+          style={{ width: 'min(83vw, 37rem)' }}
         >
           <div className="mx-auto rounded-[1.2rem] border border-cyan-100/20 bg-slate-950/26 p-2 shadow-[0_18px_40px_rgba(2,6,23,0.34)] backdrop-blur-[8px] md:p-3">
             <div className="mb-2 flex items-center justify-center gap-3 px-2 text-[clamp(0.62rem,1.35vw,0.76rem)] font-black uppercase tracking-[0.28em] text-amber-200/92">
@@ -1016,7 +1017,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               <span>Number Stones</span>
               <span className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent via-amber-200/65 to-transparent" />
             </div>
-            <div className="relative mx-auto flex min-h-[7rem] items-center justify-center rounded-[1.1rem] border border-white/12 bg-[radial-gradient(circle_at_50%_18%,rgba(103,232,249,0.16),rgba(15,23,42,0.16)_42%,rgba(2,6,23,0.52)_100%)] px-2.5 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:min-h-[7.9rem] md:px-3.5 md:py-3.5">
+            <div className="relative mx-auto flex min-h-[6.75rem] items-center justify-center rounded-[1.1rem] border border-white/12 bg-[radial-gradient(circle_at_50%_18%,rgba(103,232,249,0.16),rgba(15,23,42,0.16)_42%,rgba(2,6,23,0.52)_100%)] px-2.5 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:min-h-[7.45rem] md:px-3.5 md:py-3.5">
               <div className="relative flex w-full items-center justify-center gap-[0.4rem] md:gap-2">
                 {activeTargetAnchors.map((anchor, idx) => {
               const token = targetSlots[idx];
@@ -1086,8 +1087,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
 
         <div
-          className="pointer-events-none absolute left-1/2 top-[39.2%] z-10 -translate-x-1/2"
-          style={{ width: 'min(84vw, 44rem)' }}
+          className="pointer-events-none absolute left-1/2 top-[70.8%] z-10 -translate-x-1/2"
+          style={{ width: 'min(84vw, 40rem)' }}
         >
           <div className="rounded-[1.25rem] border border-cyan-100/16 bg-slate-950/24 p-2 shadow-[0_16px_36px_rgba(2,6,23,0.28)] backdrop-blur-[8px] md:p-3">
             <div className="mb-2 flex items-center justify-center gap-3 px-2 text-[clamp(0.62rem,1.35vw,0.76rem)] font-black uppercase tracking-[0.28em] text-cyan-100/90">
@@ -1138,7 +1139,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
 
         <div
-          className="pointer-events-none absolute left-1/2 top-[55.2%] z-30 -translate-x-1/2"
+          className="pointer-events-none absolute left-1/2 top-[52.4%] z-30 -translate-x-1/2"
           style={{ width: `${layout.enemyWidth + 6}%` }}
         >
           <div className="relative">
@@ -1301,7 +1302,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         <div
           className="game-submit-dock-fixed"
           style={{
-            bottom: 'calc(env(safe-area-inset-bottom) + 0.7rem)',
+            bottom: 'calc(env(safe-area-inset-bottom) + 0.55rem)',
           }}
         >
           <button

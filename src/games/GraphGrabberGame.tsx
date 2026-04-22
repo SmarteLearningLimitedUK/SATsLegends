@@ -723,7 +723,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
         <div className="mx-auto flex w-full max-w-[56rem] flex-col gap-1.5 md:gap-2">
           <GameQuestionCard
             title={round.title}
-            className="w-full !mb-0 game-question-card--dock-bottom"
+            className="w-full !mb-0"
             style={{
               ['--question-card-width' as any]: 'min(100%, 56rem)',
               ['--question-card-padding' as any]: '8px 10px',

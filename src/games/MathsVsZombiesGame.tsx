@@ -527,24 +527,6 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
             ) : null}
           </div>
 
-          <div className="absolute left-1/2 top-5 z-10 w-[min(92%,34rem)] -translate-x-1/2 rounded-[1.4rem] border border-amber-300/55 bg-slate-950/72 px-5 py-4 shadow-[0_20px_48px_rgba(2,6,23,0.48)] backdrop-blur-md">
-            <div className="flex items-center justify-center gap-3 text-[0.72rem] font-black uppercase tracking-[0.26em] text-amber-100">
-              <span className="h-px w-10 bg-amber-200/75" />
-              Mission
-              <span className="h-px w-10 bg-amber-200/75" />
-            </div>
-            <div className="mt-2 text-center text-[clamp(0.95rem,2vw,1.15rem)] font-semibold leading-snug text-white/94">
-              the monster minds have sent their minions - solve the sum to defeat them
-            </div>
-            <div className="mt-3 flex items-center justify-center">
-              <div className="rounded-[1rem] border border-cyan-200/40 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(23,37,84,0.95))] px-5 py-3 shadow-[0_10px_28px_rgba(2,6,23,0.45)]">
-                <div className="text-[clamp(1.95rem,6vw,3.05rem)] font-black leading-none tracking-[0.04em] text-white drop-shadow-[0_2px_8px_rgba(2,6,23,0.7)]">
-                  {question.prompt.split('\n\n').slice(-1)[0]}
-                </div>
-              </div>
-            </div>
-          </div>
-
           <AnimatePresence>
             {zombies.map((zombie) => {
               const frameList = FRAMES_BY_STATE[zombie.state] ?? zombieWalkFrames;
@@ -583,24 +565,39 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
         </div>
 
-        <div className="mx-4 mt-3 rounded-[1.5rem] border border-amber-300/35 bg-slate-950/74 p-4 shadow-[0_20px_48px_rgba(2,6,23,0.45)]">
+        <div className="mx-4 mt-3 rounded-[1.35rem] border border-amber-300/35 bg-slate-950/74 px-4 py-3 shadow-[0_20px_48px_rgba(2,6,23,0.45)]">
           <div
             className={`min-h-[16px] text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
             aria-hidden={!feedback}
           >
             {feedback || '\u00A0'}
           </div>
-          <div className="mt-2 text-center text-[0.72rem] font-black uppercase tracking-[0.28em] text-amber-100/90">
+          <div className="flex items-center justify-center gap-3 text-[0.66rem] font-black uppercase tracking-[0.24em] text-amber-100/90">
+            <span className="h-px w-8 bg-amber-200/75" />
+            Mission
+            <span className="h-px w-8 bg-amber-200/75" />
+          </div>
+          <div className="mt-2 text-center text-[clamp(0.84rem,2.1vw,1.02rem)] font-semibold leading-snug text-white/94">
+            the monster minds have sent their minions - solve the sum to defeat them
+          </div>
+          <div className="mt-2 flex items-center justify-center">
+            <div className="rounded-[0.95rem] border border-cyan-200/40 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(23,37,84,0.95))] px-4 py-2.5 shadow-[0_10px_24px_rgba(2,6,23,0.4)]">
+              <div className="text-[clamp(1.35rem,4vw,2.1rem)] font-black leading-none tracking-[0.03em] text-white drop-shadow-[0_2px_8px_rgba(2,6,23,0.7)]">
+                {question.prompt.split('\n\n').slice(-1)[0]}
+              </div>
+            </div>
+          </div>
+          <div className="mt-3 text-center text-[0.68rem] font-black uppercase tracking-[0.24em] text-amber-100/90">
             Choose the correct answer
           </div>
-          <div className="mt-3 grid grid-cols-2 gap-3">
+          <div className="mt-2 grid grid-cols-4 gap-2">
             {question.options.map((option, index) => (
               <button
                 key={`${option}-${index}`}
                 type="button"
                 onClick={() => handleAnswer(index)}
                 disabled={locked}
-                className={`h-[clamp(3.1rem,8vh,3.85rem)] rounded-[1rem] px-3 text-[clamp(1.05rem,4vw,1.35rem)] font-black shadow-[0_10px_22px_rgba(2,6,23,0.28)] ${
+                className={`h-[clamp(2.6rem,6.5vh,3.15rem)] rounded-[0.95rem] px-2 text-[clamp(0.88rem,3vw,1.12rem)] font-black shadow-[0_10px_18px_rgba(2,6,23,0.24)] ${
                   locked && selectedAnswer === index
                     ? index === question.correctIndex
                       ? 'ui-button-success'

@@ -795,7 +795,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
               <div className="pointer-events-none absolute left-1/2 top-[4%] z-40 w-[min(88vw,430px)] -translate-x-1/2">
                 <GameQuestionCard
                   title="TARGET RECIPE"
-                  className="game-question-card--dock-bottom w-full rounded-[1.45rem] border border-slate-950/70 px-5 py-4 text-center shadow-[0_18px_32px_rgba(1,6,20,0.55)]"
+                  className="w-full rounded-[1.45rem] border border-slate-950/70 px-5 py-4 text-center shadow-[0_18px_32px_rgba(1,6,20,0.55)]"
                   bodyClassName="mt-0.5"
                 >
                   <div className="text-[clamp(1rem,4vw,1.28rem)] font-black tracking-[0.01em] text-white">
