@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import { motion } from 'motion/react';
 import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
 import heartIcon from '../assets/casual_ui/icons/icon__heart.png';
-import titleFlagAsset from '../assets/licensed/slices/deposited_blue_banner.png';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 import GameActionDock from './GameActionDock';
 import { LEVEL_TIMERS_DISABLED } from '../app/testingFlags';
@@ -95,15 +94,9 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
             {gameTitle ? (
               <div className="pointer-events-none absolute inset-x-0 top-1/2 flex -translate-y-1/2 justify-center px-3">
                 <div
-                  className="relative flex h-[clamp(1.8rem,4.4vw,2.35rem)] w-[clamp(11rem,34vw,15.5rem)] items-center justify-center overflow-hidden px-[clamp(0.9rem,2.2vw,1.3rem)] py-[0.1rem] text-center shadow-[0_4px_10px_rgba(2,6,23,0.2)]"
-                  style={{
-                    backgroundImage: `url(${titleFlagAsset})`,
-                    backgroundSize: '100% 100%',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat',
-                  }}
+                  className="relative flex h-[clamp(1.5rem,3.8vw,2rem)] w-[clamp(10rem,32vw,14.5rem)] items-center justify-center overflow-hidden rounded-full border border-amber-200/45 bg-[linear-gradient(180deg,rgba(244,197,70,0.18),rgba(8,18,43,0.78))] px-[clamp(0.75rem,2vw,1.1rem)] py-[0.1rem] text-center shadow-[0_4px_10px_rgba(2,6,23,0.24)] backdrop-blur-[2px]"
                 >
-                  <span className="truncate text-[clamp(0.58rem,1.4vw,0.78rem)] font-black uppercase tracking-[0.18em] text-white drop-shadow-[0_1px_0_rgba(0,0,0,0.4)]">
+                  <span className="truncate text-[clamp(0.58rem,1.4vw,0.78rem)] font-black uppercase tracking-[0.2em] text-amber-50 drop-shadow-[0_1px_0_rgba(0,0,0,0.45)]">
                     {gameTitle}
                   </span>
                 </div>
