@@ -72,6 +72,7 @@ const MAX_FLIGHT_DISTANCE = 980;
 const CANNON_ANCHOR_X_RATIO = 0.5;
 const CANNON_ANCHOR_Y_RATIO = 0.5;
 const CAMERA_LEAD_DISTANCE = 340;
+const CAMERA_ACTIVE_LERP = 0.18;
 const ENEMY_FOREGROUND_LEAD = 110;
 const SKY_DRIFT_FACTOR = 0.14;
 const GROUND_DRIFT_FACTOR = 0.28;
@@ -891,13 +892,13 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       if (projectile?.active) {
         const travel = normalizeVector(projectile.vx, projectile.vy);
         cameraTargetRef.current = {
-          x: projectile.x - (travel.x * CAMERA_LEAD_DISTANCE),
-          y: projectile.y - (travel.y * CAMERA_LEAD_DISTANCE),
+          x: projectile.x - (travel.x * CAMERA_LEAD_DISTANCE * 0.45),
+          y: projectile.y - (travel.y * CAMERA_LEAD_DISTANCE * 0.45),
         };
       }
 
       const camera = cameraRef.current;
-      const followStrength = projectile?.active ? CAMERA_LERP : RETURN_LERP;
+      const followStrength = projectile?.active ? CAMERA_ACTIVE_LERP : RETURN_LERP;
       camera.x = lerp(camera.x, cameraTargetRef.current.x, followStrength);
       camera.y = lerp(camera.y, cameraTargetRef.current.y, followStrength);
       camera.x = clamp(camera.x, -WORLD_RADIUS, WORLD_RADIUS);
@@ -1048,6 +1049,15 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         ctx.save();
         ctx.translate(projectileScreen.x, projectileScreen.y);
         drawAngryBirdProjectile(ctx, PROJECTILE_RADIUS + 2, pulse);
+        ctx.restore();
+
+        ctx.save();
+        ctx.globalAlpha = projectile.active ? 0.16 : 0.08;
+        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(projectileScreen.x, projectileScreen.y, 28, 0, Math.PI * 2);
+        ctx.stroke();
         ctx.restore();
       }
 
