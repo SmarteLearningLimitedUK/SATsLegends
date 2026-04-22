@@ -3072,11 +3072,15 @@ button:disabled {
 }
 
 .answer-choice-surface {
-  margin-top: auto;
+  margin-top: auto !important;
+  width: 100%;
+  flex: 0 0 auto;
 }
 
 .game-submit-dock {
-  margin-top: auto;
+  margin-top: auto !important;
+  width: 100%;
+  flex: 0 0 auto;
 }
 
 .game-submit-dock-fixed {
@@ -3109,6 +3113,7 @@ button:disabled {
 .game-screen-bottom {
   flex: 0 0 auto;
   min-height: clamp(3.4rem, 16vh, 7.2rem);
+  margin-top: auto;
 }
 
 .structured-game-layout > * {
@@ -3184,6 +3189,21 @@ button:disabled {
 
 .structured-game-layout .game-shell-zone-actions {
   margin-top: clamp(0.2rem, 0.9vh, 0.7rem);
+}
+
+.screen-gameplay .game-screen-layout .game-screen-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.screen-gameplay .game-screen-layout .game-screen-main > * {
+  min-height: 0;
+}
+
+.screen-gameplay .game-screen-layout .game-screen-main > .answer-choice-surface,
+.screen-gameplay .game-screen-layout .game-screen-main > .game-submit-dock,
+.screen-gameplay .game-screen-layout .game-screen-main > .game-submit-dock-fixed {
+  margin-top: auto !important;
 }
 
 .screen-gameplay .game-shell-contract > * > * {
