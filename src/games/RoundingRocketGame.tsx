@@ -330,7 +330,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
     };
   }, [rocketState]);
 
-  const rocketVerticalOffset = 100;
+  const rocketVerticalOffset = 80;
 
   return (
     <div className="relative h-full w-full overflow-hidden">
@@ -351,11 +351,18 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
       />
 
       <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
-        <GameQuestionCard title={`Rounding Rocket: nearest ${round.target}`}>
-          <span className="block text-[clamp(1.3rem,5.2vw,1.85rem)] font-black leading-none text-white drop-shadow-[0_2px_6px_rgba(2,6,23,0.6)]">
-            {round.value}
+        <GameQuestionCard
+          title={`Rounding Rocket: nearest ${round.target}`}
+          className="mx-auto max-w-[31rem] border border-amber-300/55 bg-slate-950/58 px-5 py-3 shadow-[0_18px_42px_rgba(2,6,23,0.45)] backdrop-blur-md"
+          titleClassName="flex items-center justify-center gap-3 text-[0.72rem] tracking-[0.28em] text-amber-100"
+          bodyClassName="mt-1 flex flex-col items-center gap-1.5"
+        >
+          <span className="inline-flex min-w-[11rem] items-center justify-center rounded-[1.15rem] border border-violet-300/55 bg-[linear-gradient(180deg,rgba(99,102,241,0.96),rgba(67,56,202,0.94))] px-5 py-2.5 shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_14px_32px_rgba(54,46,126,0.42)]">
+            <span className="text-[clamp(2rem,7vw,2.85rem)] font-black leading-none text-white drop-shadow-[0_2px_6px_rgba(2,6,23,0.6)]">
+              {round.value}
+            </span>
           </span>
-          <span className="mt-1 block text-sm font-semibold leading-snug text-cyan-100/90">
+          <span className="block text-[0.95rem] font-semibold leading-snug text-cyan-100/90">
             Round correctly to fuel the rocket.
           </span>
         </GameQuestionCard>
@@ -385,7 +392,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
               transition={rocketState === 'idle'
                 ? { duration: 2.2, repeat: Infinity, ease: 'easeInOut' }
                 : { duration: rocketState === 'launching' ? 0.58 : 0.35, ease: 'easeOut' }}
-              className="relative h-[clamp(16rem,36vh,21rem)] w-[clamp(12rem,50vw,18rem)] overflow-visible"
+              className="relative h-[clamp(17rem,38vh,22.5rem)] w-[clamp(13rem,52vw,19.5rem)] overflow-visible"
             >
               <div className="absolute inset-x-[2%] top-0 bottom-[9%] overflow-hidden">
                 <img
@@ -466,8 +473,11 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
           </AnimatePresence>
         </main>
 
-        <section className="mx-auto w-full max-w-[21rem] shrink-0">
-          <div className="grid grid-cols-3 gap-2.5">
+        <section className="mx-auto w-full max-w-[26rem] shrink-0">
+          <div className="mb-2 text-center text-[0.72rem] font-black uppercase tracking-[0.28em] text-amber-100/90">
+            Choose the correct rounding
+          </div>
+          <div className="grid grid-cols-3 gap-3">
             {round.pads.map((padValue) => {
               const isSelected = selectedPad === padValue;
               const successFlash = padFeedback?.value === padValue && padFeedback.type === 'success';
@@ -479,9 +489,9 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
                   type="button"
                   onClick={() => handlePadTap(padValue)}
                   whileTap={(!inputLocked && isSessionActive) ? { scale: 0.96 } : undefined}
-                  disabled={inputLocked || !isSessionActive || didComplete}
-                  className={[
-                    'relative h-[clamp(2.55rem,7vh,3rem)] rounded-[0.9rem] px-1.5 text-center text-[clamp(0.86rem,3.8vw,1.12rem)] font-black tabular-nums transition',
+                disabled={inputLocked || !isSessionActive || didComplete}
+                className={[
+                    'relative h-[clamp(3.1rem,8.2vh,3.7rem)] rounded-[1rem] px-2 text-center text-[clamp(1.05rem,4vw,1.4rem)] font-black tabular-nums transition',
                     successFlash
                       ? 'ui-button-success'
                       : errorFlash
